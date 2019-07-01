@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2018 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2018 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.test.repo.project;
@@ -57,25 +57,22 @@ public class ProjectListSortIT extends AbstractProjectTestCase {
 
 		Date startTime = new Date();
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-				for (int i = 0; i < 40; i++) {
+			for (int i = 0; i < 40; i++) {
 
-					int modulo = i % 2;
+				int modulo = i % 2;
 
-					NodeRef hierarchy2NodeRef = modulo == 0 ? PROJECT_HIERARCHY2_CRUSTACEAN_REF : PROJECT_HIERARCHY2_FISH_REF;
-					ProjectData projectData = new ProjectData();
-					projectData.setName("Raw material " + (i % 3 == 0 ? "aaa" : "bbb") + i);
-					projectData.setHierarchy1(PROJECT_HIERARCHY1_SEA_FOOD_REF);
-					projectData.setHierarchy2(hierarchy2NodeRef);
-					projectData.setParentNodeRef(getTestFolderNodeRef());
-					projectData = alfrescoRepository.save(projectData);
-				}
-
-				return null;
+				NodeRef hierarchy2NodeRef = modulo == 0 ? PROJECT_HIERARCHY2_CRUSTACEAN_REF : PROJECT_HIERARCHY2_FISH_REF;
+				ProjectData projectData = new ProjectData();
+				projectData.setName("Raw material " + ((i % 3) == 0 ? "aaa" : "bbb") + i);
+				projectData.setHierarchy1(PROJECT_HIERARCHY1_SEA_FOOD_REF);
+				projectData.setHierarchy2(hierarchy2NodeRef);
+				projectData.setParentNodeRef(getTestFolderNodeRef());
+				projectData = alfrescoRepository.save(projectData);
 			}
+
+			return null;
 		}, false, true);
 
 		waitForSolr(startTime);
@@ -99,11 +96,9 @@ public class ProjectListSortIT extends AbstractProjectTestCase {
 				dataListFilter.setDataType(ProjectModel.TYPE_PROJECT);
 				dataListFilter.setSortId("ProjectList");
 
-				
 				dataListFilter.getPagination().setMaxResults(-1);
 				dataListFilter.getPagination().setPageSize(25);
 				dataListFilter.setHasWriteAccess(true);
-				
 
 				List<String> metadataFields = new LinkedList<>();
 				metadataFields.add("cm:name");

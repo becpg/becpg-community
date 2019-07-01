@@ -1,23 +1,22 @@
 /*******************************************************************************
- * Copyright (C) 2010-2018 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2018 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.test;
 
-import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -25,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.naming.Name;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
@@ -36,7 +34,6 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.dictionary.DictionaryDAO;
 import org.alfresco.repo.domain.qname.QNameDAO;
 import org.alfresco.repo.model.Repository;
-import org.alfresco.repo.node.integrity.IntegrityChecker;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationComponent;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
@@ -44,7 +41,6 @@ import org.alfresco.repo.security.authentication.MutableAuthenticationDao;
 import org.alfresco.repo.solr.SOLRTrackingComponent;
 import org.alfresco.repo.solr.Transaction;
 import org.alfresco.repo.transaction.RetryingTransactionHelper;
-import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.ContentService;
@@ -71,15 +67,12 @@ import org.junit.Rule;
 import org.junit.rules.MethodRule;
 import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
-import org.junit.runners.model.FrameworkMethod;
-import org.junit.runners.model.Statement;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.TestExecutionListeners;
 import org.subethamail.wiser.Wiser;
 import org.w3c.dom.Document;
-
 
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.admin.InitVisitorService;
@@ -96,60 +89,53 @@ import junit.framework.TestCase;
 
 /**
  * base class of test cases for product classes.
- * 
+ *
  * @author matthieu
  */
 @RunWith(value = BeCPGTestRunner.class)
-@TestExecutionListeners( { BeCPSpringTestListener.class })
+@TestExecutionListeners({ BeCPSpringTestListener.class })
 public abstract class RepoBaseTestCase extends TestCase implements InitializingBean {
 
 	private static final Log logger = LogFactory.getLog(RepoBaseTestCase.class);
 
 	private Map<String, NodeRef> testFolders = new HashMap<>();
-	
 
-	@Rule public TestName name = new TestName();
-	
-	
+	@Rule
+	public TestName name = new TestName();
+
 	public NodeRef getTestFolderNodeRef() {
 		return testFolders.get(getTestFolderName());
 	}
 
 	private String getTestFolderName() {
-		return getClassName().replaceAll("\\.", "_")+"_"+name.getMethodName();
+		return getClassName().replaceAll("\\.", "_") + "_" + name.getMethodName();
 	}
-	
+
 	protected NodeRef systemFolderNodeRef;
 
 	public static RepoBaseTestCase INSTANCE;
 
 	public static final Wiser wiser = new Wiser(2500);
-	
-	
-	
 
-	 /**
-     * Print the test we are currently running, useful if the test is running remotely
-     * and we don't see the server logs
-     */
-    @Rule
-    public MethodRule testAnnouncer = new MethodRule() {
-        @Override
-        public Statement apply(Statement base, FrameworkMethod method, Object target) {
-            System.out.println("Running " + getClassName() + " Integration Test: " + method.getName() + "()");
-            return base;
-        }
-    };
-	
-    protected String getClassName() {
-        Class<?> enclosingClass = getClass().getEnclosingClass();
-        if (enclosingClass != null) {
-            return enclosingClass.getName();
-        } else {
-            return getClass().getName();
-        }
-    }
-    
+	/**
+	 * Print the test we are currently running, useful if the test is running
+	 * remotely and we don't see the server logs
+	 */
+	@Rule
+	public MethodRule testAnnouncer = (base, method, target) -> {
+		System.out.println("Running " + getClassName() + " Integration Test: " + method.getName() + "()");
+		return base;
+	};
+
+	protected String getClassName() {
+		Class<?> enclosingClass = getClass().getEnclosingClass();
+		if (enclosingClass != null) {
+			return enclosingClass.getName();
+		} else {
+			return getClass().getName();
+		}
+	}
+
 	static {
 		try {
 			logger.debug("setupBeforeClass : Start wiser");
@@ -233,7 +219,7 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 	@Resource
 	private SOLRTrackingComponent solrTrackingComponent;
-	
+
 	@Resource
 	protected EntityListDAO entityListDAO;
 
@@ -250,99 +236,88 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 		boolean shouldInit = shouldInit();
 
 		if (shouldInit) {
-			transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
-				public Boolean execute() throws Throwable {
+			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-					// Init repo for test
-					initRepoVisitorService.run(repositoryHelper.getCompanyHome());
+				// Init repo for test
+				initRepoVisitorService.run(repositoryHelper.getCompanyHome());
 
-					return false;
+				return false;
 
-				}
 			}, false, true);
 		}
 
-		systemFolderNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			public NodeRef execute() throws Throwable {
-				return repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM,
-						TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
-
-			}
-		}, false, true);
+		systemFolderNodeRef = transactionService.getRetryingTransactionHelper()
+				.doInTransaction(() -> repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM,
+						TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM)), false, true);
 
 		doInitRepo(shouldInit);
 
 	}
 
+	@Override
 	@Before
 	public void setUp() throws Exception {
-		testFolders.put(getTestFolderName(), transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			public NodeRef execute() throws Throwable {
-				// As system user
-				AuthenticationUtil.setFullyAuthenticatedUser(AuthenticationUtil.getAdminUserName());
+		testFolders.put(getTestFolderName(), transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			// As system user
+			AuthenticationUtil.setFullyAuthenticatedUser(AuthenticationUtil.getAdminUserName());
 
-				String testFolderName =   getTestFolderName();
-				
-				Date now = new Date();
-				SimpleDateFormat format = new SimpleDateFormat("dd_MM_YYYY_hh_mm_ss");
-				
-				NodeRef parentTestFolder = repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), "Junit Tests", "Junit Test");
+			String testFolderName = getTestFolderName();
 
-				parentTestFolder = repoService.getOrCreateFolderByPath(parentTestFolder, format.format(now), format.format(now));
-				
-				NodeRef folderNodeRef = RepoBaseTestCase.INSTANCE.fileFolderService.create(parentTestFolder, testFolderName,
-						ContentModel.TYPE_FOLDER).getNodeRef();
-				return folderNodeRef;
+			Date now = new Date();
+			SimpleDateFormat format = new SimpleDateFormat("dd_MM_YYYY_hh_mm_ss");
 
-			}
+			NodeRef parentTestFolder = repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), "Junit Tests", "Junit Test");
 
-			
+			parentTestFolder = repoService.getOrCreateFolderByPath(parentTestFolder, format.format(now), format.format(now));
+
+			NodeRef folderNodeRef = RepoBaseTestCase.INSTANCE.fileFolderService.create(parentTestFolder, testFolderName, ContentModel.TYPE_FOLDER)
+					.getNodeRef();
+			return folderNodeRef;
+
 		}, false, true));
 	}
 
+	@Override
 	@After
 	public void tearDown() throws Exception {
-//		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
-//			public Boolean execute() throws Throwable {
-//				ruleService.disableRules();
-//				try {
-//					IntegrityChecker.setWarnInTransaction();
-//					nodeService.addAspect(getTestFolderNodeRef(), ContentModel.ASPECT_TEMPORARY, null);
-//					nodeService.deleteNode(getTestFolderNodeRef());
-//				} finally {
-//					ruleService.enableRules();
-//				}
-//				return true;
-//
-//			}
-//		}, false, true);
-	
+		// transactionService.getRetryingTransactionHelper().doInTransaction(new
+		// RetryingTransactionCallback<Boolean>() {
+		// public Boolean execute() throws Throwable {
+		// ruleService.disableRules();
+		// try {
+		// IntegrityChecker.setWarnInTransaction();
+		// nodeService.addAspect(getTestFolderNodeRef(),
+		// ContentModel.ASPECT_TEMPORARY, null);
+		// nodeService.deleteNode(getTestFolderNodeRef());
+		// } finally {
+		// ruleService.enableRules();
+		// }
+		// return true;
+		//
+		// }
+		// }, false, true);
 
 	}
-	
 
 	public void waitForSolr(final Date startTime) {
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			public NodeRef execute() throws Throwable {
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-				List<Transaction> transactions = solrTrackingComponent.getTransactions(null, startTime.getTime(), null, null, 100);
+			List<Transaction> transactions = solrTrackingComponent.getTransactions(null, startTime.getTime(), null, null, 100);
 
-				logger.info("Found " + transactions.size() + " new transactions");
+			logger.info("Found " + transactions.size() + " new transactions");
 
-				Long lastIdxServer = transactions.get(transactions.size() - 1).getId();
+			Long lastIdxServer = transactions.get(transactions.size() - 1).getId();
 
-				Long lastIdxSolr = getLastSolrIndex();
-				int j = 0;
-				while (lastIdxSolr < lastIdxServer && j < 10) {
-					Thread.sleep(2000);
-					lastIdxSolr = getLastSolrIndex();
-					j++;
-					logger.info("Wait for solr (2s) : serverIdx " + lastIdxServer + " solrIdx " + lastIdxSolr + " retry *" + j);
-				}
-
-				return null;
-
+			Long lastIdxSolr = getLastSolrIndex();
+			int j = 0;
+			while ((lastIdxSolr < lastIdxServer) && (j < 10)) {
+				Thread.sleep(2000);
+				lastIdxSolr = getLastSolrIndex();
+				j++;
+				logger.info("Wait for solr (2s) : serverIdx " + lastIdxServer + " solrIdx " + lastIdxSolr + " retry *" + j);
 			}
+
+			return null;
 
 		}, false, true);
 	}
@@ -365,7 +340,7 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 		XPath xpath = factory.newXPath();
 
 		String strIndex = (String) xpath.evaluate("//long[@name='Id for last TX in index']", doc, XPathConstants.STRING);
-		if(strIndex == null || strIndex.isEmpty()) {
+		if ((strIndex == null) || strIndex.isEmpty()) {
 			return getLastSolrIndex();
 		}
 		// <long name="Id for last TX on server">1413</long><long
@@ -373,7 +348,6 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 		return Long.valueOf(strIndex);
 	}
 
-	
 	protected boolean shouldInit() {
 		return nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS,
 				TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM)) == null;

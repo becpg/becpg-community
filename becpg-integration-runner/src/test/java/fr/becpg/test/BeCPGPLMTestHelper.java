@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2018 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2018 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.test;
@@ -66,8 +66,8 @@ public class BeCPGPLMTestHelper {
 				ContentModel.ASSOC_CONTAINS, folderName);
 
 		if (folderNodeRef == null) {
-			folderNodeRef = PLMBaseTestCase.INSTANCE2.fileFolderService.create(PLMBaseTestCase.INSTANCE2.repositoryHelper.getCompanyHome(),
-					folderName, ContentModel.TYPE_FOLDER).getNodeRef();
+			folderNodeRef = PLMBaseTestCase.INSTANCE2.fileFolderService
+					.create(PLMBaseTestCase.INSTANCE2.repositoryHelper.getCompanyHome(), folderName, ContentModel.TYPE_FOLDER).getNodeRef();
 		}
 
 		return folderNodeRef;
@@ -90,8 +90,9 @@ public class BeCPGPLMTestHelper {
 		// USER_ONE
 		createUser(USER_ONE);
 		createUser(USER_TWO);
-		if(!PLMBaseTestCase.INSTANCE2.authorityService.getAuthoritiesForUser(USER_TWO).contains(PermissionService.GROUP_PREFIX + PLMGroup.QualityUser.toString())){
-		
+		if (!PLMBaseTestCase.INSTANCE2.authorityService.getAuthoritiesForUser(USER_TWO)
+				.contains(PermissionService.GROUP_PREFIX + PLMGroup.QualityUser.toString())) {
+
 			PLMBaseTestCase.INSTANCE2.authorityService.addAuthority(PermissionService.GROUP_PREFIX + PLMGroup.QualityUser.toString(), USER_TWO);
 		}
 
@@ -157,16 +158,13 @@ public class BeCPGPLMTestHelper {
 		finishedProduct.setHierarchy1(PLMBaseTestCase.INSTANCE2.HIERARCHY1_FROZEN_REF);
 		finishedProduct.setHierarchy2(PLMBaseTestCase.INSTANCE2.HIERARCHY2_PIZZA_REF);
 		List<CompoListDataItem> compoList = new LinkedList<>();
-		CompoListDataItem parent1 = new CompoListDataItem(null, null, 1d, 1d, ProductUnit.P, 0d, DeclarationType.Declare,
-				lSF1NodeRef);
+		CompoListDataItem parent1 = new CompoListDataItem(null, null, 1d, 1d, ProductUnit.P, 0d, DeclarationType.Declare, lSF1NodeRef);
 		CompoListDataItem child1 = new CompoListDataItem(null, parent1, 1d, 4d, ProductUnit.P, 0d, DeclarationType.Declare, lSF2NodeRef);
 		CompoListDataItem child12 = new CompoListDataItem(null, child1, 3d, 0d, ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial1NodeRef);
-		CompoListDataItem parent2 = new CompoListDataItem(null, null, 1d, 4d, ProductUnit.P, 0d, DeclarationType.Declare,
-				lSF3NodeRef);
+		CompoListDataItem parent2 = new CompoListDataItem(null, null, 1d, 4d, ProductUnit.P, 0d, DeclarationType.Declare, lSF3NodeRef);
 		CompoListDataItem child2 = new CompoListDataItem(null, parent2, 3d, 0d, ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial2NodeRef);
 		CompoListDataItem child21 = new CompoListDataItem(null, parent2, 3d, 0d, ProductUnit.kg, 0d, DeclarationType.Omit, lSF4NodeRef);
-		CompoListDataItem parent3 = new CompoListDataItem(null,null, 3d, 0d, ProductUnit.kg, 0d, DeclarationType.Omit,
-				rawMaterial1NodeRef);
+		CompoListDataItem parent3 = new CompoListDataItem(null, null, 3d, 0d, ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial1NodeRef);
 
 		compoList.add(parent1);
 		compoList.add(child1);
@@ -183,7 +181,7 @@ public class BeCPGPLMTestHelper {
 
 	/**
 	 * Create a raw material.
-	 * 
+	 *
 	 * @param parentNodeRef
 	 *            the parent node ref
 	 * @param name
@@ -192,7 +190,7 @@ public class BeCPGPLMTestHelper {
 	 */
 	public static NodeRef createRawMaterial(NodeRef parentNodeRef, String name) {
 
-		logger.debug("createRawMaterial: "+name);
+		logger.debug("createRawMaterial: " + name);
 
 		RawMaterialData rawMaterial = new RawMaterialData();
 		rawMaterial.setName(name);
@@ -219,8 +217,8 @@ public class BeCPGPLMTestHelper {
 		// Ings
 		List<IngListDataItem> ingList = new ArrayList<>();
 		for (int j = 0; j < PLMBaseTestCase.INSTANCE2.ings.size(); j++) {
-			IngListDataItem ingListItemData = new IngListDataItem(null, 12.2d, null, null, false, false, false,
-					PLMBaseTestCase.INSTANCE2.ings.get(j), false);
+			IngListDataItem ingListItemData = new IngListDataItem(null, 12.2d, null, null, false, false, false, PLMBaseTestCase.INSTANCE2.ings.get(j),
+					false);
 			ingList.add(ingListItemData);
 		}
 		rawMaterial.setIngList(ingList);

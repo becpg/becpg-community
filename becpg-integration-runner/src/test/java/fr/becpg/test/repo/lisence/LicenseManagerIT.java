@@ -22,18 +22,32 @@ public class LicenseManagerIT extends RepoBaseTestCase {
 
 	@Autowired
 	TransactionService transactionService;
-	
+
 	@Autowired
 	BeCPGLicenseManager licenseManager;
-	
+
 	@Autowired
 	BeCPGCacheService cacheService;
-	
 
 	@Test
 	public void readLisenceTest() {
-		
-		//Before Init license.json
+
+		// Purge existing licence
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			NodeRef licenseFolderNodeRef = null, licenseFileNodeRef = null;
+			licenseFolderNodeRef = repoService.getFolderByPath(RepoConsts.PATH_SYSTEM + RepoConsts.PATH_SEPARATOR + RepoConsts.PATH_LICENSE);
+			if (licenseFolderNodeRef != null) {
+				licenseFileNodeRef = nodeService.getChildByName(licenseFolderNodeRef, ContentModel.ASSOC_CONTAINS, "license.json");
+				if (licenseFileNodeRef != null) {
+					nodeService.deleteNode(licenseFileNodeRef);
+				}
+			}
+			cacheService.clearCache(BeCPGLicenseManager.class.getName());
+
+			return true;
+		}, false, false);
+
+		// Before Init license.json
 		logger.info("Initialize BeCPG License");
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			assertEquals(-1L, licenseManager.getAllowedNamedRead());
@@ -41,12 +55,11 @@ public class LicenseManagerIT extends RepoBaseTestCase {
 			assertEquals(-1L, licenseManager.getAllowedConcurrentRead());
 			assertEquals(-1L, licenseManager.getAllowedConcurrentWrite());
 			assertEquals(-1L, licenseManager.getAllowedConcurrentSupplier());
-			
+
 			cacheService.clearCache(BeCPGLicenseManager.class.getName());
-			
-			NodeRef licenseFolderNodeRef = null,  licenseFileNodeRef = null;
-			licenseFolderNodeRef = repoService
-					.getFolderByPath(RepoConsts.PATH_SYSTEM + RepoConsts.PATH_SEPARATOR + RepoConsts.PATH_LICENSE);
+
+			NodeRef licenseFolderNodeRef = null, licenseFileNodeRef = null;
+			licenseFolderNodeRef = repoService.getFolderByPath(RepoConsts.PATH_SYSTEM + RepoConsts.PATH_SEPARATOR + RepoConsts.PATH_LICENSE);
 			if (licenseFolderNodeRef != null) {
 				licenseFileNodeRef = nodeService.getChildByName(licenseFolderNodeRef, ContentModel.ASSOC_CONTAINS, "license.json.sample");
 				if (licenseFileNodeRef != null) {
@@ -55,11 +68,11 @@ public class LicenseManagerIT extends RepoBaseTestCase {
 			}
 			assertNotNull("License folder", licenseFolderNodeRef);
 			assertNotNull("License file", licenseFileNodeRef);
-			
+
 			return true;
 		}, false, false);
-		
-		//After Init license.json
+
+		// After Init license.json
 		logger.info("Update BeCPG License");
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			assertEquals(1L, licenseManager.getAllowedNamedRead());
@@ -67,35 +80,28 @@ public class LicenseManagerIT extends RepoBaseTestCase {
 			assertEquals(10L, licenseManager.getAllowedConcurrentRead());
 			assertEquals(1L, licenseManager.getAllowedConcurrentWrite());
 			assertEquals(10L, licenseManager.getAllowedConcurrentSupplier());
-			
+
 			cacheService.clearCache(BeCPGLicenseManager.class.getName());
-			
-			NodeRef licenseFolderNodeRef = repoService
-					.getFolderByPath(RepoConsts.PATH_SYSTEM + RepoConsts.PATH_SEPARATOR + RepoConsts.PATH_LICENSE);
+
+			NodeRef licenseFolderNodeRef = repoService.getFolderByPath(RepoConsts.PATH_SYSTEM + RepoConsts.PATH_SEPARATOR + RepoConsts.PATH_LICENSE);
 			if (licenseFolderNodeRef != null) {
 				NodeRef licenseFileNodeRef = nodeService.getChildByName(licenseFolderNodeRef, ContentModel.ASSOC_CONTAINS, "license.json");
 				if (licenseFileNodeRef != null) {
 					ContentWriter writer = contentService.getWriter(licenseFileNodeRef, ContentModel.PROP_CONTENT, true);
-					String content = " {\n" + 
-							"	\"LicenseName\":\"beCPG Sample LICENSE\",\n" + 
-							"	\"LicenseWriteNamed\":2,\n" + 
-							"	\"LicenseReadNamed\":1,\n" + 
-							"	\"LicenseWriteConcurrent\":1,\n" + 
-							"	\"LicenseReadConcurrent\":10,\n" + 
-							"	\"LicenseSupplierConcurrent\":10,\n" + 
-							"	\"LicenseKey\": \"YmVDUEcgU2FtcGxlIExJQ0VOU0UxMTEwMTEw\"\n" + 
-							"}";
-					
+					String content = " {\n" + "	\"LicenseName\":\"beCPG Sample LICENSE\",\n" + "	\"LicenseWriteNamed\":2,\n"
+							+ "	\"LicenseReadNamed\":1,\n" + "	\"LicenseWriteConcurrent\":1,\n" + "	\"LicenseReadConcurrent\":10,\n"
+							+ "	\"LicenseSupplierConcurrent\":10,\n" + "	\"LicenseKey\": \"YmVDUEcgU2FtcGxlIExJQ0VOU0UxMTEwMTEw\"\n" + "}";
+
 					writer.setMimetype(MimetypeMap.MIMETYPE_JSON);
-				    writer.setEncoding("UTF-8");
-				    writer.putContent(content);
+					writer.setEncoding("UTF-8");
+					writer.putContent(content);
 				}
 			}
-			
+
 			return true;
 		}, false, false);
-		
-		//After violence license.json
+
+		// After violence license.json
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			assertEquals(0L, licenseManager.getAllowedNamedRead());
 			assertEquals(0L, licenseManager.getAllowedNamedWrite());
@@ -103,27 +109,28 @@ public class LicenseManagerIT extends RepoBaseTestCase {
 			assertEquals(0L, licenseManager.getAllowedConcurrentWrite());
 			assertEquals(0L, licenseManager.getAllowedConcurrentSupplier());
 			assertEquals("Invalid license file", licenseManager.getLicenseName());
-			
+
 			return true;
 		}, true, false);
-		
+
 	}
 
 	@Test
 	public void testLicenseKey() {
-		
+
 		BeCPGLicense license = new BeCPGLicense("beCPG Sample LICENSE", 1, 1, 10, 1, 10);
- 
-		String lisenceKey  = BeCPGLicenseManager.computeLicenseKey(license);
-		
-		//Used to get the key System.out.println("Sample license key:"+lisenceKey);
-		
+
+		String lisenceKey = BeCPGLicenseManager.computeLicenseKey(license);
+
+		// Used to get the key System.out.println("Sample license
+		// key:"+lisenceKey);
+
 		assertTrue(BeCPGLicenseManager.isValid(lisenceKey, license));
-		
+
 		license = new BeCPGLicense("beCPG Sample LICENSE", 2, 2, 10, 1, 10);
-		
+
 		assertFalse(BeCPGLicenseManager.isValid(lisenceKey, license));
-		
+
 	}
 
 }

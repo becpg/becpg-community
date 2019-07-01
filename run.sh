@@ -104,6 +104,12 @@ case "$1" in
     tail
     down
     ;;
+  jenkins)
+    build_full
+    start
+    test
+    purge
+    ;;
   test)
     test
     ;;

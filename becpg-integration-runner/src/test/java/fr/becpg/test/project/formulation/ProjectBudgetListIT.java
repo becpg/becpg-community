@@ -1,5 +1,5 @@
 /*
- * 
+ *
  */
 package fr.becpg.test.project.formulation;
 
@@ -7,7 +7,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
-import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -26,7 +25,7 @@ import fr.becpg.test.project.AbstractProjectTestCase;
 
 /**
  * The Class ProjectMultiLevelPlanningTest.
- * 
+ *
  * @author rafa
  */
 public class ProjectBudgetListIT extends AbstractProjectTestCase {
@@ -37,55 +36,55 @@ public class ProjectBudgetListIT extends AbstractProjectTestCase {
 	@Test
 	public void testCalculateBudgetedExpense() throws ParseException {
 
-		final NodeRef projectNodeRef  =  createMultiLevelProject(ProjectState.OnHold, dateFormat.parse("15/11/2012"), null, PlanningMode.Planning);
+		final NodeRef projectNodeRef = createMultiLevelProject(ProjectState.OnHold, dateFormat.parse("15/11/2012"), null, PlanningMode.Planning);
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 
-				projectData.getBudgetList().add(new BudgetListDataItem(null, 3d, 1d, 1d, 1d, 1d));// 0
-				projectData.getBudgetList().add(new BudgetListDataItem(null, 2d, 2d, 2d, 2d, 1d));// 1
-				projectData.getBudgetList().add(new BudgetListDataItem(null, 2d, 3d, 3d, 3d, 1d));// 2
-				projectData.getBudgetList().add(new BudgetListDataItem(null, 3d, 3d, 3d, 3d, 1d));// 3
-				projectData.getBudgetList().get(2).setParent(projectData.getBudgetList().get(1));
-				projectData.getBudgetList().get(3).setParent(projectData.getBudgetList().get(1));
+			projectData.getBudgetList().add(new BudgetListDataItem(null, 3d, 1d, 1d, 1d, 1d));// 0
+			projectData.getBudgetList().add(new BudgetListDataItem(null, 2d, 2d, 2d, 2d, 1d));// 1
+			projectData.getBudgetList().add(new BudgetListDataItem(null, 2d, 3d, 3d, 3d, 1d));// 2
+			projectData.getBudgetList().add(new BudgetListDataItem(null, 3d, 3d, 3d, 3d, 1d));// 3
+			projectData.getBudgetList().get(2).setParent(projectData.getBudgetList().get(1));
+			projectData.getBudgetList().get(3).setParent(projectData.getBudgetList().get(1));
 
-				projectData.getInvoiceList().add(new InvoiceListDataItem(projectData.getBudgetList().get(0), 1000d, projectData.getTaskList().get(0)));
-				projectData.getInvoiceList().add(new InvoiceListDataItem(projectData.getBudgetList().get(1), 2000d, projectData.getTaskList().get(1)));
-				projectData.getInvoiceList().add(new InvoiceListDataItem(projectData.getBudgetList().get(2), 3000d, projectData.getTaskList().get(2)));
-				projectData.getInvoiceList().add(new InvoiceListDataItem(projectData.getBudgetList().get(3), 4000d, projectData.getTaskList().get(3)));
+			projectData.getInvoiceList().add(new InvoiceListDataItem(projectData.getBudgetList().get(0), 1000d, projectData.getTaskList().get(0)));
+			projectData.getInvoiceList().add(new InvoiceListDataItem(projectData.getBudgetList().get(1), 2000d, projectData.getTaskList().get(1)));
+			projectData.getInvoiceList().add(new InvoiceListDataItem(projectData.getBudgetList().get(2), 3000d, projectData.getTaskList().get(2)));
+			projectData.getInvoiceList().add(new InvoiceListDataItem(projectData.getBudgetList().get(3), 4000d, projectData.getTaskList().get(3)));
 
-				projectData.getExpenseList().add(new ExpenseListDataItem(projectData.getBudgetList().get(0), 100d, projectData.getTaskList().get(0)));
-				projectData.getExpenseList().add(new ExpenseListDataItem(projectData.getBudgetList().get(1), 200d, projectData.getTaskList().get(1)));
-				projectData.getExpenseList().add(new ExpenseListDataItem(projectData.getBudgetList().get(2), 300d, projectData.getTaskList().get(2)));
-				projectData.getExpenseList().add(new ExpenseListDataItem(projectData.getBudgetList().get(3), 400d, projectData.getTaskList().get(3)));
+			projectData.getExpenseList().add(new ExpenseListDataItem(projectData.getBudgetList().get(0), 100d, projectData.getTaskList().get(0)));
+			projectData.getExpenseList().add(new ExpenseListDataItem(projectData.getBudgetList().get(1), 200d, projectData.getTaskList().get(1)));
+			projectData.getExpenseList().add(new ExpenseListDataItem(projectData.getBudgetList().get(2), 300d, projectData.getTaskList().get(2)));
+			projectData.getExpenseList().add(new ExpenseListDataItem(projectData.getBudgetList().get(3), 400d, projectData.getTaskList().get(3)));
 
-				alfrescoRepository.save(projectData);
-				projectService.formulate(projectNodeRef);
+			alfrescoRepository.save(projectData);
+			projectService.formulate(projectNodeRef);
 
-				projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+			projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 
-				Composite<BudgetListDataItem> composite = CompositeHelper.getHierarchicalCompoList(projectData.getBudgetList());
-				Composite<TaskListDataItem> taskComposite = CompositeHelper.getHierarchicalCompoList(projectData.getTaskList());
-				logger.info(composite.toString());
-				logger.info(taskComposite.toString());
+			Composite<BudgetListDataItem> composite = CompositeHelper.getHierarchicalCompoList(projectData.getBudgetList());
+			Composite<TaskListDataItem> taskComposite = CompositeHelper.getHierarchicalCompoList(projectData.getTaskList());
+			logger.info(composite.toString());
+			logger.info(taskComposite.toString());
 
-			
-				assertEquals(1000.0, projectData.getBudgetList().get(0).getInvoice());
-				assertEquals(100.0, projectData.getBudgetList().get(0).getExpense());
-				assertEquals(7000.0, projectData.getBudgetList().get(1).getInvoice());
-				assertEquals(700.0, projectData.getBudgetList().get(1).getExpense());
-				assertEquals(900.0, projectData.getBudgetList().get(0).getProfit());
-				
-//				assertEquals(5000.0, projectData.getTaskList().get(0).getInvoice());
-//				assertEquals(500.0, projectData.getTaskList().get(0).getExpense());
-//				assertEquals(2000.0, projectData.getTaskList().get(1).getInvoice());
-//				assertEquals(200.0, projectData.getTaskList().get(1).getExpense());
+			assertEquals(1000.0, projectData.getBudgetList().get(0).getInvoice());
+			assertEquals(100.0, projectData.getBudgetList().get(0).getExpense());
+			assertEquals(7000.0, projectData.getBudgetList().get(1).getInvoice());
+			assertEquals(700.0, projectData.getBudgetList().get(1).getExpense());
+			assertEquals(900.0, projectData.getBudgetList().get(0).getProfit());
 
-				return null;
-			}
+			// assertEquals(5000.0,
+			// projectData.getTaskList().get(0).getInvoice());
+			// assertEquals(500.0,
+			// projectData.getTaskList().get(0).getExpense());
+			// assertEquals(2000.0,
+			// projectData.getTaskList().get(1).getInvoice());
+			// assertEquals(200.0,
+			// projectData.getTaskList().get(1).getExpense());
+
+			return null;
 		}, false, true);
 	}
 

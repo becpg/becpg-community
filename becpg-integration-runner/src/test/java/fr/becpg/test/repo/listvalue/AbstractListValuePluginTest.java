@@ -84,7 +84,7 @@ public abstract class AbstractListValuePluginTest extends PLMBaseTestCase {
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
-		} , false, true);
+		}, false, true);
 	}
 
 }

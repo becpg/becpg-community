@@ -218,13 +218,12 @@ public class CompareProductServiceIT extends AbstractCompareProductTest {
 
 				List<CompoListDataItem> compoList = new ArrayList<>();
 				compoList.add(new CompoListDataItem(null, null, 1d, 0d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
-				compoList.add(
-						new CompoListDataItem(null, compoList.get(0), 1d, 0d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-				compoList.add(
-						new CompoListDataItem(null, compoList.get(0), 2d, 0d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
+				compoList
+						.add(new CompoListDataItem(null, compoList.get(0), 1d, 0d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(0), 2d, 0d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
 				compoList.add(new CompoListDataItem(null, null, 1d, 0d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
-				compoList.add(
-						new CompoListDataItem(null, compoList.get(3), 3d, 0d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+				compoList
+						.add(new CompoListDataItem(null, compoList.get(3), 3d, 0d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
 				// compoList.add(new CompoListDataItem(null, 2, 3d, 0d,
 				// 0d, ProductUnit.kg, "", DeclarationType.OMIT_FR,
 				// rawMaterial4NodeRef));
@@ -253,15 +252,13 @@ public class CompareProductServiceIT extends AbstractCompareProductTest {
 
 				compoList = new ArrayList<>();
 				compoList.add(new CompoListDataItem(null, null, 2d, 0d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
-				compoList.add(
-						new CompoListDataItem(null, compoList.get(0), 1d, 0d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-				compoList.add(
-						new CompoListDataItem(null, compoList.get(0), 2d, 0d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
+				compoList
+						.add(new CompoListDataItem(null, compoList.get(0), 1d, 0d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(0), 2d, 0d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
 				compoList.add(new CompoListDataItem(null, null, 3d, 0d, ProductUnit.P, 0d, DeclarationType.Detail, localSF2NodeRef));
-				compoList.add(
-						new CompoListDataItem(null, compoList.get(3), 3d, 0d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-				compoList.add(
-						new CompoListDataItem(null, compoList.get(3), 3d, 0d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial4NodeRef));
+				compoList
+						.add(new CompoListDataItem(null, compoList.get(3), 3d, 0d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(3), 3d, 0d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial4NodeRef));
 				compoList.add(new CompoListDataItem(null, null, 3d, 0d, ProductUnit.kg, 0d, DeclarationType.Detail, sf2NodeRef));
 				fp2.getCompoListView().setCompoList(compoList);
 
@@ -306,8 +303,8 @@ public class CompareProductServiceIT extends AbstractCompareProductTest {
 				}
 
 				assertTrue(checkStructCompareRow(structCompareResult, "{http://www.bcpg.fr/model/becpg/1.0}compoList", 1,
-						StructCompareOperator.Modified, "Local semi finished 1", "Local semi finished 1", "{{http://www.bcpg.fr/model/becpg/1.0}compoListQty=1}",
-						"{{http://www.bcpg.fr/model/becpg/1.0}compoListQty=2}"));
+						StructCompareOperator.Modified, "Local semi finished 1", "Local semi finished 1",
+						"{{http://www.bcpg.fr/model/becpg/1.0}compoListQty=1}", "{{http://www.bcpg.fr/model/becpg/1.0}compoListQty=2}"));
 				assertTrue(checkStructCompareRow(structCompareResult, "{http://www.bcpg.fr/model/becpg/1.0}compoList", 1,
 						StructCompareOperator.Modified, "Local semi finished 2", "Local semi finished 2",
 						"{{http://www.bcpg.fr/model/becpg/1.0}compoListQty=1, {http://www.bcpg.fr/model/becpg/1.0}compoListUnit=kg}",

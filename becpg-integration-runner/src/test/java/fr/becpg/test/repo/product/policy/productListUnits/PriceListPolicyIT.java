@@ -6,7 +6,6 @@ package fr.becpg.test.repo.product.policy.productListUnits;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -21,7 +20,7 @@ import fr.becpg.test.PLMBaseTestCase;
 
 /**
  * The Class ProductListPoliciesTest.
- * 
+ *
  * @author querephi
  */
 public class PriceListPolicyIT extends PLMBaseTestCase {
@@ -38,124 +37,115 @@ public class PriceListPolicyIT extends PLMBaseTestCase {
 	@Test
 	public void testCreateProductLists() {
 
-		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
+		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-				/*
-				 * Create raw material
-				 */
+			/*
+			 * Create raw material
+			 */
 
-				RawMaterialData rawMaterialData = new RawMaterialData();
-				rawMaterialData.setUnit(ProductUnit.kg);
-				rawMaterialData.setName("RM");
+			RawMaterialData rawMaterialData = new RawMaterialData();
+			rawMaterialData.setUnit(ProductUnit.kg);
+			rawMaterialData.setName("RM");
 
-				cost1 = costs.get(0);
-				nodeService.setProperty(cost1, PLMModel.PROP_COSTCURRENCY, "€");
-				cost2 = costs.get(1);
-				nodeService.setProperty(cost2, PLMModel.PROP_COSTCURRENCY, "$");
+			cost1 = costs.get(0);
+			nodeService.setProperty(cost1, PLMModel.PROP_COSTCURRENCY, "€");
+			cost2 = costs.get(1);
+			nodeService.setProperty(cost2, PLMModel.PROP_COSTCURRENCY, "$");
 
-				List<CostListDataItem> costList = new ArrayList<>();
-				costList.add(new CostListDataItem(null, 12d, "", null, cost1, false));
-				costList.add(new CostListDataItem(null, 11d, "", null, cost2, false));
-				rawMaterialData.setCostList(costList);
+			List<CostListDataItem> costList = new ArrayList<>();
+			costList.add(new CostListDataItem(null, 12d, "", null, cost1, false));
+			costList.add(new CostListDataItem(null, 11d, "", null, cost2, false));
+			rawMaterialData.setCostList(costList);
 
-				List<PriceListDataItem> priceList = new ArrayList<>();
-				priceList.add(new PriceListDataItem(null, 22d, "€/kg", 1000d, "kg", 1, null, null, cost1, null,null));
-				priceList.add(new PriceListDataItem(null, 23d, "€/kg", 1000d, "kg", 2, null, null, cost1, null,null));
-				rawMaterialData.setPriceList(priceList);
+			List<PriceListDataItem> priceList = new ArrayList<>();
+			priceList.add(new PriceListDataItem(null, 22d, "€/kg", 1000d, "kg", 1, null, null, cost1, null, null));
+			priceList.add(new PriceListDataItem(null, 23d, "€/kg", 1000d, "kg", 2, null, null, cost1, null, null));
+			rawMaterialData.setPriceList(priceList);
 
-				NodeRef rawMaterialNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterialData).getNodeRef();
+			NodeRef rawMaterialNodeRef1 = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterialData).getNodeRef();
 
-				return rawMaterialNodeRef;
+			return rawMaterialNodeRef1;
 
-			}
 		}, false, true);
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-				RawMaterialData rawMaterialDBData = (RawMaterialData) alfrescoRepository.findOne(rawMaterialNodeRef);
-				int checks = 0;
+			RawMaterialData rawMaterialDBData = (RawMaterialData) alfrescoRepository.findOne(rawMaterialNodeRef);
+			int checks = 0;
 
-				for (CostListDataItem c : rawMaterialDBData.getCostList()) {
+			for (CostListDataItem c : rawMaterialDBData.getCostList()) {
 
-					logger.debug("costList unit: " + c.getUnit());
-					if (c.getCost().equals(cost1)) {
-						assertEquals("Check 1st costList", "€/kg", c.getUnit());
-						assertEquals("Check 1st costList", 22d, c.getValue());
-						checks++;
-					} else if (c.getCost().equals(cost2)) {
-						assertEquals("Check 2nd costList", "$/kg", c.getUnit());
-						assertEquals("Check 2nd costList", 11d, c.getValue());
-						checks++;
-					} else {
-						assertTrue(false);
-					}
+				logger.debug("costList unit: " + c.getUnit());
+				if (c.getCost().equals(cost1)) {
+					assertEquals("Check 1st costList", "€/kg", c.getUnit());
+					assertEquals("Check 1st costList", 22d, c.getValue());
+					checks++;
+				} else if (c.getCost().equals(cost2)) {
+					assertEquals("Check 2nd costList", "$/kg", c.getUnit());
+					assertEquals("Check 2nd costList", 11d, c.getValue());
+					checks++;
+				} else {
+					assertTrue(false);
 				}
-
-				assertEquals(2, checks);
-
-				/*
-				 * Change pref rank
-				 */
-				for (PriceListDataItem p : rawMaterialDBData.getPriceList()) {
-
-					if (p.getValue().equals(23d)) {
-						p.setPrefRank(1);
-					} else if (p.getValue().equals(22d)) {
-
-						p.setPrefRank(2);
-					} else {
-						assertTrue(false);
-					}
-				}
-
-				alfrescoRepository.save(rawMaterialDBData);
-
-				return rawMaterialNodeRef;
 			}
+
+			assertEquals(2, checks);
+
+			/*
+			 * Change pref rank
+			 */
+			for (PriceListDataItem p : rawMaterialDBData.getPriceList()) {
+
+				if (p.getValue().equals(23d)) {
+					p.setPrefRank(1);
+				} else if (p.getValue().equals(22d)) {
+
+					p.setPrefRank(2);
+				} else {
+					assertTrue(false);
+				}
+			}
+
+			alfrescoRepository.save(rawMaterialDBData);
+
+			return rawMaterialNodeRef;
 		}, false, true);
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-				RawMaterialData rawMaterialDBData = (RawMaterialData) alfrescoRepository.findOne(rawMaterialNodeRef);
+			RawMaterialData rawMaterialDBData = (RawMaterialData) alfrescoRepository.findOne(rawMaterialNodeRef);
 
-				for (CostListDataItem c : rawMaterialDBData.getCostList()) {
+			for (CostListDataItem c : rawMaterialDBData.getCostList()) {
 
-					logger.debug("costList unit: " + c.getUnit());
-					if (c.getCost().equals(cost1)) {
-						assertEquals("Check 1st costList", "€/kg", c.getUnit());
-						assertEquals("Check 1st costList", 23d, c.getValue());
-					} else if (c.getCost().equals(cost2)) {
-						assertEquals("Check 2nd costList", "$/kg", c.getUnit());
-					} else {
-						assertTrue(false);
-					}
+				logger.debug("costList unit: " + c.getUnit());
+				if (c.getCost().equals(cost1)) {
+					assertEquals("Check 1st costList", "€/kg", c.getUnit());
+					assertEquals("Check 1st costList", 23d, c.getValue());
+				} else if (c.getCost().equals(cost2)) {
+					assertEquals("Check 2nd costList", "$/kg", c.getUnit());
+				} else {
+					assertTrue(false);
 				}
-
-				/*
-				 * Change price value
-				 */
-				for (PriceListDataItem p : rawMaterialDBData.getPriceList()) {
-
-					if (p.getValue().equals(23d)) {
-						p.setValue(40d);
-					} else if (p.getValue().equals(22d)) {
-
-					} else {
-						assertTrue(false);
-					}
-				}
-
-				alfrescoRepository.save( rawMaterialDBData);
-
-				return rawMaterialNodeRef;
-
 			}
+
+			/*
+			 * Change price value
+			 */
+			for (PriceListDataItem p : rawMaterialDBData.getPriceList()) {
+
+				if (p.getValue().equals(23d)) {
+					p.setValue(40d);
+				} else if (p.getValue().equals(22d)) {
+
+				} else {
+					assertTrue(false);
+				}
+			}
+
+			alfrescoRepository.save(rawMaterialDBData);
+
+			return rawMaterialNodeRef;
+
 		}, false, true);
 
 		RawMaterialData rawMaterialDBData = (RawMaterialData) alfrescoRepository.findOne(rawMaterialNodeRef);
@@ -172,18 +162,13 @@ public class PriceListPolicyIT extends PLMBaseTestCase {
 				assertTrue(false);
 			}
 		}
-		
-		//Reset cost 
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
-				nodeService.setProperty(cost2, PLMModel.PROP_COSTCURRENCY, "€");
-				return null;
 
-			}
+		// Reset cost
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			nodeService.setProperty(cost2, PLMModel.PROP_COSTCURRENCY, "€");
+			return null;
+
 		}, false, true);
-
-		
 
 	}
 

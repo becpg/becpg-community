@@ -91,12 +91,12 @@ public class CompoListValuePluginIT extends AbstractListValuePluginTest {
 			for (ListValueEntry listValueEntry2 : listValuePage.getResults()) {
 				logger.debug("listValueEntry: " + listValueEntry2.getName() + " - " + listValueEntry2.getValue());
 			}
-			
+
 			assertEquals(2, listValuePage.getResults().size());
 
 			return null;
 
-		} , false, true);
+		}, false, true);
 	}
 
 	@Test
@@ -114,7 +114,7 @@ public class CompoListValuePluginIT extends AbstractListValuePluginTest {
 			assertFalse(compoListValuePlugin.isQueryMatch("Pâto*", "Patisserie"));
 			assertFalse(compoListValuePlugin.isQueryMatch("Pâte*", "DesPates"));
 			return null;
-		} , false, true);
+		}, false, true);
 
 	}
 }

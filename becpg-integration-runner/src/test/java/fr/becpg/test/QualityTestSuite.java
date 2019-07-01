@@ -8,13 +8,8 @@ import fr.becpg.test.repo.quality.QualityControlIT;
 import fr.becpg.test.repo.workflow.ClaimWorkflowIT;
 import fr.becpg.test.repo.workflow.NCWorkflowIT;
 
-
 @RunWith(Suite.class)
-@SuiteClasses(value={
-	QualityControlIT.class,
-	ClaimWorkflowIT.class,
-	NCWorkflowIT.class
-})
+@SuiteClasses(value = { QualityControlIT.class, ClaimWorkflowIT.class, NCWorkflowIT.class })
 public class QualityTestSuite {
 
 }

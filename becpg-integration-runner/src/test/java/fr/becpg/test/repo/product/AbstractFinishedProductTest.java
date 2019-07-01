@@ -109,7 +109,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 	protected NodeRef rawMaterial6NodeRef;
 
 	protected NodeRef rawMaterial7NodeRef;
-	
+
 	protected NodeRef rawMaterial8NodeRef;
 
 	protected NodeRef localSF11NodeRef;
@@ -758,7 +758,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			rawMaterial5.setNutList(nutList);
 			rawMaterial5.setIngList(ingList);
 			rawMaterial5NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial5).getNodeRef();
-			
+
 			/*-- Raw material 8 --*/
 			RawMaterialData rawMaterial8 = new RawMaterialData();
 			rawMaterial8.setName("Raw material 8");
@@ -829,7 +829,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			ingList.add(new IngListDataItem(null, ingList.get(0), 30d, null, null, null, false, false, false, false, ing4, false));
 			rawMaterial7.setIngList(ingList);
 			rawMaterial7NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial7).getNodeRef();
-			
+
 			/** Water **/
 			RawMaterialData waterRawMaterial = new RawMaterialData();
 			waterRawMaterial.setName("Water");
@@ -1046,7 +1046,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			costList.add(new CostListDataItem(null, 2d, "€/P", null, pkgCost2, false));
 			packagingMaterial3.setCostList(costList);
 			packagingMaterial3NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial3).getNodeRef();
-			
+
 			/*-- Packaging material 4 --*/
 			PackagingMaterialData packagingMaterial4 = new PackagingMaterialData();
 			packagingMaterial4.setName("Packaging material 4");
@@ -1054,7 +1054,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			packagingMaterial4.setTare(0.110231d); // 50g
 			packagingMaterial4.setTareUnit(TareUnit.lb);
 			packagingMaterial4NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial4).getNodeRef();
-			
+
 			/*-- Packaging material 5 --*/
 			PackagingMaterialData packagingMaterial5 = new PackagingMaterialData();
 			packagingMaterial5.setName("Packaging material 5");
@@ -1062,15 +1062,14 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			packagingMaterial5.setTare(1.410958478d); // 40g
 			packagingMaterial5.setTareUnit(TareUnit.oz);
 			packagingMaterial5NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial5).getNodeRef();
-			
+
 			PackagingMaterialData packagingMaterial6 = new PackagingMaterialData();
 			packagingMaterial6.setName("Packaging material 6");
 			packagingMaterial6.setLegalName("Legal Packaging material 6");
 			packagingMaterial6.setUnit(ProductUnit.L);
-			packagingMaterial6.setTare(1d); 
+			packagingMaterial6.setTare(1d);
 			packagingMaterial6.setTareUnit(TareUnit.g);
 			packagingMaterial6NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial6).getNodeRef();
-			
 
 			PackagingKitData packagingKit1 = new PackagingKitData();
 			packagingKit1.setName("Packaging kit 1");
@@ -1078,7 +1077,6 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			packagingKit1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingKit1).getNodeRef();
 			nodeService.setProperty(packagingKit1NodeRef, PackModel.PROP_PALLET_BOXES_PER_PALLET, 40);
 			nodeService.setProperty(packagingKit1NodeRef, PackModel.PROP_PALLET_NUMBER_ON_GROUND, 2);
-
 
 			return null;
 
@@ -1101,7 +1099,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			throw e;
 		}
 	}
-	
+
 	protected void checkILL(final NodeRef productNodeRef, final List<LabelingRuleListDataItem> labelingRuleList, final String ill, Locale locale) {
 
 		checkILL(productNodeRef, labelingRuleList, ill, locale, null);
@@ -1110,7 +1108,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 	protected void checkILL(final NodeRef productNodeRef, final List<LabelingRuleListDataItem> labelingRuleList, final String ill, Locale locale,
 			final String ruleName) {
 
-		logger.info("checkILL : " + ill+ (ruleName!=null ? " "+ruleName : ""));
+		logger.info("checkILL : " + ill + (ruleName != null ? " " + ruleName : ""));
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -1123,7 +1121,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 				for (LabelingRuleListDataItem rule : labelingRuleList) {
 					if (rule.getLabelingRuleType().equals(LabelingRuleType.Render)) {
 						rule.setNodeRef(new NodeRef("test", "becpg", UUID.randomUUID().toString()));
-						if (ruleName != null && ruleName.equals(rule.getName())) {
+						if ((ruleName != null) && ruleName.equals(rule.getName())) {
 							grpNodeRef = rule.getNodeRef();
 						}
 					}
@@ -1140,17 +1138,16 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 				Assert.assertTrue(formulatedProduct.getLabelingListView().getIngLabelingList().size() > 0);
 
 				for (IngLabelingListDataItem illDataItem : formulatedProduct.getLabelingListView().getIngLabelingList()) {
-					if (grpNodeRef == null || illDataItem.getGrp().equals(grpNodeRef)) {
+					if ((grpNodeRef == null) || illDataItem.getGrp().equals(grpNodeRef)) {
 
 						String formulatedIll = illDataItem.getValue().getValue(locale);
 						Assert.assertTrue(illDataItem.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM));
-						
+
 						Assert.assertEquals("Incorrect label :" + formulatedIll + "\n   - compare to " + ill, ill, formulatedIll);
 						Assert.assertNotNull(illDataItem.getLogValue());
 					}
 				}
-				
-				
+
 			} catch (Throwable e) {
 				logger.error(e, e);
 				throw e;

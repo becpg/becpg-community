@@ -53,9 +53,9 @@ import fr.becpg.repo.product.formulation.AllergensCalculatingFormulationHandler;
 import fr.becpg.repo.product.formulation.ScoreCalculatingFormulationHandler;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
-public class FormulationWithIngRequirementsTest extends AbstractFinishedProductTest {
+public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTest {
 
-	protected static final Log logger = LogFactory.getLog(FormulationWithIngRequirementsTest.class);
+	protected static final Log logger = LogFactory.getLog(FormulationWithIngRequirementsIT.class);
 
 	@Resource
 	private AssociationService associationService;
@@ -101,15 +101,13 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 			CompoListDataItem parent1 = new CompoListDataItem(null, null, null, 2d, ProductUnit.kg, 10d, DeclarationType.Detail, localSF1NodeRef);
 
 			compoList.add(parent1);
-			CompoListDataItem parent12 = new CompoListDataItem(null, parent1, null, 1d, ProductUnit.kg, 10d, DeclarationType.Detail,
-					localSF2NodeRef);
+			CompoListDataItem parent12 = new CompoListDataItem(null, parent1, null, 1d, ProductUnit.kg, 10d, DeclarationType.Detail, localSF2NodeRef);
 			compoList.add(parent12);
 
 			compoList.add(new CompoListDataItem(null, parent12, null, 0.80d, ProductUnit.kg, 5d, DeclarationType.Declare, rawMaterial1NodeRef));
 			compoList.add(new CompoListDataItem(null, parent12, null, 0.30d, ProductUnit.kg, 10d, DeclarationType.Detail, rawMaterial2NodeRef));
 
-			CompoListDataItem parent22 = new CompoListDataItem(null, parent1, null, 2d, ProductUnit.kg, 20d, DeclarationType.Detail,
-					localSF3NodeRef);
+			CompoListDataItem parent22 = new CompoListDataItem(null, parent1, null, 2d, ProductUnit.kg, 20d, DeclarationType.Detail, localSF3NodeRef);
 
 			compoList.add(parent22);
 			compoList.add(new CompoListDataItem(null, parent22, null, 0.170d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
@@ -309,30 +307,29 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 					assertEquals(1, reqCtrlList.getSources().size());
 					assertTrue(reqCtrlList.getSources().contains(formulatedProduct.getNodeRef()));
 					checks++;
-					} else if (I18NUtil.getMessage(ScoreCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Conditions de conservation",
-							"EU 1169/2011 (INCO)").equals(reqCtrlList.getReqMessage())) {
+				} else if (I18NUtil.getMessage(ScoreCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Conditions de conservation",
+						"EU 1169/2011 (INCO)").equals(reqCtrlList.getReqMessage())) {
 
-						assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
-						assertEquals(1, reqCtrlList.getSources().size());
-						assertTrue(reqCtrlList.getSources().contains(formulatedProduct.getNodeRef()));
-						checks++;
-					} else if (I18NUtil.getMessage(ScoreCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING,
-							"DLC (J) ou DDM/DLUO (J)", "EU 1169/2011 (INCO)").equals(
-							reqCtrlList.getReqMessage())) {
+					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
+					assertEquals(1, reqCtrlList.getSources().size());
+					assertTrue(reqCtrlList.getSources().contains(formulatedProduct.getNodeRef()));
+					checks++;
+				} else if (I18NUtil.getMessage(ScoreCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "DLC (J) ou DDM/DLUO (J)",
+						"EU 1169/2011 (INCO)").equals(reqCtrlList.getReqMessage())) {
 
-						assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
-						assertEquals(1, reqCtrlList.getSources().size());
-						assertTrue(reqCtrlList.getSources().contains(formulatedProduct.getNodeRef()));
-						checks++;
-					} else if (I18NUtil.getMessage(ScoreCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Titre",
-							"EU 1169/2011 (INCO)").equals(reqCtrlList.getReqMessage())) {
+					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
+					assertEquals(1, reqCtrlList.getSources().size());
+					assertTrue(reqCtrlList.getSources().contains(formulatedProduct.getNodeRef()));
+					checks++;
+				} else if (I18NUtil.getMessage(ScoreCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Titre", "EU 1169/2011 (INCO)")
+						.equals(reqCtrlList.getReqMessage())) {
 
-						assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
-						assertEquals(1, reqCtrlList.getSources().size());
-						assertTrue(reqCtrlList.getSources().contains(formulatedProduct.getNodeRef()));
-						checks++;
-					} else if (I18NUtil.getMessage(AllergensCalculatingFormulationHandler.MESSAGE_NOT_VALIDATED_ALLERGEN).equals(
-							reqCtrlList.getReqMessage())) {
+					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
+					assertEquals(1, reqCtrlList.getSources().size());
+					assertTrue(reqCtrlList.getSources().contains(formulatedProduct.getNodeRef()));
+					checks++;
+				} else if (I18NUtil.getMessage(AllergensCalculatingFormulationHandler.MESSAGE_NOT_VALIDATED_ALLERGEN)
+						.equals(reqCtrlList.getReqMessage())) {
 
 					assertEquals(RequirementType.Tolerated, reqCtrlList.getReqType());
 					checks++;
@@ -362,8 +359,9 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 
 			/*
 			 * 7 rclDataItem remains : one for non validated product, and three
-			 * for INCO missing fields: legal name, conservation conditions, 
-			 * precautions for use, title, use by date| best before date, and DLC
+			 * for INCO missing fields: legal name, conservation conditions,
+			 * precautions for use, title, use by date| best before date, and
+			 * DLC
 			 */
 
 			logger.debug("After removing specs, " + formulatedProduct.getReqCtrlList().size() + " remain");

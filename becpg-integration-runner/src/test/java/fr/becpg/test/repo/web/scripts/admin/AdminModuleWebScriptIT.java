@@ -1,5 +1,5 @@
 /*
- * 
+ *
  */
 package fr.becpg.test.repo.web.scripts.admin;
 
@@ -17,39 +17,40 @@ import fr.becpg.test.utils.TestWebscriptExecuters.Response;
  *
  * @author querephi
  */
-public class AdminModuleWebScriptIT extends RepoBaseTestCase{		
-	
+public class AdminModuleWebScriptIT extends RepoBaseTestCase {
+
 	/** The logger. */
 	private static final Log logger = LogFactory.getLog(AdminModuleWebScriptIT.class);
 
+	/**
+	 * Test init repo.
+	 *
+	 * @throws Exception
+	 *             the exception
+	 */
+	@Test
+	public void testInitRepo() throws Exception {
+
+		// Init-repo
+		logger.debug("test init repo webscript ");
+		String url = "/becpg/admin/repository/init-repo";
+		Response response = TestWebscriptExecuters.sendRequest(new GetRequest(url), 200, "admin");
+		logger.debug(response.getContentAsString());
+	}
 
 	/**
 	 * Test init repo.
 	 *
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	@Test
-	public void testInitRepo() throws Exception {				
-		
-		//Init-repo
-		logger.debug("test init repo webscript ");
-		String url = "/becpg/admin/repository/init-repo";
-		Response response = TestWebscriptExecuters.sendRequest(new GetRequest(url), 200, "admin");
-		logger.debug(response.getContentAsString());		
-	}	
-	
-	/**
-	 * Test init repo.
-	 *
-	 * @throws Exception the exception
-	 */
-	@Test
-	public void testReloadModels() throws Exception {				
-		
+	public void testReloadModels() throws Exception {
+
 		logger.debug("test reload models webscript ");
 		String url = "/becpg/admin/repository/reload-model";
 		Response response = TestWebscriptExecuters.sendRequest(new GetRequest(url), 200, "admin");
-		logger.debug(response.getContentAsString());			
-	}	
-	
+		logger.debug(response.getContentAsString());
+	}
+
 }

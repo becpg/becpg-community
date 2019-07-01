@@ -14,7 +14,6 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
@@ -31,7 +30,7 @@ import fr.becpg.test.PLMBaseTestCase;
 
 /**
  * The Class AuditEntityListTest.
- * 
+ *
  * @author matthieu
  */
 public class AuditEntityListIT extends PLMBaseTestCase {
@@ -41,143 +40,139 @@ public class AuditEntityListIT extends PLMBaseTestCase {
 	@Resource
 	private EntityListDAO entityListDAO;
 
-
 	@Test
 	public void testDateModified() throws InterruptedException {
 
 		long timestamps = Calendar.getInstance().getTimeInMillis();
-		
+
 		logger.debug("testHasDataListsModified()");
 
 		// create product
-		final NodeRef sfNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
+		final NodeRef sfNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-				// create SF
-				SemiFinishedProductData sfData = new SemiFinishedProductData();
-				sfData.setName("SF");
-				List<AllergenListDataItem> allergenList = new ArrayList<>();
-				allergenList.add(new AllergenListDataItem(null,null, true, true, null, null, allergens.get(0), false));
-				allergenList.add(new AllergenListDataItem(null,null, false, true, null, null, allergens.get(1), false));
-				allergenList.add(new AllergenListDataItem(null,null, true, false, null, null, allergens.get(2), false));
-				allergenList.add(new AllergenListDataItem(null,null, false, false, null, null, allergens.get(3), false));
-				sfData.setAllergenList(allergenList);
+			// create SF
+			SemiFinishedProductData sfData = new SemiFinishedProductData();
+			sfData.setName("SF");
+			List<AllergenListDataItem> allergenList = new ArrayList<>();
+			allergenList.add(new AllergenListDataItem(null, null, true, true, null, null, allergens.get(0), false));
+			allergenList.add(new AllergenListDataItem(null, null, false, true, null, null, allergens.get(1), false));
+			allergenList.add(new AllergenListDataItem(null, null, true, false, null, null, allergens.get(2), false));
+			allergenList.add(new AllergenListDataItem(null, null, false, false, null, null, allergens.get(3), false));
+			sfData.setAllergenList(allergenList);
 
+			return alfrescoRepository.create(getTestFolderNodeRef(), sfData).getNodeRef();
 
-				return alfrescoRepository.create(getTestFolderNodeRef(), sfData).getNodeRef();
-
-			}
 		}, false, true);
 
 		// load SF and test it
-	
-		Date modified = (Date) nodeService.getProperty(sfNodeRef, ContentModel.PROP_MODIFIED);
 
-		logger.info("Compare : "+timestamps+" "+modified.getTime());
-		assertTrue(timestamps<modified.getTime());
-		
+		Date modified = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			return (Date) nodeService.getProperty(sfNodeRef, ContentModel.PROP_MODIFIED);
+		}, false, true);
+
+		logger.info("Compare : " + timestamps + " " + modified.getTime());
+		assertTrue(timestamps < modified.getTime());
+
 		timestamps = Calendar.getInstance().getTimeInMillis();
 
-		assertFalse(timestamps<modified.getTime());
-		
+		assertFalse(timestamps < modified.getTime());
+
 		final SemiFinishedProductData sfData = (SemiFinishedProductData) alfrescoRepository.findOne(sfNodeRef);
 
-		
 		// setProperty of allergen without changing anything => nothing changed
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-				NodeRef nodeRef = sfData.getAllergenList().get(0).getAllergen();
-				nodeService.setProperty(nodeRef, PLMModel.PROP_ALLERGENLIST_VOLUNTARY, true);
-				return null;
+			NodeRef nodeRef = sfData.getAllergenList().get(0).getAllergen();
+			nodeService.setProperty(nodeRef, PLMModel.PROP_ALLERGENLIST_VOLUNTARY, true);
+			return null;
 
-			}
 		}, false, true);
-		
-		modified = (Date) nodeService.getProperty(sfNodeRef, ContentModel.PROP_MODIFIED);
 
-		assertFalse(timestamps<modified.getTime());
+		modified = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			return (Date) nodeService.getProperty(sfNodeRef, ContentModel.PROP_MODIFIED);
+		}, false, true);
+
+		assertFalse(timestamps < modified.getTime());
 
 		// setProperty of allergen and change smth => modified
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-				NodeRef nodeRef = sfData.getAllergenList().get(0).getNodeRef();
-				logger.info("allergen prev value " + nodeService.getProperty(nodeRef, PLMModel.PROP_ALLERGENLIST_VOLUNTARY));
-				nodeService.setProperty(nodeRef, PLMModel.PROP_ALLERGENLIST_VOLUNTARY, false);
+			NodeRef nodeRef = sfData.getAllergenList().get(0).getNodeRef();
+			logger.info("allergen prev value " + nodeService.getProperty(nodeRef, PLMModel.PROP_ALLERGENLIST_VOLUNTARY));
+			nodeService.setProperty(nodeRef, PLMModel.PROP_ALLERGENLIST_VOLUNTARY, false);
 
-				return null;
+			return null;
 
-			}
 		}, false, true);
 
-		modified = (Date) nodeService.getProperty(sfNodeRef, ContentModel.PROP_MODIFIED);
-		logger.info("Compare : "+timestamps+" "+modified.getTime());
-		
-		assertTrue(timestamps<modified.getTime());
-		
+		modified = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			return (Date) nodeService.getProperty(sfNodeRef, ContentModel.PROP_MODIFIED);
+		}, false, true);
+		logger.info("Compare : " + timestamps + " " + modified.getTime());
+
+		assertTrue(timestamps < modified.getTime());
+
 		timestamps = Calendar.getInstance().getTimeInMillis();
 
-		assertFalse(timestamps<modified.getTime());
+		assertFalse(timestamps < modified.getTime());
 
 		// add an allergen
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-				NodeRef listContainerNodeRef = entityListDAO.getListContainer(sfNodeRef);
-				NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, PLMModel.TYPE_ALLERGENLIST);
-				NodeRef allergen = allergens.get(5);
-				Map<QName, Serializable> properties = new HashMap<>();
-				properties.put(PLMModel.PROP_ALLERGENLIST_INVOLUNTARY, true);
-				properties.put(PLMModel.PROP_ALLERGENLIST_VOLUNTARY, false);
-				ChildAssociationRef childAssocRef = nodeService.createNode(listNodeRef, ContentModel.ASSOC_CONTAINS,
-						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, allergen.getId()), PLMModel.TYPE_ALLERGENLIST, properties);
-				NodeRef linkNodeRef = childAssocRef.getChildRef();
-				nodeService.createAssociation(linkNodeRef, allergen, PLMModel.ASSOC_ALLERGENLIST_ALLERGEN);
+			NodeRef listContainerNodeRef = entityListDAO.getListContainer(sfNodeRef);
+			NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, PLMModel.TYPE_ALLERGENLIST);
+			NodeRef allergen = allergens.get(5);
+			Map<QName, Serializable> properties = new HashMap<>();
+			properties.put(PLMModel.PROP_ALLERGENLIST_INVOLUNTARY, true);
+			properties.put(PLMModel.PROP_ALLERGENLIST_VOLUNTARY, false);
+			ChildAssociationRef childAssocRef = nodeService.createNode(listNodeRef, ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, allergen.getId()), PLMModel.TYPE_ALLERGENLIST, properties);
+			NodeRef linkNodeRef = childAssocRef.getChildRef();
+			nodeService.createAssociation(linkNodeRef, allergen, PLMModel.ASSOC_ALLERGENLIST_ALLERGEN);
 
-				logger.debug("listNodeRef: " + listNodeRef);
-				logger.debug("added allergen modified: " + nodeService.getProperty(linkNodeRef, ContentModel.PROP_MODIFIED));
-				logger.debug("added allergen created: " + nodeService.getProperty(linkNodeRef, ContentModel.PROP_CREATED));
+			logger.debug("listNodeRef: " + listNodeRef);
+			logger.debug("added allergen modified: " + nodeService.getProperty(linkNodeRef, ContentModel.PROP_MODIFIED));
+			logger.debug("added allergen created: " + nodeService.getProperty(linkNodeRef, ContentModel.PROP_CREATED));
 
-				return null;
+			return null;
 
-			}
 		}, false, true);
-		
-		modified = (Date) nodeService.getProperty(sfNodeRef, ContentModel.PROP_MODIFIED);
-		logger.info("Compare : "+timestamps+" "+modified.getTime());
-		assertTrue(timestamps<modified.getTime());
-		
+
+		modified = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			return (Date) nodeService.getProperty(sfNodeRef, ContentModel.PROP_MODIFIED);
+		}, false, true);
+		logger.info("Compare : " + timestamps + " " + modified.getTime());
+		assertTrue(timestamps < modified.getTime());
+
 		timestamps = Calendar.getInstance().getTimeInMillis();
 
-		assertFalse(timestamps<modified.getTime());
+		assertFalse(timestamps < modified.getTime());
 
 		// remove an allergen
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-				NodeRef nodeRef = sfData.getAllergenList().get(1).getNodeRef();
-				nodeService.deleteNode(nodeRef);
+			NodeRef nodeRef = sfData.getAllergenList().get(1).getNodeRef();
+			nodeService.deleteNode(nodeRef);
 
-				return null;
+			return null;
 
-			}
 		}, false, true);
-		
-		modified = (Date) nodeService.getProperty(sfNodeRef, ContentModel.PROP_MODIFIED);
 
-		assertTrue(timestamps<modified.getTime());
-		
+		modified = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			return (Date) nodeService.getProperty(sfNodeRef, ContentModel.PROP_MODIFIED);
+		}, false, true);
+
+		assertTrue(timestamps < modified.getTime());
+
 		timestamps = Calendar.getInstance().getTimeInMillis();
 
-		assertFalse(timestamps<modified.getTime());
+		assertFalse(timestamps < modified.getTime());
 
 	}
-	
-	
+
 }

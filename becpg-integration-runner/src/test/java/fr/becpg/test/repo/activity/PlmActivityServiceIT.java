@@ -71,41 +71,40 @@ public class PlmActivityServiceIT extends AbstractFinishedProductTest {
 	protected List<NodeRef> getActivities(NodeRef entityNodeRef, Map<String, Boolean> sortMap) {
 		// beCPGCacheService.clearAllCaches();
 		List<NodeRef> ret = new ArrayList<>();
-			NodeRef activityListNodeRef = getActivityList(entityNodeRef);
-			if (activityListNodeRef != null) {
-				// All activities of product
-				ret = sortMap !=null ? entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST, sortMap) : 
-					entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
-				
-				ret.forEach(tmp -> {
-					logger.info("Data: " + nodeService.getProperty(tmp, BeCPGModel.PROP_ACTIVITYLIST_DATA)+" user: " + nodeService.getProperty(tmp, BeCPGModel.PROP_ACTIVITYLIST_USERID));
-				});
-				
+		NodeRef activityListNodeRef = getActivityList(entityNodeRef);
+		if (activityListNodeRef != null) {
+			// All activities of product
+			ret = sortMap != null ? entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST, sortMap)
+					: entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
 
-			} else {
-				logger.error("No activity list");
-			}
+			ret.forEach(tmp -> {
+				logger.info("Data: " + nodeService.getProperty(tmp, BeCPGModel.PROP_ACTIVITYLIST_DATA) + " user: "
+						+ nodeService.getProperty(tmp, BeCPGModel.PROP_ACTIVITYLIST_USERID));
+			});
 
-			return ret;
+		} else {
+			logger.error("No activity list");
+		}
+
+		return ret;
 	}
-	
+
 	protected Map<NodeRef, ActivityListDataItem> getActivityListDataItems(NodeRef entityNodeRef) {
 
+		Map<NodeRef, ActivityListDataItem> ret = new HashMap<>();
+		NodeRef activityListNodeRef = getActivityList(entityNodeRef);
+		if (activityListNodeRef != null) {
+			// All activities of product
+			entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST)
+					.forEach(tmp -> ret.put(tmp, (ActivityListDataItem) alfrescoRepository.findOne(tmp)));
 
-			Map<NodeRef, ActivityListDataItem> ret = new HashMap<>();
-			NodeRef activityListNodeRef = getActivityList(entityNodeRef);
-			if (activityListNodeRef != null) {
-				// All activities of product
-				entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST)
-				.forEach(tmp -> ret.put(tmp, (ActivityListDataItem) alfrescoRepository.findOne(tmp)));
-				
-			} else {
-				logger.error("No activity list");
-			}
+		} else {
+			logger.error("No activity list");
+		}
 
-			return ret;
+		return ret;
 	}
-	
+
 	private NodeRef createFinishedProduct() {
 		// Create finished composite product with ActivityList
 		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -117,15 +116,15 @@ public class PlmActivityServiceIT extends AbstractFinishedProductTest {
 			// Add Activity List to product
 			NodeRef listContainerNodeRef = entityListDAO.getListContainer(productData.getNodeRef());
 			entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
-			
+
 			return productData.getNodeRef();
-			
+
 		}, false, true);
 	}
 
 	@Test
 	public void checkEntityCommentActivity() {
-		
+
 		NodeRef finishedProductNodeRef = createFinishedProduct();
 
 		// Check if just one activity was created
@@ -164,9 +163,9 @@ public class PlmActivityServiceIT extends AbstractFinishedProductTest {
 	public void checkEntityVersionActivity() {
 
 		AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
-		
+
 		final NodeRef productNodeRef = createFinishedProduct();
-		
+
 		// Check if No Activity was created
 		assertEquals("Check create Activity", 1, getActivities(productNodeRef, null).size());
 
@@ -233,7 +232,7 @@ public class PlmActivityServiceIT extends AbstractFinishedProductTest {
 		}, false, true);
 
 		// Merge activities
-		assertEquals("Check Merge Activities",4 , getActivities(productNodeRef, null).size());
+		assertEquals("Check Merge Activities", 4, getActivities(productNodeRef, null).size());
 
 	}
 
@@ -253,8 +252,8 @@ public class PlmActivityServiceIT extends AbstractFinishedProductTest {
 		}, false, true);
 
 		// Activity recorded on branch
-		assertEquals("Check update Activity", 1, 
-				(int) getActivityListDataItems(productNodeRef).entrySet().stream().filter(el -> el.getValue().getActivityType().equals(ActivityType.State)).count());
+		assertEquals("Check update Activity", 1, (int) getActivityListDataItems(productNodeRef).entrySet().stream()
+				.filter(el -> el.getValue().getActivityType().equals(ActivityType.State)).count());
 
 	}
 
@@ -269,7 +268,7 @@ public class PlmActivityServiceIT extends AbstractFinishedProductTest {
 		}, false, true);
 
 		final NodeRef finishedProductNodeRef = createFinishedProduct();
-		
+
 		assertEquals("Check create Activity", 1, getActivities(finishedProductNodeRef, null).size());
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -281,10 +280,8 @@ public class PlmActivityServiceIT extends AbstractFinishedProductTest {
 			alfrescoRepository.save(finishedProduct);
 			return null;
 		}, false, true);
-		
+
 		assertEquals("Check update Activity", 2, getActivities(finishedProductNodeRef, null).size());
 	}
-
-
 
 }

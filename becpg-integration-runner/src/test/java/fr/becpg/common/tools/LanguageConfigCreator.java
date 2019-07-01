@@ -36,7 +36,7 @@ public class LanguageConfigCreator {
 
 				if ((locale.getVariant() == null) || locale.getVariant().isEmpty()) {
 
-					System.out.println("locale.name." + localeCode + "=" + locale.getDisplayLanguage(Locale.ENGLISH) );
+					System.out.println("locale.name." + localeCode + "=" + locale.getDisplayLanguage(Locale.ENGLISH));
 				}
 			}
 
@@ -48,11 +48,11 @@ public class LanguageConfigCreator {
 
 		{
 			if ((locale.getCountry() == null) || locale.getCountry().isEmpty()) {
-				String localeCode = locale.getLanguage() ;
+				String localeCode = locale.getLanguage();
 
 				if ((locale.getVariant() == null) || locale.getVariant().isEmpty()) {
 
-					System.out.println("locale.name." + localeCode + "=" + StringUtils.capitalize(locale.getDisplayLanguage(Locale.FRENCH)) );
+					System.out.println("locale.name." + localeCode + "=" + StringUtils.capitalize(locale.getDisplayLanguage(Locale.FRENCH)));
 				}
 			}
 

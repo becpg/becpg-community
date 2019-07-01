@@ -51,8 +51,8 @@ import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
-import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
+import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
@@ -80,8 +80,6 @@ public class ExportSearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 
 	@Resource
 	private EntityService entityService;
-	
-	
 
 	private NodeRef localSF1NodeRef;
 	private NodeRef rawMaterial1NodeRef;
@@ -158,7 +156,6 @@ public class ExportSearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 		writer.putContent(img.getInputStream());
 	}
 
-
 	/**
 	 * Test export search.
 	 */
@@ -177,7 +174,7 @@ public class ExportSearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 			initTests();
 			return null;
 
-		} , false, true);
+		}, false, true);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -227,7 +224,7 @@ public class ExportSearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 
 			return null;
 
-		} , false, true);
+		}, false, true);
 
 		waitForSolr(startTime);
 
@@ -321,21 +318,21 @@ public class ExportSearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 
 			return null;
 
-		} , false, true);
+		}, false, true);
 
 		waitForSolr(startTime);
-		
 
 		// search on date range
 		try {
 
-			String url = "/becpg/report/exportsearch/" + exportProductReportTpl.toString().replace("://", "/")
-					+ "/Excel.xlsx?repo=true&term=&query="+UriEncoder.encode("{\"prop_cm_name\":\"\",\"prop_bcpg_legalName\":\"\",\"prop_bcpg_productHierarchy1\":\"\",\"prop_bcpg_productHierarchy2\":\"\",\"prop_bcpg_productState\":\"\",\"prop_bcpg_productCode\":\"\",\"prop_bcpg_eanCode\":\"\",\"assoc_bcpg_supplierAssoc\":\"\",\"assoc_bcpg_supplierAssoc_added\":\"\",\"assoc_bcpg_supplierAssoc_removed\":\"\",\"prop_cm_modified-date-range\":\"2011-04-17T00:00:00%2B02:00|2011-05-23T00:00:00%2B02:00\",\"prop_cm_modifier\":\"\",\"assoc_bcpg_ingListIng\":\"\",\"assoc_bcpg_ingListIng_added\":\"\",\"assoc_bcpg_ingListIng_removed\":\"\",\"assoc_bcpg_ingListGeoOrigin\":\"\",\"assoc_bcpg_ingListGeoOrigin_added\":\"\",\"assoc_bcpg_ingListGeoOrigin_removed\":\"\",\"assoc_bcpg_ingListBioOrigin\":\"\",\"assoc_bcpg_ingListBioOrigin_added\":\"\",\"assoc_bcpg_ingListBioOrigin_removed\":\"\",\"datatype\":\"bcpg:product\"}");
+			String url = "/becpg/report/exportsearch/" + exportProductReportTpl.toString().replace("://", "/") + "/Excel.xlsx?repo=true&term=&query="
+					+ UriEncoder.encode(
+							"{\"prop_cm_name\":\"\",\"prop_bcpg_legalName\":\"\",\"prop_bcpg_productHierarchy1\":\"\",\"prop_bcpg_productHierarchy2\":\"\",\"prop_bcpg_productState\":\"\",\"prop_bcpg_productCode\":\"\",\"prop_bcpg_eanCode\":\"\",\"assoc_bcpg_supplierAssoc\":\"\",\"assoc_bcpg_supplierAssoc_added\":\"\",\"assoc_bcpg_supplierAssoc_removed\":\"\",\"prop_cm_modified-date-range\":\"2011-04-17T00:00:00%2B02:00|2011-05-23T00:00:00%2B02:00\",\"prop_cm_modifier\":\"\",\"assoc_bcpg_ingListIng\":\"\",\"assoc_bcpg_ingListIng_added\":\"\",\"assoc_bcpg_ingListIng_removed\":\"\",\"assoc_bcpg_ingListGeoOrigin\":\"\",\"assoc_bcpg_ingListGeoOrigin_added\":\"\",\"assoc_bcpg_ingListGeoOrigin_removed\":\"\",\"assoc_bcpg_ingListBioOrigin\":\"\",\"assoc_bcpg_ingListBioOrigin_added\":\"\",\"assoc_bcpg_ingListBioOrigin_removed\":\"\",\"datatype\":\"bcpg:product\"}");
 
 			Response response = TestWebscriptExecuters.sendRequest(new GetRequest(url), 200, "admin");
 			assertNotNull(response.getContentAsString());
-			
-			//logger.debug("Response: " + response.getContentAsString());
+
+			// logger.debug("Response: " + response.getContentAsString());
 		} catch (Exception e) {
 			logger.error("Failed to execute webscript", e);
 			assertNull("Should not throw an exception", e);
@@ -344,12 +341,13 @@ public class ExportSearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 		// search on cm:name
 		try {
 
-			String url = "/becpg/report/exportsearch/" + exportProductReportTpl.toString().replace("://", "/")
-					+ "/Excel.xlsx?repo=true&term=&query="+UriEncoder.encode("{\"prop_cm_name\":\"FP\",\"prop_cm_title\":\"\",\"prop_cm_description\":\"\",\"prop_mimetype\":\"\",\"prop_cm_modified-date-range\":\"\",\"prop_cm_modifier\":\"\",\"datatype\":\"cm:content\"}");
+			String url = "/becpg/report/exportsearch/" + exportProductReportTpl.toString().replace("://", "/") + "/Excel.xlsx?repo=true&term=&query="
+					+ UriEncoder.encode(
+							"{\"prop_cm_name\":\"FP\",\"prop_cm_title\":\"\",\"prop_cm_description\":\"\",\"prop_mimetype\":\"\",\"prop_cm_modified-date-range\":\"\",\"prop_cm_modifier\":\"\",\"datatype\":\"cm:content\"}");
 
 			Response response = TestWebscriptExecuters.sendRequest(new GetRequest(url), 200, "admin");
 			assertNotNull(response.getContentAsString());
-		//	logger.debug("Response: " + response.getContentAsString());
+			// logger.debug("Response: " + response.getContentAsString());
 		} catch (Exception e) {
 			logger.error("Failed to execute webscript", e);
 			assertNull("Should not throw an exception", e);
@@ -372,7 +370,7 @@ public class ExportSearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 
 			return null;
 
-		} , false, true);
+		}, false, true);
 
 		waitForSolr(startTime);
 
@@ -386,12 +384,12 @@ public class ExportSearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 				logger.debug("report name: " + nodeService.getProperty(n, ContentModel.PROP_NAME));
 			}
 
-			assertEquals("There is two report",2, reportTpls.size());
+			assertEquals("There is two report", 2, reportTpls.size());
 			assertEquals("Check report nodeRef", exportProductReportTpl, reportTpls.get(0));
 
 			return null;
 
-		} , false, true);
+		}, false, true);
 
 		try {
 

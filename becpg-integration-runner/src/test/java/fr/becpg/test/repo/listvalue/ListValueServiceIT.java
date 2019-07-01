@@ -46,7 +46,7 @@ public class ListValueServiceIT extends AbstractListValuePluginTest {
 
 		createFinishProductNodeRef();
 
-		final String supplierName = "Supplier-"+UUID.randomUUID().toString();
+		final String supplierName = "Supplier-" + UUID.randomUUID().toString();
 
 		// First delete all existing suppliers
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -56,7 +56,7 @@ public class ListValueServiceIT extends AbstractListValuePluginTest {
 			}
 
 			return null;
-		} , false, true);
+		}, false, true);
 
 		final NodeRef supplierNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -69,7 +69,7 @@ public class ListValueServiceIT extends AbstractListValuePluginTest {
 			return nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
 					PLMModel.TYPE_SUPPLIER, properties).getChildRef();
-		} , false, true);
+		}, false, true);
 
 		waitForSolr(startTime);
 
@@ -78,7 +78,7 @@ public class ListValueServiceIT extends AbstractListValuePluginTest {
 			// suggest supplier 1
 			String[] arrClassNames = { "bcpg:supplier" };
 			List<ListValueEntry> suggestions = entityListValuePlugin
-					.suggestTargetAssoc(null,PLMModel.TYPE_SUPPLIER, supplierName, 0, 10, arrClassNames, null).getResults();
+					.suggestTargetAssoc(null, PLMModel.TYPE_SUPPLIER, supplierName, 0, 10, arrClassNames, null).getResults();
 
 			boolean containsSupplier = false;
 			for (ListValueEntry s1 : suggestions) {
@@ -92,7 +92,7 @@ public class ListValueServiceIT extends AbstractListValuePluginTest {
 			assertTrue("check supplier key", containsSupplier);
 
 			// suggest supplier (return supplier 1 and template
-			suggestions = entityListValuePlugin.suggestTargetAssoc(null,PLMModel.TYPE_SUPPLIER, "*", 0, 10, arrClassNames, null).getResults();
+			suggestions = entityListValuePlugin.suggestTargetAssoc(null, PLMModel.TYPE_SUPPLIER, "*", 0, 10, arrClassNames, null).getResults();
 
 			containsSupplier = false;
 			for (ListValueEntry s2 : suggestions) {
@@ -109,7 +109,7 @@ public class ListValueServiceIT extends AbstractListValuePluginTest {
 			// 1 and template
 			Map<String, Serializable> props = new HashMap<>();
 			props.put(ListValueService.PROP_EXCLUDE_CLASS_NAMES, "bcpg:entityTplAspect");
-			suggestions = entityListValuePlugin.suggestTargetAssoc(null,PLMModel.TYPE_SUPPLIER, "*", 0, 10, arrClassNames, props).getResults();
+			suggestions = entityListValuePlugin.suggestTargetAssoc(null, PLMModel.TYPE_SUPPLIER, "*", 0, 10, arrClassNames, props).getResults();
 
 			containsSupplier = false;
 			for (ListValueEntry s3 : suggestions) {
@@ -124,13 +124,14 @@ public class ListValueServiceIT extends AbstractListValuePluginTest {
 
 			// filter by client : no results
 			String[] arrClassNames2 = { "bcpg:client" };
-			suggestions = entityListValuePlugin.suggestTargetAssoc(null,PLMModel.TYPE_SUPPLIER, supplierName, 0, 10, arrClassNames2, null).getResults();
+			suggestions = entityListValuePlugin.suggestTargetAssoc(null, PLMModel.TYPE_SUPPLIER, supplierName, 0, 10, arrClassNames2, null)
+					.getResults();
 
 			assertEquals("0 suggestion", 0, suggestions.size());
 
 			// test permissions
 			authenticationComponent.setSystemUserAsCurrentUser();
-			suggestions = entityListValuePlugin.suggestTargetAssoc(null,PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT, "*", 0, 10, null, null).getResults();
+			suggestions = entityListValuePlugin.suggestTargetAssoc(null, PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT, "*", 0, 10, null, null).getResults();
 			for (ListValueEntry s4 : suggestions) {
 				logger.debug("SF for system user: " + s4.getName());
 
@@ -139,16 +140,15 @@ public class ListValueServiceIT extends AbstractListValuePluginTest {
 			assertEquals("2 suggestion", 2, suggestions.size());
 
 			authenticationComponent.setCurrentUser(BeCPGPLMTestHelper.USER_ONE);
-			suggestions = entityListValuePlugin.suggestTargetAssoc(null,PLMModel.TYPE_FINISHEDPRODUCT, "*", 0, 10, null, null).getResults();
+			suggestions = entityListValuePlugin.suggestTargetAssoc(null, PLMModel.TYPE_FINISHEDPRODUCT, "*", 0, 10, null, null).getResults();
 			for (ListValueEntry s5 : suggestions) {
 				logger.debug("SF for user one: " + s5.getName());
 
 			}
 			assertEquals("1 suggestion", 1, suggestions.size());
 
-			
 			return null;
-		} , false, true);
+		}, false, true);
 	}
 
 }

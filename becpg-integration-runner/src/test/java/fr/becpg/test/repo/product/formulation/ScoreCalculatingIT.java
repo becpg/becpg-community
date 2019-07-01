@@ -55,16 +55,15 @@ public class ScoreCalculatingIT extends AbstractFinishedProductTest {
 
 	@Autowired
 	private Repository repositoryHelper;
-	
+
 	@Autowired
 	private FileFolderService fileFolderService;
-	
+
 	@Autowired
 	private ContentService contentService;
-	
+
 	private NodeRef familyNodeRef;
-	
-	
+
 	public void setRepository(Repository repository) {
 		this.repositoryHelper = repository;
 	}
@@ -72,7 +71,7 @@ public class ScoreCalculatingIT extends AbstractFinishedProductTest {
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
-		
+
 		familyNodeRef = getFamilyNodeRef();
 		setUpCatalogs(familyNodeRef);
 		// create RM and lSF
@@ -110,7 +109,7 @@ public class ScoreCalculatingIT extends AbstractFinishedProductTest {
 			rawMaterial12.setState(SystemState.Valid);
 			alfrescoRepository.save(rawMaterial12);
 
-			List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
+			List<CompoListDataItem> compoList = new ArrayList<>();
 			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
 			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial5NodeRef));
 			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial6NodeRef));
@@ -133,7 +132,7 @@ public class ScoreCalculatingIT extends AbstractFinishedProductTest {
 			packagingKit.setState(SystemState.Simulation);
 			alfrescoRepository.save(packagingKit);
 
-			List<PackagingListDataItem> packagingList = new ArrayList<PackagingListDataItem>();
+			List<PackagingListDataItem> packagingList = new ArrayList<>();
 			packagingList.add(new PackagingListDataItem(null, 1d, ProductUnit.kg, PackagingLevel.Primary, false, packagingMaterial1NodeRef));
 			packagingList.add(new PackagingListDataItem(null, 1d, ProductUnit.kg, PackagingLevel.Primary, false, packagingMaterial2NodeRef));
 			packagingList.add(new PackagingListDataItem(null, 1d, ProductUnit.kg, PackagingLevel.Secondary, true, packagingKit1NodeRef));
@@ -161,7 +160,7 @@ public class ScoreCalculatingIT extends AbstractFinishedProductTest {
 			List<ForbiddenIngListDataItem> forbiddenIngList2 = new ArrayList<>();
 
 			ings = new ArrayList<>();
-			List<NodeRef> geoOrigins = new ArrayList<NodeRef>();
+			List<NodeRef> geoOrigins = new ArrayList<>();
 			ings.add(ing2);
 			geoOrigins.add(geoOrigin2);
 			forbiddenIngList2.add(new ForbiddenIngListDataItem(null, RequirementType.Forbidden, "Ing2 geoOrigin2 interdit sur charcuterie", null,
@@ -195,15 +194,15 @@ public class ScoreCalculatingIT extends AbstractFinishedProductTest {
 			logger.info("MandatoryFieldsScore=" + mandatoryFieldsScore + " (expecting 20)");
 			logger.info("GlobalScore=" + globalScore + " (expecting 49)");
 
-			//3 /8 valid products (37.5%)
+			// 3 /8 valid products (37.5%)
 			assertEquals(37, validationScore);
-			
+
 			// 1 spec requirement is not respected : -10%
 			assertEquals(90, specificationsScore);
-			
+
 			// 1/5 mandatory fields filled (20%)
 			assertEquals(20, mandatoryFieldsScore);
-			
+
 			// 37.5 + 90 + 20 = 49.1 % global score
 			assertEquals(49, globalScore);
 
@@ -224,98 +223,99 @@ public class ScoreCalculatingIT extends AbstractFinishedProductTest {
 			return null;
 		}, false, true);
 	}
-	
-	private void setUpCatalogs(NodeRef family){
+
+	private void setUpCatalogs(NodeRef family) {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			String catalogJSONString = "[{\"entityType\":[\"bcpg:finishedProduct\"],\"uniqueFields\":[\"bcpg:erpCode\"],\"id\":\"incoFinishedProduct\",\"label\":\"EU 1169/2011 (INCO)\",\"fields\":[\"bcpg:legalName\",\"bcpg:precautionOfUseRef\",\"bcpg:useByDate|bcpg:bestBeforeDate\",\"bcpg:storageConditionsRef\",\"cm:title\"]},{\"entityType\":[\"bcpg:rawMaterial\"],\"uniqueFields\":[\"bcpg:erpCode\"],\"id\":\"incoRawMaterials\",\"label\":\"EU 1169/2011 (INCO)\",\"fields\":[\"bcpg:legalName\"]}]";
-			
-		JSONArray properCatalogs = new JSONArray(catalogJSONString);
-		logger.info("properCatalog: "+properCatalogs);
-		 NodeRef folder = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(), "/app:company_home/cm:System/cm:PropertyCatalogs");
-		 
-		 List<FileInfo> files = fileFolderService.list(folder);
-		 if(!files.isEmpty()) {
-			 
-			 NodeRef catalogFile = files.get(0).getNodeRef();
-			 ContentReader reader = contentService.getReader(catalogFile, ContentModel.PROP_CONTENT);
-			 
-			 String content = reader.getContentString();
-			 
-			 JSONArray catalogs = new JSONArray();
-			 
-			 try {
-				 catalogs = new JSONArray(content);
-				 JSONObject catalog = catalogs.getJSONObject(0);
-				 catalog.put("entityFilter", "hierarchy1.toString() == '"+family+"' ? true : false");
-				 logger.info("Catalog before writing: "+catalogs);
-				 ContentWriter writer = contentService.getWriter(catalogFile, ContentModel.PROP_CONTENT, true);
-				 PrintWriter printWriter = new PrintWriter(writer.getContentOutputStream());
-				 
-				 printWriter.write(catalogs.toString());
-				 printWriter.flush();
-				 printWriter.close();
-			} catch (JSONException e) {
-				logger.error("unable to parse content "+content+" to jsonarray",e);
+
+			JSONArray properCatalogs = new JSONArray(catalogJSONString);
+			logger.info("properCatalog: " + properCatalogs);
+			NodeRef folder = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(),
+					"/app:company_home/cm:System/cm:PropertyCatalogs");
+
+			List<FileInfo> files = fileFolderService.list(folder);
+			if (!files.isEmpty()) {
+
+				NodeRef catalogFile = files.get(0).getNodeRef();
+				ContentReader reader = contentService.getReader(catalogFile, ContentModel.PROP_CONTENT);
+
+				String content = reader.getContentString();
+
+				JSONArray catalogs = new JSONArray();
+
+				try {
+					catalogs = new JSONArray(content);
+					JSONObject catalog = catalogs.getJSONObject(0);
+					catalog.put("entityFilter", "hierarchy1.toString() == '" + family + "' ? true : false");
+					logger.info("Catalog before writing: " + catalogs);
+					ContentWriter writer = contentService.getWriter(catalogFile, ContentModel.PROP_CONTENT, true);
+					PrintWriter printWriter = new PrintWriter(writer.getContentOutputStream());
+
+					printWriter.write(catalogs.toString());
+					printWriter.flush();
+					printWriter.close();
+				} catch (JSONException e) {
+					logger.error("unable to parse content " + content + " to jsonarray", e);
+				}
+
+			} else {
+				logger.error("No catalog in folder, do init repo");
 			}
-			 
-		 } else {
-			 logger.error("No catalog in folder, do init repo");	 
-		 }
-		 
-		 return null;
+
+			return null;
 		}, false, true);
 	}
-	
-	private void restoreCatalogs(){
+
+	private void restoreCatalogs() {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			String catalogJSONString = "[{\"entityType\":[\"bcpg:finishedProduct\"],\"uniqueFields\":[\"bcpg:erpCode\"],\"id\":\"incoFinishedProduct\",\"label\":\"EU 1169/2011 (INCO)\",\"fields\":[\"bcpg:legalName\",\"bcpg:precautionOfUseRef\",\"bcpg:useByDate|bcpg:bestBeforeDate\",\"bcpg:storageConditionsRef\",\"cm:title\"]},{\"entityType\":[\"bcpg:rawMaterial\"],\"uniqueFields\":[\"bcpg:erpCode\"],\"id\":\"incoRawMaterials\",\"label\":\"EU 1169/2011 (INCO)\",\"fields\":[\"bcpg:legalName\"]}]";
-			
-		 NodeRef folder = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(), "/app:company_home/cm:System/cm:PropertyCatalogs");
-		 
-		 List<FileInfo> files = fileFolderService.list(folder);
-		 if(!files.isEmpty()) {
-			 
-			 NodeRef catalogFile = files.get(0).getNodeRef();
-			 ContentReader reader = contentService.getReader(catalogFile, ContentModel.PROP_CONTENT);
-			 
-			 String content = reader.getContentString();
-			 
-			 JSONArray catalogs = new JSONArray();
-			 
-			 try {
-				 catalogs = new JSONArray(catalogJSONString);
-				 ContentWriter writer = contentService.getWriter(catalogFile, ContentModel.PROP_CONTENT, true);
-				 PrintWriter printWriter = new PrintWriter(writer.getContentOutputStream());
-				 
-				 printWriter.write(catalogs.toString());
-				 printWriter.flush();
-				 printWriter.close();
-			} catch (JSONException e) {
-				logger.error("unable to parse content "+content+" to jsonarray",e);
+
+			NodeRef folder = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(),
+					"/app:company_home/cm:System/cm:PropertyCatalogs");
+
+			List<FileInfo> files = fileFolderService.list(folder);
+			if (!files.isEmpty()) {
+
+				NodeRef catalogFile = files.get(0).getNodeRef();
+				ContentReader reader = contentService.getReader(catalogFile, ContentModel.PROP_CONTENT);
+
+				String content = reader.getContentString();
+
+				JSONArray catalogs = new JSONArray();
+
+				try {
+					catalogs = new JSONArray(catalogJSONString);
+					ContentWriter writer = contentService.getWriter(catalogFile, ContentModel.PROP_CONTENT, true);
+					PrintWriter printWriter = new PrintWriter(writer.getContentOutputStream());
+
+					printWriter.write(catalogs.toString());
+					printWriter.flush();
+					printWriter.close();
+				} catch (JSONException e) {
+					logger.error("unable to parse content " + content + " to jsonarray", e);
+				}
+
+			} else {
+				logger.error("No catalog in folder, do init repo");
 			}
-			 
-		 } else {
-			 logger.error("No catalog in folder, do init repo");	 
-		 }
-		 
-		 return null;
+
+			return null;
 		}, false, true);
 	}
-	
-	
+
 	@Override
-	public void tearDown() throws Exception{
+	public void tearDown() throws Exception {
 		super.tearDown();
-		
+
 		restoreCatalogs();
 	}
-	
-	private NodeRef getFamilyNodeRef(){
-		
+
+	private NodeRef getFamilyNodeRef() {
+
 		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			Map<QName, Serializable> props = new HashMap<QName, Serializable>(1);
-		    props.put(BeCPGModel.PROP_LKV_VALUE, "Famille 1");
-		    return nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+			Map<QName, Serializable> props = new HashMap<>(1);
+			props.put(BeCPGModel.PROP_LKV_VALUE, "Famille 1");
+			return nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) props.get(BeCPGModel.PROP_LKV_VALUE)),
 					BeCPGModel.TYPE_LINKED_VALUE, props).getChildRef();
 		}, false, true);

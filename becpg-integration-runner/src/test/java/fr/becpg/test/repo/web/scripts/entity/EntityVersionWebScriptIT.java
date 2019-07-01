@@ -1,5 +1,5 @@
 /*
- * 
+ *
  */
 package fr.becpg.test.repo.web.scripts.entity;
 
@@ -10,8 +10,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
-import org.alfresco.repo.version.VersionModel;
+import org.alfresco.repo.version.VersionBaseModel;
 import org.alfresco.service.cmr.coci.CheckOutCheckInService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.version.Version;
@@ -43,59 +42,36 @@ public class EntityVersionWebScriptIT extends PLMBaseTestCase {
 	@Test
 	public void testGetVersionHistory() throws Exception {
 
-		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(
-				new RetryingTransactionCallback<NodeRef>() {
-
-					@Override
-					public NodeRef execute() throws Throwable {
-
-						return BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test report");
-					}
-
-				}, false, true);
+		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper()
+				.doInTransaction(() -> BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test report"), false, true);
 
 		if (!nodeService.hasAspect(rawMaterialNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
-			transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-
-				@Override
-				public NodeRef execute() throws Throwable {
-					logger.debug("Add versionnable aspect");
-					Map<QName, Serializable> aspectProperties = new HashMap<>();
-					aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
-					nodeService.addAspect(rawMaterialNodeRef, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
-					return rawMaterialNodeRef;
-				}
-
+			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				logger.debug("Add versionnable aspect");
+				Map<QName, Serializable> aspectProperties = new HashMap<>();
+				aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
+				nodeService.addAspect(rawMaterialNodeRef, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
+				return rawMaterialNodeRef;
 			}, false, true);
 
 		}
 
-		final NodeRef checkedOutNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(
-				new RetryingTransactionCallback<NodeRef>() {
-					@Override
-					public NodeRef execute() throws Throwable {
+		final NodeRef checkedOutNodeRef = transactionService.getRetryingTransactionHelper()
+				.doInTransaction(() -> checkOutCheckInService.checkout(rawMaterialNodeRef), false, true);
 
-						return checkOutCheckInService.checkout(rawMaterialNodeRef);
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-					}
-				}, false, true);
+			Map<String, Serializable> versionProperties = new HashMap<>();
+			versionProperties.put(Version.PROP_DESCRIPTION, "This is a test version");
+			versionProperties.put(VersionBaseModel.PROP_VERSION_TYPE, VersionType.MAJOR);
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
+			NodeRef checkedInNodeRef = checkOutCheckInService.checkin(checkedOutNodeRef, versionProperties);
 
-				Map<String, Serializable> versionProperties = new HashMap<>();
-				versionProperties.put(Version.PROP_DESCRIPTION, "This is a test version");
-				versionProperties.put(VersionModel.PROP_VERSION_TYPE, VersionType.MAJOR);
+			NodeRef checkedOutNodeRef2 = checkOutCheckInService.checkout(checkedInNodeRef);
+			checkOutCheckInService.checkin(checkedOutNodeRef2, null);
 
-				NodeRef checkedInNodeRef = checkOutCheckInService.checkin(checkedOutNodeRef, versionProperties);
+			return null;
 
-				NodeRef checkedOutNodeRef2 = checkOutCheckInService.checkout(checkedInNodeRef);
-				checkOutCheckInService.checkin(checkedOutNodeRef2, null);
-
-				return null;
-
-			}
 		}, false, true);
 
 		// Call webscript on raw material to check out
@@ -106,6 +82,5 @@ public class EntityVersionWebScriptIT extends PLMBaseTestCase {
 		logger.debug("version history: " + response.getContentAsString());
 
 	}
-	
 
 }
