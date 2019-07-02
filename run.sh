@@ -73,6 +73,10 @@ test() {
     $MVN_EXEC verify $EXTRA_ENV -pl becpg-integration-runner
 }
 
+test_jenkins() {
+    $MVN_EXEC verify -o $EXTRA_ENV
+}
+
 case "$1" in
   install)
     build_full
@@ -111,7 +115,7 @@ case "$1" in
   jenkins)
     build_full
     start
-    test
+    test_jenkins
     purge
     ;;
   test)
