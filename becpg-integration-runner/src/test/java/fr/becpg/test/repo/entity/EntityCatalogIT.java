@@ -52,6 +52,7 @@ public class EntityCatalogIT extends PLMBaseTestCase {
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
+		
 		cacheService.clearCache(EntityCatalogService.class.getName());
 		List<JSONArray> res = new ArrayList<>();
 		res.add(new JSONArray(CATALOGS_STRING));

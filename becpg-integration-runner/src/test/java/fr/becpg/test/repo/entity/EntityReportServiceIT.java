@@ -96,13 +96,15 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 
 		initReports();
 
-		List<NodeRef> ret = reportTplService.getSystemReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT);
-		for (NodeRef ref : ret) {
-			logger.info(nodeService.getProperty(ref, ContentModel.PROP_NAME));
-		}
-		assertEquals("check system templates", 5,
-				reportTplService.getSystemReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT).size());
-
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			List<NodeRef> ret = reportTplService.getSystemReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT);
+			for (NodeRef ref : ret) {
+				logger.info(nodeService.getProperty(ref, ContentModel.PROP_NAME));
+			}
+			assertEquals("check system templates", 5,
+					reportTplService.getSystemReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT).size());
+			return null;
+		}, false, true);
 		// create product
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -121,8 +123,6 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 			return null;
 		}, false, true);
 
-		System.out.println("PWET3");
-
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			createdDate = new Date();
@@ -130,8 +130,6 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 
 			return null;
 		}, false, true);
-
-		System.out.println("PWET4");
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -173,8 +171,6 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 			return null;
 		}, false, true);
 
-		System.out.println("PWET5");
-
 		// Test datalist modified
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -200,8 +196,11 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 
 		}, false, true);
 
-		assertTrue(entityReportService.shouldGenerateReport(pfNodeRef, null));
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			assertTrue(entityReportService.shouldGenerateReport(pfNodeRef, null));
+			return null;
 
+		}, false, true);
 		// Delete report tpl -> report should be deleted
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -237,8 +236,6 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 			return null;
 
 		}, false, true);
-
-		System.out.println("PWET7");
 
 	}
 
@@ -276,8 +273,19 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 	public void testGetProductSystemReportTemplates() {
 
 		Date startTime = new Date();
-
 		initReports();
+		
+		String userReportTpl = "user tpl "+(new Date().getTime());
+		String userReportTpl2 = "user tpl 2"+(new Date().getTime());
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			for(NodeRef tmpRef : reportTplService.getUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, "user*")) {
+				nodeService.setProperty(tmpRef, ReportModel.PROP_REPORT_TPL_IS_DISABLED, true);
+			}
+			return null;
+
+		}, false, true);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -303,11 +311,9 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 			QName typeQName = nodeService.getType(pfNodeRef);
 			assertEquals("check system templates", 5, reportTplService.getSystemReportTemplates(ReportType.Document, typeQName).size());
 
-			assertEquals("check user templates", 0,
-					reportTplService.getUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, "user").size());
-
+			
 			// add a user template
-			reportTplService.createTplRptDesign(productReportTplFolder, "user tpl", "beCPG/birt/document/product/default/ProductReport.rptdesign",
+			reportTplService.createTplRptDesign(productReportTplFolder, userReportTpl, "beCPG/birt/document/product/default/ProductReport.rptdesign",
 					ReportType.Document, ReportFormat.PDF, PLMModel.TYPE_FINISHEDPRODUCT, false, true, true);
 
 			return null;
@@ -321,10 +327,10 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 		final NodeRef userTpl2NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			assertEquals("check user templates", 1,
-					reportTplService.getUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, "user tpl").size());
+					reportTplService.getUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, userReportTpl).size());
 
 			// add a user template
-			return reportTplService.createTplRptDesign(productReportTplFolder, "user tpl 2",
+			return reportTplService.createTplRptDesign(productReportTplFolder, userReportTpl2,
 					"beCPG/birt/document/product/default/ProductReport.rptdesign", ReportType.Document, ReportFormat.PDF,
 					PLMModel.TYPE_FINISHEDPRODUCT, false, false, true);
 
@@ -334,20 +340,23 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-			assertEquals("check user templates", 2,
+			assertEquals("check user templates",2,
 					reportTplService.getUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, "u*").size());
-			assertEquals("check user templates", 2,
+			assertEquals("check user templates",2,
 					reportTplService.getUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, "user*").size());
-			assertEquals("check user templates", 2,
+			assertEquals("check user templates",2,
 					reportTplService.getUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, "user tpl 2").size());
+			
 			assertEquals("check user templates", 1,
-					reportTplService.getUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, "\"user tpl 2\"").size());
+					reportTplService.getUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, "\""+userReportTpl2+"\"").size());
 			assertEquals("check user templates", userTpl2NodeRef,
-					reportTplService.getUserReportTemplate(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, "user tpl 2"));
+					reportTplService.getUserReportTemplate(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, userReportTpl2));
 
 			return null;
 
 		}, false, true);
+		
+		
 
 	}
 }

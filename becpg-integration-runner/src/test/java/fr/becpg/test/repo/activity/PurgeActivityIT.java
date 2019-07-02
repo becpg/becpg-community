@@ -635,7 +635,6 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 
 	@Override
 	protected List<NodeRef> getActivities(NodeRef entityNodeRef, Map<String, Boolean> sortMap) {
-
 		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			List<NodeRef> ret = new ArrayList<>();
@@ -646,7 +645,7 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 			}
 
 			return ret;
-		}, true, false);
+		}, false, true);
 	}
 
 }

@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.repo.workflow.WorkflowModel;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -140,11 +141,14 @@ public class ProductValidationWorkflowIT extends AbstractWorkflowTest {
 
 		}, false, true);
 
-		assertEquals(nodeService.getProperty(productNodeRef, PLMModel.PROP_PRODUCT_STATE), SystemState.ToValidate.toString());
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			assertEquals(nodeService.getProperty(productNodeRef, PLMModel.PROP_PRODUCT_STATE), SystemState.ToValidate.toString());
+			return null;
+		}, false, true);
 
+		
 		WorkflowTask task = getNextTaskForWorkflow(workflowInstanceId);
-
-		assertEquals(task.getDescription(), "Validation produit - Raw material wf validation 1");
+		assertEquals(task.getDescription(), "Validation produit - "+nodeService.getProperty(productNodeRef,ContentModel.PROP_NAME));
 
 		logger.info(task.getPath().getNode().getName());
 		assertEquals("doProductValidationRDTask", task.getPath().getNode().getName());
@@ -194,7 +198,10 @@ public class ProductValidationWorkflowIT extends AbstractWorkflowTest {
 		task = submitTask(workflowInstanceId, "bcpgwf:approveProductTask", null, new HashMap<QName, Serializable>());
 		// logger.info(task.getPath().getNode().getName());
 
-		assertEquals(nodeService.getProperty(productNodeRef, PLMModel.PROP_PRODUCT_STATE), SystemState.Valid.toString());
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			assertEquals(nodeService.getProperty(productNodeRef, PLMModel.PROP_PRODUCT_STATE), SystemState.Valid.toString());
+			return null;
+		}, false, true);
 
 		printInProgressTasks(workflowInstanceId);
 		//
