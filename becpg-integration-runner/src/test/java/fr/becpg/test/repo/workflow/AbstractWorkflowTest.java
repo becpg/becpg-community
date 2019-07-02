@@ -43,13 +43,17 @@ public abstract class AbstractWorkflowTest extends PLMBaseTestCase {
 	protected WorkflowService workflowService;
 
 	protected WorkflowTask getNextTaskForWorkflow(String workflowInstanceId) {
-		WorkflowTaskQuery taskQuery = new WorkflowTaskQuery();
-		taskQuery.setProcessId(workflowInstanceId);
-		taskQuery.setTaskState(WorkflowTaskState.IN_PROGRESS);
 
-		List<WorkflowTask> workflowTasks = workflowService.queryTasks(taskQuery, false);
-		assertEquals(1, workflowTasks.size());
-		return workflowTasks.get(0);
+		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			WorkflowTaskQuery taskQuery = new WorkflowTaskQuery();
+			taskQuery.setProcessId(workflowInstanceId);
+			taskQuery.setTaskState(WorkflowTaskState.IN_PROGRESS);
+
+			List<WorkflowTask> workflowTasks = workflowService.queryTasks(taskQuery, false);
+			assertEquals(1, workflowTasks.size());
+			return workflowTasks.get(0);
+
+		}, false, true);
 	}
 
 	protected WorkflowTask submitTask(final String workflowInstanceId, final String taskName, final String transitionName,

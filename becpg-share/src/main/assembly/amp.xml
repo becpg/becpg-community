@@ -52,6 +52,16 @@
                 <exclude>README.md</exclude>
             </excludes>
         </fileSet>
+        
+        <fileSet>
+            <directory>src/main/assembly/config</directory>
+            <outputDirectory>config</outputDirectory>
+            <filtered>false</filtered> <!-- Will filter files and substitute POM props such as for example ${project.name} -->
+            <excludes>
+                <exclude>README.md</exclude>
+            </excludes>
+        </fileSet>
+        
     </fileSets>
 
     <!-- Include the project artifact (JAR) in the /lib directory in the AMP, and any 3rd party libraries (JARs)

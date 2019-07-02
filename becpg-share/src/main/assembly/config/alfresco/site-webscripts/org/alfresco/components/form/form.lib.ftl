@@ -117,7 +117,7 @@
 			<#if item?? && item.kind != "set" && !isHiddenField(form.fields[item.id]) >      
 			   <#assign showSet=true>
 			</#if>
-			<#if item?? && item.kind == "set">
+			<#if item?? && item.kind?? && item.kind == "set">
 				<#assign showSet=true>
 			</#if>
 		</#list>

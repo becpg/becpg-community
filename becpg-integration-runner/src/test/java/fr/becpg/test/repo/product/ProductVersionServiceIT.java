@@ -200,9 +200,12 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 		}, false, true);
 
 		validateNewVersion(newRawMaterialNodeRef, rawMaterialNodeRef, rawMaterial, productUnit, valueAdded, true);
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			assertTrue(!nodeService.hasAspect(newRawMaterialNodeRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT));
+			assertNull(nodeService.getProperty(newRawMaterialNodeRef, PLMWorkflowModel.PROP_PV_VALIDATION_DATE));
+			return null;
+		}, false, true);
 
-		assertTrue(!nodeService.hasAspect(newRawMaterialNodeRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT));
-		assertNull(nodeService.getProperty(newRawMaterialNodeRef, PLMWorkflowModel.PROP_PV_VALIDATION_DATE));
 	}
 
 	private String getVersionLabel(ProductData newRawMaterial) {
@@ -724,13 +727,21 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 			return checkOutCheckInService.checkin(workingCopyNodeRef, versionProperties);
 		}, false, true);
 
-		assertEquals(newRawMaterialNodeRef, rawMaterialNodeRef);
-		assertNotNull(entityVersionService.getVersionHistoryNodeRef(rawMaterialNodeRef));
-		assertNotNull(versionService.getVersionHistory(rawMaterialNodeRef));
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			assertEquals(newRawMaterialNodeRef, rawMaterialNodeRef);
+			assertNotNull(entityVersionService.getVersionHistoryNodeRef(rawMaterialNodeRef));
+			assertNotNull(versionService.getVersionHistory(rawMaterialNodeRef));
+			return null;
 
-		for (EntityVersion entityVersion : entityVersionService.getAllVersions(rawMaterialNodeRef)) {
-			assertNull(versionService.getVersionHistory(entityVersion.getEntityVersionNodeRef()));
-		}
+		}, false, true);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			for (EntityVersion entityVersion : entityVersionService.getAllVersions(rawMaterialNodeRef)) {
+				assertNull(versionService.getVersionHistory(entityVersion.getEntityVersionNodeRef()));
+			}
+			return null;
+
+		}, false, true);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -738,10 +749,13 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 			return null;
 
 		}, false, true);
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			assertNotNull(entityVersionService.getVersionHistoryNodeRef(rawMaterialNodeRef));
+			assertNotNull(versionService.getVersionHistory(rawMaterialNodeRef));
+			assertFalse(nodeService.exists(rawMaterialNodeRef));
+			return null;
 
-		assertNotNull(entityVersionService.getVersionHistoryNodeRef(rawMaterialNodeRef));
-		assertNotNull(versionService.getVersionHistory(rawMaterialNodeRef));
-		assertFalse(nodeService.exists(rawMaterialNodeRef));
+		}, false, true);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -751,10 +765,13 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 			return null;
 
 		}, false, true);
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			assertTrue(nodeService.exists(rawMaterialNodeRef));
+			assertNotNull(entityVersionService.getVersionHistoryNodeRef(rawMaterialNodeRef));
+			assertNotNull(versionService.getVersionHistory(rawMaterialNodeRef));
+			return null;
 
-		assertTrue(nodeService.exists(rawMaterialNodeRef));
-		assertNotNull(entityVersionService.getVersionHistoryNodeRef(rawMaterialNodeRef));
-		assertNotNull(versionService.getVersionHistory(rawMaterialNodeRef));
+		}, false, true);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			nodeService.addAspect(rawMaterialNodeRef, ContentModel.ASPECT_TEMPORARY, null);
@@ -764,9 +781,13 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 
 		}, false, true);
 
-		assertNull(entityVersionService.getVersionHistoryNodeRef(rawMaterialNodeRef));
-		assertNull(versionService.getVersionHistory(rawMaterialNodeRef));
-		assertFalse(nodeService.exists(rawMaterialNodeRef));
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			assertNull(entityVersionService.getVersionHistoryNodeRef(rawMaterialNodeRef));
+			assertNull(versionService.getVersionHistory(rawMaterialNodeRef));
+			assertFalse(nodeService.exists(rawMaterialNodeRef));
+			return null;
+
+		}, false, true);
 
 	}
 
@@ -817,9 +838,13 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 			return checkOutCheckInService.checkin(workingCopyNodeRef, versionProperties);
 		}, false, true);
 
-		assertEquals(newRawMaterialNodeRef, rawMaterialNodeRef);
-		assertNotNull(entityVersionService.getVersionHistoryNodeRef(rawMaterialNodeRef));
-		assertNotNull(versionService.getVersionHistory(rawMaterialNodeRef));
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			assertEquals(newRawMaterialNodeRef, rawMaterialNodeRef);
+			assertNotNull(entityVersionService.getVersionHistoryNodeRef(rawMaterialNodeRef));
+			assertNotNull(versionService.getVersionHistory(rawMaterialNodeRef));
+			return null;
+		}, false, true);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -828,9 +853,13 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 
 		}, false, true);
 
-		assertNotNull(entityVersionService.getVersionHistoryNodeRef(rawMaterialNodeRef));
-		assertNotNull(getVersionHistoryNodeRef(rawMaterialNodeRef));
-		assertFalse(nodeService.exists(rawMaterialNodeRef));
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			assertNotNull(entityVersionService.getVersionHistoryNodeRef(rawMaterialNodeRef));
+			assertNotNull(getVersionHistoryNodeRef(rawMaterialNodeRef));
+			assertFalse(nodeService.exists(rawMaterialNodeRef));
+			return null;
+
+		}, false, true);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -841,9 +870,13 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 
 		}, false, true);
 
-		assertNull(entityVersionService.getVersionHistoryNodeRef(rawMaterialNodeRef));
-		assertNull(getVersionHistoryNodeRef(rawMaterialNodeRef));
-		assertFalse(nodeService.exists(rawMaterialNodeRef));
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			assertNull(entityVersionService.getVersionHistoryNodeRef(rawMaterialNodeRef));
+			assertNull(getVersionHistoryNodeRef(rawMaterialNodeRef));
+			assertFalse(nodeService.exists(rawMaterialNodeRef));
+			return null;
+
+		}, false, true);
 
 	}
 

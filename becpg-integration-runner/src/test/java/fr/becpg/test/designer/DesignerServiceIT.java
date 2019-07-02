@@ -17,6 +17,8 @@
  ******************************************************************************/
 package fr.becpg.test.designer;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.HashMap;
@@ -79,9 +81,12 @@ public class DesignerServiceIT extends AbstractDesignerServiceTest {
 			DesignerTree tree = designerTreeVisitor.visitModelTreeNodeRef(modelNodeRef);
 			assertNotNull(tree);
 			logger.debug(tree);
+			File tmp2 = File.createTempFile("testDesignerConfig", "xml");
 
-			// To Xml
-			metaModelVisitor.visitModelXml(modelNodeRef, System.out);
+			try (FileOutputStream tmpStream = new FileOutputStream(tmp2)) {
+				// To Xml
+				metaModelVisitor.visitModelXml(modelNodeRef, tmpStream);
+			}
 
 			return null;
 
@@ -109,7 +114,12 @@ public class DesignerServiceIT extends AbstractDesignerServiceTest {
 
 			formModelVisitor.visitConfigNodeRef(configNodeRef, in);
 			// To Xml
-			formModelVisitor.visitConfigXml(configNodeRef, System.out);
+
+			File tmp2 = File.createTempFile("testDesignerConfig", "xml");
+
+			try (FileOutputStream tmpStream = new FileOutputStream(tmp2)) {
+				formModelVisitor.visitConfigXml(configNodeRef, tmpStream);
+			}
 
 			return null;
 

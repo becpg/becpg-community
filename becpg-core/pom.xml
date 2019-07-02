@@ -133,20 +133,18 @@
         </dependency>
 
 
-		<!-- Image IO
+		<!-- Image IO -->
 		 <dependency>
 	        <groupId>com.twelvemonkeys.imageio</groupId>
 	        <artifactId>imageio-jpeg</artifactId>
 	        <version>3.3.2</version>
-	        <scope>test</scope>
 	    </dependency>
 	    <dependency>
 	        <groupId>com.twelvemonkeys.imageio</groupId>
 	        <artifactId>imageio-tiff</artifactId>
 	        <version>3.3.2</version>
-	         <scope>test</scope>
 	    </dependency>
-		 -->
+	
 		 
 		<!-- IText PDF -->
 		<dependency>

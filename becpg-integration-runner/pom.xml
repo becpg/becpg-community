@@ -125,7 +125,19 @@
 			</testResource>
 		</testResources>
 		<plugins>
-			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>test-jar</id>
+						<phase>test-compile</phase>
+						<goals>
+							<goal>test-jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
@@ -208,42 +220,35 @@
 				</executions>
 			</plugin>
 
-			
+
 			<plugin>
-						<groupId>com.spotify</groupId>
-						<artifactId>dockerfile-maven-plugin</artifactId>
-						<version>1.4.10</version>
-						<executions>
-							<execution>
-								<id>becpg-test</id>
-								<goals>
-									<goal>build</goal>
-								</goals>
-								<configuration>
-									<repository>${docker.becpg.url}/becpg-test</repository>
-									<contextDirectory>${project.build.directory}/becpg-test</contextDirectory>
-									<tag>${project.version}</tag>
-									<pullNewerImage>false</pullNewerImage>
-									<buildArgs>
-										<VERSION>${project.version}</VERSION>
-									</buildArgs>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
+				<groupId>com.spotify</groupId>
+				<artifactId>dockerfile-maven-plugin</artifactId>
+				<version>1.4.10</version>
+				<executions>
+					<execution>
+						<id>becpg-test</id>
+						<goals>
+							<goal>build</goal>
+						</goals>
+						<configuration>
+							<repository>${docker.becpg.url}/becpg-test</repository>
+							<contextDirectory>${project.build.directory}/becpg-test</contextDirectory>
+							<tag>${project.version}</tag>
+							<pullNewerImage>false</pullNewerImage>
+							<buildArgs>
+								<VERSION>${project.version}</VERSION>
+							</buildArgs>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 
             <!-- Make sure we attach the tests so we can include them when running -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<executions>
-					<execution>
-						<id>test-jar</id>
-						<phase>test-compile</phase>
-						<goals>
-							<goal>test-jar</goal>
-						</goals>
-					</execution>
 					<execution>
 						<goals>
 							<goal>test-jar</goal>
@@ -253,7 +258,7 @@
 						</configuration>
 					</execution>
 				</executions>
-			</plugin>
+			</plugin> 
             <!-- Runs the integration tests, any class that follows naming convention
                  "**/IT*.java", "**/*IT.java", and "**/*ITCase.java" will be considered an integration test -->
 			<plugin>

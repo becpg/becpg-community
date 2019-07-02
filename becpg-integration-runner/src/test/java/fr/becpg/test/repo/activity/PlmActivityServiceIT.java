@@ -70,27 +70,31 @@ public class PlmActivityServiceIT extends AbstractFinishedProductTest {
 
 	protected List<NodeRef> getActivities(NodeRef entityNodeRef, Map<String, Boolean> sortMap) {
 		// beCPGCacheService.clearAllCaches();
-		List<NodeRef> ret = new ArrayList<>();
-		NodeRef activityListNodeRef = getActivityList(entityNodeRef);
-		if (activityListNodeRef != null) {
-			// All activities of product
-			ret = sortMap != null ? entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST, sortMap)
-					: entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
-
-			ret.forEach(tmp -> {
-				logger.info("Data: " + nodeService.getProperty(tmp, BeCPGModel.PROP_ACTIVITYLIST_DATA) + " user: "
-						+ nodeService.getProperty(tmp, BeCPGModel.PROP_ACTIVITYLIST_USERID));
-			});
-
-		} else {
-			logger.error("No activity list");
-		}
-
-		return ret;
+			
+		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			List<NodeRef> ret = new ArrayList<>();
+			NodeRef activityListNodeRef = getActivityList(entityNodeRef);
+			if (activityListNodeRef != null) {
+				// All activities of product
+				ret = sortMap != null ? entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST, sortMap)
+						: entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
+	
+				ret.forEach(tmp -> {
+					logger.info("Data: " + nodeService.getProperty(tmp, BeCPGModel.PROP_ACTIVITYLIST_DATA) + " user: "
+							+ nodeService.getProperty(tmp, BeCPGModel.PROP_ACTIVITYLIST_USERID));
+				});
+	
+			} else {
+				logger.error("No activity list");
+			}
+	
+			return ret;
+		}, false,true);
 	}
 
 	protected Map<NodeRef, ActivityListDataItem> getActivityListDataItems(NodeRef entityNodeRef) {
-
+			
+		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 		Map<NodeRef, ActivityListDataItem> ret = new HashMap<>();
 		NodeRef activityListNodeRef = getActivityList(entityNodeRef);
 		if (activityListNodeRef != null) {
@@ -103,6 +107,7 @@ public class PlmActivityServiceIT extends AbstractFinishedProductTest {
 		}
 
 		return ret;
+		}, false,true);
 	}
 
 	private NodeRef createFinishedProduct() {

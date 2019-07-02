@@ -204,11 +204,16 @@ public class NCWorkflowIT extends AbstractWorkflowTest {
 		 * do prevActionTask
 		 */
 		if (needPrevAction) {
-			assertTrue(workflowService.getWorkflowById(workflowInstanceId).isActive());
+			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				assertTrue(workflowService.getWorkflowById(workflowInstanceId).isActive());
+				return null;
+			}, false, true);
 			task = submitTask(workflowInstanceId, "ncwf:prevActionTask", null, null, "commentaire émetteur");
 		}
-
-		assertFalse(workflowService.getWorkflowById(workflowInstanceId).isActive());
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			assertFalse(workflowService.getWorkflowById(workflowInstanceId).isActive());
+			return null;
+		}, false, true);
 	}
 
 	private void executeNonConformityAdhoc() {

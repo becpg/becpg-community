@@ -221,6 +221,9 @@ public class ClaimWorkflowIT extends AbstractWorkflowTest {
 
 			assertEquals("Claim", (String) nodeService.getProperty(ncNodeRef, QualityModel.PROP_NC_TYPE));
 
+			return null;
+		}, false, true);
+
 			// checkStorageFolder(ncNodeRef);
 
 			// Back to saisie
@@ -233,6 +236,8 @@ public class ClaimWorkflowIT extends AbstractWorkflowTest {
 			properties = new HashMap<>();
 
 			task = submitTask(workflowInstanceId, "ncwf:claimStartTask", null, properties);
+			
+			
 			assertEquals("analysisTask", task.getPath().getNode().getName());
 
 			if (!shortWay) {
@@ -300,8 +305,11 @@ public class ClaimWorkflowIT extends AbstractWorkflowTest {
 
 				properties = new HashMap<>();
 				task = submitTask(workflowInstanceId, "ncwf:claimClosingTask", null, properties);
-
+				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 				assertFalse(workflowService.getWorkflowById(workflowInstanceId).isActive());
+
+				return null;
+			}, false, true);
 
 			} else {
 				properties = new HashMap<>();
@@ -313,13 +321,14 @@ public class ClaimWorkflowIT extends AbstractWorkflowTest {
 
 				properties = new HashMap<>();
 				task = submitTask(workflowInstanceId, "ncwf:claimClosingTask", null, properties);
-
+				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 				assertFalse(workflowService.getWorkflowById(workflowInstanceId).isActive());
+
+				return null;
+			}, false, true);
 
 			}
 
-			return null;
-		}, false, true);
 	}
 
 	// private void checkWorkLog(final NodeRef ncNodeRef, final int workLogSize,

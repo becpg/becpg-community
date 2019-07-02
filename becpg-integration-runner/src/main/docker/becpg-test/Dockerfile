@@ -8,18 +8,22 @@ ENV TOMCAT_DIR=/usr/local/tomcat/
 
 # HOTSWAP AGENT
 # Install and configure Trava OpenJDK (OpenJDK pre-built with DCEVM and hotswap agent for Java 11)
-#RUN curl -sL  https://github.com/TravaOpenJDK/trava-jdk-11-dcevm/releases/download/dcevm-11.0.1%2B8/java11-openjdk-dcevm-linux.tar.gz \
-#      -o $TOMCAT_DIR/trava-jdk-11-dcevm.tar.gz
-#RUN mkdir -p /usr/java && tar -xvf $TOMCAT_DIR/trava-jdk-11-dcevm.tar.gz -C /usr/java/ && \
-#    rm $TOMCAT_DIR/trava-jdk-11-dcevm.tar.gz && \
-#    alternatives --install /usr/bin/java java /usr/java/dcevm-11.0.1+7/bin/java 40000 && \
-#    alternatives --install /usr/bin/javac javac /usr/java/dcevm-11.0.1+7/bin/javac 40000 && \
-#    alternatives --install /usr/bin/jar jar /usr/java/dcevm-11.0.1+7/bin/jar 40000 && \
-#    alternatives --set java /usr/java/dcevm-11.0.1+7/bin/java && \
-#    alternatives --set javac /usr/java/dcevm-11.0.1+7/bin/javac && \
-#    alternatives --set jar /usr/java/dcevm-11.0.1+7/bin/jar && \
-#    ln -sfn /usr/java/dcevm-11.0.1+7 /usr/java/latest && \
-#    ln -sfn /usr/java/dcevm-11.0.1+7 /usr/java/default
+RUN curl -sL  https://github.com/TravaOpenJDK/trava-jdk-11-dcevm/releases/download/dcevm-11.0.1%2B8/java11-openjdk-dcevm-linux.tar.gz \
+      -o $TOMCAT_DIR/trava-jdk-11-dcevm.tar.gz
+RUN mkdir -p /usr/java && tar -xvf $TOMCAT_DIR/trava-jdk-11-dcevm.tar.gz -C /usr/java/ && \
+    rm $TOMCAT_DIR/trava-jdk-11-dcevm.tar.gz && \
+    update-alternatives --install /usr/bin/java java /usr/java/dcevm-11.0.1+8/bin/java 40000 && \
+    update-alternatives --install /usr/bin/javac javac /usr/java/dcevm-11.0.1+8/bin/javac 40000 && \
+    update-alternatives --install /usr/bin/jar jar /usr/java/dcevm-11.0.1+8/bin/jar 40000 && \
+    update-alternatives --set java /usr/java/dcevm-11.0.1+8/bin/java && \
+    update-alternatives --set javac /usr/java/dcevm-11.0.1+8/bin/javac && \
+    update-alternatives --set jar /usr/java/dcevm-11.0.1+8/bin/jar && \
+    ln -sfn /usr/java/dcevm-11.0.1+8 /usr/java/latest && \
+    ln -sfn /usr/java/dcevm-11.0.1+8 /usr/java/default
+
+
+ENV JAVA_HOME /usr/java/dcevm-11.0.1+8
+ENV PATH $JAVA_HOME/bin:$PATH
 
       
 COPY becpg-core-${project.version}.amp /root/amp/
@@ -45,17 +49,20 @@ RUN set -x && \
 RUN rm -rf /root/amp/*
 
 #Debuging 
-#COPY share-config-custom.xml $TOMCAT_DIR/shared/classes/alfresco/web-extension
-COPY log4j.properties $TOMCAT_DIR/webapps/alfresco/WEB-INF/classes
-COPY hotswap-agent.properties $TOMCAT_DIR/webapps/alfresco/WEB-INF/classes
-COPY beCPG.properties $TOMCAT_DIR/shared/classes/beCPG.properties
-COPY alfresco-global.properties $TOMCAT_DIR/shared/classes/alfresco-global.properties
 
-COPY disable-webscript-caching-context.xml $TOMCAT_DIR/shared/classes/alfresco/extension
-COPY lessc-context.xml $TOMCAT_DIR/shared/classes/alfresco/web-extension
+COPY alfresco/log4j.properties $TOMCAT_DIR/webapps/alfresco/WEB-INF/classes
+COPY alfresco/hotswap-agent.properties $TOMCAT_DIR/webapps/alfresco/WEB-INF/classes
+COPY alfresco/beCPG.properties $TOMCAT_DIR/shared/classes/beCPG.properties
+COPY alfresco/alfresco-global.properties $TOMCAT_DIR/shared/classes/alfresco-global.properties
+COPY alfresco/disable-webscript-caching-context.xml $TOMCAT_DIR/shared/classes/alfresco/extension
+
+COPY share/hotswap-agent.properties $TOMCAT_DIR/webapps/share/WEB-INF/classes/hotswap-agent.properties
+COPY share/lessc-context.xml $TOMCAT_DIR/shared/classes/alfresco/web-extension
+COPY share/share-config-custom.xml $TOMCAT_DIR/shared/classes/alfresco/web-extension
 
 # Copy Dockerfile to avoid an error if no JARs exist
 COPY extensions/*.jar $TOMCAT_DIR/webapps/alfresco/WEB-INF/lib/
+COPY extensions/becpg-integration-runner-3.0.0-tests.jar $TOMCAT_DIR/webapps/alfresco/WEB-INF/lib/
 
 WORKDIR /root
 

@@ -13,8 +13,8 @@ services:
       - "8888:8888"  
     volumes:
       - becpg_data:/usr/local/tomcat/data
-     # - ../../../sample-project-platform/target/classes:/usr/local/tomcat/hotswap-agent/sample-project-platform/target/classes
-     # - ../../../sample-project-integration-tests/target/test-classes:/usr/local/tomcat/hotswap-agent/sample-project-integration-tests/target/test-classes
+      - ../../becpg-core/target/classes:/usr/local/tomcat/hotswap-agent/becpg-core/target/classes
+      - ../../becpg-integration-runner/target/test-classes:/usr/local/tomcat/hotswap-agent/becpg-integration-runner/target/test-classes
   becpg-db:
     image: ${docker.becpg.url}/becpg-db:${project.version}
     environment:

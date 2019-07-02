@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 
 echo -e "\e[0m888                 \e[32m.d8888b.  8888888b.   .d8888b. \e[0m" 
@@ -33,22 +33,23 @@ down() {
 deploy_fast(){
 
 	#becpg-amp
-	docker-compose -f $COMPOSE_FILE_PATH cp becpg-core/src/main/amp/config/alfresco/templates/. becpg:/usr/local/tomcat/webapps/alfresco/WEB-INF/classes/alfresco/templates
+	docker cp becpg-core/src/main/resources/alfresco/templates/. becpg:/usr/local/tomcat/webapps/alfresco/WEB-INF/classes/alfresco/templates
 	
 	#becpg-share
-	docker-compose -f $COMPOSE_FILE_PATH cp becpg-share/src/main/amp/config/alfresco/module/becpg-share/web/. becpg:/usr/local/tomcat/webapps/share/
-	docker-compose -f $COMPOSE_FILE_PATH cp becpg-share/src/main/amp/config/alfresco/module/becpg-share/config/. becpg:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
-	docker-compose -f $COMPOSE_FILE_PATH cp becpg-designer/becpg-designer-share/src/main/amp/config/alfresco/module/becpg-designer-share/web/. becpg:/usr/local/tomcat/webapps/share/
-	docker-compose -f $COMPOSE_FILE_PATH cp becpg-designer/becpg-designer-share/src/main/amp/config/alfresco/module/becpg-designer-share/config/. becpg:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
-	docker-compose -f $COMPOSE_FILE_PATH cp becpg-project/becpg-project-share/src/main/amp/config/alfresco/module/becpg-project-share/web/. becpg:/usr/local/tomcat/webapps/share/
-	docker-compose -f $COMPOSE_FILE_PATH cp becpg-project/becpg-project-share/src/main/amp/config/alfresco/module/becpg-project-share/config/. becpg:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
-	docker-compose -f $COMPOSE_FILE_PATH cp becpg-plm/becpg-plm-share/src/main/amp/config/alfresco/module/becpg-plm-share/web/. becpg:/usr/local/tomcat/webapps/share/
-	docker-compose -f $COMPOSE_FILE_PATH cp becpg-plm/becpg-plm-share/src/main/amp/config/alfresco/module/becpg-plm-share/config/. becpg:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
+	docker cp becpg-share/src/main/assembly/web/. target_becpg_1:/usr/local/tomcat/webapps/share/
+	docker cp becpg-share/src/main/resources/alfresco/. target_becpg_1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
+	docker cp becpg-designer/becpg-designer-share/src/main/assembly/web/. target_becpg_1:/usr/local/tomcat/webapps/share/
+	docker cp becpg-designer/becpg-designer-share/src/main/resources/alfresco/. target_becpg_1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
+	docker cp becpg-project/becpg-project-share/src/main/assembly/web/. target_becpg_1:/usr/local/tomcat/webapps/share/
+	docker cp becpg-project/becpg-project-share/src/main/resources/alfresco/. target_becpg_1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
+	docker cp becpg-plm/becpg-plm-share/src/main/assembly/web/. target_becpg_1:/usr/local/tomcat/webapps/share/
+	docker cp becpg-plm/becpg-plm-share/src/main/resources/alfresco/. target_becpg_1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
+	if [ -d becpg-enterprise ]; then
+	  docker cp becpg-enterprise/becpg-enterprise-share/src/main/assembly/web/. target_becpg_1:/usr/local/tomcat/webapps/share/
+	  docker cp becpg-enterprise/becpg-enterprise-share/src/main/resources/alfresco/. target_becpg_1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
+	fi
 	
-	#docker cp becpg-enterprise/becpg-enterprise-share/src/main/amp/config/alfresco/module/becpg-enterprise-share/web/. $CONTAINER_PLM_NAME:/usr/local/tomcat/webapps/share/
-	#docker cp becpg-enterprise/becpg-enterprise-share/src/main/amp/config/alfresco/module/becpg-enterprise-share/config/. $CONTAINER_PLM_NAME:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
-	
-	wget --delete-after --http-user=admin --http-password=becpg --header=Accept-Charset:iso-8859-1,utf-8 --header=Accept-Language:en-us --post-data reset=on http://localhost:80/share/page/index
+	#wget --delete-after --http-user=admin --http-password=becpg --header=Accept-Charset:iso-8859-1,utf-8 --header=Accept-Language:en-us --post-data reset=on http://localhost:8080/share/page/index
 
 }
 
@@ -73,7 +74,7 @@ test() {
 }
 
 case "$1" in
-  build_full_start)
+  install)
     build_full
     start
     tail
@@ -83,6 +84,13 @@ case "$1" in
     start
     tail
     ;;
+  build_test)
+    build
+    start
+    test
+    tail
+    down
+    ;;
   start)
     start
     tail
@@ -90,19 +98,15 @@ case "$1" in
   stop)
     down
     ;;
+  deploy_fast)
+    deploy_fast
+    ;;  
   purge)
     down
     purge
     ;;
   tail)
     tail
-    ;;
-  build_test)
-    build_full
-    start
-    test
-    tail
-    down
     ;;
   jenkins)
     build_full
@@ -114,5 +118,5 @@ case "$1" in
     test
     ;;
   *)
-    echo "Usage: $0 {build_start|start|stop|purge|tail|build_test|test}"
+    echo "Usage: $0 {install|build_start|build_test|start|stop|purge|tail|test|deploy_fast}"
 esac
