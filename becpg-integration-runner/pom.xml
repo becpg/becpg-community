@@ -125,7 +125,7 @@
 			</testResource>
 		</testResources>
 		<plugins>
-			<plugin>
+			<!-- <plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<executions>
@@ -137,7 +137,7 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>
+			</plugin> -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
@@ -250,6 +250,8 @@
 				<artifactId>maven-jar-plugin</artifactId>
 				<executions>
 					<execution>
+					    <id>test-jar</id>
+						<phase>test-compile</phase>
 						<goals>
 							<goal>test-jar</goal>
 						</goals>
