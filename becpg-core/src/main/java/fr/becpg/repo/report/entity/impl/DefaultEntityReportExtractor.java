@@ -564,7 +564,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 				PropertyDefinition propertyDef = dictionaryService.getProperty(property.getKey());
 				if (propertyDef == null) {
-					logger.warn("This property doesn't exist. Name: " + property.getKey() + " nodeRef : " + nodeRef);
+					logger.debug("This property doesn't exist. Name: " + property.getKey() + " nodeRef : " + nodeRef);
 					continue;
 				}
 
