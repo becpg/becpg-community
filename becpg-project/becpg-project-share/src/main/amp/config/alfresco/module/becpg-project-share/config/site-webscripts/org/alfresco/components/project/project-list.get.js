@@ -49,7 +49,8 @@ function main()
        sortUrl :  page.url.context+"/proxy/alfresco/becpg/entity/datalists/sort/node",
        dataUrl : page.url.context+"/proxy/alfresco/becpg/entity/datalists/data/node",
        itemUrl : page.url.context+"/proxy/alfresco/becpg/entity/datalists/item/node/",
-       simpleView : preferences.simpleView !=null ? preferences.simpleView : false
+       simpleView : preferences.simpleView !=null ? preferences.simpleView : false,
+       filter : preferences.filter
       }
    };
     
