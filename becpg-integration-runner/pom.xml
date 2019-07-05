@@ -138,38 +138,7 @@
 					</execution>
 				</executions>
 			</plugin> -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<executions>
-                    <!-- Copy the repository extension and the dependencies required for execute integration tests -->
-					<execution>
-						<id>collect-test-artifacts</id>
-						<phase>package</phase>
-						<goals>
-							<goal>copy-dependencies</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${project.build.directory}/becpg-test/extensions</outputDirectory>
-							<excludeScope>compile</excludeScope>
-							<excludeTypes>amp</excludeTypes>
-						</configuration>
-					</execution>
-                    <!-- Collect extensions (JARs or AMPs) declared in this module do be deployed to docker -->
-					<execution>
-						<id>collect-extensions</id>
-						<phase>package</phase>
-						<goals>
-							<goal>copy-dependencies</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${project.build.directory}/becpg-test</outputDirectory>
-							<includeScope>runtime</includeScope>
-							<includeTypes>amp</includeTypes>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+			
             <!-- Filter the Dockerfile and the other files added to the container to be able to replace maven properties -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -221,36 +190,14 @@
 			</plugin>
 
 
-			<plugin>
-				<groupId>com.spotify</groupId>
-				<artifactId>dockerfile-maven-plugin</artifactId>
-				<version>1.4.10</version>
-				<executions>
-					<execution>
-						<id>becpg-test</id>
-						<goals>
-							<goal>build</goal>
-						</goals>
-						<configuration>
-							<repository>${docker.becpg.url}/becpg-test</repository>
-							<contextDirectory>${project.build.directory}/becpg-test</contextDirectory>
-							<tag>${project.version}</tag>
-							<pullNewerImage>false</pullNewerImage>
-							<buildArgs>
-								<VERSION>${project.version}</VERSION>
-							</buildArgs>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
+			
             <!-- Make sure we attach the tests so we can include them when running -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<executions>
 					<execution>
-					    <id>test-jar</id>
+						<id>test-jar</id>
 						<phase>test-compile</phase>
 						<goals>
 							<goal>test-jar</goal>
@@ -271,6 +218,74 @@
 		</plugins>
 	</build>
 	<profiles>
+		<profile>
+			<id>becpg-test</id>
+			<activation>
+				<property>
+					<name>skipTests</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<executions>
+                    <!-- Copy the repository extension and the dependencies required for execute integration tests -->
+							<execution>
+								<id>collect-test-artifacts</id>
+								<phase>package</phase>
+								<goals>
+									<goal>copy-dependencies</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${project.build.directory}/becpg-test/extensions</outputDirectory>
+									<excludeScope>compile</excludeScope>
+									<excludeTypes>amp</excludeTypes>
+								</configuration>
+							</execution>
+                    <!-- Collect extensions (JARs or AMPs) declared in this module do be deployed to docker -->
+							<execution>
+								<id>collect-extensions</id>
+								<phase>package</phase>
+								<goals>
+									<goal>copy-dependencies</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${project.build.directory}/becpg-test</outputDirectory>
+									<includeScope>runtime</includeScope>
+									<includeTypes>amp</includeTypes>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>com.spotify</groupId>
+						<artifactId>dockerfile-maven-plugin</artifactId>
+						<version>1.4.10</version>
+						<executions>
+							<execution>
+								<id>becpg-test</id>
+								<goals>
+									<goal>build</goal>
+								</goals>
+								<configuration>
+									<repository>${docker.becpg.url}/becpg-test</repository>
+									<contextDirectory>${project.build.directory}/becpg-test</contextDirectory>
+									<tag>${project.version}</tag>
+									<pullNewerImage>false</pullNewerImage>
+									<buildArgs>
+										<VERSION>${project.version}</VERSION>
+									</buildArgs>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+
+		</profile>
 		<profile>
 			<id>full</id>
 			<build>
@@ -304,21 +319,6 @@
 									<contextDirectory>${project.build.directory}/becpg-db</contextDirectory>
 									<pullNewerImage>true</pullNewerImage>
 									<tag>${project.version}</tag>
-								</configuration>
-							</execution>
-							<execution>
-								<id>becpg-test</id>
-								<goals>
-									<goal>build</goal>
-								</goals>
-								<configuration>
-									<repository>${docker.becpg.url}/becpg-test</repository>
-									<contextDirectory>${project.build.directory}/becpg-test</contextDirectory>
-									<tag>${project.version}</tag>
-									<pullNewerImage>false</pullNewerImage>
-									<buildArgs>
-										<VERSION>${project.version}</VERSION>
-									</buildArgs>
 								</configuration>
 							</execution>
 						</executions>

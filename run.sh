@@ -58,7 +58,7 @@ purge() {
 }
 
 build() {
-    $MVN_EXEC clean package $EXTRA_ENV -DskipTests=true
+    $MVN_EXEC clean package $EXTRA_ENV -DskipTests=true -P build
 }
 
 build_full() {
