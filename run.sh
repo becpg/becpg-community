@@ -112,12 +112,6 @@ case "$1" in
   tail)
     tail
     ;;
-  jenkins)
-    build_full
-    start
-    test_jenkins
-    purge
-    ;;
   test)
     test
     ;;
