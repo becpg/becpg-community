@@ -629,25 +629,32 @@
 				<View name="taskList" alias="taskList">
 					<SQL dialect="generic">
 						select  
-							nodeRef,
-							entityNodeRef,
-							doc->>"$.pjt_tlTaskName" as tlTaskName,
-							doc->>"$.pjt_tlDuration" as tlDuration,
-							doc->>"$.pjt_tlRealDuration" as tlRealDuration,
-							CAST(doc->>"$.pjt_tlStart" as DATE) as tlStart,
-							CAST(doc->>"$.pjt_tlEnd" as DATE) as tlEnd,
-							doc->>"$.pjt_tlState" as tlState,
-							doc->>"$.pjt_tlResources[0]" as tlResources,
-							doc->>"$.pjt_tlWork" as tlWork,
-							doc->>"$.pjt_tlLoggedTime" as tlLoggedTime,
-							doc->>"$.bcpg_sort" as sortOrder,
-							CAST(doc->>"$.cm_modified" as DATE) as projectDateModified,
-							instanceId
+							a.nodeRef,
+							a.entityNodeRef,
+							a.doc->>"$.pjt_tlTaskName" as tlTaskName,
+							a.doc->>"$.pjt_tlDuration" as tlDuration,
+							a.doc->>"$.pjt_tlRealDuration" as tlRealDuration,
+							CAST(a.doc->>"$.pjt_tlStart" as DATE) as tlStart,
+							CAST(a.doc->>"$.pjt_tlEnd" as DATE) as tlEnd,
+							a.doc->>"$.pjt_tlState" as tlState,
+							a.doc->>"$.pjt_tlResources[0]" as tlResources,
+							a.doc->>"$.pjt_tlWork" as tlWork,
+							a.doc->>"$.pjt_tlLoggedTime" as tlLoggedTime,
+							a.doc->>"$.bcpg_sort" as sortOrder,
+							CAST(a.doc->>"$.cm_modified" as DATE) as projectDateModified,
+							a.instanceId,
+							CASE 
+								 WHEN a.doc->>"$.pjt_tlResources[0]" LIKE 'GROUP_PROJECT%'
+								 	THEN
+								 	  json_extract(b.doc,CONCAT('$.', SUBSTRING_INDEX (a.doc->>"$.pjt_tlResources[0]","_",-2)))
+								 ELSE
+								 	a.doc->>"$.pjt_tlResources[0]"
+								 END as taskResources
 						from
-							taskList
+							taskList a inner join pjt_project b on a.entityNodeRef = b.nodeRef 
 						<#if !isAdmin>	
 						  where instanceId = ${instanceId}
-						</#if>
+						</#if>						
 					</SQL>
 				</View>
 
@@ -698,7 +705,7 @@
 
 		<Dimension name="resource" caption="${msg("jsolap.resource.title")}" >
 			<Hierarchy name="resource" caption="${msg("jsolap.resource.title")}" hasAll="true" allMemberCaption="${msg("jsolap.resource.caption")}">
-				<Level name="tlResources" caption="${msg("jsolap.resource.title")}" column="tlResources"  type="String"    />
+					<Level name="taskResources" caption="${msg("jsolap.resource.title")}" column="taskResources"  type="String"    />
 			</Hierarchy>
 		</Dimension>
 		
@@ -721,7 +728,7 @@
 		<Measure name="averageActualDurations" caption="${msg("jsolap.averageActualDurations.title")}" column="tlRealDuration" datatype="Numeric" aggregator="avg" visible="true"  />
 		<Measure name="workload" caption="${msg("jsolap.workload.title")}" column="tlWork" datatype="Integer" aggregator="sum" visible="true"></Measure>
 		<Measure name="loggedTime" caption="${msg("jsolap.loggedTime.title")}" column="tlLoggedTime" datatype="Integer" aggregator="sum" visible="true"></Measure>
-		<Measure name="avgLoggedTime" caption="${msg("jsolap.avgLoggedTime.title")}" column="tlLoggedTime" datatype="Integer" aggregator="avg" visible="true"></Measure>		
+		<Measure name="avgLoggedTime" caption="${msg("jsolap.avgLoggedTime.title")}" column="tlLoggedTime" datatype="Integer" aggregator="avg" visible="true"></Measure>
 		
 		<CalculatedMember name="averageDurations" caption="${msg("jsolap.averageDurations.title")}" dimension="Measures" visible="true">
 			<Formula>([Measures].[averageDurations],[designation.taskPerName].PrevMember) + ([Measures].[averageActualDurations])</Formula>
