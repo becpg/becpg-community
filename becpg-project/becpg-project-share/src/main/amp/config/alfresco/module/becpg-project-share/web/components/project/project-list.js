@@ -16,6 +16,7 @@ var g; // gantt var
      * Alfresco Slingshot aliases
      */
     var $html = Alfresco.util.encodeHTML;
+    
 
     /**
      * DocumentList constructor.
@@ -38,6 +39,7 @@ var g; // gantt var
         YAHOO.Bubbling.on("filterChanged", this.onFilterChanged, this);
         YAHOO.Bubbling.on("simpleDetailedChanged", this.onSimpleDetailed, this);
         
+        this.services.preferences = new Alfresco.service.Preferences();
 
         if (view == "resources")
         {
@@ -153,7 +155,8 @@ var g; // gantt var
                             });
                             
 
-                            this.widgets.filter.set("label", this.msg("filter.projects.InProgress")+ " " + Alfresco.constants.MENU_ARROW_SYMBOL);
+                            var filterKey = (this.options.filter.filterId ? this.options.filter.filterId + (this.options.filter.filterData ? "." + this.options.filter.filterData : "") : "projects.InProgress");
+                            this.widgets.filter.set("label", this.msg("filter."+filterKey)+ " " + Alfresco.constants.MENU_ARROW_SYMBOL);
                             
                         	
                             JSGantt.register(this);
@@ -274,9 +277,11 @@ var g; // gantt var
                             if(this.currentSort!=null){
 								request.sort = this.currentSort.replace("prop_","").replace("_",":")+"|"+((this.currentSortDir == "yui-dt-asc") ? "true" : "false");
 							}
-							
 							if(this.queryExecutionId != null) {
 								request.queryExecutionId = this.queryExecutionId;
+							}
+							if(this.options.filter.filterId){
+								p_obj.filter = this.options.filter;
 							}
 
                             if (p_obj && p_obj.filter)
@@ -287,7 +292,7 @@ var g; // gantt var
                                     filterId : p_obj.filter.filterId,
                                     filterData : p_obj.filter.filterData,
                                     filterParams : this._createFilterURLParameters(p_obj.filter,
-                                            this.options.filterParameters)
+                                    		this.options.filterParameters)
                                 };
                             }
 
@@ -499,14 +504,15 @@ var g; // gantt var
                          */
                         onFilterChanged : function PL_onFilterChanged(layer, args)
                         {
-                            var filter = Alfresco.util.cleanBubblingObject(args[1]);
+                            var filter = this.options.filter.filterId ? this.options.filter : Alfresco.util.cleanBubblingObject(args[1]);
+                            
                             if (filter.filterId == "filterform")
                             {
                             	this.widgets.filter.set("label", $html(this
                                         .msg("filter." + filter.filterId))+ " " + Alfresco.constants.MENU_ARROW_SYMBOL);
                             	
                             }
-                            else if (filter.filterId == "all")
+                            else if (filter.filterId == "all" || filter.filterId == "my-projects")
                             {
                             	this.widgets.filter.set("label", $html(this.msg(
                                         "filter." + filter.filterId))+ " " + Alfresco.constants.MENU_ARROW_SYMBOL);
@@ -548,6 +554,10 @@ var g; // gantt var
                             	  filterObj.filterData = value.split("|")[1];
                               }
                               
+                              
+                              this.options.filter = filterObj;
+                              this.services.preferences.set("org.alfresco.share.project.list." + (this.options.siteId != null ? this.options.siteId : "home") + ".filter", this.options.filter);
+
                               YAHOO.Bubbling.fire("changeFilter", filterObj);
                            }
                         },
