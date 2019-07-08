@@ -208,7 +208,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 							policyBehaviourFilter.disableBehaviour(entityNodeRef);
 							if (logger.isDebugEnabled()) {
 								logger.debug(
-										"Generate report: " + entityNodeRef + " - " + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
+										"Generate reports for entity: " + entityNodeRef + " - " + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
 							}
 
 							Date generatedDate = Calendar.getInstance().getTime();
@@ -217,7 +217,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 							Date formulatedDate = (Date) nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_FORMULATED_DATE);
 
 							if ((formulatedDate != null) && (modified != null) && (formulatedDate.getTime() > modified.getTime())) {
-								logger.debug("taking formulated date");
+								logger.trace("Using formulated date instead of modified");
 								modified = formulatedDate;
 							}
 
@@ -239,9 +239,6 @@ public class EntityReportServiceImpl implements EntityReportService {
 								}
 
 								final NodeRef selectedReportNodeRef = getSelectedReport(entityNodeRef);
-
-								// Map<String, String> preferences =
-								// getMergedPreferences(tplsNodeRef);
 
 								List<Locale> entityReportLocales = getEntityReportLocales(entityNodeRef);
 
@@ -294,7 +291,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 														if (writer != null) {
 
-															if ((selectedReportNodeRef == documentNodeRef)
+															if ((selectedReportNodeRef!=null && documentNodeRef !=null && selectedReportNodeRef.toString().equals(documentNodeRef.toString()))
 																	|| ((selectedReportNodeRef == null) && isDefault)) {
 																EntityReportData reportData = retrieveExtractor(entityNodeRef).extract(entityNodeRef,
 																		reportParameters.getPreferences());
@@ -317,7 +314,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 																params.put(BeCPGReportEngine.PARAM_DOCUMENT_NODEREF, documentNodeRef);
 																params.put(BeCPGReportEngine.PARAM_ENTITY_NODEREF, entityNodeRef);
 
-																logger.debug("beCPGReportEngine createReport: " + entityNodeRef + " for document "
+																logger.debug("Update report: " + entityNodeRef + " for document "
 																		+ documentName + " (" + documentNodeRef + ")");
 
 																if (logger.isTraceEnabled()) {
@@ -336,6 +333,9 @@ public class EntityReportServiceImpl implements EntityReportService {
 															} else {
 																writer.setMimetype("text/plain");
 																writer.putContent("Loading ...");
+																
+																logger.debug("Mark durty report: " + entityNodeRef + " for document "
+																		+ documentName + " (" + documentNodeRef + ")");
 
 																nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_IS_DIRTY, true);
 															}
@@ -1121,7 +1121,13 @@ public class EntityReportServiceImpl implements EntityReportService {
 				}
 			}
 			if (documentNodeRef == null) {
+				
 				documentNodeRef = nodeService.getChildByName(documentsFolderNodeRef, ContentModel.ASSOC_CONTAINS, documentName);
+				
+				
+				if(logger.isDebugEnabled()) {
+					logger.debug("Create new report document "+documentName+" ("+documentNodeRef+")");
+				}
 
 				if (documentNodeRef == null) {
 					documentNodeRef = fileFolderService.create(documentsFolderNodeRef, documentName, ReportModel.TYPE_REPORT).getNodeRef();
@@ -1335,6 +1341,10 @@ public class EntityReportServiceImpl implements EntityReportService {
 				String reportTitle = (String) nodeService.getProperty(reportNodeRef, ContentModel.PROP_TITLE);
 
 				if ((reportTitle != null) && reportTitle.equalsIgnoreCase(reportName)) {
+					if(logger.isDebugEnabled()) {
+						logger.debug("Found selected report for name: "+reportName+ " "+reportNodeRef);
+					}
+					
 					return reportNodeRef;
 				}
 
@@ -1344,6 +1354,9 @@ public class EntityReportServiceImpl implements EntityReportService {
 				}
 
 			}
+		}
+		if(logger.isDebugEnabled()) {
+			logger.debug("Selected report for name: "+reportName+" not  found returning default "+ret);
 		}
 		return ret;
 	}
