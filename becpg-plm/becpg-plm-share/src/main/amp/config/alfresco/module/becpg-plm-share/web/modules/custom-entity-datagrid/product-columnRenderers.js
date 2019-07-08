@@ -255,11 +255,11 @@ if (beCPG.module.EntityDataGridRenderers) {
             
             var title = Alfresco.util.encodeHTML(data.metadata);
             var cssClass = data.metadata;
-            if(oRecord.getData("itemData")["prop_bcpg_nutListIsFormulated"] && oRecord.getData("itemData")["prop_bcpg_nutListIsFormulated"].value){
+            if(oRecord.getData("itemData")["prop_bcpg_nutListIsFormulated"]){
 	            if( oRecord.getData("itemData")["prop_bcpg_nutListFormulaErrorLog"]  &&  oRecord.getData("itemData")["prop_bcpg_nutListFormulaErrorLog"].value  != null){
 	           	 cssClass= "nut-formulated-error";
 	               title = Alfresco.util.encodeHTML( oRecord.getData("itemData")["prop_bcpg_nutListFormulaErrorLog"].value );
-	            } else if(isFormulated){
+	            } else if(oRecord.getData("itemData")["prop_bcpg_nutListIsFormulated"].value){
 	           	 cssClass= "nut-formulated";
 	            }
             }
