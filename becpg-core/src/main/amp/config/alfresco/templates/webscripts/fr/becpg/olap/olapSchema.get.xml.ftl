@@ -1,5 +1,5 @@
 <#assign instanceId = args.instance />
-<#assign isAdmin = people.isAdmin(people.getPerson(person.properties["cm:userName"])) && person.properties["cm:userName"]?contains("admin") />
+<#assign isAdmin = people.isAdmin(people.getPerson(person.properties["cm:userName"])) && person.properties["cm:userName"] == "admin@demo.becpg.fr" && (instanceId == "2" || instanceId == "3")/>
 <?xml version="1.0" encoding="UTF-8"?>
 <Schema name="beCPG OLAP Schema"> 
 	
