@@ -42,12 +42,15 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 							logger.debug(extractName(specDataItem.getLabelClaim()) + " has been visited");
 						}
 						specLabelClaimsVisitedMap.put(specDataItem, true);
-						if (Boolean.TRUE.equals(specDataItem.getIsClaimed()) && (!Boolean.TRUE
-								.equals(listDataItem.getIsClaimed() || !LabelClaimListDataItem.VALUE_NA.equals(listDataItem.getLabelClaimValue())))) {
-							addSpecificationUnclaimedLabelClaim(formulatedProduct, listDataItem);
-						} else if (LabelClaimListDataItem.VALUE_SUITABLE.equals(listDataItem.getLabelClaimValue()) && (!Boolean.TRUE.equals(
-								listDataItem.getIsClaimed() || !LabelClaimListDataItem.VALUE_SUITABLE.equals(listDataItem.getLabelClaimValue())))) {
-							addSpecificationUnclaimedLabelClaim(formulatedProduct, listDataItem);
+						if (!Boolean.TRUE.equals(listDataItem.getIsClaimed())) {
+							if ((Boolean.TRUE.equals(specDataItem.getIsClaimed())
+									&& !LabelClaimListDataItem.VALUE_NA.equals(listDataItem.getLabelClaimValue()))
+									|| (LabelClaimListDataItem.VALUE_SUITABLE.equals(specDataItem.getLabelClaimValue())
+											&& !(LabelClaimListDataItem.VALUE_SUITABLE.equals(listDataItem.getLabelClaimValue())
+													|| LabelClaimListDataItem.VALUE_NA.equals(listDataItem.getLabelClaimValue())))) {
+								addSpecificationUnclaimedLabelClaim(formulatedProduct, listDataItem);
+							}
+
 						}
 
 					}
