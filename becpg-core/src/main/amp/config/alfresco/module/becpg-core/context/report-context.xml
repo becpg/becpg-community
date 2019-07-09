@@ -27,6 +27,44 @@
 	 <property name="serviceRegistry" ref="ServiceRegistry"/>
 	 <property name="scriptService" ref="scriptService"/>
 	</bean>
+	
+	
+	<bean id="reportContentServiceWrapper" class="fr.becpg.repo.report.engine.ReportContentServiceWrapper">
+		<property name="contentService" ref="ContentService"/>
+		<property name="entityReportService" ref="entityReportService" />
+		 <property name="nodeService" ref="NodeService"/>
+		 <property name="transactionService" ref="transactionService"/>
+	</bean>
+	
+	<!-- Override default exportComponent for ZIP download-->
+
+   <bean id="exporterComponent" class="org.alfresco.repo.exporter.ExporterComponent">
+        <property name="namespaceService">
+            <ref bean="NamespaceService" />
+        </property>
+        <property name="dictionaryService">
+            <ref bean="DictionaryService" />
+        </property>
+        <property name="nodeService">
+            <ref bean="NodeService" />
+        </property>
+        <property name="searchService">
+            <ref bean="SearchService" />
+        </property>
+        <property name="contentService">
+            <ref bean="reportContentServiceWrapper" />
+        </property>
+        <property name="descriptorService">
+            <ref bean="DescriptorService" />
+        </property>
+        <property name="authenticationService">
+            <ref bean="AuthenticationService" />
+        </property>
+        <property name="permissionService">
+            <ref bean="PermissionService" />
+        </property>
+    </bean>
+
 
 	
 	<!-- Thread pool for reports async generation -->
