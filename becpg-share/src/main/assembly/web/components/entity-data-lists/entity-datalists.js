@@ -582,6 +582,19 @@
 										Dom.removeClass(divs, selectedClass);
 										Dom.addClass(myDiv, selectedClass);
 										
+										var element = document.getElementById(me.id+'-CustomViewLabel');
+										if(element){
+											element.parentNode.removeChild(element);
+										}
+									    element = document.getElementById(me.id+'-CustomViewName');
+									    if(element){
+											element.parentNode.removeChild(element);
+										}
+										
+										Dom.get(formFieldId).type= "hidden";
+										Dom.get(formFieldId).value = listType;
+										
+										
 										if("CustomView" == listType){
 											
 											var inputType =  Dom.get(formFieldId);
@@ -605,20 +618,6 @@
 											Dom.insertAfter(nameHtml,inputType.parentNode);
 											
 											
-										}  else {
-										
-											
-											var element = document.getElementById(me.id+'-CustomViewLabel');
-											if(element){
-												element.parentNode.removeChild(element);
-											}
-										    element = document.getElementById(me.id+'-CustomViewName');
-										    if(element){
-												element.parentNode.removeChild(element);
-											}
-											
-											Dom.get(formFieldId).type= "hidden";
-											Dom.get(formFieldId).value = listType;
 										}
 										
 										
