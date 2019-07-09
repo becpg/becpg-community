@@ -46,6 +46,18 @@ public class Nutrient5CTest {
 						Double.valueOf(Nutrient5CHelper.compute5CScore(335d, 1.21d, 2.22d, 0.413d, 1.585d, 5.26d, 0d, 0.899d, 2.94d, "Others")),
 						Arrays.asList(new Double[] { 18d, 10d, 2d, -1d }), Arrays.asList(new String[] { "E", "D", "C", "B", "A" })));
 
+                //#5863
+
+//		Assert.assertEquals(0,Nutrient5CHelper.compute5CScore(1166d, 9.3d, 25.3d, 1.4d, 1,91d*2.54d,null, null,null, 12d, "Others"));
+		
+		//#5828
+		
+		Assert.assertEquals("B",Nutrient5CHelper.buildNutrientClass(
+				(double) Nutrient5CHelper.compute5CScore(365d, 1.21d, 2.22d, 0.413d, 0.624d*2.54d,  5.26, 0.899, null, null, "Others"),
+				Arrays.asList(new Double[]{18d,10d,2d,-1d}),Arrays.asList(new String[]{"E","D","C","B","A"})));
+		
+		
+
 	}
 
 }
