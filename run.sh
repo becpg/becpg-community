@@ -61,8 +61,8 @@ build() {
     $MVN_EXEC clean package $EXTRA_ENV -DskipTests=true -P build
 }
 
-build_full() {
-    $MVN_EXEC clean package $EXTRA_ENV -DskipTests=true -P full
+install() {
+    $MVN_EXEC clean install $EXTRA_ENV -DskipTests=true -P full
 }
 
 tail() {
@@ -79,9 +79,7 @@ test_jenkins() {
 
 case "$1" in
   install)
-    build_full
-    start
-    tail
+    install
     ;;
   build_start)
     build
