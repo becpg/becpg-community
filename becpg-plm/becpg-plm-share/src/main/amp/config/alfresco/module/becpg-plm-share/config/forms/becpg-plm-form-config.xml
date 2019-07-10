@@ -671,7 +671,6 @@
 					</field>
 					
 					<field id="gs1:packagingTypeCode" help-id="becpg.forms.help.gs1.packagingTypeCode"  set="primaryPackaging" />
-					<field id="gs1:secondaryPackagingTypeCode" help-id="becpg.forms.help.gs1.packagingTypeCode"  set="primaryPackaging" />
 					
 					<field id="gs1:height" help-id="becpg.forms.help.gs1.height" set="primaryPackaging" >
 						<control
@@ -793,10 +792,6 @@
 			            </control>
 					</field>
 					<field id="gs1:sortingBonusCriteria" set="packSorting" />
-					
- 				
- 					<field id="gs1:isTradeItemABaseUnit" help-id="becpg.forms.help.gs1.isTradeItemABaseUnit" set="indicateursPanel" />
- 					<field id="gs1:isTradeItemAConsumerUnit" help-id="becpg.forms.help.gs1.isTradeItemAConsumerUnit" set="indicateursPanel" />
 					
 				
 					<field id="gs1:isTradeItemABaseUnit" help-id="becpg.forms.help.gs1.isTradeItemABaseUnit" set="indicateursPanel" />
