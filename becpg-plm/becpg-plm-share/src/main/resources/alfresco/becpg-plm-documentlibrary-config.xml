@@ -210,9 +210,14 @@
 			       <permission allow="true">CreateChangeOrder</permission>
 			    </permissions>
 			</content>
-			<content id="entity" label="menu.create-content.entity" type="pagelink" index="180" icon="entity">
-				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:entityV2&amp;formId=create-entity&amp;isEntity=true
-				</param>
+			<content id="productSpecification" label="menu.create-content.productSpecification" type="pagelink" index="180" icon="productSpecification">
+				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:productSpecification&amp;formId=create&amp;isEntity=true</param>
+			</content>
+			<content id="productMicrobioCriteria" label="menu.create-content.productMicrobioCriteria" type="pagelink" index="190" icon="productMicrobioCriteria">
+				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:productMicrobioCriteria&amp;formId=create&amp;isEntity=true</param>
+			</content>
+			<content id="entity" label="menu.create-content.entity" type="pagelink" index="200" icon="entity">
+				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:entityV2&amp;formId=create-entity&amp;isEntity=true</param>
 			</content>
 		</create-content>
 		<create-content-by-template>true</create-content-by-template>
