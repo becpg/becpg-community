@@ -398,7 +398,8 @@ YAHOO.Bubbling
         	  return asset.name != null && 
               (asset.name === "compoList" || asset.name === "processList" || asset.name === "packagingList" 
             	  || asset.name === "ingLabelingList" || asset.name === "nutList" || asset.name === "labelClaimList" 
-                  || asset.name === "costList" || asset.name === "physicoChemList" || asset.name === "ingList" || asset.name === "allergenList") ;
+                  || asset.name === "costList" || asset.name === "physicoChemList" || asset.name === "ingList" || asset.name === "allergenList") && beCPG.util.contains(entity.aspects,
+                  "bcpg:productAspect") ;
           },
           createWidget : function(containerDiv, instance) {
 
@@ -611,7 +612,8 @@ YAHOO.Bubbling
 			  actionName : "import-nuts",
 			  right : false,
 			  evaluate : function(asset, entity) {
-				  return (entity != null && entity.userAccess.edit && asset.name != null && asset.name === "nutList");
+				  return (entity != null && entity.userAccess.edit && asset.name != null && asset.name === "nutList" && beCPG.util.contains(entity.aspects,
+                  "bcpg:productAspect"));
 				  
 			  },
 			  fn : function(instance) {
