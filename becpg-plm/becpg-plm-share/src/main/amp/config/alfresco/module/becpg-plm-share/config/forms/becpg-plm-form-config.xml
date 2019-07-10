@@ -611,7 +611,6 @@
 					</field>
 					
 					<field id="gs1:packagingTypeCode" help-id="becpg.forms.help.gs1.packagingTypeCode"  set="primaryPackaging" />
-					<field id="gs1:secondaryPackagingTypeCode" help-id="becpg.forms.help.gs1.packagingTypeCode"  set="primaryPackaging" />
 					
 					<field id="gs1:height" help-id="becpg.forms.help.gs1.height" set="primaryPackaging" >
 						<control
