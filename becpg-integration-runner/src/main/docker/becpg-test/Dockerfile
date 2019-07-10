@@ -64,5 +64,6 @@ COPY share/share-config-custom.xml $TOMCAT_DIR/shared/classes/alfresco/web-exten
 COPY extensions/*.jar $TOMCAT_DIR/webapps/alfresco/WEB-INF/lib/
 COPY extensions/becpg-integration-runner-${project.version}-tests.jar $TOMCAT_DIR/webapps/alfresco/WEB-INF/lib/
 
+
 WORKDIR /root
 
