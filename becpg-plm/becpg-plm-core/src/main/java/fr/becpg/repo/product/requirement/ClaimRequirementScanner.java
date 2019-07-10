@@ -22,6 +22,7 @@ import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelClaimListDataItem> {
 
 	public static final String MESSAGE_NOT_CLAIM = "message.formulate.labelClaim.notClaimed";
+	public static final String MESSAGE_CLAIM_MISSING = "message.formulate.labelClaim.missing";
 
 	private static Log logger = LogFactory.getLog(ClaimRequirementScanner.class);
 
@@ -42,12 +43,26 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 							logger.debug(extractName(specDataItem.getLabelClaim()) + " has been visited");
 						}
 						specLabelClaimsVisitedMap.put(specDataItem, true);
-						if (Boolean.TRUE.equals(specDataItem.getIsClaimed()) && (!Boolean.TRUE
-								.equals(listDataItem.getIsClaimed() || !LabelClaimListDataItem.VALUE_NA.equals(listDataItem.getLabelClaimValue())))) {
-							addSpecificationUnclaimedLabelClaim(formulatedProduct, listDataItem);
-						} else if (LabelClaimListDataItem.VALUE_SUITABLE.equals(listDataItem.getLabelClaimValue()) && (!Boolean.TRUE.equals(
-								listDataItem.getIsClaimed() || !LabelClaimListDataItem.VALUE_SUITABLE.equals(listDataItem.getLabelClaimValue())))) {
-							addSpecificationUnclaimedLabelClaim(formulatedProduct, listDataItem);
+
+						boolean add = false;
+
+						if ((listDataItem.getLabelClaimValue() == null) || listDataItem.getLabelClaimValue().isEmpty()) {
+							add = true;
+						} else if (!LabelClaimListDataItem.VALUE_NA.equals(listDataItem.getLabelClaimValue())) {
+							if (LabelClaimListDataItem.VALUE_TRUE.equals(specDataItem.getLabelClaimValue())
+									&& !LabelClaimListDataItem.VALUE_TRUE.equals(listDataItem.getLabelClaimValue())) {
+								add = true;
+							} else if (LabelClaimListDataItem.VALUE_FALSE.equals(specDataItem.getLabelClaimValue())
+									&& !LabelClaimListDataItem.VALUE_FALSE.equals(listDataItem.getLabelClaimValue())) {
+								add = true;
+							} else if (LabelClaimListDataItem.VALUE_SUITABLE.equals(specDataItem.getLabelClaimValue())
+									&& !LabelClaimListDataItem.VALUE_SUITABLE.equals(listDataItem.getLabelClaimValue())) {
+								add = true;
+							}
+						}
+
+						if (add) {
+							addSpecificationUnclaimedLabelClaim(formulatedProduct, listDataItem, specDataItem.getLabelClaimValue() );
 						}
 
 					}
@@ -61,7 +76,7 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 					if (logger.isDebugEnabled()) {
 						logger.debug(extractName(specDataItem.getLabelClaim()) + " was not found, raising rclDataItem for spec");
 					}
-					addSpecificationUnclaimedLabelClaim(formulatedProduct, specDataItem);
+					addMissingLabelClaim(formulatedProduct, specDataItem);
 				}
 			});
 		}
@@ -69,8 +84,19 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 		return ret;
 	}
 
-	private void addSpecificationUnclaimedLabelClaim(ProductData formulatedProduct, LabelClaimListDataItem labelClaim) {
-		String message = I18NUtil.getMessage(MESSAGE_NOT_CLAIM, extractName(labelClaim.getLabelClaim()));
+	private void addSpecificationUnclaimedLabelClaim(ProductData formulatedProduct, LabelClaimListDataItem labelClaim, String labelClaimValue) {
+		String message = I18NUtil.getMessage(MESSAGE_NOT_CLAIM, extractName(labelClaim.getLabelClaim()), extractClaimValue(labelClaimValue));
+		formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, labelClaim.getLabelClaim(),
+				new ArrayList<NodeRef>(), RequirementDataType.Specification));
+		
+	}
+
+	private String extractClaimValue(String labelClaimValue) {
+		return I18NUtil.getMessage("message.formulate.labelClaim.value."+labelClaimValue);
+	}
+
+	private void addMissingLabelClaim(ProductData formulatedProduct, LabelClaimListDataItem labelClaim) {
+		String message = I18NUtil.getMessage(MESSAGE_CLAIM_MISSING, extractName(labelClaim.getLabelClaim()));
 		formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, labelClaim.getLabelClaim(),
 				new ArrayList<NodeRef>(), RequirementDataType.Specification));
 	}

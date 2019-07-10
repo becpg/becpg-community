@@ -79,6 +79,37 @@
 			</form>
 		</forms>
 	</config>
+	
+	<config evaluator="model-type" condition="bcpg:productMicrobioCriteria">
+		<forms>
+			<form id="create">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:title" force="true" />
+					<show id="cm:description" />
+					<show id="bcpg:pmcRegulation" />
+					<show id="bcpg:pmcConcernedProducts" />
+				</field-visibility>
+				<appearance>
+					<field id="cm:description">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:pmcRegulation">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:pmcConcernedProducts">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
 
 	<config evaluator="node-type" condition="bcpg:productSpecification">
 		<forms>
@@ -109,6 +140,34 @@
 		</forms>
 	</config>
 	
+	<config evaluator="model-type" condition="bcpg:productSpecification">
+		<forms>
+			<form id="create">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:title" force="true" />
+					<show id="cm:description" />
+					<show id="bcpg:productSpecifications" force="true" />
+					<show id="bcpg:specCompatibilityTpls" force="true" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:productSpecifications" help-id="becpg.forms.help.productSpecifications" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
+						</control>
+					</field>
+					<field id="bcpg:specCompatibilityTpls"  >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:entityV2?classNames=bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse</control-param>
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
 	
 
 	<!-- bcpg:finishedProduct type (existing nodes) -->
@@ -116,6 +175,8 @@
 		<forms>
 			<form>
 				<edit-form template="/org/alfresco/components/form/tab-edit-form.ftl" />
+				<view-form template="/org/alfresco/components/form/tab-edit-form.ftl" />
+				<create-form template="/org/alfresco/components/form/tab-edit-form.ftl" />
 				<field-visibility>
 
 					<!-- mainInfo -->
@@ -204,50 +265,50 @@
 
 					<!-- GS1 -->
 					
-					<show id="gs1:productHierarchy1" for-mode="edit" />
-	              	<show id="gs1:productHierarchy2" for-mode="edit" />
-	             	<show id="gs1:productHierarchy3" for-mode="edit" />
-	              	<show id="gs1:productHierarchy4" for-mode="edit" />
-	             	<show id="gs1:productHierarchy5" for-mode="edit" />
+					<show id="gs1:productHierarchy1"  />
+	              	<show id="gs1:productHierarchy2"  />
+	             	<show id="gs1:productHierarchy3"  />
+	              	<show id="gs1:productHierarchy4" />
+	             	<show id="gs1:productHierarchy5"  />
 					
-					<show id="gs1:packagingTypeCode" for-mode="edit" />
-					<show id="gs1:height" for-mode="edit" />
-					<show id="gs1:width" for-mode="edit" />
-					<show id="gs1:depth" for-mode="edit" />
-					<show id="pack:tare" for-mode="edit" />
-					<show id="pack:tareUnit" for-mode="edit" />
-					<show id="gs1:weight" for-mode="edit" />
-					
-					
-					<show id="gs1:secondaryPackagingTypeCode" for-mode="edit" />
-					<show id="gs1:secondaryHeight" for-mode="edit" />
-					<show id="gs1:secondaryWidth" for-mode="edit" />
-					<show id="gs1:secondaryDepth" for-mode="edit" />
-					<show id="gs1:secondaryNetWeight" for-mode="edit" />
-					<show id="gs1:secondaryWeight" for-mode="edit" />
+					<show id="gs1:packagingTypeCode"  />
+					<show id="gs1:height"  />
+					<show id="gs1:width"  />
+					<show id="gs1:depth"  />
+					<show id="pack:tare"  />
+					<show id="pack:tareUnit" />
+					<show id="gs1:weight"  />
 					
 					
-					<show id="pack:palletProductsPerBox" for-mode="edit" />
-					<show id="pack:palletLayers" for-mode="edit" />
-					<show id="pack:palletBoxesPerLayer" for-mode="edit" />
-					<show id="pack:palletBoxesPerLastLayer" for-mode="edit" />
-					<show id="pack:palletBoxesPerPallet" for-mode="edit" />
-					<show id="pack:palletHeight" for-mode="edit" />
-					<show id="gs1:tertiaryWidth" for-mode="edit" />
-					<show id="gs1:tertiaryDepth" for-mode="edit" />
+					<show id="gs1:secondaryPackagingTypeCode"  />
+					<show id="gs1:secondaryHeight"  />
+					<show id="gs1:secondaryWidth"  />
+					<show id="gs1:secondaryDepth"  />
+					<show id="gs1:secondaryNetWeight"  />
+					<show id="gs1:secondaryWeight"  />
 					
-					<show id="pack:palletNumberOnGround" for-mode="edit" />
-					<show id="pack:palletStackingMaxWeight" for-mode="edit" />
 					
-					<show id="gs1:tertiaryNetWeight" for-mode="edit" />
-					<show id="gs1:tertiaryWeight" for-mode="edit" />
-					<show id="gs1:palletTypeCode" for-mode="edit" />
-					<show id="gs1:platformTermsAndConditionsCode" for-mode="edit" />
+					<show id="pack:palletProductsPerBox"  />
+					<show id="pack:palletLayers"  />
+					<show id="pack:palletBoxesPerLayer" />
+					<show id="pack:palletBoxesPerLastLayer"  />
+					<show id="pack:palletBoxesPerPallet"  />
+					<show id="pack:palletHeight"  />
+					<show id="gs1:tertiaryWidth"  />
+					<show id="gs1:tertiaryDepth"  />
 					
-					<show id="gs1:isTradeItemMarkedAsRecyclable" for-mode="edit" />
-					<show id="gs1:packUnitNumber" for-mode="edit" />
-					<show id="gs1:sortingInstructions" for-mode="edit" />
-					<show id="gs1:sortingBonusCriteria" for-mode="edit" />
+					<show id="pack:palletNumberOnGround"  />
+					<show id="pack:palletStackingMaxWeight"  />
+					
+					<show id="gs1:tertiaryNetWeight"  />
+					<show id="gs1:tertiaryWeight"  />
+					<show id="gs1:palletTypeCode"  />
+					<show id="gs1:platformTermsAndConditionsCode" />
+					
+					<show id="gs1:isTradeItemMarkedAsRecyclable"  />
+					<show id="gs1:packUnitNumber"  />
+					<show id="gs1:sortingInstructions"  />
+					<show id="gs1:sortingBonusCriteria" />
 
 					
 					<!-- <show id="gs1:isTradeItemABaseUnit" for-mode="edit" />
@@ -257,23 +318,22 @@
 					<show id="gs1:isTradeItemAnOrderableUnit" for-mode="edit" /> 
 					<show id="gs1:isTradeItemAReturnableItem" for-mode="edit" />
 					-->
-					<show id="gs1:isTradeItemAVariableUnit" for-mode="edit" />
-					<show id="gs1:isTradeItemAFullDisplayStand" for-mode="edit" />
+					<show id="gs1:isTradeItemAVariableUnit"  />
+					<show id="gs1:isTradeItemAFullDisplayStand"  />
 				<!-- 	<show id="gs1:isTradeItemAService" for-mode="edit" /> 
 					<show id="gs1:isTradeItemAModel" for-mode="edit" /> -->
-					<show id="gs1:isTradeItemABulkItem" for-mode="edit" />
-					<show id="gs1:isTradeItemADivisibleItem" for-mode="edit" />
-					<show id="gs1:isTradeItemAPromotionalItem" for-mode="edit" />
-					<show id="gs1:isTradeItemACutToOrderItem" for-mode="edit" />
-					<show id="gs1:isPackagingMarkedReturnable" for-mode="edit" />
+					<show id="gs1:isTradeItemABulkItem"  />
+					<show id="gs1:isTradeItemADivisibleItem"  />
+					<show id="gs1:isTradeItemAPromotionalItem"  />
+					<show id="gs1:isTradeItemACutToOrderItem"  />
+					<show id="gs1:isPackagingMarkedReturnable" />
 					
 					
-					<show id="gs1:effectiveDate" for-mode="edit" />
-					<show id="gs1:startAvailabilityDateTime" for-mode="edit" />
-					<show id="gs1:lastChangeDateTime" for-mode="edit" />
-					<show id="gs1:publicationDate" for-mode="edit" />
+					<show id="gs1:effectiveDate"  />
+					<show id="gs1:startAvailabilityDateTime"  />
+					<show id="gs1:lastChangeDateTime"  />
+					<show id="gs1:publicationDate"  />
 				
-
 
 				</field-visibility>
 				<appearance>
@@ -611,7 +671,6 @@
 					</field>
 					
 					<field id="gs1:packagingTypeCode" help-id="becpg.forms.help.gs1.packagingTypeCode"  set="primaryPackaging" />
-					<field id="gs1:secondaryPackagingTypeCode" help-id="becpg.forms.help.gs1.packagingTypeCode"  set="primaryPackaging" />
 					
 					<field id="gs1:height" help-id="becpg.forms.help.gs1.height" set="primaryPackaging" >
 						<control
@@ -733,10 +792,6 @@
 			            </control>
 					</field>
 					<field id="gs1:sortingBonusCriteria" set="packSorting" />
-					
- 				
- 					<field id="gs1:isTradeItemABaseUnit" help-id="becpg.forms.help.gs1.isTradeItemABaseUnit" set="indicateursPanel" />
- 					<field id="gs1:isTradeItemAConsumerUnit" help-id="becpg.forms.help.gs1.isTradeItemAConsumerUnit" set="indicateursPanel" />
 					
 				
 					<field id="gs1:isTradeItemABaseUnit" help-id="becpg.forms.help.gs1.isTradeItemABaseUnit" set="indicateursPanel" />
@@ -941,6 +996,7 @@
 	<!-- bcpg:finishedProduct type (creating nodes nodes) -->
 	<config evaluator="model-type" condition="bcpg:finishedProduct">
 		<forms>
+			
 			<form id="search">
 				<field-visibility>
 					<show id="cm:name" force="true"/>
@@ -1259,22 +1315,27 @@
 					<!-- tags and categories -->
 					<show id="cm:taggable" />
 					<show id="cm:categories" />
-
+					
+					
 				</field-visibility>
 				<appearance>
 					<set id="mainInfo" appearance="bordered-panel"
-						label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+						label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl"
+						/>
 					<set id="formulation" appearance="bordered-panel"
-						label-id="becpg.forms.set.formulation.label" template="/org/alfresco/components/form/3-column-set.ftl" />
+						label-id="becpg.forms.set.formulation.label" template="/org/alfresco/components/form/3-column-set.ftl"
+						/>
 					<set id="consumer" appearance="bordered-panel" label-id="becpg.forms.set.consumer.label"
-						template="/org/alfresco/components/form/2-column-set.ftl" />
+						template="/org/alfresco/components/form/2-column-set.ftl"  />
 					<set id="profitability" appearance="bordered-panel"
-						label-id="becpg.forms.set.rentability.label" template="/org/alfresco/components/form/3-column-set.ftl" />
+						label-id="becpg.forms.set.rentability.label" template="/org/alfresco/components/form/3-column-set.ftl"
+						/>
 					<set id="categories" appearance="bordered-panel"
-						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl"
+						 />
 					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
-						template="/org/alfresco/components/form/2-column-set.ftl" />
-
+						template="/org/alfresco/components/form/2-column-set.ftl"  />
+					
 					<!-- Main info -->
 					<field id="cm:name" set="mainInfo" />
 					<field id="cm:title" set="mainInfo" label-id="becpg.forms.field.tradeName">
@@ -1442,7 +1503,7 @@
 							template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					
-					
+
 
 					<!-- profitability -->
 					<field id="bcpg:unitPrice" help-id="becpg.forms.help.unitPrice" set="profitability" />
@@ -8694,7 +8755,35 @@
 					<field id="bcpg:nutListFormulaErrorLog" label="hidden"/>
 				</appearance>
 			</form>
-			
+			<form id="datagridWUsed">
+				<field-visibility>
+					<show id="bcpg:variantIds" force="true" />
+					<show id="bcpg:depthLevel" />
+					<show id="bcpg:nutListNut" />
+					<show id="bcpg:nutListValue" />
+					<show id="bcpg:nutListFormulatedValue" />
+					<show id="bcpg:nutListUnit" />
+					<show id="bcpg:nutListMini" />
+					<show id="bcpg:nutListMaxi" />
+					<show id="bcpg:nutListValuePerServing" force="true" />
+					<show id="bcpg:nutListGDAPerc" force="true" />
+					<show id="bcpg:nutListLossPerc" />
+					<show id="bcpg:nutListMethod" />
+					<show id="fm:commentCount" force="true" />
+					<show id="bcpg:nutListIsFormulated" />
+					<show id="bcpg:nutListFormulaErrorLog" />					
+					<show id="entity_bcpg:nutListNut_bcpg:nut" force="true"/>
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:variantIds" label="hidden"></field>
+					<field id="bcpg:depthLevel" label="hidden"></field>
+					<field id="bcpg:nutListFormulatedValue" label="hidden" read-only="true" />
+					<field id="bcpg:nutListUnit" read-only="true" label="hidden"></field>
+					<field id="fm:commentCount" label="hidden" read-only="true" />
+					<field id="bcpg:nutListIsFormulated" label="hidden"/>
+					<field id="bcpg:nutListFormulaErrorLog" label="hidden"/>
+				</appearance>
+			</form>
 
 			<form id="filter">
 				<field-visibility>

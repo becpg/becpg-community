@@ -78,15 +78,14 @@ public class EuropeanNutrientRegulation extends AbstractNutrientRegulation {
 	protected String displayValueByCode(Double value, Double roundedValue, String nutrientTypeCode, Locale locale) {
 		
 		if(value != null && roundedValue != null && nutrientTypeCode != null){
-			if (nutrientTypeCode.equals(NutrientCode.Fat) && value<=0.5) {
-				return "< " + formatDouble(0.5, locale);
-			} else if (nutrientTypeCode.equals(NutrientCode.FatSaturated) && value<=0.1) {
+			if (nutrientTypeCode.equals(NutrientCode.FatSaturated) && value<=0.1) {
 				return "< " + formatDouble(0.1, locale);
-			} else if ((nutrientTypeCode.equals(NutrientCode.CarbohydrateByDiff) 
+			} else if ((nutrientTypeCode.equals(NutrientCode.Fat)
+					|| nutrientTypeCode.equals(NutrientCode.CarbohydrateByDiff) 
 						|| nutrientTypeCode.equals(NutrientCode.Sugar)
 						|| nutrientTypeCode.equals(NutrientCode.FiberDietary)
 						|| nutrientTypeCode.equals(NutrientCode.Protein)
-						) && value<0.5) {
+						) && value<=0.5) {
 				return "< " + formatDouble(0.5, locale);
 			} else if (nutrientTypeCode.equals(NutrientCode.Sodium) && value<0.005) {
 				return "< " + formatDouble(0.005, locale);
