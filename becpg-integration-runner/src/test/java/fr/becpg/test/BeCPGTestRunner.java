@@ -36,6 +36,8 @@ import org.alfresco.rad.SpringContextHolder;
 import org.alfresco.rad.test.Remote;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -86,6 +88,8 @@ public class BeCPGTestRunner extends SpringJUnit4ClassRunner {
 	public static final String SUCCESS = "SUCCESS";
 	public static final String FAILURE = "FAILURE";
 
+	private static Log logger = LogFactory.getLog(BeCPGTestRunner.class);
+	
 	public BeCPGTestRunner(Class<?> klass) throws InitializationError {
 		super(klass);
 	}
@@ -152,13 +156,15 @@ public class BeCPGTestRunner extends SpringJUnit4ClassRunner {
 		// execution: " + testWebScriptUrl);
 		HttpGet get = new HttpGet(getContextRoot(method) + testWebScriptUrl);
 
+		String body = "";
+		
 		try {
 			// Send proxied request and read response
 			HttpResponse resp = httpclient.execute(get);
 			InputStream is = resp.getEntity().getContent();
 			InputStreamReader ir = new InputStreamReader(is);
 			BufferedReader br = new BufferedReader(ir);
-			String body = "";
+			
 			String line;
 			while ((line = br.readLine()) != null) {
 				body += line + "\n";
@@ -219,6 +225,7 @@ public class BeCPGTestRunner extends SpringJUnit4ClassRunner {
 		} catch (ParserConfigurationException e) {
 			notifier.fireTestFailure(new Failure(desc, e));
 		} catch (SAXException e) {
+			logger.error("Cannot parse body :"+ body);
 			notifier.fireTestFailure(new Failure(desc, e));
 		} finally {
 			try {
