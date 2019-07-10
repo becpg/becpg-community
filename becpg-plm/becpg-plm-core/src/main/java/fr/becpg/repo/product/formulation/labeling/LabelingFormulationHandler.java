@@ -442,6 +442,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 								component.setVolume(component.getVolume() * (meatContentData.getMeatContent() / 100d));
 								toAdd.add(meatReplacement);
 							}
+							
+							meatReplacement.getAllergens().addAll(component.getAllergens());
+							meatReplacement.getGeoOrigins().addAll(component.getGeoOrigins());
 
 						} else if (component instanceof CompositeLabeling) {
 							applyMeatContentRules(formulatedProduct, (CompositeLabeling) component, labelingFormulaContext);
