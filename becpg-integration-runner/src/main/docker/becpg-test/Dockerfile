@@ -21,8 +21,6 @@ RUN mkdir -p /usr/java && tar -xvf $TOMCAT_DIR/trava-jdk-11-dcevm.tar.gz -C /usr
     ln -sfn /usr/java/dcevm-11.0.1+8 /usr/java/latest && \
     ln -sfn /usr/java/dcevm-11.0.1+8 /usr/java/default
 
-
-ENV JAVA_HOME /usr/java/dcevm-11.0.1+8
 ENV PATH $JAVA_HOME/bin:$PATH
 
       
