@@ -8,6 +8,7 @@ services:
     image: ${docker.becpg.url}/becpg-test:${project.version}
     environment:
       CATALINA_OPTS: -Xmx1G -Duser.language=fr -Duser.country=FR -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:8888
+      JAVA_HOME: /usr/java/dcevm-11.0.1+8
     ports:
       - "8080:8080"
       - "8888:8888"  
