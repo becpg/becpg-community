@@ -76,47 +76,54 @@ public class FormulationLabelClaimIT extends AbstractFinishedProductTest {
 	@Test
 	public void testSpecificationsLabelingMerge() {
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		NodeRef testProduct = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			Map<QName, Serializable> properties = new HashMap<>();
 			// properties.put(BeCPGModel.PROP_CHARACT_NAME, "labelClaim1");
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "labelClaim1");
-			NodeRef testProduct = createTestProduct(null);
+			properties.put(ContentModel.PROP_NAME, "labelClaim1");
+			NodeRef tmp = createTestProduct(null);
 			NodeRef labelClaimNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_LABEL_CLAIM, properties).getChildRef();
 
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "labelClaim2");
+			properties.put(ContentModel.PROP_NAME, "labelClaim2");
 			NodeRef labelClaimNodeRef2 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_LABEL_CLAIM, properties).getChildRef();
 
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "labelClaim3");
+			properties.put(ContentModel.PROP_NAME, "labelClaim3");
 			NodeRef labelClaimNodeRef3 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_LABEL_CLAIM, properties).getChildRef();
 
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "labelClaim4");
+			properties.put(ContentModel.PROP_NAME, "labelClaim4");
 			NodeRef labelClaimNodeRef4 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_LABEL_CLAIM, properties).getChildRef();
 
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "labelClaim5");
+			properties.put(ContentModel.PROP_NAME, "labelClaim5");
 			NodeRef labelClaimNodeRef5 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_LABEL_CLAIM, properties).getChildRef();
 
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "labelClaim6");
+			properties.put(ContentModel.PROP_NAME, "labelClaim6");
 			NodeRef labelClaimNodeRef6 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_LABEL_CLAIM, properties).getChildRef();
 
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "labelClaim7");
+			properties.put(ContentModel.PROP_NAME, "labelClaim7");
 			NodeRef labelClaimNodeRef7 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_LABEL_CLAIM, properties).getChildRef();
@@ -164,7 +171,7 @@ public class FormulationLabelClaimIT extends AbstractFinishedProductTest {
 			globalSpec.getProductSpecifications().add(productSpec1);
 			globalSpec.getProductSpecifications().add(productSpec2);
 
-			ProductData product = alfrescoRepository.findOne(testProduct);
+			ProductData product = alfrescoRepository.findOne(tmp);
 			product.setProductSpecifications(new ArrayList<ProductSpecificationData>());
 			product.getProductSpecifications().add(globalSpec);
 			product.setLabelClaimList(new ArrayList<LabelClaimListDataItem>());
@@ -207,12 +214,24 @@ public class FormulationLabelClaimIT extends AbstractFinishedProductTest {
 			nodeService.createAssociation(globalProductSpecificationNodeRef, productSpecificationNodeRef1, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
 
 			// create association
-			nodeService.createAssociation(testProduct, globalProductSpecificationNodeRef, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
+			nodeService.createAssociation(tmp, globalProductSpecificationNodeRef, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
 
 			/*-- Formulation --*/
 			logger.info("/*-- Formulation --*/");
-			productService.formulate(testProduct);
+			productService.formulate(tmp);
 
+
+			return tmp;
+		}, false, true);
+			
+		
+		checkRequirement(testProduct);
+
+	}
+
+	protected void checkRequirement(NodeRef testProduct) {
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			/* -- Check formulation -- */
 			ProductData formulatedProduct = alfrescoRepository.findOne(testProduct);
 
@@ -226,7 +245,7 @@ public class FormulationLabelClaimIT extends AbstractFinishedProductTest {
 					assertEquals(RequirementDataType.Specification, rclDataItem.getReqDataType());
 					assertEquals(RequirementType.Forbidden, rclDataItem.getReqType());
 					checks++;
-				} else if ("L'allégation 'labelClaim3' doit être revendiquée".equals(rclDataItem.getReqMessage())) {
+				} else if ("Allégation 'labelClaim3' non renseignée".equals(rclDataItem.getReqMessage())) {
 					assertEquals(RequirementDataType.Specification, rclDataItem.getReqDataType());
 					assertEquals(RequirementType.Forbidden, rclDataItem.getReqType());
 					checks++;
@@ -254,5 +273,6 @@ public class FormulationLabelClaimIT extends AbstractFinishedProductTest {
 
 			return null;
 		}, false, true);
+		
 	}
 }
