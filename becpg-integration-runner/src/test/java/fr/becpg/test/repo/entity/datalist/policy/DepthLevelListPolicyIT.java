@@ -582,6 +582,8 @@ public class DepthLevelListPolicyIT extends PLMBaseTestCase {
 			return copyService.copy(finishedProductNodeRef, getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
 
 		}, false, true);
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 		final ProductData finishedProductLoaded = alfrescoRepository.findOne(finishedProductNodeRef);
 		final ProductData copiedProductLoaded = alfrescoRepository.findOne(copiedNodeRef);
@@ -594,6 +596,8 @@ public class DepthLevelListPolicyIT extends PLMBaseTestCase {
 		assertNotNull(copiedProductLoaded.getCompoListView().getCompoList().get(1).getParent());
 		assertNotSame(finishedProductLoaded.getCompoListView().getCompoList().get(1).getParent().getNodeRef(),
 				copiedProductLoaded.getCompoListView().getCompoList().get(1).getParent().getNodeRef());
+		return null;
+		}, false, true);
 	}
 
 	public void printSort(List<CompoListDataItem> compoListDataItem) {
