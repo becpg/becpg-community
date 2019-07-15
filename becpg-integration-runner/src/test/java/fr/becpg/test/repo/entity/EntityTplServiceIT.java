@@ -108,6 +108,7 @@ public class EntityTplServiceIT extends PLMBaseTestCase {
 		NodeRef newFolderNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			FileInfo newFolder = fileFolderService.create(rmTplNodeRef, name, ContentModel.TYPE_FOLDER);
+			
 
 			for (FileInfo folder : fileFolderService.listFolders(rmTplNodeRef)) {
 				logger.debug("Template Folder: " + folder.getName() + ", template NR: " + rmTplNodeRef);
@@ -116,8 +117,13 @@ public class EntityTplServiceIT extends PLMBaseTestCase {
 			return newFolder.getNodeRef();
 		}, false, true);
 
+		
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			entityTplService.synchronizeEntities(rmTplNodeRef);
+			return null;
+			}, false, true);
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			FileInfo newFolder = fileFolderService.getFileInfo(newFolderNodeRef);
 			assertNotNull(newFolder);
@@ -136,10 +142,15 @@ public class EntityTplServiceIT extends PLMBaseTestCase {
 			return null;
 		}, false, true);
 
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			entityTplService.synchronizeEntities(rmTplNodeRef);
+			return null;
+			}, false, true);
+	
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			logger.debug("Node deleted, synchronizing again");
 
-			entityTplService.synchronizeEntities(rmTplNodeRef);
 			List<FileInfo> rm1Folders = fileFolderService.listFolders(rm1NodeRef);
 			logger.debug("Check if folder was removed");
 			assertNull(rm1Folders.stream().filter(f -> name.equals(f.getName())).findAny().orElse(null));
@@ -147,6 +158,11 @@ public class EntityTplServiceIT extends PLMBaseTestCase {
 			return null;
 		}, false, true);
 
+		
+		
 	}
+	
+		
+
 
 }
