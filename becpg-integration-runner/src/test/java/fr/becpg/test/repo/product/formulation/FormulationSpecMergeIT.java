@@ -38,15 +38,12 @@ import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.formulation.AllergensCalculatingFormulationHandler;
-import fr.becpg.repo.product.formulation.LabelClaimFormulationHandler;
 import fr.becpg.repo.product.formulation.NutsCalculatingFormulationHandler;
 import fr.becpg.repo.product.formulation.ScoreCalculatingFormulationHandler;
-import fr.becpg.repo.product.requirement.ClaimRequirementScanner;
 import fr.becpg.repo.product.requirement.NutsRequirementScanner;
 import fr.becpg.repo.product.requirement.PhysicoRequirementScanner;
-import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
-public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
+public class FormulationSpecMergeIT extends FormulationLabelClaimIT {
 
 	protected static final Log logger = LogFactory.getLog(FormulationSpecMergeIT.class);
 
@@ -79,7 +76,7 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 	@Test
 	public void testSpecificationsLabelClaimMerge() {
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		NodeRef testProduct = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			logger.info("/*************************************/");
 			logger.info("/*--     Test LabelClaim Merge     --*/");
@@ -87,12 +84,12 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 
 			Map<QName, Serializable> properties = new HashMap<>();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "labelClaim1");
-			NodeRef testProduct = createTestProduct("Finished product 1");
+			NodeRef tmp = createTestProduct("Finished product 1");
 
 			List<CompoListDataItem> compoList = new ArrayList<>();
 			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF11NodeRef));
 			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial12NodeRef));
-			ProductData finishedProduct = alfrescoRepository.findOne(testProduct);
+			ProductData finishedProduct = alfrescoRepository.findOne(tmp);
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			alfrescoRepository.save(finishedProduct);
 
@@ -102,36 +99,42 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "labelClaim2");
+			properties.put(ContentModel.PROP_NAME, "labelClaim2");
 			NodeRef labelClaimNodeRef2 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_LABEL_CLAIM, properties).getChildRef();
 
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "labelClaim3");
+			properties.put(ContentModel.PROP_NAME, "labelClaim3");
 			NodeRef labelClaimNodeRef3 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_LABEL_CLAIM, properties).getChildRef();
 
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "labelClaim4");
+			properties.put(ContentModel.PROP_NAME, "labelClaim4");
 			NodeRef labelClaimNodeRef4 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_LABEL_CLAIM, properties).getChildRef();
 
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "labelClaim5");
+			properties.put(ContentModel.PROP_NAME, "labelClaim5");
 			NodeRef labelClaimNodeRef5 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_LABEL_CLAIM, properties).getChildRef();
 
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "labelClaim6");
+			properties.put(ContentModel.PROP_NAME, "labelClaim6");
 			NodeRef labelClaimNodeRef6 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_LABEL_CLAIM, properties).getChildRef();
 
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "labelClaim7");
+			properties.put(ContentModel.PROP_NAME, "labelClaim7");
 			NodeRef labelClaimNodeRef7 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_LABEL_CLAIM, properties).getChildRef();
@@ -179,7 +182,7 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			globalSpec.getProductSpecifications().add(productSpec1);
 			globalSpec.getProductSpecifications().add(productSpec2);
 
-			ProductData product = alfrescoRepository.findOne(testProduct);
+			ProductData product = alfrescoRepository.findOne(tmp);
 			product.setProductSpecifications(new ArrayList<ProductSpecificationData>());
 			product.getProductSpecifications().add(globalSpec);
 			product.setLabelClaimList(new ArrayList<LabelClaimListDataItem>());
@@ -222,55 +225,16 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			nodeService.createAssociation(globalProductSpecificationNodeRef, productSpecificationNodeRef1, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
 
 			// create association
-			nodeService.createAssociation(testProduct, globalProductSpecificationNodeRef, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
+			nodeService.createAssociation(tmp, globalProductSpecificationNodeRef, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
 
 			/*-- Formulation --*/
 			logger.info("/*-- Formulation --*/");
-			productService.formulate(testProduct);
+			productService.formulate(tmp);
 
-			/* -- Check formulation -- */
-			ProductData formulatedProduct = alfrescoRepository.findOne(testProduct);
-
-			logger.info("/*-- Formulation raised " + formulatedProduct.getReqCtrlList().size() + " rclDataItem --*/");
-			int checks = 0;
-			for (ReqCtrlListDataItem rclDataItem : formulatedProduct.getReqCtrlList()) {
-				logger.info(rclDataItem.getReqMessage());
-				if (I18NUtil.getMessage(ClaimRequirementScanner.MESSAGE_NOT_CLAIM, "labelClaim1").equals(rclDataItem.getReqMessage())) {
-					fail();
-				} else if (I18NUtil.getMessage(ClaimRequirementScanner.MESSAGE_NOT_CLAIM, "labelClaim2").equals(rclDataItem.getReqMessage())) {
-					assertEquals(RequirementDataType.Specification, rclDataItem.getReqDataType());
-					assertEquals(RequirementType.Forbidden, rclDataItem.getReqType());
-					checks++;
-				} else if (I18NUtil.getMessage(ClaimRequirementScanner.MESSAGE_NOT_CLAIM, "labelClaim3").equals(rclDataItem.getReqMessage())) {
-					assertEquals(RequirementDataType.Specification, rclDataItem.getReqDataType());
-					assertEquals(RequirementType.Forbidden, rclDataItem.getReqType());
-					checks++;
-				} else if (I18NUtil.getMessage(ClaimRequirementScanner.MESSAGE_NOT_CLAIM, "labelClaim4").equals(rclDataItem.getReqMessage())) {
-					fail();
-				} else if (I18NUtil.getMessage(ClaimRequirementScanner.MESSAGE_NOT_CLAIM, "labelClaim5").equals(rclDataItem.getReqMessage())) {
-					fail();
-				} else if (I18NUtil.getMessage(ClaimRequirementScanner.MESSAGE_NOT_CLAIM, "labelClaim6").equals(rclDataItem.getReqMessage())) {
-					assertEquals(RequirementDataType.Specification, rclDataItem.getReqDataType());
-					assertEquals(RequirementType.Forbidden, rclDataItem.getReqType());
-					checks++;
-				} else if (I18NUtil.getMessage(LabelClaimFormulationHandler.MESSAGE_MISSING_CLAIM, "labelClaim6")
-						.equals(rclDataItem.getReqMessage())) {
-					assertEquals(RequirementDataType.Labelclaim, rclDataItem.getReqDataType());
-					assertEquals(RequirementType.Info, rclDataItem.getReqType());
-					checks++;
-				} else if (I18NUtil.getMessage(LabelClaimFormulationHandler.MESSAGE_MISSING_CLAIM, "labelClaim7")
-						.equals(rclDataItem.getReqMessage())) {
-					assertEquals(RequirementDataType.Labelclaim, rclDataItem.getReqDataType());
-					assertEquals(RequirementType.Info, rclDataItem.getReqType());
-					checks++;
-				}
-
-			}
-			logger.info("Checks: " + checks + " (should be 5)");
-			assertEquals(5, checks);
-
-			return null;
+			return tmp;
 		}, false, true);
+
+		checkRequirement(testProduct);
 	}
 
 	@Test
