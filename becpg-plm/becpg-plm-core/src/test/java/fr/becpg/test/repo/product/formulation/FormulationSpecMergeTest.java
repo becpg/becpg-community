@@ -38,16 +38,12 @@ import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.formulation.AllergensCalculatingFormulationHandler;
-import fr.becpg.repo.product.formulation.LabelClaimFormulationHandler;
 import fr.becpg.repo.product.formulation.NutsCalculatingFormulationHandler;
-import fr.becpg.repo.product.formulation.PhysicoChemCalculatingFormulationHandler;
 import fr.becpg.repo.product.formulation.ScoreCalculatingFormulationHandler;
-import fr.becpg.repo.product.requirement.ClaimRequirementScanner;
 import fr.becpg.repo.product.requirement.NutsRequirementScanner;
 import fr.becpg.repo.product.requirement.PhysicoRequirementScanner;
-import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
-public class FormulationSpecMergeTest extends AbstractFinishedProductTest {
+public class FormulationSpecMergeTest extends FormulationLabelClaimTest {
 
 	protected static final Log logger = LogFactory.getLog(FormulationSpecMergeTest.class);
 
@@ -80,7 +76,7 @@ public class FormulationSpecMergeTest extends AbstractFinishedProductTest {
 	@Test
 	public void testSpecificationsLabelClaimMerge() {
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		NodeRef testProduct = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			logger.info("/*************************************/");
 			logger.info("/*--     Test LabelClaim Merge     --*/");
@@ -88,13 +84,12 @@ public class FormulationSpecMergeTest extends AbstractFinishedProductTest {
 
 			Map<QName, Serializable> properties = new HashMap<>();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "labelClaim1");
-			NodeRef testProduct = createTestProduct("Finished product 1");
+			NodeRef tmp = createTestProduct("Finished product 1");
 
 			List<CompoListDataItem> compoList = new ArrayList<>();
 			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF11NodeRef));
-			compoList
-					.add(new CompoListDataItem(null, compoList.get(0), null, 2d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial12NodeRef));
-			ProductData finishedProduct = alfrescoRepository.findOne(testProduct);
+			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial12NodeRef));
+			ProductData finishedProduct = alfrescoRepository.findOne(tmp);
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			alfrescoRepository.save(finishedProduct);
 
@@ -104,36 +99,42 @@ public class FormulationSpecMergeTest extends AbstractFinishedProductTest {
 
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "labelClaim2");
+			properties.put(ContentModel.PROP_NAME, "labelClaim2");
 			NodeRef labelClaimNodeRef2 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_LABEL_CLAIM, properties).getChildRef();
 
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "labelClaim3");
+			properties.put(ContentModel.PROP_NAME, "labelClaim3");
 			NodeRef labelClaimNodeRef3 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_LABEL_CLAIM, properties).getChildRef();
 
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "labelClaim4");
+			properties.put(ContentModel.PROP_NAME, "labelClaim4");
 			NodeRef labelClaimNodeRef4 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_LABEL_CLAIM, properties).getChildRef();
 
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "labelClaim5");
+			properties.put(ContentModel.PROP_NAME, "labelClaim5");
 			NodeRef labelClaimNodeRef5 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_LABEL_CLAIM, properties).getChildRef();
 
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "labelClaim6");
+			properties.put(ContentModel.PROP_NAME, "labelClaim6");
 			NodeRef labelClaimNodeRef6 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_LABEL_CLAIM, properties).getChildRef();
 
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "labelClaim7");
+			properties.put(ContentModel.PROP_NAME, "labelClaim7");
 			NodeRef labelClaimNodeRef7 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_LABEL_CLAIM, properties).getChildRef();
@@ -181,7 +182,7 @@ public class FormulationSpecMergeTest extends AbstractFinishedProductTest {
 			globalSpec.getProductSpecifications().add(productSpec1);
 			globalSpec.getProductSpecifications().add(productSpec2);
 
-			ProductData product = alfrescoRepository.findOne(testProduct);
+			ProductData product = alfrescoRepository.findOne(tmp);
 			product.setProductSpecifications(new ArrayList<ProductSpecificationData>());
 			product.getProductSpecifications().add(globalSpec);
 			product.setLabelClaimList(new ArrayList<LabelClaimListDataItem>());
@@ -224,55 +225,16 @@ public class FormulationSpecMergeTest extends AbstractFinishedProductTest {
 			nodeService.createAssociation(globalProductSpecificationNodeRef, productSpecificationNodeRef1, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
 
 			// create association
-			nodeService.createAssociation(testProduct, globalProductSpecificationNodeRef, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
+			nodeService.createAssociation(tmp, globalProductSpecificationNodeRef, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
 
 			/*-- Formulation --*/
 			logger.info("/*-- Formulation --*/");
-			productService.formulate(testProduct);
+			productService.formulate(tmp);
 
-			/* -- Check formulation -- */
-			ProductData formulatedProduct = alfrescoRepository.findOne(testProduct);
-
-			logger.info("/*-- Formulation raised " + formulatedProduct.getReqCtrlList().size() + " rclDataItem --*/");
-			int checks = 0;
-			for (ReqCtrlListDataItem rclDataItem : formulatedProduct.getReqCtrlList()) {
-				logger.info(rclDataItem.getReqMessage());
-				if (I18NUtil.getMessage(ClaimRequirementScanner.MESSAGE_NOT_CLAIM, "labelClaim1").equals(rclDataItem.getReqMessage())) {
-					fail();
-				} else if (I18NUtil.getMessage(ClaimRequirementScanner.MESSAGE_NOT_CLAIM, "labelClaim2").equals(rclDataItem.getReqMessage())) {
-					assertEquals(RequirementDataType.Specification, rclDataItem.getReqDataType());
-					assertEquals(RequirementType.Forbidden, rclDataItem.getReqType());
-					checks++;
-				} else if (I18NUtil.getMessage(ClaimRequirementScanner.MESSAGE_NOT_CLAIM, "labelClaim3").equals(rclDataItem.getReqMessage())) {
-					assertEquals(RequirementDataType.Specification, rclDataItem.getReqDataType());
-					assertEquals(RequirementType.Forbidden, rclDataItem.getReqType());
-					checks++;
-				} else if (I18NUtil.getMessage(ClaimRequirementScanner.MESSAGE_NOT_CLAIM, "labelClaim4").equals(rclDataItem.getReqMessage())) {
-					fail();
-				} else if (I18NUtil.getMessage(ClaimRequirementScanner.MESSAGE_NOT_CLAIM, "labelClaim5").equals(rclDataItem.getReqMessage())) {
-					fail();
-				} else if (I18NUtil.getMessage(ClaimRequirementScanner.MESSAGE_NOT_CLAIM, "labelClaim6").equals(rclDataItem.getReqMessage())) {
-					assertEquals(RequirementDataType.Specification, rclDataItem.getReqDataType());
-					assertEquals(RequirementType.Forbidden, rclDataItem.getReqType());
-					checks++;
-				} else if (I18NUtil.getMessage(LabelClaimFormulationHandler.MESSAGE_MISSING_CLAIM, "labelClaim6")
-						.equals(rclDataItem.getReqMessage())) {
-					assertEquals(RequirementDataType.Labelclaim, rclDataItem.getReqDataType());
-					assertEquals(RequirementType.Info, rclDataItem.getReqType());
-					checks++;
-				} else if (I18NUtil.getMessage(LabelClaimFormulationHandler.MESSAGE_MISSING_CLAIM, "labelClaim7")
-						.equals(rclDataItem.getReqMessage())) {
-					assertEquals(RequirementDataType.Labelclaim, rclDataItem.getReqDataType());
-					assertEquals(RequirementType.Info, rclDataItem.getReqType());
-					checks++;
-				}
-
-			}
-			logger.info("Checks: " + checks + " (should be 5)");
-			assertEquals(5, checks);
-
-			return null;
+			return tmp;
 		}, false, true);
+
+		checkRequirement(testProduct);
 	}
 
 	@Test
@@ -339,12 +301,10 @@ public class FormulationSpecMergeTest extends AbstractFinishedProductTest {
 			 */
 			List<CompoListDataItem> compoList = new ArrayList<>();
 			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
-			compoList
-					.add(new CompoListDataItem(null, compoList.get(0), null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
 			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
 			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
-			compoList
-					.add(new CompoListDataItem(null, compoList.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+			compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
 			compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
@@ -378,8 +338,9 @@ public class FormulationSpecMergeTest extends AbstractFinishedProductTest {
 					nodeService.getProperty(nut2, BeCPGModel.PROP_CHARACT_NAME), "6", "7<= ", "");
 			String message2 = I18NUtil.getMessage(NutsRequirementScanner.MESSAGE_NUT_NOT_IN_RANGE,
 					nodeService.getProperty(nut3, BeCPGModel.PROP_CHARACT_NAME), "14", "", " <=10");
-//			String message3 = I18NUtil.getMessage(AbstractSimpleListFormulationHandler.MESSAGE_UNDEFINED_CHARACT,
-//					nodeService.getProperty(nut3, BeCPGModel.PROP_CHARACT_NAME));
+			// String message3 =
+			// I18NUtil.getMessage(AbstractSimpleListFormulationHandler.MESSAGE_UNDEFINED_CHARACT,
+			// nodeService.getProperty(nut3, BeCPGModel.PROP_CHARACT_NAME));
 			String message4 = I18NUtil.getMessage(NutsCalculatingFormulationHandler.MESSAGE_MAXIMAL_DAILY_VALUE,
 					nodeService.getProperty(nut3, BeCPGModel.PROP_CHARACT_NAME));
 			String message5 = I18NUtil.getMessage(NutsRequirementScanner.MESSAGE_NUT_NOT_IN_RANGE,
@@ -403,7 +364,7 @@ public class FormulationSpecMergeTest extends AbstractFinishedProductTest {
 					checks++;
 				} else if (message0.equals(r.getReqMessage())) {
 					fail();
-				}  else if (message4.equals(r.getReqMessage())) {
+				} else if (message4.equals(r.getReqMessage())) {
 					assertEquals(0, r.getSources().size());
 					checks++;
 				} else if (message5.equals(r.getReqMessage())) {
@@ -483,12 +444,10 @@ public class FormulationSpecMergeTest extends AbstractFinishedProductTest {
 
 			List<CompoListDataItem> compoList = new ArrayList<>();
 			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
-			compoList
-					.add(new CompoListDataItem(null, compoList.get(0), null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
 			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
 			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
-			compoList
-					.add(new CompoListDataItem(null, compoList.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+			compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
 			compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 
 			// avoids rclDataItems due to invalid status
@@ -683,8 +642,7 @@ public class FormulationSpecMergeTest extends AbstractFinishedProductTest {
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
 					assertEquals(0, reqCtrlList.getSources().size());
 					checks++;
-				} else if (I18NUtil
-						.getMessage(PhysicoRequirementScanner.MESSAGE_PHYSICO_NOT_IN_RANGE, "physicoChem6", 1.29, "3<= ", "")
+				} else if (I18NUtil.getMessage(PhysicoRequirementScanner.MESSAGE_PHYSICO_NOT_IN_RANGE, "physicoChem6", 1.29, "3<= ", "")
 						.equals(reqCtrlList.getReqMessage())) {
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
 					assertEquals(0, reqCtrlList.getSources().size());
@@ -726,28 +684,28 @@ public class FormulationSpecMergeTest extends AbstractFinishedProductTest {
 			RawMaterialData rawMaterial1 = new RawMaterialData();
 			rawMaterial1.setName("Raw material 1b");
 			rawMaterial1.setState(SystemState.Valid);
-			rawMaterial1.setIngList(new ArrayList<IngListDataItem>(Arrays.asList(gmoAndIonizedIng1)));
+			rawMaterial1.setIngList(new ArrayList<>(Arrays.asList(gmoAndIonizedIng1)));
 			NodeRef rawMaterial1bNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial1).getNodeRef();
 
 			RawMaterialData rawMaterial2 = new RawMaterialData();
 			rawMaterial2.setName("Raw material 2b");
 			rawMaterial2.setState(SystemState.Valid);
-			rawMaterial2.setIngList(new ArrayList<IngListDataItem>(Arrays.asList(ionizedIng2)));
+			rawMaterial2.setIngList(new ArrayList<>(Arrays.asList(ionizedIng2)));
 			NodeRef rawMaterial2bNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial2).getNodeRef();
 
 			RawMaterialData rawMaterial3 = new RawMaterialData();
 			rawMaterial3.setState(SystemState.Valid);
 			rawMaterial3.setName("Raw material 3b");
-			rawMaterial3.setIngList(new ArrayList<IngListDataItem>(Arrays.asList(gmoIng3)));
+			rawMaterial3.setIngList(new ArrayList<>(Arrays.asList(gmoIng3)));
 			NodeRef rawMaterial3bNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial3).getNodeRef();
 
 			RawMaterialData rawMaterial4 = new RawMaterialData();
 			rawMaterial4.setName("Raw material 4b");
 			rawMaterial4.setState(SystemState.Valid);
-			rawMaterial4.setIngList(new ArrayList<IngListDataItem>(Arrays.asList(cleanIng4)));
+			rawMaterial4.setIngList(new ArrayList<>(Arrays.asList(cleanIng4)));
 			NodeRef rawMaterial4bNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial4).getNodeRef();
 
-			List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
+			List<CompoListDataItem> compoList = new ArrayList<>();
 			compoList.add(new CompoListDataItem(null, null, null, 0.80d, ProductUnit.kg, 5d, DeclarationType.Declare, rawMaterial2bNodeRef));
 			compoList.add(new CompoListDataItem(null, null, null, 0.30d, ProductUnit.kg, 10d, DeclarationType.Detail, rawMaterial3bNodeRef));
 			compoList.add(new CompoListDataItem(null, null, null, 0.80d, ProductUnit.kg, 5d, DeclarationType.Declare, rawMaterial1bNodeRef));

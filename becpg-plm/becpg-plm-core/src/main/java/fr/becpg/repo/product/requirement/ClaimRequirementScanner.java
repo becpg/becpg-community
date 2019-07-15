@@ -18,11 +18,11 @@ import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.product.formulation.LabelClaimFormulationHandler;
 
 public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelClaimListDataItem> {
 
 	public static final String MESSAGE_NOT_CLAIM = "message.formulate.labelClaim.notClaimed";
-	public static final String MESSAGE_CLAIM_MISSING = "message.formulate.labelClaim.missing";
 
 	private static Log logger = LogFactory.getLog(ClaimRequirementScanner.class);
 
@@ -96,7 +96,7 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 	}
 
 	private void addMissingLabelClaim(ProductData formulatedProduct, LabelClaimListDataItem labelClaim) {
-		String message = I18NUtil.getMessage(MESSAGE_CLAIM_MISSING, extractName(labelClaim.getLabelClaim()));
+		String message = I18NUtil.getMessage(LabelClaimFormulationHandler.MESSAGE_MISSING_CLAIM, extractName(labelClaim.getLabelClaim()));
 		formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, labelClaim.getLabelClaim(),
 				new ArrayList<NodeRef>(), RequirementDataType.Specification));
 	}
