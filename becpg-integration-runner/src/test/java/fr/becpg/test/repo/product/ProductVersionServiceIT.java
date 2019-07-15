@@ -116,12 +116,7 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 			return r;
 		}, false, true);
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			assertTrue(nodeService.hasAspect(rawMaterialNodeRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT));
-
-			entityReportService.generateReports(rawMaterialNodeRef);
-			return null;
-		}, false, true);
+		entityReportService.generateReports(rawMaterialNodeRef);
 
 		if (!nodeService.hasAspect(rawMaterialNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
 			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -234,9 +229,10 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 
 			}
 
+			entityReportService.generateReports(rawMaterialNodeRef);
+
 			final NodeRef workingCopyNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-				entityReportService.generateReports(rawMaterialNodeRef);
 				return checkOutCheckInService.checkout(rawMaterialNodeRef);
 
 			}, false, true);
@@ -600,10 +596,7 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 			return r;
 		}, false, true);
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			entityReportService.generateReports(rawMaterialNodeRef);
-			return null;
-		}, false, true);
+		entityReportService.generateReports(rawMaterialNodeRef);
 
 		final NodeRef branchNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -691,10 +684,7 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 			return r;
 		}, false, true);
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			entityReportService.generateReports(rawMaterialNodeRef);
-			return null;
-		}, false, true);
+		entityReportService.generateReports(rawMaterialNodeRef);
 
 		if (!nodeService.hasAspect(rawMaterialNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
 			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -802,10 +792,7 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 			return r;
 		}, false, true);
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			entityReportService.generateReports(rawMaterialNodeRef);
-			return null;
-		}, false, true);
+		entityReportService.generateReports(rawMaterialNodeRef);
 
 		if (!nodeService.hasAspect(rawMaterialNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
 			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {

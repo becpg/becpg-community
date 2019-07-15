@@ -20,27 +20,75 @@ package fr.becpg.test.repo.product.lexer;
 import java.util.Date;
 import java.util.List;
 
+import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.lexer.CompositionLexer;
-import fr.becpg.test.repo.product.AbstractFinishedProductTest;
+import fr.becpg.test.PLMBaseTestCase;
 
-public class CompositionLexerIT extends AbstractFinishedProductTest {
+public class CompositionLexerIT extends PLMBaseTestCase {
 
 	protected static Log logger = LogFactory.getLog(CompositionLexerIT.class);
+
+	protected NodeRef rawMaterial1NodeRef;
+
+	protected NodeRef rawMaterial2NodeRef;
+
+	protected NodeRef rawMaterial3NodeRef;
+
+	protected NodeRef rawMaterial5NodeRef;
+
+	@Autowired
+	ProductService productService;
+
+	Date startTime;
 
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
-		Date startTime = new Date();
+		startTime = new Date();
 
 		// create RM and lSF
-		initParts();
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			RawMaterialData rawMaterial1 = new RawMaterialData();
+			rawMaterial1.setName("lexer material 1" + startTime.getTime());
+
+			alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial1);
+
+			rawMaterial1NodeRef = rawMaterial1.getNodeRef();
+
+			RawMaterialData rawMaterial2 = new RawMaterialData();
+			rawMaterial2.setName("lexer material 2" + startTime.getTime());
+
+			alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial2);
+
+			rawMaterial2NodeRef = rawMaterial2.getNodeRef();
+
+			RawMaterialData rawMaterial3 = new RawMaterialData();
+			rawMaterial3.setName("lexer material 3" + startTime.getTime());
+
+			alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial3);
+
+			rawMaterial3NodeRef = rawMaterial3.getNodeRef();
+
+			RawMaterialData rawMaterial5 = new RawMaterialData();
+			rawMaterial5.setName("lexer material 5" + startTime.getTime());
+
+			alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial3);
+
+			rawMaterial5NodeRef = rawMaterial5.getNodeRef();
+
+			return true;
+		}, false, true);
 		// Wait for Solr
 
 		waitForSolr(startTime);
@@ -49,14 +97,33 @@ public class CompositionLexerIT extends AbstractFinishedProductTest {
 
 	@Test
 	public void testCompositionLexer() throws Exception {
+		
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			String recipe = "5 P Raw material 1\n 12,9 gr Raw material 2\n 25.5005 g Raw material 3\n50 Raw material 5";
 
+			String recipe = "5 P Lexer material 1" + startTime.getTime() + "\n 12,9 gr Lexer material 2" + startTime.getTime()
+					+ "\n 25.5005 g Lexer material 3" + startTime.getTime() + "\n50 Lexer material 5" + startTime.getTime() + "";
+
+			ProductData productData = productService.formulateText(recipe);
+
+			org.junit.Assert.assertNotNull(productData);
+			return null;
+
+		}, false, true);
+		
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			String recipe = "5 P Lexer material 1" + startTime.getTime() + "\n 12,9 gr Lexer material 2" + startTime.getTime()
+					+ "\n 25.5005 g Lexer material 3" + startTime.getTime() + "\n50 Lexer material 5" + startTime.getTime() + "";
+
+			logger.debug("Lex: "+recipe);
+			
 			List<CompoListDataItem> ret = CompositionLexer.lexMultiLine(recipe);
 
 			int check = 0;
 			for (CompoListDataItem item : ret) {
 
+				logger.debug("Item: "+item.toString());
+				
 				if (item.getProduct().equals(rawMaterial1NodeRef) && item.getQtySubFormula().equals(5d)
 						&& item.getCompoListUnit().equals(ProductUnit.P)) {
 					check++;
@@ -80,19 +147,5 @@ public class CompositionLexerIT extends AbstractFinishedProductTest {
 		}, false, true);
 	}
 
-	@Test
-	public void testFormulateRecipe() throws Exception {
-
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-
-			String recipe = "5 P Raw material 1\n 12,9 gr Raw material 2\n 25.5005 g Raw material 3\n50 Raw material 5";
-
-			ProductData productData = productService.formulateText(recipe);
-
-			org.junit.Assert.assertNotNull(productData);
-			return null;
-
-		}, false, true);
-	}
 
 }

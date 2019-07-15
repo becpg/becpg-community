@@ -262,183 +262,190 @@ public class ImportServiceIT extends PLMBaseTestCase {
 
 		}, false, true);
 
-		/*
-		 * check imported values
-		 */
-		NodeRef tempNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TEMP);
-		assertNotNull("Temp folder should exist", tempNodeRef);
-		NodeRef importFolderNodeRef = nodeService.getChildByName(tempNodeRef, ContentModel.ASSOC_CONTAINS, PATH_PRODUCTS);
-		assertNotNull("import folder should exist", importFolderNodeRef);
-		assertEquals(5, fileFolderService.list(importFolderNodeRef).size());
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-		/*
-		 * check products in repo
-		 */
+			/*
+			 * check imported values
+			 */
+			NodeRef tempNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TEMP);
+			assertNotNull("Temp folder should exist", tempNodeRef);
+			NodeRef importFolderNodeRef = nodeService.getChildByName(tempNodeRef, ContentModel.ASSOC_CONTAINS, PATH_PRODUCTS);
+			assertNotNull("import folder should exist", importFolderNodeRef);
+			assertEquals(5, fileFolderService.list(importFolderNodeRef).size());
 
-		String productName = "Saumon surgelé 80x20x4";
-		NodeRef product1NodeRef = nodeService.getChildByName(importFolderNodeRef, ContentModel.ASSOC_CONTAINS, productName);
-		// productFolder => look for product
+			/*
+			 * check products in repo
+			 */
 
-		assertNotNull("product 1 should exist", product1NodeRef);
+			String productName = "Saumon surgelé 80x20x4";
+			NodeRef product1NodeRef = nodeService.getChildByName(importFolderNodeRef, ContentModel.ASSOC_CONTAINS, productName);
+			// productFolder => look for product
 
-		ProductData productData = alfrescoRepository.findOne(product1NodeRef);
+			assertNotNull("product 1 should exist", product1NodeRef);
 
-		logger.debug("Props: " + nodeService.getProperties(product1NodeRef));
+			ProductData productData = alfrescoRepository.findOne(product1NodeRef);
 
-		// check Props : Saumon surgelé 80x20x4 saumon sugelé Sea food Fish
-		// ToValidate Thu Mar 17 17:44:13 CET 2011 admin Mon Mar 21 22:44:26 CET
-		// 2011 admin 0.0 0.0 0.0 0.0 0.0 0.0
-		// /home/querephi/Documents/beCPG/projets/demo/jeu de
-		// données/Sushi/sushi saumon/produit.jpg
-		assertEquals("Saumon surgelé 80x20x4", productData.getName());
-		assertEquals(SystemState.ToValidate, productData.getState());
-		assertEquals("saumon sugelé", productData.getLegalName().getDefaultValue());
-		assertEquals("Sea food", HierarchyHelper.getHierachyName(productData.getHierarchy1(), nodeService));
-		assertEquals("Fish", HierarchyHelper.getHierachyName(productData.getHierarchy2(), nodeService));
+			logger.debug("Props: " + nodeService.getProperties(product1NodeRef));
 
-		/*-- check associations --*/
-		List<AssociationRef> supplierAssocRefs = nodeService.getTargetAssocs(product1NodeRef, PLMModel.ASSOC_SUPPLIERS);
-		assertEquals("check product has 2 suppliers defined", 2, supplierAssocRefs.size());
-		String supplier1Code = (String) nodeService.getProperty(supplierAssocRefs.get(0).getTargetRef(), BeCPGModel.PROP_ERP_CODE);
-		String supplier2Code = (String) nodeService.getProperty(supplierAssocRefs.get(1).getTargetRef(), BeCPGModel.PROP_ERP_CODE);
-		assertEquals("check supplier name", "1000012", supplier1Code);
-		assertEquals("check supplier name", "1000013", supplier2Code);
-		// does space between association values work ?
+			// check Props : Saumon surgelé 80x20x4 saumon sugelé Sea food Fish
+			// ToValidate Thu Mar 17 17:44:13 CET 2011 admin Mon Mar 21 22:44:26
+			// CET
+			// 2011 admin 0.0 0.0 0.0 0.0 0.0 0.0
+			// /home/querephi/Documents/beCPG/projets/demo/jeu de
+			// données/Sushi/sushi saumon/produit.jpg
+			assertEquals("Saumon surgelé 80x20x4", productData.getName());
+			assertEquals(SystemState.ToValidate, productData.getState());
+			assertEquals("saumon sugelé", productData.getLegalName().getDefaultValue());
+			assertEquals("Sea food", HierarchyHelper.getHierachyName(productData.getHierarchy1(), nodeService));
+			assertEquals("Fish", HierarchyHelper.getHierachyName(productData.getHierarchy2(), nodeService));
 
-		/*
-		 * Check Saumon
-		 */
-		productName = "Saumon 80x20x3";
-		NodeRef product2NodeRef = nodeService.getChildByName(importFolderNodeRef, ContentModel.ASSOC_CONTAINS, productName);
-		// productFolder => look for product
+			/*-- check associations --*/
+			List<AssociationRef> supplierAssocRefs = nodeService.getTargetAssocs(product1NodeRef, PLMModel.ASSOC_SUPPLIERS);
+			assertEquals("check product has 2 suppliers defined", 2, supplierAssocRefs.size());
+			String supplier1Code = (String) nodeService.getProperty(supplierAssocRefs.get(0).getTargetRef(), BeCPGModel.PROP_ERP_CODE);
+			String supplier2Code = (String) nodeService.getProperty(supplierAssocRefs.get(1).getTargetRef(), BeCPGModel.PROP_ERP_CODE);
+			assertEquals("check supplier name", "1000012", supplier1Code);
+			assertEquals("check supplier name", "1000013", supplier2Code);
+			// does space between association values work ?
 
-		assertNotNull("product 2 should exist", product2NodeRef);
-		supplierAssocRefs = nodeService.getTargetAssocs(product2NodeRef, PLMModel.ASSOC_SUPPLIERS);
-		assertEquals("check product has 2 suppliers defined", 2, supplierAssocRefs.size());
-		supplier1Code = (String) nodeService.getProperty(supplierAssocRefs.get(0).getTargetRef(), BeCPGModel.PROP_ERP_CODE);
-		supplier2Code = (String) nodeService.getProperty(supplierAssocRefs.get(1).getTargetRef(), BeCPGModel.PROP_ERP_CODE);
-		assertEquals("check supplier name", "1000012", supplier1Code);
-		assertEquals("check supplier name", "1000014", supplier2Code);
+			/*
+			 * Check Saumon
+			 */
+			productName = "Saumon 80x20x3";
+			NodeRef product2NodeRef = nodeService.getChildByName(importFolderNodeRef, ContentModel.ASSOC_CONTAINS, productName);
+			// productFolder => look for product
 
-		/*-- check productLists --*/
-		assertEquals("costs should exist", 2, productData.getCostList().size());
-		assertEquals("nuts should exist", 3, productData.getNutList().size());
-		String[] costNames = { "Coût MP", "Coût Emb" };
-		double[] costValues = { 1.0d, 3.1d };
-		String[] nutNames = { "Protéines", "Lipides", "Glucides" };
-		double[] nutValues = { 2.5d, 3.6d, 5.6d };
+			assertNotNull("product 2 should exist", product2NodeRef);
+			supplierAssocRefs = nodeService.getTargetAssocs(product2NodeRef, PLMModel.ASSOC_SUPPLIERS);
+			assertEquals("check product has 2 suppliers defined", 2, supplierAssocRefs.size());
+			supplier1Code = (String) nodeService.getProperty(supplierAssocRefs.get(0).getTargetRef(), BeCPGModel.PROP_ERP_CODE);
+			supplier2Code = (String) nodeService.getProperty(supplierAssocRefs.get(1).getTargetRef(), BeCPGModel.PROP_ERP_CODE);
+			assertEquals("check supplier name", "1000012", supplier1Code);
+			assertEquals("check supplier name", "1000014", supplier2Code);
 
-		// check costs
-		int costChecked = 0;
-		int z_idx = 0;
-		for (CostListDataItem c : productData.getCostList()) {
-			String costName = (String) nodeService.getProperty(c.getCost(), BeCPGModel.PROP_CHARACT_NAME);
+			/*-- check productLists --*/
+			assertEquals("costs should exist", 2, productData.getCostList().size());
+			assertEquals("nuts should exist", 3, productData.getNutList().size());
+			String[] costNames = { "Coût MP", "Coût Emb" };
+			double[] costValues = { 1.0d, 3.1d };
+			String[] nutNames = { "Protéines", "Lipides", "Glucides" };
+			double[] nutValues = { 2.5d, 3.6d, 5.6d };
 
-			for (String s : costNames) {
-				if (s.equals(costName)) {
-					assertEquals("Check cost value", costValues[z_idx], nodeService.getProperty(c.getNodeRef(), PLMModel.PROP_COSTLIST_VALUE));
-					costChecked++;
-					break;
+			// check costs
+			int costChecked = 0;
+			int z_idx = 0;
+			for (CostListDataItem c : productData.getCostList()) {
+				String costName = (String) nodeService.getProperty(c.getCost(), BeCPGModel.PROP_CHARACT_NAME);
+
+				for (String s : costNames) {
+					if (s.equals(costName)) {
+						assertEquals("Check cost value", costValues[z_idx], nodeService.getProperty(c.getNodeRef(), PLMModel.PROP_COSTLIST_VALUE));
+						costChecked++;
+						break;
+					}
 				}
+				z_idx++;
 			}
-			z_idx++;
-		}
-		assertEquals("2 costs have been checked", 2, costChecked);
+			assertEquals("2 costs have been checked", 2, costChecked);
 
-		// check nuts
-		int nutChecked = 0;
-		z_idx = 0;
-		for (NutListDataItem n : productData.getNutList()) {
-			String nutName = (String) nodeService.getProperty(n.getNut(), BeCPGModel.PROP_CHARACT_NAME);
+			// check nuts
+			int nutChecked = 0;
+			z_idx = 0;
+			for (NutListDataItem n : productData.getNutList()) {
+				String nutName = (String) nodeService.getProperty(n.getNut(), BeCPGModel.PROP_CHARACT_NAME);
 
-			for (String s : nutNames) {
-				if (s.equals(nutName)) {
-					assertEquals("Check nut value", nutValues[z_idx], nodeService.getProperty(n.getNodeRef(), PLMModel.PROP_NUTLIST_VALUE));
-					nutChecked++;
-					break;
+				for (String s : nutNames) {
+					if (s.equals(nutName)) {
+						assertEquals("Check nut value", nutValues[z_idx], nodeService.getProperty(n.getNodeRef(), PLMModel.PROP_NUTLIST_VALUE));
+						nutChecked++;
+						break;
+					}
 				}
+				z_idx++;
 			}
-			z_idx++;
-		}
-		assertEquals("3 nuts have been checked", 3, nutChecked);
+			assertEquals("3 nuts have been checked", 3, nutChecked);
 
-		// check that file Images/produit.jpg has been imported and check title
-		NodeRef imagesNodeRef = nodeService.getChildByName(product2NodeRef, ContentModel.ASSOC_CONTAINS, "Images");
-		assertNotNull("check Images exits", imagesNodeRef);
+			// check that file Images/produit.jpg has been imported and check
+			// title
+			NodeRef imagesNodeRef = nodeService.getChildByName(product2NodeRef, ContentModel.ASSOC_CONTAINS, "Images");
+			assertNotNull("check Images exits", imagesNodeRef);
 
-		NodeRef imgNodeRef = nodeService.getChildByName(imagesNodeRef, ContentModel.ASSOC_CONTAINS, "produit.jpg");
-		assertNotNull("check produit.jpg exits", imgNodeRef);
-		assertEquals("Check title on image", "sushi saumon", nodeService.getProperty(imgNodeRef, ContentModel.PROP_TITLE));
+			NodeRef imgNodeRef = nodeService.getChildByName(imagesNodeRef, ContentModel.ASSOC_CONTAINS, "produit.jpg");
+			assertNotNull("check produit.jpg exits", imgNodeRef);
+			assertEquals("Check title on image", "sushi saumon", nodeService.getProperty(imgNodeRef, ContentModel.PROP_TITLE));
 
-		/*
-		 * check trim is done by CSVReader
-		 */
+			/*
+			 * check trim is done by CSVReader
+			 */
 
-		NodeRef product4NodeRef = nodeService.getChildByName(importFolderNodeRef, ContentModel.ASSOC_CONTAINS, "Thon 80x20x8");
-		assertNotNull("product 4 should exist", product4NodeRef);
+			NodeRef product4NodeRef = nodeService.getChildByName(importFolderNodeRef, ContentModel.ASSOC_CONTAINS, "Thon 80x20x8");
+			assertNotNull("product 4 should exist", product4NodeRef);
 
-		/*
-		 * check productTpl
-		 */
+			/*
+			 * check productTpl
+			 */
 
-		NodeRef productTplNodeRef = nodeService.getChildByName(importFolderNodeRef, ContentModel.ASSOC_CONTAINS, "productTpl");
-		assertNotNull("productTpl should exist", productTplNodeRef);
+			NodeRef productTplNodeRef = nodeService.getChildByName(importFolderNodeRef, ContentModel.ASSOC_CONTAINS, "productTpl");
+			assertNotNull("productTpl should exist", productTplNodeRef);
 
-		ProductData productTplData = alfrescoRepository.findOne(product1NodeRef);
+			ProductData productTplData = alfrescoRepository.findOne(product1NodeRef);
 
-		/*-- check productLists of productTpl --*/
-		assertEquals("costs should exist", 2, productData.getCostList().size());
-		assertEquals("nuts should exist", 3, productData.getNutList().size());
+			/*-- check productLists of productTpl --*/
+			assertEquals("costs should exist", 2, productData.getCostList().size());
+			assertEquals("nuts should exist", 3, productData.getNutList().size());
 
-		// check costs
-		costChecked = 0;
-		z_idx = 0;
-		for (CostListDataItem c : productTplData.getCostList()) {
-			String costName = (String) nodeService.getProperty(c.getCost(), BeCPGModel.PROP_CHARACT_NAME);
+			// check costs
+			costChecked = 0;
+			z_idx = 0;
+			for (CostListDataItem c : productTplData.getCostList()) {
+				String costName = (String) nodeService.getProperty(c.getCost(), BeCPGModel.PROP_CHARACT_NAME);
 
-			for (String s : costNames) {
-				if (s.equals(costName)) {
-					assertEquals("Check cost value", costValues[z_idx], nodeService.getProperty(c.getNodeRef(), PLMModel.PROP_COSTLIST_VALUE));
-					costChecked++;
-					break;
+				for (String s : costNames) {
+					if (s.equals(costName)) {
+						assertEquals("Check cost value", costValues[z_idx], nodeService.getProperty(c.getNodeRef(), PLMModel.PROP_COSTLIST_VALUE));
+						costChecked++;
+						break;
+					}
 				}
+				z_idx++;
 			}
-			z_idx++;
-		}
-		assertEquals("2 costs have been checked", 2, costChecked);
+			assertEquals("2 costs have been checked", 2, costChecked);
 
-		// check nuts
-		nutChecked = 0;
-		z_idx = 0;
-		for (NutListDataItem n : productTplData.getNutList()) {
-			String nutName = (String) nodeService.getProperty(n.getNut(), BeCPGModel.PROP_CHARACT_NAME);
+			// check nuts
+			nutChecked = 0;
+			z_idx = 0;
+			for (NutListDataItem n : productTplData.getNutList()) {
+				String nutName = (String) nodeService.getProperty(n.getNut(), BeCPGModel.PROP_CHARACT_NAME);
 
-			for (String s : nutNames) {
-				if (s.equals(nutName)) {
-					assertEquals("Check nut value", nutValues[z_idx], nodeService.getProperty(n.getNodeRef(), PLMModel.PROP_NUTLIST_VALUE));
-					nutChecked++;
-					break;
+				for (String s : nutNames) {
+					if (s.equals(nutName)) {
+						assertEquals("Check nut value", nutValues[z_idx], nodeService.getProperty(n.getNodeRef(), PLMModel.PROP_NUTLIST_VALUE));
+						nutChecked++;
+						break;
+					}
 				}
+				z_idx++;
 			}
-			z_idx++;
-		}
 
-		assertEquals("3 nuts have been checked", 3, nutChecked);
+			assertEquals("3 nuts have been checked", 3, nutChecked);
 
-		/*
-		 * check products import in site, it is not classified
-		 */
+			/*
+			 * check products import in site, it is not classified
+			 */
 
-		List<NodeRef> siteFoldernode = BeCPGQueryBuilder.createQuery().selectNodesByPath(repositoryHelper.getCompanyHome(), PATH_SITE_FOLDER);
-		assertEquals("classif folder should exist", 1, siteFoldernode.size());
-		NodeRef siteFolderNodeRef = siteFoldernode.get(0);
-		assertEquals("1 product should exist", 1, fileFolderService.list(siteFolderNodeRef).size());
+			List<NodeRef> siteFoldernode = BeCPGQueryBuilder.createQuery().selectNodesByPath(repositoryHelper.getCompanyHome(), PATH_SITE_FOLDER);
+			assertEquals("classif folder should exist", 1, siteFoldernode.size());
+			NodeRef siteFolderNodeRef = siteFoldernode.get(0);
+			assertEquals("1 product should exist", 1, fileFolderService.list(siteFolderNodeRef).size());
 
-		productName = "Saumon surgelé 80x20x4";
-		product1NodeRef = nodeService.getChildByName(importFolderNodeRef, ContentModel.ASSOC_CONTAINS, productName);
+			productName = "Saumon surgelé 80x20x4";
+			product1NodeRef = nodeService.getChildByName(importFolderNodeRef, ContentModel.ASSOC_CONTAINS, productName);
 
-		assertNotNull("product 1 should exist", product1NodeRef);
+			assertNotNull("product 1 should exist", product1NodeRef);
 
+			return null;
+
+		}, false, true);
 	}
 
 	@Test
@@ -612,25 +619,29 @@ public class ImportServiceIT extends PLMBaseTestCase {
 
 		// 2nd time to check they are updated and not recreated
 		importHierarchies();
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			// search by name
+			List<NodeRef> ret = hierarchyService.getHierarchiesByPath(HIERARCHY_RAWMATERIAL_PATH, null, "USDA");
+			assertEquals(1, ret.size());
 
-		// search by name
-		List<NodeRef> ret = hierarchyService.getHierarchiesByPath(HIERARCHY_RAWMATERIAL_PATH, null, "USDA");
-		assertEquals(1, ret.size());
+			// search by code
+			assertNotNull(hierarchyService.getHierarchyByPath(HIERARCHY_RAWMATERIAL_PATH, null,
+					(String) nodeService.getProperty(ret.get(0), BeCPGModel.PROP_CODE)));
 
-		// search by code
-		assertNotNull(hierarchyService.getHierarchyByPath(HIERARCHY_RAWMATERIAL_PATH, null,
-				(String) nodeService.getProperty(ret.get(0), BeCPGModel.PROP_CODE)));
+			NodeRef parentNodeRef = ret.get(0);
 
-		NodeRef parentNodeRef = ret.get(0);
+			// search by name
+			ret = hierarchyService.getHierarchiesByPath(HIERARCHY_RAWMATERIAL_PATH, parentNodeRef, "Dairy and Egg Products");
 
-		// search by name
-		ret = hierarchyService.getHierarchiesByPath(HIERARCHY_RAWMATERIAL_PATH, parentNodeRef, "Dairy and Egg Products");
+			assertEquals(1, ret.size());
 
-		assertEquals(1, ret.size());
+			// search by code
+			assertNotNull(hierarchyService.getHierarchyByPath(HIERARCHY_RAWMATERIAL_PATH, parentNodeRef,
+					(String) nodeService.getProperty(ret.get(0), BeCPGModel.PROP_CODE)));
 
-		// search by code
-		assertNotNull(hierarchyService.getHierarchyByPath(HIERARCHY_RAWMATERIAL_PATH, parentNodeRef,
-				(String) nodeService.getProperty(ret.get(0), BeCPGModel.PROP_CODE)));
+			return null;
+
+		}, false, true);
 	}
 
 	private void importHierarchiesFile(final int i) {
@@ -669,30 +680,55 @@ public class ImportServiceIT extends PLMBaseTestCase {
 		logger.debug("Check hierarchies");
 		importHierarchiesFile(1);
 
-		NodeRef hierarchy1USDA = hierarchyService.getHierarchyByPath(HIERARCHY_RAWMATERIAL_PATH, null, "USDA");
+		NodeRef hierarchy1USDA = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			return hierarchyService.getHierarchyByPath(HIERARCHY_RAWMATERIAL_PATH, null, "USDA");
+
+		}, false, true);
+
 		assertNotNull(hierarchy1USDA);
 
 		importHierarchiesFile(2);
 
-		NodeRef hierarchy2Dairy = hierarchyService.getHierarchyByPath(HIERARCHY_RAWMATERIAL_PATH, hierarchy1USDA, "Dairy and Egg Products");
+		NodeRef hierarchy2Dairy = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			return hierarchyService.getHierarchyByPath(HIERARCHY_RAWMATERIAL_PATH, hierarchy1USDA, "Dairy and Egg Products");
+
+		}, false, true);
+
 		assertNotNull(hierarchy2Dairy);
-		NodeRef hierarchy2Spices = hierarchyService.getHierarchyByPath(HIERARCHY_RAWMATERIAL_PATH, hierarchy1USDA, "Spices and Herbs");
+
+		NodeRef hierarchy2Spices = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			return hierarchyService.getHierarchyByPath(HIERARCHY_RAWMATERIAL_PATH, hierarchy1USDA, "Spices and Herbs");
+
+		}, false, true);
+
 		assertNotNull(hierarchy2Spices);
 
 		importHierarchiesFile(3);
 
-		NodeRef hierarchy3Dairy = hierarchyService.getHierarchyByPath(HIERARCHY_RAWMATERIAL_PATH, hierarchy2Dairy, "Dairy");
-		assertNotNull(hierarchy3Dairy);
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			NodeRef hierarchy3Dairy = hierarchyService.getHierarchyByPath(HIERARCHY_RAWMATERIAL_PATH, hierarchy2Dairy, "Dairy");
+			assertNotNull(hierarchy3Dairy);
+
+			return null;
+
+		}, false, true);
 
 		importHierarchiesFile(4);
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			// check unicity
+			List<NodeRef> listItems = BeCPGQueryBuilder.createQuery().andID(hierarchy1USDA).inDB().list();
+			assertEquals(1, listItems.size());
+			listItems = BeCPGQueryBuilder.createQuery().andID(hierarchy2Dairy).inDB().list();
+			assertEquals(1, listItems.size());
+			listItems = BeCPGQueryBuilder.createQuery().andID(hierarchy2Spices).inDB().list();
+			assertEquals(1, listItems.size());
 
-		// check unicity
-		List<NodeRef> listItems = BeCPGQueryBuilder.createQuery().andID(hierarchy1USDA).inDB().list();
-		assertEquals(1, listItems.size());
-		listItems = BeCPGQueryBuilder.createQuery().andID(hierarchy2Dairy).inDB().list();
-		assertEquals(1, listItems.size());
-		listItems = BeCPGQueryBuilder.createQuery().andID(hierarchy2Spices).inDB().list();
-		assertEquals(1, listItems.size());
+			return null;
+
+		}, false, true);
 	}
 
 	@Test

@@ -89,12 +89,18 @@ public class UserImportServiceIT extends PLMBaseTestCase {
 
 	@Test
 	public void testImportUserCSV() {
+		
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			NodeRef csv = createCSV();
 			userImporterService.importUser(csv);
-			Assert.assertEquals(1, wiser.getMessages().size());
+
 			return null;
 
+		}, false, true);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			Assert.assertEquals(1, wiser.getMessages().size());
+			return null;
 		}, false, true);
 
 	}
