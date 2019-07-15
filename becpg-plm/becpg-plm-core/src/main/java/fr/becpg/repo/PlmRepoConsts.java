@@ -136,6 +136,8 @@ public class PlmRepoConsts {
 	public static final String PATH_GS1_PACKAGING_TYPE_CODES = "PackagingTypeCodes";
 	public static final String PATH_GS1_PALLET_TYPE_CODES = "PalletTypeCodes";
 	public static final String PATH_GS1_PLATFORM_TERM_AND_CONDITIONS_CODES = "PlatformTermsAndConditionsCodes";
+	public static final String PATH_GS1_SORTING_BONUS_CRITERIA = "SortingBonusCriteria";
+
 	
 	
 }
