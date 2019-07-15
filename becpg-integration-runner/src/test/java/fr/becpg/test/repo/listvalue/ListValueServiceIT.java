@@ -43,7 +43,10 @@ public class ListValueServiceIT extends AbstractListValuePluginTest {
 	public void testSuggestSupplier() {
 
 		Date startTime = new Date();
-
+		
+		//delete existing products
+		purgeExistingProducts();
+		
 		createFinishProductNodeRef();
 
 		final String supplierName = "Supplier-" + UUID.randomUUID().toString();
@@ -138,14 +141,37 @@ public class ListValueServiceIT extends AbstractListValuePluginTest {
 			}
 
 			assertEquals("2 suggestion", 2, suggestions.size());
+			
+			return null;
+		}, false, true);
 
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			authenticationComponent.setCurrentUser(BeCPGPLMTestHelper.USER_ONE);
-			suggestions = entityListValuePlugin.suggestTargetAssoc(null, PLMModel.TYPE_FINISHEDPRODUCT, "*", 0, 10, null, null).getResults();
+			List<ListValueEntry> suggestions = entityListValuePlugin.suggestTargetAssoc(null, PLMModel.TYPE_FINISHEDPRODUCT, "*", 0, 10, null, null).getResults();
 			for (ListValueEntry s5 : suggestions) {
 				logger.debug("SF for user one: " + s5.getName());
 
 			}
 			assertEquals("1 suggestion", 1, suggestions.size());
+
+			return null;
+		}, false, true);
+	}
+	
+	void purgeExistingProducts() {
+		// First delete all existing suppliers
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			for (NodeRef tmpNodeRef : BeCPGQueryBuilder.createQuery().inDB().ofType(PLMModel.TYPE_FINISHEDPRODUCT).list()) {
+				nodeService.deleteNode(tmpNodeRef);
+			}
+			
+			for (NodeRef tmpNodeRef : BeCPGQueryBuilder.createQuery().inDB().ofType(PLMModel.TYPE_SEMIFINISHEDPRODUCT).list()) {
+				nodeService.deleteNode(tmpNodeRef);
+			}
+			
+			for (NodeRef tmpNodeRef : BeCPGQueryBuilder.createQuery().inDB().ofType(PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT).list()) {
+				nodeService.deleteNode(tmpNodeRef);
+			}
 
 			return null;
 		}, false, true);
