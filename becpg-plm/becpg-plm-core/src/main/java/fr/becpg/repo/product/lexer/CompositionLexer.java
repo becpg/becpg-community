@@ -128,7 +128,7 @@ public class CompositionLexer {
 	}
 
 	private static NodeRef extractProduct(String productName) {
-		return BeCPGQueryBuilder.createQuery().ofType(PLMModel.TYPE_PRODUCT).excludeDefaults().andPropEquals(ContentModel.PROP_NAME, productName)
+		return BeCPGQueryBuilder.createQuery().ofType(PLMModel.TYPE_PRODUCT).excludeDefaults().andPropEquals(ContentModel.PROP_NAME, productName.trim())
 				.singleValue();
 	}
 
