@@ -200,23 +200,28 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 
 	protected RemoteEntityFormat getFormat(WebScriptRequest req) {
 		String format = req.getParameter(PARAM_FORMAT);
-		if (format != null && RemoteEntityFormat.csv.toString().equals(format)) {
+		if (format != null && RemoteEntityFormat.csv.toString().equalsIgnoreCase(format)) {
 			return RemoteEntityFormat.csv;
-		} else if (format != null && RemoteEntityFormat.xml_excel.toString().equals(format)) {
+		} else if (format != null && RemoteEntityFormat.xml_excel.toString().equalsIgnoreCase(format)) {
 			return RemoteEntityFormat.xml_excel;
-		} else if (format != null && RemoteEntityFormat.xml_all.toString().equals(format)) {
+		} else if (format != null && RemoteEntityFormat.xml_all.toString().equalsIgnoreCase(format)) {
 			return RemoteEntityFormat.xml_all;
-		} else if (format != null && RemoteEntityFormat.xml_light.toString().equals(format)) {
+		} else if (format != null && RemoteEntityFormat.xml_light.toString().equalsIgnoreCase(format)) {
 			return RemoteEntityFormat.xml_light;
-		}
+		} else if (format != null && RemoteEntityFormat.json.toString().equalsIgnoreCase(format)) {
+			return RemoteEntityFormat.json;
+		} 
 		return RemoteEntityFormat.xml;
 	}
 
 	protected String getContentType(WebScriptRequest req) {
 		RemoteEntityFormat format = getFormat(req);
 		if (RemoteEntityFormat.csv.equals(format)) {
-			return "text/csv";
-		} else {
+			return "text/csv;charset=UTF-8";
+		} else if(RemoteEntityFormat.json.equals(format)) { 
+			return "application/json;charset=UTF-8";
+			
+		}else {
 			return "application/xml";
 		}
 	}
