@@ -44,6 +44,7 @@ import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.Path;
+import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.codec.binary.Base64InputStream;
@@ -62,23 +63,15 @@ import fr.becpg.repo.entity.remote.RemoteEntityService;
  * @author matthieu
  * 
  */
-public class ExcelXmlEntityVisitor {
+public class ExcelXmlEntityVisitor  extends AbstractEntityVisitor{
 
-	private final NodeService nodeService;
-	private final NamespaceService namespaceService;
-	private final DictionaryService dictionaryService;
-	private final ContentService contentService;
+
+	public ExcelXmlEntityVisitor(NodeService mlNodeService, NodeService nodeService, NamespaceService namespaceService,
+			DictionaryService dictionaryService, ContentService contentService, SiteService siteService) {
+		super(mlNodeService, nodeService, namespaceService, dictionaryService, contentService, siteService);
+	}
 
 	private static final Log logger = LogFactory.getLog(ExcelXmlEntityVisitor.class);
-
-	public ExcelXmlEntityVisitor(NodeService nodeService, NamespaceService namespaceService, DictionaryService dictionaryService,
-			ContentService contentService) {
-		super();
-		this.nodeService = nodeService;
-		this.namespaceService = namespaceService;
-		this.dictionaryService = dictionaryService;
-		this.contentService = contentService;
-	}
 
 	public void visit(NodeRef entityNodeRef, OutputStream result) throws XMLStreamException {
 
