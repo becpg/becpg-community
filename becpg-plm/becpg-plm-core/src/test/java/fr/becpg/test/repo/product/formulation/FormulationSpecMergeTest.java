@@ -47,13 +47,6 @@ public class FormulationSpecMergeTest extends FormulationLabelClaimTest {
 
 	protected static final Log logger = LogFactory.getLog(FormulationSpecMergeTest.class);
 
-	@Override
-	public void setUp() throws Exception {
-		super.setUp();
-		// create RM and lSF
-		initParts();
-	}
-
 	private NodeRef createTestProduct(final String name) {
 		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
