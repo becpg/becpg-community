@@ -191,7 +191,6 @@ public class AutoNumServiceImpl implements AutoNumService {
 	}
 
 	@Override
-	@Autowired
 	public String getOrCreateBeCPGCode(NodeRef nodeRef) {
 		return getOrCreateCode(nodeRef, BeCPGModel.PROP_CODE);
 	}
