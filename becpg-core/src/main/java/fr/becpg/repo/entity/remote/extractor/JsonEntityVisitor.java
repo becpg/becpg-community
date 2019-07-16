@@ -19,20 +19,15 @@ package fr.becpg.repo.entity.remote.extractor;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.Reader;
+import java.io.OutputStreamWriter;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.rule.RuleModel;
@@ -55,18 +50,20 @@ import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.apache.commons.codec.binary.Base64InputStream;
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.extensions.surf.util.ISO8601DateFormat;
-
-import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.model.ReportModel;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.dictionary.constraint.DynListConstraint;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
+import fr.becpg.repo.helper.JsonHelper;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.SiteHelper;
 
@@ -75,193 +72,187 @@ import fr.becpg.repo.helper.SiteHelper;
  * @author matthieu
  *
  */
-public class XmlEntityVisitor extends AbstractEntityVisitor {
+public class JsonEntityVisitor extends AbstractEntityVisitor {
 
-	public XmlEntityVisitor(NodeService mlNodeService, NodeService nodeService, NamespaceService namespaceService,
+	public JsonEntityVisitor(NodeService mlNodeService, NodeService nodeService, NamespaceService namespaceService,
 			DictionaryService dictionaryService, ContentService contentService, SiteService siteService) {
 		super(mlNodeService, nodeService, namespaceService, dictionaryService, contentService, siteService);
 	}
 
-	private static final Log logger = LogFactory.getLog(XmlEntityVisitor.class);
+	private static final Log logger = LogFactory.getLog(JsonEntityVisitor.class);
 
 	@Override
-	public void visit(NodeRef entityNodeRef, OutputStream result) throws XMLStreamException {
+	public void visit(NodeRef entityNodeRef, OutputStream result) throws JSONException, IOException {
 
-		// Create an output factory
-		XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
-		xmlof.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, true);
-		// Create an XML stream writer
-		XMLStreamWriter xmlw = xmlof.createXMLStreamWriter(result);
+		JSONObject entity = new JSONObject();
 
-		if (logger.isDebugEnabled()) {
-			logger.debug("Indent xml formater ON");
-			xmlw = new IndentingXMLStreamWriter(xmlw);
+		try (OutputStreamWriter out = new OutputStreamWriter(result, StandardCharsets.UTF_8)) {
+			visitNode(entityNodeRef, entity, true, true, false);
+			visitLists(entityNodeRef, entity);
+	
+			entity.write(out);
 		}
-
-		// Write XML prologue
-		xmlw.writeStartDocument();
-		// Visit node
-		visitNode(entityNodeRef, xmlw, true, true, false);
-		// Write document end. This closes all open structures
-		xmlw.writeEndDocument();
-		// Close the writer to flush the output
-		xmlw.close();
 
 	}
 
 	@Override
-	public void visit(List<NodeRef> entities, OutputStream result) throws XMLStreamException {
-		// Create an output factory
-		XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
-		xmlof.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, true);
-		// Create an XML stream writer
-		XMLStreamWriter xmlw = xmlof.createXMLStreamWriter(result);
+	public void visit(List<NodeRef> entities, OutputStream result) throws JSONException, IOException {
 
-		if (logger.isDebugEnabled()) {
-			logger.debug("Indent xml formater ON");
-			xmlw = new IndentingXMLStreamWriter(xmlw);
-		}
+		JSONObject ret = new JSONObject();
+		JSONArray jsonEntities = new JSONArray();
+		try (OutputStreamWriter out = new OutputStreamWriter(result, StandardCharsets.UTF_8)) {
 
-		// Write XML prologue
-		xmlw.writeStartDocument();
-		// Visit node
-		xmlw.writeStartElement(BeCPGModel.BECPG_PREFIX, RemoteEntityService.ELEM_ENTITIES, BeCPGModel.BECPG_URI);
+			for (NodeRef nodeRef : entities) {
+				JSONObject entity = new JSONObject();
 
-		for (NodeRef nodeRef : entities) {
-			if ((this.filteredProperties != null) && !this.filteredProperties.isEmpty()) {
-				entityList = true;
-				visitNode(nodeRef, xmlw, true, true, false);
-			} else {
-				visitNode(nodeRef, xmlw, false, false, false);
+				if ((this.filteredProperties != null) && !this.filteredProperties.isEmpty()) {
+					entityList = true;
+					visitNode(nodeRef, entity, true, true, false);
+				} else {
+					visitNode(nodeRef, entity, false, false, false);
+				}
+
+				jsonEntities.put(entity);
 			}
-		}
 
-		xmlw.writeEndElement();
-		// Write document end. This closes all open structures
-		xmlw.writeEndDocument();
-		// Close the writer to flush the output
-		xmlw.close();
+			ret.put("entities", jsonEntities);
+			ret.write(out);
+		}
 
 	}
 
 	@Override
-	public void visitData(NodeRef entityNodeRef, OutputStream result) throws XMLStreamException {
+	public void visitData(NodeRef entityNodeRef, OutputStream result) throws JSONException, IOException {
+		JSONObject data = new JSONObject();
 
-		// Create an output factory
-		XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
-		xmlof.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, true);
-		// Create an XML stream writer
-		XMLStreamWriter xmlw = xmlof.createXMLStreamWriter(result);
-
-		if (logger.isDebugEnabled()) {
-			logger.debug("Indent xml formater ON");
-			xmlw = new IndentingXMLStreamWriter(xmlw);
+		try (OutputStreamWriter out = new OutputStreamWriter(result, StandardCharsets.UTF_8)) {
+			// Visit node
+			visitNode(entityNodeRef, data, false, false, true);
+			data.write(out);
 		}
-
-		// Write XML prologue
-		xmlw.writeStartDocument();
-		// Visit node
-		visitNode(entityNodeRef, xmlw, false, false, true);
-		// Write document end. This closes all open structures
-		xmlw.writeEndDocument();
-		// Close the writer to flush the output
-		xmlw.close();
 
 	}
 
-	private void visitNode(NodeRef nodeRef, XMLStreamWriter xmlw, boolean assocs, boolean props, boolean content) throws XMLStreamException {
+	private void visitNode(NodeRef nodeRef, JSONObject entity, boolean assocs, boolean props, boolean content) throws JSONException {
 		cacheList.add(nodeRef);
 
-		extractLevel++;
-
 		QName nodeType = nodeService.getType(nodeRef).getPrefixedQName(namespaceService);
-		String prefix = nodeType.getPrefixString().split(":")[0];
 		String name = (String) nodeService.getProperty(nodeRef, RemoteHelper.getPropName(nodeType, dictionaryService));
-		// lists filter
-		if (DataListModel.TYPE_DATALIST.equals(nodeType) && (filteredLists != null) && !filteredLists.isEmpty() && !filteredLists.contains(name)) {
-			extractLevel--;
-			return;
-		}
-		xmlw.writeStartElement(prefix, nodeType.getLocalName(), nodeType.getNamespaceURI());
+
 		Path path = null;
 
 		if (nodeService.getPrimaryParent(nodeRef) != null) {
 			NodeRef parentRef = nodeService.getPrimaryParent(nodeRef).getParentRef();
 			if (parentRef != null) {
 				path = nodeService.getPath(parentRef);
-				xmlw.writeAttribute(RemoteEntityService.ATTR_PATH, path.toPrefixString(namespaceService));
+				entity.put(RemoteEntityService.ATTR_PATH, path.toPrefixString(namespaceService));
+
 			}
 		} else {
 			logger.warn("Node : " + nodeRef + " has no primary parent");
 		}
 
-		xmlw.writeAttribute(RemoteEntityService.ATTR_TYPE, RemoteEntityService.NODE_TYPE);
+		entity.put(RemoteEntityService.ATTR_TYPE, nodeType.toPrefixString(namespaceService));
 
 		if (name != null) {
-			xmlw.writeAttribute(RemoteEntityService.ATTR_NAME, name);
+			entity.put(RemoteEntityService.ATTR_NAME, name);
 		}
-		xmlw.writeAttribute(RemoteEntityService.ATTR_NODEREF, nodeRef.toString());
 
-		if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_CODE)) {
-			if (nodeService.getProperty(nodeRef, BeCPGModel.PROP_CODE) != null) {
-				xmlw.writeAttribute(RemoteEntityService.ATTR_CODE, (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_CODE));
-			} else {
-				logger.warn("Node : " + nodeRef + " has null becpg code");
-			}
-
-		}
-		// erpCode
-		if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ERP_CODE)) {
-			if (nodeService.getProperty(nodeRef, BeCPGModel.PROP_ERP_CODE) != null) {
-				xmlw.writeAttribute(RemoteEntityService.ATTR_ERP_CODE, (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_ERP_CODE));
-			}
-		}
+		entity.put(RemoteEntityService.ATTR_NODEREF, nodeRef);
 
 		// Assoc first
 		if (assocs) {
-			visitAssocs(nodeRef, xmlw);
+			visitAssocs(nodeRef, entity);
 		}
 
 		if (path != null) {
-			visitSite(nodeRef, xmlw, path);
+			visitSite(nodeRef, entity, path);
 		}
 
 		if (props) {
-			visitProps(nodeRef, xmlw);
+			visitProps(nodeRef, entity);
 		}
+
+		
 
 		if (content) {
-			visitContent(nodeRef, xmlw);
+			visitContent(nodeRef, entity);
 		}
 
-		xmlw.writeEndElement();
-		extractLevel--;
 	}
 
-	private void visitContent(NodeRef nodeRef, XMLStreamWriter xmlw) throws XMLStreamException {
+	private void visitLists(NodeRef nodeRef, JSONObject entity) throws JSONException {
 
-		xmlw.writeStartElement(BeCPGModel.BECPG_PREFIX, RemoteEntityService.ELEM_DATA, BeCPGModel.BECPG_URI);
+		NodeRef listContainerNodeRef = nodeService.getChildByName(nodeRef, BeCPGModel.ASSOC_ENTITYLISTS, RepoConsts.CONTAINER_DATALISTS);
 
-		ContentReader contentReader = contentService.getReader(nodeRef, ContentModel.PROP_CONTENT);
-		if (contentReader != null) {
-			try (InputStream in = contentReader.getContentInputStream();
-					Reader reader = new InputStreamReader(new Base64InputStream(in, true, -1, null))) {
+		if (listContainerNodeRef != null) {
+			List<ChildAssociationRef> assocRefs = nodeService.getChildAssocs(listContainerNodeRef);
+			for (ChildAssociationRef assocRef : assocRefs) {
 
-				char[] buf = new char[4096];
-				int n;
-				while ((n = reader.read(buf)) >= 0) {
-					xmlw.writeCharacters(buf, 0, n);
+				NodeRef listNodeRef = assocRef.getChildRef();
+				String dataListType = (String) nodeService.getProperty(listNodeRef, DataListModel.PROP_DATALISTITEMTYPE);
+
+				if ((dataListType != null) && !dataListType.isEmpty()) {
+
+					QName dataListTypeQName = QName.createQName(dataListType, namespaceService);
+
+					if ((BeCPGModel.TYPE_ENTITYLIST_ITEM.equals(dataListTypeQName)
+							|| dictionaryService.isSubClass(dataListTypeQName, BeCPGModel.TYPE_ENTITYLIST_ITEM)
+							|| ((String) nodeService.getProperty(listNodeRef, ContentModel.PROP_NAME)).startsWith(RepoConsts.WUSED_PREFIX))) {
+
+						if ((filteredLists == null) || filteredLists.isEmpty()
+								|| filteredLists.contains(nodeService.getProperty(listNodeRef, ContentModel.PROP_NAME))) {
+
+							JSONArray list = new JSONArray();
+							entity.put(dataListTypeQName.toPrefixString(), list);
+
+							List<ChildAssociationRef> listItemRefs = nodeService.getChildAssocs(listNodeRef);
+
+							for (ChildAssociationRef listItemRef : listItemRefs) {
+
+								NodeRef listItem = listItemRef.getChildRef();
+								JSONObject jsonAssocNode = new JSONObject();
+								list.put(jsonAssocNode);
+
+								visitNode(listItem, jsonAssocNode, true, true, false);
+
+							}
+
+						}
+
+					} else {
+						logger.warn("Existing " + dataListTypeQName + " list doesn't inheritate from 'bcpg:entityListItem'.");
+					}
 				}
 
-			} catch (ContentIOException | IOException e) {
-				throw new XMLStreamException("Cannot serialyze data");
 			}
 		}
 
-		xmlw.writeEndElement();
 	}
 
-	private void visitAssocs(NodeRef nodeRef, XMLStreamWriter xmlw) throws XMLStreamException {
+	private void visitContent(NodeRef nodeRef, JSONObject entity) throws JSONException {
+
+		ContentReader contentReader = contentService.getReader(nodeRef, ContentModel.PROP_CONTENT);
+		if (contentReader != null) {
+
+			try (InputStream in = contentReader.getContentInputStream(); ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
+
+				int nRead;
+				byte[] data = new byte[1024];
+				while ((nRead = in.read(data, 0, data.length)) != -1) {
+					buffer.write(data, 0, nRead);
+				}
+				buffer.flush();
+				entity.put(ContentModel.PROP_CONTENT.toPrefixString(namespaceService), buffer.toByteArray());
+
+			} catch (ContentIOException | IOException e) {
+				throw new JSONException("Cannot serialyze data");
+			}
+		}
+
+	}
+
+	private void visitAssocs(NodeRef nodeRef, JSONObject entity) throws JSONException {
 
 		TypeDefinition typeDef = dictionaryService.getType(nodeService.getType(nodeRef));
 		if (typeDef != null) {
@@ -282,28 +273,36 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 				if (!assocDef.getName().getNamespaceURI().equals(NamespaceService.RENDITION_MODEL_1_0_URI)
 						&& !assocDef.getName().getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI)
 						&& !assocDef.getName().equals(ContentModel.ASSOC_ORIGINAL) && !assocDef.getName().equals(RuleModel.ASSOC_RULE_FOLDER)
-						&& assocDef.isChild()) {
+						&& !assocDef.getName().equals(BeCPGModel.ASSOC_ENTITYLISTS) && assocDef.isChild()) {
 					QName nodeType = assocDef.getName().getPrefixedQName(namespaceService);
-					String prefix = nodeType.getPrefixString().split(":")[0];
+					nodeType.getPrefixString().split(":");
 					// fields & child assocs filter
-					if (((filteredProperties != null) && !filteredProperties.isEmpty() && !filteredProperties.contains(nodeType)
-							&& (extractLevel == 1) && !nodeType.equals(BeCPGModel.ASSOC_ENTITYLISTS))
-							|| (nodeType.equals(BeCPGModel.ASSOC_ENTITYLISTS) && entityList && (extractLevel == 1))) {
-
+					if (((filteredProperties != null) && !filteredProperties.isEmpty() && !filteredProperties.contains(nodeType))) {
 						continue;
 					}
 
-					xmlw.writeStartElement(prefix, nodeType.getLocalName(), nodeType.getNamespaceURI());
-					xmlw.writeAttribute(RemoteEntityService.ATTR_TYPE, RemoteEntityService.CHILD_ASSOC_TYPE);
+					JSONArray jsonAssocs = new JSONArray();
+
 					List<ChildAssociationRef> assocRefs = nodeService.getChildAssocs(nodeRef);
-					for (ChildAssociationRef assocRef : assocRefs) {
-						if (assocRef.getTypeQName().equals(assocDef.getName())) {
-							NodeRef childRef = assocRef.getChildRef();
-							visitNode(childRef, xmlw, light ? false : true, light ? false : true, false);
-						}
+					if (assocDef.isTargetMany() && !assocRefs.isEmpty()) {
+						entity.put(nodeType.toPrefixString(), jsonAssocs);
 					}
 
-					xmlw.writeEndElement();
+					for (ChildAssociationRef assocRef : assocRefs) {
+						if (assocRef.getTypeQName().equals(assocDef.getName())) {
+
+							NodeRef childRef = assocRef.getChildRef();
+							JSONObject jsonAssocNode = new JSONObject();
+							if (assocDef.isTargetMany()) {
+								jsonAssocs.put(jsonAssocNode);
+							} else {
+								entity.put(nodeType.toPrefixString(), jsonAssocNode);
+							}
+
+							visitNode(childRef, jsonAssocNode, light ? false : true, light ? false : true, false);
+
+						}
+					}
 				}
 
 			}
@@ -316,30 +315,37 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 						&& !assocDef.getName().equals(RuleModel.ASSOC_RULE_FOLDER) && !assocDef.getName().equals(ContentModel.ASSOC_ORIGINAL)
 						&& !assocDef.isChild()) {
 					QName nodeType = assocDef.getName().getPrefixedQName(namespaceService);
-					String prefix = nodeType.getPrefixString().split(":")[0];
 					// fields & assocs filter
-					if ((filteredProperties != null) && !filteredProperties.isEmpty() && !filteredProperties.contains(nodeType)
-							&& (extractLevel == 1)) {
+					if ((filteredProperties != null) && !filteredProperties.isEmpty() && !filteredProperties.contains(nodeType)) {
 						continue;
 					}
 
-					xmlw.writeStartElement(prefix, nodeType.getLocalName(), nodeType.getNamespaceURI());
+					JSONArray jsonAssocs = new JSONArray();
 
-					xmlw.writeAttribute(RemoteEntityService.ATTR_TYPE, RemoteEntityService.ASSOC_TYPE);
 					List<AssociationRef> assocRefs = nodeService.getTargetAssocs(nodeRef, assocDef.getName());
+					if (assocDef.isTargetMany() && !assocRefs.isEmpty()) {
+						entity.put(nodeType.toPrefixString(), jsonAssocs);
+					}
 					for (AssociationRef assocRef : assocRefs) {
 						NodeRef childRef = assocRef.getTargetRef();
+
+						JSONObject jsonAssocNode = new JSONObject();
+						if (assocDef.isTargetMany()) {
+							jsonAssocs.put(jsonAssocNode);
+						} else {
+							entity.put(nodeType.toPrefixString(), jsonAssocNode);
+						}
+
 						// extract assoc properties
 						if (filteredAssocProperties.containsKey(nodeType)) {
 							cachedAssocRef = Collections.singletonMap(childRef, filteredAssocProperties.get((nodeType)));
-							visitNode(childRef, xmlw, shouldDumpAll(childRef), true, false);
+							visitNode(childRef, jsonAssocNode, shouldDumpAll(childRef), true, false);
 
 						} else {
-							visitNode(childRef, xmlw, shouldDumpAll(childRef), shouldDumpAll(childRef), false);
+							visitNode(childRef, jsonAssocNode, shouldDumpAll(childRef), shouldDumpAll(childRef), false);
 						}
 						cachedAssocRef = null;
 					}
-					xmlw.writeEndElement();
 				}
 
 			}
@@ -350,7 +356,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 
 	}
 
-	private void visitProps(NodeRef nodeRef, XMLStreamWriter xmlw) throws XMLStreamException {
+	private void visitProps(NodeRef nodeRef, JSONObject entity) throws JSONException {
 
 		Map<QName, Serializable> props = nodeService.getProperties(nodeRef);
 		if (props != null) {
@@ -362,7 +368,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 					PropertyDefinition propertyDefinition = dictionaryService.getProperty(entry.getKey());
 					if (propertyDefinition != null) {
 						QName propName = entry.getKey().getPrefixedQName(namespaceService);
-						String prefix = propName.getPrefixString().split(":")[0];
+						propName.getPrefixString().split(":");
 						// filter props
 						if ((filteredProperties != null) && !filteredProperties.isEmpty() && !filteredProperties.contains(propName)
 								&& (extractLevel == 1)) {
@@ -376,30 +382,25 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 
 						Map<NodeRef, List<QName>> tmpCachedAssocRef = cachedAssocRef;
 
-						xmlw.writeStartElement(prefix, propName.getLocalName(), propName.getNamespaceURI());
-						xmlw.writeAttribute(RemoteEntityService.ATTR_TYPE,
-								propertyDefinition.getDataType().getName().toPrefixString(namespaceService));
-
 						MLText mlValues = null;
 						if (DataTypeDefinition.MLTEXT.equals(propertyDefinition.getDataType().getName())
 								&& (mlNodeService.getProperty(nodeRef, propertyDefinition.getName()) instanceof MLText)) {
 							mlValues = (MLText) mlNodeService.getProperty(nodeRef, propertyDefinition.getName());
-							visitMltextAttributes(xmlw, mlValues);
+							visitMltextAttributes(propName.toPrefixString(), entity, mlValues);
 						} else if (DataTypeDefinition.TEXT.equals(propertyDefinition.getDataType().getName())) {
 							if (!propertyDefinition.getConstraints().isEmpty()) {
 								for (ConstraintDefinition constraint : propertyDefinition.getConstraints()) {
 									if (constraint.getConstraint() instanceof DynListConstraint) {
 										mlValues = ((DynListConstraint) constraint.getConstraint()).getMLAwareAllowedValues().get(entry.getValue());
-										visitMltextAttributes(xmlw, mlValues);
+										visitMltextAttributes(propName.toPrefixString(), entity, mlValues);
 										break;
 									}
 								}
 							}
 						}
 						cachedAssocRef = null;
-						visitPropValue(entry.getValue(), xmlw);
+						visitPropValue(propName.toPrefixString(), entity, entry.getValue());
 						cachedAssocRef = tmpCachedAssocRef;
-						xmlw.writeEndElement();
 
 					} else {
 						logger.debug("Properties not in dictionnary: " + entry.getKey());
@@ -412,58 +413,53 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 
 	}
 
-	private void visitMltextAttributes(XMLStreamWriter xmlw, MLText mlValues) throws XMLStreamException {
+	private void visitMltextAttributes(String propType, JSONObject entity, MLText mlValues) throws JSONException {
 		if (mlValues != null) {
 			for (Map.Entry<Locale, String> mlEntry : mlValues.entrySet()) {
 				String code = MLTextHelper.localeKey(mlEntry.getKey());
-				if ((code != null) && !code.isEmpty()) {
-					xmlw.writeAttribute(code.replaceAll(":", "_"), writeCDATA(mlEntry.getValue()));
+				if ((code != null) && !code.isEmpty() && (mlEntry.getValue() != null)) {
+					entity.put(propType + "_" + code, mlEntry.getValue());
+
 				}
 			}
 		}
 	}
 
-	private void visitSite(NodeRef nodeRef, XMLStreamWriter xmlw, Path path) throws XMLStreamException {
+	private void visitSite(NodeRef nodeRef, JSONObject entity, Path path) throws JSONException {
 
 		String siteId = SiteHelper.extractSiteId(path.toPrefixString(namespaceService));
 
 		if (siteId != null) {
-			xmlw.writeStartElement("metadata", "siteId", path.toPrefixString(namespaceService));
-			xmlw.writeAttribute(RemoteEntityService.ATTR_TYPE, "d:text");
-			xmlw.writeCData(siteId);
-			xmlw.writeEndElement();
+			entity.put("siteId", siteId);
 
 			SiteInfo site = siteService.getSite(siteId);
 
-			xmlw.writeStartElement("metadata", "siteName", path.toPrefixString(namespaceService));
-			xmlw.writeAttribute(RemoteEntityService.ATTR_TYPE, "d:text");
 			if (site != null) {
-				xmlw.writeCData(site.getTitle());
+				entity.put("siteName", site.getTitle());
+
 			}
-			xmlw.writeEndElement();
 		}
 
 	}
 
 	@SuppressWarnings("unchecked")
-	private void visitPropValue(Serializable value, XMLStreamWriter xmlw) throws XMLStreamException {
+	private void visitPropValue(String propType, JSONObject entity, Serializable value) throws JSONException {
 		if (value instanceof List) {
-			xmlw.writeStartElement(RemoteEntityService.ELEM_LIST);
+			JSONArray tmp = new JSONArray();
+			entity.put(propType, tmp);
 			for (Serializable subEl : (List<Serializable>) value) {
-				xmlw.writeStartElement(RemoteEntityService.ELEM_LIST_VALUE);
-				visitPropValue(subEl, xmlw);
-				xmlw.writeEndElement();
+				tmp.put(JsonHelper.formatValue(subEl));
+
 			}
-			xmlw.writeEndElement();
 		} else if (value instanceof NodeRef) {
-			visitNode((NodeRef) value, xmlw, shouldDumpAll((NodeRef) value), shouldDumpAll((NodeRef) value), false);
-		} else if (value instanceof Date) {
-			xmlw.writeCharacters(ISO8601DateFormat.format((Date) value));
+			JSONObject node = new JSONObject();
+			entity.put(propType, node);
+
+			visitNode((NodeRef) value, node, shouldDumpAll((NodeRef) value), shouldDumpAll((NodeRef) value), false);
 		} else {
-			if (value != null) {
-				xmlw.writeCData(value.toString());
+			if (value != null && JsonHelper.formatValue(value)!=null && !JsonHelper.formatValue(value).toString().isEmpty()) {
+				entity.put(propType, JsonHelper.formatValue(value));
 			}
 		}
 	}
-
 }

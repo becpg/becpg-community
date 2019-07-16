@@ -49,7 +49,7 @@
 				<value>true</value>
 			</parameter>
 		</constraint>
-		
+
 		<constraint name="gs1:palletTypeCodeConstraint" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
@@ -66,9 +66,9 @@
 				<value>true</value>
 			</parameter>
 		</constraint>
-		
-		
-	<constraint name="gs1:platformTermsAndConditionsCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+
+
+		<constraint name="gs1:platformTermsAndConditionsCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
 					<value>/System/Lists/bcpg:entityLists/PlatformTermsAndConditionsCodes</value>
@@ -84,7 +84,7 @@
 				<value>true</value>
 			</parameter>
 		</constraint>
-		
+
 		<constraint name="gs1:sortingBonusCriteriaConstraint" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
@@ -100,12 +100,20 @@
 			<parameter name="addEmptyValue">
 				<value>true</value>
 			</parameter>
-		</constraint>		
-		
+		</constraint>
+
+
+		<constraint name="gs1:variableTradeItemTypeCodeList" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>LOOSE</value>
+					<value>PRE_PACKED</value>
+				</list>
+			</parameter>
+		</constraint>
 	</constraints>
 	<aspects>
-	
-	
+
 		<aspect name="gs1:measuresAspect">
 			<properties>
 				<property name="gs1:productHierarchy1">
@@ -128,7 +136,7 @@
 					<type>d:noderef</type>
 					<mandatory>false</mandatory>
 				</property>
-				
+
 			</properties>
 			<associations />
 			<overrides />
@@ -173,7 +181,7 @@
 					</index>
 				</property>
 				<property name="gs1:isTradeItemAnInvoiceUnit">
-					<description></description>
+					<description />
 					<type>d:boolean</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
@@ -191,15 +199,7 @@
 						<tokenised>TRUE</tokenised>
 					</index>
 				</property>
-				<property name="gs1:isTradeItemAVariableUnit">
-					<type>d:boolean</type>
-					<mandatory>false</mandatory>
-					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
-					</index>
-				</property>
+
 				<property name="gs1:isTradeItemAFullDisplayStand">
 					<type>d:boolean</type>
 					<mandatory>false</mandatory>
@@ -272,11 +272,33 @@
 						<tokenised>TRUE</tokenised>
 					</index>
 				</property>
+				<property name="gs1:isTradeItemAVariableUnit">
+					<type>d:boolean</type>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+				<property name="gs1:eanCodePrice">
+					<type>d:text</type>
+				</property>
+				<property name="gs1:eanCodeWeight">
+					<type>d:text</type>
+				</property>
+				<property name="gs1:variableTradeItemType">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="gs1:variableTradeItemTypeCodeList" />
+					</constraints>
+				</property>
 			</properties>
 			<associations />
 			<overrides />
 			<mandatory-aspects />
 		</aspect>
+
+
 		<aspect name="gs1:datesAspect">
 			<title>GS1 Dates Aspect</title>
 			<properties>
@@ -321,12 +343,12 @@
 			<overrides />
 			<mandatory-aspects />
 		</aspect>
-		
-		
-		
+
+
+
 		<aspect name="gs1:packagingAspect">
 			<properties>
-			<property name="gs1:height">
+				<property name="gs1:height">
 					<type>d:float</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
@@ -443,7 +465,7 @@
 						<tokenised>TRUE</tokenised>
 					</index>
 				</property>
-				
+
 				<property name="gs1:packagingTypeCode">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
@@ -468,7 +490,7 @@
 						<constraint ref="gs1:packagingTypeCodeConstraint" />
 					</constraints>
 				</property>
-				
+
 				<property name="gs1:palletTypeCode">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
@@ -481,24 +503,24 @@
 						<constraint ref="gs1:palletTypeCodeConstraint" />
 					</constraints>
 				</property>
-				
+
 				<property name="gs1:platformTermsAndConditionsCode">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 					<constraints>
 						<constraint ref="gs1:platformTermsAndConditionsCodes" />
 					</constraints>
 				</property>
-		
+
 			</properties>
 			<overrides />
 			<mandatory-aspects />
 		</aspect>
-		
+
 		<aspect name="gs1:packSortingAspect">
 			<properties>
-			   <property name="gs1:isPackagingMarkedReturnable">
+				<property name="gs1:isPackagingMarkedReturnable">
 					<type>d:boolean</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
@@ -549,8 +571,8 @@
 				</property>
 			</properties>
 		</aspect>
-		
-		
+
+
 		<aspect name="gs1:gs1Aspect">
 			<properties />
 			<associations />
@@ -560,7 +582,7 @@
 				<aspect>gs1:indicatorsAspect</aspect>
 				<aspect>gs1:datesAspect</aspect>
 				<aspect>gs1:packagingAspect</aspect>
-				<aspect>gs1:packSortingAspect</aspect>		
+				<aspect>gs1:packSortingAspect</aspect>
 			</mandatory-aspects>
 		</aspect>
 		<aspect name="gs1:nutrientAspect">
