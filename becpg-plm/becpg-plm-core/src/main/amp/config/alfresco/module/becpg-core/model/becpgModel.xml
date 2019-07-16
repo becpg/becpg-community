@@ -1049,7 +1049,6 @@
 			</properties>
 			<mandatory-aspects>
 				<aspect>bcpg:legalNameAspect</aspect>
-				<aspect>bcpg:sortableListAspect</aspect>
 			</mandatory-aspects>
 		</type>
 
