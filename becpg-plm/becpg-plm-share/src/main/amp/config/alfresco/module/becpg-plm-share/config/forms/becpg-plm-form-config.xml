@@ -338,7 +338,7 @@
 					
 					<show id="gs1:effectiveDate"  />
 					<show id="gs1:startAvailabilityDateTime"  />
-					<show id="gs1:lastChangeDateTime"  />
+					<show id="gs1:endAvailabilityDateTime"  />
 					<show id="gs1:publicationDate"  />
 				
 
@@ -833,7 +833,7 @@
 
 					<field id="gs1:effectiveDate" help-id="becpg.forms.help.gs1.effectiveDate"  set="datesPanel" />
 					<field id="gs1:startAvailabilityDateTime" help-id="becpg.forms.help.gs1.startAvailabilityDateTime"  set="datesPanel" />
-					<field id="gs1:lastChangeDateTime" help-id="becpg.forms.help.gs1.lastChangeDateTime"  set="datesPanel" />
+					<field id="gs1:endAvailabilityDateTime" set="datesPanel" />
 					<field id="gs1:publicationDate" help-id="becpg.forms.help.gs1.publicationDate"  set="datesPanel" />
 
 				</appearance>
