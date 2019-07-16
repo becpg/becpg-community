@@ -10,7 +10,20 @@ import org.alfresco.service.namespace.QName;
  */
 public interface AutoNumService {
 
-
+	
+	/**
+	 * 
+	 * @param nodeRef
+	 * @param codeQName
+	 * @return
+	 */
+	String getOrCreateCode(NodeRef nodeRef, QName codeQName);
+	
+	/**
+	 * 
+	 * @param nodeRef
+	 * @return
+	 */
 	String getOrCreateBeCPGCode(NodeRef nodeRef);
 	/**
 	 * Gets the auto num value.
