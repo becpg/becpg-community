@@ -1,0 +1,25 @@
+package fr.becpg.test.repo.helpers;
+
+import org.apache.commons.validator.routines.checkdigit.CheckDigitException;
+import org.apache.commons.validator.routines.checkdigit.EAN13CheckDigit;
+import org.junit.Test;
+
+import fr.becpg.repo.helper.GTINHelper;
+import org.junit.Assert;
+
+public class GTINHelperTest {
+
+	@Test
+	public void testEAN13() throws CheckDigitException {
+
+		String ean13 = GTINHelper.createEAN13Code("455632", "1258");
+
+		Assert.assertEquals(ean13, "4556320012583");
+		EAN13CheckDigit validator = new EAN13CheckDigit();
+		Assert.assertEquals("3",validator.calculate("455632001258"));
+		Assert.assertTrue(validator.isValid(ean13));
+		
+
+	}
+
+}

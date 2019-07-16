@@ -88,16 +88,15 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	private EntityService entityService;
 
 	private PaginatedSearchCache paginatedSearchCache;
-	
+
 	private PermissionService permissionService;
 
 	private RepoService repoService;
-	
+
 	private boolean useBrowserLocale;
 
 	private boolean showEntitiesInTree = false;
-	
-	
+
 	public void setUseBrowserLocale(boolean useBrowserLocale) {
 		this.useBrowserLocale = useBrowserLocale;
 	}
@@ -120,6 +119,14 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 	public String getOrCreateBeCPGCode(ScriptNode sourceNode) {
 		return autoNumService.getOrCreateBeCPGCode(sourceNode.getNodeRef());
+	}
+
+	public String getAutoNumValue(String className, String propertyName) {
+		return autoNumService.getAutoNumValue(QName.createQName(className, namespaceService), QName.createQName(propertyName, namespaceService));
+	}
+
+	public String getOrCreateCode(ScriptNode sourceNode, String propertyName) {
+		return autoNumService.getOrCreateCode(sourceNode.getNodeRef(), QName.createQName(propertyName, namespaceService));
 	}
 
 	public void shareContent(ScriptNode sourceNode) {
@@ -169,7 +176,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public void setRepoService(RepoService repoService) {
 		this.repoService = repoService;
 	}
-	
+
 	public void setEntityService(EntityService entityService) {
 		this.entityService = entityService;
 	}
@@ -229,7 +236,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	}
 
 	public String getMessage(String messageKey, Object param) {
-		
+
 		return I18NUtil.getMessage(messageKey, param, I18NUtil.getLocale());
 	}
 
@@ -288,19 +295,18 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 		return null;
 	}
-	
-	
+
 	public boolean allowWrite(ScriptNode sourceNode, String authority) {
 		return AuthenticationUtil.runAsSystem(() -> {
 			permissionService.setPermission(sourceNode.getNodeRef(), authority, PermissionService.EDITOR, true);
 			return true;
 		});
 	}
-	
+
 	public String getUserLocale(ScriptNode personNode) {
 		String loc = (String) mlNodeService.getProperty(personNode.getNodeRef(), BeCPGModel.PROP_USER_LOCAL);
-		if(loc ==  null || loc.isEmpty()) {
-			if(useBrowserLocale) {
+		if ((loc == null) || loc.isEmpty()) {
+			if (useBrowserLocale) {
 				return null;
 			} else {
 				return MLTextHelper.localeKey(I18NUtil.getLocale());
@@ -308,12 +314,12 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		}
 		return loc;
 	}
-	
+
 	public String getUserContentLocale(ScriptNode personNode) {
 		String loc = (String) mlNodeService.getProperty(personNode.getNodeRef(), BeCPGModel.PROP_USER_CONTENT_LOCAL);
-		if(loc ==  null || loc.isEmpty()) {
-			if(useBrowserLocale) {
-				 return null;
+		if ((loc == null) || loc.isEmpty()) {
+			if (useBrowserLocale) {
+				return null;
 			} else {
 				loc = MLTextHelper.localeKey(I18NUtil.getContentLocale());
 			}

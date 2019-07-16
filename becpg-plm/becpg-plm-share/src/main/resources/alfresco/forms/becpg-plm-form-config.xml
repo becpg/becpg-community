@@ -318,7 +318,7 @@
 					<show id="gs1:isTradeItemAnOrderableUnit" for-mode="edit" /> 
 					<show id="gs1:isTradeItemAReturnableItem" for-mode="edit" />
 					-->
-					<show id="gs1:isTradeItemAVariableUnit"  />
+					
 					<show id="gs1:isTradeItemAFullDisplayStand"  />
 				<!-- 	<show id="gs1:isTradeItemAService" for-mode="edit" /> 
 					<show id="gs1:isTradeItemAModel" for-mode="edit" /> -->
@@ -327,6 +327,13 @@
 					<show id="gs1:isTradeItemAPromotionalItem"  />
 					<show id="gs1:isTradeItemACutToOrderItem"  />
 					<show id="gs1:isPackagingMarkedReturnable" />
+					
+					
+					<show id="gs1:isTradeItemAVariableUnit"  />
+				    <show id="gs1:eanCodePrice" />
+					<show id="gs1:eanCodeWeight" />
+					<show id="gs1:variableTradeItemType"/>
+					
 					
 					
 					<show id="gs1:effectiveDate"  />
@@ -383,6 +390,13 @@
 					<set appearance="bordered-panel" id="indicateursPanel"
 						label-id="becpg.forms.set.indicators.label" parent="publicationTab"
 						template="/org/alfresco/components/form/2-column-set.ftl" />
+						
+					<set appearance="bordered-panel" id="variableTradeItemPanel"
+						label-id="becpg.forms.set.variableTradeItem.label" parent="publicationTab"
+						template="/org/alfresco/components/form/2-column-set.ftl" />	
+						
+						
+						
 					<set appearance="bordered-panel" id="datesPanel"
 						label-id="becpg.forms.set.dates.label" parent="publicationTab"
 						template="/org/alfresco/components/form/2-column-set.ftl" />
@@ -799,7 +813,7 @@
 					<field id="gs1:isTradeItemADespatchUnit" help-id="becpg.forms.help.gs1.isTradeItemADespatchUnit" set="indicateursPanel" />
 					<field id="gs1:isTradeItemAnInvoiceUnit" help-id="becpg.forms.help.gs1.isTradeItemAnInvoiceUnit" set="indicateursPanel" />
 					<field id="gs1:isTradeItemAnOrderableUnit" help-id="becpg.forms.help.gs1.isTradeItemAnOrderableUnit" set="indicateursPanel" />
-					<field id="gs1:isTradeItemAVariableUnit" help-id="becpg.forms.help.gs1.isTradeItemAVariableUnit" set="indicateursPanel" />
+					
 					<field id="gs1:isTradeItemAFullDisplayStand" help-id="becpg.forms.help.gs1.isTradeItemAFullDisplayStand" set="indicateursPanel" />
 					
 					<field id="gs1:isTradeItemAService" help-id="becpg.forms.help.gs1.isTradeItemAService" set="indicateursPanel" />
@@ -809,6 +823,13 @@
 					<field id="gs1:isTradeItemAPromotionalItem" help-id="becpg.forms.help.gs1.isTradeItemAPromotionalItem" set="indicateursPanel" />
 					<field id="gs1:isTradeItemACutToOrderItem" help-id="becpg.forms.help.gs1.isTradeItemACutToOrderItem" set="indicateursPanel" />
 					<field id="gs1:isPackagingMarkedReturnable" set="indicateursPanel" />
+					
+					
+					<field id="gs1:isTradeItemAVariableUnit" help-id="becpg.forms.help.gs1.isTradeItemAVariableUnit" set="variableTradeItemPanel" />
+				    <field id="gs1:eanCodePrice" set="variableTradeItemPanel"/>
+					<field id="gs1:eanCodeWeight" set="variableTradeItemPanel"/>
+					<field id="gs1:variableTradeItemType" set="variableTradeItemPanel"/>
+					
 
 					<field id="gs1:effectiveDate" help-id="becpg.forms.help.gs1.effectiveDate"  set="datesPanel" />
 					<field id="gs1:startAvailabilityDateTime" help-id="becpg.forms.help.gs1.startAvailabilityDateTime"  set="datesPanel" />
