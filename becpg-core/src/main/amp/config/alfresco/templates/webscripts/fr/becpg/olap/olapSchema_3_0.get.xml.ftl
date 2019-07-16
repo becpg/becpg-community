@@ -651,7 +651,7 @@
 						from
 							taskList a inner join pjt_project b on a.entityNodeRef = b.nodeRef 
 						<#if !isAdmin>	
-						  where instanceId = ${instanceId}
+						  where a.instanceId = ${instanceId}
 						</#if>						
 					</SQL>
 				</View>
@@ -689,11 +689,12 @@
 				<Level approxRowCount="5" name="tlState" caption="${msg("jsolap.taskState.title")}"  column="tlState"  type="String"    >
 				  <NameExpression>
 					  <SQL dialect="generic" >
-					  <![CDATA[CASE WHEN tlState='Planned' THEN '${msg("listconstraint.pjt_projectStates.Planned")}'
-	                            WHEN tlState='InProgress' THEN '${msg("listconstraint.pjt_projectStates.InProgress")}'
-	                            WHEN tlState='OnHold' THEN '${msg("listconstraint.pjt_projectStates.OnHold")}'
-	                            WHEN tlState='Cancelled' THEN '${msg("listconstraint.pjt_projectStates.Cancelled")}'
-	                            WHEN tlState='Completed' THEN '${msg("listconstraint.pjt_projectStates.Completed")}'
+					  <![CDATA[CASE WHEN tlState='Planned' THEN '${msg("listconstraint.pjt_taskStates.Planned")}'
+	                            WHEN tlState='InProgress' THEN '${msg("listconstraint.pjt_taskStates.InProgress")}'
+	                            WHEN tlState='OnHold' THEN '${msg("listconstraint.pjt_taskStates.OnHold")}'
+	                            WHEN tlState='Cancelled' THEN '${msg("listconstraint.pjt_taskStates.Cancelled")}'
+	                            WHEN tlState='Refused' THEN '${msg("listconstraint.pjt_taskStates.Refused")}'
+	                            WHEN tlState='Completed' THEN '${msg("listconstraint.pjt_taskStates.Completed")}'
 	                            ELSE 'Vide'
 	                           END]]></SQL>
               </NameExpression>
