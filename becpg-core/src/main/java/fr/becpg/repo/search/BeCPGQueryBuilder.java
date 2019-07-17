@@ -137,6 +137,8 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	private final Set<NodeRef> notIds = new HashSet<>();
 	private final Set<QName> notNullProps = new HashSet<>();
 	private final Set<QName> nullProps = new HashSet<>();
+	private final Set<QName> nullOrUnsetProps = new HashSet<>();
+
 	private final Map<QName, String> propQueriesMap = new HashMap<>();
 	private final Map<QName, Pair<String, String>> propBetweenQueriesMap = new HashMap<>();
 	private final Map<QName, Pair<String, String>> propBetweenOrNullQueriesMap = new HashMap<>();
@@ -156,10 +158,9 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		INSTANCE = this;
 
 	}
-	
 
 	public boolean isInit() {
-		return INSTANCE!=null;
+		return INSTANCE != null;
 	}
 
 	private BeCPGQueryBuilder() {
@@ -289,7 +290,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		cmisLanguage();
 		return this;
 	}
-	
+
 	public BeCPGQueryBuilder inDBIfPossible() {
 		queryConsistancy = QueryConsistency.TRANSACTIONAL_IF_POSSIBLE;
 		return this;
@@ -363,6 +364,15 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		return this;
 	}
 
+	public BeCPGQueryBuilder isNullOrUnset(QName propQName) {
+		if (!notNullProps.contains(propQName)) {
+			nullOrUnsetProps.add(propQName);
+		} else {
+			logger.warn("Unconsistent search null prop already in notNullProps : " + propQName);
+		}
+		return this;
+	}
+
 	public BeCPGQueryBuilder andFTSQuery(String ftsQuery) {
 		ftsQueries.add(ftsQuery);
 		return this;
@@ -376,6 +386,10 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	public BeCPGQueryBuilder andPropEquals(QName propQName, String value) {
 		if (value == null) {
 			isNull(propQName);
+		} else if (isPropQueryNull(value)) {
+			isNullOrUnset(propQName);
+		} else if (isPropQueryNotNull(value)) {
+			isNotNull(propQName);
 		} else {
 			propQueriesEqualMap.put(propQName, value);
 		}
@@ -385,10 +399,24 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	public BeCPGQueryBuilder andPropQuery(QName propQName, String propQuery) {
 		if (propQuery == null) {
 			isNull(propQName);
+		} else if (isPropQueryNull(propQuery)) {
+			isNullOrUnset(propQName);
+		} else if (isPropQueryNotNull(propQuery)) {
+			isNotNull(propQName);
 		} else {
 			propQueriesMap.put(propQName, propQuery);
 		}
 		return this;
+	}
+
+	private boolean isPropQueryNull(String value) {
+		return (value == null) || "ISUNSET".equalsIgnoreCase(value) || "ISNULL".equalsIgnoreCase(value) || "NULL".equalsIgnoreCase(value)
+				|| "EMPTY".equalsIgnoreCase(value);
+	}
+
+	private boolean isPropQueryNotNull(String value) {
+		return (value == null) || "ISSET".equalsIgnoreCase(value) || "ISNOTNULL".equalsIgnoreCase(value) || "NOTNULL".equalsIgnoreCase(value)
+				|| "NOTEMPTY".equalsIgnoreCase(value);
 	}
 
 	public BeCPGQueryBuilder andBetween(QName propQName, String start, String end) {
@@ -677,6 +705,12 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			}
 		}
 
+		if (!nullOrUnsetProps.isEmpty()) {
+			for (QName tmpQName : nullOrUnsetProps) {
+				runnedQuery.append(mandatory(getCondIsNullOrIsUnsetValue(tmpQName)));
+			}
+		}
+
 		if (!ids.isEmpty()) {
 			for (NodeRef tmpNodeRef : ids) {
 				runnedQuery.append(mandatory(getCondEqualID(tmpNodeRef)));
@@ -773,6 +807,13 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		if (!notNullProps.isEmpty()) {
 			for (QName tmpQName : notNullProps) {
 				whereClause.append(" AND ").append(getCmisPrefix(tmpQName)).append(" IS NOT NULL");
+			}
+
+		}
+
+		if (!nullOrUnsetProps.isEmpty()) {
+			for (QName tmpQName : nullOrUnsetProps) {
+				whereClause.append(" AND ").append(getCmisPrefix(tmpQName)).append(" IS NULL");
 			}
 
 		}
@@ -882,7 +923,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	private String getCmisPrefix(QName tmpQName) {
 		String ret = tmpQName.toPrefixString(namespaceService);
 		QName aspect = dictionaryService.getProperty(tmpQName) != null ? dictionaryService.getProperty(tmpQName).getContainerClass().getName() : null;
-		if ((dictionaryService.getProperty(tmpQName) != null) && dictionaryService.getProperty(tmpQName).getContainerClass().isAspect() 
+		if ((dictionaryService.getProperty(tmpQName) != null) && dictionaryService.getProperty(tmpQName).getContainerClass().isAspect()
 				&& !aspect.isMatch(ContentModel.ASPECT_AUDITABLE)) {
 			this.aspects.add(aspect);
 			ret = aspect.getLocalName() + "." + ret;
@@ -1062,7 +1103,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		String sortDirection = null;
 		String createSortDirection = "ASC";
 		QName dataTypeQName = null;
-		
+
 		StoreRef storeRef = StoreRef.STORE_REF_WORKSPACE_SPACESSTORE;
 		if (AuthenticationUtil.isMtEnabled()) {
 			storeRef = tenantService.getName(storeRef);
@@ -1125,17 +1166,14 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 			}
 
-			sql += "where alf_node.store_id=(select id from alf_store where protocol='"+storeRef.getProtocol()
-					+"' and identifier='"+storeRef.getIdentifier()+"') "
-					+ "and alf_node.type_qname_id=(select id from alf_qname " + "where ns_id=(select id from alf_namespace where uri='"
-					+ dataTypeQName.getNamespaceURI() + "') " + "and local_name='" + type.getLocalName() + "') "
-					+ "and id in (select child_node_id from alf_child_assoc where " + "parent_node_id = (select id from alf_node where uuid='"
-					+ parentNodeRef.getId() + "'"
-					+ " and store_id=(select id from alf_store where protocol='"+storeRef.getProtocol()+"'"
-					+ " and identifier='"+storeRef.getIdentifier()+"') )) ";
+			sql += "where alf_node.store_id=(select id from alf_store where protocol='" + storeRef.getProtocol() + "' and identifier='"
+					+ storeRef.getIdentifier() + "') " + "and alf_node.type_qname_id=(select id from alf_qname "
+					+ "where ns_id=(select id from alf_namespace where uri='" + dataTypeQName.getNamespaceURI() + "') " + "and local_name='"
+					+ type.getLocalName() + "') " + "and id in (select child_node_id from alf_child_assoc where "
+					+ "parent_node_id = (select id from alf_node where uuid='" + parentNodeRef.getId() + "'"
+					+ " and store_id=(select id from alf_store where protocol='" + storeRef.getProtocol() + "'" + " and identifier='"
+					+ storeRef.getIdentifier() + "') )) ";
 
-			
-			
 			sql += sortOrderSql;
 
 			if (logger.isTraceEnabled()) {
@@ -1147,14 +1185,14 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 					try (java.sql.ResultSet res = statement.executeQuery()) {
 						while (res.next()) {
 							NodeRef nodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, res.getString("uuid"));
-								if (nodeService.exists(nodeRef)) {
-									ret.add(nodeRef);
-								}
-							} 
+							if (nodeService.exists(nodeRef)) {
+								ret.add(nodeRef);
+							}
 						}
+					}
 				}
 			} catch (SQLException e) {
-				logger.error("Error running : "+sql, e);
+				logger.error("Error running : " + sql, e);
 			}
 
 		}
@@ -1275,6 +1313,5 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	public String toString() {
 		return buildQuery();
 	}
-
 
 }
