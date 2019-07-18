@@ -1065,7 +1065,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 		}
 		patternMatcher.appendTail(sb);
 
-		String documentName = sb.toString().replace("-  -", "-").replace("- -", "-").trim().replaceAll("\\-$|\\(\\)", "").trim()
+		String documentName = sb.toString().replace("-  -", "-").replace("\\s{2,}", " ").replace("- -", "-").trim().replaceAll("\\-$|\\(\\)", "").trim()
 				.replaceAll("\\-$|\\(\\)", "").replaceAll("\\." + RepoConsts.REPORT_EXTENSION_BIRT, "").trim();
 
 		if (reportFormat != null) {
@@ -1345,6 +1345,9 @@ public class EntityReportServiceImpl implements EntityReportService {
 				if(logger.isDebugEnabled()) {
 					logger.debug("Test "+reportName+" against "+reportTitle);
 				}
+				
+				//Test 10. Barcode report (en) against 
+				//     10. Barcode report  (en)
 
 				if ((reportTitle != null) && reportTitle.equalsIgnoreCase(reportName)) {
 					if(logger.isDebugEnabled()) {
