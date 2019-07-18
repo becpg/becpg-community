@@ -8,6 +8,7 @@ import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.transaction.AlfrescoTransactionSupport;
 import org.alfresco.repo.transaction.AlfrescoTransactionSupport.TxnReadState;
 import org.alfresco.repo.transaction.RetryingTransactionHelper;
+import org.alfresco.repo.virtual.VirtualContentModel;
 import org.alfresco.service.cmr.dictionary.InvalidTypeException;
 import org.alfresco.service.cmr.repository.ContentIOException;
 import org.alfresco.service.cmr.repository.ContentReader;
@@ -54,7 +55,6 @@ public class ReportContentServiceWrapper implements ContentService {
 		this.entityReportService = entityReportService;
 	}
 
-	
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
@@ -83,6 +83,12 @@ public class ReportContentServiceWrapper implements ContentService {
 
 		if (ReportModel.TYPE_REPORT.equals(nodeService.getType(nodeRef))) {
 
+			if ((nodeRef != null) && nodeService.hasAspect(nodeRef, VirtualContentModel.ASPECT_VIRTUAL_DOCUMENT)) {
+				nodeRef = new NodeRef((String) nodeService.getProperty(nodeRef, VirtualContentModel.PROP_ACTUAL_NODE_REF));
+			}
+
+			final NodeRef finalNodeRef = nodeRef;
+
 			NodeRef entityNodeRef = entityReportService.getEntityNodeRef(nodeRef);
 			if ((entityNodeRef != null) && entityReportService.shouldGenerateReport(entityNodeRef, nodeRef)) {
 
@@ -98,9 +104,9 @@ public class ReportContentServiceWrapper implements ContentService {
 
 					logger.debug("refreshReport: Entity report is not up to date for " + entityNodeRef);
 
-					entityReportService.generateReport(entityNodeRef, nodeRef);
+					entityReportService.generateReport(entityNodeRef, finalNodeRef);
 
-					return nodeRef;
+					return finalNodeRef;
 
 				}, AuthenticationUtil.getSystemUserName()), false, requiresNew);
 
