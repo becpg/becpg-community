@@ -1339,10 +1339,16 @@ public class EntityReportServiceImpl implements EntityReportService {
 			if (permissionService.hasPermission(reportNodeRef, "Read") == AccessStatus.ALLOWED) {
 
 				String reportTitle = (String) nodeService.getProperty(reportNodeRef, ContentModel.PROP_TITLE);
+				if(reportTitle == null ) {
+					reportTitle = (String) nodeService.getProperty(reportNodeRef, ContentModel.PROP_NAME);
+				}
+				if(logger.isDebugEnabled()) {
+					logger.debug("Test "+reportName+" against "+reportTitle);
+				}
 
 				if ((reportTitle != null) && reportTitle.equalsIgnoreCase(reportName)) {
 					if(logger.isDebugEnabled()) {
-						logger.debug("Found selected report for name: "+reportName+ " "+reportNodeRef);
+						logger.debug("Found selected report for title: "+reportName+ " "+reportNodeRef);
 					}
 					
 					return reportNodeRef;
@@ -1356,7 +1362,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 			}
 		}
 		if(logger.isDebugEnabled()) {
-			logger.debug("Selected report for name: "+reportName+" not  found returning default "+ret);
+			logger.debug("Selected report for title: "+reportName+" not  found returning default "+ret);
 		}
 		return ret;
 	}
