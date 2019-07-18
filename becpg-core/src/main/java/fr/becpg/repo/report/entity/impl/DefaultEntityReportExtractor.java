@@ -569,7 +569,6 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 				}
 
 				String value = attributeExtractorService.extractPropertyForReport(propertyDef, property.getValue(), propertyFormats, false);
-	
 
 				boolean isDyn = false;
 				boolean isList = false;
@@ -645,9 +644,9 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 							if ((code != null) && !code.isEmpty()) {
 								Element ret = addData(nodeElt, useCData, propertyDef.getName(), mlEntry.getValue(), code, context);
 								if (isDyn && (ret != null)) {
-									if( useCData) {
-									  ret.addAttribute("code", value);
-									} 
+									if (useCData) {
+										ret.addAttribute("code", value);
+									}
 								}
 
 							}
@@ -692,27 +691,30 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 	private String extractName(QName targetClass, NodeRef nodeRef) {
 
-		if (!nodeService.exists(nodeRef)) {
-			logger.info("Extract name : " + targetClass);
-		}
+		if (nodeService.exists(nodeRef)) {
 
-		QName propNameOfType = getPropNameOfType(targetClass);
+			QName propNameOfType = getPropNameOfType(targetClass);
 
-		if (propNameOfType != null) {
-			return (String) nodeService.getProperty(nodeRef, propNameOfType);
-		}
-
-		if (ContentModel.TYPE_CMOBJECT.equals(targetClass)
-				&& entityDictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_CHARACT)) {
-			String name = (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_LEGAL_NAME);
-
-			if ((name == null) || name.isEmpty()) {
-				name = (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_CHARACT_NAME);
+			if (propNameOfType != null) {
+				return (String) nodeService.getProperty(nodeRef, propNameOfType);
 			}
-			return name;
-		}
 
-		return attributeExtractorService.extractPropName(targetClass, nodeRef);
+			if (ContentModel.TYPE_CMOBJECT.equals(targetClass)
+					&& entityDictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_CHARACT)) {
+				String name = (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_LEGAL_NAME);
+
+				if ((name == null) || name.isEmpty()) {
+					name = (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_CHARACT_NAME);
+				}
+				return name;
+			}
+
+			return attributeExtractorService.extractPropName(targetClass, nodeRef);
+
+		} else {
+			logger.warn("Node doesn't exists : " + targetClass + "  " + nodeRef);
+			return "#Error";
+		}
 	}
 
 	private void loadComments(NodeRef nodeRef, Element nodeElt, DefaultExtractorContext context) {
