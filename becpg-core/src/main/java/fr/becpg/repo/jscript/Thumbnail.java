@@ -24,6 +24,7 @@ import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.transaction.AlfrescoTransactionSupport;
 import org.alfresco.repo.transaction.AlfrescoTransactionSupport.TxnReadState;
 import org.alfresco.repo.transaction.RetryingTransactionHelper;
+import org.alfresco.repo.virtual.VirtualContentModel;
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -54,7 +55,6 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 	private BeCPGCacheService beCPGCacheService;
 
 	private ServiceRegistry serviceRegistry;
-	
 
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
@@ -128,7 +128,15 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 
 	public ScriptNode getReportNode(ScriptNode sourceNode) {
 
-		if (entityReportService.shouldGenerateReport(sourceNode.getNodeRef(), null)) {
+		NodeRef sourceNodeRef = sourceNode.getNodeRef();
+
+		if ((sourceNodeRef != null) && nodeService.hasAspect(sourceNodeRef, VirtualContentModel.ASPECT_VIRTUAL_DOCUMENT)) {
+			sourceNodeRef = new NodeRef((String) nodeService.getProperty(sourceNodeRef, VirtualContentModel.PROP_ACTUAL_NODE_REF));
+		}
+
+		final NodeRef finalNodeRef = sourceNodeRef;
+
+		if (entityReportService.shouldGenerateReport(sourceNodeRef, null)) {
 
 			RetryingTransactionHelper txnHelper = serviceRegistry.getRetryingTransactionHelper();
 			txnHelper.setForceWritable(true);
@@ -140,12 +148,12 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 			}
 			txnHelper.doInTransaction(() -> AuthenticationUtil.runAs(() -> {
 
-				logger.debug("getReportNode: Entity report is not up to date for " + sourceNode.getNodeRef());
-				NodeRef reportNodeRef = entityReportService.getSelectedReport(sourceNode.getNodeRef());
+				logger.debug("getReportNode: Entity report is not up to date for " + finalNodeRef);
+				NodeRef reportNodeRef = entityReportService.getSelectedReport(finalNodeRef);
 				if (reportNodeRef != null) {
 					cleanThumbnails(reportNodeRef);
 				}
-				entityReportService.generateReports(sourceNode.getNodeRef());
+				entityReportService.generateReports(finalNodeRef);
 
 				return reportNodeRef;
 
@@ -160,7 +168,13 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 	}
 
 	public ScriptNode refreshReport(ScriptNode reportNode) {
-		final NodeRef reportNodeRef = reportNode.getNodeRef();
+		NodeRef reportNodeRef = reportNode.getNodeRef();
+
+		if ((reportNodeRef != null) && nodeService.hasAspect(reportNodeRef, VirtualContentModel.ASPECT_VIRTUAL_DOCUMENT)) {
+			reportNodeRef = new NodeRef((String) nodeService.getProperty(reportNodeRef, VirtualContentModel.PROP_ACTUAL_NODE_REF));
+		}
+
+		final NodeRef finalNodeRef = reportNodeRef;
 
 		NodeRef entityNodeRef = entityReportService.getEntityNodeRef(reportNodeRef);
 		if ((entityNodeRef != null) && entityReportService.shouldGenerateReport(entityNodeRef, reportNodeRef)) {
@@ -177,10 +191,10 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 
 				logger.debug("refreshReport: Entity report is not up to date for " + entityNodeRef);
 
-				entityReportService.generateReport(entityNodeRef, reportNodeRef);
-				cleanThumbnails(reportNodeRef);
+				entityReportService.generateReport(entityNodeRef, finalNodeRef);
+				cleanThumbnails(finalNodeRef);
 
-				return reportNodeRef;
+				return finalNodeRef;
 
 			}, AuthenticationUtil.getSystemUserName()), false, requiresNew), serviceRegistry, getScope());
 
