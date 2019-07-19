@@ -95,8 +95,8 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 
 		String taskName = taskNodeRef != null ? (String) nodeService.getProperty(taskNodeRef, ProjectModel.PROP_TL_TASK_NAME) : null;
 
-		return I18NUtil.getMessage(MAIL_SUBJECT_KEY, "[" + projectName + (code != null ? " - " + code : "") + "]"
-				+ (taskName != null ? " " + taskName : "") + (afterStateMsg != null ? " (" + afterStateMsg + ")" : ""));
+		return I18NUtil.getMessage(MAIL_SUBJECT_KEY, "[" + projectName + (code != null ? " - " + code : "") + "]"+ (afterStateMsg != null ? " (" + afterStateMsg + ")" : "")
+				+ (taskName != null ? " " + taskName : "") );
 
 	}
 

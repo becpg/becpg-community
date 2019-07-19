@@ -12,9 +12,66 @@
       {
          color: #0072cf;
       }
+      
+         
+      ul {
+       list-style-type: none;
+       margin:0px;
+       padding-left:10px;
+      }
+      
+      ul li div.delivrable {
+			 border: 1px solid rgb(204, 204, 204);
+			 font-size: 108%;
+		     margin: 5px;
+		     width: 95%;
+		     min-height: 40px;
+		     height: 40px;
+		     display: table !important;
+		     padding:0 !important;
+		     box-shadow: 0.33px 2px 8px rgba(0, 0, 0, 0.1);
+		}
+		
+		ul li div.delivrable-status {
+			width: 5px;
+			display: table-cell !important;
+		    padding:0 !important;
+		}
+		
+		div.delivrable-container {
+			 display: table-cell !important;
+		     padding: 10px !important;
+		}
+		
+		
+		span.doc-file {
+			display: inline-table;
+		}
+		
+		div.delivrable-status.delivrable-status-Completed {
+			background-color : rgb(123, 209, 72);
+		}
+		
+		div.delivrable-status-Closed   {
+			text-decoration:  line-through ;
+		}
+		
+		
+		 div.delivrable-status.delivrable-status-Closed {
+		    background-color : grey;
+		 }
+		 
+		 div.delivrable-status.delivrable-status-Planned, div.delivrable-status.delivrable-status-InProgress {
+		    background-color :rgb(73, 134, 231);
+		 }
+
+ 
+      
       --></style>
    </head>
    
+    <#assign currentPerson = people.getPerson(args.project.properties["cm:modifier"])>
+
    <body bgcolor="#dddddd">
       <table width="100%" cellpadding="20" cellspacing="0" border="0" bgcolor="#dddddd">
          <tr>
@@ -32,61 +89,58 @@
                                              <tr>
                                                 <td>
                                                    <img src="${shareUrl}/res/components/images/task-64.png" alt="" width="64" height="64" border="0" style="padding-right: 20px;" />
-                                                </td>                                               
+                                                </td> 
+                                                <td>
+                                                  <h2>Le projet <a href="${shareUrl}/page/entity-data-lists?list=taskList&nodeRef=${args.project.nodeRef}">${args.project.name}</a> a été mis à jour par ${currentPerson.properties["cm:firstName"]!""} ${currentPerson.properties["cm:lastName"]!""}.</h2>
+                                                </td>                                              
                                              </tr>
                                           </table>
                                           <div style="font-size: 14px; margin: 12px 0px 24px 0px; padding-top: 10px; border-top: 1px solid #aaaaaa;">
-                                             <p>Bonjour,</p>
 
-                                             <p>
                                              	<#if args.activityType == 'State'>
-                                             		L'état de la tâche a été changé de <b>${args.beforeState}</b> à <b>${args.afterState}</b>.
+                                             		<p>L'état de la tâche a été changé de <b>${args.beforeState}</b> à <b>${args.afterState}</b>.</p>
                                              		
                                              		<#if  args.taskComment??>
-                                             		   <hr/>
-                                             		   <i>${args.refusedComment}</i>
-                                             		<#/if>
+                                             		    <p> Commentaire: </p>
+                                             			<table width="100%" cellpadding="0" callspacing="0" border="0" bgcolor="#eeeeee" style="padding:10px; border: 1px solid #aaaaaa;">
+		                                                   <tr>
+		                                                      <td>
+		                                                        ${args.taskComment}
+		                                                      </td>
+		                                                   </tr>
+		                                                </table>
+		                                          
+                                             		</#if>
+                                             		
+                                             		
+									      	<p >Livrables:</p>
+									      	
+									      	<ul><li>
+									      		<div class="delivrable delivrable-status-InProgress">
+										      			<div class="delivrable-status delivrable-status-InProgress"></div>
+										      				<div class="delivrable-container">
+										      						<span >Livrable 1</span>
+										      			</div>
+										      	</div>						
+										      	</li>
+										     </ul>
+				      						
+                                             		
                                              		
                                              	<#elseif args.activityType == 'Comment'>
-                                             		Un commentaire a été  <#if args.activityEvent == 'Create'>créé<#elseif args.activityEvent == 'Update'>mis à jour<#else>supprimé</#if> sur <#if args.deliverableDescription??>le livrable <b>"${args.deliverableDescription}"</b> <#elseif args.taskTitle??>la tâche <b>"${args.taskTitle}"</b> <#else>le projet</#if> :                                              		                                             		 
-                                             		<i>${args.comment.content}</i>
+                                             		<p> Un commentaire a été  <#if args.activityEvent == 'Create'>créé<#elseif args.activityEvent == 'Update'>mis à jour<#else>supprimé</#if> sur <#if args.deliverableDescription??>le livrable <b>"${args.deliverableDescription}"</b> <#elseif args.taskTitle??>la tâche <b>"${args.taskTitle}"</b> <#else>le projet</#if> : </p>                                             		                                             		 
+                                             			<#if  args.comment?? && args.comment.content??> 
+	                                             		<table width="100%" cellpadding="0" callspacing="0" border="0" bgcolor="#eeeeee" style="padding:10px; border: 1px solid #aaaaaa;">
+			                                                   <tr>
+			                                                      <td>
+			                                                        ${args.comment.content}
+			                                                      </td>
+			                                                   </tr>
+			                                             </table>
+		                                             	</#if>
                                              	</#if>                                             	
-                                             </p>
                                              
-                                             <#if (args.project)??>
-                                                <table cellpadding="0" callspacing="0" border="0" bgcolor="#eeeeee" style="padding:10px; border: 1px solid #aaaaaa;">
-                                                   <tr>
-                                                      <td>
-                                                         <table cellpadding="0" cellspacing="0" border="0">
-                                                            <tr>
-                                                               <td valign="top">
-                                                                  <img src="${shareUrl}/res/components/images/generic-file.png" alt="" width="64" height="64" border="0" style="padding-right: 10px;" />
-                                                               </td>
-                                                               <td>
-                                                                  <table cellpadding="2" cellspacing="0" border="0">
-                                                                     <tr>
-                                                                        <td><b>${args.project.name}</b></td>
-                                                                     </tr>
-                                                                    <tr>
-                                                                        <td>Cliquez sur le lien pour accéder au projet:</td>
-                                                                     </tr>
-                                                                     <tr>
-                                                                        <td>
-                                                                           <a href="${shareUrl}/page/entity-data-lists?list=taskList&nodeRef=${args.project.nodeRef}">
-                                                                           ${shareUrl}/page/entity-data-lists?list=taskList&nodeRef=${args.project.nodeRef}</a>
-                                                                        </td>
-                                                                     </tr>                                                                         
-                                                                  </table>
-                                                               </td>
-                                                            </tr>
-                                                         </table>
-                                                      </td>
-                                                   </tr>
-                                                </table>
-                                             </#if>
-                                             
-                                             <p>Cordialement,<br />
-                                             beCPG</p>
+                                           
                                           </div>
                                        </td>
                                     </tr>
@@ -100,7 +154,7 @@
                            </tr>
                            <tr>
                               <td style="padding: 10px 30px;">
-                                 <img src="${shareUrl}/themes/default/images/app-logo.png" alt="" width="117" height="48" border="0" />
+                                 <img src="${shareUrl}/themes/default/images/app-logo.png" alt="" width="117"  border="0" />
                               </td>
                            </tr>
                         </table>

@@ -18,6 +18,7 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
+import fr.becpg.repo.activity.policy.EntityActivityPolicy;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.project.data.projectList.DeliverableState;
 import fr.becpg.repo.project.data.projectList.TaskManualDate;
@@ -128,9 +129,11 @@ public class ProjectListPolicy extends ProjectPolicy
 		if ((beforeState != null) && (afterState != null) && !beforeState.equals(afterState)) {
 
 			projectActivityService.postTaskStateChangeActivity(nodeRef, beforeState, afterState);
+			queueNode(EntityActivityPolicy.KEY_QUEUE_UPDATED_STATUS, nodeRef);
+			
 			formulateProject = true;
 
-			if (beforeState.equals(TaskState.Completed.toString()) && afterState.equals(TaskState.InProgress.toString())) {
+			if ((beforeState.equals(TaskState.Completed.toString()) || beforeState.equals(TaskState.Refused.toString())) && afterState.equals(TaskState.InProgress.toString())) {
 				// re-open task
 				logger.debug("re-open task: " + nodeRef);
 				projectService.reopenTask(nodeRef);
