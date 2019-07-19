@@ -193,6 +193,7 @@ public class ProjectServiceImpl implements ProjectService {
 
 		if ((taskComment != null) && !taskComment.isEmpty()) {
 			commentService.createComment(nodeRef, "", taskComment, false);
+			nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_TASK_COMMENT, taskComment);
 		}
 
 		Date startDate = (Date) nodeService.getProperty(nodeRef, ProjectModel.PROP_TL_START);
@@ -411,6 +412,7 @@ public class ProjectServiceImpl implements ProjectService {
 
 		if ((taskNodeRef != null) && (taskComment != null) && !taskComment.isEmpty()) {
 			commentService.createComment(taskNodeRef, "", taskComment, false);
+			nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_TASK_COMMENT, taskComment);
 		}
 
 		nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_STATE, TaskState.Refused.toString());

@@ -41,6 +41,13 @@
                                              <p>                                             	
                                              	<#if args.activityType == 'State'>
                                              		The state of the task has been changed from <b>${args.beforeState}</b> to <b>${args.afterState}</b>.
+                                             		
+                                             		<#if  args.taskComment??>
+                                             		   <hr/>
+                                             		   <i>${args.refusedComment}</i>
+                                             		<#/if>
+                                             		
+                                             		
                                              	<#elseif args.activityType == 'Comment'>                                             		
                                              		A comment has been <#if args.activityEvent == 'Create'>created<#elseif args.activityEvent == 'Update'>updated<#else>deleted</#if> on <#if (args.deliverableDescription)??>deliverable <b>"${args.deliverableDescription}"</b> <#elseif (args.taskTitle)??>task <b>"${args.taskTitle}"</b> <#else>project</#if>:                                              		
                                              		<i>${args.comment.content}</i>
