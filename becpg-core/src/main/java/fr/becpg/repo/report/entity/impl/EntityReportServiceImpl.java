@@ -1065,7 +1065,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 		}
 		patternMatcher.appendTail(sb);
 
-		String documentName = sb.toString().replace("-  -", "-").replace("\\s{2,}", " ").replace("- -", "-").trim().replaceAll("\\-$|\\(\\)", "").trim()
+		String documentName = sb.toString().replace("-  -", "-").replaceAll("\\s{2,}", " ").replace("- -", "-").trim().replaceAll("\\-$|\\(\\)", "").trim()
 				.replaceAll("\\-$|\\(\\)", "").replaceAll("\\." + RepoConsts.REPORT_EXTENSION_BIRT, "").trim();
 
 		if (reportFormat != null) {
