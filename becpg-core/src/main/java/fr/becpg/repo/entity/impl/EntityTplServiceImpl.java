@@ -628,13 +628,13 @@ public class EntityTplServiceImpl implements EntityTplService {
 	}
 
 	@Override
-	public void removeDataListOnEntities(NodeRef entityTplNodeRef, QName entityList) {
+	public void removeDataListOnEntities(NodeRef entityTplNodeRef, String entityListName) {
 		List<NodeRef> entities = getEntitiesToUpdate(entityTplNodeRef);
 
 		doInBatch(entities, 10, entityNodeRef -> {
 
 			NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
-			NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, entityList);
+			NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, entityListName);
 
 			if (listNodeRef != null) {
 				logger.debug("Deleting list with node: " + listNodeRef + " on entity: " + entityNodeRef + " ("
@@ -645,7 +645,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 		});
 
 		NodeRef tplListContainerNodeRef = entityListDAO.getListContainer(entityTplNodeRef);
-		NodeRef tplListNodeRef = entityListDAO.getList(tplListContainerNodeRef, entityList);
+		NodeRef tplListNodeRef = entityListDAO.getList(tplListContainerNodeRef, entityListName);
 
 		if (tplListNodeRef != null) {
 			logger.debug("Deleting list with node: " + tplListNodeRef + " on template: " + entityTplNodeRef + " ("

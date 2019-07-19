@@ -389,7 +389,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 			NodeRef existingListNodeRef;
 
-			if (name.startsWith(RepoConsts.WUSED_PREFIX) || name.startsWith(RepoConsts.CUSTOM_VIEW_PREFIX)) {
+			if (name.startsWith(RepoConsts.WUSED_PREFIX) || name.startsWith(RepoConsts.CUSTOM_VIEW_PREFIX) || name.contains("@")) {
 				existingListNodeRef = getList(targetListContainerNodeRef, name);
 			} else {
 				existingListNodeRef = getList(targetListContainerNodeRef, listQName);
