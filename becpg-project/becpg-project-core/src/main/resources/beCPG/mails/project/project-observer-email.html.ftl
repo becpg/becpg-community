@@ -44,8 +44,8 @@
                                              		
                                              		<#if  args.taskComment??>
                                              		   <hr/>
-                                             		   <i>${args.refusedComment}</i>
-                                             		<#/if>
+                                             		   <i>${args.taskComment}</i>
+                                             		</#if>
                                              		
                                              		
                                              	<#elseif args.activityType == 'Comment'>                                             		
