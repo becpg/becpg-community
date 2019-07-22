@@ -48,6 +48,7 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 	public static final String ARG_COMMENT = "comment";
 	public static final String ARG_PROJECT = "project";
 	public static final String ARG_TASK_STATE = "taskState";
+	public static final String ARG_TASK = "task";
 	public static final String ARG_TASK_COMMENT = "taskComment";
 
 	private static final String PREFIX_LOCALIZATION_TASK_NAME = "listconstraint.pjt_taskStates.";
@@ -82,6 +83,7 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 		templateArgs.put(ARG_AFTER_STATE, afterStateMsg);
 		templateArgs.put(ARG_TASK_STATE, afterState);
 		templateArgs.put(ARG_PROJECT, projectNodeRef);
+		templateArgs.put(ARG_TASK, taskNodeRef);
 		templateArgs.put(ARG_TASK_COMMENT, nodeService.getProperty(taskNodeRef, ProjectModel.PROP_TL_TASK_COMMENT));
 
 		notifyObservers(projectNodeRef, taskNodeRef, subject, templateArgs, MAIL_TEMPLATE);
@@ -113,6 +115,7 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 		if (taskNodeRef != null) {
 			templateArgs.put(ARG_TASK_TITLE, nodeService.getProperty(taskNodeRef, ProjectModel.PROP_TL_TASK_NAME));
 			templateArgs.put(ARG_TASK_DESCRIPTION, nodeService.getProperty(taskNodeRef, ProjectModel.PROP_TL_TASK_DESCRIPTION));
+			templateArgs.put(ARG_TASK, taskNodeRef);
 		}
 
 		if (deliverableNodeRef != null) {
