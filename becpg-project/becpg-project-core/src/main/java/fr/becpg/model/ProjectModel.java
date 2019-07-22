@@ -45,6 +45,8 @@ public interface ProjectModel {
 	QName PROP_PROJECT_LEGENDS = QName.createQName(PROJECT_URI, "projectLegends");
 	QName ASSOC_PROJECT_ENTITY = QName.createQName(PROJECT_URI, "projectEntity");
 	QName ASSOC_PROJECT_OBSERVERS = QName.createQName(PROJECT_URI, "projectObservers");
+
+	QName PROP_OBSERVERS_EVENTS = QName.createQName(PROJECT_URI,"observersEvents");
 	
 	QName ASSOC_PROJECT_CUR_TASKS = QName.createQName(PROJECT_URI, "projectCurrentTasks");
 	QName ASSOC_PROJECT_CUR_COMMENTS = QName.createQName(PROJECT_URI, "projectCurrentComments");
@@ -52,6 +54,7 @@ public interface ProjectModel {
 	QName TYPE_TASK_LIST = QName.createQName(PROJECT_URI, "taskList");
 	QName PROP_TL_TASK_NAME = QName.createQName(PROJECT_URI, "tlTaskName");
 	QName PROP_TL_TASK_DESCRIPTION = QName.createQName(PROJECT_URI, "tlTaskDescription");
+	QName PROP_TL_TASK_COMMENT =  QName.createQName(PROJECT_URI, "tlTaskComment");
 
 	QName PROP_TL_IS_MILESTONE = QName.createQName(PROJECT_URI, "tlIsMilestone");
 	QName PROP_TL_IS_EXCLUDE_FROM_SEARCH = QName.createQName(PROJECT_URI, "tlIsExcludeFromSearch");
@@ -134,6 +137,7 @@ public interface ProjectModel {
 	QName PROP_QNAME_DELEGATION_END = QName.createQName(PROJECT_URI, "delegationEndDate");
 	QName PROP_QNAME_REASSIGN_TASK = QName.createQName(PROJECT_URI, "reassignCurrentTasks");
 	QName PROP_QNAME_REASSIGN_RESOURCE = QName.createQName(PROJECT_URI, "reassignTo");
+
 	
 	
 

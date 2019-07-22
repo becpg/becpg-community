@@ -41,12 +41,8 @@ public interface EntityTplService {
 
 	NodeRef createView(NodeRef entityTplNodeRef, QName typeQName, String name);
 	
-	void removeDataListOnEntities(NodeRef entityTplNodeRef, QName entityList);
+	void removeDataListOnEntities(NodeRef entityTplNodeRef, String entityListName);
 
 	NodeRef createActivityList(NodeRef entityNodeRef, QName typeActivityList);
 	
-	/** TODO
-	void removeDataListItemsOnEntities(NodeRef entityTplNodeRef, List<NodeRef> dataListItems);
-	*/
-
 }

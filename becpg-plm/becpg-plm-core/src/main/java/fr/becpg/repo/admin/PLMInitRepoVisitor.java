@@ -647,6 +647,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	protected void visitPermissions(NodeRef nodeRef, String folderName) {
 
 		if (Objects.equals(folderName, PlmRepoConsts.PATH_EXCHANGE)) {
+			permissionService.setInheritParentPermissions(nodeRef, false);
 			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + SystemGroup.SystemMgr.toString(), PermissionService.COORDINATOR,
 					true);
 		}

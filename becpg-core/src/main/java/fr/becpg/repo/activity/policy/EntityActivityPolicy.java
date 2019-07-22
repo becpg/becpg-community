@@ -34,10 +34,10 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 
 	private static final Log logger = LogFactory.getLog(EntityActivityPolicy.class);
 
-	protected static final String KEY_QUEUE_UPDATED = "EntityActivity_updated";
-	protected static final String KEY_QUEUE_DELETED = "EntityActivity_deleted";
-	protected static final String KEY_QUEUE_CREATED = "EntityActivity_created";
-	protected static final String KEY_QUEUE_UPDATED_STATUS = "EntityActivity_UpdatedStatus";
+	public static final String KEY_QUEUE_UPDATED = "EntityActivity_updated";
+	public static final String KEY_QUEUE_DELETED = "EntityActivity_deleted";
+	public static final String KEY_QUEUE_CREATED = "EntityActivity_created";
+	public static final String KEY_QUEUE_UPDATED_STATUS = "EntityActivity_UpdatedStatus";
 
 	private static final Set<QName> isIgnoredTypes = new HashSet<>();
 
@@ -162,6 +162,7 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 
 					if (entityState != null) {
 						queueNode(KEY_QUEUE_UPDATED_STATUS + DELIMITER + beforeState + DELIMITER + afterState, nodeRef);
+						queueNode(KEY_QUEUE_UPDATED_STATUS, nodeRef);
 					} else {
 						queueNode(KEY_QUEUE_UPDATED, nodeRef);
 					}
@@ -244,7 +245,7 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 					registerActivity(nodeRef, type, ActivityEvent.Create);
 					break;
 				default:
-					if (key.contains(KEY_QUEUE_UPDATED_STATUS)) {
+					if (key.contains(KEY_QUEUE_UPDATED_STATUS + DELIMITER)) {
 						String[] strState = pattern.split(key);
 						logger.debug("Action change state, post activity");
 						if(strState!=null && strState.length>1) {

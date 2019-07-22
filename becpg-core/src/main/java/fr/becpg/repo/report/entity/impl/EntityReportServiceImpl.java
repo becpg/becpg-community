@@ -1029,7 +1029,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 		}
 		patternMatcher.appendTail(sb);
 
-		String documentName = sb.toString().replace("-  -", "-").replace("- -", "-").trim().replaceAll("\\-$|\\(\\)", "").trim()
+		String documentName = sb.toString().replace("-  -", "-").replaceAll("\\s{2,}", " ").replace("- -", "-").trim().replaceAll("\\-$|\\(\\)", "").trim()
 				.replaceAll("\\-$|\\(\\)", "").replaceAll("\\." + RepoConsts.REPORT_EXTENSION_BIRT, "").trim();
 
 		if (reportFormat != null) {
@@ -1085,7 +1085,13 @@ public class EntityReportServiceImpl implements EntityReportService {
 				}
 			}
 			if (documentNodeRef == null) {
+				
 				documentNodeRef = nodeService.getChildByName(documentsFolderNodeRef, ContentModel.ASSOC_CONTAINS, documentName);
+				
+				
+				if(logger.isDebugEnabled()) {
+					logger.debug("Create new report document "+documentName+" ("+documentNodeRef+")");
+				}
 
 				if (documentNodeRef == null) {
 					documentNodeRef = fileFolderService.create(documentsFolderNodeRef, documentName, ReportModel.TYPE_REPORT).getNodeRef();
@@ -1297,12 +1303,22 @@ public class EntityReportServiceImpl implements EntityReportService {
 			if (permissionService.hasPermission(reportNodeRef, "Read") == AccessStatus.ALLOWED) {
 
 				String reportTitle = (String) nodeService.getProperty(reportNodeRef, ContentModel.PROP_TITLE);
+				if(reportTitle == null ) {
+					reportTitle = (String) nodeService.getProperty(reportNodeRef, ContentModel.PROP_NAME);
+				}
+				if(logger.isDebugEnabled()) {
+					logger.debug("Test "+reportName+" against "+reportTitle);
+				}
+				
+				//Test 10. Barcode report (en) against 
+				//     10. Barcode report  (en)
 
 				if ((reportTitle != null) && reportTitle.equalsIgnoreCase(reportName)) {
-					if (logger.isDebugEnabled()) {
-						logger.debug("Found selected report for name: " + reportName + " " + reportNodeRef);
+					if(logger.isDebugEnabled()) {
+						logger.debug("Found selected report for title: "+reportName+ " "+reportNodeRef);
 					}
 
+					
 					return reportNodeRef;
 				}
 
@@ -1313,8 +1329,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 			}
 		}
-		if (logger.isDebugEnabled()) {
-			logger.debug("Selected report for name: " + reportName + " not  found returning default " + ret);
+		if(logger.isDebugEnabled()) {
+			logger.debug("Selected report for title: "+reportName+" not  found returning default "+ret);
 		}
 		return ret;
 	}

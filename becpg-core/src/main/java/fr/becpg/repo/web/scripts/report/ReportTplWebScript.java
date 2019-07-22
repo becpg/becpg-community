@@ -1,5 +1,5 @@
 /*
- * 
+ *
  */
 package fr.becpg.repo.web.scripts.report;
 
@@ -103,17 +103,19 @@ public class ReportTplWebScript extends AbstractWebScript {
 
 		Boolean isSystem = (Boolean) nodeService.getProperty(nodeRef, ReportModel.PROP_REPORT_TPL_IS_SYSTEM);
 		QName classType = (QName) nodeService.getProperty(nodeRef, ReportModel.PROP_REPORT_TPL_CLASS_NAME);
+		List<NodeRef> refs = null;
 
-		if (isSystem != null && isSystem && classType != null) {
+		if ((isSystem != null) && isSystem && (classType != null)) {
 
-			List<NodeRef> refs = BeCPGQueryBuilder.createQuery()
-					.ofType(classType)
-					.withAspect(ReportModel.ASPECT_REPORT_ENTITY)
-					.excludeVersions()
+			refs = BeCPGQueryBuilder.createQuery().ofType(classType).withAspect(ReportModel.ASPECT_REPORT_ENTITY).excludeVersions()
 					.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list();
 
-			logger.info("Refresh reports of " + refs.size() + " entities. action: " + action);
+		} else {
+			refs = associationService.getSourcesAssocs(nodeRef, ReportModel.ASSOC_REPORT_TEMPLATES);
+		}
 
+		if (refs != null) {
+			logger.info("Refresh reports of " + refs.size() + " entities. action: " + action);
 			if (ACTION_REFRESH.equals(action)) {
 				entityReportAsyncGenerator.queueNodes(refs, true);
 			} else if (ACTION_UPDATE_PERMISSIONS.equals(action)) {
@@ -140,7 +142,8 @@ public class ReportTplWebScript extends AbstractWebScript {
 
 		for (AssociationRef assocRef : assocRefs) {
 			if (logger.isDebugEnabled()) {
-				logger.debug("Delete report " + assocRef.getSourceRef() + " - name: " + nodeService.getProperty(assocRef.getSourceRef(), ContentModel.PROP_NAME));
+				logger.debug("Delete report " + assocRef.getSourceRef() + " - name: "
+						+ nodeService.getProperty(assocRef.getSourceRef(), ContentModel.PROP_NAME));
 			}
 			nodeService.addAspect(assocRef.getSourceRef(), ContentModel.ASPECT_TEMPORARY, null);
 			nodeService.deleteNode(assocRef.getSourceRef());

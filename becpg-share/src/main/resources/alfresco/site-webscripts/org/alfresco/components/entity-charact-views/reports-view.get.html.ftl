@@ -31,7 +31,7 @@
 				<#if reports?? && reports?size &gt; 0 >
 
                        <div class="entity-picker-report">
-	                    <input id="${el}-entityReportPicker-button" type="button" name="${el}-entityReportPicker-button" value="${msg("picker.report.choose")}" ></input>
+	                    <input id="${el}-entityReportPicker-button" type="button" name="${el}-entityReportPicker-button" value="${msg("picker.report.choose")}" />
 					      <select id="${el}-entityReportPicker-select"  name="${el}-entityReportPicker-select">
 					      	<#list reports?sort_by("templateName") as report>
 					      		<option value="${report.nodeRef}">${report.templateName?replace(".rptdesign", "")}</option>
