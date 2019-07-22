@@ -16,6 +16,9 @@
             "bcpg:storageConditionsRef|bcpg:preparationTips",
             "cm:title"
         ],
+        "i18nMessages" :{
+			"cm:title":"becpg.forms.field.tradeName"
+		},
         "auditedFields": [
            "bcpg:legalName",
            "bcpg:useByDate","bcpg:bestBeforeDate",
@@ -36,7 +39,10 @@
         ],
         "fields":[
             "bcpg:legalName"
-        ]
+        ],
+        "i18nMessages" :{
+			"cm:title":"becpg.forms.field.tradeName"
+		}
     }
 
 ]
