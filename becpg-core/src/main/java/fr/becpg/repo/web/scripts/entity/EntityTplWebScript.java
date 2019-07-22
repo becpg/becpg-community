@@ -8,8 +8,6 @@ import java.util.Map;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceException;
-import org.alfresco.service.namespace.NamespaceService;
-import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.webscripts.AbstractWebScript;
@@ -41,7 +39,6 @@ public class EntityTplWebScript extends AbstractWebScript {
 	
 	private EntityTplService entityTplService;
 	
-	private NamespaceService namespaceService;
 	
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
@@ -49,10 +46,6 @@ public class EntityTplWebScript extends AbstractWebScript {
 
 	public void setEntityTplService(EntityTplService entityTplService) {
 		this.entityTplService = entityTplService;
-	}
-
-	public void setNamespaceService(NamespaceService namespaceService) {
-		this.namespaceService = namespaceService;
 	}
 
 	@Override
@@ -81,11 +74,8 @@ public class EntityTplWebScript extends AbstractWebScript {
 				logger.debug("In recursive delete block, has datalist: "+req.getParameter(PARAM_DATALIST));
 				if(req.getParameter(PARAM_DATALIST) != null){
 					
-					QName entityList = null;
-					
 					try {
-						entityList = QName.createQName(req.getParameter(PARAM_DATALIST), namespaceService);
-						entityTplService.removeDataListOnEntities(nodeRef, entityList);
+						entityTplService.removeDataListOnEntities(nodeRef, req.getParameter(PARAM_DATALIST));
 					} catch(NamespaceException e){
 						logger.error(e,e);
 						throw new WebScriptException(e.getMessage());
