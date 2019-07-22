@@ -164,6 +164,7 @@
                             if (menuItem)
                             {
                                 scope.widgets.entityReportPicker.value = encodeURIComponent(menuItem.value);
+                                
                                 scope.preferencesService
                                         .set(
                                                 scope.getPickerPreference(),
