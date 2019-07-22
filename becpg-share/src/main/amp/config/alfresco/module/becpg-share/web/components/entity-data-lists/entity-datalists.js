@@ -863,7 +863,7 @@
 					            {
 					               method: Alfresco.util.Ajax.GET,
 					               url: Alfresco.constants.PROXY_URI + "becpg/entity/entityTpl/" + this.options.entityNodeRef.replace(":/", "")
-						            + "/datalistRecursiveDelete?datalist=" + datalist.itemType,
+						            + "/datalistRecursiveDelete?datalist=" + datalist.name,
 					               successCallback:
 					               {
 					                  fn: function DataLists_onDeleteList_confirm_success(response, p_obj)

@@ -102,6 +102,18 @@
 				</list>
 			</parameter>
 		</constraint>
+		
+		<constraint name="pjt:observersEventTypes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>Comment</value>
+					<value>TaskStart</value>
+					<value>TaskEnd</value>
+					<value>TaskRefused</value>
+				</list>
+			</parameter>
+		</constraint>
+		
 
 		<constraint name="pjt:planningModes" type="LIST">
 			<parameter name="allowedValues">
@@ -376,6 +388,11 @@
 				<property name="pjt:tlTaskDescription">
 					<type>d:text</type>
 				</property>
+				<property name="pjt:tlTaskComment">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<index enabled="false"/>
+				</property>
 				<property name="pjt:tlIsMilestone">
 					<type>d:boolean</type>
 				</property>
@@ -421,6 +438,7 @@
 				<property name="pjt:tlWorkflowInstance">
 					<type>d:text</type>
 				</property>
+				
 				<property name="pjt:tlStart">
 					<type>d:date</type>
 					<index enabled="false" />
@@ -958,6 +976,8 @@
 				</property>
 			</properties>
 		</aspect>
+		
+	
 
 		<aspect name="pjt:completionAspect">
 			<properties>
@@ -1085,7 +1105,18 @@
 			</properties>
 		</aspect>
 		
-		
+		<aspect name="pjt:observersEventsAspect">
+			<properties>
+				<property name="pjt:observersEvents">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<multiple>true</multiple>
+					<constraints>
+						<constraint ref="pjt:observersEventTypes" />
+					</constraints>
+				</property>
+			</properties>
+		</aspect>
 
                 
 		<aspect name="pjt:requestListAspect">

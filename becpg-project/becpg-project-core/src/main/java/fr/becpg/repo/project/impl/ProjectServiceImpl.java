@@ -28,6 +28,7 @@ import java.util.regex.Pattern;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.admin.SysAdminParams;
 import org.alfresco.repo.forum.CommentService;
+import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authority.AuthorityDAO;
 import org.alfresco.service.cmr.repository.AssociationRef;
@@ -94,6 +95,8 @@ public class ProjectServiceImpl implements ProjectService {
 	private ScriptService scriptService;
 	@Autowired
 	private CommentService commentService;
+	@Autowired
+	private BehaviourFilter policyBehaviourFilter;
 
 	@Autowired
 	SysAdminParams sysAdminParams;
@@ -122,6 +125,8 @@ public class ProjectServiceImpl implements ProjectService {
 			}
 		}
 
+		nodeService.setProperty(taskNodeRef, ProjectModel.PROP_TL_TASK_COMMENT, null);
+		
 	}
 
 	@Override
@@ -141,23 +146,23 @@ public class ProjectServiceImpl implements ProjectService {
 	public void formulate(NodeRef projectNodeRef) throws FormulateException {
 		if (nodeService.getType(projectNodeRef).equals(ProjectModel.TYPE_PROJECT)) {
 			logger.debug("Formulate project : " + projectNodeRef);
-			
+
 			L2CacheSupport.doInCacheContext(() -> {
 				AuthenticationUtil.runAsSystem(() -> {
-					
+
 					formulationService.formulate(projectNodeRef);
-					
-					NodeRef parentProjectNodeRef  = associationService.getTargetAssoc(projectNodeRef,ProjectModel.ASSOC_PARENT_PROJECT);
-					
-					//Check for parent project
-					if(parentProjectNodeRef!=null) {
+
+					NodeRef parentProjectNodeRef = associationService.getTargetAssoc(projectNodeRef, ProjectModel.ASSOC_PARENT_PROJECT);
+
+					// Check for parent project
+					if (parentProjectNodeRef != null) {
 						formulate(parentProjectNodeRef);
 					}
 
 					return true;
 				});
 
-			} , false, true);
+			}, false, true);
 		}
 	}
 
@@ -172,8 +177,7 @@ public class ProjectServiceImpl implements ProjectService {
 
 			if (!nodeService.hasAspect(nextTaskAssociationRef, ContentModel.ASPECT_PENDING_DELETE)) {
 
-				List<NodeRef> nextTaskPrevTaskNodeRefs = associationService.getTargetAssocs(nextTaskAssociationRef,
-						ProjectModel.ASSOC_TL_PREV_TASKS);
+				List<NodeRef> nextTaskPrevTaskNodeRefs = associationService.getTargetAssocs(nextTaskAssociationRef, ProjectModel.ASSOC_TL_PREV_TASKS);
 
 				if (nextTaskAssociationRefs.contains(taskListNodeRef)) {
 					nextTaskPrevTaskNodeRefs.remove(taskListNodeRef);
@@ -190,22 +194,32 @@ public class ProjectServiceImpl implements ProjectService {
 
 	@Override
 	public void submitTask(NodeRef nodeRef, String taskComment) {
+		try {
+			// Disable notifications
+			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 
-		if ((taskComment != null) && !taskComment.isEmpty()) {
-			commentService.createComment(nodeRef, "", taskComment, false);
+			if ((taskComment != null) && !taskComment.isEmpty()) {
+				commentService.createComment(nodeRef, "", taskComment, false);
+				nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_TASK_COMMENT, taskComment);
+			} else {
+				nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_TASK_COMMENT, null);
+			}
+
+			Date startDate = (Date) nodeService.getProperty(nodeRef, ProjectModel.PROP_TL_START);
+			Date endDate = ProjectHelper.removeTime(new Date());
+			// we want to keep the planned duration to calculate overdue
+			nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_END, endDate);
+			// milestone duration is maximum 1 day or startDate is after endDate
+			Boolean isMileStone = (Boolean) nodeService.getProperty(nodeRef, ProjectModel.PROP_TL_IS_MILESTONE);
+			if (((isMileStone != null) && isMileStone) || ((startDate == null) || startDate.after(endDate))) {
+				nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_START, endDate);
+			}
+
+			nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_STATE, TaskState.Completed.toString());
+		} finally {
+			policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
 		}
 
-		Date startDate = (Date) nodeService.getProperty(nodeRef, ProjectModel.PROP_TL_START);
-		Date endDate = ProjectHelper.removeTime(new Date());
-
-		nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_STATE, TaskState.Completed.toString());
-		// we want to keep the planned duration to calculate overdue
-		nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_END, endDate);
-		// milestone duration is maximum 1 day or startDate is after endDate
-		Boolean isMileStone = (Boolean) nodeService.getProperty(nodeRef, ProjectModel.PROP_TL_IS_MILESTONE);
-		if (((isMileStone != null) && isMileStone) || ((startDate == null) || startDate.after(endDate))) {
-			nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_START, endDate);
-		}
 	}
 
 	@Override
@@ -268,8 +282,8 @@ public class ProjectServiceImpl implements ProjectService {
 			Date delegationStart = (Date) nodeService.getProperty(resource, ProjectModel.PROP_QNAME_DELEGATION_START);
 			Date delegationEnd = (Date) nodeService.getProperty(resource, ProjectModel.PROP_QNAME_DELEGATION_END);
 
-			if ((delegationStart == null) || (delegationStart.before(new Date()) || delegationStart.equals(new Date()))
-					&& (delegationEnd == null || delegationEnd.after(new Date()) || delegationEnd.equals(new Date()))) {
+			if ((delegationStart == null) || ((delegationStart.before(new Date()) || delegationStart.equals(new Date()))
+					&& ((delegationEnd == null) || delegationEnd.after(new Date()) || delegationEnd.equals(new Date())))) {
 
 				NodeRef reassignResource = getReassignedResource(
 						associationService.getTargetAssoc(resource, ProjectModel.PROP_QNAME_REASSIGN_RESOURCE));
@@ -407,15 +421,23 @@ public class ProjectServiceImpl implements ProjectService {
 	@Override
 	public NodeRef refusedTask(NodeRef nodeRef, String taskComment) {
 
-		NodeRef taskNodeRef = associationService.getTargetAssoc(nodeRef, ProjectModel.ASSOC_TL_REFUSED_TASK_REF);
+		try {
+			// Disable notifications
+			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+			NodeRef taskNodeRef = associationService.getTargetAssoc(nodeRef, ProjectModel.ASSOC_TL_REFUSED_TASK_REF);
 
-		if ((taskNodeRef != null) && (taskComment != null) && !taskComment.isEmpty()) {
-			commentService.createComment(taskNodeRef, "", taskComment, false);
+			if ((taskNodeRef != null) && (taskComment != null) && !taskComment.isEmpty()) {
+				commentService.createComment(taskNodeRef, "", taskComment, false);
+				nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_TASK_COMMENT, taskComment);
+			} else {
+				nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_TASK_COMMENT, null);
+			}
+
+			nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_STATE, TaskState.Refused.toString());
+			return taskNodeRef;
+		} finally {
+			policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
 		}
-
-		nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_STATE, TaskState.Refused.toString());
-
-		return taskNodeRef;
 
 	}
 
