@@ -17,7 +17,7 @@
       ul {
        list-style-type: none;
        margin:0px;
-       padding-left:10px;
+       padding-left:0px;
       }
       
       ul li div.delivrable {
@@ -70,7 +70,7 @@
       --></style>
    </head>
    
-    <#assign currentPerson = people.getPerson(args.project.properties["cm:modifier"])>
+    <#assign projectModifier = people.getPerson(args.project.properties["cm:modifier"])>
 
    <body bgcolor="#dddddd">
       <table width="100%" cellpadding="20" cellspacing="0" border="0" bgcolor="#dddddd">
@@ -91,7 +91,7 @@
                                                    <img src="${shareUrl}/res/components/images/task-64.png" alt="" width="64" height="64" border="0" style="padding-right: 20px;" />
                                                 </td> 
                                                 <td>
-                                                  <h2>Le projet <a href="${shareUrl}/page/entity-data-lists?list=taskList&nodeRef=${args.project.nodeRef}">${args.project.name}</a> a été mis à jour par ${currentPerson.properties["cm:firstName"]!""} ${currentPerson.properties["cm:lastName"]!""}.</h2>
+                                                  <h2>Le projet <a href="${shareUrl}/page/entity-data-lists?list=taskList&nodeRef=${args.project.nodeRef}">${args.project.name}</a> a été mis à jour par ${projectModifier.properties["cm:firstName"]!""} ${projectModifier.properties["cm:lastName"]!""}.</h2>
                                                 </td>                                              
                                              </tr>
                                           </table>
@@ -111,21 +111,55 @@
 		                                                </table>
 		                                          
                                              		</#if>
-                                             		
-                                             		
+
+									      	
+									      	<#if args.task?? &&  args.task.sourceAssociations["pjt:dlTask"]??>
+									      	  		
 									      	<p >Livrables:</p>
 									      	
-									      	<ul><li>
-									      		<div class="delivrable delivrable-status-InProgress">
-										      			<div class="delivrable-status delivrable-status-InProgress"></div>
+									      	<ul>
+									      	<#list args.task.sourceAssociations["pjt:dlTask"] as deliverable>
+												<#if deliverable?? && deliverable.hasPermission("Read")  && (!deliverable.properties["pjt:dlScriptExecOrder"]?? || 
+														deliverable.properties["pjt:dlScriptExecOrder"] == "None" ) && (!deliverable.properties["pjt:dlUrl"]?? || !deliverable.properties["pjt:dlUrl"]?contains("wizard") )>
+													<li>
+														<div class="delivrable delivrable-status-${deliverable.properties["pjt:dlState"]!"InProgress"}">
+										      			<div class="delivrable-status delivrable-status-${deliverable.properties["pjt:dlState"]!"InProgress"}"></div>
 										      				<div class="delivrable-container">
-										      						<span >Livrable 1</span>
+										      						<#if deliverable.properties["pjt:dlUrl"]?? && deliverable.properties["pjt:dlUrl"]!="">
+										      							<span class="doc-url"><a title="Suivre le lien" href="${deliverable.properties["pjt:dlUrl"]}">
+										      						   		 <img src="${shareUrl}/res/components/images/link-16.png" /><span >&nbsp;${deliverable.properties["pjt:dlDescription"]!""}</span></a>
+										      							</span>
+										      						<#elseif deliverable.assocs["pjt:dlContent"]?exists>
+															   			<#list deliverable.assocs["pjt:dlContent"] as content>
+															                  <#if content.hasPermission("Read")>
+																                  <#if content.isContainer>
+																	                   <span class="doc-file"><a title="Ouvrir le dossier" href="${shareUrl}/page/site/${content.getSiteShortName()!"valid"}/folder-details?nodeRef=${content.nodeRef}">
+																		                	<img src="${shareUrl}/res/components/images/filetypes/generic-folder-16.png" />&nbsp;<span >${deliverable.properties["pjt:dlDescription"]!""}</span></a>
+																		               </span>
+																                  <#else>
+																                  	 <span class="doc-file"><a title="Ouvrir le document" href="${shareUrl}/page/site/${content.getSiteShortName()!"valid"}/document-details?nodeRef=${content.nodeRef}">
+																	                	<img src="${shareUrl}/res/components/images/filetypes/generic-file-16.png" />&nbsp;<span >${deliverable.properties["pjt:dlDescription"]!""}</span></a>
+																	               </span>
+																                  </#if>											
+																			</#if>
+															   			</#list>
+														  			<#else>
+														  				<span >${deliverable.properties["pjt:dlDescription"]!""}</span>
+													   				</#if>
 										      			</div>
-										      	</div>						
-										      	</li>
+											         	</div>						
+											      	</li>
+															                  
+																                  
+												</#if>
+		
+									      		
 										     </ul>
-				      						
-                                             		
+									      	</#list>
+									      	
+									  </#if>    	
+									      	
+									     
                                              		
                                              	<#elseif args.activityType == 'Comment'>
                                              		<p> Un commentaire a été  <#if args.activityEvent == 'Create'>créé<#elseif args.activityEvent == 'Update'>mis à jour<#else>supprimé</#if> sur <#if args.deliverableDescription??>le livrable <b>"${args.deliverableDescription}"</b> <#elseif args.taskTitle??>la tâche <b>"${args.taskTitle}"</b> <#else>le projet</#if> : </p>                                             		                                             		 
