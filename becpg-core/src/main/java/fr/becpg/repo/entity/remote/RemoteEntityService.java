@@ -42,6 +42,13 @@ public interface RemoteEntityService {
 	String ATTR_NAME = "name";
 	String ATTR_NODEREF = "nodeRef";
 	String ATTR_CODE = "code";
+	
+	String CHARACT_ATTR_PATH = "charactPath";
+	String CHARACT_ATTR_NAME = "charactName";
+	String CHARACT_ATTR_NODEREF = "charactNodeRef";
+	String CHARACT_ATTR_CODE = "charactCode";
+	String CHARACT_ATTR_ERP_CODE = "charactErpCode";
+	
 	String ATTR_ERP_CODE = "erpCode";
 	String ELEM_ENTITIES = "entities";
 	String ELEM_DATA = "data";

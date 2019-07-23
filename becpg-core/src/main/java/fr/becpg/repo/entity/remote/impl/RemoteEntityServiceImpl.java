@@ -65,6 +65,7 @@ import fr.becpg.repo.entity.remote.extractor.ExcelXmlEntityVisitor;
 import fr.becpg.repo.entity.remote.extractor.ImportEntityXmlVisitor;
 import fr.becpg.repo.entity.remote.extractor.JsonEntityVisitor;
 import fr.becpg.repo.entity.remote.extractor.XmlEntityVisitor;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.repository.L2CacheSupport;
 
 /**
@@ -115,6 +116,10 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 
 	@Autowired
 	private EntityDictionaryService entityDictionaryService;
+	
+	@Autowired
+	private AssociationService associationService;
+	
 
 	private static final Log logger = LogFactory.getLog(RemoteEntityServiceImpl.class);
 
@@ -219,7 +224,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 				policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
 
-				ImportEntityXmlVisitor xmlEntityVisitor = new ImportEntityXmlVisitor(serviceRegistry, entityDictionaryService);
+				ImportEntityXmlVisitor xmlEntityVisitor = new ImportEntityXmlVisitor(serviceRegistry, entityDictionaryService,associationService);
 				xmlEntityVisitor.setEntityProviderCallBack(entityProviderCallBack);
 				try {
 					return xmlEntityVisitor.visit(entityNodeRef, destNodeRef, properties, in);
@@ -247,9 +252,8 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	@Override
 	public void listEntities(List<NodeRef> entities, OutputStream result, RemoteEntityFormat format, List<String> fields) throws BeCPGException {
 		if (format.equals(RemoteEntityFormat.xml)) {
-			XmlEntityVisitor xmlEntityVisitor = new XmlEntityVisitor(mlNodeService, nodeService, namespaceService, dictionaryService, contentService,
-					siteService);
-			if ((fields != null) && !fields.isEmpty()) {
+			XmlEntityVisitor xmlEntityVisitor = new XmlEntityVisitor(mlNodeService, nodeService, namespaceService, dictionaryService, contentService, siteService, entityDictionaryService, associationService);
+			if(fields != null && !fields.isEmpty()) {
 				xmlEntityVisitor.setFilteredFields(fields);
 			}
 			try {
@@ -278,8 +282,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	@Override
 	public void getEntityData(NodeRef entityNodeRef, OutputStream result, RemoteEntityFormat format) throws BeCPGException {
 		if (RemoteEntityFormat.xml.equals(format)) {
-			XmlEntityVisitor xmlEntityVisitor = new XmlEntityVisitor(mlNodeService, nodeService, namespaceService, dictionaryService, contentService,
-					siteService);
+			XmlEntityVisitor xmlEntityVisitor = new XmlEntityVisitor(mlNodeService, nodeService, namespaceService, dictionaryService, contentService, siteService, entityDictionaryService, associationService);
 			try {
 				xmlEntityVisitor.visitData(entityNodeRef, result);
 			} catch (XMLStreamException e) {
@@ -304,7 +307,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	@Override
 	public void addOrUpdateEntityData(NodeRef entityNodeRef, InputStream in, RemoteEntityFormat format) throws BeCPGException {
 		if (RemoteEntityFormat.xml.equals(format)) {
-			ImportEntityXmlVisitor xmlEntityVisitor = new ImportEntityXmlVisitor(serviceRegistry, entityDictionaryService);
+			ImportEntityXmlVisitor xmlEntityVisitor = new ImportEntityXmlVisitor(serviceRegistry, entityDictionaryService,associationService);
 
 			String fileName = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
 
