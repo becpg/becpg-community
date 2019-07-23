@@ -3295,31 +3295,31 @@
 			<properties>
 				<property name="bcpg:locationAddress1">
 					<title>Address line 1</title>
-					<type>d:text</type>
+					<type>d:mltext</type>
 				</property>
 				<property name="bcpg:locationAddress2">
 					<title>Address line 2</title>
-					<type>d:text</type>
+					<type>d:mltext</type>
 				</property>
 				<property name="bcpg:locationAddress3">
 					<title>Address line 3</title>
-					<type>d:text</type>
+					<type>d:mltext</type>
 				</property>
 				<property name="bcpg:locationCity">
 					<title>City</title>
-					<type>d:text</type>
+					<type>d:mltext</type>
 				</property>
 				<property name="bcpg:locationZip">
 					<title>Zip/Postal Code</title>
-					<type>d:text</type>
+					<type>d:mltext</type>
 				</property>
 				<property name="bcpg:locationState">
 					<title>State/Province/Region</title>
-					<type>d:text</type>
+					<type>d:mltext</type>
 				</property>
 				<property name="bcpg:locationCountry">
 					<title>Country</title>
-					<type>d:text</type>
+					<type>d:mltext</type>
 				</property>
 			</properties>
 		</aspect>
