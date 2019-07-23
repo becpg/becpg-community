@@ -28,6 +28,7 @@ import org.alfresco.service.cmr.repository.ContentData;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.Path;
+import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.namespace.QName;
@@ -35,6 +36,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.StopWatch;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorMode;
 import fr.becpg.repo.helper.SiteHelper;
@@ -69,6 +71,8 @@ public abstract class AbstractNodeDataExtractor implements NodeDataExtractor {
 	protected static final String PROP_SITE = "site";
 	protected static final String PROP_ASPECTS = "aspects";
 	protected static final String PROP_METADATA = "metadata";
+	protected static final String PROP_PERMISSIONS = "permissions";
+	
 
 	public AbstractNodeDataExtractor(ServiceRegistry services, AttributeExtractorService attributeExtractorService) {
 		super();
@@ -121,6 +125,18 @@ public abstract class AbstractNodeDataExtractor implements NodeDataExtractor {
 				siteData.put(PROP_TITLE, site.getTitle());
 				ret.put(PROP_SITE, siteData);
 			}
+			
+			Map<String, Map<String, Boolean>> permissions = new HashMap<>(1);
+			Map<String, Boolean> userAccess = new HashMap<>(5);
+			
+			boolean hasWrite = (services.getPermissionService().hasPermission(nodeRef, "Write") == AccessStatus.ALLOWED);
+			
+			permissions.put("userAccess", userAccess);
+			userAccess.put("delete",  (services.getPermissionService().hasPermission(nodeRef, "Delete") == AccessStatus.ALLOWED));
+			userAccess.put("create",  (services.getPermissionService().hasPermission(nodeRef, "CreateChildren") == AccessStatus.ALLOWED));
+			userAccess.put("edit", hasWrite);
+			
+			ret.put(PROP_PERMISSIONS, permissions);
 
 			return ret;
 
