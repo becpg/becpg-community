@@ -55,7 +55,7 @@
       <property name="nodeService" ref="nodeService" />
       <property name="publicAction" value="false"/>
       <property name="transactionHelper" ref="retryingTransactionHelper"/>
-      <property name="contentService" ref="contentService"/>
+      <property name="contentService" ref="reportContentServiceWrapper"/>
       <property name="updateService" ref="downloadStatusUpdateService"/>
       <property name="namespaceService" ref="namespaceService"/>
    </bean>

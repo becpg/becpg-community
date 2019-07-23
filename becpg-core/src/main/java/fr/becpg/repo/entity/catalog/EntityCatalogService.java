@@ -55,6 +55,7 @@ public class EntityCatalogService {
 	public static final String PROP_MISSING_FIELDS = "missingFields";
 	public static final String PROP_UNIQUE_FIELDS = "uniqueFields";
 	public static final String PROP_NON_UNIQUE_FIELDS = "nonUniqueFields";
+	public static final String PROP_I18N_MESSAGES = "i18nMessages";
 	public static final String PROP_DISPLAY_NAME = "displayName";
 	public static final String PROP_FIELDS = "fields";
 	public static final String PROP_LABEL = "label";
@@ -313,12 +314,15 @@ public class EntityCatalogService {
 							JSONArray reqFields = catalog.has(EntityCatalogService.PROP_FIELDS)
 									? catalog.getJSONArray(EntityCatalogService.PROP_FIELDS)
 									: new JSONArray();
+							JSONObject i18nMessages = catalog.has(EntityCatalogService.PROP_I18N_MESSAGES)
+									? catalog.getJSONObject(EntityCatalogService.PROP_I18N_MESSAGES)
+									: new JSONObject();
 							JSONArray uniqueFields = catalog.has(EntityCatalogService.PROP_UNIQUE_FIELDS)
 									? catalog.getJSONArray(EntityCatalogService.PROP_UNIQUE_FIELDS)
 									: new JSONArray();
 
 							JSONArray nonUniqueFields = extractNonUniqueFields(entityNodeRef, catalog.getString(EntityCatalogService.PROP_LABEL),
-									properties, uniqueFields);
+									properties, uniqueFields, i18nMessages);
 
 							for (String lang : langs) {
 
@@ -326,7 +330,7 @@ public class EntityCatalogService {
 
 								logger.debug("=== Catalog name: " + catalog.getString(EntityCatalogService.PROP_LABEL) + ", lang: " + lang);
 
-								JSONArray missingFields = extractMissingFields(entityNodeRef, properties, reqFields,
+								JSONArray missingFields = extractMissingFields(entityNodeRef, properties, reqFields, i18nMessages,
 										defaultLocale.equals(lang) ? null : lang);
 								if ((missingFields.length() > 0) || (nonUniqueFields.length() > 0)) {
 
@@ -362,7 +366,7 @@ public class EntityCatalogService {
 		return ret;
 	}
 
-	private JSONArray extractNonUniqueFields(NodeRef productNodeRef, String catalogName, Map<QName, Serializable> properties, JSONArray uniqueFields)
+	private JSONArray extractNonUniqueFields(NodeRef productNodeRef, String catalogName, Map<QName, Serializable> properties, JSONArray uniqueFields, JSONObject i18nMessages)
 			throws JSONException {
 		JSONArray res = new JSONArray();
 
@@ -380,7 +384,7 @@ public class EntityCatalogService {
 					if (!(propDuplicates.isEmpty())) {
 
 						ClassAttributeDefinition classDef = formatQnameString(field);
-						String propTitle = classDef.getTitle(dictionaryService);
+						String propTitle = getFieldDisplayName(classDef, i18nMessages.has(field) ? i18nMessages.getString(field) : null);
 
 						JSONObject nonUniqueField = new JSONObject();
 						nonUniqueField.put(EntityCatalogService.PROP_ID, field);
@@ -435,7 +439,7 @@ public class EntityCatalogService {
 		return queryResults;
 	}
 
-	private JSONArray extractMissingFields(NodeRef entityNodeRef, Map<QName, Serializable> properties, JSONArray reqFields, String lang)
+	private JSONArray extractMissingFields(NodeRef entityNodeRef, Map<QName, Serializable> properties, JSONArray reqFields, JSONObject i18nMessages, String lang)
 			throws JSONException {
 		JSONArray ret = new JSONArray();
 
@@ -504,7 +508,7 @@ public class EntityCatalogService {
 
 			if (!present && !ignore) {
 				logger.debug("\tfield " + field + " is absent...");
-				ret.put(createMissingFields(entityNodeRef, splitFields));
+				ret.put(createMissingFields(entityNodeRef, splitFields, i18nMessages));
 			}
 
 		}
@@ -537,7 +541,7 @@ public class EntityCatalogService {
 		return res;
 	}
 
-	private JSONObject createMissingFields(NodeRef enrityNodeRef, List<String> fields) throws JSONException {
+	private JSONObject createMissingFields(NodeRef enrityNodeRef, List<String> fields, JSONObject i18nMessages) throws JSONException {
 
 		JSONObject field = new JSONObject();
 
@@ -561,7 +565,7 @@ public class EntityCatalogService {
 			}
 
 			id += classDef.getName().toPrefixString(namespaceService) + (i == (fields.size() - 1) ? "" : "|");
-			displayName += classDef.getTitle(dictionaryService) + (i == (fields.size() - 1) ? "" : " " + I18NUtil.getMessage(MESSAGE_OR) + " ");
+			displayName += getFieldDisplayName(classDef, i18nMessages.has(currentField) ? i18nMessages.getString(currentField) : null) + (i == (fields.size() - 1) ? "" : " " + I18NUtil.getMessage(MESSAGE_OR) + " ");
 		}
 
 		if (lang != null) {
@@ -573,6 +577,11 @@ public class EntityCatalogService {
 
 		return field;
 
+	}
+	
+	public String getFieldDisplayName(ClassAttributeDefinition classDef, String messageKey) {
+		String displayName = messageKey != null ? I18NUtil.getMessage(messageKey) : classDef.getTitle(dictionaryService);
+		return displayName != null ? displayName : messageKey;
 	}
 
 	private ClassAttributeDefinition formatQnameString(String qNameString) {

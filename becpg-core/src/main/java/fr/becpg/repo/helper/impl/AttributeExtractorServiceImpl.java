@@ -65,6 +65,7 @@ import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.ExcelHelper;
 import fr.becpg.repo.helper.JsonFormulaHelper;
+import fr.becpg.repo.helper.JsonHelper;
 import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.security.SecurityService;
@@ -782,7 +783,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 					tmp.put("version", properties.get(ContentModel.PROP_VERSION_LABEL));
 				}
 				tmp.put("displayValue", displayName);
-				tmp.put("value", formatValue(value));
+				tmp.put("value",JsonHelper.formatValue(value));
 
 				return tmp;
 			}
@@ -869,24 +870,6 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		return SiteHelper.extractSiteId(path);
 	}
 
-	private Object formatValue(Object value) {
-		if (value != null) {
-			if (value instanceof Date) {
-				return ISO8601DateFormat.format((Date) value);
-			} else if (value instanceof Double) {
-				Double d = (Double) value;
-				if (d.isInfinite()) {
-					return 0 == d.compareTo(Double.POSITIVE_INFINITY) ? "23456789012E777" : "-23456789012E777";
-				}
-			} else if (value instanceof Float) {
-				Float f = (Float) value;
-				if (f.isInfinite()) {
-					return 0 == f.compareTo(Float.POSITIVE_INFINITY) ? "23456789012E777" : "-23456789012E777";
-				}
-			}
-		}
-		return value;
-	}
 
 	@Override
 	public String extractPropName(NodeRef v) {

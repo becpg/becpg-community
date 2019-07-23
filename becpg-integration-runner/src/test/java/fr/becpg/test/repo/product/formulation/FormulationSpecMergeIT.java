@@ -47,13 +47,7 @@ public class FormulationSpecMergeIT extends FormulationLabelClaimIT {
 
 	protected static final Log logger = LogFactory.getLog(FormulationSpecMergeIT.class);
 
-	@Override
-	public void setUp() throws Exception {
-		super.setUp();
-		// create RM and lSF
-		initParts();
-	}
-
+	
 	private NodeRef createTestProduct(final String name) {
 		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
