@@ -54,11 +54,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
 import com.google.common.collect.Lists;
+import com.hazelcast.impl.concurrentmap.CostAwareRecordList;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.data.hierarchicalList.CompositeDataItem;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.entity.EntityTplPlugin;
@@ -73,6 +75,8 @@ import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.RepositoryEntityDefReader;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
+import fr.becpg.repo.repository.model.SimpleCharactDataItem;
+import fr.becpg.repo.repository.model.SimpleListDataItem;
 import fr.becpg.repo.repository.model.Synchronisable;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
@@ -288,20 +292,20 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 				logger.debug("entityTpl" + entityTpl.toString());
 
-				final Map<QName, List<? extends RepositoryEntity>> datalistsTpl = repositoryEntityDefReader.getDataLists(entityTpl);
-
-				Map<QName, ?> datalistViews = repositoryEntityDefReader.getDataListViews(entityTpl);
-				for (Map.Entry<QName, ?> dataListViewEntry : datalistViews.entrySet()) {
-
-					Map<QName, List<? extends RepositoryEntity>> tmp = repositoryEntityDefReader.getDataLists(dataListViewEntry.getValue());
-					datalistsTpl.putAll(tmp);
-
-				}
-
 				List<NodeRef> entityNodeRefs = getEntitiesToUpdate(tplNodeRef);
 				logger.debug("synchronize entityNodeRefs, size " + entityNodeRefs.size());
 
 				doInBatch(entityNodeRefs, 10, entityNodeRef -> {
+
+					final Map<QName, List<? extends RepositoryEntity>> datalistsTpl = repositoryEntityDefReader.getDataLists(entityTpl);
+
+					Map<QName, ?> datalistViews = repositoryEntityDefReader.getDataListViews(entityTpl);
+					for (Map.Entry<QName, ?> dataListViewEntry : datalistViews.entrySet()) {
+
+						Map<QName, List<? extends RepositoryEntity>> tmp = repositoryEntityDefReader.getDataLists(dataListViewEntry.getValue());
+						datalistsTpl.putAll(tmp);
+
+					}
 
 					if ((datalistsTpl != null) && !datalistsTpl.isEmpty()) {
 
@@ -328,8 +332,8 @@ public class EntityTplServiceImpl implements EntityTplService {
 											(List<BeCPGDataObject>) datalistsTpl.get(dataListQName));
 									update = true;
 								}
-
 							}
+							
 
 							if (!update) {
 
@@ -350,14 +354,18 @@ public class EntityTplServiceImpl implements EntityTplService {
 											}
 										}
 
+										
 										if (!isFound) {
 
-											// if we change identifier assoc
-											// -> Duplicate child name not
-											// allowed
 											dataListItemTpl.setName(null);
 											dataListItemTpl.setNodeRef(null);
 											dataListItemTpl.setParentNodeRef(null);
+
+											if ((dataListItemTpl instanceof CompositeDataItem)
+													&& (((CompositeDataItem<RepositoryEntity>) dataListItemTpl).getParent() != null)) {
+												((CompositeDataItem<RepositoryEntity>) dataListItemTpl).setParent(findCompositeParent(
+														((CompositeDataItem<RepositoryEntity>) dataListItemTpl).getParent(), dataListItems));
+											}
 
 											if (dataListItemTpl instanceof Synchronisable) {
 												if (((Synchronisable) dataListItemTpl).isSynchronisable()) {
@@ -432,6 +440,25 @@ public class EntityTplServiceImpl implements EntityTplService {
 		} else {
 			logger.error("Only one massive operation at a time");
 		}
+	}
+
+	private RepositoryEntity findCompositeParent(RepositoryEntity parent, List<BeCPGDataObject> dataListItems) {
+
+		for (RepositoryEntity dataListItem : dataListItems) {
+
+			Map<QName, Serializable> identAttrTpl = repositoryEntityDefReader.getIdentifierAttributes(dataListItem);
+
+			if (!identAttrTpl.isEmpty()) {
+
+				Map<QName, Serializable> identAttr = repositoryEntityDefReader.getIdentifierAttributes(parent);
+				if (identAttrTpl.equals(identAttr)) {
+					return dataListItem;
+				}
+			}
+
+		}
+
+		return null;
 	}
 
 	@Override
@@ -547,11 +574,11 @@ public class EntityTplServiceImpl implements EntityTplService {
 			try {
 				((RuleService) ruleService).disableRules(entityNodeRef);
 				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-				
+
 				for (EntityTplPlugin entityTplPlugin : entityTplPlugins) {
 					entityTplPlugin.beforeSynchronizeEntity(entityNodeRef, entityTplNodeRef);
 				}
-				
+
 				// copy files
 				entityService.copyFiles(entityTplNodeRef, entityNodeRef);
 
@@ -628,13 +655,13 @@ public class EntityTplServiceImpl implements EntityTplService {
 	}
 
 	@Override
-	public void removeDataListOnEntities(NodeRef entityTplNodeRef, QName entityList) {
+	public void removeDataListOnEntities(NodeRef entityTplNodeRef, String entityListName) {
 		List<NodeRef> entities = getEntitiesToUpdate(entityTplNodeRef);
 
 		doInBatch(entities, 10, entityNodeRef -> {
 
 			NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
-			NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, entityList);
+			NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, entityListName);
 
 			if (listNodeRef != null) {
 				logger.debug("Deleting list with node: " + listNodeRef + " on entity: " + entityNodeRef + " ("
@@ -645,7 +672,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 		});
 
 		NodeRef tplListContainerNodeRef = entityListDAO.getListContainer(entityTplNodeRef);
-		NodeRef tplListNodeRef = entityListDAO.getList(tplListContainerNodeRef, entityList);
+		NodeRef tplListNodeRef = entityListDAO.getList(tplListContainerNodeRef, entityListName);
 
 		if (tplListNodeRef != null) {
 			logger.debug("Deleting list with node: " + tplListNodeRef + " on template: " + entityTplNodeRef + " ("
@@ -671,13 +698,13 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 	/*
 	 * / TODO faire en s'inspirant du synchronizeEntities
-	 * 
+	 *
 	 * @Override public void removeDataListItemsOnEntities(NodeRef
 	 * entityTplNodeRef, List<NodeRef> dataListItems) { List<NodeRef> entities =
 	 * getEntitiesToUpdate(entityTplNodeRef);
-	 * 
-	 * 
-	 * 
+	 *
+	 *
+	 *
 	 * }
 	 */
 }

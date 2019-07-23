@@ -174,19 +174,17 @@
 		
 		onCopyToClipboard : function(fieldId) {
 			
-			var htmlId= fieldId.split("#")[2]+ fieldId.split("#")[0];
-			var el = document.getElementById(htmlId);
-				
-			if (document.selection) {// IE 
-				var range = document.querySelector("#"+htmlId);
-				range.select();
-				document.execCommand("copy");
-			} else if (window.getSelection) { // Chrome, Mozilla, Edge ...
-				var range = document.querySelector("#"+htmlId);
-				range.select();
-				var result = document.execCommand("copy");
+			var clipboardListner = function(e) {
+				e.clipboardData.setData("text/html", illValue);
+				e.clipboardData.setData("text/plain", illValue);
+				e.preventDefault();
 			}
 			
+			var htmlId= fieldId.split("#")[2]+ fieldId.split("#")[0];
+			var illValue = document.getElementById(htmlId).innerHTML; 
+			document.addEventListener("copy", clipboardListner);
+			document.execCommand("copy");
+			document.removeEventListener("copy", clipboardListner);
 			
 	    	Alfresco.util.PopupManager.displayMessage({
                 text : this.msg("message.copy-to-clipboard.success")

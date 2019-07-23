@@ -147,6 +147,12 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 			dynamicCharactListItems.add(new DynamicCharactListItem(" beCPG SUM++ ",
 					"@beCPG.sum(compoListView.compoList.?[parent == null],\"@beCPG.propValue(dataListItem.nodeRef,'bcpg:compoListQty')\")"));
 
+
+                        //Static fonction
+				dynamicCharactListItems.add(new DynamicCharactListItem("Autonum V1 ","T(fr.becpg.repo.helper.AutoNumHelper).getAutoNumValue(\"bcpg:finishedProduct\",\"bcpg:eanCode\")"));
+				dynamicCharactListItems.add(new DynamicCharactListItem("Autonum V2 ","T(fr.becpg.repo.helper.AutoNumHelper).getOrCreateCode(nodeRef,\"bcpg:eanCode\")"));
+
+
 			// Formulate twice
 			dynamicCharactListItems.add(new DynamicCharactListItem("Formulate twice", "reformulateCount=1"));
 
