@@ -66,7 +66,9 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.dictionary.constraint.DynListConstraint;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.SiteHelper;
 
@@ -77,9 +79,16 @@ import fr.becpg.repo.helper.SiteHelper;
  */
 public class XmlEntityVisitor extends AbstractEntityVisitor {
 
+	private final EntityDictionaryService entityDictionaryService;
+
+	private final AssociationService associationService;
+
 	public XmlEntityVisitor(NodeService mlNodeService, NodeService nodeService, NamespaceService namespaceService,
-			DictionaryService dictionaryService, ContentService contentService, SiteService siteService) {
+			DictionaryService dictionaryService, ContentService contentService, SiteService siteService,
+			EntityDictionaryService entityDictionaryService, AssociationService associationService) {
 		super(mlNodeService, nodeService, namespaceService, dictionaryService, contentService, siteService);
+		this.associationService = associationService;
+		this.entityDictionaryService = entityDictionaryService;
 	}
 
 	private static final Log logger = LogFactory.getLog(XmlEntityVisitor.class);
@@ -183,47 +192,30 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 			return;
 		}
 		xmlw.writeStartElement(prefix, nodeType.getLocalName(), nodeType.getNamespaceURI());
-		Path path = null;
+		boolean isCharact = false;
 
-		if (nodeService.getPrimaryParent(nodeRef) != null) {
-			NodeRef parentRef = nodeService.getPrimaryParent(nodeRef).getParentRef();
-			if (parentRef != null) {
-				path = nodeService.getPath(parentRef);
-				xmlw.writeAttribute(RemoteEntityService.ATTR_PATH, path.toPrefixString(namespaceService));
-			}
-		} else {
-			logger.warn("Node : " + nodeRef + " has no primary parent");
-		}
+		if (light && entityDictionaryService.isSubClass(nodeType, BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
 
-		xmlw.writeAttribute(RemoteEntityService.ATTR_TYPE, RemoteEntityService.NODE_TYPE);
+			QName pivotAssoc = entityDictionaryService.getDefaultPivotAssoc(nodeType);
 
-		if (name != null) {
-			xmlw.writeAttribute(RemoteEntityService.ATTR_NAME, name);
-		}
-		xmlw.writeAttribute(RemoteEntityService.ATTR_NODEREF, nodeRef.toString());
+			if (pivotAssoc != null) {
+				NodeRef part = associationService.getTargetAssoc(nodeRef, pivotAssoc);
+				if ((part != null)) {
+					isCharact = true;
+					writeStdAttributes(xmlw, part, nodeType, name, isCharact);
+				}
 
-		if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_CODE)) {
-			if (nodeService.getProperty(nodeRef, BeCPGModel.PROP_CODE) != null) {
-				xmlw.writeAttribute(RemoteEntityService.ATTR_CODE, (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_CODE));
-			} else {
-				logger.warn("Node : " + nodeRef + " has null becpg code");
 			}
 
 		}
-		// erpCode
-		if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ERP_CODE)) {
-			if (nodeService.getProperty(nodeRef, BeCPGModel.PROP_ERP_CODE) != null) {
-				xmlw.writeAttribute(RemoteEntityService.ATTR_ERP_CODE, (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_ERP_CODE));
-			}
+
+		if (!isCharact) {
+			writeStdAttributes(xmlw, nodeRef, nodeType, name, false);
 		}
 
 		// Assoc first
 		if (assocs) {
 			visitAssocs(nodeRef, xmlw);
-		}
-
-		if (path != null) {
-			visitSite(nodeRef, xmlw, path);
 		}
 
 		if (props) {
@@ -236,6 +228,50 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 
 		xmlw.writeEndElement();
 		extractLevel--;
+	}
+
+	private void writeStdAttributes(XMLStreamWriter xmlw, NodeRef nodeRef, QName nodeType, String name, boolean isCharact) throws XMLStreamException {
+		Path path = null;
+
+		if (nodeService.getPrimaryParent(nodeRef) != null) {
+			NodeRef parentRef = nodeService.getPrimaryParent(nodeRef).getParentRef();
+			if (parentRef != null) {
+				path = nodeService.getPath(parentRef);
+				xmlw.writeAttribute(isCharact ? RemoteEntityService.CHARACT_ATTR_PATH : RemoteEntityService.ATTR_PATH,
+						path.toPrefixString(namespaceService));
+			}
+		} else {
+			logger.warn("Node : " + nodeRef + " has no primary parent");
+		}
+
+		xmlw.writeAttribute(RemoteEntityService.ATTR_TYPE, RemoteEntityService.NODE_TYPE);
+
+		if (name != null) {
+			xmlw.writeAttribute(isCharact ? RemoteEntityService.CHARACT_ATTR_NAME : RemoteEntityService.ATTR_NAME, name);
+		}
+		xmlw.writeAttribute(isCharact ? RemoteEntityService.CHARACT_ATTR_NODEREF : RemoteEntityService.ATTR_NODEREF, nodeRef.toString());
+
+		if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_CODE)) {
+			if (nodeService.getProperty(nodeRef, BeCPGModel.PROP_CODE) != null) {
+				xmlw.writeAttribute(isCharact ? RemoteEntityService.CHARACT_ATTR_CODE : RemoteEntityService.ATTR_CODE,
+						(String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_CODE));
+			} else {
+				logger.warn("Node : " + nodeRef + " has null becpg code");
+			}
+
+		}
+		// erpCode
+		if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ERP_CODE)) {
+			if (nodeService.getProperty(nodeRef, BeCPGModel.PROP_ERP_CODE) != null) {
+				xmlw.writeAttribute(isCharact ? RemoteEntityService.CHARACT_ATTR_ERP_CODE : RemoteEntityService.ATTR_ERP_CODE,
+						(String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_ERP_CODE));
+			}
+		}
+
+		if ((path != null) && !isCharact) {
+			visitSite(nodeRef, xmlw, path);
+		}
+
 	}
 
 	private void visitContent(NodeRef nodeRef, XMLStreamWriter xmlw) throws XMLStreamException {
