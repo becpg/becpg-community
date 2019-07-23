@@ -116,10 +116,9 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 
 	@Autowired
 	private EntityDictionaryService entityDictionaryService;
-	
+
 	@Autowired
 	private AssociationService associationService;
-	
 
 	private static final Log logger = LogFactory.getLog(RemoteEntityServiceImpl.class);
 
@@ -133,7 +132,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 			throws BeCPGException {
 		if (format.equals(RemoteEntityFormat.xml) || format.equals(RemoteEntityFormat.xml_all) || format.equals(RemoteEntityFormat.xml_light)) {
 			XmlEntityVisitor xmlEntityVisitor = new XmlEntityVisitor(mlNodeService, nodeService, namespaceService, dictionaryService, contentService,
-					siteService);
+					siteService, entityDictionaryService, associationService);
 			if (format.equals(RemoteEntityFormat.xml_all)) {
 				xmlEntityVisitor.setDumpAll(true);
 			}
@@ -162,7 +161,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 		} else if (format.equals(RemoteEntityFormat.json)) {
 			JsonEntityVisitor jsonEntityVisitor = new JsonEntityVisitor(mlNodeService, nodeService, namespaceService, dictionaryService,
 					contentService, siteService);
-		
+
 			if ((fields != null) && !fields.isEmpty()) {
 				jsonEntityVisitor.setFilteredFields(fields);
 			}
@@ -224,7 +223,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 				policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
 
-				ImportEntityXmlVisitor xmlEntityVisitor = new ImportEntityXmlVisitor(serviceRegistry, entityDictionaryService,associationService);
+				ImportEntityXmlVisitor xmlEntityVisitor = new ImportEntityXmlVisitor(serviceRegistry, entityDictionaryService, associationService);
 				xmlEntityVisitor.setEntityProviderCallBack(entityProviderCallBack);
 				try {
 					return xmlEntityVisitor.visit(entityNodeRef, destNodeRef, properties, in);
@@ -252,8 +251,9 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	@Override
 	public void listEntities(List<NodeRef> entities, OutputStream result, RemoteEntityFormat format, List<String> fields) throws BeCPGException {
 		if (format.equals(RemoteEntityFormat.xml)) {
-			XmlEntityVisitor xmlEntityVisitor = new XmlEntityVisitor(mlNodeService, nodeService, namespaceService, dictionaryService, contentService, siteService, entityDictionaryService, associationService);
-			if(fields != null && !fields.isEmpty()) {
+			XmlEntityVisitor xmlEntityVisitor = new XmlEntityVisitor(mlNodeService, nodeService, namespaceService, dictionaryService, contentService,
+					siteService, entityDictionaryService, associationService);
+			if ((fields != null) && !fields.isEmpty()) {
 				xmlEntityVisitor.setFilteredFields(fields);
 			}
 			try {
@@ -282,7 +282,8 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	@Override
 	public void getEntityData(NodeRef entityNodeRef, OutputStream result, RemoteEntityFormat format) throws BeCPGException {
 		if (RemoteEntityFormat.xml.equals(format)) {
-			XmlEntityVisitor xmlEntityVisitor = new XmlEntityVisitor(mlNodeService, nodeService, namespaceService, dictionaryService, contentService, siteService, entityDictionaryService, associationService);
+			XmlEntityVisitor xmlEntityVisitor = new XmlEntityVisitor(mlNodeService, nodeService, namespaceService, dictionaryService, contentService,
+					siteService, entityDictionaryService, associationService);
 			try {
 				xmlEntityVisitor.visitData(entityNodeRef, result);
 			} catch (XMLStreamException e) {
@@ -307,7 +308,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	@Override
 	public void addOrUpdateEntityData(NodeRef entityNodeRef, InputStream in, RemoteEntityFormat format) throws BeCPGException {
 		if (RemoteEntityFormat.xml.equals(format)) {
-			ImportEntityXmlVisitor xmlEntityVisitor = new ImportEntityXmlVisitor(serviceRegistry, entityDictionaryService,associationService);
+			ImportEntityXmlVisitor xmlEntityVisitor = new ImportEntityXmlVisitor(serviceRegistry, entityDictionaryService, associationService);
 
 			String fileName = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
 

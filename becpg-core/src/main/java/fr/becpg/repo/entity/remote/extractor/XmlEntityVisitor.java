@@ -66,7 +66,9 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.dictionary.constraint.DynListConstraint;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.SiteHelper;
 
@@ -77,16 +79,17 @@ import fr.becpg.repo.helper.SiteHelper;
  */
 public class XmlEntityVisitor extends AbstractEntityVisitor {
 
-        private final EntityDictionaryService entityDictionaryService;
+	private final EntityDictionaryService entityDictionaryService;
+
 	private final AssociationService associationService;
 
-
 	public XmlEntityVisitor(NodeService mlNodeService, NodeService nodeService, NamespaceService namespaceService,
-			DictionaryService dictionaryService, ContentService contentService, SiteService siteService,EntityDictionaryService entityDictionaryService, AssociationService associationService) {
+			DictionaryService dictionaryService, ContentService contentService, SiteService siteService,
+			EntityDictionaryService entityDictionaryService, AssociationService associationService) {
 		super(mlNodeService, nodeService, namespaceService, dictionaryService, contentService, siteService);
-        this.associationService = associationService;
-		this.entityDictionaryService = entityDictionaryService;	
-}
+		this.associationService = associationService;
+		this.entityDictionaryService = entityDictionaryService;
+	}
 
 	private static final Log logger = LogFactory.getLog(XmlEntityVisitor.class);
 
@@ -192,9 +195,9 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 		boolean isCharact = false;
 
 		if (light && entityDictionaryService.isSubClass(nodeType, BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
-		
+
 			QName pivotAssoc = entityDictionaryService.getDefaultPivotAssoc(nodeType);
-			
+
 			if (pivotAssoc != null) {
 				NodeRef part = associationService.getTargetAssoc(nodeRef, pivotAssoc);
 				if ((part != null)) {
