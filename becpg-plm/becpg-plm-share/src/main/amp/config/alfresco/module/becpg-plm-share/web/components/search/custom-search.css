@@ -17,6 +17,9 @@
     border-width: 1px;
 }
 
+div.selected-items, div.item-select {
+	float:left;
+}
 
 .search .search-box-adv
 {
