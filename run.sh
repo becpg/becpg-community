@@ -33,7 +33,7 @@ down() {
 deploy_fast(){
 
 	#becpg-amp
-	docker cp becpg-core/src/main/resources/alfresco/templates/. becpg:/usr/local/tomcat/webapps/alfresco/WEB-INF/classes/alfresco/templates
+	docker cp becpg-core/src/main/resources/alfresco/templates/. target_becpg_1:/usr/local/tomcat/webapps/alfresco/WEB-INF/classes/alfresco/templates
 	
 	#becpg-share
 	docker cp becpg-share/src/main/assembly/web/. target_becpg_1:/usr/local/tomcat/webapps/share/
