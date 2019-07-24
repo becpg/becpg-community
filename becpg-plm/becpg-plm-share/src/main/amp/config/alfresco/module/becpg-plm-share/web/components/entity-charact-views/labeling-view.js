@@ -180,7 +180,7 @@
 				e.preventDefault();
 			}
 			
-			var htmlId= fieldId.split("#")[2]+ fieldId.split("#")[0];
+			var htmlId= fieldId.split("#")[0] + fieldId.split("#")[2];
 			var illValue = document.getElementById(htmlId).innerHTML; 
 			document.addEventListener("copy", clipboardListner);
 			document.execCommand("copy");

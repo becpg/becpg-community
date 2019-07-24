@@ -803,7 +803,6 @@ if (beCPG.module.EntityDataGridRenderers) {
 				
 					if(label == "bcpg:illValue"){
 						
-						html += '<div id="'+ suffix + htmlId +'" style ="display:block; width:0; height:0; opacity: 0;">' + displayValue + '</div>';
 						
 						if(editPermission){
 							html += '<span id="' +htmlId+"#"+ nodeRef+"#"+ label+  '" class="copyToIllManualValue"><a href="#" title="'+ scope.msg("label.copy.to.illManualValue.title") +'" class="labeling-action copy-to"></a> </span>';
