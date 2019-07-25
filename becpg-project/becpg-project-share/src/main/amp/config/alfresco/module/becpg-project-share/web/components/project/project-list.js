@@ -507,10 +507,8 @@ var g; // gantt var
                         	
                             var filter = Alfresco.util.cleanBubblingObject(args[1]);
                             filter = (this.options.filter.filterId && filter.filterId != "filterform") ? this.options.filter : filter; 
-                            
                             this.options.filter = filter;
-                            this.services.preferences.set("org.alfresco.share.project.list." + (this.options.siteId != null ? this.options.siteId : "home") + ".filter", this.options.filter);
-                            
+                          
                             if (filter.filterId == "filterform")
                             {
                             	this.widgets.filter.set("label", $html(this
@@ -561,6 +559,8 @@ var g; // gantt var
                               
                               
                               this.options.filter = filterObj;
+                              this.services.preferences.set("org.alfresco.share.project.list." + (this.options.siteId != null ? this.options.siteId : "home") + ".filter", this.options.filter);
+                              
                               YAHOO.Bubbling.fire("changeFilter", filterObj);
                            }
                         },
