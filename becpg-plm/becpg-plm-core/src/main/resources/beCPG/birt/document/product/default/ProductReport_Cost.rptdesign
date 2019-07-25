@@ -37,7 +37,7 @@
     </list-property>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="452">
-            <property name="FILELIST">src/main/resources/beCPG/birt/document/product/default/ProductReport.xml</property>
+            <property name="FILELIST">becpg-plm/becpg-plm-core/src/main/resources/beCPG/birt/document/product/default/datasource_for_Cost.xml</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
@@ -2471,7 +2471,13 @@ res;</expression>
                 <structure>
                     <property name="columnName">productLossPerc</property>
                     <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">productLossPerc</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">packagingListPkgLevelTranslation</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">packagingListPkgLevelTranslation</text-property>
                 </structure>
             </list-property>
             <list-property name="filter"/>
@@ -2595,26 +2601,31 @@ res;</expression>
                     </structure>
                     <structure>
                         <property name="position">24</property>
+                        <property name="name">packagingListPkgLevelTranslation</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">25</property>
                         <property name="name">costPerProduct</property>
                         <property name="dataType">float</property>
                     </structure>
                     <structure>
-                        <property name="position">25</property>
+                        <property name="position">26</property>
                         <property name="name">costPerKilo</property>
                         <property name="dataType">float</property>
                     </structure>
                     <structure>
-                        <property name="position">26</property>
+                        <property name="position">27</property>
                         <property name="name">packagingListProductLabel</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">27</property>
+                        <property name="position">28</property>
                         <property name="name">runningCount</property>
                         <property name="dataType">integer</property>
                     </structure>
                     <structure>
-                        <property name="position">28</property>
+                        <property name="position">29</property>
                         <property name="name">conditionalCurrentCost</property>
                         <property name="dataType">float</property>
                     </structure>
@@ -2783,8 +2794,15 @@ res;</expression>
                     <property name="dataType">float</property>
                     <property name="nativeDataType">8</property>
                 </structure>
+                <structure>
+                    <property name="position">24</property>
+                    <property name="name">packagingListPkgLevelTranslation</property>
+                    <property name="nativeName">packagingListPkgLevelTranslation</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingLists/packagingList]#:#{erpCode;STRING;/@erpCode},{packagingListProduct;STRING;/@packagingListProduct},{packagingListQty;DOUBLE;/@packagingListQty},{packagingListUnit;STRING;/@packagingListUnit},{unitTotalCost;DOUBLE;/@unitTotalCost},{packagingListLossPerc;DOUBLE;/@packagingListLossPerc},{packagingListPkgLevel;STRING;/@packagingListPkgLevel},{packagingListQtyForProduct;DOUBLE;/@packagingListQtyForProduct},{depthLevel;INT;/@depthLevel},{netWeight;DOUBLE;../../../netWeight},{itemType;STRING;/@itemType},{versionLabel;STRING;/@versionLabel},{itemTypeEntity;STRING;../../../itemType},{title;STRING;/@title},{productCompoQtyUsed;DOUBLE;../../../productCompoQtyUsed},{currentCost;DOUBLE;/@currentCost},{compoListProduct;STRING;/@compoListProduct},{qtyForCost;DOUBLE;/@qtyForCost},{futureCost;DOUBLE;/@futureCost},{previousCost;DOUBLE;/@previousCost},{reportParametersCode;STRING;../../../reportParameters/@code},{componentLossPerc;DOUBLE;packagingListProduct//productLossPerc/},{productLossPerc;DOUBLE;../../../productLossPerc}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingLists/packagingList]#:#{erpCode;STRING;/@erpCode},{packagingListProduct;STRING;/@packagingListProduct},{packagingListQty;DOUBLE;/@packagingListQty},{packagingListUnit;STRING;/@packagingListUnit},{unitTotalCost;DOUBLE;/@unitTotalCost},{packagingListLossPerc;DOUBLE;/@packagingListLossPerc},{packagingListPkgLevel;STRING;/@packagingListPkgLevel},{packagingListQtyForProduct;DOUBLE;/@packagingListQtyForProduct},{depthLevel;INT;/@depthLevel},{netWeight;DOUBLE;../../../netWeight},{itemType;STRING;/@itemType},{versionLabel;STRING;/@versionLabel},{itemTypeEntity;STRING;../../../itemType},{title;STRING;/@title},{productCompoQtyUsed;DOUBLE;../../../productCompoQtyUsed},{currentCost;DOUBLE;/@currentCost},{compoListProduct;STRING;/@compoListProduct},{qtyForCost;DOUBLE;/@qtyForCost},{futureCost;DOUBLE;/@futureCost},{previousCost;DOUBLE;/@previousCost},{reportParametersCode;STRING;../../../reportParameters/@code},{componentLossPerc;DOUBLE;packagingListProduct//productLossPerc/},{productLossPerc;DOUBLE;../../../productLossPerc},{packagingListPkgLevelTranslation;STRING;/@packagingListPkgLevelTranslation}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -5329,22 +5347,6 @@ matière
                     <property name="dataType">float</property>
                 </structure>
                 <structure>
-                    <property name="name">packagingListPkgLevel</property>
-                    <text-property name="displayName">packagingListPkgLevel</text-property>
-                    <expression name="expression" type="javascript">if (dataSetRow["packagingListPkgLevel"]=="Primary"){
-"Primaire"
-}else if (dataSetRow["packagingListPkgLevel"]=="Secondary"){
-"Secondaire"
-}else if (dataSetRow["packagingListPkgLevel"]=="Tertiary"){
-"Tertiaire"
-}
- else {
-dataSetRow["packagingListPkgLevel"]
-}</expression>
-                    <property name="dataType">string</property>
-                    <property name="allowExport">true</property>
-                </structure>
-                <structure>
                     <property name="name">costPerProduct</property>
                     <text-property name="displayName">costPerProduct</text-property>
                     <expression name="expression" type="javascript">dataSetRow["costPerProduct"]</expression>
@@ -5441,6 +5443,12 @@ dataSetRow["packagingListPkgLevel"]
                     <text-property name="displayName">productLossPerc</text-property>
                     <expression name="expression" type="javascript">dataSetRow["productLossPerc"]</expression>
                     <property name="dataType">float</property>
+                </structure>
+                <structure>
+                    <property name="name">packagingListPkgLevelTranslation</property>
+                    <text-property name="displayName">packagingListPkgLevelTranslation</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["packagingListPkgLevelTranslation"]</expression>
+                    <property name="dataType">string</property>
                 </structure>
             </list-property>
             <column id="3528">
@@ -5608,9 +5616,8 @@ dataSetRow["packagingListPkgLevel"]
                     </cell>
                     <cell id="3581">
                         <property name="style">becpg-cell-data</property>
-                        <data id="3584">
-                            <property name="style">becpg-data</property>
-                            <property name="resultSetColumn">packagingListPkgLevel</property>
+                        <data id="7397">
+                            <property name="resultSetColumn">packagingListPkgLevelTranslation</property>
                         </data>
                     </cell>
                     <cell id="3643">
