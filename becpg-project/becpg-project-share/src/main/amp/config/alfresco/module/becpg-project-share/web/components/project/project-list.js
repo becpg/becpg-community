@@ -280,7 +280,7 @@ var g; // gantt var
 							if(this.queryExecutionId != null) {
 								request.queryExecutionId = this.queryExecutionId;
 							}
-							if(this.options.filter.filterId){
+							if(this.options.filter.filterId && p_obj.filter.filterId != "filterform"){
 								p_obj.filter = this.options.filter;
 							}
 
@@ -504,7 +504,12 @@ var g; // gantt var
                          */
                         onFilterChanged : function PL_onFilterChanged(layer, args)
                         {
-                            var filter = this.options.filter.filterId ? this.options.filter : Alfresco.util.cleanBubblingObject(args[1]);
+                        	
+                            var filter = Alfresco.util.cleanBubblingObject(args[1]);
+                            filter = (this.options.filter.filterId && filter.filterId != "filterform") ? this.options.filter : filter; 
+                            
+                            this.options.filter = filter;
+                            this.services.preferences.set("org.alfresco.share.project.list." + (this.options.siteId != null ? this.options.siteId : "home") + ".filter", this.options.filter);
                             
                             if (filter.filterId == "filterform")
                             {
@@ -556,8 +561,6 @@ var g; // gantt var
                               
                               
                               this.options.filter = filterObj;
-                              this.services.preferences.set("org.alfresco.share.project.list." + (this.options.siteId != null ? this.options.siteId : "home") + ".filter", this.options.filter);
-
                               YAHOO.Bubbling.fire("changeFilter", filterObj);
                            }
                         },
