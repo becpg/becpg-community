@@ -177,20 +177,25 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 
 		}
 
-		_logger.debug("TemplateNodeRef: " + templateNodeRef);
-		_logger.debug("TemplateArgs: " + templateArgs);
-
-		Action mailAction = actionService.createAction(MailActionExecuter.NAME);
-		mailAction.setParameterValue(MailActionExecuter.PARAM_SUBJECT, subject);
-		mailAction.setParameterValue(MailActionExecuter.PARAM_TO_MANY, new ArrayList<>(authorities));
-		mailAction.setParameterValue(MailActionExecuter.PARAM_TEMPLATE, findLocalizedTemplateNodeRef(templateNodeRef));
-		mailAction.setParameterValue(MailActionExecuter.PARAM_FROM, mailFrom);
-		mailAction.setParameterValue(MailActionExecuter.PARAM_TEMPLATE_MODEL, (Serializable) templateArgs);
-
-		AuthenticationUtil.runAsSystem(() -> {
-			actionService.executeAction(mailAction, null, true, true);
-			return null;
-		});
+		if(authorities!=null && !authorities.isEmpty()) {
+			_logger.debug("TemplateNodeRef: " + templateNodeRef);
+			_logger.debug("TemplateArgs: " + templateArgs);
+	
+			Action mailAction = actionService.createAction(MailActionExecuter.NAME);
+			mailAction.setParameterValue(MailActionExecuter.PARAM_SUBJECT, subject);
+			mailAction.setParameterValue(MailActionExecuter.PARAM_TO_MANY, new ArrayList<>(authorities));
+			mailAction.setParameterValue(MailActionExecuter.PARAM_TEMPLATE, findLocalizedTemplateNodeRef(templateNodeRef));
+			mailAction.setParameterValue(MailActionExecuter.PARAM_FROM, mailFrom);
+			mailAction.setParameterValue(MailActionExecuter.PARAM_TEMPLATE_MODEL, (Serializable) templateArgs);
+	
+			AuthenticationUtil.runAsSystem(() -> {
+				actionService.executeAction(mailAction, null, true, true);
+				return null;
+			});
+		} else if(_logger.isDebugEnabled()){
+			_logger.debug("No recipients to send mail to (sendToSelf:"+sendToSelf+")");
+		}
+		
 
 	}
 
