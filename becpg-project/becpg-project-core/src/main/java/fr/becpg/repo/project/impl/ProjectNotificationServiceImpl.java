@@ -97,8 +97,8 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 
 		String taskName = taskNodeRef != null ? (String) nodeService.getProperty(taskNodeRef, ProjectModel.PROP_TL_TASK_NAME) : null;
 
-		return I18NUtil.getMessage(MAIL_SUBJECT_KEY, "[" + projectName + (code != null ? " - " + code : "") + "]"+ (afterStateMsg != null ? " (" + afterStateMsg + ")" : "")
-				+ (taskName != null ? " " + taskName : "") );
+		return I18NUtil.getMessage(MAIL_SUBJECT_KEY, "[" + projectName + (((code != null) && !projectName.contains(code)) ? " - " + code : "") + "]"
+				+ (afterStateMsg != null ? " (" + afterStateMsg + ")" : "") + (taskName != null ? " " + taskName : ""));
 
 	}
 
@@ -156,8 +156,7 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 
 	@SuppressWarnings("unchecked")
 	private boolean shouldNotify(NodeRef nodeRef, Map<String, Object> templateArgs) {
-	
-		
+
 		List<String> notificationEvents = (List<String>) nodeService.getProperty(nodeRef, ProjectModel.PROP_OBSERVERS_EVENTS);
 
 		if ((notificationEvents == null) || notificationEvents.isEmpty()) {
@@ -199,7 +198,6 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 					break;
 				}
 
-				
 				if (notify) {
 					return true;
 				}
