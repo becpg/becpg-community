@@ -552,7 +552,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	 */
 	protected void loadAttributes(NodeRef nodeRef, Element nodeElt, boolean useCData, List<QName> hiddenAttributes, DefaultExtractorContext context) {
 
-		PropertyFormats propertyFormats = new PropertyFormats(true);
+		PropertyFormats propertyFormats = new PropertyFormats(false);
 
 		// properties
 		Map<QName, Serializable> properties = nodeService.getProperties(nodeRef);
