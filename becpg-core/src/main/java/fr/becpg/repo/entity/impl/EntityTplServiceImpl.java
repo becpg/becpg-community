@@ -54,7 +54,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
 import com.google.common.collect.Lists;
-import com.hazelcast.impl.concurrentmap.CostAwareRecordList;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
@@ -75,8 +74,6 @@ import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.RepositoryEntityDefReader;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
-import fr.becpg.repo.repository.model.SimpleCharactDataItem;
-import fr.becpg.repo.repository.model.SimpleListDataItem;
 import fr.becpg.repo.repository.model.Synchronisable;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
@@ -301,7 +298,6 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 					Map<QName, ?> datalistViews = repositoryEntityDefReader.getDataListViews(entityTpl);
 					for (Map.Entry<QName, ?> dataListViewEntry : datalistViews.entrySet()) {
-
 						Map<QName, List<? extends RepositoryEntity>> tmp = repositoryEntityDefReader.getDataLists(dataListViewEntry.getValue());
 						datalistsTpl.putAll(tmp);
 
@@ -311,7 +307,6 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 						RepositoryEntity entity = alfrescoRepository.findOne(entityNodeRef);
 						Map<QName, List<? extends RepositoryEntity>> datalists = repositoryEntityDefReader.getDataLists(entity);
-
 						Map<QName, ?> datalistViews1 = repositoryEntityDefReader.getDataListViews(entity);
 						for (Map.Entry<QName, ?> dataListViewEntry : datalistViews1.entrySet()) {
 							Map<QName, List<? extends RepositoryEntity>> tmp = repositoryEntityDefReader.getDataLists(dataListViewEntry.getValue());
@@ -321,9 +316,8 @@ public class EntityTplServiceImpl implements EntityTplService {
 						NodeRef listContainerNodeRef = alfrescoRepository.getOrCreateDataListContainer(entity);
 
 						for (QName dataListQName : datalistsTpl.keySet()) {
-
 							List<BeCPGDataObject> dataListItems = (List<BeCPGDataObject>) datalists.get(dataListQName);
-
+							
 							boolean update = false;
 
 							for (EntityTplPlugin entityTplPlugin : entityTplPlugins) {
@@ -334,10 +328,11 @@ public class EntityTplServiceImpl implements EntityTplService {
 								}
 							}
 							
-
 							if (!update) {
 
 								for (RepositoryEntity dataListItemTpl : datalistsTpl.get(dataListQName)) {
+									
+									Integer ItemTplSort = (Integer) nodeService.getProperty(dataListItemTpl.getNodeRef(), BeCPGModel.PROP_SORT);
 
 									Map<QName, Serializable> identAttrTpl = repositoryEntityDefReader.getIdentifierAttributes(dataListItemTpl);
 
@@ -346,9 +341,13 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 										// look on instance
 										for (RepositoryEntity dataListItem : dataListItems) {
-
+											
 											Map<QName, Serializable> identAttr = repositoryEntityDefReader.getIdentifierAttributes(dataListItem);
 											if (identAttrTpl.equals(identAttr)) {
+																						
+												if ((Integer) nodeService.getProperty(dataListItem.getNodeRef(), BeCPGModel.PROP_SORT) != ItemTplSort) {
+													nodeService.setProperty(dataListItem.getNodeRef(), BeCPGModel.PROP_SORT, ItemTplSort);
+												}
 												isFound = true;
 												break;
 											}
@@ -356,7 +355,6 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 										
 										if (!isFound) {
-
 											dataListItemTpl.setName(null);
 											dataListItemTpl.setNodeRef(null);
 											dataListItemTpl.setParentNodeRef(null);
@@ -377,12 +375,10 @@ public class EntityTplServiceImpl implements EntityTplService {
 												dataListItems.add((BeCPGDataObject) dataListItemTpl);
 												update = true;
 											}
-
-										}
+										} 
 									}
 
-								}
-
+								}	
 							}
 
 							if (update) {
