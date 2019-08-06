@@ -843,7 +843,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 							Double newLossPerc = FormulationHelper.getComponentLossPerc(subProductData, subDataItem);
 
-							loadCompoListItem(entityNodeRef, dataItem, subDataItem, subProductData, compoListElt, level + 1, subQty, subQtyForCost, newLossPerc,
+							loadCompoListItem(entityNodeRef, dataItem, subDataItem, subProductData, compoListElt, 
+									((depthLevel == null ? 0:depthLevel)+level + 1), subQty, subQtyForCost, newLossPerc,
 									context);
 
 						}
