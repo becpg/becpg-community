@@ -367,11 +367,11 @@ public class FormulationHelper {
 			Double density = subProductData.getDensity();
 			if ((density == null) || density.equals(0d) || density.isNaN() || density.isInfinite()) {
 				if (logger.isDebugEnabled()) {
-					logger.debug("Cannot calculate volume since density is null or equals to 0");
+					logger.debug("Use default density");
 				}
-			} else {
-				return ((100 + overrun) * (yield / 100) * qty) / (density * 100);
+				density = DEFAULT_DENSITY;
 			}
+			return ((100 + overrun) * (yield / 100) * qty) / (density * 100);
 		}
 
 		return null;
