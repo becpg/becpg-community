@@ -90,6 +90,8 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 						rawMaterial1NodeRef));
 				compoList.add(new CompoListDataItem(null, item, null, 2d, ProductUnit.kg, 0d, DeclarationType.Detail,
 						rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, item, null, 2d, ProductUnit.kg, 0d, DeclarationType.Detail,
+						rawMaterial2NodeRef));
 				item = new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail,
 						localSF2NodeRef);
 				compoList.add(item);
