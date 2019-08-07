@@ -267,26 +267,27 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 						QName assocQName = QName.createQName(assocName, namespaceService);
 
 						String[] arrValues = propValue.split(RepoConsts.MULTI_VALUES_SEPARATOR);
+						Set<NodeRef> nodesToKeep = new HashSet<>();
+						
 						for (String strNodeRef : arrValues) {
 
 							NodeRef nodeRef = new NodeRef(strNodeRef);
 
 							if (nodeService.exists(nodeRef)) {
 
-								List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, assocQName);
+								List<AssociationRef>  assocRefs = nodeService.getSourceAssocs(nodeRef, assocQName);
 
 								// remove nodes that don't respect the
 								// assoc_ criteria
-								List<NodeRef> nodesToKeep = new ArrayList<>();
 
 								for (AssociationRef assocRef : assocRefs) {
 									nodesToKeep.add(assocRef.getSourceRef());
 								}
 
-								nodes.retainAll(nodesToKeep);
 							}
 
 						}
+						nodes.retainAll(nodesToKeep);
 					}
 				}
 			}
