@@ -318,15 +318,22 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 	private void extractJSONSubList(ProductData productData, CompositionDataItem dataListItem, Expression exp, String path, JSONArray subList)
 			throws JSONException {
 		ProductData subProductData = alfrescoRepository.findOne(dataListItem.getComponent());
-		List<Pair<CompositionDataItem, Double>> compositeList = new ArrayList<>();
+		List<CompositionDataItem> compositeList = new ArrayList<>();
+		List<Double> qtyList = new ArrayList<>();
+		List<Double> lossPercList = new ArrayList<>();
 		if ((subProductData instanceof FinishedProductData) || (subProductData instanceof SemiFinishedProductData)) {
 			for (CompositionDataItem subDataListItem : subProductData.getCompoListView().getCompoList()) {
-				Pair<CompositionDataItem, Double> pair = new Pair<>(subDataListItem, subDataListItem.getQty());
+				compositeList.add(subDataListItem);
+				qtyList.add(subDataListItem.getQty());
+				lossPercList.add(subDataListItem.getLossPerc());
+				
 				if (FormulationHelper.getNetWeight(subProductData, FormulationHelper.DEFAULT_NET_WEIGHT) != 0) {
 					subDataListItem.setQty((dataListItem.getQty() * subDataListItem.getQty())
 							/ FormulationHelper.getNetWeight(subProductData, FormulationHelper.DEFAULT_NET_WEIGHT));
 				}
-				compositeList.add(pair);
+				
+				subDataListItem.setLossPerc(((1 + (dataListItem.getLossPerc()!=null ? dataListItem.getLossPerc():0)/100) 
+						* (1 + (subDataListItem.getLossPerc()!=null ? subDataListItem.getLossPerc():0)/100)-1)*100);
 			}
 		} else if (subProductData instanceof PackagingKitData) {
 
@@ -334,8 +341,10 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 
 			for (PackagingListDataItem subDataListItem : subProductData.getPackagingListView().getPackagingList()) {
 
-				Pair<CompositionDataItem, Double> pair = new Pair<>(subDataListItem, subDataListItem.getQty());
-               
+				compositeList.add(subDataListItem);
+				qtyList.add(subDataListItem.getQty());
+				lossPercList.add(subDataListItem.getLossPerc());
+				
 				if(!PLMModel.TYPE_PACKAGINGKIT.equals(nodeService.getType(subDataListItem.getComponent()))) {
 					if ((variantPackagingData != null) && (subDataListItem.getQty() != null)) {
 						if (PackagingLevel.Secondary.equals(subDataListItem.getPkgLevel()) && (variantPackagingData.getProductPerBoxes() != null)) {
@@ -354,17 +363,19 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 
 					subDataListItem.setQty(dataListItem.getQty() * subDataListItem.getQty());
 				}
-
-				compositeList.add(pair);
+				
+				subDataListItem.setLossPerc(((1 + (dataListItem.getLossPerc()!=null ? dataListItem.getLossPerc():0)/100) 
+						* (1 + (subDataListItem.getLossPerc()!=null ? subDataListItem.getLossPerc():0)/100)-1)*100);
 			}
 		}
-		for (Pair<CompositionDataItem, Double> pair : compositeList) {
+		for (int i=0 ; i<compositeList.size() ; i++) {
+			CompositionDataItem composite = compositeList.get(i);
 			try {
 				JSONObject subObject = new JSONObject();
 
-				StandardEvaluationContext dataContext = formulaService.createEvaluationContext(productData, pair.getFirst());
+				StandardEvaluationContext dataContext = formulaService.createEvaluationContext(productData, composite);
 
-				String subPath = path + "/" + pair.getFirst().getNodeRef().getId();
+				String subPath = path + "/" + composite.getNodeRef().getId();
 
 				Object subValue = exp.getValue(dataContext);
 				subObject.put(JsonFormulaHelper.JSON_VALUE, subValue);
@@ -375,11 +386,12 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 				if (PLMModel.TYPE_SEMIFINISHEDPRODUCT.equals(nodeService.getType(dataListItem.getComponent()))
 						|| PLMModel.TYPE_FINISHEDPRODUCT.equals(nodeService.getType(dataListItem.getComponent()))
 						|| PLMModel.TYPE_PACKAGINGKIT.equals(nodeService.getType(dataListItem.getComponent()))) {
-					extractJSONSubList(productData, pair.getFirst(), exp, subPath, subList);
+					extractJSONSubList(productData, composite, exp, subPath, subList);
 				}
 			} finally {
-				// Reset QTY
-				pair.getFirst().setQty(pair.getSecond());
+				// Reset
+				composite.setQty(qtyList.get(i));
+				composite.setLossPerc(lossPercList.get(i));
 			}
 		}
 	}
