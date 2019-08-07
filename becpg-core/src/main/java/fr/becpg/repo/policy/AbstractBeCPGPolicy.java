@@ -147,6 +147,10 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 		return false;
 	}
 
+	public Set<String> getKeys() {
+		return keys;
+	}
+
 	protected void doAfterCommit(String key, Set<NodeRef> pendingNodes) {
 		// Do Nothing
 
