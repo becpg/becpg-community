@@ -270,6 +270,15 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 		return MPMModel.ASSOC_PL_RESOURCE;
 	}
 
+	@Override
+	public Double getLossPerc() {
+		return null;
+	}
+
+	@Override
+	public void setLossPerc(Double d) {		
+	}
+
 	
 	
 	

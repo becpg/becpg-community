@@ -36,6 +36,10 @@ public interface CompositionDataItem extends RepositoryEntity, Cloneable, Effect
 
 	void setQty(Double d);
 	
+	Double getLossPerc();
+
+	void setLossPerc(Double d);
+	
 	CompositionDataItem clone();
 
 }

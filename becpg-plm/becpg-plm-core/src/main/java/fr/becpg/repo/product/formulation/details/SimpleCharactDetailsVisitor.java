@@ -125,7 +125,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 
 					ProductData compoListProduct = (ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct());
 
-					visitPart(subProductData.getNodeRef(), compoListProduct, ret, weightUsed, volUsed, netQty, subWeight, currLevel, null);
+					visitPart(subProductData.getNodeRef(), compoListProduct, compoListDataItem.getNodeRef(), ret, weightUsed, volUsed, netQty, subWeight, currLevel, null);
 					if (((maxLevel < 0) || (currLevel < maxLevel))
 							&& !entityDictionaryService.isMultiLevelLeaf(nodeService.getType(compoListDataItem.getProduct()))) {
 						visitRecur(compoListProduct, ret, currLevel + 1, maxLevel, weightUsed, volUsed, netQty);
@@ -155,7 +155,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 		return ret;
 	}
 
-	protected void visitPart(NodeRef parent, ProductData productData, CharactDetails charactDetails, Double weightUsed, Double volUsed,
+	protected void visitPart(NodeRef parent, ProductData productData, NodeRef componentDataList, CharactDetails charactDetails, Double weightUsed, Double volUsed,
 			Double netQtyInLorKg, Double netWeight, Integer currLevel, SimpleCharactUnitProvider unitProvider) throws FormulateException {
 
 		if (productData == null) {
@@ -209,7 +209,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 								+ productData.getName() + " - netQty: " + netQty + " - qty: " + qtyUsed + " - value: " + value);
 					}
 
-					currentCharactDetailsValue = new CharactDetailsValue(parent, productData.getNodeRef(), value, currLevel, unit);
+					currentCharactDetailsValue = new CharactDetailsValue(parent, productData.getNodeRef(), componentDataList, value, currLevel, unit);
 
 					if ((simpleCharact instanceof ForecastValueDataItem) && !charactDetails.isMultiple()) {
 						ForecastValueDataItem forecastValue = (ForecastValueDataItem) simpleCharact;
