@@ -20,6 +20,7 @@ package fr.becpg.repo.web.scripts.product;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -76,7 +77,7 @@ public class CharactDetailsHelper {
 
 		Map<String, String> additionalValues = createAdditionalValuesMap();
 		List<Object> totals = new LinkedList<>();
-		String colUnit = "";
+		Map<String, String> colUnits = new HashMap<String, String>();
 		for (Map.Entry<NodeRef, List<CharactDetailsValue>> entry : charactDetails.getData().entrySet()) {
 			String propName = attributeExtractorService.extractPropName(entry.getKey());
 
@@ -86,7 +87,7 @@ public class CharactDetailsHelper {
 					value.setName(propName);
 					compEls.add(value);
 				}
-				colUnit = value.getUnit();
+				colUnits.put(propName, value.getUnit());
 
 				fillAdditionalValuesMap(additionalValues, value, propName);
 			}
@@ -95,7 +96,7 @@ public class CharactDetailsHelper {
 		// put previous, future, headers if necessary
 		Map<String, Integer> indexMap = createColumnMap(charactDetails.getData(), additionalValues, attributeExtractorService, metadatas.length());
 
-		writeMetadata(colUnit, metadatas, indexMap);
+		writeMetadata(colUnits, metadatas, indexMap);
 		// Entity nut 1, nut2, nut3
 
 		List<List<Object>> resultsets = new LinkedList<>();
@@ -111,7 +112,7 @@ public class CharactDetailsHelper {
 
 			String currentDetailsName = charactDetailsValue.getName();
 			List<Object> tmp;
-			if (!tmpMap.containsKey(charactDetailsValue.getKeyNodeRef())) {
+			if (!tmpMap.containsKey(charactDetailsValue.getCompositeNodeRef())) {
 
 				tmp = new ArrayList<>();
 				tmp.add(attributeExtractorService.extractPropName(charactDetailsValue.getKeyNodeRef()));
@@ -120,11 +121,11 @@ public class CharactDetailsHelper {
 				for (int i = 0; i < indexMap.size(); i++) {
 					tmp.add(null);
 				}
-				tmpMap.put(charactDetailsValue.getKeyNodeRef(), tmp);
+				tmpMap.put(charactDetailsValue.getCompositeNodeRef(), tmp);
 			} else {
-				tmp = tmpMap.get(charactDetailsValue.getKeyNodeRef());
+				tmp = tmpMap.get(charactDetailsValue.getCompositeNodeRef());
 			}
-
+			
 			// set charact value, increase its total
 			for (Map.Entry<NodeRef, List<CharactDetailsValue>> entry : charactDetails.getData().entrySet()) {
 				Integer currentIndex = indexMap.get(currentDetailsName);
@@ -136,7 +137,6 @@ public class CharactDetailsHelper {
 					int entryIndex = entry.getValue().indexOf(matchingCharact.get());
 					if (entryIndex != -1) {
 						Double value = entry.getValue().get(entryIndex).getValue();
-
 						tmp.set(currentIndex, value);
 						if (entry.getValue().get(entryIndex).getLevel() == 0) {
 							total += value != null ? value : 0d;
@@ -203,12 +203,17 @@ public class CharactDetailsHelper {
 
 	}
 
-	private static void writeMetadata(String colUnit, JSONArray metadatas, Map<String, Integer> indexMap) throws JSONException {
+	private static void writeMetadata(Map<String, String> colUnits, JSONArray metadatas, Map<String, Integer> indexMap) throws JSONException {
+		String colUnit = "";
 		for (Entry<String, Integer> entry : indexMap.entrySet()) {
 			JSONObject metadata = new JSONObject();
 			metadata.put("colType", "Double");
 			metadata.put("colIndex", entry.getValue());
 			metadata.put("colName", entry.getKey());
+			if(colUnits.containsKey(entry.getKey())){
+				//Mini, Maxi, Future, Previous columns
+				colUnit = colUnits.get(entry.getKey());
+			}
 			metadata.put("colUnit", colUnit);
 			metadatas.put(metadata);
 		}
