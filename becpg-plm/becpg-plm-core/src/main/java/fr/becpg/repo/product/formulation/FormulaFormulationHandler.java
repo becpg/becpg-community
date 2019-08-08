@@ -29,7 +29,6 @@ import java.util.regex.Matcher;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
@@ -404,14 +403,18 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 	}
 
 	protected void copyTemplateDynamicCharactList(List<DynamicCharactListItem> sourceList, List<DynamicCharactListItem> targetList) {
-
+		
 		for (DynamicCharactListItem sourceItem : sourceList) {
 			if (sourceItem.getTitle() != null) {
 				if (sourceItem.isSynchronisable()) {
+					String sourceItemTitle =  sourceItem.getTitle() + "_" + (sourceItem.getColumnName() != null ?  sourceItem.getColumnName() : "" );
 					boolean isFound = false;
 					for (DynamicCharactListItem targetItem : targetList) {
 						// update formula
-						if (sourceItem.getName().equals(targetItem.getName()) || sourceItem.getTitle().equals(targetItem.getTitle())) {
+						String targetItemTitle =  targetItem.getTitle() + "_" + (targetItem.getColumnName() != null ?  targetItem.getColumnName() : "" );
+						
+						if (sourceItem.getName().equals(targetItem.getName()) || sourceItemTitle.equals(targetItemTitle)) {
+							
 							targetItem.setName(sourceItem.getName());
 							targetItem.setTitle(sourceItem.getTitle());
 							if ((targetItem.getIsManual() == null) || !targetItem.getIsManual()) {
@@ -427,6 +430,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 							break;
 						}
 					}
+					
 					if (!isFound) {
 						sourceItem.setNodeRef(null);
 						sourceItem.setParentNodeRef(null);
