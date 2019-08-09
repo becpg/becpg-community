@@ -644,7 +644,7 @@
 							CASE 
 								 WHEN a.doc->>"$.pjt_tlResources[0]" LIKE 'GROUP_PROJECT%'
 								 	THEN
-								 	  json_extract(b.doc,CONCAT('$.', SUBSTRING_INDEX (a.doc->>"$.pjt_tlResources[0]","_",-2)))
+								 	  REGEXP_REPLACE(json_extract(b.doc,CONCAT('$.', SUBSTRING_INDEX (a.doc->>"$.pjt_tlResources[0]","_",-2))),'[\\[\\"\\]]*','')
 								 ELSE
 								 	a.doc->>"$.pjt_tlResources[0]"
 								 END as taskResources
@@ -722,7 +722,7 @@
 		<DimensionUsage name="tlStart" caption="${msg("jsolap.startDate.title")}" source="timeDimension" foreignKey="tlStart" />
 		<DimensionUsage name="tlEnd" caption="${msg("jsolap.endDate.title")}" source="timeDimension" foreignKey="tlEnd" />
 		<DimensionUsage name="projectDateModified" caption="${msg("jsolap.modificationDate.title")}" source="timeDimension"  foreignKey="projectDateModified" />	
-		<Measure name="stepsNumber" caption="${msg("jsolap.stepsNumber.title")}" column="noderef" datatype="Numeric" aggregator="distinct-count" visible="true" />
+		<Measure name="stepsNumber" caption="${msg("jsolap.tasksNumber.title")}" column="noderef" datatype="Numeric" aggregator="distinct-count" visible="true" />
 		<Measure name="averageForecastDurations" caption="${msg("jsolap.averageForecastDurations.title")}" column="tlDuration" datatype="Numeric" aggregator="avg" visible="true"  />
 		<Measure name="averageActualDurations" caption="${msg("jsolap.averageActualDurations.title")}" column="tlRealDuration" datatype="Numeric" aggregator="avg" visible="true"  />
 		<Measure name="workload" caption="${msg("jsolap.workload.title")}" column="tlWork" datatype="Integer" aggregator="sum" visible="true"></Measure>
