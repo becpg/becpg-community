@@ -6,6 +6,7 @@ public class CharactDetailsValue {
 
 	private NodeRef parentNodeRef;
 	private NodeRef keyNodeRef;
+	private NodeRef compositeNodeRef;
 	private Double value;
 	private Double previousValue;
 	private Double futureValue;
@@ -15,10 +16,11 @@ public class CharactDetailsValue {
 	private String unit;
 	private String name;
 
-	public CharactDetailsValue(NodeRef parentNodeRef, NodeRef keyNodeRef, Double value, Integer level, String unit) {
+	public CharactDetailsValue(NodeRef parentNodeRef, NodeRef keyNodeRef, NodeRef compositeNodeRef, Double value, Integer level, String unit) {
 		super();
 		this.parentNodeRef = parentNodeRef;
 		this.keyNodeRef = keyNodeRef;
+		this.compositeNodeRef = compositeNodeRef;
 		this.value = value;
 		this.level = level;
 		this.unit = unit;
@@ -28,6 +30,10 @@ public class CharactDetailsValue {
 		return keyNodeRef;
 	}
 	
+
+	public NodeRef getCompositeNodeRef() {
+		return compositeNodeRef;
+	}
 
 	public void setValue(Double value) {
 		this.value = value;
@@ -142,6 +148,11 @@ public class CharactDetailsValue {
 				return false;
 		} else if (!parentNodeRef.equals(other.parentNodeRef))
 			return false;
+		if (compositeNodeRef == null) {
+			if (other.compositeNodeRef != null)
+				return false;
+		} else if (!compositeNodeRef.equals(other.compositeNodeRef))
+			return false;
 		return true;
 	}
 
@@ -158,6 +169,7 @@ public class CharactDetailsValue {
 		result = prime * result + ((mini == null) ? 0 : mini.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((parentNodeRef == null) ? 0 : parentNodeRef.hashCode());
+		result = prime * result + ((compositeNodeRef == null) ? 0 : compositeNodeRef.hashCode());
 		result = prime * result + ((previousValue == null) ? 0 : previousValue.hashCode());
 		result = prime * result + ((unit == null) ? 0 : unit.hashCode());
 		result = prime * result + ((value == null) ? 0 : value.hashCode());
@@ -208,6 +220,11 @@ public class CharactDetailsValue {
 				return false;
 		} else if (!parentNodeRef.equals(other.parentNodeRef))
 			return false;
+		if (compositeNodeRef == null) {
+			if (other.compositeNodeRef != null)
+				return false;
+		} else if (!compositeNodeRef.equals(other.compositeNodeRef))
+			return false;
 		if (previousValue == null) {
 			if (other.previousValue != null)
 				return false;
@@ -228,9 +245,9 @@ public class CharactDetailsValue {
 
 	@Override
 	public String toString() {
-		return "CharactDetailsValue [parentNodeRef=" + parentNodeRef + ", keyNodeRef=" + keyNodeRef + ", value=" + value + ", previousValue="
-				+ previousValue + ", futureValue=" + futureValue + ", mini=" + mini + ", maxi=" + maxi + ", level=" + level + ", unit=" + unit
-				+ ", name=" + name + "]";
+		return "CharactDetailsValue [parentNodeRef=" + parentNodeRef + ", keyNodeRef=" + keyNodeRef + ", compositeNodeRef=" + compositeNodeRef
+				+ ", value=" + value + ", previousValue=" + previousValue + ", futureValue=" + futureValue + ", mini=" + mini + ", maxi=" + maxi
+				+ ", level=" + level + ", unit=" + unit + ", name=" + name + "]";
 	}
 
 }

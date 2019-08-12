@@ -18,8 +18,12 @@
 package fr.becpg.repo.variant.policy;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.copy.CopyServicePolicies;
@@ -33,6 +37,7 @@ import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.RegexQNamePattern;
+import org.alfresco.util.transaction.TransactionSupportUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -49,6 +54,8 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 	private CopyService copyService;
 
 	private EntityListDAO entityListDAO;
+	
+	public static final String KEY_QUEUE_VARIANT = "Variant_Item_";
 
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
@@ -59,55 +66,18 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 	}
 
 	public void doInit() {
-
-		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyCompletePolicy.QNAME, PLMModel.TYPE_VARIANT, new JavaBehaviour(this,
+		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyCompletePolicy.QNAME, PLMModel.ASPECT_ENTITYLIST_VARIANT, new JavaBehaviour(this,
 				"onCopyComplete"));
 	}
 
 	@Override
 	public void onCopyComplete(QName classRef, final NodeRef sourceNodeRef, final NodeRef destinationRef, boolean copyToNewNode,
 			Map<NodeRef, NodeRef> copyMap) {
-		logger.debug("On copy complete Variant");
-
-		NodeRef entityNodeRef = nodeService.getPrimaryParent(destinationRef).getParentRef();
-
-		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().withAspect(PLMModel.ASPECT_ENTITYLIST_VARIANT)
-				.andPropEquals(PLMModel.PROP_VARIANTIDS, sourceNodeRef.toString()).inDB();
-
-		if (logger.isDebugEnabled()) {
-			logger.debug("Entity of destination " + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME) + " " + entityNodeRef
-					+ " variant: " + nodeService.getProperty(sourceNodeRef, ContentModel.PROP_NAME));
-			logger.debug("Search for " + queryBuilder.toString());
-		}
-
-		List<NodeRef> result = queryBuilder.list();
-
-		if (!result.isEmpty()) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Found " + result.size() + " entityDataList to check for update variant");
-			}
-			for (NodeRef entityDataListNodeRef : result) {
-				NodeRef tmpNodeRef = entityListDAO.getEntity(entityDataListNodeRef);
-				if (logger.isDebugEnabled()) {
-					logger.debug("Check is " + nodeService.getProperty(tmpNodeRef, ContentModel.PROP_NAME) + " " + tmpNodeRef + "is entity");
-				}
-				if (entityNodeRef.equals(tmpNodeRef)) {
-					logger.debug("Ok for replacement");
-					@SuppressWarnings("unchecked")
-					List<NodeRef> variantIds = (List<NodeRef>) nodeService.getProperty(entityDataListNodeRef, PLMModel.PROP_VARIANTIDS);
-					variantIds.remove(sourceNodeRef);
-					variantIds.add(destinationRef);
-
-					if (logger.isDebugEnabled()) {
-						logger.debug("entityDataListNodeRef " + entityDataListNodeRef);
-						logger.debug("VariantIds remove " + sourceNodeRef + " " + nodeService.getProperty(sourceNodeRef, ContentModel.PROP_NAME));
-						logger.debug("VariantIds add " + destinationRef + " " + nodeService.getProperty(destinationRef, ContentModel.PROP_NAME));
-					}
-
-					nodeService.setProperty(entityDataListNodeRef, PLMModel.PROP_VARIANTIDS, (Serializable) variantIds);
-				}
-			}
-		}
+		logger.debug("On copy complete Variant ");
+		
+		NodeRef targetEntityRef = entityListDAO.getEntity(destinationRef);
+		
+		queueNode(KEY_QUEUE_VARIANT + targetEntityRef.toString(), destinationRef);
 	}
 
 	@Override
@@ -120,7 +90,7 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 				public Void doWork() throws Exception {
 
 					NodeRef origNodeRef = getCheckedOut(workingCopyNodeRef);
-
+					
 					// Copy variants
 
 					List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(origNodeRef, PLMModel.ASSOC_VARIANTS,
@@ -147,7 +117,8 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 	
 	@Override
 	public void doBeforeCheckin(NodeRef origNodeRef,final  NodeRef workingCopyNodeRef) {
-		if (nodeService.hasAspect(origNodeRef, PLMModel.ASPECT_ENTITY_VARIANT)) {
+		
+		if (nodeService.hasAspect(origNodeRef, PLMModel.ASPECT_ENTITY_VARIANT) || nodeService.hasAspect(workingCopyNodeRef, PLMModel.ASPECT_ENTITY_VARIANT)) {
 			
 			logger.debug("On check in Variant");
 
@@ -159,6 +130,19 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 					if (origNodeRef != null) {
 						List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(origNodeRef, PLMModel.ASSOC_VARIANTS,
 								RegexQNamePattern.MATCH_ALL);
+						
+						//On initial version while branch merging  
+						if(childAssocs != null && !childAssocs.isEmpty()) {
+							for(String key : getKeys()) {
+								if (key.startsWith(KEY_QUEUE_VARIANT)){
+									Set<NodeRef> pendingNodes = TransactionSupportUtil.getResource(key);
+									if(pendingNodes != null && ! pendingNodes.isEmpty()) {
+										updateVariantIds(key, pendingNodes, true);
+									}
+								}
+							}
+						}
+						
 						for (ChildAssociationRef childAssoc : childAssocs) {
 							if (logger.isDebugEnabled()) {
 								logger.debug("Remove variant on OrigNode " + childAssoc.getChildRef() + " "
@@ -208,6 +192,95 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 		return original;
 	}
 
+	@Override
+	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
+		logger.debug("On before commit");
+		
+		if(pendingNodes != null && !pendingNodes.isEmpty()) {
+			updateVariantIds(key, pendingNodes, false);
+		}
+		return false;
+	}
+	
+	
+	private void updateVariantIds(String key, Set<NodeRef> pendingNodes, boolean unQueueNode ){
+		
+		logger.debug("Pending nodes of "+ key + " : "+pendingNodes);
+		
+		NodeRef targetEntityRef = entityListDAO.getEntity(pendingNodes.iterator().next());
+		if(!pendingNodes.isEmpty()) {
+			
+			List<NodeRef> result = BeCPGQueryBuilder.createQuery().ofType(PLMModel.TYPE_VARIANT).parent(targetEntityRef).inDB().list();
+			
+			Map<NodeRef, String> targetEntityVariants = new HashMap<>();
+			
+			result.forEach((variantRef) -> {
+				targetEntityVariants.put(variantRef, (String)nodeService.getProperty(variantRef, ContentModel.PROP_NAME));
+			});
+			
+			if (logger.isDebugEnabled()) {
+				logger.debug("Search variant of : " + targetEntityRef);
+			}
+			
+			for(NodeRef itemTargetRef : pendingNodes) {
+				if(unQueueNode) {
+					unQueueNode(key, itemTargetRef);
+				}
+				
+				@SuppressWarnings("unchecked")
+				List<NodeRef> itemVariantIds = (List<NodeRef>) nodeService.getProperty(itemTargetRef, PLMModel.PROP_VARIANTIDS);
+				
+				
+				if(itemVariantIds != null) {
+					Map<NodeRef, String> originVariantIds =  new HashMap<>();
+					itemVariantIds.forEach((variantRef) -> {
+						originVariantIds.put(variantRef, (String)nodeService.getProperty(variantRef, ContentModel.PROP_NAME));
+					});
+					List<NodeRef> newVariantIds = new ArrayList<>();
+					
+					for(NodeRef variantId  : itemVariantIds) {
+						String variantName = originVariantIds.get(variantId);
+						NodeRef newVariantRef = null; 
+
+						if(targetEntityVariants.containsValue(variantName)) {
+							newVariantRef = getKeyByValue(targetEntityVariants, variantName);
+							if (logger.isDebugEnabled()) {
+								logger.debug("Replace variant : " + variantId +" by : " + newVariantRef);
+							}
+						
+						} else {
+							if (logger.isDebugEnabled()) {
+								logger.debug("Create variant : "+ variantName );
+							}
+							
+							Map<QName, Serializable> props = new HashMap<>();
+							props.put(ContentModel.PROP_NAME, variantName);
+							props.put(PLMModel.PROP_IS_DEFAULT_VARIANT, nodeService.getProperty(variantId, PLMModel.PROP_IS_DEFAULT_VARIANT));
+							newVariantRef =  nodeService.createNode(targetEntityRef, PLMModel.ASSOC_VARIANTS, PLMModel.ASSOC_VARIANTS, PLMModel.TYPE_VARIANT, props).getChildRef();
+							targetEntityVariants.put(newVariantRef, variantName);
+						}
+						if(newVariantRef != null) {
+							newVariantIds.add(newVariantRef);
+						}
+					}
+					nodeService.setProperty(itemTargetRef, PLMModel.PROP_VARIANTIDS, (Serializable) newVariantIds);
+				}
+			}
+			
+		}
+	}
+	
+	
+	private <K, V> K getKeyByValue(Map<K, V> map, V value) {
+	    for (Entry<K, V> entry : map.entrySet()) {
+	        if (entry.getValue().equals(value)) {
+	            return entry.getKey();
+	        }
+	    }
+	    return null;
+	}
+	
+	
 	@Override
 	public void cancelCheckout(NodeRef origNodeRef, NodeRef workingCopyNodeRef) {
 		// Do nothing

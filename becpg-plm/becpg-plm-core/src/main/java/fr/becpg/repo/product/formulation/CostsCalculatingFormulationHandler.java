@@ -309,60 +309,64 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 			Double costPerProduct = null;
 			Double previousCostPerProduct = null;
 			Double futureCostPerProduct = null;
+			String costCurrency = (String) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTCURRENCY);
+			String productCurrency = (String) nodeService.getProperty(formulatedProduct.getNodeRef(), PLMModel.PROP_PRICE_CURRENCY);
 
-			if (c.getValue() != null) {
-				if ((isFixed != null) && (isFixed == Boolean.TRUE)) {
-					unitTotalFixedCost += c.getValue();
-
-					if ((formulatedProduct.getProjectedQty() != null) && !formulatedProduct.getProjectedQty().equals(0)) {
-						costPerProduct = c.getValue() / formulatedProduct.getProjectedQty();
-
+			if ((productCurrency == null) || (costCurrency == null) || productCurrency.equals(costCurrency)) {
+				if (c.getValue() != null) {
+					if ((isFixed != null) && (isFixed == Boolean.TRUE)) {
+						unitTotalFixedCost += c.getValue();
+	
+						if ((formulatedProduct.getProjectedQty() != null) && !formulatedProduct.getProjectedQty().equals(0)) {
+							costPerProduct = c.getValue() / formulatedProduct.getProjectedQty();
+	
+							if (c.getFutureValue() != null) {
+								futureCostPerProduct = c.getFutureValue() / formulatedProduct.getProjectedQty();
+							}
+	
+							if (c.getPreviousValue() != null) {
+								previousCostPerProduct = c.getPreviousValue() / formulatedProduct.getProjectedQty();
+							}
+	
+						}
+	
+					} else if ((formulatedProduct.getUnit() != null) && formulatedProduct.getUnit().isP()) {
+						costPerProduct = c.getValue();
+	
 						if (c.getFutureValue() != null) {
-							futureCostPerProduct = c.getFutureValue() / formulatedProduct.getProjectedQty();
+							futureCostPerProduct = c.getFutureValue();
 						}
-
+	
 						if (c.getPreviousValue() != null) {
-							previousCostPerProduct = c.getPreviousValue() / formulatedProduct.getProjectedQty();
+							previousCostPerProduct = c.getPreviousValue();
 						}
-
-					}
-
-				} else if ((formulatedProduct.getUnit() != null) && formulatedProduct.getUnit().isP()) {
-					costPerProduct = c.getValue();
-
-					if (c.getFutureValue() != null) {
-						futureCostPerProduct = c.getFutureValue();
-					}
-
-					if (c.getPreviousValue() != null) {
-						previousCostPerProduct = c.getPreviousValue();
-					}
-
-					if (formulatedProduct.getQty() != null) {
-						if (costPerProduct != null) {
-							costPerProduct *= formulatedProduct.getQty();
+	
+						if (formulatedProduct.getQty() != null) {
+							if (costPerProduct != null) {
+								costPerProduct *= formulatedProduct.getQty();
+							}
+							if (futureCostPerProduct != null) {
+								futureCostPerProduct *= formulatedProduct.getQty();
+							}
+							if (previousCostPerProduct != null) {
+								previousCostPerProduct *= formulatedProduct.getQty();
+							}
 						}
-						if (futureCostPerProduct != null) {
-							futureCostPerProduct *= formulatedProduct.getQty();
+	
+					} else {
+						
+						
+						costPerProduct = netQty * c.getValue();
+	
+						if (c.getFutureValue() != null) {
+							futureCostPerProduct = netQty * c.getFutureValue();
 						}
-						if (previousCostPerProduct != null) {
-							previousCostPerProduct *= formulatedProduct.getQty();
+	
+						if (c.getPreviousValue() != null) {
+							previousCostPerProduct = netQty * c.getPreviousValue();
 						}
+	
 					}
-
-				} else {
-					
-					
-					costPerProduct = netQty * c.getValue();
-
-					if (c.getFutureValue() != null) {
-						futureCostPerProduct = netQty * c.getFutureValue();
-					}
-
-					if (c.getPreviousValue() != null) {
-						previousCostPerProduct = netQty * c.getPreviousValue();
-					}
-
 				}
 			}
 
