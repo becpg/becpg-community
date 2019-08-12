@@ -427,7 +427,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 					Double qtyForCost = FormulationHelper.getQtyForCost(dataItem, 0d, subProductData,
 							CostsCalculatingFormulationHandler.keepProductUnit);
 
-					loadCompoListItem(productData.getNodeRef(), null, dataItem, subProductData, compoListElt, 0, qty, qtyForCost, parentLossRatio, context);
+					loadCompoListItem(productData.getNodeRef(), null, dataItem, subProductData, compoListElt, 1, qty, qtyForCost, parentLossRatio, context);
 				}
 			}
 
@@ -804,7 +804,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 			Integer depthLevel = dataItem.getDepthLevel();
 			if (depthLevel != null) {
-				partElt.addAttribute(BeCPGModel.PROP_DEPTH_LEVEL.getLocalName(), "" + (depthLevel + level));
+				level = depthLevel - 1 + level;
+				partElt.addAttribute(BeCPGModel.PROP_DEPTH_LEVEL.getLocalName(), "" + level);
 				partElt.addAttribute(ATTR_NODEREF, dataItem.getNodeRef().toString());
 				if (parentDataItem != null) {
 					partElt.addAttribute(ATTR_PARENT_NODEREF, parentDataItem.getNodeRef().toString());

@@ -135,7 +135,7 @@ public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetails
 									+ packagingProduct.getName() + " - value: " + value);
 						}
 
-						currentCharactDetailsValue = new CharactDetailsValue(parent, packagingProduct.getNodeRef(), value, currLevel, null);
+						currentCharactDetailsValue = new CharactDetailsValue(parent, packagingProduct.getNodeRef(), packagingListDataItem.getNodeRef(), value, currLevel, null);
 
 						charactDetails.addKeyValue(simpleCharact.getCharactNodeRef(), currentCharactDetailsValue);
 						
@@ -185,7 +185,7 @@ public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetails
 					}
 
 
-					visitPart(subProductData.getNodeRef(), compoListProduct, ret, weightUsed, volUsed, compoProductQty, compoProductQty, currLevel, null);
+					visitPart(subProductData.getNodeRef(), compoListProduct, compoListDataItem.getNodeRef(), ret, weightUsed, volUsed, compoProductQty, compoProductQty, currLevel, null);
 					if (((maxLevel < 0) || (currLevel < maxLevel))
 							&& !entityDictionaryService.isMultiLevelLeaf(nodeService.getType(compoListDataItem.getProduct()))) {
 						visitRecur(compoListProduct, ret, currLevel + 1, maxLevel, weightUsed, volUsed, netQty);
