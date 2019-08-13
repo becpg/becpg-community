@@ -4262,7 +4262,7 @@
 						template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="effectivity" appearance="bordered-panel"
 						label-id="becpg.forms.set.effectivity.label" template="/org/alfresco/components/form/2-column-set.ftl"
-						parent="mainTab" />	
+						/>	
 						
 
 					<!-- Main info -->
