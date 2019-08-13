@@ -4237,6 +4237,12 @@
 					<show id="cm:created" for-mode="view" />
 					<show id="cm:modifier" for-mode="view" />
 					<show id="cm:modified" for-mode="view" />
+					
+					
+					<!-- Effectivity -->
+					<show id="bcpg:startEffectivity" for-mode="view" />
+					<show id="bcpg:endEffectivity" for-mode="view" />
+					
 
 				</field-visibility>
 				<appearance>
@@ -4254,6 +4260,10 @@
 						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
 						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="effectivity" appearance="bordered-panel"
+						label-id="becpg.forms.set.effectivity.label" template="/org/alfresco/components/form/2-column-set.ftl"
+						parent="mainTab" />	
+						
 
 					<!-- Main info -->
 					<field id="cm:name" set="mainInfo" />
@@ -4435,6 +4445,21 @@
 					<field id="cm:created" set="audit" />
 					<field id="cm:modifier" set="audit" />
 					<field id="cm:modified" set="audit" />
+					
+					
+						<!-- Effectivity -->
+					<field id="bcpg:startEffectivity" set="effectivity">
+						<control template="/org/alfresco/components/form/controls/date.ftl">
+							<control-param name="showTime">false</control-param>
+						</control>
+					</field>
+					<field id="bcpg:endEffectivity" set="effectivity">
+						<control template="/org/alfresco/components/form/controls/date.ftl">
+							<control-param name="showTime">false</control-param>
+						</control>
+					</field>
+					
+					
 				</appearance>
 			</form>
 			<form id="reports-parameters">
