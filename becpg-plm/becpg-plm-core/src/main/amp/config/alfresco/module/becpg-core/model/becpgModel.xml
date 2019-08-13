@@ -2419,7 +2419,7 @@
 				</property>
 				<property name="bcpg:dynamicCharactSynchronisableState">
 					<type>d:text</type>
-					<default>Manual</default>
+					<default>Template</default>
 					<constraints>
 						<constraint ref="bcpg:synchronisableStates" />
 					</constraints>
