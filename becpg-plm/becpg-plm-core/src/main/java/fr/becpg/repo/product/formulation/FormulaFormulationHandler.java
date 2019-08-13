@@ -420,13 +420,14 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 		for (DynamicCharactListItem sourceItem : sourceList) {
 			if (sourceItem.getTitle() != null) {
 				if (sourceItem.isSynchronisable()) {
-					String sourceItemTitle =  sourceItem.getTitle() + "_" + (sourceItem.getColumnName() != null ?  sourceItem.getColumnName() : "" );
 					boolean isFound = false;
 					for (DynamicCharactListItem targetItem : targetList) {
+						// charact renamed
+						if (sourceItem.getName().equals(targetItem.getName()) && !sourceItem.getTitle().equals(targetItem.getTitle())) {
+							targetItem.setTitle(sourceItem.getTitle());
+						}
 						// update formula
-						String targetItemTitle =  targetItem.getTitle() + "_" + (targetItem.getColumnName() != null ?  targetItem.getColumnName() : "" );
-						
-						if (sourceItem.getName().equals(targetItem.getName()) || sourceItemTitle.equals(targetItemTitle)) {
+						if (sourceItem.getName().equals(targetItem.getName())) {
 							
 							targetItem.setName(sourceItem.getName());
 							targetItem.setTitle(sourceItem.getTitle());
