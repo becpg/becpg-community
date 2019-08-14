@@ -298,9 +298,6 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 					Map<QName, ?> datalistViews = repositoryEntityDefReader.getDataListViews(entityTpl);
 
-					QName TYPE_PROJECT = QName.createQName("http://www.bcpg.fr/model/project/1.0","project");
-					QName TYPE_TASKLIST = QName.createQName("http://www.bcpg.fr/model/project/1.0","taskList");
-
 					for (Map.Entry<QName, ?> dataListViewEntry : datalistViews.entrySet()) {
 						Map<QName, List<? extends RepositoryEntity>> tmp = repositoryEntityDefReader.getDataLists(dataListViewEntry.getValue());
 						datalistsTpl.putAll(tmp);
@@ -335,52 +332,51 @@ public class EntityTplServiceImpl implements EntityTplService {
 							if (!update) {
 
 								for (RepositoryEntity dataListItemTpl : datalistsTpl.get(dataListQName)) {
-									if (!nodeService.getType(tplNodeRef).equals(TYPE_PROJECT) || (nodeService.getType(tplNodeRef).equals(TYPE_PROJECT) && !dataListQName.equals(TYPE_TASKLIST))){
-										Integer ItemTplSort = (Integer) nodeService.getProperty(dataListItemTpl.getNodeRef(), BeCPGModel.PROP_SORT);
+									Integer ItemTplSort = (Integer) nodeService.getProperty(dataListItemTpl.getNodeRef(), BeCPGModel.PROP_SORT);
 
-										Map<QName, Serializable> identAttrTpl = repositoryEntityDefReader.getIdentifierAttributes(dataListItemTpl);
+									Map<QName, Serializable> identAttrTpl = repositoryEntityDefReader.getIdentifierAttributes(dataListItemTpl);
 
-										if (!identAttrTpl.isEmpty()) {
-											boolean isFound = false;
-											// look on instance
-											for (RepositoryEntity dataListItem : dataListItems) {
+									if (!identAttrTpl.isEmpty()) {
+										boolean isFound = false;
+										// look on instance
+										for (RepositoryEntity dataListItem : dataListItems) {
 
-												Map<QName, Serializable> identAttr = repositoryEntityDefReader.getIdentifierAttributes(dataListItem);
-												if (identAttrTpl.equals(identAttr)) {
+											Map<QName, Serializable> identAttr = repositoryEntityDefReader.getIdentifierAttributes(dataListItem);
+											if (identAttrTpl.equals(identAttr)) {
 
-													if ((Integer) nodeService.getProperty(dataListItem.getNodeRef(), BeCPGModel.PROP_SORT) != ItemTplSort) {
-														nodeService.setProperty(dataListItem.getNodeRef(), BeCPGModel.PROP_SORT, ItemTplSort);
-													}
-													isFound = true;
-													break;
+												if ((Integer) nodeService.getProperty(dataListItem.getNodeRef(), BeCPGModel.PROP_SORT) != ItemTplSort) {
+													nodeService.setProperty(dataListItem.getNodeRef(), BeCPGModel.PROP_SORT, ItemTplSort);
 												}
+												isFound = true;
+												break;
+											}
+										}
+
+
+										if (!isFound) {
+											dataListItemTpl.setName(null);
+											dataListItemTpl.setNodeRef(null);
+											dataListItemTpl.setParentNodeRef(null);
+
+											if ((dataListItemTpl instanceof CompositeDataItem)
+													&& (((CompositeDataItem<RepositoryEntity>) dataListItemTpl).getParent() != null)) {
+												((CompositeDataItem<RepositoryEntity>) dataListItemTpl).setParent(findCompositeParent(
+														((CompositeDataItem<RepositoryEntity>) dataListItemTpl).getParent(), dataListItems));
 											}
 
-
-											if (!isFound) {
-												dataListItemTpl.setName(null);
-												dataListItemTpl.setNodeRef(null);
-												dataListItemTpl.setParentNodeRef(null);
-
-												if ((dataListItemTpl instanceof CompositeDataItem)
-														&& (((CompositeDataItem<RepositoryEntity>) dataListItemTpl).getParent() != null)) {
-													((CompositeDataItem<RepositoryEntity>) dataListItemTpl).setParent(findCompositeParent(
-															((CompositeDataItem<RepositoryEntity>) dataListItemTpl).getParent(), dataListItems));
-												}
-
-												if (dataListItemTpl instanceof Synchronisable) {
-													if (((Synchronisable) dataListItemTpl).isSynchronisable()) {
-														dataListItems.add((BeCPGDataObject) dataListItemTpl);
-														update = true;
-													}
-												} else {
-													// Synchronize always
+											if (dataListItemTpl instanceof Synchronisable) {
+												if (((Synchronisable) dataListItemTpl).isSynchronisable()) {
 													dataListItems.add((BeCPGDataObject) dataListItemTpl);
 													update = true;
 												}
+											} else {
+												// Synchronize always
+												dataListItems.add((BeCPGDataObject) dataListItemTpl);
+												update = true;
 											}
-										} 
-									}
+										}
+									} 
+
 								}	
 							}
 
