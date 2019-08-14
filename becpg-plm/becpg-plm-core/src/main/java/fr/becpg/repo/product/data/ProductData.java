@@ -80,6 +80,8 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private Double qty;
 	private Double density;
 	private Double yield;
+	private Double manualYield;
+	private Double secondaryYield;
 	private Double yieldVolume;
 	private Double netWeight;
 	private Double weightPrimary;
@@ -428,6 +430,22 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 
 	public void setYield(Double yield) {
 		this.yield = yield;
+	}
+
+	public Double getManualYield() {
+		return manualYield;
+	}
+
+	public void setManualYield(Double manualYield) {
+		this.manualYield = manualYield;
+	}
+
+	public Double getSecondaryYield() {
+		return secondaryYield;
+	}
+
+	public void setSecondaryYield(Double secondaryYield) {
+		this.secondaryYield = secondaryYield;
 	}
 
 	public Double getYieldVolume() {
@@ -1111,7 +1129,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	@Override
 	public String toString() {
 		return "ProductData [hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", legalName=" + legalName + ", title=" + title + ", erpCode="
-				+ erpCode + ", state=" + state + ", unit=" + unit + ", qty=" + qty + ", density=" + density + ", yield=" + yield + ", yieldVolume="
+				+ erpCode + ", state=" + state + ", unit=" + unit + ", qty=" + qty + ", density=" + density + ", yield=" + yield + ", manualYield="+manualYield+", yieldVolume="
 				+ yieldVolume + ", netWeight=" + netWeight + ", netVolume=" + netVolume + ", servingSize=" + servingSize + ", recipeQtyUsed="
 				+ recipeQtyUsed + ", tare=" + tare + ", tareUnit=" + tareUnit + ", unitTotalCost=" + unitTotalCost + ", unitPrice=" + unitPrice
 				+ ", profitability=" + profitability + ", breakEven=" + breakEven + ", allergenList=" + allergenList + ", productScores="
@@ -1144,6 +1162,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		result = (prime * result) + ((unitTotalCost == null) ? 0 : unitTotalCost.hashCode());
 		result = (prime * result) + ((variants == null) ? 0 : variants.hashCode());
 		result = (prime * result) + ((yield == null) ? 0 : yield.hashCode());
+		result = (prime * result) + ((manualYield == null) ? 0 : manualYield.hashCode());
 		result = (prime * result) + ((yieldVolume == null) ? 0 : yieldVolume.hashCode());
 		return result;
 	}
@@ -1300,6 +1319,13 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 				return false;
 			}
 		} else if (!yield.equals(other.yield)) {
+			return false;
+		}
+		if (manualYield == null) {
+			if (other.manualYield != null) {
+				return false;
+			}
+		} else if (!manualYield.equals(other.manualYield)) {
 			return false;
 		}
 		if (yieldVolume == null) {

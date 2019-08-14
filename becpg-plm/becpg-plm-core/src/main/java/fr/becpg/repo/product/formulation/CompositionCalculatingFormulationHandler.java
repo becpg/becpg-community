@@ -71,7 +71,6 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 			return true;
 		}
 
-		Double netWeight = formulatedProduct.getNetWeight();
 
 		Composite<CompoListDataItem> compositeAll = CompositeHelper.getHierarchicalCompoList(formulatedProduct.getCompoList());
 		Composite<CompoListDataItem> compositeDefaultVariant = CompositeHelper
@@ -101,7 +100,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 			variants.add(formulatedProduct.getDefaultVariantData());
 		}
 
-		visitVariantData(variants, compositeAll, formulatedProduct.getProductLossPerc());
+		visitVariantData(variants, compositeAll, formulatedProduct, formulatedProduct.getProductLossPerc());
 
 		// Yield
 		visitYieldChildren(formulatedProduct, compositeDefaultVariant);
@@ -112,7 +111,14 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 
 		formulatedProduct.setRecipeQtyUsedWithLossPerc(formulatedProduct.getDefaultVariantData().getRecipeQtyUsedWithLossPerc());
 
-		if ((netWeight != null) && (qtyUsed != null) && (qtyUsed != 0d)) {
+
+		Double netWeight = formulatedProduct.getNetWeight();
+		
+		Double manualYield = formulatedProduct.getManualYield();
+		
+		if(manualYield!=null && manualYield!=0d  && (qtyUsed != null) && (qtyUsed != 0d)) {
+			formulatedProduct.setYield(manualYield);
+	   } else if ((netWeight != null) && (qtyUsed != null) && (qtyUsed != 0d)) {
 			formulatedProduct.setYield((100 * netWeight) / qtyUsed);
 		} else {
 			formulatedProduct.setYield(null);
@@ -148,7 +154,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		return true;
 	}
 
-	private void visitVariantData(List<VariantData> variants, Composite<CompoListDataItem> composite, Double parentLossRatio) {
+	private void visitVariantData(List<VariantData> variants, Composite<CompoListDataItem> composite, ProductData formulatedProduct, Double parentLossRatio) {
 
 		for (Composite<CompoListDataItem> component : composite.getChildren()) {
 
@@ -160,7 +166,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 				Double lossPerc = FormulationHelper.calculateLossPerc(parentLossRatio,FormulationHelper.getComponentLossPerc(componentProduct, compoListDataItem));
 
 				if (!component.isLeaf()) {
-					visitVariantData(variants, component, lossPerc);
+					visitVariantData(variants, component, formulatedProduct, lossPerc);
 				} else {
 					for (VariantData variantData : variants) {
 
@@ -170,6 +176,13 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 
 							Double recipeQtyUsed = (FormulationHelper.getQtyInKg(compoListDataItem)
 									* FormulationHelper.getYield(component.getData())) / 100;
+							
+							if(formulatedProduct.getManualYield()!=null && formulatedProduct.getManualYield()!=0d) {
+								recipeQtyUsed = (recipeQtyUsed * 100) / formulatedProduct.getManualYield();
+								recipeQtyUsedWithLossPerc = (recipeQtyUsedWithLossPerc * 100) / formulatedProduct.getManualYield();
+							}
+							
+							
 							Double recipeVolumeUsed = FormulationHelper.getNetVolume(compoListDataItem, componentProduct);
 							if(recipeVolumeUsed == null) {
 								recipeVolumeUsed = 0d;
