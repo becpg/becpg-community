@@ -100,7 +100,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 			variants.add(formulatedProduct.getDefaultVariantData());
 		}
 
-		visitVariantData(variants, compositeAll, formulatedProduct.getProductLossPerc());
+		visitVariantData(variants, compositeAll, formulatedProduct);
 
 		// Yield
 		visitYieldChildren(formulatedProduct, compositeDefaultVariant);
@@ -154,7 +154,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		return true;
 	}
 
-	private void visitVariantData(List<VariantData> variants, Composite<CompoListDataItem> composite, Double parentLossRatio) {
+	private void visitVariantData(List<VariantData> variants, Composite<CompoListDataItem> composite, ProductData formulatedProduct) {
 
 		for (Composite<CompoListDataItem> component : composite.getChildren()) {
 
@@ -163,10 +163,10 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 				CompoListDataItem compoListDataItem = component.getData();
 				ProductData componentProduct = (ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct());
 	
-				Double lossPerc = FormulationHelper.calculateLossPerc(parentLossRatio,FormulationHelper.getComponentLossPerc(componentProduct, compoListDataItem));
+				Double lossPerc = FormulationHelper.calculateLossPerc(formulatedProduct.getComponentLossPerc(),FormulationHelper.getComponentLossPerc(componentProduct, compoListDataItem));
 
 				if (!component.isLeaf()) {
-					visitVariantData(variants, component, lossPerc);
+					visitVariantData(variants, component, formulatedProduct);
 				} else {
 					for (VariantData variantData : variants) {
 
@@ -176,6 +176,13 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 
 							Double recipeQtyUsed = (FormulationHelper.getQtyInKg(compoListDataItem)
 									* FormulationHelper.getYield(component.getData())) / 100;
+							
+							if(formulatedProduct.getManualYield()!=null && formulatedProduct.getManualYield()!=0d) {
+								recipeQtyUsed = (recipeQtyUsed * 100) / formulatedProduct.getManualYield();
+								recipeQtyUsedWithLossPerc = (recipeQtyUsedWithLossPerc * 100) / formulatedProduct.getManualYield();
+							}
+							
+							
 							Double recipeVolumeUsed = FormulationHelper.getNetVolume(compoListDataItem, componentProduct);
 							if(recipeVolumeUsed == null) {
 								recipeVolumeUsed = 0d;
