@@ -131,6 +131,9 @@ public class EntityTplProjectPlugin implements EntityTplPlugin {
 
 	@Override
 	public boolean shouldSynchronizeDataList(RepositoryEntity entity, QName dataListQName) {
+		if (ProjectModel.TYPE_PROJECT.equals(nodeService.getType(entity.getNodeRef())) && ProjectModel.TYPE_TASK_LIST.equals(dataListQName)){
+			return true;
+		}
 				return false;
 	}
 
