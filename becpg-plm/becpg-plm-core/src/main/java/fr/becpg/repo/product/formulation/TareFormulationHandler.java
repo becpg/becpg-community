@@ -107,20 +107,25 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 
 			if (variantPackagingData != null) {
 				formulatedProduct.getExtraProperties().put(GS1Model.PROP_WEIGHT, formulatedProduct.getWeightPrimary());
+				
 				if (!variantPackagingData.isManualPrimary()) {
 					formulatedProduct.getExtraProperties().put(GS1Model.PROP_WIDTH, variantPackagingData.getWidth());
 					formulatedProduct.getExtraProperties().put(GS1Model.PROP_DEPTH, variantPackagingData.getDepth());
 					formulatedProduct.getExtraProperties().put(GS1Model.PROP_HEIGHT, variantPackagingData.getHeight());
 				}
+				
 				formulatedProduct.getExtraProperties().put(GS1Model.PROP_SECONDARY_WEIGHT, formulatedProduct.getWeightSecondary());
 				formulatedProduct.getExtraProperties().put(GS1Model.PROP_SECONDARY_NET_WEIGHT, formulatedProduct.getNetWeightSecondary());
+				
 				if (!variantPackagingData.isManualSecondary()) {
 					formulatedProduct.getExtraProperties().put(GS1Model.PROP_SECONDARY_WIDTH, variantPackagingData.getSecondaryWidth());
 					formulatedProduct.getExtraProperties().put(GS1Model.PROP_SECONDARY_DEPTH, variantPackagingData.getSecondaryDepth());
 					formulatedProduct.getExtraProperties().put(GS1Model.PROP_SECONDARY_HEIGHT, variantPackagingData.getSecondaryHeight());
 				}
+				
 				formulatedProduct.getExtraProperties().put(GS1Model.PROP_TERTIARY_NET_WEIGHT, formulatedProduct.getNetWeightTertiary());
 				formulatedProduct.getExtraProperties().put(GS1Model.PROP_TERTIARY_WEIGHT, formulatedProduct.getWeightTertiary());
+				
 				if (!variantPackagingData.isManualTertiary()) {
 					formulatedProduct.getExtraProperties().put(GS1Model.PROP_TERTIARY_WIDTH, variantPackagingData.getTertiaryWidth());
 					formulatedProduct.getExtraProperties().put(GS1Model.PROP_TERTIARY_DEPTH, variantPackagingData.getTertiaryDepth());

@@ -100,6 +100,9 @@ public class CompositionQtyCalculatingFormulationHandler extends FormulationBase
 				Double qty;
 				if (component.isLeaf()) {
 					qty = (qtyInKg * 100) / FormulationHelper.getYield(component.getData());
+					if(formulatedProduct.getManualYield()!=null && formulatedProduct.getManualYield()!=0d) {
+						qty = (qtyInKg * 100) / formulatedProduct.getManualYield();
+					}
 				} else {
 					qty = qtyInKg;
 				}

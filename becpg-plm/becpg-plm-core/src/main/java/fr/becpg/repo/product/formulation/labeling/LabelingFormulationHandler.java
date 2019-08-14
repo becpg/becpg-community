@@ -219,8 +219,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			Composite<CompoListDataItem> compositeDefaultVariant = CompositeHelper.getHierarchicalCompoList(compoList);
 
 			CompositeLabeling compositeLabeling = visitCompositeLabeling(new CompositeLabeling(CompositeLabeling.ROOT), compositeDefaultVariant,
-					labelingFormulaContext, 1d, formulatedProduct.getYield(), formulatedProduct.getRecipeQtyUsed(), true);
+					labelingFormulaContext, 1d, labelingFormulaContext.getYield()!=null ? labelingFormulaContext.getYield()  : formulatedProduct.getYield(), formulatedProduct.getRecipeQtyUsed(), true);
 
+			
 			if (logger.isTraceEnabled()) {
 				logger.trace(" Before aggrate \n " + compositeLabeling.toString());
 			}
@@ -1506,6 +1507,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	}
 
+	//Why not productData.getYield
+	@Deprecated 
 	private Double computeYield(ProductData productData) {
 		Double qtyUsed = productData.getRecipeQtyUsed();
 		Double netWeight = productData.getNetWeight();
