@@ -210,6 +210,9 @@ public class LabelingFormulaContext extends RuleParser {
 	private boolean labelingByLanguage = false;
 	private boolean force100Perc = false;
 
+	
+	private Double yield = null;
+	
 	/**
 	 * Use to disable allergen detection in legalName - Comma separated list of
 	 * locale codes - Empty for all allergens - Wildcard (*) can be used for
@@ -247,6 +250,16 @@ public class LabelingFormulaContext extends RuleParser {
 
 	public void setIngsLabelingWithYield(boolean ingsLabelingWithYield) {
 		this.ingsLabelingWithYield = ingsLabelingWithYield;
+	}
+
+	
+	public Double getYield() {
+		return yield;
+	}
+
+	public void setYield(Double yield) {
+		this.yield = yield;
+		this.ingsLabelingWithYield = true;
 	}
 
 	public void setIngDefaultFormat(String ingDefaultFormat) {
