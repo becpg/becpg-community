@@ -33,6 +33,7 @@ public class NutrientFormulationHelper {
 	private static final String KEY_VALUE = "v";
 	private static final String KEY_MINI = "min";
 	private static final String KEY_MAXI = "max";
+	private static final String KEY_SECONDARY_VALUE= "v2";
 	private static final String KEY_VALUE_PER_SERVING = "vps";
 	private static final String KEY_GDA_PERC = "gda";
 	private static final String KEY_VALUE_PER_CONTAINER = "vpc";
@@ -231,6 +232,8 @@ public class NutrientFormulationHelper {
 
 	private static String keyToXml(String abrv) {
 		switch (abrv) {
+		case KEY_SECONDARY_VALUE:
+			return "SecondaryValue";
 		case KEY_MINI:
 			return "Mini";
 		case KEY_MAXI:
@@ -273,6 +276,8 @@ public class NutrientFormulationHelper {
 		try {
 
 			JSONObject value = new JSONObject();
+			JSONObject secondaryValue = new JSONObject();
+			
 			JSONObject mini = new JSONObject();
 			JSONObject maxi = new JSONObject();
 			JSONObject valuePerServing = new JSONObject();
@@ -297,6 +302,18 @@ public class NutrientFormulationHelper {
 						gda.put(key, regulation.roundGDA(100 * vps / def.getGda(), nutCode));
 					}
 				}
+				
+				if(formulatedProduct.getSecondaryYield()!=null && formulatedProduct.getSecondaryYield()!=0d) {
+					Double tmp = n.getValue();
+					if(tmp!=null) {
+						if(formulatedProduct.getYield()!=null && formulatedProduct.getYield()!=0d) {
+							tmp = tmp/(formulatedProduct.getYield()/100d);
+						}
+						tmp = tmp * formulatedProduct.getSecondaryYield()/100d;
+					}
+					secondaryValue.put(key, regulation.round(tmp, nutCode, nutUnit));
+				}
+				
 				Double containerQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct, 0d);
 				if((key.equals("US") || key.equals("US_2013")) && n.getValue() != null){
 					Double vpc = regulation.round(n.getValue() * containerQty * 10, nutCode, nutUnit);
@@ -308,6 +325,7 @@ public class NutrientFormulationHelper {
 			}
 			
 			jsonRound.put(KEY_VALUE, value);
+			jsonRound.put(KEY_SECONDARY_VALUE, secondaryValue);
 			jsonRound.put(KEY_MINI, mini);
 			jsonRound.put(KEY_MAXI, maxi);
 			jsonRound.put(KEY_VALUE_PER_SERVING, valuePerServing);

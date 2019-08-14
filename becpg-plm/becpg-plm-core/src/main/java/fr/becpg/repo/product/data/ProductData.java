@@ -81,6 +81,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private Double density;
 	private Double yield;
 	private Double manualYield;
+	private Double secondaryYield;
 	private Double yieldVolume;
 	private Double netWeight;
 	private Double weightPrimary;
@@ -437,6 +438,14 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 
 	public void setManualYield(Double manualYield) {
 		this.manualYield = manualYield;
+	}
+
+	public Double getSecondaryYield() {
+		return secondaryYield;
+	}
+
+	public void setSecondaryYield(Double secondaryYield) {
+		this.secondaryYield = secondaryYield;
 	}
 
 	public Double getYieldVolume() {
