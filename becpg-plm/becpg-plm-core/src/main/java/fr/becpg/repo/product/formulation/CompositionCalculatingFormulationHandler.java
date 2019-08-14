@@ -71,7 +71,6 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 			return true;
 		}
 
-		Double netWeight = formulatedProduct.getNetWeight();
 
 		Composite<CompoListDataItem> compositeAll = CompositeHelper.getHierarchicalCompoList(formulatedProduct.getCompoList());
 		Composite<CompoListDataItem> compositeDefaultVariant = CompositeHelper
@@ -112,7 +111,14 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 
 		formulatedProduct.setRecipeQtyUsedWithLossPerc(formulatedProduct.getDefaultVariantData().getRecipeQtyUsedWithLossPerc());
 
-		if ((netWeight != null) && (qtyUsed != null) && (qtyUsed != 0d)) {
+
+		Double netWeight = formulatedProduct.getNetWeight();
+		
+		Double manualYield = formulatedProduct.getManualYield();
+		
+		if(manualYield!=null && manualYield!=0d  && (qtyUsed != null) && (qtyUsed != 0d)) {
+			formulatedProduct.setYield(manualYield);
+	   } else if ((netWeight != null) && (qtyUsed != null) && (qtyUsed != 0d)) {
 			formulatedProduct.setYield((100 * netWeight) / qtyUsed);
 		} else {
 			formulatedProduct.setYield(null);
