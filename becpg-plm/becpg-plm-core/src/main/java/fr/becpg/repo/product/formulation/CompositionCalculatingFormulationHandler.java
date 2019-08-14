@@ -100,7 +100,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 			variants.add(formulatedProduct.getDefaultVariantData());
 		}
 
-		visitVariantData(variants, compositeAll, formulatedProduct);
+		visitVariantData(variants, compositeAll, formulatedProduct, formulatedProduct.getProductLossPerc());
 
 		// Yield
 		visitYieldChildren(formulatedProduct, compositeDefaultVariant);
@@ -154,7 +154,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		return true;
 	}
 
-	private void visitVariantData(List<VariantData> variants, Composite<CompoListDataItem> composite, ProductData formulatedProduct) {
+	private void visitVariantData(List<VariantData> variants, Composite<CompoListDataItem> composite, ProductData formulatedProduct, Double parentLossRatio) {
 
 		for (Composite<CompoListDataItem> component : composite.getChildren()) {
 
@@ -163,10 +163,10 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 				CompoListDataItem compoListDataItem = component.getData();
 				ProductData componentProduct = (ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct());
 	
-				Double lossPerc = FormulationHelper.calculateLossPerc(formulatedProduct.getComponentLossPerc(),FormulationHelper.getComponentLossPerc(componentProduct, compoListDataItem));
+				Double lossPerc = FormulationHelper.calculateLossPerc(parentLossRatio,FormulationHelper.getComponentLossPerc(componentProduct, compoListDataItem));
 
 				if (!component.isLeaf()) {
-					visitVariantData(variants, component, formulatedProduct);
+					visitVariantData(variants, component, formulatedProduct, lossPerc);
 				} else {
 					for (VariantData variantData : variants) {
 
