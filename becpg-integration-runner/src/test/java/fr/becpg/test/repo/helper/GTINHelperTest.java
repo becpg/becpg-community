@@ -1,4 +1,4 @@
-package fr.becpg.test.repo.helpers;
+package fr.becpg.test.repo.helper;
 
 import org.apache.commons.validator.routines.checkdigit.CheckDigitException;
 import org.apache.commons.validator.routines.checkdigit.EAN13CheckDigit;
