@@ -307,9 +307,9 @@ public class NutrientFormulationHelper {
 					Double tmp = n.getValue();
 					if(tmp!=null) {
 						if(formulatedProduct.getYield()!=null && formulatedProduct.getYield()!=0d) {
-							tmp = tmp/(formulatedProduct.getYield()/100d);
+							tmp = tmp*(formulatedProduct.getYield()/100d);
 						}
-						tmp = tmp * formulatedProduct.getSecondaryYield()/100d;
+						tmp = tmp / (formulatedProduct.getSecondaryYield()/100d);
 					}
 					secondaryValue.put(key, regulation.round(tmp, nutCode, nutUnit));
 				}
