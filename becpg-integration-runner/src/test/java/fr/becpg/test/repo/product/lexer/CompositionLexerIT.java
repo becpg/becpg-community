@@ -83,7 +83,7 @@ public class CompositionLexerIT extends PLMBaseTestCase {
 			RawMaterialData rawMaterial5 = new RawMaterialData();
 			rawMaterial5.setName("lexer material 5" + startTime.getTime());
 
-			alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial3);
+			alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial5);
 
 			rawMaterial5NodeRef = rawMaterial5.getNodeRef();
 
