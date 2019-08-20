@@ -147,7 +147,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	private final Set<QName> excludedAspects = new HashSet<>();
 	private final Set<QName> excludedTypes = new HashSet<>();
 	private final Map<QName, String> excludedPropQueriesMap = new HashMap<>();
-	private QueryConsistency queryConsistancy = QueryConsistency.EVENTUAL;
+	private QueryConsistency queryConsistancy = QueryConsistency.DEFAULT;
 	private boolean isExactType = false;
 	private String searchTemplate = null;
 	private SearchParameters.Operator operator = null;
@@ -194,11 +194,17 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	public BeCPGQueryBuilder inType(QName typeQname) {
-		types.add(typeQname);
+		if(!typeQname.equals(type)) {
+			types.add(typeQname);
+		}
+		
 		return this;
 	}
 
 	public BeCPGQueryBuilder inBoostedType(QName typeQname, Integer boostFactor) {
+		if(!typeQname.equals(type)) {
+			type=null;
+		}
 		boostedTypes.add(new Pair<>(typeQname, boostFactor));
 		return this;
 	}
@@ -989,6 +995,9 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 				sp.setDefaultOperator(operator);
 			}
 			if (searchTemplate != null) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("searchTemplate:" + searchTemplate);
+				}
 				sp.addQueryTemplate(DEFAULT_FIELD_NAME, searchTemplate);
 			} else {
 				sp.addQueryTemplate(DEFAULT_FIELD_NAME, defaultSearchTemplate);

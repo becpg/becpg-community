@@ -316,7 +316,7 @@ public class UserImporterServiceImpl implements UserImporterService {
 								try {
 									
 									URL url = new URL("http://becpg:8080/share/service/modules/enable-site?url=" + siteInfo.getShortName()
-											+ "&preset=" + DEFAULT_PRESET + "&ticket="+authenticationService.getCurrentTicket());
+											+ "&preset=" + DEFAULT_PRESET + "&alf_ticket="+authenticationService.getCurrentTicket());
 									URLConnection con = url.openConnection();
 
 									InputStream in = con.getInputStream();
@@ -324,7 +324,7 @@ public class UserImporterServiceImpl implements UserImporterService {
 										in.close();
 									}
 
-								} catch (Exception e) {
+								} catch (IOException e) {
 									logger.error("Unable to enable site", e);
 								}
 
