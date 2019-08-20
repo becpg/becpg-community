@@ -116,7 +116,13 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 			return r;
 		}, false, true);
 
-		entityReportService.generateReports(rawMaterialNodeRef);
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			entityReportService.generateReports(rawMaterialNodeRef);
+
+			return true;
+
+		}, false, true);
 
 		if (!nodeService.hasAspect(rawMaterialNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
 			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -229,7 +235,13 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 
 			}
 
-			entityReportService.generateReports(rawMaterialNodeRef);
+			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+				entityReportService.generateReports(rawMaterialNodeRef);
+
+				return true;
+
+			}, false, true);
 
 			final NodeRef workingCopyNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -596,7 +608,13 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 			return r;
 		}, false, true);
 
-		entityReportService.generateReports(rawMaterialNodeRef);
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			entityReportService.generateReports(rawMaterialNodeRef);
+
+			return true;
+
+		}, false, true);
 
 		final NodeRef branchNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -684,7 +702,13 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 			return r;
 		}, false, true);
 
-		entityReportService.generateReports(rawMaterialNodeRef);
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			entityReportService.generateReports(rawMaterialNodeRef);
+
+			return true;
+
+		}, false, true);
 
 		if (!nodeService.hasAspect(rawMaterialNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
 			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -792,7 +816,13 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 			return r;
 		}, false, true);
 
-		entityReportService.generateReports(rawMaterialNodeRef);
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			entityReportService.generateReports(rawMaterialNodeRef);
+
+			return true;
+
+		}, false, true);
 
 		if (!nodeService.hasAspect(rawMaterialNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
 			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {

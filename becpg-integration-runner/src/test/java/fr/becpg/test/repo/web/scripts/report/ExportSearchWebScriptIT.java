@@ -384,7 +384,7 @@ public class ExportSearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 				logger.debug("report name: " + nodeService.getProperty(n, ContentModel.PROP_NAME));
 			}
 
-			assertEquals("There is two report", 2, reportTpls.size());
+			assertEquals("There is two report", 5, reportTpls.size());
 			assertEquals("Check report nodeRef", exportProductReportTpl, reportTpls.get(0));
 
 			return null;
@@ -396,8 +396,9 @@ public class ExportSearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 			String url = "/becpg/report/exportsearch/templates/bcpg:product";
 
 			Response response = TestWebscriptExecuters.sendRequest(new GetRequest(url), 200, "admin");
-
-			logger.debug("response: " + response.getContentAsString());
+			assertTrue(response.getStatus() == 200);
+			
+			
 		} catch (Exception e) {
 			logger.error("Failed to execute webscript", e);
 		}

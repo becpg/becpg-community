@@ -34,6 +34,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.dictionary.DictionaryDAO;
 import org.alfresco.repo.domain.qname.QNameDAO;
 import org.alfresco.repo.model.Repository;
+import org.alfresco.repo.node.integrity.IntegrityChecker;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationComponent;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
@@ -41,6 +42,7 @@ import org.alfresco.repo.security.authentication.MutableAuthenticationDao;
 import org.alfresco.repo.solr.SOLRTrackingComponent;
 import org.alfresco.repo.solr.Transaction;
 import org.alfresco.repo.transaction.RetryingTransactionHelper;
+import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.ContentService;
@@ -257,6 +259,8 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 	@Override
 	@Before
 	public void setUp() throws Exception {
+		super.setUp();
+		
 		testFolders.put(getTestFolderName(), transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			// As system user
 			AuthenticationUtil.setFullyAuthenticatedUser(AuthenticationUtil.getAdminUserName());
@@ -277,32 +281,33 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 		}, false, true));
 	}
 
-	@Override
-	@After
-	public void tearDown() throws Exception {
-		// transactionService.getRetryingTransactionHelper().doInTransaction(new
-		// RetryingTransactionCallback<Boolean>() {
-		// public Boolean execute() throws Throwable {
-		// ruleService.disableRules();
-		// try {
-		// IntegrityChecker.setWarnInTransaction();
-		// nodeService.addAspect(getTestFolderNodeRef(),
-		// ContentModel.ASPECT_TEMPORARY, null);
-		// nodeService.deleteNode(getTestFolderNodeRef());
-		// } finally {
-		// ruleService.enableRules();
-		// }
-		// return true;
-		//
-		// }
-		// }, false, true);
-
-	}
+//	@Override
+//	@After
+//	public void tearDown() throws Exception {
+//		super.tearDown();
+//		
+//		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
+//			public Boolean execute() throws Throwable {
+//				ruleService.disableRules();
+//				try {
+//					IntegrityChecker.setWarnInTransaction();
+//					nodeService.addAspect(getTestFolderNodeRef(), ContentModel.ASPECT_TEMPORARY, null);
+//					logger.debug("Delete test folder");
+//					nodeService.deleteNode(getTestFolderNodeRef());
+//				} finally {
+//					ruleService.enableRules();
+//				}
+//				return true;
+//
+//			}
+//		}, false, true);
+//
+//	}
 
 	public void waitForSolr(final Date startTime) {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-			List<Transaction> transactions = solrTrackingComponent.getTransactions(null, startTime.getTime(), null, null, 100);
+			List<Transaction> transactions = solrTrackingComponent.getTransactions(null, startTime.getTime(), null, null, 1000);
 
 			logger.info("Found " + transactions.size() + " new transactions");
 
@@ -317,6 +322,7 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 				logger.info("Wait for solr (2s) : serverIdx " + lastIdxServer + " solrIdx " + lastIdxSolr + " retry *" + j);
 			}
 
+			
 			return null;
 
 		}, false, true);
@@ -339,7 +345,12 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 		XPathFactory factory = XPathFactory.newInstance();
 		XPath xpath = factory.newXPath();
 
-		String strIndex = (String) xpath.evaluate("//long[@name='Id for last TX in index']", doc, XPathConstants.STRING);
+//		logger.info("Id for last TX on server : "+ (String) xpath.evaluate("//long[@name='Id for last TX on server']", doc, XPathConstants.STRING));
+//		logger.info("Approx transaction indexing time remaining : "+ (String) xpath.evaluate("//str[@name='Approx transaction indexing time remaining']", doc, XPathConstants.STRING));
+//		logger.info("Approx change set indexing time remaining : "+ (String) xpath.evaluate("//str[@name='Approx change set indexing time remaining']", doc, XPathConstants.STRING));
+//		logger.info("Alfresco Transactions in Index : "+ (String) xpath.evaluate("//long[@name='Alfresco Transactions in Index']", doc, XPathConstants.STRING));
+//		
+		String strIndex = (String) xpath.evaluate("//long[@name='Alfresco Transactions in Index']", doc, XPathConstants.STRING);
 		if ((strIndex == null) || strIndex.isEmpty()) {
 			return getLastSolrIndex();
 		}

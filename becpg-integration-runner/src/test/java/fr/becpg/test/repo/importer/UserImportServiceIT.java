@@ -91,6 +91,19 @@ public class UserImportServiceIT extends PLMBaseTestCase {
 	public void testImportUserCSV() {
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			NodeRef matthieuNodeRef = personService.getPerson("matthieu");
+			
+			
+			if(matthieuNodeRef!=null) {
+				personService.deletePerson(matthieuNodeRef);
+			}
+			
+			return null;
+
+		}, false, true);
+		
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			NodeRef csv = createCSV();
 			userImporterService.importUser(csv);
 
