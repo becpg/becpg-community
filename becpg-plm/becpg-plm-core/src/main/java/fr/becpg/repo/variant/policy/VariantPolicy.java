@@ -20,6 +20,7 @@ package fr.becpg.repo.variant.policy;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -135,10 +136,16 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 						if(childAssocs != null && !childAssocs.isEmpty()) {
 							for(String key : getKeys()) {
 								if (key.startsWith(KEY_QUEUE_VARIANT)){
-									Set<NodeRef> pendingNodes = TransactionSupportUtil.getResource(key);
-									if(pendingNodes != null && ! pendingNodes.isEmpty()) {
-										updateVariantIds(key, pendingNodes, true);
+									Set<NodeRef> pendingNodes = new HashSet<>();
+									Set<NodeRef> tempPendingNodes = TransactionSupportUtil.getResource(key);
+									if(tempPendingNodes != null) {
+										pendingNodes.addAll(tempPendingNodes);
+										
+										if(pendingNodes != null && ! pendingNodes.isEmpty()) {
+											updateVariantIds(key, pendingNodes, true);
+										}
 									}
+									
 								}
 							}
 						}
@@ -224,6 +231,7 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 			
 			for(NodeRef itemTargetRef : pendingNodes) {
 				if(unQueueNode) {
+					logger.info("unQueue Node : "+itemTargetRef);
 					unQueueNode(key, itemTargetRef);
 				}
 				
