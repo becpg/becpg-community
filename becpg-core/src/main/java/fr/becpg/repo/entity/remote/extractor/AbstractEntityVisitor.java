@@ -131,6 +131,7 @@ public abstract class AbstractEntityVisitor {
 				? attribute.replace("&", "&amp;").replace("\"", "&quot;").replace("\'", "&apos;").replace("<", "&lt;").replace(">", "&gt;")
 				: "";
 	}
+	
 
 	protected boolean shouldDumpAll(NodeRef nodeRef) {
 		QName nodeType = nodeService.getType(nodeRef).getPrefixedQName(namespaceService);
