@@ -84,7 +84,8 @@ public class CharactDetailsFormulationIT extends AbstractFinishedProductTest {
 			compoList.add(item);
 			compoList.add(new CompoListDataItem(null, item, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
 			compoList.add(new CompoListDataItem(null, item, null, 2d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-			compoList.add(new CompoListDataItem(null, item, null, 2d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
+			compoList.add(new CompoListDataItem(null, item, null, 2d, ProductUnit.kg, 0d, DeclarationType.Detail,
+					rawMaterial2NodeRef));
 			item = new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef);
 			compoList.add(item);
 			compoList.add(new CompoListDataItem(null, item, null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
@@ -119,30 +120,11 @@ public class CharactDetailsFormulationIT extends AbstractFinishedProductTest {
 
 		}, false, true);
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			productService.formulate(finishedProductNodeRef);
-
-			return null;
-
-		}, false, true);
-
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-
-			FinishedProductData finishedProduct = (FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef);
-
-			Assert.assertNotNull(finishedProduct.getNutList());
-			for (NutListDataItem nutItem : finishedProduct.getNutList()) {
-				Assert.assertTrue(nodeService.hasAspect(nutItem.getNodeRef(), BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM));
-			}
-			return null;
-
-		}, false, true);
-
 	}
 
 	/**
 	 * Test formulate product and check cost details message
-	 *
+	 * 
 	 * @throws Exception
 	 *             the exception
 	 */
@@ -322,8 +304,8 @@ public class CharactDetailsFormulationIT extends AbstractFinishedProductTest {
 					} else {
 						checks++;
 					}
-
 				}
+
 			}
 
 			assertEquals("Verify checks done", 12, checks);

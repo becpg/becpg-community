@@ -146,8 +146,9 @@ public class EntityCatalogService {
 			Set<NodeRef> listNodeRefs) {
 		try {
 			if (((before != null) && (after != null)) || (listNodeRefs != null)) {
-
+				
 				for (JSONArray catalogDef : getCatalogsDef()) {
+					
 					for (int i = 0; i < catalogDef.length(); i++) {
 						JSONObject catalog = catalogDef.getJSONObject(i);
 						if (catalog.has(PROP_CATALOG_MODIFIED_FIELD)) {
