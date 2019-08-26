@@ -130,7 +130,7 @@ public class FormulationHelper {
 	 * @param packagingListDataItem
 	 * @return
 	 */
-	private static Double getQty(PackagingListDataItem packagingListDataItem, ProductData subProductData) {
+	public static Double getQty(PackagingListDataItem packagingListDataItem, ProductData subProductData) {
 
 		if (packagingListDataItem.getQty() == null) {
 			logger.warn("Packaging element doesn't have any quantity");

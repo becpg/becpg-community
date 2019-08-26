@@ -375,7 +375,7 @@ public class ImportEntityXmlVisitor {
 							locale = MLTextHelper.parseLocale(strLocale);
 							if (!attributes.getValue(i).equals(RemoteEntityService.MLTEXT_TYPE) && (attributes.getQName(i) != null)
 									&& MLTextHelper.isSupportedLocale(locale)) {
-								mltextAttributes.put(locale, StringEscapeUtils.unescapeHtml(attributes.getValue(i).toString()));
+								mltextAttributes.put(locale, StringEscapeUtils.unescapeHtml(readCDATA(attributes.getValue(i).toString())));
 							}
 						}
 					}
@@ -518,6 +518,12 @@ public class ImportEntityXmlVisitor {
 			}
 		}
 
+		protected String readCDATA(String attribute) {
+			return attribute != null
+					? attribute.replace("&amp;", "&").replace("&quot;", "\"").replace("&apos;", "'").replace("&lt;", "<").replace("&gt;", ">")
+					: "";
+		}
+		
 		private void queueProperties(NodeRef nodeRef, QName propQname, String value) {
 			logger.debug("Queue propertie: " + propQname + " " + value);
 
