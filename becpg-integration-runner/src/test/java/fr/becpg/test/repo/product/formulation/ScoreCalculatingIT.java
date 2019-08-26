@@ -29,6 +29,8 @@ import org.json.JSONObject;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.ibm.icu.util.Calendar;
+
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemState;
@@ -73,6 +75,7 @@ public class ScoreCalculatingIT extends AbstractFinishedProductTest {
 		super.setUp();
 
 		familyNodeRef = getFamilyNodeRef();
+		beCPGCacheService.clearAllCaches();
 		setUpCatalogs(familyNodeRef);
 		// create RM and lSF
 		initParts();
@@ -178,6 +181,14 @@ public class ScoreCalculatingIT extends AbstractFinishedProductTest {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			productService.formulate(finishedProductNodeRef);
+			
+
+			return null;
+		}, false, true);	
+			
+
+		// formulate and check FP score
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			ProductData finishedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
 
 			assertNotNull(finishedProduct.getEntityScore());
@@ -246,7 +257,7 @@ public class ScoreCalculatingIT extends AbstractFinishedProductTest {
 				try {
 					catalogs = new JSONArray(content);
 					JSONObject catalog = catalogs.getJSONObject(0);
-					catalog.put("entityFilter", "hierarchy1.toString() == '" + family + "' ? true : false");
+					catalog.put("entityFilter", "hierarchy1!=null && hierarchy1.toString() == '" + family + "' ? true : false");
 					logger.info("Catalog before writing: " + catalogs);
 					ContentWriter writer = contentService.getWriter(catalogFile, ContentModel.PROP_CONTENT, true);
 					PrintWriter printWriter = new PrintWriter(writer.getContentOutputStream());
@@ -306,7 +317,7 @@ public class ScoreCalculatingIT extends AbstractFinishedProductTest {
 	@Override
 	public void tearDown() throws Exception {
 		super.tearDown();
-
+		beCPGCacheService.clearAllCaches();
 		restoreCatalogs();
 	}
 
@@ -314,7 +325,7 @@ public class ScoreCalculatingIT extends AbstractFinishedProductTest {
 
 		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			Map<QName, Serializable> props = new HashMap<>(1);
-			props.put(BeCPGModel.PROP_LKV_VALUE, "Famille 1");
+			props.put(BeCPGModel.PROP_LKV_VALUE, "Famille 1-"+(Calendar.getInstance().getTimeInMillis()));
 			return nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) props.get(BeCPGModel.PROP_LKV_VALUE)),
 					BeCPGModel.TYPE_LINKED_VALUE, props).getChildRef();

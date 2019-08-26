@@ -77,10 +77,12 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 
 					try {
 						Boolean result = (Boolean) (expression.getValue(context));
-						logger.debug("Expression " + expression + " returned " + result);
+						if(logger.isDebugEnabled()) {
+							logger.debug("Expression " + expression + " returned " + result);
+						}
 						res = result.booleanValue();
 					} catch (Exception e) {
-						logger.error("Unable to parse expression " + expression, e);
+						logger.error("Unable to parse expression " + formula, e);
 						logger.debug("Creating new CtrlListDataItem (method productMatchesOnFormula...)");
 						ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Tolerated,
 								"Unable to parse formula " + formula, null, new ArrayList<NodeRef>(), RequirementDataType.Completion);

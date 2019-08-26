@@ -529,6 +529,7 @@ public class FormulationSpecMergeIT extends FormulationLabelClaimIT {
 					assertEquals(1, r.getSources().size());
 					assertTrue(r.getSources().contains(rawMaterial2NodeRef));
 					assertEquals(RequirementType.Forbidden, r.getReqType());
+					
 					checks++;
 				} else if (!RequirementDataType.Completion.equals(r.getReqDataType())) {
 					logger.debug("Unexpected rclDataItem: " + r.getReqMessage());
