@@ -119,7 +119,12 @@ public class CharactDetailsFormulationIT extends AbstractFinishedProductTest {
 
 		}, false, true);
 
-		productService.formulate(finishedProductNodeRef);
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			productService.formulate(finishedProductNodeRef);
+
+			return null;
+
+		}, false, true);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -137,7 +142,7 @@ public class CharactDetailsFormulationIT extends AbstractFinishedProductTest {
 
 	/**
 	 * Test formulate product and check cost details message
-	 * 
+	 *
 	 * @throws Exception
 	 *             the exception
 	 */

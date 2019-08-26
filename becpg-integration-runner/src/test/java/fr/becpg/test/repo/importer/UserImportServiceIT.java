@@ -33,7 +33,6 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 
@@ -111,10 +110,6 @@ public class UserImportServiceIT extends PLMBaseTestCase {
 
 		}, false, true);
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			Assert.assertEquals(1, wiser.getMessages().size());
-			return null;
-		}, false, true);
 
 	}
 
