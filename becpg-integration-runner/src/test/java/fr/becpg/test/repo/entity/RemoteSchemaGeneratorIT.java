@@ -14,7 +14,6 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
-import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.xml.sax.SAXException;
 
@@ -30,7 +29,7 @@ public class RemoteSchemaGeneratorIT extends PLMBaseTestCase {
 	@Resource
 	private RemoteSchemaGenerator remoteSchemaGenerator;
 
-	@Test
+	//@Test
 	public void testGenerateSchema() throws XMLStreamException, IOException, SAXException, BeCPGException {
 
 		File tempFile = File.createTempFile("schema", "xsd");

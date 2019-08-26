@@ -5,7 +5,7 @@
 			"itemKind": "workflow",
 			"permissionGroup": "GROUP_ClaimStart",
 			"condition": "eval( document==null)"
-		}{
+		},{
 			"itemId": "activiti$productValidation",
 			"itemKind": "workflow",
 			"permissionGroup": "GROUP_EVERYONE",
@@ -17,7 +17,7 @@
 			"hiddenFields": [
 				"assoc_bcpgwf_pvCallerActor"
 			]
-		}{
+		},{
 			"title": "Modification emballage",
 			"itemId": "pjt:project",
 			"itemKind": "node",
@@ -30,12 +30,12 @@
 			"hiddenFields": [
 				"assoc_bcpgwf_pvCallerActor"
 			]
-		}{
+		},{
 			"title": "Validation documentaire",
 			"itemId": "start-validation-wf.js",
 			"itemKind": "script",
 			"condition": "eval(document==null || document.isSubType(\"cm:content\") )"
-		}[
+		},[
 			{
 				"itemId": "activiti$claimProcess",
 				"itemKind": "workflow",
@@ -75,7 +75,7 @@
 				"itemKind": "script",
 				"condition": "eval(document==null || document.isSubType(\"cm:content\") )"
 			}
-		[
+		,[
 		{
 			"itemId": "activiti$claimProcess",
 			"itemKind": "workflow",
@@ -114,7 +114,7 @@
 			"itemId": "start-validation-wf.js",
 			"itemKind": "script","condition"
 			: "eval(document==null || document.isSubType(\"cm:content\") )"
-		}
+		},
 	[
 		{
 		 "itemId" : "activiti$claimProcess",
