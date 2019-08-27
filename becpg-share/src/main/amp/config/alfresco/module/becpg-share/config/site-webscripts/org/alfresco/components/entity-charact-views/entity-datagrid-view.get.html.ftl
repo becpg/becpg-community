@@ -41,7 +41,7 @@
 			<div class="edit-datagrid-form">
 				 <span class="yui-button yui-push-button" id="${el}-edit-datagrid-form">
 				     <span class="first-child">
-				        <button type="button" tabindex="0" id="${el}-edit-datagrid-form-button" title="${msg("edit.form")}">&nbsp;</button>
+				        <button type="button" tabindex="0" id="${el}-edit-datagrid-form-button" title="${msg("label.form-edit.button")}">&nbsp;</button>
 				    </span>
 				 </span>
 			 </div>

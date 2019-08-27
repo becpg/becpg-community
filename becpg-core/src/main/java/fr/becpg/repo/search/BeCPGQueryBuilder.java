@@ -468,7 +468,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		excludeAspect(BeCPGModel.ASPECT_ENTITY_TPL);
 		excludeAspect(BeCPGModel.ASPECT_HIDDEN_FOLDER);
 		excludeType(BeCPGModel.TYPE_SYSTEM_ENTITY);
-		excludeAspect(ContentModel.ASPECT_CHECKED_OUT);
+		excludeAspect(ContentModel.ASPECT_WORKING_COPY);
 		return this;
 	}
 
