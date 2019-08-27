@@ -406,7 +406,7 @@
 							renderCellThumbnail = function Search_renderCellThumbnail(elCell, oRecord, oColumn, oData) {
 								oColumn.width = 100;
 								Dom.setStyle(elCell.parentNode, "width", oColumn.width + "px");
-								Dom.setStyle(elCell.parentNode, "background-color", "#f4f4f4");
+								//Dom.setStyle(elCell.parentNode, "background-color", "#f4f4f4");
 								Dom.addClass(elCell, "thumbnail-cell");
 								if (oRecord.getData("type") === "document") {
 									Dom.addClass(elCell, "thumbnail");
@@ -549,7 +549,8 @@
 								label : "",
 								sortable : false,
 								formatter : renderCellSelected,
-								width : 16
+								width : 16,
+								className : "search-select-cell-adv"
 							},
 
 							{
@@ -906,7 +907,11 @@
 							for (var i = startRecord; i <= endRecord; i++) {
 								record = recordSet.getRecord(i);
 								if (record != null && this.selectedItems[record.getData("nodeRef")]) {
-									items.push(record.getData());
+									var node = record.getData();
+									node.jsNode = {};
+								    var isContainer = record._oData.type != "document" ? true : false;
+								    node.jsNode.isContainer = isContainer;
+									items.push(node);
 								}
 							}
 
@@ -1092,6 +1097,7 @@
 						 *            method
 						 */
 						onItemSelect : function Search_onItemSelect(sType, aArgs, p_obj) {
+							
 							var domEvent = aArgs[0], eventTarget = aArgs[1];
 
 							// Select based upon the className of the clicked
@@ -1105,6 +1111,7 @@
 
 	if (Alfresco.doclib && Alfresco.doclib.Actions) {
 		YAHOO.lang.augmentProto(beCPG.custom.Search, Alfresco.doclib.Actions);
+		YAHOO.lang.augmentProto(beCPG.custom.Search, Alfresco.DocListToolbar);
 	}
 
 })();

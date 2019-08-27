@@ -2,7 +2,7 @@
 .search .search-bar span.bulk-edit-button
 {
    background: transparent url("../../components/images/edit-inline-16.png") no-repeat 12px 4px;
-   padding-left: 22px; 
+   padding-left: 22px;
 }
 
 
@@ -61,4 +61,8 @@ div.selected-items, div.item-select {
 
 .yui-skin-lightTheme #bd {
     padding-bottom: 0;
+}
+
+.search .search-select-cell-adv {
+	vertical-align: top;
 }
