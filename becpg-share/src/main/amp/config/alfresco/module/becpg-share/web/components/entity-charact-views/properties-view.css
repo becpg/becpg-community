@@ -27,3 +27,9 @@
 .properties-view span.item-separator {
     margin-left: 0.8em;
 }
+
+
+.properties-view .form-container .viewmode-field div {
+    padding: 0px !important;
+}
+

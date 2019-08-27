@@ -73,6 +73,7 @@
 	padding:0px;
 	background-color: transparent;
 	background-position: 8px 100%;
+	background-image: none;
 }
 
 .datagrid .columns-conf span.first-child {
@@ -83,7 +84,9 @@
 
 .datagrid .columns-conf button {
 	padding: 0px 0px 0px 16px;
-	min-height: 0em;
+	height: 16px;
+	line-height: 0px;
+	min-height:0px;
 }
 
 
@@ -684,3 +687,14 @@ div.dt-tooltip span.dt-tooltip-content::after {
   border-style: solid;
   border-color: transparent transparent #2c3e50 transparent;
 }
+
+
+.edit-datagrid-form   .yui-button {
+	background:none;
+	border:none;
+}
+
+.edit-datagrid-form  .yui-button .first-child {
+	border:none;
+}
+
