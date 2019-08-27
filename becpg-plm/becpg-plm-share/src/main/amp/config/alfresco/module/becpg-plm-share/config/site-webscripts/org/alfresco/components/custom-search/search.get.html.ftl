@@ -6,8 +6,6 @@
   <@link rel="stylesheet" type="text/css" href="${url.context}/res/components/documentlibrary/actions.css" group="search"/>
 	<@link rel="stylesheet" type="text/css" href="${url.context}/res/modules/documentlibrary/global-folder.css" group="search"/>
 	<@link rel="stylesheet" type="text/css" href="${url.context}/res/components/people-finder/people-finder.css" group="search"/>
-  <@link rel="stylesheet" type="text/css" href="${url.context}/res/components/documentlibrary/toolbar.css" group="search"/>
-  <@link rel="stylesheet" type="text/css" href="${url.context}/res/components/documentlibrary/custom-toolbar.css" group="search"/>
 	
 	
   <@link href="${url.context}/res/css/beCPG.css" group="search"/>
@@ -20,6 +18,7 @@
    
    
     <@script type="text/javascript" src="${url.context}/res/components/documentlibrary/actions.js" group="search"/>
+    <@script type="text/javascript" src="${url.context}/res/modules/documentlibrary/doclib-actions.js" group="search"/> 
 	<@script type="text/javascript" src="${url.context}/res/components/common/common-component-style-filter-chain.js" group="search"/>
 	<@script type="text/javascript" src="${url.context}/res/components/documentlibrary/actions-util.js" group="search"/>
 	<@script type="text/javascript" src="${url.context}/res/components/common/common-component-style-filter-chain.js" group="search"/>
@@ -27,8 +26,6 @@
 	<@script type="text/javascript" src="${url.context}/res/modules/documentlibrary/global-folder.js" group="search"/>
 	<@script type="text/javascript" src="${url.context}/res/modules/documentlibrary/copy-move-to.js" group="search"/>
 	<@script type="text/javascript" src="${url.context}/res/components/people-finder/people-finder.js" group="search"/>
-	<@script type="text/javascript" src="${url.context}/res/components/documentlibrary/toolbar.js" group="search"/>
-	<@script type="text/javascript" src="${url.context}/res/components/documentlibrary/custom-toolbar.js"  group="search" />
 
   <@script src="${url.context}/res/components/search/search-lib.js" group="search"/>
    <@script src="${url.context}/res/components/search/search.js" group="search"/>
@@ -138,10 +135,11 @@
 					         <div class="bd">
 					             <ul>			                
 					                 <li><a type="" rel="" href="#" ><span class="onActionDownload">${msg("menu.selected-items.download")}</span></a></li>
-					                 <li><a type="" rel="" href="#" ><span class="onActionQuickShare">${msg("menu.selected-items.quick-share")}</span></a></li>
-	                                 <li><a type="" rel="" href="#" ><span class="onActionCopyTo">${msg("menu.selected-items.copy")}</span></a></li>
+					                 <li><a type="" rel="content" href="#" ><span class="onActionQuickShare">${msg("menu.selected-items.quick-share")}</span></a></li>
+	                                 <#-- <li><a type="" rel="" href="#" ><span class="onActionCopyTo">${msg("menu.selected-items.copy")}</span></a></li> -->
 	                                 <#-- <li><a type="" rel="delete" href="#" ><span class="onActionMoveTo">${msg("menu.selected-items.move")}</span></a></li> -->
-	                                 <li><a type="" rel="delete" href="#" ><span class="onActionDelete">${msg("menu.selected-items.delete")}</span></a></li>        
+	                                 <li><a type="" rel="delete" href="#" ><span class="onActionDeleteMultiple">${msg("menu.selected-items.delete")}</span></a></li>
+	                                         
 					            </ul>
      				         </div>
 					      </div>			
