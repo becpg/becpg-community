@@ -16,5 +16,10 @@
 .form-datagrid-view  .edit-datagrid-form span.first-child
 {
    background: url(../documentlibrary/actions/folder-edit-metadata-16.png) no-repeat 6px 4px;
-   border:none;	
+}
+
+
+.yui-skin-becpg .form-datagrid-view  .edit-datagrid-form span.first-child
+{
+	border:none;	
 }
