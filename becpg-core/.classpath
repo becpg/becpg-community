@@ -37,7 +37,11 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" path="/becpg-report"/>
+	<classpathentry kind="src" path="/becpg-report">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="var" path="M2_REPO/org/alfresco/alfresco-legacy-lucene/5.1.e/alfresco-legacy-lucene-5.1.e.jar" sourcepath="M2_REPO/org/alfresco/alfresco-legacy-lucene/5.1.e/alfresco-legacy-lucene-5.1.e-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/alfresco/alfresco-data-model/5.1.e/alfresco-data-model-5.1.e.jar" sourcepath="M2_REPO/org/alfresco/alfresco-data-model/5.1.e/alfresco-data-model-5.1.e-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/alfresco/alfresco-core/5.6/alfresco-core-5.6.jar" sourcepath="M2_REPO/org/alfresco/alfresco-core/5.6/alfresco-core-5.6-sources.jar">
