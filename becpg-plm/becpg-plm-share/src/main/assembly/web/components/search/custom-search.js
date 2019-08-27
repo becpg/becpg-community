@@ -17,6 +17,7 @@
 		this.selectedItems = {};
 
 		YAHOO.Bubbling.on("selectedItemsChanged", this.onSelectedItemsChanged, this);
+		
 
 		return this;
 	};
@@ -317,6 +318,11 @@
 								disabled : true
 							});
 
+							
+
+							// DocLib Actions module
+					        this.modules.actions = new Alfresco.module.DoclibActions();
+							
 							// Finally show the component body here to prevent
 							// UI
 							// artifacts on YUI button decoration
@@ -998,6 +1004,10 @@
 							// Check each item for user permissions
 							for (i = 0, ii = items.length; i < ii; i++) {
 								item = items[i];
+								
+								if(!item.jsNode.isContainer){
+									item.permissions.userAccess.content = true;
+								}
 
 								// Required user access level - logical AND of
 								// each
@@ -1105,13 +1115,225 @@
 
 							this.selectItems(Alfresco.util.findEventClass(eventTarget));
 							Event.preventDefault(domEvent);
-						}
+						},
+						
+						
+						/**
+					       * Delete Multiple Records.
+					       *
+					       * @method onActionDelete
+					       * @param records {object} Object literal representing one or more file(s) or folder(s) to be actioned
+					       */
+					      onActionDeleteMultiple: function DLTB_onActionDelete(records)
+					      {
+					         var me = this,
+					            fileNames = [];
+					         
+					         // Handle a single record being provided...
+					         if (typeof records.length === "undefined")
+					         {
+					            records = [records];
+					         }
+					         for (var i = 0, j = records.length; i < j; i++)
+					         {
+					            fileNames.push("<span class=\"" + (records[i].jsNode.isContainer ? "folder" : "document") + "\">" + $html(records[i].displayName) + "</span>");
+					         }
+					         
+					         var confirmTitle = this.msg("title.multiple-delete.confirm"),
+					            confirmMsg = this.msg("message.multiple-delete.confirm", records.length);
+
+					         confirmMsg += "<div class=\"toolbar-file-list\">" + fileNames.join("") + "</div>";
+
+					         Alfresco.util.PopupManager.displayPrompt(
+					         {
+					            title: confirmTitle,
+					            text: confirmMsg,
+					            noEscape: true,
+					            modal: true,
+					            buttons: [
+					            {
+					               text: this.msg("button.delete"),
+					               handler: function DLTB_onActionDelete_delete()
+					               {
+					                  this.destroy();
+					                  me._onActionDeleteConfirm.call(me, records);
+					               }
+					            },
+					            {
+					               text: this.msg("button.cancel"),
+					               handler: function DLTB_onActionDelete_cancel()
+					               {
+					                  this.destroy();
+					               },
+					               isDefault: true
+					            }]
+					         });
+					      },
+
+					      /**
+					       * Delete Multiple Records confirmed.
+					       *
+					       * @method _onActionDeleteConfirm
+					       * @param records {array} Array containing records to be deleted
+					       * @private
+					       */
+					      _onActionDeleteConfirm: function DLTB__onActionDeleteConfirm(records)
+					      {
+					         var multipleRecords = [], i, ii;
+					         for (i = 0, ii = records.length; i < ii; i++)
+					         {
+					            multipleRecords.push(records[i].nodeRef);
+					         }
+					         
+					         // Success callback function
+					         var fnSuccess = function DLTB__oADC_success(data, records)
+					         {
+					            var result;
+					            var successFileCount = 0;
+					            var successFolderCount = 0;
+					            
+					            // Did the operation succeed?
+					            if (!data.json.overallSuccess)
+					            {
+					               Alfresco.util.PopupManager.displayMessage(
+					               {
+					                  text: this.msg("message.multiple-delete.failure")
+					               });
+					               return;
+					            }
+					            
+					            YAHOO.Bubbling.fire("filesDeleted");
+					            
+					            for (i = 0, ii = data.json.totalResults; i < ii; i++)
+					            {
+					               result = data.json.results[i];
+					               
+					               if (result.success)
+					               {
+					                  if (result.type == "folder")
+					                  {
+					                     successFolderCount++;
+					                  }
+					                  else
+					                  {
+					                     successFileCount++;
+					                  }
+					                  
+					                  YAHOO.Bubbling.fire(result.type == "folder" ? "folderDeleted" : "fileDeleted",
+					                  {
+					                     multiple: true,
+					                     nodeRef: result.nodeRef
+					                  });
+					               }
+					            }
+					            
+					            // Activities, in Site mode only
+					            var successCount = successFolderCount + successFileCount;
+					            if (Alfresco.util.isValueSet(this.options.siteId))
+					            {
+					               var activityData;
+					               
+					               if (successCount > 0)
+					               {
+					                  if (successCount < this.options.groupActivitiesAt)
+					                  {
+					                     // Below cutoff for grouping Activities into one
+					                     for (i = 0; i < successCount; i++)
+					                     {
+					                        activityData =
+					                        {
+					                           fileName: data.json.results[i].id,
+					                           nodeRef: data.json.results[i].nodeRef,
+					                           path: this.currentPath,
+					                           parentNodeRef : this.doclistMetadata.parent.nodeRef
+					                        };
+					                        
+					                        if (data.json.results[i].type == "folder")
+					                        {
+					                           this.modules.actions.postActivity(this.options.siteId, "folder-deleted", "documentlibrary", activityData);
+					                        }
+					                        else
+					                        {
+					                           this.modules.actions.postActivity(this.options.siteId, "file-deleted", "documentlibrary", activityData);
+					                        }
+					                     }
+					                  }
+					                  else
+					                  {
+					                     if (successFileCount > 0)
+					                     {
+					                        // grouped into one message
+					                        activityData =
+					                        {
+					                           fileCount: successFileCount,
+					                           path: this.currentPath,
+					                           parentNodeRef : this.doclistMetadata.parent.nodeRef
+					                        };
+					                        this.modules.actions.postActivity(this.options.siteId, "files-deleted", "documentlibrary", activityData);
+					                     }
+					                     if (successFolderCount > 0)
+					                     {
+					                        // grouped into one message
+					                        activityData =
+					                        {
+					                           fileCount: successFolderCount,
+					                           path: this.currentPath,
+					                           parentNodeRef : this.doclistMetadata.parent.nodeRef
+					                        };
+					                        this.modules.actions.postActivity(this.options.siteId, "folders-deleted", "documentlibrary", activityData);
+					                     }
+					                  }
+					               }
+					            }
+
+					            Alfresco.util.PopupManager.displayMessage(
+					            {
+					               text: this.msg("message.multiple-delete.success", successCount)
+					            });
+					         };
+					         
+					         // Construct the data object for the genericAction call
+					         this.modules.actions.genericAction(
+					         {
+					            success:
+					            {
+					               callback:
+					               {
+					                  fn: fnSuccess,
+					                  scope: this,
+					                  obj: records
+					               }
+					            },
+					            failure:
+					            {
+					               message: this.msg("message.multiple-delete.failure")
+					            },
+					            webscript:
+					            {
+					               method: Alfresco.util.Ajax.DELETE,
+					               name: "files"
+					            },
+					            wait:
+					            {
+					               message: this.msg("message.multiple-delete.please-wait")
+					            },
+					            config:
+					            {
+					               requestContentType: Alfresco.util.Ajax.JSON,
+					               dataObj:
+					               {
+					                  nodeRefs: multipleRecords
+					               }
+					            }
+					         });
+					      },
+
 
 					});
 
 	if (Alfresco.doclib && Alfresco.doclib.Actions) {
 		YAHOO.lang.augmentProto(beCPG.custom.Search, Alfresco.doclib.Actions);
-		YAHOO.lang.augmentProto(beCPG.custom.Search, Alfresco.DocListToolbar);
+		
 	}
 
 })();

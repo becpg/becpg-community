@@ -66,3 +66,33 @@ div.selected-items, div.item-select {
 .search .search-select-cell-adv {
 	vertical-align: top;
 }
+
+
+/* Messages */
+
+.toolbar-file-list
+{
+   max-height: 15em;
+   overflow-y: auto;
+   padding: 0.5em;
+   text-align: left;
+}
+
+.toolbar-file-list span
+{
+   background-position: 1px 0px;
+   background-repeat: no-repeat;
+   display: block;
+   min-height: 18px;
+   padding-left: 20px;
+}
+
+.toolbar-file-list span.folder
+{
+   background-image: url(images/folder-open-16.png);
+}
+
+.toolbar-file-list span.document
+{
+   background-image: url(images/generic-16.png);
+}
