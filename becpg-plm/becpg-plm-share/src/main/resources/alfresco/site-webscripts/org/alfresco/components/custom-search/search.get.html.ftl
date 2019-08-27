@@ -6,6 +6,8 @@
   <@link rel="stylesheet" type="text/css" href="${url.context}/res/components/documentlibrary/actions.css" group="search"/>
 	<@link rel="stylesheet" type="text/css" href="${url.context}/res/modules/documentlibrary/global-folder.css" group="search"/>
 	<@link rel="stylesheet" type="text/css" href="${url.context}/res/components/people-finder/people-finder.css" group="search"/>
+  <@link rel="stylesheet" type="text/css" href="${url.context}/res/components/documentlibrary/toolbar.css" group="search"/>
+  <@link rel="stylesheet" type="text/css" href="${url.context}/res/components/documentlibrary/custom-toolbar.css" group="search"/>
 	
 	
   <@link href="${url.context}/res/css/beCPG.css" group="search"/>
@@ -18,12 +20,15 @@
    
    
     <@script type="text/javascript" src="${url.context}/res/components/documentlibrary/actions.js" group="search"/>
+	<@script type="text/javascript" src="${url.context}/res/components/common/common-component-style-filter-chain.js" group="search"/>
 	<@script type="text/javascript" src="${url.context}/res/components/documentlibrary/actions-util.js" group="search"/>
 	<@script type="text/javascript" src="${url.context}/res/components/common/common-component-style-filter-chain.js" group="search"/>
 	<@script type="text/javascript" src="${url.context}/res/modules/simple-dialog.js" group="search"/>
 	<@script type="text/javascript" src="${url.context}/res/modules/documentlibrary/global-folder.js" group="search"/>
 	<@script type="text/javascript" src="${url.context}/res/modules/documentlibrary/copy-move-to.js" group="search"/>
 	<@script type="text/javascript" src="${url.context}/res/components/people-finder/people-finder.js" group="search"/>
+	<@script type="text/javascript" src="${url.context}/res/components/documentlibrary/toolbar.js" group="search"/>
+	<@script type="text/javascript" src="${url.context}/res/components/documentlibrary/custom-toolbar.js"  group="search" />
 
   <@script src="${url.context}/res/components/search/search-lib.js" group="search"/>
    <@script src="${url.context}/res/components/search/search.js" group="search"/>
@@ -113,7 +118,7 @@
          </div>
         
          
-         <div class="yui-gf search-bar theme-bg-color-3">
+         <div class="yui-ge search-bar theme-bg-color-3">
             <div class="yui-u first">
                <div class="item-select">
 			          <button id="${el}-itemSelect-button" name="bulk-edit-itemSelect-button">${msg("menu.select")}&nbsp;&#9662;</button>
@@ -132,29 +137,18 @@
 					      <div id="${el}-selectedItems-menu" class="yuimenu" style="visibility:hidden">
 					         <div class="bd">
 					             <ul>			                
-					                 <li><a type="" rel="" href="" ><span class="onActionDownload">${msg("menu.selected-items.download")}</span></a></li>
-					                 <li><a type="" rel="" href="" ><span class="onActionQuickShare">${msg("menu.selected-items.quick-share")}</span></a></li>
-	                                 <li><a type="" rel="" href="" ><span class="onActionCopyTo">${msg("menu.selected-items.copy")}</span></a></li>
-	                                 <li><a type="" rel="delete" href="" ><span class="onActionMoveTo">${msg("menu.selected-items.move")}</span></a></li>
-	                                 <li><a type="" rel="delete" href="" ><span class="onActionDelete">${msg("menu.selected-items.delete")}</span></a></li>        
+					                 <li><a type="" rel="" href="#" ><span class="onActionDownload">${msg("menu.selected-items.download")}</span></a></li>
+					                 <li><a type="" rel="" href="#" ><span class="onActionQuickShare">${msg("menu.selected-items.quick-share")}</span></a></li>
+	                                 <li><a type="" rel="" href="#" ><span class="onActionCopyTo">${msg("menu.selected-items.copy")}</span></a></li>
+	                                 <#-- <li><a type="" rel="delete" href="#" ><span class="onActionMoveTo">${msg("menu.selected-items.move")}</span></a></li> -->
+	                                 <li><a type="" rel="delete" href="#" ><span class="onActionDelete">${msg("menu.selected-items.delete")}</span></a></li>        
 					            </ul>
      				         </div>
 					      </div>			
 					   </div>
-               <div id="${el}-search-info" class="search-info">${msg("search.info.searching")}</div>
-               <div id="${el}-paginator-top" class="paginator hidden"></div>
-            </div>
-            <div class="yui-u align-right">
-               <span class="yui-button yui-push-button" id="${el}-sort-menubutton">
-                  <span class="first-child"><button></button></span>
-               </span>
-               <select id="${el}-sort-menu" class="yuimenu hidden">
-                  <#list sortFields as sort>
-                  <option value="${sort.type!""}">${sort.label}</option>
-                  </#list>
-               </select>
-               	<#if exportSearchTpls?has_content >
+					   
 					<#-- beCPG : export -->
+					<#if exportSearchTpls?has_content >
 				    <span class="yui-button yui-push-button" id="${el}-export-menubutton">
 				            <span class="first-child"><button></button></span>
 				    </span>
@@ -164,8 +158,8 @@
 				          <option value="${exportSearchTpl.nodeRef}" fileName="${exportSearchTpl.name}.${exportSearchTpl.format?lower_case}" reportTplName="${exportSearchTpl.reportTplName}">${exportSearchTpl.name}</option>
 				          </#list>
 				    </select>
-				</#if>
-				<#-- beCPG : bulkedit -->
+				    </#if>
+					   <#-- beCPG : bulkedit -->
 				<span id="${el}-bulk-edit" class="yui-button yui-push-button bulk-edit-button">
 				   <button>
 						<span>${msg("button.bulkEdit")}</span>
@@ -179,6 +173,24 @@
 				   </button>
 				</span>
 				</#if>
+				 <div class="yui-ge">
+			      <div class="yui-u first align-center">
+	               <div id="${el}-search-info" class="search-info">${msg("search.info.searching")}</div>
+	               <div id="${el}-paginator-top" class="paginator hidden"></div>
+               	  </div>
+                </div>
+            </div>
+            <div class="yui-u align-right">
+               <span class="yui-button yui-push-button" id="${el}-sort-menubutton">
+                  <span class="first-child"><button></button></span>
+               </span>
+               <select id="${el}-sort-menu" class="yuimenu hidden">
+                  <#list sortFields as sort>
+                  <option value="${sort.type!""}">${sort.label}</option>
+                  </#list>
+               </select>
+              
+				
             </div>
          </div>
          
