@@ -895,3 +895,36 @@ span.favourite span.ctn-fav {
     padding-left: 20px;
 }
 
+
+/** Fix themes **/
+
+.yui-skin-greenTheme .flat-button button, 
+.yui-skin-yellowTheme .flat-button button,
+.yui-skin-greyTheme .flat-button button,
+.yui-skin-hcBlack .flat-button button,
+.yui-skin-default  .flat-button button,
+.yui-skin-gdocs  .flat-button button  {
+	padding-right: 20px;
+	background-position: right center;
+	background-repeat: no-repeat;
+	color: #000;
+}
+
+
+
+.yui-skin-greenTheme div.flat-button span.yui-radio-button-checked, .yui-skin-greenTheme div.flat-button span.yui-checkbox-button-checked,
+.yui-skin-yellowTheme div.flat-button span.yui-radio-button-checked, .yui-skin-yellowTheme div.flat-button span.yui-checkbox-button-checked ,
+.yui-skin-default div.flat-button span.yui-radio-button-checked, .yui-skin-default div.flat-button span.yui-checkbox-button-checked,
+.yui-skin-gdocs div.flat-button span.yui-radio-button-checked, .yui-skin-gdocs div.flat-button span.yui-checkbox-button-checked  {
+    background: transparent none;
+}
+
+.yui-skin-hcBlack .filter .selected a {
+    color: white;
+}
+
+
+.yui-skin-default .yui-dt td, .yui-skin-default .yui-dt th {
+	border-color: #cbcbcb;
+}
+

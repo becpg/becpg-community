@@ -20,6 +20,14 @@
  padding-right: 5px;
 }
 
+#toolbar-contribs .filter-form .yui-menu-button button,
+.datagrid-bar .filter-form  .yui-menu-button button
+ {
+ padding-right: 0px;
+}
+
+
+
 
 .datalist-toolbar .entity-view-details span.first-child
 {
