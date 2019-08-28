@@ -1,8 +1,11 @@
 package fr.becpg.test.repo.lisence;
 
+import javax.annotation.Resource;
+
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.content.MimetypeMap;
 import org.alfresco.service.cmr.repository.ContentWriter;
+import org.alfresco.service.cmr.repository.CopyService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
@@ -29,6 +32,10 @@ public class LicenseManagerIT extends RepoBaseTestCase {
 	@Autowired
 	BeCPGCacheService cacheService;
 
+
+	@Resource
+	private CopyService copyService;
+	
 	@Test
 	public void readLisenceTest() {
 
@@ -56,16 +63,22 @@ public class LicenseManagerIT extends RepoBaseTestCase {
 			assertEquals(-1L, licenseManager.getAllowedConcurrentWrite());
 			assertEquals(-1L, licenseManager.getAllowedConcurrentSupplier());
 
-			cacheService.clearCache(BeCPGLicenseManager.class.getName());
 
 			NodeRef licenseFolderNodeRef = null, licenseFileNodeRef = null;
 			licenseFolderNodeRef = repoService.getFolderByPath(RepoConsts.PATH_SYSTEM + RepoConsts.PATH_SEPARATOR + RepoConsts.PATH_LICENSE);
 			if (licenseFolderNodeRef != null) {
 				licenseFileNodeRef = nodeService.getChildByName(licenseFolderNodeRef, ContentModel.ASSOC_CONTAINS, "license.json.sample");
 				if (licenseFileNodeRef != null) {
-					nodeService.setProperty(licenseFileNodeRef, ContentModel.PROP_NAME, "license.json");
+					licenseFileNodeRef = copyService.copyAndRename(licenseFileNodeRef, licenseFolderNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, true);
+					if (licenseFileNodeRef != null) {
+						nodeService.setProperty(licenseFileNodeRef, ContentModel.PROP_NAME, "license.json");
+					}
 				}
 			}
+			
+
+			cacheService.clearCache(BeCPGLicenseManager.class.getName());
+			
 			assertNotNull("License folder", licenseFolderNodeRef);
 			assertNotNull("License file", licenseFileNodeRef);
 

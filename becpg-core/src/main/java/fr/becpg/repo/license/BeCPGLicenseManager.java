@@ -146,8 +146,12 @@ public class BeCPGLicenseManager {
 				if (licenseFileNodeRef != null) {
 
 					ContentReader reader = contentService.getReader(licenseFileNodeRef, ContentModel.PROP_CONTENT);
-					String content = reader.getContentString();
-					return new JSONObject(content);
+					if(reader!=null) {
+						String content = reader.getContentString();
+						return new JSONObject(content);
+					} else {
+						logger.info("Empty license file installed");
+					}
 				} else {
 					logger.info("No beCPG license file installed");
 				}

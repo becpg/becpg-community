@@ -7,7 +7,7 @@ services:
   becpg:
     image: ${docker.becpg.url}/becpg-test:${project.version}
     environment:
-      CATALINA_OPTS: -Xmx1G -Duser.language=fr -Duser.country=FR -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:8888
+      CATALINA_OPTS: -Xmx4G -Duser.language=fr -Duser.country=FR -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:8888
       JAVA_HOME: /usr/java/dcevm-11.0.1+8
     ports:
       - "8080:8080"
@@ -28,7 +28,7 @@ services:
   solr:
       image: ${docker.becpg.url}/becpg-solr:${project.version}
       environment:
-      - SOLR_JAVA_MEM=-Xmx1g
+      - SOLR_JAVA_MEM=-Xmx2g
       volumes:
       - solr_data:/opt/alfresco-search-services/data
       ports:
