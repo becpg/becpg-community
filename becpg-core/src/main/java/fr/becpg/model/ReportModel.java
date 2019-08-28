@@ -82,6 +82,9 @@ public class ReportModel {
 	public static final QName PROP_REPORT_KINDS =  QName.createQName(REPORT_URI,
 			"reportKinds");
 	
+	public static final QName PROP_REPORT_KINDS_CODE =  QName.createQName(REPORT_URI,
+			"reportKindsCode");
+	
 	// reportTpls
 	public static final QName ASPECT_REPORT_TEMPLATES = QName.createQName(REPORT_URI,
 			"reportTplsAspect");
