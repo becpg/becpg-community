@@ -281,11 +281,11 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 		}, false, true));
 	}
 
-//	@Override
-//	@After
-//	public void tearDown() throws Exception {
-//		super.tearDown();
-//		
+	@Override
+	@After
+	public void tearDown() throws Exception {
+		super.tearDown();
+		
 //		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
 //			public Boolean execute() throws Throwable {
 //				ruleService.disableRules();
@@ -301,8 +301,8 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 //
 //			}
 //		}, false, true);
-//
-//	}
+
+	}
 
 	public void waitForSolr(final Date startTime) {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -314,14 +314,19 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 			Long lastIdxServer = transactions.get(transactions.size() - 1).getId();
 
 			Long lastIdxSolr = getLastSolrIndex();
+			Long transactionInSolr = getTransactionInIndex();
+			Long transactionInServer = transactionInSolr+transactions.size();
+			
 			int j = 0;
-			while ((lastIdxSolr < lastIdxServer) && (j < 10)) {
+			while (((lastIdxSolr < lastIdxServer) || (transactionInSolr < transactionInServer)) && (j < 10)) {
 				Thread.sleep(2000);
 				lastIdxSolr = getLastSolrIndex();
+				transactionInSolr =  getTransactionInIndex();
 				j++;
-				logger.info("Wait for solr (2s) : serverIdx " + lastIdxServer + " solrIdx " + lastIdxSolr + " retry *" + j);
+				logger.info("Wait for solr (2s) : serverIdx " + lastIdxServer + " solrIdx " + lastIdxSolr + " serverTx " + transactionInServer + " solrTx " + transactionInSolr + " retry *" + j);
 			}
-
+		
+			Thread.sleep(4000);
 			
 			return null;
 
@@ -331,7 +336,7 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 	private Long getLastSolrIndex() throws Exception {
 
 		HttpClient httpclient = HttpClients.createDefault();
-		HttpGet httpget = new HttpGet("http://solr:8983/solr/admin/cores?action=SUMMARY&wt=xml");
+		HttpGet httpget = new HttpGet("http://solr:8983/solr/admin/cores?action=SUMMARY&wt=xml&core=alfresco");
 		HttpResponse httpResponse = httpclient.execute(httpget);
 		assertEquals("HTTP Response Status is not OK(200)", HttpStatus.SC_OK, httpResponse.getStatusLine().getStatusCode());
 		HttpEntity entity = httpResponse.getEntity();
@@ -345,14 +350,40 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 		XPathFactory factory = XPathFactory.newInstance();
 		XPath xpath = factory.newXPath();
 
-//		logger.info("Id for last TX on server : "+ (String) xpath.evaluate("//long[@name='Id for last TX on server']", doc, XPathConstants.STRING));
 //		logger.info("Approx transaction indexing time remaining : "+ (String) xpath.evaluate("//str[@name='Approx transaction indexing time remaining']", doc, XPathConstants.STRING));
 //		logger.info("Approx change set indexing time remaining : "+ (String) xpath.evaluate("//str[@name='Approx change set indexing time remaining']", doc, XPathConstants.STRING));
 //		logger.info("Alfresco Transactions in Index : "+ (String) xpath.evaluate("//long[@name='Alfresco Transactions in Index']", doc, XPathConstants.STRING));
 //		
-		String strIndex = (String) xpath.evaluate("//long[@name='Alfresco Transactions in Index']", doc, XPathConstants.STRING);
+		String strIndex = (String) xpath.evaluate("//long[@name='Id for last TX on server']", doc, XPathConstants.STRING);
 		if ((strIndex == null) || strIndex.isEmpty()) {
 			return getLastSolrIndex();
+		}
+		// <long name="Id for last TX on server">1413</long><long
+		// name="Id for last TX in index">1413</long>
+		return Long.valueOf(strIndex);
+	}
+	
+	
+	private Long getTransactionInIndex() throws Exception {
+
+		HttpClient httpclient = HttpClients.createDefault();
+		HttpGet httpget = new HttpGet("http://solr:8983/solr/admin/cores?action=SUMMARY&wt=xml&core=alfresco");
+		HttpResponse httpResponse = httpclient.execute(httpget);
+		assertEquals("HTTP Response Status is not OK(200)", HttpStatus.SC_OK, httpResponse.getStatusLine().getStatusCode());
+		HttpEntity entity = httpResponse.getEntity();
+		assertNotNull("Response from Web Script is null", entity);
+
+		DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
+		domFactory.setNamespaceAware(true); // never forget this!
+		DocumentBuilder builder = domFactory.newDocumentBuilder();
+		Document doc = builder.parse(entity.getContent());
+
+		XPathFactory factory = XPathFactory.newInstance();
+		XPath xpath = factory.newXPath();
+
+		String strIndex = (String) xpath.evaluate("//long[@name='Alfresco Transactions in Index']", doc, XPathConstants.STRING);
+		if ((strIndex == null) || strIndex.isEmpty()) {
+			return getTransactionInIndex();
 		}
 		// <long name="Id for last TX on server">1413</long><long
 		// name="Id for last TX in index">1413</long>

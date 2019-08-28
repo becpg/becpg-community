@@ -317,8 +317,8 @@ public class ScoreCalculatingIT extends AbstractFinishedProductTest {
 	@Override
 	public void tearDown() throws Exception {
 		super.tearDown();
-		beCPGCacheService.clearAllCaches();
 		restoreCatalogs();
+		beCPGCacheService.clearAllCaches();
 	}
 
 	private NodeRef getFamilyNodeRef() {

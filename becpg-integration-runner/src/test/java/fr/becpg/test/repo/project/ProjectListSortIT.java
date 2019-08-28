@@ -59,7 +59,7 @@ public class ProjectListSortIT extends AbstractProjectTestCase {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-			for (int i = 0; i < 40; i++) {
+			for (int i = 0; i < 39; i++) {
 
 				int modulo = i % 2;
 
@@ -87,14 +87,17 @@ public class ProjectListSortIT extends AbstractProjectTestCase {
 
 				List<NodeRef> projectNodeRefs = queryBuilder.list();
 
+				assertEquals(40, projectNodeRefs.size());
+				
 				for (NodeRef projectNodeRef : projectNodeRefs) {
-					logger.info("project " + getHierarchy(projectNodeRef, ProjectModel.PROP_PROJECT_HIERARCHY2));
+					logger.info("Simple query test " + getHierarchy(projectNodeRef, ProjectModel.PROP_PROJECT_HIERARCHY2));
 				}
 
 				DataListFilter dataListFilter = new DataListFilter();
 				dataListFilter.setDataListName("projectList");
 				dataListFilter.setDataType(ProjectModel.TYPE_PROJECT);
 				dataListFilter.setSortId("ProjectList");
+				dataListFilter.setParentNodeRef(getTestFolderNodeRef());
 
 				dataListFilter.getPagination().setMaxResults(-1);
 				dataListFilter.getPagination().setPageSize(25);
@@ -121,7 +124,7 @@ public class ProjectListSortIT extends AbstractProjectTestCase {
 					String projectName = (String) nameData.get("displayValue");
 					logger.info("project sorted " + projectName + " - " + projectHierarchy2);
 
-					if (i < 20) {
+					if (i < 21) {
 						assertEquals("Crustacean", projectHierarchy2);
 					} else {
 						assertEquals("Fish", projectHierarchy2);
