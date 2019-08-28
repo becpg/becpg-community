@@ -313,12 +313,20 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 															if (logger.isTraceEnabled()) {
 																logger.trace("DataSource XML : \n"
-																		+ filterByReportKind(reportData.getXmlDataSource(), tplNodeRef).asXML()
+																		+ reportData.getXmlDataSource().asXML()
 																		+ "\n\n");
 															}
 
+															Element filteredDatasource = filterByReportKind(reportData.getXmlDataSource(), tplNodeRef);
+															
+															if (logger.isTraceEnabled()) {
+																logger.trace("Filtered DataSource XML : \n"
+																		+ filteredDatasource.asXML()
+																		+ "\n\n");
+															}
+															
 															beCPGReportEngine.createReport(tplNodeRef, new ByteArrayInputStream(
-																	filterByReportKind(reportData.getXmlDataSource(), tplNodeRef).asXML().getBytes()),
+																	filteredDatasource.asXML().getBytes()),
 																	writer.getContentOutputStream(), params);
 
 															nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_IS_DIRTY, false);
@@ -430,14 +438,14 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 					for (Iterator<Element> elIterator = dlEl.elementIterator(); elIterator.hasNext();) {
 						Element itemEl = elIterator.next();
-						String[] rkValues = itemEl.valueOf("@" + ReportModel.PROP_REPORT_KINDS.getLocalName()).split("\\s*,\\s*");
+						String[] repKindCodes = itemEl.valueOf("@" + ReportModel.PROP_REPORT_KINDS_CODE.getLocalName()).split("\\s*,\\s*");
 
-						if (Arrays.asList(rkValues).contains(reportKindNoneCode)) {
+						if (Arrays.asList(repKindCodes).contains(reportKindNoneCode)) {
 							dlEl.remove(itemEl);
 							continue;
 						}
 
-						if (Arrays.asList(rkValues).contains(reportKindCode)) {
+						if (Arrays.asList(repKindCodes).contains(reportKindCode)) {
 							hasReportKindAspect = true;
 						}
 
@@ -446,8 +454,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 					if (hasReportKindAspect) {
 						for (Iterator<Element> elIterator = dlEl.elementIterator(); elIterator.hasNext();) {
 							Element itemEl = elIterator.next();
-							String[] rkValues = itemEl.valueOf("@" + ReportModel.PROP_REPORT_KINDS.getLocalName()).split("\\s*,\\s*");
-							if (!Arrays.asList(rkValues).contains(reportKindCode) || (rkValues == null)) {
+							String[] repKindCodes = itemEl.valueOf("@" + ReportModel.PROP_REPORT_KINDS_CODE.getLocalName()).split("\\s*,\\s*");
+							if (!Arrays.asList(repKindCodes).contains(reportKindCode) || (repKindCodes == null)) {
 								dlEl.remove(itemEl);
 							}
 						}
