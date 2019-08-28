@@ -15,15 +15,12 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.junit.Assert;
 import org.junit.Test;
 
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.listvalue.ListValueEntry;
 import fr.becpg.repo.listvalue.ListValueService;
 import fr.becpg.repo.listvalue.impl.EntityListValuePlugin;
-import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.test.BeCPGPLMTestHelper;
 
 /**
@@ -75,7 +72,7 @@ public class ListValueServiceIT extends AbstractListValuePluginTest {
 
 			boolean containsSupplier = false;
 			for (ListValueEntry s1 : suggestions) {
-				//logger.debug("supplier test 1: " + s1.getName() + " " + s1.getValue());
+				logger.debug("supplier test 1: " + s1.getName() + " " + s1.getValue());
 				if (s1.getValue().equals(supplierNodeRef.toString()) && s1.getName().equals(supplierName)) {
 					containsSupplier = true;
 				}

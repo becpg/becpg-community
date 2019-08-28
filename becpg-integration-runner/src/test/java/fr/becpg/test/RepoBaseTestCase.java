@@ -326,7 +326,20 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 				logger.info("Wait for solr (2s) : serverIdx " + lastIdxServer + " solrIdx " + lastIdxSolr + " serverTx " + transactionInServer + " solrTx " + transactionInSolr + " retry *" + j);
 			}
 		
-			Thread.sleep(4000);
+			int count = 0;
+			j=0;
+			while (count <4 && (j < 10)) {
+				long curtrans = getTransactionInIndex();
+				
+				if(transactionInSolr == curtrans) {
+					count++;
+				}
+				logger.info("Wait for solr (2s) "+curtrans);
+				transactionInSolr =  curtrans;
+				Thread.sleep(2000);
+				j++;
+			}
+			
 			
 			return null;
 
