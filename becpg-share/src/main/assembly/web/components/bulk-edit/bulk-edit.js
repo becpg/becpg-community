@@ -905,10 +905,11 @@
 						 * @protected
 						 */
 						_setupPropsPicker : function BulkEdit__setupPropsPicker() {
-							var containerEl = Dom.get(this.id + "-itemProps-container"), html = "";
+							var containerEl = Dom.get(this.id + "-itemProps-container"), lines = new Array();
 							if (containerEl != null) {
 								var inc = 0;
 								var colCount = 0;
+								
 								for (var i = 0, ii = this.datalistColumns.length; i < ii; i++) {
 
 									var column = this.datalistColumns[i];
@@ -917,21 +918,30 @@
 									var propLabel = column.label;
 									if (!(column.protectedField || column.disabled || "prop_cm_name" == propName || "prop_bcpg_code" == propName)) {
 
-										var className = "";
-										if (colCount < Math.floor(inc / 5)) {
-											className = "reset ";
+										if(lines[colCount] ==null){
+											lines[colCount]="";
 										}
-										colCount = Math.floor(inc / 5);
-										className += "column-" + colCount;
-
-										html += '<li class="' + className + '"><input id="propSelected-' + i
+										if(colCount == 0){
+											inc++;
+										}
+										
+										lines[colCount] += '<td ><input id="propSelected-' + i
 												+ '" type="checkbox" name="propChecked" value="' + propName + '" /><label for="propSelected-' + i
-												+ '" >' + propLabel + '</label></li>';
-										inc++;
+												+ '" >' + propLabel + '</label></td>';
+										colCount++;
+										
+										if(colCount == 5){
+											colCount = 0;
+										}
+										
 									}
 								}
+								var html = "";
+								for(i in lines){
+									html+="<tr>"+lines[i]+"</tr>"
+								}
 
-								containerEl.innerHTML = "<ul style=\"width:" + ((colCount + 1) * 20) + "em;\">" + html + "</ul>";
+								containerEl.innerHTML = "<table width=\""+(inc * 250)+"px\">" + html + "</table>";
 
 								this.selectedFields = Selector.query('input[type="checkbox"]', containerEl);
 							}
