@@ -2,9 +2,10 @@ FROM tomcat:9-jdk11
 MAINTAINER beCPG
 
 ENV NEXUS=https://artifacts.alfresco.com/nexus/content/groups/public
-ENV ALF_VERSION=${alfresco.version}
+ENV ALF_VERSION=${alfresco.platform.version}
+ENV VTI_VERSION=${alfresco.aos.version}
 ENV ALF_SHARE_VERSION=${alfresco.share.version}
-ENV MMT_VERSION=${alfresco.version}
+ENV MMT_VERSION=${alfresco.platform.version}
 ENV PDF_RENDERER_VERSION=1.0
 ENV MYSQL_CONNECTOR=${mysql.connector.version}
 
@@ -137,17 +138,17 @@ RUN set -x && \
 #AOS    
 RUN set -x && \
     curl --silent --location \
-      https://readonly:YLdy9W5v@www.becpg.fr/becpg-repo/releases/addons/_vti_bin-1.1.7.war  \
-      -o _vti_bin-1.1.7.war && \
-    unzip -q _vti_bin-1.1.7.war -d webapps/_vti_bin && \
-    rm _vti_bin-1.1.7.war
+      https://readonly:YLdy9W5v@www.becpg.fr/becpg-repo/releases/addons/_vti_bin-${VTI_VERSION}.war  \
+      -o _vti_bin-${VTI_VERSION}.war && \
+    unzip -q _vti_bin-${VTI_VERSION}.war -d webapps/_vti_bin && \
+    rm _vti_bin-${VTI_VERSION}.war
         	        
 RUN set -x && \
     curl --silent --location \
-      https://readonly:YLdy9W5v@www.becpg.fr/becpg-repo/releases/addons/alfresco-aos-core-1.1.7.amp  \
-      -o /root/amp/alfresco-aos-core-1.1.7.amp && \
+      https://readonly:YLdy9W5v@www.becpg.fr/becpg-repo/releases/addons/alfresco-aos-core-${VTI_VERSION}.amp  \
+      -o /root/amp/alfresco-aos-core-${VTI_VERSION}.amp && \
     java -jar /root/alfresco-mmt.jar install /root/amp/ webapps/alfresco -nobackup -directory && \
-    rm /root/amp/alfresco-aos-core-1.1.7.amp
+    rm /root/amp/alfresco-aos-core-${VTI_VERSION}.amp
 
 
       

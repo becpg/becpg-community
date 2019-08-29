@@ -44,7 +44,7 @@
 		<dependency>
 			<groupId>org.alfresco</groupId>
 			<artifactId>alfresco-repository</artifactId>
-			<version>${alfresco.version}</version>
+			<version>${alfresco.platform.version}</version>
 			<scope>provided</scope>
 		</dependency>
 

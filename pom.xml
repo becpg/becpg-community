@@ -112,9 +112,11 @@
         <!-- Properties used in dependency declarations, you don't need to change these -->
         <alfresco.groupId>org.alfresco</alfresco.groupId>
         <alfresco.bomDependencyArtifactId>alfresco-platform</alfresco.bomDependencyArtifactId>
+        
         <alfresco.platform.version>5.2.g</alfresco.platform.version>
         <alfresco.share.version>5.2.f</alfresco.share.version>
-	
+		<alfresco.aos.version>1.1.7</alfresco.aos.version>
+        <mysql.connector.version>8.0.16</mysql.connector.version>
 
         <!-- Docker images -->
         <docker.acs.image>alfresco/alfresco-content-repository-community</docker.acs.image>
@@ -130,8 +132,6 @@
         <!-- This parameter is only required for those cases in which ACS is not exposed in http://localhost:8080/alfresco (i.e. Windows Docker) -->
         <test.acs.endpoint.path/>
         
-        <mysql.connector.version>8.0.16</mysql.connector.version>
-	
 		<docker.becpg.url>docker.becpg.fr:443/becpg</docker.becpg.url>
 	   
 	   	<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
@@ -141,8 +141,6 @@
 	    <sonar.scm.disabled>true</sonar.scm.disabled>
 	    <sonar.language>java</sonar.language>
 	    
-	    	<!-- Deprecated -->
-	    <alfresco.version>5.2.g</alfresco.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -454,7 +452,7 @@
         <dependency>
             <groupId>${alfresco.groupId}</groupId>
             <artifactId>alfresco-remote-api</artifactId>
-            <version>${alfresco.version}</version>
+            <version>${alfresco.platform.version}</version>
             <scope>provided</scope>
         </dependency>
 
