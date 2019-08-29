@@ -328,7 +328,7 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 		
 			int count = 0;
 			j=0;
-			while (count <4 && (j < 10)) {
+			while (count <10 && (j < 10)) {
 				long curtrans = getTransactionInIndex();
 				
 				if(transactionInSolr == curtrans) {
