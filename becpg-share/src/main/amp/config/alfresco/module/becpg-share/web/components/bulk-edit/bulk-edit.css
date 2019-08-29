@@ -7,60 +7,14 @@
 .bulk-edit .bulk-edit-props-container{
 	 margin-left: 1em;
 	 padding: 10px;
-	 height: 11em;
 	 overflow: auto;
 }
 
-.bulk-edit .bulk-edit-props-container  li {
-    line-height: 2em;
-	 width: 20em;
-	 white-space: nowrap;
-     overflow: hidden;
-     text-overflow: ellipsis;
-  }
-
- .bulk-edit .bulk-edit-props-container   li.reset {
-    margin-top: -10em;
+.bulk-edit .bulk-edit-props-container  td {
+    padding:3px 10px;
+    min-width : 150px;
  }
-
- .bulk-edit .bulk-edit-props-container  li.column-0 { margin-left: 0em; }
- .bulk-edit .bulk-edit-props-container  li.column-1 { margin-left: 20em; }
- .bulk-edit .bulk-edit-props-container  li.column-2 { margin-left: 40em; }
- .bulk-edit .bulk-edit-props-container  li.column-3 { margin-left: 60em; }
- .bulk-edit .bulk-edit-props-container  li.column-4 { margin-left: 80em; }
- .bulk-edit .bulk-edit-props-container  li.column-5 { margin-left: 100em; }
- .bulk-edit .bulk-edit-props-container  li.column-6 { margin-left: 120em; }
- .bulk-edit .bulk-edit-props-container  li.column-7 { margin-left: 140em; }
- .bulk-edit .bulk-edit-props-container  li.column-8 { margin-left: 160em; }
- .bulk-edit .bulk-edit-props-container  li.column-9 { margin-left: 180em; }
- .bulk-edit .bulk-edit-props-container  li.column-10 { margin-left: 200em; }
- .bulk-edit .bulk-edit-props-container  li.column-11 { margin-left: 220em; }
- .bulk-edit .bulk-edit-props-container  li.column-12 { margin-left: 240em; }
- .bulk-edit .bulk-edit-props-container  li.column-13 { margin-left: 260em; }
- .bulk-edit .bulk-edit-props-container  li.column-14 { margin-left: 280em; }
- .bulk-edit .bulk-edit-props-container  li.column-15 { margin-left: 300em; }
- .bulk-edit .bulk-edit-props-container  li.column-16 { margin-left: 320em; }
- .bulk-edit .bulk-edit-props-container  li.column-17 { margin-left: 340em; }
- .bulk-edit .bulk-edit-props-container  li.column-18 { margin-left: 360em; }
- .bulk-edit .bulk-edit-props-container  li.column-19 { margin-left: 380em; }
- .bulk-edit .bulk-edit-props-container  li.column-20 { margin-left: 400em; }
- .bulk-edit .bulk-edit-props-container  li.column-21 { margin-left: 420em; }
- .bulk-edit .bulk-edit-props-container  li.column-22 { margin-left: 440em; }
- .bulk-edit .bulk-edit-props-container  li.column-23 { margin-left: 460em; }
- .bulk-edit .bulk-edit-props-container  li.column-24 { margin-left: 480em; }
- .bulk-edit .bulk-edit-props-container  li.column-25 { margin-left: 500em; }
- .bulk-edit .bulk-edit-props-container  li.column-26 { margin-left: 520em; }
- .bulk-edit .bulk-edit-props-container  li.column-27 { margin-left: 540em; }
- .bulk-edit .bulk-edit-props-container  li.column-28 { margin-left: 560em; }
- .bulk-edit .bulk-edit-props-container  li.column-29 { margin-left: 580em; }
- .bulk-edit .bulk-edit-props-container  li.column-30 { margin-left: 600em; }
- .bulk-edit .bulk-edit-props-container  li.column-31 { margin-left: 620em; }
- .bulk-edit .bulk-edit-props-container  li.column-32 { margin-left: 640em; }
- .bulk-edit .bulk-edit-props-container  li.column-33 { margin-left: 660em; }
- .bulk-edit .bulk-edit-props-container  li.column-34 { margin-left: 680em; }
- .bulk-edit .bulk-edit-props-container  li.column-35 { margin-left: 700em; }      
-         
-
+  
 /* bulk-edit Metadata */
 .bulk-edit .bulk-edit-meta
 {
