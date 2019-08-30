@@ -9,6 +9,7 @@ function main()
       argsXPath = args['xpath'],
       argsRootNode = args['rootNode'],
       argsGroup = args['group'],
+      argsSelectableMimeType = args['selectableMimeType'],
       pathElements = url.service.split("/"),
       parent = null,
       rootNode = companyhome,
@@ -25,6 +26,7 @@ function main()
       logger.log("argsSearchTerm = " + argsSearchTerm);
       logger.log("argsMaxResults = " + argsMaxResults);
       logger.log("argsXPath = " + argsXPath);
+      logger.log("argsSelectableMimeType = " + argsSelectableMimeType);
    }
          
    try
@@ -51,6 +53,9 @@ function main()
          // force the argsMaxResults var to be treated as a number
          maxResults = parseInt(argsMaxResults, 10) || maxResults;
       }
+      
+      //consider argsSearchTerm null if empty string
+      argsSearchTerm = (argsSearchTerm != null && argsSearchTerm.length == 0) ? null : argsSearchTerm ;
 
       // if the last path element is 'doclib' or 'siblings' find parent node
       if (pathElements.length > 0)
@@ -120,8 +125,14 @@ function main()
                { 
                   item: result
                };
-               resultObj.selectable = isItemSelectable(result, argsSelectableType);
-               
+               if(argsSelectableMimeType)
+               {
+                  resultObj.selectable = isItemSelectableByMimeType(result, argsSelectableType, argsSelectableMimeType);
+               }
+               else
+               {
+                  resultObj.selectable = isItemSelectable(result, argsSelectableType);
+               }
                containerResults.push(resultObj);
             }
             else
@@ -136,7 +147,14 @@ function main()
                { 
                   item: result
                };
-               resultObj.selectable = isItemSelectable(result, argsSelectableType);
+               if(argsSelectableMimeType)
+               {
+                  resultObj.selectable = isItemSelectableByMimeType(result, argsSelectableType, argsSelectableMimeType);
+               }
+               else
+               {
+                  resultObj.selectable = isItemSelectable(result, argsSelectableType);
+               }
                resultObj.container = container;
                contentResults.push(resultObj);
             }
@@ -146,40 +164,44 @@ function main()
       else if (url.templateArgs.type == "category")
       {
          var catAspect = (args["aspect"] != null) ? args["aspect"] : "cm:generalclassifiable";
-
-         // TODO: Better way of finding this
-         var rootCategories = classification.getRootCategories(catAspect);
-         if (rootCategories != null && rootCategories.length > 0)
+         
+         if (nodeRef == "workspace://SpacesStore/tag:tag-root")
          {
-            if (argsRootNode)
+            categoryResults = classification.getRootCategories(catAspect, argsSearchTerm, maxResults, 0);
+            parent = resolveNode(nodeRef);
+         }
+         else
+         {
+            var rootCategories = classification.getRootCategories(catAspect);
+            if (rootCategories != null && rootCategories.length > 0)
             {
-               rootNode = resolveNode(argsRootNode);
-               if (rootNode == null)
+               if (argsRootNode)
+               {
+                  rootNode = resolveNode(argsRootNode);
+                  if (rootNode == null)
+                  {
+                     rootNode = rootCategories[0].parent;
+                  }
+               }
+               else
                {
                   rootNode = rootCategories[0].parent;
                }
-            }
-            else
-            {
-               rootNode = rootCategories[0].parent;
-            }
-
-            if (nodeRef == "alfresco://category/root")
-            {
-               parent = rootNode;
-               categoryResults = classification.getRootCategories(catAspect);
-            }
-            else
-            {
-               parent = resolveNode(nodeRef);
-               categoryResults = parent.children;
-            }
-            
-            if (argsSearchTerm != null)
-            {
-               var filteredResults = [];
-               for each (result in categoryResults)
+               
+               if (nodeRef == "alfresco://category/root")
                {
+                  parent = rootNode;
+                  categoryResults = classification.getRootCategories(catAspect, argsSearchTerm, maxResults, 0);
+               }
+               else
+               {
+                  parent = resolveNode(nodeRef);
+                  categoryResults = parent.children;
+                  if (argsSearchTerm != null)
+                  {
+                     var filteredResults = [];
+                     for each (result in categoryResults)
+                     {
                   if (result.properties.name.indexOf(argsSearchTerm) == 0)
                   {
                      filteredResults.push(result);
@@ -188,8 +210,14 @@ function main()
                categoryResults = filteredResults.slice(0);
             }
             categoryResults.sort(sortByName);
+                  categoryResults = categoryResults.slice(0, maxResults);
+               }
+            }
+         }
             
             // make each result an object and indicate it is selectable in the UI
+         if (categoryResults)
+         {
             for each (var result in categoryResults)
             {
                results.push(
@@ -275,6 +303,24 @@ function isItemSelectable(node, selectableType)
       }
    }
    
+   return selectable;
+}
+
+/**
+ * Identifies if the node can be selected. The node can be selected if it is of specified type and has specified mime type.
+ * 
+ * @param node
+ * @param selectableType
+ * @param argsSelectableMimeType
+ * @returns <code>true<code> if the node can be selected, or false otherwise.
+ */
+function isItemSelectableByMimeType(node, selectableType, argsSelectableMimeType)
+{
+   var selectable = isItemSelectable(node, selectableType);
+   if(selectable && argsSelectableMimeType != null && argsSelectableMimeType != "")
+   {
+      selectable = node.properties.content.mimetype.equals(argsSelectableMimeType);
+   }
    return selectable;
 }
 

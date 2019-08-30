@@ -190,7 +190,7 @@
 
 <!--  NotificationRule Job -->
 
-    <bean id="notificationRuleJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+    <bean id="notificationRuleJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
         <property name="jobClass">
             <value>fr.becpg.repo.notification.NotificationRuleJob</value>
         </property>
@@ -209,12 +209,9 @@
         </property>
     </bean>
     
-    <bean id="notificationRuleJobTrigger" class="org.alfresco.util.CronTriggerBean"  >
+    <bean id="notificationRuleJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"  >
         <property name="jobDetail">
             <ref bean="notificationRuleJob"/>
-        </property>
-        <property name="scheduler">
-            <ref bean="schedulerFactory"/>
         </property>
         <property name="cronExpression">
             <value>${beCPG.notification.notify.cronExpression}</value>

@@ -280,7 +280,7 @@
 	<!-- Specification Job -->
 
 
-	<bean id="productSpecificationFormulationJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+	<bean id="productSpecificationFormulationJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
 		<property name="jobClass">
 			<value>fr.becpg.repo.product.requirement.ProductSpecificationFormulationJob</value>
 		</property>
@@ -296,12 +296,9 @@
 		</property>
 	</bean>
 
-	<bean id="productSpecificationFormulationJobTrigger" class="org.alfresco.util.CronTriggerBean">
+	<bean id="productSpecificationFormulationJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
 		<property name="jobDetail">
 			<ref bean="productSpecificationFormulationJob" />
-		</property>
-		<property name="scheduler">
-			<ref bean="schedulerFactory" />
 		</property>
 		<!-- Everyday at 23h -->
 		<property name="cronExpression">
