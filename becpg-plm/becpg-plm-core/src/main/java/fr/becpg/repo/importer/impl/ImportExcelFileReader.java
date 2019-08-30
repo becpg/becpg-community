@@ -11,7 +11,7 @@ import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
@@ -130,7 +130,7 @@ public class ImportExcelFileReader implements ImportFileReader {
 				XSSFColor green = new XSSFColor(new java.awt.Color(255, 0, 0));
 
 				style.setFillForegroundColor(green);
-				style.setFillPattern(CellStyle.SOLID_FOREGROUND);
+				style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
 				Cell cell = row.createCell(columnIdx + 1);
 				cell.setCellValue(errorMsg);
@@ -167,7 +167,7 @@ public class ImportExcelFileReader implements ImportFileReader {
 				XSSFColor green = new XSSFColor(new java.awt.Color(0, 255, 0));
 
 				style.setFillForegroundColor(green);
-				style.setFillPattern(CellStyle.SOLID_FOREGROUND);
+				style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
 				for (int i = 0; i < row.getLastCellNum(); i++) {
 					Cell cell = row.getCell(i);

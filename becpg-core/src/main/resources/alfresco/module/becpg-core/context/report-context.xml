@@ -36,7 +36,7 @@
 		 <property name="transactionService" ref="transactionService"/>
 	</bean>
 	
-	<!-- Override default exportComponent for ZIP download-->
+	<!-- Override default exportComponent for ZIP download -->
 
    <bean id="exporterComponent" class="org.alfresco.repo.exporter.ExporterComponent">
         <property name="namespaceService">
@@ -64,8 +64,6 @@
             <ref bean="PermissionService" />
         </property>
     </bean>
-
-
 	
 	<!-- Thread pool for reports async generation -->
 	<bean id="reportAsyncThreadPool" class="org.alfresco.util.ThreadPoolExecutorFactoryBean">

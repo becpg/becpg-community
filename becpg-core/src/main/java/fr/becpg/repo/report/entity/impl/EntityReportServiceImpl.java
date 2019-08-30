@@ -167,7 +167,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 	@Autowired
 	private EntityListDAO entityListDAO;
 
-	@Resource
+	@Autowired
 	protected RepoService repoService;
 
 	@Autowired
