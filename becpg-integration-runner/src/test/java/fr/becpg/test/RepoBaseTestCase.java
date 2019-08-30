@@ -20,10 +20,8 @@ package fr.becpg.test;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
@@ -34,15 +32,11 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.dictionary.DictionaryDAO;
 import org.alfresco.repo.domain.qname.QNameDAO;
 import org.alfresco.repo.model.Repository;
-import org.alfresco.repo.node.integrity.IntegrityChecker;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationComponent;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.MutableAuthenticationDao;
-import org.alfresco.repo.solr.SOLRTrackingComponent;
-import org.alfresco.repo.solr.Transaction;
 import org.alfresco.repo.transaction.RetryingTransactionHelper;
-import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.ContentService;
@@ -76,6 +70,7 @@ import org.springframework.test.context.TestExecutionListeners;
 import org.subethamail.wiser.Wiser;
 import org.w3c.dom.Document;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.admin.InitVisitorService;
 import fr.becpg.repo.cache.BeCPGCacheService;
@@ -87,6 +82,7 @@ import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.hierarchy.HierarchyService;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 import junit.framework.TestCase;
 
 /**
@@ -220,9 +216,6 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 	protected BehaviourFilter policyBehaviourFilter;
 
 	@Autowired
-	private SOLRTrackingComponent solrTrackingComponent;
-
-	@Autowired
 	protected EntityListDAO entityListDAO;
 
 	@Autowired
@@ -260,7 +253,7 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 	@Before
 	public void setUp() throws Exception {
 		super.setUp();
-		
+
 		testFolders.put(getTestFolderName(), transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			// As system user
 			AuthenticationUtil.setFullyAuthenticatedUser(AuthenticationUtil.getAdminUserName());
@@ -285,66 +278,103 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 	@After
 	public void tearDown() throws Exception {
 		super.tearDown();
-		
-//		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
-//			public Boolean execute() throws Throwable {
-//				ruleService.disableRules();
-//				try {
-//					IntegrityChecker.setWarnInTransaction();
-//					nodeService.addAspect(getTestFolderNodeRef(), ContentModel.ASPECT_TEMPORARY, null);
-//					logger.debug("Delete test folder");
-//					nodeService.deleteNode(getTestFolderNodeRef());
-//				} finally {
-//					ruleService.enableRules();
-//				}
-//				return true;
-//
-//			}
-//		}, false, true);
+
+		// transactionService.getRetryingTransactionHelper().doInTransaction(new
+		// RetryingTransactionCallback<Boolean>() {
+		// public Boolean execute() throws Throwable {
+		// ruleService.disableRules();
+		// try {
+		// IntegrityChecker.setWarnInTransaction();
+		// nodeService.addAspect(getTestFolderNodeRef(),
+		// ContentModel.ASPECT_TEMPORARY, null);
+		// logger.debug("Delete test folder");
+		// nodeService.deleteNode(getTestFolderNodeRef());
+		// } finally {
+		// ruleService.enableRules();
+		// }
+		// return true;
+		//
+		// }
+		// }, false, true);
 
 	}
 
 	public void waitForSolr(final Date startTime) {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-			List<Transaction> transactions = solrTrackingComponent.getTransactions(null, startTime.getTime(), null, null, 1000);
+			NodeRef nodeRef = nodeService
+					.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, ContentModel.TYPE_CONTENT)
+					.getChildRef();
 
-			logger.info("Found " + transactions.size() + " new transactions");
-
-			Long lastIdxServer = transactions.get(transactions.size() - 1).getId();
-
-			Long lastIdxSolr = getLastSolrIndex();
-			Long transactionInSolr = getTransactionInIndex();
-			Long transactionInServer = transactionInSolr+transactions.size();
-			
-			int j = 0;
-			while (((lastIdxSolr < lastIdxServer) || (transactionInSolr < transactionInServer)) && (j < 10)) {
-				Thread.sleep(2000);
-				lastIdxSolr = getLastSolrIndex();
-				transactionInSolr =  getTransactionInIndex();
-				j++;
-				logger.info("Wait for solr (2s) : serverIdx " + lastIdxServer + " solrIdx " + lastIdxSolr + " serverTx " + transactionInServer + " solrTx " + transactionInSolr + " retry *" + j);
-			}
-		
-			int count = 0;
-			j=0;
-			while (count <10 && (j < 10)) {
-				long curtrans = getTransactionInIndex();
-				
-				if(transactionInSolr == curtrans) {
-					count++;
-				}
-				logger.info("Wait for solr (2s) "+curtrans);
-				transactionInSolr =  curtrans;
-				Thread.sleep(2000);
-				j++;
-			}
-			
-			
+			nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, "" + startTime.getTime()+"1");
+			nodeService.setProperty(nodeRef, BeCPGModel.PROP_IS_MANUAL_LISTITEM, true);
 			return null;
 
 		}, false, true);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			int j = 0;
+			while ((BeCPGQueryBuilder.createQuery().andPropQuery(ContentModel.PROP_NAME, "" + startTime.getTime()+"*")
+					.andPropEquals(BeCPGModel.PROP_IS_MANUAL_LISTITEM, "true").inParent(getTestFolderNodeRef()).ftsLanguage().singleValue() == null)
+					&& (j < 30)) {
+
+				logger.info("Wait for solr (2s) : serverIdx " + getLastSolrIndex() + " retry *" + j);
+				Thread.sleep(2000);
+				j++;
+			}
+
+			return null;
+
+		}, false, true);
+
 	}
+
+	// public void waitForSolr(final Date startTime) {
+	// transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+	//
+	// List<Transaction> transactions =
+	// solrTrackingComponent.getTransactions(null, startTime.getTime(), null,
+	// null, 1000);
+	//
+	// logger.info("Found " + transactions.size() + " new transactions");
+	//
+	// Long lastIdxServer = transactions.get(transactions.size() - 1).getId();
+	//
+	// Long lastIdxSolr = getLastSolrIndex();
+	// Long transactionInSolr = getTransactionInIndex();
+	// Long transactionInServer = transactionInSolr+transactions.size();
+	//
+	// int j = 0;
+	// while (((lastIdxSolr < lastIdxServer) || (transactionInSolr <
+	// transactionInServer)) && (j < 10)) {
+	// Thread.sleep(2000);
+	// lastIdxSolr = getLastSolrIndex();
+	// transactionInSolr = getTransactionInIndex();
+	// j++;
+	// logger.info("Wait for solr (2s) : serverIdx " + lastIdxServer + " solrIdx
+	// " + lastIdxSolr + " serverTx " + transactionInServer + " solrTx " +
+	// transactionInSolr + " retry *" + j);
+	// }
+	//
+	// int count = 0;
+	// j=0;
+	// while (count <10 && (j < 10)) {
+	// long curtrans = getTransactionInIndex();
+	//
+	// if(transactionInSolr == curtrans) {
+	// count++;
+	// }
+	// logger.info("Wait for solr (2s) "+curtrans);
+	// transactionInSolr = curtrans;
+	// Thread.sleep(2000);
+	// j++;
+	// }
+	//
+	//
+	// return null;
+	//
+	// }, false, true);
+	// }
 
 	private Long getLastSolrIndex() throws Exception {
 
@@ -363,40 +393,19 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 		XPathFactory factory = XPathFactory.newInstance();
 		XPath xpath = factory.newXPath();
 
-//		logger.info("Approx transaction indexing time remaining : "+ (String) xpath.evaluate("//str[@name='Approx transaction indexing time remaining']", doc, XPathConstants.STRING));
-//		logger.info("Approx change set indexing time remaining : "+ (String) xpath.evaluate("//str[@name='Approx change set indexing time remaining']", doc, XPathConstants.STRING));
-//		logger.info("Alfresco Transactions in Index : "+ (String) xpath.evaluate("//long[@name='Alfresco Transactions in Index']", doc, XPathConstants.STRING));
-//		
+		// logger.info("Approx transaction indexing time remaining : "+ (String)
+		// xpath.evaluate("//str[@name='Approx transaction indexing time
+		// remaining']", doc, XPathConstants.STRING));
+		// logger.info("Approx change set indexing time remaining : "+ (String)
+		// xpath.evaluate("//str[@name='Approx change set indexing time
+		// remaining']", doc, XPathConstants.STRING));
+		// logger.info("Alfresco Transactions in Index : "+ (String)
+		// xpath.evaluate("//long[@name='Alfresco Transactions in Index']", doc,
+		// XPathConstants.STRING));
+		//
 		String strIndex = (String) xpath.evaluate("//long[@name='Id for last TX on server']", doc, XPathConstants.STRING);
 		if ((strIndex == null) || strIndex.isEmpty()) {
 			return getLastSolrIndex();
-		}
-		// <long name="Id for last TX on server">1413</long><long
-		// name="Id for last TX in index">1413</long>
-		return Long.valueOf(strIndex);
-	}
-	
-	
-	private Long getTransactionInIndex() throws Exception {
-
-		HttpClient httpclient = HttpClients.createDefault();
-		HttpGet httpget = new HttpGet("http://solr:8983/solr/admin/cores?action=SUMMARY&wt=xml&core=alfresco");
-		HttpResponse httpResponse = httpclient.execute(httpget);
-		assertEquals("HTTP Response Status is not OK(200)", HttpStatus.SC_OK, httpResponse.getStatusLine().getStatusCode());
-		HttpEntity entity = httpResponse.getEntity();
-		assertNotNull("Response from Web Script is null", entity);
-
-		DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
-		domFactory.setNamespaceAware(true); // never forget this!
-		DocumentBuilder builder = domFactory.newDocumentBuilder();
-		Document doc = builder.parse(entity.getContent());
-
-		XPathFactory factory = XPathFactory.newInstance();
-		XPath xpath = factory.newXPath();
-
-		String strIndex = (String) xpath.evaluate("//long[@name='Alfresco Transactions in Index']", doc, XPathConstants.STRING);
-		if ((strIndex == null) || strIndex.isEmpty()) {
-			return getTransactionInIndex();
 		}
 		// <long name="Id for last TX on server">1413</long><long
 		// name="Id for last TX in index">1413</long>
