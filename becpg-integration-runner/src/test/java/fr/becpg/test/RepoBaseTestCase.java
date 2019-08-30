@@ -147,85 +147,85 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 		}
 	}
 
-	@Resource
+	@Autowired
 	protected MimetypeService mimetypeService;
 
-	@Resource
+	@Autowired
 	protected Repository repositoryHelper;
 
 	@Autowired
 	protected NodeService nodeService;
 
-	@Resource
+	@Autowired
 	protected RepoService repoService;
 
-	@Resource
+	@Autowired
 	protected FileFolderService fileFolderService;
 
-	@Resource
+	@Autowired
 	protected DictionaryDAO dictionaryDAO;
 
-	@Resource
+	@Autowired
 	protected EntitySystemService entitySystemService;
 
-	@Resource
+	@Autowired
 	protected ServiceRegistry serviceRegistry;
 
-	@Resource
+	@Autowired
 	protected InitVisitorService initRepoVisitorService;
 
-	@Resource
+	@Autowired
 	protected HierarchyService hierarchyService;
 
-	@Resource
+	@Autowired
 	protected AuthenticationComponent authenticationComponent;
 
-	@Resource
+	@Autowired
 	protected ContentService contentService;
 
-	@Resource
+	@Autowired
 	protected TransactionService transactionService;
 
-	@Resource
+	@Autowired
 	protected RetryingTransactionHelper retryingTransactionHelper;
 
-	@Resource
+	@Autowired
 	protected AuthorityService authorityService;
 
-	@Resource
+	@Autowired
 	protected MutableAuthenticationDao authenticationDAO;
 
-	@Resource
+	@Autowired
 	protected MutableAuthenticationService authenticationService;
 
-	@Resource
+	@Autowired
 	protected PersonService personService;
 
-	@Resource
+	@Autowired
 	protected EntityTplService entityTplService;
 
-	@Resource
+	@Autowired
 	protected PermissionService permissionService;
 
-	@Resource
+	@Autowired
 	protected AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
-	@Resource
+	@Autowired
 	protected BeCPGCacheService beCPGCacheService;
 
-	@Resource
+	@Autowired
 	protected RuleService ruleService;
 
-	@Resource
+	@Autowired
 	protected BehaviourFilter policyBehaviourFilter;
 
-	@Resource
+	@Autowired
 	private SOLRTrackingComponent solrTrackingComponent;
 
-	@Resource
+	@Autowired
 	protected EntityListDAO entityListDAO;
 
-	@Resource
+	@Autowired
 	@Qualifier("qnameDAO")
 	protected QNameDAO qNameDAO;
 

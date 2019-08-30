@@ -9,8 +9,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.annotation.Resource;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -19,6 +17,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
@@ -34,10 +33,10 @@ public class CodePolicyIT extends PLMBaseTestCase {
 
 	private static final Log logger = LogFactory.getLog(CodePolicyIT.class);
 
-	@Resource
+	@Autowired
 	private NodeService nodeService;
 
-	@Resource
+	@Autowired
 	private AutoNumService autoNumService;
 
 	private String code1 = null;

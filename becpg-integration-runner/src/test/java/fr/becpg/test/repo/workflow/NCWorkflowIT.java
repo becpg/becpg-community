@@ -25,8 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.alfresco.repo.workflow.WorkflowModel;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
@@ -41,6 +39,7 @@ import org.alfresco.service.namespace.RegexQNamePattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.model.QualityModel;
 import fr.becpg.repo.product.data.RawMaterialData;
@@ -58,7 +57,7 @@ public class NCWorkflowIT extends AbstractWorkflowTest {
 	private static final QName ASSOC_CORR_ACTION_ACTOR = QName.createQName(NC_URI, "corrActionActor");
 	private static final QName ASSOC_CHECK_ACTOR = QName.createQName(NC_URI, "checkActor");
 
-	@Resource
+	@Autowired
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
 	/** The logger. */
@@ -68,7 +67,7 @@ public class NCWorkflowIT extends AbstractWorkflowTest {
 
 	private String workflowInstanceId = null;
 
-	@Resource
+	@Autowired
 	private NonConformityService nonConformityService;
 
 	@Test

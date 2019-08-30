@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.annotation.Resource;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
@@ -16,6 +14,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.listvalue.ListValueEntry;
@@ -32,7 +31,7 @@ public class ListValueServiceIT extends AbstractListValuePluginTest {
 
 	private static final Log logger = LogFactory.getLog(ListValueServiceIT.class);
 
-	@Resource
+	@Autowired
 	private EntityListValuePlugin entityListValuePlugin;
 
 	/**

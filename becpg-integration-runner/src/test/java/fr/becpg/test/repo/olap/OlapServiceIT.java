@@ -19,11 +19,10 @@ package fr.becpg.test.repo.olap;
 
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.repo.olap.OlapService;
 import fr.becpg.repo.olap.data.OlapChart;
@@ -35,7 +34,7 @@ public class OlapServiceIT extends RepoBaseTestCase {
 	/** The logger. */
 	private static final Log logger = LogFactory.getLog(OlapServiceIT.class);
 
-	@Resource
+	@Autowired
 	private OlapService olapService;
 
 	@Test

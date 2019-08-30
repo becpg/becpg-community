@@ -26,8 +26,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -37,6 +35,8 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Before;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
@@ -72,13 +72,14 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 
 	protected final List<NodeRef> taskLegends = new ArrayList<>();
 
-	@Resource(name = "WorkflowService")
+	@Autowired
+	@Qualifier("WorkflowService")
 	protected WorkflowService workflowService;
-	@Resource
+	@Autowired
 	protected AssociationService associationService;
-	@Resource
+	@Autowired
 	protected ProjectService projectService;
-	@Resource
+	@Autowired
 	protected EntityTplService entityTplService;
 
 	protected NodeRef userOne;

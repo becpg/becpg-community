@@ -36,8 +36,6 @@ import java.util.concurrent.atomic.LongAdder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.annotation.Resource;
-
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -47,6 +45,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.extensions.surf.util.I18NUtil;
 
@@ -77,10 +76,10 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 
 	protected static final Log logger = LogFactory.getLog(LabelingFormulationIT.class);
 
-	@Resource
+	@Autowired
 	private AssociationService associationService;
 
-	@Resource
+	@Autowired
 	@Qualifier("mlAwareNodeService")
 	private NodeService mlNodeService;
 

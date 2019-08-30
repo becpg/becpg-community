@@ -52,7 +52,7 @@ public class ScoreCalculatingIT extends AbstractFinishedProductTest {
 
 	protected static final Log logger = LogFactory.getLog(ScoreCalculatingIT.class);
 
-	@Resource
+	@Autowired
 	private AssociationService associationService;
 
 	@Autowired

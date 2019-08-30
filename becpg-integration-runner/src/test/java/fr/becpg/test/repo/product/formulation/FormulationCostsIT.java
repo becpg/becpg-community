@@ -68,7 +68,7 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 	@Autowired
 	protected AlfrescoRepository<ClientData> clientRepository;
 
-	@Resource
+	@Autowired
 	private AssociationService associationService;
 
 	@Override

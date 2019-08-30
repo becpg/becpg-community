@@ -4,11 +4,10 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Locale;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.formulation.nutrient.NutrientCode;
@@ -18,7 +17,7 @@ public class NutrientRoundingRulesTestIT {
 
 	public Log logger = LogFactory.getLog(NutrientRoundingRulesTestIT.class);
 
-	@Resource
+	@Autowired
 	protected MLTextHelper mlTextHelper;
 
 	@Test

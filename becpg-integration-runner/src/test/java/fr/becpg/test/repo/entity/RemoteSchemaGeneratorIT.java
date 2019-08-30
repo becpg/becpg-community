@@ -7,10 +7,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import javax.annotation.Resource;
 import javax.xml.stream.XMLStreamException;
 
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.xml.sax.SAXException;
 
 import fr.becpg.common.BeCPGException;
@@ -22,7 +22,7 @@ import fr.becpg.test.PLMBaseTestCase;
  */
 public class RemoteSchemaGeneratorIT extends PLMBaseTestCase {
 
-	@Resource
+	@Autowired
 	private RemoteSchemaGenerator remoteSchemaGenerator;
 
 	@Test

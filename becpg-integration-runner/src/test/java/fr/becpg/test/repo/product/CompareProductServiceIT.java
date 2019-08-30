@@ -9,14 +9,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.entity.comparison.CompareResultDataItem;
@@ -41,7 +40,7 @@ public class CompareProductServiceIT extends AbstractCompareProductTest {
 
 	private static final Log logger = LogFactory.getLog(CompareProductServiceIT.class);
 
-	@Resource
+	@Autowired
 	private ProductAttributeExtractorPlugin nameExtractor;
 
 	/**

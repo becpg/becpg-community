@@ -21,8 +21,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.rule.RuntimeRuleService;
 import org.alfresco.service.cmr.coci.CheckOutCheckInService;
@@ -32,6 +30,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.repo.project.data.ProjectData;
 
@@ -45,10 +44,10 @@ public class ProjectCOCIIT extends AbstractProjectTestCase {
 
 	private static final Log logger = LogFactory.getLog(ProjectCOCIIT.class);
 
-	@Resource
+	@Autowired
 	private CheckOutCheckInService checkOutCheckInService;
 
-	@Resource
+	@Autowired
 	private RuntimeRuleService ruleService;
 
 	@Test

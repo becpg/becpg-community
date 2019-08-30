@@ -24,8 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
@@ -33,6 +31,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.QualityModel;
@@ -55,7 +54,7 @@ public class QualityControlIT extends PLMBaseTestCase {
 
 	private static final long HOUR = 3600 * 1000; // in milli-seconds.
 
-	@Resource
+	@Autowired
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
 	private NodeRef controlStepNodeRef;

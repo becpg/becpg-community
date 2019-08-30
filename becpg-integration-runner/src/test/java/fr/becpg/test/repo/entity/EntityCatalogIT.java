@@ -38,7 +38,7 @@ public class EntityCatalogIT extends PLMBaseTestCase {
 	private static final Log logger = LogFactory.getLog(EntityCatalogIT.class);
 	private static final String CATALOG_STRING = "{\"id\":\"incoFinishedProduct\",\"label\":\"EU 1169/2011 (INCO)\",\"entityType\":[\"bcpg:finishedProduct\"],\"uniqueFields\":[\"bcpg:erpCode\",\"cm:name\"],\"fields\":[\"bcpg:legalName\",\"bcpg:useByDate|bcpg:bestBeforeDate\",\"bcpg:storageConditionsRef|bcpg:preparationTips\",\"cm:title\"],\"auditedFields\": [\"cm:name\",\"bcpg:compoList\"],\"modifiedField\": \"bcpg:modifiedCatalog1\"}";
 	private static final String CATALOGS_STRING = "[{\"id\":\"incoFinishedProduct\",\"label\":\"EU 1169/2011 (INCO)\",\"entityType\":[\"bcpg:finishedProduct\"],\"uniqueFields\":[\"bcpg:erpCode\",\"cm:name\"],\"fields\":[\"bcpg:legalName\",\"bcpg:useByDate|bcpg:bestBeforeDate\",\"bcpg:storageConditionsRef|bcpg:preparationTips\",\"cm:title\"],\"auditedFields\": [\"cm:name\",\"bcpg:costList\"],\"modifiedField\": \"bcpg:modifiedCatalog1\"},{\"id\":\"incoRawMaterials\",\"label\":\"EU 1169/2011 (INCO)\",\"entityType\":[\"bcpg:rawMaterial\"],\"uniqueFields\":[\"bcpg:erpCode\",\"cm:name\"],\"fields\":[\"bcpg:legalName\"],\"auditedFields\": [\"bcpg:legalName\"],\"modifiedField\": \"bcpg:modifiedCatalog2\"}]";
-	@Resource
+	@Autowired
 	protected ProductService productService;
 	@Autowired
 	TransactionService transactionService;

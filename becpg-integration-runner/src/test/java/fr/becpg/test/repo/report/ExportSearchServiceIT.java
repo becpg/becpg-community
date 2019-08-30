@@ -8,8 +8,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.annotation.Resource;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.download.DownloadModel;
 import org.alfresco.service.cmr.download.DownloadService;
@@ -27,6 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 
 import fr.becpg.model.BeCPGModel;
@@ -48,13 +47,13 @@ public class ExportSearchServiceIT extends RepoBaseTestCase {
 
 	private static final long PAUSE_TIME = 1000;
 
-	@Resource
+	@Autowired
 	DownloadService downloadService;
 
-	@Resource
+	@Autowired
 	ExportSearchService exportSearchService;
 
-	@Resource
+	@Autowired
 	NamespaceService namespaceService;
 
 	public NodeRef createTestNode(NodeRef parentNodeRef, QName type, String name) {

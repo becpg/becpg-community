@@ -2,7 +2,6 @@ package fr.becpg.test.repo.report;
 
 import java.util.Iterator;
 
-import javax.annotation.Resource;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 
@@ -12,6 +11,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.Assert;
 
@@ -22,7 +22,7 @@ public class ReportImageServiceIT extends RepoBaseTestCase {
 
 	private Log logger = LogFactory.getLog(ReportImageServiceIT.class);
 
-	@Resource
+	@Autowired
 	EntityService entityService;
 
 	@Test

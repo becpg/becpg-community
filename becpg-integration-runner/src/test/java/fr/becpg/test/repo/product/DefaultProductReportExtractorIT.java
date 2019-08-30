@@ -9,14 +9,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
@@ -45,10 +44,10 @@ public class DefaultProductReportExtractorIT extends AbstractFinishedProductTest
 	/** The logger. */
 	private static final Log logger = LogFactory.getLog(DefaultProductReportExtractorIT.class);
 
-	@Resource
+	@Autowired
 	private ProductReportExtractorPlugin defaultProductReportExtractor;
 
-	@Resource
+	@Autowired
 	private AssociationService associationService;
 
 	@Override

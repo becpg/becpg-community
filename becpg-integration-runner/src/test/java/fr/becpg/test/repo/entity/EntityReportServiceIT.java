@@ -7,14 +7,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.ReportModel;
@@ -41,13 +40,13 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 	/** The logger. */
 	private static final Log logger = LogFactory.getLog(EntityReportServiceIT.class);
 
-	@Resource
+	@Autowired
 	private ReportTplService reportTplService;
-	@Resource
+	@Autowired
 	private EntityService entityService;
-	@Resource
+	@Autowired
 	private AssociationService associationService;
-	@Resource
+	@Autowired
 	private EntityReportService entityReportService;
 
 	/** The PF node ref. */

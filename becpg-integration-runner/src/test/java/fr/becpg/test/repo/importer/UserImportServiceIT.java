@@ -20,8 +20,6 @@ package fr.becpg.test.repo.importer;
 import java.io.IOException;
 import java.util.Date;
 
-import javax.annotation.Resource;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentWriter;
@@ -34,6 +32,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 
 import fr.becpg.repo.importer.user.UserImporterService;
@@ -44,10 +43,10 @@ public class UserImportServiceIT extends PLMBaseTestCase {
 	public static final String COMPANY_HOME_PATH_QUERY = "PATH:\"/app:company_home/.\"";
 
 	/** The node service. */
-	@Resource
+	@Autowired
 	private SearchService searchService;
 
-	@Resource
+	@Autowired
 	UserImporterService userImporterService;
 
 	private static final Log logger = LogFactory.getLog(UserImportServiceIT.class);

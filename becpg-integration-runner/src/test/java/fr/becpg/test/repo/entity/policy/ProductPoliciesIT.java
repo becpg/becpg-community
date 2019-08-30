@@ -6,10 +6,9 @@ package fr.becpg.test.repo.entity.policy;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.annotation.Resource;
-
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
@@ -24,7 +23,7 @@ import fr.becpg.test.PLMBaseTestCase;
  */
 public class ProductPoliciesIT extends PLMBaseTestCase {
 
-	@Resource
+	@Autowired
 	private AutoNumService autoNumService;
 
 	private String productCode1 = null;

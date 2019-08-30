@@ -34,7 +34,7 @@ public class EntityTplServiceIT extends PLMBaseTestCase {
 	/** The logger. */
 	private static final Log logger = LogFactory.getLog(EntityTplServiceIT.class);
 
-	@Resource
+	@Autowired
 	private AlfrescoRepository<ProductData> alfrescoRepository;
 
 	@Autowired

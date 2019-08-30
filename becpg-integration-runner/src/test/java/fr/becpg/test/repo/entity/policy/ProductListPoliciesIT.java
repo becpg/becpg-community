@@ -7,14 +7,13 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.GUID;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
@@ -31,7 +30,7 @@ import fr.becpg.test.PLMBaseTestCase;
  */
 public class ProductListPoliciesIT extends PLMBaseTestCase {
 
-	@Resource
+	@Autowired
 	private EntityListDAO entityListDAO;
 
 	/**

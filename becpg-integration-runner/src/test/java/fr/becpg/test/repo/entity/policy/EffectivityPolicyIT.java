@@ -10,8 +10,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.CopyService;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -20,6 +18,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.product.data.RawMaterialData;
@@ -39,7 +38,7 @@ public class EffectivityPolicyIT extends PLMBaseTestCase {
 	/** The sf node ref. */
 	private NodeRef sfNodeRef;
 
-	@Resource
+	@Autowired
 	private CopyService copyService;
 
 	/**

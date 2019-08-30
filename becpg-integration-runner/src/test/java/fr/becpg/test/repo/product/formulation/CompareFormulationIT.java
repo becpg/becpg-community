@@ -19,8 +19,6 @@ package fr.becpg.test.repo.product.formulation;
 
 import java.util.Collections;
 
-import javax.annotation.Resource;
-
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -28,6 +26,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.helper.AssociationService;
@@ -39,7 +38,7 @@ public class CompareFormulationIT extends FormulationFullIT {
 
 	protected static final Log logger = LogFactory.getLog(CompareFormulationIT.class);
 
-	@Resource
+	@Autowired
 	private AssociationService associationService;
 
 	/**

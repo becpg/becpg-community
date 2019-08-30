@@ -8,12 +8,11 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.entity.datalist.MultiLevelDataListService;
@@ -37,7 +36,7 @@ public class MultiLevelDataServiceIT extends PLMBaseTestCase {
 	/** The logger. */
 	private static final Log logger = LogFactory.getLog(MultiLevelDataServiceIT.class);
 
-	@Resource
+	@Autowired
 	private MultiLevelDataListService multiLevelDataListService;
 
 	private NodeRef rawMaterial1NodeRef = null;
