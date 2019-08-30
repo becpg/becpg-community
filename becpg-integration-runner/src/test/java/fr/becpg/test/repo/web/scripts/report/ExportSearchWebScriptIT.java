@@ -77,9 +77,6 @@ public class ExportSearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 	@Autowired
 	private ReportTplService reportTplService;
 
-	@Autowired
-	private EntityService entityService;
-
 	private NodeRef localSF1NodeRef;
 	private NodeRef rawMaterial1NodeRef;
 	private NodeRef rawMaterial2NodeRef;
@@ -226,6 +223,7 @@ public class ExportSearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 		}, false, true);
 
 		waitForSolr(startTime);
+		startTime = new Date();
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -320,7 +318,8 @@ public class ExportSearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 		}, false, true);
 
 		waitForSolr(startTime);
-
+		startTime = new Date();
+		
 		// search on date range
 		try {
 
