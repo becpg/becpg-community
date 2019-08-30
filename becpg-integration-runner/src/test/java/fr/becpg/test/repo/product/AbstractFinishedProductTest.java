@@ -27,8 +27,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.annotation.Resource;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -37,6 +35,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
@@ -66,7 +65,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 	protected static final Log logger = LogFactory.getLog(AbstractFinishedProductTest.class);
 
 	/** The product service. */
-	@Resource
+	@Autowired
 	protected ProductService productService;
 
 	/** The GROU p1. */

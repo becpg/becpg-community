@@ -10,8 +10,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.workflow.WorkflowModel;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
@@ -25,6 +23,7 @@ import org.alfresco.service.namespace.RegexQNamePattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemState;
@@ -45,16 +44,16 @@ public class NPDServiceIT extends AbstractProjectTestCase {
 
 	private static final Log logger = LogFactory.getLog(NPDServiceIT.class);
 
-	@Resource
+	@Autowired
 	private ProjectPolicy projectPolicy;
 
-	@Resource
+	@Autowired
 	private ProjectWorkflowService projectWorkflowService;
 
-	@Resource
+	@Autowired
 	private CopyService copyService;
 
-	@Resource
+	@Autowired
 	private PersonService personService;
 
 	private static final String NPDWF_URI = "http://www.bcpg.fr/model/npd-workflow/1.0";

@@ -14,8 +14,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.workflow.WorkflowModel;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
@@ -30,6 +28,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.project.ProjectWorkflowService;
@@ -54,16 +53,16 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 
 	private static final Log logger = LogFactory.getLog(ProjectServiceIT.class);
 
-	@Resource
+	@Autowired
 	private EntityTplProjectPlugin entityTplProjectPlugin;
 
-	@Resource
+	@Autowired
 	private ProjectWorkflowService projectWorkflowService;
 
-	@Resource
+	@Autowired
 	private CopyService copyService;
 
-	@Resource
+	@Autowired
 	private PersonService personService;
 
 	/**

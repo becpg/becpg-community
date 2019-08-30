@@ -22,8 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.workflow.WorkflowService;
 import org.alfresco.service.cmr.workflow.WorkflowTask;
@@ -32,6 +30,8 @@ import org.alfresco.service.cmr.workflow.WorkflowTaskState;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import fr.becpg.test.PLMBaseTestCase;
 
@@ -39,7 +39,8 @@ public abstract class AbstractWorkflowTest extends PLMBaseTestCase {
 
 	private static final Log logger = LogFactory.getLog(AbstractWorkflowTest.class);
 
-	@Resource(name = "WorkflowService")
+	@Autowired
+	@Qualifier("WorkflowService")
 	protected WorkflowService workflowService;
 
 	protected WorkflowTask getNextTaskForWorkflow(String workflowInstanceId) {

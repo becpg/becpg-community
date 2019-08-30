@@ -10,8 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.version.VersionBaseModel;
 import org.alfresco.service.cmr.coci.CheckOutCheckInService;
@@ -21,6 +19,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.product.data.FinishedProductData;
@@ -45,7 +44,7 @@ public class CompareProductReportWebScriptIT extends AbstractCompareProductTest 
 
 	private static final Log logger = LogFactory.getLog(CompareProductReportWebScriptIT.class);
 
-	@Resource
+	@Autowired
 	private CheckOutCheckInService checkOutCheckInService;
 
 	@Test

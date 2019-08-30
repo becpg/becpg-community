@@ -21,13 +21,12 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
@@ -50,7 +49,7 @@ public class FormulationGenericRawMaterialIT extends AbstractFinishedProductTest
 
 	protected static final Log logger = LogFactory.getLog(FormulationGenericRawMaterialIT.class);
 
-	@Resource
+	@Autowired
 	private AssociationService associationService;
 
 	@Override

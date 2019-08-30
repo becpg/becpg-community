@@ -59,7 +59,7 @@ public class FormulationNutsIT extends AbstractFinishedProductTest {
 
 	protected static final Log logger = LogFactory.getLog(FormulationNutsIT.class);
 
-	@Resource
+	@Autowired
 	private AssociationService associationService;
 
 	@Autowired

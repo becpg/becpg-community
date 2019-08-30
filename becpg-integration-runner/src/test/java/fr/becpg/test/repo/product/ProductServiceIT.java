@@ -18,8 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Resource;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.content.encoding.ContentCharsetFinder;
 import org.alfresco.repo.security.authority.AuthorityDAO;
@@ -37,6 +35,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 
 import fr.becpg.model.BeCPGModel;
@@ -75,34 +74,34 @@ public class ProductServiceIT extends PLMBaseTestCase {
 
 	private static final Log logger = LogFactory.getLog(ProductServiceIT.class);
 
-	@Resource
+	@Autowired
 	private PermissionService permissionService;
 
-	@Resource
+	@Autowired
 	private AuthorityService authorityService;
 
-	@Resource
+	@Autowired
 	private AuthorityDAO authorityDAO;
 
-	@Resource
+	@Autowired
 	private EntityReportService entityReportService;
 
-	@Resource
+	@Autowired
 	private ReportTplService reportTplService;
 
-	@Resource
+	@Autowired
 	private EntityTplService entityTplService;
 
-	@Resource
+	@Autowired
 	private DictionaryService dictionaryService;
 
-	@Resource
+	@Autowired
 	private HierarchyService hierarchyService;
 
-	@Resource
+	@Autowired
 	private WUsedListService wUsedListService;
 
-	@Resource
+	@Autowired
 	private EntityService entityService;
 
 	/**

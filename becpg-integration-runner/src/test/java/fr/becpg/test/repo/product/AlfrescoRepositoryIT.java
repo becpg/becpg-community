@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -20,6 +18,8 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
@@ -42,11 +42,11 @@ public class AlfrescoRepositoryIT extends PLMBaseTestCase {
 	/** The logger. */
 	private static final Log logger = LogFactory.getLog(AlfrescoRepositoryIT.class);
 
-	/** The ml node service impl. */
-	@Resource(name = "mlAwareNodeService")
+	@Autowired
+	@Qualifier("mlAwareNodeService")
 	private NodeService mlNodeServiceImpl;
 
-	@Resource
+	@Autowired
 	private EntityListDAO entityListDAO;
 
 	/**

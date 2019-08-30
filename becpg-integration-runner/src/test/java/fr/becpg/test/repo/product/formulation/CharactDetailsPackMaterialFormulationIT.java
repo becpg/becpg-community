@@ -58,7 +58,7 @@ public class CharactDetailsPackMaterialFormulationIT extends AbstractFinishedPro
 	private AttributeExtractorService attributeExtractorService;
 
 	/** The product service. */
-	@Resource
+	@Autowired
 	protected ProductService productService;
 
 	/** The pf noderef. */

@@ -20,8 +20,6 @@ package fr.becpg.test.repo.security;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.PermissionService;
@@ -29,6 +27,7 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.model.SecurityModel;
 import fr.becpg.repo.listvalue.ListValueEntry;
@@ -57,15 +56,15 @@ public class SecurityServiceIT extends RepoBaseTestCase {
 	/** The logger. */
 	private static final Log logger = LogFactory.getLog(SecurityServiceIT.class);
 
-	@Resource
+	@Autowired
 	private AlfrescoRepository<ACLGroupData> alfrescoRepository;
-	@Resource
+	@Autowired
 	private SecurityService securityService;
 
-	@Resource
+	@Autowired
 	SecurityListValuePlugin securityListValuePlugin;
 
-	@Resource
+	@Autowired
 	NamespaceService namespaceService;
 
 	private void createUsers() {

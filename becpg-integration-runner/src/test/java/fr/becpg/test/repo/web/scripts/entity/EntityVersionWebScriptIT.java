@@ -7,8 +7,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.version.VersionBaseModel;
 import org.alfresco.service.cmr.coci.CheckOutCheckInService;
@@ -19,6 +17,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.test.BeCPGPLMTestHelper;
 import fr.becpg.test.PLMBaseTestCase;
@@ -36,7 +35,7 @@ public class EntityVersionWebScriptIT extends PLMBaseTestCase {
 	/** The logger. */
 	private static final Log logger = LogFactory.getLog(EntityVersionWebScriptIT.class);
 
-	@Resource
+	@Autowired
 	private CheckOutCheckInService checkOutCheckInService;
 
 	@Test

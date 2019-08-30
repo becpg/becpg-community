@@ -22,14 +22,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.entity.datalist.DataListExtractor;
@@ -46,10 +45,10 @@ public class ProjectListSortIT extends AbstractProjectTestCase {
 
 	private static final Log logger = LogFactory.getLog(ProjectListSortIT.class);
 
-	@Resource
+	@Autowired
 	protected AlfrescoRepository<ProjectData> alfrescoRepository;
 
-	@Resource
+	@Autowired
 	protected DataListExtractorFactory dataListExtractorFactory;
 
 	@Test

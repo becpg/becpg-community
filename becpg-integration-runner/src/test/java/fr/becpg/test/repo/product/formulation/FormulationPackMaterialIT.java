@@ -25,8 +25,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -35,6 +33,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
@@ -59,7 +58,7 @@ public class FormulationPackMaterialIT extends PLMBaseTestCase {
 	private static final Log logger = LogFactory.getLog(FormulationPackMaterialIT.class);
 
 	/** The product service. */
-	@Resource
+	@Autowired
 	protected ProductService productService;
 
 	/** The pf noderef. */

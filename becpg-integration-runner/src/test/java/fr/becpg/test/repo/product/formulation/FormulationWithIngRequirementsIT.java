@@ -23,8 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
@@ -32,6 +30,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
@@ -57,7 +56,7 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 
 	protected static final Log logger = LogFactory.getLog(FormulationWithIngRequirementsIT.class);
 
-	@Resource
+	@Autowired
 	private AssociationService associationService;
 
 	@Override

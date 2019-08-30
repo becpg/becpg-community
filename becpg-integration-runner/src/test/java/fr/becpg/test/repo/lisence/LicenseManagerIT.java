@@ -33,7 +33,7 @@ public class LicenseManagerIT extends RepoBaseTestCase {
 	BeCPGCacheService cacheService;
 
 
-	@Resource
+	@Autowired
 	private CopyService copyService;
 	
 	@Test

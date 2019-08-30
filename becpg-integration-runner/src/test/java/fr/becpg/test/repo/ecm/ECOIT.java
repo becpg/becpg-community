@@ -30,8 +30,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.LongAdder;
 
-import javax.annotation.Resource;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -42,6 +40,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.ibm.icu.util.Calendar;
 
@@ -82,19 +81,19 @@ public class ECOIT extends AbstractFinishedProductTest {
 	private static final Log logger = LogFactory.getLog(ECOIT.class);
 
 	/** The product service. */
-	@Resource
+	@Autowired
 	private ProductService productService;
 
-	@Resource
+	@Autowired
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
-	@Resource
+	@Autowired
 	private ECOService ecoService;
 
-	@Resource
+	@Autowired
 	private VersionService versionService;
 
-	@Resource
+	@Autowired
 	private EntityVersionService entityVersionService;
 
 	@Override

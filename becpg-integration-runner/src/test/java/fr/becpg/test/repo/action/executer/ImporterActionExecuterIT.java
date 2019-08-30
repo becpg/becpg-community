@@ -9,8 +9,6 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.content.encoding.ContentCharsetFinder;
 import org.alfresco.repo.model.Repository;
@@ -21,6 +19,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 
 import fr.becpg.repo.PlmRepoConsts;
@@ -40,7 +39,7 @@ public class ImporterActionExecuterIT extends PLMBaseTestCase {
 	/** The logger. */
 	private static final Log logger = LogFactory.getLog(ImporterActionExecuterIT.class);
 
-	@Resource
+	@Autowired
 	private Repository repository;
 
 	/**

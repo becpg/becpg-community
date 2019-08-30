@@ -9,12 +9,11 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.repo.listvalue.CompoListValuePlugin;
 import fr.becpg.repo.listvalue.ListValueEntry;
@@ -30,7 +29,7 @@ import fr.becpg.test.BeCPGPLMTestHelper;
  */
 public class CompoListValuePluginIT extends AbstractListValuePluginTest {
 
-	@Resource
+	@Autowired
 	private CompoListValuePlugin compoListValuePlugin;
 
 	private static final Log logger = LogFactory.getLog(CompoListValuePluginIT.class);

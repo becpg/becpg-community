@@ -12,8 +12,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ContentWriter;
@@ -27,6 +25,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.extensions.surf.util.I18NUtil;
 
@@ -60,19 +60,20 @@ public class ImportServiceIT extends PLMBaseTestCase {
 
 	private static final Log logger = LogFactory.getLog(ImportServiceIT.class);
 
-	@Resource
+	@Autowired
 	private ImportService importService;
 
-	@Resource(name = "mlAwareNodeService")
+	@Autowired
+	@Qualifier("mlAwareNodeService")
 	private NodeService mlNodeServiceImpl;
 
-	@Resource
+	@Autowired
 	private SearchService searchService;
 
-	@Resource
+	@Autowired
 	private NamespaceService namespaceService;
 
-	@Resource
+	@Autowired
 	private HierarchyService hierarchyService;
 
 	/*

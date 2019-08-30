@@ -7,13 +7,12 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import javax.annotation.Resource;
-
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.repo.helper.AttributeExtractorService;
@@ -27,10 +26,10 @@ import fr.becpg.test.PLMBaseTestCase;
  */
 public class PropertyServiceIT extends PLMBaseTestCase {
 
-	@Resource
+	@Autowired
 	private AttributeExtractorService attributeExtractorService;
 
-	@Resource
+	@Autowired
 	private DictionaryService dictionaryService;
 
 	/**

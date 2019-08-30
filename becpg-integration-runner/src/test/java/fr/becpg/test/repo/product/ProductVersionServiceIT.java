@@ -12,8 +12,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.node.archive.NodeArchiveService;
 import org.alfresco.repo.version.Version2Model;
@@ -31,6 +29,7 @@ import org.alfresco.service.namespace.RegexQNamePattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
@@ -62,34 +61,34 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 
 	private static final String ERP_CODE = "0001";
 
-	@Resource
+	@Autowired
 	private CheckOutCheckInService checkOutCheckInService;
 
-	@Resource
+	@Autowired
 	private VersionService versionService;
 
-	@Resource
+	@Autowired
 	private ProductService productService;
 
-	@Resource
+	@Autowired
 	private NamespaceService namespaceService;
 
-	@Resource
+	@Autowired
 	private EntityVersionService entityVersionService;
 
-	@Resource
+	@Autowired
 	private AssociationService associationService;
 
-	@Resource
+	@Autowired
 	private EntityReportService entityReportService;
 
-	@Resource
+	@Autowired
 	private EntityService entityService;
 
-	@Resource
+	@Autowired
 	private HierarchyService hierarchyService;
 
-	@Resource
+	@Autowired
 	private NodeArchiveService nodeArchiveService;
 
 	/**

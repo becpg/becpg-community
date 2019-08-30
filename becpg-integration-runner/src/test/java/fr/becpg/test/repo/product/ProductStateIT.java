@@ -3,12 +3,11 @@
  */
 package fr.becpg.test.repo.product;
 
-import javax.annotation.Resource;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.CopyService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
@@ -23,7 +22,7 @@ import fr.becpg.test.PLMBaseTestCase;
  */
 public class ProductStateIT extends PLMBaseTestCase {
 
-	@Resource
+	@Autowired
 	private CopyService copyService;
 
 	@Test

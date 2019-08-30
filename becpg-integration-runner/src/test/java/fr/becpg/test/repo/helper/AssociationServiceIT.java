@@ -10,8 +10,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.coci.CheckOutCheckInService;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -20,6 +18,7 @@ import org.alfresco.service.cmr.version.VersionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.entity.EntityService;
@@ -36,25 +35,25 @@ import fr.becpg.test.PLMBaseTestCase;
  */
 public class AssociationServiceIT extends PLMBaseTestCase {
 
-	@Resource
+	@Autowired
 	private CheckOutCheckInService checkOutCheckInService;
 
-	@Resource
+	@Autowired
 	private VersionService versionService;
 
-	@Resource
+	@Autowired
 	private NamespaceService namespaceService;
 
-	@Resource
+	@Autowired
 	private EntityVersionService entityVersionService;
 
-	@Resource
+	@Autowired
 	private AssociationService associationService;
 
-	@Resource
+	@Autowired
 	private EntityReportService entityReportService;
 
-	@Resource
+	@Autowired
 	private EntityService entityService;
 
 	/**
