@@ -69,7 +69,7 @@ public class PlmActivityServiceIT extends AbstractFinishedProductTest {
 	}
 
 	protected List<NodeRef> getActivities(NodeRef entityNodeRef, Map<String, Boolean> sortMap) {
-		// beCPGCacheService.clearAllCaches();
+		 beCPGCacheService.clearAllCaches();
 			
 		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			List<NodeRef> ret = new ArrayList<>();
