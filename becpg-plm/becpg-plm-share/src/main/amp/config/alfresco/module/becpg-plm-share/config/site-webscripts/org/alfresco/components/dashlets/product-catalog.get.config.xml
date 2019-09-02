@@ -16,6 +16,7 @@
    	<type name="rawMaterial" />
    	<type name="packagingMaterial" />
    	<type name="packagingKit" />
+   	<type name="resourceProduct" />
    	<type name="product" />
    </types>
 </config>
