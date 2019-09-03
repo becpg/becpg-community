@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2018 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2018 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.web.scripts.remote;
@@ -47,9 +47,9 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
  * Abstract remote entity webscript
- * 
+ *
  * @author matthieu
- * 
+ *
  */
 public abstract class AbstractEntityWebScript extends AbstractWebScript {
 
@@ -83,9 +83,8 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 
 	protected MimetypeService mimetypeService;
 
-    protected PermissionService permissionService;
-	
-	
+	protected PermissionService permissionService;
+
 	public void setMimetypeService(MimetypeService mimetypeService) {
 		this.mimetypeService = mimetypeService;
 	}
@@ -122,6 +121,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		if(query!=null && !query.toUpperCase().contains("TYPE")){
 			queryBuilder.ofType(BeCPGModel.TYPE_ENTITY_V2);
 		}
+
 		
 		if(req.getParameter(PARAM_ALL_VERSION)== null || "false".equalsIgnoreCase(req.getParameter(PARAM_ALL_VERSION))){
 			queryBuilder.excludeDefaults();
@@ -160,12 +160,12 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	}
 
 	protected NodeRef findEntity(WebScriptRequest req) {
-		
+
 		String nodeRef = req.getParameter(PARAM_NODEREF);
-		if (nodeRef != null && nodeRef.length() > 0) {
+		if ((nodeRef != null) && (nodeRef.length() > 0)) {
 			NodeRef node = new NodeRef(nodeRef);
 			if (nodeService.exists(node)) {
-				if(AccessStatus.ALLOWED.equals(permissionService.hasReadPermission(node))) {
+				if (AccessStatus.ALLOWED.equals(permissionService.hasReadPermission(node))) {
 					return node;
 				} else {
 					throw new WebScriptException(Status.STATUS_UNAUTHORIZED, "You have no right to see this node");
@@ -174,9 +174,16 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 				throw new WebScriptException("Node " + nodeRef + " doesn't exist in repository");
 			}
 
+		} else if (((req.getParameter(PARAM_PATH) == null) || req.getParameter(PARAM_PATH).isEmpty())
+				&& ((req.getParameter(PARAM_QUERY) == null) || req.getParameter(PARAM_QUERY).isEmpty())) {
+			throw new IllegalStateException("One of nodeRef query or path parameter is mandatory");
+		}
+		List<NodeRef> ret = findEntities(req);
+		if ((ret != null) && !ret.isEmpty()) {
+			return ret.get(0);
 		}
 
-		return findEntities(req).get(0);
+		throw new IllegalStateException("No entity found for this parameters");
 	}
 
 	protected void sendOKStatus(NodeRef entityNodeRef, WebScriptResponse resp) throws IOException {
@@ -239,6 +246,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		}
 		return new ArrayList<>(fields);
 	}
+
 	
 	public List<String> extractLists(WebScriptRequest req){
 		List<String> lists = new ArrayList<>() ;
@@ -254,5 +262,6 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		}
 		return lists;
 	}
+
 	
 }
