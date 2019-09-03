@@ -19,7 +19,7 @@ import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.report.entity.EntityReportService;
 
 /**
- * 
+ *
  * @author steven
  *
  */
@@ -28,7 +28,6 @@ public class GetContentWebScript extends AbstractEntityWebScript {
 	private EntityReportService entityReportService;
 	private AssociationService associationService;
 	private ContentService contentService;
-
 
 	public void setEntityReportService(EntityReportService entityReportService) {
 		this.entityReportService = entityReportService;
@@ -44,35 +43,27 @@ public class GetContentWebScript extends AbstractEntityWebScript {
 
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
-	
+
 		NodeRef documentNodeRef = findEntity(req);
 
+		if (ReportModel.TYPE_REPORT.equals(nodeService.getType(documentNodeRef))) {
+			List<NodeRef> sourceAssocList = associationService.getSourcesAssocs(documentNodeRef, ReportModel.ASSOC_REPORTS);
 
-		if (documentNodeRef != null) {
-
-			if (ReportModel.TYPE_REPORT.equals(nodeService.getType(documentNodeRef))) {
-				List<NodeRef> sourceAssocList = associationService.getSourcesAssocs(documentNodeRef, ReportModel.ASSOC_REPORTS);
-
-				if (!sourceAssocList.isEmpty()) {
-					entityReportService.getOrRefreshReport(sourceAssocList.get(0), documentNodeRef);
-				}
+			if (!sourceAssocList.isEmpty()) {
+				entityReportService.getOrRefreshReport(sourceAssocList.get(0), documentNodeRef);
 			}
-
-			
-			 // get the content reader
-	        ContentReader reader = contentService.getReader(documentNodeRef, ContentModel.PROP_CONTENT);
-	        if (reader == null || !reader.exists())
-	        {
-	            throw new WebScriptException(HttpServletResponse.SC_NOT_FOUND, "Unable to locate content for node ref " + documentNodeRef );
-	        }
-
-			//TODO Look at ContentStreamer streamContent class and do better (Mimetype ...)
-
-			
-			IOUtils.copy(reader.getContentInputStream(), res.getOutputStream());
-			
-
 		}
+
+		// get the content reader
+		ContentReader reader = contentService.getReader(documentNodeRef, ContentModel.PROP_CONTENT);
+		if ((reader == null) || !reader.exists()) {
+			throw new WebScriptException(HttpServletResponse.SC_NOT_FOUND, "Unable to locate content for node ref " + documentNodeRef);
+		}
+
+		// TODO Look at ContentStreamer streamContent class and do better
+		// (Mimetype ...)
+
+		IOUtils.copy(reader.getContentInputStream(), res.getOutputStream());
 
 	}
 
