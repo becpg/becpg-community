@@ -19,7 +19,6 @@ package fr.becpg.repo.web.scripts.remote;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -96,7 +95,6 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
-	
 
 	public void setPermissionService(PermissionService permissionService) {
 		this.permissionService = permissionService;
@@ -118,17 +116,15 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		}
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery();
 
-		if(query!=null && !query.toUpperCase().contains("TYPE")){
+		if ((query != null) && !query.toUpperCase().contains("TYPE")) {
 			queryBuilder.ofType(BeCPGModel.TYPE_ENTITY_V2);
 		}
 
-		
-		if(req.getParameter(PARAM_ALL_VERSION)== null || "false".equalsIgnoreCase(req.getParameter(PARAM_ALL_VERSION))){
+		if ((req.getParameter(PARAM_ALL_VERSION) == null) || "false".equalsIgnoreCase(req.getParameter(PARAM_ALL_VERSION))) {
 			queryBuilder.excludeDefaults();
 		} else {
 			queryBuilder.excludeSystems();
 		}
-		
 
 		if (maxResults == null) {
 			queryBuilder.maxResults(RepoConsts.MAX_RESULTS_256);
@@ -136,19 +132,18 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 			queryBuilder.maxResults(maxResults);
 		}
 
-		if (path != null && path.length() > 0) {
+		if ((path != null) && (path.length() > 0)) {
 			queryBuilder.inPath(path);
 		}
 
-		if (query != null && query.length() > 0) {
+		if ((query != null) && (query.length() > 0)) {
 			queryBuilder.andFTSQuery(query);
 
 		}
 
-		
 		List<NodeRef> refs = queryBuilder.list();
 
-		if (refs != null && !refs.isEmpty()) {
+		if ((refs != null) && !refs.isEmpty()) {
 			logger.info("Returning " + refs.size() + " entities");
 
 			return refs;
@@ -187,7 +182,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	}
 
 	protected void sendOKStatus(NodeRef entityNodeRef, WebScriptResponse resp) throws IOException {
-		if(resp!=null && resp.getWriter()!=null && entityNodeRef!=null) {
+		if ((resp != null) && (resp.getWriter() != null) && (entityNodeRef != null)) {
 			resp.getWriter().write(entityNodeRef.toString());
 		}
 	}
@@ -198,7 +193,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		String user = req.getParameter(PARAM_CALLBACK_USER) != null ? req.getParameter(PARAM_CALLBACK_USER) : "admin";
 		String password = req.getParameter(PARAM_CALLBACK_PASSWORD) != null ? req.getParameter(PARAM_CALLBACK_PASSWORD) : "becpg";
 
-		if (callBack != null && callBack.length() > 0) {
+		if ((callBack != null) && (callBack.length() > 0)) {
 			return new HttpEntityProviderCallback(callBack, user, password, remoteEntityService);
 		}
 		logger.debug("No callback param provided");
@@ -207,17 +202,17 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 
 	protected RemoteEntityFormat getFormat(WebScriptRequest req) {
 		String format = req.getParameter(PARAM_FORMAT);
-		if (format != null && RemoteEntityFormat.csv.toString().equalsIgnoreCase(format)) {
+		if ((format != null) && RemoteEntityFormat.csv.toString().equalsIgnoreCase(format)) {
 			return RemoteEntityFormat.csv;
-		} else if (format != null && RemoteEntityFormat.xml_excel.toString().equalsIgnoreCase(format)) {
+		} else if ((format != null) && RemoteEntityFormat.xml_excel.toString().equalsIgnoreCase(format)) {
 			return RemoteEntityFormat.xml_excel;
-		} else if (format != null && RemoteEntityFormat.xml_all.toString().equalsIgnoreCase(format)) {
+		} else if ((format != null) && RemoteEntityFormat.xml_all.toString().equalsIgnoreCase(format)) {
 			return RemoteEntityFormat.xml_all;
-		} else if (format != null && RemoteEntityFormat.xml_light.toString().equalsIgnoreCase(format)) {
+		} else if ((format != null) && RemoteEntityFormat.xml_light.toString().equalsIgnoreCase(format)) {
 			return RemoteEntityFormat.xml_light;
-		} else if (format != null && RemoteEntityFormat.json.toString().equalsIgnoreCase(format)) {
+		} else if ((format != null) && RemoteEntityFormat.json.toString().equalsIgnoreCase(format)) {
 			return RemoteEntityFormat.json;
-		} 
+		}
 		return RemoteEntityFormat.xml;
 	}
 
@@ -225,21 +220,21 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		RemoteEntityFormat format = getFormat(req);
 		if (RemoteEntityFormat.csv.equals(format)) {
 			return "text/csv;charset=UTF-8";
-		} else if(RemoteEntityFormat.json.equals(format)) { 
+		} else if (RemoteEntityFormat.json.equals(format)) {
 			return "application/json;charset=UTF-8";
-			
-		}else {
+
+		} else {
 			return "application/xml";
 		}
 	}
 
-	public List<String> extractFields(WebScriptRequest req){
-		Set<String> fields = new HashSet<>() ;
+	public List<String> extractFields(WebScriptRequest req) {
+		Set<String> fields = new HashSet<>();
 		String fieldsParams = req.getParameter(PARAM_FIELDS);
-		if (fieldsParams != null && fieldsParams.length() > 0) {
-			for(String field : fieldsParams.split(",")) {
+		if ((fieldsParams != null) && (fieldsParams.length() > 0)) {
+			for (String field : fieldsParams.split(",")) {
 				fields.add(field);
-				if(field.contains("|")) {
+				if (field.contains("|")) {
 					fields.add(field.split("\\|")[0]);
 				}
 			}
@@ -247,15 +242,14 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		return new ArrayList<>(fields);
 	}
 
-	
-	public List<String> extractLists(WebScriptRequest req){
-		List<String> lists = new ArrayList<>() ;
+	public List<String> extractLists(WebScriptRequest req) {
+		List<String> lists = new ArrayList<>();
 		String listsParams = req.getParameter(PARAM_LISTS);
-		if (listsParams != null && listsParams.length() > 0) {
+		if ((listsParams != null) && (listsParams.length() > 0)) {
 			String[] splitted = listsParams.split(",");
-			for(String list : splitted) {
+			for (String list : splitted) {
 				String[] listName = list.split(":");
-				if(listName != null && listName.length > 1) {
+				if ((listName != null) && (listName.length > 1)) {
 					lists.add(listName[1]);
 				}
 			}
@@ -263,5 +257,4 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		return lists;
 	}
 
-	
 }
