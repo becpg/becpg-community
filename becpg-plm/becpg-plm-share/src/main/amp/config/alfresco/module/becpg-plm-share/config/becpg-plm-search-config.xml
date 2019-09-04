@@ -27,6 +27,7 @@
 			<show id="bcpg:code" />
 			<show id="bcpg:erpCode"/>
 			<show id="bcpg:eanCode" />
+			<show id="bcpg:nutrientProfilingClass" />
 			<show id="bcpg:suppliers"  />
 			<show id="bcpg:clients" />
       </metadata>
@@ -46,6 +47,7 @@
 				<form labelId="search.form.label.bcpg_finishedProduct" descriptionId="search.form.desc.bcpg_finishedProduct">bcpg:finishedProduct</form>
 				<form labelId="search.form.label.bcpg_semiFinishedProduct" descriptionId="search.form.desc.bcpg_semiFinishedProduct">bcpg:semiFinishedProduct</form>
 				<form labelId="search.form.label.bcpg_packagingMaterial" descriptionId="search.form.desc.bcpg_packagingMaterial">bcpg:packagingMaterial</form>
+				<form labelId="search.form.label.bcpg_packagingKit" descriptionId="search.form.desc.bcpg_packagingKit">bcpg:packagingKit</form>
 				<form labelId="search.form.label.bcpg_rawMaterial" descriptionId="search.form.desc.bcpg_rawMaterial">bcpg:rawMaterial</form>
 				<form labelId="search.form.label.bcpg_resourceProduct" descriptionId="search.form.desc.bcpg_resourceProduct">bcpg:resourceProduct</form>
 				<form labelId="search.form.label.bcpg_client" descriptionId="search.form.desc.bcpg_client">bcpg:client</form>
