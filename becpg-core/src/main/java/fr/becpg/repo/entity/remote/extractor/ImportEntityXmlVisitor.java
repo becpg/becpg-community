@@ -706,16 +706,20 @@ public class ImportEntityXmlVisitor {
 						QName pivot = entityDictionaryService.getDefaultPivotAssoc(type);
 						if (pivot != null) {
 
-							NodeRef pivotAssocNodeRef = findNode(attributes.getValue(RemoteEntityService.CHARACT_ATTR_NODEREF),
-									attributes.getValue(RemoteEntityService.CHARACT_ATTR_CODE),
-									attributes.getValue(RemoteEntityService.CHARACT_ATTR_ERP_CODE),
-									PropertiesHelper.cleanName(attributes.getValue(RemoteEntityService.CHARACT_ATTR_NAME)), null,
-									attributes.getValue(RemoteEntityService.CHARACT_ATTR_PATH), BeCPGModel.TYPE_ENTITYLIST_ITEM, pivot, cache);
-						
-							if (pivotAssocNodeRef != null) {
-								
-								logger.debug("findByPivotAssoc "+  pivot+ " "+ type);
-								ret = findByPivotAssoc(parentNodeRef, pivotAssocNodeRef, pivot, type);
+							if(attributes.getValue(RemoteEntityService.CHARACT_ATTR_NODEREF)!=null || attributes.getValue(RemoteEntityService.CHARACT_ATTR_CODE)!=null
+									|| attributes.getValue(RemoteEntityService.CHARACT_ATTR_ERP_CODE)!=null || attributes.getValue(RemoteEntityService.CHARACT_ATTR_NAME)!=null) {
+							
+								NodeRef pivotAssocNodeRef = findNode(attributes.getValue(RemoteEntityService.CHARACT_ATTR_NODEREF),
+										attributes.getValue(RemoteEntityService.CHARACT_ATTR_CODE),
+										attributes.getValue(RemoteEntityService.CHARACT_ATTR_ERP_CODE),
+										PropertiesHelper.cleanName(attributes.getValue(RemoteEntityService.CHARACT_ATTR_NAME)), null,
+										attributes.getValue(RemoteEntityService.CHARACT_ATTR_PATH), BeCPGModel.TYPE_ENTITYLIST_ITEM, pivot, cache);
+							
+								if (pivotAssocNodeRef != null) {
+									
+									logger.debug("findByPivotAssoc "+  pivot+ " "+ type);
+									ret = findByPivotAssoc(parentNodeRef, pivotAssocNodeRef, pivot, type);
+								}
 							}
 
 						}

@@ -139,6 +139,7 @@
 	    <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
         <sonar.jacoco.reportPaths>${maven.multiModuleProjectDirectory}/target/jacoco.exec</sonar.jacoco.reportPaths>
 	    <sonar.scm.disabled>true</sonar.scm.disabled>
+	    <sonar.ws.timeout>3600</sonar.ws.timeout>
 	    <sonar.language>java</sonar.language>
 	    
 	</properties>
