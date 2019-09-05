@@ -54,7 +54,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
 import com.google.common.collect.Lists;
-import com.hazelcast.impl.concurrentmap.CostAwareRecordList;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
@@ -75,8 +74,6 @@ import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.RepositoryEntityDefReader;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
-import fr.becpg.repo.repository.model.SimpleCharactDataItem;
-import fr.becpg.repo.repository.model.SimpleListDataItem;
 import fr.becpg.repo.repository.model.Synchronisable;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
