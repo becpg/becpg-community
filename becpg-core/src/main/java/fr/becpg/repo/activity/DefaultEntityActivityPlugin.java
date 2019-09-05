@@ -16,6 +16,11 @@ public class DefaultEntityActivityPlugin implements EntityActivityPlugin {
 		return false;
 	}
 
+	@Override
+	public boolean isIgnoreStateProperty(QName propName) {
+		return false;
+	}
+
 	
 
 }

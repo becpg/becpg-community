@@ -20,6 +20,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.activity.policy.EntityActivityPolicy;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.project.ProjectActivityService;
 import fr.becpg.repo.project.data.projectList.DeliverableState;
 import fr.becpg.repo.project.data.projectList.TaskManualDate;
 import fr.becpg.repo.project.data.projectList.TaskState;
@@ -36,6 +37,12 @@ public class ProjectListPolicy extends ProjectPolicy
 	private static final Log logger = LogFactory.getLog(ProjectListPolicy.class);
 
 	private AssociationService associationService;
+
+	private ProjectActivityService projectActivityService;
+
+	public void setProjectActivityService(ProjectActivityService projectActivityService) {
+		this.projectActivityService = projectActivityService;
+	}
 
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
@@ -127,17 +134,25 @@ public class ProjectListPolicy extends ProjectPolicy
 		String afterState = (String) after.get(ProjectModel.PROP_TL_STATE);
 
 		if ((beforeState != null) && (afterState != null) && !beforeState.equals(afterState)) {
+			try {
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
+				projectActivityService.postTaskStateChangeActivity(nodeRef, null, beforeState, afterState,
+						!(policyBehaviourFilter.isEnabled(ContentModel.ASPECT_AUDITABLE)
+								&& policyBehaviourFilter.isEnabled(BeCPGModel.TYPE_ENTITYLIST_ITEM)));
+				queueNode(EntityActivityPolicy.KEY_QUEUE_UPDATED_STATUS, nodeRef);
 
-			projectActivityService.postTaskStateChangeActivity(nodeRef, beforeState, afterState);
-			queueNode(EntityActivityPolicy.KEY_QUEUE_UPDATED_STATUS, nodeRef);
-			
-			formulateProject = true;
+				formulateProject = true;
 
-			if ((beforeState.equals(TaskState.Completed.toString()) || beforeState.equals(TaskState.Refused.toString())) && afterState.equals(TaskState.InProgress.toString())) {
-				// re-open task
-				logger.debug("re-open task: " + nodeRef);
-				projectService.reopenTask(nodeRef);
+				if ((beforeState.equals(TaskState.Completed.toString()) || beforeState.equals(TaskState.Refused.toString()))
+						&& afterState.equals(TaskState.InProgress.toString())) {
+					// re-open task
+					logger.debug("re-open task: " + nodeRef);
+					projectService.reopenTask(nodeRef);
 
+				}
+
+			} finally {
+				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
 			}
 		}
 
@@ -165,28 +180,37 @@ public class ProjectListPolicy extends ProjectPolicy
 		boolean formulateProject = false;
 
 		if (isPropChanged(before, after, ProjectModel.PROP_DL_STATE)) {
+			try {
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
 
-			String beforeState = (String) before.get(ProjectModel.PROP_DL_STATE);
-			String afterState = (String) after.get(ProjectModel.PROP_DL_STATE);
-			projectActivityService.postDeliverableStateChangeActivity(nodeRef, beforeState, afterState);
+				String beforeState = (String) before.get(ProjectModel.PROP_DL_STATE);
+				String afterState = (String) after.get(ProjectModel.PROP_DL_STATE);
+				projectActivityService.postDeliverableStateChangeActivity(nodeRef, beforeState, afterState,
+						!(policyBehaviourFilter.isEnabled(ContentModel.ASPECT_AUDITABLE)
+								&& policyBehaviourFilter.isEnabled(BeCPGModel.TYPE_ENTITYLIST_ITEM)));
 
-			if ((beforeState != null) && (afterState != null) && beforeState.equals(DeliverableState.Completed.toString())
-					&& afterState.equals(DeliverableState.InProgress.toString())) {
+				if ((beforeState != null) && (afterState != null) && beforeState.equals(DeliverableState.Completed.toString())
+						&& afterState.equals(DeliverableState.InProgress.toString())) {
 
-				// re-open deliverable and disable policy to avoid every dl are
-				// re-opened
-				logger.debug("re-open deliverable: " + nodeRef);
-				try {
-					policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
-					policyBehaviourFilter.disableBehaviour(ProjectModel.ASPECT_BUDGET);
-					projectService.openDeliverable(nodeRef);
-				} finally {
-					policyBehaviourFilter.enableBehaviour(ProjectModel.ASPECT_BUDGET);
-					policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_TASK_LIST);
+					// re-open deliverable and disable policy to avoid every dl
+					// are
+					// re-opened
+					logger.debug("re-open deliverable: " + nodeRef);
+					try {
+						policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
+						policyBehaviourFilter.disableBehaviour(ProjectModel.ASPECT_BUDGET);
+						projectService.openDeliverable(nodeRef);
+					} finally {
+						policyBehaviourFilter.enableBehaviour(ProjectModel.ASPECT_BUDGET);
+						policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_TASK_LIST);
+					}
 				}
+
+				formulateProject = true;
+			} finally {
+				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
 			}
 
-			formulateProject = true;
 		}
 
 		if (isPropChanged(before, after, ProjectModel.PROP_DL_DESCRIPTION)) {
@@ -196,6 +220,7 @@ public class ProjectListPolicy extends ProjectPolicy
 		if (formulateProject) {
 			queueListItem(nodeRef);
 		}
+
 	}
 
 	private void onUpdatePropertiesScoreList(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
@@ -234,7 +259,7 @@ public class ProjectListPolicy extends ProjectPolicy
 	public void onDeleteAssociation(AssociationRef assocRef) {
 		if (assocRef.getTypeQName().equals(ProjectModel.ASSOC_SUB_PROJECT)) {
 			NodeRef projectNodeRef = entityListDAO.getEntity(assocRef.getSourceRef());
-			if (projectNodeRef != null && !isNotLocked(projectNodeRef)
+			if ((projectNodeRef != null) && !isNotLocked(projectNodeRef)
 					&& !nodeService.hasAspect(projectNodeRef, ContentModel.ASPECT_PENDING_DELETE)) {
 				nodeService.removeAssociation(assocRef.getTargetRef(), projectNodeRef, ProjectModel.ASSOC_PARENT_PROJECT);
 			}
