@@ -312,8 +312,11 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 					AuthenticationUtil.runAs(() -> {
 						RetryingTransactionCallback<Object> actionCallback = () -> {
 							policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+							policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
+							
 							entityListDAO.copyDataLists(templateNodeRef, nodeRef, false);
 
+							
 							return null;
 						};
 						return transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback);

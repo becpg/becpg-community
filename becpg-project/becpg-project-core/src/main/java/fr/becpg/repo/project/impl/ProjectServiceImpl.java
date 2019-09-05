@@ -36,6 +36,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.ScriptService;
 import org.alfresco.service.cmr.security.AccessPermission;
+import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.namespace.NamespaceService;
@@ -48,10 +49,12 @@ import org.springframework.stereotype.Service;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DeliverableUrl;
 import fr.becpg.model.ProjectModel;
+import fr.becpg.model.ReportModel;
 import fr.becpg.repo.ProjectRepoConsts;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.project.ProjectActivityService;
 import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.ProjectState;
@@ -97,6 +100,8 @@ public class ProjectServiceImpl implements ProjectService {
 	private CommentService commentService;
 	@Autowired
 	private BehaviourFilter policyBehaviourFilter;
+	@Autowired
+	private ProjectActivityService projectActivityService;
 
 	@Autowired
 	SysAdminParams sysAdminParams;
@@ -126,7 +131,7 @@ public class ProjectServiceImpl implements ProjectService {
 		}
 
 		nodeService.setProperty(taskNodeRef, ProjectModel.PROP_TL_TASK_COMMENT, null);
-		
+
 	}
 
 	@Override
@@ -145,24 +150,36 @@ public class ProjectServiceImpl implements ProjectService {
 	@Override
 	public void formulate(NodeRef projectNodeRef) throws FormulateException {
 		if (nodeService.getType(projectNodeRef).equals(ProjectModel.TYPE_PROJECT)) {
-			logger.debug("Formulate project : " + projectNodeRef);
 
-			L2CacheSupport.doInCacheContext(() -> {
-				AuthenticationUtil.runAsSystem(() -> {
+			if (permissionService.hasPermission(projectNodeRef, PermissionService.WRITE) == AccessStatus.ALLOWED) {
+				try {
+					policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
+					policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+					policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 
-					formulationService.formulate(projectNodeRef);
+					L2CacheSupport.doInCacheContext(() -> {
+						AuthenticationUtil.runAsSystem(() -> {
 
-					NodeRef parentProjectNodeRef = associationService.getTargetAssoc(projectNodeRef, ProjectModel.ASSOC_PARENT_PROJECT);
+							formulationService.formulate(projectNodeRef);
 
-					// Check for parent project
-					if (parentProjectNodeRef != null) {
-						formulate(parentProjectNodeRef);
-					}
+							NodeRef parentProjectNodeRef = associationService.getTargetAssoc(projectNodeRef, ProjectModel.ASSOC_PARENT_PROJECT);
 
-					return true;
-				});
+							// Check for parent project
+							if (parentProjectNodeRef != null) {
+								formulate(parentProjectNodeRef);
+							}
 
-			}, false, true);
+							return true;
+						});
+
+					}, false, true);
+
+				} finally {
+					policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
+					policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+					policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+				}
+			}
 		}
 	}
 
@@ -196,10 +213,12 @@ public class ProjectServiceImpl implements ProjectService {
 	public void submitTask(NodeRef nodeRef, String taskComment) {
 		try {
 			// Disable notifications
-			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
+
+			NodeRef commentNodeRef = null;
 
 			if ((taskComment != null) && !taskComment.isEmpty()) {
-				commentService.createComment(nodeRef, "", taskComment, false);
+				commentNodeRef = commentService.createComment(nodeRef, "", taskComment, false);
 				nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_TASK_COMMENT, taskComment);
 			} else {
 				nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_TASK_COMMENT, null);
@@ -216,8 +235,12 @@ public class ProjectServiceImpl implements ProjectService {
 			}
 
 			nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_STATE, TaskState.Completed.toString());
+
+			projectActivityService.postTaskStateChangeActivity(nodeRef, commentNodeRef, TaskState.InProgress.toString(),
+					TaskState.Completed.toString(), false);
+
 		} finally {
-			policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+			policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
 		}
 
 	}
@@ -423,20 +446,25 @@ public class ProjectServiceImpl implements ProjectService {
 
 		try {
 			// Disable notifications
-			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
 			NodeRef taskNodeRef = associationService.getTargetAssoc(nodeRef, ProjectModel.ASSOC_TL_REFUSED_TASK_REF);
 
+			NodeRef commentNodeRef = null;
 			if ((taskNodeRef != null) && (taskComment != null) && !taskComment.isEmpty()) {
-				commentService.createComment(taskNodeRef, "", taskComment, false);
+				commentNodeRef = commentService.createComment(taskNodeRef, "", taskComment, false);
 				nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_TASK_COMMENT, taskComment);
 			} else {
 				nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_TASK_COMMENT, null);
 			}
 
 			nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_STATE, TaskState.Refused.toString());
+
+			projectActivityService.postTaskStateChangeActivity(nodeRef, commentNodeRef, TaskState.InProgress.toString(), TaskState.Refused.toString(),
+					false);
+
 			return taskNodeRef;
 		} finally {
-			policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+			policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
 		}
 
 	}

@@ -110,7 +110,8 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 
 		if (policyBehaviourFilter.isEnabled(ContentModel.ASPECT_AUDITABLE) && policyBehaviourFilter.isEnabled(BeCPGModel.ASPECT_SORTABLE_LIST)
-				&& policyBehaviourFilter.isEnabled(nodeRef, ContentModel.ASPECT_AUDITABLE)) {
+				&& policyBehaviourFilter.isEnabled(nodeRef, ContentModel.ASPECT_AUDITABLE)
+				&& policyBehaviourFilter.isEnabled(BeCPGModel.TYPE_ACTIVITY_LIST)) {
 
 			QName entityState = null;
 			String beforeState = null;
@@ -131,23 +132,28 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 			QName type = nodeService.getType(nodeRef);
 			if (accept(type)) {
 
-				 if ((before != null) && (after != null) && (before.size() < after.size())) {
-						isDifferent = true;
+				if ((before != null) && (after != null) && (before.size() < after.size())) {
+					isDifferent = true;
 				}
-				 
-				if (before != null && after != null) {
+
+				if ((before != null) && (after != null)) {
 					for (QName beforeType : before.keySet()) {
 						if (!isIgnoredTypes.contains(beforeType)) {
-							
-							if( (before.get(beforeType) == null && after.get(beforeType) == null )
-								|| (before.get(beforeType) != null && after.get(beforeType) != null && before.get(beforeType).equals(after.get(beforeType)))) {
+
+							if (((before.get(beforeType) == null) && (after.get(beforeType) == null)) || ((before.get(beforeType) != null)
+									&& (after.get(beforeType) != null) && before.get(beforeType).equals(after.get(beforeType)))) {
 								continue;
 							}
-							
-							if ((before.get(beforeType) != null && after.get(beforeType) != null && !before.get(beforeType).equals(after.get(beforeType)))
-									|| (before.get(beforeType) == null || after.get(beforeType) == null) ) {
+
+							if (((before.get(beforeType) != null) && (after.get(beforeType) != null)
+									&& !before.get(beforeType).equals(after.get(beforeType)))
+									|| ((before.get(beforeType) == null) || (after.get(beforeType) == null))) {
 								isDifferent = true;
 								if (entityActivityService.isMatchingStateProperty(beforeType)) {
+									if (entityActivityService.isIgnoreStateProperty(beforeType)) {
+										isDifferent = false;
+										break;
+									}
 									entityState = beforeType;
 									beforeState = before.get(entityState) != null ? before.get(entityState).toString() : "";
 									afterState = after.get(entityState) != null ? after.get(entityState).toString() : "";
@@ -174,7 +180,8 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 
 	@Override
 	public void onContentUpdate(NodeRef nodeRef, boolean newContent) {
-		if (policyBehaviourFilter.isEnabled(ContentModel.ASPECT_AUDITABLE) && policyBehaviourFilter.isEnabled(BeCPGModel.ASPECT_SORTABLE_LIST)) {
+		if (policyBehaviourFilter.isEnabled(ContentModel.ASPECT_AUDITABLE) && policyBehaviourFilter.isEnabled(BeCPGModel.ASPECT_SORTABLE_LIST)
+				&& policyBehaviourFilter.isEnabled(BeCPGModel.TYPE_ACTIVITY_LIST)) {
 			if (L2CacheSupport.isThreadLockEnable()) {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Entity [" + Thread.currentThread().getName() + "] is locked :" + nodeRef);
@@ -192,7 +199,8 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 
 	@Override
 	public void onCreateNode(ChildAssociationRef childAssocRef) {
-		if (policyBehaviourFilter.isEnabled(ContentModel.ASPECT_AUDITABLE) && policyBehaviourFilter.isEnabled(BeCPGModel.ASPECT_SORTABLE_LIST)) {
+		if (policyBehaviourFilter.isEnabled(ContentModel.ASPECT_AUDITABLE) && policyBehaviourFilter.isEnabled(BeCPGModel.ASPECT_SORTABLE_LIST)
+				&& policyBehaviourFilter.isEnabled(BeCPGModel.TYPE_ACTIVITY_LIST)) {
 			if (L2CacheSupport.isThreadLockEnable()) {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Entity [" + Thread.currentThread().getName() + "] is locked  :" + childAssocRef.getChildRef());
@@ -210,7 +218,8 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 
 	@Override
 	public void beforeDeleteNode(NodeRef nodeRef) {
-		if (policyBehaviourFilter.isEnabled(ContentModel.ASPECT_AUDITABLE) && policyBehaviourFilter.isEnabled(BeCPGModel.ASPECT_SORTABLE_LIST)) {
+		if (policyBehaviourFilter.isEnabled(ContentModel.ASPECT_AUDITABLE) && policyBehaviourFilter.isEnabled(BeCPGModel.ASPECT_SORTABLE_LIST)
+				&& policyBehaviourFilter.isEnabled(BeCPGModel.TYPE_ACTIVITY_LIST)) {
 			if (L2CacheSupport.isThreadLockEnable()) {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Entity [" + Thread.currentThread().getName() + "] is locked  :" + nodeRef);
@@ -230,7 +239,6 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 	@Override
 	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 
-		
 		for (NodeRef nodeRef : pendingNodes) {
 			if (nodeService.exists(nodeRef)) {
 				QName type = nodeService.getType(nodeRef);
@@ -248,7 +256,9 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 					if (key.contains(KEY_QUEUE_UPDATED_STATUS + DELIMITER)) {
 						String[] strState = pattern.split(key);
 						logger.debug("Action change state, post activity");
-						entityActivityService.postStateChangeActivity(nodeRef, null, strState[1], strState[2]);
+						if ((strState != null) && (strState.length > 1)) {
+							entityActivityService.postStateChangeActivity(nodeRef, null, strState[1], strState[2]);
+						}
 					}
 					break;
 				}

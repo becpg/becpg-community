@@ -9,7 +9,7 @@ import fr.becpg.model.QualityModel;
 import fr.becpg.repo.entity.EntityDictionaryService;
 
 @Service
-public class PlmEntityActivityPlugin implements EntityActivityPlugin {	
+public class PlmEntityActivityPlugin extends DefaultEntityActivityPlugin implements EntityActivityPlugin {	
 	
 	@Autowired
 	EntityDictionaryService entityDictionaryService;

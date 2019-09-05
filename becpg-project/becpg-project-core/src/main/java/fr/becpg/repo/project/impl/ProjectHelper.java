@@ -422,7 +422,7 @@ public class ProjectHelper {
 
 	public static void setTaskState(TaskListDataItem task, TaskState state, ProjectActivityService projectActivityService) {
 		if (!state.equals(task.getTaskState())) {
-			projectActivityService.postTaskStateChangeActivity(task.getNodeRef(), task.getTaskState().toString(), state.toString());
+			projectActivityService.postTaskStateChangeActivity(task.getNodeRef(),null, task.getTaskState().toString(), state.toString(), true);
 			task.setTaskState(state);
 		}
 	}
