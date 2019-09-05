@@ -572,10 +572,13 @@ public class EntityTplServiceImpl implements EntityTplService {
 				((RuleService) ruleService).disableRules(entityNodeRef);
 				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
+				
 				for (EntityTplPlugin entityTplPlugin : entityTplPlugins) {
 					entityTplPlugin.beforeSynchronizeEntity(entityNodeRef, entityTplNodeRef);
 				}
 
+				
 				// copy files
 				entityService.copyFiles(entityTplNodeRef, entityNodeRef);
 
@@ -596,6 +599,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 			} finally {
 				((RuleService) ruleService).enableRules(entityNodeRef);
+				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
 				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 			}
 

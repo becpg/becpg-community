@@ -109,9 +109,28 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 		return false;
 	}
+	
+	@Override
+	public boolean isIgnoreStateProperty(QName propName) {
 
+		for (EntityActivityPlugin entityActivityPlugin : entityActivityPlugins) {
+			if (entityActivityPlugin.isIgnoreStateProperty(propName)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+	
+	
 	@Override
 	public boolean postCommentActivity(NodeRef entityNodeRef, NodeRef commentNodeRef, ActivityEvent activityEvent) {
+		return postCommentActivity(entityNodeRef, commentNodeRef, activityEvent, true)!=null;
+	}
+	
+
+	@Override
+	public NodeRef postCommentActivity(NodeRef entityNodeRef, NodeRef commentNodeRef, ActivityEvent activityEvent, boolean notifyObservers) {
 		if (commentNodeRef != null) {
 			try {
 				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
@@ -123,7 +142,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)
 							|| nodeService.hasAspect(activityListNodeRef, ContentModel.ASPECT_PENDING_DELETE)) {
 						logger.debug("No activity on entity template or pending delete node");
-						return false;
+						return null;
 					}
 
 					ActivityListDataItem activityListDataItem = new ActivityListDataItem();
@@ -156,7 +175,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 						}
 					} else {
 						// Case comment on other nodes under entity
-						return false;
+						return null;
 					}
 
 					if (!data.has(PROP_TITLE) || (data.get(PROP_TITLE) == null)) {
@@ -170,9 +189,11 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 					alfrescoRepository.save(activityListDataItem);
 
-					notifyListeners(entityNodeRef, activityListDataItem);
+					if(notifyObservers) {
+						notifyListeners(entityNodeRef, activityListDataItem);
+					}
 
-					return true;
+					return activityListDataItem.getNodeRef();
 				}
 			} catch (JSONException e) {
 				logger.error(e, e);
@@ -181,7 +202,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 			}
 		}
 
-		return false;
+		return null;
 
 	}
 
