@@ -44,8 +44,10 @@ div.selected-items, div.item-select {
     margin-right: 1.5em;
 }
 
-.search .itemname {
-	padding: 0 2em;
+.search .results .itemname {
+	background-image: none !important;
+	float: left;
+    display:block;
 }
 
 .search .search-sites {
@@ -55,6 +57,10 @@ div.selected-items, div.item-select {
 .search .search-box-adv .form-container .form-fields {
     border: 0;
     margin-left: 0;
+}
+
+.search .selected-form-button .form-type-name  {
+     padding: 0 20px;
 }
 
 /* fix ie chrome */
@@ -96,3 +102,53 @@ div.selected-items, div.item-select {
 {
    background-image: url(images/generic-16.png);
 }
+.search div.nutriscore {
+	margin-left: 60%;
+	position: absolute;
+}
+
+.search span.title {
+   display: block;
+   font-size:90%;
+   padding-left:5px;
+}
+
+/* redefine  beCPG*/
+
+.search .yui-dt-col-image  {
+   vertical-align: top;
+}
+
+.search .results div.details{
+	width: 50%;
+}
+
+.search .results div.details {
+	clear:both;
+}
+
+.yui-skin-becpg .search .itemname {
+    color: #333 !important;
+    font-family: Roboto Condensed, Arial, sans-serif;
+    font-size: 120%;
+    font-weight: normal;
+    padding: 5px;
+    background-image: none !important;
+}
+
+.yui-skin-becpg .search .results div.details span, .yui-skin-becpg .search .results div.details a {
+    color: rgba(0, 0, 0, 0.7);
+    word-wrap: break-word;
+    font-weight: bold;
+    font-family: Roboto, sans-serif;
+    max-width: 65%;
+}
+
+.yui-skin-becpg .search .results div.details{
+    color: #5f6368;
+    margin-right: 0;
+    word-wrap: break-word;
+    font-family: Roboto, sans-serif;
+    padding-left: 5px;
+}
+

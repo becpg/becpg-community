@@ -32,7 +32,7 @@ function customSearchMain()
     {
         var formJson = jsonUtils.toObject(model.searchQuery);
 
-        if (formJson.length !== 0)
+        if (formJson!=null && formJson.length !== 0)
         {
             datatype = formJson.datatype;
         }
