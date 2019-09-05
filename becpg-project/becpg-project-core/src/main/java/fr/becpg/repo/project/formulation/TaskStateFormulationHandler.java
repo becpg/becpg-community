@@ -299,7 +299,7 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 						
 						
 						if(!TaskState.InProgress.equals(currentTaskState)){
-							projectActivityService.postTaskStateChangeActivity(nextTask.getNodeRef(), currentTaskState.toString(), TaskState.InProgress.toString());
+							projectActivityService.postTaskStateChangeActivity(nextTask.getNodeRef(), null, currentTaskState.toString(), TaskState.InProgress.toString(), true);
 						}
 
 						if (!nextTask.getIsGroup()) {
@@ -412,6 +412,8 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 					allTasksCancelled = false;
 					allTasksPlanned = false;
 					hasTaskInProgress = true;
+				} else if (TaskState.Planned.equals(c.getTaskState())) {
+					allTasksCancelled = false;
 				}
 			}
 			if (hasTaskInProgress) {
