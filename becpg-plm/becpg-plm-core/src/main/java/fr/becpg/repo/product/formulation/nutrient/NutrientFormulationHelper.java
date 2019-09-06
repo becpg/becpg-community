@@ -34,6 +34,7 @@ public class NutrientFormulationHelper {
 	private static final String KEY_MINI = "min";
 	private static final String KEY_MAXI = "max";
 	private static final String KEY_SECONDARY_VALUE= "v2";
+	private static final String KEY_SECONDARY_VALUE_PER_SERVING = "v2ps";
 	private static final String KEY_VALUE_PER_SERVING = "vps";
 	private static final String KEY_GDA_PERC = "gda";
 	private static final String KEY_VALUE_PER_CONTAINER = "vpc";
@@ -234,6 +235,8 @@ public class NutrientFormulationHelper {
 		switch (abrv) {
 		case KEY_SECONDARY_VALUE:
 			return "SecondaryValue";
+		case KEY_SECONDARY_VALUE_PER_SERVING:
+			return "SecondaryValuePerServing";
 		case KEY_MINI:
 			return "Mini";
 		case KEY_MAXI:
@@ -277,6 +280,7 @@ public class NutrientFormulationHelper {
 
 			JSONObject value = new JSONObject();
 			JSONObject secondaryValue = new JSONObject();
+			JSONObject secondaryValuePerServing = new JSONObject();
 			
 			JSONObject mini = new JSONObject();
 			JSONObject maxi = new JSONObject();
@@ -312,6 +316,9 @@ public class NutrientFormulationHelper {
 						tmp = tmp / (formulatedProduct.getSecondaryYield()/100d);
 					}
 					secondaryValue.put(key, regulation.round(tmp, nutCode, nutUnit));
+					
+					Double tmpPerServing = tmp * formulatedProduct.getServingSize() / 100d;
+					secondaryValuePerServing.put(key, regulation.round(tmpPerServing, nutCode, nutUnit));
 				}
 				
 				Double containerQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct, 0d);
@@ -326,6 +333,7 @@ public class NutrientFormulationHelper {
 			
 			jsonRound.put(KEY_VALUE, value);
 			jsonRound.put(KEY_SECONDARY_VALUE, secondaryValue);
+			jsonRound.put(KEY_SECONDARY_VALUE_PER_SERVING, secondaryValuePerServing);
 			jsonRound.put(KEY_MINI, mini);
 			jsonRound.put(KEY_MAXI, maxi);
 			jsonRound.put(KEY_VALUE_PER_SERVING, valuePerServing);
