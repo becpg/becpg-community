@@ -26,6 +26,15 @@ var BeCPGUtil = {
         if(item.properties["bcpg:productState"] && item.properties["bcpg:productState"]!=null){
             return "entity-"+item.properties["bcpg:productState"].toLowerCase();
         }
+        
+        if(item.properties["bcpg:supplierState"] && item.properties["bcpg:supplierState"]!=null){
+            return "entity-"+item.properties["bcpg:supplierState"].toLowerCase();
+        }
+        
+        if(item.properties["bcpg:clientState"] && item.properties["bcpg:clientState"]!=null){
+            return "entity-"+item.properties["bcpg:clientState"].toLowerCase();
+        }
+        
         if(item.properties["ecm:ecoState"] && item.properties["ecm:ecoState"]!=null){
             return "ecm-"+item.properties["ecm:ecoState"].toLowerCase();
         }
