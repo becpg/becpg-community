@@ -709,6 +709,54 @@
                      }
 
                   },
+                  
+                  generateFavourite : function ProjectDashlet_generateFavourite(scope, record) {
+                      var i18n = "favourite.document.", html = "";
+
+                      if (record.getData("isFavourite")) {
+                         html = '<a class="favourite-action ' + scope.substitute(FAVOURITE_EVENTCLASS) + ' enabled" title="' + scope
+                               .msg(i18n + "remove.tip") + '" tabindex="0"></a>';
+                      } else {
+                         html = '<a class="favourite-action ' + scope.substitute(FAVOURITE_EVENTCLASS) + '" title="' + scope
+                               .msg(i18n + "add.tip") + '" tabindex="0">' + scope.msg(i18n + "add.label") + '</a>';
+                      }
+
+                      return html;
+                   },
+
+                   onFavourite : function ProjectDashlet_onFavourite(row) {
+                      var record = this.widgets.alfrescoDataTable.getRecord(row), file = record.getData(), nodeRef = file.nodeRef;
+
+                      file.isFavourite = !file.isFavourite;
+                      this.widgets.alfrescoDataTable.getDataTable().updateRow(record, file);
+
+                      var responseConfig = {
+                         failureCallback : {
+                            fn : function SimpleDocList_onFavourite_failure(event, p_oRow) {
+                               // Reset the flag to it's previous state
+                               var record = this.widgets.alfrescoDataTable.getRecord(p_oRow), file = record.getData();
+
+                               file.isFavourite = !file.isFavourite;
+                               this.widgets.alfrescoDataTable.getDataTable().updateRow(record, file);
+                               Alfresco.util.PopupManager.displayPrompt({
+                                  text : this.msg("message.save.failure", file.displayName)
+                               });
+                            },
+                            scope : this,
+                            obj : row
+                         }
+                      };
+
+                      this.services.preferences[file.isFavourite ? "add" : "remove"].call(this.services.preferences,
+                            Alfresco.service.Preferences.FAVOURITE_FOLDERS, nodeRef, responseConfig);
+                   },
+                   
+                   substitute : function ProjectDashlet_substitute(text) {
+                       
+                       return YAHOO.lang.substitute(text, {
+                          site : Alfresco.constants.SITE !== null && Alfresco.constants.SITE.length > 0 ? "."+Alfresco.constants.SITE: ""
+                       });
+                   },
 
                   /**
                    * Search Handlers
