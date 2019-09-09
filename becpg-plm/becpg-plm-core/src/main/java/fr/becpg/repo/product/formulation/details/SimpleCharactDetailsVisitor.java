@@ -199,10 +199,16 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 				// calculate charact from qty or vol ?
 				Double qtyUsed = formulateInVol ? volUsed : weightUsed;
 				Double netQty = forceWeight ? netWeight : netQtyInLorKg;
-				Double value = FormulationHelper.calculateValue(0d, qtyUsed, simpleCharact.getValue(), netQty, unit);
+				Double value = FormulationHelper.calculateValue(0d, qtyUsed, simpleCharact.getValue(), netQty);
+				
+				
 				CharactDetailsValue currentCharactDetailsValue = null;
 
 				if ((value != null) && (simpleCharact.shouldDetailIfZero() || (value != 0d))) {
+					
+					value = FormulationHelper.flatPercValue(value,unit);
+				
+					
 					if (logger.isDebugEnabled()) {
 						logger.debug("Add new charact detail. Charact: "
 								+ nodeService.getProperty(simpleCharact.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME) + " - entityNodeRef: "
@@ -218,26 +224,29 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 						// add future and past values
 						if (forecastValue.getPreviousValue() != null) {
 							currentCharactDetailsValue
-									.setPreviousValue(FormulationHelper.calculateValue(0d, qtyUsed, forecastValue.getPreviousValue(), netQty, unit));
+									.setPreviousValue(FormulationHelper.calculateValue(0d, qtyUsed, forecastValue.getPreviousValue(), netQty));
 						}
 
 						if (forecastValue.getFutureValue() != null) {
 							currentCharactDetailsValue
-									.setFutureValue(FormulationHelper.calculateValue(0d, qtyUsed, forecastValue.getFutureValue(), netQty, unit));
+									.setFutureValue(FormulationHelper.calculateValue(0d, qtyUsed, forecastValue.getFutureValue(), netQty));
 						}
 					}
 
 					if ((simpleCharact instanceof MinMaxValueDataItem) && !charactDetails.isMultiple()) {
 						MinMaxValueDataItem minMaxValue = (MinMaxValueDataItem) simpleCharact;
+						minMaxValue.setMaxi(FormulationHelper.flatPercValue(minMaxValue.getMaxi(),unit));
+						minMaxValue.setMini(FormulationHelper.flatPercValue(minMaxValue.getMini(),unit));
+						
 
 						logger.debug("minMaxValue, prev=" + minMaxValue.getMini() + ", maxi=" + minMaxValue.getMaxi());
 						// add future and past values
 						if (minMaxValue.getMini() != null) {
-							currentCharactDetailsValue.setMini(FormulationHelper.calculateValue(0d, qtyUsed, minMaxValue.getMini(), netQty, unit));
+							currentCharactDetailsValue.setMini(FormulationHelper.calculateValue(0d, qtyUsed, minMaxValue.getMini(), netQty));
 						}
 
 						if (minMaxValue.getMaxi() != null) {
-							currentCharactDetailsValue.setMaxi(FormulationHelper.calculateValue(0d, qtyUsed, minMaxValue.getMaxi(), netQty, unit));
+							currentCharactDetailsValue.setMaxi(FormulationHelper.calculateValue(0d, qtyUsed, minMaxValue.getMaxi(), netQty));
 						}
 					}
 
