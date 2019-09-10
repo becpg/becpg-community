@@ -66,7 +66,7 @@
 									from
 										assoc_bcpg_clients a left join bcpg_client b on a.nodeRef = b.nodeRef	
 									<#if !isAdmin>	
-									  where instanceId = ${instanceId}
+									  where b.instanceId = ${instanceId}
 									</#if>
 								</SQL>
 				</View>
@@ -1178,6 +1178,66 @@
 			</Hierarchy>
 		</Dimension>
 		
+		<Dimension foreignKey="nodeRef"  name="plant" caption="${msg("jsolap.plant.title")}">
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.plant.caption")}" primaryKey="entityNodeRef">
+				<View name="plant" alias="plant">
+								<SQL dialect="generic">
+									select  
+										entityNodeRef,
+										doc->>"$.name" as name,
+										nodeRef
+									from
+										assoc_bcpg_plants
+									<#if !isAdmin>	
+									  where instanceId = ${instanceId}
+									</#if>
+								</SQL>
+				</View>
+				<Level name="name" caption="${msg("jsolap.plant.title")}" column="nodeRef" nameColumn="name" type="String"  >
+				</Level>
+			</Hierarchy>
+		</Dimension>
+		
+		<Dimension foreignKey="nodeRef"  name="trademark" caption="${msg("jsolap.trademark.title")}">
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.trademark.caption")}" primaryKey="entityNodeRef">
+				<View name="trademark" alias="trademark">
+								<SQL dialect="generic">
+									select  
+										entityNodeRef,
+										doc->>"$.name" as name,
+										nodeRef
+									from
+										assoc_bcpg_trademarkRef
+									<#if !isAdmin>	
+									  where instanceId = ${instanceId}
+									</#if>
+								</SQL>
+				</View>
+				<Level name="name" caption="${msg("jsolap.trademark.title")}" column="nodeRef" nameColumn="name" type="String"  >
+				</Level>
+			</Hierarchy>
+		</Dimension>
+		
+		<Dimension foreignKey="nodeRef"  name="subsidiary" caption="${msg("jsolap.subsidiary.title")}">
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.subsidiary.caption")}" primaryKey="entityNodeRef">
+				<View name="subsidiary" alias="subsidiary">
+								<SQL dialect="generic">
+									select  
+										entityNodeRef,
+										doc->>"$.name" as name,
+										nodeRef
+									from
+										assoc_bcpg_subsidiaryRef
+									<#if !isAdmin>	
+									  where instanceId = ${instanceId}
+									</#if>
+								</SQL>
+				</View>
+				<Level name="name" caption="${msg("jsolap.subsidiary.title")}" column="nodeRef" nameColumn="name" type="String"  >
+				</Level>
+			</Hierarchy>
+		</Dimension>
+		
 		<Dimension name="productType" caption="${msg("jsolap.productType.title")}">
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.productType.caption")}"  >
 				
@@ -1214,7 +1274,7 @@
 									from
 										assoc_bcpg_suppliers a left join bcpg_supplier b on a.nodeRef = b.nodeRef						
 									<#if !isAdmin>	
-									  where instanceId = ${instanceId}
+									  where b.instanceId = ${instanceId}
 									</#if>
 								</SQL>
 				</View>
