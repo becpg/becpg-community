@@ -18,12 +18,10 @@
 package fr.becpg.repo.project.impl;
 
 import java.util.Collections;
-import java.util.Date;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.activities.post.lookup.PostLookup;
 import org.alfresco.repo.forum.CommentService;
-import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.activities.ActivityService;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -36,9 +34,9 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.activity.EntityActivityListener;
+import fr.becpg.repo.activity.EntityActivityPlugin;
 import fr.becpg.repo.activity.EntityActivityService;
 import fr.becpg.repo.activity.data.ActivityEvent;
 import fr.becpg.repo.activity.data.ActivityListDataItem;
@@ -51,7 +49,7 @@ import fr.becpg.repo.project.ProjectNotificationService;
 import fr.becpg.repo.repository.AlfrescoRepository;
 
 @Service("projectActivityService")
-public class ProjectActivityServiceImpl implements ProjectActivityService, EntityActivityListener {
+public class ProjectActivityServiceImpl implements ProjectActivityService, EntityActivityListener, EntityActivityPlugin {
 
 	private static final String PROJECT_ACTIVITY_TYPE = "fr.becpg.project";
 
@@ -96,16 +94,49 @@ public class ProjectActivityServiceImpl implements ProjectActivityService, Entit
 	EntityDictionaryService entityDictionaryService;
 
 	@Override
-	public void postTaskStateChangeActivity(NodeRef taskNodeRef, String beforeState, String afterState) {
+	public boolean isMatchingStateProperty(QName propName){
+		return ProjectModel.PROP_PROJECT_STATE.isMatch(propName) ||  ProjectModel.PROP_TL_STATE.isMatch(propName) || ProjectModel.PROP_DL_STATE.isMatch(propName);
+	}
+
+	
+
+	@Override
+	public boolean isIgnoreStateProperty(QName propName) {
+		return ProjectModel.PROP_TL_STATE.isMatch(propName) || ProjectModel.PROP_DL_STATE.isMatch(propName);
+	}
+
+	
+	
+	@Override
+	public boolean isMatchingEntityType(QName entityType) {
+		return entityDictionaryService.isSubClass(entityType, ProjectModel.TYPE_PROJECT);
+	}
+
+	
+	@Override
+	public void postTaskStateChangeActivity(NodeRef taskNodeRef,NodeRef commentNodeRef, String beforeState, String afterState, boolean notifyOnly) {
 
 		QName itemType = nodeService.getType(taskNodeRef);
 
 		NodeRef entityNodeRef = entityActivityService.getEntityNodeRefForActivity(taskNodeRef, itemType);
 
 		if (entityNodeRef != null) {
-			if (entityActivityService.postStateChangeActivity(entityNodeRef, taskNodeRef, beforeState, afterState)) {
-				projectNotificationService.notifyTaskStateChanged(entityNodeRef, taskNodeRef, beforeState, afterState);
 
+			logger.debug("Task state change with comment: "+(commentNodeRef!=null)+", notify only : "+notifyOnly);
+			
+			if (notifyOnly || entityActivityService.postStateChangeActivity(entityNodeRef, taskNodeRef, beforeState, afterState)) {
+				
+				projectNotificationService.notifyTaskStateChanged(entityNodeRef, taskNodeRef, beforeState, afterState);
+				
+				if(commentNodeRef!=null) {
+					NodeRef activityItemNodeRef  = entityActivityService.postCommentActivity(entityNodeRef, commentNodeRef, ActivityEvent.Create, false);
+					
+					// Update curr comments assoc
+					associationService.update(entityNodeRef, ProjectModel.ASSOC_PROJECT_CUR_COMMENTS,
+							Collections.singletonList(activityItemNodeRef));
+					
+				}
+				
 				postStateChangeActivity(TASK_STATE_ACTIVITY, (String) nodeService.getProperty(taskNodeRef, ProjectModel.PROP_TL_TASK_NAME),
 						taskNodeRef, beforeState, afterState, true);
 
@@ -113,34 +144,18 @@ public class ProjectActivityServiceImpl implements ProjectActivityService, Entit
 		}
 
 	}
+	
+
 
 	@Override
-	@Deprecated
-	//TODO remove and use EntityActivityStateListener instead
-	public void postProjectStateChangeActivity(NodeRef projectNodeRef, String beforeState, String afterState) {
-
-		if (entityActivityService.postStateChangeActivity(projectNodeRef, null, beforeState, afterState)) {
-			
-			nodeService.setProperty(projectNodeRef, BeCPGModel.PROP_STATE_ACTIVITY_MODIFIED, new Date());
-			nodeService.setProperty(projectNodeRef, BeCPGModel.PROP_STATE_ACTIVITY_MODIFIER, AuthenticationUtil.getFullyAuthenticatedUser());
-			nodeService.setProperty(projectNodeRef, BeCPGModel.PROP_STATE_ACTIVITY_PREVIOUSSTATE, beforeState);
-		
-			postStateChangeActivity(PROJECT_STATE_ACTIVITY, (String) nodeService.getProperty(projectNodeRef, ContentModel.PROP_NAME), projectNodeRef,
-					beforeState, afterState, false);
-
-		}
-
-	}
-
-	@Override
-	public void postDeliverableStateChangeActivity(NodeRef deliverableNodeRef, String beforeState, String afterState) {
+	public void postDeliverableStateChangeActivity(NodeRef deliverableNodeRef, String beforeState, String afterState, boolean notifyOnly) {
 
 		QName itemType = nodeService.getType(deliverableNodeRef);
 
 		NodeRef entityNodeRef = entityActivityService.getEntityNodeRefForActivity(deliverableNodeRef, itemType);
 
 		if (entityNodeRef != null) {
-			if (entityActivityService.postStateChangeActivity(entityNodeRef, deliverableNodeRef, beforeState, afterState)) {
+			if (notifyOnly || entityActivityService.postStateChangeActivity(entityNodeRef, deliverableNodeRef, beforeState, afterState)) {
 
 				postStateChangeActivity(DELIVERABLE_STATE_ACTIVITY,
 						(String) nodeService.getProperty(deliverableNodeRef, ProjectModel.PROP_DL_DESCRIPTION), deliverableNodeRef, beforeState,

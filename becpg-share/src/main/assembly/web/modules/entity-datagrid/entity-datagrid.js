@@ -1366,6 +1366,7 @@
                                                     this, column, this.options.saveFieldUrl) : null
                                         };
                                 	
+                                	
                                 	if(column.options!=null ){
                                 		try {
 	                                		var joptions = YAHOO.lang.JSON.parse(
@@ -1381,7 +1382,10 @@
                                 		} catch(e){
                                 			console.log("ERROR cannot parse options: "+column.options)
                                 		}
-                                	}
+                                	} else if(column.label == "hidden" || (beCPG.util.contains(
+                                                this.options.hiddenOnlyColumns, key))){
+                                    	colDef.width = 0;
+                                    }
                                 	
                                 	
                                     columnDefinitions.push(colDef);
@@ -1649,7 +1653,62 @@
                                             this.onActionColumnConf);
 
                                 }
+                                
+                                var isResize = false;
+                                for(var i=0, allKeys=this.widgets.dataTable.getColumnSet().keys, len=allKeys.length; i<len; i++) {
+                                	if(allKeys[i].showAfterRenderSize ){
+                                		if(allKeys[i].width!=allKeys[i].showAfterRenderSize){
+                                			isResize = true;
+                                		}
+	                   					this.widgets.dataTable.setColumnWidth(allKeys[i],allKeys[i].showAfterRenderSize);  
+	                   					Dom.setStyle(allKeys[i]._elTh, "width", allKeys[i].showAfterRenderSize+"px");
+	                   					allKeys[i].showAfterRenderSize = null;
+                                    }
+                                	
+                                	if( allKeys[i].showAfterRender == true){
+	                                     this.widgets.dataTable.showColumn(allKeys[i]);
+	                                	 allKeys[i].showAfterRender = null;
+	                   				}
+	                                if( allKeys[i].hideAfterRender == true){
+	                                	this.widgets.dataTable.hideColumn(allKeys[i]);
+	                                	allKeys[i].hideAfterRender = null;
+	                   			    }
+		                   				
+                                }
                             	
+                                
+                                if(this.options.floatingHeader){
+                             	   
+    	                            require(dojoConfig,[
+    	                        	         "jquery", "floatthead"
+    	                        	       ], function(jQuery) {
+    	                            		try {
+    	                            			if(jQuery && jQuery.floatThead){
+		       	                            		if(!me.widgets.floatingHeader || !me.widgets.floatingHeader.floatThead ){
+		       	                            			me.widgets.floatingHeader = jQuery(me.widgets.dataTable._elTable);
+		       	    	                            	me.widgets.floatingHeader.floatThead({zIndex:2, scrollContainer: function(table){
+		       	    	                                    return me.widgets.floatingHeader.closest('.scrollableList');
+		       	    	                                },floatContainerClass:"floatThead-container grid yui-dt"});
+		       	    	                            
+		       	    	                            	
+		       	                            		} else {
+		       	                            			if(isResize){
+		       	                            				me.widgets.floatingHeader.floatThead('destroy');
+		       	                            				me.widgets.floatingHeader = jQuery(me.widgets.dataTable._elTable);
+			       	    	                            	me.widgets.floatingHeader.floatThead({zIndex:2, scrollContainer: function(table){
+			       	    	                                    return me.widgets.floatingHeader.closest('.scrollableList');
+			       	    	                                },floatContainerClass:"floatThead-container grid yui-dt"});
+		       	                            			} else {
+		       	                            				me.widgets.floatingHeader.floatThead('reflow');
+		       	                            			}
+		       	                            		}
+    	                            			}
+    	                            		} catch (exep){
+    	                            			//Nothing I can do
+    	                            		}
+    	                            });
+                             	   
+                                }
                             	
                              // Item Select menu button
                                 if( this.widgets.itemSelect ==null){
@@ -1660,60 +1719,26 @@
                                                     menu : me.timeStampId+"itemSelect-menu",
                                                     disabled : false
                                        });
-                                   
-                                  
-                                   if(this.options.floatingHeader){
-                                	   
-       	                            require(dojoConfig,[
-       	                        	         "jquery", "floatthead"
-       	                        	       ], function(jQuery) {
-       	                            		try {
-       	                            			if(jQuery.floatThead){
-		       	                            		if(!me.widgets.floatingHeader || !me.widgets.floatingHeader.floatThead ){
-		       	                            			me.widgets.floatingHeader = jQuery(me.widgets.dataTable._elTable);
-		       	    	                            	me.widgets.floatingHeader.floatThead({zIndex:2, scrollContainer: function(table){
-		       	    	                                    return me.widgets.floatingHeader.closest('.scrollableList');
-		       	    	                                },floatContainerClass:"floatThead-container grid yui-dt"});
-		       	                            		} else {
-		       	                            			 me.widgets.floatingHeader.floatThead('reflow');
-		       	                            		}
-       	                            			}
-       	                            		} catch (exep){
-       	                            			//Nothing I can do
-       	                            		}
-       	                            });
-                                	   
-                                	   
-                                	   this.widgets.itemSelect.getMenu().subscribe("show",function(){
-                                		   
-                                		   var floatTheadDiv = YAHOO.util.Selector.query('div.floatThead-container');
-                                		   Dom.addClass(floatTheadDiv,"itemSelect-open");
-                                		   
-                                	   },  this.widgets.itemSelect, this);
-                                	   
-                                	   
-                                	   this.widgets.itemSelect.getMenu().subscribe("hide",function(){
-                                		   var floatTheadDiv = YAHOO.util.Selector.query('div.floatThead-container');
-                                		   Dom.removeClass(floatTheadDiv,"itemSelect-open");
-                                		   
-                                	   },  this.widgets.itemSelect, this);
-                                	   
-                                	   
-                                	   
-//                                	    var reFlowAfterUpdate = function EntityDataGrid_reFlowAfterUpdate()
-//                                        {
-//                                	    	if(me.widgets.floatingHeader){
-//          	                                  me.widgets.floatingHeader.floatThead('reflow');
-//          	                               	}
-//                                        };
-//                                        this.extraAfterDataGridUpdate.push(reFlowAfterUpdate);
-                                	   
-                                   }
-                                   
-     
-                                    
+
                                  // Enable item select menu
                                     Dom.removeClass(me.id +"-"+me.timeStampId+"itemSelect-div", "hidden");
+                                    
+                                    if(this.options.floatingHeader){
+	    	                             this.widgets.itemSelect.getMenu().subscribe("show",function(){
+	                             		   
+	                             		   var floatTheadDiv = YAHOO.util.Selector.query('div.floatThead-container');
+	                             		   Dom.addClass(floatTheadDiv,"itemSelect-open");
+	                             		   
+	                             	   },  this.widgets.itemSelect, this);
+	                             	   
+	                             	   
+	                             	   this.widgets.itemSelect.getMenu().subscribe("hide",function(){
+	                             		   var floatTheadDiv = YAHOO.util.Selector.query('div.floatThead-container');
+	                             		   Dom.removeClass(floatTheadDiv,"itemSelect-open");
+	                             		   
+	                             	   },  this.widgets.itemSelect, this);
+                                    }	 
+                                    
                                 }
 
                                 // IE6 fix for long filename rendering issue
@@ -2000,14 +2025,7 @@
 	                                		 me.widgets.floatingHeader.floatThead('reflow');
 	                                	 }
 	                                 },this);
-	                            	 
-	                           this.widgets.dataTable.subscribe("columnShowEvent", function(e)
-	                            {   
-	                        	   if(me.widgets.floatingHeader){
-	                                  me.widgets.floatingHeader.floatThead('reflow');
-	                               	}
-	                        	  
-	                            });
+
 	                           
                             }
 
@@ -3005,16 +3023,17 @@
                                 var oColumn = this.widgets.dataTable.getColumn(obj.columnId);
                                 if (oColumn)
                                 {
+                                	var reflow = false;
                                     if (oColumn.hidden  ) {
                                         this.widgets.dataTable.showColumn(oColumn);
-                                       // Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
+                                        reflow = true;
                                     }
                                     
                                     oColumn.label = obj.label;
                                     this.widgets.dataTable.formatTheadCell(oColumn._elThLabel, oColumn,
                                             this.widgets.dataTable.get("sortedBy"));
                                     
-                                    if(this.widgets.floatingHeader && this.widgets.floatingHeader!=null){
+                                    if(reflow && this.widgets.floatingHeader && this.widgets.floatingHeader!=null){
                                		  this.widgets.floatingHeader.floatThead('reflow');
                                	 	}
 

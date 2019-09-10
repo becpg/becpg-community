@@ -163,7 +163,7 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 			String authorityName;
 			QName type = nodeService.getType(recipientNodeRef);
 			if (type.equals(ContentModel.TYPE_AUTHORITY_CONTAINER)) {
-				_logger.info(recipientNodeRef + " is a group, extracting...");
+				_logger.debug(recipientNodeRef + " is a group, extracting...");
 				authorities.addAll(extractAuthoritiesFromGroup(recipientNodeRef, sendToSelf));
 			} else {
 				authorityName = (String) nodeService.getProperty(recipientNodeRef, ContentModel.PROP_USERNAME);

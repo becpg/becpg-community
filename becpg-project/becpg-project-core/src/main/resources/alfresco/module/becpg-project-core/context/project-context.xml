@@ -123,7 +123,6 @@
 	<!-- Policy -->
 	<bean id="projectPolicy" class="fr.becpg.repo.project.policy.ProjectPolicy" parent="abstractBeCPGPolicy" depends-on="bcpg.project.dictionaryBootstrap">
 		<property name="projectService" ref="projectService" />
-		<property name="projectActivityService" ref="projectActivityService" />
 		<property name="alfrescoRepository" ref="alfrescoRepository" />
 		<property name="projectWorkflowService" ref="projectWorkflowService" />
 		<property name="entityListDAO" ref="entityListDAO" />
@@ -131,6 +130,7 @@
 	
 	<bean id="projectListPolicy" class="fr.becpg.repo.project.policy.ProjectListPolicy" parent="projectPolicy" depends-on="bcpg.project.dictionaryBootstrap">
 		<property name="associationService" ref="associationService" />
+		<property name="projectActivityService" ref="projectActivityService" />
 	</bean>
 	
 

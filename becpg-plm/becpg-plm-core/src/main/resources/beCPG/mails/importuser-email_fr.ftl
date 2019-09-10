@@ -36,7 +36,7 @@
                                                 </td>
                                                 <td>
                                                    <div style="font-size: 22px; padding-bottom: 4px;">
-                                                      Account for beCPG
+                                                      Compte beCPG
                                                    </div>
                                                    <div style="font-size: 13px;">
                                                       ${date?datetime?string.full}
@@ -52,7 +52,7 @@
 															<br />- Compte : ${username}
 															<br />- Mot de passe : ${password}</p>
 															
-															<p>Je vous conseille d'utiliser le navigateur Firefox ou Chrome.<br />															
+															<p>Nous vous conseillons d'utiliser le navigateur Firefox ou Chrome.<br />															
 															</p>
 															
                                              <p>Cordialement,<br />
@@ -70,7 +70,7 @@
                            </tr>
                            <tr>
                               <td style="padding: 0px 30px; font-size: 13px;">
-                                 Pour en savoir plus sur beCPG, vister <a href="http://www.becpg.net">http://www.becpg.net</a>
+                                 Pour en savoir plus sur beCPG, visiter <a href="http://www.becpg.net">http://www.becpg.net</a>
                               </td>
                            </tr>
                            <tr>

@@ -22,7 +22,6 @@ import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.version.EntityVersionPlugin;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
-import fr.becpg.repo.project.ProjectActivityService;
 import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.project.ProjectWorkflowService;
 import fr.becpg.repo.project.data.ProjectData;
@@ -45,7 +44,6 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 	protected static final String KEY_PROJECT_ITEM = "ProjectItem";
 
 	protected ProjectService projectService;
-	protected ProjectActivityService projectActivityService;
 	protected AlfrescoRepository<ProjectData> alfrescoRepository;
 	protected ProjectWorkflowService projectWorkflowService;
 	protected EntityListDAO entityListDAO;
@@ -60,10 +58,6 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 
 	public void setProjectService(ProjectService projectService) {
 		this.projectService = projectService;
-	}
-
-	public void setProjectActivityService(ProjectActivityService projectActivityService) {
-		this.projectActivityService = projectActivityService;
 	}
 
 	public void setAlfrescoRepository(AlfrescoRepository<ProjectData> alfrescoRepository) {
@@ -93,8 +87,6 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 
 		// change state
 		if ((afterState != null) && !afterState.equals(beforeState)) {
-
-			projectActivityService.postProjectStateChangeActivity(nodeRef, beforeState, afterState);
 
 			if (afterState.equals(ProjectState.InProgress.toString())) {
 				logger.debug("onUpdateProperties:start project");

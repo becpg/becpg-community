@@ -29,7 +29,11 @@ public interface EntityActivityService {
 	static final String PROP_AFTER_STATE = "afterState";
 	
 
-	boolean postCommentActivity(NodeRef entityNodeRef, NodeRef commentNodeRef, ActivityEvent activityEvent);
+	
+
+	boolean postCommentActivity(NodeRef entityNodeRef, NodeRef actionedUponNodeRef, ActivityEvent activityEvent);
+	
+	NodeRef postCommentActivity(NodeRef entityNodeRef, NodeRef commentNodeRef, ActivityEvent activityEvent, boolean notifyObservers);
 
 	boolean postContentActivity(NodeRef entityNodeRef, NodeRef contentNodeRef, ActivityEvent activityEvent);
 
@@ -52,6 +56,9 @@ public interface EntityActivityService {
 	void mergeActivities(NodeRef fromNodeRef, NodeRef toNodeRef);
 
 	boolean isMatchingStateProperty(QName propName);
+
+	boolean isIgnoreStateProperty(QName propName);
+
 
 
 

@@ -59,7 +59,6 @@ import fr.becpg.repo.repository.model.ForecastValueDataItem;
 import fr.becpg.repo.repository.model.FormulatedCharactDataItem;
 import fr.becpg.repo.repository.model.MinMaxValueDataItem;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
-import fr.becpg.repo.repository.model.UnitAwareDataItem;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
 public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListDataItem> extends FormulationBaseHandler<ProductData> {
@@ -308,6 +307,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 	protected void calculate(SimpleListDataItem newSimpleListDataItem, SimpleListDataItem slDataItem, Double qtyUsed, Double netQty,
 			boolean isGenericRawMaterial) {
+		
 
 		Double formulatedValue = 0d;
 		if (newSimpleListDataItem instanceof FormulatedCharactDataItem) {
@@ -316,15 +316,11 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 			formulatedValue = newSimpleListDataItem.getValue();
 		}
 
-		String unit = null;
-		if (slDataItem instanceof UnitAwareDataItem) {
-			unit = ((UnitAwareDataItem) slDataItem).getUnit();
-		}
 
 		Double newValue = formulatedValue != null ? formulatedValue : 0d;
 		Double value = slDataItem.getValue();
 		if (value != null) {
-			newSimpleListDataItem.setValue(FormulationHelper.calculateValue(formulatedValue, qtyUsed, value, netQty, unit));
+			newSimpleListDataItem.setValue(FormulationHelper.calculateValue(formulatedValue, qtyUsed, value, netQty));
 		} else {
 			value = 0d;
 		}
@@ -343,11 +339,11 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 			} else {
 				if ((newMini != null) || (miniValue != null)) {
 					((MinMaxValueDataItem) newSimpleListDataItem).setMini(FormulationHelper.calculateValue(newMini != null ? newMini : newValue,
-							qtyUsed, miniValue != null ? miniValue : value, netQty, unit));
+							qtyUsed, miniValue != null ? miniValue : value, netQty));
 				}
 				if ((newMaxi != null) || (maxiValue != null)) {
 					((MinMaxValueDataItem) newSimpleListDataItem).setMaxi(FormulationHelper.calculateValue(newMaxi != null ? newMaxi : newValue,
-							qtyUsed, maxiValue != null ? maxiValue : value, netQty, unit));
+							qtyUsed, maxiValue != null ? maxiValue : value, netQty));
 				}
 			}
 		}
@@ -355,10 +351,10 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		if (newSimpleListDataItem instanceof ForecastValueDataItem) {
 			((ForecastValueDataItem) newSimpleListDataItem)
 					.setPreviousValue(FormulationHelper.calculateValue(((ForecastValueDataItem) newSimpleListDataItem).getPreviousValue(), qtyUsed,
-							((ForecastValueDataItem) slDataItem).getPreviousValue(), netQty, unit));
+							((ForecastValueDataItem) slDataItem).getPreviousValue(), netQty));
 			((ForecastValueDataItem) newSimpleListDataItem)
 					.setFutureValue(FormulationHelper.calculateValue(((ForecastValueDataItem) newSimpleListDataItem).getFutureValue(), qtyUsed,
-							((ForecastValueDataItem) slDataItem).getFutureValue(), netQty, unit));
+							((ForecastValueDataItem) slDataItem).getFutureValue(), netQty));
 		}
 
 		if (logger.isDebugEnabled()) {

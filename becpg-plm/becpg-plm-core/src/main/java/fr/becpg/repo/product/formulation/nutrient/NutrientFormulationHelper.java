@@ -21,7 +21,7 @@ import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.product.formulation.nutrient.AbstractNutrientRegulation.NutrientDefinition;
 
 /**
- * 
+ *
  * @author matthieu
  *
  */
@@ -33,29 +33,28 @@ public class NutrientFormulationHelper {
 	private static final String KEY_VALUE = "v";
 	private static final String KEY_MINI = "min";
 	private static final String KEY_MAXI = "max";
-	private static final String KEY_SECONDARY_VALUE= "v2";
+	private static final String KEY_SECONDARY_VALUE = "v2";
+	private static final String KEY_SECONDARY_VALUE_PER_SERVING = "v2ps";
 	private static final String KEY_VALUE_PER_SERVING = "vps";
 	private static final String KEY_GDA_PERC = "gda";
 	private static final String KEY_VALUE_PER_CONTAINER = "vpc";
 	private static final String KEY_GDA_PERC_PER_CONTAINER = "gdapc";
 	private static final String KEY_UNIT = "unit";
 
-	
 	private static Map<String, NutrientRegulation> regulations = new HashMap<>();
-	
+
 	static {
 		regulations.put("EU", new EuropeanNutrientRegulation("beCPG/databases/nuts/EuNutrientRegulation.csv"));
 
 		regulations.put("US", new UsNutrientRegulation("beCPG/databases/nuts/UsNutrientRegulation_2016.csv"));
 		regulations.put("US_2013", new UsNutrientRegulation("beCPG/databases/nuts/UsNutrientRegulation_2013_2020.csv"));
-		
+
 		regulations.put("CA", new CanadianNutrientRegulation("beCPG/databases/nuts/CanadianNutrientRegulation_2017.csv"));
 		regulations.put("CA_2013", new CanadianNutrientRegulation2013("beCPG/databases/nuts/CanadianNutrientRegulation_2013_2022.csv"));
-		
+
 		regulations.put("CN", new ChineseNutrientRegulation("beCPG/databases/nuts/ChineseNutrientRegulation.csv"));
 		regulations.put("AU", new AustralianNutrientRegulation("beCPG/databases/nuts/AUNutrientRegulation.csv"));
 	}
-	
 
 	public static Double extractValuePerServing(String roundedValue, Locale locale) {
 		return extractValuePerServing(roundedValue, getLocalKey(locale));
@@ -72,13 +71,13 @@ public class NutrientFormulationHelper {
 	public static Double extractValue(String roundedValue, Locale locale) {
 		return extractValue(roundedValue, getLocalKey(locale));
 	}
-	
+
 	public static Double extractValuePerServing(String roundedValue, String key) {
-		return extractValueByKey(roundedValue, KEY_VALUE_PER_SERVING, key );
+		return extractValueByKey(roundedValue, KEY_VALUE_PER_SERVING, key);
 	}
-	
+
 	public static Double extractValuePerContainer(String roundedValue, String key) {
-		return extractValueByKey(roundedValue, KEY_VALUE_PER_CONTAINER, key );
+		return extractValueByKey(roundedValue, KEY_VALUE_PER_CONTAINER, key);
 	}
 
 	public static Double extractMini(String roundedValue, String key) {
@@ -90,13 +89,13 @@ public class NutrientFormulationHelper {
 	}
 
 	public static Double extractValue(String roundedValue, String key) {
-		return extractValueByKey(roundedValue, KEY_VALUE,key);
+		return extractValueByKey(roundedValue, KEY_VALUE, key);
 	}
 
 	public static Double extractGDAPerc(String roundedValue, String key) {
-		return extractValueByKey(roundedValue, KEY_GDA_PERC,key);
+		return extractValueByKey(roundedValue, KEY_GDA_PERC, key);
 	}
-	
+
 	private static Double extractValueByKey(String roundedValue, String item, String key) {
 
 		JSONObject jsonRound;
@@ -117,12 +116,11 @@ public class NutrientFormulationHelper {
 	}
 
 	private static String getLocalKey(Locale locale) {
-		if (locale.getCountry().equals("US") || 
-				locale.getCountry().equals("CA")) {
+		if (locale.getCountry().equals("US") || locale.getCountry().equals("CA")) {
 			return locale.getCountry();
-		} else if(locale.getLanguage().equals("zh")){
+		} else if (locale.getLanguage().equals("zh")) {
 			return "CN";
-		} else if(locale.getCountry().equals("AU") ||locale.getCountry().equals("NZ")){
+		} else if (locale.getCountry().equals("AU") || locale.getCountry().equals("NZ")) {
 			return "AU";
 		}
 		return "EU";
@@ -134,83 +132,81 @@ public class NutrientFormulationHelper {
 			String nutCode = nutListElt.attributeValue(ATTR_NUT_CODE);
 			String nutListValue = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_VALUE.getLocalName());
 			String nutListValuePerServing = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_VALUE_PER_SERVING.getLocalName());
-			Element reportLocales = (Element)nutListElt.selectSingleNode("nutListNut/nut/reportLocales");
+			Element reportLocales = (Element) nutListElt.selectSingleNode("nutListNut/nut/reportLocales");
 			try {
 				JSONObject jsonRound = new JSONObject(roundedValue);
-				
+
 				for (String locKey : getAvailableRegulations()) {
 					NutrientRegulation regulation = getRegulation(locKey);
 					NutrientDefinition def = regulation.getNutrientDefinition(nutCode);
-					
+
 					String suffix = "";
 					if (!locKey.equals(localKey)) {
 						suffix = "_" + locKey;
 					}
-					
+
 					if (def != null) {
-						if( def.getSort()!=null) {
+						if (def.getSort() != null) {
 							nutListElt.addAttribute("regulSort" + suffix, "" + def.getSort());
 						}
-						if(def.getDepthLevel()!=null) {
+						if (def.getDepthLevel() != null) {
 							nutListElt.addAttribute("regulDepthLevel" + suffix, "" + def.getDepthLevel());
 						}
 						boolean display = true;
-						if(reportLocales != null && reportLocales.getText() != null && reportLocales.getText() != ""){
+						if ((reportLocales != null) && (reportLocales.getText() != null) && (reportLocales.getText() != "")) {
 							display = false;
-							for (String reportLocale : reportLocales.getText().split(",")){
-								if(reportLocale != null && locale != null && reportLocale.trim().equals(locale.toString())){
+							for (String reportLocale : reportLocales.getText().split(",")) {
+								if ((reportLocale != null) && (locale != null) && reportLocale.trim().equals(locale.toString())) {
 									display = true;
 									break;
 								}
 							}
 						}
-						if(display){
-							if(Boolean.TRUE.equals(def.getMandatory())) {
+						if (display) {
+							if (Boolean.TRUE.equals(def.getMandatory())) {
 								nutListElt.addAttribute("regulDisplayMode" + suffix, "M");
-							} else  if(Boolean.TRUE.equals(def.getOptional())) {
+							} else if (Boolean.TRUE.equals(def.getOptional())) {
 								nutListElt.addAttribute("regulDisplayMode" + suffix, "O");
 							}
 						}
-						if(def.getBold()!=null) {
+						if (def.getBold() != null) {
 							nutListElt.addAttribute("regulBold" + suffix, "" + def.getBold());
 						}
-						if(def.getGda()!=null) {
+						if (def.getGda() != null) {
 							nutListElt.addAttribute("regulGDA" + suffix, "" + def.getGda());
 						}
-						if( def.getUl()!=null) {
+						if (def.getUl() != null) {
 							nutListElt.addAttribute("regulUL" + suffix, "" + def.getUl());
 						}
-						if( def.getUnit()!=null) {
+						if (def.getUnit() != null) {
 							nutListElt.addAttribute("regulUnit" + suffix, "" + def.getUnit());
 						}
-						if( def.getShowGDAPerc()!=null) {
+						if (def.getShowGDAPerc() != null) {
 							nutListElt.addAttribute("regulShowGDAPerc" + suffix, "" + def.getShowGDAPerc());
 						}
 					}
-					
+
 					for (Iterator<?> i = jsonRound.keys(); i.hasNext();) {
 						String valueKey = (String) i.next();
 						JSONObject value = (JSONObject) jsonRound.get(valueKey);
-						if(value.has(locKey)){
+						if (value.has(locKey)) {
 							nutListElt.addAttribute("rounded" + keyToXml(valueKey) + suffix, "" + value.get(locKey));
 						}
 					}
 
-					if(nutListValue != null && nutListValue != ""){
-						nutListElt.addAttribute("roundedDisplayValue" + suffix , 
-								NutrientFormulationHelper.displayValue(Double.parseDouble(nutListValue), 
-										extractValue(roundedValue, locKey), nutCode, locale, locKey));
-						
-						if(locKey.equals("US") || locKey.equals("US_2013")){
-							nutListElt.addAttribute("roundedDisplayValuePerContainer" + suffix , 
-									NutrientFormulationHelper.displayValue(extractValuePerContainer(roundedValue, locKey), 
+					if ((nutListValue != null) && (nutListValue != "")) {
+						nutListElt.addAttribute("roundedDisplayValue" + suffix, NutrientFormulationHelper
+								.displayValue(Double.parseDouble(nutListValue), extractValue(roundedValue, locKey), nutCode, locale, locKey));
+
+						if (locKey.equals("US") || locKey.equals("US_2013")) {
+							nutListElt.addAttribute("roundedDisplayValuePerContainer" + suffix,
+									NutrientFormulationHelper.displayValue(extractValuePerContainer(roundedValue, locKey),
 											extractValuePerContainer(roundedValue, locKey), nutCode, locale, locKey));
 						}
 					}
-					if(nutListValuePerServing != null && nutListValuePerServing != ""){
-						nutListElt.addAttribute("roundedDisplayValuePerServing" + suffix , 
-								NutrientFormulationHelper.displayValue(Double.parseDouble(nutListValuePerServing), 
-										extractValuePerServing(roundedValue, locKey), nutCode, locale, locKey));
+					if ((nutListValuePerServing != null) && (nutListValuePerServing != "")) {
+						nutListElt.addAttribute("roundedDisplayValuePerServing" + suffix, NutrientFormulationHelper.displayValue(
+								Double.parseDouble(nutListValuePerServing), extractValuePerServing(roundedValue, locKey), nutCode, locale, locKey));
 					}
 				}
 			} catch (JSONException e) {
@@ -220,11 +216,11 @@ public class NutrientFormulationHelper {
 	}
 
 	private static Double parseDouble(Object vps) {
-		if(vps instanceof Integer) {
+		if (vps instanceof Integer) {
 			return ((Integer) vps).doubleValue();
-		} else if(vps instanceof Long) {
+		} else if (vps instanceof Long) {
 			return ((Long) vps).doubleValue();
-		} else if(vps instanceof Number) {
+		} else if (vps instanceof Number) {
 			return ((Number) vps).doubleValue();
 		}
 		return (Double) vps;
@@ -234,6 +230,8 @@ public class NutrientFormulationHelper {
 		switch (abrv) {
 		case KEY_SECONDARY_VALUE:
 			return "SecondaryValue";
+		case KEY_SECONDARY_VALUE_PER_SERVING:
+			return "SecondaryValuePerServing";
 		case KEY_MINI:
 			return "Mini";
 		case KEY_MAXI:
@@ -277,55 +275,63 @@ public class NutrientFormulationHelper {
 
 			JSONObject value = new JSONObject();
 			JSONObject secondaryValue = new JSONObject();
-			
+			JSONObject secondaryValuePerServing = new JSONObject();
+
 			JSONObject mini = new JSONObject();
 			JSONObject maxi = new JSONObject();
 			JSONObject valuePerServing = new JSONObject();
 			JSONObject gda = new JSONObject();
 			JSONObject valuePerContainer = new JSONObject();
 			JSONObject gdaPerContainer = new JSONObject();
-			
+
 			for (String key : getAvailableRegulations()) {
 				String nutUnit = n.getUnit();
-				
+
 				NutrientRegulation regulation = getRegulation(key);
 				NutrientDefinition def = regulation.getNutrientDefinition(nutCode);
 
 				value.put(key, regulation.round(n.getValue(), nutCode, nutUnit));
 				mini.put(key, regulation.round(n.getMini(), nutCode, nutUnit));
 				maxi.put(key, regulation.round(n.getMaxi(), nutCode, nutUnit));
-				
-				if(n.getValuePerServing() != null){
+
+				if (n.getValuePerServing() != null) {
 					Double vps = regulation.round(n.getValuePerServing(), nutCode, nutUnit);
-					valuePerServing.put(key,vps);
-					if(def!=null &&  def.getGda()!=null &&  def.getGda()!=0) {
-						gda.put(key, regulation.roundGDA(100 * vps / def.getGda(), nutCode));
+					valuePerServing.put(key, vps);
+					if ((def != null) && (def.getGda() != null) && (def.getGda() != 0)) {
+						gda.put(key, regulation.roundGDA((100 * vps) / def.getGda(), nutCode));
 					}
 				}
-				
-				if(formulatedProduct.getSecondaryYield()!=null && formulatedProduct.getSecondaryYield()!=0d) {
+
+				if ((formulatedProduct.getSecondaryYield() != null) && (formulatedProduct.getSecondaryYield() != 0d)) {
 					Double tmp = n.getValue();
-					if(tmp!=null) {
-						if(formulatedProduct.getYield()!=null && formulatedProduct.getYield()!=0d) {
-							tmp = tmp*(formulatedProduct.getYield()/100d);
+					if (tmp != null) {
+						if ((formulatedProduct.getYield() != null) && (formulatedProduct.getYield() != 0d)) {
+							tmp = tmp * (formulatedProduct.getYield() / 100d);
 						}
-						tmp = tmp / (formulatedProduct.getSecondaryYield()/100d);
+						tmp = tmp / (formulatedProduct.getSecondaryYield() / 100d);
+
+						secondaryValue.put(key, regulation.round(tmp, nutCode, nutUnit));
+
+						if (formulatedProduct.getServingSize() != null) {
+							Double tmpPerServing = tmp * (formulatedProduct.getServingSize() / 100d);
+							secondaryValuePerServing.put(key, regulation.round(tmpPerServing, nutCode, nutUnit));
+						}
 					}
-					secondaryValue.put(key, regulation.round(tmp, nutCode, nutUnit));
 				}
-				
+
 				Double containerQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct, 0d);
-				if((key.equals("US") || key.equals("US_2013")) && n.getValue() != null){
+				if ((key.equals("US") || key.equals("US_2013")) && (n.getValue() != null)) {
 					Double vpc = regulation.round(n.getValue() * containerQty * 10, nutCode, nutUnit);
 					valuePerContainer.put(key, vpc);
-					if(def!=null &&  def.getGda()!=null &&  def.getGda()!=0) {
-						gdaPerContainer.put(key, regulation.roundGDA(100 * vpc / def.getGda(), nutCode));
+					if ((def != null) && (def.getGda() != null) && (def.getGda() != 0)) {
+						gdaPerContainer.put(key, regulation.roundGDA((100 * vpc) / def.getGda(), nutCode));
 					}
 				}
 			}
-			
+
 			jsonRound.put(KEY_VALUE, value);
 			jsonRound.put(KEY_SECONDARY_VALUE, secondaryValue);
+			jsonRound.put(KEY_SECONDARY_VALUE_PER_SERVING, secondaryValuePerServing);
 			jsonRound.put(KEY_MINI, mini);
 			jsonRound.put(KEY_MAXI, maxi);
 			jsonRound.put(KEY_VALUE_PER_SERVING, valuePerServing);
@@ -338,10 +344,9 @@ public class NutrientFormulationHelper {
 		}
 		n.setRoundedValue(jsonRound.toString());
 	}
-	
 
 	private static List<String> getAvailableRegulations() {
-		
+
 		List<String> ret = new LinkedList<>();
 		if (MLTextHelper.isSupportedLocale(Locale.US)) {
 			ret.add("US");
@@ -375,34 +380,33 @@ public class NutrientFormulationHelper {
 	}
 
 	public static String displayValue(Double value, Double roundedValue, String nutCode, Locale locale) {
-		if(value == null){
+		if (value == null) {
 			return null;
 		}
 		return getRegulation(getLocalKey(locale)).displayValue(value, roundedValue, nutCode, locale);
 	}
-	
+
 	public static String displayValue(Double value, Double roundedValue, String nutCode, Locale locale, String regulation) {
-		if(value == null){
+		if (value == null) {
 			return null;
 		}
 		return getRegulation(regulation).displayValue(value, roundedValue, nutCode, locale);
 	}
-	
+
 	public static Double roundGDA(Double value, String nutCode, Locale locale) {
-		if(value == null){
+		if (value == null) {
 			return null;
 		}
 		return getRegulation(getLocalKey(locale)).roundGDA(value, nutCode);
 	}
 
 	private static NutrientRegulation getRegulation(String key) {
-		
-		if(regulations.containsKey(key)) {
+
+		if (regulations.containsKey(key)) {
 			return regulations.get(key);
 		}
-		
+
 		return regulations.get("EU");
 	}
-
 
 }

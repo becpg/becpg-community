@@ -459,18 +459,59 @@
 								var metadata = oRecord.getData("metadata");
 
 								var desc = '<span class="itemname ' + (metadata ? (' ' + metadata) : '') + '"><a href="' + url
-										+ '" class="theme-color-1">' + $html(displayName) + '</a>';
+										+ '" class="theme-color-1">' + $html(displayName)
+										
+										
+								if(oRecord.getData("itemData")!=null &&  oRecord.getData("itemData")["prop_bcpg_productState"]!=null
+										&&  oRecord.getData("itemData")["prop_bcpg_productState"].value!=null){
+									desc += '&nbsp;<span class="product-state entity-'+oRecord.getData("itemData")["prop_bcpg_productState"].value+'">['
+										+oRecord.getData("itemData")["prop_bcpg_productState"].displayValue+']</span>';
+								}
+										
+										
+								desc += '</a>';
 								// add title (if any) to displayname area
 								var title = oRecord.getData("title");
 								if (title && title !== displayName) {
-									desc += '<span class="title">(' + $html(title) + ')</span>';
+									desc += '&nbsp;<span class="title">(' + $html(title) + ')</span>';
 								}
+
 								desc += '</span>';
+								
+								
+								// Nutriscore
+								if(oRecord.getData("itemData")!=null &&  oRecord.getData("itemData")["prop_bcpg_nutrientProfilingClass"]!=null
+										&&  oRecord.getData("itemData")["prop_bcpg_nutrientProfilingClass"].value!=null){
+									var nutriScore = oRecord.getData("itemData")["prop_bcpg_nutrientProfilingClass"].value;
+									desc += '<div class="nutriscore"><span class="nutrient-class">'
+							      	if (nutriScore != "" 
+							      	   && (
+							      			 nutriScore == "A"
+							      	       || nutriScore == "B"
+							      	       || nutriScore == "C"
+							      	       || nutriScore == "D"
+							      	       || nutriScore == "E")){
+							      		 desc += '<span class="'+( nutriScore == "A"? 'selected ':'' )+'nutrient-class-a">A</span>';
+								         desc += '<span class="'+( nutriScore == "B"? 'selected ':'' )+'nutrient-class-b">B</span>';
+								         desc += '<span class="'+( nutriScore == "C"? 'selected ':'' )+'nutrient-class-c">C</span>';
+								         desc += '<span class="'+( nutriScore == "D"? 'selected ':'' )+'nutrient-class-d">D</span>';
+								         desc += '<span class="'+( nutriScore == "E"? 'selected ':'' )+'nutrient-class-e">E</span>';
+							      	}
+									desc += '</span></div>';
+								} 
+								
 
 								// description (if any)
 								var txt = oRecord.getData("description");
 								if (txt) {
-									desc += '<div class="details meta">' + $html(txt) + '</div>';
+									desc += '<div class="details meta ">';
+									
+									if(txt.length>200){
+										desc += $html(txt.substring(0,200).trim())+"...";
+									}  else {
+										desc += $html(txt);
+									}
+									desc +='</div>';
 								}
 
 								// detailed information, includes site etc. type
@@ -518,29 +559,33 @@
 								if (itemData != null) {
 
 									for (key in itemData) {
-										var item = itemData[key];
-										var propName = key + (item.type == 'subtype' ? "_added" : "");
-
-										if (item.displayValue != null && item.displayValue.length > 0) {
-											desc += '<div class="details">' + $html(item.label) + ': ';
-											desc += '<span id="' + me.id + '|' + $html(propName) + '|' + $html(item.value) + '|' + $html(itemType)
-													+ '" class="searchByProp" ><a class="search-prop" href="#">' + $html(item.displayValue)
-													+ '</a></span>';
-											desc += '</div>';
-										} else if (item.length > 0) {
-											for (jj in item) {
-												if (jj == 0) {
-													desc += '<div class="details">' + $html(item[jj].label) + ': ';
-												} else {
-													desc += ",&nbsp;";
+										if(key != "prop_bcpg_productState" && key !="prop_bcpg_nutrientProfilingClass"){
+											
+											var item = itemData[key];
+											var propName = key + (item.type == 'subtype' ? "_added" : "");
+	
+											if (item.displayValue != null && item.displayValue.length > 0) {
+												desc += '<div class="details">' + $html(item.label) + ': ';
+												
+													desc += '<span id="' + me.id + '|' + $html(propName) + '|' + $html(item.value) + '|' + $html(itemType)
+															+ '" class="searchByProp" ><a class="search-prop" href="#">' + $html(item.displayValue)
+															+ '</a></span>';
+												desc += '</div>';
+											} else if (item.length > 0) {
+												for (jj in item) {
+													if (jj == 0) {
+														desc += '<div class="details">' + $html(item[jj].label) + ': ';
+													} else {
+														desc += ",&nbsp;";
+													}
+													desc += '<span id="' + me.id + '|' + $html(propName) + '|' + $html(item[jj].value) + '|'
+															+ $html(itemType) + '" class="searchByProp" ><a class="search-prop" href="#">'
+															+ $html(item[jj].displayValue) + '</a></span>';
+	
 												}
-												desc += '<span id="' + me.id + '|' + $html(propName) + '|' + $html(item[jj].value) + '|'
-														+ $html(itemType) + '" class="searchByProp" ><a class="search-prop" href="#">'
-														+ $html(item[jj].displayValue) + '</a></span>';
-
+												desc += '</div>';
+	
 											}
-											desc += '</div>';
-
 										}
 									}
 
