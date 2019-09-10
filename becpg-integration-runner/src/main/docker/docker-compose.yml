@@ -5,7 +5,7 @@ volumes:
   becpg_data:
 services:
   becpg:
-    image: ${docker.becpg.url}/becpg-test:${project.version}
+    image: ${docker.becpg.url}/becpg-${becpg.dockerbuild.name}:${project.version}
     environment:
       CATALINA_OPTS: -Xmx4G -Duser.language=fr -Duser.country=FR -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:8888
       JAVA_HOME: /usr/java/dcevm-11.0.1+8

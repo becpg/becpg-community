@@ -21,7 +21,7 @@ else
 fi
 
 start() {
-    docker-compose -f $COMPOSE_FILE_PATH up -d
+   	 	docker-compose -f $COMPOSE_FILE_PATH up -d
 }
 
 down() {
@@ -58,7 +58,13 @@ purge() {
 }
 
 build() {
-    $MVN_EXEC clean package $EXTRA_ENV -DskipTests=true -P build
+   if [ -d becpg-enterprise ]; then
+    cd becpg-enterprise
+   	 $MVN_EXEC clean package $EXTRA_ENV -DskipTests=true  -Dbecpg.dockerbuild.name="enterprise-test"
+    cd ..
+   else
+   	 $MVN_EXEC clean package $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="test"
+   fi 
 }
 
 install() {
