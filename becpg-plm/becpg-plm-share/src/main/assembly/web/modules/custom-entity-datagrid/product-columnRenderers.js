@@ -60,8 +60,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 			
 			if(label == "mpm:rplResourceRef"){
 			    if (oColumn.hidden) {
-                    scope.widgets.dataTable.showColumn(oColumn);
-                    Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
+			    	oColumn.showAfterRender = true;
                 }
 			}
 			
@@ -563,11 +562,12 @@ if (beCPG.module.EntityDataGridRenderers) {
         propertyName : "bcpg:lrLocales",
         renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
         	if (data.value != null) {
-				Dom.setStyle(elCell, "width", "16px");
-				Dom.setStyle(elCell.parentNode, "width", "16px");
+        		
 				if (oColumn.hidden) {
-					scope.widgets.dataTable.showColumn(oColumn);
-					Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
+					oColumn.showAfterRender = true;
+				}
+				if(oColumn.label == "" ){
+					oColumn.showAfterRenderSize = 16;
 				}
 				
 				var country = data.value[0];
@@ -678,13 +678,12 @@ if (beCPG.module.EntityDataGridRenderers) {
 			var variants = data.value, isInDefault = !variants || variants.length < 1;
 
 			if (data.value != null && data.value.length > 0) {
-				if(oColumn.label == ""){
-					Dom.setStyle(elCell, "width", "16px");
-					Dom.setStyle(elCell.parentNode, "width", "16px");
-				}
+				
 				if (oColumn.hidden) {
-					scope.widgets.dataTable.showColumn(oColumn);
-					Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
+					oColumn.showAfterRender = true;
+				}
+				if(oColumn.label == "" ){
+					oColumn.showAfterRenderSize = 16;
 				}
 			}
 
@@ -723,11 +722,9 @@ if (beCPG.module.EntityDataGridRenderers) {
 			
 			if(scope.options.extraDataParams!=null && scope.options.extraDataParams.indexOf("effectiveFilterOn="+(!oColumn.hidden))>0){
 				if (oColumn.hidden) {
-					Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
-					scope.widgets.dataTable.showColumn(oColumn);
+					oColumn.showAfterRender = true;
 				} else {
-					Dom.addClass(elCell.parentNode, "yui-dt-hidden");
-					scope.widgets.dataTable.hideColumn(oColumn);
+					oColumn.hideAfterRender = true;
 				}
 			}
 			
@@ -770,11 +767,11 @@ if (beCPG.module.EntityDataGridRenderers) {
 		propertyName : "pack:labelingPosition",
 		renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
 			if (data.value != null) {
-				Dom.setStyle(elCell, "width", "16px");
-				Dom.setStyle(elCell.parentNode, "width", "16px");
 				if (oColumn.hidden) {
-					scope.widgets.dataTable.showColumn(oColumn);
-					Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
+					oColumn.showAfterRender = true;
+				}
+				if(oColumn.label == "" ){
+					oColumn.showAfterRenderSize = 16;
 				}
 				return "<span title=\"" + data.displayValue + "\" class='labeling-aspect'>&nbsp;</span>";
 			}
@@ -842,12 +839,12 @@ if (beCPG.module.EntityDataGridRenderers) {
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 	    propertyName : "boolean_bcpg:lrIsActive",
 	    renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
-	    	Dom.setStyle(elCell, "width", "16px");
-	        Dom.setStyle(elCell.parentNode, "width", "16px");    
 	    	if (oColumn.hidden) {
-                    scope.widgets.dataTable.showColumn(oColumn);
-                    Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
+	    		oColumn.showAfterRender = true;
             }
+	    	if(oColumn.label == "" ){
+	    		oColumn.showAfterRenderSize = 16;
+			}
 	        if(data.value){
 	            return "<span  class='rule-enabled'>&nbsp;</span>";
 	        } 
@@ -980,11 +977,12 @@ if (beCPG.module.EntityDataGridRenderers) {
       renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
          if(data.value != null && data.value.length>0){
         	if(oColumn.label == ""){
-        		Dom.setStyle(elCell, "width", "16px");
-				Dom.setStyle(elCell.parentNode, "width", "16px");
+        		
         		if (oColumn.hidden) {
-						scope.widgets.dataTable.showColumn(oColumn);
-						Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
+        			oColumn.showAfterRender = true;
+				}
+        		if(oColumn.label == ""){
+        			oColumn.showAfterRenderSize = 16;
 				}
 				
 				return "<span title=\"" + data.displayValue.replace(/&nbsp;/gi," ")
