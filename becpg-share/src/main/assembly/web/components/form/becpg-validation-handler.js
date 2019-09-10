@@ -123,7 +123,7 @@
 		   			
 		   			var  match = (args[i].condition == field.value);
 		   			
-		   			if(args[i].condition.indexOf("|")>0){
+		   			if(args[i].condition.indexOf("|") != -1){
 		   				var conds = args[i].condition.split("|");
 		   				for(var j in conds){
 		   					if(conds[j] == field.value){
