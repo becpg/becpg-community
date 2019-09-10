@@ -49,11 +49,10 @@ if (beCPG.module.EntityDataGridRenderers) {
                     	 }
                     	 
                         if (oColumn.hidden) {
-                           scope.widgets.dataTable.showColumn(oColumn);
-                           Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
+                        	oColumn.showAfterRender = true;
+                        	oColumn.showAfterRenderSize = 32;
                         }
-                        Dom.setStyle(elCell, "width", "32px");
-                        Dom.setStyle(elCell.parentNode, "width", "32px");
+
                         return '<div class="onActionShowComments"><a class="' + scope.id + '-action-link action-link" title="' + scope
                               .msg("actions.comment") + '" href="" rel="edit"><span>' + data.displayValue + '</span></a></div>';
 
