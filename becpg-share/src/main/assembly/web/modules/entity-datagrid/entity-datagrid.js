@@ -1592,6 +1592,7 @@
 	                                // Change when dynamic sort
 	
 	                                var oSortedBy = this.get("sortedBy") || {};
+	                                var bSorted = (oSortedBy.key === oColumn.key) ? true : false;
 	
 	                                // Is there a custom sort handler function
 	                                // defined?
