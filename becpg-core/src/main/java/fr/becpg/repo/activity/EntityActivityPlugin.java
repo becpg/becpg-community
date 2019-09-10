@@ -7,6 +7,8 @@ public interface EntityActivityPlugin {
 	boolean isMatchingStateProperty(QName propName);
 
 	boolean isMatchingEntityType(QName entityName);
+
+	boolean isIgnoreStateProperty(QName propName);
 	
 	
 }

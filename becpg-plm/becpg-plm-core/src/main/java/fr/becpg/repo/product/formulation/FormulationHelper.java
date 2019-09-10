@@ -384,7 +384,7 @@ public class FormulationHelper {
 		return getNetVolume(qty, compoListDataItem, subProductData);
 	}
 
-	public static Double calculateValue(Double totalValue, Double qtyUsed, Double value, Double netWeight, String unit) {
+	public static Double calculateValue(Double totalValue, Double qtyUsed, Double value, Double netWeight) {
 
 		if ((totalValue == null) && (value == null)) {
 			return null;
@@ -396,16 +396,12 @@ public class FormulationHelper {
 		if ((netWeight != null) && (netWeight != 0d)) {
 			value = value / netWeight;
 		}
-
-		totalValue += value;
-		if ((unit != null) && (unit.equals("%") || unit.equals("Perc"))) {
-			if (totalValue > 100d) {
-				totalValue = 100d;
-			}
-		}
-		return totalValue;
+	
+		return totalValue + value;
 	}
 
+
+	
 	public static BigDecimal getTareInKg(CompoListDataItem compoList, ProductData subProduct) {
 
 		ProductUnit compoListUnit = compoList.getCompoListUnit();
@@ -569,5 +565,14 @@ public class FormulationHelper {
 			return compoListDataItem.getLossPerc();
 		}
 		return componentProduct.getComponentLossPerc()!= null ?componentProduct.getComponentLossPerc():0d;
+	}
+
+	public static Double flatPercValue(Double formulatedValue, String unit) {
+		if ((unit != null) && (unit.equals("%") || unit.equals("Perc"))) {
+			if (formulatedValue > 100d) {
+				return 100d;
+			}
+		}
+		return formulatedValue;
 	}
 }
