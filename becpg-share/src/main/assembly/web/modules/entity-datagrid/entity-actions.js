@@ -640,7 +640,7 @@
 			            	
 			            	setTimeout(function(){
 			            		YAHOO.Bubbling.fire(me.scopeId + "scopedActiveDataListChanged", 
-			            	    		{extraDataParams : "&clearCache=true"}
+			            	    		{clearCache :true}
 			            	    );
 			            	}, 1000);
 			            	
