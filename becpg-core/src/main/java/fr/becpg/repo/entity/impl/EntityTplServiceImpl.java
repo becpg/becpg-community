@@ -569,7 +569,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 			try {
 				((RuleService) ruleService).disableRules(entityNodeRef);
 				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-
+				//Desactivate for all the transaction (do not reactivate it)
 				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
 				
 				for (EntityTplPlugin entityTplPlugin : entityTplPlugins) {
@@ -597,7 +597,6 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 			} finally {
 				((RuleService) ruleService).enableRules(entityNodeRef);
-				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
 				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 			}
 
