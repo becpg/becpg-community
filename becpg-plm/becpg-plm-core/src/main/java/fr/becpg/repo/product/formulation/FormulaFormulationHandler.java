@@ -325,14 +325,14 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 				compositeList.add(subDataListItem);
 				qtyList.add(subDataListItem.getQty());
 				lossPercList.add(subDataListItem.getLossPerc());
-				
+
 				if (FormulationHelper.getNetWeight(subProductData, FormulationHelper.DEFAULT_NET_WEIGHT) != 0) {
 					subDataListItem.setQty((dataListItem.getQty() * subDataListItem.getQty())
 							/ FormulationHelper.getNetWeight(subProductData, FormulationHelper.DEFAULT_NET_WEIGHT));
 				}
-				
-				subDataListItem.setLossPerc(((1 + (dataListItem.getLossPerc()!=null ? dataListItem.getLossPerc():0)/100) 
-						* (1 + (subDataListItem.getLossPerc()!=null ? subDataListItem.getLossPerc():0)/100)-1)*100);
+
+				subDataListItem.setLossPerc((((1 + ((dataListItem.getLossPerc() != null ? dataListItem.getLossPerc() : 0) / 100))
+						* (1 + ((subDataListItem.getLossPerc() != null ? subDataListItem.getLossPerc() : 0) / 100))) - 1) * 100);
 			}
 		} else if (subProductData instanceof PackagingKitData) {
 
@@ -343,13 +343,13 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 				compositeList.add(subDataListItem);
 				qtyList.add(subDataListItem.getQty());
 				lossPercList.add(subDataListItem.getLossPerc());
-				
-				if(!PLMModel.TYPE_PACKAGINGKIT.equals(nodeService.getType(subDataListItem.getComponent()))) {
+
+				if (!PLMModel.TYPE_PACKAGINGKIT.equals(nodeService.getType(subDataListItem.getComponent()))) {
 					if ((variantPackagingData != null) && (subDataListItem.getQty() != null)) {
 						if (PackagingLevel.Secondary.equals(subDataListItem.getPkgLevel()) && (variantPackagingData.getProductPerBoxes() != null)) {
 							subDataListItem.setQty(subDataListItem.getQty() / variantPackagingData.getProductPerBoxes());
 						}
-	
+
 						if (PackagingLevel.Tertiary.equals(subDataListItem.getPkgLevel()) && (variantPackagingData.getProductPerPallet() != null)) {
 							subDataListItem.setQty(subDataListItem.getQty() / variantPackagingData.getProductPerPallet());
 						}
@@ -357,17 +357,17 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 				}
 
 				if ((dataListItem instanceof PackagingListDataItem) && (((PackagingListDataItem) dataListItem).getPackagingListUnit() != null)
-						&& !ProductUnit.PP.equals(((PackagingListDataItem) dataListItem).getPackagingListUnit())
-						&& (dataListItem.getQty() != null) && (subDataListItem.getQty() != null)) {
+						&& !ProductUnit.PP.equals(((PackagingListDataItem) dataListItem).getPackagingListUnit()) && (dataListItem.getQty() != null)
+						&& (subDataListItem.getQty() != null)) {
 
 					subDataListItem.setQty(dataListItem.getQty() * subDataListItem.getQty());
 				}
-				
-				subDataListItem.setLossPerc(((1 + (dataListItem.getLossPerc()!=null ? dataListItem.getLossPerc():0)/100) 
-						* (1 + (subDataListItem.getLossPerc()!=null ? subDataListItem.getLossPerc():0)/100)-1)*100);
+
+				subDataListItem.setLossPerc((((1 + ((dataListItem.getLossPerc() != null ? dataListItem.getLossPerc() : 0) / 100))
+						* (1 + ((subDataListItem.getLossPerc() != null ? subDataListItem.getLossPerc() : 0) / 100))) - 1) * 100);
 			}
 		}
-		for (int i=0 ; i<compositeList.size() ; i++) {
+		for (int i = 0; i < compositeList.size(); i++) {
 			CompositionDataItem composite = compositeList.get(i);
 			try {
 				JSONObject subObject = new JSONObject();
@@ -415,7 +415,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 	}
 
 	protected void copyTemplateDynamicCharactList(List<DynamicCharactListItem> sourceList, List<DynamicCharactListItem> targetList) {
-		
+
 		for (DynamicCharactListItem sourceItem : sourceList) {
 			if (sourceItem.getTitle() != null) {
 				if (sourceItem.isSynchronisable()) {
@@ -427,9 +427,10 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 						}
 						// update formula
 						if (sourceItem.getName().equals(targetItem.getName())) {
-							
+
 							targetItem.setName(sourceItem.getName());
 							targetItem.setTitle(sourceItem.getTitle());
+							targetItem.setSort(sourceItem.getSort());
 							if ((targetItem.getIsManual() == null) || !targetItem.getIsManual()) {
 								targetItem.setFormula(sourceItem.getFormula());
 								targetItem.setColumnName(sourceItem.getColumnName());
@@ -443,7 +444,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 							break;
 						}
 					}
-					
+
 					if (!isFound) {
 						sourceItem.setNodeRef(null);
 						sourceItem.setParentNodeRef(null);
@@ -457,5 +458,18 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 				}
 			}
 		}
+
+		targetList.sort((o1, o2) -> {
+			if ((o1.getSort() == null) && (o2.getSort() == null)) {
+				return 0;
+			}
+			if ((o1.getSort() == null) && (o2.getSort() != null)) {
+				return -1;
+			}
+			if ((o2.getSort() == null) && (o1.getSort() != null)) {
+				return 1;
+			}
+			return o1.getSort().compareTo(o2.getSort());
+		});
 	}
 }
