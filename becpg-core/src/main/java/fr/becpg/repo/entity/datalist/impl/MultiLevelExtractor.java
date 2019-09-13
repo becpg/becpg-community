@@ -122,6 +122,7 @@ public class MultiLevelExtractor extends SimpleExtractor {
 		Map<String, Object> props = new HashMap<>();
 		props.put(PROP_ROOT_ENTITYNODEREF, dataListFilter.getEntityNodeRef());
 		props.put(PROP_PATH, "");
+		
 		appendNextLevel(ret, metadataFields, listData, 0, startIndex, pageSize, props, dataListFilter);
 
 		ret.setFullListSize(listData.getSize());
@@ -163,7 +164,7 @@ public class MultiLevelExtractor extends SimpleExtractor {
 				if (!itemType.equals(dataListFilter.getDataType())) {
 					props.put(PROP_ACCESSRIGHT, false);
 				} else {
-					props.put(PROP_ACCESSRIGHT, true);// TODO
+					props.put(PROP_ACCESSRIGHT, dataListFilter.hasWriteAccess());
 				}
 
 				if (ret.getComputedFields() == null) {
