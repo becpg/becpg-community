@@ -373,6 +373,12 @@
 
 		<type name="pjt:taskLegend">
 			<parent>bcpg:entityListItem</parent>
+			<properties>
+				<property name="pjt:taskLegendSites">
+					<type>d:text</type>
+				</property>
+			
+			</properties>
 			<mandatory-aspects>
 				<aspect>bcpg:colorAspect</aspect>
 			</mandatory-aspects>
