@@ -508,8 +508,7 @@
                         if (isTask) {
                            if (!this.options.simpleView) {
                               desc += '<h3 class="filename">';
-                              desc += this.getTaskTitle(record, record.itemData["dt_pjt_project"].nodeRef, null,
-                                    true);
+                              desc += this.getTaskTitle(record, record.itemData["dt_pjt_project"].nodeRef);
                               desc += '</h3>';
                            } else {
                               desc += '<h3 class="filename simple-view">' + this.getTaskTitle(record,
