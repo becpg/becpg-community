@@ -44,6 +44,14 @@ public interface SecurityService {
 	int computeAccessMode(QName nodeType, String name);
 	
 	/**
+	 * Compute access mode for the given field name on a specific type
+	 * @param nodeType
+	 * @param name
+	 * @return Access Mode status
+	 */
+	int computeAccessMode(QName nodeType, QName name);
+	
+	/**
 	 * Refresh ACLS cache per tenant
 	 */
 	void refreshAcls();
