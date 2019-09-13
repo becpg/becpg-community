@@ -28,6 +28,7 @@
 				<list>
 					<value>read</value>
 					<value>write</value>
+					<value>readandwrite</value>
 				</list>
 			</parameter>
 		</constraint>
