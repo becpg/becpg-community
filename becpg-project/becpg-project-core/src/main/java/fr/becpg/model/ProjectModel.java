@@ -76,6 +76,8 @@ public interface ProjectModel {
 	QName ASSOC_PARENT_PROJECT = QName.createQName(PROJECT_URI, "parentProjectRef");
 	QName PROP_TL_MANUAL_DATE = QName.createQName(PROJECT_URI, "tlManualDate");
 	
+	QName PROP_TASK_LEGEND_SITES = QName.createQName(PROJECT_URI, "taskLegendSites");
+	
 
 	QName ASSOC_TL_RESOURCE_COST = QName.createQName(PROJECT_URI, "tlResourceCost");
 		
