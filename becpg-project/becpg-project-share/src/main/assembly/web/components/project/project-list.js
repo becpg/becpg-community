@@ -194,17 +194,17 @@ var g; // gantt var
                                                     {
                                                         id : data[i].nodeRef,
                                                         label : data[i].label,
-                                                        color : data[i].color!=null ? data[i].color.toString().replace('#', '') : null,
+                                                        color : data[i].color!=null ? data[i].color.toString().replace('#', '') : "FFBC00",
                                                         nbProjects : data[i].nbProjects
                                                     };
-
-                                                    this.taskLegends.push(taskLegend);
-
-                                                    html += '<span class="task-legend" style="background-color:#' + taskLegend.color + '" ></span><span><a href='+Alfresco.util
-                                                    .siteURL("project-list?view="+
-                                                            this.view+"#filter=filterform|%7B%22prop_pjt_projectState%22%3A%22InProgress%22%2C%22prop_pjt_projectLegends%22%3A%22"
-                                                            +encodeURIComponent(taskLegend.id)+"%22%7D")+">"
-                                                    + taskLegend.label + ' ('+taskLegend.nbProjects +')</a></span>&nbsp;';
+	                                                this.taskLegends.push(taskLegend);
+	
+	                                                html += '<span class="task-legend" style="background-color:#' + taskLegend.color + '" ></span><span><a href='+Alfresco.util
+	                                                    .siteURL("project-list?view="+
+	                                                            this.view+"#filter=filterform|%7B%22prop_pjt_projectState%22%3A%22InProgress%22%2C%22prop_pjt_projectLegends%22%3A%22"
+	                                                            +encodeURIComponent(taskLegend.id)+"%22%7D")+">"
+	                                                    + taskLegend.label + ' ('+taskLegend.nbProjects +')</a></span>&nbsp;';
+                                               
                                                 }
 
                                                 Dom.get(this.id + "-legend").innerHTML = html;
@@ -596,51 +596,13 @@ var g; // gantt var
                          */
                         onDataItemCreated : function EntityDataGrid_onDataItemCreated(layer, args)
                         {
-                            var obj = args[1];
+                        	var obj = args[1], instance = this;
                             if (obj && (obj.nodeRef !== null))
                             {
-
-                                var nodeRef = new Alfresco.util.NodeRef(obj.nodeRef), url = this.options.itemUrl + nodeRef.uri + ((this.options.entityNodeRef != null && this.options.entityNodeRef.length > 0) ? "?entityNodeRef=" + this.options.entityNodeRef + "&"
-                                        : "?") + "itemType=" + encodeURIComponent(this.options.itemType != null ? this.options.itemType
-                                        : this.datalistMeta.itemType) + "&dataListName=" + encodeURIComponent(this.datalistMeta.name != null ? this.datalistMeta.name
-                                        : this.options.list);
-
-                                // Reload the node's metadata
-                                Alfresco.util.Ajax.jsonPost(
-                                {
-                                    url : url,
-                                    dataObj : this._buildDataGridParams(),
-                                    successCallback :
-                                    {
-                                        fn : function EntityDataGrid_onDataItemCreated_refreshSuccess(response)
-                                        {
-
-                                            if (response.json && (response.json.item !== null))
-                                            {
-                                                var item = response.json.item;
-
-                                                YAHOO.Bubbling.fire("changeFilter", filter =
-                                                {
-                                                    filterOwner : "Alfresco.component.AllFilter",
-                                                    filterId : "projects",
-                                                    filterData : item["itemData"]["prop_pjt_projectState"].value
-                                                });
-                                            }
-                                        },
-                                        scope : this
-                                    },
-                                    failureCallback :
-                                    {
-                                        fn : function EntityDataGrid_onDataItemCreated_refreshFailure(response)
-                                        {
-                                            Alfresco.util.PopupManager.displayMessage(
-                                            {
-                                                text : this.msg("message.create.refresh.failure")
-                                            });
-                                        },
-                                        scope : this
-                                    }
-                                });
+                               
+                                window.location = beCPG.util.entityURL(instance.options.siteId,
+                                		obj.nodeRef , "pjt:project",null,"View-properties");
+                                                
                             }
                         }
                     }, true);

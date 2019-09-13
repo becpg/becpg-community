@@ -12,8 +12,9 @@
                             ganttInitialiser : function(callBack)
                             {
 
-                                var url = Alfresco.constants.PROXY_URI + "becpg/project/info" + (this.options.siteId != null && this.options.siteId.length > 0 ? "?site=" + this.options.siteId
-                                        : "");
+                                var url = Alfresco.constants.PROXY_URI + "becpg/project/info?" + (this.options.siteId != null && this.options.siteId.length > 0 ? "site=" + this.options.siteId 
+                                		+ (this.options.entityNodeRef != null  ? "&entityNodeRef=" + this.options.entityNodeRef: "")
+                                        : (this.options.entityNodeRef != null  ? "entityNodeRef=" + this.options.entityNodeRef: ""));
 
                                 Alfresco.util.Ajax.request(
                                 {
@@ -30,7 +31,7 @@
                                                 {
                                                     id : data[i].nodeRef,
                                                     label : data[i].label,
-                                                    color : data[i].color.replace('#', '')
+                                                    color : data[i].color!=null ? data[i].color.replace('#', '') : "FFBC00"
                                                 };
 
                                                 this.taskLegends.push(taskLegend);
