@@ -1,1 +1,0 @@
-function refreshTagScope(b){foreach(site in b.children){foreach(item in site.children){if(item.isContainer){var a=actions.create("refresh-tagscope");a.execute(item)}}}}var sitesNode=companyhome.childByNamePath("Sites");refreshTagScope(sitesNode);
