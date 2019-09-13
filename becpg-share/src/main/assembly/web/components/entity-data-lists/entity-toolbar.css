@@ -118,6 +118,11 @@
     padding-left: 0px ! important;
 }
 
+.datalist-toolbar .new-row .yui-button-disabled,
+.datalist-toolbar .selected-items .yui-button-disabled {
+   display:none;
+}
+
 
 .datalist-toolbar .print span.first-child {
     background: url(../images/printer-16.png) no-repeat 8px 4px ! important;
