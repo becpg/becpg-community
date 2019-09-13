@@ -14,3 +14,4 @@ syntax: regexp
 ^becpg-olap/archives$
 ^solr/solr_home$
 ^alf_data_dev$
+^.*-min\.js$
