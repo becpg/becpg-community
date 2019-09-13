@@ -144,6 +144,7 @@
 		<property name="dataListSortRegistry" ref="dataListSortRegistry" />
 		<property name="preferenceService" ref="preferenceService" />
 		<property name="projectService" ref="projectService" />
+		<property name="securityService" ref="securityService" />
 	</bean>
 
 

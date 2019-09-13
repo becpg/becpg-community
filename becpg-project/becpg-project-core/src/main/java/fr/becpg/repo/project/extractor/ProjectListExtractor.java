@@ -53,6 +53,7 @@ import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorMode;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
+import fr.becpg.repo.security.SecurityService;
 
 public class ProjectListExtractor extends ActivityListExtractor {
 
@@ -77,6 +78,8 @@ public class ProjectListExtractor extends ActivityListExtractor {
 	private AssociationService associationService;
 
 	private PreferenceService preferenceService;
+	
+	private SecurityService securityService;
 
 	private static final Log logger = LogFactory.getLog(ProjectListExtractor.class);
 
@@ -86,6 +89,11 @@ public class ProjectListExtractor extends ActivityListExtractor {
 
 	public void setPersonService(PersonService personService) {
 		this.personService = personService;
+	}
+	
+
+	public void setSecurityService(SecurityService securityService) {
+		this.securityService = securityService;
 	}
 
 	@Override
@@ -114,7 +122,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 		Map<NodeRef, Map<String, Object>> cache = new HashMap<>();
 
 		for (NodeRef nodeRef : results) {
-			if (permissionService.hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED) {
+			if (permissionService.hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED ) {
 				if (!nodeService.exists(nodeRef)) {
 					logger.error("NodeRef doesn't exist ? " + nodeRef.toString());
 				} else {
@@ -301,7 +309,10 @@ public class ProjectListExtractor extends ActivityListExtractor {
 
 								for (NodeRef itemNodeRef : assocRefs) {
 
-									if (permissionService.hasPermission(itemNodeRef, "Read") == AccessStatus.ALLOWED) {
+									
+									
+									if (permissionService.hasPermission(itemNodeRef, "Read") == AccessStatus.ALLOWED 
+											&& securityService.computeAccessMode(itemType, field.getFieldQname()) == SecurityService.READ_ACCESS) {
 
 										Map<String, Object> tmp = new HashMap<>(4);
 
@@ -309,7 +320,9 @@ public class ProjectListExtractor extends ActivityListExtractor {
 										Map<String, Boolean> userAccess = new HashMap<>(1);
 
 										permissions.put("userAccess", userAccess);
-										userAccess.put("edit", permissionService.hasPermission(itemNodeRef, "Write") == AccessStatus.ALLOWED);
+										userAccess.put("edit", permissionService.hasPermission(itemNodeRef, "Write") == AccessStatus.ALLOWED
+												&& securityService.computeAccessMode(itemType, field.getFieldQname()) == SecurityService.WRITE_ACCESS);
+										
 
 										QName itemType = nodeService.getType(itemNodeRef);
 										Map<QName, Serializable> properties = nodeService.getProperties(itemNodeRef);
