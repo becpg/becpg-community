@@ -46,13 +46,10 @@ public interface ProjectService {
 	 */
 	void reopenTask(NodeRef taskNodeRef);
 
+
 	
-	/**
-	 * Get the task legend list
-	 * 
-	 * @return
-	 */
-	List<NodeRef> getTaskLegendList();
+
+	List<NodeRef> getTaskLegendList(NodeRef projectNodeRef);
 	
 	/**
 	 * Get the number of inProgress project for this legend
@@ -126,6 +123,7 @@ public interface ProjectService {
 	List<NodeRef> extractResources(NodeRef projectNodeRef, List<NodeRef> resources);
 
 	NodeRef getReassignedResource(NodeRef resource);
+
 	
 
 }

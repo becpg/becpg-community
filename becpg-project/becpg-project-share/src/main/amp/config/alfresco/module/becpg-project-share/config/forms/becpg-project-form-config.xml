@@ -652,9 +652,11 @@
 				<field-visibility>
 					<show id="cm:name" />
 					<show id="bcpg:color" />
+					<show id="pjt:taskLegendSites" />
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
 				<appearance>
+					<field id="pjt:taskLegendSites" help-id="becpg.forms.help.taskLegendSites" />
 					<field id="bcpg:color">
 						<control
 							template="/org/alfresco/components/form/controls/selectcolorpicker.ftl" />
@@ -669,9 +671,12 @@
 				<field-visibility>
 					<show id="cm:name" />
 					<show id="bcpg:color" />
+					<show id="pjt:taskLegendSites" />
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
 				<appearance>
+					<field id="pjt:taskLegendSites" help-id="becpg.forms.help.taskLegendSites" />
+				
 					<field id="bcpg:color">
 						<control
 							template="/org/alfresco/components/form/controls/selectcolorpicker.ftl" />
