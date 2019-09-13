@@ -9,6 +9,13 @@
 	with beCPG. If not, see <http://www.gnu.org/licenses/>. -->
 <alfresco-config>
 
+	<config evaluator="string-compare" condition="BecpgMenu">
+	 	<hideSharedFiles>true</hideSharedFiles>
+	 	<hidePeople>true</hidePeople>
+	 	<hideMyFiles>false</hideMyFiles>
+	</config>
+
+
 	<config evaluator="string-compare" condition="Workflow">
 		<permission-workflows default="allow">
 			<permission-workflow name="activiti$claimProcess">
