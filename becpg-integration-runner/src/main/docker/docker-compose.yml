@@ -15,6 +15,8 @@ services:
     volumes:
       - becpg_data:/usr/local/tomcat/data
       - ../../becpg-core/target/classes:/usr/local/tomcat/hotswap-agent/becpg-core/target/classes
+      - ../../becpg-plm/becpg-plm-core/target/classes:/usr/local/tomcat/hotswap-agent/becpg-plm-core/target/classes
+      - ../../becpg-project/becpg-project-core/target/classes:/usr/local/tomcat/hotswap-agent/becpg-project-core/target/classes
       - ../../becpg-integration-runner/target/test-classes:/usr/local/tomcat/hotswap-agent/becpg-integration-runner/target/test-classes
   becpg-db:
     image: ${docker.becpg.url}/becpg-db:${project.version}
@@ -33,6 +35,7 @@ services:
       - solr_data:/opt/alfresco-search-services/data
       ports:
           - "8983:8983"  
+
   becpg-report:
     image:  ${docker.becpg.url}/becpg-report:2.2.5
 
