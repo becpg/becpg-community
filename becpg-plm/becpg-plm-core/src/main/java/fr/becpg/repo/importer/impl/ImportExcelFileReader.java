@@ -84,11 +84,7 @@ public class ImportExcelFileReader implements ImportFileReader {
 					&& DataTypeDefinition.TEXT.equals(((PropertyDefinition)attributeMapping.getAttribute()).getDataType().getName())
 					|| DataTypeDefinition.MLTEXT.equals(((PropertyDefinition)attributeMapping.getAttribute()).getDataType().getName())
 						 ){
-						try {
-							line.add(cell.getStringCellValue());
-						} catch (IllegalStateException e) {
-							throw new IllegalStateException(e.getMessage()+" for field "+((PropertyDefinition)attributeMapping.getAttribute()).getName(),e);
-						}
+						line.add(""+cell.getNumericCellValue());
 					} else	
 					if (HSSFDateUtil.isCellDateFormatted(cell) || HSSFDateUtil.isCellInternalDateFormatted(cell)) {
 						line.add(propertyFormats.formatDate(cell.getDateCellValue()));
