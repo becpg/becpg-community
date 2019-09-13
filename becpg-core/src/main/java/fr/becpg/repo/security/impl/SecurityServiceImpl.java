@@ -84,6 +84,11 @@ public class SecurityServiceImpl implements SecurityService {
 	private BeCPGCacheService beCPGCacheService;
 
 	@Override
+	public int computeAccessMode(QName nodeType, QName propName) {
+		return computeAccessMode(nodeType, propName.toPrefixString(namespaceService));
+	}
+
+	@Override
 	public int computeAccessMode(QName nodeType, String propName) {
 		StopWatch stopWatch = null;
 		if (logger.isDebugEnabled()) {
