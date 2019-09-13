@@ -93,6 +93,11 @@ public class DeliverableListDataItem extends BeCPGDataObject {
 	public void setState(DeliverableState state) {
 		this.state = state;
 	}
+	
+	public void setState(String state) {
+		this.state = DeliverableState.valueOf(state);
+	}
+	
 
 	@AlfProp
 	@AlfQname(qname = "pjt:dlDescription")
