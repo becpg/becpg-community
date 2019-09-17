@@ -63,6 +63,7 @@ import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
 import fr.becpg.repo.project.data.projectList.DeliverableState;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskState;
+import fr.becpg.repo.project.policy.ProjectListPolicy;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
@@ -103,7 +104,10 @@ public class ProjectServiceImpl implements ProjectService {
 	private BehaviourFilter policyBehaviourFilter;
 	@Autowired
 	private ProjectActivityService projectActivityService;
-
+	@Autowired
+	private ProjectListPolicy projectListPolicy;
+	
+	
 	@Autowired
 	SysAdminParams sysAdminParams;
 
@@ -168,9 +172,18 @@ public class ProjectServiceImpl implements ProjectService {
 
 			if (permissionService.hasPermission(projectNodeRef, PermissionService.WRITE) == AccessStatus.ALLOWED) {
 				try {
+
+					policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_LOG_TIME_LIST);
+					policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
+					policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
+					policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_PROJECT);
+					policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_SCORE_LIST);
+					policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_BUDGET_LIST);
+					policyBehaviourFilter.disableBehaviour(ProjectModel.ASPECT_BUDGET);
 					policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
 					policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 					policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+					policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
 
 					L2CacheSupport.doInCacheContext(() -> {
 						AuthenticationUtil.runAsSystem(() -> {
@@ -193,6 +206,14 @@ public class ProjectServiceImpl implements ProjectService {
 					policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
 					policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
 					policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+					policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
+					policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_LOG_TIME_LIST);
+					policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
+					policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_TASK_LIST);
+					policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_PROJECT);
+					policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_SCORE_LIST);
+					policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_BUDGET_LIST);
+					policyBehaviourFilter.enableBehaviour(ProjectModel.ASPECT_BUDGET);
 				}
 			}
 		}
@@ -229,6 +250,9 @@ public class ProjectServiceImpl implements ProjectService {
 		try {
 			// Disable notifications
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
+			policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
+			
+			logger.debug("Call submitTask");
 
 			NodeRef commentNodeRef = null;
 
@@ -253,8 +277,47 @@ public class ProjectServiceImpl implements ProjectService {
 
 			projectActivityService.postTaskStateChangeActivity(nodeRef, commentNodeRef, TaskState.InProgress.toString(),
 					TaskState.Completed.toString(), false);
+			
+			projectListPolicy.queueListItem(nodeRef);
 
 		} finally {
+			policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_TASK_LIST);
+			policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
+		}
+
+	}
+	
+
+	@Override
+	public NodeRef refusedTask(NodeRef nodeRef, String taskComment) {
+
+		try {
+			// Disable notifications
+			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
+			policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
+			
+			logger.debug("Call refusedTask");
+			
+			NodeRef taskNodeRef = associationService.getTargetAssoc(nodeRef, ProjectModel.ASSOC_TL_REFUSED_TASK_REF);
+
+			NodeRef commentNodeRef = null;
+			if ((taskNodeRef != null) && (taskComment != null) && !taskComment.isEmpty()) {
+				commentNodeRef = commentService.createComment(taskNodeRef, "", taskComment, false);
+				nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_TASK_COMMENT, taskComment);
+			} else {
+				nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_TASK_COMMENT, null);
+			}
+
+			nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_STATE, TaskState.Refused.toString());
+
+			projectActivityService.postTaskStateChangeActivity(nodeRef, commentNodeRef, TaskState.InProgress.toString(), TaskState.Refused.toString(),
+					false);
+
+			projectListPolicy.queueListItem(nodeRef);
+			
+			return taskNodeRef;
+		} finally {
+			policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_TASK_LIST);
 			policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
 		}
 
@@ -456,33 +519,6 @@ public class ProjectServiceImpl implements ProjectService {
 
 	}
 
-	@Override
-	public NodeRef refusedTask(NodeRef nodeRef, String taskComment) {
-
-		try {
-			// Disable notifications
-			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
-			NodeRef taskNodeRef = associationService.getTargetAssoc(nodeRef, ProjectModel.ASSOC_TL_REFUSED_TASK_REF);
-
-			NodeRef commentNodeRef = null;
-			if ((taskNodeRef != null) && (taskComment != null) && !taskComment.isEmpty()) {
-				commentNodeRef = commentService.createComment(taskNodeRef, "", taskComment, false);
-				nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_TASK_COMMENT, taskComment);
-			} else {
-				nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_TASK_COMMENT, null);
-			}
-
-			nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_STATE, TaskState.Refused.toString());
-
-			projectActivityService.postTaskStateChangeActivity(nodeRef, commentNodeRef, TaskState.InProgress.toString(), TaskState.Refused.toString(),
-					false);
-
-			return taskNodeRef;
-		} finally {
-			policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
-		}
-
-	}
 
 	@Override
 	public Long getNbProjectsByLegend(NodeRef legendNodeRef, String siteId) {

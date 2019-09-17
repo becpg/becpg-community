@@ -83,6 +83,7 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 	protected EntityTplService entityTplService;
 
 	protected NodeRef userOne;
+	protected NodeRef observerOne;
 	protected NodeRef userTwo;
 	protected NodeRef groupOne;
 	protected NodeRef groupTwo;
@@ -198,8 +199,9 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 			List<NodeRef> resourceCostsFileInfo = entityListDAO.getListItems(resourceCostFolder, ProjectModel.TYPE_RESOURCE_COST);
 			resourceCost = (ResourceCost) alfrescoRepository.findOne(resourceCostsFileInfo.get(0));
 
-			userOne = BeCPGTestHelper.createUser(BeCPGTestHelper.USER_ONE);
-			userTwo = BeCPGTestHelper.createUser(BeCPGTestHelper.USER_TWO);
+				userOne = BeCPGTestHelper.createUser(BeCPGTestHelper.USER_ONE);
+				userTwo = BeCPGTestHelper.createUser(BeCPGTestHelper.USER_TWO);
+				observerOne =  BeCPGTestHelper.createUser("ObserverOne");
 
 			groupOne = BeCPGTestHelper.createGroup("groupOne", BeCPGTestHelper.USER_TWO);
 
@@ -292,9 +294,10 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 			prevTasks.add(projectTplData.getTaskList().get(0).getNodeRef());
 			projectTplData.getTaskList().get(1).setPrevTasks(prevTasks);
 
-			prevTasks = new ArrayList<>();
-			prevTasks.add(projectTplData.getTaskList().get(1).getNodeRef());
-			projectTplData.getTaskList().get(2).setPrevTasks(prevTasks);
+				prevTasks = new ArrayList<>();
+				prevTasks.add(projectTplData.getTaskList().get(1).getNodeRef());
+				projectTplData.getTaskList().get(2).setPrevTasks(prevTasks);
+				projectTplData.getTaskList().get(2).setRefusedTask(projectTplData.getTaskList().get(1));
 
 			prevTasks = new ArrayList<>();
 			prevTasks.add(projectTplData.getTaskList().get(2).getNodeRef());
