@@ -134,26 +134,23 @@ public class ProjectListPolicy extends ProjectPolicy
 		String afterState = (String) after.get(ProjectModel.PROP_TL_STATE);
 
 		if ((beforeState != null) && (afterState != null) && !beforeState.equals(afterState)) {
-			try {
-				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
-				projectActivityService.postTaskStateChangeActivity(nodeRef, null, beforeState, afterState,
-						!(policyBehaviourFilter.isEnabled(ContentModel.ASPECT_AUDITABLE)
-								&& policyBehaviourFilter.isEnabled(BeCPGModel.TYPE_ENTITYLIST_ITEM)));
-				queueNode(EntityActivityPolicy.KEY_QUEUE_UPDATED_STATUS, nodeRef);
 
-				formulateProject = true;
+			
+			projectActivityService.postTaskStateChangeActivity(nodeRef, null, beforeState, afterState, false);
 
-				if ((beforeState.equals(TaskState.Completed.toString()) || beforeState.equals(TaskState.Refused.toString()))
-						&& afterState.equals(TaskState.InProgress.toString())) {
-					// re-open task
-					logger.debug("re-open task: " + nodeRef);
-					projectService.reopenTask(nodeRef);
+			queueNode(EntityActivityPolicy.KEY_QUEUE_UPDATED_STATUS, nodeRef);
 
-				}
+			formulateProject = true;
 
-			} finally {
-				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
+			
+			if ((beforeState.equals(TaskState.Completed.toString()) || beforeState.equals(TaskState.Refused.toString()))
+					&& afterState.equals(TaskState.InProgress.toString())) {
+				// re-open task
+				logger.debug("re-open task: " + nodeRef);
+				projectService.reopenTask(nodeRef);
+
 			}
+
 		}
 
 		if (isPropChanged(before, after, ProjectModel.PROP_TL_DURATION) || isPropChanged(before, after, ProjectModel.PROP_TL_START)
@@ -180,36 +177,31 @@ public class ProjectListPolicy extends ProjectPolicy
 		boolean formulateProject = false;
 
 		if (isPropChanged(before, after, ProjectModel.PROP_DL_STATE)) {
-			try {
-				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
 
-				String beforeState = (String) before.get(ProjectModel.PROP_DL_STATE);
-				String afterState = (String) after.get(ProjectModel.PROP_DL_STATE);
-				projectActivityService.postDeliverableStateChangeActivity(nodeRef, beforeState, afterState,
-						!(policyBehaviourFilter.isEnabled(ContentModel.ASPECT_AUDITABLE)
-								&& policyBehaviourFilter.isEnabled(BeCPGModel.TYPE_ENTITYLIST_ITEM)));
+			String beforeState = (String) before.get(ProjectModel.PROP_DL_STATE);
+			String afterState = (String) after.get(ProjectModel.PROP_DL_STATE);
 
-				if ((beforeState != null) && (afterState != null) && beforeState.equals(DeliverableState.Completed.toString())
-						&& afterState.equals(DeliverableState.InProgress.toString())) {
 
-					// re-open deliverable and disable policy to avoid every dl
-					// are
-					// re-opened
-					logger.debug("re-open deliverable: " + nodeRef);
-					try {
-						policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
-						policyBehaviourFilter.disableBehaviour(ProjectModel.ASPECT_BUDGET);
-						projectService.openDeliverable(nodeRef);
-					} finally {
-						policyBehaviourFilter.enableBehaviour(ProjectModel.ASPECT_BUDGET);
-						policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_TASK_LIST);
-					}
+			projectActivityService.postDeliverableStateChangeActivity(nodeRef, beforeState, afterState, false);
+
+			if ((beforeState != null) && (afterState != null) && beforeState.equals(DeliverableState.Completed.toString())
+					&& afterState.equals(DeliverableState.InProgress.toString())) {
+
+				// re-open deliverable and disable policy to avoid every dl
+				// are
+				// re-opened
+				logger.debug("re-open deliverable: " + nodeRef);
+				try {
+					policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
+					policyBehaviourFilter.disableBehaviour(ProjectModel.ASPECT_BUDGET);
+					projectService.openDeliverable(nodeRef);
+				} finally {
+					policyBehaviourFilter.enableBehaviour(ProjectModel.ASPECT_BUDGET);
+					policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_TASK_LIST);
 				}
-
-				formulateProject = true;
-			} finally {
-				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
 			}
+
+			formulateProject = true;
 
 		}
 
