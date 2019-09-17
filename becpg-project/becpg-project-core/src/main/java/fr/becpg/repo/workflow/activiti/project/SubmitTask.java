@@ -44,6 +44,7 @@ public class SubmitTask extends ScriptTaskListener {
 				String taskComment = (String) task.getVariable("bpm_comment");
 
 				String transition = (String) task.getVariable("pjt_worflowTransition");
+				
 				if ((transition != null) && "refused".equals(transition)) {
 					projectService.refusedTask(taskNodeRef, taskComment);
 				} else {

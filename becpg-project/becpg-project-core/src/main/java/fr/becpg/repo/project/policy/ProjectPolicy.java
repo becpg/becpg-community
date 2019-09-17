@@ -89,7 +89,6 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 		if ((afterState != null) && !afterState.equals(beforeState)) {
 
 			if (afterState.equals(ProjectState.InProgress.toString())) {
-				logger.debug("onUpdateProperties:start project");
 				Date startDate = ProjectHelper.removeTime(new Date());
 				nodeService.setProperty(nodeRef, ProjectModel.PROP_PROJECT_START_DATE, startDate);
 				ProjectData projectData = alfrescoRepository.findOne(nodeRef);
@@ -114,7 +113,7 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 		}
 	}
 
-	protected void queueListItem(NodeRef listItemNodeRef) {
+	public void queueListItem(NodeRef listItemNodeRef) {
 		NodeRef projectNodeRef = entityListDAO.getEntity(listItemNodeRef);
 		if (projectNodeRef != null) {
 			queueNode(projectNodeRef);
@@ -129,9 +128,6 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 	@Override
 	protected boolean doBeforeCommit(String key, final Set<NodeRef> pendingNodes) {
 
-		if (logger.isDebugEnabled()) {
-			logger.debug("doBeforeCommit key: " + key + " size: " + pendingNodes.size());
-		}
 		if (KEY_DELETED_TASK_LIST_ITEM.equals(key)) {
 			for (NodeRef wfIds : pendingNodes) {
 				projectWorkflowService.deleteWorkflowById(wfIds.getId());
@@ -140,32 +136,8 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 
 			for (final NodeRef projectNodeRef : pendingNodes) {
 				if (nodeService.exists(projectNodeRef)) {
-
-					AuthenticationUtil.runAs(() -> {
-
-						try {
-							policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_LOG_TIME_LIST);
-							policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
-							policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
-							policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_PROJECT);
-							policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_SCORE_LIST);
-							policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_BUDGET_LIST);
-							policyBehaviourFilter.disableBehaviour(ProjectModel.ASPECT_BUDGET);
-							projectService.formulate(projectNodeRef);
-						} catch (FormulateException e) {
-							logger.error(e, e);
-						} finally {
-							policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_LOG_TIME_LIST);
-							policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
-							policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_TASK_LIST);
-							policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_PROJECT);
-							policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_SCORE_LIST);
-							policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_BUDGET_LIST);
-							policyBehaviourFilter.enableBehaviour(ProjectModel.ASPECT_BUDGET);
-						}
-
-						return null;
-					}, AuthenticationUtil.SYSTEM_USER_NAME);
+					logger.debug("doBeforeCommit formulate project : "+projectNodeRef);
+					projectService.formulate(projectNodeRef);
 				}
 			}
 

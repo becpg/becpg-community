@@ -138,12 +138,15 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 		// Set the notification recipients
 		if (taskNodeRef != null) {
 			if (shouldNotify(taskNodeRef, templateArgs)) {
+				
 				observerNodeRefs.addAll(associationService.getTargetAssocs(taskNodeRef, ProjectModel.ASSOC_TL_OBSERVERS));
 			}
 		}
 
 		if (!observerNodeRefs.isEmpty()) {
 
+			logger.debug("Notify "+observerNodeRefs.size()+" observers");
+			
 			observerNodeRefs = projectService.extractResources(projectNodeRef, observerNodeRefs);
 			Map<String, Object> argsMap = new HashMap<>();
 			argsMap.put("args", templateArgs);
