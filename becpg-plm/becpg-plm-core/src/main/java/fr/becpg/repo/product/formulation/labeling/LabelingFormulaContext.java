@@ -893,12 +893,14 @@ public class LabelingFormulaContext extends RuleParser {
 		String label;
 		Double qtyPerc;
 		String geoOriginsLabel;
+		Integer level;
 
-		public HtmlTableStruct(String label, Double qtyPerc, String geoOriginsLabel) {
+		public HtmlTableStruct( String label, Double qtyPerc, String geoOriginsLabel, Integer level) {
 			super();
 			this.label = label;
 			this.geoOriginsLabel = geoOriginsLabel;
 			this.qtyPerc = qtyPerc;
+			this.level = level;
 		}
 
 	}
@@ -915,11 +917,8 @@ public class LabelingFormulaContext extends RuleParser {
 
 			tableContent.append("<table cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"" + styleCss + "\" rules=\"none\">");
 
-			List<HtmlTableStruct> flatList = flatCompositeLabeling(lblCompositeContext, 1d);
+			List<HtmlTableStruct> flatList = flatCompositeLabeling(lblCompositeContext, 1d,0);
 			if (flatList.size() > 0) {
-				Collections.sort(flatList, (a, b) -> {
-					return b.qtyPerc.compareTo(a.qtyPerc);
-				});
 
 				boolean first = true;
 				for (HtmlTableStruct tmp : flatList) {
@@ -928,9 +927,13 @@ public class LabelingFormulaContext extends RuleParser {
 						first = false;
 					} else {
 
-						total = total.add(new BigDecimal(tmp.qtyPerc));
+						if(tmp.level == 0) {
+							total = total.add(new BigDecimal(tmp.qtyPerc));
+						}
+						
+						
 						ret.append(applyRoundingMode(new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale()), tmp.qtyPerc)
-								.format(new Object[] { tmp.label, tmp.qtyPerc, tmp.geoOriginsLabel }));
+								.format(new Object[] { indent(tmp.label,tmp.level), tmp.qtyPerc, tmp.geoOriginsLabel }));
 					}
 				}
 
@@ -965,7 +968,21 @@ public class LabelingFormulaContext extends RuleParser {
 
 	}
 
-	private List<HtmlTableStruct> flatCompositeLabeling(CompositeLabeling parent, Double ratio) {
+	private String indent(String label, Integer level) {
+		if(level!=null && level >0) {
+			String indent = "";
+			for (int i = 0; i <level; i++) {
+				indent+="&nbsp;&nbsp;";
+			}
+			return indent+label;
+			
+			
+		}
+		
+		return label;
+	}
+
+	private List<HtmlTableStruct> flatCompositeLabeling(CompositeLabeling parent, Double ratio, Integer level) {
 		List<HtmlTableStruct> ret = new LinkedList<>();
 
 		for (Map.Entry<IngTypeItem, List<AbstractLabelingComponent>> kv : getSortedIngListByType(parent).entrySet()) {
@@ -1002,7 +1019,7 @@ public class LabelingFormulaContext extends RuleParser {
 					if (component instanceof IngItem) {
 						IngItem ingItem = (IngItem) component;
 						
-						ret.add(new HtmlTableStruct(ingName, qtyPerc, geoOriginsLabel != null ? geoOriginsLabel : ""));
+						ret.add(new HtmlTableStruct(ingName, qtyPerc, geoOriginsLabel != null ? geoOriginsLabel : "", level));
 
 						//TODO generic
 						CompositeLabeling subIngComposite = new CompositeLabeling();
@@ -1016,7 +1033,7 @@ public class LabelingFormulaContext extends RuleParser {
 						subIngComposite.setVolumeTotal(parent.getVolumeTotal());
 						
 						
-						ret.addAll(flatCompositeLabeling(subIngComposite, ratio));
+						ret.addAll(flatCompositeLabeling(subIngComposite, ratio,level+1));
 
 
 					} else if (component instanceof CompositeLabeling) {
@@ -1026,9 +1043,9 @@ public class LabelingFormulaContext extends RuleParser {
 							subRatio = 1d;
 						}
 
-						ret.add(new HtmlTableStruct(ingName, qtyPerc, geoOriginsLabel != null ? geoOriginsLabel : ""));
+						ret.add(new HtmlTableStruct(ingName, qtyPerc, geoOriginsLabel != null ? geoOriginsLabel : "",level));
 
-						ret.addAll(flatCompositeLabeling((CompositeLabeling) component, subRatio));
+						ret.addAll(flatCompositeLabeling((CompositeLabeling) component, subRatio,level+1));
 
 					} else {
 						logger.error("Unsupported ing type. Name: " + component.getName());
