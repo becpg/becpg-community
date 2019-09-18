@@ -150,7 +150,7 @@ public class ProjectServiceImpl implements ProjectService {
 
 		ProjectData project = alfrescoRepository.findOne(projectNodeRef);
 		for(TaskListDataItem task: project.getTaskList()) {
-			if(task.getTaskLegend()!=null) {
+			if(task.getTaskLegend()!=null && !ret.contains(task.getTaskLegend())) {
 				ret.add(task.getTaskLegend());
 			}
 		}
