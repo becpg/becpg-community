@@ -73,9 +73,6 @@ div.discussions-toolbar {
     display: none;
 }
 
-#page_x002e_component-1-1_x002e_user_x007e_supplier-F17_x007e_dashboard_x0023_default-filters {
-	display: none;
-}
 
 .yui-button-align {
     border-color: transparent;
@@ -84,11 +81,6 @@ div.discussions-toolbar {
     display: none;
     vertical-align: text-bottom;
 }
-
-#page_x002e_component-1-1_x002e_user_x007e_Fournisseur1_x007e_dashboard_x0023_default-filters {
-    display: none;
-}
-
 
 #template_x002e_documentlist_v2_x002e_myfiles_x0023_default-actions-yui-rec65 .document-delete {
     display: none;
@@ -119,6 +111,15 @@ div.discussions-toolbar {
 label[for="page_x002e_data-form_x002e_task-edit_x0023_default_assoc_packageItems-cntrl"] {
     display: none!important;
 }
+
+.dashlet.my-tasks > .toolbar {
+	display:none;
+}
+
+.dashlet.my-tasks > .toolbar ~.toolbar  {
+	display:block;
+}
+
 
 
 #alf-id137 {
