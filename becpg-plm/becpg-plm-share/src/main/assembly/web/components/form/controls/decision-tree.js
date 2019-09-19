@@ -81,9 +81,17 @@
                         	   htmlForm += '<span class="decision-tree-note">'+question.note+'</span>';
                            }
                            
+                           
+                           
                            if(question.url){
-                        	   htmlForm += '<span class="decision-tree-url"><a title="' + this.msg("link.title.open-link") + '" href="' + question.url  + '"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/link-16.png" />'+question.url+'</a></span>';
-                           }
+                        	   if(question.url instanceof Array){
+                                   for(var z=0 ; z<question.url.length ; z++){
+                                	   htmlForm += '<span class="decision-tree-url"><a title="' + this.msg("link.title.open-link") + '" href="' + question.url[z]  + '"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/link-16.png" />'+question.url[z]+'</a></span>';
+                                   }
+                               } else {
+                            	   htmlForm += '<span class="decision-tree-url"><a title="' + this.msg("link.title.open-link") + '" href="' + question.url  + '"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/link-16.png" />'+question.url+'</a></span>';
+                               }
+                              }
                           
                            
                            for(var j = 0; j< question.choices.length; j++){
