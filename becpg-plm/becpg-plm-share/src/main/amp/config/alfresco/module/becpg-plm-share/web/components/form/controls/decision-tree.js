@@ -77,6 +77,15 @@
                                     +question.id.toUpperCase()+' - '
                                     + (question.label ? question.label: this.msg("form.control.decision-tree."+this.options.prefix+"."+question.id+".label"))
                                     +'</legend>';
+                           if(question.note){
+                        	   htmlForm += '<span class="decision-tree-note">'+question.note+'</span>';
+                           }
+                           
+                           if(question.url){
+                        	   htmlForm += '<span class="decision-tree-url"><a title="' + this.msg("link.title.open-link") + '" href="' + question.url  + '"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/link-16.png" />'+question.url+'</a></span>';
+                           }
+                          
+                           
                            for(var j = 0; j< question.choices.length; j++){
                               var choice = question.choices[j];
 
@@ -162,7 +171,17 @@
                      var fnOnSelectChoice = function DT__fnOnSelectChoice(layer, args) {
                         var owner = Bubbling.getOwnerByTagName(args[1].input, "input");
                         if (owner !== null) {
-                           owner.checked = true;
+                           var previousState = owner.previousState;
+                        	
+                           if(previousState == true){
+                        	   owner.checked = false;
+                        	   owner.previousState = false;
+
+                           } else {
+                        	   owner.checked = true;
+                        	   owner.previousState = true
+                           }
+
                            me.toogleVisible();
                            return false;
                         }
@@ -239,7 +258,7 @@
                      
                      for(var i = 0; i< this.options.data.length; i++){
                         var question = this.options.data[i];
-                        if(i == 0 && (!this.options.disabled || this.options.currentValue.length>0)){
+                        if((i == 0 || question.start == true) && (!this.options.disabled || this.options.currentValue.length>0)){
                            visible.push(question.id);
                         }
                         if(beCPG.util.contains(visible,question.id) && question.choices){
