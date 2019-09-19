@@ -323,6 +323,8 @@ public class CharactDetailsHelper {
 			cell.setCellStyle(style);
 		}
 
+		Map<NodeRef,Integer> rowIndexes = new HashMap<>();
+		
 		for (CharactDetailsValue charactDetailsValue : compEls) {
 			cellnum = 0;
 			String prefix = "";
@@ -334,7 +336,19 @@ public class CharactDetailsHelper {
 				prefix += ">";
 			}
 
-			row = sheet.createRow(rownum++);
+
+			String currentDetailsName = charactDetailsValue.getName();
+			
+			if(rowIndexes.containsKey(charactDetailsValue.getCompositeNodeRef())) {
+				rownum = rowIndexes.get(charactDetailsValue.getCompositeNodeRef());
+				row = sheet.getRow(rownum);
+			} else {
+				rownum = rowIndexes.size()+1;
+				rowIndexes.put(charactDetailsValue.getCompositeNodeRef(), rownum);
+				row = sheet.createRow(rownum);
+			}
+			
+		
 			cell = row.createCell(cellnum++);
 			cell.setCellValue(prefix + attributeExtractorService.extractPropName(charactDetailsValue.getKeyNodeRef()));
 
@@ -348,18 +362,23 @@ public class CharactDetailsHelper {
 			cell = row.createCell(cellnum++);
 			cell.setCellValue(charactDetailsValue.getLevel());
 
-			String currentDetailsName = charactDetailsValue.getName();
 
 			// set charact value to cell
 			for (Map.Entry<NodeRef, List<CharactDetailsValue>> entry : charactDetails.getData().entrySet()) {
 
 				Integer currentIndex = indexMap.get(currentDetailsName);
 
-				if (entry.getValue().contains(charactDetailsValue)) {
-
-					cell = row.createCell(currentIndex);
-					Double value = entry.getValue().get(entry.getValue().indexOf(charactDetailsValue)).getValue();
-					cell.setCellValue(value);
+				Optional<CharactDetailsValue> matchingCharact = compEls.stream()
+						.filter(elt -> elt.keyEquals(charactDetailsValue) && elt.getName().equals(currentDetailsName)).findFirst();
+				if (matchingCharact.isPresent()) {
+					
+					int entryIndex = entry.getValue().indexOf(matchingCharact.get());
+					if (entryIndex != -1) {
+						Double value = entry.getValue().get(entryIndex).getValue();
+						cell = row.createCell(currentIndex);
+						cell.setCellValue(value);
+					}
+					
 				}
 			}
 
