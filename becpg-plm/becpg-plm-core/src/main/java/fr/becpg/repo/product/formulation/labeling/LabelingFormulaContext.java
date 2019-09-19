@@ -210,9 +210,8 @@ public class LabelingFormulaContext extends RuleParser {
 	private boolean labelingByLanguage = false;
 	private boolean force100Perc = false;
 
-	
 	private Double yield = null;
-	
+
 	/**
 	 * Use to disable allergen detection in legalName - Comma separated list of
 	 * locale codes - Empty for all allergens - Wildcard (*) can be used for
@@ -252,7 +251,6 @@ public class LabelingFormulaContext extends RuleParser {
 		this.ingsLabelingWithYield = ingsLabelingWithYield;
 	}
 
-	
 	public Double getYield() {
 		return yield;
 	}
@@ -735,7 +733,7 @@ public class LabelingFormulaContext extends RuleParser {
 	}
 
 	public String renderAsHtmlTable(String styleCss, boolean showTotal) {
-		return renderAsHtmlTable("border-collapse:collapse", showTotal, false);
+		return renderAsHtmlTable(styleCss, showTotal, false);
 	}
 
 	public String renderAsHtmlTable(String styleCss, boolean showTotal, boolean force100Perc) {
@@ -881,6 +879,186 @@ public class LabelingFormulaContext extends RuleParser {
 		ret.append("</table>");
 		return cleanLabel(ret);
 
+	}
+
+	public String renderAsFlatHtmlTable() {
+		return renderAsFlatHtmlTable("border-collapse:collapse", false);
+	}
+
+	public String renderAsFlatHtmlTable(String styleCss, boolean showTotal) {
+		return renderAsFlatHtmlTable(styleCss, showTotal, false);
+	}
+
+	private class HtmlTableStruct {
+		String label;
+		Double qtyPerc;
+		String geoOriginsLabel;
+		Integer level;
+
+		public HtmlTableStruct( String label, Double qtyPerc, String geoOriginsLabel, Integer level) {
+			super();
+			this.label = label;
+			this.geoOriginsLabel = geoOriginsLabel;
+			this.qtyPerc = qtyPerc;
+			this.level = level;
+		}
+
+	}
+
+	public String renderAsFlatHtmlTable(String styleCss, boolean showTotal, boolean force100Perc) {
+
+		BigDecimal total = new BigDecimal(0d);
+
+		StringBuffer tableContent = new StringBuffer();
+		StringBuffer ret = new StringBuffer();
+
+		try {
+			shouldBreakIngType = true;
+
+			tableContent.append("<table cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"" + styleCss + "\" rules=\"none\">");
+
+			List<HtmlTableStruct> flatList = flatCompositeLabeling(lblCompositeContext, 1d,0);
+			if (flatList.size() > 0) {
+
+				boolean first = true;
+				for (HtmlTableStruct tmp : flatList) {
+
+					if (first && force100Perc) {
+						first = false;
+					} else {
+
+						if(tmp.level == 0) {
+							total = total.add(new BigDecimal(tmp.qtyPerc));
+						}
+						
+						
+						ret.append(applyRoundingMode(new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale()), tmp.qtyPerc)
+								.format(new Object[] { indent(tmp.label,tmp.level), tmp.qtyPerc, tmp.geoOriginsLabel }));
+					}
+				}
+
+				if (force100Perc) {
+					BigDecimal diffValue = (new BigDecimal(1d)).subtract(total);
+
+					total = new BigDecimal(1);
+
+				    Double qtyPerc = 	roundeedValue(flatList.get(0).qtyPerc, new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale())).add(diffValue)
+							.doubleValue();
+
+					tableContent.append(applyRoundingMode(new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale()), totalPrecision,
+							RoundingMode.HALF_UP).format(new Object[] { flatList.get(0).label, qtyPerc, flatList.get(0).geoOriginsLabel }));
+
+				}
+				tableContent.append(ret);
+			}
+
+			if (showTotal && (total.doubleValue() > 0)) {
+				tableContent.append(
+						applyRoundingMode(new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale()), totalPrecision, RoundingMode.HALF_UP)
+								.format(new Object[] { "<b>" + I18NUtil.getMessage("entity.datalist.item.details.total") + "</b>",
+										total.doubleValue(), "" }));
+			}
+
+			tableContent.append("</table>");
+
+			return cleanLabel(tableContent);
+		} finally {
+			shouldBreakIngType = false;
+		}
+
+	}
+
+	private String indent(String label, Integer level) {
+		if(level!=null && level >0) {
+			String indent = "";
+			for (int i = 0; i <level; i++) {
+				indent+="&nbsp;&nbsp;";
+			}
+			return indent+label;
+			
+			
+		}
+		
+		return label;
+	}
+
+	private List<HtmlTableStruct> flatCompositeLabeling(CompositeLabeling parent, Double ratio, Integer level) {
+		List<HtmlTableStruct> ret = new LinkedList<>();
+
+		for (Map.Entry<IngTypeItem, List<AbstractLabelingComponent>> kv : getSortedIngListByType(parent).entrySet()) {
+
+			for (AbstractLabelingComponent component : kv.getValue()) {
+
+				Double qtyPerc = computeQtyPerc(parent, component, ratio);
+				Double volumePerc = computeVolumePerc(parent, component, ratio);
+
+				qtyPerc = (useVolume ? volumePerc : qtyPerc);
+
+				String ingName = getLegalIngName(component, qtyPerc, false, false);
+
+				if ((kv.getKey() != null) && (getLegalIngName(kv.getKey(), null, false, false) != null)) {
+					boolean doNotDetailsDeclType = isDoNotDetails(
+							kv.getKey().getOrigNodeRef() != null ? kv.getKey().getOrigNodeRef() : kv.getKey().getNodeRef());
+
+					String ingTypeLegalName = getLegalIngName(kv.getKey(), null,
+							((kv.getValue().size() > 1) || (!kv.getValue().isEmpty() && kv.getValue().get(0).isPlural())), false);
+
+					if (doNotDetailsDeclType) {
+						ingTypeLegalName = createAllergenAwareLabel(ingTypeLegalName, kv.getValue());
+					}
+
+					ingName = getIngTextFormat(kv.getKey(), qtyPerc)
+							.format(new Object[] { ingTypeLegalName, null, doNotDetailsDeclType ? null : ingName, null });
+
+				}
+
+				String geoOriginsLabel = createGeoOriginsLabel(component.getNodeRef(), component.getGeoOrigins());
+
+				if (!component.shouldSkip() && !shouldSkip(component.getNodeRef(), qtyPerc)) {
+
+					if (component instanceof IngItem) {
+						IngItem ingItem = (IngItem) component;
+						
+						ret.add(new HtmlTableStruct(ingName, qtyPerc, geoOriginsLabel != null ? geoOriginsLabel : "", level));
+
+						//TODO generic
+						CompositeLabeling subIngComposite = new CompositeLabeling();
+						for (IngItem subIngItem : ingItem.getSubIngs()) {
+							subIngComposite.add(new IngItem(subIngItem));
+						}
+
+						subIngComposite.setQty(parent.getQty());
+						subIngComposite.setVolume(parent.getVolume());
+						subIngComposite.setQtyTotal(parent.getQtyTotal());
+						subIngComposite.setVolumeTotal(parent.getVolumeTotal());
+						
+						
+						ret.addAll(flatCompositeLabeling(subIngComposite, ratio,level+1));
+
+
+					} else if (component instanceof CompositeLabeling) {
+
+						Double subRatio = qtyPerc;
+						if (DeclarationType.Kit.equals(((CompositeLabeling) component).getDeclarationType())) {
+							subRatio = 1d;
+						}
+
+						ret.add(new HtmlTableStruct(ingName, qtyPerc, geoOriginsLabel != null ? geoOriginsLabel : "",level));
+
+						ret.addAll(flatCompositeLabeling((CompositeLabeling) component, subRatio,level+1));
+
+					} else {
+						logger.error("Unsupported ing type. Name: " + component.getName());
+					}
+
+				} else {
+					logger.debug("Removing ing with qty of 0: " + ingName);
+				}
+
+			}
+
+		}
+		return ret;
 	}
 
 	private boolean isDoNotDetails(NodeRef nodeRef) {
