@@ -11,7 +11,12 @@ import fr.becpg.repo.repository.RepositoryEntity;
 
 @Service
 public class EntityDefaultTplPlugin implements EntityTplPlugin{
-
+	@Override
+	public void beforeSynchronizeEntity(NodeRef projectNodeRef, NodeRef entityTplNodeRef) {
+		  // Default plugin for spring injection or it will break designer
+		   //Do nothing
+	}
+	
 	@Override
 	public void synchronizeEntity(NodeRef entityNodeRef, NodeRef entityTplNodeRef) {
 	   // Default plugin for spring injection or it will break designer
