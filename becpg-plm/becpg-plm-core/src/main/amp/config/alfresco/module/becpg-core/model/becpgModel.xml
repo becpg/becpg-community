@@ -1847,7 +1847,7 @@
 				</property>
 				<property name="bcpg:ingListDeclType">
 					<type>d:text</type>
-					<default>Declare</default>
+					<default>Detail</default>
 					<index enabled="false" />
 					<constraints>
 						<constraint ref="bcpg:declarationTypes" />
