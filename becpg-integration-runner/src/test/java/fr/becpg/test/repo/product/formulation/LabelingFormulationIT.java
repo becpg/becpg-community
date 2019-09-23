@@ -172,6 +172,14 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		final NodeRef finishProduct1 = createTestProduct(null);
 
 		final NodeRef finishProduct2 = createTestProduct(null);
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			
+			FinishedProductData finishedProduct2 = (FinishedProductData) alfrescoRepository.findOne(finishProduct2);
+			finishedProduct2.setLegalName("legal Finished product 2");
+			alfrescoRepository.save(finishedProduct2);
+			return null;
+		}, false, true);
 
 		finishedProductNodeRef1 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			FinishedProductData finishedProduct1 = new FinishedProductData();
@@ -204,7 +212,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 				new LabelingRuleListDataItem("Aggr", null, LabelingRuleType.Group, Arrays.asList(rawMaterial13NodeRef, rawMaterial16NodeRef), null));
 
 		checkILL(finishedProductNodeRef1, labelingRuleList,
-				"<b>aggr (38,7%):</b> ing3 french 38,7%, ing1 french, ing2 french<br/><b>legal Finished product 1 (33,3%):</b> pâte french 50% (legal Raw material 12 33,3% (ing2 french 25%, ing1 french 8,3%), ing2 french 11,1%, ing1 french 5,6%), garniture french 50% (ing3 french 41,7%, ing4 french 8,3%)<br/><b>legal Finished product 1 (16,7%):</b> pâte french 50% (legal Raw material 12 33,3% (ing2 french 25%, ing1 french 8,3%), ing2 french 11,1%, ing1 french 5,6%), garniture french 50% (ing3 french 41,7%, ing4 french 8,3%)<br/>garniture french 11,2%",
+				"<b>aggr (38,7%):</b> ing3 french 38,7%, ing1 french, ing2 french<br/><b>legal Finished product 2 (33,3%):</b> pâte french 50% (legal Raw material 12 33,3% (ing2 french 25%, ing1 french 8,3%), ing2 french 11,1%, ing1 french 5,6%), garniture french 50% (ing3 french 41,7%, ing4 french 8,3%)<br/><b>legal Finished product 1 (16,7%):</b> pâte french 50% (legal Raw material 12 33,3% (ing2 french 25%, ing1 french 8,3%), ing2 french 11,1%, ing1 french 5,6%), garniture french 50% (ing3 french 41,7%, ing4 french 8,3%)<br/>garniture french 11,2%",
 				Locale.FRENCH);
 
 		checkError(finishedProductNodeRef1, labelingRuleList,
@@ -491,6 +499,13 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		final NodeRef finishProduct1 = createTestProduct(null);
 
 		final NodeRef finishProduct2 = createTestProduct(null);
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			
+			FinishedProductData finishedProduct2 = (FinishedProductData) alfrescoRepository.findOne(finishProduct2);
+			finishedProduct2.setLegalName("legal Finished product 2");
+			alfrescoRepository.save(finishedProduct2);
+			return null;
+		}, false, true);
 
 		NodeRef finishedProductNodeRef1 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			FinishedProductData finishedProduct1 = new FinishedProductData();
@@ -550,7 +565,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		// └──[ing4 french - 1.0]
 
 		checkILL(finishedProductNodeRef1, labelingRuleList,
-				"<b>legal Finished product 1 (33,3%):</b> pâte french 16,7% (legal Raw material 12 11,1% (ing2 french 8,3%, ing1 french 2,8%), ing2 french 3,7%, ing1 french 1,9%), garniture french 16,7% (ing3 french 13,9%, ing4 french 2,8%)<br/><b>legal Finished product 1 (16,7%):</b> pâte french 8,3% (legal Raw material 12 5,6% (ing2 french 4,2%, ing1 french 1,4%), ing2 french 1,9%, ing1 french 0,9%), garniture french 8,3% (ing3 french 6,9%, ing4 french 1,4%)<br/>garniture french 50% (legal Raw material 13 25% (ing3 french 25%), ing3 french 16,7%, ing4 french 8,3%)",
+				"<b>legal Finished product 2 (33,3%):</b> pâte french 16,7% (legal Raw material 12 11,1% (ing2 french 8,3%, ing1 french 2,8%), ing2 french 3,7%, ing1 french 1,9%), garniture french 16,7% (ing3 french 13,9%, ing4 french 2,8%)<br/><b>legal Finished product 2 (16,7%):</b> pâte french 8,3% (legal Raw material 12 5,6% (ing2 french 4,2%, ing1 french 1,4%), ing2 french 1,9%, ing1 french 0,9%), garniture french 8,3% (ing3 french 6,9%, ing4 french 1,4%)<br/>garniture french 50% (legal Raw material 13 25% (ing3 french 25%), ing3 french 16,7%, ing4 french 8,3%)",
 				Locale.FRENCH);
 
 		labelingRuleList = new ArrayList<>();

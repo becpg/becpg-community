@@ -122,8 +122,8 @@ public class IngParentLevelPatchV2 extends AbstractBeCPGPatch {
 							nodeService.addAspect(dataListNodeRef, BeCPGModel.ASPECT_DEPTH_LEVEL, properties);	
 							
 							// check processing aid
-							if(nodeService.getProperty(dataListNodeRef, PLMModel.PROP_ING_LIST_IS_PROCESSING_AID) == null){
-								nodeService.setProperty(dataListNodeRef, PLMModel.PROP_ING_LIST_IS_PROCESSING_AID, false);
+							if(nodeService.getProperty(dataListNodeRef, PLMModel.PROP_INGLIST_IS_PROCESSING_AID) == null){
+								nodeService.setProperty(dataListNodeRef, PLMModel.PROP_INGLIST_IS_PROCESSING_AID, false);
 							}
 						}
 					
