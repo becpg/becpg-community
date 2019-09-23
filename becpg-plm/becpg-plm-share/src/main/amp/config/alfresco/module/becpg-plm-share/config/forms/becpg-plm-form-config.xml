@@ -8535,6 +8535,7 @@
 					<show id="bcpg:ingListGeoOrigin" />
 					<show id="bcpg:ingListGeoTransfo" />
 					<show id="bcpg:ingListBioOrigin" />
+					<show id="bcpg:ingListDeclType" />
 					<show id="bcpg:parentLevel" />
 				</field-visibility>
 
@@ -8562,6 +8563,14 @@
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
+					
+						<field id="bcpg:ingListDeclType" >
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isStoreable">true</control-param>
+							<control-param name="options">Declare|constraint.declarationtype.declare,DoNotDetails|constraint.declarationtype.donotdetails,Detail|constraint.declarationtype.detail,Omit|constraint.declarationtype.omit,DoNotDeclare|constraint.declarationtype.donotdeclare</control-param>
+						</control>
+					</field>
+					
 					<field id="bcpg:parentLevel">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:ingList&#38;attributeName=bcpg:ingListIng
@@ -8613,6 +8622,7 @@
 					<show id="bcpg:ingListGeoOrigin" />
 					<show id="bcpg:ingListGeoTransfo" />
 					<show id="bcpg:ingListBioOrigin" />
+					<show id="bcpg:ingListDeclType" />
 					<show id="bcpg:parentLevel" />
 				</field-visibility>
 
@@ -8639,6 +8649,12 @@
 					<field id="bcpg:ingListBioOrigin">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:ingListDeclType" >
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isStoreable">true</control-param>
+							<control-param name="options">Declare|constraint.declarationtype.declare,DoNotDetails|constraint.declarationtype.donotdetails,Detail|constraint.declarationtype.detail,Omit|constraint.declarationtype.omit,DoNotDeclare|constraint.declarationtype.donotdeclare</control-param>	
+						</control>
 					</field>
 					<field id="bcpg:parentLevel">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
