@@ -562,7 +562,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		// └──[ing4 french - 1.0]
 
 		checkILL(finishedProductNodeRef1, labelingRuleList,
-				"<b>legal Finished product 2 (33,3%):</b> pâte french 16,7% (legal Raw material 12 11,1% (ing2 french 8,3%, ing1 french 2,8%), ing2 french 3,7%, ing1 french 1,9%), garniture french 16,7% (ing3 french 13,9%, ing4 french 2,8%)<br/><b>legal Finished product 2 (16,7%):</b> pâte french 8,3% (legal Raw material 12 5,6% (ing2 french 4,2%, ing1 french 1,4%), ing2 french 1,9%, ing1 french 0,9%), garniture french 8,3% (ing3 french 6,9%, ing4 french 1,4%)<br/>garniture french 50% (legal Raw material 13 25% (ing3 french 25%), ing3 french 16,7%, ing4 french 8,3%)",
+				"<b>legal Finished product 2 (33,3%):</b> pâte french 16,7% (legal Raw material 12 11,1% (ing2 french 8,3%, ing1 french 2,8%), ing2 french 3,7%, ing1 french 1,9%), garniture french 16,7% (ing3 french 13,9%, ing4 french 2,8%)<br/><b>legal Finished product 1 (16,7%):</b> pâte french 8,3% (legal Raw material 12 5,6% (ing2 french 4,2%, ing1 french 1,4%), ing2 french 1,9%, ing1 french 0,9%), garniture french 8,3% (ing3 french 6,9%, ing4 french 1,4%)<br/>garniture french 50% (legal Raw material 13 25% (ing3 french 25%), ing3 french 16,7%, ing4 french 8,3%)",
 				Locale.FRENCH);
 
 		labelingRuleList = new ArrayList<>();
@@ -641,6 +641,67 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		checkILL(finishedProductNodeRef, labelingRuleList, "epaississant french, ing2 french 16,7%, ing1 french 8,3%", Locale.FRENCH);
 
 	}
+	
+	
+	@Test
+	public void testShowPerc() {
+
+		/** Do not detail ingType */
+
+		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			logger.debug("/*-- Create finished product --*/");
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setName("Produit fini 4");
+			finishedProduct.setLegalName("Legal Produit fini 4");
+			finishedProduct.setUnit(ProductUnit.kg);
+			finishedProduct.setQty(4d);
+			finishedProduct.setDensity(1d);
+			List<CompoListDataItem> compoList = new ArrayList<>();
+
+			compoList.add(new CompoListDataItem(null, null, null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial7NodeRef));
+			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+
+			finishedProduct.getCompoListView().setCompoList(compoList);
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+		}, false, true);
+
+		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
+
+		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
+		labelingRuleList.add(new LabelingRuleListDataItem("%", "#.#%|HALF_DOWN", LabelingRuleType.ShowPerc));
+		
+		
+		// └──[root - 0.0 (11.0, vol: 11.0) ]
+		// ├──[ing5 french - 5.0 (10.0, vol: 10.0) Detail]
+		// │ ├──[ing1 french - 7.0 ( vol : 7.0) ]
+		// │ └──[ing4 french - 3.0 ( vol : 3.0) ]
+		// └──[Juice - 6.0 (6.0, vol: 6.0) Detail]
+		// ├──[ing1 french - 2.0 ( vol : 2.0) ]
+		// └──[ing2 french - 4.0 ( vol : 4.0) ]
+
+		checkILL(finishedProductNodeRef, labelingRuleList, "epaississant french: ing5 french 75% (ing1 french 52,5%, ing4 french 22,5%), ing2 french 16,7%, ing1 french 8,3%", Locale.FRENCH);
+		
+		labelingRuleList = new ArrayList<>();
+		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
+		labelingRuleList.add(new LabelingRuleListDataItem("%", "#.#%|UP", LabelingRuleType.ShowPerc));
+		
+		checkILL(finishedProductNodeRef, labelingRuleList, "epaississant french: ing5 french 75% (ing1 french 52,5%, ing4 french 22,5%), ing2 french 16,7%, ing1 french 8,4%", Locale.FRENCH);
+		
+		labelingRuleList = new ArrayList<>();
+		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
+		labelingRuleList.add(new LabelingRuleListDataItem("%", "#.#%", LabelingRuleType.ShowPerc));
+		labelingRuleList.add(new LabelingRuleListDataItem("Pref1", "defaultRoundingMode=T(java.math.RoundingMode).UP", LabelingRuleType.Prefs));
+		
+		checkILL(finishedProductNodeRef, labelingRuleList, "epaississant french: ing5 french 75% (ing1 french 52,5%, ing4 french 22,5%), ing2 french 16,7%, ing1 french 8,4%", Locale.FRENCH);
+		
+		labelingRuleList = new ArrayList<>();
+		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
+		labelingRuleList.add(new LabelingRuleListDataItem("%", "#.#%|DOWN", LabelingRuleType.ShowPerc,Arrays.asList(ing2),null ));
+		
+		checkILL(finishedProductNodeRef, labelingRuleList, "epaississant french: ing5 french (ing1 french, ing4 french), ing2 french 16,6%, ing1 french", Locale.FRENCH);
+		
+	}
+	
 
 	@Test
 	public void testReconstitutionLabeling() throws Exception {
