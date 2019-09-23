@@ -1845,6 +1845,14 @@
 					<mandatory enforced="true">true</mandatory>
 					<default>false</default>
 				</property>
+				<property name="bcpg:ingListDeclType">
+					<type>d:text</type>
+					<default>Declare</default>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="bcpg:declarationTypes" />
+					</constraints>
+				</property>
 			</properties>
 			<associations>
 				<association name="bcpg:ingListIng">
