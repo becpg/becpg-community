@@ -824,7 +824,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			// ingList : ing5
 			ingList = new ArrayList<>();
 			ingList.add(new IngListDataItem(null, 100d, null, null, false, false, false, ing5, false));
-			ingList.add(new IngListDataItem(null, ingList.get(0), 70d, null, null, null, false, false, false, false, ing1, false));
+			ingList.add(new IngListDataItem(null, ingList.get(0), 70d, null, null, null, false, false, true, false, ing1, false));
 			ingList.add(new IngListDataItem(null, ingList.get(0), 30d, null, null, null, false, false, false, false, ing4, false));
 			rawMaterial7.setIngList(ingList);
 			rawMaterial7NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial7).getNodeRef();
