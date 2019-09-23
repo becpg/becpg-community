@@ -38,6 +38,11 @@ import fr.becpg.repo.project.data.projectList.TaskState;
  */
 public class ProjectNotificationIT extends AbstractProjectTestCase {
 
+	private static Log logger = LogFactory.getLog(ProjectNotificationIT.class);
+	
+	@Autowired
+	CommentService commentService;
+	
 	/**
 	 * Test observers get notifications
 	 * 
