@@ -570,7 +570,8 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 			try {
 				((RuleService) ruleService).disableRules(entityNodeRef);
-				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+				
+				//Desactivate for all the transaction (do not reactivate it)
 
 				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
 				
@@ -578,6 +579,8 @@ public class EntityTplServiceImpl implements EntityTplService {
 					entityTplPlugin.beforeSynchronizeEntity(entityNodeRef, entityTplNodeRef);
 				}
 
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+				
 				
 				// copy files
 				entityService.copyFiles(entityTplNodeRef, entityNodeRef);
