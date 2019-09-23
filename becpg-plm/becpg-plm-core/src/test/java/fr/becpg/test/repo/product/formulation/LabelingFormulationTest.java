@@ -214,6 +214,8 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		checkILL(finishedProductNodeRef1, labelingRuleList,
 				"<b>aggr (38,7%):</b> ing3 french 38,7%, ing1 french, ing2 french<br/><b>legal Finished product 2 (33,3%):</b> pâte french 50% (legal Raw material 12 33,3% (ing2 french 25%, ing1 french 8,3%), ing2 french 11,1%, ing1 french 5,6%), garniture french 50% (ing3 french 41,7%, ing4 french 8,3%)<br/><b>legal Finished product 1 (16,7%):</b> pâte french 50% (legal Raw material 12 33,3% (ing2 french 25%, ing1 french 8,3%), ing2 french 11,1%, ing1 french 5,6%), garniture french 50% (ing3 french 41,7%, ing4 french 8,3%)<br/>garniture french 11,2%",
 				Locale.FRENCH);
+		
+		
 
 		checkError(finishedProductNodeRef1, labelingRuleList,
 				"Impossible de déclarer ou d'aggreger l'ingrédient ing2 sans quantité, changer le type de déclaration du composant");
@@ -596,7 +598,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		// └──[ing2 french - 1.5]
 
 		checkILL(finishedProductNodeRef1, labelingRuleList,
-				"<b>aggr (50%):</b> legal Raw material 13 25% (ing3 french 25%), ing3 french 16,7%, ing4 french 8,3%<br/><b>legal Finished product 1 (16,7%):</b> pâte french 16,7% (legal Raw material 12 11,1% (ing2 french 8,3%, ing1 french 2,8%), ing2 french 3,7%, ing1 french 1,9%)<br/><b>legal Finished product 1 (8,3%):</b> pâte french 8,3% (legal Raw material 12 5,6% (ing2 french 4,2%, ing1 french 1,4%), ing2 french 1,9%, ing1 french 0,9%)",
+				"<b>aggr (50%):</b> legal Raw material 13 25% (ing3 french 25%), ing3 french 16,7%, ing4 french 8,3%<br/><b>legal Finished product 2 (16,7%):</b> pâte french 16,7% (legal Raw material 12 11,1% (ing2 french 8,3%, ing1 french 2,8%), ing2 french 3,7%, ing1 french 1,9%)<br/><b>legal Finished product 1 (8,3%):</b> pâte french 8,3% (legal Raw material 12 5,6% (ing2 french 4,2%, ing1 french 1,4%), ing2 french 1,9%, ing1 french 0,9%)",	
 				Locale.FRENCH);
 
 	}
@@ -700,6 +702,66 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		
 		checkILL(finishedProductNodeRef, labelingRuleList, "epaississant french: ing5 french (ing1 french, ing4 french), ing2 french 16,6%, ing1 french", Locale.FRENCH);
 		
+	}
+	
+	
+
+	@Test
+	public void testIngDeclType() {
+
+		/** Do not detail ingType */
+
+		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			logger.debug("/*-- Create finished product --*/");
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setName("Produit fini 4");
+			finishedProduct.setLegalName("Legal Produit fini 4");
+			finishedProduct.setUnit(ProductUnit.kg);
+			finishedProduct.setQty(4d);
+			finishedProduct.setDensity(1d);
+			List<CompoListDataItem> compoList = new ArrayList<>();
+
+			compoList.add(new CompoListDataItem(null, null, null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial7NodeRef));
+			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+
+			finishedProduct.getCompoListView().setCompoList(compoList);
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+		}, false, true);
+
+		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
+
+		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
+		labelingRuleList.add(new LabelingRuleListDataItem("%", "#.#%|HALF_DOWN", LabelingRuleType.ShowPerc));
+		labelingRuleList.add(new LabelingRuleListDataItem("Decl ing5 ",null, LabelingRuleType.Declare,Arrays.asList(ing5), null ));
+		
+		
+		// └──[root - 0.0 (11.0, vol: 11.0) ]
+		// ├──[ing5 french - 5.0 (10.0, vol: 10.0) Detail]
+		// │ ├──[ing1 french - 7.0 ( vol : 7.0) ]
+		// │ └──[ing4 french - 3.0 ( vol : 3.0) ]
+		// └──[Juice - 6.0 (6.0, vol: 6.0) Detail]
+		// ├──[ing1 french - 2.0 ( vol : 2.0) ]
+		// └──[ing2 french - 4.0 ( vol : 4.0) ]
+		
+
+		checkILL(finishedProductNodeRef, labelingRuleList, "ing1 french 60,8%, ing4 french 22,5%, ing2 french 16,7%", Locale.FRENCH);
+		labelingRuleList = new ArrayList<>();
+
+		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
+		labelingRuleList.add(new LabelingRuleListDataItem("%", "#.#%|HALF_DOWN", LabelingRuleType.ShowPerc));
+		labelingRuleList.add(new LabelingRuleListDataItem("Decl ing5 ",null, LabelingRuleType.Declare,Arrays.asList(ing5), null ));
+		labelingRuleList.add(new LabelingRuleListDataItem("DoNotDecl ing1 ","ingListDataItem.isProcessingAid == true", LabelingRuleType.DoNotDeclare, null, null ));
+
+		checkILL(finishedProductNodeRef, labelingRuleList, "ing4 french 22,5%, ing2 french 16,7%, ing1 french 8,3%", Locale.FRENCH);
+		
+		labelingRuleList = new ArrayList<>();
+
+		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
+		labelingRuleList.add(new LabelingRuleListDataItem("%", "#.#%|HALF_DOWN", LabelingRuleType.ShowPerc));
+		labelingRuleList.add(new LabelingRuleListDataItem("Decl ing5 ",null, LabelingRuleType.Declare,Arrays.asList(ing5), null ));
+		labelingRuleList.add(new LabelingRuleListDataItem("Omit ing1 ","ingListDataItem.isProcessingAid == true", LabelingRuleType.Omit, null, null ));
+
+		checkILL(finishedProductNodeRef, labelingRuleList, "ing4 french 75%, ing2 french 16,7%, ing1 french 8,3%", Locale.FRENCH);
 	}
 	
 
