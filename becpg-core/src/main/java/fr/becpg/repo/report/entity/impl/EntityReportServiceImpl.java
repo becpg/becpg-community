@@ -245,13 +245,17 @@ public class EntityReportServiceImpl implements EntityReportService {
 								final Boolean hideDefaultLocal;
 								if (!entityReportLocales.contains(defaultLocale)) {
 									hideDefaultLocal = true;
-									entityReportLocales.add(defaultLocale);
+									entityReportLocales.add(defaultLocale);									
 								} else {
 									hideDefaultLocal = false;
 								}
+								
+								if (logger.isDebugEnabled()) {
+									logger.debug("Generate report for locales : "+entityReportLocales.toString());
+								}
 
 								for (Locale locale : entityReportLocales) {
-
+									
 									I18NUtil.setLocale(locale);
 									I18NUtil.setContentLocale(locale);
 
@@ -260,6 +264,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 										for (EntityReportParameters reportParameters : getEntityReportParametersList(tplNodeRef, entityNodeRef)) {
 
 											if (isLocaleEnableOnTemplate(tplNodeRef, locale, hideDefaultLocal)) {
+											
 
 												Boolean isDefault = (Boolean) this.nodeService.getProperty(tplNodeRef,
 														ReportModel.PROP_REPORT_TPL_IS_DEFAULT);
@@ -293,6 +298,9 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 															if ((selectedReportNodeRef!=null && documentNodeRef !=null && selectedReportNodeRef.toString().equals(documentNodeRef.toString()))
 																	|| ((selectedReportNodeRef == null) && isDefault)) {
+																
+																logger.debug("Extract datasource for locale: "+locale);
+																
 																EntityReportData reportData = retrieveExtractor(entityNodeRef).extract(entityNodeRef,
 																		reportParameters.getPreferences());
 
@@ -360,6 +368,10 @@ public class EntityReportServiceImpl implements EntityReportService {
 																	MLTextHelper.localeKey(locale));
 															nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_IS_DEFAULT, isDefault);
 
+															
+															I18NUtil.setLocale(locale);
+															I18NUtil.setContentLocale(locale);
+															
 														}
 
 													} catch (ReportException e) {
