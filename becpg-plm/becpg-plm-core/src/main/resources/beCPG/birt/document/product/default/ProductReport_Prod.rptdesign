@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
-    <property name="createdBy">Eclipse BIRT Designer Version 4.7.0.v201706222054</property>
+    <property name="createdBy">Eclipse BIRT Designer Version 4.4.2.v201410272105 Build &lt;4.4.2.v20150217-1805></property>
     <list-property name="userProperties">
         <structure>
             <property name="name">Data Cube.OrganoList.x</property>
@@ -19,11 +19,115 @@
         <value>./ProductReport</value>
     </simple-property-list>
     <property name="units">in</property>
-    <method name="initialize"><![CDATA[function indent_docx (coef, depthLevel, object) {
-	if (reportContext.getOutputFormat().toString()== "docx") {
-		object.getStyle().paddingLeft = (coef * (depthLevel - 1) + 4) + "pt";
+    <method name="initialize"><![CDATA[function nearbyValue (value, base, delta) {
+
+ 	 if (value >= (base - delta) &amp;&amp; value  < (base + delta) ) {
+  		return base;
+  	} else if (value > base) {
+  		return nearbyValue(value, (base + (delta * 2) ), delta);
+  	} 
+  	return nearbyValue(value, (base - (delta + 2) ), delta);
+}
+
+function getNearValue(nutValue, delta ) {
+	
+  	var base = Math.floor(nutValue/10);
+  	var result = base * 10;
+ 	return nearbyValue(nutValue, result, delta/2);
+}
+
+function isNutPresent(ruleTab, targetStr) {
+	for (var i in ruleTab) {
+		if (ruleTab[i] == targetStr) {
+			return true;
+		}
 	}
-}]]></method>
+	return false;
+}
+
+function getSingularOrPluralWord (word, myNumber) {
+	if (myNumber == 1) {
+		return  reportContext.getMessage(word, reportContext.getLocale())
+	}
+	return  reportContext.getMessage(word+"s", reportContext.getLocale());
+}
+
+function isBetween(valueTotest, nutListUnit, higherThanValue, lessOrEqualValue) { //This function has specially made for "traffic-light labelling"
+	
+	return (valueTotest > higherThanValue ) &amp;&amp; ( valueTotest <= lessOrEqualValue);
+}
+
+function isLessOrEqual( valueTotest, nutListUnit , value) { //This function has specially made for "traffic-light labelling"
+
+	return (valueTotest <= value );
+}
+
+function isHigherThan(valueTotest, nutListUnit, value) { //This function has specially made for "traffic-light labelling"
+	
+ 	return (valueTotest > value);
+}
+
+function indent_docx (coef, depthLevel, object, whichSide) {
+	if ( reportContext.getOutputFormat().toString()== "docx" ) {
+		if (whichSide == "left") {
+			object.getStyle().paddingLeft = (coef * (depthLevel - 1) + 4) + "pt";
+		} else if (whichSide == "right") {
+			object.getStyle().paddingRight = (coef * (depthLevel - 1) + 4) + "pt";
+		} else {
+			object.getStyle().paddingLeft = (coef * (depthLevel - 1) + 4) + "pt";
+			object.getStyle().paddingRight = (coef * (depthLevel - 1) + 4) + "pt";
+		}
+	}
+}
+
+function getConvertedDensityInUsUnit (productQty, unit) { 
+	if ( unit == "g" ) {
+		var res_oz = productQty * 0.03527396195;
+		return (res_oz < 16) ? Formatter.format(res_oz, "##0.##") + "" + " oz": Formatter.format((res_oz * 0.0625), "##0.##") + " lb";
+	} else { // kg
+		var res_lb = productQty * 2.2046226218488 ;
+		return (res_lb >= 1) ? Formatter.format(res_lb, "##0.##") + "" + " lb" : Formatter.format((res_lb * 16), "##0.##") + "" + " oz"
+	}
+}
+
+/**
+	Convert a internationnal value in US Value (Gallon or fl_ounce)
+	@qty : a float|integer value,
+	@unit : can be null if @isVolume is false,
+	@isVolume : indicate if qty represents a volume or not.
+*/
+function getConvertedCapacityInUsUnit (qty, unit, isVolume) { 
+	var res_gal = 0;
+	
+	if ( !isVolume ) { // qty always un kg
+		res_gal = qty * 0.264172053;
+	} else {//qty can be in 'L', 'cL' or 'mL'
+		
+		if(unit == "L") {
+			res_gal = qty * 0.26417205124156;
+			
+		} else if (  unit == "cL" ) {
+			res_gal = qty * 0.0026417205124156;
+			
+		} else if ( unit == "mL") {
+			res_gal = qty * 0.00026417205124156;
+		}	
+	}
+	
+	return (res_gal >= 1) ? Formatter.format(res_gal, "##0.##") + "" + " gal" : Formatter.format((res_gal * 128) , "##0.##") + "" + " fl oz" ;
+}
+
+
+
+
+
+
+
+
+
+
+
+]]></method>
     <property name="iconFile">/templates/dual_column_chart_listing.gif</property>
     <property name="cheatSheet">org.eclipse.birt.report.designer.ui.cheatsheet.dualchartlisting</property>
     <property name="bidiLayoutOrientation">ltr</property>
@@ -36,7 +140,7 @@
     </list-property>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="452">
-            <property name="FILELIST">TMP_STANDARD/ToCompress/ProductReport.xml</property>
+            <property name="FILELIST">becpg-plm/becpg-plm-core/src/main/resources/beCPG/birt/document/product/default/datasourceDEV_en_US.xml</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
@@ -51,6 +155,36 @@
 	row["versionLabel"]
 } else "1.0"</expression>
                     <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">uvcDimensions</property>
+                    <property name="dataType">string</property>
+                    <property name="aggregateFunction">FIRST</property>
+                    <list-property name="arguments">
+                        <structure>
+                            <property name="name">Expression</property>
+                            <expression name="value">var height = (row["gs1_height"] != null ) ?  row["gs1_height"] : "";
+var depth  = (row["gs1_depth"] != null ) ?  row["gs1_depth"] : "";
+var width = (row["gs1_width"] != null ) ?    row["gs1_width"] : "";
+
+depth + "x" + width + "x" +  height;</expression>
+                        </structure>
+                    </list-property>
+                </structure>
+                <structure>
+                    <property name="name">secondaryDimensions</property>
+                    <property name="dataType">string</property>
+                    <property name="aggregateFunction">FIRST</property>
+                    <list-property name="arguments">
+                        <structure>
+                            <property name="name">Expression</property>
+                            <expression name="value">var height = (row["gs1_secondaryHeight"] != null ) ? row["gs1_secondaryHeight"]  : "" ;
+var depth  = (row["gs1_secondaryDepth"] != null ) ?  row["gs1_secondaryDepth"]  : "" ;
+var width   = (row["gs1_secondaryWidth"] != null ) ?    row["gs1_secondaryWidth"]  : "" ;
+
+depth + "x" + width + "x" +  height;</expression>
+                        </structure>
+                    </list-property>
                 </structure>
             </list-property>
             <list-property name="columnHints">
@@ -115,11 +249,24 @@
                     <text-property name="heading">productQty</text-property>
                 </structure>
                 <structure>
-                    <property name="columnName">versionLabel</property>
+                    <property name="columnName">productDensity</property>
+                    <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">productDensity</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">description</property>
                     <property name="analysis">attribute</property>
                     <property name="onColumnLayout">false</property>
-                    <text-property name="heading">versionLabel</text-property>
-                    <property name="analysisColumn">versionLabel</property>
+                    <text-property name="heading">description</text-property>
+                    <property name="analysisColumn">description</property>
+                </structure>
+                <structure>
+                    <property name="columnName">clients</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">clients</text-property>
+                    <property name="analysisColumn">clients</property>
                 </structure>
                 <structure>
                     <property name="columnName">productHierarchy1</property>
@@ -136,6 +283,19 @@
                     <property name="analysisColumn">productHierarchy2</property>
                 </structure>
                 <structure>
+                    <property name="columnName">legalName</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">legalName</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">versionLabel</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">versionLabel</text-property>
+                    <property name="analysisColumn">versionLabel</property>
+                </structure>
+                <structure>
                     <property name="columnName">trademark</property>
                     <property name="analysis">attribute</property>
                     <property name="onColumnLayout">false</property>
@@ -143,37 +303,10 @@
                     <property name="analysisColumn">trademark</property>
                 </structure>
                 <structure>
-                    <property name="columnName">clients</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">clients</text-property>
-                    <property name="analysisColumn">clients</property>
-                </structure>
-                <structure>
-                    <property name="columnName">created</property>
-                    <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">created</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">description</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">description</text-property>
-                    <property name="analysisColumn">description</property>
-                </structure>
-                <structure>
                     <property name="columnName">useByDate</property>
-                    <property name="analysis">attribute</property>
+                    <property name="analysis">measure</property>
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">useByDate</text-property>
-                    <property name="analysisColumn">useByDate</property>
-                </structure>
-                <structure>
-                    <property name="columnName">startEffectivity</property>
-                    <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">startEffectivity</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">productComments</property>
@@ -181,6 +314,18 @@
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">productComments</text-property>
                     <property name="analysisColumn">productComments</property>
+                </structure>
+                <structure>
+                    <property name="columnName">eanCode</property>
+                    <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">eanCode</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">pvValidationDate</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">pvValidationDate</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">pvCallerActor</property>
@@ -207,40 +352,10 @@
                     <text-property name="heading">pvProductionApprovalActor</text-property>
                 </structure>
                 <structure>
-                    <property name="columnName">pvValidationDate</property>
-                    <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">pvValidationDate</text-property>
-                </structure>
-                <structure>
                     <property name="columnName">pvRDApprovalActor</property>
                     <property name="analysis">dimension</property>
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">pvRDApprovalActor</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">legalName</property>
-                    <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">legalName</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">productDensity</property>
-                    <property name="analysis">measure</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">productDensity</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">plants</property>
-                    <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">plants</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">erpCode</property>
-                    <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">erpCode</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">packagingDescription</property>
@@ -249,28 +364,10 @@
                     <text-property name="heading">packagingDescription</text-property>
                 </structure>
                 <structure>
-                    <property name="columnName">eanCode</property>
-                    <property name="analysis">measure</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">eanCode</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">aspects</property>
-                    <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">aspects</text-property>
-                </structure>
-                <structure>
                     <property name="columnName">netWeight</property>
                     <property name="analysis">measure</property>
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">netWeight</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">productCompoQtyUsed</property>
-                    <property name="analysis">measure</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">productCompoQtyUsed</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">title</property>
@@ -279,9 +376,121 @@
                     <text-property name="heading">title</text-property>
                 </structure>
                 <structure>
+                    <property name="columnName">created</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">created</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">productCompoQtyUsed</property>
+                    <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">productCompoQtyUsed</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">aspects</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">aspects</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">erpCode</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">erpCode</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">startEffectivity</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">startEffectivity</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">plants</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">plants</text-property>
+                </structure>
+                <structure>
                     <property name="columnName">versionLabelBcpg</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">versionLabelBcpg</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">gs1_height</property>
+                    <property name="analysis">measure</property>
+                    <text-property name="heading">gs1_height</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">gs1_depth</property>
+                    <property name="analysis">measure</property>
+                    <text-property name="heading">gs1_depth</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">gs1_width</property>
+                    <property name="analysis">measure</property>
+                    <text-property name="heading">gs1_width</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">tareUnit</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">tareUnit</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">tare</property>
+                    <property name="analysis">measure</property>
+                    <text-property name="heading">tare</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">gs1_weight</property>
+                    <property name="analysis">measure</property>
+                    <text-property name="heading">gs1_weight</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">gs1_secondaryWidth</property>
+                    <property name="analysis">measure</property>
+                    <text-property name="heading">gs1_secondaryWidth</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">gs1_secondaryWeight</property>
+                    <property name="analysis">measure</property>
+                    <text-property name="heading">gs1_secondaryWeight</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">gs1_secondaryHeight</property>
+                    <property name="analysis">measure</property>
+                    <text-property name="heading">gs1_secondaryHeight</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">gs1_secondaryDepth</property>
+                    <property name="analysis">measure</property>
+                    <text-property name="heading">gs1_secondaryDepth</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">tertiaryWeight</property>
+                    <property name="analysis">measure</property>
+                    <text-property name="heading">tertiaryWeight</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">palletBoxesPerLayer</property>
+                    <property name="analysis">measure</property>
+                    <text-property name="heading">palletBoxesPerLayer</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">palletBoxesPerPallet</property>
+                    <property name="analysis">measure</property>
+                    <text-property name="heading">palletBoxesPerPallet</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">palletProductsPerBox</property>
+                    <property name="analysis">measure</property>
+                    <text-property name="heading">palletProductsPerBox</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">palletLayers</property>
+                    <property name="analysis">measure</property>
+                    <text-property name="heading">palletLayers</text-property>
                 </structure>
             </list-property>
             <list-property name="parameters"/>
@@ -334,48 +543,48 @@
                     </structure>
                     <structure>
                         <property name="position">10</property>
-                        <property name="name">versionLabel</property>
-                        <property name="dataType">string</property>
+                        <property name="name">productDensity</property>
+                        <property name="dataType">float</property>
                     </structure>
                     <structure>
                         <property name="position">11</property>
-                        <property name="name">productHierarchy1</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">12</property>
-                        <property name="name">productHierarchy2</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">13</property>
-                        <property name="name">trademark</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">14</property>
-                        <property name="name">clients</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">15</property>
-                        <property name="name">created</property>
-                        <property name="dataType">date-time</property>
-                    </structure>
-                    <structure>
-                        <property name="position">16</property>
                         <property name="name">description</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
+                        <property name="position">12</property>
+                        <property name="name">clients</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">13</property>
+                        <property name="name">productHierarchy1</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">14</property>
+                        <property name="name">productHierarchy2</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">15</property>
+                        <property name="name">legalName</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">16</property>
+                        <property name="name">versionLabel</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
                         <property name="position">17</property>
-                        <property name="name">useByDate</property>
+                        <property name="name">trademark</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
                         <property name="position">18</property>
-                        <property name="name">startEffectivity</property>
-                        <property name="dataType">date-time</property>
+                        <property name="name">useByDate</property>
+                        <property name="dataType">integer</property>
                     </structure>
                     <structure>
                         <property name="position">19</property>
@@ -384,63 +593,63 @@
                     </structure>
                     <structure>
                         <property name="position">20</property>
-                        <property name="name">pvCallerActor</property>
+                        <property name="name">eanCode</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
                         <property name="position">21</property>
-                        <property name="name">pvTransmitterActor</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">22</property>
-                        <property name="name">pvQualityApprovalActor</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">23</property>
-                        <property name="name">pvProductionApprovalActor</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">24</property>
                         <property name="name">pvValidationDate</property>
                         <property name="dataType">date-time</property>
                     </structure>
                     <structure>
+                        <property name="position">22</property>
+                        <property name="name">pvCallerActor</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">23</property>
+                        <property name="name">pvTransmitterActor</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">24</property>
+                        <property name="name">pvQualityApprovalActor</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
                         <property name="position">25</property>
-                        <property name="name">pvRDApprovalActor</property>
+                        <property name="name">pvProductionApprovalActor</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
                         <property name="position">26</property>
-                        <property name="name">legalName</property>
+                        <property name="name">pvRDApprovalActor</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
                         <property name="position">27</property>
-                        <property name="name">productDensity</property>
-                        <property name="dataType">float</property>
-                    </structure>
-                    <structure>
-                        <property name="position">28</property>
-                        <property name="name">plants</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">29</property>
-                        <property name="name">erpCode</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">30</property>
                         <property name="name">packagingDescription</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">31</property>
-                        <property name="name">eanCode</property>
+                        <property name="position">28</property>
+                        <property name="name">netWeight</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">29</property>
+                        <property name="name">title</property>
                         <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">30</property>
+                        <property name="name">created</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">31</property>
+                        <property name="name">productCompoQtyUsed</property>
+                        <property name="dataType">float</property>
                     </structure>
                     <structure>
                         <property name="position">32</property>
@@ -449,17 +658,17 @@
                     </structure>
                     <structure>
                         <property name="position">33</property>
-                        <property name="name">netWeight</property>
-                        <property name="dataType">float</property>
+                        <property name="name">erpCode</property>
+                        <property name="dataType">string</property>
                     </structure>
                     <structure>
                         <property name="position">34</property>
-                        <property name="name">productCompoQtyUsed</property>
-                        <property name="dataType">float</property>
+                        <property name="name">startEffectivity</property>
+                        <property name="dataType">date-time</property>
                     </structure>
                     <structure>
                         <property name="position">35</property>
-                        <property name="name">title</property>
+                        <property name="name">plants</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
@@ -469,7 +678,92 @@
                     </structure>
                     <structure>
                         <property name="position">37</property>
+                        <property name="name">gs1_height</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">38</property>
+                        <property name="name">gs1_depth</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">39</property>
+                        <property name="name">gs1_width</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">40</property>
+                        <property name="name">tareUnit</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">41</property>
+                        <property name="name">tare</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">42</property>
+                        <property name="name">gs1_weight</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">43</property>
+                        <property name="name">gs1_secondaryWidth</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">44</property>
+                        <property name="name">gs1_secondaryWeight</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">45</property>
+                        <property name="name">gs1_secondaryHeight</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">46</property>
+                        <property name="name">gs1_secondaryDepth</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">47</property>
+                        <property name="name">tertiaryWeight</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">48</property>
+                        <property name="name">palletBoxesPerLayer</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">49</property>
+                        <property name="name">palletBoxesPerPallet</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">50</property>
+                        <property name="name">palletProductsPerBox</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">51</property>
+                        <property name="name">palletLayers</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">52</property>
                         <property name="name">versionLabelToShow</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">53</property>
+                        <property name="name">uvcDimensions</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">54</property>
+                        <property name="name">secondaryDimensions</property>
                         <property name="dataType">string</property>
                     </structure>
                 </list-property>
@@ -541,66 +835,66 @@
                 </structure>
                 <structure>
                     <property name="position">10</property>
-                    <property name="name">versionLabel</property>
-                    <property name="nativeName">versionLabel</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="name">productDensity</property>
+                    <property name="nativeName">productDensity</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
                 </structure>
                 <structure>
                     <property name="position">11</property>
-                    <property name="name">productHierarchy1</property>
-                    <property name="nativeName">productHierarchy1</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">12</property>
-                    <property name="name">productHierarchy2</property>
-                    <property name="nativeName">productHierarchy2</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">13</property>
-                    <property name="name">trademark</property>
-                    <property name="nativeName">trademark</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">14</property>
-                    <property name="name">clients</property>
-                    <property name="nativeName">clients</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">15</property>
-                    <property name="name">created</property>
-                    <property name="nativeName">created</property>
-                    <property name="dataType">date-time</property>
-                    <property name="nativeDataType">93</property>
-                </structure>
-                <structure>
-                    <property name="position">16</property>
                     <property name="name">description</property>
                     <property name="nativeName">description</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
+                    <property name="position">12</property>
+                    <property name="name">clients</property>
+                    <property name="nativeName">clients</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">13</property>
+                    <property name="name">productHierarchy1</property>
+                    <property name="nativeName">productHierarchy1</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">14</property>
+                    <property name="name">productHierarchy2</property>
+                    <property name="nativeName">productHierarchy2</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">15</property>
+                    <property name="name">legalName</property>
+                    <property name="nativeName">legalName</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">16</property>
+                    <property name="name">versionLabel</property>
+                    <property name="nativeName">versionLabel</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
                     <property name="position">17</property>
-                    <property name="name">useByDate</property>
-                    <property name="nativeName">useByDate</property>
+                    <property name="name">trademark</property>
+                    <property name="nativeName">trademark</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">18</property>
-                    <property name="name">startEffectivity</property>
-                    <property name="nativeName">startEffectivity</property>
-                    <property name="dataType">date-time</property>
-                    <property name="nativeDataType">93</property>
+                    <property name="name">useByDate</property>
+                    <property name="nativeName">useByDate</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">4</property>
                 </structure>
                 <structure>
                     <property name="position">19</property>
@@ -611,87 +905,87 @@
                 </structure>
                 <structure>
                     <property name="position">20</property>
-                    <property name="name">pvCallerActor</property>
-                    <property name="nativeName">pvCallerActor</property>
+                    <property name="name">eanCode</property>
+                    <property name="nativeName">eanCode</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">21</property>
-                    <property name="name">pvTransmitterActor</property>
-                    <property name="nativeName">pvTransmitterActor</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">22</property>
-                    <property name="name">pvQualityApprovalActor</property>
-                    <property name="nativeName">pvQualityApprovalActor</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">23</property>
-                    <property name="name">pvProductionApprovalActor</property>
-                    <property name="nativeName">pvProductionApprovalActor</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">24</property>
                     <property name="name">pvValidationDate</property>
                     <property name="nativeName">pvValidationDate</property>
                     <property name="dataType">date-time</property>
                     <property name="nativeDataType">93</property>
                 </structure>
                 <structure>
+                    <property name="position">22</property>
+                    <property name="name">pvCallerActor</property>
+                    <property name="nativeName">pvCallerActor</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">23</property>
+                    <property name="name">pvTransmitterActor</property>
+                    <property name="nativeName">pvTransmitterActor</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">24</property>
+                    <property name="name">pvQualityApprovalActor</property>
+                    <property name="nativeName">pvQualityApprovalActor</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
                     <property name="position">25</property>
+                    <property name="name">pvProductionApprovalActor</property>
+                    <property name="nativeName">pvProductionApprovalActor</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">26</property>
                     <property name="name">pvRDApprovalActor</property>
                     <property name="nativeName">pvRDApprovalActor</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">26</property>
-                    <property name="name">legalName</property>
-                    <property name="nativeName">legalName</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
                     <property name="position">27</property>
-                    <property name="name">productDensity</property>
-                    <property name="nativeName">productDensity</property>
-                    <property name="dataType">float</property>
-                    <property name="nativeDataType">8</property>
-                </structure>
-                <structure>
-                    <property name="position">28</property>
-                    <property name="name">plants</property>
-                    <property name="nativeName">plants</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">29</property>
-                    <property name="name">erpCode</property>
-                    <property name="nativeName">erpCode</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">30</property>
                     <property name="name">packagingDescription</property>
                     <property name="nativeName">packagingDescription</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">31</property>
-                    <property name="name">eanCode</property>
-                    <property name="nativeName">eanCode</property>
+                    <property name="position">28</property>
+                    <property name="name">netWeight</property>
+                    <property name="nativeName">netWeight</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">29</property>
+                    <property name="name">title</property>
+                    <property name="nativeName">title</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">30</property>
+                    <property name="name">created</property>
+                    <property name="nativeName">created</property>
+                    <property name="dataType">date-time</property>
+                    <property name="nativeDataType">93</property>
+                </structure>
+                <structure>
+                    <property name="position">31</property>
+                    <property name="name">productCompoQtyUsed</property>
+                    <property name="nativeName">productCompoQtyUsed</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
                 </structure>
                 <structure>
                     <property name="position">32</property>
@@ -702,22 +996,22 @@
                 </structure>
                 <structure>
                     <property name="position">33</property>
-                    <property name="name">netWeight</property>
-                    <property name="nativeName">netWeight</property>
-                    <property name="dataType">float</property>
-                    <property name="nativeDataType">8</property>
+                    <property name="name">erpCode</property>
+                    <property name="nativeName">erpCode</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">34</property>
-                    <property name="name">productCompoQtyUsed</property>
-                    <property name="nativeName">productCompoQtyUsed</property>
-                    <property name="dataType">float</property>
-                    <property name="nativeDataType">8</property>
+                    <property name="name">startEffectivity</property>
+                    <property name="nativeName">startEffectivity</property>
+                    <property name="dataType">date-time</property>
+                    <property name="nativeDataType">93</property>
                 </structure>
                 <structure>
                     <property name="position">35</property>
-                    <property name="name">title</property>
-                    <property name="nativeName">title</property>
+                    <property name="name">plants</property>
+                    <property name="nativeName">plants</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
@@ -728,8 +1022,113 @@
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
+                <structure>
+                    <property name="position">37</property>
+                    <property name="name">gs1_height</property>
+                    <property name="nativeName">gs1_height</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">38</property>
+                    <property name="name">gs1_depth</property>
+                    <property name="nativeName">gs1_depth</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">39</property>
+                    <property name="name">gs1_width</property>
+                    <property name="nativeName">gs1_width</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">40</property>
+                    <property name="name">tareUnit</property>
+                    <property name="nativeName">tareUnit</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">41</property>
+                    <property name="name">tare</property>
+                    <property name="nativeName">tare</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">42</property>
+                    <property name="name">gs1_weight</property>
+                    <property name="nativeName">gs1_weight</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">43</property>
+                    <property name="name">gs1_secondaryWidth</property>
+                    <property name="nativeName">gs1_secondaryWidth</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">44</property>
+                    <property name="name">gs1_secondaryWeight</property>
+                    <property name="nativeName">gs1_secondaryWeight</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">45</property>
+                    <property name="name">gs1_secondaryHeight</property>
+                    <property name="nativeName">gs1_secondaryHeight</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">46</property>
+                    <property name="name">gs1_secondaryDepth</property>
+                    <property name="nativeName">gs1_secondaryDepth</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">47</property>
+                    <property name="name">tertiaryWeight</property>
+                    <property name="nativeName">tertiaryWeight</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">48</property>
+                    <property name="name">palletBoxesPerLayer</property>
+                    <property name="nativeName">palletBoxesPerLayer</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">4</property>
+                </structure>
+                <structure>
+                    <property name="position">49</property>
+                    <property name="name">palletBoxesPerPallet</property>
+                    <property name="nativeName">palletBoxesPerPallet</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">4</property>
+                </structure>
+                <structure>
+                    <property name="position">50</property>
+                    <property name="name">palletProductsPerBox</property>
+                    <property name="nativeName">palletProductsPerBox</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">4</property>
+                </structure>
+                <structure>
+                    <property name="position">51</property>
+                    <property name="name">palletLayers</property>
+                    <property name="nativeName">palletLayers</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">4</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{code;STRING;/code},{productCurrency;STRING;/productCurrency},{productPrice;DOUBLE;/productPrice},{productUnit;STRING;/productUnit},{productType;STRING;/productType},{name;STRING;/name},{productState;STRING;/productState},{modified;TIMESTAMP;/modified},{productQty;DOUBLE;/productQty},{versionLabel;STRING;/versionLabel},{productHierarchy1;STRING;/productHierarchy1},{productHierarchy2;STRING;/productHierarchy2},{trademark;STRING;/trademark},{clients;STRING;/clients},{created;TIMESTAMP;/created},{description;STRING;/description},{useByDate;STRING;/useByDate},{startEffectivity;TIMESTAMP;/startEffectivity},{productComments;STRING;/productComments},{pvCallerActor;STRING;/pvCallerActor},{pvTransmitterActor;STRING;/pvTransmitterActor},{pvQualityApprovalActor;STRING;/pvQualityApprovalActor},{pvProductionApprovalActor;STRING;/pvProductionApprovalActor},{pvValidationDate;TIMESTAMP;/pvValidationDate},{pvRDApprovalActor;STRING;/pvRDApprovalActor},{legalName;STRING;/legalName},{productDensity;DOUBLE;/productDensity},{plants;STRING;/plants},{erpCode;STRING;/erpCode},{packagingDescription;STRING;/packagingDescription},{eanCode;STRING;/eanCode},{aspects;STRING;/aspects},{netWeight;DOUBLE;/netWeight},{productCompoQtyUsed;DOUBLE;/productCompoQtyUsed},{title;STRING;/title},{versionLabelBcpg;STRING;/versionLabel[@prefix='bcpg']}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{code;STRING;/code},{productCurrency;STRING;/productCurrency},{productPrice;DOUBLE;/productPrice},{productUnit;STRING;/productUnit},{productType;STRING;/productType},{name;STRING;/name},{productState;STRING;/productState},{modified;TIMESTAMP;/modified},{productQty;DOUBLE;/productQty},{productDensity;DOUBLE;/productDensity},{description;STRING;/description},{clients;STRING;/clients},{productHierarchy1;STRING;/productHierarchy1},{productHierarchy2;STRING;/productHierarchy2},{legalName;STRING;/legalName},{versionLabel;STRING;/versionLabel},{trademark;STRING;/trademark},{useByDate;INT;/useByDate},{productComments;STRING;/productComments},{eanCode;STRING;/eanCode},{pvValidationDate;TIMESTAMP;/pvValidationDate},{pvCallerActor;STRING;/pvCallerActor},{pvTransmitterActor;STRING;/pvTransmitterActor},{pvQualityApprovalActor;STRING;/pvQualityApprovalActor},{pvProductionApprovalActor;STRING;/pvProductionApprovalActor},{pvRDApprovalActor;STRING;/pvRDApprovalActor},{packagingDescription;STRING;/packagingDescription},{netWeight;DOUBLE;/netWeight},{title;STRING;/title},{created;TIMESTAMP;/created},{productCompoQtyUsed;DOUBLE;/productCompoQtyUsed},{aspects;STRING;/aspects},{erpCode;STRING;/erpCode},{startEffectivity;TIMESTAMP;/startEffectivity},{plants;STRING;/plants},{versionLabelBcpg;STRING;/versionLabel[@prefix='bcpg']},{gs1_height;DOUBLE;/height[@prefix='gs1']},{gs1_depth;DOUBLE;/depth[@prefix='gs1']},{gs1_width;DOUBLE;/width[@prefix='gs1']},{tareUnit;STRING;/tareUnit},{tare;DOUBLE;/tare},{gs1_weight;DOUBLE;/weight[@prefix='gs1']},{gs1_secondaryWidth;DOUBLE;/secondaryWidth},{gs1_secondaryWeight;DOUBLE;/secondaryWeight},{gs1_secondaryHeight;DOUBLE;/secondaryHeight},{gs1_secondaryDepth;DOUBLE;/secondaryDepth},{tertiaryWeight;DOUBLE;/tertiaryWeight},{palletBoxesPerLayer;INT;/palletBoxesPerLayer},{palletBoxesPerPallet;INT;/palletBoxesPerPallet},{palletProductsPerBox;INT;/palletProductsPerBox},{palletLayers;INT;/palletLayers}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -3577,14 +3976,14 @@ if (row["width"]!= null ) {
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">13</property>
+                    <property name="position">12</property>
                     <property name="name">nbFinishedProductThirdLevel</property>
                     <property name="nativeName">nbFinishedProductThirdLevel</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingLists//packagingList]#:#{itemType;STRING;/@itemType},{packagingListProduct;STRING;/@packagingListProduct},{legalName;STRING;/@legalName},{packagingListQty;STRING;/@packagingListQty},{packagingListUnit;STRING;/@packagingListUnit},{packagingListPkgLevel;STRING;/@packagingListPkgLevel},{pmDimensions;STRING;/@pmDimensions},{tare;STRING;/@tare},{palletLayers;STRING;/@palletLayers},{palletBoxesPerLayer;STRING;/@palletBoxesPerLayer},{palletBoxesPerPallet;STRING;/@palletBoxesPerPallet},{nbFinishedProductThirdLevel;STRING;/@nbFinishedProductThirdLevel}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingLists/packagingList]#:#{itemType;STRING;/@itemType},{packagingListProduct;STRING;/@packagingListProduct},{legalName;STRING;/@legalName},{packagingListQty;STRING;/@packagingListQty},{packagingListUnit;STRING;/@packagingListUnit},{packagingListPkgLevel;STRING;/@packagingListPkgLevel},{pmDimensions;STRING;/@pmDimensions},{tare;STRING;/@tare},{palletLayers;STRING;/@palletLayers},{palletBoxesPerLayer;STRING;/@palletBoxesPerLayer},{palletBoxesPerPallet;STRING;/@palletBoxesPerPallet},{nbFinishedProductThirdLevel;STRING;/@nbFinishedProductThirdLevel}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -7620,44 +8019,187 @@ else{
                             </cell>
                             <cell id="2363">
                                 <property name="style">becpg-cell-data</property>
-                                <data id="2767">
-                                    <property name="dataSet">packFirstLevelMaster</property>
-                                    <list-property name="boundDataColumns">
+                                <grid id="10504">
+                                    <property name="dataSet">Product</property>
+                                    <list-property name="visibility">
                                         <structure>
-                                            <property name="name">pmDimensions</property>
-                                            <text-property name="displayName">pmDimensions</text-property>
-                                            <expression name="expression" type="javascript">dataSetRow["pmDimensions"]</expression>
-                                            <property name="dataType">string</property>
+                                            <property name="format">all</property>
+                                            <expression name="valueExpr" type="javascript">( row["gs1_height"] == "" || row["gs1_height"] === null ) &amp;&amp; (row["gs1_depth"] == "" || row["gs1_depth"] === null ) &amp;&amp; ( row["gs1_width"] == "" || row["gs1_width"] === null )</expression>
                                         </structure>
                                     </list-property>
-                                    <property name="resultSetColumn">pmDimensions</property>
-                                </data>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">gs1_height</property>
+                                            <text-property name="displayName">gs1_height</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["gs1_height"]</expression>
+                                            <property name="dataType">float</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">gs1_depth</property>
+                                            <text-property name="displayName">gs1_depth</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["gs1_depth"]</expression>
+                                            <property name="dataType">float</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">gs1_width</property>
+                                            <text-property name="displayName">gs1_width</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["gs1_width"]</expression>
+                                            <property name="dataType">float</property>
+                                        </structure>
+                                    </list-property>
+                                    <column id="10505"/>
+                                    <row id="10506">
+                                        <cell id="10507">
+                                            <data id="10494">
+                                                <property name="fontSize">8.5pt</property>
+                                                <structure name="numberFormat">
+                                                    <property name="category">Custom</property>
+                                                    <property name="pattern">#,##0.#</property>
+                                                </structure>
+                                                <property name="display">inline</property>
+                                                <property name="dataSet">Product</property>
+                                                <list-property name="visibility">
+                                                    <structure>
+                                                        <property name="format">all</property>
+                                                        <expression name="valueExpr" type="javascript">row["gs1_depth"] == null || row["gs1_depth"] == ""</expression>
+                                                    </structure>
+                                                </list-property>
+                                                <list-property name="boundDataColumns">
+                                                    <structure>
+                                                        <property name="name">gs1_depth</property>
+                                                        <text-property name="displayName">gs1_depth</text-property>
+                                                        <expression name="expression" type="javascript">var m_size = dataSetRow["gs1_depth"];
+
+if ( m_size !== null &amp;&amp; m_size !== "" ) {
+
+( reportContext.getLocale().toString().toLowerCase() == "en_us" ) ? BirtMath.round(m_size * 0.0393700787, 1) : m_size;
+
+}</expression>
+                                                        <property name="dataType">float</property>
+                                                        <property name="allowExport">true</property>
+                                                    </structure>
+                                                </list-property>
+                                                <property name="resultSetColumn">gs1_depth</property>
+                                            </data>
+                                            <label id="10497">
+                                                <property name="fontSize">8.5pt</property>
+                                                <property name="display">inline</property>
+                                                <text-property name="text">x</text-property>
+                                            </label>
+                                            <data id="10495">
+                                                <property name="fontSize">8.5pt</property>
+                                                <structure name="numberFormat">
+                                                    <property name="category">Custom</property>
+                                                    <property name="pattern">#,##0.#</property>
+                                                </structure>
+                                                <property name="display">inline</property>
+                                                <property name="dataSet">Product</property>
+                                                <list-property name="visibility">
+                                                    <structure>
+                                                        <property name="format">all</property>
+                                                        <expression name="valueExpr" type="javascript">row["gs1_width"] == "" || row["gs1_width"] === 0</expression>
+                                                    </structure>
+                                                </list-property>
+                                                <list-property name="boundDataColumns">
+                                                    <structure>
+                                                        <property name="name">gs1_width</property>
+                                                        <text-property name="displayName">gs1_width</text-property>
+                                                        <expression name="expression" type="javascript">var m_size = dataSetRow["gs1_width"];
+
+if ( m_size !== null &amp;&amp; m_size !== "" ) {
+
+( reportContext.getLocale().toString().toLowerCase() == "en_us" ) ? BirtMath.round(m_size * 0.0393700787, 1) : m_size;
+
+}</expression>
+                                                        <property name="dataType">float</property>
+                                                        <property name="allowExport">true</property>
+                                                    </structure>
+                                                </list-property>
+                                                <property name="resultSetColumn">gs1_width</property>
+                                            </data>
+                                            <label id="10498">
+                                                <property name="fontSize">8.5pt</property>
+                                                <property name="display">inline</property>
+                                                <text-property name="text">x</text-property>
+                                            </label>
+                                            <data id="10496">
+                                                <property name="fontSize">8.5pt</property>
+                                                <structure name="numberFormat">
+                                                    <property name="category">Custom</property>
+                                                    <property name="pattern">#,##0.#</property>
+                                                </structure>
+                                                <property name="display">inline</property>
+                                                <property name="dataSet">Product</property>
+                                                <list-property name="boundDataColumns">
+                                                    <structure>
+                                                        <property name="name">gs1_height</property>
+                                                        <text-property name="displayName">gs1_height</text-property>
+                                                        <expression name="expression" type="javascript">var m_size = dataSetRow["gs1_height"];
+
+if ( m_size !== null &amp;&amp; m_size !== "" ) {
+
+( reportContext.getLocale().toString().toLowerCase() == "en_us" ) ? BirtMath.round(m_size * 0.0393700787, 1) : m_size;
+
+}</expression>
+                                                        <property name="dataType">float</property>
+                                                        <property name="allowExport">true</property>
+                                                    </structure>
+                                                </list-property>
+                                                <property name="resultSetColumn">gs1_height</property>
+                                            </data>
+                                        </cell>
+                                    </row>
+                                </grid>
                             </cell>
                             <cell id="2364">
                                 <property name="style">becpg-cell-data</property>
-                                <data id="9152">
+                                <data id="10488">
                                     <structure name="numberFormat">
                                         <property name="category">Custom</property>
                                         <property name="pattern">#,##0.#</property>
                                     </structure>
-                                    <property name="dataSet">packagingLevelMesures</property>
+                                    <property name="dataSet">Product</property>
                                     <list-property name="boundDataColumns">
                                         <structure>
-                                            <property name="name">tarePkgLevel1</property>
-                                            <text-property name="displayName">tarePkgLevel1</text-property>
+                                            <property name="name">tare</property>
+                                            <text-property name="displayName">tare</text-property>
                                             <expression name="expression" type="javascript">var isConvertToOz = (BirtStr.toLower( reportContext.getLocale().toString()) == "en_us") ;
 
- (isConvertToOz ) ? dataSetRow["tarePkgLevel1"] * 35.27396195 : dataSetRow["tarePkgLevel1"] * 1000;</expression>
+ if (isConvertToOz ) {
+ 
+ 	var coef_gToOz_or_kgToOz = 1;
+ 	if (dataSetRow["tareUnit"] == "g") {
+ 		coef_gToOz_or_kgToOz = 0.033814022558919;
+ 	} else if (dataSetRow["tareUnit"] == "kg") {
+ 		coef_gToOz_or_kgToOz =  35.27396195;
+ 	}else if (dataSetRow["tareUnit"] == "lb") {
+ 		coef_gToOz_or_kgToOz = 16 ;
+ 	}
+ 	
+ 	dataSetRow["tare"]  * coef_gToOz_or_kgToOz;
+ 	 
+ } else { 
+ 	var coef  =  (dataSetRow["tareUnit"] == "g") ?  1 : 1000;
+ 	
+ 	if (dataSetRow["tareUnit"] == "oz") {
+ 		coef = 29.5735296875;
+ 	} else if (dataSetRow["tareUnit"] == "lb") {
+ 		coef = 453.59237 ;
+ 	}else if (dataSetRow["tareUnit"] == "kg") {
+ 		coef = 1000 ;
+ 	}
+ 	dataSetRow["tare"] * coef;
+ }</expression>
                                             <property name="dataType">float</property>
                                             <property name="allowExport">true</property>
                                         </structure>
                                     </list-property>
-                                    <property name="resultSetColumn">tarePkgLevel1</property>
+                                    <property name="resultSetColumn">tare</property>
                                 </data>
                             </cell>
                             <cell id="2365">
                                 <property name="style">becpg-cell-data</property>
-                                <data id="3239">
+                                <data id="10523">
                                     <structure name="numberFormat">
                                         <property name="category">Custom</property>
                                         <property name="pattern">#,##0.#</property>
@@ -7684,70 +8226,199 @@ else{
                             </cell>
                             <cell id="2366">
                                 <property name="style">becpg-cell-data</property>
-                                <data id="9159">
+                                <data id="10489">
                                     <structure name="numberFormat">
                                         <property name="category">Custom</property>
                                         <property name="pattern">#,##0.#</property>
                                     </structure>
-                                    <property name="dataSet">packagingLevelMesures</property>
+                                    <property name="dataSet">Product</property>
                                     <list-property name="boundDataColumns">
                                         <structure>
-                                            <property name="name">grossWeightPkgLevel1_toUse</property>
-                                            <text-property name="displayName">grossWeightPkgLevel1_toUse</text-property>
-                                            <expression name="expression" type="javascript">dataSetRow["grossWeightPkgLevel1_toUse"]</expression>
+                                            <property name="name">gs1_weight</property>
+                                            <text-property name="displayName">gs1_weight</text-property>
+                                            <expression name="expression" type="javascript">var m_size = dataSetRow["gs1_weight"];
+
+if ( m_size !== null &amp;&amp; m_size !== "" ) {
+
+	var isConvertToOz =  (BirtStr.toLower( reportContext.getLocale().toString()) == "en_us") ;
+
+	(! isConvertToOz) ? m_size * 1000 : m_size * 35.27396195 ;
+}</expression>
                                             <property name="dataType">float</property>
+                                            <property name="allowExport">true</property>
                                         </structure>
                                     </list-property>
-                                    <property name="resultSetColumn">grossWeightPkgLevel1_toUse</property>
+                                    <property name="resultSetColumn">gs1_weight</property>
                                 </data>
                             </cell>
                             <cell id="2762">
                                 <property name="style">becpg-cell-data</property>
-                                <data id="2765">
-                                    <property name="dataSet">packagingLevelMesures</property>
+                                <data id="10524">
+                                    <property name="dataSet">Product</property>
                                     <list-property name="boundDataColumns">
                                         <structure>
-                                            <property name="name">nbProductsPkgLevel2</property>
-                                            <text-property name="displayName">nbProductsPkgLevel2</text-property>
-                                            <expression name="expression" type="javascript">dataSetRow["nbProductsPkgLevel2"]</expression>
-                                            <property name="dataType">string</property>
+                                            <property name="name">palletProductsPerBox</property>
+                                            <text-property name="displayName">palletProductsPerBox</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["palletProductsPerBox"]</expression>
+                                            <property name="dataType">integer</property>
                                         </structure>
                                     </list-property>
-                                    <property name="resultSetColumn">nbProductsPkgLevel2</property>
+                                    <property name="resultSetColumn">palletProductsPerBox</property>
                                 </data>
                             </cell>
                             <cell id="2368">
                                 <property name="style">becpg-cell-data</property>
-                                <data id="2455">
-                                    <property name="dataSet">packSecondLevelMaster</property>
-                                    <list-property name="boundDataColumns">
+                                <grid id="10508">
+                                    <property name="dataSet">Product</property>
+                                    <list-property name="visibility">
                                         <structure>
-                                            <property name="name">pmDimensions</property>
-                                            <text-property name="displayName">pmDimensions</text-property>
-                                            <expression name="expression" type="javascript">dataSetRow["pmDimensions"]</expression>
-                                            <property name="dataType">string</property>
+                                            <property name="format">all</property>
+                                            <expression name="valueExpr" type="javascript">( row["gs1_secondaryWidth"]== "" || row["gs1_secondaryWidth"] === null ) &amp;&amp; ( row["gs1_secondaryHeight"] == "" || row["gs1_secondaryHeight"] === null ) &amp;&amp; ( row["gs1_secondaryDepth"] == "" || row["gs1_secondaryDepth"] === null )</expression>
                                         </structure>
                                     </list-property>
-                                    <property name="resultSetColumn">pmDimensions</property>
-                                </data>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">gs1_secondaryWidth</property>
+                                            <text-property name="displayName">gs1_secondaryWidth</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["gs1_secondaryWidth"]</expression>
+                                            <property name="dataType">float</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">gs1_secondaryHeight</property>
+                                            <text-property name="displayName">gs1_secondaryHeight</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["gs1_secondaryHeight"]</expression>
+                                            <property name="dataType">float</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">gs1_secondaryDepth</property>
+                                            <text-property name="displayName">gs1_secondaryDepth</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["gs1_secondaryDepth"]</expression>
+                                            <property name="dataType">float</property>
+                                        </structure>
+                                    </list-property>
+                                    <column id="10509"/>
+                                    <row id="10510">
+                                        <cell id="10511">
+                                            <data id="10499">
+                                                <property name="fontSize">9pt</property>
+                                                <structure name="numberFormat">
+                                                    <property name="category">Custom</property>
+                                                    <property name="pattern">#,##0.#</property>
+                                                </structure>
+                                                <property name="display">inline</property>
+                                                <property name="dataSet">Product</property>
+                                                <list-property name="boundDataColumns">
+                                                    <structure>
+                                                        <property name="name">gs1_secondaryDepth</property>
+                                                        <text-property name="displayName">gs1_secondaryDepth</text-property>
+                                                        <expression name="expression" type="javascript">var m_size = dataSetRow["gs1_secondaryDepth"];
+
+if ( m_size !== null &amp;&amp; m_size !== "" ) {
+
+( reportContext.getLocale().toString().toLowerCase() == "en_us" ) ? BirtMath.round(m_size * 0.0393700787, 1) : m_size;
+
+}</expression>
+                                                        <property name="dataType">float</property>
+                                                        <property name="allowExport">true</property>
+                                                    </structure>
+                                                </list-property>
+                                                <property name="resultSetColumn">gs1_secondaryDepth</property>
+                                            </data>
+                                            <label id="10502">
+                                                <property name="fontSize">9pt</property>
+                                                <property name="display">inline</property>
+                                                <text-property name="text">x</text-property>
+                                            </label>
+                                            <data id="10500">
+                                                <property name="fontSize">9pt</property>
+                                                <structure name="numberFormat">
+                                                    <property name="category">Custom</property>
+                                                    <property name="pattern">#,##0.#</property>
+                                                </structure>
+                                                <property name="display">inline</property>
+                                                <property name="dataSet">Product</property>
+                                                <list-property name="boundDataColumns">
+                                                    <structure>
+                                                        <property name="name">gs1_secondaryWidth</property>
+                                                        <text-property name="displayName">gs1_secondaryWidth</text-property>
+                                                        <expression name="expression" type="javascript">var m_size = dataSetRow["gs1_secondaryWidth"];
+
+if ( m_size !== null &amp;&amp; m_size !== "" ) {
+
+( reportContext.getLocale().toString().toLowerCase() == "en_us" ) ? BirtMath.round(m_size * 0.0393700787, 1) : m_size;
+
+}</expression>
+                                                        <property name="dataType">float</property>
+                                                        <property name="allowExport">true</property>
+                                                    </structure>
+                                                </list-property>
+                                                <property name="resultSetColumn">gs1_secondaryWidth</property>
+                                            </data>
+                                            <label id="10503">
+                                                <property name="fontSize">9pt</property>
+                                                <property name="display">inline</property>
+                                                <text-property name="text">x</text-property>
+                                            </label>
+                                            <data id="10501">
+                                                <property name="fontSize">9pt</property>
+                                                <structure name="numberFormat">
+                                                    <property name="category">Custom</property>
+                                                    <property name="pattern">#,##0.#</property>
+                                                </structure>
+                                                <property name="display">inline</property>
+                                                <property name="dataSet">Product</property>
+                                                <list-property name="boundDataColumns">
+                                                    <structure>
+                                                        <property name="name">gs1_secondaryHeight</property>
+                                                        <text-property name="displayName">gs1_secondaryHeight</text-property>
+                                                        <expression name="expression" type="javascript">var m_size = dataSetRow["gs1_secondaryHeight"];
+
+if ( m_size !== null &amp;&amp; m_size !== "" ) {
+
+( reportContext.getLocale().toString().toLowerCase() == "en_us" ) ? BirtMath.round(m_size * 0.0393700787, 1) : m_size;
+
+}</expression>
+                                                        <property name="dataType">float</property>
+                                                        <property name="allowExport">true</property>
+                                                    </structure>
+                                                </list-property>
+                                                <property name="resultSetColumn">gs1_secondaryHeight</property>
+                                            </data>
+                                        </cell>
+                                    </row>
+                                </grid>
                             </cell>
                             <cell id="2369">
                                 <property name="style">becpg-cell-data</property>
-                                <data id="9158">
+                                <data id="10491">
                                     <structure name="numberFormat">
                                         <property name="category">Custom</property>
                                         <property name="pattern">#,##0.##</property>
                                     </structure>
-                                    <property name="dataSet">packagingLevelMesures</property>
-                                    <list-property name="boundDataColumns">
+                                    <property name="dataSet">Product</property>
+                                    <list-property name="visibility">
                                         <structure>
-                                            <property name="name">grossWeightPkgLevel2_toUse</property>
-                                            <text-property name="displayName">grossWeightPkgLevel2_toUse</text-property>
-                                            <expression name="expression" type="javascript">dataSetRow["grossWeightPkgLevel2_toUse"]</expression>
-                                            <property name="dataType">float</property>
+                                            <property name="format">all</property>
+                                            <expression name="valueExpr" type="javascript">row["gs1_secondaryWeight"] == "" || row["gs1_secondaryWeight"] === null</expression>
                                         </structure>
                                     </list-property>
-                                    <property name="resultSetColumn">grossWeightPkgLevel2_toUse</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">gs1_secondaryWeight</property>
+                                            <text-property name="displayName">gs1_secondaryWeight</text-property>
+                                            <expression name="expression" type="javascript">var m_size = dataSetRow["gs1_secondaryWeight"];
+
+if ( m_size !== null &amp;&amp; m_size !== "" ) {
+
+	var isConvertToLb = (BirtStr.toLower( reportContext.getLocale().toString()) == "en_us") ;
+
+	( isConvertToLb ) ? m_size * 2.204622622 : m_size ;
+}</expression>
+                                            <property name="dataType">float</property>
+                                            <property name="allowExport">true</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">gs1_secondaryWeight</property>
                                 </data>
                             </cell>
                         </row>
@@ -7765,12 +8436,6 @@ else{
                         <property name="pageBreakInside">avoid</property>
                         <property name="dataSet">packList</property>
                         <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">packagingListProduct</property>
-                                <text-property name="displayName">packagingListProduct</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["packagingListProduct"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
                             <structure>
                                 <property name="name">tableCheck</property>
                                 <text-property name="displayName">tableCheck</text-property>
@@ -7860,14 +8525,18 @@ en mm</text-property>
                             <property name="textAlign">center</property>
                             <cell id="2738">
                                 <property name="style">becpg-cell-data</property>
-                                <data id="2747">
-                                    <property name="dataSet">packThirdLevel</property>
+                                <data id="10518">
+                                    <structure name="numberFormat">
+                                        <property name="category">Custom</property>
+                                        <property name="pattern">#,##0.##</property>
+                                    </structure>
+                                    <property name="dataSet">Product</property>
                                     <list-property name="boundDataColumns">
                                         <structure>
                                             <property name="name">palletBoxesPerLayer</property>
                                             <text-property name="displayName">palletBoxesPerLayer</text-property>
                                             <expression name="expression" type="javascript">dataSetRow["palletBoxesPerLayer"]</expression>
-                                            <property name="dataType">string</property>
+                                            <property name="dataType">integer</property>
                                         </structure>
                                     </list-property>
                                     <property name="resultSetColumn">palletBoxesPerLayer</property>
@@ -7875,14 +8544,18 @@ en mm</text-property>
                             </cell>
                             <cell id="2739">
                                 <property name="style">becpg-cell-data</property>
-                                <data id="2748">
-                                    <property name="dataSet">packThirdLevel</property>
+                                <data id="10517">
+                                    <structure name="numberFormat">
+                                        <property name="category">Custom</property>
+                                        <property name="pattern">#,##0.##</property>
+                                    </structure>
+                                    <property name="dataSet">Product</property>
                                     <list-property name="boundDataColumns">
                                         <structure>
                                             <property name="name">palletLayers</property>
                                             <text-property name="displayName">palletLayers</text-property>
                                             <expression name="expression" type="javascript">dataSetRow["palletLayers"]</expression>
-                                            <property name="dataType">string</property>
+                                            <property name="dataType">integer</property>
                                         </structure>
                                     </list-property>
                                     <property name="resultSetColumn">palletLayers</property>
@@ -7890,14 +8563,18 @@ en mm</text-property>
                             </cell>
                             <cell id="2740">
                                 <property name="style">becpg-cell-data</property>
-                                <data id="2749">
-                                    <property name="dataSet">packThirdLevel</property>
+                                <data id="10520">
+                                    <structure name="numberFormat">
+                                        <property name="category">Custom</property>
+                                        <property name="pattern">#,##0.#</property>
+                                    </structure>
+                                    <property name="dataSet">Product</property>
                                     <list-property name="boundDataColumns">
                                         <structure>
                                             <property name="name">palletBoxesPerPallet</property>
                                             <text-property name="displayName">palletBoxesPerPallet</text-property>
                                             <expression name="expression" type="javascript">dataSetRow["palletBoxesPerPallet"]</expression>
-                                            <property name="dataType">string</property>
+                                            <property name="dataType">integer</property>
                                         </structure>
                                     </list-property>
                                     <property name="resultSetColumn">palletBoxesPerPallet</property>
@@ -7905,55 +8582,100 @@ en mm</text-property>
                             </cell>
                             <cell id="2741">
                                 <property name="style">becpg-cell-data</property>
-                                <data id="2752">
-                                    <property name="dataSet">packagingLevelMesures</property>
-                                    <list-property name="boundDataColumns">
-                                        <structure>
-                                            <property name="name">nbProductsPkgLevel3</property>
-                                            <text-property name="displayName">nbProductsPkgLevel3</text-property>
-                                            <expression name="expression" type="javascript">dataSetRow["nbProductsPkgLevel3"]</expression>
-                                            <property name="dataType">string</property>
-                                        </structure>
-                                    </list-property>
-                                    <property name="resultSetColumn">nbProductsPkgLevel3</property>
-                                </data>
-                            </cell>
-                            <cell id="2742">
-                                <property name="style">becpg-cell-data</property>
-                                <data id="9157">
-                                    <structure name="numberFormat">
-                                        <property name="category">Custom</property>
-                                        <property name="pattern">#,##0.##</property>
-                                    </structure>
-                                    <property name="dataSet">packagingLevelMesures</property>
-                                    <list-property name="boundDataColumns">
-                                        <structure>
-                                            <property name="name">grossWeightPkgLevel3_toUse</property>
-                                            <text-property name="displayName">grossWeightPkgLevel3_toUse</text-property>
-                                            <expression name="expression" type="javascript">dataSetRow["grossWeightPkgLevel3_toUse"]</expression>
-                                            <property name="dataType">float</property>
-                                        </structure>
-                                    </list-property>
-                                    <property name="resultSetColumn">grossWeightPkgLevel3_toUse</property>
-                                </data>
-                            </cell>
-                            <cell id="2743">
-                                <property name="style">becpg-cell-data</property>
-                                <data id="9156">
+                                <data id="10522">
                                     <structure name="numberFormat">
                                         <property name="category">Custom</property>
                                         <property name="pattern">#,##0.#</property>
                                     </structure>
-                                    <property name="dataSet">packThirdLevel</property>
-                                    <list-property name="boundDataColumns">
+                                    <property name="dataSet">Product</property>
+                                    <list-property name="visibility">
                                         <structure>
-                                            <property name="name">palletHeight_toUse</property>
-                                            <text-property name="displayName">palletHeight_toUse</text-property>
-                                            <expression name="expression" type="javascript">dataSetRow["palletHeight_toUse"]</expression>
-                                            <property name="dataType">float</property>
+                                            <property name="format">all</property>
+                                            <expression name="valueExpr" type="javascript">row["nbProductsPerPallet"] == null || row["nbProductsPerPallet"] == ""</expression>
                                         </structure>
                                     </list-property>
-                                    <property name="resultSetColumn">palletHeight_toUse</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">nbProductsPerPallet</property>
+                                            <expression name="expression" type="javascript">if (dataSetRow["palletProductsPerBox"] != null  &amp;&amp; dataSetRow["palletProductsPerBox"] != ""  &amp;&amp; dataSetRow["palletBoxesPerPallet"] != null  &amp;&amp; dataSetRow["palletBoxesPerPallet"] != ""   ) { 
+	dataSetRow["palletProductsPerBox"] * dataSetRow["palletBoxesPerPallet"];
+}</expression>
+                                            <property name="dataType">integer</property>
+                                            <property name="allowExport">true</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">palletBoxesPerPallet</property>
+                                            <text-property name="displayName">palletBoxesPerPallet</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["palletBoxesPerPallet"]</expression>
+                                            <property name="dataType">integer</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">palletProductsPerBox</property>
+                                            <text-property name="displayName">palletProductsPerBox</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["palletProductsPerBox"]</expression>
+                                            <property name="dataType">integer</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">nbProductsPerPallet</property>
+                                </data>
+                            </cell>
+                            <cell id="2742">
+                                <property name="style">becpg-cell-data</property>
+                                <data id="10492">
+                                    <property name="fontSize">9pt</property>
+                                    <structure name="numberFormat">
+                                        <property name="category">Custom</property>
+                                        <property name="pattern">#,##0.##</property>
+                                    </structure>
+                                    <property name="dataSet">Product</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">tertiaryWeight</property>
+                                            <text-property name="displayName">tertiaryWeight</text-property>
+                                            <expression name="expression" type="javascript">var m_size = dataSetRow["tertiaryWeight"];
+
+if ( m_size !== null &amp;&amp; m_size !== "" ) {
+
+	( BirtStr.toLower( reportContext.getLocale().toString()) == "en_us" ) ? m_size * 2.204622622 :  m_size;
+	
+}</expression>
+                                            <property name="dataType">float</property>
+                                            <property name="allowExport">true</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">tertiaryWeight</property>
+                                </data>
+                            </cell>
+                            <cell id="2743">
+                                <property name="style">becpg-cell-data</property>
+                                <data id="10493">
+                                    <structure name="numberFormat">
+                                        <property name="category">Custom</property>
+                                        <property name="pattern">#,##0.##</property>
+                                    </structure>
+                                    <property name="dataSet">packThirdLevel</property>
+                                    <list-property name="visibility">
+                                        <structure>
+                                            <property name="format">all</property>
+                                            <expression name="valueExpr" type="javascript">row["palletHeight"] == "" || row["palletHeight"] === null</expression>
+                                        </structure>
+                                    </list-property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">palletHeight</property>
+                                            <text-property name="displayName">palletHeight</text-property>
+                                            <expression name="expression" type="javascript">var m_size = dataSetRow["palletHeight"];
+
+if ( m_size !== null &amp;&amp; m_size !== "" ) {
+
+	( reportContext.getLocale().toString().toLowerCase() == "en_us" ) ? BirtMath.round(m_size * 0.0393700787, 1)  : m_size ;
+	
+}</expression>
+                                            <property name="dataType">float</property>
+                                            <property name="allowExport">true</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">palletHeight</property>
                                 </data>
                             </cell>
                         </row>
