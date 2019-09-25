@@ -1,5 +1,6 @@
 package fr.becpg.repo.product.formulation.labeling;
 
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -42,10 +43,15 @@ public abstract class RuleParser {
 	protected final Map<NodeRef, ShowRule> showGeoRules = new HashMap<>();
 
 	protected String defaultPercFormat = "0.#%";
+	protected RoundingMode defaultRoundingMode = RoundingMode.HALF_DOWN;
 
 	protected boolean showAllPerc = false;
 	protected boolean showAllGeo = false;
 	
+	
+	public void setDefaultRoundingMode(RoundingMode defaultRoundingMode) {
+		this.defaultRoundingMode = defaultRoundingMode;
+	}
 
 	public void setDefaultPercFormat(String defaultPercFormat) {
 		this.defaultPercFormat = defaultPercFormat;
@@ -100,7 +106,12 @@ public abstract class RuleParser {
 				if (components==null || components.isEmpty()) {
 					showAllPerc = true;
 					if ((formula != null) && !formula.isEmpty()) {
-						defaultPercFormat = formula;
+						if(formula.contains("|")) {
+							defaultPercFormat = formula.split("\\|")[0];
+							defaultRoundingMode = RoundingMode.valueOf(formula.split("\\|")[1]);
+						} else {
+							defaultPercFormat = formula;
+						}
 					}
 
 				} else {

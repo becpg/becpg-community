@@ -51,7 +51,7 @@ import fr.becpg.test.data.EntityTestData;
  */
 public class ProjectServiceIT extends AbstractProjectTestCase {
 
-	private static final Log logger = LogFactory.getLog(ProjectServiceTest.class);
+	private static final Log logger = LogFactory.getLog(ProjectServiceIT.class);
 
 	@Autowired
 	private EntityTplProjectPlugin entityTplProjectPlugin;

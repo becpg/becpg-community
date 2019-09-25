@@ -19,7 +19,7 @@ import fr.becpg.repo.repository.annotation.AlfType;
 
 @AlfType
 @AlfQname(qname="bcpg:ing")
-public class IngItem extends AbstractLabelingComponent {	
+public class IngItem extends CompositeLabeling {	
 
 	/**
 	 * 
@@ -31,8 +31,6 @@ public class IngItem extends AbstractLabelingComponent {
 	private String ingCEECode;
 	
 	private IngTypeItem ingType;
-
-	private List<IngItem> subIngs  = new LinkedList<>();
 	
 	private Set<NodeRef> pluralParents = new HashSet<>();
 
@@ -47,7 +45,6 @@ public class IngItem extends AbstractLabelingComponent {
 		super(ingItem);
 		this.ingCEECode = ingItem.ingCEECode;
 	    this.ingType = ingItem.ingType;
-	    this.subIngs = clone(ingItem.subIngs);
 	    this.charactName = ingItem.charactName;
 	}
 	
@@ -97,19 +94,11 @@ public class IngItem extends AbstractLabelingComponent {
 		this.ingType = ingType;
 	}
 
-	public List<IngItem> getSubIngs() {
-		return subIngs;
-	}
-
-	public void setSubIngs(List<IngItem> subIngs) {
-		this.subIngs = subIngs;
-	}
-	
 	
 	public Set<NodeRef> getPluralParents() {
 		return pluralParents;
 	}
-
+	
 	@Override
 	public IngItem clone()  {
 		return new IngItem(this);
@@ -149,11 +138,6 @@ public class IngItem extends AbstractLabelingComponent {
 			if (other.ingType != null)
 				return false;
 		} else if (!ingType.equals(other.ingType))
-			return false;
-		if (subIngs == null) {
-			if (other.subIngs != null)
-				return false;
-		} else if (!subIngs.equals(other.subIngs))
 			return false;
 		return true;
 	}
