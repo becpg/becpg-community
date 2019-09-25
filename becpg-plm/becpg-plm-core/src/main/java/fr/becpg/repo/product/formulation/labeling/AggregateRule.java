@@ -15,7 +15,8 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.constraints.LabelingRuleType;
-import fr.becpg.repo.product.data.ing.AbstractLabelingComponent;
+import fr.becpg.repo.product.data.ing.CompositeLabeling;
+import fr.becpg.repo.product.data.ing.LabelingComponent;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 
 /*
@@ -101,10 +102,10 @@ public class AggregateRule {
 				: ruleNodeRef != null ? ruleNodeRef : new NodeRef(RepoConsts.SPACES_STORE, "aggr-" + name.hashCode());
 	}
 
-	public boolean matchAll(Collection<AbstractLabelingComponent> values, boolean recur) {
+	public boolean matchAll(Collection<CompositeLabeling> values, boolean recur) {
 		// #2352
 		if (!recur) {
-			for (AbstractLabelingComponent abstractLabelingComponent : values) {
+			for (CompositeLabeling abstractLabelingComponent : values) {
 				if (getKey().equals(abstractLabelingComponent.getNodeRef())) {
 					return true;
 				}
@@ -112,7 +113,7 @@ public class AggregateRule {
 		}
 
 		int matchCount = components.size();
-		for (AbstractLabelingComponent abstractLabelingComponent : values) {
+		for (LabelingComponent abstractLabelingComponent : values) {
 			if (components.contains(abstractLabelingComponent.getNodeRef())) {
 				matchCount--;
 			}
