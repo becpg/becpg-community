@@ -269,6 +269,14 @@
 		</columns>
 	</mapping>	
 	
+	<mapping name="bcpg:labelingRuleList">
+        <nodeColumnKeys>
+            <nodeColumnKey attribute="cm:name" />
+        </nodeColumnKeys>
+        <columns>
+        </columns>
+    </mapping>
+    
 	<mapping name="bcpg:client">
 		<nodeColumnKeys>
 			<nodeColumnKey attribute="bcpg:erpCode" />
