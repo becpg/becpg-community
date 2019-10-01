@@ -408,6 +408,7 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 					allTasksCancelled = false;
 				} else if (TaskState.Completed.equals(c.getTaskState())) {
 					allTasksPlanned = false;
+					allTasksCancelled = false;
 				}  else if (TaskState.OnHold.equals(c.getTaskState()) || TaskState.Refused.equals(c.getTaskState())) {
 					allTasksCancelled = false;
 					allTasksPlanned = false;
