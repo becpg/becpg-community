@@ -18,6 +18,7 @@
 package fr.becpg.repo.project.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -323,6 +324,34 @@ public class ProjectServiceImpl implements ProjectService {
 
 	}
 
+	
+	
+
+	@Override
+	public NodeRef reassignTask(NodeRef taskNodeRef, String user) {
+
+		try {
+			// Disable notifications
+			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
+			policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
+			
+			logger.debug("Call reassignTask to: "+user);
+			NodeRef userNodeRef = authorityDAO.getAuthorityNodeRefOrNull((String) user);
+			if (userNodeRef != null) {
+				associationService.update(taskNodeRef, ProjectModel.ASSOC_TL_RESOURCES, Arrays.asList(userNodeRef));
+			} else {
+				logger.error("Cannot find user for assignee: "+ user);
+			}
+			
+			
+			return taskNodeRef;
+		} finally {
+			policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_TASK_LIST);
+			policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
+		}
+	}
+	
+	
 	@Override
 	public List<NodeRef> extractResources(NodeRef projectNodeRef, List<NodeRef> resources) {
 		List<NodeRef> ret = new ArrayList<>();
@@ -534,5 +563,6 @@ public class ProjectServiceImpl implements ProjectService {
 		}
 		return queryBuilder.count();
 	}
+
 
 }
