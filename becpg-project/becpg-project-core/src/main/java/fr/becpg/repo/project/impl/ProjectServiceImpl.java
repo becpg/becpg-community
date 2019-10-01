@@ -236,6 +236,7 @@ public class ProjectServiceImpl implements ProjectService {
 			// Disable notifications
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
 			policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
+			policyBehaviourFilter.disableBehaviour(ProjectModel.ASPECT_BUDGET);
 			
 			logger.debug("Call submitTask");
 
@@ -266,6 +267,7 @@ public class ProjectServiceImpl implements ProjectService {
 			projectListPolicy.queueListItem(nodeRef);
 
 		} finally {
+			policyBehaviourFilter.enableBehaviour(ProjectModel.ASPECT_BUDGET);
 			policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_TASK_LIST);
 			policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
 		}
@@ -280,6 +282,7 @@ public class ProjectServiceImpl implements ProjectService {
 			// Disable notifications
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
 			policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
+			policyBehaviourFilter.disableBehaviour(ProjectModel.ASPECT_BUDGET);
 			
 			logger.debug("Call refusedTask");
 			
@@ -302,6 +305,7 @@ public class ProjectServiceImpl implements ProjectService {
 			
 			return taskNodeRef;
 		} finally {
+			policyBehaviourFilter.enableBehaviour(ProjectModel.ASPECT_BUDGET);
 			policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_TASK_LIST);
 			policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
 		}
