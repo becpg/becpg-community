@@ -105,7 +105,7 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 					AuthenticationUtil.runAsSystem(() -> {
 						formulationService.formulate(productNodeRef);
 						if (!fast) {
-								entityActivityService.postEntityActivity(productNodeRef, ActivityType.Formulation, ActivityEvent.Update);
+								entityActivityService.postEntityActivity(productNodeRef, ActivityType.Formulation, ActivityEvent.Update, null);
 						}
 
 						return true;

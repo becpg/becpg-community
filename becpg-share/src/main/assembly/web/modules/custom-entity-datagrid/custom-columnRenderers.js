@@ -18,263 +18,319 @@
  ******************************************************************************/
 if (beCPG.module.EntityDataGridRenderers) {
 
- 
-
-   YAHOO.Bubbling.fire("registerDataGridRenderer", {
-      propertyName : "mltext_bcpg:lkvValue",
-      renderer : function(oRecord, data, label, scope) {
-         if (oRecord.getData("itemData")["prop_bcpg_depthLevel"] != null) {
-            var padding = (oRecord.getData("itemData")["prop_bcpg_depthLevel"].value - 1) * 15;
-            return '<span class="' + data.metadata + '" style="margin-left:' + padding + 'px;">' + Alfresco.util
-                  .encodeHTML(data.displayValue) + '</span>';
-         }
-         return Alfresco.util.encodeHTML(data.displayValue);
-
-      }
-
-   });
-   
-   
-   YAHOO.Bubbling
-         .fire(
-               "registerDataGridRenderer",
-               {
-                  propertyName : "fm:commentCount",
-                  renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
-
-                     if (data.value != null && data.value != "" && data.value != "0") {
-
-                    	 if(scope.options  && scope.options.itemType == "pjt:project"){
-                    		 return "";
-                    	 }
-                    	 
-                        if (oColumn.hidden) {
-                        	oColumn.showAfterRender = true;
-                        	oColumn.showAfterRenderSize = 32;
-                        }
-
-                        return '<div class="onActionShowComments"><a class="' + scope.id + '-action-link action-link" title="' + scope
-                              .msg("actions.comment") + '" href="" rel="edit"><span>' + data.displayValue + '</span></a></div>';
-
-                     }
-
-                     return "";
-
-                  }
-
-               });
-   
-
-   
-   YAHOO.Bubbling.fire("registerDataGridRenderer", {
-	      propertyName : [ "bcpg:alData" ],
-	      renderer : function(oRecord, data, label, scope) {
-	    	  var activityType = oRecord.getData("itemData")["prop_bcpg_alType"].value;
-	    	  var user = oRecord.getData("itemData")["prop_bcpg_alUserId"];
-	    	  var dateCreated = oRecord.getData("itemData")["prop_cm_created"];
-	    	  var html = "";
-              if(data.title || activityType == "Datalist" ){
-            	  var title = "";
-            	  var className = data.className!=null ? data.className : "entity"; 	  
-            	  title = "<span class=\""+className+"\">"+Alfresco.util.encodeHTML(data.title)+"</span>";
-            	  if(activityType == "State"){
-            		  title = scope.msg("entity.activity.state.change", title, scope.msg("data.state." +data.beforeState.toLowerCase()), scope.msg("data.state."+data.afterState.toLowerCase()));
-            	  } else if (activityType == "Datalist" ){
-            		  if (data.title == null || data.title.indexOf(className)>0){
-            			  title  = scope.msg("entity.activity.datalist.simple", scope.msg("data.list."+className));
-            		  } else{
-            			  title  = scope.msg("entity.activity.datalist."+data.activityEvent.toLowerCase(), title, scope.msg("data.list."+className) );
-            		  }
-            		  
-            	  } else if(activityType == "Entity"|| activityType == "Formulation" || activityType == "Report"){
-            		  title  = scope.msg("entity.activity."+activityType.toLowerCase(), title);
-            	  } else if(activityType == "Comment"){
-            		 title  = scope.msg("entity.activity.comment."+data.activityEvent.toLowerCase(), title);
-            	  } else if(activityType == "Content"){
-            		  if(data.activityEvent == "Delete"){
-            			  title = '<span class="doc-file"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/' + Alfresco.util
- 	                     .getFileIcon(data.title, "cm:content", 16) + '" />'+Alfresco.util.encodeHTML(data.title)+'</span>';
-            		  } else {
-	            		 title = '<span class="doc-file"><a  href="' +  beCPG.util.entityURL(oRecord.getData("siteId"),data.contentNodeRef, "document") + 
-	            		 '"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/' + Alfresco.util
-	                     .getFileIcon(data.title, "cm:content", 16) + '" />'+Alfresco.util.encodeHTML(data.title)+'</a></span>';
-            		  }
-            		 title  = scope.msg("entity.activity.content."+data.activityEvent.toLowerCase(), title);
-            	  }  else if(activityType == "Merge"){
-            		  title  = scope.msg("entity.activity.merge", title, data.branchTitle );
-            	  } else if(activityType == "Version"){
-            		  title  = scope.msg("entity.activity.version", title, data.versionLabel, data.versionNodeRef );
-            	  }
-            	  
-            	  html += '<div class="entity-activity-details">';
-    	          html += '   <div class="icon">' + Alfresco.Share.userAvatar(user.value,32) + '</div>';
-    	          html += '   <div class="details">';
-    	          html += '      <span class="user-info">';
-    	          html += Alfresco.util.userProfileLink(user.value, user.displayValue, 'class="theme-color-1"') + ' ';
-    	          html += '      </span>';
-    	          html += '      <span class="date-info">';
-    	          html += Alfresco.util.relativeTime(Alfresco.util.fromISO8601(dateCreated.value)) +' ('+  Alfresco.util.formatDate(dateCreated.value	, Alfresco.util.message(scope.msg("date.format"))) + ') <br/>';
-    	          html += '      </span>';
-    	          html += '      <div class="activity-title">' + title + '</div>';
-    	          if(data.content){
-    	         	html += '      <div class="activity-content">' + (data.content) + '</div>';
-    	          }
-    	          html += '   </div>';
-    	          html += '   <div class="clear"></div>';
-    	          html += '</div>';
-            	  
-              }
-	    	  return html;
-
-	      }
-
-	   });
-   
-   YAHOO.Bubbling.fire("registerDataGridRenderer", {
-	      propertyName : "sec:groupsAssignee",
-	      renderer : function(oRecord, data, label, scope) {
-	         if (data.displayValue != null) {
-	            return Alfresco.util.encodeHTML(data.displayValue);
-	         }
-	         return Alfresco.util.encodeHTML(data.metadata);
-
-	      }
-
-	   });
-
- YAHOO.Bubbling.fire("registerDataGridRenderer", {
-	      propertyName : [ "cm:created","pjt:rlDueDate" ],
-	      renderer : function(oRecord, data, label, scope) {
-	    	  if (data.value != null){
-	    		  return Alfresco.util.formatDate(data.value,"dd/mm/yyyy").toLowerCase();
-	    	  }
-	         return "";
-	      }
-
-	   });
 
 
-   var LIKE_EVENTCLASS = Alfresco.util.generateDomId(null, "like");
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+		propertyName : "mltext_bcpg:lkvValue",
+		renderer : function(oRecord, data, label, scope) {
+			if (oRecord.getData("itemData")["prop_bcpg_depthLevel"] != null) {
+				var padding = (oRecord.getData("itemData")["prop_bcpg_depthLevel"].value - 1) * 15;
+				return '<span class="' + data.metadata + '" style="margin-left:' + padding + 'px;">' + Alfresco.util
+				.encodeHTML(data.displayValue) + '</span>';
+			}
+			return Alfresco.util.encodeHTML(data.displayValue);
+
+		}
+
+	});
 
 
-   YAHOO.Bubbling
-   .fire(
-		   "registerDataGridRenderer",
-		   {
-			   propertyName : "cm:likesRatingSchemeCount",
-			   renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
+	YAHOO.Bubbling
+	.fire(
+			"registerDataGridRenderer",
+			{
+				propertyName : "fm:commentCount",
+				renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
 
-				   if(!scope.onLikes){
+					if (data.value != null && data.value != "" && data.value != "0") {
 
-					   scope.likeServices = new Alfresco.service.Ratings(Alfresco.service.Ratings.LIKES);
+						if(scope.options  && scope.options.itemType == "pjt:project"){
+							return "";
+						}
 
-					   scope.onLikes = function EntityDataGrid_onLikes(row)
-					   {
-						   var file = this.widgets.dataTable.getRecord(row).getData(),
-						   nodeRef = new Alfresco.util.NodeRef(file.nodeRef),
-						   likes = file.likes;
+						if (oColumn.hidden) {
+							oColumn.showAfterRender = true;
+							oColumn.showAfterRenderSize = 32;
+						}
 
-						   if(!file.likes){
-							   file.likes = {isLiked : false ,totalLikes : 0 };
-						   }
+						return '<div class="onActionShowComments"><a class="' + scope.id + '-action-link action-link" title="' + scope
+						.msg("actions.comment") + '" href="" rel="edit"><span>' + data.displayValue + '</span></a></div>';
 
-						   likes.isLiked = !likes.isLiked;
-						   likes.totalLikes += (likes.isLiked ? 1 : -1);
+					}
 
-						   var responseConfig =
-						   {
-								   successCallback:
-								   {
-									   fn: function CustomDataGrid_onLikes_success(event, p_nodeRef)
-						   {
-										   var data = event.json.data;
-										   if (data)
-										   {                	
-											   // Update the record with the server's value
-											   var record = this._findRecordByParameter(p_nodeRef, "nodeRef"),
-											   file = record.getData(),
-											   likes = file.likes;
+					return "";
 
-											   likes.totalLikes = data.ratingsCount;
-											   this.widgets.dataTable.updateRow(record, file);
+				}
 
-										   }
-						   },
-						   scope: this,
-						   obj: nodeRef.toString()
-								   },
-								   failureCallback:
-								   {
-									   fn: function CustomDataGrid_onLikes_failure(event, p_nodeRef)
-								   {
-										   // Reset the flag to it's previous state
-										   var record = this._findRecordByParameter(p_nodeRef, "nodeRef"),
-										   file = record.getData(),
-										   likes = file.likes;
-
-										   likes.isLiked = !likes.isLiked;
-										   likes.totalLikes += (likes.isLiked ? 1 : -1);
-										   this.widgets.dataTable.updateRow(record, file);
-										   Alfresco.util.PopupManager.displayPrompt(
-												   {
-													   text: this.msg("message.save.failure", p_nodeRef)
-												   });
-								   },
-								   scope: this,
-								   obj: nodeRef.toString()
-								   }
-						   };
-
-						   if (likes.isLiked)
-						   {
-							   this.likeServices.set(nodeRef, 1, responseConfig);
-						   }
-						   else
-						   {
-							   this.likeServices.remove(nodeRef, responseConfig);
-						   }
-						   var record = this._findRecordByParameter(nodeRef, "nodeRef");
-						   this.widgets.dataTable.updateRow(record, file);
-
-					   };
-
-					   // Hook like/unlike events
-					   var fnLikesHandler = function CustomDataGrid_fnLikesHandler(layer, args)
-					   {
-						   var owner = YAHOO.Bubbling.getOwnerByTagName(args[1].anchor, "div");
-						   if (owner !== null)
-						   {
-							   scope.onLikes.call(scope, args[1].target.offsetParent, owner);           		     
-						   }
-						   return true;
-					   };
-					   YAHOO.Bubbling.addDefaultAction(LIKE_EVENTCLASS, fnLikesHandler);
-
-				   }
+			});
 
 
-				   var likes = oRecord.getData().likes, html = "";
-				   if(likes){
-					   html += '<div class="detail detail-social"><span class="item item-social">';
 
-					   if (likes.isLiked)
-					   {
-						   html += '<a class="like-action ' + LIKE_EVENTCLASS + ' enabled" title="' + scope.msg("like.document.remove.tip") + '" tabindex="0"></a>';
-					   }
-					   else
-					   {
-						   html += '<a class="like-action ' + LIKE_EVENTCLASS + '" title="' + scope.msg("like.document.add.tip") + '" tabindex="0">' + scope.msg("like.document.add.label") + '</a>';
-					   }
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+		propertyName : [ "bcpg:alData" ],
+		renderer : function(oRecord, data, label, scope) {
+			var activityType = oRecord.getData("itemData")["prop_bcpg_alType"].value;
+			var user = oRecord.getData("itemData")["prop_bcpg_alUserId"];
+			var dateCreated = oRecord.getData("itemData")["prop_cm_created"];			
+			var html = "";
+			if(data.title || activityType == "Datalist" ){
+				var title = "";
+				var className = data.className!=null ? data.className : "entity"; 	  
+				title = "<span class=\""+className+"\">"+Alfresco.util.encodeHTML(data.title)+"</span>";
+				if(activityType == "State"){
+					title = scope.msg("entity.activity.state.change", title, scope.msg("data.state." +data.beforeState.toLowerCase()), scope.msg("data.state."+data.afterState.toLowerCase()));
+				} else if (activityType == "Datalist" ){
+					if (data.title == null || data.title.indexOf(className)>0){
+						title  = scope.msg("entity.activity.datalist.simple", scope.msg("data.list."+className));
+					} else{
+						title  = scope.msg("entity.activity.datalist."+data.activityEvent.toLowerCase(), title, scope.msg("data.list."+className) );
+					}
 
-					   html += '<span class="likes-count">' + Alfresco.util.encodeHTML(likes.totalLikes) + '</span></span></div>';
+				} else if(activityType == "Entity"|| activityType == "Formulation" || activityType == "Report"){
+					title  = scope.msg("entity.activity."+activityType.toLowerCase(), title);
+				} else if(activityType == "Comment"){
+					title  = scope.msg("entity.activity.comment."+data.activityEvent.toLowerCase(), title);
+				} else if(activityType == "Content"){
+					if(data.activityEvent == "Delete"){
+						title = '<span class="doc-file"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/' + Alfresco.util
+						.getFileIcon(data.title, "cm:content", 16) + '" />'+Alfresco.util.encodeHTML(data.title)+'</span>';
+					} else {
+						title = '<span class="doc-file"><a  href="' +  beCPG.util.entityURL(oRecord.getData("siteId"),data.contentNodeRef, "document") + 
+						'"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/' + Alfresco.util
+						.getFileIcon(data.title, "cm:content", 16) + '" />'+Alfresco.util.encodeHTML(data.title)+'</a></span>';
+					}
+					title  = scope.msg("entity.activity.content."+data.activityEvent.toLowerCase(), title);
+				}  else if(activityType == "Merge"){
+					title  = scope.msg("entity.activity.merge", title, data.branchTitle );
+				} else if(activityType == "Version"){
+					title  = scope.msg("entity.activity.version", title, data.versionLabel, data.versionNodeRef );
+				}
 
-				   }
-				   return html;
-			   }
+				html += '<div class="entity-activity-details">';
+				html += '   <div class="icon">' + Alfresco.Share.userAvatar(user.value,32) + '</div>';
+				html += '   <div class="details">';
+				html += '      <span class="user-info">';
+				html += Alfresco.util.userProfileLink(user.value, user.displayValue, 'class="theme-color-1"') + ' ';
+				html += '      </span>';
+				html += '      <span class="date-info">';
+				html += Alfresco.util.relativeTime(Alfresco.util.fromISO8601(dateCreated.value)) +' ('+  Alfresco.util.formatDate(dateCreated.value	, Alfresco.util.message(scope.msg("date.format"))) + ') <br/>';
+				html += '      </span>';
+				html += '      <div class="activity-title">' + title + '</div>';
 
-		   });
+				if (data.properties){
+					html += '      <div class="before-after-prop">';
+					html += '      <table class="prop-table"><tr style="background-color: #c4eaff;">';
+					html += '      <th style="width:30%; font-weight: bold;">' + scope.msg("entity.activity.property") + '</th>';
+					html += '      <th style="width:35%; font-weight: bold;">' + scope.msg("entity.activity.before") + '</th>';
+					html += '      <th style="width:35%; font-weight: bold;">' + scope.msg("entity.activity.after") + '</th></tr><tbody>';
 
-   
-  
+					var count = 0;
+					data.properties.forEach(function(prop){
+						var property="";
+						var before = prop.before;
+						var after = prop.after;
+						var locale = "";
+
+						if (before != null && before.length > 0 && before[0] != null && typeof before[0] == 'object'){
+							var beforePerLocale = before[0];
+							var afterPerLocale = after[0];
+							Object.keys(beforePerLocale).forEach(function(key){
+								if (beforePerLocale[key] != afterPerLocale[key]) {
+									locale = key;
+									if (key.includes("_")){
+										locale = key.substring(3,5).toLowerCase();
+									}
+									html += '      <tr'+(count%2 == 0 ? ' style="background-color: white;"':'')+'><td>' + prop.title +
+									' <img class="icon16_11" src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/flags/' + locale + '.png" /></td>';
+									html += '      <td>' + beforePerLocale[key] + '</td>';
+									html += '      <td>' + afterPerLocale[key] + '</td>';		
+									count++;
+								}
+							});
+							if (after != null && after.length > 0 && after[0] != null && typeof after[0] == 'object'){
+								Object.keys(afterPerLocale).forEach(function(key){
+									if (!beforePerLocale.hasOwnProperty(key)) {
+										locale = key;
+										if (key.includes("_")){
+											locale = key.substring(3,5).toLowerCase();
+										}
+										html += '      <tr'+(count%2 == 0 ? ' style="background-color: white;"':'')+'><td>' + prop.title +
+										' <img class="icon16_11" src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/flags/' + locale + '.png" /></td>';
+										html += '      <td> </td>';
+										html += '      <td>' + afterPerLocale[key] + '</td>';
+										count++;
+									}
+								});
+							}
+						} else {
+							html += '      <tr'+(count%2 == 0 ? ' style="background-color: white;"':'')+'><td>' + prop.title + '</td>';
+							html += '      <td>' + prop.before + '</td>';
+							html += '      <td>' + prop.after + '</td></tr>';
+							count++;
+						}
+					});
+					html += '    </tbody></table></div>'
+				}
+
+				if(data.content){
+					html += '      <div class="activity-content">' + (data.content) + '</div>';
+				}
+				html += '   </div>';
+				html += '   <div class="clear"></div>';
+				html += '</div>';
+
+			}
+			return html;
+
+		}
+
+	});
+
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+		propertyName : "sec:groupsAssignee",
+		renderer : function(oRecord, data, label, scope) {
+			if (data.displayValue != null) {
+				return Alfresco.util.encodeHTML(data.displayValue);
+			}
+			return Alfresco.util.encodeHTML(data.metadata);
+
+		}
+
+	});
+
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+		propertyName : [ "cm:created","pjt:rlDueDate" ],
+		renderer : function(oRecord, data, label, scope) {
+			if (data.value != null){
+				return Alfresco.util.formatDate(data.value,"dd/mm/yyyy").toLowerCase();
+			}
+			return "";
+		}
+
+	});
+
+
+	var LIKE_EVENTCLASS = Alfresco.util.generateDomId(null, "like");
+
+
+	YAHOO.Bubbling
+	.fire(
+			"registerDataGridRenderer",
+			{
+				propertyName : "cm:likesRatingSchemeCount",
+				renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
+
+					if(!scope.onLikes){
+
+						scope.likeServices = new Alfresco.service.Ratings(Alfresco.service.Ratings.LIKES);
+
+						scope.onLikes = function EntityDataGrid_onLikes(row)
+						{
+							var file = this.widgets.dataTable.getRecord(row).getData(),
+							nodeRef = new Alfresco.util.NodeRef(file.nodeRef),
+							likes = file.likes;
+
+							if(!file.likes){
+								file.likes = {isLiked : false ,totalLikes : 0 };
+							}
+
+							likes.isLiked = !likes.isLiked;
+							likes.totalLikes += (likes.isLiked ? 1 : -1);
+
+							var responseConfig =
+							{
+									successCallback:
+									{
+										fn: function CustomDataGrid_onLikes_success(event, p_nodeRef)
+							{
+											var data = event.json.data;
+											if (data)
+											{                	
+												// Update the record with the server's value
+												var record = this._findRecordByParameter(p_nodeRef, "nodeRef"),
+												file = record.getData(),
+												likes = file.likes;
+
+												likes.totalLikes = data.ratingsCount;
+												this.widgets.dataTable.updateRow(record, file);
+
+											}
+							},
+							scope: this,
+							obj: nodeRef.toString()
+									},
+									failureCallback:
+									{
+										fn: function CustomDataGrid_onLikes_failure(event, p_nodeRef)
+									{
+											// Reset the flag to it's previous state
+											var record = this._findRecordByParameter(p_nodeRef, "nodeRef"),
+											file = record.getData(),
+											likes = file.likes;
+
+											likes.isLiked = !likes.isLiked;
+											likes.totalLikes += (likes.isLiked ? 1 : -1);
+											this.widgets.dataTable.updateRow(record, file);
+											Alfresco.util.PopupManager.displayPrompt(
+													{
+														text: this.msg("message.save.failure", p_nodeRef)
+													});
+									},
+									scope: this,
+									obj: nodeRef.toString()
+									}
+							};
+
+							if (likes.isLiked)
+							{
+								this.likeServices.set(nodeRef, 1, responseConfig);
+							}
+							else
+							{
+								this.likeServices.remove(nodeRef, responseConfig);
+							}
+							var record = this._findRecordByParameter(nodeRef, "nodeRef");
+							this.widgets.dataTable.updateRow(record, file);
+
+						};
+
+						// Hook like/unlike events
+						var fnLikesHandler = function CustomDataGrid_fnLikesHandler(layer, args)
+						{
+							var owner = YAHOO.Bubbling.getOwnerByTagName(args[1].anchor, "div");
+							if (owner !== null)
+							{
+								scope.onLikes.call(scope, args[1].target.offsetParent, owner);           		     
+							}
+							return true;
+						};
+						YAHOO.Bubbling.addDefaultAction(LIKE_EVENTCLASS, fnLikesHandler);
+
+					}
+
+
+					var likes = oRecord.getData().likes, html = "";
+					if(likes){
+						html += '<div class="detail detail-social"><span class="item item-social">';
+
+						if (likes.isLiked)
+						{
+							html += '<a class="like-action ' + LIKE_EVENTCLASS + ' enabled" title="' + scope.msg("like.document.remove.tip") + '" tabindex="0"></a>';
+						}
+						else
+						{
+							html += '<a class="like-action ' + LIKE_EVENTCLASS + '" title="' + scope.msg("like.document.add.tip") + '" tabindex="0">' + scope.msg("like.document.add.label") + '</a>';
+						}
+
+						html += '<span class="likes-count">' + Alfresco.util.encodeHTML(likes.totalLikes) + '</span></span></div>';
+
+					}
+					return html;
+				}
+
+			});
+
+
+
 
 }

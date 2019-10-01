@@ -75,7 +75,7 @@
 }
 
 .datagrid.activityList .yui-dt-data  tr,.datagrid.activityList .yui-dt-data tr.yui-dt-highlighted 	{
-	background-color: white;
+	background-color: transparent;
 	border: none;
 	cursor : default;
 }
@@ -167,5 +167,17 @@
 	top: 11px;
 	content: '';
 }
+
+.before-after-prop {
+	background-color: #ddf3ff;
+	border: 1px solid #FFF;
+	padding: 5px;
+	margin: 10px;
+	border-radius: 8px;
+	box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+	position: relative;
+	width: 80%;
+}
+
 
 
