@@ -1,9 +1,15 @@
 package fr.becpg.repo.activity;
 
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
+
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.QName;
 import org.json.JSONObject;
+
+import com.google.gdata.util.common.base.Pair;
 
 import fr.becpg.repo.activity.data.ActivityEvent;
 import fr.becpg.repo.activity.data.ActivityType;
@@ -28,6 +34,10 @@ public interface EntityActivityService {
 	static final String PROP_BEFORE_STATE = "beforeState";
 	static final String PROP_AFTER_STATE = "afterState";
 	
+	static final String PROP_PROPERTIES= "properties";
+	static final String BEFORE = "before";
+	static final String AFTER = "after";
+	
 
 	
 
@@ -37,13 +47,13 @@ public interface EntityActivityService {
 
 	boolean postContentActivity(NodeRef entityNodeRef, NodeRef contentNodeRef, ActivityEvent activityEvent);
 
-	boolean postDatalistActivity(NodeRef entityNodeRef, NodeRef datalistItemNodeRef, ActivityEvent activityEvent);
+	boolean postDatalistActivity(NodeRef entityNodeRef, NodeRef datalistItemNodeRef, ActivityEvent activityEvent,Map<QName,Pair<Serializable,Serializable>> updatedProperties);
 	
 	boolean postVersionActivity(NodeRef origNodeRef, NodeRef versionNodeRef, String versionLabel);
 	
 	boolean postMergeBranchActivity(NodeRef branchNodeRef, NodeRef branchToNodeRef, VersionType versionType, String description);
-
-	boolean postEntityActivity(NodeRef entityNodeRef, ActivityType activityType, ActivityEvent activityEvent);
+	
+	boolean postEntityActivity(NodeRef entityNodeRef, ActivityType activityType, ActivityEvent activityEvent, Map<QName,Pair<List<Serializable>,List<Serializable>>> updatedProperties);
 
 	boolean postStateChangeActivity(NodeRef entityNodeRef, NodeRef datalistItemNodeRef, String beforeState, String afterState);
 

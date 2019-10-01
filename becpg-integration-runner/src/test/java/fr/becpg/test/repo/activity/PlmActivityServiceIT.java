@@ -142,7 +142,7 @@ public class PlmActivityServiceIT extends AbstractFinishedProductTest {
 		}, false, true);
 
 		// Check if comment activity was created
-		assertEquals("Activity 3: comment creation", 3, getActivities(finishedProductNodeRef, null).size());
+		assertEquals("Activity 3: comment creation", 2, getActivities(finishedProductNodeRef, null).size());
 
 		// Update comment on finished product
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -151,7 +151,7 @@ public class PlmActivityServiceIT extends AbstractFinishedProductTest {
 		}, false, true);
 
 		// Check if comment activity was updated
-		assertEquals("Activity 4: update comment", 4, getActivities(finishedProductNodeRef, null).size());
+		assertEquals("Activity 4: update comment", 3, getActivities(finishedProductNodeRef, null).size());
 
 		// Delete finished product comment
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -160,7 +160,7 @@ public class PlmActivityServiceIT extends AbstractFinishedProductTest {
 		}, false, true);
 
 		// Check if comment activity was deleted
-		Assert.assertEquals("Activity 5: delete comment", 5, getActivities(finishedProductNodeRef, null).size());
+		Assert.assertEquals("Activity 5: delete comment", 4, getActivities(finishedProductNodeRef, null).size());
 
 	}
 

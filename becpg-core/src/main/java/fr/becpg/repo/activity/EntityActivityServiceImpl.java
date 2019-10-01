@@ -1,5 +1,6 @@
 package fr.becpg.repo.activity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -15,22 +16,29 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.forum.CommentService;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.service.ServiceRegistry;
+import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.version.VersionType;
+import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
 import org.alfresco.util.ISO8601DateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
+
+import com.google.gdata.util.common.base.Pair;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
@@ -52,12 +60,16 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	private static Log logger = LogFactory.getLog(EntityActivityServiceImpl.class);
 
 	private static final int MAX_PAGE = 50;
-	
+
 	private static final Map<String, Boolean> SORT_MAP;
 	static{
 		SORT_MAP = new LinkedHashMap<>();
 		SORT_MAP.put("@cm:created", true);
 	}
+
+	@Autowired
+	@Qualifier("ServiceRegistry")
+	private ServiceRegistry serviceRegistry;
 
 	@Autowired
 	private EntityListDAO entityListDAO;
@@ -98,6 +110,9 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	@Autowired
 	private TransactionService transactionService;
 
+	@Autowired
+	NamespaceService namespaceService;
+
 	@Override
 	public boolean isMatchingStateProperty(QName propName) {
 
@@ -109,7 +124,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 		return false;
 	}
-	
+
 	@Override
 	public boolean isIgnoreStateProperty(QName propName) {
 
@@ -121,13 +136,13 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 		return false;
 	}
-	
-	
+
+
 	@Override
 	public boolean postCommentActivity(NodeRef entityNodeRef, NodeRef commentNodeRef, ActivityEvent activityEvent) {
 		return postCommentActivity(entityNodeRef, commentNodeRef, activityEvent, true)!=null;
 	}
-	
+
 
 	@Override
 	public NodeRef postCommentActivity(NodeRef entityNodeRef, NodeRef commentNodeRef, ActivityEvent activityEvent, boolean notifyObservers) {
@@ -295,7 +310,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	}
 
 	@Override
-	public boolean postDatalistActivity(NodeRef entityNodeRef, NodeRef datalistNodeRef, ActivityEvent activityEvent) {
+	public boolean postDatalistActivity(NodeRef entityNodeRef, NodeRef datalistNodeRef, ActivityEvent activityEvent,Map<QName,Pair<Serializable,Serializable>> updatedProperties) {
+
 		if ((datalistNodeRef != null)) {
 			try {
 				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
@@ -329,6 +345,26 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 							data.put(PROP_TITLE, attributeExtractorService.extractPropName(datalistNodeRef));
 						} 
 					}
+					if (activityEvent.equals(ActivityEvent.Update) && updatedProperties != null) {
+						List<JSONObject> properties = new ArrayList<JSONObject>();
+						for (Map.Entry<QName,Pair<Serializable,Serializable>> entry : updatedProperties.entrySet()) {
+							JSONObject property = new JSONObject();
+							PropertyDefinition propDef = serviceRegistry.getDictionaryService().getProperty(entry.getKey());
+							if(propDef != null && propDef.getTitle(serviceRegistry.getDictionaryService()) != null && propDef.getTitle(serviceRegistry.getDictionaryService()).length()>0) {
+								property.put(PROP_TITLE,propDef.getTitle(serviceRegistry.getDictionaryService()));
+							} else {
+								property.put(PROP_TITLE,entry.getKey().toPrefixString(serviceRegistry.getNamespaceService()));
+							}
+							property.put(BEFORE,entry.getValue().getFirst());
+							if (entry.getKey().toString().equals("{http://www.alfresco.org/model/content/1.0}name")) {
+								property.put(AFTER,data.get(PROP_TITLE));
+							} else {
+								property.put(AFTER,entry.getValue().getSecond());
+							}
+							properties.add(property);
+						}
+						data.put(PROP_PROPERTIES, new JSONArray(properties));
+					}
 
 					activityListDataItem.setActivityType(ActivityType.Datalist);
 					activityListDataItem.setActivityData(data.toString());
@@ -353,6 +389,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	}
 
 	private void mergeWithLastActivity(ActivityListDataItem item) {
+
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.HOUR, -1);
 
@@ -363,9 +400,9 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 				.andBetween(ContentModel.PROP_CREATED,  "'" + ISO8601DateFormat.format(cal.getTime()) + "'", "'" + ISO8601DateFormat.format(new Date(Long.MAX_VALUE)) + "'")
 				.addSort(ContentModel.PROP_CREATED, false)
 				.inDB();
-		
+
 		List<NodeRef> sortedActivityList = query.list();
-		
+
 		// The last created activity
 		if(sortedActivityList.isEmpty()){
 			sortedActivityList = BeCPGQueryBuilder.createQuery().parent(activityListNodeRef)
@@ -375,36 +412,67 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					.inDB()
 					.list();
 		}
-		
+
 		for (NodeRef activityListItemNodeRef : sortedActivityList) {
+
 			ActivityListDataItem activity = alfrescoRepository.findOne(activityListItemNodeRef);
-			
+
 			JSONObject activityData = null, itemData = null;
 			try {
 				activityData =  new JSONObject(activity.getActivityData());
 				itemData =  new JSONObject(item.getActivityData());
-				if( ((activity.getActivityData().equals(item.getActivityData())) 
+				if( ((activity.getActivityData().equals(item.getActivityData()))
 						|| (!itemData.has(PROP_TITLE) && !activityData.has(PROP_TITLE) 
-						&& item.getActivityType().equals(ActivityType.Datalist) 
-						&& activityData.get(PROP_CLASSNAME).equals(itemData.get(PROP_CLASSNAME)) 
-						&& activityData.get(PROP_ACTIVITY_EVENT).equals(itemData.get(PROP_ACTIVITY_EVENT)))) 
+								&& item.getActivityType().equals(ActivityType.Datalist) 
+								&& activityData.get(PROP_CLASSNAME).equals(itemData.get(PROP_CLASSNAME)) 
+								&& activityData.get(PROP_ACTIVITY_EVENT).equals(itemData.get(PROP_ACTIVITY_EVENT)))) 
 						&& activity.getUserId().equals(item.getUserId()) 
 						&& activity.getActivityType().equals(item.getActivityType()) ){
-					
+
 					nodeService.addAspect(activityListItemNodeRef, ContentModel.ASPECT_TEMPORARY, null);
 					nodeService.deleteNode(activityListItemNodeRef);
-				
+
 					if(logger.isDebugEnabled()){						
 						logger.debug("Merge with the last activity "+activity.getActivityType() );
 					}
-					
+
 					return;
+					// Add previous updated properties in the data of the last activity
+				} else if (itemData.has(PROP_PROPERTIES) && activityData.has(PROP_PROPERTIES)
+						&& itemData.get(PROP_ACTIVITY_EVENT).equals(activityData.get(PROP_ACTIVITY_EVENT))
+						&& item.getUserId().equals(activity.getUserId()) 
+						&& item.getActivityType().equals(activity.getActivityType())
+						&& itemData.get(PROP_TITLE).equals(activityData.get(PROP_TITLE))
+						&& ((!itemData.has(PROP_CLASSNAME) && !activityData.has(PROP_CLASSNAME)) || (itemData.get(PROP_CLASSNAME).equals(activityData.get(PROP_CLASSNAME))))) {
+					
+						JSONArray activityProperties = activityData.getJSONArray(PROP_PROPERTIES);
+						JSONArray itemProperties = itemData.getJSONArray(PROP_PROPERTIES);
+						for (int i = 0; i < activityProperties.length(); i++) {
+							JSONObject activityProperty = activityProperties.getJSONObject(i);
+							boolean isSameProperty = false;
+							for (int j = 0; j < itemProperties.length(); j++) {
+								JSONObject itemProperty = itemProperties.getJSONObject(j);
+								if (itemProperty.get(PROP_TITLE).equals(activityProperty.get(PROP_TITLE))) {
+									isSameProperty = true;
+								}
+							}
+							if (!isSameProperty) {
+								itemProperties.put(activityProperty);
+							}
+						}
+						itemData.put(PROP_PROPERTIES, itemProperties);
+						item.setActivityData(itemData.toString());
+						alfrescoRepository.save(item);
+
+						nodeService.addAspect(activityListItemNodeRef, ContentModel.ASPECT_TEMPORARY, null);
+						nodeService.deleteNode(activityListItemNodeRef);
+
 				}
-				
+
 			} catch (JSONException e) {
 				logger.error("parse json", e);
 			} 
-			
+
 		}
 	}
 
@@ -451,7 +519,6 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 					data.put(PROP_BEFORE_STATE, beforeState);
 					data.put(PROP_AFTER_STATE, afterState);
-
 					activityListDataItem.setActivityType(ActivityType.State);
 					activityListDataItem.setActivityData(data.toString());
 					activityListDataItem.setParentNodeRef(activityListNodeRef);
@@ -540,7 +607,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	}
 
 	@Override
-	public boolean postEntityActivity(NodeRef entityNodeRef, ActivityType activityType, ActivityEvent activityEvent) {
+	public boolean postEntityActivity(NodeRef entityNodeRef, ActivityType activityType, ActivityEvent activityEvent,Map<QName,Pair<List<Serializable>,List<Serializable>>> updatedProperties) {
 
 		try {
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
@@ -565,7 +632,26 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					}
 
 					data.put(PROP_TITLE, nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
-
+					if (activityEvent.equals(ActivityEvent.Update) && updatedProperties != null) {
+						List<JSONObject> properties = new ArrayList<JSONObject>();
+						for (Map.Entry<QName,Pair<List<Serializable>,List<Serializable>>> entry : updatedProperties.entrySet()) {
+							JSONObject property = new JSONObject();
+							PropertyDefinition propDef = serviceRegistry.getDictionaryService().getProperty(entry.getKey());
+							if(propDef != null && propDef.getTitle(serviceRegistry.getDictionaryService()) != null && propDef.getTitle(serviceRegistry.getDictionaryService()).length()>0) {
+								property.put(PROP_TITLE,propDef.getTitle(serviceRegistry.getDictionaryService()));
+							} else {
+								property.put(PROP_TITLE,entry.getKey().toPrefixString(serviceRegistry.getNamespaceService()));
+							}
+							property.put(BEFORE,entry.getValue().getFirst());
+							if(data.has(PROP_TITLE) && data.get(PROP_TITLE) != null && entry.getKey().equals(ContentModel.PROP_NAME)) {
+								property.put(AFTER,data.get(PROP_TITLE)); 
+							} else {
+								property.put(AFTER,entry.getValue().getSecond());
+							}
+							properties.add(property);
+						}
+						data.put(PROP_PROPERTIES, new JSONArray(properties));
+					}
 					activityListDataItem.setActivityType(activityType);
 					activityListDataItem.setActivityData(data.toString());
 					activityListDataItem.setParentNodeRef(activityListNodeRef);
@@ -655,7 +741,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 		return null;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see fr.becpg.repo.activity.EntityActivityService#cleanActivities()
@@ -666,13 +752,13 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 	@Override
 	public void cleanActivities() {
-		
+
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			// Only entities that might could be have activities
 			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_ENTITY_V2).inDB().maxResults(RepoConsts.MAX_RESULTS_UNLIMITED);
 			List<NodeRef> entityNodeRefs = queryBuilder.list();
-			
+
 			if(logger.isDebugEnabled()){
 				logger.debug("Clean activities, Number of entities: " + entityNodeRefs.size());
 			}
@@ -687,26 +773,26 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 						if(logger.isDebugEnabled()){							
 							logger.debug("group activities of entity : "+entityNodeRef);
 						}
-						
+
 						NodeRef activityListNodeRef = getActivityList(entityNodeRef);
 						if (activityListNodeRef != null) {
-							
+
 							Set<String> users = new HashSet<>();
 							Date cronDate = new Date();
 							// Get Activity list ordered by the date of creation
 							List<NodeRef> activityListDataItemNodeRefs = entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST, SORT_MAP);
 							Collections.reverse(activityListDataItemNodeRefs);
-							
+
 							int nbrActivity = activityListDataItemNodeRefs.size();
 							//Keep the first 50 activities
 							activityListDataItemNodeRefs = activityListDataItemNodeRefs.subList(nbrActivity>MAX_PAGE? MAX_PAGE : 0, nbrActivity>MAX_PAGE? nbrActivity : 0 );
-							
+
 							nbrActivity = activityListDataItemNodeRefs.size();
-							
+
 							if(logger.isDebugEnabled()){
 								logger.debug("nbrActivity: " + nbrActivity);
 							}
-							
+
 							// Clean activities which are not in the first page.
 							if (nbrActivity > 0 ) {
 								Map<ActivityType, List<NodeRef>> activitiesByType = new HashMap<>();
@@ -714,22 +800,22 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 								int activityInPage = 0;
 								boolean hasFormulation = false;
 								boolean hasReport = false;
-								
+
 								for (NodeRef activityItemNodeRef : activityListDataItemNodeRefs) {
 									if (activityInPage == MAX_PAGE){
 										hasFormulation = false;
 										hasReport = false;
 										activityInPage = 0;
 									}
-									
+
 									Date created = (Date) nodeService.getProperty(activityItemNodeRef, ContentModel.PROP_CREATED);
 									if (cronDate.after(created)) {
 										cronDate = created;
 									}
-									
+
 									activity = alfrescoRepository.findOne(activityItemNodeRef);
 									ActivityType activityType = activity.getActivityType();
-									
+
 									if((activityType.equals(ActivityType.Formulation) && hasFormulation) 
 											|| (activityType.equals(ActivityType.Report) && hasReport)){
 										nodeService.addAspect(activityItemNodeRef, ContentModel.ASPECT_TEMPORARY, null);
@@ -748,7 +834,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 										users.add(activity.getUserId());
 									}	
 								}
-								
+
 								List<NodeRef> dlActivities = activitiesByType.get(ActivityType.Datalist);
 								if(dlActivities != null){
 									// Group list by day/week/month/year
@@ -783,42 +869,42 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		Calendar minLimit = Calendar.getInstance();
 		minLimit.setTime(new Date());
 		minLimit.set(Calendar.HOUR_OF_DAY, 0);
-		
+
 		switch(timePeriod){
 		case Calendar.DAY_OF_YEAR: 
 			break;
-			
+
 		case Calendar.WEEK_OF_YEAR: 
 			maxLimit.set(Calendar.DAY_OF_WEEK, maxLimit.getFirstDayOfWeek());
 			minLimit.set(Calendar.DAY_OF_WEEK, minLimit.getFirstDayOfWeek());
 			minLimit.add(timePeriod, -1);
 			break;
-			
+
 		case Calendar.MONTH: 
 			maxLimit.set(Calendar.DAY_OF_MONTH, 1);
 			minLimit.set(Calendar.DAY_OF_MONTH, 1);
 			minLimit.add(timePeriod, -1);
 			break;
-			
+
 		case Calendar.YEAR: 
 			maxLimit.add(timePeriod, -1);
 			minLimit.add(timePeriod, -2);
 			break;
 		}
-		
+
 		// Repeat till the oldest activity
 		while (maxLimit.getTime().after(cronDate)) {
 
 			for (String userId : users) { 
-				
+
 				if(activitiesNodeRefs != null){
 					Map<NodeRef,List<String>> activitiesByEntity = new HashMap<>();
 					List<NodeRef> removedNodes = new ArrayList<>();
-				
+
 					for (NodeRef activityNodeRef : activitiesNodeRefs) {
-						
+
 						Date createdDate = (Date) nodeService.getProperty(activityNodeRef, ContentModel.PROP_CREATED);
-						
+
 						ActivityListDataItem activity = alfrescoRepository.findOne(activityNodeRef);
 						NodeRef activityParentNodeRef = activity.getParentNodeRef();
 						String strData = activity.getActivityData();
@@ -830,17 +916,17 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 						} catch (JSONException e) {
 							logger.error("Problem occurred while parsing data activity!! ", e);
 						}
-						
+
 						if (createdDate.after(minLimit.getTime()) && createdDate.before(maxLimit.getTime()) && activity.getUserId().equals(userId)) {
 							// group same data-list activity
 							if(activitiesByEntity.containsKey(activityParentNodeRef) 
 									&& activitiesByEntity.get(activityParentNodeRef).contains(datalistClassName)){
 								removedNodes.add(activityNodeRef);
-								
+
 								nodeService.addAspect(activityNodeRef, ContentModel.ASPECT_TEMPORARY, null);
 								nodeService.deleteNode(activityNodeRef);
 							} else {
-								
+
 								if (!activitiesByEntity.containsKey(activityParentNodeRef)) {
 									activitiesByEntity.put(activityParentNodeRef, new ArrayList<>());
 								}

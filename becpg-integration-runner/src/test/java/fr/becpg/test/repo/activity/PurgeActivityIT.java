@@ -188,9 +188,9 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 		for (int i = 0; i < 50; i++) {
 			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 				// Generate report
-				entityActivityService.postEntityActivity(finishedProductNodeRef, ActivityType.Report, ActivityEvent.Update);
+				entityActivityService.postEntityActivity(finishedProductNodeRef, ActivityType.Report, ActivityEvent.Update, null);
 				// Formulation
-				entityActivityService.postEntityActivity(finishedProductNodeRef, ActivityType.Formulation, ActivityEvent.Update);
+				entityActivityService.postEntityActivity(finishedProductNodeRef, ActivityType.Formulation, ActivityEvent.Update, null);
 
 				return null;
 			}, false, true);
@@ -240,9 +240,9 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 		for (int i = 0; i < 100; i++) {
 			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 				// Generate report
-				entityActivityService.postEntityActivity(finishedProductNodeRef, ActivityType.Report, ActivityEvent.Update);
+				entityActivityService.postEntityActivity(finishedProductNodeRef, ActivityType.Report, ActivityEvent.Update, null);
 				// Formulation
-				entityActivityService.postEntityActivity(finishedProductNodeRef, ActivityType.Formulation, ActivityEvent.Update);
+				entityActivityService.postEntityActivity(finishedProductNodeRef, ActivityType.Formulation, ActivityEvent.Update, null);
 
 				return null;
 			}, false, true);
@@ -319,9 +319,9 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 		for (int i = 0; i < 25; i++) {
 			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 				// Generate report
-				entityActivityService.postEntityActivity(finishedProductNodeRef, ActivityType.Report, ActivityEvent.Update);
+				entityActivityService.postEntityActivity(finishedProductNodeRef, ActivityType.Report, ActivityEvent.Update,null);
 				// Formulation
-				entityActivityService.postEntityActivity(finishedProductNodeRef, ActivityType.Formulation, ActivityEvent.Update);
+				entityActivityService.postEntityActivity(finishedProductNodeRef, ActivityType.Formulation, ActivityEvent.Update,null);
 				return null;
 			}, false, true);
 
@@ -411,9 +411,9 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 
 				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 					// Generate report
-					entityActivityService.postEntityActivity(finishedProductNodeRef, ActivityType.Report, ActivityEvent.Update);
+					entityActivityService.postEntityActivity(finishedProductNodeRef, ActivityType.Report, ActivityEvent.Update, null);
 					// Formulation
-					entityActivityService.postEntityActivity(finishedProductNodeRef, ActivityType.Formulation, ActivityEvent.Update);
+					entityActivityService.postEntityActivity(finishedProductNodeRef, ActivityType.Formulation, ActivityEvent.Update, null);
 					return null;
 				}, false, true);
 
@@ -515,11 +515,11 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 			return null;
 		}, false, true);
 
-		assertEquals("Check generated Activity", MAX_PAGE + 4, getActivities(productNodeRef, null).size());
+		assertEquals("Check generated Activity", MAX_PAGE + 3, getActivities(productNodeRef, null).size());
 
 		entityActivityService.cleanActivities();
 
-		assertEquals("Check generated Activity", MAX_PAGE + 4, getActivities(productNodeRef, null).size());
+		assertEquals("Check generated Activity", MAX_PAGE + 3, getActivities(productNodeRef, null).size());
 
 		for (int i = 0; i < 50; i++) {
 			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {

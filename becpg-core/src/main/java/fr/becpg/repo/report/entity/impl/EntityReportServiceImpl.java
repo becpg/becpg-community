@@ -393,7 +393,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 						// set reportNodeGenerated property to now
 						nodeService.setProperty(entityNodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED, generatedDate);
 
-						entityActivityService.postEntityActivity(entityNodeRef, ActivityType.Report, ActivityEvent.Update);
+						entityActivityService.postEntityActivity(entityNodeRef, ActivityType.Report, ActivityEvent.Update,null);
 
 					} finally {
 						I18NUtil.setLocale(currentLocal);
