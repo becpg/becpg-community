@@ -151,9 +151,9 @@ public class CompositionQtyCalculatingFormulationHandler extends FormulationBase
 				return qty / unitFactor;
 			} else if (compoListUnit.isP()) {
 
-				Double productQty = 1d;
+				Double productQty = FormulationHelper.QTY_FOR_PIECE;
 
-				if (compoListUnit.equals(ProductUnit.m) || (compoListUnit.equals(ProductUnit.m2) && (componentProductData.getQty() != null))) {
+				if (componentProductData.getUnit() != null && componentProductData.getUnit().isP() && componentProductData.getQty() != null) {
 					productQty = componentProductData.getQty();
 				}
 
