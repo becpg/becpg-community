@@ -16,7 +16,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.forum.CommentService;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.service.ServiceRegistry;
+import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
@@ -34,7 +34,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
@@ -66,10 +65,6 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		SORT_MAP = new LinkedHashMap<>();
 		SORT_MAP.put("@cm:created", true);
 	}
-
-	@Autowired
-	@Qualifier("ServiceRegistry")
-	private ServiceRegistry serviceRegistry;
 
 	@Autowired
 	private EntityListDAO entityListDAO;
@@ -113,6 +108,9 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	@Autowired
 	NamespaceService namespaceService;
 
+	@Autowired
+	public DictionaryService dictionaryService;
+	
 	@Override
 	public boolean isMatchingStateProperty(QName propName) {
 
@@ -349,14 +347,14 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 						List<JSONObject> properties = new ArrayList<JSONObject>();
 						for (Map.Entry<QName,Pair<Serializable,Serializable>> entry : updatedProperties.entrySet()) {
 							JSONObject property = new JSONObject();
-							PropertyDefinition propDef = serviceRegistry.getDictionaryService().getProperty(entry.getKey());
-							if(propDef != null && propDef.getTitle(serviceRegistry.getDictionaryService()) != null && propDef.getTitle(serviceRegistry.getDictionaryService()).length()>0) {
-								property.put(PROP_TITLE,propDef.getTitle(serviceRegistry.getDictionaryService()));
+							PropertyDefinition propDef = (PropertyDefinition)entityDictionaryService.getPropDef(entry.getKey());
+							if(propDef != null && propDef.getTitle(dictionaryService) != null && propDef.getTitle(dictionaryService).length()>0) {
+								property.put(PROP_TITLE,propDef.getTitle(dictionaryService));
 							} else {
-								property.put(PROP_TITLE,entry.getKey().toPrefixString(serviceRegistry.getNamespaceService()));
+								property.put(PROP_TITLE,entry.getKey().toPrefixString(namespaceService));
 							}
 							property.put(BEFORE,entry.getValue().getFirst());
-							if (entry.getKey().toString().equals("{http://www.alfresco.org/model/content/1.0}name")) {
+							if (entry.getKey().equals(ContentModel.PROP_NAME)) {
 								property.put(AFTER,data.get(PROP_TITLE));
 							} else {
 								property.put(AFTER,entry.getValue().getSecond());
@@ -636,11 +634,11 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 						List<JSONObject> properties = new ArrayList<JSONObject>();
 						for (Map.Entry<QName,Pair<List<Serializable>,List<Serializable>>> entry : updatedProperties.entrySet()) {
 							JSONObject property = new JSONObject();
-							PropertyDefinition propDef = serviceRegistry.getDictionaryService().getProperty(entry.getKey());
-							if(propDef != null && propDef.getTitle(serviceRegistry.getDictionaryService()) != null && propDef.getTitle(serviceRegistry.getDictionaryService()).length()>0) {
-								property.put(PROP_TITLE,propDef.getTitle(serviceRegistry.getDictionaryService()));
+							PropertyDefinition propDef = (PropertyDefinition) entityDictionaryService.getPropDef(entry.getKey());
+							if(propDef != null && propDef.getTitle(dictionaryService) != null && propDef.getTitle(dictionaryService).length()>0) {
+								property.put(PROP_TITLE,propDef.getTitle(dictionaryService));
 							} else {
-								property.put(PROP_TITLE,entry.getKey().toPrefixString(serviceRegistry.getNamespaceService()));
+								property.put(PROP_TITLE,entry.getKey().toPrefixString(namespaceService));
 							}
 							property.put(BEFORE,entry.getValue().getFirst());
 							if(data.has(PROP_TITLE) && data.get(PROP_TITLE) != null && entry.getKey().equals(ContentModel.PROP_NAME)) {
