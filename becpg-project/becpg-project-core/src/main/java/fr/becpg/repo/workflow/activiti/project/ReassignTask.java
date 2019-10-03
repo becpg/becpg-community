@@ -41,7 +41,7 @@ public class ReassignTask extends ScriptTaskListener {
 			logger.debug("taskNode exist " + taskNode.getNodeRef());
 			NodeRef taskNodeRef = taskNode.getNodeRef();
 
-			if (nodeService.exists(taskNodeRef)) {
+			if (nodeService.exists(taskNodeRef) && task.getAssignee()!=null) {
 				
 				projectService.reassignTask(taskNodeRef, task.getAssignee());
 			}
