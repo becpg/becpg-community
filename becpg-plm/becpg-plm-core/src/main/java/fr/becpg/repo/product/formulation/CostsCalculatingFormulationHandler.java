@@ -375,41 +375,30 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 				if ((c.getDepthLevel() == null) || (c.getDepthLevel() == 1)) {
 					unitTotalVariableCost += costPerProduct;
 				}
-				if ((formulatedProduct instanceof FinishedProductData) || (formulatedProduct instanceof SemiFinishedProductData)) {
-					c.setValuePerProduct(costPerProduct);
-				}
+				c.setValuePerProduct(costPerProduct);
 			}
 
+			c.setFutureValuePerProduct(null);
 			if (futureCostPerProduct != null) {
 				if ((c.getDepthLevel() == null) || (c.getDepthLevel() == 1)) {
 					futureTotalVariableCost += futureCostPerProduct;
 				}
-				if ((formulatedProduct instanceof FinishedProductData) || (formulatedProduct instanceof SemiFinishedProductData)) {
-					c.setFutureValuePerProduct(futureCostPerProduct);
-				}
+				c.setFutureValuePerProduct(futureCostPerProduct);
 			}
-
+			
+			c.setPreviousValuePerProduct(null);
 			if (previousCostPerProduct != null) {
 				if ((c.getDepthLevel() == null) || (c.getDepthLevel() == 1)) {
 					previousTotalVariableCost += previousCostPerProduct;
 				}
-				if ((formulatedProduct instanceof FinishedProductData) || (formulatedProduct instanceof SemiFinishedProductData)) {
-					c.setPreviousValuePerProduct(previousCostPerProduct);
-				}
+				c.setPreviousValuePerProduct(previousCostPerProduct);
 			}
 
 		}
 
-		if (formulatedProduct instanceof FinishedProductData) {
-			formulatedProduct.setUnitTotalCost(unitTotalVariableCost);
-			formulatedProduct.setPreviousUnitTotalCost(previousTotalVariableCost);
-			formulatedProduct.setFutureUnitTotalCost(futureTotalVariableCost);
-		} else {
-			// €/Kg, €/L or €/P
-			formulatedProduct.setUnitTotalCost(unitTotalVariableCost / netQty);
-			formulatedProduct.setPreviousUnitTotalCost(previousTotalVariableCost / netQty);
-			formulatedProduct.setFutureUnitTotalCost(futureTotalVariableCost / netQty);
-		}
+		formulatedProduct.setUnitTotalCost(unitTotalVariableCost);
+		formulatedProduct.setPreviousUnitTotalCost(previousTotalVariableCost);
+		formulatedProduct.setFutureUnitTotalCost(futureTotalVariableCost);
 
 		if ((formulatedProduct.getUnitPrice() != null) && (formulatedProduct.getUnitTotalCost() != null)) {
 
