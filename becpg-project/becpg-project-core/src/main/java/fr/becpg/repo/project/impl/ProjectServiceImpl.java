@@ -107,8 +107,7 @@ public class ProjectServiceImpl implements ProjectService {
 	private ProjectActivityService projectActivityService;
 	@Autowired
 	private ProjectListPolicy projectListPolicy;
-	
-	
+
 	@Autowired
 	SysAdminParams sysAdminParams;
 
@@ -140,25 +139,24 @@ public class ProjectServiceImpl implements ProjectService {
 
 	}
 
-	
 	@Override
 	public List<NodeRef> getTaskLegendList(NodeRef projectNodeRef) {
-		if(projectNodeRef ==  null) {
+		if (projectNodeRef == null) {
 			return BeCPGQueryBuilder.createQuery().ofType(ProjectModel.TYPE_TASK_LEGEND).addSort(BeCPGModel.PROP_SORT, true).inDB().list();
 		}
-		
-		List<NodeRef> ret = new LinkedList<NodeRef>();
+
+		List<NodeRef> ret = new LinkedList<>();
 
 		ProjectData project = alfrescoRepository.findOne(projectNodeRef);
-		for(TaskListDataItem task: project.getTaskList()) {
-			if(task.getTaskLegend()!=null && !ret.contains(task.getTaskLegend())) {
+		for (TaskListDataItem task : project.getTaskList()) {
+			if ((task.getTaskLegend() != null) && !ret.contains(task.getTaskLegend())) {
 				ret.add(task.getTaskLegend());
 			}
 		}
 
 		return ret;
 	}
-	
+
 	@Override
 	public NodeRef getProjectsContainer(String siteId) {
 		if ((siteId != null) && (siteId.length() > 0)) {
@@ -253,7 +251,7 @@ public class ProjectServiceImpl implements ProjectService {
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
 			policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
 			policyBehaviourFilter.disableBehaviour(ProjectModel.ASPECT_BUDGET);
-			
+
 			logger.debug("Call submitTask");
 
 			NodeRef commentNodeRef = null;
@@ -279,7 +277,7 @@ public class ProjectServiceImpl implements ProjectService {
 
 			projectActivityService.postTaskStateChangeActivity(nodeRef, commentNodeRef, TaskState.InProgress.toString(),
 					TaskState.Completed.toString(), false);
-			
+
 			projectListPolicy.queueListItem(nodeRef);
 
 		} finally {
@@ -289,7 +287,6 @@ public class ProjectServiceImpl implements ProjectService {
 		}
 
 	}
-	
 
 	@Override
 	public NodeRef refusedTask(NodeRef nodeRef, String taskComment) {
@@ -299,9 +296,9 @@ public class ProjectServiceImpl implements ProjectService {
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
 			policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
 			policyBehaviourFilter.disableBehaviour(ProjectModel.ASPECT_BUDGET);
-			
+
 			logger.debug("Call refusedTask");
-			
+
 			NodeRef taskNodeRef = associationService.getTargetAssoc(nodeRef, ProjectModel.ASSOC_TL_REFUSED_TASK_REF);
 
 			NodeRef commentNodeRef = null;
@@ -318,7 +315,7 @@ public class ProjectServiceImpl implements ProjectService {
 					false);
 
 			projectListPolicy.queueListItem(nodeRef);
-			
+
 			return taskNodeRef;
 		} finally {
 			policyBehaviourFilter.enableBehaviour(ProjectModel.ASPECT_BUDGET);
@@ -328,9 +325,6 @@ public class ProjectServiceImpl implements ProjectService {
 
 	}
 
-	
-	
-
 	@Override
 	public NodeRef reassignTask(NodeRef taskNodeRef, String user) {
 
@@ -338,24 +332,29 @@ public class ProjectServiceImpl implements ProjectService {
 			// Disable notifications
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
 			policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
-			
-			logger.debug("Call reassignTask to: "+user);
-			NodeRef userNodeRef = authorityDAO.getAuthorityNodeRefOrNull((String) user);
+
+			logger.debug("Call reassignTask to: " + user);
+			NodeRef userNodeRef = authorityDAO.getAuthorityNodeRefOrNull(user);
 			if (userNodeRef != null) {
-				associationService.update(taskNodeRef, ProjectModel.ASSOC_TL_RESOURCES, Arrays.asList(userNodeRef));
+				List<NodeRef> resources = associationService.getTargetAssocs(taskNodeRef, ProjectModel.ASSOC_TL_RESOURCES);
+				if ((resources.size() == 1) && !resources.contains(userNodeRef) && !resources.contains(getReassignedResource(userNodeRef))) {
+					QName type = nodeService.getType(resources.get(0));
+					if (!type.equals(ContentModel.TYPE_AUTHORITY_CONTAINER)) {
+						associationService.update(taskNodeRef, ProjectModel.ASSOC_TL_RESOURCES, Arrays.asList(userNodeRef));
+					}
+				}
 			} else {
-				logger.error("Cannot find user for assignee: "+ user);
+				logger.error("Cannot find user for assignee: " + user);
 			}
-			
-			
+
 			return taskNodeRef;
 		} finally {
 			policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_TASK_LIST);
 			policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
 		}
 	}
-	
-	
+
+
 	@Override
 	public List<NodeRef> extractResources(NodeRef projectNodeRef, List<NodeRef> resources) {
 		List<NodeRef> ret = new ArrayList<>();
@@ -552,7 +551,6 @@ public class ProjectServiceImpl implements ProjectService {
 
 	}
 
-
 	@Override
 	public Long getNbProjectsByLegend(NodeRef legendNodeRef, String siteId) {
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(ProjectModel.TYPE_PROJECT)
@@ -567,6 +565,5 @@ public class ProjectServiceImpl implements ProjectService {
 		}
 		return queryBuilder.count();
 	}
-
 
 }
