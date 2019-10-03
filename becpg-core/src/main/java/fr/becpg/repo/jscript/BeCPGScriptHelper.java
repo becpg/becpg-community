@@ -39,6 +39,7 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.validator.routines.checkdigit.CheckDigitException;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
@@ -49,6 +50,8 @@ import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.AutoNumHelper;
+import fr.becpg.repo.helper.GTINHelper;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
@@ -327,4 +330,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		return loc;
 	}
 
+	public static String generateEAN13Code(String prefix) throws CheckDigitException {
+		return GTINHelper.createEAN13Code(prefix,AutoNumHelper.getAutoNumValue("bcpg:eanCode", "bcpg:ean13Pref"+prefix));
+	}
 }

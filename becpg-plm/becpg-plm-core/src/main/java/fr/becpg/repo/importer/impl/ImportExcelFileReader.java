@@ -81,8 +81,8 @@ public class ImportExcelFileReader implements ImportFileReader {
 					break;
 				case Cell.CELL_TYPE_NUMERIC:	
 					if(attributeMapping!=null && attributeMapping.getAttribute() instanceof PropertyDefinition
-					&& DataTypeDefinition.TEXT.equals(((PropertyDefinition)attributeMapping.getAttribute()).getDataType().getName())
-					|| DataTypeDefinition.MLTEXT.equals(((PropertyDefinition)attributeMapping.getAttribute()).getDataType().getName())
+					&& (DataTypeDefinition.TEXT.equals(((PropertyDefinition)attributeMapping.getAttribute()).getDataType().getName())
+					|| DataTypeDefinition.MLTEXT.equals(((PropertyDefinition)attributeMapping.getAttribute()).getDataType().getName()))
 						 ){
 						line.add(""+cell.getNumericCellValue());
 					} else	
