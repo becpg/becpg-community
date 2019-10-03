@@ -8567,7 +8567,7 @@
 						<field id="bcpg:ingListDeclType" >
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="isStoreable">true</control-param>
-							<control-param name="options">Declare|constraint.declarationtype.declare,DoNotDetails|constraint.declarationtype.donotdetails,Detail|constraint.declarationtype.detail,Omit|constraint.declarationtype.omit,DoNotDeclare|constraint.declarationtype.donotdeclare</control-param>
+							<control-param name="options">Declare|data.declarationtype.declare,DoNotDetails|data.declarationtype.donotdetails,Detail|data.declarationtype.detail,Omit|data.declarationtype.omit,DoNotDeclare|data.declarationtype.donotdeclare</control-param>
 						</control>
 					</field>
 					
@@ -8653,7 +8653,7 @@
 					<field id="bcpg:ingListDeclType" >
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="isStoreable">true</control-param>
-							<control-param name="options">Declare|constraint.declarationtype.declare,DoNotDetails|constraint.declarationtype.donotdetails,Detail|constraint.declarationtype.detail,Omit|constraint.declarationtype.omit,DoNotDeclare|constraint.declarationtype.donotdeclare</control-param>	
+							<control-param name="options">Declare|data.declarationtype.declare,DoNotDetails|data.declarationtype.donotdetails,Detail|data.declarationtype.detail,Omit|data.declarationtype.omit,DoNotDeclare|data.declarationtype.donotdeclare</control-param>	
 						</control>
 					</field>
 					<field id="bcpg:parentLevel">

@@ -1508,7 +1508,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 								: realDiluentQty.divide(diluentQty, 10, BigDecimal.ROUND_HALF_UP);
 
 						BigDecimal realQty = realDiluentQty.add(productQty.multiply(realDiluentQtyRatio)).divide(rate, 10, BigDecimal.ROUND_HALF_UP);
-					
+
 						ingLabelItem.setQty(ingQty.subtract(realDiluentQty).doubleValue());
 						productLabelItem.setQty(productQty.subtract(realQty).doubleValue());
 
@@ -1521,10 +1521,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						BigDecimal realVol = readlDiluentvolume.add(productVol.multiply(readlDiluentvolumeRatio)).divide(rate, 10,
 								BigDecimal.ROUND_HALF_UP);
 
-
 						ingLabelItem.setVolume(ingVol.subtract(readlDiluentvolume).doubleValue());
 						productLabelItem.setVolume(productVol.subtract(realVol).doubleValue());
-
 
 						IngItem targetLabelItem = (IngItem) parent.get(reconstituableData.getTargetIngNodeRef());
 						if (targetLabelItem == null) {
@@ -1625,161 +1623,164 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 			DeclarationType ingDeclarationType = getDeclarationType(compoListDataItem, ingListItem.getData(), labelingFormulaContext);
 			if (!DeclarationType.Omit.equals(ingDeclarationType) && !DeclarationType.DoNotDeclare.equals(ingDeclarationType)) {
-				
-				if(DeclarationType.Declare.equals(ingDeclarationType) && !ingListItem.isLeaf()) {
-					logger.debug("Declaring ingredient ");
+
+				if (DeclarationType.Declare.equals(ingDeclarationType) && !ingListItem.isLeaf()) {
+					logger.debug("Declaring ingredient: ");
 					visitIngList(parent, product, ingListItem, omitQtyPerc, qty, volume, labelingFormulaContext, compoListDataItem, errors);
-					return parent;
-				}
-				
-				
-				NodeRef ingNodeRef = ingListItem.getData().getIng();
-				IngItem ingLabelItem = (IngItem) parent.get(ingNodeRef);
-				boolean isNew = true;
-
-				if (ingLabelItem == null) {
-					ingLabelItem = new IngItem((IngItem) alfrescoRepository.findOne(ingNodeRef));
-					ingLabelItem.getPluralParents().add(ingListItem.getData().getNodeRef());
-					ingLabelItem.setDeclarationType(ingDeclarationType);
-
-					parent.add(ingLabelItem);
-
-					if (applyThreshold) {
-						labelingFormulaContext.getToApplyThresholdItems().add(ingNodeRef);
-					}
-
-					if (logger.isTraceEnabled()) {
-						logger.trace("- Add new ing " + getName(ingLabelItem) + " to current Label " + getName(parent) );
-					}
 
 				} else {
-					if (logger.isTraceEnabled()) {
-						logger.trace("- Update ing value: " + ingLabelItem.getLegalName(I18NUtil.getContentLocaleLang()));
-					}
-					isNew = false;
-					if (!ingLabelItem.getPluralParents().contains(ingListItem.getData().getNodeRef())) {
-						ingLabelItem.getPluralParents().add(ingListItem.getData().getNodeRef());
-						ingLabelItem.setPlural(true);
-					}
-				}
 
-				if (product.getAllergenList() != null) {
-					for (AllergenListDataItem allergenListDataItem : product.getAllergenList()) {
-						if (allergenListDataItem.getVoluntary() && allergenListDataItem.getVoluntarySources().contains(ingNodeRef)) {
-							if (AllergenType.Major.toString()
-									.equals(nodeService.getProperty(allergenListDataItem.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE))) {
-								ingLabelItem.getAllergens().add(allergenListDataItem.getAllergen());
+					if (DeclarationType.Declare.equals(ingDeclarationType)) {
+						ingDeclarationType = DeclarationType.DoNotDetails;
+					}
+
+					NodeRef ingNodeRef = ingListItem.getData().getIng();
+					IngItem ingLabelItem = (IngItem) parent.get(ingNodeRef);
+					boolean isNew = true;
+
+					if (ingLabelItem == null) {
+						ingLabelItem = new IngItem((IngItem) alfrescoRepository.findOne(ingNodeRef));
+						ingLabelItem.getPluralParents().add(ingListItem.getData().getNodeRef());
+						ingLabelItem.setDeclarationType(ingDeclarationType);
+
+						parent.add(ingLabelItem);
+
+						if (applyThreshold) {
+							labelingFormulaContext.getToApplyThresholdItems().add(ingNodeRef);
+						}
+
+						if (logger.isTraceEnabled()) {
+							logger.trace("- Add new ing " + getName(ingLabelItem) + " to current Label " + getName(parent));
+						}
+
+					} else {
+						if (logger.isTraceEnabled()) {
+							logger.trace("- Update ing value: " + ingLabelItem.getLegalName(I18NUtil.getContentLocaleLang()));
+						}
+						isNew = false;
+						if (!ingLabelItem.getPluralParents().contains(ingListItem.getData().getNodeRef())) {
+							ingLabelItem.getPluralParents().add(ingListItem.getData().getNodeRef());
+							ingLabelItem.setPlural(true);
+						}
+					}
+
+					if (product.getAllergenList() != null) {
+						for (AllergenListDataItem allergenListDataItem : product.getAllergenList()) {
+							if (allergenListDataItem.getVoluntary() && allergenListDataItem.getVoluntarySources().contains(ingNodeRef)) {
+								if (AllergenType.Major.toString()
+										.equals(nodeService.getProperty(allergenListDataItem.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE))) {
+									ingLabelItem.getAllergens().add(allergenListDataItem.getAllergen());
+								}
 							}
 						}
 					}
-				}
 
-				if ((ingListItem.getData().getGeoTransfo() != null) && !ingListItem.getData().getGeoTransfo().isEmpty()) {
-					ingLabelItem.getGeoOrigins().addAll(ingListItem.getData().getGeoTransfo());
-				} else if (ingListItem.getData().getGeoOrigin() != null) {
-					ingLabelItem.getGeoOrigins().addAll(ingListItem.getData().getGeoOrigin());
-				}
-
-				if (product.getGeoOrigins() != null) {
-					ingLabelItem.getGeoOrigins().addAll(product.getGeoOrigins());
-				}
-
-				Double qtyPerc = ingListItem.getData().getQtyPerc();
-
-				if (qtyPerc == null) {
-
-					String message = I18NUtil.getMessage("message.formulate.labelRule.error.nullIng", getName(ingLabelItem));
-					ReqCtrlListDataItem error = errors.get(message);
-					if (error != null) {
-						if (!error.getSources().contains(product.getNodeRef())) {
-							error.getSources().add(product.getNodeRef());
-						}
-					} else {
-						if (logger.isDebugEnabled()) {
-							logger.debug("Store error for future qtyPerc is null " + getName(ingLabelItem));
-						}
-						error = createError(ingLabelItem, product.getNodeRef());
-						errors.put(message, error);
-					}
-					if ((ingLabelItem.getQty() != null) && !isNew) {
-						if (logger.isDebugEnabled()) {
-							logger.debug("Adding aggregate error " + error.toString());
-						}
-						labelingFormulaContext.getErrors().add(error);
+					if ((ingListItem.getData().getGeoTransfo() != null) && !ingListItem.getData().getGeoTransfo().isEmpty()) {
+						ingLabelItem.getGeoOrigins().addAll(ingListItem.getData().getGeoTransfo());
+					} else if (ingListItem.getData().getGeoOrigin() != null) {
+						ingLabelItem.getGeoOrigins().addAll(ingListItem.getData().getGeoOrigin());
 					}
 
-					ingLabelItem.setQty(null);
-					ingLabelItem.setQtyTotal(null);
-					ingLabelItem.setVolume(null);
-					ingLabelItem.setVolumeTotal(null);
-				} else {
+					if (product.getGeoOrigins() != null) {
+						ingLabelItem.getGeoOrigins().addAll(product.getGeoOrigins());
+					}
 
-					qtyPerc += omitQtyPerc;
+					Double qtyPerc = ingListItem.getData().getQtyPerc();
 
-					// if one ingItem has null perc -> must be null
-					if ((ingLabelItem.getQty() != null) && (qty != null)) {
-
-						ingLabelItem.setQty(ingLabelItem.getQty() + ((qty * qtyPerc) / 100));
-						ingLabelItem.setQtyTotal(ingLabelItem.getQty());
-						
-						if (logger.isTraceEnabled()) {
-							logger.trace(" -- new qty to add to " + getName(ingLabelItem) + ": " + ((qty * qtyPerc) / 100));
-						}
-
-						if ((ingLabelItem.getVolume() != null) && (volume != null)) {
-							ingLabelItem.setVolume(ingLabelItem.getVolume() + ((volume * qtyPerc) / 100));
-							ingLabelItem.setVolumeTotal(ingLabelItem.getVolume());
-							
-							logger.trace(" -- new volume to add: " + ((volume * qtyPerc) / 100));
-						}
-
-					} else {
+					if (qtyPerc == null) {
 
 						String message = I18NUtil.getMessage("message.formulate.labelRule.error.nullIng", getName(ingLabelItem));
 						ReqCtrlListDataItem error = errors.get(message);
 						if (error != null) {
-							if (qty == null) {
-								if (!error.getSources().contains(product.getNodeRef())) {
-									error.getSources().add(product.getNodeRef());
-								}
-							}
-							if (!Objects.equals(ingLabelItem.getQty(), qty)) {
-								if (logger.isDebugEnabled()) {
-									logger.debug("Adding aggregate error " + error.toString());
-								}
-								labelingFormulaContext.getErrors().add(error);
+							if (!error.getSources().contains(product.getNodeRef())) {
+								error.getSources().add(product.getNodeRef());
 							}
 						} else {
 							if (logger.isDebugEnabled()) {
-								logger.debug("Store error for future");
+								logger.debug("Store error for future qtyPerc is null " + getName(ingLabelItem));
 							}
-							errors.put(message, createError(ingLabelItem, product.getNodeRef()));
+							error = createError(ingLabelItem, product.getNodeRef());
+							errors.put(message, error);
+						}
+						if ((ingLabelItem.getQty() != null) && !isNew) {
+							if (logger.isDebugEnabled()) {
+								logger.debug("Adding aggregate error " + error.toString());
+							}
+							labelingFormulaContext.getErrors().add(error);
 						}
 
-						if (qty == null) {
-							ingLabelItem.setQty(null);
-							ingLabelItem.setQtyTotal(null);
-							ingLabelItem.setVolume(null);
-							ingLabelItem.setVolumeTotal(null);
+						ingLabelItem.setQty(null);
+						ingLabelItem.setQtyTotal(null);
+						ingLabelItem.setVolume(null);
+						ingLabelItem.setVolumeTotal(null);
+					} else {
+
+						qtyPerc += omitQtyPerc;
+
+						// if one ingItem has null perc -> must be null
+						if ((ingLabelItem.getQty() != null) && (qty != null)) {
+
+							ingLabelItem.setQty(ingLabelItem.getQty() + ((qty * qtyPerc) / 100));
+							ingLabelItem.setQtyTotal(ingLabelItem.getQty());
+
+							if (logger.isTraceEnabled()) {
+								logger.trace(" -- new qty to add to " + getName(ingLabelItem) + ": " + ((qty * qtyPerc) / 100));
+							}
+
+							if ((ingLabelItem.getVolume() != null) && (volume != null)) {
+								ingLabelItem.setVolume(ingLabelItem.getVolume() + ((volume * qtyPerc) / 100));
+								ingLabelItem.setVolumeTotal(ingLabelItem.getVolume());
+
+								logger.trace(" -- new volume to add: " + ((volume * qtyPerc) / 100));
+							}
+
+						} else {
+
+							String message = I18NUtil.getMessage("message.formulate.labelRule.error.nullIng", getName(ingLabelItem));
+							ReqCtrlListDataItem error = errors.get(message);
+							if (error != null) {
+								if (qty == null) {
+									if (!error.getSources().contains(product.getNodeRef())) {
+										error.getSources().add(product.getNodeRef());
+									}
+								}
+								if (!Objects.equals(ingLabelItem.getQty(), qty)) {
+									if (logger.isDebugEnabled()) {
+										logger.debug("Adding aggregate error " + error.toString());
+									}
+									labelingFormulaContext.getErrors().add(error);
+								}
+							} else {
+								if (logger.isDebugEnabled()) {
+									logger.debug("Store error for future");
+								}
+								errors.put(message, createError(ingLabelItem, product.getNodeRef()));
+							}
+
+							if (qty == null) {
+								ingLabelItem.setQty(null);
+								ingLabelItem.setQtyTotal(null);
+								ingLabelItem.setVolume(null);
+								ingLabelItem.setVolumeTotal(null);
+							}
+
+						}
+					}
+
+					// Sub ings
+					if (!ingListItem.isLeaf() && !DeclarationType.DoNotDeclare.equals(ingDeclarationType)
+							&& !DeclarationType.DoNotDetails.equals(ingDeclarationType)) {
+						if (logger.isTraceEnabled()) {
+							logger.trace(" -- Adding subings " + ingListItem.getChildren().size());
 						}
 
-					}
-				}
+						visitIngList(ingLabelItem, product, ingListItem, omitQtyPerc, qty, volume, labelingFormulaContext, compoListDataItem, errors);
 
-				// Sub ings
-				if (!ingListItem.isLeaf() && !DeclarationType.DoNotDeclare.equals(ingDeclarationType)
-						&& !DeclarationType.DoNotDetails.equals(ingDeclarationType)) {
-					if (logger.isTraceEnabled()) {
-						logger.trace(" -- Adding subings " + ingListItem.getChildren().size());
+					} else if (DeclarationType.Detail.equals(ingDeclarationType)) {
+						ingLabelItem.setDeclarationType(DeclarationType.DoNotDetails);
 					}
 
-					visitIngList(ingLabelItem, product, ingListItem, omitQtyPerc, qty, volume, labelingFormulaContext, compoListDataItem, errors);
-
-				
-				} else if (DeclarationType.Detail.equals(ingDeclarationType)) {
-					ingLabelItem.setDeclarationType(DeclarationType.DoNotDetails);
 				}
-
 			}
 		}
 
@@ -1846,23 +1847,23 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					logger.trace(" -- Found declType : " + DeclarationType.valueOf(declType) + " for "
 							+ nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME));
 				}
-				
+
 				return DeclarationType.valueOf(declType);
 			}
-			
+
 			if (logger.isTraceEnabled()) {
 				logger.trace(" -- Default declType : " + DeclarationType.Detail + " for default "
 						+ nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME));
 			}
-			
+
 			return DeclarationType.Detail;
 		}
 
 		if (logger.isTraceEnabled()) {
-	
+
 			logger.trace(" -- Found declType : " + compoListDataItem.getDeclType() + " for default "
 					+ nodeService.getProperty(compoListDataItem.getProduct(), ContentModel.PROP_NAME));
-			
+
 		}
 		return compoListDataItem.getDeclType();
 	}
