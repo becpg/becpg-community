@@ -46,9 +46,11 @@ public interface ProjectService {
 	 */
 	void reopenTask(NodeRef taskNodeRef);
 
-
-	
-
+	/**
+	 * 
+	 * @param projectNodeRef
+	 * @return
+	 */
 	List<NodeRef> getTaskLegendList(NodeRef projectNodeRef);
 	
 	/**
@@ -120,9 +122,28 @@ public interface ProjectService {
 	 */
 	void runScript(ProjectData project, TaskListDataItem task, NodeRef scriptNode);
 
+	/**
+	 * 
+	 * @param projectNodeRef
+	 * @param resources
+	 * @return
+	 */
 	List<NodeRef> extractResources(NodeRef projectNodeRef, List<NodeRef> resources);
 
+	/**
+	 * 
+	 * @param resource
+	 * @return
+	 */
 	NodeRef getReassignedResource(NodeRef resource);
+
+	/**
+	 * 
+	 * @param taskNodeRef
+	 * @param assignee
+	 * @return
+	 */
+	NodeRef reassignTask(NodeRef taskNodeRef, String assignee);
 
 	
 
