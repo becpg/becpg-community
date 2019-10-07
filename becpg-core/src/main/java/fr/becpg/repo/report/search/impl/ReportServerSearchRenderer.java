@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
@@ -20,6 +23,8 @@ import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.repository.Path;
+import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.io.IOUtils;
@@ -45,9 +50,11 @@ import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
+import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.MLTextHelper;
+import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.report.engine.BeCPGReportEngine;
 import fr.becpg.repo.report.search.SearchReportRenderer;
 import fr.becpg.repo.report.template.ReportTplService;
@@ -113,6 +120,8 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 	private static final String TAG_FILES = "files";
 	private static final String TAG_NODE = "node";
 	private static final String TAG_FILE = "file";
+	private static final String TAG_SITE = "siteId";
+	private static final String TAG_PATH = "path";
 	private static final String ATTR_ID = "id";
 	public static final String VALUE_NULL = "";
 
@@ -236,6 +245,15 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 				}
 			}
 		}
+		Path path = nodeService.getPath(nodeRef);
+		//Extract site
+		if(path!=null) {
+			String pathString = path.toPrefixString(namespaceService);
+			String siteId = SiteHelper.extractSiteId(pathString);
+			if (siteId != null) {
+			   nodeElt.addAttribute(TAG_SITE,siteId);
+			}
+		}
 
 		// export file
 		Map<NodeRef, Map<String, String>> filesAttributes = new HashMap<>();
@@ -292,6 +310,8 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 
 		return params;
 	}
+	
+	
 
 	/**
 	 * Gets the column value.
