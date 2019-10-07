@@ -368,8 +368,8 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 				}
 			}
 
-			boolean isCostForUnitTotalCost = (c.getDepthLevel() == null) || (c.getDepthLevel() == 1) 
-					&& (productCurrency == null) || (costCurrency == null) || productCurrency.equals(costCurrency);			
+			boolean isCostForUnitTotalCost = (c.getDepthLevel() == null || c.getDepthLevel() == 1) 
+					&& (productCurrency == null || costCurrency == null || productCurrency.equals(costCurrency));			
 			c.setValuePerProduct(null);
 			if (costPerProduct != null) {
 				if (isCostForUnitTotalCost) {
