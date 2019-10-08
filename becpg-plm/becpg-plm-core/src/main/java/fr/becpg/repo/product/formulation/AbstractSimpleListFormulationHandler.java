@@ -181,7 +181,15 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 			for (CompoListDataItem compoItem : formulatedProduct
 					.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 				Double weight = FormulationHelper.getQtyInKg(compoItem);
-				if (weight != null && !DeclarationType.Omit.equals(compoItem.getDeclType())  ) {
+				//omit item if parent is omitted
+				boolean omit = false;
+				CompoListDataItem tmpCompoItem = compoItem;
+				while(tmpCompoItem != null && !omit){
+					omit = DeclarationType.Omit.equals(tmpCompoItem.getDeclType());
+					tmpCompoItem = tmpCompoItem.getParent();
+				}
+				
+				if (weight != null && !omit) {
 
 					ProductData partProduct = (ProductData) alfrescoRepository.findOne(compoItem.getProduct());
 					Double vol = FormulationHelper.getNetVolume(compoItem, partProduct);
