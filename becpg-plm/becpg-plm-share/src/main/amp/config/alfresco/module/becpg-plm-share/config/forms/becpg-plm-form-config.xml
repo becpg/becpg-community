@@ -2402,7 +2402,12 @@
 						</control>
 					</field>
 					<field id="bcpg:productState" set="mainInfo" />
-					<field id="bcpg:productUnit" set="mainInfo" />
+					<field id="bcpg:productUnit" set="mainInfo" >
+						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
+							<control-param name="options">P|becpg.forms.field.productUnit,m,m2,m3,ft,g,mL,cp,fl_oz
+							</control-param>
+						</control>
+					</field>
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
 					<field id="bcpg:eanCode" help-id="becpg.forms.help.eanCode" set="mainInfo"  >
@@ -2947,7 +2952,12 @@
 						</control>
 					</field>
 					<field id="bcpg:productState" set="mainInfo" />
-					<field id="bcpg:productUnit" set="mainInfo" />
+					<field id="bcpg:productUnit" set="mainInfo" >
+						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
+							<control-param name="options">P|becpg.forms.field.productUnit,m,m2,m3,ft,g,mL,cp,fl_oz
+							</control-param>
+						</control>
+					</field>
 					<field id="bcpg:componentLossPerc" set="mainInfo" />
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
