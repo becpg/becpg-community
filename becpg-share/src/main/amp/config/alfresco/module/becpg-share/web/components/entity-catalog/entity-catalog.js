@@ -247,10 +247,10 @@
 									}
 	
 	
-									for(var field in fieldArray){
+									for(var subField in fieldArray){
 	
 										var fieldId="";
-										var curField = fieldArray[field].replace(":", "_");
+										var curField = fieldArray[subField].replace(":", "_");
 	
 	
 										var found = YAHOO.util.Dom.get(id+"_assoc_"+curField);
