@@ -49,15 +49,8 @@ public class CompositionQtyCalculatingFormulationHandler extends FormulationBase
 		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)) {
 			return true;
 		}
-
-		// no compo => no formulation
-		if (!formulatedProduct.hasCompoListEl(new VariantFilters<>())) {
-			logger.debug("no compo => no formulation");
-			return true;
-		}
-
+		
 		// Take in account net weight
-
 		if (formulatedProduct.getUnit() != null) {
 			Double qty = null;
 			if (formulatedProduct.getQty() != null) {
@@ -72,6 +65,13 @@ public class CompositionQtyCalculatingFormulationHandler extends FormulationBase
 			}
 
 		}
+
+		// no compo => no formulation
+		if (!formulatedProduct.hasCompoListEl(new VariantFilters<>())) {
+			logger.debug("no compo => no formulation");
+			return true;
+		}
+
 		Double netWeight = formulatedProduct.getNetWeight() != null ? formulatedProduct.getNetWeight() : 100d;
 		Composite<CompoListDataItem> compositeAll = CompositeHelper.getHierarchicalCompoList(formulatedProduct.getCompoList());
 
