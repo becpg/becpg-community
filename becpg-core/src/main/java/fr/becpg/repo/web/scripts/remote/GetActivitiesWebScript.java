@@ -31,6 +31,7 @@ import org.alfresco.query.PagingRequest;
 import org.alfresco.query.PagingResults;
 import org.alfresco.repo.domain.activities.ActivityFeedEntity;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.virtual.VirtualContentModel;
 import org.alfresco.service.cmr.activities.ActivityService;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
@@ -69,9 +70,6 @@ public class GetActivitiesWebScript extends AbstractWebScript {
 	private NamespaceService namespaceService;
 
 	private ContentService contentService;
-	
-	
-	
 
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
@@ -126,7 +124,7 @@ public class GetActivitiesWebScript extends AbstractWebScript {
 			// for the stream
 			resp.setContentType("application/xml");
 			resp.setContentEncoding("UTF-8");
-		} catch (SocketException  e1) {
+		} catch (SocketException e1) {
 
 			// the client cut the connection - our mission was accomplished
 			// apart from a little error message
@@ -182,9 +180,14 @@ public class GetActivitiesWebScript extends AbstractWebScript {
 						nodeRef = new NodeRef(toString(summary.get("entityNodeRef")));
 					}
 					if (nodeRef != null) {
-						xmlw.writeAttribute("nodeRef", nodeRef.toString());
-						if(nodeService.exists(nodeRef)) {
-							xmlw.writeAttribute("nodeType", nodeService.getType(nodeRef).toPrefixString(namespaceService));					
+						if (nodeService.exists(nodeRef)) {
+							if ((nodeRef != null) && nodeService.hasAspect(nodeRef, VirtualContentModel.ASPECT_VIRTUAL_DOCUMENT)) {
+								nodeRef = new NodeRef((String) nodeService.getProperty(nodeRef, VirtualContentModel.PROP_ACTUAL_NODE_REF));
+							}
+
+							xmlw.writeAttribute("nodeRef", nodeRef.toString());
+
+							xmlw.writeAttribute("nodeType", nodeService.getType(nodeRef).toPrefixString(namespaceService));
 							ContentReader contentReader = contentService.getReader(nodeRef, ContentModel.PROP_CONTENT);
 							if ((contentReader != null) && (contentReader.getMimetype() != null)) {
 								xmlw.writeAttribute("mimeType", contentReader.getMimetype());
