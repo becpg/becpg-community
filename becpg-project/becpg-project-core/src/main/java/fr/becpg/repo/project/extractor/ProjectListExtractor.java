@@ -176,6 +176,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 		// pjt:project
 		QName dataType = dataListFilter.getDataType();
 		BeCPGQueryBuilder beCPGQueryBuilder = dataListFilter.getSearchQuery();
+		beCPGQueryBuilder.excludeDefaults();
 
 		if (VIEW_ENTITY_PROJECTS.equals(dataListFilter.getFilterId())) {
 			results = associationService.getSourcesAssocs(dataListFilter.getEntityNodeRef(), ProjectModel.ASSOC_PROJECT_ENTITY);
@@ -198,6 +199,8 @@ public class ProjectListExtractor extends ActivityListExtractor {
 					}
 
 					beCPGQueryBuilder.excludeProp(ProjectModel.PROP_TL_IS_EXCLUDE_FROM_SEARCH, Boolean.TRUE.toString());
+					
+					
 
 					if (dataListFilter.getCriteriaMap() == null) {
 						dataListFilter.setCriteriaMap(new HashMap<String, String>());
