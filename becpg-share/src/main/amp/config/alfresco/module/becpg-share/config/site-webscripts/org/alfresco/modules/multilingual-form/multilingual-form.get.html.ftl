@@ -76,7 +76,6 @@
 	      	<#else>	
 		         <#list mlFields?sort_by(["localeLabel"]) as mlField>
 					<#assign description=mlField.description!""?html>
-	                <#if mlField.locale != currentLocale>
 		         	<div class="form-field">
 		         	 
 	      				<label for="${el}-${mlField.locale}"><#if args.label?? >${label?html}<#elseif mlField.label??>${mlField.label?html}<#else> ${mlField.localeLabel}</#if>:&nbsp;
@@ -87,7 +86,6 @@
 			      				 name="${mlField.locale}" id="${el}-${mlField.locale}" >${mlField.value!""}</div>
 			      	 
 		      		</div>
-	               </#if>
 		      	</#list>
 	      	</#if>
 	      	
