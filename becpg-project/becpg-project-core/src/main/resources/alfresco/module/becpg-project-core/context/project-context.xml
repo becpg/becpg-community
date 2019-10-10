@@ -91,6 +91,8 @@
 					<property name="propsToCopyToParent" value="${project.subProject.propsToCopyToParent}"/>
 					<property name="nodeService" ref="nodeService"/>
 					<property name="namespaceService" ref="namespaceService"/>
+					<property name="associationService" ref="associationService"/>
+					<property name="entityDictionaryService" ref="entityDictionaryService"/>
 				</bean>
 				<bean class="fr.becpg.repo.project.formulation.PlanningFormulationHandler" >
 					<property name="alfrescoRepository" ref="alfrescoRepository" />

@@ -312,104 +312,92 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 			String costCurrency = (String) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTCURRENCY);
 			String productCurrency = (String) nodeService.getProperty(formulatedProduct.getNodeRef(), PLMModel.PROP_PRICE_CURRENCY);
 
-			if ((productCurrency == null) || (costCurrency == null) || productCurrency.equals(costCurrency)) {
-				if (c.getValue() != null) {
-					if ((isFixed != null) && (isFixed == Boolean.TRUE)) {
-						unitTotalFixedCost += c.getValue();
-	
-						if ((formulatedProduct.getProjectedQty() != null) && !formulatedProduct.getProjectedQty().equals(0)) {
-							costPerProduct = c.getValue() / formulatedProduct.getProjectedQty();
-	
-							if (c.getFutureValue() != null) {
-								futureCostPerProduct = c.getFutureValue() / formulatedProduct.getProjectedQty();
-							}
-	
-							if (c.getPreviousValue() != null) {
-								previousCostPerProduct = c.getPreviousValue() / formulatedProduct.getProjectedQty();
-							}
-	
-						}
-	
-					} else if ((formulatedProduct.getUnit() != null) && formulatedProduct.getUnit().isP()) {
-						costPerProduct = c.getValue();
-	
+			if (c.getValue() != null) {
+				if ((isFixed != null) && (isFixed == Boolean.TRUE)) {
+					unitTotalFixedCost += c.getValue();
+
+					if ((formulatedProduct.getProjectedQty() != null) && !formulatedProduct.getProjectedQty().equals(0)) {
+						costPerProduct = c.getValue() / formulatedProduct.getProjectedQty();
+
 						if (c.getFutureValue() != null) {
-							futureCostPerProduct = c.getFutureValue();
+							futureCostPerProduct = c.getFutureValue() / formulatedProduct.getProjectedQty();
 						}
-	
+
 						if (c.getPreviousValue() != null) {
-							previousCostPerProduct = c.getPreviousValue();
+							previousCostPerProduct = c.getPreviousValue() / formulatedProduct.getProjectedQty();
 						}
-	
-						if (formulatedProduct.getQty() != null) {
-							if (costPerProduct != null) {
-								costPerProduct *= formulatedProduct.getQty();
-							}
-							if (futureCostPerProduct != null) {
-								futureCostPerProduct *= formulatedProduct.getQty();
-							}
-							if (previousCostPerProduct != null) {
-								previousCostPerProduct *= formulatedProduct.getQty();
-							}
-						}
-	
-					} else {
-						
-						
-						costPerProduct = netQty * c.getValue();
-	
-						if (c.getFutureValue() != null) {
-							futureCostPerProduct = netQty * c.getFutureValue();
-						}
-	
-						if (c.getPreviousValue() != null) {
-							previousCostPerProduct = netQty * c.getPreviousValue();
-						}
-	
+
 					}
+
+				} else if ((formulatedProduct.getUnit() != null) && formulatedProduct.getUnit().isP()) {
+					costPerProduct = c.getValue();
+
+					if (c.getFutureValue() != null) {
+						futureCostPerProduct = c.getFutureValue();
+					}
+
+					if (c.getPreviousValue() != null) {
+						previousCostPerProduct = c.getPreviousValue();
+					}
+
+					if (formulatedProduct.getQty() != null) {
+						if (costPerProduct != null) {
+							costPerProduct *= formulatedProduct.getQty();
+						}
+						if (futureCostPerProduct != null) {
+							futureCostPerProduct *= formulatedProduct.getQty();
+						}
+						if (previousCostPerProduct != null) {
+							previousCostPerProduct *= formulatedProduct.getQty();
+						}
+					}
+
+				} else {
+					
+					
+					costPerProduct = netQty * c.getValue();
+
+					if (c.getFutureValue() != null) {
+						futureCostPerProduct = netQty * c.getFutureValue();
+					}
+
+					if (c.getPreviousValue() != null) {
+						previousCostPerProduct = netQty * c.getPreviousValue();
+					}
+
 				}
 			}
 
+			boolean isCostForUnitTotalCost = (c.getDepthLevel() == null || c.getDepthLevel() == 1) 
+					&& (productCurrency == null || costCurrency == null || productCurrency.equals(costCurrency));			
 			c.setValuePerProduct(null);
 			if (costPerProduct != null) {
-				if ((c.getDepthLevel() == null) || (c.getDepthLevel() == 1)) {
+				if (isCostForUnitTotalCost) {
 					unitTotalVariableCost += costPerProduct;
 				}
-				if ((formulatedProduct instanceof FinishedProductData) || (formulatedProduct instanceof SemiFinishedProductData)) {
-					c.setValuePerProduct(costPerProduct);
-				}
+				c.setValuePerProduct(costPerProduct);
 			}
-
+			
+			c.setFutureValuePerProduct(null);
 			if (futureCostPerProduct != null) {
-				if ((c.getDepthLevel() == null) || (c.getDepthLevel() == 1)) {
+				if (isCostForUnitTotalCost) {
 					futureTotalVariableCost += futureCostPerProduct;
 				}
-				if ((formulatedProduct instanceof FinishedProductData) || (formulatedProduct instanceof SemiFinishedProductData)) {
-					c.setFutureValuePerProduct(futureCostPerProduct);
-				}
+				c.setFutureValuePerProduct(futureCostPerProduct);
 			}
-
+			
+			c.setPreviousValuePerProduct(null);
 			if (previousCostPerProduct != null) {
-				if ((c.getDepthLevel() == null) || (c.getDepthLevel() == 1)) {
+				if (isCostForUnitTotalCost) {
 					previousTotalVariableCost += previousCostPerProduct;
 				}
-				if ((formulatedProduct instanceof FinishedProductData) || (formulatedProduct instanceof SemiFinishedProductData)) {
-					c.setPreviousValuePerProduct(previousCostPerProduct);
-				}
+				c.setPreviousValuePerProduct(previousCostPerProduct);
 			}
-
 		}
 
-		if (formulatedProduct instanceof FinishedProductData) {
-			formulatedProduct.setUnitTotalCost(unitTotalVariableCost);
-			formulatedProduct.setPreviousUnitTotalCost(previousTotalVariableCost);
-			formulatedProduct.setFutureUnitTotalCost(futureTotalVariableCost);
-		} else {
-			// €/Kg, €/L or €/P
-			formulatedProduct.setUnitTotalCost(unitTotalVariableCost / netQty);
-			formulatedProduct.setPreviousUnitTotalCost(previousTotalVariableCost / netQty);
-			formulatedProduct.setFutureUnitTotalCost(futureTotalVariableCost / netQty);
-		}
+		formulatedProduct.setUnitTotalCost(unitTotalVariableCost);
+		formulatedProduct.setPreviousUnitTotalCost(previousTotalVariableCost);
+		formulatedProduct.setFutureUnitTotalCost(futureTotalVariableCost);
 
 		if ((formulatedProduct.getUnitPrice() != null) && (formulatedProduct.getUnitTotalCost() != null)) {
 
@@ -577,8 +565,9 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 					} else if (templateCostList.getUnit().endsWith("Pal")) {
 						if ((formulatedProduct.getDefaultVariantPackagingData() != null)
 								&& (formulatedProduct.getDefaultVariantPackagingData().getProductPerPallet() != null)) {
+							Double productQty = formulatedProduct.getQty() != null ? formulatedProduct.getQty() : FormulationHelper.QTY_FOR_PIECE;
 							calculateValues(templateCostList, costList, true,
-									(double) formulatedProduct.getDefaultVariantPackagingData().getProductPerPallet());
+									(double) formulatedProduct.getDefaultVariantPackagingData().getProductPerPallet() * productQty);
 						}
 						isCalculated = true;
 					}

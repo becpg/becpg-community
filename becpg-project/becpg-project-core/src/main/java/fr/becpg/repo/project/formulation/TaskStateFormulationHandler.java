@@ -129,7 +129,7 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 
 			boolean allTaskPlanned = true;
 			for (TaskListDataItem task : projectData.getTaskList()) {
-				if (!TaskState.Planned.equals(task.getTaskState()) && !TaskState.Cancelled.equals(task.getTaskState())) {
+				if (!task.isPlanned() && !TaskState.Cancelled.equals(task.getTaskState())) {
 					allTaskPlanned = false;
 					break;
 				}
@@ -185,7 +185,7 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 					projectWorkflowService.cancelWorkflow(nextTask);
 				}
 
-				if (TaskState.Planned.equals(nextTask.getTaskState())) {
+				if (nextTask.isPlanned()) {
 
 					// no previous task
 					if (nextTask.getPrevTasks().isEmpty()) {
@@ -233,7 +233,7 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 						reformulate = true;
 					}
 
-				} else if (TaskState.Refused.equals(nextTask.getTaskState()) && (nextTask.getRefusedTask() != null)) {
+				} else if (nextTask.isRefused() && (nextTask.getRefusedTask() != null)) {
 					boolean shouldRefused = true;
 					logger.debug("Enter refused task");
 					// Check if all brothers are closed
@@ -248,7 +248,7 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 					if (shouldRefused) {
 						logger.debug("Reopen path : " + nextTask.getRefusedTask().getTaskName());
 
-						ProjectHelper.reOpenPath(projectData, nextTask, nextTask.getRefusedTask(), projectActivityService);
+						ProjectHelper.reOpenRefusePath(projectData, nextTask, nextTask.getRefusedTask(), projectActivityService);
 
 						// Revisit tasks
 						reformulate = true;
@@ -403,17 +403,14 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 			List<TaskListDataItem> tasks = ProjectHelper.getChildrenTasks(projectData, parent);
 			for (TaskListDataItem c : tasks) {
 				completionPerc += (c.getCompletionPercent() != null ? c.getCompletionPercent() : 0);
-				if (TaskState.InProgress.equals(c.getTaskState())) {
+				if (TaskState.InProgress.equals(c.getTaskState()) || TaskState.OnHold.equals(c.getTaskState()) || c.isRefused()) {
 					hasTaskInProgress = true;
 					allTasksCancelled = false;
+					allTasksPlanned = false;
 				} else if (TaskState.Completed.equals(c.getTaskState())) {
 					allTasksPlanned = false;
 					allTasksCancelled = false;
-				}  else if (TaskState.OnHold.equals(c.getTaskState()) || TaskState.Refused.equals(c.getTaskState())) {
-					allTasksCancelled = false;
-					allTasksPlanned = false;
-					hasTaskInProgress = true;
-				} else if (TaskState.Planned.equals(c.getTaskState())) {
+				} else if (c.isPlanned()) {
 					allTasksCancelled = false;
 				}
 			}
