@@ -51,7 +51,7 @@ public interface ProjectService {
 	 * @param projectNodeRef
 	 * @return
 	 */
-	List<NodeRef> getTaskLegendList(NodeRef projectNodeRef);
+	List<NodeRef> getTaskLegendList();
 	
 	/**
 	 * Get the number of inProgress project for this legend
