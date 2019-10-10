@@ -146,5 +146,11 @@ public interface ProjectService {
 	NodeRef reassignTask(NodeRef taskNodeRef, String assignee);
 
 	
+         /**
+	 * Refused a project Task
+	 * @param taskNodeRef
+	 * @return 
+	 */
+        NodeRef refusedTask(NodeRef nodeRef);
 
 }
