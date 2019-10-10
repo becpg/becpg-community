@@ -70,13 +70,7 @@
                                                 <#if (args.workflowDueDate)??>Due:&nbsp;&nbsp;<b>${args.workflowDueDate?date?string.full}</b><br></#if>               
                                              </p>
                                                                                           
-                                             <#if args.workflowPooled == true>
-                                                <p>Click on this link to view the task:</p>
-                                                <p><a href="${shareUrl}/page/task-details?taskId=${args.workflowId}">${shareUrl}/page/task-details?taskId=${args.workflowId}</a>
-                                             <#else>
-                                                <p>Click on this link to modify the task:</p>
-                                                <p><a href="${shareUrl}/page/task-edit?taskId=${args.workflowId}">${shareUrl}/page/task-edit?taskId=${args.workflowId}</a>
-                                             </#if>
+                                             <p><a href="${shareUrl}/page/task-edit?taskId=${args.workflowId}">Click on this link to view the task</a></p>
                                              
                                              <p>Regards,<br />
                                             beCPG</p>
