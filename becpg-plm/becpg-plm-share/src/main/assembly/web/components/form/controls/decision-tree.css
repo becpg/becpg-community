@@ -30,6 +30,11 @@
 }
 
 
+.large-dialog .bd .form-container .decision-tree-control p {
+	display : block;
+}
+
+
 .yui-dialog .form-container .decision-tree-control input[type="radio"] ,
 .form-container .decision-tree-control input[type="radio"],
  :not(.bd) > .form-container .yui-navset .form-field  .decision-tree-control input[type="radio"]:not(.number-range):not(.date-range):not(.number-unit):not(.yui-ac-input),

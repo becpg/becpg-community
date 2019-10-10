@@ -142,6 +142,10 @@ public class ProjectListPolicy extends ProjectPolicy
 
 			formulateProject = true;
 
+			if(afterState.equals(TaskState.Refused.toString())) {
+				projectService.refusedTask(nodeRef);
+			}
+			
 			
 			if ((beforeState.equals(TaskState.Completed.toString()) || beforeState.equals(TaskState.Refused.toString()))
 					&& afterState.equals(TaskState.InProgress.toString())) {

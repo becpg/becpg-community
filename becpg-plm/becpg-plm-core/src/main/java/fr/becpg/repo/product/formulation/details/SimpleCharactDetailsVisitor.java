@@ -108,8 +108,16 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 
 			for (CompoListDataItem compoListDataItem : subProductData
 					.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
+				
+				//omit item if parent is omitted
+				boolean omit = false;
+				CompoListDataItem tmpCompoItem = compoListDataItem;
+				while(tmpCompoItem != null && !omit){
+					omit = DeclarationType.Omit.equals(tmpCompoItem.getDeclType());
+					tmpCompoItem = tmpCompoItem.getParent();
+				}
 
-				if (!DeclarationType.Omit.equals(compoListDataItem.getDeclType())) {
+				if (!omit) {
 
 					Double weightUsed = FormulationHelper.getQtyInKg(compoListDataItem);
 					if ((FormulationHelper.getNetWeight(subProductData, FormulationHelper.DEFAULT_NET_WEIGHT) != 0d) && (subWeight != null)) {
@@ -117,7 +125,8 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 
 					}
 
-					Double volUsed = FormulationHelper.getNetVolume(compoListDataItem, subProductData);
+					ProductData partProduct = (ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct());
+					Double volUsed = FormulationHelper.getNetVolume(compoListDataItem, partProduct);
 					Double netVol = FormulationHelper.getNetVolume(subProductData);
 					if ((volUsed != null) && (netVol != null) && (netVol != 0d) && (subVol != null)) {
 						volUsed = (volUsed / FormulationHelper.getNetVolume(subProductData)) * subVol;

@@ -153,7 +153,7 @@ public class ProjectDetailsWebScript extends AbstractWebScript {
 
 				// commingTask && overdueTask && overdueWorkPercent
 				if ((task.getEnd() != null) && task.getEnd().before(today)
-						&& (task.getState().equals(TaskState.Planned.toString()) || task.getState().equals(TaskState.InProgress.toString()))) {
+						&& (task.isPlanned() || task.getState().equals(TaskState.InProgress.toString()))) {
 					overdueTaskCompletionPerc += task.getCompletionPercent() != null ? 100 - task.getCompletionPercent() : 100;
 					overdueTaskList.put(taskObject);
 
@@ -162,7 +162,7 @@ public class ProjectDetailsWebScript extends AbstractWebScript {
 					}
 
 				} else if ((task.getStart() != null) && task.getStart().after(today)
-						&& (task.getState().equals(TaskState.Planned.toString()) || task.getState().equals(TaskState.InProgress.toString()))) {
+						&& (task.isPlanned() || task.getState().equals(TaskState.InProgress.toString()))) {
 					commingTaskList.put(taskObject);
 				}
 
