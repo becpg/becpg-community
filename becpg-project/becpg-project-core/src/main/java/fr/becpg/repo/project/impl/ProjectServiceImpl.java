@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -140,21 +139,8 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	@Override
-	public List<NodeRef> getTaskLegendList(NodeRef projectNodeRef) {
-		if (projectNodeRef == null) {
-			return BeCPGQueryBuilder.createQuery().ofType(ProjectModel.TYPE_TASK_LEGEND).addSort(BeCPGModel.PROP_SORT, true).inDB().list();
-		}
-
-		List<NodeRef> ret = new LinkedList<>();
-
-		ProjectData project = alfrescoRepository.findOne(projectNodeRef);
-		for (TaskListDataItem task : project.getTaskList()) {
-			if ((task.getTaskLegend() != null) && !ret.contains(task.getTaskLegend())) {
-				ret.add(task.getTaskLegend());
-			}
-		}
-
-		return ret;
+	public List<NodeRef> getTaskLegendList() {
+		return BeCPGQueryBuilder.createQuery().ofType(ProjectModel.TYPE_TASK_LEGEND).addSort(BeCPGModel.PROP_SORT, true).inDB().list();
 	}
 
 	@Override
