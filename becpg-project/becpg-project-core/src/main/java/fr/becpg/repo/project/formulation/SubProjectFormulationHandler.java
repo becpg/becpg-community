@@ -2,14 +2,22 @@ package fr.becpg.repo.project.formulation;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.alfresco.service.cmr.dictionary.AssociationDefinition;
+import org.alfresco.service.cmr.dictionary.ChildAssociationDefinition;
+import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
+import org.alfresco.service.cmr.dictionary.PropertyDefinition;
+import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.project.ProjectActivityService;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.ProjectState;
@@ -29,6 +37,8 @@ public class SubProjectFormulationHandler extends FormulationBaseHandler<Project
 
 	private ProjectActivityService projectActivityService;
 
+	private EntityDictionaryService entityDictionaryService;
+
 	private String propsToCopyFromParent = null;
 
 	private String propsToCopyToParent = null;
@@ -36,6 +46,8 @@ public class SubProjectFormulationHandler extends FormulationBaseHandler<Project
 	private NodeService nodeService;
 
 	private NamespaceService namespaceService;
+
+	private AssociationService associationService;
 
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
@@ -65,6 +77,7 @@ public class SubProjectFormulationHandler extends FormulationBaseHandler<Project
 	public boolean process(ProjectData projectData) throws FormulateException {
 
 		Map<QName, String> propsToCopyToParentTmp = new HashMap<>();
+		Map<QName, List<NodeRef>> assocsToCopyToParentTmp = new HashMap<>();
 
 		for (TaskListDataItem task : projectData.getTaskList()) {
 			if (task.getSubProject() != null) {
@@ -95,11 +108,23 @@ public class SubProjectFormulationHandler extends FormulationBaseHandler<Project
 					for (String propertyToCopy : propsToCopyFromParent.split(",")) {
 						QName propertyQname = QName.createQName(propertyToCopy, namespaceService);
 
-						Serializable value = nodeService.getProperty(projectData.getNodeRef(), propertyQname);
-						if (value == null) {
-							nodeService.removeProperty(task.getSubProject(), propertyQname);
-						} else {
-							nodeService.setProperty(task.getSubProject(), propertyQname, value);
+						ClassAttributeDefinition propDef = entityDictionaryService.getPropDef(propertyQname);
+						if (propDef instanceof PropertyDefinition) {
+
+							Serializable value = nodeService.getProperty(projectData.getNodeRef(), propertyQname);
+							if (value == null) {
+								nodeService.removeProperty(task.getSubProject(), propertyQname);
+							} else {
+								nodeService.setProperty(task.getSubProject(), propertyQname, value);
+							}
+						} else if (propDef instanceof AssociationDefinition) {
+							if (propDef instanceof ChildAssociationDefinition) {
+								// Not supported
+
+							} else {
+								List<NodeRef> nodeRefs = associationService.getTargetAssocs(projectData.getNodeRef(), propertyQname);
+								associationService.update(task.getSubProject(), propertyQname, nodeRefs);
+							}
 						}
 					}
 				}
@@ -108,16 +133,34 @@ public class SubProjectFormulationHandler extends FormulationBaseHandler<Project
 					for (String propertyToCopy : propsToCopyToParent.split(",")) {
 						QName propertyQname = QName.createQName(propertyToCopy, namespaceService);
 
-						Serializable value = nodeService.getProperty(task.getSubProject(), propertyQname);
+						ClassAttributeDefinition propDef = entityDictionaryService.getPropDef(propertyQname);
+						if (propDef instanceof PropertyDefinition) {
 
-						if ((value instanceof String) && (value != null)) {
+							Serializable value = nodeService.getProperty(task.getSubProject(), propertyQname);
 
-							if (propsToCopyToParentTmp.get(propertyQname) != null) {
-								value = propsToCopyToParentTmp.get(propertyQname) + "\n" + value;
+							if ((value instanceof String) && (value != null)) {
+
+								if (propsToCopyToParentTmp.get(propertyQname) != null) {
+									value = propsToCopyToParentTmp.get(propertyQname) + "\n" + value;
+								}
+								propsToCopyToParentTmp.put(propertyQname, (String) value);
+							} else if (propsToCopyToParentTmp.get(propertyQname) == null) {
+								propsToCopyToParentTmp.put(propertyQname, null);
 							}
-							propsToCopyToParentTmp.put(propertyQname, (String) value);
-						} else if (propsToCopyToParentTmp.get(propertyQname) == null) {
-							propsToCopyToParentTmp.put(propertyQname, null);
+
+						} else if (propDef instanceof AssociationDefinition) {
+							if (propDef instanceof ChildAssociationDefinition) {
+								// Not supported
+
+							} else {
+								List<NodeRef> nodeRefs = associationService.getTargetAssocs(task.getSubProject(), propertyQname);
+
+								if (assocsToCopyToParentTmp.get(propertyQname) != null) {
+									nodeRefs.addAll(assocsToCopyToParentTmp.get(propertyQname));
+								}
+								assocsToCopyToParentTmp.put(propertyQname, nodeRefs);
+
+							}
 						}
 					}
 				}
@@ -129,7 +172,19 @@ public class SubProjectFormulationHandler extends FormulationBaseHandler<Project
 			nodeService.setProperty(projectData.getNodeRef(), entry.getKey(), entry.getValue());
 		}
 
+		for (Map.Entry<QName, List<NodeRef>> entry : assocsToCopyToParentTmp.entrySet()) {
+			associationService.update(projectData.getNodeRef(), entry.getKey(), entry.getValue());
+		}
+
 		return true;
+	}
+
+	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
+		this.entityDictionaryService = entityDictionaryService;
+	}
+
+	public void setAssociationService(AssociationService associationService) {
+		this.associationService = associationService;
 	}
 
 }
