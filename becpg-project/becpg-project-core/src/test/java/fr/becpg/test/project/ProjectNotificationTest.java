@@ -183,14 +183,14 @@ public class ProjectNotificationTest extends AbstractProjectTestCase {
 			List<NodeRef> observerNodeRefs = new ArrayList<>();
 			observerNodeRefs.add(observerOne);
 
-			assertEquals(projectData.getTaskList().get(2).getState(), TaskState.Planned.toString()); 
+			assertEquals(projectData.getTaskList().get(2).getState(), TaskState.Refused.toString()); 
 			assertEquals(projectData.getTaskList().get(1).getState(), TaskState.InProgress.toString());
 			alfrescoRepository.save(projectData);
 
 			return null;
 		}, false, true);
 
-		waitForMail(12 + nbMail);
+		waitForMail(11 + nbMail);
 		checkActivity(projectNodeRef, 9);
 
 		// Resubmit task
@@ -240,7 +240,7 @@ public class ProjectNotificationTest extends AbstractProjectTestCase {
 			return null;
 		}, false, true);
 
-		waitForMail(15 + nbMail);
+		waitForMail(14 + nbMail);
 		checkActivity(projectNodeRef, 11);
 
 	}

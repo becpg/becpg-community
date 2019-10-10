@@ -105,8 +105,7 @@ public class ProjectServiceImpl implements ProjectService {
 	private ProjectActivityService projectActivityService;
 	@Autowired
 	private ProjectListPolicy projectListPolicy;
-	
-	
+
 	@Autowired
 	SysAdminParams sysAdminParams;
 
@@ -237,7 +236,7 @@ public class ProjectServiceImpl implements ProjectService {
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
 			policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
 			policyBehaviourFilter.disableBehaviour(ProjectModel.ASPECT_BUDGET);
-			
+
 			logger.debug("Call submitTask");
 
 			NodeRef commentNodeRef = null;
@@ -263,7 +262,7 @@ public class ProjectServiceImpl implements ProjectService {
 
 			projectActivityService.postTaskStateChangeActivity(nodeRef, commentNodeRef, TaskState.InProgress.toString(),
 					TaskState.Completed.toString(), false);
-			
+
 			projectListPolicy.queueListItem(nodeRef);
 
 		} finally {
@@ -273,7 +272,6 @@ public class ProjectServiceImpl implements ProjectService {
 		}
 
 	}
-	
 
 	@Override
 	public NodeRef refusedTask(NodeRef nodeRef, String taskComment) {
@@ -283,27 +281,31 @@ public class ProjectServiceImpl implements ProjectService {
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
 			policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
 			policyBehaviourFilter.disableBehaviour(ProjectModel.ASPECT_BUDGET);
-			
-			logger.debug("Call refusedTask");
-			
-			NodeRef taskNodeRef = associationService.getTargetAssoc(nodeRef, ProjectModel.ASSOC_TL_REFUSED_TASK_REF);
+			return AuthenticationUtil.runAsSystem(() -> {
 
-			NodeRef commentNodeRef = null;
-			if ((taskNodeRef != null) && (taskComment != null) && !taskComment.isEmpty()) {
-				commentNodeRef = commentService.createComment(taskNodeRef, "", taskComment, false);
-				nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_TASK_COMMENT, taskComment);
-			} else {
-				nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_TASK_COMMENT, null);
-			}
+				logger.debug("Call refusedTask");
 
-			nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_STATE, TaskState.Refused.toString());
+				NodeRef taskNodeRef = associationService.getTargetAssoc(nodeRef, ProjectModel.ASSOC_TL_REFUSED_TASK_REF);
 
-			projectActivityService.postTaskStateChangeActivity(nodeRef, commentNodeRef, TaskState.InProgress.toString(), TaskState.Refused.toString(),
-					false);
+				NodeRef commentNodeRef = null;
+				if ((taskNodeRef != null) && (taskComment != null) && !taskComment.isEmpty()) {
+					commentService.createComment(nodeRef, "", taskComment, false);
+					commentNodeRef = commentService.createComment(taskNodeRef, "", taskComment, false);
+					nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_TASK_COMMENT, taskComment);
+				} else {
+					nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_TASK_COMMENT, null);
+				}
 
-			projectListPolicy.queueListItem(nodeRef);
-			
-			return taskNodeRef;
+				nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_STATE, TaskState.Refused.toString());
+				nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_IS_REFUSED, false);
+
+				projectActivityService.postTaskStateChangeActivity(nodeRef, commentNodeRef, TaskState.InProgress.toString(),
+						TaskState.Refused.toString(), false);
+
+				projectListPolicy.queueListItem(nodeRef);
+
+				return taskNodeRef;
+			});
 		} finally {
 			policyBehaviourFilter.enableBehaviour(ProjectModel.ASPECT_BUDGET);
 			policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_TASK_LIST);
@@ -311,6 +313,13 @@ public class ProjectServiceImpl implements ProjectService {
 		}
 
 	}
+	
+	@Override
+	public NodeRef refusedTask(NodeRef nodeRef) {
+		nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_IS_REFUSED, false);
+		return nodeRef;
+	}
+		
 
 	@Override
 	public List<NodeRef> extractResources(NodeRef projectNodeRef, List<NodeRef> resources) {
@@ -467,13 +476,13 @@ public class ProjectServiceImpl implements ProjectService {
 						if (allow) {
 							boolean updatePerm = true;
 							for (AccessPermission perm : permissionService.getAllSetPermissions(n)) {
-								if (authorityName.equals(perm.getAuthority()) && PermissionService.EDITOR.equals(perm.getPermission())) {
+								if (authorityName.equals(perm.getAuthority()) && PermissionService.COORDINATOR.equals(perm.getPermission())) {
 									updatePerm = false;
 									break;
 								}
 							}
 							if (updatePerm) {
-								permissionService.setPermission(n, authorityName, PermissionService.EDITOR, true);
+								permissionService.setPermission(n, authorityName, PermissionService.COORDINATOR, true);
 							}
 						} else {
 							permissionService.clearPermission(n, authorityName);
@@ -507,7 +516,6 @@ public class ProjectServiceImpl implements ProjectService {
 		}
 
 	}
-
 
 	@Override
 	public Long getNbProjectsByLegend(NodeRef legendNodeRef, String siteId) {

@@ -126,6 +126,8 @@ public interface ProjectService {
 	List<NodeRef> extractResources(NodeRef projectNodeRef, List<NodeRef> resources);
 
 	NodeRef getReassignedResource(NodeRef resource);
+
+	NodeRef refusedTask(NodeRef nodeRef);
 	
 
 }
