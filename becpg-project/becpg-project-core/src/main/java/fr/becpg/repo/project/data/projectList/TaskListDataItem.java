@@ -51,6 +51,7 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	private Boolean isMilestone = false;
 	private Boolean isGroup = false;
 	private Boolean isExcludeFromSearch;
+	private Boolean isRefused;
 	private Integer duration;
 	private Integer realDuration;
 	private Integer capacity;
@@ -115,6 +116,8 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	public void setIsMilestone(Boolean isMilestone) {
 		this.isMilestone = isMilestone;
 	}
+	
+	
 
 	@AlfProp
 	@AlfQname(qname = "pjt:tlIsGroup")
@@ -127,6 +130,16 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	}
 	
 	
+	@AlfProp
+	@AlfQname(qname = "pjt:tlIsRefused")
+	public Boolean getIsRefused() {
+		return isRefused;
+	}
+
+	public void setIsRefused(Boolean isRefused) {
+		this.isRefused = isRefused;
+	}
+
 	@AlfProp
 	@AlfQname(qname = "pjt:tlIsExcludeFromSearch")
 	public Boolean getIsExcludeFromSearch() {
@@ -491,6 +504,7 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 		result = prime * result + ((isExcludeFromSearch == null) ? 0 : isExcludeFromSearch.hashCode());
 		result = prime * result + ((isGroup == null) ? 0 : isGroup.hashCode());
 		result = prime * result + ((isMilestone == null) ? 0 : isMilestone.hashCode());
+		result = prime * result + ((isRefused == null) ? 0 : isRefused.hashCode());
 		result = prime * result + ((lastNotification == null) ? 0 : lastNotification.hashCode());
 		result = prime * result + ((loggedTime == null) ? 0 : loggedTime.hashCode());
 		result = prime * result + ((manualDate == null) ? 0 : manualDate.hashCode());
@@ -587,6 +601,11 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 			if (other.isMilestone != null)
 				return false;
 		} else if (!isMilestone.equals(other.isMilestone))
+			return false;
+		if (isRefused == null) {
+			if (other.isRefused != null)
+				return false;
+		} else if (!isRefused.equals(other.isRefused))
 			return false;
 		if (lastNotification == null) {
 			if (other.lastNotification != null)
@@ -698,7 +717,13 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 				+ ", resourceCost=" + resourceCost + "]";
 	}
 
-	
+	public boolean isPlanned() {
+		return  TaskState.Planned.equals(taskState) || (TaskState.Refused.equals(taskState) && Boolean.TRUE.equals(isRefused));
+	}
+
+	public boolean isRefused() {
+		return  TaskState.Refused.equals(taskState) && !Boolean.TRUE.equals(isRefused);
+	}
 	
 
 }

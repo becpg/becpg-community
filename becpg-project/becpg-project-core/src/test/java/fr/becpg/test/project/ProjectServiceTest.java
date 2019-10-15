@@ -286,9 +286,9 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			Assert.assertNull(projectService.getProjectsContainer(null));
-			Assert.assertTrue(projectService.getTaskLegendList(null).size() > 0);
+			Assert.assertTrue(projectService.getTaskLegendList().size() > 0);
 
-			Assert.assertTrue(projectService.getTaskLegendList(null).contains(legendNodeRef));
+			Assert.assertTrue(projectService.getTaskLegendList().contains(legendNodeRef));
 			return null;
 		}, false, true);
 	}

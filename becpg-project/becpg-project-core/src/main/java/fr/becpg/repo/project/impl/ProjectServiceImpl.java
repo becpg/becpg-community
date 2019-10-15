@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -140,21 +139,8 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	@Override
-	public List<NodeRef> getTaskLegendList(NodeRef projectNodeRef) {
-		if (projectNodeRef == null) {
-			return BeCPGQueryBuilder.createQuery().ofType(ProjectModel.TYPE_TASK_LEGEND).addSort(BeCPGModel.PROP_SORT, true).inDB().list();
-		}
-
-		List<NodeRef> ret = new LinkedList<>();
-
-		ProjectData project = alfrescoRepository.findOne(projectNodeRef);
-		for (TaskListDataItem task : project.getTaskList()) {
-			if ((task.getTaskLegend() != null) && !ret.contains(task.getTaskLegend())) {
-				ret.add(task.getTaskLegend());
-			}
-		}
-
-		return ret;
+	public List<NodeRef> getTaskLegendList() {
+		return BeCPGQueryBuilder.createQuery().ofType(ProjectModel.TYPE_TASK_LEGEND).addSort(BeCPGModel.PROP_SORT, true).inDB().list();
 	}
 
 	@Override
@@ -296,27 +282,31 @@ public class ProjectServiceImpl implements ProjectService {
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
 			policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
 			policyBehaviourFilter.disableBehaviour(ProjectModel.ASPECT_BUDGET);
+			return AuthenticationUtil.runAsSystem(() -> {
 
-			logger.debug("Call refusedTask");
+				logger.debug("Call refusedTask");
 
-			NodeRef taskNodeRef = associationService.getTargetAssoc(nodeRef, ProjectModel.ASSOC_TL_REFUSED_TASK_REF);
+				NodeRef taskNodeRef = associationService.getTargetAssoc(nodeRef, ProjectModel.ASSOC_TL_REFUSED_TASK_REF);
 
-			NodeRef commentNodeRef = null;
-			if ((taskNodeRef != null) && (taskComment != null) && !taskComment.isEmpty()) {
-				commentNodeRef = commentService.createComment(taskNodeRef, "", taskComment, false);
-				nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_TASK_COMMENT, taskComment);
-			} else {
-				nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_TASK_COMMENT, null);
-			}
+				NodeRef commentNodeRef = null;
+				if ((taskNodeRef != null) && (taskComment != null) && !taskComment.isEmpty()) {
+					commentService.createComment(nodeRef, "", taskComment, false);
+					commentNodeRef = commentService.createComment(taskNodeRef, "", taskComment, false);
+					nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_TASK_COMMENT, taskComment);
+				} else {
+					nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_TASK_COMMENT, null);
+				}
 
-			nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_STATE, TaskState.Refused.toString());
+				nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_STATE, TaskState.Refused.toString());
+				nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_IS_REFUSED, false);
 
-			projectActivityService.postTaskStateChangeActivity(nodeRef, commentNodeRef, TaskState.InProgress.toString(), TaskState.Refused.toString(),
-					false);
+				projectActivityService.postTaskStateChangeActivity(nodeRef, commentNodeRef, TaskState.InProgress.toString(),
+						TaskState.Refused.toString(), false);
 
-			projectListPolicy.queueListItem(nodeRef);
+				projectListPolicy.queueListItem(nodeRef);
 
-			return taskNodeRef;
+				return taskNodeRef;
+			});
 		} finally {
 			policyBehaviourFilter.enableBehaviour(ProjectModel.ASPECT_BUDGET);
 			policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_TASK_LIST);
@@ -324,6 +314,14 @@ public class ProjectServiceImpl implements ProjectService {
 		}
 
 	}
+
+        @Override
+	public NodeRef refusedTask(NodeRef nodeRef) {
+		nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_IS_REFUSED, false);
+		return nodeRef;
+	}
+		
+
 
 	@Override
 	public NodeRef reassignTask(NodeRef taskNodeRef, String user) {
@@ -510,13 +508,13 @@ public class ProjectServiceImpl implements ProjectService {
 						if (allow) {
 							boolean updatePerm = true;
 							for (AccessPermission perm : permissionService.getAllSetPermissions(n)) {
-								if (authorityName.equals(perm.getAuthority()) && PermissionService.EDITOR.equals(perm.getPermission())) {
+								if (authorityName.equals(perm.getAuthority()) && PermissionService.COORDINATOR.equals(perm.getPermission())) {
 									updatePerm = false;
 									break;
 								}
 							}
 							if (updatePerm) {
-								permissionService.setPermission(n, authorityName, PermissionService.EDITOR, true);
+								permissionService.setPermission(n, authorityName, PermissionService.COORDINATOR, true);
 							}
 						} else {
 							permissionService.clearPermission(n, authorityName);

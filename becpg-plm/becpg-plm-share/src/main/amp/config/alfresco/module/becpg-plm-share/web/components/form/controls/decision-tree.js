@@ -81,6 +81,9 @@
                         	   htmlForm += '<span class="decision-tree-note">'+question.note+'</span>';
                            }
                            
+                           if(question.upperNote){
+                        	   htmlForm += '<span class="decision-tree-note">'+question.upperNote+'</span>';
+                           }
                            
                            
                            if(question.url){
@@ -158,6 +161,10 @@
                                   }
                               }
                                htmlForm +='</div>';
+                           }
+                           
+                           if(question.lowerNote){
+                        	   htmlForm += '<span class="decision-tree-note">'+question.lowerNote+'</span>';
                            }
                           
                           htmlForm += '</fieldset>';
