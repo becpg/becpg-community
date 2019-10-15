@@ -51,7 +51,7 @@ public interface ProjectService {
 	 * @param projectNodeRef
 	 * @return
 	 */
-	List<NodeRef> getTaskLegendList(NodeRef projectNodeRef);
+	List<NodeRef> getTaskLegendList();
 	
 	/**
 	 * Get the number of inProgress project for this legend
@@ -146,5 +146,11 @@ public interface ProjectService {
 	NodeRef reassignTask(NodeRef taskNodeRef, String assignee);
 
 	
+         /**
+	 * Refused a project Task
+	 * @param taskNodeRef
+	 * @return 
+	 */
+        NodeRef refusedTask(NodeRef nodeRef);
 
 }

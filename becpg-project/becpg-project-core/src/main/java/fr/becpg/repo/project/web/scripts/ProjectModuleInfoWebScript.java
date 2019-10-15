@@ -85,7 +85,7 @@ public class ProjectModuleInfoWebScript extends AbstractWebScript {
 		try {
 
 			NodeRef projectContainer = projectService.getProjectsContainer(siteId);
-			List<NodeRef> legends = projectService.getTaskLegendList(projectNodeRef);
+			List<NodeRef> legends = projectService.getTaskLegendList();
 
 			JSONObject obj = new JSONObject();
 			JSONArray jsonArray = new JSONArray();

@@ -103,27 +103,24 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 			String[] headerRow = getHeaderRow(dataBaseFile);
 
 			int nameColumn = extractNameColumnIndex(headerRow);
-			
-			String preparedQuery = BeCPGQueryHelper.prepareQuery(dictionaryService, query).replace("*", ""); 
-			
-			
+
+			String preparedQuery = BeCPGQueryHelper.prepareQuery(dictionaryService, query).replace("*", "");
 
 			matches.addAll(getColumn(dataBaseFile, nameColumn).stream().filter(res -> nameMatches(query, res.toString())).limit(100)
 					.collect(Collectors.toList()));
 
-				matches.sort((o1, o2) -> {
-					
-					if(BeCPGQueryHelper.isAllQuery(query)){
-						return  o1.getValue().compareTo(o2.getValue());
-					}
-					
-					String value =  BeCPGQueryHelper.prepareQuery(dictionaryService,o1.getValue()).replace("*", "").replace(preparedQuery, "A");
-					String value2 =  BeCPGQueryHelper.prepareQuery(dictionaryService,o2.getValue()).replace("*", "").replace(preparedQuery, "A");
-					
-					return value.compareTo(value2);
-					
-				});
+			matches.sort((o1, o2) -> {
 
+				if (BeCPGQueryHelper.isAllQuery(query)) {
+					return o1.getValue().compareTo(o2.getValue());
+				}
+
+				String value = BeCPGQueryHelper.prepareQuery(dictionaryService, o1.getValue()).replace("*", "").replace(preparedQuery, "A");
+				String value2 = BeCPGQueryHelper.prepareQuery(dictionaryService, o2.getValue()).replace("*", "").replace(preparedQuery, "A");
+
+				return value.compareTo(value2);
+
+			});
 
 			logger.debug("suggestion for " + query + ", found " + matches.size() + " results");
 		} else {
@@ -161,7 +158,7 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 
 							NutListDataItem nut = new NutListDataItem(null, null, null, null, null, null, nutNodeRef, false);
 
-							String newMethod = getFileName(databaseFile);
+							String newMethod = extractNutMethod(databaseFile);
 							PropertyDefinition methodDef = dictionaryService.getProperty(PLMModel.PROP_NUTLIST_METHOD);
 
 							if (methodDef != null) {
@@ -473,7 +470,7 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 		public String getId() {
 			return id;
 		}
-		
+
 		public String getValue() {
 			return value;
 		}
@@ -527,8 +524,9 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 		return getProductName(file, id, extractIdentifierColumnIndex(headerRow), extractNameColumnIndex(headerRow));
 	}
 
-	public String getFileName(NodeRef node) {
-		return FilenameUtils.removeExtension((String) nodeService.getProperty(node, ContentModel.PROP_NAME));
+	public String extractNutMethod(NodeRef node) {
+		return FilenameUtils.removeExtension((String) nodeService.getProperty(node, ContentModel.PROP_NAME)).toLowerCase().replace("table", "").trim()
+				.toUpperCase();
 	}
 
 }
