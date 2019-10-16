@@ -515,9 +515,9 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 				// same cost
 				if ((costList.getCost() != null) && costList.getCost().equals(templateCostList.getCost())) {
 					if(isTemplateCost) {
-						if ((templateCostList.getParent() != null) && (costList.getParent() == null)) {
+						if (templateCostList.getParent() != null) {
 							costList.setParent(findParentByCharactName(simpleListDataList, templateCostList.getParent().getCharactNodeRef()));
-						} else if (templateCostList.getParent() == null) {
+						} else {
 							costList.setParent(null);
 						}
 					}
