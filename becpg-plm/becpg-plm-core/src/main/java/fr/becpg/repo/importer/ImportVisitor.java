@@ -35,10 +35,11 @@ public interface ImportVisitor {
 	 *
 	 * @param mappingElt the mapping elt
 	 * @param importContext the import context
+	 * @param mappingLoader the mapping loader
 	 * @return the import context
 	 * @throws ImporterException the be cpg exception
 	 */
-	ImportContext loadClassMapping(Element mappingElt, ImportContext importContext) throws MappingException ;
+	ImportContext loadClassMapping(Object mapping, ImportContext importContext, MappingLoader mappingLoader) throws MappingException ;
 	
 	/**
 	 * Load mapping columns.
