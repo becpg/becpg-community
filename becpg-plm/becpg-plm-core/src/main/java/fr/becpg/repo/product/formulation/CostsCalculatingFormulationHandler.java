@@ -316,7 +316,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 				if ((isFixed != null) && (isFixed == Boolean.TRUE)) {
 					unitTotalFixedCost += c.getValue();
 
-					if ((formulatedProduct.getProjectedQty() != null) && !formulatedProduct.getProjectedQty().equals(0)) {
+					if ((formulatedProduct.getProjectedQty() != null) && !formulatedProduct.getProjectedQty().equals(0l)) {
 						costPerProduct = c.getValue() / formulatedProduct.getProjectedQty();
 
 						if (c.getFutureValue() != null) {
@@ -514,17 +514,15 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 			if (templateCostList.getPlants().isEmpty() || templateCostList.getPlants().contains(plantNodeRef)) {
 				// same cost
 				if ((costList.getCost() != null) && costList.getCost().equals(templateCostList.getCost())) {
+					if(isTemplateCost) {
+						if (templateCostList.getParent() != null) {
+							costList.setParent(findParentByCharactName(simpleListDataList, templateCostList.getParent().getCharactNodeRef()));
+						} else {
+							costList.setParent(null);
+						}
+					}
 					// manual
 					if ((costList.getIsManual() == null) || !costList.getIsManual()) {
-
-						if(isTemplateCost) {
-							if ((templateCostList.getParent() != null) && (costList.getParent() == null)) {
-								costList.setParent(findParentByCharactName(simpleListDataList, templateCostList.getParent().getCharactNodeRef()));
-							} else if (templateCostList.getParent() == null) {
-								costList.setParent(null);
-							}
-						}
-						
 						copyTemplateCost(formulatedProduct, templateCostList, costList);
 					}
 					addCost = false;

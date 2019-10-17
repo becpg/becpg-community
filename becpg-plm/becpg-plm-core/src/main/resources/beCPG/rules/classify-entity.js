@@ -148,17 +148,11 @@ function main() {
 		}
 
 		if (state == "Valid") {
-			if (!isInSite(document, VALID_SITE_ID)) {
-				classifyByHierarchy(document, getDocumentLibraryNodeRef(VALID_SITE_ID));
-			}
+			classifyByHierarchy(document, getDocumentLibraryNodeRef(VALID_SITE_ID));
 		} else if (state == "Simulation" || state == "ToValidate") {
-			if (isInSite(document, VALID_SITE_ID) || isInSite(document, ARCHIVED_SITE_ID)) {
-				bcpg.moveAndRename(document, getDocumentLibraryNodeRef(SIMULATION_SITE_ID));
-			}
+			classifyByHierarchy(document, getDocumentLibraryNodeRef(SIMULATION_SITE_ID));
 		} else if (state == "Archived") {
-			if (!isInSite(document, ARCHIVED_SITE_ID)) {
-				classifyByHierarchy(document, getDocumentLibraryNodeRef(ARCHIVED_SITE_ID));
-			}
+			classifyByHierarchy(document, getDocumentLibraryNodeRef(ARCHIVED_SITE_ID));
 		}
 
 	}
