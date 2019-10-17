@@ -531,10 +531,10 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 							isFound = true;
 
 							if ((sl instanceof CompositeDataItem) && (tsl instanceof CompositeDataItem)) {
-								if ((((CompositeDataItem<T>) tsl).getParent() != null) && (((CompositeDataItem<T>) sl).getParent() == null)) {
+								if (((CompositeDataItem<T>) tsl).getParent() != null) {
 									((CompositeDataItem<T>) sl).setParent(findParentByCharactName(simpleListDataList,
 											((CompositeDataItem<T>) tsl).getParent().getCharactNodeRef()));
-								} else if (((CompositeDataItem<T>) tsl).getParent() == null) {
+								} else {
 									((CompositeDataItem<T>) sl).setParent(null);
 								}
 							}

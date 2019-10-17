@@ -791,7 +791,7 @@
                                             lazyloadmenu : false
                                         });
                                 
-                         
+                                this.widgets.filterForm.set("disabled", true);
                                  
                                 this.widgets.filterForm.getMenu().subscribe("show", function(p_sType, p_aArgs){
                                	 	me.populateFilterForm();
@@ -1105,6 +1105,8 @@
                             Dom.addClass(this.id + "-selectListMessage", "hidden");
                             
                             this.widgets.newRowButton.set("disabled", false);
+                            
+                            this.widgets.filterForm.set("disabled", false);
 
                             Bubbling.fire(this.scopeId + "onDatalistColumnsReady",
                             {
