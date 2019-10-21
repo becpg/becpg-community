@@ -115,7 +115,8 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 			// even if project is not in Progress, we visit it because a task
 			// can start the project (manual task or task that has startdate <
 			// NOW)
-			if (visitTask(projectData, null)) {
+			List<NodeRef> tasksCheckWorkflowDone = new ArrayList<>();
+			if (visitTask(projectData, null, tasksCheckWorkflowDone)) {
 
 				if (projectData.getReformulateCount() == null) {
 					projectData.setReformulateCount(1);
@@ -156,7 +157,7 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 		return true;
 	}
 
-	private boolean visitTask(ProjectData projectData, TaskListDataItem taskListDataItem) {
+	private boolean visitTask(ProjectData projectData, TaskListDataItem taskListDataItem, List<NodeRef> tasksCheckWorkflowDone) {
 
 		logger.debug("Enter visit task : " + (taskListDataItem != null ? taskListDataItem.getTaskName() : "Project root"));
 
@@ -350,11 +351,12 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 
 						}
 
-
 						// check workflow instance (task may be reopened) and
 						// workflow properties
-						projectWorkflowService.checkWorkflowInstance(projectData, nextTask, nextDeliverables);
-
+						if(!tasksCheckWorkflowDone.contains(nextTask.getNodeRef())){
+							projectWorkflowService.checkWorkflowInstance(projectData, nextTask, nextDeliverables);
+							tasksCheckWorkflowDone.add(nextTask.getNodeRef());
+						}
 						
 						if ((nextTask.getResources() != null) && !nextTask.getResources().isEmpty()) {
 
@@ -378,7 +380,7 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 
 				// we visit every task since user can have started a task in the
 				// middle of the project even if previous are not started
-				reformulate = reformulate || visitTask(projectData, nextTask);
+				reformulate = reformulate || visitTask(projectData, nextTask, tasksCheckWorkflowDone);
 				// children first
 				// visitGroup(projectData, nextTask);
 				// parent second
