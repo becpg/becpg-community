@@ -22,6 +22,7 @@ import org.alfresco.repo.action.evaluator.CompareMimeTypeEvaluator;
 import org.alfresco.repo.action.evaluator.ComparePropertyValueEvaluator;
 import org.alfresco.repo.action.evaluator.IsSubTypeEvaluator;
 import org.alfresco.repo.action.evaluator.compare.ComparePropertyValueOperation;
+import org.alfresco.repo.action.evaluator.compare.ContentPropertyName;
 import org.alfresco.repo.action.executer.ScriptActionExecuter;
 import org.alfresco.repo.content.MimetypeMap;
 import org.alfresco.repo.site.SiteModel;
@@ -543,6 +544,15 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_PROPERTY, ContentModel.PROP_NAME);
 			conditionOnName.setInvertCondition(false);
 			compositeAction.addActionCondition(conditionOnName);
+			
+			// fix #6103 in case webdav we should check file size
+			ActionCondition conditionOnSize = actionService.createActionCondition(ComparePropertyValueEvaluator.NAME);
+			conditionOnSize.setParameterValue(ComparePropertyValueEvaluator.PARAM_OPERATION, ComparePropertyValueOperation.GREATER_THAN.toString());
+			conditionOnSize.setParameterValue(ComparePropertyValueEvaluator.PARAM_CONTENT_PROPERTY, ContentPropertyName.SIZE.toString());
+			conditionOnSize.setParameterValue(ComparePropertyValueEvaluator.PARAM_PROPERTY, ContentModel.PROP_CONTENT);
+			conditionOnSize.setParameterValue(ComparePropertyValueEvaluator.PARAM_VALUE, 5);
+			conditionOnSize.setInvertCondition(false);
+			compositeAction.addActionCondition(conditionOnSize);
 
 			// rule
 			Rule rule = new Rule();
@@ -573,10 +583,20 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_PROPERTY, ContentModel.PROP_NAME);
 			conditionOnName.setInvertCondition(false);
 			compositeAction.addActionCondition(conditionOnName);
+			
+			// fix #6103 in case webdav we should check file size
+			conditionOnSize = actionService.createActionCondition(ComparePropertyValueEvaluator.NAME);
+			conditionOnSize.setParameterValue(ComparePropertyValueEvaluator.PARAM_OPERATION, ComparePropertyValueOperation.GREATER_THAN.toString());
+			conditionOnSize.setParameterValue(ComparePropertyValueEvaluator.PARAM_CONTENT_PROPERTY, ContentPropertyName.SIZE.toString());
+			conditionOnSize.setParameterValue(ComparePropertyValueEvaluator.PARAM_PROPERTY, ContentModel.PROP_CONTENT);
+			conditionOnSize.setParameterValue(ComparePropertyValueEvaluator.PARAM_VALUE, 5);
+			conditionOnSize.setInvertCondition(false);
+			compositeAction.addActionCondition(conditionOnSize);
 
 			// rule
 			rule = new Rule();
 			rule.setRuleType(RuleType.INBOUND);
+			rule.setRuleType(RuleType.UPDATE);
 			rule.setAction(compositeAction);
 			rule.applyToChildren(true);
 			rule.setTitle("import xlsx file");
@@ -610,6 +630,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			// rule
 			Rule rule = new Rule();
 			rule.setRuleType(RuleType.INBOUND);
+			rule.setRuleType(RuleType.UPDATE);
 			rule.setAction(compositeAction);
 			rule.applyToChildren(true);
 			rule.setTitle("import user");
