@@ -273,7 +273,7 @@
 								<configuration>
 									<repository>${docker.becpg.url}/becpg-test</repository>
 									<contextDirectory>${project.build.directory}/becpg-test</contextDirectory>
-									<tag>${project.version}</tag>
+									<tag>${docker.becpg.tag}</tag>
 									<pullNewerImage>false</pullNewerImage>
 									<buildArgs>
 										<VERSION>${project.version}</VERSION>
@@ -305,7 +305,7 @@
 									<repository>${docker.becpg.url}/becpg-base</repository>
 									<contextDirectory>${project.build.directory}/becpg-base</contextDirectory>
 									<pullNewerImage>true</pullNewerImage>
-									<tag>${project.version}</tag>
+									<tag>${docker.becpg.tag}</tag>
 								</configuration>
 							</execution>
 							<execution>
@@ -318,7 +318,7 @@
 									<repository>${docker.becpg.url}/becpg-db</repository>
 									<contextDirectory>${project.build.directory}/becpg-db</contextDirectory>
 									<pullNewerImage>true</pullNewerImage>
-									<tag>${project.version}</tag>
+									<tag>${docker.becpg.tag}</tag>
 								</configuration>
 							</execution>
 							<execution>
@@ -331,7 +331,7 @@
 									<repository>${docker.becpg.url}/becpg-solr</repository>
 									<contextDirectory>${project.build.directory}/becpg-solr</contextDirectory>
 									<pullNewerImage>true</pullNewerImage>
-									<tag>${project.version}</tag>
+									<tag>${docker.becpg.tag}</tag>
 								</configuration>
 							</execution>
 						</executions>
