@@ -210,9 +210,13 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 				if (workflowInstance.isActive()) {
 					return true;
 				}
+				else{
+					task.setWorkflowInstance("");
+				}
 			} else {
 				logger.warn(
 						"Workflow instance unknown. WorkflowId: " + workflowId + " task " + task.getNodeRef() + " Task name " + task.getTaskName());
+				task.setWorkflowInstance("");
 			}
 		}
 

@@ -46,10 +46,12 @@ import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
+import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.AllergenType;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.LabelingRuleType;
+import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.ing.CompositeLabeling;
@@ -124,8 +126,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 		// no compo => no formulation
 		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)
-				|| !formulatedProduct.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
-			logger.debug("no compo => no formulation - " + formulatedProduct.getName());
+				|| ((formulatedProduct.getLabelingListView() == null) && !alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_INGLABELINGLIST))) {
+			logger.debug("no labelingListView => no formulation - " + formulatedProduct.getName());
 			return true;
 		}
 
@@ -211,8 +213,14 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				return true;
 			}
 
-			List<CompoListDataItem> compoList = formulatedProduct
-					.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()));
+			List<CompoListDataItem> compoList = new ArrayList<>();
+			if(formulatedProduct instanceof RawMaterialData){
+				compoList.add(new CompoListDataItem(null, null, 1d, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, formulatedProduct.getNodeRef()));
+			}
+			else{
+				compoList = formulatedProduct
+						.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()));
+			}
 
 			// Compute composite
 			Composite<CompoListDataItem> compositeDefaultVariant = CompositeHelper.getHierarchicalCompoList(compoList);
