@@ -1,10 +1,17 @@
 <@markup id="css" >
    <#-- CSS Dependencies -->
+   <@link href="${url.context}/res/modules/entity-datagrid/entity-datagrid.css" group="entity-datalists" />
+   <@link href="${url.context}/res/modules/custom-entity-datagrid/custom-entity-datagrid.css" group="entity-datalists" />
+   <@link href="${url.context}/res/modules/custom-entity-datagrid/project-columnRenderers.css" group="entity-datalists" />
    <@link href="${url.context}/res/components/workflow/task-list.css" group="workflow"/>
 </@>
 
 <@markup id="js">
    <#-- JavaScript Dependencies -->
+   <@script src="${url.context}/res/modules/entity-datagrid/entity-columnRenderer.js" group="entity-datalists"></@script>
+   <@script src="${url.context}/res/modules/custom-entity-datagrid/custom-columnRenderers.js" group="entity-datalists"></@script>
+   <@script src="${url.context}/res/modules/custom-entity-datagrid/project-columnRenderers.js" group="entity-datalists"></@script>
+   
    <@script src="${url.context}/res/components/workflow/workflow-actions.js" group="workflow"/>
    <@script src="${url.context}/res/components/workflow/task-list.js" group="workflow"/>
 </@>

@@ -43,6 +43,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.project.ProjectWorkflowService;
 import fr.becpg.repo.project.data.ProjectData;
@@ -107,6 +108,8 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 
 		workflowProps.put(WorkflowModel.PROP_SEND_EMAIL_NOTIFICATIONS, true);
 		workflowProps.put(ProjectModel.ASSOC_WORKFLOW_TASK, taskListDataItem.getNodeRef());
+		workflowProps.put(BeCPGModel.ASSOC_WORKFLOW_ENTITY,projectData.getNodeRef());
+		
 
 		// set workflow Initiator as Project Manager
 
