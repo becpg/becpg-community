@@ -7,6 +7,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -26,10 +28,14 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ModelUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONObject;
 import org.springframework.extensions.webscripts.Cache;
 import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
+
+import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.helper.AttributeExtractorService;
 
 public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 	private static final Log LOGGER = LogFactory.getLog(BeCPGTaskInstancesGet.class);
@@ -39,6 +45,14 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 	public static final String PARAM_DIR = "dir";
 	private static final QName QNAME_INITIATOR = QName.createQName("wf","initiator");
 	
+
+	private AttributeExtractorService attributeExtractorService;
+	
+
+	public void setAttributeExtractorService(AttributeExtractorService attributeExtractorService) {
+		this.attributeExtractorService = attributeExtractorService;
+	}
+
 
 	@Override
 	protected Map<String, Object> buildModel(WorkflowModelBuilder modelBuilder, WebScriptRequest req, Status status, Cache cache) {
@@ -66,7 +80,18 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 		Boolean pooledTasksOnly = getPooledTasks(req);
 
 		// get list of properties to include in the response
-		List<String> properties = getProperties(req);
+		List<String> tmp = getProperties(req);
+		List<String> properties = new LinkedList<String>();
+		List<String> extraProperties = new LinkedList<String>();
+		
+		for (Iterator<String> iterator = tmp.iterator(); iterator.hasNext();) {
+			String prop = (String) iterator.next();
+			if(prop.startsWith("extra_")) {
+				extraProperties.add(prop.replaceAll("extra_", "").replace("_",":"));
+			} else {
+				properties.add(prop);
+			}
+		}
 
 		// get filter param values
 		filters.put(PARAM_PRIORITY, req.getParameter(PARAM_PRIORITY));
@@ -174,7 +199,7 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 					// items we need. This will
 					// drastically improve performance over paging after
 					// building the model
-					results.add(modelBuilder.buildSimple(task, properties));
+					results.add(buildbeCPGModel(modelBuilder, task, properties,extraProperties));
 				}
 			}
 		}
@@ -191,6 +216,28 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 		// create and return results, paginated if necessary
 		return model;
 	}
+
+
+	private Map<String, Object> buildbeCPGModel(WorkflowModelBuilder modelBuilder, WorkflowTask task, List<String> properties, List<String> extraProperties) {
+		 Map<String, Object> ret = modelBuilder.buildSimple(task, properties);
+
+		 if(!extraProperties.isEmpty()) {
+		 
+		  NodeRef entityNodeRef =  (NodeRef) task.getProperties().get(BeCPGModel.ASSOC_WORKFLOW_ENTITY);
+		  
+		  if(entityNodeRef!=null && nodeService.exists(entityNodeRef)) {
+			  
+			  JSONObject tmp =  new JSONObject(attributeExtractorService.extractNodeData(entityNodeRef, nodeService.getType(entityNodeRef), extraProperties, AttributeExtractorService.AttributeExtractorMode.JSON));
+			  
+			  ret.put("extra",tmp.toString());
+			  
+		  }
+		 }
+		 
+		return ret;
+	}
+
+
 
 	private QName extractSort(String parameter) {
 	
@@ -228,6 +275,8 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 		}
 		return null;
 	}
+	
+	
 
 	/**
 	 * Retrieves the pooledTasks parameter.

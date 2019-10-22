@@ -816,6 +816,22 @@
 				</property>
 			</properties>
 		</aspect>
+		
+		<aspect name="bcpg:workflowAspect">
+			<associations>
+				<association name="bcpg:workflowEntity">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:entityV2</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+		</aspect>
 
 	</aspects>
 </model>

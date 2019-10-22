@@ -154,5 +154,9 @@ public interface BeCPGModel {
 	QName ASPECT_ERP_CODE = QName.createQName(BECPG_URI, "erpCodeAspect");
 	QName PROP_ERP_CODE = QName.createQName(BECPG_URI, "erpCode");
 
+	// WorkflowEntity
+	QName ASSOC_WORKFLOW_ENTITY = QName.createQName(BECPG_URI, "workflowEntity");
+	
+	
 	
 }

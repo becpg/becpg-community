@@ -53,7 +53,7 @@
        */
       YAHOO.Bubbling.on("filterChanged", this.onFilterChanged, this);
       YAHOO.Bubbling.on("filterSearch", this.onFilterSearch, this);
-      
+ 
 
       return this;
    };
@@ -73,6 +73,8 @@
     */
    YAHOO.lang.augmentObject(Alfresco.component.TaskList.prototype,
    {
+	  
+	   
       /**
        * Object container for initialization options
        *
@@ -106,7 +108,13 @@
           * @type int
           * @default 50
           */
-         maxItems: 50
+         maxItems: 50,
+         
+  	   /**
+          * Column Info Url
+          */
+
+         columnsUrl : Alfresco.constants.URL_SERVICECONTEXT + "module/entity-datagrid/config/columns"
       },
 
       /**
@@ -117,17 +125,35 @@
        */
       onReady: function DL_onReady()
       {
-         var url = Alfresco.constants.PROXY_URI + "api/task-instances?authority=" + encodeURIComponent(Alfresco.constants.USERNAME) +
-         	   "&exclude=" + this.options.hiddenTaskTypes.join(",")+
-               "&properties=" + ["bpm_priority", "bpm_status", "bpm_dueDate", "bpm_description"].join(","), me = this;
+    	  
+    	  
+    	  
+
+          // Query the visible columns for this list's item
+          // type
+          Alfresco.util.Ajax.jsonGet(
+          {
+              url : this.options.columnsUrl + "?itemType=pjt:project&formId=taskList",
+              successCallback :
+              {
+                  fn : this.onDatalistColumns,
+                  scope : this
+              }
+          });
+    	  
          
-         this.widgets.pagingDataTable = new Alfresco.util.DataTable(
-         {
-            dataTable:
-            {
-               container: this.id + "-tasks",
-               columnDefinitions:
-               [
+      },
+      
+      
+      onDatalistColumns : function EntityDataGrid_onDatalistColumns(response)
+      {
+          this.datalistColumns = response.json.columns;
+          this.dataRequestFields = [];
+          this.dataResponseFields = [];
+         
+          var columns = ["bpm_priority", "bpm_status", "bpm_dueDate", "bpm_description"];
+          var columnDefs = 
+              [
                   { key: "id", sortable: true,label:"", formatter: this.bind(this.renderCellPriority), width: 16 },
                   { key: "isPooled", sortable: false,label:"", formatter: this.bind(this.renderCellPooled), width: 16 },      
                   { key: "description", sortable: true, label:this.msg("label.description"), formatter: this.bind(this.renderTitleCell) },
@@ -135,106 +161,183 @@
                   { key: "path", sortable: true, label:this.msg("label.due"), formatter: this.bind(this.renderDueDateCell) },
                   { key: "state", sortable: true, label:this.msg("label.started"), formatter: this.bind(this.renderStartDateCell) },
                   { key: "owner", sortable: true, label:this.msg("label.initiator"), formatter: this.bind(this.renderInitiatorCell) },
-                  { key: "name", sortable: false, label:"", formatter: this.bind(this.renderCellActions), width: 200 }
-               ],
-               config:
-               {
-                  MSG_EMPTY: this.msg("message.noTasks")
-               }
-            },
-            dataSource:
-            {
-               url: url,
-               defaultFilter:
-               {
-                  filterId: "workflows.active"
-               },
-               filterResolver: this.bind(function(filter)
-               {
-                  // Reuse method form WorkflowActions
-                  return this.createFilterURLParameters(filter, this.options.filterParameters);
-               })
-            },
-            paginator:
-            {
-               config:
-               {
-                  containers: [this.id + "-paginator", this.id + "-paginatorBottom"],
-                  rowsPerPage: this.options.maxItems
-               }
-            }
-           
+                  
+               ];
+          
+          
+          for (var i = 0, ii = this.datalistColumns.length; i < ii; i++)
+          {
+        	  
+        	  
+        	  var column = this.datalistColumns[i], columnName = column.name.replace(":", "_"), fieldLookup = (column.type == "property" ? "prop"
+                      : "assoc");
+
+              if (column.dataType == "nested" && column.columns)
+              {
+                  fieldLookup = "dt";
+                  fieldLookup += "_" + columnName;
+                  for (var j = 0; j < column.columns.length; j++)
+                  {
+                      columnName += "|" + column.columns[j].name.replace(":", "_");
+                  }
+
+              }
+              else
+              {
+                  fieldLookup += "_" + columnName;
+              }
+
+              this.dataRequestFields.push(columnName);
+              this.dataResponseFields.push(fieldLookup);
+              this.datalistColumns[fieldLookup] = column;
+        	  
+              
+              var colDef = {
+                          key : fieldLookup,
+                          label : column.label == "hidden" ? "" : column.label,
+                          hidden : column.label == "hidden" ,
+                          sortOptions :
+                          {
+                              field : column.formsName,
+                              sortFunction : beCPG.module.EntityDataRendererHelper.getSortFunction()
+                          },
+                          formatter : beCPG.module.EntityDataRendererHelper.getCellFormatter(this),
+                          sortable : false
+                      };
+              	
+              	if(column.options!=null ){
+              		try {
+                  		var joptions = YAHOO.lang.JSON.parse(
+                  				column.options);
+                  		/* Syntax example
+                  			{maxAutoWidth:100,resizeable:true,minWidth:150}
+                  		*/
+                  		if(joptions){
+                      		for(var key in joptions) {
+                      			colDef[key] = joptions[key];
+                      		}
+                  		}
+              		} catch(e){
+              			console.log("ERROR cannot parse options: "+column.options)
+              		}
+              	}
+              	
+              	
+              	columnDefs.push(colDef);
+                columns.push("extra_"+column.name.replace(":", "_"));
+              
+          }
+          
+          columnDefs.push({ key: "name", sortable: false, label:"", formatter: this.bind(this.renderCellActions), width: 200 });
+          
+   
+          var url = Alfresco.constants.PROXY_URI + "api/task-instances?authority=" + encodeURIComponent(Alfresco.constants.USERNAME) +
+          	   "&exclude=" + this.options.hiddenTaskTypes.join(",")+
+                "&properties=" + columns.join(","), me = this;
+          
+          this.widgets.pagingDataTable = new Alfresco.util.DataTable(
+          {
+             dataTable:
+             {
+                container: this.id + "-tasks",
+                columnDefinitions:columnDefs,
+                config:
+                {
+                   MSG_EMPTY: this.msg("message.noTasks")
+                }
+             },
+             dataSource:
+             {
+                url: url,
+                defaultFilter:
+                {
+                   filterId: "workflows.active"
+                },
+                filterResolver: this.bind(function(filter)
+                {
+                   // Reuse method form WorkflowActions
+                   return this.createFilterURLParameters(filter, this.options.filterParameters);
+                })
+             },
+             paginator:
+             {
+                config:
+                {
+                   containers: [this.id + "-paginator", this.id + "-paginatorBottom"],
+                   rowsPerPage: this.options.maxItems
+                }
+             }
             
-         });
-         
-         this.widgets.pagingDataTable.getDataTable().sortColumn = function(oColumn, sDir) {
-			    if(oColumn && (oColumn instanceof YAHOO.widget.Column)) {
-			        if(!oColumn.sortable) {
-			            Dom.addClass(this.getThEl(oColumn), DT.CLASS_SORTABLE);
-			        }
-			        
-			        // Validate given direction
-			        if(sDir && (sDir !== DT.CLASS_ASC) && (sDir !== DT.CLASS_DESC)) {
-			            sDir = null;
-			        }
-			        
-			        // Get the sort dir
-			        var sSortDir = sDir || this.getColumnSortDir(oColumn);
-			
-			        // Is the Column currently sorted?
-			        var oSortedBy = this.get("sortedBy") || {};
-			        var bSorted = (oSortedBy.key === oColumn.key) ? true : false;
-			
-			        var ok = this.doBeforeSortColumn(oColumn, sSortDir);
-			        if(ok) {
-			            // Server-side sort
-			            if(this.get("dynamicData")) {
-			                // Get current state
-			                var oState = this.getState();
-			                
-			                // Reset record offset, if paginated
-			                if(oState.pagination) {
-			                    oState.pagination.recordOffset = 0;
-			                }
-			                
-			                // Update sortedBy to new values
-			                oState.sortedBy = {
-			                    key: oColumn.key,
-			                    dir: sSortDir
-			                };
-			                
-			                var oSelf = this;
-			                // Get the request for the new state
-			                oState = oState || {pagination:null, sortedBy:null};
-			                var sort = encodeURIComponent((oState.sortedBy) ? oState.sortedBy.key : oSelf.getColumnSet().keys[0].getKey());
-			                var dir = (oState.sortedBy && oState.sortedBy.dir === YAHOO.widget.DataTable.CLASS_DESC) ? "desc" : "asc";
-			        
-			                
-			               var  baseParameters = me.widgets.pagingDataTable.createUrlParameters(),
-			                request = baseParameters+"&sort=" + sort +
-			                        "&dir=" + dir ;
-			
-			                // Purge selections
-			                this.unselectAllRows();
-			                this.unselectAllCells();
-			
-			                // Send request for new data
-			                var callback = {
-			                    success : this.onDataReturnSetRows,
-			                    failure : this.onDataReturnSetRows,
-			                    argument : oState, // Pass along the new state to the callback
-			                    scope : this
-			                };
-			                this._oDataSource.sendRequest(request, callback);            
-			            }
-			         
-			            this.fireEvent("columnSortEvent",{column:oColumn,dir:sSortDir});
-			            return;
-			        }
-			    }
-			};
-			
-         
+             
+          });
+          
+          this.widgets.pagingDataTable.getDataTable().sortColumn = function(oColumn, sDir) {
+ 			    if(oColumn && (oColumn instanceof YAHOO.widget.Column)) {
+ 			        if(!oColumn.sortable) {
+ 			            Dom.addClass(this.getThEl(oColumn), DT.CLASS_SORTABLE);
+ 			        }
+ 			        
+ 			        // Validate given direction
+ 			        if(sDir && (sDir !== DT.CLASS_ASC) && (sDir !== DT.CLASS_DESC)) {
+ 			            sDir = null;
+ 			        }
+ 			        
+ 			        // Get the sort dir
+ 			        var sSortDir = sDir || this.getColumnSortDir(oColumn);
+ 			
+ 			        // Is the Column currently sorted?
+ 			        var oSortedBy = this.get("sortedBy") || {};
+ 			        var bSorted = (oSortedBy.key === oColumn.key) ? true : false;
+ 			
+ 			        var ok = this.doBeforeSortColumn(oColumn, sSortDir);
+ 			        if(ok) {
+ 			            // Server-side sort
+ 			            if(this.get("dynamicData")) {
+ 			                // Get current state
+ 			                var oState = this.getState();
+ 			                
+ 			                // Reset record offset, if paginated
+ 			                if(oState.pagination) {
+ 			                    oState.pagination.recordOffset = 0;
+ 			                }
+ 			                
+ 			                // Update sortedBy to new values
+ 			                oState.sortedBy = {
+ 			                    key: oColumn.key,
+ 			                    dir: sSortDir
+ 			                };
+ 			                
+ 			                var oSelf = this;
+ 			                // Get the request for the new state
+ 			                oState = oState || {pagination:null, sortedBy:null};
+ 			                var sort = encodeURIComponent((oState.sortedBy) ? oState.sortedBy.key : oSelf.getColumnSet().keys[0].getKey());
+ 			                var dir = (oState.sortedBy && oState.sortedBy.dir === YAHOO.widget.DataTable.CLASS_DESC) ? "desc" : "asc";
+ 			        
+ 			                
+ 			               var  baseParameters = me.widgets.pagingDataTable.createUrlParameters(),
+ 			                request = baseParameters+"&sort=" + sort +
+ 			                        "&dir=" + dir ;
+ 			
+ 			                // Purge selections
+ 			                this.unselectAllRows();
+ 			                this.unselectAllCells();
+ 			
+ 			                // Send request for new data
+ 			                var callback = {
+ 			                    success : this.onDataReturnSetRows,
+ 			                    failure : this.onDataReturnSetRows,
+ 			                    argument : oState, // Pass along the new state to the callback
+ 			                    scope : this
+ 			                };
+ 			                this._oDataSource.sendRequest(request, callback);            
+ 			            }
+ 			         
+ 			            this.fireEvent("columnSortEvent",{column:oColumn,dir:sSortDir});
+ 			            return;
+ 			        }
+ 			    }
+ 			};
+ 			
       },
 
 
