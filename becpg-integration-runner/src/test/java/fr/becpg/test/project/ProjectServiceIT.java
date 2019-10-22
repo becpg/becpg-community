@@ -30,6 +30,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.project.ProjectWorkflowService;
 import fr.becpg.repo.project.data.PlanningMode;
@@ -729,6 +730,7 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 		for (WorkflowTask workflowTask : workflowTasks) {
 			NodeRef taskNodeRef = (NodeRef) workflowTask.getProperties().get(ProjectModel.ASSOC_WORKFLOW_TASK);
 			if ((taskNodeRef != null) && taskNodeRef.equals(taskListDataItemNodeRef)) {
+				assertEquals(entityListDAO.getEntity(taskListDataItemNodeRef), workflowTask.getProperties().get(BeCPGModel.ASSOC_WORKFLOW_ENTITY));
 				assertEquals(workflowDescription, workflowTask.getProperties().get(WorkflowModel.PROP_DESCRIPTION));
 				assertEquals(dueDate, workflowTask.getProperties().get(WorkflowModel.PROP_DUE_DATE));
 				if (assignees.size() == 1) {

@@ -299,11 +299,14 @@ public class ImportHelper {
 	}
 
 	private static Number parseNumber(ImportContext importContext, String val) throws ParseException {
-		if (importContext.getPropertyFormats().getDecimalFormat().getDecimalFormatSymbols().getDecimalSeparator() == ',') {
-			val = val.replaceAll("\\.", ",");
-		} else {
-			val = val.replaceAll(",", ".");
+		if(importContext.getImportFileReader() instanceof ImportCSVFileReader) {
+			if (importContext.getPropertyFormats().getDecimalFormat().getDecimalFormatSymbols().getDecimalSeparator() == ',') {
+				val = val.replaceAll("\\.", ",");
+			} else {
+				val = val.replaceAll(",", ".");
+			}
 		}
+		
 		return importContext.getPropertyFormats().parseDecimal(val);
 
 	}
