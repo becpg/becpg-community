@@ -79,7 +79,7 @@ public class ImportHelper {
 
 					// load translations
 					boolean first = true;
-					for (int z_idx = pos; z_idx < importContext.getColumns().size(); z_idx++) {
+					for (int z_idx = pos; z_idx < importContext.getColumns().size() && z_idx < values.size(); z_idx++) {
 
 						// bcpg:legalName_en
 						String transColumn = importContext.getColumns().get(z_idx).getId();
