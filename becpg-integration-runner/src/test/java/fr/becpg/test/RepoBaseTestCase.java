@@ -238,12 +238,29 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 				return false;
 
+				}
 			}, false, true);
+		
+		
+			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				List<Rule> rules = ruleService.getRules(repositoryHelper.getCompanyHome(), false);
+				for (Rule rule : rules) {
+					if ("classifyEntityRule".equals(rule.getTitle())) {
+						ruleService.disableRule(rule);
+					}
+				}
+				return null;
+			}, false, true);
+			
 		}
+		
+		systemFolderNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+				return repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM,
+						TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
 
-		systemFolderNodeRef = transactionService.getRetryingTransactionHelper()
-				.doInTransaction(() -> repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM,
-						TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM)), false, true);
+			}
+		}, false, true);
 
 		doInitRepo(shouldInit);
 
