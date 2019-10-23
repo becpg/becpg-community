@@ -48,6 +48,7 @@ import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.rule.Rule;
 import org.alfresco.service.cmr.rule.RuleService;
 import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.MutableAuthenticationService;
@@ -220,13 +221,27 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 					// Init repo for test
 					initRepoVisitorService.run(repositoryHelper.getCompanyHome());
+					
+					
 
 					return false;
 
 				}
 			}, false, true);
+		
+		
+			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				List<Rule> rules = ruleService.getRules(repositoryHelper.getCompanyHome(), false);
+				for (Rule rule : rules) {
+					if ("classifyEntityRule".equals(rule.getTitle())) {
+						ruleService.disableRule(rule);
+					}
+				}
+				return null;
+			}, false, true);
+			
 		}
-
+		
 		systemFolderNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 				return repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM,
