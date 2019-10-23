@@ -20,6 +20,7 @@ package fr.becpg.test;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -238,29 +239,23 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 				return false;
 
-				}
 			}, false, true);
-		
-		
+
 			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-				List<Rule> rules = ruleService.getRules(repositoryHelper.getCompanyHome(), false);
-				for (Rule rule : rules) {
+				List<org.alfresco.service.cmr.rule.Rule> rules = ruleService.getRules(repositoryHelper.getCompanyHome(), false);
+				for (org.alfresco.service.cmr.rule.Rule rule : rules) {
 					if ("classifyEntityRule".equals(rule.getTitle())) {
 						ruleService.disableRule(rule);
 					}
 				}
 				return null;
 			}, false, true);
-			
-		}
-		
-		systemFolderNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			public NodeRef execute() throws Throwable {
-				return repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM,
-						TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
 
-			}
-		}, false, true);
+		}
+
+		systemFolderNodeRef = transactionService.getRetryingTransactionHelper()
+				.doInTransaction(() -> repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM,
+						TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM)), false, true);
 
 		doInitRepo(shouldInit);
 
@@ -323,7 +318,7 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 					.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, ContentModel.TYPE_CONTENT)
 					.getChildRef();
 
-			nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, "" + startTime.getTime()+"1");
+			nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, "" + startTime.getTime() + "1");
 			nodeService.setProperty(nodeRef, BeCPGModel.PROP_IS_MANUAL_LISTITEM, true);
 			return null;
 
@@ -331,7 +326,7 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			int j = 0;
-			while ((BeCPGQueryBuilder.createQuery().andPropQuery(ContentModel.PROP_NAME, "" + startTime.getTime()+"*")
+			while ((BeCPGQueryBuilder.createQuery().andPropQuery(ContentModel.PROP_NAME, "" + startTime.getTime() + "*")
 					.andPropEquals(BeCPGModel.PROP_IS_MANUAL_LISTITEM, "true").inParent(getTestFolderNodeRef()).ftsLanguage().singleValue() == null)
 					&& (j < 30)) {
 
