@@ -332,12 +332,23 @@
 									 itemType : step.itemId,
 									 title : encodeURIComponent(step.label)
 								 });
+					 } else if(step.type == "documents"){
+
+						 url =  YAHOO.lang
+						 .substitute(
+								 Alfresco.constants.URL_SERVICECONTEXT + "components/entity-charact-views/simple-documents-view" + 
+								 "?nodeRef={nodeRef}&path={path}",
+								 {
+									 nodeRef : step.nodeRef,
+									 path : step.path,
+									 title : encodeURIComponent(step.label)
+								 });
 					 }
 
 
 					 if(url!=null){
 
-						 if(step.type != "entityDataList" || !step.loaded  ){
+						 if((step.type != "entityDataList" && step.type != "documents")  || !step.loaded  ){
 							 Alfresco.util.Ajax
 							 .request(
 									 {
