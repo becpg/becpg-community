@@ -27,6 +27,7 @@ import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
@@ -248,37 +249,6 @@ public class UserImporterServiceImpl implements UserImporterService {
 						sendMail(person, username, password);
 					}
 
-					if (headers.containsKey(GROUPS)) {
-						String[] groups = splitted[headers.get(GROUPS)].split(FIELD_SEPARATOR);
-						for (String group : groups) {
-							String[] grp = group.split(PATH_SEPARATOR);
-							String currGroup = null;
-							for (String aGrp : grp) {
-								String tmp = aGrp;
-								if ((tmp != null) && !tmp.isEmpty()) {
-									if (!authorityService.authorityExists(authorityService.getName(AuthorityType.GROUP, tmp))) {
-										tmp = authorityService.createAuthority(AuthorityType.GROUP, tmp);
-										logger.debug("Create group : " + tmp);
-										if ((currGroup != null) && !currGroup.isEmpty()) {
-											logger.debug("Add group  " + tmp + " to " + currGroup);
-											authorityService.addAuthority(currGroup, tmp);
-
-										}
-									} else {
-										tmp = authorityService.getName(AuthorityType.GROUP, tmp);
-									}
-									currGroup = tmp;
-								}
-							}
-
-							if ((currGroup != null) && !currGroup.isEmpty()) {
-								logger.debug("Add user  " + username + " to " + currGroup);
-
-								authorityService.addAuthority(currGroup, username);
-							}
-
-						}
-					}
 
 				} else {
 					logger.info("User " + username + " already exist");
@@ -289,6 +259,47 @@ public class UserImporterServiceImpl implements UserImporterService {
 			});
 			
 
+			if (headers.containsKey(GROUPS)) {
+				String[] groups = splitted[headers.get(GROUPS)].split(FIELD_SEPARATOR);
+				
+				Set<String> userGroups = authorityService.getContainingAuthorities(AuthorityType.GROUP, username, false);
+				userGroups.forEach(group-> {
+					logger.info("Group: "+group + ", user: "+username);
+					if(!group.startsWith("GROUP_site_")) {
+						authorityService.removeAuthority(group, username);
+					}
+				});
+				
+				for (String group : groups) {
+					String[] grp = group.split(PATH_SEPARATOR);
+					String currGroup = null;
+					for (String aGrp : grp) {
+						String tmp = aGrp;
+						if ((tmp != null) && !tmp.isEmpty()) {
+							if (!authorityService.authorityExists(authorityService.getName(AuthorityType.GROUP, tmp))) {
+								tmp = authorityService.createAuthority(AuthorityType.GROUP, tmp);
+								logger.debug("Create group : " + tmp);
+								if ((currGroup != null) && !currGroup.isEmpty()) {
+									logger.debug("Add group  " + tmp + " to " + currGroup);
+									authorityService.addAuthority(currGroup, tmp);
+
+								}
+							} else {
+								tmp = authorityService.getName(AuthorityType.GROUP, tmp);
+							}
+							currGroup = tmp;
+						}
+					}
+
+					if ((currGroup != null) && !currGroup.isEmpty()) {
+						logger.debug("Add user  " + username + " to " + currGroup);
+
+						authorityService.addAuthority(currGroup, username);
+					}
+
+				}
+			}
+			
 			if (headers.containsKey(MEMBERSHIPS)) {
 				AuthenticationUtil.runAsSystem(() -> {
 					if ((splitted[headers.get(MEMBERSHIPS)] != null) && !splitted[headers.get(MEMBERSHIPS)].isEmpty()) {
