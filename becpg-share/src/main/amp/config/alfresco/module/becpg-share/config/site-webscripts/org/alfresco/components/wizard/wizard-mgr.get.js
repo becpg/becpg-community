@@ -29,12 +29,14 @@ function main() {
     var wizardStruct = [];
     
     model.comments = false;
+    model.draft = false;
     
     var wizards = config.scoped["wizard"]["wizards"].childrenMap["wizard"];
     for (var i = 0, wizard; i < wizards.size(); i++) {
         wizard = wizards.get(i);
         if(wizard.attributes["id"] == page.url.args.id){
         	model.comments =  wizard.attributes["comments"] == "true";
+        	model.draft = wizard.attributes["draft"] == "true";
             var steps = wizard.childrenMap["step"];
             for(var j = 0, step; j < steps.size(); j++){
                 step = steps.get(j);
@@ -63,6 +65,7 @@ function main() {
          siteId : (page.url.templateArgs.site != null) ? page.url.templateArgs.site : "",
          destination :  (page.url.args.destination != null) ? page.url.args.destination : "",
          nodeRef :  (page.url.args.nodeRef != null) ? page.url.args.nodeRef : "",
+         draft : model.draft, 
          wizardStruct : wizardStruct
       }
    };

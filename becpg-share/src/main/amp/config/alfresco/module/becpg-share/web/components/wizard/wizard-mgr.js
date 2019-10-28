@@ -48,6 +48,8 @@
 
 					 destination : "",
 
+					 draft : false,
+					 
 					 wizardStruct : []
 				 },
 
@@ -60,6 +62,11 @@
 				 onReady : function WizardMgr_onReady()
 				 {
 					 var me = this;
+					 
+					 
+					 if(Dom.get(this.id+'-tabview')!=null){
+                     	this.widgets.tabView = new YAHOO.widget.TabView(this.id+'-tabview');
+                     }
 
 					 // Initialize wizard
 					 this.widgets.wizard = jQuery("#" + this.id + "-wizard")
@@ -67,6 +74,7 @@
 							 {
 								 stepsOrientation : "vertical",
 								 enableCancelButton : true,
+								 showFinishButtonAlways : this.options.draft,
 								 enableKeyNavigation : false,
 								 labels: {
 									 cancel: me.msg("wizard.cancel.button"),
@@ -124,7 +132,28 @@
 										 if(currentIndex > priorIndex){
 											 nextStep.nodeRef = step.nodeRef;
 										 }
-										 me.loadStep(nextStep);
+										 
+										 if(step.type != "form" && step.nextStepWebScript!=null){
+
+											 var url = YAHOO.lang.substitute(
+													 Alfresco.constants.PROXY_URI + step.nextStepWebScript, {
+														 nodeRef :   step.nodeRef
+													 });
+
+											 Alfresco.util.Ajax.jsonRequest({
+												 url : url,
+												 method : "GET",
+												 successCallback : {
+													 fn : function(response) {
+														 nextStep.nodeRef = response.json.nodeRef;
+														 me.loadStep(nextStep);
+													 },
+													 scope : this
+												 }
+											 });
+										 } else {
+											 me.loadStep(nextStep);
+										 }
 									 }
 
 
@@ -337,10 +366,9 @@
 						 url =  YAHOO.lang
 						 .substitute(
 								 Alfresco.constants.URL_SERVICECONTEXT + "components/entity-charact-views/simple-documents-view" + 
-								 "?nodeRef={nodeRef}&path={path}",
+								 "?nodeRef={nodeRef}",
 								 {
 									 nodeRef : step.nodeRef,
-									 path : step.path,
 									 title : encodeURIComponent(step.label)
 								 });
 					 }

@@ -76,8 +76,7 @@
 	   	<#assign el=args.htmlid?html>
 	   		  <div id="alf-filters" width="1000px"></div>
 	    	  <#if comments || catalogId??>
-	    	 <div class="wizard-container">
-	    	 		
+	    	 	<div class="wizard-container">	    	 		
 			         <div  class="wizard-content">
 			  </#if>  
 			  			<div class="clear"></div>
@@ -87,50 +86,76 @@
 						</div>          		          
 	         	<#if comments || catalogId??>
 	         		 </div>
-	         		 <#if catalogId??>
-		         	 <div class="wizard-catalog">
-		         	 	
-		         		 <div id="${el}-step-step1_cat">
-							  <div id="${el}-step-step1_cat-entity-catalog"></div> 
-						 </div>	
-					  </div>
-					  <#if !comments >
-					 </div>
-					  </#if>
+	         		 
+	         		 <#if comments && catalogId??>
+	         		 	 <div id="${el}-tabview" class="yui-navset wizard-comments">
+									<ul class="yui-nav" >
+								   		<li class="selected" ><a href="#${el}-comments" ><em>${msg("header.comments")}</em></a></li>
+								   		<li ><a href="#${el}-catalogs"><em>${msg("label.property_completion")}</em></a></li>
+								   	</ul>
+						   <div class="yui-content properties-tab">
+								 <div id="tab_${el}-comments">  	
+	         		 <#else>
+	         		   <#if comments >	 
+	         		 	 <div class="wizard-comments">
+	         			</#if>	 
+	         		 </#if>
+	         		 
+			        <#if comments >	 
+			        	 
+							         <div id="${el}-body" class="comments-list">
+							            <div id="${el}-add-comment">
+							               <div id="${el}-add-form-container" class="theme-bg-color-4 hidden"></div>
+							            </div>
+							            <div class="comments-list-actions">
+							               <div class="left">
+							                  <div id="${el}-actions" class="hidden">
+							                     <button id="${el}-add-comment-button">${msg("button.addComment")}</button>
+							                  </div>
+							               </div>
+							               <div class="right">
+							                  <div id="${el}-paginator-top"></div>
+							               </div>
+							               <div class="clear"></div>
+							            </div>
+							            <hr class="hidden"/>
+							            <div id="${el}-comments-list"></div>
+							            <hr class="hidden"/>
+							            <div class="comments-list-actions">
+							               <div class="left">
+							               </div>
+							               <div class="right">
+							                  <div id="${el}-paginator-bottom"></div>
+							               </div>
+							               <div class="clear"></div>
+							            </div>
+							         </div>
+							     
+	         		  </div>
+			         </#if> 
+	         		  
+		         		 <#if comments && catalogId??>
+		         		  <div id="tab_${el}-catlogs">
+		         		  <#else>
+		         		  <#if catalogId?? >	 
+		         		 	<div class="wizard-catalog"> 
+		         		 </#if>
+		         		 </#if>
+			         		 <#if catalogId??>
+				         	 		         	 	
+				         		 <div id="${el}-step-step1_cat">
+									  <div id="${el}-step-step1_cat-entity-catalog"></div> 
+								 </div>	
+								 </div>
+					  	 </#if>
 					  
-					  </#if>
-					  <#if comments >	 
-	        			  <div class="wizard-comments">
-					         <div id="${el}-body" class="comments-list">
-					            <div id="${el}-add-comment">
-					               <div id="${el}-add-form-container" class="theme-bg-color-4 hidden"></div>
-					            </div>
-					            <div class="comments-list-actions">
-					               <div class="left">
-					                  <div id="${el}-actions" class="hidden">
-					                     <button id="${el}-add-comment-button">${msg("button.addComment")}</button>
-					                  </div>
-					               </div>
-					               <div class="right">
-					                  <div id="${el}-paginator-top"></div>
-					               </div>
-					               <div class="clear"></div>
-					            </div>
-					            <hr class="hidden"/>
-					            <div id="${el}-comments-list"></div>
-					            <hr class="hidden"/>
-					            <div class="comments-list-actions">
-					               <div class="left">
-					               </div>
-					               <div class="right">
-					                  <div id="${el}-paginator-bottom"></div>
-					               </div>
-					               <div class="clear"></div>
-					            </div>
-					         </div>
-					       </div> 
-	         		 </div>
-	         	 </#if> 
+					  
+					   <#if comments && catalogId??>
+					  	</div></div>
+					   </#if>
+					  
+					</div>
+					
 			</#if>
    </@>
 </@>
