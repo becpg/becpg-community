@@ -24,7 +24,7 @@
          siteId :  "",
          containerId :  "documentLibrary",
          rootNode : "${args.nodeRef}",
-         currentPath : null,
+         currentPath : <#if args.path?? >"${args.path}"<#else>null</#if>,
          usePagination : true,
          sortAscending : true,
          sortField :  "cm:name",
