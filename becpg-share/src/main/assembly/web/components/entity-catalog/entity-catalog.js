@@ -312,11 +312,16 @@
 				}
 			}
 
-			YAHOO.util.Dom.get(this.id+"-entity-catalog").innerHTML='<span class="wait">' + Alfresco.util.encodeHTML(this.msg("label.loading")) + '</span>';
+			var catalogsDiv = YAHOO.util.Dom.get(this.id+"-entity-catalog");
+			
+			catalogsDiv.innerHTML='<span class="wait">' + Alfresco.util.encodeHTML(this.msg("label.loading")) + '</span>';
 			
 			var formulateButton = YAHOO.util.Selector.query('div.formulate');
 			
-			YAHOO.util.Dom.addClass(formulateButton, "loading");
+			if(formulateButton!=null){
+				YAHOO.util.Dom.addClass(formulateButton, "loading");
+			}
+			
 			
 			var catalogUrl = Alfresco.constants.PROXY_URI + "becpg/entity/catalog/node/" + instance.options.entityNodeRef.replace(":/","");
 			if(instance.options.catalogId!=null ){
@@ -331,28 +336,32 @@
 					fn : function (response){
 
 						if(response.json != null  && response.json !== undefined ){
-							var html = parseJsonToHTML(response.json),
-							  catalogs = YAHOO.util.Dom.get(this.id+"-entity-catalog");
-							
-							  catalogs.innerHTML=html;
+
+							catalogsDiv.innerHTML=parseJsonToHTML(response.json);
 
 							if( response.json.catalogs != null  && response.json.catalogs !== undefined 
 									&& Object.keys(response.json.catalogs).length > 0){
+								
+								
+								
 							   var insertId = this.id.replace("wizard-mgr","%%%").replace("_cat","")
 							   				  .replace("-mgr", "").replace("%%%","wizard-mgr");		
 							   
-	 							   var form = YAHOO.util.Dom.get(insertId+"-form");
-	 								
-	 								if(form !== undefined && form != null){
-	 									
-	 									var pageContent = YAHOO.util.Dom.get(insertId);
-	 									YAHOO.util.Dom.addClass(pageContent,"inline-block");
-	 									YAHOO.util.Dom.addClass(catalogs,"inline-block");
-	 									YAHOO.util.Dom.addClass(catalogs,"catalogs");
-	 									YAHOO.util.Dom.insertAfter(catalogs,pageContent);
-	 									YAHOO.util.Dom.removeClass(this.id+"-entity-catalog","hidden");
-	 									
-	 								}
+							   
+								   if(this.id.indexOf("wizard-mgr")<1){
+		 							   var form = YAHOO.util.Dom.get(insertId+"-form");
+		 								
+		 								if(form !== undefined && form != null){
+		 									
+		 									var pageContent = YAHOO.util.Dom.get(insertId);
+		 									YAHOO.util.Dom.addClass(pageContent,"inline-block");
+		 									YAHOO.util.Dom.addClass(catalogsDiv,"inline-block");
+		 									YAHOO.util.Dom.addClass(catalogsDiv,"catalogs");
+		 									YAHOO.util.Dom.insertAfter(catalogsDiv,pageContent);
+		 									YAHOO.util.Dom.removeClass(this.id+"-entity-catalog","hidden");
+		 									
+		 								}
+								   }
 	 								
 
 		                           	YAHOO.util.Event.onAvailable(insertId+"-form",function(){

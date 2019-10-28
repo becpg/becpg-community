@@ -166,9 +166,13 @@
 					listId="microbioList" itemId="bcpg:microbioList"></step>
 			    <step id="step8" labelId="becpg.wizard.supplier.mp.step8.label"
 					titleId="becpg.wizard.supplier.mp.step8.title" type="entityDataList"
-					listId="organoList" itemId="bcpg:organoList"></step>
+					listId="organoList" itemId="bcpg:organoList" 
+					 nextStepWebScript="becpg/project/path?nodeRef={nodeRef}&amp;path=Documents" ></step>
+				<step id="step9" label="becpg.wizard.supplier.mp.step9.label"
+					titleId="becpg.wizard.supplier.mp.step9.title" type="documents" 
+					  ></step>		
 			</wizard>
-			<wizard id="supplier">
+			<wizard id="supplier" draft="true">
 				<step id="step1" labelId="becpg.wizard.supplier.step1.label"
 					titleId="becpg.wizard.supplier.step1.title" type="form" formId="supplier"
 					itemId="bcpg:supplier"></step>
@@ -178,6 +182,8 @@
 				<step id="step3" labelId="becpg.wizard.supplier.step3.label"
 					titleId="becpg.wizard.supplier.step3.title" type="entityDataList"
 					listId="contactList" itemId="bcpg:contactList"></step>
+				<step id="step4" label="becpg.wizard.supplier.step4.label"
+					titleId="becpg.wizard.supplier.step4.title" type="documents"></step>	
 			</wizard>
 			<wizard id="supplier-pack">
 				<step id="step1" labelId="becpg.wizard.supplier.pack.step1.label"
