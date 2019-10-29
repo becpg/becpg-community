@@ -36,6 +36,8 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 	private PackagingLevel pkgLevel;
 
 	private Boolean isMaster;
+	
+	private Boolean isRecycle;
 
 	private NodeRef product;
 
@@ -88,6 +90,16 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 	public void setIsMaster(Boolean isMaster) {
 		this.isMaster = isMaster;
 	}
+	
+	@AlfProp
+	@AlfQname(qname = "bcpg:packagingListIsRecycle")
+	public Boolean getIsRecycle() {
+		return isRecycle;
+	}
+
+	public void setIsRecycle(Boolean isRecycle) {
+		this.isRecycle = isRecycle;
+	}
 
 	@AlfSingleAssoc
 	@DataListIdentifierAttr
@@ -134,6 +146,7 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 		this.packagingListUnit = c.packagingListUnit;
 		this.pkgLevel = c.pkgLevel;
 		this.isMaster = c.isMaster;
+		this.isRecycle = c.isRecycle;
 		this.product = c.product;
 	}
 
@@ -142,6 +155,7 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + ((isMaster == null) ? 0 : isMaster.hashCode());
+		result = prime * result + ((isRecycle == null) ? 0 : isRecycle.hashCode());
 		result = prime * result + ((lossPerc == null) ? 0 : lossPerc.hashCode());
 		result = prime * result + ((packagingListUnit == null) ? 0 : packagingListUnit.hashCode());
 		result = prime * result + ((pkgLevel == null) ? 0 : pkgLevel.hashCode());
@@ -163,6 +177,11 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 			if (other.isMaster != null)
 				return false;
 		} else if (!isMaster.equals(other.isMaster))
+			return false;
+		if (isRecycle == null) {
+			if (other.isRecycle != null)
+				return false;
+		} else if (!isRecycle.equals(other.isRecycle))
 			return false;
 		if (lossPerc == null) {
 			if (other.lossPerc != null)
@@ -188,7 +207,8 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 
 	@Override
 	public String toString() {
-		return "PackagingListDataItem [nodeRef=" + nodeRef + ", qty=" + qty + ", packagingListUnit=" + packagingListUnit + ", pkgLevel=" + pkgLevel + ", product=" + product + "]";
+		return "PackagingListDataItem [qty=" + qty + ", packagingListUnit=" + packagingListUnit + ", lossPerc=" + lossPerc + ", pkgLevel=" + pkgLevel
+				+ ", isMaster=" + isMaster + ", isRecycle=" + isRecycle + ", product=" + product + "]";
 	}
 
 	@Override

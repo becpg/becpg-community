@@ -179,10 +179,15 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 
 	private BigDecimal calculateTareOfComposition(ProductData formulatedProduct) {
 		BigDecimal totalTare = new BigDecimal(0d);
-		for (CompoListDataItem compoList : formulatedProduct
-				.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
-			if (compoList.getProduct() != null) {
-				totalTare = totalTare.add(FormulationHelper.getTareInKg(compoList, alfrescoRepository.findOne(compoList.getProduct())));
+		if(logger.isDebugEnabled()){
+			logger.debug("calculateTareOfComposition dropPackagingOfComponents: " + formulatedProduct.getDropPackagingOfComponents());
+		}
+		if(formulatedProduct.getDropPackagingOfComponents() == null || !formulatedProduct.getDropPackagingOfComponents()){
+			for (CompoListDataItem compoList : formulatedProduct
+					.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
+				if (compoList.getProduct() != null) {
+					totalTare = totalTare.add(FormulationHelper.getTareInKg(compoList, alfrescoRepository.findOne(compoList.getProduct())));
+				}
 			}
 		}
 		return totalTare;

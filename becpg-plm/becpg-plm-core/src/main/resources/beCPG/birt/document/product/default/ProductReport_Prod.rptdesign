@@ -140,7 +140,7 @@ function getConvertedCapacityInUsUnit (qty, unit, isVolume) {
     </list-property>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="452">
-            <property name="FILELIST">becpg-plm/becpg-plm-core/src/main/resources/beCPG/birt/document/product/default/datasourceDEV_en_US.xml</property>
+            <property name="FILELIST">src/main/resources/beCPG/birt/document/product/default/ProductReport.xml</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
@@ -420,77 +420,97 @@ depth + "x" + width + "x" +  height;</expression>
                 <structure>
                     <property name="columnName">gs1_height</property>
                     <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">gs1_height</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">gs1_depth</property>
                     <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">gs1_depth</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">gs1_width</property>
                     <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">gs1_width</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">tareUnit</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">tareUnit</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">tare</property>
                     <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">tare</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">gs1_weight</property>
                     <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">gs1_weight</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">gs1_secondaryWidth</property>
                     <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">gs1_secondaryWidth</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">gs1_secondaryWeight</property>
                     <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">gs1_secondaryWeight</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">gs1_secondaryHeight</property>
                     <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">gs1_secondaryHeight</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">gs1_secondaryDepth</property>
                     <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">gs1_secondaryDepth</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">tertiaryWeight</property>
                     <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">tertiaryWeight</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">palletBoxesPerLayer</property>
                     <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">palletBoxesPerLayer</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">palletBoxesPerPallet</property>
                     <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">palletBoxesPerPallet</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">palletProductsPerBox</property>
                     <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">palletProductsPerBox</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">palletLayers</property>
                     <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">palletLayers</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">palletHeight</property>
+                    <property name="analysis">measure</property>
+                    <text-property name="heading">palletHeight</text-property>
                 </structure>
             </list-property>
             <list-property name="parameters"/>
@@ -753,16 +773,21 @@ depth + "x" + width + "x" +  height;</expression>
                     </structure>
                     <structure>
                         <property name="position">52</property>
+                        <property name="name">palletHeight</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">53</property>
                         <property name="name">versionLabelToShow</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">53</property>
+                        <property name="position">54</property>
                         <property name="name">uvcDimensions</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">54</property>
+                        <property name="position">55</property>
                         <property name="name">secondaryDimensions</property>
                         <property name="dataType">string</property>
                     </structure>
@@ -1127,8 +1152,15 @@ depth + "x" + width + "x" +  height;</expression>
                     <property name="dataType">integer</property>
                     <property name="nativeDataType">4</property>
                 </structure>
+                <structure>
+                    <property name="position">52</property>
+                    <property name="name">palletHeight</property>
+                    <property name="nativeName">palletHeight</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{code;STRING;/code},{productCurrency;STRING;/productCurrency},{productPrice;DOUBLE;/productPrice},{productUnit;STRING;/productUnit},{productType;STRING;/productType},{name;STRING;/name},{productState;STRING;/productState},{modified;TIMESTAMP;/modified},{productQty;DOUBLE;/productQty},{productDensity;DOUBLE;/productDensity},{description;STRING;/description},{clients;STRING;/clients},{productHierarchy1;STRING;/productHierarchy1},{productHierarchy2;STRING;/productHierarchy2},{legalName;STRING;/legalName},{versionLabel;STRING;/versionLabel},{trademark;STRING;/trademark},{useByDate;INT;/useByDate},{productComments;STRING;/productComments},{eanCode;STRING;/eanCode},{pvValidationDate;TIMESTAMP;/pvValidationDate},{pvCallerActor;STRING;/pvCallerActor},{pvTransmitterActor;STRING;/pvTransmitterActor},{pvQualityApprovalActor;STRING;/pvQualityApprovalActor},{pvProductionApprovalActor;STRING;/pvProductionApprovalActor},{pvRDApprovalActor;STRING;/pvRDApprovalActor},{packagingDescription;STRING;/packagingDescription},{netWeight;DOUBLE;/netWeight},{title;STRING;/title},{created;TIMESTAMP;/created},{productCompoQtyUsed;DOUBLE;/productCompoQtyUsed},{aspects;STRING;/aspects},{erpCode;STRING;/erpCode},{startEffectivity;TIMESTAMP;/startEffectivity},{plants;STRING;/plants},{versionLabelBcpg;STRING;/versionLabel[@prefix='bcpg']},{gs1_height;DOUBLE;/height[@prefix='gs1']},{gs1_depth;DOUBLE;/depth[@prefix='gs1']},{gs1_width;DOUBLE;/width[@prefix='gs1']},{tareUnit;STRING;/tareUnit},{tare;DOUBLE;/tare},{gs1_weight;DOUBLE;/weight[@prefix='gs1']},{gs1_secondaryWidth;DOUBLE;/secondaryWidth},{gs1_secondaryWeight;DOUBLE;/secondaryWeight},{gs1_secondaryHeight;DOUBLE;/secondaryHeight},{gs1_secondaryDepth;DOUBLE;/secondaryDepth},{tertiaryWeight;DOUBLE;/tertiaryWeight},{palletBoxesPerLayer;INT;/palletBoxesPerLayer},{palletBoxesPerPallet;INT;/palletBoxesPerPallet},{palletProductsPerBox;INT;/palletProductsPerBox},{palletLayers;INT;/palletLayers}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{code;STRING;/code},{productCurrency;STRING;/productCurrency},{productPrice;DOUBLE;/productPrice},{productUnit;STRING;/productUnit},{productType;STRING;/productType},{name;STRING;/name},{productState;STRING;/productState},{modified;TIMESTAMP;/modified},{productQty;DOUBLE;/productQty},{productDensity;DOUBLE;/productDensity},{description;STRING;/description},{clients;STRING;/clients},{productHierarchy1;STRING;/productHierarchy1},{productHierarchy2;STRING;/productHierarchy2},{legalName;STRING;/legalName},{versionLabel;STRING;/versionLabel},{trademark;STRING;/trademark},{useByDate;INT;/useByDate},{productComments;STRING;/productComments},{eanCode;STRING;/eanCode},{pvValidationDate;TIMESTAMP;/pvValidationDate},{pvCallerActor;STRING;/pvCallerActor},{pvTransmitterActor;STRING;/pvTransmitterActor},{pvQualityApprovalActor;STRING;/pvQualityApprovalActor},{pvProductionApprovalActor;STRING;/pvProductionApprovalActor},{pvRDApprovalActor;STRING;/pvRDApprovalActor},{packagingDescription;STRING;/packagingDescription},{netWeight;DOUBLE;/netWeight},{title;STRING;/title},{created;TIMESTAMP;/created},{productCompoQtyUsed;DOUBLE;/productCompoQtyUsed},{aspects;STRING;/aspects},{erpCode;STRING;/erpCode},{startEffectivity;TIMESTAMP;/startEffectivity},{plants;STRING;/plants},{versionLabelBcpg;STRING;/versionLabel[@prefix='bcpg']},{gs1_height;DOUBLE;/height[@prefix='gs1']},{gs1_depth;DOUBLE;/depth[@prefix='gs1']},{gs1_width;DOUBLE;/width[@prefix='gs1']},{tareUnit;STRING;/tareUnit},{tare;DOUBLE;/tare},{gs1_weight;DOUBLE;/weight[@prefix='gs1']},{gs1_secondaryWidth;DOUBLE;/secondaryWidth},{gs1_secondaryWeight;DOUBLE;/secondaryWeight},{gs1_secondaryHeight;DOUBLE;/secondaryHeight},{gs1_secondaryDepth;DOUBLE;/secondaryDepth},{tertiaryWeight;DOUBLE;/tertiaryWeight},{palletBoxesPerLayer;INT;/palletBoxesPerLayer},{palletBoxesPerPallet;INT;/palletBoxesPerPallet},{palletProductsPerBox;INT;/palletProductsPerBox},{palletLayers;INT;/palletLayers},{palletHeight;DOUBLE;/palletHeight}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -2142,16 +2174,19 @@ if (row["width"]!= null ) {
                 <structure>
                     <property name="columnName">length</property>
                     <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">length</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">width</property>
                     <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">width</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">height</property>
                     <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">height</text-property>
                 </structure>
                 <structure>
@@ -2166,6 +2201,12 @@ if (row["width"]!= null ) {
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">isDefaultVariant</text-property>
                 </structure>
+                <structure>
+                    <property name="columnName">dropPackagingOfComponents</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">dropPackagingOfComponents</text-property>
+                </structure>
             </list-property>
             <list-property name="filter">
                 <structure>
@@ -2173,6 +2214,17 @@ if (row["width"]!= null ) {
                     <expression name="expr" type="javascript">row["packagingListPkgLevel"]</expression>
                     <simple-property-list name="value1">
                         <value>"Tertiary"</value>
+                    </simple-property-list>
+                </structure>
+                <structure>
+                    <property name="operator">is-false</property>
+                    <expression name="expr" type="javascript">row["dropPackagingOfComponents"]</expression>
+                </structure>
+                <structure>
+                    <property name="operator">eq</property>
+                    <expression name="expr" type="javascript">row["itemType"]</expression>
+                    <simple-property-list name="value1">
+                        <value>"bcpg:packagingMaterial"</value>
                     </simple-property-list>
                 </structure>
             </list-property>
@@ -2251,26 +2303,31 @@ if (row["width"]!= null ) {
                     </structure>
                     <structure>
                         <property name="position">15</property>
+                        <property name="name">dropPackagingOfComponents</property>
+                        <property name="dataType">boolean</property>
+                    </structure>
+                    <structure>
+                        <property name="position">16</property>
                         <property name="name">length_toUse</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">16</property>
+                        <property name="position">17</property>
                         <property name="name">height_toUse</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">17</property>
+                        <property name="position">18</property>
                         <property name="name">width_toUse</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">18</property>
+                        <property name="position">19</property>
                         <property name="name">pmDimensions</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">19</property>
+                        <property name="position">20</property>
                         <property name="name">count variant</property>
                         <property name="dataType">integer</property>
                     </structure>
@@ -2376,8 +2433,15 @@ if (row["width"]!= null ) {
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
+                <structure>
+                    <property name="position">15</property>
+                    <property name="name">dropPackagingOfComponents</property>
+                    <property name="nativeName">dropPackagingOfComponents</property>
+                    <property name="dataType">boolean</property>
+                    <property name="nativeDataType">16</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingLists/packagingList]#:#{itemType;STRING;/@itemType},{packagingListProduct;STRING;/@packagingListProduct},{legalName;STRING;/@legalName},{packagingListQty;BIGDECIMAL;/@packagingListQty},{packagingListUnit;STRING;/@packagingListUnit},{packagingListPkgLevel;STRING;/@packagingListPkgLevel},{tare;STRING;/@tare},{erpCode;STRING;/@erpCode},{tareUnit;STRING;/@tareUnit},{length;DOUBLE;/@length},{width;DOUBLE;/@width},{height;DOUBLE;/@height},{variants;STRING;/@variants},{isDefaultVariant;STRING;/@isDefaultVariant}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingLists/packagingList]#:#{itemType;STRING;/@itemType},{packagingListProduct;STRING;/@packagingListProduct},{legalName;STRING;/@legalName},{packagingListQty;BIGDECIMAL;/@packagingListQty},{packagingListUnit;STRING;/@packagingListUnit},{packagingListPkgLevel;STRING;/@packagingListPkgLevel},{tare;STRING;/@tare},{erpCode;STRING;/@erpCode},{tareUnit;STRING;/@tareUnit},{length;DOUBLE;/@length},{width;DOUBLE;/@width},{height;DOUBLE;/@height},{variants;STRING;/@variants},{isDefaultVariant;STRING;/@isDefaultVariant},{dropPackagingOfComponents;BOOLEAN;/@dropPackagingOfComponents}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -2974,1306 +3038,15 @@ if (row["width"]!= null ) {
                 </ex-property>
             </list-property>
         </oda-data-set>
-        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="packagingLevelMesures" id="2713">
-            <list-property name="computedColumns">
-                <structure>
-                    <property name="name">grossWeightPkgLevel1_toUse</property>
-                    <expression name="expression">// Convert kg to oz if local = en_us
-(BirtStr.toLower( reportContext.getLocale().toString()) == "en_us") ? dataSetRow["grossWeightPkgLevel1"] * 35.27396195  :  dataSetRow["grossWeightPkgLevel1"]*1000 ;</expression>
-                    <property name="dataType">float</property>
-                </structure>
-                <structure>
-                    <property name="name">grossWeightPkgLevel2_toUse</property>
-                    <expression name="expression">//Convert kg to lb if locale = en_us
-(BirtStr.toLower( reportContext.getLocale().toString()) == "en_us") ? dataSetRow["grossWeightPkgLevel2"] * 2.204622622 : dataSetRow["grossWeightPkgLevel2"];</expression>
-                    <property name="dataType">float</property>
-                </structure>
-                <structure>
-                    <property name="name">grossWeightPkgLevel3_toUse</property>
-                    <expression name="expression">//Convert to lb if locale = en_us
-(BirtStr.toLower( reportContext.getLocale().toString()) == "en_us") ? dataSetRow["grossWeightPkgLevel3"] * 2.204622622 :  dataSetRow["grossWeightPkgLevel3"]</expression>
-                    <property name="dataType">float</property>
-                </structure>
-            </list-property>
-            <list-property name="columnHints">
-                <structure>
-                    <property name="columnName">tarePkgLevel1</property>
-                    <property name="analysis">measure</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">tarePkgLevel1</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">netWeightPkgLevel1</property>
-                    <property name="analysis">measure</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">netWeightPkgLevel1</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">grossWeightPkgLevel1</property>
-                    <property name="analysis">measure</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">grossWeightPkgLevel1</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">tarePkgLevel2</property>
-                    <property name="analysis">measure</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">tarePkgLevel2</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">netWeightPkgLevel2</property>
-                    <property name="analysis">measure</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">netWeightPkgLevel2</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">grossWeightPkgLevel2</property>
-                    <property name="analysis">measure</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">grossWeightPkgLevel2</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">tarePkgLevel3</property>
-                    <property name="analysis">measure</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">tarePkgLevel3</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">netWeightPkgLevel3</property>
-                    <property name="analysis">measure</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">netWeightPkgLevel3</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">grossWeightPkgLevel3</property>
-                    <property name="analysis">measure</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">grossWeightPkgLevel3</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">nbProductsPkgLevel2</property>
-                    <property name="analysis">measure</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">nbProductsPkgLevel2</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">nbProductsPkgLevel3</property>
-                    <property name="analysis">measure</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">nbProductsPkgLevel3</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">variantId</property>
-                    <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">variantId</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">isDefaultVariant</property>
-                    <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">isDefaultVariant</text-property>
-                </structure>
-            </list-property>
-            <list-property name="parameters"/>
-            <structure name="cachedMetaData">
-                <list-property name="resultSet">
-                    <structure>
-                        <property name="position">1</property>
-                        <property name="name">tarePkgLevel1</property>
-                        <property name="dataType">float</property>
-                    </structure>
-                    <structure>
-                        <property name="position">2</property>
-                        <property name="name">netWeightPkgLevel1</property>
-                        <property name="dataType">float</property>
-                    </structure>
-                    <structure>
-                        <property name="position">3</property>
-                        <property name="name">grossWeightPkgLevel1</property>
-                        <property name="dataType">float</property>
-                    </structure>
-                    <structure>
-                        <property name="position">4</property>
-                        <property name="name">tarePkgLevel2</property>
-                        <property name="dataType">float</property>
-                    </structure>
-                    <structure>
-                        <property name="position">5</property>
-                        <property name="name">netWeightPkgLevel2</property>
-                        <property name="dataType">float</property>
-                    </structure>
-                    <structure>
-                        <property name="position">6</property>
-                        <property name="name">grossWeightPkgLevel2</property>
-                        <property name="dataType">float</property>
-                    </structure>
-                    <structure>
-                        <property name="position">7</property>
-                        <property name="name">tarePkgLevel3</property>
-                        <property name="dataType">float</property>
-                    </structure>
-                    <structure>
-                        <property name="position">8</property>
-                        <property name="name">netWeightPkgLevel3</property>
-                        <property name="dataType">float</property>
-                    </structure>
-                    <structure>
-                        <property name="position">9</property>
-                        <property name="name">grossWeightPkgLevel3</property>
-                        <property name="dataType">float</property>
-                    </structure>
-                    <structure>
-                        <property name="position">10</property>
-                        <property name="name">nbProductsPkgLevel2</property>
-                        <property name="dataType">float</property>
-                    </structure>
-                    <structure>
-                        <property name="position">11</property>
-                        <property name="name">nbProductsPkgLevel3</property>
-                        <property name="dataType">float</property>
-                    </structure>
-                    <structure>
-                        <property name="position">12</property>
-                        <property name="name">variantId</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">13</property>
-                        <property name="name">isDefaultVariant</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">14</property>
-                        <property name="name">grossWeightPkgLevel1_toUse</property>
-                        <property name="dataType">float</property>
-                    </structure>
-                    <structure>
-                        <property name="position">15</property>
-                        <property name="name">grossWeightPkgLevel2_toUse</property>
-                        <property name="dataType">float</property>
-                    </structure>
-                    <structure>
-                        <property name="position">16</property>
-                        <property name="name">grossWeightPkgLevel3_toUse</property>
-                        <property name="dataType">float</property>
-                    </structure>
-                </list-property>
-            </structure>
-            <property name="dataSource">DataXml</property>
-            <list-property name="resultSet">
-                <structure>
-                    <property name="position">1</property>
-                    <property name="name">tarePkgLevel1</property>
-                    <property name="nativeName">tarePkgLevel1</property>
-                    <property name="dataType">float</property>
-                    <property name="nativeDataType">8</property>
-                </structure>
-                <structure>
-                    <property name="position">2</property>
-                    <property name="name">netWeightPkgLevel1</property>
-                    <property name="nativeName">netWeightPkgLevel1</property>
-                    <property name="dataType">float</property>
-                    <property name="nativeDataType">8</property>
-                </structure>
-                <structure>
-                    <property name="position">3</property>
-                    <property name="name">grossWeightPkgLevel1</property>
-                    <property name="nativeName">grossWeightPkgLevel1</property>
-                    <property name="dataType">float</property>
-                    <property name="nativeDataType">8</property>
-                </structure>
-                <structure>
-                    <property name="position">4</property>
-                    <property name="name">tarePkgLevel2</property>
-                    <property name="nativeName">tarePkgLevel2</property>
-                    <property name="dataType">float</property>
-                    <property name="nativeDataType">8</property>
-                </structure>
-                <structure>
-                    <property name="position">5</property>
-                    <property name="name">netWeightPkgLevel2</property>
-                    <property name="nativeName">netWeightPkgLevel2</property>
-                    <property name="dataType">float</property>
-                    <property name="nativeDataType">8</property>
-                </structure>
-                <structure>
-                    <property name="position">6</property>
-                    <property name="name">grossWeightPkgLevel2</property>
-                    <property name="nativeName">grossWeightPkgLevel2</property>
-                    <property name="dataType">float</property>
-                    <property name="nativeDataType">8</property>
-                </structure>
-                <structure>
-                    <property name="position">7</property>
-                    <property name="name">tarePkgLevel3</property>
-                    <property name="nativeName">tarePkgLevel3</property>
-                    <property name="dataType">float</property>
-                    <property name="nativeDataType">8</property>
-                </structure>
-                <structure>
-                    <property name="position">8</property>
-                    <property name="name">netWeightPkgLevel3</property>
-                    <property name="nativeName">netWeightPkgLevel3</property>
-                    <property name="dataType">float</property>
-                    <property name="nativeDataType">8</property>
-                </structure>
-                <structure>
-                    <property name="position">9</property>
-                    <property name="name">grossWeightPkgLevel3</property>
-                    <property name="nativeName">grossWeightPkgLevel3</property>
-                    <property name="dataType">float</property>
-                    <property name="nativeDataType">8</property>
-                </structure>
-                <structure>
-                    <property name="position">10</property>
-                    <property name="name">nbProductsPkgLevel2</property>
-                    <property name="nativeName">nbProductsPkgLevel2</property>
-                    <property name="dataType">float</property>
-                    <property name="nativeDataType">8</property>
-                </structure>
-                <structure>
-                    <property name="position">11</property>
-                    <property name="name">nbProductsPkgLevel3</property>
-                    <property name="nativeName">nbProductsPkgLevel3</property>
-                    <property name="dataType">float</property>
-                    <property name="nativeDataType">8</property>
-                </structure>
-                <structure>
-                    <property name="position">12</property>
-                    <property name="name">variantId</property>
-                    <property name="nativeName">variantId</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">13</property>
-                    <property name="name">isDefaultVariant</property>
-                    <property name="nativeName">isDefaultVariant</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-            </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingLists/packagingLevelMeasures]#:#{tarePkgLevel1;DOUBLE;/@tarePkgLevel1},{netWeightPkgLevel1;DOUBLE;/@netWeightPkgLevel1},{grossWeightPkgLevel1;DOUBLE;/@grossWeightPkgLevel1},{tarePkgLevel2;DOUBLE;/@tarePkgLevel2},{netWeightPkgLevel2;DOUBLE;/@netWeightPkgLevel2},{grossWeightPkgLevel2;DOUBLE;/@grossWeightPkgLevel2},{tarePkgLevel3;DOUBLE;/@tarePkgLevel3},{netWeightPkgLevel3;DOUBLE;/@netWeightPkgLevel3},{grossWeightPkgLevel3;DOUBLE;/@grossWeightPkgLevel3},{nbProductsPkgLevel2;DOUBLE;/@nbProductsPkgLevel2},{nbProductsPkgLevel3;DOUBLE;/@nbProductsPkgLevel3},{variantId;STRING;/@variantId},{isDefaultVariant;STRING;/@isDefaultVariant}]]></xml-property>
-            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
-<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
-  <Version>2.0</Version>
-  <design:ResultSets derivedMetaData="true">
-    <design:resultSetDefinitions>
-      <design:resultSetColumns>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>tarePkgLevel1</design:name>
-              <design:position>1</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>tarePkgLevel1</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>netWeightPkgLevel1</design:name>
-              <design:position>2</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>netWeightPkgLevel1</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>grossWeightPkgLevel1</design:name>
-              <design:position>3</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>grossWeightPkgLevel1</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>tarePkgLevel2</design:name>
-              <design:position>4</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>tarePkgLevel2</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>netWeightPkgLevel2</design:name>
-              <design:position>5</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>netWeightPkgLevel2</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>grossWeightPkgLevel2</design:name>
-              <design:position>6</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>grossWeightPkgLevel2</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>tarePkgLevel3</design:name>
-              <design:position>7</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>tarePkgLevel3</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>netWeightPkgLevel3</design:name>
-              <design:position>8</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>netWeightPkgLevel3</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>grossWeightPkgLevel3</design:name>
-              <design:position>9</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>grossWeightPkgLevel3</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-      </design:resultSetColumns>
-      <design:criteria/>
-    </design:resultSetDefinitions>
-  </design:ResultSets>
-</model:DesignValues>]]></xml-property>
-            <list-property name="privateDriverProperties">
-                <ex-property>
-                    <name>MAX_ROW</name>
-                    <value>-1</value>
-                </ex-property>
-                <ex-property>
-                    <name>XML_FILE</name>
-                </ex-property>
-            </list-property>
-        </oda-data-set>
-        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="packFirstLevel" id="2986">
-            <property name="nullsOrdering">nulls lowest</property>
-            <list-property name="columnHints">
-                <structure>
-                    <property name="columnName">itemType</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">itemType</text-property>
-                    <property name="analysisColumn">itemType</property>
-                </structure>
-                <structure>
-                    <property name="columnName">packagingListProduct</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">packagingListProduct</text-property>
-                    <property name="analysisColumn">packagingListProduct</property>
-                </structure>
-                <structure>
-                    <property name="columnName">legalName</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">legalName</text-property>
-                    <property name="analysisColumn">legalName</property>
-                </structure>
-                <structure>
-                    <property name="columnName">packagingListQty</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">packagingListQty</text-property>
-                    <property name="analysisColumn">packagingListQty</property>
-                </structure>
-                <structure>
-                    <property name="columnName">packagingListUnit</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">packagingListUnit</text-property>
-                    <property name="analysisColumn">packagingListUnit</property>
-                </structure>
-                <structure>
-                    <property name="columnName">packagingListPkgLevel</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">packagingListPkgLevel</text-property>
-                    <property name="analysisColumn">packagingListPkgLevel</property>
-                </structure>
-                <structure>
-                    <property name="columnName">pmDimensions</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">pmDimensions</text-property>
-                    <property name="analysisColumn">pmDimensions</property>
-                </structure>
-                <structure>
-                    <property name="columnName">tare</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">tare</text-property>
-                    <property name="analysisColumn">tare</property>
-                </structure>
-            </list-property>
-            <list-property name="filter">
-                <structure>
-                    <property name="operator">eq</property>
-                    <expression name="expr" type="javascript">row["packagingListPkgLevel"]</expression>
-                    <simple-property-list name="value1">
-                        <value>"Primary"</value>
-                    </simple-property-list>
-                </structure>
-            </list-property>
-            <list-property name="parameters"/>
-            <structure name="cachedMetaData">
-                <list-property name="resultSet">
-                    <structure>
-                        <property name="position">1</property>
-                        <property name="name">itemType</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">2</property>
-                        <property name="name">packagingListProduct</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">3</property>
-                        <property name="name">legalName</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">4</property>
-                        <property name="name">packagingListQty</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">5</property>
-                        <property name="name">packagingListUnit</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">6</property>
-                        <property name="name">packagingListPkgLevel</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">7</property>
-                        <property name="name">pmDimensions</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">8</property>
-                        <property name="name">tare</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                </list-property>
-            </structure>
-            <property name="dataSource">DataXml</property>
-            <list-property name="resultSet">
-                <structure>
-                    <property name="position">1</property>
-                    <property name="name">itemType</property>
-                    <property name="nativeName">itemType</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">2</property>
-                    <property name="name">packagingListProduct</property>
-                    <property name="nativeName">packagingListProduct</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">3</property>
-                    <property name="name">legalName</property>
-                    <property name="nativeName">legalName</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">4</property>
-                    <property name="name">packagingListQty</property>
-                    <property name="nativeName">packagingListQty</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">5</property>
-                    <property name="name">packagingListUnit</property>
-                    <property name="nativeName">packagingListUnit</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">6</property>
-                    <property name="name">packagingListPkgLevel</property>
-                    <property name="nativeName">packagingListPkgLevel</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">7</property>
-                    <property name="name">pmDimensions</property>
-                    <property name="nativeName">pmDimensions</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">8</property>
-                    <property name="name">tare</property>
-                    <property name="nativeName">tare</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-            </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingLists/packagingList]#:#{itemType;STRING;/@itemType},{packagingListProduct;STRING;/@packagingListProduct},{legalName;STRING;/@legalName},{packagingListQty;STRING;/@packagingListQty},{packagingListUnit;STRING;/@packagingListUnit},{packagingListPkgLevel;STRING;/@packagingListPkgLevel},{pmDimensions;STRING;/@pmDimensions},{tare;STRING;/@tare}]]></xml-property>
-            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
-<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
-  <Version>2.0</Version>
-  <design:ResultSets derivedMetaData="true">
-    <design:resultSetDefinitions>
-      <design:resultSetColumns>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>itemType</design:name>
-              <design:position>1</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>itemType</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>packagingListProduct</design:name>
-              <design:position>2</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>packagingListProduct</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>legalName</design:name>
-              <design:position>3</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>legalName</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>packagingListQty</design:name>
-              <design:position>4</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>packagingListQty</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>packagingListUnit</design:name>
-              <design:position>5</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>packagingListUnit</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>packagingListPkgLevel</design:name>
-              <design:position>6</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>packagingListPkgLevel</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>pmDimensions</design:name>
-              <design:position>7</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>pmDimensions</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-      </design:resultSetColumns>
-      <design:criteria/>
-    </design:resultSetDefinitions>
-  </design:ResultSets>
-</model:DesignValues>]]></xml-property>
-            <list-property name="privateDriverProperties">
-                <ex-property>
-                    <name>MAX_ROW</name>
-                    <value>-1</value>
-                </ex-property>
-                <ex-property>
-                    <name>XML_FILE</name>
-                </ex-property>
-            </list-property>
-        </oda-data-set>
-        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="packSecondLevel" id="2398">
-            <property name="nullsOrdering">nulls lowest</property>
-            <list-property name="columnHints">
-                <structure>
-                    <property name="columnName">itemType</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">itemType</text-property>
-                    <property name="analysisColumn">itemType</property>
-                </structure>
-                <structure>
-                    <property name="columnName">packagingListProduct</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">packagingListProduct</text-property>
-                    <property name="analysisColumn">packagingListProduct</property>
-                </structure>
-                <structure>
-                    <property name="columnName">legalName</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">legalName</text-property>
-                    <property name="analysisColumn">legalName</property>
-                </structure>
-                <structure>
-                    <property name="columnName">packagingListQty</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">packagingListQty</text-property>
-                    <property name="analysisColumn">packagingListQty</property>
-                </structure>
-                <structure>
-                    <property name="columnName">packagingListUnit</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">packagingListUnit</text-property>
-                    <property name="analysisColumn">packagingListUnit</property>
-                </structure>
-                <structure>
-                    <property name="columnName">packagingListPkgLevel</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">packagingListPkgLevel</text-property>
-                    <property name="analysisColumn">packagingListPkgLevel</property>
-                </structure>
-                <structure>
-                    <property name="columnName">pmDimensions</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">pmDimensions</text-property>
-                    <property name="analysisColumn">pmDimensions</property>
-                </structure>
-                <structure>
-                    <property name="columnName">tare</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">tare</text-property>
-                    <property name="analysisColumn">tare</property>
-                </structure>
-                <structure>
-                    <property name="columnName">palletLayers</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">palletLayers</text-property>
-                    <property name="analysisColumn">palletLayers</property>
-                </structure>
-                <structure>
-                    <property name="columnName">palletBoxesPerLayer</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">palletBoxesPerLayer</text-property>
-                    <property name="analysisColumn">palletBoxesPerLayer</property>
-                </structure>
-                <structure>
-                    <property name="columnName">palletBoxesPerPallet</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">palletBoxesPerPallet</text-property>
-                    <property name="analysisColumn">palletBoxesPerPallet</property>
-                </structure>
-                <structure>
-                    <property name="columnName">nbFinishedProductThirdLevel</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">nbFinishedProductThirdLevel</text-property>
-                    <property name="analysisColumn">nbFinishedProductThirdLevel</property>
-                </structure>
-            </list-property>
-            <list-property name="filter">
-                <structure>
-                    <property name="operator">eq</property>
-                    <expression name="expr" type="javascript">row["packagingListPkgLevel"]</expression>
-                    <simple-property-list name="value1">
-                        <value>"Secondary"</value>
-                    </simple-property-list>
-                </structure>
-                <structure>
-                    <property name="operator">eq</property>
-                    <expression name="expr" type="javascript">row["itemType"]</expression>
-                    <simple-property-list name="value1">
-                        <value>"bcpg:packagingMaterial"</value>
-                    </simple-property-list>
-                </structure>
-            </list-property>
-            <list-property name="parameters"/>
-            <structure name="cachedMetaData">
-                <list-property name="resultSet">
-                    <structure>
-                        <property name="position">1</property>
-                        <property name="name">itemType</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">2</property>
-                        <property name="name">packagingListProduct</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">3</property>
-                        <property name="name">legalName</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">4</property>
-                        <property name="name">packagingListQty</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">5</property>
-                        <property name="name">packagingListUnit</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">6</property>
-                        <property name="name">packagingListPkgLevel</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">7</property>
-                        <property name="name">pmDimensions</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">8</property>
-                        <property name="name">tare</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">9</property>
-                        <property name="name">palletLayers</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">10</property>
-                        <property name="name">palletBoxesPerLayer</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">11</property>
-                        <property name="name">palletBoxesPerPallet</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">12</property>
-                        <property name="name">nbFinishedProductThirdLevel</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                </list-property>
-            </structure>
-            <property name="dataSource">DataXml</property>
-            <list-property name="resultSet">
-                <structure>
-                    <property name="position">1</property>
-                    <property name="name">itemType</property>
-                    <property name="nativeName">itemType</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">2</property>
-                    <property name="name">packagingListProduct</property>
-                    <property name="nativeName">packagingListProduct</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">3</property>
-                    <property name="name">legalName</property>
-                    <property name="nativeName">legalName</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">4</property>
-                    <property name="name">packagingListQty</property>
-                    <property name="nativeName">packagingListQty</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">5</property>
-                    <property name="name">packagingListUnit</property>
-                    <property name="nativeName">packagingListUnit</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">6</property>
-                    <property name="name">packagingListPkgLevel</property>
-                    <property name="nativeName">packagingListPkgLevel</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">7</property>
-                    <property name="name">pmDimensions</property>
-                    <property name="nativeName">pmDimensions</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">8</property>
-                    <property name="name">tare</property>
-                    <property name="nativeName">tare</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">9</property>
-                    <property name="name">palletLayers</property>
-                    <property name="nativeName">palletLayers</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">10</property>
-                    <property name="name">palletBoxesPerLayer</property>
-                    <property name="nativeName">palletBoxesPerLayer</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">11</property>
-                    <property name="name">palletBoxesPerPallet</property>
-                    <property name="nativeName">palletBoxesPerPallet</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">12</property>
-                    <property name="name">nbFinishedProductThirdLevel</property>
-                    <property name="nativeName">nbFinishedProductThirdLevel</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-            </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingLists/packagingList]#:#{itemType;STRING;/@itemType},{packagingListProduct;STRING;/@packagingListProduct},{legalName;STRING;/@legalName},{packagingListQty;STRING;/@packagingListQty},{packagingListUnit;STRING;/@packagingListUnit},{packagingListPkgLevel;STRING;/@packagingListPkgLevel},{pmDimensions;STRING;/@pmDimensions},{tare;STRING;/@tare},{palletLayers;STRING;/@palletLayers},{palletBoxesPerLayer;STRING;/@palletBoxesPerLayer},{palletBoxesPerPallet;STRING;/@palletBoxesPerPallet},{nbFinishedProductThirdLevel;STRING;/@nbFinishedProductThirdLevel}]]></xml-property>
-            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
-<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
-  <Version>2.0</Version>
-  <design:ResultSets derivedMetaData="true">
-    <design:resultSetDefinitions>
-      <design:resultSetColumns>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>itemType</design:name>
-              <design:position>1</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>itemType</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>packagingListProduct</design:name>
-              <design:position>2</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>packagingListProduct</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>legalName</design:name>
-              <design:position>3</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>legalName</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>packagingListQty</design:name>
-              <design:position>4</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>packagingListQty</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>packagingListUnit</design:name>
-              <design:position>5</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>packagingListUnit</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>packagingListPkgLevel</design:name>
-              <design:position>6</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>packagingListPkgLevel</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>pmDimensions</design:name>
-              <design:position>7</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>pmDimensions</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>tare</design:name>
-              <design:position>8</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>tare</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>palletLayers</design:name>
-              <design:position>9</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>palletLayers</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>palletBoxesPerLayer</design:name>
-              <design:position>10</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>palletBoxesPerLayer</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>palletBoxesPerPallet</design:name>
-              <design:position>11</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>palletBoxesPerPallet</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-      </design:resultSetColumns>
-      <design:criteria/>
-    </design:resultSetDefinitions>
-  </design:ResultSets>
-</model:DesignValues>]]></xml-property>
-            <list-property name="privateDriverProperties">
-                <ex-property>
-                    <name>MAX_ROW</name>
-                    <value>-1</value>
-                </ex-property>
-                <ex-property>
-                    <name>XML_FILE</name>
-                </ex-property>
-            </list-property>
-        </oda-data-set>
         <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="packThirdLevel" id="2676">
             <property name="nullsOrdering">nulls lowest</property>
-            <list-property name="computedColumns">
-                <structure>
-                    <property name="name">palletHeight_toUse</property>
-                    <expression name="expression">( reportContext.getLocale().toString().toLowerCase() == "en_us"  &amp;&amp; row["palletHeight"] != null ) ? BirtMath.round(row["palletHeight"] * 0.0393700787, 1)  : row["palletHeight"];</expression>
-                    <property name="dataType">float</property>
-                </structure>
-            </list-property>
             <list-property name="columnHints">
-                <structure>
-                    <property name="columnName">itemType</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">itemType</text-property>
-                    <property name="analysisColumn">itemType</property>
-                </structure>
-                <structure>
-                    <property name="columnName">packagingListProduct</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">packagingListProduct</text-property>
-                    <property name="analysisColumn">packagingListProduct</property>
-                </structure>
                 <structure>
                     <property name="columnName">legalName</property>
                     <property name="analysis">attribute</property>
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">legalName</text-property>
                     <property name="analysisColumn">legalName</property>
-                </structure>
-                <structure>
-                    <property name="columnName">packagingListQty</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">packagingListQty</text-property>
-                    <property name="analysisColumn">packagingListQty</property>
-                </structure>
-                <structure>
-                    <property name="columnName">packagingListUnit</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">packagingListUnit</text-property>
-                    <property name="analysisColumn">packagingListUnit</property>
-                </structure>
-                <structure>
-                    <property name="columnName">packagingListPkgLevel</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">packagingListPkgLevel</text-property>
-                    <property name="analysisColumn">packagingListPkgLevel</property>
-                </structure>
-                <structure>
-                    <property name="columnName">pmDimensions</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">pmDimensions</text-property>
-                    <property name="analysisColumn">pmDimensions</property>
-                </structure>
-                <structure>
-                    <property name="columnName">tare</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">tare</text-property>
-                    <property name="analysisColumn">tare</property>
-                </structure>
-                <structure>
-                    <property name="columnName">palletLayers</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">palletLayers</text-property>
-                    <property name="analysisColumn">palletLayers</property>
-                </structure>
-                <structure>
-                    <property name="columnName">palletBoxesPerLayer</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">palletBoxesPerLayer</text-property>
-                    <property name="analysisColumn">palletBoxesPerLayer</property>
-                </structure>
-                <structure>
-                    <property name="columnName">palletBoxesPerPallet</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">palletBoxesPerPallet</text-property>
-                    <property name="analysisColumn">palletBoxesPerPallet</property>
-                </structure>
-                <structure>
-                    <property name="columnName">palletHeight</property>
-                    <property name="analysis">measure</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">palletHeight</text-property>
-                    <property name="analysisColumn">palletHeight</property>
                 </structure>
             </list-property>
             <list-property name="filter">
@@ -4287,68 +3060,8 @@ if (row["width"]!= null ) {
                 <list-property name="resultSet">
                     <structure>
                         <property name="position">1</property>
-                        <property name="name">itemType</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">2</property>
-                        <property name="name">packagingListProduct</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">3</property>
                         <property name="name">legalName</property>
                         <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">4</property>
-                        <property name="name">packagingListQty</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">5</property>
-                        <property name="name">packagingListUnit</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">6</property>
-                        <property name="name">packagingListPkgLevel</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">7</property>
-                        <property name="name">pmDimensions</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">8</property>
-                        <property name="name">tare</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">9</property>
-                        <property name="name">palletLayers</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">10</property>
-                        <property name="name">palletBoxesPerLayer</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">11</property>
-                        <property name="name">palletBoxesPerPallet</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">12</property>
-                        <property name="name">palletHeight</property>
-                        <property name="dataType">integer</property>
-                    </structure>
-                    <structure>
-                        <property name="position">13</property>
-                        <property name="name">palletHeight_toUse</property>
-                        <property name="dataType">float</property>
                     </structure>
                 </list-property>
             </structure>
@@ -4356,90 +3069,13 @@ if (row["width"]!= null ) {
             <list-property name="resultSet">
                 <structure>
                     <property name="position">1</property>
-                    <property name="name">itemType</property>
-                    <property name="nativeName">itemType</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">2</property>
-                    <property name="name">packagingListProduct</property>
-                    <property name="nativeName">packagingListProduct</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">3</property>
                     <property name="name">legalName</property>
                     <property name="nativeName">legalName</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
-                <structure>
-                    <property name="position">4</property>
-                    <property name="name">packagingListQty</property>
-                    <property name="nativeName">packagingListQty</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">5</property>
-                    <property name="name">packagingListUnit</property>
-                    <property name="nativeName">packagingListUnit</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">6</property>
-                    <property name="name">packagingListPkgLevel</property>
-                    <property name="nativeName">packagingListPkgLevel</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">7</property>
-                    <property name="name">pmDimensions</property>
-                    <property name="nativeName">pmDimensions</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">8</property>
-                    <property name="name">tare</property>
-                    <property name="nativeName">tare</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">9</property>
-                    <property name="name">palletLayers</property>
-                    <property name="nativeName">palletLayers</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">10</property>
-                    <property name="name">palletBoxesPerLayer</property>
-                    <property name="nativeName">palletBoxesPerLayer</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">11</property>
-                    <property name="name">palletBoxesPerPallet</property>
-                    <property name="nativeName">palletBoxesPerPallet</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">12</property>
-                    <property name="name">palletHeight</property>
-                    <property name="nativeName">palletHeight</property>
-                    <property name="dataType">integer</property>
-                    <property name="nativeDataType">4</property>
-                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingLists//packagingList]#:#{itemType;STRING;/@itemType},{packagingListProduct;STRING;/@packagingListProduct},{legalName;STRING;/@legalName},{packagingListQty;STRING;/@packagingListQty},{packagingListUnit;STRING;/@packagingListUnit},{packagingListPkgLevel;STRING;/@packagingListPkgLevel},{pmDimensions;STRING;/@pmDimensions},{tare;STRING;/@tare},{palletLayers;STRING;/@palletLayers},{palletBoxesPerLayer;STRING;/@palletBoxesPerLayer},{palletBoxesPerPallet;STRING;/@palletBoxesPerPallet},{palletHeight;INT;@palletHeight}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingLists//packagingList]#:#{legalName;STRING;/@legalName}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -5219,7 +3855,19 @@ if (row["width"]!= null ) {
                 <structure>
                     <property name="columnName">packagingListProduct</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">packagingListProduct</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">dropPackagingOfComponents</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">dropPackagingOfComponents</text-property>
+                </structure>
+            </list-property>
+            <list-property name="filter">
+                <structure>
+                    <property name="operator">is-false</property>
+                    <expression name="expr" type="javascript">row["dropPackagingOfComponents"]</expression>
                 </structure>
             </list-property>
             <list-property name="parameters"/>
@@ -5232,6 +3880,11 @@ if (row["width"]!= null ) {
                     </structure>
                     <structure>
                         <property name="position">2</property>
+                        <property name="name">dropPackagingOfComponents</property>
+                        <property name="dataType">boolean</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
                         <property name="name">tableCheck</property>
                         <property name="dataType">integer</property>
                     </structure>
@@ -5246,8 +3899,15 @@ if (row["width"]!= null ) {
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">dropPackagingOfComponents</property>
+                    <property name="nativeName">dropPackagingOfComponents</property>
+                    <property name="dataType">boolean</property>
+                    <property name="nativeDataType">16</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingLists/packagingList]#:#{packagingListProduct;STRING;/@packagingListProduct}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingLists/packagingList]#:#{packagingListProduct;STRING;/@packagingListProduct},{dropPackagingOfComponents;BOOLEAN;/@dropPackagingOfComponents}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -5536,968 +4196,6 @@ row["rplStepRef"];
           </design:attributes>
           <design:usageHints>
             <design:label>rplStepRef</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-      </design:resultSetColumns>
-      <design:criteria/>
-    </design:resultSetDefinitions>
-  </design:ResultSets>
-</model:DesignValues>]]></xml-property>
-            <list-property name="privateDriverProperties">
-                <ex-property>
-                    <name>MAX_ROW</name>
-                    <value>-1</value>
-                </ex-property>
-                <ex-property>
-                    <name>XML_FILE</name>
-                </ex-property>
-            </list-property>
-        </oda-data-set>
-        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="packFirstLevelMaster" id="2456">
-            <property name="nullsOrdering">nulls lowest</property>
-            <list-property name="computedColumns">
-                <structure>
-                    <property name="name">length_toUse</property>
-                    <expression name="expression">var myResult = null ; 
-
-if  (row["productLength"] != null ){
-
-	 myResult = BirtMath.round(row["productLength"],0) ;
-	 
-} else if (row["length"]!= null ) {
-
-	myResult = BirtMath.round(row["length"],0) ;
-	
-} 
-
-if (myResult != null ) { 
-	( reportContext.getLocale().toString().toLowerCase() == "en_us" ) ? BirtMath.round(myResult * 0.0393700787, 1) : myResult;
-} else { 
-	""; 
-}</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">height_toUse</property>
-                    <expression name="expression">var myResult = null ; 
-
-if  (row["productHeight"] != null ){
-
-	 myResult = BirtMath.round(row["productHeight"],0) ;
-	 
-} else if (row["height"]!= null ) {
-
-	myResult = BirtMath.round(row["height"],0) ;
-	
-} 
-
-if (myResult != null ) { 
-	( reportContext.getLocale().toString().toLowerCase() == "en_us" ) ? BirtMath.round(myResult * 0.0393700787, 1)  : myResult;
-} else { 
-	""; 
-}</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">width_toUse</property>
-                    <expression name="expression">var myResult = null ; 
-
-if  (row["productWidth"] != null ){
-
-	 myResult = BirtMath.round(row["productWidth"],0) ;
-	 
-} else if (row["width"]!= null ) {
-
-	myResult = BirtMath.round(row["width"],0) ;
-	
-} 
-
-if (myResult != null ) { 
-	( reportContext.getLocale().toString().toLowerCase() == "en_us" ) ? BirtMath.round(myResult * 0.0393700787, 1)  : myResult;
-} else { 
-	""; 
-}</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">pmDimensions</property>
-                    <expression name="expression">row["length_toUse"] + "x" + row["width_toUse"] + "x" + row["height_toUse"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-            </list-property>
-            <list-property name="columnHints">
-                <structure>
-                    <property name="columnName">itemType</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">itemType</text-property>
-                    <property name="analysisColumn">itemType</property>
-                </structure>
-                <structure>
-                    <property name="columnName">packagingListProduct</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">packagingListProduct</text-property>
-                    <property name="analysisColumn">packagingListProduct</property>
-                </structure>
-                <structure>
-                    <property name="columnName">legalName</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">legalName</text-property>
-                    <property name="analysisColumn">legalName</property>
-                </structure>
-                <structure>
-                    <property name="columnName">packagingListQty</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">packagingListQty</text-property>
-                    <property name="analysisColumn">packagingListQty</property>
-                </structure>
-                <structure>
-                    <property name="columnName">packagingListUnit</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">packagingListUnit</text-property>
-                    <property name="analysisColumn">packagingListUnit</property>
-                </structure>
-                <structure>
-                    <property name="columnName">packagingListPkgLevel</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">packagingListPkgLevel</text-property>
-                    <property name="analysisColumn">packagingListPkgLevel</property>
-                </structure>
-                <structure>
-                    <property name="columnName">tare</property>
-                    <property name="analysis">measure</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">tare</text-property>
-                    <property name="analysisColumn">tare</property>
-                </structure>
-                <structure>
-                    <property name="columnName">packagingListIsMaster</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">packagingListIsMaster</text-property>
-                    <property name="analysisColumn">packagingListIsMaster</property>
-                </structure>
-                <structure>
-                    <property name="columnName">length</property>
-                    <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">length</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">width</property>
-                    <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">width</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">height</property>
-                    <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">height</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">productHeight</property>
-                    <property name="analysis">measure</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">productHeight</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">productLength</property>
-                    <property name="analysis">measure</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">productLength</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">productWidth</property>
-                    <property name="analysis">measure</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">productWidth</text-property>
-                </structure>
-            </list-property>
-            <list-property name="filter">
-                <structure>
-                    <property name="operator">eq</property>
-                    <expression name="expr" type="javascript">row["packagingListPkgLevel"]</expression>
-                    <simple-property-list name="value1">
-                        <value>"Primary"</value>
-                    </simple-property-list>
-                </structure>
-                <structure>
-                    <property name="operator">eq</property>
-                    <expression name="expr" type="javascript">row["packagingListIsMaster"]</expression>
-                    <simple-property-list name="value1">
-                        <value>"true"</value>
-                    </simple-property-list>
-                </structure>
-            </list-property>
-            <list-property name="parameters"/>
-            <structure name="cachedMetaData">
-                <list-property name="resultSet">
-                    <structure>
-                        <property name="position">1</property>
-                        <property name="name">itemType</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">2</property>
-                        <property name="name">packagingListProduct</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">3</property>
-                        <property name="name">legalName</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">4</property>
-                        <property name="name">packagingListQty</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">5</property>
-                        <property name="name">packagingListUnit</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">6</property>
-                        <property name="name">packagingListPkgLevel</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">7</property>
-                        <property name="name">tare</property>
-                        <property name="dataType">float</property>
-                    </structure>
-                    <structure>
-                        <property name="position">8</property>
-                        <property name="name">packagingListIsMaster</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">9</property>
-                        <property name="name">length</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">10</property>
-                        <property name="name">width</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">11</property>
-                        <property name="name">height</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">12</property>
-                        <property name="name">productHeight</property>
-                        <property name="dataType">float</property>
-                    </structure>
-                    <structure>
-                        <property name="position">13</property>
-                        <property name="name">productLength</property>
-                        <property name="dataType">float</property>
-                    </structure>
-                    <structure>
-                        <property name="position">14</property>
-                        <property name="name">productWidth</property>
-                        <property name="dataType">float</property>
-                    </structure>
-                    <structure>
-                        <property name="position">15</property>
-                        <property name="name">length_toUse</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">16</property>
-                        <property name="name">height_toUse</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">17</property>
-                        <property name="name">width_toUse</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">18</property>
-                        <property name="name">pmDimensions</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                </list-property>
-            </structure>
-            <property name="dataSource">DataXml</property>
-            <list-property name="resultSet">
-                <structure>
-                    <property name="position">1</property>
-                    <property name="name">itemType</property>
-                    <property name="nativeName">itemType</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">2</property>
-                    <property name="name">packagingListProduct</property>
-                    <property name="nativeName">packagingListProduct</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">3</property>
-                    <property name="name">legalName</property>
-                    <property name="nativeName">legalName</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">4</property>
-                    <property name="name">packagingListQty</property>
-                    <property name="nativeName">packagingListQty</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">5</property>
-                    <property name="name">packagingListUnit</property>
-                    <property name="nativeName">packagingListUnit</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">6</property>
-                    <property name="name">packagingListPkgLevel</property>
-                    <property name="nativeName">packagingListPkgLevel</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">7</property>
-                    <property name="name">tare</property>
-                    <property name="nativeName">tare</property>
-                    <property name="dataType">float</property>
-                    <property name="nativeDataType">8</property>
-                </structure>
-                <structure>
-                    <property name="position">8</property>
-                    <property name="name">packagingListIsMaster</property>
-                    <property name="nativeName">packagingListIsMaster</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">9</property>
-                    <property name="name">length</property>
-                    <property name="nativeName">length</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">8</property>
-                </structure>
-                <structure>
-                    <property name="position">10</property>
-                    <property name="name">width</property>
-                    <property name="nativeName">width</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">8</property>
-                </structure>
-                <structure>
-                    <property name="position">11</property>
-                    <property name="name">height</property>
-                    <property name="nativeName">height</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">8</property>
-                </structure>
-                <structure>
-                    <property name="position">12</property>
-                    <property name="name">productHeight</property>
-                    <property name="nativeName">productHeight</property>
-                    <property name="dataType">float</property>
-                    <property name="nativeDataType">8</property>
-                </structure>
-                <structure>
-                    <property name="position">13</property>
-                    <property name="name">productLength</property>
-                    <property name="nativeName">productLength</property>
-                    <property name="dataType">float</property>
-                    <property name="nativeDataType">8</property>
-                </structure>
-                <structure>
-                    <property name="position">14</property>
-                    <property name="name">productWidth</property>
-                    <property name="nativeName">productWidth</property>
-                    <property name="dataType">float</property>
-                    <property name="nativeDataType">8</property>
-                </structure>
-            </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingLists/packagingList]#:#{itemType;STRING;/@itemType},{packagingListProduct;STRING;/@packagingListProduct},{legalName;STRING;/@legalName},{packagingListQty;STRING;/@packagingListQty},{packagingListUnit;STRING;/@packagingListUnit},{packagingListPkgLevel;STRING;/@packagingListPkgLevel},{tare;DOUBLE;/@tare},{packagingListIsMaster;STRING;/@packagingListIsMaster},{length;DOUBLE;@length},{width;DOUBLE;@width},{height;DOUBLE;@height},{productHeight;DOUBLE;../../../height},{productLength;DOUBLE;../../../length},{productWidth;DOUBLE;../../../width}]]></xml-property>
-            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
-<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
-  <Version>2.0</Version>
-  <design:ResultSets derivedMetaData="true">
-    <design:resultSetDefinitions>
-      <design:resultSetColumns>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>itemType</design:name>
-              <design:position>1</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>itemType</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>packagingListProduct</design:name>
-              <design:position>2</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>packagingListProduct</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>legalName</design:name>
-              <design:position>3</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>legalName</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>packagingListQty</design:name>
-              <design:position>4</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>packagingListQty</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>packagingListUnit</design:name>
-              <design:position>5</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>packagingListUnit</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>packagingListPkgLevel</design:name>
-              <design:position>6</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>packagingListPkgLevel</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>pmDimensions</design:name>
-              <design:position>7</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>pmDimensions</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-      </design:resultSetColumns>
-      <design:criteria/>
-    </design:resultSetDefinitions>
-  </design:ResultSets>
-</model:DesignValues>]]></xml-property>
-            <list-property name="privateDriverProperties">
-                <ex-property>
-                    <name>MAX_ROW</name>
-                    <value>-1</value>
-                </ex-property>
-                <ex-property>
-                    <name>XML_FILE</name>
-                </ex-property>
-            </list-property>
-        </oda-data-set>
-        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="packSecondLevelMaster" id="2397">
-            <list-property name="computedColumns">
-                <structure>
-                    <property name="name">length_toUse</property>
-                    <expression name="expression">if (row["length"]!= null ) {
- 
-	( reportContext.getLocale().toString().toLowerCase() == "en_us" ) ? BirtMath.round(row["length"] * 0.0393700787, 1) : row["length"];
-
-} else { 
-	""; 
-}</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">height_toUse</property>
-                    <expression name="expression">if (row["height"]!= null ) {
- 
-	( reportContext.getLocale().toString().toLowerCase() == "en_us" ) ? BirtMath.round(row["height"] * 0.0393700787, 1) : row["length"];
-
-} else { 
-	""; 
-}</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">width_toUse</property>
-                    <expression name="expression">var myResult = null ; 
-
-if (row["width"]!= null ) {
- 
-	( reportContext.getLocale().toString().toLowerCase() == "en_us" ) ? BirtMath.round(row["width"] * 0.0393700787, 1) : row["length"];
-
-} else { 
-	""; 
-}</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">pmDimensions</property>
-                    <expression name="expression">(row["length_toUse"]!=""? row["length_toUse"] + "x" :  "") + (row["width_toUse"]!="" ? row["width_toUse"] + "x"  :  "") +(row["height_toUse"]!="" ?  row["height_toUse"]  :  "")</expression>
-                    <property name="dataType">string</property>
-                </structure>
-            </list-property>
-            <list-property name="columnHints">
-                <structure>
-                    <property name="columnName">itemType</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">itemType</text-property>
-                    <property name="analysisColumn">itemType</property>
-                </structure>
-                <structure>
-                    <property name="columnName">packagingListProduct</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">packagingListProduct</text-property>
-                    <property name="analysisColumn">packagingListProduct</property>
-                </structure>
-                <structure>
-                    <property name="columnName">legalName</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">legalName</text-property>
-                    <property name="analysisColumn">legalName</property>
-                </structure>
-                <structure>
-                    <property name="columnName">packagingListQty</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">packagingListQty</text-property>
-                    <property name="analysisColumn">packagingListQty</property>
-                </structure>
-                <structure>
-                    <property name="columnName">packagingListUnit</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">packagingListUnit</text-property>
-                    <property name="analysisColumn">packagingListUnit</property>
-                </structure>
-                <structure>
-                    <property name="columnName">packagingListPkgLevel</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">packagingListPkgLevel</text-property>
-                    <property name="analysisColumn">packagingListPkgLevel</property>
-                </structure>
-                <structure>
-                    <property name="columnName">tare</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">tare</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">packagingListIsMaster</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">packagingListIsMaster</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">length</property>
-                    <property name="analysis">measure</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">length</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">width</property>
-                    <property name="analysis">measure</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">width</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">height</property>
-                    <property name="analysis">measure</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">height</text-property>
-                </structure>
-            </list-property>
-            <list-property name="filter">
-                <structure>
-                    <property name="operator">eq</property>
-                    <expression name="expr" type="javascript">row["packagingListPkgLevel"]</expression>
-                    <simple-property-list name="value1">
-                        <value>"Secondary"</value>
-                    </simple-property-list>
-                </structure>
-                <structure>
-                    <property name="operator">eq</property>
-                    <expression name="expr" type="javascript">row["packagingListIsMaster"]</expression>
-                    <simple-property-list name="value1">
-                        <value>"true"</value>
-                    </simple-property-list>
-                </structure>
-                <structure>
-                    <property name="operator">eq</property>
-                    <expression name="expr" type="javascript">row["itemType"]</expression>
-                    <simple-property-list name="value1">
-                        <value>"bcpg:packagingMaterial"</value>
-                    </simple-property-list>
-                </structure>
-            </list-property>
-            <list-property name="parameters"/>
-            <structure name="cachedMetaData">
-                <list-property name="resultSet">
-                    <structure>
-                        <property name="position">1</property>
-                        <property name="name">itemType</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">2</property>
-                        <property name="name">packagingListProduct</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">3</property>
-                        <property name="name">legalName</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">4</property>
-                        <property name="name">packagingListQty</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">5</property>
-                        <property name="name">packagingListUnit</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">6</property>
-                        <property name="name">packagingListPkgLevel</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">7</property>
-                        <property name="name">tare</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">8</property>
-                        <property name="name">packagingListIsMaster</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">9</property>
-                        <property name="name">length</property>
-                        <property name="dataType">float</property>
-                    </structure>
-                    <structure>
-                        <property name="position">10</property>
-                        <property name="name">width</property>
-                        <property name="dataType">float</property>
-                    </structure>
-                    <structure>
-                        <property name="position">11</property>
-                        <property name="name">height</property>
-                        <property name="dataType">float</property>
-                    </structure>
-                    <structure>
-                        <property name="position">12</property>
-                        <property name="name">length_toUse</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">13</property>
-                        <property name="name">height_toUse</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">14</property>
-                        <property name="name">width_toUse</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">15</property>
-                        <property name="name">pmDimensions</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                </list-property>
-            </structure>
-            <property name="dataSource">DataXml</property>
-            <list-property name="resultSet">
-                <structure>
-                    <property name="position">1</property>
-                    <property name="name">itemType</property>
-                    <property name="nativeName">itemType</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">2</property>
-                    <property name="name">packagingListProduct</property>
-                    <property name="nativeName">packagingListProduct</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">3</property>
-                    <property name="name">legalName</property>
-                    <property name="nativeName">legalName</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">4</property>
-                    <property name="name">packagingListQty</property>
-                    <property name="nativeName">packagingListQty</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">5</property>
-                    <property name="name">packagingListUnit</property>
-                    <property name="nativeName">packagingListUnit</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">6</property>
-                    <property name="name">packagingListPkgLevel</property>
-                    <property name="nativeName">packagingListPkgLevel</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">7</property>
-                    <property name="name">tare</property>
-                    <property name="nativeName">tare</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">8</property>
-                    <property name="name">packagingListIsMaster</property>
-                    <property name="nativeName">packagingListIsMaster</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">9</property>
-                    <property name="name">length</property>
-                    <property name="nativeName">length</property>
-                    <property name="dataType">float</property>
-                    <property name="nativeDataType">8</property>
-                </structure>
-                <structure>
-                    <property name="position">10</property>
-                    <property name="name">width</property>
-                    <property name="nativeName">width</property>
-                    <property name="dataType">float</property>
-                    <property name="nativeDataType">8</property>
-                </structure>
-                <structure>
-                    <property name="position">11</property>
-                    <property name="name">height</property>
-                    <property name="nativeName">height</property>
-                    <property name="dataType">float</property>
-                    <property name="nativeDataType">8</property>
-                </structure>
-            </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingLists//packagingList]#:#{itemType;STRING;/@itemType},{packagingListProduct;STRING;/@packagingListProduct},{legalName;STRING;/@legalName},{packagingListQty;STRING;/@packagingListQty},{packagingListUnit;STRING;/@packagingListUnit},{packagingListPkgLevel;STRING;/@packagingListPkgLevel},{tare;STRING;/@tare},{packagingListIsMaster;STRING;/@packagingListIsMaster},{length;DOUBLE;@length},{width;DOUBLE;@width},{height;DOUBLE;@height}]]></xml-property>
-            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
-<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
-  <Version>2.0</Version>
-  <design:ResultSets derivedMetaData="true">
-    <design:resultSetDefinitions>
-      <design:resultSetColumns>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>itemType</design:name>
-              <design:position>1</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>itemType</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>packagingListProduct</design:name>
-              <design:position>2</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>packagingListProduct</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>legalName</design:name>
-              <design:position>3</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>legalName</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>packagingListQty</design:name>
-              <design:position>4</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>packagingListQty</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>packagingListUnit</design:name>
-              <design:position>5</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>packagingListUnit</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>packagingListPkgLevel</design:name>
-              <design:position>6</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>packagingListPkgLevel</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>pmDimensions</design:name>
-              <design:position>7</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>pmDimensions</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>tare</design:name>
-              <design:position>8</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>tare</design:label>
             <design:formattingHints/>
           </design:usageHints>
         </design:resultColumnDefinitions>
@@ -8648,34 +6346,17 @@ if ( m_size !== null &amp;&amp; m_size !== "" ) {
                             </cell>
                             <cell id="2743">
                                 <property name="style">becpg-cell-data</property>
-                                <data id="10493">
-                                    <structure name="numberFormat">
-                                        <property name="category">Custom</property>
-                                        <property name="pattern">#,##0.##</property>
-                                    </structure>
-                                    <property name="dataSet">packThirdLevel</property>
-                                    <list-property name="visibility">
-                                        <structure>
-                                            <property name="format">all</property>
-                                            <expression name="valueExpr" type="javascript">row["palletHeight"] == "" || row["palletHeight"] === null</expression>
-                                        </structure>
-                                    </list-property>
+                                <data id="10526">
+                                    <property name="dataSet">Product</property>
                                     <list-property name="boundDataColumns">
                                         <structure>
-                                            <property name="name">palletHeight</property>
-                                            <text-property name="displayName">palletHeight</text-property>
-                                            <expression name="expression" type="javascript">var m_size = dataSetRow["palletHeight"];
-
-if ( m_size !== null &amp;&amp; m_size !== "" ) {
-
-	( reportContext.getLocale().toString().toLowerCase() == "en_us" ) ? BirtMath.round(m_size * 0.0393700787, 1)  : m_size ;
-	
-}</expression>
+                                            <property name="name">palletHeight2</property>
+                                            <expression name="expression" type="javascript">( reportContext.getLocale().toString().toLowerCase() == "en_us"  &amp;&amp; row["palletHeight"] != null ) ? BirtMath.round(row["palletHeight"] * 0.0393700787, 1)  : row["palletHeight"];</expression>
                                             <property name="dataType">float</property>
                                             <property name="allowExport">true</property>
                                         </structure>
                                     </list-property>
-                                    <property name="resultSetColumn">palletHeight</property>
+                                    <property name="resultSetColumn">palletHeight2</property>
                                 </data>
                             </cell>
                         </row>

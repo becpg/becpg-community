@@ -272,6 +272,7 @@ public interface PLMModel {
 	QName PROP_PRODUCT_DENSITY = QName.createQName(BeCPGModel.BECPG_URI, "productDensity");
 	QName PROP_PRODUCT_COMMENTS = QName.createQName(BeCPGModel.BECPG_URI, "productComments");
 	QName PROP_PRODUCT_SCORE = QName.createQName(BeCPGModel.BECPG_URI, "productScores");
+	QName PROP_PRODUCT_DROP_PACKAGING_OF_COMPONENTS = QName.createQName(BeCPGModel.BECPG_URI, "dropPackagingOfComponents");
 	
 	// transformation
 	QName ASPECT_TRANSFORMATION = QName.createQName(BeCPGModel.BECPG_URI, "transformationAspect");	
