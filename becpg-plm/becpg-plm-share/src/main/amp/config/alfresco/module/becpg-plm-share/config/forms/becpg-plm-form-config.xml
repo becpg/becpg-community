@@ -278,6 +278,7 @@
 					<show id="pack:tare"  />
 					<show id="pack:tareUnit" />
 					<show id="gs1:weight"  />
+					<show id="bcpg:dropPackagingOfComponents"  />
 					
 					
 					<show id="gs1:secondaryPackagingTypeCode"  />
@@ -715,6 +716,8 @@
 							<control-param name="unit">kg</control-param>
 						</control>
 					</field>
+					<field id="bcpg:dropPackagingOfComponents" set="primaryPackaging"></field>
+					
 					<field id="gs1:secondaryPackagingTypeCode" help-id="becpg.forms.help.gs1.packagingTypeCode"  set="secondaryPackaging" />
 					<field id="gs1:secondaryHeight" set="secondaryPackaging" >
 						<control
@@ -7616,10 +7619,10 @@
 					
 					<show id="bcpg:packagingListQty" />
 					<show id="bcpg:packagingListUnit" />
+					<show id="bcpg:packagingListLossPerc" />
 					<show id="bcpg:packagingListPkgLevel" />
 					<show id="bcpg:packagingListIsMaster" />
-					<show id="bcpg:packagingListLossPerc" />
-
+					<show id="bcpg:packagingListIsRecycle" />
 					
 					<show id="bcpg:variantIds" force="true" />
 					<show id="bcpg:instruction" force="true" />
@@ -7649,6 +7652,7 @@
 						</control>
 					</field>
 					<field id="bcpg:packagingListIsMaster" help-id="becpg.forms.help.packagingListIsMaster" set="2-col" />
+					<field id="bcpg:packagingListIsRecycle" help-id="becpg.forms.help.packagingListIsRecycle" set="2-col" />
 					<field id="bcpg:variantIds" help-id="becpg.forms.help.variantIds" set="2-col">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/variantList
@@ -7710,6 +7714,7 @@
 					<show id="bcpg:packagingListLossPerc" />
 					<show id="bcpg:packagingListPkgLevel" />
 					<show id="bcpg:packagingListIsMaster" />
+					<show id="bcpg:packagingListIsRecycle" />
 					<show id="bcpg:dynamicCharactColumn1" force="true" />
 					<show id="bcpg:dynamicCharactColumn2" force="true" />
 					<show id="bcpg:dynamicCharactColumn3" force="true" />
@@ -7748,6 +7753,7 @@
 					<show id="entity_bcpg:packagingListProduct_bcpg:product" force="true" />
 					<show id="bcpg:packagingListPkgLevel" />
 					<show id="bcpg:packagingListIsMaster" />
+					<show id="bcpg:packagingListIsRecycle" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:depthLevel">
@@ -7757,6 +7763,14 @@
 						</control>
 					</field>
 					<field id="bcpg:packagingListIsMaster">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="insertBlank">true</control-param>
+							<control-param name="options">true|data.boolean.true,false|data.boolean.false
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:packagingListIsRecycle">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="isSearch">true</control-param>
 							<control-param name="insertBlank">true</control-param>
@@ -7775,6 +7789,7 @@
 					<show id="bcpg:packagingListLossPerc" />
 					<show id="bcpg:packagingListPkgLevel" />
 					<show id="bcpg:packagingListIsMaster" />
+					<show id="bcpg:packagingListIsRecycle" />
 					<show id="bcpg:startEffectivity" force="true" />
 					<show id="bcpg:endEffectivity" force="true" />
 				</field-visibility>
@@ -7791,10 +7806,10 @@
 					
 					<show id="bcpg:packagingListQty" />
 					<show id="bcpg:packagingListUnit" />
-					
+					<show id="bcpg:packagingListLossPerc" />
 					<show id="bcpg:packagingListPkgLevel" />
 					<show id="bcpg:packagingListIsMaster" />
-					<show id="bcpg:packagingListLossPerc" />
+					<show id="bcpg:packagingListIsRecycle" />
 					<show id="bcpg:variantIds" force="true" />
 					<show id="pack:labelingPosition" />
 					<show id="pack:labelingType" />
@@ -7823,6 +7838,7 @@
 						</control>
 					</field>
 					<field id="bcpg:packagingListIsMaster" help-id="becpg.forms.help.packagingListIsMaster" set="2-col"/>
+					<field id="bcpg:packagingListIsRecycle" help-id="becpg.forms.help.packagingListIsRecycle" set="2-col" />
 					<field id="bcpg:variantIds" help-id="becpg.forms.help.variantIds" set="2-col">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/variantList
