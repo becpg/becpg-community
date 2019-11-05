@@ -164,8 +164,16 @@ if (beCPG.module.EntityDataGridRenderers) {
 							}
 						} else {
 							html += '      <tr'+(count%2 == 0 ? ' style="background-color: white;"':'')+'><td>' + prop.title + '</td>';
-							html += '      <td>' + prop.before + '</td>';
-							html += '      <td>' + prop.after + '</td></tr>';
+							if (before != null){
+								html += '      <td>' + before + '</td>';
+							} else {
+								html += '      <td> </td>';
+							} 
+							if (after != null){
+								html += '      <td>' + after + '</td>';
+							} else {
+								html += '      <td> </td>';
+							}
 							count++;
 						}
 					});

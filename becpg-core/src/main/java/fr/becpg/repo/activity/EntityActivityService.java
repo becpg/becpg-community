@@ -24,7 +24,10 @@ public interface EntityActivityService {
 	static final String PROP_COMMENT_NODEREF = "commentNodeRef";
 	static final String PROP_CONTENT_NODEREF = "contentNodeRef";
 	static final String PROP_DATALIST_NODEREF = "datalistNodeRef";
+	static final String PROP_DATALIST_TYPE= "datalistType";
 	static final String PROP_ENTITY_NODEREF = "entityNodeRef";
+	static final String PROP_ENTITY_TYPE= "entityType";
+	static final String PROP_CHARACT_NODEREF = "charactNodeRef";
 	static final String PROP_ACTIVITY_EVENT = "activityEvent";
 	static final String PROP_CLASSNAME = "className";
 	static final String PROP_TITLE = "title";

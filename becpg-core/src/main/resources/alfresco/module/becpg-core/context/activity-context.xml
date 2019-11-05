@@ -32,6 +32,8 @@
 
     <bean id="activityListExtractor" class="fr.becpg.repo.activity.extractor.ActivityListExtractor" parent="simpleExtractor">
 		<property name="entityActivityService" ref="entityActivityService"/>
+		<property name="dictionaryService" ref="dictionaryService"/>
+		<property name="securityService" ref="securityService"/>
 		<property name="defaultExtractor" value="false"/>
 	</bean>
 	

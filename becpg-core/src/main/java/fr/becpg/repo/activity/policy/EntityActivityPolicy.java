@@ -58,6 +58,10 @@ NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.OnCreateAssociationP
 		isIgnoredTypes.add(ContentModel.PROP_MODIFIED);
 		isIgnoredTypes.add(ContentModel.PROP_MODIFIER);
 		isIgnoredTypes.add(ForumModel.PROP_COMMENT_COUNT);
+		isIgnoredTypes.add(BeCPGModel.PROP_SORT);
+		isIgnoredTypes.add(BeCPGModel.PROP_STATE_ACTIVITY_PREVIOUSSTATE);
+		isIgnoredTypes.add(BeCPGModel.PROP_STATE_ACTIVITY_MODIFIED);
+		isIgnoredTypes.add(BeCPGModel.PROP_STATE_ACTIVITY_MODIFIER);
 	}
 
 	private EntityActivityService entityActivityService;
@@ -124,6 +128,12 @@ NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.OnCreateAssociationP
 		return DoNothingCopyBehaviourCallback.getInstance();
 	}
 
+	public boolean ignoreType(QName type, Map<QName, Serializable> before, Map<QName, Serializable> after) {
+		return (type.getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI)
+				|| ((!before.containsKey(type) || before.get(type) == null)  && (after.get(type) == null || after.get(type).equals("")))
+				|| ((!after.containsKey(type) || after.get(type) == null)  && (before.get(type) == null || before.get(type).equals(""))));	
+	}
+
 	@Override
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 		if (policyBehaviourFilter.isEnabled(ContentModel.ASPECT_AUDITABLE) && policyBehaviourFilter.isEnabled(BeCPGModel.ASPECT_SORTABLE_LIST)
@@ -154,7 +164,7 @@ NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.OnCreateAssociationP
 				if ((before != null) && (after != null) && (before.size() < after.size())) {
 					MapDifference<QName,Serializable> diff = Maps.difference(before, after);
 					for(QName afterType : diff.entriesOnlyOnRight().keySet()) {
-						if (!isIgnoredTypes.contains(afterType) && after.get(afterType) != null && after.get(afterType) != "") {
+						if (!isIgnoredTypes.contains(afterType) && after.get(afterType) != null && after.get(afterType) != "" && !ignoreType(afterType, before,after)) {
 							isDifferent = true;
 
 							Pair<List<Serializable>, List<Serializable>> beforeAfterProperties = new Pair<List<Serializable>, List<Serializable>>(null, Arrays.asList(after.get(afterType)));
@@ -166,13 +176,13 @@ NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.OnCreateAssociationP
 
 				if ((before != null) && (after != null)) {
 					for (QName beforeType : before.keySet()) {
-						if (!isIgnoredTypes.contains(beforeType)) {
+						if (!isIgnoredTypes.contains(beforeType) && !ignoreType(beforeType, before,after)) {
 
 							if (((before.get(beforeType) == null) && (after.get(beforeType) == null)) || ((before.get(beforeType) != null)
 									&& (after.get(beforeType) != null) && before.get(beforeType).equals(after.get(beforeType)))) {
 								continue;
 							}
-							
+
 							if (((before.get(beforeType) != null) && (after.get(beforeType) != null)
 									&& !before.get(beforeType).equals(after.get(beforeType)))
 									|| ((before.get(beforeType) == null) || (after.get(beforeType) == null))) {
@@ -227,12 +237,12 @@ NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.OnCreateAssociationP
 
 			QName type = assocRef.getTypeQName();
 
-			if (assocRef.getTargetRef() != null && nodeService.getProperty(assocRef.getTargetRef(),ContentModel.PROP_NAME) != null) {
-				Map<QName, Pair<List<Serializable>, List<Serializable>>> resources = new HashMap<QName, Pair<List<Serializable>,List<Serializable>>>();
+			if (assocRef.getTargetRef() != null) {
+				Map<QName, Pair<List<Pair<NodeRef,Serializable>>, List<Pair<NodeRef,Serializable>>>> resources = new HashMap<QName, Pair<List<Pair<NodeRef,Serializable>>, List<Pair<NodeRef,Serializable>>>>();
 				if(TransactionSupportUtil.getResource(KEY_QUEUE_UPDATED_STATUS + assocRef.getSourceRef()) != null) {
 					resources = TransactionSupportUtil.getResource(KEY_QUEUE_UPDATED_STATUS + assocRef.getSourceRef());
-					List<Serializable> afterAssocs = new ArrayList<Serializable>();
-					List<Serializable> beforeAssocs = new ArrayList<Serializable>();
+					List<Pair<NodeRef,Serializable>> afterAssocs = new ArrayList<Pair<NodeRef,Serializable>>();
+					List<Pair<NodeRef,Serializable>> beforeAssocs = new ArrayList<Pair<NodeRef,Serializable>>();
 					if (resources.get(type) != null) {
 						if(resources.get(type).getFirst() != null){
 							beforeAssocs = resources.get(type).getFirst();
@@ -241,13 +251,13 @@ NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.OnCreateAssociationP
 							afterAssocs = resources.get(type).getSecond();
 						}						
 					}
-					afterAssocs.add(nodeService.getProperty(assocRef.getTargetRef(),ContentModel.PROP_NAME));
-					Pair <List<Serializable>,List<Serializable>> beforeAfterAssocs = new Pair<List<Serializable>, List<Serializable>>(beforeAssocs, afterAssocs);
+					afterAssocs.add(new Pair<NodeRef,Serializable>(assocRef.getTargetRef(), nodeService.getProperty(assocRef.getTargetRef(),ContentModel.PROP_NAME)));
+					Pair<List<Pair<NodeRef,Serializable>>, List<Pair<NodeRef,Serializable>>> beforeAfterAssocs = new Pair<List<Pair<NodeRef,Serializable>>, List<Pair<NodeRef,Serializable>>>(beforeAssocs, afterAssocs);
 					resources.put(type,beforeAfterAssocs);
 				} else {
-					List<Serializable> afterAssocs = new ArrayList<Serializable>();
-					afterAssocs.add(nodeService.getProperty(assocRef.getTargetRef(),ContentModel.PROP_NAME));
-					Pair <List<Serializable>,List<Serializable>> beforeAfterAssocs = new Pair<List<Serializable>, List<Serializable>>(null,afterAssocs);
+					List<Pair<NodeRef,Serializable>> afterAssocs = new ArrayList<Pair<NodeRef,Serializable>>();
+					afterAssocs.add(new Pair<NodeRef,Serializable>(assocRef.getTargetRef(),nodeService.getProperty(assocRef.getTargetRef(),ContentModel.PROP_NAME)));
+					Pair <List<Pair<NodeRef,Serializable>>,List<Pair<NodeRef,Serializable>>> beforeAfterAssocs = new Pair<List<Pair<NodeRef,Serializable>>, List<Pair<NodeRef,Serializable>>>(null,afterAssocs);
 					resources.put(type, beforeAfterAssocs);
 				}
 				if(resources != null && resources.size()>0) {
@@ -273,12 +283,12 @@ NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.OnCreateAssociationP
 
 			QName type = assocRef.getTypeQName();
 
-			if (assocRef.getTargetRef() != null && nodeService.getProperty(assocRef.getTargetRef(),ContentModel.PROP_NAME) != null) {
-				Map<QName, Pair<List<Serializable>, List<Serializable>>> resources = new HashMap<QName, Pair<List<Serializable>,List<Serializable>>>();
+			if (assocRef.getTargetRef() != null ) {
+				Map<QName, Pair<List<Pair<NodeRef,Serializable>>, List<Pair<NodeRef,Serializable>>>> resources = new HashMap<QName, Pair<List<Pair<NodeRef,Serializable>>,List<Pair<NodeRef,Serializable>>>>();
 				if(TransactionSupportUtil.getResource(KEY_QUEUE_UPDATED_STATUS + assocRef.getSourceRef()) != null) {
 					resources = TransactionSupportUtil.getResource(KEY_QUEUE_UPDATED_STATUS + assocRef.getSourceRef());
-					List<Serializable> afterAssocs = new ArrayList<Serializable>();
-					List<Serializable> beforeAssocs = new ArrayList<Serializable>();
+					List<Pair<NodeRef,Serializable>> afterAssocs = new ArrayList<Pair<NodeRef,Serializable>>();
+					List<Pair<NodeRef,Serializable>> beforeAssocs = new ArrayList<Pair<NodeRef,Serializable>>();
 					if (resources.get(type) != null) {
 						if(resources.get(type).getFirst() != null){
 							beforeAssocs = resources.get(type).getFirst();
@@ -287,13 +297,13 @@ NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.OnCreateAssociationP
 							afterAssocs = resources.get(type).getSecond();
 						}						
 					}
-					beforeAssocs.add(nodeService.getProperty(assocRef.getTargetRef(),ContentModel.PROP_NAME));
-					Pair <List<Serializable>,List<Serializable>> beforeAfterAssocs = new Pair<List<Serializable>, List<Serializable>>(beforeAssocs, afterAssocs);
+					beforeAssocs.add(new Pair<NodeRef,Serializable>(assocRef.getTargetRef(), nodeService.getProperty(assocRef.getTargetRef(),ContentModel.PROP_NAME)));
+					Pair <List<Pair<NodeRef,Serializable>>,List<Pair<NodeRef,Serializable>>> beforeAfterAssocs = new Pair<List<Pair<NodeRef,Serializable>>, List<Pair<NodeRef,Serializable>>>(beforeAssocs, afterAssocs);
 					resources.put(type,beforeAfterAssocs);
 				} else {
-					List<Serializable> beforeAssocs = new ArrayList<Serializable>();
-					beforeAssocs.add(nodeService.getProperty(assocRef.getTargetRef(),ContentModel.PROP_NAME));
-					Pair <List<Serializable>,List<Serializable>> beforeAfterAssocs = new Pair<List<Serializable>, List<Serializable>>(beforeAssocs, null);
+					List<Pair<NodeRef,Serializable>> beforeAssocs = new ArrayList<Pair<NodeRef,Serializable>>();
+					beforeAssocs.add(new Pair<NodeRef,Serializable>(assocRef.getTargetRef(), nodeService.getProperty(assocRef.getTargetRef(),ContentModel.PROP_NAME)));
+					Pair <List<Pair<NodeRef,Serializable>>,List<Pair<NodeRef,Serializable>>> beforeAfterAssocs = new Pair<List<Pair<NodeRef,Serializable>>, List<Pair<NodeRef,Serializable>>>(beforeAssocs, null);
 					resources.put(type, beforeAfterAssocs);
 				}
 				if(resources != null && resources.size()>0) {

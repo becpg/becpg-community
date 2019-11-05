@@ -152,7 +152,10 @@ public class DataListSortServiceImpl implements DataListSortService {
 		Integer sort = null;
 		boolean isDepthList = nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_DEPTH_LEVEL);
 		logger.debug("isDepthList: " + isDepthList);
-
+		
+		//Desactivate activity policy
+		policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
+				
 		if (isDepthList) {
 
 			parentLevel = (NodeRef) nodeService.getProperty(nodeRef, BeCPGModel.PROP_PARENT_LEVEL);
@@ -435,6 +438,9 @@ public class DataListSortServiceImpl implements DataListSortService {
 			logger.debug("node: " + tryGetName(nodeRef));
 			logger.debug("moveUp: " + moveUp);
 		}
+		
+		//Desactivate activity policy
+		policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
 
 		// look for the right destNode (before or after sibling)
 		NodeRef destNodeRef = getNextSiblingNode(dataType, listContainer, nodeRef, moveUp);
