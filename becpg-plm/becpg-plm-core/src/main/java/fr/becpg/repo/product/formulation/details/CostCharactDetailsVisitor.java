@@ -135,20 +135,23 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 			for (PackagingListDataItem packagingListDataItem : formulatedProduct
 					.getPackagingList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 			
+				if(packagingListDataItem.getProduct()!=null && 
+						(packagingListDataItem.getIsRecycle() == null || !packagingListDataItem.getIsRecycle())) {
 
-				ProductData packagingListDataItemProduct = (ProductData) alfrescoRepository.findOne(packagingListDataItem.getProduct());
-				
-				Double qty = (FormulationHelper.getQtyForCostByPackagingLevel(formulatedProduct, packagingListDataItem, packagingListDataItemProduct)
-						/ FormulationHelper.getNetQtyForCost(formulatedProduct)) * subQuantity;
-				
-				visitPart(formulatedProduct.getNodeRef(), packagingListDataItemProduct, packagingListDataItem.getNodeRef(), ret, qty, qty, netQty, netQty , currLevel, unitProvider);
-
-				 if ((maxLevel < 0) || (currLevel < maxLevel)) {
-					 logger.debug("Finding one packaging with nr=" + packagingListDataItem.getProduct());
-					 
-					 visitRecurCost(packagingListDataItemProduct, ret, currLevel + 1, maxLevel, qty,
-								netQty, unitProvider);
-				 }
+					ProductData packagingListDataItemProduct = (ProductData) alfrescoRepository.findOne(packagingListDataItem.getProduct());
+					
+					Double qty = (FormulationHelper.getQtyForCostByPackagingLevel(formulatedProduct, packagingListDataItem, packagingListDataItemProduct)
+							/ FormulationHelper.getNetQtyForCost(formulatedProduct)) * subQuantity;
+					
+					visitPart(formulatedProduct.getNodeRef(), packagingListDataItemProduct, packagingListDataItem.getNodeRef(), ret, qty, qty, netQty, netQty , currLevel, unitProvider);
+	
+					 if ((maxLevel < 0) || (currLevel < maxLevel)) {
+						 logger.debug("Finding one packaging with nr=" + packagingListDataItem.getProduct());
+						 
+						 visitRecurCost(packagingListDataItemProduct, ret, currLevel + 1, maxLevel, qty,
+									netQty, unitProvider);
+					 }
+				}
 
 			}
 

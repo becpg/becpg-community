@@ -89,6 +89,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private Double weightSecondary;
 	private Double netWeightTertiary;
 	private Double weightTertiary;
+	private Boolean dropPackagingOfComponents;
 
 	private Double netVolume;
 	private Double servingSize;
@@ -553,6 +554,16 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 
 	public void setWeightTertiary(Double weightTertiary) {
 		this.weightTertiary = weightTertiary;
+	}
+	
+	@AlfProp
+	@AlfQname(qname = "bcpg:dropPackagingOfComponents")
+	public Boolean getDropPackagingOfComponents() {
+		return dropPackagingOfComponents;
+	}
+
+	public void setDropPackagingOfComponents(Boolean dropPackagingOfComponents) {
+		this.dropPackagingOfComponents = dropPackagingOfComponents;
 	}
 
 	@AlfProp
@@ -1131,7 +1142,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		return "ProductData [hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", legalName=" + legalName + ", title=" + title + ", erpCode="
 				+ erpCode + ", state=" + state + ", unit=" + unit + ", qty=" + qty + ", density=" + density + ", yield=" + yield + ", manualYield="+manualYield+", yieldVolume="
 				+ yieldVolume + ", netWeight=" + netWeight + ", netVolume=" + netVolume + ", servingSize=" + servingSize + ", recipeQtyUsed="
-				+ recipeQtyUsed + ", tare=" + tare + ", tareUnit=" + tareUnit + ", unitTotalCost=" + unitTotalCost + ", unitPrice=" + unitPrice
+				+ recipeQtyUsed + ", dropPackagingOfComponents=" + dropPackagingOfComponents + ", tare=" + tare + ", tareUnit=" + tareUnit + ", unitTotalCost=" + unitTotalCost + ", unitPrice=" + unitPrice
 				+ ", profitability=" + profitability + ", breakEven=" + breakEven + ", allergenList=" + allergenList + ", productScores="
 				+ entityScore + "]";
 	}
@@ -1154,6 +1165,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		result = (prime * result) + ((servingSize == null) ? 0 : servingSize.hashCode());
 		result = (prime * result) + ((servingSizeUnit == null) ? 0 : servingSizeUnit.hashCode());
 		result = (prime * result) + ((state == null) ? 0 : state.hashCode());
+		result = (prime * result) + ((dropPackagingOfComponents == null) ? 0 : dropPackagingOfComponents.hashCode());
 		result = (prime * result) + ((tare == null) ? 0 : tare.hashCode());
 		result = (prime * result) + ((tareUnit == null) ? 0 : tareUnit.hashCode());
 		result = (prime * result) + ((title == null) ? 0 : title.hashCode());
@@ -1271,6 +1283,13 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 			return false;
 		}
 		if (state != other.state) {
+			return false;
+		}
+		if (dropPackagingOfComponents == null) {
+			if (other.dropPackagingOfComponents != null) {
+				return false;
+			}
+		} else if (!dropPackagingOfComponents.equals(other.dropPackagingOfComponents)) {
 			return false;
 		}
 		if (tare == null) {
