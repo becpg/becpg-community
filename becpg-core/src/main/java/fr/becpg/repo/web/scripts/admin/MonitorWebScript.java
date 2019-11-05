@@ -3,6 +3,7 @@
  */
 package fr.becpg.repo.web.scripts.admin;
 
+import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.util.HashMap;
@@ -11,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.repo.security.authentication.AbstractAuthenticationService;
+import org.alfresco.service.cmr.repository.ContentService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.webscripts.Cache;
@@ -25,23 +27,35 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 public class MonitorWebScript extends DeclarativeWebScript {
 
 	private static final Log logger = LogFactory.getLog(MonitorWebScript.class);
-
+	
+	private ContentService contentService;
+	
 	private AbstractAuthenticationService authenticationService;
 
 	public void setAuthenticationService(AbstractAuthenticationService authenticationService) {
 		this.authenticationService = authenticationService;
 	}
-
+	
+	public void setContentService(ContentService contentService) {
+		this.contentService = contentService;
+	}
 
 	@Override
 	protected Map<String, Object> executeImpl(WebScriptRequest req, Status status, Cache cache) {
 		logger.debug("start admin webscript");
-
+		
 		Map<String, Object> ret = new HashMap<>();
 
 		Set<String> users = new HashSet<>(authenticationService.getUsersWithTickets(true));
 
 		MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
+		
+		long diskFreeSpace = contentService.getStoreFreeSpace();
+		if (diskFreeSpace > -1){
+			ret.put("diskFreeSpace", diskFreeSpace / 1000000d);
+		} else {
+			ret.put("diskFreeSpace", new File("/").getFreeSpace() / 1000000d);
+		}
 
 		Runtime runtime = Runtime.getRuntime();
 
