@@ -74,7 +74,7 @@ public class ProjectNotificationIT extends AbstractProjectTestCase {
 
 		waitForMail(1 + nbMail);
 
-		checkActivity(projectNodeRef, 1);
+		checkActivity(projectNodeRef, 5);
 
 		logger.info("Nb mails before notification:" + nbMail);
 
@@ -92,7 +92,7 @@ public class ProjectNotificationIT extends AbstractProjectTestCase {
 
 		waitForMail(4 + nbMail);
 
-		checkActivity(projectNodeRef, 3);
+		checkActivity(projectNodeRef, 6);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -104,7 +104,7 @@ public class ProjectNotificationIT extends AbstractProjectTestCase {
 		}, false, true);
 
 		waitForMail(5 + nbMail);
-		checkActivity(projectNodeRef, 5);
+		checkActivity(projectNodeRef, 7);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -139,7 +139,7 @@ public class ProjectNotificationIT extends AbstractProjectTestCase {
 		}, false, true);
 
 		waitForMail(8 + nbMail);
-		checkActivity(projectNodeRef, 7);
+		checkActivity(projectNodeRef,9);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -191,7 +191,7 @@ public class ProjectNotificationIT extends AbstractProjectTestCase {
 		}, false, true);
 
 		waitForMail(11 + nbMail);
-		checkActivity(projectNodeRef, 9);
+		checkActivity(projectNodeRef,11);
 
 		// Resubmit task
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -241,7 +241,8 @@ public class ProjectNotificationIT extends AbstractProjectTestCase {
 		}, false, true);
 
 		waitForMail(14 + nbMail);
-		checkActivity(projectNodeRef, 11);
+		
+		checkActivity(projectNodeRef, 13);
 
 	}
 
@@ -283,7 +284,7 @@ public class ProjectNotificationIT extends AbstractProjectTestCase {
 			}
 
 			return ret;
-		}, true, false).size(), size);
+		}, false, true).size(), size);
 	}
 
 }

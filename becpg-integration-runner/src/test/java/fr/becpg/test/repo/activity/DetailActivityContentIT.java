@@ -140,21 +140,21 @@ public class DetailActivityContentIT extends AbstractFinishedProductTest {
 		assertEquals("Check if No Activity", 1, getActivities(finishedProductNodeRef, null).size());
 
 		// Add Client to product
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		NodeRef client1NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			ClientData client1 = new ClientData();
 			client1.setName("Client1");
 			client1 = clientRepository.create(getTestFolderNodeRef(), client1);
 			List<NodeRef> clients = new ArrayList<NodeRef>();
 			clients.add(client1.getNodeRef());
 			nodeService.setAssociations(finishedProductNodeRef, PLMModel.ASSOC_CLIENTS, clients);
-			return finishedProductNodeRef;
+			return client1.getNodeRef();
 		}, false, true);
 
 		// Check if an activity has been created
 		assertEquals("Activity 2: Create client association", 2, getActivities(finishedProductNodeRef, null).size());
 
 		// Change client of finished product
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		NodeRef client2NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			ClientData client2 = new ClientData();
 			client2.setName("Client2");
 			client2 = clientRepository.create(getTestFolderNodeRef(), client2);
@@ -167,7 +167,7 @@ public class DetailActivityContentIT extends AbstractFinishedProductTest {
 			}
 
 			nodeService.setAssociations(finishedProductNodeRef, PLMModel.ASSOC_CLIENTS, clients2);
-			return finishedProductNodeRef;
+			return client2.getNodeRef();
 		}, false, true);
 		
 		assertEquals("Activity 2: Modify client association", 2, getActivities(finishedProductNodeRef, null).size());
@@ -184,9 +184,9 @@ public class DetailActivityContentIT extends AbstractFinishedProductTest {
 			if (data.getJSONArray("properties") != null && data.getJSONArray("properties").length() > 0) {
 				JSONObject dataProp = data.getJSONArray("properties").getJSONObject(0);
 				if (dataProp != null) {
-					assertEquals("Check erpCode after modification", "bcpg:clients", dataProp.getString("title"));
-					assertEquals("Check erpCode before modification", "[\"Client1\"]",dataProp.getString("before"));
-					assertEquals("Check erpCode after modification", "[\"Client2\"]", dataProp.getString("after"));
+					assertEquals("Check erpCode after modification", PLMModel.ASSOC_CLIENTS.toString(), dataProp.getString("title"));
+					assertEquals("Check erpCode before modification", "[\"("+client1NodeRef+", Client1)\"]",dataProp.getString("before"));
+					assertEquals("Check erpCode before modification", "[\"("+client2NodeRef+", Client2)\"]",dataProp.getString("after"));
 				}
 			}
 
