@@ -1453,6 +1453,11 @@
 					<mandatory enforced="true">true</mandatory>
 					<default>false</default>
 				</property>
+				<property name="bcpg:packagingListIsRecycle">
+					<type>d:boolean</type>
+					<mandatory enforced="true">true</mandatory>
+					<default>false</default>
+				</property>
 			</properties>
 			<associations>
 				<association name="bcpg:packagingListProduct">
@@ -3086,6 +3091,9 @@
 					<constraints>
 						<constraint ref="bcpg:systemState" />
 					</constraints>
+				</property>
+				<property name="bcpg:dropPackagingOfComponents">
+					<type>d:boolean</type>
 				</property>
 			</properties>
 		</aspect>

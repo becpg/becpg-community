@@ -182,7 +182,8 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 			for (PackagingListDataItem packagingListDataItem : formulatedProduct
 					.getPackagingList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 				
-				if(packagingListDataItem.getProduct()!=null) {
+				if(packagingListDataItem.getProduct()!=null && 
+						(packagingListDataItem.getIsRecycle() == null || !packagingListDataItem.getIsRecycle())) {
 					
 					ProductData partProduct = (ProductData) alfrescoRepository.findOne(packagingListDataItem.getProduct());
 					
