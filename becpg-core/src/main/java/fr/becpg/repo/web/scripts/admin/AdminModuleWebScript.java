@@ -3,6 +3,7 @@
  */
 package fr.becpg.repo.web.scripts.admin;
 
+import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.util.HashMap;
@@ -16,11 +17,11 @@ import org.alfresco.repo.dictionary.DictionaryDAO;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.security.authentication.AbstractAuthenticationService;
 import org.alfresco.repo.tenant.TenantAdminService;
+import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.json.JSONException;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.extensions.webscripts.Cache;
 import org.springframework.extensions.webscripts.DeclarativeWebScript;
@@ -52,7 +53,7 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 	private static final String ACTION_RELOAD_MODEL = "reload-model";
 	private static final String ACTION_GET_SYSTEM_ENTITIES = "system-entities";
 	private static final String ACTION_GET_CONNECTED_USERS = "show-users";
-
+		
 	private InitVisitorService initVisitorService;
 
 	private Repository repository;
@@ -74,8 +75,9 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 	private String becpgSchema;
 	
 	private AuthorityService authorityService;
-
 	
+	private ContentService contentService;
+
 	public void setAuthorityService(AuthorityService authorityService) {
 		this.authorityService = authorityService;
 	}
@@ -118,6 +120,10 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 	
 	public void setLicenseManager(BeCPGLicenseManager licenseManager) {
 		this.licenseManager = licenseManager;
+	}
+
+	public void setContentService(ContentService contentService) {
+		this.contentService = contentService;
 	}
 
 	@Override
@@ -213,12 +219,20 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 		// Add status
 
 		ret.put("status", "SUCCESS");
+		
+		//Add disk free space
+		long diskFreeSpace = contentService.getStoreFreeSpace();
+		if (diskFreeSpace > -1){
+			ret.put("diskFreeSpace", diskFreeSpace / 1000000d);
+		} else {
+			ret.put("diskFreeSpace", new File("/").getFreeSpace() / 1000000d);
+		}
 
 		// Add system infos
 
 		MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
-
 		
+
 		Runtime runtime = Runtime.getRuntime();
 
 		ret.put("totalMemory", runtime.totalMemory() / 1000000d);
@@ -237,7 +251,6 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 		ret.put("allowedNamedWrite", licenseManager.getAllowedNamedWrite());
 		ret.put("allowedNamedRead",  licenseManager.getAllowedNamedRead());
 		ret.put("licenseName",  licenseManager.getLicenseName());
-		
 		
 		ret.put("becpgSchema", becpgSchema);
 		

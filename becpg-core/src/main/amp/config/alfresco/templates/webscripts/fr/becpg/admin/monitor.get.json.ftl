@@ -2,6 +2,7 @@
 {
    "status": "${status}",
    "systemInfo" : {
+   		"diskFreeSpace": ${diskFreeSpace?c},
    		"totalMemory": ${totalMemory?c},
 		"freeMemory": ${freeMemory?c},
 		"maxMemory": ${maxMemory?c},
