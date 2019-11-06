@@ -3,7 +3,6 @@
  */
 package fr.becpg.repo.web.scripts.admin;
 
-import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.util.HashMap;
@@ -219,14 +218,6 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 		// Add status
 
 		ret.put("status", "SUCCESS");
-		
-		//Add disk free space
-		long diskFreeSpace = contentService.getStoreFreeSpace();
-		if (diskFreeSpace > -1){
-			ret.put("diskFreeSpace", diskFreeSpace / 1000000d);
-		} else {
-			ret.put("diskFreeSpace", new File("/").getFreeSpace() / 1000000d);
-		}
 
 		// Add system infos
 
@@ -235,6 +226,7 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 
 		Runtime runtime = Runtime.getRuntime();
 
+		ret.put("diskFreeSpace", contentService.getStoreFreeSpace());
 		ret.put("totalMemory", runtime.totalMemory() / 1000000d);
 		ret.put("freeMemory", runtime.freeMemory() / 1000000d);
 		ret.put("maxMemory", runtime.maxMemory() / 1000000d);
