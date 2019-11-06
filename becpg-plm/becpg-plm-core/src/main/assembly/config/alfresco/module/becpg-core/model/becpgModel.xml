@@ -1455,7 +1455,6 @@
 				</property>
 				<property name="bcpg:packagingListIsRecycle">
 					<type>d:boolean</type>
-					<mandatory enforced="true">true</mandatory>
 					<default>false</default>
 				</property>
 			</properties>

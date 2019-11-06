@@ -733,6 +733,12 @@
 							if (args.searchQuery !== undefined) {
 								searchQuery = args.searchQuery;
 							}
+							
+							var searchAllSites = this.searchAllSites;
+					         if (args.searchAllSites !== undefined)
+					         {
+					            searchAllSites = args.searchAllSites;
+					         }
 
 							// call webscript
 							var url = Alfresco.constants.PROXY_URI + "becpg/report/exportsearch/" + args.reportTpl.replace("://", "/") + "/"
@@ -750,11 +756,10 @@
 									url += "&tag=" + encodeURIComponent(searchTag);
 								}
 							}
-							/*
-							 * if(this.options.siteId.length !== 0) { url +=
-							 * "&site=" + siteId + "&repo=false"; } else
-							 */
-							{
+							
+							 if(this.options.siteId.length !== 0 && !searchAllSites) { 
+							    url +="&site=" + this.options.siteId + "&repo=false"; } 
+							 else {
 								url += "&site=&repo=true";
 							}
 
