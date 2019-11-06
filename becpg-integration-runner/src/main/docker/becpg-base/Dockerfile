@@ -8,6 +8,7 @@ ENV ALF_SHARE_VERSION=${alfresco.share.version}
 ENV MMT_VERSION=${alfresco.platform.version}
 ENV PDF_RENDERER_VERSION=1.0
 ENV MYSQL_CONNECTOR=${mysql.connector.version}
+ENV SUPPORT_TOOLS_VERSION=1.1.0.0-amp
 
 WORKDIR /usr/local/tomcat/
 
@@ -119,21 +120,32 @@ RUN set -x && \
     java -jar /root/alfresco-mmt.jar install /root/amp/ webapps/share -nobackup -directory && \
     rm /root/amp/javascript-console-share-0.6.0.amp 
     
+#User account switcher  
+RUN set -x && \
+    curl --silent --location \
+      https://readonly:YLdy9W5v@www.becpg.fr/becpg-repo/releases/addons/share-login-switcher-1.5.jar  \
+      -o webapps/share/WEB-INF/lib/share-login-switcher-1.5.jar    
+      
+RUN set -x && \
+    curl --silent --location \
+      https://readonly:YLdy9W5v@www.becpg.fr/becpg-repo/releases/addons/repo-login-switcher-1.5.jar  \
+      -o webapps/alfresco/WEB-INF/lib/repo-login-switcher-1.5.jar          
+    
 #Support tools
 RUN set -x && \
     curl --silent --location \
-      https://readonly:YLdy9W5v@www.becpg.fr/becpg-repo/releases/addons/support-tools-repo-1.0.0.0.amp  \
-      -o /root/amp/support-tools-repo-1.0.0.0.amp && \
+      https://readonly:YLdy9W5v@www.becpg.fr/becpg-repo/releases/addons/support-tools-repo-${SUPPORT_TOOLS_VERSION}.amp  \
+      -o /root/amp/support-tools-repo-${SUPPORT_TOOLS_VERSION}.amp && \
     java -jar /root/alfresco-mmt.jar install /root/amp/ webapps/alfresco -nobackup -directory && \
-    rm /root/amp/support-tools-repo-1.0.0.0.amp  
+    rm /root/amp/support-tools-repo-${SUPPORT_TOOLS_VERSION}.amp  
 
 
 RUN set -x && \
     curl --silent --location \
-      https://readonly:YLdy9W5v@www.becpg.fr/becpg-repo/releases/addons/support-tools-share-1.0.0.0.amp  \
-      -o /root/amp/support-tools-share-1.0.0.0.amp && \
+      https://readonly:YLdy9W5v@www.becpg.fr/becpg-repo/releases/addons/support-tools-share-${SUPPORT_TOOLS_VERSION}.amp  \
+      -o /root/amp/support-tools-share-${SUPPORT_TOOLS_VERSION}.amp && \
     java -jar /root/alfresco-mmt.jar install /root/amp/ webapps/share -nobackup -directory && \
-    rm /root/amp/support-tools-share-1.0.0.0.amp  
+    rm /root/amp/support-tools-share-${SUPPORT_TOOLS_VERSION}.amp  
 
 #AOS    
 RUN set -x && \
