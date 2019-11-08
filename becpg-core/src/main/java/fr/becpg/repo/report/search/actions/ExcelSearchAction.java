@@ -34,8 +34,10 @@ import org.alfresco.service.cmr.view.Location;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ParameterCheck;
 import org.alfresco.util.TempFileProvider;
+import org.apache.commons.io.FilenameUtils;
 
 import fr.becpg.repo.report.search.impl.ExcelReportSearchRenderer;
+import fr.becpg.repo.report.template.ReportTplService;
 
 /**
  * {@link ActionExecuter} for creating an excel file containing content from the
@@ -49,8 +51,6 @@ import fr.becpg.repo.report.search.impl.ExcelReportSearchRenderer;
 public class ExcelSearchAction extends ActionExecuterAbstractBase {
 
 	private static final String CREATION_ERROR = "Unexpected error creating file for download";
-	private static final String TEMP_FILE_PREFIX = "download";
-	private static final String TEMP_FILE_SUFFIX = ".xlsx";
 
 	public static final String PARAM_TPL_NODEREF = "templateNodeRef";
 
@@ -136,11 +136,18 @@ public class ExcelSearchAction extends ActionExecuterAbstractBase {
 			ExcelSearchDownloadExporter handler = new ExcelSearchDownloadExporter(transactionHelper, updateService, downloadStorage, contentService,
 					excelReportSearchRenderer, actionedUponNodeRef, templateNodeRef, Long.valueOf(downloadRequest.getRequetedNodeRefs().length));
 
-			final File tempFile = TempFileProvider.createTempFile(TEMP_FILE_PREFIX, TEMP_FILE_SUFFIX);
+			String suffix = ReportTplService.PARAM_VALUE_XLSXREPORT_EXTENSION;
+			String name = ((String) nodeService.getProperty(templateNodeRef, ContentModel.PROP_NAME));
+			
+			if(name.endsWith(ReportTplService.PARAM_VALUE_XLSMREPORT_EXTENSION)) {
+				suffix = ReportTplService.PARAM_VALUE_XLSMREPORT_EXTENSION;
+			}
+			
+			final File tempFile = TempFileProvider.createTempFile( FilenameUtils.removeExtension(name), suffix);
 			handler.setTemplateFile(tempFile);
 			try {
 				exporterService.exportView(handler, crawlerParameters, null);
-				fileCreationComplete(actionedUponNodeRef, tempFile, handler);
+				fileCreationComplete(actionedUponNodeRef, suffix , tempFile, handler);
 			} catch (DownloadCancelledException ex) {
 				downloadCancelled(actionedUponNodeRef, handler);
 			} finally {
@@ -156,7 +163,7 @@ public class ExcelSearchAction extends ActionExecuterAbstractBase {
 		paramList.add(new ParameterDefinitionImpl(PARAM_TPL_NODEREF, DataTypeDefinition.NODE_REF, true, "Search template nodeRef"));
 	}
 
-	private void fileCreationComplete(final NodeRef actionedUponNodeRef, final File tempFile, final ExcelSearchDownloadExporter handler) {
+	private void fileCreationComplete(final NodeRef actionedUponNodeRef, String suffix, final File tempFile, final ExcelSearchDownloadExporter handler) {
 		// Update the content and set the status to done.
 		transactionHelper.doInTransaction(() -> {
 			try {
@@ -166,7 +173,16 @@ public class ExcelSearchAction extends ActionExecuterAbstractBase {
 						handler.getFilesAddedCount(), handler.getFileCount());
 				updateService.update(actionedUponNodeRef, status, handler.getNextSequenceNumber());
 				ContentData contentData = (ContentData) nodeService.getProperty(actionedUponNodeRef, ContentModel.PROP_CONTENT);
-				ContentData excelContentData = ContentData.setMimetype(contentData, "application/vnd.ms-excel");
+				
+				
+				ContentData excelContentData = null;
+						
+				if(ReportTplService.PARAM_VALUE_XLSMREPORT_EXTENSION.equals(suffix)) {
+					excelContentData = ContentData.setMimetype(contentData, "application/vnd.ms-excel.sheet.macroEnabled.12");
+				} else {
+					excelContentData = ContentData.setMimetype(contentData, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+				}
+				
 				nodeService.setProperty(actionedUponNodeRef, ContentModel.PROP_CONTENT, excelContentData);
 				return null;
 			} catch (ContentIOException ex1) {
