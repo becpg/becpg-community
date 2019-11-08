@@ -82,7 +82,7 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 				XSSFSheet sheet = workbook.getSheetAt(i);
 				mainType = fillSheet(sheet, searchResults, mainType);
 			}
-			workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
+		  //Disable for XLSM (break #2259 ?) workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
 			workbook.setForceFormulaRecalculation(true);
 			workbook.write(outputStream);
 
@@ -285,8 +285,9 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 
 	@Override
 	public boolean isApplicable(NodeRef templateNodeRef, ReportFormat reportFormat) {
-		return ReportFormat.XLSX.equals(reportFormat) && ((String) nodeService.getProperty(templateNodeRef, ContentModel.PROP_NAME))
-				.endsWith(ReportTplService.PARAM_VALUE_XLSXREPORT_EXTENSION);
+		return ReportFormat.XLSX.equals(reportFormat) &&  (((String) nodeService.getProperty(templateNodeRef, ContentModel.PROP_NAME))
+				.endsWith(ReportTplService.PARAM_VALUE_XLSXREPORT_EXTENSION) || ((String) nodeService.getProperty(templateNodeRef, ContentModel.PROP_NAME))
+				.endsWith(ReportTplService.PARAM_VALUE_XLSMREPORT_EXTENSION));
 	}
 
 	@Override
