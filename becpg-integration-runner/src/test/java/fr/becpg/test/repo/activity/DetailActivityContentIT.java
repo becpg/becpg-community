@@ -98,7 +98,7 @@ public class DetailActivityContentIT extends AbstractFinishedProductTest {
 		// Check if just one activity was created
 		assertEquals("Check if No Activity", 1, getActivities(finishedProductNodeRef, null).size());
 
-		// Change ErpCode of finished product
+		// Change erp code of finished product
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			nodeService.setProperty(finishedProductNodeRef, BeCPGModel.PROP_ERP_CODE, "22222");
 			return null;
@@ -107,7 +107,7 @@ public class DetailActivityContentIT extends AbstractFinishedProductTest {
 		// Check if an activity has been created
 		assertEquals("Activity 2: erpCode modification", 2, getActivities(finishedProductNodeRef, null).size());
 
-		// Check before and after erpCode in activity data
+		// Check activity data
 		NodeRef activityListNodeRef = getActivityList(finishedProductNodeRef);
 		List<NodeRef> activities = entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
 		NodeRef activity = activities.get(getActivities(finishedProductNodeRef, null).size()-1);
@@ -172,7 +172,7 @@ public class DetailActivityContentIT extends AbstractFinishedProductTest {
 		
 		assertEquals("Activity 2: Modify client association", 2, getActivities(finishedProductNodeRef, null).size());
 
-		// Check before and after client in activity data NodeRef
+		// Check activity data
 		NodeRef activityListNodeRef = getActivityList(finishedProductNodeRef);
 		List<NodeRef> activities = entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
 		NodeRef activity = activities.get(getActivities(finishedProductNodeRef, null).size()-1);
@@ -184,9 +184,9 @@ public class DetailActivityContentIT extends AbstractFinishedProductTest {
 			if (data.getJSONArray("properties") != null && data.getJSONArray("properties").length() > 0) {
 				JSONObject dataProp = data.getJSONArray("properties").getJSONObject(0);
 				if (dataProp != null) {
-					assertEquals("Check erpCode after modification", PLMModel.ASSOC_CLIENTS.toString(), dataProp.getString("title"));
-					assertEquals("Check erpCode before modification", "[\"("+client1NodeRef+", Client1)\"]",dataProp.getString("before"));
-					assertEquals("Check erpCode before modification", "[\"("+client2NodeRef+", Client2)\"]",dataProp.getString("after"));
+					assertEquals("Check client title modification", PLMModel.ASSOC_CLIENTS.toString(), dataProp.getString("title"));
+					assertEquals("Check client before modification", "[\"("+client1NodeRef+", Client1)\"]",dataProp.getString("before"));
+					assertEquals("Check client after modification", "[\"("+client2NodeRef+", Client2)\"]",dataProp.getString("after"));
 				}
 			}
 
@@ -196,7 +196,8 @@ public class DetailActivityContentIT extends AbstractFinishedProductTest {
 		}
 	}
 
-	@Test public void checkEntityDatalistActivity() {
+	@Test
+	public void checkEntityDatalistActivity() {
 
 		final NodeRef lSF1NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			LocalSemiFinishedProductData lSF1 = new LocalSemiFinishedProductData();
@@ -218,7 +219,7 @@ public class DetailActivityContentIT extends AbstractFinishedProductTest {
 			return null;
 		}, false, true);
 
-		assertEquals("Check Add compoList item", 2, getActivities(finishedProductNodeRef, null).size()); 
+		assertEquals("Check add compoList item", 2, getActivities(finishedProductNodeRef, null).size()); 
 
 		//Change composition qty
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -230,7 +231,7 @@ public class DetailActivityContentIT extends AbstractFinishedProductTest {
 		
 		assertEquals("Check update compoList item ", 3, getActivities(finishedProductNodeRef, null).size()); 
 
-		// Check before and after client in activity data NodeRef
+		// Check activity data
 		NodeRef activityListNodeRef = getActivityList(finishedProductNodeRef);
 		List<NodeRef> activities = entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
 		NodeRef activity = activities.get(getActivities(finishedProductNodeRef, null).size()-1);
@@ -242,8 +243,8 @@ public class DetailActivityContentIT extends AbstractFinishedProductTest {
 			if (data.getJSONArray("properties") != null && data.getJSONArray("properties").length() > 0) {
 				JSONObject dataProp = data.getJSONArray("properties").getJSONObject(0);
 				if (dataProp != null) {
-					assertEquals("Check erpCode before modification", "[1]",dataProp.getString("before"));
-					assertEquals("Check erpCode after modification", "[2]", dataProp.getString("after"));
+					assertEquals("Check compo qty modification", "[1]",dataProp.getString("before"));
+					assertEquals("Check compo qty modification", "[2]", dataProp.getString("after"));
 				}
 			}
 
