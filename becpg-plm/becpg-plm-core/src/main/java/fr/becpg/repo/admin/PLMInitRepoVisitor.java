@@ -1019,6 +1019,12 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		dataLists.clear();
 		dataLists.add(PLMModel.TYPE_FORBIDDENINGLIST);
 		dataLists.add(PLMModel.TYPE_LABELINGRULELIST);
+		dataLists.add(PLMModel.TYPE_DYNAMICCHARACTLIST);
+		dataLists.add(PLMModel.TYPE_NUTLIST);
+		dataLists.add(PLMModel.TYPE_ALLERGENLIST);
+		dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
+		dataLists.add(PLMModel.TYPE_LABELCLAIMLIST);
+		dataLists.add(PLMModel.TYPE_SPEC_COMPATIBILTY_LIST);
 		entityTplNodeRef = entityTplService.createEntityTpl(qualityTplsNodeRef, PLMModel.TYPE_PRODUCT_SPECIFICATION, null, true, true, dataLists,
 				null);
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
