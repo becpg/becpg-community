@@ -332,8 +332,6 @@ public class EntityTplServiceImpl implements EntityTplService {
 							if (!update) {
 
 								for (RepositoryEntity dataListItemTpl : datalistsTpl.get(dataListQName)) {
-									Integer ItemTplSort = (Integer) nodeService.getProperty(dataListItemTpl.getNodeRef(), BeCPGModel.PROP_SORT);
-
 									Map<QName, Serializable> identAttrTpl = repositoryEntityDefReader.getIdentifierAttributes(dataListItemTpl);
 
 									if (!identAttrTpl.isEmpty()) {
@@ -344,14 +342,10 @@ public class EntityTplServiceImpl implements EntityTplService {
 											Map<QName, Serializable> identAttr = repositoryEntityDefReader.getIdentifierAttributes(dataListItem);
 											if (identAttrTpl.equals(identAttr)) {
 
-												if ((Integer) nodeService.getProperty(dataListItem.getNodeRef(), BeCPGModel.PROP_SORT) != ItemTplSort) {
-													nodeService.setProperty(dataListItem.getNodeRef(), BeCPGModel.PROP_SORT, ItemTplSort);
-												}
 												isFound = true;
 												break;
 											}
 										}
-
 
 										if (!isFound) {
 											dataListItemTpl.setName(null);
@@ -375,9 +369,9 @@ public class EntityTplServiceImpl implements EntityTplService {
 												update = true;
 											}
 										}
-									} 
+									}
 
-								}	
+								}
 							}
 
 							if (update) {
@@ -568,17 +562,16 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 			try {
 				((RuleService) ruleService).disableRules(entityNodeRef);
-				
-				//Desactivate for all the transaction (do not reactivate it)
+
+				// Desactivate for all the transaction (do not reactivate it)
 				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
-				
+
 				for (EntityTplPlugin entityTplPlugin : entityTplPlugins) {
 					entityTplPlugin.beforeSynchronizeEntity(entityNodeRef, entityTplNodeRef);
 				}
 
 				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-				
-				
+
 				// copy files
 				entityService.copyFiles(entityTplNodeRef, entityNodeRef);
 
