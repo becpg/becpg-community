@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
 import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
 import fr.becpg.repo.product.data.productList.ResourceParamDataItem;
@@ -31,6 +32,12 @@ public class ProductSpecificationData extends ProductData {
 	private List<ResourceParamDataItem> resourceParams;
 
 	private List<SpecCompatibilityDataItem> specCompatibilityList;
+	
+	private List<DynamicCharactListItem> dynamicCharactList;
+	
+	
+	
+	
 
 	private List<NodeRef> specCompatibilityTpls = new ArrayList<>();
 
@@ -73,6 +80,17 @@ public class ProductSpecificationData extends ProductData {
 
 	public void setForbiddenIngList(List<ForbiddenIngListDataItem> forbiddenIngList) {
 		this.forbiddenIngList = forbiddenIngList;
+	}
+	
+	
+	@DataList
+	@AlfQname(qname = "bcpg:dynamicCharactList")
+	public List<DynamicCharactListItem> getDynamicCharactList() {
+		return dynamicCharactList;
+	}
+
+	public void setDynamicCharactList(List<DynamicCharactListItem> dynamicCharactList) {
+		this.dynamicCharactList = dynamicCharactList;
 	}
 
 	@DataList
