@@ -121,7 +121,12 @@ public class ExportSearchWebScript extends AbstractSearchWebScript {
 
 				String name = (String) nodeService.getProperty(templateNodeRef, ContentModel.PROP_NAME);
 
-				String mimeType = mimetypeService.getMimetype(reportFormat.toString());
+				String format = reportFormat.toString();
+				if(ReportFormat.XLSX.equals(reportFormat) && name.endsWith(ReportTplService.PARAM_VALUE_XLSMREPORT_EXTENSION)) {
+					format = "xlsm";
+				}
+				
+				String mimeType = mimetypeService.getMimetype(format);
 
 				name = FilenameUtils.removeExtension(name) + FilenameUtils.EXTENSION_SEPARATOR_STR + mimetypeService.getExtension(mimeType);
 
