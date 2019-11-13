@@ -189,6 +189,10 @@ public class NutrientRoundingRulesTest {
 		
 		assertEquals(3.78d, NutrientFormulationHelper.round(3.7777d, NutrientCode.VitA, Locale.FRENCH, "µg/100g"), 0);
 		assertEquals(3.8d, NutrientFormulationHelper.round(3.7777d, NutrientCode.VitD, Locale.FRENCH, "µg/100g"), 0);
+		
+		assertEquals(5d, NutrientFormulationHelper.roundGDA(5.41d, NutrientCode.VitA, Locale.US), 5.4d);
+		assertEquals(5d, NutrientFormulationHelper.roundGDA(5.46d, NutrientCode.VitA, Locale.US), 5.5d);
+		
 	}
 	
 	@Test
