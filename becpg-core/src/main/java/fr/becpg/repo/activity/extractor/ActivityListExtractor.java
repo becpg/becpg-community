@@ -28,6 +28,7 @@ import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AccessStatus;
+import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -220,7 +221,7 @@ public class ActivityListExtractor extends SimpleExtractor {
 						nodeRef = new NodeRef(propertyArray.getString(i));
 					}
 					if (nodeService.exists(nodeRef)) {
-						if (permissionService.hasPermission(nodeRef,"Read") == AccessStatus.ALLOWED){
+						if (permissionService.hasPermission(nodeRef,PermissionService.READ) == AccessStatus.ALLOWED){
 							if (propertyDef != null) {
 								postproperty.put(attributeExtractorService.getStringValue(propertyDef, (Serializable)nodeRef, new PropertyFormats(true)));
 							} else {
