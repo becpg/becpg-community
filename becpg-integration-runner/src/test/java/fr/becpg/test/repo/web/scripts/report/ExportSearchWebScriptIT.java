@@ -45,7 +45,6 @@ import com.google.gdata.util.common.net.UriEncoder;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
@@ -76,9 +75,6 @@ public class ExportSearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 
 	@Autowired
 	private ReportTplService reportTplService;
-
-	@Autowired
-	private EntityService entityService;
 
 	private NodeRef localSF1NodeRef;
 	private NodeRef rawMaterial1NodeRef;
@@ -165,7 +161,6 @@ public class ExportSearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 		// CompareProductServiceTest => beaucoup de code en commun !
 		// init objects
 
-		Date startTime = new Date();
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -225,7 +220,7 @@ public class ExportSearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 
 		}, false, true);
 
-		waitForSolr(startTime);
+		waitForSolr();
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -319,7 +314,7 @@ public class ExportSearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 
 		}, false, true);
 
-		waitForSolr(startTime);
+		waitForSolr();
 
 		// search on date range
 		try {
@@ -371,7 +366,7 @@ public class ExportSearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 
 		}, false, true);
 
-		waitForSolr(startTime);
+		waitForSolr();
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 

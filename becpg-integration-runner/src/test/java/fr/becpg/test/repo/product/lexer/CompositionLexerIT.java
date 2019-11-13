@@ -91,7 +91,7 @@ public class CompositionLexerIT extends PLMBaseTestCase {
 		}, false, true);
 		// Wait for Solr
 
-		waitForSolr(startTime);
+		waitForSolr();
 
 	}
 

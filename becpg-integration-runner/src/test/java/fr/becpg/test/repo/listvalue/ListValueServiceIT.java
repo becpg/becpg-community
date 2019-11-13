@@ -40,7 +40,6 @@ public class ListValueServiceIT extends AbstractListValuePluginTest {
 	@Test
 	public void testSuggestSupplier() {
 
-		Date startTime = new Date();
 		
 		createFinishProductNodeRef();
 
@@ -60,7 +59,7 @@ public class ListValueServiceIT extends AbstractListValuePluginTest {
 					PLMModel.TYPE_SUPPLIER, properties).getChildRef();
 		}, false, true);
 
-		waitForSolr(startTime);
+		waitForSolr();
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 

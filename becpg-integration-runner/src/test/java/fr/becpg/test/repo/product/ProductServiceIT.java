@@ -87,13 +87,7 @@ public class ProductServiceIT extends PLMBaseTestCase {
 	private EntityReportService entityReportService;
 
 	@Autowired
-	private ReportTplService reportTplService;
-
-	@Autowired
 	private EntityTplService entityTplService;
-
-	@Autowired
-	private DictionaryService dictionaryService;
 
 	@Autowired
 	private HierarchyService hierarchyService;
@@ -339,7 +333,7 @@ public class ProductServiceIT extends PLMBaseTestCase {
 
 		}, false, true);
 
-		waitForSolr(startTime);
+		waitForSolr();
 
 		final NodeRef rawMaterial2NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
