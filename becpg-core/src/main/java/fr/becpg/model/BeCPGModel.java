@@ -139,6 +139,13 @@ public interface BeCPGModel {
 	QName PROP_BRANCH_FROM_VERSION_LABEL = QName.createQName(BECPG_URI, "branchFromVersionLabel");
 	QName ASSOC_AUTO_MERGE_TO = QName.createQName(BECPG_URI, "autoMergeTo");
 	
+
+	QName PROP_AUTO_MERGE_VERSIONTYPE =  QName.createQName(BECPG_URI, "autoMergeVersionType");
+	QName PROP_AUTO_MERGE_COMMENTS  =  QName.createQName(BECPG_URI, "autoMergeComments");
+	QName PROP_AUTO_MERGE_IMPACTWUSED  =  QName.createQName(BECPG_URI, "autoMergeImpactWUsed");
+	QName ASPECT_AUTO_MERGE_ASPECT = QName.createQName(BeCPGModel.BECPG_URI, "autoMergeAspect");
+	
+	
 	QName ASPECT_LINKED_SEARCH = QName.createQName(BECPG_URI, "linkedSearchAspect");
 	QName ASSOC_LINKED_SEARCH_ASSOCIATION = QName.createQName(BECPG_URI, "linkedSearchAssociation");
 	
