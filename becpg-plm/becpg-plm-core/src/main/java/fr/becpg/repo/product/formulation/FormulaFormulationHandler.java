@@ -414,69 +414,72 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 					formulatedProduct.getProcessListView().getDynamicCharactList());
 		}
 		
-
-		for (ProductSpecificationData specData : formulatedProduct.getProductSpecifications()) {
-			copyTemplateDynamicCharactList(specData.getDynamicCharactList(), formulatedProduct.getCompoListView().getDynamicCharactList());
+		if(formulatedProduct.getProductSpecifications()!=null) {
+			for (ProductSpecificationData specData : formulatedProduct.getProductSpecifications()) {
+				copyTemplateDynamicCharactList(specData.getDynamicCharactList(), formulatedProduct.getCompoListView().getDynamicCharactList());
+			}
 		}
 
 	}
 
 	protected void copyTemplateDynamicCharactList(List<DynamicCharactListItem> sourceList, List<DynamicCharactListItem> targetList) {
 
-		for (DynamicCharactListItem sourceItem : sourceList) {
-			if (sourceItem.getTitle() != null) {
-				if (sourceItem.isSynchronisable()) {
-					boolean isFound = false;
-					for (DynamicCharactListItem targetItem : targetList) {
-						// charact renamed
-						if (sourceItem.getName().equals(targetItem.getName()) && !sourceItem.getTitle().equals(targetItem.getTitle())) {
-							targetItem.setTitle(sourceItem.getTitle());
-						}
-						// update formula
-						if (sourceItem.getName().equals(targetItem.getName())) {
-
-							targetItem.setName(sourceItem.getName());
-							targetItem.setTitle(sourceItem.getTitle());
-							targetItem.setSort(sourceItem.getSort());
-							if ((targetItem.getIsManual() == null) || !targetItem.getIsManual()) {
-								targetItem.setFormula(sourceItem.getFormula());
-								targetItem.setColumnName(sourceItem.getColumnName());
-								targetItem.setGroupColor(sourceItem.getGroupColor());
-								targetItem.setColor(sourceItem.getColor());
-								targetItem.setSynchronisableState(sourceItem.getSynchronisableState());
-								targetItem.setExecOrder(sourceItem.getExecOrder());
-								targetItem.setMultiLevelFormula(sourceItem.getMultiLevelFormula());
+		if(sourceList !=null && targetList!=null) {
+			for (DynamicCharactListItem sourceItem : sourceList) {
+				if (sourceItem.getTitle() != null) {
+					if (sourceItem.isSynchronisable()) {
+						boolean isFound = false;
+						for (DynamicCharactListItem targetItem : targetList) {
+							// charact renamed
+							if (sourceItem.getName().equals(targetItem.getName()) && !sourceItem.getTitle().equals(targetItem.getTitle())) {
+								targetItem.setTitle(sourceItem.getTitle());
 							}
-							isFound = true;
-							break;
+							// update formula
+							if (sourceItem.getName().equals(targetItem.getName())) {
+	
+								targetItem.setName(sourceItem.getName());
+								targetItem.setTitle(sourceItem.getTitle());
+								targetItem.setSort(sourceItem.getSort());
+								if ((targetItem.getIsManual() == null) || !targetItem.getIsManual()) {
+									targetItem.setFormula(sourceItem.getFormula());
+									targetItem.setColumnName(sourceItem.getColumnName());
+									targetItem.setGroupColor(sourceItem.getGroupColor());
+									targetItem.setColor(sourceItem.getColor());
+									targetItem.setSynchronisableState(sourceItem.getSynchronisableState());
+									targetItem.setExecOrder(sourceItem.getExecOrder());
+									targetItem.setMultiLevelFormula(sourceItem.getMultiLevelFormula());
+								}
+								isFound = true;
+								break;
+							}
 						}
-					}
-
-					if (!isFound) {
+	
+						if (!isFound) {
+							sourceItem.setNodeRef(null);
+							sourceItem.setParentNodeRef(null);
+							targetList.add(sourceItem);
+						}
+					} else {
 						sourceItem.setNodeRef(null);
 						sourceItem.setParentNodeRef(null);
+						sourceItem.setTransient(true);
 						targetList.add(sourceItem);
 					}
-				} else {
-					sourceItem.setNodeRef(null);
-					sourceItem.setParentNodeRef(null);
-					sourceItem.setTransient(true);
-					targetList.add(sourceItem);
 				}
 			}
+	
+			targetList.sort((o1, o2) -> {
+				if ((o1.getSort() == null) && (o2.getSort() == null)) {
+					return 0;
+				}
+				if ((o1.getSort() == null) && (o2.getSort() != null)) {
+					return -1;
+				}
+				if ((o2.getSort() == null) && (o1.getSort() != null)) {
+					return 1;
+				}
+				return o1.getSort().compareTo(o2.getSort());
+			});
 		}
-
-		targetList.sort((o1, o2) -> {
-			if ((o1.getSort() == null) && (o2.getSort() == null)) {
-				return 0;
-			}
-			if ((o1.getSort() == null) && (o2.getSort() != null)) {
-				return -1;
-			}
-			if ((o2.getSort() == null) && (o1.getSort() != null)) {
-				return 1;
-			}
-			return o1.getSort().compareTo(o2.getSort());
-		});
 	}
 }

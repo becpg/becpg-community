@@ -73,17 +73,17 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 		}
 
 		int sort = 2;
-		if((productData.getEntityTpl()!=null && !productData.getEntityTpl().equals(productData))){
+		if (((productData.getEntityTpl() != null) && !productData.getEntityTpl().equals(productData))) {
 			synchronizeTemplate(productData.getEntityTpl().getLabelClaimList(), productData.getLabelClaimList(), sort);
 		}
 		List<ProductSpecificationData> specDatas = productData.getProductSpecifications();
-		if (specDatas!=null && !specDatas.isEmpty()) {
+		if ((specDatas != null) && !specDatas.isEmpty()) {
 			specDatas.sort((o1, o2) -> {
 				return o1.getName().compareTo(o2.getName());
 			});
 
 			for (ProductSpecificationData specData : specDatas) {
-				sort ++;
+				sort++;
 				synchronizeTemplate(specData.getLabelClaimList(), productData.getLabelClaimList(), sort);
 			}
 		}
@@ -138,46 +138,49 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 
 	private void synchronizeTemplate(List<LabelClaimListDataItem> templateSimpleListDataList, List<LabelClaimListDataItem> simpleListDataList,
 			int sort) {
-		for (LabelClaimListDataItem tsl : templateSimpleListDataList) {
-			if (tsl.getLabelClaim() != null) {
-				boolean isFound = false;
-				for (LabelClaimListDataItem sl : simpleListDataList) {
-					if (tsl.getLabelClaim().equals(sl.getLabelClaim())) {
-						isFound = true;
-						break;
+
+		if ((templateSimpleListDataList != null) && (simpleListDataList != null)) {
+
+			for (LabelClaimListDataItem tsl : templateSimpleListDataList) {
+				if (tsl.getLabelClaim() != null) {
+					boolean isFound = false;
+					for (LabelClaimListDataItem sl : simpleListDataList) {
+						if (tsl.getLabelClaim().equals(sl.getLabelClaim())) {
+							isFound = true;
+							break;
+						}
 					}
-				}
-				if (!isFound) {
-					LabelClaimListDataItem toAdd = tsl.clone();
-					toAdd.setName(null);
-					toAdd.setNodeRef(null);
-					toAdd.setParentNodeRef(null);
-					simpleListDataList.add(toAdd);
-				}
-
-			}
-		}
-
-		// check sorting
-		int lastSort = 0;
-		for (LabelClaimListDataItem sl : simpleListDataList) {
-			if (sl.getLabelClaim() != null) {
-				boolean isFound = false;
-
-				for (LabelClaimListDataItem tsl : templateSimpleListDataList) {
-					if (sl.getLabelClaim().equals(tsl.getLabelClaim())) {
-						isFound = true;
-						lastSort = (tsl.getSort()) * (10^sort);
-						sl.setSort(lastSort);
+					if (!isFound) {
+						LabelClaimListDataItem toAdd = tsl.clone();
+						toAdd.setName(null);
+						toAdd.setNodeRef(null);
+						toAdd.setParentNodeRef(null);
+						simpleListDataList.add(toAdd);
 					}
-				}
 
-				if (!isFound) {
-					sl.setSort(++lastSort);
 				}
 			}
-		}
 
+			// check sorting
+			int lastSort = 0;
+			for (LabelClaimListDataItem sl : simpleListDataList) {
+				if (sl.getLabelClaim() != null) {
+					boolean isFound = false;
+
+					for (LabelClaimListDataItem tsl : templateSimpleListDataList) {
+						if (sl.getLabelClaim().equals(tsl.getLabelClaim())) {
+							isFound = true;
+							lastSort = (tsl.getSort()) * (10 ^ sort);
+							sl.setSort(lastSort);
+						}
+					}
+
+					if (!isFound) {
+						sl.setSort(++lastSort);
+					}
+				}
+			}
+		}
 	}
 
 	private void visitPart(ProductData productData, ProductData partProduct, LabelClaimListDataItem subLabelClaimItem, Set<NodeRef> resetedClaim) {
