@@ -265,7 +265,7 @@ public class CompareProductServiceIT extends AbstractCompareProductTest {
 
 			}, false, true);
 
-			waitForSolr(startTime);
+			waitForSolr();
 
 			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 

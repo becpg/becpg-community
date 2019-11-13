@@ -311,7 +311,10 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 	}
 
-	public void waitForSolr(final Date startTime) {
+	public void waitForSolr() {
+		
+		Date startTime = new Date();
+		
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			NodeRef nodeRef = nodeService

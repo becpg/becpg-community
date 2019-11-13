@@ -40,11 +40,9 @@ public class CompoListValuePluginIT extends AbstractListValuePluginTest {
 	@Test
 	public void testCompoListValuePlugin() {
 
-		Date startTime = new Date();
-
 		final NodeRef finishedProductNodeRef = createFinishProductNodeRef();
 
-		waitForSolr(startTime);
+		waitForSolr();
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
