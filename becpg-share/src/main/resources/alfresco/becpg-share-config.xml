@@ -230,6 +230,7 @@
 				<aspect name="bcpg:entityTplAspect" />
 				<aspect name="bcpg:entityBranchAspect" />
 				<aspect name="bcpg:docLinkedEntitiesAspect" />
+				<aspect name="bcpg:autoMergeAspect" />
 			</visible>
 
 			<!-- Aspects that a user can add. Same as "visible" if left empty -->
@@ -302,8 +303,31 @@
 				<param name="page">wused?nodeRefs={node.nodeRef}&amp;type={node.type}</param>
 				<evaluator>evaluator.becpg.doclib.action.entity</evaluator>
 			</action>
+			
+			
+			
+		   	<action id="entity-merge" type="javascript" label="actions.document.merge-entity">
+				<param name="function">onActionMergeEntity</param>
+				<permissions>
+					<permission allow="true">Write</permission>
+				</permissions>
+				<evaluator>evaluator.becpg.doclib.action.entity.isBranch</evaluator>
+				<evaluator negate="true">evaluator.becpg.doclib.action.entity.isSystemEntity</evaluator>
+				<evaluator negate="true">evaluator.becpg.doclib.action.entity.isWorkingCopy</evaluator>
+				<evaluator negate="true">evaluator.doclib.action.notEditable</evaluator>
+				<evaluator>evaluator.becpg.doclib.action.entity</evaluator>
+			</action>
+		
+			<action id="entity-branch" type="javascript" label="actions.document.branch-entity">
+				<param name="function">onActionBranchEntity</param>
+				<evaluator negate="true">evaluator.becpg.doclib.action.entity.isSystemEntity</evaluator>
+				<evaluator negate="true">evaluator.becpg.doclib.action.entity.isWorkingCopy</evaluator>
+				<evaluator negate="true">evaluator.doclib.action.notEditable</evaluator>
+				<evaluator>evaluator.becpg.doclib.action.entity</evaluator>
+			</action>
+			
 
-			<action id="entity-checkin" type="javascript" label="actions.document.checkin-entity">
+		<!-- 	<action id="entity-checkin" type="javascript" label="actions.document.checkin-entity">
 				<param name="function">onActionCheckInEntity</param>
 				<permissions>
 					<permission allow="true">Write</permission>
@@ -322,7 +346,7 @@
 				<evaluator negate="true">evaluator.becpg.doclib.action.entity.isWorkingCopy</evaluator>
 				<evaluator negate="true">evaluator.doclib.action.notEditable</evaluator>
 			</action>
-			<!-- Cancel editing (cancel checkout) -->
+			Cancel editing (cancel checkout)
 			<action id="entity-cancel-editing" type="javascript" label="actions.document.cancel-checkout-entity">
 				<param name="function">onActionCancelCheckOutEntity</param>
 				<permissions>
@@ -330,7 +354,7 @@
 				</permissions>
 				<evaluator>evaluator.doclib.action.isWorkingCopy</evaluator>
 			</action>
-		
+		 -->
 
 			<action id="entity-view-documents" type="javascript" label="actions.entity.view-documents">
 				<param name="function">onActionShowDocs</param>
@@ -444,9 +468,12 @@
 				<action index="101" id="document-edit-metadata" icon="folder-edit-metadata" label="actions.folder.edit-metadata" >
 		            <param name="page">edit-metadata?nodeRef={node.nodeRef}&amp;siteId={site}</param>
 		        </action>
-				<action index="102" id="entity-checkin" />
+				<!-- <action index="102" id="entity-checkin" />
 				<action index="103" id="entity-checkout" />
-				<action index="104" id="entity-cancel-editing" />
+				<action index="104" id="entity-cancel-editing" /> -->
+				
+				<action index="103" id="entity-branch" />
+				<action index="104" id="entity-merge" />
 				<action index="105" id="entity-view-original" />
 				<action index="106" id="entity-view-working-copy" />
 				<!-- <action index="108" id="entity-refresh-reports" /> -->
