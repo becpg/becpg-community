@@ -46,6 +46,8 @@ import fr.becpg.repo.ecm.data.dataList.ReplacementListDataItem;
 import fr.becpg.repo.entity.datalist.WUsedListService;
 import fr.becpg.repo.entity.datalist.WUsedListService.WUsedOperator;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
+import fr.becpg.repo.entity.version.EntityVersionService;
+import fr.becpg.repo.entity.version.EntityVersionServiceImpl;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.product.data.ProductData;
@@ -106,18 +108,20 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 	@Autowired
 	private WUsedListService wUsedListService;
 
+	@Autowired
+	private EntityVersionService entityVersionService;
+
 	@Override
 	public boolean addAutomaticChangeEntry(final NodeRef entityNodeRef, final ChangeOrderData currentUserChangeOrderData) {
 
-		if( Boolean.TRUE.equals(withoutRecord) && currentUserChangeOrderData == null) {
+		if (Boolean.TRUE.equals(withoutRecord) && currentUserChangeOrderData == null) {
 			return false;
 		}
-		
+
 		if (!accept(entityNodeRef)) {
 			return false;
 		}
 
-		
 		return AuthenticationUtil.runAsSystem(() -> {
 			NodeRef parentNodeRef = getChangeOrderFolder();
 
@@ -215,57 +219,37 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 
 		boolean ret;
 		if (isEnable) {
-			if (withoutRecord) {
-				return reformulateChangedEntities();
-			} else {
 
-				if (shouldApplyAutomaticECO) {
-					if (logger.isDebugEnabled()) {
-						logger.debug("Try to apply automatic change order");
-					}
+			if (autoMergeBranch()) {
 
-					final NodeRef ecoNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-						NodeRef parentNodeRef = getChangeOrderFolder();
-						return getAutomaticECONoderef(parentNodeRef);
-					}, false, true);
+				if (withoutRecord) {
+					return reformulateChangedEntities();
+				} else {
 
-					if (ecoNodeRef != null) {
+					if (shouldApplyAutomaticECO) {
+						if (logger.isDebugEnabled()) {
+							logger.debug("Try to apply automatic change order");
+						}
 
-						transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-							ecoService.setInProgress(ecoNodeRef);
-							return true;
+						final NodeRef ecoNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+							NodeRef parentNodeRef = getChangeOrderFolder();
+							return getAutomaticECONoderef(parentNodeRef);
 						}, false, true);
 
-						ret = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+						if (ecoNodeRef != null) {
 
-							if (logger.isDebugEnabled()) {
-								logger.debug("Found automatic change order to calculate WUsed :" + ecoNodeRef);
-							}
-							try {
-								ecoService.calculateWUsedList(ecoNodeRef, true);
-							} catch (Exception e) {
-								if (e instanceof ConcurrencyFailureException) {
-									throw (ConcurrencyFailureException) e;
-								}
-								logger.error(e, e);
-								return false;
-							}
-							return true;
+							transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+								ecoService.setInProgress(ecoNodeRef);
+								return true;
+							}, false, true);
 
-						}, false, true);
+							ret = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-						if (ret) {
-							return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 								if (logger.isDebugEnabled()) {
-									logger.debug("Found automatic change order to apply :" + ecoNodeRef);
+									logger.debug("Found automatic change order to calculate WUsed :" + ecoNodeRef);
 								}
 								try {
-
-									if (ecoService.apply(ecoNodeRef) && deleteOnApply) {
-										logger.debug("It's applied and deleteOnApply is set to true, deleting ECO with NR=" + ecoNodeRef);
-										nodeService.deleteNode(ecoNodeRef);
-									}
-
+									ecoService.calculateWUsedList(ecoNodeRef, true);
 								} catch (Exception e) {
 									if (e instanceof ConcurrencyFailureException) {
 										throw (ConcurrencyFailureException) e;
@@ -274,13 +258,81 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 									return false;
 								}
 								return true;
+
 							}, false, true);
+
+							if (ret) {
+								return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+									if (logger.isDebugEnabled()) {
+										logger.debug("Found automatic change order to apply :" + ecoNodeRef);
+									}
+									try {
+
+										if (ecoService.apply(ecoNodeRef) && deleteOnApply) {
+											logger.debug("It's applied and deleteOnApply is set to true, deleting ECO with NR=" + ecoNodeRef);
+											nodeService.deleteNode(ecoNodeRef);
+										}
+
+									} catch (Exception e) {
+										if (e instanceof ConcurrencyFailureException) {
+											throw (ConcurrencyFailureException) e;
+										}
+										logger.error(e, e);
+										return false;
+									}
+									return true;
+								}, false, true);
+							}
 						}
 					}
 				}
 			}
 		}
 		return false;
+	}
+
+	private boolean autoMergeBranch() {
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.DATE, +1);
+
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+
+		String dateRange = dateFormat.format(cal.getTime());
+
+		String ftsQuery = String.format("@bcpg\\:autoMergeDate:[MIN TO %s]", dateRange);
+
+		logger.info("Start of auto merge entities for: " + ftsQuery);
+
+		List<NodeRef> nodeRefs = transactionService.getRetryingTransactionHelper().doInTransaction(() -> BeCPGQueryBuilder.createQuery()
+				.ofType(PLMModel.TYPE_PRODUCT).withAspect(BeCPGModel.ASPECT_AUTO_MERGE_ASPECT).andFTSQuery(ftsQuery).maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list(), false, true);
+
+		for (NodeRef entityNodeRef : nodeRefs) {
+
+			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Found product to merge: " + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME) + " (" + entityNodeRef
+							+ ") ");
+				}
+				try {
+					AuthenticationUtil.runAsSystem(() -> {
+						entityVersionService.mergeBranch(entityNodeRef);
+
+						return true;
+					});
+
+				} catch (Exception e) {
+					if (e instanceof ConcurrencyFailureException) {
+						throw (ConcurrencyFailureException) e;
+					}
+					logger.error("Cannot merge node:" + entityNodeRef, e);
+				}
+
+				return true;
+
+			}, false, true);
+		}
+
+		return true;
 	}
 
 	private boolean reformulateChangedEntities() {
@@ -293,8 +345,8 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 		String dateRange = dateFormat.format(cal.getTime());
 
 		String ftsQuery = String.format("@cm\\:created:[%s TO MAX] OR @cm\\:modified:[%s TO MAX]", dateRange, dateRange);
-		
-		logger.info("Start of reformulate changed entities for: "+ftsQuery);
+
+		logger.info("Start of reformulate changed entities for: " + ftsQuery);
 
 		List<NodeRef> nodeRefs = transactionService.getRetryingTransactionHelper().doInTransaction(() -> BeCPGQueryBuilder.createQuery()
 				.ofType(PLMModel.TYPE_PRODUCT).andFTSQuery(ftsQuery).maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list(), false, true);
@@ -317,13 +369,12 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 						if (associationQName != null) {
 							MultiLevelListData wUsedData = wUsedListService.getWUsedEntity(Arrays.asList(entityNodeRef), WUsedOperator.AND,
 									associationQName, RepoConsts.MAX_DEPTH_LEVEL);
-							
-							if(logger.isTraceEnabled()) {
-								logger.trace("WUsed to apply:"+wUsedData.toString());
-								logger.trace("Leaf size :" +  wUsedData.getAllLeafs().size());
-										
+
+							if (logger.isTraceEnabled()) {
+								logger.trace("WUsed to apply:" + wUsedData.toString());
+								logger.trace("Leaf size :" + wUsedData.getAllLeafs().size());
+
 							}
-							
 
 							return wUsedData.getAllLeafs();
 						}
@@ -337,8 +388,8 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 				return new ArrayList<>();
 
 			}, false, true);
-			
-			logger.info(" - reformulating: "+toReformulates.size()+" entities");
+
+			logger.info(" - reformulating: " + toReformulates.size() + " entities");
 
 			for (NodeRef toReformulate : toReformulates) {
 
@@ -369,7 +420,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 							if (e instanceof ConcurrencyFailureException) {
 								throw (ConcurrencyFailureException) e;
 							}
-							logger.error("Cannot reformulate node:"+ toReformulate, e);
+							logger.error("Cannot reformulate node:" + toReformulate, e);
 							return false;
 						} finally {
 							policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
@@ -384,7 +435,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 			}
 
 		}
-		
+
 		logger.info("End of reformulate changed entities");
 
 		return ret;
