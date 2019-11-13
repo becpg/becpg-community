@@ -281,6 +281,38 @@
 		</forms>
 	</config>
 	
+	
+	<config evaluator="aspect" condition="bcpg:autoMergeAspect">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="bcpg:autoMergeDate" />
+				    <show id="bcpg:autoMergeTo" />
+					<show id="bcpg:autoMergeVersionType" />
+					<show id="bcpg:autoMergeComments" />
+					<show id="bcpg:autoMergeImpactWUsed" />
+				</field-visibility>
+				<appearance>
+					<set id="branch" appearance="bordered-panel" label-id="becpg.forms.set.branch.label" />
+					<field id="bcpg:autoMergeDate" set="branch" />
+				    <field id="bcpg:autoMergeTo" set="branch" >
+				    	<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/branches</control-param>
+							<control-param name="urlParamsToPass">itemId</control-param>
+						</control>
+					</field>
+				
+					<field id="bcpg:autoMergeVersionType" set="branch" />
+					<field id="bcpg:autoMergeComments" set="branch" >
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					<field id="bcpg:autoMergeImpactWUsed" set="branch" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	
+	
 	<!-- bcpg:notificationRuleList -->
 	<config evaluator="model-type" condition="bcpg:notificationRuleList">
 		<forms>

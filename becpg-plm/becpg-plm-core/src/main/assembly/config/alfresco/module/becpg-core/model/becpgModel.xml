@@ -27,6 +27,8 @@
 				<value>true</value>
 			</parameter>
 		</constraint>
+
+
 		<constraint name="bcpg:systemState" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -47,6 +49,17 @@
 				</list>
 			</parameter>
 		</constraint>
+		
+		
+		<constraint name="bcpg:versionTypes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>MINOR</value>
+					<value>MAJOR</value>
+				</list>
+			</parameter>
+		</constraint>
+		
 		<constraint name="bcpg:activityTypes" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -89,7 +102,7 @@
 				</list>
 			</parameter>
 		</constraint>
-		
+
 		<constraint name="bcpg:servingSizeUnit" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -101,8 +114,8 @@
 				</list>
 			</parameter>
 		</constraint>
-		
-		
+
+
 		<constraint name="bcpg:compoListUnit" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -242,7 +255,7 @@
 				<value>true</value>
 			</parameter>
 		</constraint>
-		
+
 		<constraint name="bcpg:allergenType" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -253,14 +266,14 @@
 		</constraint>
 		<constraint name="bcpg:declarationTypes" type="LIST">
 			<parameter name="allowedValues">
-				<list>					
+				<list>
 					<value>Declare</value>
 					<value>DoNotDetails</value>
 					<value>Detail</value>
 					<value>Kit</value>
 					<value>Group</value>
 					<value>Omit</value>
-					<value>DoNotDeclare</value>					
+					<value>DoNotDeclare</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -278,17 +291,17 @@
 					<value>DoNotDetailsComponents</value>
 					<value>Omit</value>
 					<value>DoNotDeclare</value>
-                    <value>DeclareThreshold</value>
+					<value>DeclareThreshold</value>
 					<value>Type</value>
 					<value>Render</value>
 					<value>Locale</value>
 					<value>Format</value>
 					<value>Prefs</value>
-					
+
 				</list>
 			</parameter>
 		</constraint>
-		
+
 		<constraint name="bcpg:lrGroups" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -317,14 +330,14 @@
 				</list>
 			</parameter>
 		</constraint>
-		
+
 		<constraint name="bcpg:costTypes" type="LIST">
 			<parameter name="allowedValues">
-			<list>
+				<list>
 					<value></value>
 					<value>Composition</value>
 					<value>Packaging</value>
-					<value>Process</value>		
+					<value>Process</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -465,8 +478,8 @@
 			<parameter name="addEmptyValue">
 				<value>true</value>
 			</parameter>
-		</constraint>		
-		
+		</constraint>
+
 		<constraint name="bcpg:packagingLevel" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -593,7 +606,7 @@
 				</list>
 			</parameter>
 		</constraint>
-		
+
 		<constraint name="bcpg:nrTimeTypes" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -605,7 +618,7 @@
 				</list>
 			</parameter>
 		</constraint>
-		
+
 		<constraint name="bcpg:nrVersionFilterTypes" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -615,7 +628,7 @@
 				</list>
 			</parameter>
 		</constraint>
-		
+
 		<constraint name="bcpg:nrRecurringTimeTypes" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -626,7 +639,7 @@
 				</list>
 			</parameter>
 		</constraint>
-		
+
 		<constraint name="bcpg:nrRecurringDays" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -641,7 +654,7 @@
 				</list>
 			</parameter>
 		</constraint>
-		
+
 		<constraint name="bcpg:meatTypes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
@@ -662,7 +675,7 @@
 	</constraints>
 
 	<types>
-	
+
 		<type name="bcpg:listValue">
 			<parent>bcpg:entityListItem</parent>
 			<properties>
@@ -673,10 +686,10 @@
 					<type>d:mltext</type>
 					<mandatory>true</mandatory>
 					<index enabled="true">
-	                  <atomic>true</atomic>
-	                  <stored>false</stored> 
-	                  <tokenised>both</tokenised>
-	               </index>
+						<atomic>true</atomic>
+						<stored>false</stored>
+						<tokenised>both</tokenised>
+					</index>
 				</property>
 			</properties>
 		</type>
@@ -688,10 +701,10 @@
 					<type>d:mltext</type>
 					<mandatory>true</mandatory>
 					<index enabled="true">
-	                  <atomic>true</atomic>
-	                  <stored>false</stored> 
-	                  <tokenised>both</tokenised>
-	               </index>
+						<atomic>true</atomic>
+						<stored>false</stored>
+						<tokenised>both</tokenised>
+					</index>
 				</property>
 			</properties>
 			<mandatory-aspects>
@@ -743,12 +756,12 @@
 			<mandatory-aspects>
 				<aspect>bcpg:sortableListAspect</aspect>
 			</mandatory-aspects>
-		</type>		
-		
+		</type>
+
 		<type name="bcpg:smartContentListItem">
 			<parent>bcpg:entityListItem</parent>
 		</type>
-		
+
 		<type name="bcpg:activityList">
 			<parent>bcpg:entityListItem</parent>
 			<properties>
@@ -786,30 +799,30 @@
 						<many>true</many>
 					</target>
 				</association>
-			</associations>		
-		
+			</associations>
+
 			<mandatory-aspects>
 				<aspect>bcpg:codeAspect</aspect>
 				<aspect>bcpg:entityListsAspect</aspect>
 			</mandatory-aspects>
 		</type>
-		
-		
+
+
 		<type name="bcpg:productSpecCompatibilityList">
 			<parent>bcpg:productListItem</parent>
-			<properties>														
+			<properties>
 				<property name="bcpg:psclReqType">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<constraints>
 						<constraint ref="bcpg:reqTypes" />
-					</constraints>					
-				</property>				
+					</constraints>
+				</property>
 				<property name="bcpg:psclReqDetails">
-					<type>d:text</type>				
-					<index enabled="false"/>	
-				</property>	
-			</properties>		
+					<type>d:text</type>
+					<index enabled="false" />
+				</property>
+			</properties>
 			<associations>
 				<association name="bcpg:psclSourceItem">
 					<source>
@@ -822,9 +835,9 @@
 						<many>false</many>
 					</target>
 				</association>
-			</associations>	
+			</associations>
 		</type>
-		
+
 
 		<type name="bcpg:productMicrobioCriteria">
 			<parent>bcpg:entityV2</parent>
@@ -832,18 +845,18 @@
 				<property name="bcpg:pmcRegulation">
 					<type>d:mltext</type>
 					<index enabled="true">
-	                  <atomic>true</atomic>
-	                  <stored>false</stored> 
-	                  <tokenised>both</tokenised>
-	               </index>
+						<atomic>true</atomic>
+						<stored>false</stored>
+						<tokenised>both</tokenised>
+					</index>
 				</property>
 				<property name="bcpg:pmcConcernedProducts">
 					<type>d:mltext</type>
 					<index enabled="true">
-	                  <atomic>true</atomic>
-	                  <stored>false</stored> 
-	                  <tokenised>both</tokenised>
-	               </index>
+						<atomic>true</atomic>
+						<stored>false</stored>
+						<tokenised>both</tokenised>
+					</index>
 				</property>
 			</properties>
 			<mandatory-aspects>
@@ -901,11 +914,11 @@
 		</type>
 		<type name="bcpg:packagingMaterial">
 			<parent>bcpg:product</parent>
-				<properties>
-					<property name="bcpg:foodContact">
-						<type>d:boolean</type>
-					</property>
-				</properties>
+			<properties>
+				<property name="bcpg:foodContact">
+					<type>d:boolean</type>
+				</property>
+			</properties>
 			<mandatory-aspects>
 				<aspect>bcpg:eanAspect</aspect>
 				<aspect>bcpg:suppliersAspect</aspect>
@@ -915,9 +928,9 @@
 		<type name="bcpg:resourceProduct">
 			<parent>bcpg:product</parent>
 			<overrides>
-			   <property name="bcpg:productUnit">
-				  <default>h</default>
-			    </property>
+				<property name="bcpg:productUnit">
+					<default>h</default>
+				</property>
 			</overrides>
 			<mandatory-aspects>
 				<aspect>bcpg:eanAspect</aspect>
@@ -930,13 +943,13 @@
 			<parent>bcpg:entityListItem</parent>
 			<properties>
 				<property name="bcpg:charactName">
-				    <type>d:mltext</type>
-				    <mandatory>true</mandatory>
-				    <index enabled="true">
-	                  <atomic>true</atomic>
-	                  <stored>false</stored> 
-	                  <tokenised>both</tokenised>
-	               </index>
+					<type>d:mltext</type>
+					<mandatory>true</mandatory>
+					<index enabled="true">
+						<atomic>true</atomic>
+						<stored>false</stored>
+						<tokenised>both</tokenised>
+					</index>
 				</property>
 			</properties>
 			<mandatory-aspects>
@@ -965,7 +978,7 @@
 				</property>
 				<property name="bcpg:allergenRegulatoryThreshold">
 					<type>d:double</type>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 			</properties>
 			<associations>
@@ -1089,7 +1102,7 @@
 					<constraints>
 						<constraint ref="bcpg:nutType" />
 					</constraints>
-				</property>				
+				</property>
 				<property name="bcpg:nutUnit">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
@@ -1117,16 +1130,16 @@
 					<index enabled="false" />
 				</property>
 				<property name="bcpg:nutSort">
-	            <type>d:mltext</type>
-	            <mandatory>false</mandatory>
-	            <index enabled="false"/>
-             </property>
+					<type>d:mltext</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
 			</properties>
-				
-		</type>
-		
 
-       <type name="bcpg:nutrientProfile">
+		</type>
+
+
+		<type name="bcpg:nutrientProfile">
 			<parent>bcpg:charact</parent>
 			<properties>
 				<property name="bcpg:nutrientProfileScoreFormula">
@@ -1190,15 +1203,15 @@
 				<property name="bcpg:bioOriginType">
 					<type>d:mltext</type>
 					<index enabled="true">
-	                  <atomic>true</atomic>
-	                  <stored>false</stored> 
-	                  <tokenised>both</tokenised>
-	               </index>
+						<atomic>true</atomic>
+						<stored>false</stored>
+						<tokenised>both</tokenised>
+					</index>
 				</property>
 			</properties>
 		</type>
 
-		
+
 
 		<type name="bcpg:supplier">
 			<parent>bcpg:entityV2</parent>
@@ -1239,7 +1252,7 @@
 				<aspect>bcpg:entityTplRefAspect</aspect>
 			</mandatory-aspects>
 		</type>
-		
+
 		<type name="bcpg:client">
 			<parent>bcpg:entityV2</parent>
 			<properties>
@@ -1278,7 +1291,7 @@
 				<aspect>bcpg:entityTplRefAspect</aspect>
 			</mandatory-aspects>
 		</type>
-		
+
 		<type name="bcpg:plant">
 			<parent>bcpg:entityListItem</parent>
 			<properties>
@@ -1320,38 +1333,38 @@
 				<aspect>bcpg:location</aspect>
 			</mandatory-aspects>
 		</type>
-		
+
 		<type name="bcpg:subsidiary">
 			<parent>bcpg:entityListItem</parent>
 		</type>
-		
-		
+
+
 		<type name="bcpg:trademark">
 			<parent>bcpg:entityListItem</parent>
 			<properties>
-			  <property name="bcpg:trademarkType">
-			 	    <type>d:text</type>
+				<property name="bcpg:trademarkType">
+					<type>d:text</type>
 					<constraints>
 						<constraint ref="bcpg:trademarkTypes" />
 					</constraints>
-			  </property>
-			</properties>
-		</type>
-		
-		<type name="bcpg:customsCode">
-			<parent>bcpg:charact</parent>
-			<properties>
-			   <property name="bcpg:cstsCode">
-			   	   <type>d:text</type>
-				   <mandatory>true</mandatory>
 				</property>
 			</properties>
 		</type>
-		
+
+		<type name="bcpg:customsCode">
+			<parent>bcpg:charact</parent>
+			<properties>
+				<property name="bcpg:cstsCode">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+				</property>
+			</properties>
+		</type>
+
 		<type name="bcpg:certification">
 			<parent>bcpg:entityListItem</parent>
 		</type>
-		
+
 		<type name="bcpg:approvalNumber">
 			<parent>bcpg:entityListItem</parent>
 		</type>
@@ -1368,7 +1381,7 @@
 					<type>d:double</type>
 					<mandatory>true</mandatory>
 					<index enabled="false" />
-				</property>				
+				</property>
 				<property name="bcpg:compoListUnit">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
@@ -1707,7 +1720,7 @@
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
-			   <property name="bcpg:illLogValue">
+				<property name="bcpg:illLogValue">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<index enabled="false" />
@@ -1736,11 +1749,11 @@
 			<properties>
 				<property name="bcpg:lrLabel">
 					<type>d:mltext</type>
-					 <index enabled="true">
-		                  <atomic>true</atomic>
-		                  <stored>false</stored> 
-		                  <tokenised>both</tokenised>
-		               </index>
+					<index enabled="true">
+						<atomic>true</atomic>
+						<stored>false</stored>
+						<tokenised>both</tokenised>
+					</index>
 				</property>
 				<property name="bcpg:lrGroup">
 					<type>d:text</type>
@@ -1824,7 +1837,7 @@
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
-				<property name="bcpg:ingListVolumeQtyPerc"> 
+				<property name="bcpg:ingListVolumeQtyPerc">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="false" />
@@ -1902,7 +1915,7 @@
 						<mandatory>false</mandatory>
 						<many>true</many>
 					</target>
-				</association>	
+				</association>
 			</associations>
 			<mandatory-aspects>
 				<aspect>bcpg:depthLevelAspect</aspect>
@@ -2027,7 +2040,7 @@
 					<type>d:text</type>
 					<index enabled="false" />
 				</property>
-				
+
 			</properties>
 			<associations>
 				<association name="bcpg:nutListNut">
@@ -2144,10 +2157,10 @@
 					<type>d:mltext</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-	                  <atomic>true</atomic>
-	                  <stored>false</stored> 
-	                  <tokenised>both</tokenised>
-	               </index>
+						<atomic>true</atomic>
+						<stored>false</stored>
+						<tokenised>both</tokenised>
+					</index>
 				</property>
 				<property name="bcpg:filQtyPercMaxi">
 					<type>d:double</type>
@@ -2349,7 +2362,7 @@
 					<type>d:text</type>
 					<default></default>
 					<constraints>
-					  <constraint ref="bcpg:labelClaimValues"></constraint>
+						<constraint ref="bcpg:labelClaimValues"></constraint>
 					</constraints>
 				</property>
 				<property name="bcpg:lclComments">
@@ -2443,15 +2456,15 @@
 					<constraints>
 						<constraint ref="bcpg:dynamicCharactExecOrders" />
 					</constraints>
-				</property>	
-				<property name="bcpg:dynamicCharactMultiLevel" >
+				</property>
+				<property name="bcpg:dynamicCharactMultiLevel">
 					<type>d:boolean</type>
 					<default>false</default>
 				</property>
-					
+
 			</properties>
 		</type>
-	
+
 		<type name="bcpg:labelClaim">
 			<parent>bcpg:charact</parent>
 			<properties>
@@ -2481,7 +2494,7 @@
 				</property>
 			</properties>
 		</type>
-		
+
 		<type name="bcpg:variant">
 			<parent>cm:content</parent>
 			<properties>
@@ -2497,18 +2510,18 @@
 				<property name="bcpg:storageConditionsMode">
 					<type>d:mltext</type>
 					<index enabled="true">
-	                  <atomic>true</atomic>
-	                  <stored>false</stored> 
-	                  <tokenised>both</tokenised>
-	               </index>
+						<atomic>true</atomic>
+						<stored>false</stored>
+						<tokenised>both</tokenised>
+					</index>
 				</property>
 				<property name="bcpg:storageConditionsTemperature">
 					<type>d:mltext</type>
 					<index enabled="true">
-	                  <atomic>true</atomic>
-	                  <stored>false</stored> 
-	                  <tokenised>both</tokenised>
-	               </index>
+						<atomic>true</atomic>
+						<stored>false</stored>
+						<tokenised>both</tokenised>
+					</index>
 				</property>
 			</properties>
 		</type>
@@ -2516,7 +2529,7 @@
 		<type name="bcpg:precautionOfUse">
 			<parent>bcpg:charact</parent>
 		</type>
-		
+
 		<type name="bcpg:notificationRuleList">
 			<parent>bcpg:entityListItem</parent>
 			<properties>
@@ -2528,7 +2541,7 @@
 					<type>d:text</type>
 				</property>
 				<property name="bcpg:nrConditions">
-					<type>d:text</type>					
+					<type>d:text</type>
 				</property>
 				<property name="bcpg:nrFrequency">
 					<type>d:int</type>
@@ -2552,25 +2565,25 @@
 					<mandatory enforced="true">true</mandatory>
 				</property>
 				<property name="bcpg:nrVersionFilter">
-					<type>d:text</type>	
+					<type>d:text</type>
 					<constraints>
 						<constraint ref="bcpg:nrVersionFilterTypes" />
-					</constraints>				
+					</constraints>
 				</property>
 				<property name="bcpg:nrForceNotification">
-					<type>d:boolean</type>					
+					<type>d:boolean</type>
 				</property>
 				<property name="bcpg:nrRecurringTimeType">
-					<type>d:text</type>	
+					<type>d:text</type>
 					<constraints>
 						<constraint ref="bcpg:nrRecurringTimeTypes" />
-					</constraints>				
+					</constraints>
 				</property>
 				<property name="bcpg:nrRecurringDay">
-					<type>d:text</type>	
+					<type>d:text</type>
 					<constraints>
 						<constraint ref="bcpg:nrRecurringDays" />
-					</constraints>				
+					</constraints>
 				</property>
 			</properties>
 			<associations>
@@ -2606,11 +2619,11 @@
 						<many>false</many>
 					</target>
 				</association>
-			</associations>			
+			</associations>
 		</type>
 
 	</types>
-	
+
 	<aspects>
 	
 	  <!--  
@@ -2623,7 +2636,7 @@
 			</properties>
 		</aspect>
        -->
-       
+
 		<aspect name="bcpg:formulatedEntityAspect">
 			<properties>
 				<property name="bcpg:formulatedDate">
@@ -2631,8 +2644,8 @@
 				</property>
 			</properties>
 		</aspect>
-		
-		
+
+
 		<aspect name="bcpg:stateActivityAspect">
 			<properties>
 				<property name="bcpg:stateActivityModified">
@@ -2646,32 +2659,32 @@
 				</property>
 			</properties>
 		</aspect>
-		
-	
+
+
 		<aspect name="bcpg:legalNameAspect">
 			<properties>
 				<property name="bcpg:legalName">
 					<type>d:mltext</type>
 					<index enabled="true">
-	                  <atomic>true</atomic>
-	                  <stored>false</stored> 
-	                  <tokenised>both</tokenised>
-	               </index>
+						<atomic>true</atomic>
+						<stored>false</stored>
+						<tokenised>both</tokenised>
+					</index>
 				</property>
 				<property name="bcpg:pluralLegalName">
 					<type>d:mltext</type>
 					<index enabled="true">
-	                  <atomic>true</atomic>
-	                  <stored>false</stored> 
-	                  <tokenised>both</tokenised>
-	               </index>
+						<atomic>true</atomic>
+						<stored>false</stored>
+						<tokenised>both</tokenised>
+					</index>
 				</property>
 			</properties>
 		</aspect>
-	
+
 		<aspect name="bcpg:systemFolderAspect">
 		</aspect>
-		
+
 		<aspect name="bcpg:depthLevelAspect">
 			<properties>
 				<property name="bcpg:depthLevel">
@@ -2708,7 +2721,7 @@
 				</property>
 			</properties>
 		</aspect>
-		
+
 		<aspect name="bcpg:codeAspect">
 			<properties>
 				<property name="bcpg:code">
@@ -2868,7 +2881,7 @@
 				</property>
 			</properties>
 		</aspect>
-		
+
 		<aspect name="bcpg:isDeletedAspect">
 			<properties>
 				<property name="bcpg:isDeleted">
@@ -2885,8 +2898,8 @@
 					<type>d:text</type>
 				</property>
 			</properties>
-		</aspect>		
-		
+		</aspect>
+
 		<aspect name="bcpg:reconstitutableAspect">
 			<properties>
 				<property name="bcpg:reconstitutionRate">
@@ -2898,7 +2911,7 @@
 				</property>
 			</properties>
 			<associations>
-			    <association name="bcpg:targetReconstitutionRef">
+				<association name="bcpg:targetReconstitutionRef">
 					<source>
 						<mandatory>false</mandatory>
 						<many>true</many>
@@ -2925,8 +2938,8 @@
 		
 		<!-- Deprecated -->
 		<aspect name="bcpg:diluentAspect"></aspect>
-		
-		
+
+
 		<aspect name="bcpg:waterAspect"></aspect>
 		
 		<!-- Aspect used to store the entity type of the template (entityFolderTpl, entityTpl, etc...) -->
@@ -2959,7 +2972,7 @@
 				</association>
 			</associations>
 		</aspect>
-		
+
 		<aspect name="bcpg:customsCodeAspect">
 			<associations>
 				<association name="bcpg:customsCodeRef">
@@ -2991,8 +3004,8 @@
 				</association>
 			</associations>
 		</aspect>
-		
-		
+
+
 		<aspect name="bcpg:supplierAccountRefAspect">
 			<associations>
 				<association name="bcpg:supplierAccountRef">
@@ -3034,10 +3047,10 @@
 				<property name="bcpg:productComments">
 					<type>d:mltext</type>
 					<index enabled="true">
-	                  <atomic>true</atomic>
-	                  <stored>false</stored> 
-	                  <tokenised>both</tokenised>
-	               </index>
+						<atomic>true</atomic>
+						<stored>false</stored>
+						<tokenised>both</tokenised>
+					</index>
 				</property>
 				<property name="bcpg:productHierarchy1">
 					<type>d:noderef</type>
@@ -3096,8 +3109,8 @@
 				</property>
 			</properties>
 		</aspect>
-		
-		
+
+
 		<aspect name="bcpg:productGeoOriginAspect">
 			<associations>
 				<association name="bcpg:productGeoOrigin">
@@ -3117,8 +3130,8 @@
 		<aspect name="bcpg:entityScoreAspect">
 			<properties>
 				<property name="bcpg:entityScore">
-				  <type>d:text</type>
-				  <index enabled="false"/>
+					<type>d:text</type>
+					<index enabled="false" />
 				</property>
 			</properties>
 		</aspect>
@@ -3376,7 +3389,7 @@
 					<type>d:double</type>
 					<mandatory>false</mandatory>
 				</property>
-				
+
 				<property name="bcpg:priceCurrency">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
@@ -3465,7 +3478,7 @@
 				</property>
 			</properties>
 		</aspect>
-		
+
 		<aspect name="bcpg:linkedSearchAspect">
 			<associations>
 				<association name="bcpg:linkedSearchAssociation">
@@ -3481,52 +3494,52 @@
 				</association>
 			</associations>
 		</aspect>
-		
-	<aspect name="bcpg:labelingRuleAspect">
-	 	<properties>
-			<property name="bcpg:lrLocales">
+
+		<aspect name="bcpg:labelingRuleAspect">
+			<properties>
+				<property name="bcpg:lrLocales">
 					<type>d:text</type>
-					<multiple>true</multiple>					
-			</property>
-		</properties>
-	</aspect>
-		
+					<multiple>true</multiple>
+				</property>
+			</properties>
+		</aspect>
+
 		<aspect name="bcpg:ingTypeAspect">
-			 <properties>
-			 	<property name="bcpg:ingCEECode">
+			<properties>
+				<property name="bcpg:ingCEECode">
 					<type>d:text</type>
-				</property>	
+				</property>
 				<property name="bcpg:ingTypeV2">
 					<type>d:noderef</type>
 					<mandatory>false</mandatory>
 				</property>
-			 </properties>	
-		</aspect>		
-		
+			</properties>
+		</aspect>
+
 		<aspect name="bcpg:meatAspect">
-			 <properties>
-			 	<property name="bcpg:meatType">
+			<properties>
+				<property name="bcpg:meatType">
 					<type>d:text</type>
 					<constraints>
 						<constraint ref="bcpg:meatTypes"></constraint>
 					</constraints>
-				</property>	
+				</property>
 				<property name="bcpg:meatContentData">
 					<type>d:text</type>
-				</property>	
-			 </properties>	
-		</aspect>		
-		
-		
+				</property>
+			</properties>
+		</aspect>
+
+
 		<aspect name="bcpg:contractDateAspect">
-            <properties>
-            	 <property name="bcpg:contractDate">
-                    <type>d:int</type>
-                    <mandatory>false</mandatory>
-                    <index enabled="false"/>
-                </property>
-            </properties>
-        </aspect>
+			<properties>
+				<property name="bcpg:contractDate">
+					<type>d:int</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+			</properties>
+		</aspect>
 
 		<aspect name="bcpg:certificateDateAspect">
 			<properties>
@@ -3588,7 +3601,7 @@
 				</property>
 			</properties>
 		</aspect>
-		
+
 		<aspect name="bcpg:compareWithAspect">
 			<associations>
 				<association name="bcpg:compareWithEntities">
@@ -3605,7 +3618,7 @@
 				</association>
 			</associations>
 		</aspect>
-		
+
 		<aspect name="bcpg:compareWithDynColumnAspect">
 			<properties>
 				<property name="bcpg:compareWithDynColumn">
@@ -3614,14 +3627,14 @@
 				</property>
 			</properties>
 		</aspect>
-		
+
 		<aspect name="bcpg:entityBranchAspect">
-		 <properties>
+			<properties>
 				<property name="bcpg:branchFromVersionLabel">
 					<title>Branch from version label</title>
-               <type>d:text</type>
-               <protected>true</protected>
-               <mandatory>true</mandatory>
+					<type>d:text</type>
+					<protected>true</protected>
+					<mandatory>true</mandatory>
 				</property>
 			</properties>
 			<associations>
@@ -3637,6 +3650,29 @@
 						<many>false</many>
 					</target>
 				</association>
+			</associations>
+		</aspect>
+
+		<aspect name="bcpg:autoMergeAspect">
+			<properties>
+				<property name="bcpg:autoMergeDate">
+					<type>d:date</type>
+				</property>
+				<property name="bcpg:autoMergeVersionType">
+					<type>d:text</type>
+					<default>MINOR</default>
+					<constraints>
+					  <constraint ref="bcpg:versionTypes"/>
+					</constraints>
+				</property>
+				<property name="bcpg:autoMergeComments">
+					<type>d:text</type>
+				</property>
+				<property name="bcpg:autoMergeImpactWUsed">
+					<type>d:boolean</type>
+				</property>
+			</properties>
+			<associations>
 				<association name="bcpg:autoMergeTo">
 					<title>Auto merge to entity</title>
 					<source>
@@ -3652,6 +3688,7 @@
 			</associations>
 		</aspect>
 
+
 		<aspect name="bcpg:nutListServingAspect">
 			<properties>
 				<property name="bcpg:nutListValuePerServing">
@@ -3666,8 +3703,8 @@
 				</property>
 			</properties>
 		</aspect>
-		
-		
+
+
 		<aspect name="bcpg:nutrientProfilingScoreAspect">
 			<properties>
 				<property name="bcpg:nutrientProfilingScore">
@@ -3700,12 +3737,12 @@
 				<property name="bcpg:userContentLocale">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:userLocale">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 			</properties>
 		</aspect>
@@ -3748,241 +3785,241 @@
 					<index enabled="false"></index>
 				</property>
 			</properties>
-		
+
 			<associations>
-					 <association name="bcpg:advIlIngAnd">
-						<source>
-							<mandatory>false</mandatory>
-							<many>true</many>
-						</source>
-						<target>
-							<class>bcpg:ing</class>
-							<mandatory>false</mandatory>
-							<many>true</many>
-						</target>
-					</association>
-			 		<association name="bcpg:advIlIngNot">
-						<source>
-							<mandatory>false</mandatory>
-							<many>true</many>
-						</source>
-						<target>
-							<class>bcpg:ing</class>
-							<mandatory>false</mandatory>
-							<many>true</many>
-						</target>
-					</association>
-			
-				  <association name="bcpg:advAlVolAnd">
-						<source>
-							<mandatory>false</mandatory>
-							<many>true</many>
-						</source>
-						<target>
-							<class>bcpg:allergen</class>
-							<mandatory>false</mandatory>
-							<many>true</many>
-						</target>
-					</association>
-					<association name="bcpg:advAlInVolAnd">
-						<source>
-							<mandatory>false</mandatory>
-							<many>true</many>
-						</source>
-						<target>
-							<class>bcpg:allergen</class>
-							<mandatory>false</mandatory>
-							<many>true</many>
-						</target>
-					</association>
-					 <association name="bcpg:advAlVolNot">
-						<source>
-							<mandatory>false</mandatory>
-							<many>true</many>
-						</source>
-						<target>
-							<class>bcpg:allergen</class>
-							<mandatory>false</mandatory>
-							<many>true</many>
-						</target>
-					</association>
-					<association name="bcpg:advAlInVolNot">
-						<source>
-							<mandatory>false</mandatory>
-							<many>true</many>
-						</source>
-						<target>
-							<class>bcpg:allergen</class>
-							<mandatory>false</mandatory>
-							<many>true</many>
-						</target>
-					</association>
-					
-					<association name="bcpg:advLclClaimAnd">
-						<source>
-							<mandatory>false</mandatory>
-							<many>true</many>
-						</source>
-						<target>
-							<class>bcpg:labelClaim</class>
-							<mandatory>false</mandatory>
-							<many>true</many>
-						</target>
-					</association>
-					<association name="bcpg:advLclClaimNot">
-						<source>
-							<mandatory>false</mandatory>
-							<many>true</many>
-						</source>
-						<target>
-							<class>bcpg:labelClaim</class>
-							<mandatory>false</mandatory>
-							<many>true</many>
-						</target>
-					</association>
-					
-					<association name="bcpg:advNlNut1">
-						<source>
-							<mandatory>false</mandatory>
-							<many>true</many>
-						</source>
-						<target>
-							<class>bcpg:nut</class>
-							<mandatory>false</mandatory>
-							<many>false</many>
-						</target>
-					</association>
-					<association name="bcpg:advNlNut2">
-						<source>
-							<mandatory>false</mandatory>
-							<many>true</many>
-						</source>
-						<target>
-							<class>bcpg:nut</class>
-							<mandatory>false</mandatory>
-							<many>false</many>
-						</target>
-					</association>
-					<association name="bcpg:advNlNut3">
-						<source>
-							<mandatory>false</mandatory>
-							<many>true</many>
-						</source>
-						<target>
-							<class>bcpg:nut</class>
-							<mandatory>false</mandatory>
-							<many>false</many>
-						</target>
-					</association>
-					<association name="bcpg:advPclPhysicoChem1">
-						<source>
-							<mandatory>false</mandatory>
-							<many>true</many>
-						</source>
-						<target>
-							<class>bcpg:physicoChem</class>
-							<mandatory>false</mandatory>
-							<many>false</many>
-						</target>
-					</association>
-					<association name="bcpg:advPclPhysicoChem2">
-						<source>
-							<mandatory>false</mandatory>
-							<many>true</many>
-						</source>
-						<target>
-							<class>bcpg:physicoChem</class>
-							<mandatory>false</mandatory>
-							<many>false</many>
-						</target>
-					</association>
-					<association name="bcpg:advClCost1">
-						<source>
-							<mandatory>false</mandatory>
-							<many>true</many>
-						</source>
-						<target>
-							<class>bcpg:cost</class>
-							<mandatory>false</mandatory>
-							<many>false</many>
-						</target>
-					</association>
-					<association name="bcpg:advClCost2">
-						<source>
-							<mandatory>false</mandatory>
-							<many>true</many>
-						</source>
-						<target>
-							<class>bcpg:cost</class>
-							<mandatory>false</mandatory>
-							<many>false</many>
-						</target>
-					</association>
-					
-					<association name="bcpg:advNotRespectedProductSpecs">
-						<source>
-							<mandatory>false</mandatory>
-							<many>true</many>
-						</source>
-						<target>
-							<class>bcpg:productSpecification</class>
-							<mandatory>false</mandatory>
-							<many>true</many>
-						</target>
+				<association name="bcpg:advIlIngAnd">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:ing</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
 				</association>
-					<association name="bcpg:advRespectedProductSpecs">
-						<source>
-							<mandatory>false</mandatory>
-							<many>true</many>
-						</source>
-						<target>
-							<class>bcpg:productSpecification</class>
-							<mandatory>false</mandatory>
-							<many>true</many>
-						</target>
+				<association name="bcpg:advIlIngNot">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:ing</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
 				</association>
-					
+
+				<association name="bcpg:advAlVolAnd">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:allergen</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="bcpg:advAlInVolAnd">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:allergen</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="bcpg:advAlVolNot">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:allergen</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="bcpg:advAlInVolNot">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:allergen</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+
+				<association name="bcpg:advLclClaimAnd">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:labelClaim</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="bcpg:advLclClaimNot">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:labelClaim</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+
+				<association name="bcpg:advNlNut1">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:nut</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="bcpg:advNlNut2">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:nut</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="bcpg:advNlNut3">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:nut</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="bcpg:advPclPhysicoChem1">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:physicoChem</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="bcpg:advPclPhysicoChem2">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:physicoChem</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="bcpg:advClCost1">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:cost</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="bcpg:advClCost2">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:cost</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+
+				<association name="bcpg:advNotRespectedProductSpecs">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:productSpecification</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="bcpg:advRespectedProductSpecs">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:productSpecification</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+
 			</associations>
 		</aspect>
 
 		<aspect name="bcpg:auditableCatalogAspect">
 			<properties>
 				<property name="bcpg:modifiedCatalog1">
-					 <type>d:datetime</type>
-		             <protected>true</protected>
-		             <mandatory>false</mandatory>
-		             <index enabled="true">
-		                  <atomic>true</atomic>
-		                  <stored>false</stored> 
-		                  <tokenised>both</tokenised>
-		                  <facetable>true</facetable>
-		              </index>
+					<type>d:datetime</type>
+					<protected>true</protected>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>true</atomic>
+						<stored>false</stored>
+						<tokenised>both</tokenised>
+						<facetable>true</facetable>
+					</index>
 				</property>
 				<property name="bcpg:modifiedCatalog2">
-					 <type>d:datetime</type>
-		             <protected>true</protected>
-		             <mandatory>false</mandatory>
-		             <index enabled="true">
-		                  <atomic>true</atomic>
-		                  <stored>false</stored> 
-		                  <tokenised>both</tokenised>
-		                  <facetable>true</facetable>
-		              </index>
+					<type>d:datetime</type>
+					<protected>true</protected>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>true</atomic>
+						<stored>false</stored>
+						<tokenised>both</tokenised>
+						<facetable>true</facetable>
+					</index>
 				</property>
 				<property name="bcpg:modifiedCatalog3">
-					 <type>d:datetime</type>
-		             <protected>true</protected>
-		             <mandatory>false</mandatory>
-		             <index enabled="true">
-		                  <atomic>true</atomic>
-		                  <stored>false</stored> 
-		                  <tokenised>both</tokenised>
-		                  <facetable>true</facetable>
-		              </index>
+					<type>d:datetime</type>
+					<protected>true</protected>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>true</atomic>
+						<stored>false</stored>
+						<tokenised>both</tokenised>
+						<facetable>true</facetable>
+					</index>
 				</property>
 			</properties>
 		</aspect>
-		
+
 		<aspect name="bcpg:workflowAspect">
 			<associations>
 				<association name="bcpg:workflowEntity">
@@ -3998,7 +4035,7 @@
 				</association>
 			</associations>
 		</aspect>
-		
-		
+
+
 	</aspects>
 </model>
