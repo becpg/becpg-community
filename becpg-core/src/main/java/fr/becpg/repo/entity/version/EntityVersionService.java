@@ -50,10 +50,13 @@ public interface EntityVersionService {
 
 	void deleteEntityVersion(Version version);
 
-	NodeRef mergeBranch(NodeRef branchNodeRef, NodeRef branchToNodeRef, VersionType versionType, String description);
-
 	void impactWUsed(NodeRef newEntityNodeRef, VersionType versionType, String description);
 
+
+	NodeRef mergeBranch(NodeRef branchNodeRef, NodeRef branchToNodeRef, VersionType versionType, String description);
+	
 	NodeRef mergeBranch(NodeRef branchNodeRef, NodeRef branchToNodeRef, VersionType versionType, String description, boolean impactWused);
+
+	NodeRef mergeBranch(NodeRef branchNodeRef);
 
 }
