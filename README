@@ -31,35 +31,34 @@ To build projects use :
 
 $> mvn clean package -DskipTests=true 
 
-Projects can be found in target dirs. 
+AMP can be found in target dirs. 
 
-3 - Start embedded Tomcat for development
+3 - Start beCPG in Docker 
 ------------------------------------------
 
-Start integrated server
+Install requirement
 
-$> ./run.sh or mvn install -P run
+$> ./run.sh install
 
-Refer also to Alfresco Maven SDK 2.0
+$> ./run.sh build_start
+
+Refer also to Alfresco Maven SDK 4.0
+
 
 2 - Run Tests
 --------------
 
-To run all Junit tests :
+To run all integration tests :
 
-$> mvn clean test -Dmaven.test.failure.ignore=true -P purge
+$> ./run.sh test
 
 To run specific test
 
 $> mvn test -Dtest=MyTest.java -DfailIfNoTests=false
 
-Integrations tests require beCPG server to be launch first.
+Integrations tests require beCPG server to be launch first (./run.sh build_start).
 
-In other console:
-
-$> ./run.sh or mvn install -P run
-
-3 - Deploy projects
+3 - Manually deploy AMP
 -------------------
 
 Refer to INSTALL
