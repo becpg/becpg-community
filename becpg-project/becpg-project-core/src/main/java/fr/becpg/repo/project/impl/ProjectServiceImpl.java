@@ -154,52 +154,49 @@ public class ProjectServiceImpl implements ProjectService {
 	@Override
 	public void formulate(NodeRef projectNodeRef) throws FormulateException {
 		if (nodeService.getType(projectNodeRef).equals(ProjectModel.TYPE_PROJECT)) {
+			try {
 
-			if (permissionService.hasPermission(projectNodeRef, PermissionService.WRITE) == AccessStatus.ALLOWED) {
-				try {
+				policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_LOG_TIME_LIST);
+				policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
+				policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
+				policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_PROJECT);
+				policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_SCORE_LIST);
+				policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_BUDGET_LIST);
+				policyBehaviourFilter.disableBehaviour(ProjectModel.ASPECT_BUDGET);
+				policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
+				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
 
-					policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_LOG_TIME_LIST);
-					policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
-					policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
-					policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_PROJECT);
-					policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_SCORE_LIST);
-					policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_BUDGET_LIST);
-					policyBehaviourFilter.disableBehaviour(ProjectModel.ASPECT_BUDGET);
-					policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
-					policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
-					policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-					policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
+				L2CacheSupport.doInCacheContext(() -> {
+					AuthenticationUtil.runAsSystem(() -> {
 
-					L2CacheSupport.doInCacheContext(() -> {
-						AuthenticationUtil.runAsSystem(() -> {
+						formulationService.formulate(projectNodeRef);
 
-							formulationService.formulate(projectNodeRef);
+						NodeRef parentProjectNodeRef = associationService.getTargetAssoc(projectNodeRef, ProjectModel.ASSOC_PARENT_PROJECT);
 
-							NodeRef parentProjectNodeRef = associationService.getTargetAssoc(projectNodeRef, ProjectModel.ASSOC_PARENT_PROJECT);
+						// Check for parent project
+						if (parentProjectNodeRef != null) {
+							formulate(parentProjectNodeRef);
+						}
 
-							// Check for parent project
-							if (parentProjectNodeRef != null) {
-								formulate(parentProjectNodeRef);
-							}
+						return true;
+					});
 
-							return true;
-						});
+				}, false, true);
 
-					}, false, true);
-
-				} finally {
-					policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
-					policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
-					policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-					policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
-					policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_LOG_TIME_LIST);
-					policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
-					policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_TASK_LIST);
-					policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_PROJECT);
-					policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_SCORE_LIST);
-					policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_BUDGET_LIST);
-					policyBehaviourFilter.enableBehaviour(ProjectModel.ASPECT_BUDGET);
-				}
+			} finally {
+				policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
+				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
+				policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_LOG_TIME_LIST);
+				policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
+				policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_TASK_LIST);
+				policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_PROJECT);
+				policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_SCORE_LIST);
+				policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_BUDGET_LIST);
+				policyBehaviourFilter.enableBehaviour(ProjectModel.ASPECT_BUDGET);
 			}
 		}
 	}
