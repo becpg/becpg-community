@@ -132,7 +132,8 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		synchronizeTemplate(formulatedProduct, simpleListDataList);
 
 		if (isFormulatedProduct) {
-			visitChildren(formulatedProduct, simpleListDataList);
+			visitChildren(formulatedProduct, simpleListDataList,
+					FormulationHelper.getNetQtyInLorKg(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT));
 		}
 
 	}
@@ -163,7 +164,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		}
 	}
 
-	protected void visitChildren(ProductData formulatedProduct, List<T> simpleListDataList) throws FormulateException {
+	protected void visitChildren(ProductData formulatedProduct, List<T> simpleListDataList, Double netQtyInLorKg) throws FormulateException {
 
 		Map<NodeRef, Double> totalQtiesValue = new HashMap<>();
 
@@ -171,9 +172,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 		
 		Double netWeight = FormulationHelper.getNetWeight(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
-		Double netQtyInLorKg = FormulationHelper.getNetQtyInLorKg(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
-		
-
+				
 		if (formulatedProduct.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 
 			Map<NodeRef, List<NodeRef>> mandatoryCharacts = getMandatoryCharacts(formulatedProduct, PLMModel.TYPE_RAWMATERIAL);
@@ -281,7 +280,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 						// calculate charact from qty or vol ?
 						Double qtyUsed =  formulateInVol ? volUsed : weightUsed;
 						Double netQty =  forceWeight ? netWeight : netQtyInLorKg ; 
-
+						
 						// look for charact in component
 						SimpleListDataItem slDataItem = componentSimpleListDataList.stream()
 								.filter(s -> newSimpleListDataItem.getCharactNodeRef().equals(s.getCharactNodeRef())).findFirst().orElse(null);

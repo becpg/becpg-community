@@ -201,7 +201,7 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 		Serializable beforeProp = before.get(propertyQName);
 		Serializable afterProp = after.get(propertyQName);
 
-		if ((afterProp != null) && !afterProp.equals(beforeProp)) {
+		if (((afterProp != null) && !afterProp.equals(beforeProp)) || (afterProp == null && beforeProp != null)) {
 			return true;
 		}
 		return false;

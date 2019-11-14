@@ -565,7 +565,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	public void setDropPackagingOfComponents(Boolean dropPackagingOfComponents) {
 		this.dropPackagingOfComponents = dropPackagingOfComponents;
 	}
-
+	
 	@AlfProp
 	@AlfQname(qname = "bcpg:netVolume")
 	public Double getNetVolume() {
@@ -1086,7 +1086,11 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 
 	
 	public boolean isLiquid() {
-		return (unit != null) && ((unit.isVolume()));
+		if(servingSizeUnit != null && !servingSizeUnit.equals(ProductUnit.kg) && servingSizeUnit.isVolume()){
+			return true;
+		}else{
+			return (unit != null && unit.isVolume());
+		}
 	}
 
 	public boolean isRawMaterial() {

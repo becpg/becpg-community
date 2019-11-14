@@ -303,9 +303,14 @@ public class FormulationHelper {
 
 		return defaultValue;
 	}
-
 	
-
+	public static Double getNetQtyForNuts(ProductData formulatedProduct) {
+		if(formulatedProduct.isLiquid()){
+			return FormulationHelper.getNetVolume(formulatedProduct);
+		} else{
+			return FormulationHelper.getNetWeight(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
+		}
+	}
 	
 	public static Double getServingSizeInLorKg(ProductData formulatedProduct) {
 		if(formulatedProduct.getServingSize()!=null && formulatedProduct.getServingSizeUnit()!=null) {
