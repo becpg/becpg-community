@@ -25,6 +25,7 @@ import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
@@ -41,7 +42,6 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 public class LabelClaimFormulationHandler extends FormulationBaseHandler<ProductData> {
 
 	private static final Log logger = LogFactory.getLog(LabelClaimFormulationHandler.class);
-
 
 	public static final String MESSAGE_MISSING_CLAIM = "message.formulate.labelClaim.missing";
 
@@ -72,6 +72,22 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 			return true;
 		}
 
+		int sort = 2;
+		if((productData.getEntityTpl()!=null && !productData.getEntityTpl().equals(productData))){
+			synchronizeTemplate(productData.getEntityTpl().getLabelClaimList(), productData.getLabelClaimList(), sort);
+		}
+		List<ProductSpecificationData> specDatas = productData.getProductSpecifications();
+		if (specDatas!=null && !specDatas.isEmpty()) {
+			specDatas.sort((o1, o2) -> {
+				return o1.getName().compareTo(o2.getName());
+			});
+
+			for (ProductSpecificationData specData : specDatas) {
+				sort ++;
+				synchronizeTemplate(specData.getLabelClaimList(), productData.getLabelClaimList(), sort);
+			}
+		}
+
 		ExpressionParser parser = new SpelExpressionParser();
 		StandardEvaluationContext context = formulaService.createEvaluationContext(productData);
 
@@ -79,7 +95,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 			if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 
 				Set<NodeRef> resetedClaim = new HashSet<>();
-				
+
 				productData.getLabelClaimList().forEach(l -> {
 
 					l.getMissingLabelClaims().clear();
@@ -93,7 +109,6 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 					}
 
 				});
-				
 
 				Set<NodeRef> visitedProducts = new HashSet<>();
 
@@ -102,10 +117,10 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 					NodeRef part = compoItem.getProduct();
 					if (!visitedProducts.contains(part) && (compoItem.getQtySubFormula() != null) && (compoItem.getQtySubFormula() > 0)) {
 						ProductData partProduct = alfrescoRepository.findOne(part);
-						if (partProduct.getLabelClaimList() != null ) {
+						if (partProduct.getLabelClaimList() != null) {
 							for (LabelClaimListDataItem labelClaim : partProduct.getLabelClaimList()) {
 
-								visitPart(productData, partProduct, labelClaim,resetedClaim);
+								visitPart(productData, partProduct, labelClaim, resetedClaim);
 
 							}
 						}
@@ -121,6 +136,50 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 		return true;
 	}
 
+	private void synchronizeTemplate(List<LabelClaimListDataItem> templateSimpleListDataList, List<LabelClaimListDataItem> simpleListDataList,
+			int sort) {
+		for (LabelClaimListDataItem tsl : templateSimpleListDataList) {
+			if (tsl.getLabelClaim() != null) {
+				boolean isFound = false;
+				for (LabelClaimListDataItem sl : simpleListDataList) {
+					if (tsl.getLabelClaim().equals(sl.getLabelClaim())) {
+						isFound = true;
+						break;
+					}
+				}
+				if (!isFound) {
+					LabelClaimListDataItem toAdd = tsl.clone();
+					toAdd.setName(null);
+					toAdd.setNodeRef(null);
+					toAdd.setParentNodeRef(null);
+					simpleListDataList.add(toAdd);
+				}
+
+			}
+		}
+
+		// check sorting
+		int lastSort = 0;
+		for (LabelClaimListDataItem sl : simpleListDataList) {
+			if (sl.getLabelClaim() != null) {
+				boolean isFound = false;
+
+				for (LabelClaimListDataItem tsl : templateSimpleListDataList) {
+					if (sl.getLabelClaim().equals(tsl.getLabelClaim())) {
+						isFound = true;
+						lastSort = (tsl.getSort()) * (10^sort);
+						sl.setSort(lastSort);
+					}
+				}
+
+				if (!isFound) {
+					sl.setSort(++lastSort);
+				}
+			}
+		}
+
+	}
+
 	private void visitPart(ProductData productData, ProductData partProduct, LabelClaimListDataItem subLabelClaimItem, Set<NodeRef> resetedClaim) {
 		for (LabelClaimListDataItem labelClaimItem : productData.getLabelClaimList()) {
 			if (logger.isDebugEnabled()) {
@@ -130,16 +189,15 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 			if (((labelClaimItem.getIsManual() == null) || !labelClaimItem.getIsManual())
 					&& ((labelClaimItem.getLabelClaim() != null) && labelClaimItem.getLabelClaim().equals(subLabelClaimItem.getLabelClaim()))) {
 
-				if(!resetedClaim.contains(labelClaimItem.getLabelClaim())) {
-					
+				if (!resetedClaim.contains(labelClaimItem.getLabelClaim())) {
+
 					if ((labelClaimItem.getIsManual() == null) || !labelClaimItem.getIsManual()) {
 						labelClaimItem.setLabelClaimValue(null);
 					}
-					
+
 					resetedClaim.add(labelClaimItem.getLabelClaim());
 				}
-				
-				
+
 				if (subLabelClaimItem.getLabelClaimValue() != null) {
 					switch (subLabelClaimItem.getLabelClaimValue()) {
 					case LabelClaimListDataItem.VALUE_TRUE:
@@ -154,19 +212,19 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 						}
 						break;
 					case LabelClaimListDataItem.VALUE_SUITABLE:
-						if (labelClaimItem.getIsClaimed() || (labelClaimItem.getLabelClaimValue() == null) 
+						if (labelClaimItem.getIsClaimed() || (labelClaimItem.getLabelClaimValue() == null)
 								|| LabelClaimListDataItem.VALUE_NA.toString().equals(labelClaimItem.getLabelClaimValue())) {
 							labelClaimItem.setLabelClaimValue(LabelClaimListDataItem.VALUE_SUITABLE);
 						}
 						break;
 					case LabelClaimListDataItem.VALUE_FALSE:
-						if (labelClaimItem.getLabelClaimValue()==null || !labelClaimItem.getLabelClaimValue().isEmpty()) {
+						if ((labelClaimItem.getLabelClaimValue() == null) || !labelClaimItem.getLabelClaimValue().isEmpty()) {
 							labelClaimItem.setIsClaimed(false);
 						}
 						if (!labelClaimItem.getIsFormulated()) {
 							addMissingLabelClaims(partProduct, labelClaimItem);
 						}
-						
+
 						break;
 					case LabelClaimListDataItem.VALUE_EMPTY:
 					default:
@@ -211,7 +269,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 	private void addMissingLabelClaimReq(ProductData productData, ProductData partProduct, LabelClaimListDataItem labelClaimItem) {
 		String message = I18NUtil.getMessage(MESSAGE_MISSING_CLAIM, extractName(labelClaimItem.getLabelClaim()));
 		productData.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Info, message, labelClaimItem.getLabelClaim(),
-				new ArrayList<NodeRef>(Arrays.asList(partProduct.getNodeRef())), RequirementDataType.Labelclaim));
+				new ArrayList<>(Arrays.asList(partProduct.getNodeRef())), RequirementDataType.Labelclaim));
 
 	}
 
@@ -235,7 +293,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 					if ((formulaText != null) && (formulaText.length() > 0)) {
 						try {
 							labelClaimListDataItem.setIsFormulated(true);
-							
+
 							String[] formulas = SpelHelper.formatMTFormulas(formulaText);
 							for (String formula : formulas) {
 
@@ -250,13 +308,12 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 										labelClaimListDataItem.setIsClaimed((Boolean) ret);
 									} else {
 										labelClaimListDataItem.setLabelClaimValue(LabelClaimListDataItem.VALUE_EMPTY);
-										labelClaimListDataItem
-												.setErrorLog(I18NUtil.getMessage("message.formulate.formula.incorrect.type.boolean", Locale.getDefault()));
+										labelClaimListDataItem.setErrorLog(
+												I18NUtil.getMessage("message.formulate.formula.incorrect.type.boolean", Locale.getDefault()));
 									}
 								}
 							}
 
-			
 						} catch (Exception e) {
 							labelClaimListDataItem.setErrorLog(e.getLocalizedMessage());
 							if (logger.isDebugEnabled()) {

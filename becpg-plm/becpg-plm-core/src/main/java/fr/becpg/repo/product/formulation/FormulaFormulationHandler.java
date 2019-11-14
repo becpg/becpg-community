@@ -52,6 +52,7 @@ import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.PackagingKitData;
 import fr.becpg.repo.product.data.PackagingListView;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
@@ -412,6 +413,12 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 			copyTemplateDynamicCharactList(templateProductData.getProcessListView().getDynamicCharactList(),
 					formulatedProduct.getProcessListView().getDynamicCharactList());
 		}
+		
+
+		for (ProductSpecificationData specData : formulatedProduct.getProductSpecifications()) {
+			copyTemplateDynamicCharactList(specData.getDynamicCharactList(), formulatedProduct.getCompoListView().getDynamicCharactList());
+		}
+
 	}
 
 	protected void copyTemplateDynamicCharactList(List<DynamicCharactListItem> sourceList, List<DynamicCharactListItem> targetList) {

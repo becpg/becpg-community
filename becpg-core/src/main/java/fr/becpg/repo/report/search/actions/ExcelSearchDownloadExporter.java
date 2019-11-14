@@ -150,7 +150,7 @@ public class ExcelSearchDownloadExporter implements Exporter {
 	public void end() {
 		if (outputStream != null) {
 			try {
-				workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
+				//Disable for XLSM (break #2259 ?) workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
 				workbook.setForceFormulaRecalculation(true);
 				workbook.write(outputStream);
 			} catch (ContentIOException | IOException e) {
