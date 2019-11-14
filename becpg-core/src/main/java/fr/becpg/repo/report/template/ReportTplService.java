@@ -30,6 +30,7 @@ public interface ReportTplService {
 	String PARAM_VALUE_DESIGN_EXTENSION = ".rptdesign";
 	String PARAM_VALUE_XLSXREPORT_EXTENSION = ".xlsx";
 	String PARAM_VALUE_XMLREPORT_EXTENSION = ".xml";
+	String PARAM_VALUE_XLSMREPORT_EXTENSION =  ".xlsm";
 	
 	
 	/**
