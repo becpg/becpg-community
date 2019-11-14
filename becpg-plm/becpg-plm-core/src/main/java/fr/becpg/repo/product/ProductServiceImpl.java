@@ -95,31 +95,28 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 
 	@Override
 	public void formulate(NodeRef productNodeRef, boolean fast) throws FormulateException {
-		if (permissionService.hasPermission(productNodeRef, PermissionService.WRITE) == AccessStatus.ALLOWED) {
-			try {
-				policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
-				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
-				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+		try {
+			policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
+			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 
-				L2CacheSupport.doInCacheContext(() -> {
-					AuthenticationUtil.runAsSystem(() -> {
-						formulationService.formulate(productNodeRef);
-						if (!fast) {
-								entityActivityService.postEntityActivity(productNodeRef, ActivityType.Formulation, ActivityEvent.Update);
-						}
+			L2CacheSupport.doInCacheContext(() -> {
+				AuthenticationUtil.runAsSystem(() -> {
+					formulationService.formulate(productNodeRef);
+					if (!fast) {
+							entityActivityService.postEntityActivity(productNodeRef, ActivityType.Formulation, ActivityEvent.Update);
+					}
 
-						return true;
-					});
+					return true;
+				});
 
-				}, false, true);
+			}, false, true);
 
-			} finally {
-				policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
-				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
-				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-			}
-		} 
-
+		} finally {
+			policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
+			policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+			policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+		}
 	}
 
 	@Override
