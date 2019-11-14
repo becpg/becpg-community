@@ -18,9 +18,16 @@ function main()
    }
    
    
-   var project = search.findNode(nodeRef);
-   if(project){
-       model.entity = project.childByNamePath(path);
+   var node = search.findNode(nodeRef);
+   if(node){
+   	while(path.indexOf("..") == 0){
+   		node = node.parent;
+   		path = path.substr(3);
+   	}
+   	if(path!=""){
+   		node = node.childByNamePath(path);
+   	}
+       model.entity = node;
    }
    
 }
