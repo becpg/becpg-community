@@ -95,7 +95,6 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 
 	@Override
 	public void formulate(NodeRef productNodeRef, boolean fast) throws FormulateException {
-		if (permissionService.hasPermission(productNodeRef, PermissionService.WRITE) == AccessStatus.ALLOWED) {
 			try {
 				policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
 				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
@@ -118,7 +117,6 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
 				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 			}
-		} 
 
 	}
 

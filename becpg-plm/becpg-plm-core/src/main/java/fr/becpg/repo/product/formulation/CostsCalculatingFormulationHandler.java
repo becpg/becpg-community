@@ -23,14 +23,10 @@ import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.product.data.ClientData;
 import fr.becpg.repo.product.data.EffectiveFilters;
-import fr.becpg.repo.product.data.FinishedProductData;
-import fr.becpg.repo.product.data.PackagingKitData;
 import fr.becpg.repo.product.data.PackagingMaterialData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
-import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.SupplierData;
-import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
@@ -98,7 +94,10 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 					|| formulatedProduct.hasPackagingListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))
 					|| formulatedProduct.hasProcessListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE));
 
-			formulateSimpleList(formulatedProduct, formulatedProduct.getCostList(), hasCompoEl);
+			cleanSimpleList(formulatedProduct.getCostList(), hasCompoEl);
+			synchronizeTemplate(formulatedProduct, formulatedProduct.getCostList());
+			visitChildren(formulatedProduct, formulatedProduct.getCostList(),
+					FormulationHelper.getNetQtyForCost(formulatedProduct));
 
 			// simulation: take in account cost of components defined on
 			// formulated product
@@ -153,9 +152,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 	}
 
 	@Override
-	protected void visitChildren(ProductData formulatedProduct, List<CostListDataItem> costList) throws FormulateException {
-
-		Double netQty = FormulationHelper.getNetQtyForCost(formulatedProduct);
+	protected void visitChildren(ProductData formulatedProduct, List<CostListDataItem> costList, Double netQty) throws FormulateException {
 
 		if (formulatedProduct.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 
