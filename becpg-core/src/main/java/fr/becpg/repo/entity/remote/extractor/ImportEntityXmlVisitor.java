@@ -833,7 +833,7 @@ public class ImportEntityXmlVisitor {
 			if ((code != null) && (code.length() > 0)) {
 				beCPGQueryBuilder.andPropEquals(BeCPGModel.PROP_CODE, code);
 			} else if ((erpCode != null) && (erpCode.length() > 0)) {
-				beCPGQueryBuilder.andPropEquals(BeCPGModel.PROP_ERP_CODE, code);
+				beCPGQueryBuilder.andPropEquals(BeCPGModel.PROP_ERP_CODE, erpCode);
 			} else if ((name != null) && (name.length() > 0) && !name.startsWith(EMPTY_NAME_PREFIX)) {
 				beCPGQueryBuilder.andPropEquals(RemoteHelper.getPropName(type, entityDictionaryService), name);
 			}
