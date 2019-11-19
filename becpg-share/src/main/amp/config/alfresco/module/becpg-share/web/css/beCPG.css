@@ -121,6 +121,12 @@
 	margin: 0;
 }
 
+.form-container  .checkboxmany p {
+	display : block;
+}
+
+
+
 /* Auto complete */
 .form-container .yui-navset :not(.yui-u) > .form-field .yui-ac .ac-body input[type="text"].yui-ac-input ,
 :not(.bd) > .form-container  .yui-g .form-field .yui-ac .ac-body input[type="text"].yui-ac-input, 
