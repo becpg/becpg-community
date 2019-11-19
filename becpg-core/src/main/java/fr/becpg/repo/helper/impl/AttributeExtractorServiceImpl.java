@@ -48,6 +48,7 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ISO8601DateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.ibatis.javassist.expr.Instanceof;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
@@ -383,7 +384,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 								value += constraintName != null
 										? TranslateHelper.getConstraint(constraintName, tempValue, propertyFormats.isUseDefaultLocale())
-										: tempValue;
+												: tempValue;
 							}
 						}
 					}
@@ -406,7 +407,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 					} else {
 						value = constraintName != null
 								? TranslateHelper.getConstraint(constraintName, v.toString(), propertyFormats.isUseDefaultLocale())
-								: v.toString();
+										: v.toString();
 					}
 				}
 			}
@@ -513,6 +514,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	 * "FX1"]_bcpg:allergenListInVoluntary
 	 * bcpg:allergenList[bcpg:allergenListAllergen#bcpg:allergenCode ==
 	 * "FX1"]|bcpg:allergenListInVoluntary
+	 * pack:packMaterialList[pack:pmlMaterial.contains("Autres matériaux")]_pack:pmlWeight
 	 *
 	 * -> bcpg_compoList[bcpg_compoListProduct|bcpg_erpCode=="PF1"]|
 	 * bcpg_compoListQty
@@ -557,12 +559,19 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 					AttributeExtractorFilter dataListFilter = null;
 					QName fieldQname = null;
 					if (dlField.contains("[")) {
-						Matcher ma = Pattern.compile("(.*)(\\[(.*)\\s*==\\s*\"(.*)\"\\])").matcher(dlField);
-						if (ma.matches()) {
-							fieldQname = QName.createQName(ma.group(1), namespaceService);
-							dataListFilter = new AttributeExtractorFilter(ma.group(3).replaceAll("#", "|").trim(), ma.group(4).trim());
+						Matcher maEqual = Pattern.compile("(.*)(\\[(.*)\\s*==\\s*\"(.*)\"\\])").matcher(dlField);
+						if (maEqual.matches()) {
+							fieldQname = QName.createQName(maEqual.group(1), namespaceService);
+							dataListFilter = new AttributeExtractorFilter(maEqual.group(3).replaceAll("#", "|").trim(), maEqual.group(4).trim());
 						} else {
-							logger.error("Cannot extract datalist filter: " + dlField);
+							Matcher maContains = Pattern.compile("(.*)(\\[(.*)\\.contains\\(\"(.*)\"\\)\\])").matcher(dlField);
+							if (maContains.matches()) {
+								fieldQname = QName.createQName(maContains.group(1), namespaceService);
+
+								dataListFilter = new AttributeExtractorFilter(maContains.group(3).replaceAll("#", "|").trim(), maContains.group(4).trim());
+							} else {
+								logger.error("Cannot extract datalist filter: " + dlField);
+							}
 						}
 
 					} else {
@@ -613,7 +622,6 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 						ret.add(new AttributeExtractorStructure(prefix + field.replaceFirst(":", "_"), prodDef, itemType));
 					}
 				}
-
 			}
 		}
 		return ret;
@@ -624,38 +632,38 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		return extractNodeData(nodeRef, itemType, nodeService.getProperties(nodeRef), readExtractStructure(itemType, metadataFields), mode,
 				new DataListCallBack() {
 
-					@Override
-					public List<Map<String, Object>> extractNestedField(NodeRef nodeRef, AttributeExtractorStructure field) {
-						List<Map<String, Object>> ret = new ArrayList<>();
+			@Override
+			public List<Map<String, Object>> extractNestedField(NodeRef nodeRef, AttributeExtractorStructure field) {
+				List<Map<String, Object>> ret = new ArrayList<>();
 
-						if (field.getFieldDef() instanceof AssociationDefinition) {
-							List<NodeRef> assocRefs;
-							if (((AssociationDefinition) field.getFieldDef()).isChild()) {
-								assocRefs = associationService.getChildAssocs(nodeRef, field.getFieldDef().getName());
-							} else {
-								assocRefs = associationService.getTargetAssocs(nodeRef, field.getFieldDef().getName());
-							}
-							for (NodeRef itemNodeRef : assocRefs) {
-								addExtracted(itemNodeRef, field, new HashMap<>(), ret);
-							}
-
-						}
-						return ret;
+				if (field.getFieldDef() instanceof AssociationDefinition) {
+					List<NodeRef> assocRefs;
+					if (((AssociationDefinition) field.getFieldDef()).isChild()) {
+						assocRefs = associationService.getChildAssocs(nodeRef, field.getFieldDef().getName());
+					} else {
+						assocRefs = associationService.getTargetAssocs(nodeRef, field.getFieldDef().getName());
+					}
+					for (NodeRef itemNodeRef : assocRefs) {
+						addExtracted(itemNodeRef, field, new HashMap<>(), ret);
 					}
 
-					private void addExtracted(NodeRef itemNodeRef, AttributeExtractorStructure field, Map<NodeRef, Map<String, Object>> cache,
-							List<Map<String, Object>> ret) {
-						if (cache.containsKey(itemNodeRef)) {
-							ret.add(cache.get(itemNodeRef));
-						} else {
-							if (permissionService.hasPermission(itemNodeRef, "Read") == AccessStatus.ALLOWED) {
-								QName itemType = nodeService.getType(itemNodeRef);
-								Map<QName, Serializable> properties = nodeService.getProperties(itemNodeRef);
-								ret.add(extractNodeData(itemNodeRef, itemType, properties, field.getChildrens(), mode, null));
-							}
-						}
+				}
+				return ret;
+			}
+
+			private void addExtracted(NodeRef itemNodeRef, AttributeExtractorStructure field, Map<NodeRef, Map<String, Object>> cache,
+					List<Map<String, Object>> ret) {
+				if (cache.containsKey(itemNodeRef)) {
+					ret.add(cache.get(itemNodeRef));
+				} else {
+					if (permissionService.hasPermission(itemNodeRef, "Read") == AccessStatus.ALLOWED) {
+						QName itemType = nodeService.getType(itemNodeRef);
+						Map<QName, Serializable> properties = nodeService.getProperties(itemNodeRef);
+						ret.add(extractNodeData(itemNodeRef, itemType, properties, field.getChildrens(), mode, null));
 					}
-				});
+				}
+			}
+		});
 	}
 
 	@Override
@@ -676,11 +684,27 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				List<Map<String, Object>> extracted = callback.extractNestedField(nodeRef, field);
 
 				if ((AttributeExtractorMode.CSV.equals(mode) || AttributeExtractorMode.XLSX.equals(mode)) && !extracted.isEmpty()) {
-					for (Map.Entry<String, Object> entry : extracted.get(0).entrySet()) {
-						// Prefix with field name for CSV
-						ret.put(field.getFieldName() + "_" + entry.getKey(), entry.getValue());
-					}
 
+					if (extracted.size() > 1) {
+						Double value;
+						for (Map<String,Object> extractedElt : extracted) {
+							for (Map.Entry<String, Object> entry : extractedElt.entrySet()) {
+								if (entry.getValue() instanceof Number && ret.containsKey(field.getFieldName() + "_" + entry.getKey())
+										&& ret.get(field.getFieldName() + "_" + entry.getKey()) instanceof Number) {
+									value = (Double)ret.get(field.getFieldName() + "_" + entry.getKey()) + (Double)entry.getValue();
+									ret.put(field.getFieldName() + "_" + entry.getKey(), value);
+								} else {
+									ret.put(field.getFieldName() + "_" + entry.getKey(), entry.getValue());	
+								}
+							}
+						}
+
+					} else {
+						for (Map.Entry<String, Object> entry : extracted.get(0).entrySet()) {
+							// Prefix with field name for CSV
+							ret.put(field.getFieldName() + "_" + entry.getKey(), entry.getValue());
+						}
+					}
 				} else {
 					if (field.isEntityField() && !extracted.isEmpty()) {
 						ret.put(field.getFieldName(), callback.extractNestedField(nodeRef, field).get(0));
@@ -951,13 +975,17 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		// Extracted:{dt_bcpg_allergenListAllergen=[{prop_bcpg_allergenCode={displayValue=F257,
 		// metadata=text, value=F257}}]}
 
+		// Criteria:{pack:pmlMaterial=Autres matériaux}
+		// Extracted:{assoc_pack_pmlMaterial=[{displayValue=Autres matériaux - Bois, siteId=null, metadata=lvValue, 
+		//value=workspace://SpacesStore/405f98a1-ebfa-41f0-a3e7-8ac7c7c150ca}]}
+
 		for (String key : comp.keySet()) {
 			String critKey = key.replace(PROP_SUFFIX, "").replace(ASSOC_SUFFIX, "").replace(DT_SUFFIX, "").replace("_", ":");
 
 			Object tmp = comp.get(key);
 			if (tmp != null) {
 				Map<String, Object> data = null;
-				
+
 				if (tmp instanceof ArrayList<?>) {
 					if (((ArrayList<?>) tmp).size() > 0) {
 						data = (Map<String, Object>) ((ArrayList<?>) tmp).get(0);
@@ -975,8 +1003,8 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				if (data.containsKey("value") && (data.get("value") != null)) {
 					value = data.get("value").toString().toLowerCase();
 				} else {
-					
-					
+
+
 					for (String subKey : data.keySet()) {
 						tmp = data.get(subKey);
 
@@ -997,7 +1025,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 						if (data.containsKey("value") && (data.get("value") != null)) {
 							value = data.get("value").toString().toLowerCase();
 						}
-						
+
 						break;
 					}
 
