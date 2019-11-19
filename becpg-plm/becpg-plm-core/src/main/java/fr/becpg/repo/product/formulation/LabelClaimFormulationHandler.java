@@ -221,7 +221,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 						if ((labelClaimItem.getLabelClaimValue() == null) || !labelClaimItem.getLabelClaimValue().isEmpty()) {
 							labelClaimItem.setIsClaimed(false);
 						}
-						if (!labelClaimItem.getIsFormulated()) {
+						if (labelClaimItem.getIsFormulated()==null || !labelClaimItem.getIsFormulated()) {
 							addMissingLabelClaims(partProduct, labelClaimItem);
 						}
 
@@ -245,7 +245,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 						logger.debug(extractName(subLabelClaimItem.getLabelClaim()) + " has null label claim value");
 					}
 
-					if (!labelClaimItem.getIsFormulated()) {
+					if (labelClaimItem.getIsFormulated()==null ||  !labelClaimItem.getIsFormulated()) {
 						addMissingLabelClaimReq(productData, partProduct, labelClaimItem);
 						addMissingLabelClaims(partProduct, labelClaimItem);
 
