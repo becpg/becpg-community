@@ -248,7 +248,9 @@
 					<field id="dsg:parameterValue" set="mainInfo"  >
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">		
 		                     <control-param name="style">width: 95%</control-param>
-		                 </control>
+							<control-param name="rows">25</control-param>
+							<control-param name="maxLength">50000</control-param>
+						</control>
 					</field>
 				</appearance>
 			</form>
