@@ -322,6 +322,32 @@
         Alfresco.util.Ajax.jsonRequest(config);
 
     };
+    
+    
+    beCPG.util.updateMultiCheckboxesValue = function(checkboxesName, hiddenField, signalChange)
+    {
+       var listElement = document.getElementsByName(checkboxesName);
+       
+       if (listElement !== null)
+       {
+    	   var values = new Array();
+      	   for(var k = 0; k < listElement.length; k++)  
+      	   {  
+      	        if(listElement[k].checked) {
+      	          values.push(listElement[k].value);
+      	        } 
+      	    }   
+          
+          YUIDom.get(hiddenField).value = values.join(",");
+          
+          if (signalChange)
+          {
+             YAHOO.Bubbling.fire("mandatoryControlValueUpdated", this);
+          }
+       }
+    };
+
+    
 
     Alfresco.util.getFileIcon.types =
     {
