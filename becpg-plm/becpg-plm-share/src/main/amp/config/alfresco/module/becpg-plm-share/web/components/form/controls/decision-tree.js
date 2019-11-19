@@ -102,14 +102,15 @@
 
                               if(choice.list!=null){
                                   var listOption = this.getCurrentListOptions(question.id, choice.id );
-                                 if(! choice.checkboxes){
+                                 if(!choice.checkboxes){
                                 	 htmlForm +="<p>";
                                  }
                                   var msgKey  =  choice.id == "-" ? "form.control.decision-tree.empty" : "form.control.decision-tree."+this.options.prefix+"."+question.id+"."+choice.id;           
-                
+
                                   if(choice.multiple && choice.checkboxes){
                                 	  for(var z = 0; z< choice.list.length; z++){
                                           var selected = false;
+                                          if(listOption!=null && listOption!=""){
                                             var values = listOption.split(",");
                                               for(var zz = 0; zz< values.length; zz++){
                                                   if(values[zz] == z){
@@ -117,8 +118,9 @@
                                                       break;
                                                   }
                                               }  
+                                          }
                                           
-                                          htmlForm +='<p><input type="checkbox" id="checkbox-'+this.id+question.id+'_'+choice.id+'_'+z+'" name="--group_'+this.id+question.id+'_'+choice.id+'" '+(this.options.disabled?'disabled':'')+' tabindex="0"  class="'+QUESTION_EVENTCLASS+'"  value="'+z+'" '+( selected ? "checked":"")+'>';
+                                          htmlForm +='<p><input type="checkbox" id="checkbox-'+this.id+question.id+'_'+choice.id+'_'+z+'" name="--group_'+this.id+question.id+'_'+choice.id+'" '+(this.options.disabled?'disabled':'')+' tabindex="0"  class="'+QUESTION_EVENTCLASS+'"  value="'+z+'" '+( selected ? 'checked="checked"':"")+'>';
                                           htmlForm +='<label for="checkbox-'+this.id+question.id+'_'+choice.id+'_'+z+'" >'+choice.list[z]+'</label></p>';
                                 	  
                                 	  }	  
@@ -160,15 +162,17 @@
                                   htmlForm +='<label for="'+this.id+'-choice_'+question.id+'_'+choice.id+'">'+(choice.label ? choice.label:  this.msg(msgKey))+'</label>';
                                   htmlForm +="</p>";   
                                  
-                                  if(choice.comment){
-                                     showComment = true;
-                                     commentLabel = choice.commentLabel;
-                                     
-                                     if(choice.textarea){
-                                         textarea = choice.textarea;
-                                     }
-                                  }
+                                
                               }
+                              
+                              if(choice.comment){
+                                  showComment = true;
+                                  commentLabel = choice.commentLabel;
+                                  
+                                  if(choice.textarea){
+                                      textarea = choice.textarea;
+                                  }
+                               }
                            }
                            
                            if(showComment){
@@ -209,7 +213,7 @@
                      var fnOnSelectChoice = function DT__fnOnSelectChoice(layer, args) {
                         var owner = Bubbling.getOwnerByTagName(args[1].input, "input");
                         if (owner !== null) {
-	                        if(!owner.type == "checkbox"){
+	                        if(owner.type != "checkbox"){
 		                           var previousState = owner.previousState;
 		                           if(previousState == true){
 		                        	   owner.checked = false;
@@ -340,7 +344,7 @@
 	                                    	        	 if(value.length>0){
 	                                                         value+=",";
 	                                                     }
-	                                                     value += checkboxes[k].value;
+	                                                     value += ""+checkboxes[k].value;
 	                                                     showVisible = true;
 	                                    	        } 
 	                                    	    }  
