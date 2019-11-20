@@ -10,6 +10,25 @@ if(isExternalUser(user)){
     widgetUtils.deleteObjectFromArray(model.jsonModel, "id", "HEADER_REPOSITORY");
 } else {
 
+	
+	if (config.scoped["BecpgMenu"]){
+		if (  config.scoped["BecpgMenu"]["hidePeople"] &&
+	    config.scoped["BecpgMenu"]["hidePeople"].getValue() == "true"){
+	     widgetUtils.deleteObjectFromArray(model.jsonModel, "id", "HEADER_PEOPLE"); 
+	}
+	
+	if (  config.scoped["BecpgMenu"]["hideSharedFiles"] &&
+		    config.scoped["BecpgMenu"]["hideSharedFiles"].getValue() == "true"){
+		     widgetUtils.deleteObjectFromArray(model.jsonModel, "id", "HEADER_SHARED_FILES"); 
+		}
+	
+	if (  config.scoped["BecpgMenu"]["hideMyFiles"] &&
+		    config.scoped["BecpgMenu"]["hideMyFiles"].getValue() == "true"){
+		     widgetUtils.deleteObjectFromArray(model.jsonModel, "id", "MY_FILES"); 
+		}
+	}
+	
+	
     var beCPGMenu = getOrCreateBeCPGMenu();
     
     

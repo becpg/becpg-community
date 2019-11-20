@@ -53,6 +53,7 @@ import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorMode;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
+import fr.becpg.repo.security.SecurityService;
 
 public class ProjectListExtractor extends ActivityListExtractor {
 
@@ -77,6 +78,8 @@ public class ProjectListExtractor extends ActivityListExtractor {
 	private AssociationService associationService;
 
 	private PreferenceService preferenceService;
+	
+	private SecurityService securityService;
 
 	private static final Log logger = LogFactory.getLog(ProjectListExtractor.class);
 
@@ -86,6 +89,11 @@ public class ProjectListExtractor extends ActivityListExtractor {
 
 	public void setPersonService(PersonService personService) {
 		this.personService = personService;
+	}
+	
+
+	public void setSecurityService(SecurityService securityService) {
+		this.securityService = securityService;
 	}
 
 	@Override
@@ -114,7 +122,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 		Map<NodeRef, Map<String, Object>> cache = new HashMap<>();
 
 		for (NodeRef nodeRef : results) {
-			if (permissionService.hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED) {
+			if (permissionService.hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED ) {
 				if (!nodeService.exists(nodeRef)) {
 					logger.error("NodeRef doesn't exist ? " + nodeRef.toString());
 				} else {
@@ -175,7 +183,8 @@ public class ProjectListExtractor extends ActivityListExtractor {
 
 		// pjt:project
 		QName dataType = dataListFilter.getDataType();
-		BeCPGQueryBuilder beCPGQueryBuilder = dataListFilter.getSearchQuery();
+		BeCPGQueryBuilder beCPGQueryBuilder = dataListFilter.getSearchQuery().excludeDefaults();
+	
 
 		if (VIEW_ENTITY_PROJECTS.equals(dataListFilter.getFilterId())) {
 			results = associationService.getSourcesAssocs(dataListFilter.getEntityNodeRef(), ProjectModel.ASSOC_PROJECT_ENTITY);
@@ -198,6 +207,8 @@ public class ProjectListExtractor extends ActivityListExtractor {
 					}
 
 					beCPGQueryBuilder.excludeProp(ProjectModel.PROP_TL_IS_EXCLUDE_FROM_SEARCH, Boolean.TRUE.toString());
+					
+					
 
 					if (dataListFilter.getCriteriaMap() == null) {
 						dataListFilter.setCriteriaMap(new HashMap<String, String>());
@@ -224,7 +235,8 @@ public class ProjectListExtractor extends ActivityListExtractor {
 
 					for (Iterator<NodeRef> iterator = results.iterator(); iterator.hasNext();) {
 						NodeRef nodeRef = iterator.next();
-						if (associationService.getTargetAssoc(nodeRef, ProjectModel.ASSOC_TL_RESOURCES) == null) {
+						if (associationService.getTargetAssoc(nodeRef, ProjectModel.ASSOC_TL_RESOURCES) == null 
+								|| !accept(entityListDAO.getEntity(nodeRef))) {
 							iterator.remove();
 						}
 					}
@@ -232,6 +244,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 					if (VIEW_PROJECTS.equals(dataListFilter.getFilterId())) {
 						BeCPGQueryBuilder projectQueryBuilder = dataListFilter.getSearchQuery();
 						projectQueryBuilder.ofType(ProjectModel.TYPE_PROJECT);
+						projectQueryBuilder.excludeDefaults();
 						List<NodeRef> projectList = projectQueryBuilder.ftsLanguage().list();
 						for (Iterator<NodeRef> iterator = results.iterator(); iterator.hasNext();) {
 							NodeRef nodeRef = iterator.next();
@@ -274,6 +287,10 @@ public class ProjectListExtractor extends ActivityListExtractor {
 		return results;
 	}
 
+	private boolean accept(NodeRef projectNodeRef) {
+		return projectNodeRef!=null && ! nodeService.hasAspect(projectNodeRef,BeCPGModel.ASPECT_ENTITY_TPL);
+	}
+
 	@Override
 	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields,
 			final AttributeExtractorMode mode, Map<QName, Serializable> properties, final Map<String, Object> props,
@@ -301,7 +318,10 @@ public class ProjectListExtractor extends ActivityListExtractor {
 
 								for (NodeRef itemNodeRef : assocRefs) {
 
-									if (permissionService.hasPermission(itemNodeRef, "Read") == AccessStatus.ALLOWED) {
+									
+									
+									if (permissionService.hasPermission(itemNodeRef, "Read") == AccessStatus.ALLOWED 
+											&& securityService.computeAccessMode(itemType, field.getFieldQname()) == SecurityService.READ_ACCESS) {
 
 										Map<String, Object> tmp = new HashMap<>(4);
 
@@ -309,7 +329,9 @@ public class ProjectListExtractor extends ActivityListExtractor {
 										Map<String, Boolean> userAccess = new HashMap<>(1);
 
 										permissions.put("userAccess", userAccess);
-										userAccess.put("edit", permissionService.hasPermission(itemNodeRef, "Write") == AccessStatus.ALLOWED);
+										userAccess.put("edit", permissionService.hasPermission(itemNodeRef, "Write") == AccessStatus.ALLOWED
+												&& securityService.computeAccessMode(itemType, field.getFieldQname()) == SecurityService.WRITE_ACCESS);
+										
 
 										QName itemType = nodeService.getType(itemNodeRef);
 										Map<QName, Serializable> properties = nodeService.getProperties(itemNodeRef);

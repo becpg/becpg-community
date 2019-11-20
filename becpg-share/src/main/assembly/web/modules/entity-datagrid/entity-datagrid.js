@@ -735,30 +735,30 @@
                             Bubbling.addDefaultAction(me.id + "-action-link", fnActionHandler);
                             Bubbling.addDefaultAction(me.id + "-show-more", fnActionHandler);
                             
-                            // Hook filter change events
-                            var fnChangeFilterHandler = function EntityDataGrid_fnChangeFilterHandler(layer, args)
-                            {
-                                var owner = args[1].anchor;
-                                if (owner !== null)
-                                {
-                                    var filter = owner.rel, filters, filterObj = {};
-                                    if (filter && filter !== "")
-                                    {
-                                        args[1].stop = true;
-                                        filters = filter.split("|");
-                                        filterObj =
-                                        {
-                                            filterOwner : window.unescape(filters[0] || ""),
-                                            filterId : window.unescape(filters[1] || ""),
-                                            filterData : window.unescape(filters[2] || "").replace("$ML$", "|"),
-                                            filterDisplay : window.unescape(filters[3] || "")
-                                        };
-                                        Bubbling.fire(this.scopeId + "changeFilter", filterObj);
-                                    }
-                                }
-                                return true;
-                            };
-                            Bubbling.addDefaultAction("filter-change", fnChangeFilterHandler);
+//                            // Hook filter change events
+//                            var fnChangeFilterHandler = function EntityDataGrid_fnChangeFilterHandler(layer, args)
+//                            {
+//                                var owner = args[1].anchor;
+//                                if (owner !== null)
+//                                {
+//                                    var filter = owner.rel, filters, filterObj = {};
+//                                    if (filter && filter !== "")
+//                                    {
+//                                        args[1].stop = true;
+//                                        filters = filter.split("|");
+//                                        filterObj =
+//                                        {
+//                                            filterOwner : window.unescape(filters[0] || ""),
+//                                            filterId : window.unescape(filters[1] || ""),
+//                                            filterData : window.unescape(filters[2] || "").replace("$ML$", "|"),
+//                                            filterDisplay : window.unescape(filters[3] || "")
+//                                        };
+//                                        Bubbling.fire(this.scopeId + "changeFilter", filterObj);
+//                                    }
+//                                }
+//                                return true;
+//                            };
+//                            Bubbling.addDefaultAction("filter-change", fnChangeFilterHandler);
 
                             // DataList Actions module
                             this.modules.actions = new Alfresco.module.DataListActions();
@@ -791,7 +791,7 @@
                                             lazyloadmenu : false
                                         });
                                 
-                         
+                                this.widgets.filterForm.set("disabled", true);
                                  
                                 this.widgets.filterForm.getMenu().subscribe("show", function(p_sType, p_aArgs){
                                	 	me.populateFilterForm();
@@ -945,8 +945,8 @@
                         {
                             return this.options.columnsUrl + "?itemType=" + encodeURIComponent(this.options.itemType != null ? this.options.itemType
                                     : this.datalistMeta.itemType) + "&list=" + encodeURIComponent(this.datalistMeta.name != null ? this.datalistMeta.name
-                                    : this.options.list) + (formId != null ? "&formId=" + formId : "") + (this.options.extraDataParams.indexOf("&clearCache=true") < 0 ? ""
-                                    : this.options.extraDataParams ) + (this.options.siteId ? "&siteId=" + this.options.siteId : "");
+                                    : this.options.list) + (formId != null ? "&formId=" + formId : "") + (this.options.clearCache ? "&clearCache=true"
+                                    : "" ) + (this.options.siteId ? "&siteId=" + this.options.siteId : "");
                         },
 
                         /**
@@ -987,7 +987,9 @@
 	                                    fn : function()
 	                                    {
 	                                    	this.isFilterFormLoaded = false;
-	                                        this.widgets.filterForm.set("disabled", true);
+	                                    	if(this.widgets.filterForm!=null){
+	                                    		this.widgets.filterForm.set("disabled", true);
+	                                    	}
 	                                    },
 	                                    scope : this
 	                                },
@@ -1007,8 +1009,9 @@
                         onFilterFormTemplateLoaded : function EntityDataGrid_onFilterFormTemplateLoaded(response)
                         {
                             Dom.get(this.id + "-filterform").innerHTML = response.serverResponse.responseText;
-
-                            this.widgets.filterForm.set("disabled", false);
+                            if(this.widgets.filterForm!=null){
+                            	this.widgets.filterForm.set("disabled", false);
+                            }
 
                         },
 
@@ -1103,9 +1106,14 @@
                             this._setupDataTable();
                             // Hide "no list" message
                             Dom.addClass(this.id + "-selectListMessage", "hidden");
+                            if(this.widgets.newRowButton!=null){
+                            	this.widgets.newRowButton.set("disabled", false);
+                            }
                             
-                            this.widgets.newRowButton.set("disabled", false);
-
+                            if(this.widgets.filterForm!=null){
+                            	this.widgets.filterForm.set("disabled", false);
+                            }
+                            
                             Bubbling.fire(this.scopeId + "onDatalistColumnsReady",
                             {
                                 entityDatagrid : this
@@ -2680,6 +2688,10 @@
 	                                this.parentInputNodeRef = null;
 	                            }
 
+	                            if(obj.clearCache!=null){
+	                            	this.options.clearCache = obj.clearCache;
+	                            }
+	                            
                             	if(obj.extraDataParams!=null) {
                             		this.options.extraDataParams = obj.extraDataParams;
                             	}

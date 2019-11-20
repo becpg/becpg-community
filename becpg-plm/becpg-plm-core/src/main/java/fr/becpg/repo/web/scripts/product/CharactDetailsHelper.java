@@ -288,114 +288,132 @@ public class CharactDetailsHelper {
 			font.setColor(HSSFColorPredefined.WHITE.getIndex());
 			style.setFont(font);
 
-			Cell cell = row.createCell(cellnum++);
-			cell.setCellValue(getYAxisLabel());
-			cell.setCellStyle(style);
+		Cell cell = row.createCell(cellnum++);
+		cell.setCellValue(getYAxisLabel());
+		cell.setCellStyle(style);
 
+		cell = row.createCell(cellnum++);
+		cell.setCellValue(PRODUCT_TYPE_KEY);
+		cell.setCellStyle(style);
+
+		cell = row.createCell(cellnum++);
+		cell.setCellValue(LEVEL_KEY);
+		cell.setCellStyle(style);
+
+		Map<String, String> additionalValues = createAdditionalValuesMap();
+		List<CharactDetailsValue> compEls = new LinkedList<>();
+
+		for (Map.Entry<NodeRef, List<CharactDetailsValue>> entry : charactDetails.getData().entrySet()) {
+			for (CharactDetailsValue value : entry.getValue()) {
+				String propName = attributeExtractorService.extractPropName(entry.getKey());
+				if (!compEls.contains(value)) {
+					value.setName(propName);
+					compEls.add(value);
+				}
+
+				fillAdditionalValuesMap(additionalValues, value, propName);
+			}
+		}
+
+		Map<String, Integer> indexMap = createColumnMap(charactDetails.getData(), additionalValues, attributeExtractorService, cellnum);
+		// add sorted headers
+		for (Entry<String, Integer> entry : indexMap.entrySet()) {
+			cell = row.createCell(entry.getValue());
+			cell.setCellValue(entry.getKey());
+			cell.setCellStyle(style);
+		}
+
+		Map<NodeRef,Integer> rowIndexes = new HashMap<>();
+		
+		for (CharactDetailsValue charactDetailsValue : compEls) {
+			cellnum = 0;
+			String prefix = "";
+			if (charactDetailsValue.getLevel() > 0) {
+				prefix = "└";
+				for (int i = 0; i < charactDetailsValue.getLevel(); i++) {
+					prefix += "──";
+				}
+				prefix += ">";
+			}
+
+
+			String currentDetailsName = charactDetailsValue.getName();
+			
+			if(rowIndexes.containsKey(charactDetailsValue.getCompositeNodeRef())) {
+				rownum = rowIndexes.get(charactDetailsValue.getCompositeNodeRef());
+				row = sheet.getRow(rownum);
+			} else {
+				rownum = rowIndexes.size()+1;
+				rowIndexes.put(charactDetailsValue.getCompositeNodeRef(), rownum);
+				row = sheet.createRow(rownum);
+			}
+			
+		
 			cell = row.createCell(cellnum++);
-			cell.setCellValue(PRODUCT_TYPE_KEY);
-			cell.setCellStyle(style);
+			cell.setCellValue(prefix + attributeExtractorService.extractPropName(charactDetailsValue.getKeyNodeRef()));
 
+			// product type cell
 			cell = row.createCell(cellnum++);
-			cell.setCellValue(LEVEL_KEY);
-			cell.setCellStyle(style);
+			String type = nodeService.getType(charactDetailsValue.getKeyNodeRef()).getLocalName();
+			String typeTitle = I18NUtil.getMessage("bcpg_bcpgmodel.type.bcpg_" + type + ".title");
+			cell.setCellValue(typeTitle);
 
-			Map<String, String> additionalValues = createAdditionalValuesMap();
-			List<CharactDetailsValue> compEls = new LinkedList<>();
+			// level depth cell
+			cell = row.createCell(cellnum++);
+			cell.setCellValue(charactDetailsValue.getLevel());
 
+
+			// set charact value to cell
 			for (Map.Entry<NodeRef, List<CharactDetailsValue>> entry : charactDetails.getData().entrySet()) {
-				for (CharactDetailsValue value : entry.getValue()) {
-					String propName = attributeExtractorService.extractPropName(entry.getKey());
-					if (!compEls.contains(value)) {
-						value.setName(propName);
-						compEls.add(value);
-					}
 
-					fillAdditionalValuesMap(additionalValues, value, propName);
-				}
-			}
+				Integer currentIndex = indexMap.get(currentDetailsName);
 
-			Map<String, Integer> indexMap = createColumnMap(charactDetails.getData(), additionalValues, attributeExtractorService, cellnum);
-			// add sorted headers
-			for (Entry<String, Integer> entry : indexMap.entrySet()) {
-				cell = row.createCell(entry.getValue());
-				cell.setCellValue(entry.getKey());
-				cell.setCellStyle(style);
-			}
-
-			for (CharactDetailsValue charactDetailsValue : compEls) {
-				cellnum = 0;
-				String prefix = "";
-				if (charactDetailsValue.getLevel() > 0) {
-					prefix = "└";
-					for (int i = 0; i < charactDetailsValue.getLevel(); i++) {
-						prefix += "──";
-					}
-					prefix += ">";
-				}
-
-				row = sheet.createRow(rownum++);
-				cell = row.createCell(cellnum++);
-				cell.setCellValue(prefix + attributeExtractorService.extractPropName(charactDetailsValue.getKeyNodeRef()));
-
-				// product type cell
-				cell = row.createCell(cellnum++);
-				String type = nodeService.getType(charactDetailsValue.getKeyNodeRef()).getLocalName();
-				String typeTitle = I18NUtil.getMessage("bcpg_bcpgmodel.type.bcpg_" + type + ".title");
-				cell.setCellValue(typeTitle);
-
-				// level depth cell
-				cell = row.createCell(cellnum++);
-				cell.setCellValue(charactDetailsValue.getLevel());
-
-				String currentDetailsName = charactDetailsValue.getName();
-
-				// set charact value to cell
-				for (Map.Entry<NodeRef, List<CharactDetailsValue>> entry : charactDetails.getData().entrySet()) {
-
-					Integer currentIndex = indexMap.get(currentDetailsName);
-
-					if (entry.getValue().contains(charactDetailsValue)) {
-
+				Optional<CharactDetailsValue> matchingCharact = compEls.stream()
+						.filter(elt -> elt.keyEquals(charactDetailsValue) && elt.getName().equals(currentDetailsName)).findFirst();
+				if (matchingCharact.isPresent()) {
+					
+					int entryIndex = entry.getValue().indexOf(matchingCharact.get());
+					if (entryIndex != -1) {
+						Double value = entry.getValue().get(entryIndex).getValue();
 						cell = row.createCell(currentIndex);
-						Double value = entry.getValue().get(entry.getValue().indexOf(charactDetailsValue)).getValue();
 						cell.setCellValue(value);
 					}
-				}
-
-				// put additional characts to cells
-				for (Entry<String, String> entry : additionalValues.entrySet()) {
-
-					String key = entry.getKey();
-
-					if (!entry.getValue().equals(currentDetailsName)) {
-						continue;
-					}
-
-					Integer index = indexMap.get(key);
-					Double currentAdditionalValue = 0d;
-
-					if (key.equals(PREVIOUS_COST_KEY)) {
-						currentAdditionalValue = charactDetailsValue.getPreviousValue();
-					} else if (key.equals(FUTURE_COST_KEY)) {
-						currentAdditionalValue = charactDetailsValue.getFutureValue();
-					} else if (key.equals(MINI_VALUE_KEY)) {
-						currentAdditionalValue = charactDetailsValue.getMini();
-					} else if (key.equals(MAXI_VALUE_KEY)) {
-						currentAdditionalValue = charactDetailsValue.getMaxi();
-					}
-
-					if (currentAdditionalValue == null) {
-						currentAdditionalValue = 0d;
-					}
-
-					cell = row.createCell(index);
-					cell.setCellValue(currentAdditionalValue);
+					
 				}
 			}
 
-			workbook.write(outputStream);
+			// put additional characts to cells
+			for (Entry<String, String> entry : additionalValues.entrySet()) {
+
+				String key = entry.getKey();
+
+				if (!entry.getValue().equals(currentDetailsName)) {
+					continue;
+				}
+
+				Integer index = indexMap.get(key);
+				Double currentAdditionalValue = 0d;
+
+				if (key.equals(PREVIOUS_COST_KEY)) {
+					currentAdditionalValue = charactDetailsValue.getPreviousValue();
+				} else if (key.equals(FUTURE_COST_KEY)) {
+					currentAdditionalValue = charactDetailsValue.getFutureValue();
+				} else if (key.equals(MINI_VALUE_KEY)) {
+					currentAdditionalValue = charactDetailsValue.getMini();
+				} else if (key.equals(MAXI_VALUE_KEY)) {
+					currentAdditionalValue = charactDetailsValue.getMaxi();
+				}
+
+				if (currentAdditionalValue == null) {
+					currentAdditionalValue = 0d;
+				}
+
+				cell = row.createCell(index);
+				cell.setCellValue(currentAdditionalValue);
+			}
 		}
+
+		workbook.write(outputStream);
 	}
 
 	// translation -> index in resulting array, sorted so it goes value - mini -

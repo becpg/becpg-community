@@ -10,6 +10,7 @@ import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -54,6 +55,8 @@ import fr.becpg.repo.importer.ImportService;
 import fr.becpg.repo.importer.ImportType;
 import fr.becpg.repo.importer.ImportVisitor;
 import fr.becpg.repo.importer.ImporterException;
+import fr.becpg.repo.importer.MappingLoaderFactory;
+import fr.becpg.repo.importer.MappingType;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
@@ -69,32 +72,6 @@ public class ImportServiceImpl implements ImportService {
 	private static final String FULL_PATH_IMPORT_FAILED_FOLDER = "/app:company_home/cm:Exchange/cm:Import/cm:ImportFailed";
 	private static final String FULL_PATH_IMPORT_LOG_FOLDER = "/app:company_home/cm:Exchange/cm:Import/cm:ImportLog";
 	private static final String FULL_PATH_IMPORT_SUCCEEDED_FOLDER = "/app:company_home/cm:Exchange/cm:Import/cm:ImportSucceeded";
-
-	private static final String PFX_COMMENT = "#";
-
-	private static final String PFX_MAPPING = "MAPPING";
-
-	private static final String PFX_PATH = "PATH";
-
-	private static final String PFX_TYPE = "TYPE";
-
-	private static final String PFX_LIST_TYPE = "LIST_TYPE";
-
-	private static final String PFX_ENTITY_TYPE = "ENTITY_TYPE";
-
-	private static final String PFX_STOP_ON_FIRST_ERROR = "STOP_ON_FIRST_ERROR";
-
-	private static final String PFX_DELETE_DATALIST = "DELETE_DATALIST";
-
-	private static final String PFX_COLUMS = "COLUMNS";
-
-	private static final String PFX_VALUES = "VALUES";
-
-	private static final String PFX_IMPORT_TYPE = "IMPORT_TYPE";
-
-	private static final String PFX_DOCS_BASE_PATH = "DOCS_BASE_PATH";
-
-	private static final String PFX_DISABLED_POLICIES = "DISABLED_POLICIES";
 
 	private static final String PATH_SITES = "st:sites";
 
@@ -160,6 +137,8 @@ public class ImportServiceImpl implements ImportService {
 	@Autowired
 	@Qualifier("importCommentsVisitor")
 	private ImportVisitor importCommentsVisitor;
+	@Autowired
+	private MappingLoaderFactory mappingLoaderFactory;
 
 	/**
 	 * Import a text file
@@ -333,11 +312,13 @@ public class ImportServiceImpl implements ImportService {
 		Element mappingElt = null;
 		String[] arrStr;
 
+		Map<String,Object> annotationMapping = new HashMap<>();
+		
 		while ((importContext.getImportIndex() < lastIndex) && ((arrStr = importContext.nextLine()) != null)) {
 			if (arrStr.length > 0) {
 				String prefix = PropertiesHelper.cleanValue(arrStr[COLUMN_PREFIX]);
 
-				if (prefix.equals(PFX_PATH)) {
+				if (prefix.equals(ImportHelper.PFX_PATH)) {
 
 					importContext.setParentNodeRef(null);
 
@@ -345,7 +326,7 @@ public class ImportServiceImpl implements ImportService {
 					importContext.setPath(cleanPath(pathValue));
 
 					if (pathValue.isEmpty()) {
-						throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_PATH, importContext.getImportIndex()));
+						throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, ImportHelper.PFX_PATH, importContext.getImportIndex()));
 					}
 
 					if (pathValue.startsWith(PATH_SITES) || pathValue.startsWith(RepoConsts.PATH_SEPARATOR + PATH_SITES)) {
@@ -360,25 +341,25 @@ public class ImportServiceImpl implements ImportService {
 
 					NodeRef parentNodeRef = repoService.getOrCreateFolderByPaths(repositoryHelper.getCompanyHome(), paths);
 					importContext.setParentNodeRef(parentNodeRef);
-				} else if (prefix.equals(PFX_DOCS_BASE_PATH)) {
+				} else if (prefix.equals(ImportHelper.PFX_DOCS_BASE_PATH)) {
 
 					String importDocsBasePath = arrStr[COLUMN_MAPPING];
 					if (!importDocsBasePath.isEmpty()) {
 						importContext.setDocsBasePath(importDocsBasePath);
 					}
 
-				} else if (prefix.equals(PFX_IMPORT_TYPE)) {
+				} else if (prefix.equals(ImportHelper.PFX_IMPORT_TYPE)) {
 
 					importContext.setImportType(null);
 
 					String importTypeValue = arrStr[COLUMN_IMPORT_TYPE];
 					if (importTypeValue.isEmpty()) {
-						throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_IMPORT_TYPE, importContext.getImportIndex()));
+						throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, ImportHelper.PFX_IMPORT_TYPE, importContext.getImportIndex()));
 					}
 
 					ImportType importType = ImportType.valueOf(importTypeValue);
 					importContext.setImportType(importType);
-				} else if (prefix.equals(PFX_DISABLED_POLICIES)) {
+				} else if (prefix.equals(ImportHelper.PFX_DISABLED_POLICIES)) {
 
 					importContext.getDisabledPolicies().clear();
 
@@ -389,81 +370,100 @@ public class ImportServiceImpl implements ImportService {
 						}
 
 					}
-				} else if (prefix.equals(PFX_LIST_TYPE)) {
+				} else if (prefix.equals(ImportHelper.PFX_LIST_TYPE)) {
 
 					importContext.setListType(null);
 
 					String typeValue = arrStr[COLUMN_LIST_TYPE];
 					if (typeValue.isEmpty()) {
-						throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_LIST_TYPE, importContext.getImportIndex()));
+						throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, ImportHelper.PFX_LIST_TYPE, importContext.getImportIndex()));
 					}
 
 					QName type = QName.createQName(typeValue, nameSpaceService);
 					importContext.setListType(type);
 
-				} else if (prefix.equals(PFX_TYPE)) {
+				} else if (prefix.equals(ImportHelper.PFX_TYPE)) {
 
 					importContext.setType(null);
 
 					String typeValue = arrStr[COLUMN_TYPE];
 					if (typeValue.isEmpty()) {
-						throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_TYPE, importContext.getImportIndex()));
+						throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, ImportHelper.PFX_TYPE, importContext.getImportIndex()));
 					}
 
 					QName type = QName.createQName(typeValue, nameSpaceService);
 					importContext.setType(type);
 
-				} else if (prefix.equals(PFX_ENTITY_TYPE)) {
+				} else if (prefix.equals(ImportHelper.PFX_ENTITY_TYPE)) {
 
 					importContext.setEntityType(null);
 
 					String typeValue = arrStr[COLUMN_ENTITY_TYPE];
 					if (typeValue.isEmpty()) {
-						throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_ENTITY_TYPE, importContext.getImportIndex()));
+						throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, ImportHelper.PFX_ENTITY_TYPE, importContext.getImportIndex()));
 					}
 
 					QName entityType = QName.createQName(typeValue, nameSpaceService);
 					importContext.setEntityType(entityType);
-				} else if (prefix.equals(PFX_STOP_ON_FIRST_ERROR)) {
+				} else if (prefix.equals(ImportHelper.PFX_STOP_ON_FIRST_ERROR)) {
 
 					String stopOnFirstErrorValue = arrStr[COLUMN_TYPE];
 					if (!stopOnFirstErrorValue.isEmpty()) {
 						importContext.setStopOnFirstError(Boolean.valueOf(stopOnFirstErrorValue));
 					}
-				} else if (prefix.equals(PFX_DELETE_DATALIST)) {
+				} else if (prefix.equals(ImportHelper.PFX_DELETE_DATALIST)) {
 
 					String deleteDataList = arrStr[COLUMN_TYPE];
 					if (!deleteDataList.isEmpty()) {
 						importContext.setDeleteDataList(Boolean.valueOf(deleteDataList));
 					}
 
-				} else if (prefix.equals(PFX_COLUMS)) {
-
+				} else if (prefix.equals(ImportHelper.PFX_COLUMS)) {
+					
+					if(annotationMapping != null && !annotationMapping.isEmpty()) {
+						annotationMapping.put(ImportHelper.PFX_COLUMS, Arrays.asList(arrStr));
+						importContext = importNodeVisitor.loadClassMapping(annotationMapping, importContext,  mappingLoaderFactory.getMappingLoader(MappingType.ANNOTATION));
+					}
+					
 					boolean undefinedColumns = true;
 					List<String> columns = new ArrayList<>(arrStr.length);
+					
 					for (int z_idx = 1; z_idx < arrStr.length; z_idx++) {
 						if (!arrStr[z_idx].isEmpty()) {
 							columns.add(arrStr[z_idx]);
 							undefinedColumns = false;
 						}
 					}
-
 					if (undefinedColumns) {
-						throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_COLUMS, importContext.getImportIndex()));
+						throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, ImportHelper.PFX_COLUMS, importContext.getImportIndex()));
 					}
-
+					
 					importContext = importNodeVisitor.loadMappingColumns(mappingElt, columns, importContext);
 
-				} else if (prefix.equals(PFX_MAPPING)) {
+				} else if (prefix.equals(ImportHelper.PFX_COLUMNS_PARAMS)) {
+					List<List<String>> columnsParams = (List<List<String>>)annotationMapping.get(ImportHelper.PFX_COLUMNS_PARAMS);
+					if(columnsParams == null) {
+						columnsParams = new ArrayList<>();
+					}
+					columnsParams.add(Arrays.asList(arrStr));
+					annotationMapping.put(ImportHelper.PFX_COLUMNS_PARAMS, columnsParams);
+					
+					if (annotationMapping.isEmpty()) {
+						throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, ImportHelper.PFX_MAPPING, importContext.getImportIndex()));
+					}
+					
+					
+				} else if (prefix.equals(ImportHelper.PFX_MAPPING)) {
 
 					String mappingValue = arrStr[COLUMN_MAPPING];
 					if (mappingValue.isEmpty()) {
-						throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_MAPPING, importContext.getImportIndex()));
+						throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, ImportHelper.PFX_MAPPING, importContext.getImportIndex()));
 					}
 
 					mappingElt = loadMapping(mappingValue);
-					importContext = importNodeVisitor.loadClassMapping(mappingElt, importContext);
-				} else if (prefix.equals(PFX_VALUES)) {
+					importContext = importNodeVisitor.loadClassMapping(mappingElt, importContext,  mappingLoaderFactory.getMappingLoader(MappingType.XML));
+					
+				} else if (prefix.equals(ImportHelper.PFX_VALUES)) {
 
 					try {
 
@@ -481,7 +481,7 @@ public class ImportServiceImpl implements ImportService {
 						}
 
 						if (undefinedValues) {
-							throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_VALUES, importContext.getImportIndex()));
+							throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, ImportHelper.PFX_VALUES, importContext.getImportIndex()));
 						}
 
 						// disable policy
@@ -537,7 +537,7 @@ public class ImportServiceImpl implements ImportService {
 							policyBehaviourFilter.enableBehaviour(disabledPolicy);
 						}
 					}
-				} else if (!(prefix.isEmpty() || prefix.equals(PFX_COMMENT))) {
+				} else if (!(prefix.isEmpty() || prefix.equals(ImportHelper.PFX_COMMENT))) {
 					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNSUPPORTED_PREFIX, importContext.getImportIndex(), prefix));
 				}
 			}
@@ -583,6 +583,7 @@ public class ImportServiceImpl implements ImportService {
 
 		return mappingElt;
 	}
+	
 
 	private void createLogFile(NodeRef parentNodeRef, String fileName, String content) throws IOException {
 

@@ -54,7 +54,6 @@ public class MultiLevelDataServiceIT extends PLMBaseTestCase {
 	public void testGetMultiLevelCompoList() {
 
 		logger.debug("testGetMultiLevelCompoList");
-		Date startTime = new Date();
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -108,7 +107,7 @@ public class MultiLevelDataServiceIT extends PLMBaseTestCase {
 			return null;
 		}, false, true);
 
-		waitForSolr(startTime);
+		waitForSolr();
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 

@@ -77,33 +77,78 @@
                                     +question.id.toUpperCase()+' - '
                                     + (question.label ? question.label: this.msg("form.control.decision-tree."+this.options.prefix+"."+question.id+".label"))
                                     +'</legend>';
+                           if(question.note){
+                        	   htmlForm += '<span class="decision-tree-note">'+question.note+'</span>';
+                           }
+                           
+                           if(question.upperNote){
+                        	   htmlForm += '<span class="decision-tree-note">'+question.upperNote+'</span>';
+                           }
+                           
+                           
+                           if(question.url){
+                        	   if(question.url instanceof Array){
+                                   for(var z=0 ; z<question.url.length ; z++){
+                                	   htmlForm += '<span class="decision-tree-url"><a title="' + this.msg("link.title.open-link") + '" href="' + question.url[z]  + '"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/link-16.png" />'+question.url[z]+'</a></span>';
+                                   }
+                               } else {
+                            	   htmlForm += '<span class="decision-tree-url"><a title="' + this.msg("link.title.open-link") + '" href="' + question.url  + '"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/link-16.png" />'+question.url+'</a></span>';
+                               }
+                              }
+                          
+                           
                            for(var j = 0; j< question.choices.length; j++){
                               var choice = question.choices[j];
 
                               if(choice.list!=null){
                                   var listOption = this.getCurrentListOptions(question.id, choice.id );
-                                  htmlForm +="<p>";
-                                  var msgKey  =  choice.id == "-" ? "form.control.decision-tree.empty" : "form.control.decision-tree."+this.options.prefix+"."+question.id+"."+choice.id;
-                                  htmlForm +='<label for="'+this.id+'-choice_'+question.id+'_'+choice.id+'">'+(choice.label ? choice.label:  this.msg(msgKey))+'</label>';
-                                 
-                                  htmlForm +='<select '+(choice.multiple ? 'multiple="true"':"")+' '+(this.options.disabled?'disabled':'')+' tabindex="0" id="'+this.id+'-select_'+question.id+'_'+choice.id+'" class="'+LIST_EVENTCLASS+'" name="--group_'+this.id+question.id+'"  >';
-                                  for(var z = 0; z< choice.list.length; z++){
-                                      var selected = false;
-                                      if(choice.multiple){
-                                          var values = listOption.split(",");
-                                          for(var zz = 0; zz< values.length; zz++){
-                                              if(values[zz] == choice.list[z]){
-                                                  selected = true;
-                                                  break;
-                                              }
+                                 if(!choice.checkboxes){
+                                	 htmlForm +="<p>";
+                                 }
+                                  var msgKey  =  choice.id == "-" ? "form.control.decision-tree.empty" : "form.control.decision-tree."+this.options.prefix+"."+question.id+"."+choice.id;           
+
+                                  if(choice.multiple && choice.checkboxes){
+                                	  for(var z = 0; z< choice.list.length; z++){
+                                          var selected = false;
+                                          if(listOption!=null && listOption!=""){
+                                            var values = listOption.split(",");
+                                              for(var zz = 0; zz< values.length; zz++){
+                                                  if(values[zz] == z){
+                                                      selected = true;
+                                                      break;
+                                                  }
+                                              }  
                                           }
-                                      } else {
-                                          selected = listOption == choice.list[z];
-                                      }
-                                      htmlForm +='<option '+( selected ? "selected":"")+'>'+choice.list[z]+'</option>';
+                                          
+                                          htmlForm +='<p><input type="checkbox" id="checkbox-'+this.id+question.id+'_'+choice.id+'_'+z+'" name="--group_'+this.id+question.id+'_'+choice.id+'" '+(this.options.disabled?'disabled':'')+' tabindex="0"  class="'+QUESTION_EVENTCLASS+'"  value="'+z+'" '+( selected ? 'checked="checked"':"")+'>';
+                                          htmlForm +='<label for="checkbox-'+this.id+question.id+'_'+choice.id+'_'+z+'" >'+choice.list[z]+'</label></p>';
+                                	  
+                                	  }	  
+                                	  
+                                  } else {
+                                	  htmlForm +='<label for="'+this.id+'-choice_'+question.id+'_'+choice.id+'">'+(choice.label ? choice.label:  this.msg(msgKey))+'</label>';
+	                                  htmlForm +='<select '+(choice.multiple ? 'multiple="true"':"")+' '+(this.options.disabled?'disabled':'')+' tabindex="0" id="'+this.id+'-select_'+question.id+'_'+choice.id+'" class="'+LIST_EVENTCLASS+'" name="--group_'+this.id+question.id+'_'+choice.id+'"  >';
+	                                  for(var z = 0; z< choice.list.length; z++){
+	                                      var selected = false;
+	                                      if(choice.multiple){
+	                                          var values = listOption.split(",");
+	                                          for(var zz = 0; zz< values.length; zz++){
+	                                              if(values[zz] == choice.list[z]){
+	                                                  selected = true;
+	                                                  break;
+	                                              }
+	                                          }
+	                                      } else {
+	                                          selected = listOption == choice.list[z];
+	                                      }
+	                                      htmlForm +='<option '+( selected ? "selected":"")+'>'+choice.list[z]+'</option>';
+	                                  }
+	                                  htmlForm +='</select>';
+	                                  
                                   }
-                                  htmlForm +='</select>';
-                                  htmlForm +="</p>";   
+                                  if(! choice.checkboxes){
+                                	  htmlForm +="</p>";   
+                                  }
                                   
                                   YAHOO.util.Event.addListener(this.id+'-select_'+question.id+'_'+choice.id, "change", function(){
                                       me.toogleVisible();
@@ -117,15 +162,17 @@
                                   htmlForm +='<label for="'+this.id+'-choice_'+question.id+'_'+choice.id+'">'+(choice.label ? choice.label:  this.msg(msgKey))+'</label>';
                                   htmlForm +="</p>";   
                                  
-                                  if(choice.comment){
-                                     showComment = true;
-                                     commentLabel = choice.commentLabel;
-                                     
-                                     if(choice.textarea){
-                                         textarea = choice.textarea;
-                                     }
-                                  }
+                                
                               }
+                              
+                              if(choice.comment){
+                                  showComment = true;
+                                  commentLabel = choice.commentLabel;
+                                  
+                                  if(choice.textarea){
+                                      textarea = choice.textarea;
+                                  }
+                               }
                            }
                            
                            if(showComment){
@@ -141,6 +188,10 @@
                                   }
                               }
                                htmlForm +='</div>';
+                           }
+                           
+                           if(question.lowerNote){
+                        	   htmlForm += '<span class="decision-tree-note">'+question.lowerNote+'</span>';
                            }
                           
                           htmlForm += '</fieldset>';
@@ -162,14 +213,23 @@
                      var fnOnSelectChoice = function DT__fnOnSelectChoice(layer, args) {
                         var owner = Bubbling.getOwnerByTagName(args[1].input, "input");
                         if (owner !== null) {
-                           owner.checked = true;
-                           me.toogleVisible();
-                           return false;
+	                        if(owner.type != "checkbox"){
+		                           var previousState = owner.previousState;
+		                           if(previousState == true){
+		                        	   owner.checked = false;
+		                        	   owner.previousState = false;
+		                           } else {
+		                        	   owner.checked = true;
+		                        	   owner.previousState = true
+		                           }
+	                        }
+	                       me.toogleVisible();
+	                       return false;
+	                        
                         }
                      };
 
                      Bubbling.addDefaultAction(QUESTION_EVENTCLASS, fnOnSelectChoice);
-                  
                   },
                   
                   refreshDecisionTree : function(){
@@ -239,7 +299,7 @@
                      
                      for(var i = 0; i< this.options.data.length; i++){
                         var question = this.options.data[i];
-                        if(i == 0 && (!this.options.disabled || this.options.currentValue.length>0)){
+                        if((i == 0 || question.start == true) && (!this.options.disabled || this.options.currentValue.length>0)){
                            visible.push(question.id);
                         }
                         if(beCPG.util.contains(visible,question.id) && question.choices){
@@ -249,7 +309,7 @@
                              var choice = question.choices[j];
                              
                              if(this.formRuntime!=null && question.mandatory){
-                                 if(choice.list!=null){
+                                 if(choice.list!=null && !choice.checkboxes){
                                      this.formRuntime.addValidation(this.id+'-select_'+question.id+'_'+choice.id, Alfresco.forms.validation.mandatory, null, "keyup");
                                  } else {
                                      this.formRuntime.addValidation(this.id+'-choice_'+question.id+'_'+choice.id, Alfresco.forms.validation.mandatory, null, "keyup");
@@ -263,25 +323,47 @@
                                      
                                  }
                              }
+
+                             if((choice.list!=null && !choice.checkboxes && Dom.get(this.id+"-select_"+question.id+'_'+choice.id).value!=null)
+                                     || (choice.list!=null && choice.checkboxes )  ||  Dom.get(this.id+"-choice_"+question.id+'_'+choice.id).checked ){
                              
-                             if((choice.list!=null && Dom.get(this.id+"-select_"+question.id+'_'+choice.id).value!=null)
-                                     ||  Dom.get(this.id+"-choice_"+question.id+'_'+choice.id).checked){
-                               
+                            	 var showVisible = false;
                                  if(choice.list!=null){
-                                     var value = "", selectElem = Dom.get(this.id+"-select_"+question.id+'_'+choice.id);
+                                     var value = "";
                                      
                                      if(choice.multiple){
-                                         for (var j = 0, jj = selectElem.options.length; j < jj; j++)
-                                         {
-                                            if (selectElem.options[j].selected)
-                                            {
-                                               if(value.length>0){
-                                                   value+=",";
-                                               }
-                                               value += selectElem.options[j].value;
-                                            }
-                                         }
+                                    	 
+                                    	 if(choice.checkboxes){
+                                    	 
+	                                    	 var checkboxes = document.getElementsByName('--group_'+this.id+question.id+'_'+choice.id);  
+	                                    	 
+	                                    	 for(var k = 0; k < checkboxes.length; k++)  
+	                                    	    {  
+	                                    	        if(checkboxes[k].checked) {
+	                                    	        	
+	                                    	        	 if(value.length>0){
+	                                                         value+=",";
+	                                                     }
+	                                                     value += ""+checkboxes[k].value;
+	                                                     showVisible = true;
+	                                    	        } 
+	                                    	    }  
+                                    	 } else {
+                                    		 showVisible = true
+                                    		 var selectElem = Dom.get(this.id+"-select_"+question.id+'_'+choice.id);
+	                                         for (var j = 0, jj = selectElem.options.length; j < jj; j++)
+	                                         {
+	                                            if (selectElem.options[j].selected)
+	                                            {
+	                                               if(value.length>0){
+	                                                   value+=",";
+	                                               }
+	                                               value += selectElem.options[j].value;
+	                                            }
+	                                         }
+                                    	 }
                                      } else {
+                                    	 var selectElem = Dom.get(this.id+"-select_"+question.id+'_'+choice.id);
                                           value = selectElem.value;
                                         
                                      }
@@ -289,11 +371,13 @@
                                          value });
                                      
                                  } else {
+                                	 showVisible = true;
+                                	 
                                      ret.push({ qid : question.id, cid : choice.id});
                                  }
                                  
                                  
-                                if(choice.cid){
+                                if(choice.cid && showVisible){
                                     if(choice.cid instanceof Array){
                                         for(var z=0 ; z<choice.cid.length ; z++){
                                             visible.push(choice.cid[z]);
@@ -325,7 +409,7 @@
                                 var choice = question.choices[j];
                                 
                                 if(this.formRuntime!=null && question.mandatory){
-                                    if(choice.list!=null){
+                                    if(choice.list!=null  && !choice.checkboxes){
                                         this.formRuntime.removeValidation(this.id+'-select_'+question.id+'_'+choice.id);
                                     } else {
                                         this.formRuntime.removeValidation(this.id+'-choice_'+question.id+'_'+choice.id);

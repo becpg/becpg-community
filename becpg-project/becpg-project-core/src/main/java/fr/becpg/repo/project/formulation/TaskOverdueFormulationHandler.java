@@ -103,7 +103,7 @@ public class TaskOverdueFormulationHandler extends FormulationBaseHandler<Projec
 				}
 
 				if(currentDate.after(nextNotification)){
-					task.setLastNotification(nextNotification);
+					task.setLastNotification(currentDate);
 					logger.debug("authoritiesNR: "+task.getNotificationAuthorities());
 					sendTaskNotificationEmails(task.getNotificationAuthorities(), task, projectData, workflowTaskId);
 				}

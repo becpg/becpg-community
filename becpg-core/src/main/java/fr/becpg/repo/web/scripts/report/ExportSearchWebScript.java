@@ -23,10 +23,12 @@ import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
+import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.AttachmentHelper;
 import fr.becpg.repo.report.search.ExportSearchService;
 import fr.becpg.repo.report.template.ReportTplService;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.web.scripts.search.AbstractSearchWebScript;
 import fr.becpg.report.client.ReportFormat;
 
@@ -93,7 +95,13 @@ public class ExportSearchWebScript extends AbstractSearchWebScript {
 
 			QName datatype = QName.createQName(jsonObject.getString("datatype"), namespaceService);
 
-			List<NodeRef> resultNodeRefs = doSearch(req, RepoConsts.MAX_RESULTS_5000);
+			List<NodeRef> resultNodeRefs = null;
+			String aftsQuery = (String) nodeService.getProperty(templateNodeRef, ReportModel.PROP_REPORT_TPL_SEARCH_QUERY);
+			if ((aftsQuery != null) && !aftsQuery.isEmpty()) {
+				resultNodeRefs = BeCPGQueryBuilder.createQuery().andFTSQuery(aftsQuery).maxResults(RepoConsts.MAX_RESULTS_5000).list();
+			} else {
+				resultNodeRefs = doSearch(req, RepoConsts.MAX_RESULTS_5000);
+			}
 
 			ReportFormat reportFormat = reportTplService.getReportFormat(templateNodeRef);
 
@@ -113,7 +121,12 @@ public class ExportSearchWebScript extends AbstractSearchWebScript {
 
 				String name = (String) nodeService.getProperty(templateNodeRef, ContentModel.PROP_NAME);
 
-				String mimeType = mimetypeService.getMimetype(reportFormat.toString());
+				String format = reportFormat.toString();
+				if(ReportFormat.XLSX.equals(reportFormat) && name.endsWith(ReportTplService.PARAM_VALUE_XLSMREPORT_EXTENSION)) {
+					format = "xlsm";
+				}
+				
+				String mimeType = mimetypeService.getMimetype(format);
 
 				name = FilenameUtils.removeExtension(name) + FilenameUtils.EXTENSION_SEPARATOR_STR + mimetypeService.getExtension(mimeType);
 

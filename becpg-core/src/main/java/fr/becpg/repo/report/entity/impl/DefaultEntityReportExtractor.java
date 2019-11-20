@@ -905,7 +905,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 	private void loadCreator(NodeRef entityNodeRef, Element entityElt, Element imgsElt, DefaultExtractorContext context) {
 		String creator = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_CREATOR);
-		if (creator != null) {
+		if (creator != null && personService.personExists(creator)) {
 			Element creatorElt = (Element) entityElt.selectSingleNode(ContentModel.PROP_CREATOR.getLocalName());
 			NodeRef creatorNodeRef = personService.getPerson(creator);
 			loadNodeAttributes(creatorNodeRef, creatorElt, true, context);

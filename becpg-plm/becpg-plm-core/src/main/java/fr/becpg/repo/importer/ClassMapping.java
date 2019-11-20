@@ -4,7 +4,9 @@
 package fr.becpg.repo.importer;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.alfresco.service.namespace.QName;
 
@@ -29,6 +31,8 @@ public class ClassMapping {
 	
 	/** The columns. */
 	private List<AbstractAttributeMapping> columns = new ArrayList<>();
+	
+	private Map<QName, String> paths = new HashMap<>();
 	
 	/**
 	 * Gets the type.
@@ -102,11 +106,23 @@ public class ClassMapping {
 		this.columns = columns;
 	}
 
+	
+
+	public Map<QName, String> getPaths() {
+		return paths;
+	}
+
+	public void setPaths(Map<QName, String> paths) {
+		this.paths = paths;
+	}
+
 	@Override
 	public String toString() {
-		return "ClassMapping [type=" + type + ", nodeColumnKeys=" + nodeColumnKeys + ", dataListColumnKeys=" + dataListColumnKeys + ", columns="
-				+ columns + "]";
+		return "ClassMapping [type=" + type + ", nodeColumnKeys=" + nodeColumnKeys + ", dataListColumnKeys="
+				+ dataListColumnKeys + ", columns=" + columns + ", paths=" + paths + "]";
 	}
+
+	
 	
 	
 }

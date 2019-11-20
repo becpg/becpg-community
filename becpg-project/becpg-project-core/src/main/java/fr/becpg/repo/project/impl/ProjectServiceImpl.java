@@ -18,6 +18,7 @@
 package fr.becpg.repo.project.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -62,6 +63,7 @@ import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
 import fr.becpg.repo.project.data.projectList.DeliverableState;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskState;
+import fr.becpg.repo.project.policy.ProjectListPolicy;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
@@ -102,6 +104,8 @@ public class ProjectServiceImpl implements ProjectService {
 	private BehaviourFilter policyBehaviourFilter;
 	@Autowired
 	private ProjectActivityService projectActivityService;
+	@Autowired
+	private ProjectListPolicy projectListPolicy;
 
 	@Autowired
 	SysAdminParams sysAdminParams;
@@ -150,35 +154,49 @@ public class ProjectServiceImpl implements ProjectService {
 	@Override
 	public void formulate(NodeRef projectNodeRef) throws FormulateException {
 		if (nodeService.getType(projectNodeRef).equals(ProjectModel.TYPE_PROJECT)) {
+			try {
 
-			if (permissionService.hasPermission(projectNodeRef, PermissionService.WRITE) == AccessStatus.ALLOWED) {
-				try {
-					policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
-					policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
-					policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+				policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_LOG_TIME_LIST);
+				policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
+				policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
+				policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_PROJECT);
+				policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_SCORE_LIST);
+				policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_BUDGET_LIST);
+				policyBehaviourFilter.disableBehaviour(ProjectModel.ASPECT_BUDGET);
+				policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
+				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
 
-					L2CacheSupport.doInCacheContext(() -> {
-						AuthenticationUtil.runAsSystem(() -> {
+				L2CacheSupport.doInCacheContext(() -> {
+					AuthenticationUtil.runAsSystem(() -> {
 
-							formulationService.formulate(projectNodeRef);
+						formulationService.formulate(projectNodeRef);
 
-							NodeRef parentProjectNodeRef = associationService.getTargetAssoc(projectNodeRef, ProjectModel.ASSOC_PARENT_PROJECT);
+						NodeRef parentProjectNodeRef = associationService.getTargetAssoc(projectNodeRef, ProjectModel.ASSOC_PARENT_PROJECT);
 
-							// Check for parent project
-							if (parentProjectNodeRef != null) {
-								formulate(parentProjectNodeRef);
-							}
+						// Check for parent project
+						if (parentProjectNodeRef != null) {
+							formulate(parentProjectNodeRef);
+						}
 
-							return true;
-						});
+						return true;
+					});
 
-					}, false, true);
+				}, false, true);
 
-				} finally {
-					policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
-					policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
-					policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-				}
+			} finally {
+				policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
+				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
+				policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_LOG_TIME_LIST);
+				policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
+				policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_TASK_LIST);
+				policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_PROJECT);
+				policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_SCORE_LIST);
+				policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_BUDGET_LIST);
+				policyBehaviourFilter.enableBehaviour(ProjectModel.ASPECT_BUDGET);
 			}
 		}
 	}
@@ -214,6 +232,10 @@ public class ProjectServiceImpl implements ProjectService {
 		try {
 			// Disable notifications
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
+			policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
+			policyBehaviourFilter.disableBehaviour(ProjectModel.ASPECT_BUDGET);
+
+			logger.debug("Call submitTask");
 
 			NodeRef commentNodeRef = null;
 
@@ -239,11 +261,94 @@ public class ProjectServiceImpl implements ProjectService {
 			projectActivityService.postTaskStateChangeActivity(nodeRef, commentNodeRef, TaskState.InProgress.toString(),
 					TaskState.Completed.toString(), false);
 
+			projectListPolicy.queueListItem(nodeRef);
+
 		} finally {
+			policyBehaviourFilter.enableBehaviour(ProjectModel.ASPECT_BUDGET);
+			policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_TASK_LIST);
 			policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
 		}
 
 	}
+
+	@Override
+	public NodeRef refusedTask(NodeRef nodeRef, String taskComment) {
+
+		try {
+			// Disable notifications
+			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
+			policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
+			policyBehaviourFilter.disableBehaviour(ProjectModel.ASPECT_BUDGET);
+			return AuthenticationUtil.runAsSystem(() -> {
+
+				logger.debug("Call refusedTask");
+
+				NodeRef taskNodeRef = associationService.getTargetAssoc(nodeRef, ProjectModel.ASSOC_TL_REFUSED_TASK_REF);
+
+				NodeRef commentNodeRef = null;
+				if ((taskNodeRef != null) && (taskComment != null) && !taskComment.isEmpty()) {
+					commentService.createComment(nodeRef, "", taskComment, false);
+					commentNodeRef = commentService.createComment(taskNodeRef, "", taskComment, false);
+					nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_TASK_COMMENT, taskComment);
+				} else {
+					nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_TASK_COMMENT, null);
+				}
+
+				nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_STATE, TaskState.Refused.toString());
+				nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_IS_REFUSED, false);
+
+				projectActivityService.postTaskStateChangeActivity(nodeRef, commentNodeRef, TaskState.InProgress.toString(),
+						TaskState.Refused.toString(), false);
+
+				projectListPolicy.queueListItem(nodeRef);
+
+				return taskNodeRef;
+			});
+		} finally {
+			policyBehaviourFilter.enableBehaviour(ProjectModel.ASPECT_BUDGET);
+			policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_TASK_LIST);
+			policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
+		}
+
+	}
+
+        @Override
+	public NodeRef refusedTask(NodeRef nodeRef) {
+		nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_IS_REFUSED, false);
+		return nodeRef;
+	}
+		
+
+
+	@Override
+	public NodeRef reassignTask(NodeRef taskNodeRef, String user) {
+
+		try {
+			// Disable notifications
+			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
+			policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
+
+			logger.debug("Call reassignTask to: " + user);
+			NodeRef userNodeRef = authorityDAO.getAuthorityNodeRefOrNull(user);
+			if (userNodeRef != null) {
+				List<NodeRef> resources = associationService.getTargetAssocs(taskNodeRef, ProjectModel.ASSOC_TL_RESOURCES);
+				if ((resources.size() == 1) && !resources.contains(userNodeRef) && !resources.contains(getReassignedResource(userNodeRef))) {
+					QName type = nodeService.getType(resources.get(0));
+					if (!type.equals(ContentModel.TYPE_AUTHORITY_CONTAINER)) {
+						associationService.update(taskNodeRef, ProjectModel.ASSOC_TL_RESOURCES, Arrays.asList(userNodeRef));
+					}
+				}
+			} else {
+				logger.error("Cannot find user for assignee: " + user);
+			}
+
+			return taskNodeRef;
+		} finally {
+			policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_TASK_LIST);
+			policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
+		}
+	}
+
 
 	@Override
 	public List<NodeRef> extractResources(NodeRef projectNodeRef, List<NodeRef> resources) {
@@ -400,13 +505,13 @@ public class ProjectServiceImpl implements ProjectService {
 						if (allow) {
 							boolean updatePerm = true;
 							for (AccessPermission perm : permissionService.getAllSetPermissions(n)) {
-								if (authorityName.equals(perm.getAuthority()) && PermissionService.EDITOR.equals(perm.getPermission())) {
+								if (authorityName.equals(perm.getAuthority()) && PermissionService.COORDINATOR.equals(perm.getPermission())) {
 									updatePerm = false;
 									break;
 								}
 							}
 							if (updatePerm) {
-								permissionService.setPermission(n, authorityName, PermissionService.EDITOR, true);
+								permissionService.setPermission(n, authorityName, PermissionService.COORDINATOR, true);
 							}
 						} else {
 							permissionService.clearPermission(n, authorityName);
@@ -437,34 +542,6 @@ public class ProjectServiceImpl implements ProjectService {
 					+ "/" + sysAdminParams.getShareContext());
 
 			scriptService.executeScript(scriptNode, ContentModel.PROP_CONTENT, model);
-		}
-
-	}
-
-	@Override
-	public NodeRef refusedTask(NodeRef nodeRef, String taskComment) {
-
-		try {
-			// Disable notifications
-			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
-			NodeRef taskNodeRef = associationService.getTargetAssoc(nodeRef, ProjectModel.ASSOC_TL_REFUSED_TASK_REF);
-
-			NodeRef commentNodeRef = null;
-			if ((taskNodeRef != null) && (taskComment != null) && !taskComment.isEmpty()) {
-				commentNodeRef = commentService.createComment(taskNodeRef, "", taskComment, false);
-				nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_TASK_COMMENT, taskComment);
-			} else {
-				nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_TASK_COMMENT, null);
-			}
-
-			nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_STATE, TaskState.Refused.toString());
-
-			projectActivityService.postTaskStateChangeActivity(nodeRef, commentNodeRef, TaskState.InProgress.toString(), TaskState.Refused.toString(),
-					false);
-
-			return taskNodeRef;
-		} finally {
-			policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
 		}
 
 	}

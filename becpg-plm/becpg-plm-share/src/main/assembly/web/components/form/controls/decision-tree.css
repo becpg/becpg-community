@@ -22,14 +22,29 @@
 }
 
 .form-container .decision-tree-control p {
-	display : inline-table;
 	padding-left: 5px;
 }
 
+.bd .form-container .decision-tree-control p {
+	display : inline-table;
+}
+
+
+.large-dialog .bd .form-container .decision-tree-control p {
+	display : block;
+}
+
+
 .yui-dialog .form-container .decision-tree-control input[type="radio"] ,
-.form-container .decision-tree-control input[type="radio"] {
+.form-container .decision-tree-control input[type="radio"],
+ :not(.bd) > .form-container .yui-navset .form-field  .decision-tree-control input[type="radio"]:not(.number-range):not(.date-range):not(.number-unit):not(.yui-ac-input),
+ :not(.bd) > .form-container .yui-g .form-field  .decision-tree-control input[type="radio"]:not(.number-range):not(.date-range):not(.number-unit):not(.yui-ac-input)
+ {
 	width:1em!important;
 } 
+
+
+
 
 .decision-tree-message {
 	 background-color: #FFFFCC;
@@ -37,4 +52,9 @@
     border-radius: 5px 5px 5px 5px;
     margin: 0 0 1em 0.4em;
     padding: 0.6em;
+}
+
+.decision-tree-note, .decision-tree-url {
+	display:block;
+     padding:0 10px 10px 0;
 }

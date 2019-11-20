@@ -44,12 +44,18 @@
 		<property name="nodeService" ref="nodeService" />
 	</bean>
 
+	<bean id="nutCharactDetailsVisitor"
+		class="fr.becpg.repo.product.formulation.details.NutCharactDetailsVisitor">
+		<property name="alfrescoRepository" ref="alfrescoRepository" />
+		<property name="nodeService" ref="nodeService" />
+		<property name="entityDictionaryService" ref="entityDictionaryService" />	
+	</bean>
 
 	<bean id="charactDetailsVisitorFactory" class="fr.becpg.repo.product.CharactDetailsVisitorFactoryImpl">
 		<property name="visitorRegistry">
 			<map>
 				<entry key="bcpg:nutList">
-					<ref bean="simpleCharactDetailsVisitor" />
+					<ref bean="nutCharactDetailsVisitor" />
 				</entry>
 				<entry key="bcpg:ingList">
 					<ref bean="simpleCharactDetailsVisitor" />

@@ -358,7 +358,9 @@ public class EntityReportServiceImpl implements EntityReportService {
 														nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_LOCALES,
 																MLTextHelper.localeKey(locale));
 														nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_IS_DEFAULT, isDefault);
-
+                                
+												                I18NUtil.setLocale(locale);
+														I18NUtil.setContentLocale(locale);
 													}
 
 												} catch (ReportException e) {
@@ -391,7 +393,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 						// set reportNodeGenerated property to now
 						nodeService.setProperty(entityNodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED, generatedDate);
 
-						entityActivityService.postEntityActivity(entityNodeRef, ActivityType.Report, ActivityEvent.Update);
+						entityActivityService.postEntityActivity(entityNodeRef, ActivityType.Report, ActivityEvent.Update,null);
 
 					} finally {
 						I18NUtil.setLocale(currentLocal);

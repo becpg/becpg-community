@@ -32,6 +32,7 @@ import org.alfresco.service.namespace.QName;
 public class AttributeMapping extends AbstractAttributeMapping {
 
 	private QName targetClass;
+	private boolean isMLText = false;
 	
 	public QName getTargetClass() {
 		return targetClass;
@@ -41,14 +42,26 @@ public class AttributeMapping extends AbstractAttributeMapping {
 		this.targetClass = targetClass;
 	}
 
+	
+	public boolean isMLText() {
+		return isMLText;
+	}
+
+	public void setMLText(boolean isMLText) {
+		this.isMLText = isMLText;
+	}
+
 	public AttributeMapping(String id, ClassAttributeDefinition attribute) {
 		super(id, attribute);
 	}
 
 	@Override
 	public String toString() {
-		return "AttributeMapping [targetClass=" + targetClass + ", getId()=" + getId() + "]";
+		return "AttributeMapping [targetClass=" + targetClass + ", isMLText=" + isMLText + ", getId()=" + getId()
+				+ ", getAttribute()=" + getAttribute() + ", getClass()=" + getClass() + "]";
 	}
+
+	
 
 	
 }

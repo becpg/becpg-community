@@ -72,10 +72,39 @@ public class UsNutrientRegulation extends AbstractNutrientRegulation {
 				} else {
 					return 0.0;
 				}		
+				
+			} else if (nutrientTypeCode.equals(NutrientCode.Calcium)
+					|| nutrientTypeCode.equals(NutrientCode.Potassium)
+					|| nutrientTypeCode.equals(NutrientCode.VitA)
+					|| nutrientTypeCode.equals(NutrientCode.Choline)
+					|| nutrientTypeCode.equals(NutrientCode.Chloride)
+					|| nutrientTypeCode.equals(NutrientCode.Phosphorus)) {
+				return roundValue(value,10d);
 			} else if (nutrientTypeCode.equals(NutrientCode.VitD)
-					|| nutrientTypeCode.equals(NutrientCode.Calcium)
 					|| nutrientTypeCode.equals(NutrientCode.Iron)
-					|| nutrientTypeCode.equals(NutrientCode.Potassium)) {
+					|| nutrientTypeCode.equals(NutrientCode.VitE)
+					|| nutrientTypeCode.equals(NutrientCode.Niacin)
+					|| nutrientTypeCode.equals(NutrientCode.Biotin)
+					|| nutrientTypeCode.equals(NutrientCode.PantoAcid)
+					|| nutrientTypeCode.equals(NutrientCode.Zinc)
+					|| nutrientTypeCode.equals(NutrientCode.Chromium)
+					|| nutrientTypeCode.equals(NutrientCode.Molybdenum)) {
+				return roundValue(value,0.1d);
+			} else if (nutrientTypeCode.equals(NutrientCode.Thiamin)
+				|| nutrientTypeCode.equals(NutrientCode.Riboflavin)
+				|| nutrientTypeCode.equals(NutrientCode.VitB6)
+				|| nutrientTypeCode.equals(NutrientCode.VitB12)
+				|| nutrientTypeCode.equals(NutrientCode.Copper)
+				|| nutrientTypeCode.equals(NutrientCode.Manganese)) {
+				return roundValue(value,0.01d);
+			} else if (nutrientTypeCode.equals(NutrientCode.Folate)
+					|| nutrientTypeCode.equals(NutrientCode.Magnesium)) {
+				return roundValue(value,5d);
+			} else if (nutrientTypeCode.equals(NutrientCode.VitC)
+					|| nutrientTypeCode.equals(NutrientCode.VitK1)
+					|| nutrientTypeCode.equals(NutrientCode.VitK2)
+					|| nutrientTypeCode.equals(NutrientCode.Iodine)
+					|| nutrientTypeCode.equals(NutrientCode.Selenium)) {
 				return roundValue(value,1d);
 			}
 		}
@@ -99,7 +128,7 @@ public class UsNutrientRegulation extends AbstractNutrientRegulation {
 						|| nutrientTypeCode.equals(NutrientCode.Polyols)
 						) && value<1 && value >= 0.5) {
 				return "<1";
-			} else if (nutrientTypeCode.equals(NutrientCode.VitA)
+			/*} else if (nutrientTypeCode.equals(NutrientCode.VitA)
 					|| nutrientTypeCode.equals(NutrientCode.VitC)
 					|| nutrientTypeCode.equals(NutrientCode.VitE)
 					|| nutrientTypeCode.equals(NutrientCode.VitK1)
@@ -121,7 +150,7 @@ public class UsNutrientRegulation extends AbstractNutrientRegulation {
 					|| nutrientTypeCode.equals(NutrientCode.Manganese)
 					|| nutrientTypeCode.equals(NutrientCode.Chromium)
 					|| nutrientTypeCode.equals(NutrientCode.Choline)) {
-				return "";
+				return "";*/
 			}
 		}
 		return formatDouble(roundedValue, locale);

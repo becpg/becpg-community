@@ -96,7 +96,7 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 		}
 
 		QName entityType = importContext.getEntityType() != null ? importContext.getEntityType() : PLMModel.TYPE_PRODUCT;
-		NodeRef entityNodeRef = findNodeByKeyOrCode(importContext,null, entityType, entityProperties);
+		NodeRef entityNodeRef = findNodeByKeyOrCode(importContext,null, entityType, entityProperties, null);
 
 		if (entityNodeRef == null) {
 			throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_FIND_ENTITY, values));
@@ -157,7 +157,7 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 
 					AssociationDefinition associationDef = dictionaryService.getAssociation(qName);
 					List<NodeRef> targetRefs = findTargetNodesByValue(importContext, associationDef.isTargetMany(), associationDef.getTargetClass()
-							.getName(), value);
+							.getName(), value, null);
 					dataListColumnsAssocs.put(qName, targetRefs);
 				}
 			}
@@ -359,7 +359,7 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 
 						AssociationDefinition associationDef = dictionaryService.getAssociation(qName);
 						List<NodeRef> targetRefs = findTargetNodesByValue(importContext, associationDef.isSourceMany(), associationDef
-								.getTargetClass().getName(), value);
+								.getTargetClass().getName(), value, null);
 						dataListColumnsAssocs.put(qName, targetRefs);
 					}
 					

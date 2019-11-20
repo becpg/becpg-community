@@ -113,6 +113,9 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 	@Value("${beCPG.defaultSearchTemplate}")
 	private String defaultSearchTemplate;
+	
+	@Value("${beCPG.report.includeReportInSearch}")
+	private Boolean includeReportInSearch = false;
 
 	@Autowired
 	private NodeService nodeService;
@@ -485,7 +488,9 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		excludeType(ContentModel.TYPE_FAILED_THUMBNAIL);
 		excludeType(ContentModel.TYPE_RATING);
 		excludeType(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-		excludeType(ReportModel.TYPE_REPORT);
+		if(!includeReportInSearch) {
+			excludeType(ReportModel.TYPE_REPORT);
+		}
 		excludeType(ForumModel.TYPE_FORUM);
 		excludeType(RuleModel.TYPE_RULE);
 		excludeType(ForumModel.TYPE_POST);

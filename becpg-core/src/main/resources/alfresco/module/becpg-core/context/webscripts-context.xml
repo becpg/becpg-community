@@ -60,10 +60,12 @@
 		<property name="licenseManager" ref="becpgLicenseManager"/>
 		<property name="becpgSchema" value="${becpg.schema}"/>
 		<property name="authorityService" ref="authorityService"/>
+		<property name="contentService" ref="contentService"/>
 	</bean>
 	
 	<bean id="webscript.fr.becpg.admin.monitor.get" class="fr.becpg.repo.web.scripts.admin.MonitorWebScript" parent="webscript">
 		<property name="authenticationService" ref="authenticationService" />
+		<property name="contentService" ref="contentService"/>
 	</bean>
 
 	<bean id="webscript.fr.becpg.admin.adminTenant.get" class="fr.becpg.repo.web.scripts.admin.AdminTenantWebScript" parent="webscript">
@@ -298,6 +300,7 @@
     <bean id="webscript.org.alfresco.repository.workflow.task-instances.get"
           class="fr.becpg.repo.web.scripts.workflow.BeCPGTaskInstancesGet"
           parent="abstractWorkflowWebScript">
+          <property name="attributeExtractorService" ref="attributeExtractorService" />
     </bean>
     
 </beans>

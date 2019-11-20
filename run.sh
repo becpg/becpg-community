@@ -25,6 +25,13 @@ start() {
 }
 
 down() {
+	if [ -d becpg-enterprise ]; then
+    cd becpg-enterprise
+   	 $MVN_EXEC clean validate $EXTRA_ENV -DskipTests=true  -Dbecpg.dockerbuild.name="enterprise-test"
+    cd ..
+   	else
+   	 $MVN_EXEC clean validate $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="test"
+    fi 
     if [ -f $COMPOSE_FILE_PATH ]; then
         docker-compose -f $COMPOSE_FILE_PATH down
     fi
@@ -79,9 +86,6 @@ test() {
     $MVN_EXEC verify $EXTRA_ENV -pl becpg-integration-runner
 }
 
-test_jenkins() {
-    $MVN_EXEC verify -o $EXTRA_ENV
-}
 
 case "$1" in
   install)

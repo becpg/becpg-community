@@ -23,11 +23,13 @@
 			prefix="d" />
 		<import uri="http://www.alfresco.org/model/bpm/1.0" prefix="bpm" />
 		<import uri="http://www.bcpg.fr/model/project/1.0" prefix="pjt" />
+		<import uri="http://www.bcpg.fr/model/becpg/1.0" prefix="bcpg" />
 	</imports>
 
 	<namespaces>
 		<namespace uri="http://www.becpg.fr/model/project-workflow/1.0"
 			prefix="pjtwf" />
+	
 	</namespaces>
     
 	<types>
@@ -52,11 +54,12 @@
 				<property name="bpm:packageItemActionGroup">
 					<default>edit_package_item_actions</default>
 				</property>
-				<property name="bpm:reassignable">
+				<!-- <property name="bpm:reassignable">
 					<default>false</default>
-				</property>	
+				</property>	 -->
 			</overrides>
 			<mandatory-aspects>
+				<aspect>bcpg:workflowAspect</aspect>
 				<aspect>pjt:workflowAspect</aspect>
 			</mandatory-aspects>
 		</type>

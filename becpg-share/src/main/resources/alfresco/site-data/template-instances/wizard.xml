@@ -7,6 +7,28 @@
    </properties>
    <components>
 
+       <!-- Mobile App Launch -->
+      <component>
+         <region-id>mobile-app</region-id>
+         <sub-components>
+            <sub-component id="default">
+               <evaluations>
+                  <!-- if User Agent matches: iPad, iPhone, iPod -->
+                  <evaluation id="useragent">
+                     <evaluators>
+                        <evaluator type="useragent.component.evaluator">
+                           <params>
+                              <useragent>iPhone|iPod|iPad</useragent>
+                           </params>
+                        </evaluator>
+                     </evaluators>
+                     <url>/components/mobile-app-support/ios-mobile</url>
+                  </evaluation>
+               </evaluations>
+            </sub-component>
+         </sub-components>
+      </component>
+       
       <!-- Title -->
       <component>
          <region-id>title</region-id>
@@ -51,10 +73,53 @@
          </sub-components>
       </component>
 
+
+
+        <!-- Actions -->
+		<component>
+	         <region-id>actions-common</region-id>
+	         <url>/components/documentlibrary/actions-common</url>
+	         <properties>
+	            <nodeRef>{nodeRef}</nodeRef>
+	            <dependencyGroup>documentlibrary</dependencyGroup>
+	         </properties>
+	      </component>
+      
+
       <!-- Wizard Manager -->
       <component>
          <region-id>wizard-mgr</region-id>
          <url>/components/wizard/wizard-mgr</url>
+      </component>
+      
+		
+		<!-- Uploaders -->
+    
+       <component>
+         <region-id>html-upload</region-id>
+         <url>/components/upload/html-upload</url>
+      </component>
+      <component>
+         <region-id>flash-upload</region-id>
+         <url>/components/upload/flash-upload</url>
+      </component>
+      <component>
+         <region-id>file-upload</region-id>
+         <url>/components/upload/file-upload</url>
+      </component>
+      <component>
+         <region-id>dnd-upload</region-id>
+         <url>/components/upload/dnd-upload</url>
+      </component>
+      <component>
+         <region-id>archive-and-download</region-id>
+         <url>/components/download/archive</url>
+      </component>
+		
+	  <!-- Custom Code -->
+      <component>
+         <region-id>doclib-custom</region-id>
+         <url>/components/documentlibrary/doclib-custom</url>
       </component>
 
    </components>

@@ -56,6 +56,9 @@ public interface ProjectModel {
 	QName PROP_TL_TASK_DESCRIPTION = QName.createQName(PROJECT_URI, "tlTaskDescription");
 	QName PROP_TL_TASK_COMMENT =  QName.createQName(PROJECT_URI, "tlTaskComment");
 
+	QName WORKFLOW_TRANSITION = QName.createQName(PROJECT_URI, "worflowTransition");
+	
+
 	QName PROP_TL_IS_MILESTONE = QName.createQName(PROJECT_URI, "tlIsMilestone");
 	QName PROP_TL_IS_EXCLUDE_FROM_SEARCH = QName.createQName(PROJECT_URI, "tlIsExcludeFromSearch");
 	QName PROP_TL_DURATION = QName.createQName(PROJECT_URI, "tlDuration");
@@ -72,9 +75,14 @@ public interface ProjectModel {
 	QName ASSOC_TL_OBSERVERS = QName.createQName(PROJECT_URI, "tlObservers");
 	QName PROP_TL_WORKFLOW_INSTANCE = QName.createQName(PROJECT_URI, "tlWorkflowInstance");
 	QName PROP_TL_FIXED_COST = QName.createQName(PROJECT_URI, "tlFixedCost");
+
+	QName PROP_TL_IS_REFUSED  = QName.createQName(PROJECT_URI, "tlIsRefused");
+	
 	QName ASSOC_SUB_PROJECT = QName.createQName(PROJECT_URI, "subProjectRef");
 	QName ASSOC_PARENT_PROJECT = QName.createQName(PROJECT_URI, "parentProjectRef");
 	QName PROP_TL_MANUAL_DATE = QName.createQName(PROJECT_URI, "tlManualDate");
+	
+	QName PROP_TASK_LEGEND_SITES = QName.createQName(PROJECT_URI, "taskLegendSites");
 	
 
 	QName ASSOC_TL_RESOURCE_COST = QName.createQName(PROJECT_URI, "tlResourceCost");
@@ -137,6 +145,8 @@ public interface ProjectModel {
 	QName PROP_QNAME_DELEGATION_END = QName.createQName(PROJECT_URI, "delegationEndDate");
 	QName PROP_QNAME_REASSIGN_TASK = QName.createQName(PROJECT_URI, "reassignCurrentTasks");
 	QName PROP_QNAME_REASSIGN_RESOURCE = QName.createQName(PROJECT_URI, "reassignTo");
+
+
 
 	
 	

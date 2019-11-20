@@ -63,8 +63,6 @@ public class DuplicateVariantWebScript extends AbstractWebScript {
 
 	protected static final String PARAM_NODEREF = "nodeRef";
 
-	protected static final String PARAM_ENTITYNODEREF = "entityNodeRef";
-
 	private static final Log logger = LogFactory.getLog(DuplicateVariantWebScript.class);
 
 	private NodeService nodeService;

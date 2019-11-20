@@ -33,7 +33,7 @@ import fr.becpg.repo.repository.model.AbstractManualDataItem;
 
 @AlfType
 @AlfQname(qname = "bcpg:labelClaimList")
-public class LabelClaimListDataItem extends AbstractManualDataItem {
+public class LabelClaimListDataItem extends AbstractManualDataItem implements  Cloneable {
 
 	/**
 	 * 
@@ -140,7 +140,15 @@ public class LabelClaimListDataItem extends AbstractManualDataItem {
 		this.labelClaim = labelClaimItem.labelClaim;
 		this.type = labelClaimItem.type;
 		this.labelClaimValue = labelClaimItem.labelClaimValue;
+		this.isFormulated = labelClaimItem.isFormulated;
 	}
+	
+	
+	@Override
+	public LabelClaimListDataItem clone() {
+		return new LabelClaimListDataItem(this);
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

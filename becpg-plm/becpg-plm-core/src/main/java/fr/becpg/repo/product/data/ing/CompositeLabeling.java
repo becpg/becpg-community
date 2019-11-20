@@ -5,6 +5,8 @@ package fr.becpg.repo.product.data.ing;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -14,13 +16,13 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 
 //TODO voir pour faire mieux avec les heritages Composite<LabelingComponent>
-public class CompositeLabeling extends AbstractLabelingComponent {
+public class CompositeLabeling extends LabelingComponent {
 
 	public final static String ROOT = "root";
 	
 	private static final long serialVersionUID = 7903326038199131582L;
 
-	private Map<NodeRef, AbstractLabelingComponent> ingList = new LinkedHashMap<>();
+	private Map<NodeRef, CompositeLabeling> ingList = new LinkedHashMap<>();
 
 	private Double qtyTotal = 0d;
 	
@@ -59,6 +61,28 @@ public class CompositeLabeling extends AbstractLabelingComponent {
 		this.ingType = productData.getIngType();
 		
 	}
+	
+
+	@SuppressWarnings("unchecked")
+	protected <T extends CompositeLabeling> List<T> clone(List<T> list) {
+		List<T> ret = new LinkedList<>();
+		if (list != null) {
+			for (T toAdd : list) {
+				ret.add((T) toAdd.clone());
+			}
+		}
+		return ret;
+	}
+
+	protected Map<NodeRef, CompositeLabeling> clone(Map<NodeRef, CompositeLabeling> list) {
+		Map<NodeRef, CompositeLabeling> ret = new LinkedHashMap<>();
+		if (list != null) {
+			for (Map.Entry<NodeRef, CompositeLabeling> toAdd : list.entrySet()) {
+				ret.put(toAdd.getKey(), toAdd.getValue().clone());
+			}
+		}
+		return ret;
+	}
 
 	public IngTypeItem getIngType() {
 		return ingType;
@@ -96,7 +120,7 @@ public class CompositeLabeling extends AbstractLabelingComponent {
 		this.volumeTotal = volumeTotal;
 	}
 
-	public void add(AbstractLabelingComponent ing) {
+	public void add(CompositeLabeling ing) {
 		ingList.put(ing.getNodeRef(), ing);
 	}
 
@@ -104,16 +128,16 @@ public class CompositeLabeling extends AbstractLabelingComponent {
 		ingList.remove(ing);
 	}
 
-	public AbstractLabelingComponent get(NodeRef grpNodeRef) {
+	public CompositeLabeling get(NodeRef grpNodeRef) {
 		return ingList.get(grpNodeRef);
 
 	}
 
-	public Map<NodeRef, AbstractLabelingComponent> getIngList() {
+	public Map<NodeRef, CompositeLabeling> getIngList() {
 		return ingList;
 	}
 	
-	public void setIngList(Map<NodeRef, AbstractLabelingComponent> ingList) {
+	public void setIngList(Map<NodeRef, CompositeLabeling> ingList) {
 		this.ingList = ingList;
 	}
 
@@ -131,13 +155,13 @@ public class CompositeLabeling extends AbstractLabelingComponent {
 	}
 
 	private void print(StringBuilder sb, String prefix, boolean isTail) {
-		sb.append(prefix).append(isTail ? "└──[" : "├──[").append(getLegalName(I18NUtil.getContentLocaleLang()) == null ? ROOT : getLegalName(I18NUtil.getContentLocaleLang())).append(" ( plural:"+isPlural()+",shouldSkip:"+shouldSkip()+") ").append(" - ").append(getQty()).append(" (").append(getQtyTotal()).append(", vol: ").append(getVolumeTotal()).append(") ").append(declarationType != null ? declarationType.toString() : "").append("]\n");
-        for (Iterator<AbstractLabelingComponent> iterator = ingList.values().iterator(); iterator.hasNext(); ) {
-        	AbstractLabelingComponent labelingComponent =  iterator.next();
+		sb.append(prefix).append(isTail ? "└──[" : "├──[").append(getLegalName(I18NUtil.getContentLocaleLang()) == null ? ROOT : getLegalName(I18NUtil.getContentLocaleLang())).append(" ( plural:"+isPlural()+") ").append(" - ").append(getQty()).append(" (").append(getQtyTotal()).append(", vol: ").append(getVolumeTotal()).append(") ").append(declarationType != null ? declarationType.toString() : "").append("]\n");
+        for (Iterator<CompositeLabeling> iterator = ingList.values().iterator(); iterator.hasNext(); ) {
+        	CompositeLabeling labelingComponent =  iterator.next();
         	if(labelingComponent  instanceof CompositeLabeling) {
 				((CompositeLabeling)labelingComponent).print(sb, prefix + (isTail ? "    " : "│   "), !iterator.hasNext());
 			} else {
-				sb.append(prefix).append(isTail ? "    " : "│   ").append(!iterator.hasNext() ? "└──[" : "├──[").append(labelingComponent.getLegalName(I18NUtil.getContentLocaleLang())).append(" ( plural:"+labelingComponent.isPlural()+",shouldSkip:"+labelingComponent.shouldSkip()+") ").append(" - ").append(labelingComponent.getQty()).append(" ( vol : ").append(labelingComponent.getVolume()).append(") ]\n"); 
+				sb.append(prefix).append(isTail ? "    " : "│   ").append(!iterator.hasNext() ? "└──[" : "├──[").append(labelingComponent.getLegalName(I18NUtil.getContentLocaleLang())).append(" ( plural:"+labelingComponent.isPlural()+" ) ").append(" - ").append(labelingComponent.getQty()).append(" ( vol : ").append(labelingComponent.getVolume()).append(") ]\n"); 
 			}
  
         }

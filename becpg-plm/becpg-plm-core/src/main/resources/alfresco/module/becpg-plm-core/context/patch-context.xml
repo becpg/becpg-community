@@ -869,5 +869,26 @@
         <property name="policyBehaviourFilter">
         	<ref bean="policyBehaviourFilter"/>
         </property>
+        <property name="ruleService" ref="ruleService"/>
 	</bean>
+	
+	
+	
+    <bean id="patch.bcpg.project.redeployProjectAdhocProcess" class="fr.becpg.repo.admin.patch.PLMWorkflowPatch" parent="basePatch" >
+        <property name="id"><value>patch.bcpg.project.redeployProjectAdhocProcess</value></property>
+        <property name="description"><value>patch.bcpg.project.redeployProjectAdhocProcess.description</value></property>
+        <property name="fixesFromSchema" value="0"/>
+        <property name="fixesToSchema" value="10057" />
+        <property name="targetSchema" value="10175"/>
+        <property name="workflowDefinitions">
+            <list>		
+					<props>
+						<prop key="engineId">activiti</prop>
+						<prop key="location">alfresco/module/becpg-project-core/workflow/project/project-adhoc.bpmn</prop>
+						<prop key="mimetype">text/xml</prop>
+					</props>
+            </list>
+        </property>
+    </bean>
+	
 </beans>

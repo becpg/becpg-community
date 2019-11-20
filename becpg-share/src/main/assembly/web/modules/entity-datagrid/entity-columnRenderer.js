@@ -213,7 +213,7 @@
 			   }
 
 			   if (oRecord && oColumn) {
-				   if (!oData) {
+				   if (!oData && oRecord.getData("itemData")) {
 					   oData = oRecord.getData("itemData")[oColumn.field];
 				   }
 

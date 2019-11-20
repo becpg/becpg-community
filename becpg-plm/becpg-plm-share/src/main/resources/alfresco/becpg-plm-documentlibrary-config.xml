@@ -235,26 +235,6 @@
 		<!-- Action definitions -->
 		<actions>
 		
-		   	<action id="entity-merge" type="javascript" label="actions.document.merge-entity">
-				<param name="function">onActionMergeEntity</param>
-				<permissions>
-					<permission allow="true">Write</permission>
-				</permissions>
-				<evaluator>evaluator.becpg.doclib.action.entity.isBranch</evaluator>
-				<evaluator negate="true">evaluator.becpg.doclib.action.entity.isSystemEntity</evaluator>
-				<evaluator negate="true">evaluator.becpg.doclib.action.entity.isWorkingCopy</evaluator>
-				<evaluator negate="true">evaluator.doclib.action.notEditable</evaluator>
-				<evaluator>evaluator.becpg.doclib.action.entity</evaluator>
-			</action>
-		
-			<action id="entity-branch" type="javascript" label="actions.document.branch-entity">
-				<param name="function">onActionBranchEntity</param>
-				<evaluator negate="true">evaluator.becpg.doclib.action.entity.isSystemEntity</evaluator>
-				<evaluator negate="true">evaluator.becpg.doclib.action.entity.isWorkingCopy</evaluator>
-				<evaluator negate="true">evaluator.doclib.action.notEditable</evaluator>
-				<evaluator>evaluator.becpg.doclib.action.entity</evaluator>
-			</action>
-
 			<action id="entity-compare" type="javascript" label="actions.entity.compare">
 				<param name="function">onActionCompareEntity</param>
 				<evaluator>evaluator.becpg.doclib.action.product</evaluator>
@@ -312,8 +292,6 @@
 		<actionGroups>
 
 			<actionGroup id="entity-details">
-				<action index="103" id="entity-branch" />
-				<action index="104" id="entity-merge" />
 				<action index="110" id="entity-compare" icon="compare" />
 				<action index="110" id="send-to-supplier"  />
 				<action index="110" id="create-supplier" />

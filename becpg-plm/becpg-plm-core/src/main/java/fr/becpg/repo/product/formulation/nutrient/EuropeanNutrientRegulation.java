@@ -96,5 +96,12 @@ public class EuropeanNutrientRegulation extends AbstractNutrientRegulation {
 		return formatDouble(roundedValue, locale);
 	}
 	
+	@Override
+	public Double roundGDA(Double value, String nutrientTypeCode) {
+		if (value == null) {
+			return null;
+		}
+		return  roundValue(value, 0.1d);
+	}
 	
 }

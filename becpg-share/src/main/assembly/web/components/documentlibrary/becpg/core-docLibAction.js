@@ -25,119 +25,202 @@
 (function() {
 	
 	var $isValueSet = Alfresco.util.isValueSet;
-
-	YAHOO.Bubbling.fire("registerAction", {
-	   actionName : "onActionCheckOutEntity",
-	   fn : function onActionCheckOutEntity(asset) {
-		   var displayName = asset.displayName, nodeRef = new Alfresco.util.NodeRef(asset.nodeRef);
-
-		   Alfresco.util.PopupManager.displayMessage({
-		      displayTime : 0,
-		      effect : null,
-		      text : this.msg("message.checkout-entity.inprogress", displayName),
-		   });
-
-		   this.modules.actions.genericAction({
-		      success : {
-			      callback : {
-			         fn : function DocumentActions_oAEO_success(data) {
-				         this.recordData.jsNode.setNodeRef(data.json.results[0].nodeRef);
-				         window.location.href = this.getActionUrls(this.recordData).documentDetailsUrl.replace("document-details?","entity-data-lists?list=View-properties&");
-			         },
-			         scope : this
-			      }
-		      },
-		      failure : {
-			      message : this.msg("message.checkout-entity.failure", displayName)
-		      },
-		      webscript : {
-		         method : Alfresco.util.Ajax.POST,
-		         name : "checkout/node/{nodeRef}",
-		         params : {
-			         nodeRef : nodeRef.uri
-		         }
-		      }
-		   });
-	   }
-	});
-
+	
 	YAHOO.Bubbling
-	      .fire(
-	            "registerAction",
-	            {
-	               actionName : "onActionCheckInEntity",
-	               fn : function onActionCheckInEntity(asset) {
-		               var displayName = asset.displayName, nodeRef = new Alfresco.util.NodeRef(asset.nodeRef), version = asset.version;
+    .fire(
+          "registerAction",
+          {
+             actionName : "onActionMergeEntity",
+             fn : function onActionMergeEntity(asset) {
+                 var displayName = asset.displayName, nodeRef = new Alfresco.util.NodeRef(asset.nodeRef), version = asset.version;
 
-		               if (asset.workingCopy && asset.workingCopy.workingCopyVersion) {
-			               version = asset.workingCopy.workingCopyVersion;
-		               }
+                 if (!this.newEntityVersion) {
+                     this.newEntityVersion = Alfresco.module.getNewEntityVersionInstance();
+                 }
 
-		               if (!this.newEntityVersion) {
-			               this.newEntityVersion = Alfresco.module.getNewEntityVersionInstance();
-		               }
+                 this.newEntityVersion.show({
+                    filename : displayName,
+                    nodeRef : nodeRef,
+                    version : version,
+                    merge : true,
+                    onNewEntityVersionComplete : {
+                       fn : function EntityActions_oACI_success(data) {
+                           this.recordData.jsNode.setNodeRef(data.successful[0].nodeRef);
+                           window.location.href = this.getActionUrls(this.recordData).documentDetailsUrl.replace("document-details?","entity-data-lists?list=View-properties&");
+                       },
+                       scope : this
+                    }
+                 });
 
-		               this.newEntityVersion.show({
-		                  filename : displayName,
-		                  nodeRef : nodeRef,
-		                  version : version,
-		                  merge : false,
-		                  onNewEntityVersionComplete : {
-		                     fn : function EntityActions_oACI_success(data) {
-			                     this.recordData.jsNode.setNodeRef(data.successful[0].nodeRef);
-			                     window.location.href = this.getActionUrls(this.recordData).documentDetailsUrl.replace("document-details?","entity-data-lists?list=View-properties&");
-		                     },
-		                     scope : this
-		                  }
-		               });
+             }
+          });
+	
+	YAHOO.Bubbling
+    .fire(
+          "registerAction",
+          {
+             actionName : "onActionBranchEntity",
+             fn : function onActionBranchEntity(p_record) {
+                 var  nodeRef = new Alfresco.util.NodeRef(p_record.nodeRef), recordSiteName = $isValueSet(p_record.location.site) ? p_record.location.site.name : null,
+                		 displayName = p_record.displayName;
+                 
+                var msgPopup = Alfresco.util.PopupManager.displayMessage({
+                	 text : this.msg("message.branch-entity.inprogress", displayName),
+                	 displayTime: 0
+       		    	});
+                 
+                 
+                 Alfresco.util.Ajax
+                 .request({
+                    method : Alfresco.util.Ajax.POST,
+                    url : Alfresco.constants.PROXY_URI + "becpg/entity/simulation/create?entityNodeRef=" + nodeRef,
+                    responseContentType : Alfresco.util.Ajax.JSON,
+                    successCallback : {
+                       fn : function(resp) {
+                          if (resp.json) {
+                             window.location.href = beCPG.util.entityURL(recordSiteName,
+                                   resp.json.persistedObject, p_record.node.type);
+                          }
+                       },
+                       scope : this
+                    } ,
+                    failureCallback : {
+                        fn : function(response) {
+                        	msgPopup.destroy();
+                           if (response.json && response.json.message) {
+                              Alfresco.util.PopupManager.displayPrompt({
+                                 title : this.msg("message.branch-entity.failure"),
+                                 text : response.json.message
+                              });
+                           } else {
+                              Alfresco.util.PopupManager.displayMessage({
+                                 text : this.msg("message.branch-entity.failure")
+                              });
+                           }
+                        },
+                        scope : this
+                     }
 
-	               }
-	            });
+                 });
 
+             }
+          });
+    
 	
 	
-	YAHOO.Bubbling.fire("registerAction", {
-		   actionName : "onActionCancelCheckOutEntity",
-		   fn : function onActionCancelCheckOutEntity(asset) {
-			   var displayName = asset.displayName, nodeRef = new Alfresco.util.NodeRef(asset.nodeRef);
-
-			   this.modules.actions.genericAction(
-		         {
-		            success:
-		            {
-		               callback:
-		               {
-		                  fn: function DocumentActions_oACE_success(data)
-		                  {
-		                      var oldNodeRef = this.recordData.jsNode.nodeRef.nodeRef,
-		                      newNodeRef = data.json.results[0].nodeRef;
-		                      this.recordData.jsNode.setNodeRef(newNodeRef);
-		                      window.location = this.getActionUrls(this.recordData).documentDetailsUrl.replace("document-details?","entity-data-lists?list=View-properties&") + "#editCancelled";
-		                      // ALF-16598 fix, page is not refreshed if only hash was changed, force page reload for cancel online editing
-		                      if (oldNodeRef == newNodeRef)
-		                      {
-		                          window.location.reload();
-		                      }
-		                  },
-		                  scope: this
-		               }
-		            },
-		            failure:
-		            {
-		               message: this.msg("message.edit-cancel.failure", displayName)
-		            },
-		            webscript:
-		            {
-		               method: Alfresco.util.Ajax.POST,
-		               name: "cancel-checkout/node/{nodeRef}",
-		               params:
-		               {
-		                  nodeRef: nodeRef.uri
-		               }
-		            }
-		         });			   
-		   }
-		});	
+//
+//	YAHOO.Bubbling.fire("registerAction", {
+//	   actionName : "onActionCheckOutEntity",
+//	   fn : function onActionCheckOutEntity(asset) {
+//		   var displayName = asset.displayName, nodeRef = new Alfresco.util.NodeRef(asset.nodeRef);
+//
+//		   Alfresco.util.PopupManager.displayMessage({
+//		      displayTime : 0,
+//		      effect : null,
+//		      text : this.msg("message.checkout-entity.inprogress", displayName),
+//		   });
+//
+//		   this.modules.actions.genericAction({
+//		      success : {
+//			      callback : {
+//			         fn : function DocumentActions_oAEO_success(data) {
+//				         this.recordData.jsNode.setNodeRef(data.json.results[0].nodeRef);
+//				         window.location.href = this.getActionUrls(this.recordData).documentDetailsUrl.replace("document-details?","entity-data-lists?list=View-properties&");
+//			         },
+//			         scope : this
+//			      }
+//		      },
+//		      failure : {
+//			      message : this.msg("message.checkout-entity.failure", displayName)
+//		      },
+//		      webscript : {
+//		         method : Alfresco.util.Ajax.POST,
+//		         name : "checkout/node/{nodeRef}",
+//		         params : {
+//			         nodeRef : nodeRef.uri
+//		         }
+//		      }
+//		   });
+//	   }
+//	});
+//
+//	YAHOO.Bubbling
+//	      .fire(
+//	            "registerAction",
+//	            {
+//	               actionName : "onActionCheckInEntity",
+//	               fn : function onActionCheckInEntity(asset) {
+//		               var displayName = asset.displayName, nodeRef = new Alfresco.util.NodeRef(asset.nodeRef), version = asset.version;
+//
+//		               if (asset.workingCopy && asset.workingCopy.workingCopyVersion) {
+//			               version = asset.workingCopy.workingCopyVersion;
+//		               }
+//
+//		               if (!this.newEntityVersion) {
+//			               this.newEntityVersion = Alfresco.module.getNewEntityVersionInstance();
+//		               }
+//
+//		               this.newEntityVersion.show({
+//		                  filename : displayName,
+//		                  nodeRef : nodeRef,
+//		                  version : version,
+//		                  merge : false,
+//		                  onNewEntityVersionComplete : {
+//		                     fn : function EntityActions_oACI_success(data) {
+//			                     this.recordData.jsNode.setNodeRef(data.successful[0].nodeRef);
+//			                     window.location.href = this.getActionUrls(this.recordData).documentDetailsUrl.replace("document-details?","entity-data-lists?list=View-properties&");
+//		                     },
+//		                     scope : this
+//		                  }
+//		               });
+//
+//	               }
+//	            });
+//
+//	
+//	
+//	YAHOO.Bubbling.fire("registerAction", {
+//		   actionName : "onActionCancelCheckOutEntity",
+//		   fn : function onActionCancelCheckOutEntity(asset) {
+//			   var displayName = asset.displayName, nodeRef = new Alfresco.util.NodeRef(asset.nodeRef);
+//
+//			   this.modules.actions.genericAction(
+//		         {
+//		            success:
+//		            {
+//		               callback:
+//		               {
+//		                  fn: function DocumentActions_oACE_success(data)
+//		                  {
+//		                      var oldNodeRef = this.recordData.jsNode.nodeRef.nodeRef,
+//		                      newNodeRef = data.json.results[0].nodeRef;
+//		                      this.recordData.jsNode.setNodeRef(newNodeRef);
+//		                      window.location = this.getActionUrls(this.recordData).documentDetailsUrl.replace("document-details?","entity-data-lists?list=View-properties&") + "#editCancelled";
+//		                      // ALF-16598 fix, page is not refreshed if only hash was changed, force page reload for cancel online editing
+//		                      if (oldNodeRef == newNodeRef)
+//		                      {
+//		                          window.location.reload();
+//		                      }
+//		                  },
+//		                  scope: this
+//		               }
+//		            },
+//		            failure:
+//		            {
+//		               message: this.msg("message.edit-cancel.failure", displayName)
+//		            },
+//		            webscript:
+//		            {
+//		               method: Alfresco.util.Ajax.POST,
+//		               name: "cancel-checkout/node/{nodeRef}",
+//		               params:
+//		               {
+//		                  nodeRef: nodeRef.uri
+//		               }
+//		            }
+//		         });			   
+//		   }
+//		});	
 
 	YAHOO.Bubbling.fire("registerAction", {
 	   actionName : "onActionRefreshReport",

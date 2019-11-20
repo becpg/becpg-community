@@ -119,7 +119,6 @@ public class ProductListAttributesPolicyIT extends PLMBaseTestCase {
 					assertTrue(false);
 				}
 			}
-
 			/*
 			 * Change product unit
 			 */
@@ -157,6 +156,87 @@ public class ProductListAttributesPolicyIT extends PLMBaseTestCase {
 					assertTrue(false);
 				}
 			}
+
+			/*
+			 * Change product unit
+			 */
+			nodeService.setProperty(rawMaterialNodeRef, PLMModel.PROP_PRODUCT_UNIT, ProductUnit.P);
+			nodeService.setProperty(rawMaterialNodeRef, PLMModel.PROP_PRODUCT_SERVING_SIZE_UNIT, "mL");
+
+			return null;
+		}, false, true);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			RawMaterialData rawMaterialDBData = (RawMaterialData) alfrescoRepository.findOne(rawMaterialNodeRef);
+
+			for (CostListDataItem c : rawMaterialDBData.getCostList()) {
+
+				logger.debug("costList unit: " + c.getUnit());
+				if (c.getCost().equals(cost1)) {
+					assertEquals("Check 1st costList", "€/P", c.getUnit());
+				} else if (c.getCost().equals(cost2)) {
+					assertEquals("Check 2nd costList", "$/P", c.getUnit());
+				} else if (c.getCost().equals(cost3)) {
+					assertEquals("Check 3rd costList", "€", c.getUnit());
+				} else {
+					assertTrue(false);
+				}
+			}
+
+			for (NutListDataItem n : rawMaterialDBData.getNutList()) {
+
+				logger.debug("nutList unit: " + n.getUnit());
+				if (n.getNut().equals(nut1)) {
+					assertEquals("Check 1st nutList", "kcal/100mL", n.getUnit());
+				} else if (n.getNut().equals(nut2)) {
+					assertEquals("Check 2nd nutList", "kJ/100mL", n.getUnit());
+				} else {
+					assertTrue(false);
+				}
+			}
+			/*
+			 * Change product unit
+			 */
+			nodeService.setProperty(rawMaterialNodeRef, PLMModel.PROP_PRODUCT_UNIT, ProductUnit.L);
+			nodeService.setProperty(rawMaterialNodeRef, PLMModel.PROP_PRODUCT_SERVING_SIZE_UNIT, "g");
+			return null;
+		}, false, true);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			RawMaterialData rawMaterialDBData = (RawMaterialData) alfrescoRepository.findOne(rawMaterialNodeRef);
+
+			for (CostListDataItem c : rawMaterialDBData.getCostList()) {
+
+				logger.debug("costList unit: " + c.getUnit());
+				if (c.getCost().equals(cost1)) {
+					assertEquals("Check 1st costList", "€/L", c.getUnit());
+				} else if (c.getCost().equals(cost2)) {
+					assertEquals("Check 2nd costList", "$/L", c.getUnit());
+				} else if (c.getCost().equals(cost3)) {
+					assertEquals("Check 3rd costList", "€", c.getUnit());
+				} else {
+					assertTrue(false);
+				}
+			}
+			for (NutListDataItem n : rawMaterialDBData.getNutList()) {
+
+				logger.debug("nutList unit: " + n.getUnit());
+				if (n.getNut().equals(nut1)) {
+					assertEquals("Check 1st nutList", "kcal/100g", n.getUnit());
+				} else if (n.getNut().equals(nut2)) {
+					assertEquals("Check 2nd nutList", "kJ/100g", n.getUnit());
+				} else {
+					assertTrue(false);
+				}
+			}
+
+			/*
+			 * Change product unit
+			 */
+			nodeService.setProperty(rawMaterialNodeRef, PLMModel.PROP_PRODUCT_UNIT, ProductUnit.L);
+			nodeService.setProperty(rawMaterialNodeRef, PLMModel.PROP_PRODUCT_SERVING_SIZE_UNIT, null);
 
 			return null;
 		}, false, true);
