@@ -82,62 +82,7 @@
                                                 </#if>
                                              </p>
                                              
-                                             <#if args.workflowPooled == true>
-                                                <p>Click on this link to view the task:</p>
-                                                <p><a href="${shareUrl}/page/task-details?taskId=${args.workflowId}">${shareUrl}/page/task-details?taskId=${args.workflowId}</a>
-                                             <#else>
-                                                <p>Click on this link to edit the task:</p>
-                                                <p><a href="${shareUrl}/page/task-edit?taskId=${args.workflowId}">${shareUrl}/page/task-edit?taskId=${args.workflowId}</a>
-                                             </#if>
-                                             
-                                             <#if (args.workflowDocuments)??>
-                                                <table cellpadding="0" callspacing="0" border="0" bgcolor="#eeeeee" style="padding:10px; border: 1px solid #aaaaaa;">
-                                                   <#list args.workflowDocuments as doc>
-                                                      <tr>
-                                                         <td>
-                                                            <table cellpadding="0" cellspacing="0" border="0">
-                                                               <tr>
-                                                                  <td valign="top">
-                                                                     <img src="${shareUrl}/res/components/images/generic-file.png" alt="" width="64" height="64" border="0" style="padding-right: 10px;" />
-                                                                  </td>
-                                                                  <td>
-                                                                     <table cellpadding="2" cellspacing="0" border="0">
-                                                                        <tr>
-                                                                           <td><b>${doc.name}</b></td>
-                                                                        </tr>
-                                                                         <#if doc.hasAspect("bcpg:entityListsAspect")>
-                                                                          <tr>
-	                                                                           <td>Click on this link to access the entity:</td>
-	                                                                        </tr>
-	                                                                        <tr>
-	                                                                           <td>
-	                                                                              <a href="${shareUrl}/page/entity-data-lists?list=View-properties&nodeRef=${doc.nodeRef}">
-	                                                                              ${shareUrl}/page/entity-data-lists?list=View-properties&nodeRef=${doc.nodeRef}</a>
-	                                                                           </td>
-	                                                                        </tr>
-                                                                         <#else>
-                                                                           <tr>
-	                                                                           <td>Click on this link to download the document:</td>
-	                                                                        </tr>
-	                                                                        <tr>
-	                                                                           <td>
-	                                                                              <a href="${shareUrl}/proxy/alfresco/api/node/content/workspace/SpacesStore/${doc.id}/${doc.name}?a=true">
-	                                                                              ${shareUrl}/proxy/alfresco/api/node/content/workspace/SpacesStore/${doc.id}/${doc.name}?a=true</a>
-	                                                                           </td>
-	                                                                        </tr>
-                                                                         </#if>
-                                                                     </table>
-                                                                  </td>
-                                                               </tr>
-                                                            </table>
-                                                         </td>
-                                                      </tr>
-                                                      <#if doc_has_next>
-                                                         <tr><td><div style="border-top: 1px solid #aaaaaa; margin:12px;"></div></td></tr>
-                                                      </#if>
-                                                   </#list>
-                                                </table>
-                                             </#if>
+                                           	 <p><a href="${shareUrl}/page/task-edit?taskId=${args.workflowId}">Click on this link to view the task</a></p>
                                              
                                              <p>Regards,<br />
                                              beCPG</p>

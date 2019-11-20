@@ -74,7 +74,7 @@ public class ProjectListSortIT extends AbstractProjectTestCase {
 			return null;
 		}, false, true);
 
-		waitForSolr(startTime);
+		waitForSolr();
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@SuppressWarnings("unchecked")
@@ -113,7 +113,7 @@ public class ProjectListSortIT extends AbstractProjectTestCase {
 				PaginatedExtractedItems extractedItems = extractor.extract(dataListFilter, metadataFields);
 
 				assertEquals(25, extractedItems.getPageItems().size());
-
+                boolean isFish = false;
 				for (int i = 0; i < extractedItems.getPageItems().size(); i++) {
 					Map<String, Object> item = extractedItems.getPageItems().get(i);
 					Map<String, Object> itemData = (Map<String, Object>) item.get("itemData");
@@ -122,12 +122,14 @@ public class ProjectListSortIT extends AbstractProjectTestCase {
 					String projectHierarchy2 = (String) hierarchy2Data.get("displayValue");
 					String projectName = (String) nameData.get("displayValue");
 					logger.info("project sorted " + projectName + " - " + projectHierarchy2);
-
-					if (i < 21) {
-						assertEquals("Crustacean", projectHierarchy2);
-					} else {
-						assertEquals("Fish", projectHierarchy2);
+					if("Fish".equals(projectHierarchy2)) {
+						isFish = true;
 					}
+					
+					if(isFish && "Crustacean".equals(projectHierarchy2)) {
+						fail("No Crustacean should apears after fish");
+					}
+					
 				}
 
 				return null;

@@ -45,6 +45,8 @@
       /* Decoupled event listeners */
       YAHOO.Bubbling.on("formContentReady", this.onFormContentReady, this);
       YAHOO.Bubbling.on("beforeFormRuntimeInit", this.onBeforeFormRuntimeInit, this);
+      YAHOO.Bubbling.on("formBeforeSubmit", this.onFormBeforeSubmit, this);
+      
       
       return this;
    };
@@ -90,7 +92,6 @@
          // change the default 'Submit' label to be 'Save'
          var submitButton = args[1].buttons.submit;
          submitButton.set("label", this.msg("button.create"));
-         submitButton.addListener("click", this.onSubmitButtonClick, null, this);
          
          // add a handler to the cancel button
          var cancelButton = args[1].buttons.cancel;
@@ -175,11 +176,8 @@
       /**
        * Called when user clicks on the submit button.
        *
-       * @method onCancelButtonClick
-       * @param type
-       * @param args
        */
-      onSubmitButtonClick: function CreateContentMgr_onSubmit(type, args)
+      onFormBeforeSubmit: function CreateContentMgr_onFormBeforeSubmit(type, args)
       {
     	  Alfresco.util.PopupManager.displayMessage({
 	            text: this.msg("message.create.please-wait"),

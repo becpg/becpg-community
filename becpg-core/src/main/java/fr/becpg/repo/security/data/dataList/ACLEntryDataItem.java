@@ -49,6 +49,7 @@ public class ACLEntryDataItem extends BeCPGDataObject {
 
 		public static final String READ_ONLY = "read";
 		public static final String READ_WRITE = "write";
+		public static final String READ_READANDWRITE = "readandwrite";
 
 		public PermissionModel(String permission, List<NodeRef> groups) {
 			super();
@@ -77,11 +78,11 @@ public class ACLEntryDataItem extends BeCPGDataObject {
 		}
 
 		public boolean isReadOnly() {
-			return READ_ONLY.equals(permission);
+			return READ_ONLY.equals(permission)  || READ_READANDWRITE.equals(permission);
 		}
 
 		public boolean isWrite() {
-			return READ_WRITE.equals(permission);
+			return READ_WRITE.equals(permission) || READ_READANDWRITE.equals(permission);
 		}
 
 		@Override

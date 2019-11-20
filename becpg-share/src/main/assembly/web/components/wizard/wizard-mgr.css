@@ -146,16 +146,9 @@ div.wizard-content {
 }
 .wizard > .content > .body {
     float: left;
-  /*   padding: 2.5%;
-    width: 95%; */
+    width: 95%; 
 }
-/* 
-.wizard > .content > .body.entity-data-lists {
-    float: left;
-    padding: 0px;
-    width: 100%;
-    background: white;
-} */
+
 
 .wizard > .content > .body ul {
     list-style: disc outside none !important;
@@ -315,6 +308,10 @@ div.wizard-content {
 **/
 
 
+.wizard .documents {
+	
+}
+
 .wizard .dashlet {
     z-index: auto;
     margin: 5px 0px 20px 0;
@@ -324,6 +321,11 @@ div.wizard-content {
 .wizard .datagrid {
     padding: 0px;
 }
+
+.wizard .datagrid .toolbar{
+  visibility: visible;
+}
+
 
 .wizard .datagrid table {
 	border:none;

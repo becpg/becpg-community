@@ -733,6 +733,12 @@
 							if (args.searchQuery !== undefined) {
 								searchQuery = args.searchQuery;
 							}
+							
+							var searchAllSites = this.searchAllSites;
+					         if (args.searchAllSites !== undefined)
+					         {
+					            searchAllSites = args.searchAllSites;
+					         }
 
 							// call webscript
 							var url = Alfresco.constants.PROXY_URI + "becpg/report/exportsearch/" + args.reportTpl.replace("://", "/") + "/"
@@ -750,21 +756,20 @@
 									url += "&tag=" + encodeURIComponent(searchTag);
 								}
 							}
-							/*
-							 * if(this.options.siteId.length !== 0) { url +=
-							 * "&site=" + siteId + "&repo=false"; } else
-							 */
-							{
+							
+							 if(this.options.siteId.length !== 0 && !searchAllSites) { 
+							    url +="&site=" + this.options.siteId + "&repo=false"; } 
+							 else {
 								url += "&site=&repo=true";
 							}
 
-							if (args.reportFileName.indexOf(".zip") > 0 || args.reportTplName.indexOf(".xlsx") > 0) {
+							if (args.reportFileName.indexOf(".zip") > 0 || args.reportTplName.indexOf(".xlsx") > 0 || args.reportTplName.indexOf(".xlsm") > 0) {
 
 								url += "&async=true";
 
 								var downloadDialog = Alfresco.getArchiveAndDownloadInstance();
 
-								downloadDialog.mimeType = args.reportFileName.indexOf(".xlsx") > 0 ? "-excel" : "";
+								downloadDialog.mimeType = args.reportFileName.indexOf(".xlsx") > 0 || args.reportFileName.indexOf(".xlsm") > 0 ? "-excel" : "";
 
 								downloadDialog._resetGUI = function() {
 									// Reset references and the gui before

@@ -93,9 +93,9 @@ public class BeCPGTestHelper {
 
 			PropertyMap ppOne = new PropertyMap(4);
 			ppOne.put(ContentModel.PROP_USERNAME, userName);
-			ppOne.put(ContentModel.PROP_FIRSTNAME, "firstName");
-			ppOne.put(ContentModel.PROP_LASTNAME, "lastName");
-			ppOne.put(ContentModel.PROP_EMAIL, "email@email.com");
+			ppOne.put(ContentModel.PROP_FIRSTNAME, "firstName-"+userName);
+			ppOne.put(ContentModel.PROP_LASTNAME, "lastName-"+userName);
+			ppOne.put(ContentModel.PROP_EMAIL, userName+"@email.com");
 			ppOne.put(ContentModel.PROP_JOBTITLE, "jobTitle");
 
 			return RepoBaseTestCase.INSTANCE.personService.createPerson(ppOne);

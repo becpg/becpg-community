@@ -46,13 +46,14 @@ import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
+import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.AllergenType;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.LabelingRuleType;
+import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
-import fr.becpg.repo.product.data.ing.AbstractLabelingComponent;
 import fr.becpg.repo.product.data.ing.CompositeLabeling;
 import fr.becpg.repo.product.data.ing.DeclarationFilter;
 import fr.becpg.repo.product.data.ing.IngItem;
@@ -125,8 +126,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 		// no compo => no formulation
 		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)
-				|| !formulatedProduct.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
-			logger.debug("no compo => no formulation - " + formulatedProduct.getName());
+				|| ((formulatedProduct.getLabelingListView() == null) && !alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_INGLABELINGLIST))) {
+			logger.debug("no labelingListView => no formulation - " + formulatedProduct.getName());
 			return true;
 		}
 
@@ -212,16 +213,23 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				return true;
 			}
 
-			List<CompoListDataItem> compoList = formulatedProduct
-					.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()));
+			List<CompoListDataItem> compoList = new ArrayList<>();
+			if(formulatedProduct instanceof RawMaterialData){
+				compoList.add(new CompoListDataItem(null, null, 1d, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, formulatedProduct.getNodeRef()));
+			}
+			else{
+				compoList = formulatedProduct
+						.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()));
+			}
 
 			// Compute composite
 			Composite<CompoListDataItem> compositeDefaultVariant = CompositeHelper.getHierarchicalCompoList(compoList);
 
-			CompositeLabeling compositeLabeling = visitCompositeLabeling(new CompositeLabeling(CompositeLabeling.ROOT), compositeDefaultVariant,
-					labelingFormulaContext, 1d, labelingFormulaContext.getYield()!=null ? labelingFormulaContext.getYield()  : formulatedProduct.getYield(), formulatedProduct.getRecipeQtyUsed(), true);
+			CompositeLabeling compositeLabeling = visitCompoList(new CompositeLabeling(CompositeLabeling.ROOT), compositeDefaultVariant,
+					labelingFormulaContext, 1d,
+					labelingFormulaContext.getYield() != null ? labelingFormulaContext.getYield() : formulatedProduct.getYield(),
+					formulatedProduct.getRecipeQtyUsed(), true);
 
-			
 			if (logger.isTraceEnabled()) {
 				logger.trace(" Before aggrate \n " + compositeLabeling.toString());
 			}
@@ -358,7 +366,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		Double totalVolume = 0d;
 		boolean containsGroup = false;
 
-		for (AbstractLabelingComponent component : lblCompositeContext.getIngList().values()) {
+		for (CompositeLabeling component : lblCompositeContext.getIngList().values()) {
 			if (labelingFormulaContext.isGroup(component)) {
 				containsGroup = true;
 			}
@@ -409,13 +417,13 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 		if (!labelingFormulaContext.getMeatContentRules().isEmpty() && !formulatedProduct.getMeatContents().isEmpty()) {
 
-			Set<AbstractLabelingComponent> toAdd = new HashSet<>();
+			Set<CompositeLabeling> toAdd = new HashSet<>();
 
 			for (MeatContentRule meatContentRule : labelingFormulaContext.getMeatContentRules()) {
 
 				MeatContentData meatContentData = formulatedProduct.getMeatContents().get(meatContentRule.getMeatType());
 				if ((meatContentData != null) && (meatContentData.getMeatContent() != null) && (meatContentData.getMeatContent() < 100)) {
-					AbstractLabelingComponent meatReplacement = parent.getIngList().get(meatContentRule.getReplacement());
+					CompositeLabeling meatReplacement = parent.getIngList().get(meatContentRule.getReplacement());
 					if (meatReplacement == null) {
 						RepositoryEntity replacement = alfrescoRepository.findOne(meatContentRule.getReplacement());
 						if (replacement instanceof IngItem) {
@@ -431,7 +439,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						}
 					}
 
-					for (AbstractLabelingComponent component : parent.getIngList().values()) {
+					for (CompositeLabeling component : parent.getIngList().values()) {
 						if (component.getNodeRef().equals(meatContentRule.getComponent())) {
 							if (component.getQty() != null) {
 								meatReplacement.setQty(component.getQty() * (1d - (meatContentData.getMeatContent() / 100d)));
@@ -443,18 +451,18 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 								component.setVolume(component.getVolume() * (meatContentData.getMeatContent() / 100d));
 								toAdd.add(meatReplacement);
 							}
-							
+
 							meatReplacement.getAllergens().addAll(component.getAllergens());
 							meatReplacement.getGeoOrigins().addAll(component.getGeoOrigins());
 
-						} else if (component instanceof CompositeLabeling) {
-							applyMeatContentRules(formulatedProduct, (CompositeLabeling) component, labelingFormulaContext);
+						} else {
+							applyMeatContentRules(formulatedProduct, component, labelingFormulaContext);
 						}
 					}
 				}
 			}
 
-			for (AbstractLabelingComponent tmp : toAdd) {
+			for (CompositeLabeling tmp : toAdd) {
 				parent.add(tmp);
 			}
 
@@ -464,73 +472,37 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	private void aggregateLegalName(CompositeLabeling parent, LabelingFormulaContext labelingFormulaContext, boolean multiLevel) {
 
-		Map<String, List<AbstractLabelingComponent>> componentsByName = new HashMap<>();
+		Map<String, List<CompositeLabeling>> componentsByName = new HashMap<>();
 
-		for (AbstractLabelingComponent component : parent.getIngList().values()) {
-			List<AbstractLabelingComponent> tmp = new ArrayList<>();
-			if (!component.shouldSkip()) {
-				String name = labelingFormulaContext.getLegalIngName(component);
-				if ((name != null) && !name.isEmpty()) {
-					if (componentsByName.containsKey(name)) {
-						tmp = componentsByName.get(name);
-					}
-					tmp.add(component);
+		for (CompositeLabeling component : parent.getIngList().values()) {
+			List<CompositeLabeling> tmp = new ArrayList<>();
+			String name = labelingFormulaContext.getLegalIngName(component);
+			if ((name != null) && !name.isEmpty()) {
+				if (componentsByName.containsKey(name)) {
+					tmp = componentsByName.get(name);
+				}
+				tmp.add(component);
 
-					componentsByName.put(name, tmp);
-				}
-				if (multiLevel && (component instanceof CompositeLabeling)) {
-					aggregateLegalName((CompositeLabeling) component, labelingFormulaContext, multiLevel);
-				}
+				componentsByName.put(name, tmp);
+			}
+			if (multiLevel) {
+				aggregateLegalName(component, labelingFormulaContext, multiLevel);
 			}
 		}
 
-		for (List<AbstractLabelingComponent> toAggregate : componentsByName.values()) {
+		for (List<CompositeLabeling> toAggregate : componentsByName.values()) {
 
-			AbstractLabelingComponent prev = null;
-			for (AbstractLabelingComponent component : toAggregate) {
+			CompositeLabeling prev = null;
+			for (CompositeLabeling component : toAggregate) {
 				if (prev == null) {
 					prev = component;
 				} else {
-					// Same type same declaration
-					if (((prev instanceof CompositeLabeling) && (component instanceof CompositeLabeling)
-							&& (((CompositeLabeling) prev).getDeclarationType() != null)
-							&& ((CompositeLabeling) prev).getDeclarationType().equals(((CompositeLabeling) component).getDeclarationType())
-							&& !((CompositeLabeling) prev).isGroup()) || ((prev instanceof IngItem) && (component instanceof IngItem))) {
 
-						merge(prev, component);
-						parent.remove(component.getNodeRef());
+					merge(prev, component);
+					parent.remove(component.getNodeRef());
 
-						if (labelingFormulaContext.getToApplyThresholdItems().contains(component.getNodeRef())) {
-							labelingFormulaContext.getToApplyThresholdItems().add(prev.getNodeRef());
-						}
-
-					} else if ((prev instanceof CompositeLabeling) && (component instanceof IngItem)
-							&& DeclarationType.DoNotDetails.equals(((CompositeLabeling) prev).getDeclarationType())
-							&& ((IngItem) component).getSubIngs().isEmpty()) {
-
-						merge(prev, component);
-						parent.remove(component.getNodeRef());
-
-						if (labelingFormulaContext.getToApplyThresholdItems().contains(component.getNodeRef())) {
-							labelingFormulaContext.getToApplyThresholdItems().add(prev.getNodeRef());
-						}
-
-					} else if ((prev instanceof IngItem) && (component instanceof CompositeLabeling)
-							&& DeclarationType.DoNotDetails.equals(((CompositeLabeling) component).getDeclarationType())
-							&& ((IngItem) prev).getSubIngs().isEmpty()) {
-
-						merge(component, prev);
-						parent.remove(prev.getNodeRef());
-
-						if (labelingFormulaContext.getToApplyThresholdItems().contains(prev.getNodeRef())) {
-							labelingFormulaContext.getToApplyThresholdItems().add(component.getNodeRef());
-						}
-
-						prev = component;
-
-					} else {
-						// DO nothing
-						prev = component;
+					if (labelingFormulaContext.getToApplyThresholdItems().contains(component.getNodeRef())) {
+						labelingFormulaContext.getToApplyThresholdItems().add(prev.getNodeRef());
 					}
 
 				}
@@ -541,7 +513,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	}
 
-	private void merge(AbstractLabelingComponent prev, AbstractLabelingComponent component) {
+	private void merge(CompositeLabeling prev, CompositeLabeling component) {
 		if ((prev != null) && (component != null)) {
 			if ((prev.getQty() != null) && (component.getQty() != null)) {
 				prev.setQty(prev.getQty() + component.getQty());
@@ -554,43 +526,31 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				prev.setVolume(null);
 			}
 
-			if ((prev instanceof CompositeLabeling) && (component instanceof CompositeLabeling)) {
-				if ((((CompositeLabeling) prev).getQtyTotal() != null) && (((CompositeLabeling) component).getQtyTotal() != null)) {
-					((CompositeLabeling) prev).setQtyTotal(((CompositeLabeling) prev).getQtyTotal() + ((CompositeLabeling) component).getQtyTotal());
+			if ((prev.getQtyTotal() != null) && (component.getQtyTotal() != null)) {
+				prev.setQtyTotal(prev.getQtyTotal() + component.getQtyTotal());
+			} else {
+				prev.setQtyTotal(null);
+			}
+			if ((prev.getVolumeTotal() != null) && (component.getVolumeTotal() != null)) {
+				prev.setVolumeTotal(prev.getVolumeTotal() + component.getVolumeTotal());
+			} else {
+				prev.setVolumeTotal(null);
+			}
+			for (CompositeLabeling ing : component.getIngList().values()) {
+				if (prev.getIngList().containsKey(ing.getNodeRef())) {
+					merge(prev.getIngList().get(ing.getNodeRef()), ing);
 				} else {
-					((CompositeLabeling) prev).setQtyTotal(null);
+					prev.add(ing);
 				}
-				if ((((CompositeLabeling) prev).getVolumeTotal() != null) && (((CompositeLabeling) component).getVolumeTotal() != null)) {
-					((CompositeLabeling) prev)
-							.setVolumeTotal(((CompositeLabeling) prev).getVolumeTotal() + ((CompositeLabeling) component).getVolumeTotal());
-				} else {
-					((CompositeLabeling) prev).setVolumeTotal(null);
-				}
-				for (AbstractLabelingComponent ing : ((CompositeLabeling) component).getIngList().values()) {
-					if (((CompositeLabeling) prev).getIngList().containsKey(ing.getNodeRef())) {
-						merge(((CompositeLabeling) prev).getIngList().get(ing.getNodeRef()), ing);
-					} else {
-						((CompositeLabeling) prev).add(ing);
-					}
-				}
-
 			}
 
 			if ((prev.getPluralLegalName() == null) && (component.getPluralLegalName() != null)) {
 				prev.setPluralLegalName(component.getPluralLegalName());
 			}
 
-			if ((prev instanceof CompositeLabeling) && (((CompositeLabeling) prev).getIngType() == null)) {
-				if ((component instanceof CompositeLabeling) && (((CompositeLabeling) component).getIngType() != null)) {
-					((CompositeLabeling) prev).setIngType(((CompositeLabeling) component).getIngType());
-				} else if ((component instanceof IngItem) && (((IngItem) component).getIngType() != null)) {
-					((CompositeLabeling) prev).setIngType(((IngItem) component).getIngType());
-				}
-			} else if ((prev instanceof IngItem) && (((IngItem) prev).getIngType() == null)) {
-				if ((component instanceof CompositeLabeling) && (((CompositeLabeling) component).getIngType() != null)) {
-					((IngItem) prev).setIngType(((CompositeLabeling) component).getIngType());
-				} else if ((component instanceof IngItem) && (((IngItem) component).getIngType() != null)) {
-					((IngItem) prev).setIngType(((IngItem) component).getIngType());
+			if ((prev.getIngType() == null)) {
+				if ((component.getIngType() != null)) {
+					prev.setIngType(component.getIngType());
 				}
 			}
 
@@ -607,27 +567,27 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		merged.setVolumeTotal(lblCompositeContext.getVolumeTotal());
 
 		// Start adding all the components
-		for (AbstractLabelingComponent component : lblCompositeContext.getIngList().values()) {
+		for (CompositeLabeling component : lblCompositeContext.getIngList().values()) {
 			if (!labelingFormulaContext.isGroup(component)) {
 				merged.add(component.clone());
 			}
 		}
 
 		// Then merge
-		for (AbstractLabelingComponent component : lblCompositeContext.getIngList().values()) {
+		for (CompositeLabeling component : lblCompositeContext.getIngList().values()) {
 			if (labelingFormulaContext.isGroup(component)) {
-				CompositeLabeling compositeLabeling = (CompositeLabeling) component;
-				for (AbstractLabelingComponent subComponent : compositeLabeling.getIngList().values()) {
+				CompositeLabeling compositeLabeling = component;
+				for (CompositeLabeling subComponent : compositeLabeling.getIngList().values()) {
 
 					Double qty = labelingFormulaContext.computeQtyPerc(compositeLabeling, subComponent,
 							compositeLabeling.getQty() != null ? compositeLabeling.getQty() : 1d);
 					Double volume = labelingFormulaContext.computeVolumePerc(compositeLabeling, subComponent,
 							compositeLabeling.getVolume() != null ? compositeLabeling.getVolume() : 1d);
 
-					AbstractLabelingComponent toMerged = merged.get(subComponent.getNodeRef());
+					CompositeLabeling toMerged = merged.get(subComponent.getNodeRef());
 
 					if (toMerged == null) {
-						AbstractLabelingComponent clonedSubComponent = subComponent.clone();
+						CompositeLabeling clonedSubComponent = subComponent.clone();
 						clonedSubComponent.setQty(qty);
 						clonedSubComponent.setVolume(volume);
 						merged.add(clonedSubComponent);
@@ -761,15 +721,15 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 		if (!labelingFormulaContext.getAggregateRules().isEmpty()) {
 
-			Map<NodeRef, AbstractLabelingComponent> toAdd = new HashMap<>();
-			Map<NodeRef, AbstractLabelingComponent> ingList = parent.getIngList();
+			Map<NodeRef, CompositeLabeling> toAdd = new HashMap<>();
+			Map<NodeRef, CompositeLabeling> ingList = parent.getIngList();
 
-			for (Iterator<Map.Entry<NodeRef, AbstractLabelingComponent>> iterator = ingList.entrySet().iterator(); iterator.hasNext();) {
-				AbstractLabelingComponent component = iterator.next().getValue();
+			for (Iterator<Map.Entry<NodeRef, CompositeLabeling>> iterator = ingList.entrySet().iterator(); iterator.hasNext();) {
+				CompositeLabeling component = iterator.next().getValue();
 
 				// Recur
-				if (recur && (component instanceof CompositeLabeling)) {
-					applyAggregateRules((CompositeLabeling) component, labelingFormulaContext, recur, mergedLabelling);
+				if (recur) {
+					applyAggregateRules(component, labelingFormulaContext, recur, mergedLabelling);
 				}
 
 				if (labelingFormulaContext.getAggregateRules().containsKey(component.getNodeRef())) {
@@ -806,7 +766,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 										logger.trace("Adding :" + getName(component) + "  to aggregate rule, qty " + qty + " is100Perc " + is100Perc);
 									}
 
-									AbstractLabelingComponent current = toAdd.containsKey(aggregateRuleNodeRef) ? toAdd.get(aggregateRuleNodeRef)
+									CompositeLabeling current = toAdd.containsKey(aggregateRuleNodeRef) ? toAdd.get(aggregateRuleNodeRef)
 											: ingList.get(aggregateRuleNodeRef);
 
 									// Replacement
@@ -857,8 +817,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 									} else {
 
 										CompositeLabeling compositeLabeling = null;
-										if ((current != null) && (current instanceof CompositeLabeling)) {
-											compositeLabeling = (CompositeLabeling) current;
+										if (current != null) {
+											compositeLabeling = current;
 										}
 
 										if (compositeLabeling == null) {
@@ -883,18 +843,16 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 										ReqCtrlListDataItem error = null;
 
-										if ((component instanceof CompositeLabeling)
-												&& DeclarationType.Declare.equals(((CompositeLabeling) component).getDeclarationType())) {
-											for (AbstractLabelingComponent childComponent : ((CompositeLabeling) component).getIngList().values()) {
+										if (DeclarationType.Declare.equals(component.getDeclarationType())) {
+											for (CompositeLabeling childComponent : component.getIngList().values()) {
 												Double subQty = null;
 												Double subVolume = null;
 												if ((qty != null) && (childComponent.getQty() != null)) {
-													subQty = (childComponent.getQty() * qty) / ((CompositeLabeling) component).getQtyTotal();
+													subQty = (childComponent.getQty() * qty) / component.getQtyTotal();
 												}
 
 												if ((volume != null) && (childComponent.getVolume() != null)) {
-													subVolume = (childComponent.getVolume() * volume)
-															/ ((CompositeLabeling) component).getVolumeTotal();
+													subVolume = (childComponent.getVolume() * volume) / component.getVolumeTotal();
 												}
 
 												error = appendToAggregate(childComponent, compositeLabeling, aggregateRule, subQty, subVolume,
@@ -942,7 +900,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				}
 			}
 
-			for (AbstractLabelingComponent ing : toAdd.values()) {
+			for (CompositeLabeling ing : toAdd.values()) {
 				parent.add(ing);
 			}
 
@@ -950,19 +908,15 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	}
 
-	private ReqCtrlListDataItem appendToAggregate(AbstractLabelingComponent component, CompositeLabeling compositeLabeling,
-			AggregateRule aggregateRule, Double qty, Double volume, Set<NodeRef> allergens, Set<NodeRef> geoOrigins) {
-		AbstractLabelingComponent current = compositeLabeling.getIngList().get(component.getNodeRef());
+	private ReqCtrlListDataItem appendToAggregate(CompositeLabeling component, CompositeLabeling compositeLabeling, AggregateRule aggregateRule,
+			Double qty, Double volume, Set<NodeRef> allergens, Set<NodeRef> geoOrigins) {
+		CompositeLabeling current = compositeLabeling.getIngList().get(component.getNodeRef());
 		boolean is100Perc = (aggregateRule.getQty() == null) || (aggregateRule.getQty() == 100d);
 
 		if (!LabelingRuleType.DoNotDetails.equals(aggregateRule.getLabelingRuleType())) {
 			if (current == null) {
 				if (!is100Perc) {
-					if (component instanceof CompositeLabeling) {
-						current = new CompositeLabeling((CompositeLabeling) component);
-					} else {
-						current = new IngItem((IngItem) component);
-					}
+					current = component.clone();
 				} else {
 					current = component;
 				}
@@ -972,11 +926,11 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					logger.trace(" - Add new ing to aggregate  :" + getName(current));
 				}
 
-				if ((current instanceof CompositeLabeling) && DeclarationType.Group.equals(((CompositeLabeling) current).getDeclarationType())) {
+				if (DeclarationType.Group.equals(current.getDeclarationType())) {
 					if (logger.isTraceEnabled()) {
 						logger.trace(" - Downgrade group to Detail");
 					}
-					((CompositeLabeling) current).setDeclarationType(DeclarationType.Detail);
+					current.setDeclarationType(DeclarationType.Detail);
 				}
 
 				compositeLabeling.add(current);
@@ -1037,25 +991,23 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	private List<CompositeLabeling> reorderCompositeLabeling(CompositeLabeling current, boolean isFirst) {
 		List<CompositeLabeling> ret = new LinkedList<>();
 
-		for (Iterator<Map.Entry<NodeRef, AbstractLabelingComponent>> iterator = current.getIngList().entrySet().iterator(); iterator.hasNext();) {
-			AbstractLabelingComponent component = iterator.next().getValue();
-			if (component instanceof CompositeLabeling) {
+		for (Iterator<Map.Entry<NodeRef, CompositeLabeling>> iterator = current.getIngList().entrySet().iterator(); iterator.hasNext();) {
+			CompositeLabeling component = iterator.next().getValue();
 
-				Double currQty = component.getQty();
-				ret.addAll(reorderCompositeLabeling((CompositeLabeling) component, false));
-				if (!Objects.equals(component.getQty(), currQty) && (component.getQty() == 0)) {
-					iterator.remove();
-				} else {
-					if (!isFirst) {
-						if (((CompositeLabeling) component).isGroup()) {
+			Double currQty = component.getQty();
+			ret.addAll(reorderCompositeLabeling(component, false));
+			if (!Objects.equals(component.getQty(), currQty) && (component.getQty() == 0)) {
+				iterator.remove();
+			} else {
+				if (!isFirst) {
+					if (component.isGroup()) {
 
-							logger.trace("Found misplaced group :" + getName(component));
-							// Remove from current
-							iterator.remove();
+						logger.trace("Found misplaced group :" + getName(component));
+						// Remove from current
+						iterator.remove();
 
-							ret.add((CompositeLabeling) component);
+						ret.add(component);
 
-						}
 					}
 				}
 			}
@@ -1158,7 +1110,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	}
 
-	private CompositeLabeling visitCompositeLabeling(CompositeLabeling parent, Composite<CompoListDataItem> parentComposite,
+	private CompositeLabeling visitCompoList(CompositeLabeling parent, Composite<CompoListDataItem> parentComposite,
 			LabelingFormulaContext labelingFormulaContext, Double ratio, Double yield, Double recipeQtyUsed, boolean computeReconstitution)
 			throws FormulateException {
 
@@ -1305,7 +1257,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						if (((productData.getIngList() == null) || productData.getIngList().isEmpty())) {
 							declarationType = DeclarationType.DoNotDetails;
 						} else {
-							// Case all ingedient are omit
+							// Case all ingredients are omit
 							boolean shouldOmit = true;
 							for (IngListDataItem ingListItem : productData.getIngList()) {
 								DeclarationType ingDeclarationType = getDeclarationType(compoListDataItem, ingListItem, labelingFormulaContext);
@@ -1330,9 +1282,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 						if (!DeclarationType.Declare.equals(declarationType) || !aggregateRules.isEmpty()) {
 
-							AbstractLabelingComponent lc = parent.get(productData.getNodeRef());
-							if ((lc != null) && (lc instanceof CompositeLabeling)) {
-								compositeLabeling = (CompositeLabeling) lc;
+							CompositeLabeling lc = parent.get(productData.getNodeRef());
+							if ((lc != null)) {
+								compositeLabeling = lc;
 								compositeLabeling.setPlural(true);
 
 								if (qty != null) {
@@ -1400,8 +1352,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 						if (!isMultiLevel && (productData.getIngList() != null) && !productData.getIngList().isEmpty()) {
 
-							loadIngList(productData, CompositeHelper.getHierarchicalCompoList(productData.getIngList()), qty, volume,
-									labelingFormulaContext, compoListDataItem, compositeLabeling, errors);
+							visitIngList(compositeLabeling, productData, CompositeHelper.getHierarchicalCompoList(productData.getIngList()), null,
+									qty, volume, labelingFormulaContext, compoListDataItem, errors);
 
 						}
 
@@ -1456,8 +1408,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 								logger.trace(" -- Recur yield " + recurYield + " recur recipeQtyUsed " + recurRecipeQtyUsed);
 							}
 
-							visitCompositeLabeling(compositeLabeling, composite, labelingFormulaContext, computedRatio, recurYield,
-									recurRecipeQtyUsed, !parent.equals(compositeLabeling));
+							visitCompoList(compositeLabeling, composite, labelingFormulaContext, computedRatio, recurYield, recurRecipeQtyUsed,
+									!parent.equals(compositeLabeling));
 						}
 					}
 
@@ -1507,8 +1459,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	}
 
-	//Why not productData.getYield
-	@Deprecated 
+	// Why not productData.getYield
+	@Deprecated
 	private Double computeYield(ProductData productData) {
 		Double qtyUsed = productData.getRecipeQtyUsed();
 		Double netWeight = productData.getNetWeight();
@@ -1527,7 +1479,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		return qty;
 	}
 
-	private String getName(AbstractLabelingComponent component) {
+	private String getName(CompositeLabeling component) {
 		if (component instanceof IngItem) {
 			return ((IngItem) component).getCharactName();
 		}
@@ -1543,10 +1495,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 			reconstituableDataItems.stream().sorted((e1, e2) -> Integer.compare(e2.getPriority(), e1.getPriority())).forEach(reconstituableData -> {
 
-				AbstractLabelingComponent productLabelItem = parent.get(reconstituableData.getProductNodeRef());
+				CompositeLabeling productLabelItem = parent.get(reconstituableData.getProductNodeRef());
 				if ((productLabelItem != null) && (productLabelItem.getQty() != null)) {
 
-					AbstractLabelingComponent ingLabelItem = parent.get(reconstituableData.getDiluentIngNodeRef());
+					CompositeLabeling ingLabelItem = parent.get(reconstituableData.getDiluentIngNodeRef());
 
 					if ((ingLabelItem != null) && (ingLabelItem.getQty() != null) && (reconstituableData.getRate() != 0d)) {
 
@@ -1564,7 +1516,6 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 								: realDiluentQty.divide(diluentQty, 10, BigDecimal.ROUND_HALF_UP);
 
 						BigDecimal realQty = realDiluentQty.add(productQty.multiply(realDiluentQtyRatio)).divide(rate, 10, BigDecimal.ROUND_HALF_UP);
-						BigDecimal subIngQtyRatio = realDiluentQty.divide(ingQty, 10, BigDecimal.ROUND_HALF_UP);
 
 						ingLabelItem.setQty(ingQty.subtract(realDiluentQty).doubleValue());
 						productLabelItem.setQty(productQty.subtract(realQty).doubleValue());
@@ -1578,26 +1529,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						BigDecimal realVol = readlDiluentvolume.add(productVol.multiply(readlDiluentvolumeRatio)).divide(rate, 10,
 								BigDecimal.ROUND_HALF_UP);
 
-						BigDecimal subIngVolRatio = readlDiluentvolume.divide(ingVol, 10, BigDecimal.ROUND_HALF_UP);
-
 						ingLabelItem.setVolume(ingVol.subtract(readlDiluentvolume).doubleValue());
 						productLabelItem.setVolume(productVol.subtract(realVol).doubleValue());
-
-						if (ingLabelItem instanceof IngItem) {
-							if (((IngItem) ingLabelItem).getSubIngs() != null) {
-								for (IngItem subIng : ((IngItem) ingLabelItem).getSubIngs()) {
-									if (subIng.getQty() != null) {
-										BigDecimal subIngQty = new BigDecimal(subIng.getQty());
-										subIng.setQty(subIngQty.subtract(subIngQtyRatio.multiply(subIngQty)).doubleValue());
-									}
-
-									if (subIng.getVolume() != null) {
-										BigDecimal subIngVol = new BigDecimal(subIng.getVolume());
-										subIng.setVolume(subIngVol.subtract(subIngVolRatio.multiply(subIngVol)).doubleValue());
-									}
-								}
-							}
-						}
 
 						IngItem targetLabelItem = (IngItem) parent.get(reconstituableData.getTargetIngNodeRef());
 						if (targetLabelItem == null) {
@@ -1655,8 +1588,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		return Collections.emptyList();
 	}
 
-	private void loadIngList(ProductData product, Composite<IngListDataItem> compositeIngList, Double qty, Double volume,
-			LabelingFormulaContext labelingFormulaContext, CompoListDataItem compoListDataItem, CompositeLabeling compositeLabeling,
+	private CompositeLabeling visitIngList(CompositeLabeling parent, ProductData product, Composite<IngListDataItem> compositeIngList,
+			Double omitQtyPerc, Double qty, Double volume, LabelingFormulaContext labelingFormulaContext, CompoListDataItem compoListDataItem,
 			Map<String, ReqCtrlListDataItem> errors) {
 
 		boolean applyThreshold = false;
@@ -1664,8 +1597,12 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			applyThreshold = true;
 		}
 
-		Double omitQtyPerc = 0d;
 		List<Composite<IngListDataItem>> toAddIngListItem = new ArrayList<>();
+
+		// Only first level of subIng
+		if (omitQtyPerc == null) {
+			omitQtyPerc = 0d;
+		}
 
 		for (Composite<IngListDataItem> ingListItem : compositeIngList.getChildren()) {
 
@@ -1693,222 +1630,172 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		for (Composite<IngListDataItem> ingListItem : toAddIngListItem) {
 
 			DeclarationType ingDeclarationType = getDeclarationType(compoListDataItem, ingListItem.getData(), labelingFormulaContext);
+			if (!DeclarationType.Omit.equals(ingDeclarationType) && !DeclarationType.DoNotDeclare.equals(ingDeclarationType)) {
 
-			NodeRef ingNodeRef = ingListItem.getData().getIng();
-			IngItem ingLabelItem = (IngItem) compositeLabeling.get(ingNodeRef);
-			boolean isNew = true;
+				if (DeclarationType.Declare.equals(ingDeclarationType) && !ingListItem.isLeaf()) {
+					logger.debug("Declaring ingredient: ");
+					visitIngList(parent, product, ingListItem, omitQtyPerc, qty, volume, labelingFormulaContext, compoListDataItem, errors);
 
-			if (ingLabelItem == null) {
-				ingLabelItem = new IngItem((IngItem) alfrescoRepository.findOne(ingNodeRef));
-				ingLabelItem.getPluralParents().add(ingListItem.getData().getNodeRef());
+				} else {
 
-				compositeLabeling.add(ingLabelItem);
+					if (DeclarationType.Declare.equals(ingDeclarationType)) {
+						ingDeclarationType = DeclarationType.DoNotDetails;
+					}
 
-				if (applyThreshold) {
-					labelingFormulaContext.getToApplyThresholdItems().add(ingNodeRef);
-				}
+					NodeRef ingNodeRef = ingListItem.getData().getIng();
+					IngItem ingLabelItem = (IngItem) parent.get(ingNodeRef);
+					boolean isNew = true;
 
-				if (logger.isTraceEnabled()) {
-					logger.trace("- Add new ing " + getName(ingLabelItem) + " to current Label " + getName(compositeLabeling));
-				}
+					if (ingLabelItem == null) {
+						ingLabelItem = new IngItem((IngItem) alfrescoRepository.findOne(ingNodeRef));
+						ingLabelItem.getPluralParents().add(ingListItem.getData().getNodeRef());
+						ingLabelItem.setDeclarationType(ingDeclarationType);
 
-			} else {
-				if (logger.isTraceEnabled()) {
-					logger.trace("- Update ing value: " + ingLabelItem.getLegalName(I18NUtil.getContentLocaleLang()));
-				}
-				isNew = false;
-				if (!ingLabelItem.getPluralParents().contains(ingListItem.getData().getNodeRef())) {
-					ingLabelItem.getPluralParents().add(ingListItem.getData().getNodeRef());
-					ingLabelItem.setPlural(true);
-				}
-			}
+						parent.add(ingLabelItem);
 
-			if (product.getAllergenList() != null) {
-				for (AllergenListDataItem allergenListDataItem : product.getAllergenList()) {
-					if (allergenListDataItem.getVoluntary() && allergenListDataItem.getVoluntarySources().contains(ingNodeRef)) {
-						if (AllergenType.Major.toString()
-								.equals(nodeService.getProperty(allergenListDataItem.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE))) {
-							ingLabelItem.getAllergens().add(allergenListDataItem.getAllergen());
+						if (applyThreshold) {
+							labelingFormulaContext.getToApplyThresholdItems().add(ingNodeRef);
+						}
+
+						if (logger.isTraceEnabled()) {
+							logger.trace("- Add new ing " + getName(ingLabelItem) + " to current Label " + getName(parent));
+						}
+
+					} else {
+						if (logger.isTraceEnabled()) {
+							logger.trace("- Update ing value: " + ingLabelItem.getLegalName(I18NUtil.getContentLocaleLang()));
+						}
+						isNew = false;
+						if (!ingLabelItem.getPluralParents().contains(ingListItem.getData().getNodeRef())) {
+							ingLabelItem.getPluralParents().add(ingListItem.getData().getNodeRef());
+							ingLabelItem.setPlural(true);
 						}
 					}
-				}
-			}
 
-			if ((ingListItem.getData().getGeoTransfo() != null) && !ingListItem.getData().getGeoTransfo().isEmpty()) {
-				ingLabelItem.getGeoOrigins().addAll(ingListItem.getData().getGeoTransfo());
-			} else if (ingListItem.getData().getGeoOrigin() != null) {
-				ingLabelItem.getGeoOrigins().addAll(ingListItem.getData().getGeoOrigin());
-			}
-
-			if (product.getGeoOrigins() != null) {
-				ingLabelItem.getGeoOrigins().addAll(product.getGeoOrigins());
-			}
-
-			Double qtyPerc = ingListItem.getData().getQtyPerc();
-
-			if (qtyPerc == null) {
-
-				String message = I18NUtil.getMessage("message.formulate.labelRule.error.nullIng", getName(ingLabelItem));
-				ReqCtrlListDataItem error = errors.get(message);
-				if (error != null) {
-					if (!error.getSources().contains(product.getNodeRef())) {
-						error.getSources().add(product.getNodeRef());
-					}
-				} else {
-					if (logger.isDebugEnabled()) {
-						logger.debug("Store error for future qtyPerc is null " + getName(ingLabelItem));
-					}
-					error = createError(ingLabelItem, product.getNodeRef());
-					errors.put(message, error);
-				}
-				if ((ingLabelItem.getQty() != null) && !isNew) {
-					if (logger.isDebugEnabled()) {
-						logger.debug("Adding aggregate error " + error.toString());
-					}
-					labelingFormulaContext.getErrors().add(error);
-				}
-
-				ingLabelItem.setQty(null);
-				ingLabelItem.setVolume(null);
-			} else {
-
-				qtyPerc += omitQtyPerc;
-
-				// if one ingItem has null perc -> must be null
-				if ((ingLabelItem.getQty() != null) && (qty != null)) {
-
-					ingLabelItem.setQty(ingLabelItem.getQty() + ((qty * qtyPerc) / 100));
-					if (logger.isTraceEnabled()) {
-						logger.trace(" -- new qty to add to " + getName(ingLabelItem) + ": " + ((qty * qtyPerc) / 100));
+					if (product.getAllergenList() != null) {
+						for (AllergenListDataItem allergenListDataItem : product.getAllergenList()) {
+							if (allergenListDataItem.getVoluntary() && allergenListDataItem.getVoluntarySources().contains(ingNodeRef)) {
+								if (AllergenType.Major.toString()
+										.equals(nodeService.getProperty(allergenListDataItem.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE))) {
+									ingLabelItem.getAllergens().add(allergenListDataItem.getAllergen());
+								}
+							}
+						}
 					}
 
-					if ((ingLabelItem.getVolume() != null) && (volume != null)) {
-						ingLabelItem.setVolume(ingLabelItem.getVolume() + ((volume * qtyPerc) / 100));
-						logger.trace(" -- new volume to add: " + ((volume * qtyPerc) / 100));
+					if ((ingListItem.getData().getGeoTransfo() != null) && !ingListItem.getData().getGeoTransfo().isEmpty()) {
+						ingLabelItem.getGeoOrigins().addAll(ingListItem.getData().getGeoTransfo());
+					} else if (ingListItem.getData().getGeoOrigin() != null) {
+						ingLabelItem.getGeoOrigins().addAll(ingListItem.getData().getGeoOrigin());
 					}
 
-				} else {
+					if (product.getGeoOrigins() != null) {
+						ingLabelItem.getGeoOrigins().addAll(product.getGeoOrigins());
+					}
 
-					String message = I18NUtil.getMessage("message.formulate.labelRule.error.nullIng", getName(ingLabelItem));
-					ReqCtrlListDataItem error = errors.get(message);
-					if (error != null) {
-						if (qty == null) {
+					Double qtyPerc = ingListItem.getData().getQtyPerc();
+
+					if (qtyPerc == null) {
+
+						String message = I18NUtil.getMessage("message.formulate.labelRule.error.nullIng", getName(ingLabelItem));
+						ReqCtrlListDataItem error = errors.get(message);
+						if (error != null) {
 							if (!error.getSources().contains(product.getNodeRef())) {
 								error.getSources().add(product.getNodeRef());
 							}
+						} else {
+							if (logger.isDebugEnabled()) {
+								logger.debug("Store error for future qtyPerc is null " + getName(ingLabelItem));
+							}
+							error = createError(ingLabelItem, product.getNodeRef());
+							errors.put(message, error);
 						}
-						if (!Objects.equals(ingLabelItem.getQty(), qty)) {
+						if ((ingLabelItem.getQty() != null) && !isNew) {
 							if (logger.isDebugEnabled()) {
 								logger.debug("Adding aggregate error " + error.toString());
 							}
 							labelingFormulaContext.getErrors().add(error);
 						}
-					} else {
-						if (logger.isDebugEnabled()) {
-							logger.debug("Store error for future");
-						}
-						errors.put(message, createError(ingLabelItem, product.getNodeRef()));
-					}
 
-					if (qty == null) {
 						ingLabelItem.setQty(null);
+						ingLabelItem.setQtyTotal(null);
 						ingLabelItem.setVolume(null);
-					}
+						ingLabelItem.setVolumeTotal(null);
+					} else {
 
-				}
-			}
+						qtyPerc += omitQtyPerc;
 
-			// Sub ings
-			if (!ingListItem.isLeaf() && !DeclarationType.DoNotDeclare.equals(ingDeclarationType)) {
-				// Only one level of subIngs
-				for (Composite<IngListDataItem> subIngListItem : ingListItem.getChildren()) {
+						// if one ingItem has null perc -> must be null
+						if ((ingLabelItem.getQty() != null) && (qty != null)) {
 
-					DeclarationType subIngItemDeclarationType = getDeclarationType(compoListDataItem, subIngListItem.getData(),
-							labelingFormulaContext);
-					if (!DeclarationType.Omit.equals(subIngItemDeclarationType) && !DeclarationType.DoNotDeclare.equals(subIngItemDeclarationType)) {
+							ingLabelItem.setQty(ingLabelItem.getQty() + ((qty * qtyPerc) / 100));
+							ingLabelItem.setQtyTotal(ingLabelItem.getQty());
 
-						IngItem subIngItem = new IngItem((IngItem) alfrescoRepository.findOne(subIngListItem.getData().getIng()));
+							if (logger.isTraceEnabled()) {
+								logger.trace(" -- new qty to add to " + getName(ingLabelItem) + ": " + ((qty * qtyPerc) / 100));
+							}
 
-						Double subIngQtyPerc = subIngListItem.getData().getQtyPerc();
-						if (subIngQtyPerc != null) {
-							subIngQtyPerc += omitQtyPerc;
-						}
+							if ((ingLabelItem.getVolume() != null) && (volume != null)) {
+								ingLabelItem.setVolume(ingLabelItem.getVolume() + ((volume * qtyPerc) / 100));
+								ingLabelItem.setVolumeTotal(ingLabelItem.getVolume());
 
-						if ((subIngQtyPerc != null) && (qty != null)) {
-							subIngItem.setQty((qty * subIngQtyPerc) / 100);
+								logger.trace(" -- new volume to add: " + ((volume * qtyPerc) / 100));
+							}
+
 						} else {
-							subIngItem.setQty(null);
-						}
-						if ((subIngQtyPerc != null) && (volume != null)) {
-							subIngItem.setVolume((volume * subIngQtyPerc) / 100);
-						} else {
-							subIngItem.setVolume(null);
-						}
 
-						if (product.getAllergenList() != null) {
-							for (AllergenListDataItem allergenListDataItem : product.getAllergenList()) {
-								if (allergenListDataItem.getVoluntary()
-										&& allergenListDataItem.getVoluntarySources().contains(subIngItem.getNodeRef())) {
-									if (AllergenType.Major.toString()
-											.equals(nodeService.getProperty(allergenListDataItem.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE))) {
-										subIngItem.getAllergens().add(allergenListDataItem.getAllergen());
+							String message = I18NUtil.getMessage("message.formulate.labelRule.error.nullIng", getName(ingLabelItem));
+							ReqCtrlListDataItem error = errors.get(message);
+							if (error != null) {
+								if (qty == null) {
+									if (!error.getSources().contains(product.getNodeRef())) {
+										error.getSources().add(product.getNodeRef());
 									}
 								}
+								if (!Objects.equals(ingLabelItem.getQty(), qty)) {
+									if (logger.isDebugEnabled()) {
+										logger.debug("Adding aggregate error " + error.toString());
+									}
+									labelingFormulaContext.getErrors().add(error);
+								}
+							} else {
+								if (logger.isDebugEnabled()) {
+									logger.debug("Store error for future");
+								}
+								errors.put(message, createError(ingLabelItem, product.getNodeRef()));
 							}
+
+							if (qty == null) {
+								ingLabelItem.setQty(null);
+								ingLabelItem.setQtyTotal(null);
+								ingLabelItem.setVolume(null);
+								ingLabelItem.setVolumeTotal(null);
+							}
+
+						}
+					}
+
+					// Sub ings
+					if (!ingListItem.isLeaf() && !DeclarationType.DoNotDeclare.equals(ingDeclarationType)
+							&& !DeclarationType.DoNotDetails.equals(ingDeclarationType)) {
+						if (logger.isTraceEnabled()) {
+							logger.trace(" -- Adding subings " + ingListItem.getChildren().size());
 						}
 
-						if ((subIngListItem.getData().getGeoTransfo() != null) && !subIngListItem.getData().getGeoTransfo().isEmpty()) {
-							subIngItem.getGeoOrigins().addAll(subIngListItem.getData().getGeoTransfo());
-						} else if (subIngListItem.getData().getGeoOrigin() != null) {
-							subIngItem.getGeoOrigins().addAll(subIngListItem.getData().getGeoOrigin());
-						}
+						visitIngList(ingLabelItem, product, ingListItem, omitQtyPerc, qty, volume, labelingFormulaContext, compoListDataItem, errors);
 
-						if (ingLabelItem.getSubIngs().stream()
-								.filter(i -> (labelingFormulaContext.getLegalIngName(i) != null)
-										&& labelingFormulaContext.getLegalIngName(i).equals(labelingFormulaContext.getLegalIngName(subIngItem)))
-								.count() < 1) {
-							logger.trace(
-									"Adding subIng: " + subIngItem.getCharactName() + " qty: " + subIngItem.getQty() + " for perc :" + subIngQtyPerc);
-							ingLabelItem.getSubIngs().add(subIngItem);
-						} else {
-							logger.trace("Merge subIng: " + subIngItem.getCharactName());
-							ingLabelItem.getSubIngs().stream()
-									.filter(i -> (labelingFormulaContext.getLegalIngName(i) != null)
-											&& labelingFormulaContext.getLegalIngName(i).equals(labelingFormulaContext.getLegalIngName(subIngItem)))
-
-									.forEach(i -> {
-										if ((i.getQty() != null) && (subIngItem.getQty() != null)) {
-											i.setQty(i.getQty() + subIngItem.getQty());
-										} else {
-											// TODO add warning
-											i.setQty(null);
-										}
-										if ((i.getVolume() != null) && (subIngItem.getVolume() != null)) {
-											i.setVolume(i.getVolume() + subIngItem.getVolume());
-										} else {
-											// TODO add warning
-											i.setVolume(null);
-										}
-
-										i.getAllergens().addAll(subIngItem.getAllergens());
-
-									});
-						}
+					} else if (DeclarationType.Detail.equals(ingDeclarationType)) {
+						ingLabelItem.setDeclarationType(DeclarationType.DoNotDetails);
 					}
 
 				}
 			}
-
-			if (DeclarationType.DoNotDeclare.equals(ingDeclarationType)) {
-				if (logger.isTraceEnabled()) {
-					logger.trace("Add should skip to: " + ingLabelItem.getName());
-				}
-				ingLabelItem.setShouldSkip(true);
-			}
 		}
+
+		return parent;
 	}
 
-	private ReqCtrlListDataItem createError(AbstractLabelingComponent ingItem, NodeRef productNodeRef) {
+	private ReqCtrlListDataItem createError(CompositeLabeling ingItem, NodeRef productNodeRef) {
 		String message = I18NUtil.getMessage("message.formulate.labelRule.error.nullIng", getName(ingItem));
 		List<NodeRef> sourceNodeRefs = new ArrayList<>();
 		if (productNodeRef != null) {
@@ -1962,11 +1849,29 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				}
 			}
 
+			String declType = (String) nodeService.getProperty(ingListDataItem.getNodeRef(), PLMModel.PROP_INGLIST_DECL_TYPE);
+			if ((declType != null) && !declType.isEmpty()) {
+				if (logger.isTraceEnabled()) {
+					logger.trace(" -- Found declType : " + DeclarationType.valueOf(declType) + " for "
+							+ nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME));
+				}
+
+				return DeclarationType.valueOf(declType);
+			}
+
+			if (logger.isTraceEnabled()) {
+				logger.trace(" -- Default declType : " + DeclarationType.Detail + " for default "
+						+ nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME));
+			}
+
+			return DeclarationType.Detail;
 		}
 
 		if (logger.isTraceEnabled()) {
+
 			logger.trace(" -- Found declType : " + compoListDataItem.getDeclType() + " for default "
 					+ nodeService.getProperty(compoListDataItem.getProduct(), ContentModel.PROP_NAME));
+
 		}
 		return compoListDataItem.getDeclType();
 	}

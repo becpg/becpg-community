@@ -43,8 +43,6 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 	@Autowired
 	private ReportTplService reportTplService;
 	@Autowired
-	private EntityService entityService;
-	@Autowired
 	private AssociationService associationService;
 	@Autowired
 	private EntityReportService entityReportService;
@@ -271,7 +269,6 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 	@Test
 	public void testGetProductSystemReportTemplates() {
 
-		Date startTime = new Date();
 		initReports();
 		
 		String userReportTpl = "user tpl "+(new Date().getTime());
@@ -319,9 +316,8 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 
 		}, false, true);
 
-		waitForSolr(startTime);
+		waitForSolr();
 
-		startTime = new Date();
 
 		final NodeRef userTpl2NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -335,7 +331,7 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 
 		}, false, true);
 
-		waitForSolr(startTime);
+		waitForSolr();
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 

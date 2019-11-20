@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2018 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2018 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.project.web.scripts;
@@ -35,19 +35,22 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.project.ProjectService;
 
 /**
  * return Project Module Info
- * 
+ *
  * @author matthieu
- * 
+ *
  */
 public class ProjectModuleInfoWebScript extends AbstractWebScript {
 
 	private static final Log logger = LogFactory.getLog(ProjectModuleInfoWebScript.class);
 
 	private static final String PARAM_SITE = "site";
+
+	private static final String PARAM_ENTITY_NODEREF = "entityNodeRef";
 
 	private NodeService nodeService;
 
@@ -72,6 +75,13 @@ public class ProjectModuleInfoWebScript extends AbstractWebScript {
 			watch.start();
 		}
 
+		String entityNodeRef = req.getParameter(PARAM_ENTITY_NODEREF);
+
+		NodeRef projectNodeRef = null;
+		if ((entityNodeRef != null) && !entityNodeRef.isEmpty()) {
+			projectNodeRef = new NodeRef(entityNodeRef);
+		}
+
 		try {
 
 			NodeRef projectContainer = projectService.getProjectsContainer(siteId);
@@ -82,15 +92,21 @@ public class ProjectModuleInfoWebScript extends AbstractWebScript {
 
 			obj.put("parentNodeRef", projectContainer);
 
-			int sort = 0;
 			for (NodeRef legend : legends) {
 				JSONObject lObj = new JSONObject();
 				lObj.put("nodeRef", legend);
 				lObj.put("label", nodeService.getProperty(legend, ContentModel.PROP_NAME));
 				lObj.put("color", nodeService.getProperty(legend, BeCPGModel.PROP_COLOR));
-				lObj.put("nbProjects", projectService.getNbProjectsByLegend(legend, siteId));
-				lObj.put("sort",sort++);
-				jsonArray.put(lObj);
+				if (projectNodeRef == null) {
+					lObj.put("nbProjects", projectService.getNbProjectsByLegend(legend, siteId));
+				}
+				lObj.put("sort", nodeService.getProperty(legend, BeCPGModel.PROP_SORT));
+
+				String siteIds = (String) nodeService.getProperty(legend, ProjectModel.PROP_TASK_LEGEND_SITES);
+				if (siteId == null || (siteIds == null) || siteIds.isEmpty() || contains(siteId, siteIds)) {
+					jsonArray.put(lObj);
+				}
+
 			}
 
 			obj.put("legends", jsonArray);
@@ -107,6 +123,15 @@ public class ProjectModuleInfoWebScript extends AbstractWebScript {
 				logger.debug("ProjectModuleInfoWebScript execute in " + watch.getTotalTimeSeconds() + "s");
 			}
 		}
+	}
+
+	private boolean contains(String siteId, String siteIds) {
+		for (String tmp : siteIds.split(",")) {
+			if (tmp.equals(siteId)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

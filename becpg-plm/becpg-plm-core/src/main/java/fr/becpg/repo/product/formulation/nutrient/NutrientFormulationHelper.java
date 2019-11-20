@@ -54,6 +54,10 @@ public class NutrientFormulationHelper {
 
 		regulations.put("CN", new ChineseNutrientRegulation("beCPG/databases/nuts/ChineseNutrientRegulation.csv"));
 		regulations.put("AU", new AustralianNutrientRegulation("beCPG/databases/nuts/AUNutrientRegulation.csv"));
+		
+		
+		regulations.put("ID", new IndonesianNutrientRegulation("beCPG/databases/nuts/IndonesianNutrientRegulation.csv"));
+		regulations.put("MX", new MexicanNutrientRegulation("beCPG/databases/nuts/MexicanNutrientRegulation.csv"));
 	}
 
 	public static Double extractValuePerServing(String roundedValue, Locale locale) {

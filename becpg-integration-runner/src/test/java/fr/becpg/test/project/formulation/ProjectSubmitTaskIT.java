@@ -97,7 +97,7 @@ public class ProjectSubmitTaskIT extends AbstractProjectTestCase {
 			assertEquals(DeliverableState.Planned, projectData.getDeliverableList().get(3).getState());
 
 			// check completion percent of task 2
-			assertNull(projectData.getTaskList().get(1).getCompletionPercent());
+			assertEquals(0,(int)projectData.getTaskList().get(1).getCompletionPercent());
 
 			// submit deliverable 2
 			projectData.getDeliverableList().get(1).setState(DeliverableState.Completed);

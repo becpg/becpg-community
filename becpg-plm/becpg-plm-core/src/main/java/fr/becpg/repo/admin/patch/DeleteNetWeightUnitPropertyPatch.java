@@ -1,13 +1,19 @@
 package fr.becpg.repo.admin.patch;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+import org.alfresco.repo.batch.BatchProcessWorkProvider;
+import org.alfresco.repo.batch.BatchProcessor;
+import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker;
 import org.alfresco.repo.domain.node.NodeDAO;
 import org.alfresco.repo.domain.patch.PatchDAO;
 import org.alfresco.repo.domain.qname.QNameDAO;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.rule.RuleService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.Pair;
 import org.apache.commons.logging.Log;
@@ -28,13 +34,17 @@ public class DeleteNetWeightUnitPropertyPatch extends AbstractBeCPGPatch {
 	private PatchDAO patchDAO;
 	private QNameDAO qnameDAO;
 	private BehaviourFilter policyBehaviourFilter;
+	private RuleService ruleService;
+	
+	private final int batchThreads = 3;
+	private final int batchSize = 40;
+	private final long count = batchThreads * batchSize;
 
 	@Override
 	protected String applyInternal() throws Exception {
 
 		AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 		
-		policyBehaviourFilter.disableBehaviour();
 
 		doForType(PLMModel.TYPE_FINISHEDPRODUCT, false);
 		doForType(PLMModel.TYPE_SEMIFINISHEDPRODUCT, false);
@@ -42,34 +52,88 @@ public class DeleteNetWeightUnitPropertyPatch extends AbstractBeCPGPatch {
 		doForType(PLMModel.TYPE_PACKAGINGMATERIAL, false);
 		doForType(PLMModel.TYPE_PACKAGINGKIT, false);
 		
-		policyBehaviourFilter.enableBehaviour();
 		return I18NUtil.getMessage(MSG_SUCCESS);
 	}
 
 	private void doForType(final QName type, boolean isAspect) {
 		
-		final Pair<Long, QName> val = getQnameDAO().getQName(type);
-		
-		if (val != null) {
-			Long typeQNameId = val.getFirst();
-			List<Long> nodeids = null;
-		
-			nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, 1L, getPatchDAO().getMaxAdmNodeID());
-			
-			for (Long nodeid : nodeids) {
-				NodeRef.Status status = getNodeDAO().getNodeIdStatus(nodeid);
-				if (!status.isDeleted()) {
-					if (nodeService.exists(status.getNodeRef())) {
-						if(nodeService.getProperty(status.getNodeRef(), PROP_NET_WEIGHT_UNIT) != null) {
-							logger.info("Remove netWeightUnit On :" + status.getNodeRef());
-							nodeService.removeProperty(status.getNodeRef(), PROP_NET_WEIGHT_UNIT);
+		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<NodeRef>() {
+			final List<NodeRef> result = new ArrayList<>();
+
+			final long maxNodeId = getPatchDAO().getMaxAdmNodeID();
+
+			long minSearchNodeId = 0;
+			long maxSearchNodeId = count;
+
+			final Pair<Long, QName> val = getQnameDAO().getQName(type);
+
+			public int getTotalEstimatedWorkSize() {
+				return result.size();
+			}
+
+			public Collection<NodeRef> getNextWork() {
+				if (val != null) {
+					Long typeQNameId = val.getFirst();
+
+					result.clear();
+
+					while (result.isEmpty() && minSearchNodeId < maxNodeId) {
+						
+						
+						List<Long> nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, minSearchNodeId, maxSearchNodeId);
+
+						for (Long nodeid : nodeids) {
+							NodeRef.Status status = getNodeDAO().getNodeIdStatus(nodeid);
+							if (!status.isDeleted()) {
+								result.add(status.getNodeRef());
+							}
 						}
-					} else {
-						logger.warn("entityNodeRef doesn't exist : " + status.getNodeRef());
+						minSearchNodeId = minSearchNodeId + count;
+						maxSearchNodeId = maxSearchNodeId + count;
 					}
 				}
+
+				return result;
 			}
-		}
+		};
+
+		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("RemovePalletNbOfBoxesPatch",
+				transactionService.getRetryingTransactionHelper(), workProvider, batchThreads, batchSize, applicationEventPublisher, logger, 1000);
+		
+		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
+
+			public void afterProcess() throws Throwable {
+				ruleService.disableRules();
+			}
+
+			public void beforeProcess() throws Throwable {
+				ruleService.enableRules();
+			}
+
+			public String getIdentifier(NodeRef entry) {
+				return entry.toString();
+			}
+
+			public void process(NodeRef productNodeRef) throws Throwable {
+				
+				AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
+				policyBehaviourFilter.disableBehaviour();
+				if (nodeService.exists(productNodeRef)) {
+					if(nodeService.getProperty(productNodeRef, PROP_NET_WEIGHT_UNIT) != null) {
+						logger.info("Remove netWeightUnit On :" + productNodeRef);
+						nodeService.removeProperty(productNodeRef, PROP_NET_WEIGHT_UNIT);
+					}
+				} else {
+					logger.warn("entityNodeRef doesn't exist : " + productNodeRef);
+				}
+				
+				policyBehaviourFilter.disableBehaviour();
+
+			}
+
+		};
+		
+		batchProcessor.process(worker, true);			
 	}
 			
 
@@ -101,5 +165,12 @@ public class DeleteNetWeightUnitPropertyPatch extends AbstractBeCPGPatch {
 		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
 
+	public RuleService getRuleService() {
+		return ruleService;
+	}
+
+	public void setRuleService(RuleService ruleService) {
+		this.ruleService = ruleService;
+	}
 	
 }

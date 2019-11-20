@@ -22,13 +22,17 @@ import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.MLText;
+import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
 import org.springframework.extensions.surf.util.I18NUtil;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.PropertiesHelper;
 import fr.becpg.repo.importer.ImportContext;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
  * Helper used by the import classes.
@@ -37,6 +41,113 @@ import fr.becpg.repo.importer.ImportContext;
  */
 public class ImportHelper {
 
+	public static final String PFX_COMMENT = "#";
+
+	public static final String PFX_MAPPING = "MAPPING";
+
+	public static final String PFX_COLUMNS_PARAMS = "COLUMNS_PARAMS";
+
+	public static final String PFX_PATH = "PATH";
+
+	public static final String PFX_TYPE = "TYPE";
+
+	public static final String PFX_LIST_TYPE = "LIST_TYPE";
+
+	public static final String PFX_ENTITY_TYPE = "ENTITY_TYPE";
+
+	public static final String PFX_STOP_ON_FIRST_ERROR = "STOP_ON_FIRST_ERROR";
+
+	public static final String PFX_DELETE_DATALIST = "DELETE_DATALIST";
+
+	public static final String PFX_COLUMS = "COLUMNS";
+
+	public static final String PFX_VALUES = "VALUES";
+
+	public static final String PFX_IMPORT_TYPE = "IMPORT_TYPE";
+
+	public static final String PFX_DOCS_BASE_PATH = "DOCS_BASE_PATH";
+
+	public static final String PFX_DISABLED_POLICIES = "DISABLED_POLICIES";
+
+	public static final String QUERY_XPATH_MAPPING = "mapping";
+
+	public static final String QUERY_XPATH_DATE_FORMAT = "settings/setting[@id='dateFormat']/@value";
+
+	public static final String QUERY_XPATH_DATETIME_FORMAT = "settings/setting[@id='datetimeFormat']/@value";
+
+	public static final String QUERY_XPATH_DECIMAL_PATTERN = "settings/setting[@id='decimalPattern']/@value";
+
+	public static final String QUERY_XPATH_NODE_COLUMN_KEY = "nodeColumnKeys/nodeColumnKey";
+
+	public static final String QUERY_XPATH_DATALIST_COLUMN_KEY = "dataListColumnKeys/dataListColumnKey";
+
+	public static final String QUERY_XPATH_COLUMNS_ATTRIBUTE = "columns/column[@type='Attribute']";
+
+	public static final String QUERY_XPATH_COLUMNS_FORMULA = "columns/column[@type='Formula']";
+
+	public static final String QUERY_XPATH_COLUMNS_MLTEXT = "columns/column[@type='MLText']";
+
+	public static final String QUERY_XPATH_COLUMNS_DATALIST = "columns/column[@type='Characteristic']";
+
+	public static final String QUERY_XPATH_COLUMNS_FILE = "columns/column[@type='File']";
+
+	public static final String QUERY_ATTR_GET_ID = "@id";
+
+	public static final String QUERY_ATTR_GET_ATTRIBUTE = "@attribute";
+
+	public static final String QUERY_ATTR_GET_TARGET_CLASS = "@targetClass";
+
+	public static final String QUERY_ATTR_GET_NAME = "@name";
+
+	public static final String QUERY_ATTR_GET_DATALIST_QNAME = "@dataListQName";
+
+	public static final String QUERY_ATTR_GET_PATH = "@path";
+
+	public static final String QUERY_ATTR_GET_CHARACT_QNAME = "@charactQName";
+
+	public static final String QUERY_ATTR_GET_CHARACT_NODE_REF = "@charactNodeRef";
+
+	public static final String QUERY_ATTR_GET_CHARACT_NAME = "@charactName";
+
+	public static final String QUERY_ATTR_GET_CHARACT_KEY_QNAME = "@charactKeyName";
+
+	public static final String MSG_ERROR_LOAD_FILE = "import_service.error.err_load_file";
+
+	public static final String MSG_ERROR_FILE_NOT_FOUND = "import_service.error.err_file_not_found";
+
+	public static final String MSG_ERROR_FILE_BAD_PREFIX = "import_service.error.err_file_bad_prefix";
+
+	public static final String MSG_ERROR_MAPPING_ATTR_FAILED = "import_service.error.err_mapping_attr_failed";
+	
+	public static final String MSG_ERROR_MAPPING_ANNOTATION_NOT_FOUND = "import_service.error.err_mapping_annotation_not_found";
+
+	public static final String MSG_ERROR_GET_OR_CREATE_NODEREF = "import_service.error.err_get_or_create_noderef";
+
+	public static final String MSG_ERROR_GET_NODEREF_CHARACT = "import_service.error.err_get_noderef_charact";
+
+	public static final String MSG_ERROR_UNDEFINED_CHARACT = "import_service.error.err_undefined_charact";
+
+	public static final String MSG_ERROR_COLUMNS_DO_NOT_RESPECT_MAPPING = "import_service.error.err_columns_do_not_respect_mapping";
+
+	public static final String MSG_ERROR_TARGET_ASSOC_NOT_FOUND = "import_service.error.err_target_assoc_not_found";
+
+	public static final String MSG_ERROR_TARGET_ASSOC_SEVERAL = "import_service.error.err_target_assoc_several";
+
+	public static final String MSG_ERROR_GET_ASSOC_TARGET = "import_service.error.err_get_assoc_target";
+
+	public static final String MSG_ERROR_NO_DOCS_BASE_PATH_SET = "import_service.error.err_no_docs_base_path_set";
+
+	public static final String MSG_ERROR_NO_PARENT = "import_service.error.err_no_parent";
+
+	public static final String QUERY_XPATH_MAPPING_NODE = "mappings/mapping[@name=";
+
+	public static final String QUERY_XPATH_COLUMNS_HIERARCHY = "columns/column[@type='Hierarchy']";
+
+	public static final String QUERY_ATTR_GET_PARENT_LEVEL_ATTRIBUTE = "@parentLevelAttribute";
+
+	public static final String QUERY_ATTR_GET_PARENT_LEVEL = "@parentLevel";
+	
+	
 	/** The Constant MLTEXT_SEPARATOR. */
 	public static final String MLTEXT_SEPARATOR = "_";
 
@@ -79,7 +190,7 @@ public class ImportHelper {
 
 					// load translations
 					boolean first = true;
-					for (int z_idx = pos; z_idx < importContext.getColumns().size(); z_idx++) {
+					for (int z_idx = pos; z_idx < importContext.getColumns().size() && z_idx < values.size(); z_idx++) {
 
 						// bcpg:legalName_en
 						String transColumn = importContext.getColumns().get(z_idx).getId();
@@ -188,11 +299,14 @@ public class ImportHelper {
 	}
 
 	private static Number parseNumber(ImportContext importContext, String val) throws ParseException {
-		if (importContext.getPropertyFormats().getDecimalFormat().getDecimalFormatSymbols().getDecimalSeparator() == ',') {
-			val = val.replaceAll("\\.", ",");
-		} else {
-			val = val.replaceAll(",", ".");
+		if(importContext.getImportFileReader() instanceof ImportCSVFileReader) {
+			if (importContext.getPropertyFormats().getDecimalFormat().getDecimalFormatSymbols().getDecimalSeparator() == ',') {
+				val = val.replaceAll("\\.", ",");
+			} else {
+				val = val.replaceAll(",", ".");
+			}
 		}
+		
 		return importContext.getPropertyFormats().parseDecimal(val);
 
 	}
@@ -245,5 +359,20 @@ public class ImportHelper {
 
 		return properties;
 	}
+	
+	public static NodeRef findCharact(QName type, QName property, String name, NodeService nodeService) {
+
+		for (NodeRef tmpNodeRef : BeCPGQueryBuilder.createQuery().ofType(type).andPropEquals(property, name).inDB().ftsLanguage()
+				.list()) {
+			if (!nodeService.hasAspect(tmpNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)
+					&& !nodeService.hasAspect(tmpNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)) {
+				return tmpNodeRef;
+			}
+		}
+		return null;
+	}
+
+
+	
 
 }

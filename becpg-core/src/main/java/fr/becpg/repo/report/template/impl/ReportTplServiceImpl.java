@@ -313,20 +313,17 @@ public class ReportTplServiceImpl implements ReportTplService {
 
 		ReportType reportType = ReportType.parse((String) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_TYPE));
 		String format = (String) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT);
-		ReportFormat reportFormat;
+		
 
-		String dbReportFormat = (String) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT);
-		if (dbReportFormat == null) {
+		if (format == null) {
 			if (ReportType.ExportSearch.equals(reportType)) {
-				reportFormat = ReportFormat.XLSX;
+				return ReportFormat.XLSX;
 			} else {
-				reportFormat = ReportFormat.PDF;
+				return ReportFormat.PDF;
 			}
-		} else {
-			reportFormat = ReportFormat.valueOf(format);
-		}
-
-		return reportFormat;
+		} 
+		
+		return  ReportFormat.valueOf(format);
 	}
 
 	private List<NodeRef> getReportTpls(ReportType reportType, QName nodeType, Boolean isSystem, Boolean isDefault, String tplName) {

@@ -99,8 +99,7 @@ public class EntityCatalogWebScript extends AbstractWebScript {
 			if (catalogId == null) {
 
 				boolean formulated = false;
-				if (formulationService.shouldFormulate(productNodeRef)
-						&& (permissionService.hasPermission(productNodeRef, PermissionService.WRITE) == AccessStatus.ALLOWED)) {
+				if (formulationService.shouldFormulate(productNodeRef)) {
 
 					try {
 						policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);

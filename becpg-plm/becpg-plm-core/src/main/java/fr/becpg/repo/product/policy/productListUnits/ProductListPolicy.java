@@ -117,11 +117,8 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 
 	@Override
 	public void onUpdateProperties(NodeRef productNodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
-		String beforeProductUnit = (String) before.get(PLMModel.PROP_PRODUCT_UNIT);
-		String afterProductUnit = (String) after.get(PLMModel.PROP_PRODUCT_UNIT);
-
-		if ((afterProductUnit != null) && !afterProductUnit.equals(beforeProductUnit)) {
-
+		
+		if(isPropChanged(before, after, PLMModel.PROP_PRODUCT_UNIT) || isPropChanged(before, after, PLMModel.PROP_PRODUCT_SERVING_SIZE_UNIT)){ 
 			// Bind the listener to the transaction
 			AlfrescoTransactionSupport.bindListener(transactionListener);
 			// Get the set of nodes read
@@ -137,6 +134,7 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 	private class ProductListPolicyTransactionListener extends TransactionListenerAdapter {
 
 		final Map<NodeRef, ProductUnit> productsUnit = new HashMap<>(3);
+		final Map<NodeRef, ProductUnit> productsServingSizeUnit = new HashMap<>(3);
 		final Map<NodeRef, NodeRef> productNodeRefs = new HashMap<>(3);
 
 		@Override
@@ -183,7 +181,7 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 							if ((costListNodeRef != null) && !isTemplate(productNodeRef)) {
 
 								productsUnit.put(costListNodeRef, productUnit);
-
+								
 								for (NodeRef productListItemNodeRef : entityListDAO.getListItems(costListNodeRef, PLMModel.TYPE_COSTLIST)) {
 
 									NodeRef costNodeRef = associationService.getTargetAssoc(productListItemNodeRef, PLMModel.ASSOC_COSTLIST_COST);
@@ -211,6 +209,8 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 							if (nutListNodeRef != null) {
 
 								productsUnit.put(nutListNodeRef, productUnit);
+								ProductUnit servingSizeUnit = ProductUnit.getUnit((String) nodeService.getProperty(productNodeRef, PLMModel.PROP_PRODUCT_SERVING_SIZE_UNIT));
+								productsServingSizeUnit.put(nutListNodeRef, servingSizeUnit);
 
 								for (NodeRef productListItemNodeRef : entityListDAO.getListItems(nutListNodeRef, PLMModel.TYPE_NUTLIST)) {
 
@@ -221,10 +221,10 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 										String nutUnit = (String) nodeService.getProperty(nutNodeRef, PLMModel.PROP_NUTUNIT);
 
 										if (!((nutListUnit != null) && !nutListUnit.isEmpty()
-												&& nutListUnit.endsWith(NutsCalculatingFormulationHandler.calculateSuffixUnit(productUnit)))) {
+												&& nutListUnit.endsWith(NutsCalculatingFormulationHandler.calculateSuffixUnit(productUnit, servingSizeUnit)))) {
 
 											nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_NUTLIST_UNIT,
-													NutsCalculatingFormulationHandler.calculateUnit(productUnit, nutUnit));
+													NutsCalculatingFormulationHandler.calculateUnit(productUnit, servingSizeUnit, nutUnit));
 										}
 									}
 								}
@@ -303,7 +303,7 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 								if (listNodeRef != null) {
 
 									nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_NUTLIST_UNIT,
-											NutsCalculatingFormulationHandler.calculateUnit(getProductUnit(listNodeRef), nutUnit));
+											NutsCalculatingFormulationHandler.calculateUnit(getProductUnit(listNodeRef), getServingSizeUnit(listNodeRef), nutUnit));
 								}
 							}
 
@@ -348,6 +348,23 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 			}
 
 			return productUnit;
+		}
+		
+		private ProductUnit getServingSizeUnit(NodeRef listNodeRef) {
+
+			ProductUnit isServingSizeUnit = productsServingSizeUnit.get(listNodeRef);
+
+			if (isServingSizeUnit == null) {
+
+				NodeRef productNodeRef = getProduct(listNodeRef);
+				if (productNodeRef != null) {
+
+					isServingSizeUnit = ProductUnit.getUnit((String) nodeService.getProperty(productNodeRef, PLMModel.PROP_PRODUCT_SERVING_SIZE_UNIT));
+					productsServingSizeUnit.put(listNodeRef, isServingSizeUnit);
+				}
+			}
+
+			return isServingSizeUnit;
 		}
 
 		private NodeRef getProduct(NodeRef listNodeRef) {

@@ -12,6 +12,7 @@
 	          </activiti:string>
           </activiti:field>
         </activiti:taskListener>
+        <activiti:taskListener event="assignment" class="fr.becpg.repo.workflow.activiti.project.ReassignTask"></activiti:taskListener>
         <activiti:taskListener event="complete" class="fr.becpg.repo.workflow.activiti.project.SubmitTask"></activiti:taskListener>
       </extensionElements>
     </userTask>

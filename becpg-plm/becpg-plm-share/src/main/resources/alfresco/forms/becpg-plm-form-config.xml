@@ -278,6 +278,7 @@
 					<show id="pack:tare"  />
 					<show id="pack:tareUnit" />
 					<show id="gs1:weight"  />
+					<show id="bcpg:dropPackagingOfComponents"  />
 					
 					
 					<show id="gs1:secondaryPackagingTypeCode"  />
@@ -715,6 +716,8 @@
 							<control-param name="unit">kg</control-param>
 						</control>
 					</field>
+					<field id="bcpg:dropPackagingOfComponents" set="primaryPackaging"></field>
+					
 					<field id="gs1:secondaryPackagingTypeCode" help-id="becpg.forms.help.gs1.packagingTypeCode"  set="secondaryPackaging" />
 					<field id="gs1:secondaryHeight" set="secondaryPackaging" >
 						<control
@@ -904,15 +907,16 @@
 			<form id="reports-parameters">
 	         	<field-visibility>
 	         		<show id="rep:reportLocales" force="true" />
-	               <show id="rep:reportParameters" force="true" />
-	               <show id="rep:reportTpls" force="true" />
-	              
+	                <show id="rep:reportParameters" force="true" />
+	                <show id="rep:reportTpls" force="true" />
 	            </field-visibility>
 	            <appearance>
 					<field id="rep:reportLocales" >
 						<control template="/org/alfresco/components/form/controls/mtlangue.ftl"/>
 					</field>
-					<field id="rep:reportParameters" />
+					<field id="rep:reportParameters" >
+					  	<control template="/org/alfresco/components/form/controls/checkboxmany.ftl"/>
+					</field>
 					<field id="rep:reportTpls" />
 				</appearance>		
 	         </form>
@@ -2042,7 +2046,9 @@
 					<field id="rep:reportLocales" >
 						<control template="/org/alfresco/components/form/controls/mtlangue.ftl"/>
 					</field>
-					<field id="rep:reportParameters" />
+					<field id="rep:reportParameters" >
+					  	<control template="/org/alfresco/components/form/controls/checkboxmany.ftl"/>
+					</field>
 					<field id="rep:reportTpls" />
 				</appearance>		
 	         </form>
@@ -2402,7 +2408,12 @@
 						</control>
 					</field>
 					<field id="bcpg:productState" set="mainInfo" />
-					<field id="bcpg:productUnit" set="mainInfo" />
+					<field id="bcpg:productUnit" set="mainInfo" >
+						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
+							<control-param name="options">P|becpg.forms.field.productUnit,m,m2,m3,ft,g,mL,cp,fl_oz
+							</control-param>
+						</control>
+					</field>
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
 					<field id="bcpg:eanCode" help-id="becpg.forms.help.eanCode" set="mainInfo"  >
@@ -2429,7 +2440,9 @@
 					<field id="rep:reportLocales" set="mainInfo" >
 						<control template="/org/alfresco/components/form/controls/mtlangue.ftl"/>
 					</field>
-					<field id="rep:reportParameters" set="mainInfo" />
+					<field id="rep:reportParameters" set="mainInfo" >
+					  	<control template="/org/alfresco/components/form/controls/checkboxmany.ftl"/>
+					</field>
 
 					<!-- tare -->
 					<field id="pack:tare" set="tare" />
@@ -2590,7 +2603,9 @@
 					<field id="rep:reportLocales" >
 						<control template="/org/alfresco/components/form/controls/mtlangue.ftl"/>
 					</field>
-					<field id="rep:reportParameters" />
+					<field id="rep:reportParameters"  >
+					  	<control template="/org/alfresco/components/form/controls/checkboxmany.ftl"/>
+					</field>
 					<field id="rep:reportTpls" />
 				</appearance>		
 	         </form>
@@ -2947,7 +2962,12 @@
 						</control>
 					</field>
 					<field id="bcpg:productState" set="mainInfo" />
-					<field id="bcpg:productUnit" set="mainInfo" />
+					<field id="bcpg:productUnit" set="mainInfo" >
+						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
+							<control-param name="options">P|becpg.forms.field.productUnit,m,m2,m3,ft,g,mL,cp,fl_oz
+							</control-param>
+						</control>
+					</field>
 					<field id="bcpg:componentLossPerc" set="mainInfo" />
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
@@ -3442,7 +3462,9 @@
 					<field id="rep:reportLocales" >
 						<control template="/org/alfresco/components/form/controls/mtlangue.ftl"/>
 					</field>
-					<field id="rep:reportParameters" />
+					<field id="rep:reportParameters" set="mainInfo" >
+					  	<control template="/org/alfresco/components/form/controls/checkboxmany.ftl"/>
+					</field>
 					<field id="rep:reportTpls" />
 				</appearance>		
 	         </form>
@@ -4521,7 +4543,9 @@
 					<field id="rep:reportLocales" >
 						<control template="/org/alfresco/components/form/controls/mtlangue.ftl"/>
 					</field>
-					<field id="rep:reportParameters" />
+					<field id="rep:reportParameters"  >
+					  	<control template="/org/alfresco/components/form/controls/checkboxmany.ftl"/>
+					</field>
 					<field id="rep:reportTpls" />
 				</appearance>		
 	         </form>
@@ -7065,7 +7089,9 @@
 				<field id="rep:reportLocales" >
 					<control template="/org/alfresco/components/form/controls/mtlangue.ftl"/>
 				</field>
-				<field id="rep:reportParameters" />
+				<field id="rep:reportParameters"  >
+					  	<control template="/org/alfresco/components/form/controls/checkboxmany.ftl"/>
+					</field>
 				<field id="rep:reportTpls" />
 			</appearance>		
          </form>
@@ -7606,10 +7632,10 @@
 					
 					<show id="bcpg:packagingListQty" />
 					<show id="bcpg:packagingListUnit" />
+					<show id="bcpg:packagingListLossPerc" />
 					<show id="bcpg:packagingListPkgLevel" />
 					<show id="bcpg:packagingListIsMaster" />
-					<show id="bcpg:packagingListLossPerc" />
-
+					<show id="bcpg:packagingListIsRecycle" />
 					
 					<show id="bcpg:variantIds" force="true" />
 					<show id="bcpg:instruction" force="true" />
@@ -7639,6 +7665,7 @@
 						</control>
 					</field>
 					<field id="bcpg:packagingListIsMaster" help-id="becpg.forms.help.packagingListIsMaster" set="2-col" />
+					<field id="bcpg:packagingListIsRecycle" help-id="becpg.forms.help.packagingListIsRecycle" set="2-col" />
 					<field id="bcpg:variantIds" help-id="becpg.forms.help.variantIds" set="2-col">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/variantList
@@ -7700,6 +7727,7 @@
 					<show id="bcpg:packagingListLossPerc" />
 					<show id="bcpg:packagingListPkgLevel" />
 					<show id="bcpg:packagingListIsMaster" />
+					<show id="bcpg:packagingListIsRecycle" />
 					<show id="bcpg:dynamicCharactColumn1" force="true" />
 					<show id="bcpg:dynamicCharactColumn2" force="true" />
 					<show id="bcpg:dynamicCharactColumn3" force="true" />
@@ -7738,6 +7766,7 @@
 					<show id="entity_bcpg:packagingListProduct_bcpg:product" force="true" />
 					<show id="bcpg:packagingListPkgLevel" />
 					<show id="bcpg:packagingListIsMaster" />
+					<show id="bcpg:packagingListIsRecycle" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:depthLevel">
@@ -7747,6 +7776,14 @@
 						</control>
 					</field>
 					<field id="bcpg:packagingListIsMaster">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="insertBlank">true</control-param>
+							<control-param name="options">true|data.boolean.true,false|data.boolean.false
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:packagingListIsRecycle">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="isSearch">true</control-param>
 							<control-param name="insertBlank">true</control-param>
@@ -7765,6 +7802,7 @@
 					<show id="bcpg:packagingListLossPerc" />
 					<show id="bcpg:packagingListPkgLevel" />
 					<show id="bcpg:packagingListIsMaster" />
+					<show id="bcpg:packagingListIsRecycle" />
 					<show id="bcpg:startEffectivity" force="true" />
 					<show id="bcpg:endEffectivity" force="true" />
 				</field-visibility>
@@ -7781,10 +7819,10 @@
 					
 					<show id="bcpg:packagingListQty" />
 					<show id="bcpg:packagingListUnit" />
-					
+					<show id="bcpg:packagingListLossPerc" />
 					<show id="bcpg:packagingListPkgLevel" />
 					<show id="bcpg:packagingListIsMaster" />
-					<show id="bcpg:packagingListLossPerc" />
+					<show id="bcpg:packagingListIsRecycle" />
 					<show id="bcpg:variantIds" force="true" />
 					<show id="pack:labelingPosition" />
 					<show id="pack:labelingType" />
@@ -7813,6 +7851,7 @@
 						</control>
 					</field>
 					<field id="bcpg:packagingListIsMaster" help-id="becpg.forms.help.packagingListIsMaster" set="2-col"/>
+					<field id="bcpg:packagingListIsRecycle" help-id="becpg.forms.help.packagingListIsRecycle" set="2-col" />
 					<field id="bcpg:variantIds" help-id="becpg.forms.help.variantIds" set="2-col">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/variantList
@@ -8535,6 +8574,7 @@
 					<show id="bcpg:ingListGeoOrigin" />
 					<show id="bcpg:ingListGeoTransfo" />
 					<show id="bcpg:ingListBioOrigin" />
+					<show id="bcpg:ingListDeclType" />
 					<show id="bcpg:parentLevel" />
 				</field-visibility>
 
@@ -8562,6 +8602,14 @@
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
+					
+						<field id="bcpg:ingListDeclType" >
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isStoreable">true</control-param>
+							<control-param name="options">Declare|data.declarationtype.declare,DoNotDetails|data.declarationtype.donotdetails,Detail|data.declarationtype.detail,Omit|data.declarationtype.omit,DoNotDeclare|data.declarationtype.donotdeclare</control-param>
+						</control>
+					</field>
+					
 					<field id="bcpg:parentLevel">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:ingList&#38;attributeName=bcpg:ingListIng
@@ -8613,6 +8661,7 @@
 					<show id="bcpg:ingListGeoOrigin" />
 					<show id="bcpg:ingListGeoTransfo" />
 					<show id="bcpg:ingListBioOrigin" />
+					<show id="bcpg:ingListDeclType" />
 					<show id="bcpg:parentLevel" />
 				</field-visibility>
 
@@ -8639,6 +8688,12 @@
 					<field id="bcpg:ingListBioOrigin">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:ingListDeclType" >
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isStoreable">true</control-param>
+							<control-param name="options">Declare|data.declarationtype.declare,DoNotDetails|data.declarationtype.donotdetails,Detail|data.declarationtype.detail,Omit|data.declarationtype.omit,DoNotDeclare|data.declarationtype.donotdeclare</control-param>	
+						</control>
 					</field>
 					<field id="bcpg:parentLevel">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">

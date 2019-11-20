@@ -44,11 +44,9 @@ public abstract class AbstractCompareProductTest extends PLMBaseTestCase {
 	public void setUp() throws Exception {
 		super.setUp();
 
-		Date startTime = new Date();
-
 		initObjects();
 
-		waitForSolr(startTime);
+		waitForSolr();
 	}
 
 	private void initObjects() {

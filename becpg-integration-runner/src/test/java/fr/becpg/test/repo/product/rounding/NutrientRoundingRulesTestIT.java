@@ -63,6 +63,36 @@ public class NutrientRoundingRulesTestIT {
 		assertEquals(1d, NutrientFormulationHelper.round(0.6d, NutrientCode.Sugar, Locale.US, "g/100g"), 0);
 		assertEquals(0d, NutrientFormulationHelper.round(0.4d, NutrientCode.Sugar, Locale.US, "g/100g"), 0);
 		assertEquals(0d, NutrientFormulationHelper.round(0.18d, NutrientCode.Sugar, Locale.US, "g/100g"), 0);
+		
+		assertEquals(1.2d, NutrientFormulationHelper.round(1.23d, NutrientCode.VitD, Locale.US, "μg/100g"), 0);
+		assertEquals(30d, NutrientFormulationHelper.round(26.3d, NutrientCode.Calcium, Locale.US, "mg/100g"), 0);
+		assertEquals(2.4d, NutrientFormulationHelper.round(2.38d, NutrientCode.Iron, Locale.US, "mg/100g"), 0);
+		assertEquals(40d, NutrientFormulationHelper.round(42.4d, NutrientCode.Potassium, Locale.US, "mg/100g"), 0);
+		
+		assertEquals(40d, NutrientFormulationHelper.round(39d, NutrientCode.VitA, Locale.US, "μg/100g"), 0);
+		assertEquals(1d, NutrientFormulationHelper.round(0.59d, NutrientCode.VitC, Locale.US, "mg/100g"), 0);
+		assertEquals(3.3d, NutrientFormulationHelper.round(3.28d, NutrientCode.VitE, Locale.US, "mg/100g"), 0);
+		assertEquals(4d, NutrientFormulationHelper.round(4.25d, NutrientCode.VitK1, Locale.US, "μg/100g"), 0);
+		assertEquals(3d, NutrientFormulationHelper.round(2.86d, NutrientCode.VitK2, Locale.US, "μg/100g"), 0);
+		assertEquals(6.39d, NutrientFormulationHelper.round(6.392d, NutrientCode.Thiamin, Locale.US, "mg/100g"), 0);
+		assertEquals(2.13d, NutrientFormulationHelper.round(2.127d, NutrientCode.Riboflavin, Locale.US, "mg/100g"), 0);
+		assertEquals(4d, NutrientFormulationHelper.round(3.98d, NutrientCode.Niacin, Locale.US, "mg/100g"), 0);
+		assertEquals(6.75d, NutrientFormulationHelper.round(6.754d, NutrientCode.VitB6, Locale.US, "mg/100g"), 0);
+		assertEquals(15d, NutrientFormulationHelper.round(13.5d, NutrientCode.Folate, Locale.US, "μg/100g"), 0);
+		assertEquals(1.23d, NutrientFormulationHelper.round(1.232d, NutrientCode.VitB12, Locale.US, "μg/100g"), 0);
+		assertEquals(0.2d, NutrientFormulationHelper.round(0.16d, NutrientCode.Biotin, Locale.US, "μg/100g"), 0);
+		assertEquals(1.2d, NutrientFormulationHelper.round(1.23d, NutrientCode.PantoAcid, Locale.US, "mg/100g"), 0);
+		assertEquals(20d, NutrientFormulationHelper.round(16.9d, NutrientCode.Phosphorus, Locale.US, "mg/100g"), 0);
+		assertEquals(2d, NutrientFormulationHelper.round(1.83d, NutrientCode.Iodine, Locale.US, "μg/100g"), 0);
+		assertEquals(15d, NutrientFormulationHelper.round(12.6d, NutrientCode.Magnesium, Locale.US, "mg/100g"), 0);
+		assertEquals(8.3d, NutrientFormulationHelper.round(8.29d, NutrientCode.Zinc, Locale.US, "mg/100g"), 0);
+		assertEquals(9d, NutrientFormulationHelper.round(8.6d, NutrientCode.Selenium, Locale.US, "μg/100g"), 0);
+		assertEquals(5.16d, NutrientFormulationHelper.round(5.157d, NutrientCode.Copper, Locale.US, "mg/100g"), 0);
+		assertEquals(2.41d, NutrientFormulationHelper.round(2.411d, NutrientCode.Manganese, Locale.US, "mg/100g"), 0);
+		assertEquals(1.7d, NutrientFormulationHelper.round(1.69d, NutrientCode.Chromium, Locale.US, "μg/100g"), 0);
+		assertEquals(1.2d, NutrientFormulationHelper.round(1.23d, NutrientCode.Molybdenum, Locale.US, "μg/100g"), 0);
+		assertEquals(50d, NutrientFormulationHelper.round(54d, NutrientCode.Chloride, Locale.US, "mg/100g"), 0);
+		assertEquals(80d, NutrientFormulationHelper.round(78d, NutrientCode.Choline, Locale.US, "mg/100g"), 0);
 
 		// less than
 		assertEquals("<5", NutrientFormulationHelper.displayValue(3d,
@@ -91,10 +121,10 @@ public class NutrientRoundingRulesTestIT {
 		assertEquals(60d, NutrientFormulationHelper.roundGDA(56d, NutrientCode.VitA, Locale.US), 0);
 		assertEquals(5d, NutrientFormulationHelper.roundGDA(5.4d, NutrientCode.Sodium, Locale.US), 0);
 
-		assertEquals(4d, NutrientFormulationHelper.round(3.7d, NutrientCode.VitD, Locale.US, "µg/100g"), 0);
-		assertEquals("4", NutrientFormulationHelper.displayValue(3.7d, NutrientFormulationHelper.round(3.7d, NutrientCode.VitD, Locale.US, "µg/100g"),
+		assertEquals(3.7d, NutrientFormulationHelper.round(3.7d, NutrientCode.VitD, Locale.US, "µg/100g"), 0);
+		assertEquals("3.7", NutrientFormulationHelper.displayValue(3.7d, NutrientFormulationHelper.round(3.7d, NutrientCode.VitD, Locale.US, "µg/100g"),
 				NutrientCode.VitD, Locale.US));
-		assertEquals("", NutrientFormulationHelper.displayValue(3.7d, NutrientFormulationHelper.round(3.7d, NutrientCode.VitA, Locale.US, "µg/100g"),
+		assertEquals("0", NutrientFormulationHelper.displayValue(3.7d, NutrientFormulationHelper.round(3.7d, NutrientCode.VitA, Locale.US, "µg/100g"),
 				NutrientCode.VitA, Locale.US));
 	}
 
@@ -161,6 +191,10 @@ public class NutrientRoundingRulesTestIT {
 
 		assertEquals(3.78d, NutrientFormulationHelper.round(3.7777d, NutrientCode.VitA, Locale.FRENCH, "µg/100g"), 0);
 		assertEquals(3.8d, NutrientFormulationHelper.round(3.7777d, NutrientCode.VitD, Locale.FRENCH, "µg/100g"), 0);
+		
+		assertEquals(5d, NutrientFormulationHelper.roundGDA(5.41d, NutrientCode.VitA, Locale.US), 5.4d);
+		assertEquals(5d, NutrientFormulationHelper.roundGDA(5.46d, NutrientCode.VitA, Locale.US), 5.5d);
+		
 	}
 
 	@Test
