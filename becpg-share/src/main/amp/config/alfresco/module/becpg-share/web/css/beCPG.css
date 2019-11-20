@@ -125,7 +125,9 @@
 	display : block;
 }
 
-
+.form-container  .checkboxmany p label {
+	display: inline;
+}
 
 /* Auto complete */
 .form-container .yui-navset :not(.yui-u) > .form-field .yui-ac .ac-body input[type="text"].yui-ac-input ,
