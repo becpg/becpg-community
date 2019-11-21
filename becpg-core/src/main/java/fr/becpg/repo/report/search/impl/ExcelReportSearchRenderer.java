@@ -20,6 +20,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -74,8 +75,7 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 			watch.start();
 		}
 
-		try {
-			XSSFWorkbook workbook = new XSSFWorkbook(reader.getContentInputStream());
+		try (XSSFWorkbook workbook = new XSSFWorkbook(reader.getContentInputStream())){;
 
 			QName mainType = null;
 			for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
@@ -242,7 +242,7 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 		String currentNested = "";
 		for (int i = 1; i < headerRow.getLastCellNum(); i++) {
 			if (headerRow.getCell(i) != null) {
-				if (headerRow.getCell(i).getCellType() == Cell.CELL_TYPE_STRING) {
+				if (headerRow.getCell(i).getCellType() == CellType.STRING) {
 					String cellValue = headerRow.getCell(i).getStringCellValue();
 					if ((cellValue != null) && !cellValue.isEmpty() && !cellValue.startsWith("#")) {
 						if (cellValue.contains("_") && !cellValue.contains("formula") && !cellValue.startsWith("dyn_")) {
@@ -267,7 +267,7 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 							metadataFields.add(cellValue);
 						}
 					}
-				} else if (headerRow.getCell(i).getCellType() == Cell.CELL_TYPE_FORMULA) {
+				} else if (headerRow.getCell(i).getCellType() == CellType.FORMULA) {
 					String cellFormula = headerRow.getCell(i).getCellFormula();
 					metadataFields.add("excel|" + cellFormula);
 				}
