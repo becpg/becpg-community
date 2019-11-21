@@ -111,14 +111,7 @@
 
         <!-- Properties used in dependency declarations, you don't need to change these -->
         <alfresco.groupId>org.alfresco</alfresco.groupId>
-       
-        
-         <!-- Alfresco 5.2
-        
-        <alfresco.platform.version>5.2.g</alfresco.platform.version>
-        <alfresco.share.version>5.2.f</alfresco.share.version>
- 		<alfresco-repository.version>5.2.g</alfresco-repository.version>
-		<alfresco.aos.version>1.1.7</alfresco.aos.version>  -->
+               
         <mysql.connector.version>8.0.16</mysql.connector.version>
         <alfresco.bomDependencyArtifactId>alfresco-platform</alfresco.bomDependencyArtifactId>
         
@@ -418,8 +411,7 @@
                 </executions>
             </plugin>
 
-	 
-			<!-- <plugin>
+	 		<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>buildnumber-maven-plugin</artifactId>
 				<version>1.2</version>
@@ -436,7 +428,7 @@
 					<doupdate>false</doupdate>
 					<getRevisionOnlyOnce>true</getRevisionOnlyOnce>
 				</configuration>
-			</plugin> -->
+			</plugin> 
 			
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -496,8 +488,30 @@
           	<version>${alfresco.sdk.version}</version>
             <scope>test</scope>
         </dependency>
-		
 
+
+        <dependency>
+        	<groupId>org.alfresco</groupId>
+        	<artifactId>alfresco-repository</artifactId>
+        	<exclusions>
+        		<exclusion>
+        			<groupId>com.sun.xml.bind</groupId>
+        			<artifactId>jaxb-impl</artifactId>
+        		</exclusion>
+        		<exclusion>
+        			<groupId>javax.xml.bind</groupId>
+        			<artifactId>jaxb-api</artifactId>
+        		</exclusion>
+        		<exclusion>
+        			<groupId>xerces</groupId>
+        			<artifactId>xercesImpl</artifactId>
+        		</exclusion>
+        		<exclusion>
+        			<groupId>javax.xml.ws</groupId>
+        			<artifactId>jaxws-api</artifactId>
+        		</exclusion>
+        	</exclusions>
+        </dependency>
 	</dependencies>
 	<profiles>
 	
@@ -540,22 +554,6 @@
                     </plugin>
                 </plugins>
             </build>
-            <dependencies>
-            	<dependency>
-				    <groupId>javax.xml.bind</groupId>
-				    <artifactId>jaxb-api</artifactId>
-				    <version>2.4.0-b180725.0427</version>
-				</dependency>
-				<dependency>
-				    <groupId>commons-lang</groupId>
-				    <artifactId>commons-lang</artifactId>
-				</dependency>
-				<dependency>
-				    <groupId>org.apache.ws.commons.util</groupId>
-				    <artifactId>ws-commons-util</artifactId>
-				    <version>1.0.2</version>
-				</dependency>
-            </dependencies>
         </profile>
 	
 		<profile>

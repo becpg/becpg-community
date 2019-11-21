@@ -24,16 +24,21 @@ RUN mkdir -p /usr/local/tomcat/data && \
 	mkdir -p /usr/local/tomcat/lib/classes && \
 	mkdir -p /opt/tools && \
 	mkdir -p /usr/local/tomcat/shared/lib && \
-	mkdir -p /usr/local/tomcat/shared/classes
+    mkdir -p /usr/local/tomcat/shared/classes/alfresco/extension/mimetypes \
+             /usr/local/tomcat/shared/classes/alfresco/extension/transform/renditions \
+             /usr/local/tomcat/shared/classes/alfresco/extension/transform/pipelines	
+	
 
 
-RUN set -x \
-      && apt-get update \
-      && apt-get install -y --no-install-recommends \
-                  imagemagick \
-                  ghostscript \
-      && apt-get clean \
-      && rm -rf /var/lib/apt/lists/*
+#RUN set -x \
+#     && apt-get update \
+#      && apt-get install -y --no-install-recommends \
+#                  imagemagick \
+#                 ghostscript \
+#      && apt-get clean \
+#      && rm -rf /var/lib/apt/lists/*
+      
+      
       
 WORKDIR /usr/local/tomcat/
       
