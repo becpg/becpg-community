@@ -40,7 +40,7 @@
         <dependency>
             <groupId>org.alfresco</groupId>
             <artifactId>alfresco-remote-api</artifactId>
-             <version>${alfresco.share.version}</version>
+             <version>${alfresco-remote-api.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

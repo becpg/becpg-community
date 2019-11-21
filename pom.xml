@@ -113,22 +113,32 @@
         <alfresco.groupId>org.alfresco</alfresco.groupId>
        
         
-         <!-- Alfresco 5.2 -->
+         <!-- Alfresco 5.2
         
         <alfresco.platform.version>5.2.g</alfresco.platform.version>
         <alfresco.share.version>5.2.f</alfresco.share.version>
  		<alfresco-repository.version>5.2.g</alfresco-repository.version>
-		<alfresco.aos.version>1.1.7</alfresco.aos.version>
+		<alfresco.aos.version>1.1.7</alfresco.aos.version>  -->
         <mysql.connector.version>8.0.16</mysql.connector.version>
         <alfresco.bomDependencyArtifactId>alfresco-platform</alfresco.bomDependencyArtifactId>
         
          <!-- Alfresco 6 -->
-	     <alfresco.platform.version>6.1.2-ga</alfresco.platform.version>
-		 <alfresco.share.version>6.1.0-RC3</alfresco.share.version>
-		 <alfresco-repository.version>7.43</alfresco-repository.version>
+	     <alfresco.platform.version>6.2.0-ea</alfresco.platform.version>
+		 <alfresco.share.version>6.2.0-RC4</alfresco.share.version>
+		 <alfresco-repository.version>7.131</alfresco-repository.version>
+		 <alfresco-remote-api.version>7.101</alfresco-remote-api.version>
+		 
+		 
+<!-- 
+        <dependency.alfresco-remote-api.version>7.101</dependency.alfresco-remote-api.version>
+        <dependency.alfresco-repository.version>7.131</dependency.alfresco-repository.version>
+        <dependency.alfresco-data-model.version>8.50.1</dependency.alfresco-data-model.version>
+        <dependency.alfresco-core.version>7.22</dependency.alfresco-core.version> -->
+		 
+		 
 			       
-		<alfresco.aos.version>1.2.2</alfresco.aos.version>
-		<mysql.connector.version>8.0.16</mysql.connector.version>
+		<alfresco.aos.version>1.3.0-RC1</alfresco.aos.version>
+		<mysql.connector.version>8.0.18</mysql.connector.version>
 		<alfresco.bomDependencyArtifactId>acs-community-packaging</alfresco.bomDependencyArtifactId>
         
     
@@ -178,7 +188,7 @@
             <dependency>
 	            <groupId>org.alfresco</groupId>
 	            <artifactId>alfresco-remote-api</artifactId>
-	            <version>7.35</version>
+	            <version>${alfresco-remote-api.version}</version>
 	            <scope>provided</scope>
 	         </dependency>
             
@@ -409,7 +419,7 @@
             </plugin>
 
 	 
-			<plugin>
+			<!-- <plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>buildnumber-maven-plugin</artifactId>
 				<version>1.2</version>
@@ -426,7 +436,7 @@
 					<doupdate>false</doupdate>
 					<getRevisionOnlyOnce>true</getRevisionOnlyOnce>
 				</configuration>
-			</plugin>
+			</plugin> -->
 			
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -492,10 +502,10 @@
 	<profiles>
 	
 	
-		<profile>
+	<!-- 	<profile>
             <id>java8</id>
             <activation>
-               <!--  <jdk>[1.8,11.0)</jdk> -->
+                <jdk>[1.8,11.0)</jdk>
                 <activeByDefault>true</activeByDefault>
             </activation>
             <build>
@@ -511,12 +521,12 @@
                     </plugin>
                 </plugins>
             </build>
-        </profile>
+        </profile> -->
         <profile>
             <id>java11</id>
            <activation>
                <!--  <jdk>[11.0,)</jdk> -->
-               <activeByDefault>false</activeByDefault>
+               <activeByDefault>true</activeByDefault>
             </activation>
             <build>
                 <plugins>
@@ -531,11 +541,19 @@
                 </plugins>
             </build>
             <dependencies>
-                <!-- TODO -->
             	<dependency>
 				    <groupId>javax.xml.bind</groupId>
 				    <artifactId>jaxb-api</artifactId>
 				    <version>2.4.0-b180725.0427</version>
+				</dependency>
+				<dependency>
+				    <groupId>commons-lang</groupId>
+				    <artifactId>commons-lang</artifactId>
+				</dependency>
+				<dependency>
+				    <groupId>org.apache.ws.commons.util</groupId>
+				    <artifactId>ws-commons-util</artifactId>
+				    <version>1.0.2</version>
 				</dependency>
             </dependencies>
         </profile>

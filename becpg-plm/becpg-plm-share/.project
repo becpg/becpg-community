@@ -2,10 +2,7 @@
 <projectDescription>
   <name>becpg-plm-share</name>
   <comment>Alfresco share module for beCPG PLM. NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
-  <projects>
-    <project>alfresco-remote-api-7.43</project>
-    <project>alfresco-repository-7.43</project>
-  </projects>
+  <projects/>
   <buildSpec>
     <buildCommand>
       <name>org.eclipse.wst.common.project.facet.core.builder</name>
