@@ -3,7 +3,7 @@ MAINTAINER beCPG
 
 ENV NEXUS=https://artifacts.alfresco.com/nexus/content/groups/public
 ENV DIST_DIR /opt/alfresco-search-services
-ENV SEARCH_SERVICE_VERSION=1.3.0.6
+ENV SEARCH_SERVICE_VERSION=1.4.0
 ARG USERNAME=solr
 ARG USERID=33007
 

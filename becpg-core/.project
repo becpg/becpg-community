@@ -1,34 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-  <name>becpg-core</name>
-  <comment>BeCPG repository. NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
-  <projects/>
-  <buildSpec>
-    <buildCommand>
-      <name>org.eclipse.wst.common.project.facet.core.builder</name>
-    </buildCommand>
-    <buildCommand>
-      <name>org.eclipse.jdt.core.javabuilder</name>
-    </buildCommand>
-    <buildCommand>
-      <name>org.eclipse.wst.validation.validationbuilder</name>
-    </buildCommand>
-    <buildCommand>
-      <name>org.springframework.ide.eclipse.core.springbuilder</name>
-    </buildCommand>
-    <buildCommand>
-      <name>org.springframework.ide.eclipse.boot.validation.springbootbuilder</name>
-    </buildCommand>
-    <buildCommand>
-      <name>org.eclipse.m2e.core.maven2Builder</name>
-    </buildCommand>
-  </buildSpec>
-  <natures>
-    <nature>org.springframework.ide.eclipse.core.springnature</nature>
-    <nature>org.eclipse.jem.workbench.JavaEMFNature</nature>
-    <nature>org.eclipse.wst.common.modulecore.ModuleCoreNature</nature>
-    <nature>org.eclipse.m2e.core.maven2Nature</nature>
-    <nature>org.eclipse.jdt.core.javanature</nature>
-    <nature>org.eclipse.wst.common.project.facet.core.nature</nature>
-  </natures>
+	<name>becpg-core</name>
+	<comment>BeCPG repository. NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
+	<projects>
+		<project>becpg-report</project>
+		<project>alfresco-repository-alfresco-repository-7.131</project>
+		<project>alfresco-core-7.22</project>
+		<project>alfresco-remote-api-alfresco-remote-api-7.101</project>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
+			<name>org.eclipse.m2e.core.maven2Builder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+		<nature>org.eclipse.m2e.core.maven2Nature</nature>
+	</natures>
 </projectDescription>

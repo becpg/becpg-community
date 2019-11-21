@@ -58,7 +58,6 @@
 			<scope>test</scope>
 		</dependency>
 		
-		
 		<!-- beCPG AMPs -->
 		<dependency>
 			<groupId>fr.becpg</groupId>
@@ -73,6 +72,12 @@
 			<type>amp</type>
 			<version>${project.version}</version>
 			<scope>runtime</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.ws.commons.util</groupId>
+					<artifactId>ws-commons-util</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>fr.becpg</groupId>
@@ -87,6 +92,12 @@
 			<type>amp</type>
 			<version>${project.version}</version>
 			<scope>runtime</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.ws.commons.util</groupId>
+					<artifactId>ws-commons-util</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>fr.becpg</groupId>
@@ -101,6 +112,12 @@
 			<type>amp</type>
 			<version>${project.version}</version>
 			<scope>runtime</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.ws.commons.util</groupId>
+					<artifactId>ws-commons-util</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>fr.becpg</groupId>
@@ -115,6 +132,42 @@
 			<type>amp</type>
 			<version>${project.version}</version>
 			<scope>runtime</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.ws.commons.util</groupId>
+					<artifactId>ws-commons-util</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.alfresco</groupId>
+			<artifactId>alfresco-repository</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>com.sun.xml.bind</groupId>
+					<artifactId>jaxb-impl</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>javax.xml.bind</groupId>
+					<artifactId>jaxb-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>xerces</groupId>
+					<artifactId>xercesImpl</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>javax.xml.ws</groupId>
+					<artifactId>jaxws-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>xalan</groupId>
+					<artifactId>xalan</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>xml-apis</groupId>
+					<artifactId>xml-apis</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 	</dependencies>
 	<build>

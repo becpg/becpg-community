@@ -33,7 +33,6 @@ import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.util.URIUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.ws.commons.util.Base64;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -250,7 +249,7 @@ public class OlapServiceImpl implements OlapService {
 		String currentUserName = getCurrentOlapUserName();
 		currentUserName += "#" + authenticationService.getCurrentTicket();
 
-		return Base64.encode(currentUserName.getBytes());
+		return java.util.Base64.getEncoder().encode(currentUserName.getBytes()).toString();
 	}
 
 	private String getCurrentOlapUserName() {
