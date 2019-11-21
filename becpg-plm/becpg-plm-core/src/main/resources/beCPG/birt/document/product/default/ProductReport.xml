@@ -13,6 +13,9 @@
     <image entityNodeRef="workspace://SpacesStore/91e61667-5b5f-422a-8fdb-464db6bc6ce8" entityType="packagingKit" id="Img9" name="img_palet1.jpg"/>
     <image entityNodeRef="workspace://SpacesStore/91e61667-5b5f-422a-8fdb-464db6bc6ce8" entityType="packagingKit" id="Img10" name="img_palet2.jpg"/>
   </images>
+  <servingSize prefix="bcpg"><![CDATA[80.0]]></servingSize>
+  <servingSizeText prefix="bcpg"><![CDATA[]]></servingSizeText>
+  <servingSizeUnit prefix="bcpg" translation="mL"><![CDATA[mL]]></servingSizeUnit>
   <likesRatingSchemeTotal prefix="cm"><![CDATA[1.0]]></likesRatingSchemeTotal>
   <tare prefix="pack"><![CDATA[52.0]]></tare>
   <isPackagingMarkedReturnable prefix="gs1"><![CDATA[false]]></isPackagingMarkedReturnable>
@@ -39,7 +42,6 @@
   <isTradeItemAFullDisplayStand prefix="gs1"><![CDATA[false]]></isTradeItemAFullDisplayStand>
   <name prefix="cm"><![CDATA[Quiche lorraine 400g]]></name>
   <initialVersion prefix="cm"><![CDATA[true]]></initialVersion>
-  <servingSize prefix="bcpg"><![CDATA[80.0]]></servingSize>
   <isTradeItemAModel prefix="gs1"><![CDATA[false]]></isTradeItemAModel>
   <productQty prefix="bcpg"><![CDATA[0.4]]></productQty>
   <formulatedDate prefix="bcpg"><![CDATA[2019-02-08T10:48:26.908Z]]></formulatedDate>
