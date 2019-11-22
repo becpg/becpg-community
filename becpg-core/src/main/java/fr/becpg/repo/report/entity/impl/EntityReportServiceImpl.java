@@ -1316,20 +1316,22 @@ public class EntityReportServiceImpl implements EntityReportService {
 				if(reportTitle == null ) {
 					reportTitle = (String) nodeService.getProperty(reportNodeRef, ContentModel.PROP_NAME);
 				}
-				if(logger.isDebugEnabled()) {
-					logger.debug("Test "+reportName+" against "+reportTitle);
-				}
-				
-				//Test 10. Barcode report (en) against 
-				//     10. Barcode report  (en)
-
-				if ((reportTitle != null) && reportTitle.equalsIgnoreCase(reportName)) {
+				if(reportName !=null) {
 					if(logger.isDebugEnabled()) {
-						logger.debug("Found selected report for title: "+reportName+ " "+reportNodeRef);
+						logger.debug("Test "+reportName+" against "+reportTitle);
 					}
-
 					
-					return reportNodeRef;
+					//Test 10. Barcode report (en) against 
+					//     10. Barcode report  (en)
+	
+					if ((reportTitle != null) && reportTitle.equalsIgnoreCase(reportName)) {
+						if(logger.isDebugEnabled()) {
+							logger.debug("Found selected report for title: "+reportName+ " "+reportNodeRef);
+						}
+	
+						
+						return reportNodeRef;
+					}
 				}
 
 				Boolean isDefault = (Boolean) this.nodeService.getProperty(reportNodeRef, ReportModel.PROP_REPORT_IS_DEFAULT);
@@ -1349,17 +1351,21 @@ public class EntityReportServiceImpl implements EntityReportService {
 	public String getSelectedReportName(NodeRef entityNodeRef) {
 
 		String username = AuthenticationUtil.getFullyAuthenticatedUser();
-		String typeName = nodeService.getType(entityNodeRef).toPrefixString(namespaceService).replace(":", "_");
-
-		Map<String, Serializable> preferences = preferenceService.getPreferences(username);
-
-		String reportName = (String) preferences.get(PREF_REPORT_PREFIX + typeName + PREF_REPORT_SUFFIX);
-
-		if (logger.isDebugEnabled()) {
-			logger.debug("Getting: " + reportName + " from preference for: " + username + " and type: " + typeName);
+		
+		if(!AuthenticationUtil.SYSTEM_USER_NAME.equals(username)){
+			String typeName = nodeService.getType(entityNodeRef).toPrefixString(namespaceService).replace(":", "_");
+	
+			Map<String, Serializable> preferences = preferenceService.getPreferences(username);
+	
+			String reportName = (String) preferences.get(PREF_REPORT_PREFIX + typeName + PREF_REPORT_SUFFIX);
+	
+			if (logger.isDebugEnabled()) {
+				logger.debug("Getting: " + reportName + " from preference for: " + username + " and type: " + typeName);
+			}
+	
+			return reportName;
 		}
-
-		return reportName;
+		return null;
 	}
 
 	@Override

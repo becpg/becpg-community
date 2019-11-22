@@ -249,7 +249,7 @@ public class OlapServiceImpl implements OlapService {
 		String currentUserName = getCurrentOlapUserName();
 		currentUserName += "#" + authenticationService.getCurrentTicket();
 
-		return java.util.Base64.getEncoder().encode(currentUserName.getBytes()).toString();
+		return java.util.Base64.getEncoder().encodeToString(currentUserName.getBytes());
 	}
 
 	private String getCurrentOlapUserName() {

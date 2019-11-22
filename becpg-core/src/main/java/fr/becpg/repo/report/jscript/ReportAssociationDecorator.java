@@ -75,7 +75,7 @@ public class ReportAssociationDecorator extends fr.becpg.repo.jscript.app.BaseAs
 						jsonObj.put("templateName", reportTitle);
 						jsonObj.put("isDefault", isDefault);
 							
-						if ( reportTitle.equalsIgnoreCase(prefsReportName)) {
+						if ( prefsReportName!=null && reportTitle.equalsIgnoreCase(prefsReportName)) {
 							jsonObj.put("isSelected", true);
 						} else {
 							jsonObj.put("isSelected", false);
