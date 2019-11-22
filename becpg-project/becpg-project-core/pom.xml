@@ -40,13 +40,13 @@
 			<type>jar</type>
 		</dependency>
 		
-		<!-- alfresco -->
-		<dependency>
-			<groupId>org.alfresco</groupId>
-			<artifactId>alfresco-repository</artifactId>
+ 		<dependency>
+		    <groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
 			<scope>provided</scope>
 		</dependency>
 
+	
 
 	</dependencies>
 	<build>

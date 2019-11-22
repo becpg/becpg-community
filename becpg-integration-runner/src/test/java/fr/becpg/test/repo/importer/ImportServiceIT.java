@@ -136,8 +136,13 @@ public class ImportServiceIT extends PLMBaseTestCase {
 
 			logger.debug("Start import");
 
+			try {
 			importService.importText(nodeRef, true, false);
 
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
 			return null;
 
 		}, false, true);

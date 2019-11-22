@@ -131,7 +131,7 @@ public class BeCPGLicenseManager {
 		String key = lisence.licenseName + lisence.allowedNamedRead + lisence.allowedNamedWrite + lisence.allowedConcurrentRead
 				+ lisence.allowedConcurrentWrite + lisence.allowedConcurrentSupplier;
 
-		return java.util.Base64.getEncoder().encode(key.getBytes()).toString();
+		return java.util.Base64.getEncoder().encodeToString(key.getBytes());
 	}
 
 	private JSONObject getLicenseFile() {
