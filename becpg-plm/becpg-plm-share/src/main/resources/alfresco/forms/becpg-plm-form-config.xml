@@ -907,15 +907,16 @@
 			<form id="reports-parameters">
 	         	<field-visibility>
 	         		<show id="rep:reportLocales" force="true" />
-	               <show id="rep:reportParameters" force="true" />
-	               <show id="rep:reportTpls" force="true" />
-	              
+	                <show id="rep:reportParameters" force="true" />
+	                <show id="rep:reportTpls" force="true" />
 	            </field-visibility>
 	            <appearance>
 					<field id="rep:reportLocales" >
 						<control template="/org/alfresco/components/form/controls/mtlangue.ftl"/>
 					</field>
-					<field id="rep:reportParameters" />
+					<field id="rep:reportParameters" >
+					  	<control template="/org/alfresco/components/form/controls/checkboxmany.ftl"/>
+					</field>
 					<field id="rep:reportTpls" />
 				</appearance>		
 	         </form>
@@ -2045,7 +2046,9 @@
 					<field id="rep:reportLocales" >
 						<control template="/org/alfresco/components/form/controls/mtlangue.ftl"/>
 					</field>
-					<field id="rep:reportParameters" />
+					<field id="rep:reportParameters" >
+					  	<control template="/org/alfresco/components/form/controls/checkboxmany.ftl"/>
+					</field>
 					<field id="rep:reportTpls" />
 				</appearance>		
 	         </form>
@@ -2437,7 +2440,9 @@
 					<field id="rep:reportLocales" set="mainInfo" >
 						<control template="/org/alfresco/components/form/controls/mtlangue.ftl"/>
 					</field>
-					<field id="rep:reportParameters" set="mainInfo" />
+					<field id="rep:reportParameters" set="mainInfo" >
+					  	<control template="/org/alfresco/components/form/controls/checkboxmany.ftl"/>
+					</field>
 
 					<!-- tare -->
 					<field id="pack:tare" set="tare" />
@@ -2598,7 +2603,9 @@
 					<field id="rep:reportLocales" >
 						<control template="/org/alfresco/components/form/controls/mtlangue.ftl"/>
 					</field>
-					<field id="rep:reportParameters" />
+					<field id="rep:reportParameters"  >
+					  	<control template="/org/alfresco/components/form/controls/checkboxmany.ftl"/>
+					</field>
 					<field id="rep:reportTpls" />
 				</appearance>		
 	         </form>
@@ -3455,7 +3462,9 @@
 					<field id="rep:reportLocales" >
 						<control template="/org/alfresco/components/form/controls/mtlangue.ftl"/>
 					</field>
-					<field id="rep:reportParameters" />
+					<field id="rep:reportParameters" set="mainInfo" >
+					  	<control template="/org/alfresco/components/form/controls/checkboxmany.ftl"/>
+					</field>
 					<field id="rep:reportTpls" />
 				</appearance>		
 	         </form>
@@ -4534,7 +4543,9 @@
 					<field id="rep:reportLocales" >
 						<control template="/org/alfresco/components/form/controls/mtlangue.ftl"/>
 					</field>
-					<field id="rep:reportParameters" />
+					<field id="rep:reportParameters"  >
+					  	<control template="/org/alfresco/components/form/controls/checkboxmany.ftl"/>
+					</field>
 					<field id="rep:reportTpls" />
 				</appearance>		
 	         </form>
@@ -7078,7 +7089,9 @@
 				<field id="rep:reportLocales" >
 					<control template="/org/alfresco/components/form/controls/mtlangue.ftl"/>
 				</field>
-				<field id="rep:reportParameters" />
+				<field id="rep:reportParameters"  >
+					  	<control template="/org/alfresco/components/form/controls/checkboxmany.ftl"/>
+					</field>
 				<field id="rep:reportTpls" />
 			</appearance>		
          </form>
