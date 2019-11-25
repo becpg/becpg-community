@@ -10,7 +10,7 @@ CA;Calcium, Ca;25;1;true;false;false;1300;2500;mg;true
 CHOAVL;Carbohydrate, by difference;12;1;false;true;false;;;;
 CHO-;Carbohydrate, by difference (with fiber);11;1;true;false;true;275;;g;true
 CHOL-;Cholesterol;8;1;true;false;true;300;;mg;true
-CHOLN;CholineTot;57;1;false;true;false;550;3500;mg;
+CHOLN;CholineTot;57;1;false;true;false;550;3500;mg;true
 CR;Chromium;56;1;false;true;false;35;;µg;true
 CU;Copper;54;1;false;true;false;0,9;10;mg;true
 US_ENER-E14;Energy kcal;1;1;true;false;true;2000;;kcal;true
@@ -71,15 +71,15 @@ VITA-;Vitamin A;28;1;false;true;false;900;3000;µg;true
 VITA;Vitamin A retinol equivalents;29;1;false;true;false;;;;
 VITA-IU;Vitamin A, IU;30;1;false;true;false;;;;
 VITA-RAE;Vitamin A, RAE;31;1;false;true;false;;;;
-VITB12;Vitamin B-12;46;1;false;true;false;2,4;;µg;
+VITB12;Vitamin B-12;46;1;false;true;false;2,4;;µg;true
 VITB6-;Vitamin B-6;41;1;false;true;false;1,7;100;mg;true
-BIOT;Vitamin B7 (Biotin);47;1;false;true;false;30;;µg;
+BIOT;Vitamin B7 (Biotin);47;1;false;true;false;30;;µg;true
 VITC-;Vitamin C, total ascorbic acid;32;1;false;true;false;90;2000;mg;true
 VITD-;VITAMIN D;23;1;true;false;false;20;100;µg;true
 VITDEQ;Vitamin D (D2 + D3);24;1;false;true;false;;;;
 VITE-;Vitamin E;33;1;false;true;false;15;1000;mg;true
 TOCPHA;Vitamin E (alpha-tocopherol);34;1;false;true;false;;;;
-VITK1;Vitamin K (phylloquinone);35;1;false;true;false;120;;µg;
+VITK1;Vitamin K (phylloquinone);35;1;false;true;false;120;;µg;true
 VITK2;Vitamin K2;36;1;false;true;false;;;;
 WATER;Water;84;1;false;true;false;;;;
 ZN;Zinc, Zn;52;1;false;true;false;11;40;mg;true
