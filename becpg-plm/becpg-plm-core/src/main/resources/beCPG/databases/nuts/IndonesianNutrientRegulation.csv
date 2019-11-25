@@ -10,10 +10,10 @@ CA;Calcium, Ca;;1;false;true;false;1100;;mg;true
 CHOAVL;Carbohydrate, by difference;;;;;;;;;
 CHO-;Carbohydrate, by difference (with fiber);6;1;true;false;true;325;;g;true
 CHOL-;Cholesterol;3;2;true;false;true;300;300;mg;true
-CHOLN;CholineTot;;1;false;true;false;450;;mg;
+CHOLN;CholineTot;;1;false;true;false;450;;mg;true
 CR;Chromium;;1;false;true;false;26;;µg;true
 CU;Copper;;1;false;true;false;800;;mg;true
-US_ENER-E14;Energy kcal;1;1;true;false;true;2150;;kcal;false
+ENER-E14;Energy kcal;1;1;true;false;true;2150;;kcal;false
 F10D0;FA 10:0, capric;;;;;;;;;
 F12D0;FA 12:0, lauric;;;;;;;;;
 F14D0;FA 14:0 , myristic;;;;;;;;;
@@ -32,7 +32,7 @@ F8D0;FA 8:0, caprylic;;;;;;;;;
 FAMSCIS;Fatty acids, total monounsaturated;;;;;;;;;
 FAPUCIS;Fatty acids, total polyunsaturated;;;;;;;;;
 FASAT;Fatty acids, total saturated;4;1;true;false;false;20;;g;true
-FIBTG;Fiber, total dietary;;1;false;true;false;30;;g;false
+FIBTG;Fiber, total dietary;;1;false;true;false;30;;g;true
 FOLDFE;Folate DFE;;;;;;;;;
 FOLFD;Folate natural;;;;;;;;;
 FOLAC;Folic acid;;;;;;;;;
@@ -51,7 +51,7 @@ PANTAC;Panto acid;;1;false;true;false;5;;mg;true
 P;Phosphorus, P;;1;false;true;false;700;;mg;true
 POLYL;Polyols total;;;;;;;;;
 K;Potassium, k;;1;false;true;false;4700;;mg;true
-PRO-;Protein;5;1;true;false;false;60;;g;true
+PRO-;Protein;5;1;true;false;true;60;;g;true
 CARTBEQ;Provitamin A (b-carotene equivalents);;;;;;;;;
 PROCNT;Raw proteins (N x 6.25);;;;;;;;;
 RETOL;Retinol;;;;;;;;;
@@ -69,7 +69,7 @@ FATRN;Total trans fatty acids;;2;true;false;true;;;g;false
 TRP;Tryptophan;;;;;;;;;
 VITA-;Vitamin A;;1;false;true;false;600;;µg;true
 VITA;Vitamin A retinol equivalents;;;;;;;;;
-VITA-IU;Vitamin A, IU;;1;false;true;false;600;;IU;
+VITA-IU;Vitamin A, IU;;;;;;;;;
 VITA-RAE;Vitamin A, RAE;;;;;;;;;
 VITB12;Vitamin B-12;;1;false;true;false;2.4;;µg;true
 VITB6-;Vitamin B-6;;1;false;true;false;1.3;;mg;true
