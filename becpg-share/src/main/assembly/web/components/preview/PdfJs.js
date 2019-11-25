@@ -132,7 +132,7 @@
           * @type String
           * @default "auto"
           */
-         defaultScale : "1.25",
+         defaultScale : "auto",
 
          /**
           * Multipler for zooming in/out
