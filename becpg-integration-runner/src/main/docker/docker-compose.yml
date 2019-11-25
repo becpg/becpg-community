@@ -38,7 +38,7 @@ services:
       environment:
           JAVA_OPTS: " -Xms256m -Xmx256m"
       ports:
-          - 8092:8090
+          - 8090:8090
 #  tika:
 #      image: alfresco/alfresco-tika:latest
 #      environment:

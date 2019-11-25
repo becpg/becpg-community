@@ -26,17 +26,17 @@ RUN mkdir -p /usr/local/tomcat/data && \
 	mkdir -p /usr/local/tomcat/shared/lib && \
     mkdir -p /usr/local/tomcat/shared/classes/alfresco/extension/mimetypes \
              /usr/local/tomcat/shared/classes/alfresco/extension/transform/renditions \
-             /usr/local/tomcat/shared/classes/alfresco/extension/transform/pipelines	
+             /usr/local/tomcat/shared/classes/alfresco/extension/transform/pipelines 
 	
 
 
-#RUN set -x \
-#     && apt-get update \
-#      && apt-get install -y --no-install-recommends \
-#                  imagemagick \
-#                 ghostscript \
-#      && apt-get clean \
-#      && rm -rf /var/lib/apt/lists/*
+RUN set -x \
+     && apt-get update \
+      && apt-get install -y --no-install-recommends \
+                  imagemagick \
+                 ghostscript \
+      && apt-get clean \
+      && rm -rf /var/lib/apt/lists/*
       
       
       
@@ -48,7 +48,7 @@ RUN set -x && \
     curl --silent --location \  
        ${NEXUS}/org/alfresco/alfresco-content-services-community-distribution/${ALF_VERSION}/alfresco-content-services-community-distribution-${ALF_VERSION}.zip \
        -o /root/alfresco-content-services-community-distribution.zip && \
-       cd /root && unzip /root/alfresco-content-services-community-distribution.zip && cd /usr/local/tomcat/ \
+       cd /root && unzip /root/alfresco-content-services-community-distribution.zip && cd /usr/local/tomcat/ && \
        tar xvfz /root/alfresco-content-services-community-distribution-${ALF_VERSION}/alfresco-pdf-renderer/alfresco-pdf-renderer-1.1-linux.tgz -C /opt/tools/ && \
        unzip -q /root/alfresco-content-services-community-distribution-${ALF_VERSION}/web-server/webapps/alfresco.war -d webapps/alfresco && \
        unzip -q /root/alfresco-content-services-community-distribution-${ALF_VERSION}/web-server/webapps/share.war -d webapps/share && \
