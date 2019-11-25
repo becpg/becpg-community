@@ -38,7 +38,6 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.cmr.rule.RuleService;
 import org.alfresco.service.cmr.rule.RuleType;
-import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.AuthenticationService;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.version.Version;
@@ -59,7 +58,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.BeCPGPermissions;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.activity.EntityActivityService;
 import fr.becpg.repo.cache.BeCPGCacheService;
@@ -696,23 +694,25 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 		// Look for primary parent
 		NodeRef tmp;
-
-		do {
-			tmp = associationService.getTargetAssoc(primaryParentNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY);
-			if (tmp != null) {
-				primaryParentNodeRef = tmp;
-			}
-		} while (tmp != null);
-
 		List<NodeRef> ret = new LinkedList<>();
-		ret.add(primaryParentNodeRef);
-		ret.addAll(getAllChildVersionBranches(primaryParentNodeRef));
-
-		Collections.sort(ret, (o1, o2) -> {
-			Date d1 = (Date) nodeService.getProperty(o1, ContentModel.PROP_CREATED);
-			Date d2 = (Date) nodeService.getProperty(o2, ContentModel.PROP_CREATED);
-			return (d1 == d2) ? 0 : d2 == null ? -1 : d2.compareTo(d1);
-		});
+		if(primaryParentNodeRef!=null) {
+			do {
+				tmp = associationService.getTargetAssoc(primaryParentNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY);
+				if (tmp != null) {
+					primaryParentNodeRef = tmp;
+				}
+			} while (tmp != null);
+	
+			
+			ret.add(primaryParentNodeRef);
+			ret.addAll(getAllChildVersionBranches(primaryParentNodeRef));
+	
+			Collections.sort(ret, (o1, o2) -> {
+				Date d1 = (Date) nodeService.getProperty(o1, ContentModel.PROP_CREATED);
+				Date d2 = (Date) nodeService.getProperty(o2, ContentModel.PROP_CREATED);
+				return (d1 == d2) ? 0 : d2 == null ? -1 : d2.compareTo(d1);
+			});
+		}
 
 		return ret;
 	}
@@ -888,9 +888,6 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		if (branchToNodeRef == null) {
 			branchToNodeRef = associationService.getTargetAssoc(branchNodeRef, BeCPGModel.ASSOC_AUTO_MERGE_TO);
 		}
-
-		
-		if (permissionService.hasPermission(branchToNodeRef, BeCPGPermissions.MERGE_ENTITY) == AccessStatus.ALLOWED) {
 		
 			if (branchToNodeRef != null) {
 
@@ -954,7 +951,6 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 					}
 				}
 			}
-		}
 		return null;
 	}
 
