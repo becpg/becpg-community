@@ -81,6 +81,7 @@
 {
    background-repeat: no-repeat;
    padding: 1px 0 1px 18px;
+   font-size: 13px;
 }
 
 .activities .detail .blog
@@ -108,6 +109,7 @@
    background-image: url(../images/filetypes/generic-file-16.png);
 }
 
+//beCPG
 .activities .detail .entity
 {
    background-image: url(../images/filetypes/generic-entity-16.png);
