@@ -126,6 +126,10 @@ public class NutrientFormulationHelper {
 			return "CN";
 		} else if (locale.getCountry().equals("AU") || locale.getCountry().equals("NZ")) {
 			return "AU";
+		} else if (locale.getCountry().equals("MX")) {
+			return "MX";
+		} else if (locale.getCountry().equals("ID")) {
+			return "ID";
 		}
 		return "EU";
 	}
