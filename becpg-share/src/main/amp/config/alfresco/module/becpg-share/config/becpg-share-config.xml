@@ -230,6 +230,7 @@
 				<aspect name="bcpg:entityTplAspect" />
 				<aspect name="bcpg:entityBranchAspect" />
 				<aspect name="bcpg:docLinkedEntitiesAspect" />
+				<aspect name="bcpg:autoMergeAspect" />
 			</visible>
 
 			<!-- Aspects that a user can add. Same as "visible" if left empty -->
