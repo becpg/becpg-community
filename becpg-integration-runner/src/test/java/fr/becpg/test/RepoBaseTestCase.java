@@ -23,12 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathFactory;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.dictionary.DictionaryDAO;
 import org.alfresco.repo.domain.qname.QNameDAO;
@@ -52,12 +46,6 @@ import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.HttpClients;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -69,7 +57,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.TestExecutionListeners;
 import org.subethamail.wiser.Wiser;
-import org.w3c.dom.Document;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
@@ -333,7 +320,7 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 					.andPropEquals(BeCPGModel.PROP_IS_MANUAL_LISTITEM, "true").inParent(getTestFolderNodeRef()).ftsLanguage().singleValue() == null)
 					&& (j < 30)) {
 
-				logger.info("Wait for solr (2s) : serverIdx " + getLastSolrIndex() + " retry *" + j);
+				logger.info("Wait for solr (2s) : serverIdx retry *" + j);
 				Thread.sleep(2000);
 				j++;
 			}
@@ -391,41 +378,6 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 	// }, false, true);
 	// }
 
-	private Long getLastSolrIndex() throws Exception {
-
-		HttpClient httpclient = HttpClients.createDefault();
-		HttpGet httpget = new HttpGet("http://solr:8983/solr/admin/cores?action=SUMMARY&wt=xml&core=alfresco");
-		HttpResponse httpResponse = httpclient.execute(httpget);
-		assertEquals("HTTP Response Status is not OK(200)", HttpStatus.SC_OK, httpResponse.getStatusLine().getStatusCode());
-		HttpEntity entity = httpResponse.getEntity();
-		assertNotNull("Response from Web Script is null", entity);
-
-		DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
-		domFactory.setNamespaceAware(true); // never forget this!
-		DocumentBuilder builder = domFactory.newDocumentBuilder();
-		Document doc = builder.parse(entity.getContent());
-
-		XPathFactory factory = XPathFactory.newInstance();
-		XPath xpath = factory.newXPath();
-
-		// logger.info("Approx transaction indexing time remaining : "+ (String)
-		// xpath.evaluate("//str[@name='Approx transaction indexing time
-		// remaining']", doc, XPathConstants.STRING));
-		// logger.info("Approx change set indexing time remaining : "+ (String)
-		// xpath.evaluate("//str[@name='Approx change set indexing time
-		// remaining']", doc, XPathConstants.STRING));
-		// logger.info("Alfresco Transactions in Index : "+ (String)
-		// xpath.evaluate("//long[@name='Alfresco Transactions in Index']", doc,
-		// XPathConstants.STRING));
-		//
-		String strIndex = (String) xpath.evaluate("//long[@name='Id for last TX on server']", doc, XPathConstants.STRING);
-		if ((strIndex == null) || strIndex.isEmpty()) {
-			return getLastSolrIndex();
-		}
-		// <long name="Id for last TX on server">1413</long><long
-		// name="Id for last TX in index">1413</long>
-		return Long.valueOf(strIndex);
-	}
 
 	protected boolean shouldInit() {
 		return nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS,
