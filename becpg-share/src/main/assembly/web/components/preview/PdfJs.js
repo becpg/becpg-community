@@ -131,8 +131,9 @@
           * @property defaultScale
           * @type String
           * @default "auto"
+          * beCPG
           */
-         defaultScale : "auto",
+         defaultScale : "1.25",
 
          /**
           * Multipler for zooming in/out
