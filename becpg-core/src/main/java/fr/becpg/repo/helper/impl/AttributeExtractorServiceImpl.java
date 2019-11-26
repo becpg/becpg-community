@@ -48,7 +48,6 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ISO8601DateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.ibatis.javassist.expr.Instanceof;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
@@ -514,7 +513,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	 * "FX1"]_bcpg:allergenListInVoluntary
 	 * bcpg:allergenList[bcpg:allergenListAllergen#bcpg:allergenCode ==
 	 * "FX1"]|bcpg:allergenListInVoluntary
-	 * pack:packMaterialList[pack:pmlMaterial.contains("Autres matériaux")]_pack:pmlWeight
+	 * pack:packMaterialList[pack:pmlMaterial.startsWith("Autres matériaux")]_pack:pmlWeight
 	 *
 	 * -> bcpg_compoList[bcpg_compoListProduct|bcpg_erpCode=="PF1"]|
 	 * bcpg_compoListQty
@@ -564,11 +563,11 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 							fieldQname = QName.createQName(maEqual.group(1), namespaceService);
 							dataListFilter = new AttributeExtractorFilter(maEqual.group(3).replaceAll("#", "|").trim(), maEqual.group(4).trim());
 						} else {
-							Matcher maContains = Pattern.compile("(.*)(\\[(.*)\\.contains\\(\"(.*)\"\\)\\])").matcher(dlField);
-							if (maContains.matches()) {
-								fieldQname = QName.createQName(maContains.group(1), namespaceService);
+							Matcher maStartsWith = Pattern.compile("(.*)(\\[(.*)\\.startsWith\\(\"(.*)\"\\)\\])").matcher(dlField);
+							if (maStartsWith.matches()) {
+								fieldQname = QName.createQName(maStartsWith.group(1), namespaceService);
 
-								dataListFilter = new AttributeExtractorFilter(maContains.group(3).replaceAll("#", "|").trim(), maContains.group(4).trim());
+								dataListFilter = new AttributeExtractorFilter(maStartsWith.group(3).replaceAll("#", "|").trim(), maStartsWith.group(4).trim());
 							} else {
 								logger.error("Cannot extract datalist filter: " + dlField);
 							}
@@ -1049,7 +1048,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 					}
 				}
 
-				if (!value.contains(compValue.toLowerCase()) && !displayValue.contains(compValue)) {
+				if (!value.startsWith(compValue.toLowerCase()) && !displayValue.startsWith(compValue)) {
 					return false;
 				}
 			}
