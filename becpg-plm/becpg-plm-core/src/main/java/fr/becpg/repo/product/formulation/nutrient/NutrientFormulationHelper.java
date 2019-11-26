@@ -55,7 +55,6 @@ public class NutrientFormulationHelper {
 		regulations.put("CN", new ChineseNutrientRegulation("beCPG/databases/nuts/ChineseNutrientRegulation.csv"));
 		regulations.put("AU", new AustralianNutrientRegulation("beCPG/databases/nuts/AUNutrientRegulation.csv"));
 		
-		
 		regulations.put("ID", new IndonesianNutrientRegulation("beCPG/databases/nuts/IndonesianNutrientRegulation.csv"));
 		regulations.put("MX", new MexicanNutrientRegulation("beCPG/databases/nuts/MexicanNutrientRegulation.csv"));
 	}
@@ -276,7 +275,6 @@ public class NutrientFormulationHelper {
 	// }
 	//
 	public static void extractRoundedValue(ProductData formulatedProduct, String nutCode, NutListDataItem n) {
-
 		JSONObject jsonRound = new JSONObject();
 
 		try {
@@ -293,11 +291,11 @@ public class NutrientFormulationHelper {
 			JSONObject gdaPerContainer = new JSONObject();
 
 			for (String key : getAvailableRegulations()) {
+				
 				String nutUnit = n.getUnit();
 
 				NutrientRegulation regulation = getRegulation(key);
 				NutrientDefinition def = regulation.getNutrientDefinition(nutCode);
-
 				value.put(key, regulation.round(n.getValue(), nutCode, nutUnit));
 				mini.put(key, regulation.round(n.getMini(), nutCode, nutUnit));
 				maxi.put(key, regulation.round(n.getMaxi(), nutCode, nutUnit));
@@ -374,7 +372,7 @@ public class NutrientFormulationHelper {
 		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("es_MX"))) {
 			ret.add("MX");
 		}
-		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("id_ID"))) {
+		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("in_ID"))) {
 			ret.add("ID");
 		}
 
