@@ -371,6 +371,12 @@ public class NutrientFormulationHelper {
 		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("en_AU"))) {
 			ret.add("AU");
 		}
+		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("es_MX"))) {
+			ret.add("MX");
+		}
+		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("id_ID"))) {
+			ret.add("ID");
+		}
 
 		ret.add("EU");
 		return ret;
