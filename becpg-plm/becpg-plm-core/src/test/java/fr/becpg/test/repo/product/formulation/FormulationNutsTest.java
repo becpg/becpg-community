@@ -42,6 +42,7 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.FormulationChain;
 import fr.becpg.repo.formulation.FormulationHandler;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
@@ -107,6 +108,8 @@ public class FormulationNutsTest extends AbstractFinishedProductTest {
 				
 				assertEquals(NutrientFormulationHelper.extractValuePerServing(nutListDataItem.getRoundedValue(), Locale.FRENCH).doubleValue(), (6d * 50d) / 100);
 				
+				MLTextHelper helper = new MLTextHelper();
+				helper.setSupportedLocales("fr,en_US,en,es_MX,in_ID");
 				NutrientFormulationHelper.extractRoundedValue(formulatedProduct, NutrientCode.Fat, nutListDataItem);
 				assertEquals(4d, NutrientFormulationHelper.extractGDAPerc(nutListDataItem.getRoundedValue(),"ID"));
 				assertEquals(4d, NutrientFormulationHelper.extractGDAPerc(nutListDataItem.getRoundedValue(),"MX"));
