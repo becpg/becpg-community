@@ -89,5 +89,5 @@
     <bean id="beCPGPermissionBootstrap" parent="permissionModelBootstrap">
       <property name="model" value="alfresco/module/${artifactId}/model/becpgPermissionModel.xml"/>
     </bean>
- 
+  
 </beans>

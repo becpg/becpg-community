@@ -4,7 +4,6 @@
 package fr.becpg.test.repo.entity.datalist;
 
 import java.util.Collections;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 

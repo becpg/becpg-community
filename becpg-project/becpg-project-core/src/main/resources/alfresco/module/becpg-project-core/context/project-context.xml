@@ -187,7 +187,7 @@
 
     <!-- Project formulation -->
         
-    <bean id="projectFormulationJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+    <bean id="projectFormulationJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
         <property name="jobClass">
             <value>fr.becpg.repo.project.impl.ProjectFormulationJob</value>
         </property>
@@ -203,12 +203,9 @@
         </property>
     </bean>
     
-    <bean id="projectFormulationTrigger" class="org.alfresco.util.CronTriggerBean"  >
+    <bean id="projectFormulationTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"  >
         <property name="jobDetail">
             <ref bean="projectFormulationJob"/>
-        </property>
-        <property name="scheduler">
-            <ref bean="schedulerFactory"/>
         </property>
         <property name="cronExpression">
             <value>${project.formulation.cronExpression}</value>

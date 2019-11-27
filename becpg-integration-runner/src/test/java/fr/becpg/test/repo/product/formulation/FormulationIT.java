@@ -17,12 +17,10 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.MPMModel;
 import fr.becpg.model.PLMModel;
-import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
@@ -50,8 +48,6 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 	protected static final Log logger = LogFactory.getLog(FormulationIT.class);
 
-	@Autowired
-	private AssociationService associationService;
 
 	/*
 	 * (non-Javadoc)

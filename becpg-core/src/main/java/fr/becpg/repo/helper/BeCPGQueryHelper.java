@@ -12,6 +12,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.Token;
 import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.fr.FrenchAnalyzer;
 
 import fr.becpg.repo.search.lucene.analysis.AbstractBeCPGAnalyzer;
 import fr.becpg.repo.search.lucene.analysis.EnglishBeCPGAnalyser;
@@ -44,6 +45,7 @@ public class BeCPGQueryHelper {
 				logger.debug("Analyzing " + entityName + " with query " + query + " using analyzer : " + analyzer.getClass().getName());
 			}
 
+			
 			TokenStream querySource = null;
 			Reader queryReader;
 			TokenStream productNameSource = null;
@@ -52,8 +54,8 @@ public class BeCPGQueryHelper {
 
 				queryReader = new StringReader(query);
 				productNameReader = new StringReader(entityName);
-				querySource = analyzer.tokenStream(null, queryReader);
-				productNameSource = analyzer.tokenStream(null, productNameReader);
+				querySource = analyzer.tokenStream("isQueryMatch", queryReader);
+				productNameSource = analyzer.tokenStream("isQueryMatch", productNameReader);
 
 				Token reusableToken = new Token();
 				boolean match = true;

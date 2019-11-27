@@ -220,7 +220,7 @@ public class CompoListValuePlugin extends EntityListValuePlugin {
 			for (Map.Entry<NodeRef, MultiLevelListData> kv : mlld.getTree().entrySet()) {
 
 				NodeRef productNodeRef = kv.getValue().getEntityNodeRef();
-				if (productNodeRef != null  && AccessStatus.ALLOWED.equals(permissionService.hasReadPermission(productNodeRef)) ) {
+				if (productNodeRef != null && AccessStatus.ALLOWED.equals(permissionService.hasReadPermission(productNodeRef))) {
 					logger.debug("productNodeRef: " + productNodeRef);
 
 					// avoid cycle: when editing an item, cannot select itself
@@ -278,21 +278,23 @@ public class CompoListValuePlugin extends EntityListValuePlugin {
 
 	private String extractHierarchyFullName(NodeRef hierarchy) {
 		String res = (String) nodeService.getProperty(hierarchy, ContentModel.PROP_NAME);
-			NodeRef parent = (NodeRef) nodeService.getProperty(hierarchy, BeCPGModel.PROP_PARENT_LEVEL);
-			if (parent != null && AccessStatus.ALLOWED.equals(permissionService.hasReadPermission(parent))) {
-				res = extractHierarchyFullName(parent) + " > " + res;
-			}
-			return res;
-		
+		NodeRef parent = (NodeRef) nodeService.getProperty(hierarchy, BeCPGModel.PROP_PARENT_LEVEL);
+		if (parent != null && AccessStatus.ALLOWED.equals(permissionService.hasReadPermission(parent))) {
+			res = extractHierarchyFullName(parent) + " > " + res;
+		}
+		return res;
+
 	}
 
 	private int getDepthUserPref(DataListFilter dataListFilter) {
 		String username = AuthenticationUtil.getFullyAuthenticatedUser();
+		Integer depth = null;
+		if (!AuthenticationUtil.SYSTEM_USER_NAME.equals(username)) {
+			Map<String, Serializable> prefs = preferenceService.getPreferences(username);
 
-		Map<String, Serializable> prefs = preferenceService.getPreferences(username);
+			depth = (Integer) prefs.get(MultiLevelExtractor.PREF_DEPTH_PREFIX + dataListFilter.getDataType().getLocalName());
 
-		Integer depth = (Integer) prefs.get(MultiLevelExtractor.PREF_DEPTH_PREFIX + dataListFilter.getDataType().getLocalName());
-
+		}
 		return depth != null ? depth : 0;
 	}
 

@@ -18,6 +18,41 @@ services:
       - ../../becpg-plm/becpg-plm-core/target/classes:/usr/local/tomcat/hotswap-agent/becpg-plm-core/target/classes
       - ../../becpg-project/becpg-project-core/target/classes:/usr/local/tomcat/hotswap-agent/becpg-project-core/target/classes
       - ../../becpg-integration-runner/target/test-classes:/usr/local/tomcat/hotswap-agent/becpg-integration-runner/target/test-classes
+      
+#  alfresco-pdf-renderer:
+#      image: alfresco/alfresco-pdf-renderer:latest
+#      environment:
+#          JAVA_OPTS: " -Xms256m -Xmx256m"
+#      ports:
+#          - 8090:8090
+
+#  imagemagick:
+#      image: alfresco/alfresco-imagemagick:latest
+#      environment:
+#          JAVA_OPTS: " -Xms256m -Xmx256m"
+#      ports:
+#          - 8091:8090
+
+  alfresco-libreoffice:
+      image: alfresco/alfresco-libreoffice:latest
+      environment:
+          JAVA_OPTS: " -Xms256m -Xmx256m"
+      ports:
+          - 8090:8090
+#  tika:
+#      image: alfresco/alfresco-tika:latest
+#      environment:
+#          JAVA_OPTS: " -Xms256m -Xmx256m"
+#      ports:
+#          - 8093:8090
+
+#  transform-misc:
+#      image: alfresco/alfresco-transform-misc:latest
+#      environment:
+#          JAVA_OPTS: " -Xms256m -Xmx256m"
+#      ports:
+#          - 8094:8090  
+            
   becpg-db:
     image: ${docker.becpg.url}/becpg-db:${docker.becpg.tag}
     environment:

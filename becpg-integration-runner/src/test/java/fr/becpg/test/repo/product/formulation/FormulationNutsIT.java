@@ -24,8 +24,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
@@ -41,7 +39,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.FormulationChain;
 import fr.becpg.repo.formulation.FormulationHandler;
-import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
@@ -51,6 +49,7 @@ import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.formulation.NutsCalculatingFormulationHandler;
+import fr.becpg.repo.product.formulation.nutrient.NutrientCode;
 import fr.becpg.repo.product.formulation.nutrient.NutrientFormulationHelper;
 import fr.becpg.repo.product.requirement.NutsRequirementScanner;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
@@ -58,9 +57,6 @@ import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 public class FormulationNutsIT extends AbstractFinishedProductTest {
 
 	protected static final Log logger = LogFactory.getLog(FormulationNutsIT.class);
-
-	@Autowired
-	private AssociationService associationService;
 
 	@Autowired
 	@Qualifier("productFormulationChain")

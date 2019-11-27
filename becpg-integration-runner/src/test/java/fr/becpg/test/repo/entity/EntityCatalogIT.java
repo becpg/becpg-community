@@ -6,8 +6,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;

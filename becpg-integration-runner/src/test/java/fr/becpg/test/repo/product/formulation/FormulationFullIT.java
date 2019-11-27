@@ -23,17 +23,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
-import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
@@ -49,16 +46,12 @@ import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
-import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.product.formulation.NutsCalculatingFormulationHandler;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
 public class FormulationFullIT extends AbstractFinishedProductTest {
 
 	protected static final Log logger = LogFactory.getLog(FormulationFullIT.class);
-
-	@Autowired
-	private AssociationService associationService;
 
 	@Override
 	public void setUp() throws Exception {
@@ -148,11 +141,11 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 			dynamicCharactListItems.add(new DynamicCharactListItem(" beCPG SUM++ ",
 					"@beCPG.sum(compoListView.compoList.?[parent == null],\"@beCPG.propValue(dataListItem.nodeRef,'bcpg:compoListQty')\")"));
 
-
-                        //Static fonction
-				dynamicCharactListItems.add(new DynamicCharactListItem("Autonum V1 ","T(fr.becpg.repo.helper.AutoNumHelper).getAutoNumValue(\"bcpg:finishedProduct\",\"bcpg:eanCode\")"));
-				dynamicCharactListItems.add(new DynamicCharactListItem("Autonum V2 ","T(fr.becpg.repo.helper.AutoNumHelper).getOrCreateCode(nodeRef,\"bcpg:eanCode\")"));
-
+			// Static fonction
+			dynamicCharactListItems.add(new DynamicCharactListItem("Autonum V1 ",
+					"T(fr.becpg.repo.helper.AutoNumHelper).getAutoNumValue(\"bcpg:finishedProduct\",\"bcpg:eanCode\")"));
+			dynamicCharactListItems.add(
+					new DynamicCharactListItem("Autonum V2 ", "T(fr.becpg.repo.helper.AutoNumHelper).getOrCreateCode(nodeRef,\"bcpg:eanCode\")"));
 
 			// Formulate twice
 			dynamicCharactListItems.add(new DynamicCharactListItem("Formulate twice", "reformulateCount=1"));
@@ -564,7 +557,7 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 		assertEquals(2, checks);
 
 	}
-	
+
 	@Test
 	public void testFormulationInML() throws Exception {
 
@@ -572,56 +565,54 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 
 		final NodeRef finishedProductNodeRef = createFullProductNodeRef("Produit fini 2");
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			public NodeRef execute() throws Throwable {
-				
-				nodeService.setProperty(finishedProductNodeRef, PLMModel.PROP_PRODUCT_NET_VOLUME, 2.5d);
-				nodeService.setProperty(finishedProductNodeRef, PLMModel.PROP_PRODUCT_SERVING_SIZE, 62.5);//62,5mL
-				nodeService.setProperty(finishedProductNodeRef, PLMModel.PROP_PRODUCT_SERVING_SIZE_UNIT, "mL");
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-				/*-- Formulate product --*/
-				logger.info("/*-- Formulate product --*/");
-				productService.formulate(finishedProductNodeRef);
+			nodeService.setProperty(finishedProductNodeRef, PLMModel.PROP_PRODUCT_NET_VOLUME, 2.5d);
+			nodeService.setProperty(finishedProductNodeRef, PLMModel.PROP_PRODUCT_SERVING_SIZE, 62.5);// 62,5mL
+			nodeService.setProperty(finishedProductNodeRef, PLMModel.PROP_PRODUCT_SERVING_SIZE_UNIT, "mL");
 
-				/*-- Verify formulation --*/
-				logger.info("/*-- Verify formulation --*/");
-				ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+			/*-- Formulate product --*/
+			logger.info("/*-- Formulate product --*/");
+			productService.formulate(finishedProductNodeRef);
 
-				// nuts
-				int checks = 0;
-				DecimalFormat df = new DecimalFormat("0.00");
-				assertNotNull("NutList is null", formulatedProduct.getNutList());
-				for (NutListDataItem nutListDataItem : formulatedProduct.getNutList()) {
-					String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + nutListDataItem.getValue() + " - unit: "
-							+ nutListDataItem.getUnit();
-					logger.info(trace);
-					if (nutListDataItem.getNut().equals(nut1)) {
-						assertNotSame("nut1.getValue() == 2.4, actual values: " + trace, df.format(2.4), df.format(nutListDataItem.getValue()));
-						assertEquals("nut1.getValue() == 4 (Formula), actual values: ", df.format(4.0), df.format(nutListDataItem.getValue()));
-						assertEquals("nut1.getUnit() == kJ/100mL, actual values: " + trace, "kJ/100mL", nutListDataItem.getUnit());
-						assertEquals("must be group1", GROUP1, nutListDataItem.getGroup());
-						checks++;
-					}
-					if (nutListDataItem.getNut().equals(nut2)) {
-						assertEquals("nut2.getValue() == 4.8, actual values: ", df.format(4.8), df.format(nutListDataItem.getValue()));
-						assertEquals("nut2.getUnit() == kcal/100mL, actual values: " + trace, "kcal/100mL", nutListDataItem.getUnit());
-						assertEquals("must be group2", GROUP2, nutListDataItem.getGroup());
-						assertEquals(df.format(4.8 * 62.5 / 100), df.format(nutListDataItem.getValuePerServing()));
-						assertEquals(df.format(100 * nutListDataItem.getValuePerServing() / 2000d), df.format(nutListDataItem.getGdaPerc()));
-						checks++;
-					}
-					if (nutListDataItem.getNut().equals(nut3)) {
-						assertEquals("nut3.getValue() == 11.2, actual values: " + trace, df.format(11.2), df.format(nutListDataItem.getValue()));
-					
-						checks++;
-					}
-					assertEquals(NutsCalculatingFormulationHandler.NUT_FORMULATED, nutListDataItem.getMethod());
+			/*-- Verify formulation --*/
+			logger.info("/*-- Verify formulation --*/");
+			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+
+			// nuts
+			int checks = 0;
+			DecimalFormat df = new DecimalFormat("0.00");
+			assertNotNull("NutList is null", formulatedProduct.getNutList());
+			for (NutListDataItem nutListDataItem : formulatedProduct.getNutList()) {
+				String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), BeCPGModel.PROP_CHARACT_NAME) + " - value: "
+						+ nutListDataItem.getValue() + " - unit: " + nutListDataItem.getUnit();
+				logger.info(trace);
+				if (nutListDataItem.getNut().equals(nut1)) {
+					assertNotSame("nut1.getValue() == 2.4, actual values: " + trace, df.format(2.4), df.format(nutListDataItem.getValue()));
+					assertEquals("nut1.getValue() == 4 (Formula), actual values: ", df.format(4.0), df.format(nutListDataItem.getValue()));
+					assertEquals("nut1.getUnit() == kJ/100mL, actual values: " + trace, "kJ/100mL", nutListDataItem.getUnit());
+					assertEquals("must be group1", GROUP1, nutListDataItem.getGroup());
+					checks++;
 				}
-				assertEquals(3, checks);
+				if (nutListDataItem.getNut().equals(nut2)) {
+					assertEquals("nut2.getValue() == 4.8, actual values: ", df.format(4.8), df.format(nutListDataItem.getValue()));
+					assertEquals("nut2.getUnit() == kcal/100mL, actual values: " + trace, "kcal/100mL", nutListDataItem.getUnit());
+					assertEquals("must be group2", GROUP2, nutListDataItem.getGroup());
+					assertEquals(df.format((4.8 * 62.5) / 100), df.format(nutListDataItem.getValuePerServing()));
+					assertEquals(df.format((100 * nutListDataItem.getValuePerServing()) / 2000d), df.format(nutListDataItem.getGdaPerc()));
+					checks++;
+				}
+				if (nutListDataItem.getNut().equals(nut3)) {
+					assertEquals("nut3.getValue() == 11.2, actual values: " + trace, df.format(11.2), df.format(nutListDataItem.getValue()));
 
-				return null;
-
+					checks++;
+				}
+				assertEquals(NutsCalculatingFormulationHandler.NUT_FORMULATED, nutListDataItem.getMethod());
 			}
+			assertEquals(3, checks);
+
+			return null;
+
 		}, false, true);
 
 	}

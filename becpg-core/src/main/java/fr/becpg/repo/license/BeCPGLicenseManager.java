@@ -7,7 +7,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.ws.commons.util.Base64;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -132,7 +131,7 @@ public class BeCPGLicenseManager {
 		String key = lisence.licenseName + lisence.allowedNamedRead + lisence.allowedNamedWrite + lisence.allowedConcurrentRead
 				+ lisence.allowedConcurrentWrite + lisence.allowedConcurrentSupplier;
 
-		return Base64.encode(key.getBytes());
+		return java.util.Base64.getEncoder().encodeToString(key.getBytes());
 	}
 
 	private JSONObject getLicenseFile() {

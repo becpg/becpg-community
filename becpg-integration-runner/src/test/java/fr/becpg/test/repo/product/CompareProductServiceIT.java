@@ -4,7 +4,6 @@
 package fr.becpg.test.repo.product;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -202,7 +201,6 @@ public class CompareProductServiceIT extends AbstractCompareProductTest {
 	@Test
 	public void testStructComparison() {
 
-		Date startTime = new Date();
 		String previousNameFormat = nameExtractor.getProductNameFormat();
 		try {
 
@@ -311,11 +309,11 @@ public class CompareProductServiceIT extends AbstractCompareProductTest {
 
 				assertTrue(checkStructCompareRow(structCompareResult, "{http://www.bcpg.fr/model/becpg/1.0}compoList", 2, StructCompareOperator.Added,
 						"", "Raw material 4", "{}",
-						"{{http://www.alfresco.org/model/system/1.0}locale=fr_FR, {http://www.bcpg.fr/model/becpg/1.0}compoListQty=3, {http://www.bcpg.fr/model/becpg/1.0}compoListUnit=kg, {http://www.bcpg.fr/model/becpg/1.0}compoListQtySubFormula=0, {http://www.bcpg.fr/model/becpg/1.0}compoListDeclType=Détailler, {http://www.bcpg.fr/model/becpg/1.0}compoListLossPerc=0, {http://www.bcpg.fr/model/becpg/1.0}compoListProduct=Raw material 4, {http://www.bcpg.fr/model/becpg/1.0}depthLevel=2}"));
-
+						"{{http://www.alfresco.org/model/system/1.0}locale=fr, {http://www.bcpg.fr/model/becpg/1.0}compoListQty=3, {http://www.bcpg.fr/model/becpg/1.0}compoListUnit=kg, {http://www.bcpg.fr/model/becpg/1.0}compoListQtySubFormula=0, {http://www.bcpg.fr/model/becpg/1.0}compoListDeclType=Détailler, {http://www.bcpg.fr/model/becpg/1.0}compoListLossPerc=0, {http://www.bcpg.fr/model/becpg/1.0}compoListProduct=Raw material 4, {http://www.bcpg.fr/model/becpg/1.0}depthLevel=2}"));
+  
 				assertTrue(checkStructCompareRow(structCompareResult, "{http://www.bcpg.fr/model/becpg/1.0}compoList", 1, StructCompareOperator.Added,
 						"", "SF 2", "{}",
-						"{{http://www.alfresco.org/model/system/1.0}locale=fr_FR, {http://www.bcpg.fr/model/becpg/1.0}compoListQty=3, {http://www.bcpg.fr/model/becpg/1.0}compoListUnit=kg, {http://www.bcpg.fr/model/becpg/1.0}compoListQtySubFormula=0, {http://www.bcpg.fr/model/becpg/1.0}compoListDeclType=Détailler, {http://www.bcpg.fr/model/becpg/1.0}compoListLossPerc=0, {http://www.bcpg.fr/model/becpg/1.0}compoListProduct=SF 2, {http://www.bcpg.fr/model/becpg/1.0}depthLevel=1}"));
+						"{{http://www.alfresco.org/model/system/1.0}locale=fr, {http://www.bcpg.fr/model/becpg/1.0}compoListQty=3, {http://www.bcpg.fr/model/becpg/1.0}compoListUnit=kg, {http://www.bcpg.fr/model/becpg/1.0}compoListQtySubFormula=0, {http://www.bcpg.fr/model/becpg/1.0}compoListDeclType=Détailler, {http://www.bcpg.fr/model/becpg/1.0}compoListLossPerc=0, {http://www.bcpg.fr/model/becpg/1.0}compoListProduct=SF 2, {http://www.bcpg.fr/model/becpg/1.0}depthLevel=1}"));
 				return null;
 
 			}, false, true);

@@ -19,9 +19,8 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.util.TempFileProvider;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.pdfbox.exceptions.COSVisitorException;
+import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.util.PDFMergerUtility;
 
 public class PDFScriptHelper extends BaseScopableProcessorExtension {
 	
@@ -103,8 +102,6 @@ public class PDFScriptHelper extends BaseScopableProcessorExtension {
 					throw new AlfrescoRuntimeException("Failed to process file.", e);
 				}
 			}
-		} catch (COSVisitorException e) {
-			throw new AlfrescoRuntimeException(e.getMessage(), e);
 		} catch (IOException e) {
 			throw new AlfrescoRuntimeException(e.getMessage(), e);
 		}

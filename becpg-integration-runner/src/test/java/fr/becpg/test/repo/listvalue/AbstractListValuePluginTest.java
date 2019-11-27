@@ -34,6 +34,9 @@ public abstract class AbstractListValuePluginTest extends PLMBaseTestCase {
 
 	protected NodeRef createFinishProductNodeRef() {
 		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			
+			ruleService.disableRules();
+			
 			authenticationComponent.setSystemUserAsCurrentUser();
 
 			BeCPGPLMTestHelper.createUsers();

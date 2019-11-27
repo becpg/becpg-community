@@ -5,8 +5,6 @@ ENV NEXUS=https://artifacts.alfresco.com/nexus/content/groups/public
 ENV ALF_VERSION=${alfresco.platform.version}
 ENV VTI_VERSION=${alfresco.aos.version}
 ENV ALF_SHARE_VERSION=${alfresco.share.version}
-ENV MMT_VERSION=${alfresco.platform.version}
-ENV PDF_RENDERER_VERSION=1.0
 ENV MYSQL_CONNECTOR=${mysql.connector.version}
 ENV SUPPORT_TOOLS_VERSION=1.1.0.0-amp
 
@@ -26,51 +24,40 @@ RUN mkdir -p /usr/local/tomcat/data && \
 	mkdir -p /usr/local/tomcat/lib/classes && \
 	mkdir -p /opt/tools && \
 	mkdir -p /usr/local/tomcat/shared/lib && \
-	mkdir -p /usr/local/tomcat/shared/classes
+    mkdir -p /usr/local/tomcat/shared/classes/alfresco/extension/mimetypes \
+             /usr/local/tomcat/shared/classes/alfresco/extension/transform/renditions \
+             /usr/local/tomcat/shared/classes/alfresco/extension/transform/pipelines 
+	
 
 
 RUN set -x \
-      && apt-get update \
+     && apt-get update \
       && apt-get install -y --no-install-recommends \
                   imagemagick \
-                  ghostscript \
+                 ghostscript \
       && apt-get clean \
       && rm -rf /var/lib/apt/lists/*
+      
+      
       
 WORKDIR /usr/local/tomcat/
       
 
-## JAR - ALFRESCO MMT
-RUN set -x && \
-    curl --silent --location \
-      ${NEXUS}/org/alfresco/alfresco-mmt/${MMT_VERSION}/alfresco-mmt-${MMT_VERSION}.jar \
-      -o /root/alfresco-mmt.jar && \
-      mkdir /root/amp
       
-## Alfresco pdf renderer      
 RUN set -x && \
-    curl --silent --location \
-      ${NEXUS}/org/alfresco/alfresco-pdf-renderer/${PDF_RENDERER_VERSION}/alfresco-pdf-renderer-${PDF_RENDERER_VERSION}-linux.tgz \
-      -o /opt/tools/alfresco-pdf-renderer-${PDF_RENDERER_VERSION}-linux.tgz && \
-      tar xvfz /opt/tools/alfresco-pdf-renderer-${PDF_RENDERER_VERSION}-linux.tgz && \
-      mv alfresco-pdf-renderer /opt/tools/ && \
-      rm /opt/tools/alfresco-pdf-renderer-${PDF_RENDERER_VERSION}-linux.tgz
-
-## ALFRESCO.WAR
-RUN set -x && \
-    curl --silent --location \
-      ${NEXUS}/org/alfresco/alfresco-platform/${ALF_VERSION}/alfresco-platform-${ALF_VERSION}.war \
-      -o alfresco-platform-${ALF_VERSION}.war && \
-    unzip -q alfresco-platform-${ALF_VERSION}.war -d webapps/alfresco && \
-    rm alfresco-platform-${ALF_VERSION}.war
-
-## SHARE.WAR    
-RUN set -x && \
-    curl --silent --location \
-      ${NEXUS}/org/alfresco/share/${ALF_SHARE_VERSION}/share-${ALF_SHARE_VERSION}.war \
-      -o share-${ALF_SHARE_VERSION}.war && \
-    unzip -q share-${ALF_SHARE_VERSION}.war -d webapps/share && \
-    rm share-${ALF_SHARE_VERSION}.war
+    curl --silent --location \  
+       ${NEXUS}/org/alfresco/alfresco-content-services-community-distribution/${ALF_VERSION}/alfresco-content-services-community-distribution-${ALF_VERSION}.zip \
+       -o /root/alfresco-content-services-community-distribution.zip && \
+       cd /root && unzip /root/alfresco-content-services-community-distribution.zip && cd /usr/local/tomcat/ && \
+       tar xvfz /root/alfresco-content-services-community-distribution-${ALF_VERSION}/alfresco-pdf-renderer/alfresco-pdf-renderer-1.1-linux.tgz -C /opt/tools/ && \
+       unzip -q /root/alfresco-content-services-community-distribution-${ALF_VERSION}/web-server/webapps/alfresco.war -d webapps/alfresco && \
+       unzip -q /root/alfresco-content-services-community-distribution-${ALF_VERSION}/web-server/webapps/share.war -d webapps/share && \
+       unzip -q /root/alfresco-content-services-community-distribution-${ALF_VERSION}/web-server/webapps/_vti_bin.war -d webapps/_vti_bin && \
+       unzip -q /root/alfresco-content-services-community-distribution-${ALF_VERSION}/web-server/webapps/ROOT.war -d webapps/ROOT && \
+       mkdir /root/amp && cp /root/alfresco-content-services-community-distribution-${ALF_VERSION}/bin/alfresco-mmt.jar /root/ &&  \
+       java -jar /root/alfresco-mmt.jar install /root/alfresco-content-services-community-distribution-${ALF_VERSION}/amps/ webapps/alfresco -nobackup -directory && \
+       rm -rf /root/alfresco-content-services-community-distribution-${ALF_VERSION} && rm -rf /root/alfresco-content-services-community-distribution.zip
+      
     
 
 ## JDBC - MYSQL
@@ -79,14 +66,6 @@ RUN set -x && \
       http://central.maven.org/maven2/mysql/mysql-connector-java/${MYSQL_CONNECTOR}/mysql-connector-java-${MYSQL_CONNECTOR}.jar \
 	-o lib/mysql-connector-java-${MYSQL_CONNECTOR}.jar
 
-
-## AMP - ALFRESCO SHARE SERVICE
-RUN set -x && \
-    curl --silent --location \
-      ${NEXUS}/org/alfresco/alfresco-share-services/${ALF_SHARE_VERSION}/alfresco-share-services-${ALF_SHARE_VERSION}.amp \
-      -o /root/amp/alfresco-share-services-${ALF_SHARE_VERSION}.amp && \
-    java -jar /root/alfresco-mmt.jar install /root/amp/ webapps/alfresco -nobackup -directory && \
-    rm /root/amp/alfresco-share-services-${ALF_SHARE_VERSION}.amp
 
 
 #workflow-reporting-repo 
@@ -148,16 +127,10 @@ RUN set -x && \
     rm /root/amp/support-tools-share-${SUPPORT_TOOLS_VERSION}.amp  
 
 #AOS    
-RUN set -x && \
-    curl --silent --location \
-      https://readonly:YLdy9W5v@www.becpg.fr/becpg-repo/releases/addons/_vti_bin-${VTI_VERSION}.war  \
-      -o _vti_bin-${VTI_VERSION}.war && \
-    unzip -q _vti_bin-${VTI_VERSION}.war -d webapps/_vti_bin && \
-    rm _vti_bin-${VTI_VERSION}.war
         	        
 RUN set -x && \
     curl --silent --location \
-      https://readonly:YLdy9W5v@www.becpg.fr/becpg-repo/releases/addons/alfresco-aos-core-${VTI_VERSION}.amp  \
+     ${NEXUS}/org/alfresco/aos-module/alfresco-aos-module/${VTI_VERSION}/alfresco-aos-module-${VTI_VERSION}.amp  \
       -o /root/amp/alfresco-aos-core-${VTI_VERSION}.amp && \
     java -jar /root/alfresco-mmt.jar install /root/amp/ webapps/alfresco -nobackup -directory && \
     rm /root/amp/alfresco-aos-core-${VTI_VERSION}.amp

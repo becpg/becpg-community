@@ -11,7 +11,8 @@ import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
@@ -66,20 +67,20 @@ public class ImportExcelFileReader implements ImportFileReader {
 				  attributeMapping = columns.get(i-1);	
 				}
 
-				int cellType = cell.getCellType();
+				CellType cellType = cell.getCellType();
 				
-				if(cellType == Cell.CELL_TYPE_FORMULA){
+				if(cellType == CellType.FORMULA){
 					cellType = cell.getCachedFormulaResultType();
 				}
 				
 				switch (cellType) {
-				case Cell.CELL_TYPE_BLANK:
+				case  BLANK:
 					line.add("");
 					break;
-				case Cell.CELL_TYPE_BOOLEAN:
+				case BOOLEAN:
 					line.add("" + cell.getBooleanCellValue());
 					break;
-				case Cell.CELL_TYPE_NUMERIC:	
+				case NUMERIC:	
 					if(attributeMapping!=null && attributeMapping.getAttribute() instanceof PropertyDefinition
 					&& (DataTypeDefinition.TEXT.equals(((PropertyDefinition)attributeMapping.getAttribute()).getDataType().getName())
 					|| DataTypeDefinition.MLTEXT.equals(((PropertyDefinition)attributeMapping.getAttribute()).getDataType().getName()))
@@ -92,7 +93,7 @@ public class ImportExcelFileReader implements ImportFileReader {
 						line.add(propertyFormats.formatDecimal(cell.getNumericCellValue()));
 					}
 					break;
-				case Cell.CELL_TYPE_STRING:
+				case STRING:
 					line.add(cell.getStringCellValue());
 					break;
 				default:
@@ -130,7 +131,7 @@ public class ImportExcelFileReader implements ImportFileReader {
 				XSSFColor green = new XSSFColor(new java.awt.Color(255, 0, 0));
 
 				style.setFillForegroundColor(green);
-				style.setFillPattern(CellStyle.SOLID_FOREGROUND);
+				style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
 				Cell cell = row.createCell(columnIdx + 1);
 				cell.setCellValue(errorMsg);
@@ -167,7 +168,7 @@ public class ImportExcelFileReader implements ImportFileReader {
 				XSSFColor green = new XSSFColor(new java.awt.Color(0, 255, 0));
 
 				style.setFillForegroundColor(green);
-				style.setFillPattern(CellStyle.SOLID_FOREGROUND);
+				style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
 				for (int i = 0; i < row.getLastCellNum(); i++) {
 					Cell cell = row.getCell(i);
