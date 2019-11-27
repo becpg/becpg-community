@@ -141,6 +141,10 @@
         <property name="authorityService">
             <ref bean="authorityService"/>
         </property>
+        
+         <property name="permissionService">
+            <ref bean="permissionService"/>
+        </property>
 	</bean>
 	
 </beans>
