@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -353,8 +352,6 @@ public class ExportSearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 	 */
 	@Test
 	public void testGetExportSearchTpls() {
-
-		Date startTime = new Date();
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 

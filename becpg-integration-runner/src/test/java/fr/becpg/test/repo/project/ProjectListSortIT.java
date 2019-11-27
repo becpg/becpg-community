@@ -17,7 +17,6 @@
  ******************************************************************************/
 package fr.becpg.test.repo.project;
 
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -54,7 +53,6 @@ public class ProjectListSortIT extends AbstractProjectTestCase {
 	@Test
 	public void testSort() throws Exception {
 
-		Date startTime = new Date();
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 

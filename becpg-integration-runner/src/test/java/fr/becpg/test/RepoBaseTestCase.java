@@ -228,18 +228,8 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 			}, false, true);
 
-			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-				List<org.alfresco.service.cmr.rule.Rule> rules = ruleService.getRules(repositoryHelper.getCompanyHome(), false);
-				for (org.alfresco.service.cmr.rule.Rule rule : rules) {
-					if ("classifyEntityRule".equals(rule.getTitle())) {
-						ruleService.disableRule(rule);
-					}
-				}
-				return null;
-			}, false, true);
-
 		}
-
+		
 		systemFolderNodeRef = transactionService.getRetryingTransactionHelper()
 				.doInTransaction(() -> repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM,
 						TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM)), false, true);
@@ -253,6 +243,22 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 	public void setUp() throws Exception {
 		super.setUp();
 
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			List<org.alfresco.service.cmr.rule.Rule> rules = ruleService.getRules(repositoryHelper.getCompanyHome(), false);
+			for (org.alfresco.service.cmr.rule.Rule rule : rules) {
+				if(!rule.getRuleDisabled()) {
+					logger.debug("Active rule: "+rule.getTitle());
+					if ("classifyEntityRule".equals(rule.getTitle())) {
+						logger.debug("Disable rule: "+rule.getTitle());
+						ruleService.disableRule(rule);
+					}
+				}
+			}
+			return null;
+		}, false, true);
+
+		
 		testFolders.put(getTestFolderName(), transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			// As system user
 			AuthenticationUtil.setFullyAuthenticatedUser(AuthenticationUtil.getAdminUserName());
