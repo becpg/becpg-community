@@ -37,6 +37,12 @@ public class AddSitePermissionPatch extends AbstractBeCPGPatch {
 	public void setAuthorityService(AuthorityService authorityService) {
 		this.authorityService = authorityService;
 	}
+	
+	
+
+	public void setPermissionService(PermissionService permissionService) {
+		this.permissionService = permissionService;
+	}
 
 	@Override
 	protected String applyInternal() throws Exception {
