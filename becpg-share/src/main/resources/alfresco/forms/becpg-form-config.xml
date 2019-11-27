@@ -296,7 +296,7 @@
 					<set id="branch" appearance="bordered-panel" label-id="becpg.forms.set.branch.label" />
 					<field id="bcpg:autoMergeDate" set="branch" />
 				    <field id="bcpg:autoMergeTo" set="branch" >
-				    	<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+				    	<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/branches</control-param>
 							<control-param name="urlParamsToPass">itemId</control-param>
 						</control>
