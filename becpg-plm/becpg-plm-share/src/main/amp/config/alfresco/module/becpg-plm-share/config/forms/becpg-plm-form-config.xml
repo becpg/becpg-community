@@ -8344,8 +8344,9 @@
     							menu: {},
     							entity_encoding : "raw",
     							forced_root_blocks : false,
-    							forced_root_block: false,
-      							force_p_newlines: false
+    							forced_root_block: '',
+      							force_p_newlines: false,
+      							force_br_newlines : true
 							</control-param>
 						</control>
 					</field>
@@ -8418,8 +8419,9 @@
     							menu: {},
     							entity_encoding : "raw",
     							forced_root_blocks : false,
-    							forced_root_block: false,
-      							force_p_newlines: false
+    							forced_root_block: '',
+      							force_p_newlines: false,
+      							force_br_newlines : true
 							</control-param>
 						</control>
 					</field>
