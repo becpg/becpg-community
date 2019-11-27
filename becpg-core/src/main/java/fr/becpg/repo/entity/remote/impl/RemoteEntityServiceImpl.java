@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Resource;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 
@@ -111,7 +110,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	@Autowired
 	private BehaviourFilter policyBehaviourFilter;
 
-	@Resource
+	@Autowired
 	private RemoteSchemaGenerator remoteSchemaGenerator;
 
 	@Autowired

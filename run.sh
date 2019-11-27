@@ -14,20 +14,16 @@ echo -e " \e[91mCopyright (C) 2010-2019 beCPG.\e[0m"
 
 export COMPOSE_FILE_PATH=${PWD}/becpg-integration-runner/target/docker-compose.yml
 
-if [ -z "${M2_HOME}" ]; then
-  export MVN_EXEC="mvn"
-else
-  export MVN_EXEC="${M2_HOME}/bin/mvn"
-fi
+export MVN_EXEC="mvn"
 
 start() {
-   	 	docker-compose -f $COMPOSE_FILE_PATH up -d
+   	 	docker-compose -f $COMPOSE_FILE_PATH up -d --remove-orphans
 }
 
 down() {
 	if [ -d becpg-enterprise ]; then
     cd becpg-enterprise
-   	 $MVN_EXEC clean validate $EXTRA_ENV -DskipTests=true  -Dbecpg.dockerbuild.name="enterprise-test"
+   	 $MVN_EXEC clean validate $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="enterprise-test"
     cd ..
    	else
    	 $MVN_EXEC clean validate $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="test"
@@ -56,7 +52,7 @@ deploy_fast(){
 	  docker cp becpg-enterprise/becpg-enterprise-share/src/main/resources/alfresco/. target_becpg_1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
 	fi
 	
-	#wget --delete-after --http-user=admin --http-password=becpg --header=Accept-Charset:iso-8859-1,utf-8 --header=Accept-Language:en-us --post-data reset=on http://localhost:8080/share/page/index
+	wget --delete-after --http-user=admin --http-password=becpg --header=Accept-Charset:iso-8859-1,utf-8 --header=Accept-Language:en-us --post-data reset=on http://localhost:8080/share/page/index
 
 }
 
@@ -79,7 +75,7 @@ install() {
 }
 
 tail() {
-    docker-compose -f $COMPOSE_FILE_PATH logs -f --tail=50
+    docker-compose -f $COMPOSE_FILE_PATH logs -f --tail=50 becpg
 }
 
 test() {

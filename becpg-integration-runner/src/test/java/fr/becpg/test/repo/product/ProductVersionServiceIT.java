@@ -36,12 +36,10 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.model.PLMWorkflowModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.model.SystemState;
-import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.entity.version.EntityVersion;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.hierarchy.HierarchyService;
-import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
@@ -67,8 +65,6 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 	@Autowired
 	private VersionService versionService;
 
-	@Autowired
-	private ProductService productService;
 
 	@Autowired
 	private NamespaceService namespaceService;
@@ -81,9 +77,6 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 
 	@Autowired
 	private EntityReportService entityReportService;
-
-	@Autowired
-	private EntityService entityService;
 
 	@Autowired
 	private HierarchyService hierarchyService;

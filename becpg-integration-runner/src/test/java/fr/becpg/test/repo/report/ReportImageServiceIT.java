@@ -63,7 +63,7 @@ public class ReportImageServiceIT extends RepoBaseTestCase {
 
 			return entityService.getImage(tempImgNodeRef);
 
-		}, false, true));
+		}, false, true),"Image should'nt be null");
 
 	}
 

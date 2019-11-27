@@ -26,11 +26,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
-import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
@@ -48,9 +46,6 @@ import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 public class FormulationGenericRawMaterialIT extends AbstractFinishedProductTest {
 
 	protected static final Log logger = LogFactory.getLog(FormulationGenericRawMaterialIT.class);
-
-	@Autowired
-	private AssociationService associationService;
 
 	@Override
 	public void setUp() throws Exception {

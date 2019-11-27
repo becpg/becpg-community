@@ -8338,7 +8338,15 @@
 					</field>
 					<field id="bcpg:illManualValue">
 						<control template="/org/alfresco/components/form/controls/richtext.ftl">
-							<control-param name="rows">10</control-param>
+							<control-param name="editorAppearance">custom</control-param>
+							<control-param name="editorParameters">
+								toolbar: "bold italic underline",
+    							menu: {},
+    							entity_encoding : "raw",
+    							forced_root_blocks : false,
+    							forced_root_block: false,
+      							force_p_newlines: false
+							</control-param>
 						</control>
 					</field>
 				</appearance>
@@ -8404,7 +8412,15 @@
 					</field>
 					<field id="bcpg:illManualValue">
 						<control template="/org/alfresco/components/form/controls/richtext.ftl">
-							<control-param name="rows">10</control-param>
+							<control-param name="editorAppearance">custom</control-param>
+							<control-param name="editorParameters">
+								toolbar: "bold italic underline",
+    							menu: {},
+    							entity_encoding : "raw",
+    							forced_root_blocks : false,
+    							forced_root_block: false,
+      							force_p_newlines: false
+							</control-param>
 						</control>
 					</field>
 				</appearance>

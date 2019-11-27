@@ -9,7 +9,7 @@
 	<parent>
 		<artifactId>becpg-parent</artifactId>
 		<groupId>fr.becpg</groupId>
-		<version>3.0.0</version>
+		<version>3.2.0</version>
 		<relativePath>../</relativePath>
 	</parent>
 
@@ -58,7 +58,6 @@
 			<scope>test</scope>
 		</dependency>
 		
-		
 		<!-- beCPG AMPs -->
 		<dependency>
 			<groupId>fr.becpg</groupId>
@@ -73,6 +72,12 @@
 			<type>amp</type>
 			<version>${project.version}</version>
 			<scope>runtime</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.ws.commons.util</groupId>
+					<artifactId>ws-commons-util</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>fr.becpg</groupId>
@@ -87,6 +92,12 @@
 			<type>amp</type>
 			<version>${project.version}</version>
 			<scope>runtime</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.ws.commons.util</groupId>
+					<artifactId>ws-commons-util</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>fr.becpg</groupId>
@@ -101,6 +112,12 @@
 			<type>amp</type>
 			<version>${project.version}</version>
 			<scope>runtime</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.ws.commons.util</groupId>
+					<artifactId>ws-commons-util</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>fr.becpg</groupId>
@@ -115,7 +132,14 @@
 			<type>amp</type>
 			<version>${project.version}</version>
 			<scope>runtime</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.ws.commons.util</groupId>
+					<artifactId>ws-commons-util</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
+		
 	</dependencies>
 	<build>
 		<testResources>

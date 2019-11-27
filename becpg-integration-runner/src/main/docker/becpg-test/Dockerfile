@@ -1,4 +1,4 @@
-FROM ${docker.becpg.url}/becpg-base:${project.version}
+FROM ${docker.becpg.url}/becpg-base:${docker.becpg.tag}
 MAINTAINER beCPG
 
 RUN curl -sL https://deb.nodesource.com/setup_9.x | bash - && apt-get install -y nodejs  && curl -L https://www.npmjs.com/install.sh | sh  && npm install -g less      

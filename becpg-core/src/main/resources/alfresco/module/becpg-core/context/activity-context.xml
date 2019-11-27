@@ -39,7 +39,7 @@
 	
 	<!-- Job  -->
 	
-	  <bean id="entityActivityJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+	  <bean id="entityActivityJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
         <property name="jobClass">
             <value>fr.becpg.repo.activity.EntityActivityJob</value>
         </property>
@@ -55,12 +55,11 @@
         </property>
     </bean>
     
-    <bean id="entityActivityJobTrigger" class="org.alfresco.util.CronTriggerBean"  >
+    
+    
+    <bean id="entityActivityJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"  >
         <property name="jobDetail">
             <ref bean="entityActivityJob"/>
-        </property>
-        <property name="scheduler">
-            <ref bean="schedulerFactory"/>
         </property>
         <property name="cronExpression">
             <value>${beCPG.activity.cleaner.cronExpression}</value>

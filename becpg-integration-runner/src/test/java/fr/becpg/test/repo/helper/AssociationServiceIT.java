@@ -14,17 +14,12 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.coci.CheckOutCheckInService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.version.Version;
-import org.alfresco.service.cmr.version.VersionService;
-import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.model.PLMModel;
-import fr.becpg.repo.entity.EntityService;
-import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.helper.AssociationService;
-import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.test.BeCPGPLMTestHelper;
 import fr.becpg.test.PLMBaseTestCase;
 
@@ -39,22 +34,7 @@ public class AssociationServiceIT extends PLMBaseTestCase {
 	private CheckOutCheckInService checkOutCheckInService;
 
 	@Autowired
-	private VersionService versionService;
-
-	@Autowired
-	private NamespaceService namespaceService;
-
-	@Autowired
-	private EntityVersionService entityVersionService;
-
-	@Autowired
 	private AssociationService associationService;
-
-	@Autowired
-	private EntityReportService entityReportService;
-
-	@Autowired
-	private EntityService entityService;
 
 	/**
 	 * Test check out check in.

@@ -46,7 +46,6 @@ import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.UrlUtil;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
@@ -129,7 +128,7 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 		templateModel.put("date", new Date());
 
 		String email = (String) nodeService.getProperty(personNodeRef, ContentModel.PROP_EMAIL);
-		if (!StringUtils.isEmpty(email)) {
+		if (email!=null && !email.isEmpty()) {
 			List<NodeRef> users = new ArrayList<>(1);
 			users.add(personNodeRef);
 			sendMail(users, I18NUtil.getMessage("becpg.mail.newUser.title"), RepoConsts.EMAIL_NEW_USER_TEMPLATE, templateModel, sendToSelf);

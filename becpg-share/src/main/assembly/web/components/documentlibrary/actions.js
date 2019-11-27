@@ -430,14 +430,15 @@
                fn: function dLA_onActionDetails_failure(response)
                {
                   var failureMsg = this.msg("message.details.failure");
-                  if (response.json && response.json.message.indexOf("Failed to persist field 'prop_cm_name'") !== -1)
+                  if (response.json && (response.json.message.indexOf("Failed to persist field 'prop_cm_name'") !== -1 || response.json.message.indexOf("already exists") !== -1))
                   {
                      failureMsg = this.msg("message.details.failure.name");
                   }
                   Alfresco.util.PopupManager.displayMessage(
                   {
-                     text: failureMsg
-                  });
+                     text: failureMsg,
+                     zIndex: editDetails.zIndex
+                  }, editDetails.dialog.body);
                },
                scope: this
             }
@@ -969,30 +970,7 @@
 
       _launchOnlineEditorChrome: function dlA__launchOnlineEditorChrome(protocolHandler, url)
       {
-          var protocolUrl = protocolHandler + ':ofe%7Cu%7C' + url;
-          var protocolHandlerPresent = false;
-
-          var input = document.createElement('input');
-          var inputTop = document.body.scrollTop + 10;
-          input.setAttribute('style', 'z-index: 1000; background-color: rgba(0, 0, 0, 0); border: none; outline: none; position: absolute; left: 10px; top: '+inputTop+'px;');
-          document.getElementsByTagName("body")[0].appendChild(input);
-          input.focus();
-          input.onblur = function() {
-              protocolHandlerPresent = true;
-          };
-          location.href = protocolUrl;
-          setTimeout(function()
-          {
-              input.onblur = null;
-              input.remove();
-              if(!protocolHandlerPresent)
-              {
-                  Alfresco.util.PopupManager.displayMessage(
-                  {
-                      text: this.msg('message.edit-online.supported_office_version_required')
-                  });
-              }
-          }, 500);
+          location.href = protocolHandler + ':ofe%7Cu%7C' + url;
       },
 
       getProtocolForFileExtension: function(fileExtension)
@@ -1348,31 +1326,7 @@
 
       _aos_tryToLaunchOfficeByMsProtocolHandler: function dlA__aos_tryToLaunchOfficeByMsProtocolHandler(officeLauncher, protocolHandler, url)
       {
-          var protocolUrl = protocolHandler + ':ofe%7Cu%7C' + url;
-          var protocolHandlerPresent = false;
-
-          var input = document.createElement('input');
-          var inputTop = document.body.scrollTop + 10;
-          input.setAttribute('style', 'z-index: 1000; background-color: rgba(0, 0, 0, 0); border: none; outline: none; position: absolute; left: 10px; top: '+inputTop+'px;');
-          document.getElementsByTagName("body")[0].appendChild(input);
-          input.focus();
-          input.onblur = function() {
-              protocolHandlerPresent = true;
-          };
-          input.context = this;
-          location.href = protocolUrl;
-          setTimeout(function()
-          {
-              input.onblur = null;
-              input.remove();
-              if(!protocolHandlerPresent)
-              {
-                  Alfresco.util.PopupManager.displayMessage(
-                  {
-                      text: input.context.msg('message.edit-online-aos.supported_office_version_required')
-                  });
-              }
-          }, 500);
+         location.href = protocolHandler + ':ofe%7Cu%7C' + url;
       },
 
       _aos_launchOfficeOnIos: function dlA__aos_launchOfficeOnIos(officeLauncher, protocolHandler, url)

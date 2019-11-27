@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.service.cmr.model.FileFolderService;
@@ -34,7 +32,6 @@ import com.ibm.icu.util.Calendar;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemState;
-import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
@@ -52,8 +49,6 @@ public class ScoreCalculatingIT extends AbstractFinishedProductTest {
 
 	protected static final Log logger = LogFactory.getLog(ScoreCalculatingIT.class);
 
-	@Autowired
-	private AssociationService associationService;
 
 	@Autowired
 	private Repository repositoryHelper;

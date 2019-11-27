@@ -13,9 +13,7 @@ import java.util.Map;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.workflow.WorkflowModel;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
-import org.alfresco.service.cmr.repository.CopyService;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.cmr.workflow.WorkflowPath;
 import org.alfresco.service.cmr.workflow.WorkflowTask;
 import org.alfresco.service.namespace.QName;
@@ -23,16 +21,13 @@ import org.alfresco.service.namespace.RegexQNamePattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemState;
-import fr.becpg.repo.project.ProjectWorkflowService;
 import fr.becpg.repo.project.data.PlanningMode;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.ProjectState;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
-import fr.becpg.repo.project.policy.ProjectPolicy;
 import fr.becpg.test.project.AbstractProjectTestCase;
 
 /**
@@ -44,17 +39,6 @@ public class NPDServiceIT extends AbstractProjectTestCase {
 
 	private static final Log logger = LogFactory.getLog(NPDServiceIT.class);
 
-	@Autowired
-	private ProjectPolicy projectPolicy;
-
-	@Autowired
-	private ProjectWorkflowService projectWorkflowService;
-
-	@Autowired
-	private CopyService copyService;
-
-	@Autowired
-	private PersonService personService;
 
 	private static final String NPDWF_URI = "http://www.bcpg.fr/model/npd-workflow/1.0";
 
