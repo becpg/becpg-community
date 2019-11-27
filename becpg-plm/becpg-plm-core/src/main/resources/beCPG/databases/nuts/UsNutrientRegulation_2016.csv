@@ -51,7 +51,7 @@ PANTAC;Panto acid;48;1;false;true;false;5;;mg;true
 P;Phosphorus, P;49;1;false;true;false;1250;4000;mg;true
 POLYL;Polyols total;19;2;false;true;false;;;g;
 K;Potassium, k;27;1;true;false;false;4700;;mg;true
-PRO-;Protein;21;1;true;false;true;50;;g;false
+PRO-;Protein;21;1;true;false;true;50;;g;true
 CARTBEQ;Provitamin A (b-carotene equivalents);81;1;false;true;false;;;;
 PROCNT;Raw proteins (N x 6.25);22;1;false;true;false;;;;
 RETOL;Retinol;82;1;false;true;false;;;;
