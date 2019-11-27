@@ -11,7 +11,6 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -21,7 +20,6 @@ import java.util.Set;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.content.encoding.ContentCharsetFinder;
 import org.alfresco.repo.security.authority.AuthorityDAO;
-import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -58,7 +56,6 @@ import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.report.entity.EntityReportService;
-import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.test.BeCPGPLMTestHelper;
 import fr.becpg.test.PLMBaseTestCase;
 
@@ -318,8 +315,6 @@ public class ProductServiceIT extends PLMBaseTestCase {
 
 		logger.debug("testClassifyProductByHierarchy");
 
-		Date startTime = new Date();
-
 		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			/*-- Create raw material --*/
@@ -483,7 +478,7 @@ public class ProductServiceIT extends PLMBaseTestCase {
 			CompoListDataItem wUsed0 = wUsedProducts.get(0);
 
 			assertEquals("check PF", finishedProductNodeRef, wUsed0.getProduct());
-			assertEquals("check PF level", new Integer(1), wUsed0.getDepthLevel());
+			assertEquals("check PF level", (Integer)1, wUsed0.getDepthLevel());
 			assertEquals("check PF qty", 3d, wUsed0.getQty());
 			assertEquals("check PF qty sub formula", 0d, wUsed0.getQtySubFormula());
 			assertEquals("check PF unit", ProductUnit.kg, wUsed0.getCompoListUnit());

@@ -126,4 +126,21 @@
         <property name="ruleService" ref="ruleService"/>
 	</bean>
 	
+	
+	<bean id="patch.bcpg.addSitePermissionPatch" class="fr.becpg.repo.admin.patch.AddSitePermissionPatch" parent="beCPGBasePatch" >
+        <property name="id"><value>patch.bcpg.addSitePermissionPatch</value></property>
+        <property name="description"><value>patch.bcpg.addSitePermissionPatch.description</value></property>
+        <property name="fixesFromSchema" value="0"/>
+        <property name="fixesToSchema" value="10057" />
+        <property name="targetSchema" value="10175"/>
+        <property name="requiresTransaction"><value>true</value></property>
+        <property name="applyToTenants"><value>true</value></property>
+        <property name="siteService">
+            <ref bean="siteService"/>
+        </property>
+        <property name="authorityService">
+            <ref bean="authorityService"/>
+        </property>
+	</bean>
+	
 </beans>

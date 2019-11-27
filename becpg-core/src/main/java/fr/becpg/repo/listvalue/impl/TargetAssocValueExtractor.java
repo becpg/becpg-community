@@ -70,7 +70,8 @@ public class TargetAssocValueExtractor implements ListValueExtractor<NodeRef> {
 				String cssClass = attributeExtractorService.extractMetadata(type,nodeRef);
 				Map<String, String> props = new HashMap<>(2);
 				props.put("type", type.toPrefixString(namespaceService));
-				if(favouritesService.isFavourite(AuthenticationUtil.getFullyAuthenticatedUser(), nodeRef)){
+				String userName = AuthenticationUtil.getFullyAuthenticatedUser();
+				if(!AuthenticationUtil.SYSTEM_USER_NAME.equals(userName) && favouritesService.isFavourite(userName, nodeRef)){
 				   	cssClass += "  favourite";
 				}
 				

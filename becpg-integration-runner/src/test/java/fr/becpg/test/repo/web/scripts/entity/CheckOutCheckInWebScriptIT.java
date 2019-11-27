@@ -4,7 +4,6 @@
 package fr.becpg.test.repo.web.scripts.entity;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.service.cmr.coci.CheckOutCheckInService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -13,7 +12,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.test.BeCPGPLMTestHelper;
 import fr.becpg.test.PLMBaseTestCase;
@@ -30,8 +28,6 @@ public class CheckOutCheckInWebScriptIT extends PLMBaseTestCase {
 
 	private static final Log logger = LogFactory.getLog(CheckOutCheckInWebScriptIT.class);
 
-	@Autowired
-	private CheckOutCheckInService checkOutCheckInService;
 
 	private NodeRef createRawMaterial(final String name) {
 		return transactionService.getRetryingTransactionHelper()

@@ -13,13 +13,11 @@ echo -e " \e[91mCopyright (C) 2010-2019 beCPG.\e[0m"
 
 
 export COMPOSE_FILE_PATH=${PWD}/becpg-integration-runner/target/docker-compose.yml
-#https://hub.alfresco.com/t5/alfresco-content-services-hub/alfresco-community-edition-201910-ea-release-notes/ba-p/292243
-#export MVN_EXEC="docker run --privileged -t -i -u 1000:1000  -v /var/run/docker.sock:/var/run/docker.sock -u jenkins --privileged -v /opt/java_repository:/var/jenkins_home/.m2/repository/ -v "$PWD":/var/jenkins_home -w /var/jenkins_home  eu.gcr.io/becpg.fr/api-project-243761268436/becpg/becpg-ci-runner:jdk-11 mvn"
 
 export MVN_EXEC="mvn"
 
 start() {
-   	 	docker-compose -f $COMPOSE_FILE_PATH up -d
+   	 	docker-compose -f $COMPOSE_FILE_PATH up -d --remove-orphans
 }
 
 down() {
@@ -54,7 +52,7 @@ deploy_fast(){
 	  docker cp becpg-enterprise/becpg-enterprise-share/src/main/resources/alfresco/. target_becpg_1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
 	fi
 	
-	#wget --delete-after --http-user=admin --http-password=becpg --header=Accept-Charset:iso-8859-1,utf-8 --header=Accept-Language:en-us --post-data reset=on http://localhost:8080/share/page/index
+	wget --delete-after --http-user=admin --http-password=becpg --header=Accept-Charset:iso-8859-1,utf-8 --header=Accept-Language:en-us --post-data reset=on http://localhost:8080/share/page/index
 
 }
 
@@ -77,7 +75,7 @@ install() {
 }
 
 tail() {
-    docker-compose -f $COMPOSE_FILE_PATH logs -f --tail=50
+    docker-compose -f $COMPOSE_FILE_PATH logs -f --tail=50 becpg
 }
 
 test() {

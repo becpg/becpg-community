@@ -33,7 +33,7 @@ services:
 #      ports:
 #          - 8091:8090
 
-  libreoffice:
+  alfresco-libreoffice:
       image: alfresco/alfresco-libreoffice:latest
       environment:
           JAVA_OPTS: " -Xms256m -Xmx256m"
