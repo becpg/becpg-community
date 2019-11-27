@@ -219,6 +219,9 @@ public class ProjectListExtractor extends ActivityListExtractor {
 					}
 
 					dataListFilter.getCriteriaMap().put("assoc_pjt_projectManager_added", currentUserNodeRef.toString());
+					if(!dataListFilter.getCriteriaMap().containsKey("prop_pjt_projectState")) {
+						dataListFilter.getCriteriaMap().put("prop_pjt_projectState", "\"Planned\",\"InProgress\"");
+					}
 				}
 
 				results = advSearchService.queryAdvSearch(dataType, beCPGQueryBuilder, dataListFilter.getCriteriaMap(), pagination.getMaxResults());
