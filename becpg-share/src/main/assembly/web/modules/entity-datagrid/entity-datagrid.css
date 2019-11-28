@@ -447,6 +447,10 @@ div.filterButtonsBar {
 	background-image: url(../../components/images/duplicate-row-16.png);
 }
 
+.datagrid-bar .onActionSimulate {
+	background-image: url(../../components/documentlibrary/actions/folder-copy-to-16.png);
+}
+
 .datagrid-bar .onActionUp {
 	background-image: url(../../components/images/up-arrow-16.png);
 }
