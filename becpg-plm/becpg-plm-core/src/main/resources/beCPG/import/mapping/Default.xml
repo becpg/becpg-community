@@ -117,6 +117,8 @@
 		<nodeColumnKeys>
 			<nodeColumnKey attribute="bcpg:parentLevel" />
 			<nodeColumnKey attribute="bcpg:lkvValue" />
+			<nodeColumnKey attribute="bcpg:code" />
+			<nodeColumnKey attribute="bcpg:erpCode" />
 			<!-- to match by path -->
 			<nodeColumnKey attribute="cm:contains" />
 		</nodeColumnKeys>
