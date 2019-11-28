@@ -83,7 +83,7 @@ import org.xml.sax.SAXException;
  */
 public class BeCPGTestRunner extends SpringJUnit4ClassRunner {
 	private static final String ACS_ENDPOINT_PROP = "acs.endpoint.path";
-	private static final String ACS_DEFAULT_ENDPOINT = "http://localhost:8080/alfresco";
+	private static final String ACS_DEFAULT_ENDPOINT = "https://localhost:8080/alfresco";
 
 	public static final String SUCCESS = "SUCCESS";
 	public static final String FAILURE = "FAILURE";
