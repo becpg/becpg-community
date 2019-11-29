@@ -63,15 +63,15 @@ purge() {
 build() {
    if [ -d becpg-enterprise ]; then
     cd becpg-enterprise
-   	 $MVN_EXEC clean package $EXTRA_ENV -DskipTests=true  -Dbecpg.dockerbuild.name="enterprise-test"
+   	 $MVN_EXEC -T 4  package $EXTRA_ENV -DskipTests=true  -Dbecpg.dockerbuild.name="enterprise-test"
     cd ..
    else
-   	 $MVN_EXEC clean package $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="test"
+   	 $MVN_EXEC  package $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="test"
    fi 
 }
 
 install() {
-    $MVN_EXEC clean install $EXTRA_ENV -DskipTests=true -P full
+    $MVN_EXEC  install $EXTRA_ENV -DskipTests=true -P full
 }
 
 tail() {
