@@ -230,15 +230,6 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 			}, false, true);
 		
 		
-			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-				List<Rule> rules = ruleService.getRules(repositoryHelper.getCompanyHome(), false);
-				for (Rule rule : rules) {
-					if ("classifyEntityRule".equals(rule.getTitle())) {
-						ruleService.disableRule(rule);
-					}
-				}
-				return null;
-			}, false, true);
 			
 		}
 		
@@ -256,6 +247,18 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 	@Before
 	public void setUp() throws Exception {
+		
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			List<Rule> rules = ruleService.getRules(repositoryHelper.getCompanyHome(), false);
+			for (Rule rule : rules) {
+				if ("classifyEntityRule".equals(rule.getTitle())) {
+					ruleService.disableRule(rule);
+				}
+			}
+			return null;
+		}, false, true);
+		
 		threadSafeTestFolder.set(transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 				// As system user
