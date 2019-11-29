@@ -32,6 +32,8 @@ import fr.becpg.repo.product.data.constraints.DeclarationType;
  */
 public class DeclarationFilter {
 
+	private final String ruleName;
+	
 	private final String formula;
 	
 	private final DeclarationType declarationType;
@@ -41,8 +43,9 @@ public class DeclarationFilter {
 	private Double threshold = null;
 	
 
-	public DeclarationFilter(String formula, DeclarationType declarationType, List<String> locales) {
+	public DeclarationFilter(String ruleName, String formula, DeclarationType declarationType, List<String> locales) {
 		super();
+		this.ruleName = ruleName;
 		this.formula = formula;
 		this.declarationType = declarationType;
 		if(locales!=null){
@@ -70,6 +73,10 @@ public class DeclarationFilter {
 		return formula;
 	}
 
+
+	public String getRuleName() {
+		return ruleName;
+	}
 
 	public DeclarationType getDeclarationType() {
 		return declarationType;
