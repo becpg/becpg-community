@@ -102,8 +102,6 @@ public class FormulationNutsIT extends AbstractFinishedProductTest {
 				
 				assertEquals(NutrientFormulationHelper.extractValuePerServing(nutListDataItem.getRoundedValue(), Locale.FRENCH).doubleValue(), (6d * 50d) / 100);
 				
-				MLTextHelper helper = new MLTextHelper();
-				helper.setSupportedLocales("fr,en_US,en,es_MX,in_ID");
 				NutrientFormulationHelper.extractRoundedValue(formulatedProduct, NutrientCode.Fat, nutListDataItem);
 				assertEquals(4d, NutrientFormulationHelper.extractGDAPerc(nutListDataItem.getRoundedValue(),"ID"));
 				assertEquals(4d, NutrientFormulationHelper.extractGDAPerc(nutListDataItem.getRoundedValue(),"MX"));
