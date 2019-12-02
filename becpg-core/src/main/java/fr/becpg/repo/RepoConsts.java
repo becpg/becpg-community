@@ -67,17 +67,17 @@ public class RepoConsts {
 	public static final String REGEX_NON_NEGATIVE_INTEGER_FIELD = "^\\d*$";
 
 	/*-- Lucene --*/
-	public static final int MAX_RESULTS_SINGLE_VALUE = 1;
+	public static final Integer MAX_RESULTS_SINGLE_VALUE = 1;
 	
-	public static final int MAX_RESULTS_256 = 256;
+	public static final Integer MAX_RESULTS_256 = 256;
 	
-	public static final int MAX_RESULTS_1000 = 1000;
+	public static final Integer MAX_RESULTS_1000 = 1000;
 	
-	public static final int MAX_RESULTS_UNLIMITED = -1;
+	public static final Integer MAX_RESULTS_UNLIMITED = -1;
 	
-	public static final int MAX_SUGGESTIONS = 100;
+	public static final Integer MAX_SUGGESTIONS = 100;
 
-	public static final int MAX_RESULTS_5000 = 5000;
+	public static final Integer MAX_RESULTS_5000 = 5000;
 	
 	
 	

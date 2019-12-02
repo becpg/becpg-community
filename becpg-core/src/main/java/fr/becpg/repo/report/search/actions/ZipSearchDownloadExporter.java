@@ -151,7 +151,6 @@ public class ZipSearchDownloadExporter implements Exporter {
 
 	}
 
-	@SuppressWarnings("unchecked")
 	private void readFileMapping(NodeRef templateNodeRef) throws Exception {
 
 		//

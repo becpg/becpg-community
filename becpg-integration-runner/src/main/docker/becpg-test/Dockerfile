@@ -52,7 +52,7 @@ COPY alfresco/log4j.properties $TOMCAT_DIR/webapps/alfresco/WEB-INF/classes
 COPY alfresco/hotswap-agent.properties $TOMCAT_DIR/webapps/alfresco/WEB-INF/classes
 COPY alfresco/beCPG.properties $TOMCAT_DIR/shared/classes/beCPG.properties
 COPY alfresco/alfresco-global.properties $TOMCAT_DIR/shared/classes/alfresco-global.properties
-COPY alfresco/disable-webscript-caching-context.xml $TOMCAT_DIR/shared/classes/alfresco/extension
+#COPY alfresco/disable-webscript-caching-context.xml $TOMCAT_DIR/shared/classes/alfresco/extension
 
 COPY share/hotswap-agent.properties $TOMCAT_DIR/webapps/share/WEB-INF/classes/hotswap-agent.properties
 COPY share/lessc-context.xml $TOMCAT_DIR/shared/classes/alfresco/web-extension
