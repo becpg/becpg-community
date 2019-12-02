@@ -428,7 +428,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 		try {
 
-			final T entity = entityClass.newInstance();
+			final T entity = entityClass.getDeclaredConstructor().newInstance();
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("findOne instanceOf :" + entity.getClass().getName());
@@ -490,7 +490,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 	private <R> R loadDataListView(final T entity, QName datalistContainerQname, Class<R> returnType, Map<NodeRef, RepositoryEntity> caches)
 			throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
-		R ret = returnType.newInstance();
+		R ret = returnType.getDeclaredConstructor().newInstance();
 
 		BeanWrapper beanWrapper = PropertyAccessorFactory.forBeanPropertyAccess(ret);
 		for (final PropertyDescriptor pd : beanWrapper.getPropertyDescriptors()) {

@@ -58,6 +58,7 @@ public class EntityVersionsListValuePlugin implements ListValuePlugin {
 
 		String nodeRef = (String) props.get(ListValueService.PROP_NODEREF);
 		if (nodeRef == null) {
+			@SuppressWarnings("unchecked")
 			Map<String, String> extras = (HashMap<String, String>) props.get(ListValueService.EXTRA_PARAM);
 			if (extras != null) {
 				if (extras.get("itemId") != null) {
