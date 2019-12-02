@@ -220,6 +220,7 @@
 					<show id="bcpg:precautionOfUseRef" force="true" />
 					<show id="bcpg:preparationTips" force="true" />
 					<show id="bcpg:productMicrobioCriteriaRef" />
+					<show id="bcpg:meatType" force="false" />				
 
 					<!-- formulation -->
 					<show id="bcpg:productQty" />
@@ -527,6 +528,7 @@
 							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
 						</control>
 					</field>
+					<field id="bcpg:meatType" set="consumer" />
 
 					<!-- formulation -->
 					<field id="bcpg:productQty" help-id="becpg.forms.help.productQty" set="formulation" />
@@ -1317,6 +1319,7 @@
 					<show id="bcpg:precautionOfUseRef" force="true" />
 					<show id="bcpg:preparationTips" force="true" />
 					<show id="bcpg:productMicrobioCriteriaRef" />
+					<show id="bcpg:meatType" force="false" />
 					
 					<!-- formulation -->
 					<show id="bcpg:productQty" />
@@ -1480,6 +1483,7 @@
 							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
 						</control>
 					</field>
+					<field id="bcpg:meatType" set="consumer" />
 
 					<!-- formulation -->
 					<field id="bcpg:productQty" help-id="becpg.forms.help.productQty" set="formulation" />
@@ -4287,6 +4291,7 @@
 					<show id="bcpg:precautionOfUseRef" force="true" />
 					<show id="bcpg:preparationTips" force="true" />
 					<show id="bcpg:productMicrobioCriteriaRef" />
+					<show id="bcpg:meatType" force="false" />
 
 					<!-- Dimension -->
 					<show id="pack:length" />
@@ -4459,6 +4464,7 @@
 							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
 						</control>
 					</field>
+					<field id="bcpg:meatType" set="consumer" />
 
 					<!-- Dimension -->
 					<field id="pack:length" set="dimension" >
@@ -4929,6 +4935,7 @@
 					<show id="bcpg:precautionOfUseRef" force="true" />
 					<show id="bcpg:preparationTips" force="true" />
 					<show id="bcpg:productMicrobioCriteriaRef" />
+					<show id="bcpg:meatType" force="false" />
 
 					<!-- formulation -->
 					<show id="bcpg:productQty" />
@@ -5051,6 +5058,7 @@
 							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
 						</control>
 					</field>
+					<field id="bcpg:meatType" set="consumer" />
 
 					<!-- formulation -->
 					<field id="bcpg:productQty" help-id="becpg.forms.help.productQty" set="formulation" />
