@@ -30,6 +30,8 @@ public class RepoConsts {
 	//Security
 	public static final String PATH_SECURITY = "Security";
 	
+	public static final String SCRIPTS_FULL_PATH = "/app:company_home/app:dictionary/app:scripts";
+	
 	//Icons
 	public static final String PATH_ICON = "Icons";
 	
