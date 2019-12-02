@@ -261,6 +261,7 @@
                         			             '@beCPG.findOne($nodeRef)',
                         			             '@beCPG.propValue($nodeRef,"bcpg:productQty")',
                         			             '@beCPG.copy($fromNodeRef,propQnames,listQNames)',
+                        			             '@beCPG.runScript($scriptNodeRef)',
                         			             'isLiquid()',
                         			             'isRawMaterial()',
                         			             'isPackaging()',
