@@ -4,16 +4,21 @@ import java.beans.PropertyDescriptor;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.alfresco.model.ContentModel;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.repository.ScriptService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.beanutils.PropertyUtils;
@@ -30,8 +35,10 @@ import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.CompositionDataItem;
 import fr.becpg.repo.product.data.spel.FormulaFormulationContext;
@@ -63,6 +70,8 @@ public class FormulaService {
 
 	private EntityListDAO entityListDAO;
 
+	private ScriptService scriptService;
+
 	public void setSecurityMethodBeforeAdvice(SecurityMethodBeforeAdvice securityMethodBeforeAdvice) {
 		this.securityMethodBeforeAdvice = securityMethodBeforeAdvice;
 	}
@@ -93,6 +102,10 @@ public class FormulaService {
 
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
+	}
+
+	public void setScriptService(ScriptService scriptService) {
+		this.scriptService = scriptService;
 	}
 
 	public void registerCustomFunctions(ProductData productData, StandardEvaluationContext context) {
@@ -134,24 +147,23 @@ public class FormulaService {
 		public Serializable propValue(NodeRef nodeRef, String qname) {
 			return nodeService.getProperty(nodeRef, QName.createQName(qname, namespaceService));
 		}
-		
+
 		public Serializable propValue(RepositoryEntity item, String qname) {
 			Serializable value = item.getExtraProperties().get(QName.createQName(qname, namespaceService));
-			if(value == null){
+			if (value == null) {
 				value = nodeService.getProperty(item.getNodeRef(), QName.createQName(qname, namespaceService));
 				item.getExtraProperties().put(QName.createQName(qname, namespaceService), value);
 			}
 			return value;
 		}
 
-        public NodeRef assocValue(NodeRef nodeRef, String qname) {
+		public NodeRef assocValue(NodeRef nodeRef, String qname) {
 			return associationService.getTargetAssoc(nodeRef, QName.createQName(qname, namespaceService));
 		}
-		
+
 		public List<NodeRef> assocValues(NodeRef nodeRef, String qname) {
 			return associationService.getTargetAssocs(nodeRef, QName.createQName(qname, namespaceService));
 		}
-
 
 		public QName getQName(String qName) {
 			return QName.createQName(qName, namespaceService);
@@ -162,6 +174,44 @@ public class FormulaService {
 			return value;
 		}
 
+	
+
+		public MLText updateMLText(MLText mlText, String locale, String value) {
+
+			if (mlText == null) {
+				mlText = new MLText();
+			}
+
+			if ((value != null) && !value.isEmpty()) {
+				mlText.addValue(MLTextHelper.parseLocale(locale), value);
+			} else {
+				mlText.removeValue(MLTextHelper.parseLocale(locale));
+			}
+
+			return mlText;
+		}
+
+		public void runScript(String scriptNode) {
+			runScript(new NodeRef(scriptNode));
+		}
+		
+		public void runScript(NodeRef scriptNode) {
+			// Checking script path for security
+			
+			if ((scriptNode != null) && nodeService.exists(scriptNode)
+					&& nodeService.getPath(scriptNode).toPrefixString(namespaceService).startsWith(RepoConsts.SCRIPTS_FULL_PATH)) {
+
+				System.out.println(nodeService.getPath(scriptNode).toPrefixString(namespaceService));
+				String userName = AuthenticationUtil.getFullyAuthenticatedUser();
+
+				Map<String, Object> model = new HashMap<>();
+				model.put("currentUser", userName);
+				model.put("entity", productData);
+
+				scriptService.executeScript(scriptNode, ContentModel.PROP_CONTENT, model);
+			}
+		}
+
 		public Double sum(Collection<RepositoryEntity> range, String formula) {
 			return aggreate(productData, range, formula, Operator.SUM);
 		}
@@ -169,17 +219,16 @@ public class FormulaService {
 		public Double sum(Collection<Double> range) {
 			return range.stream().mapToDouble(Double::doubleValue).sum();
 		}
-		
-		
+
 		public Double avg(Collection<RepositoryEntity> range, String formula) {
 			return aggreate(productData, range, formula, Operator.AVG);
 		}
-		
+
 		public void applyFormulaToList(Collection<RepositoryEntity> range, String formula) {
-			applyToList(productData,range ,formula);
+			applyToList(productData, range, formula);
 		}
 
-		public void copy(NodeRef fromNodeRef, Collection<String> propQNames,Collection<String> listQNames) {
+		public void copy(NodeRef fromNodeRef, Collection<String> propQNames, Collection<String> listQNames) {
 			try {
 				Set<QName> treatedProp = new HashSet<>();
 				Set<QName> treatedList = new HashSet<>();
@@ -288,17 +337,16 @@ public class FormulaService {
 
 		return context;
 	}
-	
+
 	public StandardEvaluationContext createEvaluationContext(ProductData productData, LabelingFormulaContext labelingFormulaContext) {
 		StandardEvaluationContext context = new StandardEvaluationContext(labelingFormulaContext);
 
 		labelingFormulaContext.setEntity(createSecurityProxy(productData));
-		
+
 		registerCustomFunctions(productData, context);
 
 		return context;
 	}
-	
 
 	public StandardEvaluationContext createEvaluationContext(ProductData productData, CompositionDataItem dataListItem) {
 		StandardEvaluationContext dataContext = new StandardEvaluationContext(
@@ -349,15 +397,11 @@ public class FormulaService {
 			registerCustomFunctions(entity, context);
 
 			exp.getValue(context, Double.class);
-			
+
 		}
-		
-		
-		
+
 	}
-	
-	
-	
+
 	public ProductData findOne(NodeRef nodeRef) {
 		return createSecurityProxy(alfrescoRepository.findOne(nodeRef));
 	}
