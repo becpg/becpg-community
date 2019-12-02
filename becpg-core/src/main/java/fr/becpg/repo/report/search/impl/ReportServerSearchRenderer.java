@@ -1,6 +1,7 @@
 package fr.becpg.repo.report.search.impl;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
@@ -11,23 +12,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
+import org.alfresco.service.cmr.repository.ContentIOException;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.Path;
-import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
@@ -50,7 +47,6 @@ import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
-import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.MLTextHelper;
@@ -121,7 +117,6 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 	private static final String TAG_NODE = "node";
 	private static final String TAG_FILE = "file";
 	private static final String TAG_SITE = "siteId";
-	private static final String TAG_PATH = "path";
 	private static final String ATTR_ID = "id";
 	public static final String VALUE_NULL = "";
 
@@ -359,7 +354,6 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 	 * @throws MappingException
 	 * @throws BeCPGException
 	 */
-	@SuppressWarnings("unchecked")
 	private ReportServerSearchContext getQuery(NodeRef templateNodeRef) throws MappingException {
 
 		Element queryElt;
@@ -374,11 +368,9 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 		}
 
 		ContentReader reader = contentService.getReader(queryNodeRef, ContentModel.PROP_CONTENT);
-		InputStream is = null;
 		SAXReader saxReader = new SAXReader();
 
-		try {
-			is = reader.getContentInputStream();
+		try(InputStream is = reader.getContentInputStream()) {
 			Document doc = saxReader.read(is);
 			queryElt = doc.getRootElement();
 
@@ -469,10 +461,8 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 				exportSearchCtx.getFileColumns().add(attributeMapping);
 			}
 
-		} catch (DocumentException e) {
+		} catch (DocumentException | ContentIOException | IOException e ) {
 			logger.error("Failed to read the query file", e);
-		} finally {
-			IOUtils.closeQuietly(is);
 		}
 
 		return exportSearchCtx;

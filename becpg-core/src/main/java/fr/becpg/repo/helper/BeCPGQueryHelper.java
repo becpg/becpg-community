@@ -178,7 +178,7 @@ public class BeCPGQueryHelper {
 		if (luceneAnaLyzer == null) {
 			DataTypeDefinition def = dictionaryService.getDataType(DataTypeDefinition.TEXT);
 			try {
-				return (Analyzer) Class.forName(def.resolveAnalyserClassName(Locale.getDefault())).newInstance();
+				return (Analyzer) Class.forName(def.resolveAnalyserClassName(Locale.getDefault())).getDeclaredConstructor().newInstance();
 			} catch (Exception e) {
 				logger.error(e, e);
 				if (Locale.FRENCH.equals(Locale.getDefault())) {

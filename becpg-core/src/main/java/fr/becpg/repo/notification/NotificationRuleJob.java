@@ -40,6 +40,7 @@ public class NotificationRuleJob implements Job {
 		});
 		
 		if ((tenantAdminService != null) && tenantAdminService.isEnabled()) {
+			@SuppressWarnings("deprecation")
 			List<Tenant> tenants = tenantAdminService.getAllTenants();
 			for (Tenant tenant : tenants) {
 				String tenantDomain = tenant.getTenantDomain();
