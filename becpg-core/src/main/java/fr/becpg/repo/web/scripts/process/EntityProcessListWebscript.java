@@ -8,8 +8,6 @@ import java.util.Map;
 import org.alfresco.repo.web.scripts.workflow.AbstractWorkflowWebscript;
 import org.alfresco.repo.web.scripts.workflow.WorkflowModelBuilder;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.extensions.webscripts.Cache;
 import org.springframework.extensions.webscripts.Status;
@@ -17,8 +15,6 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 
 public class EntityProcessListWebscript extends AbstractWorkflowWebscript {
 
-	private static final Log logger = LogFactory.getLog(EntityProcessListWebscript.class);
-	
 	public static final String PARAM_STORE_TYPE = "store_type";
 	public static final String PARAM_STORE_ID = "store_id";
 	public static final String PARAM_NODE_ID = "id";

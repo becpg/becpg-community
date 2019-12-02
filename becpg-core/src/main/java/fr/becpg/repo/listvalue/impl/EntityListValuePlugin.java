@@ -233,13 +233,20 @@ public class EntityListValuePlugin implements ListValuePlugin {
 							nodesToKeep.add(assocRef.getSourceRef());
 						}
 						tmp.retainAll(nodesToKeep);
-
-						ret = tmp.subList(0, Math.min(RepoConsts.MAX_SUGGESTIONS, tmp.size()));
+						if(!RepoConsts.MAX_RESULTS_UNLIMITED.equals(pageSize) ) {
+							ret = tmp.subList(0, Math.min(RepoConsts.MAX_SUGGESTIONS, tmp.size()));
+						}
 					}
 				}
 			}
 		}
-		queryBuilder.maxResults(RepoConsts.MAX_SUGGESTIONS);
+		
+		if(RepoConsts.MAX_RESULTS_UNLIMITED.equals(pageSize) ) {
+			queryBuilder.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED);
+		} else {
+			queryBuilder.maxResults(RepoConsts.MAX_SUGGESTIONS);
+		}
+			
 
 		if (ret == null) {
 			ret = queryBuilder.list();

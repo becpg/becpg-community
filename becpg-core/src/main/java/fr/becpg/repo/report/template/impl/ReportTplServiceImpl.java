@@ -38,7 +38,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -130,7 +129,7 @@ public class ReportTplServiceImpl implements ReportTplService {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param reportType
 	 * @param nodeType
 	 * @return
@@ -141,8 +140,7 @@ public class ReportTplServiceImpl implements ReportTplService {
 
 		return (ret != null) && !ret.isEmpty() ? ret.get(0) : null;
 	}
-	
-	
+
 	/**
 	 * Create the rptdesign node for the report
 	 *
@@ -163,10 +161,8 @@ public class ReportTplServiceImpl implements ReportTplService {
 
 		NodeRef reportTplNodeRef = null;
 		ClassPathResource resource = new ClassPathResource(tplFilePath);
-		InputStream in = null;
 		if (resource.exists()) {
-			try {
-				in = new BufferedInputStream(resource.getInputStream());
+			try (InputStream in = new BufferedInputStream(resource.getInputStream())) {
 				String extension = RepoConsts.REPORT_EXTENSION_BIRT;
 				int i = tplFilePath.lastIndexOf('.');
 				if (i > 0) {
@@ -210,8 +206,6 @@ public class ReportTplServiceImpl implements ReportTplService {
 				writer.setMimetype(mimetype);
 				writer.setEncoding(encoding);
 				writer.putContent(in);
-			} finally {
-				IOUtils.closeQuietly(in);
 			}
 		} else {
 			logger.error("Path doesn't exists: " + tplFilePath);
@@ -232,12 +226,10 @@ public class ReportTplServiceImpl implements ReportTplService {
 	public NodeRef createTplRessource(NodeRef parentNodeRef, String xmlFilePath, boolean overrideRessource) throws IOException {
 
 		ClassPathResource resource = new ClassPathResource(xmlFilePath);
-		InputStream in = null;
-		
+
 		NodeRef fileNodeRef = null;
 		if (resource.exists()) {
-			try {
-				in = new BufferedInputStream(resource.getInputStream());
+			try (InputStream in = new BufferedInputStream(resource.getInputStream())) {
 				fileNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, resource.getFilename());
 
 				if ((fileNodeRef == null) || overrideRessource) {
@@ -261,14 +253,12 @@ public class ReportTplServiceImpl implements ReportTplService {
 					writer.setEncoding(encoding);
 					writer.putContent(in);
 				}
-			} finally {
-				IOUtils.closeQuietly(in);
 			}
 
 		} else {
 			logger.error("Resource not found. Path: " + xmlFilePath);
 		}
-		
+
 		return fileNodeRef;
 	}
 
@@ -313,7 +303,6 @@ public class ReportTplServiceImpl implements ReportTplService {
 
 		ReportType reportType = ReportType.parse((String) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_TYPE));
 		String format = (String) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT);
-		
 
 		if (format == null) {
 			if (ReportType.ExportSearch.equals(reportType)) {
@@ -321,9 +310,9 @@ public class ReportTplServiceImpl implements ReportTplService {
 			} else {
 				return ReportFormat.PDF;
 			}
-		} 
-		
-		return  ReportFormat.valueOf(format);
+		}
+
+		return ReportFormat.valueOf(format);
 	}
 
 	private List<NodeRef> getReportTpls(ReportType reportType, QName nodeType, Boolean isSystem, Boolean isDefault, String tplName) {
@@ -346,9 +335,9 @@ public class ReportTplServiceImpl implements ReportTplService {
 			QName classType = (QName) nodeService.getProperty(rTplNodeRef, ReportModel.PROP_REPORT_TPL_CLASS_NAME);
 
 			if ((((classType == null) && (nodeType == null)) || ((classType != null) && classType.equals(nodeType)))
-					&& (isSystem == null ||  isSystem.equals(nodeService.getProperty(rTplNodeRef, ReportModel.PROP_REPORT_TPL_IS_SYSTEM)))
-					&& (isDefault == null || isDefault.equals(nodeService.getProperty(rTplNodeRef, ReportModel.PROP_REPORT_TPL_IS_DEFAULT)) )
-					&& !Boolean.TRUE.equals(nodeService.getProperty(rTplNodeRef, ReportModel.PROP_REPORT_TPL_IS_DISABLED)) ) {
+					&& ((isSystem == null) || isSystem.equals(nodeService.getProperty(rTplNodeRef, ReportModel.PROP_REPORT_TPL_IS_SYSTEM)))
+					&& ((isDefault == null) || isDefault.equals(nodeService.getProperty(rTplNodeRef, ReportModel.PROP_REPORT_TPL_IS_DEFAULT)))
+					&& !Boolean.TRUE.equals(nodeService.getProperty(rTplNodeRef, ReportModel.PROP_REPORT_TPL_IS_DISABLED))) {
 				ret.add(rTplNodeRef);
 			}
 		}

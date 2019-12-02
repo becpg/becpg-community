@@ -181,7 +181,6 @@
 		<property name="nodeService" ref="nodeService" />
 		<property name="formulationService" ref="formulationService"/>
 		<property name="policyBehaviourFilter" ref="policyBehaviourFilter"/>
-		<property name="permissionService" ref="PermissionService"/>
 		<property name="ruleService" ref="ruleService"/>
 		<property name="entityCatalogService" ref="entityCatalogService"/>
 	</bean>

@@ -10,8 +10,6 @@ import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.rule.RuleService;
-import org.alfresco.service.cmr.security.AccessStatus;
-import org.alfresco.service.cmr.security.PermissionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
@@ -47,8 +45,6 @@ public class EntityCatalogWebScript extends AbstractWebScript {
 
 	private BehaviourFilter policyBehaviourFilter;
 
-	private PermissionService permissionService;
-
 	private RuleService ruleService;
 
 	private EntityCatalogService entityCatalogService;
@@ -59,10 +55,6 @@ public class EntityCatalogWebScript extends AbstractWebScript {
 
 	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
 		this.policyBehaviourFilter = policyBehaviourFilter;
-	}
-
-	public void setPermissionService(PermissionService permissionService) {
-		this.permissionService = permissionService;
 	}
 
 	public void setNodeService(NodeService nodeService) {
