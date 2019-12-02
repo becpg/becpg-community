@@ -46,7 +46,6 @@ import fr.becpg.repo.report.entity.EntityReportService;
 public class EntityReportAsyncGeneratorImpl implements EntityReportAsyncGenerator {
 
 	private static final Log logger = LogFactory.getLog(EntityReportAsyncGeneratorImpl.class);
-	private static final String ASYNC_ACTION_URL_PREFIX = "page/document-details?nodeRef=";
 
 	private ThreadPoolExecutor threadExecuter;
 
@@ -98,11 +97,6 @@ public class EntityReportAsyncGeneratorImpl implements EntityReportAsyncGenerato
 
 	}
 
-	private NodeRef getEntityReportTpl(NodeRef nodeRef) {
-		List<NodeRef> tmps = associationService.getTargetAssocs(nodeRef, ReportModel.ASSOC_REPORTS);
-		tmps = associationService.getTargetAssocs(tmps.get(0), ReportModel.ASSOC_REPORT_TPL);
-		return tmps.get(0);
-	}
 
 	private class EntityReportAsyncNotificationCallback {
 
@@ -127,7 +121,7 @@ public class EntityReportAsyncGeneratorImpl implements EntityReportAsyncGenerato
 				AuthenticationUtil.runAs(() -> {
 					transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-						beCPGMailService.sendMailOnAsyncAction(userName, "generate-reports", ASYNC_ACTION_URL_PREFIX + getEntityReportTpl(nodeRef),
+						beCPGMailService.sendMailOnAsyncAction(userName, "generate-reports", null ,
 								true, watch.getTotalTimeSeconds());
 
 						return null;
