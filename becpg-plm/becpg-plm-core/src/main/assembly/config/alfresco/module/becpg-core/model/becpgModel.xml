@@ -327,6 +327,7 @@
 					<value>£</value>
 					<value>SFr</value>
 					<value>zł</value>
+					<value>kr</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -442,6 +443,25 @@
 					<value>zł/m2</value>
 					<value>zł/h</value>
 					<value>zł/Pal</value>
+					<value>kr</value>
+					<value>kr/L</value>
+					<value>kr/cL</value>
+					<value>kr/mL</value>
+					<value>kr/kg</value>
+					<value>kr/g</value>
+					<value>kr/lb</value>
+					<value>kr/oz</value>
+					<value>kr/P</value>
+					<value>kr/m</value>
+					<value>kr/mm</value>
+					<value>kr/in</value>
+					<value>kr/ft</value>
+					<value>kr/gal</value>
+					<value>kr/cp</value>
+					<value>kr/fl_oz</value>
+					<value>kr/m2</value>
+					<value>kr/h</value>
+					<value>kr/Pal</value>
 				</list>
 			</parameter>
 		</constraint>
