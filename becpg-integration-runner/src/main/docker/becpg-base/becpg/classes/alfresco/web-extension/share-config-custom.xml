@@ -39,6 +39,34 @@
       </web-framework>
    </config>
 
+
+   <!--
+      CSRF filter config to mitigate CSRF/Seasurfing/XSRF attacks
+
+      To disable the CSRF filter override the <filter> to not contain any values, see share-config-custom.xml for
+      an example.
+
+      If you have a custom resource(s) that a client POST to that can't accept a token, for whatever reason, then make
+      sure to copy the entire CSRFPolicy config and place it in your share-config-custom.xml file
+      with the replace="true" attribute and make sure to add a new <rule> in the top of the <filter> element,
+      which has a <request> element matching your requests, and uses only the "assertReferer" & "assertOrigin" actions.
+
+      I.e.
+      <rule>
+         <request>
+            <method>POST</method>
+            <path>/proxy/alfresco/custom/repoWebscript/withoutParams|/service/custom/shareResource/thatMayHaveParams(\?.+)?</path>
+         </request>
+         <action name="assertReferer">
+            <param name="referer">{referer}</param>
+         </action>
+         <action name="assertOrigin">
+            <param name="origin">{origin}</param>
+         </action>
+      </rule>
+   -->
+
+
    <!-- Disable the CSRF Token Filter -->
 
    <config evaluator="string-compare" condition="CSRFPolicy" replace="true">
@@ -283,6 +311,18 @@
             <uri>slingshot/doclib/treenode/site/{site}/{container}{path}?children={evaluateChildFoldersSite}&amp;max={maximumFolderCountSite}</uri>
          </container>
       </siteTree>
+   </config>
+   
+   <!-- beCPG -->
+    <config evaluator="string-compare" condition="Users" replace="true">
+      <users>
+         <!-- minimum length for username and password -->
+         <username-min-length>2</username-min-length>
+         <password-min-length>3</password-min-length>
+         <show-authorization-status>false</show-authorization-status>
+      </users>
+      <!-- This enables/disables the Add External Users Panel on the Add Users page. -->
+      <enable-external-users-panel>false</enable-external-users-panel>
    </config>
 
    <!-- Repository Library config section -->
