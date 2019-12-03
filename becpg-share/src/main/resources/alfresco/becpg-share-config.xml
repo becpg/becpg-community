@@ -16,6 +16,13 @@
 			<language locale="en">English</language>
 			<language locale="en_US">English USA</language>
 			<language locale="fr">French</language>
+			<language locale="sv_SE">Swedish</language>
+			<language locale="fi">Finnish</language>
+			<language locale="es">Spanish</language>
+			<language locale="it">Italian</language>
+			<language locale="pt">Portuguese</language>
+			<language locale="ru">Russian</language>
+			<language locale="de">German</language>
 		</ui-languages>
 	
 	
@@ -27,6 +34,7 @@
 			<language locale="en_AU">English - Australia</language>
 			<language locale="de">German</language>
 			<language locale="es">Spanish</language>
+			<language locale="es_MX">Spanish - Mexico</language>
 			<language locale="fr">French</language>
 			<language locale="fr_CA">French - Canada</language>
 			<language locale="it">Italian</language>
@@ -39,6 +47,8 @@
 			<language locale="sv_SE">Swedish - Sweden</language>
 			<language locale="el">Greek</language>
 			<language locale="pl">Polish</language>
+			<language locale="fi_FI">Finnish - Finland</language>
+			<language locale="in_ID">Indonesian - Indonesia</language>
 			
 			<!-- Others can be use in language only way if country is same than language 
 			
