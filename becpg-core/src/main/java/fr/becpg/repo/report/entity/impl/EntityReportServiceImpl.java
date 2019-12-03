@@ -1332,7 +1332,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 				}
 
 				Boolean isDefault = (Boolean) this.nodeService.getProperty(reportNodeRef, ReportModel.PROP_REPORT_IS_DEFAULT);
-				if (isDefault) {
+				if (isDefault!=null && isDefault) {
 					ret = reportNodeRef;
 				}
 
