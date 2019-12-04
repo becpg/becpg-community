@@ -932,8 +932,11 @@ if (beCPG.module.EntityDataGridRenderers) {
 			if (data.value != null) {				
 				var unit = "";
 				if( Alfresco.constants.JS_LOCALE == "en_US"){
-					var absValue = Math.abs(data.value*2.204622622)
-				  if (absValue < 1) {
+					var absValue = Math.abs(data.value*2.204622622);
+					var compoUnit = oRecord.getData("itemData")["prop_bcpg_compoListUnit"]!=null ?
+							 oRecord.getData("itemData")["prop_bcpg_compoListUnit"].value : "";
+				  if ((absValue < 1 &&  compoUnit != "lb")  
+						  || compoUnit == "oz") {
 						qty = data.value *35.27396195;
 						unit = " oz";
 					}  else {
