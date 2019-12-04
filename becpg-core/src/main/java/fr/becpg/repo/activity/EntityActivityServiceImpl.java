@@ -763,7 +763,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			// Only entities that might could be have activities
-			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_ENTITY_V2).inDB()
+			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_ENTITY_V2).excludeVersions().inDB()
 					.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED);
 			List<NodeRef> entityNodeRefs = queryBuilder.list();
 
