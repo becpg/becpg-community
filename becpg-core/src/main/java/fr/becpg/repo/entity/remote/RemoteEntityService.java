@@ -40,8 +40,11 @@ public interface RemoteEntityService {
 	String ATTR_TYPE = "type";
 	String ATTR_PATH = "path";
 	String ATTR_NAME = "name";
+	String ATTR_SITE = "site";
 	String ATTR_NODEREF = "nodeRef";
 	String ATTR_CODE = "code";
+	String ATTR_ID = "id";
+	
 	
 	String CHARACT_ATTR_PATH = "charactPath";
 	String CHARACT_ATTR_NAME = "charactName";
@@ -54,7 +57,10 @@ public interface RemoteEntityService {
 	String ELEM_DATA = "data";
 	String ELEM_LIST = "values";
 	String ELEM_LIST_VALUE = "value";
-	
+	String ELEM_DATALISTS = "datalists";
+	String ELEM_PROPERTIES = "properties";
+	String ELEM_ASSOCIATIONS = "associations";
+	String ELEM_ENTITY = "entity";
 
 	/**
 	 * Get entity at provided format
