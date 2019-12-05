@@ -136,7 +136,7 @@ const ARCHIVED_SITE_ID = "archived";
 
 function main() {
 
-	if (!document.hasAspect("bcpg:entityTplAspect") && !document.hasAspect("cm:workingcopy") && !isInUserFolder(document)) {
+	if (document.hasPermission("Read") && !document.hasAspect("bcpg:entityTplAspect") && !document.hasAspect("cm:workingcopy") && !isInUserFolder(document)) {
 
 		var state = "";
 		if (document.isSubType("bcpg:product")) {
