@@ -34,7 +34,6 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
-import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
@@ -56,6 +55,7 @@ import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
 
 /**
@@ -67,8 +67,8 @@ public class ExcelXmlEntityVisitor  extends AbstractEntityVisitor{
 
 
 	public ExcelXmlEntityVisitor(NodeService mlNodeService, NodeService nodeService, NamespaceService namespaceService,
-			DictionaryService dictionaryService, ContentService contentService, SiteService siteService) {
-		super(mlNodeService, nodeService, namespaceService, dictionaryService, contentService, siteService);
+			EntityDictionaryService entityDictionaryService, ContentService contentService, SiteService siteService) {
+		super(mlNodeService, nodeService, namespaceService, entityDictionaryService, contentService, siteService);
 	}
 
 	private static final Log logger = LogFactory.getLog(ExcelXmlEntityVisitor.class);
@@ -163,7 +163,7 @@ public class ExcelXmlEntityVisitor  extends AbstractEntityVisitor{
 		xmlw.writeAttribute(RemoteEntityService.ATTR_TYPE, RemoteEntityService.NODE_TYPE);
 
 
-		xmlw.writeAttribute(RemoteEntityService.ATTR_NAME, (String) nodeService.getProperty(nodeRef, RemoteHelper.getPropName(nodeType,dictionaryService)));
+		xmlw.writeAttribute(RemoteEntityService.ATTR_NAME, (String) nodeService.getProperty(nodeRef, RemoteHelper.getPropName(nodeType,entityDictionaryService)));
 		xmlw.writeAttribute(RemoteEntityService.ATTR_NODEREF, nodeRef.toString());
 
 		if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_CODE)) {
@@ -212,10 +212,10 @@ public class ExcelXmlEntityVisitor  extends AbstractEntityVisitor{
 
 	private void visitAssocs(NodeRef nodeRef, XMLStreamWriter xmlw) throws XMLStreamException {
 
-		Map<QName, AssociationDefinition> assocs = new HashMap<>(dictionaryService.getType(nodeService.getType(nodeRef))
+		Map<QName, AssociationDefinition> assocs = new HashMap<>(entityDictionaryService.getType(nodeService.getType(nodeRef))
 				.getAssociations());
 		for (QName aspect : nodeService.getAspects(nodeRef)) {
-			assocs.putAll(dictionaryService.getAspect(aspect).getAssociations());
+			assocs.putAll(entityDictionaryService.getAspect(aspect).getAssociations());
 		}
 		// First childs
 		for (Map.Entry<QName, AssociationDefinition> entry : assocs.entrySet()) {
@@ -273,7 +273,7 @@ public class ExcelXmlEntityVisitor  extends AbstractEntityVisitor{
 				if (entry.getValue() != null && !propQName.getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI)
 						&& !propQName.getNamespaceURI().equals(NamespaceService.RENDITION_MODEL_1_0_URI)
 						&& !propQName.getNamespaceURI().equals(ReportModel.REPORT_URI) && !propQName.equals(ContentModel.PROP_CONTENT)) {
-					PropertyDefinition propertyDefinition = dictionaryService.getProperty(entry.getKey());
+					PropertyDefinition propertyDefinition = entityDictionaryService.getProperty(entry.getKey());
 					if (propertyDefinition != null) {
 						QName propName = entry.getKey().getPrefixedQName(namespaceService);
 						xmlw.writeStartElement( getXmlName( propName));
