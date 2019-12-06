@@ -61,6 +61,7 @@ public interface RemoteEntityService {
 	String ELEM_PROPERTIES = "properties";
 	String ELEM_ASSOCIATIONS = "associations";
 	String ELEM_ENTITY = "entity";
+	String ELEM_ATTRIBUTES = "attributes";
 
 	/**
 	 * Get entity at provided format
