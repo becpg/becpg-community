@@ -190,7 +190,7 @@ public class PackagingHelper implements InitializingBean {
 		variantPackagingData.setPalletBoxesPerLastLayer((Integer) nodeService.getProperty(product, PackModel.PROP_PALLET_BOXES_PER_LAST_LAYER));
 		variantPackagingData.setPalletStackingMaxWeight((Double) nodeService.getProperty(product, PackModel.PROP_PALLET_STACKING_MAX_WEIGHT));
 		variantPackagingData.setPalletBoxesPerLayer((Integer) nodeService.getProperty(product, PackModel.PROP_PALLET_BOXES_PER_LAYER));
-		variantPackagingData.setPalletHeight((Integer) nodeService.getProperty(product, PackModel.PROP_PALLET_HEIGHT));
+		variantPackagingData.setPalletHeight((Double) nodeService.getProperty(product, PackModel.PROP_PALLET_HEIGHT));
 		variantPackagingData.setPalletNumberOnGround((Integer) nodeService.getProperty(product, PackModel.PROP_PALLET_NUMBER_ON_GROUND));
 		variantPackagingData.setPalletTypeCode((String) nodeService.getProperty(product, GS1Model.PROP_PALLET_TYPE_CODE));
 		variantPackagingData

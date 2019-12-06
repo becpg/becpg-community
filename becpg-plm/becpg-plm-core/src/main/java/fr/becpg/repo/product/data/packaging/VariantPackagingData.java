@@ -18,7 +18,7 @@ public class VariantPackagingData {
 
 	private Integer palletLayers;
 	private Integer palletBoxesPerLayer;
-	private Integer palletHeight;
+	private Double palletHeight;
 	private Integer palletNumberOnGround;
 	private Integer palletBoxesPerLastLayer;
 	private Double palletStackingMaxWeight;
@@ -107,11 +107,11 @@ public class VariantPackagingData {
 		this.palletBoxesPerLayer = palletBoxesPerLayer;
 	}
 
-	public Integer getPalletHeight() {
+	public Double getPalletHeight() {
 		return palletHeight;
 	}
 
-	public void setPalletHeight(Integer palletHeight) {
+	public void setPalletHeight(Double palletHeight) {
 		this.palletHeight = palletHeight;
 	}
 
