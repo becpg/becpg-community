@@ -1,6 +1,7 @@
 package fr.becpg.repo.web.scripts.remote;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -10,6 +11,7 @@ import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.io.IOUtils;
+import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
@@ -62,9 +64,11 @@ public class GetContentWebScript extends AbstractEntityWebScript {
 
 		// TODO Look at ContentStreamer streamContent class and do better
 		// (Mimetype ...)
+      try (OutputStream out = res.getOutputStream()){
 
-		IOUtils.copy(reader.getContentInputStream(), res.getOutputStream());
-
+        	IOUtils.copy(reader.getContentInputStream(),out);
+        }
+		
 	}
 
 }

@@ -38,5 +38,9 @@ public class RemoteHelper {
 		}
 		return ContentModel.PROP_NAME;
 	}
+
+	public static boolean isJSONValue(QName propType) {
+		return BeCPGModel.PROP_ENTITY_SCORE.equals(propType) || BeCPGModel.PROP_ACTIVITYLIST_DATA.equals(propType);
+	}
 	
 }
