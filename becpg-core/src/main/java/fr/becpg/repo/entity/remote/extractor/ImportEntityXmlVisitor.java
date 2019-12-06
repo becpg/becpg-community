@@ -109,7 +109,6 @@ public class ImportEntityXmlVisitor {
 	public NodeRef visit(NodeRef entityNodeRef, NodeRef destNodeRef, Map<QName, Serializable> properties, InputStream in)
 			throws IOException, SAXException, ParserConfigurationException {
 
-		try {
 			SAXParserFactory factory = SAXParserFactory.newInstance();
 			SAXParser saxParser = factory.newSAXParser();
 
@@ -119,24 +118,17 @@ public class ImportEntityXmlVisitor {
 			handler.removeExistingAssociations();
 
 			return handler.getCurNodeRef();
-		} finally {
-			IOUtils.closeQuietly(in);
-		}
 
 	}
 
 	public void visitData(InputStream in, OutputStream out) throws IOException, SAXException, ParserConfigurationException {
-		try {
 			SAXParserFactory factory = SAXParserFactory.newInstance();
 			SAXParser saxParser = factory.newSAXParser();
 
 			EntityDataXmlHandler handler = new EntityDataXmlHandler(out);
 			saxParser.parse(in, handler);
 
-		} finally {
-			IOUtils.closeQuietly(in);
-		}
-	}
+	}	
 
 	private class EntityDataXmlHandler extends DefaultHandler {
 
