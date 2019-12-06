@@ -141,6 +141,9 @@ public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 		if (value == null) {
 			return null;
 		}
+		if (Double.isInfinite(value) || Double.isNaN(value)) {
+			return 0.0;
+		}
 		if (nutrientTypeCode != null && !nutrientTypeCode.isEmpty()) {
 			String regulUnit = nutUnit;
 			NutrientDefinition def = getNutrientDefinition(nutrientTypeCode);
