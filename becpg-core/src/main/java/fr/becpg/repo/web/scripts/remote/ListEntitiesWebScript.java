@@ -18,10 +18,12 @@
 package fr.becpg.repo.web.scripts.remote;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.SocketException;
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
@@ -38,14 +40,13 @@ public class ListEntitiesWebScript extends AbstractEntityWebScript {
 
 		logger.debug("List entities");
 
-		try {
+		try (OutputStream out = resp.getOutputStream()){
 
-			remoteEntityService.listEntities(entities, resp.getOutputStream(), getFormat(req), extractFields(req));
+			remoteEntityService.listEntities(entities, out, getFormat(req), extractFields(req));
 
-			// set mimetype for the content and the character encoding + length
-			// for the stream
 			resp.setContentType(getContentType(req));
 			resp.setContentEncoding("UTF-8");
+			resp.setStatus(Status.STATUS_OK);
 
 		} catch (BeCPGException e) {
 			logger.error("Cannot export entity", e);

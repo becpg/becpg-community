@@ -35,7 +35,6 @@ import javax.xml.stream.XMLStreamException;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.ServiceRegistry;
-import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.MimetypeService;
@@ -94,8 +93,6 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	@Autowired
 	private NamespaceService namespaceService;
 
-	@Autowired
-	private DictionaryService dictionaryService;
 
 	@Autowired
 	@Qualifier("ContentService")

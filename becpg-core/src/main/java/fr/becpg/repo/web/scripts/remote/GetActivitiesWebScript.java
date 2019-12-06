@@ -46,6 +46,7 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
 import org.springframework.extensions.surf.util.ISO8601DateFormat;
 import org.springframework.extensions.webscripts.AbstractWebScript;
+import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
@@ -113,17 +114,18 @@ public class GetActivitiesWebScript extends AbstractWebScript {
 			logger.debug("Get user feed entries: " + feedUserId + ", " + feedDBID);
 		}
 
-		try {
+		  try (OutputStream out = resp.getOutputStream()){
 
 			PagingResults<ActivityFeedEntity> feedEntries = activityService.getPagedUserFeedEntries(feedUserId, null, false, false, feedDBID,
 					new PagingRequest(1000));
 
-			visit(feedEntries, resp.getOutputStream());
+			visit(feedEntries, out);
 
 			// set mimetype for the content and the character encoding + length
 			// for the stream
 			resp.setContentType("application/xml");
 			resp.setContentEncoding("UTF-8");
+			resp.setStatus(Status.STATUS_OK);
 		} catch (SocketException e1) {
 
 			// the client cut the connection - our mission was accomplished

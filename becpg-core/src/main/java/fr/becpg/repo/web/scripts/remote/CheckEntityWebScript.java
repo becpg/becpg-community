@@ -44,7 +44,7 @@ public class CheckEntityWebScript extends AbstractEntityWebScript {
 		}
 
 		resp.getWriter().write("KO");
-
+		resp.getWriter().close();
 	}
 
 }
