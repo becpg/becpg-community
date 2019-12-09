@@ -46,6 +46,7 @@ import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.MethodRule;
@@ -285,6 +286,13 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 		}, false, true));
 	}
 
+	
+	@Override
+	@After
+	public void tearDown() throws Exception {
+		super.tearDown();
+	}
+	
 	public void waitForSolr() {
 
 		Date startTime = new Date();
