@@ -236,7 +236,7 @@
 					<set id="" appearance="title" label-id="workflow.set.general" />
 					<set id="info" appearance=""
 						template="/org/alfresco/components/form/2-column-set.ftl" />
-					<set id="intervenants" appearance="title" label="Intervenants" 
+					<set id="assignees" appearance="title"  label-id="workflow.set.assignees" 
 						template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="items" appearance="title" label-id="workflow.set.items" />
 					<set id="other" appearance="title" label-id="workflow.set.other" />
@@ -251,32 +251,32 @@
 							<control-param name="style">width: 95%</control-param>
 						</control>
 					</field>						
-					<field id="bcpgwf:pvQualityApprovalActor" set="intervenants" >
+					<field id="bcpgwf:pvQualityApprovalActor" set="assignees" >
 						<control template="/org/alfresco/components/form/controls/authority.ftl">
 							<control-param name="extraParams">group=GROUP_QualityMgr</control-param>
 						</control>
 					</field>
-					<field id="bcpgwf:pvProductionApprovalActor" set="intervenants" >
+					<field id="bcpgwf:pvProductionApprovalActor" set="assignees" >
 						<control template="/org/alfresco/components/form/controls/authority.ftl">
 							<control-param name="extraParams">group=GROUP_ProductionMgr</control-param>
 						</control>
 					</field>
-					<field id="bcpgwf:pvRDApprovalActor" set="intervenants" >
+					<field id="bcpgwf:pvRDApprovalActor" set="assignees" >
 						<control template="/org/alfresco/components/form/controls/authority.ftl">
 							<control-param name="extraParams">group=GROUP_RDMgr</control-param>
 						</control>
 					</field>
-					<field id="bcpgwf:pvPackagingApprovalActor" set="intervenants" >
+					<field id="bcpgwf:pvPackagingApprovalActor" set="assignees" >
 						<control template="/org/alfresco/components/form/controls/authority.ftl">
 							<control-param name="extraParams">group=GROUP_PackagingMgr</control-param>
 						</control>
 					</field>
-					<field id="bcpgwf:pvCallerActor" set="intervenants" >
+					<field id="bcpgwf:pvCallerActor" set="assignees" >
 						<control template="/org/alfresco/components/form/controls/authority.ftl">
 							<control-param name="extraParams">group=GROUP_pvCallerActor</control-param>
 						</control>
 				    </field>
-					<field id="bcpgwf:pvCaller2Actor" set="intervenants" >
+					<field id="bcpgwf:pvCaller2Actor" set="assignees" >
 						<control template="/org/alfresco/components/form/controls/authority.ftl">
 							<control-param name="extraParams">group=GROUP_pvCaller2Actor</control-param>
 						</control>
@@ -725,7 +725,7 @@
 					<set id="" appearance="title" label-id="workflow.set.task.info" />
 					<set id="info" appearance=""
 						template="/org/alfresco/components/form/3-column-set.ftl" />
-					<set id="intervenants" appearance="title" label="Intervenants" 
+					<set id="assignees" appearance="title" label-id="workflow.set.assignees" 
 						template="/org/alfresco/components/form/3-column-set.ftl" />
 					<set id="progress" appearance="title" label-id="workflow.set.task.progress" />
 					<set id="items" appearance="title" label-id="workflow.set.items" />
@@ -748,58 +748,58 @@
 						</control>
 					</field>
 					
-					<field id="bcpgwf:pvQualityApprovalActor" set="intervenants" read-only="true"/>											
-					<field id="bcpgwf:reviewQualityApproval" set="intervenants" read-only="true">
+					<field id="bcpgwf:pvQualityApprovalActor" set="assignees" read-only="true"/>											
+					<field id="bcpgwf:reviewQualityApproval" set="assignees" read-only="true">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="insertBlank">true</control-param>
 						</control>
 					</field>					
-					<field id="bcpgwf:reviewQualityComment" set="intervenants">
+					<field id="bcpgwf:reviewQualityComment" set="assignees">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
-					<field id="bcpgwf:pvProductionApprovalActor" set="intervenants" read-only="true"/>
-					<field id="bcpgwf:reviewProductionApproval" set="intervenants" read-only="true">
+					<field id="bcpgwf:pvProductionApprovalActor" set="assignees" read-only="true"/>
+					<field id="bcpgwf:reviewProductionApproval" set="assignees" read-only="true">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
-					<field id="bcpgwf:reviewProductionComment" set="intervenants">
+					<field id="bcpgwf:reviewProductionComment" set="assignees">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
-					<field id="bcpgwf:pvRDApprovalActor" set="intervenants" read-only="true"/>
-					<field id="bcpgwf:reviewRDApproval" set="intervenants" read-only="true">
+					<field id="bcpgwf:pvRDApprovalActor" set="assignees" read-only="true"/>
+					<field id="bcpgwf:reviewRDApproval" set="assignees" read-only="true">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
-					<field id="bcpgwf:reviewRDComment" set="intervenants">
+					<field id="bcpgwf:reviewRDComment" set="assignees">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
-					<field id="bcpgwf:pvPackagingApprovalActor" set="intervenants" read-only="true"/>
-					<field id="bcpgwf:reviewPackagingApproval" set="intervenants" read-only="true">
+					<field id="bcpgwf:pvPackagingApprovalActor" set="assignees" read-only="true"/>
+					<field id="bcpgwf:reviewPackagingApproval" set="assignees" read-only="true">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
-					<field id="bcpgwf:reviewPackagingComment" set="intervenants">
+					<field id="bcpgwf:reviewPackagingComment" set="assignees">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
-					<field id="bcpgwf:pvCallerActor" set="intervenants" read-only="true"/>
-					<field id="bcpgwf:reviewCallerApproval" set="intervenants" read-only="true">
+					<field id="bcpgwf:pvCallerActor" set="assignees" read-only="true"/>
+					<field id="bcpgwf:reviewCallerApproval" set="assignees" read-only="true">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
-					<field id="bcpgwf:reviewCallerComment" set="intervenants">
+					<field id="bcpgwf:reviewCallerComment" set="assignees">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
-					<field id="bcpgwf:pvCaller2Actor" set="intervenants" read-only="true"/>
-					<field id="bcpgwf:reviewCaller2Approval" set="intervenants" read-only="true">
+					<field id="bcpgwf:pvCaller2Actor" set="assignees" read-only="true"/>
+					<field id="bcpgwf:reviewCaller2Approval" set="assignees" read-only="true">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
-					<field id="bcpgwf:reviewCaller2Comment" set="intervenants">
+					<field id="bcpgwf:reviewCaller2Comment" set="assignees">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
 					
@@ -846,7 +846,7 @@
 					<set id="" appearance="title" label-id="workflow.set.task.info" />
 					<set id="info" appearance=""
 						template="/org/alfresco/components/form/3-column-set.ftl" />					
-					<set id="intervenants" appearance="title" label="Intervenants" 
+					<set id="assignees" appearance="title" label-id="workflow.set.assignees" 
 						template="/org/alfresco/components/form/3-column-set.ftl" />
 					<set id="progress" appearance="title" label-id="workflow.set.task.progress" />
 					<set id="items" appearance="title" label-id="workflow.set.items" />
@@ -870,58 +870,58 @@
 						</control>
 					</field>
 					
-					<field id="bcpgwf:pvQualityApprovalActor" set="intervenants" />											
-					<field id="bcpgwf:reviewQualityApproval" set="intervenants" read-only="true">
+					<field id="bcpgwf:pvQualityApprovalActor" set="assignees" />											
+					<field id="bcpgwf:reviewQualityApproval" set="assignees" read-only="true">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="insertBlank">true</control-param>
 						</control>
 					</field>					
-					<field id="bcpgwf:reviewQualityComment" set="intervenants">
+					<field id="bcpgwf:reviewQualityComment" set="assignees">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
-					<field id="bcpgwf:pvProductionApprovalActor" set="intervenants" />
-					<field id="bcpgwf:reviewProductionApproval" set="intervenants" read-only="true">
+					<field id="bcpgwf:pvProductionApprovalActor" set="assignees" />
+					<field id="bcpgwf:reviewProductionApproval" set="assignees" read-only="true">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
-					<field id="bcpgwf:reviewProductionComment" set="intervenants">
+					<field id="bcpgwf:reviewProductionComment" set="assignees">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
-					<field id="bcpgwf:pvRDApprovalActor" set="intervenants" />
-					<field id="bcpgwf:reviewRDApproval" set="intervenants" read-only="true">
+					<field id="bcpgwf:pvRDApprovalActor" set="assignees" />
+					<field id="bcpgwf:reviewRDApproval" set="assignees" read-only="true">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
-					<field id="bcpgwf:reviewRDComment" set="intervenants">
+					<field id="bcpgwf:reviewRDComment" set="assignees">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
-					<field id="bcpgwf:pvPackagingApprovalActor" set="intervenants" />
-					<field id="bcpgwf:reviewPackagingApproval" set="intervenants" read-only="true">
+					<field id="bcpgwf:pvPackagingApprovalActor" set="assignees" />
+					<field id="bcpgwf:reviewPackagingApproval" set="assignees" read-only="true">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
-					<field id="bcpgwf:reviewPackagingComment" set="intervenants">
+					<field id="bcpgwf:reviewPackagingComment" set="assignees">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
-					<field id="bcpgwf:pvCallerActor" set="intervenants" />
-					<field id="bcpgwf:reviewCallerApproval" set="intervenants" read-only="true">
+					<field id="bcpgwf:pvCallerActor" set="assignees" />
+					<field id="bcpgwf:reviewCallerApproval" set="assignees" read-only="true">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
-					<field id="bcpgwf:reviewCallerComment" set="intervenants">
+					<field id="bcpgwf:reviewCallerComment" set="assignees">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
-					<field id="bcpgwf:pvCaller2Actor" set="intervenants" />
-					<field id="bcpgwf:reviewCaller2Approval" set="intervenants" read-only="true">
+					<field id="bcpgwf:pvCaller2Actor" set="assignees" />
+					<field id="bcpgwf:reviewCaller2Approval" set="assignees" read-only="true">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
-					<field id="bcpgwf:reviewCaller2Comment" set="intervenants">
+					<field id="bcpgwf:reviewCaller2Comment" set="assignees">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
 					
