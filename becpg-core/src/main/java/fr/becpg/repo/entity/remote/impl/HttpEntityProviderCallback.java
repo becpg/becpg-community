@@ -2,7 +2,6 @@ package fr.becpg.repo.entity.remote.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Serializable;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -10,7 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpEntity;
@@ -56,11 +54,11 @@ public class HttpEntityProviderCallback implements EntityProviderCallBack {
 
 	@Override
 	public NodeRef provideNode(NodeRef nodeRef, Map<NodeRef, NodeRef> cache) throws BeCPGException {
-		return provideNode(nodeRef, null, null, cache);
+		return provideNode(nodeRef, null, cache);
 	}
 
 	@Override
-	public NodeRef provideNode(NodeRef nodeRef, NodeRef destNodeRef, Map<QName, Serializable> properties,
+	public NodeRef provideNode(NodeRef nodeRef, NodeRef destNodeRef,
 			Map<NodeRef, NodeRef> cache) throws BeCPGException {
 		try {
 			String url = remoteServer + "?nodeRef=" + nodeRef.toString();
@@ -84,7 +82,7 @@ public class HttpEntityProviderCallback implements EntityProviderCallBack {
 				// case 3 : not visited yet, put in map and visit
 				visitedNodes.put(nodeRef, null);
 				try (InputStream entityStream = responseEntity.getContent()) {
-					NodeRef res = remoteEntityService.createOrUpdateEntity(nodeRef, destNodeRef, properties,
+					NodeRef res = remoteEntityService.internalCreateOrUpdateEntity(nodeRef, destNodeRef,
 							entityStream, RemoteEntityFormat.xml, this, cache);
 					visitedNodes.put(nodeRef, res);
 

@@ -17,17 +17,15 @@
  ******************************************************************************/
 package fr.becpg.repo.entity.remote;
 
-import java.io.Serializable;
 import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.namespace.QName;
 
 import fr.becpg.common.BeCPGException;
 
 public interface EntityProviderCallBack {
 
-	NodeRef provideNode(NodeRef nodeRef, NodeRef destNodeRef, Map<QName, Serializable> properties, Map<NodeRef, NodeRef> cache) throws BeCPGException;
+	NodeRef provideNode(NodeRef nodeRef, NodeRef destNodeRef, Map<NodeRef, NodeRef> cache) throws BeCPGException;
 	
 	NodeRef provideNode(NodeRef nodeRef,Map<NodeRef, NodeRef> cache) throws BeCPGException;
 

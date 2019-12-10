@@ -18,14 +18,11 @@
 package fr.becpg.repo.web.scripts.remote;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.HashMap;
-import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.namespace.QName;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -45,6 +42,7 @@ import fr.becpg.repo.entity.remote.impl.HttpEntityProviderCallback;
  * @author matthieu
  * 
  */
+@Deprecated
 public class ImportEntityWebScript extends AbstractEntityWebScript implements InitializingBean {
 
 	private String remoteServer;
@@ -90,14 +88,14 @@ public class ImportEntityWebScript extends AbstractEntityWebScript implements In
 				destNodeRef = new NodeRef(destination);
 			}
 
-			Map<QName, Serializable> props = new HashMap<>();
-			props.put(BeCPGModel.PROP_CODE, null);
-			props.put(ContentModel.PROP_OWNER, AuthenticationUtil.getFullyAuthenticatedUser());
 			JSONArray ret = new JSONArray();
 			for (final String entity : entities.split(",")) {
 				NodeRef entityNodeRef;
 				try {
-					entityNodeRef = entityProviderCallBack.provideNode(new NodeRef(entity), destNodeRef, props, new HashMap<>());
+					entityNodeRef = entityProviderCallBack.provideNode(new NodeRef(entity), destNodeRef, new HashMap<>());
+					nodeService.setProperty(entityNodeRef,BeCPGModel.PROP_CODE, null);
+					nodeService.setProperty(entityNodeRef,ContentModel.PROP_OWNER, AuthenticationUtil.getFullyAuthenticatedUser());
+					
 				} catch (BeCPGException e) {
 					logger.error("Cannot import entity ", e);
 					throw new WebScriptException(e.getMessage());

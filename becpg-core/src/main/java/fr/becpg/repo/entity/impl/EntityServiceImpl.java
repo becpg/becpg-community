@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2018 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2018 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.entity.impl;
@@ -51,7 +51,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,9 +68,9 @@ import fr.becpg.repo.helper.TranslateHelper;
 
 /**
  * Entity Service implementation
- * 
+ *
  * @author querephi
- * 
+ *
  */
 @Service("entityService")
 public class EntityServiceImpl implements EntityService {
@@ -96,14 +95,12 @@ public class EntityServiceImpl implements EntityService {
 	@Autowired
 	private ContentService contentService;
 
-//	@Autowired
-//	private DictionaryService dictionaryService;
-//	
-	
+	// @Autowired
+	// private DictionaryService dictionaryService;
+	//
+
 	@Autowired
 	private EntityDictionaryService entityDictionaryService;
-	
-	
 
 	private static Integer MAX_DEPTH_LEVEL = 6;
 
@@ -113,10 +110,9 @@ public class EntityServiceImpl implements EntityService {
 		IGNORE_PARENT_ASSOC_TYPES.add(ContentModel.ASSOC_IN_ZONE);
 	}
 
-
 	/**
 	 * Load an image in the folder Images.
-	 * 
+	 *
 	 * @param nodeRef
 	 *            the node ref
 	 * @param imgName
@@ -145,7 +141,7 @@ public class EntityServiceImpl implements EntityService {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param nodeRef
 	 * @param imgName
 	 * @return List of images nodeRefs
@@ -190,11 +186,12 @@ public class EntityServiceImpl implements EntityService {
 
 	/**
 	 * Load the image associated to the node.
-	 * 
+	 *
 	 * @param nodeRef
 	 *            the node ref
 	 * @return the image
 	 */
+	@Override
 	public byte[] getImage(NodeRef nodeRef) {
 
 		byte[] imageBytes = null;
@@ -202,11 +199,9 @@ public class EntityServiceImpl implements EntityService {
 		ContentReader reader = contentService.getReader(nodeRef, ContentModel.PROP_CONTENT);
 
 		if (reader != null) {
-			InputStream in = reader.getContentInputStream();
-			OutputStream out = null;
-			try {
+			try (InputStream in = reader.getContentInputStream(); OutputStream out = new ByteArrayOutputStream()) {
 				Image image = ImageIO.read(in);
-				out = new ByteArrayOutputStream();
+
 				if (image != null) {
 					ImageIO.write((RenderedImage) image, guessImageFormat(reader.getMimetype()), out);
 					imageBytes = ((ByteArrayOutputStream) out).toByteArray();
@@ -214,9 +209,6 @@ public class EntityServiceImpl implements EntityService {
 
 			} catch (IOException e) {
 				logger.error("Failed to get the content for " + nodeRef, e);
-			} finally {
-				IOUtils.closeQuietly(in);
-				IOUtils.closeQuietly(out);
 			}
 		}
 
@@ -259,21 +251,19 @@ public class EntityServiceImpl implements EntityService {
 			String mimetype = mimetypeService.guessMimetype(filename);
 
 			BufferedImage bufferedImage;
-			OutputStream out = null;
 			try {
 				bufferedImage = ImageIO.read(new ByteArrayInputStream(image.getValue()));
 
 				ContentWriter writer = contentService.getWriter(fileNodeRef, ContentModel.PROP_CONTENT, true);
 				writer.setMimetype(mimetype);
-				out = writer.getContentOutputStream();
+				try (OutputStream out = writer.getContentOutputStream()) {
 
-				ImageIO.write(bufferedImage, "jpg", out);
-				logger.debug("Write image " + filename);
-				bufferedImage.flush();
+					ImageIO.write(bufferedImage, "jpg", out);
+					logger.debug("Write image " + filename);
+					bufferedImage.flush();
+				}
 			} catch (IOException e) {
 				logger.error(e, e);
-			} finally {
-				IOUtils.closeQuietly(out);
 			}
 		}
 	}
@@ -301,7 +291,7 @@ public class EntityServiceImpl implements EntityService {
 	@Override
 	public String getDefaultImageName(QName entityTypeQName) {
 		String imgName = TranslateHelper.getTranslatedPath(RepoConsts.PATH_LOGO_IMAGE + "." + entityTypeQName.getLocalName());
-		if (imgName == null || imgName.isEmpty()) {
+		if ((imgName == null) || imgName.isEmpty()) {
 			imgName = TranslateHelper.getTranslatedPath(RepoConsts.PATH_LOGO_IMAGE);
 		}
 		if (imgName != null) {
@@ -334,12 +324,12 @@ public class EntityServiceImpl implements EntityService {
 	public NodeRef getOrCreateDocumentsFolder(NodeRef entityNodeRef) {
 		return getDocumentsFolder(entityNodeRef, true);
 	}
-	
+
 	@Override
 	public NodeRef getDocumentsFolder(NodeRef entityNodeRef, boolean create) {
 		String documentsFolderName = TranslateHelper.getTranslatedPath(RepoConsts.PATH_DOCUMENTS);
 		NodeRef documentsFolderNodeRef = nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS, documentsFolderName);
-		if (documentsFolderNodeRef == null && create) {
+		if ((documentsFolderNodeRef == null) && create) {
 			documentsFolderNodeRef = fileFolderService.create(entityNodeRef, documentsFolderName, ContentModel.TYPE_FOLDER).getNodeRef();
 		}
 		return documentsFolderNodeRef;
@@ -351,17 +341,14 @@ public class EntityServiceImpl implements EntityService {
 		Map<QName, Serializable> props = new HashMap<>();
 		props.put(ContentModel.PROP_NAME, entityName);
 
-		if (sourceNodeRef != null && nodeService.exists(sourceNodeRef)) {
+		if ((sourceNodeRef != null) && nodeService.exists(sourceNodeRef)) {
 			logger.debug("Copy existing entity");
 
-			ret = AuthenticationUtil.runAsSystem(new AuthenticationUtil.RunAsWork<NodeRef>() {
-				@Override
-				public NodeRef doWork() throws Exception {
-					NodeRef ret = copyService.copyAndRename(sourceNodeRef, parentNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN,
-							true);
-					nodeService.setProperty(ret, ContentModel.PROP_NAME, entityName);
-					return ret;
-				}
+			ret = AuthenticationUtil.runAsSystem(() -> {
+				NodeRef ret1 = copyService.copyAndRename(sourceNodeRef, parentNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN,
+						true);
+				nodeService.setProperty(ret1, ContentModel.PROP_NAME, entityName);
+				return ret1;
 			});
 
 		} else {
@@ -382,7 +369,7 @@ public class EntityServiceImpl implements EntityService {
 	/**
 	 * Get original name from the working copy name and the cm:workingCopyLabel
 	 * that was used to create it.
-	 * 
+	 *
 	 * @param workingCopyLabel
 	 * @return original name
 	 */
@@ -409,7 +396,7 @@ public class EntityServiceImpl implements EntityService {
 
 	private void copyOrMoveFiles(NodeRef sourceNodeRef, NodeRef targetNodeRef, boolean isCopy) {
 
-		if (targetNodeRef != null && sourceNodeRef != null) {
+		if ((targetNodeRef != null) && (sourceNodeRef != null)) {
 
 			for (FileInfo file : fileFolderService.list(sourceNodeRef)) {
 
@@ -490,14 +477,11 @@ public class EntityServiceImpl implements EntityService {
 			deleteNode(listContainerNodeRef, deleteArchivedNodes);
 		}
 	}
-	
-
 
 	@Override
 	public NodeRef getEntityNodeRef(NodeRef nodeRef, QName itemType) {
 		return getEntityNodeRef(nodeRef, itemType, new HashSet<NodeRef>());
 	}
-	
 
 	private NodeRef getEntityNodeRef(NodeRef nodeRef, QName itemType, Set<NodeRef> visitedNodeRefs) {
 		if (nodeService.exists(nodeRef)) {
@@ -552,8 +536,7 @@ public class EntityServiceImpl implements EntityService {
 		}
 
 		return true;
-		
-	}
 
+	}
 
 }
