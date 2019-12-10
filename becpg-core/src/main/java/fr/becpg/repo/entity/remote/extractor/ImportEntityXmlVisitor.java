@@ -48,7 +48,6 @@ import org.alfresco.service.namespace.NamespaceException;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.codec.binary.Base64OutputStream;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -74,7 +73,6 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  */
 public class ImportEntityXmlVisitor {
 
-	private static final String FULL_PATH_IMPORT_TO_DO = "/app:company_home/cm:Exchange/cm:Import/cm:ImportToDo";
 
 	private final Pattern nodeRefPattern = Pattern.compile("(workspace://SpacesStore/[a-z0-9A-Z\\-]*)");
 
@@ -106,13 +104,13 @@ public class ImportEntityXmlVisitor {
 		this.associationService = associationService;
 	}
 
-	public NodeRef visit(NodeRef entityNodeRef, NodeRef destNodeRef, Map<QName, Serializable> properties, InputStream in)
+	public NodeRef visit(NodeRef entityNodeRef, NodeRef destNodeRef, InputStream in)
 			throws IOException, SAXException, ParserConfigurationException {
 
 			SAXParserFactory factory = SAXParserFactory.newInstance();
 			SAXParser saxParser = factory.newSAXParser();
 
-			EntityXmlHandler handler = new EntityXmlHandler(entityNodeRef, destNodeRef, properties);
+			EntityXmlHandler handler = new EntityXmlHandler(entityNodeRef, destNodeRef);
 			saxParser.parse(in, handler);
 			handler.handlePropertiesQueue();
 			handler.removeExistingAssociations();
@@ -201,13 +199,12 @@ public class ImportEntityXmlVisitor {
 
 		private QName nodeType = null;
 
-		public EntityXmlHandler(NodeRef entityNodeRef, NodeRef destNodeRef, Map<QName, Serializable> properties) {
+		public EntityXmlHandler(NodeRef entityNodeRef, NodeRef destNodeRef) {
 			this.entityNodeRef = entityNodeRef;
 			this.destNodeRef = destNodeRef;
-			this.properties = properties;
 		}
 
-		private static final String EMPTY_NAME_PREFIX = "REMOTE-";
+		
 
 		@Override
 		public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
@@ -233,7 +230,7 @@ public class ImportEntityXmlVisitor {
 					}
 
 					if ((name == null) || name.trim().isEmpty()) {
-						name = EMPTY_NAME_PREFIX + UUID.randomUUID().toString();
+						name = RemoteEntityService.EMPTY_NAME_PREFIX + UUID.randomUUID().toString();
 					}
 
 					if ((entityNodeRef != null) && curNodeRef.isEmpty()) {
@@ -774,7 +771,7 @@ public class ImportEntityXmlVisitor {
 			}
 
 			if (ret == null) {
-				ret = BeCPGQueryBuilder.createQuery().selectNodeByPath(rootNode, FULL_PATH_IMPORT_TO_DO);
+				ret = BeCPGQueryBuilder.createQuery().selectNodeByPath(rootNode, RemoteEntityService.FULL_PATH_IMPORT_TO_DO);
 			}
 
 			return ret;
@@ -826,7 +823,7 @@ public class ImportEntityXmlVisitor {
 				beCPGQueryBuilder.andPropEquals(BeCPGModel.PROP_CODE, code);
 			} else if ((erpCode != null) && (erpCode.length() > 0)) {
 				beCPGQueryBuilder.andPropEquals(BeCPGModel.PROP_ERP_CODE, erpCode);
-			} else if ((name != null) && (name.length() > 0) && !name.startsWith(EMPTY_NAME_PREFIX)) {
+			} else if ((name != null) && (name.length() > 0) && !name.startsWith(RemoteEntityService.EMPTY_NAME_PREFIX)) {
 				beCPGQueryBuilder.andPropEquals(RemoteHelper.getPropName(type, entityDictionaryService), name);
 			}
 
@@ -839,7 +836,7 @@ public class ImportEntityXmlVisitor {
 			List<NodeRef> ret = beCPGQueryBuilder.list();
 			if (!ret.isEmpty()) {
 				for (NodeRef node : ret) {
-					if (serviceRegistry.getNodeService().exists(node) && ((name == null) || name.startsWith(EMPTY_NAME_PREFIX)
+					if (serviceRegistry.getNodeService().exists(node) && ((name == null) || name.startsWith(RemoteEntityService.EMPTY_NAME_PREFIX)
 							|| name.equals(PropertiesHelper.cleanName((String) serviceRegistry.getNodeService().getProperty(node,
 									RemoteHelper.getPropName(type, entityDictionaryService)))))) {
 						logger.debug("Found node for query :" + beCPGQueryBuilder.toString());
