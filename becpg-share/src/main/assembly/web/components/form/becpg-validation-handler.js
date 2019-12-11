@@ -125,7 +125,7 @@
 		   			}
 		   		if(inputEl!=null){
 		   			var match;
-		   			if(args[i].condition != null && args[i].condition.startsWith("RegExp_")){
+		   			if(args[i].condition != null && args[i].condition.indexOf("RegExp_") == 0){
 		   				var regex = new RegExp(args[i].condition.replace("RegExp_", ""));
 			   			match = field.value.match(regex) != null;
 		   			}else {
