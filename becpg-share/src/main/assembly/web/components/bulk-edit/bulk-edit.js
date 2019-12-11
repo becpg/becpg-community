@@ -1593,6 +1593,12 @@
 							
 							//Warning before editing ERP code
 							
+							var getObjectByValue = function (array, key, value) {
+							    return array.filter(function (object) {
+							        return object[key] === value;
+							    });
+							};
+							
 							var popupKind = "bulk-edit",  li = '', colCount = 0;
 							var html = '<div class="hd">' + this.msg("header." + popupKind + ".picker") + '</div>';
 				       		html += '<div class="bd">';
@@ -1602,9 +1608,11 @@
 				       		html += '        <div class="form-field">';
 				       		html += '			<div  id="'+this.id+'-columns-list" />';
 				       		
-				       		for(i in displayFields){
-				       			var obj = this.datalistColumns.find(function(element){ return element.formsName == displayFields[i]});
-				       			li += '<li><input id="propSelected-' + i + '"  type="checkbox" name="propChecked" value="'+ displayFields[i] + '" /> <label for="propSelected-' + i + '" >' + obj.label + '</label></li>';
+				       		for(var i in displayFields){
+				       			var obj = getObjectByValue(this.datalistColumns,"formsName",displayFields[i]);
+				       			if(obj && obj.length> 0&&  obj[0].label){
+				       				li += '<li><input id="propSelected-' + i + '"  type="checkbox" name="propChecked" value="'+ displayFields[i] + '" /> <label for="propSelected-' + i + '" >' + obj[0].label + '</label></li>';
+				       			}
 				       		}
 				       		
 				       		html += '<span>'+this.msg("label.edit-columns.title") + '</span><br/><br/><ul style="width:' + ((colCount + 1) * 20) + 'em;">'+ li +'</ul>';	
@@ -1630,23 +1638,8 @@
 			       			
 			       			this.widgets.columnsListPanel.show();
 			       			
-			       			var containerEl = Dom.get(this.id+'-columns-list').parentNode
+			       			var containerEl = Dom.get(this.id+'-columns-list').parentNode;
 			       			
-			       			this.widgets.okBkButton = Alfresco.util.createYUIButton(this, "bulk-edit-ok", function (){
-				       			var me = this, selectedFields = Selector.query('input[type="checkbox"]', containerEl);
-			       				displayFields = [];
-			       				
-			       				for ( var i in selectedFields) {	
-			       					if(selectedFields[i].checked){
-			       						displayFields.push(selectedFields[i].value);
-			       					}	
-			       				}
-			       				
-			       				me.widgets.columnsListPanel.hide();
-			       				fnDialogShow.call(me);
-			       				
-				            });
-	
 			       			
 			       			var fnDialogShow =  function(){
 			       				var selectedNodeRef = this.getSelectedItems(), submissionParams = "";
@@ -1700,14 +1693,14 @@
 			       									text : this.msg(confirmMessage),
 			       									buttons : [ {
 			       										text : this.msg("button.yes"),
-			       										handler : function columnsUpdate() {
+			       										handler : function () {
 			       											this.destroy();
 			       											submit = true;
 			       											createRow.widgets.okButton._button.click();
 			       										}
 			       									}, {
 			       										text : this.msg("button.no"),
-			       										handler : function EntityDataGrid__onActionEdit_cancel() {
+			       										handler : function () {
 			       											this.destroy();
 			       											submit = false;
 			       										},
@@ -1745,7 +1738,24 @@
 			       					}
 			       				}).show();
 			       				
-			       			}
+			       			};
+			       			
+
+			       			this.widgets.okBkButton = Alfresco.util.createYUIButton(this, "bulk-edit-ok", function (){
+				       			var me = this, selectedFields = Selector.query('input[type="checkbox"]', containerEl);
+			       				displayFields = [];
+			       				
+			       				for ( var i in selectedFields) {	
+			       					if(selectedFields[i].checked){
+			       						displayFields.push(selectedFields[i].value);
+			       					}	
+			       				}
+			       				
+			       				me.widgets.columnsListPanel.hide();
+			       				fnDialogShow.call(me);
+			       				
+				            });
+	
 
 
 						},
