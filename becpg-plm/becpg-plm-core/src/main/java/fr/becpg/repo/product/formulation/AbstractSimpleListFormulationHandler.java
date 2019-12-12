@@ -42,6 +42,7 @@ import fr.becpg.repo.data.hierarchicalList.CompositeDataItem;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
@@ -73,6 +74,8 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	protected EntityListDAO entityListDAO;
 
 	protected NodeService nodeService;
+	
+	protected NodeService mlNodeService;
 
 	protected boolean transientFormulation = false;
 
@@ -96,6 +99,11 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
+	}
+	
+
+	public void setMlNodeService(NodeService mlNodeService) {
+		this.mlNodeService = mlNodeService;
 	}
 
 	public T createNewInstance() throws InstantiationException, IllegalAccessException {
@@ -228,10 +236,9 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		// ReqCtrlList
 		for (Map.Entry<NodeRef, List<NodeRef>> mandatoryCharact : mandatoryCharacts.entrySet()) {
 			if ((mandatoryCharact.getValue() != null) && !mandatoryCharact.getValue().isEmpty()) {
-				String message = I18NUtil.getMessage(MESSAGE_UNDEFINED_CHARACT,
-						nodeService.getProperty(mandatoryCharact.getKey(), BeCPGModel.PROP_CHARACT_NAME));
 
-				reqCtrlList.add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, mandatoryCharact.getKey(),
+				reqCtrlList.add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, MLTextHelper.getI18NMessage(MESSAGE_UNDEFINED_CHARACT,
+						mlNodeService.getProperty(mandatoryCharact.getKey(), BeCPGModel.PROP_CHARACT_NAME)), mandatoryCharact.getKey(),
 						mandatoryCharact.getValue(), dataType));
 			}
 		}
@@ -497,10 +504,9 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 				if (error != null) {
 					formulatedCharactDataItem.setValue(null);
 					formulatedCharactDataItem.setErrorLog(error);
-					String message = I18NUtil.getMessage(errorKey, Locale.getDefault(),
-							nodeService.getProperty(formulatedCharactDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME), error);
 
-					ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Tolerated, message,
+					ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Tolerated, MLTextHelper.getI18NMessage(errorKey, Locale.getDefault(),
+							mlNodeService.getProperty(formulatedCharactDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME), error),
 							formulatedCharactDataItem.getCharactNodeRef(), new ArrayList<NodeRef>(), getRequirementDataType());
 					formulatedProduct.getReqCtrlList().add(rclDataItem);
 				}

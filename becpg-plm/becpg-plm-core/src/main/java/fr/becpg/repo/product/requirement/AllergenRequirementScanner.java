@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.springframework.extensions.surf.util.I18NUtil;
 
-import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
@@ -37,7 +37,7 @@ public class AllergenRequirementScanner extends AbstractRequirementScanner<Aller
 							}
 
 							if (!isAllergenAllowed) {
-								String message = I18NUtil.getMessage(MESSAGE_FORBIDDEN_ALLERGEN, extractName(listDataItem.getAllergen()));
+								MLText message = MLTextHelper.getI18NMessage(MESSAGE_FORBIDDEN_ALLERGEN, extractName(listDataItem.getAllergen()));
 								ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message,
 										listDataItem.getAllergen(), new ArrayList<NodeRef>(), RequirementDataType.Specification);
 								rclDataItem.getSources().addAll(listDataItem.getVoluntarySources());
@@ -83,10 +83,6 @@ public class AllergenRequirementScanner extends AbstractRequirementScanner<Aller
 				}
 			}
 		});
-	}
-
-	private String extractName(NodeRef charactRef) {
-		return (String) nodeService.getProperty(charactRef, BeCPGModel.PROP_CHARACT_NAME);
 	}
 
 

@@ -97,6 +97,7 @@
 		<property name="alfrescoRepository" ref="alfrescoRepository" />
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="nodeService" ref="nodeService" />
+		<property name="mlNodeService" ref="mlAwareNodeService" />
 	</bean>
 
 
@@ -135,9 +136,10 @@
 					<property name="nodeService" ref="nodeService" />
 					<property name="allergenRequirementScanner">
 						<bean class="fr.becpg.repo.product.requirement.AllergenRequirementScanner">
-								<property name="nodeService" ref="nodeService" />
+								<property name="mlNodeService" ref="mlAwareNodeService" />
 						</bean>
 					</property>
+					<property name="mlNodeService" ref="mlAwareNodeService" />
 				</bean>
 				<bean parent="abstractSimpleFormulationHandler"
 					class="fr.becpg.repo.product.formulation.NutsCalculatingFormulationHandler">
@@ -178,6 +180,7 @@
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="formulaService" ref="formulaService"/>
 					<property name="nodeService" ref="nodeService" />
+					<property name="mlNodeService" ref="mlAwareNodeService" />
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.FormulaFormulationHandler" >
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
@@ -321,21 +324,21 @@
 		<property name="requirementScanners">
 			<list>
 				<bean class="fr.becpg.repo.product.requirement.AllergenRequirementScanner">
-					<property name="nodeService" ref="nodeService" />
+					<property name="mlNodeService" ref="mlAwareNodeService" />
 				</bean>
 				<bean class="fr.becpg.repo.product.requirement.IngRequirementScanner">
-					<property name="nodeService" ref="nodeService" />
+					<property name="mlNodeService" ref="mlAwareNodeService" />
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="ingsCalculatingWithYield" value="${beCPG.formulation.ingsCalculatingWithYield}" />
 				</bean>
 				<bean class="fr.becpg.repo.product.requirement.NutsRequirementScanner">
-					<property name="nodeService" ref="nodeService" />
+					<property name="mlNodeService" ref="mlAwareNodeService" />
 				</bean>
 				<bean class="fr.becpg.repo.product.requirement.PhysicoRequirementScanner">
-					<property name="nodeService" ref="nodeService" />
+					<property name="mlNodeService" ref="mlAwareNodeService" />
 				</bean>
 				<bean class="fr.becpg.repo.product.requirement.ClaimRequirementScanner">
-					<property name="nodeService" ref="nodeService" />
+					<property name="mlNodeService" ref="mlAwareNodeService" />
 				</bean>
 			</list>
 		</property>

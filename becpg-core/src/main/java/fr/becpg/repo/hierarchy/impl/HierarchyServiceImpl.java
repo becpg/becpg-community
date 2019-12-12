@@ -185,7 +185,7 @@ public class HierarchyServiceImpl implements HierarchyService {
 
 	@Override
 	public void classifyByHierarchy(NodeRef containerNodeRef, NodeRef entityNodeRef) {
-		classifyByHierarchy(containerNodeRef, entityNodeRef, null);
+		classifyByHierarchy(containerNodeRef, entityNodeRef, null, Locale.getDefault());
 
 	}
 
@@ -198,7 +198,7 @@ public class HierarchyServiceImpl implements HierarchyService {
 	 *            : entity
 	 */
 	@Override
-	public void classifyByHierarchy(final NodeRef containerNodeRef, final NodeRef entityNodeRef, final QName hierarchyQname) {
+	public void classifyByHierarchy(final NodeRef containerNodeRef, final NodeRef entityNodeRef, final QName hierarchyQname, Locale locale) {
 
 		AuthenticationUtil.runAsSystem(() -> {
 
@@ -206,12 +206,12 @@ public class HierarchyServiceImpl implements HierarchyService {
 			Locale currentContentLocal = I18NUtil.getContentLocale();
 
 			try {
-				I18NUtil.setLocale(Locale.getDefault());
+				I18NUtil.setLocale(locale);
 				I18NUtil.setContentLocale(null);
 				
 					QName type = nodeService.getType(entityNodeRef);
 					ClassDefinition classDef = dictionaryService.getClass(type);
-
+					
 					NodeRef destinationNodeRef = repoService.getOrCreateFolderByPath(containerNodeRef, type.getLocalName(),
 							classDef.getTitle(dictionaryService));
 

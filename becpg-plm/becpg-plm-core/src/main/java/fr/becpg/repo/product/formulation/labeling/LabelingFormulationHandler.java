@@ -187,9 +187,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							exp.getValue(dataContext, String.class);
 
 						} catch (Exception e) {
-							String message = I18NUtil.getMessage("message.formulate.labelRule.error", labelingRuleListDataItem.getName(),
-									e.getLocalizedMessage());
-							formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, null,
+							formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Tolerated,  MLTextHelper.getI18NMessage("message.formulate.labelRule.error", labelingRuleListDataItem.getName(),
+									e.getLocalizedMessage()), null,
 									new ArrayList<NodeRef>(), RequirementDataType.Labelling));
 							if (logger.isDebugEnabled()) {
 								logger.debug("Error in formula :" + SpelHelper.formatFormula(labelingRuleListDataItem.getFormula()), e);
@@ -321,9 +320,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 									label.addValue(locale, ret);
 
 								} catch (Exception e) {
-									String message = I18NUtil.getMessage("message.formulate.labelRule.error", labelingRuleListDataItem.getName(),
-											e.getLocalizedMessage());
-									formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, null,
+									formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, MLTextHelper.getI18NMessage("message.formulate.labelRule.error", labelingRuleListDataItem.getName(),
+											e.getLocalizedMessage()), null,
 											new ArrayList<NodeRef>(), RequirementDataType.Labelling));
 
 									if (logger.isDebugEnabled()) {
@@ -977,9 +975,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			if (current != null) {
 				current.setQty(null);
 				current.setVolume(null);
-				String message = I18NUtil.getMessage("message.formulate.labelRule.error.nullIng", getName(current));
-
-				return new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, null, new ArrayList<NodeRef>(),
+				
+				return new ReqCtrlListDataItem(null, RequirementType.Forbidden, MLTextHelper.getI18NMessage("message.formulate.labelRule.error.nullIng", getName(current)), null, new ArrayList<NodeRef>(),
 						RequirementDataType.Labelling);
 			}
 		}
@@ -1796,12 +1793,11 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	}
 
 	private ReqCtrlListDataItem createError(CompositeLabeling ingItem, NodeRef productNodeRef) {
-		String message = I18NUtil.getMessage("message.formulate.labelRule.error.nullIng", getName(ingItem));
 		List<NodeRef> sourceNodeRefs = new ArrayList<>();
 		if (productNodeRef != null) {
 			sourceNodeRefs.add(productNodeRef);
 		}
-		return new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, null, sourceNodeRefs, RequirementDataType.Labelling);
+		return new ReqCtrlListDataItem(null, RequirementType.Forbidden, MLTextHelper.getI18NMessage("message.formulate.labelRule.error.nullIng", getName(ingItem)), null, sourceNodeRefs, RequirementDataType.Labelling);
 
 	}
 

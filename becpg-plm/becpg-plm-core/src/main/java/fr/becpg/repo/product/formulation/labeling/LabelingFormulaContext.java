@@ -1772,10 +1772,9 @@ if (component instanceof CompositeLabeling) {
 
 				return ret;
 			} catch (Exception e) {
-				
-				String message = I18NUtil.getMessage("message.formulate.labelRule.error", declarationFilter.getRuleName(),
-						e.getLocalizedMessage());
-				getEntity().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, null,
+		
+				getEntity().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, MLTextHelper.getI18NMessage("message.formulate.labelRule.error", declarationFilter.getRuleName(),
+						e.getLocalizedMessage()), null,
 						new ArrayList<NodeRef>(), RequirementDataType.Labelling));
 				if (logger.isDebugEnabled()) {
 					logger.debug("Cannot evaluate formula :" + declarationFilter.getFormula() + " on " + declarationFilterContext.toString(), e);
