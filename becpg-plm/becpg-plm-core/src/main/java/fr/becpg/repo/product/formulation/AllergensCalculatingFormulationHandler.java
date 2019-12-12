@@ -21,6 +21,7 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
@@ -49,12 +50,17 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 
 	public static final String MESSAGE_NOT_VALIDATED_ALLERGEN = "message.formulate.allergen.notValidated";
 
+	public static final String MESSAGE_NULL_PERC = "message.formulate.allergen.error.nullQtyPerc";
+	
 	private static final Log logger = LogFactory.getLog(AllergensCalculatingFormulationHandler.class);
 
 	protected AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
 	protected NodeService nodeService;
-
+	
+	protected NodeService mlNodeService;
+	
+	
 	private AllergenRequirementScanner allergenRequirementScanner;
 
 	public void setAllergenRequirementScanner(AllergenRequirementScanner allergenRequirementScanner) {
@@ -67,6 +73,12 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
+	}
+
+	
+	
+	public void setMlNodeService(NodeService mlNodeService) {
+		this.mlNodeService = mlNodeService;
 	}
 
 	@Override
@@ -115,7 +127,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 
 									List<NodeRef> sourceNodeRefs = new ArrayList<>();
 									if (error == null) {
-										error = new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, null, sourceNodeRefs,
+										error = new ReqCtrlListDataItem(null, RequirementType.Tolerated, MLTextHelper.getI18NMessage(MESSAGE_NOT_VALIDATED_ALLERGEN), null, sourceNodeRefs,
 												RequirementDataType.Allergen);
 									} else {
 										sourceNodeRefs = error.getSources();
@@ -333,7 +345,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 								List<NodeRef> sourceNodeRefs = new ArrayList<>();
 								sourceNodeRefs.add(partProduct.getNodeRef());
 
-								error = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, allergenNodeRef, sourceNodeRefs,
+								error = new ReqCtrlListDataItem(null, RequirementType.Forbidden, MLTextHelper.getI18NMessage(MESSAGE_NULL_PERC,mlNodeService.getProperty(allergenNodeRef, BeCPGModel.PROP_CHARACT_NAME)), allergenNodeRef, sourceNodeRefs,
 										RequirementDataType.Allergen);
 								errors.put(message, error);
 

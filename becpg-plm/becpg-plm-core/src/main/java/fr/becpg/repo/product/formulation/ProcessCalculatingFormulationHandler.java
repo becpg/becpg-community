@@ -25,10 +25,10 @@ import java.util.Objects;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ResourceProductData;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
@@ -165,8 +165,7 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 							&& (formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes() != null)) {
 						p.setRateProduct(p.getRateResource() * formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes());
 					} else {
-						String message = I18NUtil.getMessage(FormulationHelper.MISSING_NUMBER_OF_PRODUCT_PER_BOX);
-						formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, null,
+						formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, MLTextHelper.getI18NMessage(FormulationHelper.MISSING_NUMBER_OF_PRODUCT_PER_BOX), null,
 								new ArrayList<NodeRef>(), RequirementDataType.Packaging));
 					}
 				} else {

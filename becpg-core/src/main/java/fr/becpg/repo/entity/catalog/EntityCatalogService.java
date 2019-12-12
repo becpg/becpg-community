@@ -146,9 +146,9 @@ public class EntityCatalogService {
 			Set<NodeRef> listNodeRefs) {
 		try {
 			if (((before != null) && (after != null)) || (listNodeRefs != null)) {
-				
+
 				for (JSONArray catalogDef : getCatalogsDef()) {
-					
+
 					for (int i = 0; i < catalogDef.length(); i++) {
 						JSONObject catalog = catalogDef.getJSONObject(i);
 						if (catalog.has(PROP_CATALOG_MODIFIED_FIELD)) {
@@ -175,8 +175,8 @@ public class EntityCatalogService {
 									} else {
 										for (QName beforeType : before.keySet()) {
 											Serializable beforeValue = before.get(beforeType);
-											if (auditedFields.contains(beforeType)
-													&& (((beforeValue == null)  && (after.get(beforeType) != null)) || (beforeValue != null && !beforeValue.equals(after.get(beforeType))))) {
+											if (auditedFields.contains(beforeType) && (((beforeValue == null) && (after.get(beforeType) != null))
+													|| ((beforeValue != null) && !beforeValue.equals(after.get(beforeType))))) {
 												if (logger.isDebugEnabled()) {
 													logger.debug("Catalog properties changed update date: " + catalogModifiedDate);
 												}
@@ -250,12 +250,10 @@ public class EntityCatalogService {
 
 		public boolean matchFormula(String formula);
 	}
-	
-	public JSONArray formulateCatalogs(NodeRef entityNodeRef, List<String> locales,
-			EntityCatalogMatcher entityCatalogMatcher) throws JSONException {
+
+	public JSONArray formulateCatalogs(NodeRef entityNodeRef, List<String> locales, EntityCatalogMatcher entityCatalogMatcher) throws JSONException {
 		return formulateCatalog(null, entityNodeRef, locales, entityCatalogMatcher);
 	}
-
 
 	public JSONArray formulateCatalog(String catalogId, NodeRef entityNodeRef, List<String> locales, EntityCatalogMatcher entityCatalogMatcher)
 			throws JSONException {
@@ -367,8 +365,8 @@ public class EntityCatalogService {
 		return ret;
 	}
 
-	private JSONArray extractNonUniqueFields(NodeRef productNodeRef, String catalogName, Map<QName, Serializable> properties, JSONArray uniqueFields, JSONObject i18nMessages)
-			throws JSONException {
+	private JSONArray extractNonUniqueFields(NodeRef productNodeRef, String catalogName, Map<QName, Serializable> properties, JSONArray uniqueFields,
+			JSONObject i18nMessages) throws JSONException {
 		JSONArray res = new JSONArray();
 
 		if (productNodeRef != null) {
@@ -386,6 +384,8 @@ public class EntityCatalogService {
 
 						ClassAttributeDefinition classDef = formatQnameString(field);
 						String propTitle = getFieldDisplayName(classDef, i18nMessages.has(field) ? i18nMessages.getString(field) : null);
+						
+						
 
 						JSONObject nonUniqueField = new JSONObject();
 						nonUniqueField.put(EntityCatalogService.PROP_ID, field);
@@ -393,6 +393,36 @@ public class EntityCatalogService {
 						nonUniqueField.put(EntityCatalogService.PROP_VALUE, propValue);
 						nonUniqueField.put(EntityCatalogService.PROP_ENTITIES, toJsonArray(propDuplicates));
 
+						
+
+						MLText displayMLName = MLTextHelper.createMLTextI18N(loc -> {
+							Locale old = I18NUtil.getLocale();
+							String ret = "";
+							try {
+								I18NUtil.setLocale(loc);
+									return getFieldDisplayName(classDef, i18nMessages.has(field) ? i18nMessages.getString(field) : null);
+					
+							} catch (JSONException e) {
+								logger.error(e, e);
+							} finally {
+								I18NUtil.setLocale(old);
+							}
+
+							return ret;
+
+						});
+						
+						if (displayMLName != null) {
+							for (Map.Entry<Locale, String> mlEntry : displayMLName.entrySet()) {
+								String code = MLTextHelper.localeKey(mlEntry.getKey());
+								if ((code != null) && !code.isEmpty() && (mlEntry.getValue() != null)) {
+									nonUniqueField.put(EntityCatalogService.PROP_DISPLAY_NAME + "_" + code, mlEntry.getValue());
+
+								}
+							}
+						}
+						
+						
 						res.put(nonUniqueField);
 
 					}
@@ -416,11 +446,13 @@ public class EntityCatalogService {
 		List<NodeRef> queryResults = new ArrayList<>();
 		if ((value != null) && !value.isEmpty()) {
 
-			queryResults = BeCPGQueryBuilder.createQuery().ofType(nodeService.getType(productNodeRef)).andNotID(productNodeRef).excludeDefaults()
-					.andPropEquals(propQName, value).inDBIfPossible().list();
+			queryResults = BeCPGQueryBuilder.createQuery().ofType(nodeService.getType(productNodeRef))/*.andNotID(productNodeRef).excludeDefaults()*/
+					.andPropEquals(propQName, value).list();
 
 			List<NodeRef> falsePositives = new ArrayList<>();
 
+			System.out.println("Check : "+queryResults.size()+" "+propQName);
+			
 			// Lucene equals is actually contains, remove results that contain
 			// but do not equal value
 			for (NodeRef result : queryResults) {
@@ -440,8 +472,8 @@ public class EntityCatalogService {
 		return queryResults;
 	}
 
-	private JSONArray extractMissingFields(NodeRef entityNodeRef, Map<QName, Serializable> properties, JSONArray reqFields, JSONObject i18nMessages, String lang)
-			throws JSONException {
+	private JSONArray extractMissingFields(NodeRef entityNodeRef, Map<QName, Serializable> properties, JSONArray reqFields, JSONObject i18nMessages,
+			String lang) throws JSONException {
 		JSONArray ret = new JSONArray();
 
 		for (int i = 0; i < reqFields.length(); i++) {
@@ -565,9 +597,14 @@ public class EntityCatalogService {
 				break;
 			}
 
+			String i18nKey = i18nMessages.has(currentField) ? i18nMessages.getString(currentField) : null;
+
 			id += classDef.getName().toPrefixString(namespaceService) + (i == (fields.size() - 1) ? "" : "|");
-			displayName += getFieldDisplayName(classDef, i18nMessages.has(currentField) ? i18nMessages.getString(currentField) : null) + (i == (fields.size() - 1) ? "" : " " + I18NUtil.getMessage(MESSAGE_OR) + " ");
+			displayName += getFieldDisplayName(classDef, i18nKey) + (i == (fields.size() - 1) ? "" : " " + I18NUtil.getMessage(MESSAGE_OR) + " ");
+
 		}
+
+		
 
 		if (lang != null) {
 			field.put(EntityCatalogService.PROP_LOCALE, lang);
@@ -576,10 +613,45 @@ public class EntityCatalogService {
 		field.put(EntityCatalogService.PROP_ID, id);
 		field.put(EntityCatalogService.PROP_DISPLAY_NAME, displayName);
 
+		MLText displayMLName = MLTextHelper.createMLTextI18N(loc -> {
+			Locale old = I18NUtil.getLocale();
+			String ret = "";
+			try {
+				I18NUtil.setLocale(loc);
+
+				for (int i = 0; i < fields.size(); ++i) {
+					String currentField = fields.get(i);
+					ClassAttributeDefinition classDef = formatQnameString(currentField);
+
+					String i18nKey = i18nMessages.has(currentField) ? i18nMessages.getString(currentField) : null;
+
+					ret = ret + getFieldDisplayName(classDef, i18nKey)
+							+ (i == (fields.size() - 1) ? "" : " " + I18NUtil.getMessage(MESSAGE_OR) + " ");
+				}
+			} catch (JSONException e) {
+				logger.error(e, e);
+			} finally {
+				I18NUtil.setLocale(old);
+			}
+
+			return ret;
+
+		});
+		
+		if (displayMLName != null) {
+			for (Map.Entry<Locale, String> mlEntry : displayMLName.entrySet()) {
+				String code = MLTextHelper.localeKey(mlEntry.getKey());
+				if ((code != null) && !code.isEmpty() && (mlEntry.getValue() != null)) {
+					field.put(EntityCatalogService.PROP_DISPLAY_NAME + "_" + code, mlEntry.getValue());
+
+				}
+			}
+		}
+
 		return field;
 
 	}
-	
+
 	public String getFieldDisplayName(ClassAttributeDefinition classDef, String messageKey) {
 		String displayName = messageKey != null ? I18NUtil.getMessage(messageKey) : classDef.getTitle(dictionaryService);
 		return displayName != null ? displayName : messageKey;
@@ -601,5 +673,4 @@ public class EntityCatalogService {
 		return res;
 	}
 
-	
 }

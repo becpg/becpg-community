@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -18,6 +19,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.FormulateException;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
@@ -122,8 +124,8 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 
 					for (Map.Entry<NodeRef, List<NodeRef>> mandatoryCharact : getMandatoryCharacts(formulatedProduct, null).entrySet()) {
 						if ((mandatoryCharact.getValue() != null) && !mandatoryCharact.getValue().isEmpty()) {
-							String message = I18NUtil.getMessage(MESSAGE_UNDEFINED_CHARACT,
-									nodeService.getProperty(mandatoryCharact.getKey(), BeCPGModel.PROP_CHARACT_NAME));
+							MLText message = MLTextHelper.getI18NMessage(MESSAGE_UNDEFINED_CHARACT,
+									mlNodeService.getProperty(mandatoryCharact.getKey(), BeCPGModel.PROP_CHARACT_NAME));
 
 							formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message,
 									mandatoryCharact.getKey(), mandatoryCharact.getValue(), RequirementDataType.Nutrient));
@@ -181,7 +183,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 						Double ul = nut.getNutUL();
 						if (ul != null) {
 							if (valuePerserving > ul) {
-								String message = I18NUtil.getMessage(MESSAGE_MAXIMAL_DAILY_VALUE,
+								MLText message = MLTextHelper.getI18NMessage(MESSAGE_MAXIMAL_DAILY_VALUE,
 										nut.getCharactName());
 
 								formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message,

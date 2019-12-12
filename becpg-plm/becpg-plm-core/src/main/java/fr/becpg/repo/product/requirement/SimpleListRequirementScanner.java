@@ -4,14 +4,14 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
@@ -56,15 +56,15 @@ public abstract class SimpleListRequirementScanner<T extends SimpleListDataItem>
 							}
 
 							if (!isCharactAllowed) {
-								String message = I18NUtil.getMessage(getSpecErrorMessageKey(),
-										nodeService.getProperty(listDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME),
-										(listDataItem.getValue() != null ? listDataItem.getValue() : I18NUtil.getMessage(MESSAGE_UNDEFINED_VALUE)),
-										(minMaxSpecValueDataItem.getMini() != null
-												? NumberFormat.getInstance(Locale.getDefault()).format(minMaxSpecValueDataItem.getMini()) + "<= "
-												: ""),
-										(minMaxSpecValueDataItem.getMaxi() != null
-												? " <=" + NumberFormat.getInstance(Locale.getDefault()).format(minMaxSpecValueDataItem.getMaxi())
-												: ""));
+								MLText message = MLTextHelper.getI18NMessage(getSpecErrorMessageKey(),
+										mlNodeService.getProperty(listDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME),
+										(listDataItem.getValue() != null ? listDataItem.getValue() : MLTextHelper.getI18NMessage(MESSAGE_UNDEFINED_VALUE)),
+										 MLTextHelper.createMLTextI18N((l) -> {return (minMaxSpecValueDataItem.getMini() != null
+												? NumberFormat.getInstance(l).format(minMaxSpecValueDataItem.getMini()) + "<= "
+												: "");}),
+										 MLTextHelper.createMLTextI18N((l) -> { return (minMaxSpecValueDataItem.getMaxi() != null
+												? " <=" + NumberFormat.getInstance(l).format(minMaxSpecValueDataItem.getMaxi())
+												: "");}));
 								ret.add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message,
 										listDataItem.getCharactNodeRef(), new ArrayList<NodeRef>(), RequirementDataType.Specification));
 
@@ -83,30 +83,6 @@ public abstract class SimpleListRequirementScanner<T extends SimpleListDataItem>
 	protected abstract String getSpecErrorMessageKey();
 
 
-	
-//	private List<T> extractRequirements(ProductData formulatedProduct) {
-//		List<T> ret = new ArrayList<>();
-//		if (formulatedProduct.getProductSpecifications() != null) {
-//			for (ProductSpecificationData specification : formulatedProduct.getProductSpecifications()) {
-//				mergeRequirements(ret, extractRequirements(specification));
-//				if (getDataListVisited(specification) != null) {
-//					mergeRequirements(ret, getDataListVisited(specification));
-//				}
-//			}
-//		}
-//
-//		// if this spec has a datalist, merge it with the rest. Only applies to
-//		// specs
-//		if ((getDataListVisited(formulatedProduct) != null) && !getDataListVisited(formulatedProduct).isEmpty()
-//				&& (formulatedProduct instanceof ProductSpecificationData)) {
-//			if (logger.isTraceEnabled()) {
-//				logger.trace("formulatedProduct (c=" + formulatedProduct.getClass().getName() + ") has a dataList, visiting it)");
-//			}
-//			mergeRequirements(ret, getDataListVisited(formulatedProduct));
-//		}
-//
-//		return ret;
-//	}
 
 	protected void mergeRequirements(List<T> ret, List<T> toAdd) {
 		toAdd.forEach(item -> {

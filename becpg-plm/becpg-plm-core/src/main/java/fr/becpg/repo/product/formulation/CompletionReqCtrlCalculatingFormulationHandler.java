@@ -3,6 +3,7 @@ package fr.becpg.repo.product.formulation;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -13,12 +14,12 @@ import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
-import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.entity.catalog.EntityCatalogService;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.AbstractProductDataView;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
@@ -56,7 +57,6 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 
 	@Override
 	public boolean process(ProductData product) throws FormulateException {
-		logger.debug("===== Calculating score of " + product.getName() + " (" + product.getState() + ") =====");
 		if (logger.isDebugEnabled()) {
 			logger.debug("===== Calculating score of product " + product.getName() + " =====");
 		}
@@ -77,7 +77,7 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 
 					try {
 						Boolean result = (Boolean) (expression.getValue(context));
-						if(logger.isDebugEnabled()) {
+						if (logger.isDebugEnabled()) {
 							logger.debug("Expression " + expression + " returned " + result);
 						}
 						res = result.booleanValue();
@@ -85,7 +85,7 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 						logger.error("Unable to parse expression " + formula, e);
 						logger.debug("Creating new CtrlListDataItem (method productMatchesOnFormula...)");
 						ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Tolerated,
-								"Unable to parse formula " + formula, null, new ArrayList<NodeRef>(), RequirementDataType.Completion);
+								new MLText("Unable to parse formula " + formula), null, new ArrayList<NodeRef>(), RequirementDataType.Completion);
 						product.getReqCtrlList().add(rclDataItem);
 						res = false;
 					}
@@ -99,7 +99,7 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 			extractReqCtrl(product, catalogs);
 
 			ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Tolerated,
-					I18NUtil.getMessage(MESSAGE_NON_VALIDATED_STATE), null, new ArrayList<NodeRef>(), RequirementDataType.Validation);
+					MLTextHelper.getI18NMessage(MESSAGE_NON_VALIDATED_STATE), null, new ArrayList<NodeRef>(), RequirementDataType.Validation);
 
 			boolean shouldAdd = false;
 
@@ -145,14 +145,12 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 
 						String lang = missingField.has(EntityCatalogService.PROP_LOCALE) ? missingField.getString(EntityCatalogService.PROP_LOCALE)
 								: null;
-						String displayName = missingField.has(EntityCatalogService.PROP_DISPLAY_NAME)
-								? missingField.getString(EntityCatalogService.PROP_DISPLAY_NAME)
-								: null;
+						MLText displayName = extractDisplayName(missingField);
 
 						// Mandatory fields
-						final String message = (lang != null
-								? I18NUtil.getMessage(MESSAGE_MANDATORY_FIELD_MISSING_LOCALIZED, displayName, catalogName, "(" + lang + ")")
-								: I18NUtil.getMessage(MESSAGE_MANDATORY_FIELD_MISSING, displayName, catalogName));
+						final MLText message = (lang != null
+								? MLTextHelper.getI18NMessage(MESSAGE_MANDATORY_FIELD_MISSING_LOCALIZED, displayName, catalogName, "(" + lang + ")")
+								: MLTextHelper.getI18NMessage(MESSAGE_MANDATORY_FIELD_MISSING, displayName, catalogName));
 
 						ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, null,
 								new ArrayList<NodeRef>(), RequirementDataType.Completion);
@@ -170,9 +168,8 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 					for (int j = 0; j < uniqueFields.length(); j++) {
 						JSONObject uniqueField = uniqueFields.getJSONObject(j);
 
-						String displayName = uniqueField.has(EntityCatalogService.PROP_DISPLAY_NAME)
-								? uniqueField.getString(EntityCatalogService.PROP_DISPLAY_NAME)
-								: null;
+						MLText displayName = extractDisplayName(uniqueField);
+
 						String value = uniqueField.has(EntityCatalogService.PROP_VALUE) ? uniqueField.getString(EntityCatalogService.PROP_VALUE)
 								: null;
 						List<NodeRef> propDuplicates = uniqueField.has(EntityCatalogService.PROP_ENTITIES)
@@ -180,9 +177,9 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 								: null;
 
 						// Uniquefields
-						String message = I18NUtil.getMessage(MESSAGE_NON_UNIQUE_FIELD, displayName, value);
 
-						ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, null, propDuplicates,
+						ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Forbidden,
+								MLTextHelper.getI18NMessage(MESSAGE_NON_UNIQUE_FIELD, displayName, value), null, propDuplicates,
 								RequirementDataType.Completion);
 						productData.getReqCtrlList().add(rclDataItem);
 
@@ -193,6 +190,23 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 
 		}
 
+	}
+
+	private MLText extractDisplayName(JSONObject missingField) {
+
+		return MLTextHelper.createMLTextI18N(loc -> {
+			try {
+				if (missingField.has(EntityCatalogService.PROP_DISPLAY_NAME + "_" + MLTextHelper.localeKey(loc))) {
+					return missingField.getString(EntityCatalogService.PROP_DISPLAY_NAME + "_" + MLTextHelper.localeKey(loc));
+				} else if (missingField.has(EntityCatalogService.PROP_DISPLAY_NAME)) {
+					return missingField.getString(EntityCatalogService.PROP_DISPLAY_NAME);
+				}
+				return "";
+			} catch (JSONException e) {
+				return "";
+			}
+
+		});
 	}
 
 	private List<NodeRef> fromJsonArray(JSONArray jsonArray) throws JSONException {

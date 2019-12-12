@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
@@ -26,6 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.extensions.webscripts.AbstractWebScript;
 import org.springframework.extensions.webscripts.Cache;
 import org.springframework.extensions.webscripts.WebScriptException;
@@ -42,6 +44,7 @@ import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.impl.DataListOutputWriterFactory;
 import fr.becpg.repo.helper.JsonHelper;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.security.SecurityService;
 import fr.becpg.repo.web.scripts.BrowserCacheHelper;
 import fr.becpg.repo.web.scripts.WebscriptHelper;
@@ -91,6 +94,8 @@ public class EntityDataListWebScript extends AbstractWebScript {
 
 	/** The Constant PARAM_ID. */
 	protected static final String PARAM_ID = "id";
+	
+	protected static final String PARAM_LOCALE = "locale";
 
 	protected static final String PARAM_FIELDS = "fields";
 
@@ -215,6 +220,12 @@ public class EntityDataListWebScript extends AbstractWebScript {
 			isRepo = false;
 		}
 		dataListFilter.setRepo(isRepo);
+		
+		Locale currentLocal = null;
+		if(req.getParameter(PARAM_LOCALE)!=null) {
+			currentLocal = I18NUtil.getContentLocale();
+			I18NUtil.setContentLocale(MLTextHelper.parseLocale(req.getParameter(PARAM_LOCALE)));
+		}
 		
 		
 		String guessContainer = req.getParameter(PARAM_GUESS_CONTAINER);
@@ -381,6 +392,10 @@ public class EntityDataListWebScript extends AbstractWebScript {
 		} catch (JSONException e) {
 			throw new WebScriptException("Unable to parse JSON", e);
 		} finally {
+			if(currentLocal!=null) {
+				I18NUtil.setContentLocale(currentLocal);
+			}
+			
 			if (logger.isDebugEnabled()) {
 				watch.stop();
 				logger.debug("EntityDataListWebScript execute in " + watch.getTotalTimeSeconds() + "s");
