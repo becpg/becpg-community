@@ -438,6 +438,7 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 			}, false, true);
 		}
 
+		waitForSolr();
 		logger.info("Activities number before clean : " + getActivities(finishedProductNodeRef, null).size());
 
 		// clean activities
@@ -547,12 +548,13 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 		assertNotNull("Activities before clean not null ", activitiesBeforeClean);
 		assertTrue("activities number before clean > 50 : ", activitiesBeforeClean > MAX_PAGE);
 
+		waitForSolr();
 		// Clean Activities
 		entityActivityService.cleanActivities();
 
-		assertTrue(activitiesBeforeClean > getActivities(productNodeRef, null).size());
-
-		assertTrue(getActivities(productNodeRef, null).size() >= MAX_PAGE);
+		int activitiesAfterClean = getActivities(productNodeRef, null).size();
+		assertTrue(activitiesBeforeClean >= activitiesAfterClean);
+		assertTrue(activitiesAfterClean > MAX_PAGE);
 
 	}
 
