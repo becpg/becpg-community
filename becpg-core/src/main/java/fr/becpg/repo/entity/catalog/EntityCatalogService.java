@@ -446,13 +446,11 @@ public class EntityCatalogService {
 		List<NodeRef> queryResults = new ArrayList<>();
 		if ((value != null) && !value.isEmpty()) {
 
-			queryResults = BeCPGQueryBuilder.createQuery().ofType(nodeService.getType(productNodeRef))/*.andNotID(productNodeRef).excludeDefaults()*/
-					.andPropEquals(propQName, value).list();
+			queryResults = BeCPGQueryBuilder.createQuery().ofType(nodeService.getType(productNodeRef)).andNotID(productNodeRef).excludeDefaults()
+					.andPropEquals(propQName, value).inDBIfPossible().list();
 
 			List<NodeRef> falsePositives = new ArrayList<>();
 
-			System.out.println("Check : "+queryResults.size()+" "+propQName);
-			
 			// Lucene equals is actually contains, remove results that contain
 			// but do not equal value
 			for (NodeRef result : queryResults) {
