@@ -1096,6 +1096,12 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		} else {
 			ill.setLocales(null);
 		}
+		
+		//Limit to 50ko (Max 64k)
+		if(log!=null && log.length()> 50000) {
+		   log = "{\"children\":[{\"cssClass\":\"error\",\"name\":\"error-too-long\",\"legal\":\"Details cannot be display, data too long\"}],\"name\":\"root\",\"legal\":\"root\"}";
+		}
+		
 		ill.setLogValue(log);
 		ill.setSort(sortOrder);
 
