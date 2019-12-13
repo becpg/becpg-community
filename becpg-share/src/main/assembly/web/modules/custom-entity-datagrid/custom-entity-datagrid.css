@@ -1,4 +1,3 @@
-
 .datagrid .red {
 	color: red;
 }
@@ -168,8 +167,8 @@
 	content: '';
 }
 
-.before-after-prop {
-	background-color: #ddf3ff;
+.datagrid.activityList .yui-dt .before-after-prop {
+	background-color: #FFF;
 	border: 1px solid #FFF;
 	padding: 5px;
 	margin: 10px;
@@ -179,5 +178,23 @@
 	width: 80%;
 }
 
+.datagrid.activityList .yui-dt .before-after-prop thead{
+	display:table-header-group;
+	border-bottom: 1px solid #CBCBCB;
+	padding-bottom: 5px;
+}
 
+.datagrid.activityList .yui-dt .before-after-prop th.prop-col {
+	width:30%;
+}
+
+.datagrid.activityList .yui-dt .before-after-prop th.before-after-col {
+	width:35%;
+}
+
+.datagrid.activityList .yui-dt .before-after-prop tbody tr.grey{
+	background-color: #f8f8f8;
+	border-up: 1px solid #CBCBCB;
+	border-bottom: 1px solid #CBCBCB;
+}
 
