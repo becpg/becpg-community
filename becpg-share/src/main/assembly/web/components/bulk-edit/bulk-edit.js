@@ -1685,7 +1685,7 @@
 			       						scope : this
 			       					},
 			       					doBeforeFormSubmit : {
-			       						fn: function(){
+			       						fn: function(form, obj){
 			       							if(!submit){
 			       								
 			       								Alfresco.util.PopupManager.displayPrompt({
@@ -1696,7 +1696,9 @@
 			       										handler : function () {
 			       											this.destroy();
 			       											submit = true;
+			       											createRow.form._toggleSubmitElements(true);
 			       											createRow.widgets.okButton._button.click();
+			       											createRow.hide();
 			       										}
 			       									}, {
 			       										text : this.msg("button.no"),
@@ -1715,6 +1717,13 @@
 
 			       					doBeforeAjaxRequest : {
 			       		             fn : function() {
+			       		            	if(submit){
+				       		             	Alfresco.util.PopupManager.displayMessage({
+						                        text : this.msg("message.edit-selected.wait"),
+						                        spanClass : "wait",
+						                        displayTime : 0
+						                     });
+				       		             	}
 			       		            	  return submit;
 			       		              },
 			       		             scope: this
