@@ -629,12 +629,14 @@
 			            this.widgets.okBkButton = Alfresco.util.createYUIButton(this, "bulk-edit-ok", function (){
 
 			            	var selectedFields = Selector.query('input[type="checkbox"]', containerEl);
+			            	var prefsValue = {};
 
 			            	for ( var i in selectedFields) {
 					 				var fieldId = selectedFields[i].value;
-					 				var prfs = prefs + "."+fieldId
-					 				me.services.preferences.set(prfs, {checked : selectedFields[i].checked});
+					 				prefsValue[fieldId] = {checked : selectedFields[i].checked}
 					 			}
+			            	
+			            	me.services.preferences.set(prefs, prefsValue);
 			            	
 			            	this.widgets.columnsListPanel.hide();
 			            	
