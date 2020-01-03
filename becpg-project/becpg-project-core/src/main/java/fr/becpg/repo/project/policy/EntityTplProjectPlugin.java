@@ -42,8 +42,15 @@ public class EntityTplProjectPlugin implements EntityTplPlugin {
 			NodeRef listContainerNodeRef = entityListDAO.getListContainer(projectNodeRef);
 			if (listContainerNodeRef != null) {
 				Integer completionPerc = (Integer) nodeService.getProperty(projectNodeRef, ProjectModel.PROP_COMPLETION_PERCENT);
+				logger.debug("beforeSynchronizeEntity check completion perc:"+ completionPerc);
 				if(completionPerc == null || completionPerc == 0) {
-					nodeService.deleteNode(listContainerNodeRef);
+					try {
+						policyBehaviourFilter.disableBehaviour();
+						nodeService.deleteNode(listContainerNodeRef);
+						logger.debug("beforeSynchronizeEntity deleting datalist container");
+					} finally {
+						policyBehaviourFilter.enableBehaviour();
+					}
 				}	
 			}
 		}
