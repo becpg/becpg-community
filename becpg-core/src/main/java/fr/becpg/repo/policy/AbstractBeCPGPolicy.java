@@ -63,7 +63,7 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 	protected BeCPGPolicyTransactionListener postTransactionListener = new BeCPGPolicyTransactionListener("post");
 
 
-	private final Set<String> keys = new HashSet<>();
+	private final Set<String> keys = new LinkedHashSet<>();
 
 	private static final Log logger = LogFactory.getLog(AbstractBeCPGPolicy.class);
 
