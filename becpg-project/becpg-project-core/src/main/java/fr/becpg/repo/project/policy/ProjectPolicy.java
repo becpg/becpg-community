@@ -10,7 +10,6 @@ import java.util.Set;
 
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
-import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.QName;
@@ -20,7 +19,6 @@ import org.apache.commons.logging.LogFactory;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.version.EntityVersionPlugin;
-import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.project.ProjectWorkflowService;
