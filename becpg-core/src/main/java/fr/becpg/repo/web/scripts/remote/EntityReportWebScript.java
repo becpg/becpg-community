@@ -1,6 +1,7 @@
 package fr.becpg.repo.web.scripts.remote;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.SocketException;
 import java.util.Locale;
 
@@ -97,7 +98,7 @@ public class EntityReportWebScript extends AbstractEntityWebScript {
 		}
 
 
-		try {
+		try(OutputStream out =  resp.getOutputStream()) {
 
 			NodeRef documentNodeRef = entityReportService.getAssociatedDocumentNodeRef(entityNodeRef, templateNodeRef, reportParameters, locale, ReportFormat.valueOf(format.toUpperCase()));
 			if(documentNodeRef!=null) {
@@ -111,14 +112,14 @@ public class EntityReportWebScript extends AbstractEntityWebScript {
 		            throw new WebScriptException(HttpServletResponse.SC_NOT_FOUND, "Unable to locate content for node ref " + documentNodeRef );
 		        }
 
-				IOUtils.copy(reader.getContentInputStream(), resp.getOutputStream());
+				IOUtils.copy(reader.getContentInputStream(),out);
 				
 			} else {			
 				if (logger.isDebugEnabled()) {
 					logger.debug("Generate report for entity: " + entityNodeRef);
 				}
 				entityReportService.generateReport(entityNodeRef, templateNodeRef, reportParameters, locale, ReportFormat.valueOf(format.toUpperCase()),
-					resp.getOutputStream());
+						out);
 			}
 		} catch (SocketException e1) {
 

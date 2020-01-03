@@ -17,7 +17,6 @@
  ******************************************************************************/
 package fr.becpg.test;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +26,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.dictionary.DictionaryDAO;
 import org.alfresco.repo.domain.qname.QNameDAO;
 import org.alfresco.repo.model.Repository;
+import org.alfresco.repo.node.integrity.IntegrityChecker;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationComponent;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
@@ -229,7 +229,7 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 			}, false, true);
 
 		}
-		
+
 		systemFolderNodeRef = transactionService.getRetryingTransactionHelper()
 				.doInTransaction(() -> repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM,
 						TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM)), false, true);
@@ -243,14 +243,11 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 	public void setUp() throws Exception {
 		super.setUp();
 
-
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			List<org.alfresco.service.cmr.rule.Rule> rules = ruleService.getRules(repositoryHelper.getCompanyHome(), false);
 			for (org.alfresco.service.cmr.rule.Rule rule : rules) {
-				if(!rule.getRuleDisabled()) {
-					logger.debug("Active rule: "+rule.getTitle());
+				if (!rule.getRuleDisabled()) {
 					if ("classifyEntityRule".equals(rule.getTitle())) {
-						logger.debug("Disable rule: "+rule.getTitle());
 						ruleService.disableRule(rule);
 					}
 				}
@@ -258,56 +255,48 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 			return null;
 		}, false, true);
 
-		
 		testFolders.put(getTestFolderName(), transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			// As system user
 			AuthenticationUtil.setFullyAuthenticatedUser(AuthenticationUtil.getAdminUserName());
 
 			String testFolderName = getTestFolderName();
 
-			Date now = new Date();
-			SimpleDateFormat format = new SimpleDateFormat("dd_MM_YYYY_hh_mm_ss");
-
 			NodeRef parentTestFolder = repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), "Junit Tests", "Junit Test");
 
-			parentTestFolder = repoService.getOrCreateFolderByPath(parentTestFolder, format.format(now), format.format(now));
+			NodeRef folderNodeRef = repoService.getFolderByPath(parentTestFolder, testFolderName);
 
-			NodeRef folderNodeRef = RepoBaseTestCase.INSTANCE.fileFolderService.create(parentTestFolder, testFolderName, ContentModel.TYPE_FOLDER)
+			if (folderNodeRef != null) {
+
+				ruleService.disableRules();
+				try {
+					IntegrityChecker.setWarnInTransaction();
+					nodeService.addAspect(folderNodeRef, ContentModel.ASPECT_TEMPORARY, null);
+					logger.debug("Delete test folder");
+					nodeService.deleteNode(folderNodeRef);
+				} finally {
+					ruleService.enableRules();
+				}
+
+			}
+
+			folderNodeRef = RepoBaseTestCase.INSTANCE.fileFolderService.create(parentTestFolder, testFolderName, ContentModel.TYPE_FOLDER)
 					.getNodeRef();
 			return folderNodeRef;
 
 		}, false, true));
 	}
 
+	
 	@Override
 	@After
 	public void tearDown() throws Exception {
 		super.tearDown();
-
-		// transactionService.getRetryingTransactionHelper().doInTransaction(new
-		// RetryingTransactionCallback<Boolean>() {
-		// public Boolean execute() throws Throwable {
-		// ruleService.disableRules();
-		// try {
-		// IntegrityChecker.setWarnInTransaction();
-		// nodeService.addAspect(getTestFolderNodeRef(),
-		// ContentModel.ASPECT_TEMPORARY, null);
-		// logger.debug("Delete test folder");
-		// nodeService.deleteNode(getTestFolderNodeRef());
-		// } finally {
-		// ruleService.enableRules();
-		// }
-		// return true;
-		//
-		// }
-		// }, false, true);
-
 	}
-
+	
 	public void waitForSolr() {
-		
+
 		Date startTime = new Date();
-		
+
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			NodeRef nodeRef = nodeService
@@ -383,7 +372,6 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 	//
 	// }, false, true);
 	// }
-
 
 	protected boolean shouldInit() {
 		return nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS,

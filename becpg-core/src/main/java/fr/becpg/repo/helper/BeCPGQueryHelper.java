@@ -12,7 +12,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.Token;
 import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.analysis.fr.FrenchAnalyzer;
 
 import fr.becpg.repo.search.lucene.analysis.AbstractBeCPGAnalyzer;
 import fr.becpg.repo.search.lucene.analysis.EnglishBeCPGAnalyser;
@@ -136,9 +135,9 @@ public class BeCPGQueryHelper {
 				reader = new StringReader(query.trim());
 
 				if (analyzer instanceof AbstractBeCPGAnalyzer) {
-					source = ((AbstractBeCPGAnalyzer) analyzer).tokenStream(null, reader, true);
+					source = ((AbstractBeCPGAnalyzer) analyzer).tokenStream("prepareQuery", reader, true);
 				} else {
-					source = analyzer.tokenStream(null, reader);
+					source = analyzer.tokenStream("prepareQuery", reader);
 				}
 
 				StringBuilder buff = new StringBuilder();
@@ -179,7 +178,7 @@ public class BeCPGQueryHelper {
 		if (luceneAnaLyzer == null) {
 			DataTypeDefinition def = dictionaryService.getDataType(DataTypeDefinition.TEXT);
 			try {
-				return (Analyzer) Class.forName(def.resolveAnalyserClassName(Locale.getDefault())).newInstance();
+				return (Analyzer) Class.forName(def.resolveAnalyserClassName(Locale.getDefault())).getDeclaredConstructor().newInstance();
 			} catch (Exception e) {
 				logger.error(e, e);
 				if (Locale.FRENCH.equals(Locale.getDefault())) {

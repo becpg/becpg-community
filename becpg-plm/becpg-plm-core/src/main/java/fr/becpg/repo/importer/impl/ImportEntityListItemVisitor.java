@@ -149,13 +149,13 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 				}
 
 				String value = values.get(z_idx);
-				PropertyDefinition propertyDef = dictionaryService.getProperty(qName);
+				PropertyDefinition propertyDef = entityDictionaryService.getProperty(qName);
 
 				if (propertyDef instanceof PropertyDefinition) {
 					dataListColumnsProps.put(qName, value);
 				} else {
 
-					AssociationDefinition associationDef = dictionaryService.getAssociation(qName);
+					AssociationDefinition associationDef = entityDictionaryService.getAssociation(qName);
 					List<NodeRef> targetRefs = findTargetNodesByValue(importContext, associationDef.isTargetMany(), associationDef.getTargetClass()
 							.getName(), value, null);
 					dataListColumnsAssocs.put(qName, targetRefs);
@@ -351,13 +351,13 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 
 					QName qName = classMapping.getDataListColumnKeys().get(0);
 
-					PropertyDefinition propertyDef = dictionaryService.getProperty(qName);
+					PropertyDefinition propertyDef = entityDictionaryService.getProperty(qName);
 
 					if (propertyDef instanceof PropertyDefinition) {
 						dataListColumnsProps.put(qName, value);
 					} else {
 
-						AssociationDefinition associationDef = dictionaryService.getAssociation(qName);
+						AssociationDefinition associationDef = entityDictionaryService.getAssociation(qName);
 						List<NodeRef> targetRefs = findTargetNodesByValue(importContext, associationDef.isSourceMany(), associationDef
 								.getTargetClass().getName(), value, null);
 						dataListColumnsAssocs.put(qName, targetRefs);

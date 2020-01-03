@@ -4,6 +4,7 @@
 package fr.becpg.repo.hierarchy.action;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.alfresco.repo.action.ParameterDefinitionImpl;
 import org.alfresco.repo.action.executer.ActionExecuterAbstractBase;
@@ -16,6 +17,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.hierarchy.HierarchyService;
 
 /**
@@ -29,6 +31,7 @@ public class ClassifyByHierarchyActionExecuter extends ActionExecuterAbstractBas
 	public static final String NAME = "classify-by-hierarchy";
 	public static final String PARAM_DESTINATION_FOLDER = "destination-folder";
 	public static final String PARAM_PROP_HIERARCHY = "prop-hierarchy";
+	public static final String PARAM_PROP_LOCALE = "prop-locale";
 	
 	/** The logger. */
 	private static final Log logger = LogFactory.getLog(ClassifyByHierarchyActionExecuter.class);
@@ -60,13 +63,22 @@ public class ClassifyByHierarchyActionExecuter extends ActionExecuterAbstractBas
 			hierarchyQname = QName.createQName(propHierarchy, namespaceService);
 		}
 		
-		hierarchyService.classifyByHierarchy(approveFolder, nodeRef, hierarchyQname);		
+		Locale  locale = Locale.getDefault();
+		
+		String propLocale = (String)action.getParameterValue(PARAM_PROP_LOCALE);
+		if(propLocale!=null && !propLocale.isEmpty()){
+			locale = MLTextHelper.parseLocale(propLocale);
+		}
+		
+		
+		hierarchyService.classifyByHierarchy(approveFolder, nodeRef, hierarchyQname, locale);		
 	}
 
 	@Override
 	protected void addParameterDefinitions(List<ParameterDefinition> paramList) {
 		paramList.add(new ParameterDefinitionImpl(PARAM_DESTINATION_FOLDER, DataTypeDefinition.NODE_REF, true, getParamDisplayLabel(PARAM_DESTINATION_FOLDER)));
 		paramList.add(new ParameterDefinitionImpl(PARAM_PROP_HIERARCHY, DataTypeDefinition.TEXT, false, getParamDisplayLabel(PARAM_PROP_HIERARCHY)));
+		paramList.add(new ParameterDefinitionImpl(PARAM_PROP_LOCALE, DataTypeDefinition.TEXT, false, getParamDisplayLabel(PARAM_PROP_LOCALE)));
 	}
 
 	

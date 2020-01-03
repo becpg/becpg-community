@@ -18,6 +18,7 @@
 package fr.becpg.repo.web.scripts.remote;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.springframework.extensions.webscripts.WebScriptException;
@@ -40,9 +41,9 @@ public class UpdateEntityDataWebScript extends AbstractEntityWebScript {
 		NodeRef entityNodeRef = findEntity(req);
 
 		logger.debug("Update entity: " + entityNodeRef);
-		try {
+		try (InputStream in  = req.getContent().getInputStream()){
 			
-			remoteEntityService.addOrUpdateEntityData(entityNodeRef,req.getContent().getInputStream(), getFormat(req));
+			remoteEntityService.addOrUpdateEntityData(entityNodeRef,in, getFormat(req));
 
 			sendOKStatus(entityNodeRef, resp);
 		} catch (BeCPGException e) {

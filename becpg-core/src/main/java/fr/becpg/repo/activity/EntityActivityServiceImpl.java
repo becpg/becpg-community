@@ -308,7 +308,6 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	@Override
 	public boolean postDatalistActivity(NodeRef entityNodeRef, NodeRef datalistNodeRef, ActivityEvent activityEvent,
 			Map<QName, Pair<Serializable, Serializable>> updatedProperties) {
-
 		if ((datalistNodeRef != null)) {
 			try {
 				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
@@ -345,6 +344,9 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 						if (attributeExtractorService.hasAttributeExtractorPlugin(datalistNodeRef)) {
 							data.put(PROP_TITLE, attributeExtractorService.extractPropName(datalistNodeRef));
 						}
+						else {
+							data.put(PROP_TITLE, nodeService.getProperty(datalistNodeRef, ContentModel.PROP_NAME));
+						}
 					}
 					if (activityEvent.equals(ActivityEvent.Update) && updatedProperties != null) {
 						List<JSONObject> properties = new ArrayList<JSONObject>();
@@ -362,7 +364,6 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 						}
 						data.put(PROP_PROPERTIES, new JSONArray(properties));
 					}			
-
 					if (!activityEvent.equals(ActivityEvent.Update) || updatedProperties != null) {
 						activityListDataItem.setActivityType(ActivityType.Datalist);
 						activityListDataItem.setActivityData(data.toString());
@@ -388,7 +389,6 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	}
 
 	private void mergeWithLastActivity(ActivityListDataItem item) {
-
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.HOUR, -1);
 
@@ -423,7 +423,6 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 						&& activityData.get(PROP_ACTIVITY_EVENT).equals(itemData.get(PROP_ACTIVITY_EVENT))))
 						&& activity.getUserId().equals(item.getUserId())
 						&& activity.getActivityType().equals(item.getActivityType())) {
-
 					nodeService.addAspect(activityListItemNodeRef, ContentModel.ASPECT_TEMPORARY, null);
 					nodeService.deleteNode(activityListItemNodeRef);
 
@@ -440,8 +439,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 						&& itemData.has(PROP_TITLE) && activityData.has(PROP_TITLE)
 						&& itemData.get(PROP_TITLE).equals(activityData.get(PROP_TITLE))
 						&& ((!itemData.has(PROP_CLASSNAME) && !activityData.has(PROP_CLASSNAME))
-								|| (itemData.get(PROP_CLASSNAME).equals(activityData.get(PROP_CLASSNAME))))) {
-
+								|| (itemData.has(PROP_CLASSNAME) && activityData.has(PROP_CLASSNAME) && itemData.get(PROP_CLASSNAME).equals(activityData.get(PROP_CLASSNAME))))) {
 					JSONArray activityProperties = activityData.getJSONArray(PROP_PROPERTIES);
 					JSONArray itemProperties = itemData.getJSONArray(PROP_PROPERTIES);
 					for (int i = 0; i < activityProperties.length(); i++) {
@@ -451,6 +449,11 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 							JSONObject itemProperty = itemProperties.getJSONObject(j);
 							if (itemProperty.get(PROP_TITLE).equals(activityProperty.get(PROP_TITLE))) {
 								isSameProperty = true;
+								if (activityProperty.has(BEFORE)) {
+									itemProperty.put(BEFORE,activityProperty.get(BEFORE));
+								}else {
+									itemProperty.put(BEFORE,"");
+								}
 							}
 						}
 						if (!isSameProperty) {
@@ -608,7 +611,6 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	@Override
 	public boolean postEntityActivity(NodeRef entityNodeRef, ActivityType activityType, ActivityEvent activityEvent,
 			Map<QName, Pair<List<Serializable>, List<Serializable>>> updatedProperties) {
-
 		try {
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 
@@ -763,7 +765,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			// Only entities that might could be have activities
-			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_ENTITY_V2).inDB()
+			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_ENTITY_V2).excludeVersions()
 					.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED);
 			List<NodeRef> entityNodeRefs = queryBuilder.list();
 

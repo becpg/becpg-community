@@ -39,6 +39,34 @@
       </web-framework>
    </config>
 
+
+   <!--
+      CSRF filter config to mitigate CSRF/Seasurfing/XSRF attacks
+
+      To disable the CSRF filter override the <filter> to not contain any values, see share-config-custom.xml for
+      an example.
+
+      If you have a custom resource(s) that a client POST to that can't accept a token, for whatever reason, then make
+      sure to copy the entire CSRFPolicy config and place it in your share-config-custom.xml file
+      with the replace="true" attribute and make sure to add a new <rule> in the top of the <filter> element,
+      which has a <request> element matching your requests, and uses only the "assertReferer" & "assertOrigin" actions.
+
+      I.e.
+      <rule>
+         <request>
+            <method>POST</method>
+            <path>/proxy/alfresco/custom/repoWebscript/withoutParams|/service/custom/shareResource/thatMayHaveParams(\?.+)?</path>
+         </request>
+         <action name="assertReferer">
+            <param name="referer">{referer}</param>
+         </action>
+         <action name="assertOrigin">
+            <param name="origin">{origin}</param>
+         </action>
+      </rule>
+   -->
+
+
    <!-- Disable the CSRF Token Filter -->
 
    <config evaluator="string-compare" condition="CSRFPolicy" replace="true">
@@ -284,6 +312,7 @@
          </container>
       </siteTree>
    </config>
+   
 
    <!-- Repository Library config section -->
    <config evaluator="string-compare" condition="RepositoryLibrary" replace="true">

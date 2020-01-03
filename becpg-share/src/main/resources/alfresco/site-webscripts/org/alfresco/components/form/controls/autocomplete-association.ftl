@@ -13,8 +13,10 @@
 	<#if field.control.params.pageLinkTemplate??>
 		<#assign pageLinkTemplate='${field.control.params.pageLinkTemplate}'/>
 	<#else>
-		<#assign pageLinkTemplate='document-details?nodeRef={nodeRef}'/>
+		<#assign pageLinkTemplate='entity-data-lists?list=View-properties&nodeRef={nodeRef}'/>
 	</#if>
+<#elseif field.control.params.showLink?? && field.control.params.showLink =="false">
+	<#assign pageLinkTemplate='null'/>
 </#if>
 <#if args.entityNodeRef?? >
 	<#if ds?contains("?")>
@@ -43,7 +45,7 @@
 		 		readOnly : ${field.disabled?string},
 		        multipleSelectMode: ${multipleSelectMode?string}, 
 		        isMandatory : ${field.mandatory?string},
-		      <#if pageLinkTemplate??>
+		      <#if pageLinkTemplate?? && pageLinkTemplate !="null">
 		 		targetLinkTemplate: "${pageLinkTemplate}" ,
 		 		</#if>
 		 		dsStr:"${ds}"

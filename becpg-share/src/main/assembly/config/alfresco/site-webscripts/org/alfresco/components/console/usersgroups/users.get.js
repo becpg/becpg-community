@@ -28,7 +28,7 @@ function main() {
          maxSearchResults: parseInt(maxSearchResults),
          minUsernameLength: parseInt(minUsernameLength),
          minPasswordLength: parseInt(minPasswordLength),
-         showAuthorizationStatus: showAuthorizationStatus == 'true' ? true : false,
+         showAuthorizationStatus: false, // beCPG showAuthorizationStatus == 'true' ? true : false,
          docsEdition: context.properties["docsEdition"].getValue()
       }
    };

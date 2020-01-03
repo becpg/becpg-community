@@ -111,8 +111,48 @@
 				</list>
 			</parameter>
 		</constraint>
+
+
+		<constraint name="gs1:temperatureMeasurementUnits" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>CEL</value>
+					<value>FAH</value>
+					<value>KEL</value>
+				</list>
+			</parameter>
+		</constraint>
+
 	</constraints>
 	<aspects>
+
+		<aspect name="gs1:temperatureMeasurementAspect">
+			<properties>
+				<property name="gs1:maximumTemperature">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="gs1:minimumTemperature">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="gs1:maximumToleranceTemperature">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="gs1:minimumToleranceTemperature">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="gs1:temperatureMeasurementUnit">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<constraints>
+						<constraint ref="gs1:temperatureMeasurementUnits" />
+					</constraints>
+				</property>
+			</properties>
+		</aspect>
 
 		<aspect name="gs1:measuresAspect">
 			<properties>
@@ -329,8 +369,8 @@
 						<tokenised>TRUE</tokenised>
 					</index>
 				</property>
-				
-				
+
+
 				<property name="gs1:publicationDate">
 					<type>d:date</type>
 					<mandatory>false</mandatory>
@@ -351,7 +391,7 @@
 						<tokenised>TRUE</tokenised>
 					</index>
 				</property>
-				
+
 			</properties>
 			<associations />
 			<overrides />

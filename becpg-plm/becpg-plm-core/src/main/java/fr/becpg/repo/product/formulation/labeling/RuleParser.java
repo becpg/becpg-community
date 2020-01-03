@@ -153,7 +153,7 @@ public abstract class RuleParser {
 					type = DeclarationType.valueOf(labeLabelingRuleType.toString());
 				}
 
-				DeclarationFilter declarationFilter = new DeclarationFilter(formula, type, locales);
+				DeclarationFilter declarationFilter = new DeclarationFilter(name, formula, type, locales);
 				if (isThreshold) {
 					declarationFilter.setThreshold(Double.parseDouble(formula));
 				}

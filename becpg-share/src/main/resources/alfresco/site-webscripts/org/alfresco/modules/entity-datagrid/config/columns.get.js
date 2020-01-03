@@ -77,7 +77,7 @@ function getFormConfig(itemId, formId, mode, prefixedSiteId) {
 			}
 			
 			// drop back to default form if formId config missing
-			if (formConfig === null) {
+			if (formConfig === null && formId != "taskList") {
 				// look up the default form
 				formConfig = formsConfig.defaultForm;
 			}
@@ -233,124 +233,127 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId) {
 		
 		var formConfig = getFormConfig(itemType, formId, mode, prefixedSiteId);
 		
-		// get the configured visible fields
-		var visibleFields = getVisibleFields(mode == "bulk-edit" ? "edit" : "view", formConfig);
-		
-		// build the JSON object to send to the server
-		var postBody = createPostBody("type", itemType, visibleFields, formConfig, mode);
-
-		// make remote call to service
-		var connector = remote.connect("alfresco");
-		var json = connector.post("/api/formdefinitions", jsonUtils.toJSONString(postBody), "application/json");
-
-		if (logger.isLoggingEnabled()) {
-			logger.log("json = " + json);
-		}
-
-		if (json.status == 401) {
-			status.setCode(json.status, "Not authenticated");
-			return;
-		}
-
-		var formModel = eval('(' + json + ')');
-
-		// if we got a successful response attempt to render the form
-		if (json.status == 200) {
-			columns = formModel.data.definition.fields;
-		} else {
+		if(formConfig!=null){
+				
+			// get the configured visible fields
+			var visibleFields = getVisibleFields(mode == "bulk-edit" ? "edit" : "view", formConfig);
+			
+			// build the JSON object to send to the server
+			var postBody = createPostBody("type", itemType, visibleFields, formConfig, mode);
+	
+			// make remote call to service
+			var connector = remote.connect("alfresco");
+			var json = connector.post("/api/formdefinitions", jsonUtils.toJSONString(postBody), "application/json");
+	
 			if (logger.isLoggingEnabled()) {
-				logger.log("error = " + formModel.message);
+				logger.log("json = " + json);
 			}
-			columns = [];
-		}
-		
-		// get default fields
-		if(mode == "datagrid-prefs"){			
-			postBody.force = [];
-			var jsonDefaultFields = connector.post("/api/formdefinitions", jsonUtils.toJSONString(postBody), "application/json");
-			formModel = eval('(' + jsonDefaultFields + ')');
-			defaultColumns = formModel.data.definition.fields;
-		}
-
-		for ( var i in visibleFields) {
-
-			var fieldId = visibleFields[i];
-
-			if (fieldId.indexOf("dataList_") == 0) {
-
-				var name = fieldId.replace("dataList_", ""), column = {
-					type : "dataList",
-					name : name,
-					"dataType" : "nested"
-				};
-				
-				if (formConfig.fields[fieldId].label != null || formConfig.fields[fieldId].labelId != null) {
-					column.label = formConfig.fields[fieldId].label != null ? formConfig.fields[fieldId].label
-							: formConfig.fields[fieldId].labelId;
-				}
-				
-				if (formConfig.fields[fieldId].getHelpText() != null) {
-					column.help = formConfig.fields[fieldId].getHelpText();
-				}
-				
-				
-				column.columns = getColumns(name + "", "sub-datagrid");
-
-				ret.push(column);
-
-			} else if (fieldId.indexOf("entity_") == 0) {
-				var splitted = fieldId.replace("entity_", "").split("_");
-				var name = splitted[0], column = {
-					type : "entity",
-					name : name,
-					"dataType" : "nested"
-				};
-				
-				if (formConfig.fields[fieldId].label != null || formConfig.fields[fieldId].labelId != null) {
-					column.label = formConfig.fields[fieldId].label != null ? formConfig.fields[fieldId].label
-							: formConfig.fields[fieldId].labelId;
-				}
-				
-				if (formConfig.fields[fieldId].getHelpText() != null) {
-					column.help = formConfig.fields[fieldId].getHelpText();
-				}
-
-				
-				
-				if (formIdArgs != null) {
-					column.columns = getColumns(splitted[1] + "", "sub-datagrid", "sub-datagrid-" + formIdArgs);
-				} else {
-					column.columns = getColumns(splitted[1] + "", "sub-datagrid");
-				}
-
-				ret.push(column);
-
+	
+			if (json.status == 401) {
+				status.setCode(json.status, "Not authenticated");
+				return;
+			}
+	
+			var formModel = eval('(' + json + ')');
+	
+			// if we got a successful response attempt to render the form
+			if (json.status == 200) {
+				columns = formModel.data.definition.fields;
 			} else {
-
-				for ( var j in columns) {
-					if (columns[j].name == fieldId) {
-						if (formConfig.fields[fieldId].label != null || formConfig.fields[fieldId].labelId != null) {
-							columns[j].label = formConfig.fields[fieldId].label != null ? formConfig.fields[fieldId].label
-									: formConfig.fields[fieldId].labelId;
+				if (logger.isLoggingEnabled()) {
+					logger.log("error = " + formModel.message);
+				}
+				columns = [];
+			}
+			
+			// get default fields
+			if(mode == "datagrid-prefs"){			
+				postBody.force = [];
+				var jsonDefaultFields = connector.post("/api/formdefinitions", jsonUtils.toJSONString(postBody), "application/json");
+				formModel = eval('(' + jsonDefaultFields + ')');
+				defaultColumns = formModel.data.definition.fields;
+			}
+	
+			for ( var i in visibleFields) {
+	
+				var fieldId = visibleFields[i];
+	
+				if (fieldId.indexOf("dataList_") == 0) {
+	
+					var name = fieldId.replace("dataList_", ""), column = {
+						type : "dataList",
+						name : name,
+						"dataType" : "nested"
+					};
+					
+					if (formConfig.fields[fieldId].label != null || formConfig.fields[fieldId].labelId != null) {
+						column.label = formConfig.fields[fieldId].label != null ? formConfig.fields[fieldId].label
+								: formConfig.fields[fieldId].labelId;
+					}
+					
+					if (formConfig.fields[fieldId].getHelpText() != null) {
+						column.help = formConfig.fields[fieldId].getHelpText();
+					}
+					
+					
+					column.columns = getColumns(name + "", "sub-datagrid");
+	
+					ret.push(column);
+	
+				} else if (fieldId.indexOf("entity_") == 0) {
+					var splitted = fieldId.replace("entity_", "").split("_");
+					var name = splitted[0], column = {
+						type : "entity",
+						name : name,
+						"dataType" : "nested"
+					};
+					
+					if (formConfig.fields[fieldId].label != null || formConfig.fields[fieldId].labelId != null) {
+						column.label = formConfig.fields[fieldId].label != null ? formConfig.fields[fieldId].label
+								: formConfig.fields[fieldId].labelId;
+					}
+					
+					if (formConfig.fields[fieldId].getHelpText() != null) {
+						column.help = formConfig.fields[fieldId].getHelpText();
+					}
+	
+					
+					
+					if (formIdArgs != null) {
+						column.columns = getColumns(splitted[1] + "", "sub-datagrid", "sub-datagrid-" + formIdArgs);
+					} else {
+						column.columns = getColumns(splitted[1] + "", "sub-datagrid");
+					}
+	
+					ret.push(column);
+	
+				} else {
+	
+					for ( var j in columns) {
+						if (columns[j].name == fieldId) {
+							if (formConfig.fields[fieldId].label != null || formConfig.fields[fieldId].labelId != null) {
+								columns[j].label = formConfig.fields[fieldId].label != null ? formConfig.fields[fieldId].label
+										: formConfig.fields[fieldId].labelId;
+							}
+							
+							if (formConfig.fields[fieldId].getHelpText() != null) {
+								columns[j].help = formConfig.fields[fieldId].getHelpText();
+							} 
+	
+							columns[j].readOnly = formConfig.fields[fieldId].isReadOnly();
+							
+							if(mode == "datagrid-prefs"){
+								columns[j].checked = isAllowedOrChecked(fieldId, formConfig, "popup", defaultColumns);
+							}
+							
+							ret.push(columns[j]);
 						}
-						
-						if (formConfig.fields[fieldId].getHelpText() != null) {
-							columns[j].help = formConfig.fields[fieldId].getHelpText();
-						} 
-
-						columns[j].readOnly = formConfig.fields[fieldId].isReadOnly();
-						
-						if(mode == "datagrid-prefs"){
-							columns[j].checked = isAllowedOrChecked(fieldId, formConfig, "popup", defaultColumns);
-						}
-						
-						ret.push(columns[j]);
 					}
 				}
+	
 			}
-
+	
 		}
-
 	}
 
 	return ret;

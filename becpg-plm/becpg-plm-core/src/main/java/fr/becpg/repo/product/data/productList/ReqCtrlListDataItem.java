@@ -19,10 +19,12 @@ package fr.becpg.repo.product.data.productList;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.repository.annotation.AlfMlText;
@@ -56,7 +58,7 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 	}
 
 	public String getReqMessage() {
-		return reqMlMessage!=null ? reqMlMessage.getDefaultValue() : null;
+		return reqMlMessage!=null ? MLTextHelper.getClosestValue(reqMlMessage, Locale.getDefault()) : null;
 	}
 	
 	public String getKey() {
@@ -126,17 +128,7 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 		super();
 	}
 
-	
-	public ReqCtrlListDataItem(NodeRef nodeRef, RequirementType reqType, String reqMessage, NodeRef charact, List<NodeRef> sources, RequirementDataType reqDataType){
-		super();
-		this.nodeRef = nodeRef;
-		this.reqType = reqType;
-		this.reqMlMessage = new MLText(reqMessage);
-		this.charact = charact;
-		this.sources = sources;
-		this.reqDataType = reqDataType != null ? reqDataType : RequirementDataType.Nutrient;
-	}
-	
+
 	public ReqCtrlListDataItem(NodeRef nodeRef, RequirementType reqType, MLText reqMessage, NodeRef charact, List<NodeRef> sources, RequirementDataType reqDataType){
 		super();
 		this.nodeRef = nodeRef;

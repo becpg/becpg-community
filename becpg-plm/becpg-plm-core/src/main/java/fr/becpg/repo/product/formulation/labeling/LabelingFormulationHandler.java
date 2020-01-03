@@ -187,12 +187,11 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							exp.getValue(dataContext, String.class);
 
 						} catch (Exception e) {
-							String message = I18NUtil.getMessage("message.formulate.labelRule.error", labelingRuleListDataItem.getName(),
-									e.getLocalizedMessage());
-							formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, null,
+							formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Tolerated,  MLTextHelper.getI18NMessage("message.formulate.labelRule.error", labelingRuleListDataItem.getName(),
+									e.getLocalizedMessage()), null,
 									new ArrayList<NodeRef>(), RequirementDataType.Labelling));
-							if (logger.isInfoEnabled()) {
-								logger.info("Error in formula :" + SpelHelper.formatFormula(labelingRuleListDataItem.getFormula()), e);
+							if (logger.isDebugEnabled()) {
+								logger.debug("Error in formula :" + SpelHelper.formatFormula(labelingRuleListDataItem.getFormula()), e);
 							}
 						}
 					} else if (!LabelingRuleType.Render.equals(type)) {
@@ -321,13 +320,12 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 									label.addValue(locale, ret);
 
 								} catch (Exception e) {
-									String message = I18NUtil.getMessage("message.formulate.labelRule.error", labelingRuleListDataItem.getName(),
-											e.getLocalizedMessage());
-									formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, null,
+									formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, MLTextHelper.getI18NMessage("message.formulate.labelRule.error", labelingRuleListDataItem.getName(),
+											e.getLocalizedMessage()), null,
 											new ArrayList<NodeRef>(), RequirementDataType.Labelling));
 
-									if (logger.isInfoEnabled()) {
-										logger.info("Error in formula : (" + labelingRuleListDataItem.getNodeRef() + ")"
+									if (logger.isDebugEnabled()) {
+										logger.debug("Error in formula : (" + labelingRuleListDataItem.getNodeRef() + ")"
 												+ SpelHelper.formatFormula(labelingRuleListDataItem.getFormula()), e);
 									}
 								} finally {
@@ -977,9 +975,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			if (current != null) {
 				current.setQty(null);
 				current.setVolume(null);
-				String message = I18NUtil.getMessage("message.formulate.labelRule.error.nullIng", getName(current));
-
-				return new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, null, new ArrayList<NodeRef>(),
+				
+				return new ReqCtrlListDataItem(null, RequirementType.Forbidden, MLTextHelper.getI18NMessage("message.formulate.labelRule.error.nullIng", getName(current)), null, new ArrayList<NodeRef>(),
 						RequirementDataType.Labelling);
 			}
 		}
@@ -1099,6 +1096,12 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		} else {
 			ill.setLocales(null);
 		}
+		
+		//Limit to 50ko (Max 64k)
+		if(log!=null && log.length()> 50000) {
+		   log = "{\"children\":[{\"cssClass\":\"error\",\"name\":\"error-too-long\",\"legal\":\"Details cannot be display, data too long\"}],\"name\":\"root\",\"legal\":\"root\"}";
+		}
+		
 		ill.setLogValue(log);
 		ill.setSort(sortOrder);
 
@@ -1796,12 +1799,11 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	}
 
 	private ReqCtrlListDataItem createError(CompositeLabeling ingItem, NodeRef productNodeRef) {
-		String message = I18NUtil.getMessage("message.formulate.labelRule.error.nullIng", getName(ingItem));
 		List<NodeRef> sourceNodeRefs = new ArrayList<>();
 		if (productNodeRef != null) {
 			sourceNodeRefs.add(productNodeRef);
 		}
-		return new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, null, sourceNodeRefs, RequirementDataType.Labelling);
+		return new ReqCtrlListDataItem(null, RequirementType.Forbidden, MLTextHelper.getI18NMessage("message.formulate.labelRule.error.nullIng", getName(ingItem)), null, sourceNodeRefs, RequirementDataType.Labelling);
 
 	}
 
@@ -1812,7 +1814,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			if (labelingFormulaContext.getNodeDeclarationFilters().containsKey(compoListDataItem.getProduct())) {
 				for (DeclarationFilter declarationFilter : labelingFormulaContext.getNodeDeclarationFilters().get(compoListDataItem.getProduct())) {
 					if (!declarationFilter.isThreshold() && ((declarationFilter.getFormula() == null) || labelingFormulaContext
-							.matchFormule(declarationFilter.getFormula(), new DeclarationFilterContext(compoListDataItem, ingListDataItem)))) {
+							.matchFormule(declarationFilter, new DeclarationFilterContext(compoListDataItem, ingListDataItem)))) {
 
 						if (logger.isTraceEnabled()) {
 							logger.trace(" -- Found declType : " + declarationFilter.getDeclarationType() + " for "
@@ -1828,7 +1830,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			if (labelingFormulaContext.getNodeDeclarationFilters().containsKey(ingListDataItem.getIng())) {
 				for (DeclarationFilter declarationFilter : labelingFormulaContext.getNodeDeclarationFilters().get(ingListDataItem.getIng())) {
 					if (!declarationFilter.isThreshold() && ((declarationFilter.getFormula() == null) || labelingFormulaContext
-							.matchFormule(declarationFilter.getFormula(), new DeclarationFilterContext(compoListDataItem, ingListDataItem)))) {
+							.matchFormule(declarationFilter, new DeclarationFilterContext(compoListDataItem, ingListDataItem)))) {
 						if (logger.isTraceEnabled()) {
 							logger.trace(" -- Found declType : " + declarationFilter.getDeclarationType() + " for "
 									+ nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME));
@@ -1840,7 +1842,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 			for (DeclarationFilter declarationFilter : labelingFormulaContext.getDeclarationFilters()) {
 				if (!declarationFilter.isThreshold() && (declarationFilter.getFormula() != null) && labelingFormulaContext
-						.matchFormule(declarationFilter.getFormula(), new DeclarationFilterContext(compoListDataItem, ingListDataItem))) {
+						.matchFormule(declarationFilter, new DeclarationFilterContext(compoListDataItem, ingListDataItem))) {
 					if (logger.isTraceEnabled()) {
 						logger.trace(" -- Found declType : " + declarationFilter.getDeclarationType() + " for "
 								+ nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME));

@@ -23,9 +23,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.alfresco.service.cmr.dictionary.AspectDefinition;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
+import org.alfresco.service.cmr.dictionary.PropertyDefinition;
+import org.alfresco.service.cmr.dictionary.TypeDefinition;
 import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,6 +47,7 @@ import fr.becpg.repo.repository.RepositoryEntityDefReader;
 public class EntityDictionaryServiceImpl implements EntityDictionaryService {
 
 	private Map<QName,QName> propDefMapping = new HashMap<>();
+	
 	
 	
 	@Autowired
@@ -151,6 +155,31 @@ public class EntityDictionaryServiceImpl implements EntityDictionaryService {
 						return dictionaryService.getSubTypes(typeQname, true);
 					}
 				});
+	}
+
+	@Override
+	public TypeDefinition getType(QName type) {
+		return dictionaryService.getType(type);
+	}
+
+	@Override
+	public AspectDefinition getAspect(QName aspect) {
+		return dictionaryService.getAspect(aspect);
+	}
+
+	@Override
+	public PropertyDefinition getProperty(QName key) {
+		return dictionaryService.getProperty(key);
+	}
+
+	@Override
+	public AssociationDefinition getAssociation(QName qName) {
+		return dictionaryService.getAssociation(qName);
+	}
+
+	@Override
+	public DictionaryService getDictionaryService() {
+		return dictionaryService;
 	}
 
 

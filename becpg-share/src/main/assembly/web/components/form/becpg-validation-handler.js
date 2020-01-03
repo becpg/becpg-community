@@ -2,24 +2,28 @@
 {
 	
 /*
+<!-- general comments field is porp/assoc -->
+
 	<field id="acme:fieldId">
-     <constraint-handlers>
-       <constraint type="MANDATORY" validation-handler="beCPG.forms.validation.mandatoryIf|{\"field_bcpg_code\":\"EMPTY\"}" event="keyup" />
-       <constraint type="MANDATORY" validation-handler="beCPG.forms.validation.mandatoryIf|{\"field_bcpg_code\":\"PF25\"}" event="keyup" />
-       <constraint type="MANDATORY" validation-handler="beCPG.forms.validation.mandatoryIf|{\"field_bcpg_code\":\"NOTEMPTY\"}" event="keyup" />
-       <constraint type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf|{\"field_bcpg_code\":\"EMPTY\"}" event="keyup" />
-       <!-- Not -->
-       <constraint type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf|{\"field_bcpg_code\":\"-PF25\"})" event="keyup" />
-       <constraint type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf|{\"field_bcpg_code\":\"PF24\"})" event="keyup" />
-       <constraint type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf|{\"field_bcpg_code\":\"EMPTY\"})" event="keyup" />
-       
-       <constraint type="MANDATORY" validation-handler="beCPG.forms.validation.GTIN" event="keyup" />
-     </constraint-handlers>
+		<constraint-handlers>
+			<!-- mandatoryIf --> 
+			<constraint type="MANDATORY" validation-handler="beCPG.forms.validation.mandatoryIf" event='keyup,change@{"prop":"field_bcpg_code", "condition" :"EMPTY"}' />
+			<constraint type="MANDATORY" validation-handler="beCPG.forms.validation.mandatoryIf" event='keyup,change@{"prop":"field_bcpg_code", "condition" :"NOTEMPTY\"}' />
+			<constraint type="MANDATORY" validation-handler="beCPG.forms.validation.mandatoryIf" event='keyup,change@{"prop":"field_bcpg_code", "condition" :"PF25"}' />
+			<!-- hideIf -->
+			<constraint type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf" event='keyup,change@{"prop":"field_bcpg_code", "condition" :""}' />
+			<constraint type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf" event='keyup,change@{"prop":"field_bcpg_code", "condition" :"PF24"}' />
+			<constraint type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf" event='keyup,change@{"prop":"field_bcpg_code", "condition" :"PF24|PF25"}' />
+	        <!-- hideIf with regex (hide if not PF24)-->
+	        <constraint type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf" event='keyup,change@{"prop":"field_bcpg_code", "condition" :"RegExp_^(?!PF24$).*"}' />
+	        <!-- GTIN -->
+	        <constraint type="MANDATORY" validation-handler="beCPG.forms.validation.GTIN" event="keyup" />
+     	</constraint-handlers>
     </field>
 	
 	http://docs.alfresco.com/5.1/concepts/dev-extensions-share-form-field-validation-handlers.html
 	
-*/	
+*/
 	 if(beCPG.forms == null) beCPG.forms = {};
 
 	 if(beCPG.forms.validation == null) beCPG.forms.validation = {};
@@ -120,18 +124,24 @@
 		   				}
 		   			}
 		   		if(inputEl!=null){
-		   			
-		   			var  match = (args[i].condition == field.value);
-		   			
-		   			if(args[i].condition.indexOf("|") != -1){
-		   				var conds = args[i].condition.split("|");
-		   				for(var j in conds){
-		   					if(conds[j] == field.value){
-		   						match = true;
-		   						break;
+		   			var match;
+		   			if(args[i].condition != null && args[i].condition.indexOf("RegExp_") == 0){
+		   				var regex = new RegExp(args[i].condition.replace("RegExp_", ""));
+			   			match = field.value.match(regex) != null;
+		   			}else {
+		   				match = (args[i].condition == field.value);
+		   				if(args[i].condition.indexOf("|") != -1){
+		   					var conds = args[i].condition.split("|");
+		   					for(var j in conds){
+		   						regex = new RegExp();
+		   						if(field.value == conds[j]){
+		   							match = true;
+		   							break;
+		   						}
 		   					}
 		   				}
 		   			}
+
 		   			
 			   		if(match){
 			   			YAHOO.util.Dom.addClass(inputEl,"hidden");

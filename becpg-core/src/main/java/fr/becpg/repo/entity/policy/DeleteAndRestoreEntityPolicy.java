@@ -45,7 +45,6 @@ import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.PropertiesHelper;
-import fr.becpg.repo.node.integrity.BeCPGIntegrityChecker;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
 /**

@@ -26,13 +26,14 @@ import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+
+import fr.becpg.repo.entity.EntityDictionaryService;
 
 /**
  *
@@ -44,7 +45,7 @@ public abstract class AbstractEntityVisitor {
 	protected final NodeService mlNodeService;
 	protected final NodeService nodeService;
 	protected final NamespaceService namespaceService;
-	protected final DictionaryService dictionaryService;
+	protected final EntityDictionaryService entityDictionaryService;
 	protected final ContentService contentService;
 	protected final SiteService siteService;
 
@@ -110,12 +111,12 @@ public abstract class AbstractEntityVisitor {
 	}
 
 	public AbstractEntityVisitor(NodeService mlNodeService, NodeService nodeService, NamespaceService namespaceService,
-			DictionaryService dictionaryService, ContentService contentService, SiteService siteService) {
+			EntityDictionaryService entityDictionaryService, ContentService contentService, SiteService siteService) {
 		super();
 		this.mlNodeService = mlNodeService;
 		this.nodeService = nodeService;
 		this.namespaceService = namespaceService;
-		this.dictionaryService = dictionaryService;
+		this.entityDictionaryService = entityDictionaryService;
 		this.contentService = contentService;
 		this.siteService = siteService;
 	}

@@ -23,6 +23,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
@@ -48,10 +49,16 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 	public static final String MESSAGE_LABELCLAIM_ERROR = "message.formulate.labelClaim.error";
 
 	private NodeService nodeService;
+	
+	private NodeService mlNodeService;
 
 	private FormulaService formulaService;
 
 	private AlfrescoRepository<ProductData> alfrescoRepository;
+	
+	public void setMlNodeService(NodeService mlNodeService) {
+		this.mlNodeService = mlNodeService;
+	}
 
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
@@ -270,8 +277,9 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 	}
 
 	private void addMissingLabelClaimReq(ProductData productData, ProductData partProduct, LabelClaimListDataItem labelClaimItem) {
-		String message = I18NUtil.getMessage(MESSAGE_MISSING_CLAIM, extractName(labelClaimItem.getLabelClaim()));
-		productData.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Info, message, labelClaimItem.getLabelClaim(),
+		
+		productData.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Info,
+				MLTextHelper.getI18NMessage(MESSAGE_MISSING_CLAIM, mlNodeService.getProperty(labelClaimItem.getLabelClaim(), BeCPGModel.PROP_CHARACT_NAME)), labelClaimItem.getLabelClaim(),
 				new ArrayList<>(Arrays.asList(partProduct.getNodeRef())), RequirementDataType.Labelclaim));
 
 	}
@@ -328,10 +336,9 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 
 				if (labelClaimListDataItem.getErrorLog() != null) {
 
-					String message = I18NUtil.getMessage(MESSAGE_LABELCLAIM_ERROR, Locale.getDefault(),
-							nodeService.getProperty(labelClaimListDataItem.getLabelClaim(), BeCPGModel.PROP_CHARACT_NAME),
-							labelClaimListDataItem.getErrorLog());
-					productData.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message,
+					productData.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Tolerated,  MLTextHelper.getI18NMessage(MESSAGE_LABELCLAIM_ERROR,
+							mlNodeService.getProperty(labelClaimListDataItem.getLabelClaim(), BeCPGModel.PROP_CHARACT_NAME),
+							labelClaimListDataItem.getErrorLog()),
 							labelClaimListDataItem.getLabelClaim(), new ArrayList<NodeRef>(), RequirementDataType.Labelclaim));
 				}
 

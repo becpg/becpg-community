@@ -16,6 +16,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.model.PLMModel;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.listvalue.ListValueEntry;
 import fr.becpg.repo.listvalue.ListValueService;
 import fr.becpg.repo.listvalue.impl.EntityListValuePlugin;
@@ -79,11 +80,11 @@ public class ListValueServiceIT extends AbstractListValuePluginTest {
 			assertTrue("check supplier key", containsSupplier);
 
 			// suggest supplier (return supplier 1 and template
-			suggestions = entityListValuePlugin.suggestTargetAssoc(null, PLMModel.TYPE_SUPPLIER, "*", 0, 1000, arrClassNames, null).getResults();
+			suggestions = entityListValuePlugin.suggestTargetAssoc(null, PLMModel.TYPE_SUPPLIER, "*", 0, RepoConsts.MAX_RESULTS_UNLIMITED, arrClassNames, null).getResults();
 
 			containsSupplier = false;
 			for (ListValueEntry s2 : suggestions) {
-				//logger.debug("supplier test 2: " + s2.getName() + " supplierName "+supplierName);
+				logger.debug("supplier test 2: " + s2.getName() + " supplierName "+supplierName);
 				if (s2.getValue().equals(supplierNodeRef.toString()) && s2.getName().equals(supplierName)) {
 					containsSupplier = true;
 				}
@@ -95,7 +96,7 @@ public class ListValueServiceIT extends AbstractListValuePluginTest {
 			// 1 and template
 			Map<String, Serializable> props = new HashMap<>();
 			props.put(ListValueService.PROP_EXCLUDE_CLASS_NAMES, "bcpg:entityTplAspect");
-			suggestions = entityListValuePlugin.suggestTargetAssoc(null, PLMModel.TYPE_SUPPLIER, "*", 0, 1000, arrClassNames, props).getResults();
+			suggestions = entityListValuePlugin.suggestTargetAssoc(null, PLMModel.TYPE_SUPPLIER, "*", 0, RepoConsts.MAX_RESULTS_UNLIMITED, arrClassNames, props).getResults();
 
 			containsSupplier = false;
 			for (ListValueEntry s3 : suggestions) {
@@ -109,14 +110,14 @@ public class ListValueServiceIT extends AbstractListValuePluginTest {
 
 			// filter by client : no results
 			String[] arrClassNames2 = { "bcpg:client" };
-			suggestions = entityListValuePlugin.suggestTargetAssoc(null, PLMModel.TYPE_SUPPLIER, supplierName, 0, 1000, arrClassNames2, null)
+			suggestions = entityListValuePlugin.suggestTargetAssoc(null, PLMModel.TYPE_SUPPLIER, supplierName, 0, RepoConsts.MAX_RESULTS_UNLIMITED, arrClassNames2, null)
 					.getResults();
 
 			assertEquals("0 suggestion", 0, suggestions.size());
 
 			// test permissions
 			authenticationComponent.setSystemUserAsCurrentUser();
-			suggestions = entityListValuePlugin.suggestTargetAssoc(null, PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT, "*", 0, 1000, null, null).getResults();
+			suggestions = entityListValuePlugin.suggestTargetAssoc(null, PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT, "*", 0, RepoConsts.MAX_RESULTS_UNLIMITED, null, null).getResults();
 			for (ListValueEntry s4 : suggestions) {
 				logger.debug("SF for system user: " + s4.getName());
 
@@ -129,7 +130,7 @@ public class ListValueServiceIT extends AbstractListValuePluginTest {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			authenticationComponent.setCurrentUser(BeCPGPLMTestHelper.USER_ONE);
-			List<ListValueEntry> suggestions = entityListValuePlugin.suggestTargetAssoc(null, PLMModel.TYPE_FINISHEDPRODUCT, "*", 0, 10, null, null).getResults();
+			List<ListValueEntry> suggestions = entityListValuePlugin.suggestTargetAssoc(null, PLMModel.TYPE_FINISHEDPRODUCT, "*", 0, RepoConsts.MAX_RESULTS_UNLIMITED, null, null).getResults();
 			for (ListValueEntry s5 : suggestions) {
 				logger.debug("SF for user one: " + s5.getName());
 

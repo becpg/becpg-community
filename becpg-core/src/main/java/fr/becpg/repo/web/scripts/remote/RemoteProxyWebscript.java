@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2018 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2018 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.web.scripts.remote;
@@ -37,14 +37,14 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 
 /**
  * Act has a remote proxy for webscript
+ * 
  * @author matthieu
  *
  */
 public class RemoteProxyWebscript extends AbstractWebScript {
 
-
 	private static final Log logger = LogFactory.getLog(RemoteProxyWebscript.class);
-	
+
 	private static final String REMOTE_URL_PARAM = "remoteUrl";
 
 	private String remoteServer;
@@ -52,7 +52,7 @@ public class RemoteProxyWebscript extends AbstractWebScript {
 	private String remoteUser;
 
 	private char[] remotePwd;
-	
+
 	public void setRemoteServer(String remoteServer) {
 		this.remoteServer = remoteServer;
 	}
@@ -62,29 +62,30 @@ public class RemoteProxyWebscript extends AbstractWebScript {
 	}
 
 	public void setRemotePwd(char[] remotePwd) {
-		if(remotePwd!=null){
+		if (remotePwd != null) {
 			this.remotePwd = Arrays.copyOf(remotePwd, remotePwd.length);
 		}
 	}
 
+	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
-		
+
 		Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();
-		
-		
-		String remoteUrl = remoteServer+"/service/"+templateArgs.get(REMOTE_URL_PARAM);
+
+		String remoteUrl = remoteServer + "/service/" + templateArgs.get(REMOTE_URL_PARAM);
 		boolean first = true;
-		for(String name : req.getParameterNames()){
-			//ISSUE do not forward alf_ticket
-			if(!"alf_ticket".equals(name)){
-				remoteUrl+=(first?"?":"&")+name+"="+URLEncoder.encode(req.getParameter(name),"UTF-8");
+		for (String name : req.getParameterNames()) {
+			// ISSUE do not forward alf_ticket
+			if (!"alf_ticket".equals(name)) {
+				remoteUrl += (first ? "?" : "&") + name + "=" + URLEncoder.encode(req.getParameter(name), "UTF-8");
 				first = false;
 			}
 		}
-		
-		logger.debug("Forward request to :"+remoteUrl);
-		
+
+		logger.debug("Forward request to :" + remoteUrl);
+
 		Authenticator.setDefault(new Authenticator() {
+			@Override
 			protected PasswordAuthentication getPasswordAuthentication() {
 				return new PasswordAuthentication(remoteUser, remotePwd);
 			}
@@ -92,18 +93,14 @@ public class RemoteProxyWebscript extends AbstractWebScript {
 
 		try {
 			URL entityUrl = new URL(remoteUrl);
-			InputStream input = null;
-		
-			try {
-				input = entityUrl.openStream();
+
+			try (InputStream input = entityUrl.openStream()) {
 				IOUtils.copy(input, resp.getOutputStream());
 
-			} finally {
-				IOUtils.closeQuietly(input);
 			}
 		} catch (MalformedURLException e) {
 			throw new WebScriptException(e.getMessage());
 		}
-		
+
 	}
 }
