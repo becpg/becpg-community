@@ -1,0 +1,122 @@
+{
+    "type": "model",
+    "id": "plm",
+    "datagrids": {
+        "bcpg:compoList": {
+            "default": {
+                "bcpg:variantIds": {
+                    "force": true,
+                    "hidden": true,
+                    "readOnly": true
+                },
+                "bcpg:depthLevel": {},
+                "bcpg:compoListProduct": {},
+                "bcpg:compoListQtySubFormula": {},
+                "bcpg:compareWithDynColumn": {
+                    "force": true,
+                    "hidden": true
+                },
+                "bcpg:compoListUnit": {},
+                "bcpg:compoListQty": {
+                    "readOnly": true
+                },
+                "bcpg:compoListYieldPerc": {},
+                "bcpg:compoListLossPerc": {},
+                "bcpg:dynamicCharactColumn1": {
+                    "force": true,
+                    "hidden": true
+                },
+                "bcpg:dynamicCharactColumn2": {
+                    "force": true,
+                    "hidden": true
+                },
+                "bcpg:dynamicCharactColumn3": {
+                    "force": true,
+                    "hidden": true
+                },
+                "bcpg:dynamicCharactColumn4": {
+                    "force": true,
+                    "hidden": true
+                },
+                "bcpg:dynamicCharactColumn5": {
+                    "force": true,
+                    "hidden": true
+                },
+                "bcpg:dynamicCharactColumn6": {
+                    "force": true,
+                    "hidden": true
+                },
+                "bcpg:dynamicCharactColumn7": {
+                    "force": true,
+                    "hidden": true
+                },
+                "bcpg:dynamicCharactColumn8": {
+                    "force": true,
+                    "hidden": true
+                },
+                "bcpg:dynamicCharactColumn9": {
+                    "force": true,
+                    "hidden": true
+                },
+                "bcpg:dynamicCharactColumn10": {
+                    "force": true,
+                    "hidden": true
+                },
+                "bcpg:startEffectivity": {
+                    "force": true,
+                    "hidden": true
+                },
+                "bcpg:endEffectivity": {
+                    "force": true,
+                    "hidden": true
+                },
+                "bcpg:instruction": {
+                    "force": true,
+                    "hidden": true
+                },
+                "fm:commentCount": {
+                    "force": true,
+                    "readOnly": true
+                }
+            }
+        },
+        "labeling": {
+            "bcpg:variantIds": {
+                "force": true
+            },
+            "bcpg:depthLevel": {},
+            "bcpg:compoListProduct": {},
+            "bcpg:compoListQtySubFormula": {},
+            "bcpg:compoListUnit": {},
+            "bcpg:compoListDeclType": {}
+        }
+    },
+    "bcpg:labelClaimList": {
+        "default": {
+            "bcpg:lclLabelClaim": {},
+            "entity_bcpg:lclLabelClaim_bcpg:labelClaim": {
+                "hidden": true
+            },
+            "bcpg:lclType": {},
+            "bcpg:lclClaimValue": {},
+            "bcpg:lclMissingLabelClaims": {
+                "force": true,
+                "readOnly": true
+            },
+            "bcpg:lclComments": {
+                "force": true
+            },
+            "fm:commentCount": {
+                "force": true,
+                "hidden": true
+            },
+            "bcpg:lclIsFormulated": {
+                "hidden": true
+            },
+            "bcpg:lclFormulaErrorLog": {
+                "hidden": true
+            },
+            "rep:reportKinds": {}
+        }
+    }
+}
