@@ -25,7 +25,6 @@ import org.alfresco.service.namespace.QName;
 
 import fr.becpg.common.BeCPGException;
 import fr.becpg.model.EntityListState;
-import fr.becpg.model.SystemState;
 
 /**
  * Entity service

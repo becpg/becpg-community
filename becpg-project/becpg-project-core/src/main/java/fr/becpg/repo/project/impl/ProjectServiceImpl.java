@@ -37,7 +37,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.ScriptService;
 import org.alfresco.service.cmr.security.AccessPermission;
-import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.namespace.NamespaceService;
@@ -52,6 +51,7 @@ import fr.becpg.model.DeliverableUrl;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.ProjectRepoConsts;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.AssociationService;
@@ -312,13 +312,11 @@ public class ProjectServiceImpl implements ProjectService {
 
 	}
 
-        @Override
+	@Override
 	public NodeRef refusedTask(NodeRef nodeRef) {
 		nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_IS_REFUSED, false);
 		return nodeRef;
 	}
-		
-
 
 	@Override
 	public NodeRef reassignTask(NodeRef taskNodeRef, String user) {
@@ -348,7 +346,6 @@ public class ProjectServiceImpl implements ProjectService {
 			policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
 		}
 	}
-
 
 	@Override
 	public List<NodeRef> extractResources(NodeRef projectNodeRef, List<NodeRef> resources) {
@@ -527,7 +524,8 @@ public class ProjectServiceImpl implements ProjectService {
 	@Override
 	public void runScript(ProjectData project, TaskListDataItem task, NodeRef scriptNode) {
 
-		if ((scriptNode != null) && nodeService.exists(scriptNode)) {
+		if ((scriptNode != null) && nodeService.exists(scriptNode)
+				&& nodeService.getPath(scriptNode).toPrefixString(namespaceService).startsWith(RepoConsts.SCRIPTS_FULL_PATH)) {
 
 			String userName = AuthenticationUtil.getFullyAuthenticatedUser();
 

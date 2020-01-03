@@ -145,9 +145,13 @@
 											  	}
 										}
 										
+										var displayName = catalogs[key].missingFields[field].displayName;
+										if(catalogs[key].missingFields[field]["displayName_"+Alfresco.constants.JS_LOCALE]){
+											displayName = catalogs[key].missingFields[field]["displayName_"+Alfresco.constants.JS_LOCALE];
+										}
 										
 										html+="<li class=\"missing-field\" >"
-												+catalogs[key].missingFields[field].displayName+
+												+displayName+
 												(flag!=null?"<img title="+instance.msg("locale.name."+catalogs[key].missingFields[field].locale)
 														+" src=\"/share/res/components/images/flags/"
 														+flag+".png\">":"")+"</li>";	
@@ -163,9 +167,15 @@
 								html+="<h3>"+instance.msg("label.non-unique-properties")+"</h3>";
 								
 								html+="<ul class=\"catalog-missing-propList\">";
-									for(var field in catalogs[key].nonUniqueFields){	
+									for(var field in catalogs[key].nonUniqueFields){
+										
+										var displayName = catalogs[key].nonUniqueFields[field].displayName;
+										if(catalogs[key].nonUniqueFields[field]["displayName_"+Alfresco.constants.JS_LOCALE]){
+											displayName = catalogs[key].nonUniqueFields[field]["displayName_"+Alfresco.constants.JS_LOCALE];
+										}
+										
 										html+="<li class=\"non-unique-field\" >"
-												+catalogs[key].nonUniqueFields[field].displayName
+												+displayName
 												+"</li>";	
 									}
 									
@@ -294,7 +304,8 @@
 												}
 											}							
 										} else {
-											var absentMissingFieldId = "missing-field_"+catalogs[key]+"_"+catalogs[key].missingFields[field].displayName;
+											
+											var absentMissingFieldId = "missing-field_"+catalogs[key]+"_"+catalogs[key].missingFields[field].id;
 	
 											var absentMissingFieldHTMLElement = YAHOO.util.Dom.get(absentMissingFieldId);
 	

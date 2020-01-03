@@ -33,11 +33,6 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 
 	private static final Log logger = LogFactory.getLog(ScoreCalculatingFormulationHandler.class);
 
-	public static final String MESSAGE_MANDATORY_FIELD_MISSING = "message.formulate.mandatory_property";
-	public static final String MESSAGE_MANDATORY_FIELD_MISSING_LOCALIZED = "message.formulate.mandatory_property_localized";
-	public static final String MESSAGE_NON_VALIDATED_STATE = "message.formulate.nonValidatedState";
-	public static final String MESSAGE_OR = "message.formulate.or";
-	public static final String MESSAGE_NON_UNIQUE_FIELD = "message.formulate.non-unique-field";
 	private AlfrescoRepository<ProductData> alfrescoRepository;
 
 	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {

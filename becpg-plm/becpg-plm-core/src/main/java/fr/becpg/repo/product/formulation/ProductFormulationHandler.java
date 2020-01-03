@@ -25,17 +25,18 @@ import java.util.List;
 
 import org.alfresco.service.cmr.lock.LockService;
 import org.alfresco.service.cmr.lock.LockStatus;
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.PackagingKitData;
@@ -326,7 +327,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 	}
 
 	private void addMessingReq(List<ReqCtrlListDataItem> reqCtrlListDataItem, NodeRef sourceNodeRef, String reqMsg, RequirementDataType reqDataType) {
-		String message = I18NUtil.getMessage(reqMsg);
+		MLText message = MLTextHelper.getI18NMessage(reqMsg);
 		ArrayList<NodeRef> sources = new ArrayList<>(1);
 		if (sourceNodeRef != null) {
 			sources.add(sourceNodeRef);

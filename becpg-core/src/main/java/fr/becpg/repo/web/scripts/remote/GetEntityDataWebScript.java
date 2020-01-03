@@ -18,9 +18,11 @@
 package fr.becpg.repo.web.scripts.remote;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.SocketException;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
@@ -41,15 +43,14 @@ public class GetEntityDataWebScript extends AbstractEntityWebScript {
 		NodeRef entityNodeRef = findEntity(req);
 
 		logger.debug("Get entity data: " + entityNodeRef);
-		try {
 
-			remoteEntityService.getEntityData(entityNodeRef, resp.getOutputStream(), getFormat(req));
+		try (OutputStream out = resp.getOutputStream()){
 
-			// set mimetype for the content and the character encoding + length
-			// for the stream
+			remoteEntityService.getEntityData(entityNodeRef, out, getFormat(req));
+
 			resp.setContentType(getContentType(req));
 			resp.setContentEncoding("UTF-8");
-			
+			resp.setStatus(Status.STATUS_OK);
 		} catch (BeCPGException e) {
 			logger.error("Cannot export entity data", e);
 			throw new WebScriptException(e.getMessage());

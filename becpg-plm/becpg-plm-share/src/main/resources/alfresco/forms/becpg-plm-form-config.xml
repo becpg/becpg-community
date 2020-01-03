@@ -220,6 +220,7 @@
 					<show id="bcpg:precautionOfUseRef" force="true" />
 					<show id="bcpg:preparationTips" force="true" />
 					<show id="bcpg:productMicrobioCriteriaRef" />
+					<show id="bcpg:meatType" force="false" />				
 
 					<!-- formulation -->
 					<show id="bcpg:productQty" />
@@ -465,6 +466,7 @@
 					<field id="bcpg:customsCodeRef" set="mainInfo" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="showLink">false</control-param>							
 						</control>
 					</field>
 					<field id="bcpg:subsidiaryRef" set="mainInfo" />
@@ -502,20 +504,8 @@
 							<control-param name="unit">d</control-param>
 						</control>
 					</field>
-					<field id="bcpg:storageConditionsRef" help-id="becpg.forms.help.storageConditionsRef" set="consumer">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="style">null</control-param>
-							<control-param name="showTooltip">false</control-param>
-						</control>
-					</field>
-					<field id="bcpg:precautionOfUseRef" help-id="becpg.forms.help.precautionOfUseRef" set="consumer">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="style">null</control-param>
-							<control-param name="showTooltip">false</control-param>
-						</control>
-					</field>
+					<field id="bcpg:storageConditionsRef" help-id="becpg.forms.help.storageConditionsRef" set="consumer"/>
+					<field id="bcpg:precautionOfUseRef" help-id="becpg.forms.help.precautionOfUseRef" set="consumer"/>
 					<field id="bcpg:preparationTips" help-id="becpg.forms.help.preparationTips" set="consumer">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">2</control-param>
@@ -527,6 +517,7 @@
 							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
 						</control>
 					</field>
+					<field id="bcpg:meatType" set="consumer" />
 
 					<!-- formulation -->
 					<field id="bcpg:productQty" help-id="becpg.forms.help.productQty" set="formulation" />
@@ -1140,6 +1131,7 @@
 					<field id="bcpg:customsCodeRef" set="2-col-product-criteria" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="showLink">false</control-param>
 						</control>
 					</field>
 					
@@ -1317,6 +1309,7 @@
 					<show id="bcpg:precautionOfUseRef" force="true" />
 					<show id="bcpg:preparationTips" force="true" />
 					<show id="bcpg:productMicrobioCriteriaRef" />
+					<show id="bcpg:meatType" force="false" />
 					
 					<!-- formulation -->
 					<show id="bcpg:productQty" />
@@ -1421,6 +1414,7 @@
 					<field id="bcpg:customsCodeRef" set="mainInfo" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="showLink">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:subsidiaryRef"  set="mainInfo" />
@@ -1458,17 +1452,8 @@
 							<control-param name="unit">d</control-param>
 						</control>
 					</field>
-					<field id="bcpg:storageConditionsRef" help-id="becpg.forms.help.storageConditionsRef" set="consumer">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="showTooltip">false</control-param>
-						</control>
-					</field>
-					<field id="bcpg:precautionOfUseRef" help-id="becpg.forms.help.precautionOfUseRef" set="consumer">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-						</control>
-					</field>
+					<field id="bcpg:storageConditionsRef" help-id="becpg.forms.help.storageConditionsRef" set="consumer"/>
+					<field id="bcpg:precautionOfUseRef" help-id="becpg.forms.help.precautionOfUseRef" set="consumer"/>
 					<field id="bcpg:preparationTips" help-id="becpg.forms.help.preparationTips" set="consumer">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">2</control-param>
@@ -1480,6 +1465,7 @@
 							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
 						</control>
 					</field>
+					<field id="bcpg:meatType" set="consumer" />
 
 					<!-- formulation -->
 					<field id="bcpg:productQty" help-id="becpg.forms.help.productQty" set="formulation" />
@@ -2502,6 +2488,7 @@
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/listvalue/values/System/Lists/bcpg:entityLists/pmMaterials
 							</control-param>
+							<control-param name="showLink">false</control-param>
 						</control>
 					</field>
 					<field id="pack:pmAdditionnalMaterial" set="material"/>
@@ -2758,6 +2745,7 @@
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/listvalue/values/System/Lists/bcpg:entityLists/pmMaterials
 							</control-param>
+							<control-param name="showLink">false</control-param>
 						</control>
 					</field>
 					<field id="pack:pmAdditionnalMaterial" set="material"/>
@@ -2885,6 +2873,7 @@
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/listvalue/values/System/Lists/bcpg:entityLists/pmMaterials
 							</control-param>
+							<control-param name="showLink">false</control-param>
 						</control>
 					</field>
 				</appearance>
@@ -3291,12 +3280,14 @@
 					 <control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="showTooltip">false</control-param>
+							<control-param name="showLink">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:targetReconstitutionRef"  set="consumer">
 					 <control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="showTooltip">false</control-param>
+							<control-param name="showLink">false</control-param>
 						</control>
 					</field>
 					
@@ -3330,20 +3321,8 @@
 							<control-param name="unit">d</control-param>
 						</control>
 					</field>
-					<field id="bcpg:storageConditionsRef" help-id="becpg.forms.help.storageConditionsRef" set="consumer">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="style">null</control-param>
-							<control-param name="showTooltip">false</control-param>
-						</control>
-					</field>
-					<field id="bcpg:precautionOfUseRef" help-id="becpg.forms.help.precautionOfUseRef" set="consumer">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="style">null</control-param>
-							<control-param name="showTooltip">false</control-param>
-						</control>
-					</field>
+					<field id="bcpg:storageConditionsRef" help-id="becpg.forms.help.storageConditionsRef" set="consumer"/>
+					<field id="bcpg:precautionOfUseRef" help-id="becpg.forms.help.precautionOfUseRef" set="consumer"/>
 					<field id="bcpg:preparationTips" help-id="becpg.forms.help.preparationTips" set="consumer">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">2</control-param>
@@ -3551,7 +3530,6 @@
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/supplierPlants</control-param>
-							
 						</control>
 					</field>
 					<field id="bcpg:productGeoOrigin"  set="mainInfo"  />
@@ -3585,20 +3563,8 @@
 							<control-param name="unit">d</control-param>
 						</control>
 					</field>
-					<field id="bcpg:storageConditionsRef" help-id="becpg.forms.help.storageConditionsRef" set="consumer">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="style">null</control-param>
-							<control-param name="showTooltip">false</control-param>
-						</control>
-					</field>
-					<field id="bcpg:precautionOfUseRef" help-id="becpg.forms.help.precautionOfUseRef" set="consumer">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="style">null</control-param>
-							<control-param name="showTooltip">false</control-param>
-						</control>
-					</field>
+					<field id="bcpg:storageConditionsRef" help-id="becpg.forms.help.storageConditionsRef" set="consumer"/>
+					<field id="bcpg:precautionOfUseRef" help-id="becpg.forms.help.precautionOfUseRef" set="consumer"/>
 					<field id="bcpg:preparationTips" help-id="becpg.forms.help.preparationTips" set="consumer">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">2</control-param>
@@ -3883,12 +3849,14 @@
 					 <control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="showTooltip">false</control-param>
+							<control-param name="showLink">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:targetReconstitutionRef"  set="consumer">
 					 <control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="showTooltip">false</control-param>
+							<control-param name="showLink">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:ingTypeV2" set="consumer">
@@ -3918,20 +3886,8 @@
 							<control-param name="unit">d</control-param>
 						</control>
 					</field>
-					<field id="bcpg:storageConditionsRef" help-id="becpg.forms.help.storageConditionsRef" set="consumer">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="style">null</control-param>
-							<control-param name="showTooltip">false</control-param>
-						</control>
-					</field>
-					<field id="bcpg:precautionOfUseRef" help-id="becpg.forms.help.precautionOfUseRef" set="consumer">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="style">null</control-param>
-							<control-param name="showTooltip">false</control-param>
-						</control>
-					</field>
+					<field id="bcpg:storageConditionsRef" help-id="becpg.forms.help.storageConditionsRef" set="consumer"/>
+					<field id="bcpg:precautionOfUseRef" help-id="becpg.forms.help.precautionOfUseRef" set="consumer"/>
 					<field id="bcpg:preparationTips" help-id="becpg.forms.help.preparationTips" set="consumer">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">2</control-param>
@@ -4287,6 +4243,7 @@
 					<show id="bcpg:precautionOfUseRef" force="true" />
 					<show id="bcpg:preparationTips" force="true" />
 					<show id="bcpg:productMicrobioCriteriaRef" />
+					<show id="bcpg:meatType" force="false" />
 
 					<!-- Dimension -->
 					<show id="pack:length" />
@@ -4434,20 +4391,8 @@
 							<control-param name="unit">d</control-param>
 						</control>
 					</field>
-					<field id="bcpg:storageConditionsRef" help-id="becpg.forms.help.storageConditionsRef" set="consumer">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="style">null</control-param>
-							<control-param name="showTooltip">false</control-param>
-						</control>
-					</field>
-					<field id="bcpg:precautionOfUseRef" help-id="becpg.forms.help.precautionOfUseRef" set="consumer">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="style">null</control-param>
-							<control-param name="showTooltip">false</control-param>
-						</control>
-					</field>
+					<field id="bcpg:storageConditionsRef" help-id="becpg.forms.help.storageConditionsRef" set="consumer"/>
+					<field id="bcpg:precautionOfUseRef" help-id="becpg.forms.help.precautionOfUseRef" set="consumer"/>
 					<field id="bcpg:preparationTips" help-id="becpg.forms.help.preparationTips" set="consumer">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">2</control-param>
@@ -4459,6 +4404,7 @@
 							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
 						</control>
 					</field>
+					<field id="bcpg:meatType" set="consumer" />
 
 					<!-- Dimension -->
 					<field id="pack:length" set="dimension" >
@@ -4929,6 +4875,7 @@
 					<show id="bcpg:precautionOfUseRef" force="true" />
 					<show id="bcpg:preparationTips" force="true" />
 					<show id="bcpg:productMicrobioCriteriaRef" />
+					<show id="bcpg:meatType" force="false" />
 
 					<!-- formulation -->
 					<show id="bcpg:productQty" />
@@ -5026,20 +4973,8 @@
 							<control-param name="unit">d</control-param>
 						</control>
 					</field>
-					<field id="bcpg:storageConditionsRef" help-id="becpg.forms.help.storageConditionsRef" set="consumer">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="style">null</control-param>
-							<control-param name="showTooltip">false</control-param>
-						</control>
-					</field>
-					<field id="bcpg:precautionOfUseRef" help-id="becpg.forms.help.precautionOfUseRef" set="consumer">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="style">null</control-param>
-							<control-param name="showTooltip">false</control-param>
-						</control>
-					</field>
+					<field id="bcpg:storageConditionsRef" help-id="becpg.forms.help.storageConditionsRef" set="consumer"/>
+					<field id="bcpg:precautionOfUseRef" help-id="becpg.forms.help.precautionOfUseRef" set="consumer"/>
 					<field id="bcpg:preparationTips" help-id="becpg.forms.help.preparationTips" set="consumer">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">2</control-param>
@@ -5051,6 +4986,7 @@
 							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
 						</control>
 					</field>
+					<field id="bcpg:meatType" set="consumer" />
 
 					<!-- formulation -->
 					<field id="bcpg:productQty" help-id="becpg.forms.help.productQty" set="formulation" />
@@ -8344,8 +8280,9 @@
     							menu: {},
     							entity_encoding : "raw",
     							forced_root_blocks : false,
-    							forced_root_block: false,
-      							force_p_newlines: false
+    							forced_root_block: '',
+      							force_p_newlines: false,
+      							force_br_newlines : true
 							</control-param>
 						</control>
 					</field>
@@ -8418,8 +8355,9 @@
     							menu: {},
     							entity_encoding : "raw",
     							forced_root_blocks : false,
-    							forced_root_block: false,
-      							force_p_newlines: false
+    							forced_root_block: '',
+      							force_p_newlines: false,
+      							force_br_newlines : true
 							</control-param>
 						</control>
 					</field>

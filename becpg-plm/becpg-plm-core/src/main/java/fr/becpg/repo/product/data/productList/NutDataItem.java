@@ -3,6 +3,8 @@
  */
 package fr.becpg.repo.product.data.productList;
 
+import org.alfresco.service.cmr.repository.MLText;
+
 import fr.becpg.repo.repository.annotation.AlfMlText;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
@@ -19,7 +21,7 @@ public class NutDataItem extends BeCPGDataObject {
 	
 	private String nutCode;
 
-	private String charactName;
+	private MLText charactName;
 	
 	private String nutGroup;
 	
@@ -46,12 +48,13 @@ public class NutDataItem extends BeCPGDataObject {
 	}
 
 	@AlfProp
+	@AlfMlText
 	@AlfQname(qname="bcpg:charactName")
-	public String getCharactName() {
+	public MLText getCharactName() {
 		return charactName;
 	}
 
-	public void setCharactName(String charactName) {
+	public void setCharactName(MLText charactName) {
 		this.charactName = charactName;
 	}
 

@@ -387,7 +387,7 @@
 						getWebscriptUrl : function ProductNotifications_getWebscriptUrl() {
 							return Alfresco.constants.PROXY_URI + "becpg/entity/datalists/data/node"
 									+ "?guessContainer=true&repo=true&itemType=bcpg:reqCtrlList&pageSize=20&dataListName=reqCtrlList&entityNodeRef="
-									+ this.options.entityNodeRef;
+									+ this.options.entityNodeRef+"&locale="+Alfresco.constants.JS_LOCALE;
 
 						},
 

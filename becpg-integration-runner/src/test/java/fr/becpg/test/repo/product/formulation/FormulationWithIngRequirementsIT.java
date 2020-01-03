@@ -47,7 +47,7 @@ import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.formulation.AllergensCalculatingFormulationHandler;
-import fr.becpg.repo.product.formulation.ScoreCalculatingFormulationHandler;
+import fr.becpg.repo.product.formulation.CompletionReqCtrlCalculatingFormulationHandler;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
 public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTest {
@@ -221,7 +221,7 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 				/*
 				 * #1909 added non validation rclDataItem
 				 */
-				if (I18NUtil.getMessage(ScoreCalculatingFormulationHandler.MESSAGE_NON_VALIDATED_STATE).equals(reqCtrlList.getReqMessage())) {
+				if (I18NUtil.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_NON_VALIDATED_STATE).equals(reqCtrlList.getReqMessage())) {
 					assertEquals(RequirementType.Tolerated, reqCtrlList.getReqType());
 					assertEquals(RequirementDataType.Validation, reqCtrlList.getReqDataType());
 					assertEquals(10, reqCtrlList.getSources().size());
@@ -286,7 +286,7 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 					assertTrue(reqCtrlList.getSources().contains(rawMaterial6NodeRef));
 					checks++;
 				} else if (I18NUtil
-						.getMessage(ScoreCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Libellé légal", "EU 1169/2011 (INCO)")
+						.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Libellé légal", "EU 1169/2011 (INCO)")
 						.equals(reqCtrlList.getReqMessage())) {
 
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
@@ -294,28 +294,28 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 					assertTrue(reqCtrlList.getSources().contains(formulatedProduct.getNodeRef()));
 					checks++;
 				} else if (I18NUtil
-						.getMessage(ScoreCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Précautions d'emploi", "EU 1169/2011 (INCO)")
+						.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Précautions d'emploi", "EU 1169/2011 (INCO)")
 						.equals(reqCtrlList.getReqMessage())) {
 
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
 					assertEquals(1, reqCtrlList.getSources().size());
 					assertTrue(reqCtrlList.getSources().contains(formulatedProduct.getNodeRef()));
 					checks++;
-				} else if (I18NUtil.getMessage(ScoreCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Conditions de conservation",
+				} else if (I18NUtil.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Conditions de conservation",
 						"EU 1169/2011 (INCO)").equals(reqCtrlList.getReqMessage())) {
 
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
 					assertEquals(1, reqCtrlList.getSources().size());
 					assertTrue(reqCtrlList.getSources().contains(formulatedProduct.getNodeRef()));
 					checks++;
-				} else if (I18NUtil.getMessage(ScoreCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "DLC (J) ou DDM/DLUO (J)",
+				} else if (I18NUtil.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "DLC (J) ou DDM/DLUO (J)",
 						"EU 1169/2011 (INCO)").equals(reqCtrlList.getReqMessage())) {
 
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
 					assertEquals(1, reqCtrlList.getSources().size());
 					assertTrue(reqCtrlList.getSources().contains(formulatedProduct.getNodeRef()));
 					checks++;
-				} else if (I18NUtil.getMessage(ScoreCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Titre", "EU 1169/2011 (INCO)")
+				} else if (I18NUtil.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Titre", "EU 1169/2011 (INCO)")
 						.equals(reqCtrlList.getReqMessage())) {
 
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());

@@ -20,6 +20,8 @@ package fr.becpg.repo.listvalue;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.becpg.repo.RepoConsts;
+
 /**
  * 
  * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
@@ -39,22 +41,30 @@ import java.util.List;
         		pageNum = 1;
         	}
         	
-            this.page = pageNum;
-            this.pageSize = pageSize;
-            this.fullListSize = fullList.size();
-            
-            int fromIndex = Math.max((page-1) * pageSize,0);
-            int toIndex = Math.min(page * pageSize, fullListSize);
-            
-            if(!fullList.isEmpty() && toIndex >= fromIndex){
-            	if(listValueExtractor == null){
-            		results = (List<ListValueEntry>) fullList.subList(fromIndex, toIndex);
-            	}else {
-            		results = listValueExtractor.extract(fullList.subList(fromIndex, toIndex)); 
-            	}
-            } else {
-            	results = new ArrayList<>();
-            }
+        	if(RepoConsts.MAX_RESULTS_UNLIMITED.equals(pageSize)) {
+        		this.page = 0;
+        		 this.pageSize = fullList.size();
+ 	             this.fullListSize = fullList.size();
+ 	             this.results =  listValueExtractor.extract(fullList);
+        	} else {
+        	
+	            this.page = pageNum;
+	            this.pageSize = pageSize;
+	            this.fullListSize = fullList.size();
+	            
+	            int fromIndex = Math.max((page-1) * pageSize,0);
+	            int toIndex = Math.min(page * pageSize, fullListSize);
+	            
+	            if(!fullList.isEmpty() && toIndex >= fromIndex){
+	            	if(listValueExtractor == null){
+	            		results = (List<ListValueEntry>) fullList.subList(fromIndex, toIndex);
+	            	}else {
+	            		results = listValueExtractor.extract(fullList.subList(fromIndex, toIndex)); 
+	            	}
+	            } else {
+	            	results = new ArrayList<>();
+	            }
+        	}
         }
      
 

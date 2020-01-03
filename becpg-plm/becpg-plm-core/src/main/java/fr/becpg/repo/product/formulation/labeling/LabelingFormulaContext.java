@@ -47,8 +47,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
-import org.springframework.expression.spel.SpelEvaluationException;
-import org.springframework.expression.spel.SpelParseException;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
@@ -63,6 +61,8 @@ import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.LabelingRuleType;
+import fr.becpg.repo.product.data.constraints.RequirementDataType;
+import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.ing.CompositeLabeling;
 import fr.becpg.repo.product.data.ing.DeclarationFilter;
 import fr.becpg.repo.product.data.ing.IngItem;
@@ -1055,7 +1055,7 @@ if (component instanceof CompositeLabeling) {
 		if (nodeDeclarationFilters.containsKey(nodeRef)) {
 			for (DeclarationFilter declarationFilter : nodeDeclarationFilters.get(nodeRef)) {
 				if (DeclarationType.DoNotDetails.equals(declarationFilter.getDeclarationType())
-						&& matchFormule(declarationFilter.getFormula(), new DeclarationFilterContext())
+						&& matchFormule(declarationFilter, new DeclarationFilterContext())
 						&& declarationFilter.matchLocale(currentLocale)) {
 					return true;
 				}
@@ -1578,12 +1578,12 @@ if (component instanceof CompositeLabeling) {
 					boolean shouldBreak = false;
 					for (DeclarationFilter declarationFilter : nodeDeclarationFilters.get(ingType.getNodeRef())) {
 						if (DeclarationType.Omit.equals(declarationFilter.getDeclarationType())
-								&& matchFormule(declarationFilter.getFormula(), new DeclarationFilterContext())
+								&& matchFormule(declarationFilter, new DeclarationFilterContext())
 								&& declarationFilter.matchLocale(currentLocale)) {
 							shouldBreak = true;
 							break;
 						} else if ((DeclarationType.DoNotDeclare.equals(declarationFilter.getDeclarationType()) && !declarationFilter.isThreshold()
-								&& matchFormule(declarationFilter.getFormula(), new DeclarationFilterContext())
+								&& matchFormule(declarationFilter, new DeclarationFilterContext())
 								&& declarationFilter.matchLocale(currentLocale))) {
 							ingType = null;
 							break;
@@ -1755,26 +1755,29 @@ if (component instanceof CompositeLabeling) {
 		return ingType;
 	}
 
-	public boolean matchFormule(String formula, DeclarationFilterContext declarationFilterContext) {
-		if ((formula != null) && !formula.isEmpty()) {
+	public boolean matchFormule(DeclarationFilter declarationFilter, DeclarationFilterContext declarationFilterContext) {
+		if ((declarationFilter.getFormula() != null) && !declarationFilter.getFormula().isEmpty()) {
 
 			try {
 				ExpressionParser parser = new SpelExpressionParser();
 				StandardEvaluationContext dataContext = new StandardEvaluationContext(declarationFilterContext);
 
-				Expression exp = parser.parseExpression(SpelHelper.formatFormula(formula));
+				Expression exp = parser.parseExpression(SpelHelper.formatFormula(declarationFilter.getFormula()));
 
 				boolean ret = exp.getValue(dataContext, Boolean.class);
 
 				if (ret && logger.isDebugEnabled()) {
-					logger.debug("Matching formula :" + formula);
+					logger.debug("Matching formula :" + declarationFilter.getFormula());
 				}
 
 				return ret;
-			} catch (SpelParseException | SpelEvaluationException e) {
-				logger.error("Cannot evaluate formula :" + formula + " for " + declarationFilterContext.getCompoListDataItem());
+			} catch (Exception e) {
+		
+				getEntity().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, MLTextHelper.getI18NMessage("message.formulate.labelRule.error", declarationFilter.getRuleName(),
+						e.getLocalizedMessage()), null,
+						new ArrayList<NodeRef>(), RequirementDataType.Labelling));
 				if (logger.isDebugEnabled()) {
-					logger.error("Cannot evaluate formula :" + formula + " on " + declarationFilterContext.toString(), e);
+					logger.debug("Cannot evaluate formula :" + declarationFilter.getFormula() + " on " + declarationFilterContext.toString(), e);
 				}
 			}
 		}

@@ -247,7 +247,7 @@
 				</property>
 				<property name="pack:palletHeight">
 					<title>Hauteur palette (mm)</title>
-					<type>d:int</type>
+					<type>d:double</type>
 				</property>
 				<property name="pack:palletNumberOnGround">
 					<title>Stacking capacity</title>

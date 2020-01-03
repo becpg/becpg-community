@@ -39,7 +39,6 @@ import org.alfresco.repo.rule.RuleModel;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ConstraintDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
-import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.dictionary.TypeDefinition;
 import org.alfresco.service.cmr.repository.AssociationRef;
@@ -79,16 +78,13 @@ import fr.becpg.repo.helper.SiteHelper;
  */
 public class XmlEntityVisitor extends AbstractEntityVisitor {
 
-	private final EntityDictionaryService entityDictionaryService;
-
 	private final AssociationService associationService;
 
 	public XmlEntityVisitor(NodeService mlNodeService, NodeService nodeService, NamespaceService namespaceService,
-			DictionaryService dictionaryService, ContentService contentService, SiteService siteService,
-			EntityDictionaryService entityDictionaryService, AssociationService associationService) {
-		super(mlNodeService, nodeService, namespaceService, dictionaryService, contentService, siteService);
+			EntityDictionaryService entityDictionaryService, ContentService contentService, SiteService siteService,
+			 AssociationService associationService) {
+		super(mlNodeService, nodeService, namespaceService, entityDictionaryService, contentService, siteService);
 		this.associationService = associationService;
-		this.entityDictionaryService = entityDictionaryService;
 	}
 
 	private static final Log logger = LogFactory.getLog(XmlEntityVisitor.class);
@@ -185,7 +181,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 
 		QName nodeType = nodeService.getType(nodeRef).getPrefixedQName(namespaceService);
 		String prefix = nodeType.getPrefixString().split(":")[0];
-		String name = (String) nodeService.getProperty(nodeRef, RemoteHelper.getPropName(nodeType, dictionaryService));
+		String name = (String) nodeService.getProperty(nodeRef, RemoteHelper.getPropName(nodeType, entityDictionaryService));
 		// lists filter
 		if (DataListModel.TYPE_DATALIST.equals(nodeType) && (filteredLists != null) && !filteredLists.isEmpty() && !filteredLists.contains(name)) {
 			extractLevel--;
@@ -299,13 +295,13 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 
 	private void visitAssocs(NodeRef nodeRef, XMLStreamWriter xmlw) throws XMLStreamException {
 
-		TypeDefinition typeDef = dictionaryService.getType(nodeService.getType(nodeRef));
+		TypeDefinition typeDef = entityDictionaryService.getType(nodeService.getType(nodeRef));
 		if (typeDef != null) {
 
 			Map<QName, AssociationDefinition> assocs = new HashMap<>(typeDef.getAssociations());
 			for (QName aspect : nodeService.getAspects(nodeRef)) {
-				if (dictionaryService.getAspect(aspect) != null) {
-					assocs.putAll(dictionaryService.getAspect(aspect).getAssociations());
+				if (entityDictionaryService.getAspect(aspect) != null) {
+					assocs.putAll(entityDictionaryService.getAspect(aspect).getAssociations());
 				} else {
 					logger.warn("No definition for :" + aspect);
 				}
@@ -395,7 +391,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 				if ((entry.getValue() != null) && !propQName.getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI)
 						&& !propQName.getNamespaceURI().equals(NamespaceService.RENDITION_MODEL_1_0_URI)
 						&& !propQName.getNamespaceURI().equals(ReportModel.REPORT_URI) && !propQName.equals(ContentModel.PROP_CONTENT)) {
-					PropertyDefinition propertyDefinition = dictionaryService.getProperty(entry.getKey());
+					PropertyDefinition propertyDefinition = entityDictionaryService.getProperty(entry.getKey());
 					if (propertyDefinition != null) {
 						QName propName = entry.getKey().getPrefixedQName(namespaceService);
 						String prefix = propName.getPrefixString().split(":")[0];

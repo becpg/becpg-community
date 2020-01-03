@@ -26,7 +26,6 @@ import org.alfresco.service.cmr.dictionary.AspectDefinition;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
-import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.dictionary.TypeDefinition;
 import org.alfresco.service.cmr.repository.AssociationRef;
@@ -64,6 +63,7 @@ import fr.becpg.model.GS1Model;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.AutoNumService;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.remote.extractor.RemoteHelper;
 import fr.becpg.repo.helper.AssociationService;
@@ -90,7 +90,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 	protected NodeService nodeService;
 
-	protected DictionaryService dictionaryService;
+	protected EntityDictionaryService entityDictionaryService;
 
 	protected RepoService repoService;
 
@@ -125,9 +125,9 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		this.nodeService = nodeService;
 	}
 
-	public void setDictionaryService(DictionaryService dictionaryService) {
-		this.dictionaryService = dictionaryService;
-	}	
+	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
+		this.entityDictionaryService = entityDictionaryService;
+	}
 
 	public void setRepoService(RepoService repoService) {
 		this.repoService = repoService;
@@ -246,7 +246,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 	private String getName(QName type, Map<QName, Serializable> properties) {
 		String name = null;
-		QName propName = RemoteHelper.getPropName(type, dictionaryService);
+		QName propName = RemoteHelper.getPropName(type, entityDictionaryService);
 		if (properties.get(propName) != null) {
 			if (properties.get(propName) instanceof MLText) {
 				name = ((MLText) properties.get(propName)).getDefaultValue();
@@ -744,7 +744,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 					qName = QName.createQName(columnId, namespaceService);
 				}
 
-				PropertyDefinition propertyDefinition = dictionaryService.getProperty(qName);
+				PropertyDefinition propertyDefinition = entityDictionaryService.getProperty(qName);
 
 				if (propertyDefinition != null) {
 					logger.debug("Create mapping column for property, id: " + columnId + " - name: " + propertyDefinition.getName());
@@ -761,7 +761,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 						isMLPropertyDef = false;
 					}
 				} else {
-					AssociationDefinition assocDefinition = dictionaryService.getAssociation(qName);
+					AssociationDefinition assocDefinition = entityDictionaryService.getAssociation(qName);
 					if (assocDefinition != null) {
 						logger.debug("Create mapping column for assoc, id: " + columnId + " - name: " + assocDefinition.getName());
 						AbstractAttributeMapping attributeMapping = new AttributeMapping(columnId, assocDefinition);
@@ -826,9 +826,9 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 				}
 				// look in import folder
 				nodeRef = nodeService.getChildByName(importContext.getParentNodeRef(), ContentModel.ASSOC_CONTAINS, name);
-			} else if (!dictionaryService.isSubClass(type, BeCPGModel.TYPE_LINKED_VALUE)
-					&& !dictionaryService.isSubClass(type, BeCPGModel.TYPE_LIST_VALUE)
-					&& !dictionaryService.isSubClass(type, BeCPGModel.TYPE_CHARACT)) {
+			} else if (!entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_LINKED_VALUE)
+					&& !entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_LIST_VALUE)
+					&& !entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_CHARACT)) {
 
 				throw new ImporterException(I18NUtil.getMessage(ImportHelper.MSG_ERROR_GET_OR_CREATE_NODEREF));
 			}
@@ -919,8 +919,8 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			logger.debug("nodeColumnKeys is empty type: " + type);
 
 			// look for codeAspect
-			if (dictionaryService.getType(type) != null && dictionaryService.getType(type).getDefaultAspects() != null) {
-				for (AspectDefinition aspectDef : dictionaryService.getType(type).getDefaultAspects()) {
+			if (entityDictionaryService.getType(type) != null && entityDictionaryService.getType(type).getDefaultAspects() != null) {
+				for (AspectDefinition aspectDef : entityDictionaryService.getType(type).getDefaultAspects()) {
 					if (aspectDef.getName().equals(BeCPGModel.ASPECT_CODE) && (properties.get(BeCPGModel.PROP_CODE) != null)) {
 						if (NodeRef.isNodeRef(properties.get(BeCPGModel.PROP_CODE).toString())) {
 							return new NodeRef(properties.get(BeCPGModel.PROP_CODE).toString());
@@ -933,10 +933,10 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 				}
 			}
 
-			QName propName = RemoteHelper.getPropName(type, dictionaryService);
+			QName propName = RemoteHelper.getPropName(type, entityDictionaryService);
 
 			// look by name
-			if (!doQuery && !dictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITY_V2) && (properties.get(propName) != null)) {
+			if (!doQuery && !entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITY_V2) && (properties.get(propName) != null)) {
 
 				String name = getName(type, properties);
 
@@ -963,7 +963,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			
 
 			//#3433
-			if(dictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM) && propDef!=null && BeCPGModel.PROP_PARENT_LEVEL.equals(propDef.getName())) {
+			if(entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM) && propDef!=null && BeCPGModel.PROP_PARENT_LEVEL.equals(propDef.getName())) {
 				queryBuilder.parent(importContext.getParentNodeRef());
 			}
 			
@@ -1140,8 +1140,8 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			} else {
 
 				// look for codeAspect
-				if ((dictionaryService.getType(type) != null) && (dictionaryService.getType(type).getDefaultAspects() != null)) {
-					for (AspectDefinition aspectDef : dictionaryService.getType(type).getDefaultAspects()) {
+				if ((entityDictionaryService.getType(type) != null) && (entityDictionaryService.getType(type).getDefaultAspects() != null)) {
+					for (AspectDefinition aspectDef : entityDictionaryService.getType(type).getDefaultAspects()) {
 						if (aspectDef.getName().equals(BeCPGModel.ASPECT_CODE)) {
 							properties.put(BeCPGModel.PROP_CODE, value);
 							doQuery = true;
@@ -1152,7 +1152,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 				// we try with the name
 				if (!doQuery) {
-					properties.put(RemoteHelper.getPropName(type, dictionaryService), value);
+					properties.put(RemoteHelper.getPropName(type, entityDictionaryService), value);
 					doQuery = true;
 				}
 			}
@@ -1169,9 +1169,9 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 				if (nodeRef == null) {
 					String typeTitle = type.toString();
-					TypeDefinition typeDef = dictionaryService.getType(type);
-					if ((typeDef != null) && (typeDef.getTitle(dictionaryService) != null) && !typeDef.getTitle(dictionaryService).isEmpty()) {
-						typeTitle = typeDef.getTitle(dictionaryService);
+					TypeDefinition typeDef = entityDictionaryService.getType(type);
+					if ((typeDef != null) && (typeDef.getTitle(entityDictionaryService.getDictionaryService()) != null) && !typeDef.getTitle(entityDictionaryService.getDictionaryService()).isEmpty()) {
+						typeTitle = typeDef.getTitle(entityDictionaryService.getDictionaryService());
 					}
 
 					logger.error(I18NUtil.getMessage(ImportHelper.MSG_ERROR_TARGET_ASSOC_NOT_FOUND, typeTitle, value));

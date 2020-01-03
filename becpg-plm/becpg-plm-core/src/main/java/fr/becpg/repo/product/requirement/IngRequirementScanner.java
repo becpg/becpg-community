@@ -17,6 +17,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
@@ -103,8 +104,8 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 							if (checkRuleMatchIng(ingListDataItem, fil)) {
 								MLText curMessage = fil.getReqMessage();
 								if ((curMessage == null) || curMessage.values().stream().noneMatch(mes -> (mes != null) && !mes.isEmpty())) {
-									curMessage = new MLText(I18NUtil.getMessage(MESSAGE_FORBIDDEN_ING,
-											nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME)));
+									curMessage = MLTextHelper.getI18NMessage(MESSAGE_FORBIDDEN_ING,
+											mlNodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME));
 								}
 
 								ReqCtrlListDataItem reqCtrl = reqCtrlMap.get(fil.getNodeRef());
@@ -176,7 +177,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 	private void checkILOfPart(NodeRef productNodeRef, DeclarationType declType, ProductData componentProductData,
 			List<ForbiddenIngListDataItem> forbiddenIngredientsList, Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap, Set<NodeRef> visited) {
 
-		if (!PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.equals(nodeService.getType(productNodeRef)) && !visited.contains(productNodeRef)) {
+		if (!PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.equals(mlNodeService.getType(productNodeRef)) && !visited.contains(productNodeRef)) {
 
 			visited.add(productNodeRef);
 
@@ -230,8 +231,8 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 								} else {
 									MLText curMessage = fil.getReqMessage();
 									if ((curMessage == null) || curMessage.values().stream().noneMatch(mes -> (mes != null) && !mes.isEmpty())) {
-										curMessage = new MLText(I18NUtil.getMessage(MESSAGE_FORBIDDEN_ING,
-												nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME)));
+										curMessage =MLTextHelper.getI18NMessage(MESSAGE_FORBIDDEN_ING,
+												mlNodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME));
 									}
 									;
 

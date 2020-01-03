@@ -34,8 +34,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.annotation.Resource;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
@@ -503,7 +501,6 @@ public class EntityReportServiceImpl implements EntityReportService {
 		});
 	}
 
-	@SuppressWarnings("unchecked")
 	private Element filterByParams(Element entity, List<String> filteredParams) {
 
 		for (Iterator<Element> entityIter = entity.elementIterator(); entityIter.hasNext();) {
@@ -1335,7 +1332,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 				}
 
 				Boolean isDefault = (Boolean) this.nodeService.getProperty(reportNodeRef, ReportModel.PROP_REPORT_IS_DEFAULT);
-				if (isDefault) {
+				if (isDefault!=null && isDefault) {
 					ret = reportNodeRef;
 				}
 

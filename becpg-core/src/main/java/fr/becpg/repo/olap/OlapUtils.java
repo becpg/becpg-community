@@ -98,7 +98,7 @@ public class OlapUtils {
 	// TODO crappy !!!
 	public static Object convert(String value) {
 		if (value == null || value.isEmpty()) {
-			return new Long(0);
+			return (Long)0L;
 		}
 		try {
 			return Long.parseLong(value);

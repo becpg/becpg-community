@@ -6,12 +6,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.extensions.surf.util.I18NUtil;
 
-import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
@@ -85,18 +85,18 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 	}
 
 	private void addSpecificationUnclaimedLabelClaim(ProductData formulatedProduct, LabelClaimListDataItem labelClaim, String labelClaimValue) {
-		String message = I18NUtil.getMessage(MESSAGE_NOT_CLAIM, extractName(labelClaim.getLabelClaim()), extractClaimValue(labelClaimValue));
+		MLText message = MLTextHelper.getI18NMessage(MESSAGE_NOT_CLAIM, extractName(labelClaim.getLabelClaim()), extractClaimValue(labelClaimValue));
 		formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, labelClaim.getLabelClaim(),
 				new ArrayList<NodeRef>(), RequirementDataType.Specification));
 		
 	}
 
-	private String extractClaimValue(String labelClaimValue) {
-		return I18NUtil.getMessage("message.formulate.labelClaim.value."+labelClaimValue);
+	private MLText extractClaimValue(String labelClaimValue) {
+		return MLTextHelper.getI18NMessage("message.formulate.labelClaim.value."+labelClaimValue);
 	}
 
 	private void addMissingLabelClaim(ProductData formulatedProduct, LabelClaimListDataItem labelClaim) {
-		String message = I18NUtil.getMessage(LabelClaimFormulationHandler.MESSAGE_MISSING_CLAIM, extractName(labelClaim.getLabelClaim()));
+		MLText message = MLTextHelper.getI18NMessage(LabelClaimFormulationHandler.MESSAGE_MISSING_CLAIM, extractName(labelClaim.getLabelClaim()));
 		formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, labelClaim.getLabelClaim(),
 				new ArrayList<NodeRef>(), RequirementDataType.Specification));
 	}
@@ -140,8 +140,5 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 		return partProduct.getLabelClaimList();
 	}
 
-	private String extractName(NodeRef labelClaim) {
-		return (String) nodeService.getProperty(labelClaim, BeCPGModel.PROP_CHARACT_NAME);
-	}
 
 }

@@ -119,10 +119,10 @@ if (beCPG.module.EntityDataGridRenderers) {
 
 				if (data.properties){
 					html += '      <div class="before-after-prop">';
-					html += '      <table class="prop-table"><tr style="background-color: #c4eaff;">';
-					html += '      <th style="width:30%; font-weight: bold;">' + scope.msg("entity.activity.property") + '</th>';
-					html += '      <th style="width:35%; font-weight: bold;">' + scope.msg("entity.activity.before") + '</th>';
-					html += '      <th style="width:35%; font-weight: bold;">' + scope.msg("entity.activity.after") + '</th></tr><tbody>';
+					html += '      <table><thead><tr>';
+					html += '      <th class="prop-col">' + scope.msg("entity.activity.property") + '</th>';
+					html += '      <th class="before-after-col">' + scope.msg("entity.activity.before") + '</th>';
+					html += '      <th class="before-after-col">' + scope.msg("entity.activity.after") + '</th></tr></thead><tbody>';
 
 					var count = 0;
 					data.properties.forEach(function(prop){
@@ -137,13 +137,13 @@ if (beCPG.module.EntityDataGridRenderers) {
 							Object.keys(beforePerLocale).forEach(function(key){
 								if (beforePerLocale[key] != afterPerLocale[key]) {
 									locale = key;
-									if (key.includes("_")){
+									if (key.indexOf("_") > -1){
 										locale = key.substring(3,5).toLowerCase();
 									}
-									html += '      <tr'+(count%2 == 0 ? ' style="background-color: white;"':'')+'><td>' + prop.title +
+									html += '      <tr '+(count%2 == 0 ? '':'class="grey"')+'><td>' + prop.title +
 									' <img class="icon16_11" src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/flags/' + locale + '.png" /></td>';
 									html += '      <td>' + beforePerLocale[key] + '</td>';
-									html += '      <td>' + afterPerLocale[key] + '</td>';		
+									html += '      <td>' + afterPerLocale[key] + '</td></tr>';		
 									count++;
 								}
 							});
@@ -151,28 +151,28 @@ if (beCPG.module.EntityDataGridRenderers) {
 								Object.keys(afterPerLocale).forEach(function(key){
 									if (!beforePerLocale.hasOwnProperty(key)) {
 										locale = key;
-										if (key.includes("_")){
+										if (key.indexOf("_") > -1){
 											locale = key.substring(3,5).toLowerCase();
 										}
-										html += '      <tr'+(count%2 == 0 ? ' style="background-color: white;"':'')+'><td>' + prop.title +
+										html += '      <tr '+(count%2 == 0 ? '':'class="grey"')+'><td>' + prop.title +
 										' <img class="icon16_11" src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/flags/' + locale + '.png" /></td>';
 										html += '      <td> </td>';
-										html += '      <td>' + afterPerLocale[key] + '</td>';
+										html += '      <td>' + afterPerLocale[key] + '</td></tr>';
 										count++;
 									}
 								});
 							}
 						} else {
-							html += '      <tr'+(count%2 == 0 ? ' style="background-color: white;"':'')+'><td>' + prop.title + '</td>';
+							html += '      <tr '+(count%2 == 0 ? '':'class="grey"')+'><td>' + prop.title + '</td>';
 							if (before != null){
 								html += '      <td>' + before + '</td>';
 							} else {
 								html += '      <td> </td>';
 							} 
 							if (after != null){
-								html += '      <td>' + after + '</td>';
+								html += '      <td>' + after + '</td></tr>';
 							} else {
-								html += '      <td> </td>';
+								html += '      <td> </td></tr>';
 							}
 							count++;
 						}

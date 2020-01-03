@@ -343,7 +343,7 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 			return (now.equals(lastDate) || now.isAfter(lastDate)) && now.getDayOfWeek().equals(notification.getRecurringDay());
 		}
 		
-		return now.equals(lastDate);
+		return now.equals(lastDate) || now.isAfter(lastDate);
 	}
 	
 

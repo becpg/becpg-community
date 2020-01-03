@@ -3,6 +3,7 @@ package fr.becpg.test.repo.product.formulation;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,8 +16,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 import org.springframework.extensions.surf.util.I18NUtil;
-
-import com.ibm.icu.util.Calendar;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
@@ -38,8 +37,8 @@ import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.formulation.AllergensCalculatingFormulationHandler;
+import fr.becpg.repo.product.formulation.CompletionReqCtrlCalculatingFormulationHandler;
 import fr.becpg.repo.product.formulation.NutsCalculatingFormulationHandler;
-import fr.becpg.repo.product.formulation.ScoreCalculatingFormulationHandler;
 import fr.becpg.repo.product.requirement.NutsRequirementScanner;
 import fr.becpg.repo.product.requirement.PhysicoRequirementScanner;
 
@@ -500,11 +499,11 @@ public class FormulationSpecMergeIT extends FormulationLabelClaimIT {
 			for (ReqCtrlListDataItem r : formulatedProduct.getReqCtrlList()) {
 				logger.debug("Checking rclDataItem " + r.getReqMessage());
 				if (I18NUtil
-						.getMessage(ScoreCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Précautions d'emploi", "EU 1169/2011 (INCO)")
+						.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Précautions d'emploi", "EU 1169/2011 (INCO)")
 						.equals(r.getReqMessage())) {
 					assertEquals(RequirementType.Forbidden, r.getReqType());
 					checkMissingFields++;
-				} else if (I18NUtil.getMessage(ScoreCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Conditions de conservation",
+				} else if (I18NUtil.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Conditions de conservation",
 						"EU 1169/2011 (INCO)").equals(r.getReqMessage())) {
 					assertEquals(RequirementType.Forbidden, r.getReqType());
 					checkMissingFields++;
@@ -763,11 +762,11 @@ public class FormulationSpecMergeIT extends FormulationLabelClaimIT {
 				logger.debug("/*-- Checking : \"" + reqCtrlList.getReqMessage() + "\" --*/");
 
 				if (I18NUtil
-						.getMessage(ScoreCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Précautions d'emploi", "EU 1169/2011 (INCO)")
+						.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Précautions d'emploi", "EU 1169/2011 (INCO)")
 						.equals(reqCtrlList.getReqMessage())) {
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
 					checkMissingFields++;
-				} else if (I18NUtil.getMessage(ScoreCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Conditions de conservation",
+				} else if (I18NUtil.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Conditions de conservation",
 						"EU 1169/2011 (INCO)").equals(reqCtrlList.getReqMessage())) {
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
 					checkMissingFields++;

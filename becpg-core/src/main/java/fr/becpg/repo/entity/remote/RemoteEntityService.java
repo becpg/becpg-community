@@ -19,12 +19,10 @@ package fr.becpg.repo.entity.remote;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.namespace.QName;
 
 import fr.becpg.common.BeCPGException;
 
@@ -40,8 +38,11 @@ public interface RemoteEntityService {
 	String ATTR_TYPE = "type";
 	String ATTR_PATH = "path";
 	String ATTR_NAME = "name";
+	String ATTR_SITE = "site";
 	String ATTR_NODEREF = "nodeRef";
 	String ATTR_CODE = "code";
+	String ATTR_ID = "id";
+	
 	
 	String CHARACT_ATTR_PATH = "charactPath";
 	String CHARACT_ATTR_NAME = "charactName";
@@ -54,7 +55,15 @@ public interface RemoteEntityService {
 	String ELEM_DATA = "data";
 	String ELEM_LIST = "values";
 	String ELEM_LIST_VALUE = "value";
+	String ELEM_DATALISTS = "datalists";
+	String ELEM_PROPERTIES = "properties";
+	String ELEM_ASSOCIATIONS = "associations";
+	String ELEM_ENTITY = "entity";
+	String ELEM_ATTRIBUTES = "attributes";
+	String FULL_PATH_IMPORT_TO_DO = "/app:company_home/cm:Exchange/cm:Import/cm:ImportToDo";
+	String EMPTY_NAME_PREFIX = "REMOTE-";
 	
+	String ATTR_PARENT_ID = "parent";
 
 	/**
 	 * Get entity at provided format
@@ -91,7 +100,7 @@ public interface RemoteEntityService {
 	 * @return
 	 * @throws BeCPGException
 	 */
-	NodeRef createOrUpdateEntity(NodeRef entityNodeRef, NodeRef destNodeRef, Map<QName, Serializable> properties, InputStream in,
+	NodeRef internalCreateOrUpdateEntity(NodeRef entityNodeRef, NodeRef destNodeRef, InputStream in,
 			RemoteEntityFormat format, EntityProviderCallBack callback, Map<NodeRef, NodeRef> cache) throws BeCPGException;
 
 	/**

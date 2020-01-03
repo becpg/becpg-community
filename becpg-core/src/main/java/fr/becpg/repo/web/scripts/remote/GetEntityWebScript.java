@@ -18,6 +18,7 @@
 package fr.becpg.repo.web.scripts.remote;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.SocketException;
 import java.nio.file.AccessDeniedException;
 
@@ -44,14 +45,14 @@ public class GetEntityWebScript extends AbstractEntityWebScript {
 
 		logger.debug("Get entity: " + entityNodeRef);
 
-		try {
+		try (OutputStream out = resp.getOutputStream()){
 
-			remoteEntityService.getEntity(entityNodeRef, resp.getOutputStream(), getFormat(req), extractFields(req), extractLists(req));
+			remoteEntityService.getEntity(entityNodeRef, out, getFormat(req), extractFields(req), extractLists(req));
 
-			// set mimetype for the content and the character encoding + length
-			// for the stream
 			resp.setContentType(getContentType(req));
 			resp.setContentEncoding("UTF-8");
+			resp.setStatus(Status.STATUS_OK);
+			
 		} catch (BeCPGException e) {
 			logger.error("Cannot export entity", e);
 			throw new WebScriptException(e.getMessage());
