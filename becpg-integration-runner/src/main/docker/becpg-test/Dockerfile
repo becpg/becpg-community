@@ -57,6 +57,7 @@ COPY alfresco/alfresco-global.properties $TOMCAT_DIR/shared/classes/alfresco-glo
 COPY share/hotswap-agent.properties $TOMCAT_DIR/webapps/share/WEB-INF/classes/hotswap-agent.properties
 COPY share/lessc-context.xml $TOMCAT_DIR/shared/classes/alfresco/web-extension
 COPY share/share-config-custom.xml $TOMCAT_DIR/shared/classes/alfresco/web-extension
+COPY share/web.xml  $TOMCAT_DIR/webapps/share/WEB-INF/
 
 # Copy Dockerfile to avoid an error if no JARs exist
 COPY extensions/*.jar $TOMCAT_DIR/webapps/alfresco/WEB-INF/lib/
