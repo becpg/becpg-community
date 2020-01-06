@@ -20,8 +20,16 @@ import { AppLayoutComponent } from './app-layout/app-layout.component';
 
 //beCPG
 
-import { EntityComponent } from './becpg/entity/entity.component';
+import { EntityComponent } from './becpg/components/entity/entity.component';
 import { EntityListComponent } from './becpg/entity-list/entity-list.component';
+import { EntityHeaderComponent } from './becpg/components/entity-header/entity-header.component';
+import { EntityViewsComponent } from './becpg/components/entity-views/entity-views.component';
+import { EntityViewToolbarComponent } from './becpg/components/entity-view-toolbar/entity-view-toolbar.component';
+import { EntityFormComponent } from './becpg/components/entity-form/entity-form.component';
+import { EntityDatagridComponent } from './becpg/components/entity-datagrid/entity-datagrid.component';
+import { EntityLogoComponent } from './becpg/components/entity-logo/entity-logo.component';
+
+
 import { TableModule } from 'primeng/table';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import { HttpClientModule } from '@angular/common/http';
@@ -43,12 +51,7 @@ import localePl from '@angular/common/locales/pl';
 import localeFi from '@angular/common/locales/fi';
 import localeDa from '@angular/common/locales/da';
 import localeSv from '@angular/common/locales/sv';
-import { EntityHeaderComponent } from './becpg/components/entity-header/entity-header.component';
-import { EntityViewsComponent } from './becpg/components/entity-views/entity-views.component';
-import { EntityViewToolbarComponent } from './becpg/components/entity-view-toolbar/entity-view-toolbar.component';
-import { EntityFormComponent } from './becpg/components/entity-form/entity-form.component';
-import { EntityDatagridComponent } from './becpg/components/entity-datagrid/entity-datagrid.component';
-import { EntityLogoComponent } from './becpg/components/entity-logo/entity-logo.component';
+
 
 registerLocaleData(localeFr);
 registerLocaleData(localeDe);

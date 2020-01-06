@@ -18,13 +18,11 @@ export class EntityApiService {
 
   constructor(private apiService: AlfrescoApiService, private http: HttpClient) { }
 
-  getEntity(id: string): Entity {
-
-    const entity = new Entity();
-
+  getEntity(id: string): Promise<Entity> {
+    return new Promise((success) => {
     this.apiService.getInstance().webScript.executeWebScript('GET', 'becpg/entitylists/node/' + id.replace(':/', '')).then(
       (data) => {
-
+        const entity = new Entity();
         entity.name = data.entity.name;
         entity.id = data.entity.nodeRef.replace('workspace://SpacesStore/','');
         entity.parentId = data.entity.parentNodeRef;
@@ -45,13 +43,12 @@ export class EntityApiService {
           }
         }
 
+        success(entity);
+
       }, (error) => {
         console.log('Error' + error);
       });
-
-
-
-    return entity;
+    });
   }
 
 

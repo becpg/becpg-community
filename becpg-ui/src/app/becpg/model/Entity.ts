@@ -55,7 +55,7 @@ import { EntityList } from './EntityList';
 //  }
 
 
-export class Entity extends Node{
+export class Entity extends Node {
  /*
   Extend from node
 
@@ -71,6 +71,5 @@ export class Entity extends Node{
   */
 
   datalists?: EntityList[];
-
-  isEntityTemplate = true;
+  isEntityTemplate: boolean;
 }

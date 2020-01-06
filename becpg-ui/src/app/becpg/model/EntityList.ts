@@ -20,11 +20,11 @@ import { PermissionsInfo } from '@alfresco/js-api';
 
 
 export class EntityList {
-   id : string;
-   name : string;
-   title : string;
-   description : string;
-   nodeType : string;
-   state : string;
-   permissions:  PermissionsInfo[];
+   id: string;
+   name: string;
+   title: string;
+   description: string;
+   nodeType: string;
+   state: string;
+   permissions: PermissionsInfo[];
 }
