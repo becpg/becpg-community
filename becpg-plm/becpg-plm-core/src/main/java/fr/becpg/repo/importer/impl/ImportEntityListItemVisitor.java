@@ -122,6 +122,7 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 		} else if (importContext.isDeleteDataList(entityNodeRef)) {
 			List<NodeRef> dataListItems = entityListDAO.getListItems(listNodeRef, listType);
 			for (NodeRef dataListItem : dataListItems) {
+				nodeService.addAspect(dataListItem, ContentModel.ASPECT_TEMPORARY, null);
 				nodeService.deleteNode(dataListItem);
 			}
 		}
