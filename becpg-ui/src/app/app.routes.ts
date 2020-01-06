@@ -23,7 +23,7 @@ import { LoginComponent } from './login/login.component';
 import { DocumentlistComponent } from './documentlist/documentlist.component';
 import { AppLayoutComponent } from './app-layout/app-layout.component';
 import { FileViewComponent } from './file-view/file-view.component';
-import { EntityComponent } from './becpg/entity/entity.component';
+import { EntityComponent } from './becpg/components/entity/entity.component';
 
 export const appRoutes: Routes = [
   { path: 'files/:nodeId/view', component: FileViewComponent, canActivate: [AuthGuardEcm], outlet: 'overlay' },

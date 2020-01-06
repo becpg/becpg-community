@@ -1,7 +1,6 @@
-<div class="entity-views">
+<div class="entity-views"  *ngIf="entity" >
       <div class="entity-views-header">
-
-        <app-entity-logo entity="entity" ></app-entity-logo>
+        <app-entity-logo ></app-entity-logo>
 
         <span *ngIf="editMode">
           <button mat-icon-button (click)="createView()">
@@ -13,9 +12,9 @@
       </div>
       <div class="entity-views-content">
         <mat-nav-list>
-          <mat-list-item *ngFor="let view of entity.datalists" [routerLinkActive]="['is-active']">
-             <mat-checkbox [(ngModel)]="view.state" ></mat-checkbox>
-             <a matLine selected="true" routerLink="/entity/{{entity.id}}/{{view.name}}">{{view.title}}</a>
+          <mat-list-item *ngFor="let view of entityViews" [routerLinkActive]="['is-active']">
+             <mat-checkbox [(ngModel)]="view.isValid" ></mat-checkbox>
+             <a matLine selected="true" routerLink="/entity/{{entity.id}}/{{view.id}}">{{view.list.title}}</a>
              <button *ngIf="editMode" mat-icon-button (click)="editView(view)">
                 <mat-icon>edit</mat-icon>
              </button>

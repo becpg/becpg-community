@@ -2,28 +2,33 @@ import { Component, OnInit, ViewChild, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { map } from 'rxjs/operators';
 import { AlfrescoApi } from '@alfresco/js-api';
-import { EntityApiService } from '../api/entity-api.service';
+import { EntityApiService } from '../../api/entity-api.service';
+import { EntityViewService } from '../../api/entity-view.service';
 import { Breakpoints, BreakpointObserver } from '@angular/cdk/layout';
-import {TableModule} from 'primeng/table';
-import { Entity } from '../model/Entity';
-import { EntityListItem } from '../model/EntityListItem';
-import { EntityList } from '../model/EntityList';
+import { TableModule } from 'primeng/table';
+import { Entity } from '../../model/Entity';
+import { EntityListItem } from '../../model/EntityListItem';
+import { EntityList } from '../../model/EntityList';
+import { EntityView } from '../../model/EntityView';
 import { NotificationService } from '@alfresco/adf-core';
 import { DocumentListComponent } from '@alfresco/adf-content-services';
-import { PreviewService } from '../../services/preview.service';
+import { PreviewService } from '../../../services/preview.service';
+
 
 @Component({
   selector: 'app-entity',
   templateUrl: './entity.component.html',
-  styleUrls: ['./entity.component.css']
+  styleUrls: ['./entity.component.scss']
 })
 export class EntityComponent implements OnInit {
 
- entity: Entity;
+  entity: Entity;
 
- list: EntityList;
+  view: EntityView;
 
- showCreate = true;
+  list: EntityList;
+
+  showCreate = true;
 
   /** Based on the screen size, switch from standard to one column per row */
   cards = this.breakpointObserver.observe(Breakpoints.Handset).pipe(
@@ -57,41 +62,22 @@ export class EntityComponent implements OnInit {
   documentList: DocumentListComponent;
 
 
-  constructor( private route: ActivatedRoute, private notificationService: NotificationService, private preview: PreviewService, private breakpointObserver: BreakpointObserver, private entityApiService : EntityApiService) {}
+  constructor(private route: ActivatedRoute, private entityViewService: EntityViewService, private notificationService: NotificationService, private preview: PreviewService, private breakpointObserver: BreakpointObserver, private entityApiService: EntityApiService) { }
 
   ngOnInit() {
-    this.getEntity();
-    this.getView();
-   // this.list  = this.entity.datalists[0];
-
-   //this.alfrescoJsApi.login('admin', 'admin').then(function (data) {
-
-    //this.alfrescoJsApi.core.nodesApi.
-
-  //  this.nodesApi.getNode(nodeId)
-  //  .subscribe(
-  //      (node) => {
-  //          console.log(node.properties);
-  //      },
-  //      error => { console.log("Ouch, an error happened!"); }
-  //  );
-
-
-  }
-
-  onSelect(list: EntityList){
-    this.list = list;
-  }
-
-  getView() {
-    
-  }
-
-  getEntity(){
     const id = this.route.snapshot.paramMap.get('id');
-    const viewId = this.route.snapshot.paramMap.get('viewId');
-    this.entity = this.entityApiService.getEntity('workspace://SpacesStore/'+id);
+    let viewId = this.route.snapshot.paramMap.get('viewId');
+    if (viewId == null) {
+      viewId = 'properties';
+    }
+    this.entityApiService.getEntity('workspace://SpacesStore/' + id).then(entity => {
+      this.entity = entity;
+      this.view = this.entityViewService.getView(this.entity, viewId);
+    });
+
+
   }
+
 
 
 
