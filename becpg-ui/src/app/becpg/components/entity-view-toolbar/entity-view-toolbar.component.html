@@ -4,7 +4,7 @@
       <mat-icon>menu</mat-icon>
     </button>
   </p>
-  <span>{{entity.name}}</span>
+  <span *ngIf="entity">{{entity.name}}</span>
   <span class="example-fill-remaining-space"></span>
   <p>
     <button mat-icon-button (click)="rightPane.toggle()">
