@@ -5,6 +5,7 @@ import { RouterModule } from '@angular/router';
 import { CoreModule, TRANSLATION_PROVIDER, TranslateLoaderService } from '@alfresco/adf-core';
 import { ContentModule } from '@alfresco/adf-content-services';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { ProcessModule } from '@alfresco/adf-process-services';
 
 
 import { appRoutes } from './app.routes';
@@ -28,6 +29,7 @@ import { EntityViewToolbarComponent } from './becpg/components/entity-view-toolb
 import { EntityFormComponent } from './becpg/components/entity-form/entity-form.component';
 import { EntityDatagridComponent } from './becpg/components/entity-datagrid/entity-datagrid.component';
 import { EntityLogoComponent } from './becpg/components/entity-logo/entity-logo.component';
+
 
 
 import { TableModule } from 'primeng/table';
@@ -84,6 +86,7 @@ registerLocaleData(localeSv);
         // ADF modules
         CoreModule.forRoot(),
         ContentModule.forRoot(),
+        ProcessModule.forRoot(),
         TranslateModule.forRoot({
             loader: { provide: TranslateLoader, useClass: TranslateLoaderService }
         }),
@@ -106,6 +109,7 @@ registerLocaleData(localeSv);
         EntityFormComponent,
         EntityDatagridComponent,
         EntityLogoComponent
+        
     ],
     providers: [
         PreviewService,

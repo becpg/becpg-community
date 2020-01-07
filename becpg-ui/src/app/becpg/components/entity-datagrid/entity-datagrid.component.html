@@ -1,3 +1,37 @@
-<p>
-  entity-datagrid works!
-</p>
+<ng-container *ngIf="pageResults | async as data">
+  <p-table [columns]="data.columns" [value]="data.items" [resizableColumns]="true" [scrollable]="true"
+      selectionMode="multiple" [(selection)]="selectItems" [loading]="loading">
+      <ng-template pTemplate="header" let-columns>
+          <tr>
+              <th style="width: 2.25em">
+                  <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+              </th>
+              <th *ngFor="let col of columns" [pSortableColumn]="col.fieldName">
+                  {{col.label}}
+                  <p-sortIcon [field]="col.field"></p-sortIcon>
+              </th>
+          </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-item let-columns="columns" let-editing="editing" let-index="rowIndex" >
+          <tr [pReorderableRow]="index" >
+              <td>
+                  <p-tableCheckbox [value]="item"></p-tableCheckbox>
+              </td>
+              <td *ngFor="let col of columns" [pEditableColumn]="item.itemData[col.fieldName]" >
+                  <p-cellEditor>
+                      <ng-template pTemplate="input">
+                          <input type="text" [(ngModel)]="item.itemData[col.fieldName].value" required>
+                      </ng-template>
+                      <ng-template pTemplate="output">
+                          {{item.itemData[col.fieldName].displayValue}}
+                      </ng-template>
+                  </p-cellEditor>
+              </td>
+          </tr>
+      </ng-template>
+
+</p-table>
+
+  <!-- 
+<p-contextMenu #cm [model]="items"></p-contextMenu> -->
+</ng-container>

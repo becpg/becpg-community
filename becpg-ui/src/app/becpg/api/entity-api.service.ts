@@ -7,6 +7,8 @@ import { EntityListItem } from '../model/EntityListItem';
 import { EntityListPageResults } from '../model/EntityListPageResults';
 import { AlfrescoApiService } from '@alfresco/adf-core';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
+import { Observable, from } from 'rxjs';
+
 import beCPGModel from '../../../assets/becpg/datalist-columns.json';
 
 @Injectable({
@@ -18,8 +20,8 @@ export class EntityApiService {
 
   constructor(private apiService: AlfrescoApiService, private http: HttpClient) { }
 
-  getEntity(id: string): Promise<Entity> {
-    return new Promise((success) => {
+  getEntity(id: string): Observable<Entity> {
+    return from(new Promise<Entity>((success) => {
     this.apiService.getInstance().webScript.executeWebScript('GET', 'becpg/entitylists/node/' + id.replace(':/', '')).then(
       (data) => {
         const entity = new Entity();
@@ -48,7 +50,7 @@ export class EntityApiService {
       }, (error) => {
         console.log('Error' + error);
       });
-    });
+    }));
   }
 
 

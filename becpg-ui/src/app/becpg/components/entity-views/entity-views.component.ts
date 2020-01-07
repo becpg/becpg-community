@@ -1,7 +1,7 @@
 import { Component, OnChanges, Input } from '@angular/core';
-import { Entity } from 'app/becpg/model/Entity';
-import { EntityView } from 'app/becpg/model/EntityView';
-import { EntityViewService } from 'app/becpg/api/entity-view.service';
+import { Entity } from '../../model/Entity';
+import { EntityView } from '../../model/EntityView';
+import { EntityViewService } from '../../api/entity-view.service';
 
 @Component({
   selector: 'app-entity-views',
@@ -20,12 +20,14 @@ export class EntityViewsComponent implements OnChanges {
   constructor(private entityViewService: EntityViewService) { }
 
   ngOnChanges() {
-    if (this.entity.isEntityTemplate) {
-      this.editMode = true;
-    }
-    
+    if(this.entity){
+      if (this.entity.isEntityTemplate) {
+        this.editMode = true;
+      }
+      
 
-    this.entityViews = this.entityViewService.getViews(this.entity);
+      this.entityViews = this.entityViewService.getViews(this.entity);
+    }
   }
 
   createView() {
