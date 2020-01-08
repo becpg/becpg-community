@@ -63,6 +63,8 @@ public interface DesignerService {
 	
 	void unpublish(String fileName);
 
+	String export(NodeRef nodeRef) ;
+
 	
 
 	

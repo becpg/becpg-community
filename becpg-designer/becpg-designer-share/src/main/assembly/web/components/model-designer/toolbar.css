@@ -34,6 +34,12 @@
    padding-left: 24px;
 }
 
+.designer-toolbar .export span.first-child
+{
+   background: url(../documentlibrary/actions/document-download-16.png) no-repeat 12px 4px;
+   padding-left: 24px;
+}
+
 .designer-toolbar .delete-row span.first-child
 {
    background: url(../images/delete-16.png) no-repeat 12px 4px;
