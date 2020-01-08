@@ -47,7 +47,7 @@ export class EntityComponent implements OnInit {
     if (viewId == null) {
         viewId = 'properties';
       }
-    this.view =   this.entityViewService.getView(entity,viewId);
+    this.view =   this.entityViewService.getView(entity, viewId);
 
    });
 

@@ -29,7 +29,6 @@
           <mat-card class="dashboard-card">
             <mat-card-header>
               <mat-card-title>
-                {{card.component}}
                 <div *ngIf="card.title">
                 {{card.title}}
                </div>
@@ -49,7 +48,7 @@
               </div>
 
               <div *ngIf="card.component=='entity-form'">
-                <app-entity-form></app-entity-form>
+                <app-entity-form [nodeType]="'bcpg:finishedProduct'"  [formId]="'default'" ></app-entity-form>
               </div>
               
               <div *ngIf="card.component=='document'">

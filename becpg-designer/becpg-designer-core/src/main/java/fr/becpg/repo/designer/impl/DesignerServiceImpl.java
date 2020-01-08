@@ -31,6 +31,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.dictionary.DictionaryDAO;
 import org.alfresco.repo.dictionary.M2Model;
@@ -41,6 +45,7 @@ import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.ContentWriter;
+import org.alfresco.service.cmr.repository.InvalidNodeRefException;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -49,6 +54,8 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
@@ -81,6 +88,8 @@ public class DesignerServiceImpl implements DesignerService {
 	private MetaModelVisitor metaModelVisitor;
 
 	private FormModelVisitor formModelVisitor;
+	
+	private FormJsonVisitor formJsonVisitor;
 
 	private DesignerTreeVisitor designerTreeVisitor;
 
@@ -119,6 +128,10 @@ public class DesignerServiceImpl implements DesignerService {
 
 	public void setDictionaryService(DictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
+	}
+
+	public void setFormJsonVisitor(FormJsonVisitor formJsonVisitor) {
+		this.formJsonVisitor = formJsonVisitor;
 	}
 
 	/**
@@ -770,6 +783,25 @@ public class DesignerServiceImpl implements DesignerService {
 		}
 
 		
+	}
+
+	@Override
+	public String export(NodeRef nodeRef) {
+		try {
+			 JSONObject ret = new JSONObject();
+			
+			if (nodeService.hasAspect(nodeRef, DesignerModel.ASPECT_CONFIG)) {
+				logger.debug("Write config XML");
+				NodeRef configNodeRef = findConfigNodeRef(nodeRef);
+				formJsonVisitor.visit(configNodeRef, ret);
+	
+			}
+			
+			return ret.toString(3);
+		} catch (JSONException e) {
+			logger.error(e,e);
+		}
+		return null;
 	}
 
 }

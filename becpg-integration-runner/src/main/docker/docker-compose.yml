@@ -16,6 +16,7 @@ services:
       - becpg_data:/usr/local/tomcat/data
       - ../../becpg-core/target/classes:/usr/local/tomcat/hotswap-agent/becpg-core/target/classes
       - ../../becpg-plm/becpg-plm-core/target/classes:/usr/local/tomcat/hotswap-agent/becpg-plm-core/target/classes
+      - ../../becpg-designer/becpg-designer-core/target/classes:/usr/local/tomcat/hotswap-agent/becpg-designer-core/target/classes
       - ../../becpg-project/becpg-project-core/target/classes:/usr/local/tomcat/hotswap-agent/becpg-project-core/target/classes
       - ../../becpg-integration-runner/target/test-classes:/usr/local/tomcat/hotswap-agent/becpg-integration-runner/target/test-classes
       
