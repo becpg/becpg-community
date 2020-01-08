@@ -6186,6 +6186,8 @@
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:geoOriginISOCode" />
+					 <show id="bcpg:geoOriginISOCodeThreeLetters" />
+                    <show id="bcpg:geoOriginISOCodeNumeric" />
 					<show id="bcpg:linkedSearchAssociation" force="true" />
 				</field-visibility>
 				<appearance>
@@ -6218,6 +6220,8 @@
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:geoOriginISOCode" />
+					 <show id="bcpg:geoOriginISOCodeThreeLetters" />
+                    <show id="bcpg:geoOriginISOCodeNumeric" />
 					<show id="bcpg:linkedSearchAssociation" force="true" />
 				</field-visibility>
 
@@ -6259,6 +6263,8 @@
 					<show id="bcpg:charactName" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:geoOriginISOCode" />
+					<show id="bcpg:geoOriginISOCodeThreeLetters" />
+                    <show id="bcpg:geoOriginISOCodeNumeric" />
 					<show id="bcpg:linkedSearchAssociation" force="true" />
 				</field-visibility>
 			</form>
