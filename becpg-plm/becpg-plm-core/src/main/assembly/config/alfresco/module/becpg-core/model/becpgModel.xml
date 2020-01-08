@@ -1214,6 +1214,12 @@
 				<property name="bcpg:geoOriginISOCode">
 					<type>d:text</type>
 				</property>
+				<property name="bcpg:geoOriginISOCodeThreeLetters">
+                    <type>d:text</type>
+                </property>
+                <property name="bcpg:geoOriginISOCodeNumeric">
+                    <type>d:text</type>
+                </property>
 			</properties>
 		</type>
 
