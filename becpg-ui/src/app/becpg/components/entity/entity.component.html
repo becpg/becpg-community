@@ -22,9 +22,9 @@
   <section>
     <app-entity-view-toolbar [entity]="entity | async" [leftPane]="leftPane" [rightPane]="rightPane" ></app-entity-view-toolbar>
     <div class="grid-container" *ngIf="view" >
-      {{view.cards}}
+     
        
-      <mat-grid-list cols="2" rowHeight="350px">
+      <mat-grid-list cols="2" rowHeight="8000px">
         <mat-grid-tile *ngFor="let card of view.cards" [colspan]="card.cols" [rowspan]="card.rows">
           <mat-card class="dashboard-card">
             <mat-card-header>
@@ -47,8 +47,9 @@
                 <app-entity-datagrid [entity]="entity" list="view.list"></app-entity-datagrid>
               </div>
 
+              
               <div *ngIf="card.component=='entity-form'">
-                <app-entity-form [nodeType]="'bcpg:finishedProduct'"  [formId]="'default'" ></app-entity-form>
+                <app-entity-form [node]="entity | async"  [formId]="'default'" ></app-entity-form>
               </div>
               
               <div *ngIf="card.component=='document'">
