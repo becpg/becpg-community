@@ -9,6 +9,7 @@ import {
 import { Observable, of, Subject } from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/operators';
 import { EntityFormService } from '../../api/entity-form.service';
+import { Node } from '@alfresco/js-api';
 
 @Component({
     selector: 'app-entity-form',
@@ -22,7 +23,7 @@ export class EntityFormComponent  implements OnInit, OnDestroy, OnChanges {
 
     /** Content Services node ID for the form metadata. */
     @Input()
-    nodeId: string;
+    node: Node;
 
     /** Content Services node ID for the form metadata. */
     @Input()
@@ -149,20 +150,16 @@ export class EntityFormComponent  implements OnInit, OnDestroy, OnChanges {
 
     loadForm() {
 
-        if (this.nodeId) {
-            this.nodeService.getNodeMetadata(this.nodeId).subscribe((data) => {
-                //TODO  this.data = data.metadata;
-                this.loadbeCPGForm(data.nodeType, false);
-            },
-                this.handleError);
+        if (this.node) {
+            this.loadbeCPGForm(this.node.id, false);
         } else if (this.nodeType) {
             this.loadbeCPGForm(this.nodeType, true);
         }
 
     }
-    loadbeCPGForm(nodeType: string, isModel: boolean) {
+    loadbeCPGForm(itemId: string, isModel: boolean) {
 
-        this.entityFormService.loadForm(this.formId, nodeType, isModel).subscribe((form) => {
+        this.entityFormService.loadForm(this.formId, itemId, isModel).subscribe((form) => {
             this.form = form; //this.parseForm(form);
             this.visibilityService.refreshVisibility(this.form);
             this.form.validateForm();

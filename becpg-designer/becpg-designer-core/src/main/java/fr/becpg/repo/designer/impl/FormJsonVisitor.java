@@ -210,7 +210,7 @@ public class FormJsonVisitor {
 			field.put("name", label );
 		}
 		//TODO Remove that
-		field.put("type","text");
+	//	field.put("type","text");
 		
 //		field.put("description", nodeService.getProperty(fieldNodeRef, DesignerModel.PROP_DSG_DESCRIPTION));
 //		field.put("description-id", nodeService.getProperty(fieldNodeRef, DesignerModel.PROP_DSG_DESCRIPTIONID));
@@ -325,7 +325,6 @@ public class FormJsonVisitor {
 	}
 
 	private void visitControl(NodeRef controlRef, JSONObject field) throws JSONException {
-		nodeService.getProperty(controlRef, DesignerModel.PROP_DSG_TEMPLATEPATH);
 
 		
 //		Text	text	TextWidgetComponent
@@ -376,6 +375,7 @@ public class FormJsonVisitor {
 					
 					} else if(template.endsWith("textarea.ftl")) {
 						field.put("type","multi-line-text");
+						
 //						<control-param name="rows" optional="true" type="int"/>
 //						<control-param name="columns" optional="true" type="int"/>
 //						<control-param name="activateLinks" optional="true"
