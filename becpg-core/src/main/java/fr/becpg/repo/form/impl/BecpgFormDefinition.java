@@ -1,0 +1,289 @@
+package fr.becpg.repo.form.impl;
+
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import org.alfresco.repo.forms.FieldDefinition;
+import org.alfresco.repo.forms.Form;
+import org.alfresco.repo.forms.FormData.FieldData;
+import org.alfresco.repo.forms.PropertyFieldDefinition;
+import org.alfresco.repo.forms.PropertyFieldDefinition.FieldConstraint;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+public class BecpgFormDefinition {
+
+	private List<String> forcedFields = new LinkedList<>();
+	private List<String> fields = new LinkedList<>();
+
+	private Map<String, JSONObject> tabs = new LinkedHashMap<>();
+	private Map<String, JSONObject> sets = new LinkedHashMap<>();
+	private Map<String, List<JSONObject>> tree = new LinkedHashMap<>();
+
+	private static String ROOT = "root";
+
+	public JSONObject merge(Form form) throws JSONException {
+		JSONObject ret = new JSONObject();
+
+		for (JSONObject tab : tabs.values()) {
+
+			ret.append("tabs", tab);
+		}
+
+		for (String entry : tree.keySet()) {
+
+			int i = 0;
+			int column = 1;
+
+			for (JSONObject field : tree.get(entry)) {
+				if (!sets.containsKey(field.getString("id"))) {
+					loadDef(field, form);
+					loadData(field, form);
+				}
+
+				if (ROOT.equals(entry)) {
+
+					ret.append("fields", field);
+
+				} else {
+
+					JSONObject set = sets.get(entry);
+					if ((set != null) && set.has("numberOfColumns")) {
+						column = set.getInt("numberOfColumns");
+					}
+
+					String colName = "" + ((i % column) + 1);
+					JSONArray columnJson = new JSONArray();
+					if (set.has("fields") && set.getJSONObject("fields").has(colName)) {
+						columnJson = set.getJSONObject("fields").getJSONArray(colName);
+					} else {
+						JSONObject tmp = new JSONObject();
+						if (set.has("fields")) {
+							tmp = set.getJSONObject("fields");
+						} else {
+							set.put("fields", tmp);
+						}
+
+						tmp.put(colName, columnJson);
+					}
+					columnJson.put(field);
+
+				}
+				i++;
+			}
+
+		}
+		return ret;
+	}
+
+	private void loadData(JSONObject field, Form form) throws JSONException {
+		String id = field.getString("id");
+		FieldData data = form.getFormData().getFieldData(id);
+
+		if (data != null) {
+			field.put("value", data.getValue());
+		}
+	}
+
+	private void loadDef(JSONObject field, Form form) throws JSONException {
+		String id = field.getString("id");
+
+		boolean loaded = false;
+		if (field.has("loaded")) {
+			loaded = field.getBoolean("loaded");
+		}
+
+		if (!loaded) {
+			for (FieldDefinition fieldDefinition : form.getFieldDefinitions()) {
+				if (fieldDefinition.getName().equals(id)) {
+
+					if (fieldDefinition.getDefaultValue() != null) {
+						field.put("value", fieldDefinition.getDefaultValue());
+					}
+
+					if (!field.has("name")) {
+						field.put("name", fieldDefinition.getLabel());
+					}
+
+					String formWidget = "text";
+
+					if (fieldDefinition instanceof PropertyFieldDefinition) {
+
+						boolean isList = false;
+						if (((PropertyFieldDefinition) fieldDefinition).getConstraints() != null) {
+							for (FieldConstraint constraint : ((PropertyFieldDefinition) fieldDefinition).getConstraints()) {
+
+								if (constraint.getType() == "LIST") {
+									isList = true;
+									if (constraint.getParameters().containsKey("allowedValues")) {
+
+										for (String option : ((List<String>) constraint.getParameters().get("allowedValues"))) {
+											JSONObject optionJson = new JSONObject();
+											if (option.indexOf('|') > 0) {
+												optionJson.put("id", option.split("\\|")[0]);
+												optionJson.put("name", option.split("\\|")[1]);
+											} else {
+												optionJson.put("id", option);
+												optionJson.put("name", option);
+											}
+											field.append("options", optionJson);
+										}
+
+									}
+								} else if (constraint.getType() == "REGEXP") {
+									if (constraint.getParameters().containsKey("expression")) {
+										field.put("regexPattern", constraint.getParameters().get("expression"));
+									}
+									if (constraint.getParameters().containsKey("requiresMatch")) {
+										// TODO
+									}
+								} else if (constraint.getType() == "MIN-MAX") {
+									if (constraint.getParameters().containsKey("minValue")) {
+										field.put("minValue", constraint.getParameters().get("minValue"));
+									}
+									if (constraint.getParameters().containsKey("maxValue")) {
+										field.put("maxValue", constraint.getParameters().get("maxValue"));
+									}
+								} else if (constraint.getType() == "LENGTH") {
+									if (constraint.getParameters().containsKey("minLength")) {
+										field.put("minLength", constraint.getParameters().get("minLength"));
+
+									}
+									if (constraint.getParameters().containsKey("maxLength")) {
+										field.put("maxLength", constraint.getParameters().get("maxLength"));
+
+									}
+								}
+
+							}
+						}
+
+						switch (((PropertyFieldDefinition) fieldDefinition).getDataType()) {
+						case "text":
+							if (isList) {
+								if (((PropertyFieldDefinition) fieldDefinition).isRepeating()) {
+									formWidget = "dropdown";
+								} else {
+									formWidget = "dropdown";
+								}
+							} else {
+								formWidget = "text";
+							}
+							break;
+						case "boolean":
+							formWidget = "boolean";
+							break;
+						case "mltext":
+							formWidget = "text";
+							break;
+						case "integer":
+							formWidget = "integer";
+							break;
+						case "double":
+							formWidget = "text";
+							break;
+						case "long":
+							formWidget = "text";
+							break;
+						case "float":
+							formWidget = "text";
+							break;
+						case "noderef":
+							formWidget = "text";
+							break;
+						case "date":
+							formWidget = "date";
+							break;
+						case "datetime":
+							formWidget = "datetime";
+							break;
+
+						}
+
+						if (((PropertyFieldDefinition) fieldDefinition).isMandatory()) {
+							field.put("required", true);
+						}
+
+					}
+
+					if (!field.has("type")) {
+						field.put("type", formWidget);
+					}
+
+					field.put("loaded", true);
+				}
+			}
+		}
+	}
+
+	public List<String> getForcedFields() {
+		return forcedFields;
+	}
+
+	public List<String> getFields() {
+		return fields;
+	}
+
+	public void addTab(String tabId, JSONObject tab) {
+		tabs.put(tabId, tab);
+
+	}
+
+	public void addSet(String parentId, JSONObject set) throws JSONException {
+		if (tabs.containsKey(parentId)) {
+			set.put("tab", parentId);
+			parentId = ROOT;
+
+		}
+
+		if ((parentId == null) || parentId.isEmpty()) {
+			parentId = ROOT;
+		}
+
+		List<JSONObject> tmp = new LinkedList<>();
+		if (tree.containsKey(parentId)) {
+			tmp = tree.get(parentId);
+		} else {
+			tree.put(parentId, tmp);
+		}
+
+		tmp.add(set);
+
+		sets.put(set.getString("id"), set);
+
+	}
+
+	public void addField(String parentId, JSONObject field, boolean force) throws JSONException {
+		if (tabs.containsKey(parentId)) {
+			field.put("tab", parentId);
+			parentId = ROOT;
+
+		}
+
+		if ((parentId == null) || parentId.isEmpty()) {
+			parentId = ROOT;
+		}
+
+		List<JSONObject> tmp = new LinkedList<>();
+		if (tree.containsKey(parentId)) {
+			tmp = tree.get(parentId);
+		} else {
+			tree.put(parentId, tmp);
+		}
+
+		tmp.add(field);
+
+		String fieldId = field.getString("id");
+
+		if (force) {
+			forcedFields.add(fieldId);
+		}
+
+		fields.add(fieldId);
+
+	}
+
+}
