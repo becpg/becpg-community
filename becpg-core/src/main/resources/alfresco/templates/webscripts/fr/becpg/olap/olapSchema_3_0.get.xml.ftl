@@ -6,33 +6,54 @@
 
 	<Dimension type="TimeDimension" name="timeDimension" caption="${msg("jsolap.timeDimension.title")}">	
 		<Hierarchy name="date" hasAll="true" allMemberName="${msg("jsolap.allPeriods.title")}" allMemberCaption="${msg("jsolap.date.caption")}"  primaryKey="id" caption="${msg("jsolap.date.title")}">
-			<Table name="becpg_dimdate" alias="olapDate" />
+			<View name="olapDate" alias="olapDate">
+				<SQL dialect="generic">
+					select
+						id,
+						Year,
+						NWeek,
+						concat ( 'W', Week ,'/', Year) enNWeek,
+						NQuarter,
+						concat ( 'Q', Quarter,'/', Year) enNQuarter,
+						Month,
+						Day,
+						NDay,
+						NDayUsFormat
+					from
+						becpg_dimdate
+				</SQL>
+			</View>
 			<Level name="Year" caption="${msg("jsolap.year.title")}" column="Year" type="Numeric"  levelType="TimeYears"  />
-			<Level name="Quarter" caption="${msg("jsolap.quarter.title")}" column="Quarter" nameColumn="NQuarter" type="String"  levelType="TimeQuarters"  />
-			<Level approxRowCount="12" name="Month" caption="${msg("jsolap.month.title")}" column="NMonth4L" type="String" levelType="TimeMonths" >
+			<Level approxRowCount="12" name="Month" caption="${msg("jsolap.month.title")}" column="Month" type="Numeric" levelType="TimeMonths" >
 				<NameExpression>
 					<SQL dialect="generic" >
-					  <![CDATA[CASE WHEN NMonth4L='janv' THEN '${msg("jsolap.month.january.title")[0..3]}'
-	                            WHEN NMonth4L='févr' THEN '${msg("jsolap.month.february.title")[0..3]}'
-	                            WHEN NMonth4L='mars' THEN '${msg("jsolap.month.march.title")[0..3]}'
-	                            WHEN NMonth4L='avri' THEN '${msg("jsolap.month.april.title")[0..3]}'
-	                            WHEN NMonth4L='mai' THEN '${msg("jsolap.month.may.title")[0..2]}'
-	                            WHEN NMonth4L='juin' THEN '${msg("jsolap.month.june.title")[0..3]}'
-	                            WHEN NMonth4L='juil' THEN '${msg("jsolap.month.july.title")[0..3]}'
-	                            WHEN NMonth4L='août' THEN '${msg("jsolap.month.august.title")[0..3]}'
-	                            WHEN NMonth4L='sept' THEN '${msg("jsolap.month.septembre.title")[0..3]}'
-	                            WHEN NMonth4L='octo' THEN '${msg("jsolap.month.october.title")[0..3]}'
-	                            WHEN NMonth4L='nove' THEN '${msg("jsolap.month.november.title")[0..3]}'
-	                            WHEN NMonth4L='déce' THEN '${msg("jsolap.month.december.title")[0..3]}'
+					  <![CDATA[CASE WHEN Month='1' THEN '${msg("jsolap.month.january.title")[0..2]}'
+	                            WHEN Month='2' THEN '${msg("jsolap.month.february.title")[0..2]}'
+	                            WHEN Month='3' THEN '${msg("jsolap.month.march.title")[0..2]}'
+	                            WHEN Month='4' THEN '${msg("jsolap.month.april.title")[0..2]}'
+	                            WHEN Month='5' THEN '${msg("jsolap.month.may.title")[0..2]}'
+	                            WHEN Month='6' THEN '${msg("jsolap.month.june.title")[0..2]}'
+	                            WHEN Month='7' THEN '${msg("jsolap.month.july.title")[0..2]}'
+	                            WHEN Month='8' THEN '${msg("jsolap.month.august.title")[0..2]}'
+	                            WHEN Month='9' THEN '${msg("jsolap.month.septembre.title")[0..2]}'
+	                            WHEN Month='10' THEN '${msg("jsolap.month.october.title")[0..2]}'
+	                            WHEN Month='11' THEN '${msg("jsolap.month.november.title")[0..2]}'
+	                            WHEN Month='12' THEN '${msg("jsolap.month.december.title")[0..2]}'
 	                            ELSE 'Vide'
 	                           END]]></SQL>
 				</NameExpression>
 			</Level>
-			<Level name="Week" caption="${msg("jsolap.week.title")}" column="Week" nameColumn="NWeek" type="String"  levelType="TimeWeeks"  />
-			<#if msg("jsolap.date.format") == "dd/mm/yyyy" >
-				<Level name="Day" caption="${msg("jsolap.day.title")}" column="Day" nameColumn="NDay" ordinalColumn="Day" type="Numeric"  levelType="TimeDays"  />
+			<#if .locale == "fr" >
+				<Level name="Week" caption="${msg("jsolap.week.title")}" column="nWeek" type="String"  levelType="TimeWeeks"  />
+				<Level name="Quarter" caption="${msg("jsolap.quarter.title")}" column="nQuarter" type="String"  levelType="TimeQuarters"  />
 			<#else>
+				<Level name="Week" caption="${msg("jsolap.week.title")}" column="enNWeek" type="String"  levelType="TimeWeeks"  />
+				<Level name="Quarter" caption="${msg("jsolap.quarter.title")}" column="enNQuarter" type="String"  levelType="TimeQuarters"  />
+			</#if>
+			<#if .locale == "en_US" >
 				<Level name="Day" caption="${msg("jsolap.day.title")}" column="Day" nameColumn="NDayUsFormat" ordinalColumn="Day" type="Numeric"  levelType="TimeDays"  />
+			<#else>
+				<Level name="Day" caption="${msg("jsolap.day.title")}" column="Day" nameColumn="NDay" ordinalColumn="Day" type="Numeric"  levelType="TimeDays"  />
 			</#if>
 		</Hierarchy>		
 	</Dimension>
@@ -252,30 +273,56 @@
 		
 		<Dimension type="TimeDimension" name="frequency" caption="${msg("jsolap.date.title")}" foreignKey="olap_date">	
 			<Hierarchy name="date" hasAll="true" allMemberName="${msg("jsolap.allPeriods.title")}" allMemberCaption="${msg("jsolap.date.caption")}"  primaryKey="Date" caption="${msg("jsolap.date.title")}">
-				<Table name="becpg_dimdate" alias="olapDate"/>
+				<View name="olapDate" alias="olapDate">
+					<SQL dialect="generic">
+						select
+							id,
+							Date,
+							Year,
+							NWeek,
+							concat ( 'W', Week ,'/', Year) enNWeek,
+							NQuarter,
+							concat ( 'Q', Quarter,'/', Year) enNQuarter,
+							Month,
+							Day,
+							NDay,
+							NDayUsFormat
+						from
+							becpg_dimdate
+					</SQL>
+				</View>
 				<Level name="Year" caption="${msg("jsolap.year.title")}" column="Year" type="Numeric"  levelType="TimeYears"  />
-				<Level name="Quarter" caption="${msg("jsolap.quarter.title")}" column="Quarter" nameColumn="NQuarter" type="String"  levelType="TimeQuarters"  />
-				<Level approxRowCount="12" name="Month" caption="${msg("jsolap.month.title")}" column="NMonth4L" type="String" levelType="TimeMonths" >
+				<Level approxRowCount="12" name="Month" caption="${msg("jsolap.month.title")}" column="Month" type="Numeric" levelType="TimeMonths" >
 					<NameExpression>
 						<SQL dialect="generic" >
-						  <![CDATA[CASE WHEN NMonth4L='janv' THEN '${msg("jsolap.month.january.title")[0..3]}'
-		                            WHEN NMonth4L='févr' THEN '${msg("jsolap.month.february.title")[0..3]}'
-		                            WHEN NMonth4L='mars' THEN '${msg("jsolap.month.march.title")[0..3]}'
-		                            WHEN NMonth4L='avri' THEN '${msg("jsolap.month.april.title")[0..3]}'
-		                            WHEN NMonth4L='mai' THEN '${msg("jsolap.month.may.title")[0..2]}'
-		                            WHEN NMonth4L='juin' THEN '${msg("jsolap.month.june.title")[0..3]}'
-		                            WHEN NMonth4L='juil' THEN '${msg("jsolap.month.july.title")[0..3]}'
-		                            WHEN NMonth4L='août' THEN '${msg("jsolap.month.august.title")[0..3]}'
-		                            WHEN NMonth4L='sept' THEN '${msg("jsolap.month.septembre.title")[0..3]}'
-		                            WHEN NMonth4L='octo' THEN '${msg("jsolap.month.october.title")[0..3]}'
-		                            WHEN NMonth4L='nove' THEN '${msg("jsolap.month.november.title")[0..3]}'
-		                            WHEN NMonth4L='déce' THEN '${msg("jsolap.month.december.title")[0..3]}'
+						  <![CDATA[CASE WHEN Month='1' THEN '${msg("jsolap.month.january.title")[0..2]}'
+		                            WHEN Month='2' THEN '${msg("jsolap.month.february.title")[0..2]}'
+		                            WHEN Month='3' THEN '${msg("jsolap.month.march.title")[0..2]}'
+		                            WHEN Month='4' THEN '${msg("jsolap.month.april.title")[0..2]}'
+		                            WHEN Month='5' THEN '${msg("jsolap.month.may.title")[0..2]}'
+		                            WHEN Month='6' THEN '${msg("jsolap.month.june.title")[0..2]}'
+		                            WHEN Month='7' THEN '${msg("jsolap.month.july.title")[0..2]}'
+		                            WHEN Month='8' THEN '${msg("jsolap.month.august.title")[0..2]}'
+		                            WHEN Month='9' THEN '${msg("jsolap.month.septembre.title")[0..2]}'
+		                            WHEN Month='10' THEN '${msg("jsolap.month.october.title")[0..2]}'
+		                            WHEN Month='11' THEN '${msg("jsolap.month.november.title")[0..2]}'
+		                            WHEN Month='12' THEN '${msg("jsolap.month.december.title")[0..2]}'
 		                            ELSE 'Vide'
 		                           END]]></SQL>
 					</NameExpression>
 				</Level>
-				<Level name="Week" caption="${msg("jsolap.week.title")}" column="Week" nameColumn="NWeek" type="String"  levelType="TimeWeeks"  />
-				<Level name="Day" caption="${msg("jsolap.day.title")}" column="Day" nameColumn="NDay" ordinalColumn="Day" type="Numeric"  levelType="TimeDays"  />
+				<#if .locale == "fr" >
+					<Level name="Week" caption="${msg("jsolap.week.title")}" column="nWeek" type="String"  levelType="TimeWeeks"  />
+					<Level name="Quarter" caption="${msg("jsolap.quarter.title")}" column="nQuarter" type="String"  levelType="TimeQuarters"  />
+				<#else>
+					<Level name="Week" caption="${msg("jsolap.week.title")}" column="enNWeek" type="String"  levelType="TimeWeeks"  />
+					<Level name="Quarter" caption="${msg("jsolap.quarter.title")}" column="enNQuarter" type="String"  levelType="TimeQuarters"  />
+				</#if>
+				<#if .locale == "en_US" >
+					<Level name="Day" caption="${msg("jsolap.day.title")}" column="Day" nameColumn="NDayUsFormat" ordinalColumn="Day" type="Numeric"  levelType="TimeDays"  />
+				<#else>
+					<Level name="Day" caption="${msg("jsolap.day.title")}" column="Day" nameColumn="NDay" ordinalColumn="Day" type="Numeric"  levelType="TimeDays"  />
+				</#if>
 			</Hierarchy>		
 		</Dimension>
 		
