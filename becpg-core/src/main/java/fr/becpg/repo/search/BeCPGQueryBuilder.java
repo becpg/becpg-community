@@ -543,18 +543,18 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			if (RepoConsts.MAX_RESULTS_UNLIMITED == maxResults) {
 				int page = 1;
 
-				logger.info("Unlimited results ask -  start pagination");
+				logger.debug("Unlimited results ask -  start pagination");
 				List<NodeRef> tmp = search(runnedQuery, getSort(ContentModel.PROP_MODIFIED, false), page, RepoConsts.MAX_RESULTS_256);
 
 				if ((tmp != null) && !tmp.isEmpty()) {
-					logger.info(" - Page 1:" + tmp.size());
+					logger.debug(" - Page 1:" + tmp.size());
 					refs = tmp;
 				}
 				while ((tmp != null) && (tmp.size() == RepoConsts.MAX_RESULTS_256)) {
 					page++;
 					tmp = search(runnedQuery, getSort(ContentModel.PROP_MODIFIED, false), page, RepoConsts.MAX_RESULTS_256);
 					if ((tmp != null) && !tmp.isEmpty()) {
-						logger.info(" - Page " + page + ":" + tmp.size());
+						logger.debug(" - Page " + page + ":" + tmp.size());
 						refs.addAll(tmp);
 					}
 				}

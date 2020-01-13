@@ -30,6 +30,7 @@ import fr.becpg.model.PackModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.EffectiveFilters;
+import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
@@ -103,7 +104,7 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 			}
 		}
 
-		if (formulatedProduct.getAspects().contains(GS1Model.ASPECT_MEASURES_ASPECT)) {
+		if (formulatedProduct instanceof FinishedProductData || formulatedProduct.getAspects().contains(GS1Model.ASPECT_MEASURES_ASPECT)) {
 
 			if (variantPackagingData != null) {
 				formulatedProduct.getExtraProperties().put(GS1Model.PROP_WEIGHT, formulatedProduct.getWeightPrimary());
@@ -133,7 +134,7 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 					formulatedProduct.getExtraProperties().put(GS1Model.PROP_PLATFORMTERMSANSCONDITION_CODE, variantPackagingData.getPlatformTermsAndConditionsCode());
 				
 
-					if (formulatedProduct.getAspects().contains(PackModel.ASPECT_PALLET)) {
+					if (formulatedProduct instanceof FinishedProductData || formulatedProduct.getAspects().contains(PackModel.ASPECT_PALLET)) {
 						
 						formulatedProduct.getExtraProperties().put(PackModel.PROP_PALLET_PRODUCTS_PER_BOX, variantPackagingData.getProductPerBoxes());
 

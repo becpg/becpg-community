@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.namespace.NamespaceException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.webscripts.AbstractWebScript;
@@ -73,18 +72,9 @@ public class EntityTplWebScript extends AbstractWebScript {
 				
 				logger.debug("In recursive delete block, has datalist: "+req.getParameter(PARAM_DATALIST));
 				if(req.getParameter(PARAM_DATALIST) != null){
-					
-					try {
-						entityTplService.removeDataListOnEntities(nodeRef, req.getParameter(PARAM_DATALIST));
-					} catch(NamespaceException e){
-						logger.error(e,e);
-						throw new WebScriptException(e.getMessage());
-					}
-					
+					entityTplService.removeDataListOnEntities(nodeRef, req.getParameter(PARAM_DATALIST));
 				}
-				
-				
-				
+
 			} else {
 				String error = "Unsupported action: " + action;
 				logger.error(error);
