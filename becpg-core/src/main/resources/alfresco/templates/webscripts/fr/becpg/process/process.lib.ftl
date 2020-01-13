@@ -22,9 +22,9 @@
       "firstName": "${processInstance.initiator.firstName}"</#if><#if processInstance.initiator.lastName??>,
       "lastName": "${processInstance.initiator.lastName}"</#if><#if processInstance.initiator.avatarUrl??>,
       "avatarUrl": "${processInstance.initiator.avatarUrl}"</#if>
-   },
+   }
    <#else>
-   null,
+   null
    </#if>
 }
 </#escape>

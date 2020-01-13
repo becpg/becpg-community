@@ -2552,7 +2552,7 @@
     									  var messageTitle = me.msg("title.multiple-quick-share");
     									  
     									  var messageBody = me.msg("message.multiple-quick-share", sharedFiles.length);
-    									  messageBody += '<div class="quick-share-url-container">' + sharedFiles.join("") + '</div>';
+    									  messageBody += '<div class="quick-share-url-container">' + sharedFiles.join("<br/>") + '</div>';
     									  messageBody += '<textarea id="'+clipboardHtmlId+'" style ="display:block; width:0; height:0; opacity: 0;">' + sharedFiles.join("\n").replace(/<span>/g, '').replace(/<\/span>/g, '') + '</textarea>';
     									  
     									  Alfresco.util.PopupManager.displayPrompt(
