@@ -659,6 +659,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 			if (listNodeRef != null) {
 				logger.debug("Deleting list with node: " + listNodeRef + " on entity: " + entityNodeRef + " ("
 						+ nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME) + ")");
+				nodeService.addAspect(listNodeRef, ContentModel.ASPECT_TEMPORARY, null);
 				nodeService.deleteNode(listNodeRef);
 			}
 
@@ -670,6 +671,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 		if (tplListNodeRef != null) {
 			logger.debug("Deleting list with node: " + tplListNodeRef + " on template: " + entityTplNodeRef + " ("
 					+ nodeService.getProperty(entityTplNodeRef, ContentModel.PROP_NAME) + ")");
+			nodeService.addAspect(tplListNodeRef, ContentModel.ASPECT_TEMPORARY, null);
 			nodeService.deleteNode(tplListNodeRef);
 		}
 	}
@@ -689,15 +691,4 @@ public class EntityTplServiceImpl implements EntityTplService {
 		return listNodeRef;
 	}
 
-	/*
-	 * / TODO faire en s'inspirant du synchronizeEntities
-	 *
-	 * @Override public void removeDataListItemsOnEntities(NodeRef
-	 * entityTplNodeRef, List<NodeRef> dataListItems) { List<NodeRef> entities =
-	 * getEntitiesToUpdate(entityTplNodeRef);
-	 *
-	 *
-	 *
-	 * }
-	 */
 }
