@@ -185,7 +185,7 @@ public class DetailActivityContentIT extends AbstractFinishedProductTest {
 				JSONObject dataProp = data.getJSONArray("properties").getJSONObject(0);
 				if (dataProp != null) {
 					assertEquals("Check client title modification", PLMModel.ASSOC_CLIENTS.toString(), dataProp.getString("title"));
-					assertEquals("Check client before modification", "[\"("+client1NodeRef+", Client1)\"]",dataProp.getString("before"));
+					assertEquals("Check client before modification", "[]",dataProp.getString("before"));
 					assertEquals("Check client after modification", "[\"("+client2NodeRef+", Client2)\"]",dataProp.getString("after"));
 				}
 			}
