@@ -5,7 +5,7 @@
 	<groupId>fr.becpg</groupId>
 	<artifactId>becpg-parent</artifactId>
 	<packaging>pom</packaging>
-	<version>3.2.0</version>
+	<version>3.2.1</version>
 	<name>beCPG</name>
 	<prerequisites>
         <maven>3.3.0</maven>
@@ -146,7 +146,7 @@
         <test.acs.endpoint.path/>
         
 		<docker.becpg.url>docker.becpg.fr:443/becpg</docker.becpg.url>
-	    <docker.becpg.tag>3.2.0</docker.becpg.tag>
+	    <docker.becpg.tag>3.2.1</docker.becpg.tag>
 	   	<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
 	    <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
