@@ -296,8 +296,8 @@ if (beCPG.module.EntityDataGridRenderers) {
         		  return "0";
         	  }  else if(Math.abs(val) < 0.000001){
         		  return beCPG.util.sigFigs(val*1000000,3).toLocaleString()+"×10<sup>-6</sup>";
-        	  } else if(Math.abs(val) < 0.01){
-        		  return beCPG.util.sigFigs(val*1000,3).toLocaleString()+"×10<sup>-3</sup>";
+        	  } else if(Math.abs(val) < 0.001){
+        		  return beCPG.util.sigFigs(val*10000,3).toLocaleString()+"×10<sup>-4</sup>";
         	  } else if(Math.abs(val) >= 1000000){
         		  return beCPG.util.sigFigs(val/1000000,3).toLocaleString()+"×10<sup>6</sup>";
         	  }
