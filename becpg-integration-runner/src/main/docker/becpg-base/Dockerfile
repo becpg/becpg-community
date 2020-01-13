@@ -100,15 +100,15 @@ RUN set -x && \
     rm /root/amp/javascript-console-share-0.6.0.amp 
     
 #User account switcher  
-RUN set -x && \
-    curl --silent --location \
-      https://readonly:YLdy9W5v@www.becpg.fr/becpg-repo/releases/addons/share-login-switcher-1.5.jar  \
-      -o webapps/share/WEB-INF/lib/share-login-switcher-1.5.jar    
+#RUN set -x && \
+#    curl --silent --location \
+#      https://readonly:YLdy9W5v@www.becpg.fr/becpg-repo/releases/addons/share-login-switcher-1.5.jar  \
+#      -o webapps/share/WEB-INF/lib/share-login-switcher-1.5.jar    
       
-RUN set -x && \
-    curl --silent --location \
-      https://readonly:YLdy9W5v@www.becpg.fr/becpg-repo/releases/addons/repo-login-switcher-1.5.jar  \
-      -o webapps/alfresco/WEB-INF/lib/repo-login-switcher-1.5.jar          
+#RUN set -x && \
+#    curl --silent --location \
+#      https://readonly:YLdy9W5v@www.becpg.fr/becpg-repo/releases/addons/repo-login-switcher-1.5.jar  \
+#      -o webapps/alfresco/WEB-INF/lib/repo-login-switcher-1.5.jar          
     
 #Support tools
 RUN set -x && \
