@@ -85,7 +85,7 @@
                 {
                     "component": "entity-datagrid",
                     "options": {},
-                    "cols": 1,
+                    "cols": 2,
                     "rows": 1
                 },
                 {
@@ -95,7 +95,7 @@
                         "formId": "nutList"
                     },
                     "cols": 2,
-                    "rows": 2
+                    "rows": 1
                 }
             ]
         },
