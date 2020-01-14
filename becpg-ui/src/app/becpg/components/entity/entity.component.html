@@ -22,7 +22,6 @@
       </adf-info-drawer-tab>
   
   </adf-info-drawer>
-  
 
 
 
@@ -32,7 +31,7 @@
     <div class="grid-container" *ngIf="view" >
      
        
-      <mat-grid-list cols="2" rowHeight="8000px">
+      <mat-grid-list cols="2" rowHeight="400px">
         <mat-grid-tile *ngFor="let card of view.cards" [colspan]="card.cols" [rowspan]="card.rows">
           <mat-card class="dashboard-card">
             <mat-card-header>

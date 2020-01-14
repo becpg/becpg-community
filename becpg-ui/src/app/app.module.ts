@@ -29,7 +29,7 @@ import { EntityViewToolbarComponent } from './becpg/components/entity-view-toolb
 import { EntityFormComponent } from './becpg/components/entity-form/entity-form.component';
 import { EntityDatagridComponent } from './becpg/components/entity-datagrid/entity-datagrid.component';
 import { EntityLogoComponent } from './becpg/components/entity-logo/entity-logo.component';
-
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 
 import { TableModule } from 'primeng/table';
