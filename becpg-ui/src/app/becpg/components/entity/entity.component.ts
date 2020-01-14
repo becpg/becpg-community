@@ -10,7 +10,7 @@ import { Entity } from '../../model/Entity';
 import { EntityListItem } from '../../model/EntityListItem';
 import { EntityList } from '../../model/EntityList';
 import { EntityView } from '../../model/EntityView';
-import { NotificationService } from '@alfresco/adf-core';
+import { NotificationService, CommentModel } from '@alfresco/adf-core';
 import { DocumentListComponent } from '@alfresco/adf-content-services';
 import { PreviewService } from '../../../services/preview.service';
 import { Observable, of } from 'rxjs';
@@ -24,6 +24,8 @@ import { switchMap, mergeMap } from 'rxjs/operators';
   styleUrls: ['./entity.component.scss']
 })
 export class EntityComponent implements OnInit {
+
+  nodeId: String;
 
   entity: Observable<Entity>;
 
@@ -47,13 +49,17 @@ export class EntityComponent implements OnInit {
     if (viewId == null) {
         viewId = 'properties';
       }
+    this.nodeId = entity.id;
     this.view =   this.entityViewService.getView(entity, viewId);
 
    });
 
 
-
   }
+
+
+
+
 
 
 }

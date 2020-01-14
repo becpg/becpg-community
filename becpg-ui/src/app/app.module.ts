@@ -53,6 +53,15 @@ import localePl from '@angular/common/locales/pl';
 import localeFi from '@angular/common/locales/fi';
 import localeDa from '@angular/common/locales/da';
 import localeSv from '@angular/common/locales/sv';
+import { AutocompleteComponent } from './becpg/components/entity-form/widgets/autocomplete/autocomplete.component';
+import { MtlangueComponent } from './becpg/components/entity-form/widgets/mtlangue/mtlangue.component';
+import { ColorComponent } from './becpg/components/entity-form/widgets/color/color.component';
+import { NumberUnitComponent } from './becpg/components/entity-form/widgets/number-unit/number-unit.component';
+import { NumberRangeComponent } from './becpg/components/entity-form/widgets/number-range/number-range.component';
+import { DateRangeComponent } from './becpg/components/entity-form/widgets/date-range/date-range.component';
+import { SpelEditorComponent } from './becpg/components/entity-form/widgets/spel-editor/spel-editor.component';
+import { NutriscoreComponent } from './becpg/components/entity-form/widgets/nutriscore/nutriscore.component';
+
 
 
 registerLocaleData(localeFr);
@@ -108,9 +117,29 @@ registerLocaleData(localeSv);
         EntityViewToolbarComponent,
         EntityFormComponent,
         EntityDatagridComponent,
-        EntityLogoComponent
+        EntityLogoComponent,
+        AutocompleteComponent,
+        MtlangueComponent,
+        ColorComponent,
+        NumberUnitComponent,
+        NumberRangeComponent,
+        DateRangeComponent,
+        SpelEditorComponent,
+        NutriscoreComponent
         
     ],
+    entryComponents: [
+        AutocompleteComponent,
+        MtlangueComponent,
+        ColorComponent,
+        NumberUnitComponent,
+        NumberRangeComponent,
+        DateRangeComponent,
+        SpelEditorComponent,
+        NutriscoreComponent
+        
+    ],
+
     providers: [
         PreviewService,
         {

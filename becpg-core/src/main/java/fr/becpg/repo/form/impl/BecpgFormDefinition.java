@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.alfresco.repo.forms.AssociationFieldDefinition;
 import org.alfresco.repo.forms.FieldDefinition;
 import org.alfresco.repo.forms.Form;
 import org.alfresco.repo.forms.FormData.FieldData;
@@ -32,63 +33,98 @@ public class BecpgFormDefinition {
 
 			ret.append("tabs", tab);
 		}
+		Map<String, JSONObject> cloned = new LinkedHashMap<>();
 
 		for (String entry : tree.keySet()) {
 
 			int i = 0;
 			int column = 1;
 
-			for (JSONObject field : tree.get(entry)) {
-				if (!sets.containsKey(field.getString("id"))) {
-					loadDef(field, form);
-					loadData(field, form);
+			for (JSONObject toClone : tree.get(entry)) {
+
+				String id = toClone.getString("id");
+
+				boolean found = true;
+
+				if (!sets.containsKey(id)) {
+					found = loadDef(toClone, form);
 				}
 
-				if (ROOT.equals(entry)) {
+				if (!cloned.containsKey(id)) {
+					JSONObject tmp = new JSONObject(toClone.toString());
+					
+					
+					cloned.put(id, tmp);
+				}
+				JSONObject field = cloned.get(id);
 
-					ret.append("fields", field);
-
-				} else {
-
-					JSONObject set = sets.get(entry);
-					if ((set != null) && set.has("numberOfColumns")) {
-						column = set.getInt("numberOfColumns");
+				if (!sets.containsKey(id)) {
+					loadData(field, form);
+					if(field.has("dataKey")) {
+						field.put("id", field.getString("dataKey"));
+						field.remove("dataKey");
+						field.remove("loaded");
 					}
+				}
 
-					String colName = "" + ((i % column) + 1);
-					JSONArray columnJson = new JSONArray();
-					if (set.has("fields") && set.getJSONObject("fields").has(colName)) {
-						columnJson = set.getJSONObject("fields").getJSONArray(colName);
+				if (found) {
+					if (ROOT.equals(entry)) {
+
+						ret.append("fields", field);
+
 					} else {
-						JSONObject tmp = new JSONObject();
-						if (set.has("fields")) {
-							tmp = set.getJSONObject("fields");
-						} else {
-							set.put("fields", tmp);
+
+						JSONObject set = sets.get(entry);
+
+						if (set != null) {
+							if (!cloned.containsKey(entry)) {
+								cloned.put(entry, new JSONObject(set.toString()));
+							}
+							set = cloned.get(entry);
 						}
 
-						tmp.put(colName, columnJson);
+						if ((set != null) && set.has("numberOfColumns")) {
+							column = set.getInt("numberOfColumns");
+						}
+
+						String colName = "" + ((i % column) + 1);
+						JSONArray columnJson = new JSONArray();
+						if ((set != null) && set.has("fields") && set.getJSONObject("fields").has(colName)) {
+							columnJson = set.getJSONObject("fields").getJSONArray(colName);
+						} else {
+							JSONObject tmp = new JSONObject();
+							if (set.has("fields")) {
+								tmp = set.getJSONObject("fields");
+							} else {
+								set.put("fields", tmp);
+							}
+
+							tmp.put(colName, columnJson);
+						}
+						columnJson.put(field);
+
 					}
-					columnJson.put(field);
-
+					i++;
 				}
-				i++;
 			}
-
 		}
 		return ret;
 	}
 
 	private void loadData(JSONObject field, Form form) throws JSONException {
-		String id = field.getString("id");
-		FieldData data = form.getFormData().getFieldData(id);
-
-		if (data != null) {
-			field.put("value", data.getValue());
+		if(field.has("dataKey")) {
+			String key = field.getString("dataKey");
+			if(key!=null) {
+				FieldData data = form.getFormData().getFieldData(key);
+				
+				if (data != null) {
+					field.put("value", data.getValue());
+				}
+			}
 		}
 	}
 
-	private void loadDef(JSONObject field, Form form) throws JSONException {
+	private boolean loadDef(JSONObject field, Form form) throws JSONException {
 		String id = field.getString("id");
 
 		boolean loaded = false;
@@ -96,9 +132,13 @@ public class BecpgFormDefinition {
 			loaded = field.getBoolean("loaded");
 		}
 
+		boolean found = false;
+
 		if (!loaded) {
 			for (FieldDefinition fieldDefinition : form.getFieldDefinitions()) {
 				if (fieldDefinition.getName().equals(id)) {
+
+					found = true;
 
 					if (fieldDefinition.getDefaultValue() != null) {
 						field.put("value", fieldDefinition.getDefaultValue());
@@ -107,6 +147,8 @@ public class BecpgFormDefinition {
 					if (!field.has("name")) {
 						field.put("name", fieldDefinition.getLabel());
 					}
+					
+					field.put("dataKey",fieldDefinition.getDataKeyName());
 
 					String formWidget = "text";
 
@@ -183,13 +225,13 @@ public class BecpgFormDefinition {
 							formWidget = "integer";
 							break;
 						case "double":
-							formWidget = "text";
+							formWidget = "integer";
 							break;
 						case "long":
-							formWidget = "text";
+							formWidget = "integer";
 							break;
 						case "float":
-							formWidget = "text";
+							formWidget = "integer";
 							break;
 						case "noderef":
 							formWidget = "text";
@@ -207,6 +249,23 @@ public class BecpgFormDefinition {
 							field.put("required", true);
 						}
 
+					} if (fieldDefinition instanceof AssociationFieldDefinition) {
+						JSONObject jsonParams = new JSONObject();
+						if(field.has("params")) {
+							jsonParams = field.getJSONObject("params");
+						} else {
+							field.put("params", jsonParams);
+						}
+						
+						jsonParams.put("endpointType", ((AssociationFieldDefinition)fieldDefinition).getEndpointType());
+						jsonParams.put("endpointMany", ((AssociationFieldDefinition)fieldDefinition).isEndpointMany());
+						
+						if(((AssociationFieldDefinition)fieldDefinition).isEndpointMandatory()) {
+							field.put("required", true);
+						}
+						
+						
+						formWidget = "autocomplete";
 					}
 
 					if (!field.has("type")) {
@@ -214,9 +273,19 @@ public class BecpgFormDefinition {
 					}
 
 					field.put("loaded", true);
+
+					break;
+				}
+			}
+		} else {
+			for (FieldDefinition fieldDefinition : form.getFieldDefinitions()) {
+				if (fieldDefinition.getName().equals(id)) {
+					found = true;
+					break;
 				}
 			}
 		}
+		return found;
 	}
 
 	public List<String> getForcedFields() {

@@ -10,6 +10,14 @@ import { Observable, of, Subject } from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/operators';
 import { EntityFormService } from '../../api/entity-form.service';
 import { Node } from '@alfresco/js-api';
+import { AutocompleteComponent } from './widgets/autocomplete/autocomplete.component';
+import { MtlangueComponent } from './widgets/mtlangue/mtlangue.component';
+import { NumberRangeComponent } from './widgets/number-range/number-range.component';
+import { NumberUnitComponent } from './widgets/number-unit/number-unit.component';
+import { SpelEditorComponent } from './widgets/spel-editor/spel-editor.component';
+import { NutriscoreComponent } from './widgets/nutriscore/nutriscore.component';
+import { ColorComponent } from './widgets/color/color.component';
+import { DateRangeComponent } from './widgets/date-range/date-range.component';
 
 @Component({
     selector: 'app-entity-form',
@@ -100,8 +108,15 @@ export class EntityFormComponent  implements OnInit, OnDestroy, OnChanges {
         protected nodeService: NodeService,
         protected formRenderingService: FormRenderingService,
         protected entityFormService: EntityFormService) {
-        // this.formRenderingService.setComponentTypeResolver('upload', () => AttachFileWidgetComponent, true);
-        // this.formRenderingService.setComponentTypeResolver('select-folder', () => AttachFolderWidgetComponent, true);
+        this.formRenderingService.setComponentTypeResolver('autocomplete', () => AutocompleteComponent, true);
+        this.formRenderingService.setComponentTypeResolver('color', () => ColorComponent, true);
+        this.formRenderingService.setComponentTypeResolver('mtlangue', () => MtlangueComponent, true);
+        this.formRenderingService.setComponentTypeResolver('number-range', () => NumberRangeComponent, true);
+        this.formRenderingService.setComponentTypeResolver('number-unit', () => NumberUnitComponent, true);
+        this.formRenderingService.setComponentTypeResolver('spel-editor', () => SpelEditorComponent, true);
+        this.formRenderingService.setComponentTypeResolver('date-range', () => DateRangeComponent, true);
+        this.formRenderingService.setComponentTypeResolver('nutriscore', () => NutriscoreComponent, true);
+
     }
 
 

@@ -6,16 +6,24 @@
     <app-entity-views [entity]="entity | async" ></app-entity-views>
   </mat-sidenav>
   <mat-sidenav  #rightPane mode="side" position="end">
-    <mat-tab-group>
-      <mat-tab label="One">
-        <h1>Some tab content</h1>
-        <p>...</p>
-      </mat-tab>
-      <mat-tab label="Two">
-        <h1>Some more tab content</h1>
-        <p>...</p>
-      </mat-tab>
-    </mat-tab-group>
+    <adf-info-drawer>
+
+      <adf-info-drawer-tab label="Tab1">
+          <div>Tab1 content</div>
+      </adf-info-drawer-tab>
+  
+      <adf-info-drawer-tab label="Comments" icon="comment">
+                  
+        <adf-comments
+        [nodeId]="nodeId"
+        [readOnly]="false">
+      </adf-comments>
+
+      </adf-info-drawer-tab>
+  
+  </adf-info-drawer>
+  
+
 
 
   </mat-sidenav>
@@ -49,13 +57,21 @@
 
               
               <div *ngIf="card.component=='entity-form'">
-                <app-entity-form [node]="entity | async"  [formId]="'default'" ></app-entity-form>
+                <app-entity-form [node]="entity | async"  [formId]="card.options.formId"  ></app-entity-form>
               </div>
               
               <div *ngIf="card.component=='document'">
                TODO
 
               </div>
+
+              <div *ngIf="card.component=='repport'">
+              <adf-viewer 
+                [showViewer]="true" 
+                [overlayMode]="true" 
+                [nodeId]="nodeId">
+            </adf-viewer>
+            </div>
               
             </mat-card-content>
           </mat-card>
