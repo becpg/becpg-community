@@ -35,6 +35,7 @@ import { EntityLogoComponent } from './becpg/components/entity-logo/entity-logo.
 import { TableModule } from 'primeng/table';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import { HttpClientModule } from '@angular/common/http';
+import { MatDialogModule } from '@angular/material';
 
 import { registerLocaleData } from '@angular/common';
 import localeFr from '@angular/common/locales/fr';
@@ -61,6 +62,7 @@ import { NumberRangeComponent } from './becpg/components/entity-form/widgets/num
 import { DateRangeComponent } from './becpg/components/entity-form/widgets/date-range/date-range.component';
 import { SpelEditorComponent } from './becpg/components/entity-form/widgets/spel-editor/spel-editor.component';
 import { NutriscoreComponent } from './becpg/components/entity-form/widgets/nutriscore/nutriscore.component';
+import { EntityLogoUploadPopupComponent } from './becpg/components/entity-logo/entity-logo-upload-popup/entity-logo-upload-popup.component';
 
 
 
@@ -101,7 +103,9 @@ registerLocaleData(localeSv);
         }),
         TableModule,
         MatSidenavModule,
-        HttpClientModule
+        HttpClientModule,
+        FlexLayoutModule,
+        MatDialogModule
     ],
     declarations: [
         AppComponent,
@@ -125,7 +129,8 @@ registerLocaleData(localeSv);
         NumberRangeComponent,
         DateRangeComponent,
         SpelEditorComponent,
-        NutriscoreComponent
+        NutriscoreComponent,
+        EntityLogoUploadPopupComponent
         
     ],
     entryComponents: [
@@ -136,7 +141,8 @@ registerLocaleData(localeSv);
         NumberRangeComponent,
         DateRangeComponent,
         SpelEditorComponent,
-        NutriscoreComponent
+        NutriscoreComponent,
+        EntityLogoUploadPopupComponent
         
     ],
 
