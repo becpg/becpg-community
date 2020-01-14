@@ -1,9 +1,9 @@
 
 
 <mat-sidenav-container class="entity-container">
-  <mat-sidenav #leftPane mode="side" opened="false" >
+  <mat-sidenav #leftPane mode="over" opened="false" >
     
-    <app-entity-views [entity]="entity | async" ></app-entity-views>
+    <app-entity-views [entity]="entity | async" [leftPane]="leftPane"></app-entity-views>
   </mat-sidenav>
   <mat-sidenav  #rightPane mode="side" position="end">
     <mat-tab-group>

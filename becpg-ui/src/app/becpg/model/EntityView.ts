@@ -5,14 +5,11 @@ export class EntityView {
     list: EntityList;
   cards: any;
   sort: any;
-
+  isValid: boolean;
     constructor(list: EntityList) {
         this.id = list.name;
         this.list = list;
-    }
-
-    isValid(): boolean {
-        return 'Valid' === this.list.state;
+        this.isValid = 'Valid' === list.state; 
     }
 
 }

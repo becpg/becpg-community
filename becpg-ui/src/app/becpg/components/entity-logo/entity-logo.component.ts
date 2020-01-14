@@ -1,4 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, Inject, ViewChild } from '@angular/core';
+import { EntityApiService } from '../../api/entity-api.service';
+import { ActivatedRoute } from '@angular/router';
+import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import { MatSidenav } from '@angular/material';
+import { EntityLogoUploadPopupComponent } from './entity-logo-upload-popup/entity-logo-upload-popup.component';
+
 
 @Component({
   selector: 'app-entity-logo',
@@ -7,9 +13,34 @@ import { Component, OnInit } from '@angular/core';
 })
 export class EntityLogoComponent implements OnInit {
 
-  constructor() { }
+  entityLogoUrl: string;
+  nodeId: string;
+  @Input() 
+  public leftPane: MatSidenav;
+  
+  constructor(private route: ActivatedRoute,
+              private entityApiService: EntityApiService, 
+              private dialog: MatDialog) {}
 
   ngOnInit() {
+     this.nodeId = this.route.snapshot.params["id"];
+     this.entityLogoUrl = this.entityApiService.getEntityLogoUrl(this.nodeId);
   }
 
+  openUploadLogoDialog(): void {
+    const dialogRef = this.dialog.open(EntityLogoUploadPopupComponent, 
+      {data: {nodeId: this.nodeId}});
+
+    dialogRef.afterClosed().subscribe(result => {
+      this.ngOnInit();
+    });
+  }
+
+  toggleSideLeftNavbar(){
+    this.leftPane.toggle();
+  }
+
+
 }
+
+

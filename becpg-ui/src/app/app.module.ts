@@ -6,6 +6,7 @@ import { CoreModule, TRANSLATION_PROVIDER, TranslateLoaderService } from '@alfre
 import { ContentModule } from '@alfresco/adf-content-services';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { ProcessModule } from '@alfresco/adf-process-services';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 
 import { appRoutes } from './app.routes';
@@ -31,10 +32,10 @@ import { EntityDatagridComponent } from './becpg/components/entity-datagrid/enti
 import { EntityLogoComponent } from './becpg/components/entity-logo/entity-logo.component';
 
 
-
 import { TableModule } from 'primeng/table';
-import {MatSidenavModule} from '@angular/material/sidenav';
+import { MatSidenavModule } from '@angular/material/sidenav';
 import { HttpClientModule } from '@angular/common/http';
+import { MatDialogModule } from '@angular/material';
 
 import { registerLocaleData } from '@angular/common';
 import localeFr from '@angular/common/locales/fr';
@@ -53,6 +54,8 @@ import localePl from '@angular/common/locales/pl';
 import localeFi from '@angular/common/locales/fi';
 import localeDa from '@angular/common/locales/da';
 import localeSv from '@angular/common/locales/sv';
+import { EntityLogoUploadPopupComponent } from './becpg/components/entity-logo/entity-logo-upload-popup/entity-logo-upload-popup.component';
+
 
 
 registerLocaleData(localeFr);
@@ -92,7 +95,9 @@ registerLocaleData(localeSv);
         }),
         TableModule,
         MatSidenavModule,
-        HttpClientModule
+        HttpClientModule,
+        FlexLayoutModule,
+        MatDialogModule
     ],
     declarations: [
         AppComponent,
@@ -108,9 +113,11 @@ registerLocaleData(localeSv);
         EntityViewToolbarComponent,
         EntityFormComponent,
         EntityDatagridComponent,
-        EntityLogoComponent
+        EntityLogoComponent,
+        EntityLogoUploadPopupComponent
         
     ],
+    entryComponents: [EntityLogoUploadPopupComponent],
     providers: [
         PreviewService,
         {
