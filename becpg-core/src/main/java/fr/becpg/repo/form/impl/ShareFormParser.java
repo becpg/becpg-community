@@ -13,6 +13,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.extensions.surf.util.I18NUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -151,7 +152,7 @@ public class ShareFormParser {
 
 			String label = elem.getAttribute("label");
 			if ((label == null) || label.isEmpty()) {
-				label = elem.getAttribute("label-id");
+				label = I18NUtil.getMessage(elem.getAttribute("label-id"));
 			}
 
 			if (hasTab && ((parentId == null) || parentId.isEmpty())) {
@@ -289,7 +290,7 @@ public class ShareFormParser {
 
 			String label = field.getAttribute("label");
 			if ((label == null) || label.isEmpty()) {
-				label = field.getAttribute("label-id");
+				label = I18NUtil.getMessage(field.getAttribute("label-id"));
 			}
 			if ((label != null) && !label.isEmpty()) {
 				jsonField.put("name", label);
@@ -372,7 +373,7 @@ public class ShareFormParser {
 					// type="int"/>
 
 				} else if (template.endsWith("autocomplete.ftl")) {
-					field.put("type", "text");
+					field.put("type", "autocomplete");
 					// <control-param name="ds" optional="false" type="string"
 					// default="becpg/autocomplete/..."/>
 					// <control-param name="parent" optional="true"
@@ -392,7 +393,10 @@ public class ShareFormParser {
 					// type="boolean" />
 
 				} else if (template.endsWith("autocomplete-association.ftl")) {
-					field.put("type", "text");
+					field.put("type", "autocomplete");
+					
+					
+					
 					// <control-param name="ds" optional="true" type="string" />
 					// <control-param name="style" optional="true"
 					// type="string"/>
@@ -402,15 +406,15 @@ public class ShareFormParser {
 					// <control-param name="parent" optional="true"
 					// type="string"/>
 				} else if (template.endsWith("mtlangue.ftl")) {
-					field.put("type", "text");
+					field.put("type", "mtlangue");
 				} else if (template.endsWith("selectcolorpicker.ftl")) {
-					field.put("type", "text");
+					field.put("type", "color");
 				} else if (template.endsWith("period.ftl")) {
 					field.put("type", "text");
 				} else if (template.endsWith("authority.ftl")) {
-					field.put("type", "text");
+					field.put("type", "person");
 				} else if (template.endsWith("association.ftl")) {
-					field.put("type", "text");
+					field.put("type", "autocomplete");
 					// <control-param name="compactMode" optional="true"
 					// type="boolean"/>
 					// <control-param name="displayMode" optional="true"
@@ -430,31 +434,39 @@ public class ShareFormParser {
 					// <control-param name="allowNavigationToContentChildren"/>
 					// <control-param name="editorAppearance"/>
 				} else if (template.endsWith("number-unit.ftl")) {
-					field.put("type", "integer");
+					field.put("type", "number-unit");
 					// <control-param name="unit">kg</control-param>
 				} else if (template.endsWith("nutrient-class.ftl")) {
-					field.put("type", "text");
+					field.put("type", "nutrient-score");
 				} else if (template.endsWith("numberrange.ftl")) {
-					field.put("type", "text");
+					field.put("type", "number-range");
 				} else if (template.endsWith("daterange.ftl")) {
-					field.put("type", "text");
+					field.put("type", "date-range");
 				} else if (template.endsWith("spel-editor.ftl")) {
-					field.put("type", "text");
+					field.put("type", "spel-editor");
 				}
 
+				
+				visitParam(elem,field);
 			}
 
-			// visitParameterXml(assoc.getChildRef(), control);
-
-			// NodeList params = elem.getElementsByTagName("control-param");
-			// for (int j = 0; j < params.getLength(); j++) {
-			// Element param = (Element) params.item(j);
-			// param.getAttribute("name"));
-			// param.getTextContent());
-			//
-			// }
 		}
 
+	}
+
+	private void visitParam(Element elem, JSONObject field) throws JSONException {
+		JSONObject jsonParams = new JSONObject();
+		 boolean hasParam = false;
+		 NodeList params = elem.getElementsByTagName("control-param");
+		 for (int j = 0; j < params.getLength(); j++) {
+			 hasParam = true;
+			 Element param = (Element) params.item(j);
+			 jsonParams.put( param.getAttribute("name"),  param.getTextContent());
+		}
+		 if(hasParam) {
+			 field.put("params",jsonParams);
+		 }
+		
 	}
 
 }

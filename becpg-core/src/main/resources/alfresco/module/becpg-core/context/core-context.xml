@@ -48,6 +48,7 @@
 				<value>alfresco/module/${pom.artifactId}/messages/groups</value>
 				<value>alfresco/module/${pom.artifactId}/messages/demo</value>
 				<value>alfresco/module/${pom.artifactId}/messages/patch</value>
+				<value>alfresco/module/${pom.artifactId}/messages/becpg-forms</value>
 			</list>
 		</property>
 	</bean>

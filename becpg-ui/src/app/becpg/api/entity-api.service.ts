@@ -21,7 +21,7 @@ export class EntityApiService {
   constructor(private apiService: AlfrescoApiService, private http: HttpClient) { }
 
   getEntity(id: string): Observable<Entity> {
-    return from(new Promise<Entity>((success) => {
+    return from(
     this.apiService.getInstance().webScript.executeWebScript('GET', 'becpg/entitylists/node/' + id.replace(':/', '')).then(
       (data) => {
         const entity = new Entity();
@@ -45,12 +45,10 @@ export class EntityApiService {
           }
         }
 
-        success(entity);
-
-      }, (error) => {
-        console.log('Error' + error);
-      });
-    }));
+      return entity;
+      }
+      )
+    );
   }
 
 

@@ -6,18 +6,26 @@
             "sort": "200",
             "cards": [
                 {
+                    "component": "entity-datagrid",
+                    "options": {},
+                    "cols": 2,
+                    "rows": 1
+                }
+            ]
+        },
+        "properties": {
+            "sort": "0",
+            "cards": [
+                {
                     "title": "Properties",
                     "component": "entity-form",
                     "options": {
                         "formId": "default"
                     },
-                    "cols": 2,
-                    "rows": 2
+                    "cols": 1,
+                    "rows": 4
                 }
             ]
-        },
-        "properties": {
-            "sort": "0"
         },
         "reports": {
             "sort": "10"
@@ -72,7 +80,24 @@
             "sort": "130"
         },
         "nutList": {
-            "sort": "140"
+            "sort": "140",
+            "cards": [
+                {
+                    "component": "entity-datagrid",
+                    "options": {},
+                    "cols": 1,
+                    "rows": 1
+                },
+                {
+                    "title": "NutriScore",
+                    "component": "entity-form",
+                    "options": {
+                        "formId": "nutList"
+                    },
+                    "cols": 2,
+                    "rows": 2
+                }
+            ]
         },
         "ingLabelingList": {
             "sort": "150"
