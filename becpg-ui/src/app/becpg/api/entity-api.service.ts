@@ -5,8 +5,8 @@ import { EntityReport } from '../model/EntityReport';
 import { EntityListColumn } from '../model/EntityListColumn';
 import { EntityListItem } from '../model/EntityListItem';
 import { EntityListPageResults } from '../model/EntityListPageResults';
-import { AlfrescoApiService } from '@alfresco/adf-core';
-import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
+import { AlfrescoApiService, AppConfigService } from '@alfresco/adf-core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, from } from 'rxjs';
 
 import beCPGModel from '../../../assets/becpg/datalist-columns.json';
@@ -16,9 +16,13 @@ import beCPGModel from '../../../assets/becpg/datalist-columns.json';
 })
 export class EntityApiService {
 
+  becpgHost: string;
 
-
-  constructor(private apiService: AlfrescoApiService, private http: HttpClient) { }
+  constructor(private apiService: AlfrescoApiService,
+              private appConfig: AppConfigService, 
+              private http: HttpClient) { 
+      this.becpgHost = this.appConfig.get<string>('ecmHost');
+    }
 
   getEntity(id: string): Observable<Entity> {
     return from(new Promise<Entity>((success) => {
@@ -54,6 +58,49 @@ export class EntityApiService {
   }
 
 
+  getEntityLogoUrl(nodeId: string): string {
+    return this.becpgHost + "/share/proxy/alfresco/api/node/workspace/SpacesStore/" +
+     nodeId + "/content/thumbnails/doclib?c=queue&ph=true";
+  }
+
+  uploadEntityLogo(logoToUpload: File, entityId: string): Observable<any> {
+    const nodeRef = 'workspace://SpacesStore/' + entityId;
+    const ticket = this.apiService.getInstance().getTicketEcm();
+    const entityLogoEndpoint = this.becpgHost + '/alfresco/service/becpg/entity/uploadlogo';
+    const formData: FormData = new FormData();
+    formData.append('filedata', logoToUpload, logoToUpload.name);
+    formData.append('updateNodeRef', nodeRef);
+    let headers = new HttpHeaders({
+      'Autorization': ticket
+    });
+
+    return this.http.post<any>(entityLogoEndpoint, formData, { 
+      headers: headers,
+      reportProgress: true,  
+      observe: 'events' 
+    });
+    /*
+    * Otherwise call native alfresco-js-api
+    return this.baseApi.apiClient.callApi('/alfresco/service/becpg/entity/uploadlogo', 'POST', {}, {}, { 
+      headers: headers,
+      reportProgress: true,  
+      observe: 'events' 
+    }, formData, formData, ['multipart/form-data'], ['application/json'], null, null, 'application/json');
+    */
+    
+    
+  }
+
+  updateEntityListState(id: string, state: string): Promise<any> {
+    return this.apiService.getInstance().webScript.executeWebScript('POST', 'becpg/entitylist/node/' + id.replace(':/', ''), {
+      state: state
+    }, null, null, null);
+  }
+ 
+  deleteEntityListView(id: string): Promise<any> {
+    return this.apiService.getInstance().webScript.executeWebScript('DELETE', 'slingshot/datalists/list/node/' + id.replace(':/', ''), {
+    }, null, null, null);
+  }
 
   getEntityListItems(entity: Entity, list: EntityList, columns: EntityListColumn[]): Promise<EntityListPageResults>{
     return new Promise((success) => {
