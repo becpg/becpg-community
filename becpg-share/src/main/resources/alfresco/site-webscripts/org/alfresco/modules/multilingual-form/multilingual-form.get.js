@@ -45,7 +45,9 @@ function main()
            				description = field.description;
            				if(field.locale == lang.key){
            					field.localeLabel = lang.label;
-           					field.control = {params: {editorAppearance: "default"}};
+           					field.control = {params: {editorAppearance: "custom"
+           						, editorParameters:"toolbar: \"bold italic underline\",menu: {},entity_encoding : \"raw\",forced_root_blocks : false,forced_root_block: false,force_p_newlines: false"}};
+
            					model.mlFields.push(field);
            					added = true;
            					break;
@@ -57,7 +59,9 @@ function main()
            			  	if(lang.key.indexOf("_")>0){
            			  	 country = lang.key.split("_")[1].toLowerCase();
            			  	}
-           				var toAdd  = { "localeLabel" : lang.label, "locale" : lang.key, "value": "", "description":description, "country":country, "control": {"params": {"editorAppearance": "default"}} };
+           				var toAdd  = { "localeLabel" : lang.label, "locale" : lang.key, "value": "", "description":description, "country":country, "control": { "params": 
+           					{"editorAppearance": "custom", "editorParameters":"toolbar: \"bold italic underline\",menu: {},entity_encoding : \"raw\",forced_root_blocks : false,forced_root_block: false,force_p_newlines: false"}
+           					}};
            				model.mlFields.push(toAdd);
            			}
            			
