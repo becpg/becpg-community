@@ -22,7 +22,6 @@ import { AppLayoutComponent } from './app-layout/app-layout.component';
 //beCPG
 
 import { EntityComponent } from './becpg/components/entity/entity.component';
-import { EntityListComponent } from './becpg/entity-list/entity-list.component';
 import { EntityHeaderComponent } from './becpg/components/entity-header/entity-header.component';
 import { EntityViewsComponent } from './becpg/components/entity-views/entity-views.component';
 import { EntityViewToolbarComponent } from './becpg/components/entity-view-toolbar/entity-view-toolbar.component';
@@ -115,7 +114,6 @@ registerLocaleData(localeSv);
         AppLayoutComponent,
         FileViewComponent,
         EntityComponent,
-        EntityListComponent,
         EntityHeaderComponent,
         EntityViewsComponent,
         EntityViewToolbarComponent,
@@ -131,7 +129,6 @@ registerLocaleData(localeSv);
         SpelEditorComponent,
         NutriscoreComponent,
         EntityLogoUploadPopupComponent
-        
     ],
     entryComponents: [
         AutocompleteComponent,
@@ -143,7 +140,6 @@ registerLocaleData(localeSv);
         SpelEditorComponent,
         NutriscoreComponent,
         EntityLogoUploadPopupComponent
-        
     ],
 
     providers: [
@@ -157,6 +153,7 @@ registerLocaleData(localeSv);
             }
         }
     ],
+
     bootstrap: [AppComponent]
 })
 export class AppModule {

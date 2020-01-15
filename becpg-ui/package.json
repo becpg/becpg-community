@@ -51,6 +51,8 @@
     "moment-es6": "1.0.0",
     "ng2-charts": "1.6.0",
     "pdfjs-dist": "2.0.489",
+    "primeflex": "^1.0.0",
+    "primeicons": "^2.0.0",
     "primeng": "^9.0.0-rc.2",
     "raphael": "2.2.7",
     "reflect-metadata": "0.1.10",

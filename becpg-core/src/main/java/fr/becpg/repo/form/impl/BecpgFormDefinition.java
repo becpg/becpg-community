@@ -114,7 +114,7 @@ public class BecpgFormDefinition {
 	private void loadData(JSONObject field, Form form) throws JSONException {
 		if(field.has("dataKey")) {
 			String key = field.getString("dataKey");
-			if(key!=null) {
+			if(key!=null && form.getFormData()!=null) {
 				FieldData data = form.getFormData().getFieldData(key);
 				
 				if (data != null) {

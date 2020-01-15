@@ -30,52 +30,33 @@
     <app-entity-view-toolbar [entity]="entity | async" [leftPane]="leftPane" [rightPane]="rightPane" ></app-entity-view-toolbar>
     <div class="grid-container" *ngIf="view" >
      
+     
+      <div class="p-grid" *ngFor="let card of view.cards" >
+          <div class="p-col-{{card.cols}}">
        
-      <mat-grid-list cols="2" rowHeight="400px">
-        <mat-grid-tile *ngFor="let card of view.cards" [colspan]="card.cols" [rowspan]="card.rows">
-          <mat-card class="dashboard-card">
-            <mat-card-header>
-              <mat-card-title>
-                <div *ngIf="card.title">
-                {{card.title}}
-               </div>
-                <button mat-icon-button class="more-button" [matMenuTriggerFor]="menu" aria-label="Toggle menu">
-                  <mat-icon>more_vert</mat-icon>
-                </button>
-                <mat-menu #menu="matMenu" xPosition="before">
-                  <button mat-menu-item>Expand</button>
-                  <button mat-menu-item>Remove</button>
-                </mat-menu>
-              </mat-card-title>
-            </mat-card-header>
-            <mat-card-content class="dashboard-card-content">
+                  <div *ngIf="card.component=='entity-datagrid'">
+                    <app-entity-datagrid [entity]="entity | async" [list]="view.list"  [itemType]="card.options.itemType"> </app-entity-datagrid>
+                  </div>
 
-              <div *ngIf="card.component=='entity-datagrid'">
-                <app-entity-datagrid [entity]="entity" list="view.list"></app-entity-datagrid>
-              </div>
+                  <div *ngIf="card.component=='entity-form'">
+                    <app-entity-form [node]="entity | async"  [formId]="card.options.formId"  ></app-entity-form>
+                  </div>
+                  
+                  <div *ngIf="card.component=='document'">
+                    TODO
+                  </div>
 
-              
-              <div *ngIf="card.component=='entity-form'">
-                <app-entity-form [node]="entity | async"  [formId]="card.options.formId"  ></app-entity-form>
-              </div>
-              
-              <div *ngIf="card.component=='document'">
-               TODO
+                  <div *ngIf="card.component=='report'">
+                    <adf-viewer 
+                      [showViewer]="true" 
+                      [overlayMode]="true" 
+                      [nodeId]="nodeId">
+                  </adf-viewer>
+                </div>
 
-              </div>
+          </div>
+      </div>
 
-              <div *ngIf="card.component=='repport'">
-              <adf-viewer 
-                [showViewer]="true" 
-                [overlayMode]="true" 
-                [nodeId]="nodeId">
-            </adf-viewer>
-            </div>
-              
-            </mat-card-content>
-          </mat-card>
-        </mat-grid-tile>
-      </mat-grid-list>
     </div>
   
   </section>
