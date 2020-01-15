@@ -1,14 +1,16 @@
+
 <ng-container *ngIf="pageResults | async as data">
   <p-table [columns]="data.columns" [value]="data.items" [resizableColumns]="true" [scrollable]="true"
-      selectionMode="multiple" [(selection)]="selectItems" [loading]="loading">
+      selectionMode="multiple" [(selection)]="selectItems" [loading]="loading"  
+      [paginator]="true" [rows]="10" [pageLinks]="3" [rowsPerPageOptions]="[5,10,20]">
       <ng-template pTemplate="header" let-columns>
           <tr>
               <th style="width: 2.25em">
                   <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
               </th>
-              <th *ngFor="let col of columns" [pSortableColumn]="col.fieldName">
+              <th *ngFor="let col of columns" [pSortableColumn]="col.name">
                   {{col.label}}
-                  <p-sortIcon [field]="col.field"></p-sortIcon>
+                  <p-sortIcon [field]="col.name"></p-sortIcon>
               </th>
           </tr>
       </ng-template>
@@ -17,13 +19,13 @@
               <td>
                   <p-tableCheckbox [value]="item"></p-tableCheckbox>
               </td>
-              <td *ngFor="let col of columns" [pEditableColumn]="item.itemData[col.fieldName]" >
+              <td *ngFor="let col of columns" [pEditableColumn]="item.itemData[col.name].value" >
                   <p-cellEditor>
                       <ng-template pTemplate="input">
-                          <input type="text" [(ngModel)]="item.itemData[col.fieldName].value" required>
+                          <input type="text" [(ngModel)]="item.itemData[col.name].value" required>
                       </ng-template>
                       <ng-template pTemplate="output">
-                          {{item.itemData[col.fieldName].displayValue}}
+                          {{item.itemData[col.name].displayValue}} 
                       </ng-template>
                   </p-cellEditor>
               </td>

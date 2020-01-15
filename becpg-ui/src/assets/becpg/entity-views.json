@@ -8,8 +8,7 @@
                 {
                     "component": "entity-datagrid",
                     "options": {},
-                    "cols": 2,
-                    "rows": 1
+                    "cols": 10
                 }
             ]
         },
@@ -22,8 +21,7 @@
                     "options": {
                         "formId": "default"
                     },
-                    "cols": 1,
-                    "rows": 4
+                    "cols": 6
                 }
             ]
         },
@@ -39,22 +37,19 @@
                 {
                     "component": "entity-datagrid",
                     "options": {},
-                    "cols": 1,
-                    "rows": 1
+                    "cols": 12
                 },
                 {
                     "component": "entity-datagrid",
                     "options": {
                         "itemType": "bcpg:dynamicCharactList"
                     },
-                    "cols": 1,
-                    "rows": 2
+                    "cols": 6
                 },
                 {
-                    "component": "entity-custom-datagrid",
+                    "component": "entity-datagrid",
                     "options": {},
-                    "cols": 2,
-                    "rows": 2
+                    "cols": 6
                 }
             ]
         },
@@ -85,8 +80,7 @@
                 {
                     "component": "entity-datagrid",
                     "options": {},
-                    "cols": 2,
-                    "rows": 1
+                    "cols": 6
                 },
                 {
                     "title": "NutriScore",
@@ -94,8 +88,7 @@
                     "options": {
                         "formId": "nutList"
                     },
-                    "cols": 2,
-                    "rows": 1
+                    "cols": 4
                 }
             ]
         },

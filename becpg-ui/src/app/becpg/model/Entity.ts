@@ -72,4 +72,5 @@ export class Entity extends Node {
 
   datalists?: EntityList[];
   isEntityTemplate: boolean;
+  siteId?: string;
 }

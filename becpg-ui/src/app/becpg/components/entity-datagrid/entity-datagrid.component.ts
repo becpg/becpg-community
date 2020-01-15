@@ -1,20 +1,24 @@
-import { Component, OnInit, Input  } from '@angular/core';
+import { Component, OnInit, Input, OnChanges } from '@angular/core';
 import { LazyLoadEvent } from 'primeng';
-import { EntityApiService } from '../../api/entity-api.service';
+import { EntityDatagridService } from '../../api/entity-datagrid.service';
 import { Entity } from '../../model/Entity';
 import { EntityList } from '../../model/EntityList';
 import { EntityListColumn } from '../../model/EntityListColumn';
 import { EntityListItem } from '../../model/EntityListItem';
 import { EntityListPageResults } from '../../model/EntityListPageResults';
+import { Observable, from } from 'rxjs';
+import { StringifyOptions } from 'querystring';
 
 @Component({
   selector: 'app-entity-datagrid',
   templateUrl: './entity-datagrid.component.html',
   styleUrls: ['./entity-datagrid.component.scss']
 })
-export class EntityDatagridComponent implements OnInit {
+export class EntityDatagridComponent implements OnChanges, OnInit {
 
-  pageResults: Promise<EntityListPageResults>;
+  pageResults: Observable<EntityListPageResults>;
+
+  columns: Observable<EntityListColumn[]>;
 
   selectItems: EntityListItem[];
 
@@ -22,22 +26,42 @@ export class EntityDatagridComponent implements OnInit {
 
   @Input() entity: Entity;
 
+  @Input() formId: string;
+
+  @Input() itemType: string;
+
   loading: boolean;
 
-  constructor(private entityApiService: EntityApiService) { }
+  constructor(private entityDatagridService: EntityDatagridService) { }
 
   ngOnInit() {
 
-    this.loading = true;
+    this.loadColumns();
 
-    this.entityApiService.getVisibleColumns(this.list).then(columns => {
-      this.loading = false;
-      this.pageResults = this.entityApiService.getEntityListItems(this.entity, this.list, columns);
+  }
 
+  ngOnChanges() {
+    this.loadColumns();
+  }
+
+
+  loadColumns() {
+
+    if (this.entity != null && this.list != null) {
+      this.loading = true;
+
+      if (this.itemType == null) {
+        this.itemType = this.list.nodeType;
+      }
+
+      this.columns = this.entityDatagridService.getVisibleColumns(this.itemType, this.formId);
+
+      this.columns.subscribe(columns => {
+        this.pageResults = this.entityDatagridService.getEntityListItems(this.entity, this.list, columns, this.itemType);
+      });
+
+      this.pageResults.subscribe(data => { this.loading = false; });
     }
-
-    );
-    
   }
 
   onSort() {

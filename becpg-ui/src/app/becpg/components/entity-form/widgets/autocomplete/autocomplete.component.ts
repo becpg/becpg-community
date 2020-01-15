@@ -47,8 +47,7 @@ export class AutocompleteComponent extends WidgetComponent implements OnInit {
   }
 
   private getResults(query: string): Observable<any[]> {
-    console.log(this.generateRequest(query));
-
+   
     return from(this.apiService.getInstance()
       .webScript.executeWebScript('GET', this.generateRequest(query), null, null, null, null)
       .then(ret => {
