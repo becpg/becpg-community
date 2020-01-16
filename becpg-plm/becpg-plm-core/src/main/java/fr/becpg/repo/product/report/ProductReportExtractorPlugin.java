@@ -1569,6 +1569,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			if (r.getReqType() != null) {
 				reqCtrlListElt.addAttribute(PLMModel.PROP_RCL_REQ_TYPE.getLocalName(), r.getReqType().toString());
 			}
+			if (r.getReqDataType() != null) {
+				reqCtrlListElt.addAttribute(PLMModel.PROP_RCL_REQ_DATA_TYPE.getLocalName(), r.getReqDataType().toString());
+			}
 		}
 	}
 
