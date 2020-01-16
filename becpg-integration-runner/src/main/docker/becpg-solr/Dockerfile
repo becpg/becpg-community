@@ -27,6 +27,7 @@ RUN set -x \
 
     
 COPY rerank/solrcore.properties  $DIST_DIR/solrhome/templates/rerank/conf/
+COPY shared.properties $DIST_DIR/solrhome/conf/
     
 WORKDIR $DIST_DIR
 VOLUME $DIST_DIR/data
