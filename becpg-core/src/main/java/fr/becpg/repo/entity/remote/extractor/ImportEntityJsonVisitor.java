@@ -175,6 +175,14 @@ public class ImportEntityJsonVisitor {
 					.getChildRef();
 
 		} else {
+			for (Entry<QName, Serializable> prop : properties.entrySet()) {
+				if (prop.getValue() == null) {
+					nodeService.removeProperty(entityNodeRef, prop.getKey());
+				} else {
+					nodeService.setProperty(entityNodeRef, prop.getKey(), prop.getValue());
+				}
+			}
+
 			nodeService.setProperties(entityNodeRef, properties);
 		}
 
@@ -344,7 +352,6 @@ public class ImportEntityJsonVisitor {
 
 		return assocs;
 	}
-
 
 	@SuppressWarnings("unchecked")
 	private Map<QName, Serializable> jsonToProperties(JSONObject entity) throws JSONException {
