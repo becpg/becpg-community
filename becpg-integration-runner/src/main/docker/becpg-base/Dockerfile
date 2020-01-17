@@ -63,7 +63,7 @@ RUN set -x && \
 ## JDBC - MYSQL
 RUN set -x && \
     curl --silent --location \
-      http://central.maven.org/maven2/mysql/mysql-connector-java/${MYSQL_CONNECTOR}/mysql-connector-java-${MYSQL_CONNECTOR}.jar \
+      https://repo1.maven.org/maven2/mysql/mysql-connector-java/${MYSQL_CONNECTOR}/mysql-connector-java-${MYSQL_CONNECTOR}.jar \
 	-o lib/mysql-connector-java-${MYSQL_CONNECTOR}.jar
 
 
