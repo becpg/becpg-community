@@ -69,12 +69,3 @@ $>java -jar  $ALF/bin/alfresco-mmt.jar install ./becpg-project/becpg-project-sha
 $>java -jar  $ALF/bin/alfresco-mmt.jar install ./becpg-plm/becpg-plm-share/target/becpg-plm-share-$BECPG_VERSION.amp $SERVER/webapps/share.war -force
 
 
-4 - Install becpg-olap
-----------------------
-
-Install instructions Only EE for now
-
-5 - Install becpg-report
-------------------------
-
-Copy ./becpg-report/target/becpg-report.war under tomcat webapps folder

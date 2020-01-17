@@ -30,6 +30,7 @@ import org.springframework.util.StopWatch;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.helper.AttributeExtractorService;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.report.search.SearchReportRenderer;
 import fr.becpg.repo.report.search.actions.ExcelSearchAction;
@@ -40,7 +41,7 @@ import fr.becpg.report.client.ReportFormat;
 public class ExcelReportSearchRenderer implements SearchReportRenderer {
 
 	private final static Log logger = LogFactory.getLog(ExcelReportSearchRenderer.class);
-
+	
 	@Autowired
 	private ActionService actionService;
 
@@ -236,7 +237,6 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 	}
 
 	private List<AttributeExtractorStructure> extractListStruct(QName itemType, Row headerRow) {
-
 		List<String> metadataFields = new LinkedList<>();
 		String currentNested = "";
 		for (int i = 1; i < headerRow.getLastCellNum(); i++) {
@@ -253,7 +253,15 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 									metadataFields.add(currentNested);
 									currentNested = "";
 								}
-								currentNested = cellValue.replace("_", "|");
+								
+								if (MLTextHelper.getSupportedLocalesList() != null && MLTextHelper.getSupportedLocalesList().contains(cellValue.substring(cellValue.indexOf("_")+1))){
+									currentNested = cellValue.replaceFirst("_", "|");
+									metadataFields.add(currentNested);
+									currentNested = "";
+									
+								} else {
+									currentNested = cellValue.replace("_", "|");
+								}
 							}
 
 						} else {
