@@ -170,6 +170,17 @@ public class MLTextHelper {
 
 		return ret;
 	}
+	
+	public static List<String> getSupportedLocalesList() {
+		
+		List<String> ret = new ArrayList<String>();
+		if (supportedLocales != null) {
+			ret = Arrays.asList(supportedLocales.split(","));
+		}
+
+		return ret;
+	}
+
 
 
 	public static Locale parseLocale(String key) {
