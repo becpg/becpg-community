@@ -1,5 +1,7 @@
 package fr.becpg.repo.helper;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -42,7 +44,7 @@ public class MLTextHelper {
 	public static boolean shouldExtractMLText() {
 		return shouldExtractMLText;
 	}
-
+	
 	/**
 	 * Try to find the best match for locale or try with default server local
 	 * 
@@ -158,6 +160,17 @@ public class MLTextHelper {
 
 		return ret;
 	}
+	
+	public static List<String> getSupportedLocalesList() {
+		
+		List<String> ret = new ArrayList<String>();
+		if (supportedLocales != null) {
+			ret = Arrays.asList(supportedLocales.split(","));
+		}
+
+		return ret;
+	}
+
 
 	public static Locale parseLocale(String key) {
 		if (key.contains("_")) {
