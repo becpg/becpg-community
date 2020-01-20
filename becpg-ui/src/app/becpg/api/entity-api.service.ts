@@ -19,8 +19,8 @@ export class EntityApiService {
   becpgHost: string;
 
   constructor(private apiService: AlfrescoApiService,
-              private appConfig: AppConfigService, 
-              private http: HttpClient) { 
+              private appConfig: AppConfigService,
+              private http: HttpClient) {
       this.becpgHost = this.appConfig.get<string>('ecmHost');
     }
 
@@ -57,8 +57,9 @@ export class EntityApiService {
 
 
   getEntityLogoUrl(nodeId: string): string {
+    let timeStamp = (new Date()).getTime();
     return this.becpgHost + "/alfresco/service/api/node/workspace/SpacesStore/" +
-     nodeId + "/content/thumbnails/doclib?c=queue&ph=true";
+     nodeId + "/content/thumbnails/doclib?c=queue&ph=true&&lastModified="+timeStamp;
   }
 
   uploadEntityLogo(logoToUpload: File, entityId: string): Observable<any> {
@@ -72,35 +73,24 @@ export class EntityApiService {
       'Autorization': ticket
     });
 
-    return this.http.post<any>(entityLogoEndpoint, formData, { 
+    return this.http.post<any>(entityLogoEndpoint, formData, {
       headers: headers,
-      reportProgress: true,  
-      observe: 'events' 
+      reportProgress: true,
+      observe: 'events'
     });
     /*
     * Otherwise call native alfresco-js-api
-    return this.baseApi.apiClient.callApi('/alfresco/service/becpg/entity/uploadlogo', 'POST', {}, {}, { 
+    return this.baseApi.apiClient.callApi('/alfresco/service/becpg/entity/uploadlogo', 'POST', {}, {}, {
       headers: headers,
-      reportProgress: true,  
-      observe: 'events' 
+      reportProgress: true,
+      observe: 'events'
     }, formData, formData, ['multipart/form-data'], ['application/json'], null, null, 'application/json');
     */
-    
-    
+
+
   }
 
-  updateEntityListState(id: string, state: string): Promise<any> {
-    return this.apiService.getInstance().webScript.executeWebScript('POST', 'becpg/entitylist/node/' + id.replace(':/', ''), {
-      state: state
-    }, null, null, null);
-  }
- 
-  deleteEntityListView(id: string): Promise<any> {
-    return this.apiService.getInstance().webScript.executeWebScript('DELETE', 'slingshot/datalists/list/node/' + id.replace(':/', ''), {
-    }, null, null, null);
-  }
 
-  
 
   getEntityReports(entity: Entity): EntityReport[] {
     const reports: EntityReport[] = [];
@@ -131,7 +121,7 @@ export class EntityApiService {
 
   }
 
-  
+
 
 
 }

@@ -16,14 +16,14 @@ export class EntityViewsComponent implements OnChanges {
   @Input()
   entity: Entity;
 
-  @Input() 
+  @Input()
   public leftPane: MatSidenav;
 
   entityViews: EntityView[];
 
   editMode = true;
 
-  constructor(private entityViewService: EntityViewService, 
+  constructor(private entityViewService: EntityViewService,
               private entityApiService: EntityApiService,
               private dialog: MatDialog) { }
 
@@ -32,7 +32,7 @@ export class EntityViewsComponent implements OnChanges {
       if (this.entity.isEntityTemplate) {
         this.editMode = true;
       }
-      
+
 
       this.entityViews = this.entityViewService.getViews(this.entity);
     }
@@ -54,15 +54,15 @@ export class EntityViewsComponent implements OnChanges {
       },
       minWidth: '250px'
   });
-  
+
   dialogRef.afterClosed().subscribe((result) => {
       if (result === true) {
-        this.entityApiService.deleteEntityListView(view.list.id)
+        this.entityViewService.deleteEntityListView(view.list.id)
         .then(
           (success) => {
-            // TODO update the entity 
+            // TODO update the entity
             console.log('Success: ' + JSON.stringify(success));
-          }, 
+          },
           (error) => {
             console.log('Error: ' + JSON.stringify(error));
           });
@@ -76,7 +76,7 @@ export class EntityViewsComponent implements OnChanges {
 
   changeViewListState(view: EntityView): void{
     const state = view.isValid ? "Valid" : "ToValidate";
-    this.entityApiService.updateEntityListState(view.list.id, state)
+    this.entityViewService.updateEntityListState(view.list.id, state)
     .then(
       (success) => {
          console.log('Success' +  JSON.stringify(success));

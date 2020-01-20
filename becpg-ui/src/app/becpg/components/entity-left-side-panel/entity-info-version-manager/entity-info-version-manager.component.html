@@ -1,0 +1,43 @@
+<mat-card style="text-align: left;">
+    <mat-card-header>
+      <div mat-card-avatar [ngStyle]="{background: 'url(' + entityLogoUrl + ')', 'background-size': 'cover', 'width': '80px', 'height': '80px'}"></div>
+      <mat-card-subtitle *ngIf="entity.modifiedByUser">Updated by  {{ entity.modifiedByUser.displayName }}</mat-card-subtitle>
+      <mat-card-subtitle *ngIf="entity.modifiedAt">On {{ entity.modifiedAt | date }}</mat-card-subtitle>
+      <mat-card-subtitle>
+        <button
+          mat-menu-item
+          #favorites="adfFavorite"
+          [adf-node-favorite]="selectedEntities">
+          <mat-icon color="primary" *ngIf="favorites.hasFavorites()">star</mat-icon>
+          <mat-icon *ngIf="!favorites.hasFavorites()">star_border</mat-icon>
+          <span>{{ 'APP.ACTIONS.FAVORITE' | translate }}</span>
+          </button>
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+        <mat-grid-list cols="4" algin="start" rowHeight="100px" >
+          <mat-grid-tile colspan="2" rowspan="1" style="algin:left">
+            <div fxFlex fxLayoutAlign="start center">
+              <button mat-raised-button
+                color="primary"
+                (click)="onShowHistory()"> Show History
+              </button>
+            </div>
+          </mat-grid-tile>
+          <mat-grid-tile colspan="2" rowspan="1">
+              <mat-form-field>
+              <mat-select [(value)]="selected" placeholder="Version">
+                  <mat-option *ngFor="let version of versions" value="version.label">{{ version.label }}</mat-option>
+              </mat-select>
+              </mat-form-field>
+          </mat-grid-tile>
+        </mat-grid-list>
+      </mat-card-content>
+
+
+
+
+  </mat-card>
+  <mat-divider></mat-divider>
+

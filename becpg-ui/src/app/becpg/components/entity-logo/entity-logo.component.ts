@@ -15,11 +15,11 @@ export class EntityLogoComponent implements OnInit {
 
   entityLogoUrl: string;
   nodeId: string;
-  @Input() 
+  @Input()
   public leftPane: MatSidenav;
-  
+
   constructor(private route: ActivatedRoute,
-              private entityApiService: EntityApiService, 
+              private entityApiService: EntityApiService,
               private dialog: MatDialog) {}
 
   ngOnInit() {
@@ -28,11 +28,15 @@ export class EntityLogoComponent implements OnInit {
   }
 
   openUploadLogoDialog(): void {
-    const dialogRef = this.dialog.open(EntityLogoUploadPopupComponent, 
+    const dialogRef = this.dialog.open(EntityLogoUploadPopupComponent,
       {data: {nodeId: this.nodeId}});
 
     dialogRef.afterClosed().subscribe(result => {
-      this.ngOnInit();
+      setTimeout(
+        () => {
+        this.ngOnInit();
+        }, 2000);
+
     });
   }
 

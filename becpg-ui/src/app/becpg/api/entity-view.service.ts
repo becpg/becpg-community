@@ -3,6 +3,7 @@ import { Entity } from '../model/Entity';
 import { EntityList } from '../model/EntityList';
 import { EntityView } from '../model/EntityView';
 import entityViewsModel from '../../../assets/becpg/entity-views.json';
+import { AlfrescoApiService } from '@alfresco/adf-core';
 
 
 @Injectable({
@@ -10,7 +11,7 @@ import entityViewsModel from '../../../assets/becpg/entity-views.json';
 })
 export class EntityViewService {
 
-  constructor() { }
+  constructor(private apiService: AlfrescoApiService) { }
 
   hiddenViews: string[] = ['activityList'];
 
@@ -60,6 +61,17 @@ export class EntityViewService {
 
 
     return view;
+  }
+
+  updateEntityListState(id: string, state: string): Promise<any> {
+    return this.apiService.getInstance().webScript.executeWebScript('POST', 'becpg/entitylist/node/' + id.replace(':/', ''), {
+      state: state
+    }, null, null, null);
+  }
+
+  deleteEntityListView(id: string): Promise<any> {
+    return this.apiService.getInstance().webScript.executeWebScript('DELETE', 'slingshot/datalists/list/node/' + id.replace(':/', ''), {
+    }, null, null, null);
   }
 
 
