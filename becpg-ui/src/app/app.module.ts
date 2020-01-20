@@ -1,9 +1,11 @@
+import { EntityVersionHistoryPopupComponent } from './becpg/components/entity-left-side-panel/entity-info-version-manager/entity-version-history/entity-version-history-popup.component';
+import { EntityInfoVersionManagerComponent } from './becpg/components/entity-left-side-panel/entity-info-version-manager/entity-info-version-manager.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { CoreModule, TRANSLATION_PROVIDER, TranslateLoaderService } from '@alfresco/adf-core';
-import { ContentModule } from '@alfresco/adf-content-services';
+import { CoreModule, TRANSLATION_PROVIDER, TranslateLoaderService, DialogModule } from '@alfresco/adf-core';
+import { ContentModule, VersionManagerModule } from '@alfresco/adf-content-services';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { ProcessModule } from '@alfresco/adf-process-services';
 
@@ -34,7 +36,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { TableModule } from 'primeng/table';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import { HttpClientModule } from '@angular/common/http';
-import { MatDialogModule } from '@angular/material';
+import { MatDialogModule, MatSelectModule, MatCardModule, MatGridListModule, MatButtonModule, MatIconModule } from '@angular/material';
 
 import { registerLocaleData } from '@angular/common';
 import localeFr from '@angular/common/locales/fr';
@@ -62,6 +64,7 @@ import { DateRangeComponent } from './becpg/components/entity-form/widgets/date-
 import { SpelEditorComponent } from './becpg/components/entity-form/widgets/spel-editor/spel-editor.component';
 import { NutriscoreComponent } from './becpg/components/entity-form/widgets/nutriscore/nutriscore.component';
 import { EntityLogoUploadPopupComponent } from './becpg/components/entity-logo/entity-logo-upload-popup/entity-logo-upload-popup.component';
+import { NodeRefToIdPipe } from './becpg/pipes/node-ref-to-id.pipe';
 
 
 
@@ -104,7 +107,14 @@ registerLocaleData(localeSv);
         MatSidenavModule,
         HttpClientModule,
         FlexLayoutModule,
-        MatDialogModule
+        MatDialogModule,
+        MatSelectModule,
+        MatCardModule,
+        MatGridListModule,
+        MatButtonModule,
+        MatIconModule,
+        VersionManagerModule,
+        DialogModule
     ],
     declarations: [
         AppComponent,
@@ -128,7 +138,10 @@ registerLocaleData(localeSv);
         DateRangeComponent,
         SpelEditorComponent,
         NutriscoreComponent,
-        EntityLogoUploadPopupComponent
+        EntityLogoUploadPopupComponent,
+        EntityInfoVersionManagerComponent,
+        EntityVersionHistoryPopupComponent,
+        NodeRefToIdPipe
     ],
     entryComponents: [
         AutocompleteComponent,
@@ -139,7 +152,8 @@ registerLocaleData(localeSv);
         DateRangeComponent,
         SpelEditorComponent,
         NutriscoreComponent,
-        EntityLogoUploadPopupComponent
+        EntityLogoUploadPopupComponent,
+        EntityVersionHistoryPopupComponent
     ],
 
     providers: [

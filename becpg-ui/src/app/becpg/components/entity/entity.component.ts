@@ -31,13 +31,18 @@ export class EntityComponent implements OnInit {
 
   view: EntityView;
 
-  constructor(private route: ActivatedRoute, private entityViewService: EntityViewService, private notificationService: NotificationService, private preview: PreviewService, private breakpointObserver: BreakpointObserver, private entityApiService: EntityApiService) { }
+  constructor(private route: ActivatedRoute,
+    private entityViewService: EntityViewService,
+    private notificationService: NotificationService,
+    private preview: PreviewService,
+    private breakpointObserver: BreakpointObserver,
+    private entityApiService: EntityApiService) { }
 
   ngOnInit() {
 
 
     const id = this.route.snapshot.paramMap.get('id');
-   
+
    this.entity = this.route.paramMap.pipe(
     switchMap(params => {
       return this.entityApiService.getEntity('workspace://SpacesStore/' + params.get('id'));

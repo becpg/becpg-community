@@ -1,0 +1,57 @@
+<h1 mat-dialog-title>{{ 'ENTITY_VERSION_HISTORY.DIALOG.TITLE' | translate }}</h1>
+
+<!-- <div mat-dialog-content>
+    <adf-version-manager hidden [node]="entity"></adf-version-manager>
+    <adf-version-list [node]="entity"></adf-version-list>
+</div> -->
+<mat-dialog-content>
+  <mat-list class="adf-version-list" >
+          <mat-list-item *ngFor="let version of versions">
+              <img matListAvatar [src]="entityLogoUrl">
+              <h4 mat-line class="adf-version-list-item-name">{{version.name}}</h4>
+              <p mat-line>
+                  <span class="adf-version-list-item-version">{{version.label}}</span> -
+                  <span class="adf-version-list-item-date">{{version.createdDate | date | adfTimeAgo}}</span>
+              </p>
+              <p mat-line class="adf-version-list-item-comment">{{version.description}}</p>
+
+              <div>
+                  <mat-menu #versionMenu="matMenu">
+                        <button
+                            mat-menu-item
+                            routerLink="/entity/{{version.nodeRef | nodeRefToId}}">
+                            <button mat-icon-button>
+                              <mat-icon>open_in_new</mat-icon>
+                              {{ 'Open' | translate }}
+                            </button>
+                        </button>
+                      <button mat-menu-item>
+                          <button mat-icon-button>
+                            <mat-icon>compare_arrows</mat-icon>
+                            {{ 'Compare' | translate }}
+                          </button>
+                      </button>
+                      <button mat-menu-item
+                              [adfNodeDownload]="node">
+                              <button mat-icon-button>
+                                  <mat-icon>get_app</mat-icon>
+                                </button>
+                          {{ 'ADF_VERSION_LIST.ACTIONS.DOWNLOAD' | translate }}
+                      </button>
+
+                  </mat-menu>
+                  <button mat-icon-button [matMenuTriggerFor]="versionMenu">
+                      <mat-icon>more_vert</mat-icon>
+                  </button>
+              </div>
+          </mat-list-item>
+      </mat-list>
+      <ng-template #loading_template>
+          <mat-progress-bar data-automation-id="version-history-loading-bar" mode="indeterminate"
+                            color="accent"></mat-progress-bar>
+      </ng-template>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-raised-button (click)="onClickCancel()">{{ 'VERSION.DIALOG.CLOSE' | translate}}</button>
+</mat-dialog-actions>
