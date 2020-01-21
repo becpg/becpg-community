@@ -63,6 +63,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 	private static final String CRITERIA_ING = "assoc_bcpg_ingListIng_added";
 	private static final String CRITERIA_ING_AND = "assoc_bcpg_advIlIngAnd_added";
 	private static final String CRITERIA_ING_NOT = "assoc_bcpg_advIlIngNot_added";
+	private static final String CRITERIA_ING_RANGE = "prop_bcpg_ingListQtyPerc-range";
 
 	private static final String CRITERIA_GEO_ORIGIN = "assoc_bcpg_ingListGeoOrigin_added";
 	private static final String CRITERIA_BIO_ORIGIN = "assoc_bcpg_ingListBioOrigin_added";
@@ -120,6 +121,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		keysToExclude.add(CRITERIA_ING);
 		keysToExclude.add(CRITERIA_ING_AND);
 		keysToExclude.add(CRITERIA_ING_NOT);
+		keysToExclude.add(CRITERIA_ING_RANGE);
 
 		keysToExclude.add(CRITERIA_GEO_ORIGIN);
 		keysToExclude.add(CRITERIA_BIO_ORIGIN);
@@ -195,6 +197,9 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 				nodes = getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_COMPO_LIST_PRODUCT, PLMModel.ASSOC_COMPOLIST_PRODUCT, null, null);
 				nodes = getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_PROCESS_LIST_RESSOURCE, MPMModel.ASSOC_PL_RESOURCE, null, null);
 
+				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_ING_AND, PLMModel.ASSOC_INGLIST_ING, PLMModel.PROP_INGLIST_QTY_PERC,
+						criteria.get(CRITERIA_ING_RANGE));
+				
 				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_ALLERGEN, PLMModel.ASSOC_ALLERGENLIST_ALLERGEN,
 						PLMModel.PROP_ALLERGENLIST_VOLUNTARY, "true");
 				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_ALLERGEN_VOL_AND, PLMModel.ASSOC_ALLERGENLIST_ALLERGEN,
