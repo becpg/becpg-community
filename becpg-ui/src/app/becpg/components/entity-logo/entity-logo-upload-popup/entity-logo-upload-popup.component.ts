@@ -32,7 +32,7 @@ export class EntityLogoUploadPopupComponent {
       (events) => {
         if(events.type == HttpEventType.UploadProgress){
           this.loadingProgress =  Math.round(events.loaded / events.total) * 100;
-        }else if (events.type == HttpEventType.Response){
+        } else if (events.type == HttpEventType.Response){
           this.loadingProgress = 100;
           this.onClickCancel();
         }

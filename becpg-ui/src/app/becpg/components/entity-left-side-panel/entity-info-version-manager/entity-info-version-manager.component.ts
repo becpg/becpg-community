@@ -33,7 +33,7 @@ export class EntityInfoVersionManagerComponent implements OnInit{
   ngOnInit(): void{
 
     this.entityLogoUrl =  this.entityApiService.getEntityLogoUrl(this.entity.id);
-    const node: MinimalNodeEntity = { entry: this.entity };
+    const node: MinimalNodeEntity = { entry: null };
     this.selectedEntities = [node];
 
     this.entityVersionService.getEntityVersions(this.entity.id)

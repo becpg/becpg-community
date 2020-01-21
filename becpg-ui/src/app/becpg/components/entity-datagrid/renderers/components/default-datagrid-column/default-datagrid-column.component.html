@@ -1,0 +1,26 @@
+<p-cellEditor>
+  <ng-template pTemplate="input"   >
+
+ <!--  <container-element [ngSwitch]="column.dataType == 'date'">
+      <some-element *ngSwitchCase="match_expression_1">...</some-element>
+      <some-element *ngSwitchCase="match_expression_2">...</some-element>
+      <some-other-element *ngSwitchCase="match_expression_3">...</some-other-element>
+      <some-element *ngSwitchDefault>...</some-element>
+    </container-element> -->
+    <div [ngSwitch]="column.dataType">
+      <input type="text"  *ngSwitchCase="'date'" [(ngModel)]="item.itemData[column.name].value" required>
+      <input type="text"  *ngSwitchCase="'datetime'" [(ngModel)]="item.itemData[column.name].value" required>
+      <input type="text"  *ngSwitchCase="'boolean'" [(ngModel)]="item.itemData[column.name].value" required>
+      <input type="text"  *ngSwitchCase="'float'" [(ngModel)]="item.itemData[column.name].value" required>
+      <input type="text"  *ngSwitchCase="'int'" [(ngModel)]="item.itemData[column.name].value" required>
+      <input type="text"  *ngSwitchCase="'long'" [(ngModel)]="item.itemData[column.name].value" required>
+      <input type="text"  *ngSwitchCase="'double'" [(ngModel)]="item.itemData[column.name].value" required>
+      <input type="text"  *ngSwitchCase="'text'" [(ngModel)]="item.itemData[column.name].value" required>
+      <input type="text"  *ngSwitchCase="'mltext'" [(ngModel)]="item.itemData[column.name].value" required>
+      <input type="text"  *ngSwitchDefault [(ngModel)]="item.itemData[column.name].value" required>
+    </div>
+  </ng-template>
+  <ng-template pTemplate="output">
+      {{item.itemData[column.name].displayValue}}  {{column.dataType}}
+  </ng-template>
+</p-cellEditor>

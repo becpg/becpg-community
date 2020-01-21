@@ -1,6 +1,4 @@
-import { PathInfo } from '@alfresco/js-api';
 import { Node } from '@alfresco/js-api';
-import { PermissionsInfo } from '@alfresco/js-api';
 import { EntityList } from './EntityList';
 
 //  "container": "workspace:\/\/SpacesStore\/850ea5b0-347f-459d-bf48-47f9006f583d",

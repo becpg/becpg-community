@@ -48,7 +48,19 @@
                 },
                 {
                     "component": "entity-datagrid",
-                    "options": {},
+                    "options": {
+                        "customLists" : [ {
+                            "id": "nutList",
+                            "nodeType": "bcpg:nutList"
+                        }, {
+                            "id": "costList",
+                            "nodeType": "bcpg:costList"
+                        }, {
+                            "id": "physicoChemList",
+                            "nodeType": "bcpg:physicoChemList"
+                        }
+                    ]
+                    },
                     "cols": 6
                 }
             ]

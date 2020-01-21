@@ -32,7 +32,7 @@ export class EntityVersionHistoryPopupComponent implements OnInit {
   ngOnInit(): void {
     this.entity = this.data.entity;
     this.entityLogoUrl = this.data.entityLogoUrl;
-    this.node = {entry: this.entity};
+    this.node = null;
     console.log(this.entityLogoUrl);
 
     this.entityVersionService.getEntityHistory(this.entity.id)

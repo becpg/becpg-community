@@ -12,8 +12,80 @@ import { Observable, from } from 'rxjs';
 })
 export class EntityDatagridService {
 
-  constructor(private apiService: AlfrescoApiService) {
 
+  renderers = {};
+
+
+  constructor(private apiService: AlfrescoApiService) {
+      // /**
+			//  * Person
+			//  */
+      // this.registerRenderer("cm:person", function(oRecord, data, label, scope) {
+      //   return '<span class="person">' + $userProfile(data.metadata, data.displayValue) + '</span>';
+      // });
+
+      // /**
+      // * Boolean
+      // */
+      // this.registerRenderer("boolean", function(oRecord, data, label, scope) {
+      //   var booleanValueTrue = scope.msg("data.boolean.true");
+      //   var booleanValueFalse = scope.msg("data.boolean.false");
+      //   return data.value == true ? booleanValueTrue : booleanValueFalse;
+      // });
+
+      // /**
+      // * Authority container
+      // */
+      // this.registerRenderer("cm:authoritycontainer", function(oRecord, data, label, scope) {
+      //   return '<span class="userGroup">' + $html(data.displayValue) + '</span>';
+      // });
+
+      // /**
+      // * Content
+      // */
+      // this.registerRenderer([ "cm:content", "cm:cmobject", "cm:folder" ], function(oRecord, data, label, scope) {
+      //   var url = scope._buildCellUrl(data);
+      //   var html = '<a href="' + url + '">';
+      //   html += '<img src="'
+      //         + Alfresco.constants.URL_RESCONTEXT
+      //         + 'components/images/filetypes/'
+      //         + Alfresco.util.getFileIcon(data.displayValue, (data.metadata == "container" ? 'cm:folder' : null),
+      //               16) + '" width="16" alt="' + $html(data.displayValue) + '" title="' + $html(data.displayValue)
+      //         + '" />';
+      //   html += ' ' + $html(data.displayValue) + '</a>';
+      //   return html;
+      // });
+      
+      // this.registerRenderer([ "content_cm:content"], function(oRecord, data, label, scope, z, zz, elCell, oColumn) {
+      //  var nodeRef = new Alfresco.util.NodeRef(oRecord.getData("nodeRef"));
+
+      //  oColumn.width = 100;
+
+      //  Dom.setStyle(elCell, "width", oColumn.width + "px");
+      //  Dom.setStyle(elCell.parentNode, "width", oColumn.width + "px");
+     
+
+      //  return '<span class="thumbnail"><img src="' + Alfresco.constants.PROXY_URI + 'api/node/' + nodeRef.uri
+      //  + '/content/thumbnails/doclib?c=queue&ph=true&timestamp='+(new Date())+'"  /></span>';
+       
+      // });
+
+
+  }
+
+
+
+  registerRenderer(propertyName: any , renderer : any) : boolean {
+    
+      if (propertyName instanceof Array) {
+        for ( var i in propertyName) {
+          this.renderers[propertyName[i]] = renderer;
+        }
+
+      } else {
+        this.renderers[propertyName] = renderer;
+      }
+      return true;
   }
 
 
@@ -33,10 +105,22 @@ export class EntityDatagridService {
             if (Object.prototype.hasOwnProperty.call(ret.fields, i)) {
               const column = new EntityListColumn();
               column.type = ret.fields[i].type;
-              column.label = ret.fields[i].name;
+              column.hidden = ret.fields[i].name === 'hidden' ;
+              column.label = column.hidden ? '' : ret.fields[i].name;
               // column.dataType = ret.fields[i].dataType;
               // column.fieldName = ret.fields[i].id;
               column.name = ret.fields[i].id;
+              
+              column.sortable  = (column.type === 'property');
+
+             // console.log(column);
+              // column.sortable =  true;
+              // column.filter = true;
+              // column.filterMatchMode = 'contains';
+              // column.allowToggle= true;
+              // column.style= { 'width': '200px', 'vertical-align': 'top' };
+
+
               columns.push(column);
             }
 
@@ -104,6 +188,18 @@ export class EntityDatagridService {
       ));
 
   }
+
+
+  sort() {
+    // var url = me.options.sortUrl + "/" + dstData.nodeRef
+    // .replace(":/", "") + "?selectedNodeRefs=" + srcData.nodeRef;
+
+
+  }
+
+
+
+
 
 
 }

@@ -41,4 +41,6 @@ export class EntityListColumn {
    fieldName: string;
    label: string; 
    dataType: string;
+   hidden: boolean;
+   sortable: boolean;
 }

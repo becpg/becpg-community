@@ -23,7 +23,7 @@ export class EntityLogoComponent implements OnInit {
               private dialog: MatDialog) {}
 
   ngOnInit() {
-     this.nodeId = this.route.snapshot.params["id"];
+     this.nodeId = this.route.snapshot.params['id'];
      this.entityLogoUrl = this.entityApiService.getEntityLogoUrl(this.nodeId);
   }
 
