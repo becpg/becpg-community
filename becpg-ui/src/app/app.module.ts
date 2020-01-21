@@ -27,14 +27,32 @@ import { EntityComponent } from './becpg/components/entity/entity.component';
 import { EntityHeaderComponent } from './becpg/components/entity-header/entity-header.component';
 import { EntityViewsComponent } from './becpg/components/entity-views/entity-views.component';
 import { EntityViewToolbarComponent } from './becpg/components/entity-view-toolbar/entity-view-toolbar.component';
+
+//Form
 import { EntityFormComponent } from './becpg/components/entity-form/entity-form.component';
+import { AutocompleteComponent } from './becpg/components/entity-form/widgets/autocomplete/autocomplete.component';
+
+//Datagrid
 import { EntityDatagridComponent } from './becpg/components/entity-datagrid/entity-datagrid.component';
+import { ColumnRendererDispatcherComponent } from './becpg/components/entity-datagrid/renderers/components/column-renderer-dispatcher.component';
+import { DefaultDatagridColumnComponent } from './becpg/components/entity-datagrid/renderers/components/default-datagrid-column/default-datagrid-column.component';
+import { ColumnRendererDirective } from './becpg/components/entity-datagrid/renderers/directives/column-renderer.directive';
+
+
 import { EntityLogoComponent } from './becpg/components/entity-logo/entity-logo.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
 
 import { TableModule } from 'primeng/table';
-import {MatSidenavModule} from '@angular/material/sidenav';
+import {MultiSelectModule} from 'primeng/multiselect';
+import {ContextMenuModule} from 'primeng/contextmenu';
+import {ButtonModule} from 'primeng/button';
+import {MenuModule} from 'primeng/menu';
+import {SplitButtonModule} from 'primeng/splitbutton';
+import {DropdownModule} from 'primeng/dropdown';
+
+
+import { MatSidenavModule} from '@angular/material/sidenav';
 import { HttpClientModule } from '@angular/common/http';
 import { MatDialogModule, MatSelectModule, MatCardModule, MatGridListModule, MatButtonModule, MatIconModule } from '@angular/material';
 
@@ -55,7 +73,6 @@ import localePl from '@angular/common/locales/pl';
 import localeFi from '@angular/common/locales/fi';
 import localeDa from '@angular/common/locales/da';
 import localeSv from '@angular/common/locales/sv';
-import { AutocompleteComponent } from './becpg/components/entity-form/widgets/autocomplete/autocomplete.component';
 import { MtlangueComponent } from './becpg/components/entity-form/widgets/mtlangue/mtlangue.component';
 import { ColorComponent } from './becpg/components/entity-form/widgets/color/color.component';
 import { NumberUnitComponent } from './becpg/components/entity-form/widgets/number-unit/number-unit.component';
@@ -103,7 +120,15 @@ registerLocaleData(localeSv);
         TranslateModule.forRoot({
             loader: { provide: TranslateLoader, useClass: TranslateLoaderService }
         }),
+        //PrimeNG
         TableModule,
+        MultiSelectModule,
+        ContextMenuModule,
+        ButtonModule,
+        MenuModule,
+        SplitButtonModule,
+        DropdownModule,
+
         MatSidenavModule,
         HttpClientModule,
         FlexLayoutModule,
@@ -141,7 +166,10 @@ registerLocaleData(localeSv);
         EntityLogoUploadPopupComponent,
         EntityInfoVersionManagerComponent,
         EntityVersionHistoryPopupComponent,
-        NodeRefToIdPipe
+        NodeRefToIdPipe,
+        ColumnRendererDispatcherComponent,
+        DefaultDatagridColumnComponent,
+        ColumnRendererDirective
     ],
     entryComponents: [
         AutocompleteComponent,
@@ -153,7 +181,8 @@ registerLocaleData(localeSv);
         SpelEditorComponent,
         NutriscoreComponent,
         EntityLogoUploadPopupComponent,
-        EntityVersionHistoryPopupComponent
+        EntityVersionHistoryPopupComponent,
+        DefaultDatagridColumnComponent
     ],
 
     providers: [

@@ -1,39 +1,75 @@
 
 <ng-container *ngIf="pageResults | async as data">
-  <p-table [columns]="data.columns" [value]="data.items" [resizableColumns]="true" [scrollable]="true"
-      selectionMode="multiple" [(selection)]="selectItems" [loading]="loading"  
-      [paginator]="true" [rows]="10" [pageLinks]="3" [rowsPerPageOptions]="[5,10,20]">
+  <p-table [columns]="selectedColumns" [value]="data.items" 
+      stateStorage="local" stateKey="entity-datagrid-session"
+      [scrollable]="true" scrollHeight="200px" [resizableColumns]="true" [loading]="loading"  #dt 
+      [(selection)]="selectedItems" 
+      [(contextMenuSelection)]="selectedItem" [contextMenu]="rowMenu"
+      [paginator]="true" [rows]="10" [totalRecords]="data.totalRecords" >
+      <ng-template pTemplate="caption">
+        <div class="data-grid-toolbar">
+            <button pButton icon="pi pi-search" (click)="toggleFilter()"> </button>
+            <button *ngIf="hasPermissions('create')" pButton icon="pi pi-plus" (click)="onActionAdd()"> </button>
+            <button *ngIf="selectedItems!=null && selectedItems.length>0" type="button" pButton icon="pi pi-bars"  (click)="selectedMenu.toggle($event)"></button>
+            <p-menu #selectedMenu [popup]="true" [model]="selectedMenuItems"></p-menu>
+           
+            <span *ngIf="customLists!=null">
+                <p-dropdown [options]="customLists" [(ngModel)]="list" optionLabel="id"></p-dropdown>
+            </span>
+         </div>  
+      </ng-template>
+      <ng-template pTemplate="colgroup" let-columns>
+        <colgroup>
+            <col *ngFor="let col of columns" >
+        </colgroup>
+    </ng-template>
       <ng-template pTemplate="header" let-columns>
           <tr>
-              <th style="width: 2.25em">
+              <th style="width: 3em">
                   <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
               </th>
-              <th *ngFor="let col of columns" [pSortableColumn]="col.name">
+              <th *ngFor="let col of columns" [pSortableColumn]="col.name" pResizableColumn pReorderableColumn >
                   {{col.label}}
-                  <p-sortIcon [field]="col.name"></p-sortIcon>
+                  <p-sortIcon [field]="col.name" ></p-sortIcon>
               </th>
+              <th style="width: 10em">
+                <p-multiSelect dropdownIcon="pi pi-cog" baseZIndex="99" [options]="initialColumns" displaySelectedLabel="false" [(ngModel)]="selectedColumns" optionLabel="label"></p-multiSelect>
+             </th>
           </tr>
+          <tr *ngIf="filterOn">
+            <th style="width: 3em"></th> 
+            <th *ngFor="let col of columns" [ngSwitch]="col.name">
+                <input pInputText type="text" (input)="dt.filter($event.target.value, col.name, 'contains')">
+            </th>
+            <th style="width: 10em">
+               
+            </th>
+        </tr>
       </ng-template>
+      
       <ng-template pTemplate="body" let-item let-columns="columns" let-editing="editing" let-index="rowIndex" >
-          <tr [pReorderableRow]="index" >
-              <td>
+          <tr [pReorderableRow]="index" [pContextMenuRow]="item" >
+              <td style="width: 3em">
+                  <i class="fa fa-bars" pReorderableRowHandle></i>
                   <p-tableCheckbox [value]="item"></p-tableCheckbox>
               </td>
-              <td *ngFor="let col of columns" [pEditableColumn]="item.itemData[col.name].value" >
-                  <p-cellEditor>
-                      <ng-template pTemplate="input">
-                          <input type="text" [(ngModel)]="item.itemData[col.name].value" required>
-                      </ng-template>
-                      <ng-template pTemplate="output">
-                          {{item.itemData[col.name].displayValue}} 
-                      </ng-template>
-                  </p-cellEditor>
+              <td *ngFor="let col of columns" [pEditableColumn]="item.itemData[col.name].value" class="ui-resizable-column" >
+                 <column-renderer-dispatcher [item]="item" [column]="col"></column-renderer-dispatcher>
+              </td>
+              <td style="width: 10em">
+                <p-splitButton label="Edit"  (onClick)="onActionEdit()" icon="pi pi-pencil" onDropdownClick="filterRowMenuItems()" [model]="rowMenuItems"></p-splitButton>
               </td>
           </tr>
       </ng-template>
-
 </p-table>
 
-  <!-- 
-<p-contextMenu #cm [model]="items"></p-contextMenu> -->
+
+<!-- <div class="dynamicCharactList-prop-panel">
+    <span>
+      <input  id="dynamicCharactList-${el}-colCheckbox" type="checkbox"/>
+      <label  for="dynamicCharactList-${el}-colCheckbox">${msg("dashlet.dynamicCharactList.colCheckbox")}</label>
+</span>
+</div> -->
+
+<p-contextMenu #rowMenu [model]="rowMenuItems" onShow="filterRowMenuItems()"></p-contextMenu>
 </ng-container>

@@ -60,7 +60,7 @@
           <div class="p-col-{{card.cols}}">
 
                   <div *ngIf="card.component=='entity-datagrid'">
-                    <app-entity-datagrid [entity]="entity | async" [list]="view.list"  [itemType]="card.options.itemType"> </app-entity-datagrid>
+                    <app-entity-datagrid [entity]="entity | async" [list]="view.list"  [itemType]="card.options.itemType" [customLists]="card.options.customLists"></app-entity-datagrid> 
                   </div>
 
                   <div *ngIf="card.component=='entity-form'">
