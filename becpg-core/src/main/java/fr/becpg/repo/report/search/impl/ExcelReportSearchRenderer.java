@@ -254,9 +254,13 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 									metadataFields.add(currentNested);
 									currentNested = "";
 								}
-								
-								if (MLTextHelper.getSupportedLocalesList() != null && MLTextHelper.getSupportedLocalesList().contains(cellValue.substring(cellValue.indexOf("_")+1))){
-									currentNested = cellValue.replaceFirst("_", "|");
+								if (MLTextHelper.getSupportedLocalesList() != null ) { 
+									String[] cellValues = cellValue.split("_");
+									currentNested = cellValue.replace("_","|");
+									if (MLTextHelper.getSupportedLocalesList().contains(cellValues[cellValues.length-2] + "_" + cellValues[cellValues.length-1])) {
+										int index = cellValue.lastIndexOf("_");
+										currentNested = currentNested.substring(0,index) + "_" + currentNested.substring(index+1);
+									}
 									metadataFields.add(currentNested);
 									currentNested = "";
 									
