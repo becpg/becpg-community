@@ -1,4 +1,4 @@
-import { MinimalNodeEntity, MinimalNodeEntryEntity } from 'alfresco-js-api';
+import { NodeEntry, Node } from 'alfresco-js-api';
 import { Component, OnInit, Input } from '@angular/core';
 import { Entity } from '../../../model/Entity';
 import { MatDialog } from '@angular/material';
@@ -16,14 +16,13 @@ export class EntityInfoVersionManagerComponent implements OnInit{
   @Input()
   entity: Entity;
 
-  entityLogoUrl: string;
+  entityLogoUrl: string = "";
 
   versions: any[];
 
   branches: any[];
 
-
-  selectedEntities: MinimalNodeEntity[] = [];
+  selectedEntities: NodeEntry[] = [];
 
 
   constructor(private dialog: MatDialog,
@@ -33,8 +32,8 @@ export class EntityInfoVersionManagerComponent implements OnInit{
   ngOnInit(): void{
 
     this.entityLogoUrl =  this.entityApiService.getEntityLogoUrl(this.entity.id);
-    const node: MinimalNodeEntity = { entry: null };
-    this.selectedEntities = [node];
+
+    this.selectedEntities = [{entry : this.entity as Node}];
 
     this.entityVersionService.getEntityVersions(this.entity.id)
       .then(
