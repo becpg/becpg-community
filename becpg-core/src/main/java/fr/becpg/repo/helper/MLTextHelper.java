@@ -160,7 +160,6 @@ public class MLTextHelper {
 
 		return ret;
 	}
-
 	
 	public static List<String> getSupportedLocalesList() {
 		
@@ -171,8 +170,6 @@ public class MLTextHelper {
 
 		return ret;
 	}
-
-
 
 	public static Locale parseLocale(String key) {
 		if (key.contains("_")) {

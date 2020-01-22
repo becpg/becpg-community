@@ -1052,6 +1052,7 @@
 
 					<!-- ing information -->
 					<show id="bcpg:advIlIngAnd" force="true" />
+					<show id="bcpg:ingListQtyPerc" force="true" />
 					<show id="bcpg:advIlIngNot" force="true" />
 					<show id="bcpg:ingListGeoOrigin" force="true" />
 					<show id="bcpg:ingListBioOrigin" force="true" />
@@ -1204,6 +1205,10 @@
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
+					<field id="bcpg:ingListQtyPerc" set="ings-criteria" >
+						<control
+							template="/org/alfresco/components/form/controls/numberrange.ftl" />
+					</field>	
 					<field id="bcpg:advIlIngNot" set="ings-criteria" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
@@ -3969,6 +3974,7 @@
 
 					<!-- ing information -->
 					<show id="bcpg:advIlIngAnd" force="true" />
+					<show id="bcpg:ingListQtyPerc" force="true" />
 					<show id="bcpg:advIlIngNot" force="true" />
 					<show id="bcpg:ingListGeoOrigin" force="true" />
 					<show id="bcpg:ingListBioOrigin" force="true" />
@@ -4106,6 +4112,10 @@
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
+					<field id="bcpg:ingListQtyPerc" set="ings-criteria" >
+						<control
+							template="/org/alfresco/components/form/controls/numberrange.ftl" />
+					</field>	
 					<field id="bcpg:advIlIngNot" set="ings-criteria" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
@@ -4652,6 +4662,7 @@
 
 					<!-- ing information -->
 					<show id="bcpg:advIlIngAnd" force="true" />
+					<show id="bcpg:ingListQtyPerc" force="true" />
 					<show id="bcpg:advIlIngNot" force="true" />
 					<show id="bcpg:ingListGeoOrigin" force="true" />
 					<show id="bcpg:ingListBioOrigin" force="true" />
@@ -4778,6 +4789,10 @@
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
+					<field id="bcpg:ingListQtyPerc" set="ings-criteria" >
+						<control
+							template="/org/alfresco/components/form/controls/numberrange.ftl" />
+					</field>	
 					<field id="bcpg:advIlIngNot" set="ings-criteria" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
