@@ -1121,6 +1121,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			throws FormulateException {
 
 		Map<String, ReqCtrlListDataItem> errors = new HashMap<>();
+		
+		boolean applyWaterLost = true;
 
 		for (Composite<CompoListDataItem> composite : parentComposite.getChildren()) {
 
@@ -1157,7 +1159,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 				Double waterLost = 0d;
 				if ((ingsCalculatingWithYield || labelingFormulaContext.isIngsLabelingWithYield()) && (qty != null) && (yield != null)
-						&& (yield != 100d) && (recipeQtyUsed != null) && nodeService.hasAspect(productNodeRef, PLMModel.ASPECT_WATER)) {
+						&& (yield != 100d) && (recipeQtyUsed != null) && nodeService.hasAspect(productNodeRef, PLMModel.ASPECT_WATER) && applyWaterLost) {
 					waterLost = (1 - (yield / 100d)) * recipeQtyUsed * LabelingFormulaContext.PRECISION_FACTOR;
 
 					if (logger.isTraceEnabled()) {
@@ -1167,6 +1169,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					labelingFormulaContext.getToApplyThresholdItems().add(productNodeRef);
 
 					qty -= waterLost;
+					
+					applyWaterLost = false;
 				}
 
 				if ((qty != null) && (ratio != null)) {

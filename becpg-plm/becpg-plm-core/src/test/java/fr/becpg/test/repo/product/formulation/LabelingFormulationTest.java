@@ -311,7 +311,8 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 			finishedProduct1.setUnit(ProductUnit.kg);
 
 			List<CompoListDataItem> compoList1 = new ArrayList<>();
-			compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterialWaterNodeRef));
+			compoList1.add(new CompoListDataItem(null, null, null, 0.5d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterialWaterNodeRef));
+			compoList1.add(new CompoListDataItem(null, null, null, 0.5d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterialWaterNodeRef));
 			compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
 			compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial2NodeRef));
 
