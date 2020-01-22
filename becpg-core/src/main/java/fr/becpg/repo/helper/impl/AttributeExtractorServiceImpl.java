@@ -605,9 +605,14 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 						fieldQname = QName.createQName(dlField, namespaceService);
 					}
 					while (tokeniser.hasMoreTokens()) {
-						dLFields.add(tokeniser.nextToken());
+						String nextToken = tokeniser.nextToken();
+						if (MLTextHelper.getSupportedLocalesList() != null && MLTextHelper.getSupportedLocalesList().contains(nextToken)){
+							dLFields.set(dLFields.size()-1, dLFields.get(dLFields.size()-1) + "|" + nextToken );
+						} else {
+							dLFields.add(nextToken);
+						}
 					}
-
+					
 					if (entityDictionaryService.isSubClass(fieldQname, BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
 						ret.add(new AttributeExtractorStructure(DT_SUFFIX + dlField.replaceFirst(":", "_"), fieldQname, dataListFilter, dLFields, itemType));
 
