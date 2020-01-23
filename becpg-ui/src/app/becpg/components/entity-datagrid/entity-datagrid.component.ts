@@ -54,6 +54,9 @@ export class EntityDatagridComponent implements OnChanges, OnInit {
 
   rowMenuItems: FilterableMenuItem[];
 
+  calendarLocale = 'fr';
+
+  dateFormat = 'dd/mm/yyyy';
 
   //extraDataParams : "&clearCache=true&repo=true&effectiveFilterOn="+instance.options.effectiveFilterOn
   effectiveFilterOn = false;

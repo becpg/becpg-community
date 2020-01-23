@@ -8,7 +8,7 @@
                 {
                     "component": "entity-datagrid",
                     "options": {},
-                    "cols": 10
+                    "cols": 12
                 }
             ]
         },

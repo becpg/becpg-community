@@ -50,6 +50,9 @@ import {ButtonModule} from 'primeng/button';
 import {MenuModule} from 'primeng/menu';
 import {SplitButtonModule} from 'primeng/splitbutton';
 import {DropdownModule} from 'primeng/dropdown';
+import {ToggleButtonModule} from 'primeng/togglebutton';
+import {CalendarModule} from 'primeng/calendar';
+
 
 
 import { MatSidenavModule} from '@angular/material/sidenav';
@@ -82,6 +85,7 @@ import { SpelEditorComponent } from './becpg/components/entity-form/widgets/spel
 import { NutriscoreComponent } from './becpg/components/entity-form/widgets/nutriscore/nutriscore.component';
 import { EntityLogoUploadPopupComponent } from './becpg/components/entity-logo/entity-logo-upload-popup/entity-logo-upload-popup.component';
 import { NodeRefToIdPipe } from './becpg/pipes/node-ref-to-id.pipe';
+import { EntityRecentsComponent } from './becpg/components/entity-recents/entity-recents.component';
 
 
 
@@ -128,7 +132,9 @@ registerLocaleData(localeSv);
         MenuModule,
         SplitButtonModule,
         DropdownModule,
-
+        ToggleButtonModule,
+        CalendarModule,
+        
         MatSidenavModule,
         HttpClientModule,
         FlexLayoutModule,
@@ -169,7 +175,8 @@ registerLocaleData(localeSv);
         NodeRefToIdPipe,
         ColumnRendererDispatcherComponent,
         DefaultDatagridColumnComponent,
-        ColumnRendererDirective
+        ColumnRendererDirective,
+        EntityRecentsComponent
     ],
     entryComponents: [
         AutocompleteComponent,

@@ -110,10 +110,11 @@ export class EntityDatagridService {
               // column.dataType = ret.fields[i].dataType;
               // column.fieldName = ret.fields[i].id;
               column.name = ret.fields[i].id;
-              
               column.sortable  = (column.type === 'property');
 
-             // console.log(column);
+              column.options = ret.fields[i].options;
+              column.required = ret.fields[i].required;
+
               // column.sortable =  true;
               // column.filter = true;
               // column.filterMatchMode = 'contains';

@@ -1,75 +1,131 @@
-
 <ng-container *ngIf="pageResults | async as data">
-  <p-table [columns]="selectedColumns" [value]="data.items" 
-      stateStorage="local" stateKey="entity-datagrid-session"
-      [scrollable]="true" scrollHeight="200px" [resizableColumns]="true" [loading]="loading"  #dt 
-      [(selection)]="selectedItems" 
-      [(contextMenuSelection)]="selectedItem" [contextMenu]="rowMenu"
-      [paginator]="true" [rows]="10" [totalRecords]="data.totalRecords" >
-      <ng-template pTemplate="caption">
-        <div class="data-grid-toolbar">
-            <button pButton icon="pi pi-search" (click)="toggleFilter()"> </button>
-            <button *ngIf="hasPermissions('create')" pButton icon="pi pi-plus" (click)="onActionAdd()"> </button>
-            <button *ngIf="selectedItems!=null && selectedItems.length>0" type="button" pButton icon="pi pi-bars"  (click)="selectedMenu.toggle($event)"></button>
-            <p-menu #selectedMenu [popup]="true" [model]="selectedMenuItems"></p-menu>
-           
-            <span *ngIf="customLists!=null">
-                <p-dropdown [options]="customLists" [(ngModel)]="list" optionLabel="id"></p-dropdown>
-            </span>
-         </div>  
-      </ng-template>
-      <ng-template pTemplate="colgroup" let-columns>
-        <colgroup>
-            <col *ngFor="let col of columns" >
-        </colgroup>
-    </ng-template>
-      <ng-template pTemplate="header" let-columns>
-          <tr>
-              <th style="width: 3em">
-                  <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
-              </th>
-              <th *ngFor="let col of columns" [pSortableColumn]="col.name" pResizableColumn pReorderableColumn >
-                  {{col.label}}
-                  <p-sortIcon [field]="col.name" ></p-sortIcon>
-              </th>
-              <th style="width: 10em">
-                <p-multiSelect dropdownIcon="pi pi-cog" baseZIndex="99" [options]="initialColumns" displaySelectedLabel="false" [(ngModel)]="selectedColumns" optionLabel="label"></p-multiSelect>
-             </th>
-          </tr>
-          <tr *ngIf="filterOn">
-            <th style="width: 3em"></th> 
-            <th *ngFor="let col of columns" [ngSwitch]="col.name">
-                <input pInputText type="text" (input)="dt.filter($event.target.value, col.name, 'contains')">
-            </th>
-            <th style="width: 10em">
-               
-            </th>
-        </tr>
-      </ng-template>
-      
-      <ng-template pTemplate="body" let-item let-columns="columns" let-editing="editing" let-index="rowIndex" >
-          <tr [pReorderableRow]="index" [pContextMenuRow]="item" >
-              <td style="width: 3em">
-                  <i class="fa fa-bars" pReorderableRowHandle></i>
-                  <p-tableCheckbox [value]="item"></p-tableCheckbox>
-              </td>
-              <td *ngFor="let col of columns" [pEditableColumn]="item.itemData[col.name].value" class="ui-resizable-column" >
-                 <column-renderer-dispatcher [item]="item" [column]="col"></column-renderer-dispatcher>
-              </td>
-              <td style="width: 10em">
-                <p-splitButton label="Edit"  (onClick)="onActionEdit()" icon="pi pi-pencil" onDropdownClick="filterRowMenuItems()" [model]="rowMenuItems"></p-splitButton>
-              </td>
-          </tr>
-      </ng-template>
-</p-table>
+    <p-table [columns]="selectedColumns" [value]="data.items" stateStorage="local" stateKey="entity-datagrid-session"
+        [scrollable]="true" scrollHeight="500px" [resizableColumns]="true" [loading]="loading" #dt
+        [(selection)]="selectedItems" [(contextMenuSelection)]="selectedItem" [contextMenu]="rowMenu" [paginator]="true"
+        [rows]="10" [totalRecords]="data.totalRecords">
+        <ng-template pTemplate="caption">
+            <div class="data-grid-toolbar">
+                <button pButton icon="pi pi-search" (click)="toggleFilter()"> </button>
+                <button *ngIf="hasPermissions('create')" pButton icon="pi pi-plus" (click)="onActionAdd()"> </button>
+                <button *ngIf="selectedItems!=null && selectedItems.length>0" type="button" pButton icon="pi pi-bars"
+                    (click)="selectedMenu.toggle($event)"></button>
+                <p-menu #selectedMenu [popup]="true" [model]="selectedMenuItems"></p-menu>
+
+                <span *ngIf="customLists!=null">
+                    <p-dropdown [options]="customLists" [(ngModel)]="list" optionLabel="id"></p-dropdown>
+                </span>
+            </div>
+        </ng-template>
+        <ng-template pTemplate="colgroup" let-columns>
+            <colgroup>
+                <col *ngFor="let col of columns">
+            </colgroup>
+        </ng-template>
+        <ng-template pTemplate="header" let-columns>
+            <tr>
+                <th style="width: 3em">
+                    <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                </th>
+                <th *ngFor="let col of columns" [pSortableColumn]="col.name" pResizableColumn >
+                    {{col.label}}
+                    <p-sortIcon [field]="col.name"></p-sortIcon>
+                </th>
+                <th style="width: 10em">
+                    <p-multiSelect  appendTo="body" dropdownIcon="pi pi-cog" baseZIndex="99" [options]="initialColumns"
+                        displaySelectedLabel="false" [(ngModel)]="selectedColumns" optionLabel="label"></p-multiSelect>
+                </th>
+            </tr>
+            <tr *ngIf="filterOn">
+                <th style="width: 3em"></th>
+                <th *ngFor="let col of columns" [ngSwitch]="col.name">
+                    <input pInputText type="text" (input)="dt.filter($event.target.value, col.name, 'contains')">
+                </th>
+                <th style="width: 10em">
+
+                </th>
+            </tr>
+        </ng-template>
+
+        <ng-template  pTemplate="body" let-item let-columns="columns" let-editing="editing" let-index="rowIndex">
+            <tr [pReorderableRow]="index" [pContextMenuRow]="item">
+                <td style="width: 3em">
+                    <i class="fa fa-bars" pReorderableRowHandle></i>
+                    <p-tableCheckbox [value]="item"></p-tableCheckbox>
+                </td>
+                <td *ngFor="let column of columns" [pEditableColumn]="item.itemData[column.name].value"
+                    class="ui-resizable-column">
+
+                    <p-cellEditor>
+                        <ng-template pTemplate="input">
+
+                            <ng-template [ngIf]="column.type == 'integer' 
+                      || column.type == 'number'">
+                                <input pInputText type="text" [(ngModel)]="item.itemData[column.name].value"
+                                    [required]="column.required">
+                            </ng-template>
+
+                            <ng-template [ngIf]="column.type == 'dropdown' ">
+                                <p-dropdown appendTo="body" *ngIf="!column.repeating" [options]="column.options"
+                                    [(ngModel)]="item.itemData[column.name].value" optionLabel="name"
+                                    [style]="{'width':'100%'}"></p-dropdown>
+                                <p-multiSelect appendTo="body" *ngIf="column.repeating" [options]="column.options"
+                                    [(ngModel)]="item.itemData[column.name].value" optionLabel="name"></p-multiSelect>
+                            </ng-template>
+
+                            <ng-template [ngIf]="column.type == 'text'">
+                                <input pInputText type="text" [(ngModel)]="item.itemData[column.name].value"
+                                    [required]="column.required">
+                            </ng-template>
 
 
-<!-- <div class="dynamicCharactList-prop-panel">
+                            <ng-template [ngIf]="column.type == 'boolean'">
+                                <p-toggleButton [(ngModel)]="item.itemData[column.name].value"></p-toggleButton>
+                            </ng-template>
+
+                            <ng-template [ngIf]="column.type == 'date'">
+                                <p-calendar
+                                appendTo="body"
+                                dateFormat="{{dateFormat}}"
+                                [locale]="calendarLocale" 
+                                [(ngModel)]="item.itemData[column.name].value"
+                                [style]="{'width':'100%'}"
+                                ></p-calendar
+                                    >
+                            </ng-template>
+
+                            <ng-template [ngIf]="column.type == 'datetime'">
+                                <p-calendar 
+                                appendTo="body"
+                                dateFormat="{{dateFormat}}"
+                                [locale]="calendarLocale" 
+                                readonlyInput="true"
+                                showButtonBar="true"
+                                [(ngModel)]="item.itemData[column.name].value"
+                                showTime="true"
+                                [style]="{'width':'100%'}"></p-calendar>
+                            </ng-template>
+
+                        </ng-template>
+                        <ng-template pTemplate="output">
+                            <column-renderer-dispatcher [item]="item" [column]="column"></column-renderer-dispatcher>
+                        </ng-template>
+                    </p-cellEditor>
+
+                </td>
+                <td style="width: 10em">
+                    <p-splitButton  appendTo="body" label="Edit" (onClick)="onActionEdit()" icon="pi pi-pencil"
+                        onDropdownClick="filterRowMenuItems()" [model]="rowMenuItems"></p-splitButton>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+    <!-- <div class="dynamicCharactList-prop-panel">
     <span>
       <input  id="dynamicCharactList-${el}-colCheckbox" type="checkbox"/>
       <label  for="dynamicCharactList-${el}-colCheckbox">${msg("dashlet.dynamicCharactList.colCheckbox")}</label>
 </span>
 </div> -->
 
-<p-contextMenu #rowMenu [model]="rowMenuItems" onShow="filterRowMenuItems()"></p-contextMenu>
+    <p-contextMenu #rowMenu [model]="rowMenuItems" onShow="filterRowMenuItems()"></p-contextMenu>
 </ng-container>
