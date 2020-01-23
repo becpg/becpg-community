@@ -299,6 +299,10 @@ function getEntityResults(params)
    // ensure a TYPE is specified
    var ftsQuery = params.term + ' AND +TYPE:"bcpg:entityV2"';
    
+   // Prioritize according to the product state
+   ftsQuery = ftsQuery +'AND (@{http://www.bcpg.fr/model/becpg/1.0}productState:Valid^4 or @{http://www.bcpg.fr/model/becpg/1.0}productState:Simulation^2 or ' +
+   		' EXISTS:"bcpg:productState" or -EXISTS:"bcpg:productState")';
+  
    // root node - generally used for overridden Repository root in Share
    if (params.rootNode !== null)
    {
@@ -306,8 +310,6 @@ function getEntityResults(params)
    } 
    
    ftsQuery = '(' + ftsQuery + ') AND -ASPECT:"sys:hidden" AND -ASPECT:"cm:workingCopy" AND -ASPECT:"bcpg:compositeVersion" AND -cm:creator:system -ASPECT:"bcpg:entityTplAspect" AND -ASPECT:"bcpg:hiddenFolder" AND -TYPE:"bcpg:systemEntity"';
-   
-   
    if (logger.isLoggingEnabled())
       logger.log("LiveQuery:\r\n" + ftsQuery);
    
