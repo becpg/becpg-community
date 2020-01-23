@@ -43,4 +43,6 @@ export class EntityListColumn {
    dataType: string;
    hidden: boolean;
    sortable: boolean;
+   options? : any[];
+   required: boolean;
 }

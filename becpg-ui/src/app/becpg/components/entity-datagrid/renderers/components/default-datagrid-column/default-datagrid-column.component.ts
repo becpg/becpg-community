@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { EntityListItem } from '../../../../../model/EntityListItem';
 import { EntityListColumn } from '../../../../../model/EntityListColumn';
-import {DatagridColumnComponent} from '../datagrid-column.component';
+import { DatagridColumnComponent } from '../datagrid-column.component';
 
 @Component({
   selector: 'app-default-datagrid-column',
@@ -15,7 +15,9 @@ export class DefaultDatagridColumnComponent implements DatagridColumnComponent {
 
   constructor() { }
 
-  
 
+  isArray(): boolean {
+    return Array.isArray(this.item.itemData[this.column.name]);
+  }
 
 }

@@ -10,62 +10,100 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, from } from 'rxjs';
 
 import beCPGModel from '../../../assets/becpg/datalist-columns.json';
+import { BeCPGHelper } from '../utils/becpg-helper.';
+import { EntityLink } from '../model/EntityLink';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EntityApiService {
 
-  becpgHost: string;
 
   constructor(private apiService: AlfrescoApiService,
-              private appConfig: AppConfigService,
-              private http: HttpClient) {
-      this.becpgHost = this.appConfig.get<string>('ecmHost');
-    }
+    private appConfig: AppConfigService,
+    private http: HttpClient) {
+  }
 
   getEntity(id: string): Observable<Entity> {
     return from(
-    this.apiService.getInstance().webScript.executeWebScript('GET', 'becpg/entitylists/node/' + id.replace(':/', '')).then(
-      (data) => {
-        const entity = new Entity();
-        entity.name = data.entity.name;
-        entity.id = data.entity.nodeRef.replace('workspace://SpacesStore/','');
-        entity.parentId = data.entity.parentNodeRef;
-        entity.datalists = [];
-        //TODO user access
+      this.apiService.getInstance().webScript.executeWebScript('GET', 'becpg/entitylists/node/' + id.replace(':/', '')).then(
+        (data) => {
+          const entity = new Entity();
+          entity.name = data.entity.name;
+          entity.id = data.entity.nodeRef.replace('workspace://SpacesStore/', '');
+          entity.parentId = data.entity.parentNodeRef;
+          entity.datalists = [];
+          //TODO user access
 
-        for (const i in data.datalists) {
-          if (Object.prototype.hasOwnProperty.call(data.datalists, i)) {
-            const list = new EntityList();
-            list.description = data.datalists[i].description;
-            list.nodeType = data.datalists[i].itemType;
-            list.name = data.datalists[i].name.replace('View-','');
-            list.state = data.datalists[i].state;
-            list.title = data.datalists[i].title;
-            list.id = data.datalists[i].nodeRef;
-            //TODO permissions
-            entity.datalists.push(list);
+          for (const i in data.datalists) {
+            if (Object.prototype.hasOwnProperty.call(data.datalists, i)) {
+              const list = new EntityList();
+              list.description = data.datalists[i].description;
+              list.nodeType = data.datalists[i].itemType;
+              list.name = data.datalists[i].name.replace('View-', '');
+              list.state = data.datalists[i].state;
+              list.title = data.datalists[i].title;
+              list.id = data.datalists[i].nodeRef;
+              //TODO permissions
+              entity.datalists.push(list);
+            }
           }
-        }
 
-      return entity;
-      }
+          return entity;
+        }
       )
     );
   }
 
 
+  getRecents(id: string, viewId: string): Observable<EntityLink[]> {
+
+    const params = {};
+    if (id != null) {
+      params['entityNodeRef'] = BeCPGHelper.NODE_REF_SPACE_PREFIX + id;
+    }
+
+    if (viewId != null) {
+      params['list'] = viewId;
+    }
+
+    return from(
+      this.apiService.getInstance().webScript.executeWebScript('GET', 'becpg/dockbar', params).then(
+        (data) => {
+          const entities: EntityLink[] = [];
+
+          for (let i = 0; i < data.items.length; i++) {
+            const item = data.items[i];
+
+            entities.push({
+              'name': item.displayName,
+              'nodeType': item.itemType,
+              'id': item.nodeRef.replace(BeCPGHelper.NODE_REF_SPACE_PREFIX, ''),
+              'viewId': item.list
+            });
+
+          }
+
+          return entities;
+
+        }));
+  }
+
+
   getEntityLogoUrl(nodeId: string): string {
-    let timeStamp = (new Date()).getTime();
-    return this.becpgHost + "/alfresco/service/api/node/workspace/SpacesStore/" +
-     nodeId + "/content/thumbnails/doclib?c=queue&ph=true&&lastModified="+timeStamp;
+
+    const timeStamp = (new Date()).getTime();
+    return this.apiService.getInstance().contentClient.host + '/alfresco/service/api/node/workspace/SpacesStore/' + nodeId +
+    '/content/thumbnails/doclib?c=queue&ph=true&lastModified=' +
+     timeStamp +
+     this.apiService.getInstance().contentClient.getAlfTicket(null);
+
   }
 
   uploadEntityLogo(logoToUpload: File, entityId: string): Observable<any> {
     const nodeRef = 'workspace://SpacesStore/' + entityId;
     const ticket = this.apiService.getInstance().getTicketEcm();
-    const entityLogoEndpoint = this.becpgHost + '/alfresco/service/becpg/entity/uploadlogo';
+    const entityLogoEndpoint = this.apiService.getInstance().contentClient.host + '/alfresco/service/becpg/entity/uploadlogo';
     const formData: FormData = new FormData();
     formData.append('filedata', logoToUpload, logoToUpload.name);
     formData.append('updateNodeRef', nodeRef);
@@ -79,13 +117,13 @@ export class EntityApiService {
       observe: 'events'
     });
     /*
-    * Otherwise call native alfresco-js-api
-    return this.baseApi.apiClient.callApi('/alfresco/service/becpg/entity/uploadlogo', 'POST', {}, {}, {
-      headers: headers,
-      reportProgress: true,
-      observe: 'events'
-    }, formData, formData, ['multipart/form-data'], ['application/json'], null, null, 'application/json');
-    */
+    * Otherwise call native alfresco-js-api */
+    // return this.apiService.getInstance().contentClient.callApi('/alfresco/service/becpg/entity/uploadlogo', 'POST', {}, {}, {
+    //   headers: headers,
+    //   reportProgress: true,
+    //   observe: 'events'
+    // }, formData, formData, ['multipart/form-data'], ['application/json'], null, null, 'application/json');
+    
 
 
   }
