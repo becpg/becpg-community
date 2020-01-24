@@ -166,9 +166,13 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	private static final String PRODUCT_REPORT_EN_US_RESOURCE = "beCPG/birt/document/product/default/ProductReport_en_US.properties";
 	private static final String PRODUCT_REPORT_EN_RESOURCE = "beCPG/birt/document/product/default/ProductReport_en.properties";
 	private static final String PRODUCT_REPORT_ES_RESOURCE = "beCPG/birt/document/product/default/ProductReport_es.properties";
+	private static final String PRODUCT_REPORT_FI_RESOURCE = "beCPG/birt/document/product/default/ProductReport_fi.properties";
 	private static final String PRODUCT_REPORT_FR_RESOURCE = "beCPG/birt/document/product/default/ProductReport_fr.properties";
 	private static final String PRODUCT_REPORT_IT_RESOURCE = "beCPG/birt/document/product/default/ProductReport_it.properties";
 	private static final String PRODUCT_REPORT_NL_RESOURCE = "beCPG/birt/document/product/default/ProductReport_nl.properties";
+	private static final String PRODUCT_REPORT_PT_RESOURCE = "beCPG/birt/document/product/default/ProductReport_pt.properties";
+	private static final String PRODUCT_REPORT_RU_RESOURCE = "beCPG/birt/document/product/default/ProductReport_ru.properties";
+	private static final String PRODUCT_REPORT_SV_RESOURCE = "beCPG/birt/document/product/default/ProductReport_sv.properties";
 	private static final String PRODUCT_REPORT_CSS_RESOURCE = "beCPG/birt/document/product/default/becpg-report.css";
 	private static final String PRODUCT_REPORT_IMG_CCCCCC = "beCPG/birt/document/product/default/cccccc-200X30.png";
 	private static final String PRODUCT_REPORT_IMG_TRAFFICLIGHTS_ENERGY = "beCPG/birt/document/product/default/images/trafficLights_Energy.png";
@@ -1114,7 +1118,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			String[][] otherReportName = { { productReportProductionName, productReportCostName, productReportRDName }, null, null, null };
 			
 			String[] productReportResource = { PRODUCT_REPORT_DE_RESOURCE, PRODUCT_REPORT_EN_US_RESOURCE, PRODUCT_REPORT_EN_RESOURCE,
-					PRODUCT_REPORT_ES_RESOURCE, PRODUCT_REPORT_FR_RESOURCE, PRODUCT_REPORT_IT_RESOURCE, PRODUCT_REPORT_NL_RESOURCE,
+					PRODUCT_REPORT_ES_RESOURCE, PRODUCT_REPORT_FI_RESOURCE, PRODUCT_REPORT_FR_RESOURCE, PRODUCT_REPORT_IT_RESOURCE, 
+					PRODUCT_REPORT_NL_RESOURCE, PRODUCT_REPORT_PT_RESOURCE, PRODUCT_REPORT_RU_RESOURCE, PRODUCT_REPORT_SV_RESOURCE,
 					PRODUCT_REPORT_CSS_RESOURCE, PRODUCT_REPORT_IMG_CCCCCC, PRODUCT_REPORT_IMG_TRAFFICLIGHTS_ENERGY,
 					PRODUCT_REPORT_IMG_TRAFFICLIGHTS_GREEN, PRODUCT_REPORT_IMG_TRAFFICLIGHTS_ORANGE, PRODUCT_REPORT_IMG_TRAFFICLIGHTS_RED,
 					PRODUCT_REPORT_IMG_TRAFFICLIGHTS_SERVING };
@@ -1185,7 +1190,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 							}
 							
 							nodeService.setProperty(template, ReportModel.PROP_REPORT_LOCALES,
-									(Serializable) Arrays.asList("fr", "en", "es", "en_US", "it", "nl"));
+									(Serializable) Arrays.asList("fr", "en", "es", "en_US", "it", "nl", "sv_SE", "fi_FI", "ru", "pt"));
 							
 							if (productType == PLMModel.TYPE_PACKAGINGMATERIAL) {
 								nodeService.setProperty(template, ReportModel.PROP_REPORT_TEXT_PARAMETERS,
