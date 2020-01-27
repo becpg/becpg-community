@@ -1,8 +1,0 @@
-<div class="entity-recents">
-  <mat-nav-list>
-    <mat-list-item *ngFor="let link of entities | async" 
-                    [routerLinkActive]="['is-active']" >
-              <a selected="true" routerLink="/entity/{{link.id}}/{{link.viewId}}"  >{{link.name}}</a>
-    </mat-list-item>
-  </mat-nav-list>
-</div>
