@@ -1,9 +1,0 @@
-<ng-template [ngIf]="isArray()" [ngIfElse]="notAnArray">
-  <ul *ngFor="let data of item.itemData[column.name]">
-    <li>{{data.displayValue}}</li>
-  </ul>
-</ng-template>
-
-<ng-template #notAnArray>
-  {{item.itemData[column.name].displayValue}}
-</ng-template>
