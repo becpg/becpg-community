@@ -43,7 +43,13 @@ class ShowRule {
 	}
 	
 	public boolean matchQty(Double qtyPerc) {
-		return threshold == null || qtyPerc == null || qtyPerc < (threshold/100d);
+		return threshold == null || qtyPerc == null || qtyPerc <= (threshold/100d);
 	}
+
+	public Double getThreshold() {
+		return threshold;
+	}
+	
+	
 
 }
