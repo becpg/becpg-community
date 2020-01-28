@@ -660,6 +660,7 @@
 			<form>
 				<field-visibility>
 					<show id="cm:name" />
+					<show id="cm:title" force="true" />
 					<show id="bcpg:color" />
 					<show id="pjt:taskLegendSites" />
 					<show id="bcpg:isDeleted" />
@@ -679,6 +680,7 @@
 			<form>
 				<field-visibility>
 					<show id="cm:name" />
+					<show id="cm:title" force="true" />
 					<show id="bcpg:color" />
 					<show id="pjt:taskLegendSites" />
 					<show id="bcpg:isDeleted" />
