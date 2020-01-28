@@ -496,7 +496,7 @@ public class LabelingFormulaContext extends RuleParser {
 
 	private String createPercAwareLabel(LabelingComponent lblComponent, String ingLegalName, Double qty, boolean useTotalPrecision) {
 		if (qty != null) {
-			Pair<DecimalFormat, RoundingMode> decimalFormat = getDecimalFormat(lblComponent);
+			Pair<DecimalFormat, RoundingMode> decimalFormat = getDecimalFormat(lblComponent, qty);
 			if (decimalFormat != null) {
 
 				applyAutomaticPrecicion(decimalFormat.getFirst(), useTotalPrecision ? totalPrecision : qty, decimalFormat.getSecond(),
@@ -509,35 +509,62 @@ public class LabelingFormulaContext extends RuleParser {
 		return ingLegalName;
 	}
 
-	private Pair<DecimalFormat, RoundingMode> getDecimalFormat(LabelingComponent lblComponent) {
+	private Pair<DecimalFormat, RoundingMode> getDecimalFormat(LabelingComponent lblComponent, Double qty) {
 		DecimalFormat decimalFormat = null;
 		RoundingMode roundingMode = defaultRoundingMode;
 
 		DecimalFormatSymbols symbols = new DecimalFormatSymbols(I18NUtil.getContentLocale());
 		if ((lblComponent != null)) {
+			
+			boolean lookThreshold = false;
+			
 			if (showAllPerc) {
 				if (lblComponent instanceof IngTypeItem) {
 					NodeRef ingItemNodeRef = ((IngTypeItem) lblComponent).getOrigNodeRef() != null ? ((IngTypeItem) lblComponent).getOrigNodeRef()
 							: lblComponent.getNodeRef();
 					if (isDoNotDetails(ingItemNodeRef) || showPercRules.containsKey(ingItemNodeRef)) {
 						decimalFormat = new DecimalFormat(defaultPercFormat, symbols);
+						lookThreshold = true;
 					}
 				} else {
 					decimalFormat = new DecimalFormat(defaultPercFormat, symbols);
+					lookThreshold = true;
 				}
 
 			} else if (showPercRules.containsKey(lblComponent.getNodeRef())) {
 				ShowRule showRule = showPercRules.get(lblComponent.getNodeRef());
-				if (showRule.matchLocale(I18NUtil.getLocale())) {
+				if (showRule.matchLocale(I18NUtil.getLocale())
+						&& showRule.matchQty(qty)) {
 					decimalFormat = new DecimalFormat((showRule.format != null) && !showRule.format.isEmpty() ? showRule.format : defaultPercFormat,
 							symbols);
 					
 					if(showRule.roundingMode!=null) {
 						roundingMode = showRule.roundingMode;
 					}
+				} else {
+					lookThreshold = true;
 				}
 
+			} else {
+				lookThreshold = true;
 			}
+			
+			if(lookThreshold ) {
+				for(ShowRule showRule : showPercRulesByThreshold) {
+					if(showRule.matchLocale(I18NUtil.getLocale()) 
+								&& showRule.matchQty(qty)) {
+							decimalFormat = new DecimalFormat((showRule.format != null) && !showRule.format.isEmpty() ? showRule.format : defaultPercFormat,
+									symbols);
+							
+							if(showRule.roundingMode!=null) {
+								roundingMode = showRule.roundingMode;
+							}
+							
+							break;
+					}	
+				}
+			}
+				
 
 		}
 		if (decimalFormat != null) {
@@ -1066,7 +1093,7 @@ if (component instanceof CompositeLabeling) {
 	}
 
 	private BigDecimal roundeedValue(Double qty, LabelingComponent lblComponent) {
-		Pair<DecimalFormat, RoundingMode> ret = getDecimalFormat(lblComponent);
+		Pair<DecimalFormat, RoundingMode> ret = getDecimalFormat(lblComponent, qty);
 		if (ret != null) {
 			return roundeedValue(qty, ret.getFirst(), ret.getSecond());
 		}
