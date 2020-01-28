@@ -39,6 +39,8 @@ public abstract class RuleParser {
 	protected final Map<NodeRef, List<AggregateRule>> aggregateRules = new HashMap<>();
 	protected final List<MeatContentRule> meatContentRules = new ArrayList<>();
 	protected final Map<NodeRef, RenameRule> renameRules = new HashMap<>();
+	
+	protected final List<ShowRule> showPercRulesByThreshold = new ArrayList<>();
 	protected final Map<NodeRef, ShowRule> showPercRules = new HashMap<>();
 	protected final Map<NodeRef, ShowRule> showGeoRules = new HashMap<>();
 
@@ -104,14 +106,21 @@ public abstract class RuleParser {
 				addLocale(formula, locales);
 			} else if (LabelingRuleType.ShowPerc.equals(labeLabelingRuleType)) {
 				if (components==null || components.isEmpty()) {
-					showAllPerc = true;
 					if ((formula != null) && !formula.isEmpty()) {
 						if(formula.contains("|")) {
-							defaultPercFormat = formula.split("\\|")[0];
-							defaultRoundingMode = RoundingMode.valueOf(formula.split("\\|")[1]);
+							if(formula.split("\\|").length > 2) {
+								showPercRulesByThreshold.add(new ShowRule(formula, locales));
+							} else {
+								defaultPercFormat = formula.split("\\|")[0];
+								defaultRoundingMode = RoundingMode.valueOf(formula.split("\\|")[1]);
+								showAllPerc = true;
+							}
 						} else {
 							defaultPercFormat = formula;
+							showAllPerc = true;
 						}
+					} else {
+						showAllPerc = true;
 					}
 
 				} else {

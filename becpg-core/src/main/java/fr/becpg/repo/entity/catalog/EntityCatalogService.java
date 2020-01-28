@@ -372,20 +372,31 @@ public class EntityCatalogService {
 		if (productNodeRef != null) {
 			for (int i = 0; i < uniqueFields.length(); i++) {
 
-				String field = uniqueFields.getString(i);
+				String fieldDef = uniqueFields.getString(i);
+				String field;
+				QName typeQName = nodeService.getType(productNodeRef);
+				QName propQName = null;
 
-				QName propQName = QName.createQName(field, namespaceService);
+				if (fieldDef.contains("|")) {
+					propQName = QName.createQName(fieldDef.split("\\|")[0], namespaceService);
+					typeQName = QName.createQName(fieldDef.split("\\|")[1], namespaceService);
+					field = fieldDef.split("\\|")[0];
+
+				} else {
+					propQName = QName.createQName(fieldDef, namespaceService);
+					field = fieldDef;
+				}
+
 				Serializable propValue = nodeService.getProperty(productNodeRef, propQName);
 
 				if (propValue != null) {
-					List<NodeRef> propDuplicates = getPropertyDuplicates(productNodeRef, propQName, propValue.toString());
+
+					List<NodeRef> propDuplicates = getPropertyDuplicates(productNodeRef, typeQName, propQName, propValue.toString());
 
 					if (!(propDuplicates.isEmpty())) {
 
 						ClassAttributeDefinition classDef = formatQnameString(field);
 						String propTitle = getFieldDisplayName(classDef, i18nMessages.has(field) ? i18nMessages.getString(field) : null);
-						
-						
 
 						JSONObject nonUniqueField = new JSONObject();
 						nonUniqueField.put(EntityCatalogService.PROP_ID, field);
@@ -393,15 +404,13 @@ public class EntityCatalogService {
 						nonUniqueField.put(EntityCatalogService.PROP_VALUE, propValue);
 						nonUniqueField.put(EntityCatalogService.PROP_ENTITIES, toJsonArray(propDuplicates));
 
-						
-
 						MLText displayMLName = MLTextHelper.createMLTextI18N(loc -> {
 							Locale old = I18NUtil.getLocale();
 							String ret = "";
 							try {
 								I18NUtil.setLocale(loc);
-									return getFieldDisplayName(classDef, i18nMessages.has(field) ? i18nMessages.getString(field) : null);
-					
+								return getFieldDisplayName(classDef, i18nMessages.has(field) ? i18nMessages.getString(field) : null);
+
 							} catch (JSONException e) {
 								logger.error(e, e);
 							} finally {
@@ -411,7 +420,7 @@ public class EntityCatalogService {
 							return ret;
 
 						});
-						
+
 						if (displayMLName != null) {
 							for (Map.Entry<Locale, String> mlEntry : displayMLName.entrySet()) {
 								String code = MLTextHelper.localeKey(mlEntry.getKey());
@@ -421,8 +430,7 @@ public class EntityCatalogService {
 								}
 							}
 						}
-						
-						
+
 						res.put(nonUniqueField);
 
 					}
@@ -441,12 +449,12 @@ public class EntityCatalogService {
 		return ret;
 	}
 
-	private List<NodeRef> getPropertyDuplicates(NodeRef productNodeRef, QName propQName, String value) {
+	private List<NodeRef> getPropertyDuplicates(NodeRef productNodeRef, QName typeQName, QName propQName, String value) {
 
 		List<NodeRef> queryResults = new ArrayList<>();
 		if ((value != null) && !value.isEmpty()) {
 
-			queryResults = BeCPGQueryBuilder.createQuery().ofType(nodeService.getType(productNodeRef)).andNotID(productNodeRef).excludeDefaults()
+			queryResults = BeCPGQueryBuilder.createQuery().ofType(typeQName).andNotID(productNodeRef).excludeDefaults()
 					.andPropEquals(propQName, value).inDBIfPossible().list();
 
 			List<NodeRef> falsePositives = new ArrayList<>();
@@ -602,8 +610,6 @@ public class EntityCatalogService {
 
 		}
 
-		
-
 		if (lang != null) {
 			field.put(EntityCatalogService.PROP_LOCALE, lang);
 		}
@@ -635,7 +641,7 @@ public class EntityCatalogService {
 			return ret;
 
 		});
-		
+
 		if (displayMLName != null) {
 			for (Map.Entry<Locale, String> mlEntry : displayMLName.entrySet()) {
 				String code = MLTextHelper.localeKey(mlEntry.getKey());

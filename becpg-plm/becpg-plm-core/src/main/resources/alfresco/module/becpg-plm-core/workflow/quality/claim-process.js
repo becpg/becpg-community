@@ -386,11 +386,17 @@ function sendMail(userOrGroup, from, subject, message, isAction) {
             mail.parameters.from = from.properties.email;
             mail.parameters.ignore_send_failure = true;
 
-            // for Local
-            // person.properties["{http://www.alfresco.org/model/system/1.0}locale"]
+            // for Locale
+            //var locale =  person.properties["{http://www.alfresco.org/model/system/1.0}locale"]
+            var locale = utils.getLocale();
 
             var template = search.xpathSearch("/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:claim-"
-                    + (isAction ? "action" : "notify") + "-task-email.ftl")[0];
+                    + (isAction ? "action" : "notify") + "-task-email" + (locale != null && locale != "" ? "_" + locale : "")+".ftl")[0];
+            
+            if (!template){
+            	template = search.xpathSearch("/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:claim-"
+                        + (isAction ? "action" : "notify") + "-task-email.ftl")[0];
+            }
             
             if(template){
                 mail.parameters.template = template;

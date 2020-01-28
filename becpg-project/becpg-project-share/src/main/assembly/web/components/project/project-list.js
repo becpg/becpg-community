@@ -435,45 +435,48 @@ var g; // gantt var
                                     var start = new Date();
                                     var resources = [];
 
-                                    for (var i = 0; i < recordSet.getLength(); i++)
-                                    {
+                                    for (var i = 0; i < recordSet.getLength(); i++){
 
                                         var oRecord = recordSet.getRecord(i);
                                         var task = oRecord.getData();
-                                        var taskId = task.nodeRef;
-
-                                        var title = task["itemData"]["dt_pjt_project"]["itemData"]["prop_cm_name"].displayValue;
-
-                                        var tlIsMilestone = task["itemData"]["prop_pjt_tlIsMilestone"].value;
-                                        var tlPercent = task["itemData"]["prop_pjt_completionPercent"].value;
-
-                                        var taskOwner = task["itemData"]["assoc_pjt_tlResources"].length > 0 ? task["itemData"]["assoc_pjt_tlResources"][0].value
-                                                : null;
-                                        var taskOwnerTitle = task["itemData"]["assoc_pjt_tlResources"].length > 0 ? ('<span class="resource-title">' + task["itemData"]["assoc_pjt_tlResources"][0].displayValue + '</span>')
-                                                : null;
-
-                                        if (!resources[taskOwner])
-                                        {
+                                        var taskOwnerParent = task["itemData"]["assoc_pjt_tlResources"].length > 0 ? task["itemData"]["assoc_pjt_tlResources"][0].value : null;
+                                        		
+                                        if (!resources[taskOwnerParent]){
+                                        	resources[taskOwnerParent] = true;
+                                        	var taskOwnerTitle = task["itemData"]["assoc_pjt_tlResources"].length > 0 ? ('<span class="resource-title">' + task["itemData"]["assoc_pjt_tlResources"][0].displayValue + '</span>')
+                                        			: null;
                                             g.AddTaskItem(new JSGantt.TaskItem(taskOwner, taskOwnerTitle, null, null,
                                                     'FFBC00', '', 0, '', 0, 1, 0, 1));
+                                            
+                                            
+                                            for (var j = 0; j < recordSet.getLength(); j++){
+                                            	oRecord = recordSet.getRecord(j);
+                                                task = oRecord.getData();
+                                                var taskOwner = task["itemData"]["assoc_pjt_tlResources"].length > 0 ? task["itemData"]["assoc_pjt_tlResources"][0].value : null;
+                                                		
+                                                if(taskOwnerParent == taskOwner){
+                                                	var taskId = task.nodeRef;
+                                                	var title = task["itemData"]["dt_pjt_project"]["itemData"]["prop_cm_name"].displayValue;
+                                                	var tlIsMilestone = task["itemData"]["prop_pjt_tlIsMilestone"].value;
+                                                	var tlPercent = task["itemData"]["prop_pjt_completionPercent"].value;
+                                                	taskOwnerTitle = task["itemData"]["assoc_pjt_tlResources"].length > 0 ? ('<span class="resource-title">' + task["itemData"]["assoc_pjt_tlResources"][0].displayValue + '</span>')
+                                                			: null;
+                                                	var tdates = this.cache[taskId];
+                                                	if (!tdates){
+                                                		tdates = this.extractDates(task, start, true);
+                                                		this.cache[taskId] = tdates;
+                                                	}
+                                                	task["itemData"]["prop_pjt_tlTaskName"].displayValue = task["itemData"]["dt_pjt_project"]["itemData"]["prop_bcpg_code"].displayValue + " - " + task["itemData"]["prop_pjt_tlTaskName"].displayValue;
+                                                	var taskTitle = this.getTaskTitle(task, null);
+                                                	
+                                                	g.AddTaskItem(new JSGantt.TaskItem(taskId, taskTitle, tdates.start, tdates.end,
+                                                			this.getTaskColor(task), null, tlIsMilestone ? 1 : 0, title , tlPercent,
+                                                					0, taskOwner, 1));
+                                                }		
+                                            }
+                                            
                                         }
-
-                                        resources[taskOwner] = true;
-
-                                        var tdates = this.cache[taskId];
-                                        if (!tdates)
-                                        {
-                                            tdates = this.extractDates(task, start, true);
-                                            this.cache[taskId] = tdates;
-                                        }
-
-                                        task["itemData"]["prop_pjt_tlTaskName"].displayValue = task["itemData"]["dt_pjt_project"]["itemData"]["prop_bcpg_code"].displayValue + " - " + task["itemData"]["prop_pjt_tlTaskName"].displayValue;
-
-                                        var taskTitle = this.getTaskTitle(task, null);
-
-                                        g.AddTaskItem(new JSGantt.TaskItem(taskId, taskTitle, tdates.start, tdates.end,
-                                                this.getTaskColor(task), null, tlIsMilestone ? 1 : 0, title , tlPercent,
-                                                0, taskOwner, 1));
+                                        
 
                                     }
 

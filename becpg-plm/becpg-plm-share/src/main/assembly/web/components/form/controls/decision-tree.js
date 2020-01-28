@@ -155,12 +155,15 @@
                                   });
                                   
                               } else {
-                                  var checked = this.getCurrentValueChecked(question.id, choice.id );
-                                  htmlForm +="<p>";
-                                  htmlForm +='<input '+(this.options.disabled?'disabled':'')+' tabindex="0" id="'+this.id+'-choice_'+question.id+'_'+choice.id+'" class="'+QUESTION_EVENTCLASS+'" name="--group_'+this.id+question.id+'" type="radio"  '+(checked?'checked="checked"':"")+' />';
-                                  var msgKey  =  choice.id == "-" ? "form.control.decision-tree.empty" : "form.control.decision-tree."+this.options.prefix+"."+question.id+"."+choice.id;
-                                  htmlForm +='<label for="'+this.id+'-choice_'+question.id+'_'+choice.id+'">'+(choice.label ? choice.label:  this.msg(msgKey))+'</label>';
-                                  htmlForm +="</p>";   
+                              
+                                  if(choice.label != "hidden"){
+                                	  var checked = this.getCurrentValueChecked(question.id, choice.id );
+	                                  htmlForm +="<p>";
+	                                  htmlForm +='<input '+(this.options.disabled?'disabled':'')+' tabindex="0" id="'+this.id+'-choice_'+question.id+'_'+choice.id+'" class="'+QUESTION_EVENTCLASS+'" name="--group_'+this.id+question.id+'" type="radio"  '+(checked?'checked="checked"':"")+' />';
+	                                  var msgKey  =  choice.id == "-" ? "form.control.decision-tree.empty" : "form.control.decision-tree."+this.options.prefix+"."+question.id+"."+choice.id;
+	                                  htmlForm +='<label for="'+this.id+'-choice_'+question.id+'_'+choice.id+'">'+(choice.label ? choice.label:  this.msg(msgKey))+'</label>';
+	                                  htmlForm +="</p>";   
+                                  }
                                  
                                 
                               }
@@ -177,7 +180,9 @@
                            
                            if(showComment){
                               htmlForm +='<div id="'+this.id+'-comment_'+question.id+'" class="decision-tree-comments hidden" >';
-                              htmlForm +='<label for="'+this.id+'-comment_'+question.id+'-input">'+(commentLabel ? commentLabel: this.msg("form.control.decision-tree."+this.options.prefix+"."+question.id+".comment"))+':</label>';
+                              if(choice.label!="hidden") {
+                            	  htmlForm +='<label for="'+this.id+'-comment_'+question.id+'-input">'+(commentLabel ? commentLabel: this.msg("form.control.decision-tree."+this.options.prefix+"."+question.id+".comment"))+':</label>';
+                              }
                               if(this.options.disabled){
                                   htmlForm +='<span id="'+this.id+'-comment_'+question.id+'-input" >'+this.getCurrentValueComment(question.id)+'</span>';
                               } else {
@@ -309,23 +314,33 @@
                              var choice = question.choices[j];
                              
                              if(this.formRuntime!=null && question.mandatory){
-                                 if(choice.list!=null && !choice.checkboxes){
+                                 if(choice.list!=null && !choice.checkboxes && !choice.hasValidation){
+                                	 choice.hasValidation = true;
                                      this.formRuntime.addValidation(this.id+'-select_'+question.id+'_'+choice.id, Alfresco.forms.validation.mandatory, null, "keyup");
                                  } else {
-                                     this.formRuntime.addValidation(this.id+'-choice_'+question.id+'_'+choice.id, Alfresco.forms.validation.mandatory, null, "keyup");
-                                     if(choice.comment ){
-                                         if( Dom.get(this.id+"-choice_"+question.id+'_'+choice.id).checked){
-                                             this.formRuntime.addValidation(this.id+"-comment_"+question.id+"-input", Alfresco.forms.validation.mandatory, null, "keyup");
-                                         } else {
-                                             this.formRuntime.removeValidation(this.id+"-comment_"+question.id+"-input");
-                                         }
-                                     }
-                                     
+                                	 if(choice.label != "hidden" && !choice.hasValidation){
+                                		 choice.hasValidation = true;
+	                                     this.formRuntime.addValidation(this.id+'-choice_'+question.id+'_'+choice.id, Alfresco.forms.validation.mandatory, null, "keyup");
+                                	 }
+	                                 if(choice.comment){
+	                                      if(choice.label == "hidden" || Dom.get(this.id+"-choice_"+question.id+'_'+choice.id).checked){
+	                                         if( !choice.hasCommentValidation){
+	                                        	 choice.hasCommentValidation = true;
+	                                        	 this.formRuntime.addValidation(this.id+"-comment_"+question.id+"-input", Alfresco.forms.validation.mandatory, null, "keyup");
+	                                         }
+	                                      } else {
+	                                    	  if( choice.hasCommentValidation){
+	                                    		  choice.hasCommentValidation = false;
+	                                    		  this.formRuntime.removeValidation(this.id+"-comment_"+question.id+"-input");
+	                                    	  }
+	                                      }
+	                                  }
+                                	                                      
                                  }
                              }
 
                              if((choice.list!=null && !choice.checkboxes && Dom.get(this.id+"-select_"+question.id+'_'+choice.id).value!=null)
-                                     || (choice.list!=null && choice.checkboxes )  ||  Dom.get(this.id+"-choice_"+question.id+'_'+choice.id).checked ){
+                                     || (choice.list!=null && choice.checkboxes )  || choice.label == "hidden" ||  Dom.get(this.id+"-choice_"+question.id+'_'+choice.id).checked ){
                              
                             	 var showVisible = false;
                                  if(choice.list!=null){
@@ -409,11 +424,16 @@
                                 var choice = question.choices[j];
                                 
                                 if(this.formRuntime!=null && question.mandatory){
-                                    if(choice.list!=null  && !choice.checkboxes){
+                                    if(choice.list!=null  && !choice.checkboxes && choice.hasValidation){
+                                    	choice.hasValidation = false;
                                         this.formRuntime.removeValidation(this.id+'-select_'+question.id+'_'+choice.id);
                                     } else {
-                                        this.formRuntime.removeValidation(this.id+'-choice_'+question.id+'_'+choice.id);
-                                        if(choice.comment ){
+                                    	if(choice.label!="hidden" && choice.hasValidation){
+                                    		choice.hasValidation = false;
+                                    		this.formRuntime.removeValidation(this.id+'-choice_'+question.id+'_'+choice.id);
+                                    	}
+                                        if(choice.comment && choice.hasCommentValidation){
+                                  		    choice.hasCommentValidation = false;
                                             this.formRuntime.removeValidation(this.id+"-comment_"+question.id+"-input");
                                         }
                                     }
