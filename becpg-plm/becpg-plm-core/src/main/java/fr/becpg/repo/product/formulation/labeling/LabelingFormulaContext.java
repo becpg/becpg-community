@@ -550,9 +550,10 @@ public class LabelingFormulaContext extends RuleParser {
 			}
 			
 			if(lookThreshold ) {
+				Double threshold = 100d;
 				for(ShowRule showRule : showPercRulesByThreshold) {
 					if(showRule.matchLocale(I18NUtil.getLocale()) 
-								&& showRule.matchQty(qty)) {
+								&& showRule.matchQty(qty) && showRule.getThreshold() < threshold) {
 							decimalFormat = new DecimalFormat((showRule.format != null) && !showRule.format.isEmpty() ? showRule.format : defaultPercFormat,
 									symbols);
 							
@@ -560,7 +561,7 @@ public class LabelingFormulaContext extends RuleParser {
 								roundingMode = showRule.roundingMode;
 							}
 							
-							break;
+							threshold = showRule.getThreshold();
 					}	
 				}
 			}
@@ -854,7 +855,7 @@ public class LabelingFormulaContext extends RuleParser {
 					if (!shouldSkip(component.getNodeRef(), qtyPerc)) {
 
 						String subLabel = new String();
- if (component instanceof CompositeLabeling) {
+						if (component instanceof CompositeLabeling) {
 
 							Double subRatio = qtyPerc;
 							if (DeclarationType.Kit.equals(((CompositeLabeling) component).getDeclarationType())) {
@@ -1051,7 +1052,7 @@ public class LabelingFormulaContext extends RuleParser {
 				String geoOriginsLabel = createGeoOriginsLabel(component.getNodeRef(), component.getGeoOrigins());
 
 				if (!shouldSkip(component.getNodeRef(), qtyPerc)) {
-if (component instanceof CompositeLabeling) {
+					if (component instanceof CompositeLabeling) {
 
 						Double subRatio = qtyPerc;
 						if (DeclarationType.Kit.equals(((CompositeLabeling) component).getDeclarationType())) {
