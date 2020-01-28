@@ -11,12 +11,21 @@ import fr.becpg.repo.helper.MLTextHelper;
 class ShowRule {
 	String format;
 	RoundingMode roundingMode = null;
+	Double threshold = null;
 	Set<Locale> locales = new HashSet<>();
 
 	public ShowRule(String format, List<String> locales) {
 		if(format.contains("|")) {
-			this.format = format.split("\\|")[0];
-			roundingMode = RoundingMode.valueOf(format.split("\\|")[1]);
+			String[] splitted = format.split("\\|");
+			
+			this.format = splitted[0];
+			if(!splitted[1].isEmpty()) {
+				roundingMode = RoundingMode.valueOf(splitted[1]);
+			} 
+			if(splitted.length>2 && !splitted[2].isEmpty()) {
+				threshold = Double.valueOf(splitted[2]);
+			}
+			
 		} else {
 			this.format = format;
 		}
@@ -32,5 +41,15 @@ class ShowRule {
 	public boolean matchLocale(Locale locale) {
 		return locales.isEmpty() || locales.contains(locale);
 	}
+	
+	public boolean matchQty(Double qtyPerc) {
+		return threshold == null || qtyPerc == null || qtyPerc <= (threshold/100d);
+	}
+
+	public Double getThreshold() {
+		return threshold;
+	}
+	
+	
 
 }

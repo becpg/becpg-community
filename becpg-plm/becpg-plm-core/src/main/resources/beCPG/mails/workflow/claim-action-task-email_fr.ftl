@@ -67,7 +67,7 @@
                                              </#if>
                                             
                                              <p>
-                                                <#if (args.workflowDueDate)??>Due:&nbsp;&nbsp;<b>${args.workflowDueDate?date?string.full}</b><br></#if>               
+                                                <#if (args.workflowDueDate)??>Echéance:&nbsp;&nbsp;<b>${args.workflowDueDate?date?string.full}</b><br></#if>               
                                              </p>
 	                                                                                          
 											 <p><a href="${shareUrl}/page/task-edit?taskId=${args.workflowId}">Cliquez sur ce lien pour voir la tâche</a></p>

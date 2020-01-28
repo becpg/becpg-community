@@ -55,9 +55,10 @@
                                              </#if>
                                              
                                              <p>
-                                                <#if (args.workflowDueDate)??>Due:&nbsp;&nbsp;<b>${args.workflowDueDate?date?string.full}</b><br></#if>
+                                                <#if (args.workflowDueDate)??>Echéance:&nbsp;&nbsp;<b>${args.workflowDueDate?date?string.full}</b><br></#if>
                                              </p>
-                                             
+                                            
+									                                              
                                              <p>Cordialement,<br />
                                             beCPG</p>
                                           </div>
