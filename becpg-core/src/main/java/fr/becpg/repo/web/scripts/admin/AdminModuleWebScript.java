@@ -227,6 +227,7 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 		Runtime runtime = Runtime.getRuntime();
 
 		ret.put("diskFreeSpace", contentService.getStoreFreeSpace());
+		ret.put("diskTotalSpace", contentService.getStoreTotalSpace());
 		ret.put("totalMemory", runtime.totalMemory() / 1000000d);
 		ret.put("freeMemory", runtime.freeMemory() / 1000000d);
 		ret.put("maxMemory", runtime.maxMemory() / 1000000d);
