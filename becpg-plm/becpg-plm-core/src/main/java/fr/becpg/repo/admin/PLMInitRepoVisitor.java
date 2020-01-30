@@ -132,7 +132,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	private static final String PRODUCT_REPORT_RAWMATERIAL_PATH = "beCPG/birt/document/product/default/RawMaterialReport.rptdesign";
 
 	private static final String EXPORT_RAWMATERIAL_INGLIST_XLSX_PATH = "beCPG/birt/exportsearch/product/ExportRawMaterialIngList.xlsx";
-	final Locale[] locales =  {Locale.FRENCH, Locale.ENGLISH};
 	private static final Map<String, String> reportKindCodes = new HashMap<>();
 	private static final String NONE_KIND_REPORT = "none";
 	
@@ -1137,9 +1136,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				String reportKindCode = reportKindCodes.get(reportKind);
 
 				MLText mltValue = new MLText();
-				for( Locale locale : locales){
-					mltValue.put(MLTextHelper.getNearestLocale(locale), I18NUtil.getMessage("becpg.reportkind."+reportKindCode.toLowerCase()+".value",MLTextHelper.getNearestLocale(locale) ));	
-				}
+				mltValue.put(Locale.FRENCH, I18NUtil.getMessage("becpg.reportkind."+reportKindCode.toLowerCase()+".value",Locale.FRENCH));	
+				mltValue.put(Locale.ENGLISH, I18NUtil.getMessage("becpg.reportkind."+reportKindCode.toLowerCase()+".value",Locale.ENGLISH));	
+			
 				// for aspect on report template
 				Map<QName, Serializable> reportKindTplProps = new HashMap<>();
 				reportKindTplProps.put(ReportModel.PROP_REPORT_KINDS, reportKindCode);
