@@ -52,8 +52,6 @@ public class BecpgFormDefinition {
 
 				if (!cloned.containsKey(id)) {
 					JSONObject tmp = new JSONObject(toClone.toString());
-					
-					
 					cloned.put(id, tmp);
 				}
 				JSONObject field = cloned.get(id);

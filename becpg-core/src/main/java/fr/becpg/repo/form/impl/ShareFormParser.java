@@ -273,7 +273,7 @@ public class ShareFormParser {
 		}
 
 		if (!StringUtils.isEmpty(elem.getAttribute("for-mode"))) {
-			jsonField.put("for-mode", elem.getAttribute("for-mode"));
+			jsonField.put("mode", elem.getAttribute("for-mode"));
 		}
 
 		jsonField.put("fieldType", "FormFieldRepresentation");
