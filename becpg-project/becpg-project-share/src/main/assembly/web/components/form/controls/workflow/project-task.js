@@ -210,8 +210,10 @@
 		                    						if(isValid){
 			                    						var nodes = YAHOO.util.Selector.query("div.delivrable-status-Refused");
 			                    						for(var key in nodes){
-			                    							 Dom.removeClass(nodes[key], "delivrable-status-Refused");
-			                    							 Dom.addClass(nodes[key], "delivrable-status-Completed");
+			                    							if(Dom.hasClass(nodes[key],catalogId)){
+				                    							 Dom.removeClass(nodes[key], "delivrable-status-Refused");
+				                    							 Dom.addClass(nodes[key], "delivrable-status-Completed");
+			                    							}
 			                    						}
 			                    						
 			                    						
@@ -256,15 +258,17 @@
                         getDeliverableTitle : function PT_getDeliverableTitle(deliverable, entityNodeRef)
                         {
 
-                            var ret = "", url = deliverable.url;
+                            var ret = "", url = deliverable.url, stateCss = deliverable.state;
 
                             if(url != null && url.length > 0 && url.indexOf("catalogId") > 0){
-                            	 deliverable.state = "Refused";
+                            	var catalogId = YAHOO.util.History.getQueryStringParameter("catalogId",url)
+                            	stateCss = "Refused"+" "+catalogId;
+                            	deliverable.state = "Refused";
                             }
                             
                             
-                            ret = '<div class="delivrable delivrable-status-' + deliverable.state + '">';
-                            ret += '<div class="delivrable-status delivrable-status-' + deliverable.state + '"></div>';
+                            ret = '<div class="delivrable delivrable-status-' + stateCss + '">';
+                            ret += '<div class="delivrable-status delivrable-status-' + stateCss + '"></div>';
 
                             
                             ret += '<div class="delivrable-container">';
@@ -284,7 +288,7 @@
                                 ret += '<span class="node-' + deliverable.nodeRef + '|' + deliverable.state + '">';
 
                                 ret += '<a class="'+DELIVERABLE_STATE_EVENTCLASS+'" title="' + this
-                                .msg("form.control.project-task.change-state") + '" href="#"><span class="delivrable-status delivrable-status-' + deliverable.state + '">&nbsp;</span></a>';
+                                .msg("form.control.project-task.change-state") + '" href="#"><span class="delivrable-status delivrable-status-' + stateCss + '">&nbsp;</span></a>';
 
                                 var contents = deliverable.contents;
 

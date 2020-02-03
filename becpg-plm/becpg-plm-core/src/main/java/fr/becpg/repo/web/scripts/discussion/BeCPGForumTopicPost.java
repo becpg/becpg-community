@@ -64,7 +64,7 @@ public class BeCPGForumTopicPost extends ForumTopicPost {
 
 			NodeRef supplierAccountNodeRef = personService.getPersonOrNull(supplierUserName);
 			nodeService.addAspect(topic.getNodeRef(), PLMModel.ASPECT_SUPPLIERS_ACCOUNTREF, null);
-			nodeService.createAssociation(topic.getNodeRef(), supplierAccountNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNT);
+			nodeService.createAssociation(topic.getNodeRef(), supplierAccountNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
 
 			updateTopicPermission(topic.getNodeRef(), supplierUserName);
 
