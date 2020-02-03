@@ -71,7 +71,7 @@ public class BeCPGForumPostGet extends AbstractDiscussionWebScript {
 		Map<String, String> ret = new HashMap<>();
 
 		if (nodeService.hasAspect(topic.getNodeRef(), PLMModel.ASPECT_SUPPLIERS_ACCOUNTREF)) {
-			List<AssociationRef> associations = nodeService.getTargetAssocs(topic.getNodeRef(), PLMModel.ASSOC_SUPPLIER_ACCOUNT);
+			List<AssociationRef> associations = nodeService.getTargetAssocs(topic.getNodeRef(), PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
 			NodeRef userNodeRef = associations.get(0).getTargetRef();
 			ret.put("userName", (String) nodeService.getProperty(userNodeRef, ContentModel.PROP_USERNAME));
 			ret.put("firstName", (String) nodeService.getProperty(userNodeRef, ContentModel.PROP_FIRSTNAME));

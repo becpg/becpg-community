@@ -215,11 +215,7 @@ public class HierarchyServiceImpl implements HierarchyService {
 					NodeRef destinationNodeRef = repoService.getOrCreateFolderByPath(containerNodeRef, type.getLocalName(),
 							classDef.getTitle(dictionaryService));
 
-					NodeRef hierarchyNodeRef = getHierarchyNodeRef(entityNodeRef, hierarchyQname);
-					
-					if (hierarchyNodeRef != null) {
-						destinationNodeRef = getOrCreateHierachyFolder(hierarchyNodeRef, destinationNodeRef);
-					}
+					destinationNodeRef = getOrCreateHierachyFolder(entityNodeRef, hierarchyQname, destinationNodeRef);
 
 					if (destinationNodeRef != null) {
 						if (destinationNodeRef != entityNodeRef) {
@@ -268,6 +264,18 @@ public class HierarchyServiceImpl implements HierarchyService {
 		return hierarchyNodeRef;
 	}
 
+	@Override
+	public NodeRef getOrCreateHierachyFolder(NodeRef entityNodeRef,  QName hierarchyQname , NodeRef destinationNodeRef) {
+		
+		NodeRef hierarchyNodeRef = getHierarchyNodeRef(entityNodeRef, null);
+		
+		if (hierarchyNodeRef != null) {
+			destinationNodeRef = getOrCreateHierachyFolder(hierarchyNodeRef, destinationNodeRef);
+		}
+
+		return destinationNodeRef;
+	}
+	
 	private NodeRef getOrCreateHierachyFolder(NodeRef hierarchyNodeRef, NodeRef parentNodeRef) {
 		NodeRef destinationNodeRef = null;
 

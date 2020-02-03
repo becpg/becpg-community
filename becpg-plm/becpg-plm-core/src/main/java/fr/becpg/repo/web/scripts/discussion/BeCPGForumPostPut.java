@@ -99,14 +99,14 @@ public class BeCPGForumPostPut extends ForumPostPut {
 			NodeRef oldUserNodeRef = null;
 
 			if (nodeService.hasAspect(topic.getNodeRef(), PLMModel.ASPECT_SUPPLIERS_ACCOUNTREF)) {
-				List<AssociationRef> associations = nodeService.getTargetAssocs(topic.getNodeRef(), PLMModel.ASSOC_SUPPLIER_ACCOUNT);
+				List<AssociationRef> associations = nodeService.getTargetAssocs(topic.getNodeRef(), PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
 				oldUserNodeRef = associations.get(0).getTargetRef();
-				nodeService.removeAssociation(topic.getNodeRef(), oldUserNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNT);
+				nodeService.removeAssociation(topic.getNodeRef(), oldUserNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
 			} else {
 				nodeService.addAspect(topic.getNodeRef(), PLMModel.ASPECT_SUPPLIERS_ACCOUNTREF, null);
 			}
 
-			nodeService.createAssociation(topic.getNodeRef(), newUserNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNT);
+			nodeService.createAssociation(topic.getNodeRef(), newUserNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
 
 			updateTopicPermission(topic.getNodeRef(), newUserNodeRef, oldUserNodeRef);
 
