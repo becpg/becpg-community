@@ -294,8 +294,8 @@ public class SupplierPortalWebScript extends AbstractWebScript {
 
 			if (supplierNodeRef != null) {
 
-				NodeRef accountNodeRef = associationService.getTargetAssoc(supplierNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNT);
-				if (accountNodeRef == null) {
+				List<NodeRef> accountNodeRefs = associationService.getTargetAssocs(supplierNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
+				if (accountNodeRefs == null || accountNodeRefs.isEmpty()) {
 					throw new IllegalStateException(I18NUtil.getMessage("message.supplier-account.missed"));
 				}
 

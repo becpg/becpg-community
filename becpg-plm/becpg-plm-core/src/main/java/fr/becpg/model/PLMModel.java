@@ -251,7 +251,7 @@ public interface PLMModel {
 	
 	// supplierAccountRef aspect
 	QName ASPECT_SUPPLIERS_ACCOUNTREF = QName.createQName(BeCPGModel.BECPG_URI, "supplierAccountRefAspect");
-	QName ASSOC_SUPPLIER_ACCOUNT = QName.createQName(BeCPGModel.BECPG_URI, "supplierAccountRef");
+	QName ASSOC_SUPPLIER_ACCOUNTS = QName.createQName(BeCPGModel.BECPG_URI, "supplierAccountRef");
 	
 
 
