@@ -68,7 +68,7 @@ public class SupplierAccountWebScript extends  AbstractWebScript {
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(()->{
 
-			List<AssociationRef> associations = nodeService.getTargetAssocs(nodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNT);
+			List<AssociationRef> associations = nodeService.getTargetAssocs(nodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
 			
 			String userName = SUPPLIER_PREFIX +"-"+ (String)nodeService.getProperty(nodeRef, BeCPGModel.PROP_CODE);
 			String password = UUID.randomUUID().toString();
@@ -91,7 +91,7 @@ public class SupplierAccountWebScript extends  AbstractWebScript {
 					NodeRef userRef = personService.createPerson(propMap);
 					authorityService.addAuthority(authorityService.getName(AuthorityType.GROUP, SystemGroup.ExternalUser.toString()), userName);
 					
-					nodeService.createAssociation(nodeRef, userRef, PLMModel.ASSOC_SUPPLIER_ACCOUNT);
+					nodeService.createAssociation(nodeRef, userRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
 					
 					String creator = (String)nodeService.getProperty(nodeRef, ContentModel.PROP_CREATOR);
 					mailService.sendMailNewUser(personService.getPersonOrNull(creator), userName, password, true);
@@ -108,7 +108,7 @@ public class SupplierAccountWebScript extends  AbstractWebScript {
 						logger.debug("Reassign to an existed user");
 					}
 					
-					nodeService.createAssociation(nodeRef, personService.getPerson(userName), PLMModel.ASSOC_SUPPLIER_ACCOUNT);
+					nodeService.createAssociation(nodeRef, personService.getPerson(userName), PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
 				}
 				
 			} else {
