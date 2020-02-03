@@ -32,5 +32,6 @@ public interface HierarchyService {
 	NodeRef createHierarchy(NodeRef dataListNodeRef, NodeRef hierarchyParent, String value);
 	void classifyByHierarchy(NodeRef containerNodeRef, NodeRef entityNodeRef);
 	void classifyByHierarchy(NodeRef containerNodeRef, NodeRef entityNodeRef, QName hierarchyQname, Locale locale);
+	NodeRef getOrCreateHierachyFolder(NodeRef entityNodeRef, QName hierarchyQname, NodeRef destinationNodeRef);
 	
 }

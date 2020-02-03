@@ -23,12 +23,12 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMGroup;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.ProjectModel;
-import fr.becpg.model.SystemGroup;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.admin.impl.AbstractInitVisitorImpl;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.ContentHelper;
+import fr.becpg.repo.jscript.SupplierPortalHelper;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
 import fr.becpg.repo.project.data.projectList.DeliverableScriptOrder;
@@ -47,7 +47,6 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 	private static final String SUPPLIER_PRE_SCRIPT = "plm.supplier.portal.deliverable.scripts.pre.name";
 	private static final String VALIDATE_POST_SCRIPT = "plm.supplier.portal.deliverable.scripts.post.name";
 
-	private static final String SUPPLIER_SITE_ID = "supplier-portal";
 	private static final String SUPPLIER_SITE_PRESET = "supplier-site-dashboard";
 
 	private static final String XPATH_DICTIONNARY_SCRIPTS = "./app:dictionary/app:scripts";
@@ -83,21 +82,21 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 		NodeRef entityTplNodeRef = nodeService.getChildByName(entityTplsNodeRef, ContentModel.ASSOC_CONTAINS,
 				I18NUtil.getMessage(SUPPLIER_PJT_TPL_NAME));
 
-		SiteInfo siteInfo = siteService.getSite(SUPPLIER_SITE_ID);
+		SiteInfo siteInfo = siteService.getSite(SupplierPortalHelper.SUPPLIER_SITE_ID);
 		NodeRef documentLibraryNodeRef = null;
 		if (siteInfo == null) {
-			siteInfo = siteService.createSite(SUPPLIER_SITE_PRESET, SUPPLIER_SITE_ID, I18NUtil.getMessage("plm.supplier.portal.site.title"), "",
+			siteInfo = siteService.createSite(SUPPLIER_SITE_PRESET, SupplierPortalHelper.SUPPLIER_SITE_ID, I18NUtil.getMessage("plm.supplier.portal.site.title"), "",
 					SiteVisibility.PRIVATE);
 
 			siteService.setMembership(siteInfo.getShortName(), PermissionService.GROUP_PREFIX + PLMGroup.ReferencingMgr.toString(),
 					SiteModel.SITE_MANAGER);
 
 			// pre-create doclib
-			documentLibraryNodeRef = siteService.createContainer(SUPPLIER_SITE_ID, SiteService.DOCUMENT_LIBRARY, ContentModel.TYPE_FOLDER, null);
+			documentLibraryNodeRef = siteService.createContainer(SupplierPortalHelper.SUPPLIER_SITE_ID, SiteService.DOCUMENT_LIBRARY, ContentModel.TYPE_FOLDER, null);
 
 			ret.add(siteInfo);
 		} else {
-			documentLibraryNodeRef = siteService.getContainer(SUPPLIER_SITE_ID, SiteService.DOCUMENT_LIBRARY);
+			documentLibraryNodeRef = siteService.getContainer(SupplierPortalHelper.SUPPLIER_SITE_ID, SiteService.DOCUMENT_LIBRARY);
 
 		}
 
