@@ -48,7 +48,7 @@ public class BeCPGForumTopicsFilteredGet extends ForumTopicsFilteredGet {
 			List<TopicInfo> topics = new ArrayList<>();
 			
 			for(NodeRef nodeRef : associationService.getSourcesAssocs(personService.getPerson(AuthenticationUtil.getFullyAuthenticatedUser()),
-					PLMModel.ASSOC_SUPPLIER_ACCOUNT)){
+					PLMModel.ASSOC_SUPPLIER_ACCOUNTS)){
 				if(nodeService.getType(nodeRef).equals(ForumModel.TYPE_TOPIC)){
 				   ChildAssociationRef ref = nodeService.getPrimaryParent(nodeRef);
 		           String topicName = ref.getQName().getLocalName();

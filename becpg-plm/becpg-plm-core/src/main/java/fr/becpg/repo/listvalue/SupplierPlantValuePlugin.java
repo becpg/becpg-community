@@ -56,7 +56,7 @@ public class SupplierPlantValuePlugin extends EntityListValuePlugin {
 		
 		NodeRef connectedUser = personService.getPerson(AuthenticationUtil.getFullyAuthenticatedUser());
 		
-		List<NodeRef> suppliers = associationService.getSourcesAssocs(connectedUser, PLMModel.ASSOC_SUPPLIER_ACCOUNT);
+		List<NodeRef> suppliers = associationService.getSourcesAssocs(connectedUser, PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
 		if(suppliers !=null && !suppliers.isEmpty()){
 			List<NodeRef> ret = new ArrayList<NodeRef>();
 			for(NodeRef supplierNodeRef: suppliers){
