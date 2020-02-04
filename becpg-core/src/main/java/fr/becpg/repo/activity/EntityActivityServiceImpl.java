@@ -677,9 +677,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 			logger.debug("Clean activities, Number of entities: " + entityNodeRefs.size());
 		}
 		doInBatch(entityNodeRefs, 10);
-
 	}
-	
 	
 	private void doInBatch(final List<NodeRef> entityNodeRefs, final int batchSize) {
 		
@@ -802,7 +800,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 		if (logger.isInfoEnabled()) {
 			watch.stop();
-			logger.info("Batch takes " + watch.getTotalTimeSeconds() + " seconds");
+			logger.info("Clean activities batchs takes " + watch.getTotalTimeSeconds() + " seconds");
 		}
 	}
 
@@ -902,10 +900,11 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	}
 	
 	private List<NodeRef> getEntitiesToPurge(){
-		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_ENTITY_V2)
-				.excludeVersions()
-				.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED);
-		return queryBuilder.list();
-		
+		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_ENTITY_V2)
+					.excludeVersions()
+					.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED);
+			return queryBuilder.list();
+		}, false, true);
 	}
 }
