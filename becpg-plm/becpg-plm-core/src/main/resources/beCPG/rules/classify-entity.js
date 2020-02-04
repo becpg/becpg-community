@@ -133,6 +133,7 @@ function rename(product) {
 const SIMULATION_SITE_ID = "simulation";
 const VALID_SITE_ID = "valid";
 const ARCHIVED_SITE_ID = "archived";
+const SUPPLIER_PORTAL_SITE = "supplier-portal";
 
 function main() {
 
@@ -149,7 +150,7 @@ function main() {
 
 		if (state == "Valid") {
 			classifyByHierarchy(document, getDocumentLibraryNodeRef(VALID_SITE_ID));
-		} else if (state == "Simulation" || state == "ToValidate") {
+		} else if ((state == "Simulation" || state == "ToValidate") && !isInSite(document, SUPPLIER_PORTAL_SITE)) {
 			classifyByHierarchy(document, getDocumentLibraryNodeRef(SIMULATION_SITE_ID));
 		} else if (state == "Archived") {
 			classifyByHierarchy(document, getDocumentLibraryNodeRef(ARCHIVED_SITE_ID));
