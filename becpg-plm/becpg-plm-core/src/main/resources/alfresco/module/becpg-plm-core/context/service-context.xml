@@ -186,6 +186,10 @@
 		<property name="nodeService" ref="NodeService" />
 		<property name="personService" ref="PersonService" />
 		<property name="authorityService" ref="AuthorityService" />
+		<property name="associationService" ref="associationService"/>
+		<property name="authenticationService" ref="authenticationService"/>
+		<property name="mailService" ref="beCPGMailService"/>
+		<property name="transactionService" ref="transactionService"/>
 	</bean>
 	
 	
