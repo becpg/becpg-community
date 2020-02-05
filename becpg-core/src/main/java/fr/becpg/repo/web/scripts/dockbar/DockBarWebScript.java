@@ -77,6 +77,7 @@ public class DockBarWebScript extends AbstractWebScript {
 	private PreferenceService preferenceService;
 
 	private ServiceRegistry serviceRegistry;
+	
 
 	public void setServiceRegistry(ServiceRegistry serviceRegistry) {
 		this.serviceRegistry = serviceRegistry;
@@ -103,7 +104,7 @@ public class DockBarWebScript extends AbstractWebScript {
 		}
 
 		NodeRef productNodeRef = null;
-		if (entityNodeRef != null && !entityNodeRef.isEmpty()) {
+		if (entityNodeRef != null && !entityNodeRef.isEmpty() && NodeRef.isNodeRef(entityNodeRef)) {
 			productNodeRef = new NodeRef(entityNodeRef);
 		}
 		
