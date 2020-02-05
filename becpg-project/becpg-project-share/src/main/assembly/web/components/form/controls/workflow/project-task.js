@@ -195,14 +195,18 @@
 		                    				successCallback : {
 		                    					fn : function (response){
 		                    						var isValid = true;
+		                    						var catalogID = null;
 		                    						
 		                    						if( response.json.catalogs != null  && response.json.catalogs !== undefined 
 		                									&& Object.keys(response.json.catalogs).length > 0){
 		                    							
 		                    							var catalogs = response.json.catalogs;
+		                    							 
 		                    							for(var key in catalogs){
+		                    								catalogID  = catalogs[key].id;
 		                    								if(catalogs[key].missingFields !== undefined && catalogs[key].missingFields.length >0){
 		                    									isValid = false;
+		                    									break;
 		                    								}
 		                    							}
 		                    						}
@@ -210,7 +214,7 @@
 		                    						if(isValid){
 			                    						var nodes = YAHOO.util.Selector.query("div.delivrable-status-Refused");
 			                    						for(var key in nodes){
-			                    							if(Dom.hasClass(nodes[key],catalogId)){
+			                    							if(catalogID== null || Dom.hasClass(nodes[key],catalogID)){
 				                    							 Dom.removeClass(nodes[key], "delivrable-status-Refused");
 				                    							 Dom.addClass(nodes[key], "delivrable-status-Completed");
 			                    							}
