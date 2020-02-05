@@ -1,11 +1,13 @@
 /*
- * 
+ *
  */
 package fr.becpg.repo.entity.policy;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.model.ApplicationModel;
 import org.alfresco.model.ContentModel;
@@ -21,12 +23,14 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityService;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
 /**
  * @author matthieu
  */
-public class DocLinkedEntitiesPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnDeleteAssociationPolicy {
+public class DocLinkedEntitiesPolicy extends AbstractBeCPGPolicy
+		implements NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnDeleteAssociationPolicy {
 
 	private static final Log logger = LogFactory.getLog(DocLinkedEntitiesPolicy.class);
 
@@ -35,15 +39,23 @@ public class DocLinkedEntitiesPolicy extends AbstractBeCPGPolicy implements Node
 
 	private EntityService entityService;
 
+	private AssociationService associationService;
+
 	public void setEntityService(EntityService entityService) {
 		this.entityService = entityService;
 	}
 
+	public void setAssociationService(AssociationService associationService) {
+		this.associationService = associationService;
+	}
+
+	@Override
 	public void doInit() {
-		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, BeCPGModel.ASPECT_DOC_LINKED_ENTITIES, new JavaBehaviour(this,
-				"onCreateAssociation"));
-		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteAssociationPolicy.QNAME, BeCPGModel.ASPECT_DOC_LINKED_ENTITIES, new JavaBehaviour(this,
-				"onDeleteAssociation"));
+		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, BeCPGModel.ASPECT_DOC_LINKED_ENTITIES,
+				new JavaBehaviour(this, "onCreateAssociation"));
+		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteAssociationPolicy.QNAME, BeCPGModel.ASPECT_DOC_LINKED_ENTITIES,
+				new JavaBehaviour(this, "onDeleteAssociation"));
+
 	}
 
 	private void createLink(NodeRef nodeRef, NodeRef destRef) {
@@ -58,8 +70,8 @@ public class DocLinkedEntitiesPolicy extends AbstractBeCPGPolicy implements Node
 			props.put(ContentModel.PROP_LINK_DESTINATION, nodeRef);
 
 			// create File Link node
-			ChildAssociationRef childRef = nodeService.createNode(destRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, newName),
-					ApplicationModel.TYPE_FILELINK, props);
+			ChildAssociationRef childRef = nodeService.createNode(destRef, ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, newName), ApplicationModel.TYPE_FILELINK, props);
 
 			// apply the titled aspect - title and description
 			Map<QName, Serializable> titledProps = new HashMap<>(2, 1.0f);
@@ -88,7 +100,11 @@ public class DocLinkedEntitiesPolicy extends AbstractBeCPGPolicy implements Node
 
 	@Override
 	public void onDeleteAssociation(AssociationRef associationRef) {
-		if (BeCPGModel.ASSOC_DOC_LINKED_ENTITIES.equals(associationRef.getTypeQName())) {
+		if (BeCPGModel.ASSOC_DOC_LINKED_ENTITIES.equals(associationRef.getTypeQName())
+				&& policyBehaviourFilter.isEnabled(ContentModel.ASPECT_AUDITABLE)
+				&& policyBehaviourFilter.isEnabled(associationRef.getSourceRef(), ContentModel.ASPECT_AUDITABLE)
+				&& !isWorkingCopyOrVersion(associationRef.getSourceRef())
+				&& !nodeService.hasAspect(associationRef.getSourceRef(), ContentModel.ASPECT_CHECKED_OUT)) {
 			NodeRef destRef = entityService.getOrCreateDocumentsFolder(associationRef.getTargetRef());
 
 			deleteLink(associationRef.getSourceRef(), destRef);
@@ -98,11 +114,30 @@ public class DocLinkedEntitiesPolicy extends AbstractBeCPGPolicy implements Node
 
 	@Override
 	public void onCreateAssociation(AssociationRef associationRef) {
-		if (BeCPGModel.ASSOC_DOC_LINKED_ENTITIES.equals(associationRef.getTypeQName())) {
-			NodeRef destRef = entityService.getOrCreateDocumentsFolder(associationRef.getTargetRef());
+		if (BeCPGModel.ASSOC_DOC_LINKED_ENTITIES.equals(associationRef.getTypeQName())
+				&& policyBehaviourFilter.isEnabled(ContentModel.ASPECT_AUDITABLE)
+				&& policyBehaviourFilter.isEnabled(associationRef.getSourceRef(), ContentModel.ASPECT_AUDITABLE)
+				&& !nodeService.hasAspect(associationRef.getSourceRef(), ContentModel.ASPECT_CHECKED_OUT)
+				&& !isWorkingCopyOrVersion(associationRef.getSourceRef())) {
 
-			createLink(associationRef.getSourceRef(), destRef);
+			queueNode(associationRef.getSourceRef());
+
 		}
 
 	}
+
+	@Override
+	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
+		for (NodeRef entityNodeRef : pendingNodes) {
+			if (nodeService.exists(entityNodeRef) && !isWorkingCopyOrVersion(entityNodeRef)) {
+				List<NodeRef> linkedNodeRefs = associationService.getTargetAssocs(entityNodeRef, BeCPGModel.ASSOC_DOC_LINKED_ENTITIES);
+				for (NodeRef linkedNodeRef : linkedNodeRefs) {
+					NodeRef destRef = entityService.getOrCreateDocumentsFolder(linkedNodeRef);
+					createLink(entityNodeRef, destRef);
+				}
+			}
+		}
+		return true;
+	}
+
 }
