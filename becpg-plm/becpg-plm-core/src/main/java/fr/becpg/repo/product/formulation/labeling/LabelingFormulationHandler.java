@@ -544,7 +544,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				}
 			}
 
-			if ((prev.getPluralLegalName() == null) && (component.getPluralLegalName() != null)) {
+			if ((prev.getPluralLegalName() == null || prev.getPluralLegalName().isEmpty()) 
+					&& (component.getPluralLegalName() != null && !component.getPluralLegalName().isEmpty())) {
 				prev.setPluralLegalName(component.getPluralLegalName());
 			}
 
