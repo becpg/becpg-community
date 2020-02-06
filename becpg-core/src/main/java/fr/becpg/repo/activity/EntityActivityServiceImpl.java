@@ -781,6 +781,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 							}
 							
 						} catch (Exception e) {
+							logger.error(e,e);
 						} finally {
 							logger.info("Purge terminated with sucess: ");
 							policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
