@@ -169,6 +169,8 @@
                             	return 0;
                             });
                             
+                            var countCatalog = 0;
+                            
                             for (j in deliverables)
                             {
                             	var dUrl = deliverables[j].url
@@ -180,10 +182,13 @@
                             		
                             		if(wizardNodeRef!=null && catalogId!=null){
                             			
+                            			countCatalog++;
+                            			
+                            			var hiddenClass = countCatalog > 1 ? "-"+ countCatalog : "";
 
                                 		var validateButtonId = this.id.replace(/assoc_pjt_workflowTask\-cntrl/g,this.options.transitionField) + "-validate";
                                     	YAHOO.util.Event.onAvailable(validateButtonId,function(){
-                                    		  Dom.addClass(validateButtonId, "hidden");
+                                    		  Dom.addClass(validateButtonId, "hidden"+hiddenClass);
                                     	}, this);
                                 		
                                 		
@@ -222,7 +227,7 @@
 			                    						
 			                    						
 			                                        	YAHOO.util.Event.onAvailable(validateButtonId,function(){
-			                                        		  Dom.removeClass(validateButtonId, "hidden");
+			                                        		  Dom.removeClass(validateButtonId, "hidden"+hiddenClass);
 			                                        	}, this);
 		                    						}
 		                    					},
