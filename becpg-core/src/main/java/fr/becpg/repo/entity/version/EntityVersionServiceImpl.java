@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.model.ImapModel;
 import org.alfresco.query.PagingRequest;
 import org.alfresco.query.PagingResults;
 import org.alfresco.repo.forum.CommentService;
@@ -265,6 +266,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 					policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 					policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
 					policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_VERSIONABLE);
+					policyBehaviourFilter.disableBehaviour(ImapModel.ASPECT_IMAP_CONTENT);
 
 					// version is a copy of working copy or orig for 1st
 					// version
@@ -312,6 +314,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 					policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
 					policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
 					policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_VERSIONABLE);
+					policyBehaviourFilter.enableBehaviour(ImapModel.ASPECT_IMAP_CONTENT);
 				}
 
 			});
