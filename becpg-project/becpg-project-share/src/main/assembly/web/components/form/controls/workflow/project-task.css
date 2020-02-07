@@ -66,7 +66,7 @@
 }
 
 
-
+".project"
 .project-list.project-task a.active-comments {
 	cursor: pointer;
 	margin-left: 5px;
@@ -85,6 +85,10 @@
     color: white;
     text-align: center;
 	
+}
+
+.hidden-1, .hidden-2, .hidden-3, .hidden-4 {
+	visibility: hidden;
 }
 
  

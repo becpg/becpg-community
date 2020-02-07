@@ -1453,7 +1453,7 @@ public class LabelingFormulaContext extends RuleParser {
 			}
 
 			tree.put("name", getName(component));
-			tree.put("legal", cleanLabel(getLegalIngName(component, null, false, false)));
+			tree.put("legal", cleanLabel(getLegalIngName(component, null, component.isPlural(), false)));
 			if ((component.getVolume() != null) && (totalVol != null) && (totalVol > 0)) {
 				tree.put("vol", (component.getVolume() / totalVol) * 100);
 			}
@@ -1488,7 +1488,7 @@ public class LabelingFormulaContext extends RuleParser {
 				JSONArray children = new JSONArray();
 				for (Map.Entry<IngTypeItem, List<LabelingComponent>> kv : getSortedIngListByType(composite).entrySet()) {
 
-					if ((kv.getKey() != null) && (getLegalIngName(kv.getKey(), null, false, false) != null)) {
+					if ((kv.getKey() != null) && (getLegalIngName(kv.getKey(), null,false, false) != null)) {
 
 						JSONObject ingTypeJson = new JSONObject();
 						ingTypeJson.put("nodeRef", kv.getKey().getNodeRef().toString());
