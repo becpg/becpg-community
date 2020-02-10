@@ -140,7 +140,7 @@ function getConvertedCapacityInUsUnit (qty, unit, isVolume) {
     </list-property>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="452">
-            <property name="FILELIST">src/main/resources/beCPG/birt/document/product/default/ProductReport.xml</property>
+            <property name="FILELIST">becpg-plm/becpg-plm-core/src/main/resources/beCPG/birt/document/product/default/ProductReport.xml</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
@@ -2076,7 +2076,7 @@ depth + "x" + width + "x" +  height;</expression>
                     <property name="name">height_toUse</property>
                     <expression name="expression">if (row["height"]!= null ) {
  
-	( reportContext.getLocale().toString().toLowerCase() == "en_us" ) ? BirtMath.round(row["height"] * 0.0393700787, 1) : row["length"];
+	( reportContext.getLocale().toString().toLowerCase() == "en_us" ) ? BirtMath.round(row["height"] * 0.0393700787, 1) : row["height"];
 
 } else { 
 	""; 
@@ -2089,7 +2089,7 @@ depth + "x" + width + "x" +  height;</expression>
 
 if (row["width"]!= null ) {
  
-	( reportContext.getLocale().toString().toLowerCase() == "en_us" ) ? BirtMath.round(row["width"] * 0.0393700787, 1) : row["length"];
+	( reportContext.getLocale().toString().toLowerCase() == "en_us" ) ? BirtMath.round(row["width"] * 0.0393700787, 1) : row["width"];
 
 } else { 
 	""; 
@@ -6351,7 +6351,7 @@ if ( m_size !== null &amp;&amp; m_size !== "" ) {
                                     <list-property name="boundDataColumns">
                                         <structure>
                                             <property name="name">palletHeight2</property>
-                                            <expression name="expression" type="javascript">( reportContext.getLocale().toString().toLowerCase() == "en_us"  &amp;&amp; row["palletHeight"] != null ) ? BirtMath.round(row["palletHeight"] * 0.0393700787, 1)  : row["palletHeight"];</expression>
+                                            <expression name="expression" type="javascript">( reportContext.getLocale().toString().toLowerCase() == "en_us"  &amp;&amp; dataSetRow["palletHeight"] != null ) ? BirtMath.round(dataSetRow["palletHeight"] * 0.0393700787, 1)  : dataSetRow["palletHeight"];</expression>
                                             <property name="dataType">float</property>
                                             <property name="allowExport">true</property>
                                         </structure>
