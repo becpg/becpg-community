@@ -259,3 +259,36 @@ function onCreateApproveProductTask() {
 
 	}
 }
+
+///#6878 Do not removed, used by old workflows
+
+function getMemberNames(assignees){
+	
+	var memberNames = null;
+	if(assignees != null){
+		var memberNames = new java.util.ArrayList();
+		
+		for (var i=0; i<assignees.size(); i++) {
+			if(assignees.get(i).isSubType("cm:authorityContainer")){
+				var members = people.getMembers(assignees.get(i));
+				for(var j in members) 
+				{
+				  memberNames.add(members[j].properties.userName);
+				}
+			}
+			else if(assignees.get(i).isSubType("cm:person")){
+				memberNames.add(assignees.get(i).properties.userName);
+			}		
+		}
+	}
+	return memberNames;
+}
+
+function sendMailToAssignees(assignees, from, subject, message, templatePath, workflowDocuments){
+	for (var i = 0; i < assignees.size(); i++){
+		sendMail(assignees.get(i), from, subject, message, templatePath, workflowDocuments)
+	}
+}
+
+
+
