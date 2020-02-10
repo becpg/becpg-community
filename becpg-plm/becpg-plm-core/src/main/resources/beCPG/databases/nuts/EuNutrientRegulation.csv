@@ -78,7 +78,7 @@ BIOT;Vitamin B7 (Biotin);45;1;false;true;false;50;;µg;true
 VITC-;Vitamin C, total ascorbic acid;34;1;false;true;false;80;;mg;true
 VITD-;VITAMIN D;28;1;false;true;false;5;;µg;true
 VITDEQ;Vitamin D (D2 + D3);29;1;false;true;false;;;;
-VITE-;Vitamin E;30;1;false;true;false;12;;µg;true
+VITE-;Vitamin E;30;1;false;true;false;12;;mg;true
 TOCPHA;Vitamin E (alpha-tocopherol);31;1;false;true;false;;;;
 VITK1;Vitamin K (phylloquinone);32;1;false;true;false;75;;µg;true
 VITK2;Vitamin K2;33;1;false;true;false;;;;
