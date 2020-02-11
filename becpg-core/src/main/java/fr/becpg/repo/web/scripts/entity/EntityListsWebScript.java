@@ -54,12 +54,14 @@ import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
+import fr.becpg.model.ReportModel;
 import fr.becpg.model.SecurityModel;
 import fr.becpg.model.SystemGroup;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.SiteHelper;
+import fr.becpg.repo.report.jscript.ReportAssociationDecorator;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.security.SecurityService;
 
@@ -81,7 +83,7 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 	private static final String MODEL_KEY_NAME_ENTITY = "entity";
 
 	private static final String MODEL_KEY_NAME_CONTAINER = "container";
-	
+
 	private static final String MODEL_KEY_USER_SECURITY_ROLES = "userSecurityRoles";
 
 	private static final String MODEL_KEY_NAME_LISTS = "lists";
@@ -91,7 +93,7 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 	private static final String MODEL_HAS_CHANGE_STATE_PERMISSION = "hasChangeStatePermission";
 
 	private static final String MODEL_KEY_ACL_TYPE = "aclType";
-	
+
 	private static final String MODEL_KEY_ACL_TYPE_NODE = "aclTypeNode";
 
 	private static final String MODEL_PROP_KEY_LIST_TYPES = "listTypes";
@@ -99,6 +101,8 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 	private static final String MODEL_KEY_NAME_ENTITY_PATH = "entityPath";
 
 	private static final String MODEL_ACCESS_MAP = "accessMap";
+
+	private static final String MODEL_REPORTS = "reports";
 
 	private static final Log logger = LogFactory.getLog(EntityListsWebScript.class);
 
@@ -123,6 +127,8 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 	private AssociationService associationService;
 
 	private BehaviourFilter policyBehaviourFilter;
+
+	private ReportAssociationDecorator reportAssociationDecorator;
 
 	public void setPermissionService(PermissionService permissionService) {
 		this.permissionService = permissionService;
@@ -168,6 +174,10 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
 
+	public void setReportAssociationDecorator(ReportAssociationDecorator reportAssociationDecorator) {
+		this.reportAssociationDecorator = reportAssociationDecorator;
+	}
+
 	/**
 	 * Suggest values according to query
 	 *
@@ -184,9 +194,9 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 	@Override
 	protected Map<String, Object> executeImpl(WebScriptRequest req, Status status, Cache cache) {
 
-		//Always return in browser local
+		// Always return in browser local
 		I18NUtil.setContentLocale(null);
-		
+
 		Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();
 		String storeType = templateArgs.get(PARAM_STORE_TYPE);
 		String storeId = templateArgs.get(PARAM_STORE_ID);
@@ -216,16 +226,14 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 			logger.debug("We want to get datalist for current ACL entity");
 			String aclType = (String) nodeService.getProperty(nodeRef, SecurityModel.PROP_ACL_GROUP_NODE_TYPE);
 			QName aclTypeQname = QName.createQName(aclType, namespaceService);
-			
-			
+
 			NodeRef typeNodeRef = BeCPGQueryBuilder.createQuery().ofType(aclTypeQname).singleValue();
-			
-			if(typeNodeRef!=null) {
+
+			if (typeNodeRef != null) {
 				model.put(MODEL_KEY_ACL_TYPE_NODE, typeNodeRef.toString());
 			}
 			model.put(MODEL_KEY_ACL_TYPE, aclType);
-			
-				
+
 			NodeRef templateNodeRef = entityTplService.getEntityTpl(aclTypeQname);
 			if (templateNodeRef != null) {
 				listContainerNodeRef = entityListDAO.getListContainer(templateNodeRef);
@@ -271,35 +279,9 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 				entityTplNodeRef = entityTplService.getEntityTpl(nodeType);
 			}
 
-			// #1763 Do not work on permissions changed or when node is locked
-			//
-			// Date propModified = (Date) nodeService.getProperty(nodeRef,
-			// ContentModel.PROP_MODIFIED);
-			// lastModified = entityTplNodeRef != null ? (Date)
-			// nodeService.getProperty(entityTplNodeRef,
-			// ContentModel.PROP_MODIFIED) : null;
-			// if (lastModified == null || (propModified != null &&
-			// lastModified.getTime() < propModified.getTime())) {
-			// lastModified = propModified;
-			// }
-			//
-			// if (lastModified != null &&
-			// BrowserCacheHelper.shouldReturnNotModified(req, lastModified)) {
-			// status.setCode(HttpServletResponse.SC_NOT_MODIFIED);
-			// status.setRedirect(true);
-			//
-			// if (logger.isDebugEnabled()) {
-			// logger.debug("Send Not_MODIFIED status");
-			// }
-			// return model;
-			// }
-
 			if (entityTplNodeRef != null) {
 
 				final NodeRef templateNodeRef = entityTplNodeRef;
-				// Redmine #59 : copy missing datalists as admin, otherwise, if
-				// a datalist is added in product template, users cannot see
-				// datalists of valid products
 				StopWatch watch = null;
 				if (logger.isDebugEnabled()) {
 					watch = new StopWatch();
@@ -313,10 +295,9 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 						RetryingTransactionCallback<Object> actionCallback = () -> {
 							policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 							policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
-							
+
 							entityListDAO.copyDataLists(templateNodeRef, nodeRef, false);
 
-							
 							return null;
 						};
 						return transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback);
@@ -351,12 +332,11 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 				NodeRef temp = it.next();
 				String dataListType = (String) nodeService.getProperty(temp, DataListModel.PROP_DATALISTITEMTYPE);
 				int access_mode = securityService.computeAccessMode(nodeType, dataListType);
-				
-				if(SecurityService.NONE_ACCESS != access_mode) {
+
+				if (SecurityService.NONE_ACCESS != access_mode) {
 					String dataListName = (String) nodeService.getProperty(temp, ContentModel.PROP_NAME);
 					access_mode = securityService.computeAccessMode(nodeType, dataListName);
 				}
-				
 
 				if (SecurityService.NONE_ACCESS == access_mode) {
 					if (logger.isTraceEnabled()) {
@@ -372,16 +352,6 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 			}
 		}
 
-		// if (lastModified == null) {
-		// lastModified = new Date();
-		// }
-		//
-		// cache.setIsPublic(false);
-		// cache.setMustRevalidate(true);
-		// cache.setNeverCache(false);
-		// cache.setMaxAge(0L);
-		// cache.setLastModified(lastModified);
-
 		Path path = nodeService.getPath(nodeRef);
 
 		String stringPath = path.toPrefixString(namespaceService);
@@ -389,11 +359,18 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 
 		String retPath = SiteHelper.extractDisplayPath(stringPath, displayPath);
 
+		if (nodeService.hasAspect(nodeRef, ReportModel.ASPECT_REPORT_ENTITY)) {
+			model.put(MODEL_REPORTS,
+					reportAssociationDecorator
+							.decorate(ReportModel.ASSOC_REPORTS, nodeRef, associationService.getTargetAssocs(nodeRef, ReportModel.ASSOC_REPORTS))
+							.toJSONString());
+		}
+
 		model.put(MODEL_KEY_NAME_ENTITY_PATH, retPath);
 		model.put(MODEL_KEY_NAME_ENTITY, nodeRef);
 		model.put(MODEL_KEY_NAME_CONTAINER, listContainerNodeRef);
 		model.put(MODEL_KEY_USER_SECURITY_ROLES, securityService.getUserSecurityRoles());
-		
+
 		model.put(MODEL_HAS_WRITE_PERMISSION,
 				hasWritePermission || authorityService.isAdminAuthority(AuthenticationUtil.getFullyAuthenticatedUser()));
 		model.put(MODEL_HAS_CHANGE_STATE_PERMISSION, hasChangeStatePermission);
@@ -412,6 +389,4 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 		return false;
 	}
 
-	
-	
 }

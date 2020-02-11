@@ -98,7 +98,9 @@
          	}
          		<#if compareWithEntity_has_next>,</#if></#list>]
          </#if>
- 
+         </#escape>
+         <#if reports??>
+            ,"reports":${reports}
+         </#if>
     }
 }
-</#escape>
