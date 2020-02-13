@@ -88,6 +88,7 @@ public class RepoConsts {
 	
 	/*-- Report --*/
 	public static final String REPORT_EXTENSION_BIRT = "rptdesign";
+	public static final String REPORT_EXTENSION_JXLS = "jxls";
 	public static final String REPORT_EXTENSION_PDF = ".PDF";
 	public static final String REPORT_EXTENSION_XLSX = ".XLSX";
 	public static final String EXTENSION_LOG = ".log";
@@ -172,6 +173,7 @@ public class RepoConsts {
 	public static final String[] SUPPORTED_LANGUAGES = {"fr", "en"};
 
 	public static final String PATH_LICENSE = "license";
+
 
 
 	

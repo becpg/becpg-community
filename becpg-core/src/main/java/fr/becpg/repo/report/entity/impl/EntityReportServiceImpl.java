@@ -17,7 +17,6 @@
  ******************************************************************************/
 package fr.becpg.repo.report.entity.impl;
 
-import java.io.ByteArrayInputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -101,8 +100,6 @@ import fr.becpg.report.client.ReportParams;
 @Service("entityReportService")
 public class EntityReportServiceImpl implements EntityReportService {
 
-	// private static final String REPORT_NAME = "%s - %s";
-
 	private static final String PREF_REPORT_PREFIX = "fr.becpg.repo.report.";
 	private static final String PREF_REPORT_SUFFIX = ".view";
 	private static final String REPORT_PARAM_SEPARATOR = "#";
@@ -139,7 +136,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 	private ReportTplService reportTplService;
 
 	@Autowired
-	private BeCPGReportEngine beCPGReportEngine;
+	private BeCPGReportEngine[] engines;
 
 	@Autowired
 	private MimetypeService mimetypeService;
@@ -285,12 +282,11 @@ public class EntityReportServiceImpl implements EntityReportService {
 																&& selectedReportNodeRef.toString().equals(documentNodeRef.toString()))
 																|| ((selectedReportNodeRef == null) && isDefault)) {
 
-															EntityReportData reportData = retrieveExtractor(entityNodeRef).extract(entityNodeRef,
-																	reportParameters.getPreferences());
+															BeCPGReportEngine engine = getReportEngine(tplNodeRef,
+																	ReportFormat.valueOf(reportFormat));
 
-															if (reportData.getXmlDataSource() == null) {
-																throw new IllegalArgumentException("nodeElt is null");
-															}
+															EntityReportData reportData = retrieveExtractor(entityNodeRef, engine)
+																	.extract(entityNodeRef, reportParameters.getPreferences());
 
 															reportData.setParameters(reportParameters);
 
@@ -309,23 +305,26 @@ public class EntityReportServiceImpl implements EntityReportService {
 															logger.debug("Update report: " + entityNodeRef + " for document " + documentName + " ("
 																	+ documentNodeRef + ")");
 
-															if (logger.isTraceEnabled()) {
-																logger.trace("DataSource XML : \n"
-																		+ reportData.getXmlDataSource().asXML()
-																		+ "\n\n");
+															if (engine.isXmlEngine()) {
+																if (reportData.getXmlDataSource() == null) {
+																	throw new IllegalArgumentException("nodeElt is null");
+																}
+
+																if (logger.isTraceEnabled()) {
+																	logger.trace(
+																			"DataSource XML : \n" + reportData.getXmlDataSource().asXML() + "\n\n");
+																}
+
+																filterByReportKind(reportData.getXmlDataSource(), tplNodeRef);
+
+																if (logger.isTraceEnabled()) {
+																	logger.trace("Filtered DataSource XML : \n"
+																			+ reportData.getXmlDataSource().asXML() + "\n\n");
+																}
+
 															}
 
-															Element filteredDatasource = filterByReportKind(reportData.getXmlDataSource(), tplNodeRef);
-															
-															if (logger.isTraceEnabled()) {
-																logger.trace("Filtered DataSource XML : \n"
-																		+ filteredDatasource.asXML()
-																		+ "\n\n");
-															}
-															
-															beCPGReportEngine.createReport(tplNodeRef, new ByteArrayInputStream(
-																	filteredDatasource.asXML().getBytes()),
-																	writer.getContentOutputStream(), params);
+															engine.createReport(tplNodeRef, reportData, writer.getContentOutputStream(), params);
 
 															nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_IS_DIRTY, false);
 														} else {
@@ -356,8 +355,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 														nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_LOCALES,
 																MLTextHelper.localeKey(locale));
 														nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_IS_DEFAULT, isDefault);
-                                
-												                I18NUtil.setLocale(locale);
+
+														I18NUtil.setLocale(locale);
 														I18NUtil.setContentLocale(locale);
 													}
 
@@ -391,7 +390,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 						// set reportNodeGenerated property to now
 						nodeService.setProperty(entityNodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED, generatedDate);
 
-						entityActivityService.postEntityActivity(entityNodeRef, ActivityType.Report, ActivityEvent.Update,null);
+						entityActivityService.postEntityActivity(entityNodeRef, ActivityType.Report, ActivityEvent.Update, null);
 
 					} finally {
 						I18NUtil.setLocale(currentLocal);
@@ -407,7 +406,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Element filterByReportKind(Element dataXml, NodeRef tplNodeRef) {
+	private void filterByReportKind(Element dataXml, NodeRef tplNodeRef) {
 		StopWatch stopWatch = null;
 		if (logger.isDebugEnabled()) {
 			stopWatch = new StopWatch();
@@ -415,7 +414,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 		}
 
 		if (getFromCacheListFolderNodeRef(RepoConsts.PATH_REPORT_KINDLIST) == null) {
-			return dataXml;
+			return;
 		}
 
 		String reportKindCode = "", reportKindNoneCode = "None";
@@ -482,14 +481,14 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 		});
 
-		dataXml = valideCode.size() > 0 ? filterByParams(dataXml,
-				getFilteredParams(valideCode, Arrays.asList(entityParams != null ? entityParams : new String[0]), reportKindCode)) : dataXml;
+		if (valideCode.size() > 0) {
+			filterByParams(dataXml,
+					getFilteredParams(valideCode, Arrays.asList(entityParams != null ? entityParams : new String[0]), reportKindCode));
+		}
 		if (logger.isDebugEnabled()) {
 			stopWatch.stop();
 			logger.debug("Filter XML takes : " + stopWatch.getTotalTimeSeconds() + "s");
 		}
-
-		return dataXml;
 
 	}
 
@@ -501,7 +500,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 		});
 	}
 
-	private Element filterByParams(Element entity, List<String> filteredParams) {
+	private void filterByParams(Element entity, List<String> filteredParams) {
 
 		for (Iterator<Element> entityIter = entity.elementIterator(); entityIter.hasNext();) {
 			Element itemEl = entityIter.next();
@@ -523,12 +522,11 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 			Iterator<Element> itemElIter = itemEl.elementIterator();
 			if (itemElIter.hasNext()) {
-				itemEl = filterByParams(itemEl, filteredParams);
+				filterByParams(itemEl, filteredParams);
 			}
 
 		}
 
-		return entity;
 	}
 
 	private List<String> getFilteredParams(Map<String, String> params, List<String> paramList, String reportKind) {
@@ -788,11 +786,10 @@ public class EntityReportServiceImpl implements EntityReportService {
 						String documentTitle = getReportDocumentName(entityNodeRef, tplNodeRef, null, locale, reportParameters,
 								reportParameters.getReportTitleFormat(reportTitleFormat));
 
-						EntityReportData reportData = retrieveExtractor(entityNodeRef).extract(entityNodeRef, reportParameters.getPreferences());
+						BeCPGReportEngine engine = getReportEngine(tplNodeRef, ReportFormat.valueOf(reportFormat));
 
-						if (reportData.getXmlDataSource() == null) {
-							throw new IllegalArgumentException("nodeElt is null");
-						}
+						EntityReportData reportData = retrieveExtractor(entityNodeRef, engine).extract(entityNodeRef,
+								reportParameters.getPreferences());
 
 						reportData.setParameters(reportParameters);
 
@@ -817,9 +814,21 @@ public class EntityReportServiceImpl implements EntityReportService {
 								logger.debug("beCPGReportEngine createReport: " + entityNodeRef + " for document " + documentName + " ("
 										+ documentNodeRef + ")");
 
-								beCPGReportEngine.createReport(tplNodeRef,
-										new ByteArrayInputStream(filterByReportKind(reportData.getXmlDataSource(), tplNodeRef).asXML().getBytes()),
-										writer.getContentOutputStream(), params);
+								if (engine.isXmlEngine()) {
+
+									if (reportData.getXmlDataSource() == null) {
+										throw new IllegalArgumentException("nodeElt is null");
+									}
+
+									filterByReportKind(reportData.getXmlDataSource(), tplNodeRef);
+
+									if (logger.isTraceEnabled()) {
+										logger.trace("Filtered DataSource XML : \n" + reportData.getXmlDataSource().asXML() + "\n\n");
+									}
+
+								}
+
+								engine.createReport(tplNodeRef, reportData, writer.getContentOutputStream(), params);
 
 								I18NUtil.setLocale(Locale.getDefault());
 								I18NUtil.setContentLocale(Locale.getDefault());
@@ -877,14 +886,10 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 				I18NUtil.setLocale(locale);
 				I18NUtil.setContentLocale(locale);
-				// TODO run as System test permission in ReportContentGet and
-				// EntityReportWebscript
 
-				EntityReportData reportData = retrieveExtractor(entityNodeRef).extract(entityNodeRef, reportParameters.getPreferences());
+				BeCPGReportEngine engine = getReportEngine(templateNodeRef, reportFormat);
 
-				if (reportData.getXmlDataSource() == null) {
-					throw new IllegalArgumentException("nodeElt is null");
-				}
+				EntityReportData reportData = retrieveExtractor(entityNodeRef, engine).extract(entityNodeRef, reportParameters.getPreferences());
 
 				reportData.setParameters(reportParameters);
 
@@ -898,9 +903,20 @@ public class EntityReportServiceImpl implements EntityReportService {
 					params.put(ReportParams.PARAM_ASSOCIATED_TPL_FILES,
 							associationService.getTargetAssocs(templateNodeRef, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES));
 
-					beCPGReportEngine.createReport(templateNodeRef,
-							new ByteArrayInputStream(filterByReportKind(reportData.getXmlDataSource(), templateNodeRef).asXML().getBytes()),
-							outputStream, params);
+					if (engine.isXmlEngine()) {
+
+						if (reportData.getXmlDataSource() == null) {
+							throw new IllegalArgumentException("nodeElt is null");
+						}
+
+						filterByReportKind(reportData.getXmlDataSource(), templateNodeRef);
+
+						if (logger.isTraceEnabled()) {
+							logger.trace("Filtered DataSource XML : \n" + reportData.getXmlDataSource().asXML() + "\n\n");
+						}
+					}
+
+					engine.createReport(templateNodeRef, reportData, outputStream, params);
 
 				} catch (ReportException e) {
 					logger.error("Failed to execute report for template : " + templateNodeRef, e);
@@ -979,7 +995,9 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 			reportData.setParameters(reportParameters);
 
-			return filterByReportKind(reportData.getXmlDataSource(), null).asXML();
+			filterByReportKind(reportData.getXmlDataSource(), null);
+
+			return reportData.getXmlDataSource().asXML();
 		} finally {
 			I18NUtil.setLocale(currentLocal);
 			I18NUtil.setContentLocale(currentContentLocal);
@@ -993,10 +1011,20 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 	@Override
 	public EntityReportExtractorPlugin retrieveExtractor(NodeRef entityNodeRef) {
-		QName type = nodeService.getType(entityNodeRef);
+		return retrieveExtractor(entityNodeRef, null);
+	}
+
+	private EntityReportExtractorPlugin retrieveExtractor(NodeRef entityNodeRef, BeCPGReportEngine engine) {
 
 		EntityReportExtractorPlugin ret = null;
+
+		QName type = nodeService.getType(entityNodeRef);
+
 		for (EntityReportExtractorPlugin entityReportExtractorPlugin : entityExtractors) {
+			if (engine!=null && engine.isXmlEngine() && (entityReportExtractorPlugin instanceof NoXmlEntityReportExtractor)) {
+				return ret;
+			}
+
 			EntityReportExtractorPriority priority = entityReportExtractorPlugin.getMatchPriority(type);
 			if (!EntityReportExtractorPriority.NONE.equals(priority)) {
 				if ((ret == null) || priority.isHigherPriority(ret.getMatchPriority(type))) {
@@ -1006,6 +1034,17 @@ public class EntityReportServiceImpl implements EntityReportService {
 		}
 
 		return ret;
+	}
+
+	private BeCPGReportEngine getReportEngine(NodeRef templateNodeRef, ReportFormat reportFormat) throws ReportException {
+		if (engines != null) {
+			for (BeCPGReportEngine engine : engines) {
+				if (engine.isApplicable(templateNodeRef, reportFormat)) {
+					return engine;
+				}
+			}
+		}
+		throw new ReportException("No report engine found for  tpl:"+templateNodeRef+" "+reportFormat);
 	}
 
 	private String getReportDocumentName(NodeRef entityNodeRef, NodeRef tplNodeRef, String reportFormat, Locale locale,
@@ -1036,8 +1075,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 		}
 		patternMatcher.appendTail(sb);
 
-		String documentName = sb.toString().replace("-  -", "-").replaceAll("\\s{2,}", " ").replace("- -", "-").trim().replaceAll("\\-$|\\(\\)", "").trim()
-				.replaceAll("\\-$|\\(\\)", "").replaceAll("\\." + RepoConsts.REPORT_EXTENSION_BIRT, "").trim();
+		String documentName = sb.toString().replace("-  -", "-").replaceAll("\\s{2,}", " ").replace("- -", "-").trim().replaceAll("\\-$|\\(\\)", "")
+				.trim().replaceAll("\\-$|\\(\\)", "").replaceAll("\\." + RepoConsts.REPORT_EXTENSION_BIRT, "").replaceAll("\\." + RepoConsts.REPORT_EXTENSION_JXLS, "").trim();
 
 		if (reportFormat != null) {
 			documentName += "." + reportFormat.toLowerCase();
@@ -1092,12 +1131,11 @@ public class EntityReportServiceImpl implements EntityReportService {
 				}
 			}
 			if (documentNodeRef == null) {
-				
+
 				documentNodeRef = nodeService.getChildByName(documentsFolderNodeRef, ContentModel.ASSOC_CONTAINS, documentName);
-				
-				
-				if(logger.isDebugEnabled()) {
-					logger.debug("Create new report document "+documentName+" ("+documentNodeRef+")");
+
+				if (logger.isDebugEnabled()) {
+					logger.debug("Create new report document " + documentName + " (" + documentNodeRef + ")");
 				}
 
 				if (documentNodeRef == null) {
@@ -1310,36 +1348,35 @@ public class EntityReportServiceImpl implements EntityReportService {
 			if (permissionService.hasPermission(reportNodeRef, "Read") == AccessStatus.ALLOWED) {
 
 				String reportTitle = (String) nodeService.getProperty(reportNodeRef, ContentModel.PROP_TITLE);
-				if(reportTitle == null ) {
+				if (reportTitle == null) {
 					reportTitle = (String) nodeService.getProperty(reportNodeRef, ContentModel.PROP_NAME);
 				}
-				if(reportName !=null) {
-					if(logger.isDebugEnabled()) {
-						logger.debug("Test "+reportName+" against "+reportTitle);
+				if (reportName != null) {
+					if (logger.isDebugEnabled()) {
+						logger.debug("Test " + reportName + " against " + reportTitle);
 					}
-					
-					//Test 10. Barcode report (en) against 
-					//     10. Barcode report  (en)
-	
+
+					// Test 10. Barcode report (en) against
+					// 10. Barcode report (en)
+
 					if ((reportTitle != null) && reportTitle.equalsIgnoreCase(reportName)) {
-						if(logger.isDebugEnabled()) {
-							logger.debug("Found selected report for title: "+reportName+ " "+reportNodeRef);
+						if (logger.isDebugEnabled()) {
+							logger.debug("Found selected report for title: " + reportName + " " + reportNodeRef);
 						}
-	
-						
+
 						return reportNodeRef;
 					}
 				}
 
 				Boolean isDefault = (Boolean) this.nodeService.getProperty(reportNodeRef, ReportModel.PROP_REPORT_IS_DEFAULT);
-				if (isDefault!=null && isDefault) {
+				if ((isDefault != null) && isDefault) {
 					ret = reportNodeRef;
 				}
 
 			}
 		}
-		if(logger.isDebugEnabled()) {
-			logger.debug("Selected report for title: "+reportName+" not  found returning default "+ret);
+		if (logger.isDebugEnabled()) {
+			logger.debug("Selected report for title: " + reportName + " not  found returning default " + ret);
 		}
 		return ret;
 	}
@@ -1348,18 +1385,18 @@ public class EntityReportServiceImpl implements EntityReportService {
 	public String getSelectedReportName(NodeRef entityNodeRef) {
 
 		String username = AuthenticationUtil.getFullyAuthenticatedUser();
-		
-		if(!AuthenticationUtil.SYSTEM_USER_NAME.equals(username)){
+
+		if (!AuthenticationUtil.SYSTEM_USER_NAME.equals(username)) {
 			String typeName = nodeService.getType(entityNodeRef).toPrefixString(namespaceService).replace(":", "_");
-	
+
 			Map<String, Serializable> preferences = preferenceService.getPreferences(username);
-	
+
 			String reportName = (String) preferences.get(PREF_REPORT_PREFIX + typeName + PREF_REPORT_SUFFIX);
-	
+
 			if (logger.isDebugEnabled()) {
 				logger.debug("Getting: " + reportName + " from preference for: " + username + " and type: " + typeName);
 			}
-	
+
 			return reportName;
 		}
 		return null;

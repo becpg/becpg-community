@@ -20,12 +20,10 @@
 
 <beans>
 
-	<bean id="beCPGReportEngine" class="fr.becpg.repo.report.engine.impl.BeCPGReportServerClient">
+	<bean id="reportServerEngine" class="fr.becpg.repo.report.engine.impl.ReportServerEngine">
 	 <property name="nodeService" ref="nodeService"/>
 	 <property name="reportServerUrl" value="${becpg.reportServerUrl}"/>
 	 <property name="contentService" ref="contentService"/>
-	 <property name="serviceRegistry" ref="ServiceRegistry"/>
-	 <property name="scriptService" ref="scriptService"/>
 	</bean>
 	
 	
