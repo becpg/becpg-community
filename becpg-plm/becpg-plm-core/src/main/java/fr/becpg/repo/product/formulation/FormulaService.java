@@ -40,7 +40,6 @@ import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.productList.CompositionDataItem;
 import fr.becpg.repo.product.data.spel.FormulaFormulationContext;
 import fr.becpg.repo.product.data.spel.FormulaFormulationContext.Operator;
 import fr.becpg.repo.product.formulation.labeling.LabelingFormulaContext;
@@ -205,8 +204,6 @@ public class FormulaService {
 			
 			if ((scriptNode != null) && nodeService.exists(scriptNode)
 					&& nodeService.getPath(scriptNode).toPrefixString(namespaceService).startsWith(RepoConsts.SCRIPTS_FULL_PATH)) {
-
-				System.out.println(nodeService.getPath(scriptNode).toPrefixString(namespaceService));
 				String userName = AuthenticationUtil.getFullyAuthenticatedUser();
 
 				Map<String, Object> model = new HashMap<>();
@@ -353,7 +350,7 @@ public class FormulaService {
 		return context;
 	}
 
-	public StandardEvaluationContext createEvaluationContext(ProductData productData, CompositionDataItem dataListItem) {
+	public StandardEvaluationContext createEvaluationContext(ProductData productData, RepositoryEntity dataListItem) {
 		StandardEvaluationContext dataContext = new StandardEvaluationContext(
 				new FormulaFormulationContext(this, createSecurityProxy(productData), dataListItem));
 

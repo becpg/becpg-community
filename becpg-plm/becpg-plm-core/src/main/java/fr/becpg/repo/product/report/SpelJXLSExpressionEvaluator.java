@@ -6,9 +6,9 @@ import java.util.regex.Matcher;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jxls.expression.ExpressionEvaluator;
-import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.spel.SpelParseException;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
@@ -81,13 +81,9 @@ public class SpelJXLSExpressionEvaluator implements ExpressionEvaluator {
 					return exp.getValue(context);
 				}
 			}
-		} catch (Exception e) {
-			if (e instanceof ConcurrencyFailureException) {
-				throw (ConcurrencyFailureException) e;
-			}
+		} catch (SpelParseException e) {
 			logger.error("wrong expression: "+expression ,e);
 		}
-		
 
 		return "";
 

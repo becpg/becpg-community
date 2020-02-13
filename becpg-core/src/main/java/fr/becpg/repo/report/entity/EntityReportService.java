@@ -32,6 +32,10 @@ public interface EntityReportService {
 	
 	void generateReport(NodeRef entityNodeRef, NodeRef documentNodeRef, ReportFormat reportFormat, OutputStream outputStream);
 	
+	void generateReport(NodeRef entityNodeRef, NodeRef templateNodeRef, EntityReportParameters reportParameters, Locale locale,
+			ReportFormat reportFormat, OutputStream outputStream);
+
+	
 	NodeRef getOrRefreshReport(NodeRef entityNodeRef, NodeRef documentNodeRef);
 	
 	String getXmlReportDataSource(NodeRef entityNodeRef, Locale locale, EntityReportParameters reportParameters);
@@ -47,9 +51,6 @@ public interface EntityReportService {
 	EntityReportExtractorPlugin retrieveExtractor(NodeRef entityNodeRef);
 
 	NodeRef getEntityNodeRef(NodeRef nodeRef);
-
-	void generateReport(NodeRef entityNodeRef, NodeRef templateNodeRef, EntityReportParameters reportParameters, Locale locale,
-			ReportFormat reportFormat, OutputStream outputStream);
 
 	NodeRef getAssociatedDocumentNodeRef(NodeRef entityNodeRef, NodeRef tplNodeRef, EntityReportParameters reportParameters, Locale locale, ReportFormat reportFormat);
 

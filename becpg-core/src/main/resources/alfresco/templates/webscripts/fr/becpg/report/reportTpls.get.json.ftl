@@ -4,7 +4,7 @@
    [
    <#list reportTpls as reportTpl>
     {
-	   "name": "${reportTpl.name?replace(".rptdesign", "")?replace(".xml", "")?replace(".xlsx", "")?replace(".xlsm", "")}",
+	   "name": "${reportTpl.name?replace(".rptdesign", "")?replace(".jxls", "")?replace(".xml", "")?replace(".xlsx", "")?replace(".xlsm", "")}",
 	   "title": "${reportTpl.properties.title!""}",
 	   "reportTplName":"${reportTpl.properties.name!""}",
 	   <#if reportTpl.name?contains(".xlsm") >
