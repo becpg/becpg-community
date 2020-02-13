@@ -32,8 +32,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.util.StopWatch;
 
-import fr.becpg.model.ReportModel;
-import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.mail.BeCPGMailService;
 import fr.becpg.repo.report.entity.EntityReportAsyncGenerator;
 import fr.becpg.repo.report.entity.EntityReportService;
@@ -54,8 +52,6 @@ public class EntityReportAsyncGeneratorImpl implements EntityReportAsyncGenerato
 	@Autowired
 	private BeCPGMailService beCPGMailService;
 
-	@Autowired
-	private AssociationService associationService;
 
 	@Autowired
 	private TransactionService transactionService;
