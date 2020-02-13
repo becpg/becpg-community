@@ -1021,7 +1021,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 		QName type = nodeService.getType(entityNodeRef);
 
 		for (EntityReportExtractorPlugin entityReportExtractorPlugin : entityExtractors) {
-			if (engine!=null && engine.isXmlEngine() && (entityReportExtractorPlugin instanceof NoXmlEntityReportExtractor)) {
+			if (engine!=null && !engine.isXmlEngine() && (entityReportExtractorPlugin instanceof NoXmlEntityReportExtractor)) {
 				return ret;
 			}
 
