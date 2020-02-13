@@ -17,20 +17,25 @@
  ******************************************************************************/
 package fr.becpg.repo.report.engine;
 
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.report.entity.EntityReportData;
 import fr.becpg.report.client.ReportException;
+import fr.becpg.report.client.ReportFormat;
 
 public interface BeCPGReportEngine {
 	
 	public static final String PARAM_DOCUMENT_NODEREF = "documentNodeRef";
 	public static final String PARAM_ENTITY_NODEREF = "entityNodeRef";
-	public static final String JS_EXTENSION = ".js";
 
-	void createReport(NodeRef tplNodeRef, InputStream in, OutputStream out, Map<String, Object> params) throws ReportException;
+
+	void createReport(NodeRef tplNodeRef,EntityReportData reportData, OutputStream out, Map<String, Object> params) throws ReportException;
+
+	boolean isApplicable(NodeRef templateNodeRef, ReportFormat reportFormat);
+	
+	boolean isXmlEngine();
 
 }

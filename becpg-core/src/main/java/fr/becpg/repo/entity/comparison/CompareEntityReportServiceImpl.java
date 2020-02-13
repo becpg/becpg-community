@@ -1,6 +1,5 @@
 package fr.becpg.repo.entity.comparison;
 
-import java.io.ByteArrayInputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,6 +30,8 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.report.engine.BeCPGReportEngine;
+import fr.becpg.repo.report.engine.impl.ReportServerEngine;
+import fr.becpg.repo.report.entity.EntityReportData;
 import fr.becpg.report.client.ReportFormat;
 import fr.becpg.report.client.ReportParams;
 
@@ -89,7 +90,7 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 	private CompareEntityService compareEntityService;
 
 	@Autowired
-	private BeCPGReportEngine beCPGReportEngine;
+	private ReportServerEngine reportServerEngine;
 
 	@Autowired
 	private NodeService nodeService;
@@ -132,7 +133,11 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 				params.put(ReportParams.PARAM_LANG, MLTextHelper.localeKey(I18NUtil.getLocale()));
 				params.put(ReportParams.PARAM_ASSOCIATED_TPL_FILES,
 						associationService.getTargetAssocs(templateNodeRef, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES));
-				beCPGReportEngine.createReport(templateNodeRef, new ByteArrayInputStream(entitiesCmpElt.asXML().getBytes()), out, params);
+				
+				EntityReportData reportData = new EntityReportData();
+				reportData.setXmlDataSource(entitiesCmpElt);
+				
+				reportServerEngine.createReport(templateNodeRef, reportData, out, params);
 
 			} catch (Exception e) {
 				logger.error("Failed to run comparison report: ", e);
