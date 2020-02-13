@@ -184,7 +184,7 @@
                             			
                             			countCatalog++;
                             			
-                            			var hiddenClass = countCatalog > 1 ? "-"+ countCatalog : "";
+                            			const hiddenClass = countCatalog > 1 ? "-"+ countCatalog : "";
 
                                 		var validateButtonId = this.id.replace(/assoc_pjt_workflowTask\-cntrl/g,this.options.transitionField) + "-validate";
                                     	YAHOO.util.Event.onAvailable(validateButtonId,function(){
