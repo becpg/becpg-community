@@ -1,6 +1,5 @@
 package fr.becpg.repo.report.search.impl;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -34,7 +33,6 @@ import org.dom4j.Element;
 import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
@@ -51,10 +49,12 @@ import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.SiteHelper;
-import fr.becpg.repo.report.engine.BeCPGReportEngine;
+import fr.becpg.repo.report.engine.impl.ReportServerEngine;
+import fr.becpg.repo.report.entity.EntityReportData;
 import fr.becpg.repo.report.search.SearchReportRenderer;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
+import fr.becpg.report.client.ReportException;
 import fr.becpg.report.client.ReportFormat;
 import fr.becpg.report.client.ReportParams;
 
@@ -70,7 +70,7 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 	private ContentService contentService;
 
 	@Autowired
-	private BeCPGReportEngine beCPGReportEngine;
+	private ReportServerEngine reportServerEngine;
 
 	@Autowired
 	private NamespaceService namespaceService;
@@ -132,6 +132,8 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 			params.put(ReportParams.PARAM_FORMAT, reportFormat);
 			params.put(ReportParams.PARAM_IMAGES, new HashMap<String, byte[]>());
 
+			EntityReportData reportData = new EntityReportData();
+
 			// Prepare data source
 			logger.debug("Prepare data source");
 			Document document = DocumentHelper.createDocument();
@@ -146,12 +148,14 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 				logger.debug("Xml data: " + exportElt.asXML());
 			}
 
-			beCPGReportEngine.createReport(templateNodeRef, new ByteArrayInputStream(exportElt.asXML().getBytes()), outputStream, params);
+			reportData.setXmlDataSource(exportElt);
 
-		} catch (Exception e) {
-			if (e instanceof ConcurrencyFailureException) {
-				throw (ConcurrencyFailureException) e;
-			}
+			reportServerEngine.createReport(templateNodeRef, reportData, outputStream, params);
+
+		} catch (ReportException e) {
+
+			logger.error("Failed to run report: ", e);
+		} catch (MappingException e) {
 			logger.error("Failed to run report: ", e);
 		}
 
@@ -241,12 +245,12 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 			}
 		}
 		Path path = nodeService.getPath(nodeRef);
-		//Extract site
-		if(path!=null) {
+		// Extract site
+		if (path != null) {
 			String pathString = path.toPrefixString(namespaceService);
 			String siteId = SiteHelper.extractSiteId(pathString);
 			if (siteId != null) {
-			   nodeElt.addAttribute(TAG_SITE,siteId);
+				nodeElt.addAttribute(TAG_SITE, siteId);
 			}
 		}
 
@@ -305,8 +309,6 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 
 		return params;
 	}
-	
-	
 
 	/**
 	 * Gets the column value.
@@ -370,7 +372,7 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 		ContentReader reader = contentService.getReader(queryNodeRef, ContentModel.PROP_CONTENT);
 		SAXReader saxReader = new SAXReader();
 
-		try(InputStream is = reader.getContentInputStream()) {
+		try (InputStream is = reader.getContentInputStream()) {
 			Document doc = saxReader.read(is);
 			queryElt = doc.getRootElement();
 
@@ -461,7 +463,7 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 				exportSearchCtx.getFileColumns().add(attributeMapping);
 			}
 
-		} catch (DocumentException | ContentIOException | IOException e ) {
+		} catch (DocumentException | ContentIOException | IOException e) {
 			logger.error("Failed to read the query file", e);
 		}
 
@@ -475,7 +477,7 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 	@Override
 	public void executeAction(NodeRef templateNodeRef, NodeRef downloadNode, ReportFormat reportFormat) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

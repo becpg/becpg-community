@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2018 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2018 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG.
  *  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
@@ -23,22 +23,21 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.jscript.ScriptNode;
-import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.repository.ScriptService;
 import org.apache.http.client.ClientProtocolException;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.repo.report.engine.BeCPGReportEngine;
+import fr.becpg.repo.report.entity.EntityReportData;
+import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.report.client.AbstractBeCPGReportClient;
 import fr.becpg.report.client.ReportException;
 import fr.becpg.report.client.ReportFormat;
@@ -46,20 +45,18 @@ import fr.becpg.report.client.ReportParams;
 
 /**
  * beCPGReportServerClient used to interact with reporting server
- * 
+ *
  * @author matthieu
- * 
+ *
  */
-public class BeCPGReportServerClient extends AbstractBeCPGReportClient implements BeCPGReportEngine {
+public class ReportServerEngine extends AbstractBeCPGReportClient implements BeCPGReportEngine {
 
 	private NodeService nodeService;
 
 	private ContentService contentService;
+	
+	
 
-	private ServiceRegistry serviceRegistry;
-	
-	private ScriptService scriptService;
-	
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
@@ -68,19 +65,13 @@ public class BeCPGReportServerClient extends AbstractBeCPGReportClient implement
 		this.contentService = contentService;
 	}
 
-	public void setScriptService(ScriptService scriptService) {
-		this.scriptService = scriptService;
-	}
-	
-
-	public void setServiceRegistry(ServiceRegistry serviceRegistry) {
-		this.serviceRegistry = serviceRegistry;
+	@Override
+	public boolean isApplicable(NodeRef templateNodeRef, ReportFormat reportFormat) {
+		return ((String) nodeService.getProperty(templateNodeRef, ContentModel.PROP_NAME)).endsWith(ReportTplService.PARAM_VALUE_DESIGN_EXTENSION);
 	}
 
 	@Override
-	public void createReport(final NodeRef tplNodeRef, final InputStream in, final OutputStream out, final Map<String, Object> params)
-			throws ReportException {
-		
+	public void createReport(NodeRef tplNodeRef, EntityReportData reportData, OutputStream out, Map<String, Object> params) throws ReportException {
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
 			watch = new StopWatch();
@@ -88,19 +79,49 @@ public class BeCPGReportServerClient extends AbstractBeCPGReportClient implement
 		}
 
 		final ReportFormat format = (ReportFormat) params.get(ReportParams.PARAM_FORMAT);
-		
+
 		if (format == null) {
 			throw new IllegalArgumentException("Format is a mandatory param");
 		}
-	
-		String tplName = (String) nodeService.getProperty(tplNodeRef, ContentModel.PROP_NAME);
-		
-		if(tplName.endsWith(BeCPGReportEngine.JS_EXTENSION)) {
-			createJsReport(tplNodeRef,params);
-		} else {
-			createBirtReport(tplNodeRef, in, out, params, format);
+
+		try (InputStream in = new ByteArrayInputStream(reportData.getXmlDataSource().asXML().getBytes())) {
+
+			executeInSession(reportSession -> {
+
+				String templateId = tplNodeRef.toString();
+
+				sendTplFile(reportSession, templateId, tplNodeRef);
+
+				@SuppressWarnings("unchecked")
+				List<NodeRef> associatedTplFiles = (List<NodeRef>) params.get(ReportParams.PARAM_ASSOCIATED_TPL_FILES);
+
+				if (associatedTplFiles != null) {
+					for (NodeRef nodeRef : associatedTplFiles) {
+						String assocFileId = getAssociatedTplFileId(templateId, (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME));
+						sendTplFile(reportSession, assocFileId, nodeRef);
+					}
+				}
+
+				reportSession.setTemplateId(templateId);
+
+				@SuppressWarnings("unchecked")
+				final Map<String, byte[]> images = (Map<String, byte[]>) params.get(ReportParams.PARAM_IMAGES);
+
+				if (images != null) {
+					for (Map.Entry<String, byte[]> entry : images.entrySet()) {
+						sendImage(reportSession, entry.getKey(), new ByteArrayInputStream(entry.getValue()));
+					}
+				}
+
+				reportSession.setFormat(format.toString());
+				reportSession.setLang((String) params.get(ReportParams.PARAM_LANG));
+
+				generateReport(reportSession, in, out);
+			});
+
+		} catch (IOException e) {
+			throw new ReportException(e);
 		}
-		
 
 		if (logger.isDebugEnabled()) {
 			watch.stop();
@@ -109,74 +130,12 @@ public class BeCPGReportServerClient extends AbstractBeCPGReportClient implement
 
 	}
 
-	
-	private void createJsReport(NodeRef tplNodeRef, Map<String, Object> params) {
-		if ((tplNodeRef != null) && nodeService.exists(tplNodeRef)) {
-
-			logger.debug("Run javascript report");
-			
-			Map<String, Object> model = new HashMap<>();
-
-			model.put("entity", new ScriptNode((NodeRef)params.get(BeCPGReportEngine.PARAM_ENTITY_NODEREF),serviceRegistry));
-			model.put("document", new ScriptNode((NodeRef)params.get(BeCPGReportEngine.PARAM_DOCUMENT_NODEREF),serviceRegistry));
-
-			scriptService.executeScript(tplNodeRef, ContentModel.PROP_CONTENT, model);
-		}
-
-		
-	}
-
-	public void createBirtReport(final NodeRef tplNodeRef, final InputStream in, final OutputStream out, final Map<String, Object> params,final ReportFormat reportFormat)
-			throws ReportException {
-		
-		executeInSession(new ReportSessionCallBack() {
-
-			@Override
-			public void doInReportSession(ReportSession reportSession) throws ReportException, ClientProtocolException, IOException {
-
-				String templateId = tplNodeRef.toString();
-
-				
-				
-				sendTplFile(reportSession, templateId, tplNodeRef);
-
-				@SuppressWarnings("unchecked")
-				List<NodeRef> associatedTplFiles = (List<NodeRef>) params.get(ReportParams.PARAM_ASSOCIATED_TPL_FILES);
-				
-				if(associatedTplFiles!=null){
-					for (NodeRef nodeRef : associatedTplFiles) {
-						String assocFileId = getAssociatedTplFileId(templateId, (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME));
-						sendTplFile(reportSession, assocFileId, nodeRef);
-					}
-				}
-				
-				reportSession.setTemplateId(templateId);
-
-				@SuppressWarnings("unchecked")
-				final Map<String, byte[]> images = (Map<String, byte[]>) params.get(ReportParams.PARAM_IMAGES);
-				
-				if (images != null) {
-					for (Map.Entry<String, byte[]> entry : images.entrySet()) {
-						sendImage(reportSession, entry.getKey(), new ByteArrayInputStream(entry.getValue()));
-					}
-				}
-				
-				reportSession.setFormat(reportFormat.toString());
-				reportSession.setLang((String) params.get(ReportParams.PARAM_LANG));
-
-				generateReport(reportSession, in, out);
-			}
-
-		});
-	}
-	
-
 	private String getAssociatedTplFileId(String templateId, String name) {
 		return templateId + "-" + name;
 	}
 
-	private void sendTplFile(ReportSession reportSession, String templateId, NodeRef tplNodeRef) throws ReportException, ClientProtocolException,
-			IOException {
+	private void sendTplFile(ReportSession reportSession, String templateId, NodeRef tplNodeRef)
+			throws ReportException, ClientProtocolException, IOException {
 
 		Date dateModified = (Date) nodeService.getProperty(tplNodeRef, ContentModel.PROP_MODIFIED);
 		// Timestamp or -1
@@ -189,13 +148,18 @@ public class BeCPGReportServerClient extends AbstractBeCPGReportClient implement
 
 		logger.debug("Received timeStamp :" + timeStamp);
 
-		if (timeStamp < 0 || timeStamp < dateModified.getTime()) {
+		if ((timeStamp < 0) || (timeStamp < dateModified.getTime())) {
 			ContentReader reader = contentService.getReader(tplNodeRef, ContentModel.PROP_CONTENT);
-			if(reader!=null) {
+			if (reader != null) {
 				saveTemplate(reportSession, reader.getContentInputStream());
 			}
 		}
 
+	}
+
+	@Override
+	public boolean isXmlEngine() {
+		return true;
 	}
 
 }
