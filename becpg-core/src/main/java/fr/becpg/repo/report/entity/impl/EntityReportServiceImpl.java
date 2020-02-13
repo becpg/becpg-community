@@ -1022,7 +1022,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 		for (EntityReportExtractorPlugin entityReportExtractorPlugin : entityExtractors) {
 			if (engine!=null && !engine.isXmlEngine() && (entityReportExtractorPlugin instanceof NoXmlEntityReportExtractor)) {
-				return ret;
+				return entityReportExtractorPlugin;
 			}
 
 			EntityReportExtractorPriority priority = entityReportExtractorPlugin.getMatchPriority(type);
