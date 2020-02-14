@@ -35,6 +35,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
@@ -874,8 +875,12 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 							}
 							
 						} catch (Exception e) {
+							if (e instanceof ConcurrencyFailureException) {
+								throw (ConcurrencyFailureException) e;
+							}
+							logger.error(e,e);
 						} finally {
-							logger.info("Purge terminated with sucess: ");
+							logger.debug("Purge terminated with sucess: ");
 							policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
 						}
 						
