@@ -307,8 +307,9 @@ public class EntityServiceImpl implements EntityService {
 		String name = getDefaultImageName(nodeService.getType(entityNodeRef));
 		Map<QName, Serializable> props = new HashMap<>();
 		props.put(ContentModel.PROP_NAME, name);
-
-		logger.info("Create new Image node: " + name + " under " + imagesFolderNodeRef);
+		if(logger.isDebugEnabled()) {
+			logger.debug("Create new Image node: " + name + " under " + imagesFolderNodeRef);
+		}
 		return nodeService
 				.createNode(imagesFolderNodeRef, ContentModel.ASSOC_CONTAINS,
 						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name)), ContentModel.TYPE_CONTENT, props)
