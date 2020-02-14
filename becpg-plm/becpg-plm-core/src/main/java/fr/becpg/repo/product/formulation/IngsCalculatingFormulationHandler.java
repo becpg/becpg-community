@@ -14,14 +14,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.Stack;
 import java.util.stream.Collectors;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.webscripts.GUID;
+
+import com.icegreen.greenmail.pop3.commands.StatCommand;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
@@ -471,16 +475,17 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		Map<IngListDataItem, List<IngListDataItem>> byParent = ingList.stream()
 				.collect(Collectors.groupingBy(obj -> (obj.getParent() == null ? nullPlaceholder : obj.getParent()), Collectors.toList()));
 
-		Queue<IngListDataItem> processor = new LinkedList<>();
+		Stack<IngListDataItem> processor = new Stack<>();
 
 		int i = 1;
 
-		byParent.get(nullPlaceholder).stream().sorted(Comparator.comparingDouble(IngListDataItem::getQtyPerc).reversed()).collect(Collectors.toList())
+		byParent.get(nullPlaceholder).stream().sorted(Comparator.comparingDouble(IngListDataItem::getQtyPerc)).collect(Collectors.toList())
 				.forEach(processor::add);
 		while (!processor.isEmpty()) {
 			i++;
-			IngListDataItem il = processor.poll();
-			byParent.getOrDefault(il, Collections.emptyList()).stream().sorted(Comparator.comparingDouble(IngListDataItem::getQtyPerc).reversed())
+			IngListDataItem il = processor.pop();
+			byParent.getOrDefault(il, Collections.emptyList()).stream().sorted(Comparator.comparingDouble(IngListDataItem::getQtyPerc))
+			        .collect(Collectors.toList())
 					.forEach(processor::add);
 			il.setSort(i);
 		}
