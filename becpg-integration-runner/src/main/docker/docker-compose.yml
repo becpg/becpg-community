@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 volumes:
   becpg_data_db:
   solr_data:
@@ -34,12 +34,18 @@ services:
 #      ports:
 #          - 8091:8090
 
-#  alfresco-libreoffice:
-#      image: alfresco/alfresco-libreoffice:latest
-#      environment:
-#          JAVA_OPTS: " -Xms256m -Xmx256m"
-#      ports:
-#          - 8090:8090
+  alfresco-libreoffice:
+      image: alfresco/alfresco-libreoffice:latest
+      environment:
+          JAVA_OPTS: " -Xms256m -Xmx256m"
+      ports:
+          - 8090:8090
+      healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:8090/live"]
+        interval: 1m30s
+        timeout: 10s
+        retries: 3
+      
 #  tika:
 #      image: alfresco/alfresco-tika:latest
 #      environment:
@@ -74,7 +80,5 @@ services:
 
   becpg-report:
     image:  ${docker.becpg.url}/becpg-report:2.2.5
-    
-  libreoffice:
-    image: jeci/alfresco-libreoffice:5.3.6
+
  

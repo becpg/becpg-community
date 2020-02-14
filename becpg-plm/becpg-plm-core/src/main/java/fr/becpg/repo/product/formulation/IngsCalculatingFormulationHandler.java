@@ -14,8 +14,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.Stack;
 import java.util.stream.Collectors;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
@@ -467,22 +469,25 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	 */
 	private void sortIL(List<IngListDataItem> ingList) {
 
-		final IngListDataItem nullPlaceholder = new IngListDataItem();
-		Map<IngListDataItem, List<IngListDataItem>> byParent = ingList.stream()
-				.collect(Collectors.groupingBy(obj -> (obj.getParent() == null ? nullPlaceholder : obj.getParent()), Collectors.toList()));
-
-		Queue<IngListDataItem> processor = new LinkedList<>();
-
-		int i = 1;
-
-		byParent.get(nullPlaceholder).stream().sorted(Comparator.comparingDouble(IngListDataItem::getQtyPerc).reversed()).collect(Collectors.toList())
-				.forEach(processor::add);
-		while (!processor.isEmpty()) {
-			i++;
-			IngListDataItem il = processor.poll();
-			byParent.getOrDefault(il, Collections.emptyList()).stream().sorted(Comparator.comparingDouble(IngListDataItem::getQtyPerc).reversed())
+		if(!ingList.isEmpty()) {
+			final IngListDataItem nullPlaceholder = new IngListDataItem();
+			Map<IngListDataItem, List<IngListDataItem>> byParent = ingList.stream()
+					.collect(Collectors.groupingBy(obj -> (obj.getParent() == null ? nullPlaceholder : obj.getParent()), Collectors.toList()));
+	
+			Stack<IngListDataItem> processor = new Stack<>();
+	
+			int i = 1;
+	
+			byParent.getOrDefault(nullPlaceholder, Collections.emptyList()).stream().sorted(Comparator.comparingDouble(IngListDataItem::getQtyPerc)).collect(Collectors.toList())
 					.forEach(processor::add);
-			il.setSort(i);
+			while (!processor.isEmpty()) {
+				i++;
+				IngListDataItem il = processor.pop();
+				byParent.getOrDefault(il, Collections.emptyList()).stream().sorted(Comparator.comparingDouble(IngListDataItem::getQtyPerc))
+				        .collect(Collectors.toList())
+						.forEach(processor::add);
+				il.setSort(i);
+			}
 		}
 
 	}
