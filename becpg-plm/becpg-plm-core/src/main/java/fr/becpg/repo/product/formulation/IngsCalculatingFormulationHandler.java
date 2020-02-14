@@ -471,23 +471,25 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	 */
 	private void sortIL(List<IngListDataItem> ingList) {
 
-		final IngListDataItem nullPlaceholder = new IngListDataItem();
-		Map<IngListDataItem, List<IngListDataItem>> byParent = ingList.stream()
-				.collect(Collectors.groupingBy(obj -> (obj.getParent() == null ? nullPlaceholder : obj.getParent()), Collectors.toList()));
-
-		Stack<IngListDataItem> processor = new Stack<>();
-
-		int i = 1;
-
-		byParent.get(nullPlaceholder).stream().sorted(Comparator.comparingDouble(IngListDataItem::getQtyPerc)).collect(Collectors.toList())
-				.forEach(processor::add);
-		while (!processor.isEmpty()) {
-			i++;
-			IngListDataItem il = processor.pop();
-			byParent.getOrDefault(il, Collections.emptyList()).stream().sorted(Comparator.comparingDouble(IngListDataItem::getQtyPerc))
-			        .collect(Collectors.toList())
+		if(!ingList.isEmpty()) {
+			final IngListDataItem nullPlaceholder = new IngListDataItem();
+			Map<IngListDataItem, List<IngListDataItem>> byParent = ingList.stream()
+					.collect(Collectors.groupingBy(obj -> (obj.getParent() == null ? nullPlaceholder : obj.getParent()), Collectors.toList()));
+	
+			Stack<IngListDataItem> processor = new Stack<>();
+	
+			int i = 1;
+	
+			byParent.getOrDefault(nullPlaceholder, Collections.emptyList()).stream().sorted(Comparator.comparingDouble(IngListDataItem::getQtyPerc)).collect(Collectors.toList())
 					.forEach(processor::add);
-			il.setSort(i);
+			while (!processor.isEmpty()) {
+				i++;
+				IngListDataItem il = processor.pop();
+				byParent.getOrDefault(il, Collections.emptyList()).stream().sorted(Comparator.comparingDouble(IngListDataItem::getQtyPerc))
+				        .collect(Collectors.toList())
+						.forEach(processor::add);
+				il.setSort(i);
+			}
 		}
 
 	}
