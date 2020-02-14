@@ -6,12 +6,15 @@ package fr.becpg.repo.product.formulation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -45,7 +48,6 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 	/** The Constant NO_GRP. */
 	public static final String NO_GRP = "-";
-
 
 	/** The logger. */
 	private static final Log logger = LogFactory.getLog(IngsCalculatingFormulationHandler.class);
@@ -106,12 +108,11 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			calculateIL(formulatedProduct, reqCtrlMap);
 		}
 
-	
-		if(!reqCtrlMap.isEmpty()) {
+		if (!reqCtrlMap.isEmpty()) {
 			if (formulatedProduct.getReqCtrlList() == null) {
 				formulatedProduct.setReqCtrlList(new LinkedList<ReqCtrlListDataItem>());
 			}
-			
+
 			formulatedProduct.getReqCtrlList().addAll(reqCtrlMap.values());
 		}
 
@@ -418,10 +419,6 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		}
 	}
 
-	
-
-	
-
 	// TODO refactor this method
 	@Deprecated
 	private IngListDataItem findIngListDataItem(List<IngListDataItem> ingLists, IngListDataItem ingList) {
@@ -466,44 +463,28 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	/**
 	 * Sort ingList by qty perc in descending order.
 	 *
-	 * @param costList
-	 *            the cost list
 	 * @return the list
 	 */
 	private void sortIL(List<IngListDataItem> ingList) {
 
-		Collections.sort(ingList, (i1, i2) -> {
+		final IngListDataItem nullPlaceholder = new IngListDataItem();
+		Map<IngListDataItem, List<IngListDataItem>> byParent = ingList.stream()
+				.collect(Collectors.groupingBy(obj -> (obj.getParent() == null ? nullPlaceholder : obj.getParent()), Collectors.toList()));
 
-			// increase
-			if (((i1.getParent() == null) && (i2.getParent() == null))
-					|| ((i1.getParent() != null) && (i2.getParent() != null) && i1.getParent().equals(i2.getParent()))) {
-				return Double.compare(i2.getQtyPerc() != null ? i2.getQtyPerc() : -1d, i1.getQtyPerc() != null ? i1.getQtyPerc() : -1d);
-			} else {
-				IngListDataItem root1 = findRoot(i1);
-				IngListDataItem root2 = findRoot(i2);
-				if (root1.equals(root2)) {
-					return Integer.compare(i1.getDepthLevel() != null ? i1.getDepthLevel() : -1,
-							i2.getDepthLevel() != null ? i2.getDepthLevel() : -1);
-				} else {
-					return Double.compare(root2.getQtyPerc() != null ? root2.getQtyPerc() : -1d,
-							root1.getQtyPerc() != null ? root1.getQtyPerc() : -1d);
-				}
-			}
-		});
+		Queue<IngListDataItem> processor = new LinkedList<>();
 
 		int i = 1;
-		for (IngListDataItem il : ingList) {
-			il.setSort(i);
+
+		byParent.get(nullPlaceholder).stream().sorted(Comparator.comparingDouble(IngListDataItem::getQtyPerc).reversed()).collect(Collectors.toList())
+				.forEach(processor::add);
+		while (!processor.isEmpty()) {
 			i++;
+			IngListDataItem il = processor.poll();
+			byParent.getOrDefault(il, Collections.emptyList()).stream().sorted(Comparator.comparingDouble(IngListDataItem::getQtyPerc).reversed())
+					.forEach(processor::add);
+			il.setSort(i);
 		}
+
 	}
 
-	private IngListDataItem findRoot(IngListDataItem ingList) {
-		while (ingList.getParent() != null) {
-			ingList = ingList.getParent();
-		}
-		return ingList;
-	}
-
-	
 }
