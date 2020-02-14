@@ -164,6 +164,11 @@ public class FormulaService {
 			return associationService.getTargetAssocs(nodeRef, QName.createQName(qname, namespaceService));
 		}
 
+		public List<Serializable> assocPropValues(NodeRef nodeRef, String assocQname, String propQName) {
+			return associationService.getTargetAssocs(nodeRef, QName.createQName(assocQname, namespaceService))
+					.stream().map(o -> propValue(o, propQName)).collect(Collectors.toList());
+		}
+		
 		public QName getQName(String qName) {
 			return QName.createQName(qName, namespaceService);
 		}
