@@ -301,7 +301,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 
 		String ftsQuery = String.format("@bcpg\\:autoMergeDate:[MIN TO %s]", dateRange);
 
-		logger.info("Start of auto merge entities for: " + ftsQuery);
+		logger.debug("Start of auto merge entities for: " + ftsQuery);
 
 		List<NodeRef> nodeRefs = transactionService.getRetryingTransactionHelper().doInTransaction(() -> BeCPGQueryBuilder.createQuery()
 				.ofType(PLMModel.TYPE_PRODUCT).withAspect(BeCPGModel.ASPECT_AUTO_MERGE_ASPECT).andFTSQuery(ftsQuery).maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list(), false, true);
@@ -346,7 +346,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 
 		String ftsQuery = String.format("@cm\\:created:[%s TO MAX] OR @cm\\:modified:[%s TO MAX]", dateRange, dateRange);
 
-		logger.info("Start of reformulate changed entities for: " + ftsQuery);
+		logger.debug("Start of reformulate changed entities for: " + ftsQuery);
 
 		List<NodeRef> nodeRefs = transactionService.getRetryingTransactionHelper().doInTransaction(() -> BeCPGQueryBuilder.createQuery()
 				.ofType(PLMModel.TYPE_PRODUCT).andFTSQuery(ftsQuery).maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list(), false, true);
@@ -389,8 +389,9 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 
 			}, false, true);
 
-			logger.info(" - reformulating: " + toReformulates.size() + " entities");
-
+			if(logger.isDebugEnbaled()) {
+				logger.debug(" - reformulating: " + toReformulates.size() + " entities");
+			}
 			for (NodeRef toReformulate : toReformulates) {
 
 				if (!formulatedEntities.contains(toReformulate)) {
@@ -436,7 +437,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 
 		}
 
-		logger.info("End of reformulate changed entities");
+		logger.debug("End of reformulate changed entities");
 
 		return ret;
 	}
