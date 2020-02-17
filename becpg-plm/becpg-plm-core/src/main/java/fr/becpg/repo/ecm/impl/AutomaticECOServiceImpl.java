@@ -47,7 +47,6 @@ import fr.becpg.repo.entity.datalist.WUsedListService;
 import fr.becpg.repo.entity.datalist.WUsedListService.WUsedOperator;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 import fr.becpg.repo.entity.version.EntityVersionService;
-import fr.becpg.repo.entity.version.EntityVersionServiceImpl;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.product.data.ProductData;
