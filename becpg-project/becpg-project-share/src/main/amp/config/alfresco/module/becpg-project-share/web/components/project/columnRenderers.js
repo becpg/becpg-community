@@ -215,7 +215,7 @@
 		
 		  YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		      propertyName : ["pjt:slScore","pjt:projectScore"],
-		      renderer : function(oRecord, data, label, scope) {
+		      renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
 
 		    	Dom.setStyle(elCell, "width", "25px");
 				Dom.setStyle(elCell.parentNode, "width", "25px");
