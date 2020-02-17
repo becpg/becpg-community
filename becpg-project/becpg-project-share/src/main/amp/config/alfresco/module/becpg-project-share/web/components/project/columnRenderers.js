@@ -217,6 +217,13 @@
 		      propertyName : ["pjt:slScore","pjt:projectScore"],
 		      renderer : function(oRecord, data, label, scope) {
 
+		    	Dom.setStyle(elCell, "width", "25px");
+				Dom.setStyle(elCell.parentNode, "width", "25px");
+				if (oColumn.hidden) {
+					scope.widgets.dataTable.showColumn(oColumn);
+					Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
+				} 
+		    	  
 		      	var className="";
 		      	if(data.value != null){
 		      		if(data.value < 25){
