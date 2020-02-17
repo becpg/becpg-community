@@ -31,11 +31,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
 import com.google.common.collect.Lists;
+
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.activity.data.ActivityEvent;
@@ -682,7 +684,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	private void doInBatch(final List<NodeRef> entityNodeRefs, final int batchSize) {
 		
 		StopWatch watch = null;
-		if (logger.isInfoEnabled()) {
+		if (logger.isDebugEnabled()) {
 			watch = new StopWatch();
 			watch.start();
 		}
@@ -781,9 +783,12 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 							}
 							
 						} catch (Exception e) {
+							if (e instanceof ConcurrencyFailureException) {
+																throw (ConcurrencyFailureException) e;
+															}
 							logger.error(e,e);
 						} finally {
-							logger.info("Purge terminated with sucess: ");
+							logger.debug("Purge terminated with sucess: ");
 							policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
 						}
 						
@@ -799,9 +804,9 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 			
 		}, false, true);
 
-		if (logger.isInfoEnabled()) {
+		if (logger.isDebugEnabled()) {
 			watch.stop();
-			logger.info("Clean activities batchs takes " + watch.getTotalTimeSeconds() + " seconds");
+			logger.debug("Clean activities batchs takes " + watch.getTotalTimeSeconds() + " seconds");
 		}
 	}
 
