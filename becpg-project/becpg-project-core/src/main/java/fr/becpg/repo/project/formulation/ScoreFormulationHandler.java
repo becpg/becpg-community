@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2018 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2018 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.project.formulation;
@@ -27,9 +27,9 @@ import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 
 /**
  * Project visitor to calculate project score
- * 
+ *
  * @author quere
- * 
+ *
  */
 public class ScoreFormulationHandler extends FormulationBaseHandler<ProjectData> {
 
@@ -40,24 +40,28 @@ public class ScoreFormulationHandler extends FormulationBaseHandler<ProjectData>
 	@Override
 	public boolean process(ProjectData projectData) throws FormulateException {
 
-		int totalScore = 0;
-		int totalWeight = 0;
-		projectData.setScore(null);
-		for (ScoreListDataItem sl : projectData.getScoreList()) {
+		// Score can be set manually
+		if ((projectData.getScoreList() != null) && !projectData.getScoreList().isEmpty()) {
 
-			if (sl.getWeight() != null && sl.getScore() != null) {
-				totalScore += sl.getWeight() * sl.getScore();
-				totalWeight += sl.getWeight();
+			int totalScore = 0;
+			int totalWeight = 0;
+			projectData.setScore(null);
+			for (ScoreListDataItem sl : projectData.getScoreList()) {
+
+				if ((sl.getWeight() != null) && (sl.getScore() != null)) {
+					totalScore += sl.getWeight() * sl.getScore();
+					totalWeight += sl.getWeight();
+				}
+				logger.debug("totalScore: " + totalScore + " totalWeight: " + totalWeight);
 			}
-			logger.debug("totalScore: " + totalScore + " totalWeight: " + totalWeight);
-		}
 
-		if (totalWeight == 0) {
-			logger.debug("Total weight of project " + projectData.getNodeRef() + " is equal to 0.");
-		} else if (totalWeight != TOTAL_WEIGHT) {
-			logger.debug("Total weight of project " + projectData.getNodeRef() + " is different of 100. totalWeight: " + totalWeight);
-		} else {
-			projectData.setScore(totalScore / totalWeight);
+			if (totalWeight == 0) {
+				logger.debug("Total weight of project " + projectData.getNodeRef() + " is equal to 0.");
+			} else if (totalWeight != TOTAL_WEIGHT) {
+				logger.debug("Total weight of project " + projectData.getNodeRef() + " is different of 100. totalWeight: " + totalWeight);
+			} else {
+				projectData.setScore(totalScore / totalWeight);
+			}
 		}
 
 		return true;
