@@ -213,12 +213,28 @@
 			   }
 			});
 		
-		YAHOO.Bubbling.fire("registerDataGridRenderer", {
-			   propertyName : ["pjt:projectScore"],
-			   renderer : function(oRecord, data, label, scope) {
-				   return (data.value !=null) ? $html(data.displayValue)+ '&nbsp; %' : '';
-			   }
-			});
+		  YAHOO.Bubbling.fire("registerDataGridRenderer", {
+		      propertyName : ["pjt:slScore","pjt:projectScore"],
+		      renderer : function(oRecord, data, label, scope) {
+
+		      	var className="";
+		      	if(data.value != null){
+		      		if(data.value < 25){
+		      			className="score-red";
+		      		}
+		      		else if(data.value < 50){
+		      			className="score-orange";
+		      		}
+		      		else if(data.value < 75){
+		      			className="score-blue";
+		      		}
+		      		else{
+		      			className="score-green";
+		      		}
+		      	}
+		      	return '<span class="' + className + '" >' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';         
+		      }
+		   });
 
 		   
 		   YAHOO.Bubbling.fire("registerDataGridRenderer", {
