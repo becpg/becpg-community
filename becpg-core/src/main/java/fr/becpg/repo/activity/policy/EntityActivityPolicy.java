@@ -23,13 +23,13 @@ import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.util.Pair;
 import org.alfresco.util.transaction.TransactionSupportUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
-import com.google.gdata.util.common.base.Pair;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.activity.EntityActivityService;
