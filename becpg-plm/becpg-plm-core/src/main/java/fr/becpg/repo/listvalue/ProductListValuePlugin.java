@@ -155,10 +155,11 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 		queryBuilder.maxResults(RepoConsts.MAX_SUGGESTIONS);
 		List<NodeRef> ret = new ArrayList<>();
 		try {
-			return new ListValuePage(queryBuilder.list(), pageNum, pageSize, targetAssocValueExtractor);
+			ret = queryBuilder.list();
 		} catch (LuceneQueryParserException e) {
 			logger.error("Bad list value query:" + queryBuilder.toString());
 		}
+		return new ListValuePage(ret, pageNum, pageSize, targetAssocValueExtractor);
 	}
 
 	/**
