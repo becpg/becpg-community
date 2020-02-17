@@ -18,11 +18,13 @@
 package fr.becpg.repo.listvalue;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.search.impl.lucene.LuceneQueryParserException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -49,12 +51,10 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 	private static final String SOURCE_TYPE_PRODUCT_REPORT = "productreport";
 
 	private final static Log logger = LogFactory.getLog(ProductListValuePlugin.class);
-	
-	
+
 	@Value("${beCPG.product.searchTemplate}")
 	private String productSearchTemplate = "%(cm:name  bcpg:erpCode bcpg:code bcpg:legalName)";
-	
-	
+
 	@Autowired
 	private ReportTplService reportTplService;
 
@@ -96,9 +96,9 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 
 		if (!isAllQuery(query)) {
 			if (query.length() > 2) {
-				ftsQuery.append("("+prepareQuery(query.trim())+") OR ");
+				ftsQuery.append("(" + prepareQuery(query.trim()) + ") OR ");
 			}
-			ftsQuery.append("("+query+")");
+			ftsQuery.append("(" + query + ")");
 
 			ftsQuery.append(")^10 AND +(");
 		}
@@ -117,31 +117,29 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 		ftsQuery.append(SystemState.Simulation.toString());
 
 		queryBuilder.andFTSQuery(ftsQuery.toString());
-		
+
 		NodeRef entityNodeRef = null;
-		if(props.get(ListValueService.PROP_NODEREF)!=null){
-			 entityNodeRef = new NodeRef((String) props.get(ListValueService.PROP_NODEREF));
-			 queryBuilder.andNotID(entityNodeRef);
+		if (props.get(ListValueService.PROP_NODEREF) != null) {
+			entityNodeRef = new NodeRef((String) props.get(ListValueService.PROP_NODEREF));
+			queryBuilder.andNotID(entityNodeRef);
 		}
-		
 
 		String queryFilter = (String) props.get(ListValueService.PROP_FILTER);
 
-		
 		if ((queryFilter != null) && (!queryFilter.isEmpty())) {
 			String[] splitted = queryFilter.split("\\|");
 
 			String filterValue = splitted[1];
 			if ((filterValue != null) && !filterValue.isEmpty()) {
 				if (filterValue.contains("{")) {
-					
+
 					if (entityNodeRef != null) {
 						filterValue = extractExpr(entityNodeRef, filterValue);
 					}
 				}
 				if ((filterValue != null) && !filterValue.isEmpty() && !filterValue.contains("{")) {
-					if(filterValue.contains(",")){
-						for(String tmp : filterValue.split(",")){
+					if (filterValue.contains(",")) {
+						for (String tmp : filterValue.split(",")) {
 							queryBuilder.andPropEquals(QName.createQName(splitted[0], namespaceService), tmp);
 						}
 					} else {
@@ -155,8 +153,12 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 		filterByClass(queryBuilder, arrClassNames);
 
 		queryBuilder.maxResults(RepoConsts.MAX_SUGGESTIONS);
-
-		return new ListValuePage(queryBuilder.list(), pageNum, pageSize, targetAssocValueExtractor);
+		List<NodeRef> ret = new ArrayList<>();
+		try {
+			return new ListValuePage(queryBuilder.list(), pageNum, pageSize, targetAssocValueExtractor);
+		} catch (LuceneQueryParserException e) {
+			logger.error("Bad list value query:" + queryBuilder.toString());
+		}
 	}
 
 	/**
