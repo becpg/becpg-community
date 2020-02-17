@@ -97,6 +97,28 @@ if (beCPG.module.EntityDataGridRenderers) {
 	      }
 	   });
    
+   YAHOO.Bubbling.fire("registerDataGridRenderer", {
+      propertyName : "pjt:slScore",
+      renderer : function(oRecord, data, label, scope) {
+
+      	var className="";
+      	if(data.value != null){
+      		if(data.value < 25){
+      			className="score-red";
+      		}
+      		else if(data.value < 50){
+      			className="score-orange";
+      		}
+      		else if(data.value < 75){
+      			className="score-blue";
+      		}
+      		else{
+      			className="score-green";
+      		}
+      	}
+      	return '<span class="' + className + '" >' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';         
+      }
+   });
    
    
    YAHOO.Bubbling.fire("registerDataGridRenderer", {
@@ -169,21 +191,5 @@ if (beCPG.module.EntityDataGridRenderers) {
 	   }});
    
    
-   
-   /* Align cost to the right
-   YAHOO.Bubbling.fire("registerDataGridRenderer", {
-	      propertyName : [ "pjt:invoice","pjt:expense","pjt:blBudgetedExpense", "pjt:blBudgetedInvoice",, "pjt:blProfit" ,"pjt:projectBudgetedCost","pjt:tlFixedCost","pjt:resourceCostValue" ],
-	      renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
-	      	
-	    	  if(data.value!=null){
-	    		  Dom.setStyle(elCell, "text-align", "right");  
-	    		  return  (new Intl.NumberFormat(Alfresco.constants.JS_LOCALE.replace("_","-") ,{minimumFractionDigits : 2, maximumFractionDigits : 2 })).format( data.value);
-	    	  }
-	    	  return "";
-	    	  
-	      }
-
-	 });
-	*/
    
 }
