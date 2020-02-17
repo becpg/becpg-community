@@ -98,7 +98,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 	   });
    
    YAHOO.Bubbling.fire("registerDataGridRenderer", {
-      propertyName : "pjt:slScore",
+      propertyName : ["pjt:slScore","pjt:projectScore"],
       renderer : function(oRecord, data, label, scope) {
 
       	var className="";
