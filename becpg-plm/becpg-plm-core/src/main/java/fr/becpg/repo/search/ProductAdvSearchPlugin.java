@@ -269,7 +269,9 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 			watch = new StopWatch();
 			watch.start();
 		}
-
+		Set<NodeRef> nodesToKeepOr = new HashSet<>();
+		boolean hasOrOperand = false;
+		
 		for (Map.Entry<String, String> criterion : criteria.entrySet()) {
 
 			String key = criterion.getKey();
@@ -282,7 +284,16 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 				if (assocName.endsWith("_added")) {
 					if (!entityDictionaryService.isSubClass(datatype, PLMModel.TYPE_PRODUCT) || !keysToExclude.contains(key)) {
 
-						assocName = assocName.substring(0, assocName.length() - 6);
+						boolean isOROperand = false;
+						
+						if(assocName.endsWith("_or_added")) {
+							isOROperand = true;
+							hasOrOperand = true;
+							assocName = assocName.substring(0, assocName.length() - 9);
+						} else {
+						
+							assocName = assocName.substring(0, assocName.length() - 6);
+						}
 						assocName = assocName.replace("_", ":");
 						QName assocQName = QName.createQName(assocName, namespaceService);
 
@@ -307,10 +318,18 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 							}
 
 						}
-						nodes.retainAll(nodesToKeep);
+						if(!isOROperand) {
+							nodes.retainAll(nodesToKeep);
+						} else {
+							nodesToKeepOr.addAll(nodesToKeep);
+						}
 					}
 				}
 			}
+		}
+		
+		if(hasOrOperand) {
+			nodes.retainAll(nodesToKeepOr);	
 		}
 
 		if (logger.isDebugEnabled()) {
