@@ -28,6 +28,7 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
 import org.alfresco.util.ISO8601DateFormat;
+import org.alfresco.util.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
@@ -41,7 +42,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
 import com.google.common.collect.Lists;
-import com.google.gdata.util.common.base.Pair;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
@@ -776,7 +776,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	private void doInBatch(final List<NodeRef> entityNodeRefs, final int batchSize) {
 		
 		StopWatch watch = null;
-		if (logger.isInfoEnabled()) {
+		if (logger.isDebugEnabled()) {
 			watch = new StopWatch();
 			watch.start();
 		}
@@ -876,8 +876,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 							
 						} catch (Exception e) {
 							if (e instanceof ConcurrencyFailureException) {
-								throw (ConcurrencyFailureException) e;
-							}
+																throw (ConcurrencyFailureException) e;
+															}
 							logger.error(e,e);
 						} finally {
 							logger.debug("Purge terminated with sucess: ");
@@ -896,9 +896,9 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 			
 		}, false, true);
 
-		if (logger.isInfoEnabled()) {
+		if (logger.isDebugEnabled()) {
 			watch.stop();
-			logger.info("Clean activities batchs takes " + watch.getTotalTimeSeconds() + " seconds");
+			logger.debug("Clean activities batchs takes " + watch.getTotalTimeSeconds() + " seconds");
 		}
 	}
 

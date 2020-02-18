@@ -157,6 +157,15 @@ public class EntityDictionaryServiceImpl implements EntityDictionaryService {
 				});
 	}
 
+	
+
+	@Override
+	public boolean isAssoc(QName assocName) {
+		return dictionaryService.getAssociation(assocName)!=null;
+	}
+
+
+	
 	@Override
 	public TypeDefinition getType(QName type) {
 		return dictionaryService.getType(type);
@@ -181,7 +190,6 @@ public class EntityDictionaryServiceImpl implements EntityDictionaryService {
 	public DictionaryService getDictionaryService() {
 		return dictionaryService;
 	}
-
 
 
 

@@ -51,6 +51,9 @@ public interface EntityDictionaryService {
 	QName getMultiLevelSecondaryPivot(QName dataListItemType);
 
 	void registerPropDefMapping(QName orig, QName dest);
+	
+
+	boolean isAssoc(QName propQname);
 
 	
 	//Override
@@ -63,4 +66,5 @@ public interface EntityDictionaryService {
 	AssociationDefinition getAssociation(QName qName);
 
 	DictionaryService getDictionaryService();
+
 }
