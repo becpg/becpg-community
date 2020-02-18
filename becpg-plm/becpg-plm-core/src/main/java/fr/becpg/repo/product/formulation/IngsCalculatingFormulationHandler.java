@@ -12,12 +12,10 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 import java.util.Set;
 import java.util.Stack;
 import java.util.stream.Collectors;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
@@ -480,6 +478,8 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	
 			byParent.getOrDefault(nullPlaceholder, Collections.emptyList()).stream().sorted(Comparator.comparingDouble(IngListDataItem::getQtyPerc)).collect(Collectors.toList())
 					.forEach(processor::add);
+			
+			
 			while (!processor.isEmpty()) {
 				i++;
 				IngListDataItem il = processor.pop();
@@ -488,6 +488,8 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 						.forEach(processor::add);
 				il.setSort(i);
 			}
+			
+			ingList.sort(Comparator.comparingInt(IngListDataItem::getSort));
 		}
 
 	}

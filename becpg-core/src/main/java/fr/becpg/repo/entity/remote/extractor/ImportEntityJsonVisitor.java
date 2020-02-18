@@ -182,8 +182,6 @@ public class ImportEntityJsonVisitor {
 					nodeService.setProperty(entityNodeRef, prop.getKey(), prop.getValue());
 				}
 			}
-
-			nodeService.setProperties(entityNodeRef, properties);
 		}
 
 		for (Entry<QName, List<NodeRef>> assocEntry : associations.entrySet()) {
