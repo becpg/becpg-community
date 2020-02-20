@@ -33,6 +33,8 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.project.ProjectService;
 
+//TODO use remote formulation webscript instead
+@Deprecated
 public class FormulateProjectWebScript extends AbstractWebScript {
 	
 	protected static final String PARAM_STORE_TYPE = "store_type";
