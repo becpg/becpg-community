@@ -30,6 +30,8 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.repo.formulation.FormulateException;
 
+//TODO use remote formulation webscript instead
+@Deprecated
 public class FormulateWebScript extends AbstractProductWebscript {
 
 	protected static final String PARAM_FAST = "fast";

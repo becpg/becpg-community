@@ -24,8 +24,6 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.security.AccessStatus;
-import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -42,6 +40,7 @@ import fr.becpg.repo.activity.data.ActivityType;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.formulation.FormulateException;
+import fr.becpg.repo.formulation.FormulationPlugin;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.product.data.CharactDetails;
 import fr.becpg.repo.product.data.FinishedProductData;
@@ -54,7 +53,7 @@ import fr.becpg.repo.repository.L2CacheSupport;
  * @author querephi
  */
 @Service("productService")
-public class ProductServiceImpl implements ProductService, InitializingBean {
+public class ProductServiceImpl implements ProductService, InitializingBean, FormulationPlugin {
 
 	private static Log logger = LogFactory.getLog(ProductService.class);
 
@@ -66,9 +65,6 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 
 	@Autowired
 	private BehaviourFilter policyBehaviourFilter;
-
-	@Autowired
-	private PermissionService permissionService;
 
 	@Autowired
 	private CharactDetailsVisitorFactory charactDetailsVisitorFactory;
@@ -95,28 +91,28 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 
 	@Override
 	public void formulate(NodeRef productNodeRef, boolean fast) throws FormulateException {
-			try {
-				policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
-				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
-				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+		try {
+			policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
+			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 
-				L2CacheSupport.doInCacheContext(() -> {
-					AuthenticationUtil.runAsSystem(() -> {
-						formulationService.formulate(productNodeRef);
-						if (!fast) {
-								entityActivityService.postEntityActivity(productNodeRef, ActivityType.Formulation, ActivityEvent.Update, null);
-						}
+			L2CacheSupport.doInCacheContext(() -> {
+				AuthenticationUtil.runAsSystem(() -> {
+					formulationService.formulate(productNodeRef);
+					if (!fast) {
+						entityActivityService.postEntityActivity(productNodeRef, ActivityType.Formulation, ActivityEvent.Update, null);
+					}
 
-						return true;
-					});
+					return true;
+				});
 
-				}, false, true);
+			}, false, true);
 
-			} finally {
-				policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
-				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
-				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-			}
+		} finally {
+			policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
+			policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+			policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+		}
 
 	}
 
@@ -172,6 +168,17 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 		}, true);
 
 		return productData;
+	}
+
+	@Override
+	public FormulationPluginPriority getMatchPriority(QName type) {
+		return entityDictionaryService.isSubClass(type, PLMModel.TYPE_PRODUCT) ? FormulationPluginPriority.NORMAL : FormulationPluginPriority.NONE;
+
+	}
+
+	@Override
+	public void runFormulation(NodeRef entityNodeRef) throws FormulateException {
+		formulate(entityNodeRef, true);
 	}
 
 }

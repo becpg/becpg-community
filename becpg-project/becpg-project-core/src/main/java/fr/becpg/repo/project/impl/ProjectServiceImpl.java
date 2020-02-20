@@ -52,7 +52,9 @@ import fr.becpg.model.ProjectModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.ProjectRepoConsts;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.formulation.FormulateException;
+import fr.becpg.repo.formulation.FormulationPlugin;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.project.ProjectActivityService;
@@ -76,7 +78,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  */
 
 @Service("projectService")
-public class ProjectServiceImpl implements ProjectService {
+public class ProjectServiceImpl implements ProjectService, FormulationPlugin {
 
 	private static final Log logger = LogFactory.getLog(ProjectServiceImpl.class);
 
@@ -106,6 +108,8 @@ public class ProjectServiceImpl implements ProjectService {
 	private ProjectActivityService projectActivityService;
 	@Autowired
 	private ProjectListPolicy projectListPolicy;
+	@Autowired
+	private EntityDictionaryService entityDictionaryService;
 
 	@Autowired
 	SysAdminParams sysAdminParams;
@@ -557,6 +561,17 @@ public class ProjectServiceImpl implements ProjectService {
 			queryBuilder.inSite(siteId, null);
 		}
 		return queryBuilder.count();
+	}
+	
+	@Override
+	public FormulationPluginPriority getMatchPriority(QName type) {
+		return entityDictionaryService.isSubClass(type, ProjectModel.TYPE_PROJECT) ? FormulationPluginPriority.NORMAL : FormulationPluginPriority.NONE;
+
+	}
+
+	@Override
+	public void runFormulation(NodeRef entityNodeRef) throws FormulateException {
+		formulate(entityNodeRef);
 	}
 
 }
