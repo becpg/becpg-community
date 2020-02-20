@@ -27,6 +27,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.node.integrity.IntegrityChecker;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.dao.ConcurrencyFailureException;
@@ -37,6 +38,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationChain;
+import fr.becpg.repo.formulation.FormulationPlugin;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.repository.AlfrescoRepository;
 
@@ -46,7 +48,7 @@ import fr.becpg.repo.repository.AlfrescoRepository;
  * @since 1.5
  * @param <T>
  */
-public class FormulationServiceImpl<T extends FormulatedEntity> implements FormulationService<T> {
+public class FormulationServiceImpl<T extends FormulatedEntity> implements FormulationService<T>, FormulationPlugin {
 
 	private static final String DEFAULT_CHAIN_ID = "default";
 
@@ -217,5 +219,16 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 
 		return null;
 	}
+
+	@Override
+	public FormulationPluginPriority getMatchPriority(QName type) {
+		return FormulationPluginPriority.NORMAL;
+	}
+
+	@Override
+	public void runFormulation(NodeRef entityNodeRef) throws FormulateException {
+		formulate(entityNodeRef);
+	}
+
 
 }
