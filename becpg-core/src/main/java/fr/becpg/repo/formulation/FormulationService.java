@@ -20,7 +20,7 @@ package fr.becpg.repo.formulation;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 
-public interface FormulationService<T extends FormulatedEntity> {
+public interface FormulationService<T extends FormulatedEntity>  {
 
      T formulate(NodeRef entityNodeRef, String chainId) throws FormulateException;
     

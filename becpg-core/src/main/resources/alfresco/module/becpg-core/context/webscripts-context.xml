@@ -279,6 +279,10 @@
 		<property name="contentService" ref="ContentService" />	
 	</bean>
 		
+    <bean id="webscript.fr.becpg.remote.formulate.get" class="fr.becpg.repo.web.scripts.remote.FormulateEntityWebScript" parent="abstractEntityWebScript">
+    	 <property name="formulationExecutor" ref="formulationExecutor" />
+	</bean>		
+		
 	<!-- dockbar -->
 	<bean id="webscript.fr.becpg.dockbar.dockbar.get" class="fr.becpg.repo.web.scripts.dockbar.DockBarWebScript" parent="webscript">
 		<property name="preferenceService" ref="PreferenceService" />
