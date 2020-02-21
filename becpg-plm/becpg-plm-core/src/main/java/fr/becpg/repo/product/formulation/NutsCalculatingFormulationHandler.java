@@ -113,7 +113,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 
 							if (qtyUsed != null) {
 								if (!(partProduct instanceof LocalSemiFinishedProductData)) {
-									visitPart(partProduct, formulatedProduct.getNutList(), retainNodes, qtyUsed, netQty, isGenericRawMaterial,
+									visitPart(formulatedProduct, partProduct, formulatedProduct.getNutList(), retainNodes, qtyUsed, netQty, isGenericRawMaterial,
 											totalQtiesValue);
 								}
 							}
@@ -213,7 +213,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 	}
 
 	
-	private List<ReqCtrlListDataItem> visitPart(ProductData partProduct, List<NutListDataItem> nutList, List<NutListDataItem> retainNodes,
+	private List<ReqCtrlListDataItem> visitPart(ProductData formulatedProduct, ProductData partProduct, List<NutListDataItem> nutList, List<NutListDataItem> retainNodes,
 			Double qtyUsed, Double netQty, Boolean isGenericRawMaterial, Map<NodeRef, Double> totalQtiesValue) {
 
 		List<ReqCtrlListDataItem> ret = new ArrayList<>();
@@ -236,7 +236,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 
 				if ((nutListDataItem != null) && (qtyUsed != null)) {
 
-					calculate(newNutListDataItem, nutListDataItem, qtyUsed, netQty, isGenericRawMaterial);
+					calculate(formulatedProduct, partProduct, newNutListDataItem, nutListDataItem, qtyUsed, netQty, isGenericRawMaterial);
 
 					if ((totalQtiesValue != null) && (nutListDataItem.getValue() != null)) {
 						Double currentQty = totalQtiesValue.get(newNutListDataItem.getCharactNodeRef());
