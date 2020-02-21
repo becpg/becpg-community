@@ -385,6 +385,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		this.plants = plants;
 	}
 
+	
 	@AlfProp
 	@AlfQname(qname = "bcpg:ingTypeV2")
 	public IngTypeItem getIngType() {
