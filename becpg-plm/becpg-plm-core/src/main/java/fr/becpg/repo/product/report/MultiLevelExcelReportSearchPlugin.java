@@ -56,7 +56,8 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 		String depthLevel = parameter != null ? parameter.replaceAll("Level", "").replaceAll("Max", "").replaceAll("Only", "") : "All";
 
 		for (NodeRef entityNodeRef : searchResults) {
-			if (mainType.equals(nodeService.getType(entityNodeRef))) {
+			QName entityType = nodeService.getType(entityNodeRef);
+			if (mainType.equals(entityType) || entityDictionaryService.isSubClass(entityType, mainType)) {
 				Serializable key = nodeService.getProperty(entityNodeRef, keyColumn.getFieldDef().getName());
 				if (key == null) {
 					key = nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_CODE);
