@@ -8344,7 +8344,8 @@
 					<show id="bcpg:priceListUnit" />
 					<show id="bcpg:priceListPurchaseQty" />
 					<show id="bcpg:priceListPurchaseUnit" />
-					<show id="bcpg:suppliers" />
+					<show id="bcpg:suppliers" force="true"/>
+					<show id="bcpg:plants" force="true" />
 					<show id="bcpg:priceListGeoOrigins" />
 					
 					<show id="bcpg:startEffectivity" />
@@ -8382,7 +8383,8 @@
 					<show id="bcpg:priceListUnit" />
 					<show id="bcpg:priceListPurchaseQty" />
 					<show id="bcpg:priceListPurchaseUnit" />
-					<show id="bcpg:suppliers" />
+					<show id="bcpg:suppliers" force="true"/>
+					<show id="bcpg:plants" force="true" />
 					<show id="bcpg:priceListGeoOrigins" />
 					<show id="bcpg:startEffectivity" />
 					<show id="bcpg:endEffectivity" />
@@ -8402,7 +8404,8 @@
 					<show id="bcpg:priceListUnit" />
 					<show id="bcpg:priceListPurchaseQty" />
 					<show id="bcpg:priceListPurchaseUnit" />
-					<show id="bcpg:suppliers" />
+					<show id="bcpg:suppliers" force="true"/>
+					<show id="bcpg:plants" force="true" />
 					<show id="bcpg:priceListGeoOrigins" />
 					<show id="bcpg:startEffectivity" />
 					<show id="bcpg:endEffectivity" />

@@ -201,7 +201,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 					Double vol = FormulationHelper.getNetVolume(compoItem, partProduct);
 
 					
-					visitPart(compoItem.getProduct(), partProduct,  simpleListDataList, weight, vol, netQtyInLorKg, netWeight, mandatoryCharacts, totalQtiesValue,
+					visitPart(formulatedProduct, partProduct,  simpleListDataList, weight, vol, netQtyInLorKg, netWeight, mandatoryCharacts, totalQtiesValue,
 							isGenericRawMaterial);
 				}
 			}
@@ -251,7 +251,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	 * @param valueCount
 	 *
 	 */
-	protected void visitPart(NodeRef componentNodeRef, ProductData partProduct, List<T> simpleListDataList, Double weightUsed, Double volUsed, Double netQtyInLorKg,
+	protected void visitPart(ProductData formulatedProduct, ProductData partProduct, List<T> simpleListDataList, Double weightUsed, Double volUsed, Double netQtyInLorKg,
 			Double netWeight, Map<NodeRef, List<NodeRef>> mandatoryCharacts, Map<NodeRef, Double> totalQtiesValue, boolean isGenericRawMaterial)
 			throws FormulateException {
 
@@ -264,7 +264,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 				logger.debug("simpleListDataList  is null or empty");
 
 				mandatoryCharacts.keySet().forEach(charactNodeRef -> {
-					addMissingMandatoryCharact(mandatoryCharacts, charactNodeRef, componentNodeRef);
+					addMissingMandatoryCharact(mandatoryCharacts, charactNodeRef, partProduct.getNodeRef());
 				});
 			} else {
 
@@ -295,14 +295,14 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 						if ((slDataItem == null) || (slDataItem.getValue() == null)) {
 							if (!(slDataItem instanceof MinMaxValueDataItem) || ((((MinMaxValueDataItem) slDataItem).getMaxi() == null)
 									&& (((MinMaxValueDataItem) slDataItem).getMini() == null))) {
-								addMissingMandatoryCharact(mandatoryCharacts, newSimpleListDataItem.getCharactNodeRef(), componentNodeRef);
+								addMissingMandatoryCharact(mandatoryCharacts, newSimpleListDataItem.getCharactNodeRef(),  partProduct.getNodeRef());
 							}
 						}
 
 						// Calculate values
 						if ((slDataItem != null) && (qtyUsed != null)) {
 
-							calculate(newSimpleListDataItem, slDataItem, qtyUsed, netQty, isGenericRawMaterial);
+							calculate(formulatedProduct, partProduct, newSimpleListDataItem, slDataItem, qtyUsed, netQty, isGenericRawMaterial);
 
 							if ((totalQtiesValue != null) && (slDataItem.getValue() != null)) {
 								Double currentQty = totalQtiesValue.get(newSimpleListDataItem.getCharactNodeRef());
@@ -319,7 +319,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		}
 	}
 
-	protected void calculate(SimpleListDataItem newSimpleListDataItem, SimpleListDataItem slDataItem, Double qtyUsed, Double netQty,
+	protected void calculate(ProductData formulatedProduct, ProductData partProduct, SimpleListDataItem newSimpleListDataItem, SimpleListDataItem slDataItem, Double qtyUsed, Double netQty,
 			boolean isGenericRawMaterial) {
 		
 
@@ -332,7 +332,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 
 		Double newValue = formulatedValue != null ? formulatedValue : 0d;
-		Double value = slDataItem.getValue();
+		Double value = extractValue(formulatedProduct, partProduct, slDataItem);
 		if (value != null) {
 			newSimpleListDataItem.setValue(FormulationHelper.calculateValue(formulatedValue, qtyUsed, value, netQty));
 		} else {
@@ -390,6 +390,11 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 				}
 			}
 		}
+	}
+
+	protected Double extractValue(ProductData formulatedProduct, ProductData partProduct, SimpleListDataItem slDataItem) {
+		
+		return slDataItem.getValue();
 	}
 
 	protected void addMissingMandatoryCharact(Map<NodeRef, List<NodeRef>> mandatoryCharacts, NodeRef charactNodeRef, NodeRef componentNodeRef) {
