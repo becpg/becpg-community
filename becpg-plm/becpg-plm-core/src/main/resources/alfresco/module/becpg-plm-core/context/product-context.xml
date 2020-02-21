@@ -35,12 +35,6 @@
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="associationService" ref="associationService"/>
 	</bean>
-	<bean id="productListUnits.PriceListPolicy"
-		class="fr.becpg.repo.product.policy.productListUnits.PriceListPolicy"
-		parent="abstractBeCPGPolicy" depends-on="bcpg.plm.dictionaryBootstrap">
-		<property name="entityListDAO" ref="entityListDAO" />
-		<property name="alfrescoRepository" ref="alfrescoRepository" />
-	</bean>
 	
 	<bean id="labelingRuleListPolicy" class="fr.becpg.repo.product.policy.LabelingRuleListPolicy"
 		parent="abstractBeCPGPolicy" depends-on="bcpg.plm.dictionaryBootstrap">

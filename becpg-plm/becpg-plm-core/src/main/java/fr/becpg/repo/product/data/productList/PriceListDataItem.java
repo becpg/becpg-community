@@ -3,6 +3,7 @@
  */
 package fr.becpg.repo.product.data.productList;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,6 +39,8 @@ public class PriceListDataItem extends AbstractEffectiveDataItem {
 	private NodeRef cost;
 
 	private List<NodeRef> suppliers = new LinkedList<>();
+	
+	private List<NodeRef> plants = new ArrayList<>();
 
 	private List<NodeRef> geoOrigins = new LinkedList<>();
 
@@ -119,6 +122,17 @@ public class PriceListDataItem extends AbstractEffectiveDataItem {
 
 	public void setSuppliers(List<NodeRef> suppliers) {
 		this.suppliers = suppliers;
+	}
+	
+
+	@AlfMultiAssoc
+	@AlfQname(qname = "bcpg:plants")
+	public List<NodeRef> getPlants() {
+		return plants;
+	}
+
+	public void setPlants(List<NodeRef> plants) {
+		this.plants = plants;
 	}
 
 	/**
