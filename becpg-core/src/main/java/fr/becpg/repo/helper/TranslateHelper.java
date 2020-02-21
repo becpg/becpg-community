@@ -93,7 +93,7 @@ public class TranslateHelper {
 		MLText res = new MLText();
 
 		logger.debug("Getting translations for key: " + key);
-		for (String localeString : RepoConsts.SUPPORTED_LANGUAGES) {
+		for (String localeString : RepoConsts.SUPPORTED_UI_LOCALES) {
 			Locale currentLocale = new Locale(localeString);
 
 			String translation = I18NUtil.getMessage(key, currentLocale);
