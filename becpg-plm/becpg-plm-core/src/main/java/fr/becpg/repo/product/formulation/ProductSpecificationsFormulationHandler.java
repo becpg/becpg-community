@@ -12,6 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
@@ -78,91 +79,102 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 		this.nodeService = nodeService;
 	}
 
+	private ReentrantLock processLock = new ReentrantLock();
+
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 
 		if (formulatedProduct instanceof ProductSpecificationData) {
+			if (processLock.tryLock()) {
+				try {
+					ProductSpecificationData specificationData = (ProductSpecificationData) formulatedProduct;
+					if (alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_SPEC_COMPATIBILTY_LIST)) {
 
-			ProductSpecificationData specificationData = (ProductSpecificationData) formulatedProduct;
-			if (alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_SPEC_COMPATIBILTY_LIST)) {
+						Map<NodeRef, String> toUpdate = new HashMap<>();
+						Set<NodeRef> toSkipProduct = new HashSet<>();
+						List<NodeRef> productNodeRefs = getProductNodeRefs((ProductSpecificationData) formulatedProduct);
+						if (logger.isDebugEnabled()) {
+							logger.debug(" - found " + productNodeRefs.size() + " products to test specification on");
+						}
 
-				Map<NodeRef, String> toUpdate = new HashMap<>();
-				Set<NodeRef> toSkipProduct = new HashSet<>();
-				List<NodeRef> productNodeRefs = getProductNodeRefs((ProductSpecificationData) formulatedProduct);
-				if (logger.isDebugEnabled()) {
-					logger.debug(" - found " + productNodeRefs.size() + " products to test specification on");
-				}
+						for (NodeRef productNodeRef : productNodeRefs) {
 
-				for (NodeRef productNodeRef : productNodeRefs) {
+							Date formulatedDate = (Date) nodeService.getProperty(productNodeRef, BeCPGModel.PROP_FORMULATED_DATE);
 
-					Date formulatedDate = (Date) nodeService.getProperty(productNodeRef, BeCPGModel.PROP_FORMULATED_DATE);
+							if ((formulatedDate == null) || (specificationData.getFormulatedDate() == null)
+									|| ((specificationData.getModifiedDate() != null)
+											&& (specificationData.getModifiedDate().getTime() > specificationData.getFormulatedDate().getTime()))
+									|| (formulatedDate.getTime() > specificationData.getFormulatedDate().getTime())) {
 
-					if ((formulatedDate == null) || (specificationData.getFormulatedDate() == null)
-							|| ((specificationData.getModifiedDate() != null)
-									&& (specificationData.getModifiedDate().getTime() > specificationData.getFormulatedDate().getTime()))
-							|| (formulatedDate.getTime() > specificationData.getFormulatedDate().getTime())) {
+								transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+									ProductData productData = alfrescoRepository.findOne(productNodeRef);
 
-						transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-							ProductData productData = alfrescoRepository.findOne(productNodeRef);
+									for (RequirementScanner scanner : requirementScanners) {
 
-							for (RequirementScanner scanner : requirementScanners) {
-
-								String reqDetails = null;
-								StopWatch stopWatch = null;
-								if (logger.isDebugEnabled()) {
-									stopWatch = new StopWatch();
-									stopWatch.start();
-								}
-								for (ReqCtrlListDataItem reqCtrlListDataItem : scanner.checkRequirements(productData,
-										Arrays.asList((ProductSpecificationData) formulatedProduct))) {
-									if (RequirementType.Forbidden.equals(reqCtrlListDataItem.getReqType())
-											&& RequirementDataType.Specification.equals(reqCtrlListDataItem.getReqDataType())) {
-										if (reqDetails == null) {
-											reqDetails = reqCtrlListDataItem.getReqMessage();
-										} else {
-											reqDetails += RepoConsts.LABEL_SEPARATOR;
-											reqDetails += reqCtrlListDataItem.getReqMessage();
+										String reqDetails = null;
+										StopWatch stopWatch = null;
+										if (logger.isDebugEnabled()) {
+											stopWatch = new StopWatch();
+											stopWatch.start();
+										}
+										for (ReqCtrlListDataItem reqCtrlListDataItem : scanner.checkRequirements(productData,
+												Arrays.asList((ProductSpecificationData) formulatedProduct))) {
+											if (RequirementType.Forbidden.equals(reqCtrlListDataItem.getReqType())
+													&& RequirementDataType.Specification.equals(reqCtrlListDataItem.getReqDataType())) {
+												if (reqDetails == null) {
+													reqDetails = reqCtrlListDataItem.getReqMessage();
+												} else {
+													reqDetails += RepoConsts.LABEL_SEPARATOR;
+													reqDetails += reqCtrlListDataItem.getReqMessage();
+												}
+											}
+										}
+										if (reqDetails != null) {
+											if (logger.isDebugEnabled()) {
+												stopWatch.stop();
+												logger.debug(
+														"Adding Forbidden for " + productNodeRef + " in " + stopWatch.getTotalTimeMillis() + "ms");
+											}
+											toUpdate.put(productNodeRef, reqDetails);
 										}
 									}
-								}
-								if (reqDetails != null) {
-									if(logger.isDebugEnabled()) {
-										stopWatch.stop();
-										logger.debug("Adding Forbidden for " + productNodeRef + " in " + stopWatch.getTotalTimeMillis() + "ms");
-									}
-									toUpdate.put(productNodeRef, reqDetails);
+									return productData;
+								}, true, true);
+							} else {
+								logger.trace("Skipping productNodeRef: " + productNodeRef);
+								toSkipProduct.add(productNodeRef);
+							}
+						}
+
+						List<SpecCompatibilityDataItem> toRemove = new ArrayList<>();
+
+						for (SpecCompatibilityDataItem cul1 : specificationData.getSpecCompatibilityList()) {
+							if (!toSkipProduct.contains(cul1.getSourceItem())) {
+								if (!toUpdate.containsKey(cul1.getSourceItem())) {
+									toRemove.add(cul1);
+								} else {
+									cul1.setReqDetails(toUpdate.get(cul1.getSourceItem()));
+									toUpdate.remove(cul1.getSourceItem());
 								}
 							}
-							return productData;
-						}, true, true);
-					} else {
-						logger.trace("Skipping productNodeRef: " + productNodeRef);
-						toSkipProduct.add(productNodeRef);
-					}
-				}
-
-				List<SpecCompatibilityDataItem> toRemove = new ArrayList<>();
-
-				for (SpecCompatibilityDataItem cul1 : specificationData.getSpecCompatibilityList()) {
-					if (!toSkipProduct.contains(cul1.getSourceItem())) {
-						if (!toUpdate.containsKey(cul1.getSourceItem())) {
-							toRemove.add(cul1);
-						} else {
-							cul1.setReqDetails(toUpdate.get(cul1.getSourceItem()));
-							toUpdate.remove(cul1.getSourceItem());
 						}
+
+						for (Map.Entry<NodeRef, String> entry : toUpdate.entrySet()) {
+							specificationData.getSpecCompatibilityList()
+									.add(new SpecCompatibilityDataItem(RequirementType.Forbidden, entry.getValue(), entry.getKey()));
+						}
+
+						specificationData.getSpecCompatibilityList().removeAll(toRemove);
+
+					} else {
+						logger.debug("No change unit list");
 					}
+				} finally {
+					processLock.unlock();
 				}
-
-				for (Map.Entry<NodeRef, String> entry : toUpdate.entrySet()) {
-					specificationData.getSpecCompatibilityList().add(new SpecCompatibilityDataItem( RequirementType.Forbidden,
-							entry.getValue(), entry.getKey()));
-				}
-
-				specificationData.getSpecCompatibilityList().removeAll(toRemove);
-
 			} else {
-				logger.debug("No change unit list");
+				logger.error("Only one massive operation at a time");
+				return false;
 			}
 
 		} else {
@@ -182,8 +194,8 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 
 	public boolean run() {
 		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			try {
 
+			try {
 				for (NodeRef productSpecificationNodeRef : BeCPGQueryBuilder.createQuery().ofType(PLMModel.TYPE_PRODUCT_SPECIFICATION)
 						.excludeDefaults().list()) {
 
@@ -231,24 +243,24 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 	}
 
 	private List<NodeRef> getProductNodeRefs(ProductSpecificationData formulatedProduct) {
-		
-		if(formulatedProduct.getSpecCompatibilityTpls()!=null && !formulatedProduct.getSpecCompatibilityTpls().isEmpty()) {
+
+		if ((formulatedProduct.getSpecCompatibilityTpls() != null) && !formulatedProduct.getSpecCompatibilityTpls().isEmpty()) {
 			List<NodeRef> ret = new ArrayList<>();
-			for(NodeRef tplNodeRef : formulatedProduct.getSpecCompatibilityTpls()) {
+			for (NodeRef tplNodeRef : formulatedProduct.getSpecCompatibilityTpls()) {
 				List<AssociationRef> assocRefs = nodeService.getSourceAssocs(tplNodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF);
 
 				for (AssociationRef assocRef : assocRefs) {
-					if (!nodeService.hasAspect(assocRef.getSourceRef(), BeCPGModel.ASPECT_COMPOSITE_VERSION) && !tplNodeRef.equals(assocRef.getSourceRef())) {
+					if (!nodeService.hasAspect(assocRef.getSourceRef(), BeCPGModel.ASPECT_COMPOSITE_VERSION)
+							&& !tplNodeRef.equals(assocRef.getSourceRef())) {
 						ret.add(assocRef.getSourceRef());
 					}
 				}
-				
+
 			}
-			
+
 			return ret;
 		}
-		
-		
+
 		return BeCPGQueryBuilder.createQuery().inType(PLMModel.TYPE_FINISHEDPRODUCT).inType(PLMModel.TYPE_SEMIFINISHEDPRODUCT)
 				.inType(PLMModel.TYPE_RAWMATERIAL).excludeDefaults().maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list();
 	}
