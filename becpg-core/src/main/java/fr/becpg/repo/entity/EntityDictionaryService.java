@@ -23,6 +23,7 @@ import java.util.List;
 import org.alfresco.service.cmr.dictionary.AspectDefinition;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
+import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.dictionary.TypeDefinition;
@@ -61,10 +62,13 @@ public interface EntityDictionaryService {
 
 	AspectDefinition getAspect(QName aspect);
 
+	ClassDefinition getClass(QName type);
+
 	PropertyDefinition getProperty(QName key);
 
 	AssociationDefinition getAssociation(QName qName);
 
 	DictionaryService getDictionaryService();
+
 
 }
