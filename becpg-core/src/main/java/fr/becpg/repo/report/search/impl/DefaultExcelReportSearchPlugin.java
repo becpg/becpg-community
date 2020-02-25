@@ -126,7 +126,7 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 
 		for (AttributeExtractorStructure metadataField : metadataFields) {
 			if (metadataField.isFormulaField()) {
-				if(metadataField.getFieldName().startsWith("formula")) {
+				if(metadataField.getFieldName().startsWith("formula") || metadataField.getFieldName().startsWith("dyn_")) {
 					item.put(metadataField.getFieldName(), eval(metadataField.getFormula(), item));
 				} else {
 					item.put(metadataField.getFieldName(),metadataField.getFormula());
