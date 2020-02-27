@@ -85,7 +85,8 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 						// Ings
 						if (!fil.getIngs().isEmpty() && (fil.getReqMessage() != null) && !fil.getReqMessage().isEmpty()) {
 							if (fil.getIngs().contains(ingListDataItem.getIng())) {
-								if ((fil.getQtyPercMaxi() != null) && (fil.getQtyPercMaxi() <= ingListDataItem.getQtyPerc())) {
+								if ((ingListDataItem.getQtyPerc() == null) || 
+										((fil.getQtyPercMaxi() != null) && (fil.getQtyPercMaxi() <= ingListDataItem.getQtyPerc()))) {
 
 									// req not respected
 									ReqCtrlListDataItem reqCtrl = reqCtrlMap.get(fil.getNodeRef());
