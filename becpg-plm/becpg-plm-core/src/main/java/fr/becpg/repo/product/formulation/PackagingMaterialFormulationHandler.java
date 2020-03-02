@@ -56,7 +56,7 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 			// no compo, no packagingList => no formulation
 			if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)
 					|| (!formulatedProduct.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))
-							|| !formulatedProduct
+							&& !formulatedProduct
 									.hasPackagingListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())))) {
 				logger.debug("no compoList, no packagingList => no formulation");
 				return true;
