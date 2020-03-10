@@ -6,7 +6,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -20,6 +22,7 @@ import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -186,10 +189,27 @@ NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.OnCreateAssociationP
 							if (((before.get(beforeType) != null) && (after.get(beforeType) != null)
 									&& !before.get(beforeType).equals(after.get(beforeType)))
 									|| ((before.get(beforeType) == null) || (after.get(beforeType) == null))) {
-								isDifferent = true;
-								if (!entityActivityService.isMatchingStateProperty(beforeType)) {
-									Pair<List<Serializable>, List<Serializable>> beforeAfterProperties = new Pair<List<Serializable>, List<Serializable>>(Arrays.asList(before.get(beforeType)), Arrays.asList(after.get(beforeType)));
-									updatedProperties.put(beforeType, beforeAfterProperties);
+
+								if (before.get(beforeType) != null && after.get(beforeType) != null
+										&& before.get(beforeType).getClass().equals(MLText.class)){
+									MLText beforeMlText = (MLText)before.get(beforeType);
+									MLText afterMlText = (MLText)after.get(beforeType);
+									for (Entry<Locale, String> afterEntry : afterMlText.entrySet()) {
+										if ((beforeMlText.containsKey(afterEntry.getKey()) && !afterEntry.getValue().equals(beforeMlText.getValue(afterEntry.getKey())))
+												|| (!beforeMlText.containsKey(afterEntry.getKey()) && !afterEntry.getValue().equals(""))) {
+											isDifferent = true;
+											if (!entityActivityService.isMatchingStateProperty(beforeType)) {
+												Pair<List<Serializable>, List<Serializable>> beforeAfterProperties = new Pair<List<Serializable>, List<Serializable>>(Arrays.asList(before.get(beforeType)), Arrays.asList(after.get(beforeType)));
+												updatedProperties.put(beforeType, beforeAfterProperties);
+											}
+										}
+									}
+								} else {
+									isDifferent = true;
+									if (!entityActivityService.isMatchingStateProperty(beforeType)) {
+										Pair<List<Serializable>, List<Serializable>> beforeAfterProperties = new Pair<List<Serializable>, List<Serializable>>(Arrays.asList(before.get(beforeType)), Arrays.asList(after.get(beforeType)));
+										updatedProperties.put(beforeType, beforeAfterProperties);
+									}
 								}
 							}
 
