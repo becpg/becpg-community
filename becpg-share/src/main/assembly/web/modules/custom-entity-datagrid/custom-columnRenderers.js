@@ -75,8 +75,9 @@ if (beCPG.module.EntityDataGridRenderers) {
 			var html = "";
 			if(data.title || activityType == "Datalist" ){
 				var title = "";
-				var className = data.className!=null ? data.className : "entity"; 	  
-				title = "<span class=\""+className+"\">"+Alfresco.util.encodeHTML(data.title)+"</span>";
+				var className = data.className!=null ? data.className : "entity";
+				var charactType = data.charactType!=null ? data.charactType : className;
+				title = "<span class=\""+charactType+"\">"+Alfresco.util.encodeHTML(data.title)+"</span>";
 				if(activityType == "State"){
 					title = scope.msg("entity.activity.state.change", title, scope.msg("data.state." +data.beforeState.toLowerCase()), scope.msg("data.state."+data.afterState.toLowerCase()));
 				} else if (activityType == "Datalist" ){
