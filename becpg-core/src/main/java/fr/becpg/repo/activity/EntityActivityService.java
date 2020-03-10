@@ -28,6 +28,7 @@ public interface EntityActivityService {
 	static final String PROP_ENTITY_NODEREF = "entityNodeRef";
 	static final String PROP_ENTITY_TYPE= "entityType";
 	static final String PROP_CHARACT_NODEREF = "charactNodeRef";
+	static final String PROP_CHARACT_TYPE = "charactType";
 	static final String PROP_ACTIVITY_EVENT = "activityEvent";
 	static final String PROP_CLASSNAME = "className";
 	static final String PROP_TITLE = "title";
