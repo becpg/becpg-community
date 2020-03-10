@@ -202,12 +202,15 @@ public interface PLMModel {
 	// ing
 	QName TYPE_ING = QName.createQName(BeCPGModel.BECPG_URI, "ing");
 	QName PROP_ING_CEECODE = QName.createQName(BeCPGModel.BECPG_URI, "ingCEECode");
+	QName PROP_ING_CASCODE = QName.createQName(BeCPGModel.BECPG_URI, "ingCASCode");
+	QName PROP_ING_RID= QName.createQName(BeCPGModel.BECPG_URI, "ingRID");
 
 	QName ASPECT_ING_TYPE = QName.createQName(BeCPGModel.BECPG_URI, "ingTypeAspect");
 	
 	QName PROP_ING_TYPE_V2 = QName.createQName(BeCPGModel.BECPG_URI, "ingTypeV2");
 	QName TYPE_ING_TYPE_ITEM = QName.createQName(BeCPGModel.BECPG_URI, "ingTypeItem");
 	QName PROP_ING_TYPE_DEC_THRESHOLD = QName.createQName(BeCPGModel.BECPG_URI, "ingTypeDecThreshold");
+	QName PROP_ING_FUNCTION_RID = QName.createQName(BeCPGModel.BECPG_URI, "ingFunctionRID");
 	QName PROP_PLURAL_LEGAL_NAME = QName.createQName(BeCPGModel.BECPG_URI, "pluralLegalName");
 
 	// microbio
@@ -378,6 +381,11 @@ public interface PLMModel {
 	QName ASPECT_CUSTOMSCODE = QName.createQName(BeCPGModel.BECPG_URI, "customsCodeAspect");
 	QName ASSOC_CUSTOMSCODE = QName.createQName(BeCPGModel.BECPG_URI, "customsCodeRef");
 	
+	// Regulatory
+	QName ASPECT_REGULATORY= QName.createQName(BeCPGModel.BECPG_URI, "regulatoryAspect");
+	QName ASSOC_REGULATORY_USAGE = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryUsageRef");
+	QName TYPE_REGULATORY_USAGE = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryUsage");
+	QName PROP_USAGE_RID = QName.createQName(BeCPGModel.BECPG_URI, "usageRID");
 	
 	QName ASPECT_WATER = QName.createQName(BeCPGModel.BECPG_URI, "waterAspect");
 	QName LABELING_RULE_ASPECT =  QName.createQName(BeCPGModel.BECPG_URI, "labelingRuleAspect");
