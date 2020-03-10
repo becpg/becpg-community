@@ -26,6 +26,29 @@ public class BecpgFormDefinition {
 
 	private static String ROOT = "root";
 
+	/*
+	 * FIXME:
+	 * JSONArray lacks its remove method, probably due to a JAR providing an obsolete version of JSONArray.
+	 * Using remove instead would be more efficient.
+	 */
+	private static JSONObject filterFields(JSONObject object) throws JSONException {
+		JSONObject result = new JSONObject();
+		for (String objectKey: JSONObject.getNames(object)) {
+			if (objectKey.equals("fields")) {
+				JSONArray array = object.getJSONArray("fields");
+				for (int i = 0; i < array.length(); i++) {
+					JSONObject obj = array.getJSONObject(i);
+					if (obj.has("fields")) {
+						result.append("fields", obj);
+					}
+				}
+			} else {
+				result.put(objectKey, object.get(objectKey));
+			}
+		}
+		return result;
+	}
+	
 	public JSONObject merge(Form form) throws JSONException {
 		JSONObject ret = new JSONObject();
 
@@ -106,7 +129,8 @@ public class BecpgFormDefinition {
 				}
 			}
 		}
-		return ret;
+		
+		return filterFields(ret);
 	}
 
 	private void loadData(JSONObject field, Form form) throws JSONException {
