@@ -267,6 +267,7 @@
                         			             '@beCPG.assocPropValues($nodeRef,"bcpg:client","cm:name")',
                         			             '@beCPG.copy($fromNodeRef,propQnames,listQNames)',
                         			             '@beCPG.runScript($scriptNodeRef)',
+                        			             '@beCPG.decernis(#this,@beCPG.assocValues(#this.nodeRef,"bcpg:productGeoOrigin"))',
                         			             'isLiquid()',
                         			             'isRawMaterial()',
                         			             'isPackaging()',
