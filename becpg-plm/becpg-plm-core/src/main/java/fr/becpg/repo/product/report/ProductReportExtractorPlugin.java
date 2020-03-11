@@ -518,11 +518,11 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				Element packgLevelMesuresElt = packagingListElt.addElement(TAG_PACKAGING_LEVEL_MEASURES);
 				if (kv.getKey() != null) {
 					packgLevelMesuresElt.addAttribute(ATTR_VARIANT_ID, (String) nodeService.getProperty(kv.getKey(), ContentModel.PROP_NAME));
-					packgLevelMesuresElt.addAttribute(PLMModel.PROP_IS_DEFAULT_VARIANT.getLocalName(),
-							Boolean.toString((Boolean) nodeService.getProperty(kv.getKey(), PLMModel.PROP_IS_DEFAULT_VARIANT)));
+					packgLevelMesuresElt.addAttribute(BeCPGModel.PROP_IS_DEFAULT_VARIANT.getLocalName(),
+							Boolean.toString((Boolean) nodeService.getProperty(kv.getKey(), BeCPGModel.PROP_IS_DEFAULT_VARIANT)));
 				} else {
 					packgLevelMesuresElt.addAttribute(ATTR_VARIANT_ID, "");
-					packgLevelMesuresElt.addAttribute(PLMModel.PROP_IS_DEFAULT_VARIANT.getLocalName(), "true");
+					packgLevelMesuresElt.addAttribute(BeCPGModel.PROP_IS_DEFAULT_VARIANT.getLocalName(), "true");
 				}
 
 				packgLevelMesuresElt.addAttribute(ATTR_PKG_TARE_LEVEL_1, toString(tarePrimary));
@@ -1487,21 +1487,21 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	protected NodeRef loadVariants(ProductData productData, Element entityElt) {
 		NodeRef defaultVariantNodeRef = null;
 
-		Element variantsElt = entityElt.addElement(PLMModel.ASSOC_VARIANTS.getLocalName());
+		Element variantsElt = entityElt.addElement(BeCPGModel.ASSOC_VARIANTS.getLocalName());
 		if ((productData.getVariants() != null) && !productData.getVariants().isEmpty()) {
 			for (VariantData variant : productData.getVariants()) {
 				if (variant.getIsDefaultVariant()) {
 					defaultVariantNodeRef = variant.getNodeRef();
 				}
 
-				Element variantElt = variantsElt.addElement(PLMModel.TYPE_VARIANT.getLocalName());
+				Element variantElt = variantsElt.addElement(BeCPGModel.TYPE_VARIANT.getLocalName());
 				variantElt.addAttribute(ContentModel.PROP_NAME.getLocalName(), variant.getName());
-				variantElt.addAttribute(PLMModel.PROP_IS_DEFAULT_VARIANT.getLocalName(), Boolean.toString(variant.getIsDefaultVariant()));
+				variantElt.addAttribute(BeCPGModel.PROP_IS_DEFAULT_VARIANT.getLocalName(), Boolean.toString(variant.getIsDefaultVariant()));
 			}
 		} else {
-			Element variantElt = variantsElt.addElement(PLMModel.TYPE_VARIANT.getLocalName());
+			Element variantElt = variantsElt.addElement(BeCPGModel.TYPE_VARIANT.getLocalName());
 			variantElt.addAttribute(ContentModel.PROP_NAME.getLocalName(), "");
-			variantElt.addAttribute(PLMModel.PROP_IS_DEFAULT_VARIANT.getLocalName(), Boolean.TRUE.toString());
+			variantElt.addAttribute(BeCPGModel.PROP_IS_DEFAULT_VARIANT.getLocalName(), Boolean.TRUE.toString());
 		}
 		return defaultVariantNodeRef;
 	}
@@ -1519,7 +1519,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				variantNames += ((String) nodeService.getProperty(variantNodeRef, ContentModel.PROP_NAME));
 
 				if ((isDefault == null) || !isDefault) {
-					isDefault = (Boolean) nodeService.getProperty(variantNodeRef, PLMModel.PROP_IS_DEFAULT_VARIANT);
+					isDefault = (Boolean) nodeService.getProperty(variantNodeRef, BeCPGModel.PROP_IS_DEFAULT_VARIANT);
 				}
 
 				if (isDefault == null) {
@@ -1527,11 +1527,11 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				}
 
 			}
-			dataItemElt.addAttribute(PLMModel.PROP_IS_DEFAULT_VARIANT.getLocalName(), isDefault.toString());
-			dataItemElt.addAttribute(PLMModel.PROP_VARIANTIDS.getLocalName(), variantNames);
+			dataItemElt.addAttribute(BeCPGModel.PROP_IS_DEFAULT_VARIANT.getLocalName(), isDefault.toString());
+			dataItemElt.addAttribute(BeCPGModel.PROP_VARIANTIDS.getLocalName(), variantNames);
 		} else {
-			dataItemElt.addAttribute(PLMModel.PROP_VARIANTIDS.getLocalName(), "");
-			dataItemElt.addAttribute(PLMModel.PROP_IS_DEFAULT_VARIANT.getLocalName(), Boolean.TRUE.toString());
+			dataItemElt.addAttribute(BeCPGModel.PROP_VARIANTIDS.getLocalName(), "");
+			dataItemElt.addAttribute(BeCPGModel.PROP_IS_DEFAULT_VARIANT.getLocalName(), Boolean.TRUE.toString());
 		}
 	}
 

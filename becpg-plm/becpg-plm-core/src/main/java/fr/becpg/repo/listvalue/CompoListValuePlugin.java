@@ -186,7 +186,7 @@ public class CompoListValuePlugin extends EntityListValuePlugin {
 	@SuppressWarnings("unchecked")
 	private String extractVariantNames(NodeRef dataListItemNodeRef) {
 
-		List<NodeRef> variantNodeRefs = (List<NodeRef>) nodeService.getProperty(dataListItemNodeRef, PLMModel.PROP_VARIANTIDS);
+		List<NodeRef> variantNodeRefs = (List<NodeRef>) nodeService.getProperty(dataListItemNodeRef, BeCPGModel.PROP_VARIANTIDS);
 		String variantNames = "";
 
 		if (variantNodeRefs != null) {
