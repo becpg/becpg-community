@@ -86,12 +86,7 @@
 		<property name="namespacePrefixResolver" ref="namespaceService" />
 	</bean>
 
-	<!-- Variant -->
-
-	<bean id="variantPolicy" class="fr.becpg.repo.variant.policy.VariantPolicy" parent="abstractBeCPGPolicy" depends-on="bcpg.plm.dictionaryBootstrap">
-		<property name="copyService" ref="copyService" />
-		<property name="entityListDAO" ref="entityListDAO" />
-	</bean>
+    <!-- Variant -->
 
 	<bean id="webscript.fr.becpg.variant.duplicateVariant.post" class="fr.becpg.repo.web.scripts.variant.DuplicateVariantWebScript" parent="webscript">
 		<property name="nodeService" ref="NodeService" />

@@ -84,9 +84,6 @@
 		<property name="tenantService" ref="tenantService" />
 	</bean>
 
-
-
-
 	<!-- Entity lists -->
 	<bean id="webscript.fr.becpg.entity.entityLists.get" class="fr.becpg.repo.web.scripts.entity.EntityListsWebScript" parent="webscript">
 		<property name="securityService" ref="securityService" />
@@ -100,6 +97,7 @@
 		<property name="permissionService" ref="PermissionService" />
 		<property name="associationService" ref="associationService" />
 		<property name="policyBehaviourFilter" ref="policyBehaviourFilter"/>
+		<property name="lockService" ref="lockService" />
 	</bean>
 
 	<bean id="webscript.fr.becpg.entity.entityDictionnary.get" class="fr.becpg.repo.web.scripts.entity.EntityDictionnaryWebScript" parent="webscript">
@@ -120,7 +118,6 @@
 		<property name="lockService" ref="lockService" />
 		<property name="effectiveFilterEnabled" value="${beCPG.datalist.effectiveFilterEnabled}"/>
 	</bean>
-
 
 	<bean id="webscript.fr.becpg.entity.datalist.sort.post" class="fr.becpg.repo.web.scripts.entity.datalist.SortDataListWebScript" parent="webscript">
 		<property name="nodeService" ref="NodeService" />
@@ -153,7 +150,6 @@
 		<property name="entityVersionService" ref="entityVersionService" />
 	</bean>
 
-
 	<bean id="webscript.fr.becpg.entity.compareEntityReport.get" class="fr.becpg.repo.web.scripts.entity.CompareEntityReportWebScript" parent="webscript">
 		<property name="compareEntityReportService" ref="compareEntityReportService" />
 		<property name="mimetypeService" ref="mimetypeService" />
@@ -184,7 +180,6 @@
 		<property name="ruleService" ref="ruleService"/>
 		<property name="entityCatalogService" ref="entityCatalogService"/>
 	</bean>
-	
 
 	<!-- Stream report content -->
 	<bean id="webscript.fr.becpg.report.reportContent.get" class="fr.becpg.repo.web.scripts.report.ReportContentGet" parent="webscript">
@@ -289,8 +284,6 @@
 		<property name="serviceRegistry" ref="ServiceRegistry" />
 		<property name="attributeExtractorService" ref="attributeExtractorService" />
 	</bean>
-	
-
     
 	<!-- Retrieves all active and closed process instances that the given node is part of. -->
     <bean id="webscript.fr.becpg.process.entity-process-list.get"
@@ -305,5 +298,12 @@
           parent="abstractWorkflowWebScript">
           <property name="attributeExtractorService" ref="attributeExtractorService" />
     </bean>
+    
+   	<!-- Variant -->
+
+	<bean id="variantPolicy" class="fr.becpg.repo.variant.policy.VariantPolicy" parent="abstractBeCPGPolicy" depends-on="bcpg.plm.dictionaryBootstrap">
+		<property name="copyService" ref="copyService" />
+		<property name="entityListDAO" ref="entityListDAO" />
+	</bean>
     
 </beans>
