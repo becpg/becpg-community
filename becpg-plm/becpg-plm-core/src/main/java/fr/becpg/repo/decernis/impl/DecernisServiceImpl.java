@@ -39,7 +39,7 @@ import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 
-@Service
+@Service("decernisService")
 public class DecernisServiceImpl implements DecernisService {
 
 	private static Log logger = LogFactory.getLog(DecernisServiceImpl.class);
@@ -109,32 +109,6 @@ public class DecernisServiceImpl implements DecernisService {
 		return false;
 	}
 
-	private List<String> getCountries(List<String> countries) throws RestClientException, JSONException {
-
-		List<String> ret = new ArrayList<>();
-		for (String country : countries) {
-			String countryName = nodeService.getProperty(new NodeRef(country), BeCPGModel.PROP_CHARACT_NAME).toString();
-			if ((countryName != null) && !countryName.equals("") && isAvaillableCountry(countryName)) {
-				ret.add(countryName);
-			}
-		}
-		return ret;
-	}
-
-	private List<String> getUsages(ProductData product) {
-		List<String> usages = new ArrayList<>();
-		List<AssociationRef> usageAssocs = nodeService.getTargetAssocs(product.getNodeRef(), PLMModel.ASSOC_REGULATORY_USAGE);
-		if (usageAssocs != null) {
-			for (AssociationRef usageAssoc : usageAssocs) {
-				if (nodeService.getTargetAssocs(usageAssoc.getTargetRef(), BeCPGModel.PROP_CHARACT_NAME) != null) {
-					String usage = nodeService.getProperty(usageAssoc.getTargetRef(), BeCPGModel.PROP_CHARACT_NAME).toString();
-					usages.add(usage);
-				}
-			}
-		}
-		return usages;
-	}
-
 	private JSONObject getIngredients(ProductData product) throws InvalidNodeRefException, JSONException {
 
 		JSONObject ret = new JSONObject();
@@ -147,14 +121,14 @@ public class DecernisServiceImpl implements DecernisService {
 
 		for (IngListDataItem ingListDataItem : product.getIngList()) {
 			if (ingListDataItem.getIng() != null) {
-				Serializable casCode = nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_ING_CASCODE);
+				Serializable casCode = nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_CAS_NUMBER);
 				Serializable ingName = nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME);
-				Serializable rid = nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_ING_RID);
+				Serializable rid = nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_REGULATORY_CODE);
 				Serializable ingType = nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_ING_TYPE_V2);
 				Serializable ingQtyPerc = nodeService.getProperty(ingListDataItem.getNodeRef(), PLMModel.PROP_INGLIST_QTY_PERC);
 				Serializable function = null;
 				if (ingType != null) {
-					function = nodeService.getProperty((NodeRef) ingType, PLMModel.PROP_ING_FUNCTION_RID);
+					function = nodeService.getProperty((NodeRef) ingType, PLMModel.PROP_REGULATORY_CODE);
 				}
 				if ((rid == null) || rid.equals("")) {
 					String url = serverUrl + "ingredients?current_company={company}&q={query}&identifier_type={type}&module_id={module}&limit=1";
@@ -175,7 +149,7 @@ public class DecernisServiceImpl implements DecernisService {
 							if (jsonObject.has("count") && (jsonObject.getInt("count") == 1) && jsonObject.has("results")) {
 								JSONArray results = jsonObject.getJSONArray("results");
 								rid = results.getJSONObject(0).getString("did");
-								nodeService.setProperty(ingListDataItem.getIng(), PLMModel.PROP_ING_RID, rid);
+								nodeService.setProperty(ingListDataItem.getIng(), PLMModel.PROP_REGULATORY_CODE, rid);
 								
 							} else if (jsonObject.has("count") && (jsonObject.getInt("count") == 0)) {
 								createReqCtrl(product, ingListDataItem.getIng(), MESSAGE_NO_RID_ING);
@@ -340,12 +314,14 @@ public class DecernisServiceImpl implements DecernisService {
 	}
 
 	@Override
-	public String launchDecernisAnalysis(ProductData product, List<String> countriesNoderef) throws RestClientException, JSONException {
+	public String launchDecernisAnalysis(ProductData product, List<String> countries, List<String> usages) throws RestClientException, JSONException {
 		String ret = "";
- 
-			List<String> usages = getUsages(product);
 			if (usages.size() > 0) {
-				List<String> countries = getCountries(countriesNoderef);
+				for (String country : countries) {
+					if (!isAvaillableCountry(country)) {
+						countries.remove(country);
+					}
+				}
 				JSONObject data = getIngredients(product);
 				if ((data != null) && (countries.size() > 0)) {
 					for (String usage : usages) {

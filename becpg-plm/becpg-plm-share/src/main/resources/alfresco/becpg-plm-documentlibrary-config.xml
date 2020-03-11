@@ -11,7 +11,7 @@
 				<aspect name="bcpg:profitabilityAspect" />
 				<aspect name="bcpg:reconstitutableAspect" />
 				<aspect name="bcpg:customsCodeAspect" />
-				<aspect name="bcpg:regulatoryAspect" />
+				<aspect name="bcpg:regulatoryCodeAspect" />
 				<aspect name="qa:batchAspect" />
 				<aspect name="qa:acAspect" />
 				<aspect name="gs1:gs1Aspect" />
