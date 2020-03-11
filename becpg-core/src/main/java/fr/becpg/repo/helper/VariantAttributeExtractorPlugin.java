@@ -28,7 +28,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.PLMModel;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.helper.impl.AbstractExprNameExtractor;
 
@@ -42,7 +41,7 @@ public class VariantAttributeExtractorPlugin extends AbstractExprNameExtractor {
 
 	@Override
 	public Collection<QName> getMatchingTypes() {
-		return entityDictionaryService.getSubTypes(PLMModel.TYPE_VARIANT);
+		return entityDictionaryService.getSubTypes(BeCPGModel.TYPE_VARIANT);
 	}
 
 	@Override
@@ -52,7 +51,7 @@ public class VariantAttributeExtractorPlugin extends AbstractExprNameExtractor {
 
 	@Override
 	public String extractMetadata(QName type, NodeRef nodeRef) {
-		Boolean isDefault = (Boolean) nodeService.getProperty(nodeRef, PLMModel.PROP_IS_DEFAULT_VARIANT);
+		Boolean isDefault = (Boolean) nodeService.getProperty(nodeRef, BeCPGModel.PROP_IS_DEFAULT_VARIANT);
 		String color =  (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_COLOR);
 		return (Boolean.TRUE.equals(isDefault) ? "variant-default": "variant")+(color!=null && color.indexOf("#")==0 ? color : "");
 	}
