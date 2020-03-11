@@ -164,6 +164,12 @@ public interface BeCPGModel {
 	// WorkflowEntity
 	QName ASSOC_WORKFLOW_ENTITY = QName.createQName(BECPG_URI, "workflowEntity");
 	
-	
+	// variant
+	QName ASPECT_ENTITYLIST_VARIANT = QName.createQName(BECPG_URI, "entityListVariantAspect");
+	QName ASPECT_ENTITY_VARIANT = QName.createQName(BECPG_URI, "entityVariantAspect");
+	QName ASSOC_VARIANTS = QName.createQName(BECPG_URI, "variants");
+	QName TYPE_VARIANT = QName.createQName(BECPG_URI, "variant");
+	QName PROP_VARIANTIDS = QName.createQName(BECPG_URI, "variantIds");
+	QName PROP_IS_DEFAULT_VARIANT = QName.createQName(BECPG_URI, "isDefaultVariant");
 	
 }

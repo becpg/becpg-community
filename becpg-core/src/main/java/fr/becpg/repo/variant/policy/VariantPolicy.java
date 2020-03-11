@@ -42,7 +42,7 @@ import org.alfresco.util.transaction.TransactionSupportUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fr.becpg.model.PLMModel;
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.version.EntityVersionPlugin;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
@@ -67,7 +67,7 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 	}
 
 	public void doInit() {
-		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyCompletePolicy.QNAME, PLMModel.ASPECT_ENTITYLIST_VARIANT, new JavaBehaviour(this,
+		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyCompletePolicy.QNAME, BeCPGModel.ASPECT_ENTITYLIST_VARIANT, new JavaBehaviour(this,
 				"onCopyComplete"));
 	}
 
@@ -84,8 +84,9 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 	@Override
 	public void doAfterCheckout(NodeRef origNodeRef, final NodeRef workingCopyNodeRef) {
 
-		if (nodeService.hasAspect(origNodeRef, PLMModel.ASPECT_ENTITY_VARIANT)) {
-			logger.debug("On check out Variant");
+		
+		if (nodeService.hasAspect(origNodeRef, BeCPGModel.ASPECT_ENTITY_VARIANT)) {
+			logger.info("On check out Variant");
 			AuthenticationUtil.runAsSystem(new AuthenticationUtil.RunAsWork<Void>() {
 				@Override
 				public Void doWork() throws Exception {
@@ -94,7 +95,7 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 					
 					// Copy variants
 
-					List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(origNodeRef, PLMModel.ASSOC_VARIANTS,
+					List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(origNodeRef, BeCPGModel.ASSOC_VARIANTS,
 							RegexQNamePattern.MATCH_ALL);
 					for (ChildAssociationRef childAssoc : childAssocs) {
 						if (logger.isDebugEnabled()) {
@@ -102,7 +103,7 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 									+ " to workingCopy ");
 						}
 
-						copyService.copyAndRename(childAssoc.getChildRef(), workingCopyNodeRef, PLMModel.ASSOC_VARIANTS, QName.createQName(
+						copyService.copyAndRename(childAssoc.getChildRef(), workingCopyNodeRef, BeCPGModel.ASSOC_VARIANTS, QName.createQName(
 								NamespaceService.CONTENT_MODEL_1_0_URI,
 								QName.createValidLocalName((String) nodeService.getProperty(childAssoc.getChildRef(), ContentModel.PROP_NAME))),
 								false);
@@ -119,7 +120,7 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 	@Override
 	public void doBeforeCheckin(NodeRef origNodeRef,final  NodeRef workingCopyNodeRef) {
 		
-		if (nodeService.hasAspect(origNodeRef, PLMModel.ASPECT_ENTITY_VARIANT) || nodeService.hasAspect(workingCopyNodeRef, PLMModel.ASPECT_ENTITY_VARIANT)) {
+		if (nodeService.hasAspect(origNodeRef, BeCPGModel.ASPECT_ENTITY_VARIANT) || nodeService.hasAspect(workingCopyNodeRef, BeCPGModel.ASPECT_ENTITY_VARIANT)) {
 			
 			logger.debug("On check in Variant");
 
@@ -129,7 +130,7 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 					NodeRef origNodeRef = getCheckedOut(workingCopyNodeRef);
 
 					if (origNodeRef != null) {
-						List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(origNodeRef, PLMModel.ASSOC_VARIANTS,
+						List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(origNodeRef, BeCPGModel.ASSOC_VARIANTS,
 								RegexQNamePattern.MATCH_ALL);
 						
 						//On initial version while branch merging  
@@ -159,13 +160,13 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 						}
 
 						// move variants of working copy
-						childAssocs = nodeService.getChildAssocs(workingCopyNodeRef, PLMModel.ASSOC_VARIANTS, RegexQNamePattern.MATCH_ALL);
+						childAssocs = nodeService.getChildAssocs(workingCopyNodeRef, BeCPGModel.ASSOC_VARIANTS, RegexQNamePattern.MATCH_ALL);
 						for (ChildAssociationRef childAssoc : childAssocs) {
 							if (logger.isDebugEnabled()) {
 								logger.debug("move variant of workfingCopy " + childAssoc.getChildRef() + " "
 										+ nodeService.getProperty(childAssoc.getChildRef(), ContentModel.PROP_NAME) + " to origNode ");
 							}
-							nodeService.moveNode(childAssoc.getChildRef(), origNodeRef, PLMModel.ASSOC_VARIANTS, PLMModel.ASSOC_VARIANTS);
+							nodeService.moveNode(childAssoc.getChildRef(), origNodeRef, BeCPGModel.ASSOC_VARIANTS, BeCPGModel.ASSOC_VARIANTS);
 						}
 					}
 
@@ -217,7 +218,7 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 		NodeRef targetEntityRef = entityListDAO.getEntity(pendingNodes.iterator().next());
 		if(!pendingNodes.isEmpty()) {
 			
-			List<NodeRef> result = BeCPGQueryBuilder.createQuery().ofType(PLMModel.TYPE_VARIANT).parent(targetEntityRef).inDB().list();
+			List<NodeRef> result = BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_VARIANT).parent(targetEntityRef).inDB().list();
 			
 			Map<NodeRef, String> targetEntityVariants = new HashMap<>();
 			
@@ -236,7 +237,7 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 				}
 				
 				@SuppressWarnings("unchecked")
-				List<NodeRef> itemVariantIds = (List<NodeRef>) nodeService.getProperty(itemTargetRef, PLMModel.PROP_VARIANTIDS);
+				List<NodeRef> itemVariantIds = (List<NodeRef>) nodeService.getProperty(itemTargetRef, BeCPGModel.PROP_VARIANTIDS);
 				
 				
 				if(itemVariantIds != null) {
@@ -263,15 +264,15 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 							
 							Map<QName, Serializable> props = new HashMap<>();
 							props.put(ContentModel.PROP_NAME, variantName);
-							props.put(PLMModel.PROP_IS_DEFAULT_VARIANT, nodeService.getProperty(variantId, PLMModel.PROP_IS_DEFAULT_VARIANT));
-							newVariantRef =  nodeService.createNode(targetEntityRef, PLMModel.ASSOC_VARIANTS, PLMModel.ASSOC_VARIANTS, PLMModel.TYPE_VARIANT, props).getChildRef();
+							props.put(BeCPGModel.PROP_IS_DEFAULT_VARIANT, nodeService.getProperty(variantId, BeCPGModel.PROP_IS_DEFAULT_VARIANT));
+							newVariantRef =  nodeService.createNode(targetEntityRef, BeCPGModel.ASSOC_VARIANTS, BeCPGModel.ASSOC_VARIANTS, BeCPGModel.TYPE_VARIANT, props).getChildRef();
 							targetEntityVariants.put(newVariantRef, variantName);
 						}
 						if(newVariantRef != null) {
 							newVariantIds.add(newVariantRef);
 						}
 					}
-					nodeService.setProperty(itemTargetRef, PLMModel.PROP_VARIANTIDS, (Serializable) newVariantIds);
+					nodeService.setProperty(itemTargetRef, BeCPGModel.PROP_VARIANTIDS, (Serializable) newVariantIds);
 				}
 			}
 			
