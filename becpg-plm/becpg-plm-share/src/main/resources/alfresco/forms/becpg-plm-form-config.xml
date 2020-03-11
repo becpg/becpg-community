@@ -236,7 +236,6 @@
 					<show id="bcpg:servingSizeText" force="true" />
 					<show id="bcpg:numberOfServings" force="true" />
 					<show id="bcpg:productSpecifications" />
-					<show id="bcpg:regulatoryUsageRef" />
 
 					<!-- Profitability -->
 					<show id="bcpg:unitPrice" force="true" />
@@ -567,12 +566,6 @@
 							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
 							</control-param>
 							<control-param name="style">width:200px</control-param>
-						</control>
-					</field>
-					<field id="bcpg:regulatoryUsageRef"  set="formulation" >
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="showLink">false</control-param>							
 						</control>
 					</field>
 
@@ -1479,8 +1472,7 @@
 					<show id="bcpg:servingSizeText" force="true" />
 					<show id="bcpg:numberOfServings" force="true" />
 					<show id="bcpg:productSpecifications" />
-					<show id="bcpg:regulatoryUsageRef"/>					
-
+					
 					<!-- Profitability -->
 					<show id="bcpg:unitPrice" force="true" />
 					<show id="bcpg:priceCurrency" force="true" />
@@ -1645,12 +1637,6 @@
 							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
 							</control-param>
 							<control-param name="style">width:200px</control-param>
-						</control>
-					</field>
-					<field id="bcpg:regulatoryUsageRef"  set="formulation" >
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="showLink">false</control-param>							
 						</control>
 					</field>
 					<field id="bcpg:netVolume" help-id="becpg.forms.help.netVolume" set="formulation" >
@@ -4400,7 +4386,6 @@
 					<show id="bcpg:servingSize" force="true" />
 					<show id="bcpg:servingSizeUnit" force="true" />
 					<show id="bcpg:productSpecifications" />
-					<show id="bcpg:regulatoryUsageRef"/>
 
 					<!-- Consumer -->
 					<show id="bcpg:useByDate" force="true" />
@@ -4538,13 +4523,7 @@
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:regulatoryUsageRef"  set="formulation" >
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="showLink">false</control-param>							
-						</control>
-					</field>
-
+	
 					<!-- consumer -->
 					<field id="bcpg:useByDate" help-id="becpg.forms.help.useByDate" set="consumer" />
 					<field id="bcpg:bestBeforeDate" help-id="becpg.forms.help.bestBeforeDate" set="consumer" >
@@ -5063,7 +5042,6 @@
 					<show id="bcpg:servingSize" force="true" />
 					<show id="bcpg:servingSizeUnit" force="true" />
 					<show id="bcpg:productSpecifications" />
-					<show id="bcpg:regulatoryUsageRef"/>
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" />
@@ -5193,13 +5171,7 @@
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:regulatoryUsageRef"  set="formulation" >
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="showLink">false</control-param>							
-						</control>
-					</field>
-
+			
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
 						<control>
@@ -5825,8 +5797,8 @@
 					<show id="bcpg:legalName" />
 					<show id="bcpg:pluralLegalName"/>
 					<show id="bcpg:ingCEECode"  force="true"/>
-					<show id="bcpg:ingCASCode"  force="true"/>
-					<show id="bcpg:ingRID"  force="true"/>
+					<show id="bcpg:casNumber"  force="true"/>
+					<show id="bcpg:regulatoryCode" force="true"/>
 					<show id="bcpg:ingTypeV2"  force="true"/>
 				</field-visibility>
 
@@ -5838,8 +5810,8 @@
 						</control>
 					</field>
 					<field id="bcpg:ingCEECode" />
-					<field id="bcpg:ingCASCode" />
-					<field id="bcpg:ingRID" />
+					<field id="bcpg:casNumber" />
+					<field id="bcpg:regulatoryCode" />
 					<field id="bcpg:ingTypeV2">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ingTypeItem
@@ -5862,8 +5834,8 @@
 					<show id="bcpg:legalName" />
 					<show id="bcpg:pluralLegalName"/>
 					<show id="bcpg:ingCEECode" force="true"/>
-					<show id="bcpg:ingCASCode" force="true"/>
-					<show id="bcpg:ingRID" force="true"/>
+					<show id="bcpg:casNumber" force="true"/>
+					<show id="bcpg:regulatoryCode" force="true"/>
 					<show id="bcpg:ingTypeV2"  force="true"/>
 				</field-visibility>
 
@@ -5876,8 +5848,8 @@
 						</control>
 					</field>
 					<field id="bcpg:ingCEECode" />
-					<fiels id="bcpg:ingCASCode"/>
-					<field id="bcpg:ingRID"/>
+					<fiels id="bcpg:casNumber"/>
+					<field id="bcpg:regulatoryCode"/>
 					<field id="bcpg:ingTypeV2">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ingTypeItem
@@ -5893,8 +5865,8 @@
 					<show id="bcpg:charactName" force="true"/>
 					<show id="bcpg:legalName" force="true"/>
 					<show id="bcpg:ingCEECode" force="true"/>
-					<show id="bcpg:ingCASCode" force="true"/>
-					<show id="bcpg:ingRID" force="true"/>
+					<show id="bcpg:casNumber" force="true"/>
+					<show id="bcpg:regulatoryCode" force="true"/>
 					<show id="bcpg:ingTypeV2"  force="true"/>
 				</field-visibility>
 				<appearance>
@@ -5926,8 +5898,8 @@
 					<show id="bcpg:legalName" />
 					<show id="bcpg:pluralLegalName"/>
 					<show id="bcpg:ingCEECode" force="true"/>
-					<show id="bcpg:ingCASCode" force="true"/>
-					<show id="bcpg:ingRID" force="true"/>
+					<show id="bcpg:casNumber" force="true"/>
+					<show id="bcpg:regulatoryCode" force="true"/>
 					<show id="bcpg:ingTypeV2"  force="true"/>
 				</field-visibility>
 			</form>
@@ -6384,8 +6356,9 @@
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:geoOriginISOCode" />
-					 <show id="bcpg:geoOriginISOCodeThreeLetters" />
+					<show id="bcpg:geoOriginISOCodeThreeLetters" />
                     <show id="bcpg:geoOriginISOCodeNumeric" />
+                    <show id="bcpg:regulatoryCode" force="true"/>
 					<show id="bcpg:linkedSearchAssociation" force="true" />
 				</field-visibility>
 				<appearance>
@@ -6420,6 +6393,7 @@
 					<show id="bcpg:geoOriginISOCode" />
 					 <show id="bcpg:geoOriginISOCodeThreeLetters" />
                     <show id="bcpg:geoOriginISOCodeNumeric" />
+                    <show id="bcpg:regulatoryCode" force="true"/>
 					<show id="bcpg:linkedSearchAssociation" force="true" />
 				</field-visibility>
 
@@ -6433,6 +6407,7 @@
 					</field>
 					<field id="bcpg:legalName" />
 					<field id="bcpg:geoOriginISOCode" />
+					<field id="bcpg:regulatoryCode" force="true"/>
 					<field id="bcpg:linkedSearchAssociation">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -6463,6 +6438,7 @@
 					<show id="bcpg:geoOriginISOCode" />
 					<show id="bcpg:geoOriginISOCodeThreeLetters" />
                     <show id="bcpg:geoOriginISOCodeNumeric" />
+                    <show id="bcpg:regulatoryCode" force="true"/>
 					<show id="bcpg:linkedSearchAssociation" force="true" />
 				</field-visibility>
 			</form>
@@ -7089,44 +7065,7 @@
 				</field-visibility>
 			</form>
 		</forms>
-	</config>
-	
-	<config evaluator="node-type" condition="bcpg:regulatoryUsage">
-		<forms>
-			<form>
-				<field-visibility>
-					<show id="bcpg:charactName" />
-					<show id="bcpg:usageRID"/>
-				</field-visibility>
-			</form>
-		</forms>
-	</config>
-
-	<config evaluator="model-type" condition="bcpg:regulatoryUsage">
-		<forms>
-			<form>
-				<field-visibility>
-					<show id="bcpg:charactName" />
-					<show id="bcpg:usageRID"/>
-				</field-visibility>
-			</form>
-
-			<form id="filter">
-				<field-visibility>
-					<show id="bcpg:charactName" />	
-					<show id="bcpg:usageRID"/>			
-				</field-visibility>
-			</form>
-
-			<form id="datagrid">
-				<field-visibility>
-					<show id="bcpg:charactName" />
-					<show id="bcpg:usageRID"/>
-				</field-visibility>
-			</form>
-		</forms>
-	</config>
-	
+	</config>	
 	
 	<config evaluator="model-type" condition="pjt:project">
 	   <forms>
@@ -9923,7 +9862,7 @@
 					<show id="bcpg:ingTypeDecThreshold" />
 					<show id="bcpg:ingTypeDoNotDeclare" />
 					<show id="bcpg:ingTypeIsLastGroup" />
-					<show id="bcpg:ingFunctionRID" />
+					<show id="bcpg:regulatoryCode" />
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
@@ -9941,7 +9880,7 @@
 					<show id="bcpg:ingTypeDecThreshold" />
 					<show id="bcpg:ingTypeDoNotDeclare" />
 					<show id="bcpg:ingTypeIsLastGroup" />
-					<show id="bcpg:ingFunctionRID" />
+					<show id="bcpg:regulatoryCode" />
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
@@ -9951,7 +9890,7 @@
 				<field-visibility>
 					<show id="bcpg:lvValue" />
 					<show id="bcpg:ingTypeDecThreshold" />
-					<show id="bcpg:ingFunctionRID" />
+					<show id="bcpg:regulatoryCode" />
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
@@ -9964,7 +9903,7 @@
 					<show id="bcpg:ingTypeDecThreshold" />
 					<show id="bcpg:ingTypeDoNotDeclare" />
 					<show id="bcpg:ingTypeIsLastGroup" />
-					<show id="bcpg:ingFunctionRID" />
+					<show id="bcpg:regulatoryCode" />
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
