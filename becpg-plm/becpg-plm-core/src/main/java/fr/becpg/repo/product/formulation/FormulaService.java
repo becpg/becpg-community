@@ -202,7 +202,7 @@ public class FormulaService {
 			return mlText;
 		}
 		
-		public String decernis(ProductData product, List<String> countries){
+		public String decernis(ProductData product, List<String> countries) throws Exception{
 			return decernisService.launchDecernisAnalysis(product, countries);						
 		}		
 

@@ -81,6 +81,7 @@ import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.TranslateHelper;
+import fr.becpg.repo.report.entity.EntityImageInfo;
 import fr.becpg.repo.report.entity.EntityReportData;
 import fr.becpg.repo.report.entity.EntityReportExtractorPlugin;
 import fr.becpg.repo.report.entity.EntityReportService;
@@ -205,7 +206,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		boolean isInDataListContext = false;
 
 		Map<String, String> preferences;
-		Map<String, byte[]> images = new HashMap<>();
+		Map<EntityImageInfo, byte[]> images = new HashMap<>();
 		Set<NodeRef> extractedNodes = new HashSet<>();
 
 		public DefaultExtractorContext(Map<String, String> preferences) {
@@ -213,7 +214,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			this.preferences = preferences;
 		}
 
-		public Map<String, byte[]> getImages() {
+		public Map<EntityImageInfo, byte[]> getImages() {
 			return images;
 		}
 
@@ -372,14 +373,19 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 		byte[] imageBytes = entityService.getImage(imgNodeRef);
 		if (imageBytes != null) {
+			EntityImageInfo imgInfo = new EntityImageInfo(imgId, (String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_NAME),
+					(String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_TITLE),
+					(String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_DESCRIPTION));
+
 			Element imgElt = imgsElt.addElement(TAG_IMAGE);
 			imgElt.addAttribute(ATTR_ENTITY_NODEREF, entityNodeRef.toString());
 			imgElt.addAttribute(ATTR_ENTITY_TYPE, nodeService.getType(entityNodeRef).getLocalName());
 			imgElt.addAttribute(ATTR_IMAGE_ID, imgId);
-			imgElt.addAttribute(ContentModel.PROP_NAME.getLocalName(), (String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_NAME));
-			imgElt.addAttribute(ContentModel.PROP_TITLE.getLocalName(), (String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_TITLE));
-			addCDATA(imgElt, ContentModel.PROP_DESCRIPTION, (String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_DESCRIPTION), null);
-			context.getImages().put(imgId, imageBytes);
+			imgElt.addAttribute(ContentModel.PROP_NAME.getLocalName(), imgInfo.getName());
+			imgElt.addAttribute(ContentModel.PROP_TITLE.getLocalName(), imgInfo.getTitle());
+			addCDATA(imgElt, ContentModel.PROP_DESCRIPTION, imgInfo.getDescription(), null);
+
+			context.getImages().put(imgInfo, imageBytes);
 		}
 	}
 
@@ -905,7 +911,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 	private void loadCreator(NodeRef entityNodeRef, Element entityElt, Element imgsElt, DefaultExtractorContext context) {
 		String creator = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_CREATOR);
-		if (creator != null && personService.personExists(creator)) {
+		if ((creator != null) && personService.personExists(creator)) {
 			Element creatorElt = (Element) entityElt.selectSingleNode(ContentModel.PROP_CREATOR.getLocalName());
 			NodeRef creatorNodeRef = personService.getPerson(creator);
 			loadNodeAttributes(creatorNodeRef, creatorElt, true, context);

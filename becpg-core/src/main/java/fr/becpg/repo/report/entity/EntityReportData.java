@@ -26,7 +26,7 @@ public class EntityReportData {
 	
 	private Element xmlDataSource;
 	
-	private Map<String, byte[]> dataObjects = new HashMap<>();
+	private Map<EntityImageInfo, byte[]> dataObjects = new HashMap<>();
 	/**
 	 * @return the xmlDataSource
 	 */
@@ -42,13 +42,13 @@ public class EntityReportData {
 	/**
 	 * @return the dataObjects
 	 */
-	public Map<String, byte[]> getDataObjects() {
+	public Map<EntityImageInfo, byte[]> getDataObjects() {
 		return dataObjects;
 	}
 	/**
 	 * @param dataObjects the dataObjects to set
 	 */
-	public void setDataObjects(Map<String, byte[]> dataObjects) {
+	public void setDataObjects(Map<EntityImageInfo, byte[]> dataObjects) {
 		this.dataObjects = dataObjects;
 	}
 	
