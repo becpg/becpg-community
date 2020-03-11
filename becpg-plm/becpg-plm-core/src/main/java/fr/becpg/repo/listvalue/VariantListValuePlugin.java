@@ -31,6 +31,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.listvalue.impl.EntityListValuePlugin;
@@ -68,7 +69,7 @@ public class VariantListValuePlugin extends EntityListValuePlugin {
 			logger.debug("VariantListValuePlugin sourceType: " + sourceType + " - entityNodeRef: " + entityNodeRef);
 		}
 
-		List<NodeRef> ret = associationService.getChildAssocs(entityNodeRef, PLMModel.ASSOC_VARIANTS);
+		List<NodeRef> ret = associationService.getChildAssocs(entityNodeRef, BeCPGModel.ASSOC_VARIANTS);
 	
 		return new ListValuePage(ret, pageNum, pageSize, new VariantListValueExtractor());
 
@@ -94,7 +95,7 @@ public class VariantListValuePlugin extends EntityListValuePlugin {
 	    	if(nodeRefs!=null){
 	    		for(NodeRef nodeRef : nodeRefs){
 	    			String name = (String)nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
-	    			Boolean isDefault = (Boolean) nodeService.getProperty(nodeRef, PLMModel.PROP_IS_DEFAULT_VARIANT);		
+	    			Boolean isDefault = (Boolean) nodeService.getProperty(nodeRef, BeCPGModel.PROP_IS_DEFAULT_VARIANT);		
 	    			suggestions.add(new ListValueEntry(nodeRef.toString(),name, Boolean.TRUE.equals(isDefault) ? "variant-default": "variant"));
 	    			
 	    		}

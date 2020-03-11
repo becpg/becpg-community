@@ -239,7 +239,7 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 				
 				String value = dataListColumnProps.getValue();
 				
-				if (PLMModel.PROP_VARIANTIDS.equals(dataListColumnProps.getKey())) {
+				if (BeCPGModel.PROP_VARIANTIDS.equals(dataListColumnProps.getKey())) {
 					NodeRef variantNodeRef = getOrCreateVariant(importContext, value, false);
 					if(variantNodeRef!=null){
 						List<NodeRef> ret = new ArrayList<>();
@@ -294,7 +294,7 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 		
 		NodeRef entityNodeRef = importContext.getEntityNodeRef();
 		if (entityNodeRef != null && value != null && !value.isEmpty()) {
-			List<NodeRef> variants = associationService.getChildAssocs(entityNodeRef, PLMModel.ASSOC_VARIANTS);
+			List<NodeRef> variants = associationService.getChildAssocs(entityNodeRef, BeCPGModel.ASSOC_VARIANTS);
 			boolean isDefault = false;
 			String name = value;
 			if (value.contains("|")) {
@@ -315,9 +315,9 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 	
 				Map<QName, Serializable> props = new HashMap<>();
 				props.put(ContentModel.PROP_NAME, name);
-				props.put(PLMModel.PROP_IS_DEFAULT_VARIANT, isDefault);
+				props.put(BeCPGModel.PROP_IS_DEFAULT_VARIANT, isDefault);
 	
-				return nodeService.createNode(entityNodeRef, PLMModel.ASSOC_VARIANTS, PLMModel.ASSOC_VARIANTS, PLMModel.TYPE_VARIANT, props)
+				return nodeService.createNode(entityNodeRef, BeCPGModel.ASSOC_VARIANTS, BeCPGModel.ASSOC_VARIANTS, BeCPGModel.TYPE_VARIANT, props)
 						.getChildRef();
 			}
 			return null;
@@ -336,7 +336,7 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 	protected NodeRef findPropertyTargetNodeByValue(ImportContext importContext, PropertyDefinition propDef,
 			AbstractAttributeMapping attributeMapping, String value, Map<QName, Serializable> properties) throws ImporterException {
 
-		if (PLMModel.PROP_VARIANTIDS.equals(propDef.getName())) {
+		if (BeCPGModel.PROP_VARIANTIDS.equals(propDef.getName())) {
 			return getOrCreateVariant(importContext, value,true);
 
 		} else if (BeCPGModel.PROP_PARENT_LEVEL.equals(propDef.getName())) {
