@@ -410,9 +410,9 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 			// create variant
 			Map<QName, Serializable> props = new HashMap<>();
 			props.put(ContentModel.PROP_NAME, "variant");
-			props.put(PLMModel.PROP_IS_DEFAULT_VARIANT, true);
+			props.put(BeCPGModel.PROP_IS_DEFAULT_VARIANT, true);
 			NodeRef variantNodeRef = nodeService
-					.createNode(finishedProductNodeRef1, PLMModel.ASSOC_VARIANTS, PLMModel.ASSOC_VARIANTS, PLMModel.TYPE_VARIANT, props)
+					.createNode(finishedProductNodeRef1, BeCPGModel.ASSOC_VARIANTS, BeCPGModel.ASSOC_VARIANTS, BeCPGModel.TYPE_VARIANT, props)
 					.getChildRef();
 
 			logger.debug("Add versionnable aspect");
@@ -465,11 +465,11 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 			assertNotNull("Check history version exists", versionNodeRef);
 
 			ProductData productData = alfrescoRepository.findOne(versionNodeRef);
-			assertEquals(1, nodeService.getChildAssocs(versionNodeRef, PLMModel.ASSOC_VARIANTS, RegexQNamePattern.MATCH_ALL).size());
+			assertEquals(1, nodeService.getChildAssocs(versionNodeRef, BeCPGModel.ASSOC_VARIANTS, RegexQNamePattern.MATCH_ALL).size());
 			logger.info("finishedProductNodeRef compoList is " + productData.getCompoListView().getCompoList().get(2).getNodeRef());
 			logger.info("finishedProductNodeRef variant is " + productData.getCompoListView().getCompoList().get(2).getVariants());
 			assertEquals(1, productData.getCompoListView().getCompoList().get(2).getVariants().size());
-			assertEquals(nodeService.getChildAssocs(versionNodeRef, PLMModel.ASSOC_VARIANTS, RegexQNamePattern.MATCH_ALL).get(0).getChildRef(),
+			assertEquals(nodeService.getChildAssocs(versionNodeRef, BeCPGModel.ASSOC_VARIANTS, RegexQNamePattern.MATCH_ALL).get(0).getChildRef(),
 					productData.getCompoListView().getCompoList().get(2).getVariants().get(0));
 
 			return null;
@@ -480,12 +480,12 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			ProductData productData = alfrescoRepository.findOne(finishedProductNodeRef);
-			assertEquals(1, nodeService.getChildAssocs(versionNodeRef, PLMModel.ASSOC_VARIANTS, RegexQNamePattern.MATCH_ALL).size());
+			assertEquals(1, nodeService.getChildAssocs(versionNodeRef, BeCPGModel.ASSOC_VARIANTS, RegexQNamePattern.MATCH_ALL).size());
 			logger.info("finishedProductNodeRef compoList is " + productData.getCompoListView().getCompoList().get(2).getNodeRef());
 			logger.info("finishedProductNodeRef variant is " + productData.getCompoListView().getCompoList().get(2).getVariants());
 			assertEquals(1, productData.getCompoListView().getCompoList().get(2).getVariants().size());
 			assertEquals(
-					nodeService.getChildAssocs(finishedProductNodeRef, PLMModel.ASSOC_VARIANTS, RegexQNamePattern.MATCH_ALL).get(0).getChildRef(),
+					nodeService.getChildAssocs(finishedProductNodeRef, BeCPGModel.ASSOC_VARIANTS, RegexQNamePattern.MATCH_ALL).get(0).getChildRef(),
 					productData.getCompoListView().getCompoList().get(2).getVariants().get(0));
 
 			return null;
