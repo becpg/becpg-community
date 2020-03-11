@@ -912,6 +912,148 @@
 					<field id="rep:reportTpls" />
 				</appearance>		
 	         </form>
+			<form id="supplier-mp">
+				<field-visibility>
+
+					<!-- mainInfo -->
+					<show id="cm:name" />
+					<show id="cm:title" force="true" />
+					<show id="bcpg:legalName" />
+					<show id="bcpg:productComments" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:packagingDescription" force="true" />
+					<show id="bcpg:eanCode" />
+					<show id="bcpg:supplierPlants" force="true"/>
+					<show id="bcpg:productGeoOrigin"  force="true"  />
+					<!-- Consumer -->
+					<show id="bcpg:productDensity" />
+					
+					<show id="bcpg:useByDate" force="true" />
+					<show id="bcpg:bestBeforeDate" force="true" />
+					<show id="bcpg:periodAfterOpening" force="true" />
+					<show id="bcpg:contractDate" force="true" />
+					<show id="bcpg:storageConditionsRef" force="true" />
+					<show id="bcpg:precautionOfUseRef" force="true" />
+					<show id="bcpg:preparationTips" force="true" />
+					
+					<!-- pallet -->
+					<show id="pack:palletProductsPerBox" />
+					<show id="pack:palletLayers" />
+					<show id="pack:palletBoxesPerLayer" />
+					<show id="pack:palletBoxesPerLastLayer" />
+					<show id="pack:palletBoxesPerPallet" />
+					<show id="pack:palletHeight" />
+					<show id="pack:palletNumberOnGround" />
+					<show id="pack:palletStackingMaxWeight" />
+
+					<!-- Tare -->
+					<show id="pack:tare" />
+					<show id="pack:tareUnit" />
+					
+
+				</field-visibility>
+				<appearance>
+					<set id="mainInfo" appearance="bordered-panel"
+						label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="consumer" appearance="bordered-panel" label-id="becpg.forms.set.consumer.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="pallet" appearance="bordered-panel" label-id="becpg.forms.set.pallet.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="tare" appearance="bordered-panel" label-id="becpg.forms.set.tare.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+
+					<!-- Main info -->
+					<field id="cm:name" set="mainInfo" />
+					<field id="cm:title" set="mainInfo" label-id="becpg.forms.field.tradeName">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="bcpg:legalName" help-id="becpg.forms.help.legalName" set="mainInfo" />
+					<field id="cm:description" set="mainInfo">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:packagingDescription" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">2</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productComments" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">2</control-param>
+						</control>
+					</field>
+					<field id="bcpg:eanCode" help-id="becpg.forms.help.eanCode" set="mainInfo"  >
+						<constraint-handlers>
+		                  	<constraint type="MANDATORY" validation-handler="beCPG.forms.validation.GTIN" event="keyup,change"/>
+		            	</constraint-handlers>
+					</field>
+					<field id="bcpg:supplierPlants" set="mainInfo" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/supplierPlants</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productGeoOrigin"  set="mainInfo"  />
+					
+					<!-- consumer -->
+					
+					<field id="bcpg:productDensity" set="consumer" />
+					<field id="bcpg:useByDate" help-id="becpg.forms.help.useByDate" set="consumer" />
+					<field id="bcpg:bestBeforeDate" help-id="becpg.forms.help.bestBeforeDate" set="consumer" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">d</control-param>
+						</control>
+					</field>
+					<field id="bcpg:periodAfterOpening" help-id="becpg.forms.help.periodAfterOpening" set="consumer" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">d</control-param>
+						</control>
+					</field>
+					<field id="bcpg:contractDate" help-id="becpg.forms.help.contractDate" set="consumer" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">d</control-param>
+						</control>
+					</field>
+					<field id="bcpg:storageConditionsRef" help-id="becpg.forms.help.storageConditionsRef" set="consumer"/>
+					<field id="bcpg:precautionOfUseRef" help-id="becpg.forms.help.precautionOfUseRef" set="consumer"/>
+					<field id="bcpg:preparationTips" help-id="becpg.forms.help.preparationTips" set="consumer">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">2</control-param>
+						</control>
+					</field>
+
+					<!-- pallet -->
+					<field id="pack:palletProductsPerBox" set="pallet" />
+					<field id="pack:palletLayers" set="pallet" />
+					<field id="pack:palletBoxesPerLayer" set="pallet" />
+					<field id="pack:palletBoxesPerPallet" set="pallet" />
+					<field id="pack:palletBoxesPerLastLayer" set="pallet" />
+					<field id="pack:palletHeight" set="pallet" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">mm</control-param>
+						</control>
+					</field>
+					<field id="pack:palletNumberOnGround" set="pallet" />
+					<field id="pack:palletStackingMaxWeight" set="pallet">
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">kg</control-param>
+						</control>
+					</field>
+					
+
+					<!-- tare -->
+					<field id="pack:tare" set="tare" />
+					<field id="pack:tareUnit" set="tare" />
+
+				
+				</appearance>
+			</form>
 			<!-- Document Library pop-up Edit Metadata form -->
 			<form id="doclib-simple-metadata">
 				<field-visibility>
