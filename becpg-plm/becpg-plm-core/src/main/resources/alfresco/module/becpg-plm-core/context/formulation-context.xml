@@ -79,14 +79,6 @@
 
 	<!-- Formulation visitors -->
 	
-	<bean id="decernisService" class="fr.becpg.repo.decernis.impl.DecernisServiceImpl">
-		<property name="nodeService" ref="nodeService" />
-		<property name="alfrescoRepository" ref="alfrescoRepository" />
-		<property name="serverUrl" value="${beCPG.decernis.serverUrl}"/>
-		<property name="companyName" value="${beCPG.decernis.companyName}"/>
-		<property name="token" value="${beCPG.decernis.token}"/>
-		<property name="module" value="${beCPG.decernis.module}"/>
-	</bean>
 
 	<bean id="formulaService" class="fr.becpg.repo.product.formulation.FormulaService">
 		<property name="alfrescoRepository" ref="alfrescoRepository" />
