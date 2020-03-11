@@ -18,6 +18,7 @@
  ******************************************************************************/
 package fr.becpg.repo.web.scripts.entity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -26,6 +27,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONArray;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.node.MLPropertyInterceptor;
@@ -40,17 +45,19 @@ import org.alfresco.service.cmr.repository.Path;
 import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.PermissionService;
+import org.alfresco.service.cmr.lock.LockService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
-import org.springframework.extensions.webscripts.Cache;
-import org.springframework.extensions.webscripts.DeclarativeWebScript;
-import org.springframework.extensions.webscripts.Status;
+import org.springframework.extensions.webscripts.AbstractWebScript;
 import org.springframework.extensions.webscripts.WebScriptRequest;
+import org.springframework.extensions.webscripts.WebScriptResponse;
 import org.springframework.util.StopWatch;
+import org.springframework.extensions.webscripts.WebScriptException;
+import org.alfresco.service.cmr.repository.ChildAssociationRef;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
@@ -68,8 +75,64 @@ import fr.becpg.repo.security.SecurityService;
  *
  * @author querephi
  */
-public class EntityListsWebScript extends DeclarativeWebScript {
-
+public class EntityListsWebScript extends AbstractWebScript {
+	
+	private static final String RESULT_CONTAINER = "container";
+	
+	private static final String RESULT_DATALISTS = "datalists";
+	
+	private static final String RESULT_ENTITY = "entity";
+	
+	private static final String RESULT_LIST_TYPES = "listTypes";
+	
+	private static final String RESULT_ACL_TYPE = "aclType";
+	
+	private static final String RESULT_ACL_TYPE_NODE = "aclTypeNode";
+	
+	private static final String KEY_NAME_NAME = "name";
+	
+	private static final String KEY_NAME_TITLE = "title";
+	
+	private static final String KEY_NAME_DESCRIPTION = "description";
+	
+	private static final String KEY_NAME_ENTITY_NAME = "entityName";
+	
+	private static final String KEY_NAME_NODE_REF = "nodeRef";
+	
+	private static final String KEY_NAME_ITEM_TYPE = "itemType";
+	
+	private static final String KEY_NAME_STATE = "state";
+	
+	private static final String KEY_NAME_PARENT_NODE_REF = "parentNodeRef";
+	
+	private static final String KEY_NAME_USER_ACCESS = "userAccess";
+	
+	private static final String KEY_NAME_PERMISSIONS = "permissions";
+	
+	private static final String KEY_NAME_EDIT = "edit";
+	
+	private static final String KEY_NAME_DELETE = "delete";
+	
+	private static final String KEY_NAME_CREATE = "create";
+	
+	private static final String KEY_NAME_USER_SECURITY_ROLES = "userSecurityRoles";
+	
+	private static final String KEY_NAME_CHANGE_STATE = "changeState";
+	
+	private static final String KEY_NAME_ASPECTS = "aspects";
+	
+	private static final String KEY_NAME_TYPE = "type";
+	
+	private static final String KEY_NAME_PATH = "path";
+	
+	private static final String KEY_NAME_IS_DEFAULT_VARIANT = "isDefaultVariant";
+	
+	private static final String KEY_NAME_COLOR = "color";
+	
+	private static final String KEY_NAME_VARIANT = "variants";
+	
+	private static final String KEY_NAME_COMPARE_WITH_ENTITIES = "compareWithEntities";
+	
 	private static final String PARAM_STORE_TYPE = "store_type";
 
 	private static final String PARAM_STORE_ID = "store_id";
@@ -77,28 +140,6 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 	private static final String PARAM_ACL_MODE = "aclMode";
 
 	private static final String PARAM_ID = "id";
-
-	private static final String MODEL_KEY_NAME_ENTITY = "entity";
-
-	private static final String MODEL_KEY_NAME_CONTAINER = "container";
-	
-	private static final String MODEL_KEY_USER_SECURITY_ROLES = "userSecurityRoles";
-
-	private static final String MODEL_KEY_NAME_LISTS = "lists";
-
-	private static final String MODEL_HAS_WRITE_PERMISSION = "hasWritePermission";
-
-	private static final String MODEL_HAS_CHANGE_STATE_PERMISSION = "hasChangeStatePermission";
-
-	private static final String MODEL_KEY_ACL_TYPE = "aclType";
-	
-	private static final String MODEL_KEY_ACL_TYPE_NODE = "aclTypeNode";
-
-	private static final String MODEL_PROP_KEY_LIST_TYPES = "listTypes";
-
-	private static final String MODEL_KEY_NAME_ENTITY_PATH = "entityPath";
-
-	private static final String MODEL_ACCESS_MAP = "accessMap";
 
 	private static final Log logger = LogFactory.getLog(EntityListsWebScript.class);
 
@@ -123,6 +164,8 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 	private AssociationService associationService;
 
 	private BehaviourFilter policyBehaviourFilter;
+	
+	private LockService lockService;
 
 	public void setPermissionService(PermissionService permissionService) {
 		this.permissionService = permissionService;
@@ -167,7 +210,184 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
 		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
+	
+	public void setLockService(LockService lockService) {
+		this.lockService = lockService;
+	}
+	
+	private static Serializable defaultValue(Serializable val, Serializable def) {
+		if (val != null)
+			return val;
+		else
+			return def;
+	}
+	
+	private JSONArray makeListTypes(Iterable<ClassDefinition> classDefinitions) throws JSONException {
+		JSONArray listTypes = new JSONArray();
+		for (ClassDefinition classDefinition: classDefinitions) {
+			JSONObject obj = new JSONObject();
 
+			QName name = classDefinition.getName();
+			if (name != null)
+				obj.put(KEY_NAME_NAME, name.toPrefixString());
+			
+			obj.put(KEY_NAME_TITLE, defaultValue(classDefinition.getTitle(null), ""));
+
+			obj.put(KEY_NAME_DESCRIPTION, defaultValue(classDefinition.getTitle(null), ""));
+			
+			listTypes.put(obj);
+		}
+		JSONObject last = new JSONObject();
+		last.put(KEY_NAME_NAME, "CustomView");
+		last.put(KEY_NAME_TITLE, I18NUtil.getMessage("entity-datalist-customview-title"));
+		last.put(KEY_NAME_DESCRIPTION, I18NUtil.getMessage("entity-datalist-customview-description"));
+		listTypes.put(last);
+		return listTypes;
+	}
+	
+	private JSONArray makeDatalists(
+			Iterable<NodeRef> lists,
+			NodeRef entity,
+			boolean hasWritePermission,
+			boolean hasChangeStatePermission,
+			Map<NodeRef, Boolean> accessMap) throws JSONException {
+		final boolean entityIsLocked = lockService.isLocked(entity);
+		
+		JSONArray datalist = new JSONArray();
+		for (NodeRef list: lists) {
+			JSONObject object = new JSONObject();
+			
+			object.put(KEY_NAME_ENTITY_NAME, nodeService.getProperty(entity, ContentModel.PROP_NAME));
+			
+			Serializable name = nodeService.getProperty(list, ContentModel.PROP_NAME);
+			object.put(KEY_NAME_NAME, name);
+
+			object.put(
+					KEY_NAME_TITLE,
+					defaultValue(nodeService.getProperty(list, ContentModel.PROP_TITLE), name)
+				);
+
+			object.put(
+					KEY_NAME_DESCRIPTION,
+					defaultValue(nodeService.getProperty(list, ContentModel.PROP_DESCRIPTION), "")
+				);
+			
+			object.put(KEY_NAME_NODE_REF, list.toString());
+
+			object.put(
+					KEY_NAME_ITEM_TYPE,
+					defaultValue(nodeService.getProperty(list, DataListModel.PROP_DATALISTITEMTYPE), "")
+				);
+
+			object.put(
+					KEY_NAME_STATE,
+					defaultValue(nodeService.getProperty(list, BeCPGModel.PROP_ENTITYLIST_STATE), "ToValidate")
+				);
+			
+			JSONObject permissions = new JSONObject();
+			permissions.put(KEY_NAME_EDIT, hasWritePermission && !entityIsLocked);
+			permissions.put(KEY_NAME_DELETE, hasWritePermission && !entityIsLocked);
+			Boolean accessMapListNodeRef = accessMap.get(nodeService.getProperty(list, ContentModel.PROP_NODE_REF));
+			if (accessMapListNodeRef == null)
+				accessMapListNodeRef = false;
+			permissions.put(KEY_NAME_CHANGE_STATE, (hasChangeStatePermission || accessMapListNodeRef) && !entityIsLocked);
+			object.put(KEY_NAME_PERMISSIONS, permissions);
+			
+			datalist.put(object);
+		}
+		return datalist;
+	}
+	
+	private JSONObject makeEntity(NodeRef entity, String path) throws RuntimeException, JSONException {
+		JSONObject result = new JSONObject();
+		
+		result.put(KEY_NAME_NODE_REF, entity.toString());
+		
+		ChildAssociationRef primaryParent = nodeService.getPrimaryParent(entity);
+		if (primaryParent == null)
+			throw new RuntimeException("Entity is root node");
+		result.put(KEY_NAME_PARENT_NODE_REF, primaryParent.getParentRef());
+		
+		result.put(KEY_NAME_NAME, nodeService.getProperty(entity, ContentModel.PROP_NAME));
+		
+		JSONObject userAccess = new JSONObject();
+		final boolean entityIsLocked = lockService.isLocked(entity);
+		userAccess.put(
+				KEY_NAME_CREATE,
+				permissionService.hasPermission(entity, "CreateChildren") == AccessStatus.ALLOWED
+					&& !entityIsLocked
+			);
+		userAccess.put(
+				KEY_NAME_EDIT,
+				permissionService.hasPermission(entity, "Write") == AccessStatus.ALLOWED
+					&& !entityIsLocked
+			);
+		userAccess.put(
+				KEY_NAME_DELETE,
+				permissionService.hasPermission(entity, "Delete") == AccessStatus.ALLOWED
+					&& !entityIsLocked
+			);
+		result.put(KEY_NAME_USER_ACCESS, userAccess);
+		
+		JSONArray userSecurityRoles = new JSONArray();
+		for (String securityRole: securityService.getUserSecurityRoles())
+			userSecurityRoles.put(securityRole);
+		result.put(KEY_NAME_USER_SECURITY_ROLES, userSecurityRoles);
+		
+		JSONArray aspects = new JSONArray();
+		for (QName aspect: nodeService.getAspects(entity))
+			aspects.put(aspect.toPrefixString(namespaceService));
+		result.put(KEY_NAME_ASPECTS, aspects);
+		
+		result.put(KEY_NAME_TYPE, nodeService.getType(entity).toPrefixString(namespaceService));
+		
+		result.put(KEY_NAME_PATH, path);
+		
+		List<ChildAssociationRef> variantsAssociations = new ArrayList<ChildAssociationRef>();
+		if (nodeService.hasAspect(entity, BeCPGModel.ASPECT_ENTITY_VARIANT)) {
+			for (ChildAssociationRef association: nodeService.getChildAssocs(entity)) {
+				if (association.getTypeQName().isMatch(BeCPGModel.ASSOC_VARIANTS))
+					variantsAssociations.add(association);
+			}
+		}
+		if (!variantsAssociations.isEmpty()) {
+			JSONArray variants = new JSONArray();
+			for (ChildAssociationRef association: variantsAssociations) {
+				NodeRef variant = association.getChildRef();
+				JSONObject obj = new JSONObject();
+				obj.put(KEY_NAME_NODE_REF, variant.toString());
+				obj.put(KEY_NAME_NAME, nodeService.getProperty(variant, ContentModel.PROP_NAME));
+				Serializable isDefaultVariant = nodeService.getProperty(variant, BeCPGModel.PROP_IS_DEFAULT_VARIANT);
+				obj.put(KEY_NAME_IS_DEFAULT_VARIANT, defaultValue(isDefaultVariant, false));
+				obj.put(KEY_NAME_COLOR, defaultValue(nodeService.getProperty(variant, BeCPGModel.PROP_COLOR), ""));
+				variants.put(obj);
+			}
+			result.put(KEY_NAME_VARIANT, variants);
+		}
+		
+		// NOTE: not properly tested yet
+		List<ChildAssociationRef> compareAssociations = new ArrayList<ChildAssociationRef>();
+		if (nodeService.hasAspect(entity, BeCPGModel.ASPECT_COMPARE_WITH)) {
+			for (ChildAssociationRef association: nodeService.getChildAssocs(entity)) {
+				if (association.getTypeQName().isMatch(BeCPGModel.ASSOC_COMPARE_WITH_ENTITIES))
+					compareAssociations.add(association);
+			}
+		}
+		if (!compareAssociations.isEmpty()) {
+			JSONArray compareWithEntities = new JSONArray();
+			for (ChildAssociationRef association: compareAssociations) {
+				NodeRef compareWithEntity = association.getChildRef();
+				JSONObject obj = new JSONObject();
+				obj.put(KEY_NAME_NODE_REF, compareWithEntity.toString());
+				obj.put(KEY_NAME_NAME, nodeService.getProperty(compareWithEntity, ContentModel.PROP_NAME));
+				compareWithEntities.put(obj);
+			}
+			result.put(KEY_NAME_COMPARE_WITH_ENTITIES, compareWithEntities);
+		}
+		
+		return result;
+	}
+	
 	/**
 	 * Suggest values according to query
 	 *
@@ -182,225 +402,235 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 	 * @return the map
 	 */
 	@Override
-	protected Map<String, Object> executeImpl(WebScriptRequest req, Status status, Cache cache) {
-
-		//Always return in browser local
-		I18NUtil.setContentLocale(null);
-		
-		Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();
-		String storeType = templateArgs.get(PARAM_STORE_TYPE);
-		String storeId = templateArgs.get(PARAM_STORE_ID);
-		String nodeId = templateArgs.get(PARAM_ID);
-		String aclMode = req.getParameter(PARAM_ACL_MODE);
-
-		logger.debug("entityListsWebScript executeImpl()");
-
-		List<NodeRef> listsNodeRef = new ArrayList<>();
-		final NodeRef nodeRef = new NodeRef(storeType, storeId, nodeId);
-		NodeRef listContainerNodeRef = null;
-		QName nodeType = nodeService.getType(nodeRef);
-		boolean hasChangeStatePermission = false;
-		boolean hasWritePermission = false;// admin
-		Map<NodeRef, Boolean> accessRights = new HashMap<>(); // can
-		// delete
-		// entity
-		// lists
-		boolean skipFilter = false;
-
-		// Date lastModified = null;
-
-		Map<String, Object> model = new HashMap<>();
-
-		// We get datalist for a given aclGroup
-		if ((aclMode != null) && SecurityModel.TYPE_ACL_GROUP.equals(nodeType)) {
-			logger.debug("We want to get datalist for current ACL entity");
-			String aclType = (String) nodeService.getProperty(nodeRef, SecurityModel.PROP_ACL_GROUP_NODE_TYPE);
-			QName aclTypeQname = QName.createQName(aclType, namespaceService);
+	final public void execute(WebScriptRequest req, WebScriptResponse res) throws WebScriptException {
+		JSONObject result = new JSONObject();
+		try {
+			//Always return in browser local
+			I18NUtil.setContentLocale(null);
 			
-			
-			NodeRef typeNodeRef = BeCPGQueryBuilder.createQuery().ofType(aclTypeQname).singleValue();
-			
-			if(typeNodeRef!=null) {
-				model.put(MODEL_KEY_ACL_TYPE_NODE, typeNodeRef.toString());
-			}
-			model.put(MODEL_KEY_ACL_TYPE, aclType);
-			
+			Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();
+			String storeType = templateArgs.get(PARAM_STORE_TYPE);
+			String storeId = templateArgs.get(PARAM_STORE_ID);
+			String nodeId = templateArgs.get(PARAM_ID);
+			String aclMode = req.getParameter(PARAM_ACL_MODE);
+	
+			logger.debug("entityListsWebScript executeImpl()");
+	
+			List<NodeRef> listsNodeRef = new ArrayList<>();
+			final NodeRef nodeRef = new NodeRef(storeType, storeId, nodeId);
+			NodeRef listContainerNodeRef = null;
+			QName nodeType = nodeService.getType(nodeRef);
+			boolean hasChangeStatePermission = false;
+			boolean hasWritePermission = false;// admin
+			Map<NodeRef, Boolean> accessRights = new HashMap<>(); // can
+			// delete
+			// entity
+			// lists
+			boolean skipFilter = false;
+	
+			// Date lastModified = null;
+	
+			// We get datalist for a given aclGroup
+			if ((aclMode != null) && SecurityModel.TYPE_ACL_GROUP.equals(nodeType)) {
+				logger.debug("We want to get datalist for current ACL entity");
+				String aclType = (String) nodeService.getProperty(nodeRef, SecurityModel.PROP_ACL_GROUP_NODE_TYPE);
+				QName aclTypeQname = QName.createQName(aclType, namespaceService);
 				
-			NodeRef templateNodeRef = entityTplService.getEntityTpl(aclTypeQname);
-			if (templateNodeRef != null) {
-				listContainerNodeRef = entityListDAO.getListContainer(templateNodeRef);
-				if (listContainerNodeRef == null) {
-					listContainerNodeRef = entityListDAO.createListContainer(templateNodeRef);
-				}
-			} else {
-				logger.error("Cannot get templateNodeRef for type : " + aclType);
-			}
-			skipFilter = true;
-		}
-		// We get datalist for entityTpl
-		else if ((nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITYLISTS) && nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_TPL))
-				|| BeCPGModel.TYPE_SYSTEM_ENTITY.equals(nodeType)) {
-
-			listContainerNodeRef = entityListDAO.getListContainer(nodeRef);
-			if (listContainerNodeRef == null) {
-				listContainerNodeRef = entityListDAO.createListContainer(nodeRef);
-			}
-
-			// Add types that can be added
-			Set<ClassDefinition> classDefinitions = new HashSet<>();
-			Collection<QName> entityListTypes = dictionaryService.getSubTypes(BeCPGModel.TYPE_ENTITYLIST_ITEM, true);
-
-			for (QName entityListType : entityListTypes) {
-				if (!BeCPGModel.TYPE_ENTITYLIST_ITEM.equals(entityListType)) {
-					classDefinitions.add(dictionaryService.getClass(entityListType));
-				}
-			}
-
-			model.put(MODEL_PROP_KEY_LIST_TYPES, classDefinitions);
-
-			hasWritePermission = true;
-			skipFilter = true;
-		}
-		// We get datalist for entity
-		else {
-
-			NodeRef entityTplNodeRef;
-			if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_TPL_REF)) {
-				entityTplNodeRef = associationService.getTargetAssoc(nodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF);
-			} else {
-				entityTplNodeRef = entityTplService.getEntityTpl(nodeType);
-			}
-
-			// #1763 Do not work on permissions changed or when node is locked
-			//
-			// Date propModified = (Date) nodeService.getProperty(nodeRef,
-			// ContentModel.PROP_MODIFIED);
-			// lastModified = entityTplNodeRef != null ? (Date)
-			// nodeService.getProperty(entityTplNodeRef,
-			// ContentModel.PROP_MODIFIED) : null;
-			// if (lastModified == null || (propModified != null &&
-			// lastModified.getTime() < propModified.getTime())) {
-			// lastModified = propModified;
-			// }
-			//
-			// if (lastModified != null &&
-			// BrowserCacheHelper.shouldReturnNotModified(req, lastModified)) {
-			// status.setCode(HttpServletResponse.SC_NOT_MODIFIED);
-			// status.setRedirect(true);
-			//
-			// if (logger.isDebugEnabled()) {
-			// logger.debug("Send Not_MODIFIED status");
-			// }
-			// return model;
-			// }
-
-			if (entityTplNodeRef != null) {
-
-				final NodeRef templateNodeRef = entityTplNodeRef;
-				// Redmine #59 : copy missing datalists as admin, otherwise, if
-				// a datalist is added in product template, users cannot see
-				// datalists of valid products
-				StopWatch watch = null;
-				if (logger.isDebugEnabled()) {
-					watch = new StopWatch();
-					watch.start();
-				}
-				boolean mlAware = MLPropertyInterceptor.isMLAware();
-
-				try {
-					MLPropertyInterceptor.setMLAware(true);
-					AuthenticationUtil.runAs(() -> {
-						RetryingTransactionCallback<Object> actionCallback = () -> {
-							policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-							policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
-							
-							entityListDAO.copyDataLists(templateNodeRef, nodeRef, false);
-
-							
-							return null;
-						};
-						return transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback);
-					}, AuthenticationUtil.getAdminUserName());
-
-				} finally {
-					MLPropertyInterceptor.setMLAware(mlAware);
-				}
-
-				if (logger.isDebugEnabled()) {
-					watch.stop();
-					logger.debug("copyDataLists executed in  " + watch.getTotalTimeSeconds() + " seconds - templateNodeRef " + templateNodeRef);
-				}
-
-			}
-
-			listContainerNodeRef = entityListDAO.getListContainer(nodeRef);
-		}
-
-		if (listContainerNodeRef != null) {
-
-			listsNodeRef = entityListDAO.getExistingListsNodeRef(listContainerNodeRef);
-		}
-
-		// filter list with perms
-		if (!skipFilter) {
-
-			boolean isExternalUser = isCurrentUserExternal();
-
-			Iterator<NodeRef> it = listsNodeRef.iterator();
-			while (it.hasNext()) {
-				NodeRef temp = it.next();
-				String dataListType = (String) nodeService.getProperty(temp, DataListModel.PROP_DATALISTITEMTYPE);
-				int access_mode = securityService.computeAccessMode(nodeType, dataListType);
 				
-				if(SecurityService.NONE_ACCESS != access_mode) {
-					String dataListName = (String) nodeService.getProperty(temp, ContentModel.PROP_NAME);
-					access_mode = securityService.computeAccessMode(nodeType, dataListName);
-				}
+				NodeRef typeNodeRef = BeCPGQueryBuilder.createQuery().ofType(aclTypeQname).singleValue();
 				
-
-				if (SecurityService.NONE_ACCESS == access_mode) {
-					if (logger.isTraceEnabled()) {
-						logger.trace("Don't display dataList:" + dataListType);
-					}
-					it.remove();
-				} else if (!isExternalUser && (SecurityService.WRITE_ACCESS == access_mode)
-						&& (permissionService.hasPermission(temp, PermissionService.WRITE) == AccessStatus.ALLOWED)) {
-					accessRights.put(temp, true);
+				result.put(RESULT_ACL_TYPE, aclType);
+				if(typeNodeRef!=null) {
+					result.put(RESULT_ACL_TYPE_NODE, typeNodeRef.toString());
 				} else {
-					accessRights.put(temp, false);
+					result.put(RESULT_ACL_TYPE_NODE, "null");
+				}
+					
+				NodeRef templateNodeRef = entityTplService.getEntityTpl(aclTypeQname);
+				if (templateNodeRef != null) {
+					listContainerNodeRef = entityListDAO.getListContainer(templateNodeRef);
+					if (listContainerNodeRef == null) {
+						listContainerNodeRef = entityListDAO.createListContainer(templateNodeRef);
+					}
+				} else {
+					logger.error("Cannot get templateNodeRef for type : " + aclType);
+				}
+				skipFilter = true;
+			}
+			// We get datalist for entityTpl
+			else if ((nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITYLISTS) && nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_TPL))
+					|| BeCPGModel.TYPE_SYSTEM_ENTITY.equals(nodeType)) {
+	
+				listContainerNodeRef = entityListDAO.getListContainer(nodeRef);
+				if (listContainerNodeRef == null) {
+					listContainerNodeRef = entityListDAO.createListContainer(nodeRef);
+				}
+	
+				// Add types that can be added
+				Set<ClassDefinition> classDefinitions = new HashSet<>();
+				Collection<QName> entityListTypes = dictionaryService.getSubTypes(BeCPGModel.TYPE_ENTITYLIST_ITEM, true);
+	
+				for (QName entityListType : entityListTypes) {
+					if (!BeCPGModel.TYPE_ENTITYLIST_ITEM.equals(entityListType)) {
+						classDefinitions.add(dictionaryService.getClass(entityListType));
+					}
+				}
+	
+				result.put(RESULT_LIST_TYPES, makeListTypes(classDefinitions));
+	
+				hasWritePermission = true;
+				skipFilter = true;
+			}
+			// We get datalist for entity
+			else {
+	
+				NodeRef entityTplNodeRef;
+				if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_TPL_REF)) {
+					entityTplNodeRef = associationService.getTargetAssoc(nodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF);
+				} else {
+					entityTplNodeRef = entityTplService.getEntityTpl(nodeType);
+				}
+	
+				// #1763 Do not work on permissions changed or when node is locked
+				//
+				// Date propModified = (Date) nodeService.getProperty(nodeRef,
+				// ContentModel.PROP_MODIFIED);
+				// lastModified = entityTplNodeRef != null ? (Date)
+				// nodeService.getProperty(entityTplNodeRef,
+				// ContentModel.PROP_MODIFIED) : null;
+				// if (lastModified == null || (propModified != null &&
+				// lastModified.getTime() < propModified.getTime())) {
+				// lastModified = propModified;
+				// }
+				//
+				// if (lastModified != null &&
+				// BrowserCacheHelper.shouldReturnNotModified(req, lastModified)) {
+				// status.setCode(HttpServletResponse.SC_NOT_MODIFIED);
+				// status.setRedirect(true);
+				//
+				// if (logger.isDebugEnabled()) {
+				// logger.debug("Send Not_MODIFIED status");
+				// }
+				// return model;
+				// }
+	
+				if (entityTplNodeRef != null) {
+	
+					final NodeRef templateNodeRef = entityTplNodeRef;
+					// Redmine #59 : copy missing datalists as admin, otherwise, if
+					// a datalist is added in product template, users cannot see
+					// datalists of valid products
+					StopWatch watch = null;
+					if (logger.isDebugEnabled()) {
+						watch = new StopWatch();
+						watch.start();
+					}
+					boolean mlAware = MLPropertyInterceptor.isMLAware();
+	
+					try {
+						MLPropertyInterceptor.setMLAware(true);
+						AuthenticationUtil.runAs(() -> {
+							RetryingTransactionCallback<Object> actionCallback = () -> {
+								policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+								policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
+								
+								entityListDAO.copyDataLists(templateNodeRef, nodeRef, false);
+	
+								
+								return null;
+							};
+							return transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback);
+						}, AuthenticationUtil.getAdminUserName());
+	
+					} finally {
+						MLPropertyInterceptor.setMLAware(mlAware);
+					}
+	
+					if (logger.isDebugEnabled()) {
+						watch.stop();
+						logger.debug("copyDataLists executed in  " + watch.getTotalTimeSeconds() + " seconds - templateNodeRef " + templateNodeRef);
+					}
+	
+				}
+	
+				listContainerNodeRef = entityListDAO.getListContainer(nodeRef);
+			}
+	
+			if (listContainerNodeRef != null) {
+				listsNodeRef = entityListDAO.getExistingListsNodeRef(listContainerNodeRef);
+			}
+	
+			// filter list with perms
+			if (!skipFilter) {
+	
+				boolean isExternalUser = isCurrentUserExternal();
+	
+				Iterator<NodeRef> it = listsNodeRef.iterator();
+				while (it.hasNext()) {
+					NodeRef temp = it.next();
+					String dataListType = (String) nodeService.getProperty(temp, DataListModel.PROP_DATALISTITEMTYPE);
+					int access_mode = securityService.computeAccessMode(nodeType, dataListType);
+					
+					if(SecurityService.NONE_ACCESS != access_mode) {
+						String dataListName = (String) nodeService.getProperty(temp, ContentModel.PROP_NAME);
+						access_mode = securityService.computeAccessMode(nodeType, dataListName);
+					}
+					
+	
+					if (SecurityService.NONE_ACCESS == access_mode) {
+						if (logger.isTraceEnabled()) {
+							logger.trace("Don't display dataList:" + dataListType);
+						}
+						it.remove();
+					} else if (!isExternalUser && (SecurityService.WRITE_ACCESS == access_mode)
+							&& (permissionService.hasPermission(temp, PermissionService.WRITE) == AccessStatus.ALLOWED)) {
+						accessRights.put(temp, true);
+					} else {
+						accessRights.put(temp, false);
+					}
 				}
 			}
+	
+			// if (lastModified == null) {
+			// lastModified = new Date();
+			// }
+			//
+			// cache.setIsPublic(false);
+			// cache.setMustRevalidate(true);
+			// cache.setNeverCache(false);
+			// cache.setMaxAge(0L);
+			// cache.setLastModified(lastModified);
+	
+			Path path = nodeService.getPath(nodeRef);
+	
+			String stringPath = path.toPrefixString(namespaceService);
+			String displayPath = path.toDisplayPath(nodeService, permissionService);
+	
+			String retPath = SiteHelper.extractDisplayPath(stringPath, displayPath);
+
+			result.put(RESULT_ENTITY, makeEntity(nodeRef, retPath));
+			result.put(RESULT_CONTAINER, listContainerNodeRef.toString());
+			
+			// hasWritePermission as it used to appear in the model
+			final boolean effectiveHasWritePermission =
+					hasWritePermission || authorityService.isAdminAuthority(AuthenticationUtil.getFullyAuthenticatedUser());
+	
+			JSONObject permissions = new JSONObject();
+			permissions.put(KEY_NAME_CREATE, effectiveHasWritePermission && !lockService.isLocked(nodeRef));
+			result.put(KEY_NAME_PERMISSIONS, permissions);
+
+			result.put(
+					RESULT_DATALISTS,
+					makeDatalists(listsNodeRef, nodeRef, effectiveHasWritePermission, hasChangeStatePermission, accessRights)
+			);
+			
+			res.setContentType("application/json");
+			res.setContentEncoding("UTF-8");
+			result.write(res.getWriter());
+		} catch (Exception e) {
+			logger.error(e, e);
+			throw new WebScriptException("Failed to build JSON file", e);
 		}
-
-		// if (lastModified == null) {
-		// lastModified = new Date();
-		// }
-		//
-		// cache.setIsPublic(false);
-		// cache.setMustRevalidate(true);
-		// cache.setNeverCache(false);
-		// cache.setMaxAge(0L);
-		// cache.setLastModified(lastModified);
-
-		Path path = nodeService.getPath(nodeRef);
-
-		String stringPath = path.toPrefixString(namespaceService);
-		String displayPath = path.toDisplayPath(nodeService, permissionService);
-
-		String retPath = SiteHelper.extractDisplayPath(stringPath, displayPath);
-
-		model.put(MODEL_KEY_NAME_ENTITY_PATH, retPath);
-		model.put(MODEL_KEY_NAME_ENTITY, nodeRef);
-		model.put(MODEL_KEY_NAME_CONTAINER, listContainerNodeRef);
-		model.put(MODEL_KEY_USER_SECURITY_ROLES, securityService.getUserSecurityRoles());
-		
-		model.put(MODEL_HAS_WRITE_PERMISSION,
-				hasWritePermission || authorityService.isAdminAuthority(AuthenticationUtil.getFullyAuthenticatedUser()));
-		model.put(MODEL_HAS_CHANGE_STATE_PERMISSION, hasChangeStatePermission);
-		model.put(MODEL_KEY_NAME_LISTS, listsNodeRef);
-		model.put(MODEL_ACCESS_MAP, accessRights);
-
-		return model;
 	}
 
 	private boolean isCurrentUserExternal() {
