@@ -6,6 +6,6 @@ import fr.becpg.repo.product.data.ProductData;
 
 public interface DecernisService {
 
-	public String launchDecernisAnalysis(ProductData product, List<String> countries) throws Exception;
+	public String launchDecernisAnalysis(ProductData product, List<String> countries, List<String> usages) throws Exception;
 	
 }

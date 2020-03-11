@@ -45,9 +45,7 @@ public class IngTypeItem extends LabelingComponent{
 	private Boolean isDoNotDeclare;
 	
 	private Boolean isLastGroup;
-	
-	private String functionRID;
-	
+		
 	private NodeRef origNodeRef;
 	
 	
@@ -136,17 +134,6 @@ public class IngTypeItem extends LabelingComponent{
 		this.decThreshold = decThreshold;
 	}
 	
-	@AlfProp
-	@AlfQname(qname = "bcpg:ingFunctionRID")
-	public String getFunctionRID() {
-		return functionRID;
-	}
-
-	public void setFunctionRID(String functionRID) {
-		this.functionRID = functionRID;
-	}
-
-	
 	@Override
 	public String getLegalName(Locale locale) {
 		String ret = MLTextHelper.getClosestValue(legalName, locale);
@@ -173,7 +160,6 @@ public class IngTypeItem extends LabelingComponent{
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + ((decThreshold == null) ? 0 : decThreshold.hashCode());
-		result = prime * result + ((functionRID == null) ? 0 : functionRID.hashCode());
 		result = prime * result + ((isDoNotDeclare == null) ? 0 : isDoNotDeclare.hashCode());
 		result = prime * result + ((isLastGroup == null) ? 0 : isLastGroup.hashCode());
 		result = prime * result + ((lvCode == null) ? 0 : lvCode.hashCode());
@@ -195,11 +181,6 @@ public class IngTypeItem extends LabelingComponent{
 			if (other.decThreshold != null)
 				return false;
 		} else if (!decThreshold.equals(other.decThreshold))
-			return false;
-		if (functionRID == null) {
-			if (other.functionRID != null)
-				return false;
-		} else if (!functionRID.equals(other.functionRID))
 			return false;
 		if (isDoNotDeclare == null) {
 			if (other.isDoNotDeclare != null)
