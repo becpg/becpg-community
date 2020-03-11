@@ -50,6 +50,7 @@ import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.report.engine.impl.ReportServerEngine;
+import fr.becpg.repo.report.entity.EntityImageInfo;
 import fr.becpg.repo.report.entity.EntityReportData;
 import fr.becpg.repo.report.search.SearchReportRenderer;
 import fr.becpg.repo.report.template.ReportTplService;
@@ -130,7 +131,7 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 
 			Map<String, Object> params = new HashMap<>();
 			params.put(ReportParams.PARAM_FORMAT, reportFormat);
-			params.put(ReportParams.PARAM_IMAGES, new HashMap<String, byte[]>());
+			params.put(ReportParams.PARAM_IMAGES, new HashMap<EntityImageInfo, byte[]>());
 
 			EntityReportData reportData = new EntityReportData();
 
@@ -286,8 +287,8 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 					if (imageBytes != null) {
 
 						@SuppressWarnings("unchecked")
-						Map<String, byte[]> images = (Map<String, byte[]>) params.get(ReportParams.PARAM_IMAGES);
-						images.put(id, imageBytes);
+						Map<EntityImageInfo, byte[]> images = (Map<EntityImageInfo, byte[]>) params.get(ReportParams.PARAM_IMAGES);
+						images.put(new EntityImageInfo(id, null, null, null), imageBytes);
 					}
 				}
 				// class attribute

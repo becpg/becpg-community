@@ -32,10 +32,10 @@ import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.http.client.ClientProtocolException;
-import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.repo.report.engine.BeCPGReportEngine;
+import fr.becpg.repo.report.entity.EntityImageInfo;
 import fr.becpg.repo.report.entity.EntityReportData;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.report.client.AbstractBeCPGReportClient;
@@ -105,11 +105,11 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 				reportSession.setTemplateId(templateId);
 
 				@SuppressWarnings("unchecked")
-				final Map<String, byte[]> images = (Map<String, byte[]>) params.get(ReportParams.PARAM_IMAGES);
+				final Map<EntityImageInfo, byte[]> images = (Map<EntityImageInfo, byte[]>) params.get(ReportParams.PARAM_IMAGES);
 
 				if (images != null) {
-					for (Map.Entry<String, byte[]> entry : images.entrySet()) {
-						sendImage(reportSession, entry.getKey(), new ByteArrayInputStream(entry.getValue()));
+					for (Map.Entry<EntityImageInfo, byte[]> entry : images.entrySet()) {
+						sendImage(reportSession, entry.getKey().getId(), new ByteArrayInputStream(entry.getValue()));
 					}
 				}
 
