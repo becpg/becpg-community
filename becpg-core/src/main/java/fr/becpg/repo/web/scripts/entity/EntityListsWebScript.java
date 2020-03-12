@@ -93,6 +93,8 @@ public class EntityListsWebScript extends AbstractWebScript {
 
 	private static final String RESULT_ACL_TYPE_NODE = "aclTypeNode";
 
+	private static final String RESULT_REPORTS = "reports";
+
 	private static final String KEY_NAME_NAME = "name";
 
 	private static final String KEY_NAME_TITLE = "title";
@@ -171,7 +173,7 @@ public class EntityListsWebScript extends AbstractWebScript {
 
 	private LockService lockService;
 
-    private ReportAssociationDecorator reportAssociationDecorator;
+	private ReportAssociationDecorator reportAssociationDecorator;
 
 	public void setPermissionService(PermissionService permissionService) {
 		this.permissionService = permissionService;
@@ -217,7 +219,7 @@ public class EntityListsWebScript extends AbstractWebScript {
 		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
 
-    public void setReportAssociationDecorator(ReportAssociationDecorator reportAssociationDecorator) {
+	public void setReportAssociationDecorator(ReportAssociationDecorator reportAssociationDecorator) {
 		this.reportAssociationDecorator = reportAssociationDecorator;
 	}
 
@@ -565,13 +567,10 @@ public class EntityListsWebScript extends AbstractWebScript {
 
 			String retPath = SiteHelper.extractDisplayPath(stringPath, displayPath);
 
-
 			if (nodeService.hasAspect(nodeRef, ReportModel.ASPECT_REPORT_ENTITY)) {
-				result.put(MODEL_REPORTS,
-					reportAssociationDecorator
-							.decorate(ReportModel.ASSOC_REPORTS, nodeRef, associationService.getTargetAssocs(nodeRef, ReportModel.ASSOC_REPORTS))
-							);
-		}	
+				result.put(RESULT_REPORTS, reportAssociationDecorator.decorate(ReportModel.ASSOC_REPORTS, nodeRef,
+						associationService.getTargetAssocs(nodeRef, ReportModel.ASSOC_REPORTS)));
+			}
 
 			result.put(RESULT_ENTITY, makeEntity(nodeRef, retPath));
 			result.put(RESULT_CONTAINER, listContainerNodeRef.toString());
