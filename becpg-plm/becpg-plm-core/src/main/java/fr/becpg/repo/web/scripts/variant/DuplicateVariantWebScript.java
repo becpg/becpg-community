@@ -49,7 +49,6 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.PLMModel;
 import fr.becpg.repo.data.hierarchicalList.CompositeDataItem;
 import fr.becpg.repo.product.data.AbstractProductDataView;
 import fr.becpg.repo.product.data.ProductData;
@@ -130,9 +129,9 @@ public class DuplicateVariantWebScript extends AbstractWebScript {
 
 				Map<QName, Serializable> props = new HashMap<>();
 				props.put(ContentModel.PROP_NAME, name);
-				props.put(PLMModel.PROP_IS_DEFAULT_VARIANT, false);
+				props.put(BeCPGModel.PROP_IS_DEFAULT_VARIANT, false);
 				NodeRef newVariantNodeRef = nodeService
-						.createNode(entityNodeRef, PLMModel.ASSOC_VARIANTS, PLMModel.ASSOC_VARIANTS, PLMModel.TYPE_VARIANT, props).getChildRef();
+						.createNode(entityNodeRef, BeCPGModel.ASSOC_VARIANTS, BeCPGModel.ASSOC_VARIANTS, BeCPGModel.TYPE_VARIANT, props).getChildRef();
 
 				VariantFilters<? extends VariantDataItem> variantFilters = new VariantFilters<>(variantNodeRef);
 
@@ -206,7 +205,7 @@ public class DuplicateVariantWebScript extends AbstractWebScript {
 					}
 					sort = sort + lastSort;
 					nodeService.setProperty(newDLNodeRef, BeCPGModel.PROP_SORT, sort);
-					nodeService.setProperty(newDLNodeRef, PLMModel.PROP_VARIANTIDS, new ArrayList<>(Arrays.asList(newVariantNodeRef)));
+					nodeService.setProperty(newDLNodeRef, BeCPGModel.PROP_VARIANTIDS, new ArrayList<>(Arrays.asList(newVariantNodeRef)));
 
 					i++;
 

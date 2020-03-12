@@ -623,6 +623,7 @@
 				<list>
 					<value>Pre</value>
 					<value>Post</value>
+					<value>Defer</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -1385,7 +1386,7 @@
 					<mandatory>true</mandatory>
 				</property>
 			</properties>
-		</type>
+		</type>		
 
 		<type name="bcpg:certification">
 			<parent>bcpg:entityListItem</parent>
@@ -3014,6 +3015,14 @@
 				</association>
 			</associations>
 		</aspect>
+		
+		<aspect name="bcpg:regulatoryCodeAspect">
+			<properties>
+				<property name="bcpg:regulatoryCode">
+					<type>d:text</type>
+				</property>
+			</properties>
+		</aspect>
 
 		<aspect name="bcpg:entityTplRefAspect">
 			<associations>
@@ -3534,7 +3543,7 @@
 			<properties>
 				<property name="bcpg:ingCEECode">
 					<type>d:text</type>
-				</property>
+				</property>				
 				<property name="bcpg:ingTypeV2">
 					<type>d:noderef</type>
 					<mandatory>false</mandatory>
@@ -4061,7 +4070,5 @@
 				</association>
 			</associations>
 		</aspect>
-
-
 	</aspects>
 </model>

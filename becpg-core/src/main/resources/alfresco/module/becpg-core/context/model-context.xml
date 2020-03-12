@@ -29,6 +29,7 @@
 				<value>alfresco/module/${artifactId}/model/reportModel.xml</value>
 				<value>alfresco/module/${artifactId}/model/becpgModel.xml</value>
 				<value>alfresco/module/${artifactId}/model/securityModel.xml</value>
+				<value>alfresco/module/${artifactId}/model/variantModel.xml</value>
 			</list>
 		</property>
 
@@ -37,6 +38,7 @@
 				<value>alfresco/module/${artifactId}/model/reportModel</value>
 				<value>alfresco/module/${artifactId}/model/becpgModel</value>
 				<value>alfresco/module/${artifactId}/model/securityModel</value>
+				<value>alfresco/module/${artifactId}/model/variantModel</value>
 			</list>
 		</property>
 	</bean>

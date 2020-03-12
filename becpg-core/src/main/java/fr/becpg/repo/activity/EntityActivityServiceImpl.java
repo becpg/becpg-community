@@ -343,6 +343,10 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					NodeRef charactNodeRef = getMatchingCharactNodeRef(datalistNodeRef);
 
 					if (charactNodeRef != null) {
+						QName charactType = nodeService.getType(charactNodeRef);
+						if (charactType != null) {
+							data.put(PROP_CHARACT_TYPE, attributeExtractorService.extractMetadata(charactType, charactNodeRef));
+						}
 						data.put(PROP_CHARACT_NODEREF, charactNodeRef);
 						data.put(PROP_TITLE, attributeExtractorService.extractPropName(charactNodeRef));
 					} else {

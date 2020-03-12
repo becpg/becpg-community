@@ -36,6 +36,7 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.decernis.DecernisService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.MLTextHelper;
@@ -64,6 +65,8 @@ public class FormulaService {
 	private NodeService nodeService;
 
 	private NamespaceService namespaceService;
+	
+	private DecernisService decernisService;
 
 	private AssociationService associationService;
 
@@ -105,6 +108,10 @@ public class FormulaService {
 
 	public void setScriptService(ScriptService scriptService) {
 		this.scriptService = scriptService;
+	}
+
+	public void setDecernisService(DecernisService decernisService) {
+		this.decernisService = decernisService;
 	}
 
 	public void registerCustomFunctions(ProductData productData, StandardEvaluationContext context) {
@@ -194,6 +201,10 @@ public class FormulaService {
 
 			return mlText;
 		}
+		
+		public String decernis(ProductData product, List<String> countries, List<String> usages) throws Exception{
+			return decernisService.launchDecernisAnalysis(product, countries, usages);						
+		}		
 
 		public void runScript(String scriptNode) {
 			runScript(new NodeRef(scriptNode));
