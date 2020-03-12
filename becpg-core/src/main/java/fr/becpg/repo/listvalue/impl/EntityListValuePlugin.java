@@ -71,6 +71,7 @@ public class EntityListValuePlugin implements ListValuePlugin {
 	protected static final String mixedSearchTemplate = "%(cm:name bcpg:erpCode bcpg:code bcpg:charactName bcpg:legalName bcpg:lvValue)";
 	protected static final String charactSearchTemplate = "%(bcpg:charactName bcpg:legalName)";
 	protected static final String listValueSearchTemplate = "%(bcpg:lvValue bcpg:legalName)";
+	protected static final String personSearchTemplate = "%(cm:userName cm:firstName cm:lastName cm:email)";
 
 	protected static final String PARAM_VALUES_SEPARATOR = ",";
 
@@ -159,6 +160,11 @@ public class EntityListValuePlugin implements ListValuePlugin {
 			if(isAllQuery(query)){
 				queryBuilder.addSort(BeCPGModel.PROP_LV_VALUE, true);
 			}	
+		} else if (entityDictionaryService.isSubClass(type, ContentModel.TYPE_PERSON)) {
+		 		template = personSearchTemplate;
+				if(isAllQuery(query)){
+					queryBuilder.addSort(ContentModel.PROP_LASTNAME, true);
+				}	
 		} else if (arrClassNames != null) {
 			for (String className : arrClassNames) {
 				QName classQName;
