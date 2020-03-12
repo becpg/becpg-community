@@ -202,6 +202,7 @@ public interface PLMModel {
 	// ing
 	QName TYPE_ING = QName.createQName(BeCPGModel.BECPG_URI, "ing");
 	QName PROP_ING_CEECODE = QName.createQName(BeCPGModel.BECPG_URI, "ingCEECode");
+	QName PROP_ING_CASCODE = QName.createQName(BeCPGModel.BECPG_URI, "ingCASCode");
 
 	QName ASPECT_ING_TYPE = QName.createQName(BeCPGModel.BECPG_URI, "ingTypeAspect");
 	
@@ -290,15 +291,6 @@ public interface PLMModel {
 	QName ASPECT_EAN = QName.createQName(BeCPGModel.BECPG_URI, "eanAspect");
 	QName PROP_EAN_CODE = QName.createQName(BeCPGModel.BECPG_URI, "eanCode");
 
-	// variant
-	QName TYPE_VARIANT = QName.createQName(BeCPGModel.BECPG_URI, "variant");
-	QName ASPECT_ENTITY_VARIANT = QName.createQName(BeCPGModel.BECPG_URI, "entityVariantAspect");
-	QName ASPECT_ENTITYLIST_VARIANT = QName.createQName(BeCPGModel.BECPG_URI, "entityListVariantAspect");
-
-	QName ASSOC_VARIANTS = QName.createQName(BeCPGModel.BECPG_URI, "variants");
-	QName PROP_VARIANTIDS = QName.createQName(BeCPGModel.BECPG_URI, "variantIds");
-	QName PROP_IS_DEFAULT_VARIANT = QName.createQName(BeCPGModel.BECPG_URI, "isDefaultVariant");
-
 	// profitability
 	QName ASPECT_PROFITABILITY = QName.createQName(BeCPGModel.BECPG_URI, "profitabilityAspect");
 	QName PROP_UNIT_PRICE = QName.createQName(BeCPGModel.BECPG_URI, "unitPrice");
@@ -378,6 +370,12 @@ public interface PLMModel {
 	QName ASPECT_CUSTOMSCODE = QName.createQName(BeCPGModel.BECPG_URI, "customsCodeAspect");
 	QName ASSOC_CUSTOMSCODE = QName.createQName(BeCPGModel.BECPG_URI, "customsCodeRef");
 	
+	// Regulatory code
+	QName ASPECT_REGULATORY_CODE= QName.createQName(BeCPGModel.BECPG_URI, "regulatoryCodeAspect");
+	QName PROP_REGULATORY_CODE = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryCode");
+	
+	//Cas Number
+	QName PROP_CAS_NUMBER= QName.createQName(BeCPGModel.BECPG_URI, "casNumber");
 	
 	QName ASPECT_WATER = QName.createQName(BeCPGModel.BECPG_URI, "waterAspect");
 	QName LABELING_RULE_ASPECT =  QName.createQName(BeCPGModel.BECPG_URI, "labelingRuleAspect");

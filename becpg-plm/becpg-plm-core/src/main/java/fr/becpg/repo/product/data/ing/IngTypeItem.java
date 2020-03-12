@@ -45,7 +45,7 @@ public class IngTypeItem extends LabelingComponent{
 	private Boolean isDoNotDeclare;
 	
 	private Boolean isLastGroup;
-	
+		
 	private NodeRef origNodeRef;
 	
 	
@@ -133,8 +133,6 @@ public class IngTypeItem extends LabelingComponent{
 	public void setDecThreshold(Double decThreshold) {
 		this.decThreshold = decThreshold;
 	}
-
-	
 	
 	@Override
 	public String getLegalName(Locale locale) {

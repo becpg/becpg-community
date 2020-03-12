@@ -30,6 +30,10 @@ public class IngItem extends CompositeLabeling {
 	
 	private String ingCEECode;
 	
+	private String ingCASCode;
+	
+	private String ingRID;
+	
 	private IngTypeItem ingType;
 	
 	private Set<NodeRef> pluralParents = new HashSet<>();
@@ -82,7 +86,26 @@ public class IngItem extends CompositeLabeling {
 	public void setIngCEECode(String ingCEECode) {
 		this.ingCEECode = ingCEECode;
 	}
+	
+	@AlfProp
+	@AlfQname(qname="bcpg:ingCASCode")
+	public String getIngCASCode() {
+		return ingCASCode;
+	}
 
+	public void setIngCASCode(String ingCASCode) {
+		this.ingCASCode = ingCASCode;
+	}
+	
+	@AlfProp
+	@AlfQname(qname="bcpg:ingRID")
+	public String getingRID() {
+		return ingRID;
+	}
+
+	public void setingRID(String ingRID) {
+		this.ingRID = ingRID;
+	}
 
 	@AlfProp
 	@AlfQname(qname="bcpg:ingTypeV2")
@@ -109,7 +132,9 @@ public class IngItem extends CompositeLabeling {
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + ((charactName == null) ? 0 : charactName.hashCode());
+		result = prime * result + ((ingCASCode == null) ? 0 : ingCASCode.hashCode());
 		result = prime * result + ((ingCEECode == null) ? 0 : ingCEECode.hashCode());
+		result = prime * result + ((ingRID == null) ? 0 : ingRID.hashCode());
 		result = prime * result + ((ingType == null) ? 0 : ingType.hashCode());
 		return result;
 	}
@@ -129,10 +154,20 @@ public class IngItem extends CompositeLabeling {
 				return false;
 		} else if (!charactName.equals(other.charactName))
 			return false;
+		if (ingCASCode == null) {
+			if (other.ingCASCode != null)
+				return false;
+		} else if (!ingCASCode.equals(other.ingCASCode))
+			return false;
 		if (ingCEECode == null) {
 			if (other.ingCEECode != null)
 				return false;
 		} else if (!ingCEECode.equals(other.ingCEECode))
+			return false;
+		if (ingRID == null) {
+			if (other.ingRID != null)
+				return false;
+		} else if (!ingRID.equals(other.ingRID))
 			return false;
 		if (ingType == null) {
 			if (other.ingType != null)

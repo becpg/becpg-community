@@ -2,7 +2,6 @@
    <#-- CSS Dependencies -->
    <@link href="${url.context}/res/modules/entity-datagrid/entity-datagrid.css" group="entity-datalists" />
    <@link href="${url.context}/res/modules/custom-entity-datagrid/custom-entity-datagrid.css" group="entity-datalists" />
-   <@link href="${url.context}/res/modules/custom-entity-datagrid/project-columnRenderers.css" group="entity-datalists" />
    <@link href="${url.context}/res/components/workflow/task-list.css" group="workflow"/>
 </@>
 

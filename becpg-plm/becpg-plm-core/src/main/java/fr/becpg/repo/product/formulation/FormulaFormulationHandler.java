@@ -127,7 +127,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 			computeFormula(productData, parser, context, view);
 		}
 
-		if (DynamicCharactExecOrder.Post.equals(execOrder)) {
+		if (DynamicCharactExecOrder.Post.equals(execOrder) ) {
 			computeNutrientProfile(productData, parser, context);
 		}
 
@@ -178,7 +178,8 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 			}
 
 			for (DynamicCharactListItem dynamicCharactListItem : view.getDynamicCharactList()) {
-				if (execOrder.equals(dynamicCharactListItem.getExecOrder())) {
+				if (execOrder.equals(dynamicCharactListItem.getExecOrder()) || (  DynamicCharactExecOrder.Defer.equals(execOrder) 
+						&& DynamicCharactExecOrder.Post.equals(dynamicCharactListItem.getExecOrder()) )) {
 					try {
 						if ((dynamicCharactListItem.getFormula() != null) && !dynamicCharactListItem.getFormula().isEmpty()) {
 							if ((dynamicCharactListItem.getColumnName() != null) && !dynamicCharactListItem.getColumnName().isEmpty()) {
