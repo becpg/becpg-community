@@ -6407,7 +6407,7 @@
 					</field>
 					<field id="bcpg:legalName" />
 					<field id="bcpg:geoOriginISOCode" />
-					<field id="bcpg:regulatoryCode" force="true"/>
+					<field id="bcpg:regulatoryCode"/>
 					<field id="bcpg:linkedSearchAssociation">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -9865,7 +9865,7 @@
 					<show id="bcpg:ingTypeDecThreshold" />
 					<show id="bcpg:ingTypeDoNotDeclare" />
 					<show id="bcpg:ingTypeIsLastGroup" />
-					<show id="bcpg:regulatoryCode" />
+					<show id="bcpg:regulatoryCode" force="true" />
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
@@ -9883,7 +9883,7 @@
 					<show id="bcpg:ingTypeDecThreshold" />
 					<show id="bcpg:ingTypeDoNotDeclare" />
 					<show id="bcpg:ingTypeIsLastGroup" />
-					<show id="bcpg:regulatoryCode" />
+					<show id="bcpg:regulatoryCode" force="true"  />
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
@@ -9893,7 +9893,7 @@
 				<field-visibility>
 					<show id="bcpg:lvValue" />
 					<show id="bcpg:ingTypeDecThreshold" />
-					<show id="bcpg:regulatoryCode" />
+					<show id="bcpg:regulatoryCode" force="true"  />
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
@@ -9906,7 +9906,7 @@
 					<show id="bcpg:ingTypeDecThreshold" />
 					<show id="bcpg:ingTypeDoNotDeclare" />
 					<show id="bcpg:ingTypeIsLastGroup" />
-					<show id="bcpg:regulatoryCode" />
+					<show id="bcpg:regulatoryCode" force="true" />
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
