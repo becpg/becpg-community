@@ -26,20 +26,67 @@ public class BecpgFormDefinition {
 
 	private static String ROOT = "root";
 
-	/*
-	 * FIXME:
-	 * JSONArray lacks its remove method, probably due to a JAR providing an obsolete version of JSONArray.
-	 * Using remove instead would be more efficient.
-	 */
+	private static boolean isContainerRepresentation(final JSONObject object) {
+		try {
+			return object.getString("fieldType").equals("ContainerRepresentation");
+		} catch (JSONException e) {
+			return false;
+		}
+	}
+
+	private static JSONObject filterFieldsRecursive(JSONObject object) throws JSONException {
+		JSONObject ret = null;
+		
+		if (isContainerRepresentation(object)) {
+			
+			JSONObject fields = null;
+			int size = 0;
+			boolean isFieldsExist = object.has("fields");
+			if(isFieldsExist) {
+				fields = object.getJSONObject("fields");
+				size = fields.length();
+			}
+			if (size > 0 && isFieldsExist) {
+				ret = new JSONObject();
+				JSONObject filteredFields = new JSONObject();
+				int counter = 1;
+				for (int i = 1; i <= size; i++) {
+					final String key = String.valueOf(i);
+					JSONArray fieldArray = fields.getJSONArray(key);
+					JSONArray filteredFieldArray = new JSONArray();
+					for (int j = 0; j < fieldArray.length(); j++) {
+						final JSONObject obj = filterFieldsRecursive(fieldArray.getJSONObject(j));
+						if (obj != null) {
+							filteredFieldArray.put(obj);
+						}
+					}
+					if (filteredFieldArray.length() > 0) {
+						filteredFields.put(String.valueOf(counter), filteredFieldArray);
+						counter++;
+					}
+				}
+				ret.put("fields", filteredFields);
+				
+				for (String key : JSONObject.getNames(object)) {
+					if (!key.equals("fields")) {
+						ret.put(key, object.get(key));
+					}
+				}
+			}
+		}
+		
+		return ret;
+	}
+
 	private static JSONObject filterFields(JSONObject object) throws JSONException {
 		JSONObject result = new JSONObject();
-		for (String objectKey: JSONObject.getNames(object)) {
+		for (String objectKey : JSONObject.getNames(object)) {
 			if (objectKey.equals("fields")) {
 				JSONArray array = object.getJSONArray("fields");
 				for (int i = 0; i < array.length(); i++) {
-					JSONObject obj = array.getJSONObject(i);
-					if (obj.has("fields")) {
-						result.append("fields", obj);
+					final JSONObject filtered = filterFieldsRecursive(array.getJSONObject(i));
+					if (filtered != null) {
+						result.append("fields", filtered);
 					}
 				}
 			} else {
@@ -48,7 +95,7 @@ public class BecpgFormDefinition {
 		}
 		return result;
 	}
-	
+
 	public JSONObject merge(Form form) throws JSONException {
 		JSONObject ret = new JSONObject();
 
@@ -81,7 +128,7 @@ public class BecpgFormDefinition {
 
 				if (!sets.containsKey(id)) {
 					loadData(field, form);
-					if(field.has("dataKey")) {
+					if (field.has("dataKey")) {
 						field.put("id", field.getString("dataKey"));
 						field.remove("dataKey");
 						field.remove("loaded");
@@ -129,16 +176,16 @@ public class BecpgFormDefinition {
 				}
 			}
 		}
-		
+
 		return filterFields(ret);
 	}
 
 	private void loadData(JSONObject field, Form form) throws JSONException {
-		if(field.has("dataKey")) {
+		if (field.has("dataKey")) {
 			String key = field.getString("dataKey");
-			if(key!=null && form.getFormData()!=null) {
+			if (key != null && form.getFormData() != null) {
 				FieldData data = form.getFormData().getFieldData(key);
-				
+
 				if (data != null) {
 					field.put("value", data.getValue());
 				}
@@ -169,8 +216,8 @@ public class BecpgFormDefinition {
 					if (!field.has("name")) {
 						field.put("name", fieldDefinition.getLabel());
 					}
-					
-					field.put("dataKey",fieldDefinition.getDataKeyName());
+
+					field.put("dataKey", fieldDefinition.getDataKeyName());
 
 					String formWidget = "text";
 
@@ -178,13 +225,15 @@ public class BecpgFormDefinition {
 
 						boolean isList = false;
 						if (((PropertyFieldDefinition) fieldDefinition).getConstraints() != null) {
-							for (FieldConstraint constraint : ((PropertyFieldDefinition) fieldDefinition).getConstraints()) {
+							for (FieldConstraint constraint : ((PropertyFieldDefinition) fieldDefinition)
+									.getConstraints()) {
 
 								if (constraint.getType() == "LIST") {
 									isList = true;
 									if (constraint.getParameters().containsKey("allowedValues")) {
 
-										for (String option : ((List<String>) constraint.getParameters().get("allowedValues"))) {
+										for (String option : ((List<String>) constraint.getParameters()
+												.get("allowedValues"))) {
 											JSONObject optionJson = new JSONObject();
 											if (option.indexOf('|') > 0) {
 												optionJson.put("id", option.split("\\|")[0]);
@@ -271,22 +320,23 @@ public class BecpgFormDefinition {
 							field.put("required", true);
 						}
 
-					} if (fieldDefinition instanceof AssociationFieldDefinition) {
+					}
+					if (fieldDefinition instanceof AssociationFieldDefinition) {
 						JSONObject jsonParams = new JSONObject();
-						if(field.has("params")) {
+						if (field.has("params")) {
 							jsonParams = field.getJSONObject("params");
 						} else {
 							field.put("params", jsonParams);
 						}
-						
-						jsonParams.put("endpointType", ((AssociationFieldDefinition)fieldDefinition).getEndpointType());
-						jsonParams.put("endpointMany", ((AssociationFieldDefinition)fieldDefinition).isEndpointMany());
-						
-						if(((AssociationFieldDefinition)fieldDefinition).isEndpointMandatory()) {
+
+						jsonParams.put("endpointType",
+								((AssociationFieldDefinition) fieldDefinition).getEndpointType());
+						jsonParams.put("endpointMany", ((AssociationFieldDefinition) fieldDefinition).isEndpointMany());
+
+						if (((AssociationFieldDefinition) fieldDefinition).isEndpointMandatory()) {
 							field.put("required", true);
 						}
-						
-						
+
 						formWidget = "autocomplete";
 					}
 
