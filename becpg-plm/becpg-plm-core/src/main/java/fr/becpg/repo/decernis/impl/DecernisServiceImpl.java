@@ -49,16 +49,16 @@ public class DecernisServiceImpl implements DecernisService {
 	@Autowired
 	private NodeService nodeService;
 
-	@Value("beCPG.decernis.serverUrl")
+	@Value("${beCPG.decernis.serverUrl}")
 	private String serverUrl;
 
-	@Value("beCPG.decernis.companyName")
+	@Value("${beCPG.decernis.companyName}")
 	private String companyName;
 
-	@Value("beCPG.decernis.token")
+	@Value("${beCPG.decernis.token}")
 	private String token;
 
-	@Value("beCPG.decernis.module")
+	@Value("${beCPG.decernis.module}")
 	private String module;
 
 	private RestTemplate restTemplate = new RestTemplate();
@@ -347,7 +347,6 @@ public class DecernisServiceImpl implements DecernisService {
 				} else if (data == null) {
 					return "No ingredients found";
 				}
-
 			} else {
 				return "No usage found";
 			}
