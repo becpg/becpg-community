@@ -269,6 +269,7 @@
 				<list>
 					<value>Declare</value>
 					<value>DoNotDetails</value>
+					<value>DoNotDetailsAtEnd</value>
 					<value>Detail</value>
 					<value>Kit</value>
 					<value>Group</value>
@@ -285,6 +286,7 @@
 					<value>Rename</value>
 					<value>Detail</value>
 					<value>DoNotDetails</value>
+					<value>DoNotDetailsAtEnd</value>
 					<value>Group</value>
 					<value>Declare</value>
 					<value>DetailComponents</value>

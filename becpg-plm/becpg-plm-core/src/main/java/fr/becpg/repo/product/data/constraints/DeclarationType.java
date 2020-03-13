@@ -28,6 +28,7 @@ public enum DeclarationType {
 	Group,
 	Kit,
 	DoNotDeclare, 
-	DoNotDetails
+	DoNotDetails,
+	DoNotDetailsAtEnd
 	
 }

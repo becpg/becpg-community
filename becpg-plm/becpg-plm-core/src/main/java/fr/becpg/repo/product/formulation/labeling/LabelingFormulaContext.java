@@ -1238,6 +1238,11 @@ if (component instanceof CompositeLabeling) {
 			}
 
 		}
+		
+		if(!compositeLabeling.getIngListAtEnd().isEmpty()) {
+			ret.append(renderLabelingComponent(compositeLabeling,(List)compositeLabeling.getIngListAtEnd().values(), false, null, null, true));
+		}
+		
 		return cleanLabel(ret);
 	}
 
