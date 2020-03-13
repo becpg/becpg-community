@@ -1264,6 +1264,11 @@ public class LabelingFormulaContext extends RuleParser {
 			}
 
 		}
+		
+		if(!compositeLabeling.getIngListAtEnd().isEmpty()) {
+			ret.append(renderLabelingComponent(compositeLabeling,(List)compositeLabeling.getIngListAtEnd().values(), false, null, null, true));
+		}
+		
 		return cleanLabel(ret);
 	}
 
