@@ -32,13 +32,14 @@ import org.alfresco.repo.rule.RuntimeRuleService;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
-import org.alfresco.service.cmr.dictionary.DictionaryService;
+import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.InvalidAspectException;
 import org.alfresco.service.cmr.dictionary.TypeDefinition;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.InvalidNodeRefException;
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.rule.Rule;
@@ -49,6 +50,7 @@ import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
@@ -60,6 +62,7 @@ import fr.becpg.model.DataListModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.data.hierarchicalList.CompositeDataItem;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.entity.EntityTplPlugin;
@@ -67,6 +70,7 @@ import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationService;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.mail.BeCPGMailService;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -88,10 +92,14 @@ public class EntityTplServiceImpl implements EntityTplService {
 	private NodeService nodeService;
 
 	@Autowired
+	@Qualifier("mlAwareNodeService")
+	private NodeService mlNodeService;
+
+	@Autowired
 	private EntityListDAO entityListDAO;
 
 	@Autowired
-	private DictionaryService dictionaryService;
+	private EntityDictionaryService entityDictionaryService;
 
 	@Autowired
 	private FormulationService<FormulatedEntity> formulationService;
@@ -138,9 +146,9 @@ public class EntityTplServiceImpl implements EntityTplService {
 	public NodeRef createEntityTpl(NodeRef parentNodeRef, QName entityType, String entityTplName, boolean enabled, boolean isDefault,
 			Set<QName> entityLists, Set<String> subFolders) {
 
-		TypeDefinition typeDef = dictionaryService.getType(entityType);
+		TypeDefinition typeDef = entityDictionaryService.getType(entityType);
 		if (entityTplName == null) {
-			entityTplName = typeDef.getTitle(dictionaryService);
+			entityTplName = typeDef.getTitle(entityDictionaryService.getDictionaryService());
 		}
 		// entityTpl
 		Map<QName, Serializable> properties = new HashMap<>();
@@ -168,7 +176,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 					NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, entityList);
 					if (listNodeRef == null) {
-						listNodeRef = entityListDAO.createList(listContainerNodeRef, entityList);
+						entityListDAO.createList(listContainerNodeRef, entityList);
 					}
 				}
 			}
@@ -188,6 +196,32 @@ public class EntityTplServiceImpl implements EntityTplService {
 					}
 				}
 			}
+		} else {
+			NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityTplNodeRef);
+			if (listContainerNodeRef == null) {
+				listContainerNodeRef = entityListDAO.createListContainer(entityTplNodeRef);
+			}
+
+			for (QName entityList : entityLists) {
+
+				NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, entityList);
+
+				if (listNodeRef != null) {
+
+					ClassDefinition classDef = entityDictionaryService.getClass(entityList);
+
+					MLText title = (MLText) mlNodeService.getProperty(listNodeRef, ContentModel.PROP_TITLE);
+					MLText description = (MLText) mlNodeService.getProperty(listNodeRef, ContentModel.PROP_DESCRIPTION);
+
+					MLText classTitleMLText = TranslateHelper.getTemplateTitleMLText(classDef.getName());
+					MLText classDescritptionMLText = TranslateHelper.getTemplateDescriptionMLText(classDef.getName());
+
+					mlNodeService.setProperty(listNodeRef, ContentModel.PROP_TITLE, MLTextHelper.merge(title, classTitleMLText));
+					mlNodeService.setProperty(listNodeRef, ContentModel.PROP_DESCRIPTION, MLTextHelper.merge(description, classDescritptionMLText));
+
+				}
+			}
+
 		}
 		return entityTplNodeRef;
 	}
@@ -240,6 +274,17 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 			listNodeRef = nodeService.createNode(listContainerNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS,
 					DataListModel.TYPE_DATALIST, properties).getChildRef();
+
+		} else {
+
+			MLText title = (MLText) mlNodeService.getProperty(listNodeRef, ContentModel.PROP_TITLE);
+			MLText description = (MLText) mlNodeService.getProperty(listNodeRef, ContentModel.PROP_DESCRIPTION);
+
+			MLText classTitleMLText = TranslateHelper.getTranslatedKey("entity-datalist-" + name.toLowerCase() + "-title");
+			MLText classDescritptionMLText = TranslateHelper.getTranslatedKey("entity-datalist-" + name.toLowerCase() + "-description");
+
+			mlNodeService.setProperty(listNodeRef, ContentModel.PROP_TITLE, MLTextHelper.merge(title, classTitleMLText));
+			mlNodeService.setProperty(listNodeRef, ContentModel.PROP_DESCRIPTION, MLTextHelper.merge(description, classDescritptionMLText));
 
 		}
 		return listNodeRef;
@@ -316,7 +361,9 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 						NodeRef listContainerNodeRef = alfrescoRepository.getOrCreateDataListContainer(entity);
 
-						for (QName dataListQName : datalistsTpl.keySet()) {
+						for (Map.Entry<QName, List<? extends RepositoryEntity>> entry : datalistsTpl.entrySet()) {
+							QName dataListQName = entry.getKey();
+
 							List<BeCPGDataObject> dataListItems = (List<BeCPGDataObject>) datalists.get(dataListQName);
 
 							boolean update = false;
@@ -331,7 +378,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 							if (!update) {
 
-								for (RepositoryEntity dataListItemTpl : datalistsTpl.get(dataListQName)) {
+								for (RepositoryEntity dataListItemTpl : entry.getValue()) {
 									Map<QName, Serializable> identAttrTpl = repositoryEntityDefReader.getIdentifierAttributes(dataListItemTpl);
 
 									if (!identAttrTpl.isEmpty()) {
@@ -379,14 +426,17 @@ public class EntityTplServiceImpl implements EntityTplService {
 							}
 
 						}
+
+						synchronizeTitle(entityTpl, entity);
+
 					}
 
 					// synchronize folders
 					// remove empty folders that are not in the template
 					for (FileInfo folder : fileFolderService.listFolders(entityNodeRef)) {
-						if ((folder.getName() != "DataLists") && folder.getType().equals(ContentModel.TYPE_FOLDER)
+						if ((!"DataLists".equals(folder.getName())) && folder.getType().equals(ContentModel.TYPE_FOLDER)
 								&& (nodeService.getChildByName(tplNodeRef, ContentModel.ASSOC_CONTAINS, folder.getName()) == null)
-								&& (fileFolderService.list(folder.getNodeRef()).size() == 0)) {
+								&& (fileFolderService.list(folder.getNodeRef()).isEmpty())) {
 
 							if (logger.isDebugEnabled()) {
 								logger.debug("Remove folder " + folder.getName() + " of node " + entityNodeRef);
@@ -397,7 +447,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 					// copy folders of template that are not in the entity
 					for (FileInfo folder : fileFolderService.listFolders(tplNodeRef)) {
-						if ((folder.getName() != "DataLists") && folder.getType().equals(ContentModel.TYPE_FOLDER)
+						if ((!"DataLists".equals(folder.getName())) && folder.getType().equals(ContentModel.TYPE_FOLDER)
 								&& (nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS, folder.getName()) == null)) {
 
 							if (logger.isDebugEnabled()) {
@@ -413,10 +463,9 @@ public class EntityTplServiceImpl implements EntityTplService {
 					}
 
 				});
+			} catch (ConcurrencyFailureException e) {
+				throw (ConcurrencyFailureException) e;
 			} catch (Exception e) {
-				if (e instanceof ConcurrencyFailureException) {
-					throw (ConcurrencyFailureException) e;
-				}
 				runWithSuccess = false;
 				logger.error(e, e);
 
@@ -429,6 +478,44 @@ public class EntityTplServiceImpl implements EntityTplService {
 		} else {
 			logger.error("Only one massive operation at a time");
 		}
+	}
+
+	private void synchronizeTitle(RepositoryEntity entityTpl, RepositoryEntity entity) {
+
+		/*-- copy source datalists--*/
+		logger.debug("copy source datalists");
+		NodeRef sourceListContainerNodeRef = alfrescoRepository.getOrCreateDataListContainer(entityTpl);
+		NodeRef targetListContainerNodeRef = alfrescoRepository.getOrCreateDataListContainer(entity);
+
+		if (sourceListContainerNodeRef != null && targetListContainerNodeRef != null) {
+
+			List<NodeRef> sourceListsNodeRef = entityListDAO.getExistingListsNodeRef(sourceListContainerNodeRef);
+			for (NodeRef sourceListNodeRef : sourceListsNodeRef) {
+
+				String dataListType = (String) nodeService.getProperty(sourceListNodeRef, DataListModel.PROP_DATALISTITEMTYPE);
+				String name = (String) nodeService.getProperty(sourceListNodeRef, ContentModel.PROP_NAME);
+				QName listQName = QName.createQName(dataListType, namespaceService);
+
+				NodeRef existingListNodeRef;
+
+				if (name.startsWith(RepoConsts.WUSED_PREFIX) || name.startsWith(RepoConsts.CUSTOM_VIEW_PREFIX)
+						|| name.startsWith(RepoConsts.SMART_CONTENT_PREFIX) || name.contains("@")) {
+					existingListNodeRef = entityListDAO.getList(targetListContainerNodeRef, name);
+				} else {
+					existingListNodeRef = entityListDAO.getList(targetListContainerNodeRef, listQName);
+				}
+
+				if (existingListNodeRef != null) {
+					MLText title = (MLText) mlNodeService.getProperty(sourceListNodeRef, ContentModel.PROP_TITLE);
+					MLText description = (MLText) mlNodeService.getProperty(sourceListNodeRef, ContentModel.PROP_DESCRIPTION);
+
+					mlNodeService.setProperty(existingListNodeRef, ContentModel.PROP_TITLE, title);
+					mlNodeService.setProperty(existingListNodeRef, ContentModel.PROP_DESCRIPTION, description);
+				}
+
+			}
+		}
+
 	}
 
 	private RepositoryEntity findCompositeParent(RepositoryEntity parent, List<BeCPGDataObject> dataListItems) {
@@ -451,7 +538,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 	}
 
 	@Override
-	public void formulateEntities(NodeRef tplNodeRef) throws FormulateException {
+	public void formulateEntities(NodeRef tplNodeRef) {
 		boolean runWithSuccess = true;
 		StopWatch watch = new StopWatch();
 		watch.start();
@@ -529,7 +616,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 		}, false, true);
 
-		if (logger.isInfoEnabled()) {
+		if (logger.isInfoEnabled() && (watch != null)) {
 			watch.stop();
 			logger.info("Batch takes " + watch.getTotalTimeSeconds() + " seconds");
 		}
@@ -638,7 +725,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 			}
 
-			if (logger.isDebugEnabled()) {
+			if (logger.isDebugEnabled() && (watch != null)) {
 				watch.stop();
 				logger.debug("Synchronize entity in " + watch.getTotalTimeSeconds() + " seconds");
 			}

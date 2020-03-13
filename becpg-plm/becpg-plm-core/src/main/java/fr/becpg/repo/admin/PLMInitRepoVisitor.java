@@ -76,7 +76,6 @@ import fr.becpg.repo.entity.EntitySystemService;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.entity.catalog.EntityCatalogService;
 import fr.becpg.repo.helper.ContentHelper;
-import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.hierarchy.HierarchyHelper;
 import fr.becpg.repo.mail.BeCPGMailService;
