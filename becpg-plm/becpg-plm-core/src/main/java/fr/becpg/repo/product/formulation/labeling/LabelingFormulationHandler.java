@@ -1355,13 +1355,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 						if (!DeclarationType.Declare.equals(declarationType) || !aggregateRules.isEmpty()) {
 
-							CompositeLabeling lc = null;
-							if (DeclarationType.DoNotDetailsAtEnd.equals(declarationType)) {
-								lc = parent.getAtEnd(productData.getNodeRef());
-							} else {
-								lc = parent.get(productData.getNodeRef());
-							}
-
+(??)							CompositeLabeling lc = parent.get(productData.getNodeRef());
 							if ((lc != null)) {
 								compositeLabeling = lc;
 								compositeLabeling.setPlural(true);
@@ -1413,11 +1407,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 									compositeLabeling.setQtyTotal(applyYield(qty + waterLost, yield, labelingFormulaContext));
 									compositeLabeling.setVolumeTotal(applyYield(volume, yield, labelingFormulaContext));
 								}
-								if (DeclarationType.DoNotDetailsAtEnd.equals(declarationType)) {
-									parent.addAtEnd(compositeLabeling);
-								} else {
-									parent.add(compositeLabeling);
-								}
+(??)
+(??)								parent.add(compositeLabeling);
 
 								if (logger.isTraceEnabled()) {
 									logger.trace(" - Add detailed labeling component : " + getName(compositeLabeling) + " qty: " + qty);
@@ -1430,8 +1421,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				}
 				if (!DeclarationType.Omit.equals(declarationType)) {
 
-					if (!DeclarationType.DoNotDetails.equals(declarationType) && !DeclarationType.DoNotDetailsAtEnd.equals(declarationType)
-							&& !DeclarationType.DoNotDeclare.equals(declarationType)) {
+(??)					if (!DeclarationType.DoNotDetails.equals(declarationType) && !DeclarationType.DoNotDeclare.equals(declarationType)) {
 
 						if (!isMultiLevel && (productData.getIngList() != null) && !productData.getIngList().isEmpty()) {
 
@@ -1506,15 +1496,12 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 										"Add to parent totalQty: " + applyYield(qty + waterLost, yield, labelingFormulaContext) + " yield: " + yield);
 
 							}
-							if (!DeclarationType.DoNotDetailsAtEnd.equals(declarationType)) {
-								parent.setQtyTotal(parent.getQtyTotal() + applyYield(qty + waterLost, yield, labelingFormulaContext));
-							}
+(??)
+(??)							parent.setQtyTotal(parent.getQtyTotal() + applyYield(qty + waterLost, yield, labelingFormulaContext));
 						}
 
 						if (volume != null) {
-							if (!DeclarationType.DoNotDetailsAtEnd.equals(declarationType)) {
-								parent.setVolumeTotal(parent.getVolumeTotal() + applyYield(volume, yield, labelingFormulaContext));
-							}
+(??)							parent.setVolumeTotal(parent.getVolumeTotal() + applyYield(volume, yield, labelingFormulaContext));
 						}
 					}
 				}

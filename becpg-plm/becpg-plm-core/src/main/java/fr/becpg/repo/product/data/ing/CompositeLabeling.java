@@ -142,7 +142,6 @@ public class CompositeLabeling extends LabelingComponent {
 		ingListAtEnd.remove(ing);
 
 	}
-
 	public Map<NodeRef, CompositeLabeling> getIngListAtEnd() {
 		return ingListAtEnd;
 	}
