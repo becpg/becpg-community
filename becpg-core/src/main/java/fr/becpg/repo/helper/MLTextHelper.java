@@ -1,5 +1,6 @@
 package fr.becpg.repo.helper;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -7,6 +8,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.service.cmr.repository.MLText;
@@ -16,6 +18,8 @@ import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Component;
+
+import fr.becpg.repo.RepoConsts;
 
 /**
  *
@@ -28,8 +32,6 @@ public class MLTextHelper {
 	private static String supportedLocales;
 
 	private static boolean shouldExtractMLText;
-
-	private static final String[] supportedUILocales = { "en", "en_US", "fr", "sv_SE", "fi", "es", "it", "pt", "ru", "de" };
 
 	@Value("${beCPG.multilinguale.supportedLocales}")
 	public void setSupportedLocales(String supportedLocales) {
@@ -44,10 +46,10 @@ public class MLTextHelper {
 	public static boolean shouldExtractMLText() {
 		return shouldExtractMLText;
 	}
-	
+
 	/**
 	 * Try to find the best match for locale or try with default server local
-	 * 
+	 *
 	 * @param mltext
 	 * @param locale
 	 * @return
@@ -101,9 +103,10 @@ public class MLTextHelper {
 			return null;
 		} else if (templateLocale == null) {
 			// Return first locale found
-			for (Locale locale : options) {
-				return locale;
+			if (!options.isEmpty()) {
+				return options.iterator().next();
 			}
+
 		} else if (options.contains(templateLocale)) // First see if there is an
 														// exact match
 		{
@@ -115,7 +118,7 @@ public class MLTextHelper {
 
 		// First test language only
 		for (Locale temp : options) {
-			if ((temp.getLanguage() != null) && temp.getLanguage().equals(templateLocale.getLanguage())) {
+			if ((temp.getLanguage() != null) && (templateLocale != null) && temp.getLanguage().equals(templateLocale.getLanguage())) {
 				if ((temp.getCountry() != null) && temp.getCountry().equals(templateLocale.getCountry())) {
 					return temp;
 				}
@@ -136,10 +139,7 @@ public class MLTextHelper {
 	}
 
 	public static boolean isSupportedLocale(Locale contentLocale) {
-		if (supportedLocales.contains(contentLocale.toString())) {
-			return true;
-		}
-		return false;
+		return (contentLocale != null) && supportedLocales.contains(contentLocale.toString());
 	}
 
 	public static List<Locale> getSupportedLocales() {
@@ -160,10 +160,10 @@ public class MLTextHelper {
 
 		return ret;
 	}
-	
+
 	public static List<String> getSupportedLocalesList() {
-		
-		List<String> ret = new ArrayList<String>();
+
+		List<String> ret = new ArrayList<>();
 		if (supportedLocales != null) {
 			ret = Arrays.asList(supportedLocales.split(","));
 		}
@@ -232,8 +232,8 @@ public class MLTextHelper {
 
 	public static MLText getI18NMessage(String messageKey, Object... variables) {
 		MLText ret = new MLText();
-		for (String key : supportedUILocales) {
-			
+		for (String key : RepoConsts.SUPPORTED_UI_LOCALES) {
+
 			if (supportedLocales.contains(key)) {
 				Locale locale = parseLocale(key);
 				List<Object> parsedVariable = new LinkedList<>();
@@ -246,8 +246,7 @@ public class MLTextHelper {
 						}
 					}
 				}
-				
-				
+
 				ret.addValue(locale, I18NUtil.getMessage(messageKey, locale, parsedVariable.toArray()));
 
 			}
@@ -263,13 +262,25 @@ public class MLTextHelper {
 	public static MLText createMLTextI18N(MLTextCallback callback) {
 		MLText ret = new MLText();
 
-		for (String key : supportedUILocales) {
+		for (String key : RepoConsts.SUPPORTED_UI_LOCALES) {
 			if (supportedLocales.contains(key)) {
 				Locale locale = parseLocale(key);
 				ret.addValue(locale, callback.run(locale));
 			}
 		}
 		return ret;
+	}
+
+	public static Serializable merge(MLText toMergeTo, MLText toMergeFrom) {
+
+		for (Map.Entry<Locale, String> entry : toMergeFrom.entrySet()) {
+			String value = toMergeTo.get(entry.getKey());
+			if ((value == null) || value.isEmpty()) {
+				toMergeTo.put(entry.getKey(), entry.getValue());
+			}
+		}
+
+		return toMergeTo;
 	}
 
 }

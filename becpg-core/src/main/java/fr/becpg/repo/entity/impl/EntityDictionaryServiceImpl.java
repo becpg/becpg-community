@@ -26,6 +26,7 @@ import java.util.Map;
 import org.alfresco.service.cmr.dictionary.AspectDefinition;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
+import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.dictionary.TypeDefinition;
@@ -189,6 +190,11 @@ public class EntityDictionaryServiceImpl implements EntityDictionaryService {
 	@Override
 	public DictionaryService getDictionaryService() {
 		return dictionaryService;
+	}
+
+	@Override
+	public ClassDefinition getClass(QName type) {
+		return dictionaryService.getClass(type);
 	}
 
 

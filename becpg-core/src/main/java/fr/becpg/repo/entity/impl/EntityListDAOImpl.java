@@ -33,7 +33,6 @@ import java.util.Set;
 import org.alfresco.model.ContentModel;
 import org.alfresco.query.PagingRequest;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
-import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.CopyService;
@@ -52,6 +51,7 @@ import org.springframework.stereotype.Repository;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.TranslateHelper;
@@ -70,8 +70,9 @@ public class EntityListDAOImpl implements EntityListDAO {
 	@Autowired
 	private NodeService nodeService;
 
+	
 	@Autowired
-	private DictionaryService dictionaryService;
+	private EntityDictionaryService entityDictionaryService;
 
 	@Autowired
 	private FileFolderService fileFolderService;
@@ -137,7 +138,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 			I18NUtil.setLocale(Locale.getDefault());
 			I18NUtil.setContentLocale(null);
 
-			ClassDefinition classDef = dictionaryService.getClass(listQName);
+			ClassDefinition classDef = entityDictionaryService.getClass(listQName);
 
 			if (classDef == null) {
 				logger.error("No classDef found for :" + listQName);
@@ -161,7 +162,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 			I18NUtil.setContentLocale(currentContentLocal);
 		}
 	}
-
+	
 	@Override
 	public NodeRef createList(NodeRef listContainerNodeRef, String name, QName listQName) {
 
@@ -185,6 +186,10 @@ public class EntityListDAOImpl implements EntityListDAO {
 		return nodeService.createNode(listContainerNodeRef, ContentModel.ASSOC_CONTAINS, assocQname, DataListModel.TYPE_DATALIST, properties)
 				.getChildRef();
 	}
+	
+	
+	
+	
 
 	@Override
 	public List<NodeRef> getExistingListsNodeRef(NodeRef listContainerNodeRef) {
@@ -204,7 +209,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 					QName dataListTypeQName = QName.createQName(dataListType, namespaceService);
 
 					if ((BeCPGModel.TYPE_ENTITYLIST_ITEM.equals(dataListTypeQName)
-							|| dictionaryService.isSubClass(dataListTypeQName, BeCPGModel.TYPE_ENTITYLIST_ITEM)
+							|| entityDictionaryService.isSubClass(dataListTypeQName, BeCPGModel.TYPE_ENTITYLIST_ITEM)
 							|| ((String) nodeService.getProperty(listNodeRef, ContentModel.PROP_NAME)).startsWith(RepoConsts.WUSED_PREFIX) )) {
 
 						if (!hiddenListQnames.contains(dataListTypeQName)) {
@@ -222,12 +227,6 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 	@Override
 	public List<NodeRef> getListItems(NodeRef dataListNodeRef, QName dataType) {
-
-		// Map<String, Boolean> sortMap = new LinkedHashMap<>();
-		// sortMap.put("@bcpg:sort", true);
-		// sortMap.put("@cm:created", true);
-		//
-		// return getListItems(dataListNodeRef, dataType, sortMap);
 
 		return getListItemsV2(dataListNodeRef, dataType);
 	}
@@ -257,11 +256,8 @@ public class EntityListDAOImpl implements EntityListDAO {
 					return false;
 				}
 
-				if ((object != null) && (object instanceof NodeRef) && nodeService.getType((NodeRef) object).equals(listQNameFilter)) {
-					return true;
-				}
-
-				return false;
+				return (object instanceof NodeRef) && nodeService.getType((NodeRef) object).equals(listQNameFilter);
+				
 			});
 		}
 
@@ -270,7 +266,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 			Integer sort1 = (Integer) nodeService.getProperty(o1, BeCPGModel.PROP_SORT);
 			Integer sort2 = (Integer) nodeService.getProperty(o2, BeCPGModel.PROP_SORT);
 
-			if (sort1 == sort2) {
+			if (sort1!=null && sort1.equals(sort2) || (sort1 == null && sort2==null)) {
 
 				Date created1 = (Date) nodeService.getProperty(o1, ContentModel.PROP_CREATED);
 				Date created2 = (Date) nodeService.getProperty(o2, ContentModel.PROP_CREATED);
@@ -289,6 +285,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 				return created1.compareTo(created2);
 			}
+			
 
 			if (sort1 == null) {
 				return -1;
@@ -470,5 +467,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 		return null;
 	}
+
+	
 
 }
