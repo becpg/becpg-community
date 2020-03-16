@@ -612,8 +612,8 @@
 			<form id="create">
 				<field-visibility>
 					<show id="cm:name" />
-					<show id="cm:description" />
-					<show id="cm:titled" />
+					<show id="cm:description" force="true"/>
+					<show id="cm:title" />
 					<show id="bcpg:code" />
 
 					<!-- auditable -->
@@ -639,8 +639,8 @@
 			<form>
 				<field-visibility>
 					<show id="cm:name" />
-					<show id="cm:description" />
-					<show id="cm:titled" />
+					<show id="cm:description" force="true"/>
+					<show id="cm:title" />
 					<show id="bcpg:code" />
 
 					<!-- auditable -->
@@ -666,8 +666,8 @@
 			<form id="create">
 				<field-visibility>
 					<show id="cm:name" />
-					<show id="cm:titled" />
-					<show id="cm:description" />
+					<show id="cm:title" />
+					<show id="cm:description" force="true"/>
 					<show id="bcpg:code" />
 					<show id="qa:qcSamplesCounter" />
 					<show id="qa:qcState" />
@@ -695,7 +695,7 @@
 				<appearance>
 					<set id="mainInfo" appearance="bordered-panel" label-id="becpg.forms.set.designation.label" />
 					<field id="cm:name" set="mainInfo" />
-					<field id="cm:titled" set="mainInfo" />
+					<field id="cm:title" set="mainInfo" />
 					<field id="cm:description" set="mainInfo" />
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="qa:qcState" read-only="true" set="mainInfo" />
@@ -729,8 +729,8 @@
 			<form id="search">
 				<field-visibility>
 					<show id="cm:name" />
-					<show id="cm:titled" />
-					<show id="cm:description" />
+					<show id="cm:title" />
+					<show id="cm:description" force="true"/>
 					<show id="qa:qcState" />
 					<show id="qa:qcControlPlans" />
 
@@ -752,8 +752,8 @@
 			<form>
 				<field-visibility>
 					<show id="cm:name" />
-					<show id="cm:titled" />
-					<show id="cm:description" />
+					<show id="cm:title" />
+					<show id="cm:description" force="true"/>
 					<show id="bcpg:code" />
 					<show id="qa:qcSamplesCounter" />
 					<show id="qa:qcState" />
@@ -781,7 +781,7 @@
 				<appearance>
 					<set id="mainInfo" appearance="bordered-panel" label-id="becpg.forms.set.designation.label" />
 					<field id="cm:name" set="mainInfo" />
-					<field id="cm:titled" set="mainInfo" />
+					<field id="cm:title" set="mainInfo" />
 					<field id="cm:description" set="mainInfo" />
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="qa:qcState" read-only="true" set="mainInfo" />
@@ -836,8 +836,8 @@
 			<form>
 				<field-visibility>
 					<show id="cm:name" />
-					<show id="cm:titled" />
-					<show id="cm:description" />
+					<show id="cm:title" />
+					<show id="cm:description" force="true"/>
 					<show id="bcpg:code" />
 					<show id="qa:cpIsExtLabo" />
 					<show id="qa:cpReleaseInfo" />
@@ -867,8 +867,8 @@
 			<form>
 				<field-visibility>
 					<show id="cm:name" />
-					<show id="cm:titled" />
-					<show id="cm:description" />
+					<show id="cm:title" />
+					<show id="cm:description" force="true"/>
 					<show id="bcpg:code" />
 
 					<!-- auditable -->
@@ -887,8 +887,8 @@
 			<form>
 				<field-visibility>
 					<show id="bcpg:charactName" />
-					<show id="cm:titled" />
-					<show id="cm:description" />
+					<show id="cm:title" />
+					<show id="cm:description" force="true"/>
 					<show id="bcpg:code" />
 				</field-visibility>
 			</form>
@@ -901,15 +901,15 @@
 			<form>
 				<field-visibility>
 					<show id="bcpg:charactName" />
-					<show id="cm:titled" />
-					<show id="cm:description" />
+					<show id="cm:title" />
+					<show id="cm:description" force="true"/>
 					<show id="bcpg:code" />
 				</field-visibility>
 			</form>
 			<form id="datagrid">
 				<field-visibility>
 					<show id="bcpg:charactName" />
-					<show id="cm:titled" />
+					<show id="cm:title" />
 					<show id="bcpg:code" />
 				</field-visibility>
 			</form>
@@ -922,8 +922,8 @@
 			<form>
 				<field-visibility>
 					<show id="bcpg:charactName" />
-					<show id="cm:titled" />
-					<show id="cm:description" />
+					<show id="cm:title" />
+					<show id="cm:description" force="true"/>
 					<show id="bcpg:code" />
 				</field-visibility>
 			</form>
@@ -936,15 +936,15 @@
 			<form>
 				<field-visibility>
 					<show id="bcpg:charactName" />
-					<show id="cm:titled" />
-					<show id="cm:description" />
+					<show id="cm:title" />
+					<show id="cm:description" force="true"/>
 					<show id="bcpg:code" />
 				</field-visibility>
 			</form>
 			<form id="datagrid">
 				<field-visibility>
 					<show id="bcpg:charactName" />
-					<show id="cm:titled" />
+					<show id="cm:title" />
 					<show id="bcpg:code" />
 				</field-visibility>
 			</form>
@@ -956,10 +956,10 @@
 		<forms>
 			<form>
 				<field-visibility>
-					<show id="bcpg:controlCharactType" />
+					<show id="bcpg:controlCharactType" force="true" />
 					<show id="bcpg:charactName" />
-					<show id="cm:titled" />
-					<show id="cm:description" />
+					<show id="cm:title" />
+					<show id="cm:description" force="true" />
 					<show id="bcpg:code" />
 				</field-visibility>
 			</form>
@@ -971,18 +971,18 @@
 		<forms>
 			<form>
 				<field-visibility>
-					<show id="bcpg:controlCharactType" />
+					<show id="bcpg:controlCharactType" force="true" />
 					<show id="bcpg:charactName" />
-					<show id="cm:titled" />
-					<show id="cm:description" />
+					<show id="cm:title" />
+					<show id="cm:description" force="true" />
 					<show id="bcpg:code" />
 				</field-visibility>
 			</form>
 			<form id="datagrid">
 				<field-visibility>
-					<show id="bcpg:controlCharactType" />
+					<show id="bcpg:controlCharactType" force="true" />
 					<show id="bcpg:charactName" />
-					<show id="cm:titled" />
+					<show id="cm:title" />
 					<show id="bcpg:code" />
 				</field-visibility>
 			</form>

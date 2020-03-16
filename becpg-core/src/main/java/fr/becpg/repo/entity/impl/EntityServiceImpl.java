@@ -39,6 +39,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.coci.CheckOutCheckInServiceImpl;
 import org.alfresco.repo.content.MimetypeMap;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.virtual.VirtualContentModel;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
@@ -397,7 +398,7 @@ public class EntityServiceImpl implements EntityService {
 
 	private void copyOrMoveFiles(NodeRef sourceNodeRef, NodeRef targetNodeRef, boolean isCopy) {
 
-		if ((targetNodeRef != null) && (sourceNodeRef != null)) {
+		if ((targetNodeRef != null) && (sourceNodeRef != null) && !nodeService.hasAspect(sourceNodeRef, VirtualContentModel.ASPECT_VIRTUAL)) {
 
 			for (FileInfo file : fileFolderService.list(sourceNodeRef)) {
 
@@ -452,10 +453,12 @@ public class EntityServiceImpl implements EntityService {
 	@Override
 	public void deleteFiles(NodeRef entityNodeRef, boolean deleteArchivedNodes) {
 
-		if (entityNodeRef != null) {
+		if (entityNodeRef != null && !nodeService.hasAspect(entityNodeRef, VirtualContentModel.ASPECT_VIRTUAL)) {
 			for (FileInfo file : fileFolderService.list(entityNodeRef)) {
 
-				logger.debug("delete file: " + file.getName() + " entityFolderNodeRef: " + entityNodeRef);
+				if (logger.isDebugEnabled()) {
+					logger.debug("delete file: " + file.getName() + " entityFolderNodeRef: " + entityNodeRef);
+				}
 				deleteNode(file.getNodeRef(), deleteArchivedNodes);
 			}
 		}
@@ -463,11 +466,14 @@ public class EntityServiceImpl implements EntityService {
 
 	private void deleteNode(NodeRef nodeRef, boolean deleteArchivedNode) {
 
-		// delete from trash
-		if (deleteArchivedNode) {
-			nodeService.addAspect(nodeRef, ContentModel.ASPECT_TEMPORARY, null);
+		// Test folder exists
+		if (nodeService.exists(nodeRef)) {
+			// delete from trash
+			if (deleteArchivedNode) {
+				nodeService.addAspect(nodeRef, ContentModel.ASPECT_TEMPORARY, null);
+			}
+			nodeService.deleteNode(nodeRef);
 		}
-		nodeService.deleteNode(nodeRef);
 	}
 
 	@Override

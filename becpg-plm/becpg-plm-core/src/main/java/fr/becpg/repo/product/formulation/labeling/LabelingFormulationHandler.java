@@ -125,8 +125,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		}
 
 		// no compo => no formulation
-		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)
-				|| ((formulatedProduct.getLabelingListView() == null) && !alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_INGLABELINGLIST))) {
+		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) || ((formulatedProduct.getLabelingListView() == null)
+				&& !alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_INGLABELINGLIST))) {
 			logger.debug("no labelingListView => no formulation - " + formulatedProduct.getName());
 			return true;
 		}
@@ -187,9 +187,11 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							exp.getValue(dataContext, String.class);
 
 						} catch (Exception e) {
-							formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Tolerated,  MLTextHelper.getI18NMessage("message.formulate.labelRule.error", labelingRuleListDataItem.getName(),
-									e.getLocalizedMessage()), null,
-									new ArrayList<NodeRef>(), RequirementDataType.Labelling));
+							formulatedProduct.getReqCtrlList()
+									.add(new ReqCtrlListDataItem(
+											null, RequirementType.Tolerated, MLTextHelper.getI18NMessage("message.formulate.labelRule.error",
+													labelingRuleListDataItem.getName(), e.getLocalizedMessage()),
+											null, new ArrayList<NodeRef>(), RequirementDataType.Labelling));
 							if (logger.isDebugEnabled()) {
 								logger.debug("Error in formula :" + SpelHelper.formatFormula(labelingRuleListDataItem.getFormula()), e);
 							}
@@ -213,12 +215,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			}
 
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			if(formulatedProduct instanceof RawMaterialData){
+			if (formulatedProduct instanceof RawMaterialData) {
 				compoList.add(new CompoListDataItem(null, null, 1d, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, formulatedProduct.getNodeRef()));
-			}
-			else{
-				compoList = formulatedProduct
-						.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()));
+			} else {
+				compoList = formulatedProduct.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()));
 			}
 
 			// Compute composite
@@ -240,6 +240,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			}
 
 			aggregateLegalName(compositeLabeling, labelingFormulaContext, true);
+
+			mergeAtEndLabeling(compositeLabeling, labelingFormulaContext, new HashMap<>(), true);
 
 			if (logger.isTraceEnabled()) {
 				logger.trace(" Before reorder \n " + compositeLabeling.toString());
@@ -320,9 +322,11 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 									label.addValue(locale, ret);
 
 								} catch (Exception e) {
-									formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, MLTextHelper.getI18NMessage("message.formulate.labelRule.error", labelingRuleListDataItem.getName(),
-											e.getLocalizedMessage()), null,
-											new ArrayList<NodeRef>(), RequirementDataType.Labelling));
+									formulatedProduct.getReqCtrlList()
+											.add(new ReqCtrlListDataItem(null, RequirementType.Tolerated,
+													MLTextHelper.getI18NMessage("message.formulate.labelRule.error",
+															labelingRuleListDataItem.getName(), e.getLocalizedMessage()),
+													null, new ArrayList<NodeRef>(), RequirementDataType.Labelling));
 
 									if (logger.isDebugEnabled()) {
 										logger.debug("Error in formula : (" + labelingRuleListDataItem.getNodeRef() + ")"
@@ -511,6 +515,65 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	}
 
+	private void mergeAtEndLabeling(CompositeLabeling parent, LabelingFormulaContext labelingFormulaContext,
+			Map<String, List<CompositeLabeling>> componentsByName, boolean isRoot) {
+	
+		List<CompositeLabeling> toRemove = new ArrayList<>();
+
+		for (CompositeLabeling component : parent.getIngListAtEnd().values()) {
+			List<CompositeLabeling> tmp = new ArrayList<>();
+			String name = labelingFormulaContext.getLegalIngName(component);
+			if ((name != null) && !name.isEmpty()) {
+				if (componentsByName.containsKey(name)) {
+					tmp = componentsByName.get(name);
+				}
+				tmp.add(component);
+				componentsByName.put(name, tmp);
+			}
+			if (!isRoot) {
+				toRemove.add(component);
+			}
+
+		}
+		
+		for (CompositeLabeling component : parent.getIngList().values()) {
+			DeclarationType declarationType = component.getDeclarationType();
+
+			boolean isGroup = DeclarationType.Group.equals(declarationType) || DeclarationType.Kit.equals(declarationType);
+
+			if (!isGroup) {
+				mergeAtEndLabeling(component, labelingFormulaContext, componentsByName, isGroup);
+			} else {
+				mergeAtEndLabeling(component, labelingFormulaContext, new HashMap<>(), isGroup);
+			}
+		}
+		
+
+		if (isRoot) {
+			for (List<CompositeLabeling> toAggregate : componentsByName.values()) {
+
+				CompositeLabeling prev = null;
+				for (CompositeLabeling component : toAggregate) {
+					
+					if (prev == null) {
+						prev = component;
+					} else {
+						merge(prev, component);
+					}
+
+					if (parent.getAtEnd(component.getNodeRef()) == null) {
+						parent.addAtEnd(component);
+					}
+				}
+			}
+		} else {
+			toRemove.forEach(ing -> {
+				parent.removeAtEnd(ing.getNodeRef());
+			});
+		}
+
+	}
+
 	private void merge(CompositeLabeling prev, CompositeLabeling component) {
 		if ((prev != null) && (component != null)) {
 			if ((prev.getQty() != null) && (component.getQty() != null)) {
@@ -542,8 +605,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				}
 			}
 
-			if ((prev.getPluralLegalName() == null || prev.getPluralLegalName().isEmpty()) 
-					&& (component.getPluralLegalName() != null && !component.getPluralLegalName().isEmpty())) {
+			if (((prev.getPluralLegalName() == null) || prev.getPluralLegalName().isEmpty())
+					&& ((component.getPluralLegalName() != null) && !component.getPluralLegalName().isEmpty())) {
 				prev.setPluralLegalName(component.getPluralLegalName());
 			}
 
@@ -976,8 +1039,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			if (current != null) {
 				current.setQty(null);
 				current.setVolume(null);
-				
-				return new ReqCtrlListDataItem(null, RequirementType.Forbidden, MLTextHelper.getI18NMessage("message.formulate.labelRule.error.nullIng", getName(current)), null, new ArrayList<NodeRef>(),
+
+				return new ReqCtrlListDataItem(null, RequirementType.Forbidden,
+						MLTextHelper.getI18NMessage("message.formulate.labelRule.error.nullIng", getName(current)), null, new ArrayList<NodeRef>(),
 						RequirementDataType.Labelling);
 			}
 		}
@@ -1097,12 +1161,12 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		} else {
 			ill.setLocales(null);
 		}
-		
-		//Limit to 50ko (Max 64k)
-		if(log!=null && log.length()> 50000) {
-		   log = "{\"children\":[{\"cssClass\":\"error\",\"name\":\"error-too-long\",\"legal\":\"Details cannot be display, data too long\"}],\"name\":\"root\",\"legal\":\"root\"}";
+
+		// Limit to 50ko (Max 64k)
+		if ((log != null) && (log.length() > 50000)) {
+			log = "{\"children\":[{\"cssClass\":\"error\",\"name\":\"error-too-long\",\"legal\":\"Details cannot be display, data too long\"}],\"name\":\"root\",\"legal\":\"root\"}";
 		}
-		
+
 		ill.setLogValue(log);
 		ill.setSort(sortOrder);
 
@@ -1119,7 +1183,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			throws FormulateException {
 
 		Map<String, ReqCtrlListDataItem> errors = new HashMap<>();
-		
+
 		boolean applyWaterLost = true;
 
 		for (Composite<CompoListDataItem> composite : parentComposite.getChildren()) {
@@ -1157,7 +1221,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 				Double waterLost = 0d;
 				if ((ingsCalculatingWithYield || labelingFormulaContext.isIngsLabelingWithYield()) && (qty != null) && (yield != null)
-						&& (yield != 100d) && (recipeQtyUsed != null) && nodeService.hasAspect(productNodeRef, PLMModel.ASPECT_WATER) && applyWaterLost) {
+						&& (yield != 100d) && (recipeQtyUsed != null) && nodeService.hasAspect(productNodeRef, PLMModel.ASPECT_WATER)
+						&& applyWaterLost) {
 					waterLost = (1 - (yield / 100d)) * recipeQtyUsed * LabelingFormulaContext.PRECISION_FACTOR;
 
 					if (logger.isTraceEnabled()) {
@@ -1167,7 +1232,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					labelingFormulaContext.getToApplyThresholdItems().add(productNodeRef);
 
 					qty -= waterLost;
-					
+
 					applyWaterLost = false;
 				}
 
@@ -1245,7 +1310,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				if (!DeclarationType.DoNotDeclare.equals(declarationType) || !aggregateRules.isEmpty()) {
 
 					// MultiLevel only if detail or group
-					if (!DeclarationType.DoNotDetails.equals(declarationType)
+					if ((!DeclarationType.DoNotDetails.equals(declarationType) || !DeclarationType.DoNotDetailsAtEnd.equals(declarationType))
 							&& ((productData instanceof SemiFinishedProductData) || (productData instanceof FinishedProductData))) {
 						Composite<CompoListDataItem> sfComposite = CompositeHelper.getHierarchicalCompoList(
 								productData.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())));
@@ -1290,7 +1355,13 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 						if (!DeclarationType.Declare.equals(declarationType) || !aggregateRules.isEmpty()) {
 
-							CompositeLabeling lc = parent.get(productData.getNodeRef());
+							CompositeLabeling lc = null;
+							if (DeclarationType.DoNotDetailsAtEnd.equals(declarationType)) {
+								lc = parent.getAtEnd(productData.getNodeRef());
+							} else {
+								lc = parent.get(productData.getNodeRef());
+							}
+
 							if ((lc != null)) {
 								compositeLabeling = lc;
 								compositeLabeling.setPlural(true);
@@ -1342,8 +1413,11 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 									compositeLabeling.setQtyTotal(applyYield(qty + waterLost, yield, labelingFormulaContext));
 									compositeLabeling.setVolumeTotal(applyYield(volume, yield, labelingFormulaContext));
 								}
-
-								parent.add(compositeLabeling);
+								if (DeclarationType.DoNotDetailsAtEnd.equals(declarationType)) {
+									parent.addAtEnd(compositeLabeling);
+								} else {
+									parent.add(compositeLabeling);
+								}
 
 								if (logger.isTraceEnabled()) {
 									logger.trace(" - Add detailed labeling component : " + getName(compositeLabeling) + " qty: " + qty);
@@ -1356,7 +1430,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				}
 				if (!DeclarationType.Omit.equals(declarationType)) {
 
-					if (!DeclarationType.DoNotDetails.equals(declarationType) && !DeclarationType.DoNotDeclare.equals(declarationType)) {
+					if (!DeclarationType.DoNotDetails.equals(declarationType) && !DeclarationType.DoNotDetailsAtEnd.equals(declarationType)
+							&& !DeclarationType.DoNotDeclare.equals(declarationType)) {
 
 						if (!isMultiLevel && (productData.getIngList() != null) && !productData.getIngList().isEmpty()) {
 
@@ -1431,12 +1506,15 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 										"Add to parent totalQty: " + applyYield(qty + waterLost, yield, labelingFormulaContext) + " yield: " + yield);
 
 							}
-
-							parent.setQtyTotal(parent.getQtyTotal() + applyYield(qty + waterLost, yield, labelingFormulaContext));
+							if (!DeclarationType.DoNotDetailsAtEnd.equals(declarationType)) {
+								parent.setQtyTotal(parent.getQtyTotal() + applyYield(qty + waterLost, yield, labelingFormulaContext));
+							}
 						}
 
 						if (volume != null) {
-							parent.setVolumeTotal(parent.getVolumeTotal() + applyYield(volume, yield, labelingFormulaContext));
+							if (!DeclarationType.DoNotDetailsAtEnd.equals(declarationType)) {
+								parent.setVolumeTotal(parent.getVolumeTotal() + applyYield(volume, yield, labelingFormulaContext));
+							}
 						}
 					}
 				}
@@ -1808,7 +1886,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		if (productNodeRef != null) {
 			sourceNodeRefs.add(productNodeRef);
 		}
-		return new ReqCtrlListDataItem(null, RequirementType.Forbidden, MLTextHelper.getI18NMessage("message.formulate.labelRule.error.nullIng", getName(ingItem)), null, sourceNodeRefs, RequirementDataType.Labelling);
+		return new ReqCtrlListDataItem(null, RequirementType.Forbidden,
+				MLTextHelper.getI18NMessage("message.formulate.labelRule.error.nullIng", getName(ingItem)), null, sourceNodeRefs,
+				RequirementDataType.Labelling);
 
 	}
 
@@ -1846,8 +1926,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			}
 
 			for (DeclarationFilter declarationFilter : labelingFormulaContext.getDeclarationFilters()) {
-				if (!declarationFilter.isThreshold() && (declarationFilter.getFormula() != null) && labelingFormulaContext
-						.matchFormule(declarationFilter, new DeclarationFilterContext(compoListDataItem, ingListDataItem))) {
+				if (!declarationFilter.isThreshold() && (declarationFilter.getFormula() != null)
+						&& labelingFormulaContext.matchFormule(declarationFilter, new DeclarationFilterContext(compoListDataItem, ingListDataItem))) {
 					if (logger.isTraceEnabled()) {
 						logger.trace(" -- Found declType : " + declarationFilter.getDeclarationType() + " for "
 								+ nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME));
