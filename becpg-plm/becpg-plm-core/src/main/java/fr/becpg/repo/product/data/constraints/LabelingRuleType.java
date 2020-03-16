@@ -23,39 +23,41 @@ package fr.becpg.repo.product.data.constraints;
  *
  */
 public enum LabelingRuleType {
-	
+
 	Format,
 
 	Rename,
-	
+
 	Type,
-	
+
 	Locale,
-	
+
 	Render,
-	
-    Declare,
-	
+
+	Declare,
+
 	Omit,
-	
+
 	Detail,
-	
+
 	DoNotDetails,
-	
+
 	DetailComponents,
-	
+
 	DoNotDetailsComponents,
 	
+	DoNotDetailsAtEnd,
+
 	Group,
-	
-	DoNotDeclare, 
-	
+
+	DoNotDeclare,
+
 	Prefs,
-	
+
 	DeclareThreshold,
-	
+
 	ShowPerc,
-	
+
 	ShowGeo
 
 }

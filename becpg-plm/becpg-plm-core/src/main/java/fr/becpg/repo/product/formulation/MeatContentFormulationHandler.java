@@ -73,10 +73,10 @@ public class MeatContentFormulationHandler extends FormulationBaseHandler<Produc
 
 						if ((qtyUsedPerc != null) && (qtyUsedPerc != 0d)) {
 
-							Double lossPerc = FormulationHelper.getComponentLossPerc(partProduct, compoItem);
-							if ((lossPerc != null) && (lossPerc != 0)) {
-								qtyUsedPerc = FormulationHelper.getQtyWithLoss(qtyUsedPerc, lossPerc);
-							}
+//	Fix #7157   			Double lossPerc = FormulationHelper.getComponentLossPerc(partProduct, compoItem);
+//							if ((lossPerc != null) && (lossPerc != 0)) {
+//								qtyUsedPerc = FormulationHelper.getQtyWithLoss(qtyUsedPerc, lossPerc);
+//							}
 
 							if ((netWeight != null) && (netWeight != 0d)) {
 								qtyUsedPerc = qtyUsedPerc / netWeight;
