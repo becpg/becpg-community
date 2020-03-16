@@ -36,6 +36,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -198,6 +199,7 @@ public class LabelingFormulaContext extends RuleParser {
 			+ "<td style=\"border: solid 1px !important;padding: 5px;text-align:center;\">{1,number,0.#%}</td></tr>";
 
 	private String defaultSeparator = RepoConsts.LABEL_SEPARATOR;
+	private String atEndSeparator = RepoConsts.LABEL_SEPARATOR;
 	private String groupDefaultSeparator = RepoConsts.LABEL_SEPARATOR;
 	private String ingTypeDefaultSeparator = RepoConsts.LABEL_SEPARATOR;
 	private String allergensSeparator = RepoConsts.LABEL_SEPARATOR;
@@ -299,6 +301,10 @@ public class LabelingFormulaContext extends RuleParser {
 
 	public void setDefaultSeparator(String defaultSeparator) {
 		this.defaultSeparator = defaultSeparator;
+	}
+
+	public void setAtEndSeparator(String atEndSeparator) {
+		this.atEndSeparator = atEndSeparator;
 	}
 
 	public void setGroupDefaultSeparator(String groupDefaultSeparator) {
@@ -1265,8 +1271,11 @@ public class LabelingFormulaContext extends RuleParser {
 
 		}
 		
-		if(!compositeLabeling.getIngListAtEnd().isEmpty()) {
-			ret.append(renderLabelingComponent(compositeLabeling,(List)compositeLabeling.getIngListAtEnd().values(), false, null, null, true));
+		if(!compositeLabeling.getIngListAtEnd().isEmpty()) {	
+			if (ret.length() > 0) {
+			 ret.append(atEndSeparator);
+			}
+			ret.append(renderLabelingComponent(compositeLabeling,compositeLabeling.getIngListAtEnd().values().stream().collect(Collectors.toList()), false, null, null, true));
 		}
 		
 		return cleanLabel(ret);

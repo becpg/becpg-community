@@ -138,6 +138,11 @@ public class CompositeLabeling extends LabelingComponent {
 		return ingListAtEnd.get(grpNodeRef);
 	}
 
+	public void removeAtEnd(NodeRef ing) {
+		ingListAtEnd.remove(ing);
+
+	}
+
 	public Map<NodeRef, CompositeLabeling> getIngListAtEnd() {
 		return ingListAtEnd;
 	}
@@ -184,6 +189,20 @@ public class CompositeLabeling extends LabelingComponent {
 			}
 
 		}
+		for (Iterator<CompositeLabeling> iterator = ingListAtEnd.values().iterator(); iterator.hasNext();) {
+			CompositeLabeling labelingComponent = iterator.next();
+			if (labelingComponent instanceof CompositeLabeling) {
+				labelingComponent.print(sb, prefix + (isTail ? "    " : "│   "), !iterator.hasNext());
+			} else {
+				sb.append(prefix).append(isTail ? "    " : "│   ").append(!iterator.hasNext() ? "*──[" : "├──[")
+						.append(labelingComponent.getLegalName(I18NUtil.getContentLocaleLang()))
+						.append(" ( plural:" + labelingComponent.isPlural() + " ) ")
+						.append(" ]\n");
+			}
+
+		}
+		
+		
 	}
 
 }
