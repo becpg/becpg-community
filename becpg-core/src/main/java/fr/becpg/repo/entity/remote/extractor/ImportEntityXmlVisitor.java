@@ -830,11 +830,11 @@ public class ImportEntityXmlVisitor {
 				inBD = false;
 			}
 
-			if ((code != null) && (code.length() > 0)) {
+			if ((code != null) && (!code.isEmpty())) {
 				beCPGQueryBuilder.andPropEquals(BeCPGModel.PROP_CODE, code);
-			} else if ((erpCode != null) && (erpCode.length() > 0)) {
+			} else if ((erpCode != null) && (!erpCode.isEmpty())) {
 				beCPGQueryBuilder.andPropEquals(BeCPGModel.PROP_ERP_CODE, erpCode);
-			} else if ((name != null) && (name.length() > 0) && !name.startsWith(EMPTY_NAME_PREFIX)) {
+			} else if ((name != null) && (!name.isEmpty()) && !name.startsWith(EMPTY_NAME_PREFIX)) {
 				beCPGQueryBuilder.andPropEquals(RemoteHelper.getPropName(type, entityDictionaryService), name);
 			}
 
@@ -856,17 +856,13 @@ public class ImportEntityXmlVisitor {
 				}
 			}
 
-			if (code != null) {
+			if (((code != null) && (!code.isEmpty())) && (erpCode != null) && (!erpCode.isEmpty())) {
 				logger.debug("Retrying findNode without code for previous query : " + beCPGQueryBuilder.toString());
 				return findNode(nodeRef, null, erpCode, name, parentNodeRef, path, type, currProp, null);
-			}
-
-			if (erpCode != null) {
+			}else if (erpCode != null && !erpCode.isEmpty() && (name != null) && (!name.isEmpty()) && !name.startsWith(EMPTY_NAME_PREFIX)) {
 				logger.debug("Retrying findNode without erpCode for previous query : " + beCPGQueryBuilder.toString());
 				return findNode(nodeRef, null, null, name, parentNodeRef, path, type, currProp, null);
-			}
-
-			if (path != null) {
+			} else if (path != null && (name != null) && (!name.isEmpty()) && !name.startsWith(EMPTY_NAME_PREFIX)) {
 				logger.debug("Retrying findNode without path for previous query : " + beCPGQueryBuilder.toString());
 				return findNode(nodeRef, code, erpCode, name, parentNodeRef, null, type, currProp, null);
 			}
