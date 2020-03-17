@@ -138,6 +138,8 @@ public class ImportHelper {
 	public static final String MSG_ERROR_NO_DOCS_BASE_PATH_SET = "import_service.error.err_no_docs_base_path_set";
 
 	public static final String MSG_ERROR_NO_PARENT = "import_service.error.err_no_parent";
+	
+	public static final String MSG_ERROR_FIELD_TYPE = "import_service.error.err_field_type";
 
 	public static final String QUERY_XPATH_MAPPING_NODE = "mappings/mapping[@name=";
 
