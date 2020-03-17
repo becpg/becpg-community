@@ -280,7 +280,7 @@ public class ImportContext {
 	
 
 
-	public String[] nextLine() {
+	public String[] nextLine() throws ImporterException{
 		
 		return importFileReader.getLineAt(importIndex++, columns);
 		
