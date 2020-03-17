@@ -57,6 +57,13 @@ public class NutrientFormulationHelper {
 		
 		regulations.put("ID", new IndonesianNutrientRegulation("beCPG/databases/nuts/IndonesianNutrientRegulation.csv"));
 		regulations.put("MX", new MexicanNutrientRegulation("beCPG/databases/nuts/MexicanNutrientRegulation.csv"));
+		
+		regulations.put("HK", new HongKongNutrientRegulation("beCPG/databases/nuts/HongKongNutrientRegulation.csv"));
+		regulations.put("KR", new KoreanNutrientRegulation("beCPG/databases/nuts/KoreanNutrientRegulation.csv"));
+		regulations.put("MY", new MalaysianNutrientRegulation("beCPG/databases/nuts/MalaysianNutrientRegulation.csv"));
+		regulations.put("TH", new ThailandNutrientRegulation("beCPG/databases/nuts/ThailandNutrientRegulation.csv"));
+		regulations.put("IN", new IndianNutrientRegulation("beCPG/databases/nuts/IndianNutrientRegulation.csv"));
+		
 	}
 
 	public static Double extractValuePerServing(String roundedValue, Locale locale) {
@@ -119,16 +126,24 @@ public class NutrientFormulationHelper {
 	}
 
 	private static String getLocalKey(Locale locale) {
-		if (locale.getCountry().equals("US") || locale.getCountry().equals("CA")) {
+
+		if (locale.getCountry().equals("US") || locale.getCountry().equals("CA")
+				|| locale.getCountry().equals("MX") || locale.getCountry().equals("ID")
+			    || locale.getCountry().equals("HK") || locale.getCountry().equals("MY")
+			    || locale.getCountry().equals("IN")) {
 			return locale.getCountry();
-		} else if (locale.getLanguage().equals("zh")) {
+		} else if (locale.getCountry().equals("SG")) {
+			return "MY";	
+		}else if (locale.getLanguage().equals("zh")) {
 			return "CN";
 		} else if (locale.getCountry().equals("AU") || locale.getCountry().equals("NZ")) {
 			return "AU";
-		} else if (locale.getCountry().equals("MX")) {
-			return "MX";
-		} else if (locale.getCountry().equals("ID")) {
-			return "ID";
+		} else if (locale.getLanguage().equals("ko")) {
+			return "KR";
+		} else if (locale.getLanguage().equals("th")) {
+			return "TH";
+		} else if (locale.getCountry().equals("PR")) {
+			return "US";
 		}
 		return "EU";
 	}
@@ -354,7 +369,7 @@ public class NutrientFormulationHelper {
 	private static List<String> getAvailableRegulations() {
 
 		List<String> ret = new LinkedList<>();
-		if (MLTextHelper.isSupportedLocale(Locale.US)) {
+		if (MLTextHelper.isSupportedLocale(Locale.US) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("es_PR"))) {
 			ret.add("US");
 			ret.add("US_2013");
 		}
@@ -374,6 +389,21 @@ public class NutrientFormulationHelper {
 		}
 		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("in_ID"))) {
 			ret.add("ID");
+		}
+		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ms_MY")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("zh_SG"))) {
+			ret.add("MY");
+		}
+		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ko"))) {
+			ret.add("KR");
+		}
+		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("th"))) {
+			ret.add("TH");
+		}
+		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("zh_HK"))) {
+			ret.add("HK");
+		}
+		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("hi_IN")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("en_IN"))) {
+			ret.add("IN");
 		}
 
 		ret.add("EU");
