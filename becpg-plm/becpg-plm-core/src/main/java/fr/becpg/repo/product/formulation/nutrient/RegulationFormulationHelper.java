@@ -12,6 +12,7 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.MLTextHelper;
@@ -25,9 +26,9 @@ import fr.becpg.repo.product.formulation.nutrient.AbstractNutrientRegulation.Nut
  * @author matthieu
  *
  */
-public class NutrientFormulationHelper {
+public class RegulationFormulationHelper {
 
-	protected static final Log logger = LogFactory.getLog(NutrientFormulationHelper.class);
+	protected static final Log logger = LogFactory.getLog(RegulationFormulationHelper.class);
 
 	public static final String ATTR_NUT_CODE = "nutCode";
 	private static final String KEY_VALUE = "v";
@@ -217,17 +218,17 @@ public class NutrientFormulationHelper {
 					}
 
 					if ((nutListValue != null) && (nutListValue != "")) {
-						nutListElt.addAttribute("roundedDisplayValue" + suffix, NutrientFormulationHelper
+						nutListElt.addAttribute("roundedDisplayValue" + suffix, RegulationFormulationHelper
 								.displayValue(Double.parseDouble(nutListValue), extractValue(roundedValue, locKey), nutCode, locale, locKey));
 
 						if (locKey.equals("US") || locKey.equals("US_2013")) {
 							nutListElt.addAttribute("roundedDisplayValuePerContainer" + suffix,
-									NutrientFormulationHelper.displayValue(extractValuePerContainer(roundedValue, locKey),
+									RegulationFormulationHelper.displayValue(extractValuePerContainer(roundedValue, locKey),
 											extractValuePerContainer(roundedValue, locKey), nutCode, locale, locKey));
 						}
 					}
 					if ((nutListValuePerServing != null) && (nutListValuePerServing != "")) {
-						nutListElt.addAttribute("roundedDisplayValuePerServing" + suffix, NutrientFormulationHelper.displayValue(
+						nutListElt.addAttribute("roundedDisplayValuePerServing" + suffix, RegulationFormulationHelper.displayValue(
 								Double.parseDouble(nutListValuePerServing), extractValuePerServing(roundedValue, locKey), nutCode, locale, locKey));
 					}
 				}
@@ -450,5 +451,24 @@ public class NutrientFormulationHelper {
 
 		return regulations.get("EU");
 	}
+	
+	public static String getLabelClaimDisplayMode(String labelClaimCode) {
+		String displayMode = "O";
+		if (labelClaimCode != null) {
+			if (labelClaimCode.startsWith("US") && !I18NUtil.getLocale().getCountry().equals("US")) {
+				displayMode = "";
+			} else if (labelClaimCode.startsWith("EU")
+					&& (I18NUtil.getLocale().getCountry().equals("US") || I18NUtil.getLocale().getLanguage().equals("zh")
+							|| I18NUtil.getLocale().getCountry().equals("AU") || I18NUtil.getLocale().getCountry().equals("NZ")
+							|| I18NUtil.getLocale().getCountry().equals("MX") || I18NUtil.getLocale().getCountry().equals("ID")
+							|| I18NUtil.getLocale().getCountry().equals("MY") || I18NUtil.getLocale().getCountry().equals("IN")
+							|| I18NUtil.getLocale().getCountry().equals("PR") || I18NUtil.getLocale().getLanguage().equals("ko")
+							|| I18NUtil.getLocale().getLanguage().equals("th"))) {
+				displayMode = "";
+			}
+		}
+		return displayMode;
+	}
+
 
 }

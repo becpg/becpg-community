@@ -6,7 +6,7 @@ package fr.becpg.repo.product.data.productList;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.data.hierarchicalList.CompositeDataItem;
-import fr.becpg.repo.product.formulation.nutrient.NutrientFormulationHelper;
+import fr.becpg.repo.product.formulation.nutrient.RegulationFormulationHelper;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
@@ -98,7 +98,7 @@ public class NutListDataItem extends AbstractManualDataItem implements SimpleLis
 	}
 
 	public Double value(String key) {
-		return NutrientFormulationHelper.extractValue(getRoundedValue(), key);
+		return RegulationFormulationHelper.extractValue(getRoundedValue(), key);
 	}
 
 	@AlfProp
@@ -150,7 +150,7 @@ public class NutListDataItem extends AbstractManualDataItem implements SimpleLis
 	}
 
 	public Double mini(String key) {
-		return NutrientFormulationHelper.extractMini(getRoundedValue(), key);
+		return RegulationFormulationHelper.extractMini(getRoundedValue(), key);
 	}
 
 	@Override
@@ -166,7 +166,7 @@ public class NutListDataItem extends AbstractManualDataItem implements SimpleLis
 	}
 
 	public Double maxi(String key) {
-		return  NutrientFormulationHelper.extractMaxi(getRoundedValue(), key);
+		return  RegulationFormulationHelper.extractMaxi(getRoundedValue(), key);
 	}
 
 	@AlfProp
@@ -180,7 +180,7 @@ public class NutListDataItem extends AbstractManualDataItem implements SimpleLis
 	}
 
 	public Double valuePerServing(String key) {
-		return NutrientFormulationHelper.extractValuePerServing(getRoundedValue(), key);
+		return RegulationFormulationHelper.extractValuePerServing(getRoundedValue(), key);
 	}
 
 	@AlfProp
@@ -195,7 +195,7 @@ public class NutListDataItem extends AbstractManualDataItem implements SimpleLis
 
 	
 	public Double gdaPerc(String key) {
-		return NutrientFormulationHelper.extractGDAPerc(getRoundedValue(), key);
+		return RegulationFormulationHelper.extractGDAPerc(getRoundedValue(), key);
 	}
 
 	
