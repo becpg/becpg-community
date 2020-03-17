@@ -12,6 +12,7 @@ import org.apache.commons.io.input.BOMInputStream;
 import fr.becpg.common.csv.CSVReader;
 import fr.becpg.config.mapping.AbstractAttributeMapping;
 import fr.becpg.repo.importer.ImportFileReader;
+import fr.becpg.repo.importer.ImporterException;
 
 public class ImportCSVFileReader implements ImportFileReader {
 
@@ -28,7 +29,7 @@ public class ImportCSVFileReader implements ImportFileReader {
 	}
 
 	@Override
-	public String[] getLineAt(int importIndex, List<AbstractAttributeMapping> columns) {
+	public String[] getLineAt(int importIndex, List<AbstractAttributeMapping> columns) throws ImporterException {
 		String[] line = null;
 
 		if ((lines != null) && (importIndex < lines.size())) {
