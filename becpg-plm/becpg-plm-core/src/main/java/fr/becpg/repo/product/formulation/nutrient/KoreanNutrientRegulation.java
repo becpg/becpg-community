@@ -1,0 +1,101 @@
+package fr.becpg.repo.product.formulation.nutrient;
+
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
+import java.util.Locale;
+
+public class KoreanNutrientRegulation extends AbstractNutrientRegulation {
+
+	public KoreanNutrientRegulation(String path)  {
+		super(path);
+	}
+
+	@Override
+	protected Double roundByCode(Double value, String nutrientTypeCode) {
+
+		if(value != null && nutrientTypeCode != null){
+			if (nutrientTypeCode.equals(NutrientCode.Energykcal)){
+				if (value < 5) {
+					return 0.0;
+				}
+			} else if (nutrientTypeCode.equals(NutrientCode.Fat) || nutrientTypeCode.equals(NutrientCode.FatSaturated)) {
+				if (value < 0.5) {
+					return 0.0;
+				} else if (value < 5) {
+					return roundValue(value,0.1d);
+				} else {
+					return roundValue(value,1d);
+				}
+			} else if (nutrientTypeCode.equals(NutrientCode.FatTrans)) {
+				if (value < 0.2) {
+					return 0.0;
+				} else if (value < 0.5) {
+					return roundValue(value,0.5d);
+				} else {
+					return roundValue(value,1d);
+				}
+			} else if (nutrientTypeCode.equals(NutrientCode.Cholesterol)) {
+				if (value < 2) {
+					return 0.0;
+				} else if (value >= 5) {
+					return roundValue(value,1d);
+				}
+			} else if (nutrientTypeCode.contentEquals(NutrientCode.Sodium)) {
+				if (value < 5) {
+					return 0.0;
+				} else if (value <= 120){
+					return roundValue(value,5d);
+				} else {
+					return roundValue(value,10d);
+				}
+			} else if (nutrientTypeCode.contentEquals(NutrientCode.CarbohydrateByDiff) 
+					|| nutrientTypeCode.contentEquals(NutrientCode.Sugar)) {
+				if (value < 0.5) {
+					return 0.0;
+				} else if (value >= 1) {
+					return roundValue(value,1d);
+				}
+			} else if (nutrientTypeCode.contentEquals(NutrientCode.Protein)) {
+				if (value < 0.5) {
+					return 0.0;
+				} else if (value >= 1) {
+					return roundValue(value,1d);
+				}
+			}
+		}
+		BigDecimal bd = new BigDecimal(value);
+		bd = bd.round(new MathContext(3,RoundingMode.HALF_EVEN));
+		return bd.doubleValue();
+	}
+
+	@Override
+	protected String displayValueByCode(Double value, Double roundedValue, String nutrientTypeCode, Locale locale) {
+
+		if(value != null && roundedValue != null && nutrientTypeCode != null){
+			if (nutrientTypeCode.equals(NutrientCode.Cholesterol) && value > 2 && value < 5) {
+				return "less than 5mg";
+			} else if (nutrientTypeCode.equals(NutrientCode.Protein)
+					|| nutrientTypeCode.equals(NutrientCode.CarbohydrateByDiff)
+					|| nutrientTypeCode.equals(NutrientCode.Sugar)
+					|| nutrientTypeCode.equals(NutrientCode.Protein)
+					&& value > 0.5 && value < 1){
+				return "less than 1g";
+			}
+		}
+		return formatDouble(roundedValue, locale);
+	}
+
+	@Override
+	public Double roundGDA(Double value, String nutrientTypeCode) {
+		if(value != null){
+			if (isVitamin(nutrientTypeCode) || isMineral(nutrientTypeCode)){
+				if (value < 2) {
+					return 0.0;
+				}
+			}
+		}
+		return roundValue(value, 1d);
+	}
+
+}
