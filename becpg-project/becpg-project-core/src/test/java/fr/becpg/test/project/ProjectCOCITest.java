@@ -64,7 +64,7 @@ public class ProjectCOCITest extends AbstractProjectTestCase {
 				nodeService.addAspect(projectTplNodeRef, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
 
 				// Check out
-				logger.info("Check out project " + projectTplNodeRef + ruleService.getSavedRuleFolderAssoc(projectTplNodeRef));
+				logger.info("Check out project " + projectTplNodeRef +" rule: "+ ruleService.getSavedRuleFolderAssoc(projectTplNodeRef));
 				NodeRef workingCopyNodeRef = checkOutCheckInService.checkout(projectTplNodeRef);
 				
 				ProjectData workingCopyData = (ProjectData)alfrescoRepository.findOne(workingCopyNodeRef);								
@@ -74,12 +74,12 @@ public class ProjectCOCITest extends AbstractProjectTestCase {
 				assertTrue(workingCopyData.getDeliverableList().get(3).getTasks().get(0).equals(workingCopyData.getTaskList().get(2).getNodeRef()));
 				
 				// Check in
-				logger.info("Check in project " + workingCopyNodeRef  + ruleService.getSavedRuleFolderAssoc(workingCopyNodeRef));
+				logger.info("Check in project " + workingCopyNodeRef  +" rule: "+ ruleService.getSavedRuleFolderAssoc(workingCopyNodeRef));
 				Map<String, Serializable> versionProperties = new HashMap<>();
 				versionProperties.put(Version.PROP_DESCRIPTION, "This is a test version");
 				NodeRef newProjectNodeRef = checkOutCheckInService.checkin(workingCopyNodeRef, versionProperties);
 				
-				logger.info("Check in project done " + newProjectNodeRef  + ruleService.getSavedRuleFolderAssoc(newProjectNodeRef));
+				logger.info("Check in project done " + newProjectNodeRef  +" rule: "+ ruleService.getSavedRuleFolderAssoc(newProjectNodeRef));
 				
 				assertNotNull(newProjectNodeRef);
 				
