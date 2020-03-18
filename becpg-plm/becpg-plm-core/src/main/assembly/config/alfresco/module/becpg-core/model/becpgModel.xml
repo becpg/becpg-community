@@ -807,6 +807,14 @@
 		<!-- PLM -->
 		<type name="bcpg:productSpecification">
 			<parent>bcpg:entityV2</parent>
+			<properties>
+				<property name="bcpg:specCompatibilityJobOn">
+					<type>d:boolean</type>
+				</property>
+				<property name="bcpg:specCompatibilityLog">
+					<type>d:text</type>
+				</property>
+			</properties>
 			<associations>
 				<association name="bcpg:specCompatibilityTpls">
 					<source>

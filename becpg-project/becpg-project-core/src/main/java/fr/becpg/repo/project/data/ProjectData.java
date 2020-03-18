@@ -57,6 +57,7 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	 * 
 	 */
 	private static final long serialVersionUID = -6572843222555593368L;
+	private String code;
 	private NodeRef hierarchy1;
 	private NodeRef hierarchy2;
 	private Date startDate;
@@ -120,6 +121,18 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 		this.completionPercent = completionPercent;
 		this.entities = entities;
 		
+	}
+
+	
+	
+	@AlfProp
+	@AlfQname(qname = "bcpg:code")
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 	@AlfProp
@@ -468,63 +481,39 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result
-				+ ((budgetList == null) ? 0 : budgetList.hashCode());
-		result = prime * result
-				+ ((budgetedCost == null) ? 0 : budgetedCost.hashCode());
-		result = prime * result
-				+ ((completionDate == null) ? 0 : completionDate.hashCode());
-		result = prime
-				* result
-				+ ((completionPercent == null) ? 0 : completionPercent
-						.hashCode());
+		result = prime * result + ((budgetList == null) ? 0 : budgetList.hashCode());
+		result = prime * result + ((budgetedCost == null) ? 0 : budgetedCost.hashCode());
+		result = prime * result + ((code == null) ? 0 : code.hashCode());
+		result = prime * result + ((completionDate == null) ? 0 : completionDate.hashCode());
+		result = prime * result + ((completionPercent == null) ? 0 : completionPercent.hashCode());
 		result = prime * result + ((created == null) ? 0 : created.hashCode());
 		result = prime * result + ((creator == null) ? 0 : creator.hashCode());
-		result = prime * result
-				+ ((deliverableList == null) ? 0 : deliverableList.hashCode());
+		result = prime * result + ((currTasks == null) ? 0 : currTasks.hashCode());
+		result = prime * result + ((currentReformulateCount == null) ? 0 : currentReformulateCount.hashCode());
+		result = prime * result + ((deliverableList == null) ? 0 : deliverableList.hashCode());
 		result = prime * result + ((dueDate == null) ? 0 : dueDate.hashCode());
-		result = prime * result
-				+ ((entities == null) ? 0 : entities.hashCode());
-		result = prime * result
-				+ ((expenseList == null) ? 0 : expenseList.hashCode());
-		result = prime * result
-				+ ((formulatedDate == null) ? 0 : formulatedDate.hashCode());
-		result = prime * result
-				+ ((hierarchy1 == null) ? 0 : hierarchy1.hashCode());
-		result = prime * result
-				+ ((hierarchy2 == null) ? 0 : hierarchy2.hashCode());
-		result = prime * result
-				+ ((invoiceList == null) ? 0 : invoiceList.hashCode());
+		result = prime * result + ((entities == null) ? 0 : entities.hashCode());
+		result = prime * result + ((expenseList == null) ? 0 : expenseList.hashCode());
+		result = prime * result + ((formulatedDate == null) ? 0 : formulatedDate.hashCode());
+		result = prime * result + ((hierarchy1 == null) ? 0 : hierarchy1.hashCode());
+		result = prime * result + ((hierarchy2 == null) ? 0 : hierarchy2.hashCode());
+		result = prime * result + ((invoiceList == null) ? 0 : invoiceList.hashCode());
 		result = prime * result + ((legends == null) ? 0 : legends.hashCode());
-		result = prime * result
-				+ ((logTimeList == null) ? 0 : logTimeList.hashCode());
-		result = prime * result
-				+ ((loggedTime == null) ? 0 : loggedTime.hashCode());
-		result = prime * result
-				+ ((modified == null) ? 0 : modified.hashCode());
-		result = prime * result
-				+ ((modifier == null) ? 0 : modifier.hashCode());
+		result = prime * result + ((logTimeList == null) ? 0 : logTimeList.hashCode());
+		result = prime * result + ((loggedTime == null) ? 0 : loggedTime.hashCode());
+		result = prime * result + ((modified == null) ? 0 : modified.hashCode());
+		result = prime * result + ((modifier == null) ? 0 : modifier.hashCode());
 		result = prime * result + ((overdue == null) ? 0 : overdue.hashCode());
-		result = prime * result
-				+ ((planningMode == null) ? 0 : planningMode.hashCode());
-		result = prime * result
-				+ ((priority == null) ? 0 : priority.hashCode());
-		result = prime * result
-				+ ((projectManager == null) ? 0 : projectManager.hashCode());
-		result = prime * result
-				+ ((projectState == null) ? 0 : projectState.hashCode());
-		result = prime * result
-				+ ((projectTpl == null) ? 0 : projectTpl.hashCode());
-		result = prime
-				* result
-				+ ((reformulateCount == null) ? 0 : reformulateCount.hashCode());
+		result = prime * result + ((planningMode == null) ? 0 : planningMode.hashCode());
+		result = prime * result + ((priority == null) ? 0 : priority.hashCode());
+		result = prime * result + ((projectManager == null) ? 0 : projectManager.hashCode());
+		result = prime * result + ((projectState == null) ? 0 : projectState.hashCode());
+		result = prime * result + ((projectTpl == null) ? 0 : projectTpl.hashCode());
+		result = prime * result + ((reformulateCount == null) ? 0 : reformulateCount.hashCode());
 		result = prime * result + ((score == null) ? 0 : score.hashCode());
-		result = prime * result
-				+ ((scoreList == null) ? 0 : scoreList.hashCode());
-		result = prime * result
-				+ ((startDate == null) ? 0 : startDate.hashCode());
-		result = prime * result
-				+ ((taskList == null) ? 0 : taskList.hashCode());
+		result = prime * result + ((scoreList == null) ? 0 : scoreList.hashCode());
+		result = prime * result + ((startDate == null) ? 0 : startDate.hashCode());
+		result = prime * result + ((taskList == null) ? 0 : taskList.hashCode());
 		result = prime * result + ((work == null) ? 0 : work.hashCode());
 		return result;
 	}
@@ -548,6 +537,11 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 				return false;
 		} else if (!budgetedCost.equals(other.budgetedCost))
 			return false;
+		if (code == null) {
+			if (other.code != null)
+				return false;
+		} else if (!code.equals(other.code))
+			return false;
 		if (completionDate == null) {
 			if (other.completionDate != null)
 				return false;
@@ -567,6 +561,16 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 			if (other.creator != null)
 				return false;
 		} else if (!creator.equals(other.creator))
+			return false;
+		if (currTasks == null) {
+			if (other.currTasks != null)
+				return false;
+		} else if (!currTasks.equals(other.currTasks))
+			return false;
+		if (currentReformulateCount == null) {
+			if (other.currentReformulateCount != null)
+				return false;
+		} else if (!currentReformulateCount.equals(other.currentReformulateCount))
 			return false;
 		if (deliverableList == null) {
 			if (other.deliverableList != null)
