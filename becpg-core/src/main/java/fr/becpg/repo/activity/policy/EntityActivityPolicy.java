@@ -277,7 +277,7 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 
 		NodeRef entityNodeRef = entityActivityService.getEntityNodeRefForActivity(actionedUponNodeRef, type);
 
-		if (entityNodeRef != null) {
+		if ((entityNodeRef != null) && nodeService.exists(entityNodeRef)) {
 			try {
 				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 				if (activityEvent != null) {
@@ -298,7 +298,6 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 			} finally {
 				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
 			}
-
 		}
 
 	}
