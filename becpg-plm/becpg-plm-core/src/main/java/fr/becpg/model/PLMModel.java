@@ -161,6 +161,9 @@ public interface PLMModel {
 	
 	QName TYPE_SPEC_COMPATIBILTY_LIST = QName.createQName(BeCPGModel.BECPG_URI, "productSpecCompatibilityList");
 	
+	QName PROP_SPEC_COMPATIBILITY_JOB_ON = QName.createQName(BeCPGModel.BECPG_URI, "specCompatibilityJobOn");
+	QName PROP_SPEC_COMPATIBILITY_LOG = QName.createQName(BeCPGModel.BECPG_URI, "specCompatibilityLog");
+
 	QName ASSOC_PSCL_SOURCE_ITEM = QName.createQName(BeCPGModel.BECPG_URI, "psclSourceItem");
 	
 
