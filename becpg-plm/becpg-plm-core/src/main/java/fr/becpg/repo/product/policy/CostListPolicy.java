@@ -22,6 +22,7 @@ import org.alfresco.repo.copy.CopyDetails;
 import org.alfresco.repo.copy.CopyServicePolicies;
 import org.alfresco.repo.copy.DefaultCopyBehaviourCallback;
 import org.alfresco.repo.policy.JavaBehaviour;
+import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
 import fr.becpg.model.BeCPGModel;
@@ -61,7 +62,9 @@ public class CostListPolicy extends AbstractBeCPGPolicy implements CopyServicePo
 
 		@Override
 		public boolean getMustCopy(QName classQName, CopyDetails copyDetails) {			
-			if (nodeService.hasAspect(entityListDAO.getEntity(copyDetails.getSourceNodeRef()), BeCPGModel.ASPECT_ENTITY_TPL)
+			NodeRef entityNodeRef = entityListDAO.getEntity(copyDetails.getSourceNodeRef());
+			
+			if (nodeService.exists(entityNodeRef) && nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)
 					&& !associationService.getTargetAssocs(copyDetails.getSourceNodeRef(), PLMModel.ASSOC_PLANTS).isEmpty()) {
 				return false;
 			}

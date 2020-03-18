@@ -441,7 +441,7 @@ NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.OnCreateAssociationP
 
 		NodeRef entityNodeRef = entityActivityService.getEntityNodeRefForActivity(actionedUponNodeRef, type);
 
-		if (entityNodeRef != null) {
+		if ((entityNodeRef != null) && nodeService.exists(entityNodeRef)) {
 			try {
 				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 				if (activityEvent != null) {
@@ -464,7 +464,6 @@ NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.OnCreateAssociationP
 			} finally {
 				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
 			}
-
 		}
 
 	}
