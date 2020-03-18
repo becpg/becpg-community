@@ -5,6 +5,7 @@ package fr.becpg.repo.product.formulation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,7 +13,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.locks.ReentrantLock;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
@@ -24,6 +24,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.util.StopWatch;
+
+import com.ibm.icu.util.Calendar;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
@@ -79,23 +81,25 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 		this.nodeService = nodeService;
 	}
 
-	private ReentrantLock processLock = new ReentrantLock();
+	private Set<NodeRef> lookedSpecification = Collections.synchronizedSet(new HashSet<>());
 
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 
 		if (formulatedProduct instanceof ProductSpecificationData) {
-			if (processLock.tryLock()) {
+			if (!lookedSpecification.contains(formulatedProduct.getNodeRef())) {
 				try {
+					lookedSpecification.add(formulatedProduct.getNodeRef());
 					ProductSpecificationData specificationData = (ProductSpecificationData) formulatedProduct;
 					if (alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_SPEC_COMPATIBILTY_LIST)) {
+						StopWatch stopWatch = new StopWatch();
+						stopWatch.start();
+						String logs = "Start formulate specification at " + Calendar.getInstance().getTime().toString() + ":\n";
 
 						Map<NodeRef, String> toUpdate = new HashMap<>();
 						Set<NodeRef> toSkipProduct = new HashSet<>();
 						List<NodeRef> productNodeRefs = getProductNodeRefs((ProductSpecificationData) formulatedProduct);
-						if (logger.isDebugEnabled()) {
-							logger.debug(" - found " + productNodeRefs.size() + " products to test specification on");
-						}
+						logs += "- found " + productNodeRefs.size() + " products to test specification on\n";
 
 						for (NodeRef productNodeRef : productNodeRefs) {
 
@@ -112,11 +116,7 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 									for (RequirementScanner scanner : requirementScanners) {
 
 										String reqDetails = null;
-										StopWatch stopWatch = null;
-										if (logger.isDebugEnabled()) {
-											stopWatch = new StopWatch();
-											stopWatch.start();
-										}
+
 										for (ReqCtrlListDataItem reqCtrlListDataItem : scanner.checkRequirements(productData,
 												Arrays.asList((ProductSpecificationData) formulatedProduct))) {
 											if (RequirementType.Forbidden.equals(reqCtrlListDataItem.getReqType())
@@ -131,9 +131,7 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 										}
 										if (reqDetails != null) {
 											if (logger.isDebugEnabled()) {
-												stopWatch.stop();
-												logger.debug(
-														"Adding Forbidden for " + productNodeRef + " in " + stopWatch.getTotalTimeMillis() + "ms");
+												logger.debug("Adding Forbidden for " + productNodeRef);
 											}
 											toUpdate.put(productNodeRef, reqDetails);
 										}
@@ -166,15 +164,22 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 
 						specificationData.getSpecCompatibilityList().removeAll(toRemove);
 
+						stopWatch.stop();
+
+						logs += "- found " + toUpdate.size() + " new forbidden products,\n";
+						logs += "- found " + toSkipProduct.size() + " products to skip,\n";
+						logs += "- found " + toRemove.size() + " products to remove,\n";
+						logs += "formulation end in " + stopWatch.getTotalTimeSeconds() + "s at " + Calendar.getInstance().getTime().toString() + "\n";
+						specificationData.setSpecCompatibilityLog(logs);
+
 					} else {
 						logger.debug("No change unit list");
 					}
 				} finally {
-					processLock.unlock();
+					lookedSpecification.remove(formulatedProduct.getNodeRef());
 				}
 			} else {
-				logger.error("Only one massive operation at a time");
-				return false;
+				throw new FormulateException("Product specification " + formulatedProduct.getName() + " is already being formulated");
 			}
 
 		} else {
@@ -198,36 +203,42 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 			try {
 				for (NodeRef productSpecificationNodeRef : BeCPGQueryBuilder.createQuery().ofType(PLMModel.TYPE_PRODUCT_SPECIFICATION)
 						.excludeDefaults().list()) {
+					if (Boolean.TRUE.equals(nodeService.getProperty(productSpecificationNodeRef, PLMModel.PROP_SPEC_COMPATIBILITY_JOB_ON))) {
 
-					ProductData formulatedProduct = alfrescoRepository.findOne(productSpecificationNodeRef);
+						ProductData formulatedProduct = alfrescoRepository.findOne(productSpecificationNodeRef);
 
-					StopWatch stopWatch = null;
-					if (logger.isDebugEnabled()) {
-						stopWatch = new StopWatch();
-						stopWatch.start();
-						logger.debug("Start formulate specification :" + formulatedProduct.getName());
-					}
-					transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-
-						policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
-						try {
-							if (process(formulatedProduct)) {
-								formulatedProduct.setFormulatedDate(new Date());
-								alfrescoRepository.save(formulatedProduct);
-								return true;
-							} else {
-								return false;
-							}
-						} finally {
-							policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+						StopWatch stopWatch = null;
+						if (logger.isDebugEnabled()) {
+							stopWatch = new StopWatch();
+							stopWatch.start();
+							logger.debug("Start formulate specification :" + formulatedProduct.getName());
 						}
-					}, false, true);
+						boolean ret = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-					if (logger.isDebugEnabled()) {
-						stopWatch.stop();
-						logger.debug("Formulate specification :" + formulatedProduct.getName() + " in " + stopWatch.getTotalTimeSeconds() + "s");
+							policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+							try {
+								if (process(formulatedProduct)) {
+									formulatedProduct.setFormulatedDate(new Date());
+									alfrescoRepository.save(formulatedProduct);
+									return true;
+								} else {
+									return false;
+								}
+							} catch (FormulateException e) {
+								logger.error(e, e);
+								return false;
+							} finally {
+								policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+							}
+						}, false, true);
+
+						if (logger.isDebugEnabled()) {
+							stopWatch.stop();
+							logger.debug("Formulate specification :" + formulatedProduct.getName() + " in " + stopWatch.getTotalTimeSeconds()
+									+ "s success: " + ret);
+						}
+
 					}
-
 				}
 			} catch (Exception e) {
 				if (e instanceof ConcurrencyFailureException) {

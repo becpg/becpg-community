@@ -298,7 +298,7 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 	@Override
 	public void onDeleteNode(ChildAssociationRef associationRef, boolean arg1) {
 		logger.debug("onDeleteNode: "+associationRef.getTypeQName());
-
+       
 		removeCachedAssoc(childAssocCacheName(), associationRef.getParentRef(), associationRef.getTypeQName());
 	}
 
