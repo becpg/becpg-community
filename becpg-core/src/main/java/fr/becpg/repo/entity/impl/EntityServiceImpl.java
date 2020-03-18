@@ -96,10 +96,6 @@ public class EntityServiceImpl implements EntityService {
 	@Autowired
 	private ContentService contentService;
 
-	// @Autowired
-	// private DictionaryService dictionaryService;
-	//
-
 	@Autowired
 	private EntityDictionaryService entityDictionaryService;
 

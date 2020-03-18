@@ -213,7 +213,7 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 
 			if (isListItem) {
 				entityParent = entityListDAO.getEntity(entityNodeRef);
-				if (isPendingDelete(entityParent)) {
+				if (isPendingDelete(entityParent) || !nodeService.exists(entityParent)) {
 					return null;
 				}
 			}
