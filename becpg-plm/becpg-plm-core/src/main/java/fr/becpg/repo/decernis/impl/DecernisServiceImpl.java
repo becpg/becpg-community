@@ -8,7 +8,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.InvalidNodeRefException;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -317,6 +316,7 @@ public class DecernisServiceImpl implements DecernisService {
 	public String launchDecernisAnalysis(ProductData product, List<String> countries, List<String> usages) throws RestClientException, JSONException {
 		String ret = "";
 			if (usages.size() > 0) {
+				while (countries.remove(null));
 				for (String country : countries) {
 					if (!isAvaillableCountry(country)) {
 						countries.remove(country);
