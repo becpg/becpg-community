@@ -316,6 +316,7 @@ public class DecernisServiceImpl implements DecernisService {
 	public String launchDecernisAnalysis(ProductData product, List<String> countries, List<String> usages) throws RestClientException, JSONException {
 		String ret = "";
 			if (usages.size() > 0) {
+				while (countries.remove(null));
 				for (String country : countries) {
 					if (!isAvaillableCountry(country)) {
 						countries.remove(country);
