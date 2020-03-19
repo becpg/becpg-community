@@ -123,7 +123,7 @@ public class ECOVersionPlugin implements EntityVersionPlugin {
 			watch.start();
 
 			try {
-				AuthenticationUtil.runAsSystem(() -> {
+				AuthenticationUtil.runAs(() -> {
 					NodeRef ecoNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 						NodeRef parentNodeRef = getChangeOrderFolder();
@@ -195,7 +195,7 @@ public class ECOVersionPlugin implements EntityVersionPlugin {
 					}
 
 					return null;
-				});
+				}, this.userName);
 
 			} catch (Exception e) {
 
