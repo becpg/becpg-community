@@ -8,7 +8,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.InvalidNodeRefException;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -65,7 +64,7 @@ public class DecernisServiceImpl implements DecernisService {
 
 	// 1, Food Additives
 	// 2, Standards Of Identity
-	// 3, Contaminants
+	// 3, Contaminants	
 	// 5, Food Contact
 	// 11; Product Check
 
