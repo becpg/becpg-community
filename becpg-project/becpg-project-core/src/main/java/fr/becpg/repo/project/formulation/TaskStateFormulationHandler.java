@@ -279,7 +279,7 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 			if (shouldRefused) {
 				logger.debug("Reopen path : " + taskListDataItem.getRefusedTask().getTaskName());
 
-				ProjectHelper.reOpenRefusePath(projectData, taskListDataItem, taskListDataItem.getRefusedTask(), projectActivityService);
+				ProjectHelper.reOpenRefusePath(projectData, taskListDataItem,taskListDataItem.getRefusedTask(),taskListDataItem.getRefusedTasksToReopen(),  projectActivityService);
 
 				// Revisit tasks
 				reformulate = true;
