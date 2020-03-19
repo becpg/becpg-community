@@ -61,6 +61,8 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	private Date end;
 	private TaskState taskState = TaskState.Planned;
 	private Integer completionPercent = 0;
+	
+	private List<NodeRef> refusedTasksToReopen;
 	private List<NodeRef> prevTasks;
 	private List<NodeRef> resources;
 	private List<NodeRef> observers;
@@ -257,6 +259,17 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 
 	public void setPrevTasks(List<NodeRef> prevTasks) {
 		this.prevTasks = prevTasks;
+	}
+	
+	
+	@AlfMultiAssoc
+	@AlfQname(qname = "pjt:tlRefusedTasksToReopen")
+	public List<NodeRef> getRefusedTasksToReopen() {
+		return refusedTasksToReopen;
+	}
+
+	public void setRefusedTasksToReopen(List<NodeRef> refusedTasksToReopen) {
+		this.refusedTasksToReopen = refusedTasksToReopen;
 	}
 
 	@AlfMultiAssoc
@@ -515,6 +528,7 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 		result = prime * result + ((prevTasks == null) ? 0 : prevTasks.hashCode());
 		result = prime * result + ((realDuration == null) ? 0 : realDuration.hashCode());
 		result = prime * result + ((refusedTask == null) ? 0 : refusedTask.hashCode());
+		result = prime * result + ((refusedTasksToReopen == null) ? 0 : refusedTasksToReopen.hashCode());
 		result = prime * result + ((resourceCost == null) ? 0 : resourceCost.hashCode());
 		result = prime * result + ((resources == null) ? 0 : resources.hashCode());
 		result = prime * result + ((start == null) ? 0 : start.hashCode());
@@ -653,6 +667,11 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 			if (other.refusedTask != null)
 				return false;
 		} else if (!refusedTask.equals(other.refusedTask))
+			return false;
+		if (refusedTasksToReopen == null) {
+			if (other.refusedTasksToReopen != null)
+				return false;
+		} else if (!refusedTasksToReopen.equals(other.refusedTasksToReopen))
 			return false;
 		if (resourceCost == null) {
 			if (other.resourceCost != null)
