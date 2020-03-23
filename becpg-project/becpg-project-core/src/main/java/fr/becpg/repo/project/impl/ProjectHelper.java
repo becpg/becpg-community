@@ -23,6 +23,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
@@ -37,6 +38,7 @@ import fr.becpg.repo.project.data.projectList.DeliverableState;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskManualDate;
 import fr.becpg.repo.project.data.projectList.TaskState;
+import fr.becpg.repo.project.formulation.TaskWrapper;
 
 public class ProjectHelper {
 
@@ -45,6 +47,7 @@ public class ProjectHelper {
 
 	private static final Log logger = LogFactory.getLog(ProjectHelper.class);
 
+	@Deprecated
 	public static TaskListDataItem getTask(ProjectData projectData, NodeRef taskListNodeRef) {
 
 		if ((taskListNodeRef != null) && (projectData.getTaskList() != null)) {
@@ -60,6 +63,7 @@ public class ProjectHelper {
 	/*
 	 * Return all tasks including subproject tasks exclude groups
 	 */
+	@Deprecated
 	public static List<TaskListDataItem> getNextTasks(ProjectData projectData, NodeRef taskListNodeRef) {
 
 		List<TaskListDataItem> taskList = new ArrayList<>();
@@ -75,6 +79,7 @@ public class ProjectHelper {
 		return taskList;
 	}
 
+	@Deprecated
 	public static List<TaskListDataItem> getPrevTasks(ProjectData projectData, TaskListDataItem taskListDataItem) {
 
 		List<TaskListDataItem> taskList = new ArrayList<>();
@@ -88,6 +93,7 @@ public class ProjectHelper {
 		return taskList;
 	}
 
+	@Deprecated
 	public static List<TaskListDataItem> getLastTasks(ProjectData projectData) {
 
 		List<TaskListDataItem> taskList = new ArrayList<>();
@@ -101,6 +107,7 @@ public class ProjectHelper {
 		return taskList;
 	}
 
+	@Deprecated
 	public static List<TaskListDataItem> getChildrenTasks(ProjectData projectData, TaskListDataItem taskListDataItem) {
 
 		List<TaskListDataItem> taskList = new ArrayList<>();
@@ -112,6 +119,7 @@ public class ProjectHelper {
 		return taskList;
 	}
 
+	@Deprecated
 	public static List<TaskListDataItem> getBrethrenTask(ProjectData projectData, TaskListDataItem nextTask) {
 		List<TaskListDataItem> taskList = new ArrayList<>();
 		for (TaskListDataItem t : projectData.getTaskList()) {
@@ -174,6 +182,7 @@ public class ProjectHelper {
 
 	}
 
+	@Deprecated
 	public static List<TaskListDataItem> getSourceTasks(ProjectData projectData) {
 
 		List<TaskListDataItem> taskList = new ArrayList<>();
@@ -208,6 +217,7 @@ public class ProjectHelper {
 		return deliverableList;
 	}
 
+	@Deprecated
 	public static boolean areTasksDone(ProjectData projectData) {
 
 		if ((projectData.getTaskList() != null) && !projectData.getTaskList().isEmpty()) {
@@ -222,6 +232,7 @@ public class ProjectHelper {
 		return true;
 	}
 
+	@Deprecated
 	public static boolean areTasksDone(ProjectData projectData, List<NodeRef> taskNodeRefs) {
 
 		// no task : they are done
@@ -258,6 +269,7 @@ public class ProjectHelper {
 	 * @param projectData
 	 * @return
 	 */
+	@Deprecated
 	public static int geProjectCompletionPercent(ProjectData projectData) {
 
 		int totalWork = 0;
@@ -279,6 +291,7 @@ public class ProjectHelper {
 		return totalWork != 0 ? (100 * workDone) / totalWork : 0;
 	}
 
+	@Deprecated
 	public static Date getLastEndDate(ProjectData projectData) {
 		Date endDate = null;
 		for (TaskListDataItem task : projectData.getTaskList()) {
@@ -290,6 +303,23 @@ public class ProjectHelper {
 		return endDate;
 	}
 
+	public static Date getLastEndDate(Set<TaskWrapper> tasks) {
+		Date endDate = null;
+		for (TaskWrapper task : tasks) {
+			if (task.isLeaf() && ((endDate == null) || ((task.getTask().getEnd() != null) && task.getTask().getEnd().after(endDate)))) {
+				endDate = task.getTask().getEnd();
+			}
+		}
+		return endDate;
+	}
+	
+
+	public static Date getFirstStartDate(Set<TaskWrapper> tasks) {
+		return tasks.stream().filter(e -> e.isRoot() && (e.getTask().getStart() != null)).map(e -> e.getTask().getStart())
+				.min(Date::compareTo).orElse(null);
+	}
+
+	@Deprecated
 	public static Date getFirstStartDate(ProjectData projectData) {
 		List<TaskListDataItem> tasks = getNextTasks(projectData, null);
 		Date startDate = null;
@@ -302,7 +332,7 @@ public class ProjectHelper {
 	}
 
 	public static void setTaskStartDate(TaskListDataItem t, Date startDate) {
-		logger.debug("task: " + t.getTaskName() + " state: " + t.getTaskState() + " start: " + startDate);
+		logger.debug("task: " + t.getTaskName() + ", state: " + t.getTaskState() + ", start: " + startDate+", is group:"+t.getIsGroup());
 		if ((t.getIsGroup() || t.isPlanned() || TaskState.Cancelled.equals(t.getTaskState())
 				|| (TaskState.InProgress.equals(t.getTaskState()) && (t.getStart() == null))) && !TaskManualDate.Start.equals(t.getManualDate())) {
 			t.setStart(removeTime(startDate));
@@ -310,7 +340,7 @@ public class ProjectHelper {
 	}
 
 	public static void setTaskEndDate(TaskListDataItem t, Date endDate) {
-		logger.debug("task: " + t.getTaskName() + " state: " + t.getTaskState() + " end: " + endDate);
+		logger.debug("task: " + t.getTaskName() + ", state: " + t.getTaskState() + ", end: " + endDate+", is group:"+t.getIsGroup());
 		if ((t.getIsGroup() || t.isPlanned() || TaskState.Cancelled.equals(t.getTaskState()) || TaskState.InProgress.equals(t.getTaskState()))
 				&& !TaskManualDate.End.equals(t.getManualDate())) {
 			t.setEnd(removeTime(endDate));
@@ -430,6 +460,7 @@ public class ProjectHelper {
 		return calculateTaskDuration(task.getStart(), endDate);
 	}
 
+	@Deprecated
 	public static Integer calculateDuration(TaskListDataItem task) {
 		return task.getDuration() != null ? task.getDuration() : (Boolean.TRUE.equals(task.getIsMilestone())) ? DURATION_DEFAULT : null;
 	}
@@ -460,4 +491,14 @@ public class ProjectHelper {
 
 		return properties;
 	}
+
+	public static boolean hasPlannedDuration(TaskListDataItem task) {
+
+		if ((task != null) && ((task.getDuration() != null) || (Boolean.TRUE.equals(task.getIsMilestone())))) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 }
