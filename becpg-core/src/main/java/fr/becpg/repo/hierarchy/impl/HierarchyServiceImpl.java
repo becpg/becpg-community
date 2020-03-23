@@ -267,11 +267,11 @@ public class HierarchyServiceImpl implements HierarchyService {
 	@Override
 	public NodeRef getOrCreateHierachyFolder(NodeRef entityNodeRef,  QName hierarchyQname , NodeRef destinationNodeRef) {
 		
-		NodeRef hierarchyNodeRef = getHierarchyNodeRef(entityNodeRef, null);
-		
+		NodeRef hierarchyNodeRef = getHierarchyNodeRef(entityNodeRef, hierarchyQname);
+
 		if (hierarchyNodeRef != null) {
 			destinationNodeRef = getOrCreateHierachyFolder(hierarchyNodeRef, destinationNodeRef);
-		}
+		} 
 
 		return destinationNodeRef;
 	}
