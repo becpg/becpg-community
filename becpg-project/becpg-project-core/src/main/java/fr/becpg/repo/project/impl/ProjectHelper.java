@@ -133,6 +133,10 @@ public class ProjectHelper {
 		}
 		return taskList;
 	}
+	
+	
+
+	
 
 	public static void reOpenRefusePath(ProjectData projectData, TaskListDataItem nextTask, TaskListDataItem refusedTask,
 			List<NodeRef> refusedTasksToReopen, ProjectActivityService projectActivityService) {
@@ -315,6 +319,7 @@ public class ProjectHelper {
 	
 
 	public static Date getFirstStartDate(Set<TaskWrapper> tasks) {
+		
 		return tasks.stream().filter(e -> e.isRoot() && (e.getTask().getStart() != null)).map(e -> e.getTask().getStart())
 				.min(Date::compareTo).orElse(null);
 	}

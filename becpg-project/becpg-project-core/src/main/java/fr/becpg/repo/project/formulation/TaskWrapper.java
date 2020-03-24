@@ -1,5 +1,6 @@
 package fr.becpg.repo.project.formulation;
 
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -16,7 +17,7 @@ import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.impl.ProjectHelper;
 
 //TODO Merge with TaskListItem when is over
-public class TaskWrapper {
+public class TaskWrapper implements Comparable<TaskWrapper> {
 
 	private static final int DURATION_DEFAULT = 1;
 
@@ -68,7 +69,7 @@ public class TaskWrapper {
 	}
 
 	public boolean isLeaf() {
-		return (descendants == null) || descendants.isEmpty();
+		return ((descendants == null) || descendants.isEmpty()) && !isGroup();
 	}
 
 	public boolean isSubProject() {
@@ -112,6 +113,10 @@ public class TaskWrapper {
 		this.maxRealDuration = maxRealDuration;
 	}
 
+	public Long getStartDateTime() {
+		return (task != null) && (task.getStart() != null) ? task.getStart().getTime() : null;
+	}
+
 	public boolean dependsOf(TaskWrapper t) {
 		// is t a direct dependency?
 		if (ancestors.contains(t)) {
@@ -123,6 +128,15 @@ public class TaskWrapper {
 				return true;
 			}
 		}
+		return false;
+	}
+
+	public boolean childOf(TaskWrapper t) {
+		// is t a direct dependency?
+		if (t.getChilds().contains(this)) {
+			return true;
+		}
+
 		return false;
 	}
 
@@ -208,6 +222,49 @@ public class TaskWrapper {
 		}
 
 		return completed.stream().map(t -> t.getMaxDuration()).max(Integer::compareTo).get();
+	}
+
+	public static String print(ProjectData projectData) {
+
+		
+		
+		StringBuilder ret = new StringBuilder();
+		projectData.getTaskList().stream().forEach(t -> {
+			if ((t != null) && (t.getDuration() != null)) {
+				ret.append("\n" + " ".repeat(Math.abs(
+						Math.toIntExact(
+								((t.getStart() != null) && (projectData.getStartDate() != null))
+						? ChronoUnit.DAYS.between(t.getStart().toInstant(),projectData.getStartDate().toInstant())
+						: 0)))  + (t.getIsGroup() ? "#" : "_").repeat(Math.abs(t.getDuration())) + " " + t.getTaskName() + "[ " + t.getStart() + " / "
+						+ t.getEnd() + "] " + " (" + t.getTaskState() +"/"+ t.getDuration() +"/"+ t.getRealDuration()+ ")");
+			}
+		});
+
+		return ret.toString();
+	}
+
+	@Override
+	// https://stackoverflow.com/questions/2985317/critical-path-method-algorithm
+	public int compareTo(TaskWrapper o2) {
+		// sort by cost
+
+		if (o2.childOf(this)) {
+			return -1;
+		} else if (childOf(o2)) {
+			return 1;
+		}
+
+		// using dependency as a tie breaker
+		// note if a is dependent on b then
+		// critical cost a must be >= critical cost of b
+		if (o2.dependsOf(this)) {
+			return 1;
+		} else if (dependsOf(o2)) {
+			return -1;
+		}
+
+		return this.getMaxDuration() - o2.getMaxDuration();
+
 	}
 
 }
