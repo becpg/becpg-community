@@ -42,6 +42,7 @@ import fr.becpg.repo.repository.AlfrescoRepository;
  * @author quere
  *
  */
+@Deprecated
 public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectData> {
 
 	private static final Log logger = LogFactory.getLog(PlanningFormulationHandler.class);
