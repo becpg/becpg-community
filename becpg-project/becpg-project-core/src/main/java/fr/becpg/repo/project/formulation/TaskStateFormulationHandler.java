@@ -47,6 +47,7 @@ import fr.becpg.repo.project.data.projectList.TaskState;
 import fr.becpg.repo.project.impl.ProjectHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 
+@Deprecated
 public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectData> {
 
 	private static final int COMPLETED = 100;

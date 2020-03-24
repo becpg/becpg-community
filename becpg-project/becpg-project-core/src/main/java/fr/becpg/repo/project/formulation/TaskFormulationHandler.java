@@ -83,6 +83,16 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 
 		boolean isOnHold = isOnHold(projectData);
 
+		if (logger.isDebugEnabled()) {
+
+			logger.debug("Formulate tasks for project: " + projectData.getName());
+			logger.debug(" - mode :" + projectData.getPlanningMode());
+			logger.debug(" - startDate :" + projectData.getStartDate());
+			logger.debug(" - onHold :" + isOnHold);
+			logger.debug("before formulate tasks:" + TaskWrapper.print(projectData));
+
+		}
+
 		if (isOnHold) {
 
 			tasks.forEach(t -> {
@@ -121,29 +131,11 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 
 		visitParents(projectData, tasks, !isOnHold && !isTpl);
 
-		visitProject(projectData, tasks, !isOnHold && !isTpl);
+		visitProject(projectData, tasks, isTpl);
 
-		// https://stackoverflow.com/questions/2985317/critical-path-method-algorithm
-		tasks.stream().sorted((o1, o2) -> {
-			// sort by cost
-			int i = o2.getMaxDuration() - o1.getMaxDuration();
-			if (i != 0) {
-				return i;
-			}
-
-			// using dependency as a tie breaker
-			// note if a is dependent on b then
-			// critical cost a must be >= critical cost of b
-			if (o1.dependsOf(o2)) {
-				return -1;
-			}
-			if (o2.dependsOf(o1)) {
-				return 1;
-			}
-			return 0;
-		}).forEach(t -> {
-			System.out.println(t.getTask().getTaskName());
-		});
+		if (logger.isDebugEnabled()) {
+			logger.debug("After formulate tasks:" + TaskWrapper.print(projectData));
+		}
 
 		return true;
 	}
@@ -158,7 +150,7 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 		}
 	}
 
-	private void visitParents(ProjectData projectData, Set<TaskWrapper> tasks, boolean isTpl) {
+	private void visitParents(ProjectData projectData, Set<TaskWrapper> tasks, boolean calculateState) {
 
 		Date now = Calendar.getInstance().getTime();
 
@@ -184,6 +176,9 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 							boolean allTasksPlanned = true;
 							boolean allTasksCancelled = true;
 							int completionPerc = 0;
+							
+							task.getTask().setStart(null);
+							task.getTask().setEnd(null);
 
 							for (TaskWrapper child : task.getChilds()) {
 
@@ -222,7 +217,7 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 							task.getTask().setRealDuration(task.getRealDuration());
 							task.getTask().setWork(work);
 
-							if (!isTpl && (task.getTask().getStart() != null) && task.getTask().getStart().before(now)) {
+							if (calculateState && (task.getTask().getStart() != null) && task.getTask().getStart().before(now)) {
 
 								if (hasTaskInProgress) {
 									ProjectHelper.setTaskState(task.getTask(), TaskState.InProgress, projectActivityService);
@@ -244,10 +239,11 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 						// set task as calculated an remove
 						completed.add(task);
 					}
+
+					it.remove();
+					// note we are making progress
+					progress = true;
 				}
-				it.remove();
-				// note we are making progress
-				progress = true;
 			}
 
 			// If we haven't made any progress then a cycle must exist in
@@ -297,35 +293,35 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 			}
 
 		}
+
 	}
 
 	private void visitProject(ProjectData projectData, Set<TaskWrapper> tasks, boolean isTpl) {
-	
-	
+
 		double work = 0d;
 
 		List<NodeRef> currLegends = new ArrayList<>();
 		List<NodeRef> currTasks = new ArrayList<>();
-		
-		if(!tasks.isEmpty()&& !isTpl) {
-			
+
+		if (!tasks.isEmpty() && !isTpl) {
+
 			boolean allTaskPlanned = true;
 			boolean allTaskDone = true;
 			int totalWork = 0;
 			int workDone = 0;
-	
+
 			for (TaskWrapper task : tasks) {
 				TaskState state = task.getTask().getTaskState();
-	
+
 				if (!TaskState.Cancelled.equals(state)) {
 					if (!task.getTask().isPlanned()) {
 						allTaskPlanned = false;
 					}
-	
+
 					if (!(TaskState.Completed.equals(state))) {
 						allTaskDone = false;
 					}
-	
+
 					Integer duration = task.getDuration() != null ? task.getDuration()
 							: ProjectHelper.calculateTaskDuration(task.getTask().getStart(), task.getTask().getEnd());
 					if (duration != null) {
@@ -336,30 +332,30 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 							workDone += ((duration * task.getTask().getCompletionPercent()) / 100);
 						}
 					}
-	
+
 					if (TaskState.InProgress.equals(state)) {
 						if (!currLegends.contains(task.getTask().getTaskLegend())) {
 							currLegends.add(task.getTask().getTaskLegend());
 						}
 						currTasks.add(task.getTask().getNodeRef());
 					}
-	
+
 					if (!task.isGroup()) {
 						if (task.getTask().getWork() != null) {
 							work += task.getTask().getWork();
 						}
 					}
-	
+
 				}
-	
+
 			}
-	
+
 			if (!allTaskPlanned && ProjectState.Planned.equals(projectData.getProjectState())) {
 				projectData.setProjectState(ProjectState.InProgress);
 			} else if (allTaskPlanned && ProjectState.InProgress.equals(projectData.getProjectState())) {
 				projectData.setProjectState(ProjectState.Planned);
 			}
-	
+
 			if (allTaskDone) {
 				projectData.setCompletionDate(ProjectHelper.getLastEndDate(tasks));
 				projectData.setCompletionPercent(COMPLETED);
@@ -402,10 +398,6 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 
 					if (task.getTask() != null) {
 
-						task.getTask().setIsExcludeFromSearch(false);
-
-						logger.debug("Visit task : " + task.getTask().getTaskName() + " - state - " + task.getTask().getTaskState());
-
 						calculatePlanning(projectData, task);
 
 						if ((task.getMaxDuration() != null) && (projectDuration < task.getMaxDuration())) {
@@ -416,10 +408,8 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 						}
 
 						if (calculateState) {
-							reformulate = calculateState(projectData, task);
+							reformulate = calculateState(projectData, task) || reformulate;
 						}
-
-						logger.debug("State after - " + task.getTask().getTaskState() + " reformulate : " + reformulate);
 
 						// set task as calculated an remove
 						completed.add(task);
@@ -446,6 +436,8 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 	private boolean calculateState(ProjectData projectData, TaskWrapper task) {
 
 		boolean reformulate = false;
+
+		task.getTask().setIsExcludeFromSearch(false);
 
 		TaskState currentTaskState = task.getTask().getTaskState();
 		// cancel active workflow if task is not anymore
@@ -515,6 +507,9 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 			assign(projectData, task.getTask(), deliverables);
 
 		}
+
+		logger.debug("Visit task : " + task.getTask().getTaskName() + " - state before: " + currentTaskState + ", after: "
+				+ task.getTask().getTaskState() + ", reformulate: " + reformulate);
 
 		return reformulate;
 	}
