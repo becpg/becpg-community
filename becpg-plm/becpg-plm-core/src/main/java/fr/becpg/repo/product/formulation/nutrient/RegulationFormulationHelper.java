@@ -12,6 +12,7 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.MLTextHelper;
@@ -25,9 +26,9 @@ import fr.becpg.repo.product.formulation.nutrient.AbstractNutrientRegulation.Nut
  * @author matthieu
  *
  */
-public class NutrientFormulationHelper {
+public class RegulationFormulationHelper {
 
-	protected static final Log logger = LogFactory.getLog(NutrientFormulationHelper.class);
+	protected static final Log logger = LogFactory.getLog(RegulationFormulationHelper.class);
 
 	public static final String ATTR_NUT_CODE = "nutCode";
 	private static final String KEY_VALUE = "v";
@@ -57,6 +58,13 @@ public class NutrientFormulationHelper {
 		
 		regulations.put("ID", new IndonesianNutrientRegulation("beCPG/databases/nuts/IndonesianNutrientRegulation.csv"));
 		regulations.put("MX", new MexicanNutrientRegulation("beCPG/databases/nuts/MexicanNutrientRegulation.csv"));
+		
+		regulations.put("HK", new HongKongNutrientRegulation("beCPG/databases/nuts/HongKongNutrientRegulation.csv"));
+		regulations.put("KR", new KoreanNutrientRegulation("beCPG/databases/nuts/KoreanNutrientRegulation.csv"));
+		regulations.put("MY", new MalaysianNutrientRegulation("beCPG/databases/nuts/MalaysianNutrientRegulation.csv"));
+		regulations.put("TH", new ThailandNutrientRegulation("beCPG/databases/nuts/ThailandNutrientRegulation.csv"));
+		regulations.put("IN", new IndianNutrientRegulation("beCPG/databases/nuts/IndianNutrientRegulation.csv"));
+		
 	}
 
 	public static Double extractValuePerServing(String roundedValue, Locale locale) {
@@ -119,16 +127,24 @@ public class NutrientFormulationHelper {
 	}
 
 	private static String getLocalKey(Locale locale) {
-		if (locale.getCountry().equals("US") || locale.getCountry().equals("CA")) {
+
+		if (locale.getCountry().equals("US") || locale.getCountry().equals("CA")
+				|| locale.getCountry().equals("MX") || locale.getCountry().equals("ID")
+			    || locale.getCountry().equals("HK") || locale.getCountry().equals("MY")
+			    || locale.getCountry().equals("IN")) {
 			return locale.getCountry();
-		} else if (locale.getLanguage().equals("zh")) {
+		} else if (locale.getCountry().equals("SG")) {
+			return "MY";	
+		}else if (locale.getLanguage().equals("zh")) {
 			return "CN";
 		} else if (locale.getCountry().equals("AU") || locale.getCountry().equals("NZ")) {
 			return "AU";
-		} else if (locale.getCountry().equals("MX")) {
-			return "MX";
-		} else if (locale.getCountry().equals("ID")) {
-			return "ID";
+		} else if (locale.getLanguage().equals("ko")) {
+			return "KR";
+		} else if (locale.getLanguage().equals("th")) {
+			return "TH";
+		} else if (locale.getCountry().equals("PR")) {
+			return "US";
 		}
 		return "EU";
 	}
@@ -202,17 +218,17 @@ public class NutrientFormulationHelper {
 					}
 
 					if ((nutListValue != null) && (nutListValue != "")) {
-						nutListElt.addAttribute("roundedDisplayValue" + suffix, NutrientFormulationHelper
+						nutListElt.addAttribute("roundedDisplayValue" + suffix, RegulationFormulationHelper
 								.displayValue(Double.parseDouble(nutListValue), extractValue(roundedValue, locKey), nutCode, locale, locKey));
 
 						if (locKey.equals("US") || locKey.equals("US_2013")) {
 							nutListElt.addAttribute("roundedDisplayValuePerContainer" + suffix,
-									NutrientFormulationHelper.displayValue(extractValuePerContainer(roundedValue, locKey),
+									RegulationFormulationHelper.displayValue(extractValuePerContainer(roundedValue, locKey),
 											extractValuePerContainer(roundedValue, locKey), nutCode, locale, locKey));
 						}
 					}
 					if ((nutListValuePerServing != null) && (nutListValuePerServing != "")) {
-						nutListElt.addAttribute("roundedDisplayValuePerServing" + suffix, NutrientFormulationHelper.displayValue(
+						nutListElt.addAttribute("roundedDisplayValuePerServing" + suffix, RegulationFormulationHelper.displayValue(
 								Double.parseDouble(nutListValuePerServing), extractValuePerServing(roundedValue, locKey), nutCode, locale, locKey));
 					}
 				}
@@ -354,7 +370,7 @@ public class NutrientFormulationHelper {
 	private static List<String> getAvailableRegulations() {
 
 		List<String> ret = new LinkedList<>();
-		if (MLTextHelper.isSupportedLocale(Locale.US)) {
+		if (MLTextHelper.isSupportedLocale(Locale.US) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("es_PR"))) {
 			ret.add("US");
 			ret.add("US_2013");
 		}
@@ -374,6 +390,21 @@ public class NutrientFormulationHelper {
 		}
 		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("in_ID"))) {
 			ret.add("ID");
+		}
+		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ms_MY")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("zh_SG"))) {
+			ret.add("MY");
+		}
+		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ko"))) {
+			ret.add("KR");
+		}
+		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("th"))) {
+			ret.add("TH");
+		}
+		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("zh_HK"))) {
+			ret.add("HK");
+		}
+		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("hi_IN")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("en_IN"))) {
+			ret.add("IN");
 		}
 
 		ret.add("EU");
@@ -420,5 +451,24 @@ public class NutrientFormulationHelper {
 
 		return regulations.get("EU");
 	}
+	
+	public static String getLabelClaimDisplayMode(String labelClaimCode) {
+		String displayMode = "O";
+		if (labelClaimCode != null) {
+			if (labelClaimCode.startsWith("US") && !I18NUtil.getLocale().getCountry().equals("US")) {
+				displayMode = "";
+			} else if (labelClaimCode.startsWith("EU")
+					&& (I18NUtil.getLocale().getCountry().equals("US") || I18NUtil.getLocale().getLanguage().equals("zh")
+							|| I18NUtil.getLocale().getCountry().equals("AU") || I18NUtil.getLocale().getCountry().equals("NZ")
+							|| I18NUtil.getLocale().getCountry().equals("MX") || I18NUtil.getLocale().getCountry().equals("ID")
+							|| I18NUtil.getLocale().getCountry().equals("MY") || I18NUtil.getLocale().getCountry().equals("IN")
+							|| I18NUtil.getLocale().getCountry().equals("PR") || I18NUtil.getLocale().getLanguage().equals("ko")
+							|| I18NUtil.getLocale().getLanguage().equals("th"))) {
+				displayMode = "";
+			}
+		}
+		return displayMode;
+	}
+
 
 }

@@ -590,13 +590,20 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		final Date now = new Date();
 		if ((partProduct.getPriceList() != null) && !partProduct.getPriceList().isEmpty()) {
 			PriceListDataItem item = null;
+			boolean matchPlant = false;
+
 			for (PriceListDataItem priceListDataItem : partProduct.getPriceList()) {
-				if ((priceListDataItem.getCost() != null) && priceListDataItem.getCost().equals(slDataItem.getCharactNodeRef())
-						&& (priceListDataItem.getPlants().isEmpty() || formulatedProduct.getPlants().containsAll(priceListDataItem.getPlants()))) {
-					if ((item == null) || (priceListDataItem.getPrefRank() > item.getPrefRank())) {
-						if (((priceListDataItem.getStartEffectivity() == null) || (priceListDataItem.getStartEffectivity().getTime() <= now.getTime()))
-								&& ((priceListDataItem.getEndEffectivity() == null) || (priceListDataItem.getEndEffectivity().getTime() > now.getTime()))) {
-							item = priceListDataItem;
+				if ((priceListDataItem.getPlants().isEmpty() || formulatedProduct.getPlants().containsAll(priceListDataItem.getPlants()))) {
+					matchPlant = true;
+					if ((priceListDataItem.getCost() != null) && priceListDataItem.getCost().equals(slDataItem.getCharactNodeRef())) {
+
+						if ((item == null) || (priceListDataItem.getPrefRank() > item.getPrefRank())) {
+							if (((priceListDataItem.getStartEffectivity() == null)
+									|| (priceListDataItem.getStartEffectivity().getTime() <= now.getTime()))
+									&& ((priceListDataItem.getEndEffectivity() == null)
+											|| (priceListDataItem.getEndEffectivity().getTime() > now.getTime()))) {
+								item = priceListDataItem;
+							}
 						}
 					}
 				}
@@ -604,6 +611,8 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 
 			if ((item != null) && (item.getValue() != null)) {
 				return item.getValue();
+			} else if ((item == null) && matchPlant) {
+				return 0d;
 			}
 		}
 

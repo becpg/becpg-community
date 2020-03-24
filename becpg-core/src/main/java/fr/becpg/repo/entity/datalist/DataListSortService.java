@@ -29,7 +29,7 @@ public interface DataListSortService {
 
 	void computeDepthAndSort(Set<NodeRef> nodeRefs);
 
-	void deleteChildrens(NodeRef parentRef, NodeRef childRef);
+	void deleteChildrens(NodeRef nodeRef);
 
 	void move(NodeRef nodeRef, boolean moveUp);
 	

@@ -98,7 +98,7 @@ public class ImportEntityJsonVisitor {
 				logger.debug("Visiting: " + entity.toString(3));
 			}
 			if (entity.has(RemoteEntityService.ELEM_ENTITY)) {
-				return visit(entity.getJSONObject(RemoteEntityService.ELEM_ENTITY), false);
+				return visit(entity.getJSONObject(RemoteEntityService.ELEM_ENTITY), false, null);
 			}
 			return null;
 
@@ -106,7 +106,7 @@ public class ImportEntityJsonVisitor {
 
 	}
 
-	private NodeRef visit(JSONObject entity, boolean lookupOnly) throws JSONException {
+	private NodeRef visit(JSONObject entity, boolean lookupOnly, QName assocName) throws JSONException, BeCPGException {
 
 		QName type = null;
 		String path = null;
@@ -143,6 +143,22 @@ public class ImportEntityJsonVisitor {
 		}
 
 		if (lookupOnly) {
+			if (entityNodeRef == null) {
+				String errMsg = "Cannot find node";
+				if (assocName != null) {
+					errMsg += " for association " + assocName.toPrefixString(namespaceService);
+				}
+
+				if (!properties.isEmpty()) {
+					errMsg += ", with properties " + properties.toString();
+				}
+				if (!associations.isEmpty()) {
+					errMsg += ", with associations " + associations.toString();
+				}
+
+				throw new BeCPGException(errMsg);
+			}
+
 			return entityNodeRef;
 		}
 
@@ -258,7 +274,7 @@ public class ImportEntityJsonVisitor {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void visitDataLists(NodeRef entityNodeRef, JSONObject datalists) throws JSONException {
+	private void visitDataLists(NodeRef entityNodeRef, JSONObject datalists) throws JSONException, BeCPGException {
 		Iterator<String> iterator = datalists.keys();
 
 		NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
@@ -284,7 +300,7 @@ public class ImportEntityJsonVisitor {
 					listItem.put(RemoteEntityService.ATTR_TYPE, dataListQName);
 				}
 
-				visit(listItem, false);
+				visit(listItem, false, null);
 			}
 
 		}
@@ -292,7 +308,7 @@ public class ImportEntityJsonVisitor {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Map<QName, List<NodeRef>> jsonToAssocs(JSONObject entity) throws JSONException {
+	private Map<QName, List<NodeRef>> jsonToAssocs(JSONObject entity) throws JSONException, BeCPGException {
 		Map<QName, List<NodeRef>> assocs = new HashMap<>();
 
 		Iterator<String> iterator = entity.keys();
@@ -321,10 +337,7 @@ public class ImportEntityJsonVisitor {
 									assocEntity.put(RemoteEntityService.ATTR_TYPE, ad.getTargetClass().getName());
 								}
 
-								NodeRef ret = visit(assocEntity, true);
-								if (ret != null) {
-									tmp.add(ret);
-								}
+								tmp.add(visit(assocEntity, true, propQName));
 
 							}
 
@@ -335,10 +348,8 @@ public class ImportEntityJsonVisitor {
 								assocEntity.put(RemoteEntityService.ATTR_TYPE, ad.getTargetClass().getName());
 							}
 
-							NodeRef ret = visit(assocEntity, true);
-							if (ret != null) {
-								tmp.add(ret);
-							}
+							tmp.add(visit(assocEntity, true, propQName));
+
 						}
 
 						assocs.put(propQName, tmp);
@@ -352,7 +363,7 @@ public class ImportEntityJsonVisitor {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Map<QName, Serializable> jsonToProperties(JSONObject entity) throws JSONException {
+	private Map<QName, Serializable> jsonToProperties(JSONObject entity) throws JSONException, BeCPGException {
 		Map<QName, Serializable> nodeProps = new HashMap<>();
 
 		Iterator<String> iterator = entity.keys();
@@ -422,7 +433,7 @@ public class ImportEntityJsonVisitor {
 									Serializable val;
 
 									if (pd.getDataType().getName().equals(DataTypeDefinition.NODE_REF)) {
-										val = visit(values.getJSONObject(i), true);
+										val = visit(values.getJSONObject(i), true, propQName);
 									} else {
 										if (RemoteHelper.isJSONValue(propQName)) {
 											val = values.getJSONObject(i).toString();
@@ -435,7 +446,7 @@ public class ImportEntityJsonVisitor {
 
 							} else {
 								if (pd.getDataType().getName().equals(DataTypeDefinition.NODE_REF)) {
-									value = visit(entity.getJSONObject(key), true);
+									value = visit(entity.getJSONObject(key), true, propQName);
 								} else {
 									if (RemoteHelper.isJSONValue(propQName)) {
 										value = entity.getJSONObject(key).toString();

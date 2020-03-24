@@ -22,8 +22,6 @@ import java.net.SocketException;
 import java.nio.file.AccessDeniedException;
 
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
@@ -57,19 +55,12 @@ public class FormulateEntityWebScript extends AbstractEntityWebScript {
 		try {
 			FormulationExecutorState state = formulationExecutor.execute(entityNodeRef, false);
 
-			JSONObject ret = new JSONObject();
-
-			ret.put("entityNodeRef", entityNodeRef);
-			ret.put("status", state.toString());
-
-			resp.setContentType("application/json");
-			resp.setContentEncoding("UTF-8");
-			ret.write(resp.getWriter());
+			if (FormulationExecutorState.SUCCESS.equals(state)) {
+				sendOKStatus(entityNodeRef, resp);
+			}
 
 		} catch (FormulateException e) {
 			handleFormulationError(e);
-		} catch (JSONException e) {
-			throw new WebScriptException("Unable to serialize JSON", e);
 		} catch (AccessDeniedException e) {
 			throw new WebScriptException(Status.STATUS_UNAUTHORIZED, "You have no right to see this node");
 		} catch (SocketException e1) {

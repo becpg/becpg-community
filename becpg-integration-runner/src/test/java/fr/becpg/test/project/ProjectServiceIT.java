@@ -731,7 +731,7 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 			NodeRef taskNodeRef = (NodeRef) workflowTask.getProperties().get(ProjectModel.ASSOC_WORKFLOW_TASK);
 			if ((taskNodeRef != null) && taskNodeRef.equals(taskListDataItemNodeRef)) {
 				assertEquals(entityListDAO.getEntity(taskListDataItemNodeRef), workflowTask.getProperties().get(BeCPGModel.ASSOC_WORKFLOW_ENTITY));
-				assertEquals(workflowDescription, workflowTask.getProperties().get(WorkflowModel.PROP_DESCRIPTION));
+				assertTrue(workflowTask.getProperties().get(WorkflowModel.PROP_DESCRIPTION).toString().endsWith(workflowDescription));
 				assertEquals(dueDate, workflowTask.getProperties().get(WorkflowModel.PROP_DUE_DATE));
 				if (assignees.size() == 1) {
 					assertEquals(nodeService.getProperty(assignees.get(0), ContentModel.PROP_USERNAME),

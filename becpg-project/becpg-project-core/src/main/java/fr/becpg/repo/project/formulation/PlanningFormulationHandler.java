@@ -42,6 +42,7 @@ import fr.becpg.repo.repository.AlfrescoRepository;
  * @author quere
  *
  */
+@Deprecated
 public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectData> {
 
 	private static final Log logger = LogFactory.getLog(PlanningFormulationHandler.class);
@@ -118,7 +119,7 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 					tl.setEnd(null);
 				} else {
 					if (tl.getSubProject() == null) {
-						if (hasPlannedDuration(tl)) {
+						if (ProjectHelper.hasPlannedDuration(tl)) {
 							// in retro-planning or task has prev tasks
 							if (tl.getIsGroup() || !isPlanning || !ProjectHelper.getPrevTasks(projectData, tl).isEmpty()) {
 								ProjectHelper.setTaskStartDate(tl, null);
@@ -159,7 +160,6 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 
 	private void calculateDurationAndWork(ProjectData projectData, Composite<TaskListDataItem> composite) {
 
-		Integer duration = 0;
 		Double work = 0d;
 		for (Composite<TaskListDataItem> component : composite.getChildren()) {
 			calculateDurationAndWork(projectData, component);
@@ -167,9 +167,7 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 			if (taskListDataItem.getWork() != null) {
 				work += taskListDataItem.getWork();
 			}
-			if (taskListDataItem.getDuration() != null) {
-				duration += taskListDataItem.getDuration();
-			}
+			
 			taskListDataItem.setRealDuration(ProjectHelper.calculateRealDuration(taskListDataItem));
 		}
 		if (composite.isRoot()) {
@@ -198,6 +196,11 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 		}
 	}
 
+	
+	
+	
+	
+	
 	private void calculatePlanningOfNextTasks(ProjectData projectData, NodeRef taskNodeRef, Date startDate) throws FormulateException {
 
 		for (TaskListDataItem nextTask : ProjectHelper.getNextTasks(projectData, taskNodeRef)) {
@@ -214,7 +217,7 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 					ProjectHelper.setTaskStartDate(nextTask, startDate);
 				}
 
-				if (hasPlannedDuration(nextTask) && !nextTask.getIsGroup()) {
+				if (ProjectHelper.hasPlannedDuration(nextTask) && !nextTask.getIsGroup()) {
 					Date endDate = ProjectHelper.calculateEndDate(nextTask.getStart(), nextTask.getDuration());
 					ProjectHelper.setTaskEndDate(nextTask, endDate);
 				}
@@ -259,7 +262,7 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 				// InProgress => calculate endDate from the startDate and we
 				// stop
 				// retro-planning
-				if (hasPlannedDuration(prevTask)) {
+				if (ProjectHelper.hasPlannedDuration(prevTask)) {
 					Date d = ProjectHelper.calculateEndDate(prevTask.getStart(), prevTask.getDuration());
 					ProjectHelper.setTaskEndDate(prevTask, d);
 				}
@@ -271,7 +274,7 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 					ProjectHelper.setTaskEndDate(prevTask, endDate);
 				}
 
-				if (hasPlannedDuration(prevTask)) {
+				if (ProjectHelper.hasPlannedDuration(prevTask)) {
 					Date startDate = ProjectHelper.calculateStartDate(prevTask.getEnd(), prevTask.getDuration());
 					ProjectHelper.setTaskStartDate(prevTask, startDate);
 				}
@@ -335,12 +338,5 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 		}
 	}
 
-	private boolean hasPlannedDuration(TaskListDataItem task) {
 
-		if ((task != null) && ((task.getDuration() != null) || (Boolean.TRUE.equals(task.getIsMilestone())))) {
-			return true;
-		} else {
-			return false;
-		}
-	}
 }

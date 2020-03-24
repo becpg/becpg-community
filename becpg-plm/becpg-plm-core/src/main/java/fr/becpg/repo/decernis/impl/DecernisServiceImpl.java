@@ -8,7 +8,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.InvalidNodeRefException;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -65,7 +64,7 @@ public class DecernisServiceImpl implements DecernisService {
 
 	// 1, Food Additives
 	// 2, Standards Of Identity
-	// 3, Contaminants
+	// 3, Contaminants	
 	// 5, Food Contact
 	// 11; Product Check
 
@@ -122,7 +121,8 @@ public class DecernisServiceImpl implements DecernisService {
 		for (IngListDataItem ingListDataItem : product.getIngList()) {
 			if (ingListDataItem.getIng() != null) {
 				Serializable casCode = nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_CAS_NUMBER);
-				Serializable ingName = nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME);
+				Serializable ingName = (nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_LEGAL_NAME) != null && !nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_LEGAL_NAME).equals("") ? 
+						nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_LEGAL_NAME) : nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME));
 				Serializable rid = nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_REGULATORY_CODE);
 				Serializable ingType = nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_ING_TYPE_V2);
 				Serializable ingQtyPerc = nodeService.getProperty(ingListDataItem.getNodeRef(), PLMModel.PROP_INGLIST_QTY_PERC);
@@ -160,7 +160,7 @@ public class DecernisServiceImpl implements DecernisService {
 				
 				}
 				
-				if ((rid != null) && !rid.equals("") && ((function != null) && !function.equals("")) && ((ingName != null) && !ingName.equals(""))
+				if ((rid != null) && !rid.equals("") && !rid.equals("NA") && ((function != null) && !function.equals("")) && ((ingName != null) && !ingName.equals(""))
 						&& ((ingQtyPerc != null) && !ingQtyPerc.equals(""))) {
 					ings.put(rid.toString(), ingListDataItem.getIng());
 					JSONObject ingredient = new JSONObject();
@@ -317,6 +317,7 @@ public class DecernisServiceImpl implements DecernisService {
 	public String launchDecernisAnalysis(ProductData product, List<String> countries, List<String> usages) throws RestClientException, JSONException {
 		String ret = "";
 			if (usages.size() > 0) {
+				while (countries.remove(null));
 				for (String country : countries) {
 					if (!isAvaillableCountry(country)) {
 						countries.remove(country);
@@ -345,7 +346,7 @@ public class DecernisServiceImpl implements DecernisService {
 				} else if (countries.size() <= 0) {
 					return "No available country";
 				} else if (data == null) {
-					return "No ingredients found";
+					return "No ingredient found";
 				}
 			} else {
 				return "No usage found";

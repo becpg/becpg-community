@@ -60,7 +60,7 @@ import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 @Service("projectWorkflowService")
 public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 
-	private static final String WORKFLOW_DESCRIPTION = "%s - %s";
+	private static final String WORKFLOW_DESCRIPTION = "%s - %s - %s";
 	private static final String DEFAULT_INITIATOR = "System";
 
 	private static final Log logger = LogFactory.getLog(ProjectWorkflowServiceImpl.class);
@@ -184,7 +184,7 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 	private String calculateWorkflowDescription(ProjectData projectData, TaskListDataItem taskListDataItem,
 			List<DeliverableListDataItem> nextDeliverables) {
 
-		String workflowDescription = String.format(WORKFLOW_DESCRIPTION, projectData.getName(), taskListDataItem.getTaskName());
+		String workflowDescription = String.format(WORKFLOW_DESCRIPTION, projectData.getCode(), projectData.getName(), taskListDataItem.getTaskName());
 		return workflowDescription;
 	}
 

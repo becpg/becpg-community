@@ -506,6 +506,17 @@
 						<many>false</many>
 					</target>
 				</association>
+				<association name="pjt:tlRefusedTasksToReopen">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>pjt:taskList</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
 				<association name="pjt:tlResources">
 					<source>
 						<mandatory>false</mandatory>

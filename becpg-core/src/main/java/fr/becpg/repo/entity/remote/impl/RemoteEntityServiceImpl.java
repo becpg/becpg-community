@@ -44,6 +44,7 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -114,7 +115,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 
 	@Autowired
 	private AssociationService associationService;
-	
+
 	@Autowired
 	private EntityListDAO entityListDAO;
 
@@ -129,8 +130,8 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	public void getEntity(NodeRef entityNodeRef, OutputStream out, RemoteEntityFormat format, List<String> fields, List<String> lists)
 			throws BeCPGException {
 		if (format.equals(RemoteEntityFormat.xml) || format.equals(RemoteEntityFormat.xml_all) || format.equals(RemoteEntityFormat.xml_light)) {
-			XmlEntityVisitor xmlEntityVisitor = new XmlEntityVisitor(mlNodeService, nodeService, namespaceService, entityDictionaryService, contentService,
-					siteService, associationService);
+			XmlEntityVisitor xmlEntityVisitor = new XmlEntityVisitor(mlNodeService, nodeService, namespaceService, entityDictionaryService,
+					contentService, siteService, associationService);
 			if (format.equals(RemoteEntityFormat.xml_all)) {
 				xmlEntityVisitor.setDumpAll(true);
 			}
@@ -198,14 +199,14 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 
 			return rets.iterator().next();
 
-		} 
+		}
 
 		throw new BeCPGException("Unknown format " + format.toString());
 	}
 
 	@Override
-	public NodeRef internalCreateOrUpdateEntity(NodeRef entityNodeRef, NodeRef destNodeRef, InputStream in,
-			RemoteEntityFormat format, EntityProviderCallBack entityProviderCallBack, Map<NodeRef, NodeRef> cache) {
+	public NodeRef internalCreateOrUpdateEntity(NodeRef entityNodeRef, NodeRef destNodeRef, InputStream in, RemoteEntityFormat format,
+			EntityProviderCallBack entityProviderCallBack, Map<NodeRef, NodeRef> cache) {
 
 		StopWatch watch = null;
 
@@ -220,20 +221,23 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 				// Only for transaction do not reenable it
 				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 				policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
+				try {
+					if (RemoteEntityFormat.json.equals(format)) {
+						ImportEntityJsonVisitor jsonEntityVisitor = new ImportEntityJsonVisitor(entityDictionaryService, namespaceService,
+								associationService, mlNodeService, entityListDAO);
 
-				if(RemoteEntityFormat.json.equals(format)) {
-					ImportEntityJsonVisitor jsonEntityVisitor = new ImportEntityJsonVisitor(entityDictionaryService, namespaceService, associationService, mlNodeService, entityListDAO);
-					
-					return jsonEntityVisitor.visit(entityNodeRef, in);
-				} else {
-					ImportEntityXmlVisitor xmlEntityVisitor = new ImportEntityXmlVisitor(serviceRegistry, entityDictionaryService, associationService);
-					xmlEntityVisitor.setEntityProviderCallBack(entityProviderCallBack);
-					try {
+						return jsonEntityVisitor.visit(entityNodeRef, in);
+					} else {
+						ImportEntityXmlVisitor xmlEntityVisitor = new ImportEntityXmlVisitor(serviceRegistry, entityDictionaryService,
+								associationService);
+						xmlEntityVisitor.setEntityProviderCallBack(entityProviderCallBack);
+
 						return xmlEntityVisitor.visit(entityNodeRef, destNodeRef, in);
-					} catch (IOException | ParserConfigurationException | SAXException e) {
-						logger.error("Cannot create or update entity :" + entityNodeRef + " at format " + format, e);
-						throw new BeCPGException("Cannot create or update entity :" + entityNodeRef + " at format " + format, e);
+
 					}
+				} catch (IOException | ParserConfigurationException | SAXException | JSONException e) {
+					logger.error("Cannot create or update entity :" + entityNodeRef + " at format " + format, e);
+					throw new BeCPGException("Cannot create or update entity :" + entityNodeRef + " at format " + format, e);
 				}
 			}, false, false);
 
@@ -255,8 +259,8 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	@Override
 	public void listEntities(List<NodeRef> entities, OutputStream result, RemoteEntityFormat format, List<String> fields) throws BeCPGException {
 		if (format.equals(RemoteEntityFormat.xml)) {
-			XmlEntityVisitor xmlEntityVisitor = new XmlEntityVisitor(mlNodeService, nodeService, namespaceService, entityDictionaryService, contentService,
-					siteService, associationService);
+			XmlEntityVisitor xmlEntityVisitor = new XmlEntityVisitor(mlNodeService, nodeService, namespaceService, entityDictionaryService,
+					contentService, siteService, associationService);
 			if ((fields != null) && !fields.isEmpty()) {
 				xmlEntityVisitor.setFilteredFields(fields);
 			}
@@ -286,8 +290,8 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	@Override
 	public void getEntityData(NodeRef entityNodeRef, OutputStream result, RemoteEntityFormat format) throws BeCPGException {
 		if (RemoteEntityFormat.xml.equals(format)) {
-			XmlEntityVisitor xmlEntityVisitor = new XmlEntityVisitor(mlNodeService, nodeService, namespaceService, entityDictionaryService, contentService,
-					siteService, associationService);
+			XmlEntityVisitor xmlEntityVisitor = new XmlEntityVisitor(mlNodeService, nodeService, namespaceService, entityDictionaryService,
+					contentService, siteService, associationService);
 			try {
 				xmlEntityVisitor.visitData(entityNodeRef, result);
 			} catch (XMLStreamException e) {
