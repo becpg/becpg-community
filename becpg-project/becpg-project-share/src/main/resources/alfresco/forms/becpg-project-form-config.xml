@@ -714,6 +714,7 @@
 					<show id="pjt:tlPrevTasks" />
 					<show id="bcpg:parentLevel" force="true" />
 					<show id="pjt:tlRefusedTaskRef" />
+					<show id="pjt:tlRefusedTasksToReopen" />
 					
 					<show id="pjt:tlResources" />
 					<show id="pjt:tlObservers" />
@@ -776,7 +777,19 @@
 							<control-param name="urlParamsToPass">itemId</control-param>
 						</control>
 					</field>
+					
+				
+					
 					<field id="pjt:tlRefusedTaskRef" help-id="becpg.forms.help.tlRefusedTaskRef" set="mainInfo">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName
+							</control-param>
+							<control-param name="urlParamsToPass">itemId</control-param>
+						</control>
+					</field>
+					
+					<field id="pjt:tlRefusedTasksToReopen" set="mainInfo">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName
@@ -868,6 +881,7 @@
 					<show id="pjt:tlPrevTasks" />
 					<show id="bcpg:parentLevel" force="true" />
 					<show id="pjt:tlRefusedTaskRef" />
+					<show id="pjt:tlRefusedTasksToReopen" />
 					
 					<show id="pjt:tlResources" />
 					<show id="pjt:tlObservers" />
@@ -935,6 +949,14 @@
 						</control>
 					</field>
 				
+				 <field id="pjt:tlRefusedTasksToReopen" set="mainInfo">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName
+							</control-param>
+							<control-param name="urlParamsToPass">itemId</control-param>
+						</control>
+					</field>
 					
 					<set id="resources" appearance="bordered-panel" label-id="becpg.forms.set.resources.label"
 						template="/org/alfresco/components/form/1-column-set.ftl" />

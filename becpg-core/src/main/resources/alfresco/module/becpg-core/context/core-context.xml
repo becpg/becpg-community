@@ -153,19 +153,23 @@
 		<property name="tenantAdminService" ref="tenantAdminService"/>
 		<property name="disableAllCache" value="false"/>
 		<!-- If cache size is not define -->
-		<property name="maxCacheItems" value="500"/>
+		<property name="maxCacheItems" value="100"/>
 		<property name="cacheSizes">
 		   <!-- Cache size is by tenant -->
 			<map>
-			  <entry key="fr.becpg.repo.security.SecurityService" value="10" />
+			  <entry key="fr.becpg.repo.security.SecurityService" value="50" />
 			  <entry key="fr.becpg.repo.entity.version.EntityVersionService" value="10" />
-			  <entry key="fr.becpg.repo.helper.AttributeExtractorService" value="500" />
+			  <entry key="fr.becpg.repo.helper.AttributeExtractorService" value="100" />
 			  <entry key="fr.becpg.repo.helper.AssociationService.childs" value="10000" />
 			  <entry key="fr.becpg.repo.helper.AssociationService.assocs" value="200000" />
+			  <entry key="fr.becpg.repo.entity.catalog.EntityCatalogService" value="5" />
+			  <entry key="fr.becpg.repo.entity.EntityListDAO" value="500000" />
 			  <entry key="fr.becpg.repo.jscript.Thumbnail" value="20" />
-			  <entry key="fr.becpg.repo.search.PaginatedSearchCache" value="100" />
-			  <entry key="fr.becpg.repo.search.PaginatedSearchCache.multiLevel" value="100" />
+			  <entry key="fr.becpg.repo.search.PaginatedSearchCache" value="200" />
+			  <entry key="fr.becpg.repo.search.PaginatedSearchCache.multiLevel" value="200" />
 			  <entry key="fr.becpg.repo.entity.datalist.MultiLevelDataListService" value="50" />
+			  <entry key="fr.becpg.repo.entity.impl.EntityDictionaryServiceImpl" value="1000" />
+			  <entry key="fr.becpg.repo.license.BeCPGLicenseManager" value="20" />
 			</map>
 		</property>
 	</bean>

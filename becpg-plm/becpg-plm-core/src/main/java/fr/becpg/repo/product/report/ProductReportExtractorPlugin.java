@@ -69,7 +69,7 @@ import fr.becpg.repo.product.data.productList.ResourceParamListItem;
 import fr.becpg.repo.product.formulation.CostsCalculatingFormulationHandler;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.product.formulation.PackagingHelper;
-import fr.becpg.repo.product.formulation.nutrient.NutrientFormulationHelper;
+import fr.becpg.repo.product.formulation.nutrient.RegulationFormulationHelper;
 import fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
@@ -900,10 +900,10 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 					if (dataListItem.getErrorLog() != null && dataListItem.getErrorLog() != "") {
 						nutListElt.addAttribute(PLMModel.PROP_NUTLIST_FORMULA_ERROR.getLocalName(), "Error");
 					}
-					nutListElt.addAttribute(NutrientFormulationHelper.ATTR_NUT_CODE, nut.getNutCode());
+					nutListElt.addAttribute(RegulationFormulationHelper.ATTR_NUT_CODE, nut.getNutCode());
 					nutListElt.addAttribute(BeCPGModel.PROP_COLOR.getLocalName(), nut.getNutColor());
 
-					NutrientFormulationHelper.extractXMLAttribute(nutListElt, dataListItem.getRoundedValue(), I18NUtil.getLocale());
+					RegulationFormulationHelper.extractXMLAttribute(nutListElt, dataListItem.getRoundedValue(), I18NUtil.getLocale());
 
 					if (showDeprecated) {
 
@@ -945,16 +945,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				loadDataListItemAttributes(dataListItem, lcListElt, context);
 
 				String code = (String) nodeService.getProperty(dataListItem.getLabelClaim(), PLMModel.PROP_LABEL_CLAIM_CODE);
-				String displayMode = "O";
-				if (code != null) {
-					if (code.startsWith("US") && !I18NUtil.getLocale().getCountry().equals("US")) {
-						displayMode = "";
-					} else if (code.startsWith("EU")
-							&& (I18NUtil.getLocale().getCountry().equals("US") || I18NUtil.getLocale().getLanguage().equals("zh")
-									|| I18NUtil.getLocale().getCountry().equals("AU") || I18NUtil.getLocale().getCountry().equals("NZ"))) {
-						displayMode = "";
-					}
-				}
+				String displayMode = RegulationFormulationHelper.getLabelClaimDisplayMode(code);			
 				lcListElt.addAttribute("regulDisplayMode", displayMode);
 			}
 		}

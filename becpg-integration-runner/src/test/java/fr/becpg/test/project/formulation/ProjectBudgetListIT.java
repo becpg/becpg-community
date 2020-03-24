@@ -75,15 +75,6 @@ public class ProjectBudgetListIT extends AbstractProjectTestCase {
 			assertEquals(700.0, projectData.getBudgetList().get(1).getExpense());
 			assertEquals(900.0, projectData.getBudgetList().get(0).getProfit());
 
-			// assertEquals(5000.0,
-			// projectData.getTaskList().get(0).getInvoice());
-			// assertEquals(500.0,
-			// projectData.getTaskList().get(0).getExpense());
-			// assertEquals(2000.0,
-			// projectData.getTaskList().get(1).getInvoice());
-			// assertEquals(200.0,
-			// projectData.getTaskList().get(1).getExpense());
-
 			return null;
 		}, false, true);
 	}

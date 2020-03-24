@@ -52,7 +52,7 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 
 	private static final Log logger = LogFactory.getLog(BeCPGCacheServiceImpl.class);
 
-	private int maxCacheItems = 500;
+	private int maxCacheItems = 100;
 
 	Map<String, Integer> cacheSizes = new HashMap<>(10);
 

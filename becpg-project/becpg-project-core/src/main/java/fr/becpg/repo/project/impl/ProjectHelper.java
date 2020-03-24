@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2018 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2018 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.project.impl;
@@ -23,6 +23,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
@@ -37,6 +38,7 @@ import fr.becpg.repo.project.data.projectList.DeliverableState;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskManualDate;
 import fr.becpg.repo.project.data.projectList.TaskState;
+import fr.becpg.repo.project.formulation.TaskWrapper;
 
 public class ProjectHelper {
 
@@ -45,9 +47,10 @@ public class ProjectHelper {
 
 	private static final Log logger = LogFactory.getLog(ProjectHelper.class);
 
+	@Deprecated
 	public static TaskListDataItem getTask(ProjectData projectData, NodeRef taskListNodeRef) {
 
-		if (taskListNodeRef != null && projectData.getTaskList() != null) {
+		if ((taskListNodeRef != null) && (projectData.getTaskList() != null)) {
 			for (TaskListDataItem p : projectData.getTaskList()) {
 				if (taskListNodeRef.equals(p.getNodeRef())) {
 					return p;
@@ -58,16 +61,17 @@ public class ProjectHelper {
 	}
 
 	/*
-	 * Return all tasks including subproject tasks exclude groups 
+	 * Return all tasks including subproject tasks exclude groups
 	 */
+	@Deprecated
 	public static List<TaskListDataItem> getNextTasks(ProjectData projectData, NodeRef taskListNodeRef) {
 
 		List<TaskListDataItem> taskList = new ArrayList<>();
 		if (projectData.getTaskList() != null) {
 			for (TaskListDataItem p : projectData.getTaskList()) {
 				// taskNodeRef is null when we start project
-				if (p.getPrevTasks().contains(taskListNodeRef)
-						|| (taskListNodeRef == null && (p.getIsGroup() == null || !p.getIsGroup() || p.getSubProject() != null ) && p.getPrevTasks().isEmpty())) {
+				if (p.getPrevTasks().contains(taskListNodeRef) || ((taskListNodeRef == null)
+						&& ((p.getIsGroup() == null) || !p.getIsGroup() || (p.getSubProject() != null)) && p.getPrevTasks().isEmpty())) {
 					taskList.add(p);
 				}
 			}
@@ -75,6 +79,7 @@ public class ProjectHelper {
 		return taskList;
 	}
 
+	@Deprecated
 	public static List<TaskListDataItem> getPrevTasks(ProjectData projectData, TaskListDataItem taskListDataItem) {
 
 		List<TaskListDataItem> taskList = new ArrayList<>();
@@ -88,12 +93,13 @@ public class ProjectHelper {
 		return taskList;
 	}
 
+	@Deprecated
 	public static List<TaskListDataItem> getLastTasks(ProjectData projectData) {
 
 		List<TaskListDataItem> taskList = new ArrayList<>();
 		if (projectData.getTaskList() != null) {
 			for (TaskListDataItem t : projectData.getTaskList()) {
-				if (getNextTasks(projectData, t.getNodeRef()).isEmpty() && (t.getIsGroup() == null || !t.getIsGroup())) {
+				if (getNextTasks(projectData, t.getNodeRef()).isEmpty() && ((t.getIsGroup() == null) || !t.getIsGroup())) {
 					taskList.add(t);
 				}
 			}
@@ -101,61 +107,73 @@ public class ProjectHelper {
 		return taskList;
 	}
 
+	@Deprecated
 	public static List<TaskListDataItem> getChildrenTasks(ProjectData projectData, TaskListDataItem taskListDataItem) {
 
 		List<TaskListDataItem> taskList = new ArrayList<>();
 		for (TaskListDataItem t : projectData.getTaskList()) {
-			if (t.getParent() != null && t.getParent().equals(taskListDataItem)) {
+			if ((t.getParent() != null) && t.getParent().equals(taskListDataItem)) {
 				taskList.add(t);
 			}
 		}
 		return taskList;
 	}
 
+	@Deprecated
 	public static List<TaskListDataItem> getBrethrenTask(ProjectData projectData, TaskListDataItem nextTask) {
 		List<TaskListDataItem> taskList = new ArrayList<>();
 		for (TaskListDataItem t : projectData.getTaskList()) {
 			for (NodeRef taskListNodeRef : t.getPrevTasks()) {
-				if (!taskList.contains(t)
-						&& nextTask.getPrevTasks().contains(taskListNodeRef)
-						&& ((t.getParent() != null && t.getParent().equals(nextTask.getParent())) || (t.getParent() == null && nextTask.getParent() == null))) {
+				if (!taskList.contains(t) && nextTask.getPrevTasks().contains(taskListNodeRef)
+						&& (((t.getParent() != null) && t.getParent().equals(nextTask.getParent()))
+								|| ((t.getParent() == null) && (nextTask.getParent() == null)))) {
 					taskList.add(t);
 				}
 			}
 		}
 		return taskList;
 	}
+	
+	
+
+	
 
 	public static void reOpenRefusePath(ProjectData projectData, TaskListDataItem nextTask, TaskListDataItem refusedTask,
-			ProjectActivityService projectActivityService) {
+			List<NodeRef> refusedTasksToReopen, ProjectActivityService projectActivityService) {
 
 		if (nextTask.equals(refusedTask)) {
 			setTaskState(nextTask, TaskState.InProgress, projectActivityService);
 			reOpenDeliverables(projectData, nextTask);
 
 		} else {
-			if(!TaskState.Refused.equals(nextTask.getTaskState())) {
+			reOpenRefusedTask(projectData, nextTask, refusedTasksToReopen, projectActivityService);
+			// Reopen brethen
+			for (TaskListDataItem brotherTask : getBrethrenTask(projectData, nextTask)) {
+				reOpenRefusedTask(projectData, brotherTask, refusedTasksToReopen, projectActivityService);
+			}
+
+			for (TaskListDataItem prevTask : getPrevTasks(projectData, nextTask)) {
+				reOpenRefusePath(projectData, prevTask, refusedTask, refusedTasksToReopen, projectActivityService);
+			}
+
+		}
+
+	}
+
+	private static void reOpenRefusedTask(ProjectData projectData, TaskListDataItem nextTask, List<NodeRef> refusedTasksToReopen,
+			ProjectActivityService projectActivityService) {
+
+		if ((refusedTasksToReopen == null) || refusedTasksToReopen.isEmpty() || refusedTasksToReopen.contains(nextTask.getNodeRef())) {
+			if (!TaskState.Refused.equals(nextTask.getTaskState())) {
 				setTaskState(nextTask, TaskState.Planned, projectActivityService);
 			} else {
 				nextTask.setIsRefused(true);
 			}
 			reOpenDeliverables(projectData, nextTask);
-			// Reopen brethen
-			for (TaskListDataItem brotherTask : getBrethrenTask(projectData, nextTask)) {
-				if(!TaskState.Refused.equals(brotherTask.getTaskState())) {
-					setTaskState(brotherTask, TaskState.Planned, projectActivityService);
-				} else {
-					brotherTask.setIsRefused(true);
-				}
-				reOpenDeliverables(projectData, nextTask);
-			}
-
-			for (TaskListDataItem prevTask : getPrevTasks(projectData, nextTask)) {
-				reOpenRefusePath(projectData, prevTask, refusedTask, projectActivityService);
-			}
-
+		} else if (TaskState.Refused.equals(nextTask.getTaskState())) {
+			nextTask.setIsRefused(true);
+			reOpenDeliverables(projectData, nextTask);
 		}
-
 	}
 
 	private static void reOpenDeliverables(ProjectData projectData, TaskListDataItem nextTask) {
@@ -168,6 +186,7 @@ public class ProjectHelper {
 
 	}
 
+	@Deprecated
 	public static List<TaskListDataItem> getSourceTasks(ProjectData projectData) {
 
 		List<TaskListDataItem> taskList = new ArrayList<>();
@@ -194,7 +213,7 @@ public class ProjectHelper {
 		List<DeliverableListDataItem> deliverableList = new ArrayList<>();
 		if (projectData.getDeliverableList() != null) {
 			for (DeliverableListDataItem d : projectData.getDeliverableList()) {
-				if (d.getTasks() != null && d.getTasks().contains(taskListNodeRef)) {
+				if ((d.getTasks() != null) && d.getTasks().contains(taskListNodeRef)) {
 					deliverableList.add(d);
 				}
 			}
@@ -202,9 +221,10 @@ public class ProjectHelper {
 		return deliverableList;
 	}
 
+	@Deprecated
 	public static boolean areTasksDone(ProjectData projectData) {
 
-		if (projectData.getTaskList() != null && !projectData.getTaskList().isEmpty()) {
+		if ((projectData.getTaskList() != null) && !projectData.getTaskList().isEmpty()) {
 			for (TaskListDataItem t : projectData.getTaskList()) {
 				if (!(TaskState.Completed.equals(t.getTaskState()) || TaskState.Cancelled.equals(t.getTaskState()))) {
 					return false;
@@ -216,6 +236,7 @@ public class ProjectHelper {
 		return true;
 	}
 
+	@Deprecated
 	public static boolean areTasksDone(ProjectData projectData, List<NodeRef> taskNodeRefs) {
 
 		// no task : they are done
@@ -226,7 +247,7 @@ public class ProjectHelper {
 		List<NodeRef> inProgressTasks = new ArrayList<>();
 		inProgressTasks.addAll(taskNodeRefs);
 
-		if (projectData.getTaskList() != null && !projectData.getTaskList().isEmpty()) {
+		if ((projectData.getTaskList() != null) && !projectData.getTaskList().isEmpty()) {
 			for (int i = projectData.getTaskList().size() - 1; i >= 0; i--) {
 				TaskListDataItem t = projectData.getTaskList().get(i);
 
@@ -248,10 +269,11 @@ public class ProjectHelper {
 
 	/**
 	 * completedPercent is calculated on duration property
-	 * 
+	 *
 	 * @param projectData
 	 * @return
 	 */
+	@Deprecated
 	public static int geProjectCompletionPercent(ProjectData projectData) {
 
 		int totalWork = 0;
@@ -259,35 +281,55 @@ public class ProjectHelper {
 		for (TaskListDataItem p : projectData.getTaskList()) {
 			Integer duration = p.getDuration() != null ? p.getDuration() : calculateTaskDuration(p.getStart(), p.getEnd());
 			if (duration != null) {
-				if(!TaskState.Cancelled.equals(p.getTaskState())) {
+				if (!TaskState.Cancelled.equals(p.getTaskState())) {
 					totalWork += duration;
 				}
 				if (TaskState.Completed.equals(p.getTaskState())) {
 					workDone += duration;
-				} else if(p.getSubProject()!=null && p.getCompletionPercent()!=null) {
-					workDone += (duration * p.getCompletionPercent() / 100);
+				} else if ((p.getSubProject() != null) && (p.getCompletionPercent() != null)) {
+					workDone += ((duration * p.getCompletionPercent()) / 100);
 				}
 			}
 		}
 
-		return totalWork != 0 ? 100 * workDone / totalWork : 0;
+		return totalWork != 0 ? (100 * workDone) / totalWork : 0;
 	}
 
+	@Deprecated
 	public static Date getLastEndDate(ProjectData projectData) {
 		Date endDate = null;
 		for (TaskListDataItem task : projectData.getTaskList()) {
-			if ((!task.getIsGroup() || task.getSubProject()!=null)  && (endDate == null || (task.getEnd() != null && task.getEnd().after(endDate)))) {
+			if ((!task.getIsGroup() || (task.getSubProject() != null))
+					&& ((endDate == null) || ((task.getEnd() != null) && task.getEnd().after(endDate)))) {
 				endDate = task.getEnd();
 			}
 		}
 		return endDate;
 	}
 
+	public static Date getLastEndDate(Set<TaskWrapper> tasks) {
+		Date endDate = null;
+		for (TaskWrapper task : tasks) {
+			if (task.isLeaf() && ((endDate == null) || ((task.getTask().getEnd() != null) && task.getTask().getEnd().after(endDate)))) {
+				endDate = task.getTask().getEnd();
+			}
+		}
+		return endDate;
+	}
+	
+
+	public static Date getFirstStartDate(Set<TaskWrapper> tasks) {
+		
+		return tasks.stream().filter(e -> e.isRoot() && (e.getTask().getStart() != null)).map(e -> e.getTask().getStart())
+				.min(Date::compareTo).orElse(null);
+	}
+
+	@Deprecated
 	public static Date getFirstStartDate(ProjectData projectData) {
 		List<TaskListDataItem> tasks = getNextTasks(projectData, null);
 		Date startDate = null;
 		for (TaskListDataItem task : tasks) {
-			if ((startDate == null || (task.getStart() != null && task.getStart().before(startDate)))) {
+			if (((startDate == null) || ((task.getStart() != null) && task.getStart().before(startDate)))) {
 				startDate = task.getStart();
 			}
 		}
@@ -295,17 +337,17 @@ public class ProjectHelper {
 	}
 
 	public static void setTaskStartDate(TaskListDataItem t, Date startDate) {
-		logger.debug("task: " + t.getTaskName() + " state: " + t.getTaskState() + " start: " + startDate);
-		if ((t.getIsGroup() || t.isPlanned() || TaskState.Cancelled.equals(t.getTaskState()) || (TaskState.InProgress
-				.equals(t.getTaskState()) && t.getStart() == null)) && !TaskManualDate.Start.equals(t.getManualDate())) {
+		logger.debug("task: " + t.getTaskName() + ", state: " + t.getTaskState() + ", start: " + startDate+", is group:"+t.getIsGroup());
+		if ((t.getIsGroup() || t.isPlanned() || TaskState.Cancelled.equals(t.getTaskState())
+				|| (TaskState.InProgress.equals(t.getTaskState()) && (t.getStart() == null))) && !TaskManualDate.Start.equals(t.getManualDate())) {
 			t.setStart(removeTime(startDate));
 		}
 	}
 
 	public static void setTaskEndDate(TaskListDataItem t, Date endDate) {
-		logger.debug("task: " + t.getTaskName() + " state: " + t.getTaskState() + " end: " + endDate);
-		if ((t.getIsGroup() || t.isPlanned() || TaskState.Cancelled.equals(t.getTaskState()) || TaskState.InProgress
-				.equals(t.getTaskState())) && !TaskManualDate.End.equals(t.getManualDate())) {
+		logger.debug("task: " + t.getTaskName() + ", state: " + t.getTaskState() + ", end: " + endDate+", is group:"+t.getIsGroup());
+		if ((t.getIsGroup() || t.isPlanned() || TaskState.Cancelled.equals(t.getTaskState()) || TaskState.InProgress.equals(t.getTaskState()))
+				&& !TaskManualDate.End.equals(t.getManualDate())) {
 			t.setEnd(removeTime(endDate));
 		}
 	}
@@ -357,12 +399,12 @@ public class ProjectHelper {
 
 	public static boolean isWorkingDate(Calendar calendar) {
 		// saturday == 7 || sunday == 1
-		return calendar.get(Calendar.DAY_OF_WEEK) != 7 && calendar.get(Calendar.DAY_OF_WEEK) != 1;
+		return (calendar.get(Calendar.DAY_OF_WEEK) != 7) && (calendar.get(Calendar.DAY_OF_WEEK) != 1);
 	}
 
 	public static Integer calculateTaskDuration(Date startDate, Date endDate) {
 
-		if (startDate == null || endDate == null) {
+		if ((startDate == null) || (endDate == null)) {
 			logger.debug("startDate or endDate is null. startDate: " + startDate + " - endDate: " + endDate);
 			return null;
 		}
@@ -403,7 +445,7 @@ public class ProjectHelper {
 	public static Date calculatePrevEndDate(Date startDate) {
 		return calculateNextDate(startDate, DURATION_NEXT_DAY, false);
 	}
-	
+
 	public static Integer calculateRealDuration(TaskListDataItem task) {
 
 		Date endDate;
@@ -412,7 +454,7 @@ public class ProjectHelper {
 			endDate = ProjectHelper.removeTime(new Date());
 
 			// we wait the overdue of the task to take it in account
-			if (task.getEnd() != null && endDate.before(task.getEnd())) {
+			if ((task.getEnd() != null) && endDate.before(task.getEnd())) {
 				return null;
 			}
 		} else if (TaskState.Completed.equals(task.getTaskState())) {
@@ -420,16 +462,17 @@ public class ProjectHelper {
 		} else {
 			return null;
 		}
-		return calculateTaskDuration(task.getStart(), endDate);		
+		return calculateTaskDuration(task.getStart(), endDate);
 	}
 
-	public static Integer calculateDuration(TaskListDataItem task) {		
+	@Deprecated
+	public static Integer calculateDuration(TaskListDataItem task) {
 		return task.getDuration() != null ? task.getDuration() : (Boolean.TRUE.equals(task.getIsMilestone())) ? DURATION_DEFAULT : null;
 	}
 
 	public static void setTaskState(TaskListDataItem task, TaskState state, ProjectActivityService projectActivityService) {
 		if (!state.equals(task.getTaskState())) {
-			projectActivityService.postTaskStateChangeActivity(task.getNodeRef(),null, task.getTaskState().toString(), state.toString(), true);
+			projectActivityService.postTaskStateChangeActivity(task.getNodeRef(), null, task.getTaskState().toString(), state.toString(), true);
 			task.setTaskState(state);
 		}
 	}
@@ -453,4 +496,14 @@ public class ProjectHelper {
 
 		return properties;
 	}
+
+	public static boolean hasPlannedDuration(TaskListDataItem task) {
+
+		if ((task != null) && ((task.getDuration() != null) || (Boolean.TRUE.equals(task.getIsMilestone())))) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 }

@@ -32,7 +32,7 @@ import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.NutDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
-import fr.becpg.repo.product.formulation.nutrient.NutrientFormulationHelper;
+import fr.becpg.repo.product.formulation.nutrient.RegulationFormulationHelper;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
 /**
@@ -201,7 +201,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 						}
 					}
 					
-					NutrientFormulationHelper.extractRoundedValue(formulatedProduct, nut.getNutCode(),n);
+					RegulationFormulationHelper.extractRoundedValue(formulatedProduct, nut.getNutCode(),n);
 					
 					if (transientFormulation) {
 						n.setTransient(true);

@@ -18,10 +18,12 @@ import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.config.mapping.AbstractAttributeMapping;
 import fr.becpg.repo.importer.ImportFileReader;
+import fr.becpg.repo.importer.ImporterException;
 
 public class ImportExcelFileReader implements ImportFileReader {
 
@@ -39,7 +41,7 @@ public class ImportExcelFileReader implements ImportFileReader {
 	}
 
 	@Override
-	public String[] getLineAt(int importIndex, List<AbstractAttributeMapping> columns) {
+	public String[] getLineAt(int importIndex, List<AbstractAttributeMapping> columns) throws ImporterException{
 		String[] line = null;
 		if (sheet != null && importIndex < getTotalLineCount()) {
 			Row row = sheet.getRow(importIndex);
@@ -53,7 +55,7 @@ public class ImportExcelFileReader implements ImportFileReader {
 		return line;
 	}
 
-	private String[] extractRow(Row row, List<AbstractAttributeMapping> columns) {
+	private String[] extractRow(Row row, List<AbstractAttributeMapping> columns) throws ImporterException{
 		
 		List<String> line = new LinkedList<>();
 		for (int i = 0; i < row.getLastCellNum(); i++) {
@@ -85,7 +87,7 @@ public class ImportExcelFileReader implements ImportFileReader {
 					&& (DataTypeDefinition.TEXT.equals(((PropertyDefinition)attributeMapping.getAttribute()).getDataType().getName())
 					|| DataTypeDefinition.MLTEXT.equals(((PropertyDefinition)attributeMapping.getAttribute()).getDataType().getName()))
 						 ){
-						line.add(""+cell.getNumericCellValue());
+						throw new ImporterException(I18NUtil.getMessage(ImportHelper.MSG_ERROR_FIELD_TYPE, attributeMapping.getAttribute().getName()));
 					} else	
 					if (HSSFDateUtil.isCellDateFormatted(cell) || HSSFDateUtil.isCellInternalDateFormatted(cell)) {
 						line.add(propertyFormats.formatDate(cell.getDateCellValue()));

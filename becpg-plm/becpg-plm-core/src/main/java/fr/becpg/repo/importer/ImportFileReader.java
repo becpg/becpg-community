@@ -9,7 +9,7 @@ import fr.becpg.config.mapping.AbstractAttributeMapping;
 
 public interface ImportFileReader {
 
-	String[] getLineAt(int index, List<AbstractAttributeMapping> columns);
+	String[] getLineAt(int index, List<AbstractAttributeMapping> columns) throws ImporterException;
 
 	int getTotalLineCount();
 

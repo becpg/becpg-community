@@ -216,10 +216,7 @@ public class SortableListPolicy extends AbstractBeCPGPolicy
 
 	@Override
 	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
-		try {
-			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
-			policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
-			policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
+
 			L2CacheSupport.doInCacheContext(() -> {
 				AuthenticationUtil.runAsSystem(() -> {
 					dataListSortService.computeDepthAndSort(pendingNodes);
@@ -227,11 +224,6 @@ public class SortableListPolicy extends AbstractBeCPGPolicy
 				});
 
 			}, false, true);
-		} finally {
-			policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
-			policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
-			policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
-		}
 		return true;
 	}
 
@@ -241,13 +233,10 @@ public class SortableListPolicy extends AbstractBeCPGPolicy
 		// if folder is deleted, all children are
 		if (nodeService.exists(childRef.getParentRef()) 
 				&& isNodeArchived) {
-			try {
-				policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
+
 				logger.debug("SortableListPolicy.onDeleteNode");
-				dataListSortService.deleteChildrens(childRef.getParentRef(), childRef.getChildRef());
-			} finally {
-				policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
-			}
+				dataListSortService.deleteChildrens(childRef.getChildRef());
+			
 		}
 	}
 

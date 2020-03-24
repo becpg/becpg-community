@@ -9,7 +9,7 @@ package fr.becpg.common;
  *
  * @author querephi
  */
-public class BeCPGException extends Exception {
+public class BeCPGException extends RuntimeException {
 	
 	/**
 	 * generated serial number
