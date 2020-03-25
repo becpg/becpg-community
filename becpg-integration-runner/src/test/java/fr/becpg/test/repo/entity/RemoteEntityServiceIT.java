@@ -40,7 +40,6 @@ import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.test.BeCPGPLMTestHelper;
 import fr.becpg.test.PLMBaseTestCase;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class RemoteEntityServiceTest.
  *
@@ -48,7 +47,6 @@ import fr.becpg.test.PLMBaseTestCase;
  */
 public class RemoteEntityServiceIT extends PLMBaseTestCase {
 
-	/** The logger. */
 	private static final Log logger = LogFactory.getLog(RemoteEntityServiceIT.class);
 
 	@Autowired
@@ -63,8 +61,6 @@ public class RemoteEntityServiceIT extends PLMBaseTestCase {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			try {
-
-				// TODO
 
 				File tempFile = File.createTempFile("remoteEntity", "xml");
 				File tempFile2 = File.createTempFile("remoteEntity2", "xml");

@@ -219,13 +219,15 @@ public class DepthLevelListPolicyIT extends PLMBaseTestCase {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			// delete parentLevel
-			logger.debug("Change parentLevel");
+			logger.debug("Delete parentLevel: "+finishedProductLoaded.getCompoListView().getCompoList().get(2).getProduct());
 			nodeService.deleteNode(finishedProductLoaded.getCompoListView().getCompoList().get(2).getNodeRef());
 			return null;
 		}, false, true);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			ProductData finishedProductLoaded2 = alfrescoRepository.findOne(finishedProductNodeRef);
+
+			printSort(finishedProductLoaded.getCompoListView().getCompoList());
 
 			assertNotNull(finishedProductLoaded2.getCompoListView().getCompoList());
 			assertEquals(5, finishedProductLoaded2.getCompoListView().getCompoList().size());
@@ -581,31 +583,37 @@ public class DepthLevelListPolicyIT extends PLMBaseTestCase {
 			return copyService.copy(finishedProductNodeRef, getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
 
 		}, false, true);
-		
+
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-		final ProductData finishedProductLoaded = alfrescoRepository.findOne(finishedProductNodeRef);
-		final ProductData copiedProductLoaded = alfrescoRepository.findOne(copiedNodeRef);
+			final ProductData finishedProductLoaded = alfrescoRepository.findOne(finishedProductNodeRef);
+			final ProductData copiedProductLoaded = alfrescoRepository.findOne(copiedNodeRef);
 
-		logger.debug("origin " + finishedProductLoaded.getCompoListView().getCompoList().get(1).getParent().getNodeRef());
-		logger.debug("target " + copiedProductLoaded.getCompoListView().getCompoList().get(1).getParent().getNodeRef());
-		assertNull(finishedProductLoaded.getCompoListView().getCompoList().get(0).getParent());
-		assertNull(copiedProductLoaded.getCompoListView().getCompoList().get(0).getParent());
-		assertNotNull(finishedProductLoaded.getCompoListView().getCompoList().get(1).getParent());
-		assertNotNull(copiedProductLoaded.getCompoListView().getCompoList().get(1).getParent());
-		assertNotSame(finishedProductLoaded.getCompoListView().getCompoList().get(1).getParent().getNodeRef(),
-				copiedProductLoaded.getCompoListView().getCompoList().get(1).getParent().getNodeRef());
-		return null;
+			logger.debug("origin " + finishedProductLoaded.getCompoListView().getCompoList().get(1).getParent().getNodeRef());
+			logger.debug("target " + copiedProductLoaded.getCompoListView().getCompoList().get(1).getParent().getNodeRef());
+			assertNull(finishedProductLoaded.getCompoListView().getCompoList().get(0).getParent());
+			assertNull(copiedProductLoaded.getCompoListView().getCompoList().get(0).getParent());
+			assertNotNull(finishedProductLoaded.getCompoListView().getCompoList().get(1).getParent());
+			assertNotNull(copiedProductLoaded.getCompoListView().getCompoList().get(1).getParent());
+			assertNotSame(finishedProductLoaded.getCompoListView().getCompoList().get(1).getParent().getNodeRef(),
+					copiedProductLoaded.getCompoListView().getCompoList().get(1).getParent().getNodeRef());
+			return null;
 		}, false, true);
 	}
 
 	public void printSort(List<CompoListDataItem> compoListDataItem) {
 
 		for (CompoListDataItem c : compoListDataItem) {
+			if (nodeService.exists(c.getNodeRef())) {
 
-			logger.info("level : " + nodeService.getProperty(c.getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL) + " - Product "
-					+ nodeService.getProperty(c.getProduct(), ContentModel.PROP_NAME) + " - Parent " + c.getParent() + " - sorted: "
-					+ nodeService.getProperty(c.getNodeRef(), BeCPGModel.PROP_SORT));
+				Integer level = (Integer) nodeService.getProperty(c.getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL);
+
+				logger.info("  ".repeat(level != null ? level : 1) + " - Product " + nodeService.getProperty(c.getProduct(), ContentModel.PROP_NAME)
+						+ ((c.getParent() != null) && (c.getParent().getProduct() != null)
+								? " - Parent: " + nodeService.getProperty(c.getParent().getProduct(), ContentModel.PROP_NAME)
+								: "")
+						+ " - sorted: " + nodeService.getProperty(c.getNodeRef(), BeCPGModel.PROP_SORT));
+			}
 		}
 	}
 }
