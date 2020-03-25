@@ -45,7 +45,6 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.activity.extractor.ActivityListExtractor;
-import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.datalist.DataListSortPlugin;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
@@ -86,7 +85,6 @@ public class ProjectListExtractor extends ActivityListExtractor {
 
 	private SecurityService securityService;
 
-
 	private NamespaceService namespaceService;
 
 	private static final Log logger = LogFactory.getLog(ProjectListExtractor.class);
@@ -116,7 +114,6 @@ public class ProjectListExtractor extends ActivityListExtractor {
 	public void setMyProjectAttributes(String myProjectAttributes) {
 		this.myProjectAttributes = myProjectAttributes;
 	}
-
 
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
@@ -250,7 +247,8 @@ public class ProjectListExtractor extends ActivityListExtractor {
 						} else {
 							BeCPGQueryBuilder creatorQuery = dataListFilter.getSearchQuery().excludeDefaults().ofType(ProjectModel.TYPE_PROJECT);
 
-							if (!dataListFilter.getCriteriaMap().containsKey("prop_pjt_projectState")) {
+							if (!dataListFilter.getCriteriaMap().containsKey("prop_pjt_projectState")
+									&& ((dataListFilter.getFilterParams() == null) || !dataListFilter.getFilterParams().contains("projectState"))) {
 								creatorQuery.andPropQuery(ProjectModel.PROP_PROJECT_STATE, "Planned OR InProgress");
 							}
 
@@ -261,7 +259,8 @@ public class ProjectListExtractor extends ActivityListExtractor {
 
 					}
 
-					if (!dataListFilter.getCriteriaMap().containsKey("prop_pjt_projectState")) {
+					if (!dataListFilter.getCriteriaMap().containsKey("prop_pjt_projectState")
+							&& ((dataListFilter.getFilterParams() == null) || !dataListFilter.getFilterParams().contains("projectState"))) {
 						dataListFilter.getCriteriaMap().put("prop_pjt_projectState", "\"Planned\",\"InProgress\"");
 					}
 				}
