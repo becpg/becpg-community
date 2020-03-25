@@ -19,7 +19,6 @@ import com.ibm.icu.util.Calendar;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DeliverableUrl;
 import fr.becpg.model.ProjectModel;
-import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.project.ProjectActivityService;
 import fr.becpg.repo.project.ProjectService;
@@ -176,7 +175,7 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 							boolean allTasksPlanned = true;
 							boolean allTasksCancelled = true;
 							int completionPerc = 0;
-							
+
 							task.getTask().setStart(null);
 							task.getTask().setEnd(null);
 
@@ -249,7 +248,8 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 			// If we haven't made any progress then a cycle must exist in
 			// the graph and we wont be able to calculate the critical path
 			if (!progress) {
-				throw new FormulateException("Cyclic dependency, algorithm stopped!");
+				logger.warn("Cyclic dependency, algorithm stopped!");
+				return;
 			}
 		}
 
@@ -311,43 +311,44 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 			int workDone = 0;
 
 			for (TaskWrapper task : tasks) {
-				TaskState state = task.getTask().getTaskState();
+				if (task.getTask() != null) {
+					TaskState state = task.getTask().getTaskState();
 
-				if (!TaskState.Cancelled.equals(state)) {
-					if (!task.getTask().isPlanned()) {
-						allTaskPlanned = false;
-					}
-
-					if (!(TaskState.Completed.equals(state))) {
-						allTaskDone = false;
-					}
-
-					Integer duration = task.getDuration() != null ? task.getDuration()
-							: ProjectHelper.calculateTaskDuration(task.getTask().getStart(), task.getTask().getEnd());
-					if (duration != null) {
-						totalWork += duration;
-						if (TaskState.Completed.equals(state)) {
-							workDone += duration;
-						} else if ((task.isSubProject()) && (task.getTask().getCompletionPercent() != null)) {
-							workDone += ((duration * task.getTask().getCompletionPercent()) / 100);
+					if (!TaskState.Cancelled.equals(state)) {
+						if (!task.getTask().isPlanned()) {
+							allTaskPlanned = false;
 						}
-					}
 
-					if (TaskState.InProgress.equals(state)) {
-						if (!currLegends.contains(task.getTask().getTaskLegend())) {
-							currLegends.add(task.getTask().getTaskLegend());
+						if (!(TaskState.Completed.equals(state))) {
+							allTaskDone = false;
 						}
-						currTasks.add(task.getTask().getNodeRef());
-					}
 
-					if (!task.isGroup()) {
-						if (task.getTask().getWork() != null) {
-							work += task.getTask().getWork();
+						Integer duration = task.getDuration() != null ? task.getDuration()
+								: ProjectHelper.calculateTaskDuration(task.getTask().getStart(), task.getTask().getEnd());
+						if (duration != null) {
+							totalWork += duration;
+							if (TaskState.Completed.equals(state)) {
+								workDone += duration;
+							} else if ((task.isSubProject()) && (task.getTask().getCompletionPercent() != null)) {
+								workDone += ((duration * task.getTask().getCompletionPercent()) / 100);
+							}
 						}
-					}
 
+						if (TaskState.InProgress.equals(state)) {
+							if (!currLegends.contains(task.getTask().getTaskLegend())) {
+								currLegends.add(task.getTask().getTaskLegend());
+							}
+							currTasks.add(task.getTask().getNodeRef());
+						}
+
+						if (!task.isGroup()) {
+							if (task.getTask().getWork() != null) {
+								work += task.getTask().getWork();
+							}
+						}
+
+					}
 				}
-
 			}
 
 			if (!allTaskPlanned && ProjectState.Planned.equals(projectData.getProjectState())) {
@@ -423,7 +424,8 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 			// If we haven't made any progress then a cycle must exist in
 			// the graph and we wont be able to calculate the critical path
 			if (!progress) {
-				throw new FormulateException("Cyclic dependency, algorithm stopped!");
+				logger.warn("Cyclic dependency, algorithm stopped!");
+				return false;
 			}
 		}
 
