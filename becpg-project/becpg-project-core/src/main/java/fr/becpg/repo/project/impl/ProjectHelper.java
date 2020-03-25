@@ -320,7 +320,7 @@ public class ProjectHelper {
 
 	public static Date getFirstStartDate(Set<TaskWrapper> tasks) {
 		
-		return tasks.stream().filter(e -> e.isRoot() && (e.getTask().getStart() != null)).map(e -> e.getTask().getStart())
+		return tasks.stream().filter(e -> e.isRoot() && (e.getTask()!=null && e.getTask().getStart() != null)).map(e -> e.getTask().getStart())
 				.min(Date::compareTo).orElse(null);
 	}
 
