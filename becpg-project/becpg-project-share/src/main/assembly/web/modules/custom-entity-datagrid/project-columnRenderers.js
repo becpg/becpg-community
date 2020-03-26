@@ -103,7 +103,9 @@ if (beCPG.module.EntityDataGridRenderers) {
 
       	var className="";
       	if(data.value != null){
-      		if(data.value < 25){
+      		if (data.value < 0){
+      			className="score-black";
+      		}else if(data.value < 25){
       			className="score-red";
       		}
       		else if(data.value < 50){
