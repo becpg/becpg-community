@@ -32,7 +32,7 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 
 		if (getDataListVisited(formulatedProduct) != null) {
 			Map<LabelClaimListDataItem, Boolean> specLabelClaimsVisitedMap = new HashMap<>();
-			extractRequirements(formulatedProduct).forEach(extracedSpecDataItem -> {
+			extractRequirements(specifications).forEach(extracedSpecDataItem -> {
 				specLabelClaimsVisitedMap.put(extracedSpecDataItem, false);
 			});
 
@@ -101,18 +101,7 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 				new ArrayList<NodeRef>(), RequirementDataType.Specification));
 	}
 
-	private List<LabelClaimListDataItem> extractRequirements(ProductData formulatedProduct) {
-		List<LabelClaimListDataItem> ret = new ArrayList<>();
-		if (formulatedProduct.getProductSpecifications() != null) {
-			for (ProductSpecificationData specification : formulatedProduct.getProductSpecifications()) {
-				mergeRequirements(ret, extractRequirements(specification));
-				if (getDataListVisited(specification) != null) {
-					mergeRequirements(ret, getDataListVisited(specification));
-				}
-			}
-		}
-		return ret;
-	}
+	
 
 	@Override
 	protected void mergeRequirements(List<LabelClaimListDataItem> ret, List<LabelClaimListDataItem> toAdd) {
