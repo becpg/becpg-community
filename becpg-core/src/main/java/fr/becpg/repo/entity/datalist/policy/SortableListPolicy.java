@@ -235,7 +235,7 @@ public class SortableListPolicy extends AbstractBeCPGPolicy
 				&& isNodeArchived) {
 
 				logger.debug("SortableListPolicy.onDeleteNode");
-				dataListSortService.deleteChildrens(childRef.getChildRef());
+				dataListSortService.deleteChildrens(childRef.getParentRef(),childRef.getChildRef());
 			
 		}
 	}
