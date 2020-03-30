@@ -89,8 +89,7 @@ public class ThailandNutrientRegulation extends AbstractNutrientRegulation {
 					return 0.0;
 				} else if (value < 10) {
 					return roundValue(value, 2d);
-				}
-				if (value < 50) {
+				} else if (value < 50) {
 					return roundValue(value, 5d);
 				} else {
 					return roundValue(value, 10d);

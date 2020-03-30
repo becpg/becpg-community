@@ -30,9 +30,7 @@ public class KoreanNutrientRegulation extends AbstractNutrientRegulation {
 			} else if (nutrientTypeCode.equals(NutrientCode.FatTrans)) {
 				if (value < 0.2) {
 					return 0.0;
-				} else if (value < 0.5) {
-					return roundValue(value,0.5d);
-				} else {
+				} else if (value >= 0.5) {
 					return roundValue(value,1d);
 				}
 			} else if (nutrientTypeCode.equals(NutrientCode.Cholesterol)) {
@@ -49,7 +47,7 @@ public class KoreanNutrientRegulation extends AbstractNutrientRegulation {
 				} else {
 					return roundValue(value,10d);
 				}
-			} else if (nutrientTypeCode.contentEquals(NutrientCode.CarbohydrateByDiff) 
+			} else if (nutrientTypeCode.contentEquals(NutrientCode.CarbohydrateWithFiber) 
 					|| nutrientTypeCode.contentEquals(NutrientCode.Sugar)) {
 				if (value < 0.5) {
 					return 0.0;
@@ -73,12 +71,13 @@ public class KoreanNutrientRegulation extends AbstractNutrientRegulation {
 	protected String displayValueByCode(Double value, Double roundedValue, String nutrientTypeCode, Locale locale) {
 
 		if(value != null && roundedValue != null && nutrientTypeCode != null){
-			if (nutrientTypeCode.equals(NutrientCode.Cholesterol) && value > 2 && value < 5) {
+			if (nutrientTypeCode.equals(NutrientCode.FatTrans) && value > 0.2 && value < 0.5) {
+				return "less than 0.5g";
+			} else if (nutrientTypeCode.equals(NutrientCode.Cholesterol) && value > 2 && value < 5) {
 				return "less than 5mg";
-			} else if (nutrientTypeCode.equals(NutrientCode.Protein)
-					|| nutrientTypeCode.equals(NutrientCode.CarbohydrateByDiff)
-					|| nutrientTypeCode.equals(NutrientCode.Sugar)
-					|| nutrientTypeCode.equals(NutrientCode.Protein)
+			} else if ((nutrientTypeCode.equals(NutrientCode.Protein)
+					|| nutrientTypeCode.equals(NutrientCode.CarbohydrateWithFiber)
+					|| nutrientTypeCode.equals(NutrientCode.Sugar))
 					&& value > 0.5 && value < 1){
 				return "less than 1g";
 			}
