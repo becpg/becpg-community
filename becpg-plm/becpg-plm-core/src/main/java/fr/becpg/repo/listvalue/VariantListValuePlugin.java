@@ -44,10 +44,6 @@ public class VariantListValuePlugin extends EntityListValuePlugin {
 	
 	@Autowired
 	private AssociationService associationService;
-	
-	@Autowired
-	private DictionaryService dictionaryService;
-	
 
 	@Override
 	public String[] getHandleSourceTypes() {

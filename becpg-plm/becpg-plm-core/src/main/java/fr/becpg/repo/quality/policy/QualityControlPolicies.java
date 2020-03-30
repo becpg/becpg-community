@@ -84,6 +84,7 @@ public class QualityControlPolicies extends AbstractBeCPGPolicy implements NodeS
 	}
 
 	@Override
+	//TODO used queueAssoc instead
 	public void onCreateAssociation(AssociationRef assocRef) {
 
 		logger.debug("QualityControlPolicies onCreateAssociation");

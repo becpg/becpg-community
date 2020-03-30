@@ -60,8 +60,6 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 	
 	private NodeRef ing;
 	
-	private Boolean isManual;
-
 	private Boolean isProcessingAid = false;
 	
 	private Boolean isSupport = false;
