@@ -18,21 +18,15 @@
 package fr.becpg.repo.product.policy.productListUnits;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
-import org.alfresco.repo.transaction.AlfrescoTransactionSupport;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.transaction.TransactionListener;
-import org.alfresco.util.transaction.TransactionListenerAdapter;
-import org.alfresco.util.transaction.TransactionSupportUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.StopWatch;
@@ -55,8 +49,6 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 	private static final String KEY_PRODUCTS = "ProductListPolicy.products";
 
 	private static final Log logger = LogFactory.getLog(ProductListPolicy.class);
-
-	private TransactionListener transactionListener;
 
 	private EntityListDAO entityListDAO;
 
@@ -98,290 +90,263 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 		super.disableOnCopyBehaviour(PackModel.TYPE_LABELING_LIST);
 		super.disableOnCopyBehaviour(PLMModel.TYPE_PRODUCT);
 
-		// transaction listeners
-		this.transactionListener = new ProductListPolicyTransactionListener();
 	}
 
 	@Override
 	public void onCreateAssociation(AssociationRef assocRef) {
-		// Bind the listener to the transaction
-		AlfrescoTransactionSupport.bindListener(transactionListener);
-		// Get the set of nodes read
-		Set<AssociationRef> assocRefs = TransactionSupportUtil.getResource(KEY_PRODUCT_LISTITEMS);
-		if (assocRefs == null) {
-			assocRefs = new HashSet<>(5);
-			TransactionSupportUtil.bindResource(KEY_PRODUCT_LISTITEMS, assocRefs);
-		}
-		assocRefs.add(assocRef);
+
+		queueAssoc(KEY_PRODUCT_LISTITEMS, assocRef);
+
 	}
 
 	@Override
 	public void onUpdateProperties(NodeRef productNodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
-		
-		if(isPropChanged(before, after, PLMModel.PROP_PRODUCT_UNIT) || isPropChanged(before, after, PLMModel.PROP_PRODUCT_SERVING_SIZE_UNIT)){ 
-			// Bind the listener to the transaction
-			AlfrescoTransactionSupport.bindListener(transactionListener);
-			// Get the set of nodes read
-			Set<NodeRef> nodeRefs = TransactionSupportUtil.getResource(KEY_PRODUCTS);
-			if (nodeRefs == null) {
-				nodeRefs = new HashSet<>(3);
-				TransactionSupportUtil.bindResource(KEY_PRODUCTS, nodeRefs);
-			}
-			nodeRefs.add(productNodeRef);
+
+		if (isPropChanged(before, after, PLMModel.PROP_PRODUCT_UNIT) || isPropChanged(before, after, PLMModel.PROP_PRODUCT_SERVING_SIZE_UNIT)) {
+			queueNode(KEY_PRODUCTS, productNodeRef);
 		}
 	}
 
-	private class ProductListPolicyTransactionListener extends TransactionListenerAdapter {
+	@Override
+	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 
-		final Map<NodeRef, ProductUnit> productsUnit = new HashMap<>(3);
-		final Map<NodeRef, ProductUnit> productsServingSizeUnit = new HashMap<>(3);
-		final Map<NodeRef, NodeRef> productNodeRefs = new HashMap<>(3);
+		try {
+			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 
-		@Override
-		public void beforeCommit(boolean readOnly) {
-
-			final Set<NodeRef> products = TransactionSupportUtil.getResource(KEY_PRODUCTS);
-
-			final Set<AssociationRef> assocRefs = TransactionSupportUtil.getResource(KEY_PRODUCT_LISTITEMS);
-
-			try {
-				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
-				updateProducts(products);
-				updateProductListItems(assocRefs);
-
-			} finally {
-				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+			if (KEY_PRODUCTS.equals(key)) {
+				updateProducts(pendingNodes);
 			}
-
+		} finally {
+			policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
 		}
 
-		/*
-		 * Update the productListItem unit when the product unit is modified
-		 */
-		private void updateProducts(Set<NodeRef> productNodeRefs) {
+		return true;
 
-			if (productNodeRefs != null) {
-				StopWatch watch = null;
+	}
 
-				if (logger.isDebugEnabled()) {
-					watch = new StopWatch();
-					watch.start();
-				}
+	@Override
+	protected boolean doBeforeAssocsCommit(String key, Set<AssociationRef> pendingAssocs) {
+		try {
+			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 
-				for (NodeRef productNodeRef : productNodeRefs) {
-					if (nodeService.exists(productNodeRef)) {
-						ProductUnit productUnit = ProductUnit.getUnit((String) nodeService.getProperty(productNodeRef, PLMModel.PROP_PRODUCT_UNIT));
+			if (KEY_PRODUCT_LISTITEMS.equals(key)) {
+				updateProductListItems(pendingAssocs);
+			}
+		} finally {
+			policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+		}
+		return true;
+	}
 
-						// look for product lists
-						NodeRef listContainerNodeRef = entityListDAO.getListContainer(productNodeRef);
-						if (listContainerNodeRef != null) {
+	/*
+	 *
+	 *
+	 *
+	 * Update the productListItem unit when the product unit is modified
+	 */
+	private void updateProducts(Set<NodeRef> productNodeRefs) {
 
-							// costList
-							NodeRef costListNodeRef = entityListDAO.getList(listContainerNodeRef, PLMModel.TYPE_COSTLIST);
-							if ((costListNodeRef != null) && !isTemplate(productNodeRef)) {
+		if (productNodeRefs != null) {
+			StopWatch watch = null;
 
-								productsUnit.put(costListNodeRef, productUnit);
-								
-								for (NodeRef productListItemNodeRef : entityListDAO.getListItems(costListNodeRef, PLMModel.TYPE_COSTLIST)) {
+			if (logger.isDebugEnabled()) {
+				watch = new StopWatch();
+				watch.start();
+			}
 
-									NodeRef costNodeRef = associationService.getTargetAssoc(productListItemNodeRef, PLMModel.ASSOC_COSTLIST_COST);
-									if (costNodeRef != null) {
-										Boolean costFixed = (Boolean) nodeService.getProperty(costNodeRef, PLMModel.PROP_COSTFIXED);
+			for (NodeRef productNodeRef : productNodeRefs) {
+				if (nodeService.exists(productNodeRef)) {
+					ProductUnit productUnit = ProductUnit.getUnit((String) nodeService.getProperty(productNodeRef, PLMModel.PROP_PRODUCT_UNIT));
 
-										if ((costFixed == null) || !costFixed) {
+					// look for product lists
+					NodeRef listContainerNodeRef = entityListDAO.getListContainer(productNodeRef);
+					if (listContainerNodeRef != null) {
 
-											String costCurrency = (String) nodeService.getProperty(costNodeRef, PLMModel.PROP_COSTCURRENCY);
-											String costListUnit = (String) nodeService.getProperty(productListItemNodeRef,
-													PLMModel.PROP_COSTLIST_UNIT);
+						// costList
+						NodeRef costListNodeRef = entityListDAO.getList(listContainerNodeRef, PLMModel.TYPE_COSTLIST);
+						if ((costListNodeRef != null) && !nodeService.hasAspect(productNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)) {
 
-											if (!((costListUnit != null) && !costListUnit.isEmpty()
-													&& costListUnit.endsWith(CostsCalculatingFormulationHandler.calculateSuffixUnit(productUnit)))) {
-												nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_COSTLIST_UNIT,
-														CostsCalculatingFormulationHandler.calculateUnit(productUnit, costCurrency, costFixed));
-											}
+							// productsUnit.put(costListNodeRef, productUnit);
+
+							for (NodeRef productListItemNodeRef : entityListDAO.getListItems(costListNodeRef, PLMModel.TYPE_COSTLIST)) {
+
+								NodeRef costNodeRef = associationService.getTargetAssoc(productListItemNodeRef, PLMModel.ASSOC_COSTLIST_COST);
+								if (costNodeRef != null) {
+									Boolean costFixed = (Boolean) nodeService.getProperty(costNodeRef, PLMModel.PROP_COSTFIXED);
+
+									if ((costFixed == null) || !costFixed) {
+
+										String costCurrency = (String) nodeService.getProperty(costNodeRef, PLMModel.PROP_COSTCURRENCY);
+										String costListUnit = (String) nodeService.getProperty(productListItemNodeRef, PLMModel.PROP_COSTLIST_UNIT);
+
+										if (!((costListUnit != null) && !costListUnit.isEmpty()
+												&& costListUnit.endsWith(CostsCalculatingFormulationHandler.calculateSuffixUnit(productUnit)))) {
+											nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_COSTLIST_UNIT,
+													CostsCalculatingFormulationHandler.calculateUnit(productUnit, costCurrency, costFixed));
 										}
 									}
 								}
 							}
+						}
 
-							// nutList
-							NodeRef nutListNodeRef = entityListDAO.getList(listContainerNodeRef, PLMModel.TYPE_NUTLIST);
-							if (nutListNodeRef != null) {
+						// nutList
+						NodeRef nutListNodeRef = entityListDAO.getList(listContainerNodeRef, PLMModel.TYPE_NUTLIST);
+						if (nutListNodeRef != null) {
 
-								productsUnit.put(nutListNodeRef, productUnit);
-								ProductUnit servingSizeUnit = ProductUnit.getUnit((String) nodeService.getProperty(productNodeRef, PLMModel.PROP_PRODUCT_SERVING_SIZE_UNIT));
-								productsServingSizeUnit.put(nutListNodeRef, servingSizeUnit);
+							// productsUnit.put(nutListNodeRef, productUnit);
+							ProductUnit servingSizeUnit = ProductUnit
+									.getUnit((String) nodeService.getProperty(productNodeRef, PLMModel.PROP_PRODUCT_SERVING_SIZE_UNIT));
+							// productsServingSizeUnit.put(nutListNodeRef,
+							// servingSizeUnit);
 
-								for (NodeRef productListItemNodeRef : entityListDAO.getListItems(nutListNodeRef, PLMModel.TYPE_NUTLIST)) {
+							for (NodeRef productListItemNodeRef : entityListDAO.getListItems(nutListNodeRef, PLMModel.TYPE_NUTLIST)) {
 
-									String nutListUnit = (String) nodeService.getProperty(productListItemNodeRef, PLMModel.PROP_NUTLIST_UNIT);
+								String nutListUnit = (String) nodeService.getProperty(productListItemNodeRef, PLMModel.PROP_NUTLIST_UNIT);
 
-									NodeRef nutNodeRef = associationService.getTargetAssoc(productListItemNodeRef, PLMModel.ASSOC_NUTLIST_NUT);
-									if (nutNodeRef != null) {
-										String nutUnit = (String) nodeService.getProperty(nutNodeRef, PLMModel.PROP_NUTUNIT);
+								NodeRef nutNodeRef = associationService.getTargetAssoc(productListItemNodeRef, PLMModel.ASSOC_NUTLIST_NUT);
+								if (nutNodeRef != null) {
+									String nutUnit = (String) nodeService.getProperty(nutNodeRef, PLMModel.PROP_NUTUNIT);
 
-										if (!((nutListUnit != null) && !nutListUnit.isEmpty()
-												&& nutListUnit.endsWith(NutsCalculatingFormulationHandler.calculateSuffixUnit(productUnit, servingSizeUnit)))) {
+									if (!((nutListUnit != null) && !nutListUnit.isEmpty() && nutListUnit
+											.endsWith(NutsCalculatingFormulationHandler.calculateSuffixUnit(productUnit, servingSizeUnit)))) {
 
-											nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_NUTLIST_UNIT,
-													NutsCalculatingFormulationHandler.calculateUnit(productUnit, servingSizeUnit, nutUnit));
-										}
+										nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_NUTLIST_UNIT,
+												NutsCalculatingFormulationHandler.calculateUnit(productUnit, servingSizeUnit, nutUnit));
 									}
 								}
 							}
 						}
 					}
 				}
-
-				if (logger.isDebugEnabled()) {
-					watch.stop();
-					logger.debug("BeforeCommit run in  " + watch.getTotalTimeSeconds() + " seconds for key " + KEY_PRODUCTS
-							+ "  - pendingNodesSize : " + productNodeRefs.size());
-				}
-			}
-		}
-
-		/*
-		 * Update the productListItem unit when the target assoc is modified
-		 */
-		private void updateProductListItems(final Set<AssociationRef> assocRefs) {
-
-			if (assocRefs != null) {
-
-				StopWatch watch = null;
-
-				if (logger.isDebugEnabled()) {
-					watch = new StopWatch();
-					watch.start();
-				}
-
-				for (AssociationRef assocRef : assocRefs) {
-
-					NodeRef targetNodeRef = assocRef.getTargetRef();
-					NodeRef productListItemNodeRef = assocRef.getSourceRef();
-
-					if (nodeService.exists(targetNodeRef) && nodeService.exists(productListItemNodeRef)) {
-
-						QName type = nodeService.getType(productListItemNodeRef);
-
-						if (type.equals(PLMModel.TYPE_COSTLIST)) {
-
-							Boolean costFixed = (Boolean) nodeService.getProperty(targetNodeRef, PLMModel.PROP_COSTFIXED);
-							String costCurrency = (String) nodeService.getProperty(targetNodeRef, PLMModel.PROP_COSTCURRENCY);
-							String costListUnit = (String) nodeService.getProperty(productListItemNodeRef, PLMModel.PROP_COSTLIST_UNIT);
-
-							if ((costFixed != null) && costFixed) {
-
-								if (!((costListUnit != null) && costListUnit.equals(costCurrency))) {
-									nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_COSTLIST_UNIT, costCurrency);
-								}
-							} else {
-
-								if (!((costListUnit != null) && !costListUnit.isEmpty()
-										&& costListUnit.startsWith(costCurrency + AbstractSimpleListFormulationHandler.UNIT_SEPARATOR))) {
-
-									NodeRef listNodeRef = nodeService.getPrimaryParent(productListItemNodeRef).getParentRef();
-
-									if (listNodeRef != null) {
-
-										nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_COSTLIST_UNIT,
-												CostsCalculatingFormulationHandler.calculateUnit(getProductUnit(listNodeRef), costCurrency,
-														costFixed));
-									}
-								}
-							}
-						} else if (type.equals(PLMModel.TYPE_NUTLIST)) {
-							String nutUnit = (String) nodeService.getProperty(targetNodeRef, PLMModel.PROP_NUTUNIT);
-							String nutListUnit = (String) nodeService.getProperty(productListItemNodeRef, PLMModel.PROP_NUTLIST_UNIT);
-
-							// nutListUnit
-							if (!((nutListUnit != null) && !nutListUnit.isEmpty()
-									&& nutListUnit.startsWith(nutUnit + AbstractSimpleListFormulationHandler.UNIT_SEPARATOR))) {
-
-								NodeRef listNodeRef = nodeService.getPrimaryParent(productListItemNodeRef).getParentRef();
-
-								if (listNodeRef != null) {
-
-									nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_NUTLIST_UNIT,
-											NutsCalculatingFormulationHandler.calculateUnit(getProductUnit(listNodeRef), getServingSizeUnit(listNodeRef), nutUnit));
-								}
-							}
-
-							// nutListGroup
-							String nutGroup = (String) nodeService.getProperty(targetNodeRef, PLMModel.PROP_NUTGROUP);
-							nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_NUTLIST_GROUP, nutGroup);
-						} else if (type.equals(PLMModel.TYPE_PHYSICOCHEMLIST)) {
-							String physicoChemUnit = (String) nodeService.getProperty(targetNodeRef, PLMModel.PROP_PHYSICO_CHEM_UNIT);
-							nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_PHYSICOCHEMLIST_UNIT, physicoChemUnit);
-						} else if (type.equals(PLMModel.TYPE_LABELCLAIMLIST)) {
-							// labelClaimType
-							String labelClaimType = (String) nodeService.getProperty(targetNodeRef, PLMModel.PROP_LABEL_CLAIM_TYPE);
-							nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_LCL_TYPE, labelClaimType);
-						} else if (type.equals(PackModel.TYPE_LABELING_LIST)) {
-							// labelingList
-							String labelType = (String) nodeService.getProperty(targetNodeRef, PackModel.PROP_LABEL_TYPE);
-							nodeService.setProperty(productListItemNodeRef, PackModel.PROP_LL_TYPE, labelType);
-						}
-					}
-				}
-
-				if (logger.isDebugEnabled()) {
-					watch.stop();
-					logger.debug("BeforeCommit run in  " + watch.getTotalTimeSeconds() + " seconds for key " + KEY_PRODUCT_LISTITEMS
-							+ "  - pendingNodesSize : " + assocRefs.size());
-				}
-			}
-		}
-
-		private ProductUnit getProductUnit(NodeRef listNodeRef) {
-
-			ProductUnit productUnit = productsUnit.get(listNodeRef);
-
-			if (productUnit == null) {
-
-				NodeRef productNodeRef = getProduct(listNodeRef);
-				if (productNodeRef != null) {
-
-					productUnit = ProductUnit.getUnit((String) nodeService.getProperty(productNodeRef, PLMModel.PROP_PRODUCT_UNIT));
-					productsUnit.put(listNodeRef, productUnit);
-				}
 			}
 
-			return productUnit;
-		}
-		
-		private ProductUnit getServingSizeUnit(NodeRef listNodeRef) {
-
-			ProductUnit isServingSizeUnit = productsServingSizeUnit.get(listNodeRef);
-
-			if (isServingSizeUnit == null) {
-
-				NodeRef productNodeRef = getProduct(listNodeRef);
-				if (productNodeRef != null) {
-
-					isServingSizeUnit = ProductUnit.getUnit((String) nodeService.getProperty(productNodeRef, PLMModel.PROP_PRODUCT_SERVING_SIZE_UNIT));
-					productsServingSizeUnit.put(listNodeRef, isServingSizeUnit);
-				}
+			if (logger.isDebugEnabled()) {
+				watch.stop();
+				logger.debug("BeforeCommit run in  " + watch.getTotalTimeSeconds() + " seconds for key " + KEY_PRODUCTS + "  - pendingNodesSize : "
+						+ productNodeRefs.size());
 			}
-
-			return isServingSizeUnit;
-		}
-
-		private NodeRef getProduct(NodeRef listNodeRef) {
-			NodeRef productNodeRef = productNodeRefs.get(listNodeRef);
-			if (productNodeRef == null) {
-				NodeRef listContainerNodeRef = nodeService.getPrimaryParent(listNodeRef).getParentRef();
-				if (listContainerNodeRef != null) {
-
-					productNodeRef = nodeService.getPrimaryParent(listContainerNodeRef).getParentRef();
-					productNodeRefs.put(listNodeRef, productNodeRef);
-				}
-			}
-			return productNodeRef;
-		}
-
-		private boolean isTemplate(NodeRef productNodeRef) {
-			return nodeService.hasAspect(productNodeRef, BeCPGModel.ASPECT_ENTITY_TPL);
 		}
 	}
+
+	/*
+	 * Update the productListItem unit when the target assoc is modified
+	 */
+	private void updateProductListItems(final Set<AssociationRef> assocRefs) {
+
+		if (assocRefs != null) {
+
+			StopWatch watch = null;
+
+			if (logger.isDebugEnabled()) {
+				watch = new StopWatch();
+				watch.start();
+			}
+
+			for (AssociationRef assocRef : assocRefs) {
+
+				NodeRef targetNodeRef = assocRef.getTargetRef();
+				NodeRef productListItemNodeRef = assocRef.getSourceRef();
+
+				if (nodeService.exists(targetNodeRef) && nodeService.exists(productListItemNodeRef)) {
+
+					QName type = nodeService.getType(productListItemNodeRef);
+
+					if (type.equals(PLMModel.TYPE_COSTLIST)) {
+
+						Boolean costFixed = (Boolean) nodeService.getProperty(targetNodeRef, PLMModel.PROP_COSTFIXED);
+						String costCurrency = (String) nodeService.getProperty(targetNodeRef, PLMModel.PROP_COSTCURRENCY);
+						String costListUnit = (String) nodeService.getProperty(productListItemNodeRef, PLMModel.PROP_COSTLIST_UNIT);
+
+						if ((costFixed != null) && costFixed) {
+
+							if (!((costListUnit != null) && costListUnit.equals(costCurrency))) {
+								nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_COSTLIST_UNIT, costCurrency);
+							}
+						} else {
+
+							if (!((costListUnit != null) && !costListUnit.isEmpty()
+									&& costListUnit.startsWith(costCurrency + AbstractSimpleListFormulationHandler.UNIT_SEPARATOR))) {
+
+								nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_COSTLIST_UNIT, CostsCalculatingFormulationHandler
+										.calculateUnit(getProductUnit(productListItemNodeRef), costCurrency, costFixed));
+
+							}
+						}
+					} else if (type.equals(PLMModel.TYPE_NUTLIST)) {
+						String nutUnit = (String) nodeService.getProperty(targetNodeRef, PLMModel.PROP_NUTUNIT);
+						String nutListUnit = (String) nodeService.getProperty(productListItemNodeRef, PLMModel.PROP_NUTLIST_UNIT);
+
+						// nutListUnit
+						if (!((nutListUnit != null) && !nutListUnit.isEmpty()
+								&& nutListUnit.startsWith(nutUnit + AbstractSimpleListFormulationHandler.UNIT_SEPARATOR))) {
+
+							nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_NUTLIST_UNIT, NutsCalculatingFormulationHandler
+									.calculateUnit(getProductUnit(productListItemNodeRef), getServingSizeUnit(productListItemNodeRef), nutUnit));
+
+						}
+
+						// nutListGroup
+						String nutGroup = (String) nodeService.getProperty(targetNodeRef, PLMModel.PROP_NUTGROUP);
+						nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_NUTLIST_GROUP, nutGroup);
+					} else if (type.equals(PLMModel.TYPE_PHYSICOCHEMLIST)) {
+						String physicoChemUnit = (String) nodeService.getProperty(targetNodeRef, PLMModel.PROP_PHYSICO_CHEM_UNIT);
+						nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_PHYSICOCHEMLIST_UNIT, physicoChemUnit);
+					} else if (type.equals(PLMModel.TYPE_LABELCLAIMLIST)) {
+						// labelClaimType
+						String labelClaimType = (String) nodeService.getProperty(targetNodeRef, PLMModel.PROP_LABEL_CLAIM_TYPE);
+						nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_LCL_TYPE, labelClaimType);
+					} else if (type.equals(PackModel.TYPE_LABELING_LIST)) {
+						// labelingList
+						String labelType = (String) nodeService.getProperty(targetNodeRef, PackModel.PROP_LABEL_TYPE);
+						nodeService.setProperty(productListItemNodeRef, PackModel.PROP_LL_TYPE, labelType);
+					}
+				}
+			}
+
+			if (logger.isDebugEnabled()) {
+				watch.stop();
+				logger.debug("BeforeCommit run in  " + watch.getTotalTimeSeconds() + " seconds for key " + KEY_PRODUCT_LISTITEMS
+						+ "  - pendingNodesSize : " + assocRefs.size());
+			}
+		}
+	}
+
+	private ProductUnit getProductUnit(NodeRef listNodeRef) {
+
+		NodeRef productNodeRef = entityListDAO.getEntity(listNodeRef);
+		if (productNodeRef != null) {
+
+			return ProductUnit.getUnit((String) nodeService.getProperty(productNodeRef, PLMModel.PROP_PRODUCT_UNIT));
+		}
+
+		return null;
+	}
+
+	//
+	private ProductUnit getServingSizeUnit(NodeRef listNodeRef) {
+
+		NodeRef productNodeRef = entityListDAO.getEntity(listNodeRef);
+		if (productNodeRef != null) {
+
+			return ProductUnit.getUnit((String) nodeService.getProperty(productNodeRef, PLMModel.PROP_PRODUCT_SERVING_SIZE_UNIT));
+		}
+
+		return null;
+	}
+	//
+	// private NodeRef getProduct(NodeRef listNodeRef) {
+	// NodeRef productNodeRef = productNodeRefs.get(listNodeRef);
+	// if (productNodeRef == null) {
+	// NodeRef listContainerNodeRef =
+	// nodeService.getPrimaryParent(listNodeRef).getParentRef();
+	// if (listContainerNodeRef != null) {
+	//
+	// productNodeRef =
+	// nodeService.getPrimaryParent(listContainerNodeRef).getParentRef();
+	// productNodeRefs.put(listNodeRef, productNodeRef);
+	// }
+	// }
+	// return productNodeRef;
+	// }
+	//
 }

@@ -35,13 +35,7 @@ public class ImportProductVisitor extends ImportEntityListAspectVisitor implemen
 	protected static final String MSG_ERROR_UNKNOWN_PRODUCTTYPE = "import_service.error.err_unknown_producttype";
 	protected static final String MSG_ERROR_OVERRIDE_EXISTING_ONE = "import_service.error.err_override_existing_one";
 
-	private HierarchyService hierarchyService;
-
 	private static final Log logger = LogFactory.getLog(ImportProductVisitor.class);
-
-	public void setHierarchyService(HierarchyService hierarchyService) {
-		this.hierarchyService = hierarchyService;
-	}
 
 	/**
 	 * Check if the node exists, according to : - keys or productCode - Path

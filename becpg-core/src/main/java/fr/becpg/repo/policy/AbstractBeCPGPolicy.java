@@ -35,6 +35,7 @@ import org.alfresco.repo.transaction.AlfrescoTransactionSupport;
 import org.alfresco.repo.version.Version2Model;
 import org.alfresco.service.cmr.lock.LockService;
 import org.alfresco.service.cmr.lock.LockStatus;
+import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
@@ -64,6 +65,8 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 
 
 	private final Set<String> keys = new LinkedHashSet<>();
+	
+	private final Set<String> assocKeys = new LinkedHashSet<>();
 
 	private static final Log logger = LogFactory.getLog(AbstractBeCPGPolicy.class);
 
@@ -146,6 +149,11 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 		// Do Nothing
 		return false;
 	}
+	
+	protected boolean doBeforeAssocsCommit(String key, Set<AssociationRef> pendingAssocs) {
+		// Do Nothing
+		return false;
+	}
 
 	public Set<String> getKeys() {
 		return keys;
@@ -172,6 +180,26 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 			pendingNodes.add(nodeRef);
 		}
 	}
+	
+	protected void queueAssoc(AssociationRef associationRef) {
+		queueAssoc(generateDefaultKey(), associationRef);
+		
+	}
+	
+	
+	protected void queueAssoc(String key, AssociationRef associationRef) {
+		Set<AssociationRef> pendingNodes = TransactionSupportUtil.getResource(key);
+		if (pendingNodes == null) {
+			pendingNodes = new LinkedHashSet<>();
+			assocKeys.add(key);
+			TransactionSupportUtil.bindResource(key, pendingNodes);
+			AlfrescoTransactionSupport.bindListener(transactionListener);
+		}
+		if (!pendingNodes.contains(associationRef)) {
+			pendingNodes.add(associationRef);
+		}
+	}
+
 
 	protected void unQueueNode(NodeRef nodeRef) {
 		unQueueNode(generateDefaultKey(), nodeRef);
@@ -207,7 +235,7 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 		return false;
 	}
 
-	class BeCPGPolicyTransactionListener extends TransactionListenerAdapter {
+	protected class BeCPGPolicyTransactionListener extends TransactionListenerAdapter {
 
 		private String id = GUID.generate();
 	
@@ -222,6 +250,7 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 			StopWatch watch = null;
 
 			Set<String> keysToRemove = new HashSet<>();
+			Set<String> assocsToRemove = new HashSet<>();
 			
 			for (String key : keys) {
 
@@ -247,8 +276,41 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 				}
 			}
 			
+			for (String key : assocKeys) {
+
+				Set<AssociationRef> pendingAssocs = TransactionSupportUtil.getResource(key);
+
+				if (pendingAssocs != null) {
+
+					if (logger.isDebugEnabled()) {
+						watch = new StopWatch();
+						watch.start();
+					}
+
+					if(doBeforeAssocsCommit(key, pendingAssocs)) {
+						assocsToRemove.add(key);
+					}
+
+					if (logger.isDebugEnabled()) {
+						watch.stop();
+						logger.debug(id + " - BeforeCommit run in  " + watch.getTotalTimeSeconds() + " seconds for key " + key+"  - pendingAssocsSize : "+pendingAssocs.size());
+					}
+					
+					
+				}
+			}
+			
+			
+			
 			if(keysToRemove!=null && !keysToRemove.isEmpty()) {
 				for (String key : keys) {
+					TransactionSupportUtil.bindResource(key, null);
+				}
+				AlfrescoTransactionSupport.bindListener(postTransactionListener);
+			}
+			
+			if(assocsToRemove!=null && !assocsToRemove.isEmpty()) {
+				for (String key : assocKeys) {
 					TransactionSupportUtil.bindResource(key, null);
 				}
 				AlfrescoTransactionSupport.bindListener(postTransactionListener);

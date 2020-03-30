@@ -7,7 +7,7 @@ import org.apache.commons.logging.LogFactory;
 
 public class ChineseNutrientRegulation extends AbstractNutrientRegulation {
 	
-	public Log logger = LogFactory.getLog(ChineseNutrientRegulation.class);
+	private static final Log logger = LogFactory.getLog(ChineseNutrientRegulation.class);
 
 	public ChineseNutrientRegulation(String path)  {
 		super(path);
