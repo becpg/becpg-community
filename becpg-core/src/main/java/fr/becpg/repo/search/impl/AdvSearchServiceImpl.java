@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2018 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2018 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.search.impl;
@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
@@ -38,6 +37,7 @@ import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.search.AdvSearchPlugin;
 import fr.becpg.repo.search.AdvSearchService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
@@ -45,9 +45,9 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 /**
  * This class do a search on the repository (association, properties and
  * productLists), for the UI so it respects rights.
- * 
+ *
  * @author querephi
- * 
+ *
  */
 
 @Service("advSearchService")
@@ -60,31 +60,30 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 	@Autowired(required = false)
 	private AdvSearchPlugin[] advSearchPlugins;
-	
+
 	@Autowired
 	private NodeService nodeService;
-	
+
 	@Autowired
-	private DictionaryService dictionaryService;
+	private EntityDictionaryService entityDictionaryService;
 
 	@Override
 	public List<NodeRef> queryAdvSearch(QName datatype, BeCPGQueryBuilder beCPGQueryBuilder, Map<String, String> criteria, int maxResults) {
-		logger.debug("advSearch, dataType="+datatype+", \ncriteria="+criteria+"\nplugins: "+Arrays.asList(advSearchPlugins));
-		if(isAssocSearch(criteria) || maxResults > RepoConsts.MAX_RESULTS_1000){
+		logger.debug("advSearch, dataType=" + datatype + ", \ncriteria=" + criteria + "\nplugins: " + Arrays.asList(advSearchPlugins));
+		if (isAssocSearch(criteria) || (maxResults > RepoConsts.MAX_RESULTS_1000)) {
 			maxResults = RepoConsts.MAX_RESULTS_UNLIMITED;
-		} else if (maxResults <= 0 ) {
+		} else if (maxResults <= 0) {
 			maxResults = RepoConsts.MAX_RESULTS_1000;
 		}
-		
-		Set<String> ignoredFields =  new HashSet<>();
-		
+
+		Set<String> ignoredFields = new HashSet<>();
+
 		if (advSearchPlugins != null) {
 			for (AdvSearchPlugin advSearchPlugin : advSearchPlugins) {
-				ignoredFields.addAll( advSearchPlugin.getIgnoredFields(datatype));
+				ignoredFields.addAll(advSearchPlugin.getIgnoredFields(datatype));
 			}
 		}
-		
-		
+
 		addCriteriaMap(beCPGQueryBuilder, criteria, ignoredFields);
 
 		List<NodeRef> nodes = beCPGQueryBuilder.maxResults(maxResults).ofType(datatype).inDBIfPossible().ftsLanguage().list();
@@ -112,9 +111,9 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	public BeCPGQueryBuilder createSearchQuery(QName datatype, String term, String tag, boolean isRepo, String siteId, String containerId) {
 		BeCPGQueryBuilder beCPGQueryBuilder = BeCPGQueryBuilder.createQuery();
 		// Simple keyword search and tag specific search
-		if (term != null && term.length() != 0) {
+		if ((term != null) && (term.length() != 0)) {
 			beCPGQueryBuilder.andFTSQuery(term);
-		} else if (tag != null && tag.length() != 0) {
+		} else if ((tag != null) && (tag.length() != 0)) {
 			beCPGQueryBuilder.andFTSQuery("TAG:\"" + tag + "\"");
 		}
 
@@ -136,7 +135,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	}
 
 	private void addCriteriaMap(BeCPGQueryBuilder queryBuilder, Map<String, String> criteriaMap, Set<String> ignoredFields) {
-		if (criteriaMap != null && !criteriaMap.isEmpty()) {
+		if ((criteriaMap != null) && !criteriaMap.isEmpty()) {
 
 			for (Map.Entry<String, String> criterion : criteriaMap.entrySet()) {
 
@@ -179,7 +178,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 										// the ISO date value - so crop the
 										// strings
 										from = (sepindex == 0 ? "MIN" : propValue.substring(0, 10));
-										to = (sepindex == propValue.length() - 1 ? "MAX" : propValue.substring(sepindex + 1, sepindex + 11));
+										to = (sepindex == (propValue.length() - 1) ? "MAX" : propValue.substring(sepindex + 1, sepindex + 11));
 									} else {
 										// simple range found
 										propName = propName.substring(0, propName.length() - "-range".length());
@@ -187,46 +186,44 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 										// work out if "min" and/or "max" are
 										// specified - use MIN and MAX otherwise
 										from = (sepindex == 0 ? "MIN" : propValue.substring(0, sepindex));
-										to = (sepindex == propValue.length() - 1 ? "MAX" : propValue.substring(sepindex + 1));
+										to = (sepindex == (propValue.length() - 1) ? "MAX" : propValue.substring(sepindex + 1));
 									}
 
 									queryBuilder.andBetween(QName.createQName(propName, namespaceService), from, to);
 
 								}
 
-							} else if (propName.contains("Hierarchy")) {	
+							} else if (propName.contains("Hierarchy")) {
 								String hierarchyQuery = getHierarchyQuery(propName, propValue);
-								
-								if (hierarchyQuery != null && hierarchyQuery.length() > 0) {
+
+								if ((hierarchyQuery != null) && (hierarchyQuery.length() > 0)) {
 									List<String> hierarchyNodes = new ArrayList<>();
 									String[] results = hierarchyQuery.split(",");
-									for(String result : results){
+									for (String result : results) {
 										result = result.replaceAll("\"", "");
-											hierarchyNodes.add(result);	
+										hierarchyNodes.add(result);
 									}
-								
-									
+
 									String hierarchyPropName = propName;
-									if(!hierarchyNodes.isEmpty()) {
+									if (!hierarchyNodes.isEmpty()) {
 										Integer depthLevel = getHierarchyLevel(new NodeRef(hierarchyNodes.get(0)));
-										if(depthLevel!=null && !hierarchyPropName.contains(depthLevel.toString())) {
-											hierarchyPropName = hierarchyPropName.replaceAll("[0-9]",depthLevel.toString() );
+										if ((depthLevel != null) && !hierarchyPropName.contains(depthLevel.toString())) {
+											hierarchyPropName = hierarchyPropName.replaceAll("[0-9]", depthLevel.toString());
 										}
-										if(dictionaryService.getProperty(QName.createQName(hierarchyPropName,namespaceService)) == null) {
-											 hierarchyPropName = propName;
+										if (entityDictionaryService.getProperty(QName.createQName(hierarchyPropName, namespaceService)) == null) {
+											hierarchyPropName = propName;
 										}
-										
+
 									}
-									
-									String hierarchyNodesString = hierarchyNodes.toString()
-											.replaceAll(", ", "\" OR @" + hierarchyPropName + ":\"").replaceAll(Pattern.quote("["), "\"")
-											.replaceAll(Pattern.quote("]"), "\"");
+
+									String hierarchyNodesString = hierarchyNodes.toString().replaceAll(", ", "\" OR @" + hierarchyPropName + ":\"")
+											.replaceAll(Pattern.quote("["), "\"").replaceAll(Pattern.quote("]"), "\"");
 									StringBuilder hierarchiesQuery = new StringBuilder();
 									hierarchiesQuery.append("@");
 									hierarchiesQuery.append(hierarchyPropName);
 									hierarchiesQuery.append(":");
 									hierarchiesQuery.append(hierarchyNodesString);
-									
+
 									queryBuilder.andFTSQuery(hierarchiesQuery.toString());
 
 								}
@@ -238,7 +235,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 								} catch (Exception e) {
 									// do nothing
 								}
-								if (maxLevel != null && maxLevel > 0) {
+								if ((maxLevel != null) && (maxLevel > 0)) {
 									queryBuilder.andBetween(QName.createQName(propName, namespaceService), "0", propValue);
 
 								}
@@ -311,16 +308,16 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 					.inSubPath(RepoConsts.PATH_SYSTEM + "/" + RepoConsts.PATH_PRODUCT_HIERARCHY + "/"
 							+ BeCPGModel.ASSOC_ENTITYLISTS.toPrefixString(namespaceService))
 					.inType(BeCPGModel.TYPE_LINKED_VALUE).andPropQuery(BeCPGModel.PROP_LKV_VALUE, hierarchyName);
-			
+
 			if (propName.endsWith("Hierarchy1")) {
 				queryBuilder.andPropEquals(BeCPGModel.PROP_DEPTH_LEVEL, "1");
 			}
-			
+
 			nodes = queryBuilder.list();
 		}
 
 		String ret = "";
-		if (nodes != null && !nodes.isEmpty()) {
+		if ((nodes != null) && !nodes.isEmpty()) {
 			for (NodeRef node : nodes) {
 				ret += " \"" + node.toString() + "\"";
 			}
@@ -334,11 +331,10 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		}
 		return ret;
 	}
-	
-    private Integer  getHierarchyLevel(NodeRef hierarchyNodeRef){
-	  return (Integer) nodeService.getProperty(hierarchyNodeRef, BeCPGModel.PROP_DEPTH_LEVEL);
+
+	private Integer getHierarchyLevel(NodeRef hierarchyNodeRef) {
+		return (Integer) nodeService.getProperty(hierarchyNodeRef, BeCPGModel.PROP_DEPTH_LEVEL);
 	}
-	
 
 	private boolean isAssocSearch(Map<String, String> criteria) {
 		if (criteria != null) {
@@ -346,7 +342,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 				String key = criterion.getKey();
 				String value = criterion.getValue();
 				// association
-				if (key.startsWith("assoc_") && value != null && !value.isEmpty()) {
+				if (key.startsWith("assoc_") && (value != null) && !value.isEmpty()) {
 					return true;
 				}
 			}
