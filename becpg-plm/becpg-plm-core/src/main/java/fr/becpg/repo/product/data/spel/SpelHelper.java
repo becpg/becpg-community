@@ -24,9 +24,9 @@ import java.util.regex.Pattern;
 
 public class SpelHelper {
 
-	static class SpelShortcut {
-		public Pattern pattern;
-		public String replacement;
+	private static class SpelShortcut {
+		Pattern pattern;
+		String replacement;
 
 		public SpelShortcut(String pattern, String replacement) {
 			super();
@@ -59,7 +59,7 @@ public class SpelHelper {
 	}
 	
 	
-	public static Pattern formulaVarPattern = Pattern.compile("^var\\s+(\\w+)\\s*=(.*)$");
+	public static final Pattern formulaVarPattern = Pattern.compile("^var\\s+(\\w+)\\s*=(.*)$");
 
 	public static String formatFormula(String formula) {
 		

@@ -49,7 +49,6 @@ import fr.becpg.repo.entity.datalist.DataListSortPlugin;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.DataListPagination;
-import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorMode;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
@@ -79,8 +78,6 @@ public class ProjectListExtractor extends ActivityListExtractor {
 
 	private PersonService personService;
 
-	private AssociationService associationService;
-
 	private PreferenceService preferenceService;
 
 	private SecurityService securityService;
@@ -100,11 +97,6 @@ public class ProjectListExtractor extends ActivityListExtractor {
 	@Override
 	public void setSecurityService(SecurityService securityService) {
 		this.securityService = securityService;
-	}
-
-	@Override
-	public void setAssociationService(AssociationService associationService) {
-		this.associationService = associationService;
 	}
 
 	public void setPreferenceService(PreferenceService preferenceService) {

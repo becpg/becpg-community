@@ -29,7 +29,6 @@ import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.site.SiteInfo;
@@ -82,9 +81,6 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 
 	@Autowired
 	private ContentHelper contentHelper;
-
-	@Autowired
-	private AuthorityService authorityService;
 
 	@Autowired
 	private NamespaceService namespaceService;

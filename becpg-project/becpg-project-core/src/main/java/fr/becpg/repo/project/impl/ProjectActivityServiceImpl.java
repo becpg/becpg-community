@@ -56,7 +56,7 @@ public class ProjectActivityServiceImpl implements ProjectActivityService, Entit
 	public static final String PROJECT_STATE_ACTIVITY = PROJECT_ACTIVITY_TYPE + ".project-state";
 	public static final String TASK_STATE_ACTIVITY = PROJECT_ACTIVITY_TYPE + ".task-state";
 	public static final String DELIVERABLE_STATE_ACTIVITY = PROJECT_ACTIVITY_TYPE + ".deliverable-state";
-	public static String COMMENT_CREATED_ACTIVITY = "org.alfresco.comments.comment-created";
+	public static final String COMMENT_CREATED_ACTIVITY = "org.alfresco.comments.comment-created";
 
 	private static final Log logger = LogFactory.getLog(ProjectActivityServiceImpl.class);
 

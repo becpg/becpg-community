@@ -9,7 +9,6 @@ import java.util.Set;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.site.SiteModel;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.cmr.site.SiteService;
@@ -61,9 +60,6 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 	private AlfrescoRepository<ProjectData> alfrescoRepository;
 
 	@Autowired
-	private AuthorityService authorityService;
-
-	@Autowired
 	private ContentHelper contentHelper;
 
 	@Autowired
@@ -85,14 +81,15 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 		SiteInfo siteInfo = siteService.getSite(SupplierPortalHelper.SUPPLIER_SITE_ID);
 		NodeRef documentLibraryNodeRef = null;
 		if (siteInfo == null) {
-			siteInfo = siteService.createSite(SUPPLIER_SITE_PRESET, SupplierPortalHelper.SUPPLIER_SITE_ID, I18NUtil.getMessage("plm.supplier.portal.site.title"), "",
-					SiteVisibility.PRIVATE);
+			siteInfo = siteService.createSite(SUPPLIER_SITE_PRESET, SupplierPortalHelper.SUPPLIER_SITE_ID,
+					I18NUtil.getMessage("plm.supplier.portal.site.title"), "", SiteVisibility.PRIVATE);
 
 			siteService.setMembership(siteInfo.getShortName(), PermissionService.GROUP_PREFIX + PLMGroup.ReferencingMgr.toString(),
 					SiteModel.SITE_MANAGER);
 
 			// pre-create doclib
-			documentLibraryNodeRef = siteService.createContainer(SupplierPortalHelper.SUPPLIER_SITE_ID, SiteService.DOCUMENT_LIBRARY, ContentModel.TYPE_FOLDER, null);
+			documentLibraryNodeRef = siteService.createContainer(SupplierPortalHelper.SUPPLIER_SITE_ID, SiteService.DOCUMENT_LIBRARY,
+					ContentModel.TYPE_FOLDER, null);
 
 			ret.add(siteInfo);
 		} else {
@@ -159,9 +156,10 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 			postValidationScript.setTasks(Collections.singletonList(task2.getNodeRef()));
 
 			for (NodeRef scriptNodeRef : scriptResources) {
-				if (nodeService.getProperty(scriptNodeRef, ContentModel.PROP_NAME).equals("supplierPortalScript.js")) {
+				String name = (String) nodeService.getProperty(scriptNodeRef, ContentModel.PROP_NAME);
+				if (name.equals("supplierPortalScript.js")) {
 					preSupplierScript.setContent(scriptNodeRef);
-				} else if (nodeService.getProperty(scriptNodeRef, ContentModel.PROP_NAME).equals("validateProjectEntity.js")) {
+				} else if (name.equals("validateProjectEntity.js")) {
 					postValidationScript.setContent(scriptNodeRef);
 				}
 			}

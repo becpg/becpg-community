@@ -15,6 +15,8 @@ import java.util.stream.Stream;
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
 
 import fr.becpg.model.SystemState;
@@ -59,10 +61,10 @@ import fr.becpg.repo.variant.model.VariantData;
 
 public class ProductData extends AbstractEffectiveDataItem implements FormulatedEntity, HierarchicalEntity, StateableEntity, AspectAwareDataItem {
 
-	/**
-	 *
-	 */
+	
 	private static final long serialVersionUID = 764534088277737617L;
+	private static final Log logger = LogFactory.getLog(ProductData.class);
+	
 	private NodeRef hierarchy1;
 	private NodeRef hierarchy2;
 	private MLText legalName;
@@ -727,7 +729,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		try {
 			meatContentData = MeatContentData.parseJsonString(meatContentdata);
 		} catch (JSONException e) {
-			e.printStackTrace();
+			logger.warn("Cannot parse meatContent JSON",e);
 		}
 	}
 
