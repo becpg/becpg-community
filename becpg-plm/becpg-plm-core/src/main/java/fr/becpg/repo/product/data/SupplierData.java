@@ -20,7 +20,6 @@ public class SupplierData extends BeCPGDataObject implements HierarchicalEntity,
 
 
 	private static final long serialVersionUID = -2554133542406623412L;
-	private String name;
 	private NodeRef hierarchy1;
 	private NodeRef hierarchy2;
 	private SystemState state = SystemState.Simulation;
@@ -28,15 +27,6 @@ public class SupplierData extends BeCPGDataObject implements HierarchicalEntity,
 
 	private List<CostListDataItem> costList;
 	
-	@AlfProp
-	@AlfQname(qname = "cm:name")
-	public String getName() {
-		return name;
-	}
-		
-	public void setName(String name) {
-		this.name = name;
-	}
 
 	@AlfProp
 	@AlfQname(qname = "bcpg:supplierState")	

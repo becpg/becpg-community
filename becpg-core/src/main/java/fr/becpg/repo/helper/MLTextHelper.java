@@ -232,7 +232,7 @@ public class MLTextHelper {
 
 	public static MLText getI18NMessage(String messageKey, Object... variables) {
 		MLText ret = new MLText();
-		for (String key : RepoConsts.SUPPORTED_UI_LOCALES) {
+		for (String key : RepoConsts.SUPPORTED_UI_LOCALES.split(",")) {
 
 			if (supportedLocales.contains(key)) {
 				Locale locale = parseLocale(key);
@@ -262,7 +262,7 @@ public class MLTextHelper {
 	public static MLText createMLTextI18N(MLTextCallback callback) {
 		MLText ret = new MLText();
 
-		for (String key : RepoConsts.SUPPORTED_UI_LOCALES) {
+		for (String key : RepoConsts.SUPPORTED_UI_LOCALES.split(",")) {
 			if (supportedLocales.contains(key)) {
 				Locale locale = parseLocale(key);
 				ret.addValue(locale, callback.run(locale));

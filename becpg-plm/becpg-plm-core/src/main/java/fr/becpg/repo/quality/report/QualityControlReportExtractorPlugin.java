@@ -24,26 +24,18 @@ import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.dom4j.Element;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.QualityModel;
 import fr.becpg.repo.quality.data.QualityControlData;
 import fr.becpg.repo.report.entity.EntityReportExtractorPlugin;
-import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor;
-import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 @Service
 public class QualityControlReportExtractorPlugin extends DefaultEntityReportExtractor {
 
-	@Autowired
-	private EntityReportService entityReportService;
-
-	@Autowired
-	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
 	/**
 	 * load the datalists of the product data.
