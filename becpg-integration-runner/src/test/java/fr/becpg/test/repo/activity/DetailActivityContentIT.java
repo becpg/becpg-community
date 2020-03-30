@@ -91,7 +91,7 @@ public class DetailActivityContentIT extends AbstractFinishedProductTest {
 	}
 
 	@Test
-	public void checkPropChangesActivity() {
+	public void checkPropChangesActivityTest() {
 
 		NodeRef finishedProductNodeRef = createFinishedProduct();
 
@@ -132,7 +132,7 @@ public class DetailActivityContentIT extends AbstractFinishedProductTest {
 	}
 
 	@Test
-	public void checkAssocChangesActivity() {
+	public void checkAssocChangesActivityTest() {
 
 		NodeRef finishedProductNodeRef = createFinishedProduct();
 
@@ -197,7 +197,7 @@ public class DetailActivityContentIT extends AbstractFinishedProductTest {
 	}
 
 	@Test
-	public void checkEntityDatalistActivity() {
+	public void checkEntityDatalistActivityTest() {
 
 		final NodeRef lSF1NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			LocalSemiFinishedProductData lSF1 = new LocalSemiFinishedProductData();

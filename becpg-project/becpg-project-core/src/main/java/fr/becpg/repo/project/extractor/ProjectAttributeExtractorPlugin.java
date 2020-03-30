@@ -23,15 +23,11 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.ProjectModel;
-import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorPlugin;
 import fr.becpg.repo.helper.impl.AbstractExprNameExtractor;
 
 /**
@@ -45,12 +41,6 @@ public class ProjectAttributeExtractorPlugin extends AbstractExprNameExtractor {
 	@Value("${beCPG.project.name.format}")
 	private String projectNameFormat;
 
-	
-	@Autowired
-	private NodeService nodeService;
-
-	@Autowired
-	private NamespaceService namespaceService;
 
 	@Override
 	public Collection<QName> getMatchingTypes() {

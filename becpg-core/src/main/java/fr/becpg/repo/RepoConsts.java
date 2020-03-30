@@ -169,12 +169,9 @@ public class RepoConsts {
 	public static final String FORMAT_CSV = "csv";
 	public static final String FORMAT_XLSX = "xlsx";
 
-
 	public static final String PATH_LICENSE = "license";
 
-
-
-	public static final String[] SUPPORTED_UI_LOCALES = { "en", "en_US", "fr", "sv_SE", "fi", "es", "it", "pt", "ru", "de" };
+	public static final String SUPPORTED_UI_LOCALES =  "en,en_US,fr,sv_SE,fi,es,it,pt,ru,de";
 
 	
 }

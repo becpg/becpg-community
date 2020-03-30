@@ -573,7 +573,7 @@ public class EntityListsWebScript extends AbstractWebScript {
 			}
 
 			result.put(RESULT_ENTITY, makeEntity(nodeRef, retPath));
-			result.put(RESULT_CONTAINER, listContainerNodeRef.toString());
+			result.put(RESULT_CONTAINER, listContainerNodeRef!=null ? listContainerNodeRef.toString(): null);
 
 			// hasWritePermission as it used to appear in the model
 			final boolean effectiveHasWritePermission = hasWritePermission

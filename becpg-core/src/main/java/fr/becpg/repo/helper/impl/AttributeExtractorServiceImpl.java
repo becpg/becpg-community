@@ -1098,7 +1098,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 					if (!value.startsWith(compValue.toLowerCase()) && !displayValue.startsWith(compValue)) {
 						return false;
 					}
-				} else {
+				} else if((compValue != null)){
 					if (!value.equals(compValue.toLowerCase()) && !displayValue.equals(compValue)) {
 						return false;
 					}
