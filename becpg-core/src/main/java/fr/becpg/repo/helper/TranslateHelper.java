@@ -35,8 +35,11 @@ public class TranslateHelper {
 	private static final String MESSAGE_TRUE = "data.boolean.true";
 	private static final String MESSAGE_FALSE = "data.boolean.false";
 
-	/** The logger. */
 	private static final Log logger = LogFactory.getLog(TranslateHelper.class);
+
+	private TranslateHelper() {
+		// Only static method
+	}
 
 	/**
 	 * Translate the name of the path.
@@ -84,7 +87,7 @@ public class TranslateHelper {
 	/**
 	 * Returns the MLText with the translations for all the languages supported.
 	 * List defined in {@link RepoConsts}
-	 * 
+	 *
 	 * @param key
 	 *            the key to search for translations
 	 * @return
@@ -92,13 +95,10 @@ public class TranslateHelper {
 	public static MLText getTranslatedKey(String key) {
 		MLText res = new MLText();
 
-		logger.debug("Getting translations for key: " + key);
-		for (String localeString : RepoConsts.SUPPORTED_LANGUAGES) {
+		for (String localeString : RepoConsts.SUPPORTED_UI_LOCALES.split(",")) {
 			Locale currentLocale = new Locale(localeString);
 
 			String translation = I18NUtil.getMessage(key, currentLocale);
-
-			logger.debug("Found translation: " + translation);
 			if (translation != null) {
 				res.addValue(currentLocale, I18NUtil.getMessage(key, currentLocale));
 			}
@@ -111,8 +111,11 @@ public class TranslateHelper {
 		String localName = classQName.getLocalName();
 		String shortPrefix = classQName.getPrefixString().split(":")[0];
 
-		logger.debug("getting title mltext for class: " + classQName + " (" + localName + ", pfx:" + shortPrefix + ")");
-		logger.debug("Full path: " + shortPrefix + "_" + shortPrefix + "model.type." + shortPrefix + "_" + localName + "." + key);
+		if (logger.isDebugEnabled()) {
+
+			logger.debug("getting title mltext for class: " + classQName + " (" + localName + ", pfx:" + shortPrefix + ")");
+			logger.debug("Full path: " + shortPrefix + "_" + shortPrefix + "model.type." + shortPrefix + "_" + localName + "." + key);
+		}
 
 		return getTranslatedKey(shortPrefix + "_" + shortPrefix + "model.type." + shortPrefix + "_" + localName + "." + key);
 	}

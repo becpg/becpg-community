@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
@@ -37,7 +38,6 @@ import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.search.AdvSearchPlugin;
 import fr.becpg.repo.search.AdvSearchService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
@@ -65,7 +65,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	private NodeService nodeService;
 
 	@Autowired
-	private EntityDictionaryService entityDictionaryService;
+	private DictionaryService dictionaryService;
 
 	@Override
 	public List<NodeRef> queryAdvSearch(QName datatype, BeCPGQueryBuilder beCPGQueryBuilder, Map<String, String> criteria, int maxResults) {
@@ -210,7 +210,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 										if ((depthLevel != null) && !hierarchyPropName.contains(depthLevel.toString())) {
 											hierarchyPropName = hierarchyPropName.replaceAll("[0-9]", depthLevel.toString());
 										}
-										if (entityDictionaryService.getProperty(QName.createQName(hierarchyPropName, namespaceService)) == null) {
+										if (dictionaryService.getProperty(QName.createQName(hierarchyPropName, namespaceService)) == null) {
 											hierarchyPropName = propName;
 										}
 
