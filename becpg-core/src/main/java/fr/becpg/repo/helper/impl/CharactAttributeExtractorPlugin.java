@@ -22,7 +22,6 @@ package fr.becpg.repo.helper.impl;
 import java.util.Collection;
 
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,9 +42,6 @@ public class CharactAttributeExtractorPlugin extends AbstractExprNameExtractor {
 
 	@Autowired
 	private EntityDictionaryService entityDictionaryService;
-
-	@Autowired
-	private NamespaceService namespaceService;
 
 	@Override
 	public Collection<QName> getMatchingTypes() {

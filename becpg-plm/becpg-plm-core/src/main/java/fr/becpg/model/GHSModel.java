@@ -8,11 +8,11 @@ public class GHSModel {
 
 	public static  String GHS_PREFIX = "gsh";
 
-	public static  QName MODEL = QName.createQName(GHS_URI, "ghsModel");
+	public static final  QName MODEL = QName.createQName(GHS_URI, "ghsModel");
 
-	public static QName TYPE_PERSONAL_PROTECTION = QName.createQName(GHS_URI, "personalProtection");
-	public static QName TYPE_PICTOGRAM = QName.createQName(GHS_URI, "pictogram");
-	public static QName TYPE_HAZARD_STATEMENT = QName.createQName(GHS_URI, "hazardStatement");
-	public static QName TYPE_PRECAUTIONARY_STATEMENT = QName.createQName(GHS_URI, "precautionaryStatement");
+	public static final QName TYPE_PERSONAL_PROTECTION = QName.createQName(GHS_URI, "personalProtection");
+	public static final QName TYPE_PICTOGRAM = QName.createQName(GHS_URI, "pictogram");
+	public static final QName TYPE_HAZARD_STATEMENT = QName.createQName(GHS_URI, "hazardStatement");
+	public static final QName TYPE_PRECAUTIONARY_STATEMENT = QName.createQName(GHS_URI, "precautionaryStatement");
 
 }
