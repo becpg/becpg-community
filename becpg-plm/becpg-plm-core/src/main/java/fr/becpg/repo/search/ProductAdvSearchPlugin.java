@@ -1,6 +1,7 @@
 package fr.becpg.repo.search;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -63,6 +64,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 	private static final String CRITERIA_ING = "assoc_bcpg_ingListIng_added";
 	private static final String CRITERIA_ING_AND = "assoc_bcpg_advIlIngAnd_added";
 	private static final String CRITERIA_ING_NOT = "assoc_bcpg_advIlIngNot_added";
+	private static final String CRITERIA_ING_RANGE = "prop_bcpg_ingListQtyPerc-range";
 
 	private static final String CRITERIA_GEO_ORIGIN = "assoc_bcpg_ingListGeoOrigin_added";
 	private static final String CRITERIA_BIO_ORIGIN = "assoc_bcpg_ingListBioOrigin_added";
@@ -120,6 +122,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		keysToExclude.add(CRITERIA_ING);
 		keysToExclude.add(CRITERIA_ING_AND);
 		keysToExclude.add(CRITERIA_ING_NOT);
+		keysToExclude.add(CRITERIA_ING_RANGE);
 
 		keysToExclude.add(CRITERIA_GEO_ORIGIN);
 		keysToExclude.add(CRITERIA_BIO_ORIGIN);
@@ -195,6 +198,9 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 				nodes = getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_COMPO_LIST_PRODUCT, PLMModel.ASSOC_COMPOLIST_PRODUCT, null, null);
 				nodes = getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_PROCESS_LIST_RESSOURCE, MPMModel.ASSOC_PL_RESOURCE, null, null);
 
+				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_ING_AND, PLMModel.ASSOC_INGLIST_ING, PLMModel.PROP_INGLIST_QTY_PERC,
+						criteria.get(CRITERIA_ING_RANGE));
+
 				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_ALLERGEN, PLMModel.ASSOC_ALLERGENLIST_ALLERGEN,
 						PLMModel.PROP_ALLERGENLIST_VOLUNTARY, "true");
 				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_ALLERGEN_VOL_AND, PLMModel.ASSOC_ALLERGENLIST_ALLERGEN,
@@ -264,6 +270,8 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 			watch = new StopWatch();
 			watch.start();
 		}
+		Set<NodeRef> nodesToKeepOr = new HashSet<>();
+		boolean hasOrOperand = false;
 
 		for (Map.Entry<String, String> criterion : criteria.entrySet()) {
 
@@ -277,20 +285,29 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 				if (assocName.endsWith("_added")) {
 					if (!entityDictionaryService.isSubClass(datatype, PLMModel.TYPE_PRODUCT) || !keysToExclude.contains(key)) {
 
-						assocName = assocName.substring(0, assocName.length() - 6);
+						boolean isOROperand = false;
+
+						if (assocName.endsWith("_or_added")) {
+							isOROperand = true;
+							hasOrOperand = true;
+							assocName = assocName.substring(0, assocName.length() - 9);
+						} else {
+
+							assocName = assocName.substring(0, assocName.length() - 6);
+						}
 						assocName = assocName.replace("_", ":");
 						QName assocQName = QName.createQName(assocName, namespaceService);
 
 						String[] arrValues = propValue.split(RepoConsts.MULTI_VALUES_SEPARATOR);
 						Set<NodeRef> nodesToKeep = new HashSet<>();
-						
+
 						for (String strNodeRef : arrValues) {
 
 							NodeRef nodeRef = new NodeRef(strNodeRef);
 
 							if (nodeService.exists(nodeRef)) {
 
-								List<AssociationRef>  assocRefs = nodeService.getSourceAssocs(nodeRef, assocQName);
+								List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, assocQName);
 
 								// remove nodes that don't respect the
 								// assoc_ criteria
@@ -302,10 +319,18 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 							}
 
 						}
-						nodes.retainAll(nodesToKeep);
+						if (!isOROperand) {
+							nodes.retainAll(nodesToKeep);
+						} else {
+							nodesToKeepOr.addAll(nodesToKeep);
+						}
 					}
 				}
 			}
+		}
+
+		if (hasOrOperand) {
+			nodes.retainAll(nodesToKeepOr);
 		}
 
 		if (logger.isDebugEnabled()) {
@@ -325,6 +350,8 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 		List<NodeRef> ingListItems = null;
 		List<NodeRef> notIngListItems = null;
+
+		Map<NodeRef, Boolean> permCache = new HashMap<>();
 
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
@@ -445,14 +472,11 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 			List<NodeRef> productNodeRefs = new ArrayList<>();
 			for (NodeRef ingListItem : ingListItems) {
 
-				if (isWorkSpaceProtocol(ingListItem)) {
+				NodeRef rootNodeRef = getEntity(ingListItem, permCache);
 
-					NodeRef rootNodeRef = entityListDAO.getEntity(ingListItem);
-
-					// we don't display history version
-					if ((rootNodeRef != null) && !nodeService.hasAspect(rootNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
-						productNodeRefs.add(rootNodeRef);
-					}
+				// we don't display history version
+				if ((rootNodeRef != null)) {
+					productNodeRefs.add(rootNodeRef);
 				}
 			}
 
@@ -464,11 +488,9 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		if (notIngListItems != null) {
 			for (NodeRef ingListItem : notIngListItems) {
 
-				if (isWorkSpaceProtocol(ingListItem)) {
-					NodeRef rootNodeRef = entityListDAO.getEntity(ingListItem);
-					if ((rootNodeRef != null) && !nodeService.hasAspect(rootNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
-						nodes.remove(rootNodeRef);
-					}
+				NodeRef rootNodeRef = getEntity(ingListItem, permCache);
+				if ((rootNodeRef != null)) {
+					nodes.remove(rootNodeRef);
 				}
 			}
 
@@ -480,6 +502,36 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		}
 
 		return nodes;
+	}
+
+	private NodeRef getEntity(NodeRef nodeRef, Map<NodeRef, Boolean> permCache) {
+
+		NodeRef ret = null;
+
+		if (isWorkSpaceProtocol(nodeRef)) {
+
+			ret = entityListDAO.getEntity(nodeRef);
+
+			// we don't display history version and simulation entities
+			if (ret != null) {
+
+				Boolean visible = permCache.get(ret);
+
+				if (visible == null) {
+					visible = !nodeService.hasAspect(ret, BeCPGModel.ASPECT_COMPOSITE_VERSION);
+
+					permCache.put(ret, visible);
+				}
+
+				if (!visible) {
+					return null;
+				}
+
+			}
+		}
+
+		return ret;
+
 	}
 
 	private List<NodeRef> extractOriginNodeRefs(String propValue) {
@@ -507,7 +559,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 	}
 
 	private List<NodeRef> getSearchNodesBySpecificationCriteria(List<NodeRef> nodes, Map<String, String> criteria) {
-	
+
 		if (criteria.containsKey(CRITERIA_NOTRESPECTED_SPECIFICATIONS)) {
 
 			String notRespectedCriterias = criteria.get(CRITERIA_NOTRESPECTED_SPECIFICATIONS);
@@ -580,6 +632,8 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 		List<NodeRef> labelingListItems = null;
 
+		Map<NodeRef, Boolean> permCache = new HashMap<>();
+
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
 			watch = new StopWatch();
@@ -627,16 +681,12 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 			List<NodeRef> productNodeRefs = new ArrayList<>();
 			for (NodeRef labelingListItem : labelingListItems) {
 
-				if (isWorkSpaceProtocol(labelingListItem)) {
+				NodeRef rootNodeRef = getEntity(labelingListItem, permCache);
 
-					NodeRef rootNodeRef = entityListDAO.getEntity(labelingListItem);
-
-					// we don't display history version
-					if ((rootNodeRef != null) && !nodeService.hasAspect(rootNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
-						productNodeRefs.add(rootNodeRef);
-					}
-
+				if ((rootNodeRef != null)) {
+					productNodeRefs.add(rootNodeRef);
 				}
+
 			}
 
 			if (productNodeRefs != null) {
@@ -660,6 +710,8 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 	 */
 	private List<NodeRef> getSearchNodesByListCriteria(List<NodeRef> nodes, Map<String, String> criteria, String criteriaAssocString,
 			QName criteriaAssoc, QName criteriaAssocValue, String criteriaValue) {
+
+		Map<NodeRef, Boolean> permCache = new HashMap<>();
 
 		List<NodeRef> labelClaimListItems = null;
 
@@ -739,16 +791,13 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 			List<NodeRef> productNodeRefs = new ArrayList<>();
 			for (NodeRef labelClaimListItem : labelClaimListItems) {
 
-				if (isWorkSpaceProtocol(labelClaimListItem)) {
+				NodeRef rootNodeRef = getEntity(labelClaimListItem, permCache);
 
-					NodeRef rootNodeRef = entityListDAO.getEntity(labelClaimListItem);
-
-					// we don't display history version
-					if ((rootNodeRef != null) && !nodeService.hasAspect(rootNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
-						productNodeRefs.add(rootNodeRef);
-					}
-
+				// we don't display history version
+				if (rootNodeRef != null) {
+					productNodeRefs.add(rootNodeRef);
 				}
+
 			}
 			if (productNodeRefs != null) {
 				nodes.retainAll(productNodeRefs);
