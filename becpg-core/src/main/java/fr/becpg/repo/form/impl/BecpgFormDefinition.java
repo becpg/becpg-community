@@ -33,49 +33,54 @@ public class BecpgFormDefinition {
 			return false;
 		}
 	}
+	
+	
+	
 
 	private static JSONObject filterFieldsRecursive(JSONObject object) throws JSONException {
-		JSONObject ret = null;
+		
 		
 		if (isContainerRepresentation(object)) {
-			
+			JSONObject ret = null;
 			JSONObject fields = null;
 			int size = 0;
-			boolean isFieldsExist = object.has("fields");
-			if(isFieldsExist) {
+			if(object.has("fields")) {
 				fields = object.getJSONObject("fields");
 				size = fields.length();
-			}
-			if (size > 0 && isFieldsExist) {
-				ret = new JSONObject();
-				JSONObject filteredFields = new JSONObject();
-				int counter = 1;
-				for (int i = 1; i <= size; i++) {
-					final String key = String.valueOf(i);
-					JSONArray fieldArray = fields.getJSONArray(key);
-					JSONArray filteredFieldArray = new JSONArray();
-					for (int j = 0; j < fieldArray.length(); j++) {
-						final JSONObject obj = filterFieldsRecursive(fieldArray.getJSONObject(j));
-						if (obj != null) {
-							filteredFieldArray.put(obj);
+				if (size > 0 ) {
+				  ret = new JSONObject();
+					JSONObject filteredFields = new JSONObject();
+					int counter = 1;
+					for (int i = 1; i <= size; i++) {
+						final String key = String.valueOf(i);
+						JSONArray fieldArray = fields.getJSONArray(key);
+						JSONArray filteredFieldArray = new JSONArray();
+						for (int j = 0; j < fieldArray.length(); j++) {
+							final JSONObject obj = filterFieldsRecursive(fieldArray.getJSONObject(j));
+							if (obj != null) {
+								filteredFieldArray.put(obj);
+							}
+						}
+						if (filteredFieldArray.length() > 0) {
+							filteredFields.put(String.valueOf(counter), filteredFieldArray);
+							counter++;
 						}
 					}
-					if (filteredFieldArray.length() > 0) {
-						filteredFields.put(String.valueOf(counter), filteredFieldArray);
-						counter++;
-					}
-				}
-				ret.put("fields", filteredFields);
-				
-				for (String key : JSONObject.getNames(object)) {
-					if (!key.equals("fields")) {
-						ret.put(key, object.get(key));
+					ret.put("fields", filteredFields);
+					
+					for (String key : JSONObject.getNames(object)) {
+						if (!key.equals("fields")) {
+							ret.put(key, object.get(key));
+						}
 					}
 				}
 			}
+			
+			return ret;
+		} else {
+			return object;
 		}
 		
-		return ret;
 	}
 
 	private static JSONObject filterFields(JSONObject object) throws JSONException {
