@@ -6,13 +6,10 @@ import java.util.List;
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.namespace.NamespaceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
-import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.listvalue.ListValueEntry;
 import fr.becpg.repo.listvalue.impl.TargetAssocValueExtractor;
 
@@ -21,15 +18,6 @@ public class CalculatedCharactsValueExtractor extends TargetAssocValueExtractor 
 
 	@Autowired
 	private NodeService nodeService;
-
-	@Autowired
-	private NamespaceService namespaceService;
-
-	@Autowired
-	private AttributeExtractorService attributeExtractorService;
-
-	@Autowired
-	private EntityDictionaryService entityDictionaryService;
 
 	@Autowired
 	private EntityListDAO entityListDAO;

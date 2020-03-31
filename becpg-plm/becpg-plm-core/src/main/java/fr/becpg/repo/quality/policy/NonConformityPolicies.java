@@ -17,17 +17,14 @@
  ******************************************************************************/
 package fr.becpg.repo.quality.policy;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.StoreRef;
-import org.alfresco.service.namespace.QName;
 
 import fr.becpg.model.QualityModel;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;

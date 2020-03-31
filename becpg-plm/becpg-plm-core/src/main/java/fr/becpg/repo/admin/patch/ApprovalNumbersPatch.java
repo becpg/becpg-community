@@ -22,20 +22,23 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 
 public class ApprovalNumbersPatch extends AbstractBeCPGPatch {
-	
+
 	private static final Log logger = LogFactory.getLog(ApprovalNumbersPatch.class);
 	private static final String MSG_SUCCESS = "patch.bcpg.approvalNumbersPatch.result";
-	
+
+	private QName ASSOC_PLANT_APPROVAL_NUMBERS = QName.createQName(BeCPGModel.BECPG_URI, "plantApprovalNumbers");
+
 	private NodeDAO nodeDAO;
 	private PatchDAO patchDAO;
 	private QNameDAO qnameDAO;
-	
+
 	private BehaviourFilter policyBehaviourFilter;
 	private RuleService ruleService;
-	
+
 	private final int batchThreads = 3;
 	private final int batchSize = 40;
 	private final long count = batchThreads * batchSize;
@@ -43,16 +46,16 @@ public class ApprovalNumbersPatch extends AbstractBeCPGPatch {
 	@Override
 	protected String applyInternal() throws Exception {
 
-		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<NodeRef>() {
+		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<>() {
 
 			final List<NodeRef> result = new ArrayList<>();
-			
+
 			final Pair<Long, QName> val = qnameDAO.getQName(PLMModel.TYPE_PLANT);
-			
+
 			final long maxNodeId = nodeDAO.getMaxNodeId();
 			long minSearchNodeId = 0;
 			long maxSearchNodeId = count;
-			
+
 			@Override
 			public int getTotalEstimatedWorkSize() {
 				return result.size();
@@ -82,13 +85,13 @@ public class ApprovalNumbersPatch extends AbstractBeCPGPatch {
 
 				return result;
 			}
-			
+
 		};
-		
+
 		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("ApprovalNumbersPatch", transactionService.getRetryingTransactionHelper(),
 				workProvider, batchThreads, batchSize, applicationEventPublisher, logger, 500);
-		
-		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
+
+		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<>() {
 
 			@Override
 			public void afterProcess() throws Throwable {
@@ -111,33 +114,32 @@ public class ApprovalNumbersPatch extends AbstractBeCPGPatch {
 				AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 				policyBehaviourFilter.disableBehaviour();
 
-				List<AssociationRef> targetAssocs = nodeService.getTargetAssocs(dataListNodeRef, PLMModel.ASSOC_PLANT_APPROVAL_NUMBERS);
-				
-				if(!targetAssocs.isEmpty()){
-					
-					String approvalNumberName = ""; 
-					
-					for(AssociationRef assoc : targetAssocs){
-						if(assoc.getTypeQName().equals(PLMModel.ASSOC_PLANT_APPROVAL_NUMBERS)){
+				List<AssociationRef> targetAssocs = nodeService.getTargetAssocs(dataListNodeRef, ASSOC_PLANT_APPROVAL_NUMBERS);
+
+				if (!targetAssocs.isEmpty()) {
+
+					String approvalNumberName = "";
+
+					for (AssociationRef assoc : targetAssocs) {
+						if (assoc.getTypeQName().equals(ASSOC_PLANT_APPROVAL_NUMBERS)) {
 							NodeRef approvalNumberNodeRef = assoc.getTargetRef();
-							approvalNumberName += (approvalNumberName.isEmpty() ? "" : ", " ) + 
-									(String) nodeService.getProperty(approvalNumberNodeRef, ContentModel.PROP_NAME);
+							approvalNumberName += (approvalNumberName.isEmpty() ? "" : ", ")
+									+ (String) nodeService.getProperty(approvalNumberNodeRef, ContentModel.PROP_NAME);
 						}
 					}
-					
-					logger.debug("Setting approval number prop for node "+dataListNodeRef+" to \""+approvalNumberName+"\"");
-					nodeService.setProperty(dataListNodeRef, PLMModel.ASSOC_PLANT_APPROVAL_NUMBERS, approvalNumberName);
+
+					logger.debug("Setting approval number prop for node " + dataListNodeRef + " to \"" + approvalNumberName + "\"");
+					nodeService.setProperty(dataListNodeRef, ASSOC_PLANT_APPROVAL_NUMBERS, approvalNumberName);
 				}
 			}
 
 		};
 
 		batchProcessor.process(worker, true);
-		
+
 		return I18NUtil.getMessage(MSG_SUCCESS);
 	}
-	
-	
+
 	public NodeDAO getNodeDAO() {
 		return nodeDAO;
 	}
@@ -165,7 +167,7 @@ public class ApprovalNumbersPatch extends AbstractBeCPGPatch {
 	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
 		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
-	
+
 	public void setRuleService(RuleService ruleService) {
 		this.ruleService = ruleService;
 	}
