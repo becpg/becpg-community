@@ -567,10 +567,8 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 								NodeRef fileNodeRef = createFile(targetFolderNodeRef, file.getName(), file.getName());
 								String mimetype = mimetypeService.guessMimetype(file.getName());
-								FileInputStream in = null;
-								try {
-									in = new FileInputStream(file);
-
+								try (FileInputStream in = new FileInputStream(file);) {
+								
 									ContentCharsetFinder charsetFinder = mimetypeService.getContentCharsetFinder();
 									Charset charset = charsetFinder.getCharset(in, mimetype);
 									String encoding = charset.name();
@@ -579,11 +577,9 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 									writer.setMimetype(mimetype);
 									writer.setEncoding(encoding);
 									writer.putContent(in);
-								} catch (FileNotFoundException e) {
+								} catch (IOException e) {
 									throw new ImporterException(I18NUtil.getMessage(ImportHelper.MSG_ERROR_LOAD_FILE, value));
 
-								} finally {
-									IOUtils.closeQuietly(in);
 								}
 							}
 						}

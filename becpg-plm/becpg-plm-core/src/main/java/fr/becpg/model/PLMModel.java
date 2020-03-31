@@ -315,8 +315,7 @@ public interface PLMModel {
 	// plant
 	QName TYPE_PLANT = QName.createQName(BeCPGModel.BECPG_URI, "plant");
 	QName ASSOC_PLANT_CERTIFICATIONS = QName.createQName(BeCPGModel.BECPG_URI, "plantCertifications");
-	@Deprecated
-	QName ASSOC_PLANT_APPROVAL_NUMBERS = QName.createQName(BeCPGModel.BECPG_URI, "plantApprovalNumbers");
+
 
 	// trademark
 	QName TYPE_TRADEMARK = QName.createQName(BeCPGModel.BECPG_URI, "trademark");
