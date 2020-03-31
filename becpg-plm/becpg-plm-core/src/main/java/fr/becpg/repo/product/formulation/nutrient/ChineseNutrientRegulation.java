@@ -2,13 +2,8 @@ package fr.becpg.repo.product.formulation.nutrient;
 
 import java.util.Locale;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 public class ChineseNutrientRegulation extends AbstractNutrientRegulation {
 	
-	private static final Log logger = LogFactory.getLog(ChineseNutrientRegulation.class);
-
 	public ChineseNutrientRegulation(String path)  {
 		super(path);
 	}

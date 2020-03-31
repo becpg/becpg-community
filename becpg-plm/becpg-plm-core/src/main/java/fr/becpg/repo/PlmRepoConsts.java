@@ -3,9 +3,6 @@
  */
 package fr.becpg.repo;
 
-import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.GHSModel;
-
 /**
  * beCPG constants for repository
  * @author querephi

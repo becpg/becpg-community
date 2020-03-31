@@ -2,7 +2,6 @@ package fr.becpg.repo.admin.patch;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 
 import org.alfresco.model.ContentModel;

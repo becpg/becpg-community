@@ -397,6 +397,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	private boolean isAllergenDisabledForLocal(NodeRef allergen) {
 		if (mlNodeService.hasAspect(allergen, ReportModel.ASPECT_REPORT_LOCALES)) {
+			@SuppressWarnings("unchecked")
 			List<String> langs = (List<String>) nodeService.getProperty(allergen, ReportModel.PROP_REPORT_LOCALES);
 			if ((langs != null) && !langs.isEmpty()) {
 				return !MLTextHelper.extractLocales(langs).contains(I18NUtil.getLocale());
