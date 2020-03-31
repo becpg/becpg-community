@@ -17,18 +17,13 @@
  ******************************************************************************/
 package fr.becpg.repo.migration.impl;
 
-import java.io.Serializable;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.tenant.Tenant;
 import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.repo.version.Version2Model;
-import org.alfresco.repo.version.VersionBaseModel;
-import org.alfresco.repo.version.common.VersionImpl;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.TypeDefinition;
@@ -37,7 +32,6 @@ import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.StoreRef;
-import org.alfresco.service.cmr.version.Version;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.RegexQNamePattern;
 import org.alfresco.service.transaction.TransactionService;
@@ -52,7 +46,6 @@ import com.google.common.collect.Lists;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.migration.MigrationService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
@@ -80,9 +73,6 @@ public class MigrationServiceImpl implements MigrationService {
 
 	@Autowired
 	private DictionaryService dictionaryService;
-
-	@Autowired
-	private EntityVersionService entityVersionService;
 
 	@Autowired
 	@Qualifier("mtAwareNodeService")

@@ -115,6 +115,7 @@ import org.springframework.web.util.WebUtils;
  * @author Sylvain Chambon
  * @author dward
  */
+@SuppressWarnings("deprecation")
 public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, CallbackHandler, ApplicationContextAware
 {
     private static Log logger = LogFactory.getLog(BeCPGSSOAuthenticationFilter.class);
@@ -146,7 +147,8 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
     private String endpoint;
     private String userHeader;
     private Pattern userIdPattern;
-    private SlingshotLoginController loginController;
+    @SuppressWarnings("unused")
+	private SlingshotLoginController loginController;
     
     // Kerberos settings
     //
@@ -1399,7 +1401,7 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
             {
                 if (logger.isDebugEnabled())
                     logger.debug("Accept-Language header present: " + req.getHeader(HEADER_ACCEPT_LANGUAGE));
-                Map<String, String> headers = new HashMap(7);
+                Map<String, String> headers = new HashMap<String, String>(7);
                 headers.put(HEADER_ACCEPT_LANGUAGE, req.getHeader(HEADER_ACCEPT_LANGUAGE));
 
                 ctx = new ConnectorContext(null, headers);
@@ -1415,7 +1417,7 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
                 String authHdr = remoteRes.getStatus().getHeaders().get(HEADER_WWWAUTHENTICATE);
                 if (authHdr.equals(AUTH_SPNEGO))
                 {
-                    Map<String, String> headers = new HashMap(7);
+                    Map<String, String> headers = new HashMap<String, String>(7);
                     headers.put(HEADER_AUTHORIZATION, AUTH_SPNEGO + ' ' + tokenForEndpoint);
                     
                     if (req.getHeader(HEADER_ACCEPT_LANGUAGE) != null)
@@ -1533,7 +1535,8 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
     protected static final String PARAM_USERNAME = "username";
     
     
-    protected void beforeSuccess(HttpServletRequest request, HttpServletResponse response) throws Exception
+    
+	protected void beforeSuccess(HttpServletRequest request, HttpServletResponse response) throws Exception
     {
         try
         {

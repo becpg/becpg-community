@@ -20,8 +20,6 @@ package fr.becpg.repo.importer.user.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.Authenticator;
-import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
@@ -47,7 +45,6 @@ import org.alfresco.service.cmr.site.SiteVisibility;
 import org.alfresco.service.namespace.NamespacePrefixResolver;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.PropertyMap;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -191,22 +188,24 @@ public class UserImporterServiceImpl implements UserImporterService {
 
 	private void processCSVUpload(InputStream input, Charset charset) throws IOException, ImporterException {
 
-		CSVReader csvReader = new CSVReader(new InputStreamReader(input, charset), SEPARATOR);
-		try {
-			String[] splitted;
-			boolean isFirst = true;
-			Map<String, Integer> headers = new HashMap<>();
-			while ((splitted = csvReader.readNext()) != null) {
-				if (isFirst) {
-					headers = processHeaders(splitted);
-					isFirst = false;
-				} else if (splitted.length == headers.size()) {
-					processRow(headers, splitted);
+		try (InputStreamReader reader = new InputStreamReader(input, charset)) {
+
+			CSVReader csvReader = new CSVReader(reader, SEPARATOR);
+			try {
+				String[] splitted;
+				boolean isFirst = true;
+				Map<String, Integer> headers = new HashMap<>();
+				while ((splitted = csvReader.readNext()) != null) {
+					if (isFirst) {
+						headers = processHeaders(splitted);
+						isFirst = false;
+					} else if (splitted.length == headers.size()) {
+						processRow(headers, splitted);
+					}
 				}
+			} finally {
+				csvReader.close();
 			}
-		} finally {
-			csvReader.close();
-			IOUtils.closeQuietly(input);
 		}
 
 	}
@@ -249,7 +248,6 @@ public class UserImporterServiceImpl implements UserImporterService {
 						sendMail(person, username, password);
 					}
 
-
 				} else {
 					logger.info("User " + username + " already exist");
 				}
@@ -257,19 +255,18 @@ public class UserImporterServiceImpl implements UserImporterService {
 				return null;
 
 			});
-			
 
 			if (headers.containsKey(GROUPS)) {
 				String[] groups = splitted[headers.get(GROUPS)].split(FIELD_SEPARATOR);
-				
+
 				Set<String> userGroups = authorityService.getContainingAuthorities(AuthorityType.GROUP, username, false);
-				userGroups.forEach(group-> {
-					logger.info("Group: "+group + ", user: "+username);
-					if(!group.startsWith("GROUP_site_")) {
+				userGroups.forEach(group -> {
+					logger.info("Group: " + group + ", user: " + username);
+					if (!group.startsWith("GROUP_site_")) {
 						authorityService.removeAuthority(group, username);
 					}
 				});
-				
+
 				for (String group : groups) {
 					String[] grp = group.split(PATH_SEPARATOR);
 					String currGroup = null;
@@ -299,7 +296,7 @@ public class UserImporterServiceImpl implements UserImporterService {
 
 				}
 			}
-			
+
 			if (headers.containsKey(MEMBERSHIPS)) {
 				AuthenticationUtil.runAsSystem(() -> {
 					if ((splitted[headers.get(MEMBERSHIPS)] != null) && !splitted[headers.get(MEMBERSHIPS)].isEmpty()) {
@@ -325,9 +322,9 @@ public class UserImporterServiceImpl implements UserImporterService {
 								SiteInfo siteInfo = siteService.createSite(DEFAULT_PRESET, cleanSiteName(siteName), siteName, "",
 										SiteVisibility.PUBLIC);
 								try {
-									
+
 									URL url = new URL("http://becpg:8080/share/service/modules/enable-site?url=" + siteInfo.getShortName()
-											+ "&preset=" + DEFAULT_PRESET + "&alf_ticket="+authenticationService.getCurrentTicket());
+											+ "&preset=" + DEFAULT_PRESET + "&alf_ticket=" + authenticationService.getCurrentTicket());
 									URLConnection con = url.openConnection();
 
 									InputStream in = con.getInputStream();

@@ -58,7 +58,6 @@ public class XmlMappingLoader implements MappingLoader {
     	mappingLoaderFactory.register(this);
     }
     	
-	@SuppressWarnings("unchecked")
 	@Override
 	public ImportContext loadClassMapping(Object mapping, ImportContext importContext) throws MappingException {
 		Element mappingsElt = (Element) mapping;
