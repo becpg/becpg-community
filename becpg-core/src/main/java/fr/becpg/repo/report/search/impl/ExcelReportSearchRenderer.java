@@ -75,7 +75,7 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 			watch.start();
 		}
 
-		try (XSSFWorkbook workbook = new XSSFWorkbook(reader.getContentInputStream())){;
+		try (XSSFWorkbook workbook = new XSSFWorkbook(reader.getContentInputStream())){
 
 			QName mainType = null;
 			for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
