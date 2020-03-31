@@ -22,8 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.webdav.WebDAVHelper;
-import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
@@ -36,8 +34,6 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 import org.springframework.util.StopWatch;
 
-import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.helper.AttachmentHelper;
 import fr.becpg.repo.helper.AttributeExtractorService;

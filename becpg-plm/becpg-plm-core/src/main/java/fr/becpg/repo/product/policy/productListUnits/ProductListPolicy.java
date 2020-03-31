@@ -267,8 +267,12 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 							if (!((costListUnit != null) && !costListUnit.isEmpty()
 									&& costListUnit.startsWith(costCurrency + AbstractSimpleListFormulationHandler.UNIT_SEPARATOR))) {
 
-								nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_COSTLIST_UNIT, CostsCalculatingFormulationHandler
-										.calculateUnit(getProductUnit(productListItemNodeRef), costCurrency, costFixed));
+								ProductUnit unit = getProductUnit(productListItemNodeRef);
+
+								if (unit != null) {
+									nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_COSTLIST_UNIT,
+											CostsCalculatingFormulationHandler.calculateUnit(unit, costCurrency, costFixed));
+								}
 
 							}
 						}
@@ -280,8 +284,12 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 						if (!((nutListUnit != null) && !nutListUnit.isEmpty()
 								&& nutListUnit.startsWith(nutUnit + AbstractSimpleListFormulationHandler.UNIT_SEPARATOR))) {
 
-							nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_NUTLIST_UNIT, NutsCalculatingFormulationHandler
-									.calculateUnit(getProductUnit(productListItemNodeRef), getServingSizeUnit(productListItemNodeRef), nutUnit));
+							ProductUnit unit = getProductUnit(productListItemNodeRef);
+
+							if (unit != null) {
+								nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_NUTLIST_UNIT,
+										NutsCalculatingFormulationHandler.calculateUnit(unit, getServingSizeUnit(productListItemNodeRef), nutUnit));
+							}
 
 						}
 
@@ -314,39 +322,21 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 	private ProductUnit getProductUnit(NodeRef listNodeRef) {
 
 		NodeRef productNodeRef = entityListDAO.getEntity(listNodeRef);
-		if (productNodeRef != null) {
-
+		if ((productNodeRef != null) && nodeService.exists(productNodeRef)) {
 			return ProductUnit.getUnit((String) nodeService.getProperty(productNodeRef, PLMModel.PROP_PRODUCT_UNIT));
 		}
 
 		return null;
 	}
 
-	//
 	private ProductUnit getServingSizeUnit(NodeRef listNodeRef) {
 
 		NodeRef productNodeRef = entityListDAO.getEntity(listNodeRef);
-		if (productNodeRef != null) {
-
+		if ((productNodeRef != null) && nodeService.exists(productNodeRef)) {
 			return ProductUnit.getUnit((String) nodeService.getProperty(productNodeRef, PLMModel.PROP_PRODUCT_SERVING_SIZE_UNIT));
 		}
 
 		return null;
 	}
-	//
-	// private NodeRef getProduct(NodeRef listNodeRef) {
-	// NodeRef productNodeRef = productNodeRefs.get(listNodeRef);
-	// if (productNodeRef == null) {
-	// NodeRef listContainerNodeRef =
-	// nodeService.getPrimaryParent(listNodeRef).getParentRef();
-	// if (listContainerNodeRef != null) {
-	//
-	// productNodeRef =
-	// nodeService.getPrimaryParent(listContainerNodeRef).getParentRef();
-	// productNodeRefs.put(listNodeRef, productNodeRef);
-	// }
-	// }
-	// return productNodeRef;
-	// }
-	//
+
 }

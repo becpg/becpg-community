@@ -170,6 +170,7 @@ public class BeCPGJSONConversionComponent extends JSONConversionComponent {
 		return result;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected JSONObject userPermissionsToJSON(final NodeRef nodeRef)  {        
 	

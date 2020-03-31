@@ -17,7 +17,6 @@ import fr.becpg.config.mapping.HierarchyMapping;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.hierarchy.HierarchyHelper;
-import fr.becpg.repo.hierarchy.HierarchyService;
 import fr.becpg.repo.importer.ClassMapping;
 import fr.becpg.repo.importer.ImportContext;
 import fr.becpg.repo.importer.ImportVisitor;

@@ -140,7 +140,7 @@ public class DetailActivityContentIT extends AbstractFinishedProductTest {
 		assertEquals("Check if No Activity", 1, getActivities(finishedProductNodeRef, null).size());
 
 		// Add Client to product
-		NodeRef client1NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		 transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			ClientData client1 = new ClientData();
 			client1.setName("Client1");
 			client1 = clientRepository.create(getTestFolderNodeRef(), client1);

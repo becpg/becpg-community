@@ -1,12 +1,6 @@
 package fr.becpg.repo.importer;
 
-import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.namespace.QName;
-
 import fr.becpg.config.mapping.MappingException;
-import fr.becpg.model.BeCPGModel;
-import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 public interface MappingLoader {
 
