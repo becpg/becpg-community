@@ -3420,13 +3420,28 @@
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 				</property>
+				<property name="bcpg:ceNumber">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+				</property>
 				<property name="bcpg:ecNumber">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="bcpg:fdaNumber">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="bcpg:femaNumber">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="bcpg:flNumber">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 				</property>
 			</properties>
 		</aspect>
-
 
 		<aspect name="bcpg:profitabilityAspect">
 			<properties>
