@@ -84,7 +84,9 @@ public class LabelingFormulaContext extends RuleParser {
 
 	private static final Log logger = LogFactory.getLog(LabelingFormulaContext.class);
 
-	public static int PRECISION_FACTOR = 100;
+	public static final int PRECISION_FACTOR = 100;
+	
+	public final static Pattern ALLERGEN_DETECTION_PATTERN = Pattern.compile("<b>|<u>|<i>|[A-Z]{3}|\\p{Lu}{3}");
 
 	private CompositeLabeling lblCompositeContext;
 
@@ -588,7 +590,6 @@ public class LabelingFormulaContext extends RuleParser {
 		return StringUtils.uncapitalize(legalName);
 	}
 
-	public static Pattern ALLERGEN_DETECTION_PATTERN = Pattern.compile("<b>|<u>|<i>|[A-Z]{3}|\\p{Lu}{3}");
 
 	private String createAllergenAwareLabel(String ingLegalName, Set<NodeRef> allergens) {
 
