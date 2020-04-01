@@ -376,8 +376,14 @@ public interface PLMModel {
 	QName ASPECT_REGULATORY_CODE= QName.createQName(BeCPGModel.BECPG_URI, "regulatoryCodeAspect");
 	QName PROP_REGULATORY_CODE = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryCode");
 	
-	//Cas Number
+	//Chemical code
 	QName PROP_CAS_NUMBER= QName.createQName(BeCPGModel.BECPG_URI, "casNumber");
+	QName PROP_CE_NUMBER= QName.createQName(BeCPGModel.BECPG_URI, "ceNumber");
+	QName PROP_EC_NUMBER= QName.createQName(BeCPGModel.BECPG_URI, "ecNumber");
+	QName PROP_FDA_NUMBER= QName.createQName(BeCPGModel.BECPG_URI, "fdaNumber");
+	QName PROP_FEMA_NUMBER= QName.createQName(BeCPGModel.BECPG_URI, "femaNumber");
+	QName PROP_FL_NUMBER= QName.createQName(BeCPGModel.BECPG_URI, "flNumber");
+
 	
 	QName ASPECT_WATER = QName.createQName(BeCPGModel.BECPG_URI, "waterAspect");
 	QName LABELING_RULE_ASPECT =  QName.createQName(BeCPGModel.BECPG_URI, "labelingRuleAspect");
