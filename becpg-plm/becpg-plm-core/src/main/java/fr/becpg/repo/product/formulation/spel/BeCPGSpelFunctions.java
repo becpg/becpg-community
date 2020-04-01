@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityDictionaryService;
@@ -51,6 +52,7 @@ import fr.becpg.repo.repository.annotation.AlfProp;
  * Register custom beCPG SPEL helper accessible with @beCPG.
  *
  */
+@Service
 public class BeCPGSpelFunctions implements CustomSpelFunctions {
 
 	private static final Log logger = LogFactory.getLog(BeCPGSpelFunctions.class);
@@ -106,6 +108,9 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 
 		/**
 		 * Helper @beCPG.findOne($nodeRef)
+		 * 
+		 * Example : 
+		 *  @beCPG.findOne(nodeRef).qty
 		 *
 		 * @param nodeRef
 		 * @return repository entity for nodeRef
@@ -116,6 +121,9 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 
 		/**
 		 * Helper @beCPG.propValue($nodeRef, $qname)
+		 * 
+		 * Example :
+		 *  @beCPG.propValue(nodeRef,'bcpg:productQty')
 		 *
 		 * @param nodeRef
 		 * @param qname
@@ -320,7 +328,11 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		/**
 		 * @beCPG.sum($range, $formula)
 		 *
-		 *                    @param range
+		 * Example :
+		 *  @beCPG.sum(compoListView.compoList.?[parent == null],"entity.costList[0].value + dataListItem.qty")
+		 *  @beCPG.sum(compoListView.compoList.?[parent == null],"@beCPG.propValue(dataListItem.nodeRef,'bcpg:compoListQty')")
+		 *
+		 * @param range
 		 * @param formula
 		 * @return sum of formula results apply on range
 		 */
