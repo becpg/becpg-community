@@ -1,0 +1,543 @@
+package fr.becpg.repo.product.formulation.spel;
+
+import java.beans.PropertyDescriptor;
+import java.io.Serializable;
+import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.alfresco.model.ContentModel;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.service.cmr.dictionary.PropertyDefinition;
+import org.alfresco.service.cmr.repository.MLText;
+import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.repository.ScriptService;
+import org.alfresco.service.namespace.NamespaceService;
+import org.alfresco.service.namespace.QName;
+import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.expression.Expression;
+import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
+
+import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.entity.EntityDictionaryService;
+import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.AttributeExtractorService;
+import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorMode;
+import fr.becpg.repo.helper.MLTextHelper;
+import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.spel.FormulaFormulationContext.Operator;
+import fr.becpg.repo.product.formulation.FormulaService;
+import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.RepositoryEntity;
+import fr.becpg.repo.repository.RepositoryEntityDefReader;
+import fr.becpg.repo.repository.annotation.AlfProp;
+
+/**
+ *
+ * Register custom beCPG SPEL helper accessible with @beCPG.
+ *
+ */
+public class BeCPGSpelFunctions implements CustomSpelFunctions {
+
+	private static final Log logger = LogFactory.getLog(BeCPGSpelFunctions.class);
+
+	@Autowired
+	private RepositoryEntityDefReader<ProductData> repositoryEntityDefReader;
+
+	@Autowired
+	private EntityDictionaryService entityDictionaryService;
+
+	@Autowired
+	private NodeService nodeService;
+
+	@Autowired
+	private NamespaceService namespaceService;
+
+	@Autowired
+	private AssociationService associationService;
+
+	@Autowired
+	private EntityListDAO entityListDAO;
+
+	@Autowired
+	private ScriptService scriptService;
+
+	@Autowired
+	private AlfrescoRepository<ProductData> alfrescoRepository;
+
+	@Autowired
+	private FormulaService formulaService;
+
+	@Autowired
+	private AttributeExtractorService attributeExtractorService;
+
+	@Override
+	public boolean match(String beanName) {
+		return beanName.equals("beCPG");
+	}
+
+	@Override
+	public Object create(ProductData productData) {
+		return new BeCPGSpelFunctionsWrapper(productData);
+	}
+
+	public class BeCPGSpelFunctionsWrapper {
+
+		ProductData productData;
+
+		public BeCPGSpelFunctionsWrapper(ProductData productData) {
+			super();
+			this.productData = productData;
+		}
+
+		/**
+		 * Helper @beCPG.findOne($nodeRef)
+		 *
+		 * @param nodeRef
+		 * @return repository entity for nodeRef
+		 */
+		public ProductData findOne(NodeRef nodeRef) {
+			return formulaService.createSecurityProxy(alfrescoRepository.findOne(nodeRef));
+		}
+
+		/**
+		 * Helper @beCPG.propValue($nodeRef, $qname)
+		 *
+		 * @param nodeRef
+		 * @param qname
+		 * @return node property value
+		 */
+		public Serializable propValue(NodeRef nodeRef, String qname) {
+			return nodeService.getProperty(nodeRef, getQName(qname));
+		}
+
+		/**
+		 * Helper @beCPG.propValue($entity, $qname)
+		 *
+		 * @param nodeRef
+		 * @param qname
+		 * @return entity property value
+		 */
+		public Serializable propValue(RepositoryEntity item, String qname) {
+			Serializable value = item.getExtraProperties().get(getQName(qname));
+			if (value == null) {
+				value = nodeService.getProperty(item.getNodeRef(), getQName(qname));
+				item.getExtraProperties().put(getQName(qname), value);
+			}
+			return value;
+		}
+
+		/**
+		 * Helper @beCPG.propValue( $qname)
+		 * 
+		 * @param qname
+		 * @return property value in current productData
+		 */
+		public Serializable propValue(String qname) {
+			return propValue(productData, qname);
+
+		}
+
+		/**
+		 * Helper @beCPG.setValue($entity, $qname, $value)
+		 *
+		 * Set property value on entity
+		 *
+		 * @param item
+		 * @param qname
+		 * @param value
+		 * @return value being set
+		 */
+		public Serializable setValue(RepositoryEntity item, String qname, Serializable value) {
+			item.getExtraProperties().put(getQName(qname), value);
+			return value;
+		}
+
+		/**
+		 * Helper @beCPG.setValue( $qname, $value)
+		 *
+		 * Set property value on current entity
+		 *
+		 * @param item
+		 * @param qname
+		 * @param value
+		 * @return value being set
+		 */
+		public Serializable setValue(String qname, Serializable value) {
+			return setValue(productData, qname, value);
+		}
+
+		/**
+		 * Helper @beCPG.assocValue($entity, $qname)
+		 *
+		 * @param nodeRef
+		 * @param qname
+		 * @return association nodeRef
+		 */
+		public NodeRef assocValue(NodeRef nodeRef, String qname) {
+			return associationService.getTargetAssoc(nodeRef, getQName(qname));
+		}
+
+		public NodeRef assocValue(String qname) {
+			return assocValue(productData.getNodeRef(), qname);
+		}
+
+		/**
+		 * Helper @beCPG.assocValues($entity, $qname)
+		 *
+		 * @param nodeRef
+		 * @param qname
+		 * @return collection of association nodeRefs
+		 */
+		public List<NodeRef> assocValues(NodeRef nodeRef, String qname) {
+			return associationService.getTargetAssocs(nodeRef, getQName(qname));
+		}
+
+		public List<NodeRef> assocValues(String qname) {
+			return assocValues(productData.getNodeRef(), qname);
+		}
+
+		/**
+		 * Helper @beCPG.assocPropValues($nodeRef, $assocQname, $propQName)
+		 *
+		 * @param nodeRef
+		 * @param assocQname
+		 * @param propQName
+		 * @return collection of association property values
+		 */
+		public List<Serializable> assocPropValues(NodeRef nodeRef, String assocQname, String propQName) {
+			return associationService.getTargetAssocs(nodeRef, getQName(assocQname)).stream().map(o -> propValue(o, propQName))
+					.collect(Collectors.toList());
+		}
+
+		public List<Serializable> assocPropValues(String assocQname, String propQName) {
+			return assocPropValues(productData.getNodeRef(), assocQname, propQName);
+		}
+
+		/**
+		 * Helper @beCPG.assocPropValue($nodeRef, $assocQname, $propQName)
+		 *
+		 * Example : var val = @beCPG.assocPropValue(nodeRef, "bcpg:geoOrigin",
+		 * "bcpg:isoCode"); #val!=null ? @beCPG.setValue($nodeRef,
+		 * "cm:title", @beCPG.assocPropValue("bcpg:geoOrigin", "bcpg:isoCode"))
+		 * : "";
+		 *
+		 * or
+		 *
+		 * @beCPG.setValue("cm:title", @beCPG.assocPropValue("bcpg:geoOrigin",
+		 * "bcpg:isoCode"))
+		 *
+		 * @param nodeRef
+		 * @param assocQname
+		 * @param propQName
+		 * @return value of association property
+		 */
+		public Serializable assocPropValue(NodeRef nodeRef, String assocQname, String propQName) {
+			NodeRef assocNodeRef = assocValue(nodeRef, assocQname);
+			if (assocNodeRef != null) {
+				return propValue(assocNodeRef, propQName);
+			}
+			return null;
+		}
+
+		public Serializable assocPropValue(String assocQname, String propQName) {
+			return assocPropValue(productData.getNodeRef(), assocQname, propQName);
+		}
+
+		/**
+		 * Helper @beCPG.getQName($qname)
+		 *
+		 * @param qName
+		 * @return QName from string
+		 */
+		public QName getQName(String qName) {
+			return QName.createQName(qName, namespaceService);
+		}
+
+		/**
+		 * Helper @beCPG.updateMLText($mltext, $locale, $value)
+		 *
+		 * Update mlText locale value
+		 *
+		 * @param mlText
+		 * @param locale
+		 * @param value
+		 * @return value beeing set
+		 */
+		public MLText updateMLText(MLText mlText, String locale, String value) {
+
+			if (mlText == null) {
+				mlText = new MLText();
+			}
+
+			if ((value != null) && !value.isEmpty()) {
+				mlText.addValue(MLTextHelper.parseLocale(locale), value);
+			} else {
+				mlText.removeValue(MLTextHelper.parseLocale(locale));
+			}
+
+			return mlText;
+		}
+
+		/**
+		 * @beCPG.runScript($nodeRef)
+		 *
+		 * @param scriptNode
+		 */
+		public void runScript(String scriptNode) {
+			runScript(new NodeRef(scriptNode));
+		}
+
+		public void runScript(NodeRef scriptNode) {
+			// Checking script path for security
+
+			if ((scriptNode != null) && nodeService.exists(scriptNode)
+					&& nodeService.getPath(scriptNode).toPrefixString(namespaceService).startsWith(RepoConsts.SCRIPTS_FULL_PATH)) {
+				String userName = AuthenticationUtil.getFullyAuthenticatedUser();
+
+				Map<String, Object> model = new HashMap<>();
+				model.put("currentUser", userName);
+				model.put("entity", productData);
+
+				scriptService.executeScript(scriptNode, ContentModel.PROP_CONTENT, model);
+			}
+		}
+
+		/**
+		 * @beCPG.sum($range, $formula)
+		 *
+		 *                    @param range
+		 * @param formula
+		 * @return sum of formula results apply on range
+		 */
+		public Double sum(Collection<RepositoryEntity> range, String formula) {
+			return formulaService.aggreate(productData, range, formula, Operator.SUM);
+		}
+
+		/**
+		 * @beCPG.sum($range)
+		 *
+		 * @param range
+		 * @return sum range of double
+		 */
+		public Double sum(Collection<Double> range) {
+			return range.stream().mapToDouble(Double::doubleValue).sum();
+		}
+
+		/**
+		 * @beCPG.avg($range, $formula)
+		 *
+		 * @param range
+		 * @param formula
+		 * @return average of formula results apply on range
+		 */
+		public Double avg(Collection<RepositoryEntity> range, String formula) {
+			return formulaService.aggreate(productData, range, formula, Operator.AVG);
+		}
+
+		/**
+		 * @beCPG.avg($range)
+		 *
+		 * @param range
+		 * @return average range of double
+		 */
+		public Double avg(Collection<Double> range) {
+			return range.stream().mapToDouble(Double::doubleValue).average().getAsDouble();
+		}
+
+		/**
+		 * @beCPG.applyFormulaToList($range, $formula)
+		 * 
+		 * @param range
+		 * @param formula
+		 */
+		public void applyFormulaToList(Collection<RepositoryEntity> range, String formula) {
+			formulaService.applyToList(productData, range, formula);
+		}
+
+		/**
+		 * @beCPG.filter($range, formula)
+		 *
+		 *                       @param <T>
+		 * @param range
+		 * @param formula
+		 * @return filter collection with spel formula
+		 */
+		public <T> Collection<T> filter(Collection<T> range, String formula) {
+
+			ExpressionParser parser = new SpelExpressionParser();
+			Expression exp = parser.parseExpression(formula);
+
+			return range.stream().filter(p -> {
+
+				return exp.getValue(formulaService.createEvaluationContext(productData, p), Boolean.class);
+			}).collect(Collectors.toList());
+
+		}
+
+		/**
+		 * @beCPG.formatNumber($number)
+		 *  
+		 * @param number
+		 * @return standard becpg number format
+		 */
+		public String formatNumber(Number number) {
+			return attributeExtractorService.getPropertyFormats(AttributeExtractorMode.XLSX).formatDecimal(number);
+		}
+
+		/**
+		 * @beCPG.formatNumber($number, $format )
+		 * 
+		 * Example:  @beCPG.formatNumber(10,00005, "0.##")
+		 * 
+		 * @param number
+		 * @param format
+		 * @return formated number to provided format
+		 */
+		public String formatNumber(Number number, String format) {
+			return new java.text.DecimalFormat(format).format(number);
+		}
+		
+		/**
+		 * @beCPG.formatDate($date )
+		 * 
+		 * Example:  @beCPG.formatNumber(10,00005, "0.##")
+		 * 
+		 * @param date
+		 * @return standard becpg date format
+		 */
+		public String formatDate(Date date) {
+			return attributeExtractorService.getPropertyFormats(AttributeExtractorMode.XLSX).formatDate(date);
+		}
+
+		
+
+		/**
+		 * @beCPG.formatDate($date, $format )
+		 * 
+		 * Example:  @beCPG.formatDate(new java.util.Date(),"dd/mm/YYYY" )
+		 * 
+		 * @param date
+		 * @return standard becpg number format
+		 */
+		public String formatDate(Date date, String format) {
+			return new java.text.SimpleDateFormat(format).format(date);
+		}
+
+		/**
+		 *
+		 * @beCPG.copy($fromNodeRef, $propQNames, $listQNames)
+		 *
+		 * Copy properties from a productData to
+		 *                          current productData
+		 *                           
+		 * Example: @beCPG.copy(compoListView.compoList[0].product,{"bcpg:suppliers","bcpg:legalName"},{"bcpg:costList"});
+		 *
+		 * @param fromNodeRef
+		 * @param propQNames
+		 * @param listQNames
+		 */
+		public void copy(NodeRef fromNodeRef, Collection<String> propQNames, Collection<String> listQNames) {
+			try {
+				Set<QName> treatedProp = new HashSet<>();
+				Set<QName> treatedList = new HashSet<>();
+
+				ProductData from = alfrescoRepository.findOne(fromNodeRef);
+
+				if (from != null) {
+					BeanWrapper beanWrapper = new BeanWrapperImpl(productData);
+
+					for (final PropertyDescriptor pd : beanWrapper.getPropertyDescriptors()) {
+
+						Method readMethod = pd.getReadMethod();
+
+						if (readMethod != null) {
+							if (readMethod.isAnnotationPresent(AlfProp.class)) {
+								QName qname = repositoryEntityDefReader.readQName(readMethod);
+								for (String propQName2 : propQNames) {
+									QName propQName = QName.createQName(propQName2, namespaceService);
+									if (qname.equals(propQName)) {
+										logger.debug("Setting property : " + propQName + " from repository entity");
+
+										PropertyUtils.setProperty(from, pd.getName(), PropertyUtils.getProperty(from, pd.getName()));
+
+										treatedProp.add(propQName);
+									}
+
+								}
+
+								for (String listQName1 : listQNames) {
+									QName listQName = QName.createQName(listQName1, namespaceService);
+									if (qname.equals(listQName)) {
+										logger.debug("Setting list : " + listQName + " from repository entity");
+										PropertyUtils.setProperty(from, pd.getName(), PropertyUtils.getProperty(from, pd.getName()));
+										treatedList.add(listQName);
+									}
+
+								}
+
+							}
+						}
+					}
+
+					Map<QName, Serializable> extraPropToCopy = nodeService.getProperties(from.getNodeRef());
+
+					for (String propQName2 : propQNames) {
+						QName propQName = QName.createQName(propQName2, namespaceService);
+						if (!treatedProp.contains(propQName)) {
+							PropertyDefinition propertyDef = entityDictionaryService.getProperty(propQName);
+							if (propertyDef != null) {
+								if (extraPropToCopy.containsKey(propQName)) {
+									logger.debug("Setting property : " + propQName + " from nodeRef");
+									nodeService.setProperty(productData.getNodeRef(), propQName, extraPropToCopy.get(propQName));
+								} else {
+									logger.debug("Removing property : " + propQName);
+									nodeService.removeProperty(productData.getNodeRef(), propQName);
+								}
+
+							} else {
+								logger.debug("Setting association : " + propQName + " from nodeRef");
+								associationService.update(productData.getNodeRef(), propQName,
+										associationService.getTargetAssocs(from.getNodeRef(), propQName));
+							}
+							treatedProp.add(propQName);
+
+						}
+
+					}
+
+					NodeRef listContainerNodeRef = entityListDAO.getListContainer(from.getNodeRef());
+
+					for (String listQName2 : listQNames) {
+						QName listQName = QName.createQName(listQName2, namespaceService);
+
+						if (!treatedList.contains(listQName)) {
+							logger.debug("Copy list : " + listQName + " from nodeRef");
+							entityListDAO.copyDataList(entityListDAO.getList(listContainerNodeRef, listQName), productData.getNodeRef(), true);
+
+							treatedList.add(listQName);
+						}
+					}
+				}
+			} catch (Exception e) {
+				logger.error(e, e);
+			}
+		}
+
+	}
+
+}
