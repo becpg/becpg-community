@@ -35,7 +35,7 @@ public class DecernisSpelFunctions implements CustomSpelFunctions {
 
 		
 		/**
-		 * @decenis.launch($countries,$usages);
+		 * @decernis.launch($countries,$usages);
 		 * 
 		 * 
 		 * @param countries
@@ -47,6 +47,20 @@ public class DecernisSpelFunctions implements CustomSpelFunctions {
 			return decernisService.launchDecernisAnalysis(productData, countries, usages);
 		}
 
+		
+		/**
+		 * @decernis.launch($productData, $countries,$usages);
+		 * 
+		 * 
+		 * @param countries
+		 * @param usages
+		 * @return
+		 * @throws Exception
+		 */
+		public String launch(ProductData productData, List<String> countries, List<String> usages) throws Exception {
+			return decernisService.launchDecernisAnalysis(productData, countries, usages);
+		}
+		
 	}
 
 }
