@@ -80,20 +80,6 @@
 	<!-- Formulation visitors -->
 	
 
-	<bean id="formulaService" class="fr.becpg.repo.product.formulation.FormulaService">
-		<property name="alfrescoRepository" ref="alfrescoRepository" />
-		<property name="namespaceService" ref="namespaceService"/>
-		<property name="securityMethodBeforeAdvice" ref="securityMethodBeforeAdvice"/>
-		<property name="nodeService" ref="nodeService" />
-		<property name="entityListDAO" ref="entityListDAO" />
-		<property name="associationService" ref="associationService" />
-		<property name="repositoryEntityDefReader" ref="repositoryEntityDefReader" />
-		<property name="dictionaryService" ref="dictionaryService" />
-		<property name="scriptService" ref="scriptService"/>
-		<property name="decernisService" ref="decernisService"/>
-	</bean>
-
-
 	<bean id="abstractSimpleFormulationHandler"
 		class="fr.becpg.repo.product.formulation.AbstractSimpleListFormulationHandler" abstract="true">
 		<property name="alfrescoRepository" ref="alfrescoRepository" />
