@@ -199,6 +199,10 @@
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:casNumber" />
 					<show id="bcpg:ecNumber" />
+					<show id="bcpg:ceNumber" />
+					<show id="bcpg:fdaNumber" />
+					<show id="bcpg:femaNumber" />
+					<show id="bcpg:flNumber" />
 					
 					<show id="bcpg:eanCode" />
 					<show id="bcpg:eanCodeLevel2"  />
@@ -453,6 +457,10 @@
 					
 					<field id="bcpg:casNumber" set="mainInfo"/>
 					<field id="bcpg:ecNumber" set="mainInfo"/>
+					<field id="bcpg:ceNumber"  set="mainInfo"/>
+					<field id="bcpg:fdaNumber"  set="mainInfo"/>
+					<field id="bcpg:femaNumber"  set="mainInfo"/>
+					<field id="bcpg:flNumber"  set="mainInfo"/>
 					
 					<field id="bcpg:eanCode" help-id="becpg.forms.help.eanCode" set="mainInfo" >
 						<constraint-handlers>
@@ -3252,6 +3260,10 @@
 					
 					<show id="bcpg:casNumber" />
 					<show id="bcpg:ecNumber" />
+					<show id="bcpg:ceNumber" />
+					<show id="bcpg:fdaNumber" />
+					<show id="bcpg:femaNumber" />
+					<show id="bcpg:flNumber" />
 					
 					
 					<show id="bcpg:eanCode" />
@@ -3383,6 +3395,10 @@
 					<field id="bcpg:erpCode" set="mainInfo" />
 					<field id="bcpg:casNumber" set="mainInfo"/>
 					<field id="bcpg:ecNumber" set="mainInfo"/>
+					<field id="bcpg:ceNumber"  set="mainInfo"/>
+					<field id="bcpg:fdaNumber"  set="mainInfo"/>
+					<field id="bcpg:femaNumber"  set="mainInfo"/>
+					<field id="bcpg:flNumber"  set="mainInfo"/>
 					
 					<field id="bcpg:eanCode" help-id="becpg.forms.help.eanCode" set="mainInfo"  >
 						<constraint-handlers>
@@ -5803,6 +5819,11 @@
 					<show id="bcpg:pluralLegalName"/>
 					<show id="bcpg:ingCEECode"  force="true"/>
 					<show id="bcpg:casNumber"  force="true"/>
+					<show id="bcpg:ceNumber"  force="true"/>
+					<show id="bcpg:ecNumber"  force="true"/>
+					<show id="bcpg:fdaNumber"  force="true"/>
+					<show id="bcpg:femaNumber"  force="true"/>
+					<show id="bcpg:flNumber"  force="true"/>
 					<show id="bcpg:regulatoryCode" force="true"/>
 					<show id="bcpg:ingTypeV2"  force="true"/>
 				</field-visibility>
@@ -5816,6 +5837,11 @@
 					</field>
 					<field id="bcpg:ingCEECode" />
 					<field id="bcpg:casNumber" />
+					<field id="bcpg:ceNumber" />
+					<field id="bcpg:ecNumber" />
+					<field id="bcpg:fdaNumber" />
+					<field id="bcpg:femaNumber" />
+					<field id="bcpg:flNumber" />
 					<field id="bcpg:regulatoryCode" />
 					<field id="bcpg:ingTypeV2">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
@@ -5840,6 +5866,11 @@
 					<show id="bcpg:pluralLegalName"/>
 					<show id="bcpg:ingCEECode" force="true"/>
 					<show id="bcpg:casNumber" force="true"/>
+					<show id="bcpg:ceNumber"  force="true"/>
+					<show id="bcpg:ecNumber"  force="true"/>
+					<show id="bcpg:fdaNumber"  force="true"/>
+					<show id="bcpg:femaNumber"  force="true"/>
+					<show id="bcpg:flNumber"  force="true"/>
 					<show id="bcpg:regulatoryCode" force="true"/>
 					<show id="bcpg:ingTypeV2"  force="true"/>
 				</field-visibility>
@@ -5854,6 +5885,11 @@
 					</field>
 					<field id="bcpg:ingCEECode" />
 					<fiels id="bcpg:casNumber"/>
+					<field id="bcpg:ceNumber" />
+					<field id="bcpg:ecNumber" />
+					<field id="bcpg:fdaNumber" />
+					<field id="bcpg:femaNumber" />
+					<field id="bcpg:flNumber" />
 					<field id="bcpg:regulatoryCode"/>
 					<field id="bcpg:ingTypeV2">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
@@ -5871,6 +5907,11 @@
 					<show id="bcpg:legalName" force="true"/>
 					<show id="bcpg:ingCEECode" force="true"/>
 					<show id="bcpg:casNumber" force="true"/>
+					<show id="bcpg:ceNumber"  force="true"/>
+					<show id="bcpg:ecNumber"  force="true"/>
+					<show id="bcpg:fdaNumber"  force="true"/>
+					<show id="bcpg:femaNumber"  force="true"/>
+					<show id="bcpg:flNumber"  force="true"/>
 					<show id="bcpg:regulatoryCode" force="true"/>
 					<show id="bcpg:ingTypeV2"  force="true"/>
 				</field-visibility>
@@ -5904,6 +5945,11 @@
 					<show id="bcpg:pluralLegalName"/>
 					<show id="bcpg:ingCEECode" force="true"/>
 					<show id="bcpg:casNumber" force="true"/>
+					<show id="bcpg:ceNumber"  force="true"/>
+					<show id="bcpg:ecNumber"  force="true"/>
+					<show id="bcpg:fdaNumber"  force="true"/>
+					<show id="bcpg:femaNumber"  force="true"/>
+					<show id="bcpg:flNumber"  force="true"/>
 					<show id="bcpg:regulatoryCode" force="true"/>
 					<show id="bcpg:ingTypeV2"  force="true"/>
 				</field-visibility>
