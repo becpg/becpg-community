@@ -34,71 +34,53 @@ public class BecpgFormDefinition {
 		}
 	}
 	
-	
-	
-
-	private static JSONObject filterFieldsRecursive(JSONObject object) throws JSONException {
-		
-		
-		if (isContainerRepresentation(object)) {
-			JSONObject ret = null;
-			JSONObject fields = null;
-			int size = 0;
-			if(object.has("fields")) {
-				fields = object.getJSONObject("fields");
-				size = fields.length();
-				if (size > 0 ) {
-				  ret = new JSONObject();
-					JSONObject filteredFields = new JSONObject();
-					int counter = 1;
-					for (int i = 1; i <= size; i++) {
-						final String key = String.valueOf(i);
-						JSONArray fieldArray = fields.getJSONArray(key);
-						JSONArray filteredFieldArray = new JSONArray();
-						for (int j = 0; j < fieldArray.length(); j++) {
-							final JSONObject obj = filterFieldsRecursive(fieldArray.getJSONObject(j));
-							if (obj != null) {
-								filteredFieldArray.put(obj);
-							}
-						}
-						if (filteredFieldArray.length() > 0) {
-							filteredFields.put(String.valueOf(counter), filteredFieldArray);
-							counter++;
-						}
-					}
-					ret.put("fields", filteredFields);
-					
-					for (String key : JSONObject.getNames(object)) {
-						if (!key.equals("fields")) {
-							ret.put(key, object.get(key));
-						}
-					}
-				}
-			}
-			
-			return ret;
-		} else {
-			return object;
-		}
-		
-	}
-
-	private static JSONObject filterFields(JSONObject object) throws JSONException {
-		JSONObject result = new JSONObject();
-		for (String objectKey : JSONObject.getNames(object)) {
-			if (objectKey.equals("fields")) {
-				JSONArray array = object.getJSONArray("fields");
-				for (int i = 0; i < array.length(); i++) {
-					final JSONObject filtered = filterFieldsRecursive(array.getJSONObject(i));
-					if (filtered != null) {
-						result.append("fields", filtered);
-					}
-				}
-			} else {
-				result.put(objectKey, object.get(objectKey));
+	private static JSONArray filterArray(JSONArray array) throws JSONException {
+		final int size = array.length();
+		JSONArray result = new JSONArray();
+		for (int i = 0; i < size; ++i) {
+			JSONObject element = filter(array.getJSONObject(i));
+			if (element != null) {
+				result.put(element);
 			}
 		}
 		return result;
+	}
+	
+	private static JSONObject filter(JSONObject object) {
+		try {
+			if (isContainerRepresentation(object)) {
+				JSONObject fields;
+				try {
+					fields = object.getJSONObject("fields");
+				} catch (JSONException e) {
+					return null;
+				}
+				JSONObject filteredFields = new JSONObject();
+				final int size = fields.length();
+				int counter = 1;
+				for (int i = 1; i <= size; ++i) {
+					JSONArray array = fields.getJSONArray(Integer.toString(i));
+					JSONArray filteredArray = filterArray(array);
+					if (filteredArray.length() > 0) {
+						filteredFields.put(Integer.toString(counter), filteredArray);
+						++counter;
+					}
+				}
+				if (filteredFields.length() > 0) {
+					object.put("fields", filteredFields);
+				} else {
+					return null;
+				}
+			} else {
+				JSONArray array = object.getJSONArray("fields");
+				JSONArray filteredArray = filterArray(array);
+				object.put("fields", filteredArray);
+			}
+		} catch (JSONException e) {
+				// Skip deeper filtering
+		}
+		
+		return object;
 	}
 
 	public JSONObject merge(Form form) throws JSONException {
@@ -182,7 +164,7 @@ public class BecpgFormDefinition {
 			}
 		}
 
-		return filterFields(ret);
+		return filter(ret);
 	}
 
 	private void loadData(JSONObject field, Form form) throws JSONException {
