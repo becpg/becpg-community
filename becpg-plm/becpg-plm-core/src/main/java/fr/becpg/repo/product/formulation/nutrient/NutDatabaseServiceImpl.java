@@ -300,10 +300,9 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 		} finally {
 			MLPropertyInterceptor.setMLAware(mlAware);
 
-			if (logger.isDebugEnabled()) {
+			if (logger.isDebugEnabled() && watch != null) {
 				watch.stop();
 				logger.debug("createProduct run in  " + watch.getTotalTimeSeconds() + " seconds ");
-
 			}
 
 		}
