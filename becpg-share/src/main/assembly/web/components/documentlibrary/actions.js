@@ -156,6 +156,10 @@
             if (p_action.params.page)
             {
                markupParams.pageUrl = Alfresco.util.substituteDotNotation(p_action.params.page, p_record);
+               
+               if(p_action.params.page == "edit-metadata?nodeRef={node.nodeRef}&siteId={site}" && !p_record.location.site){
+            	   markupParams.pageUrl = markupParams.pageUrl.replace("&siteId={site}", "");
+               }
 
                /**
                 * If the page starts with a "{" character we're going to assume it's a placeholder variable
