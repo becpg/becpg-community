@@ -90,18 +90,16 @@ public class MexicanNutrientRegulation extends AbstractNutrientRegulation {
 
 	@Override
 	public Double roundGDA(Double value, String nutrientTypeCode) {
-		if(value != null){
-			if (isVitamin(nutrientTypeCode) || isMineral(nutrientTypeCode)){
-				if (value < 2) {
-					return 0.0;
-				} else if (value < 10) {
-					return roundValue(value, 2d);
-				}
-				if (value < 50) {
-					return roundValue(value, 5d);
-				} else {
-					return roundValue(value, 10d);
-				}
+		if(value != null && (isVitamin(nutrientTypeCode) || isMineral(nutrientTypeCode))){
+			if (value < 2) {
+				return 0.0;
+			} else if (value < 10) {
+				return roundValue(value, 2d);
+			}
+			if (value < 50) {
+				return roundValue(value, 5d);
+			} else {
+				return roundValue(value, 10d);
 			}
 		}
 		return roundValue(value, 1d);
