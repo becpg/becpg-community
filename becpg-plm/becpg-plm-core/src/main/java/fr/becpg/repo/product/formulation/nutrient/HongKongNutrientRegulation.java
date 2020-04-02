@@ -19,6 +19,7 @@ public class HongKongNutrientRegulation extends AbstractNutrientRegulation {
 					|| nutrientTypeCode.equals(NutrientCode.Sodium) || nutrientTypeCode.equals(NutrientCode.Cholesterol)){
 					return roundValue(value, 1d);
 			} else if (nutrientTypeCode.equals(NutrientCode.Protein) || nutrientTypeCode.equals(NutrientCode.CarbohydrateByDiff)
+					|| nutrientTypeCode.equals(NutrientCode.CarbohydrateWithFiber) 
 					|| nutrientTypeCode.equals(NutrientCode.Fat) || nutrientTypeCode.equals(NutrientCode.FatSaturated)
 					|| nutrientTypeCode.equals(NutrientCode.FatTrans) || nutrientTypeCode.equals(NutrientCode.Sugar)
 					|| nutrientTypeCode.equals(NutrientCode.FiberDietary)) {

@@ -176,7 +176,7 @@ public class RegulationFormulationHelper {
 							nutListElt.addAttribute("regulDepthLevel" + suffix, "" + def.getDepthLevel());
 						}
 						boolean display = true;
-						if ((reportLocales != null) && (reportLocales.getText() != null) && (reportLocales.getText() != "")) {
+						if ((reportLocales != null) && (reportLocales.getText() != null) && (!reportLocales.getText().equals(""))) {
 							display = false;
 							for (String reportLocale : reportLocales.getText().split(",")) {
 								if ((reportLocale != null) && (locale != null) && reportLocale.trim().equals(locale.toString())) {
@@ -217,7 +217,7 @@ public class RegulationFormulationHelper {
 						}
 					}
 
-					if ((nutListValue != null) && (nutListValue != "")) {
+					if ((nutListValue != null) && (!nutListValue.equals(""))){
 						nutListElt.addAttribute("roundedDisplayValue" + suffix, RegulationFormulationHelper
 								.displayValue(Double.parseDouble(nutListValue), extractValue(roundedValue, locKey), nutCode, locale, locKey));
 
@@ -227,7 +227,7 @@ public class RegulationFormulationHelper {
 											extractValuePerContainer(roundedValue, locKey), nutCode, locale, locKey));
 						}
 					}
-					if ((nutListValuePerServing != null) && (nutListValuePerServing != "")) {
+					if ((nutListValuePerServing != null) && (!nutListValuePerServing.equals(""))) {
 						nutListElt.addAttribute("roundedDisplayValuePerServing" + suffix, RegulationFormulationHelper.displayValue(
 								Double.parseDouble(nutListValuePerServing), extractValuePerServing(roundedValue, locKey), nutCode, locale, locKey));
 					}
