@@ -142,7 +142,7 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 			String qName = clazz.getAnnotation(AlfQname.class).qname();
 			return QName.createQName(qName, namespaceService);
 		}
-		throw new RuntimeException("No @AlfType annotation in class");
+		throw new RuntimeException("No @AlfQname annotation in class : "+clazz.getName());
 	}
 
 	@Override
