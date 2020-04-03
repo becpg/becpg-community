@@ -16,6 +16,7 @@ public class MalaysianNutrientRegulation extends AbstractNutrientRegulation {
 
 		if(value != null && nutrientTypeCode != null){
 			if (nutrientTypeCode.equals(NutrientCode.Protein) || nutrientTypeCode.equals(NutrientCode.CarbohydrateByDiff)
+					|| nutrientTypeCode.equals(NutrientCode.CarbohydrateWithFiber)
 					|| nutrientTypeCode.equals(NutrientCode.Fat) || nutrientTypeCode.equals(NutrientCode.Sugar)) {
 				if (value < 0.05) {
 					return 0.0;
