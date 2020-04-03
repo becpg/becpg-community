@@ -327,7 +327,7 @@ public class DecernisServiceImpl implements DecernisService {
 	private void createReqCtrl(ProductData product, NodeRef ing, String reqCtrlMessage) {
 		MLText reqMessage = MLTextHelper.getI18NMessage(reqCtrlMessage);
 		ReqCtrlListDataItem reqCtrlItem = new ReqCtrlListDataItem();
-		reqCtrlItem.setReqType(RequirementType.Info);
+		reqCtrlItem.setReqType(RequirementType.Tolerated);
 		reqCtrlItem.getSources().add(ing);
 		reqCtrlItem.setReqDataType(RequirementDataType.Specification);
 		reqCtrlItem.setReqMlMessage(reqMessage);
