@@ -263,6 +263,22 @@ public class EntityListDAOImpl implements EntityListDAO, NodeServicePolicies.Bef
 		return queryBuilder.childFileFolders(new PagingRequest(5000, null)).getPage();
 
 	}
+	
+	@Override
+	public  boolean isEmpty(final NodeRef listNodeRef, final QName listQNameFilter) {
+
+		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().parent(listNodeRef);
+
+		if (listQNameFilter != null) {
+			queryBuilder.ofType(listQNameFilter);
+		} else {
+			queryBuilder.ofType(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+		}
+
+		return queryBuilder.inDB().singleValue()!=null;
+
+	}
+
 
 	private List<NodeRef> getListItemsV2(final NodeRef listNodeRef, final QName listQNameFilter) {
 

@@ -372,6 +372,7 @@
                             <excludes>
                             	<exclude>**/templates/**</exclude>
                                 <exclude>**/webscripts/**</exclude>
+                                <exclude>**/rules/**</exclude>
                                 <exclude>**/site-webscripts/**</exclude>
                                 <exclude>**/META-INF/**</exclude>
                                 <exclude>**/*.lib.js</exclude>
@@ -393,6 +394,7 @@
                             <excludes>
                             	<exclude>**/templates/**</exclude>
                                 <exclude>**/webscripts/**</exclude>
+                                 <exclude>**/rules/**</exclude>
                                 <exclude>**/site-webscripts/**</exclude>
                                 <exclude>**/*.lib.js</exclude>
                                 <exclude>**/*.css</exclude>
