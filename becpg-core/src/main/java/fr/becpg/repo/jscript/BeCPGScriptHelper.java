@@ -17,10 +17,13 @@
  ******************************************************************************/
 package fr.becpg.repo.jscript;
 
+import java.io.Serializable;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.alfresco.repo.jscript.BaseScopableProcessorExtension;
 import org.alfresco.repo.jscript.ScriptNode;
@@ -47,6 +50,7 @@ import fr.becpg.model.EntityListState;
 import fr.becpg.repo.dictionary.constraint.DynListConstraint;
 import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.entity.EntityDictionaryService;
+import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.helper.AssociationService;
@@ -67,6 +71,8 @@ import fr.becpg.repo.search.PaginatedSearchCache;
 public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 	private static Log logger = LogFactory.getLog(BeCPGScriptHelper.class);
+
+	private NodeService nodeService;
 
 	private AutoNumService autoNumService;
 
@@ -95,6 +101,8 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	private PermissionService permissionService;
 
 	private RepoService repoService;
+
+	private EntityListDAO entityListDAO;
 
 	private boolean useBrowserLocale;
 
@@ -184,8 +192,16 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		this.entityService = entityService;
 	}
 
+	public void setNodeService(NodeService nodeService) {
+		this.nodeService = nodeService;
+	}
+
+	public void setEntityListDAO(EntityListDAO entityListDAO) {
+		this.entityListDAO = entityListDAO;
+	}
+
 	public String getMLProperty(ScriptNode sourceNode, String propQName, String locale) {
-		MLText mlText = (MLText) mlNodeService.getProperty(sourceNode.getNodeRef(), QName.createQName(propQName, namespaceService));
+		MLText mlText = (MLText) mlNodeService.getProperty(sourceNode.getNodeRef(), getQName(propQName));
 		if (mlText != null) {
 			return MLTextHelper.getClosestValue(mlText, MLTextHelper.parseLocale(locale));
 		}
@@ -220,7 +236,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 	public void setMLProperty(ScriptNode sourceNode, String propQName, String locale, String value) {
 
-		MLText mlText = (MLText) mlNodeService.getProperty(sourceNode.getNodeRef(), QName.createQName(propQName, namespaceService));
+		MLText mlText = (MLText) mlNodeService.getProperty(sourceNode.getNodeRef(), getQName(propQName));
 		if (mlText == null) {
 			mlText = new MLText();
 		}
@@ -230,8 +246,66 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		} else {
 			mlText.removeValue(MLTextHelper.parseLocale(locale));
 		}
-		mlNodeService.setProperty(sourceNode.getNodeRef(), QName.createQName(propQName, namespaceService), mlText);
+		mlNodeService.setProperty(sourceNode.getNodeRef(), getQName(propQName), mlText);
 
+	}
+
+	public QName getQName(String qName) {
+		return QName.createQName(qName, namespaceService);
+	}
+
+	public NodeRef assocValue(ScriptNode sourceNode, String assocQname) {
+		return associationService.getTargetAssoc(sourceNode.getNodeRef(), getQName(assocQname));
+	}
+
+	public NodeRef[] assocValues(ScriptNode sourceNode, String assocQname) {
+		return associationService.getTargetAssocs(sourceNode.getNodeRef(), getQName(assocQname)).toArray(new NodeRef[] {});
+	}
+
+	public Serializable[] assocPropValues(ScriptNode sourceNode, String assocQname, String propQName) {
+		return associationService.getTargetAssocs(sourceNode.getNodeRef(), getQName(assocQname)).stream()
+				.map(o -> nodeService.getProperty(o, getQName(propQName))).collect(Collectors.toList()).toArray(new NodeRef[] {});
+	}
+
+	public NodeRef assocAssocValue(ScriptNode sourceNode, String assocQname, String assocAssocsQname) {
+		NodeRef assocNodeRef = assocValue(sourceNode, assocQname);
+		if (assocNodeRef != null) {
+			return associationService.getTargetAssoc(assocNodeRef, getQName(assocAssocsQname));
+		}
+		return null;
+	}
+
+	public NodeRef[] assocAssocValues(ScriptNode sourceNode, String assocQname, String assocAssocsQname) {
+		NodeRef assocNodeRef = assocValue(sourceNode, assocQname);
+		if (assocNodeRef != null) {
+			return associationService.getTargetAssocs(assocNodeRef, getQName(assocAssocsQname)).toArray(new NodeRef[] {});
+		}
+		return new NodeRef[] {};
+	}
+
+	public Serializable assocPropValue(ScriptNode sourceNode, String assocQname, String propQName) {
+		NodeRef assocNodeRef = assocValue(sourceNode, assocQname);
+		if (assocNodeRef != null) {
+			return nodeService.getProperty(assocNodeRef, getQName(propQName));
+		}
+		return null;
+	}
+
+	public void updateAssoc(ScriptNode sourceNode, String assocQname, NodeRef[] nodeRefs) {
+		associationService.update(sourceNode.getNodeRef(), getQName(assocQname), Arrays.asList(nodeRefs));
+	}
+
+	public void updateAssoc(ScriptNode sourceNode, String assocQname, NodeRef nodeRef) {
+		associationService.update(sourceNode.getNodeRef(), getQName(assocQname), nodeRef);
+	}
+
+	public void updateAssoc(ScriptNode sourceNode, String assocQname, ScriptNode node) {
+		associationService.update(sourceNode.getNodeRef(), getQName(assocQname), node.getNodeRef());
+	}
+
+	public void updateAssoc(ScriptNode sourceNode, String assocQname, ScriptNode[] nodes) {
+		associationService.update(sourceNode.getNodeRef(), getQName(assocQname),
+				Arrays.asList(nodes).stream().map(o -> o.getNodeRef()).collect(Collectors.toList()));
 	}
 
 	public String getMessage(String messageKey) {
@@ -239,7 +313,6 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	}
 
 	public String getMessage(String messageKey, Object param) {
-
 		return I18NUtil.getMessage(messageKey, param, I18NUtil.getLocale());
 	}
 
@@ -275,6 +348,40 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 	public boolean changeEntityListStates(ScriptNode entity, String state) {
 		return entityService.changeEntityListStates(entity.getNodeRef(), EntityListState.valueOf(state));
+	}
+
+	public void copyList(ScriptNode destNode, ScriptNode sourceNode, String listQname) {
+		entityListDAO.copyDataList(entityListDAO.getList(entityListDAO.getListContainer(sourceNode.getNodeRef()), getQName(listQname)),
+				sourceNode.getNodeRef(), true);
+	}
+
+	public boolean listExist(ScriptNode node, String listQname) {
+		NodeRef listContainer = entityListDAO.getListContainer(node.getNodeRef());
+		if (listContainer != null) {
+			NodeRef listNodeRef = entityListDAO.getList(listContainer, getQName(listQname));
+			if (listNodeRef != null) {
+
+				return !entityListDAO.isEmpty(listNodeRef, getQName(listQname));
+
+			}
+
+		}
+		return false;
+
+	}
+
+	public NodeRef[] getListItems(ScriptNode node, String listQname) {
+		NodeRef listContainer = entityListDAO.getListContainer(node.getNodeRef());
+		if (listContainer != null) {
+			NodeRef listNodeRef = entityListDAO.getList(listContainer, getQName(listQname));
+			if (listNodeRef != null) {
+
+				return entityListDAO.getListItems(listNodeRef, getQName(listQname)).toArray(new NodeRef[] {});
+
+			}
+
+		}
+		return new NodeRef[] {};
 	}
 
 	public String[] getSubTypes(String type) {
@@ -331,6 +438,6 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	}
 
 	public static String generateEAN13Code(String prefix) throws CheckDigitException {
-		return GTINHelper.createEAN13Code(prefix,AutoNumHelper.getAutoNumValue("bcpg:eanCode", "bcpg:ean13Pref"+prefix));
+		return GTINHelper.createEAN13Code(prefix, AutoNumHelper.getAutoNumValue("bcpg:eanCode", "bcpg:ean13Pref" + prefix));
 	}
 }
