@@ -184,6 +184,15 @@ public interface EntityListDAO {
 	void moveDataLists(NodeRef sourceNodeRef, NodeRef targetNodeRef);
 
 
+	/**
+	 *  Test datalist is empty
+	 * @param listNodeRef
+	 * @param listQNameFilter
+	 * @return
+	 */
+	boolean isEmpty(NodeRef listNodeRef, QName listQNameFilter);
+
+
 
 
 

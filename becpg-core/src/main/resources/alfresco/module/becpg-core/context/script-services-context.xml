@@ -67,6 +67,8 @@
 		<property name="permissionService" ref="permissionService"/>
 		<property name="entityService" ref="entityService"/>
 		<property name="useBrowserLocale" value="${beCPG.multilinguale.useBrowserLocale}"/>
+		<property name="nodeService" ref="nodeService"/>
+		<property name="entityListDAO" ref="entityListDAO" />
 	</bean>
 	
 	<bean id="pdfScriptHelper" parent="baseJavaScriptExtension" class="fr.becpg.repo.jscript.PDFScriptHelper">
