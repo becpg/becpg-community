@@ -157,7 +157,8 @@
             {
                markupParams.pageUrl = Alfresco.util.substituteDotNotation(p_action.params.page, p_record);
                
-               if(p_action.params.page == "edit-metadata?nodeRef={node.nodeRef}&siteId={site}" && !p_record.location.site){
+               //beCPG
+               if(p_action.params.page == "edit-metadata?nodeRef={node.nodeRef}&siteId={site}" && !$isValueSet(p_record.location.site)){
             	   markupParams.pageUrl = markupParams.pageUrl.replace("&siteId={site}", "");
                }
 
@@ -169,6 +170,7 @@
                if (p_action.params.page.charAt(0) !== "{")
                {
                   var recordSiteName = $isValueSet(p_record.location.site) ? p_record.location.site.name : null;
+                   
                   markupParams.pageUrl = $siteURL(markupParams.pageUrl,
                   {
                      site: recordSiteName
