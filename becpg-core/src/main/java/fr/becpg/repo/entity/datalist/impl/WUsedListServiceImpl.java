@@ -23,7 +23,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.AssociationRef;
@@ -125,8 +129,8 @@ public class WUsedListServiceImpl implements WUsedListService {
 							boolean delete = true;
 							for (AssociationRef associationRef2 : nodeService.getSourceAssocs(entityNodeRef, associationName)) {
 								// Test that assoc is also include in product
-								if (getEntity(associationRef.getSourceRef(), permCache)
-										.equals(getEntity(associationRef2.getSourceRef(), permCache))) {
+								if ( Objects.equals(getEntity(associationRef.getSourceRef(), permCache)
+										,getEntity(associationRef2.getSourceRef(), permCache))) {
 									// TODO Test same parent
 									delete = false;
 									break;
@@ -185,7 +189,8 @@ public class WUsedListServiceImpl implements WUsedListService {
 
 	}
 
-	private NodeRef getEntity(NodeRef sourceRef, Map<NodeRef, Boolean> permCache) {
+	@Nullable
+	private NodeRef getEntity(@Nonnull NodeRef sourceRef,@Nonnull Map<NodeRef, Boolean> permCache) {
 		NodeRef ret = AuthenticationUtil.runAsSystem(() -> {
 			if (entityDictionaryService.isSubClass(nodeService.getType(sourceRef), BeCPGModel.TYPE_ENTITY_V2)) {
 				return sourceRef;

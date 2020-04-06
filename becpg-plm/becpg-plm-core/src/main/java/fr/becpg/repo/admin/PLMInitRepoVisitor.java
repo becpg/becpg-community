@@ -1128,7 +1128,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			defaultKindReport.add(NONE_KIND_REPORT);
 
 			for (String reportKind : defaultKindReport){	
-				if(reportKind == PRODUCT_REPORT_RAWMATERIAL_PATH || reportKind == PRODUCT_REPORT_PACKAGING_PATH || reportKind == PRODUCT_REPORT_COST_PATH  || reportKind == PRODUCT_REPORT_RD_PATH){
+				if(PRODUCT_REPORT_RAWMATERIAL_PATH.equals(reportKind ) ||  PRODUCT_REPORT_PACKAGING_PATH.equals(reportKind ) ||  PRODUCT_REPORT_COST_PATH.equals(reportKind )  
+						|| PRODUCT_REPORT_RD_PATH.equals(reportKind )){
 					continue;
 				}
 				

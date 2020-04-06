@@ -107,7 +107,7 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 			return getMultiLevelListData(dataListFilter, dataListFilter.getEntityNodeRef(), 0, dataListFilter.getMaxDepth(), null,
 					new HashSet<NodeRef>(), useExpandedCache, resetTree);
 		} finally {
-			if (logger.isDebugEnabled()) {
+			if (logger.isDebugEnabled() && watch!=null) {
 				watch.stop();
 				logger.debug("getMultiLevelListData at depth " + dataListFilter.getMaxDepth() + " in  " + watch.getTotalTimeSeconds() + "s");
 			}
@@ -132,7 +132,7 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 					NodeRef listsContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
 					if (listsContainerNodeRef != null) {
 
-						visitMultiLevelListData(ret, dataListFilter, entityNodeRef, listsContainerNodeRef, currDepth, maxDepthLevel, nodeType,
+						visitMultiLevelListData(ret, dataListFilter, listsContainerNodeRef, currDepth, maxDepthLevel, nodeType,
 								dataListFilter.getDataType(), parentNodeRefs, useExpandedCache, resetTree);
 
 						QName secondaryType = entityDictionaryService.getMultiLevelSecondaryPivot(dataListFilter.getDataType());
@@ -141,7 +141,7 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 
 							logger.debug("Visiting secondary type:" + secondaryType);
 
-							visitMultiLevelListData(ret, dataListFilter, entityNodeRef, listsContainerNodeRef, currDepth, maxDepthLevel, nodeType,
+							visitMultiLevelListData(ret, dataListFilter, listsContainerNodeRef, currDepth, maxDepthLevel, nodeType,
 									secondaryType, parentNodeRefs, useExpandedCache, resetTree);
 
 						}
@@ -157,7 +157,7 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 		return ret;
 	}
 
-	private void visitMultiLevelListData(MultiLevelListData ret, DataListFilter dataListFilter, NodeRef entityNodeRef, NodeRef listsContainerNodeRef,
+	private void visitMultiLevelListData(MultiLevelListData ret, DataListFilter dataListFilter, NodeRef listsContainerNodeRef,
 			int currDepth, int maxDepthLevel, QName nodeType, QName dataType, Set<NodeRef> parentNodeRefs, boolean useExpandedCache,
 			boolean resetTree) {
 		int access_mode = securityService.computeAccessMode(nodeType, dataType.toPrefixString(namespaceService));
@@ -175,7 +175,7 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 				Map<NodeRef, MultiLevelListData> currTmp = new HashMap<NodeRef, MultiLevelListData>();
 				
 				for (NodeRef childRef : childRefs) {
-					entityNodeRef = getEntityNodeRef(childRef);
+					NodeRef currEntityNodeRef = getEntityNodeRef(childRef);
 					Integer depthLevel = (Integer) nodeService.getProperty(childRef, BeCPGModel.PROP_DEPTH_LEVEL);
 					if (depthLevel == null) {
 						depthLevel = 1;
@@ -186,15 +186,15 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 							(maxDepthLevel == 0 && parentNodeRef != null) || (maxDepthLevel < 0) || (nextDepth <= maxDepthLevel) || (depthLevel == 1),
 							resetTree)) {
 
-						if (entityNodeRef != null) {
+						if (currEntityNodeRef != null) {
 							if (logger.isDebugEnabled()) {
 								logger.debug("Append level:" + depthLevel + " at currLevel " + currDepth + " for "
-										+ nodeService.getProperty(entityNodeRef, org.alfresco.model.ContentModel.PROP_NAME));
+										+ nodeService.getProperty(currEntityNodeRef, org.alfresco.model.ContentModel.PROP_NAME));
 							}
 
 							Set<NodeRef> curVisitedNodeRef = new HashSet<>(parentNodeRefs);
 
-							MultiLevelListData tmp = getMultiLevelListData(dataListFilter, entityNodeRef, nextDepth, maxDepthLevel, childRef,
+							MultiLevelListData tmp = getMultiLevelListData(dataListFilter, currEntityNodeRef, nextDepth, maxDepthLevel, childRef,
 									curVisitedNodeRef, useExpandedCache, resetTree);
 
 							currTmp.put(childRef, tmp);

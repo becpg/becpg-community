@@ -298,7 +298,7 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 			return ret;
 
 		} finally {
-			if (logger.isDebugEnabled()) {
+			if (logger.isDebugEnabled() && watch !=null) {
 				watch.stop();
 				logger.debug(getClass().getSimpleName() + " extract metadata in  " + watch.getTotalTimeSeconds() + "s");
 			}

@@ -22,6 +22,8 @@ package fr.becpg.repo.helper.impl;
 import java.util.Arrays;
 import java.util.Collection;
 
+import javax.annotation.Nonnull;
+
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.tenant.TenantDomainMismatchException;
@@ -49,6 +51,9 @@ import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorPlugin;
 @Service
 public class PersonAttributeExtractorPlugin implements AttributeExtractorPlugin {
 
+
+	private static final Log logger = LogFactory.getLog(PersonAttributeExtractorPlugin.class);
+	
 	@Autowired
 	NodeService nodeService;
 	
@@ -64,19 +69,14 @@ public class PersonAttributeExtractorPlugin implements AttributeExtractorPlugin 
 	@Autowired
 	TenantService tenantService;
 	
-	private static final Log logger = LogFactory.getLog(PersonAttributeExtractorPlugin.class);
-	 
-	
 	@Override
 	public Collection<QName> getMatchingTypes() {
-	
 		return Arrays.asList(ContentModel.TYPE_PERSON,ContentModel.TYPE_AUTHORITY_CONTAINER,ContentModel.TYPE_AUTHORITY);
 	}
 	
 
 	@Override
-	public String extractPropName(QName type, NodeRef nodeRef) {
-		type = nodeService.getType(nodeRef);
+	public String extractPropName(@Nonnull QName type,@Nonnull NodeRef nodeRef) {
 		if (type.equals(ContentModel.TYPE_AUTHORITY_CONTAINER)) {
 			return (String) nodeService.getProperty(nodeRef, ContentModel.PROP_AUTHORITY_DISPLAY_NAME);
 		} 
@@ -85,8 +85,7 @@ public class PersonAttributeExtractorPlugin implements AttributeExtractorPlugin 
 
 	
 	@Override
-	public String extractMetadata(QName type, NodeRef nodeRef) {
-		type = nodeService.getType(nodeRef);
+	public String extractMetadata(@Nonnull QName type,@Nonnull NodeRef nodeRef) {
 		if (type.equals(ContentModel.TYPE_AUTHORITY_CONTAINER)) {
 			return (String) nodeService.getProperty(nodeRef, ContentModel.PROP_AUTHORITY_NAME);
 		} 

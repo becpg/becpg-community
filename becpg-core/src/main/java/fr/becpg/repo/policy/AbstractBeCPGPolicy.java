@@ -267,7 +267,7 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 						keysToRemove.add(key);
 					}
 
-					if (logger.isDebugEnabled()) {
+					if (logger.isDebugEnabled() && watch!=null) {
 						watch.stop();
 						logger.debug(id + " - BeforeCommit run in  " + watch.getTotalTimeSeconds() + " seconds for key " + key+"  - pendingNodesSize : "+pendingNodes.size());
 					}
@@ -291,7 +291,7 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 						assocsToRemove.add(key);
 					}
 
-					if (logger.isDebugEnabled()) {
+					if (logger.isDebugEnabled()  && watch!=null) {
 						watch.stop();
 						logger.debug(id + " - BeforeCommit run in  " + watch.getTotalTimeSeconds() + " seconds for key " + key+"  - pendingAssocsSize : "+pendingAssocs.size());
 					}
@@ -335,7 +335,7 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 
 					doAfterCommit(key, pendingNodes);
 
-					if (logger.isDebugEnabled()) {
+					if (logger.isDebugEnabled()  && watch!=null) {
 						watch.stop();
 						logger.debug(id + " - AfterCommit run in  " + watch.getTotalTimeSeconds() + " seconds for key " + key+"  - pendingNodesSize : "+pendingNodes.size());
 

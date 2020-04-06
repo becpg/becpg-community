@@ -242,7 +242,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 			}, false, false);
 
 		} finally {
-			if (logger.isDebugEnabled()) {
+			if (logger.isDebugEnabled() && watch!=null) {
 				watch.stop();
 				logger.debug("createOrUpdateEntity run in  " + watch.getTotalTimeSeconds() + " seconds ");
 

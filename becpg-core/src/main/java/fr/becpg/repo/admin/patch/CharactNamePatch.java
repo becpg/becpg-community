@@ -48,7 +48,7 @@ public class CharactNamePatch extends AbstractBeCPGPatch {
 	
 	private final int batchThreads = 3;
 	private final int batchSize = 40;
-	private final long count = batchThreads * batchSize;
+	private final long count = (long)batchThreads * (long)batchSize;
 	
 	public void setDictionaryService(DictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
