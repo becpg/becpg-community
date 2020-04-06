@@ -203,7 +203,7 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 	@Override
 	public boolean isWorkflowActive(TaskListDataItem task) {
 
-		if ((task.getWorkflowInstance() != null) && !task.getWorkflowInstance().isEmpty()) {
+		if (task!=null && (task.getWorkflowInstance() != null) && !task.getWorkflowInstance().isEmpty()) {
 			String workflowId = task.getWorkflowInstance();
 			WorkflowInstance workflowInstance = workflowService.getWorkflowById(workflowId);
 			if (workflowInstance != null) {
