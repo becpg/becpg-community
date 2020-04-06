@@ -104,7 +104,7 @@ function isEmpty(value){
  * @returns value or empty if null;
  */
 function orEmpty(value, defaultValue) {
-	return value!=null ? value : (defaultValue ! null? defaultValue : "");
+	return value!=null ? value : (defaultValue != null? defaultValue : "");
 }
 
 
@@ -286,7 +286,7 @@ function copyAssocAssocValue(node, assocName, assocAssocName, nodeAssocName) {
  * @returns i18n message for current locale
  */
 function i18n(key){
-	return bcpg.getMessage(key)
+	return bcpg.getMessage(key);
 }
 
 
@@ -297,7 +297,7 @@ function i18n(key){
  * @returns i18n message for current locale
  */
 function i18n(key, params){
-	return bcpg.getMessage(key, params)
+	return bcpg.getMessage(key, params);
 }
 
 /**
@@ -309,7 +309,7 @@ function i18n(key, params){
  * @returns void
  */
 function updateMLText(node, propQName, locale, value){
-	bcpg.setMLProperty(ScriptNode sourceNode, String propQName, String locale, String value)
+	bcpg.setMLProperty( sourceNode,  propQName,  locale,  value);
 }
 
 
@@ -322,7 +322,7 @@ function removeForbiddenChar(value) {
 }
 
 function cleanName(value) {
-	return removeForbiddenChar(value));
+	return removeForbiddenChar(value);
 }
 
 /**
@@ -561,7 +561,7 @@ function copyList( destNode,  sourceNode,  listQname) {
  * @returns true if list exists and non empty
  */
 function listExist( node,  listQname) {
-	return bcpg.listExist( node,  listQname) ;
+	return bcpg.listExist( node,  listQname);
 
 }
 
