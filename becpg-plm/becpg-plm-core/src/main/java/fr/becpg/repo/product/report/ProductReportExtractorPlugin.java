@@ -395,17 +395,17 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 						dataListQName.toPrefixString(namespaceService)+"|"+type.toPrefixString(namespaceService));
 	}
 
-	private boolean isAllergenDisabledForLocal(NodeRef allergen) {
-		if (mlNodeService.hasAspect(allergen, ReportModel.ASPECT_REPORT_LOCALES)) {
+	public boolean isCharactDisplayedForLocale(NodeRef charact) {
+		if (mlNodeService.hasAspect(charact, ReportModel.ASPECT_REPORT_LOCALES)) {
 			@SuppressWarnings("unchecked")
-			List<String> langs = (List<String>) nodeService.getProperty(allergen, ReportModel.PROP_REPORT_LOCALES);
-			if ((langs != null) && !langs.isEmpty()) {
-				return !MLTextHelper.extractLocales(langs).contains(I18NUtil.getLocale());
+			List<String> langs = (List<String>) nodeService.getProperty(charact, ReportModel.PROP_REPORT_LOCALES);
+			if ((langs != null) && !langs.isEmpty() && !"".equals(langs.get(0))) {
+				return MLTextHelper.extractLocales(langs).contains(I18NUtil.getLocale());
 			}
 		}
-		return false;
+		return true;
 	}
-
+	
 	private void loadCompoList( ProductData productData, Element dataListsElt, DefaultExtractorContext context) {
 		// compoList
 		if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
@@ -897,8 +897,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 					}
 					nutListElt.addAttribute(RegulationFormulationHelper.ATTR_NUT_CODE, nut.getNutCode());
 					nutListElt.addAttribute(BeCPGModel.PROP_COLOR.getLocalName(), nut.getNutColor());
-
-					RegulationFormulationHelper.extractXMLAttribute(nutListElt, dataListItem.getRoundedValue(), I18NUtil.getLocale());
+					boolean isDisplayed = isCharactDisplayedForLocale(dataListItem.getNut());
+					RegulationFormulationHelper.extractXMLAttribute(nutListElt, dataListItem.getRoundedValue(), I18NUtil.getLocale(), isDisplayed);
 
 					if (showDeprecated) {
 
@@ -940,7 +940,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				loadDataListItemAttributes(dataListItem, lcListElt, context);
 
 				String code = (String) nodeService.getProperty(dataListItem.getLabelClaim(), PLMModel.PROP_LABEL_CLAIM_CODE);
-				String displayMode = RegulationFormulationHelper.getLabelClaimDisplayMode(code);			
+				boolean isDisplay = isCharactDisplayedForLocale(dataListItem.getLabelClaim());
+				String displayMode = (isDisplay? "O" : "");
 				lcListElt.addAttribute("regulDisplayMode", displayMode);
 			}
 		}
@@ -961,10 +962,10 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				loadDataListItemAttributes(dataListItem, allergenListElt, context);
 
 				String allergenType = (String) nodeService.getProperty(dataListItem.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE);
-				boolean isDisable = isAllergenDisabledForLocal(dataListItem.getAllergen());
+				boolean isDisplayed = isCharactDisplayedForLocale(dataListItem.getAllergen());
 				String displayMode = "";
 
-				if (!isDisable) {
+				if (isDisplayed) {
 					displayMode = "O";
 
 					if (allergenType != null) {
