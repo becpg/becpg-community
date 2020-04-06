@@ -63,6 +63,8 @@
  * generateEAN13Code(prefix) returns generate EAN13 code with autonum corresponding to prefix
  * 
  * allowWrite(node, authority) Set write permissions as system bypassing rights
+ * 
+ * allowRead(node, authority) Set read permissions as system bypassing rights
  *  
  * deleteGroupPermission(node, group) Remove specific group permissions
  *  
@@ -489,6 +491,20 @@ function getDocumentLibraryNodeRef(siteId) {
 function allowWrite(node, authority) {
 	bcpg.allowWrite(node, authority);
 }
+
+
+/**
+ * 
+ * Set read permissions as system 
+ * Example : bcpg.allowRead(document,"GROUP_EVERYONE");
+ * @param node
+ * @param authority username or group name 
+ * @returns void
+ */
+function allowRead(node, authority) {
+	bcpg.allowRead(node, authority);
+}
+
 
 
 /**

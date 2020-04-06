@@ -58,7 +58,13 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 	private static final String ENTITYV2_SUBTYPE = "isEntityV2SubType";
 	
 	private static final String separator = "\\-";
-	private static final SimpleDateFormat formatter = new SimpleDateFormat("yyyy" + separator + "MM" + separator + "dd");
+	
+	 private final ThreadLocal<SimpleDateFormat> formatter = new ThreadLocal<SimpleDateFormat>(){
+	    	protected SimpleDateFormat initialValue() {
+	    		return new SimpleDateFormat("yyyy" + separator + "MM" + separator + "dd");
+	    	}
+
+		};
 	
 
 	@Autowired
@@ -246,11 +252,11 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 	
 	private Map<String, NodeRef> getOnlyAssociatedVersions(NodeRef item, VersionFilterType versionType, Date from, Date to) {
 		Map<String, NodeRef> ret = new HashMap<>();
-		    if(versionService.getVersionHistory(item) != null){
+		    if(from!=null && to !=null && versionService.getVersionHistory(item) != null){
 		    	versionService.getVersionHistory(item).getAllVersions().forEach((version)-> {
 		    		Date createDate = version.getFrozenModifiedDate();
 		    		if(version.getVersionType().toString().equals(versionType.toString()) && !version.getVersionLabel().equals("1.0") 
-		    				&& (from.equals(to) ? formatter.format(createDate).equals(formatter.format(from)) : (createDate.after(from) && createDate.before(to)))){
+		    				&& (from.equals(to) ? formatter.get().format(createDate).equals(formatter.get().format(from)) : (createDate.after(from) && createDate.before(to)))){
 		    			ret.put(version.getVersionLabel() + "|" + version.getDescription(), version.getFrozenStateNodeRef());
 		    		}
 		    	});
@@ -282,18 +288,20 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 	private Date getDate(String strDate){
 		Date date = null;
 		
-		if(strDate.equals("MAX")){
-			date = new Date(Long.MAX_VALUE);
-		}else if (strDate.equals("MIN")){
-			date = new Date(0L);
-		}else if (strDate.equals("NOW")){
-			date = new Date();
-		}else if(strDate != null){
-			try {
-				date = formatter.parse(strDate);
-			} catch (ParseException e) {
-				logger.error("Wrong date format ", e);
-			}			
+		if(strDate!=null) {
+			if(strDate.equals("MAX")){
+				date = new Date(Long.MAX_VALUE);
+			}else if (strDate.equals("MIN")){
+				date = new Date(0L);
+			}else if (strDate.equals("NOW")){
+				date = new Date();
+			}else if(strDate != null){
+				try {
+					date = formatter.get().parse(strDate);
+				} catch (ParseException e) {
+					logger.error("Wrong date format ", e);
+				}			
+			}
 		}
 		
 		return date;

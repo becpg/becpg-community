@@ -23,7 +23,6 @@ import java.util.Map;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
-import fr.becpg.common.BeCPGException;
 import fr.becpg.model.EntityListState;
 
 /**
@@ -34,15 +33,15 @@ import fr.becpg.model.EntityListState;
  */
 public interface EntityService {
 
-	NodeRef getImage(NodeRef entityNodeRef, String imgName) throws BeCPGException;
+	NodeRef getImage(NodeRef entityNodeRef, String imgName) ;
 
-	List<NodeRef> getImages(NodeRef entityNodeRef) throws BeCPGException;
+	List<NodeRef> getImages(NodeRef entityNodeRef) ;
 
-	NodeRef getEntityDefaultImage(NodeRef entityNodeRef) throws BeCPGException;
+	NodeRef getEntityDefaultImage(NodeRef entityNodeRef) ;
 
-	void writeImages(NodeRef entityNodeRef, Map<String, byte[]> images) throws BeCPGException;
+	void writeImages(NodeRef entityNodeRef, Map<String, byte[]> images) ;
 	
-	NodeRef getImageFolder(NodeRef entityNodeRef) throws BeCPGException;
+	NodeRef getImageFolder(NodeRef entityNodeRef) ;
 
 	byte[] getImage(NodeRef imgNodeRef);
 

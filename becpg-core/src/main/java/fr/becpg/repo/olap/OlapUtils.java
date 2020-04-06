@@ -58,7 +58,7 @@ public class OlapUtils {
 			logger.error(e, e);
 			return null;
 		} finally {
-			if (logger.isDebugEnabled()) {
+			if (logger.isDebugEnabled() && watch!=null) {
 				watch.stop();
 				logger.debug("Retrivied JSON String from :" + url + " in " + watch.getTotalTimeSeconds() + " seconds");
 			}

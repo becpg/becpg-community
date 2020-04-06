@@ -351,7 +351,7 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
               // modified date and the pivot translation's modified date
               Date emptyLastModified = (Date) outboundValue;
               Date pivotLastModified = (Date) nodeService.getProperty(pivotNodeRef, ContentModel.PROP_MODIFIED);
-              if (emptyLastModified.compareTo(pivotLastModified) < 0)
+              if (emptyLastModified!=null && emptyLastModified.compareTo(pivotLastModified) < 0)
               {
                  ret = pivotLastModified;
               }

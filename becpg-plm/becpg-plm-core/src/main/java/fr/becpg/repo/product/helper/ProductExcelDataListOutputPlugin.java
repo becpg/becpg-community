@@ -119,7 +119,7 @@ public class ProductExcelDataListOutputPlugin implements ExcelDataListOutputPlug
 								} else {
 									item.setValue("");
 								}
-								if (jsonObject.has(JsonFormulaHelper.JSON_SUB_VALUES)) {
+								if (jsonObject.has(JsonFormulaHelper.JSON_SUB_VALUES) && subCache!=null) {
 									subCache.put(item.getKey(), (JSONArray) jsonObject.get(JsonFormulaHelper.JSON_SUB_VALUES));
 								}
 							}

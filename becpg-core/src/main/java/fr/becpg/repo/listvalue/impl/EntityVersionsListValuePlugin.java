@@ -19,6 +19,8 @@
 package fr.becpg.repo.listvalue.impl;
 
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -72,13 +74,17 @@ public class EntityVersionsListValuePlugin implements ListValuePlugin {
 			entityNodeRef = new NodeRef(nodeRef);
 		}
 
-		List<NodeRef> branches = entityVersionService.getAllVersionBranches(entityNodeRef);
-
-		for (Iterator<NodeRef> iterator = branches.iterator(); iterator.hasNext();) {
-			if (entityNodeRef.equals(iterator.next())) {
-				iterator.remove();
+		List<NodeRef> branches = Collections.emptyList();
+		
+		if(entityNodeRef!=null) {
+			branches = entityVersionService.getAllVersionBranches(entityNodeRef);
+	
+			for (Iterator<NodeRef> iterator = branches.iterator(); iterator.hasNext();) {
+				if (entityNodeRef.equals(iterator.next())) {
+					iterator.remove();
+				}
+	
 			}
-
 		}
 
 		return new ListValuePage(branches, pageNum, pageSize, new NodeRefListValueExtractor(ContentModel.PROP_NAME, nodeService));

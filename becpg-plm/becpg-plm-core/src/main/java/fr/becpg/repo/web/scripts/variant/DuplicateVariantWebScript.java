@@ -113,7 +113,7 @@ public class DuplicateVariantWebScript extends AbstractWebScript {
 
 		ParameterCheck.mandatoryString("nodeRef", nodeRef);
 		NodeRef variantNodeRef = new NodeRef(nodeRef);
-		if (nodeService.exists(variantNodeRef)) {
+		if (nodeService.exists(variantNodeRef) && json!=null) {
 
 			try {
 

@@ -96,7 +96,7 @@ public class FilterFormUIGet extends FormUIGet {
 				List<String> subVisibleFields = getVisibleFields(Mode.CREATE, subFormConfig);
 
 				formSvcResponse = retrieveFormDefinition(itemKind, splitted[1], subVisibleFields, subFormConfig);
-				if (formSvcResponse.getStatus().getCode() == Status.STATUS_OK) {
+				if (formSvcResponse.getStatus().getCode() == Status.STATUS_OK && model!=null) {
 					merge(model, name, generateFormModel(request, Mode.CREATE, formSvcResponse, subFormConfig), fieldSet, prevFieldId);
 				}
 
@@ -133,9 +133,9 @@ public class FilterFormUIGet extends FormUIGet {
 
 				Set toMergedSet = findSet((List<Element>) toMergeForm.get(MODEL_STRUCTURE), null);
 
-				if (fields != null && toMergeForm.containsKey(MODEL_FIELDS)) {
+				if (fields != null && toMergeForm.containsKey(MODEL_FIELDS) && toMergedSet!=null) {
 					for (Element el : toMergedSet.getChildren()) {
-						if (FIELD == el.getKind()) {
+						if (FIELD.equals(el.getKind())) {
 
 							Field field = ((Map<String, Field>) toMergeForm.get(MODEL_FIELDS)).get(el.getId());
 							if (field != null) {
@@ -184,7 +184,7 @@ public class FilterFormUIGet extends FormUIGet {
 			for (Iterator<Element> iterator = mainSet.getChildren().iterator(); iterator.hasNext();) {
 				Element el = (Element) iterator.next();
 
-				if (FIELD == el.getKind() && el.getId().contains(prevFieldId)) {
+				if (FIELD.equals(el.getKind()) && el.getId().contains(prevFieldId)) {
 					mainSet.getChildren().add(idx + 1, fieldPointer);
 					return;
 				}
@@ -198,7 +198,7 @@ public class FilterFormUIGet extends FormUIGet {
 	private Set findSet(List<Element> elements, String fieldSet) {
 
 		for (Element el : elements) {
-			if (SET == el.getKind()) {
+			if (SET.equals(el.getKind())) {
 				if (fieldSet == null || el.getId().equals(fieldSet)) {
 					return (Set) el;
 				} else {
