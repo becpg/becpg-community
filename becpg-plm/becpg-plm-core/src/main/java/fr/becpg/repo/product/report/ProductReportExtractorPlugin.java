@@ -507,7 +507,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			// display tare, net weight and gross weight
 			BigDecimal tarePrimary = FormulationHelper.getTareInKg(productData.getTare(), productData.getTareUnit());
 			if (tarePrimary == null) {
-				tarePrimary = BigDecimal.value(0d);
+				tarePrimary = BigDecimal.valueOf(0d);
 			}
 			BigDecimal grossWeightPrimary = tarePrimary.add(netWeightPrimary);
 
