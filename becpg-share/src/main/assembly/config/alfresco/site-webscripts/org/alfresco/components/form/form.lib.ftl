@@ -100,6 +100,43 @@
 </#function>
 
 
+
+<#function isHiddenSetLevel2 set>
+	<#if set?? && set.children?has_content>
+		<#list set.children as item>
+		  <#if item??>
+			<#if item.kind != "set" && !isHiddenField(form.fields[item.id]) >      
+			  <#return false>
+			</#if>
+			<#if item.kind == "set"  >
+				<#return false>
+			</#if>
+		  </#if>	
+		</#list>
+	</#if>	
+		
+	<#return true>
+</#function>
+
+
+<#function isHiddenSet set>
+	<#if set?? && set.children?has_content>
+		<#list set.children as item>
+		  <#if item??>
+			<#if item.kind != "set" && !isHiddenField(form.fields[item.id]) >      
+			   <#return false>
+			</#if>
+			<#if item.kind == "set" && !isHiddenSetLevel2(item) >
+				<#return false>
+			</#if>
+		  </#if>	
+		</#list>
+	</#if>	
+	<#return true>
+</#function>
+
+
+
 <#macro renderField field>
    <#if field.control?? && field.control.template?? && !isHiddenField(field)>
       <#assign fieldHtmlId=args.htmlid?html + "_" + field.id?html >
@@ -286,24 +323,31 @@
    <div id="${formId}-tabview" class="yui-navset"> 
 	<ul class="yui-nav">
 		<#list form.structure as item>
-			<#if item.kind == "set" && item.children?has_content>
-				<li <#if item_index == 0>class="selected"</#if>><a href="#tab_${item_index}"><em>${item.label}</em></a></li>
+			<#if item.kind == "set">
+				<#if !isHiddenSet(item)>
+					<li <#if item_index == 0>class="selected"</#if>><a href="#tab_${item_index}"><em>${item.label}</em></a></li>
+				</#if>
 			</#if>
 		</#list>
 	</ul>     	
 	<div class="yui-content">
 		<#list form.structure as item>
 		<#if item??>
-		   <div id="tab_${item_index}">
-		   		  <#if item.kind == "set">
-		               <@formLib.renderSet set=item />
+		   		  <#if item.kind == "set" >
+		   	
+					<#if !isHiddenSet(item) >
+			   		   <div id="tab_${item_index}">
+			               <@formLib.renderSet set=item />
+			            </div>	
+		            </#if>        
 	              <#else>
+	               <div id="tab_${item_index}">
 		               <@formLib.renderField field=form.fields[item.id] />
+		             </div>	 
 		          </#if>
-		   </div>	
 		 </#if>	
 	 	</#list>
-		</div> 
+	 </div> 
 	</div>
 	<script type="text/javascript">//<![CDATA[
 		YAHOO.util.Event.onAvailable('${formId}-tabview', function(){
