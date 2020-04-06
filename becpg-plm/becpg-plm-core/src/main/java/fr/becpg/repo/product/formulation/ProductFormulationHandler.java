@@ -243,19 +243,11 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 	}
 
 	private void checkFormulatedProduct(ProductData formulatedProduct) {
-
-		NodeRef productNodeRef = formulatedProduct.getNodeRef();
-		List<ReqCtrlListDataItem> reqCtrlList;
-		if (formulatedProduct instanceof PackagingKitData) {
-			reqCtrlList = formulatedProduct.getReqCtrlList();
-
-		} else {
-			reqCtrlList = formulatedProduct.getReqCtrlList();
-		}
+		
 		if (!(formulatedProduct instanceof ResourceProductData)) {
 			ProductUnit productUnit = formulatedProduct.getUnit();
 			if (productUnit == null) {
-				addMessingReq(reqCtrlList, productNodeRef, MESSAGE_MISSING_UNIT, RequirementDataType.Formulation);
+				addMessingReq(formulatedProduct.getReqCtrlList(), formulatedProduct.getNodeRef(), MESSAGE_MISSING_UNIT, RequirementDataType.Formulation);
 			}
 		}
 	}

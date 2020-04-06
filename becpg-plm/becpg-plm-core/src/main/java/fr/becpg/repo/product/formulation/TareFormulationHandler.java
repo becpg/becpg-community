@@ -169,7 +169,7 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 			formulatedProduct.setTareUnit(TareUnit.kg);
 
 			if (tarePrimary.doubleValue() < 1) {
-				tarePrimary = tarePrimary.multiply(new BigDecimal(1000d));
+				tarePrimary = tarePrimary.multiply(BigDecimal.valueOf(1000d));
 				formulatedProduct.setTareUnit(TareUnit.g);
 			}
 			formulatedProduct.setTare(tarePrimary.doubleValue());
@@ -179,7 +179,7 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 	}
 
 	private BigDecimal calculateTareOfComposition(ProductData formulatedProduct) {
-		BigDecimal totalTare = new BigDecimal(0d);
+		BigDecimal totalTare = BigDecimal.valueOf(0d);
 		if(logger.isDebugEnabled()){
 			logger.debug("calculateTareOfComposition dropPackagingOfComponents: " + formulatedProduct.getDropPackagingOfComponents());
 		}

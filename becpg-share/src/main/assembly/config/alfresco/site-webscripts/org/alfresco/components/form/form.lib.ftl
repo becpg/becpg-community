@@ -286,7 +286,7 @@
    <div id="${formId}-tabview" class="yui-navset"> 
 	<ul class="yui-nav">
 		<#list form.structure as item>
-			<#if item.kind == "set" >
+			<#if item.kind == "set" && item.children?has_content>
 				<li <#if item_index == 0>class="selected"</#if>><a href="#tab_${item_index}"><em>${item.label}</em></a></li>
 			</#if>
 		</#list>
