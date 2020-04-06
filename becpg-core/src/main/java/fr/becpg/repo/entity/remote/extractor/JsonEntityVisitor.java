@@ -243,7 +243,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 							
 							if(listItemRefs!=null && !listItemRefs.isEmpty()) {
 								JSONArray list = new JSONArray();
-								entityLists.put(dataListTypeQName.toPrefixString(), list);
+								entityLists.put(dataListTypeQName.toPrefixString(namespaceService), list);
 	
 								for (ChildAssociationRef listItemRef : listItemRefs) {
 	
@@ -313,7 +313,6 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 						&& !assocDef.getName().equals(ContentModel.ASSOC_ORIGINAL) && !assocDef.getName().equals(RuleModel.ASSOC_RULE_FOLDER)
 						&& !assocDef.getName().equals(BeCPGModel.ASSOC_ENTITYLISTS) && assocDef.isChild()) {
 					QName nodeType = assocDef.getName().getPrefixedQName(namespaceService);
-					nodeType.getPrefixString().split(":");
 					// fields & child assocs filter
 					if (((filteredProperties != null) && !filteredProperties.isEmpty() && !filteredProperties.contains(nodeType))) {
 						continue;
@@ -323,7 +322,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 					List<ChildAssociationRef> assocRefs = nodeService.getChildAssocs(nodeRef);
 					if (assocDef.isTargetMany() && !assocRefs.isEmpty()) {
-						entity.put(nodeType.toPrefixString(), jsonAssocs);
+						entity.put(nodeType.toPrefixString(namespaceService), jsonAssocs);
 					}
 
 					for (ChildAssociationRef assocRef : assocRefs) {
@@ -334,7 +333,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 							if (assocDef.isTargetMany()) {
 								jsonAssocs.put(jsonAssocNode);
 							} else {
-								entity.put(nodeType.toPrefixString(), jsonAssocNode);
+								entity.put(nodeType.toPrefixString(namespaceService), jsonAssocNode);
 							}
 
 							visitNode(childRef, jsonAssocNode, JsonVisitNodeType.ASSOC);
@@ -362,7 +361,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 					List<AssociationRef> assocRefs = nodeService.getTargetAssocs(nodeRef, assocDef.getName());
 					if (assocDef.isTargetMany() && !assocRefs.isEmpty()) {
-						entity.put(nodeType.toPrefixString(), jsonAssocs);
+						entity.put(nodeType.toPrefixString(namespaceService), jsonAssocs);
 					}
 					for (AssociationRef assocRef : assocRefs) {
 						NodeRef childRef = assocRef.getTargetRef();
@@ -371,7 +370,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 						if (assocDef.isTargetMany()) {
 							jsonAssocs.put(jsonAssocNode);
 						} else {
-							entity.put(nodeType.toPrefixString(), jsonAssocNode);
+							entity.put(nodeType.toPrefixString(namespaceService), jsonAssocNode);
 						}
 
 						visitNode(childRef, jsonAssocNode,JsonVisitNodeType.ASSOC, nodeType);
@@ -400,7 +399,6 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 					PropertyDefinition propertyDefinition = entityDictionaryService.getProperty(entry.getKey());
 					if (propertyDefinition != null) {
 						QName propName = entry.getKey().getPrefixedQName(namespaceService);
-						propName.getPrefixString().split(":");
 
 						// Assoc properties filter
 						if (assocName ==null &&  (filteredProperties != null) && !filteredProperties.isEmpty() && !filteredProperties.contains(propName)) {
@@ -416,13 +414,13 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 						if (DataTypeDefinition.MLTEXT.equals(propertyDefinition.getDataType().getName())
 								&& (mlNodeService.getProperty(nodeRef, propertyDefinition.getName()) instanceof MLText)) {
 							mlValues = (MLText) mlNodeService.getProperty(nodeRef, propertyDefinition.getName());
-							visitMltextAttributes(propName.toPrefixString(), entity, mlValues);
+							visitMltextAttributes(propName.toPrefixString(namespaceService), entity, mlValues);
 						} else if (DataTypeDefinition.TEXT.equals(propertyDefinition.getDataType().getName())) {
 							if (!propertyDefinition.getConstraints().isEmpty()) {
 								for (ConstraintDefinition constraint : propertyDefinition.getConstraints()) {
 									if (constraint.getConstraint() instanceof DynListConstraint) {
 										mlValues = ((DynListConstraint) constraint.getConstraint()).getMLAwareAllowedValues().get(entry.getValue());
-										visitMltextAttributes(propName.toPrefixString(), entity, mlValues);
+										visitMltextAttributes(propName.toPrefixString(namespaceService), entity, mlValues);
 										break;
 									}
 								}

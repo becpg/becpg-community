@@ -851,7 +851,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 			}
 		}
 
-		if (logger.isDebugEnabled()) {
+		if (logger.isDebugEnabled() && watch!=null) {
 			watch.stop();
 			logger.debug("getSearchNodesByWUsedCriteria executed in  " + watch.getTotalTimeSeconds() + " seconds ");
 		}

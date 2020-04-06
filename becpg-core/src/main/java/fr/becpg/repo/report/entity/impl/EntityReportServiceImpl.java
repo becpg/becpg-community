@@ -33,6 +33,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.Nullable;
+
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
@@ -378,7 +380,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 							}
 
-							if (logger.isDebugEnabled()) {
+							if (logger.isDebugEnabled() && watch!=null) {
 								watch.stop();
 								logger.debug("Reports generated in  " + watch.getTotalTimeSeconds() + " seconds for node " + entityNodeRef);
 							}
@@ -485,7 +487,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 			filterByParams(dataXml,
 					getFilteredParams(valideCode, Arrays.asList(entityParams != null ? entityParams : new String[0]), reportKindCode));
 		}
-		if (logger.isDebugEnabled()) {
+		if (logger.isDebugEnabled() && stopWatch!=null) {
 			stopWatch.stop();
 			logger.debug("Filter XML takes : " + stopWatch.getTotalTimeSeconds() + "s");
 		}
@@ -858,7 +860,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 							policyBehaviourFilter.enableBehaviour(documentNodeRef, ContentModel.ASPECT_AUDITABLE);
 						}
 
-						if (logger.isDebugEnabled()) {
+						if (logger.isDebugEnabled() && watch!=null) {
 							watch.stop();
 							logger.debug("Reports generated in  " + watch.getTotalTimeSeconds() + " seconds for node " + entityNodeRef);
 						}
@@ -1002,7 +1004,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 			I18NUtil.setLocale(currentLocal);
 			I18NUtil.setContentLocale(currentContentLocal);
 
-			if (logger.isDebugEnabled()) {
+			if (logger.isDebugEnabled() && watch!=null) {
 				watch.stop();
 				logger.debug("XmlReportDataSource generated in  " + watch.getTotalTimeSeconds() + " seconds for node " + entityNodeRef);
 			}
@@ -1121,8 +1123,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 						for (Locale tmpLocale : getEntityReportLocales(fileInfo.getNodeRef())) {
 							if (tmpLocale.equals(locale)) {
 								documentNodeRef = fileInfo.getNodeRef();
+								break;
 							}
-							break;
 						}
 						if (documentNodeRef != null) {
 							break;
@@ -1328,7 +1330,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 			return retrieveExtractor(entityNodeRef).shouldGenerateReport(entityNodeRef, generatedReportDate);
 		} finally {
-			if (logger.isDebugEnabled()) {
+			if (logger.isDebugEnabled() && watch!=null) {
 				watch.stop();
 				logger.debug("ShouldGenerateReport executed in  " + watch.getTotalTimeSeconds() + " seconds ");
 			}
@@ -1382,6 +1384,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 	}
 
 	@Override
+	@Nullable
 	public String getSelectedReportName(NodeRef entityNodeRef) {
 
 		String username = AuthenticationUtil.getFullyAuthenticatedUser();
@@ -1420,17 +1423,17 @@ public class EntityReportServiceImpl implements EntityReportService {
 	}
 
 	@Override
+	@Nullable
 	public NodeRef getEntityNodeRef(NodeRef reportNodeRef) {
 		List<NodeRef> entityNodeRefs = associationService.getSourcesAssocs(reportNodeRef, ReportModel.ASSOC_REPORTS);
-		if (entityNodeRefs != null) {
-			for (NodeRef entityNodeRef : entityNodeRefs) {
-				return entityNodeRef;
-			}
+		if (entityNodeRefs != null && !entityNodeRefs.isEmpty()) {
+			return entityNodeRefs.get(0);
 		}
 		return null;
 	}
 
 	@Override
+	@Nullable
 	public NodeRef getAssociatedDocumentNodeRef(NodeRef entityNodeRef, NodeRef tplNodeRef, EntityReportParameters reportParameters, Locale locale,
 			ReportFormat reportFormat) {
 		String documentName = getReportDocumentName(entityNodeRef, tplNodeRef, reportFormat.toString(), locale, reportParameters,

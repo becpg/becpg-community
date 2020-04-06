@@ -82,7 +82,7 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 
 	public Integer getDuration() {
 		return ((task != null) && (task.getDuration() != null)) ? task.getDuration()
-				: (Boolean.TRUE.equals(task.getIsMilestone())) ? DURATION_DEFAULT : null;
+				: (task!=null && Boolean.TRUE.equals(task.getIsMilestone())) ? DURATION_DEFAULT : null;
 	}
 
 	public Integer getRealDuration() {
@@ -221,7 +221,7 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 			}
 		}
 
-		return completed.stream().map(t -> t.getMaxDuration()).max(Integer::compareTo).get();
+		return completed.stream().map(t -> t.getMaxDuration()).max(Integer::compareTo).orElse(DURATION_DEFAULT);
 	}
 
 	public static String print(ProjectData projectData) {

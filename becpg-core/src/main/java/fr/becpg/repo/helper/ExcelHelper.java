@@ -88,7 +88,7 @@ public class ExcelHelper {
 							if (DataTypeDefinition.DATETIME.toString().equals(((PropertyDefinition) field.getFieldDef()).getDataType().toString())) {
 								cell.setCellStyle(createDateStyle(sheet.getWorkbook(), true));
 							} else {
-								cell.setCellStyle(createDateStyle(sheet.getWorkbook(), true));
+								cell.setCellStyle(createDateStyle(sheet.getWorkbook(), false));
 							}
 						} else if (obj instanceof Boolean) {
 							cell.setCellValue((boolean) obj);
