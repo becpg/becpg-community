@@ -60,10 +60,12 @@ public interface RemoteEntityService {
 	String ELEM_ASSOCIATIONS = "associations";
 	String ELEM_ENTITY = "entity";
 	String ELEM_ATTRIBUTES = "attributes";
+	String ELEM_PARAMS = "params";
 	String FULL_PATH_IMPORT_TO_DO = "/app:company_home/cm:Exchange/cm:Import/cm:ImportToDo";
 	String EMPTY_NAME_PREFIX = "REMOTE-";
 	
 	String ATTR_PARENT_ID = "parent";
+	
 
 	/**
 	 * Get entity at provided format

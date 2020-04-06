@@ -43,7 +43,7 @@ public class UpdateEntityWebScript extends AbstractEntityWebScript {
 		logger.debug("Update entity: " + entityNodeRef);
 		try (InputStream in = req.getContent().getInputStream()){
 			
-			remoteEntityService.createOrUpdateEntity(entityNodeRef,in, getFormat(req), getEntityProviderCallback(req));
+			entityNodeRef = remoteEntityService.createOrUpdateEntity(entityNodeRef,in, getFormat(req), getEntityProviderCallback(req));
 
 			sendOKStatus(entityNodeRef, resp);
 		} catch (BeCPGException e) {

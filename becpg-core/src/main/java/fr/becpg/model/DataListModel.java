@@ -5,24 +5,19 @@ package fr.becpg.model;
 
 import org.alfresco.service.namespace.QName;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface DataListModel.
  *
  * @author querephi
  */
-public interface DataListModel {
-	
-	/** DataList Model URI. */
-	String MODEL_1_0_URI = "http://www.alfresco.org/model/datalist/1.0";
-	
-	/** DataList Prefix. */
-	String MODEL_PREFIX = "dl";
-	
-	/** The Constant TYPE_DATALIST. */
-	QName TYPE_DATALIST = QName.createQName(MODEL_1_0_URI, "dataList");
-	
-	/** The Constant PROP_DATALISTITEMTYPE. */
-	QName PROP_DATALISTITEMTYPE = QName.createQName(MODEL_1_0_URI, "dataListItemType");
+public final class DataListModel {
+
+	public final static String MODEL_1_0_URI = "http://www.alfresco.org/model/datalist/1.0";
+
+	public final static String MODEL_PREFIX = "dl";
+
+	public final static QName TYPE_DATALIST = QName.createQName(MODEL_1_0_URI, "dataList");
+
+	public final static QName PROP_DATALISTITEMTYPE = QName.createQName(MODEL_1_0_URI, "dataListItemType");
 
 }
