@@ -59,7 +59,7 @@ import fr.becpg.repo.repository.model.UnitAwareDataItem;
 public class QualityControlServiceImpl implements QualityControlService {
 
 	private static final Log logger = LogFactory.getLog(QualityControlServiceImpl.class);
-	private static final long HOUR = 3600 * 1000; // in milli-seconds.
+	private static final long HOUR = 3600L * 1000L; // in milli-seconds.
 
 	private NodeService nodeService;
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
@@ -119,7 +119,7 @@ public class QualityControlServiceImpl implements QualityControlService {
 
 				String freq = sdl.getFreqUnit();
 				int samplesToTake = 1;
-				int freqInHour = 0;
+				int freqInHour = 1;
 				Date sampleDateTime = batchStart;
 
 				// per batch

@@ -106,7 +106,7 @@ public class FormulaService {
 				logger.debug("Value is null for [" + formula + "] on " + item.toString());
 			}
 		}
-		if (Operator.AVG.equals(operator)) {
+		if (Operator.AVG.equals(operator) && count!=0) {
 			sum /= count;
 		}
 

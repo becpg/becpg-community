@@ -42,7 +42,7 @@ public abstract class FormulationBaseHandler<T> implements FormulationHandler<T>
     	
         boolean processed = process(context);
         
-        if(logger.isDebugEnabled()){
+        if(logger.isDebugEnabled() && watch!=null ){
         	watch.stop();
         	logger.debug("Call handler : "+this.getClass().getName()+" takes " + watch.getTotalTimeSeconds() + " seconds");
         }

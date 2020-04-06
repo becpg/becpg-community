@@ -21,14 +21,12 @@ import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
-import fr.becpg.common.BeCPGException;
-
 public interface EntityProviderCallBack {
 
-	NodeRef provideNode(NodeRef nodeRef, NodeRef destNodeRef, Map<NodeRef, NodeRef> cache) throws BeCPGException;
+	NodeRef provideNode(NodeRef nodeRef, NodeRef destNodeRef, Map<NodeRef, NodeRef> cache);
 	
-	NodeRef provideNode(NodeRef nodeRef,Map<NodeRef, NodeRef> cache) throws BeCPGException;
+	NodeRef provideNode(NodeRef nodeRef,Map<NodeRef, NodeRef> cache);
 
-	void provideContent(NodeRef origNodeRef, NodeRef destNodeRef) throws BeCPGException;
+	void provideContent(NodeRef origNodeRef, NodeRef destNodeRef);
 
 }

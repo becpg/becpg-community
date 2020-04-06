@@ -96,11 +96,13 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 
 			tasks.forEach(t -> {
 
-				if (projectWorkflowService.isWorkflowActive(t.getTask())) {
-					logger.debug("Cancel workflow of project " + projectData.getName() + " for task " + t.getTask().getTaskName());
-					projectWorkflowService.cancelWorkflow(t.getTask());
+				if(t.getTask()!=null) {
+					if (projectWorkflowService.isWorkflowActive(t.getTask())) {
+						logger.debug("Cancel workflow of project " + projectData.getName() + " for task " + t.getTask().getTaskName());
+						projectWorkflowService.cancelWorkflow(t.getTask());
+					}
+					t.getTask().setIsExcludeFromSearch(true);
 				}
-				t.getTask().setIsExcludeFromSearch(true);
 
 			});
 

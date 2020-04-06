@@ -412,6 +412,14 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 			return true;
 		});
 	}
+	
+	public boolean allowRead(ScriptNode sourceNode, String authority) {
+		return AuthenticationUtil.runAsSystem(() -> {
+			permissionService.setPermission(sourceNode.getNodeRef(), authority, PermissionService.READ, true);
+			return true;
+		});
+	}
+
 
 	public String getUserLocale(ScriptNode personNode) {
 		String loc = (String) mlNodeService.getProperty(personNode.getNodeRef(), BeCPGModel.PROP_USER_LOCAL);

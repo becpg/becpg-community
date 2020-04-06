@@ -40,7 +40,7 @@ public class RepoServiceImpl implements RepoService {
 	private static final Log logger = LogFactory.getLog(RepoServiceImpl.class);
 
 	@Autowired
-	private final NodeService nodeService = null;
+	private NodeService nodeService;
 
 	@Autowired
 	private FileFolderService fileFolderService;
@@ -51,13 +51,7 @@ public class RepoServiceImpl implements RepoService {
 	@Autowired
 	private NamespaceService namespaceService;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * fr.becpg.repo.helper.RepoService#createFolderByPaths(org.alfresco.service
-	 * .cmr.repository.NodeRef, java.util.List)
-	 */
+
 	@Override
 	public NodeRef getOrCreateFolderByPaths(NodeRef parentNodeRef, List<String> paths) {
 
@@ -66,17 +60,10 @@ public class RepoServiceImpl implements RepoService {
 				parentNodeRef = getOrCreateFolderByPath(parentNodeRef, folderName, folderName);
 			}
 		}
-
 		return parentNodeRef;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * fr.becpg.repo.helper.RepoService#createFolderByPath(org.alfresco.service.
-	 * cmr.repository.NodeRef, java.lang.String, java.lang.String)
-	 */
+	
 	@Override
 	public NodeRef getOrCreateFolderByPath(NodeRef parentNodeRef, String path, String name) {
 

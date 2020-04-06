@@ -51,7 +51,7 @@ import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.permissions.PermissionCheckedValue.PermissionCheckedValueMixin;
 import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
-import org.alfresco.service.cmr.dictionary.DictionaryService;
+import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.StoreRef;
@@ -77,6 +77,7 @@ import org.springframework.util.StopWatch;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.search.impl.AbstractBeCPGQueryBuilder;
 
@@ -106,14 +107,14 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	private NamedObjectRegistry<CannedQueryFactory<NodeRef>> cannedQueryRegistry;
 
 	@Autowired
-	private DictionaryService dictionaryService;
+	private EntityDictionaryService entityDictionaryService;
 
 	@Autowired
 	private TenantService tenantService;
 
 	@Value("${beCPG.defaultSearchTemplate}")
 	private String defaultSearchTemplate;
-	
+
 	@Value("${beCPG.report.includeReportInSearch}")
 	private Boolean includeReportInSearch = false;
 
@@ -179,7 +180,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			builder.defaultSearchTemplate = INSTANCE.defaultSearchTemplate;
 			builder.cannedQueryRegistry = INSTANCE.cannedQueryRegistry;
 			builder.nodeService = INSTANCE.nodeService;
-			builder.dictionaryService = INSTANCE.dictionaryService;
+			builder.entityDictionaryService = INSTANCE.entityDictionaryService;
 			builder.tenantService = INSTANCE.tenantService;
 			builder.dataSource = INSTANCE.dataSource;
 		}
@@ -197,16 +198,16 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	public BeCPGQueryBuilder inType(QName typeQname) {
-		if(!typeQname.equals(type)) {
+		if (!typeQname.equals(type)) {
 			types.add(typeQname);
 		}
-		
+
 		return this;
 	}
 
 	public BeCPGQueryBuilder inBoostedType(QName typeQname, Integer boostFactor) {
-		if(!typeQname.equals(type)) {
-			type=null;
+		if (!typeQname.equals(type)) {
+			type = null;
 		}
 		boostedTypes.add(new Pair<>(typeQname, boostFactor));
 		return this;
@@ -488,7 +489,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		excludeType(ContentModel.TYPE_FAILED_THUMBNAIL);
 		excludeType(ContentModel.TYPE_RATING);
 		excludeType(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-		if(!includeReportInSearch) {
+		if (!includeReportInSearch) {
 			excludeType(ReportModel.TYPE_REPORT);
 		}
 		excludeType(ForumModel.TYPE_FORUM);
@@ -540,7 +541,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 		try {
 
-			if (RepoConsts.MAX_RESULTS_UNLIMITED == maxResults) {
+			if (RepoConsts.MAX_RESULTS_UNLIMITED.equals(maxResults)) {
 				int page = 1;
 
 				logger.debug("Unlimited results ask -  start pagination");
@@ -572,7 +573,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			}
 
 			if (logger.isDebugEnabled()) {
-				int tmpIndex = (RepoConsts.MAX_RESULTS_SINGLE_VALUE == maxResults ? 4 : 3);
+				int tmpIndex = (RepoConsts.MAX_RESULTS_SINGLE_VALUE.equals(maxResults) ? 4 : 3);
 
 				logger.debug("[" + Thread.currentThread().getStackTrace()[tmpIndex].getClassName() + " "
 						+ Thread.currentThread().getStackTrace()[tmpIndex].getLineNumber() + "] " + runnedQuery + " executed in  "
@@ -933,9 +934,10 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 	private String getCmisPrefix(QName tmpQName) {
 		String ret = tmpQName.toPrefixString(namespaceService);
-		QName aspect = dictionaryService.getProperty(tmpQName) != null ? dictionaryService.getProperty(tmpQName).getContainerClass().getName() : null;
-		if ((dictionaryService.getProperty(tmpQName) != null) && dictionaryService.getProperty(tmpQName).getContainerClass().isAspect()
-				&& !aspect.isMatch(ContentModel.ASPECT_AUDITABLE)) {
+		PropertyDefinition def = entityDictionaryService.getProperty(tmpQName);
+
+		QName aspect = def != null ? def.getContainerClass().getName() : null;
+		if ((def != null) && def.getContainerClass().isAspect() && (aspect != null) && !aspect.isMatch(ContentModel.ASPECT_AUDITABLE)) {
 			this.aspects.add(aspect);
 			ret = aspect.getLocalName() + "." + ret;
 		} else {
@@ -1158,7 +1160,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			String sortOrderSql = " order by alf_node.audit_created " + createSortDirection;
 
 			if ((sortFieldQName != null) && (sortDirection != null)) {
-				DataTypeDefinition dateType = dictionaryService.getProperty(sortFieldQName).getDataType();
+				DataTypeDefinition dateType = entityDictionaryService.getProperty(sortFieldQName).getDataType();
 				String fieldType = "string_value";
 
 				if (DataTypeDefinition.INT.equals(dateType.getName()) || DataTypeDefinition.LONG.equals(dateType.getName())) {
@@ -1296,7 +1298,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 		PermissionCheckedValueMixin.create(nodeRefs);
 
-		return new PagingResults<NodeRef>() {
+		return new PagingResults<>() {
 			@Override
 			public String getQueryExecutionId() {
 				return null; // TODO use Paginated Cache results

@@ -93,7 +93,7 @@ public class DataListSortServiceImpl implements DataListSortService {
 		/*
 		 * Get the last sibling node of the level
 		 */
-		public NodeRef getLastChildOfLevel(NodeRef parentLevel, HashSet<NodeRef> pendingNodeRefs) {
+		public NodeRef getLastChildOfLevel(NodeRef parentLevel, Set<NodeRef> pendingNodeRefs) {
 
 			return getQueryByParentLevel(parentLevel, true).andNotIDs(pendingNodeRefs).isNotNull(BeCPGModel.PROP_SORT)
 					.addSort(BeCPGModel.PROP_SORT, false).inDB().singleValue();
@@ -247,42 +247,7 @@ public class DataListSortServiceImpl implements DataListSortService {
 		}
 
 	}
-	//
-	// public void test(Set<NodeRef> nodeRefs) {
-	//
-	// List<NodeRef> completed = new LinkedList<>();
-	// Set<NodeRef> remaining = new HashSet<>(nodeRefs);
-	//
-	// // while there are tasks whose critical cost isn't calculated.
-	// while (!remaining.isEmpty()) {
-	// boolean progress = false;
-	//
-	// // find a new task to calculate
-	// for (Iterator<NodeRef> it = remaining.iterator(); it.hasNext();) {
-	// NodeRef task = it.next();
-	// if (completed.containsAll(task.getChilds())) {
-	//
-	// // set task as calculated an remove
-	// completed.add(task);
-	//
-	//
-	//
-	// }
-	//
-	// it.remove();
-	// // note we are making progress
-	// progress = true;
-	// }
-	//
-	//
-	// // If we haven't made any progress then a cycle must exist in
-	// // the graph and we wont be able to calculate the critical path
-	// if (!progress) {
-	// throw new FormulateException("Cyclic dependency, algorithm stopped!");
-	// }
-	// }
-	//
-	// }
+	
 
 	@Override
 	public void computeDepthAndSort(Set<NodeRef> nodeRefs) {
@@ -621,7 +586,6 @@ public class DataListSortServiceImpl implements DataListSortService {
 	 * Debug function used to get the name of the product stored in the
 	 * compoList
 	 */
-	@Deprecated
 	private String tryGetName(NodeRef nodeRef) {
 
 		if (nodeRef == null) {

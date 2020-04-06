@@ -311,7 +311,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		ret.setXmlDataSource(entityElt);
 		ret.setDataObjects(context.getImages());
 
-		if (logger.isDebugEnabled()) {
+		if (logger.isDebugEnabled() && watch!=null) {
 			watch.stop();
 			logger.debug("extract datasource in  " + watch.getTotalTimeSeconds() + " seconds for node " + entityNodeRef);
 		}

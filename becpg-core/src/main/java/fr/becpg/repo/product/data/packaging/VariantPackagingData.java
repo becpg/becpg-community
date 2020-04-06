@@ -10,9 +10,9 @@ import java.math.BigDecimal;
  */
 public class VariantPackagingData {
 
-	private BigDecimal tarePrimary = new BigDecimal(0d);
-	private BigDecimal tareSecondary = new BigDecimal(0d);
-	private BigDecimal tareTertiary = new BigDecimal(0d);
+	private BigDecimal tarePrimary = BigDecimal.valueOf(0d);
+	private BigDecimal tareSecondary = BigDecimal.valueOf(0d);
+	private BigDecimal tareTertiary = BigDecimal.valueOf(0d);
 	private Integer productPerBoxes;
 	private Integer boxesPerPallet;
 

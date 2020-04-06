@@ -273,7 +273,7 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 		if (propertiesStr != null) {
 			return Arrays.asList(propertiesStr.split(","));
 		}
-		return null;
+		return Collections.emptyList();
 	}
 	
 	

@@ -89,7 +89,7 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 		} catch (ContentIOException | IOException e) {
 			logger.error("Error generating xls report", e);
 		} finally {
-			if (logger.isDebugEnabled()) {
+			if (logger.isDebugEnabled() && watch!=null) {
 				watch.stop();
 				logger.warn("Render excel report executed in  " + watch.getTotalTimeSeconds() + " seconds");
 			}

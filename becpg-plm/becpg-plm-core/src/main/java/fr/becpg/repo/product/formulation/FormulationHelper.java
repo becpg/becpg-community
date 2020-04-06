@@ -440,12 +440,12 @@ public class FormulationHelper {
 
 		}
 
-		return new BigDecimal(0d);
+		return BigDecimal.valueOf(0d);
 	}
 
 	public static BigDecimal getTareInKg(PackagingListDataItem packList, ProductData subProductData) {
 
-		BigDecimal tare = new BigDecimal(0d);
+		BigDecimal tare = BigDecimal.valueOf(0d);
 		Double qty = FormulationHelper.getQty(packList, subProductData);
 
 		if ((qty != null) && !qty.isNaN() && !qty.isInfinite()) {

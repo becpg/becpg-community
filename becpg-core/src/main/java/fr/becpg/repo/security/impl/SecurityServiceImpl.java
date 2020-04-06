@@ -181,7 +181,7 @@ public class SecurityServiceImpl implements SecurityService {
 				}
 			}
 
-			if (logger.isDebugEnabled()) {
+			if (logger.isDebugEnabled() && watch!=null) {
 				stopWatch.stop();
 				logger.debug("Compute ACLs takes : " + stopWatch.getTotalTimeSeconds() + "s");
 			}

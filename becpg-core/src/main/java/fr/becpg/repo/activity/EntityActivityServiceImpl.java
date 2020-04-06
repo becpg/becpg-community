@@ -900,7 +900,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 			
 		}, false, true);
 
-		if (logger.isDebugEnabled()) {
+		if (logger.isDebugEnabled() && watch!=null) {
 			watch.stop();
 			logger.debug("Clean activities batchs takes " + watch.getTotalTimeSeconds() + " seconds");
 		}

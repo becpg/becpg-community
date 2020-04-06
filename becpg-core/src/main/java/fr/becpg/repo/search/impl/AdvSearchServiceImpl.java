@@ -96,7 +96,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 					watch.start();
 				}
 				nodes = advSearchPlugin.filter(nodes, datatype, criteria);
-				if (logger.isDebugEnabled()) {
+				if (logger.isDebugEnabled() && watch !=null) {
 					watch.stop();
 					logger.debug(
 							"query filter " + advSearchPlugin.getClass().getName() + " executed in  " + watch.getTotalTimeSeconds() + " seconds ");
@@ -325,7 +325,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 			ret += "\"" + hierarchyName + "\"";
 		}
 
-		if (logger.isDebugEnabled()) {
+		if (logger.isDebugEnabled() && watch!=null) {
 			watch.stop();
 			logger.debug("getHierarchyQuery executed in  " + watch.getTotalTimeSeconds() + " seconds ");
 		}

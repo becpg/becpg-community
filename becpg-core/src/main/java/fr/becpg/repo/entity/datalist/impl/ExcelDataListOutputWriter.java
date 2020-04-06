@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nonnull;
+
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.dictionary.AspectDefinition;
@@ -313,6 +315,7 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 
 	}
 
+	@Nonnull
 	private ExcelDataListOutputPlugin getPlugin(DataListFilter dataListFilter) {
 		ExcelDataListOutputPlugin ret = null;
 
@@ -323,6 +326,12 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 				ret = plugin;
 			}
 		}
+		
+		if(ret == null) {
+		
+			throw new IllegalStateException("No default plugin");
+		}
+		
 		return ret;
 
 	}

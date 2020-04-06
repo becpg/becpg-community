@@ -155,8 +155,8 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 			if (n.getNut() != null) {
 				NutDataItem nut = (NutDataItem) alfrescoRepository.findOne(n.getNut());
 				
-				if((onlyFormulaNutrient && nut.getNutFormula() != null && nut.getNutFormula() != "") 
-						|| (!onlyFormulaNutrient && (nut.getNutFormula() == null || nut.getNutFormula() == ""))){
+				if((onlyFormulaNutrient && nut.getNutFormula() != null && !nut.getNutFormula().isEmpty()) 
+						|| (!onlyFormulaNutrient && (nut.getNutFormula() == null || nut.getNutFormula().isEmpty()))){
 					n.setGroup(nut.getNutGroup());
 					n.setUnit(calculateUnit(formulatedProduct.getUnit(), formulatedProduct.getServingSizeUnit(), nut.getNutUnit()));
 					

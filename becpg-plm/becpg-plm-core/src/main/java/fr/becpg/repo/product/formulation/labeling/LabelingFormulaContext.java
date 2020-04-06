@@ -426,7 +426,7 @@ public class LabelingFormulaContext extends RuleParser {
 		decimalFormat.setRoundingMode(roundingMode);
 		if ((qty != null) && (qty > -1) && (qty != 0d)) {
 			int maxNum = decimalFormat.getMaximumFractionDigits();
-			while (((Math.pow(10, maxNum + 2) * qty) < 1)) {
+			while (((Math.pow(10, (double)maxNum + 2d) * (double)qty) < 1)) {
 				if (maxNum >= maxPrecision) {
 					decimalFormat.setRoundingMode(maxRoundingMode);
 					decimalFormat.setMaximumFractionDigits(maxNum);
@@ -797,7 +797,7 @@ public class LabelingFormulaContext extends RuleParser {
 		StringBuffer ret = new StringBuffer();
 		StringBuffer tableContent = new StringBuffer();
 
-		BigDecimal total = new BigDecimal(0d);
+		BigDecimal total = BigDecimal.valueOf(0d);
 
 		ret.append("<table cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"" + styleCss + "\" rules=\"none\">");
 
@@ -903,9 +903,9 @@ public class LabelingFormulaContext extends RuleParser {
 
 		if (force100Perc) {
 
-			BigDecimal diffValue = (new BigDecimal(1d)).subtract(total);
+			BigDecimal diffValue = BigDecimal.valueOf(1d).subtract(total);
 
-			total = new BigDecimal(1);
+			total = BigDecimal.valueOf(1d);
 
 			firstQtyPerc = roundeedValue(firstQtyPerc, new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale())).add(diffValue)
 					.doubleValue();
@@ -955,7 +955,7 @@ public class LabelingFormulaContext extends RuleParser {
 
 	public String renderAsFlatHtmlTable(String styleCss, boolean showTotal, boolean force100Perc) {
 
-		BigDecimal total = new BigDecimal(0d);
+		BigDecimal total = BigDecimal.valueOf(0d);
 
 		StringBuffer tableContent = new StringBuffer();
 		StringBuffer ret = new StringBuffer();
@@ -976,7 +976,7 @@ public class LabelingFormulaContext extends RuleParser {
 					} else {
 
 						if (tmp.level == 0) {
-							total = total.add(new BigDecimal(tmp.qtyPerc));
+							total = total.add(BigDecimal.valueOf(tmp.qtyPerc));
 						}
 
 						ret.append(applyRoundingMode(new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale()), tmp.qtyPerc)
@@ -985,9 +985,9 @@ public class LabelingFormulaContext extends RuleParser {
 				}
 
 				if (force100Perc) {
-					BigDecimal diffValue = (new BigDecimal(1d)).subtract(total);
+					BigDecimal diffValue = BigDecimal.valueOf(1d).subtract(total);
 
-					total = new BigDecimal(1);
+					total = BigDecimal.valueOf(1d);
 
 					Double qtyPerc = roundeedValue(flatList.get(0).qtyPerc, new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale()))
 							.add(diffValue).doubleValue();
@@ -1116,7 +1116,7 @@ public class LabelingFormulaContext extends RuleParser {
 		decimalFormat.setRoundingMode(roundingMode);
 		if ((qty != null) && (qty > -1) && (qty != 0d)) {
 			int maxNum = decimalFormat.getMaximumFractionDigits();
-			while (((Math.pow(10, maxNum + 2) * qty) < 1)) {
+			while (((Math.pow(10, (double)maxNum + (double)2) * (double)qty) < 1)) {
 				if (maxNum >= maxPrecision) {
 					decimalFormat.setRoundingMode(RoundingMode.FLOOR);
 					decimalFormat.setMaximumFractionDigits(maxNum);
@@ -1130,13 +1130,13 @@ public class LabelingFormulaContext extends RuleParser {
 			try {
 
 				qty = decimalFormat.parse(roundedQty).doubleValue();
-				return new BigDecimal(qty);
+				return BigDecimal.valueOf(qty);
 
 			} catch (ParseException e) {
 				logger.error(e, e);
 			}
 		}
-		return new BigDecimal(qty != null ? qty : 0d);
+		return  BigDecimal.valueOf(qty != null ? qty : 0d);
 
 	}
 
@@ -1147,12 +1147,12 @@ public class LabelingFormulaContext extends RuleParser {
 				return roundeedValue(qty, (DecimalFormat) format, defaultRoundingMode);
 			}
 		}
-		return new BigDecimal(qty);
+		return  BigDecimal.valueOf(qty);
 
 	}
 
 	private BigDecimal getTotal(CompositeLabeling compositeLabeling) {
-		BigDecimal total = new BigDecimal(0d);
+		BigDecimal total = BigDecimal.valueOf(0d);
 
 		for (Map.Entry<IngTypeItem, List<LabelingComponent>> kv : getSortedIngListByType(compositeLabeling).entrySet()) {
 
@@ -1282,7 +1282,7 @@ public class LabelingFormulaContext extends RuleParser {
 		return cleanLabel(ret);
 	}
 
-	Double totalPrecision = 1 / Math.pow(10, maxPrecision + 2);
+	Double totalPrecision = 1 / Math.pow(10, (double)maxPrecision + (double)2);
 
 	private StringBuilder renderLabelingComponent(CompositeLabeling parent, List<LabelingComponent> subComponents, boolean isIngType, Double ratio,
 			BigDecimal total, boolean hideGeo) {
@@ -1300,7 +1300,7 @@ public class LabelingFormulaContext extends RuleParser {
 			qtyPerc = (useVolume ? volumePerc : qtyPerc);
 
 			if (first && (total != null)) {
-				BigDecimal diffValue = (new BigDecimal(1d)).subtract(total);
+				BigDecimal diffValue = BigDecimal.valueOf(1d).subtract(total);
 				qtyPerc = roundeedValue(qtyPerc, component).add(diffValue).doubleValue();
 			}
 

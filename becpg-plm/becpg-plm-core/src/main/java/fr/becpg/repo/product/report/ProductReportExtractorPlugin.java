@@ -507,7 +507,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			// display tare, net weight and gross weight
 			BigDecimal tarePrimary = FormulationHelper.getTareInKg(productData.getTare(), productData.getTareUnit());
 			if (tarePrimary == null) {
-				tarePrimary = new BigDecimal(0d);
+				tarePrimary = BigDecimal.value(0d);
 			}
 			BigDecimal grossWeightPrimary = tarePrimary.add(netWeightPrimary);
 
@@ -892,7 +892,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 						nutListElt.addAttribute(PLMModel.PROP_NUTLIST_VALUE.getLocalName(), value);
 					}
 
-					if (dataListItem.getErrorLog() != null && dataListItem.getErrorLog() != "") {
+					if (dataListItem.getErrorLog() != null && !dataListItem.getErrorLog().isEmpty()) {
 						nutListElt.addAttribute(PLMModel.PROP_NUTLIST_FORMULA_ERROR.getLocalName(), "Error");
 					}
 					nutListElt.addAttribute(RegulationFormulationHelper.ATTR_NUT_CODE, nut.getNutCode());
@@ -1069,7 +1069,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		for (Map.Entry<NodeRef, Double> entry : sortedRawMaterials) {
 			Element rawMaterialElt = rawMaterialsElt.addElement(PLMModel.TYPE_RAWMATERIAL.getLocalName());
 			loadAttributes(entry.getKey(), rawMaterialElt, true, null, context);
-			addCDATA(rawMaterialElt, PLMModel.PROP_COMPOLIST_QTY, toString((100 * entry.getValue()) / totalQty), null);
+			addCDATA(rawMaterialElt, PLMModel.PROP_COMPOLIST_QTY, toString((100 * entry.getValue()) / (totalQty!=0d ? totalQty:1d)), null);
 			if (productNetWeight != 0d) {
 				Element cDATAElt = rawMaterialElt.addElement(ATTR_COMPOLIST_QTY_FOR_PRODUCT);
 				cDATAElt.addCDATA(
@@ -1267,7 +1267,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			}
 		}
 
-		extractPriceBreaksForPackaging(productData, priceBreaks, parentQty / netWeight);
+		extractPriceBreaksForPackaging(productData, priceBreaks, parentQty / (netWeight!=0d ?netWeight : 1d));
 	}
 
 	private void extractPriceBreaksForPackaging(ProductData productData, List<PriceBreakReportData> priceBreaks, Double parentQty) {
@@ -1305,7 +1305,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 				Double purchaseValue = item.getPurchaseValue();
 
-				if ((item.getPurchaseUnit() != null) && (item.getPurchaseUnit() != "")) {
+				if ((item.getPurchaseUnit() != null) && (!item.getPurchaseUnit().isEmpty())) {
 					ProductUnit purchaseUnit = ProductUnit.valueOf(item.getPurchaseUnit());
 
 					if (purchaseValue != null) {
@@ -1594,7 +1594,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		for (CostListDataItem c : formulatedProduct.getCostList()) {
 
 			Boolean isFixed = (Boolean) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTFIXED);
-			if ((isFixed == null) || (isFixed == Boolean.FALSE)) {
+			if ( isFixed == null ||  Boolean.FALSE.equals(isFixed)) {
 
 				String costType = (String) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTTYPE);
 				String costCurrency = (String) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTCURRENCY);
