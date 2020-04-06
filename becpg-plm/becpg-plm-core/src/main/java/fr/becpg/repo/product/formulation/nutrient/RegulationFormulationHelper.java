@@ -12,7 +12,6 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.MLTextHelper;
@@ -55,16 +54,16 @@ public class RegulationFormulationHelper {
 
 		regulations.put("CN", new ChineseNutrientRegulation("beCPG/databases/nuts/ChineseNutrientRegulation.csv"));
 		regulations.put("AU", new AustralianNutrientRegulation("beCPG/databases/nuts/AUNutrientRegulation.csv"));
-		
+
 		regulations.put("ID", new IndonesianNutrientRegulation("beCPG/databases/nuts/IndonesianNutrientRegulation.csv"));
 		regulations.put("MX", new MexicanNutrientRegulation("beCPG/databases/nuts/MexicanNutrientRegulation.csv"));
-		
+
 		regulations.put("HK", new HongKongNutrientRegulation("beCPG/databases/nuts/HongKongNutrientRegulation.csv"));
 		regulations.put("KR", new KoreanNutrientRegulation("beCPG/databases/nuts/KoreanNutrientRegulation.csv"));
 		regulations.put("MY", new MalaysianNutrientRegulation("beCPG/databases/nuts/MalaysianNutrientRegulation.csv"));
 		regulations.put("TH", new ThailandNutrientRegulation("beCPG/databases/nuts/ThailandNutrientRegulation.csv"));
 		regulations.put("IN", new IndianNutrientRegulation("beCPG/databases/nuts/IndianNutrientRegulation.csv"));
-		
+
 	}
 
 	public static Double extractValuePerServing(String roundedValue, Locale locale) {
@@ -130,8 +129,9 @@ public class RegulationFormulationHelper {
 
 		if (locale.getCountry().equals("US") || locale.getCountry().equals("CA")
 				|| locale.getCountry().equals("MX") || locale.getCountry().equals("ID")
-			    || locale.getCountry().equals("HK") || locale.getCountry().equals("MY")
-			    || locale.getCountry().equals("IN")) {
+				|| locale.getCountry().equals("HK") || locale.getCountry().equals("MY")
+				|| locale.getCountry().equals("IN") || locale.getCountry().equals("KR")
+				|| locale.getCountry().equals("TH")) {
 			return locale.getCountry();
 		} else if (locale.getCountry().equals("SG")) {
 			return "MY";	
@@ -139,23 +139,18 @@ public class RegulationFormulationHelper {
 			return "CN";
 		} else if (locale.getCountry().equals("AU") || locale.getCountry().equals("NZ")) {
 			return "AU";
-		} else if (locale.getLanguage().equals("ko")) {
-			return "KR";
-		} else if (locale.getLanguage().equals("th")) {
-			return "TH";
 		} else if (locale.getCountry().equals("PR")) {
 			return "US";
 		}
 		return "EU";
 	}
 
-	public static void extractXMLAttribute(Element nutListElt, String roundedValue, Locale locale) {
+	public static void extractXMLAttribute(Element nutListElt, String roundedValue, Locale locale, boolean isDisplayed) {
 		if (roundedValue != null) {
 			String localKey = getLocalKey(locale);
 			String nutCode = nutListElt.attributeValue(ATTR_NUT_CODE);
 			String nutListValue = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_VALUE.getLocalName());
 			String nutListValuePerServing = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_VALUE_PER_SERVING.getLocalName());
-			Element reportLocales = (Element) nutListElt.selectSingleNode("nutListNut/nut/reportLocales");
 			try {
 				JSONObject jsonRound = new JSONObject(roundedValue);
 
@@ -175,23 +170,15 @@ public class RegulationFormulationHelper {
 						if (def.getDepthLevel() != null) {
 							nutListElt.addAttribute("regulDepthLevel" + suffix, "" + def.getDepthLevel());
 						}
-						boolean display = true;
-						if ((reportLocales != null) && (reportLocales.getText() != null) && (!reportLocales.getText().equals(""))) {
-							display = false;
-							for (String reportLocale : reportLocales.getText().split(",")) {
-								if ((reportLocale != null) && (locale != null) && reportLocale.trim().equals(locale.toString())) {
-									display = true;
-									break;
-								}
-							}
-						}
-						if (display) {
+
+						if (isDisplayed) {
 							if (Boolean.TRUE.equals(def.getMandatory())) {
 								nutListElt.addAttribute("regulDisplayMode" + suffix, "M");
 							} else if (Boolean.TRUE.equals(def.getOptional())) {
 								nutListElt.addAttribute("regulDisplayMode" + suffix, "O");
 							}
 						}
+
 						if (def.getBold() != null) {
 							nutListElt.addAttribute("regulBold" + suffix, "" + def.getBold());
 						}
@@ -307,7 +294,7 @@ public class RegulationFormulationHelper {
 			JSONObject gdaPerContainer = new JSONObject();
 
 			for (String key : getAvailableRegulations()) {
-				
+
 				String nutUnit = n.getUnit();
 
 				NutrientRegulation regulation = getRegulation(key);
@@ -394,10 +381,10 @@ public class RegulationFormulationHelper {
 		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ms_MY")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("zh_SG"))) {
 			ret.add("MY");
 		}
-		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ko"))) {
+		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ko_KR"))) {
 			ret.add("KR");
 		}
-		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("th"))) {
+		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("th_TH"))) {
 			ret.add("TH");
 		}
 		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("zh_HK"))) {
@@ -451,24 +438,5 @@ public class RegulationFormulationHelper {
 
 		return regulations.get("EU");
 	}
-	
-	public static String getLabelClaimDisplayMode(String labelClaimCode) {
-		String displayMode = "O";
-		if (labelClaimCode != null) {
-			if (labelClaimCode.startsWith("US") && !I18NUtil.getLocale().getCountry().equals("US")) {
-				displayMode = "";
-			} else if (labelClaimCode.startsWith("EU")
-					&& (I18NUtil.getLocale().getCountry().equals("US") || I18NUtil.getLocale().getLanguage().equals("zh")
-							|| I18NUtil.getLocale().getCountry().equals("AU") || I18NUtil.getLocale().getCountry().equals("NZ")
-							|| I18NUtil.getLocale().getCountry().equals("MX") || I18NUtil.getLocale().getCountry().equals("ID")
-							|| I18NUtil.getLocale().getCountry().equals("MY") || I18NUtil.getLocale().getCountry().equals("IN")
-							|| I18NUtil.getLocale().getCountry().equals("PR") || I18NUtil.getLocale().getLanguage().equals("ko")
-							|| I18NUtil.getLocale().getLanguage().equals("th"))) {
-				displayMode = "";
-			}
-		}
-		return displayMode;
-	}
-
 
 }
