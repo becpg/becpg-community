@@ -165,7 +165,7 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 										
 										// if this column is duplicated and not the last occurrence, we don't compare
 										boolean shouldCompare = dynamicCharactListItem.getColumnName() == null 
-												|| dynamicCharactListItem.getColumnName() == "" 
+												|| "".equals(dynamicCharactListItem.getColumnName())
 												|| !duplicateDynCharactColumnsMap.containsKey(dynamicCharactListItem.getColumnName()) 
 												|| i == duplicateDynCharactColumnsMap.get(dynamicCharactListItem.getColumnName());
 										
@@ -307,7 +307,7 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 
 	private AbstractProductDataView getMatchingView(ProductData productData, AbstractProductDataView view) {
 		for (AbstractProductDataView tmp : productData.getViews()) {
-			if (tmp.getClass().getName().equals(view.getClass().getName())) {
+			if (tmp.getClass().isAssignableFrom(view.getClass())) {
 				return tmp;
 			}
 		}

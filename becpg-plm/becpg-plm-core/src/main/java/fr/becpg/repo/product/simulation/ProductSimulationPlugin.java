@@ -77,7 +77,7 @@ public class ProductSimulationPlugin implements EntitySimulationPlugin {
 
 		}, false, true);
 
-		if (logger.isInfoEnabled()) {
+		if (logger.isInfoEnabled() && watch!=null) {
 			watch.stop();
 			logger.info("Simulate batch takes " + watch.getTotalTimeSeconds() + " seconds");
 		}

@@ -85,7 +85,9 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 public class EntityTplServiceImpl implements EntityTplService {
 
 	private static final String ASYNC_ACTION_URL_PREFIX = "page/entity-data-lists?list=View-properties&nodeRef=";
-
+	
+	private static final String ENTITY_DATALIST_KEY_PREFIX =   "entity-datalist-";
+	
 	private static final Log logger = LogFactory.getLog(EntityTplServiceImpl.class);
 
 	@Autowired
@@ -268,8 +270,8 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 			Map<QName, Serializable> properties = new HashMap<>();
 			properties.put(ContentModel.PROP_NAME, name);
-			properties.put(ContentModel.PROP_TITLE, TranslateHelper.getTranslatedKey("entity-datalist-" + name.toLowerCase() + "-title"));
-			properties.put(ContentModel.PROP_DESCRIPTION, TranslateHelper.getTranslatedKey("entity-datalist-" + name.toLowerCase() + "-description"));
+			properties.put(ContentModel.PROP_TITLE, TranslateHelper.getTranslatedKey(ENTITY_DATALIST_KEY_PREFIX + name.toLowerCase() + "-title"));
+			properties.put(ContentModel.PROP_DESCRIPTION, TranslateHelper.getTranslatedKey(ENTITY_DATALIST_KEY_PREFIX + name.toLowerCase() + "-description"));
 			properties.put(DataListModel.PROP_DATALISTITEMTYPE, typeQName.toPrefixString(namespaceService));
 
 			listNodeRef = nodeService.createNode(listContainerNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS,
@@ -280,8 +282,8 @@ public class EntityTplServiceImpl implements EntityTplService {
 			MLText title = (MLText) mlNodeService.getProperty(listNodeRef, ContentModel.PROP_TITLE);
 			MLText description = (MLText) mlNodeService.getProperty(listNodeRef, ContentModel.PROP_DESCRIPTION);
 
-			MLText classTitleMLText = TranslateHelper.getTranslatedKey("entity-datalist-" + name.toLowerCase() + "-title");
-			MLText classDescritptionMLText = TranslateHelper.getTranslatedKey("entity-datalist-" + name.toLowerCase() + "-description");
+			MLText classTitleMLText = TranslateHelper.getTranslatedKey(ENTITY_DATALIST_KEY_PREFIX + name.toLowerCase() + "-title");
+			MLText classDescritptionMLText = TranslateHelper.getTranslatedKey(ENTITY_DATALIST_KEY_PREFIX + name.toLowerCase() + "-description");
 
 			mlNodeService.setProperty(listNodeRef, ContentModel.PROP_TITLE, MLTextHelper.merge(title, classTitleMLText));
 			mlNodeService.setProperty(listNodeRef, ContentModel.PROP_DESCRIPTION, MLTextHelper.merge(description, classDescritptionMLText));

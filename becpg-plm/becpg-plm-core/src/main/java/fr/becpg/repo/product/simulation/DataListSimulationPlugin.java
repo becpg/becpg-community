@@ -76,7 +76,7 @@ public class DataListSimulationPlugin implements EntitySimulationPlugin {
 								logger.debug("Create new SF " + newProductData.getName());
 	
 								for (AbstractProductDataView newView : newProductData.getViews()) {
-									if (newView.getClass().getName().equals(view.getClass().getName())) {
+									if (newView.getClass().isAssignableFrom(view.getClass())) {
 										for (CompositionDataItem newItem : newView.getMainDataList()) {
 											NodeRef origNodeRef = associationService.getTargetAssoc(newItem.getNodeRef(), ContentModel.ASSOC_ORIGINAL);
 											if ((origNodeRef != null) && origNodeRef.equals(item.getNodeRef())) {

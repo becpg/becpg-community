@@ -311,7 +311,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 			String productCurrency = (String) nodeService.getProperty(formulatedProduct.getNodeRef(), PLMModel.PROP_PRICE_CURRENCY);
 
 			if (c.getValue() != null) {
-				if ((isFixed != null) && (isFixed == Boolean.TRUE)) {
+				if (Boolean.TRUE.equals(isFixed)) {
 					unitTotalFixedCost += c.getValue();
 
 					if ((formulatedProduct.getProjectedQty() != null) && !formulatedProduct.getProjectedQty().equals(0l)) {

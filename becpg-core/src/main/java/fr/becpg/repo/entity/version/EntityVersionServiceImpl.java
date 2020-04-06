@@ -351,7 +351,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			return versionNodeRef;
 
 		} finally {
-			if (logger.isDebugEnabled()) {
+			if (logger.isDebugEnabled() && watch!=null) {
 				watch.stop();
 				logger.debug("internalCreateVersionAndCheckin run in  " + watch.getTotalTimeSeconds() + " s");
 			}
@@ -954,7 +954,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				} finally {
 					MLPropertyInterceptor.setMLAware(mlAware);
 
-					if (logger.isDebugEnabled()) {
+					if (logger.isDebugEnabled() && watch!=null) {
 						watch.stop();
 						logger.debug("createBranch run in  " + watch.getTotalTimeSeconds() + " seconds ");
 
