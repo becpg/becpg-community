@@ -46,6 +46,8 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 	private NodeRef charact;
 	private List<NodeRef> sources = new LinkedList<>();
 	private RequirementDataType reqDataType;
+	private String regulatoryCode;
+	
 
 	@AlfProp
 	@AlfQname(qname="bcpg:rclReqType")
@@ -122,6 +124,16 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 
 	public void setReqDataType(RequirementDataType reqDataType) {
 		this.reqDataType = reqDataType != null ? reqDataType : RequirementDataType.Nutrient;
+	}
+	
+	@AlfProp
+	@AlfQname(qname="bcpg:regulatoryCode")
+	public String getRegulatoryCode() {
+		return regulatoryCode;
+	}
+
+	public void setRegulatoryCode(String regulatoryCode) {
+		this.regulatoryCode = regulatoryCode;
 	}
 
 	public ReqCtrlListDataItem() {
