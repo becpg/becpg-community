@@ -68,7 +68,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 	@Autowired
 	private NodeService nodeService;
-	
+
 	@Autowired
 	@Qualifier("mlAwareNodeService")
 	private NodeService mlNodeService;
@@ -111,7 +111,8 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 						for (Map.Entry<QName, Serializable> extraProperty : entity.getExtraProperties().entrySet()) {
 							Serializable prop = nodeService.getProperty(entity.getNodeRef(), extraProperty.getKey());
 
-							if (!((prop == null && extraProperty.getValue() == null) || (prop != null && prop.equals(extraProperty.getValue())))) {
+							if (!(((prop == null) && (extraProperty.getValue() == null))
+									|| ((prop != null) && prop.equals(extraProperty.getValue())))) {
 								shouldUpdate = true;
 								if (logger.isDebugEnabled()) {
 									logger.debug("Change detected in " + extraProperty.getKey() + " - actual: " + prop + " - new: "
@@ -213,6 +214,38 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		}
 
 		return entity;
+	}
+
+	@Override
+	public boolean isDirty(T entity) {
+
+		if ((entity.getNodeRef() == null) || ((entity.getExtraProperties() != null) && (!entity.getExtraProperties().isEmpty()))
+				|| (createCollisionSafeHashCode(entity) != entity.getDbHashCode())) {
+
+			boolean shouldUpdate = true;
+
+			if ((entity.getNodeRef() != null) && (entity.getExtraProperties() != null) && !entity.getExtraProperties().isEmpty()) {
+				if (createCollisionSafeHashCode(entity) == entity.getDbHashCode()) {
+					shouldUpdate = false;
+
+					for (Map.Entry<QName, Serializable> extraProperty : entity.getExtraProperties().entrySet()) {
+						Serializable prop = nodeService.getProperty(entity.getNodeRef(), extraProperty.getKey());
+
+						if (!(((prop == null) && (extraProperty.getValue() == null)) || ((prop != null) && prop.equals(extraProperty.getValue())))) {
+							shouldUpdate = true;
+							if (logger.isDebugEnabled()) {
+								logger.debug("Change detected in " + extraProperty.getKey() + " - actual: " + prop + " - new: "
+										+ extraProperty.getValue());
+							}
+							break;
+						}
+					}
+				}
+			}
+
+			return shouldUpdate;
+		}
+		return false;
 	}
 
 	private void saveAspects(T entity) {
