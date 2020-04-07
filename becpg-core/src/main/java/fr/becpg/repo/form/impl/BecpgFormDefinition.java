@@ -4,6 +4,8 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.HashSet;
 
 import org.alfresco.repo.forms.AssociationFieldDefinition;
 import org.alfresco.repo.forms.FieldDefinition;
@@ -33,12 +35,12 @@ public class BecpgFormDefinition {
 			return false;
 		}
 	}
-	
-	private static JSONArray filterArray(JSONArray array) throws JSONException {
+
+	private static JSONArray filterArray(JSONArray array, Set<String> tabIds) throws JSONException {
 		final int size = array.length();
 		JSONArray result = new JSONArray();
 		for (int i = 0; i < size; ++i) {
-			JSONObject element = filter(array.getJSONObject(i));
+			JSONObject element = filter(array.getJSONObject(i), tabIds);
 			if (element != null) {
 				result.put(element);
 			}
@@ -46,7 +48,19 @@ public class BecpgFormDefinition {
 		return result;
 	}
 	
-	private static JSONObject filter(JSONObject object) {
+	private static JSONArray filterTabs(JSONArray tabs, Set<String> tabIds) throws JSONException {
+		final int size = tabs.length();
+		JSONArray result = new JSONArray();
+		for (int i = 0; i < size; i++) {
+			JSONObject element = tabs.getJSONObject(i);
+			if (tabIds.contains(element.getString("id"))) {
+				result.put(element);
+			}
+		}
+		return result;
+	}
+	
+	private static JSONObject filter(JSONObject object, Set<String> tabIds) {
 		try {
 			if (isContainerRepresentation(object)) {
 				JSONObject fields;
@@ -60,7 +74,7 @@ public class BecpgFormDefinition {
 				int counter = 1;
 				for (int i = 1; i <= size; ++i) {
 					JSONArray array = fields.getJSONArray(Integer.toString(i));
-					JSONArray filteredArray = filterArray(array);
+					JSONArray filteredArray = filterArray(array, tabIds);
 					if (filteredArray.length() > 0) {
 						filteredFields.put(Integer.toString(counter), filteredArray);
 						++counter;
@@ -71,13 +85,21 @@ public class BecpgFormDefinition {
 				} else {
 					return null;
 				}
+				tabIds.add(object.getString("tab"));
 			} else {
 				JSONArray array = object.getJSONArray("fields");
-				JSONArray filteredArray = filterArray(array);
+				JSONArray filteredArray = filterArray(array, tabIds);
 				object.put("fields", filteredArray);
+				try {
+					JSONArray tabs = object.getJSONArray("tabs");
+					JSONArray filteredTabs = filterTabs(tabs, tabIds);
+					object.put("tabs", filteredTabs);
+				} catch (JSONException e) {
+					// Ignore exception; this will simply skip tab filtering
+				}
 			}
 		} catch (JSONException e) {
-				// Skip deeper filtering
+				// Ignore exception; this will simply skip deeper filtering
 		}
 		
 		return object;
@@ -164,7 +186,7 @@ public class BecpgFormDefinition {
 			}
 		}
 
-		return filter(ret);
+		return filter(ret, new HashSet<String>());
 	}
 
 	private void loadData(JSONObject field, Form form) throws JSONException {
