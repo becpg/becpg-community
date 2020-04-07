@@ -142,6 +142,24 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private String meatType;
 	
 	/*
+	 * Compliance 
+	 */
+
+	private List<String> regulatoryCountries = new ArrayList<>();
+	private List<String> regulatoryUsages = new ArrayList<>();
+	private Date regulatoryFormulatedDate;
+	
+	/* 
+	 * JSON Data { 
+	 *   decernis: "checksum" 
+	 * }
+	 * 
+	 */
+	private String requirementChecksum;
+	
+	
+
+	/*
 	 * DataList
 	 */
 	private List<AllergenListDataItem> allergenList;
@@ -958,6 +976,42 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 
 	public void setReportLocales(List<String> reportLocales) {
 		this.reportLocales = reportLocales;
+	}
+	
+	public List<String> getRegulatoryCountries() {
+		return regulatoryCountries;
+	}
+
+	public void setRegulatoryCountries(List<String> regulatoryCountries) {
+		this.regulatoryCountries = regulatoryCountries;
+	}
+
+	public List<String> getRegulatoryUsages() {
+		return regulatoryUsages;
+	}
+
+	public void setRegulatoryUsages(List<String> regulatoryUsages) {
+		this.regulatoryUsages = regulatoryUsages;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "bcpg:regulatoryFormulatedDate")
+	public Date getRegulatoryFormulatedDate() {
+		return regulatoryFormulatedDate;
+	}
+
+	public void setRegulatoryFormulatedDate(Date regulatoryFormulatedDate) {
+		this.regulatoryFormulatedDate = regulatoryFormulatedDate;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "bcpg:requirementChecksum")
+	public String getRequirementChecksum() {
+		return requirementChecksum;
+	}
+
+	public void setRequirementChecksum(String requirementChecksum) {
+		this.requirementChecksum = requirementChecksum;
 	}
 
 	private <T> List<T> filterList(List<T> list, List<DataListFilter<ProductData, T>> filters) {
