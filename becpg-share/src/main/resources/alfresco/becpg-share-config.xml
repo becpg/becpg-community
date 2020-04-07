@@ -32,29 +32,29 @@
 			<language locale="en_CA">English - Canada</language>
 			<language locale="en_US">English - United States</language>
 			<language locale="en_AU">English - Australia</language>
+			<language locale="en_IN">English - India</language>
 			<language locale="de">German</language>
 			<language locale="es">Spanish</language>
 			<language locale="es_MX">Spanish - Mexico</language>
+			<language locale="es_PR">Spanish - Puerto Rico</language>
 			<language locale="fr">French</language>
 			<language locale="fr_CA">French - Canada</language>
 			<language locale="it">Italian</language>
+			<language locale="in_ID">Indonesian - Indonesia</language>
 			<language locale="ja_JP">Japanese - Japan</language>
+			<language locale="ko_KR">Korean - South Korea</language>
+			<language locale="ms_MY">Malay - Malaysia</language>
 			<language locale="nl">Dutch</language>
 			<language locale="ru">Russian</language>
-			<language locale="zh_CN">Chinese (Simplified) - China</language>
 			<language locale="pt">Portuguese</language>
 			<language locale="no">Norwegian</language>
 			<language locale="sv_SE">Swedish - Sweden</language>
 			<language locale="el">Greek</language>
 			<language locale="pl">Polish</language>
 			<language locale="fi_FI">Finnish - Finland</language>
-			<language locale="in_ID">Indonesian - Indonesia</language>
-			<language locale="zh_HK">Chinese - Hong Kong</language>
-			<language locale="ms_MY">Malay - Malaysia</language>
 			<language locale="th_TH">Thai - Thailand</language>
-			<language locale="ko">Korean - South Korea</language>
-			<language locale="en_IN">English - India</language>
-			<language locale="es_PR">Spanish - Puerto Rico</language>
+			<language locale="zh_CN">Chinese (Simplified) - China</language>
+			<language locale="zh_HK">Chinese - Hong Kong</language>
 			<language locale="zh_SG">Chinese - Singapore</language>
 			
 			
