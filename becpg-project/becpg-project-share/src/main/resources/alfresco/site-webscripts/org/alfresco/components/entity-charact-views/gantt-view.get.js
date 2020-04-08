@@ -22,6 +22,7 @@ function main()
        useFilter: model.filter,
        entityNodeRef: page.url.args.nodeRef!=null ?page.url.args.nodeRef : "",
        list:  model.listName!=null ? model.listName : "",
+       pageSize : 100,
        sortable : true,
        sortUrl : page.url.context+"/proxy/alfresco/becpg/entity/datalists/sort/node",
        dataUrl : page.url.context+"/proxy/alfresco/becpg/entity/datalists/data/node/",
