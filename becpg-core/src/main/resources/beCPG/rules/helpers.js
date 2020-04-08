@@ -38,6 +38,8 @@
  * 	
  * updateAssoc(node, assocName, values) param values can be nodeRef, nodeRef array, scriptNode, scriptNode array
  * 
+ * setValue(node, propName, value) Set property value checking if property changed returns if property has changed
+ * 
  * updateMLText(node, propQName, locale, value) Update multilingual value
  * 
  * i18n(key, params?) returns i18n message for current locale
@@ -255,15 +257,31 @@ function updateAssoc(node, assocName, values){
  * @param assocName
  * @param propName
  * @param nodePropName
- * @returns void
+ * @returns true if property has changed
  */
 function copyAssocPropValue(node, assocName, propName, nodePropName) {
 	var value = assocPropValue(node, assocName, propName);
-	if(isEmpty(value)){
-	    delete node.properties[nodePropName];
+	return setValue(node,nodePropName, value );
+}
+
+/**
+ * Set property value checking if property changed
+ * @param node
+ * @param propName
+ * @param value
+ * @returns if property has changed
+ */
+function setValue(node, propName, value){
+	if(isEmpty(value) && node.properties[propName]!=null){
+	    delete node.properties[propName];
+	    return true;
 	} else {
-		node.properties[nodePropName] = value;
+		if(node.properties[propName] !== value){
+			node.properties[propName] = value;
+			return true;
+		}
 	}
+	return false;
 }
 
 /**
