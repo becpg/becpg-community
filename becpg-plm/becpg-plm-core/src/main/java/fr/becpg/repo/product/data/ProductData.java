@@ -121,6 +121,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private Date modifiedDate;
 	private Integer reformulateCount;
 	private Integer currentReformulateCount;
+	private String formulationChainId;
 	private IngTypeItem ingType;
 	private Boolean isUpToDate = false;
 
@@ -1132,6 +1133,15 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	@Override
 	public void setCurrentReformulateCount(Integer currentReformulateCount) {
 		this.currentReformulateCount = currentReformulateCount;
+	}
+
+	
+	public String getFormulationChainId() {
+		return formulationChainId;
+	}
+
+	public void setFormulationChainId(String formulationChainId) {
+		this.formulationChainId = formulationChainId;
 	}
 
 	/**
