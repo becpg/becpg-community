@@ -64,6 +64,8 @@
  * 
  * generateEAN13Code(prefix) returns generate EAN13 code with autonum corresponding to prefix
  * 
+ * setPermissionAsSystem(node, authority, permission) Set permissions as system
+ * 
  * allowWrite(node, authority) Set write permissions as system bypassing rights
  * 
  * allowRead(node, authority) Set read permissions as system bypassing rights
@@ -500,6 +502,19 @@ function getDocumentLibraryNodeRef(siteId) {
 
 /**
  * 
+ * Set permissions as system 
+ * Example : bcpg.setPermissionAsSystem(document,"GROUP_EVERYONE", "Consumer");
+ * @param node
+ * @param authority username or group name
+ * @param permission  
+ * @returns void
+ */
+function setPermissionAsSystem(node, authority, permission) {
+	bcpg.setPermissionAsSystem(node, authority, permission);
+}
+
+/**
+ * 
  * Set write permissions as system 
  * Example : bcpg.allowWrite(document,"GROUP_EVERYONE");
  * @param node
@@ -532,10 +547,7 @@ function allowRead(node, authority) {
  * @returns void
  */
 function clearPermissions(node, inherit){
-	node.setInheritsPermissions(inherit);
-	for each(var permission in node.getDirectPermissions()) {
-		node.removePermission(permission.split(';')[2],permission.split(';')[1]);
-	}
+	bcpg.clearPermissions(node, inherit);
 }
 
 /**
@@ -546,18 +558,7 @@ function clearPermissions(node, inherit){
  * @returns void
  */
 function deleteGroupPermission(node, group){
-	var inheritedPermissions = [];
-	for each(var perm in node.getFullPermissions()){
-		if (perm.split(';')[3] == "INHERITED"){
-			inheritedPermissions.push(perm);
-		}
-	}
-	node.setInheritsPermissions(false);
-	for each(var perm in inheritedPermissions){
-		if(perm.split(';')[1] != group){
-			node.setPermission(perm.split(';')[2],perm.split(';')[1]);
-		}
-	}
+	bcpg.deleteGroupPermission(node, group);
 }
 
 
