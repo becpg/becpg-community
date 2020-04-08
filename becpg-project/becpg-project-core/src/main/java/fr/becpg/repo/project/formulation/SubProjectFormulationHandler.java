@@ -93,14 +93,24 @@ public class SubProjectFormulationHandler extends FormulationBaseHandler<Project
 				if ((subProject.getLegends() != null) && !subProject.getLegends().isEmpty()) {
 					task.setTaskLegend(subProject.getLegends().get(0));
 				}
-
+				boolean updateTaskState = true;
+				
+				if(ProjectHelper.isOnHold(projectData)) {
+					updateTaskState = true;
+					if(ProjectState.Cancelled.equals(projectData.getProjectState())) {
+						subProject.setProjectState(ProjectState.Cancelled);
+					} else {
+						subProject.setProjectState(ProjectState.OnHold);
+					}
+				} 
+				
 				ProjectState state = subProject.getProjectState();
 				if (state == null) {
 					state = ProjectState.Planned;
 				}
 
 				TaskState subProjectState = state.toTaskState();
-				if (!subProjectState.equals(task.getTaskState())) {
+				if (updateTaskState && !subProjectState.equals(task.getTaskState())) {
 					ProjectHelper.setTaskState(task, subProjectState, projectActivityService);
 				}
 
