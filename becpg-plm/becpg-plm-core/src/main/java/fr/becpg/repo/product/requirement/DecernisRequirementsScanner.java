@@ -13,12 +13,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.util.StopWatch;
 
 import fr.becpg.repo.decernis.DecernisService;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.helper.MLTextHelper;
+import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
@@ -34,18 +34,23 @@ import fr.becpg.repo.repository.impl.LazyLoadingDataList;
  * @author matthieu
  *
  */
-@Service
 public class DecernisRequirementsScanner implements RequirementScanner {
-
-	@Autowired
-	DecernisService decernisService;
-
-	@Autowired
-	AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
 	private static Log logger = LogFactory.getLog(DecernisRequirementsScanner.class);
 
 	private final static String DECERNIS_KEY = "decernis";
+
+	DecernisService decernisService;
+
+	AlfrescoRepository<RepositoryEntity> alfrescoRepository;
+
+	public void setDecernisService(DecernisService decernisService) {
+		this.decernisService = decernisService;
+	}
+
+	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
+		this.alfrescoRepository = alfrescoRepository;
+	}
 
 	private String updateChecksum(String value, String checksum) {
 		try {
@@ -87,36 +92,79 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 		if (!formulatedProduct.getRegulatoryCountries().isEmpty() && !formulatedProduct.getRegulatoryUsages().isEmpty()
 				&& (formulatedProduct.getIngList() != null) && !formulatedProduct.getIngList().isEmpty()) {
 
+			boolean shouldLaunchDecernis = false;
+
 			String checkSum = decernisService.createDecernisChecksum(formulatedProduct.getRegulatoryCountries(),
 					formulatedProduct.getRegulatoryUsages());
+			
+			shouldLaunchDecernis = !isSameChecksum(formulatedProduct.getRequirementChecksum(), checkSum);
 
-			boolean shouldLaunchDecernis = !isSameChecksum(formulatedProduct.getRequirementChecksum(), checkSum);
 
-			if (shouldLaunchDecernis) {
+			if (!shouldLaunchDecernis) {
+				logger.debug("Decernis checksum match test ingList");
+				shouldLaunchDecernis = true;
 
-				boolean isLazyList = formulatedProduct.getIngList() instanceof LazyLoadingDataList;
-
-				if (!isLazyList && !isDirty((LazyLoadingDataList<IngListDataItem>) formulatedProduct.getIngList())) {
+				if ((formulatedProduct.getIngList() instanceof LazyLoadingDataList)
+						&& !isDirty((LazyLoadingDataList<IngListDataItem>) formulatedProduct.getIngList())) {
 					shouldLaunchDecernis = false;
 				}
 
+			} else if (logger.isDebugEnabled()) {
+				logger.debug("Decernis checksum doesn't match: " + formulatedProduct.getRequirementChecksum());
 			}
-			if (shouldLaunchDecernis) {
 
-				try {
+			
+			
+			if (!ProductService.FAST_FORMULATION_CHAINID.equals(formulatedProduct.getFormulationChainId())) {
 
-					updateChecksum(formulatedProduct.getRequirementChecksum(), checkSum);
-					formulatedProduct.setRegulatoryFormulatedDate(new Date());
+				if (shouldLaunchDecernis) {
+					StopWatch watch = null;
+					try {
 
-					return decernisService.extractDecernisRequirements(formulatedProduct, formulatedProduct.getRegulatoryCountries(),
-							formulatedProduct.getRegulatoryUsages());
+						if (logger.isDebugEnabled()) {
+							watch = new StopWatch();
+							watch.start();
+						}
 
-				} catch (FormulateException e) {
-					return Arrays.asList(new ReqCtrlListDataItem(null, RequirementType.Forbidden,
-							MLTextHelper.getI18NMessage("message.formulate.decernis.error", e.getLocalizedMessage()), null, new ArrayList<NodeRef>(),
-							RequirementDataType.Specification));
+						List<ReqCtrlListDataItem> ret = decernisService.extractDecernisRequirements(formulatedProduct,
+								formulatedProduct.getRegulatoryCountries(), formulatedProduct.getRegulatoryUsages());
+
+						formulatedProduct.setRequirementChecksum(updateChecksum(formulatedProduct.getRequirementChecksum(), checkSum));
+						formulatedProduct.setRegulatoryFormulatedDate(new Date());
+
+						return ret;
+
+					} catch (FormulateException e) {
+
+						if (logger.isDebugEnabled()) {
+							logger.debug(e, e);
+						}
+
+						return Arrays.asList(new ReqCtrlListDataItem(null, RequirementType.Forbidden,
+								MLTextHelper.getI18NMessage("message.decernis.error", e.getMessage()), null, new ArrayList<NodeRef>(),
+								RequirementDataType.Specification));
+
+					} finally {
+						if (logger.isDebugEnabled() && (watch != null)) {
+							watch.stop();
+							logger.debug("Running decernis requirement scanner in: " + watch.getTotalTimeSeconds()+"s");
+						}
+					}
+
 				}
 			} else {
+				
+				logger.debug("Fast formulation skipping decernis");
+				if (shouldLaunchDecernis) {
+					logger.debug(" - mark dirty");
+					formulatedProduct.setRequirementChecksum(updateChecksum(formulatedProduct.getRequirementChecksum(), null));
+				}
+				
+			}
+
+			if (!shouldLaunchDecernis) {
+				logger.debug("Decernis requirement is up to date");
+
 				if (formulatedProduct.getReqCtrlList() != null) {
 					Set<ReqCtrlListDataItem> toKeep = new HashSet<>();
 					for (ReqCtrlListDataItem item : formulatedProduct.getReqCtrlList()) {

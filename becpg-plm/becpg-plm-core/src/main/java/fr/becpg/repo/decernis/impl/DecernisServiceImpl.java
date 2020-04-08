@@ -98,6 +98,9 @@ public class DecernisServiceImpl implements DecernisService {
 	private Set<String> countries = new HashSet<>();
 
 	private JSONObject getAvaillableCountries() throws RestClientException, JSONException {
+		
+		logger.debug("Look for decernis available country ");
+		
 		String url = serverUrl + "countries/for_module?current_company={company}&module_id={module}";
 		Map<String, String> params = new HashMap<>();
 		params.put(COMPANY, companyName);
@@ -152,44 +155,55 @@ public class DecernisServiceImpl implements DecernisService {
 
 		boolean isEmpty = true;
 
+		
 		for (IngListDataItem ingListDataItem : product.getIngList()) {
-			boolean cond = true;
+			
+			
 			if (ingListDataItem.getIng() != null) {
-				Serializable ingName = ((nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_LEGAL_NAME) != null)
-						&& !nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_LEGAL_NAME).equals("")
-								? nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_LEGAL_NAME)
-								: nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME));
-				Serializable rid = nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_REGULATORY_CODE);
-				Serializable ingType = nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_ING_TYPE_V2);
-				Serializable ingQtyPerc = nodeService.getProperty(ingListDataItem.getNodeRef(), PLMModel.PROP_INGLIST_QTY_PERC);
-				Serializable function = null;
-				if (ingType != null) {
-					function = nodeService.getProperty((NodeRef) ingType, PLMModel.PROP_REGULATORY_CODE);
-				}
 
+				String legalName = (String) nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_LEGAL_NAME);
+				
+				String ingName = legalName != null
+						&& !legalName.isEmpty()
+								? legalName
+								: (String) nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME);
+				String rid = (String) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_REGULATORY_CODE);
+				
+				Double ingQtyPerc = ingListDataItem.getQtyPerc();
+				
+				NodeRef ingType = (NodeRef) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_ING_TYPE_V2);
+				String function = null;
+				if (ingType != null) {
+					function = (String) nodeService.getProperty(ingType, PLMModel.PROP_REGULATORY_CODE);
+				}
+				
 				// Get ingredient regulatory code
-				if ((rid == null) || rid.equals("")) {
+				if ((rid == null) || rid.isEmpty()) {
 					String url = serverUrl + "ingredients?current_company={company}&q={query}&identifier_type={type}&module_id={module}&limit=1";
 					Map<String, String> params = new HashMap<>();
 					params.put(COMPANY, companyName);
 					params.put(MODULE, module);
-
+					boolean cond = true;
 					Iterator<Map.Entry<QName, String>> iterator = ingNumbers.entrySet().iterator();
 					while (iterator.hasNext() && cond) {
 						Map.Entry<QName, String> ingNumber = iterator.next();
-						Serializable number = nodeService.getProperty(ingListDataItem.getIng(), ingNumber.getKey());
-						if ((number != null) && !number.equals("") && !number.equals(MISSING_VALUE)) {
+						String number = (String) nodeService.getProperty(ingListDataItem.getIng(), ingNumber.getKey());
+						if ((number != null) && !number.isEmpty() && !number.equals(MISSING_VALUE)) {
 							cond = false;
 							params.put("query", number.toString());
 							params.put("type", ingNumber.getValue());
+							break;
 						}
 					}
-					if (cond && (ingName != null) && !ingName.equals("")) {
-						params.put("query", ingName.toString());
+					if (cond) {
+						params.put("query", ingName);
 						params.put("type", "Name");
 					}
 
 					if (params.containsKey("query")) {
+						logger.debug("Look for ingredients in decernis : "+url);
+						
+						
 						JSONObject jsonObject = new JSONObject(
 								restTemplate.exchange(url, HttpMethod.GET, createEntity(null), String.class, params).getBody());
 						if (jsonObject.has("count") && (jsonObject.getInt("count") == 1) && jsonObject.has("results")) {
@@ -204,8 +218,8 @@ public class DecernisServiceImpl implements DecernisService {
 					}
 				}
 
-				if ((rid != null) && !rid.equals("") && !rid.equals(MISSING_VALUE) && ((function != null) && !function.equals(""))
-						&& ((ingName != null) && !ingName.equals("")) && ((ingQtyPerc != null) && !ingQtyPerc.equals(""))) {
+				if ((rid != null) && !rid.isEmpty() && !rid.equals(MISSING_VALUE) && ((function != null) && !function.isEmpty())
+						&& ((ingName != null) && !ingName.isEmpty()) && ((ingQtyPerc != null) )) {
 					ings.put(rid.toString(), ingListDataItem.getIng());
 					JSONObject ingredient = new JSONObject();
 					ingredient.put("name", ingName);
@@ -299,6 +313,9 @@ public class DecernisServiceImpl implements DecernisService {
 		params.put(MODULE, module);
 
 		try {
+			
+			logger.debug("Get recipe analysis from decernis : "+recipeId+", usage : "+usage);
+			
 			HttpEntity<String> entity = createEntity(null);
 			JSONObject jsonObject = new JSONObject(restTemplate.postForObject(url, entity, String.class, params));
 			if (jsonObject.has("analysis_results") && (jsonObject.getJSONObject("analysis_results").length() > 0)) {
@@ -340,7 +357,7 @@ public class DecernisServiceImpl implements DecernisService {
 									reqCtrlItem.setRegulatoryCode((!usage.isEmpty() ? (usage.toUpperCase() + "_") : "") + country.toUpperCase());
 
 									MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_PROHIBITED_ING, country,
-											!usage.isEmpty() ? usage + "-" : "", threshold);
+											!usage.isEmpty() ? usage + " - " : "", threshold);
 									reqCtrlItem.setReqMlMessage(reqMessage);
 									reqCtrlList.add(reqCtrlItem);
 								}
@@ -385,9 +402,9 @@ public class DecernisServiceImpl implements DecernisService {
 							} finally {
 								deleteRecipe(recipeId, usage.trim());
 							}
+						} else {
+							throw new FormulateException("Error sending recipe");
 						}
-						throw new FormulateException("Error sending recipe");
-
 					}
 				}
 

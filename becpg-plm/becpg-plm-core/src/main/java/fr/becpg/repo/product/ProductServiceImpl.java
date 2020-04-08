@@ -55,6 +55,7 @@ import fr.becpg.repo.repository.L2CacheSupport;
 @Service("productService")
 public class ProductServiceImpl implements ProductService, InitializingBean, FormulationPlugin {
 
+
 	private static Log logger = LogFactory.getLog(ProductService.class);
 
 	@Autowired
@@ -77,6 +78,7 @@ public class ProductServiceImpl implements ProductService, InitializingBean, For
 
 	@Autowired
 	private EntityTplService entityTplService;
+	
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -102,7 +104,7 @@ public class ProductServiceImpl implements ProductService, InitializingBean, For
 						formulationService.formulate(productNodeRef);
 						entityActivityService.postEntityActivity(productNodeRef, ActivityType.Formulation, ActivityEvent.Update, null);
 					} else {
-						formulationService.formulate(productNodeRef, "fastProductFormulationChain");
+						formulationService.formulate(productNodeRef, FAST_FORMULATION_CHAINID);
 						
 					}
 
