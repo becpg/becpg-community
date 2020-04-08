@@ -155,6 +155,7 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 					logger.debug("Look for superClass :" + repositoryEntity.getClass().getSuperclass().getName());
 				}
 				chain = getChain(repositoryEntity.getClass().getSuperclass(), chainId);
+				
 			}
 
 			if (chain != null) {
@@ -164,6 +165,7 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 						logger.debug("Execute formulation chain  - " + i + " for " + repositoryEntity.getName());
 					}
 					repositoryEntity.setCurrentReformulateCount(i);
+					repositoryEntity.setFormulationChainId(chainId);
 					chain.executeChain(repositoryEntity);
 				} while ((repositoryEntity.getReformulateCount() != null) && (i++ < repositoryEntity.getReformulateCount()));
 				if (chain.shouldUpdateFormulatedDate()) {
@@ -214,7 +216,10 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 	private FormulationChain<T> getChain(Class<?> clazz, String chainId) {
 		Map<String, FormulationChain<T>> claims = formulationChains.get(clazz);
 		if (claims != null) {
-			return claims.get(chainId);
+			if(claims.containsKey(chainId)) {
+				return claims.get(chainId);
+			} 
+			return claims.get(DEFAULT_CHAIN_ID);
 		}
 
 		return null;
