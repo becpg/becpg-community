@@ -36,6 +36,7 @@ import org.alfresco.service.cmr.quickshare.QuickShareService;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.security.AccessPermission;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.NamespaceService;
@@ -405,6 +406,13 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 		return null;
 	}
+	
+	public boolean setPermissionAsSystem(ScriptNode sourceNode, String authority, String permission) {
+		return AuthenticationUtil.runAsSystem(() -> {
+			permissionService.setPermission(sourceNode.getNodeRef(), authority, permission, true);
+			return true;
+		});
+	}
 
 	public boolean allowWrite(ScriptNode sourceNode, String authority) {
 		return AuthenticationUtil.runAsSystem(() -> {
@@ -419,7 +427,28 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 			return true;
 		});
 	}
-
+	
+	public boolean clearPermissions(ScriptNode sourceNode, boolean inherit) {
+		return AuthenticationUtil.runAsSystem(() -> {
+			logger.info("clearPermissions");
+			permissionService.deletePermissions(sourceNode.getNodeRef());
+			permissionService.setInheritParentPermissions(sourceNode.getNodeRef(), inherit);
+			return true;
+		});
+	}
+	
+	public boolean deleteGroupPermission(ScriptNode sourceNode, String authority) {
+		return AuthenticationUtil.runAsSystem(() -> {
+			Set<AccessPermission> permissions = permissionService.getPermissions(sourceNode.getNodeRef());
+			permissionService.setInheritParentPermissions(sourceNode.getNodeRef(), false);
+			for (AccessPermission permission : permissions) {
+				if (permission.isInherited() && !permission.getAuthority().equals(authority)) {
+					permissionService.setPermission(sourceNode.getNodeRef(), permission.getAuthority(), permission.getPermission(), true);
+				}
+			}
+			return true;
+		});
+	}
 
 	public String getUserLocale(ScriptNode personNode) {
 		String loc = (String) mlNodeService.getProperty(personNode.getNodeRef(), BeCPGModel.PROP_USER_LOCAL);
