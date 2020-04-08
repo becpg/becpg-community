@@ -1,6 +1,5 @@
 package fr.becpg.repo.decernis.impl;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -29,7 +28,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -98,9 +96,9 @@ public class DecernisServiceImpl implements DecernisService {
 	private Set<String> countries = new HashSet<>();
 
 	private JSONObject getAvaillableCountries() throws RestClientException, JSONException {
-		
+
 		logger.debug("Look for decernis available country ");
-		
+
 		String url = serverUrl + "countries/for_module?current_company={company}&module_id={module}";
 		Map<String, String> params = new HashMap<>();
 		params.put(COMPANY, companyName);
@@ -155,28 +153,24 @@ public class DecernisServiceImpl implements DecernisService {
 
 		boolean isEmpty = true;
 
-		
 		for (IngListDataItem ingListDataItem : product.getIngList()) {
-			
-			
+
 			if (ingListDataItem.getIng() != null) {
 
 				String legalName = (String) nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_LEGAL_NAME);
-				
-				String ingName = legalName != null
-						&& !legalName.isEmpty()
-								? legalName
-								: (String) nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME);
+
+				String ingName = (legalName != null) && !legalName.isEmpty() ? legalName
+						: (String) nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME);
 				String rid = (String) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_REGULATORY_CODE);
-				
+
 				Double ingQtyPerc = ingListDataItem.getQtyPerc();
-				
+
 				NodeRef ingType = (NodeRef) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_ING_TYPE_V2);
 				String function = null;
 				if (ingType != null) {
 					function = (String) nodeService.getProperty(ingType, PLMModel.PROP_REGULATORY_CODE);
 				}
-				
+
 				// Get ingredient regulatory code
 				if ((rid == null) || rid.isEmpty()) {
 					String url = serverUrl + "ingredients?current_company={company}&q={query}&identifier_type={type}&module_id={module}&limit=1";
@@ -201,9 +195,8 @@ public class DecernisServiceImpl implements DecernisService {
 					}
 
 					if (params.containsKey("query")) {
-						logger.debug("Look for ingredients in decernis : "+url);
-						
-						
+						logger.debug("Look for ingredients in decernis : " + url);
+
 						JSONObject jsonObject = new JSONObject(
 								restTemplate.exchange(url, HttpMethod.GET, createEntity(null), String.class, params).getBody());
 						if (jsonObject.has("count") && (jsonObject.getInt("count") == 1) && jsonObject.has("results")) {
@@ -219,7 +212,7 @@ public class DecernisServiceImpl implements DecernisService {
 				}
 
 				if ((rid != null) && !rid.isEmpty() && !rid.equals(MISSING_VALUE) && ((function != null) && !function.isEmpty())
-						&& ((ingName != null) && !ingName.isEmpty()) && ((ingQtyPerc != null) )) {
+						&& ((ingName != null) && !ingName.isEmpty()) && ((ingQtyPerc != null))) {
 					ings.put(rid.toString(), ingListDataItem.getIng());
 					JSONObject ingredient = new JSONObject();
 					ingredient.put("name", ingName);
@@ -247,15 +240,13 @@ public class DecernisServiceImpl implements DecernisService {
 	private String sendRecipe(JSONObject data) throws JSONException {
 		String url = serverUrl + "formulas";
 		if (data != null) {
-			try {
-				HttpEntity<String> request = createEntity(data.toString());
-				JSONObject jsonObject = new JSONObject(restTemplate.postForObject(url, request, String.class));
-				if (jsonObject.has("id")) {
-					return jsonObject.getString("id");
-				}
-			} catch (HttpClientErrorException e) {
-				logger.error("Error sending recipe: " + e.getResponseBodyAsString());
+
+			HttpEntity<String> request = createEntity(data.toString());
+			JSONObject jsonObject = new JSONObject(restTemplate.postForObject(url, request, String.class));
+			if (jsonObject.has("id")) {
+				return jsonObject.getString("id");
 			}
+
 		}
 		return null;
 	}
@@ -312,18 +303,14 @@ public class DecernisServiceImpl implements DecernisService {
 		params.put(USAGE, usage);
 		params.put(MODULE, module);
 
-		try {
-			
-			logger.debug("Get recipe analysis from decernis : "+recipeId+", usage : "+usage);
-			
-			HttpEntity<String> entity = createEntity(null);
-			JSONObject jsonObject = new JSONObject(restTemplate.postForObject(url, entity, String.class, params));
-			if (jsonObject.has("analysis_results") && (jsonObject.getJSONObject("analysis_results").length() > 0)) {
-				return jsonObject;
-			}
-		} catch (HttpClientErrorException e) {
-			logger.error("Error analysing recipe: " + e.getResponseBodyAsString());
+		logger.debug("Get recipe analysis from decernis : " + recipeId + ", usage : " + usage);
+
+		HttpEntity<String> entity = createEntity(null);
+		JSONObject jsonObject = new JSONObject(restTemplate.postForObject(url, entity, String.class, params));
+		if (jsonObject.has("analysis_results") && (jsonObject.getJSONObject("analysis_results").length() > 0)) {
+			return jsonObject;
 		}
+
 		return null;
 	}
 
@@ -411,7 +398,9 @@ public class DecernisServiceImpl implements DecernisService {
 			} else {
 				throw new IllegalStateException("countries or usage cannot be null");
 			}
-		} catch (JSONException e) {
+
+		} catch (Exception e) {
+			logger.error(e, e);
 			throw new FormulateException("Unexpected decernis error", e);
 		}
 
