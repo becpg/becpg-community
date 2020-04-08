@@ -24,14 +24,17 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.project.ProjectActivityService;
 import fr.becpg.repo.project.data.ProjectData;
+import fr.becpg.repo.project.data.ProjectState;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
 import fr.becpg.repo.project.data.projectList.DeliverableState;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
@@ -44,6 +47,16 @@ public class ProjectHelper {
 	private static final int DURATION_NEXT_DAY = 2;
 
 	private static final Log logger = LogFactory.getLog(ProjectHelper.class);
+	
+	
+	public static boolean isOnHold(ProjectData projectData) {
+		return projectData.getAspects().contains(ContentModel.ASPECT_CHECKED_OUT)
+				|| projectData.getAspects().contains(ContentModel.ASPECT_WORKING_COPY)
+				|| projectData.getAspects().contains(BeCPGModel.ASPECT_COMPOSITE_VERSION)
+				|| ProjectState.Cancelled.equals(projectData.getProjectState()) || ProjectState.OnHold.equals(projectData.getProjectState());
+	}
+
+	
 
 	public static TaskListDataItem getTask(ProjectData projectData, NodeRef taskListNodeRef) {
 
