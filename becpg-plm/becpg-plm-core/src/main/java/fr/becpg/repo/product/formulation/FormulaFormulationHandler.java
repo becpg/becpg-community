@@ -180,7 +180,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 
 			for (DynamicCharactListItem dynamicCharactListItem : view.getDynamicCharactList()) {
 				if (execOrder.equals(dynamicCharactListItem.getExecOrder()) || (  DynamicCharactExecOrder.Defer.equals(dynamicCharactListItem.getExecOrder()) 
-						&& ! DynamicCharactExecOrder.Pre.equals(execOrder) && !ProductService.FAST_FORMULATION_CHAINID.equals(productData.getFormulationChainId()) )) {
+						&& !DynamicCharactExecOrder.Pre.equals(execOrder) && !ProductService.FAST_FORMULATION_CHAINID.equals(productData.getFormulationChainId()) )) {
 					try {
 						if ((dynamicCharactListItem.getFormula() != null) && !dynamicCharactListItem.getFormula().isEmpty()) {
 							if ((dynamicCharactListItem.getColumnName() != null) && !dynamicCharactListItem.getColumnName().isEmpty()) {
