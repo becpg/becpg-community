@@ -175,7 +175,7 @@
 					<property name="namespaceService" ref="namespaceService"/>
 					<property name="formulaService" ref="formulaService"/>
 					<property name="nodeService" ref="nodeService" />
-					<property name="execOrder" value="Defer"/>
+					<property name="execOrder" value="Post"/>
 				</bean>
 				<ref bean="productSpecificationsFormulationHandler" />
 				<bean class="fr.becpg.repo.product.formulation.CompletionReqCtrlCalculatingFormulationHandler">
