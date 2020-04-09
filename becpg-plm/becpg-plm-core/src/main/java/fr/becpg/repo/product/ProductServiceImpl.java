@@ -105,9 +105,7 @@ public class ProductServiceImpl implements ProductService, InitializingBean, For
 						entityActivityService.postEntityActivity(productNodeRef, ActivityType.Formulation, ActivityEvent.Update, null);
 					} else {
 						formulationService.formulate(productNodeRef, FAST_FORMULATION_CHAINID);
-						
 					}
-
 					return true;
 				});
 
@@ -183,7 +181,7 @@ public class ProductServiceImpl implements ProductService, InitializingBean, For
 
 	@Override
 	public void runFormulation(NodeRef entityNodeRef) throws FormulateException {
-		formulate(entityNodeRef, true);
+		formulate(entityNodeRef, false);
 	}
 
 }
