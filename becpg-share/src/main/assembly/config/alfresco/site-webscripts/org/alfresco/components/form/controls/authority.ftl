@@ -38,10 +38,12 @@
             <input type="hidden" id="${fieldHtmlId}" name="-" value="${field.value?html}" />
             <input type="hidden" id="${controlId}-added" name="${field.name}_added" />
             <input type="hidden" id="${controlId}-removed" name="${field.name}_removed" />
-            <div id="${controlId}-itemGroupActions" class="show-picker"></div>
-
-            <@renderPickerHTML controlId />
+            <div id="${controlId}-itemGroupActions" class="show-picker" style="display:inline-block;"></div>
+            <@formLib.renderFieldHelp field=field />
          </#if>
+         
+         <@renderPickerHTML controlId />
+         
       </div>
    </#if>
 </div>
