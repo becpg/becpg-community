@@ -46,6 +46,7 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.helper.JsonFormulaHelper;
+import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.AbstractProductDataView;
 import fr.becpg.repo.product.data.CompoListView;
 import fr.becpg.repo.product.data.FinishedProductData;
@@ -178,8 +179,8 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 			}
 
 			for (DynamicCharactListItem dynamicCharactListItem : view.getDynamicCharactList()) {
-				if (execOrder.equals(dynamicCharactListItem.getExecOrder()) || (  DynamicCharactExecOrder.Defer.equals(execOrder) 
-						&& DynamicCharactExecOrder.Post.equals(dynamicCharactListItem.getExecOrder()) )) {
+				if (execOrder.equals(dynamicCharactListItem.getExecOrder()) || (  DynamicCharactExecOrder.Defer.equals(dynamicCharactListItem.getExecOrder()) 
+						&& !DynamicCharactExecOrder.Pre.equals(execOrder) && !ProductService.FAST_FORMULATION_CHAINID.equals(productData.getFormulationChainId()) )) {
 					try {
 						if ((dynamicCharactListItem.getFormula() != null) && !dynamicCharactListItem.getFormula().isEmpty()) {
 							if ((dynamicCharactListItem.getColumnName() != null) && !dynamicCharactListItem.getColumnName().isEmpty()) {

@@ -275,7 +275,7 @@ public class EntityListDAOImpl implements EntityListDAO, NodeServicePolicies.Bef
 			queryBuilder.ofType(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 		}
 
-		return queryBuilder.inDB().singleValue()!=null;
+		return queryBuilder.inDB().singleValue() == null;
 
 	}
 

@@ -123,6 +123,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private Date modifiedDate;
 	private Integer reformulateCount;
 	private Integer currentReformulateCount;
+	private String formulationChainId;
 	private IngTypeItem ingType;
 	private Boolean isUpToDate = false;
 
@@ -141,6 +142,24 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private Map<String, MeatContentData> meatContentData = new HashMap<>();
 	private String meatType;
 	
+	/*
+	 * Compliance 
+	 */
+
+	private List<String> regulatoryCountries = new ArrayList<>();
+	private List<String> regulatoryUsages = new ArrayList<>();
+	private Date regulatoryFormulatedDate;
+	
+	/* 
+	 * JSON Data { 
+	 *   decernis: "checksum" 
+	 * }
+	 * 
+	 */
+	private String requirementChecksum;
+	
+	
+
 	/*
 	 * DataList
 	 */
@@ -959,6 +978,42 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	public void setReportLocales(List<String> reportLocales) {
 		this.reportLocales = reportLocales;
 	}
+	
+	public List<String> getRegulatoryCountries() {
+		return regulatoryCountries;
+	}
+
+	public void setRegulatoryCountries(List<String> regulatoryCountries) {
+		this.regulatoryCountries = regulatoryCountries;
+	}
+
+	public List<String> getRegulatoryUsages() {
+		return regulatoryUsages;
+	}
+
+	public void setRegulatoryUsages(List<String> regulatoryUsages) {
+		this.regulatoryUsages = regulatoryUsages;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "bcpg:regulatoryFormulatedDate")
+	public Date getRegulatoryFormulatedDate() {
+		return regulatoryFormulatedDate;
+	}
+
+	public void setRegulatoryFormulatedDate(Date regulatoryFormulatedDate) {
+		this.regulatoryFormulatedDate = regulatoryFormulatedDate;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "bcpg:requirementChecksum")
+	public String getRequirementChecksum() {
+		return requirementChecksum;
+	}
+
+	public void setRequirementChecksum(String requirementChecksum) {
+		this.requirementChecksum = requirementChecksum;
+	}
 
 	private <T> List<T> filterList(List<T> list, List<DataListFilter<ProductData, T>> filters) {
 		if ((filters != null) && !filters.isEmpty()) {
@@ -1135,6 +1190,15 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	@Override
 	public void setCurrentReformulateCount(Integer currentReformulateCount) {
 		this.currentReformulateCount = currentReformulateCount;
+	}
+
+	
+	public String getFormulationChainId() {
+		return formulationChainId;
+	}
+
+	public void setFormulationChainId(String formulationChainId) {
+		this.formulationChainId = formulationChainId;
 	}
 
 	/**

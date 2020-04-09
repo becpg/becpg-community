@@ -186,8 +186,10 @@ public class FormulationHelper {
 						&& (formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes() != null)) {
 					productQtyToTransform = productQtyToTransform / formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes();
 				} else {
-					formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, MLTextHelper.getI18NMessage(MISSING_NUMBER_OF_PRODUCT_PER_BOX), null,
-							new ArrayList<NodeRef>(), RequirementDataType.Packaging));
+					formulatedProduct.getReqCtrlList()
+							.add(new ReqCtrlListDataItem(null, RequirementType.Forbidden,
+									MLTextHelper.getI18NMessage(MISSING_NUMBER_OF_PRODUCT_PER_BOX), null, new ArrayList<NodeRef>(),
+									RequirementDataType.Packaging));
 				}
 			}
 
@@ -409,7 +411,7 @@ public class FormulationHelper {
 
 		if ((subProduct != null) && (compoListUnit != null) && (qty != null)) {
 			BigDecimal tare = FormulationHelper.getTareInKg(subProduct);
-			if (tare != null) {
+			if ((tare != null) && (tare.doubleValue() != 0d)) {
 				Double productQty = subProduct.getQty();
 				if (productQty == null) {
 					productQty = 1d;
@@ -427,12 +429,15 @@ public class FormulationHelper {
 
 				}
 
-				if ((qty != null) && !qty.isNaN() && !qty.isInfinite() && (productQty != null) && !productQty.isNaN() && !productQty.isInfinite()
-						&& (productQty != 0d)) {
+				if ((qty != null) && !qty.isNaN() && !qty.isInfinite()) {
 					if (logger.isDebugEnabled()) {
 						logger.debug("Compo tare [" + subProduct.getName() + "]: " + tare + " qty " + qty + " productQty " + productQty);
 					}
-					return tare.multiply(new BigDecimal(qty)).divide(new BigDecimal(productQty), MathContext.DECIMAL64);
+					if ((productQty != null) && !productQty.isNaN() && !productQty.isInfinite() && (productQty != 0d)) {
+						return tare.multiply(new BigDecimal(qty)).divide(new BigDecimal(productQty), MathContext.DECIMAL64);
+					} else {
+						return tare.multiply(new BigDecimal(qty));
+					}
 				} else {
 					logger.error("Qty/ProductQty is NaN or 0 or infinite:" + qty + " " + productQty + " for " + compoList.getProduct());
 				}

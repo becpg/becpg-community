@@ -38,6 +38,8 @@
  * 	
  * updateAssoc(node, assocName, values) param values can be nodeRef, nodeRef array, scriptNode, scriptNode array
  * 
+ * setValue(node, propName, value) Set property value checking if property changed returns if property has changed
+ * 
  * updateMLText(node, propQName, locale, value) Update multilingual value
  * 
  * i18n(key, params?) returns i18n message for current locale
@@ -61,6 +63,8 @@
  * moveAndRename(node,dest) Move node and rename if same name exists in destination
  * 
  * generateEAN13Code(prefix) returns generate EAN13 code with autonum corresponding to prefix
+ * 
+ * setPermissionAsSystem(node, authority, permission) Set permissions as system
  * 
  * allowWrite(node, authority) Set write permissions as system bypassing rights
  * 
@@ -104,7 +108,7 @@ function isEmpty(value){
  * @returns value or empty if null;
  */
 function orEmpty(value, defaultValue) {
-	return value!=null ? value : (defaultValue ! null? defaultValue : "");
+	return value!=null ? value : (defaultValue != null? defaultValue : "");
 }
 
 
@@ -255,15 +259,31 @@ function updateAssoc(node, assocName, values){
  * @param assocName
  * @param propName
  * @param nodePropName
- * @returns void
+ * @returns true if property has changed
  */
 function copyAssocPropValue(node, assocName, propName, nodePropName) {
 	var value = assocPropValue(node, assocName, propName);
-	if(isEmpty(value)){
-	    delete node.properties[nodePropName];
+	return setValue(node,nodePropName, value );
+}
+
+/**
+ * Set property value checking if property changed
+ * @param node
+ * @param propName
+ * @param value
+ * @returns if property has changed
+ */
+function setValue(node, propName, value){
+	if(isEmpty(value) && node.properties[propName]!=null){
+	    delete node.properties[propName];
+	    return true;
 	} else {
-		node.properties[nodePropName] = value;
+		if(node.properties[propName] !== value){
+			node.properties[propName] = value;
+			return true;
+		}
 	}
+	return false;
 }
 
 /**
@@ -286,7 +306,7 @@ function copyAssocAssocValue(node, assocName, assocAssocName, nodeAssocName) {
  * @returns i18n message for current locale
  */
 function i18n(key){
-	return bcpg.getMessage(key)
+	return bcpg.getMessage(key);
 }
 
 
@@ -297,7 +317,7 @@ function i18n(key){
  * @returns i18n message for current locale
  */
 function i18n(key, params){
-	return bcpg.getMessage(key, params)
+	return bcpg.getMessage(key, params);
 }
 
 /**
@@ -309,7 +329,7 @@ function i18n(key, params){
  * @returns void
  */
 function updateMLText(node, propQName, locale, value){
-	bcpg.setMLProperty(ScriptNode sourceNode, String propQName, String locale, String value)
+	bcpg.setMLProperty( sourceNode,  propQName,  locale,  value);
 }
 
 
@@ -322,7 +342,7 @@ function removeForbiddenChar(value) {
 }
 
 function cleanName(value) {
-	return removeForbiddenChar(value));
+	return removeForbiddenChar(value);
 }
 
 /**
@@ -482,6 +502,19 @@ function getDocumentLibraryNodeRef(siteId) {
 
 /**
  * 
+ * Set permissions as system 
+ * Example : bcpg.setPermissionAsSystem(document,"GROUP_EVERYONE", "Consumer");
+ * @param node
+ * @param authority username or group name
+ * @param permission  
+ * @returns void
+ */
+function setPermissionAsSystem(node, authority, permission) {
+	bcpg.setPermissionAsSystem(node, authority, permission);
+}
+
+/**
+ * 
  * Set write permissions as system 
  * Example : bcpg.allowWrite(document,"GROUP_EVERYONE");
  * @param node
@@ -514,10 +547,7 @@ function allowRead(node, authority) {
  * @returns void
  */
 function clearPermissions(node, inherit){
-	node.setInheritsPermissions(inherit);
-	for each(var permission in node.getDirectPermissions()) {
-		node.removePermission(permission.split(';')[2],permission.split(';')[1]);
-	}
+	bcpg.clearPermissions(node, inherit);
 }
 
 /**
@@ -528,18 +558,7 @@ function clearPermissions(node, inherit){
  * @returns void
  */
 function deleteGroupPermission(node, group){
-	var inheritedPermissions = [];
-	for each(var perm in node.getFullPermissions()){
-		if (perm.split(';')[3] == "INHERITED"){
-			inheritedPermissions.push(perm);
-		}
-	}
-	node.setInheritsPermissions(false);
-	for each(var perm in inheritedPermissions){
-		if(perm.split(';')[1] != group){
-			node.setPermission(perm.split(';')[2],perm.split(';')[1]);
-		}
-	}
+	bcpg.deleteGroupPermission(node, group);
 }
 
 
@@ -561,7 +580,7 @@ function copyList( destNode,  sourceNode,  listQname) {
  * @returns true if list exists and non empty
  */
 function listExist( node,  listQname) {
-	return bcpg.listExist( node,  listQname) ;
+	return bcpg.listExist( node,  listQname);
 
 }
 

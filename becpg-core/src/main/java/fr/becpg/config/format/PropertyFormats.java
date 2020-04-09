@@ -37,7 +37,8 @@ public class PropertyFormats {
 
 	private static final String FORMAT_DECIMAL_VALUE = "###,###.####";
 	
-    private final ThreadLocal<SimpleDateFormat> s_localDateFormat = new ThreadLocal<SimpleDateFormat>(){
+    private final ThreadLocal<SimpleDateFormat> localDateFormat = new ThreadLocal<SimpleDateFormat>(){
+    	@Override
     	protected SimpleDateFormat initialValue() {
     		if(useDefaultLocale){
     			return new SimpleDateFormat(dateFormat,Locale.getDefault());
@@ -48,7 +49,8 @@ public class PropertyFormats {
 
 	};
     
-    private final ThreadLocal<SimpleDateFormat> s_localDateTimeFormat = new ThreadLocal<SimpleDateFormat>(){
+    private final ThreadLocal<SimpleDateFormat> localDateTimeFormat = new ThreadLocal<SimpleDateFormat>(){
+    	@Override
     	protected SimpleDateFormat initialValue() {
     		if(useDefaultLocale){
     			return new SimpleDateFormat(datetimeFormat,Locale.getDefault());
@@ -59,7 +61,8 @@ public class PropertyFormats {
 
 	};
     
-    private final ThreadLocal<DecimalFormat> s_localDecimalFormat = new ThreadLocal<DecimalFormat>(){
+    private final ThreadLocal<DecimalFormat> localDecimalFormat = new ThreadLocal<DecimalFormat>(){
+    	@Override
     	protected DecimalFormat initialValue() {
     		if(useDefaultLocale){
     			return new DecimalFormat(decimalFormat);
@@ -84,23 +87,23 @@ public class PropertyFormats {
 	}
 
 	public void setUseDefaultLocale(boolean useDefaultLocale) {
-		s_localDateFormat.remove();
-		s_localDateTimeFormat.remove();
+		localDateFormat.remove();
+		localDateTimeFormat.remove();
 		this.useDefaultLocale = useDefaultLocale;
 	}
 
 	public void setDateFormat(String dateFormat) {
-		s_localDateFormat.remove();
+		localDateFormat.remove();
 		this.dateFormat = dateFormat;
 	}
 
 	public void setDatetimeFormat(String datetimeFormat) {
-		s_localDateTimeFormat.remove();
+		localDateTimeFormat.remove();
 		this.datetimeFormat = datetimeFormat;
 	}
 
 	public void setDecimalFormat(String decimalFormat) {
-		s_localDecimalFormat.remove();
+		localDecimalFormat.remove();
 		this.decimalFormat = decimalFormat;
 	}
 
@@ -118,7 +121,7 @@ public class PropertyFormats {
 	}
 	
 	public String formatDate(Object o) {
-		return s_localDateFormat.get().format(o);
+		return localDateFormat.get().format(o);
 	}
 
 	public String formatDecimal(Object o) {
@@ -127,12 +130,12 @@ public class PropertyFormats {
 		if ((maxDecimalPrecision != null) && (o != null) && (o instanceof Double)) {
 			Double qty = (Double) o;
 
-			int previousMaxDigit = s_localDecimalFormat.get().getMaximumFractionDigits();
-			RoundingMode previousRoundingMode = s_localDecimalFormat.get().getRoundingMode();
+			int previousMaxDigit = localDecimalFormat.get().getMaximumFractionDigits();
+			RoundingMode previousRoundingMode = localDecimalFormat.get().getRoundingMode();
 			try {
 			
 				if ((qty != null) && (qty > -1) && (qty != 0d)) {
-					int maxNum = s_localDecimalFormat.get().getMaximumFractionDigits();
+					int maxNum = localDecimalFormat.get().getMaximumFractionDigits();
 					
 					while (((Math.pow(10, maxNum ) * qty) < 1000)) {
 						if (maxNum >= maxDecimalPrecision) {
@@ -141,43 +144,43 @@ public class PropertyFormats {
 						maxNum++;
 					}
 					if(maxNum > previousMaxDigit) {	
-						s_localDecimalFormat.get().setMaximumFractionDigits(maxNum);
+						localDecimalFormat.get().setMaximumFractionDigits(maxNum);
 						if(maxNum >= maxDecimalPrecision) {
 							if((Math.pow(10, maxNum ) * qty)<1) {
-								s_localDecimalFormat.get().setMinimumFractionDigits(maxNum);
-								s_localDecimalFormat.get().setRoundingMode(RoundingMode.FLOOR);
+								localDecimalFormat.get().setMinimumFractionDigits(maxNum);
+								localDecimalFormat.get().setRoundingMode(RoundingMode.FLOOR);
 							}
 						} else {
-							s_localDecimalFormat.get().setRoundingMode(RoundingMode.HALF_UP);
+							localDecimalFormat.get().setRoundingMode(RoundingMode.HALF_UP);
 						}
 					}
 				}
-				ret = s_localDecimalFormat.get().format(o);
+				ret = localDecimalFormat.get().format(o);
 			} finally {
-				s_localDecimalFormat.get().setMaximumFractionDigits(previousMaxDigit);
-				s_localDecimalFormat.get().setRoundingMode(previousRoundingMode);
+				localDecimalFormat.get().setMaximumFractionDigits(previousMaxDigit);
+				localDecimalFormat.get().setRoundingMode(previousRoundingMode);
 			}
 		} else {
-			ret = s_localDecimalFormat.get().format(o);
+			ret = localDecimalFormat.get().format(o);
 		}
 
 		return ret;
 	}
 
 	public String formatDateTime(Object o) {
-		return s_localDateTimeFormat.get().format(o);
+		return localDateTimeFormat.get().format(o);
 	}
 
 	public Date parseDate(String dateString) throws ParseException {
-		return s_localDateFormat.get().parse(dateString);
+		return localDateFormat.get().parse(dateString);
 	}
 
 	public Number parseDecimal(String decimalString) throws ParseException {
-		return s_localDecimalFormat.get().parse(decimalString);
+		return localDecimalFormat.get().parse(decimalString);
 	}
 
 	public DecimalFormat getDecimalFormat() {
-		return s_localDecimalFormat.get();
+		return localDecimalFormat.get();
 	}
 
 
