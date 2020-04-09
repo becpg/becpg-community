@@ -38,7 +38,22 @@ public class PhysicoChemListDataItem extends AbstractManualDataItem implements S
 	private Boolean isFormulated;
 	
 	private String errorLog;
+
+
+	private String type;
 	
+
+	@AlfProp
+	@AlfQname(qname = "bcpg:pclType")
+	public String getType() {
+		return type;
+	}
+
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
 	
 	@AlfProp
 	@AlfQname(qname="bcpg:pclValue")
@@ -47,6 +62,8 @@ public class PhysicoChemListDataItem extends AbstractManualDataItem implements S
 	}
 	
 	
+
+
 	public void setValue(Double value) {
 		this.value = value;
 	}

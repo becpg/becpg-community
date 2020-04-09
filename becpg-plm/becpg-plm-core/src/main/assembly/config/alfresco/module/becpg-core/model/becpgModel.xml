@@ -484,6 +484,24 @@
 				<value>true</value>
 			</parameter>
 		</constraint>
+		
+		<constraint name="bcpg:physicoChemType" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/Lists/bcpg:entityLists/PhysicoTypes</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>bcpg:lvValue</value>
+			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
+		</constraint>
+		
 
 		<constraint name="bcpg:microbioUnit" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
@@ -1201,6 +1219,18 @@
 					</index>
 					<constraints>
 						<constraint ref="bcpg:physicoChemUnit" />
+					</constraints>
+				</property>
+				<property name="bcpg:physicoChemType">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>false</tokenised>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:physicoChemType" />
 					</constraints>
 				</property>
 				<property name="bcpg:physicoChemFormulated">
@@ -2133,6 +2163,12 @@
 					<index enabled="false" />
 					<constraints>
 						<constraint ref="bcpg:physicoChemUnit" />
+					</constraints>
+				</property>
+				<property name="bcpg:pclType">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="bcpg:physicoChemType" />
 					</constraints>
 				</property>
 				<property name="bcpg:pclMini">
