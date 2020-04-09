@@ -85,7 +85,7 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 		}
 		return false;
 	}
-
+	
 	@Override
 	public List<ReqCtrlListDataItem> checkRequirements(ProductData formulatedProduct, List<ProductSpecificationData> specifications) {
 
@@ -159,6 +159,7 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 					logger.debug(" - mark dirty");
 					formulatedProduct.setRequirementChecksum(updateChecksum(formulatedProduct.getRequirementChecksum(), null));
 				}
+				shouldLaunchDecernis = false;
 				
 			}
 
