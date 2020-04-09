@@ -80,7 +80,7 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 
 		calculateStartDate(projectData, tasks, isTpl);
 
-		boolean isOnHold = isOnHold(projectData);
+		boolean isOnHold = ProjectHelper.isOnHold(projectData);
 
 		if (logger.isDebugEnabled()) {
 
@@ -374,13 +374,7 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 
 	}
 
-	private boolean isOnHold(ProjectData projectData) {
-		return projectData.getAspects().contains(ContentModel.ASPECT_CHECKED_OUT)
-				|| projectData.getAspects().contains(ContentModel.ASPECT_WORKING_COPY)
-				|| projectData.getAspects().contains(BeCPGModel.ASPECT_COMPOSITE_VERSION)
-				|| ProjectState.Cancelled.equals(projectData.getProjectState()) || ProjectState.OnHold.equals(projectData.getProjectState());
-	}
-
+	
 	private boolean visit(ProjectData projectData, Set<TaskWrapper> allTasks, boolean calculateState) {
 		// tasks whose critical cost has been calculated
 		List<TaskWrapper> completed = new LinkedList<>();

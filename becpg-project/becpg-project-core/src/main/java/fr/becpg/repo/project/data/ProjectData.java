@@ -87,6 +87,7 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	private Date formulatedDate;
 	private Integer reformulateCount;
 	private Integer currentReformulateCount;
+	private String formulationChainId;
 	
 	private List<TaskListDataItem> taskList;
 	private List<DeliverableListDataItem> deliverableList;
@@ -193,6 +194,15 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 		this.currentReformulateCount = currentReformulateCount;
 	}
 	
+	
+	public String getFormulationChainId() {
+		return formulationChainId;
+	}
+
+	public void setFormulationChainId(String formulationChainId) {
+		this.formulationChainId = formulationChainId;
+	}
+
 	@AlfProp
 	@AlfQname(qname = "pjt:projectDueDate")
 	public Date getDueDate() {

@@ -42,6 +42,7 @@ public interface AlfrescoRepository<T extends RepositoryEntity>  extends CrudRep
 	NodeRef getOrCreateDataListContainer(T entity);
 	void saveDataList(NodeRef listContainerNodeRef, QName dataListContainerType, QName dataListType, List<? extends RepositoryEntity> dataList);
 	boolean isRegisteredType(QName type);
+	boolean isDirty(T entity);
 	
 
 }
