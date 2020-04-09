@@ -23,6 +23,7 @@ import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.datatype.DefaultTypeConverter;
 import org.alfresco.service.cmr.repository.datatype.TypeConversionException;
+import org.alfresco.service.namespace.InvalidQNameException;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -249,7 +250,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 									logger.debug("allowedValues.size() : " + allowedValues.size());
 									logger.debug("allowed values: " + allowedValues.toString());
 								}
-							} catch (InvalidStoreRefException e) {
+							} catch (InvalidStoreRefException | InvalidQNameException e) {
 								logger.warn("Please reload constraint once tenant created: " + e.getMessage());
 							} finally {
 								MLPropertyInterceptor.setMLAware(wasMLAware);
