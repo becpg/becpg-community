@@ -407,7 +407,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		return null;
 	}
 	
-	public boolean setPermissionAsSystem(ScriptNode sourceNode, String authority, String permission) {
+	public boolean setPermissionAsSystem(ScriptNode sourceNode, String permission, String authority) {
 		return AuthenticationUtil.runAsSystem(() -> {
 			permissionService.setPermission(sourceNode.getNodeRef(), authority, permission, true);
 			return true;
@@ -438,10 +438,10 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	
 	public boolean deleteGroupPermission(ScriptNode sourceNode, String authority) {
 		return AuthenticationUtil.runAsSystem(() -> {
-			Set<AccessPermission> permissions = permissionService.getPermissions(sourceNode.getNodeRef());
-			permissionService.setInheritParentPermissions(sourceNode.getNodeRef(), false);
+			Set<AccessPermission> permissions = permissionService.getAllSetPermissions(sourceNode.getNodeRef());
+			clearPermissions(sourceNode, false);
 			for (AccessPermission permission : permissions) {
-				if (permission.isInherited() && !permission.getAuthority().equals(authority)) {
+				if (!permission.getAuthority().equals(authority)) {
 					permissionService.setPermission(sourceNode.getNodeRef(), permission.getAuthority(), permission.getPermission(), true);
 				}
 			}
