@@ -89,7 +89,9 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 	@Override
 	public List<ReqCtrlListDataItem> checkRequirements(ProductData formulatedProduct, List<ProductSpecificationData> specifications) {
 
-		if (!formulatedProduct.getRegulatoryCountries().isEmpty() && !formulatedProduct.getRegulatoryUsages().isEmpty()
+		if (formulatedProduct.getRegulatoryCountries() != null && !formulatedProduct.getRegulatoryCountries().isEmpty() 
+				&& formulatedProduct.getRegulatoryUsages()!=null
+				&& !formulatedProduct.getRegulatoryUsages().isEmpty()
 				&& (formulatedProduct.getIngList() != null) && !formulatedProduct.getIngList().isEmpty()) {
 
 			boolean shouldLaunchDecernis = false;

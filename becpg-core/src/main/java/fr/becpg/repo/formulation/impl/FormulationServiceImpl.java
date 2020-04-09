@@ -121,8 +121,7 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 
 			entity = formulate(entity, chainId);
 
-			if (logger.isDebugEnabled()) {
-				assert watch != null;
+			if (logger.isDebugEnabled() && watch!=null) {
 				watch.stop();
 				logger.debug("Formulate : " + this.getClass().getName() + " takes " + watch.getTotalTimeSeconds() + " seconds");
 				watch = new StopWatch();
@@ -131,8 +130,7 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 
 			alfrescoRepository.save(entity);
 
-			if (logger.isDebugEnabled()) {
-				assert watch != null;
+			if (logger.isDebugEnabled() && watch!=null) {
 				watch.stop();
 				logger.debug("Save : " + this.getClass().getName() + " takes " + watch.getTotalTimeSeconds() + " seconds");
 			}
