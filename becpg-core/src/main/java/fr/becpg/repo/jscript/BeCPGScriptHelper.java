@@ -430,7 +430,6 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	
 	public boolean clearPermissions(ScriptNode sourceNode, boolean inherit) {
 		return AuthenticationUtil.runAsSystem(() -> {
-			logger.info("clearPermissions");
 			permissionService.deletePermissions(sourceNode.getNodeRef());
 			permissionService.setInheritParentPermissions(sourceNode.getNodeRef(), inherit);
 			return true;
