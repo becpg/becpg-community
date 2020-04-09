@@ -64,7 +64,7 @@
  * 
  * generateEAN13Code(prefix) returns generate EAN13 code with autonum corresponding to prefix
  * 
- * setPermissionAsSystem(node, authority, permission) Set permissions as system
+ * setPermissionAsSystem(node, permission, authority) Set permissions as system
  * 
  * allowWrite(node, authority) Set write permissions as system bypassing rights
  * 
@@ -503,14 +503,14 @@ function getDocumentLibraryNodeRef(siteId) {
 /**
  * 
  * Set permissions as system 
- * Example : bcpg.setPermissionAsSystem(document,"GROUP_EVERYONE", "Consumer");
+ * Example : bcpg.setPermissionAsSystem(document, "Consumer","GROUP_EVERYONE");
  * @param node
  * @param authority username or group name
  * @param permission  
  * @returns void
  */
-function setPermissionAsSystem(node, authority, permission) {
-	bcpg.setPermissionAsSystem(node, authority, permission);
+function setPermissionAsSystem(node, permission, authority) {
+	bcpg.setPermissionAsSystem(node, permission, authority);
 }
 
 /**
