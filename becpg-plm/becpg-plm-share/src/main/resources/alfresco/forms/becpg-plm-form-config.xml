@@ -6312,6 +6312,7 @@
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:physicoChemUnit" />
+					<show id="bcpg:physicoChemType" />
 					<show id="bcpg:physicoChemFormulated" />
 					<show id="bcpg:physicoChemFormulatedFromVol" />
 					<show id="bcpg:physicoChemFormula" />
@@ -6324,6 +6325,7 @@
 						</control>
 					</field>
 					<field id="bcpg:physicoChemUnit" />
+					<field id="bcpg:physicoChemType" />
 					<field id="bcpg:physicoChemFormula">
 						<control template="/org/alfresco/components/form/controls/spel-editor.ftl">
 							<control-param name="rows">10</control-param>
@@ -6344,6 +6346,7 @@
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:physicoChemUnit" />
+					<show id="bcpg:physicoChemType" />
 					<show id="bcpg:physicoChemFormulated" />
 					<show id="bcpg:physicoChemFormulatedFromVol" />
 					<show id="bcpg:physicoChemFormula" />
@@ -6359,6 +6362,7 @@
 					</field>
 					<field id="bcpg:legalName" />
 					<field id="bcpg:physicoChemUnit" />
+					<field id="bcpg:physicoChemType" />
 					<field id="bcpg:physicoChemFormula">
 						<control template="/org/alfresco/components/form/controls/spel-editor.ftl">
 							<control-param name="rows">10</control-param>
@@ -6372,12 +6376,19 @@
 				<field-visibility>
 					<show id="bcpg:charactName" />
 					<show id="bcpg:physicoChemUnit" />
+					<show id="bcpg:physicoChemType" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:charactName">
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:physicoChemUnit">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="insertBlank">true</control-param>
+						</control>	
+					</field>
+					<field id="bcpg:physicoChemType">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="isSearch">true</control-param>
 							<control-param name="insertBlank">true</control-param>
@@ -6391,6 +6402,7 @@
 					<show id="bcpg:charactName" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:physicoChemUnit" />
+					<show id="bcpg:physicoChemType" />
 					<show id="bcpg:physicoChemFormulated" />
 					<show id="bcpg:physicoChemFormulatedFromVol" />
 				</field-visibility>
@@ -9283,6 +9295,7 @@
 					<show id="bcpg:pclPhysicoChem" />
 					<show id="bcpg:pclValue" />
 					<show id="bcpg:pclUnit" />
+					<show id="bcpg:pclType" />
 					<show id="bcpg:pclMini" />
 					<show id="bcpg:pclMaxi" />
 					<show id="bcpg:pclTextCriteria" />
@@ -9294,6 +9307,7 @@
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden"></field>
 					<field id="bcpg:pclUnit" read-only="true"></field>
+				    <field id="bcpg:pclType" read-only="true"></field>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 					<field id="bcpg:physicoChemIsFormulated" label="hidden"/>
 					<field id="bcpg:physicoChemFormulaErrorLog" label="hidden"/>
@@ -9324,6 +9338,7 @@
 					<show id="bcpg:pclPhysicoChem" />
 					<show id="bcpg:pclValue" />
 					<show id="bcpg:pclUnit" />
+					<show id="bcpg:pclType" />
 					<show id="bcpg:pclMini" />
 					<show id="bcpg:pclMaxi" />
 					<show id="bcpg:pclTextCriteria" />
@@ -9334,6 +9349,7 @@
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden"></field>
 					<field id="bcpg:pclUnit" read-only="true"></field>
+					<field id="bcpg:pclType" read-only="true"></field>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 					<field id="bcpg:physicoChemIsFormulated" label="hidden"/>
 					<field id="bcpg:physicoChemFormulaErrorLog" label="hidden"/>
