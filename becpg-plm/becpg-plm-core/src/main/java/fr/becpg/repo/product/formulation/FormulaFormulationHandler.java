@@ -165,6 +165,9 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 				}
 			}
 
+		} else {
+			productData.setNutrientScore(null);
+			productData.setNutrientClass(null);
 		}
 
 	}
