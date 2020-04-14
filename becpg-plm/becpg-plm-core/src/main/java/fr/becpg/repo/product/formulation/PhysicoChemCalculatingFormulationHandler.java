@@ -54,11 +54,13 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 			formulatedProduct.getPhysicoChemList().forEach(n -> {
 				
 				String unit = (String) nodeService.getProperty(n.getPhysicoChem(), PLMModel.PROP_PHYSICO_CHEM_UNIT);
+				
 
 				n.setUnit(unit);
 				n.setFormulatedValue(FormulationHelper.flatPercValue(n.getFormulatedValue(),unit));
 				n.setMaxi(FormulationHelper.flatPercValue(n.getMaxi(),unit));
 				n.setMini(FormulationHelper.flatPercValue(n.getMini(),unit));
+				n.setType((String) nodeService.getProperty(n.getPhysicoChem(), PLMModel.PROP_PHYSICO_CHEM_TYPE));
 				
 			});
 
