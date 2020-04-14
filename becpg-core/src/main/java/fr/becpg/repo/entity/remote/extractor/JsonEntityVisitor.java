@@ -191,7 +191,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 	
 			JSONObject attributes  = new JSONObject();
 			if(JsonVisitNodeType.ENTITY.equals(type) || JsonVisitNodeType.DATALIST.equals(type) 
-					|| (JsonVisitNodeType.ENTITY_LIST.equals(type) && filteredProperties!=null && !filteredProperties.isEmpty())
+					|| ((JsonVisitNodeType.ENTITY_LIST.equals(type) || JsonVisitNodeType.CONTENT.equals(type)) && filteredProperties!=null && !filteredProperties.isEmpty())
 					|| (nodeType !=null && filteredAssocProperties.containsKey(nodeType))) {
 				// Assoc first
 				visitAssocs(nodeRef, attributes);	

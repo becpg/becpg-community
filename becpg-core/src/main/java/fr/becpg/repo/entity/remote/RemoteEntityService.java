@@ -105,14 +105,6 @@ public interface RemoteEntityService {
 	NodeRef internalCreateOrUpdateEntity(NodeRef entityNodeRef, NodeRef destNodeRef, InputStream in,
 			RemoteEntityFormat format, EntityProviderCallBack callback, Map<NodeRef, NodeRef> cache) throws BeCPGException;
 
-	/**
-	 * List entities at format
-	 * 
-	 * @param entities
-	 * @param out
-	 * @param format
-	 */
-	void listEntities(List<NodeRef> entities, OutputStream result, RemoteEntityFormat format) throws BeCPGException;
 
 	/**
 	 * List entities at format with specific assoc/props
@@ -131,7 +123,7 @@ public interface RemoteEntityService {
 	 * @param outputStream
 	 * @param format
 	 */
-	void getEntityData(NodeRef entityNodeRef, OutputStream outputStream, RemoteEntityFormat format) throws BeCPGException;
+	void getEntityData(NodeRef entityNodeRef, OutputStream outputStream, RemoteEntityFormat format, List<String> fields) throws BeCPGException;
 	
 	/**
 	 * Return entity data with specific assoc/prop and lists
