@@ -241,7 +241,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 			}, false, false);
 
 		} finally {
-			if (logger.isDebugEnabled() && watch!=null) {
+			if (logger.isDebugEnabled() && (watch != null)) {
 				watch.stop();
 				logger.debug("createOrUpdateEntity run in  " + watch.getTotalTimeSeconds() + " seconds ");
 
@@ -289,7 +289,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 			if ((fields != null) && !fields.isEmpty()) {
 				xmlEntityVisitor.setFilteredFields(fields);
 			}
-			
+
 			try {
 				xmlEntityVisitor.visitData(entityNodeRef, result);
 			} catch (XMLStreamException e) {

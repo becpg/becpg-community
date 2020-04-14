@@ -20,6 +20,7 @@ package fr.becpg.repo.web.scripts.remote;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.SocketException;
+import java.nio.file.AccessDeniedException;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.springframework.extensions.webscripts.Status;
@@ -54,6 +55,8 @@ public class GetEntityDataWebScript extends AbstractEntityWebScript {
 		} catch (BeCPGException e) {
 			logger.error("Cannot export entity data", e);
 			throw new WebScriptException(e.getMessage());
+		} catch (AccessDeniedException e) {
+			throw new WebScriptException(Status.STATUS_UNAUTHORIZED, "You have no right to see this node");
 		} catch (SocketException e1) {
 
 			// the client cut the connection - our mission was accomplished

@@ -68,7 +68,7 @@ public class RemoteEntityServiceIT extends PLMBaseTestCase {
 				List<NodeRef> entities = new ArrayList<>();
 				entities.add(sfNodeRef);
 
-				remoteEntityService.listEntities(entities, new FileOutputStream(tempFile2), RemoteEntityFormat.xml);
+				remoteEntityService.listEntities(entities, new FileOutputStream(tempFile2), RemoteEntityFormat.xml,null);
 
 				remoteEntityService.getEntity(sfNodeRef, new FileOutputStream(tempFile), RemoteEntityFormat.xml);
 
@@ -78,9 +78,9 @@ public class RemoteEntityServiceIT extends PLMBaseTestCase {
 
 				remoteEntityService.getEntity(tmpNodeRef, new FileOutputStream(tempFile2), RemoteEntityFormat.xml);
 
-				remoteEntityService.getEntityData(tmpNodeRef, new FileOutputStream(tempFile2), RemoteEntityFormat.xml);
+				remoteEntityService.getEntityData(tmpNodeRef, new FileOutputStream(tempFile2), RemoteEntityFormat.xml,null);
 
-				remoteEntityService.getEntityData(tmpNodeRef, new FileOutputStream(tempFile), RemoteEntityFormat.xml);
+				remoteEntityService.getEntityData(tmpNodeRef, new FileOutputStream(tempFile), RemoteEntityFormat.xml,null);
 
 				remoteEntityService.addOrUpdateEntityData(tmpNodeRef, new FileInputStream(tempFile), RemoteEntityFormat.xml);
 
