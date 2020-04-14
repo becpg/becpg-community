@@ -46,7 +46,7 @@ public class GetEntityDataWebScript extends AbstractEntityWebScript {
 
 		try (OutputStream out = resp.getOutputStream()){
 
-			remoteEntityService.getEntityData(entityNodeRef, out, getFormat(req));
+			remoteEntityService.getEntityData(entityNodeRef, out, getFormat(req), extractFields(req));
 
 			resp.setContentType(getContentType(req));
 			resp.setContentEncoding("UTF-8");
