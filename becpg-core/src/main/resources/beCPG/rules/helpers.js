@@ -264,7 +264,7 @@ function updateAssoc(node, assocName, values){
  */
 function removeAssocs(node, assocName){
 	if(!isEmpty(node)){
-		bcpg["updateAssoc(org.alfresco.repo.jscript.ScriptNode, java.lang.String,org.alfresco.service.cmr.repository.NodeRef[])"].(node, assocName, Array());
+		bcpg["updateAssoc(org.alfresco.repo.jscript.ScriptNode,java.lang.String,org.alfresco.service.cmr.repository.NodeRef[])"](node, assocName, Array());
 	}
 }
 
