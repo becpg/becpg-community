@@ -939,3 +939,9 @@ span.favourite span.ctn-fav {
 	border-color: #cbcbcb;
 }
 
+span.show-translation {
+	background: url("../../components/images/translate-16.png") no-repeat;
+	padding-right: 16px;
+	
+}
+
