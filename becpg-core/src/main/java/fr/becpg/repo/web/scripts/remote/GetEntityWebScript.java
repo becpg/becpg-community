@@ -52,7 +52,6 @@ public class GetEntityWebScript extends AbstractEntityWebScript {
 			resp.setContentType(getContentType(req));
 			resp.setContentEncoding("UTF-8");
 			resp.setStatus(Status.STATUS_OK);
-			
 		} catch (BeCPGException e) {
 			logger.error("Cannot export entity", e);
 			throw new WebScriptException(e.getMessage());
