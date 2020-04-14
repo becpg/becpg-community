@@ -44,6 +44,7 @@ public class PlmRepoConsts {
 	
 	public static final String PATH_MICROBIO_UNITS = "MicrobioUnits";
 	public static final String PATH_PHYSICO_UNITS = "PhysicoUnits";
+	public static final String PATH_PHYSICO_TYPES = "PhysicoTypes";
 	
 	public static final String PATH_PM_MATERIALS = "pmMaterials";
 	public static final String PATH_PM_PRINT_TYPES = "pmPrintTypes";

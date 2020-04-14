@@ -207,7 +207,7 @@ function assocAssocValues(node, assocName, assocAssocName){
  * @returns association property value
  */
 function assocPropValue(node, assocName, propName) {
-	return isEmpty(node) ?  "" : orEmpty( bcpg.assocPropValues(node, assocName, propName));
+	return isEmpty(node) ?  "" : orEmpty( bcpg.assocPropValue(node, assocName, propName));
 }
 
 /**
