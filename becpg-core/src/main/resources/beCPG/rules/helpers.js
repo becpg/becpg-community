@@ -248,7 +248,23 @@ function getAssoc(product, assocName, propName) {
  */
 function updateAssoc(node, assocName, values){
 	if(!isEmpty(node)){
-		bcpg.updateAssoc(node, assocName, values);
+		if(values == null){
+			removeAssocs(node, assocName);
+		} else {
+			bcpg.updateAssoc(node, assocName, values);
+		}
+	}
+}
+
+/**
+ * Remove Associations
+ * @param node
+ * @param assocName
+ * @returns void
+ */
+function removeAssocs(node, assocName){
+	if(!isEmpty(node)){
+		bcpg["updateAssoc(org.alfresco.repo.jscript.ScriptNode, java.lang.String,org.alfresco.service.cmr.repository.NodeRef[])"].(node, assocName, Array());
 	}
 }
 
