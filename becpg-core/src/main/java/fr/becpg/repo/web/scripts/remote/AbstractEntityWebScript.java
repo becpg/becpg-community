@@ -18,16 +18,20 @@
 package fr.becpg.repo.web.scripts.remote;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.zip.DataFormatException;
+import java.util.zip.Inflater;
 
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.PermissionService;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.webscripts.AbstractWebScript;
@@ -102,8 +106,8 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 
 	protected List<NodeRef> findEntities(WebScriptRequest req) {
 
-		String path = req.getParameter(PARAM_PATH);
-		String query = req.getParameter(PARAM_QUERY);
+		String path = decodeParam(req.getParameter(PARAM_PATH));
+		String query = decodeParam(req.getParameter(PARAM_QUERY));
 		String maxResultsString = req.getParameter(PARAM_MAX_RESULTS);
 
 		Integer maxResults = null;
@@ -149,7 +153,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 			return refs;
 		}
 
-		if(logger.isDebugEnabled()) {
+		if (logger.isDebugEnabled()) {
 			logger.debug("No entities found for query " + queryBuilder.toString());
 		}
 		return new ArrayList<>();
@@ -234,7 +238,8 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		Set<String> fields = new HashSet<>();
 		String fieldsParams = req.getParameter(PARAM_FIELDS);
 		if ((fieldsParams != null) && (fieldsParams.length() > 0)) {
-			for (String field : fieldsParams.split(",")) {
+
+			for (String field : decodeParam(fieldsParams).split(",")) {
 				fields.add(field);
 				if (field.contains("|")) {
 					fields.add(field.split("\\|")[0]);
@@ -248,7 +253,8 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		List<String> lists = new ArrayList<>();
 		String listsParams = req.getParameter(PARAM_LISTS);
 		if ((listsParams != null) && (listsParams.length() > 0)) {
-			String[] splitted = listsParams.split(",");
+
+			String[] splitted = decodeParam(listsParams).split(",");
 			for (String list : splitted) {
 				String[] listName = list.split(":");
 				if ((listName != null) && (listName.length > 1)) {
@@ -257,6 +263,25 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 			}
 		}
 		return lists;
+	}
+
+	private String decodeParam(String param)   {
+		if ((param != null) && Base64.isBase64(param)) {
+		     try {
+				 Inflater decompresser = new Inflater();
+				 byte[] compressedData = Base64.decodeBase64(param);
+			     decompresser.setInput(compressedData, 0, compressedData.length);
+			     byte[] output = new byte[100000];
+			     
+			     int decompressedDataLength = decompresser.inflate(output);
+			     decompresser.end();
+
+		    	 return (new String(output, 0, decompressedDataLength, "UTF-8")).replaceAll("=", "bcpg:");
+			} catch (DataFormatException | UnsupportedEncodingException e) {
+				logger.error(e,e);
+			}
+		}
+		return param;
 	}
 
 }
