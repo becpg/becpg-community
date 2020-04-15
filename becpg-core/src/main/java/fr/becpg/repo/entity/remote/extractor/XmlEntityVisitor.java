@@ -165,8 +165,13 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 
 		// Write XML prologue
 		xmlw.writeStartDocument();
-		// Visit node
-		visitNode(entityNodeRef, xmlw, false, false, true);
+		if ((this.filteredProperties != null) && !this.filteredProperties.isEmpty()) {
+			entityList = true;
+			visitNode(entityNodeRef, xmlw, true, true, true);
+		} else {
+			// Visit node
+			visitNode(entityNodeRef, xmlw, false, false, true);
+		}
 		// Write document end. This closes all open structures
 		xmlw.writeEndDocument();
 		// Close the writer to flush the output

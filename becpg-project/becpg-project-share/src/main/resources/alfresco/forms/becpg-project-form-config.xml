@@ -701,6 +701,49 @@
 
 	<config condition="pjt:taskList" evaluator="node-type">
 		<forms>
+			<form id="security">
+				<field-visibility>
+					<show id="pjt:tlRealDuration" />
+					<show id="pjt:tlWork" />
+					<show id="pjt:tlLoggedTime" />
+					<show id="pjt:tlCapacity" />
+					<show id="pjt:expense" force="true" />
+					
+					<show id="pjt:tlTaskName" />
+					<show id="pjt:tlTaskDescription" />
+					<show id="pjt:tlTaskLegend" />
+					
+					<show id="pjt:tlState" />
+					
+					<show id="pjt:subProjectRef" force="true" />
+					<show id="pjt:tlPrevTasks" />
+					<show id="bcpg:parentLevel" force="true" />
+					<show id="pjt:tlRefusedTaskRef" />
+					<show id="pjt:tlRefusedTasksToReopen" />
+					
+					<show id="pjt:tlResources" />
+					<show id="pjt:tlObservers" />
+					<show id="pjt:observersEvents" force="true"/>
+					<show id="pjt:tlWorkflowName" />
+					
+					<show id="pjt:tlIsMilestone" />
+					<show id="pjt:tlDuration" />
+					
+					<show id="pjt:completionPercent" />
+					<show id="pjt:tlManualDate" />
+					<show id="pjt:tlStart" />
+					<show id="pjt:tlEnd" />
+					
+					<show id="pjt:tlWork" />
+					<show id="pjt:tlResourceCost" />
+					<show id="pjt:tlBudgetRef" />
+					
+					<show id="pjt:notificationFrequencyValue" force="true"/>
+					<show id="pjt:notificationInitialValue" force="true"/>
+					<show id="pjt:notificationAuthorities" force="true"/>
+					
+				</field-visibility>
+			</form>
 			<form>
 				<edit-form template="tab-edit" />
 				<field-visibility>
@@ -1249,6 +1292,7 @@
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 				</appearance>
 			</form>
+			
 			<form id="sub-datagrid">
 				<field-visibility>
 					<show id="bcpg:parentLevel" />
@@ -1665,6 +1709,17 @@
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
 				</appearance>
+			</form>
+			<form id="security">
+				<field-visibility>
+					<show force="true" id="pjt:ltlTask" />
+					<show force="true" id="pjt:ltlDate" />
+					<show force="true" id="cm:creator" />
+					<show force="true" id="pjt:ltlTime" />
+					<show force="true" id="pjt:ltlComment" />
+					<show force="true" id="pjt:ltlType" />
+					<show force="true" id="pjt:invoice" />
+				</field-visibility>
 			</form>
 		</forms>
 	</config>

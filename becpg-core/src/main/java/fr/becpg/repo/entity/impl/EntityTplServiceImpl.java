@@ -85,9 +85,9 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 public class EntityTplServiceImpl implements EntityTplService {
 
 	private static final String ASYNC_ACTION_URL_PREFIX = "page/entity-data-lists?list=View-properties&nodeRef=";
-	
-	private static final String ENTITY_DATALIST_KEY_PREFIX =   "entity-datalist-";
-	
+
+	private static final String ENTITY_DATALIST_KEY_PREFIX = "entity-datalist-";
+
 	private static final Log logger = LogFactory.getLog(EntityTplServiceImpl.class);
 
 	@Autowired
@@ -271,7 +271,8 @@ public class EntityTplServiceImpl implements EntityTplService {
 			Map<QName, Serializable> properties = new HashMap<>();
 			properties.put(ContentModel.PROP_NAME, name);
 			properties.put(ContentModel.PROP_TITLE, TranslateHelper.getTranslatedKey(ENTITY_DATALIST_KEY_PREFIX + name.toLowerCase() + "-title"));
-			properties.put(ContentModel.PROP_DESCRIPTION, TranslateHelper.getTranslatedKey(ENTITY_DATALIST_KEY_PREFIX + name.toLowerCase() + "-description"));
+			properties.put(ContentModel.PROP_DESCRIPTION,
+					TranslateHelper.getTranslatedKey(ENTITY_DATALIST_KEY_PREFIX + name.toLowerCase() + "-description"));
 			properties.put(DataListModel.PROP_DATALISTITEMTYPE, typeQName.toPrefixString(namespaceService));
 
 			listNodeRef = nodeService.createNode(listContainerNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS,
@@ -458,6 +459,8 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 							try {
 								fileFolderService.copy(folder.getNodeRef(), entityNodeRef, null);
+							} catch (ConcurrencyFailureException e) {
+								throw e;
 							} catch (Exception e) {
 								logger.warn("Unable to synchronize folder " + folder.getName() + " of node " + entityNodeRef + ": " + e.getMessage());
 							}
@@ -466,7 +469,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 				});
 			} catch (ConcurrencyFailureException e) {
-				throw (ConcurrencyFailureException) e;
+				throw e;
 			} catch (Exception e) {
 				runWithSuccess = false;
 				logger.error(e, e);
@@ -489,7 +492,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 		NodeRef sourceListContainerNodeRef = alfrescoRepository.getOrCreateDataListContainer(entityTpl);
 		NodeRef targetListContainerNodeRef = alfrescoRepository.getOrCreateDataListContainer(entity);
 
-		if (sourceListContainerNodeRef != null && targetListContainerNodeRef != null) {
+		if ((sourceListContainerNodeRef != null) && (targetListContainerNodeRef != null)) {
 
 			List<NodeRef> sourceListsNodeRef = entityListDAO.getExistingListsNodeRef(sourceListContainerNodeRef);
 			for (NodeRef sourceListNodeRef : sourceListsNodeRef) {
@@ -561,6 +564,8 @@ public class EntityTplServiceImpl implements EntityTplService {
 					}
 
 				});
+			} catch (ConcurrencyFailureException e) {
+				throw e;
 			} catch (Exception e) {
 				runWithSuccess = false;
 			} finally {
@@ -738,31 +743,57 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 	@Override
 	public void removeDataListOnEntities(NodeRef entityTplNodeRef, String entityListName) {
-		List<NodeRef> entities = getEntitiesToUpdate(entityTplNodeRef);
 
-		doInBatch(entities, 10, entityNodeRef -> {
+		boolean runWithSuccess = true;
+		StopWatch watch = new StopWatch();
+		watch.start();
 
-			NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
-			NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, entityListName);
+		if (lock.tryLock()) {
+			try {
 
-			if (listNodeRef != null) {
-				logger.debug("Deleting list with node: " + listNodeRef + " on entity: " + entityNodeRef + " ("
-						+ nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME) + ")");
-				nodeService.addAspect(listNodeRef, ContentModel.ASPECT_TEMPORARY, null);
-				nodeService.deleteNode(listNodeRef);
+				List<NodeRef> entities = getEntitiesToUpdate(entityTplNodeRef);
+
+				doInBatch(entities, 10, entityNodeRef -> {
+
+					NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
+					NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, entityListName);
+
+					if (listNodeRef != null) {
+						logger.debug("Deleting list with node: " + listNodeRef + " on entity: " + entityNodeRef + " ("
+								+ nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME) + ")");
+						nodeService.addAspect(listNodeRef, ContentModel.ASPECT_TEMPORARY, null);
+						nodeService.deleteNode(listNodeRef);
+					}
+
+				});
+
+				NodeRef tplListContainerNodeRef = entityListDAO.getListContainer(entityTplNodeRef);
+				NodeRef tplListNodeRef = entityListDAO.getList(tplListContainerNodeRef, entityListName);
+
+				if (tplListNodeRef != null) {
+					logger.debug("Deleting list with node: " + tplListNodeRef + " on template: " + entityTplNodeRef + " ("
+							+ nodeService.getProperty(entityTplNodeRef, ContentModel.PROP_NAME) + ")");
+					nodeService.addAspect(tplListNodeRef, ContentModel.ASPECT_TEMPORARY, null);
+					nodeService.deleteNode(tplListNodeRef);
+				}
+
+			} catch (ConcurrencyFailureException e) {
+				throw e;
 			}
 
-		});
+			catch (Exception e) {
 
-		NodeRef tplListContainerNodeRef = entityListDAO.getListContainer(entityTplNodeRef);
-		NodeRef tplListNodeRef = entityListDAO.getList(tplListContainerNodeRef, entityListName);
-
-		if (tplListNodeRef != null) {
-			logger.debug("Deleting list with node: " + tplListNodeRef + " on template: " + entityTplNodeRef + " ("
-					+ nodeService.getProperty(entityTplNodeRef, ContentModel.PROP_NAME) + ")");
-			nodeService.addAspect(tplListNodeRef, ContentModel.ASPECT_TEMPORARY, null);
-			nodeService.deleteNode(tplListNodeRef);
+				runWithSuccess = false;
+			} finally {
+				lock.unlock();
+				watch.stop();
+				beCPGMailService.sendMailOnAsyncAction(AuthenticationUtil.getFullyAuthenticatedUser(), "entitiesTemplate.removeDataList",
+						ASYNC_ACTION_URL_PREFIX + entityTplNodeRef, runWithSuccess, watch.getTotalTimeSeconds());
+			}
+		} else {
+			logger.error("Only one massive operation at a time");
 		}
+
 	}
 
 	@Override

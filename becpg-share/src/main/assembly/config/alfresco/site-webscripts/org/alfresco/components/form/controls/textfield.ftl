@@ -4,7 +4,24 @@
          <#if field.mandatory && !(field.value?is_number) && field.value == "">
             <span class="incomplete-warning"><img class="icon16" src="${url.context}/res/components/form/images/warning-16.png" title="${msg("form.field.incomplete")}" /><span>
          </#if>
-         <span class="viewmode-label">${field.label?html}:</span>
+         <span class="viewmode-label">${field.label?html}:&nbsp;
+         	<#if field.dataType == "mltext">
+	         	<span id="${fieldHtmlId}#${form.arguments.itemId}#${field.name}" class="show-translation"></span>
+	         	<script type="text/javascript">
+					YAHOO.util.Event.addListener("${fieldHtmlId}#${form.arguments.itemId}#${field.name}", "click", function() {
+							var nodeRef = "${form.arguments.itemId}" , field="${field.name?replace("prop_","")}";
+							new Alfresco.module.SimpleDialog(nodeRef+"-multilingualForm").setOptions({
+				              templateUrl : Alfresco.constants.URL_SERVICECONTEXT + "modules/multilingual-form/multilingual-form?nodeRef=" + nodeRef + "&field=" + field + "&readonly=true",
+				              actionUrl : Alfresco.constants.PROXY_URI + "becpg/form/multilingual/field/" + field + "?nodeRef=" + nodeRef,
+				              validateOnSubmit : false,
+				              destroyOnHide : true,
+				              width: "33em"
+				           }).show();
+							
+						});
+				</script>
+	         </#if>
+         </span>
          <#if field.control.params.activateLinks?? && field.control.params.activateLinks == "true">
             <#assign fieldValue=field.value?html?replace("((http|ftp|https):\\/\\/[\\w\\-_]+(\\.[\\w\\-_]+)+([\\w\\-\\.,@?\\^=%&:\\/~\\+#]*[\\w\\-\\@?\\^=%&\\/~\\+#])?)", "<a href=\"$1\" target=\"_blank\">$1</a>", "r")>
          <#else>
@@ -14,6 +31,7 @@
                <#assign fieldValue=field.value?html>
             </#if>
          </#if>
+        
          <span id="${fieldHtmlId}-${field.id?replace("prop_","")}" class="viewmode-value <#if field.dataType == "mltext">viewmode-mltext</#if>"><#if fieldValue == "">${msg("form.control.novalue")}<#else>${fieldValue}</#if></span>
       </div>
    <#else>
