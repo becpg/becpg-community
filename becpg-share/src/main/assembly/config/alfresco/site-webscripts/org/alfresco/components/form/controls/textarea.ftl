@@ -8,7 +8,25 @@
 	         <#if field.mandatory && field.value == "">
 	            <span class="incomplete-warning"><img class="icon16" src="${url.context}/res/components/form/images/warning-16.png" title="${msg("form.field.incomplete")}" /><span>
 	         </#if>
-         <span class="viewmode-label">${field.label?html}: </span>
+         <span class="viewmode-label">${field.label?html}:&nbsp;
+         <#if field.dataType == "mltext">
+	         	<span id="${fieldHtmlId}#${form.arguments.itemId}#${field.name}" class="show-translation"></span>
+	         	<script type="text/javascript">
+					YAHOO.util.Event.addListener("${fieldHtmlId}#${form.arguments.itemId}#${field.name}", "click", function() {
+							var nodeRef = "${form.arguments.itemId}" , field="${field.name?replace("prop_","")}";
+							new Alfresco.module.SimpleDialog(nodeRef+"-multilingualForm").setOptions({
+				              templateUrl : Alfresco.constants.URL_SERVICECONTEXT + "modules/multilingual-form/multilingual-form?nodeRef=" + nodeRef + "&field=" + field + "&readonly=true",
+				              actionUrl : Alfresco.constants.PROXY_URI + "becpg/form/multilingual/field/" + field + "?nodeRef=" + nodeRef,
+				              validateOnSubmit : false,
+				              destroyOnHide : true,
+				              width: "33em"
+				           }).show();
+							
+						});
+				</script>
+	         </#if>
+         </span>
+         
          <#assign tmpFieldValue=field.value?html?replace("\n", "<br>")>
          <#if field.control.params.saveLineBreaks?? && field.control.params.saveLineBreaks == "false">
             <#assign tmpFieldValue=field.value?html>
