@@ -229,7 +229,7 @@ function assocAssocValue(node, assocName, assocAssocName){
  * @param propName default is cm:name
  * @returns
  */
-function getAssoc(product, assocName, propName) {
+function getAssoc(node, assocName, propName) {
 	if(propName){
 		return assocPropValue(node, assocName, propName)
 	} 
@@ -293,7 +293,7 @@ function setValue(node, propName, value){
 	if(isEmpty(value) && node.properties[propName]!=null){
 	    delete node.properties[propName];
 	    return true;
-	} else {
+	} else if(!isEmpty(value)) {
 		if(node.properties[propName] !== value){
 			node.properties[propName] = value;
 			return true;
