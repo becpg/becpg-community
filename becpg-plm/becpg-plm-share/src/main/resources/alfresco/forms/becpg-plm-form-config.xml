@@ -9357,10 +9357,16 @@
 			</form>
 			<form id="filter">
 				<field-visibility>
+				   <show id="bcpg:pclType" />
 				    <show id="entity_bcpg:pclPhysicoChem_bcpg:product" for-mode="view"/>
 				    <show id="bcpg:pclPhysicoChem" for-mode="create"/>
 				</field-visibility>
 				<appearance>
+					<field id="bcpg:pclType">
+						<control template="/org/alfresco/components/form/controls/checkboxmany.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
 					<field id="bcpg:pclPhysicoChem">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
