@@ -9,7 +9,7 @@ CAFFN;Caffein;76;1;false;true;false;;;;false
 CA;Calcium, Ca;48;1;false;true;false;1000;;mg;true
 CHOAVL;Carbohydrate, by difference;5;1;false;true;false;;;;false
 CHO-;Carbohydrate, by difference (with fiber);4;1;true;false;true;;;g;true
-CHOL-;Cholesterol;28;1;true;false;true;;;mg;true
+CHOL-;Cholesterol;27;1;true;false;true;;;mg;true
 CHOLN;CholineTot;49;1;false;true;false;;;;false
 CR;Chromium;50;1;false;true;false;40;;mcg;true
 CU;Copper;51;1;false;true;false;840;;mcg;true
@@ -52,7 +52,7 @@ PANTAC;Panto acid;61;1;false;true;false;5;;mg;true
 P;Phosphorus, P;62;1;false;true;false;1200;;mg;true
 POLYL;Polyols total;63;1;false;true;false;;;;false
 K;Potassium, k;64;1;false;true;false;3,5;;g;true
-PRO-;Protein;27;1;true;false;true;65;;g;true
+PRO-;Protein;28;1;true;false;true;65;;g;true
 CARTBEQ;Provitamin A (b-carotene equivalents);65;1;false;true;false;;;;false
 PROCNT;Raw proteins (N x 6.25);66;1;false;true;false;;;;false
 RETOL;Retinol;67;1;false;true;false;;;;false
