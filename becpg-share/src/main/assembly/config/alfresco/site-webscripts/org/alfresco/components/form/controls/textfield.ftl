@@ -4,28 +4,18 @@
          <#if field.mandatory && !(field.value?is_number) && field.value == "">
             <span class="incomplete-warning"><img class="icon16" src="${url.context}/res/components/form/images/warning-16.png" title="${msg("form.field.incomplete")}" /><span>
          </#if>
-         <span class="viewmode-label">${field.label?html}:
+         <span class="viewmode-label">${field.label?html}:&nbsp;
          	<#if field.dataType == "mltext">
-	         	<span id="${fieldHtmlId}#${form.arguments.itemId}#${field.name}" class="show-translation">
-	         	</span>
+	         	<span id="${fieldHtmlId}#${form.arguments.itemId}#${field.name}" class="show-translation"></span>
 	         	<script type="text/javascript">
 					YAHOO.util.Event.addListener("${fieldHtmlId}#${form.arguments.itemId}#${field.name}", "click", function() {
-							console.log("test : ${form.arguments.itemId}  - ${field.name}");
-							var nodeRef = "${form.arguments.itemId}" , field= "${field.name?replace("prop_","")}";
-				
+							var nodeRef = "${form.arguments.itemId}" , field="${field.name?replace("prop_","")}";
 							new Alfresco.module.SimpleDialog(nodeRef+"-multilingualForm").setOptions({
 				              templateUrl : Alfresco.constants.URL_SERVICECONTEXT + "modules/multilingual-form/multilingual-form?nodeRef=" + nodeRef + "&field=" + field + "&readonly=true",
 				              actionUrl : Alfresco.constants.PROXY_URI + "becpg/form/multilingual/field/" + field + "?nodeRef=" + nodeRef,
 				              validateOnSubmit : false,
 				              destroyOnHide : true,
-				              width: "33em",
-				              onSuccess: {
-				                 fn: function(){
-				                	 YAHOO.Bubbling.fire("scopedActiveDataListChanged");
-				                 },
-				                 obj: null,
-				                 scope: this
-				              }
+				              width: "33em"
 				           }).show();
 							
 						});
