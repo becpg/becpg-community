@@ -128,7 +128,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 			computeFormula(productData, parser, context, view);
 		}
 
-		if (DynamicCharactExecOrder.Post.equals(execOrder) ) {
+		if (DynamicCharactExecOrder.Post.equals(execOrder)) {
 			computeNutrientProfile(productData, parser, context);
 		}
 
@@ -165,6 +165,9 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 				}
 			}
 
+		} else {
+			productData.setNutrientScore(null);
+			productData.setNutrientClass(null);
 		}
 
 	}
@@ -179,55 +182,62 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 			}
 
 			for (DynamicCharactListItem dynamicCharactListItem : view.getDynamicCharactList()) {
-				if (execOrder.equals(dynamicCharactListItem.getExecOrder()) || (  DynamicCharactExecOrder.Defer.equals(dynamicCharactListItem.getExecOrder()) 
-						&& !DynamicCharactExecOrder.Pre.equals(execOrder) && !ProductService.FAST_FORMULATION_CHAINID.equals(productData.getFormulationChainId()) )) {
+				if (execOrder.equals(dynamicCharactListItem.getExecOrder())
+						|| (DynamicCharactExecOrder.Defer.equals(dynamicCharactListItem.getExecOrder())
+								&& !DynamicCharactExecOrder.Pre.equals(execOrder)
+								&& !ProductService.FAST_FORMULATION_CHAINID.equals(productData.getFormulationChainId()))) {
 					try {
 						if ((dynamicCharactListItem.getFormula() != null) && !dynamicCharactListItem.getFormula().isEmpty()) {
 							if ((dynamicCharactListItem.getColumnName() != null) && !dynamicCharactListItem.getColumnName().isEmpty()) {
-								String formula = SpelHelper.formatFormula(dynamicCharactListItem.getFormula());
-								logger.debug("Parse formula : " + formula + " (" + dynamicCharactListItem.getName() + ")");
-								Expression exp = parser.parseExpression(formula);
 
 								QName columnName = QName.createQName(dynamicCharactListItem.getColumnName().replaceFirst("_", ":"), namespaceService);
-								if (nullDynColumnNames.contains(columnName)) {
-									nullDynColumnNames.remove(columnName);
-								}
-								for (CompositionDataItem dataListItem : view.getMainDataList()) {
+								
+									String formula = SpelHelper.formatFormula(dynamicCharactListItem.getFormula());
+									logger.debug("Parse formula : " + formula + " (" + dynamicCharactListItem.getName() + ")");
+									Expression exp = parser.parseExpression(formula);
 
-									Double origQty = dataListItem.getQty();
-									Double qtyPerProduct = getQtyPerProduct(productData, dataListItem);
-									dataListItem.setQty(qtyPerProduct);
+									if (nullDynColumnNames.contains(columnName)) {
+										nullDynColumnNames.remove(columnName);
+									}
+									for (CompositionDataItem dataListItem : view.getMainDataList()) {
 
-									StandardEvaluationContext dataContext = formulaService.createEvaluationContext(productData, dataListItem);
-									Object value = null;
-									try {
-										value = exp.getValue(dataContext);
-									} finally {
-										if ((qtyPerProduct != null) && qtyPerProduct.equals(dataListItem.getQty())) {
-											dataListItem.setQty(origQty);
+										Double origQty = dataListItem.getQty();
+										Double qtyPerProduct = getQtyPerProduct(productData, dataListItem);
+										dataListItem.setQty(qtyPerProduct);
+
+										StandardEvaluationContext dataContext = formulaService.createEvaluationContext(productData, dataListItem);
+										Object value = null;
+										try {
+											value = exp.getValue(dataContext);
+										} finally {
+											if ((qtyPerProduct != null) && qtyPerProduct.equals(dataListItem.getQty())) {
+												dataListItem.setQty(origQty);
+											}
+										}
+
+										if (!L2CacheSupport.isCacheOnlyEnable()
+												&& ((dynamicCharactListItem.getMultiLevelFormula() != null)
+														&& Boolean.TRUE.equals(dynamicCharactListItem.getMultiLevelFormula()))
+												&& ((view instanceof CompoListView) || (view instanceof PackagingListView))
+												&& ((dataListItem.getComponent() != null) && (PLMModel.TYPE_SEMIFINISHEDPRODUCT
+														.equals(nodeService.getType(dataListItem.getComponent()))
+														|| PLMModel.TYPE_FINISHEDPRODUCT.equals(nodeService.getType(dataListItem.getComponent()))
+														|| PLMModel.TYPE_PACKAGINGKIT.equals(nodeService.getType(dataListItem.getComponent()))))) {
+
+											JSONObject jsonTree = extractJSONTree(productData, dataListItem, value, exp);
+											dataListItem.getExtraProperties().put(columnName, jsonTree.toString());
+											if (logger.isDebugEnabled()) {
+												logger.debug("JsonTree :" + value);
+											}
+										} else {
+											dataListItem.getExtraProperties().put(columnName, (Serializable) value);
+											logger.debug("Value :" + value);
 										}
 									}
 
-									if (!L2CacheSupport.isCacheOnlyEnable()
-											&& ((dynamicCharactListItem.getMultiLevelFormula() != null)
-													&& Boolean.TRUE.equals(dynamicCharactListItem.getMultiLevelFormula()))
-											&& ((view instanceof CompoListView) || (view instanceof PackagingListView))
-											&& ((dataListItem.getComponent() != null) && (PLMModel.TYPE_SEMIFINISHEDPRODUCT
-													.equals(nodeService.getType(dataListItem.getComponent()))
-													|| PLMModel.TYPE_FINISHEDPRODUCT.equals(nodeService.getType(dataListItem.getComponent()))
-													|| PLMModel.TYPE_PACKAGINGKIT.equals(nodeService.getType(dataListItem.getComponent()))))) {
 
-										JSONObject jsonTree = extractJSONTree(productData, dataListItem, value, exp);
-										dataListItem.getExtraProperties().put(columnName, jsonTree.toString());
-										if (logger.isDebugEnabled()) {
-											logger.debug("JsonTree :" + value);
-										}
-									} else {
-										dataListItem.getExtraProperties().put(columnName, (Serializable) value);
-										logger.debug("Value :" + value);
-									}
-								}
 								dynamicCharactListItem.setValue(null);
+
 							} else {
 
 								String[] formulas = SpelHelper.formatMTFormulas(dynamicCharactListItem.getFormula());
@@ -247,6 +257,18 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 								logger.debug("Value :" + dynamicCharactListItem.getValue());
 							}
 						}
+						
+						if ((dynamicCharactListItem.getColumnName() != null) && !dynamicCharactListItem.getColumnName().isEmpty() && dynamicCharactListItem.getIsManual()) {
+
+							QName columnName = QName.createQName(dynamicCharactListItem.getColumnName().replaceFirst("_", ":"), namespaceService);
+							if (nullDynColumnNames.contains(columnName)) {
+								System.out.println("Removing post: :"+dynamicCharactListItem.getColumnName());
+								nullDynColumnNames.remove(columnName);
+							}
+
+						} 
+
+						
 						dynamicCharactListItem.setErrorLog(null);
 					} catch (Exception e) {
 						if ((e.getCause() != null) && (e.getCause().getCause() instanceof BeCPGAccessDeniedException)) {
@@ -264,6 +286,8 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 				} else {
 
 					if ((dynamicCharactListItem.getColumnName() != null) && !dynamicCharactListItem.getColumnName().isEmpty()) {
+						System.out.println("Removing pre: :"+dynamicCharactListItem.getColumnName());
+						
 						QName columnName = QName.createQName(dynamicCharactListItem.getColumnName().replaceFirst("_", ":"), namespaceService);
 						if (nullDynColumnNames.contains(columnName)) {
 							nullDynColumnNames.remove(columnName);
@@ -275,7 +299,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 
 			// remove null columns
 			for (QName nullDynColumnName : nullDynColumnNames) {
-				for (CompositionDataItem dataListItem : view.getMainDataList()) {
+					for (CompositionDataItem dataListItem : view.getMainDataList()) {
 					dataListItem.getExtraProperties().put(nullDynColumnName, null);
 				}
 			}
@@ -415,8 +439,8 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 			copyTemplateDynamicCharactList(templateProductData.getProcessListView().getDynamicCharactList(),
 					formulatedProduct.getProcessListView().getDynamicCharactList());
 		}
-		
-		if(formulatedProduct.getProductSpecifications()!=null) {
+
+		if (formulatedProduct.getProductSpecifications() != null) {
 			for (ProductSpecificationData specData : formulatedProduct.getProductSpecifications()) {
 				copyTemplateDynamicCharactList(specData.getDynamicCharactList(), formulatedProduct.getCompoListView().getDynamicCharactList());
 			}
@@ -426,7 +450,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 
 	protected void copyTemplateDynamicCharactList(List<DynamicCharactListItem> sourceList, List<DynamicCharactListItem> targetList) {
 
-		if(sourceList !=null && targetList!=null) {
+		if ((sourceList != null) && (targetList != null)) {
 			for (DynamicCharactListItem sourceItem : sourceList) {
 				if (sourceItem.getTitle() != null) {
 					if (sourceItem.isSynchronisable()) {
@@ -438,7 +462,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 							}
 							// update formula
 							if (sourceItem.getName().equals(targetItem.getName())) {
-	
+
 								targetItem.setName(sourceItem.getName());
 								targetItem.setTitle(sourceItem.getTitle());
 								targetItem.setSort(sourceItem.getSort());
@@ -455,7 +479,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 								break;
 							}
 						}
-	
+
 						if (!isFound) {
 							sourceItem.setNodeRef(null);
 							sourceItem.setParentNodeRef(null);
@@ -469,7 +493,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 					}
 				}
 			}
-	
+
 			targetList.sort((o1, o2) -> {
 				if ((o1.getSort() == null) && (o2.getSort() == null)) {
 					return 0;

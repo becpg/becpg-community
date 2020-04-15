@@ -227,7 +227,7 @@ public class EntityListsWebScript extends AbstractWebScript {
 		this.lockService = lockService;
 	}
 
-	private static Serializable defaultValue(Serializable val, Serializable def) {
+	private Serializable defaultValue(Serializable val, Serializable def) {
 		if (val != null) {
 			return val;
 		} else {
@@ -242,12 +242,11 @@ public class EntityListsWebScript extends AbstractWebScript {
 
 			QName name = classDefinition.getName();
 			if (name != null) {
-				obj.put(KEY_NAME_NAME, name.toPrefixString());
+				obj.put(KEY_NAME_NAME, name.toPrefixString(namespaceService));
 			}
 
-			obj.put(KEY_NAME_TITLE, defaultValue(classDefinition.getTitle(null), ""));
-
-			obj.put(KEY_NAME_DESCRIPTION, defaultValue(classDefinition.getTitle(null), ""));
+			obj.put(KEY_NAME_TITLE, defaultValue(classDefinition.getTitle(dictionaryService), ""));
+			obj.put(KEY_NAME_DESCRIPTION, defaultValue(classDefinition.getDescription(dictionaryService), ""));
 
 			listTypes.put(obj);
 		}

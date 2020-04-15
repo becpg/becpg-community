@@ -14,6 +14,7 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 
+import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
@@ -102,6 +103,8 @@ public class SubProjectFormulationHandler extends FormulationBaseHandler<Project
 					} else {
 						subProject.setProjectState(ProjectState.OnHold);
 					}
+					//Subproject not beeing save by formulation
+					nodeService.setProperty(task.getSubProject(), ProjectModel.PROP_PROJECT_STATE, subProject.getProjectState().toString());
 				} 
 				
 				ProjectState state = subProject.getProjectState();

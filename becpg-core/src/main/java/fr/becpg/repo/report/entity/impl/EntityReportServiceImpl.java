@@ -282,7 +282,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 														if (((selectedReportNodeRef != null) && (documentNodeRef != null)
 																&& selectedReportNodeRef.toString().equals(documentNodeRef.toString()))
-																|| ((selectedReportNodeRef == null) && isDefault)) {
+																|| ((selectedReportNodeRef == null) && Boolean.TRUE.equals(isDefault))) {
 
 															BeCPGReportEngine engine = getReportEngine(tplNodeRef,
 																	ReportFormat.valueOf(reportFormat));
@@ -1371,7 +1371,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 				}
 
 				Boolean isDefault = (Boolean) this.nodeService.getProperty(reportNodeRef, ReportModel.PROP_REPORT_IS_DEFAULT);
-				if ((isDefault != null) && isDefault) {
+				if (Boolean.TRUE.equals(isDefault)) {
 					ret = reportNodeRef;
 				}
 

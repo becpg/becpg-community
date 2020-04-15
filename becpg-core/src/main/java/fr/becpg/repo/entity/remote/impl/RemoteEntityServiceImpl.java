@@ -21,7 +21,6 @@ package fr.becpg.repo.entity.remote.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -242,18 +241,13 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 			}, false, false);
 
 		} finally {
-			if (logger.isDebugEnabled() && watch!=null) {
+			if (logger.isDebugEnabled() && (watch != null)) {
 				watch.stop();
 				logger.debug("createOrUpdateEntity run in  " + watch.getTotalTimeSeconds() + " seconds ");
 
 			}
 		}
 
-	}
-
-	@Override
-	public void listEntities(List<NodeRef> entities, OutputStream result, RemoteEntityFormat format) throws BeCPGException {
-		listEntities(entities, result, format, new ArrayList<String>());
 	}
 
 	@Override
@@ -288,10 +282,14 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	}
 
 	@Override
-	public void getEntityData(NodeRef entityNodeRef, OutputStream result, RemoteEntityFormat format) throws BeCPGException {
+	public void getEntityData(NodeRef entityNodeRef, OutputStream result, RemoteEntityFormat format, List<String> fields) throws BeCPGException {
 		if (RemoteEntityFormat.xml.equals(format)) {
 			XmlEntityVisitor xmlEntityVisitor = new XmlEntityVisitor(mlNodeService, nodeService, namespaceService, entityDictionaryService,
 					contentService, siteService, associationService);
+			if ((fields != null) && !fields.isEmpty()) {
+				xmlEntityVisitor.setFilteredFields(fields);
+			}
+
 			try {
 				xmlEntityVisitor.visitData(entityNodeRef, result);
 			} catch (XMLStreamException e) {
@@ -300,7 +298,9 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 		} else if (format.equals(RemoteEntityFormat.json)) {
 			JsonEntityVisitor jsonEntityVisitor = new JsonEntityVisitor(mlNodeService, nodeService, namespaceService, entityDictionaryService,
 					contentService, siteService);
-
+			if ((fields != null) && !fields.isEmpty()) {
+				jsonEntityVisitor.setFilteredFields(fields);
+			}
 			try {
 				jsonEntityVisitor.visitData(entityNodeRef, result);
 			} catch (Exception e) {

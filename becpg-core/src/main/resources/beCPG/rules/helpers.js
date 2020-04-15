@@ -64,7 +64,7 @@
  * 
  * generateEAN13Code(prefix) returns generate EAN13 code with autonum corresponding to prefix
  * 
- * setPermissionAsSystem(node, authority, permission) Set permissions as system
+ * setPermissionAsSystem(node, permission, authority) Set permissions as system
  * 
  * allowWrite(node, authority) Set write permissions as system bypassing rights
  * 
@@ -207,7 +207,7 @@ function assocAssocValues(node, assocName, assocAssocName){
  * @returns association property value
  */
 function assocPropValue(node, assocName, propName) {
-	return isEmpty(node) ?  "" : orEmpty( bcpg.assocPropValues(node, assocName, propName));
+	return isEmpty(node) ?  "" : orEmpty( bcpg.assocPropValue(node, assocName, propName));
 }
 
 /**
@@ -229,7 +229,7 @@ function assocAssocValue(node, assocName, assocAssocName){
  * @param propName default is cm:name
  * @returns
  */
-function getAssoc(product, assocName, propName) {
+function getAssoc(node, assocName, propName) {
 	if(propName){
 		return assocPropValue(node, assocName, propName)
 	} 
@@ -248,7 +248,23 @@ function getAssoc(product, assocName, propName) {
  */
 function updateAssoc(node, assocName, values){
 	if(!isEmpty(node)){
-		bcpg.updateAssoc(node, assocName, values);
+		if(values == null){
+			removeAssocs(node, assocName);
+		} else {
+			bcpg.updateAssoc(node, assocName, values);
+		}
+	}
+}
+
+/**
+ * Remove Associations
+ * @param node
+ * @param assocName
+ * @returns void
+ */
+function removeAssocs(node, assocName){
+	if(!isEmpty(node)){
+		bcpg["updateAssoc(org.alfresco.repo.jscript.ScriptNode,java.lang.String,org.alfresco.service.cmr.repository.NodeRef[])"](node, assocName, Array());
 	}
 }
 
@@ -277,7 +293,7 @@ function setValue(node, propName, value){
 	if(isEmpty(value) && node.properties[propName]!=null){
 	    delete node.properties[propName];
 	    return true;
-	} else {
+	} else if(!isEmpty(value)) {
 		if(node.properties[propName] !== value){
 			node.properties[propName] = value;
 			return true;
@@ -503,14 +519,14 @@ function getDocumentLibraryNodeRef(siteId) {
 /**
  * 
  * Set permissions as system 
- * Example : bcpg.setPermissionAsSystem(document,"GROUP_EVERYONE", "Consumer");
+ * Example : bcpg.setPermissionAsSystem(document, "Consumer","GROUP_EVERYONE");
  * @param node
  * @param authority username or group name
  * @param permission  
  * @returns void
  */
-function setPermissionAsSystem(node, authority, permission) {
-	bcpg.setPermissionAsSystem(node, authority, permission);
+function setPermissionAsSystem(node, permission, authority) {
+	bcpg.setPermissionAsSystem(node, permission, authority);
 }
 
 /**
