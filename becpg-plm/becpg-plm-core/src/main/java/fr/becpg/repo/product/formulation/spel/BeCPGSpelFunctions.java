@@ -27,6 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
@@ -79,7 +80,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 	private ScriptService scriptService;
 
 	@Autowired
-	private AlfrescoRepository<ProductData> alfrescoRepository;
+	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
 	@Autowired
 	private FormulaService formulaService;
@@ -108,29 +109,35 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 
 		/**
 		 * Helper @beCPG.findOne($nodeRef)
-		 * 
-		 * Example : 
-		 *  @beCPG.findOne(nodeRef).qty
+		 *
+		 * Example :
+		 *
+		 * @beCPG.findOne(nodeRef).qty
 		 *
 		 * @param nodeRef
 		 * @return repository entity for nodeRef
 		 */
-		public ProductData findOne(NodeRef nodeRef) {
-			return formulaService.createSecurityProxy(alfrescoRepository.findOne(nodeRef));
+		public RepositoryEntity findOne(NodeRef nodeRef) {
+			if (nodeRef != null) {
+				return formulaService.createSecurityProxy(alfrescoRepository.findOne(nodeRef));
+			}
+			return null;
 		}
 
 		/**
 		 * Helper @beCPG.propValue($nodeRef, $qname)
-		 * 
-		 * Example :
-		 *  @beCPG.propValue(nodeRef,'bcpg:productQty')
+		 *
+		 * Example : @beCPG.propValue(nodeRef,'bcpg:productQty')
 		 *
 		 * @param nodeRef
 		 * @param qname
 		 * @return node property value
 		 */
 		public Serializable propValue(NodeRef nodeRef, String qname) {
-			return nodeService.getProperty(nodeRef, getQName(qname));
+			if (nodeRef != null) {
+				return nodeService.getProperty(nodeRef, getQName(qname));
+			}
+			return null;
 		}
 
 		/**
@@ -141,17 +148,20 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 * @return entity property value
 		 */
 		public Serializable propValue(RepositoryEntity item, String qname) {
-			Serializable value = item.getExtraProperties().get(getQName(qname));
-			if (value == null) {
-				value = nodeService.getProperty(item.getNodeRef(), getQName(qname));
-				item.getExtraProperties().put(getQName(qname), value);
+			if (item != null) {
+				Serializable value = item.getExtraProperties().get(getQName(qname));
+				if (value == null) {
+					value = nodeService.getProperty(item.getNodeRef(), getQName(qname));
+					item.getExtraProperties().put(getQName(qname), value);
+				}
+				return value;
 			}
-			return value;
+			return null;
 		}
 
 		/**
 		 * Helper @beCPG.propValue( $qname)
-		 * 
+		 *
 		 * @param qname
 		 * @return property value in current productData
 		 */
@@ -171,8 +181,11 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 * @return value being set
 		 */
 		public Serializable setValue(RepositoryEntity item, String qname, Serializable value) {
-			item.getExtraProperties().put(getQName(qname), value);
-			return value;
+			if (item != null) {
+				item.getExtraProperties().put(getQName(qname), value);
+				return value;
+			}
+			return null;
 		}
 
 		/**
@@ -197,7 +210,10 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 * @return association nodeRef
 		 */
 		public NodeRef assocValue(NodeRef nodeRef, String qname) {
-			return associationService.getTargetAssoc(nodeRef, getQName(qname));
+			if (nodeRef != null) {
+				return associationService.getTargetAssoc(nodeRef, getQName(qname));
+			}
+			return null;
 		}
 
 		public NodeRef assocValue(String qname) {
@@ -212,7 +228,10 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 * @return collection of association nodeRefs
 		 */
 		public List<NodeRef> assocValues(NodeRef nodeRef, String qname) {
-			return associationService.getTargetAssocs(nodeRef, getQName(qname));
+			if (nodeRef != null) {
+				return associationService.getTargetAssocs(nodeRef, getQName(qname));
+			}
+			return null;
 		}
 
 		public List<NodeRef> assocValues(String qname) {
@@ -228,8 +247,11 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 * @return collection of association property values
 		 */
 		public List<Serializable> assocPropValues(NodeRef nodeRef, String assocQname, String propQName) {
-			return associationService.getTargetAssocs(nodeRef, getQName(assocQname)).stream().map(o -> propValue(o, propQName))
-					.collect(Collectors.toList());
+			if (nodeRef != null) {
+				return associationService.getTargetAssocs(nodeRef, getQName(assocQname)).stream().map(o -> propValue(o, propQName))
+						.collect(Collectors.toList());
+			}
+			return null;
 		}
 
 		public List<Serializable> assocPropValues(String assocQname, String propQName) {
@@ -304,7 +326,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		/**
 		 * @beCPG.runScript($nodeRef)
 		 *
-		 * @param scriptNode
+		 *                            @param scriptNode
 		 */
 		public void runScript(String scriptNode) {
 			runScript(new NodeRef(scriptNode));
@@ -328,9 +350,12 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		/**
 		 * @beCPG.sum($range, $formula)
 		 *
-		 * Example :
-		 *  @beCPG.sum(compoListView.compoList.?[parent == null],"entity.costList[0].value + dataListItem.qty")
-		 *  @beCPG.sum(compoListView.compoList.?[parent == null],"@beCPG.propValue(dataListItem.nodeRef,'bcpg:compoListQty')")
+		 *                    Example :
+		 * @beCPG.sum(compoListView.compoList.?[parent ==
+		 *                                             null],"entity.costList[0].value
+		 *                                             + dataListItem.qty")
+		 * @beCPG.sum(compoListView.compoList.?[parent ==
+		 *                                             null],"@beCPG.propValue(dataListItem.nodeRef,'bcpg:compoListQty')")
 		 *
 		 * @param range
 		 * @param formula
@@ -343,7 +368,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		/**
 		 * @beCPG.sum($range)
 		 *
-		 * @param range
+		 *                    @param range
 		 * @return sum range of double
 		 */
 		public Double sum(Collection<Double> range) {
@@ -353,7 +378,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		/**
 		 * @beCPG.avg($range, $formula)
 		 *
-		 * @param range
+		 *                    @param range
 		 * @param formula
 		 * @return average of formula results apply on range
 		 */
@@ -364,7 +389,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		/**
 		 * @beCPG.avg($range)
 		 *
-		 * @param range
+		 *                    @param range
 		 * @return average range of double
 		 */
 		public Double avg(Collection<Double> range) {
@@ -373,8 +398,8 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 
 		/**
 		 * @beCPG.applyFormulaToList($range, $formula)
-		 * 
-		 * @param range
+		 *
+		 *                                   @param range
 		 * @param formula
 		 */
 		public void applyFormulaToList(Collection<RepositoryEntity> range, String formula) {
@@ -390,21 +415,21 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 * @return filter collection with spel formula
 		 */
 		public <T> Collection<T> filter(Collection<T> range, String formula) {
+			if (range != null) {
+				ExpressionParser parser = new SpelExpressionParser();
+				Expression exp = parser.parseExpression(formula);
 
-			ExpressionParser parser = new SpelExpressionParser();
-			Expression exp = parser.parseExpression(formula);
-
-			return range.stream().filter(p -> {
-
-				return exp.getValue(formulaService.createEvaluationContext(productData, p), Boolean.class);
-			}).collect(Collectors.toList());
-
+				return range.stream().filter(p -> {
+					return exp.getValue(formulaService.createEvaluationContext(productData, p), Boolean.class);
+				}).collect(Collectors.toList());
+			}
+			return null;
 		}
 
 		/**
 		 * @beCPG.formatNumber($number)
-		 *  
-		 * @param number
+		 *
+		 *                              @param number
 		 * @return standard becpg number format
 		 */
 		public String formatNumber(Number number) {
@@ -413,9 +438,10 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 
 		/**
 		 * @beCPG.formatNumber($number, $format )
-		 * 
-		 * Example:  @beCPG.formatNumber(10,00005, "0.##")
-		 * 
+		 *
+		 *                              Example: @beCPG.formatNumber(10,00005,
+		 *                              "0.##")
+		 *
 		 * @param number
 		 * @param format
 		 * @return formated number to provided format
@@ -423,12 +449,13 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		public String formatNumber(Number number, String format) {
 			return new java.text.DecimalFormat(format).format(number);
 		}
-		
+
 		/**
 		 * @beCPG.formatDate($date )
-		 * 
-		 * Example:  @beCPG.formatNumber(10,00005, "0.##")
-		 * 
+		 *
+		 *                         Example: @beCPG.formatNumber(10,00005,
+		 *                         "0.##")
+		 *
 		 * @param date
 		 * @return standard becpg date format
 		 */
@@ -436,13 +463,12 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 			return attributeExtractorService.getPropertyFormats(AttributeExtractorMode.XLSX).formatDate(date);
 		}
 
-		
-
 		/**
 		 * @beCPG.formatDate($date, $format )
-		 * 
-		 * Example:  @beCPG.formatDate(new java.util.Date(),"dd/mm/YYYY" )
-		 * 
+		 *
+		 *                          Example: @beCPG.formatDate(new
+		 *                          java.util.Date(),"dd/mm/YYYY" )
+		 *
 		 * @param date
 		 * @return standard becpg number format
 		 */
@@ -454,10 +480,10 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 *
 		 * @beCPG.copy($fromNodeRef, $propQNames, $listQNames)
 		 *
-		 * Copy properties from a productData to
-		 *                          current productData
-		 *                           
-		 * Example: @beCPG.copy(compoListView.compoList[0].product,{"bcpg:suppliers","bcpg:legalName"},{"bcpg:costList"});
+		 *                           Copy properties from a productData to
+		 *                           current productData
+		 *
+		 *                           Example: @beCPG.copy(compoListView.compoList[0].product,{"bcpg:suppliers","bcpg:legalName"},{"bcpg:costList"});
 		 *
 		 * @param fromNodeRef
 		 * @param propQNames
@@ -468,7 +494,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 				Set<QName> treatedProp = new HashSet<>();
 				Set<QName> treatedList = new HashSet<>();
 
-				ProductData from = alfrescoRepository.findOne(fromNodeRef);
+				RepositoryEntity from = alfrescoRepository.findOne(fromNodeRef);
 
 				if (from != null) {
 					BeanWrapper beanWrapper = new BeanWrapperImpl(productData);
@@ -545,6 +571,8 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 						}
 					}
 				}
+			} catch (ConcurrencyFailureException e) {
+				throw e;
 			} catch (Exception e) {
 				logger.error(e, e);
 			}
