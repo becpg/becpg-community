@@ -297,7 +297,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 														if (writer != null) {
 
 															if ((selectedReportNodeRef!=null && documentNodeRef !=null && selectedReportNodeRef.toString().equals(documentNodeRef.toString()))
-																	|| ((selectedReportNodeRef == null) && isDefault)) {
+																	|| ((selectedReportNodeRef == null) && Boolean.TRUE.equals(isDefault))) {
 																
 																logger.debug("Extract datasource for locale: "+locale);
 																
@@ -1370,7 +1370,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 				}
 
 				Boolean isDefault = (Boolean) this.nodeService.getProperty(reportNodeRef, ReportModel.PROP_REPORT_IS_DEFAULT);
-				if (isDefault) {
+				if (Boolean.TRUE.equals(isDefault)) {
 					ret = reportNodeRef;
 				}
 
