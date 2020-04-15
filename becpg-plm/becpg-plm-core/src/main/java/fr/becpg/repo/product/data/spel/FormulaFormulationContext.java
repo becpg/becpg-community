@@ -56,7 +56,7 @@ public class FormulaFormulationContext {
 		return dataListItem;
 	}
 
-	public ProductData getDataListItemEntity() {
+	public RepositoryEntity getDataListItemEntity() {
 		if (dataListItem instanceof CompositionDataItem) {
 
 			return ((CompositionDataItem) dataListItem).getComponent() != null
