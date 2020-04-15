@@ -31,7 +31,7 @@ public class FormulaService {
 	private SecurityMethodBeforeAdvice securityMethodBeforeAdvice;
 
 	@Autowired
-	private AlfrescoRepository<ProductData> alfrescoRepository;
+	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
 	@Autowired
 	private CustomSpelFunctions[] customSpelFunctions;
@@ -49,11 +49,11 @@ public class FormulaService {
 		});
 	}
 
-	public ProductData createSecurityProxy(ProductData productData) {
+	public RepositoryEntity createSecurityProxy(RepositoryEntity productData) {
 		ProxyFactory factory = new ProxyFactory();
 		factory.setTarget(productData);
 		factory.addAdvice(securityMethodBeforeAdvice);
-		return (ProductData) factory.getProxy();
+		return (RepositoryEntity) factory.getProxy();
 	}
 
 	public StandardEvaluationContext createEvaluationContext(ProductData productData) {
@@ -64,14 +64,14 @@ public class FormulaService {
 
 	public StandardEvaluationContext createEvaluationContext(ProductData productData, LabelingFormulaContext labelingFormulaContext) {
 		StandardEvaluationContext context = new StandardEvaluationContext(labelingFormulaContext);
-		labelingFormulaContext.setEntity(createSecurityProxy(productData));
+		labelingFormulaContext.setEntity((ProductData) createSecurityProxy(productData));
 		registerCustomFunctions(productData, context);
 		return context;
 	}
 
 	public StandardEvaluationContext createEvaluationContext(ProductData productData, RepositoryEntity dataListItem) {
 		StandardEvaluationContext dataContext = new StandardEvaluationContext(
-				new FormulaFormulationContext(this, createSecurityProxy(productData), dataListItem));
+				new FormulaFormulationContext(this, (ProductData) createSecurityProxy(productData), dataListItem));
 		registerCustomFunctions(productData, dataContext);
 		return dataContext;
 	}
@@ -128,7 +128,7 @@ public class FormulaService {
 
 	}
 
-	public ProductData findOne(NodeRef nodeRef) {
+	public RepositoryEntity findOne(NodeRef nodeRef) {
 		return createSecurityProxy(alfrescoRepository.findOne(nodeRef));
 	}
 
