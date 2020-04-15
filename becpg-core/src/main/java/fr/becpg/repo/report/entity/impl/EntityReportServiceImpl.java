@@ -285,7 +285,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 														if (((selectedReportNodeRef != null) && (documentNodeRef != null)
 																&& selectedReportNodeRef.toString().equals(documentNodeRef.toString()))
-																|| ((selectedReportNodeRef == null) && isDefault)) {
+																|| ((selectedReportNodeRef == null) && Boolean.TRUE.equals(isDefault))) {
 
 															EntityReportData reportData = retrieveExtractor(entityNodeRef).extract(entityNodeRef,
 																	reportParameters.getPreferences());
@@ -1333,7 +1333,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 				}
 
 				Boolean isDefault = (Boolean) this.nodeService.getProperty(reportNodeRef, ReportModel.PROP_REPORT_IS_DEFAULT);
-				if (isDefault) {
+				if (Boolean.TRUE.equals(isDefault)) {
 					ret = reportNodeRef;
 				}
 
