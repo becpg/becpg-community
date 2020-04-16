@@ -101,7 +101,7 @@ public class EntityCatalogWebScript extends AbstractWebScript {
 
 						L2CacheSupport.doInCacheContext(() -> {
 							AuthenticationUtil.runAsSystem(() -> {
-								formulationService.formulate(productNodeRef);
+								formulationService.formulate(productNodeRef,FormulationService.FAST_FORMULATION_CHAINID);
 								return true;
 							});
 

@@ -17,8 +17,8 @@ import org.springframework.util.StopWatch;
 
 import fr.becpg.repo.decernis.DecernisService;
 import fr.becpg.repo.formulation.FormulateException;
+import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.MLTextHelper;
-import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
@@ -117,7 +117,7 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 
 			
 			
-			if (!ProductService.FAST_FORMULATION_CHAINID.equals(formulatedProduct.getFormulationChainId())) {
+			if (!FormulationService.FAST_FORMULATION_CHAINID.equals(formulatedProduct.getFormulationChainId())) {
 
 				if (shouldLaunchDecernis) {
 					StopWatch watch = null;

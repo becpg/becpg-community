@@ -32,8 +32,6 @@ import fr.becpg.repo.product.data.ProductData;
 public interface ProductService {
 		   	       
 	
-
-	public static final String FAST_FORMULATION_CHAINID = "fastFormulationChain";
 	
     /**
      * Formulate the product (update DB)
