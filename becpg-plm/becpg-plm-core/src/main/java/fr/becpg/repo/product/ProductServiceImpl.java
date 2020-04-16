@@ -24,7 +24,6 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -104,7 +103,7 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 				AuthenticationUtil.runAsSystem(() -> {
 					if (!fast) {
 						formulationService.formulate(productNodeRef);
-						entityActivityService.postEntityActivity(productNodeRef, ActivityType.Formulation, ActivityEvent.Update, null);
+						entityActivityService.postEntityActivity(productNodeRef, ActivityType.Formulation, ActivityEvent.Update);
 					} else {
 						formulationService.formulate(productNodeRef, FormulationService.FAST_FORMULATION_CHAINID);
 					}
