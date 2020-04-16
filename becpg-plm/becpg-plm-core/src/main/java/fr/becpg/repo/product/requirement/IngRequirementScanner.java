@@ -18,6 +18,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.MLTextHelper;
+import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
@@ -65,8 +66,8 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 
 			Set<NodeRef> visited = new HashSet<>();
 
-			if (productData.getCompoList() != null) {
-				for (CompoListDataItem compoListDataItem : productData.getCompoList()) {
+			if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+				for (CompoListDataItem compoListDataItem : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 
 					if ((compoListDataItem.getQtySubFormula() != null) && (compoListDataItem.getQtySubFormula() > 0)) {
 						ProductData componentProductData = (ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct());
