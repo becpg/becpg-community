@@ -108,11 +108,11 @@ public class NutListValuePatch extends AbstractBeCPGPatch {
 		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
 
 			public void afterProcess() throws Throwable {
-				ruleService.disableRules();
+				ruleService.enableRules();
 			}
 
 			public void beforeProcess() throws Throwable {
-				ruleService.enableRules();
+				ruleService.disableRules();
 			}
 
 			public String getIdentifier(NodeRef entry) {
