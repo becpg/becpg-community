@@ -18,6 +18,7 @@
 package fr.becpg.repo.product.formulation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.alfresco.model.ContentModel;
@@ -31,6 +32,7 @@ import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
+import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
@@ -66,15 +68,15 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		}
 
 		// no compo => no formulation
-		if (!formulatedProduct.hasCompoListEl(new VariantFilters<>())) {
+		if (!formulatedProduct.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 			logger.debug("no compo => no formulation");
 			return true;
 		}
 
 
-		Composite<CompoListDataItem> compositeAll = CompositeHelper.getHierarchicalCompoList(formulatedProduct.getCompoList());
+		Composite<CompoListDataItem> compositeAll = CompositeHelper.getHierarchicalCompoList(formulatedProduct.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE)));
 		Composite<CompoListDataItem> compositeDefaultVariant = CompositeHelper
-				.getHierarchicalCompoList(formulatedProduct.getCompoList(new VariantFilters<>()));
+				.getHierarchicalCompoList(formulatedProduct.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())));
 
 		// Variants
 		List<VariantData> variants = formulatedProduct.getVariants();
@@ -125,9 +127,6 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		}
 
 		// Volume
-//		Double volumeUsed = formulatedProduct.getDefaultVariantData().getRecipeVolumeUsed();
-//		formulatedProduct.setRecipeVolumeUsed(volumeUsed);
-//		
 		Double volumeUsed = calculateVolumeFromChildren(compositeDefaultVariant);
 		formulatedProduct.setRecipeVolumeUsed(volumeUsed);
 
