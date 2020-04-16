@@ -412,11 +412,11 @@ public class DecernisServiceImpl implements DecernisService {
 		StringBuilder key = new StringBuilder();
 
 		if (countries != null) {
-			countries.stream().filter(c -> (isAvaillableCountry(c))).sorted().forEach(c -> key.append(c));
+			countries.stream().filter(c -> c!=null && !c.isEmpty()).sorted().forEach(c -> key.append(c));
 		}
 
 		if (usages != null) {
-			usages.stream().forEach(u -> key.append(u));
+			usages.stream().filter(c -> c!=null && !c.isEmpty()).sorted().forEach(u -> key.append(u));
 		}
 
 		return key.toString();
