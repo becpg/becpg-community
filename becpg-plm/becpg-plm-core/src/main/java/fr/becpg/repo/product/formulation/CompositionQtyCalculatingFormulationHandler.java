@@ -29,7 +29,6 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
-import fr.becpg.repo.variant.filters.VariantFilters;
 
 public class CompositionQtyCalculatingFormulationHandler extends FormulationBaseHandler<ProductData> {
 
@@ -67,7 +66,7 @@ public class CompositionQtyCalculatingFormulationHandler extends FormulationBase
 		}
 
 		// no compo => no formulation
-		if (!formulatedProduct.hasCompoListEl(new VariantFilters<>())) {
+		if (!formulatedProduct.hasCompoListEl()) {
 			logger.debug("no compo => no formulation");
 			return true;
 		}
@@ -141,6 +140,9 @@ public class CompositionQtyCalculatingFormulationHandler extends FormulationBase
 	private Double calculateQtyInKg(CompoListDataItem compoListDataItem) {
 		Double qty = compoListDataItem.getQtySubFormula();
 		ProductUnit compoListUnit = compoListDataItem.getCompoListUnit();
+		
+		
+		
 		ProductData componentProductData = alfrescoRepository.findOne(compoListDataItem.getProduct());
 
 		if ((qty != null) && (compoListUnit != null)) {
