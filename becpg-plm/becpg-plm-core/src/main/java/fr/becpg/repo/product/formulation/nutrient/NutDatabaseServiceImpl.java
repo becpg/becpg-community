@@ -330,11 +330,11 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 
 		try (CSVReader csvReader = getCSVReaderFromNodeRef(file)) {
 
-			String[] currentLine = null;
-
-			currentLine = csvReader.readNext();
+			String[] currentLine = csvReader.readNext();
 			while (currentLine != null) {
 				if ((currentLine.length > columnIndex) && "VALUES".equals(currentLine[0])) {
+					
+					
 					res.add(new IdentifiedValue(currentLine[identifierColumn], currentLine[columnIndex]));
 				}
 				currentLine = csvReader.readNext();
@@ -372,6 +372,7 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 			}
 			++i;
 		}
+		
 		return res;
 	}
 
