@@ -74,7 +74,7 @@
  *  
  * clearPermissions(node, inherit) Remove permissions set on node
  * 
- * copyList( destNode,  sourceNode,  listQname)  Copy one list from sourceNode to destNode
+ * copyList( sourceNode, destNode ,  listQname)  Copy one list from sourceNode to destNode
  * 
  * listExist( node,  listQname) returns true if list exists and non empty
  * 
@@ -585,8 +585,8 @@ function deleteGroupPermission(node, group){
  * @param listQname
  * @returns void
  */
-function copyList( destNode,  sourceNode,  listQname) {
-	bcpg.copyList( destNode,  sourceNode,  listQname);
+function copyList( sourceNode,  destNode,  listQname) {
+	bcpg.copyList( sourceNode,  destNode,  listQname);
 }
 
 /**
