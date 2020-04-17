@@ -60,7 +60,8 @@ public class LabelingRuleListPolicy extends AbstractBeCPGPolicy implements CopyS
 
 		@Override
 		public boolean getMustCopy(QName classQName, CopyDetails copyDetails) {
-			if (nodeService.hasAspect(entityListDAO.getEntity(copyDetails.getSourceNodeRef()), BeCPGModel.ASPECT_ENTITY_TPL)
+			NodeRef entityNodeRef = entityListDAO.getEntity(copyDetails.getSourceNodeRef());
+			if (nodeService.exists( entityNodeRef) && nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)
 					&& !(SynchronisableState.Synchronized.toString()
 							.equals(copyDetails.getSourceNodeProperties().get(PLMModel.PROP_LABELINGRULELIST_SYNC_STATE))
 							|| SynchronisableState.Manual.toString()
