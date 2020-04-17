@@ -718,7 +718,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		for (AttributeExtractorStructure field : metadataFields) {
 			if (field.isNested()) {
 				List<Map<String, Object>> extracted = callback.extractNestedField(nodeRef, field);
-
+				
 				if ((AttributeExtractorMode.CSV.equals(mode) || AttributeExtractorMode.XLSX.equals(mode)) && !extracted.isEmpty()) {
 
 					if (extracted.size() > 1) {
@@ -743,9 +743,9 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 					}
 				} else {
 					if (field.isEntityField() && !extracted.isEmpty()) {
-						ret.put(field.getFieldName(), callback.extractNestedField(nodeRef, field).get(0));
+						ret.put(field.getFieldName(),extracted.get(0));
 					} else {
-						ret.put(field.getFieldName(), callback.extractNestedField(nodeRef, field));
+						ret.put(field.getFieldName(), extracted);
 					}
 				}
 			} else if (!field.isFormulaField()) {

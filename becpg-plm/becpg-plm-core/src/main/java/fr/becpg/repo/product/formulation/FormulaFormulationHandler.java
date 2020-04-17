@@ -262,7 +262,6 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 
 							QName columnName = QName.createQName(dynamicCharactListItem.getColumnName().replaceFirst("_", ":"), namespaceService);
 							if (nullDynColumnNames.contains(columnName)) {
-								System.out.println("Removing post: :"+dynamicCharactListItem.getColumnName());
 								nullDynColumnNames.remove(columnName);
 							}
 
@@ -286,8 +285,6 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 				} else {
 
 					if ((dynamicCharactListItem.getColumnName() != null) && !dynamicCharactListItem.getColumnName().isEmpty()) {
-						System.out.println("Removing pre: :"+dynamicCharactListItem.getColumnName());
-						
 						QName columnName = QName.createQName(dynamicCharactListItem.getColumnName().replaceFirst("_", ":"), namespaceService);
 						if (nullDynColumnNames.contains(columnName)) {
 							nullDynColumnNames.remove(columnName);
