@@ -95,12 +95,12 @@ public class ApprovalNumbersPatch extends AbstractBeCPGPatch {
 
 			@Override
 			public void afterProcess() throws Throwable {
-				ruleService.disableRules();
+				ruleService.enableRules();
 			}
 
 			@Override
 			public void beforeProcess() throws Throwable {
-				ruleService.enableRules();
+				ruleService.disableRules();
 			}
 
 			@Override
