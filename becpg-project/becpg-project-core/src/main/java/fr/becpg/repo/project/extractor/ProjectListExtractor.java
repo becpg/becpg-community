@@ -326,6 +326,8 @@ public class ProjectListExtractor extends ActivityListExtractor {
 	private boolean accept(NodeRef projectNodeRef) {
 		return (projectNodeRef != null) && !nodeService.hasAspect(projectNodeRef, BeCPGModel.ASPECT_ENTITY_TPL);
 	}
+	
+	
 
 	@Override
 	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields,
@@ -337,12 +339,13 @@ public class ProjectListExtractor extends ActivityListExtractor {
 
 					@Override
 					public List<Map<String, Object>> extractNestedField(NodeRef nodeRef, AttributeExtractorStructure field) {
+						
 						List<Map<String, Object>> ret = new ArrayList<>();
+
 						if (field.isDataListItems()) {
 
-							DataListPagination pagination = (DataListPagination) props.get(PAGINATION);
 
-							if ((ProjectModel.TYPE_TASK_LIST.equals(field.getFieldQname()) && (pagination.getPageSize() > 10))
+							if ((ProjectModel.TYPE_TASK_LIST.equals(field.getFieldQname()) )
 									|| BeCPGModel.TYPE_ACTIVITY_LIST.equals(field.getFieldQname())) {
 								// Only in progress tasks
 								List<NodeRef> assocRefs;
@@ -351,12 +354,12 @@ public class ProjectListExtractor extends ActivityListExtractor {
 								} else {
 									assocRefs = associationService.getTargetAssocs(nodeRef, ProjectModel.ASSOC_PROJECT_CUR_TASKS);
 								}
-
+								
 								for (NodeRef itemNodeRef : assocRefs) {
-
 									if ((permissionService.hasPermission(itemNodeRef, "Read") == AccessStatus.ALLOWED)
-											&& (securityService.computeAccessMode(itemType, field.getFieldQname()) == SecurityService.READ_ACCESS)) {
-
+											&& (securityService.computeAccessMode(itemType, field.getFieldQname()) >= SecurityService.READ_ACCESS)) {
+										
+										
 										Map<String, Object> tmp = new HashMap<>(4);
 
 										Map<String, Map<String, Boolean>> permissions = new HashMap<>(1);
