@@ -95,7 +95,6 @@ public class EntityListValuePlugin implements ListValuePlugin {
 	@Autowired
 	protected TargetAssocValueExtractor targetAssocValueExtractor;
 
-
 	@Override
 	public String[] getHandleSourceTypes() {
 		return new String[] { SOURCE_TYPE_TARGET_ASSOC, SOURCE_TYPE_LINKED_VALUE, SOURCE_TYPE_LINKED_VALUE_ALL, SOURCE_TYPE_LIST_VALUE };
@@ -152,19 +151,19 @@ public class EntityListValuePlugin implements ListValuePlugin {
 		String template = searchTemplate;
 		if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_CHARACT)) {
 			template = charactSearchTemplate;
-			if(isAllQuery(query)){
+			if (isAllQuery(query)) {
 				queryBuilder.addSort(BeCPGModel.PROP_CHARACT_NAME, true);
 			}
 		} else if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_LIST_VALUE)) {
 			template = listValueSearchTemplate;
-			if(isAllQuery(query)){
+			if (isAllQuery(query)) {
 				queryBuilder.addSort(BeCPGModel.PROP_LV_VALUE, true);
-			}	
+			}
 		} else if (entityDictionaryService.isSubClass(type, ContentModel.TYPE_PERSON)) {
-		 		template = personSearchTemplate;
-				if(isAllQuery(query)){
-					queryBuilder.addSort(ContentModel.PROP_LASTNAME, true);
-				}	
+			template = personSearchTemplate;
+			if (isAllQuery(query)) {
+				queryBuilder.addSort(ContentModel.PROP_LASTNAME, true);
+			}
 		} else if (arrClassNames != null) {
 			for (String className : arrClassNames) {
 				QName classQName;
@@ -180,25 +179,22 @@ public class EntityListValuePlugin implements ListValuePlugin {
 				}
 			}
 		} else {
-			if(isAllQuery(query)){
+			if (isAllQuery(query)) {
 				queryBuilder.addSort(ContentModel.PROP_NAME, true);
 			}
 		}
 
 		queryBuilder.ofType(type).excludeDefaults().inSearchTemplate(template).locale(I18NUtil.getContentLocale()).andOperator().ftsLanguage();
 
-		
-
 		if (!isAllQuery(query)) {
 			StringBuilder ftsQuery = new StringBuilder();
 			if (query.length() > 2) {
-				ftsQuery.append("("+prepareQuery(query.trim())+") OR ");
+				ftsQuery.append("(" + prepareQuery(query.trim()) + ") OR ");
 			}
-			ftsQuery.append("("+query+")");
+			ftsQuery.append("(" + query + ")");
 			queryBuilder.andFTSQuery(ftsQuery.toString());
 		}
 
-		
 		if ((path != null) && !path.isEmpty()) {
 			queryBuilder.inPath(path);
 		}
@@ -239,20 +235,19 @@ public class EntityListValuePlugin implements ListValuePlugin {
 							nodesToKeep.add(assocRef.getSourceRef());
 						}
 						tmp.retainAll(nodesToKeep);
-						if(!RepoConsts.MAX_RESULTS_UNLIMITED.equals(pageSize) ) {
+						if (!RepoConsts.MAX_RESULTS_UNLIMITED.equals(pageSize)) {
 							ret = tmp.subList(0, Math.min(RepoConsts.MAX_SUGGESTIONS, tmp.size()));
 						}
 					}
 				}
 			}
 		}
-		
-		if(RepoConsts.MAX_RESULTS_UNLIMITED.equals(pageSize) ) {
+
+		if (RepoConsts.MAX_RESULTS_UNLIMITED.equals(pageSize)) {
 			queryBuilder.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED);
 		} else {
 			queryBuilder.maxResults(RepoConsts.MAX_SUGGESTIONS);
 		}
-			
 
 		if (ret == null) {
 			ret = queryBuilder.list();
@@ -261,8 +256,6 @@ public class EntityListValuePlugin implements ListValuePlugin {
 		return new ListValuePage(ret, pageNum, pageSize, getTargetAssocValueExtractor());
 
 	}
-
-
 
 	protected ListValueExtractor<NodeRef> getTargetAssocValueExtractor() {
 		return targetAssocValueExtractor;
@@ -291,31 +284,30 @@ public class EntityListValuePlugin implements ListValuePlugin {
 
 		if (path == null) {
 			NodeRef entityNodeRef = null;
+
 			@SuppressWarnings("unchecked")
 			Map<String, String> extras = (HashMap<String, String>) props.get(ListValueService.EXTRA_PARAM);
 			if (extras != null) {
-				if (extras.get("destination") != null) {
+				if ((extras.get("destination") != null) && NodeRef.isNodeRef(extras.get("destination"))) {
 					entityNodeRef = new NodeRef(extras.get("destination"));
-				} else if (extras.get("itemId") != null) {
+				} else if ((extras.get("itemId") != null) && NodeRef.isNodeRef(extras.get("itemId"))) {
 					itemIdNodeRef = new NodeRef(extras.get("itemId"));
 					entityNodeRef = nodeService.getPrimaryParent(itemIdNodeRef).getParentRef();
 				} else if (extras.get("list") != null) {
-
 					QName dataListQName = QName.createQName(extras.get("list"), namespaceService);
-
 					entityNodeRef = new NodeRef((String) props.get(ListValueService.PROP_NODEREF));
-
 					NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
-
 					if (listContainerNodeRef != null) {
 						entityNodeRef = entityListDAO.getList(listContainerNodeRef, dataListQName);
 					}
-
 				}
+
 				if (entityNodeRef != null) {
 					path = nodeService.getPath(entityNodeRef).toPrefixString(namespaceService);
 				}
+
 			}
+
 		}
 
 		query = prepareQuery(query);
@@ -323,7 +315,7 @@ public class EntityListValuePlugin implements ListValuePlugin {
 
 		if (!all) {
 			String parent = (String) props.get(ListValueService.PROP_PARENT);
-			if((parent != null) && !NodeRef.isNodeRef(parent) ) {
+			if ((parent != null) && !NodeRef.isNodeRef(parent)) {
 				ret = new ArrayList<>();
 			} else {
 				NodeRef parentNodeRef = (parent != null) && NodeRef.isNodeRef(parent) ? new NodeRef(parent) : null;
@@ -371,14 +363,11 @@ public class EntityListValuePlugin implements ListValuePlugin {
 			queryBuilder.addSort(BeCPGModel.PROP_LV_VALUE, true);
 		}
 
-		
-
 		List<NodeRef> ret = queryBuilder.ftsLanguage().list();
 
 		return new ListValuePage(ret, pageNum, pageSize, new NodeRefListValueExtractor(BeCPGModel.PROP_LV_VALUE, nodeService));
 
 	}
-
 
 	protected BeCPGQueryBuilder filterByClass(BeCPGQueryBuilder queryBuilder, String[] arrClassNames) {
 
@@ -493,7 +482,7 @@ public class EntityListValuePlugin implements ListValuePlugin {
 	protected boolean isAllQuery(String query) {
 		return BeCPGQueryHelper.isAllQuery(query);
 	}
-	
+
 	protected String prepareQuery(String query) {
 		return BeCPGQueryHelper.prepareQuery(dictionaryService, query);
 	}
@@ -525,7 +514,7 @@ public class EntityListValuePlugin implements ListValuePlugin {
 		if (propertyDef != null) {
 
 			if (IndexTokenisationMode.BOTH.equals(propertyDef.getIndexTokenisationMode())
-					|| IndexTokenisationMode.FALSE.equals(propertyDef.getIndexTokenisationMode()) && isAllQuery(query)) {
+					|| (IndexTokenisationMode.FALSE.equals(propertyDef.getIndexTokenisationMode()) && isAllQuery(query))) {
 				queryBuilder.addSort(propertyQName, true);
 			}
 		}
