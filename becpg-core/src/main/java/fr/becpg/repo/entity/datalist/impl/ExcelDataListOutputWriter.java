@@ -117,49 +117,45 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 				cell = headerRow.createCell(1);
 				cell.setCellValue(dataListFilter.getDataType().toPrefixString());
 
+				String nodePath = null;
 				String bcpgCode = null;
 
 				if (dataListFilter.getEntityNodeRef() != null) {
-					headerRow = sheet.createRow(rownum++);
-					headerRow.setRowStyle(style);
-					cell = headerRow.createCell(0);
-					cell.setCellValue("PATH");
-					cell = headerRow.createCell(1);
-
 					if (entityDictionaryService.isSubClass(nodeService.getType(dataListFilter.getEntityNodeRef()), BeCPGModel.TYPE_SYSTEM_ENTITY)) {
-						cell.setCellValue(cleanPath(nodeService.getPath(dataListFilter.getParentNodeRef()).toPrefixString(namespaceService)));
+						nodePath = cleanPath(nodeService.getPath(dataListFilter.getParentNodeRef()).toPrefixString(namespaceService));
 					} else {
 
 						bcpgCode = (String) nodeService.getProperty(dataListFilter.getEntityNodeRef(), BeCPGModel.PROP_CODE);
 
-						cell.setCellValue(
-								cleanPath(nodeService.getPath(nodeService.getPrimaryParent(dataListFilter.getEntityNodeRef()).getParentRef())
-										.toPrefixString(namespaceService)));
+						nodePath = cleanPath(nodeService.getPath(nodeService.getPrimaryParent(dataListFilter.getEntityNodeRef()).getParentRef())
+										.toPrefixString(namespaceService));
 					}
+					
 				} else if (dataListFilter.getParentNodeRef() != null) {
-					headerRow = sheet.createRow(rownum++);
-					headerRow.setRowStyle(style);
-					cell = headerRow.createCell(0);
-					cell.setCellValue("PATH");
-					cell = headerRow.createCell(1);
-					cell.setCellValue(cleanPath(nodeService.getPath(dataListFilter.getParentNodeRef()).toPrefixString(namespaceService)));
+					nodePath = cleanPath(nodeService.getPath(dataListFilter.getParentNodeRef()).toPrefixString(namespaceService));
+					
 				} else if (dataListFilter.getFilterId().equals(DataListFilter.NODE_PATH_FILTER)) {
+					nodePath = cleanPath(nodeService.getPath(new NodeRef(dataListFilter.getFilterData())).toPrefixString(namespaceService));
+				}
+				
+				if(nodePath != null) {
 					headerRow = sheet.createRow(rownum++);
 					headerRow.setRowStyle(style);
 					cell = headerRow.createCell(0);
 					cell.setCellValue("PATH");
 					cell = headerRow.createCell(1);
-					cell.setCellValue(cleanPath(nodeService.getPath(new NodeRef(dataListFilter.getFilterData())).toPrefixString(namespaceService)));
+					cell.setCellValue(nodePath);
 				}
-
+				
 				if (entityDictionaryService.isSubClass(dataListFilter.getDataType(), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
-
-					headerRow = sheet.createRow(rownum++);
-					headerRow.setRowStyle(style);
-					cell = headerRow.createCell(0);
-					cell.setCellValue("IMPORT_TYPE");
-					cell = headerRow.createCell(1);
-					cell.setCellValue("EntityListItem");
+					if(nodePath != null && !nodePath.startsWith("/System/")) {
+						headerRow = sheet.createRow(rownum++);
+						headerRow.setRowStyle(style);
+						cell = headerRow.createCell(0);
+						cell.setCellValue("IMPORT_TYPE");
+						cell = headerRow.createCell(1);
+						cell.setCellValue("EntityListItem");
+					}
 
 					headerRow = sheet.createRow(rownum++);
 					headerRow.setRowStyle(style);
