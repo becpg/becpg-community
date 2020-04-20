@@ -278,7 +278,7 @@ public class EntityListsWebScript extends AbstractWebScript {
 			if (accessMapListNodeRef == null) {
 				accessMapListNodeRef = false;
 			}
-			permissions.put(KEY_NAME_CHANGE_STATE, (hasChangeStatePermission || accessMapListNodeRef) && !entityIsLocked);
+			permissions.put(KEY_NAME_CHANGE_STATE, ( accessMapListNodeRef) && !entityIsLocked);
 			object.put(KEY_NAME_PERMISSIONS, permissions);
 
 			datalist.put(object);
