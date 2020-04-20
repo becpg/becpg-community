@@ -19,7 +19,7 @@
 				              doBeforeFormSubmit : {
 				              	fn: function(){
 				                	//Don't delete
-				                 },
+				                 }
 				              }
 				           }).show();
 							
