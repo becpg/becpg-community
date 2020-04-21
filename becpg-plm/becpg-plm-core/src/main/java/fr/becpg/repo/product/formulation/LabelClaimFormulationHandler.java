@@ -79,11 +79,17 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 		if (productData.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)) {
 			return true;
 		}
+		
+		if(productData instanceof ProductSpecificationData) {
+			return true;
+		}
 
 		int sort = 2;
 		if (((productData.getEntityTpl() != null) && !productData.getEntityTpl().equals(productData))) {
 			synchronizeTemplate(productData.getEntityTpl().getLabelClaimList(), productData.getLabelClaimList(), sort);
 		}
+		
+
 		List<ProductSpecificationData> specDatas = new LinkedList<>(extractSpecifications(productData.getProductSpecifications()));
 		if ((specDatas != null) && !specDatas.isEmpty()) {
 			specDatas.sort((o1, o2) -> {
@@ -91,17 +97,20 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 			});
 
 			for (ProductSpecificationData specData : specDatas) {
-				sort++;
-				synchronizeTemplate(specData.getLabelClaimList(), productData.getLabelClaimList(), sort);
+				synchronizeTemplate(specData.getLabelClaimList(), productData.getLabelClaimList(), ++sort);
 			}
 		}
 
+		
+		
 		ExpressionParser parser = new SpelExpressionParser();
 		StandardEvaluationContext context = formulaService.createEvaluationContext(productData);
 
 		if ((productData.getLabelClaimList() != null) && !productData.getLabelClaimList().isEmpty()) {
 			if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 
+		
+		
 				Set<NodeRef> resetedClaim = new HashSet<>();
 
 				productData.getLabelClaimList().forEach(l -> {
@@ -149,10 +158,8 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 		Set<ProductSpecificationData> ret = new HashSet<>();
 		if (specifications != null) {
 			for (ProductSpecificationData specification : specifications) {
-				if (!ret.contains(specification)) {
-					ret.add(specification);
-					ret.addAll(extractSpecifications(specification.getProductSpecifications()));
-				}
+				ret.add(specification);
+				ret.addAll(extractSpecifications(specification.getProductSpecifications()));
 			}
 		}
 		return ret;
@@ -177,6 +184,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 						toAdd.setName(null);
 						toAdd.setNodeRef(null);
 						toAdd.setParentNodeRef(null);
+						toAdd.setLabelClaimValue(null);
 						simpleListDataList.add(toAdd);
 					}
 
@@ -192,7 +200,9 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 					for (LabelClaimListDataItem tsl : templateSimpleListDataList) {
 						if (sl.getLabelClaim().equals(tsl.getLabelClaim())) {
 							isFound = true;
-							lastSort = (tsl.getSort()) * (10 ^ sort);
+							Integer tplSort = tsl.getSort();
+							
+							lastSort = (tplSort!=null ?tplSort : 0 ) * (10 ^ sort);
 							sl.setSort(lastSort);
 						}
 					}
