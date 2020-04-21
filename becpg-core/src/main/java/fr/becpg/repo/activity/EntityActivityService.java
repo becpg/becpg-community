@@ -68,6 +68,8 @@ public interface EntityActivityService {
 	void cleanActivities();
 
 	void mergeActivities(NodeRef fromNodeRef, NodeRef toNodeRef);
+	
+	void clearAllActivities(NodeRef entityTplNodeRef);
 
 	boolean isMatchingStateProperty(QName propName);
 
