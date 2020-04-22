@@ -221,7 +221,7 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId) {
 		
 		var formId = mode == "bulk-edit" ? "bulk-edit" : "datagrid";
 		
-		if (formIdArgs == null) {
+		if (formIdArgs == null || formIdArgs.length == 0) {
 			if (list!=null && list.indexOf("WUsed") == 0) {
 				formId = "datagridWUsed";
 			} else if (list == "sub-datagrid") {
