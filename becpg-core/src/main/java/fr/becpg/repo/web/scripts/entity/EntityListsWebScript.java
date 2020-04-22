@@ -258,7 +258,7 @@ public class EntityListsWebScript extends AbstractWebScript {
 		return listTypes;
 	}
 
-	private JSONArray makeDatalists(Iterable<NodeRef> lists, NodeRef entity, boolean hasWritePermission, boolean hasChangeStatePermission,
+	private JSONArray makeDatalists(Iterable<NodeRef> lists, NodeRef entity, boolean hasWritePermission,
 			Map<NodeRef, Boolean> accessMap) throws JSONException {
 		final boolean entityIsLocked = lockService.isLocked(entity);
 
@@ -284,11 +284,11 @@ public class EntityListsWebScript extends AbstractWebScript {
 			JSONObject permissions = new JSONObject();
 			permissions.put(KEY_NAME_EDIT, hasWritePermission && !entityIsLocked);
 			permissions.put(KEY_NAME_DELETE, hasWritePermission && !entityIsLocked);
-			Boolean accessMapListNodeRef = accessMap.get(nodeService.getProperty(list, ContentModel.PROP_NODE_REF));
+			Boolean accessMapListNodeRef = accessMap.get(list);
 			if (accessMapListNodeRef == null) {
 				accessMapListNodeRef = false;
 			}
-			permissions.put(KEY_NAME_CHANGE_STATE, (hasChangeStatePermission || accessMapListNodeRef) && !entityIsLocked);
+			permissions.put(KEY_NAME_CHANGE_STATE, ( accessMapListNodeRef) && !entityIsLocked);
 			object.put(KEY_NAME_PERMISSIONS, permissions);
 
 			datalist.put(object);
@@ -411,7 +411,6 @@ public class EntityListsWebScript extends AbstractWebScript {
 			final NodeRef nodeRef = new NodeRef(storeType, storeId, nodeId);
 			NodeRef listContainerNodeRef = null;
 			QName nodeType = nodeService.getType(nodeRef);
-			boolean hasChangeStatePermission = false;
 			boolean hasWritePermission = false;// admin
 			Map<NodeRef, Boolean> accessRights = new HashMap<>(); // can
 			// delete
@@ -582,7 +581,7 @@ public class EntityListsWebScript extends AbstractWebScript {
 			permissions.put(KEY_NAME_CREATE, effectiveHasWritePermission && !lockService.isLocked(nodeRef));
 			result.put(KEY_NAME_PERMISSIONS, permissions);
 
-			result.put(RESULT_DATALISTS, makeDatalists(listsNodeRef, nodeRef, effectiveHasWritePermission, hasChangeStatePermission, accessRights));
+			result.put(RESULT_DATALISTS, makeDatalists(listsNodeRef, nodeRef, effectiveHasWritePermission, accessRights));
 
 			res.setContentType("application/json");
 			res.setContentEncoding("UTF-8");

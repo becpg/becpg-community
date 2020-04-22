@@ -104,7 +104,7 @@ public class ProductServiceImpl implements ProductService, InitializingBean, For
 						formulationService.formulate(productNodeRef);
 						entityActivityService.postEntityActivity(productNodeRef, ActivityType.Formulation, ActivityEvent.Update, null);
 					} else {
-						formulationService.formulate(productNodeRef, FAST_FORMULATION_CHAINID);
+						formulationService.formulate(productNodeRef, FormulationService.FAST_FORMULATION_CHAINID);
 					}
 					return true;
 				});

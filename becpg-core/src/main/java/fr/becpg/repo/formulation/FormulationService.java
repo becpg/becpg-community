@@ -21,6 +21,9 @@ import org.alfresco.service.cmr.repository.NodeRef;
 
 
 public interface FormulationService<T extends FormulatedEntity>  {
+	
+
+	 static final String FAST_FORMULATION_CHAINID = "fastFormulationChain";
 
      T formulate(NodeRef entityNodeRef, String chainId) throws FormulateException;
     

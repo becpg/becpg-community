@@ -45,8 +45,8 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
+import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.JsonFormulaHelper;
-import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.AbstractProductDataView;
 import fr.becpg.repo.product.data.CompoListView;
 import fr.becpg.repo.product.data.FinishedProductData;
@@ -185,7 +185,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 				if (execOrder.equals(dynamicCharactListItem.getExecOrder())
 						|| (DynamicCharactExecOrder.Defer.equals(dynamicCharactListItem.getExecOrder())
 								&& !DynamicCharactExecOrder.Pre.equals(execOrder)
-								&& !ProductService.FAST_FORMULATION_CHAINID.equals(productData.getFormulationChainId()))) {
+								&& !FormulationService.FAST_FORMULATION_CHAINID.equals(productData.getFormulationChainId()))) {
 					try {
 						if ((dynamicCharactListItem.getFormula() != null) && !dynamicCharactListItem.getFormula().isEmpty()) {
 							if ((dynamicCharactListItem.getColumnName() != null) && !dynamicCharactListItem.getColumnName().isEmpty()) {
@@ -262,7 +262,6 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 
 							QName columnName = QName.createQName(dynamicCharactListItem.getColumnName().replaceFirst("_", ":"), namespaceService);
 							if (nullDynColumnNames.contains(columnName)) {
-								System.out.println("Removing post: :"+dynamicCharactListItem.getColumnName());
 								nullDynColumnNames.remove(columnName);
 							}
 
@@ -286,8 +285,6 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 				} else {
 
 					if ((dynamicCharactListItem.getColumnName() != null) && !dynamicCharactListItem.getColumnName().isEmpty()) {
-						System.out.println("Removing pre: :"+dynamicCharactListItem.getColumnName());
-						
 						QName columnName = QName.createQName(dynamicCharactListItem.getColumnName().replaceFirst("_", ":"), namespaceService);
 						if (nullDynColumnNames.contains(columnName)) {
 							nullDynColumnNames.remove(columnName);

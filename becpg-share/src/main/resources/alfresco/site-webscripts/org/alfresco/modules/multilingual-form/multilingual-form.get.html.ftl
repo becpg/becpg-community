@@ -10,7 +10,7 @@
 	<#if !args.readonly??>   
    <div id="${el}-dialogTitle" class="hd">${msg("title")}</div>
    <#else>
-   <div id="${el}-dialogTitle" class="hd">${msg("title.read")}</div>
+   <div id="${el}-dialogTitle" class="hd"><#if args.title??>${args.title?html}<#else>${msg("title.read")}</#if></div>
    </#if>
    <div class="bd">
       <form id="${el}-form" action="" method="post" class="form-container">
@@ -94,7 +94,7 @@
 			</div>
          <div class="bdft">
             <input type="button" id="${el}-ok" value="${msg("button.ok")}" tabindex="0" />
-            <input type="button" id="${el}-cancel" value="${msg("button.cancel")}" tabindex="0" />
+            <#if !args.hideCancel??><input type="button" id="${el}-cancel" value="${msg("button.cancel")}" tabindex="0" /></#if>
          </div>
       </form>
    </div>

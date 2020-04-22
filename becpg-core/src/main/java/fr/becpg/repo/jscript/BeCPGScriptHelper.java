@@ -351,9 +351,9 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		return entityService.changeEntityListStates(entity.getNodeRef(), EntityListState.valueOf(state));
 	}
 
-	public void copyList(ScriptNode destNode, ScriptNode sourceNode, String listQname) {
+	public void copyList(ScriptNode sourceNode, ScriptNode destNode,  String listQname) {
 		entityListDAO.copyDataList(entityListDAO.getList(entityListDAO.getListContainer(sourceNode.getNodeRef()), getQName(listQname)),
-				sourceNode.getNodeRef(), true);
+				destNode.getNodeRef(), true);
 	}
 
 	public boolean listExist(ScriptNode node, String listQname) {

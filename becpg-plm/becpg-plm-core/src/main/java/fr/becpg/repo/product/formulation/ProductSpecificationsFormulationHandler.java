@@ -32,6 +32,7 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
+import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
@@ -91,7 +92,8 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 				try {
 					lookedSpecification.add(formulatedProduct.getNodeRef());
 					ProductSpecificationData specificationData = (ProductSpecificationData) formulatedProduct;
-					if (alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_SPEC_COMPATIBILTY_LIST)) {
+					if (alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_SPEC_COMPATIBILTY_LIST)
+							&& !FormulationService.FAST_FORMULATION_CHAINID.equals(formulatedProduct.getFormulationChainId())) {
 						StopWatch stopWatch = new StopWatch();
 						stopWatch.start();
 						String logs = "Start formulate specification at " + Calendar.getInstance().getTime().toString() + ":\n";
@@ -169,7 +171,8 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 						logs += "- found " + toUpdate.size() + " new forbidden products,\n";
 						logs += "- found " + toSkipProduct.size() + " products to skip,\n";
 						logs += "- found " + toRemove.size() + " products to remove,\n";
-						logs += "formulation end in " + stopWatch.getTotalTimeSeconds() + "s at " + Calendar.getInstance().getTime().toString() + "\n";
+						logs += "formulation end in " + stopWatch.getTotalTimeSeconds() + "s at " + Calendar.getInstance().getTime().toString()
+								+ "\n";
 						specificationData.setSpecCompatibilityLog(logs);
 
 					} else {
