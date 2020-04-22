@@ -283,12 +283,11 @@
 			   if (parentNode !== null) {
 				   // create newParent
 				   var newParentNode = this._buildTreeNode(obj.node, parentNode.parent, true);
-				   newParentNode.insertBefore(parentNode);
-
-				   tree.removeNode(parentNode);
-
-				   tree.render();
-
+				   if(newParentNode!=null){
+					   newParentNode.insertBefore(parentNode);
+					   tree.removeNode(parentNode);
+					   tree.render();
+				   }
 			   }
 
 			   // Focus on node
@@ -499,38 +498,40 @@
 		 */
 	   _buildTreeNode : function DesignerTree_buildTreeNode(p_oData, p_oParent, p_expanded) {
 		   try {
-
-			   var treeNode = new YAHOO.widget.TextNode({
-			      label : ((p_oData.title != null && p_oData.title.length > 0) ? p_oData.title : p_oData.name),
-			      entityTitle : ((p_oData.title != null && p_oData.title.length > 0) ? p_oData.title : p_oData.name),
-			      name : p_oData.name,
-			      nodeRef : p_oData.nodeRef,
-			      itemType : p_oData.type,
-			      parentType : (p_oParent != null && p_oParent.data != null) ? p_oParent.data.itemType : null,
-			      subType : p_oData.subType,
-			      description : p_oData.description,
-			      draggable : p_oData.draggable,
-			      accepts : p_oData.accepts,
-			      formId : p_oData.formId ? p_oData.formId : null,
-			      formKind : p_oData.formKind ? p_oData.formKind : null,
-			      formType : p_oData.formType ? p_oData.formType : null
-			   }, p_oParent, p_expanded);
-
-			   if (p_oData.hasError) {
-				   treeNode.labelStyle = p_oData.type.replace(":", "-");
-			   } else {
-				   treeNode.labelStyle = "dsg-error";
-			   }
-
-			   if (p_oData.childrens.length > 0) {
-				   for ( var i in p_oData.childrens) {
-					   this._buildTreeNode(p_oData.childrens[i], treeNode, false);
+			   	if(p_oData.type){
+				   var treeNode = new YAHOO.widget.TextNode({
+				      label : ((p_oData.title != null && p_oData.title.length > 0) ? p_oData.title : p_oData.name),
+				      entityTitle : ((p_oData.title != null && p_oData.title.length > 0) ? p_oData.title : p_oData.name),
+				      name : p_oData.name,
+				      nodeRef : p_oData.nodeRef,
+				      itemType : p_oData.type,
+				      parentType : (p_oParent != null && p_oParent.data != null) ? p_oParent.data.itemType : null,
+				      subType : p_oData.subType,
+				      description : p_oData.description,
+				      draggable : p_oData.draggable,
+				      accepts : p_oData.accepts,
+				      formId : p_oData.formId ? p_oData.formId : null,
+				      formKind : p_oData.formKind ? p_oData.formKind : null,
+				      formType : p_oData.formType ? p_oData.formType : null
+				   }, p_oParent, p_expanded);
+	
+				   if (p_oData.hasError) {
+					   treeNode.labelStyle = p_oData.type.replace(":", "-");
+				   } else {
+					   treeNode.labelStyle = "dsg-error";
 				   }
-			   } else {
-				   treeNode.isLeaf = true;
-			   }
-
-			   return treeNode;
+	
+				   if (p_oData.childrens.length > 0) {
+					   for ( var i in p_oData.childrens) {
+						   this._buildTreeNode(p_oData.childrens[i], treeNode, false);
+					   }
+				   } else {
+					   treeNode.isLeaf = true;
+				   }
+	
+				   return treeNode;
+			   	} 
+			   	return null;
 
 		   } catch (e) {
 			   alert(e);
