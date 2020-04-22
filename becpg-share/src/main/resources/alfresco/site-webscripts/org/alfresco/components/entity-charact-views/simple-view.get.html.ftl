@@ -18,6 +18,7 @@
 			      sortable : true,
 			      sortUrl :  Alfresco.constants.PROXY_URI+ "becpg/entity/datalists/sort/node",
 			      itemType : "${args.itemType}",
+			      columnFormId: "${args.formId!""}",
 			      saveFieldUrl :  Alfresco.constants.PROXY_URI+ "becpg/bulkedit/save",
 			      hiddenColumns : ["prop_bcpg_depthLevel"],
 			      useHistoryManager : false,
