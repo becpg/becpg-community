@@ -38,6 +38,7 @@ import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.ProductService;
+import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ResourceProductData;
@@ -143,8 +144,8 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 
 				boolean shouldFormulate = false;
 
-				if (productData.getCompoList() != null) {
-					for (CompositionDataItem c : productData.getCompoList()) {
+				if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+					for (CompositionDataItem c : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 						if ((c.getComponent() != null)) {
 							ProductData subComponent = alfrescoRepository.findOne(c.getComponent());
 							if (checkShouldFormulateComponents(false, subComponent) || ((productData.getFormulatedDate() == null)
@@ -220,7 +221,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 
 		checkFormulatedProduct(formulatedProduct);
 
-		if (formulatedProduct.hasCompoListEl(new VariantFilters<>())) {
+		if (formulatedProduct.hasCompoListEl()) {
 			for (CompoListDataItem c : formulatedProduct.getCompoList()) {
 				if (c.getCompoListUnit() == null) {
 					addMessingReq(formulatedProduct.getReqCtrlList(), null, MESSAGE_WRONG_UNIT, RequirementDataType.Composition);
@@ -229,7 +230,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 				}
 			}
 		}
-		if (formulatedProduct.hasPackagingListEl(new VariantFilters<>())) {
+		if (formulatedProduct.hasPackagingListEl()) {
 			for (PackagingListDataItem p : formulatedProduct.getPackagingList()) {
 				if (p.getPackagingListUnit() == null) {
 					addMessingReq(formulatedProduct.getReqCtrlList(), null, MESSAGE_WRONG_UNIT, RequirementDataType.Packaging);

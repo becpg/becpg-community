@@ -42,6 +42,8 @@ public interface ListValueService {
 	
 	String PROP_NODEREF = "nodeRef";
 	
+	String PROP_ENTITYNODEREF = "entityNodeRef";
+	
 	String PROP_LOCALE = "locale";
 
 	String PROP_CLASS_NAMES = "classNames";

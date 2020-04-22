@@ -158,7 +158,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	private static final String EXPORT_NUTRIENTS_XLSX_PATH = "beCPG/birt/exportsearch/product/ExportNutrients.xlsx";
 	
 	
-	private static final String EXPORT_SUPPLIERS_CONTACTS_XLSX_PATH = "beCPG/birt/exportsearch/product/ExportSuppliersContacts.xlsx";
+	private static final String EXPORT_SUPPLIERS_CONTACTS_XLSX_PATH = "beCPG/birt/exportsearch/product/ExportSuppliers.xlsx";
 
 	private static final String PRODUCT_REPORT_DE_RESOURCE = "beCPG/birt/document/product/default/ProductReport_de.properties";
 	private static final String PRODUCT_REPORT_EN_US_RESOURCE = "beCPG/birt/document/product/default/ProductReport_en_US.properties";
