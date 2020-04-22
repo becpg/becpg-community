@@ -347,7 +347,7 @@
 											 itemKind : (step.nodeRef != null && step.nodeRef.length > 0) ?"node" : "type",
 													 itemId : (step.nodeRef != null && step.nodeRef.length > 0) ? step.nodeRef : step.itemId,
 															 destination : this.options.destination,
-															 formId : step.formId
+															 formId : step.formId!=null? step.formId : ""
 								 });
 					 } else if(step.type == "entityDataList"){
 
@@ -360,7 +360,7 @@
 									 list : step.listId,
 									 itemType : step.itemId,
 									 title : encodeURIComponent(step.label),
-									 formId : step.formId 
+									 formId : step.formId!=null? step.formId : ""
 								 });
 					 } else if(step.type == "documents"){
 
