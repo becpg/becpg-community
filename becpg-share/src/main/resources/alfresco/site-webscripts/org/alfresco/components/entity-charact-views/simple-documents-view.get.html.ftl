@@ -81,7 +81,7 @@
                record.actionParams = {};
                for (var i = 0, ii = actions.length; i < ii; i++)
                {
-                 if(actions[i].id == "document-upload-new-version" || actions[i].id  == "document-delete") {
+                 if(actions[i].id == "document-upload-new-version" || actions[i].id  == "document-delete" || actions[i].id  == "document-download" ) {
                   	actionHTML += scope.renderAction(actions[i], record);
                   }
                }
