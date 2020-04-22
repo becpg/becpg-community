@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2018 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2018 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.designer.impl;
@@ -25,11 +25,16 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Serializable;
 import java.io.Writer;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.dictionary.DictionaryDAO;
@@ -38,6 +43,7 @@ import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
+import org.alfresco.service.cmr.repository.ContentIOException;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.ContentWriter;
@@ -51,6 +57,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.xml.sax.SAXException;
 
 import fr.becpg.repo.designer.DesignerInitService;
 import fr.becpg.repo.designer.DesignerModel;
@@ -64,16 +71,17 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
 /**
- * 
+ *
  * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
- * 
+ *
  */
 
 public class DesignerServiceImpl implements DesignerService {
 
+	private static String BECPG_CONFIG_CUSTOM = "becpg-config-custom.xml";
+	
 	private NodeService nodeService;
 
-	/** The content service **/
 	private ContentService contentService;
 
 	private DictionaryService dictionaryService;
@@ -113,6 +121,7 @@ public class DesignerServiceImpl implements DesignerService {
 	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
 		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
+
 	public void setDictionaryDAO(DictionaryDAO dictionaryDAO) {
 		this.dictionaryDAO = dictionaryDAO;
 	}
@@ -121,78 +130,39 @@ public class DesignerServiceImpl implements DesignerService {
 		this.dictionaryService = dictionaryService;
 	}
 
-	/**
-	 * @param configPath
-	 *            the configPath to set
-	 */
 	public void setConfigPath(String configPath) {
 		this.configPath = configPath;
 	}
 
-	/**
-	 * @param contentService
-	 *            the contentService to set
-	 */
 	public void setContentService(ContentService contentService) {
 		this.contentService = contentService;
 	}
 
-	/**
-	 * @param nodeService
-	 *            the nodeService to set
-	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
-	/**
-	 * @param metaModelVisitor
-	 *            the metaModelVisitor to set
-	 */
 	public void setMetaModelVisitor(MetaModelVisitor metaModelVisitor) {
 		this.metaModelVisitor = metaModelVisitor;
 	}
 
-	/**
-	 * @param formModelVisitor
-	 *            the formModelVisitor to set
-	 */
 	public void setFormModelVisitor(FormModelVisitor formModelVisitor) {
 		this.formModelVisitor = formModelVisitor;
 	}
 
-	/**
-	 * @param designerTreeVisitor
-	 *            the designerTreeVisitor to set
-	 */
 	public void setDesignerTreeVisitor(DesignerTreeVisitor designerTreeVisitor) {
 		this.designerTreeVisitor = designerTreeVisitor;
 	}
 
 	public void init() {
 		logger.debug("Init DesignerServiceImpl");
-		InputStream in = null;
-		try {
 
-			try {
-				in = getControlsTemplate();
-			} catch (IOException e) {
-				logger.error(e, e);
-			}
+		try (InputStream in = getControlsTemplate()) {
 			if (in != null) {
 				controls = formModelVisitor.visitControls(in);
 			}
-
-		} catch (Exception e) {
+		} catch (IOException | SAXException | ParserConfigurationException | FactoryConfigurationError e) {
 			logger.error(e, e);
-		} finally {
-			if (in != null) {
-				try {
-					in.close();
-				} catch (Exception e) {
-					// Cannot do nothing here
-				}
-			}
 		}
 	}
 
@@ -201,12 +171,8 @@ public class DesignerServiceImpl implements DesignerService {
 		logger.debug("call createModelAspectNode");
 		M2Model m2Model = null;
 
-		try {
-			if (modelXml != null) {
-				m2Model = M2Model.createModel(modelXml);
-			}
-		} catch (Exception e) {
-			logger.error(e, e);
+		if (modelXml != null) {
+			m2Model = M2Model.createModel(modelXml);
 		}
 
 		if (m2Model == null) {
@@ -218,7 +184,7 @@ public class DesignerServiceImpl implements DesignerService {
 
 		try {
 			metaModelVisitor.visitModelNodeRef(modelNodeRef, m2Model);
-		} catch (Exception e) {
+		} catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
 			logger.error(e, e);
 		}
 
@@ -229,13 +195,12 @@ public class DesignerServiceImpl implements DesignerService {
 	public void writeXml(NodeRef nodeRef) {
 
 		ContentWriter writer = contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true);
-		OutputStream out = null;
-		try {
+		writer.setEncoding("UTF-8");
+
+		try (OutputStream out = writer.getContentOutputStream();) {
 			policyBehaviourFilter.disableBehaviour(DesignerModel.ASPECT_CONFIG);
 			policyBehaviourFilter.disableBehaviour(DesignerModel.ASPECT_MODEL);
-			
-			writer.setEncoding("UTF-8");
-			out = writer.getContentOutputStream();
+
 			if (nodeService.hasAspect(nodeRef, DesignerModel.ASPECT_MODEL)) {
 				logger.debug("Write model XML");
 				NodeRef modelNodeRef = findModelNodeRef(nodeRef);
@@ -247,19 +212,16 @@ public class DesignerServiceImpl implements DesignerService {
 			} else if (nodeService.hasAspect(nodeRef, DesignerModel.ASPECT_CONFIG)) {
 				logger.debug("Write config XML");
 				NodeRef configNodeRef = findConfigNodeRef(nodeRef);
-				formModelVisitor.visitConfigXml(configNodeRef, out);
+				if (configNodeRef != null) {
+					formModelVisitor.visitConfigXml(configNodeRef, out);
+				}
 
 			}
-		} catch (Exception e) {
+		} catch (ContentIOException | IOException | ParserConfigurationException | FactoryConfigurationError | TransformerException
+				| IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
 			logger.error(e, e);
 		} finally {
-			if (out != null) {
-				try {
-					out.close();
-				} catch (Exception e) {
-					// Cannot do nothing here
-				}
-			}
+
 			policyBehaviourFilter.enableBehaviour(DesignerModel.ASPECT_CONFIG);
 			policyBehaviourFilter.enableBehaviour(DesignerModel.ASPECT_MODEL);
 		}
@@ -281,23 +243,18 @@ public class DesignerServiceImpl implements DesignerService {
 			String path = configPath + System.getProperty("file.separator") + name;
 			logger.debug("Publish config under " + path);
 			ContentReader reader = contentService.getReader(nodeRef, ContentModel.PROP_CONTENT);
-
-			InputStream in = null;
-			OutputStream out = null;
 			try {
 				File file = new File(path);
 				if (!file.exists()) {
 					file.createNewFile();
 				}
-				out = new FileOutputStream(file);
-				in = reader.getContentInputStream();
-				IOUtils.copy(in, out);
-			} catch (Exception e) {
+
+				try (InputStream in = reader.getContentInputStream(); OutputStream out = new FileOutputStream(file)) {
+					IOUtils.copy(in, out);
+				}
+
+			} catch (IOException e) {
 				logger.error(e, e);
-			} finally {
-				IOUtils.closeQuietly(in);
-				IOUtils.closeQuietly(out);
-				
 			}
 		}
 	}
@@ -335,9 +292,12 @@ public class DesignerServiceImpl implements DesignerService {
 
 	public NodeRef findConfigNodeRef(NodeRef nodeRef) {
 
-		for (ChildAssociationRef assoc : nodeService.getChildAssocs(nodeRef)) {
-			if (assoc.getTypeQName().equals(DesignerModel.ASSOC_DSG_CONFIG)) {
-				return assoc.getChildRef();
+		if (!BECPG_CONFIG_CUSTOM.equals(nodeService.getProperty(nodeRef, ContentModel.PROP_NAME))) {
+
+			for (ChildAssociationRef assoc : nodeService.getChildAssocs(nodeRef)) {
+				if (assoc.getTypeQName().equals(DesignerModel.ASSOC_DSG_CONFIG)) {
+					return assoc.getChildRef();
+				}
 			}
 		}
 		return null;
@@ -346,16 +306,15 @@ public class DesignerServiceImpl implements DesignerService {
 	@Override
 	public DesignerTree getDesignerTree(NodeRef nodeRef) {
 		NodeRef treeNodeRef = null;
-		
-		
+
 		if (nodeService.hasAspect(nodeRef, DesignerModel.ASPECT_MODEL)) {
 			treeNodeRef = findModelNodeRef(nodeRef);
-			if (logger.isDebugEnabled() && treeNodeRef == null) {
+			if (logger.isDebugEnabled() && (treeNodeRef == null)) {
 				logger.debug("No assoc model found for this nodeRef");
 			}
 		} else if (nodeService.hasAspect(nodeRef, DesignerModel.ASPECT_CONFIG)) {
 			treeNodeRef = findConfigNodeRef(nodeRef);
-			if (logger.isDebugEnabled() && treeNodeRef == null) {
+			if (logger.isDebugEnabled() && (treeNodeRef == null)) {
 				logger.debug("No assoc config found for this nodeRef");
 			}
 		} else if (nodeService.getType(nodeRef).getNamespaceURI().equals(DesignerModel.M2_URI)
@@ -364,14 +323,15 @@ public class DesignerServiceImpl implements DesignerService {
 		} else {
 			logger.debug("Node has not mandatory aspect : model aspect. Creating ...");
 		}
-		
-		if(treeNodeRef!=null && nodeService.hasAspect(treeNodeRef, ContentModel.ASPECT_TEMPORARY)) {
+
+		if ((treeNodeRef != null) && nodeService.hasAspect(treeNodeRef, ContentModel.ASPECT_TEMPORARY)) {
 			nodeService.deleteNode(treeNodeRef);
 			treeNodeRef = null;
 		}
-		
+
 		if (treeNodeRef == null) {
-			if (nodeService.hasAspect(nodeRef, DesignerModel.ASPECT_CONFIG)) {
+			if (nodeService.hasAspect(nodeRef, DesignerModel.ASPECT_CONFIG)
+					&& !BECPG_CONFIG_CUSTOM.equals(nodeService.getProperty(nodeRef, ContentModel.PROP_NAME))) {
 				treeNodeRef = createConfigAspectNode(nodeRef);
 			} else {
 				treeNodeRef = createModelAspectNode(nodeRef);
@@ -385,21 +345,13 @@ public class DesignerServiceImpl implements DesignerService {
 		return new DesignerTree(null);
 	}
 
-	public NodeRef createModelAspectNode(NodeRef dictionaryModelNodeRef) {
+	private NodeRef createModelAspectNode(NodeRef dictionaryModelNodeRef) {
 		if (ContentModel.TYPE_DICTIONARY_MODEL.equals(nodeService.getType(dictionaryModelNodeRef))) {
 			ContentReader reader = contentService.getReader(dictionaryModelNodeRef, ContentModel.PROP_CONTENT);
-			InputStream in = null;
-			try {
-				in = reader.getContentInputStream();
+			try (InputStream in = reader.getContentInputStream()) {
 				return createModelAspectNode(dictionaryModelNodeRef, in);
-			} finally {
-				if (in != null) {
-					try {
-						in.close();
-					} catch (Exception e) {
-						// Cannot do nothing here
-					}
-				}
+			} catch (ContentIOException | IOException e) {
+				logger.error(e, e);
 			}
 		} else {
 			logger.warn("Node is not of type : dictionnary model");
@@ -407,27 +359,17 @@ public class DesignerServiceImpl implements DesignerService {
 		return null;
 	}
 
-	public NodeRef createConfigAspectNode(NodeRef parentNodeRef) {
+	private NodeRef createConfigAspectNode(NodeRef parentNodeRef) {
 		ContentReader reader = contentService.getReader(parentNodeRef, ContentModel.PROP_CONTENT);
 		ChildAssociationRef childAssociationRef = nodeService.createNode(parentNodeRef, DesignerModel.ASSOC_DSG_CONFIG,
 				DesignerModel.ASSOC_DSG_CONFIG, DesignerModel.TYPE_DSG_CONFIG);
 		NodeRef configNodeRef = childAssociationRef.getChildRef();
 		nodeService.setProperty(configNodeRef, DesignerModel.PROP_DSG_ID, nodeService.getProperty(parentNodeRef, ContentModel.PROP_NAME));
-		InputStream in = null;
-		try {
-			in = reader.getContentInputStream();
 
+		try (InputStream in = reader.getContentInputStream()) {
 			formModelVisitor.visitConfigNodeRef(configNodeRef, in);
-		} catch (Exception e) {
+		} catch (ContentIOException | IOException | SAXException | ParserConfigurationException | FactoryConfigurationError e) {
 			logger.error(e, e);
-		} finally {
-			if (in != null) {
-				try {
-					in.close();
-				} catch (Exception e) {
-					// Cannot do nothing here
-				}
-			}
 		}
 		return configNodeRef;
 	}
@@ -452,17 +394,11 @@ public class DesignerServiceImpl implements DesignerService {
 		NodeRef ret = childAssociationRef.getChildRef();
 
 		if (modelTemplate != null) {
-			InputStream in = null;
-			try {
-				String[] splitted = modelTemplate.split("_");
 
-				try {
-					in = getModelTemplate(splitted[0]);
-				} catch (IOException e) {
-					logger.error(e, e);
-				}
+			String[] splitted = modelTemplate.split("_");
+			try (InputStream in = getModelTemplate(splitted[0])) {
+
 				if (in != null) {
-
 					if (nodeService.getType(parentNodeRef).getNamespaceURI().equals(DesignerModel.DESIGNER_URI)) {
 						formModelVisitor.visitModelTemplate(ret, nodeTypeQname, splitted[1], in);
 					} else {
@@ -470,16 +406,9 @@ public class DesignerServiceImpl implements DesignerService {
 					}
 				}
 
-			} catch (Exception e) {
+			} catch (IOException | SAXException | ParserConfigurationException | FactoryConfigurationError | IllegalArgumentException
+					| IllegalAccessException | InvocationTargetException | ClassNotFoundException e) {
 				logger.error(e, e);
-			} finally {
-				if (in != null) {
-					try {
-						in.close();
-					} catch (Exception e) {
-						// Cannot do nothing here
-					}
-				}
 			}
 		}
 		if (props != null) {
@@ -496,7 +425,7 @@ public class DesignerServiceImpl implements DesignerService {
 	}
 
 	private InputStream getModelTemplate(String modelTemplate) throws IOException {
-		if (modelTemplate != null && modelTemplate.length() > 0) {
+		if ((modelTemplate != null) && (modelTemplate.length() > 0)) {
 			Resource resource = new ClassPathResource("beCPG/designer/" + modelTemplate + ".xml");
 			if (resource.exists()) {
 				return resource.getInputStream();
@@ -670,37 +599,29 @@ public class DesignerServiceImpl implements DesignerService {
 	private NodeRef findOrCreateModelFile(NodeRef parentNodeRef, String modelName, String modelTemplate, Map<String, Object> templateContext,
 			boolean isConfig) throws IOException, TemplateException {
 		NodeRef modelNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, modelName);
-		Writer out = null;
+
 		if (modelNodeRef == null) {
 			logger.debug("Model file " + modelName + " not found creating from :" + modelTemplate);
 
-			try {
+			Map<QName, Serializable> properties = new HashMap<>();
+			properties.put(ContentModel.PROP_NAME, modelName);
 
-				Map<QName, Serializable> properties = new HashMap<>();
-				properties.put(ContentModel.PROP_NAME, modelName);
+			modelNodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
+					isConfig ? ContentModel.TYPE_CONTENT : ContentModel.TYPE_DICTIONARY_MODEL, properties).getChildRef();
 
-				modelNodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
-						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
-						isConfig ? ContentModel.TYPE_CONTENT : ContentModel.TYPE_DICTIONARY_MODEL, properties).getChildRef();
+			ContentWriter writer = contentService.getWriter(modelNodeRef, ContentModel.PROP_CONTENT, true);
 
-				ContentWriter writer = contentService.getWriter(modelNodeRef, ContentModel.PROP_CONTENT, true);
+			writer.setMimetype(mimetypeService.guessMimetype(modelName));
 
-				writer.setMimetype(mimetypeService.guessMimetype(modelName));
+			Configuration cfg = new Configuration();
+			TemplateLoader templateLoader = new ClassTemplateLoader(DesignerServiceImpl.class, "/beCPG/designer/");
+			cfg.setTemplateLoader(templateLoader);
+			Template ftlTemplate = cfg.getTemplate(modelTemplate);
 
-				Configuration cfg = new Configuration();
-				TemplateLoader templateLoader = new ClassTemplateLoader(DesignerServiceImpl.class, "/beCPG/designer/");
-				cfg.setTemplateLoader(templateLoader);
-				Template ftlTemplate = cfg.getTemplate(modelTemplate);
-
-				out = new OutputStreamWriter(writer.getContentOutputStream());
-
+			try (Writer out = new OutputStreamWriter(writer.getContentOutputStream())) {
 				ftlTemplate.process(templateContext, out);
-
 				out.flush();
-				out.close();
-
-			} finally {
-				IOUtils.closeQuietly(out);
 			}
 
 		}
@@ -731,28 +652,28 @@ public class DesignerServiceImpl implements DesignerService {
 	public void createAndPublishConfig(NodeRef nodeRef) {
 		policyBehaviourFilter.disableBehaviour(DesignerModel.ASPECT_CONFIG);
 		policyBehaviourFilter.disableBehaviour(DesignerModel.ASPECT_MODEL);
-		
-		logger.debug("Creating and publishing: "+nodeRef);
-		
+
+		logger.debug("Creating and publishing: " + nodeRef);
+
 		NodeRef configNodeRef = null;
-		
+
 		if (nodeService.hasAspect(nodeRef, DesignerModel.ASPECT_MODEL)) {
 			configNodeRef = findModelNodeRef(nodeRef);
 		} else if (nodeService.hasAspect(nodeRef, DesignerModel.ASPECT_CONFIG)) {
 			configNodeRef = findConfigNodeRef(nodeRef);
-		} 
-		
-		if(configNodeRef!=null){
+		}
+
+		if (configNodeRef != null) {
 			nodeService.addAspect(configNodeRef, ContentModel.ASPECT_TEMPORARY, new HashMap<>());
 		}
 
 		if (nodeService.hasAspect(nodeRef, DesignerModel.ASPECT_CONFIG)) {
 			publish(nodeRef);
 		}
-		
+
 		policyBehaviourFilter.enableBehaviour(DesignerModel.ASPECT_CONFIG);
 		policyBehaviourFilter.enableBehaviour(DesignerModel.ASPECT_MODEL);
-		
+
 	}
 
 	@Override
@@ -762,14 +683,13 @@ public class DesignerServiceImpl implements DesignerService {
 			configDir.mkdirs();
 		}
 		String path = configPath + System.getProperty("file.separator") + fileName;
-		
+
 		File file = new File(path);
-		logger.debug("Deleting file at path "+path+", exists ? "+file.exists());
+		logger.debug("Deleting file at path " + path + ", exists ? " + file.exists());
 		if (file.exists()) {
 			file.delete();
 		}
 
-		
 	}
 
 }

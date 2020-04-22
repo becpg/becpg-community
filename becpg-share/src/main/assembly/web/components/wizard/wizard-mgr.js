@@ -354,12 +354,13 @@
 						 url =  YAHOO.lang
 						 .substitute(
 								 Alfresco.constants.URL_SERVICECONTEXT + "components/entity-charact-views/simple-view" + 
-								 "?list={list}&nodeRef={nodeRef}&itemType={itemType}&title={title}",
+								 "?list={list}&nodeRef={nodeRef}&itemType={itemType}&title={title}&formId={formId}",
 								 {
 									 nodeRef : step.nodeRef,
 									 list : step.listId,
 									 itemType : step.itemId,
-									 title : encodeURIComponent(step.label)
+									 title : encodeURIComponent(step.label),
+									 formId : step.formId 
 								 });
 					 } else if(step.type == "documents"){
 
