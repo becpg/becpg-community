@@ -468,7 +468,7 @@ public class EntityServiceImpl implements EntityService {
 
 	private void deleteNode(NodeRef nodeRef, boolean deleteArchivedNode) {
 		// Test folder exists
-		if (nodeService.exists(nodeRef)) {
+		if (nodeService.exists(nodeRef) && !nodeService.hasAspect(nodeRef, VirtualContentModel.ASPECT_VIRTUAL)) {
 			// delete from trash
 			if (deleteArchivedNode) {
 				nodeService.addAspect(nodeRef, ContentModel.ASPECT_TEMPORARY, null);
