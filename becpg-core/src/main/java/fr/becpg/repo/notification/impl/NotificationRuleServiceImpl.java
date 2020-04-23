@@ -115,7 +115,9 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 			
 			notification = alfrescoRepository.findOne(notificationNodeRef);
 			
-			if(notification.getNodeType() == null || notification.getAuthorities() == null || !isAllowed(notification)){
+			if(notification.getNodeType() == null || notification.getTarget() == null ||
+					!nodeService.exists(notification.getTarget())
+					|| notification.getAuthorities() == null || !isAllowed(notification)){
 				logger.warn("Skip notification : " + notification);
 				continue ;
 			}
@@ -240,7 +242,6 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 						}
 						templateModel.put("args", userTemplateArgs);
 						
-						logger.info("send mail: "+templateModel);
 						mailService.sendMail(Arrays.asList(authorityService.getAuthorityNodeRef(userName)), notification.getSubject(), emailTemplate, templateModel, false);	
 					} 
 				}
