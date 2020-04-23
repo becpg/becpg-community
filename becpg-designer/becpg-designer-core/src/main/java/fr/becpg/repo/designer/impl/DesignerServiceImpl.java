@@ -244,13 +244,15 @@ public class DesignerServiceImpl implements DesignerService {
 			logger.debug("Publish config under " + path);
 			ContentReader reader = contentService.getReader(nodeRef, ContentModel.PROP_CONTENT);
 			try {
-				File file = new File(path);
-				if (!file.exists()) {
-					file.createNewFile();
-				}
-
-				try (InputStream in = reader.getContentInputStream(); OutputStream out = new FileOutputStream(file)) {
-					IOUtils.copy(in, out);
+				if(reader!=null) {
+					File file = new File(path);
+					if (!file.exists()) {
+						file.createNewFile();
+					}
+	
+					try (InputStream in = reader.getContentInputStream(); OutputStream out = new FileOutputStream(file)) {
+						IOUtils.copy(in, out);
+					}
 				}
 
 			} catch (IOException e) {
@@ -667,7 +669,7 @@ public class DesignerServiceImpl implements DesignerService {
 			nodeService.addAspect(configNodeRef, ContentModel.ASPECT_TEMPORARY, new HashMap<>());
 		}
 
-		if (nodeService.hasAspect(nodeRef, DesignerModel.ASPECT_CONFIG)) {
+		if (nodeService.hasAspect(nodeRef, DesignerModel.ASPECT_CONFIG) && nodeRef!=null) {
 			publish(nodeRef);
 		}
 
