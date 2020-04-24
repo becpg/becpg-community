@@ -49,7 +49,7 @@ import fr.becpg.report.client.ReportFormat;
  */
 public class ReportContentGet extends ContentGet {
 	private static final Log logger = LogFactory.getLog(ReportContentGet.class);
-
+ 
 	private static final String PARAM_ENTITY_NODEREF = "entityNodeRef";
 	protected static final String PARAM_STORE_TYPE = "store_type";
 	protected static final String PARAM_STORE_ID = "store_id";
