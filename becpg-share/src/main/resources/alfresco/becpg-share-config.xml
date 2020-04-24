@@ -56,6 +56,14 @@
 			<language locale="zh_CN">Chinese (Simplified) - China</language>
 			<language locale="zh_HK">Chinese - Hong Kong</language>
 			<language locale="zh_SG">Chinese - Singapore</language>
+			<language locale="ar_AE">Arabic - United Arab Emirates</language>
+			<language locale="ar_BH">Arabic - Bahrain</language>
+			<language locale="ar_SA">Arabic - Saudi Arabia</language>
+			<language locale="ar_MA">Arabic - Morocco</language>
+			<language locale="ar_QA">Arabic - Qatar</language>
+			<language locale="ar_OM">Arabic - Oman</language>
+			<language locale="ar_KW">Arabic - Kuwait</language>
+			<language locale="ar_DZ">Arabic - Algeria</language>
 			
 			
 			<!-- Others can be use in language only way if country is same than language 
