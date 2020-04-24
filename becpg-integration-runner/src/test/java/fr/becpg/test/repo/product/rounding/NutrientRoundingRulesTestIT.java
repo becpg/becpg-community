@@ -658,6 +658,10 @@ public class NutrientRoundingRulesTestIT {
 		assertEquals(6.2d, RegulationFormulationHelper.round(6.24d, NutrientCode.FatMonounsaturated, MLTextHelper.parseLocale("ar_SA"), "g/100g"), 0);
 		assertEquals(0d, RegulationFormulationHelper.round(0.04d, NutrientCode.FatPolyunsaturated, MLTextHelper.parseLocale("ar_SA"), "g/100g"), 0);
 
+		assertEquals(1.9d, RegulationFormulationHelper.round(1.92d, NutrientCode.Sodium, MLTextHelper.parseLocale("ar_QA"), "mg/100g"), 0);
+		assertEquals(0.17d, RegulationFormulationHelper.round(0.169d, NutrientCode.Sodium, MLTextHelper.parseLocale("ar_QA"), "mg/100g"), 0);
+		assertEquals(0d, RegulationFormulationHelper.round(0.004d, NutrientCode.Sodium, MLTextHelper.parseLocale("ar_QA"), "mg/100g"), 0);
+		
 		assertEquals(1.9d, RegulationFormulationHelper.round(1.92d, NutrientCode.Salt, MLTextHelper.parseLocale("ar_OM"), "g/100g"), 0);
 		assertEquals(0.03d, RegulationFormulationHelper.round(0.0285d, NutrientCode.Salt, MLTextHelper.parseLocale("ar_OM"), "g/100g"), 0);
 		assertEquals(0d, RegulationFormulationHelper.round(0.01d, NutrientCode.Salt, MLTextHelper.parseLocale("ar_OM"), "g/100g"), 0);
