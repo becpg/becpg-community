@@ -183,6 +183,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			builder.entityDictionaryService = INSTANCE.entityDictionaryService;
 			builder.tenantService = INSTANCE.tenantService;
 			builder.dataSource = INSTANCE.dataSource;
+			builder.includeReportInSearch = INSTANCE.includeReportInSearch;
 		}
 		return builder;
 	}
@@ -447,8 +448,6 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	public BeCPGQueryBuilder excludeType(QName type) {
 		if (!types.contains(type) && !type.equals(this.type)) {
 			excludedTypes.add(type);
-		} else {
-			logger.warn("Unconsistent search type already in inType : " + type);
 		}
 		return this;
 	}
@@ -1298,7 +1297,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 		PermissionCheckedValueMixin.create(nodeRefs);
 
-		return new PagingResults<>() {
+		return new PagingResults<NodeRef>() {
 			@Override
 			public String getQueryExecutionId() {
 				return null; // TODO use Paginated Cache results
