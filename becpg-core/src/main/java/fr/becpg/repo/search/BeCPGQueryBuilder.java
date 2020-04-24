@@ -1278,7 +1278,6 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		return getPagingResults(pagingRequest, results);
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private PagingResults<NodeRef> getPagingResults(PagingRequest pagingRequest, final CannedQueryResults<NodeRef> results) {
 
 		final List<NodeRef> nodeRefs;
@@ -1298,7 +1297,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 		PermissionCheckedValueMixin.create(nodeRefs);
 
-		return new PagingResults() {
+		return new PagingResults<NodeRef>() {
 			@Override
 			public String getQueryExecutionId() {
 				return null; // TODO use Paginated Cache results
