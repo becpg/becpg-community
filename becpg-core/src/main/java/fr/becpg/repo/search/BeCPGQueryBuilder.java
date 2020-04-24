@@ -182,6 +182,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			builder.dictionaryService = INSTANCE.dictionaryService;
 			builder.tenantService = INSTANCE.tenantService;
 			builder.dataSource = INSTANCE.dataSource;
+			builder.includeReportInSearch = INSTANCE.includeReportInSearch;
 		}
 		return builder;
 	}
@@ -440,8 +441,6 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	public BeCPGQueryBuilder excludeType(QName type) {
 		if (!types.contains(type) && !type.equals(this.type)) {
 			excludedTypes.add(type);
-		} else {
-			logger.warn("Unconsistent search type already in inType : " + type);
 		}
 		return this;
 	}
