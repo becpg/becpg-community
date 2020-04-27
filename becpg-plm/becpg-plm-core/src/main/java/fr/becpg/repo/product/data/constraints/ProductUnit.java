@@ -46,7 +46,7 @@ public enum ProductUnit {
 	}
 	
 
-	boolean isPerc() {
+	public boolean isPerc() {
 		return Perc.equals(this);
 	}
 	
