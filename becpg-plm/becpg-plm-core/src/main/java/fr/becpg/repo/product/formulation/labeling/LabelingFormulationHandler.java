@@ -228,7 +228,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			CompositeLabeling compositeLabeling = visitCompoList(new CompositeLabeling(CompositeLabeling.ROOT), compositeDefaultVariant,
 					labelingFormulaContext, 1d,
 					labelingFormulaContext.getYield() != null ? labelingFormulaContext.getYield() : formulatedProduct.getYield(),
-					formulatedProduct.getRecipeQtyUsed(), true);
+					formulatedProduct.getRecipeQtyUsed(), true, true);
 
 			if (logger.isTraceEnabled()) {
 				logger.trace(" Before aggrate \n " + compositeLabeling.toString());
@@ -1118,12 +1118,11 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	}
 
 	private CompositeLabeling visitCompoList(CompositeLabeling parent, Composite<CompoListDataItem> parentComposite,
-			LabelingFormulaContext labelingFormulaContext, Double ratio, Double yield, Double recipeQtyUsed, boolean computeReconstitution)
+			LabelingFormulaContext labelingFormulaContext, Double ratio, Double yield, Double recipeQtyUsed, boolean computeReconstitution, boolean applyWaterLost)
 			throws FormulateException {
 
 		Map<String, ReqCtrlListDataItem> errors = new HashMap<>();
 		
-		boolean applyWaterLost = true;
 
 		for (Composite<CompoListDataItem> composite : parentComposite.getChildren()) {
 
@@ -1420,7 +1419,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							}
 
 							visitCompoList(compositeLabeling, composite, labelingFormulaContext, computedRatio, recurYield, recurRecipeQtyUsed,
-									!parent.equals(compositeLabeling));
+									!parent.equals(compositeLabeling),  (productData instanceof LocalSemiFinishedProductData) ? applyWaterLost : true );
 						}
 					}
 
