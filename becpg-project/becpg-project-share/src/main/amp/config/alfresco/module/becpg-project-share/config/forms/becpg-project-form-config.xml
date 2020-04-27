@@ -355,16 +355,15 @@
 					</field>
 				</appearance>
 			</form>
-			<!-- Allow to add custom fields to TaskList -->
+			<!-- Allow to add custom fields to TaskList
 		   <form id="taskList">
 			  <field-visibility>
 					<show id="pjt:projectManager" force="true" />
 					<show id="pjt:projectScore" force="true" />
 					<show id="pjt:projectEntity" force="true" />
-					<show id="bpm:completionDate" force="true" />
 				</field-visibility>
 			</form>
-		
+		   -->
 			<form id="datagrid">
 				<field-visibility>
 					<show id="bcpg:code" />
