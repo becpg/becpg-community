@@ -151,7 +151,7 @@
           this.dataRequestFields = [];
           this.dataResponseFields = [];
          
-          var columns = ["bpm_priority", "bpm_status", "bpm_dueDate", "bpm_description"];
+          var columns = ["bpm_priority", "bpm_status", "bpm_dueDate", "bpm_description","bpm_completionDate"];
           var columnDefs = 
               [
                   { key: "id", sortable: true,label:"", formatter: this.bind(this.renderCellPriority), width: 16 },
@@ -160,7 +160,9 @@
                   { key: "title", sortable: true, label:this.msg("label.type"), formatter: this.bind(this.renderTaskTypeCell) },
                   { key: "path", sortable: true, label:this.msg("label.due"), formatter: this.bind(this.renderDueDateCell) },
                   { key: "state", sortable: true, label:this.msg("label.started"), formatter: this.bind(this.renderStartDateCell) },
-                  { key: "owner", sortable: true, label:this.msg("label.initiator"), formatter: this.bind(this.renderInitiatorCell) },
+                  { key: "completionDate", sortable: true, hidden:true, label:this.msg("label.ended"), formatter: this.bind(this.renderCompletionDateCell) },
+                  { key: "owner", sortable: true, label:this.msg("label.initiator"), formatter: this.bind(this.renderInitiatorCell) }
+                 
                   
                ];
           
@@ -500,6 +502,21 @@
 			var date = Alfresco.util.fromISO8601(record.properties["bpm_dueDate"]);
 			elCell.innerHTML = ( date !== null ? Alfresco.util.formatDate(date, "mediumDate") : "" );
 		},
+		
+		renderCompletionDateCell: function(elCell, oRecord, oColumn, oData)
+		 {
+				var record = oRecord.getData();
+
+				var date = Alfresco.util.fromISO8601(record.properties["bpm_completionDate"]);
+				if (date!=null && oColumn.hidden) {
+					this.widgets.alfrescoDataTable.showColumn(oColumn);
+                    Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
+              }
+				
+				
+				elCell.innerHTML = ( date !== null ? Alfresco.util.formatDate(date, "mediumDate") : "" );
+	   },
+			
 		
 	   renderStartDateCell: function(elCell, oRecord, oColumn, oData)
 	   {

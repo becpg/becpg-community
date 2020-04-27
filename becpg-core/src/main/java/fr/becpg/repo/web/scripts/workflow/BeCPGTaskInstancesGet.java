@@ -251,6 +251,8 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 				return WorkflowModel.PROP_START_DATE;
 			case "path":
 				return WorkflowModel.PROP_DUE_DATE;
+			case "completionDate":
+				return WorkflowModel.PROP_COMPLETION_DATE;	
 			case "description":
 				return QNAME_INITIATOR;
 			default:
