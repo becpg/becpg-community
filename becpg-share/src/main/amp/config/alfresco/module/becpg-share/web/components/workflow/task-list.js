@@ -17,6 +17,7 @@
  * along with Alfresco. If not, see <http://www.gnu.org/licenses/>.
  */
 
+
 /**
  * TaskList component.
  *
@@ -37,6 +38,8 @@
    var $html = Alfresco.util.encodeHTML,
       $siteURL = Alfresco.util.siteURL;
 
+   var $dt = null;
+   
    /**
     * DocumentList constructor.
     *
@@ -160,7 +163,7 @@
                   { key: "title", sortable: true, label:this.msg("label.type"), formatter: this.bind(this.renderTaskTypeCell) },
                   { key: "path", sortable: true, label:this.msg("label.due"), formatter: this.bind(this.renderDueDateCell) },
                   { key: "state", sortable: true, label:this.msg("label.started"), formatter: this.bind(this.renderStartDateCell) },
-                  { key: "completionDate", sortable: true, hidden:true, label:this.msg("label.ended"), formatter: this.bind(this.renderCompletionDateCell) },
+                  { key: "completionDate", sortable: true, label:this.msg("label.ended"), formatter: this.bind(this.renderCompletionDateCell) },
                   { key: "owner", sortable: true, label:this.msg("label.initiator"), formatter: this.bind(this.renderInitiatorCell) }
                  
                   
@@ -273,6 +276,8 @@
              
           });
           
+        
+          
           this.widgets.pagingDataTable.getDataTable().sortColumn = function(oColumn, sDir) {
  			    if(oColumn && (oColumn instanceof YAHOO.widget.Column)) {
  			        if(!oColumn.sortable) {
@@ -340,6 +345,8 @@
  			    }
  			};
  			
+ 			  $dt =  this.widgets.pagingDataTable;
+ 			
       },
 
 
@@ -405,90 +412,7 @@
          elCell.innerHTML = desc;
       },
 
-      /**
-       * Task info custom datacell formatter
-       *
-       * @method TL_renderCellTaskInfo
-       * @param elCell {object}
-       * @param oRecord {object}
-       * @param oColumn {object}
-       * @param oData {object|string}
-       */
-      renderCellTaskInfo: function TL_renderCellTaskInfo(elCell, oRecord, oColumn, oData)
-      {
-         var taskId = oRecord.getData("id"),
-               message = $html(oRecord.getData("properties")["bpm_description"]),
-               dueDateStr = oRecord.getData("properties")["bpm_dueDate"],
-               dueDate = dueDateStr ? Alfresco.util.fromISO8601(dueDateStr) : null,
-               workflowInstance = oRecord.getData("workflowInstance"),
-               startedDate = workflowInstance.startDate ? Alfresco.util.fromISO8601(workflowInstance.startDate) : null,
-               type = $html(oRecord.getData("title")),
-               status = $html(oRecord.getData("properties")["bpm_status"]),
-               assignee = oRecord.getData("owner"),
-               description = $html(oRecord.getData("description")),
-               initiator;
-         // initiator may not be present, see MNT-11622
-         if (workflowInstance.initiator)
-         {
-            initiator = $html(workflowInstance.initiator.firstName);
-         }
-               
-         // if there is a property label available for the status use that instead
-         var data = oRecord.getData();
-         if (data.propertyLabels && Alfresco.util.isValueSet(data.propertyLabels["bpm_status"], false))
-         {
-            status = data.propertyLabels["bpm_status"];
-         }
-               
-         // if message is the same as the task type show the <no message> label
-         if (message == type)
-         {
-            message = this.msg("workflow.no_message");
-         }
-               
-         var href;
-         if(oRecord.getData('isEditable'))
-         {
-            href = $siteURL('task-edit?taskId=' + taskId + '&referrer=tasks&myTasksLinkBack=true') + '" class="theme-color-1" title="' + this.msg("link.editTask");
-         }
-         else
-         {
-            href = $siteURL('task-details?taskId=' + taskId + '&referrer=tasks&myTasksLinkBack=true') + '" class="theme-color-1" title="' + this.msg("link.viewTask");
-         }
-
-         var info = '<h3><a href="' + href + '">' + message + '</a></h3>';
-         info += '<div class="due"><label>' + this.msg("label.due") + ':</label><span>' + (dueDate ? Alfresco.util.formatDate(dueDate, "longDate") : this.msg("label.none")) + '</span></div>';
-         info += '<div class="started"><label>' + this.msg("label.started") + ':</label><span>' + (startedDate ? Alfresco.util.formatDate(startedDate, "longDate") : this.msg("label.none")) + '</span></div>';
-         if (!workflowInstance.isActive)
-         {
-            var endedDate = workflowInstance.endDate ? Alfresco.util.fromISO8601(workflowInstance.endDate) : null;
-            info += '<div class=ended"><label>' + this.msg("label.ended") + ':</label><span>' + (endedDate ? Alfresco.util.formatDate(endedDate, "longDate") : this.msg("label.none")) + '</span></div>';
-         }
-         info += '<div class="status"><label>' + this.msg("label.status") + ':</label><span>' + status + '</span></div>';
-         info += '<div class="type"><label>' + this.msg("label.type", type) + ':</label><span>' + type + '</span></div>';
-         info += '<div class="description"><label>' + this.msg("label.description") + ':</label><span>' + description + '</span></div>';
-         if (initiator)
-         {
-            info += '<div class="initiator"><label>' + this.msg("label.initiator") + ':</label><span>' + initiator + '</span></div>';
-         }
-         if (!assignee || !assignee.userName)
-         {
-            info += '<div class="unassigned"><span class="theme-bg-color-5 theme-color-5 unassigned-task">' + this.msg("label.unassignedTask") + '</span></div>';
-         }
-         elCell.innerHTML = info;
-         this.widgets.alfrescoDataTable.loadDataTable("q="+encodeURIComponent(this.searchTerm));
-      },
-     
-      renderInitiatorCell: function(elCell, oRecord, oColumn, oData) {
-    	  var workflowInstance = oRecord.getData("workflowInstance");
-		    // initiator may not be present, see MNT-11622
-		    if (workflowInstance.initiator)
-		    {
-		       elCell.innerHTML = '<span class="person">' 
-		    	   + Alfresco.util.userProfileLink(workflowInstance.initiator.userName, workflowInstance.initiator.firstName+" "+ workflowInstance.initiator.lastName) + '</span>';
-		       
-		    }     
-      } ,
+   
       
       renderTaskTypeCell: function(elCell, oRecord, oColumn, oData)
 		{
@@ -508,13 +432,7 @@
 				var record = oRecord.getData();
 
 				var date = Alfresco.util.fromISO8601(record.properties["bpm_completionDate"]);
-				if (date!=null && oColumn.hidden) {
-					this.widgets.alfrescoDataTable.showColumn(oColumn);
-                    Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
-              }
-				
-				
-				elCell.innerHTML = ( date !== null ? Alfresco.util.formatDate(date, "mediumDate") : "" );
+			    elCell.innerHTML = ( date !== null ? Alfresco.util.formatDate(date, "mediumDate") : "" );
 	   },
 			
 		
