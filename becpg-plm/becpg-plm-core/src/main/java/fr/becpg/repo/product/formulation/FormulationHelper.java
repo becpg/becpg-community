@@ -424,17 +424,18 @@ public class FormulationHelper {
 					productQty = 1d;
 				}
 
-				if (compoListUnit.isP()) {
+				 if (compoListUnit.isP()) {
 					if ((subProduct.getUnit() != null) && !subProduct.getUnit().isP()) {
 						productQty = 1d;
 					}
 
-				} else if (compoListUnit.isWeight() || compoListUnit.isVolume()) {
+				} else if (compoListUnit.isWeight() || compoListUnit.isVolume() || compoListUnit.isPerc()) {
 
 					productQty = getNetQtyInLorKg(subProduct, 1d);
 					qty = getQtyInKg(compoList);
 
-				}
+				} 
+				 
 
 				if ((qty != null) && !qty.isNaN() && !qty.isInfinite() && (productQty != null) && !productQty.isNaN() && !productQty.isInfinite()
 						&& (productQty != 0d)) {

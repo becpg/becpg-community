@@ -45,6 +45,10 @@ public enum ProductUnit {
 		return fl_oz.equals(this) || cp.equals(this) || gal.equals(this);
 	}
 	
+
+	boolean isPerc() {
+		return Perc.equals(this);
+	}
 	
    /**
     * Convert factor to Kg L or M
@@ -165,6 +169,7 @@ public enum ProductUnit {
 				return P;
 			}
 	}
+
 
 
 
