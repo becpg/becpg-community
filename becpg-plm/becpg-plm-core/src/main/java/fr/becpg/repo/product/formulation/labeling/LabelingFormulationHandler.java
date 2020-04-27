@@ -224,10 +224,12 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			// Compute composite
 			Composite<CompoListDataItem> compositeDefaultVariant = CompositeHelper.getHierarchicalCompoList(compoList);
 
-			CompositeLabeling compositeLabeling = visitCompoList(new CompositeLabeling(CompositeLabeling.ROOT), compositeDefaultVariant,
+			CompositeLabeling compositeLabeling = new CompositeLabeling(CompositeLabeling.ROOT);
+			
+			visitCompoList(compositeLabeling, compositeDefaultVariant,
 					labelingFormulaContext, 1d,
 					labelingFormulaContext.getYield() != null ? labelingFormulaContext.getYield() : formulatedProduct.getYield(),
-					formulatedProduct.getRecipeQtyUsed(), true);
+					formulatedProduct.getRecipeQtyUsed(), true, true);
 
 			if (logger.isTraceEnabled()) {
 				logger.trace(" Before aggrate \n " + compositeLabeling.toString());
@@ -1178,13 +1180,12 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	}
 
-	private CompositeLabeling visitCompoList(CompositeLabeling parent, Composite<CompoListDataItem> parentComposite,
-			LabelingFormulaContext labelingFormulaContext, Double ratio, Double yield, Double recipeQtyUsed, boolean computeReconstitution)
+	private boolean visitCompoList(CompositeLabeling parent, Composite<CompoListDataItem> parentComposite,
+			LabelingFormulaContext labelingFormulaContext, Double ratio, Double yield, Double recipeQtyUsed, boolean computeReconstitution, boolean applyWaterLost)
 			throws FormulateException {
 
 		Map<String, ReqCtrlListDataItem> errors = new HashMap<>();
 
-		boolean applyWaterLost = true;
 
 		for (Composite<CompoListDataItem> composite : parentComposite.getChildren()) {
 
@@ -1223,7 +1224,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				if ((ingsCalculatingWithYield || labelingFormulaContext.isIngsLabelingWithYield()) && (qty != null) && (yield != null)
 						&& (yield != 100d) && (recipeQtyUsed != null) && nodeService.hasAspect(productNodeRef, PLMModel.ASPECT_WATER)
 						&& applyWaterLost) {
-					waterLost = (1 - (yield / 100d)) * recipeQtyUsed * LabelingFormulaContext.PRECISION_FACTOR;
+					waterLost = (1 - (yield / 100d)) * (recipeQtyUsed * LabelingFormulaContext.PRECISION_FACTOR);
 
 					if (logger.isTraceEnabled()) {
 						logger.trace("Detected water lost: " + waterLost + " for qty :" + qty);
@@ -1465,16 +1466,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 							Double recurYield = yield;
 							Double recurRecipeQtyUsed = recipeQtyUsed;
-							if (!(productData instanceof LocalSemiFinishedProductData) /*
-																						 * &&
-																						 * !DeclarationType
-																						 * .
-																						 * Group
-																						 * .
-																						 * equals
-																						 * (
-																						 * declarationType)
-																						 */) {
+							if (!(productData instanceof LocalSemiFinishedProductData) ) {
 								recurYield = computeYield(productData);
 
 								if ((yield != null) && (yield != 100d) && (recurYield != null)) {
@@ -1491,8 +1483,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 								logger.trace(" -- Recur yield " + recurYield + " recur recipeQtyUsed " + recurRecipeQtyUsed);
 							}
 
-							visitCompoList(compositeLabeling, composite, labelingFormulaContext, computedRatio, recurYield, recurRecipeQtyUsed,
-									!parent.equals(compositeLabeling));
+							applyWaterLost = visitCompoList(compositeLabeling, composite, labelingFormulaContext, computedRatio, recurYield, recurRecipeQtyUsed,
+									!parent.equals(compositeLabeling),  (productData instanceof LocalSemiFinishedProductData) ? applyWaterLost : true );
 						}
 					}
 
@@ -1526,7 +1518,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			labelingFormulaContext.getReconstituableDataItems().clear();
 		}
 
-		return parent;
+		return applyWaterLost;
 	}
 
 	private void fillAllergensAndGeos(CompositeLabeling compositeLabeling, ProductData productData) {
