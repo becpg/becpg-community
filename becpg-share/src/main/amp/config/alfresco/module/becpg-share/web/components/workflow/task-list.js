@@ -38,7 +38,6 @@
    var $html = Alfresco.util.encodeHTML,
       $siteURL = Alfresco.util.siteURL;
 
-   var $dt = null;
    
    /**
     * DocumentList constructor.
@@ -345,8 +344,6 @@
  			    }
  			};
  			
- 			  $dt =  this.widgets.pagingDataTable;
- 			
       },
 
 
@@ -427,12 +424,20 @@
 			elCell.innerHTML = ( date !== null ? Alfresco.util.formatDate(date, "mediumDate") : "" );
 		},
 		
+		renderInitiatorCell: function(elCell, oRecord, oColumn, oData) {
+			 var workflowInstance = oRecord.getData("workflowInstance");
+			 if (workflowInstance.initiator) {
+				elCell.innerHTML = '<span class="person">' 
+				    + Alfresco.util.userProfileLink(workflowInstance.initiator.userName, workflowInstance.initiator.firstName+" "+ workflowInstance.initiator.lastName) + '</span>';
+				 }     
+		  } ,
+		   
+		   
 		renderCompletionDateCell: function(elCell, oRecord, oColumn, oData)
 		 {
-				var record = oRecord.getData();
-
-				var date = Alfresco.util.fromISO8601(record.properties["bpm_completionDate"]);
-			    elCell.innerHTML = ( date !== null ? Alfresco.util.formatDate(date, "mediumDate") : "" );
+			var record = oRecord.getData();
+			var date = Alfresco.util.fromISO8601(record.properties["bpm_completionDate"]);
+			elCell.innerHTML = ( date !== null ? Alfresco.util.formatDate(date, "mediumDate") : "" );
 	   },
 			
 		
