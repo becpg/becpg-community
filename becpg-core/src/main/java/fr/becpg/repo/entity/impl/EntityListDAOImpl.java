@@ -46,7 +46,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,7 +78,6 @@ public class EntityListDAOImpl implements EntityListDAO, NodeServicePolicies.Bef
 	@Autowired
 	private NodeService nodeService;
 
-	
 	@Autowired
 	private EntityDictionaryService entityDictionaryService;
 
@@ -94,19 +92,19 @@ public class EntityListDAOImpl implements EntityListDAO, NodeServicePolicies.Bef
 
 	@Autowired
 	private AssociationService associationService;
-	
+
 	@Autowired
 	private BeCPGCacheService beCPGCacheService;
-	
+
 	@Autowired
 	@Qualifier("policyComponent")
 	private PolicyComponent policyComponent;
 
 	private Set<QName> hiddenListQnames = new HashSet<>();
-	 
+
 	@PostConstruct
 	public void init() {
-		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME,BeCPGModel.TYPE_ENTITYLIST_ITEM,
+		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME, BeCPGModel.TYPE_ENTITYLIST_ITEM,
 				new JavaBehaviour(this, "beforeDeleteNode"));
 	}
 
@@ -169,7 +167,7 @@ public class EntityListDAOImpl implements EntityListDAO, NodeServicePolicies.Bef
 
 			Map<QName, Serializable> properties = new HashMap<>();
 			properties.put(ContentModel.PROP_NAME, listQName.getLocalName());
-			
+
 			MLText classTitleMLText = TranslateHelper.getTemplateTitleMLText(classDef.getName());
 			MLText classDescritptionMLText = TranslateHelper.getTemplateDescriptionMLText(classDef.getName());
 
@@ -184,7 +182,7 @@ public class EntityListDAOImpl implements EntityListDAO, NodeServicePolicies.Bef
 			I18NUtil.setContentLocale(currentContentLocal);
 		}
 	}
-	
+
 	@Override
 	public NodeRef createList(NodeRef listContainerNodeRef, String name, QName listQName) {
 
@@ -228,7 +226,7 @@ public class EntityListDAOImpl implements EntityListDAO, NodeServicePolicies.Bef
 
 					if ((BeCPGModel.TYPE_ENTITYLIST_ITEM.equals(dataListTypeQName)
 							|| entityDictionaryService.isSubClass(dataListTypeQName, BeCPGModel.TYPE_ENTITYLIST_ITEM)
-							|| ((String) nodeService.getProperty(listNodeRef, ContentModel.PROP_NAME)).startsWith(RepoConsts.WUSED_PREFIX) )) {
+							|| ((String) nodeService.getProperty(listNodeRef, ContentModel.PROP_NAME)).startsWith(RepoConsts.WUSED_PREFIX))) {
 
 						if (!hiddenListQnames.contains(dataListTypeQName)) {
 							existingLists.add(listNodeRef);
@@ -246,61 +244,14 @@ public class EntityListDAOImpl implements EntityListDAO, NodeServicePolicies.Bef
 	@Override
 	public List<NodeRef> getListItems(NodeRef dataListNodeRef, QName dataType) {
 
-		return getListItemsV2(dataListNodeRef, dataType);
-	}
-
-	@Override
-	public List<NodeRef> getListItems(final NodeRef listNodeRef, final QName listQNameFilter, Map<String, Boolean> sortMap) {
-
-		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().addSort(sortMap).parent(listNodeRef);
-
-		if (listQNameFilter != null) {
-			queryBuilder.ofType(listQNameFilter);
-		} else {
-			queryBuilder.ofType(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-		}
-
-		return queryBuilder.childFileFolders(new PagingRequest(5000, null)).getPage();
-
-	}
-	
-	@Override
-	public  boolean isEmpty(final NodeRef listNodeRef, final QName listQNameFilter) {
-
-		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().parent(listNodeRef);
-
-		if (listQNameFilter != null) {
-			queryBuilder.ofType(listQNameFilter);
-		} else {
-			queryBuilder.ofType(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-		}
-
-		return queryBuilder.inDB().singleValue() == null;
-
-	}
-
-
-	private List<NodeRef> getListItemsV2(final NodeRef listNodeRef, final QName listQNameFilter) {
-
-		List<NodeRef> ret = associationService.getChildAssocs(listNodeRef, ContentModel.ASSOC_CONTAINS);
-		if (listQNameFilter != null) {
-			CollectionUtils.filter(ret, object -> {
-
-				if (!nodeService.exists((NodeRef) object)) {
-					return false;
-				}
-
-				return (object instanceof NodeRef) && nodeService.getType((NodeRef) object).equals(listQNameFilter);
-				
-			});
-		}
+		List<NodeRef> ret = associationService.getChildAssocs(dataListNodeRef, ContentModel.ASSOC_CONTAINS, dataType);
 
 		Collections.sort(ret, (o1, o2) -> {
 
 			Integer sort1 = (Integer) nodeService.getProperty(o1, BeCPGModel.PROP_SORT);
 			Integer sort2 = (Integer) nodeService.getProperty(o2, BeCPGModel.PROP_SORT);
 
-			if (sort1!=null && sort1.equals(sort2) || (sort1 == null && sort2==null)) {
+			if (((sort1 != null) && sort1.equals(sort2)) || ((sort1 == null) && (sort2 == null))) {
 
 				Date created1 = (Date) nodeService.getProperty(o1, ContentModel.PROP_CREATED);
 				Date created2 = (Date) nodeService.getProperty(o2, ContentModel.PROP_CREATED);
@@ -319,7 +270,6 @@ public class EntityListDAOImpl implements EntityListDAO, NodeServicePolicies.Bef
 
 				return created1.compareTo(created2);
 			}
-			
 
 			if (sort1 == null) {
 				return -1;
@@ -333,6 +283,36 @@ public class EntityListDAOImpl implements EntityListDAO, NodeServicePolicies.Bef
 		});
 
 		return ret;
+	}
+
+	@Override
+	public List<NodeRef> getListItems(final NodeRef listNodeRef, final QName listQNameFilter, Map<String, Boolean> sortMap) {
+
+		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().addSort(sortMap).parent(listNodeRef);
+
+		if (listQNameFilter != null) {
+			queryBuilder.ofType(listQNameFilter);
+		} else {
+			queryBuilder.ofType(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+		}
+
+		return queryBuilder.childFileFolders(new PagingRequest(5000, null)).getPage();
+
+	}
+
+	@Override
+	public boolean isEmpty(final NodeRef listNodeRef, final QName listQNameFilter) {
+
+		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().parent(listNodeRef);
+
+		if (listQNameFilter != null) {
+			queryBuilder.ofType(listQNameFilter);
+		} else {
+			queryBuilder.ofType(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+		}
+
+		return queryBuilder.inDB().singleValue() == null;
+
 	}
 
 	@Override
@@ -420,7 +400,8 @@ public class EntityListDAOImpl implements EntityListDAO, NodeServicePolicies.Bef
 
 			NodeRef existingListNodeRef;
 
-			if (name.startsWith(RepoConsts.WUSED_PREFIX) || name.startsWith(RepoConsts.CUSTOM_VIEW_PREFIX)  || name.startsWith(RepoConsts.SMART_CONTENT_PREFIX) || name.contains("@")) {
+			if (name.startsWith(RepoConsts.WUSED_PREFIX) || name.startsWith(RepoConsts.CUSTOM_VIEW_PREFIX)
+					|| name.startsWith(RepoConsts.SMART_CONTENT_PREFIX) || name.contains("@")) {
 				existingListNodeRef = getList(targetListContainerNodeRef, name);
 			} else {
 				existingListNodeRef = getList(targetListContainerNodeRef, listQName);
@@ -482,36 +463,33 @@ public class EntityListDAOImpl implements EntityListDAO, NodeServicePolicies.Bef
 	@Override
 	public NodeRef getEntity(NodeRef listItemNodeRef) {
 		return beCPGCacheService.getFromCache(EntityListDAO.class.getName(), listItemNodeRef.getId(), () -> {
-		
+
 			NodeRef listNodeRef = nodeService.getPrimaryParent(listItemNodeRef).getParentRef();
-	
+
 			if (listNodeRef != null) {
 				return getEntityFromList(listNodeRef);
 			}
-	
+
 			return null;
 		});
 	}
-	
+
 	@Override
 	public NodeRef getEntityFromList(NodeRef listNodeRef) {
 
 		NodeRef listContainerNodeRef = nodeService.getPrimaryParent(listNodeRef).getParentRef();
 
 		if (listContainerNodeRef != null) {
-				return nodeService.getPrimaryParent(listContainerNodeRef).getParentRef();
+			return nodeService.getPrimaryParent(listContainerNodeRef).getParentRef();
 		}
 
 		return null;
 	}
 
-
 	@Override
 	public void beforeDeleteNode(NodeRef nodeRef) {
-		 beCPGCacheService.removeFromCache(EntityListDAO.class.getName(),nodeRef.getId());
-		
-	}
+		beCPGCacheService.removeFromCache(EntityListDAO.class.getName(), nodeRef.getId());
 
-	
+	}
 
 }
