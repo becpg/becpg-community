@@ -171,18 +171,21 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 
 	}
 
-	private List<ChildAssociationRef> getChildAssocsImpl(final NodeRef nodeRef, final QName qName) {
-		final String cacheKey = createCacheKey(nodeRef, qName);
+	private List<ChildAssociationRef> getChildAssocsImpl(final NodeRef nodeRef, final QName qName, final QNamePattern qNamepattern) {
+		final String cacheKey = createCacheKey(nodeRef, qName, qNamepattern);
 		final String cacheName = childAssocCacheName();
 
-		return beCPGCacheService.getFromCache(cacheName, cacheKey, () -> nodeService.getChildAssocs(nodeRef, qName, RegexQNamePattern.MATCH_ALL),
+		return beCPGCacheService.getFromCache(cacheName, cacheKey, () -> nodeService.getChildAssocs(nodeRef, qName, qNamepattern),
 				true);
 
 	}
 
-	@Override
-	public String createCacheKey(NodeRef nodeRef, QName qName) {
+	private String createCacheKey(NodeRef nodeRef, QName qName) {
 		return nodeRef.toString() + "-" + qName.toString();
+	}
+	
+	private String createCacheKey(NodeRef nodeRef, QName qName, QNamePattern qNamepattern) {
+		return nodeRef.toString() + "-" + qName.toString()+ "-" +qNamepattern.toString();
 	}
 
 	@Override
@@ -321,13 +324,22 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 
 	@Override
 	public NodeRef getChildAssoc(NodeRef nodeRef, QName qName) {
-		List<ChildAssociationRef> assocRefs = getChildAssocsImpl(nodeRef, qName);
+		List<ChildAssociationRef> assocRefs = getChildAssocsImpl(nodeRef, qName, RegexQNamePattern.MATCH_ALL);
 		return (assocRefs != null) && !assocRefs.isEmpty() ? assocRefs.get(0).getChildRef() : null;
 	}
 
 	@Override
 	public List<NodeRef> getChildAssocs(NodeRef nodeRef, QName qName) {
-		List<ChildAssociationRef> assocRefs = getChildAssocsImpl(nodeRef, qName);
+		return getChildAssocs(nodeRef, qName, RegexQNamePattern.MATCH_ALL);
+	}
+	
+	@Override
+	public List<NodeRef> getChildAssocs(NodeRef nodeRef, QName qName, QNamePattern listQNameFilter) {
+		if(listQNameFilter == null) {
+			listQNameFilter = RegexQNamePattern.MATCH_ALL;
+		}
+		
+		List<ChildAssociationRef> assocRefs = getChildAssocsImpl(nodeRef, qName, listQNameFilter);
 		List<NodeRef> listItems = new LinkedList<>();
 		for (ChildAssociationRef assocRef : assocRefs) {
 			listItems.add(assocRef.getChildRef());
@@ -335,6 +347,8 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 
 		return listItems;
 	}
+	
+	
 
 	@Override
 	public void doInit() {
@@ -431,5 +445,7 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 		}
 
 	}
+
+
 
 }
