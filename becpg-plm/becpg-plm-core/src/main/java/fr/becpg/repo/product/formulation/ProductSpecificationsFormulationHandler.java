@@ -102,6 +102,10 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 						Set<NodeRef> toSkipProduct = new HashSet<>();
 						List<NodeRef> productNodeRefs = getProductNodeRefs((ProductSpecificationData) formulatedProduct);
 						logs += "- found " + productNodeRefs.size() + " products to test specification on\n";
+						
+						if(logger.isDebugEnabled()) {
+							logger.debug(logs);
+						}
 
 						for (NodeRef productNodeRef : productNodeRefs) {
 
