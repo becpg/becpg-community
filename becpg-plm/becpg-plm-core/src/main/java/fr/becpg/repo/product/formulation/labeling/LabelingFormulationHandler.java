@@ -229,7 +229,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			visitCompoList(compositeLabeling, compositeDefaultVariant,
 					labelingFormulaContext, 1d,
 					labelingFormulaContext.getYield() != null ? labelingFormulaContext.getYield() : formulatedProduct.getYield(),
-					formulatedProduct.getRecipeQtyUsed(), true, true);
+					formulatedProduct.getRecipeQtyUsed(), true);
 
 			if (logger.isTraceEnabled()) {
 				logger.trace(" Before aggrate \n " + compositeLabeling.toString());
@@ -1180,8 +1180,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	}
 
-	private boolean visitCompoList(CompositeLabeling parent, Composite<CompoListDataItem> parentComposite,
-			LabelingFormulaContext labelingFormulaContext, Double ratio, Double yield, Double recipeQtyUsed, boolean computeReconstitution, boolean applyWaterLost)
+	private void visitCompoList(CompositeLabeling parent, Composite<CompoListDataItem> parentComposite,
+			LabelingFormulaContext labelingFormulaContext, Double ratio, Double yield, Double recipeQtyUsed, boolean computeReconstitution)
 			throws FormulateException {
 
 		Map<String, ReqCtrlListDataItem> errors = new HashMap<>();
@@ -1223,7 +1223,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				Double waterLost = 0d;
 				if ((ingsCalculatingWithYield || labelingFormulaContext.isIngsLabelingWithYield()) && (qty != null) && (yield != null)
 						&& (yield != 100d) && (recipeQtyUsed != null) && nodeService.hasAspect(productNodeRef, PLMModel.ASPECT_WATER)
-						&& applyWaterLost) {
+						&& parent.shouldApplyWaterLoss()) {
 					waterLost = (1 - (yield / 100d)) * (recipeQtyUsed * LabelingFormulaContext.PRECISION_FACTOR);
 
 					if (logger.isTraceEnabled()) {
@@ -1234,7 +1234,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 					qty -= waterLost;
 
-					applyWaterLost = false;
+					parent.setApplyWaterLoss(false);
 				}
 
 				if ((qty != null) && (ratio != null)) {
@@ -1483,8 +1483,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 								logger.trace(" -- Recur yield " + recurYield + " recur recipeQtyUsed " + recurRecipeQtyUsed);
 							}
 
-							applyWaterLost = visitCompoList(compositeLabeling, composite, labelingFormulaContext, computedRatio, recurYield, recurRecipeQtyUsed,
-									!parent.equals(compositeLabeling),  (productData instanceof LocalSemiFinishedProductData) ? applyWaterLost : true );
+							visitCompoList(compositeLabeling, composite, labelingFormulaContext, computedRatio, recurYield, recurRecipeQtyUsed,
+									!parent.equals(compositeLabeling));
 						}
 					}
 
@@ -1518,7 +1518,6 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			labelingFormulaContext.getReconstituableDataItems().clear();
 		}
 
-		return applyWaterLost;
 	}
 
 	private void fillAllergensAndGeos(CompositeLabeling compositeLabeling, ProductData productData) {
