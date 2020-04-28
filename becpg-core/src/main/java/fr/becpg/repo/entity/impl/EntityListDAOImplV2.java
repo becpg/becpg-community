@@ -283,30 +283,17 @@ public class EntityListDAOImplV2 implements EntityListDAO, NodeServicePolicies.B
 
 	}
 
-	private List<NodeRef> getListItemsV2(final NodeRef listNodeRef, final QName listQNameFilter) {
+	@Override
+	public List<NodeRef> getListItems(NodeRef dataListNodeRef, QName dataType) {
 
-		List<NodeRef> ret = associationService.getChildAssocs(listNodeRef, ContentModel.ASSOC_CONTAINS);
-		if (listQNameFilter != null) {
-			CollectionUtils.filter(ret, object -> {
-
-				if (!nodeService.exists((NodeRef) object)) {
-					return false;
-				}
-
-				if ((object != null) && (object instanceof NodeRef) && nodeService.getType((NodeRef) object).equals(listQNameFilter)) {
-					return true;
-				}
-
-				return false;
-			});
-		}
+		List<NodeRef> ret = associationService.getChildAssocs(dataListNodeRef, ContentModel.ASSOC_CONTAINS, dataType);
 
 		Collections.sort(ret, (o1, o2) -> {
 
 			Integer sort1 = (Integer) nodeService.getProperty(o1, BeCPGModel.PROP_SORT);
 			Integer sort2 = (Integer) nodeService.getProperty(o2, BeCPGModel.PROP_SORT);
 
-			if (sort1 == sort2) {
+			if (((sort1 != null) && sort1.equals(sort2)) || ((sort1 == null) && (sort2 == null))) {
 
 				Date created1 = (Date) nodeService.getProperty(o1, ContentModel.PROP_CREATED);
 				Date created2 = (Date) nodeService.getProperty(o2, ContentModel.PROP_CREATED);
@@ -339,6 +326,7 @@ public class EntityListDAOImplV2 implements EntityListDAO, NodeServicePolicies.B
 
 		return ret;
 	}
+
 
 	@Override
 	public NodeRef getListItem(NodeRef listContainerNodeRef, QName assocQName, NodeRef nodeRef) {
