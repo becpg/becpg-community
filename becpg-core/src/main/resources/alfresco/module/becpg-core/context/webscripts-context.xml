@@ -193,7 +193,7 @@
       <property name="contentService" ref="contentService" />
       <property name="repository" ref="repositoryHelper" />
 	</bean>
-	
+
 
 	<!-- Simulation webscript -->
 
