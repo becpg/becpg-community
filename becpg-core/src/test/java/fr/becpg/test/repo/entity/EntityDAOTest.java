@@ -3,6 +3,7 @@ package fr.becpg.test.repo.entity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -58,7 +59,7 @@ public class EntityDAOTest extends RepoBaseTestCase {
 			((BeCPGCacheServiceImpl) beCPGCacheService).setDisableAllCache(disableCache);
 			Map<String, Long> perfs1 = new HashMap<>();
 			Map<String, Long> perfs2 = new HashMap<>();
-			for (int i = 0; i < 5; i++) {
+			for (int i = 0; i < 2; i++) {
 				daoServicePerfTest("V1-" + i + disableCache, entityListDAO, perfs1);
 				daoServicePerfTest("V2-" + i + disableCache, entityListDAOV2, perfs2);
 
@@ -69,7 +70,7 @@ public class EntityDAOTest extends RepoBaseTestCase {
 				Long t1 = entry.getValue();
 				Long t2 = perfs2.get(entry.getKey());
 				Double perc = 0d;
-				if (t1 != 0) {
+				if (t1 != 0 && t1!=null && t2!=null) {
 					perc = ((t1 - t2) / (t1 * 1d)) * 100d;
 				}
 
@@ -116,8 +117,11 @@ public class EntityDAOTest extends RepoBaseTestCase {
 
 				NodeRef listNodeRef = perfs("getList", () -> service.getList(listContainerNodeRef, BeCPGModel.TYPE_LIST_VALUE), perfs);
 
-				for (NodeRef listItemNodeRef : perfs("getListItems++", () -> service.getListItems(listNodeRef, BeCPGModel.TYPE_LIST_VALUE), perfs)) {
-					NodeRef tmp = perfs("getEntity++", () -> service.getEntity(listItemNodeRef), perfs);
+				List<NodeRef> ret = perfs("getListItems", () -> service.getListItems(listNodeRef, BeCPGModel.TYPE_LIST_VALUE), perfs);
+				Assert.assertEquals(ret.size(),50);
+				
+				for (NodeRef listItemNodeRef : ret) {
+					NodeRef tmp = perfs("getEntity", () -> service.getEntity(listItemNodeRef), perfs);
 
 					if (!entityNodeRef.equals(tmp)) {
 
@@ -125,9 +129,10 @@ public class EntityDAOTest extends RepoBaseTestCase {
 						Assert.fail();
 					}
 				}
-
-				for (NodeRef listItemNodeRef : perfs("getListItemsSort",
-						() -> service.getListItems(listNodeRef, BeCPGModel.TYPE_LIST_VALUE, new HashMap<>()), perfs)) {
+				ret = perfs("getListItemsSort",
+						() -> service.getListItems(listNodeRef, BeCPGModel.TYPE_LIST_VALUE, new HashMap<>()), perfs);
+				Assert.assertEquals(ret.size(),50);
+				for (NodeRef listItemNodeRef : ret) {
 					Assert.assertTrue(entityNodeRef.equals(perfs("getEntity", () -> service.getEntity(listItemNodeRef), perfs)));
 				}
 			}

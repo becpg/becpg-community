@@ -24,24 +24,18 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import javax.sql.DataSource;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.coci.CheckOutCheckInServicePolicies;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
-import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.QNamePattern;
 import org.alfresco.service.namespace.RegexQNamePattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.helper.AssociationService;
@@ -57,6 +51,8 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 
 	private static Set<QName> ignoredAssocs = new HashSet<>();
 
+	private Set<String> cacheNames = new HashSet<>();
+	
 	static {
 		ignoredAssocs.add(ContentModel.ASSOC_ORIGINAL);
 	}
@@ -139,9 +135,19 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 	}
 
 	private void removeCachedAssoc(String cacheName, NodeRef nodeRef, QName qName) {
-		logger.debug("Remove assoc from  " + cacheName + " " + createCacheKey(nodeRef, qName));
-
-		beCPGCacheService.removeFromCache(cacheName, createCacheKey(nodeRef, qName));
+		if(logger.isDebugEnabled()) {
+			logger.debug("Remove assoc from  " + cacheName + " " + createCacheKey(nodeRef, qName));
+		}
+		String key = createCacheKey(nodeRef, qName);
+		
+		beCPGCacheService.removeFromCache(cacheName, key);
+		
+		for(String tmp : cacheNames) {
+			if(tmp.startsWith(key)) {
+				beCPGCacheService.removeFromCache(cacheName, tmp);	
+			}
+		}
+		
 	}
 
 	@Override
@@ -185,7 +191,16 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 	}
 	
 	private String createCacheKey(NodeRef nodeRef, QName qName, QNamePattern qNamepattern) {
-		return nodeRef.toString() + "-" + qName.toString()+ "-" +qNamepattern.toString();
+		String cacheKey = createCacheKey(nodeRef, qName);
+		
+		if(RegexQNamePattern.MATCH_ALL.equals(qNamepattern)) {
+			return cacheKey;
+		}
+		
+		String ret = cacheKey+ "-" +qNamepattern.toString();
+		cacheNames.add(ret);
+
+		return ret;
 	}
 
 	@Override
