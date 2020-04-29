@@ -84,6 +84,8 @@ public class SupplierPortalWebScript extends AbstractWebScript {
 	private NamespaceService namespaceService;
 
 	private PaginatedSearchCache paginatedSearchCache;
+	
+	private boolean createBranch;
 
 	private String entityNameTpl = "{entity_cm:name} - UPDATE - {date_YYYY}";
 	private String projectNameTpl = "PJT - {entity_cm:name} - {supplier_cm:name} - UPDATE - {date_YYYY}";
@@ -122,6 +124,10 @@ public class SupplierPortalWebScript extends AbstractWebScript {
 
 	public void setRepoService(RepoService repoService) {
 		this.repoService = repoService;
+	}
+	
+	public void setCreateBranch(boolean createBranch) {
+		this.createBranch = createBranch;
 	}
 
 	@Override
@@ -213,11 +219,14 @@ public class SupplierPortalWebScript extends AbstractWebScript {
 		if (destNodeRef == null) {
 			throw new IllegalStateException(I18NUtil.getMessage("message.project-template.destination.missed"));
 		}
-
-		NodeRef branchNodeRef = entityVersionService.createBranch(entityNodeRef, destNodeRef);
-		associationService.update(branchNodeRef, BeCPGModel.ASSOC_AUTO_MERGE_TO, entityNodeRef);
-		nodeService.setProperty(branchNodeRef, ContentModel.PROP_NAME,
-				repoService.getAvailableName(destNodeRef, createName(entityNodeRef, supplierNodeRef, entityNameTpl, currentDate), false));
+		NodeRef branchNodeRef = entityNodeRef;
+		if(createBranch) {
+			branchNodeRef = entityVersionService.createBranch(entityNodeRef, destNodeRef);
+			associationService.update(branchNodeRef, BeCPGModel.ASSOC_AUTO_MERGE_TO, entityNodeRef);
+			nodeService.setProperty(branchNodeRef, ContentModel.PROP_NAME,
+					repoService.getAvailableName(destNodeRef, createName(entityNodeRef, supplierNodeRef, entityNameTpl, currentDate), false));
+		}
+		
 
 		ProjectData projectData = new ProjectData();
 		projectData
