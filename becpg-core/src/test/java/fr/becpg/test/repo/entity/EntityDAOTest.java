@@ -49,8 +49,8 @@ public class EntityDAOTest extends RepoBaseTestCase {
 		logger.info("Perf test with cache:");
 		daoServicePerfTest(false);
 
-		logger.info("Perf test without cache:");
-		daoServicePerfTest(true);
+//		logger.info("Perf test without cache:");
+//		daoServicePerfTest(true);
 
 	}
 
