@@ -96,7 +96,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private ProductUnit servingSizeUnit;
 	private Double recipeQtyUsed;
 	private Double recipeVolumeUsed;
-	private Double productLossPerc = 0d;
+	private Double productLossPerc;
 	private Double componentLossPerc;
 	private Double recipeQtyUsedWithLossPerc;
 
@@ -473,7 +473,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	@AlfProp
 	@AlfQname(qname = "bcpg:productLossPerc")
 	public Double getProductLossPerc() {
-		return productLossPerc!=null ? productLossPerc : 0d;
+		return productLossPerc;
 	}
 
 	public void setProductLossPerc(Double lossPerc) {

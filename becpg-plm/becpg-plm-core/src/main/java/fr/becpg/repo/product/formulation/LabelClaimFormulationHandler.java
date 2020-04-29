@@ -68,7 +68,8 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 	@Override
 	public boolean process(ProductData productData) throws FormulateException {
 
-		if (productData.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)) {
+		if (productData.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) 
+				|| productData instanceof ProductSpecificationData) {
 			return true;
 		}
 
