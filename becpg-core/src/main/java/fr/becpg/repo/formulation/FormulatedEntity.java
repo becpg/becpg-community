@@ -38,5 +38,9 @@ public interface FormulatedEntity extends RepositoryEntity {
 	void setFormulationChainId(String chainId);
 	
 	String getFormulationChainId();
+	
+	boolean shouldUpdateFormulatedDate();
+	
+	void setUpdateFormulatedDate(boolean updateFormulatedDate);
 
 }
