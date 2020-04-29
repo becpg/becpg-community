@@ -24,18 +24,24 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import javax.sql.DataSource;
+
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.coci.CheckOutCheckInServicePolicies;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
+import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.QNamePattern;
 import org.alfresco.service.namespace.RegexQNamePattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.helper.AssociationService;
@@ -205,6 +211,113 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 
 		return listItems;
 	}
+	
+//
+//	@Autowired
+//	@Qualifier("dataSource")
+//	private DataSource dataSource;
+//	
+//
+//	@Autowired
+//	private TenantService tenantService;
+
+	
+	/**
+	 * ChildAssociationRef.getChildRef() --> dataListItem
+	 * ChildAssociationRef.getParentRef() --> dataListItem
+	 * @param assocs
+	 * @param assocName
+	 * @param orOperator
+	 * @return
+	 */
+	@Override
+	public List<AssociationRef> getEntitySourceAssocs(List<NodeRef> nodeRefs, QNamePattern assocQName, boolean isOrOperator){
+		List<AssociationRef> ret = new ArrayList<>();
+//		
+		for (NodeRef nodeRef : nodeRefs) {
+
+			if (nodeService.exists(nodeRef)) {
+
+				List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, assocQName);
+
+				// remove nodes that don't respect the
+				// assoc_ criteria
+
+				ret.addAll(assocRefs);
+
+			}
+
+		}
+//		if (!isOROperand) {
+//			nodes.retainAll(nodesToKeep);
+//		} else {
+//			nodesToKeepOr.addAll(nodesToKeep);
+//		}
+		
+		
+//
+//		StoreRef storeRef = StoreRef.STORE_REF_WORKSPACE_SPACESSTORE;
+//		if (AuthenticationUtil.isMtEnabled()) {
+//			storeRef = tenantService.getName(storeRef);
+//		}
+//		
+//		
+//		from 
+//		  alf_child_assoc dataListItemAssoc 
+//		  join alf_child_assoc dataListAssoc on dataListAssoc.child_node_id = dataListItemAssoc.parent_node_id
+//		  join alf_node entity  on  dataListAssoc.parent_node_id = entity.id
+//		  
+//        where
+//           dataListItemAssoc.id = (nodeRef.getId)
+//        and entity.store_id=(select id from alf_store where protocol='" + storeRef.getProtocol() + "' and identifier='"
+//				+ storeRef.getIdentifier() + "') " 
+//        
+//		
+//		
+//		select
+//	        assoc.id                    as id,
+//	        parentNode.id               as parentNodeId,
+//	        parentNode.version          as parentNodeVersion,
+//	        parentStore.protocol        as parentNodeProtocol,
+//	        parentStore.identifier      as parentNodeIdentifier,
+//	        parentNode.uuid             as parentNodeUuid,
+//	        childNode.id                as childNodeId,
+//	        childNode.version           as childNodeVersion,
+//	        childStore.protocol         as childNodeProtocol,
+//	        childStore.identifier       as childNodeIdentifier,
+//	        childNode.uuid              as childNodeUuid,
+//	        assoc.type_qname_id         as type_qname_id,
+//	        assoc.child_node_name_crc   as child_node_name_crc,
+//	        assoc.child_node_name       as child_node_name,
+//	        assoc.qname_ns_id           as qname_ns_id,
+//	        assoc.qname_localname       as qname_localname,
+//	        assoc.is_primary            as is_primary,
+//	        assoc.assoc_index           as assoc_index
+//	    from
+//            alf_child_assoc assoc
+//            join alf_node parentNode on (parentNode.id = assoc.parent_node_id)
+//            join alf_store parentStore on (parentStore.id = parentNode.store_id)
+//            join alf_node childNode on (childNode.id = assoc.child_node_id)
+//            left join alf_store childStore on (childStore.id = childNode.store_id)
+//         where
+//            childNode.id = #{childNode.id}
+//		
+//            alf_node.store_id=(select id from alf_store where protocol='" + storeRef.getProtocol() + "' and identifier='"
+//				+ storeRef.getIdentifier() + "') " 
+//		
+//		
+//		
+//		
+//            and assoc.parent_node_id = #{parentNode.id}
+//            <if test="qnameNamespaceId != null">and assoc.qname_ns_id = #{qnameNamespaceId}</if>
+//            <if test="qnameLocalName != null">and assoc.qname_localname = #{qnameLocalName}</if>
+//            and assoc.is_primary = true
+		
+		return ret;
+	}
+	
+
+	
 
 	@Override
 	public NodeRef getChildAssoc(NodeRef nodeRef, QName qName) {
