@@ -19,6 +19,7 @@ package fr.becpg.repo.helper;
 
 import java.util.List;
 
+import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.QNamePattern;
@@ -36,7 +37,6 @@ public interface AssociationService {
 	List<NodeRef> getChildAssocs(NodeRef nodeRef, QName qName, QNamePattern listQNameFilter);
 	List<NodeRef> getChildAssocs(NodeRef nodeRef, QName qName);
 	List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QNamePattern qName);
-
-	
+	List<AssociationRef> getEntitySourceAssocs(List<NodeRef> nodeRefs, QNamePattern assocQName, boolean isOrOperator);
 	
 }

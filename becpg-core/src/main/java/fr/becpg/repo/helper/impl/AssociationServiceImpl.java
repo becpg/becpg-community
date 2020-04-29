@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.coci.CheckOutCheckInServicePolicies;
@@ -50,6 +51,8 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 	private BeCPGCacheService beCPGCacheService;
 
 	private static Set<QName> ignoredAssocs = new HashSet<>();
+
+	private Set<String> cacheNames = new HashSet<>();
 
 	static {
 		ignoredAssocs.add(ContentModel.ASSOC_ORIGINAL);
@@ -97,9 +100,9 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 		if (hasChanged) {
 			removeCachedAssoc(assocCacheName(), nodeRef, qName);
 		}
-		
+
 	}
-	
+
 	@Override
 	public void update(NodeRef nodeRef, QName qName, List<NodeRef> assocNodeRefs) {
 		update(nodeRef, qName, assocNodeRefs, false);
@@ -133,9 +136,19 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 	}
 
 	private void removeCachedAssoc(String cacheName, NodeRef nodeRef, QName qName) {
-		logger.debug("Remove assoc from  " + cacheName + " " + createCacheKey(nodeRef, qName));
+		if (logger.isDebugEnabled()) {
+			logger.debug("Remove assoc from  " + cacheName + " " + createCacheKey(nodeRef, qName));
+		}
+		String key = createCacheKey(nodeRef, qName);
 
-		beCPGCacheService.removeFromCache(cacheName, createCacheKey(nodeRef, qName));
+		beCPGCacheService.removeFromCache(cacheName, key);
+
+		for (String tmp : cacheNames) {
+			if (tmp.startsWith(key)) {
+				beCPGCacheService.removeFromCache(cacheName, tmp);
+			}
+		}
+
 	}
 
 	@Override
@@ -169,8 +182,25 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 		final String cacheKey = createCacheKey(nodeRef, qName, qNamepattern);
 		final String cacheName = childAssocCacheName();
 
-		return beCPGCacheService.getFromCache(cacheName, cacheKey, () -> nodeService.getChildAssocs(nodeRef, qName, qNamepattern),
-				true);
+		return beCPGCacheService.getFromCache(cacheName, cacheKey, () -> {
+
+			List<ChildAssociationRef> ret = nodeService.getChildAssocs(nodeRef, qName, RegexQNamePattern.MATCH_ALL);
+
+			if ((qNamepattern != null) && !RegexQNamePattern.MATCH_ALL.equals(qNamepattern)) {
+
+				return ret.stream().filter(childAssocRef -> {
+
+					if (qNamepattern.isMatch(nodeService.getType(childAssocRef.getChildRef()))) {
+						return true;
+					}
+
+					return false;
+				}).collect(Collectors.toList());
+			}
+
+			return ret;
+
+		}, true);
 
 	}
 
@@ -179,7 +209,16 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 	}
 	
 	private String createCacheKey(NodeRef nodeRef, QName qName, QNamePattern qNamepattern) {
-		return nodeRef.toString() + "-" + qName.toString()+ "-" +qNamepattern.toString();
+		String cacheKey = createCacheKey(nodeRef, qName);
+
+		if (RegexQNamePattern.MATCH_ALL.equals(qNamepattern)) {
+			return cacheKey;
+		}
+
+		String ret = cacheKey + "-" + qNamepattern.toString();
+		cacheNames.add(ret);
+
+		return ret;
 	}
 
 	@Override
@@ -209,6 +248,115 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 		return listItems;
 	}
 
+	//
+	// @Autowired
+	// @Qualifier("dataSource")
+	// private DataSource dataSource;
+	//
+	//
+	// @Autowired
+	// private TenantService tenantService;
+
+	/**
+	 * ChildAssociationRef.getChildRef() --> dataListItem
+	 * ChildAssociationRef.getParentRef() --> dataListItem
+	 * 
+	 * @param assocs
+	 * @param assocName
+	 * @param orOperator
+	 * @return
+	 */
+	@Override
+	public List<AssociationRef> getEntitySourceAssocs(List<NodeRef> nodeRefs, QNamePattern assocQName, boolean isOrOperator) {
+		List<AssociationRef> ret = new ArrayList<>();
+		//
+		for (NodeRef nodeRef : nodeRefs) {
+
+			if (nodeService.exists(nodeRef)) {
+
+				List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, assocQName);
+
+				// remove nodes that don't respect the
+				// assoc_ criteria
+
+				ret.addAll(assocRefs);
+
+			}
+
+		}
+		// if (!isOROperand) {
+		// nodes.retainAll(nodesToKeep);
+		// } else {
+		// nodesToKeepOr.addAll(nodesToKeep);
+		// }
+
+		//
+		// StoreRef storeRef = StoreRef.STORE_REF_WORKSPACE_SPACESSTORE;
+		// if (AuthenticationUtil.isMtEnabled()) {
+		// storeRef = tenantService.getName(storeRef);
+		// }
+		//
+		//
+		// from
+		// alf_child_assoc dataListItemAssoc
+		// join alf_child_assoc dataListAssoc on dataListAssoc.child_node_id =
+		// dataListItemAssoc.parent_node_id
+		// join alf_node entity on dataListAssoc.parent_node_id = entity.id
+		//
+		// where
+		// dataListItemAssoc.id = (nodeRef.getId)
+		// and entity.store_id=(select id from alf_store where protocol='" +
+		// storeRef.getProtocol() + "' and identifier='"
+		// + storeRef.getIdentifier() + "') "
+		//
+		//
+		//
+		// select
+		// assoc.id as id,
+		// parentNode.id as parentNodeId,
+		// parentNode.version as parentNodeVersion,
+		// parentStore.protocol as parentNodeProtocol,
+		// parentStore.identifier as parentNodeIdentifier,
+		// parentNode.uuid as parentNodeUuid,
+		// childNode.id as childNodeId,
+		// childNode.version as childNodeVersion,
+		// childStore.protocol as childNodeProtocol,
+		// childStore.identifier as childNodeIdentifier,
+		// childNode.uuid as childNodeUuid,
+		// assoc.type_qname_id as type_qname_id,
+		// assoc.child_node_name_crc as child_node_name_crc,
+		// assoc.child_node_name as child_node_name,
+		// assoc.qname_ns_id as qname_ns_id,
+		// assoc.qname_localname as qname_localname,
+		// assoc.is_primary as is_primary,
+		// assoc.assoc_index as assoc_index
+		// from
+		// alf_child_assoc assoc
+		// join alf_node parentNode on (parentNode.id = assoc.parent_node_id)
+		// join alf_store parentStore on (parentStore.id = parentNode.store_id)
+		// join alf_node childNode on (childNode.id = assoc.child_node_id)
+		// left join alf_store childStore on (childStore.id =
+		// childNode.store_id)
+		// where
+		// childNode.id = #{childNode.id}
+		//
+		// alf_node.store_id=(select id from alf_store where protocol='" +
+		// storeRef.getProtocol() + "' and identifier='"
+		// + storeRef.getIdentifier() + "') "
+		//
+		//
+		//
+		//
+		// and assoc.parent_node_id = #{parentNode.id}
+		// <if test="qnameNamespaceId != null">and assoc.qname_ns_id =
+		// #{qnameNamespaceId}</if>
+		// <if test="qnameLocalName != null">and assoc.qname_localname =
+		// #{qnameLocalName}</if>
+		// and assoc.is_primary = true
+
+		return ret;
+	}
+
 	@Override
 	public NodeRef getChildAssoc(NodeRef nodeRef, QName qName) {
 		List<ChildAssociationRef> assocRefs = getChildAssocsImpl(nodeRef, qName, RegexQNamePattern.MATCH_ALL);
@@ -219,12 +367,14 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 	public List<NodeRef> getChildAssocs(NodeRef nodeRef, QName qName) {
 		return getChildAssocs(nodeRef, qName, RegexQNamePattern.MATCH_ALL);
 	}
+
 	
 	@Override
 	public List<NodeRef> getChildAssocs(NodeRef nodeRef, QName qName, QNamePattern listQNameFilter) {
 		if(listQNameFilter == null) {
 			listQNameFilter = RegexQNamePattern.MATCH_ALL;
 		}
+
 		
 		List<ChildAssociationRef> assocRefs = getChildAssocsImpl(nodeRef, qName, listQNameFilter);
 		List<NodeRef> listItems = new LinkedList<>();
@@ -234,8 +384,6 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 
 		return listItems;
 	}
-	
-	
 
 	@Override
 	public void doInit() {
@@ -269,7 +417,7 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 				new JavaBehaviour(this, "onCheckIn"));
 		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.OnCheckIn.QNAME, ContentModel.TYPE_AUTHORITY,
 				new JavaBehaviour(this, "onCheckIn"));
-		
+
 	}
 
 	private String assocCacheName() {
@@ -296,23 +444,22 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 
 	@Override
 	public void onDeleteChildAssociation(ChildAssociationRef associationRef) {
-		logger.debug("onDeleteChildAssociation: "+associationRef.getTypeQName());
+		logger.debug("onDeleteChildAssociation: " + associationRef.getTypeQName());
 		removeCachedAssoc(childAssocCacheName(), associationRef.getParentRef(), associationRef.getTypeQName());
-		
 
 	}
 
 	@Override
 	public void onCreateChildAssociation(ChildAssociationRef associationRef, boolean arg1) {
-		logger.debug("onCreateChildAssociation: "+associationRef.getTypeQName());
+		logger.debug("onCreateChildAssociation: " + associationRef.getTypeQName());
 		removeCachedAssoc(childAssocCacheName(), associationRef.getParentRef(), associationRef.getTypeQName());
 
 	}
 
 	@Override
 	public void onDeleteNode(ChildAssociationRef associationRef, boolean arg1) {
-		logger.debug("onDeleteNode: "+associationRef.getTypeQName());
-       
+		logger.debug("onDeleteNode: " + associationRef.getTypeQName());
+
 		removeCachedAssoc(childAssocCacheName(), associationRef.getParentRef(), associationRef.getTypeQName());
 	}
 
