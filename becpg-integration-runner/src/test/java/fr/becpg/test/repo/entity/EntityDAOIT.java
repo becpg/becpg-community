@@ -3,11 +3,13 @@ package fr.becpg.test.repo.entity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.domain.node.NodeDAO;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -24,14 +26,18 @@ import fr.becpg.repo.cache.impl.BeCPGCacheServiceImpl;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.test.RepoBaseTestCase;
 
-public class EntityDAOTest extends RepoBaseTestCase {
+public class EntityDAOIT extends RepoBaseTestCase {
 
-	private Log logger = LogFactory.getLog(EntityDAOTest.class);
+	private Log logger = LogFactory.getLog(EntityDAOIT.class);
 
 	@Autowired
 	@Qualifier("entityListDAO2")
 	private EntityListDAO entityListDAOV2;
 
+	@Autowired
+	private NodeDAO nodeDAO;
+	
+	
 	private NodeRef createTestNode(NodeRef parentNodeRef, QName type, String name) {
 
 		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -59,11 +65,9 @@ public class EntityDAOTest extends RepoBaseTestCase {
 			((BeCPGCacheServiceImpl) beCPGCacheService).setDisableAllCache(disableCache);
 			Map<String, Long> perfs1 = new HashMap<>();
 			Map<String, Long> perfs2 = new HashMap<>();
-			for (int i = 0; i < 2; i++) {
-				daoServicePerfTest("V1-" + i + disableCache, entityListDAO, perfs1);
-				daoServicePerfTest("V2-" + i + disableCache, entityListDAOV2, perfs2);
+			daoServicePerfTest("V1" +disableCache, entityListDAO, perfs1);
+			daoServicePerfTest("V2" +disableCache, entityListDAOV2, perfs2);
 
-			}
 
 			logger.info("Performance results");
 			for (Map.Entry<String, Long> entry : perfs1.entrySet()) {
@@ -109,6 +113,9 @@ public class EntityDAOTest extends RepoBaseTestCase {
 			nodes.add(entityNodeRef);
 
 		}
+		
+		//Clear alfresco cache
+		nodeDAO.clear();
 
 		for (NodeRef entityNodeRef : nodes) {
 			NodeRef listContainerNodeRef = perfs("getListContainer", () -> service.getListContainer(entityNodeRef), perfs);
@@ -122,15 +129,19 @@ public class EntityDAOTest extends RepoBaseTestCase {
 				
 				for (NodeRef listItemNodeRef : ret) {
 					NodeRef tmp = perfs("getEntity", () -> service.getEntity(listItemNodeRef), perfs);
-
+					nodeDAO.clear();
 					if (!entityNodeRef.equals(tmp)) {
 
 						logger.error(tmp + " doesn-t match " + nodeService.getType(tmp) + " " + nodeService.getProperty(tmp, ContentModel.PROP_NAME));
 						Assert.fail();
 					}
 				}
+				
+				Map<String, Boolean> defaultSortProps = new LinkedHashMap<>();
+				defaultSortProps.put("@cm:created", false);
+				
 				ret = perfs("getListItemsSort",
-						() -> service.getListItems(listNodeRef, BeCPGModel.TYPE_LIST_VALUE, new HashMap<>()), perfs);
+						() -> service.getListItems(listNodeRef, BeCPGModel.TYPE_LIST_VALUE, defaultSortProps), perfs);
 				Assert.assertEquals(ret.size(),50);
 				for (NodeRef listItemNodeRef : ret) {
 					Assert.assertTrue(entityNodeRef.equals(perfs("getEntity", () -> service.getEntity(listItemNodeRef), perfs)));
