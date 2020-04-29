@@ -12,11 +12,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.entity.catalog.EntityCatalogService;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.AbstractProductDataView;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompositionDataItem;
@@ -47,9 +49,6 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 	@Override
 	public boolean process(ProductData product) {
 
-		if (logger.isDebugEnabled()) {
-			logger.debug("===== Calculating score of product " + product.getName() + " =====");
-		}
 		
 		JSONObject scores = new JSONObject();
 

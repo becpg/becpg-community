@@ -68,7 +68,7 @@ public class FormulationHelper {
 
 	public static Double getQtyForCost(CompoListDataItem compoListDataItem, Double parentLossRatio, ProductData componentProduct,
 			boolean keepProductUnit) {
-		Double lossPerc = FormulationHelper.calculateLossPerc(parentLossRatio != null ? parentLossRatio : 0d, FormulationHelper.getComponentLossPerc(componentProduct, compoListDataItem));
+		Double lossPerc = FormulationHelper.calculateLossPerc(parentLossRatio, FormulationHelper.getComponentLossPerc(componentProduct, compoListDataItem));
 		Double yieldPerc = compoListDataItem.getYieldPerc() != null ? compoListDataItem.getYieldPerc() : 100d;
 		Double qtySubFormula = compoListDataItem.getQtySubFormula() != null ? compoListDataItem.getQtySubFormula() : DEFAULT_COMPONANT_QUANTITY;
 		Double qtyInKg = compoListDataItem.getQty() != null ? compoListDataItem.getQty() : DEFAULT_COMPONANT_QUANTITY;
@@ -107,6 +107,12 @@ public class FormulationHelper {
 	}
 
 	public static Double calculateLossPerc(Double parentLossRatio, Double lossPerc) {
+		if(parentLossRatio == null) {
+			parentLossRatio = 0d;
+		}
+		if(lossPerc == null) {
+			lossPerc = 0d;
+		}
 		return 100 * (((1 + (lossPerc / 100)) * (1 + (parentLossRatio / 100))) - 1);
 	}
 
