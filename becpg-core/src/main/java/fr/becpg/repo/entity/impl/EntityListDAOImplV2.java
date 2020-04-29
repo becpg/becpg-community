@@ -54,7 +54,6 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,6 +66,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.cache.BeCPGCacheService;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.TranslateHelper;
@@ -86,6 +86,9 @@ public class EntityListDAOImplV2 implements EntityListDAO, NodeServicePolicies.B
 	@Autowired
 	private NodeService nodeService;
 
+	@Autowired
+	private EntityDictionaryService entityDictionaryService;
+	
 	@Autowired
 	private DictionaryService dictionaryService;
 
@@ -240,7 +243,7 @@ public class EntityListDAOImplV2 implements EntityListDAO, NodeServicePolicies.B
 					QName dataListTypeQName = QName.createQName(dataListType, namespaceService);
 
 					if ((BeCPGModel.TYPE_ENTITYLIST_ITEM.equals(dataListTypeQName)
-							|| dictionaryService.isSubClass(dataListTypeQName, BeCPGModel.TYPE_ENTITYLIST_ITEM)
+							|| entityDictionaryService.isSubClass(dataListTypeQName, BeCPGModel.TYPE_ENTITYLIST_ITEM)
 							|| ((String) nodeService.getProperty(listNodeRef, ContentModel.PROP_NAME)).startsWith(RepoConsts.WUSED_PREFIX))) {
 
 						if (!hiddenListQnames.contains(dataListTypeQName)) {
@@ -254,33 +257,6 @@ public class EntityListDAOImplV2 implements EntityListDAO, NodeServicePolicies.B
 			}
 		}
 		return existingLists;
-	}
-
-	@Override
-	public List<NodeRef> getListItems(NodeRef dataListNodeRef, QName dataType) {
-
-		// Map<String, Boolean> sortMap = new LinkedHashMap<>();
-		// sortMap.put("@bcpg:sort", true);
-		// sortMap.put("@cm:created", true);
-		//
-		// return getListItems(dataListNodeRef, dataType, sortMap);
-
-		return getListItemsV2(dataListNodeRef, dataType);
-	}
-
-	@Override
-	public List<NodeRef> getListItems(final NodeRef listNodeRef, final QName listQNameFilter, Map<String, Boolean> sortMap) {
-
-		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().addSort(sortMap).parent(listNodeRef);
-
-		if (listQNameFilter != null) {
-			queryBuilder.ofType(listQNameFilter);
-		} else {
-			queryBuilder.ofType(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-		}
-
-		return queryBuilder.childFileFolders(new PagingRequest(5000, null)).getPage();
-
 	}
 
 	@Override
@@ -326,6 +302,37 @@ public class EntityListDAOImplV2 implements EntityListDAO, NodeServicePolicies.B
 
 		return ret;
 	}
+
+	@Override
+	public List<NodeRef> getListItems(final NodeRef listNodeRef, final QName listQNameFilter, Map<String, Boolean> sortMap) {
+
+		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().addSort(sortMap).parent(listNodeRef);
+
+		if (listQNameFilter != null) {
+			queryBuilder.ofType(listQNameFilter);
+		} else {
+			queryBuilder.ofType(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+		}
+
+		return queryBuilder.childFileFolders(new PagingRequest(5000, null)).getPage();
+
+	}
+
+	//@Override
+	public boolean isEmpty(final NodeRef listNodeRef, final QName listQNameFilter) {
+
+		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().parent(listNodeRef);
+
+		if (listQNameFilter != null) {
+			queryBuilder.ofType(listQNameFilter);
+		} else {
+			queryBuilder.ofType(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+		}
+
+		return queryBuilder.inDB().singleValue() == null;
+
+	}
+
 
 
 	@Override
@@ -486,7 +493,7 @@ public class EntityListDAOImplV2 implements EntityListDAO, NodeServicePolicies.B
 
 	@Override
 	public NodeRef getEntity(NodeRef listItemNodeRef) {
-		return beCPGCacheService.getFromCache(EntityListDAO.class.getName(), listItemNodeRef.getId(), () -> {
+		return beCPGCacheService.getFromCache(EntityListDAOImplV2.class.getName(), listItemNodeRef.getId(), () -> {
 
 			StoreRef storeRef = StoreRef.STORE_REF_WORKSPACE_SPACESSTORE;
 			if (AuthenticationUtil.isMtEnabled()) {
@@ -532,7 +539,7 @@ public class EntityListDAOImplV2 implements EntityListDAO, NodeServicePolicies.B
 
 	@Override
 	public void beforeDeleteNode(NodeRef nodeRef) {
-		beCPGCacheService.removeFromCache(EntityListDAO.class.getName(), nodeRef.getId());
+		beCPGCacheService.removeFromCache(EntityListDAOImplV2.class.getName(), nodeRef.getId());
 
 	}
 

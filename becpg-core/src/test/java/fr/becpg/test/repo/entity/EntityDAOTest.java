@@ -59,16 +59,21 @@ public class EntityDAOTest extends RepoBaseTestCase {
 			Map<String, Long> perfs1 = new HashMap<>();
 			Map<String, Long> perfs2 = new HashMap<>();
 			for (int i = 0; i < 5; i++) {
-				daoServicePerfTest("V1-" + i, entityListDAO, perfs1);
-				daoServicePerfTest("V2-" + i, entityListDAOV2, perfs2);
+				daoServicePerfTest("V1-" + i + disableCache, entityListDAO, perfs1);
+				daoServicePerfTest("V2-" + i + disableCache, entityListDAOV2, perfs2);
 
 			}
 
 			logger.info("Performance results");
 			for (Map.Entry<String, Long> entry : perfs1.entrySet()) {
+				Long t1 = entry.getValue();
+				Long t2 = perfs2.get(entry.getKey());
+				Double perc = 0d;
+				if (t1 != 0) {
+					perc = ((t1 - t2) / (t1 * 1d)) * 100d;
+				}
 
-				logger.info(" - " + entry.getKey() + " # V1 time: " + (entry.getValue()) + "ms, V2 time: " + (perfs2.get(entry.getKey()))
-						+ "ms, gain v2-v1: " + (((perfs2.get(entry.getKey()) - entry.getValue()) / entry.getValue()) * 100) + "%");
+				logger.info(" - " + entry.getKey() + " # V1 time: " + t1 + "ms, V2 time: " + t2 + "ms, speed gain: " + perc + "%");
 
 			}
 
@@ -111,8 +116,8 @@ public class EntityDAOTest extends RepoBaseTestCase {
 
 				NodeRef listNodeRef = perfs("getList", () -> service.getList(listContainerNodeRef, BeCPGModel.TYPE_LIST_VALUE), perfs);
 
-				for (NodeRef listItemNodeRef : perfs("getListItems", () -> service.getListItems(listNodeRef, BeCPGModel.TYPE_LIST_VALUE), perfs)) {
-					NodeRef tmp = perfs("getEntity", () -> service.getEntity(listItemNodeRef), perfs);
+				for (NodeRef listItemNodeRef : perfs("getListItems++", () -> service.getListItems(listNodeRef, BeCPGModel.TYPE_LIST_VALUE), perfs)) {
+					NodeRef tmp = perfs("getEntity++", () -> service.getEntity(listItemNodeRef), perfs);
 
 					if (!entityNodeRef.equals(tmp)) {
 

@@ -472,7 +472,7 @@ public class EntityListDAOImpl implements EntityListDAO, NodeServicePolicies.Bef
 
 	@Override
 	public NodeRef getEntity(NodeRef listItemNodeRef) {
-		//return beCPGCacheService.getFromCache(EntityListDAO.class.getName(), listItemNodeRef.getId(), () -> {
+		return beCPGCacheService.getFromCache(EntityListDAO.class.getName(), listItemNodeRef.getId(), () -> {
 		
 			NodeRef listNodeRef = nodeService.getPrimaryParent(listItemNodeRef).getParentRef();
 	
@@ -481,7 +481,7 @@ public class EntityListDAOImpl implements EntityListDAO, NodeServicePolicies.Bef
 			}
 	
 			return null;
-		//});
+		});
 	}
 	
 	@Override
