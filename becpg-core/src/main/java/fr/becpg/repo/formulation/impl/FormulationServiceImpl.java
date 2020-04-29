@@ -166,7 +166,7 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 					repositoryEntity.setFormulationChainId(chainId);
 					chain.executeChain(repositoryEntity);
 				} while ((repositoryEntity.getReformulateCount() != null) && (i++ < repositoryEntity.getReformulateCount()));
-				if (chain.shouldUpdateFormulatedDate()) {
+				if (chain.shouldUpdateFormulatedDate() && repositoryEntity.shouldUpdateFormulatedDate()) {
 					repositoryEntity.setFormulatedDate(Calendar.getInstance().getTime());
 				}
 

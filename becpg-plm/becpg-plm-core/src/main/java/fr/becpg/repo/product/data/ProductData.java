@@ -124,6 +124,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private String formulationChainId;
 	private IngTypeItem ingType;
 	private Boolean isUpToDate = false;
+	private Boolean updateFormulatedDate = true;
 
 	/*
 	 * Nutrient Score
@@ -278,6 +279,17 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	@Override
 	public void setFormulatedDate(Date formulatedDate) {
 		this.formulatedDate = formulatedDate;
+	}
+	
+	
+	@Override
+	public boolean shouldUpdateFormulatedDate() {
+		return updateFormulatedDate;
+	}
+
+	@Override
+	public void setUpdateFormulatedDate(boolean updateFormulatedDate) {
+		this.updateFormulatedDate = updateFormulatedDate;
 	}
 
 	public Boolean getIsUpToDate() {

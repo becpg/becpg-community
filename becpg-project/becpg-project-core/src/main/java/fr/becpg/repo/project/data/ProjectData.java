@@ -88,6 +88,7 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	private Integer reformulateCount;
 	private Integer currentReformulateCount;
 	private String formulationChainId;
+	private Boolean updateFormulatedDate = true;
 	
 	private List<TaskListDataItem> taskList;
 	private List<DeliverableListDataItem> deliverableList;
@@ -177,6 +178,16 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 		this.formulatedDate = formulatedDate;
 	}
 
+	
+	@Override
+	public boolean shouldUpdateFormulatedDate() {
+		return updateFormulatedDate;
+	}
+
+	@Override
+	public void setUpdateFormulatedDate(boolean updateFormulatedDate) {
+		this.updateFormulatedDate = updateFormulatedDate;
+	}
 
 	public Integer getReformulateCount() {
 		return reformulateCount;

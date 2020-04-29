@@ -1161,8 +1161,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 				Double waterLost = 0d;
 				if ((ingsCalculatingWithYield || labelingFormulaContext.isIngsLabelingWithYield()) && (qty != null) && (yield != null)
-(??)						&& (yield != 100d) && (recipeQtyUsed != null) && nodeService.hasAspect(productNodeRef, PLMModel.ASPECT_WATER)
-(??)						&& applyWaterLost) {
+						&& (yield != 100d) && (recipeQtyUsed != null) && nodeService.hasAspect(productNodeRef, PLMModel.ASPECT_WATER)
+						&& parent.shouldApplyWaterLoss()) {
 					waterLost = (1 - (yield / 100d)) * (recipeQtyUsed * LabelingFormulaContext.PRECISION_FACTOR);
 
 					if (logger.isTraceEnabled()) {
