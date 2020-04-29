@@ -175,6 +175,7 @@
 		<property name="entityNameTpl" value="${beCPG.sendToSupplier.entityName.format}"/>		
 		<property name="projectNameTpl" value="${beCPG.sendToSupplier.projectName.format}"/>	
 		<property name="repoService" ref="repoService"/>
+		<property name="createBranch" value="${beCPG.sendToSupplier.createBranch}"/>	
 	</bean>
 	
 	<bean id="webscript.fr.becpg.supplier.createSupplier.post" class="fr.becpg.repo.web.scripts.supplier.SupplierAccountWebScript" parent="webscript">
