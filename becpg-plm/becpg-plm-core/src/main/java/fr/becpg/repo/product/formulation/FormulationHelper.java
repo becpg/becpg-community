@@ -108,6 +108,12 @@ public class FormulationHelper {
 	}
 
 	public static Double calculateLossPerc(Double parentLossRatio, Double lossPerc) {
+		if(parentLossRatio == null) {
+			parentLossRatio = 0d;
+		}
+		if(lossPerc == null) {
+			lossPerc = 0d;
+		}
 		return 100 * (((1 + (lossPerc / 100)) * (1 + (parentLossRatio / 100))) - 1);
 	}
 
