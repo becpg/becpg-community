@@ -12,7 +12,7 @@ CHO-;Carbohydrate, by difference (with fiber);6;1;false;true;false;;;;
 CHOL-;Cholesterol;30;1;false;true;false;;;;
 CHOLN;CholineTot;54;1;false;true;false;;;;
 CR;Chromium;55;1;false;true;false;40;;mcg;
-CU;Copper;56;1;false;true;false;900;;mcg;
+CU;Copper;56;1;false;true;false;0,9;;mg;
 ENER-E14;Energy kcal;1;1;true;false;false;2000;;kcal;
 ENER-KJO;Energy kJ;2;1;true;false;false;8400;;kJ;
 F10D0;FA 10:0, capric;14;2;false;true;false;;;;
