@@ -19,6 +19,7 @@ public class GSONutrientRegulation extends AbstractNutrientRegulation {
 					return roundValue(value, 1d);
 			} else if (nutrientTypeCode.equals(NutrientCode.Protein) || nutrientTypeCode.equals(NutrientCode.CarbohydrateByDiff)
 					|| nutrientTypeCode.equals(NutrientCode.CarbohydrateWithFiber) || nutrientTypeCode.equals(NutrientCode.Fat)
+					|| nutrientTypeCode.equals(NutrientCode.Cholesterol) || nutrientTypeCode.equals(NutrientCode.SugarAdded)
 					|| nutrientTypeCode.equals(NutrientCode.Sugar) || nutrientTypeCode.equals(NutrientCode.FiberDietary)
 					|| nutrientTypeCode.equals(NutrientCode.Polyols) || nutrientTypeCode.equals(NutrientCode.Starch)) {
 				if (value >= 10) {
@@ -29,7 +30,7 @@ public class GSONutrientRegulation extends AbstractNutrientRegulation {
 					return 0.0;
 				}
 			} else if (nutrientTypeCode.equals(NutrientCode.FatMonounsaturated) || nutrientTypeCode.equals(NutrientCode.FatSaturated)
-					|| nutrientTypeCode.equals(NutrientCode.FatPolyunsaturated)) {
+					|| nutrientTypeCode.equals(NutrientCode.FatPolyunsaturated) || nutrientTypeCode.equals(NutrientCode.FatTrans)) {
 				if (value >= 10) {
 					return roundValue(value, 1d);
 				} else if (value > 0.1) {
@@ -38,10 +39,10 @@ public class GSONutrientRegulation extends AbstractNutrientRegulation {
 					return 0.0;
 				}
 			} else if (nutrientTypeCode.equals(NutrientCode.Sodium)) {
-				if (value >= 1) {
-					return roundValue(value, 0.1d);
-				} else if (value > 0.005) {
-					return roundValue(value, 0.01d);
+				if (value >= 1000) {
+					return roundValue(value, 100d);
+				} else if (value > 5) {
+					return roundValue(value, 10d);
 				} else {
 					return 0.0;
 				}
