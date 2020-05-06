@@ -398,7 +398,8 @@ YAHOO.Bubbling
         	  return asset.name != null && 
               (asset.name === "compoList" || asset.name === "processList" || asset.name === "packagingList" 
             	  || asset.name === "ingLabelingList" || asset.name === "nutList" || asset.name === "labelClaimList" 
-                  || asset.name === "costList" || asset.name === "physicoChemList" || asset.name === "ingList" || asset.name === "allergenList") && beCPG.util.contains(entity.aspects,
+                  || asset.name === "costList" || asset.name === "physicoChemList" || asset.name === "ingList" || asset.name === "allergenList"
+                  || asset.name === "priceList"  ) && beCPG.util.contains(entity.aspects,
                   "bcpg:productAspect") ;
           },
           createWidget : function(containerDiv, instance) {
