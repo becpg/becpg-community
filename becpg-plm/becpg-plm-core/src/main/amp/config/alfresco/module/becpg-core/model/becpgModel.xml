@@ -319,15 +319,10 @@
 				</list>
 			</parameter>
 		</constraint>
-		<constraint name="bcpg:currency" type="LIST">
-			<parameter name="allowedValues">
+		<constraint name="bcpg:currency" type="fr.becpg.repo.dictionary.constraint.CurrencyConstraint">
+			<parameter name="allowedValuesSuffix">
 				<list>
-					<value>€</value>
-					<value>$</value>
-					<value>£</value>
-					<value>SFr</value>
-					<value>zł</value>
-					<value>kr</value>
+					<value></value>
 				</list>
 			</parameter>
 		</constraint>
@@ -345,123 +340,28 @@
 		
 		<!-- TODO Create a dynamic constraint 
 		based on productUnit and currency  -->
-		<constraint name="bcpg:costListUnit" type="LIST">
-			<parameter name="allowedValues">
+		<constraint name="bcpg:costListUnit" type="fr.becpg.repo.dictionary.constraint.CurrencyConstraint">
+			<parameter name="allowedValuesSuffix">
 				<list>
-					<value>€</value>
-					<value>€/L</value>
-					<value>€/cL</value>
-					<value>€/mL</value>
-					<value>€/kg</value>
-					<value>€/g</value>
-					<value>€/lb</value>
-					<value>€/oz</value>
-					<value>€/P</value>
-					<value>€/m</value>
-					<value>€/mm</value>
-					<value>€/in</value>
-					<value>€/ft</value>
-					<value>€/gal</value>
-					<value>€/cp</value>
-					<value>€/fl_oz</value>
-					<value>€/m2</value>
-					<value>€/h</value>
-					<value>€/Pal</value>
-					<value>$</value>
-					<value>$/L</value>
-					<value>$/cL</value>
-					<value>$/mL</value>
-					<value>$/kg</value>
-					<value>$/g</value>
-					<value>$/lb</value>
-					<value>$/oz</value>
-					<value>$/P</value>
-					<value>$/m</value>
-					<value>$/mm</value>
-					<value>$/in</value>
-					<value>$/ft</value>
-					<value>$/gal</value>
-					<value>$/cp</value>
-					<value>$/fl_oz</value>
-					<value>$/m2</value>
-					<value>$/h</value>
-					<value>$/Pal</value>
-					<value>£</value>
-					<value>£/L</value>
-					<value>£/cL</value>
-					<value>£/mL</value>
-					<value>£/kg</value>
-					<value>£/g</value>
-					<value>£/lb</value>
-					<value>£/oz</value>
-					<value>£/P</value>
-					<value>£/m</value>
-					<value>£/mm</value>
-					<value>£/in</value>
-					<value>£/ft</value>
-					<value>£/gal</value>
-					<value>£/cp</value>
-					<value>£/fl_oz</value>
-					<value>£/m2</value>
-					<value>£/h</value>
-					<value>£/Pal</value>
-					<value>SFr</value>
-					<value>SFr/L</value>
-					<value>SFr/cL</value>
-					<value>SFr/mL</value>
-					<value>SFr/kg</value>
-					<value>SFr/g</value>
-					<value>SFr/lb</value>
-					<value>SFr/oz</value>
-					<value>SFr/P</value>
-					<value>SFr/m</value>
-					<value>SFr/mm</value>
-					<value>SFr/in</value>
-					<value>SFr/ft</value>
-					<value>SFr/gal</value>
-					<value>SFr/cp</value>
-					<value>SFr/fl_oz</value>
-					<value>SFr/m2</value>
-					<value>SFr/h</value>
-					<value>SFr/Pal</value>
-					<value>zł</value>
-					<value>zł/L</value>
-					<value>zł/cL</value>
-					<value>zł/mL</value>
-					<value>zł/kg</value>
-					<value>zł/g</value>
-					<value>zł/lb</value>
-					<value>zł/oz</value>
-					<value>zł/P</value>
-					<value>zł/m</value>
-					<value>zł/mm</value>
-					<value>zł/in</value>
-					<value>zł/ft</value>
-					<value>zł/gal</value>
-					<value>zł/cp</value>
-					<value>zł/fl_oz</value>
-					<value>zł/m2</value>
-					<value>zł/h</value>
-					<value>zł/Pal</value>
-					<value>kr</value>
-					<value>kr/L</value>
-					<value>kr/cL</value>
-					<value>kr/mL</value>
-					<value>kr/kg</value>
-					<value>kr/g</value>
-					<value>kr/lb</value>
-					<value>kr/oz</value>
-					<value>kr/P</value>
-					<value>kr/m</value>
-					<value>kr/mm</value>
-					<value>kr/in</value>
-					<value>kr/ft</value>
-					<value>kr/gal</value>
-					<value>kr/cp</value>
-					<value>kr/fl_oz</value>
-					<value>kr/m2</value>
-					<value>kr/h</value>
-					<value>kr/Pal</value>
+					<value></value>
+					<value>/L</value>
+					<value>/cL</value>
+					<value>/mL</value>
+					<value>/kg</value>
+					<value>/g</value>
+					<value>/lb</value>
+					<value>/oz</value>
+					<value>/P</value>
+					<value>/m</value>
+					<value>/mm</value>
+					<value>/in</value>
+					<value>/ft</value>
+					<value>/gal</value>
+					<value>/cp</value>
+					<value>/fl_oz</value>
+					<value>/m2</value>
+					<value>/h</value>
+					<value>/Pal</value>
 				</list>
 			</parameter>
 		</constraint>
