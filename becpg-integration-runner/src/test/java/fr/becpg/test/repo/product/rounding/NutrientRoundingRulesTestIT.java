@@ -645,5 +645,26 @@ public class NutrientRoundingRulesTestIT {
 		assertEquals(16.8d, RegulationFormulationHelper.round(16.76d, NutrientCode.Sodium, MLTextHelper.parseLocale("hi_IN"), "mg/100g"), 0);
 		assertEquals(41.6d, RegulationFormulationHelper.round(41.59d, NutrientCode.Sugar, MLTextHelper.parseLocale("hi_IN"), "g/100g"), 0);
 	}
+	
+	@Test
+	public void testGSORoundingRules() {
+		assertEquals(35d, RegulationFormulationHelper.round(35.24d, NutrientCode.EnergykJ, MLTextHelper.parseLocale("ar_AE"), "kJ/100g"), 0);
+		assertEquals(36d, RegulationFormulationHelper.round(35.88d, NutrientCode.Energykcal, MLTextHelper.parseLocale("ar_AE"), "kCal/100g"), 0);
+		assertEquals(17d, RegulationFormulationHelper.round(16.58d, NutrientCode.Fat, MLTextHelper.parseLocale("ar_BH"), "g/100g"), 0);
+		assertEquals(8.8d, RegulationFormulationHelper.round(8.76d, NutrientCode.CarbohydrateByDiff, MLTextHelper.parseLocale("ar_BH"), "g/100g"), 0);
+		assertEquals(0d, RegulationFormulationHelper.round(0.09d, NutrientCode.Sugar, MLTextHelper.parseLocale("ar_BH"), "g/100g"), 0);
+		
+		assertEquals(19d, RegulationFormulationHelper.round(19.35d, NutrientCode.FatSaturated, MLTextHelper.parseLocale("ar_SA"), "g/100g"), 0);
+		assertEquals(6.2d, RegulationFormulationHelper.round(6.24d, NutrientCode.FatMonounsaturated, MLTextHelper.parseLocale("ar_SA"), "g/100g"), 0);
+		assertEquals(0d, RegulationFormulationHelper.round(0.04d, NutrientCode.FatPolyunsaturated, MLTextHelper.parseLocale("ar_SA"), "g/100g"), 0);
+
+		assertEquals(1.9d, RegulationFormulationHelper.round(1.92d, NutrientCode.Salt, MLTextHelper.parseLocale("ar_OM"), "g/100g"), 0);
+		assertEquals(0.03d, RegulationFormulationHelper.round(0.0285d, NutrientCode.Salt, MLTextHelper.parseLocale("ar_OM"), "g/100g"), 0);
+		assertEquals(0d, RegulationFormulationHelper.round(0.01d, NutrientCode.Salt, MLTextHelper.parseLocale("ar_OM"), "g/100g"), 0);
+
+		assertEquals(3.78d, RegulationFormulationHelper.round(3.7777d, NutrientCode.VitA, MLTextHelper.parseLocale("ar_KW"), "µg/100g"), 0);
+		assertEquals(3.8d, RegulationFormulationHelper.round(3.7777d, NutrientCode.VitD, MLTextHelper.parseLocale("ar_KW"), "µg/100g"), 0);
+	}
+	
 
 }

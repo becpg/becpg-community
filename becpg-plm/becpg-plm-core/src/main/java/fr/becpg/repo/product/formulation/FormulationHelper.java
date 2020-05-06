@@ -108,6 +108,12 @@ public class FormulationHelper {
 	}
 
 	public static Double calculateLossPerc(Double parentLossRatio, Double lossPerc) {
+		if(parentLossRatio == null) {
+			parentLossRatio = 0d;
+		}
+		if(lossPerc == null) {
+			lossPerc = 0d;
+		}
 		return 100 * (((1 + (lossPerc / 100)) * (1 + (parentLossRatio / 100))) - 1);
 	}
 
@@ -417,17 +423,18 @@ public class FormulationHelper {
 					productQty = 1d;
 				}
 
-				if (compoListUnit.isP()) {
+				 if (compoListUnit.isP()) {
 					if ((subProduct.getUnit() != null) && !subProduct.getUnit().isP()) {
 						productQty = 1d;
 					}
 
-				} else if (compoListUnit.isWeight() || compoListUnit.isVolume()) {
+				} else if (compoListUnit.isWeight() || compoListUnit.isVolume() || compoListUnit.isPerc()) {
 
 					productQty = getNetQtyInLorKg(subProduct, 1d);
 					qty = getQtyInKg(compoList);
 
-				}
+				} 
+				 
 
 				if ((qty != null) && !qty.isNaN() && !qty.isInfinite()) {
 					if (logger.isDebugEnabled()) {

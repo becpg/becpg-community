@@ -347,19 +347,20 @@
 											 itemKind : (step.nodeRef != null && step.nodeRef.length > 0) ?"node" : "type",
 													 itemId : (step.nodeRef != null && step.nodeRef.length > 0) ? step.nodeRef : step.itemId,
 															 destination : this.options.destination,
-															 formId : step.formId
+															 formId : step.formId!=null? step.formId : ""
 								 });
 					 } else if(step.type == "entityDataList"){
 
 						 url =  YAHOO.lang
 						 .substitute(
 								 Alfresco.constants.URL_SERVICECONTEXT + "components/entity-charact-views/simple-view" + 
-								 "?list={list}&nodeRef={nodeRef}&itemType={itemType}&title={title}",
+								 "?list={list}&nodeRef={nodeRef}&itemType={itemType}&title={title}&formId={formId}",
 								 {
 									 nodeRef : step.nodeRef,
 									 list : step.listId,
 									 itemType : step.itemId,
-									 title : encodeURIComponent(step.label)
+									 title : encodeURIComponent(step.label),
+									 formId : step.formId!=null? step.formId : ""
 								 });
 					 } else if(step.type == "documents"){
 

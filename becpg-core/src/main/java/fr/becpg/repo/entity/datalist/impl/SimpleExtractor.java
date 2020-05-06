@@ -136,24 +136,12 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 
 			if (dataListFilter.isAllFilter() && entityDictionaryService.isSubClass(dataListFilter.getDataType(), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
 
-				BeCPGQueryBuilder queryBuilder = dataListFilter.getSearchQuery();
-
 				if (logger.isDebugEnabled()) {
 					logger.debug("DataType to filter :" + dataListFilter.getDataType());
 				}
 
-//				if (AuthenticationUtil.isMtEnabled()) {
-//					int skipOffset = (pagination.getPage() - 1) * pagination.getPageSize();
-//					int requestTotalCountMax = skipOffset + RepoConsts.MAX_RESULTS_1000;
-//	
-//					PagingRequest pageRequest = new PagingRequest(skipOffset, pagination.getPageSize(), pagination.getQueryExecutionId());
-//					pageRequest.setRequestTotalCountMax(requestTotalCountMax);
-//
-//					results = pagination.paginate(queryBuilder.childFileFolders(pageRequest));
-//				} else {
-					results = queryBuilder.fastChildrenByType();
-			//	}
-				
+				results = entityListDAO.getListItems(dataListFilter.getNodeRef(), dataListFilter.getDataType(), dataListFilter.getSortMap());
+
 				pagination.setQueryExecutionId(paginatedSearchCache.storeSearchResults(results));
 
 			} else if (dataListFilter.isSimpleItem()) {

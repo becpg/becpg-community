@@ -166,7 +166,7 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 					repositoryEntity.setFormulationChainId(chainId);
 					chain.executeChain(repositoryEntity);
 				} while ((repositoryEntity.getReformulateCount() != null) && (i++ < repositoryEntity.getReformulateCount()));
-				if (chain.shouldUpdateFormulatedDate()) {
+				if (chain.shouldUpdateFormulatedDate() && repositoryEntity.shouldUpdateFormulatedDate()) {
 					repositoryEntity.setFormulatedDate(Calendar.getInstance().getTime());
 				}
 
@@ -185,7 +185,7 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 				throw (ConcurrencyFailureException) e;
 			}
 			logger.error(e,e);
-			throw new FormulateException(I18NUtil.getMessage("message.formulate.failure", repositoryEntity.getNodeRef()), e);
+			throw new FormulateException(I18NUtil.getMessage("message.formulate.failure", repositoryEntity!=null ? repositoryEntity.getNodeRef() : null), e);
 
 		} catch (StackOverflowError e) {
 			logger.error(e,e);

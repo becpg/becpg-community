@@ -244,7 +244,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 								creatorQuery.andPropQuery(ProjectModel.PROP_PROJECT_STATE, "Planned OR InProgress");
 							}
 
-							creatorQuery.andPropQuery(ContentModel.PROP_CREATOR, AuthenticationUtil.getFullyAuthenticatedUser());
+							creatorQuery.andPropQuery(QName.createQName(prop,namespaceService), AuthenticationUtil.getFullyAuthenticatedUser());
 
 							unionResults.addAll(creatorQuery.list());
 						}
@@ -490,6 +490,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 				ret.put("assoc_pjt_tlResources", resources);
 			}
 		} else {
+			@SuppressWarnings("unchecked")
 			List<Map<String, Object>> resources = (List<Map<String, Object>>) ret.get("assoc_pjt_tlResources");
 			if ((resources == null) || resources.isEmpty()) {
 				return;
