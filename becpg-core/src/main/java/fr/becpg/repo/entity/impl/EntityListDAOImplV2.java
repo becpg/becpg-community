@@ -441,7 +441,7 @@ public class EntityListDAOImplV2 implements EntityListDAO, NodeServicePolicies.B
 
 	@Override
 	public NodeRef getEntity(NodeRef listItemNodeRef) {
-		return beCPGCacheService.getFromCache(EntityListDAOImplV2.class.getName(), listItemNodeRef.getId(), () -> {
+		return beCPGCacheService.getFromCache(EntityListDAO.class.getName(), listItemNodeRef.getId(), () -> {
 
 			StoreRef storeRef = StoreRef.STORE_REF_WORKSPACE_SPACESSTORE;
 			if (AuthenticationUtil.isMtEnabled()) {
@@ -486,7 +486,7 @@ public class EntityListDAOImplV2 implements EntityListDAO, NodeServicePolicies.B
 
 	@Override
 	public void beforeDeleteNode(NodeRef nodeRef) {
-		beCPGCacheService.removeFromCache(EntityListDAOImplV2.class.getName(), nodeRef.getId());
+		beCPGCacheService.removeFromCache(EntityListDAO.class.getName(), nodeRef.getId());
 
 	}
 
