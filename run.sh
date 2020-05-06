@@ -17,7 +17,7 @@ export COMPOSE_FILE_PATH=${PWD}/becpg-integration-runner/target/docker-compose.y
 export MVN_EXEC="mvn"
 
 start() {
-   	 	docker-compose -f $COMPOSE_FILE_PATH up -d --remove-orphans
+   	 	docker-compose -f $COMPOSE_FILE_PATH -f docker-compose.override.yml up -d --remove-orphans
 }
 
 down() {

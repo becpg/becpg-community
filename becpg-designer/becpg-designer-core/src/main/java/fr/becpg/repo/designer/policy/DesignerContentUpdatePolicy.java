@@ -19,7 +19,7 @@ import fr.becpg.repo.designer.DesignerService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
 public class DesignerContentUpdatePolicy extends AbstractBeCPGPolicy implements ContentServicePolicies.OnContentUpdatePolicy,
-		NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.BeforeDeleteNodePolicy{
+		NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.BeforeDeleteNodePolicy, NodeServicePolicies.OnAddAspectPolicy{
 
 	private static final Log logger = LogFactory.getLog(DesignerContentUpdatePolicy.class);
 
@@ -34,12 +34,17 @@ public class DesignerContentUpdatePolicy extends AbstractBeCPGPolicy implements 
 		
 		policyComponent.bindClassBehaviour(ContentServicePolicies.OnContentUpdatePolicy.QNAME, DesignerModel.ASPECT_CONFIG, new JavaBehaviour(this,
 				"onContentUpdate"));
+		
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnAddAspectPolicy.QNAME, DesignerModel.ASPECT_CONFIG, new JavaBehaviour(this,
+				"onAddAspect"));
+		
 
 		policyComponent.bindClassBehaviour(ContentServicePolicies.OnContentUpdatePolicy.QNAME, DesignerModel.ASPECT_MODEL, new JavaBehaviour(this,
 				"onContentUpdate"));
 
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, DesignerModel.ASPECT_CONFIG, new JavaBehaviour(this,
 								"onUpdateProperties", NotificationFrequency.TRANSACTION_COMMIT));
+		
 		
 		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME, DesignerModel.ASPECT_CONFIG, new JavaBehaviour(this,
 				"beforeDeleteNode"));
@@ -100,5 +105,13 @@ public class DesignerContentUpdatePolicy extends AbstractBeCPGPolicy implements 
 	private boolean isWorkingCopy(NodeRef nodeRef) {
 		Set<QName> aspects = nodeService.getAspects(nodeRef);
 		return aspects.contains(ContentModel.ASPECT_WORKING_COPY);
+	}
+
+	@Override
+	public void onAddAspect(NodeRef nodeRef, QName aspectTypeQName) {
+		if(!isWorkingCopy(nodeRef)) {
+			queueNode(nodeRef);
+		}
+		
 	}
 }

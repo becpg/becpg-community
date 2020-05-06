@@ -19,9 +19,6 @@ along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  */
 package fr.becpg.repo.search;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,8 +29,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
-
-import javax.sql.DataSource;
 
 import org.alfresco.model.ApplicationModel;
 import org.alfresco.model.ContentModel;
@@ -50,11 +45,9 @@ import org.alfresco.repo.search.impl.querymodel.QueryModelException;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.permissions.PermissionCheckedValue.PermissionCheckedValueMixin;
 import org.alfresco.repo.tenant.TenantService;
-import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.cmr.search.LimitBy;
 import org.alfresco.service.cmr.search.QueryConsistency;
 import org.alfresco.service.cmr.search.ResultSet;
@@ -121,10 +114,6 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	@Autowired
 	private NodeService nodeService;
 
-	@Autowired
-	@Qualifier("dataSource")
-	private DataSource dataSource;
-
 	private Integer maxResults = RepoConsts.MAX_RESULTS_256;
 	private NodeRef parentNodeRef;
 	private final Set<NodeRef> parentNodeRefs = new HashSet<>();
@@ -182,7 +171,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			builder.nodeService = INSTANCE.nodeService;
 			builder.entityDictionaryService = INSTANCE.entityDictionaryService;
 			builder.tenantService = INSTANCE.tenantService;
-			builder.dataSource = INSTANCE.dataSource;
+			builder.includeReportInSearch = INSTANCE.includeReportInSearch;
 		}
 		return builder;
 	}
@@ -447,8 +436,6 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	public BeCPGQueryBuilder excludeType(QName type) {
 		if (!types.contains(type) && !type.equals(this.type)) {
 			excludedTypes.add(type);
-		} else {
-			logger.warn("Unconsistent search type already in inType : " + type);
 		}
 		return this;
 	}
@@ -1110,110 +1097,6 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			return QName.createQName(sortProp.replace("@", ""), namespaceService);
 		}
 
-	}
-
-	public List<NodeRef> fastChildrenByType() {
-
-		List<NodeRef> ret = new LinkedList<>();
-		QName sortFieldQName = null;
-		String sortDirection = null;
-		String createSortDirection = "ASC";
-		QName dataTypeQName = null;
-
-		StoreRef storeRef = StoreRef.STORE_REF_WORKSPACE_SPACESSTORE;
-		if (AuthenticationUtil.isMtEnabled()) {
-			storeRef = tenantService.getName(storeRef);
-		}
-
-		if (type != null) {
-			dataTypeQName = type;
-		} else if (!types.isEmpty()) {
-			dataTypeQName = types.iterator().next();
-			logger.warn("Only one TYPE is allowed in fastChildrenByType");
-		}
-
-		int count = 0;
-		for (Map.Entry<String, Boolean> entry : sortProps.entrySet()) {
-			if ("cm:created".equals(entry.getKey().replace("@", ""))
-					|| ("{http://www.alfresco.org/model/content/1.0}created").equals(entry.getKey().replace("@", ""))) {
-				createSortDirection = entry.getValue() ? "ASC" : "DESC";
-			} else {
-				if (count > 0) {
-					logger.warn("Only one sort dir is allowed in fastChildrenByType");
-					break;
-				}
-
-				if (entry.getKey().indexOf(QName.NAMESPACE_BEGIN) != -1) {
-					sortFieldQName = QName.createQName(entry.getKey().replace("@", ""));
-				} else {
-					sortFieldQName = QName.createQName(entry.getKey().replace("@", ""), namespaceService);
-				}
-				sortDirection = entry.getValue() ? "ASC" : "DESC";
-				count++;
-			}
-		}
-
-		if ((dataTypeQName != null)) {
-
-			String sql = "select alf_node.uuid, alf_node.audit_created from alf_node ";
-
-			String sortOrderSql = " order by alf_node.audit_created " + createSortDirection;
-
-			if ((sortFieldQName != null) && (sortDirection != null)) {
-				DataTypeDefinition dateType = entityDictionaryService.getProperty(sortFieldQName).getDataType();
-				String fieldType = "string_value";
-
-				if (DataTypeDefinition.INT.equals(dateType.getName()) || DataTypeDefinition.LONG.equals(dateType.getName())) {
-					fieldType = "long_value";
-				} else if (DataTypeDefinition.DOUBLE.equals(dateType.getName())) {
-					fieldType = "double_value";
-				} else if (DataTypeDefinition.FLOAT.equals(dateType.getName())) {
-					fieldType = "float_value";
-				} else if (DataTypeDefinition.BOOLEAN.equals(dateType.getName())) {
-					fieldType = "boolean_value";
-				}
-
-				sql = "select alf_node.uuid, alf_node_properties." + fieldType + ", alf_node.audit_created " + "from alf_node "
-						+ "left join alf_node_properties " + "on (alf_node_properties.node_id = alf_node.id "
-						+ "and alf_node_properties.qname_id=(select id from alf_qname " + "where ns_id=(select id from alf_namespace where uri='"
-						+ sortFieldQName.getNamespaceURI() + "') " + "and local_name='" + sortFieldQName.getLocalName() + "') " + ") ";
-
-				sortOrderSql = " order by alf_node_properties." + fieldType + " " + sortDirection + ", alf_node.audit_created " + createSortDirection;
-
-			}
-
-			sql += "where alf_node.store_id=(select id from alf_store where protocol='" + storeRef.getProtocol() + "' and identifier='"
-					+ storeRef.getIdentifier() + "') " + "and alf_node.type_qname_id=(select id from alf_qname "
-					+ "where ns_id=(select id from alf_namespace where uri='" + dataTypeQName.getNamespaceURI() + "') " + "and local_name='"
-					+ type.getLocalName() + "') " + "and id in (select child_node_id from alf_child_assoc where "
-					+ "parent_node_id = (select id from alf_node where uuid='" + parentNodeRef.getId() + "'"
-					+ " and store_id=(select id from alf_store where protocol='" + storeRef.getProtocol() + "'" + " and identifier='"
-					+ storeRef.getIdentifier() + "') )) ";
-
-			sql += sortOrderSql;
-
-			if (logger.isTraceEnabled()) {
-				logger.trace("Searching with: " + sql);
-			}
-			try (Connection con = dataSource.getConnection()) {
-
-				try (PreparedStatement statement = con.prepareStatement(sql)) {
-					try (java.sql.ResultSet res = statement.executeQuery()) {
-						while (res.next()) {
-							NodeRef nodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, res.getString("uuid"));
-							if (nodeService.exists(nodeRef)) {
-								ret.add(nodeRef);
-							}
-						}
-					}
-				}
-			} catch (SQLException e) {
-				logger.error("Error running : " + sql, e);
-			}
-
-		}
-
-		return ret;
 	}
 
 	public PagingResults<NodeRef> childFileFolders(PagingRequest pageRequest) {
