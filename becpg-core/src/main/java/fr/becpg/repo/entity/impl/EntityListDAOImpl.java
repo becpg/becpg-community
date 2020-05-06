@@ -30,12 +30,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.PostConstruct;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.query.PagingRequest;
-import org.alfresco.repo.node.NodeServicePolicies;
-import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.policy.PolicyComponent;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
@@ -59,7 +55,6 @@ import org.springframework.stereotype.Repository;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.TranslateHelper;
@@ -72,7 +67,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  */
 @Repository("entityListDAO")
 @DependsOn("bcpg.dictionaryBootstrap")
-public class EntityListDAOImpl implements EntityListDAO, NodeServicePolicies.BeforeDeleteNodePolicy {
+public class EntityListDAOImpl implements EntityListDAO {
 
 	private static final Log logger = LogFactory.getLog(EntityListDAOImpl.class);
 
@@ -94,8 +89,6 @@ public class EntityListDAOImpl implements EntityListDAO, NodeServicePolicies.Bef
 	@Autowired
 	private AssociationService associationService;
 	
-	@Autowired
-	private BeCPGCacheService beCPGCacheService;
 	
 	@Autowired
 	@Qualifier("policyComponent")
@@ -103,11 +96,6 @@ public class EntityListDAOImpl implements EntityListDAO, NodeServicePolicies.Bef
 
 	private Set<QName> hiddenListQnames = new HashSet<>();
 	 
-	@PostConstruct
-	public void init() {
-		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME,BeCPGModel.TYPE_ENTITYLIST_ITEM,
-				new JavaBehaviour(this, "beforeDeleteNode"));
-	}
 
 	@Override
 	public void registerHiddenList(QName listTypeQname) {
@@ -472,16 +460,13 @@ public class EntityListDAOImpl implements EntityListDAO, NodeServicePolicies.Bef
 
 	@Override
 	public NodeRef getEntity(NodeRef listItemNodeRef) {
-		return beCPGCacheService.getFromCache(EntityListDAO.class.getName(), listItemNodeRef.getId(), () -> {
-		
-			NodeRef listNodeRef = nodeService.getPrimaryParent(listItemNodeRef).getParentRef();
+		NodeRef listNodeRef = nodeService.getPrimaryParent(listItemNodeRef).getParentRef();
 	
 			if (listNodeRef != null) {
 				return getEntityFromList(listNodeRef);
 			}
 	
 			return null;
-		});
 	}
 	
 	@Override
@@ -497,10 +482,5 @@ public class EntityListDAOImpl implements EntityListDAO, NodeServicePolicies.Bef
 	}
 
 
-	@Override
-	public void beforeDeleteNode(NodeRef nodeRef) {
-		 beCPGCacheService.removeFromCache(EntityListDAO.class.getName(),nodeRef.getId());
-		
-	}
 
 }
