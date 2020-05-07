@@ -211,7 +211,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 	 * @throws Exception
 	 *             the exception
 	 */
-	// @Test
+	@Test
 	public void testECOService() throws Exception {
 
 		final NodeRef finishedProduct1NodeRef = createFinishedProduct("PF1");
@@ -375,7 +375,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 
 	}
 
-	// @Test
+	@Test
 	public void testDeleteNode() throws Exception {
 
 		final NodeRef finishedProduct1NodeRef = createFinishedProduct("PF1");
@@ -443,7 +443,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 
 	}
 
-	// @Test
+	@Test
 	public void testTwoToOne() throws Exception {
 
 		final NodeRef finishedProduct1NodeRef = createFinishedProduct("PF1");
@@ -752,7 +752,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 	 * @throws Exception
 	 *             the exception
 	 */
-	// @Test
+	@Test
 	public void testECOInMultiLeveCompo() throws Exception {
 		final NodeRef finishedProduct1NodeRef = createFinishedProduct("PF1");
 		final NodeRef finishedProduct2NodeRef = createFinishedProduct("PF2");
@@ -1016,7 +1016,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 
 	}
 
-	// @Test
+	@Test
 	public void testReformulate() throws Exception {
 		final NodeRef finishedProduct1NodeRef = createFinishedProduct("PF1");
 		final NodeRef testNodeRef = getTestFolderNodeRef();

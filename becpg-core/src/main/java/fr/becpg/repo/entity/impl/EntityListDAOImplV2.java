@@ -35,13 +35,12 @@ import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.coci.CheckOutCheckInServicePolicies;
 import org.alfresco.repo.node.NodeServicePolicies;
-import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.policy.PolicyComponent;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
-import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.CopyService;
@@ -74,9 +73,10 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  * @author querephi
  *
  */
-@Repository("entityListDAO2")
+@Repository("entityListDAO")
 @DependsOn("bcpg.dictionaryBootstrap")
-public class EntityListDAOImplV2 implements EntityListDAO, NodeServicePolicies.BeforeDeleteNodePolicy {
+public class EntityListDAOImplV2 implements EntityListDAO,
+NodeServicePolicies.BeforeDeleteNodePolicy, CheckOutCheckInServicePolicies.OnCheckIn {
 
 	private static final Log logger = LogFactory.getLog(EntityListDAOImplV2.class);
 
@@ -85,9 +85,6 @@ public class EntityListDAOImplV2 implements EntityListDAO, NodeServicePolicies.B
 
 	@Autowired
 	private EntityDictionaryService entityDictionaryService;
-
-	@Autowired
-	private DictionaryService dictionaryService;
 
 	@Autowired
 	private FileFolderService fileFolderService;
@@ -120,9 +117,15 @@ public class EntityListDAOImplV2 implements EntityListDAO, NodeServicePolicies.B
 
 	@PostConstruct
 	public void init() {
-		
-		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME, BeCPGModel.TYPE_ENTITYLIST_ITEM,
-				new JavaBehaviour(this, "beforeDeleteNode"));
+//		
+//		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME, BeCPGModel.TYPE_ENTITYLIST_ITEM,
+//				new JavaBehaviour(this, "beforeDeleteNode"));
+//		
+//		
+//		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME, BeCPGModel.TYPE_ENTITY_V2,
+//				new JavaBehaviour(this, "onCheckIn"));
+//		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.OnCheckIn.QNAME, BeCPGModel.TYPE_ENTITY_V2,
+//				new JavaBehaviour(this, "onCheckIn"));
 	}
 
 	@Override
@@ -175,7 +178,7 @@ public class EntityListDAOImplV2 implements EntityListDAO, NodeServicePolicies.B
 			I18NUtil.setLocale(Locale.getDefault());
 			I18NUtil.setContentLocale(null);
 
-			ClassDefinition classDef = dictionaryService.getClass(listQName);
+			ClassDefinition classDef = entityDictionaryService.getClass(listQName);
 
 			if (classDef == null) {
 				logger.error("No classDef found for :" + listQName);
@@ -431,6 +434,17 @@ public class EntityListDAOImplV2 implements EntityListDAO, NodeServicePolicies.B
 
 	}
 
+	@Override
+	public NodeRef getEntity(NodeRef listItemNodeRef) {
+		NodeRef listNodeRef = nodeService.getPrimaryParent(listItemNodeRef).getParentRef();
+
+		if (listNodeRef != null) {
+			return getEntityFromList(listNodeRef);
+		}
+
+		return null;
+	}
+	
 	private static final String SQL_SELECT_ENTITY = "select entity.uuid " + " from alf_node entity "
 			+ " join alf_child_assoc dataListContainerAssoc on (entity.id = dataListContainerAssoc.parent_node_id)"
 			+ " join alf_child_assoc dataListAssoc on (dataListAssoc.parent_node_id = dataListContainerAssoc.child_node_id)"
@@ -439,9 +453,9 @@ public class EntityListDAOImplV2 implements EntityListDAO, NodeServicePolicies.B
 			+ " join alf_store dataListItemStore on (  dataListItemStore.id = dataListItem.store_id )" + " where dataListItem.uuid = ?"
 			+ " and dataListItemStore.protocol= ? and dataListItemStore.identifier=?";
 
-	@Override
-	public NodeRef getEntity(NodeRef listItemNodeRef) {
-		return beCPGCacheService.getFromCache(EntityListDAO.class.getName(), listItemNodeRef.getId(), () -> {
+
+	public NodeRef getEntityV2(NodeRef listItemNodeRef) {
+		return beCPGCacheService.getFromCache(getCacheName(), listItemNodeRef.getId(), () -> {
 
 			StoreRef storeRef = StoreRef.STORE_REF_WORKSPACE_SPACESSTORE;
 			if (AuthenticationUtil.isMtEnabled()) {
@@ -460,7 +474,15 @@ public class EntityListDAOImplV2 implements EntityListDAO, NodeServicePolicies.B
 							return new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, res.getString("uuid"));
 
 						} else {
-							logger.error("No results for:" + statement);
+							//In transaction
+							logger.warn("Perf issue!!!");
+							NodeRef listNodeRef = nodeService.getPrimaryParent(listItemNodeRef).getParentRef();
+
+							if (listNodeRef != null) {
+								return getEntityFromList(listNodeRef);
+							}
+
+							return null;
 						}
 					}
 				}
@@ -486,8 +508,28 @@ public class EntityListDAOImplV2 implements EntityListDAO, NodeServicePolicies.B
 
 	@Override
 	public void beforeDeleteNode(NodeRef nodeRef) {
-		beCPGCacheService.removeFromCache(EntityListDAO.class.getName(), nodeRef.getId());
+		beCPGCacheService.removeFromCache(getCacheName(), nodeRef.getId());
 
 	}
+	
+	@Override
+	public void onCheckIn(NodeRef nodeRef) {
+		
+			for (String cacheKey : beCPGCacheService.getCacheKeys(getCacheName())) {
+				if (cacheKey.startsWith(nodeRef.toString())) {
+					if (logger.isDebugEnabled()) {
+						logger.debug("In checkin delete:" + cacheKey);
+					}
+
+					beCPGCacheService.removeFromCache(getCacheName(), cacheKey);
+				}
+			}
+
+	}
+	
+	private String getCacheName() {
+		return EntityListDAO.class.getName();
+	}
+	
 
 }

@@ -3,15 +3,13 @@ package fr.becpg.repo.search;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -26,11 +24,11 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityDictionaryService;
-import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.datalist.WUsedListService;
 import fr.becpg.repo.entity.datalist.WUsedListService.WUsedOperator;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.impl.AssociationServiceImpl.EntitySourceAssoc;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.productList.SpecCompatibilityDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -54,9 +52,6 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 	@Autowired
 	private WUsedListService wUsedListService;
-
-	@Autowired
-	private EntityListDAO entityListDAO;
 
 	@Autowired
 	private AlfrescoRepository<ProductSpecificationData> alfrescoRepository;
@@ -302,20 +297,9 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 						Set<NodeRef> nodesToKeep = new HashSet<>();
 
 						for (String strNodeRef : arrValues) {
-
 							NodeRef nodeRef = new NodeRef(strNodeRef);
-
 							if (nodeService.exists(nodeRef)) {
-
-								List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, assocQName);
-
-								// remove nodes that don't respect the
-								// assoc_ criteria
-
-								for (AssociationRef assocRef : assocRefs) {
-									nodesToKeep.add(assocRef.getSourceRef());
-								}
-
+								nodesToKeep.addAll(associationService.getSourcesAssocs(nodeRef, assocQName));
 							}
 
 						}
@@ -333,7 +317,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 			nodes.retainAll(nodesToKeepOr);
 		}
 
-		if (logger.isDebugEnabled()) {
+		if (logger.isDebugEnabled() && (watch != null)) {
 			watch.stop();
 			logger.debug("filterByAssociations executed in  " + watch.getTotalTimeSeconds() + " seconds ");
 		}
@@ -348,10 +332,11 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 	 */
 	private List<NodeRef> getSearchNodesByIngListCriteria(List<NodeRef> nodes, Map<String, String> criteria) {
 
-		List<NodeRef> ingListItems = null;
-		List<NodeRef> notIngListItems = null;
+		List<NodeRef> ingListItemsEntity = new ArrayList<>();
 
-		Map<NodeRef, Boolean> permCache = new HashMap<>();
+		boolean applyFilter = false;
+
+		new HashMap<>();
 
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
@@ -364,139 +349,41 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 			String key = criterion.getKey();
 			String propValue = criterion.getValue();
 
-			// criteria on ing
-			if ((key.equals(CRITERIA_ING) || key.equals(CRITERIA_ING_AND)) && !propValue.isEmpty()) {
+			if ((propValue != null) && !propValue.isEmpty()) {
 
-				String[] arrValues = propValue.split(RepoConsts.MULTI_VALUES_SEPARATOR);
+				// criteria on ing
+				if ((key.equals(CRITERIA_ING) || key.equals(CRITERIA_ING_AND))) {
 
-				for (String strNodeRef : arrValues) {
+					ingListItemsEntity = associationService.getEntitySourceAssocs(extractNodeRefs(propValue), PLMModel.ASSOC_INGLIST_ING, key.equals(CRITERIA_ING))
+							.stream().map(a -> a.getEntityNodeRef()).collect(Collectors.toList());
 
-					NodeRef nodeRef = new NodeRef(strNodeRef);
+					applyFilter = true;
 
-					if (nodeService.exists(nodeRef)) {
+				} else if (key.equals(CRITERIA_ING_NOT)) {
+					nodes.removeAll(associationService.getEntitySourceAssocs(extractNodeRefs(propValue), PLMModel.ASSOC_INGLIST_ING, true).stream()
+							.map(a -> a.getEntityNodeRef()).collect(Collectors.toList()));
 
-						List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, PLMModel.ASSOC_INGLIST_ING);
-						if (ingListItems == null) {
-							ingListItems = new ArrayList<>(assocRefs.size());
-						}
+				} else if (key.equals(CRITERIA_GEO_ORIGIN)) {
 
-						for (AssociationRef assocRef : assocRefs) {
+					ingListItemsEntity.retainAll(associationService.getEntitySourceAssocs(extractNodeRefs(propValue), PLMModel.ASSOC_INGLIST_GEO_ORIGIN, true).stream()
+							.map(a -> a.getEntityNodeRef()).collect(Collectors.toList()));
 
-							NodeRef n = assocRef.getSourceRef();
-							if (isWorkSpaceProtocol(n)) {
-								ingListItems.add(n);
-							}
-						}
-					}
-				}
-			} else if (key.equals(CRITERIA_ING_NOT) && !propValue.isEmpty()) {
-				String[] arrValues = propValue.split(RepoConsts.MULTI_VALUES_SEPARATOR);
+					applyFilter = true;
+				} else if (key.equals(CRITERIA_BIO_ORIGIN) && !propValue.isEmpty()) {
 
-				for (String strNodeRef : arrValues) {
+					ingListItemsEntity.retainAll(associationService.getEntitySourceAssocs(extractNodeRefs(propValue), PLMModel.ASSOC_INGLIST_BIO_ORIGIN, true).stream()
+							.map(a -> a.getEntityNodeRef()).collect(Collectors.toList()));
+					applyFilter = true;
 
-					NodeRef nodeRef = new NodeRef(strNodeRef);
-
-					if (nodeService.exists(nodeRef)) {
-
-						List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, PLMModel.ASSOC_INGLIST_ING);
-						if (notIngListItems == null) {
-							notIngListItems = new ArrayList<>(assocRefs.size());
-						}
-
-						for (AssociationRef assocRef : assocRefs) {
-
-							NodeRef n = assocRef.getSourceRef();
-							if (isWorkSpaceProtocol(n)) {
-								notIngListItems.add(n);
-							}
-						}
-					}
-				}
-			}
-
-			// criteria on geo origin, we query as an OR operator
-			if (key.equals(CRITERIA_GEO_ORIGIN) && !propValue.isEmpty()) {
-
-				List<NodeRef> ingListGeoOrigins = new ArrayList<>();
-
-				for (NodeRef nodeRef : extractOriginNodeRefs(propValue)) {
-
-					List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, PLMModel.ASSOC_INGLIST_GEO_ORIGIN);
-
-					for (AssociationRef assocRef : assocRefs) {
-
-						NodeRef n = assocRef.getSourceRef();
-						if (isWorkSpaceProtocol(n)) {
-							ingListGeoOrigins.add(n);
-						}
-					}
-				}
-
-				if (ingListItems == null) {
-					ingListItems = ingListGeoOrigins;
-				} else {
-					ingListItems.retainAll(ingListGeoOrigins);
-				}
-			}
-
-			// criteria on bio origin, we query as an OR operator
-			if (key.equals(CRITERIA_BIO_ORIGIN) && !propValue.isEmpty()) {
-
-				List<NodeRef> ingListBioOrigins = new ArrayList<>();
-
-				for (NodeRef nodeRef : extractOriginNodeRefs(propValue)) {
-
-					List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, PLMModel.ASSOC_INGLIST_BIO_ORIGIN);
-
-					for (AssociationRef assocRef : assocRefs) {
-
-						NodeRef n = assocRef.getSourceRef();
-						if (isWorkSpaceProtocol(n)) {
-							ingListBioOrigins.add(n);
-						}
-					}
-
-				}
-
-				if (ingListItems == null) {
-					ingListItems = ingListBioOrigins;
-				} else {
-					ingListItems.retainAll(ingListBioOrigins);
 				}
 			}
 		}
 
-		// determine the product WUsed of the ing list items
-		if (ingListItems != null) {
-
-			List<NodeRef> productNodeRefs = new ArrayList<>();
-			for (NodeRef ingListItem : ingListItems) {
-
-				NodeRef rootNodeRef = getEntity(ingListItem, permCache);
-
-				// we don't display history version
-				if ((rootNodeRef != null)) {
-					productNodeRefs.add(rootNodeRef);
-				}
-			}
-
-			if (productNodeRefs != null) {
-				nodes.retainAll(productNodeRefs);
-			}
+		if (applyFilter) {
+			nodes.retainAll(ingListItemsEntity);
 		}
 
-		if (notIngListItems != null) {
-			for (NodeRef ingListItem : notIngListItems) {
-
-				NodeRef rootNodeRef = getEntity(ingListItem, permCache);
-				if ((rootNodeRef != null)) {
-					nodes.remove(rootNodeRef);
-				}
-			}
-
-		}
-
-		if (logger.isDebugEnabled()) {
+		if (logger.isDebugEnabled() && (watch != null)) {
 			watch.stop();
 			logger.debug("getSearchNodesByIngListCriteria executed in  " + watch.getTotalTimeSeconds() + " seconds ");
 		}
@@ -504,45 +391,16 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		return nodes;
 	}
 
-	private NodeRef getEntity(NodeRef nodeRef, Map<NodeRef, Boolean> permCache) {
-
-		NodeRef ret = null;
-
-		if (isWorkSpaceProtocol(nodeRef)) {
-
-			ret = entityListDAO.getEntity(nodeRef);
-
-			// we don't display history version and simulation entities
-			if (ret != null) {
-
-				Boolean visible = permCache.get(ret);
-
-				if (visible == null) {
-					visible = !nodeService.hasAspect(ret, BeCPGModel.ASPECT_COMPOSITE_VERSION);
-
-					permCache.put(ret, visible);
-				}
-
-				if (!visible) {
-					return null;
-				}
-
-			}
-		}
-
-		return ret;
-
-	}
-
-	private List<NodeRef> extractOriginNodeRefs(String propValue) {
-		List<NodeRef> ret = new LinkedList<>();
-
+	private List<NodeRef> extractNodeRefs(String propValue) {
 		String[] arrValues = propValue.split(RepoConsts.MULTI_VALUES_SEPARATOR);
+		List<NodeRef> ret = new ArrayList<>();
+
 		for (String strNodeRef : arrValues) {
+
 			NodeRef nodeRef = new NodeRef(strNodeRef);
+
 			if (nodeService.exists(nodeRef)) {
 				ret.add(nodeRef);
-
 				if (logger.isDebugEnabled()) {
 					logger.debug("Adding associated search :"
 							+ associationService.getSourcesAssocs(nodeRef, BeCPGModel.ASSOC_LINKED_SEARCH_ASSOCIATION).size());
@@ -550,7 +408,6 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 				}
 
 				ret.addAll(associationService.getSourcesAssocs(nodeRef, BeCPGModel.ASSOC_LINKED_SEARCH_ASSOCIATION));
-
 			}
 
 		}
@@ -559,14 +416,18 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 	}
 
 	private List<NodeRef> getSearchNodesBySpecificationCriteria(List<NodeRef> nodes, Map<String, String> criteria) {
+		StopWatch watch = null;
+		if (logger.isDebugEnabled()) {
+			watch = new StopWatch();
+			watch.start();
+		}
 
 		if (criteria.containsKey(CRITERIA_NOTRESPECTED_SPECIFICATIONS)) {
 
-			String notRespectedCriterias = criteria.get(CRITERIA_NOTRESPECTED_SPECIFICATIONS);
-			String[] arrValues = notRespectedCriterias.split(RepoConsts.MULTI_VALUES_SEPARATOR);
-			for (String strNodeRef : arrValues) {
-				NodeRef nodeRef = new NodeRef(strNodeRef);
-				if (nodeService.exists(nodeRef)) {
+			String propValue = criteria.get(CRITERIA_NOTRESPECTED_SPECIFICATIONS);
+			if ((propValue != null) && !propValue.isEmpty()) {
+				for (NodeRef nodeRef : extractNodeRefs(propValue)) {
+
 					ProductSpecificationData productSpecificationData = alfrescoRepository.findOne(nodeRef);
 					List<NodeRef> retainNodes = new ArrayList<>();
 					for (NodeRef productNodeRef : nodes) {
@@ -586,17 +447,15 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 					nodes.retainAll(retainNodes);
 
 				}
-			}
 
+			}
 		}
 
 		if (criteria.containsKey(CRITERIA_RESPECTED_SPECIFICATIONS)) {
 
-			String respectedCriterias = criteria.get(CRITERIA_RESPECTED_SPECIFICATIONS);
-			String[] arrValues = respectedCriterias.split(RepoConsts.MULTI_VALUES_SEPARATOR);
-			for (String strNodeRef : arrValues) {
-				NodeRef nodeRef = new NodeRef(strNodeRef);
-				if (nodeService.exists(nodeRef)) {
+			String propValue = criteria.get(CRITERIA_RESPECTED_SPECIFICATIONS);
+			if ((propValue != null) && !propValue.isEmpty()) {
+				for (NodeRef nodeRef : extractNodeRefs(propValue)) {
 					ProductSpecificationData productSpecificationData = alfrescoRepository.findOne(nodeRef);
 					List<NodeRef> removedNodes = new ArrayList<>();
 					for (NodeRef productNodeRef : nodes) {
@@ -620,7 +479,13 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 		}
 
+		if (logger.isDebugEnabled() && (watch != null)) {
+			watch.stop();
+			logger.debug("getSearchNodesBySpecificationCriteria executed in  " + watch.getTotalTimeSeconds() + " seconds ");
+		}
+
 		return nodes;
+
 	}
 
 	/**
@@ -630,9 +495,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 	 */
 	private List<NodeRef> getSearchNodesByLabelingCriteria(List<NodeRef> nodes, Map<String, String> criteria) {
 
-		List<NodeRef> labelingListItems = null;
-
-		Map<NodeRef, Boolean> permCache = new HashMap<>();
+		List<NodeRef> labelingListItemsEntity = new ArrayList<>();
 
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
@@ -645,57 +508,30 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 			String propValue = criteria.get(CRITERIA_PACK_LABEL);
 
 			// criteria on label
-			if (!propValue.isEmpty()) {
+			if ((propValue != null) && !propValue.isEmpty()) {
 
-				NodeRef nodeRef = new NodeRef(propValue);
+				for (EntitySourceAssoc assocRef : associationService.getEntitySourceAssocs(extractNodeRefs(propValue), PackModel.ASSOC_LL_LABEL, true)) {
 
-				if (nodeService.exists(nodeRef)) {
+					NodeRef n = assocRef.getDataListItemNodeRef();
 
-					List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, PackModel.ASSOC_LL_LABEL);
-					labelingListItems = new ArrayList<>(assocRefs.size());
+					if (criteria.containsKey(CRITERIA_PACK_LABEL_POSITION) && !criteria.get(CRITERIA_PACK_LABEL_POSITION).isEmpty()) {
 
-					for (AssociationRef assocRef : assocRefs) {
-
-						NodeRef n = assocRef.getSourceRef();
-						if (isWorkSpaceProtocol(n)) {
-
-							if (criteria.containsKey(CRITERIA_PACK_LABEL_POSITION) && !criteria.get(CRITERIA_PACK_LABEL_POSITION).isEmpty()) {
-
-								if (criteria.get(CRITERIA_PACK_LABEL_POSITION)
-										.equals("\"" + nodeService.getProperty(n, PackModel.PROP_LL_POSITION) + "\"")) {
-									labelingListItems.add(n);
-								}
-							} else {
-
-								labelingListItems.add(n);
-							}
+						if (criteria.get(CRITERIA_PACK_LABEL_POSITION).equals("\"" + nodeService.getProperty(n, PackModel.PROP_LL_POSITION) + "\"")) {
+							labelingListItemsEntity.add(assocRef.getEntityNodeRef());
 						}
+					} else {
+
+						labelingListItemsEntity.add(assocRef.getEntityNodeRef());
 					}
 				}
+
+				nodes.retainAll(labelingListItemsEntity);
+
 			}
 
 		}
 
-		if (labelingListItems != null) {
-
-			List<NodeRef> productNodeRefs = new ArrayList<>();
-			for (NodeRef labelingListItem : labelingListItems) {
-
-				NodeRef rootNodeRef = getEntity(labelingListItem, permCache);
-
-				if ((rootNodeRef != null)) {
-					productNodeRefs.add(rootNodeRef);
-				}
-
-			}
-
-			if (productNodeRefs != null) {
-				nodes.retainAll(productNodeRefs);
-			}
-
-		}
-
-		if (logger.isDebugEnabled()) {
+		if (logger.isDebugEnabled() && (watch != null)) {
 			watch.stop();
 			logger.debug("getSearchNodesByLabelingCriteria executed in  " + watch.getTotalTimeSeconds() + " seconds ");
 		}
@@ -711,9 +547,9 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 	private List<NodeRef> getSearchNodesByListCriteria(List<NodeRef> nodes, Map<String, String> criteria, String criteriaAssocString,
 			QName criteriaAssoc, QName criteriaAssocValue, String criteriaValue) {
 
-		Map<NodeRef, Boolean> permCache = new HashMap<>();
+		new HashMap<>();
 
-		List<NodeRef> labelClaimListItems = null;
+		List<NodeRef> entities = new ArrayList<>();
 
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
@@ -726,85 +562,55 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 			String propValue = criteria.get(criteriaAssocString);
 
 			if ((propValue != null) && !propValue.isEmpty()) {
-				String[] arrValues = propValue.split(RepoConsts.MULTI_VALUES_SEPARATOR);
 
-				for (String strNodeRef : arrValues) {
+				for (EntitySourceAssoc assocRef : associationService.getEntitySourceAssocs(extractNodeRefs(propValue), criteriaAssoc, true)) {
 
-					NodeRef nodeRef = new NodeRef(strNodeRef);
+					NodeRef n = assocRef.getDataListItemNodeRef();
+					if ((criteriaAssocValue != null) && (criteriaValue != null) && !criteriaValue.isEmpty()) {
+						Object value = nodeService.getProperty(n, criteriaAssocValue);
+						if (PLMModel.PROP_NUTLIST_VALUE.equals(criteriaAssocValue) && (value == null)) {
+							value = nodeService.getProperty(n, PLMModel.PROP_NUTLIST_FORMULATED_VALUE);
+						}
 
-					if (nodeService.exists(nodeRef)) {
+						if (value != null) {
+							if (value instanceof String) {
+								if (criteriaValue.equals(value)) {
+									entities.add(assocRef.getEntityNodeRef());
+								}
 
-						List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, criteriaAssoc);
-						labelClaimListItems = new ArrayList<>(assocRefs.size());
+							} else if (value instanceof Boolean) {
+								if (Boolean.valueOf(criteriaValue).equals(value)) {
+									entities.add(assocRef.getEntityNodeRef());
+								}
 
-						for (AssociationRef assocRef : assocRefs) {
-
-							NodeRef n = assocRef.getSourceRef();
-							if (isWorkSpaceProtocol(n)) {
-								if ((criteriaAssocValue != null) && (criteriaValue != null) && !criteriaValue.isEmpty()) {
-									Object value = nodeService.getProperty(n, criteriaAssocValue);
-									if (PLMModel.PROP_NUTLIST_VALUE.equals(criteriaAssocValue) && (value == null)) {
-										value = nodeService.getProperty(n, PLMModel.PROP_NUTLIST_FORMULATED_VALUE);
+							} else if (value instanceof Double) {
+								String[] splitted = criteriaValue.split("\\|");
+								if (splitted.length == 2) {
+									if (logger.isDebugEnabled()) {
+										logger.debug("filter by range: " + splitted[0] + "->" + splitted[1] + ", value=" + value);
 									}
-
-									if (value != null) {
-										if (value instanceof String) {
-											if (criteriaValue.equals(value)) {
-												labelClaimListItems.add(n);
-											}
-
-										} else if (value instanceof Boolean) {
-											if (Boolean.valueOf(criteriaValue).equals(value)) {
-												labelClaimListItems.add(n);
-											}
-
-										} else if (value instanceof Double) {
-											String[] splitted = criteriaValue.split("\\|");
-											if (splitted.length == 2) {
-												if (logger.isDebugEnabled()) {
-													logger.debug("filter by range: " + splitted[0] + "->" + splitted[1] + ", value=" + value);
-												}
-												if ((splitted[0].isEmpty() || (((Double) value) >= Double.valueOf(splitted[0])))
-														&& (splitted[1].isEmpty() || (((Double) value) <= Double.valueOf(splitted[1])))) {
-													labelClaimListItems.add(n);
-												}
-											} else if (splitted.length == 1) {
-												if ((splitted[0].isEmpty() || (((Double) value) >= Double.valueOf(splitted[0])))) {
-													labelClaimListItems.add(n);
-												}
-											}
-										}
+									if ((splitted[0].isEmpty() || (((Double) value) >= Double.valueOf(splitted[0])))
+											&& (splitted[1].isEmpty() || (((Double) value) <= Double.valueOf(splitted[1])))) {
+										entities.add(assocRef.getEntityNodeRef());
 									}
-								} else {
-									labelClaimListItems.add(n);
+								} else if (splitted.length == 1) {
+									if ((splitted[0].isEmpty() || (((Double) value) >= Double.valueOf(splitted[0])))) {
+										entities.add(assocRef.getEntityNodeRef());
+									}
 								}
 							}
 						}
+					} else {
+						entities.add(assocRef.getEntityNodeRef());
 					}
-				}
-			}
 
-		}
-
-		// determine the product WUsed of the ing list items
-		if (labelClaimListItems != null) {
-			List<NodeRef> productNodeRefs = new ArrayList<>();
-			for (NodeRef labelClaimListItem : labelClaimListItems) {
-
-				NodeRef rootNodeRef = getEntity(labelClaimListItem, permCache);
-
-				// we don't display history version
-				if (rootNodeRef != null) {
-					productNodeRefs.add(rootNodeRef);
 				}
 
-			}
-			if (productNodeRefs != null) {
-				nodes.retainAll(productNodeRefs);
+				nodes.retainAll(entities);
 			}
 		}
 
-		if (logger.isDebugEnabled()) {
+		if (logger.isDebugEnabled() && (watch != null)) {
 			watch.stop();
 			logger.debug("getSearchNodesByListCriteria " + criteriaAssoc.toPrefixString(namespaceService) + " executed in  "
 					+ watch.getTotalTimeSeconds() + " seconds");
@@ -822,50 +628,28 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 			watch.start();
 		}
 
-		List<NodeRef> toFilterByNodes = new ArrayList<>();
-
 		if (criteria.containsKey(criteriaAssocString)) {
 
 			String propValue = criteria.get(criteriaAssocString);
 
-			if ((propValue != null) && !propValue.isEmpty()) {
-				String[] arrValues = propValue.split(RepoConsts.MULTI_VALUES_SEPARATOR);
+			List<NodeRef> toFilterByNodes = extractNodeRefs(propValue);
 
-				for (String strNodeRef : arrValues) {
+			if (!toFilterByNodes.isEmpty()) {
 
-					NodeRef nodeRef = new NodeRef(strNodeRef);
-					if (nodeService.exists(nodeRef)) {
-						toFilterByNodes.add(nodeRef);
-
-					}
-
+				MultiLevelListData ret = wUsedListService.getWUsedEntity(toFilterByNodes, WUsedOperator.OR, criteriaAssoc, -1);
+				if (ret != null) {
+					nodes.retainAll(ret.getAllChilds());
 				}
 			}
+
 		}
 
-		if (!toFilterByNodes.isEmpty()) {
-
-			MultiLevelListData ret = wUsedListService.getWUsedEntity(toFilterByNodes, WUsedOperator.OR, criteriaAssoc, -1);
-			if (ret != null) {
-				nodes.retainAll(ret.getAllChilds());
-			}
-		}
-
-		if (logger.isDebugEnabled() && watch!=null) {
+		if (logger.isDebugEnabled() && (watch != null)) {
 			watch.stop();
 			logger.debug("getSearchNodesByWUsedCriteria executed in  " + watch.getTotalTimeSeconds() + " seconds ");
 		}
 
 		return nodes;
-	}
-
-	private boolean isWorkSpaceProtocol(NodeRef nodeRef) {
-
-		if (nodeRef.getStoreRef().getProtocol().equals(StoreRef.PROTOCOL_WORKSPACE)) {
-			return true;
-		} else {
-			return false;
-		}
 	}
 
 	private boolean isAssocSearch(Map<String, String> criteria) {

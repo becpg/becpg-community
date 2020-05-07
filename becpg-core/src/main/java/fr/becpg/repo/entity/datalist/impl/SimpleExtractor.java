@@ -140,7 +140,7 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 					logger.debug("DataType to filter :" + dataListFilter.getDataType());
 				}
 
-				results = entityListDAO.getListItems(dataListFilter.getNodeRef(), dataListFilter.getDataType(), dataListFilter.getSortMap());
+				results = entityListDAO.getListItems(dataListFilter.getParentNodeRef(), dataListFilter.getDataType(), dataListFilter.getSortMap());
 
 				pagination.setQueryExecutionId(paginatedSearchCache.storeSearchResults(results));
 

@@ -21,7 +21,6 @@ import java.io.Serializable;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -29,6 +28,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.query.PagingRequest;
@@ -57,6 +57,7 @@ import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.TranslateHelper;
+import fr.becpg.repo.helper.impl.CommonDataListSort;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
@@ -64,7 +65,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  * @author querephi
  *
  */
-@Repository("entityListDAO")
+@Repository("entityListDAOV1")
 @DependsOn("bcpg.dictionaryBootstrap")
 public class EntityListDAOImpl implements EntityListDAO {
 
@@ -88,14 +89,11 @@ public class EntityListDAOImpl implements EntityListDAO {
 	@Autowired
 	private AssociationService associationService;
 
-
 	@Autowired
 	@Qualifier("policyComponent")
 	private PolicyComponent policyComponent;
 
 	private Set<QName> hiddenListQnames = new HashSet<>();
-
-	 
 
 	@Override
 	public void registerHiddenList(QName listTypeQname) {
@@ -233,45 +231,9 @@ public class EntityListDAOImpl implements EntityListDAO {
 	@Override
 	public List<NodeRef> getListItems(NodeRef dataListNodeRef, QName dataType) {
 
-		List<NodeRef> ret = associationService.getChildAssocs(dataListNodeRef, ContentModel.ASSOC_CONTAINS, dataType);
+		return associationService.getChildAssocs(dataListNodeRef, ContentModel.ASSOC_CONTAINS, dataType).stream()
+				.filter(n -> (dataType == null) || nodeService.getType(n).equals(dataType)).sorted(new CommonDataListSort(nodeService)).collect(Collectors.toList());
 
-		Collections.sort(ret, (o1, o2) -> {
-
-			Integer sort1 = (Integer) nodeService.getProperty(o1, BeCPGModel.PROP_SORT);
-			Integer sort2 = (Integer) nodeService.getProperty(o2, BeCPGModel.PROP_SORT);
-
-			if (((sort1 != null) && sort1.equals(sort2)) || ((sort1 == null) && (sort2 == null))) {
-
-				Date created1 = (Date) nodeService.getProperty(o1, ContentModel.PROP_CREATED);
-				Date created2 = (Date) nodeService.getProperty(o2, ContentModel.PROP_CREATED);
-
-				if (created1 == created2) {
-					return 0;
-				}
-
-				if (created1 == null) {
-					return -1;
-				}
-
-				if (created2 == null) {
-					return 1;
-				}
-
-				return created1.compareTo(created2);
-			}
-
-			if (sort1 == null) {
-				return -1;
-			}
-
-			if (sort2 == null) {
-				return 1;
-			}
-
-			return sort1.compareTo(sort2);
-		});
-
-		return ret;
 	}
 
 	@Override
@@ -452,17 +414,14 @@ public class EntityListDAOImpl implements EntityListDAO {
 	@Override
 	public NodeRef getEntity(NodeRef listItemNodeRef) {
 		NodeRef listNodeRef = nodeService.getPrimaryParent(listItemNodeRef).getParentRef();
-	
 
-			if (listNodeRef != null) {
-				return getEntityFromList(listNodeRef);
-			}
+		if (listNodeRef != null) {
+			return getEntityFromList(listNodeRef);
+		}
 
-	
-			return null;
+		return null;
 	}
 
-	
 	@Override
 	public NodeRef getEntityFromList(NodeRef listNodeRef) {
 
@@ -474,6 +433,5 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 		return null;
 	}
-
 
 }

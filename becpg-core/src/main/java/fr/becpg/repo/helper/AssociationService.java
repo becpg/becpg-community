@@ -22,10 +22,11 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
-import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.QNamePattern;
+
+import fr.becpg.repo.helper.impl.AssociationServiceImpl.EntitySourceAssoc;
 
 public interface AssociationService {
 
@@ -40,8 +41,7 @@ public interface AssociationService {
 	List<NodeRef> getChildAssocs(NodeRef nodeRef, QName qName);
 	List<NodeRef> getChildAssocs(NodeRef nodeRef, QName qName, QName childTypeQName);
 	List<NodeRef> getChildAssocs(NodeRef listNodeRef, QName assocContains, QName listQNameFilter,@Nullable Map<String, Boolean> sortMap);
-	List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QNamePattern qName);
-	List<AssociationRef> getEntitySourceAssocs(List<NodeRef> nodeRefs, QNamePattern assocQName, boolean isOrOperator);
-	
+	List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QNamePattern qNamePattern);
+	List<EntitySourceAssoc> getEntitySourceAssocs(List<NodeRef> nodeRefs, QName assocQName, boolean isOrOperator);
 	
 }
