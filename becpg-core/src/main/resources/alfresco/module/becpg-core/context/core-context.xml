@@ -65,7 +65,8 @@
 		<property name="entityDictionaryService" ref="entityDictionaryService"/>
 		<property name="namespaceService" ref="namespaceService" />		
 		<property name="tenantService" ref="tenantService" />	
-		<property name="dataSource" ref="dataSource" />		
+		<property name="dataSource" ref="dataSource" />	
+		<property name="qnameDAO" ref="qnameDAO" />		
 	</bean>
 
 
