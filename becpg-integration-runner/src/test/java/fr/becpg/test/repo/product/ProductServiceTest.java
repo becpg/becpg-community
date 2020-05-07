@@ -528,14 +528,17 @@ public class ProductServiceTest extends PLMBaseTestCase {
 
 		logger.debug("testGetWUsedProduct");
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		NodeRef packagingMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			/*-- Create raw material --*/
 			logger.debug("/*-- Create pkg material --*/");
 			PackagingMaterialData packagingMaterial = new PackagingMaterialData();
 			packagingMaterial.setName("Packaging material");
-			NodeRef packagingMaterialNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial).getNodeRef();
+			return alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial).getNodeRef();
 
+		}, false, true);
+		
+		NodeRef finishedProductNodeRef1 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			/*-- Create finished product --*/
 			logger.debug("/*-- Create finished product --*/");
 
@@ -544,15 +547,23 @@ public class ProductServiceTest extends PLMBaseTestCase {
 			List<PackagingListDataItem> packagingList1 = new ArrayList<>();
 			packagingList1.add(new PackagingListDataItem(null, 1d, ProductUnit.P, PackagingLevel.Primary, true, packagingMaterialNodeRef));
 			finishedProduct1.getPackagingListView().setPackagingList(packagingList1);
-			NodeRef finishedProductNodeRef1 = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
-
+			 return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
+		}, false, true);
+		
+		NodeRef finishedProductNodeRef2 =  transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			FinishedProductData finishedProduct2 = new FinishedProductData();
 			finishedProduct2.setName("Finished Product");
 			List<PackagingListDataItem> packagingList2 = new ArrayList<>();
 			packagingList2.add(new PackagingListDataItem(null, 8d, ProductUnit.PP, PackagingLevel.Secondary, true, packagingMaterialNodeRef));
 			finishedProduct2.getPackagingListView().setPackagingList(packagingList2);
-			NodeRef finishedProductNodeRef2 = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct2).getNodeRef();
+			alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct2).getNodeRef();
 
+
+			return null;
+
+		}, false, true);
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			List<PackagingListDataItem> wUsedProducts = getWUsedPackagingList(packagingMaterialNodeRef);
 
 			assertEquals("MP should have 2 where Useds", 2, wUsedProducts.size());

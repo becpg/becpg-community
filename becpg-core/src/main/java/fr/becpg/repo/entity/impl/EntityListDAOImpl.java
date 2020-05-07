@@ -21,7 +21,6 @@ import java.io.Serializable;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -29,12 +28,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.query.PagingRequest;
 import org.alfresco.repo.policy.PolicyComponent;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
-import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.CopyService;
@@ -43,7 +42,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,9 +53,11 @@ import org.springframework.stereotype.Repository;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.TranslateHelper;
+import fr.becpg.repo.helper.impl.CommonDataListSort;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
@@ -65,7 +65,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  * @author querephi
  *
  */
-@Repository("entityListDAO")
+@Repository("entityListDAOV1")
 @DependsOn("bcpg.dictionaryBootstrap")
 public class EntityListDAOImpl implements EntityListDAO {
 
@@ -75,7 +75,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 	private NodeService nodeService;
 
 	@Autowired
-	private DictionaryService dictionaryService;
+	private EntityDictionaryService entityDictionaryService;
 
 	@Autowired
 	private FileFolderService fileFolderService;
@@ -88,14 +88,12 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 	@Autowired
 	private AssociationService associationService;
-	
-	
+
 	@Autowired
 	@Qualifier("policyComponent")
 	private PolicyComponent policyComponent;
 
 	private Set<QName> hiddenListQnames = new HashSet<>();
-	 
 
 	@Override
 	public void registerHiddenList(QName listTypeQname) {
@@ -147,7 +145,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 			I18NUtil.setLocale(Locale.getDefault());
 			I18NUtil.setContentLocale(null);
 
-			ClassDefinition classDef = dictionaryService.getClass(listQName);
+			ClassDefinition classDef = entityDictionaryService.getClass(listQName);
 
 			if (classDef == null) {
 				logger.error("No classDef found for :" + listQName);
@@ -156,7 +154,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 			Map<QName, Serializable> properties = new HashMap<>();
 			properties.put(ContentModel.PROP_NAME, listQName.getLocalName());
-			
+
 			MLText classTitleMLText = TranslateHelper.getTemplateTitleMLText(classDef.getName());
 			MLText classDescritptionMLText = TranslateHelper.getTemplateDescriptionMLText(classDef.getName());
 
@@ -214,8 +212,8 @@ public class EntityListDAOImpl implements EntityListDAO {
 					QName dataListTypeQName = QName.createQName(dataListType, namespaceService);
 
 					if ((BeCPGModel.TYPE_ENTITYLIST_ITEM.equals(dataListTypeQName)
-							|| dictionaryService.isSubClass(dataListTypeQName, BeCPGModel.TYPE_ENTITYLIST_ITEM)
-							|| ((String) nodeService.getProperty(listNodeRef, ContentModel.PROP_NAME)).startsWith(RepoConsts.WUSED_PREFIX) )) {
+							|| entityDictionaryService.isSubClass(dataListTypeQName, BeCPGModel.TYPE_ENTITYLIST_ITEM)
+							|| ((String) nodeService.getProperty(listNodeRef, ContentModel.PROP_NAME)).startsWith(RepoConsts.WUSED_PREFIX))) {
 
 						if (!hiddenListQnames.contains(dataListTypeQName)) {
 							existingLists.add(listNodeRef);
@@ -233,13 +231,9 @@ public class EntityListDAOImpl implements EntityListDAO {
 	@Override
 	public List<NodeRef> getListItems(NodeRef dataListNodeRef, QName dataType) {
 
-		// Map<String, Boolean> sortMap = new LinkedHashMap<>();
-		// sortMap.put("@bcpg:sort", true);
-		// sortMap.put("@cm:created", true);
-		//
-		// return getListItems(dataListNodeRef, dataType, sortMap);
+		return associationService.getChildAssocs(dataListNodeRef, ContentModel.ASSOC_CONTAINS, dataType).stream()
+				.filter(n -> (dataType == null) || nodeService.getType(n).equals(dataType)).sorted(new CommonDataListSort(nodeService)).collect(Collectors.toList());
 
-		return getListItemsV2(dataListNodeRef, dataType);
 	}
 
 	@Override
@@ -257,61 +251,19 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 	}
 
-	private List<NodeRef> getListItemsV2(final NodeRef listNodeRef, final QName listQNameFilter) {
+	@Override
+	public boolean isEmpty(final NodeRef listNodeRef, final QName listQNameFilter) {
 
-		List<NodeRef> ret = associationService.getChildAssocs(listNodeRef, ContentModel.ASSOC_CONTAINS);
+		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().parent(listNodeRef);
+
 		if (listQNameFilter != null) {
-			CollectionUtils.filter(ret, object -> {
-
-				if (!nodeService.exists((NodeRef) object)) {
-					return false;
-				}
-
-				if ((object != null) && (object instanceof NodeRef) && nodeService.getType((NodeRef) object).equals(listQNameFilter)) {
-					return true;
-				}
-
-				return false;
-			});
+			queryBuilder.ofType(listQNameFilter);
+		} else {
+			queryBuilder.ofType(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 		}
 
-		Collections.sort(ret, (o1, o2) -> {
+		return queryBuilder.inDB().singleValue() == null;
 
-			Integer sort1 = (Integer) nodeService.getProperty(o1, BeCPGModel.PROP_SORT);
-			Integer sort2 = (Integer) nodeService.getProperty(o2, BeCPGModel.PROP_SORT);
-
-			if (sort1 == sort2) {
-
-				Date created1 = (Date) nodeService.getProperty(o1, ContentModel.PROP_CREATED);
-				Date created2 = (Date) nodeService.getProperty(o2, ContentModel.PROP_CREATED);
-
-				if (created1 == created2) {
-					return 0;
-				}
-
-				if (created1 == null) {
-					return -1;
-				}
-
-				if (created2 == null) {
-					return 1;
-				}
-
-				return created1.compareTo(created2);
-			}
-
-			if (sort1 == null) {
-				return -1;
-			}
-
-			if (sort2 == null) {
-				return 1;
-			}
-
-			return sort1.compareTo(sort2);
-		});
-
-		return ret;
 	}
 
 	@Override
@@ -399,7 +351,8 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 			NodeRef existingListNodeRef;
 
-			if (name.startsWith(RepoConsts.WUSED_PREFIX) || name.startsWith(RepoConsts.CUSTOM_VIEW_PREFIX)  || name.startsWith(RepoConsts.SMART_CONTENT_PREFIX) || name.contains("@")) {
+			if (name.startsWith(RepoConsts.WUSED_PREFIX) || name.startsWith(RepoConsts.CUSTOM_VIEW_PREFIX)
+					|| name.startsWith(RepoConsts.SMART_CONTENT_PREFIX) || name.contains("@")) {
 				existingListNodeRef = getList(targetListContainerNodeRef, name);
 			} else {
 				existingListNodeRef = getList(targetListContainerNodeRef, listQName);
@@ -461,26 +414,24 @@ public class EntityListDAOImpl implements EntityListDAO {
 	@Override
 	public NodeRef getEntity(NodeRef listItemNodeRef) {
 		NodeRef listNodeRef = nodeService.getPrimaryParent(listItemNodeRef).getParentRef();
-	
-			if (listNodeRef != null) {
-				return getEntityFromList(listNodeRef);
-			}
-	
-			return null;
+
+		if (listNodeRef != null) {
+			return getEntityFromList(listNodeRef);
+		}
+
+		return null;
 	}
-	
+
 	@Override
 	public NodeRef getEntityFromList(NodeRef listNodeRef) {
 
 		NodeRef listContainerNodeRef = nodeService.getPrimaryParent(listNodeRef).getParentRef();
 
 		if (listContainerNodeRef != null) {
-				return nodeService.getPrimaryParent(listContainerNodeRef).getParentRef();
+			return nodeService.getPrimaryParent(listContainerNodeRef).getParentRef();
 		}
 
 		return null;
 	}
-
-
 
 }

@@ -82,19 +82,19 @@ public class ECOTest extends AbstractFinishedProductTest {
 	private static final Log logger = LogFactory.getLog(ECOTest.class);
 
 	/** The product service. */
-	@Resource
+	@Autowired
 	private ProductService productService;
 
-	@Resource
+	@Autowired
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
-	@Resource
+	@Autowired
 	private ECOService ecoService;
 
-	@Resource
+	@Autowired
 	private VersionService versionService;
 
-	@Resource
+	@Autowired
 	private EntityVersionService entityVersionService;
 
 	@Override
@@ -215,7 +215,7 @@ public class ECOTest extends AbstractFinishedProductTest {
 	 * @throws Exception
 	 *             the exception
 	 */
-	//@Test
+	@Test
 	public void testECOService() throws Exception {
 
 		final NodeRef finishedProduct1NodeRef = createFinishedProduct("PF1");
@@ -379,7 +379,7 @@ public class ECOTest extends AbstractFinishedProductTest {
 
 	}
 
-	//@Test
+	@Test
 	public void testDeleteNode() throws Exception {
 
 		final NodeRef finishedProduct1NodeRef = createFinishedProduct("PF1");
@@ -447,7 +447,7 @@ public class ECOTest extends AbstractFinishedProductTest {
 
 	}
 
-	//@Test
+	@Test
 	public void testTwoToOne() throws Exception {
 
 		final NodeRef finishedProduct1NodeRef = createFinishedProduct("PF1");
@@ -794,7 +794,7 @@ public class ECOTest extends AbstractFinishedProductTest {
 	 * @throws Exception
 	 *             the exception
 	 */
-	//@Test
+	@Test
 	public void testECOInMultiLeveCompo() throws Exception {
 		final NodeRef finishedProduct1NodeRef = createFinishedProduct("PF1");
 		final NodeRef finishedProduct2NodeRef = createFinishedProduct("PF2");
@@ -1058,7 +1058,7 @@ public class ECOTest extends AbstractFinishedProductTest {
 
 	}
 
-	//@Test
+	@Test
 	public void testReformulate() throws Exception {
 		final NodeRef finishedProduct1NodeRef = createFinishedProduct("PF1");
 		final NodeRef testNodeRef = getTestFolderNodeRef();
