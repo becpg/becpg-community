@@ -34,6 +34,8 @@ import org.alfresco.service.cmr.security.PermissionService;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.extensions.webscripts.AbstractWebScript;
 import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptException;
@@ -187,9 +189,24 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		throw new IllegalStateException("No entity found for this parameters");
 	}
 
-	protected void sendOKStatus(NodeRef entityNodeRef, WebScriptResponse resp) throws IOException {
+	protected void sendOKStatus(NodeRef entityNodeRef, WebScriptResponse resp, RemoteEntityFormat format) throws IOException {
 		if ((resp != null) && (resp.getWriter() != null) && (entityNodeRef != null)) {
-			resp.getWriter().write(entityNodeRef.toString());
+			if(RemoteEntityFormat.json.equals(format)) {
+				
+				JSONObject ret = new JSONObject();
+				try {
+					ret.put("nodeRef", entityNodeRef);
+					ret.put("status", "SUCCESS");
+	
+					resp.setContentType("application/json");
+					resp.setContentEncoding("UTF-8");
+					ret.write(resp.getWriter());
+				} catch (JSONException e) {
+					logger.error(e,e);
+				}
+			} else {
+				resp.getWriter().write(entityNodeRef.toString());
+			}
 		}
 	}
 

@@ -49,14 +49,14 @@ public class FormulateEntityWebScript extends AbstractEntityWebScript {
 	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
 
 		NodeRef entityNodeRef = findEntity(req);
-
+ 
 		logger.debug("Formulate entity: " + entityNodeRef);
 
 		try {
 			FormulationExecutorState state = formulationExecutor.execute(entityNodeRef, false);
 
 			if (FormulationExecutorState.SUCCESS.equals(state)) {
-				sendOKStatus(entityNodeRef, resp);
+				sendOKStatus(entityNodeRef, resp, getFormat(req));
 			}
 
 		} catch (FormulateException e) {
