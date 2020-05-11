@@ -67,6 +67,7 @@
 		<property name="permissionService" ref="permissionService"/>
 		<property name="entityService" ref="entityService"/>
 		<property name="useBrowserLocale" value="${beCPG.multilinguale.useBrowserLocale}"/>
+		<property name="showUnauthorizedWarning" value="${beCPG.licence.showWarning}"></property>
 	</bean>
 	
 	<bean id="pdfScriptHelper" parent="baseJavaScriptExtension" class="fr.becpg.repo.jscript.PDFScriptHelper">
