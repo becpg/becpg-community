@@ -15,6 +15,7 @@ public class GSONutrientRegulation extends AbstractNutrientRegulation {
 	protected Double roundByCode(Double value, String nutrientTypeCode) {
 		if(value != null && nutrientTypeCode != null){
 			if (nutrientTypeCode.equals(NutrientCode.Energykcal)
+					|| nutrientTypeCode.equals(NutrientCode.EnergykcalUS)
 					|| nutrientTypeCode.equals(NutrientCode.EnergykJ)) {
 					return roundValue(value, 1d);
 			} else if (nutrientTypeCode.equals(NutrientCode.Protein) || nutrientTypeCode.equals(NutrientCode.CarbohydrateByDiff)
