@@ -496,7 +496,7 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 		  
 
 		   if(!isOrOperator) {
-			   query.append(" ) group by  entity.uuid ");
+			   query.append(" ) group by  dataListItem.uuid ");
 			   query.append(" having count(distinct targetNode.uuid ) = ");
 			   query.append(nodeRefs.size());
 		   } else {

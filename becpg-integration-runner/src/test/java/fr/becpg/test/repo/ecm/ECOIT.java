@@ -701,6 +701,8 @@ public class ECOIT extends AbstractFinishedProductTest {
 			ChangeOrderData dbECOData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef1);
 			assertNotNull("check ECO exist in DB", dbECOData);
 			assertNotNull("Check WUsed list", dbECOData.getWUsedList());
+			
+		
 
 			assertEquals("Check 3 WUsed are impacted", 3, dbECOData.getWUsedList().size());
 
