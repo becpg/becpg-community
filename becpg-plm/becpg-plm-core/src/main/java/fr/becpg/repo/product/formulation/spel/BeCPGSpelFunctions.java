@@ -201,7 +201,28 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		public Serializable setValue(String qname, Serializable value) {
 			return setValue(productData, qname, value);
 		}
+		
+		
+		/**
+		 * Helper @beCPG.setAssocs($entity, $qname, $assocNodeRefs)
+		 * @param nodeRef
+		 * @param qname
+		 * @param assocNodeRefs
+		 */
+		public void setAssocs(NodeRef nodeRef, String qname, List<NodeRef> assocNodeRefs) {
+			associationService.update(nodeRef,getQName(qname), assocNodeRefs, true);
+		}
 
+		/**
+		 * Helper @beCPG.setAssoc($entity, $qname, $assocNodeRef)
+		 * @param nodeRef
+		 * @param qname
+		 * @param assocNodeRef
+		 */
+		public void setAssoc(NodeRef nodeRef, String qname, NodeRef assocNodeRef) {
+			associationService.update(nodeRef,getQName(qname), assocNodeRef);
+		}
+		
 		/**
 		 * Helper @beCPG.assocValue($entity, $qname)
 		 *
