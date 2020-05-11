@@ -3,7 +3,7 @@
  * This is a generic banner warning that can be used to display warning and error messages
  * to the user.
  * 
- * @module becpg/header/EcmWarningBar
+ * @module becpg/header/WarningBar
  * @extends dijit/_WidgetBase
  * @mixes dijit/_TemplatedMixin
  * @mixes module:alfresco/core/Core
@@ -12,7 +12,7 @@
 define(["dojo/_base/declare",
         "dijit/_WidgetBase", 
         "dijit/_TemplatedMixin",
-        "dojo/text!./templates/EcmWarningBar.html",
+        "dojo/text!./templates/WarningBar.html",
         "alfresco/core/Core",
         "dojo/dom-style",
         "dojo/_base/array",
@@ -29,20 +29,20 @@ define(["dojo/_base/declare",
         * 
         * @instance
         * @type {object[]}
-        * @default [{i18nFile: "./i18n/EcmWarningBar.properties"}]
+        * @default [{i18nFile: "./i18n/WarningBar.properties"}]
         */
        i18nRequirements : [
        {
-           i18nFile : "./i18n/EcmWarningBar.properties"
+           i18nFile : "./i18n/WarningBar.properties"
        } ],
       /**
        * An array of the CSS files to use with this widget.
        * 
        * @instance
        * @type {object[]}
-       * @default [{cssFile:"./css/EcmEcmWarningBarBar.css"}]
+       * @default [{cssFile:"./css/WarningBar.css"}]
        */
-      cssRequirements: [{cssFile:"./css/EcmWarningBar.css"}],
+      cssRequirements: [{cssFile:"./css/WarningBar.css"}],
       
       /**
        * The HTML template to use for the widget.
@@ -56,26 +56,41 @@ define(["dojo/_base/declare",
        * @type {string}
        */
       changeOrderData : null,
+      
+      warningType : null,
 
-      constructor : function alfresco_header_EcmWarningBar__constructor(args)
+      constructor : function alfresco_header_WarningBar__constructor(args)
       {
           lang.mixin(this, args);
-          this.alfSubscribe("BECPG_ECM_CREATED_SUCCESS", lang.hitch(this, "onEcmCreatedSuccess"));
+          this.warningType =  args.label;
+          if(this.warningType == "EcmWarning"){
+        	  this.alfSubscribe("BECPG_ECM_CREATED_SUCCESS", lang.hitch(this, "onEcmCreatedSuccess"));
+          }
 
       },
 
 
-      onEcmCreatedSuccess : function alfresco_header_EcmWarningBar__onEcmCreatedSuccess(payload)
+      onEcmCreatedSuccess : function alfresco_header_WarningBar__onEcmCreatedSuccess(payload)
       {
           this.addEcmBarHtml(payload);
       },
       
+      createUnauthorizedWarninBar : function alfresco_header_UnauthorizedWarningBar__createBar()
+      {
+    	  this.messageBox.innerHTML = this.message("unauthorized.warning.bar.message");
+    	  domStyle.set(this.domNode, "display", "block");
+      },
       
       
       /**
        * @instance
        */
-      postCreate: function alfresco_header_EcmWarningBar__postCreate() {
+      postCreate: function alfresco_header_WarningBar__postCreate() {
+    	  	
+    	  if(this.warningType == "UnauthorizedWarning"){
+    	  		this.createUnauthorizedWarninBar();
+    	  		return;
+    	  	}
         
               this.alfPublish("ALF_PREFERENCE_GET", {
                   preference: "fr.becpg.ecm.currentEcmNodeRef",
@@ -134,7 +149,7 @@ define(["dojo/_base/declare",
        * @param {number} index The index of the message
        * @param {number} level The severity of the message
        */
-      addEcmBarHtml: function alfresco_header_EcmWarningBar__addMessage(changeOrderData) {
+      addEcmBarHtml: function alfresco_header_WarningBar__addMessage(changeOrderData) {
          this.changeOrderData = changeOrderData;
           
          domConstruct.create("span", {
@@ -148,6 +163,8 @@ define(["dojo/_base/declare",
          
          domStyle.set(this.domNode, "display", "block");
       }
+      
+      
       
    });
 });
