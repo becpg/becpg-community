@@ -4,6 +4,8 @@
 package fr.becpg.test.repo.entity.datalist.policy;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import org.alfresco.model.ContentModel;
@@ -589,6 +591,49 @@ public class DepthLevelListPolicyIT extends PLMBaseTestCase {
 			final ProductData finishedProductLoaded = alfrescoRepository.findOne(finishedProductNodeRef);
 			final ProductData copiedProductLoaded = alfrescoRepository.findOne(copiedNodeRef);
 
+			Comparator<CompoListDataItem> sortComparator = (c1, c2) -> {
+					
+					Integer sort1 = (Integer) nodeService.getProperty(c1.getNodeRef(), BeCPGModel.PROP_SORT);
+					Integer sort2 = (Integer) nodeService.getProperty(c2.getNodeRef(), BeCPGModel.PROP_SORT);
+
+					if (((sort1 != null) && sort1.equals(sort2)) || ((sort1 == null) && (sort2 == null))) {
+
+						Date created1 = (Date) nodeService.getProperty(c1.getNodeRef(), ContentModel.PROP_CREATED);
+						Date created2 = (Date) nodeService.getProperty(c2.getNodeRef(), ContentModel.PROP_CREATED);
+
+						if (created1 == created2) {
+							return 0;
+						}
+
+						if (created1 == null) {
+							return -1;
+						}
+
+						if (created2 == null) {
+							return 1;
+						}
+
+						return created1.compareTo(created2);
+					}
+
+					if (sort1 == null) {
+						return -1;
+					}
+
+					if (sort2 == null) {
+						return 1;
+					}
+
+					return sort1.compareTo(sort2);
+					
+					
+				}  ;
+		
+			
+			
+			finishedProductLoaded.getCompoListView().getCompoList().sort(sortComparator);
+			copiedProductLoaded.getCompoListView().getCompoList().sort(sortComparator);
+			
 			logger.debug("origin " + finishedProductLoaded.getCompoListView().getCompoList().get(1).getParent().getNodeRef());
 			logger.debug("target " + copiedProductLoaded.getCompoListView().getCompoList().get(1).getParent().getNodeRef());
 			assertNull(finishedProductLoaded.getCompoListView().getCompoList().get(0).getParent());
