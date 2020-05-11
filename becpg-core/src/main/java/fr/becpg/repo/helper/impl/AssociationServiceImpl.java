@@ -224,7 +224,6 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 		return beCPGCacheService.getFromCache(cacheName, cacheKey, () -> nodeService.getTargetAssocs(nodeRef, qName), true);
 
 	}
-	
 
 	@Override
 	public NodeRef getChildAssoc(NodeRef nodeRef, QName qName) {
@@ -247,8 +246,6 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 		return getChildAssocsImpl(listNodeRef, qName, childTypeQName, sortMap);
 	}
 
-	
-
 	private List<NodeRef> getChildAssocsImpl(final NodeRef nodeRef, final QName qName, final QName childType, final Map<String, Boolean> sortProps) {
 
 		if ((sortProps != null) && !sortProps.isEmpty() && !isDefaultSort(sortProps)) {
@@ -259,26 +256,28 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 		final String cacheKey = createCacheKey(nodeRef, qName, childType);
 		final String cacheName = childAssocCacheName();
 
-		return beCPGCacheService.getFromCache(cacheName, cacheKey, () -> {
+		List<NodeRef> ret = beCPGCacheService.getFromCache(cacheName, cacheKey, () -> {
 
-			if (childType != null && sortProps!=null && !sortProps.isEmpty()) {
-
+			if ((childType != null) && (sortProps != null) && !sortProps.isEmpty()) {
 				return dbChildAssocSearch(nodeRef, qName, childType, sortProps);
 			}
 
-			
-			return nodeService.getChildAssocs(nodeRef, qName,RegexQNamePattern.MATCH_ALL).stream()
+			return nodeService.getChildAssocs(nodeRef, qName, RegexQNamePattern.MATCH_ALL, true).stream()
 					.filter(n -> (childType == null) || nodeService.getType(n.getChildRef()).equals(childType))
-					.map(assocRef -> assocRef.getChildRef())
-					/*.sorted(new CommonDataListSort(nodeService))*/
-					.collect(Collectors.toList());
+					.map(assocRef -> assocRef.getChildRef()).collect(Collectors.toList());
 
 		}, true);
 
+		if ((sortProps == null) || sortProps.isEmpty()) {
+			ret.sort(new CommonDataListSort(nodeService));
+		}
+
+		return ret;
 	}
 
 	private boolean isDefaultSort(Map<String, Boolean> sortProps) {
-		return sortProps!=null && sortProps.get("@bcpg:sort")!=null &&  sortProps.get("@bcpg:sort") && sortProps.get("@cm:created")!=null && sortProps.get("@cm:created");
+		return (sortProps != null) && (sortProps.get("@bcpg:sort") != null) && sortProps.get("@bcpg:sort") && (sortProps.get("@cm:created") != null)
+				&& sortProps.get("@cm:created");
 	}
 
 	private List<NodeRef> dbChildAssocSearch(final NodeRef nodeRef, final QName qName, final QName childType, Map<String, Boolean> sortProps) {
@@ -370,7 +369,6 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 			logger.error("Error running : " + sql, e);
 		}
 
-		
 		return ret;
 
 	}
@@ -382,7 +380,7 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 	private String createCacheKey(NodeRef nodeRef, QName qName, QNamePattern qNamepattern) {
 		String cacheKey = createCacheKey(nodeRef, qName);
 
-		if (qNamepattern == null || RegexQNamePattern.MATCH_ALL.equals(qNamepattern) ) {
+		if ((qNamepattern == null) || RegexQNamePattern.MATCH_ALL.equals(qNamepattern)) {
 			return cacheKey;
 		}
 
@@ -418,25 +416,11 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 		return listItems;
 	}
 
-	private static final String SQL_SELECT_SOURCE_ASSOC_ENTITY =
-
-			"select entity.uuid, dataListItem.uuid, dataListItem.type_qname_id, targetNode.uuid  from alf_node entity "
-					+ " join alf_child_assoc dataListContainerAssoc on (entity.id = dataListContainerAssoc.parent_node_id)"
-					+ " join alf_child_assoc dataListAssoc on (dataListAssoc.parent_node_id = dataListContainerAssoc.child_node_id)"
-					+ " join alf_child_assoc dataListItemAssoc on (dataListItemAssoc.parent_node_id = dataListAssoc.child_node_id)"
-					+ " join alf_node dataListItem on (dataListItem.id = dataListItemAssoc.child_node_id ) "
-					+ " join alf_node_assoc assoc on ( dataListItem.id = assoc.source_node_id ) "
-					+ " join alf_node targetNode on (targetNode.id = assoc.target_node_id) "
-					+ " join alf_store targetNodeStore on (  targetNodeStore.id = targetNode.store_id and targetNodeStore.protocol= ? and targetNodeStore.identifier=?) "
-					+ " where  assoc.type_qname_id=?  "
-					+ " and NOT EXISTS (SELECT NULL from alf_node_aspects where qname_id = ? and (node_id=entity.id or node_id= dataListItem.id)) ";
-
-	
 	public class EntitySourceAssoc {
 		private NodeRef entityNodeRef;
 		private NodeRef dataListItemNodeRef;
 		private NodeRef sourceNodeRef;
-		
+
 		public EntitySourceAssoc(NodeRef entityNodeRef, NodeRef dataListItemNodeRef, NodeRef sourceNodeRef) {
 			super();
 			this.entityNodeRef = entityNodeRef;
@@ -455,11 +439,22 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 		public NodeRef getSourceNodeRef() {
 			return sourceNodeRef;
 		}
-		
-		
+
 	}
-	
-	
+
+	private static final String SQL_SELECT_SOURCE_ASSOC_ENTITY_1 = "select entity.uuid as entity, dataListItem.uuid as dataListItem, dataListItem.type_qname_id as dataListItemType, targetNode.uuid as targetNode";
+
+	private static final String SQL_SELECT_SOURCE_ASSOC_ENTITY_2 = " from alf_node entity "
+			+ " join alf_child_assoc dataListContainerAssoc on (entity.id = dataListContainerAssoc.parent_node_id)"
+			+ " join alf_child_assoc dataListAssoc on (dataListAssoc.parent_node_id = dataListContainerAssoc.child_node_id)"
+			+ " join alf_child_assoc dataListItemAssoc on (dataListItemAssoc.parent_node_id = dataListAssoc.child_node_id)"
+			+ " join alf_node dataListItem on (dataListItem.id = dataListItemAssoc.child_node_id ) "
+			+ " join alf_node_assoc assoc on ( dataListItem.id = assoc.source_node_id ) "
+			+ " join alf_node targetNode on (targetNode.id = assoc.target_node_id) "
+			+ " join alf_store targetNodeStore on (  targetNodeStore.id = targetNode.store_id and targetNodeStore.protocol= ? and targetNodeStore.identifier=?) "
+			+ " where  assoc.type_qname_id=?  "
+			+ " and NOT EXISTS (SELECT NULL from alf_node_aspects where qname_id = ? and (node_id=entity.id or node_id= dataListItem.id)) ";
+
 	/**
 	 *
 	 * @param assocs
@@ -476,33 +471,44 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 			watch = new StopWatch();
 			watch.start();
 		}
-		
+
 		if ((nodeRefs != null) && !nodeRefs.isEmpty()) {
 
+			boolean isAnd = !isOrOperator && (nodeRefs.size() > 1);
+
 			StringBuilder query = new StringBuilder();
-			query.append(SQL_SELECT_SOURCE_ASSOC_ENTITY);
+			if (isAnd) {
+				query.append("select entity, dataListItem, dataListItemType, targetNode, targetCount from (");
+			}
+
+			query.append(SQL_SELECT_SOURCE_ASSOC_ENTITY_1);
+			if (isAnd) {
+				query.append(", DENSE_RANK() over (PARTITION BY entity.uuid order by targetNode.uuid) as targetCount");
+			}
+			query.append(SQL_SELECT_SOURCE_ASSOC_ENTITY_2);
 			query.append(" and ( ");
 
 			boolean isFirst = true;
 			for (NodeRef nodeRef : nodeRefs) {
-			if(!isFirst) {
-				query.append(" or ");
-			}
+				if (!isFirst) {
+					query.append(" or ");
+				}
 				query.append("targetNode.uuid='");
 				query.append(nodeRef.getId());
 				query.append("'");
 				isFirst = false;
-			}
-		  
 
-		   if(!isOrOperator) {
-			   query.append(" ) group by  dataListItem.uuid ");
-			   query.append(" having count(distinct targetNode.uuid ) = ");
-			   query.append(nodeRefs.size());
-		   } else {
-			   query.append(" ) group by dataListItem.uuid ");
-		   }
-		   
+			}
+			query.append(")");
+
+			query.append("  group by dataListItem.uuid ");
+
+			if (isAnd) {
+
+				query.append(") tmp WHERE targetCount=");
+				query.append(nodeRefs.size());
+			}
+
 			Long typeQNameId = null;
 			Long aspectQnameId = qnameDAO.getQName(BeCPGModel.ASPECT_COMPOSITE_VERSION).getFirst();
 			if (assocTypeQName != null) {
@@ -518,11 +524,14 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 			if (AuthenticationUtil.isMtEnabled()) {
 				storeRef = tenantService.getName(storeRef);
 			}
-			
+
+			System.out.println(query);
+
 			if (logger.isDebugEnabled()) {
-				logger.debug("Run query:"+query.toString()+" "+typeQNameId +" "+aspectQnameId+" "+storeRef.getProtocol()+ " "+storeRef.getIdentifier());
+				logger.debug("Run query:" + query.toString() + " " + typeQNameId + " " + aspectQnameId + " " + storeRef.getProtocol() + " "
+						+ storeRef.getIdentifier());
 			}
-			
+
 			try (Connection con = dataSource.getConnection()) {
 
 				try (PreparedStatement statement = con.prepareStatement(query.toString())) {
@@ -534,14 +543,14 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 
 					try (java.sql.ResultSet res = statement.executeQuery()) {
 						while (res.next()) {
-							NodeRef entityNodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, res.getString("entity.uuid"));
-							NodeRef sourceNodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, res.getString("targetNode.uuid"));
-							NodeRef dataListItemNodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, res.getString("dataListItem.uuid"));
-							Pair<Long, QName> entityType = qnameDAO.getQName(res.getLong("dataListItem.type_qname_id"));
+							NodeRef entityNodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, res.getString("entity"));
+							NodeRef sourceNodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, res.getString("targetNode"));
+							NodeRef dataListItemNodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, res.getString("dataListItem"));
+							Pair<Long, QName> entityType = qnameDAO.getQName(res.getLong("dataListItemType"));
 							if (!entityDictionaryService.isSubClass(entityType.getSecond(), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
 								entityNodeRef = dataListItemNodeRef;
 							}
-							
+
 							ret.add(new EntitySourceAssoc(entityNodeRef, dataListItemNodeRef, sourceNodeRef));
 						}
 
@@ -552,15 +561,14 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 			}
 
 		}
-		
-		if (logger.isDebugEnabled() && watch!=null) {
+
+		if (logger.isDebugEnabled() && (watch != null)) {
 			watch.stop();
 			logger.debug("getEntitySourceAssocs  takes " + watch.getTotalTimeSeconds() + " seconds");
 		}
 
 		return ret;
 	}
-	
 
 	@Override
 	public void doInit() {
@@ -604,7 +612,6 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 	private String childAssocCacheName() {
 		return AssociationService.class.getName() + ".childs";
 	}
-	
 
 	@Override
 	public void onDeleteAssociation(AssociationRef associationRef) {
@@ -623,7 +630,7 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 	@Override
 	public void onDeleteChildAssociation(ChildAssociationRef associationRef) {
 		logger.debug("onDeleteChildAssociation: " + associationRef.getTypeQName());
-		
+
 		removeCachedAssoc(childAssocCacheName(), associationRef.getParentRef(), associationRef.getTypeQName());
 
 	}
@@ -631,7 +638,7 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 	@Override
 	public void onCreateChildAssociation(ChildAssociationRef associationRef, boolean arg1) {
 		logger.debug("onCreateChildAssociation: " + associationRef.getTypeQName());
-		
+
 		removeCachedAssoc(childAssocCacheName(), associationRef.getParentRef(), associationRef.getTypeQName());
 
 	}
