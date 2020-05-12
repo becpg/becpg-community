@@ -289,7 +289,9 @@
 										 method : "GET",
 										 successCallback : {
 											 fn : function(response) {
-												 nextStep.nodeRef = response.json.nodeRef;
+												 if(response.json && response.json.nodeRef){
+													 nextStep.nodeRef = response.json.nodeRef;
+												 }
 												 me.loadStep(nextStep);
 											 },
 											 scope : this
