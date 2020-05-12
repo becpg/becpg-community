@@ -62,6 +62,11 @@
 
 	<bean id="associationService"  parent="abstractBeCPGPolicy" class="fr.becpg.repo.helper.impl.AssociationServiceImpl">
 		<property name="beCPGCacheService" ref="beCPGCacheService"/>
+		<property name="entityDictionaryService" ref="entityDictionaryService"/>
+		<property name="namespaceService" ref="namespaceService" />		
+		<property name="tenantService" ref="tenantService" />	
+		<property name="dataSource" ref="dataSource" />	
+		<property name="qnameDAO" ref="qnameDAO" />		
 	</bean>
 
 
@@ -162,10 +167,10 @@
 			  <entry key="fr.becpg.repo.helper.AssociationService.childs" value="10000" />
 			  <entry key="fr.becpg.repo.helper.AssociationService.assocs" value="200000" />
 			  <entry key="fr.becpg.repo.entity.catalog.EntityCatalogService" value="5" />
-			  <entry key="fr.becpg.repo.entity.EntityListDAO" value="500000" />
+(??)			  <entry key="fr.becpg.repo.entity.EntityListDAO" value="50000" />
 			  <entry key="fr.becpg.repo.jscript.Thumbnail" value="20" />
-			  <entry key="fr.becpg.repo.search.PaginatedSearchCache" value="200" />
-			  <entry key="fr.becpg.repo.search.PaginatedSearchCache.multiLevel" value="200" />
+			  <entry key="fr.becpg.repo.search.PaginatedSearchCache" value="300" />
+			  <entry key="fr.becpg.repo.search.PaginatedSearchCache.multiLevel" value="300" />
 			  <entry key="fr.becpg.repo.entity.datalist.MultiLevelDataListService" value="50" />
 			  <entry key="fr.becpg.repo.entity.impl.EntityDictionaryServiceImpl" value="1000" />
 			  <entry key="fr.becpg.repo.license.BeCPGLicenseManager" value="20" />

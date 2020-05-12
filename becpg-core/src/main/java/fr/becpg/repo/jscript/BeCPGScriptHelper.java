@@ -109,6 +109,8 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 	private boolean showEntitiesInTree = false;
 
+	private boolean showUnauthorizedWarning = true;
+
 	public void setUseBrowserLocale(boolean useBrowserLocale) {
 		this.useBrowserLocale = useBrowserLocale;
 	}
@@ -191,6 +193,23 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 	public void setEntityService(EntityService entityService) {
 		this.entityService = entityService;
+	}
+
+	public void setNodeService(NodeService nodeService) {
+		this.nodeService = nodeService;
+	}
+
+	public void setEntityListDAO(EntityListDAO entityListDAO) {
+		this.entityListDAO = entityListDAO;
+	}
+
+	
+	public boolean isShowUnauthorizedWarning() {
+		return showUnauthorizedWarning;
+	}
+
+	public void setShowUnauthorizedWarning(boolean showUnauthorizedWarning) {
+		this.showUnauthorizedWarning = showUnauthorizedWarning;
 	}
 
 	public void setNodeService(NodeService nodeService) {

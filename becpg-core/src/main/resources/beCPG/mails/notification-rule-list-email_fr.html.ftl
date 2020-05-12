@@ -62,7 +62,7 @@
                                                  <th class="becpg_cellBorderLeft">Objet</th>
                                                  <#if args.versions??>
                                                  <th class="becpg_cellBorderLeft">Date de création</th>
-                                                 <th class="becpg_cellBorderLeft">Verion</th>
+                                                 <th class="becpg_cellBorderLeft">Version</th>
                                                  <th class="becpg_cellBorderLeft">Créateur</th>
                                                  <th class="becpg_cellBorderLeft">Commentaire</th>
                                                  <#else>

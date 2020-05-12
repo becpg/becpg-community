@@ -493,7 +493,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 					} else if (readMethod.isAnnotationPresent(DataList.class) && readMethod.isAnnotationPresent(AlfQname.class)) {
 						QName datalistQname = repositoryEntityDefReader.readQName(readMethod);
 
-						PropertyUtils.setProperty(entity, pd.getName(), createDataList(entity, pd, datalistQname, datalistQname, caches));
+						PropertyUtils.setProperty(entity, pd.getName(), createDataList(entity, pd, datalistQname, null, caches));
 					}
 				}
 			}
@@ -651,7 +651,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 					T ret = findOne(el, caches);
 					ret.setParentNodeRef(dataListNodeRef);
 					return ret;
-				}).collect(Collectors.toList());
+				}).collect(Collectors.toCollection(LinkedList::new));
 
 			}
 		}
