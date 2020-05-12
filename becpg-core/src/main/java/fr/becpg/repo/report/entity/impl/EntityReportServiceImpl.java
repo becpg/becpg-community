@@ -1142,6 +1142,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 					logger.debug("Create new report document " + documentName + " (" + documentNodeRef + ")");
 				}
 
+				
 				if (documentNodeRef == null) {
 					documentNodeRef = fileFolderService.create(documentsFolderNodeRef, documentName, ReportModel.TYPE_REPORT).getNodeRef();
 				}

@@ -21,7 +21,6 @@ import java.io.Serializable;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -67,6 +66,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  */
 @Repository("entityListDAOV1")
 @DependsOn("bcpg.dictionaryBootstrap")
+@Deprecated
 public class EntityListDAOImpl implements EntityListDAO {
 
 	private static final Log logger = LogFactory.getLog(EntityListDAOImpl.class);

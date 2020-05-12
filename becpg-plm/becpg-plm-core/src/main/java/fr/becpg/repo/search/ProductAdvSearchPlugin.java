@@ -332,11 +332,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 	 */
 	private List<NodeRef> getSearchNodesByIngListCriteria(List<NodeRef> nodes, Map<String, String> criteria) {
 
-		List<NodeRef> ingListItemsEntity = new ArrayList<>();
-
-		boolean applyFilter = false;
-
-		new HashMap<>();
+		List<NodeRef> ingListItemsEntity = null;
 
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
@@ -354,10 +350,15 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 				// criteria on ing
 				if ((key.equals(CRITERIA_ING) || key.equals(CRITERIA_ING_AND))) {
 
-					ingListItemsEntity = associationService.getEntitySourceAssocs(extractNodeRefs(propValue), PLMModel.ASSOC_INGLIST_ING, key.equals(CRITERIA_ING))
-							.stream().map(a -> a.getEntityNodeRef()).collect(Collectors.toList());
+					List<NodeRef> filter = associationService
+							.getEntitySourceAssocs(extractNodeRefs(propValue), PLMModel.ASSOC_INGLIST_ING, key.equals(CRITERIA_ING)).stream()
+							.map(a -> a.getEntityNodeRef()).collect(Collectors.toList());
 
-					applyFilter = true;
+					if (ingListItemsEntity == null) {
+						ingListItemsEntity = filter;
+					} else {
+						ingListItemsEntity.retainAll(filter);
+					}
 
 				} else if (key.equals(CRITERIA_ING_NOT)) {
 					nodes.removeAll(associationService.getEntitySourceAssocs(extractNodeRefs(propValue), PLMModel.ASSOC_INGLIST_ING, true).stream()
@@ -365,21 +366,31 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 				} else if (key.equals(CRITERIA_GEO_ORIGIN)) {
 
-					ingListItemsEntity.retainAll(associationService.getEntitySourceAssocs(extractNodeRefs(propValue), PLMModel.ASSOC_INGLIST_GEO_ORIGIN, true).stream()
-							.map(a -> a.getEntityNodeRef()).collect(Collectors.toList()));
+					List<NodeRef> filter = associationService
+							.getEntitySourceAssocs(extractNodeRefs(propValue), PLMModel.ASSOC_INGLIST_GEO_ORIGIN, true).stream()
+							.map(a -> a.getEntityNodeRef()).collect(Collectors.toList());
 
-					applyFilter = true;
+					if (ingListItemsEntity == null) {
+						ingListItemsEntity = filter;
+					} else {
+						ingListItemsEntity.retainAll(filter);
+					}
 				} else if (key.equals(CRITERIA_BIO_ORIGIN) && !propValue.isEmpty()) {
 
-					ingListItemsEntity.retainAll(associationService.getEntitySourceAssocs(extractNodeRefs(propValue), PLMModel.ASSOC_INGLIST_BIO_ORIGIN, true).stream()
-							.map(a -> a.getEntityNodeRef()).collect(Collectors.toList()));
-					applyFilter = true;
+					List<NodeRef> filter = associationService
+							.getEntitySourceAssocs(extractNodeRefs(propValue), PLMModel.ASSOC_INGLIST_BIO_ORIGIN, true).stream()
+							.map(a -> a.getEntityNodeRef()).collect(Collectors.toList());
+					if (ingListItemsEntity == null) {
+						ingListItemsEntity = filter;
+					} else {
+						ingListItemsEntity.retainAll(filter);
+					}
 
 				}
 			}
 		}
 
-		if (applyFilter) {
+		if (ingListItemsEntity != null) {
 			nodes.retainAll(ingListItemsEntity);
 		}
 
@@ -510,7 +521,8 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 			// criteria on label
 			if ((propValue != null) && !propValue.isEmpty()) {
 
-				for (EntitySourceAssoc assocRef : associationService.getEntitySourceAssocs(extractNodeRefs(propValue), PackModel.ASSOC_LL_LABEL, true)) {
+				for (EntitySourceAssoc assocRef : associationService.getEntitySourceAssocs(extractNodeRefs(propValue), PackModel.ASSOC_LL_LABEL,
+						true)) {
 
 					NodeRef n = assocRef.getDataListItemNodeRef();
 
