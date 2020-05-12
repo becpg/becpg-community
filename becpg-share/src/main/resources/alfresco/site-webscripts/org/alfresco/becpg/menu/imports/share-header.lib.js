@@ -177,6 +177,10 @@ function isLanguageMgr(user){
     return user.capabilities["isbeCPGLanguageMgr"] !=null && user.capabilities["isbeCPGLanguageMgr"] == true;
 }
 
+function hasValidLicense(user){
+	return user.capabilities["hasValidLicense"];
+}
+
 
 
 

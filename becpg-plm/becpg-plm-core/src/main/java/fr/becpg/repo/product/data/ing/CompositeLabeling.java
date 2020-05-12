@@ -34,6 +34,8 @@ public class CompositeLabeling extends LabelingComponent {
 
 	private DeclarationType declarationType;
 
+	private boolean applyWaterLoss = true;
+	
 	public CompositeLabeling(String name) {
 		super();
 		this.name = name;
@@ -80,6 +82,17 @@ public class CompositeLabeling extends LabelingComponent {
 			}
 		}
 		return ret;
+	}
+
+	
+	
+	
+	public boolean shouldApplyWaterLoss() {
+		return applyWaterLoss;
+	}
+
+	public void setApplyWaterLoss(boolean applyWaterLoss) {
+		this.applyWaterLoss = applyWaterLoss;
 	}
 
 	public IngTypeItem getIngType() {
