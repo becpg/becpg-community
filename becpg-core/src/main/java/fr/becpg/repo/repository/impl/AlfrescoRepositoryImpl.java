@@ -618,7 +618,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 					T ret = findOne(el, caches);
 					ret.setParentNodeRef(dataListNodeRef);
 					return ret;
-				}).collect(Collectors.toList());
+				}).collect(Collectors.toCollection(LinkedList::new));
 
 			}
 		}

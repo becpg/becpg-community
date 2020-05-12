@@ -264,7 +264,7 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 
 			return nodeService.getChildAssocs(nodeRef, qName, RegexQNamePattern.MATCH_ALL, true).stream()
 					.filter(n -> (childType == null) || nodeService.getType(n.getChildRef()).equals(childType))
-					.map(assocRef -> assocRef.getChildRef()).collect(Collectors.toList());
+					.map(assocRef -> assocRef.getChildRef()).collect(Collectors.toCollection(LinkedList::new));
 
 		}, true);
 
@@ -524,8 +524,6 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 			if (AuthenticationUtil.isMtEnabled()) {
 				storeRef = tenantService.getName(storeRef);
 			}
-
-			System.out.println(query);
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("Run query:" + query.toString() + " " + typeQNameId + " " + aspectQnameId + " " + storeRef.getProtocol() + " "
