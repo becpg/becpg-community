@@ -316,7 +316,7 @@
 									// control will handle it
 									element.value = savedValue;
 								}
-							} else if (name.indexOf("assoc_") == 0 && name.indexOf("_added") !=0) {
+							} else if (name.indexOf("assoc_") == 0 && name.indexOf("_added") > 0) {
 								element.value = savedValue;
 								
 								var cleanElementId = element.id.split("-")[0];
