@@ -51,7 +51,6 @@ import org.springframework.util.StopWatch;
 import org.xml.sax.SAXException;
 
 import fr.becpg.common.BeCPGException;
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.remote.EntityProviderCallBack;
