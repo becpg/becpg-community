@@ -25,6 +25,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.common.BeCPGException;
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.remote.EntityProviderCallBack;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
@@ -43,8 +44,7 @@ public class HttpEntityProviderCallback implements EntityProviderCallBack {
 
 	private Map<NodeRef, NodeRef> visitedNodes = new HashMap<>();
 
-	public HttpEntityProviderCallback(String remoteServer, String remoteUser, String remotePwd,
-			RemoteEntityService remoteEntityService) {
+	public HttpEntityProviderCallback(String remoteServer, String remoteUser, String remotePwd, RemoteEntityService remoteEntityService) {
 		super();
 		this.remoteServer = remoteServer;
 		this.remoteUser = remoteUser;
@@ -58,8 +58,7 @@ public class HttpEntityProviderCallback implements EntityProviderCallBack {
 	}
 
 	@Override
-	public NodeRef provideNode(NodeRef nodeRef, NodeRef destNodeRef,
-			Map<NodeRef, NodeRef> cache) throws BeCPGException {
+	public NodeRef provideNode(NodeRef nodeRef, NodeRef destNodeRef, Map<NodeRef, NodeRef> cache) throws BeCPGException {
 		try {
 			String url = remoteServer + "?nodeRef=" + nodeRef.toString();
 			logger.debug("Try getting nodeRef  from : " + url);
@@ -73,17 +72,27 @@ public class HttpEntityProviderCallback implements EntityProviderCallBack {
 
 			// case 1 : it's added to the map and has no value (being visited
 			// somewhere in time)
-			if (visitedNodes.containsKey(nodeRef) && visitedNodes.get(nodeRef) == null) {
+			if (visitedNodes.containsKey(nodeRef) && (visitedNodes.get(nodeRef) == null)) {
 				return nodeRef;
 				// case 2 : it's added and already visited
-			} else if (visitedNodes.containsKey(nodeRef) && visitedNodes.get(nodeRef) != null) {
+			} else if (visitedNodes.containsKey(nodeRef) && (visitedNodes.get(nodeRef) != null)) {
 				return visitedNodes.get(nodeRef);
 			} else {
 				// case 3 : not visited yet, put in map and visit
 				visitedNodes.put(nodeRef, null);
+
 				try (InputStream entityStream = responseEntity.getContent()) {
-					NodeRef res = remoteEntityService.internalCreateOrUpdateEntity(nodeRef, destNodeRef,
-							entityStream, RemoteEntityFormat.xml, this, cache);
+					NodeRef res = remoteEntityService.getTransactionService().getRetryingTransactionHelper().doInTransaction(() -> {
+
+						// Only for transaction do not reenable it
+						remoteEntityService.getPolicyBehaviourFilter().disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+						remoteEntityService.getPolicyBehaviourFilter().disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
+
+						return remoteEntityService.internalCreateOrUpdateEntity(nodeRef, destNodeRef, entityStream, RemoteEntityFormat.xml, this,
+								cache);
+
+					}, false, false);
+
 					visitedNodes.put(nodeRef, res);
 
 					return res;
@@ -119,8 +128,8 @@ public class HttpEntityProviderCallback implements EntityProviderCallBack {
 
 	}
 
-	private HttpResponse getResponse(HttpGet entityUrl) throws ClientProtocolException, IOException,
-			NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
+	private HttpResponse getResponse(HttpGet entityUrl)
+			throws ClientProtocolException, IOException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
 
 		HttpClientBuilder cb = HttpClientBuilder.create();
 
