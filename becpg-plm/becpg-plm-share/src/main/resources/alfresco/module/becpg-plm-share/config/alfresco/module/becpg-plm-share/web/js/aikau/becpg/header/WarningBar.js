@@ -78,6 +78,7 @@ define(["dojo/_base/declare",
       createUnauthorizedWarninBar : function alfresco_header_UnauthorizedWarningBar__createBar()
       {
     	  this.messageBox.innerHTML = this.message("unauthorized.warning.bar.message");
+    	  this.stopRecording.style.display = "none";
     	  domStyle.set(this.domNode, "display", "block");
       },
       
