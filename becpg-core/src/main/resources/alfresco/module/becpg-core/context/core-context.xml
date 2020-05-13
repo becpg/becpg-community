@@ -167,7 +167,6 @@
 			  <entry key="fr.becpg.repo.helper.AssociationService.childs" value="10000" />
 			  <entry key="fr.becpg.repo.helper.AssociationService.assocs" value="200000" />
 			  <entry key="fr.becpg.repo.entity.catalog.EntityCatalogService" value="5" />
-			  <entry key="fr.becpg.repo.entity.EntityListDAO" value="500000" />
 			  <entry key="fr.becpg.repo.jscript.Thumbnail" value="20" />
 			  <entry key="fr.becpg.repo.search.PaginatedSearchCache" value="300" />
 			  <entry key="fr.becpg.repo.search.PaginatedSearchCache.multiLevel" value="300" />

@@ -569,9 +569,13 @@ public class ECOIT extends AbstractFinishedProductTest {
 
 			FinishedProductData productData = (FinishedProductData) alfrescoRepository.findOne(finishedProduct1NodeRef);
 
-			for (CompoListDataItem compoListDataItem : productData.getCompoList()) {
-				logger.info(nodeService.getProperty(compoListDataItem.getComponent(), ContentModel.PROP_NAME) + " "
-						+ compoListDataItem.getStartEffectivity() + " - " + compoListDataItem.getEndEffectivity());
+
+			
+			for(CompoListDataItem compoListDataItem : productData.getCompoList()) {
+				logger.info(nodeService.getProperty(compoListDataItem.getComponent(),ContentModel.PROP_NAME)
+						+" "+compoListDataItem.getStartEffectivity() + " - " +compoListDataItem.getEndEffectivity());
+				
+
 
 			}
 
@@ -593,9 +597,13 @@ public class ECOIT extends AbstractFinishedProductTest {
 
 			FinishedProductData productData = (FinishedProductData) alfrescoRepository.findOne(finishedProduct1NodeRef);
 
-			for (CompoListDataItem compoListDataItem : productData.getCompoList()) {
-				logger.info(nodeService.getProperty(compoListDataItem.getComponent(), ContentModel.PROP_NAME) + " "
-						+ compoListDataItem.getStartEffectivity() + " - " + compoListDataItem.getEndEffectivity());
+
+			
+			for(CompoListDataItem compoListDataItem : productData.getCompoList()) {
+				logger.info(nodeService.getProperty(compoListDataItem.getComponent(),ContentModel.PROP_NAME)
+						+" "+compoListDataItem.getStartEffectivity() + " - " +compoListDataItem.getEndEffectivity());
+				
+
 
 			}
 
