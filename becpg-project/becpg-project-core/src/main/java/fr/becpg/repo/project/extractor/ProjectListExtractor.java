@@ -72,7 +72,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 	private static final String VIEW_ENTITY_PROJECTS = "entity-projects";
 	private static final String PROJECT_LIST = "projectList";
 
-	private String myProjectAttributes = "pjt:projectManager,cm:created";
+	private String myProjectAttributes = "pjt:projectManager,cm:creator";
 
 	private ProjectService projectService;
 
@@ -94,7 +94,6 @@ public class ProjectListExtractor extends ActivityListExtractor {
 		this.personService = personService;
 	}
 
-	@Override
 	public void setSecurityService(SecurityService securityService) {
 		this.securityService = securityService;
 	}
@@ -199,6 +198,8 @@ public class ProjectListExtractor extends ActivityListExtractor {
 				results.add(dataListFilter.getNodeRef());
 			} else {
 
+				List<NodeRef> unionResults = new LinkedList<>();
+				
 				if (VIEW_MY_TASKS.equals(dataListFilter.getFilterId()) || VIEW_TASKS.equals(dataListFilter.getFilterId())) {
 					dataType = ProjectModel.TYPE_TASK_LIST;
 					beCPGQueryBuilder.ofType(dataType);
@@ -220,10 +221,21 @@ public class ProjectListExtractor extends ActivityListExtractor {
 					if ((dataListFilter.getCriteriaMap() != null) && !dataListFilter.getCriteriaMap().containsKey("prop_pjt_tlState")) {
 						dataListFilter.getCriteriaMap().put("prop_pjt_tlState", "\"Planned\",\"InProgress\"");
 					}
+					
+					if ((dataListFilter.getCriteriaMap() != null)) {
+						if(dataListFilter.getCriteriaMap().containsKey("prop_pjt_projectState")) {
+							dataListFilter.getCriteriaMap().remove("prop_pjt_projectState");
+						}
+						
+						if(dataListFilter.getCriteriaMap().containsKey("prop_pjt_projectLegends")) {
+							dataListFilter.getCriteriaMap().put("assoc_pjt_tlTaskLegend_added", dataListFilter.getCriteriaMap().get("prop_pjt_projectLegends"));
+							dataListFilter.getCriteriaMap().remove("prop_pjt_projectLegends");
+						}
+					}
+					
 
-				}
+				} else 
 
-				List<NodeRef> unionResults = new LinkedList<>();
 				if (VIEW_MY_PROJECTS.equals(dataListFilter.getFilterId())) {
 					String userName = AuthenticationUtil.getFullyAuthenticatedUser();
 
@@ -281,6 +293,8 @@ public class ProjectListExtractor extends ActivityListExtractor {
 						BeCPGQueryBuilder projectQueryBuilder = dataListFilter.getSearchQuery();
 						projectQueryBuilder.ofType(ProjectModel.TYPE_PROJECT);
 						projectQueryBuilder.excludeDefaults();
+						
+						
 						List<NodeRef> projectList = projectQueryBuilder.ftsLanguage().list();
 						for (Iterator<NodeRef> iterator = results.iterator(); iterator.hasNext();) {
 							NodeRef nodeRef = iterator.next();

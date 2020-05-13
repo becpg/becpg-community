@@ -588,7 +588,10 @@ public class DepthLevelListPolicyIT extends PLMBaseTestCase {
 
 			final ProductData finishedProductLoaded = alfrescoRepository.findOne(finishedProductNodeRef);
 			final ProductData copiedProductLoaded = alfrescoRepository.findOne(copiedNodeRef);
-
+			
+			printSort(finishedProductLoaded.getCompoList());
+			printSort(copiedProductLoaded.getCompoList());
+			
 			logger.debug("origin " + finishedProductLoaded.getCompoListView().getCompoList().get(1).getParent().getNodeRef());
 			logger.debug("target " + copiedProductLoaded.getCompoListView().getCompoList().get(1).getParent().getNodeRef());
 			assertNull(finishedProductLoaded.getCompoListView().getCompoList().get(0).getParent());

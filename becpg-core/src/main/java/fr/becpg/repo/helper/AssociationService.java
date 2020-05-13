@@ -18,10 +18,15 @@
 package fr.becpg.repo.helper;
 
 import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Nullable;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.QNamePattern;
+
+import fr.becpg.repo.helper.impl.AssociationServiceImpl.EntitySourceAssoc;
 
 public interface AssociationService {
 
@@ -34,9 +39,9 @@ public interface AssociationService {
 	List<NodeRef> getTargetAssocs(NodeRef nodeRef, QName qName);
 	NodeRef getChildAssoc(NodeRef nodeRef, QName qName);
 	List<NodeRef> getChildAssocs(NodeRef nodeRef, QName qName);
-	List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QNamePattern qName);
-	String createCacheKey(NodeRef nodeRef, QName qName);
-
-	
+	List<NodeRef> getChildAssocs(NodeRef nodeRef, QName qName, QName childTypeQName);
+	List<NodeRef> getChildAssocs(NodeRef listNodeRef, QName assocContains, QName listQNameFilter,@Nullable Map<String, Boolean> sortMap);
+	List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QNamePattern qNamePattern);
+	List<EntitySourceAssoc> getEntitySourceAssocs(List<NodeRef> nodeRefs, QName assocQName, boolean isOrOperator);
 	
 }

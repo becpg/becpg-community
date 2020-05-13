@@ -45,24 +45,25 @@ public class RegulationFormulationHelper {
 
 	static {
 		regulations.put("EU", new EuropeanNutrientRegulation("beCPG/databases/nuts/EuNutrientRegulation.csv"));
-
 		regulations.put("US", new UsNutrientRegulation("beCPG/databases/nuts/UsNutrientRegulation_2016.csv"));
 		regulations.put("US_2013", new UsNutrientRegulation("beCPG/databases/nuts/UsNutrientRegulation_2013_2020.csv"));
-
 		regulations.put("CA", new CanadianNutrientRegulation("beCPG/databases/nuts/CanadianNutrientRegulation_2017.csv"));
 		regulations.put("CA_2013", new CanadianNutrientRegulation2013("beCPG/databases/nuts/CanadianNutrientRegulation_2013_2022.csv"));
-
 		regulations.put("CN", new ChineseNutrientRegulation("beCPG/databases/nuts/ChineseNutrientRegulation.csv"));
 		regulations.put("AU", new AustralianNutrientRegulation("beCPG/databases/nuts/AUNutrientRegulation.csv"));
-
 		regulations.put("ID", new IndonesianNutrientRegulation("beCPG/databases/nuts/IndonesianNutrientRegulation.csv"));
 		regulations.put("MX", new MexicanNutrientRegulation("beCPG/databases/nuts/MexicanNutrientRegulation.csv"));
-
 		regulations.put("HK", new HongKongNutrientRegulation("beCPG/databases/nuts/HongKongNutrientRegulation.csv"));
 		regulations.put("KR", new KoreanNutrientRegulation("beCPG/databases/nuts/KoreanNutrientRegulation.csv"));
 		regulations.put("MY", new MalaysianNutrientRegulation("beCPG/databases/nuts/MalaysianNutrientRegulation.csv"));
 		regulations.put("TH", new ThailandNutrientRegulation("beCPG/databases/nuts/ThailandNutrientRegulation.csv"));
 		regulations.put("IN", new IndianNutrientRegulation("beCPG/databases/nuts/IndianNutrientRegulation.csv"));
+		
+		regulations.put("GSO", new GSONutrientRegulation("beCPG/databases/nuts/GSONutrientRegulation.csv"));
+		regulations.put("MA", new EuropeanNutrientRegulation("beCPG/databases/nuts/MoroccanNutrientRegulation.csv"));
+		regulations.put("DZ", new EuropeanNutrientRegulation("beCPG/databases/nuts/AlgerianNutrientRegulation.csv"));
+		regulations.put("IL", new IsraeliNutrientRegulation("beCPG/databases/nuts/IsraeliNutrientRegulation.csv"));
+		regulations.put("TR", new EuropeanNutrientRegulation("beCPG/databases/nuts/TurkishNutrientRegulation.csv"));
 
 	}
 
@@ -126,12 +127,13 @@ public class RegulationFormulationHelper {
 	}
 
 	private static String getLocalKey(Locale locale) {
-
 		if (locale.getCountry().equals("US") || locale.getCountry().equals("CA")
 				|| locale.getCountry().equals("MX") || locale.getCountry().equals("ID")
 				|| locale.getCountry().equals("HK") || locale.getCountry().equals("MY")
 				|| locale.getCountry().equals("IN") || locale.getCountry().equals("KR")
-				|| locale.getCountry().equals("TH")) {
+				|| locale.getCountry().equals("TH") || locale.getCountry().equals("MA")
+				|| locale.getCountry().equals("DZ") || locale.getCountry().equals("IL")
+				|| locale.getCountry().equals("TR")) {
 			return locale.getCountry();
 		} else if (locale.getCountry().equals("SG")) {
 			return "MY";	
@@ -140,7 +142,11 @@ public class RegulationFormulationHelper {
 		} else if (locale.getCountry().equals("AU") || locale.getCountry().equals("NZ")) {
 			return "AU";
 		} else if (locale.getCountry().equals("PR")) {
-			return "US";
+			return "US";			
+		} else if (locale.getCountry().equals("AE") || locale.getCountry().equals("BH")
+				|| locale.getCountry().equals("SA") || locale.getCountry().equals("QA")
+				|| locale.getCountry().equals("OM") || locale.getCountry().equals("KW")) {
+			return "GSO";
 		}
 		return "EU";
 	}
@@ -207,7 +213,6 @@ public class RegulationFormulationHelper {
 					if ((nutListValue != null) && (!nutListValue.equals(""))){
 						nutListElt.addAttribute("roundedDisplayValue" + suffix, RegulationFormulationHelper
 								.displayValue(Double.parseDouble(nutListValue), extractValue(roundedValue, locKey), nutCode, locale, locKey));
-
 						if (locKey.equals("US") || locKey.equals("US_2013")) {
 							nutListElt.addAttribute("roundedDisplayValuePerContainer" + suffix,
 									RegulationFormulationHelper.displayValue(extractValuePerContainer(roundedValue, locKey),
@@ -369,7 +374,7 @@ public class RegulationFormulationHelper {
 				|| MLTextHelper.isSupportedLocale(Locale.TRADITIONAL_CHINESE)) {
 			ret.add("CN");
 		}
-		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("en_AU"))) {
+		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("en_AU")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("en_NZ"))) {
 			ret.add("AU");
 		}
 		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("es_MX"))) {
@@ -392,6 +397,23 @@ public class RegulationFormulationHelper {
 		}
 		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("hi_IN")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("en_IN"))) {
 			ret.add("IN");
+		}
+		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_MA"))) {
+			ret.add("MA");
+		}
+		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_DZ"))) {
+			ret.add("DZ");
+		}
+		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("iw_IL"))) {
+			ret.add("IL");
+		}
+		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("tr_TR"))) {
+			ret.add("TR");
+		}
+		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_AE")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_BH"))
+				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_SA")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_QA"))
+				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_OM")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_KW"))) {
+			ret.add("GSO");
 		}
 
 		ret.add("EU");

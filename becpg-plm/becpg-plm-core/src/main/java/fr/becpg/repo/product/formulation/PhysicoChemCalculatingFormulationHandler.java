@@ -17,6 +17,7 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
@@ -71,7 +72,9 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 
 	@Override
 	protected boolean accept(ProductData formulatedProduct) {
-		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) || ((formulatedProduct.getPhysicoChemList() == null)
+		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) 
+				|| (formulatedProduct instanceof ProductSpecificationData)
+				|| ((formulatedProduct.getPhysicoChemList() == null)
 				&& !alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_PHYSICOCHEMLIST))) {
 			return false;
 		}

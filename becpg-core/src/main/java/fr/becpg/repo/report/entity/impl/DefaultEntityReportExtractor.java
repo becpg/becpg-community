@@ -133,6 +133,9 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	@Value("${beCPG.entity.report.mltext.fields}")
 	private String mlTextFields;
 
+	@Value("${beCPG.entity.report.mltext.locales}")
+	private String mlTextLocales;
+
 	@Value("${beCPG.product.report.assocsToExtractWithDataList}")
 	protected String assocsToExtractWithDataList = "";
 
@@ -629,7 +632,6 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 				}
 
 				if (context.prefsContains("mlTextFields", mlTextFields, propertyDef.getName().toPrefixString(namespaceService))) {
-
 					MLText mlValues = null;
 
 					if (DataTypeDefinition.MLTEXT.equals(propertyDef.getDataType().getName())) {
@@ -644,17 +646,21 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 					if (mlValues != null) {
 						for (Map.Entry<Locale, String> mlEntry : mlValues.entrySet()) {
 							String code = mlEntry.getKey().getLanguage();
+
 							if ((mlEntry.getKey().getCountry() != null) && !mlEntry.getKey().getCountry().isEmpty()) {
 								code += "_" + mlEntry.getKey().getCountry();
 							}
-							if ((code != null) && !code.isEmpty()) {
-								Element ret = addData(nodeElt, useCData, propertyDef.getName(), mlEntry.getValue(), code, context);
-								if (isDyn && (ret != null)) {
-									if (useCData) {
-										ret.addAttribute("code", value);
+							if ((mlTextLocales == null || "".equals(mlTextLocales)) && (context.getPreferences() == null || (context.getPreferences() != null && !context.getPreferences().containsKey("mlTextLocales"))) 
+									|| context.prefsContains("mlTextLocales", mlTextLocales, code)) {
+								if ((code != null) && !code.isEmpty()) {
+									Element ret = addData(nodeElt, useCData, propertyDef.getName(), mlEntry.getValue(), code, context);
+									if (isDyn && (ret != null)) {
+										if (useCData) {
+											ret.addAttribute("code", value);
+										}
 									}
-								}
 
+								}
 							}
 						}
 					}
@@ -696,7 +702,6 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	}
 
 	private String extractName(QName targetClass, NodeRef nodeRef) {
-
 		if (nodeService.exists(nodeRef)) {
 
 			QName propNameOfType = getPropNameOfType(targetClass);
@@ -714,7 +719,6 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 				}
 				return name;
 			}
-
 			return attributeExtractorService.extractPropName(targetClass, nodeRef);
 
 		} else {

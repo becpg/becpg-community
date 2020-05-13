@@ -22,6 +22,7 @@ import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.PackagingMaterialData;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
@@ -49,7 +50,10 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 
-		logger.debug("calculating visitor");
+		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) 
+				|| (formulatedProduct instanceof ProductSpecificationData)) {
+			return true;
+		}
 
 		if (alfrescoRepository.hasDataList(formulatedProduct.getNodeRef(), PackModel.PACK_MATERIAL_LIST_TYPE)) {
 

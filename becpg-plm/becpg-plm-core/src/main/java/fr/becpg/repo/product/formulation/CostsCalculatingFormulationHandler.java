@@ -26,6 +26,7 @@ import fr.becpg.repo.product.data.ClientData;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.PackagingMaterialData;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.SupplierData;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
@@ -750,7 +751,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 	@Override
 	protected boolean accept(ProductData formulatedProduct) {
 
-		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)
+		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) || formulatedProduct instanceof ProductSpecificationData
 				|| ((formulatedProduct.getCostList() == null) && !alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_COSTLIST))) {
 			return false;
 		}

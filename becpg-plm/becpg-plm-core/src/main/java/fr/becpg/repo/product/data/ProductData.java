@@ -98,7 +98,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private ProductUnit servingSizeUnit;
 	private Double recipeQtyUsed;
 	private Double recipeVolumeUsed;
-	private Double productLossPerc = 0d;
+	private Double productLossPerc;
 	private Double componentLossPerc;
 	private Double recipeQtyUsedWithLossPerc;
 
@@ -126,6 +126,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private String formulationChainId;
 	private IngTypeItem ingType;
 	private Boolean isUpToDate = false;
+	private Boolean updateFormulatedDate = true;
 
 	/*
 	 * Nutrient Score
@@ -298,6 +299,17 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	@Override
 	public void setFormulatedDate(Date formulatedDate) {
 		this.formulatedDate = formulatedDate;
+	}
+	
+	
+	@Override
+	public boolean shouldUpdateFormulatedDate() {
+		return updateFormulatedDate;
+	}
+
+	@Override
+	public void setUpdateFormulatedDate(boolean updateFormulatedDate) {
+		this.updateFormulatedDate = updateFormulatedDate;
 	}
 
 	public Boolean getIsUpToDate() {
@@ -482,7 +494,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	@AlfProp
 	@AlfQname(qname = "bcpg:productLossPerc")
 	public Double getProductLossPerc() {
-		return productLossPerc!=null ? productLossPerc : 0d;
+		return productLossPerc;
 	}
 
 	public void setProductLossPerc(Double lossPerc) {

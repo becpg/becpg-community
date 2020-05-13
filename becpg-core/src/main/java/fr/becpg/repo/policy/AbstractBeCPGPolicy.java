@@ -176,9 +176,7 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 			TransactionSupportUtil.bindResource(key, pendingNodes);
 			AlfrescoTransactionSupport.bindListener(transactionListener);
 		}
-		if (!pendingNodes.contains(nodeRef)) {
-			pendingNodes.add(nodeRef);
-		}
+		pendingNodes.add(nodeRef);
 	}
 	
 	protected void queueAssoc(AssociationRef associationRef) {
@@ -195,9 +193,8 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 			TransactionSupportUtil.bindResource(key, pendingNodes);
 			AlfrescoTransactionSupport.bindListener(transactionListener);
 		}
-		if (!pendingNodes.contains(associationRef)) {
-			pendingNodes.add(associationRef);
-		}
+		pendingNodes.add(associationRef);
+		
 	}
 
 

@@ -130,6 +130,7 @@ public class NestedAdvSearchPlugin implements AdvSearchPlugin {
 						for (AssociationRef assocRef : assocRefs) {
 							if (match(assocRef.getTargetRef(), criteriaMap)) {
 								foundMatch = true;
+								break;
 							}
 						}
 
