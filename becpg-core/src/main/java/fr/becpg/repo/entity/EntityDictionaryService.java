@@ -20,8 +20,13 @@ package fr.becpg.repo.entity;
 import java.util.Collection;
 import java.util.List;
 
+import org.alfresco.service.cmr.dictionary.AspectDefinition;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
+import org.alfresco.service.cmr.dictionary.ClassDefinition;
+import org.alfresco.service.cmr.dictionary.DictionaryService;
+import org.alfresco.service.cmr.dictionary.PropertyDefinition;
+import org.alfresco.service.cmr.dictionary.TypeDefinition;
 import org.alfresco.service.namespace.QName;
 
 public interface EntityDictionaryService {
@@ -47,4 +52,21 @@ public interface EntityDictionaryService {
 	QName getMultiLevelSecondaryPivot(QName dataListItemType);
 
 	void registerPropDefMapping(QName orig, QName dest);
+
+	boolean isAssoc(QName propQname);
+
+	//Override
+
+	TypeDefinition getType(QName type);
+
+	AspectDefinition getAspect(QName aspect);
+
+	ClassDefinition getClass(QName type);
+
+	PropertyDefinition getProperty(QName key);
+
+	AssociationDefinition getAssociation(QName qName);
+
+	DictionaryService getDictionaryService();
+
 }

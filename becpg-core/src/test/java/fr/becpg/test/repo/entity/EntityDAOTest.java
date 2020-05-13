@@ -29,8 +29,8 @@ public class EntityDAOTest extends RepoBaseTestCase {
 	private Log logger = LogFactory.getLog(EntityDAOTest.class);
 
 	@Autowired
-	@Qualifier("entityListDAO2")
-	private EntityListDAO entityListDAOV2;
+	@Qualifier("entityListDAOV1")
+	private EntityListDAO entityListDAOV1;
 
 	private NodeRef createTestNode(NodeRef parentNodeRef, QName type, String name) {
 
@@ -60,8 +60,8 @@ public class EntityDAOTest extends RepoBaseTestCase {
 			Map<String, Long> perfs1 = new HashMap<>();
 			Map<String, Long> perfs2 = new HashMap<>();
 			for (int i = 0; i < 2; i++) {
-				daoServicePerfTest("V1-" + i + disableCache, entityListDAO, perfs1);
-				daoServicePerfTest("V2-" + i + disableCache, entityListDAOV2, perfs2);
+				daoServicePerfTest("V1-" + i + disableCache, entityListDAOV1, perfs1);
+				daoServicePerfTest("V2-" + i + disableCache, entityListDAO, perfs2);
 
 			}
 

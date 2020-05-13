@@ -72,7 +72,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 	private static final String VIEW_ENTITY_PROJECTS = "entity-projects";
 	private static final String PROJECT_LIST = "projectList";
 
-	private String myProjectAttributes = "pjt:projectManager,cm:created";
+	private String myProjectAttributes = "pjt:projectManager,cm:creator";
 
 	private ProjectService projectService;
 
@@ -94,7 +94,6 @@ public class ProjectListExtractor extends ActivityListExtractor {
 		this.personService = personService;
 	}
 
-	@Override
 	public void setSecurityService(SecurityService securityService) {
 		this.securityService = securityService;
 	}
@@ -295,16 +294,6 @@ public class ProjectListExtractor extends ActivityListExtractor {
 						BeCPGQueryBuilder projectQueryBuilder = dataListFilter.getSearchQuery();
 						projectQueryBuilder.ofType(ProjectModel.TYPE_PROJECT);
 						projectQueryBuilder.excludeDefaults();
-						
-						
-						
-						
-						
-						
-						
-						
-						
-						
 						
 						
 						List<NodeRef> projectList = projectQueryBuilder.ftsLanguage().list();
