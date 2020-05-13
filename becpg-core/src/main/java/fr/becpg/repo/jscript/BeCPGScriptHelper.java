@@ -195,14 +195,6 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		this.entityService = entityService;
 	}
 
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}
-
-	public void setEntityListDAO(EntityListDAO entityListDAO) {
-		this.entityListDAO = entityListDAO;
-	}
-
 	
 	public boolean isShowUnauthorizedWarning() {
 		return showUnauthorizedWarning;

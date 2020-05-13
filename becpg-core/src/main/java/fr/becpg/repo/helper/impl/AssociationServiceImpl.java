@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +54,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.StopWatch;
 
+import com.hazelcast.util.ConcurrentHashSet;
+
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityDictionaryService;
@@ -77,7 +80,7 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 
 	private static Set<QName> ignoredAssocs = new HashSet<>();
 
-	private Set<String> cacheNames = new HashSet<>();
+	private Set<String> cacheNames = new ConcurrentHashSet<>();
 
 	private QNameDAO qnameDAO;
 
@@ -442,10 +445,8 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 
 	}
 
-	private static final String SQL_SELECT_SOURCE_ASSOC_ENTITY_1 = "select entity.uuid as entity, dataListItem.uuid as dataListItem, dataListItem.type_qname_id as dataListItemType, targetNode.uuid as targetNode";
-
-	private static final String SQL_SELECT_SOURCE_ASSOC_ENTITY_2 = " from alf_node entity "
-			+ " join alf_child_assoc dataListContainerAssoc on (entity.id = dataListContainerAssoc.parent_node_id)"
+	private static final String SQL_SELECT_SOURCE_ASSOC_ENTITY = "select entity.uuid as entity, dataListItem.uuid as dataListItem, dataListItem.type_qname_id as dataListItemType, targetNode.uuid as targetNode"
+			+ " from alf_node entity " + " join alf_child_assoc dataListContainerAssoc on (entity.id = dataListContainerAssoc.parent_node_id)"
 			+ " join alf_child_assoc dataListAssoc on (dataListAssoc.parent_node_id = dataListContainerAssoc.child_node_id)"
 			+ " join alf_child_assoc dataListItemAssoc on (dataListItemAssoc.parent_node_id = dataListAssoc.child_node_id)"
 			+ " join alf_node dataListItem on (dataListItem.id = dataListItemAssoc.child_node_id ) "
@@ -464,7 +465,7 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 	 */
 	@Override
 	public List<EntitySourceAssoc> getEntitySourceAssocs(List<NodeRef> nodeRefs, QName assocTypeQName, boolean isOrOperator) {
-		List<EntitySourceAssoc> ret = new ArrayList<>();
+		List<EntitySourceAssoc> ret = null;
 
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
@@ -476,16 +477,53 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 
 			boolean isAnd = !isOrOperator && (nodeRefs.size() > 1);
 
-			StringBuilder query = new StringBuilder();
 			if (isAnd) {
-				query.append("select entity, dataListItem, dataListItemType, targetNode, targetCount from (");
+				for (NodeRef nodeRef : nodeRefs) {
+					if (ret == null) {
+						ret = internalEntitySourceAssocs(Arrays.asList(nodeRef), assocTypeQName);
+					} else {
+						// TODO make it in DB
+						List<EntitySourceAssoc> tmp = internalEntitySourceAssocs(Arrays.asList(nodeRef), assocTypeQName);
+
+						for (Iterator<EntitySourceAssoc> iterator = ret.iterator(); iterator.hasNext();) {
+							EntitySourceAssoc entitySourceAssoc = iterator.next();
+							boolean remove = true;
+							for (EntitySourceAssoc toAdd : tmp) {
+								if (toAdd.getEntityNodeRef().equals(entitySourceAssoc.getEntityNodeRef())) {
+									remove = false;
+								}
+							}
+							if (remove) {
+								iterator.remove();
+							}
+						}
+
+					}
+				}
+
+			} else {
+				ret = internalEntitySourceAssocs(nodeRefs, assocTypeQName);
 			}
 
-			query.append(SQL_SELECT_SOURCE_ASSOC_ENTITY_1);
-			if (isAnd) {
-				query.append(", DENSE_RANK() over (PARTITION BY entity.uuid order by targetNode.uuid) as targetCount");
-			}
-			query.append(SQL_SELECT_SOURCE_ASSOC_ENTITY_2);
+		}
+
+		if (logger.isDebugEnabled() && (watch != null)) {
+			watch.stop();
+			logger.debug("getEntitySourceAssocs  takes " + watch.getTotalTimeSeconds() + " seconds");
+		}
+
+		return ret;
+	}
+
+	private List<EntitySourceAssoc> internalEntitySourceAssocs(List<NodeRef> nodeRefs, QName assocTypeQName) {
+		List<EntitySourceAssoc> ret = new ArrayList<>();
+
+		if ((nodeRefs != null) && !nodeRefs.isEmpty()) {
+
+			StringBuilder query = new StringBuilder();
+
+			query.append(SQL_SELECT_SOURCE_ASSOC_ENTITY);
+
 			query.append(" and ( ");
 
 			boolean isFirst = true;
@@ -500,14 +538,7 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 
 			}
 			query.append(")");
-
 			query.append("  group by dataListItem.uuid ");
-
-			if (isAnd) {
-
-				query.append(") tmp WHERE targetCount=");
-				query.append(nodeRefs.size());
-			}
 
 			Long typeQNameId = null;
 			Long aspectQnameId = qnameDAO.getQName(BeCPGModel.ASPECT_COMPOSITE_VERSION).getFirst();
@@ -559,12 +590,6 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 			}
 
 		}
-
-		if (logger.isDebugEnabled() && (watch != null)) {
-			watch.stop();
-			logger.debug("getEntitySourceAssocs  takes " + watch.getTotalTimeSeconds() + " seconds");
-		}
-
 		return ret;
 	}
 
