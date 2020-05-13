@@ -562,15 +562,35 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	protected void loadAttributes(NodeRef nodeRef, Element nodeElt, boolean useCData, List<QName> hiddenAttributes, DefaultExtractorContext context) {
 
 		PropertyFormats propertyFormats = new PropertyFormats(false);
-
+		
+		
 		// properties
 		Map<QName, Serializable> properties = nodeService.getProperties(nodeRef);
+		
+		//versionLabel
+		String versionLabelDisplayValue = null;
+		QName versionLabelQName = null;
+		if (properties.containsKey(BeCPGModel.PROP_VERSION_LABEL) && properties.get(BeCPGModel.PROP_VERSION_LABEL) != null
+			&& !"".equals(properties.get(BeCPGModel.PROP_VERSION_LABEL))){
+			versionLabelQName = BeCPGModel.PROP_VERSION_LABEL;
+		} else if (properties.containsKey(ContentModel.PROP_VERSION_LABEL) && properties.get(ContentModel.PROP_VERSION_LABEL) != null
+				&& !"".equals(properties.get(ContentModel.PROP_VERSION_LABEL))) {
+			versionLabelQName = ContentModel.PROP_VERSION_LABEL;
+		}
+		if (versionLabelQName != null) {
+			PropertyDefinition propertyDef = dictionaryService.getProperty(versionLabelQName);
+			if (propertyDef == null) {
+				logger.debug("This property doesn't exist. Name: " + versionLabelQName + " nodeRef : " + nodeRef);
+			}
+			versionLabelDisplayValue = attributeExtractorService.extractPropertyForReport(propertyDef, properties.get(versionLabelQName), propertyFormats, false);
+		}
+		
 		for (Map.Entry<QName, Serializable> property : properties.entrySet()) {
 
 			// do not display system properties
 			if ((hiddenAttributes == null) || (!hiddenAttributes.contains(property.getKey())
 					&& !NamespaceService.SYSTEM_MODEL_1_0_URI.equals(property.getKey().getNamespaceURI()))) {
-
+				
 				PropertyDefinition propertyDef = dictionaryService.getProperty(property.getKey());
 				if (propertyDef == null) {
 					logger.debug("This property doesn't exist. Name: " + property.getKey() + " nodeRef : " + nodeRef);
@@ -578,7 +598,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 				}
 
 				String value = attributeExtractorService.extractPropertyForReport(propertyDef, property.getValue(), propertyFormats, false);
-
+				
 				boolean isDyn = false;
 				boolean isList = false;
 
@@ -628,7 +648,12 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 						}
 					}
 				} else {
-					addData(nodeElt, useCData, propertyDef.getName(), value, null, context);
+					if (versionLabelDisplayValue != null && 
+							(property.getKey().equals(BeCPGModel.PROP_VERSION_LABEL) || property.getKey().equals(ContentModel.PROP_VERSION_LABEL))) {
+						addData(nodeElt, useCData, propertyDef.getName(), versionLabelDisplayValue, null, context);
+					} else {
+						addData(nodeElt, useCData, propertyDef.getName(), value, null, context);
+					}
 				}
 
 				if (context.prefsContains("mlTextFields", mlTextFields, propertyDef.getName().toPrefixString(namespaceService))) {
