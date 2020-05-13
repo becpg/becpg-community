@@ -29,6 +29,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import javax.sql.DataSource;
@@ -54,7 +55,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.StopWatch;
 
-import com.hazelcast.util.ConcurrentHashSet;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.cache.BeCPGCacheService;
@@ -79,8 +79,8 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 	private NamespaceService namespaceService;
 
 	private static Set<QName> ignoredAssocs = new HashSet<>();
-
-	private Set<String> cacheNames = new ConcurrentHashSet<>();
+	
+	private Set<String> cacheNames = ConcurrentHashMap.newKeySet();
 
 	private QNameDAO qnameDAO;
 
