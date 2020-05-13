@@ -196,5 +196,4 @@ public interface EntityListDAO {
 
 
 
-
 }

@@ -198,6 +198,49 @@ public class EntityDictionaryServiceImpl implements EntityDictionaryService {
 	}
 
 
+	@Override
+	public boolean isAssoc(QName assocName) {
+		return dictionaryService.getAssociation(assocName)!=null;
+
+	}
+
+	
+	@Override
+	public TypeDefinition getType(QName type) {
+		return dictionaryService.getType(type);
+
+	}
+
+	@Override
+	public AspectDefinition getAspect(QName aspect) {
+		return dictionaryService.getAspect(aspect);
+
+	}
+
+	@Override
+	public PropertyDefinition getProperty(QName key) {
+		return dictionaryService.getProperty(key);
+
+	}
+
+	@Override
+	public AssociationDefinition getAssociation(QName qName) {
+		return dictionaryService.getAssociation(qName);
+
+	}
+
+	@Override
+	public DictionaryService getDictionaryService() {
+		return dictionaryService;
+	}
+
+	@Override
+	public ClassDefinition getClass(QName type) {
+		return dictionaryService.getClass(type);
+	}
+
+
+
 
 
 }
