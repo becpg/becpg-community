@@ -141,7 +141,6 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 				}
 
 				results = entityListDAO.getListItems(dataListFilter.getParentNodeRef(), dataListFilter.getDataType(), dataListFilter.getSortMap());
-
 				pagination.setQueryExecutionId(paginatedSearchCache.storeSearchResults(results));
 
 			} else if (dataListFilter.isSimpleItem()) {
