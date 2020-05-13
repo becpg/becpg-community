@@ -184,6 +184,9 @@ public interface EntityListDAO {
 	void moveDataLists(NodeRef sourceNodeRef, NodeRef targetNodeRef);
 
 
+	boolean isEmpty(NodeRef listNodeRef, QName listQNameFilter);
+
+
 
 
 

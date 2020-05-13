@@ -611,12 +611,20 @@ public class DepthLevelListPolicyTest extends PLMBaseTestCase {
 
 				Integer level = (Integer) nodeService.getProperty(c.getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL);
 
-				logger.info("  ".repeat(level != null ? level : 1) + " - Product " + nodeService.getProperty(c.getProduct(), ContentModel.PROP_NAME)
+				logger.info(repeat(level != null ? level : 1) + " - Product " + nodeService.getProperty(c.getProduct(), ContentModel.PROP_NAME)
 						+ ((c.getParent() != null) && (c.getParent().getProduct() != null)
 								? " - Parent: " + nodeService.getProperty(c.getParent().getProduct(), ContentModel.PROP_NAME)
 								: "")
 						+ " - sorted: " + nodeService.getProperty(c.getNodeRef(), BeCPGModel.PROP_SORT));
 			}
 		}
+	}
+
+	private String repeat(int i) {
+		String ret = "";
+		for (int j = 0; j < i; j++) {
+			ret+=" ";
+		}
+		return ret;
 	}
 }

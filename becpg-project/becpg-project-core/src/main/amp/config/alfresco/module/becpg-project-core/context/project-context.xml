@@ -146,6 +146,9 @@
 		<property name="dataListSortRegistry" ref="dataListSortRegistry" />
 		<property name="preferenceService" ref="preferenceService" />
 		<property name="projectService" ref="projectService" />
+		<property name="securityService" ref="securityService" />
+		<property name="myProjectAttributes" value="${project.extractor.myProjectAttributes}"/>
+		<property name="namespaceService" ref="namespaceService" />
 	</bean>
 
 
