@@ -196,25 +196,6 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 		pendingNodes.add(associationRef);
 		
 	}
-	
-	protected void queueAssoc(AssociationRef associationRef) {
-		queueAssoc(generateDefaultKey(), associationRef);
-		
-	}
-	
-	
-	protected void queueAssoc(String key, AssociationRef associationRef) {
-		Set<AssociationRef> pendingNodes = TransactionSupportUtil.getResource(key);
-		if (pendingNodes == null) {
-			pendingNodes = new LinkedHashSet<>();
-			assocKeys.add(key);
-			TransactionSupportUtil.bindResource(key, pendingNodes);
-			AlfrescoTransactionSupport.bindListener(transactionListener);
-		}
-		if (!pendingNodes.contains(associationRef)) {
-			pendingNodes.add(associationRef);
-		}
-	}
 
 
 

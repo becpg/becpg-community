@@ -42,7 +42,7 @@ import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.repository.L2CacheSupport;
 
-public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.BeforeDeleteNodePolicy,
+public class EntityActivityPolicy extends AbstractBeCPGPolicy implements  NodeServicePolicies.OnAddAspectPolicy, NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.BeforeDeleteNodePolicy,
 NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnDeleteAssociationPolicy, ContentServicePolicies.OnContentUpdatePolicy{
 
 	private static final Log logger = LogFactory.getLog(EntityActivityPolicy.class);
@@ -51,6 +51,7 @@ NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.OnCreateAssociationP
 	public static final String KEY_QUEUE_DELETED = "EntityActivity_deleted";
 	public static final String KEY_QUEUE_CREATED = "EntityActivity_created";
 	public static final String KEY_QUEUE_UPDATED_STATUS = "EntityActivity_UpdatedStatus";
+	public static final String KEY_QUEUE_ADDED_TPL_ASPECT= "EntityActivity_AddedTplAspect";
 
 	private static final Set<QName> isIgnoredTypes = new HashSet<>();
 
@@ -85,6 +86,8 @@ NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.OnCreateAssociationP
 	@Override
 	public void doInit() {
 		logger.debug("Init EntityActivityPolicy...");
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnAddAspectPolicy.QNAME,
+				BeCPGModel.ASPECT_ENTITY_TPL, new JavaBehaviour(this, "onAddAspect"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME,
 				BeCPGModel.TYPE_ENTITY_V2, new JavaBehaviour(this, "onUpdateProperties"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnCreateNodePolicy.QNAME, BeCPGModel.TYPE_ENTITY_V2,
@@ -135,6 +138,24 @@ NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.OnCreateAssociationP
 		return (type.getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI)
 				|| ((!before.containsKey(type) || before.get(type) == null)  && (after.get(type) == null || after.get(type).equals("")))
 				|| ((!after.containsKey(type) || after.get(type) == null)  && (before.get(type) == null || before.get(type).equals(""))));	
+	}
+	
+	@Override
+	public void onAddAspect(NodeRef nodeRef, QName aspectTypeQName) {
+		if (policyBehaviourFilter.isEnabled(ContentModel.ASPECT_AUDITABLE) && policyBehaviourFilter.isEnabled(BeCPGModel.ASPECT_SORTABLE_LIST)
+				&& policyBehaviourFilter.isEnabled(BeCPGModel.TYPE_ACTIVITY_LIST)) {
+			if (L2CacheSupport.isThreadLockEnable()) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Entity [" + Thread.currentThread().getName() + "] is locked  :"
+							+ nodeRef);
+				}
+				return;
+			}
+			QName type = nodeService.getType(nodeRef);
+			if (accept(type)) {
+				queueNode(KEY_QUEUE_ADDED_TPL_ASPECT, nodeRef);
+			}
+		}
 	}
 
 	@Override
@@ -234,7 +255,7 @@ NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.OnCreateAssociationP
 				} else {
 					queueNode(KEY_QUEUE_UPDATED, nodeRef);
 				}
-				if (TransactionSupportUtil.getResource(KEY_QUEUE_UPDATED_STATUS + nodeRef.toString()) == null && updatedProperties != null && updatedProperties.size() > 0) { 
+				if (TransactionSupportUtil.getResource(KEY_QUEUE_UPDATED_STATUS + nodeRef.toString()) == null && updatedProperties != null && !updatedProperties.isEmpty()) { 
 					TransactionSupportUtil.bindResource(KEY_QUEUE_UPDATED_STATUS + nodeRef.toString(),updatedProperties); 
 				}
 			}
@@ -280,7 +301,7 @@ NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.OnCreateAssociationP
 					Pair <List<Pair<NodeRef,Serializable>>,List<Pair<NodeRef,Serializable>>> beforeAfterAssocs = new Pair<List<Pair<NodeRef,Serializable>>, List<Pair<NodeRef,Serializable>>>(null,afterAssocs);
 					resources.put(type, beforeAfterAssocs);
 				}
-				if(resources != null && resources.size()>0) {
+				if(resources != null && !resources.isEmpty()) {
 					TransactionSupportUtil.bindResource(KEY_QUEUE_UPDATED_STATUS + assocRef.getSourceRef(),resources); 
 				}
 				queueNode(KEY_QUEUE_UPDATED, assocRef.getSourceRef());			
@@ -326,7 +347,7 @@ NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.OnCreateAssociationP
 					Pair <List<Pair<NodeRef,Serializable>>,List<Pair<NodeRef,Serializable>>> beforeAfterAssocs = new Pair<List<Pair<NodeRef,Serializable>>, List<Pair<NodeRef,Serializable>>>(beforeAssocs, null);
 					resources.put(type, beforeAfterAssocs);
 				}
-				if(resources != null && resources.size()>0) {
+				if(resources != null && !resources.isEmpty()) {
 					TransactionSupportUtil.bindResource(KEY_QUEUE_UPDATED_STATUS + assocRef.getSourceRef(),resources); 
 				}
 				queueNode(KEY_QUEUE_UPDATED, assocRef.getSourceRef());			
@@ -412,6 +433,9 @@ NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.OnCreateAssociationP
 				case KEY_QUEUE_CREATED:
 					registerActivity(nodeRef, type, ActivityEvent.Create);
 					break;
+				case KEY_QUEUE_ADDED_TPL_ASPECT:
+					registerActivity(nodeRef, type, null);
+					break;
 				default:
 					if (key.contains(KEY_QUEUE_UPDATED_STATUS + DELIMITER)) {
 						String[] strState = pattern.split(key);
@@ -438,7 +462,6 @@ NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.OnCreateAssociationP
 	}
 
 	private void registerActivity(NodeRef actionedUponNodeRef, QName type, ActivityEvent activityEvent) {
-
 		NodeRef entityNodeRef = entityActivityService.getEntityNodeRefForActivity(actionedUponNodeRef, type);
 
 		if ((entityNodeRef != null) && nodeService.exists(entityNodeRef)) {
@@ -460,6 +483,8 @@ NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.OnCreateAssociationP
 						entityActivityService.postEntityActivity(actionedUponNodeRef, ActivityType.Entity,
 								activityEvent, TransactionSupportUtil.getResource(KEY_QUEUE_UPDATED_STATUS + actionedUponNodeRef.toString()));
 					}
+				} else if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITY_V2)) {
+					entityActivityService.clearAllActivities(entityNodeRef);
 				}
 			} finally {
 				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
@@ -467,5 +492,4 @@ NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.OnCreateAssociationP
 		}
 
 	}
-
 }
