@@ -31,6 +31,7 @@ import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
@@ -74,7 +75,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 		logger.debug("\t==== Calculate ingredient list of " + formulatedProduct.getName());
 
-		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)) {
+		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) || formulatedProduct instanceof ProductSpecificationData) {
 			return true;
 		}
 

@@ -32,7 +32,10 @@
 			<language locale="en_CA">English - Canada</language>
 			<language locale="en_US">English - United States</language>
 			<language locale="en_AU">English - Australia</language>
+			<language locale="en_GH">English - Ghana</language>
 			<language locale="en_IN">English - India</language>
+			<language locale="en_KE">English - Kenya</language>
+			<language locale="en_NG">English - Nigeria</language>
 			<language locale="de">German</language>
 			<language locale="es">Spanish</language>
 			<language locale="es_MX">Spanish - Mexico</language>
@@ -41,6 +44,7 @@
 			<language locale="fr_CA">French - Canada</language>
 			<language locale="it">Italian</language>
 			<language locale="in_ID">Indonesian - Indonesia</language>
+			<language locale="iw_IL">Hebrew - Israel</language>
 			<language locale="ja_JP">Japanese - Japan</language>
 			<language locale="ko_KR">Korean - South Korea</language>
 			<language locale="ms_MY">Malay - Malaysia</language>
@@ -53,9 +57,18 @@
 			<language locale="pl">Polish</language>
 			<language locale="fi_FI">Finnish - Finland</language>
 			<language locale="th_TH">Thai - Thailand</language>
+			<language locale="tr_TR">Turkish - Turkey</language>
 			<language locale="zh_CN">Chinese (Simplified) - China</language>
 			<language locale="zh_HK">Chinese - Hong Kong</language>
 			<language locale="zh_SG">Chinese - Singapore</language>
+			<language locale="ar_AE">Arabic - United Arab Emirates</language>
+			<language locale="ar_BH">Arabic - Bahrain</language>
+			<language locale="ar_SA">Arabic - Saudi Arabia</language>
+			<language locale="ar_MA">Arabic - Morocco</language>
+			<language locale="ar_QA">Arabic - Qatar</language>
+			<language locale="ar_OM">Arabic - Oman</language>
+			<language locale="ar_KW">Arabic - Kuwait</language>
+			<language locale="ar_DZ">Arabic - Algeria</language>
 			
 			
 			<!-- Others can be use in language only way if country is same than language 

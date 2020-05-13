@@ -549,9 +549,11 @@ public class EntityReportServiceImpl implements EntityReportService {
 	}
 
 	private boolean isValidReportParams(String codeParams) {
-		String[] strParams = codeParams.split(REPORT_PARAM_SEPARATOR);
-		if ((strParams[0].equals("hide") || strParams[0].equals("show")) && ((strParams.length == 2) || (strParams.length == 3))) {
-			return true;
+		if(codeParams!=null && !codeParams.isEmpty()) {
+			String[] strParams = codeParams.split(REPORT_PARAM_SEPARATOR);
+			if ((strParams[0].equals("hide") || strParams[0].equals("show")) && ((strParams.length == 2) || (strParams.length == 3))) {
+				return true;
+			}
 		}
 		return false;
 	}
@@ -1140,6 +1142,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 					logger.debug("Create new report document " + documentName + " (" + documentNodeRef + ")");
 				}
 
+				
 				if (documentNodeRef == null) {
 					documentNodeRef = fileFolderService.create(documentsFolderNodeRef, documentName, ReportModel.TYPE_REPORT).getNodeRef();
 				}

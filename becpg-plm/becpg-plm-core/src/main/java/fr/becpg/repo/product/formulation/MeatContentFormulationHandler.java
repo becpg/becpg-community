@@ -12,6 +12,7 @@ import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.meat.MeatContentData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
@@ -42,7 +43,8 @@ public class MeatContentFormulationHandler extends FormulationBaseHandler<Produc
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 
-		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)) {
+		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) 
+				|| (formulatedProduct instanceof ProductSpecificationData)) {
 			return true;
 		}
 

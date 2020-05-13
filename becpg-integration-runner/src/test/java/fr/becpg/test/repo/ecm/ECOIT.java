@@ -211,7 +211,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 	 * @throws Exception
 	 *             the exception
 	 */
-	// @Test
+	@Test
 	public void testECOService() throws Exception {
 
 		final NodeRef finishedProduct1NodeRef = createFinishedProduct("PF1");
@@ -375,7 +375,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 
 	}
 
-	// @Test
+	@Test
 	public void testDeleteNode() throws Exception {
 
 		final NodeRef finishedProduct1NodeRef = createFinishedProduct("PF1");
@@ -443,7 +443,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 
 	}
 
-	// @Test
+	@Test
 	public void testTwoToOne() throws Exception {
 
 		final NodeRef finishedProduct1NodeRef = createFinishedProduct("PF1");
@@ -569,9 +569,13 @@ public class ECOIT extends AbstractFinishedProductTest {
 
 			FinishedProductData productData = (FinishedProductData) alfrescoRepository.findOne(finishedProduct1NodeRef);
 
-			for (CompoListDataItem compoListDataItem : productData.getCompoList()) {
-				logger.info(nodeService.getProperty(compoListDataItem.getComponent(), ContentModel.PROP_NAME) + " "
-						+ compoListDataItem.getStartEffectivity() + " - " + compoListDataItem.getEndEffectivity());
+
+			
+			for(CompoListDataItem compoListDataItem : productData.getCompoList()) {
+				logger.info(nodeService.getProperty(compoListDataItem.getComponent(),ContentModel.PROP_NAME)
+						+" "+compoListDataItem.getStartEffectivity() + " - " +compoListDataItem.getEndEffectivity());
+				
+
 
 			}
 
@@ -593,9 +597,13 @@ public class ECOIT extends AbstractFinishedProductTest {
 
 			FinishedProductData productData = (FinishedProductData) alfrescoRepository.findOne(finishedProduct1NodeRef);
 
-			for (CompoListDataItem compoListDataItem : productData.getCompoList()) {
-				logger.info(nodeService.getProperty(compoListDataItem.getComponent(), ContentModel.PROP_NAME) + " "
-						+ compoListDataItem.getStartEffectivity() + " - " + compoListDataItem.getEndEffectivity());
+
+			
+			for(CompoListDataItem compoListDataItem : productData.getCompoList()) {
+				logger.info(nodeService.getProperty(compoListDataItem.getComponent(),ContentModel.PROP_NAME)
+						+" "+compoListDataItem.getStartEffectivity() + " - " +compoListDataItem.getEndEffectivity());
+				
+
 
 			}
 
@@ -701,6 +709,8 @@ public class ECOIT extends AbstractFinishedProductTest {
 			ChangeOrderData dbECOData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef1);
 			assertNotNull("check ECO exist in DB", dbECOData);
 			assertNotNull("Check WUsed list", dbECOData.getWUsedList());
+			
+		
 
 			assertEquals("Check 3 WUsed are impacted", 3, dbECOData.getWUsedList().size());
 
@@ -752,7 +762,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 	 * @throws Exception
 	 *             the exception
 	 */
-	// @Test
+	@Test
 	public void testECOInMultiLeveCompo() throws Exception {
 		final NodeRef finishedProduct1NodeRef = createFinishedProduct("PF1");
 		final NodeRef finishedProduct2NodeRef = createFinishedProduct("PF2");
@@ -1016,7 +1026,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 
 	}
 
-	// @Test
+	@Test
 	public void testReformulate() throws Exception {
 		final NodeRef finishedProduct1NodeRef = createFinishedProduct("PF1");
 		final NodeRef testNodeRef = getTestFolderNodeRef();

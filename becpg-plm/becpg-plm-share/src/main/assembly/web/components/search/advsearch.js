@@ -316,18 +316,18 @@
 									// control will handle it
 									element.value = savedValue;
 								}
-							} else if (name.indexOf("assoc_") != 0) {
+							} else if (name.indexOf("assoc_") == 0 && name.indexOf("_added") > 0) {
+								element.value = savedValue;
+								
+								var cleanElementId = element.id.split("-")[0];
+	
+								if(Dom.get(cleanElementId + "-autocomplete") != null){
+									Bubbling.fire(cleanElementId + "refreshContent", savedValue, this );
+								}
+							} else if(name.indexOf("assoc_") != 0){
 								element.value = savedValue;
 							}
 							
-							var cleanElementId = element.id.split("-")[0];
-							var autocompleteId = cleanElementId + "-autocomplete";
-							var autocompleteElement = Dom.get(autocompleteId);
-							
-							if(autocompleteElement != null){
-								element.value = savedValue;
-								Bubbling.fire(cleanElementId + "refreshContent", savedValue, this );
-							}
 
 							// reverse value setting doesn't
 							// work with

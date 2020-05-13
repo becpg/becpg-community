@@ -71,17 +71,17 @@ RUN set -x && \
 #workflow-reporting-repo 
 RUN set -x && \
     curl --silent --location \
-      https://readonly:YLdy9W5v@www.becpg.fr/becpg-repo/releases/addons/workflow-reporting-repo-1.0.0.amp  \
-      -o /root/amp/workflow-reporting-repo-1.0.0.amp && \
+      https://readonly:YLdy9W5v@www.becpg.fr/becpg-repo/releases/addons/workflow-reporting-repo-1.0.1.amp  \
+      -o /root/amp/workflow-reporting-repo-1.0.1.amp && \
     java -jar /root/alfresco-mmt.jar install /root/amp/ webapps/alfresco -nobackup -directory && \
-    rm /root/amp/workflow-reporting-repo-1.0.0.amp      
+    rm /root/amp/workflow-reporting-repo-1.0.1.amp      
 
 RUN set -x && \
     curl --silent --location \
-      https://readonly:YLdy9W5v@www.becpg.fr/becpg-repo/releases/addons/workflow-reporting-share-1.0.0.amp  \
-      -o /root/amp/workflow-reporting-share-1.0.0.amp && \
+      https://readonly:YLdy9W5v@www.becpg.fr/becpg-repo/releases/addons/workflow-reporting-share-1.0.1.amp  \
+      -o /root/amp/workflow-reporting-share-1.0.1.amp && \
     java -jar /root/alfresco-mmt.jar install /root/amp/ webapps/share -nobackup -directory && \
-    rm /root/amp/workflow-reporting-share-1.0.0.amp     
+    rm /root/amp/workflow-reporting-share-1.0.1.amp     
     
 
 #Javascript console

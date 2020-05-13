@@ -26,6 +26,7 @@ import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -45,7 +46,8 @@ public class CompositionQtyCalculatingFormulationHandler extends FormulationBase
 
 		logger.debug("Composition calculating visitor");
 
-		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)) {
+		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)
+				|| formulatedProduct instanceof ProductSpecificationData) {
 			return true;
 		}
 		

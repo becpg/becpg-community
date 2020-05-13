@@ -35,10 +35,12 @@ public class DeleteEntityWebScript extends AbstractEntityWebScript {
 		
 		NodeRef entityNodeRef = findEntity(req);
 		
-		logger.debug("Deleting entity: "+entityNodeRef);
+		if(logger.isDebugEnabled()) {
+			logger.debug("Deleting entity: "+entityNodeRef);
+		}
 		nodeService.deleteNode(entityNodeRef);
 		
-		sendOKStatus(entityNodeRef,resp);
+		sendOKStatus(entityNodeRef,resp ,getFormat(req));
 		
 	}
 
