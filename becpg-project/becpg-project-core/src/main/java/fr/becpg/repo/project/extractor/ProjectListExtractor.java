@@ -236,7 +236,6 @@ public class ProjectListExtractor extends ActivityListExtractor {
 
 				} else 
 
-				
 				if (VIEW_MY_PROJECTS.equals(dataListFilter.getFilterId())) {
 					String userName = AuthenticationUtil.getFullyAuthenticatedUser();
 
