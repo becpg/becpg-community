@@ -22,7 +22,9 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 
+import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.transaction.TransactionService;
 
 import fr.becpg.common.BeCPGException;
 
@@ -142,6 +144,11 @@ public interface RemoteEntityService {
 	 */
 	void addOrUpdateEntityData(NodeRef entityNodeRef, InputStream inputStream, RemoteEntityFormat format) throws BeCPGException;
 
+	/**
+	 * Accessors
+	 */
+	TransactionService getTransactionService(); 
 	
+	BehaviourFilter getPolicyBehaviourFilter(); 
 
 }

@@ -124,6 +124,17 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 		getEntity(entityNodeRef, out, format, null, null);
 	}
 
+	
+	public TransactionService getTransactionService() {
+		return transactionService;
+	}
+
+	public BehaviourFilter getPolicyBehaviourFilter() {
+		return policyBehaviourFilter;
+	}
+
+
+
 	@Override
 	public void getEntity(NodeRef entityNodeRef, OutputStream out, RemoteEntityFormat format, List<String> fields, List<String> lists)
 			throws BeCPGException {
@@ -214,11 +225,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 				watch = new StopWatch();
 				watch.start();
 			}
-			return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-
-				// Only for transaction do not reenable it
-				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-				policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
+		
 				try {
 					if (RemoteEntityFormat.json.equals(format)) {
 						ImportEntityJsonVisitor jsonEntityVisitor = new ImportEntityJsonVisitor(entityDictionaryService, namespaceService,
@@ -237,7 +244,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 					logger.error("Cannot create or update entity :" + entityNodeRef + " at format " + format, e);
 					throw new BeCPGException("Cannot create or update entity :" + entityNodeRef + " at format " + format, e);
 				}
-			}, false, false);
+		
 
 		} finally {
 			if (logger.isDebugEnabled() && (watch != null)) {

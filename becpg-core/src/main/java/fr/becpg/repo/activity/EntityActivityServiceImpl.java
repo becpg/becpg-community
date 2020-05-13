@@ -665,7 +665,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 						}
 						data.put(PROP_PROPERTIES, new JSONArray(properties));
 					}
-									
+
 					if (!activityType.equals(ActivityType.Entity) || !activityEvent.equals(ActivityEvent.Update) || updatedProperties != null) {
 						activityListDataItem.setActivityType(activityType);
 						activityListDataItem.setActivityData(data.toString());
@@ -770,15 +770,41 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 	@Override
 	public void cleanActivities() {
+		List<NodeRef> entityTplNodeRefs = getEntityTplToPurge();
+		if (logger.isDebugEnabled()) {
+			logger.debug("Clean activities, Number of entity templates: " + entityTplNodeRefs.size());
+		}
+		for (NodeRef entityTplNodeRef : entityTplNodeRefs) {
+			clearAllActivities(entityTplNodeRef);
+		}
+
 		List<NodeRef> entityNodeRefs = getEntitiesToPurge();
 		if (logger.isDebugEnabled()) {
 			logger.debug("Clean activities, Number of entities: " + entityNodeRefs.size());
 		}
 		doInBatch(entityNodeRefs, 10);
 	}
-	
+
+	public void clearAllActivities(NodeRef entityTplNodeRef){
+		try {
+			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+			NodeRef activityListNodeRef = getActivityList(entityTplNodeRef);
+			if (activityListNodeRef != null) {
+				List<NodeRef> activityListDataItemNodeRefs = entityListDAO.getListItems(activityListNodeRef,
+						BeCPGModel.TYPE_ACTIVITY_LIST);
+				for (NodeRef activityItemNodeRef : activityListDataItemNodeRefs) {
+					nodeService.addAspect(activityItemNodeRef, ContentModel.ASPECT_TEMPORARY, null);
+					nodeService.deleteNode(activityItemNodeRef);
+				}
+			}
+		} finally {
+			policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+		}
+
+	}
+
 	private void doInBatch(final List<NodeRef> entityNodeRefs, final int batchSize) {
-		
+
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
 			watch = new StopWatch();
@@ -786,7 +812,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		}
 
 		L2CacheSupport.doInCacheContext(() -> {
-			
+
 			for (final List<NodeRef> subList : Lists.partition(entityNodeRefs, batchSize)) {
 				RunAsWork<Object> actionRunAs = () -> {
 					RetryingTransactionCallback<Object> actionCallback = () -> {
@@ -796,28 +822,29 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 								if (logger.isDebugEnabled()) {
 									logger.debug("group activities of entity : " + entityNodeRef);
 								}
-								
+
 								NodeRef activityListNodeRef = getActivityList(entityNodeRef);
 								if (activityListNodeRef != null) {
-									
+
 									Set<String> users = new HashSet<>();
 									Date cronDate = new Date();
+
 									// Get Activity list ordered by the date of creation
 									List<NodeRef> activityListDataItemNodeRefs = entityListDAO.getListItems(activityListNodeRef,
 											BeCPGModel.TYPE_ACTIVITY_LIST, SORT_MAP);
 									Collections.reverse(activityListDataItemNodeRefs);
-									
+
 									int nbrActivity = activityListDataItemNodeRefs.size();
 									// Keep the first 50 activities
 									activityListDataItemNodeRefs = activityListDataItemNodeRefs.subList(
 											nbrActivity > MAX_PAGE ? MAX_PAGE : 0, nbrActivity > MAX_PAGE ? nbrActivity : 0);
-									
+
 									nbrActivity = activityListDataItemNodeRefs.size();
-									
+
 									if (logger.isDebugEnabled()) {
 										logger.debug("nbrActivity: " + nbrActivity);
 									}
-									
+
 									// Clean activities which are not in the first page.
 									if (nbrActivity > 0) {
 										Map<ActivityType, List<NodeRef>> activitiesByType = new HashMap<>();
@@ -825,23 +852,23 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 										int activityInPage = 0;
 										boolean hasFormulation = false;
 										boolean hasReport = false;
-										
+
 										for (NodeRef activityItemNodeRef : activityListDataItemNodeRefs) {
 											if (activityInPage == MAX_PAGE) {
 												hasFormulation = false;
 												hasReport = false;
 												activityInPage = 0;
 											}
-											
+
 											Date created = (Date) nodeService.getProperty(activityItemNodeRef,
 													ContentModel.PROP_CREATED);
 											if (cronDate.after(created)) {
 												cronDate = created;
 											}
-											
+
 											activity = alfrescoRepository.findOne(activityItemNodeRef);
 											ActivityType activityType = activity.getActivityType();
-											
+
 											if ((activityType.equals(ActivityType.Formulation) && hasFormulation)
 													|| (activityType.equals(ActivityType.Report) && hasReport)) {
 												nodeService.addAspect(activityItemNodeRef, ContentModel.ASPECT_TEMPORARY, null);
@@ -861,7 +888,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 												users.add(activity.getUserId());
 											}
 										}
-										
+
 										List<NodeRef> dlActivities = activitiesByType.get(ActivityType.Datalist);
 										if (dlActivities != null) {
 											// Group list by day/week/month/year
@@ -877,27 +904,27 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 									}
 								}
 							}
-							
+
 						} catch (Exception e) {
 							if (e instanceof ConcurrencyFailureException) {
-																throw (ConcurrencyFailureException) e;
-															}
+								throw (ConcurrencyFailureException) e;
+							}
 							logger.error(e,e);
 						} finally {
 							logger.debug("Purge terminated with sucess: ");
 							policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
 						}
-						
-						
-						
+
+
+
 						return null;
 					};
 					return transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback, false, true);
 				};
 				AuthenticationUtil.runAsSystem(actionRunAs);
-				
+
 			}
-			
+
 		}, false, true);
 
 		if (logger.isDebugEnabled() && watch!=null) {
@@ -908,7 +935,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 	// Group activities
 	private List<NodeRef> group(NodeRef entityNodeRef, List<NodeRef> activitiesNodeRefs, Set<String> users,
-		int timePeriod, Date cronDate) {
+			int timePeriod, Date cronDate) {
 		// Ignore the last day/week/month/year
 		Calendar maxLimit = Calendar.getInstance();
 		maxLimit.setTime(new Date());
@@ -1002,13 +1029,25 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		}
 		return null;
 	}
-	
+
 	private List<NodeRef> getEntitiesToPurge(){
 		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_ENTITY_V2)
+					.excludeAspect(BeCPGModel.ASPECT_ENTITY_TPL)
 					.excludeVersions()
 					.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED);
 			return queryBuilder.list();
 		}, false, true);
 	}
+
+	private List<NodeRef> getEntityTplToPurge(){
+		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_ENTITY_V2)
+					.withAspect(BeCPGModel.ASPECT_ENTITY_TPL)
+					.excludeVersions()
+					.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED);
+			return queryBuilder.list();
+		}, false, true);
+	}
+
 }

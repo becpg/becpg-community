@@ -69,7 +69,7 @@
 		<property name="useBrowserLocale" value="${beCPG.multilinguale.useBrowserLocale}"/>
 		<property name="nodeService" ref="nodeService"/>
 		<property name="entityListDAO" ref="entityListDAO" />
-               <property name="showUnauthorizedWarning" value="${beCPG.licence.showWarning}"></property>
+		<property name="showUnauthorizedWarning" value="${beCPG.licence.showWarning}"></property>
 	</bean>
 	
 	<bean id="pdfScriptHelper" parent="baseJavaScriptExtension" class="fr.becpg.repo.jscript.PDFScriptHelper">
