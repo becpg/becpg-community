@@ -1,5 +1,6 @@
 package fr.becpg.repo.product.requirement;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import fr.becpg.repo.product.data.ProductData;
@@ -18,7 +19,7 @@ public class PhysicoRequirementScanner extends SimpleListRequirementScanner<Phys
 	
 
 	protected List<PhysicoChemListDataItem> getDataListVisited(ProductData partProduct) {
-		return partProduct.getPhysicoChemList();
+		return partProduct.getPhysicoChemList()!=null ? partProduct.getPhysicoChemList() : new ArrayList<>();
 	}
 
 
