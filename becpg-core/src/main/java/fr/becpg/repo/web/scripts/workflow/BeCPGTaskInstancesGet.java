@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -43,16 +42,13 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 	public static final String PARAM_SEARCH = "q";
 	public static final String PARAM_SORT = "sort";
 	public static final String PARAM_DIR = "dir";
-	private static final QName QNAME_INITIATOR = QName.createQName("wf","initiator");
-	
+	private static final QName QNAME_INITIATOR = QName.createQName("wf", "initiator");
 
 	private AttributeExtractorService attributeExtractorService;
-	
 
 	public void setAttributeExtractorService(AttributeExtractorService attributeExtractorService) {
 		this.attributeExtractorService = attributeExtractorService;
 	}
-
 
 	@Override
 	protected Map<String, Object> buildModel(WorkflowModelBuilder modelBuilder, WebScriptRequest req, Status status, Cache cache) {
@@ -81,13 +77,13 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 
 		// get list of properties to include in the response
 		List<String> tmp = getProperties(req);
-		List<String> properties = new LinkedList<String>();
-		List<String> extraProperties = new LinkedList<String>();
-		
-		for (Iterator<String> iterator = tmp.iterator(); iterator.hasNext();) {
-			String prop = (String) iterator.next();
-			if(prop.startsWith("extra_")) {
-				extraProperties.add(prop.replaceAll("extra_", "").replace("_",":"));
+		List<String> properties = new LinkedList<>();
+		List<String> extraProperties = new LinkedList<>();
+
+		for (String string : tmp) {
+			String prop = string;
+			if (prop.startsWith("extra_")) {
+				extraProperties.add(prop.replaceAll("extra_", "").replace("_", ":"));
 			} else {
 				properties.add(prop);
 			}
@@ -155,10 +151,10 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 
 				Comparator<WorkflowTask> taskComparator = new WorkflowTaskDueAscComparator();
 				if (sortProp != null) {
-					if(QNAME_INITIATOR.equals(sortProp)) {
+					if (QNAME_INITIATOR.equals(sortProp)) {
 						taskComparator = new WorkflowInitiatorComparator(orderAsc);
 					} else {
-	
+
 						DataTypeDefinition type = dictionaryService.getProperty(sortProp).getDataType();
 						if (String.class.getName().equals(type.getJavaClassName())) {
 							taskComparator = new WorkflowStringComparator(sortProp, orderAsc);
@@ -199,7 +195,7 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 					// items we need. This will
 					// drastically improve performance over paging after
 					// building the model
-					results.add(buildbeCPGModel(modelBuilder, task, properties,extraProperties));
+					results.add(buildbeCPGModel(modelBuilder, task, properties, extraProperties));
 				}
 			}
 		}
@@ -217,30 +213,33 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 		return model;
 	}
 
+	private Map<String, Object> buildbeCPGModel(WorkflowModelBuilder modelBuilder, WorkflowTask task, List<String> properties,
+			List<String> extraProperties) {
+		Map<String, Object> ret = modelBuilder.buildSimple(task, properties);
 
-	private Map<String, Object> buildbeCPGModel(WorkflowModelBuilder modelBuilder, WorkflowTask task, List<String> properties, List<String> extraProperties) {
-		 Map<String, Object> ret = modelBuilder.buildSimple(task, properties);
+		if (!extraProperties.isEmpty()) {
 
-		 if(!extraProperties.isEmpty()) {
-		 
-		  NodeRef entityNodeRef =  (NodeRef) task.getProperties().get(BeCPGModel.ASSOC_WORKFLOW_ENTITY);
-		  
-		  if(entityNodeRef!=null && nodeService.exists(entityNodeRef)) {
-			  
-			  JSONObject tmp =  new JSONObject(attributeExtractorService.extractNodeData(entityNodeRef, nodeService.getType(entityNodeRef), extraProperties, AttributeExtractorService.AttributeExtractorMode.JSON));
-			  
-			  ret.put("extra",tmp.toString());
-			  
-		  }
-		 }
-		 
+			NodeRef entityNodeRef = (NodeRef) task.getProperties().get(BeCPGModel.ASSOC_WORKFLOW_ENTITY);
+
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("Add extra properties for :" + entityNodeRef);
+			}
+
+			if ((entityNodeRef != null) && nodeService.exists(entityNodeRef)) {
+
+				JSONObject tmp = new JSONObject(attributeExtractorService.extractNodeData(entityNodeRef, nodeService.getType(entityNodeRef),
+						extraProperties, AttributeExtractorService.AttributeExtractorMode.JSON));
+
+				ret.put("extra", tmp.toString());
+
+			}
+		}
+
 		return ret;
 	}
 
-
-
 	private QName extractSort(String parameter) {
-	
+
 		if (parameter != null) {
 			switch (parameter) {
 			case "id":
@@ -252,7 +251,7 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 			case "path":
 				return WorkflowModel.PROP_DUE_DATE;
 			case "completionDate":
-				return WorkflowModel.PROP_COMPLETION_DATE;	
+				return WorkflowModel.PROP_COMPLETION_DATE;
 			case "description":
 				return QNAME_INITIATOR;
 			default:
@@ -277,8 +276,6 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 		}
 		return Collections.emptyList();
 	}
-	
-	
 
 	/**
 	 * Retrieves the pooledTasks parameter.
@@ -527,7 +524,7 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 
 		private boolean orderAsc;
 
-		public WorkflowInitiatorComparator( boolean orderAsc) {
+		public WorkflowInitiatorComparator(boolean orderAsc) {
 
 			this.orderAsc = orderAsc;
 		}
@@ -538,14 +535,14 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 			NodeRef n1 = o1.getPath().getInstance().getInitiator();
 			NodeRef n2 = o2.getPath().getInstance().getInitiator();
 			String s1 = null, s2 = null;
-			
-			if(n1!=null) {
-				s1 = nodeService.getProperty(n1, ContentModel.PROP_FIRSTNAME)+ " "+nodeService.getProperty(n1, ContentModel.PROP_LASTNAME);
+
+			if (n1 != null) {
+				s1 = nodeService.getProperty(n1, ContentModel.PROP_FIRSTNAME) + " " + nodeService.getProperty(n1, ContentModel.PROP_LASTNAME);
 			}
-			if(n2!=null) {
-				s2 = nodeService.getProperty(n2, ContentModel.PROP_FIRSTNAME)+ " "+ nodeService.getProperty(n1, ContentModel.PROP_LASTNAME);
+			if (n2 != null) {
+				s2 = nodeService.getProperty(n2, ContentModel.PROP_FIRSTNAME) + " " + nodeService.getProperty(n1, ContentModel.PROP_LASTNAME);
 			}
-			
+
 			s1 = s1 == null ? "" : s1;
 			s2 = s2 == null ? "" : s2;
 
@@ -554,7 +551,5 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 		}
 
 	}
-	
-	
-	
+
 }
