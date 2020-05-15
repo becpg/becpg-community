@@ -55,7 +55,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.StopWatch;
 
-
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityDictionaryService;
@@ -79,7 +78,7 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 	private NamespaceService namespaceService;
 
 	private static Set<QName> ignoredAssocs = new HashSet<>();
-	
+
 	private Set<String> cacheNames = ConcurrentHashMap.newKeySet();
 
 	private QNameDAO qnameDAO;
@@ -251,7 +250,7 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 
 	private List<NodeRef> getChildAssocsImpl(final NodeRef nodeRef, final QName qName, final QName childType, final Map<String, Boolean> sortProps) {
 
-		if ((sortProps != null) && !sortProps.isEmpty() && !isDefaultSort(sortProps)) {
+		if ((childType != null) && (sortProps != null) && !sortProps.isEmpty() && !isDefaultSort(sortProps)) {
 			// No cache if specific sort
 			return dbChildAssocSearch(nodeRef, qName, childType, sortProps);
 		}
@@ -271,9 +270,7 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 
 		}, true);
 
-		if ((sortProps == null) || sortProps.isEmpty()) {
-			ret.sort(new CommonDataListSort(nodeService));
-		}
+		ret.sort(new CommonDataListSort(nodeService));
 
 		return ret;
 	}
@@ -453,8 +450,10 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 			+ " join alf_node_assoc assoc on ( dataListItem.id = assoc.source_node_id ) "
 			+ " join alf_node targetNode on (targetNode.id = assoc.target_node_id) "
 			+ " join alf_store targetNodeStore on (  targetNodeStore.id = targetNode.store_id and targetNodeStore.protocol= ? and targetNodeStore.identifier=?) "
+			+ " left join alf_node_aspects q1 on (q1.qname_id = ? and q1.node_id=entity.id)"
+			+ " left join alf_node_aspects q2 on (q2.qname_id = ? and q2.node_id=dataListItem.id)"
 			+ " where  assoc.type_qname_id=?  "
-			+ " and NOT EXISTS (SELECT NULL from alf_node_aspects where qname_id = ? and (node_id=entity.id or node_id= dataListItem.id)) ";
+			+ " and q1.qname_id IS NULL and q2.qname_id IS NULL ";
 
 	/**
 	 *
@@ -567,9 +566,10 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 
 					statement.setString(1, storeRef.getProtocol());
 					statement.setString(2, storeRef.getIdentifier());
-					statement.setLong(3, typeQNameId);
+					statement.setLong(3, aspectQnameId);
 					statement.setLong(4, aspectQnameId);
-
+					statement.setLong(5, typeQNameId);
+					
 					try (java.sql.ResultSet res = statement.executeQuery()) {
 						while (res.next()) {
 							NodeRef entityNodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, res.getString("entity"));
