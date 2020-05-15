@@ -1,5 +1,6 @@
 package fr.becpg.repo.product.requirement;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import fr.becpg.repo.product.data.ProductData;
@@ -17,7 +18,7 @@ public class NutsRequirementScanner extends SimpleListRequirementScanner<NutList
 	}
 
 	protected List<NutListDataItem> getDataListVisited(ProductData partProduct) {
-		return partProduct.getNutList();
+		return partProduct.getNutList()!=null ? partProduct.getNutList() : new ArrayList<>();
 	}
 
 
