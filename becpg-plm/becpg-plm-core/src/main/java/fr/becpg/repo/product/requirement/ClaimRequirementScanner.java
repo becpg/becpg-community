@@ -62,7 +62,7 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 						}
 
 						if (add) {
-							addSpecificationUnclaimedLabelClaim(formulatedProduct, listDataItem, specDataItem.getLabelClaimValue() );
+							addSpecificationUnclaimedLabelClaim(ret, listDataItem, specDataItem.getLabelClaimValue() );
 						}
 
 					}
@@ -76,7 +76,7 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 					if (logger.isDebugEnabled()) {
 						logger.debug(extractName(specDataItem.getLabelClaim()) + " was not found, raising rclDataItem for spec");
 					}
-					addMissingLabelClaim(formulatedProduct, specDataItem);
+					addMissingLabelClaim(ret, specDataItem);
 				}
 			});
 		}
@@ -84,9 +84,9 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 		return ret;
 	}
 
-	private void addSpecificationUnclaimedLabelClaim(ProductData formulatedProduct, LabelClaimListDataItem labelClaim, String labelClaimValue) {
+	private void addSpecificationUnclaimedLabelClaim(List<ReqCtrlListDataItem> ret, LabelClaimListDataItem labelClaim, String labelClaimValue) {
 		MLText message = MLTextHelper.getI18NMessage(MESSAGE_NOT_CLAIM, extractName(labelClaim.getLabelClaim()), extractClaimValue(labelClaimValue));
-		formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, labelClaim.getLabelClaim(),
+		ret.add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, labelClaim.getLabelClaim(),
 				new ArrayList<NodeRef>(), RequirementDataType.Specification));
 		
 	}
@@ -95,9 +95,9 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 		return MLTextHelper.getI18NMessage("message.formulate.labelClaim.value."+labelClaimValue);
 	}
 
-	private void addMissingLabelClaim(ProductData formulatedProduct, LabelClaimListDataItem labelClaim) {
+	private void addMissingLabelClaim(List<ReqCtrlListDataItem> ret, LabelClaimListDataItem labelClaim) {
 		MLText message = MLTextHelper.getI18NMessage(LabelClaimFormulationHandler.MESSAGE_MISSING_CLAIM, extractName(labelClaim.getLabelClaim()));
-		formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, labelClaim.getLabelClaim(),
+		ret.add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, labelClaim.getLabelClaim(),
 				new ArrayList<NodeRef>(), RequirementDataType.Specification));
 	}
 
