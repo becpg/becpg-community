@@ -35,6 +35,7 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 import org.springframework.util.StopWatch;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityDictionaryService;
 
 public class EntityDictionnaryWebScript extends AbstractWebScript {
@@ -89,10 +90,18 @@ public class EntityDictionnaryWebScript extends AbstractWebScript {
 			JSONArray items = new JSONArray();
 			
 			List<AssociationDefinition> assocDefs = entityDictionaryService.getPivotAssocDefs(dataType);
-			if(assocDefs == null || assocDefs.isEmpty()){
-				//Try assocs on parent
-				assocDefs = entityDictionaryService.getPivotAssocDefs(dictionaryService.getClass(dataType).getParentName());
+			if(assocDefs == null ){
+				assocDefs = new java.util.LinkedList<>();
 			}
+			
+			QName parentQname = entityDictionaryService.getClass(dataType).getParentName();
+			
+			if(assocDefs.isEmpty() || (!BeCPGModel.TYPE_ENTITY_V2.equals(parentQname) 
+					&& entityDictionaryService.isSubClass(parentQname, BeCPGModel.TYPE_ENTITY_V2))) {
+				//Try assocs on parent
+				assocDefs.addAll(entityDictionaryService.getPivotAssocDefs(parentQname));
+			}
+			
 			
 			for (AssociationDefinition assocDef : assocDefs) {
 				if (assocDef.getTitle(dictionaryService) != null && assocDef.getSourceClass().getTitle(dictionaryService) != null) {
