@@ -204,7 +204,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		
 		
 		/**
-		 * Helper @beCPG.setAssocs($entity, $qname, $assocNodeRefs)
+		 * Helper @beCPG.setAssocs($nodeRef, $qname, $assocNodeRefs)
 		 * @param nodeRef
 		 * @param qname
 		 * @param assocNodeRefs
@@ -214,7 +214,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * Helper @beCPG.setAssoc($entity, $qname, $assocNodeRef)
+		 * Helper @beCPG.setAssoc($nodeRef, $qname, $assocNodeRef)
 		 * @param nodeRef
 		 * @param qname
 		 * @param assocNodeRef
@@ -224,7 +224,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 		
 		/**
-		 * Helper @beCPG.assocValue($entity, $qname)
+		 * Helper @beCPG.assocValue($nodeRef, $qname)
 		 *
 		 * @param nodeRef
 		 * @param qname
