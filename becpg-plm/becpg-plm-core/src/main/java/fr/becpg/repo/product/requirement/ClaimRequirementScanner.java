@@ -126,7 +126,7 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 
 	@Override
 	protected List<LabelClaimListDataItem> getDataListVisited(ProductData partProduct) {
-		return partProduct.getLabelClaimList();
+		return partProduct.getLabelClaimList() !=null ? partProduct.getLabelClaimList() : new ArrayList<>();
 	}
 
 	private String extractName(NodeRef labelClaim) {
