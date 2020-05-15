@@ -136,7 +136,6 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 
 			if (dataListFilter.isAllFilter() && entityDictionaryService.isSubClass(dataListFilter.getDataType(), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
 
-
 				if (logger.isDebugEnabled()) {
 					logger.debug("DataType to filter :" + dataListFilter.getDataType());
 				}
