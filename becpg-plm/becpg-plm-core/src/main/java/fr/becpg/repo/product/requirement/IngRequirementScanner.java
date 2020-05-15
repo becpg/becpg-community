@@ -264,7 +264,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 
 	@Override
 	protected List<ForbiddenIngListDataItem> getDataListVisited(ProductData partProduct) {
-		return ((ProductSpecificationData) partProduct).getForbiddenIngList();
+		return ((ProductSpecificationData) partProduct).getForbiddenIngList()!=null ? ((ProductSpecificationData) partProduct).getForbiddenIngList() : new ArrayList<>();
 	}
 
 	private boolean checkRuleMatchIng(IngListDataItem ingListDataItem, ForbiddenIngListDataItem fil) {

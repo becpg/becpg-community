@@ -91,7 +91,7 @@ public class AllergenRequirementScanner extends AbstractRequirementScanner<Aller
 
 
 	protected List<AllergenListDataItem> getDataListVisited(ProductData partProduct) {
-		return partProduct.getAllergenList();
+		return partProduct.getAllergenList()!=null ?  partProduct.getAllergenList() : new ArrayList<>();
 	}
 
 	
