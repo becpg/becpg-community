@@ -279,11 +279,10 @@ public class DecernisServiceImpl implements DecernisService {
 		return null;
 	}
 
-	private void deleteRecipe(String recipeId, String usage) {
+	private void deleteRecipe(String recipeId) {
 		Map<String, String> params = new HashMap<>();
 		params.put(COMPANY, companyName);
 		params.put(FORMULA, recipeId);
-		params.put(USAGE, usage);
 		params.put(MODULE, module);
 
 		restTemplate.exchange(serverUrl + "formulas/" + recipeId + "?current_company={company}", HttpMethod.DELETE, createEntity(null), String.class,
@@ -407,29 +406,29 @@ public class DecernisServiceImpl implements DecernisService {
 			if ((countries != null) && (usages != null) && !usages.isEmpty() && !countries.isEmpty()) {
 				JSONObject data = getIngredients(product, ret);
 				if (data != null && data.has("ingredients")) {
-					for (String usage : usages) {
-						String recipeId = sendRecipe(data);
-						if (recipeId != null) {
-							try {
+					String recipeId = sendRecipe(data);
+					if (recipeId != null) {
+						try {
+							for (String usage : usages) {
 								JSONObject analysisResults = recipeAnalysis(recipeId, countries, usage.trim());
 								if (analysisResults != null) {
 									ret.addAll(createReqCtrl(countries, analysisResults));
 								} else {
 									throw new FormulateException("Error analysing recipe");
 								}
-							} finally {
-								deleteRecipe(recipeId, usage.trim());
 							}
-						} else {
-							throw new FormulateException("Error sending recipe");
+						} finally {
+							deleteRecipe(recipeId);
 						}
+					} else {
+						throw new FormulateException("Error sending recipe");
 					}
+
 				}
 
 			} else {
 				throw new IllegalStateException("countries or usage cannot be null");
 			}
-
 		} catch (Exception e) {
 			logger.error(e, e);
 			throw new FormulateException("Unexpected decernis error", e);
