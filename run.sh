@@ -119,6 +119,9 @@ case "$1" in
   test)
     test
     ;;
+  visualvm)
+    jvisualvm --openjmx localhost:9091
+    ;;
   *)
-    echo "Usage: $0 {install|build_start|build_test|start|stop|purge|tail|test|deploy_fast}"
+    echo "Usage: $0 {install|build_start|build_test|start|stop|purge|tail|test|deploy_fast|visualvm}"
 esac

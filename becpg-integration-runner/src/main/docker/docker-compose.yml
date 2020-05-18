@@ -7,11 +7,20 @@ services:
   becpg:
     image: ${docker.becpg.url}/becpg-${becpg.dockerbuild.name}:${docker.becpg.tag}
     environment:
-      CATALINA_OPTS: -Xmx4G -Duser.language=fr -Duser.country=FR -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:8888
+      CATALINA_OPTS: "-Xmx4G -Duser.language=fr -Duser.country=FR 
+                     -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:8888 
+                     -Dcom.sun.management.jmxremote.rmi.port=9091
+                     -Dcom.sun.management.jmxremote=true
+                     -Dcom.sun.management.jmxremote.port=9091
+                     -Dcom.sun.management.jmxremote.ssl=false
+                     -Dcom.sun.management.jmxremote.authenticate=false
+                     -Dcom.sun.management.jmxremote.local.only=false
+                     -Djava.rmi.server.hostname=127.0.0.1"
       JAVA_HOME: /usr/java/dcevm-11.0.1+8
     ports:
       - "8080:8080"
       - "8888:8888"  
+      - "9091:9091"
     volumes:
       - becpg_data:/usr/local/tomcat/data
       - ../../becpg-core/target/classes:/usr/local/tomcat/hotswap-agent/becpg-core/target/classes
