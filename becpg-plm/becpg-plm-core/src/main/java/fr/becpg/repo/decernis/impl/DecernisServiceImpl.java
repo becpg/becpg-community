@@ -195,10 +195,11 @@ public class DecernisServiceImpl implements DecernisService {
 					}
 
 					if (params.containsKey("query")) {
-						logger.debug("Look for ingredients in decernis by " + params.get("type") + ": "+ params.get("query"));
 
 						JSONObject jsonObject = new JSONObject(
 								restTemplate.exchange(url, HttpMethod.GET, createEntity(null), String.class, params).getBody());
+						logger.debug("Look for ingredients in decernis by " + params.get("type") + ": "+ params.get("query")
+						+ " " + jsonObject);
 						if (jsonObject.has("count") && (jsonObject.getInt("count") == 1) && jsonObject.has("results")) {
 							JSONArray results = jsonObject.getJSONArray("results");
 							rid = results.getJSONObject(0).getString("did");
@@ -237,11 +238,9 @@ public class DecernisServiceImpl implements DecernisService {
 			}
 		}
 
-		if (isEmpty) {
-			throw new FormulateException("No decernis ingredients found");
+		if (!isEmpty) {
+			ret.put("ingredients", ingredients);
 		}
-
-		ret.put("ingredients", ingredients);
 
 		return ret;
 
@@ -407,7 +406,7 @@ public class DecernisServiceImpl implements DecernisService {
 
 			if ((countries != null) && (usages != null) && !usages.isEmpty() && !countries.isEmpty()) {
 				JSONObject data = getIngredients(product, ret);
-				if (data != null) {
+				if (data != null && data.has("ingredients")) {
 					for (String usage : usages) {
 						String recipeId = sendRecipe(data);
 						if (recipeId != null) {
