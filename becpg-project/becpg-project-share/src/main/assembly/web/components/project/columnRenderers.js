@@ -251,6 +251,43 @@
 				}
 			});
 		   
+
+		   YAHOO.Bubbling.fire("registerDataGridRenderer", {
+		      propertyName : [ "pjt:tlTaskName" ],
+		      renderer : function(oRecord, data, label, scope) {
+		    	  var record = oRecord.getData();
+		    	  
+		    	  
+		      	return scope.getTaskTitle(record, record.itemData["dt_pjt_project"]!=null ? record.itemData["dt_pjt_project"].nodeRef : "" ,true);
+		      }
+
+		   });
+		   
+
+		   YAHOO.Bubbling.fire("registerDataGridRenderer", {
+		        propertyName : [ "pjt:tlState", "pjt:dlState" ],
+		        renderer : function(oRecord, data, label, scope) {
+		           return '<span class="' + "task-" + data.value.toLowerCase() + '" title="' + data.displayValue + '" />';
+		        }
+
+		     });
+		   
+		   
+		   YAHOO.Bubbling.fire("registerDataGridRenderer", {
+			   propertyName : "pjt:project",
+			   renderer : function(oRecord, data, label, scope, idx, length, elCell, oColumn) {
+					   var project = oRecord.getData("itemData")["dt_pjt_project"];
+					   return scope.getProjectTitleV2(project, false , oColumn);
+			   }
+			});
+		   
+		   
+		   YAHOO.Bubbling.fire("registerDataGridRenderer", {
+			   propertyName : "pjt:tlResources",
+			   renderer : function(oRecord, data, label, scope, idx, length) {
+					  return '<span class="resource-title"  >' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
+			   }
+			});
 		
 	}
 })();

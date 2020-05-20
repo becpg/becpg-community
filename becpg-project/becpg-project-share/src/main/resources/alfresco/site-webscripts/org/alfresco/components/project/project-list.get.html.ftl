@@ -1,5 +1,6 @@
 <@markup id="css" >
    <#include "../../modules/entity-datagrid/include/entity-datagrid.css.ftl"/>
+   <@link href="${url.context}/res/modules/custom-entity-datagrid/project-entity-datagrid.css" group="project-datalists" />
 
 	<@link href="${url.context}/res/components/project/jsgantt.css" group="project-list" />
 	<@link href="${url.context}/res/components/project/project-commons.css" group="project-list" />
