@@ -364,6 +364,8 @@
 				</field-visibility>
 			</form>
 		   -->
+		   
+		 
 			<form id="datagrid">
 				<field-visibility>
 					<show id="bcpg:code" />
@@ -413,6 +415,18 @@
 				</appearance>
 
 			</form>
+			<form id="sub-datagrid-projectList">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="bcpg:code"/>
+					<show id="pjt:projectState" />
+				    <show id="pjt:projectOverdue" />
+					<show id="pjt:projectStartDate" />
+					<show id="pjt:projectDueDate" />
+					<show id="pjt:projectState" />
+				</field-visibility>
+			</form>
+			
 			<form id="datagrid-simple">
 				<field-visibility>
 					<show id="bcpg:code" />
@@ -1312,6 +1326,56 @@
 					<show id="pjt:tlWorkflowInstance" />
 					<show id="fm:commentCount" force="true" />
 				</field-visibility>
+			</form>
+			
+			<form id="projectList">
+				<field-visibility>
+					<show id="bcpg:depthLevel" />
+					<show id="bcpg:parentLevel" />
+					<show id="pjt:subProjectRef" force="true" />
+					<show id="pjt:tlIsGroup" />
+					<show id="pjt:tlTaskName" />
+					<show id="entity_pjt:project_pjt:project" />
+					<show id="pjt:tlRealDuration" />
+					<show id="pjt:tlIsMilestone" />
+					<show id="pjt:tlState" />
+					<show id="pjt:tlResources" />
+					<show id="pjt:tlDuration" />
+					<show id="pjt:tlRealDuration" />
+					
+					
+					<!--  <show id="pjt:tlWork" />
+					<show id="pjt:tlLoggedTime" />
+					<show id="pjt:tlCapacity" />
+					<show id="pjt:expense" force="true" /> -->
+					
+					<show id="pjt:tlStart" />
+					<show id="pjt:tlEnd" />
+					<show id="pjt:completionPercent" />
+					<show id="pjt:tlTaskLegend" />
+					<show id="pjt:tlPrevTasks" />
+					<show id="fm:commentCount" force="true" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:depthLevel" label="hidden" />
+					<field id="bcpg:parentLevel" label="hidden" />
+					<field id="pjt:subProjectRef" label="hidden" />
+					<field id="pjt:tlIsGroup" label="hidden" />
+					<field id="pjt:tlPrevTasks" label="hidden" />
+					<field id="pjt:invoice" read-only="true" />
+					<field id="pjt:expense" read-only="true" />					
+					<field id="pjt:tlIsMilestone" label="hidden" />
+					<field id="pjt:tlStart" read-only="true" />
+					<field id="pjt:tlEnd" read-only="true" />
+					<field id="pjt:tlRealDuration" read-only="true" />
+					<field  id="entity_pjt:project_pjt:project"  label-id="becpg.forms.field.projects.datagrid.project.label" read-only="true" />
+					
+				<!--	<field id="pjt:tlCapacity" read-only="true" />
+					<field id="pjt:expense" read-only="true" />
+					<field id="pjt:tlLoggedTime" read-only="true" /> -->
+					<field id="pjt:tlTaskLegend" label="hidden" />
+					<field id="fm:commentCount" label="hidden" read-only="true" />
+				</appearance>
 			</form>
 		</forms>
 	</config>
