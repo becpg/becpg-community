@@ -59,9 +59,23 @@ var g; // gantt var
 
             });
 
-        }
-        else
-        {
+        } else if(view == "tasks"){
+        	 this.setOptions(
+        	            {
+        	                sortable : false,
+        	                localSort : true,
+        	                usePagination : true,
+        	                configurableColumns : false,
+        	                useFilter : true,
+        	                itemType : "pjt:taskList",
+        	                list : "projectList",
+        	                columnFormId: "projectList",
+        	                saveFieldUrl : Alfresco.constants.PROXY_URI + "becpg/bulkedit/save",
+        	                extraParams : "tasks"
+        	            });
+        	
+        	
+        } else {
             this
                     .setOptions(
                     {

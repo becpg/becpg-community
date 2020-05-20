@@ -2,39 +2,39 @@
    <actionSetToolbar>
       <action type="action-link" id="onActionDuplicate" permission="create" label="menu.selected-items.duplicate" />
       <action type="action-link" id="onActionDelete" permission="delete" label="menu.selected-items.delete" />
-     <!--  <action type="action-link" id="onActionUp" permission="sort" label="menu.selected-items.up" />
-      <action type="action-link" id="onActionDown" permission="sort" label="menu.selected-items.down" /> -->
+      <action type="action-link" id="onActionBulkEdit"  permission="edit,allPages" label="actions.bulk-edit" />
    </actionSetToolbar>
    <actionSetDataGrid>
-      <action type="action-link" id="onActionEdit" permission="edit" label="actions.edit" />
-      <action type="action-link" id="onActionDuplicate" permission="create" label="actions.duplicate-row" />
-      <action type="action-link" id="onActionDelete" permission="delete" label="actions.delete-row" />
+      <action type="action-link" id="onActionEdit" permission="edit" label="actions.edit"  />
+      <action type="action-link" id="onActionDuplicate" permission="create" label="actions.duplicate-row" list="dataTable"/>
+      <action type="action-link" id="onActionDelete" permission="delete" label="actions.delete-row"  list="dataTable"/>
       <action type="action-link" id="onActionShowComments" permission="edit" label="actions.comment" />
-      <action type="action-link" id="onActionShowProjectDetails"  label="link.title.project-details" />
-      <action type="action-link" id="onActionShowProjectFolder" label="link.title.open-folder" />
+      <action type="action-link" id="onActionShowProjectDetails"  label="link.title.project-details" list="dataTable"/>
+      <action type="action-link" id="onActionShowProjectFolder" label="link.title.open-folder"  list="dataTable"/>
    </actionSetDataGrid>
    	 <filters>
-      <filtermenu id="projects" data="Planned"  />
-      <filtermenu id="projects" data="InProgress" />
-      <filtermenu id="projects" data="OnHold"     />
-      <filtermenu id="projects" data="Cancelled"  />
-      <filtermenu id="projects" data="Completed"  />
-      <filtermenu id="my-projects" data=""  />
-      <filtermenu id="all"  data="" />
-      <filtermenu id="due" data="today"/>
-      <filtermenu id="due" data="tomorrow" />
-      <filtermenu id="due" data="next7Days"  />
-      <filtermenu id="due" data="overdue" />
-      <filtermenu id="due" data="noDate" />
-      <filtermenu id="started" data="last7Days" />
-      <filtermenu id="started" data="last14Days"  />
-      <filtermenu id="started" data="last28Days" />
-      <filtermenu id="cancelled" data="last7Days" />
-      <filtermenu id="cancelled" data="last14Days"  />
-      <filtermenu id="cancelled" data="last28Days" />
-      <filtermenu id="priority" data="1" />
-      <filtermenu id="priority" data="2" />
-      <filtermenu id="priority" data="3"  />	
+      <filtermenu id="projects" data="Planned" view="" />
+      <filtermenu id="projects" data="InProgress" view=""/>
+      <filtermenu id="projects" data="OnHold"     view=""/>
+      <filtermenu id="projects" data="Cancelled"  view=""/>
+      <filtermenu id="projects" data="Completed"  view=""/>
+      <filtermenu id="my-projects" data="" view="" />
+      <filtermenu id="my-tasks" data="" view="tasks" />
+      <filtermenu id="all"  data="" view=""/>
+      <filtermenu id="due" data="today" view="dataTable,gantt"/>
+      <filtermenu id="due" data="tomorrow" view="dataTable,gantt"/>
+      <filtermenu id="due" data="next7Days"  view="dataTable,gantt"/>
+      <filtermenu id="due" data="overdue" view="dataTable,gantt"/>
+      <filtermenu id="due" data="noDate" view="dataTable,gantt"/>
+      <filtermenu id="started" data="last7Days" view="dataTable,gantt"/>
+      <filtermenu id="started" data="last14Days"  view="dataTable,gantt"/>
+      <filtermenu id="started" data="last28Days" view="dataTable,gantt"/>
+      <filtermenu id="cancelled" data="last7Days" view="dataTable,gantt"/>
+      <filtermenu id="cancelled" data="last14Days"  view="dataTable,gantt"/>
+      <filtermenu id="cancelled" data="last28Days" view="dataTable,gantt"/>
+      <filtermenu id="priority" data="1" view="dataTable,gantt"/>
+      <filtermenu id="priority" data="2" view="dataTable,gantt"/>
+      <filtermenu id="priority" data="3"  view="dataTable,gantt"/>	
    </filters>
     <filters-parameters>
       <!--

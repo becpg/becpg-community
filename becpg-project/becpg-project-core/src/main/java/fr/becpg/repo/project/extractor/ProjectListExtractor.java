@@ -206,7 +206,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 					beCPGQueryBuilder.excludeProp(ProjectModel.PROP_TL_IS_EXCLUDE_FROM_SEARCH, Boolean.TRUE.toString());
 				}
 
-				if (VIEW_RESOURCES.equals(dataListFilter.getExtraParams())) {
+				if (VIEW_RESOURCES.equals(dataListFilter.getExtraParams()) || VIEW_TASKS.equals(dataListFilter.getExtraParams())) {
 					if (VIEW_PROJECTS.equals(dataListFilter.getFilterId())) {
 						beCPGQueryBuilder.clearFTSQuery();
 
@@ -279,7 +279,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 					}
 				}
 
-				if (VIEW_RESOURCES.equals(dataListFilter.getExtraParams())) {
+				if (VIEW_RESOURCES.equals(dataListFilter.getExtraParams())  || VIEW_TASKS.equals(dataListFilter.getExtraParams()) ) {
 
 					for (Iterator<NodeRef> iterator = results.iterator(); iterator.hasNext();) {
 						NodeRef nodeRef = iterator.next();
