@@ -479,9 +479,13 @@ public class ImportEntityXmlVisitor {
 									if (nodeRefMatcher.find() && !ContentModel.PROP_NAME.equals(currProp)) {
 										queueProperties(curNodeRef.peek(), currProp, currValue.toString());
 									} else {
-										if (ContentModel.PROP_NAME.equals(currProp)) {
-											serviceRegistry.getNodeService().setProperty(curNodeRef.peek(), currProp,
-													PropertiesHelper.cleanName(currValue.toString()));
+										if (ContentModel.PROP_NAME.equals(currProp) ) {
+											if(serviceRegistry.getNodeService().getChildByName(serviceRegistry.getNodeService().getPrimaryParent(curNodeRef.peek()).getParentRef(),
+													ContentModel.ASSOC_CONTAINS, PropertiesHelper.cleanName(currValue.toString())) == null) {
+											
+												serviceRegistry.getNodeService().setProperty(curNodeRef.peek(), currProp,
+														PropertiesHelper.cleanName(currValue.toString()));
+											}
 										} else {
 											if (RemoteEntityService.MLTEXT_TYPE.equals(type)) {
 												MLText mltext = new MLText();
