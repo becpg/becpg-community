@@ -32,12 +32,12 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import fr.becpg.config.format.FormatMode;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.datalist.MultiLevelDataListService;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
-import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorMode;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 
 public class MultiLevelExtractor extends SimpleExtractor {
@@ -173,7 +173,7 @@ public class MultiLevelExtractor extends SimpleExtractor {
 
 				if (RepoConsts.FORMAT_CSV.equals(dataListFilter.getFormat()) || RepoConsts.FORMAT_XLSX.equals(dataListFilter.getFormat())) {
 					ret.addItem(extractExport(
-							RepoConsts.FORMAT_XLSX.equals(dataListFilter.getFormat()) ? AttributeExtractorMode.XLSX : AttributeExtractorMode.CSV,
+							RepoConsts.FORMAT_XLSX.equals(dataListFilter.getFormat()) ? FormatMode.XLSX : FormatMode.CSV,
 							nodeRef, ret.getComputedFields(), props, cache));
 				} else {
 					ret.addItem(extractJSON(nodeRef, ret.getComputedFields(), props, cache));
@@ -188,12 +188,12 @@ public class MultiLevelExtractor extends SimpleExtractor {
 
 	@Override
 	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields,
-			AttributeExtractorMode mode, Map<QName, Serializable> properties, Map<String, Object> extraProps,
+			FormatMode mode, Map<QName, Serializable> properties, Map<String, Object> extraProps,
 			Map<NodeRef, Map<String, Object>> cache) {
 
 		Map<String, Object> tmp = super.doExtract(nodeRef, itemType, metadataFields, mode, properties, extraProps, cache);
 
-		if (AttributeExtractorMode.JSON.equals(mode)) {
+		if (FormatMode.JSON.equals(mode)) {
 			if (extraProps.get(PROP_DEPTH) != null) {
 				@SuppressWarnings("unchecked")
 				Map<String, Object> depth = (Map<String, Object>) tmp.get("prop_bcpg_depthLevel");
@@ -233,7 +233,7 @@ public class MultiLevelExtractor extends SimpleExtractor {
 
 				tmp.put("assoc_" + assocName.replaceFirst(":", "_"), attributeExtractorService.extractCommonNodeData(entityNodeRef));
 			}
-		} else if (AttributeExtractorMode.CSV.equals(mode) || AttributeExtractorMode.XLSX.equals(mode)) {
+		} else if (FormatMode.CSV.equals(mode) || FormatMode.XLSX.equals(mode)) {
 			if (extraProps.get(PROP_DEPTH) != null) {
 				tmp.put("prop_bcpg_depthLevel", extraProps.get(PROP_DEPTH).toString());
 			}
