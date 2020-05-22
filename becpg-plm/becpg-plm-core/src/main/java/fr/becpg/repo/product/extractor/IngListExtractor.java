@@ -8,13 +8,13 @@ import java.util.Map;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.springframework.extensions.surf.util.I18NUtil;
 
+import fr.becpg.config.format.FormatMode;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.impl.SimpleExtractor;
-import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorMode;
 
 public class IngListExtractor extends SimpleExtractor {
 
@@ -64,7 +64,7 @@ public class IngListExtractor extends SimpleExtractor {
 
 			tmp = new HashMap<>(3);
 			tmp.put("metadata", "double");
-			tmp.put("displayValue", attributeExtractorService.getPropertyFormats(AttributeExtractorMode.JSON).formatDecimal(totalQtyPerc));
+			tmp.put("displayValue", attributeExtractorService.getPropertyFormats(FormatMode.JSON, false).formatDecimal(totalQtyPerc));
 			tmp.put("value", totalQtyPerc);
 
 			totalNodeDataRow.put(TOTAL_KEY, tmp);

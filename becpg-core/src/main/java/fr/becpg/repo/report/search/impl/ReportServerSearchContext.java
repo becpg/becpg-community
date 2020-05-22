@@ -21,14 +21,11 @@ package fr.becpg.repo.report.search.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.config.mapping.AttributeMapping;
 import fr.becpg.config.mapping.CharacteristicMapping;
 import fr.becpg.config.mapping.FileMapping;
 
 public class ReportServerSearchContext {
-
-	private PropertyFormats propertyFormats;
 	
 	private List<AttributeMapping> attributeColumns = new ArrayList<>();
 	
@@ -36,14 +33,6 @@ public class ReportServerSearchContext {
 	
 	private List<FileMapping> fileColumns = new ArrayList<>();
 	
-	public PropertyFormats getPropertyFormats() {
-		return propertyFormats;
-	}
-
-	public void setPropertyFormats(PropertyFormats propertyFormats) {
-		this.propertyFormats = propertyFormats;
-	}
-
 	public List<AttributeMapping> getAttributeColumns() {
 		return attributeColumns;
 	}
@@ -69,7 +58,4 @@ public class ReportServerSearchContext {
 		this.fileColumns = fileColumns;
 	}
 	
-	public ReportServerSearchContext(){
-		propertyFormats = new PropertyFormats(false);
-	}
 }

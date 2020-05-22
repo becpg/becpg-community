@@ -34,13 +34,13 @@ import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.config.format.FormatMode;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.data.hierarchicalList.CompositeDataItem;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
-import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorMode;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
@@ -476,7 +476,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 * @return standard becpg number format
 		 */
 		public String formatNumber(Number number) {
-			return attributeExtractorService.getPropertyFormats(AttributeExtractorMode.XLSX).formatDecimal(number);
+			return attributeExtractorService.getPropertyFormats(FormatMode.JSON, false).formatDecimal(number);
 		}
 
 		/**
@@ -503,7 +503,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 * @return standard becpg date format
 		 */
 		public String formatDate(Date date) {
-			return attributeExtractorService.getPropertyFormats(AttributeExtractorMode.XLSX).formatDate(date);
+			return attributeExtractorService.getPropertyFormats(FormatMode.JSON, false).formatDate(date);
 		}
 
 		/**

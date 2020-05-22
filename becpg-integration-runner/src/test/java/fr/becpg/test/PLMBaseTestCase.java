@@ -283,9 +283,10 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 		if (costs.isEmpty()) {
 			NodeRef costFolder = entitySystemService.getSystemEntityDataList(charactsFolder, PlmRepoConsts.PATH_COSTS);
 			List<NodeRef> costsNodeRef = entityListDAO.getListItems(costFolder, PLMModel.TYPE_COST);
+			String[] costNames = { "Coût MP", "Coût prév MP", "Coût Emb", "Coût prév Emb" };
 			if (costsNodeRef.size() == 0) {
 
-				String[] costNames = { "Coût MP", "Coût prév MP", "Coût Emb", "Coût prév Emb" };
+				
 				for (String costName : costNames) {
 					Map<QName, Serializable> properties = new HashMap<>();
 					properties.put(BeCPGModel.PROP_CHARACT_NAME, costName);
@@ -296,10 +297,15 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 					costs.add(childAssocRef.getChildRef());
 				}
 			} else {
+			
 				for (NodeRef fileInfo : costsNodeRef) {
-					if (((String) nodeService.getProperty(fileInfo, BeCPGModel.PROP_CHARACT_NAME)).startsWith("Coût")) {
-						costs.add(fileInfo);
+					String name = (String) nodeService.getProperty(fileInfo, BeCPGModel.PROP_CHARACT_NAME);
+					for (int i = 0; i < costNames.length; i++) {
+						if (name.equals(costNames[i])) {
+							costs.add(fileInfo);
+						}
 					}
+					
 				}
 			}
 
@@ -322,7 +328,7 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 				}
 			} else {
 				for (NodeRef fileInfo : ingsNodeRef) {
-					if (((String) nodeService.getProperty(fileInfo, BeCPGModel.PROP_CHARACT_NAME)).startsWith("Ing")) {
+					if (((String) nodeService.getProperty(fileInfo, BeCPGModel.PROP_CHARACT_NAME)).startsWith("Ing ")) {
 						ings.add(fileInfo);
 					}
 				}
@@ -350,7 +356,7 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 				}
 			} else {
 				for (NodeRef fileInfo : nutsNodeRef) {
-					if (((String) nodeService.getProperty(fileInfo, BeCPGModel.PROP_CHARACT_NAME)).startsWith("Nut")) {
+					if (((String) nodeService.getProperty(fileInfo, BeCPGModel.PROP_CHARACT_NAME)).startsWith("Nut ")) {
 						nuts.add(fileInfo);
 					}
 				}
@@ -374,7 +380,7 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 				}
 			} else {
 				for (NodeRef fileInfo : organosNodeRef) {
-					if (((String) nodeService.getProperty(fileInfo, BeCPGModel.PROP_CHARACT_NAME)).startsWith("Organo")) {
+					if (((String) nodeService.getProperty(fileInfo, BeCPGModel.PROP_CHARACT_NAME)).startsWith("Organo ")) {
 						organos.add(fileInfo);
 					}
 				}
