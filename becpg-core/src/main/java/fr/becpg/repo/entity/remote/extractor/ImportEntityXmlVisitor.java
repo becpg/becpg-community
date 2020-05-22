@@ -476,7 +476,7 @@ public class ImportEntityXmlVisitor {
 								if (currValue.length() > 0) {
 									Matcher nodeRefMatcher = nodeRefPattern.matcher(currValue.toString());
 
-									if (nodeRefMatcher.find() && !ContentModel.PROP_NAME.equals(currProp)) {
+									if (nodeRefMatcher.find() && !ContentModel.PROP_NAME.equals(currProp) && !BeCPGModel.PROP_ACTIVITYLIST_DATA.equals(currProp)) {
 										queueProperties(curNodeRef.peek(), currProp, currValue.toString());
 									} else {
 										if (ContentModel.PROP_NAME.equals(currProp) ) {
@@ -614,7 +614,8 @@ public class ImportEntityXmlVisitor {
 			if ((currProp == null) || ContentModel.PROP_VERSION_LABEL.equals(currProp) || ContentModel.PROP_VERSION_TYPE.equals(currProp)
 					|| ContentModel.PROP_AUTO_VERSION.equals(currProp) || ContentModel.PROP_AUTO_VERSION_PROPS.equals(currProp)
 					|| ContentModel.PROP_MODIFIED.equals(currProp) || ContentModel.PROP_MODIFIER.equals(currProp)
-					|| ContentModel.PROP_CREATED.equals(currProp) || ContentModel.PROP_CREATOR.equals(currProp)) {
+					|| ContentModel.PROP_CREATED.equals(currProp) || ContentModel.PROP_CREATOR.equals(currProp)
+					) {
 				return true;
 			}
 			return false;
