@@ -26,58 +26,32 @@ import java.util.Locale;
 
 import org.springframework.extensions.surf.util.I18NUtil;
 
-import fr.becpg.repo.RepoConsts;
-
 /**
  * Format of properties (used for import and reports)
- * @author querephi
+ * @author querephi, matthieu
  *
  */
 public class PropertyFormats {
 
-	private static final String FORMAT_DECIMAL_VALUE = "###,###.####";
-	
-    private final ThreadLocal<SimpleDateFormat> localDateFormat = new ThreadLocal<SimpleDateFormat>(){
-    	@Override
-    	protected SimpleDateFormat initialValue() {
-    		if(useDefaultLocale){
-    			return new SimpleDateFormat(dateFormat,Locale.getDefault());
-    		} else {
-    			return new SimpleDateFormat(dateFormat, I18NUtil.getLocale());
-    		}
-    	}
 
-	};
-    
-    private final ThreadLocal<SimpleDateFormat> localDateTimeFormat = new ThreadLocal<SimpleDateFormat>(){
-    	@Override
-    	protected SimpleDateFormat initialValue() {
-    		if(useDefaultLocale){
-    			return new SimpleDateFormat(datetimeFormat,Locale.getDefault());
-    		} else {
-    			return new SimpleDateFormat(datetimeFormat, I18NUtil.getLocale());
-    		}
-    	}
-
-	};
-    
-    private final ThreadLocal<DecimalFormat> localDecimalFormat = new ThreadLocal<DecimalFormat>(){
-    	@Override
-    	protected DecimalFormat initialValue() {
-    		if(useDefaultLocale){
-    			return new DecimalFormat(decimalFormat);
-    		} else {
-    			DecimalFormat ret = (DecimalFormat) DecimalFormat.getInstance(I18NUtil.getLocale());
-    			ret.applyPattern(decimalFormat);
-    			return ret;
-    		}
-    	}
-	};
 	private boolean useDefaultLocale = true;
 	private Integer maxDecimalPrecision = null;
 	protected String dateFormat;
 	protected String datetimeFormat;
 	protected String decimalFormat;
+	
+	  public  PropertyFormats(boolean useDefaultLocal) {
+		  this(useDefaultLocal, "EEE d MMM yyyy","EEE d MMM yyyy HH:mm:ss",   "###,###.####");
+	  }
+	
+
+   public  PropertyFormats(boolean useDefaultLocal,String dateFormat,String datetimeFormat,String decimalFormat) {
+		this.useDefaultLocale = useDefaultLocal;
+		this.dateFormat = dateFormat;
+		this.datetimeFormat = datetimeFormat;
+		this.decimalFormat = decimalFormat;
+	}
+
 
 	public void setMaxDecimalPrecision(Integer maxDecimalPrecision) {
 		this.maxDecimalPrecision = maxDecimalPrecision;
@@ -105,13 +79,6 @@ public class PropertyFormats {
 	public void setDecimalFormat(String decimalFormat) {
 		localDecimalFormat.remove();
 		this.decimalFormat = decimalFormat;
-	}
-
-	public PropertyFormats(boolean useDefaultLocal) {
-		this.useDefaultLocale = useDefaultLocal;
-		dateFormat = RepoConsts.FORMAT_DATE;
-		datetimeFormat = RepoConsts.FORMAT_DATETIME;
-		decimalFormat = FORMAT_DECIMAL_VALUE;
 	}
 
 
@@ -182,6 +149,45 @@ public class PropertyFormats {
 	public DecimalFormat getDecimalFormat() {
 		return localDecimalFormat.get();
 	}
+	
+
+	
+    private final ThreadLocal<SimpleDateFormat> localDateFormat = new ThreadLocal<SimpleDateFormat>(){
+    	@Override
+    	protected SimpleDateFormat initialValue() {
+    		if(useDefaultLocale){
+    			return new SimpleDateFormat(dateFormat,Locale.getDefault());
+    		} else {
+    			return new SimpleDateFormat(dateFormat, I18NUtil.getLocale());
+    		}
+    	}
+
+	};
+    
+    private final ThreadLocal<SimpleDateFormat> localDateTimeFormat = new ThreadLocal<SimpleDateFormat>(){
+    	@Override
+    	protected SimpleDateFormat initialValue() {
+    		if(useDefaultLocale){
+    			return new SimpleDateFormat(datetimeFormat,Locale.getDefault());
+    		} else {
+    			return new SimpleDateFormat(datetimeFormat, I18NUtil.getLocale());
+    		}
+    	}
+
+	};
+    
+    private final ThreadLocal<DecimalFormat> localDecimalFormat = new ThreadLocal<DecimalFormat>(){
+    	@Override
+    	protected DecimalFormat initialValue() {
+    		if(useDefaultLocale){
+    			return new DecimalFormat(decimalFormat);
+    		} else {
+    			DecimalFormat ret = (DecimalFormat) DecimalFormat.getInstance(I18NUtil.getLocale());
+    			ret.applyPattern(decimalFormat);
+    			return ret;
+    		}
+    	}
+	};
 
 
 }
