@@ -69,7 +69,6 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
-import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.model.SystemState;
@@ -561,7 +560,6 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	 */
 	protected void loadAttributes(NodeRef nodeRef, Element nodeElt, boolean useCData, List<QName> hiddenAttributes, DefaultExtractorContext context) {
 
-		PropertyFormats propertyFormats = new PropertyFormats(false);
 		
 		
 		// properties
@@ -582,7 +580,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			if (propertyDef == null) {
 				logger.debug("This property doesn't exist. Name: " + versionLabelQName + " nodeRef : " + nodeRef);
 			}
-			versionLabelDisplayValue = attributeExtractorService.extractPropertyForReport(propertyDef, properties.get(versionLabelQName), propertyFormats, false);
+			versionLabelDisplayValue = attributeExtractorService.extractPropertyForReport(propertyDef, properties.get(versionLabelQName), false);
 		}
 		
 		for (Map.Entry<QName, Serializable> property : properties.entrySet()) {
@@ -597,7 +595,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 					continue;
 				}
 
-				String value = attributeExtractorService.extractPropertyForReport(propertyDef, property.getValue(), propertyFormats, false);
+				String value = attributeExtractorService.extractPropertyForReport(propertyDef, property.getValue(), false);
 				
 				boolean isDyn = false;
 				boolean isList = false;
@@ -621,7 +619,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 				}
 
 				if (isDyn || isList) {
-					String displayValue = attributeExtractorService.extractPropertyForReport(propertyDef, property.getValue(), propertyFormats, true);
+					String displayValue = attributeExtractorService.extractPropertyForReport(propertyDef, property.getValue(), true);
 					if (useCData) {
 						if (isList) {
 							Element ret = addData(nodeElt, true, propertyDef.getName(), value, null, context);
