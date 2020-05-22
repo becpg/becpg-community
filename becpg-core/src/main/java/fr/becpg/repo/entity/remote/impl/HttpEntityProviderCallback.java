@@ -22,6 +22,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.common.BeCPGException;
@@ -62,41 +63,52 @@ public class HttpEntityProviderCallback implements EntityProviderCallBack {
 		try {
 			String url = remoteServer + "?nodeRef=" + nodeRef.toString();
 			logger.debug("Try getting nodeRef  from : " + url);
-			logger.debug("User : " + remoteUser);
-			logger.debug("Password : " + remotePwd);
 
 			HttpGet entityUrl = new HttpGet(url);
 
 			HttpResponse httpResponse = getResponse(entityUrl);
-			HttpEntity responseEntity = httpResponse.getEntity();
 
-			// case 1 : it's added to the map and has no value (being visited
-			// somewhere in time)
-			if (visitedNodes.containsKey(nodeRef) && (visitedNodes.get(nodeRef) == null)) {
-				return nodeRef;
-				// case 2 : it's added and already visited
-			} else if (visitedNodes.containsKey(nodeRef) && (visitedNodes.get(nodeRef) != null)) {
-				return visitedNodes.get(nodeRef);
-			} else {
-				// case 3 : not visited yet, put in map and visit
-				visitedNodes.put(nodeRef, null);
+			if (httpResponse.getStatusLine().getStatusCode() == 200) {
 
-				try (InputStream entityStream = responseEntity.getContent()) {
-					NodeRef res = remoteEntityService.getTransactionService().getRetryingTransactionHelper().doInTransaction(() -> {
+				HttpEntity responseEntity = httpResponse.getEntity();
 
-						// Only for transaction do not reenable it
-						remoteEntityService.getPolicyBehaviourFilter().disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-						remoteEntityService.getPolicyBehaviourFilter().disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
+				// case 1 : it's added to the map and has no value (being
+				// visited
+				// somewhere in time)
+				if (visitedNodes.containsKey(nodeRef) && (visitedNodes.get(nodeRef) == null)) {
+					return nodeRef;
+					// case 2 : it's added and already visited
+				} else if (visitedNodes.containsKey(nodeRef) && (visitedNodes.get(nodeRef) != null)) {
+					return visitedNodes.get(nodeRef);
+				} else {
+					// case 3 : not visited yet, put in map and visit
+					visitedNodes.put(nodeRef, null);
 
-						return remoteEntityService.internalCreateOrUpdateEntity(nodeRef, destNodeRef, entityStream, RemoteEntityFormat.xml, this,
-								cache);
+					try (InputStream entityStream = responseEntity.getContent()) {
+						NodeRef res = remoteEntityService.getTransactionService().getRetryingTransactionHelper().doInTransaction(() -> {
 
-					}, false, false);
+							// Only for transaction do not reenable it
+							remoteEntityService.getPolicyBehaviourFilter().disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+							remoteEntityService.getPolicyBehaviourFilter().disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
 
-					visitedNodes.put(nodeRef, res);
+							return remoteEntityService.internalCreateOrUpdateEntity(nodeRef, destNodeRef, entityStream, RemoteEntityFormat.xml, this,
+									cache);
 
-					return res;
+						}, false, false);
+
+						visitedNodes.put(nodeRef, res);
+
+						return res;
+					}
 				}
+
+			} else {
+				if(logger.isDebugEnabled()) {
+					logger.debug("Error calling " + url + " " + EntityUtils.toString(httpResponse.getEntity(), "UTF-8") + " status "
+							+ httpResponse.getStatusLine().getStatusCode());
+				}
+				
+				return null;
 			}
 
 		} catch (IOException | KeyManagementException | NoSuchAlgorithmException | KeyStoreException e) {
