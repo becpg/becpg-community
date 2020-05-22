@@ -29,6 +29,8 @@ import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
+import fr.becpg.config.format.FormatMode;
+import fr.becpg.config.format.PropertyFormatService;
 import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
@@ -53,8 +55,6 @@ public class ProjectDetailsWebScript extends AbstractWebScript {
 
 	private static final String NODE_REF = "nodeRef";
 
-	private PropertyFormats format = new PropertyFormats(false);
-
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
 	private ContentService contentService;
@@ -62,6 +62,9 @@ public class ProjectDetailsWebScript extends AbstractWebScript {
 	private EntityListDAO entityListDAO;
 
 	private NodeService nodeService;
+	
+	private PropertyFormatService propertyFormatService;
+	
 
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
@@ -77,6 +80,12 @@ public class ProjectDetailsWebScript extends AbstractWebScript {
 
 	public void setContentService(ContentService contentService) {
 		this.contentService = contentService;
+	}
+
+	
+	
+	public void setPropertyFormatService(PropertyFormatService propertyFormatService) {
+		this.propertyFormatService = propertyFormatService;
 	}
 
 	@Override
@@ -338,7 +347,7 @@ public class ProjectDetailsWebScript extends AbstractWebScript {
 
 	private String formatDate(Serializable date) {
 		if (date != null) {
-			return format.formatDate(date);
+			return propertyFormatService.getPropertyFormats(FormatMode.JSON, false).formatDate(date);
 		}
 		return null;
 	}

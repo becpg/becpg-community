@@ -2,9 +2,11 @@ package fr.becpg.repo.product.formulation.nutrient;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
@@ -130,6 +132,8 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 		return new ListValuePage(matches, pageNum, pageSize, new IdentifiedValueListExtractor());
 	}
 
+	private static String NUT_CSV_DECIMAL_FORMAT = "###,###.####";
+	
 	@Override
 	public List<NutListDataItem> getNuts(NodeRef databaseFile, String id) {
 		List<NutListDataItem> ret = new ArrayList<>();
@@ -139,7 +143,8 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 			String[] headerRow = getHeaderRow(databaseFile);
 			int idColumn = extractIdentifierColumnIndex(headerRow);
 			int nameColumn = extractNameColumnIndex(headerRow);
-			PropertyFormats propertyFormats = new PropertyFormats(true);
+			
+			DecimalFormat decimalFormat =  new DecimalFormat(NUT_CSV_DECIMAL_FORMAT);
 
 			String[] values = getLineByIndex(databaseFile, id, idColumn);
 			for (int i = 0; i < headerRow.length; ++i) {
@@ -153,7 +158,7 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 							Number nutValue = null;
 							if ((nutValueToken != null) && !nutValueToken.isEmpty()) {
 
-								nutValue = propertyFormats.parseDecimal(nutValueToken);
+								nutValue = decimalFormat.parse(nutValueToken);
 							}
 
 							NutListDataItem nut = new NutListDataItem(null, null, null, null, null, null, nutNodeRef, false);

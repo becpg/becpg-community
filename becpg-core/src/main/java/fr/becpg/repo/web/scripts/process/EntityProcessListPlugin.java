@@ -9,8 +9,6 @@ import fr.becpg.config.format.PropertyFormats;
 
 public interface EntityProcessListPlugin {
 	
-	PropertyFormats FORMATER = new PropertyFormats(true);
-	public static final String PROCESS_DATETIME_FORMAT = "dd MMMM, yyyy";
 	
 	public static final String PROCESS_INSTANCE = "processInstance";
     public static final String PROCESS_INSTANCE_TYPE = "type";
