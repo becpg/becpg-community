@@ -33,6 +33,7 @@ import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 
+import fr.becpg.config.format.FormatMode;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.helper.AttributeExtractorService;
 
@@ -228,7 +229,7 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 			if ((entityNodeRef != null) && nodeService.exists(entityNodeRef)) {
 
 				JSONObject tmp = new JSONObject(attributeExtractorService.extractNodeData(entityNodeRef, nodeService.getType(entityNodeRef),
-						extraProperties, AttributeExtractorService.AttributeExtractorMode.JSON));
+						extraProperties, FormatMode.JSON));
 
 				ret.put("extra", tmp.toString());
 

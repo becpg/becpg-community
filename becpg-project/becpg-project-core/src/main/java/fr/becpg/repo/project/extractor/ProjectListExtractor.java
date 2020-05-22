@@ -41,6 +41,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import fr.becpg.config.format.FormatMode;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.RepoConsts;
@@ -50,7 +51,6 @@ import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.DataListPagination;
 import fr.becpg.repo.helper.AttributeExtractorService;
-import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorMode;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
@@ -136,7 +136,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 					}
 					if (RepoConsts.FORMAT_CSV.equals(dataListFilter.getFormat()) || RepoConsts.FORMAT_XLSX.equals(dataListFilter.getFormat())) {
 						ret.addItem(extractExport(
-								RepoConsts.FORMAT_XLSX.equals(dataListFilter.getFormat()) ? AttributeExtractorMode.XLSX : AttributeExtractorMode.CSV,
+								RepoConsts.FORMAT_XLSX.equals(dataListFilter.getFormat()) ? FormatMode.XLSX : FormatMode.CSV,
 								nodeRef, ret.getComputedFields(), props, cache));
 					} else {
 						Map<String, Object> extracted = extractJSON(nodeRef, ret.getComputedFields(), props, cache);
@@ -345,7 +345,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 
 	@Override
 	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields,
-			final AttributeExtractorMode mode, Map<QName, Serializable> properties, final Map<String, Object> props,
+			final FormatMode mode, Map<QName, Serializable> properties, final Map<String, Object> props,
 			final Map<NodeRef, Map<String, Object>> cache) {
 
 		Map<String, Object> ret = attributeExtractorService.extractNodeData(nodeRef, itemType, properties, metadataFields, mode,
@@ -465,12 +465,12 @@ public class ProjectListExtractor extends ActivityListExtractor {
 					}
 
 					private void addExtracted(NodeRef itemNodeRef, AttributeExtractorStructure field, Map<NodeRef, Map<String, Object>> cache,
-							AttributeExtractorMode mode, List<Map<String, Object>> ret) {
+							FormatMode mode, List<Map<String, Object>> ret) {
 						if (cache.containsKey(itemNodeRef)) {
 							ret.add(cache.get(itemNodeRef));
 						} else {
 							if (permissionService.hasPermission(itemNodeRef, "Read") == AccessStatus.ALLOWED) {
-								if (AttributeExtractorMode.CSV.equals(mode) || AttributeExtractorMode.XLSX.equals(mode)) {
+								if (FormatMode.CSV.equals(mode) || FormatMode.XLSX.equals(mode)) {
 									ret.add(extractExport(mode, itemNodeRef, field.getChildrens(), props, cache));
 								} else {
 									ret.add(extractJSON(itemNodeRef, field.getChildrens(), props, cache));
@@ -486,9 +486,9 @@ public class ProjectListExtractor extends ActivityListExtractor {
 		return ret;
 	}
 
-	private void extractTaskListResources(NodeRef nodeRef, AttributeExtractorMode mode, QName itemType, Map<String, Object> ret) {
+	private void extractTaskListResources(NodeRef nodeRef, FormatMode mode, QName itemType, Map<String, Object> ret) {
 
-		if (AttributeExtractorMode.CSV.equals(mode) || AttributeExtractorMode.XLSX.equals(mode)) {
+		if (FormatMode.CSV.equals(mode) || FormatMode.XLSX.equals(mode)) {
 			String resources = "";
 			if (entityDictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
 				for (NodeRef resourceNodeRef : projectService.extractResources(entityListDAO.getEntity(nodeRef),
