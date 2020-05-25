@@ -100,6 +100,8 @@ public class LabelingFormulaContext extends RuleParser {
 
 	private List<ReconstituableDataItem> reconstituableDataItems = new ArrayList<>();
 
+	private List<EvaporatedDataItem> evaporatedDataItems = new ArrayList<>();
+	
 	private Set<NodeRef> allergens = new HashSet<>();
 	private Set<NodeRef> inVolAllergens = new HashSet<>();
 	private Set<NodeRef> inVolAllergensProcess = new HashSet<>();
@@ -156,9 +158,9 @@ public class LabelingFormulaContext extends RuleParser {
 	public List<ReconstituableDataItem> getReconstituableDataItems() {
 		return reconstituableDataItems;
 	}
-
-	public void setReconstituableDataItems(List<ReconstituableDataItem> reconstituableDataItems) {
-		this.reconstituableDataItems = reconstituableDataItems;
+	
+	public List<EvaporatedDataItem> getEvaporatedDataItems() {
+		return evaporatedDataItems;
 	}
 
 	public CompositeLabeling getCompositeLabeling() {

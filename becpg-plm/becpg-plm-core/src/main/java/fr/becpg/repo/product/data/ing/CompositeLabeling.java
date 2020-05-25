@@ -27,14 +27,14 @@ public class CompositeLabeling extends LabelingComponent {
 	private Map<NodeRef, CompositeLabeling> ingListAtEnd = new LinkedHashMap<>();
 
 	private Double qtyTotal = 0d;
+	
+	private Double evaporatingLoss = 0d;
 
 	private Double volumeTotal = 0d;
 
 	private IngTypeItem ingType;
 
 	private DeclarationType declarationType;
-
-	private boolean applyWaterLoss = true;
 	
 	public CompositeLabeling(String name) {
 		super();
@@ -50,6 +50,7 @@ public class CompositeLabeling extends LabelingComponent {
 		this.ingType = compositeLabeling.ingType;
 		this.ingList = clone(compositeLabeling.ingList);
 		this.qtyTotal = compositeLabeling.qtyTotal;
+		this.evaporatingLoss = compositeLabeling.evaporatingLoss;
 		this.volumeTotal = compositeLabeling.volumeTotal;
 		this.declarationType = compositeLabeling.declarationType;
 	}
@@ -85,15 +86,6 @@ public class CompositeLabeling extends LabelingComponent {
 	}
 
 	
-	
-	
-	public boolean shouldApplyWaterLoss() {
-		return applyWaterLoss;
-	}
-
-	public void setApplyWaterLoss(boolean applyWaterLoss) {
-		this.applyWaterLoss = applyWaterLoss;
-	}
 
 	public IngTypeItem getIngType() {
 		return ingType;
@@ -121,6 +113,14 @@ public class CompositeLabeling extends LabelingComponent {
 
 	public void setQtyTotal(Double qtyTotal) {
 		this.qtyTotal = qtyTotal;
+	}
+
+	public Double getEvaporatingLoss() {
+		return evaporatingLoss;
+	}
+
+	public void setEvaporatingLoss(Double evaporatingLoss) {
+		this.evaporatingLoss = evaporatingLoss;
 	}
 
 	public Double getVolumeTotal() {
@@ -155,6 +155,7 @@ public class CompositeLabeling extends LabelingComponent {
 		ingListAtEnd.remove(ing);
 
 	}
+
 	public Map<NodeRef, CompositeLabeling> getIngListAtEnd() {
 		return ingListAtEnd;
 	}
