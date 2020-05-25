@@ -1142,7 +1142,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 						String formulatedIll = illDataItem.getValue().getValue(locale);
 						Assert.assertTrue(illDataItem.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM));
 
-						Assert.assertEquals("Incorrect label :" + formulatedIll + "\n   - compare to " + ill, ill, formulatedIll);
+						Assert.assertEquals("Incorrect label. Formulated :" + formulatedIll + "\n   - junit ref " + ill, ill, formulatedIll);
 						Assert.assertNotNull(illDataItem.getLogValue());
 					}
 				}
