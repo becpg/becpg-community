@@ -17,11 +17,6 @@
   You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 -->
 <export>
-	<settings>
-		<setting id="dateFormat" value="yyyy-MM-dd HH:mm:ss" />
-		<setting id="datetimeFormat" value="yyyy-MM-dd HH:mm:ss" />
-		<!-- <setting id="decimalPattern" value="#0.00"/> -->
-	</settings>
 	<query>
 		<columns>
 

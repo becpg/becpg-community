@@ -137,6 +137,12 @@ RUN set -x && \
 
 # I18N
 
+# Cloud profiling
+
+RUN mkdir -p /opt/cprof && \
+  wget -q -O- https://storage.googleapis.com/cloud-profiler/java/latest/profiler_java_agent.tar.gz \
+  | tar xzv -C /opt/cprof
+
 
 RUN set -x && \
     curl --silent --location \

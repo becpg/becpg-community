@@ -94,8 +94,6 @@ public class RepoConsts {
 	public static final String EXTENSION_LOG = ".log";
 	
 	// FORMAT
-	public static final String FORMAT_DATE = "EEE d MMM yyyy";	
-	public static final String FORMAT_DATETIME = "EEE d MMM yyyy HH:mm:ss";
 	public static final String MULTI_VALUES_SEPARATOR = ",";
 	
 	//Site containers

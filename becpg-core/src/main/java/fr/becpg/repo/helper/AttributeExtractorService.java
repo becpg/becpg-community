@@ -26,7 +26,9 @@ import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
+import fr.becpg.config.format.FormatMode;
 import fr.becpg.config.format.PropertyFormats;
+import fr.becpg.repo.helper.extractors.AbstractNodeDataExtractor;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 
 /**
@@ -60,15 +62,12 @@ public interface AttributeExtractorService {
 	}
 	
 	
-	enum AttributeExtractorMode {
-		SEARCH,JSON,XLSX,CSV
-	}
 
 	List<AttributeExtractorStructure> readExtractStructure(QName itemType, List<String> metadataFields);
 	
-	Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, List<String> metadataFields, AttributeExtractorMode mode);
+	Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, List<String> metadataFields, FormatMode mode);
 	
-	Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, Map<QName, Serializable> properties, List<AttributeExtractorStructure> metadataFields, AttributeExtractorMode mode, DataListCallBack dataListCallBack);
+	Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, Map<QName, Serializable> properties, List<AttributeExtractorStructure> metadataFields, FormatMode mode, DataListCallBack dataListCallBack);
 	
 	Map<String, Object> extractCommonNodeData(NodeRef nodeRef);
 	
@@ -76,14 +75,15 @@ public interface AttributeExtractorService {
 	
 	String[] getTags(NodeRef nodeRef);
 
+	String extractPropertyForReport(PropertyDefinition propertyDef, Serializable value, boolean formatData);
+	
+	@Deprecated
 	String extractPropertyForReport(PropertyDefinition propertyDef, Serializable value, PropertyFormats propertyFormats, boolean formatData);
 	
 	String extractMetadata(QName type, NodeRef entityNodeRef);
 
 	String getPersonDisplayName(String userId);
 
-
-	PropertyFormats getPropertyFormats(AttributeExtractorMode mode);
 
 	String extractPropName(NodeRef v);
 
@@ -96,9 +96,9 @@ public interface AttributeExtractorService {
 	boolean matchCriteria(NodeRef nodeRef, Map<String, String> criteriaMap);
 
 	
-	
+	PropertyFormats getPropertyFormats(FormatMode json,
+			boolean useServerLocale);
 
 	
-
 
 }

@@ -12,6 +12,9 @@ import org.alfresco.service.cmr.security.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.config.format.FormatMode;
+import fr.becpg.config.format.PropertyFormatService;
+import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.project.data.ProjectData;
@@ -34,11 +37,14 @@ public class ProjectProcessListPlugin implements EntityProcessListPlugin {
 	@Autowired
 	private AlfrescoRepository<ProjectData> alfrescoRepository;
 	
+	@Autowired
+	private PropertyFormatService propertyFormatService;
+	
 	
 	@Override
 	public List<Map<String, Object>> buildModel(NodeRef nodeRef){
 		
-		FORMATER.setDateFormat(PROCESS_DATETIME_FORMAT);
+		PropertyFormats formater = propertyFormatService.getPropertyFormats(FormatMode.PROCESS, true);
 		
 		List<Map<String, Object>> ret = new ArrayList<>();
 			
@@ -60,10 +66,10 @@ public class ProjectProcessListPlugin implements EntityProcessListPlugin {
 			}
 			
 			if(data.getStartDate() != null){
-				temp.put(PROCESS_INSTANCE_START_DATE, FORMATER.formatDate(data.getStartDate()));
+				temp.put(PROCESS_INSTANCE_START_DATE, formater.formatDate(data.getStartDate()));
 			}
 			if(data.getDueDate() != null){
-				temp.put(PROCESS_INSTANCE_DUE_DATE, FORMATER.formatDate(data.getDueDate()));
+				temp.put(PROCESS_INSTANCE_DUE_DATE, formater.formatDate(data.getDueDate()));
 			}
 			
 			temp.put(PROCESS_INSTANCE_IS_ACTIVE, data.getProjectState().equals(ProjectState.Completed) ? false : true);

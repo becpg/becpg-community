@@ -32,9 +32,9 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.namespace.QName;
 
+import fr.becpg.config.format.FormatMode;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.helper.AttributeExtractorService;
-import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorMode;
 
 public class ContentDataExtractor extends AbstractNodeDataExtractor  {
 
@@ -75,7 +75,7 @@ public class ContentDataExtractor extends AbstractNodeDataExtractor  {
 		 ret.put(PROP_CREATED,  formatDate((Date)props.get( ContentModel.PROP_CREATED)));
 		 ret.put(PROP_CREATOR,  props.get( ContentModel.PROP_CREATOR));
 		 if(!metadataFields.isEmpty()){
-			 ret.put(PROP_NODEDATA,  attributeExtractorService.extractNodeData(nodeRef,itemType,metadataFields,AttributeExtractorMode.SEARCH));
+			 ret.put(PROP_NODEDATA,  attributeExtractorService.extractNodeData(nodeRef,itemType,metadataFields, FormatMode.SEARCH));
 		 }
 		 
 		 DictionaryService dd = this.services.getDictionaryService();

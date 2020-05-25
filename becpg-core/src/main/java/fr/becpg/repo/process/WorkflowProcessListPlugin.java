@@ -17,13 +17,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.config.format.FormatMode;
+import fr.becpg.config.format.PropertyFormatService;
+import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.repo.web.scripts.process.EntityProcessListPlugin;
-
-
 
 @Service("workflowProcessListPlugin")
 public class WorkflowProcessListPlugin implements EntityProcessListPlugin {
-	
+
 	@Autowired
 	private NamespaceService namespaceService;
 	@Autowired
@@ -37,48 +38,43 @@ public class WorkflowProcessListPlugin implements EntityProcessListPlugin {
 	@Autowired
 	@Qualifier("WorkflowService")
 	private WorkflowService workflowService;
-	
-	
+	@Autowired
+	private PropertyFormatService propertyFormatService;
+
 	@Override
-	public List<Map<String, Object>> buildModel(NodeRef nodeRef){
-		
-		WorkflowModelBuilder modelBuilder = new WorkflowModelBuilder(namespaceService, nodeService, authenticationService, 
-                personService, workflowService, dictionaryService);
-		
-		FORMATER.setDateFormat(PROCESS_DATETIME_FORMAT);
-		
+	public List<Map<String, Object>> buildModel(NodeRef nodeRef) {
+
+		WorkflowModelBuilder modelBuilder = new WorkflowModelBuilder(namespaceService, nodeService, authenticationService, personService,
+				workflowService, dictionaryService);
+
+		PropertyFormats formater = propertyFormatService.getPropertyFormats(FormatMode.PROCESS, true);
+
 		// list all active and closed workflows for nodeRef
 		List<WorkflowInstance> workflows = workflowService.getWorkflowsForContent(nodeRef, true);
 		workflows.addAll(workflowService.getWorkflowsForContent(nodeRef, false));
-		
-		List<Map<String, Object>> results = new ArrayList<Map<String, Object>>(workflows.size());
-		
-		for (WorkflowInstance workflow : workflows){
+
+		List<Map<String, Object>> results = new ArrayList<>(workflows.size());
+
+		for (WorkflowInstance workflow : workflows) {
 			Map<String, Object> tmp = modelBuilder.buildSimple(workflow);
-			if(workflow.getStartDate() != null){
-				tmp.put(PROCESS_INSTANCE_START_DATE, FORMATER.formatDate(workflow.getStartDate()));
+			if (workflow.getStartDate() != null) {
+				tmp.put(PROCESS_INSTANCE_START_DATE, formater.formatDate(workflow.getStartDate()));
 			}
-			if(workflow.getDueDate() != null ){
-				tmp.put(PROCESS_INSTANCE_DUE_DATE, FORMATER.formatDate(workflow.getDueDate()));
+			if (workflow.getDueDate() != null) {
+				tmp.put(PROCESS_INSTANCE_DUE_DATE, formater.formatDate(workflow.getDueDate()));
 			}
-			
+
 			tmp.put(PROCESS_INSTANCE_TYPE, getType());
 			results.add(tmp);
 		}
-		
+
 		return results;
-		
+
 	}
 
-	  
-	
 	@Override
 	public String getType() {
 		return "workflow";
 	}
 
-
-	
-	
-	
 }

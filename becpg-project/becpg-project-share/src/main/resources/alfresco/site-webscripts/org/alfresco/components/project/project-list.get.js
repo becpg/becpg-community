@@ -2,18 +2,23 @@
 <import resource="classpath:alfresco/site-webscripts/org/alfresco/modules/entity-datagrid/include/actions.lib.js">
 <import resource="classpath:/alfresco/templates/org/alfresco/import/alfresco-util.js">
 
-function getFiltersMenu()
+function getFiltersMenu(viewId)
 {
    var myConfig = new XML(config.script),
       filters = [];
 
    for each (var xmlFilter in myConfig..filtermenu)
    {
-      filters.push(
-      {
-         id: xmlFilter.@id.toString(),
-         data: xmlFilter.@data.toString()
-      });
+	   
+	   var viewFilter = xmlFilter.@view.toString();
+	   
+	  if(viewFilter == "" || viewFilter.indexOf(viewId)> -1){
+	      filters.push(
+	      {
+	         id: xmlFilter.@id.toString(),
+	         data: xmlFilter.@data.toString()
+	      });
+	  }
    }
    return filters;
 }
@@ -22,6 +27,9 @@ function getFiltersMenu()
 
 function main()
 {
+	
+	var view = page.url.args.view ? page.url.args.view: "dataTable";
+	
 	var site = page.url.templateArgs.site;
 	var prefs = "org.alfresco.share.project.list";
 
@@ -31,17 +39,17 @@ function main()
 
    var preferences = AlfrescoUtil.getPreferences(prefs);
   
-   parseActions();
+   parseActions(view);
    
    var filterParameters =  getFilterParameters();
-   model.filters = getFiltersMenu();
+   model.filters = getFiltersMenu(view);
 	
 
    //Widget instantiation metadata...
    var projectList = {
     id : "projectList", 
     name : "beCPG.component.ProjectList",
-    initArgs: [ '"'+args.htmlid+'"' , page.url.args.view ? '"'+page.url.args.view+'"': '"dataTable"' ],
+    initArgs: [ '"'+args.htmlid+'"' , '"'+view+'"' ],
     options : {
        siteId : (page.url.templateArgs.site != null) ? page.url.templateArgs.site : "",
        extraDataParams: page.url.templateArgs.site!=null ? "&repo=false&container=documentLibrary":"&repo=true",

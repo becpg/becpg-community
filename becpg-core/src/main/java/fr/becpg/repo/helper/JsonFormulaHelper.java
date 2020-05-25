@@ -25,7 +25,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import fr.becpg.config.format.PropertyFormats;
+import fr.becpg.config.format.FormatMode;
+import fr.becpg.config.format.PropertyFormatService;
 
 /**
  * @author matthieu
@@ -77,10 +78,9 @@ public class JsonFormulaHelper {
 	}
 	
 	public static Object formatValue(Object v) {
-		PropertyFormats propertyFormats = new PropertyFormats(true);
 		
 		if (v != null && (v instanceof Double || v instanceof Float)) {
-			return propertyFormats.formatDecimal(v);
+			return PropertyFormatService.getInstance().getPropertyFormats(FormatMode.JSON,true).formatDecimal(v);
 		}
 		return v;
 	}

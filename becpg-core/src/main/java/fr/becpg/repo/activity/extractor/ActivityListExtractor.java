@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2018 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2018 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.activity.extractor;
@@ -37,19 +37,18 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.extensions.surf.util.I18NUtil;
 
-import fr.becpg.config.format.PropertyFormats;
+import fr.becpg.config.format.FormatMode;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.activity.EntityActivityService;
 import fr.becpg.repo.activity.data.ActivityType;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.DataListPagination;
 import fr.becpg.repo.entity.datalist.impl.SimpleExtractor;
-import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorMode;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.security.SecurityService;
 
 /**
- * 
+ *
  * @author matthieu Extract activity Fields
  */
 public class ActivityListExtractor extends SimpleExtractor {
@@ -88,39 +87,40 @@ public class ActivityListExtractor extends SimpleExtractor {
 		return super.getListNodeRef(dataListFilter, pagination);
 	}
 
-
 	@Override
-	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields,
-			AttributeExtractorMode mode, Map<QName, Serializable> properties, Map<String, Object> props, Map<NodeRef, Map<String, Object>> cache) {
+	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields, FormatMode mode,
+			Map<QName, Serializable> properties, Map<String, Object> props, Map<NodeRef, Map<String, Object>> cache) {
 		Map<String, Object> ret = super.doExtract(nodeRef, itemType, metadataFields, mode, properties, props, cache);
-		if(BeCPGModel.TYPE_ACTIVITY_LIST.equals(itemType)){
-			postLookupActivity(nodeRef, ret,properties, mode);
+		if (BeCPGModel.TYPE_ACTIVITY_LIST.equals(itemType)) {
+			postLookupActivity(nodeRef, ret, properties, mode);
 		}
 
 		return ret;
 
 	}
 
-	protected void postLookupActivity(NodeRef nodeRef, Map<String, Object> ret, Map<QName, Serializable> properties, AttributeExtractorMode mode) {
+	protected void postLookupActivity(NodeRef nodeRef, Map<String, Object> ret, Map<QName, Serializable> properties, FormatMode mode) {
 
 		String activityType = (String) properties.get(BeCPGModel.PROP_ACTIVITYLIST_TYPE);
-		if(activityType!=null) {
+		if (activityType != null) {
 
 			ret.put("prop_bcpg_alUserId", extractPerson((String) properties.get(BeCPGModel.PROP_ACTIVITYLIST_USERID)));
 			JSONObject postLookup = entityActivityService.postActivityLookUp(
 					ActivityType.valueOf((String) properties.get(BeCPGModel.PROP_ACTIVITYLIST_TYPE)),
-					(String)properties.get(BeCPGModel.PROP_ACTIVITYLIST_DATA));
+					(String) properties.get(BeCPGModel.PROP_ACTIVITYLIST_DATA));
 
-			if(AttributeExtractorMode.JSON.equals(mode)){
+			if (FormatMode.JSON.equals(mode)) {
 				NodeRef entityNodeRef = null;
 				NodeRef charactNodeRef = null;
 				QName entityType = null;
 				try {
-					if (postLookup.has(EntityActivityService.PROP_ENTITY_NODEREF) && nodeService.exists(new NodeRef(postLookup.getString(EntityActivityService.PROP_ENTITY_NODEREF)))) {
+					if (postLookup.has(EntityActivityService.PROP_ENTITY_NODEREF)
+							&& nodeService.exists(new NodeRef(postLookup.getString(EntityActivityService.PROP_ENTITY_NODEREF)))) {
 						entityNodeRef = new NodeRef(postLookup.getString(EntityActivityService.PROP_ENTITY_NODEREF));
 					}
 
-					if (postLookup.has(EntityActivityService.PROP_CHARACT_NODEREF) && nodeService.exists(new NodeRef(postLookup.getString(EntityActivityService.PROP_CHARACT_NODEREF)))) {
+					if (postLookup.has(EntityActivityService.PROP_CHARACT_NODEREF)
+							&& nodeService.exists(new NodeRef(postLookup.getString(EntityActivityService.PROP_CHARACT_NODEREF)))) {
 						charactNodeRef = new NodeRef(postLookup.getString(EntityActivityService.PROP_CHARACT_NODEREF));
 					}
 
@@ -130,75 +130,80 @@ public class ActivityListExtractor extends SimpleExtractor {
 						entityType = nodeService.getType(entityNodeRef);
 					}
 
-					if (entityType != null && (postLookup.has(EntityActivityService.PROP_DATALIST_TYPE) && securityService.computeAccessMode(entityType,postLookup.getString(EntityActivityService.PROP_DATALIST_TYPE)) == SecurityService.NONE_ACCESS) 
-							|| (charactNodeRef != null && permissionService.hasPermission(charactNodeRef,"Read") != AccessStatus.ALLOWED)){
+					if (((entityType != null)
+							&& (postLookup.has(EntityActivityService.PROP_DATALIST_TYPE) && (securityService.computeAccessMode(entityType,
+									postLookup.getString(EntityActivityService.PROP_DATALIST_TYPE)) == SecurityService.NONE_ACCESS)))
+							|| ((charactNodeRef != null) && (permissionService.hasPermission(charactNodeRef, "Read") != AccessStatus.ALLOWED))) {
 
-						//Entity Title
-						if(postLookup.has(EntityActivityService.PROP_TITLE)) {
+						// Entity Title
+						if (postLookup.has(EntityActivityService.PROP_TITLE)) {
 							postLookup.put(EntityActivityService.PROP_TITLE, I18NUtil.getMessage("message.becpg.access.denied"));
 						}
 						if (postLookup.has(EntityActivityService.PROP_PROPERTIES)) {
 							postLookup.remove(EntityActivityService.PROP_PROPERTIES);
 						}
 
-					} else if (postLookup.has("activityEvent") && postLookup.get("activityEvent").equals(ACTIVITYEVENT_UPDATE) && postLookup.has(EntityActivityService.PROP_PROPERTIES)) {
+					} else if (postLookup.has("activityEvent") && postLookup.get("activityEvent").equals(ACTIVITYEVENT_UPDATE)
+							&& postLookup.has(EntityActivityService.PROP_PROPERTIES)) {
 						JSONArray activityProperties = postLookup.getJSONArray(EntityActivityService.PROP_PROPERTIES);
 						JSONArray postActivityProperties = new JSONArray();
-						for(int i=0;i<activityProperties.length();i++) {
+						for (int i = 0; i < activityProperties.length(); i++) {
 							JSONObject activityProperty = activityProperties.getJSONObject(i);
-							JSONObject postProperty  = activityProperty;
+							JSONObject postProperty = activityProperty;
 							QName propertyName = QName.createQName(activityProperty.getString(EntityActivityService.PROP_TITLE));
 
-							if (entityType != null && securityService.computeAccessMode(entityType, propertyName) != SecurityService.NONE_ACCESS){
-								//Property Title
+							if ((entityType != null)
+									&& (securityService.computeAccessMode(entityType, propertyName) != SecurityService.NONE_ACCESS)) {
+								// Property Title
 								PropertyDefinition propertyDef = dictionaryService.getProperty(propertyName);
 								ClassAttributeDefinition propDef = entityDictionaryService.getPropDef(propertyName);
-								if(propDef != null && propDef.getTitle(dictionaryService) != null && propDef.getTitle(dictionaryService).length()>0) {
-									postProperty.put(PROP_TITLE,propDef.getTitle(dictionaryService)); 
+								if ((propDef != null) && (propDef.getTitle(dictionaryService) != null)
+										&& (propDef.getTitle(dictionaryService).length() > 0)) {
+									postProperty.put(PROP_TITLE, propDef.getTitle(dictionaryService));
 								} else {
-									postProperty.put(PROP_TITLE,propertyName.toPrefixString());
+									postProperty.put(PROP_TITLE, propertyName.toPrefixString());
 								}
-								//Before Property
+								// Before Property
 								if (activityProperty.has(EntityActivityService.BEFORE)) {
 									Object beforeProperty = activityProperty.get(EntityActivityService.BEFORE);
-									if (beforeProperty instanceof JSONArray && ((JSONArray) beforeProperty).length()>0) {
-										postProperty.put(EntityActivityService.BEFORE,checkProperty(beforeProperty, propertyDef));
+									if ((beforeProperty instanceof JSONArray) && (((JSONArray) beforeProperty).length() > 0)) {
+										postProperty.put(EntityActivityService.BEFORE, checkProperty(beforeProperty, propertyDef));
 									} else {
-										postProperty.put(EntityActivityService.BEFORE,beforeProperty);
+										postProperty.put(EntityActivityService.BEFORE, beforeProperty);
 									}
 								}
-								//AfterProperty
+								// AfterProperty
 								if (activityProperty.has(EntityActivityService.AFTER)) {
 									Object afterProperty = activityProperty.get(EntityActivityService.AFTER);
-									if (afterProperty instanceof JSONArray && ((JSONArray) afterProperty).length()>0) {
-										postProperty.put(EntityActivityService.AFTER,checkProperty(afterProperty, propertyDef));
+									if ((afterProperty instanceof JSONArray) && (((JSONArray) afterProperty).length() > 0)) {
+										postProperty.put(EntityActivityService.AFTER, checkProperty(afterProperty, propertyDef));
 									} else {
-										postProperty.put(EntityActivityService.AFTER,afterProperty);
+										postProperty.put(EntityActivityService.AFTER, afterProperty);
 									}
 								}
 								postActivityProperties.put(postProperty);
 							}
 						}
-						postLookup.put(EntityActivityService.PROP_PROPERTIES,postActivityProperties);
+						postLookup.put(EntityActivityService.PROP_PROPERTIES, postActivityProperties);
 					}
 				} catch (JSONException e) {
-					logger.error(e,e);
+					logger.error(e, e);
 				}
 
 				ret.put("prop_bcpg_alData", postLookup);
 			} else {
 				try {
-					if(postLookup.has("content")){
+					if (postLookup.has("content")) {
 						ret.put("prop_bcpg_alData", postLookup.get("content"));
 					} else {
 						ret.put("prop_bcpg_alData", "");
 					}
 				} catch (JSONException e) {
-					logger.error(e,e);
+					logger.error(e, e);
 				}
 			}
 		} else {
-			logger.warn("No activity type for node :"+nodeRef);
+			logger.warn("No activity type for node :" + nodeRef);
 		}
 
 	}
@@ -207,23 +212,26 @@ public class ActivityListExtractor extends SimpleExtractor {
 		boolean updateProperty = true;
 		JSONArray propertyArray = (JSONArray) property;
 		JSONArray postproperty = new JSONArray();
-		for (int i=0; i<propertyArray.length(); i++) {
+		for (int i = 0; i < propertyArray.length(); i++) {
 			try {
 				if (propertyArray.getString(i).contains("workspace")) {
 					NodeRef nodeRef = null;
 					String name = null;
 					if (Pattern.matches("(.*,.*)", propertyArray.getString(i))) {
-						String nodeRefString = propertyArray.getString(i).substring(propertyArray.getString(i).indexOf("(")+1, propertyArray.getString(i).indexOf(","));
+						String nodeRefString = propertyArray.getString(i).substring(propertyArray.getString(i).indexOf("(") + 1,
+								propertyArray.getString(i).indexOf(","));
 						nodeRef = new NodeRef(nodeRefString);
-						name = propertyArray.getString(i).substring(propertyArray.getString(i).indexOf(",")+1, propertyArray.getString(i).indexOf(")"));
+						name = propertyArray.getString(i).substring(propertyArray.getString(i).indexOf(",") + 1,
+								propertyArray.getString(i).indexOf(")"));
 
 					} else {
 						nodeRef = new NodeRef(propertyArray.getString(i));
 					}
 					if (nodeService.exists(nodeRef)) {
-						if (permissionService.hasPermission(nodeRef,PermissionService.READ) == AccessStatus.ALLOWED){
+						if (permissionService.hasPermission(nodeRef, PermissionService.READ) == AccessStatus.ALLOWED) {
 							if (propertyDef != null) {
-								postproperty.put(attributeExtractorService.getStringValue(propertyDef, (Serializable)nodeRef, new PropertyFormats(true)));
+								postproperty.put(attributeExtractorService.getStringValue(propertyDef, nodeRef,
+										attributeExtractorService.getPropertyFormats(FormatMode.JSON, true)));
 							} else {
 								postproperty.put(attributeExtractorService.extractPropName(nodeRef));
 							}
@@ -231,7 +239,7 @@ public class ActivityListExtractor extends SimpleExtractor {
 							postproperty.put(I18NUtil.getMessage("message.becpg.access.denied"));
 						}
 					} else {
-						if (name != null ) {
+						if (name != null) {
 							postproperty.put(name);
 						}
 					}
@@ -240,7 +248,7 @@ public class ActivityListExtractor extends SimpleExtractor {
 					break;
 				}
 			} catch (JSONException e) {
-				logger.error(e,e);
+				logger.error(e, e);
 			}
 		}
 		if (updateProperty) {
@@ -251,7 +259,7 @@ public class ActivityListExtractor extends SimpleExtractor {
 
 	@Override
 	public boolean applyTo(DataListFilter dataListFilter) {
-		return dataListFilter.getDataType() != null && dataListFilter.getDataType().equals(BeCPGModel.TYPE_ACTIVITY_LIST) ;
+		return (dataListFilter.getDataType() != null) && dataListFilter.getDataType().equals(BeCPGModel.TYPE_ACTIVITY_LIST);
 	}
 
 	@Override

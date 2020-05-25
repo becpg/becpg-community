@@ -4,6 +4,7 @@
 package fr.becpg.repo.product.formulation.labeling;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -225,9 +226,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			Composite<CompoListDataItem> compositeDefaultVariant = CompositeHelper.getHierarchicalCompoList(compoList);
 
 			CompositeLabeling compositeLabeling = new CompositeLabeling(CompositeLabeling.ROOT);
-			
-			visitCompoList(compositeLabeling, compositeDefaultVariant,
-					labelingFormulaContext, 1d,
+
+			visitCompoList(compositeLabeling, compositeDefaultVariant, labelingFormulaContext, 1d,
 					labelingFormulaContext.getYield() != null ? labelingFormulaContext.getYield() : formulatedProduct.getYield(),
 					formulatedProduct.getRecipeQtyUsed(), true);
 
@@ -519,7 +519,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	private void mergeAtEndLabeling(CompositeLabeling parent, LabelingFormulaContext labelingFormulaContext,
 			Map<String, List<CompositeLabeling>> componentsByName, boolean isRoot) {
-	
+
 		List<CompositeLabeling> toRemove = new ArrayList<>();
 
 		for (CompositeLabeling component : parent.getIngListAtEnd().values()) {
@@ -537,7 +537,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			}
 
 		}
-		
+
 		for (CompositeLabeling component : parent.getIngList().values()) {
 			DeclarationType declarationType = component.getDeclarationType();
 
@@ -549,14 +549,13 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				mergeAtEndLabeling(component, labelingFormulaContext, new HashMap<>(), isGroup);
 			}
 		}
-		
 
 		if (isRoot) {
 			for (List<CompositeLabeling> toAggregate : componentsByName.values()) {
 
 				CompositeLabeling prev = null;
 				for (CompositeLabeling component : toAggregate) {
-					
+
 					if (prev == null) {
 						prev = component;
 					} else {
@@ -1180,12 +1179,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	}
 
-	private void visitCompoList(CompositeLabeling parent, Composite<CompoListDataItem> parentComposite,
-			LabelingFormulaContext labelingFormulaContext, Double ratio, Double yield, Double recipeQtyUsed, boolean computeReconstitution)
-			throws FormulateException {
+	private void visitCompoList(CompositeLabeling parent, Composite<CompoListDataItem> parentComposite, LabelingFormulaContext labelingFormulaContext,
+			Double ratio, Double yield, Double recipeQtyUsed, boolean apply) throws FormulateException {
 
 		Map<String, ReqCtrlListDataItem> errors = new HashMap<>();
-
 
 		for (Composite<CompoListDataItem> composite : parentComposite.getChildren()) {
 
@@ -1209,57 +1206,68 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 				}
 
+				boolean isLocalSemiFinished = (productData instanceof LocalSemiFinishedProductData);
+
 				// Calculate qty
 				Double qty = FormulationHelper.getQtyInKg(compoListDataItem);
 
-				if ((qty != null) && !(productData instanceof LocalSemiFinishedProductData)) {
-					qty *= FormulationHelper.getYield(compoListDataItem) / 100;
-				}
-
 				if (qty != null) {
+
 					qty *= LabelingFormulaContext.PRECISION_FACTOR;
-				}
-
-				Double waterLost = 0d;
-				if ((ingsCalculatingWithYield || labelingFormulaContext.isIngsLabelingWithYield()) && (qty != null) && (yield != null)
-						&& (yield != 100d) && (recipeQtyUsed != null) && nodeService.hasAspect(productNodeRef, PLMModel.ASPECT_WATER)
-						&& parent.shouldApplyWaterLoss()) {
-					waterLost = (1 - (yield / 100d)) * (recipeQtyUsed * LabelingFormulaContext.PRECISION_FACTOR);
-
-
-					if (logger.isTraceEnabled()) {
-						logger.trace("Detected water lost: " + waterLost + " for qty :" + qty);
+					if (!isLocalSemiFinished) {
+						qty *= FormulationHelper.getYield(compoListDataItem) / 100;
 					}
 
-					labelingFormulaContext.getToApplyThresholdItems().add(productNodeRef);
-
-					qty -= waterLost;
-
-					parent.setApplyWaterLoss(false);
 				}
 
-				if ((qty != null) && (ratio != null)) {
-					qty *= ratio;
-					waterLost *= ratio;
-				}
-
-				// Calculate volume
 				Double volume = FormulationHelper.getNetVolume(compoListDataItem, productData);
+
 				if (volume == null) {
 					volume = 0d;
 				}
 
-				if ((volume != null) && !(productData instanceof LocalSemiFinishedProductData)) {
+				volume *= LabelingFormulaContext.PRECISION_FACTOR;
+
+				if (!isLocalSemiFinished) {
 					volume *= FormulationHelper.getYield(compoListDataItem) / 100;
-
 				}
 
-				if (volume != null) {
-					volume *= LabelingFormulaContext.PRECISION_FACTOR;
+				if ((qty != null) && (ratio != null)) {
+					qty *= ratio;
 				}
 
-				if ((volume != null) && (ratio != null)) {
+				if ((ratio != null)) {
 					volume *= ratio;
+				}
+
+				boolean applyYield = (ingsCalculatingWithYield || labelingFormulaContext.isIngsLabelingWithYield()) && (qty != null)
+						&& (yield != null) && (yield != 100d);
+				boolean applyWaterLost = applyYield && recipeQtyUsed !=null && nodeService.hasAspect(productNodeRef, PLMModel.ASPECT_WATER);
+				if (applyWaterLost) {
+
+					if (logger.isTraceEnabled()) {
+						logger.trace("Detected water lost");
+					}
+
+					// Override declaration type
+					declarationType = DeclarationType.DoNotDetails;
+					
+					EvaporatedDataItem evaporatedDataItem = null;
+					for(EvaporatedDataItem tmp: labelingFormulaContext.getEvaporatedDataItems()) {
+						if(tmp.getProductNodeRef().equals(productNodeRef)) {
+							evaporatedDataItem = tmp;
+							break;
+						}
+					}
+					
+					if(evaporatedDataItem==null) {
+						labelingFormulaContext.getEvaporatedDataItems().add(new EvaporatedDataItem(productNodeRef, 100d, qty));
+					} else {
+						evaporatedDataItem.addQty(qty);
+					}
+
+					labelingFormulaContext.getToApplyThresholdItems().add(productNodeRef);
+
 				}
 
 				// Reconstitution
@@ -1328,7 +1336,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					}
 
 					// Case show ings and is empty use legalName instead #2558
-					if (!isMultiLevel && DeclarationType.Declare.equals(declarationType) && !(productData instanceof LocalSemiFinishedProductData)) {
+					if (!isMultiLevel && DeclarationType.Declare.equals(declarationType) && !isLocalSemiFinished) {
 						if (((productData.getIngList() == null) || productData.getIngList().isEmpty())) {
 							declarationType = DeclarationType.DoNotDetails;
 						} else {
@@ -1375,14 +1383,17 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 									}
 
 									if (composite.isLeaf() && (compositeLabeling.getQtyTotal() != null)) {
+										
+										Double yieldQty =  applyYield(qty, yield, applyYield);
+										Double evaporatingLoss = qty - yieldQty;
+										
 										if (logger.isTraceEnabled()) {
-											logger.trace("Add to totalQty: " + applyYield(qty + waterLost, yield, labelingFormulaContext) + " yield: "
-													+ yield);
+											logger.trace("Add to totalQty: " + yieldQty + " yield: " + yield +" evaporating: "+evaporatingLoss);
 
 										}
 
-										compositeLabeling.setQtyTotal(
-												applyYield(qty + waterLost, yield, labelingFormulaContext) + compositeLabeling.getQtyTotal());
+										compositeLabeling.setQtyTotal(yieldQty + compositeLabeling.getQtyTotal());
+										compositeLabeling.setEvaporatingLoss(evaporatingLoss+compositeLabeling.getEvaporatingLoss());
 									}
 
 								}
@@ -1393,8 +1404,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 									}
 
 									if (composite.isLeaf() && (compositeLabeling.getVolumeTotal() != null)) {
-										compositeLabeling.setVolumeTotal(
-												applyYield(volume, yield, labelingFormulaContext) + compositeLabeling.getVolumeTotal());
+										compositeLabeling.setVolumeTotal(applyYield(volume, yield, applyYield) + compositeLabeling.getVolumeTotal());
 									}
 								}
 
@@ -1408,12 +1418,21 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 								compositeLabeling.setDeclarationType(declarationType);
 								if (composite.isLeaf()) {
 									if (logger.isTraceEnabled()) {
-										logger.trace(
-												"Set totalQty: " + applyYield(qty + waterLost, yield, labelingFormulaContext) + " yield: " + yield);
+										logger.trace("Set totalQty: " + applyYield(qty, yield, applyYield) + " yield: " + yield);
 
 									}
-									compositeLabeling.setQtyTotal(applyYield(qty + waterLost, yield, labelingFormulaContext));
-									compositeLabeling.setVolumeTotal(applyYield(volume, yield, labelingFormulaContext));
+									Double yieldQty =  applyYield(qty, yield, applyYield);
+									Double evaporatingLoss = qty - yieldQty;
+									
+									if (logger.isTraceEnabled()) {
+										logger.trace("Add to totalQty: " + yieldQty + " yield: " + yield+" evaporating: "+evaporatingLoss);
+
+									}
+
+									compositeLabeling.setQtyTotal(yieldQty );
+									compositeLabeling.setEvaporatingLoss(evaporatingLoss);
+									
+									compositeLabeling.setVolumeTotal(applyYield(volume, yield, applyYield));
 								}
 								if (DeclarationType.DoNotDetailsAtEnd.equals(declarationType)) {
 									parent.addAtEnd(compositeLabeling);
@@ -1458,7 +1477,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 										"Declare ratio for :" + productData.getName() + " " + computedRatio + " total:" + qtyTotal + " qty:" + qty);
 							}
 
-						} else if (DeclarationType.Declare.equals(declarationType) && (productData instanceof LocalSemiFinishedProductData)) {
+						} else if (DeclarationType.Declare.equals(declarationType) && isLocalSemiFinished) {
 							computedRatio = ratio;
 						}
 
@@ -1467,7 +1486,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 							Double recurYield = yield;
 							Double recurRecipeQtyUsed = recipeQtyUsed;
-							if (!(productData instanceof LocalSemiFinishedProductData) ) {
+							if (!isLocalSemiFinished) {
 								recurYield = computeYield(productData);
 
 								if ((yield != null) && (yield != 100d) && (recurYield != null)) {
@@ -1489,24 +1508,28 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						}
 					}
 
-					if (!(DeclarationType.Declare.equals(declarationType) && aggregateRules.isEmpty()
-							&& ((productData instanceof LocalSemiFinishedProductData) || isMultiLevel))) {
+					if (!(DeclarationType.Declare.equals(declarationType) && aggregateRules.isEmpty() && (isLocalSemiFinished || isMultiLevel))) {
 						// Update parent qty
 						if (qty != null) {
 
-							if (logger.isTraceEnabled()) {
-								logger.trace(
-										"Add to parent totalQty: " + applyYield(qty + waterLost, yield, labelingFormulaContext) + " yield: " + yield);
-
-							}
+							
 							if (!DeclarationType.DoNotDetailsAtEnd.equals(declarationType)) {
-								parent.setQtyTotal(parent.getQtyTotal() + applyYield(qty + waterLost, yield, labelingFormulaContext));
+								Double yieldQty =  applyYield(qty, yield, applyYield);
+								Double evaporatingLoss = qty - yieldQty;
+								
+								if (logger.isTraceEnabled()) {
+									logger.trace("Add to parent totalQty: " + yieldQty + " yield: " + yield+" evaporating: "+evaporatingLoss);
+
+								}
+								
+								parent.setQtyTotal(parent.getQtyTotal() + yieldQty);
+								parent.setEvaporatingLoss(parent.getEvaporatingLoss() + evaporatingLoss);
 							}
 						}
 
 						if (volume != null) {
 							if (!DeclarationType.DoNotDetailsAtEnd.equals(declarationType)) {
-								parent.setVolumeTotal(parent.getVolumeTotal() + applyYield(volume, yield, labelingFormulaContext));
+								parent.setVolumeTotal(parent.getVolumeTotal() + applyYield(volume, yield, applyYield));
 							}
 						}
 					}
@@ -1514,12 +1537,17 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			}
 		}
 
-		if (computeReconstitution) {
+		if (apply) {
 			applyReconstitution(parent, labelingFormulaContext.getReconstituableDataItems());
 			labelingFormulaContext.getReconstituableDataItems().clear();
+			applyEvaporation(parent, labelingFormulaContext.getEvaporatedDataItems());
+			labelingFormulaContext.getEvaporatedDataItems().clear();
+
 		}
 
 	}
+
+	
 
 	private void fillAllergensAndGeos(CompositeLabeling compositeLabeling, ProductData productData) {
 		for (AllergenListDataItem allergenListDataItem : productData.getAllergenList()) {
@@ -1550,8 +1578,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		return 100d;
 	}
 
-	private Double applyYield(Double qty, Double yield, LabelingFormulaContext labelingFormulaContext) {
-		if ((ingsCalculatingWithYield || labelingFormulaContext.isIngsLabelingWithYield()) && (qty != null) && (yield != null)) {
+	private Double applyYield(Double qty, Double yield, boolean applyYield) {
+		if (applyYield) {
 			return (qty * yield) / 100d;
 		}
 		return qty;
@@ -1563,6 +1591,33 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		}
 		return component.getName();
 	}
+	
+	
+	private void applyEvaporation(CompositeLabeling parent, List<EvaporatedDataItem> evaporatedDataItems) {
+		if (!evaporatedDataItems.isEmpty() ) {
+			if (logger.isTraceEnabled()) {
+				logger.trace(" Before applyEvaporation \n " + parent.toString());
+			}
+			Double evaporatingLost = parent.getEvaporatingLoss();
+			
+			evaporatedDataItems.stream().forEach(evaporatedDataItem -> {
+
+				CompositeLabeling productLabelItem = parent.get(evaporatedDataItem.getProductNodeRef());
+				if ((productLabelItem != null) && (productLabelItem.getQty() != null)) {
+
+					if(logger.isDebugEnabled()) {
+						logger.debug("Apply water lost : qty "+evaporatingLost * evaporatedDataItem.getRate()/100d+ " over "+parent.getQtyTotal());
+						
+					}
+					productLabelItem.setQty(productLabelItem.getQty()  - (evaporatingLost * evaporatedDataItem.getRate()/100d));
+
+				}
+			});
+
+		}
+		
+	}
+	
 
 	private void applyReconstitution(CompositeLabeling parent, List<ReconstituableDataItem> reconstituableDataItems) {
 
@@ -1591,9 +1646,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						BigDecimal realDiluentQty = ingQty.min(diluentQty);
 
 						BigDecimal realDiluentQtyRatio = (diluentQty.compareTo(BigDecimal.ZERO) == 0) ? (new BigDecimal(1d))
-								: realDiluentQty.divide(diluentQty, 10, BigDecimal.ROUND_HALF_UP);
+								: realDiluentQty.divide(diluentQty, 10, RoundingMode.HALF_UP);
 
-						BigDecimal realQty = realDiluentQty.add(productQty.multiply(realDiluentQtyRatio)).divide(rate, 10, BigDecimal.ROUND_HALF_UP);
+						BigDecimal realQty = realDiluentQty.add(productQty.multiply(realDiluentQtyRatio)).divide(rate, 10, RoundingMode.HALF_UP);
 
 						ingLabelItem.setQty(ingQty.subtract(realDiluentQty).doubleValue());
 						productLabelItem.setQty(productQty.subtract(realQty).doubleValue());
@@ -1602,10 +1657,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 						BigDecimal readlDiluentvolume = ingVol.min(diluentVolume);
 						BigDecimal readlDiluentvolumeRatio = (diluentVolume.compareTo(BigDecimal.ZERO) == 0) ? (new BigDecimal(1d))
-								: readlDiluentvolume.divide(diluentVolume, 10, BigDecimal.ROUND_HALF_UP);
+								: readlDiluentvolume.divide(diluentVolume, 10, RoundingMode.HALF_UP);
 
 						BigDecimal realVol = readlDiluentvolume.add(productVol.multiply(readlDiluentvolumeRatio)).divide(rate, 10,
-								BigDecimal.ROUND_HALF_UP);
+								RoundingMode.HALF_UP);
 
 						ingLabelItem.setVolume(ingVol.subtract(readlDiluentvolume).doubleValue());
 						productLabelItem.setVolume(productVol.subtract(realVol).doubleValue());
