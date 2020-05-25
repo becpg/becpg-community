@@ -1661,7 +1661,7 @@
 			       							mode : "create",
 			       							submitType : "json",
 			       							submissionUrl : encodeURIComponent("/becpg/bulkedit/type/" + this.options.itemType.replace(":", "_")
-			       									+ "/bulksave?nodeRefs=" + submissionParams+"&allPages="+this.allPages+"&queryExecutionId="+this.queryExecutionId),
+			       									+ "/bulksave?nodeRefs=" + submissionParams+"&allPages="+this.allPages+(this.queryExecutionId?("&queryExecutionId="+this.queryExecutionId):"")),
 			       							fields : encodeURIComponent(displayFields)
 			       						});
 			       				

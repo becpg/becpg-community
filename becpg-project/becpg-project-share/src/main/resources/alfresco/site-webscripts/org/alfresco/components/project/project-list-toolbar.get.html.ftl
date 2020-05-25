@@ -59,6 +59,14 @@
 		            </span>
 		         </div>
 		          <div class="separator">&nbsp;</div>
+		         <div class="show-tasks">
+		            <span id="${el}-show-tasks-button" class="yui-button yui-checkbox-button">
+		               <span class="first-child">
+		                  <button name="showTasks"></button>
+		               </span>
+		            </span>
+		         </div>
+		          <div class="separator">&nbsp;</div>
 		         <div class="show-resources">
 		            <span id="${el}-show-resources-button" class="yui-button yui-checkbox-button">
 		               <span class="first-child">

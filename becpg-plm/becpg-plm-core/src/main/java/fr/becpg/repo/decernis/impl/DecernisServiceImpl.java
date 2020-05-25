@@ -195,10 +195,11 @@ public class DecernisServiceImpl implements DecernisService {
 					}
 
 					if (params.containsKey("query")) {
-						logger.debug("Look for ingredients in decernis by " + params.get("type") + ": "+ params.get("query"));
 
 						JSONObject jsonObject = new JSONObject(
 								restTemplate.exchange(url, HttpMethod.GET, createEntity(null), String.class, params).getBody());
+						logger.debug("Look for ingredients in decernis by " + params.get("type") + ": "+ params.get("query")
+						+ " " + jsonObject);
 						if (jsonObject.has("count") && (jsonObject.getInt("count") == 1) && jsonObject.has("results")) {
 							JSONArray results = jsonObject.getJSONArray("results");
 							rid = results.getJSONObject(0).getString("did");
@@ -237,11 +238,9 @@ public class DecernisServiceImpl implements DecernisService {
 			}
 		}
 
-		if (isEmpty) {
-			throw new FormulateException("No decernis ingredients found");
+		if (!isEmpty) {
+			ret.put("ingredients", ingredients);
 		}
-
-		ret.put("ingredients", ingredients);
 
 		return ret;
 
@@ -280,11 +279,10 @@ public class DecernisServiceImpl implements DecernisService {
 		return null;
 	}
 
-	private void deleteRecipe(String recipeId, String usage) {
+	private void deleteRecipe(String recipeId) {
 		Map<String, String> params = new HashMap<>();
 		params.put(COMPANY, companyName);
 		params.put(FORMULA, recipeId);
-		params.put(USAGE, usage);
 		params.put(MODULE, module);
 
 		restTemplate.exchange(serverUrl + "formulas/" + recipeId + "?current_company={company}", HttpMethod.DELETE, createEntity(null), String.class,
@@ -407,30 +405,30 @@ public class DecernisServiceImpl implements DecernisService {
 
 			if ((countries != null) && (usages != null) && !usages.isEmpty() && !countries.isEmpty()) {
 				JSONObject data = getIngredients(product, ret);
-				if (data != null) {
-					for (String usage : usages) {
-						String recipeId = sendRecipe(data);
-						if (recipeId != null) {
-							try {
+				if (data != null && data.has("ingredients")) {
+					String recipeId = sendRecipe(data);
+					if (recipeId != null) {
+						try {
+							for (String usage : usages) {
 								JSONObject analysisResults = recipeAnalysis(recipeId, countries, usage.trim());
 								if (analysisResults != null) {
 									ret.addAll(createReqCtrl(countries, analysisResults));
 								} else {
 									throw new FormulateException("Error analysing recipe");
 								}
-							} finally {
-								deleteRecipe(recipeId, usage.trim());
 							}
-						} else {
-							throw new FormulateException("Error sending recipe");
+						} finally {
+							deleteRecipe(recipeId);
 						}
+					} else {
+						throw new FormulateException("Error sending recipe");
 					}
+
 				}
 
 			} else {
 				throw new IllegalStateException("countries or usage cannot be null");
 			}
-
 		} catch (Exception e) {
 			logger.error(e, e);
 			throw new FormulateException("Unexpected decernis error", e);

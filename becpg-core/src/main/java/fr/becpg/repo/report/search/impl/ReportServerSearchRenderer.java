@@ -91,10 +91,6 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 	@Autowired
 	private AttributeExtractorService attributeExtractorService;
 
-	/** The Constant QUERY_XPATH_DATE_FORMAT. */
-	protected static final String QUERY_XPATH_DATE_FORMAT = "settings/setting[@id='dateFormat']/@value";
-	protected static final String QUERY_XPATH_DATETIME_FORMAT = "settings/setting[@id='datetimeFormat']/@value";
-	protected static final String QUERY_XPATH_DECIMAL_PATTERN = "settings/setting[@id='decimalPattern']/@value";
 
 	private static final String FILE_QUERY = "ExportSearchQuery.xml";
 
@@ -327,8 +323,7 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 		if (nodeService.exists(nodeRef)) {
 			if (attribute instanceof PropertyDefinition) {
 				Serializable serializable = nodeService.getProperty(nodeRef, attribute.getName());
-				value = attributeExtractorService.extractPropertyForReport((PropertyDefinition) attribute, serializable,
-						exportSearchCtx.getPropertyFormats(), false);
+				value = attributeExtractorService.extractPropertyForReport((PropertyDefinition) attribute, serializable, false);
 
 			} else if (attribute instanceof AssociationDefinition) {
 
@@ -376,24 +371,6 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 		try (InputStream is = reader.getContentInputStream()) {
 			Document doc = saxReader.read(is);
 			queryElt = doc.getRootElement();
-
-			// date format
-			Node dateFormat = queryElt.selectSingleNode(QUERY_XPATH_DATE_FORMAT);
-			if (dateFormat != null) {
-				exportSearchCtx.getPropertyFormats().setDateFormat(dateFormat.getStringValue());
-			}
-
-			// datetime format
-			Node datetimeFormat = queryElt.selectSingleNode(QUERY_XPATH_DATETIME_FORMAT);
-			if (datetimeFormat != null) {
-				exportSearchCtx.getPropertyFormats().setDatetimeFormat(datetimeFormat.getStringValue());
-			}
-
-			// decimal format
-			Node decimalFormatPattern = queryElt.selectSingleNode(QUERY_XPATH_DECIMAL_PATTERN);
-			if (decimalFormatPattern != null) {
-				exportSearchCtx.getPropertyFormats().setDecimalFormat(decimalFormatPattern.getStringValue());
-			}
 
 			// attributes
 			List<Node> columnNodes = queryElt.selectNodes(QUERY_XPATH_COLUMNS_ATTRIBUTE);

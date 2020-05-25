@@ -1091,7 +1091,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	}
 
 	public boolean hasProcessListEl() {
-		return hasCompoListEl(Collections.emptyList());
+		return hasProcessListEl(Collections.emptyList());
 	}
 
 	public boolean hasProcessListEl(DataListFilter<ProductData, ProcessListDataItem> filter) {

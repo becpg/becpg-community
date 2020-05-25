@@ -38,12 +38,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.StopWatch;
 
+import fr.becpg.config.format.FormatMode;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.datalist.DataListExtractor;
 import fr.becpg.repo.entity.datalist.DataListExtractorFactory;
 import fr.becpg.repo.helper.AttributeExtractorService;
-import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorMode;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.helper.extractors.AbstractNodeDataExtractor;
@@ -166,9 +166,9 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 			}
 
 			ret.put(PROP_TYPE, itemType.toPrefixString(services.getNamespaceService()));
-			ret.put(PROP_CREATED, convertDateValue(properties.get(ContentModel.PROP_CREATED), AttributeExtractorMode.JSON));
+			ret.put(PROP_CREATED, convertDateValue(properties.get(ContentModel.PROP_CREATED), FormatMode.JSON));
 			ret.put(PROP_CREATOR_DISPLAY, extractPerson((String) properties.get(ContentModel.PROP_CREATOR)));
-			ret.put(PROP_MODIFIED, convertDateValue(properties.get(ContentModel.PROP_MODIFIED), AttributeExtractorMode.JSON));
+			ret.put(PROP_MODIFIED, convertDateValue(properties.get(ContentModel.PROP_MODIFIED), FormatMode.JSON));
 			ret.put(PROP_MODIFIER_DISPLAY, extractPerson((String) properties.get(ContentModel.PROP_MODIFIER)));
 
 			if (properties.get(BeCPGModel.PROP_COLOR) != null) {
@@ -195,7 +195,7 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 
 			ret.put(PROP_PERMISSIONS, permissions);
 
-			ret.put(PROP_NODEDATA, doExtract(nodeRef, itemType, metadataFields, AttributeExtractorMode.JSON, properties, props, cache));
+			ret.put(PROP_NODEDATA, doExtract(nodeRef, itemType, metadataFields, FormatMode.JSON, properties, props, cache));
 			
 			if(nodeService.hasAspect(nodeRef,ContentModel.ASPECT_LIKES_RATING_SCHEME_ROLLUPS)) {
 				
@@ -260,7 +260,7 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 		return false;
 	}
 
-	protected Map<String, Object> extractExport(AttributeExtractorMode mode, NodeRef nodeRef, List<AttributeExtractorStructure> metadataFields,
+	protected Map<String, Object> extractExport(FormatMode mode, NodeRef nodeRef, List<AttributeExtractorStructure> metadataFields,
 			Map<String, Object> props, Map<NodeRef, Map<String, Object>> cache) {
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
@@ -312,16 +312,16 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 		return ret;
 	}
 
-	protected String convertDateValue(Serializable value, AttributeExtractorMode mode) {
+	protected String convertDateValue(Serializable value, FormatMode mode) {
 		if (value instanceof Date) {
 			return formatDate((Date) value, mode);
 		}
 		return null;
 	}
 
-	protected String formatDate(Date date, AttributeExtractorMode mode) {
+	protected String formatDate(Date date, FormatMode mode) {
 		if (date != null) {
-			return attributeExtractorService.getPropertyFormats(mode).formatDate(date);
+			return attributeExtractorService.getPropertyFormats(mode,false).formatDate(date);
 		}
 		return null;
 	}
@@ -331,7 +331,7 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 	}
 
 	protected abstract Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields,
-			AttributeExtractorMode mode, Map<QName, Serializable> properties, Map<String, Object> extraProps,
+			FormatMode mode, Map<QName, Serializable> properties, Map<String, Object> extraProps,
 			Map<NodeRef, Map<String, Object>> cache);
 
 }

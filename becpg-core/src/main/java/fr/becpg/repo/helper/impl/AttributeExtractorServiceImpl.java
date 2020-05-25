@@ -56,7 +56,8 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
-import fr.becpg.config.format.CSVPropertyFormats;
+import fr.becpg.config.format.FormatMode;
+import fr.becpg.config.format.PropertyFormatService;
 import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SecurityModel;
@@ -116,14 +117,10 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	@Autowired
 	private BeCPGCacheService beCPGCacheService;
 
-	private final PropertyFormats csvPropertyFormats = new CSVPropertyFormats(false);
+	@Autowired
+	private PropertyFormatService propertyFormatService;
 
-	private final PropertyFormats propertyFormats = new PropertyFormats(false);
 
-	@Override
-	public PropertyFormats getPropertyFormats(AttributeExtractorMode mode) {
-		return AttributeExtractorMode.CSV.equals(mode) ? csvPropertyFormats : propertyFormats;
-	}
 
 	private AttributeExtractorPlugin getAttributeExtractorPlugin(QName type, NodeRef nodeRef) {
 
@@ -483,8 +480,17 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		return value;
 	}
 
+	
+
 	@Override
-	public String extractPropertyForReport(PropertyDefinition propertyDef, Serializable value, PropertyFormats propertyFormats, boolean formatData) {
+	public String extractPropertyForReport(PropertyDefinition propertyDef, Serializable value, boolean formatData) {
+		PropertyFormats propertyFormats = getPropertyFormats(FormatMode.REPORT,false);
+	
+		return extractPropertyForReport(propertyDef, value, propertyFormats, formatData);
+	}
+	
+	@Override
+	public String extractPropertyForReport(PropertyDefinition propertyDef, Serializable value, PropertyFormats propertyFormats , boolean formatData) {
 
 		if (value != null) {
 
@@ -664,7 +670,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	}
 
 	@Override
-	public Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, List<String> metadataFields, AttributeExtractorMode mode) {
+	public Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, List<String> metadataFields, FormatMode mode) {
 		return extractNodeData(nodeRef, itemType, nodeService.getProperties(nodeRef), readExtractStructure(itemType, metadataFields), mode,
 				new DataListCallBack() {
 
@@ -704,7 +710,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 	@Override
 	public Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, Map<QName, Serializable> properties,
-			List<AttributeExtractorStructure> metadataFields, AttributeExtractorMode mode, AttributeExtractorService.DataListCallBack callback) {
+			List<AttributeExtractorStructure> metadataFields, FormatMode mode, AttributeExtractorService.DataListCallBack callback) {
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
 			watch = new StopWatch();
@@ -719,7 +725,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			if (field.isNested()) {
 				List<Map<String, Object>> extracted = callback.extractNestedField(nodeRef, field);
 				
-				if ((AttributeExtractorMode.CSV.equals(mode) || AttributeExtractorMode.XLSX.equals(mode)) && !extracted.isEmpty()) {
+				if ((FormatMode.CSV.equals(mode) || FormatMode.XLSX.equals(mode)) && !extracted.isEmpty()) {
 
 					if (extracted.size() > 1) {
 						Double value;
@@ -773,7 +779,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	}
 
 	private Object extractNodeData(NodeRef nodeRef, Map<QName, Serializable> properties, Locale locale, ClassAttributeDefinition attribute,
-			AttributeExtractorMode mode, int order) {
+			FormatMode mode, int order) {
 
 		Serializable value;
 		String displayName = "";
@@ -792,12 +798,12 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				}
 
 			} else {
-				displayName = getStringValue((PropertyDefinition) attribute, value, getPropertyFormats(mode));
+				displayName = getStringValue((PropertyDefinition) attribute, value, getPropertyFormats(mode,false));
 			}
 
-			if (AttributeExtractorMode.CSV.equals(mode)) {
+			if (FormatMode.CSV.equals(mode)) {
 				return displayName;
-			} else if (AttributeExtractorMode.XLSX.equals(mode)) {
+			} else if (FormatMode.XLSX.equals(mode)) {
 				if (ExcelHelper.isExcelType(value)) {
 					return value;
 				} else {
@@ -816,7 +822,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 				type = ((PropertyDefinition) attribute).getDataType().getName().getPrefixedQName(namespaceService);
 
-				if (AttributeExtractorMode.SEARCH.equals(mode)) {
+				if (FormatMode.SEARCH.equals(mode)) {
 					tmp.put("order", order);
 					tmp.put("type", type);
 					tmp.put("label", attribute.getTitle(dictionaryService));
@@ -869,7 +875,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				assocRefs = associationService.getTargetAssocs(nodeRef, attribute.getName());
 			}
 
-			if (AttributeExtractorMode.SEARCH.equals(mode)) {
+			if (FormatMode.SEARCH.equals(mode)) {
 				HashMap<String, Object> tmp = new HashMap<>(5);
 
 				String nodeRefs = "";
@@ -891,7 +897,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				tmp.put("value", nodeRefs);
 				return tmp;
 
-			} else if (AttributeExtractorMode.CSV.equals(mode) || AttributeExtractorMode.XLSX.equals(mode)) {
+			} else if (FormatMode.CSV.equals(mode) || FormatMode.XLSX.equals(mode)) {
 				String ret = "";
 				for (NodeRef assocNodeRef : assocRefs) {
 					type = nodeService.getType(assocNodeRef);
@@ -1014,7 +1020,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	@Override
 	public boolean matchCriteria(NodeRef nodeRef, Map<String, String> criteriaMap) {
 		Map<String, Object> comp = extractNodeData(nodeRef, nodeService.getType(nodeRef), new ArrayList<>(criteriaMap.keySet()),
-				AttributeExtractorMode.JSON);
+				FormatMode.JSON);
 
 		// Criteria:{bcpg:allergenListAllergen|bcpg:allergenCode=FX1}
 		// Extracted:{dt_bcpg_allergenListAllergen=[{prop_bcpg_allergenCode={displayValue=F257,
@@ -1107,6 +1113,11 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		}
 		return true;
 
+	}
+
+	@Override
+	public PropertyFormats getPropertyFormats(FormatMode mode, boolean useServerLocale) {
+		return propertyFormatService.getPropertyFormats(mode, useServerLocale);
 	}
 
 }

@@ -32,6 +32,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import fr.becpg.config.format.FormatMode;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
@@ -42,7 +43,6 @@ import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.DataListPagination;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
-import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorMode;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.search.PaginatedSearchCache;
@@ -95,7 +95,7 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 				}
 				if (RepoConsts.FORMAT_CSV.equals(dataListFilter.getFormat()) || RepoConsts.FORMAT_XLSX.equals(dataListFilter.getFormat())) {
 					ret.addItem(extractExport(
-							RepoConsts.FORMAT_XLSX.equals(dataListFilter.getFormat()) ? AttributeExtractorMode.XLSX : AttributeExtractorMode.CSV,
+							RepoConsts.FORMAT_XLSX.equals(dataListFilter.getFormat()) ? FormatMode.XLSX : FormatMode.CSV,
 							nodeRef, ret.getComputedFields(), props, cache));
 				} else {
 					ret.addItem(extractJSON(nodeRef, ret.getComputedFields(), props, cache));
@@ -191,7 +191,7 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 
 	@Override
 	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields,
-			final AttributeExtractorMode mode, Map<QName, Serializable> properties, final Map<String, Object> props,
+			final FormatMode mode, Map<QName, Serializable> properties, final Map<String, Object> props,
 			final Map<NodeRef, Map<String, Object>> cache) {
 
 		return attributeExtractorService.extractNodeData(nodeRef, itemType, properties, metadataFields, mode,
@@ -234,12 +234,12 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 					}
 
 					private void addExtracted(NodeRef itemNodeRef, AttributeExtractorStructure field, Map<NodeRef, Map<String, Object>> cache,
-							AttributeExtractorMode mode, List<Map<String, Object>> ret) {
+							FormatMode mode, List<Map<String, Object>> ret) {
 						if (cache.containsKey(itemNodeRef)) {
 							ret.add(cache.get(itemNodeRef));
 						} else {
 							if (permissionService.hasPermission(itemNodeRef, "Read") == AccessStatus.ALLOWED) {
-								if (AttributeExtractorMode.CSV.equals(mode) || AttributeExtractorMode.XLSX.equals(mode)) {
+								if (FormatMode.CSV.equals(mode) || FormatMode.XLSX.equals(mode)) {
 									ret.add(extractExport(mode, itemNodeRef, field.getChildrens(), props, cache));
 								} else {
 									ret.add(extractJSON(itemNodeRef, field.getChildrens(), props, cache));
