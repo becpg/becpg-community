@@ -271,11 +271,18 @@
 				<field-visibility>
 					<show id="bcpg:entityTplEnabled" />
 					<show id="bcpg:entityTplIsDefault" />
+					<show id="bcpg:entityTplScript" />
+					
 				</field-visibility>
 				<appearance>
 					<set id="template" appearance="bordered-panel" label-id="becpg.forms.set.template.label" />
 					<field id="bcpg:entityTplEnabled" set="template" />
 					<field id="bcpg:entityTplIsDefault" set="template" />
+					<field id="bcpg:entityTplScript" set="template" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/association.ftl">
+							<control-param name="startLocation">{doclib}</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 		</forms>

@@ -49,7 +49,6 @@ import fr.becpg.repo.product.data.productList.AbstractEffectiveVariantListDataIt
 import fr.becpg.repo.product.data.productList.AbstractManualVariantListDataItem;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
-import fr.becpg.repo.product.data.productList.CompositionDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
 import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
@@ -71,6 +70,7 @@ import fr.becpg.repo.product.formulation.nutrient.RegulationFormulationHelper;
 import fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
+import fr.becpg.repo.repository.model.CompositionDataItem;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.variant.model.VariantData;
 

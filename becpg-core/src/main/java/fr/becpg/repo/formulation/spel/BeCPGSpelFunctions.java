@@ -1,4 +1,4 @@
-package fr.becpg.repo.product.formulation.spel;
+package fr.becpg.repo.formulation.spel;
 
 import java.beans.PropertyDescriptor;
 import java.io.Serializable;
@@ -40,9 +40,6 @@ import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.MLTextHelper;
-import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.spel.FormulaFormulationContext.Operator;
-import fr.becpg.repo.product.formulation.FormulaService;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.RepositoryEntityDefReader;
@@ -59,7 +56,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 	private static final Log logger = LogFactory.getLog(BeCPGSpelFunctions.class);
 
 	@Autowired
-	private RepositoryEntityDefReader<ProductData> repositoryEntityDefReader;
+	private RepositoryEntityDefReader<RepositoryEntity> repositoryEntityDefReader;
 
 	@Autowired
 	private EntityDictionaryService entityDictionaryService;
@@ -83,7 +80,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
 	@Autowired
-	private FormulaService formulaService;
+	private SpelFormulaService formulaService;
 
 	@Autowired
 	private AttributeExtractorService attributeExtractorService;
@@ -94,17 +91,17 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 	}
 
 	@Override
-	public Object create(ProductData productData) {
-		return new BeCPGSpelFunctionsWrapper(productData);
+	public Object create(RepositoryEntity repositoryEntity) {
+		return new BeCPGSpelFunctionsWrapper(repositoryEntity);
 	}
 
 	public class BeCPGSpelFunctionsWrapper {
 
-		ProductData productData;
+		RepositoryEntity entity;
 
-		public BeCPGSpelFunctionsWrapper(ProductData productData) {
+		public BeCPGSpelFunctionsWrapper(RepositoryEntity entity) {
 			super();
-			this.productData = productData;
+			this.entity = entity;
 		}
 
 		/**
@@ -163,10 +160,10 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 * Helper @beCPG.propValue( $qname)
 		 *
 		 * @param qname
-		 * @return property value in current productData
+		 * @return property value in current entity
 		 */
 		public Serializable propValue(String qname) {
-			return propValue(productData, qname);
+			return propValue(entity, qname);
 
 		}
 
@@ -199,7 +196,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 * @return value being set
 		 */
 		public Serializable setValue(String qname, Serializable value) {
-			return setValue(productData, qname, value);
+			return setValue(entity, qname, value);
 		}
 		
 		
@@ -238,7 +235,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		public NodeRef assocValue(String qname) {
-			return assocValue(productData.getNodeRef(), qname);
+			return assocValue(entity.getNodeRef(), qname);
 		}
 
 		/**
@@ -256,7 +253,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		public List<NodeRef> assocValues(String qname) {
-			return assocValues(productData.getNodeRef(), qname);
+			return assocValues(entity.getNodeRef(), qname);
 		}
 
 		/**
@@ -276,7 +273,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		public List<Serializable> assocPropValues(String assocQname, String propQName) {
-			return assocPropValues(productData.getNodeRef(), assocQname, propQName);
+			return assocPropValues(entity.getNodeRef(), assocQname, propQName);
 		}
 
 		/**
@@ -306,7 +303,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		public Serializable assocPropValue(String assocQname, String propQName) {
-			return assocPropValue(productData.getNodeRef(), assocQname, propQName);
+			return assocPropValue(entity.getNodeRef(), assocQname, propQName);
 		}
 
 		/**
@@ -362,7 +359,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 
 				Map<String, Object> model = new HashMap<>();
 				model.put("currentUser", userName);
-				model.put("entity", productData);
+				model.put("entity", entity);
 
 				scriptService.executeScript(scriptNode, ContentModel.PROP_CONTENT, model);
 			}
@@ -383,7 +380,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 * @return sum of formula results apply on range
 		 */
 		public Double sum(Collection<RepositoryEntity> range, String formula) {
-			return formulaService.aggreate(productData, range, formula, Operator.SUM);
+			return formulaService.aggreate(entity, range, formula, SpelFormulaContext.Operator.SUM);
 		}
 
 		/**
@@ -404,7 +401,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 * @return average of formula results apply on range
 		 */
 		public Double avg(Collection<RepositoryEntity> range, String formula) {
-			return formulaService.aggreate(productData, range, formula, Operator.AVG);
+			return formulaService.aggreate(entity, range, formula, SpelFormulaContext.Operator.AVG);
 		}
 
 		/**
@@ -424,7 +421,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 * @param formula
 		 */
 		public void applyFormulaToList(Collection<RepositoryEntity> range, String formula) {
-			formulaService.applyToList(productData, range, formula);
+			formulaService.applyToList(entity, range, formula);
 		}
 
 		/**
@@ -441,7 +438,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 				Expression exp = parser.parseExpression(formula);
 
 				return range.stream().filter(p -> {
-					return exp.getValue(formulaService.createEvaluationContext(productData, p), Boolean.class);
+					return exp.getValue(formulaService.createItemSpelContext(entity, p), Boolean.class);
 				}).collect(Collectors.toList());
 			}
 			return null;
@@ -501,8 +498,8 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 *
 		 * @beCPG.copy($fromNodeRef, $propQNames, $listQNames)
 		 *
-		 *                           Copy properties from a productData to
-		 *                           current productData
+		 *                           Copy properties from a entity to
+		 *                           current entity
 		 *
 		 *                           Example: @beCPG.copy(compoListView.compoList[0].product,{"bcpg:suppliers","bcpg:legalName"},{"bcpg:costList"});
 		 *
@@ -518,7 +515,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 				RepositoryEntity from = alfrescoRepository.findOne(fromNodeRef);
 
 				if (from != null) {
-					BeanWrapper beanWrapper = new BeanWrapperImpl(productData);
+					BeanWrapper beanWrapper = new BeanWrapperImpl(entity);
 
 					for (final PropertyDescriptor pd : beanWrapper.getPropertyDescriptors()) {
 
@@ -562,15 +559,15 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 							if (propertyDef != null) {
 								if (extraPropToCopy.containsKey(propQName)) {
 									logger.debug("Setting property : " + propQName + " from nodeRef");
-									nodeService.setProperty(productData.getNodeRef(), propQName, extraPropToCopy.get(propQName));
+									nodeService.setProperty(entity.getNodeRef(), propQName, extraPropToCopy.get(propQName));
 								} else {
 									logger.debug("Removing property : " + propQName);
-									nodeService.removeProperty(productData.getNodeRef(), propQName);
+									nodeService.removeProperty(entity.getNodeRef(), propQName);
 								}
 
 							} else {
 								logger.debug("Setting association : " + propQName + " from nodeRef");
-								associationService.update(productData.getNodeRef(), propQName,
+								associationService.update(entity.getNodeRef(), propQName,
 										associationService.getTargetAssocs(from.getNodeRef(), propQName));
 							}
 							treatedProp.add(propQName);
@@ -586,7 +583,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 
 						if (!treatedList.contains(listQName)) {
 							logger.debug("Copy list : " + listQName + " from nodeRef");
-							entityListDAO.copyDataList(entityListDAO.getList(listContainerNodeRef, listQName), productData.getNodeRef(), true);
+							entityListDAO.copyDataList(entityListDAO.getList(listContainerNodeRef, listQName), entity.getNodeRef(), true);
 
 							treatedList.add(listQName);
 						}

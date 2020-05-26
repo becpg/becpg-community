@@ -89,6 +89,7 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	private Integer currentReformulateCount;
 	private String formulationChainId;
 	private Boolean updateFormulatedDate = true;
+	private String requirementChecksum;
 	
 	private List<TaskListDataItem> taskList;
 	private List<DeliverableListDataItem> deliverableList;
@@ -177,8 +178,18 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	public void setFormulatedDate(Date formulatedDate) {
 		this.formulatedDate = formulatedDate;
 	}
-
 	
+
+	@AlfProp
+	@AlfQname(qname = "bcpg:requirementChecksum")
+	public String getRequirementChecksum() {
+		return requirementChecksum;
+	}
+
+	public void setRequirementChecksum(String requirementChecksum) {
+		this.requirementChecksum = requirementChecksum;
+	}
+
 	@Override
 	public boolean shouldUpdateFormulatedDate() {
 		return updateFormulatedDate;
@@ -276,6 +287,10 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	@AlfSingleAssoc
 	@AlfQname(qname = "bcpg:entityTplRef")
 	public NodeRef getProjectTpl() {
+		return projectTpl;
+	}
+	
+	public NodeRef getFormulatedEntityTpl() {
 		return projectTpl;
 	}
 
