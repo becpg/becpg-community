@@ -299,7 +299,7 @@ public class BecpgFormDefinition {
 							formWidget = "boolean";
 							break;
 						case "mltext":
-							formWidget = "text";
+							formWidget = "mtlangue";
 							break;
 						case "integer":
 							formWidget = "integer";
