@@ -40,6 +40,8 @@ import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
+import fr.becpg.repo.formulation.spel.SpelFormulaService;
+import fr.becpg.repo.formulation.spel.SpelHelper;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.EffectiveFilters;
@@ -66,8 +68,6 @@ import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.data.spel.DeclarationFilterContext;
-import fr.becpg.repo.product.data.spel.SpelHelper;
-import fr.becpg.repo.product.formulation.FormulaService;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
@@ -88,7 +88,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	private AssociationService associationService;
 
-	private FormulaService formulaService;
+	private SpelFormulaService formulaService;
 
 	private boolean ingsCalculatingWithYield = false;
 
@@ -112,7 +112,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		this.ingsCalculatingWithYield = ingsCalculatingWithYield;
 	}
 
-	public void setFormulaService(FormulaService formulaService) {
+	public void setFormulaService(SpelFormulaService formulaService) {
 		this.formulaService = formulaService;
 	}
 
@@ -173,7 +173,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			LabelingFormulaContext labelingFormulaContext = new LabelingFormulaContext(mlNodeService, associationService, alfrescoRepository);
 
 			ExpressionParser parser = new SpelExpressionParser();
-			StandardEvaluationContext dataContext = formulaService.createEvaluationContext(formulatedProduct, labelingFormulaContext);
+			StandardEvaluationContext dataContext = formulaService.createCustomSpelContext(formulatedProduct, labelingFormulaContext);
 
 			List<LabelingRuleListDataItem> labelingRuleLists = labelingRuleListsGroup.getValue();
 

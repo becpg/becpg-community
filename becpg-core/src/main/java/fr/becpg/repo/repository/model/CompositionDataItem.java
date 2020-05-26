@@ -15,13 +15,12 @@
  *  
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package fr.becpg.repo.product.data.productList;
+package fr.becpg.repo.repository.model;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
 import fr.becpg.repo.repository.RepositoryEntity;
-import fr.becpg.repo.repository.model.EffectiveDataItem;
 import fr.becpg.repo.variant.model.VariantDataItem;
 
 public interface CompositionDataItem extends RepositoryEntity, Cloneable, EffectiveDataItem, VariantDataItem {

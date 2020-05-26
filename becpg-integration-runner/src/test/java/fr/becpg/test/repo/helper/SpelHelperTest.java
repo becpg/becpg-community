@@ -3,7 +3,7 @@ package fr.becpg.test.repo.helper;
 import org.junit.Assert;
 import org.junit.Test;
 
-import fr.becpg.repo.product.data.spel.SpelHelper;
+import fr.becpg.repo.formulation.spel.SpelHelper;
 
 public class SpelHelperTest {
 

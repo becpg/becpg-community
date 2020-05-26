@@ -58,8 +58,9 @@ import fr.becpg.repo.repository.model.AbstractEffectiveDataItem;
 import fr.becpg.repo.repository.model.AspectAwareDataItem;
 import fr.becpg.repo.repository.model.StateableEntity;
 import fr.becpg.repo.variant.model.VariantData;
+import fr.becpg.repo.variant.model.VariantEntity;
 
-public class ProductData extends AbstractEffectiveDataItem implements FormulatedEntity, HierarchicalEntity, StateableEntity, AspectAwareDataItem {
+public class ProductData extends AbstractEffectiveDataItem implements FormulatedEntity, HierarchicalEntity, StateableEntity, AspectAwareDataItem, VariantEntity {
 
 	
 	private static final long serialVersionUID = 764534088277737617L;
@@ -404,6 +405,11 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		return entityTpl;
 	}
 
+	public NodeRef getFormulatedEntityTpl() {
+		return entityTpl!=null ? entityTpl.getNodeRef() : null;
+	}
+
+	
 	public void setEntityTpl(ProductData entityTpl) {
 		this.entityTpl = entityTpl;
 	}

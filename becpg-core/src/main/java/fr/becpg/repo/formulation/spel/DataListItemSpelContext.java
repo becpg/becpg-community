@@ -15,46 +15,50 @@
  *  
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package fr.becpg.repo.product.data.spel;
+package fr.becpg.repo.formulation.spel;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
-import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.productList.CompoListDataItem;
-import fr.becpg.repo.product.data.productList.CompositionDataItem;
-import fr.becpg.repo.product.formulation.FormulaService;
 import fr.becpg.repo.repository.RepositoryEntity;
+import fr.becpg.repo.repository.model.CompositionDataItem;
 import fr.becpg.repo.variant.model.VariantData;
 import fr.becpg.repo.variant.model.VariantDataItem;
+import fr.becpg.repo.variant.model.VariantEntity;
 
-public class FormulaFormulationContext {
+public class DataListItemSpelContext implements SpelFormulaContext<RepositoryEntity>{
 	
-	private final ProductData entity;
-	private final RepositoryEntity dataListItem;
-	private final FormulaService formulaService;
+	private  RepositoryEntity entity;
+	private  RepositoryEntity dataListItem;
+	private  SpelFormulaService formulaService;
 	
-	public enum Operator {
-		SUM,AVG,PERC
-	}
 
-	public FormulaFormulationContext(FormulaService formulaService, ProductData entity, RepositoryEntity dataListItem) {
-		super();
-		this.entity = entity;
-		this.dataListItem = dataListItem;
+
+	public DataListItemSpelContext(SpelFormulaService formulaService) {
 		this.formulaService = formulaService;
 	}
 
-	public ProductData getEntity() {
+
+	public RepositoryEntity getEntity() {
 		return entity;
 	}
+
+
+	public void setEntity(RepositoryEntity entity) {
+		this.entity = entity;
+	}
+
 
 	public RepositoryEntity getDataListItem() {
 		return dataListItem;
 	}
+
+	public void setDataListItem(RepositoryEntity dataListItem) {
+		this.dataListItem = dataListItem;
+	}
+
 
 	public RepositoryEntity getDataListItemEntity() {
 		if (dataListItem instanceof CompositionDataItem) {
@@ -67,12 +71,12 @@ public class FormulaFormulationContext {
 	}
 
     public VariantData getVariantData() {
-		if (entity != null) {
-			if (entity.getVariants() != null) {
+		if (entity != null && entity instanceof VariantEntity) {
+			if (((VariantEntity)entity).getVariants() != null) {
 				if (dataListItem instanceof VariantDataItem) {
 					List<NodeRef> variantsNodeRef = ((VariantDataItem) dataListItem).getVariants();
 					if ((variantsNodeRef != null) && !variantsNodeRef.isEmpty()) {
-						for (VariantData variant : entity.getVariants()) {
+						for (VariantData variant : ((VariantEntity)entity).getVariants()) {
 							if (variant.getNodeRef().equals(variantsNodeRef.get(0))) {
 								return variant;
 							}
@@ -80,23 +84,23 @@ public class FormulaFormulationContext {
 					}
 				}
 			}
-			return entity.getDefaultVariantData();
+			return ((VariantEntity)entity).getDefaultVariantData();
 		}
 		return new VariantData();
 	}
 
-
-	public Collection<CompositionDataItem> children(CompoListDataItem parent) {
-		List<CompositionDataItem> ret = new ArrayList<>();
-		for (CompoListDataItem item : entity.getCompoListView().getCompoList()) {
-			if (item.getParent() != null) {
-				if (parent.equals(item.getParent())) {
-					ret.add(item);
-				}
-			}
-		}
-		return ret;
-	}
+// TODO 
+//	public Collection<CompositionDataItem> children(CompoListDataItem parent) {
+//		List<CompositionDataItem> ret = new ArrayList<>();
+//		for (CompoListDataItem item : entity.getCompoListView().getCompoList()) {
+//			if (item.getParent() != null) {
+//				if (parent.equals(item.getParent())) {
+//					ret.add(item);
+//				}
+//			}
+//		}
+//		return ret;
+//	}
 	
 	public Double sum(Collection<RepositoryEntity> range, String formula) {
 		return formulaService.aggreate(entity, range, formula, Operator.SUM);
@@ -106,7 +110,9 @@ public class FormulaFormulationContext {
 	public Double avg(Collection<RepositoryEntity> range, String formula) {
 		return formulaService.aggreate(entity, range, formula, Operator.AVG);
 	}
-	
+
+
+
 
 }
 
