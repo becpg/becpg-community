@@ -4,12 +4,20 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import fr.becpg.repo.formulation.spel.SpelHelper;
+import fr.becpg.repo.product.formulation.FormulaFormulationHandler;
 
 public class SpelHelperTest {
 
+
+	
+	
 	@Test
 	public void test() {
 
+		//Test register
+		new FormulaFormulationHandler();
+		
+		
 		Assert.assertEquals(SpelHelper.formatFormula("cost['workspace://SpacesStore/c558bfcf-e996-4df4-9eb6-5061b1f7a8d0'][0].valuePerProduct"),
 				"costList.^[cost.toString() == 'workspace://SpacesStore/c558bfcf-e996-4df4-9eb6-5061b1f7a8d0'][0].valuePerProduct");
 
