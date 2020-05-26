@@ -94,10 +94,6 @@
 					<property name="associationService" ref="associationService"/>
 					<property name="entityDictionaryService" ref="entityDictionaryService"/>
 				</bean>
-				<!-- <bean class="fr.becpg.repo.project.formulation.PlanningFormulationHandler" >
-					<property name="alfrescoRepository" ref="alfrescoRepository" />
-				</bean> -->
-				
 			   <bean class="fr.becpg.repo.project.formulation.TaskFormulationHandler">
 					<property name="projectWorkflowService" ref="projectWorkflowService" />
 					<property name="projectService" ref="projectService" />
@@ -112,19 +108,22 @@
 				  <property name="alfrescoRepository" ref="alfrescoRepository" />
 				</bean>
 				<bean class="fr.becpg.repo.project.formulation.ScoreFormulationHandler" />
-				<!-- <bean class="fr.becpg.repo.project.formulation.TaskStateFormulationHandler">
-					<property name="projectWorkflowService" ref="projectWorkflowService" />
-					<property name="projectService" ref="projectService" />
-					<property name="projectActivityService" ref="projectActivityService" />
-					<property name="nodeService" ref="nodeService"/>
-					<property name="alfrescoRepository" ref="alfrescoRepository" />
-				</bean> -->
 				<bean class="fr.becpg.repo.project.formulation.TaskOverdueFormulationHandler">
 					<property name="beCPGMailService" ref="beCPGMailService"/>
 					<property name="workflowService" ref="WorkflowService"/>
 					<property name="projectNotificationService" ref="projectNotificationService"/>
 					<property name="projectService" ref="projectService" />
 				</bean>
+				
+				<bean class="fr.becpg.repo.formulation.impl.ScriptsFormulationHandler">
+					<property name="nodeService" ref="nodeService"/>
+					<property name="namespaceService" ref="namespaceService"/>
+					<property name="scriptService" ref="scriptService"/>
+					<property name="formulaService" ref="formulaService" />
+					<property name="contentService" ref="contentService" />
+					<property name="associationService" ref="associationService" />
+				</bean>
+				
 			</list>
 		</property>
 		<property name="formulationService" ref="formulationService" />
@@ -159,8 +158,6 @@
 		<property name="myProjectAttributes" value="${project.extractor.myProjectAttributes}"/>
 	 	<property name="namespaceService" ref="namespaceService" />
 	</bean>
-
-
 
 
 	<!-- Webscripts -->

@@ -42,6 +42,8 @@ import fr.becpg.repo.data.hierarchicalList.CompositeDataItem;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
+import fr.becpg.repo.formulation.spel.SpelFormulaService;
+import fr.becpg.repo.formulation.spel.SpelHelper;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
@@ -53,7 +55,6 @@ import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
-import fr.becpg.repo.product.data.spel.SpelHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.model.ForecastValueDataItem;
@@ -79,9 +80,9 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 	protected boolean transientFormulation = false;
 
-	protected FormulaService formulaService;
+	protected SpelFormulaService formulaService;
 
-	public void setFormulaService(FormulaService formulaService) {
+	public void setFormulaService(SpelFormulaService formulaService) {
 		this.formulaService = formulaService;
 	}
 
@@ -431,7 +432,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		if (formulatedCharactDataItems != null) {
 
 			ExpressionParser parser = new SpelExpressionParser();
-			StandardEvaluationContext context = formulaService.createEvaluationContext(formulatedProduct);
+			StandardEvaluationContext context = formulaService.createEntitySpelContext(formulatedProduct);
 
 			for (FormulatedCharactDataItem formulatedCharactDataItem : formulatedCharactDataItems) {
 				String error = null;
