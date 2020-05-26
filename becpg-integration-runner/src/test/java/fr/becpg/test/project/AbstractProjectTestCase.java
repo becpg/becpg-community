@@ -363,6 +363,8 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 
 		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
+			policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_ENTITY_TPL_REF);
+			
 			ProjectData projectData = new ProjectData(null, "Pjt", PROJECT_HIERARCHY1_SEA_FOOD_REF, PROJECT_HIERARCHY2_CRUSTACEAN_REF, startDate,
 					endDate, null, planningMode, null, null, null, 0, null);
 			projectData.setParentNodeRef(getTestFolderNodeRef());
