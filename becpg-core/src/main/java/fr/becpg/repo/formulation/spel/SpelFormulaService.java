@@ -57,15 +57,23 @@ public class SpelFormulaService {
 		registerCustomFunctions(entity, context);
 		return context;
 	}
-	
-	public <T extends RepositoryEntity> StandardEvaluationContext createDataListItemSpelContext(T entity, RepositoryEntity dataListItem) {
-		DataListItemSpelContext formulaContext = new DataListItemSpelContext(this); 
-		formulaContext.setEntity(createSecurityProxy(entity));
+
+	private <T extends RepositoryEntity> StandardEvaluationContext createDataListItemSpelContext(T entity, RepositoryEntity dataListItem,
+			boolean applySecurity) {
+		DataListItemSpelContext<T> formulaContext = new DataListItemSpelContext<>(this);
+		if (applySecurity) {
+			formulaContext.setEntity(createSecurityProxy(entity));
+		} else {
+			formulaContext.setEntity(entity);
+		}
 		formulaContext.setDataListItem(dataListItem);
 		StandardEvaluationContext context = new StandardEvaluationContext(formulaContext);
-		
 		registerCustomFunctions(entity, context);
 		return context;
+	}
+
+	public <T extends RepositoryEntity> StandardEvaluationContext createDataListItemSpelContext(T entity, RepositoryEntity dataListItem) {
+		return createDataListItemSpelContext(entity, dataListItem, true);
 	}
 
 	public <T extends RepositoryEntity> StandardEvaluationContext createCustomSpelContext(T entity, SpelFormulaContext<T> formulaContext) {
@@ -74,8 +82,6 @@ public class SpelFormulaService {
 		registerCustomFunctions(entity, context);
 		return context;
 	}
-
-
 
 	public <T> StandardEvaluationContext createItemSpelContext(RepositoryEntity entity, T item) {
 		StandardEvaluationContext dataContext = new StandardEvaluationContext(item);
@@ -94,7 +100,7 @@ public class SpelFormulaService {
 		Double sum = 0d;
 		int count = 0;
 		for (RepositoryEntity item : range) {
-			StandardEvaluationContext context = createDataListItemSpelContext(entity, item);
+			StandardEvaluationContext context = createDataListItemSpelContext(entity, item, false);
 			Double value = exp.getValue(context, Double.class);
 			if (value != null) {
 				sum += value;
@@ -116,7 +122,7 @@ public class SpelFormulaService {
 		Expression exp = parser.parseExpression(formula);
 
 		for (RepositoryEntity item : range) {
-			StandardEvaluationContext context = createDataListItemSpelContext(entity, item);
+			StandardEvaluationContext context = createDataListItemSpelContext(entity, item, false);
 			exp.getValue(context, Double.class);
 
 		}
