@@ -78,12 +78,12 @@ public class ScriptsFormulationHandler extends FormulationBaseHandler<Formulated
 
 		if ((entity.getFormulatedEntityTpl() != null) && !entity.getFormulatedEntityTpl().equals(entity.getNodeRef())) {
 
-			NodeRef scriptNode = associationService.getTargetAssoc(entity.getFormulatedEntityTpl(), BeCPGModel.PROP_ENTITY_TPL_SCRIPT);
+			NodeRef scriptNode = associationService.getTargetAssoc(entity.getFormulatedEntityTpl(), BeCPGModel.ASSOC_ENTITY_TPL_SCRIPT);
 
 			if ((scriptNode != null) && nodeService.exists(scriptNode)
 					&& nodeService.getPath(scriptNode).toPrefixString(namespaceService).startsWith(RepoConsts.SCRIPTS_FULL_PATH)) {
 
-				logger.debug("Found script template to run");
+				logger.error("Found script template to run:"+(String) nodeService.getProperty(scriptNode, ContentModel.PROP_NAME));
 
 				if (((String) nodeService.getProperty(scriptNode, ContentModel.PROP_NAME)).endsWith(".spel")) {
 
