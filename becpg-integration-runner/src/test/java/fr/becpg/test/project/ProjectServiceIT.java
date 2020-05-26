@@ -399,6 +399,8 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 
 		final NodeRef projectNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
+			policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_ENTITY_TPL_REF);
+			
 			// create project Tpl
 			ProjectData projectData = new ProjectData(null, "Pjt", PROJECT_HIERARCHY1_SEA_FOOD_REF, PROJECT_HIERARCHY2_CRUSTACEAN_REF, null, null,
 					null, PlanningMode.Planning, null, null, null, 0, null);
@@ -484,6 +486,8 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 
 		final NodeRef projectNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
+			policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_ENTITY_TPL_REF);
+			
 			EntityTestData entityTestData = new EntityTestData();
 			entityTestData.setParentNodeRef(getTestFolderNodeRef());
 			entityTestData.setName("Entity 1");
@@ -494,6 +498,8 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 			ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_SEA_FOOD_REF, PROJECT_HIERARCHY2_CRUSTACEAN_REF, new Date(),
 					null, null, PlanningMode.Planning, 2, ProjectState.InProgress, null, 0, productNodeRefs);
 
+			
+			
 			projectData.setParentNodeRef(getTestFolderNodeRef());
 
 			// create datalists
