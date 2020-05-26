@@ -28,9 +28,9 @@ import fr.becpg.repo.variant.model.VariantData;
 import fr.becpg.repo.variant.model.VariantDataItem;
 import fr.becpg.repo.variant.model.VariantEntity;
 
-public class DataListItemSpelContext implements SpelFormulaContext<RepositoryEntity>{
+public class  DataListItemSpelContext<T extends RepositoryEntity> implements SpelFormulaContext<T>{
 	
-	private  RepositoryEntity entity;
+	private  T entity;
 	private  RepositoryEntity dataListItem;
 	private  SpelFormulaService formulaService;
 	
@@ -41,12 +41,12 @@ public class DataListItemSpelContext implements SpelFormulaContext<RepositoryEnt
 	}
 
 
-	public RepositoryEntity getEntity() {
+	public T getEntity() {
 		return entity;
 	}
 
 
-	public void setEntity(RepositoryEntity entity) {
+	public void setEntity(T entity) {
 		this.entity = entity;
 	}
 
