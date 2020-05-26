@@ -78,6 +78,7 @@
 					<show id="bcpg:entityTplEnabled" />
 					<show id="bcpg:entityTplIsDefault" />
 					<show id="bcpg:entityTplDefaultDest" />
+					<show id="bcpg:entityTplScript" />
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" />
@@ -163,6 +164,11 @@
 					<field id="bcpg:entityTplEnabled" set="template" />
 					<field id="bcpg:entityTplIsDefault" set="template" />
 					<field id="bcpg:entityTplDefaultDest" set="template" />
+					<field id="bcpg:entityTplScript" set="template" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/association.ftl">
+							<control-param name="startLocation">{doclib}</control-param>
+						</control>
+					</field>
 
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">

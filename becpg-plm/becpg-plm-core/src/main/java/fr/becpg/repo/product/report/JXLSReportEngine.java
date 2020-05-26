@@ -21,7 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
-import fr.becpg.repo.product.formulation.FormulaService;
+import fr.becpg.repo.formulation.spel.SpelFormulaService;
 import fr.becpg.repo.report.engine.BeCPGReportEngine;
 import fr.becpg.repo.report.entity.EntityImageInfo;
 import fr.becpg.repo.report.entity.EntityReportData;
@@ -50,7 +50,7 @@ public class JXLSReportEngine implements BeCPGReportEngine {
 	private ContentService contentService;
 
 	@Autowired
-	private FormulaService formulaService;
+	private SpelFormulaService formulaService;
 
 	@Autowired
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;

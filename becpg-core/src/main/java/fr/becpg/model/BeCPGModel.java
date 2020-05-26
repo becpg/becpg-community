@@ -63,6 +63,7 @@ public final class BeCPGModel {
 	public final static QName PROP_ENTITY_TPL_ENABLED = QName.createQName(BECPG_URI, "entityTplEnabled");
 	public final static QName PROP_ENTITY_TPL_IS_DEFAULT = QName.createQName(BECPG_URI, "entityTplIsDefault");
 	public final static QName PROP_ENTITY_TPL_DEFAULT_DEST = QName.createQName(BECPG_URI, "entityTplDefaultDest");
+	public static final QName PROP_ENTITY_TPL_SCRIPT = QName.createQName(BECPG_URI, "entityTplScript");
 
 	// entityTplRef aspect
 	public final static QName ASPECT_ENTITY_TPL_REF = QName.createQName(BECPG_URI, "entityTplRefAspect");
@@ -167,5 +168,6 @@ public final class BeCPGModel {
 	public final static QName TYPE_VARIANT = QName.createQName(BECPG_URI, "variant");
 	public final static QName PROP_VARIANTIDS = QName.createQName(BECPG_URI, "variantIds");
 	public final static QName PROP_IS_DEFAULT_VARIANT = QName.createQName(BECPG_URI, "isDefaultVariant");
+	
 
 }
