@@ -6,6 +6,7 @@ import java.util.regex.Matcher;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.scripts.ScriptException;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -83,8 +84,11 @@ public class ScriptsFormulationHandler extends FormulationBaseHandler<Formulated
 			if ((scriptNode != null) && nodeService.exists(scriptNode)
 					&& nodeService.getPath(scriptNode).toPrefixString(namespaceService).startsWith(RepoConsts.SCRIPTS_FULL_PATH)) {
 
-				logger.error("Found script template to run:"+(String) nodeService.getProperty(scriptNode, ContentModel.PROP_NAME));
-
+				if(logger.isDebugEnabled()) {
+					logger.debug("Found script template to run:"+(String) nodeService.getProperty(scriptNode, ContentModel.PROP_NAME));
+				}
+				
+				
 				if (((String) nodeService.getProperty(scriptNode, ContentModel.PROP_NAME)).endsWith(".spel")) {
 
 					ExpressionParser parser = new SpelExpressionParser();
@@ -104,14 +108,23 @@ public class ScriptsFormulationHandler extends FormulationBaseHandler<Formulated
 						}
 					}
 				} else {
-
-					String userName = AuthenticationUtil.getFullyAuthenticatedUser();
-
-					Map<String, Object> model = new HashMap<>();
-					model.put("currentUser", userName);
-					model.put("entity", entity);
-
-					scriptService.executeScript(scriptNode, ContentModel.PROP_CONTENT, model);
+					try {
+						String userName = AuthenticationUtil.getFullyAuthenticatedUser();
+	
+						Map<String, Object> model = new HashMap<>();
+						model.put("currentUser", userName);
+						model.put("entity", entity);
+	
+						scriptService.executeScript(scriptNode, ContentModel.PROP_CONTENT, model);
+					} catch (ScriptException e) {
+						logger.error("Error running script : "+e.getMessage(),e);
+						
+//		TODO				entity.getReqCtrlList()
+//						.add(new ReqCtrlListDataItem(
+//								null, RequirementType.Tolerated, MLTextHelper.getI18NMessage("message.formulate.labelRule.error",
+//										labelingRuleListDataItem.getName(), e.getLocalizedMessage()),
+//								null, new ArrayList<NodeRef>(), RequirementDataType.Labelling));
+					}
 				}
 			}
 
