@@ -72,6 +72,8 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	private List<NodeRef> legends = new ArrayList<>();
 	private Integer overdue = 0;
 	private Integer score = 0;
+	private Integer duration;
+	private Integer realDuration;
 	private Date created;
 	private Date modified;
 	private String creator;
@@ -336,6 +338,22 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 
 	public void setOverdue(Integer overdue) {
 		this.overdue = overdue;
+	}
+
+	public Integer getDuration() {
+		return duration;
+	}
+
+	public void setDuration(Integer duration) {
+		this.duration = duration;
+	}
+
+	public Integer getRealDuration() {
+		return realDuration;
+	}
+
+	public void setRealDuration(Integer realDuration) {
+		this.realDuration = realDuration;
 	}
 
 	@AlfProp
