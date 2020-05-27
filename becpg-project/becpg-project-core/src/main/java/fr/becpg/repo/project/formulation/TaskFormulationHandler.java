@@ -8,7 +8,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
@@ -365,6 +364,7 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 				projectData.setProjectState(ProjectState.Completed);
 			} else {
 				projectData.setCompletionPercent(totalWork != 0 ? (100 * workDone) / totalWork : 0);
+				projectData.setCompletionDate(ProjectHelper.calculateEndDate(projectData.getStartDate(), projectData.getRealDuration()));
 			}
 		}
 
@@ -425,6 +425,8 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 			}
 		}
 
+		projectData.setDuration(projectDuration);
+		projectData.setRealDuration(projectRealDuration);
 		projectData.setOverdue(projectRealDuration - projectDuration);
 
 		return reformulate;
@@ -635,10 +637,10 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 				}
 			}
 
-			if ((task.getTask().getEnd() != null)
-					&& ((projectData.getCompletionDate() == null) || projectData.getCompletionDate().before(task.getTask().getEnd()))) {
-				projectData.setCompletionDate(task.getTask().getEnd());
-			}
+//	Useless		if ((task.getTask().getEnd() != null)
+//					&& ((projectData.getCompletionDate() == null) || projectData.getCompletionDate().before(task.getTask().getEnd()))) {
+//				projectData.setCompletionDate(task.getTask().getEnd());
+//			}
 		}
 
 		if (task.getDuration() != null) {
