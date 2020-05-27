@@ -845,7 +845,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 		if (!propQueriesEqualMap.isEmpty()) {
 			for (Map.Entry<QName, String> propQueryEntry : propQueriesEqualMap.entrySet()) {
-				whereClause.append(" AND ").append(getCmisPrefix(propQueryEntry.getKey())).append(" = '").append(propQueryEntry.getValue())
+				whereClause.append(" AND ").append(getCmisPrefix(propQueryEntry.getKey())).append(" = '").append(sanitizeProperty(propQueryEntry.getValue()))
 						.append("'");
 			}
 		}
@@ -919,6 +919,10 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 	}
 
+	private String sanitizeProperty(String prop) {
+		return prop.replaceAll("(?<!\\\\)'", "\\\\'");
+	}
+	
 	private String getCmisPrefix(QName tmpQName) {
 		String ret = tmpQName.toPrefixString(namespaceService);
 		PropertyDefinition def = entityDictionaryService.getProperty(tmpQName);
