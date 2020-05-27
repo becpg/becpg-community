@@ -327,6 +327,8 @@ public class ProjectHelper {
 				endDate = task.getTask().getEnd();
 			}
 		}
+		
+	
 		return endDate;
 	}
 	

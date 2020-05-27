@@ -7,12 +7,13 @@ import java.util.Date;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.ProjectState;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskState;
-import fr.becpg.repo.project.formulation.PlanningFormulationHandler;
 import fr.becpg.repo.project.impl.ProjectHelper;
 import fr.becpg.test.project.AbstractProjectTestCase;
 
@@ -23,6 +24,8 @@ import fr.becpg.test.project.AbstractProjectTestCase;
  */
 public class ProjectOverdueIT extends AbstractProjectTestCase {
 
+	@Autowired
+	FormulationService<ProjectData> formulationService;	
 	/**
 	 * Test the calculation of the project overdue
 	 */
@@ -38,22 +41,21 @@ public class ProjectOverdueIT extends AbstractProjectTestCase {
 			assertNotNull(projectData);
 			assertEquals(0, projectData.getOverdue().intValue());
 
-			PlanningFormulationHandler planningFormulationHandler = new PlanningFormulationHandler();
 
 			projectData.getTaskList().get(0).setTaskState(TaskState.InProgress);
-			planningFormulationHandler.process(projectData);
+			formulationService.formulate(projectData);
 			assertEquals(0, projectData.getOverdue().intValue());
 
 			// set start date to simulate 1 day after start (task in progress)
 			Date startDate = ProjectHelper.calculateNextDate(new Date(), 1, false);
 			projectData.setStartDate(startDate);
-			planningFormulationHandler.process(projectData);
+			formulationService.formulate(projectData);
 			assertEquals(0, projectData.getOverdue().intValue());
 
 			// set start date to simulate 3 days after start (task in progress)
 			startDate = ProjectHelper.calculateNextDate(new Date(), 3, false);
 			projectData.getTaskList().get(0).setStart(startDate);
-			planningFormulationHandler.process(projectData);
+			formulationService.formulate(projectData);
 			assertEquals(1, projectData.getOverdue().intValue());
 
 			// set start date to simulate 3 days after start (task completed in
@@ -64,7 +66,7 @@ public class ProjectOverdueIT extends AbstractProjectTestCase {
 			projectData.getTaskList().get(0).setStart(startDate);
 			projectData.getTaskList().get(0).setEnd(endDate);
 			projectData.getTaskList().get(1).setTaskState(TaskState.InProgress);
-			planningFormulationHandler.process(projectData);
+			formulationService.formulate(projectData);
 			assertEquals(0, projectData.getOverdue().intValue());
 
 			// set start date to simulate 6 days after start (task4 and task5 in
@@ -74,13 +76,13 @@ public class ProjectOverdueIT extends AbstractProjectTestCase {
 			for (TaskListDataItem t1 : projectData.getTaskList()) {
 				t1.setTaskState(TaskState.Planned);
 			}
-			planningFormulationHandler.process(projectData);
+			formulationService.formulate(projectData);
 			projectData.getTaskList().get(0).setTaskState(TaskState.Completed);
 			projectData.getTaskList().get(1).setTaskState(TaskState.Completed);
 			projectData.getTaskList().get(2).setTaskState(TaskState.Completed);
 			projectData.getTaskList().get(3).setTaskState(TaskState.InProgress);
 			projectData.getTaskList().get(4).setTaskState(TaskState.InProgress);
-			planningFormulationHandler.process(projectData);
+			formulationService.formulate(projectData);
 			assertEquals(0, projectData.getOverdue().intValue());
 
 			// set start date to simulate 9 days after start (task4 and task5 in
@@ -90,13 +92,13 @@ public class ProjectOverdueIT extends AbstractProjectTestCase {
 			for (TaskListDataItem t2 : projectData.getTaskList()) {
 				t2.setTaskState(TaskState.Planned);
 			}
-			planningFormulationHandler.process(projectData);
+			formulationService.formulate(projectData);
 			projectData.getTaskList().get(0).setTaskState(TaskState.Completed);
 			projectData.getTaskList().get(1).setTaskState(TaskState.Completed);
 			projectData.getTaskList().get(2).setTaskState(TaskState.Completed);
 			projectData.getTaskList().get(3).setTaskState(TaskState.InProgress);
 			projectData.getTaskList().get(4).setTaskState(TaskState.InProgress);
-			planningFormulationHandler.process(projectData);
+			formulationService.formulate(projectData);
 
 			assertEquals(1, projectData.getOverdue().intValue());
 
@@ -108,7 +110,7 @@ public class ProjectOverdueIT extends AbstractProjectTestCase {
 			projectData.getTaskList().add(task);
 			alfrescoRepository.save(projectData);
 			projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
-			planningFormulationHandler.process(projectData);
+			formulationService.formulate(projectData);
 			assertEquals(1, projectData.getOverdue().intValue());
 
 			return null;
