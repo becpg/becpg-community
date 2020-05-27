@@ -419,6 +419,7 @@
                                     }
                                     return true;
                                 };
+                                
 
                                 me.widgets.oAC.doBeforeExpandContainer = function(elTextbox, elContainer, sQuery, aResults)
                                 {
@@ -468,6 +469,21 @@
                                     {
                                         previewTooltip.cfg.setProperty("context", previewTooltips);
                                     }
+                                    
+                                    //Force the autocomplete content width to be equals or grater than it's footer width.
+                                    me.observer = new MutationObserver(function(mutations) {
+                                    	if(me.widgets.oAC){
+                                    		mutations.forEach(function(mutationRecord) {
+                                    			var footerWidth = me.widgets.oAC._elFooter.scrollWidth,
+                                    			contentWidth = me.widgets.oAC._elContent.style.width.replace('px', '');
+                                    			if (footerWidth > contentWidth){
+                                    				me.widgets.oAC._elContent.style.width =  footerWidth + "px";
+                                    			}
+                                    		});    
+                                    	}
+                                    });
+                                    me.observer.observe( me.widgets.oAC._elContent, { attributes : true, attributeFilter : ['style'] });
+                                    
                                     return true;
                                 };
 
