@@ -1185,7 +1185,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 		PermissionCheckedValueMixin.create(nodeRefs);
 
-		return new PagingResults<>() {
+		return new PagingResults<NodeRef> () {
 			@Override
 			public String getQueryExecutionId() {
 				return null; // TODO use Paginated Cache results

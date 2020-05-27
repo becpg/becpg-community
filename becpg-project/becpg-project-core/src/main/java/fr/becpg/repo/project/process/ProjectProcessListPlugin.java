@@ -36,14 +36,14 @@ public class ProjectProcessListPlugin implements EntityProcessListPlugin {
 
 	@Autowired
 	private AlfrescoRepository<ProjectData> alfrescoRepository;
-	
+
 	@Autowired
 	private PropertyFormatService propertyFormatService;
-	
 	
 	@Override
 	public List<Map<String, Object>> buildModel(NodeRef nodeRef){
 		
+
 		PropertyFormats formater = propertyFormatService.getPropertyFormats(FormatMode.PROCESS, true);
 		
 		List<Map<String, Object>> ret = new ArrayList<>();
