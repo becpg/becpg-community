@@ -19,6 +19,8 @@ package fr.becpg.repo.formulation;
 
 import java.util.Date;
 
+import org.alfresco.service.cmr.repository.NodeRef;
+
 import fr.becpg.repo.repository.RepositoryEntity;
 
 public interface FormulatedEntity extends RepositoryEntity {
@@ -42,5 +44,9 @@ public interface FormulatedEntity extends RepositoryEntity {
 	boolean shouldUpdateFormulatedDate();
 	
 	void setUpdateFormulatedDate(boolean updateFormulatedDate);
+	
+	NodeRef getFormulatedEntityTpl();
+	
+	public String getRequirementChecksum();
 
 }

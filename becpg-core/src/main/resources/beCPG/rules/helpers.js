@@ -114,12 +114,12 @@ function orEmpty(value, defaultValue) {
 
 /**
  * 
- * @param node
+ * @param node or nodeRef
  * @param propName
  * @returns node property value or empty
  */
 function getProp(node, propName) {
-	return isEmpty(node) ?  "" : orEmpty(node.properties[propName]) ;
+	return isEmpty(node) ?  "" : orEmpty(getNode(node).properties[propName]) ;
 }
 
 function propValue(node, propName){
@@ -127,15 +127,22 @@ function propValue(node, propName){
 }
 
 
+function getNode(node){
+	if(node.nodeRef != null){
+		return node;
+	}
+	return search.findNode(node);
+}
+
 /**
  * 
- * @param node
+ * @param node or nodeRef
  * @param propName
  * @param locale
  * @returns node multilingual property value or empty for locale
  */
 function getMLProp(node, propName, locale) {
-	return isEmpty(node) ?  "" : orEmpty( bcpg.getMLProperty(node, propName, locale));
+	return isEmpty(node) ?  "" : orEmpty( bcpg.getMLProperty(getNode(node), propName, locale));
 }
 
 function mlPropValue(node, propName, locale) {
@@ -247,13 +254,7 @@ function getAssoc(node, assocName, propName) {
  * @returns void
  */
 function updateAssoc(node, assocName, values){
-	if(!isEmpty(node)){
-		if(values == null){
-			removeAssocs(node, assocName);
-		} else {
-			bcpg.updateAssoc(node, assocName, values);
-		}
-	}
+	bcpg.updateAssoc(node, assocName, values);
 }
 
 /**
@@ -264,7 +265,7 @@ function updateAssoc(node, assocName, values){
  */
 function removeAssocs(node, assocName){
 	if(!isEmpty(node)){
-		bcpg["updateAssoc(org.alfresco.repo.jscript.ScriptNode,java.lang.String,org.alfresco.service.cmr.repository.NodeRef[])"](node, assocName, Array());
+		bcpg.updateAssoc(node, assocName, null);
 	}
 }
 
@@ -290,6 +291,7 @@ function copyAssocPropValue(node, assocName, propName, nodePropName) {
  * @returns if property has changed
  */
 function setValue(node, propName, value){
+	node = getNode(node);
 	if(isEmpty(value) && node.properties[propName]!=null){
 	    delete node.properties[propName];
 	    return true;
