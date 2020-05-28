@@ -95,8 +95,10 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 		SpelHelper.registerShortcut(new SpelShortcut("process\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]" ,"processListView.processList.^[resource.toString() == '$1']"));
 		SpelHelper.registerShortcut(new SpelShortcut("resParam\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]", "resourceParamList.^[param.toString() == '$1']"));
 		SpelHelper.registerShortcut(new SpelShortcut("pack\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]",	"packagingListView.packagingList.^[product.toString() == '$1']"));
+		SpelHelper.registerShortcut(new SpelShortcut("packaging\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]",	"packagingListView.packagingList.^[product.toString() == '$1']"));
 		SpelHelper.registerShortcut(new SpelShortcut("compoVar\\['(.*?)'\\]","compoListView.dynamicCharactList.^[title == '$1']?.value"));
 		SpelHelper.registerShortcut(new SpelShortcut("packVar\\['(.*?)'\\]","packagingListView.dynamicCharactList.^[title == '$1']?.value"));
+		SpelHelper.registerShortcut(new SpelShortcut("packagingVar\\['(.*?)'\\]","packagingListView.dynamicCharactList.^[title == '$1']?.value"));
 		SpelHelper.registerShortcut(new SpelShortcut("processVar\\['(.*?)'\\]","processListView.dynamicCharactList.^[title == '$1']?.value"));
 		SpelHelper.registerShortcut(new SpelShortcut("labelClaim\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]", "labelClaimList.^[labelClaim.toString() == '$1']"));
 		SpelHelper.registerShortcut(new SpelShortcut("labeling\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]",	"labelingListView.ingLabelingList.^[grp.toString() == '$1']"));
