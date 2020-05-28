@@ -89,19 +89,8 @@ public class  DataListItemSpelContext<T extends RepositoryEntity> implements Spe
 		return new VariantData();
 	}
 
-// TODO 
-//	public Collection<CompositionDataItem> children(CompoListDataItem parent) {
-//		List<CompositionDataItem> ret = new ArrayList<>();
-//		for (CompoListDataItem item : entity.getCompoListView().getCompoList()) {
-//			if (item.getParent() != null) {
-//				if (parent.equals(item.getParent())) {
-//					ret.add(item);
-//				}
-//			}
-//		}
-//		return ret;
-//	}
-	
+    
+    
 	public Double sum(Collection<RepositoryEntity> range, String formula) {
 		return formulaService.aggreate(entity, range, formula, Operator.SUM);
 	}
