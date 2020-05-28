@@ -85,22 +85,20 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 		}
 		return false;
 	}
-	
+
 	@Override
 	public List<ReqCtrlListDataItem> checkRequirements(ProductData formulatedProduct, List<ProductSpecificationData> specifications) {
 
-		if (formulatedProduct.getRegulatoryCountries() != null && !formulatedProduct.getRegulatoryCountries().isEmpty() 
-				&& formulatedProduct.getRegulatoryUsages()!=null
-				&& !formulatedProduct.getRegulatoryUsages().isEmpty()
+		if ((formulatedProduct.getRegulatoryCountries() != null) && !formulatedProduct.getRegulatoryCountries().isEmpty()
+				&& (formulatedProduct.getRegulatoryUsages() != null) && !formulatedProduct.getRegulatoryUsages().isEmpty()
 				&& (formulatedProduct.getIngList() != null) && !formulatedProduct.getIngList().isEmpty()) {
 
 			boolean shouldLaunchDecernis = false;
 
 			String checkSum = decernisService.createDecernisChecksum(formulatedProduct.getRegulatoryCountries(),
 					formulatedProduct.getRegulatoryUsages());
-			
-			shouldLaunchDecernis = !isSameChecksum(formulatedProduct.getRequirementChecksum(), checkSum);
 
+			shouldLaunchDecernis = !isSameChecksum(formulatedProduct.getRequirementChecksum(), checkSum);
 
 			if (!shouldLaunchDecernis) {
 				logger.debug("Decernis checksum match test ingList");
@@ -108,6 +106,7 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 
 				if ((formulatedProduct.getIngList() instanceof LazyLoadingDataList)
 						&& !isDirty((LazyLoadingDataList<IngListDataItem>) formulatedProduct.getIngList())) {
+					logger.debug("- ingList is dirty");
 					shouldLaunchDecernis = false;
 				}
 
@@ -115,8 +114,6 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 				logger.debug("Decernis checksum doesn't match: " + formulatedProduct.getRequirementChecksum());
 			}
 
-			
-			
 			if (!FormulationService.FAST_FORMULATION_CHAINID.equals(formulatedProduct.getFormulationChainId())) {
 
 				if (shouldLaunchDecernis) {
@@ -138,8 +135,8 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 
 					} catch (FormulateException e) {
 
-						if (logger.isDebugEnabled()) {
-							logger.debug(e, e);
+						if (logger.isWarnEnabled()) {
+							logger.warn(e, e);
 						}
 
 						return Arrays.asList(new ReqCtrlListDataItem(null, RequirementType.Forbidden,
@@ -149,20 +146,20 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 					} finally {
 						if (logger.isDebugEnabled() && (watch != null)) {
 							watch.stop();
-							logger.debug("Running decernis requirement scanner in: " + watch.getTotalTimeSeconds()+"s");
+							logger.debug("Running decernis requirement scanner in: " + watch.getTotalTimeSeconds() + "s");
 						}
 					}
 
 				}
 			} else {
-				
+
 				logger.debug("Fast formulation skipping decernis");
 				if (shouldLaunchDecernis) {
 					logger.debug(" - mark dirty");
 					formulatedProduct.setRequirementChecksum(updateChecksum(formulatedProduct.getRequirementChecksum(), null));
 				}
 				shouldLaunchDecernis = false;
-				
+
 			}
 
 			if (!shouldLaunchDecernis) {
@@ -192,15 +189,24 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 	}
 
 	private boolean isDirty(LazyLoadingDataList<IngListDataItem> dataList) {
-		if (dataList.isLoaded() && !dataList.getDeletedNodes().isEmpty()) {
-			return true;
-		} else if (dataList.isLoaded()) {
-			for (IngListDataItem item : dataList) {
-				if (alfrescoRepository.isDirty(item)) {
-					return true;
+		if (dataList.isLoaded()) {
+			if (!dataList.getDeletedNodes().isEmpty()) {
+				if(logger.isDebugEnabled()) {
+					logger.debug("IngList has deleted nodes");
 				}
-			}
+				
+				return true;
+			} else {
+				for (IngListDataItem item : dataList) {
+					if (alfrescoRepository.isDirty(item)) {
+						if(logger.isTraceEnabled()) {
+							logger.trace("IngList item is dirty:"+item.toString());
+						}
+						return true;
+					}
+				}
 
+			}
 		}
 		return false;
 	}
