@@ -3,6 +3,7 @@ package fr.becpg.repo.formulation.spel;
 import java.beans.PropertyDescriptor;
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -35,6 +36,7 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.config.format.FormatMode;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.data.hierarchicalList.CompositeDataItem;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
@@ -444,6 +446,29 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 			return null;
 		}
 
+		
+		/**
+		 * @beCPG.children($parent, $compositeList)
+		 * 
+		 * @param <T>
+		 * @param parent
+		 * @param compositeList
+		 * @return children of parent item
+		 */
+		public <T> Collection<CompositeDataItem<T>> children(CompositeDataItem<T> parent, Collection<CompositeDataItem<T>> compositeList) {
+				List<CompositeDataItem<T>> ret = new ArrayList<>();
+				for (CompositeDataItem<T> item : compositeList) {
+					if (item.getParent() != null) {
+						if (parent.equals(item.getParent())) {
+							ret.add(item);
+						}
+					}
+				}
+				return ret;
+			}
+			
+		
+		
 		/**
 		 * @beCPG.formatNumber($number)
 		 *
