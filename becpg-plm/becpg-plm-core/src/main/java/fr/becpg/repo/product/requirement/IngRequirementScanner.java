@@ -62,105 +62,120 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 
 			boolean checkAutorized = false;
 
-			List<ForbiddenIngListDataItem> requirements = extractRequirements(specifications);
+			for (Map.Entry<ProductSpecificationData, List<ForbiddenIngListDataItem>> entry : extractRequirements(specifications).entrySet()) {
+				List<ForbiddenIngListDataItem> requirements = entry.getValue();
+				ProductSpecificationData specification = entry.getKey();
 
-			Set<NodeRef> visited = new HashSet<>();
+				Set<NodeRef> visited = new HashSet<>();
 
-			if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-				for (CompoListDataItem compoListDataItem : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+				if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+					for (CompoListDataItem compoListDataItem : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 
-					if ((compoListDataItem.getQtySubFormula() != null) && (compoListDataItem.getQtySubFormula() > 0)) {
-						ProductData componentProductData = (ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct());
+						if ((compoListDataItem.getQtySubFormula() != null) && (compoListDataItem.getQtySubFormula() > 0)) {
+							ProductData componentProductData = (ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct());
 
-						checkILOfPart(compoListDataItem.getProduct(), compoListDataItem.getDeclType(), componentProductData, requirements, reqCtrlMap,
-								visited);
+							checkILOfPart(compoListDataItem.getProduct(), compoListDataItem.getDeclType(), componentProductData, requirements,
+									specification, reqCtrlMap, visited);
+
+						}
 
 					}
-
 				}
-			}
 
-			for (ForbiddenIngListDataItem fil : requirements) {
+				for (ForbiddenIngListDataItem fil : requirements) {
 
-				for (IngListDataItem ingListDataItem : productData.getIngList()) {
-					if (!RequirementType.Authorized.equals(fil.getReqType())) {
-						// Ings
-						if (!fil.getIngs().isEmpty() && (fil.getReqMessage() != null) && !fil.getReqMessage().isEmpty()) {
-							if (fil.getIngs().contains(ingListDataItem.getIng())) {
-								if ((ingListDataItem.getQtyPerc() == null) || 
-										((fil.getQtyPercMaxi() != null) && (fil.getQtyPercMaxi() <= ingListDataItem.getQtyPerc()))) {
+					for (IngListDataItem ingListDataItem : productData.getIngList()) {
+						if (!RequirementType.Authorized.equals(fil.getReqType())) {
+							// Ings
+							if (!fil.getIngs().isEmpty() && (fil.getReqMessage() != null) && !fil.getReqMessage().isEmpty()) {
+								if (fil.getIngs().contains(ingListDataItem.getIng())) {
+									if ((ingListDataItem.getQtyPerc() == null)
+											|| ((fil.getQtyPercMaxi() != null) && (fil.getQtyPercMaxi() <= ingListDataItem.getQtyPerc()))) {
 
-									// req not respected
+										// req not respected
+										ReqCtrlListDataItem reqCtrl = reqCtrlMap.get(fil.getNodeRef());
+										if (reqCtrl == null) {
+											reqCtrl = new ReqCtrlListDataItem(null, fil.getReqType(), fil.getReqMessage(), ingListDataItem.getIng(),
+													new ArrayList<NodeRef>(), RequirementDataType.Specification);
+											reqCtrlMap.put(fil.getNodeRef(), reqCtrl);
+										} else {
+											reqCtrl.setReqDataType(RequirementDataType.Specification);
+										}
+
+										if (specification.getRegulatoryCode() != null) {
+											reqCtrl.setRegulatoryCode(specification.getRegulatoryCode());
+										} else {
+											reqCtrl.setRegulatoryCode(specification.getName());
+										}
+
+									}
+								}
+							} else if ((productData.getCompoListView().getCompoList() == null)
+									|| productData.getCompoListView().getCompoList().isEmpty()) {
+								if (checkRuleMatchIng(ingListDataItem, fil)) {
+									MLText curMessage = fil.getReqMessage();
+									if ((curMessage == null) || curMessage.values().stream().noneMatch(mes -> (mes != null) && !mes.isEmpty())) {
+										curMessage = MLTextHelper.getI18NMessage(MESSAGE_FORBIDDEN_ING,
+												mlNodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME));
+									}
+
 									ReqCtrlListDataItem reqCtrl = reqCtrlMap.get(fil.getNodeRef());
 									if (reqCtrl == null) {
-										reqCtrl = new ReqCtrlListDataItem(null, fil.getReqType(), fil.getReqMessage(), ingListDataItem.getIng(),
-												new ArrayList<NodeRef>(), RequirementDataType.Specification);
+										reqCtrl = new ReqCtrlListDataItem(null, fil.getReqType(), curMessage, null, new ArrayList<NodeRef>(),
+												RequirementDataType.Specification);
 										reqCtrlMap.put(fil.getNodeRef(), reqCtrl);
 									} else {
 										reqCtrl.setReqDataType(RequirementDataType.Specification);
 									}
-								}
-							}
-						} else if ((productData.getCompoListView().getCompoList() == null)
-								|| productData.getCompoListView().getCompoList().isEmpty()) {
-							if (checkRuleMatchIng(ingListDataItem, fil)) {
-								MLText curMessage = fil.getReqMessage();
-								if ((curMessage == null) || curMessage.values().stream().noneMatch(mes -> (mes != null) && !mes.isEmpty())) {
-									curMessage = MLTextHelper.getI18NMessage(MESSAGE_FORBIDDEN_ING,
-											mlNodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME));
-								}
 
-								ReqCtrlListDataItem reqCtrl = reqCtrlMap.get(fil.getNodeRef());
-								if (reqCtrl == null) {
-									reqCtrl = new ReqCtrlListDataItem(null, fil.getReqType(), curMessage, null, new ArrayList<NodeRef>(),
-											RequirementDataType.Specification);
-									reqCtrlMap.put(fil.getNodeRef(), reqCtrl);
-								} else {
-									reqCtrl.setReqDataType(RequirementDataType.Specification);
+									if (specification.getRegulatoryCode() != null) {
+										reqCtrl.setRegulatoryCode(specification.getRegulatoryCode());
+									} else {
+										reqCtrl.setRegulatoryCode(specification.getName());
+									}
+
 								}
 
 							}
 
+						} else {
+							checkAutorized = true;
 						}
 
-					} else {
-						checkAutorized = true;
+					}
+				}
+
+				// Check autorized
+
+				if (checkAutorized) {
+
+					for (IngListDataItem ingListDataItem : productData.getIngList()) {
+						boolean autorized = false;
+
+						for (ForbiddenIngListDataItem fil : requirements) {
+							if (RequirementType.Authorized.equals(fil.getReqType())) {
+								if (checkRuleMatchIng(ingListDataItem, fil)) {
+									autorized = true;
+									if ((fil.getReqMessage() != null) && (fil.getReqMessage().getDefaultValue() != null)
+											&& (!fil.getReqMessage().getDefaultValue().isEmpty())) {
+										addReqCtrl(reqCtrlMap, fil.getNodeRef(), RequirementType.Authorized, fil.getReqMessage(),
+												ingListDataItem.getIng(), specification, RequirementDataType.Specification);
+									}
+									break;
+								}
+							}
+						}
+
+						if (!autorized) {
+							String message = I18NUtil.getMessage(MESSAGE_NOTAUTHORIZED_ING);
+							addReqCtrl(reqCtrlMap, new NodeRef(RepoConsts.SPACES_STORE, "ing-notauhtorised"), RequirementType.Forbidden,
+									new MLText(message), ingListDataItem.getIng(), specification, RequirementDataType.Specification);
+						}
+
 					}
 
 				}
 			}
-
-			// Check autorized
-
-			if (checkAutorized) {
-
-				for (IngListDataItem ingListDataItem : productData.getIngList()) {
-					boolean autorized = false;
-
-					for (ForbiddenIngListDataItem fil : requirements) {
-						if (RequirementType.Authorized.equals(fil.getReqType())) {
-							if (checkRuleMatchIng(ingListDataItem, fil)) {
-								autorized = true;
-								if ((fil.getReqMessage() != null) && (fil.getReqMessage().getDefaultValue() != null)
-										&& (!fil.getReqMessage().getDefaultValue().isEmpty())) {
-									addReqCtrl(reqCtrlMap, fil.getNodeRef(), RequirementType.Authorized, fil.getReqMessage(),
-											ingListDataItem.getIng(), RequirementDataType.Specification);
-								}
-								break;
-							}
-						}
-					}
-
-					if (!autorized) {
-						String message = I18NUtil.getMessage(MESSAGE_NOTAUTHORIZED_ING);
-						addReqCtrl(reqCtrlMap, new NodeRef(RepoConsts.SPACES_STORE, "ing-notauhtorised"), RequirementType.Forbidden,
-								new MLText(message), ingListDataItem.getIng(), RequirementDataType.Specification);
-					}
-
-				}
-
-			}
-
 		}
 
 		return new LinkedList<>(reqCtrlMap.values());
@@ -168,6 +183,8 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 
 	/**
 	 * check the ingredients of the part according to the specification
+	 * 
+	 * @param specification
 	 *
 	 * @param compoListDataItem
 	 *            the compo list data item
@@ -177,7 +194,8 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 	 *            the total qty ing map
 	 */
 	private void checkILOfPart(NodeRef productNodeRef, DeclarationType declType, ProductData componentProductData,
-			List<ForbiddenIngListDataItem> forbiddenIngredientsList, Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap, Set<NodeRef> visited) {
+			List<ForbiddenIngListDataItem> forbiddenIngredientsList, ProductSpecificationData specification,
+			Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap, Set<NodeRef> visited) {
 
 		if (!PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.equals(mlNodeService.getType(productNodeRef)) && !visited.contains(productNodeRef)) {
 
@@ -190,7 +208,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 					// req not respected
 					String message = I18NUtil.getMessage(MESSAGE_MISSING_INGLIST);
 					addReqCtrl(reqCtrlMap, new NodeRef(RepoConsts.SPACES_STORE, "missing-inglist"), RequirementType.Tolerated, new MLText(message),
-							productNodeRef, RequirementDataType.Ingredient);
+							productNodeRef, specification, RequirementDataType.Ingredient);
 				}
 			} else {
 
@@ -211,7 +229,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 					if (Math.abs(total - 100d) > 0.00001) {
 						String message = I18NUtil.getMessage(MESSAGE_INCORRECT_INGLIST_TOTAL);
 						addReqCtrl(reqCtrlMap, new NodeRef(RepoConsts.SPACES_STORE, "incorrect-inglist-total"), RequirementType.Tolerated,
-								new MLText(message), productNodeRef, RequirementDataType.Ingredient);
+								new MLText(message), productNodeRef, specification, RequirementDataType.Ingredient);
 					}
 
 				}
@@ -228,12 +246,12 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 										&& !componentProductData.getCompoListView().getCompoList().isEmpty()) {
 									for (CompoListDataItem c : componentProductData.getCompoListView().getCompoList()) {
 										checkILOfPart(c.getProduct(), declType, (ProductData) alfrescoRepository.findOne(c.getProduct()),
-												forbiddenIngredientsList, reqCtrlMap, visited);
+												forbiddenIngredientsList, specification, reqCtrlMap, visited);
 									}
 								} else {
 									MLText curMessage = fil.getReqMessage();
 									if ((curMessage == null) || curMessage.values().stream().noneMatch(mes -> (mes != null) && !mes.isEmpty())) {
-										curMessage =MLTextHelper.getI18NMessage(MESSAGE_FORBIDDEN_ING,
+										curMessage = MLTextHelper.getI18NMessage(MESSAGE_FORBIDDEN_ING,
 												mlNodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME));
 									}
 									;
@@ -252,6 +270,12 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 									if (!reqCtrl.getSources().contains(productNodeRef)) {
 										reqCtrl.getSources().add(productNodeRef);
 									}
+
+									if (specification.getRegulatoryCode() != null) {
+										reqCtrl.setRegulatoryCode(specification.getRegulatoryCode());
+									} else {
+										reqCtrl.setRegulatoryCode(specification.getName());
+									}
 								}
 							}
 						}
@@ -265,7 +289,8 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 
 	@Override
 	protected List<ForbiddenIngListDataItem> getDataListVisited(ProductData partProduct) {
-		return ((ProductSpecificationData) partProduct).getForbiddenIngList()!=null ? ((ProductSpecificationData) partProduct).getForbiddenIngList() : new ArrayList<>();
+		return ((ProductSpecificationData) partProduct).getForbiddenIngList() != null ? ((ProductSpecificationData) partProduct).getForbiddenIngList()
+				: new ArrayList<>();
 	}
 
 	private boolean checkRuleMatchIng(IngListDataItem ingListDataItem, ForbiddenIngListDataItem fil) {
@@ -354,7 +379,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 	}
 
 	private void addReqCtrl(Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap, NodeRef reqNodeRef, RequirementType requirementType, MLText message,
-			NodeRef sourceNodeRef, RequirementDataType requirementDataType) {
+			NodeRef sourceNodeRef, ProductSpecificationData specification, RequirementDataType requirementDataType) {
 
 		ReqCtrlListDataItem reqCtrl = reqCtrlMap.get(reqNodeRef);
 		if (reqCtrl == null) {
@@ -367,6 +392,13 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 		if (!reqCtrl.getSources().contains(sourceNodeRef)) {
 			reqCtrl.getSources().add(sourceNodeRef);
 		}
+
+		if (specification.getRegulatoryCode() != null) {
+			reqCtrl.setRegulatoryCode(specification.getRegulatoryCode());
+		} else {
+			reqCtrl.setRegulatoryCode(specification.getName());
+		}
+
 	}
 
 	@Override

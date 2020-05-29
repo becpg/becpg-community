@@ -71,6 +71,10 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 		if(reqDataType!=null){
 			key+= reqDataType.toString();
 		}
+		if(regulatoryCode!=null){
+			key+= regulatoryCode.toString();
+		}
+		
 		return key;
 	}
 	
@@ -125,6 +129,7 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 	public void setReqDataType(RequirementDataType reqDataType) {
 		this.reqDataType = reqDataType != null ? reqDataType : RequirementDataType.Nutrient;
 	}
+	
 	
 	@AlfProp
 	@AlfQname(qname="bcpg:regulatoryCode")

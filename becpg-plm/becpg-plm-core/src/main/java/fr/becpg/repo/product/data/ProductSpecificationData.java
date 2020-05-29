@@ -5,6 +5,7 @@ package fr.becpg.repo.product.data;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
@@ -26,8 +27,9 @@ public class ProductSpecificationData extends ProductData {
 
 	private static final long serialVersionUID = -3890483893356522048L;
 	
-	
 	private String specCompatibilityLog;
+	
+	private String regulatoryCode;
 
 	private List<ForbiddenIngListDataItem> forbiddenIngList;
 
@@ -41,6 +43,17 @@ public class ProductSpecificationData extends ProductData {
 	
 
 	private List<NodeRef> specCompatibilityTpls = new ArrayList<>();
+	
+	
+	@AlfProp
+	@AlfQname(qname="bcpg:regulatoryCode")
+	public String getRegulatoryCode() {
+		return regulatoryCode;
+	}
+
+	public void setRegulatoryCode(String regulatoryCode) {
+		this.regulatoryCode = regulatoryCode;
+	}
 	
 	@AlfProp
 	@AlfQname(qname = "bcpg:specCompatibilityLog")
@@ -118,13 +131,8 @@ public class ProductSpecificationData extends ProductData {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + ((dynamicCharactList == null) ? 0 : dynamicCharactList.hashCode());
-		result = prime * result + ((forbiddenIngList == null) ? 0 : forbiddenIngList.hashCode());
-		result = prime * result + ((labelingRuleList == null) ? 0 : labelingRuleList.hashCode());
-		result = prime * result + ((resourceParams == null) ? 0 : resourceParams.hashCode());
-		result = prime * result + ((specCompatibilityList == null) ? 0 : specCompatibilityList.hashCode());
-		result = prime * result + ((specCompatibilityLog == null) ? 0 : specCompatibilityLog.hashCode());
-		result = prime * result + ((specCompatibilityTpls == null) ? 0 : specCompatibilityTpls.hashCode());
+		result = prime * result + Objects.hash(dynamicCharactList, forbiddenIngList, labelingRuleList, regulatoryCode, resourceParams,
+				specCompatibilityList, specCompatibilityLog, specCompatibilityTpls);
 		return result;
 	}
 
@@ -137,47 +145,18 @@ public class ProductSpecificationData extends ProductData {
 		if (getClass() != obj.getClass())
 			return false;
 		ProductSpecificationData other = (ProductSpecificationData) obj;
-		if (dynamicCharactList == null) {
-			if (other.dynamicCharactList != null)
-				return false;
-		} else if (!dynamicCharactList.equals(other.dynamicCharactList))
-			return false;
-		if (forbiddenIngList == null) {
-			if (other.forbiddenIngList != null)
-				return false;
-		} else if (!forbiddenIngList.equals(other.forbiddenIngList))
-			return false;
-		if (labelingRuleList == null) {
-			if (other.labelingRuleList != null)
-				return false;
-		} else if (!labelingRuleList.equals(other.labelingRuleList))
-			return false;
-		if (resourceParams == null) {
-			if (other.resourceParams != null)
-				return false;
-		} else if (!resourceParams.equals(other.resourceParams))
-			return false;
-		if (specCompatibilityList == null) {
-			if (other.specCompatibilityList != null)
-				return false;
-		} else if (!specCompatibilityList.equals(other.specCompatibilityList))
-			return false;
-		if (specCompatibilityLog == null) {
-			if (other.specCompatibilityLog != null)
-				return false;
-		} else if (!specCompatibilityLog.equals(other.specCompatibilityLog))
-			return false;
-		if (specCompatibilityTpls == null) {
-			if (other.specCompatibilityTpls != null)
-				return false;
-		} else if (!specCompatibilityTpls.equals(other.specCompatibilityTpls))
-			return false;
-		return true;
+		return Objects.equals(dynamicCharactList, other.dynamicCharactList) && Objects.equals(forbiddenIngList, other.forbiddenIngList)
+				&& Objects.equals(labelingRuleList, other.labelingRuleList) && Objects.equals(regulatoryCode, other.regulatoryCode)
+				&& Objects.equals(resourceParams, other.resourceParams) && Objects.equals(specCompatibilityList, other.specCompatibilityList)
+				&& Objects.equals(specCompatibilityLog, other.specCompatibilityLog)
+				&& Objects.equals(specCompatibilityTpls, other.specCompatibilityTpls);
 	}
 
 	@Override
 	public String toString() {
-		return "ProductSpecificationData [forbiddenIngList=" + forbiddenIngList + ", labelingRuleList=" + labelingRuleList + "]";
+		return "ProductSpecificationData [specCompatibilityLog=" + specCompatibilityLog + ", regulatoryCode=" + regulatoryCode + ", forbiddenIngList="
+				+ forbiddenIngList + ", labelingRuleList=" + labelingRuleList + ", resourceParams=" + resourceParams + ", specCompatibilityList="
+				+ specCompatibilityList + ", dynamicCharactList=" + dynamicCharactList + ", specCompatibilityTpls=" + specCompatibilityTpls + "]";
 	}
 
 }

@@ -395,13 +395,13 @@ public class DecernisServiceImpl implements DecernisService {
 										MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_PROHIBITED_ING, country,
 												!usage.isEmpty() ? usage + " - " : "", threshold);
 										ReqCtrlListDataItem reqCtrlItem = createReqCtrl(ings.get(result.getString("did")), reqMessage, RequirementType.Forbidden);
-										reqCtrlItem.setRegulatoryCode((!usage.isEmpty() ? (usage.toUpperCase() + "_") : "") + country.toUpperCase());
+										reqCtrlItem.setRegulatoryCode( country + (!usage.isEmpty() ?  " - " + usage : "") );
 										reqCtrlList.add(reqCtrlItem);
 									} else if (result.getString("resultIndicator").toLowerCase().startsWith("not listed")){
 										MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_NOTLISTED_ING, country,
 												!usage.isEmpty() ? usage + " - " : "");
 										ReqCtrlListDataItem reqCtrlItem = createReqCtrl(ings.get(result.getString("did")), reqMessage, RequirementType.Tolerated);
-										reqCtrlItem.setRegulatoryCode((!usage.isEmpty() ? (usage.toUpperCase() + "_") : "") + country.toUpperCase());
+										reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ?  " - " + usage : ""));
 										reqCtrlList.add(reqCtrlItem);
 									}
 								}
@@ -460,7 +460,7 @@ public class DecernisServiceImpl implements DecernisService {
 			logger.error("Decernis HTTP ERROR STATUS:"+e.getStatusText());
 			logger.error("- error body:"+ e.getResponseBodyAsString());
 			throw new FormulateException("Error calling decernis service", e);
-		} catch (JSONException e) {
+		} catch (Exception e) {
 			logger.error(e, e);
 			throw new FormulateException("Unexpected decernis error", e);
 		}

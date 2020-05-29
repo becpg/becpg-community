@@ -400,7 +400,7 @@
 						getParameters : function ProductNotifications_getParameters() {
 
 							var request = {
-								fields : [ "bcpg_rclReqType", "bcpg_rclReqMessage", "bcpg_rclSources", "bcpg_rclDataType" ],
+								fields : [ "bcpg_rclReqType", "bcpg_rclReqMessage", "bcpg_rclSources", "bcpg_rclDataType", "bcpg_regulatoryCode" ],
 								page : this.currentPage,
 								filter : {
 									filterId : this.filterId,
@@ -436,11 +436,17 @@
 							} else {
 
 								var reqType = oRecord.getData("itemData")["prop_bcpg_rclReqType"].value;
+								var regulatoryCode = oRecord.getData("itemData")["prop_bcpg_regulatoryCode"].value;
+								
 								var reqProducts = oRecord.getData("itemData")["assoc_bcpg_rclSources"];
 								desc += '<div class="rclReq-details">';
 								if (reqType) {
 									desc += '   <div class="icon" ><span class="reqType' + reqType + '" title="'
 											+ Alfresco.util.encodeHTML(this.msg("data.reqtype." + reqType.toLowerCase())) + '">&nbsp;</span></div>';
+								}
+								if (regulatoryCode) {
+									desc += '      <div class="rclReq-regulatoryCode">'
+										+ Alfresco.util.encodeHTML(regulatoryCode) + '</div>';
 								}
 								desc += '      <div class="rclReq-title">'
 										+ Alfresco.util.encodeHTML(oRecord.getData("itemData")["prop_bcpg_rclReqMessage"].displayValue) + '</div>';
