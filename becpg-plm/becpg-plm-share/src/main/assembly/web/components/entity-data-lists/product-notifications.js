@@ -139,10 +139,16 @@
 									var type = (splits.length > 2 ? splits[2] : undefined);
 									var dataType = splits[1].charAt(0).toUpperCase() + splits[1].slice(1);
 									instance.filterId = (type === "all" && dataType === "All" ? "all" : "filterform");
-									instance.filterData = (type === "all" && dataType === "All" ? undefined : "{"
-											+ (type !== undefined ? ("\"prop_bcpg_rclReqType\":\"" + type+"\"") : "")
-											+ (dataType !== null ? (type !== undefined ? "," : "") + ("\"prop_bcpg_rclDataType\":\"" + dataType+"\"") : "")
-											+ "}");
+									
+									if(dataType == "RegulatoryCodes") {
+										instance.filterData =  "{\"prop_bcpg_regulatoryCode\":\"" + type+"\"}";
+									} else {
+									
+										instance.filterData = (type === "all" && dataType === "All" ? undefined : "{"
+												+ (type !== undefined ? ("\"prop_bcpg_rclReqType\":\"" + type+"\"") : "")
+												+ (dataType !== null ? (dataType !== undefined ? "," : "") + ("\"prop_bcpg_rclDataType\":\"" + dataType+"\"") : "")
+												+ "}");
+									}
 									
 									instance.reloadDataTable();
 
@@ -344,14 +350,22 @@
 																+ scoreInfo + "</a></span><ul>";
 
 														var types = scores.ctrlCount[dataType];
+														
+													
 
 														for ( var type in types[dataTypeName]) {
 															var value = types[dataTypeName][type];
-
-															html += '<li><span class="req-' + dataTypeName.toString().toLowerCase() + '-' + type
-																	+ '" title="' + instance.msg("reqTypes." + type) + '"><a class="req-filter '
-																	+ REQFILTER_EVENTCLASS + '" href="#"><span class="reqType' + type + '"></span>'
-																	+ value + '</a></li>';
+															if(dataTypeName == "RegulatoryCodes"){
+																html += '<li><span class="req-' + dataTypeName.toString().toLowerCase() + '-' + type
+																+ '" title="' + instance.msg("reqTypes." + type) + '"><a class="req-filter '
+																+ REQFILTER_EVENTCLASS + '" href="#">' + type + '</span>'
+																+ value + '</a></li>';
+															} else {
+																html += '<li><span class="req-' + dataTypeName.toString().toLowerCase() + '-' + type
+																		+ '" title="' + instance.msg("reqTypes." + type) + '"><a class="req-filter '
+																		+ REQFILTER_EVENTCLASS + '" href="#"><span class="reqType' + type + '"></span>'
+																		+ value + '</a></li>';
+															}
 
 														}
 														html += "</ul></div>";
