@@ -295,8 +295,8 @@ public class DecernisServiceImpl implements DecernisService {
 		
 		String url = serverUrl + "formulas";
 		if (data != null) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Data sent to Decernis: " + data);
+			if (logger.isTraceEnabled()) {
+				logger.trace("Data sent to Decernis: " + data);
 			}
 			HttpEntity<String> request = createEntity(data.toString());
 			JSONObject jsonObject = new JSONObject(restTemplate.postForObject(url, request, String.class));
@@ -364,8 +364,8 @@ public class DecernisServiceImpl implements DecernisService {
 		HttpEntity<String> entity = createEntity(null);
 		JSONObject jsonObject = new JSONObject(restTemplate.postForObject(url, entity, String.class, params));
 		if (jsonObject.has("analysis_results") && (jsonObject.getJSONObject("analysis_results").length() > 0)) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Data returned by Decernis: " + jsonObject);
+			if (logger.isTraceEnabled()) {
+				logger.trace("Data returned by Decernis: " + jsonObject);
 			}
 			return jsonObject;
 		}
