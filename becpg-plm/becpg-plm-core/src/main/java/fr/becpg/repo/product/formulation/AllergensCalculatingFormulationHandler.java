@@ -34,7 +34,6 @@ import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
-import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.requirement.AllergenRequirementScanner;
 import fr.becpg.repo.repository.AlfrescoRepository;

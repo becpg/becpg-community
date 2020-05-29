@@ -263,7 +263,9 @@ public class BeCPGHashCodeBuilder {
 					builder1.append(fieldValue);
 					builder2.append(fieldValue2);
 
-					if (fieldValue!=null && fieldValue2!=null && fieldValue.hashCode() != fieldValue2.hashCode()) {
+					if ((fieldValue!=null && fieldValue2!=null && fieldValue.hashCode() != fieldValue2.hashCode()) || 
+							builder1.hashCode()!=builder2.hashCode()
+							) {
 						ret += pd.getName() + " " + builder1.hashCode() + " " + builder2.hashCode() + "\n";
 
 						if (fieldValue != null) {
