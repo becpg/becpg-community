@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -12,13 +11,12 @@ import java.util.Set;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.repo.decernis.DecernisService;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationService;
+import fr.becpg.repo.helper.CheckSumHelper;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
@@ -54,39 +52,7 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
-	private String updateChecksum(String value, String checksum) {
-		try {
-			JSONObject json = null;
 
-			if (value == null) {
-				json = new JSONObject();
-			} else {
-				json = new JSONObject(value);
-			}
-
-			json.put(DECERNIS_KEY, checksum);
-
-			return json.toString();
-
-		} catch (JSONException e) {
-			logger.error(e, e);
-		}
-		return null;
-	}
-
-	private boolean isSameChecksum(String value, String checksum) {
-		try {
-			if ((value != null)) {
-				JSONObject json = new JSONObject(value);
-				if (json.has(DECERNIS_KEY)) {
-					return (checksum != null) && checksum.equals(json.getString(DECERNIS_KEY));
-				}
-			}
-		} catch (JSONException e) {
-			logger.error(e, e);
-		}
-		return false;
-	}
 
 	@Override
 	public List<ReqCtrlListDataItem> checkRequirements(ProductData formulatedProduct, List<ProductSpecificationData> specifications) {
@@ -100,7 +66,7 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 			String checkSum = decernisService.createDecernisChecksum(formulatedProduct.getRegulatoryCountries(),
 					formulatedProduct.getRegulatoryUsages());
 
-			shouldLaunchDecernis = !isSameChecksum(formulatedProduct.getRequirementChecksum(), checkSum);
+			shouldLaunchDecernis = !CheckSumHelper.isSameChecksum(DECERNIS_KEY,formulatedProduct.getRequirementChecksum(), checkSum);
 
 			if (!shouldLaunchDecernis) {
 				logger.debug("Decernis checksum match test ingList");
@@ -130,7 +96,7 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 						List<ReqCtrlListDataItem> ret = decernisService.extractDecernisRequirements(formulatedProduct,
 								formulatedProduct.getRegulatoryCountries(), formulatedProduct.getRegulatoryUsages());
 
-						formulatedProduct.setRequirementChecksum(updateChecksum(formulatedProduct.getRequirementChecksum(), checkSum));
+						formulatedProduct.setRequirementChecksum(CheckSumHelper.updateChecksum(DECERNIS_KEY,formulatedProduct.getRequirementChecksum(), checkSum));
 						formulatedProduct.setRegulatoryFormulatedDate(new Date());
 
 						return ret;
@@ -158,7 +124,7 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 				logger.debug("Fast formulation skipping decernis");
 				if (shouldLaunchDecernis) {
 					logger.debug(" - mark dirty");
-					formulatedProduct.setRequirementChecksum(updateChecksum(formulatedProduct.getRequirementChecksum(), null));
+					formulatedProduct.setRequirementChecksum(CheckSumHelper.updateChecksum(DECERNIS_KEY,formulatedProduct.getRequirementChecksum(), null));
 				}
 				shouldLaunchDecernis = false;
 
@@ -196,7 +162,6 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 				if(logger.isDebugEnabled()) {
 					logger.debug("IngList has deleted nodes");
 				}
-				
 				return true;
 			} else {
 				for (IngListDataItem item : dataList) {

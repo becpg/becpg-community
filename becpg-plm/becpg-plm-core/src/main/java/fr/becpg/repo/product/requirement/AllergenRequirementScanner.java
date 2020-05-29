@@ -3,6 +3,7 @@ package fr.becpg.repo.product.requirement;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -23,37 +24,50 @@ public class AllergenRequirementScanner extends AbstractRequirementScanner<Aller
 	public List<ReqCtrlListDataItem> checkRequirements(ProductData formulatedProduct, List<ProductSpecificationData> specifications) {
 		List<ReqCtrlListDataItem> ret = new LinkedList<>();
 
-		if (formulatedProduct.getAllergenList() != null && !formulatedProduct.getAllergenList().isEmpty()) {
-			extractRequirements(specifications).forEach(specDataItem -> {
-				formulatedProduct.getAllergenList().forEach(listDataItem -> {
-					if (listDataItem.getAllergen().equals(specDataItem.getAllergen())) {
-						if ((listDataItem.getInVoluntary() || listDataItem.getVoluntary())) {
+		if ((formulatedProduct.getAllergenList() != null) && !formulatedProduct.getAllergenList().isEmpty()) {
 
-							boolean isAllergenAllowed = false;
-							if (specDataItem.getVoluntary() && listDataItem.getVoluntary()) {
-								isAllergenAllowed = true;
-							} else if (specDataItem.getInVoluntary() && listDataItem.getInVoluntary()) {
-								isAllergenAllowed = true;
-							}
+			for (Map.Entry<ProductSpecificationData, List<AllergenListDataItem>> entry : extractRequirements(specifications).entrySet()) {
+				List<AllergenListDataItem> requirements = entry.getValue();
+				ProductSpecificationData specification = entry.getKey();
 
-							if (!isAllergenAllowed) {
-								MLText message = MLTextHelper.getI18NMessage(MESSAGE_FORBIDDEN_ALLERGEN, extractName(listDataItem.getAllergen()));
-								ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message,
-										listDataItem.getAllergen(), new ArrayList<NodeRef>(), RequirementDataType.Specification);
-								rclDataItem.getSources().addAll(listDataItem.getVoluntarySources());
-								rclDataItem.getSources().addAll(listDataItem.getInVoluntarySources());
-								ret.add(rclDataItem);
+				requirements.forEach(specDataItem -> {
+					formulatedProduct.getAllergenList().forEach(listDataItem -> {
+						if (listDataItem.getAllergen().equals(specDataItem.getAllergen())) {
+							if ((listDataItem.getInVoluntary() || listDataItem.getVoluntary())) {
+
+								boolean isAllergenAllowed = false;
+								if (specDataItem.getVoluntary() && listDataItem.getVoluntary()) {
+									isAllergenAllowed = true;
+								} else if (specDataItem.getInVoluntary() && listDataItem.getInVoluntary()) {
+									isAllergenAllowed = true;
+								}
+
+								if (!isAllergenAllowed) {
+									MLText message = MLTextHelper.getI18NMessage(MESSAGE_FORBIDDEN_ALLERGEN, extractName(listDataItem.getAllergen()));
+									ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message,
+											listDataItem.getAllergen(), new ArrayList<NodeRef>(), RequirementDataType.Specification);
+
+									if (specification.getRegulatoryCode() != null) {
+										rclDataItem.setRegulatoryCode(specification.getRegulatoryCode());
+									} else {
+										rclDataItem.setRegulatoryCode(specification.getName());
+									}
+
+									rclDataItem.getSources().addAll(listDataItem.getVoluntarySources());
+									rclDataItem.getSources().addAll(listDataItem.getInVoluntarySources());
+									ret.add(rclDataItem);
+								}
 							}
 						}
-					}
+					});
 				});
-			});
+			}
 		}
 
 		return ret;
 	}
 
-
+	@Override
 	protected void mergeRequirements(List<AllergenListDataItem> ret, List<AllergenListDataItem> toAdd) {
 		toAdd.forEach(item -> {
 			if (item.getAllergen() != null) {
@@ -85,10 +99,9 @@ public class AllergenRequirementScanner extends AbstractRequirementScanner<Aller
 		});
 	}
 
-
+	@Override
 	protected List<AllergenListDataItem> getDataListVisited(ProductData partProduct) {
-		return partProduct.getAllergenList()!=null ?  partProduct.getAllergenList() : new ArrayList<>();
+		return partProduct.getAllergenList() != null ? partProduct.getAllergenList() : new ArrayList<>();
 	}
 
-	
 }
