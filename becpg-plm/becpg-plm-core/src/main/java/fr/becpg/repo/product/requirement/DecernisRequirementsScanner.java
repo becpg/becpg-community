@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -27,6 +28,7 @@ import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
+import fr.becpg.repo.repository.impl.BeCPGHashCodeBuilder;
 import fr.becpg.repo.repository.impl.LazyLoadingDataList;
 
 /**
@@ -200,7 +202,10 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 				for (IngListDataItem item : dataList) {
 					if (alfrescoRepository.isDirty(item)) {
 						if(logger.isTraceEnabled()) {
-							logger.trace("IngList item is dirty:"+item.toString());
+							logger.trace("IngList item is dirty:"+item.toString()+" previous checksum "+item.getDbHashCode()+" new checksum" +BeCPGHashCodeBuilder.reflectionHashCode(item));
+							logger.trace(" HashDiff :" + BeCPGHashCodeBuilder.printDiff(item,
+									alfrescoRepository.findOne(item.getNodeRef())));
+							
 						}
 						return true;
 					}

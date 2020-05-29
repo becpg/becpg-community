@@ -28,6 +28,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -290,6 +292,7 @@ public class DecernisServiceImpl implements DecernisService {
 	}
 
 	private String sendRecipe(JSONObject data) throws JSONException {
+		
 		String url = serverUrl + "formulas";
 		if (data != null) {
 			if (logger.isDebugEnabled()) {
@@ -453,7 +456,11 @@ public class DecernisServiceImpl implements DecernisService {
 			} else {
 				throw new IllegalStateException("countries or usage cannot be null");
 			}
-		} catch (Exception e) {
+		}  catch (HttpClientErrorException | HttpServerErrorException e) {
+			logger.error("Decernis HTTP ERROR STATUS:"+e.getStatusText());
+			logger.error("- error body:"+ e.getResponseBodyAsString());
+			throw new FormulateException("Error calling decernis service", e);
+		} catch (JSONException e) {
 			logger.error(e, e);
 			throw new FormulateException("Unexpected decernis error", e);
 		}
