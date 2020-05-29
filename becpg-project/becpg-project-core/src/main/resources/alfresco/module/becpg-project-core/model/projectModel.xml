@@ -110,6 +110,8 @@
 					<value>TaskStart</value>
 					<value>TaskEnd</value>
 					<value>TaskRefused</value>
+					<value>NotifyDisabled</value>
+					<value>NotifyOnRefused</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -481,7 +483,6 @@
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
-
 			</properties>
 			<associations>
 				<association name="pjt:tlPrevTasks">
