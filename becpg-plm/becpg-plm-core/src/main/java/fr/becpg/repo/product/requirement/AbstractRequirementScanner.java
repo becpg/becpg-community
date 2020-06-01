@@ -1,7 +1,9 @@
 package fr.becpg.repo.product.requirement;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -11,20 +13,38 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 
-public abstract  class AbstractRequirementScanner<T> implements RequirementScanner {
+public abstract class AbstractRequirementScanner<T> implements RequirementScanner {
 
 	protected NodeService mlNodeService;
-	
 
 	public void setMlNodeService(NodeService mlNodeService) {
 		this.mlNodeService = mlNodeService;
 	}
 
-	public List<T> extractRequirements(List<ProductSpecificationData> specifications) {
+	public Map<ProductSpecificationData, List<T>> extractRequirements(List<ProductSpecificationData> specifications) {
+		Map<ProductSpecificationData, List<T>> ret = new HashMap<>();
+		if (specifications != null) {
+			for (ProductSpecificationData specification : specifications) {
+				List<T> tmp = new ArrayList<>();
+
+				mergeRequirements(tmp, extractRequirementsFromParent(specification.getProductSpecifications()));
+				if (getDataListVisited(specification) != null) {
+					mergeRequirements(tmp, getDataListVisited(specification));
+				}
+
+				ret.put(specification, tmp);
+
+			}
+		}
+		return ret;
+
+	}
+
+	private List<T> extractRequirementsFromParent(List<ProductSpecificationData> specifications) {
 		List<T> ret = new ArrayList<>();
 		if (specifications != null) {
 			for (ProductSpecificationData specification : specifications) {
-				mergeRequirements(ret, extractRequirements(specification.getProductSpecifications()));
+				mergeRequirements(ret, extractRequirementsFromParent(specification.getProductSpecifications()));
 				if (getDataListVisited(specification) != null) {
 					mergeRequirements(ret, getDataListVisited(specification));
 				}
@@ -33,15 +53,12 @@ public abstract  class AbstractRequirementScanner<T> implements RequirementScann
 		return ret;
 	}
 
-
 	protected MLText extractName(NodeRef charactRef) {
 		return (MLText) mlNodeService.getProperty(charactRef, BeCPGModel.PROP_CHARACT_NAME);
 	}
 
-	
-	
 	protected abstract List<T> getDataListVisited(ProductData productData);
-	
-	protected abstract void  mergeRequirements(List<T> ret, List<T> toAdd);
-	
+
+	protected abstract void mergeRequirements(List<T> ret, List<T> toAdd);
+
 }

@@ -186,10 +186,21 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 
 	private Double getRegulatoryThreshold(ProductData formulatedProduct, NodeRef allergen) {
 		Double ret = null;
-		AllergenListDataItem temp = allergenRequirementScanner.extractRequirements(formulatedProduct.getProductSpecifications()).stream()
-				.filter(al -> al.getAllergen().equals(allergen)).findFirst().orElse(null);
-		if ((temp != null) && (temp.getQtyPerc() != null)) {
-			ret = temp.getQtyPerc();
+		
+		for (Map.Entry<ProductSpecificationData, List<AllergenListDataItem>> entry : allergenRequirementScanner.extractRequirements(formulatedProduct.getProductSpecifications()).entrySet()) {
+			List<AllergenListDataItem> requirements = entry.getValue();
+
+		
+			AllergenListDataItem temp = requirements.stream()
+					.filter(al -> al.getAllergen().equals(allergen)).findFirst().orElse(null);
+			if ((temp != null) && (temp.getQtyPerc() != null)) {
+				ret = temp.getQtyPerc();
+			}
+			
+			if(ret!=null) {
+				break;
+			}
+		
 		}
 
 		return ret != null ? ret : (Double) nodeService.getProperty(allergen, PLMModel.PROP_ALLERGEN_REGULATORY_THRESHOLD);
