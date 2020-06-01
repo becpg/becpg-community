@@ -28,6 +28,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -290,10 +292,11 @@ public class DecernisServiceImpl implements DecernisService {
 	}
 
 	private String sendRecipe(JSONObject data) throws JSONException {
+		
 		String url = serverUrl + "formulas";
 		if (data != null) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Data sent to Decernis: " + data);
+			if (logger.isTraceEnabled()) {
+				logger.trace("Data sent to Decernis: " + data);
 			}
 			HttpEntity<String> request = createEntity(data.toString());
 			JSONObject jsonObject = new JSONObject(restTemplate.postForObject(url, request, String.class));
@@ -361,8 +364,8 @@ public class DecernisServiceImpl implements DecernisService {
 		HttpEntity<String> entity = createEntity(null);
 		JSONObject jsonObject = new JSONObject(restTemplate.postForObject(url, entity, String.class, params));
 		if (jsonObject.has("analysis_results") && (jsonObject.getJSONObject("analysis_results").length() > 0)) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Data returned by Decernis: " + jsonObject);
+			if (logger.isTraceEnabled()) {
+				logger.trace("Data returned by Decernis: " + jsonObject);
 			}
 			return jsonObject;
 		}
@@ -392,13 +395,13 @@ public class DecernisServiceImpl implements DecernisService {
 										MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_PROHIBITED_ING, country,
 												!usage.isEmpty() ? usage + " - " : "", threshold);
 										ReqCtrlListDataItem reqCtrlItem = createReqCtrl(ings.get(result.getString("did")), reqMessage, RequirementType.Forbidden);
-										reqCtrlItem.setRegulatoryCode((!usage.isEmpty() ? (usage.toUpperCase() + "_") : "") + country.toUpperCase());
+										reqCtrlItem.setRegulatoryCode( country + (!usage.isEmpty() ?  " - " + usage : "") );
 										reqCtrlList.add(reqCtrlItem);
 									} else if (result.getString("resultIndicator").toLowerCase().startsWith("not listed")){
 										MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_NOTLISTED_ING, country,
 												!usage.isEmpty() ? usage + " - " : "");
 										ReqCtrlListDataItem reqCtrlItem = createReqCtrl(ings.get(result.getString("did")), reqMessage, RequirementType.Tolerated);
-										reqCtrlItem.setRegulatoryCode((!usage.isEmpty() ? (usage.toUpperCase() + "_") : "") + country.toUpperCase());
+										reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ?  " - " + usage : ""));
 										reqCtrlList.add(reqCtrlItem);
 									}
 								}
@@ -453,6 +456,10 @@ public class DecernisServiceImpl implements DecernisService {
 			} else {
 				throw new IllegalStateException("countries or usage cannot be null");
 			}
+		}  catch (HttpClientErrorException | HttpServerErrorException e) {
+			logger.error("Decernis HTTP ERROR STATUS:"+e.getStatusText());
+			logger.error("- error body:"+ e.getResponseBodyAsString());
+			throw new FormulateException("Error calling decernis service", e);
 		} catch (Exception e) {
 			logger.error(e, e);
 			throw new FormulateException("Unexpected decernis error", e);

@@ -44,8 +44,6 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.validator.routines.checkdigit.CheckDigitException;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.mozilla.javascript.Context;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.extensions.webscripts.ScriptValueConverter;
@@ -60,6 +58,7 @@ import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AutoNumHelper;
+import fr.becpg.repo.helper.CheckSumHelper;
 import fr.becpg.repo.helper.GTINHelper;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.RepoService;
@@ -394,41 +393,11 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	}
 
 	public String updateChecksum(String key, String value, String checksum) {
-		try {
-			JSONObject json = null;
-
-			if (value == null) {
-				json = new JSONObject();
-			} else {
-				json = new JSONObject(value);
-			}
-
-			if (checksum != null) {
-				json.put(key, checksum);
-			} else {
-				json.remove(key);
-			}
-
-			return json.toString();
-
-		} catch (JSONException e) {
-			logger.error(e, e);
-		}
-		return null;
+		return CheckSumHelper.updateChecksum(key, value, checksum);
 	}
 
 	public boolean isSameChecksum(String key, String value, String checksum) {
-		try {
-			if ((value != null)) {
-				JSONObject json = new JSONObject(value);
-				if (json.has(key)) {
-					return (checksum != null) && checksum.equals(json.getString(key));
-				}
-			}
-		} catch (JSONException e) {
-			logger.error(e, e);
-		}
-		return false;
+		return CheckSumHelper.isSameChecksum(key, value, checksum);
 	}
 	
 	public RepositoryEntity findOne(String nodeRef) {
