@@ -127,6 +127,7 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 		} catch (JSONException e) {
 			logger.error("Cannot create Json Score", e);
 		}
+		
 
 		product.setEntityScore(scores.toString());
 		return true;
