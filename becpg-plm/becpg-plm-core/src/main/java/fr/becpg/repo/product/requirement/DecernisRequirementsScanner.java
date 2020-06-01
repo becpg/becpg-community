@@ -52,8 +52,6 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
-
-
 	@Override
 	public List<ReqCtrlListDataItem> checkRequirements(ProductData formulatedProduct, List<ProductSpecificationData> specifications) {
 
@@ -66,7 +64,7 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 			String checkSum = decernisService.createDecernisChecksum(formulatedProduct.getRegulatoryCountries(),
 					formulatedProduct.getRegulatoryUsages());
 
-			shouldLaunchDecernis = !CheckSumHelper.isSameChecksum(DECERNIS_KEY,formulatedProduct.getRequirementChecksum(), checkSum);
+			shouldLaunchDecernis = !CheckSumHelper.isSameChecksum(DECERNIS_KEY, formulatedProduct.getRequirementChecksum(), checkSum);
 
 			if (!shouldLaunchDecernis) {
 				logger.debug("Decernis checksum match test ingList");
@@ -74,8 +72,10 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 
 				if ((formulatedProduct.getIngList() instanceof LazyLoadingDataList)
 						&& !isDirty((LazyLoadingDataList<IngListDataItem>) formulatedProduct.getIngList())) {
-					logger.debug("- ingList is dirty");
+
 					shouldLaunchDecernis = false;
+				} else if (logger.isDebugEnabled() && (formulatedProduct.getIngList() instanceof LazyLoadingDataList)) {
+					logger.debug("- ingList is dirty");
 				}
 
 			} else if (logger.isDebugEnabled()) {
@@ -96,7 +96,8 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 						List<ReqCtrlListDataItem> ret = decernisService.extractDecernisRequirements(formulatedProduct,
 								formulatedProduct.getRegulatoryCountries(), formulatedProduct.getRegulatoryUsages());
 
-						formulatedProduct.setRequirementChecksum(CheckSumHelper.updateChecksum(DECERNIS_KEY,formulatedProduct.getRequirementChecksum(), checkSum));
+						formulatedProduct.setRequirementChecksum(
+								CheckSumHelper.updateChecksum(DECERNIS_KEY, formulatedProduct.getRequirementChecksum(), checkSum));
 						formulatedProduct.setRegulatoryFormulatedDate(new Date());
 
 						return ret;
@@ -124,7 +125,8 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 				logger.debug("Fast formulation skipping decernis");
 				if (shouldLaunchDecernis) {
 					logger.debug(" - mark dirty");
-					formulatedProduct.setRequirementChecksum(CheckSumHelper.updateChecksum(DECERNIS_KEY,formulatedProduct.getRequirementChecksum(), null));
+					formulatedProduct
+							.setRequirementChecksum(CheckSumHelper.updateChecksum(DECERNIS_KEY, formulatedProduct.getRequirementChecksum(), null));
 				}
 				shouldLaunchDecernis = false;
 
@@ -159,18 +161,19 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 	private boolean isDirty(LazyLoadingDataList<IngListDataItem> dataList) {
 		if (dataList.isLoaded()) {
 			if (!dataList.getDeletedNodes().isEmpty()) {
-				if(logger.isDebugEnabled()) {
+				if (logger.isDebugEnabled()) {
 					logger.debug("IngList has deleted nodes");
 				}
 				return true;
 			} else {
 				for (IngListDataItem item : dataList) {
 					if (alfrescoRepository.isDirty(item)) {
-						if(logger.isTraceEnabled()) {
-							logger.trace("IngList item is dirty:"+item.toString()+" previous checksum "+item.getDbHashCode()+" new checksum" +BeCPGHashCodeBuilder.reflectionHashCode(item));
-							logger.trace(" HashDiff :" + BeCPGHashCodeBuilder.printDiff(item,
-									alfrescoRepository.findOne(item.getNodeRef())));
-							
+						if (logger.isTraceEnabled()) {
+							logger.trace("IngList item is dirty: " + item.toString() + " previous checksum " + item.getDbHashCode() + " new checksum "
+									+ BeCPGHashCodeBuilder.reflectionHashCode(item) + " old "
+									+ BeCPGHashCodeBuilder.reflectionHashCode(alfrescoRepository.findOne(item.getNodeRef())));
+							logger.trace(" HashDiff :" + BeCPGHashCodeBuilder.printDiff(item, alfrescoRepository.findOne(item.getNodeRef())));
+
 						}
 						return true;
 					}

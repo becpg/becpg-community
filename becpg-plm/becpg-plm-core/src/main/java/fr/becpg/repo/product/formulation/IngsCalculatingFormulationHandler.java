@@ -16,15 +16,18 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.stream.Collectors;
 
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.extensions.webscripts.GUID;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.formulation.FormulateException;
@@ -33,6 +36,8 @@ import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
+import fr.becpg.repo.product.data.constraints.RequirementDataType;
+import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
@@ -49,6 +54,9 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 	/** The Constant NO_GRP. */
 	public static final String NO_GRP = "-";
+
+	private static final String MESSAGE_MISSING_INGLIST = "message.formulate.missing.ingList";
+	private static final String MESSAGE_INCORRECT_INGLIST_TOTAL = "message.formulate.incorrect.ingList.total";
 
 	/** The logger. */
 	private static final Log logger = LogFactory.getLog(IngsCalculatingFormulationHandler.class);
@@ -73,9 +81,8 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
-		logger.debug("\t==== Calculate ingredient list of " + formulatedProduct.getName());
 
-		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) || formulatedProduct instanceof ProductSpecificationData) {
+		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) || (formulatedProduct instanceof ProductSpecificationData)) {
 			return true;
 		}
 
@@ -234,6 +241,23 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 	}
 
+	private void addReqCtrl(Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap, NodeRef reqNodeRef, RequirementType requirementType, MLText message,
+			NodeRef sourceNodeRef, RequirementDataType requirementDataType) {
+
+		ReqCtrlListDataItem reqCtrl = reqCtrlMap.get(reqNodeRef);
+		if (reqCtrl == null) {
+			reqCtrl = new ReqCtrlListDataItem(null, requirementType, message, null, new ArrayList<NodeRef>(), requirementDataType);
+			reqCtrlMap.put(reqNodeRef, reqCtrl);
+		} else {
+			reqCtrl.setReqDataType(requirementDataType);
+		}
+
+		if (!reqCtrl.getSources().contains(sourceNodeRef)) {
+			reqCtrl.getSources().add(sourceNodeRef);
+		}
+
+	}
+
 	private Double applyYield(Double qty, Double yield) {
 		if (ingsCalculatingWithYield && (qty != null) && (yield != null)) {
 			return (qty * yield) / 100d;
@@ -257,12 +281,53 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			List<IngListDataItem> retainNodes, Map<String, Double> totalQtyIngMap, Map<String, Double> totalQtyVolMap,
 			Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap, Set<NodeRef> visited) throws FormulateException {
 
-		if (componentProductData.getIngList() == null) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("CompoItem: " + compoListDataItem.getProduct() + " - doesn't have ing ");
-			}
+		if (!PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.equals(nodeService.getType(componentProductData.getNodeRef()))
+				&& !visited.contains(componentProductData.getNodeRef())) {
 
-			return;
+			visited.add(componentProductData.getNodeRef());
+
+			// datalist ingList is null or empty
+			if ((componentProductData.getIngList() == null) || componentProductData.getIngList().isEmpty()) {
+
+				if ((compoListDataItem.getDeclType() == null) || (!compoListDataItem.getDeclType().equals(DeclarationType.DoNotDetails)
+						&& !compoListDataItem.getDeclType().equals(DeclarationType.Omit))) {
+					if (logger.isDebugEnabled()) {
+						logger.debug("CompoItem: " + compoListDataItem.getProduct() + " - doesn't have ing ");
+					}
+
+					// req not respected
+					String message = I18NUtil.getMessage(MESSAGE_MISSING_INGLIST);
+					addReqCtrl(reqCtrlMap, new NodeRef(RepoConsts.SPACES_STORE, "missing-inglist"), RequirementType.Tolerated, new MLText(message),
+							componentProductData.getNodeRef(), RequirementDataType.Ingredient);
+				}
+
+				return;
+
+			} else {
+
+				if ((compoListDataItem.getDeclType() == null) || (!compoListDataItem.getDeclType().equals(DeclarationType.DoNotDetails)
+						&& !compoListDataItem.getDeclType().equals(DeclarationType.Omit))) {
+					Double total = 0d;
+					for (IngListDataItem ingListDataItem : componentProductData.getIngList()) {
+						if ((ingListDataItem.getQtyPerc() != null)
+								&& ((ingListDataItem.getDepthLevel() == null) || (ingListDataItem.getDepthLevel() == 1))) {
+							total += ingListDataItem.getQtyPerc();
+						}
+
+					}
+
+					if (ingsCalculatingWithYield && (componentProductData.getYield() != null)) {
+						total = (componentProductData.getYield() * total) / 100d;
+					}
+					// Due to double precision
+					if (Math.abs(total - 100d) > 0.00001) {
+						String message = I18NUtil.getMessage(MESSAGE_INCORRECT_INGLIST_TOTAL);
+						addReqCtrl(reqCtrlMap, new NodeRef(RepoConsts.SPACES_STORE, "incorrect-inglist-total"), RequirementType.Tolerated,
+								new MLText(message), componentProductData.getNodeRef(), RequirementDataType.Ingredient);
+					}
+
+				}
+			}
 		}
 
 		// calculate ingList of formulated product
@@ -468,28 +533,30 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	 */
 	private void sortIL(List<IngListDataItem> ingList) {
 
-		if(!ingList.isEmpty()) {
+		if (!ingList.isEmpty()) {
 			final IngListDataItem nullPlaceholder = new IngListDataItem();
 			Map<IngListDataItem, List<IngListDataItem>> byParent = ingList.stream()
 					.collect(Collectors.groupingBy(obj -> (obj.getParent() == null ? nullPlaceholder : obj.getParent()), Collectors.toList()));
-	
+
 			Stack<IngListDataItem> processor = new Stack<>();
-	
+
 			int i = 1;
-	
-			byParent.getOrDefault(nullPlaceholder, Collections.emptyList()).stream().sorted(Comparator.comparingDouble(IngListDataItem::getQtyPerc)).collect(Collectors.toList())
-					.forEach(processor::add);
-			
-			
+
+			byParent.getOrDefault(nullPlaceholder, Collections.emptyList()).stream()
+					.sorted(Comparator.comparingDouble(IngListDataItem::getQtyPerc).thenComparing(IngListDataItem::getName))
+					.collect(Collectors.toList()).forEach(processor::add);
+
 			while (!processor.isEmpty()) {
 				i++;
 				IngListDataItem il = processor.pop();
-				byParent.getOrDefault(il, Collections.emptyList()).stream().sorted(Comparator.comparingDouble(IngListDataItem::getQtyPerc))
-				        .collect(Collectors.toList())
-						.forEach(processor::add);
+				byParent.getOrDefault(il, Collections.emptyList()).stream()
+						.sorted(Comparator.comparingDouble(IngListDataItem::getQtyPerc).thenComparing(IngListDataItem::getName))
+						.collect(Collectors.toList()).forEach(processor::add);
+
 				il.setSort(i);
+
 			}
-			
+
 			ingList.sort(Comparator.comparingInt(IngListDataItem::getSort));
 		}
 

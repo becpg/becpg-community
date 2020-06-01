@@ -54,6 +54,6 @@ public interface RepositoryEntity {
 	/**
 	 * Use to determine if changes has applied
 	 */
-	void setDbHashCode(int hashCode);
-	int getDbHashCode();
+	void setDbHashCode(long hashCode);
+	long getDbHashCode();
 }

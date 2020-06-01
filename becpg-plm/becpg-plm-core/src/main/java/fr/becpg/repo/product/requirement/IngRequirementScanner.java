@@ -33,21 +33,13 @@ import fr.becpg.repo.repository.RepositoryEntity;
 
 public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenIngListDataItem> {
 
-	private boolean ingsCalculatingWithYield = false;
-
 	private static Log logger = LogFactory.getLog(IngRequirementScanner.class);
 
 	private static final String MESSAGE_NOTAUTHORIZED_ING = "message.formulate.notauhorized.ing";
 
-	private static final String MESSAGE_MISSING_INGLIST = "message.formulate.missing.ingList";
-	private static final String MESSAGE_INCORRECT_INGLIST_TOTAL = "message.formulate.incorrect.ingList.total";
 	private static final String MESSAGE_FORBIDDEN_ING = "message.formulate.ingredient.forbidden";
 
 	AlfrescoRepository<RepositoryEntity> alfrescoRepository;
-
-	public void setIngsCalculatingWithYield(boolean ingsCalculatingWithYield) {
-		this.ingsCalculatingWithYield = ingsCalculatingWithYield;
-	}
 
 	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
@@ -183,7 +175,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 
 	/**
 	 * check the ingredients of the part according to the specification
-	 * 
+	 *
 	 * @param specification
 	 *
 	 * @param compoListDataItem
@@ -201,38 +193,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 
 			visited.add(productNodeRef);
 
-			// datalist ingList is null or empty
-			if ((componentProductData.getIngList() == null) || componentProductData.getIngList().isEmpty()) {
-
-				if ((declType == null) || (!declType.equals(DeclarationType.DoNotDetails) && !declType.equals(DeclarationType.Omit))) {
-					// req not respected
-					String message = I18NUtil.getMessage(MESSAGE_MISSING_INGLIST);
-					addReqCtrl(reqCtrlMap, new NodeRef(RepoConsts.SPACES_STORE, "missing-inglist"), RequirementType.Tolerated, new MLText(message),
-							productNodeRef, specification, RequirementDataType.Ingredient);
-				}
-			} else {
-
-				if ((declType == null) || (!declType.equals(DeclarationType.DoNotDetails) && !declType.equals(DeclarationType.Omit))) {
-					Double total = 0d;
-					for (IngListDataItem ingListDataItem : componentProductData.getIngList()) {
-						if ((ingListDataItem.getQtyPerc() != null)
-								&& ((ingListDataItem.getDepthLevel() == null) || (ingListDataItem.getDepthLevel() == 1))) {
-							total += ingListDataItem.getQtyPerc();
-						}
-
-					}
-
-					if (ingsCalculatingWithYield && (componentProductData.getYield() != null)) {
-						total = (componentProductData.getYield() * total) / 100d;
-					}
-					// Due to double precision
-					if (Math.abs(total - 100d) > 0.00001) {
-						String message = I18NUtil.getMessage(MESSAGE_INCORRECT_INGLIST_TOTAL);
-						addReqCtrl(reqCtrlMap, new NodeRef(RepoConsts.SPACES_STORE, "incorrect-inglist-total"), RequirementType.Tolerated,
-								new MLText(message), productNodeRef, specification, RequirementDataType.Ingredient);
-					}
-
-				}
+			if ((componentProductData.getIngList() != null) && !componentProductData.getIngList().isEmpty()) {
 
 				forbiddenIngredientsList.forEach(fil -> {
 
