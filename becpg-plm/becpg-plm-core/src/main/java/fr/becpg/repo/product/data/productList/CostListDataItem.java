@@ -5,6 +5,7 @@ package fr.becpg.repo.product.data.productList;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
@@ -292,22 +293,8 @@ MinMaxValueDataItem, UnitAwareDataItem, FormulatedCharactDataItem, ForecastValue
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + ((componentNodeRef == null) ? 0 : componentNodeRef.hashCode());
-		result = prime * result + ((cost == null) ? 0 : cost.hashCode());
-		result = prime * result + ((depthLevel == null) ? 0 : depthLevel.hashCode());
-		result = prime * result + ((errorLog == null) ? 0 : errorLog.hashCode());
-		result = prime * result + ((futureValue == null) ? 0 : futureValue.hashCode());
-		result = prime * result + ((futureValuePerProduct == null) ? 0 : futureValuePerProduct.hashCode());
-		result = prime * result + ((isFormulated == null) ? 0 : isFormulated.hashCode());
-		result = prime * result + ((maxi == null) ? 0 : maxi.hashCode());
-		result = prime * result + ((parent == null) ? 0 : parent.hashCode());
-		result = prime * result + ((plants == null) ? 0 : plants.hashCode());
-		result = prime * result + ((previousValue == null) ? 0 : previousValue.hashCode());
-		result = prime * result + ((previousValuePerProduct == null) ? 0 : previousValuePerProduct.hashCode());
-		result = prime * result + ((simulatedValue == null) ? 0 : simulatedValue.hashCode());
-		result = prime * result + ((unit == null) ? 0 : unit.hashCode());
-		result = prime * result + ((value == null) ? 0 : value.hashCode());
-		result = prime * result + ((valuePerProduct == null) ? 0 : valuePerProduct.hashCode());
+		result = prime * result + Objects.hash(componentNodeRef, cost, depthLevel, errorLog, futureValue, futureValuePerProduct, isFormulated, maxi,
+				parent, plants, previousValue, previousValuePerProduct, simulatedValue, unit, value, valuePerProduct);
 		return result;
 	}
 
@@ -321,87 +308,13 @@ MinMaxValueDataItem, UnitAwareDataItem, FormulatedCharactDataItem, ForecastValue
 		if (getClass() != obj.getClass())
 			return false;
 		CostListDataItem other = (CostListDataItem) obj;
-		if (componentNodeRef == null) {
-			if (other.componentNodeRef != null)
-				return false;
-		} else if (!componentNodeRef.equals(other.componentNodeRef))
-			return false;
-		if (cost == null) {
-			if (other.cost != null)
-				return false;
-		} else if (!cost.equals(other.cost))
-			return false;
-		if (depthLevel == null) {
-			if (other.depthLevel != null)
-				return false;
-		} else if (!depthLevel.equals(other.depthLevel))
-			return false;
-		if (errorLog == null) {
-			if (other.errorLog != null)
-				return false;
-		} else if (!errorLog.equals(other.errorLog))
-			return false;
-		if (futureValue == null) {
-			if (other.futureValue != null)
-				return false;
-		} else if (!futureValue.equals(other.futureValue))
-			return false;
-		if (futureValuePerProduct == null) {
-			if (other.futureValuePerProduct != null)
-				return false;
-		} else if (!futureValuePerProduct.equals(other.futureValuePerProduct))
-			return false;
-		if (isFormulated == null) {
-			if (other.isFormulated != null)
-				return false;
-		} else if (!isFormulated.equals(other.isFormulated))
-			return false;
-		if (maxi == null) {
-			if (other.maxi != null)
-				return false;
-		} else if (!maxi.equals(other.maxi))
-			return false;
-		if (parent == null) {
-			if (other.parent != null)
-				return false;
-		} else if (!parent.equals(other.parent))
-			return false;
-		if (plants == null) {
-			if (other.plants != null)
-				return false;
-		} else if (!plants.equals(other.plants))
-			return false;
-		if (previousValue == null) {
-			if (other.previousValue != null)
-				return false;
-		} else if (!previousValue.equals(other.previousValue))
-			return false;
-		if (previousValuePerProduct == null) {
-			if (other.previousValuePerProduct != null)
-				return false;
-		} else if (!previousValuePerProduct.equals(other.previousValuePerProduct))
-			return false;
-		if (simulatedValue == null) {
-			if (other.simulatedValue != null)
-				return false;
-		} else if (!simulatedValue.equals(other.simulatedValue))
-			return false;
-		if (unit == null) {
-			if (other.unit != null)
-				return false;
-		} else if (!unit.equals(other.unit))
-			return false;
-		if (value == null) {
-			if (other.value != null)
-				return false;
-		} else if (!value.equals(other.value))
-			return false;
-		if (valuePerProduct == null) {
-			if (other.valuePerProduct != null)
-				return false;
-		} else if (!valuePerProduct.equals(other.valuePerProduct))
-			return false;
-		return true;
+		return Objects.equals(componentNodeRef, other.componentNodeRef) && Objects.equals(cost, other.cost)
+				&& Objects.equals(depthLevel, other.depthLevel) && Objects.equals(errorLog, other.errorLog)
+				&& Objects.equals(futureValue, other.futureValue) && Objects.equals(futureValuePerProduct, other.futureValuePerProduct)
+				&& Objects.equals(isFormulated, other.isFormulated) && Objects.equals(maxi, other.maxi) && Objects.equals(parent, other.parent)
+				&& Objects.equals(plants, other.plants) && Objects.equals(previousValue, other.previousValue)
+				&& Objects.equals(previousValuePerProduct, other.previousValuePerProduct) && Objects.equals(simulatedValue, other.simulatedValue)
+				&& Objects.equals(unit, other.unit) && Objects.equals(value, other.value) && Objects.equals(valuePerProduct, other.valuePerProduct);
 	}
 
 

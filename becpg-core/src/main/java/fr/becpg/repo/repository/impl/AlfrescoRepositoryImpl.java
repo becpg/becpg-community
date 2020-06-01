@@ -157,11 +157,9 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 						if (logger.isDebugEnabled()) {
 							logger.debug("Update instanceOf :" + entity.getClass().getName() + " " + entity.getName());
-							if (logger.isTraceEnabled()) {
-								logger.trace(" HashDiff :" + BeCPGHashCodeBuilder.printDiff(entity,
+							logger.debug(" HashDiff :" + BeCPGHashCodeBuilder.printDiff(entity,
 										findOne(entity.getNodeRef(), new HashMap<NodeRef, RepositoryEntity>())));
 
-							}
 
 						}
 
@@ -185,14 +183,14 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 					entity.setDbHashCode(createCollisionSafeHashCode(entity));
 				} else {
-					if (logger.isDebugEnabled()) {
-						logger.debug("Entity " + entity.getName() + " has no change  to save (same extra properties) ");
+					if (logger.isTraceEnabled()) {
+						logger.trace("Entity " + entity.getName() + " has no change  to save (same extra properties) ");
 					}
 				}
 
 			} else {
-				if (logger.isDebugEnabled()) {
-					logger.debug("Entity " + entity.getName() + " has no change to save (same hashCode)");
+				if (logger.isTraceEnabled()) {
+					logger.trace("Entity " + entity.getName() + " has no change to save (same hashCode)");
 				}
 			}
 
@@ -204,8 +202,8 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 				entity.setNodeRef(L2CacheSupport.generateNodeRef());
 			}
 
-			if (logger.isDebugEnabled()) {
-				logger.debug("Save entity " + entity.getName() + " only on memory");
+			if (logger.isTraceEnabled()) {
+				logger.trace("Save entity " + entity.getName() + " only on memory");
 			}
 		}
 
@@ -285,7 +283,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 	}
 
-	private int createCollisionSafeHashCode(T entity) {
+	private long createCollisionSafeHashCode(T entity) {
 
 		return BeCPGHashCodeBuilder.reflectionHashCode(entity);
 
@@ -381,8 +379,8 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 				dataListNodeRef = entityListDAO.createList(listContainerNodeRef, dataListContainerType);
 			} else {
 
-				if (logger.isDebugEnabled()) {
-					logger.debug("Save dataList of type : " + dataListContainerType);
+				if (logger.isTraceEnabled()) {
+					logger.trace("Save dataList of type : " + dataListContainerType);
 				}
 
 			}
@@ -391,19 +389,21 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 				if (isLazyList && ((LazyLoadingDataList<? extends RepositoryEntity>) dataList).isLoaded()) {
 
-					if (logger.isDebugEnabled()) {
-						if (!((LazyLoadingDataList<? extends RepositoryEntity>) dataList).getDeletedNodes().isEmpty()) {
-							logger.debug("Nodes to delete :" + ((LazyLoadingDataList<? extends RepositoryEntity>) dataList).getDeletedNodes().size());
-						}
-					}
+					boolean deleteNodes = false;
 
 					for (RepositoryEntity dataListItem : ((LazyLoadingDataList<? extends RepositoryEntity>) dataList).getDeletedNodes()) {
 						if ((dataListItem != null) && (dataListItem.getNodeRef() != null) && !dataListItem.isTransient()) {
 							nodeService.addAspect(dataListItem.getNodeRef(), ContentModel.ASPECT_TEMPORARY, null);
 							nodeService.deleteNode(dataListItem.getNodeRef());
+							deleteNodes = true;
 						}
 					}
 
+					if (logger.isDebugEnabled() && deleteNodes) {
+						logger.debug("Nodes to delete :" + ((LazyLoadingDataList<? extends RepositoryEntity>) dataList).getDeletedNodes().size() +" in "+dataListContainerType);
+					}
+					
+					
 					((LazyLoadingDataList<? extends RepositoryEntity>) dataList).getDeletedNodes().clear();
 				}
 				for (RepositoryEntity dataListItem : dataList) {
@@ -446,8 +446,8 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 	private T findOne(NodeRef id, Map<NodeRef, RepositoryEntity> caches) {
 
 		if (caches.containsKey(id)) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Internal cache HIT for key :" + id);
+			if (logger.isTraceEnabled()) {
+				logger.trace("Internal cache HIT for key :" + id);
 			}
 			return (T) caches.get(id);
 		}
@@ -463,8 +463,8 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 			final T entity = entityClass.getDeclaredConstructor().newInstance();
 
-			if (logger.isDebugEnabled()) {
-				logger.debug("findOne instanceOf :" + entity.getClass().getName());
+			if (logger.isTraceEnabled()) {
+				logger.trace("findOne instanceOf :" + entity.getClass().getName());
 			}
 
 			entity.setNodeRef(id);
