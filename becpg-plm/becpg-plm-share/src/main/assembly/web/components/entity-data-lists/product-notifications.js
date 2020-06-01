@@ -140,13 +140,13 @@
 									var dataType = splits[1].charAt(0).toUpperCase() + splits[1].slice(1);
 									instance.filterId = (type === "all" && dataType === "All" ? "all" : "filterform");
 									
-									if(dataType == "RegulatoryCodes") {
-										instance.filterData =  "{\"prop_bcpg_regulatoryCode\":\"" + type+"\"}";
+									if(dataType == "Regulatorycodes") {
+										instance.filterData =  "{\"prop_bcpg_regulatoryCode\":\"" + type.replace("@"," ").replace("$","-") +"\"}";
 									} else {
 									
 										instance.filterData = (type === "all" && dataType === "All" ? undefined : "{"
 												+ (type !== undefined ? ("\"prop_bcpg_rclReqType\":\"" + type+"\"") : "")
-												+ (dataType !== null ? (dataType !== undefined ? "," : "") + ("\"prop_bcpg_rclDataType\":\"" + dataType+"\"") : "")
+												+ (dataType !== null ? (type !== undefined ? "," : "") + ("\"prop_bcpg_rclDataType\":\"" + dataType+"\"") : "")
 												+ "}");
 									}
 									
@@ -356,10 +356,10 @@
 														for ( var type in types[dataTypeName]) {
 															var value = types[dataTypeName][type];
 															if(dataTypeName == "RegulatoryCodes"){
-																html += '<li><span class="req-' + dataTypeName.toString().toLowerCase() + '-' + type
-																+ '" title="' + instance.msg("reqTypes." + type) + '"><a class="req-filter '
-																+ REQFILTER_EVENTCLASS + '" href="#">' + type + '</span>'
-																+ value + '</a></li>';
+																html += '<li><span class="req-' + dataTypeName.toString().toLowerCase() + '-' + type.replace(" ","@").replace("-","$")
+																+ '" ><a class="req-filter tag '
+																+ REQFILTER_EVENTCLASS + '" href="#"><span>' + type + 
+																' ('+ value + ')</span></a></li>';
 															} else {
 																html += '<li><span class="req-' + dataTypeName.toString().toLowerCase() + '-' + type
 																		+ '" title="' + instance.msg("reqTypes." + type) + '"><a class="req-filter '
