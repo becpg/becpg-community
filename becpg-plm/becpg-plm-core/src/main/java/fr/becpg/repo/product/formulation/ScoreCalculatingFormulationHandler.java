@@ -82,8 +82,7 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 					// make sure we don't put duplicates rclDataItems
 					if (!visitedRclItems.contains(rclDataItem.getKey())) {
 						if ((key != null) && (type != null)) {
-							
-							
+
 							if (specificationScore > 10) {
 								if ((RequirementDataType.Specification.equals(key)) && RequirementType.Forbidden.equals(type)) {
 									specificationScore -= 10;
@@ -166,16 +165,15 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 
 				ctrlArray.add(currentJSO);
 			}
-			
-			if(!reqNbByRegulatoryCode.isEmpty()) {
-				
+
+			if (!reqNbByRegulatoryCode.isEmpty()) {
+
 				JSONObject currentJSO = new JSONObject();
 				currentJSO.put("RegulatoryCodes", reqNbByRegulatoryCode);
 
 				ctrlArray.add(currentJSO);
 			}
-			
-	
+
 			ctrlArray.sort((o1, o2) -> {
 				// sort on keys (fbd > all)
 
@@ -209,7 +207,6 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 		} catch (JSONException e) {
 			logger.error("Cannot create Json Score", e);
 		}
-		
 
 		product.setEntityScore(scores.toString());
 
