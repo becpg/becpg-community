@@ -867,7 +867,11 @@
 						
 					<field id="pjt:tlResources" help-id="becpg.forms.help.tlResources" set="resources" />
 					<field id="pjt:tlObservers" help-id="becpg.forms.help.tlObservers"  set="resources" />
-					<field id="pjt:observersEvents"   set="resources" />
+					<field id="pjt:observersEvents"   set="resources">
+						<control template="/org/alfresco/components/form/controls/selectmany.ftl">
+							<control-param name="style">width:100% !important</control-param>
+						</control>
+					</field>
 
 					<field id="pjt:tlWorkflowName" help-id="becpg.forms.help.tlWorkflowName" set="resources">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
@@ -1026,7 +1030,11 @@
 						
 					<field id="pjt:tlResources" set="resources" />
 					<field id="pjt:tlObservers" set="resources" />
-					<field id="pjt:observersEvents"   set="resources" />
+					<field id="pjt:observersEvents"   set="resources">
+						<control template="/org/alfresco/components/form/controls/selectmany.ftl">
+							<control-param name="style">width:100% !important</control-param>
+						</control>
+					</field>
 
 					<field id="pjt:tlWorkflowName" set="resources">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
@@ -1212,7 +1220,11 @@
 						
 					<field id="pjt:tlResources" set="resources" />
 					<field id="pjt:tlObservers" set="resources" />
-					<field id="pjt:observersEvents"   set="resources" />
+					<field id="pjt:observersEvents"   set="resources">
+						<control template="/org/alfresco/components/form/controls/selectmany.ftl">
+							<control-param name="style">width:100% !important</control-param>
+						</control>
+					</field>
 
 					<field id="pjt:tlWorkflowName" set="resources">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
