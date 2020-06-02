@@ -78,6 +78,7 @@
 					<show id="bcpg:entityTplEnabled" />
 					<show id="bcpg:entityTplIsDefault" />
 					<show id="bcpg:entityTplDefaultDest" />
+					<show id="bcpg:entityTplScript" />
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" />
@@ -163,6 +164,11 @@
 					<field id="bcpg:entityTplEnabled" set="template" />
 					<field id="bcpg:entityTplIsDefault" set="template" />
 					<field id="bcpg:entityTplDefaultDest" set="template" />
+					<field id="bcpg:entityTplScript" set="template" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/association.ftl">
+							<control-param name="startLocation">{doclib}</control-param>
+						</control>
+					</field>
 
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
@@ -861,7 +867,11 @@
 						
 					<field id="pjt:tlResources" help-id="becpg.forms.help.tlResources" set="resources" />
 					<field id="pjt:tlObservers" help-id="becpg.forms.help.tlObservers"  set="resources" />
-					<field id="pjt:observersEvents"   set="resources" />
+					<field id="pjt:observersEvents"   set="resources">
+						<control template="/org/alfresco/components/form/controls/selectmany.ftl">
+							<control-param name="style">width:100% !important</control-param>
+						</control>
+					</field>
 
 					<field id="pjt:tlWorkflowName" help-id="becpg.forms.help.tlWorkflowName" set="resources">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
@@ -1020,7 +1030,11 @@
 						
 					<field id="pjt:tlResources" set="resources" />
 					<field id="pjt:tlObservers" set="resources" />
-					<field id="pjt:observersEvents"   set="resources" />
+					<field id="pjt:observersEvents"   set="resources">
+						<control template="/org/alfresco/components/form/controls/selectmany.ftl">
+							<control-param name="style">width:100% !important</control-param>
+						</control>
+					</field>
 
 					<field id="pjt:tlWorkflowName" set="resources">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
@@ -1206,7 +1220,11 @@
 						
 					<field id="pjt:tlResources" set="resources" />
 					<field id="pjt:tlObservers" set="resources" />
-					<field id="pjt:observersEvents"   set="resources" />
+					<field id="pjt:observersEvents"   set="resources">
+						<control template="/org/alfresco/components/form/controls/selectmany.ftl">
+							<control-param name="style">width:100% !important</control-param>
+						</control>
+					</field>
 
 					<field id="pjt:tlWorkflowName" set="resources">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">

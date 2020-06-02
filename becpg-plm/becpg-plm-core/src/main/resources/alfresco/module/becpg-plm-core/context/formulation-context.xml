@@ -170,6 +170,10 @@
 					<property name="nodeService" ref="nodeService" />
 					<property name="mlNodeService" ref="mlAwareNodeService" />
 				</bean>
+				<bean class="fr.becpg.repo.product.formulation.PackagingMaterialFormulationHandler">
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
+					<property name="nodeService" ref="nodeService" />
+				</bean>
 				<bean class="fr.becpg.repo.product.formulation.FormulaFormulationHandler" >
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="namespaceService" ref="namespaceService"/>
@@ -198,9 +202,14 @@
 					<property name="nodeService" ref="nodeService" />
 					<property name="attributeExtractorService" ref="attributeExtractorService"/>
 				</bean>
-				<bean class="fr.becpg.repo.product.formulation.PackagingMaterialFormulationHandler">
-					<property name="alfrescoRepository" ref="alfrescoRepository" />
-					<property name="nodeService" ref="nodeService" />
+				
+				<bean class="fr.becpg.repo.formulation.impl.ScriptsFormulationHandler">
+					<property name="nodeService" ref="nodeService"/>
+					<property name="namespaceService" ref="namespaceService"/>
+					<property name="scriptService" ref="scriptService"/>
+					<property name="formulaService" ref="formulaService" />
+					<property name="contentService" ref="contentService" />
+					<property name="associationService" ref="associationService" />
 				</bean>
 			</list>
 		</property>
@@ -250,7 +259,6 @@
 				<bean class="fr.becpg.repo.product.requirement.IngRequirementScanner">
 					<property name="mlNodeService" ref="mlAwareNodeService" />
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
-					<property name="ingsCalculatingWithYield" value="${beCPG.formulation.ingsCalculatingWithYield}" />
 				</bean>
 				<bean class="fr.becpg.repo.product.requirement.NutsRequirementScanner">
 					<property name="mlNodeService" ref="mlAwareNodeService" />

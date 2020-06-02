@@ -52,14 +52,14 @@ public  abstract class  BeCPGDataObject  extends BaseObject implements Repositor
 	
 	protected transient boolean isTransient = false;
 	
-	private transient int dbHashCode;
+	private transient long dbHashCode;
 	
 	@InternalField
-	public int getDbHashCode() {
+	public long getDbHashCode() {
 		return dbHashCode;
 	}
 
-	public void setDbHashCode(int dbHashCode) {
+	public void setDbHashCode(long dbHashCode) {
 		this.dbHashCode = dbHashCode;
 	}
 

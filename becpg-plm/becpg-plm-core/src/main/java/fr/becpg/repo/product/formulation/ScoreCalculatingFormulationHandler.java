@@ -2,8 +2,10 @@ package fr.becpg.repo.product.formulation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
@@ -12,18 +14,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.entity.catalog.EntityCatalogService;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.AbstractProductDataView;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
-import fr.becpg.repo.product.data.productList.CompositionDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.model.CompositionDataItem;
 
 /**
  * Computes product completion score
@@ -44,7 +44,6 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 	@Override
 	public boolean process(ProductData product) {
 
-		
 		JSONObject scores = new JSONObject();
 
 		try {
@@ -72,45 +71,79 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 
 			Double componentsValidationScore = (childrenSize > 0 ? (childScore * 100d) / childrenSize : 100d);
 
-			// pre merge, ctrlDataItems might be duplicated, visit them only
-			// once
-			List<String> visitedCtrlDataItems = new ArrayList<>();
+			Map<String, Map<String, Integer>> reqNbByTypeAndKey = new HashMap<>();
+			Map<String, Integer> reqNbByRegulatoryCode = new HashMap<>();
+			Set<String> visitedRclItems = new HashSet<>();
+
 			if (product.getReqCtrlList() != null) {
-				for (ReqCtrlListDataItem ctrl : product.getReqCtrlList()) {
-					logger.debug("Checking rclDataItem " + ctrl.getReqType() + " - " + ctrl.getReqDataType() + " - " + ctrl.getReqMessage());
-					if (specificationScore > 10) {
-						if ((ctrl.getReqDataType() == RequirementDataType.Specification) && (ctrl.getReqType() == RequirementType.Forbidden)
-								&& !visitedCtrlDataItems.contains(ctrl.getKey())) {
-							if (logger.isDebugEnabled()) {
-								logger.debug("Visiting specification rclDataItem: " + ctrl.getReqMessage() + ", s=" + ctrl.getSources());
+				for (ReqCtrlListDataItem rclDataItem : product.getReqCtrlList()) {
+					RequirementDataType key = rclDataItem.getReqDataType();
+					RequirementType type = rclDataItem.getReqType();
+					// make sure we don't put duplicates rclDataItems
+					if (!visitedRclItems.contains(rclDataItem.getKey())) {
+						if ((key != null) && (type != null)) {
+
+							if (specificationScore > 10) {
+								if ((RequirementDataType.Specification.equals(key)) && RequirementType.Forbidden.equals(type)) {
+									specificationScore -= 10;
+								}
 							}
-							specificationScore -= 10;
-							visitedCtrlDataItems.add(ctrl.getKey());
+
+							if (reqNbByTypeAndKey.containsKey(key.toString())) {
+								Map<String, Integer> currentCount = reqNbByTypeAndKey.get(key.toString());
+								if (currentCount == null) {
+									currentCount = new HashMap<>();
+								}
+
+								if (currentCount.containsKey(type.toString())) {
+									currentCount.put(type.toString(), currentCount.get(type.toString()) + 1);
+								} else {
+									currentCount.put(type.toString(), 1);
+								}
+
+							} else if (!reqNbByTypeAndKey.containsKey(key.toString())) {
+								// this dataType was not found before, adding it
+								Map<String, Integer> newMap = new HashMap<>();
+								newMap.put(type.toString(), 1);
+								reqNbByTypeAndKey.put(key.toString(), newMap);
+
+							}
+
 						}
-					} else {
-						break;
+						if ((rclDataItem.getRegulatoryCode() != null) && !rclDataItem.getRegulatoryCode().isEmpty()) {
+							Integer currentCount = reqNbByRegulatoryCode.get(rclDataItem.getRegulatoryCode());
+							if (currentCount == null) {
+								currentCount = 0;
+							}
+							currentCount++;
+							reqNbByRegulatoryCode.put(rclDataItem.getRegulatoryCode(), currentCount);
+						}
+
 					}
 
+					visitedRclItems.add(rclDataItem.getKey());
 				}
 			}
 
 			// checks if mandatory fields are present
 			if (scores.has(EntityCatalogService.PROP_CATALOGS)) {
 				JSONArray mandatoryFields = scores.getJSONArray(EntityCatalogService.PROP_CATALOGS);
-
-				if (mandatoryFields.length() > 0) {
+				int total = mandatoryFields.length();
+				if (total > 0) {
 
 					mandatoryFieldsScore = 0d;
 
-					for (int j = 0; j < mandatoryFields.length(); j++) {
+					for (int j = 0; j < total; j++) {
 						JSONObject catalog = (JSONObject) mandatoryFields.get(j);
 						mandatoryFieldsScore += catalog.getDouble(EntityCatalogService.PROP_SCORE);
 					}
 
-					mandatoryFieldsScore /= mandatoryFields.length();
+					mandatoryFieldsScore /= total;
 				}
 
-				logger.debug("Child score: " + childScore + ", childSize: " + childrenSize + "\n\n mandatoryFields: " + mandatoryFields);
+				if (logger.isDebugEnabled()) {
+					logger.debug("Child score: " + childScore + ", childSize: " + childrenSize + "\n\n mandatoryFields: " + mandatoryFields);
+				}
 				Double completionPercent = (componentsValidationScore + mandatoryFieldsScore + specificationScore) / 3d;
 
 				JSONObject details = new JSONObject();
@@ -123,13 +156,20 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 				scores.put("details", details);
 
 			}
-			Map<String, Map<String, Integer>> ctrlCount = getCtrlCount(product);
 
 			List<JSONObject> ctrlArray = new ArrayList<>();
 
-			for (String ctrlKey : ctrlCount.keySet()) {
+			for (String ctrlKey : reqNbByTypeAndKey.keySet()) {
 				JSONObject currentJSO = new JSONObject();
-				currentJSO.put(ctrlKey, ctrlCount.get(ctrlKey));
+				currentJSO.put(ctrlKey, reqNbByTypeAndKey.get(ctrlKey));
+
+				ctrlArray.add(currentJSO);
+			}
+
+			if (!reqNbByRegulatoryCode.isEmpty()) {
+
+				JSONObject currentJSO = new JSONObject();
+				currentJSO.put("RegulatoryCodes", reqNbByRegulatoryCode);
 
 				ctrlArray.add(currentJSO);
 			}
@@ -141,8 +181,10 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 					JSONObject o1Values = o1.getJSONObject((String) o1.keys().next());
 					JSONObject o2Values = o2.getJSONObject((String) o2.keys().next());
 
-					if ((o1Values.has("Forbidden") && !(o2Values.has("Forbidden"))) || (o1Values.has("Forbidden") && o2Values.has("Forbidden")
-							&& (o1Values.getInt("Forbidden") >= o2Values.getInt("Forbidden")))) {
+					String key = RequirementType.Forbidden.toString();
+
+					if ((o1Values.has(key) && !(o2Values.has(key)))
+							|| (o1Values.has(key) && o2Values.has(key) && (o1Values.getInt(key) >= o2Values.getInt(key)))) {
 						return -1;
 					} else {
 						return 1;
@@ -155,10 +197,12 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 				}
 			});
 
-			logger.debug("Ctrl sorted array: " + ctrlArray);
+			if (logger.isDebugEnabled()) {
+				logger.debug("Ctrl sorted array: " + ctrlArray);
+			}
 
 			scores.put("ctrlCount", ctrlArray);
-			scores.put("totalForbidden", getForbiddenCtrlAmount(ctrlCount));
+			scores.put("totalForbidden", getForbiddenCtrlAmount(reqNbByTypeAndKey));
 
 		} catch (JSONException e) {
 			logger.error("Cannot create Json Score", e);
@@ -183,50 +227,12 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 		return false;
 	}
 
-	private Map<String, Map<String, Integer>> getCtrlCount(ProductData product) {
-
-		Map<String, Map<String, Integer>> counts = new HashMap<>();
-		List<ReqCtrlListDataItem> visitedRclItems = new ArrayList<>();
-
-		if(product.getReqCtrlList()!=null){
-			for (ReqCtrlListDataItem rclDataItem : product.getReqCtrlList()) {
-				RequirementDataType key = rclDataItem.getReqDataType();
-				if(key!=null && rclDataItem.getReqType()!=null) {
-					// make sure we don't put duplicates rclDataItems
-					if (counts.containsKey(key.toString()) && !visitedRclItems.contains(rclDataItem)) {
-						Map<String, Integer> currentCount = counts.get(key.toString());
-						if (currentCount == null) {
-							currentCount = new HashMap<String, Integer>();
-						}
-		
-						if (currentCount.containsKey(rclDataItem.getReqType().toString())) {
-							currentCount.put(rclDataItem.getReqType().toString(), currentCount.get(rclDataItem.getReqType().toString()) + 1);
-						} else {
-							currentCount.put(rclDataItem.getReqType().toString(), 1);
-						}
-						visitedRclItems.add(rclDataItem);
-		
-					} else if (!counts.containsKey(key.toString())) {
-						// this dataType was not found before, adding it
-						Map<String, Integer> newMap = new HashMap<String, Integer>();
-						newMap.put(rclDataItem.getReqType().toString(), 1);
-						counts.put(key.toString(), newMap);
-		
-						visitedRclItems.add(rclDataItem);
-					}
-				}
-			}
-		}
-
-		return counts;
-	}
-
 	private int getForbiddenCtrlAmount(Map<String, Map<String, Integer>> reqCtrlList) {
 		int res = 0;
 
 		for (Map<String, Integer> map : reqCtrlList.values()) {
-			if (map.containsKey("Forbidden")) {
-				res += map.get("Forbidden");
+			if (map.containsKey(RequirementType.Forbidden.toString())) {
+				res += map.get(RequirementType.Forbidden.toString());
 			}
 		}
 

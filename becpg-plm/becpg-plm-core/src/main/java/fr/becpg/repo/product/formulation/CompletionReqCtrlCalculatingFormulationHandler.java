@@ -19,14 +19,15 @@ import fr.becpg.model.SystemState;
 import fr.becpg.repo.entity.catalog.EntityCatalogService;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
+import fr.becpg.repo.formulation.spel.SpelFormulaService;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.AbstractProductDataView;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
-import fr.becpg.repo.product.data.productList.CompositionDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.model.CompositionDataItem;
 
 public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationBaseHandler<ProductData> {
 
@@ -40,14 +41,14 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 
 	private AlfrescoRepository<ProductData> alfrescoRepository;
 
-	private FormulaService formulaService;
+	private SpelFormulaService formulaService;
 	private EntityCatalogService entityCatalogService;
 
 	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
-	public void setFormulaService(FormulaService formulaService) {
+	public void setFormulaService(SpelFormulaService formulaService) {
 		this.formulaService = formulaService;
 	}
 
@@ -69,7 +70,7 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 			JSONArray catalogs = entityCatalogService.formulateCatalogs(product.getNodeRef(), product.getReportLocales(), formula -> {
 				boolean res = true;
 
-				StandardEvaluationContext context = formulaService.createEvaluationContext(product);
+				StandardEvaluationContext context = formulaService.createEntitySpelContext(product);
 
 				if (context != null) {
 					ExpressionParser parser = new SpelExpressionParser();
@@ -126,6 +127,7 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 		} catch (JSONException e) {
 			logger.error("Cannot create Json Score", e);
 		}
+		
 
 		product.setEntityScore(scores.toString());
 		return true;

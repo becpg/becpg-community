@@ -27,7 +27,10 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -64,7 +67,15 @@ public class DecernisServiceImpl implements DecernisService {
 	@Value("${beCPG.decernis.module}")
 	private String module;
 
-	private RestTemplate restTemplate = new RestTemplate();
+	private RestTemplate restTemplate;
+
+	public DecernisServiceImpl() {
+		super();
+		restTemplate = new RestTemplate();
+		List<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();
+		interceptors.add(new DecernisRequestInterceptor());
+		restTemplate.setInterceptors(interceptors);
+	}
 
 	// 1, Food Additives
 	// 2, Standards Of Identity
@@ -73,6 +84,7 @@ public class DecernisServiceImpl implements DecernisService {
 	// 11; Product Check
 
 	private static final String MESSAGE_PROHIBITED_ING = "message.decernis.ingredient.prohibited";
+	private static final String MESSAGE_NOTLISTED_ING = "message.decernis.ingredient.notListed";
 	private static final String MESSAGE_NO_RID_ING = "message.decernis.ingredient.noRid";
 	private static final String MESSAGE_SEVERAL_RID_ING = "message.decernis.ingredient.severalRid";
 
@@ -170,70 +182,104 @@ public class DecernisServiceImpl implements DecernisService {
 				if (ingType != null) {
 					function = (String) nodeService.getProperty(ingType, PLMModel.PROP_REGULATORY_CODE);
 				}
+				try {
+					// Get ingredient regulatory code
+					if ((rid == null) || rid.isEmpty()) {
+						String url = serverUrl + "ingredients?current_company={company}&q={query}&identifier_type={type}&module_id={module}&limit=25";
 
-				// Get ingredient regulatory code
-				if ((rid == null) || rid.isEmpty()) {
-					String url = serverUrl + "ingredients?current_company={company}&q={query}&identifier_type={type}&module_id={module}&limit=1";
-					Map<String, String> params = new HashMap<>();
-					params.put(COMPANY, companyName);
-					params.put(MODULE, module);
-					boolean cond = true;
-					Iterator<Map.Entry<QName, String>> iterator = ingNumbers.entrySet().iterator();
-					while (iterator.hasNext() && cond) {
-						Map.Entry<QName, String> ingNumber = iterator.next();
-						String number = (String) nodeService.getProperty(ingListDataItem.getIng(), ingNumber.getKey());
-						if ((number != null) && !number.isEmpty() && !number.equals(MISSING_VALUE)) {
-							cond = false;
-							params.put("query", number.toString());
-							params.put("type", ingNumber.getValue());
-							break;
+						Map<String, String> params = new HashMap<>();
+						params.put(COMPANY, companyName);
+						params.put(MODULE, module);
+						boolean cond = true;
+						Iterator<Map.Entry<QName, String>> iterator = ingNumbers.entrySet().iterator();
+						while (iterator.hasNext() && cond) {
+							Map.Entry<QName, String> ingNumber = iterator.next();
+							String number = (String) nodeService.getProperty(ingListDataItem.getIng(), ingNumber.getKey());
+							if ((number != null) && !number.isEmpty() && !number.equals(MISSING_VALUE) && !number.contains(",")) {
+								cond = false;
+								params.put("query", number);
+								params.put("type", ingNumber.getValue());
+								break;
+							}
 						}
-					}
-					if (cond) {
-						params.put("query", ingName);
-						params.put("type", "Name");
-					}
+						if (cond) {
+							params.put("query", ingName);
+							params.put("type", "Name");
+						}
 
-					if (params.containsKey("query")) {
+						if (params.containsKey("query")) {
+							logger.debug("Look for ingredients in decernis by " + params.get("type") + ": " + params.get("query"));
 
-						JSONObject jsonObject = new JSONObject(
-								restTemplate.exchange(url, HttpMethod.GET, createEntity(null), String.class, params).getBody());
-						logger.debug("Look for ingredients in decernis by " + params.get("type") + ": "+ params.get("query")
-						+ " " + jsonObject);
-						if (jsonObject.has("count") && (jsonObject.getInt("count") == 1) && jsonObject.has("results")) {
-							JSONArray results = jsonObject.getJSONArray("results");
-							rid = results.getJSONObject(0).getString("did");
-							logger.debug("RID of ingredient " + params.get("query") + ": " + rid);
-						} else if (jsonObject.has("count") && (jsonObject.getInt("count") == 0)) {
-							errors.add(createReqCtrl(ingListDataItem.getIng(), MESSAGE_NO_RID_ING));
-						} else if (jsonObject.has("count") && (jsonObject.getInt("count") > 1)) {
-							if (jsonObject.has("results")) {
+							JSONObject jsonObject = new JSONObject(
+									restTemplate.exchange(url, HttpMethod.GET, createEntity(null), String.class, params).getBody());
+
+							if (jsonObject.has("count") && (jsonObject.getInt("count") >= 1) && jsonObject.has("results")) {
 								JSONArray results = jsonObject.getJSONArray("results");
-								rid = getRidByIngName(results, ingName);
-							}
-							if (rid == null || rid.isEmpty()){
-								logger.debug("Several RIDs for ingredient " + params.get("query") + ": " + jsonObject);
-								errors.add(createReqCtrl(ingListDataItem.getIng(), MESSAGE_SEVERAL_RID_ING));
-							} else {
-								logger.debug("RID of ingredient " + params.get("query") + ": " + rid);
+								JSONObject result = results.getJSONObject(0);
+								if (jsonObject.getInt("count") > 1) {
+									result = getRidByIngName(results, ingName);
+								}
+								if (result != null) {
+									rid = result.getString("did");
+									logger.debug("RID of ingredient " + params.get("query") + ": " + rid);
+									nodeService.setProperty(ingListDataItem.getIng(), PLMModel.PROP_REGULATORY_CODE, rid);
+									// Get ingredient numbers (CAS, FEMA, CE)
+									if (result.has("libidents")) {
+										JSONObject libidents = result.getJSONObject("libidents");
+										for (Map.Entry<QName, String> ingNumber : ingNumbers.entrySet()) {
+											if ((ingNumber.getKey() == PLMModel.PROP_CAS_NUMBER) || (ingNumber.getKey() == PLMModel.PROP_CE_NUMBER)
+													|| (ingNumber.getKey() == PLMModel.PROP_FEMA_NUMBER)) {
+												String ingNumberToFill = (String) nodeService.getProperty(ingListDataItem.getIng(),
+														ingNumber.getKey());
+												if (((ingNumberToFill == null) || ingNumberToFill.isEmpty()) && libidents.has(ingNumber.getValue())) {
+													JSONArray numbers = libidents.getJSONArray(ingNumber.getValue());
+													String number = null;
+													if (numbers.length() > 0) {
+														StringBuilder sb = new StringBuilder();
+														for (int i = 0; i < numbers.length(); i++) {
+															sb.append(numbers.getString(i)).append(",");
+														}
+														number = sb.deleteCharAt(sb.length() - 1).toString();
+													}
+													if ((number != null) && !number.isEmpty()) {
+														nodeService.setProperty(ingListDataItem.getIng(), ingNumber.getKey(), number);
+													}
+												}
+											}
+										}
+									}
+
+								} else {
+									logger.debug("Several RIDs for ingredient " + params.get("query"));
+									errors.add(createReqCtrl(ingListDataItem.getIng(), MLTextHelper.getI18NMessage(MESSAGE_SEVERAL_RID_ING),
+											RequirementType.Tolerated));
+								}
+							} else if (jsonObject.has("count") && (jsonObject.getInt("count") == 0)) {
+								errors.add(createReqCtrl(ingListDataItem.getIng(), MLTextHelper.getI18NMessage(MESSAGE_NO_RID_ING),
+										RequirementType.Tolerated));
 							}
 						}
 					}
-				}
 
-				if ((rid != null) && !rid.isEmpty() && !rid.equals(MISSING_VALUE) && ((function != null) && !function.isEmpty())
-						&& ((ingName != null) && !ingName.isEmpty()) && ((ingQtyPerc != null))) {
-					ings.put(rid.toString(), ingListDataItem.getIng());
-					nodeService.setProperty(ingListDataItem.getIng(), PLMModel.PROP_REGULATORY_CODE, rid);
-					JSONObject ingredient = new JSONObject();
-					ingredient.put("name", ingName);
-					ingredient.put("percentage", ingQtyPerc);
-					ingredient.put("ingredient_did", rid);
-					ingredient.put("function", function);
-					ingredient.put("spec_parameters", JSONObject.NULL);
-					ingredient.put("upper_limit", JSONObject.NULL);
-					isEmpty = false;
-					ingredients.put(ingredient);
+					if ((rid != null) && !rid.isEmpty() && !rid.equals(MISSING_VALUE) && ((function != null) && !function.isEmpty())
+							&& ((ingName != null) && !ingName.isEmpty()) && (ingQtyPerc != null)) {
+						ings.put(rid, ingListDataItem.getIng());
+						JSONObject ingredient = new JSONObject();
+						ingredient.put("name", ingName);
+						ingredient.put("percentage", ingQtyPerc);
+						ingredient.put("ingredient_did", rid);
+						ingredient.put("function", function);
+						ingredient.put("spec_parameters", JSONObject.NULL);
+						ingredient.put("upper_limit", JSONObject.NULL);
+						isEmpty = false;
+						ingredients.put(ingredient);
+					}
+
+				} catch (HttpClientErrorException | HttpServerErrorException e) {
+					logger.warn("Cannot retrieve ingredient " + ingName + " error:" + e.getStatusText());
+				} catch (Exception e) {
+					logger.error(e, e);
+					throw new FormulateException("Unexpected decernis error", e);
 				}
 			}
 		}
@@ -246,17 +292,17 @@ public class DecernisServiceImpl implements DecernisService {
 
 	}
 
-	private String getRidByIngName(JSONArray results, String ingName) throws JSONException {
-		for (int i =0; i < results.length(); i++) {
+	private JSONObject getRidByIngName(JSONArray results, String ingName) throws JSONException {
+		for (int i = 0; i < results.length(); i++) {
 			JSONObject result = results.getJSONObject(i);
 			if (result.has("synonyms")) {
 				JSONArray synonyms = result.getJSONArray("synonyms");
 				int j = 0;
-				while (i < synonyms.length()) {
-					if (synonyms.getString(j).toLowerCase().replaceAll(",","").equals(ingName.toLowerCase().replaceAll(",",""))) {
-						return result.getString("did");
+				while (j < synonyms.length()) {
+					if (synonyms.getString(j).toLowerCase().replaceAll(",", "").equals(ingName.toLowerCase().replaceAll(",", ""))) {
+						return result;
 					}
-					i++;
+					j++;
 				}
 			}
 		}
@@ -264,11 +310,9 @@ public class DecernisServiceImpl implements DecernisService {
 	}
 
 	private String sendRecipe(JSONObject data) throws JSONException {
+
 		String url = serverUrl + "formulas";
 		if (data != null) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Data sent to Decernis: " + data);
-			}
 			HttpEntity<String> request = createEntity(data.toString());
 			JSONObject jsonObject = new JSONObject(restTemplate.postForObject(url, request, String.class));
 			if (jsonObject.has("id")) {
@@ -322,7 +366,7 @@ public class DecernisServiceImpl implements DecernisService {
 		}
 
 		String url = serverUrl + "recipe_analysis?current_company={company}&formula={formula}" + countryParam.toString()
-		+ "&usage={usage}&category=null&module_id={module}&limit=1";
+				+ "&usage={usage}&category=null&module_id={module}&limit=1";
 
 		Map<String, String> params = new HashMap<>();
 		params.put(COMPANY, companyName);
@@ -335,9 +379,6 @@ public class DecernisServiceImpl implements DecernisService {
 		HttpEntity<String> entity = createEntity(null);
 		JSONObject jsonObject = new JSONObject(restTemplate.postForObject(url, entity, String.class, params));
 		if (jsonObject.has("analysis_results") && (jsonObject.getJSONObject("analysis_results").length() > 0)) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Data returned by Decernis: " + jsonObject);
-			}
 			return jsonObject;
 		}
 
@@ -355,28 +396,30 @@ public class DecernisServiceImpl implements DecernisService {
 						JSONArray tabularResults = countryResults.getJSONObject("tabular").getJSONArray("INGREDIENT_DATA_PDF");
 						for (int row = 0; row < tabularResults.length(); row++) {
 							JSONObject result = tabularResults.getJSONObject(row);
-							if (result.has("did") && result.has("resultIndicator")
-									&& result.getString("resultIndicator").toLowerCase().startsWith("prohibited")) {
+							if (result.has("did") && result.has("resultIndicator")) {
 								if (ings.containsKey(result.getString("did")) && (ings.get(result.getString("did")) != null)) {
-									ReqCtrlListDataItem reqCtrlItem = new ReqCtrlListDataItem();
-									reqCtrlItem.setReqType(RequirementType.Forbidden);
-									reqCtrlItem.setReqDataType(RequirementDataType.Specification);
-
-									reqCtrlItem.getSources().add(ings.get(result.getString("did")));
-									String threshold = (result.has("threshold") && !result.getString("threshold").equals("None")
-											? "(" + result.getString("threshold") + ")"
-													: "");
 									String usage = (analysisResults.has("search_parameters")
-											&& analysisResults.getJSONObject("search_parameters").has("usage")
-											? analysisResults.getJSONObject("search_parameters").getString("usage")
+											&& analysisResults.getJSONObject("search_parameters").has(USAGE)
+													? analysisResults.getJSONObject("search_parameters").getString("usage")
 													: "");
-
-									reqCtrlItem.setRegulatoryCode((!usage.isEmpty() ? (usage.toUpperCase() + "_") : "") + country.toUpperCase());
-
-									MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_PROHIBITED_ING, country,
-											!usage.isEmpty() ? usage + " - " : "", threshold);
-									reqCtrlItem.setReqMlMessage(reqMessage);
-									reqCtrlList.add(reqCtrlItem);
+									if (result.getString("resultIndicator").toLowerCase().startsWith("prohibited")) {
+										String threshold = (result.has("threshold") && !result.getString("threshold").equals("None")
+												? "(" + result.getString("threshold") + ")"
+												: "");
+										MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_PROHIBITED_ING, country,
+												!usage.isEmpty() ? usage + " - " : "", threshold);
+										ReqCtrlListDataItem reqCtrlItem = createReqCtrl(ings.get(result.getString("did")), reqMessage,
+												RequirementType.Forbidden);
+										reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
+										reqCtrlList.add(reqCtrlItem);
+									} else if (result.getString("resultIndicator").toLowerCase().startsWith("not listed")) {
+										MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_NOTLISTED_ING, country,
+												!usage.isEmpty() ? usage + " - " : "");
+										ReqCtrlListDataItem reqCtrlItem = createReqCtrl(ings.get(result.getString("did")), reqMessage,
+												RequirementType.Tolerated);
+										reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
+										reqCtrlList.add(reqCtrlItem);
+									}
 								}
 							}
 						}
@@ -387,12 +430,12 @@ public class DecernisServiceImpl implements DecernisService {
 		return reqCtrlList;
 	}
 
-	private ReqCtrlListDataItem createReqCtrl(NodeRef ing, String reqCtrlMessage) {
+	private ReqCtrlListDataItem createReqCtrl(NodeRef ing, MLText reqCtrlMessage, RequirementType reqType) {
 		ReqCtrlListDataItem reqCtrlItem = new ReqCtrlListDataItem();
-		reqCtrlItem.setReqType(RequirementType.Tolerated);
+		reqCtrlItem.setReqType(reqType);
 		reqCtrlItem.getSources().add(ing);
 		reqCtrlItem.setReqDataType(RequirementDataType.Specification);
-		reqCtrlItem.setReqMlMessage(MLTextHelper.getI18NMessage(reqCtrlMessage));
+		reqCtrlItem.setReqMlMessage(reqCtrlMessage);
 
 		return reqCtrlItem;
 
@@ -405,7 +448,7 @@ public class DecernisServiceImpl implements DecernisService {
 
 			if ((countries != null) && (usages != null) && !usages.isEmpty() && !countries.isEmpty()) {
 				JSONObject data = getIngredients(product, ret);
-				if (data != null && data.has("ingredients")) {
+				if ((data != null) && data.has("ingredients")) {
 					String recipeId = sendRecipe(data);
 					if (recipeId != null) {
 						try {
@@ -429,6 +472,10 @@ public class DecernisServiceImpl implements DecernisService {
 			} else {
 				throw new IllegalStateException("countries or usage cannot be null");
 			}
+		} catch (HttpClientErrorException | HttpServerErrorException e) {
+			logger.error("Decernis HTTP ERROR STATUS:" + e.getStatusText());
+			logger.error("- error body:" + e.getResponseBodyAsString());
+			throw new FormulateException("Error calling decernis service", e);
 		} catch (Exception e) {
 			logger.error(e, e);
 			throw new FormulateException("Unexpected decernis error", e);
@@ -442,11 +489,11 @@ public class DecernisServiceImpl implements DecernisService {
 		StringBuilder key = new StringBuilder();
 
 		if (countries != null) {
-			countries.stream().filter(c -> c!=null && !c.isEmpty()).sorted().forEach(c -> key.append(c));
+			countries.stream().filter(c -> (c != null) && !c.isEmpty()).sorted().forEach(c -> key.append(c));
 		}
 
 		if (usages != null) {
-			usages.stream().filter(c -> c!=null && !c.isEmpty()).sorted().forEach(u -> key.append(u));
+			usages.stream().filter(c -> (c != null) && !c.isEmpty()).sorted().forEach(u -> key.append(u));
 		}
 
 		return key.toString();

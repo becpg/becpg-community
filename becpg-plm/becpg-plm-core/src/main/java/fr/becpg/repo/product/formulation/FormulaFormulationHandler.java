@@ -46,6 +46,9 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.formulation.FormulationService;
+import fr.becpg.repo.formulation.spel.SpelFormulaService;
+import fr.becpg.repo.formulation.spel.SpelHelper;
+import fr.becpg.repo.formulation.spel.SpelHelper.SpelShortcut;
 import fr.becpg.repo.helper.JsonFormulaHelper;
 import fr.becpg.repo.product.data.AbstractProductDataView;
 import fr.becpg.repo.product.data.CompoListView;
@@ -58,13 +61,12 @@ import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.packaging.VariantPackagingData;
-import fr.becpg.repo.product.data.productList.CompositionDataItem;
 import fr.becpg.repo.product.data.productList.DynamicCharactExecOrder;
 import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
-import fr.becpg.repo.product.data.spel.SpelHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
+import fr.becpg.repo.repository.model.CompositionDataItem;
 import fr.becpg.repo.security.BeCPGAccessDeniedException;
 
 /**
@@ -79,6 +81,29 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 
 	public static final int DYN_COLUMN_SIZE = 10;
 	public static final String DYN_COLUMN_NAME = "bcpg:dynamicCharactColumn";
+	
+
+	static {
+		SpelHelper.registerShortcut(new SpelShortcut("cost\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]"    , "costList.^[cost.toString() == '$1']"));
+		SpelHelper.registerShortcut(new SpelShortcut("nut\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]"     , "nutList.^[nut.toString() == '$1']"));
+		SpelHelper.registerShortcut(new SpelShortcut("allergen\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]", "allergenList.^[allergen.toString() == '$1']"));
+		SpelHelper.registerShortcut(new SpelShortcut("ing\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]"     , "ingList.^[ing.toString() == '$1']"));
+		SpelHelper.registerShortcut(new SpelShortcut("organo\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]"  , "organoList.^[organo.toString() == '$1']"));
+		SpelHelper.registerShortcut(new SpelShortcut("physico\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]"  ,"physicoChemList.^[physicoChem.toString() == '$1']"));
+		SpelHelper.registerShortcut(new SpelShortcut("microbio\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]" , "microbioList.^[microBio.toString() == '$1']"));
+		SpelHelper.registerShortcut(new SpelShortcut("compo\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]"    , "compoListView.compoList.^[product.toString() == '$1']"));
+		SpelHelper.registerShortcut(new SpelShortcut("process\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]" ,"processListView.processList.^[resource.toString() == '$1']"));
+		SpelHelper.registerShortcut(new SpelShortcut("resParam\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]", "resourceParamList.^[param.toString() == '$1']"));
+		SpelHelper.registerShortcut(new SpelShortcut("pack\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]",	"packagingListView.packagingList.^[product.toString() == '$1']"));
+		SpelHelper.registerShortcut(new SpelShortcut("packaging\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]",	"packagingListView.packagingList.^[product.toString() == '$1']"));
+		SpelHelper.registerShortcut(new SpelShortcut("compoVar\\['(.*?)'\\]","compoListView.dynamicCharactList.^[title == '$1']?.value"));
+		SpelHelper.registerShortcut(new SpelShortcut("packVar\\['(.*?)'\\]","packagingListView.dynamicCharactList.^[title == '$1']?.value"));
+		SpelHelper.registerShortcut(new SpelShortcut("packagingVar\\['(.*?)'\\]","packagingListView.dynamicCharactList.^[title == '$1']?.value"));
+		SpelHelper.registerShortcut(new SpelShortcut("processVar\\['(.*?)'\\]","processListView.dynamicCharactList.^[title == '$1']?.value"));
+		SpelHelper.registerShortcut(new SpelShortcut("labelClaim\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]", "labelClaimList.^[labelClaim.toString() == '$1']"));
+		SpelHelper.registerShortcut(new SpelShortcut("labeling\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]",	"labelingListView.ingLabelingList.^[grp.toString() == '$1']"));
+	}
+	
 
 	private AlfrescoRepository<ProductData> alfrescoRepository;
 
@@ -86,7 +111,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 
 	private NamespaceService namespaceService;
 
-	private FormulaService formulaService;
+	private SpelFormulaService formulaService;
 
 	private DynamicCharactExecOrder execOrder = DynamicCharactExecOrder.Post;
 
@@ -106,7 +131,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 		this.nodeService = nodeService;
 	}
 
-	public void setFormulaService(FormulaService formulaService) {
+	public void setFormulaService(SpelFormulaService formulaService) {
 		this.formulaService = formulaService;
 	}
 
@@ -123,7 +148,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 		}
 
 		ExpressionParser parser = new SpelExpressionParser();
-		StandardEvaluationContext context = formulaService.createEvaluationContext(productData);
+		StandardEvaluationContext context = formulaService.createEntitySpelContext(productData);
 
 		for (AbstractProductDataView view : productData.getViews()) {
 			computeFormula(productData, parser, context, view);
@@ -206,7 +231,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 										Double qtyPerProduct = getQtyPerProduct(productData, dataListItem);
 										dataListItem.setQty(qtyPerProduct);
 
-										StandardEvaluationContext dataContext = formulaService.createEvaluationContext(productData, dataListItem);
+										StandardEvaluationContext dataContext = formulaService.createDataListItemSpelContext(productData, dataListItem);
 										Object value = null;
 										try {
 											value = exp.getValue(dataContext);
@@ -397,7 +422,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 			try {
 				JSONObject subObject = new JSONObject();
 
-				StandardEvaluationContext dataContext = formulaService.createEvaluationContext(productData, composite);
+				StandardEvaluationContext dataContext = formulaService.createDataListItemSpelContext(productData, composite);
 
 				String subPath = path + "/" + composite.getNodeRef().getId();
 

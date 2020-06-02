@@ -52,9 +52,9 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.data.hierarchicalList.CompositeDataItem;
 import fr.becpg.repo.product.data.AbstractProductDataView;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.productList.CompositionDataItem;
 import fr.becpg.repo.product.data.productList.ResourceParamListItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.model.CompositionDataItem;
 import fr.becpg.repo.variant.filters.VariantFilters;
 import fr.becpg.repo.variant.model.VariantDataItem;
 

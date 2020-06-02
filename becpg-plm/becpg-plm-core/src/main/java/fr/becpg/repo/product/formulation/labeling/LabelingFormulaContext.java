@@ -57,6 +57,8 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.formulation.spel.SpelFormulaContext;
+import fr.becpg.repo.formulation.spel.SpelHelper;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
@@ -71,7 +73,6 @@ import fr.becpg.repo.product.data.ing.IngTypeItem;
 import fr.becpg.repo.product.data.ing.LabelingComponent;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.data.spel.DeclarationFilterContext;
-import fr.becpg.repo.product.data.spel.SpelHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 
@@ -80,7 +81,7 @@ import fr.becpg.repo.repository.RepositoryEntity;
  * @author matthieu
  *
  */
-public class LabelingFormulaContext extends RuleParser {
+public class LabelingFormulaContext extends RuleParser implements SpelFormulaContext<ProductData> {
 
 	private static final Log logger = LogFactory.getLog(LabelingFormulaContext.class);
 

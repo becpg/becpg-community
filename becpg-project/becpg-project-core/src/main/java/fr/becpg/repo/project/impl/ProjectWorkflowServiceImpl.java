@@ -47,8 +47,10 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.project.ProjectWorkflowService;
 import fr.becpg.repo.project.data.ProjectData;
+import fr.becpg.repo.project.data.ProjectNotificationEvent;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
+import fr.becpg.repo.project.data.projectList.TaskState;
 
 /**
  * Class used to manage workflow
@@ -105,8 +107,8 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 			logger.debug("Add group assignees to workflow : " + groupAssignees.size());
 			workflowProps.put(WorkflowModel.ASSOC_GROUP_ASSIGNEES, (Serializable) groupAssignees);
 		}
-
-		workflowProps.put(WorkflowModel.PROP_SEND_EMAIL_NOTIFICATIONS, true);
+		
+		workflowProps.put(WorkflowModel.PROP_SEND_EMAIL_NOTIFICATIONS, shouldNotify(projectData, taskListDataItem));
 		workflowProps.put(ProjectModel.ASSOC_WORKFLOW_TASK, taskListDataItem.getNodeRef());
 		workflowProps.put(BeCPGModel.ASSOC_WORKFLOW_ENTITY,projectData.getNodeRef());
 		
@@ -161,6 +163,39 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 		} finally {
 			AuthenticationUtil.setFullyAuthenticatedUser(fullyAuthenticatedUser);
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private boolean shouldNotify(ProjectData projectData, TaskListDataItem task) {
+		boolean notify = true;
+		List<String> notificationEvents = (List<String>) nodeService.getProperty(task.getNodeRef(), ProjectModel.PROP_OBSERVERS_EVENTS);
+		
+		if (notificationEvents != null && !notificationEvents.isEmpty()) {
+			for (String notificationEvent : notificationEvents) {
+				ProjectNotificationEvent event = ProjectNotificationEvent.valueOf(notificationEvent);
+				if (ProjectNotificationEvent.NotifyOnRefused.equals(event) && isReopenedAfterRefuse(projectData, task)) {
+					notify = true;
+					break;
+				}
+				if (ProjectNotificationEvent.NotifyDisabled.equals(event)) {
+					notify = false;
+				}
+			}
+		}
+		
+		return notify;
+	}
+	
+	private boolean isReopenedAfterRefuse(ProjectData projectData, TaskListDataItem reopenedTask) {
+		boolean isReopenedAfterRefuse = false;
+		for(TaskListDataItem task : projectData.getTaskList()){
+			if (TaskState.Refused.equals(task.getTaskState()) && (reopenedTask.equals(task.getRefusedTask()) 
+					|| (task.getRefusedTasksToReopen() != null && task.getRefusedTasksToReopen().contains(reopenedTask.getNodeRef())))) {
+				isReopenedAfterRefuse = true;
+				break;
+			}
+		}
+		return isReopenedAfterRefuse;
 	}
 
 	private List<NodeRef> getAssignees(List<NodeRef> resources, boolean group) {

@@ -309,71 +309,8 @@ div.notifications-panel {
 	margin: 0.2em 0.5em 0.5em;
 	display:inline-block;
 }
-							
-	/* 						
-	// TODO Merge;
+	
 
-			var scoreDiv = YAHOO.util.Dom.get("scoreLi");
-			if (scoreDiv !== undefined && scoreDiv != null) {
-			
-				var imgWidth = 74;
-				var widthRatio = imgWidth / 166;
-
-				var rightPos = (((spriteIndex - 1) * (166 + 14) + 2 + (spriteIndex > 4 ? 10 : 0)) * widthRatio) + "px";
-				scoreDiv.style.backgroundPosition = "-" + rightPos + " 0px";
-				scoreDiv.style.width = imgWidth + "px";
-				scoreDiv.style.height = imgWidth + "px";
-
-				var backgroundSize = Math.floor(3629 * widthRatio) + "px " + Math.floor(396 * widthRatio) + "px";
-				scoreDiv.childNodes[0].style.lineHeight = imgWidth + "px";
-				scoreDiv.childNodes[0].style.fontSize = 3 * widthRatio + "em";
-				scoreDiv.style.backgroundSize = backgroundSize;
-			}
- */
-
-
-/** OLD **/
-
-.product-notifications .notifications-list .grid table {
-	border: none;
-}
-
-.product-notifications .notifications-list  .yui-dt thead {
-	display: none;
-}
-
-.product-notifications .notifications-list  .grid.yui-dt .yui-dt-data  td,
-	.datagrid.activityList .yui-dt-data td {
-	border: none !important;
-	cursor: default;
-}
-
-.product-notifications .notifications-list  .yui-dt-data  tr, .datagrid.activityList .yui-dt-data tr.yui-dt-highlighted
-	{
-	background-color: white;
-	border: none;
-	cursor: default;
-}
-
-/*
-.product-notifications .notifications-list .rclReq-details, .rclFilterElt{
-	background-color: #fff;
-	border-radius: 2px;
-	box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
- 	transition: all 0.3s cubic-bezier(.25,.8,.25,1);
-	margin: 0px 5px 5px;
-	padding: 5px;
-	border: 0.5px solid #CCCCCC;
-}
-*/
-
-/*
-.product-notifications .notifications-list .rclReq-details:hover {
-	box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
-}
-*/
-
-/** RclFiltering **/
 .rclFilterElt ul li, .req-all-all {
 	display: inline;
 	padding: 0 2px;
@@ -386,6 +323,19 @@ div.notifications-panel {
 	height: auto;
 }
 
+
+
+.req-filter.tag  {
+	background-color: #fefdca;
+	border: 1px solid #ddd;
+}
+
+
+.rclFilterSelected .req-filter.tag  {
+	background-color: #ddd;
+}
+
+
 div.dataTypeList span.req-all-all{
 	margin: 0px 5px 5px;
 }
@@ -396,10 +346,6 @@ div.dataTypeList .title {
 	margin-bottom: 5px;	
 }
 
-/* .rclReq-details ul { */
-/* 	max-height: 70px; */
-/* 	overflow-y: auto; */
-/* } */
 
 .ctrlSumPreview .dataTypeList .rclFilterElt {
 	margin-top: 10px;
@@ -447,7 +393,6 @@ div.dataTypeList .title {
 
 div.dataTypeList {
 	overflow: auto;
-	/* avoids text breaking on low resolutions */
 }
 
 
@@ -497,7 +442,6 @@ div.dataTypeList {
 	border-right: 0px;
 }
 
-/** Full screen mode */ 
 .product-notifications .notifications-list
 .full-screen .sticky-footer, .full-screen  .sticky-push {
 	height: 0px;

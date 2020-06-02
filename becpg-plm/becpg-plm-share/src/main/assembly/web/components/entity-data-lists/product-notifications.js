@@ -139,10 +139,16 @@
 									var type = (splits.length > 2 ? splits[2] : undefined);
 									var dataType = splits[1].charAt(0).toUpperCase() + splits[1].slice(1);
 									instance.filterId = (type === "all" && dataType === "All" ? "all" : "filterform");
-									instance.filterData = (type === "all" && dataType === "All" ? undefined : "{"
-											+ (type !== undefined ? ("\"prop_bcpg_rclReqType\":\"" + type+"\"") : "")
-											+ (dataType !== null ? (type !== undefined ? "," : "") + ("\"prop_bcpg_rclDataType\":\"" + dataType+"\"") : "")
-											+ "}");
+									
+									if(dataType == "Regulatorycodes") {
+										instance.filterData =  "{\"prop_bcpg_regulatoryCode\":\"" + type.replace("@"," ").replace("$","-") +"\"}";
+									} else {
+									
+										instance.filterData = (type === "all" && dataType === "All" ? undefined : "{"
+												+ (type !== undefined ? ("\"prop_bcpg_rclReqType\":\"" + type+"\"") : "")
+												+ (dataType !== null ? (type !== undefined ? "," : "") + ("\"prop_bcpg_rclDataType\":\"" + dataType+"\"") : "")
+												+ "}");
+									}
 									
 									instance.reloadDataTable();
 
@@ -344,14 +350,22 @@
 																+ scoreInfo + "</a></span><ul>";
 
 														var types = scores.ctrlCount[dataType];
+														
+													
 
 														for ( var type in types[dataTypeName]) {
 															var value = types[dataTypeName][type];
-
-															html += '<li><span class="req-' + dataTypeName.toString().toLowerCase() + '-' + type
-																	+ '" title="' + instance.msg("reqTypes." + type) + '"><a class="req-filter '
-																	+ REQFILTER_EVENTCLASS + '" href="#"><span class="reqType' + type + '"></span>'
-																	+ value + '</a></li>';
+															if(dataTypeName == "RegulatoryCodes"){
+																html += '<li><span class="req-' + dataTypeName.toString().toLowerCase() + '-' + type.replace(" ","@").replace("-","$")
+																+ '" ><a class="req-filter tag '
+																+ REQFILTER_EVENTCLASS + '" href="#"><span>' + type + 
+																' ('+ value + ')</span></a></li>';
+															} else {
+																html += '<li><span class="req-' + dataTypeName.toString().toLowerCase() + '-' + type
+																		+ '" title="' + instance.msg("reqTypes." + type) + '"><a class="req-filter '
+																		+ REQFILTER_EVENTCLASS + '" href="#"><span class="reqType' + type + '"></span>'
+																		+ value + '</a></li>';
+															}
 
 														}
 														html += "</ul></div>";
@@ -400,7 +414,7 @@
 						getParameters : function ProductNotifications_getParameters() {
 
 							var request = {
-								fields : [ "bcpg_rclReqType", "bcpg_rclReqMessage", "bcpg_rclSources", "bcpg_rclDataType" ],
+								fields : [ "bcpg_rclReqType", "bcpg_rclReqMessage", "bcpg_rclSources", "bcpg_rclDataType", "bcpg_regulatoryCode" ],
 								page : this.currentPage,
 								filter : {
 									filterId : this.filterId,
@@ -436,11 +450,17 @@
 							} else {
 
 								var reqType = oRecord.getData("itemData")["prop_bcpg_rclReqType"].value;
+								var regulatoryCode = oRecord.getData("itemData")["prop_bcpg_regulatoryCode"].value;
+								
 								var reqProducts = oRecord.getData("itemData")["assoc_bcpg_rclSources"];
 								desc += '<div class="rclReq-details">';
 								if (reqType) {
 									desc += '   <div class="icon" ><span class="reqType' + reqType + '" title="'
 											+ Alfresco.util.encodeHTML(this.msg("data.reqtype." + reqType.toLowerCase())) + '">&nbsp;</span></div>';
+								}
+								if (regulatoryCode) {
+									desc += '      <div class="rclReq-regulatoryCode">'
+										+ Alfresco.util.encodeHTML(regulatoryCode) + '</div>';
 								}
 								desc += '      <div class="rclReq-title">'
 										+ Alfresco.util.encodeHTML(oRecord.getData("itemData")["prop_bcpg_rclReqMessage"].displayValue) + '</div>';

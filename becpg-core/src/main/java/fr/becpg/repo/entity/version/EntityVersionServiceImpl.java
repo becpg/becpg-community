@@ -1032,7 +1032,17 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				for (NodeRef sourceNodeRef : sources) {
 					policyBehaviourFilter.disableBehaviour(sourceNodeRef, ContentModel.ASPECT_AUDITABLE);
 					try {
-						nodeService.removeAspect(sourceNodeRef, BeCPGModel.ASPECT_ENTITY_BRANCH);
+						//nodeService.removeAspect(sourceNodeRef, BeCPGModel.ASPECT_ENTITY_BRANCH);
+						associationService.update(sourceNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY, branchToNodeRef);
+						
+						if (nodeService.hasAspect(branchToNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
+							nodeService.setProperty(sourceNodeRef, BeCPGModel.PROP_BRANCH_FROM_VERSION_LABEL,
+									nodeService.getProperty(branchToNodeRef, ContentModel.PROP_VERSION_LABEL));
+						} else {
+							nodeService.setProperty(sourceNodeRef, BeCPGModel.PROP_BRANCH_FROM_VERSION_LABEL, RepoConsts.INITIAL_VERSION);
+						}
+						
+						
 					} finally {
 						policyBehaviourFilter.enableBehaviour(sourceNodeRef, ContentModel.ASPECT_AUDITABLE);
 					}

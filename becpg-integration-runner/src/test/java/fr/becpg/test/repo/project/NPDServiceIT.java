@@ -22,6 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.project.data.PlanningMode;
@@ -46,6 +47,8 @@ public class NPDServiceIT extends AbstractProjectTestCase {
 	public void testNPDProjectTask() {
 
 		final NodeRef projectNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			
+			policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_ENTITY_TPL_REF);
 
 			// create project Tpl
 			ProjectData projectData = new ProjectData(null, "Pjt", PROJECT_HIERARCHY1_SEA_FOOD_REF, PROJECT_HIERARCHY2_CRUSTACEAN_REF, null, null,

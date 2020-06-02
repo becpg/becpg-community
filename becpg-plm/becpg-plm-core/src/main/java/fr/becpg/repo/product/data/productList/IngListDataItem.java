@@ -19,6 +19,7 @@ package fr.becpg.repo.product.data.productList;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
@@ -324,21 +325,8 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + ((bioOrigin == null) ? 0 : bioOrigin.hashCode());
-		result = prime * result + ((depthLevel == null) ? 0 : depthLevel.hashCode());
-		result = prime * result + ((geoOrigin == null) ? 0 : geoOrigin.hashCode());
-		result = prime * result + ((geoTransfo == null) ? 0 : geoTransfo.hashCode());
-		result = prime * result + ((ing == null) ? 0 : ing.hashCode());
-		result = prime * result + ((isGMO == null) ? 0 : isGMO.hashCode());
-		result = prime * result + ((isIonized == null) ? 0 : isIonized.hashCode());
-		result = prime * result + ((isManual == null) ? 0 : isManual.hashCode());
-		result = prime * result + ((isProcessingAid == null) ? 0 : isProcessingAid.hashCode());
-		result = prime * result + ((isSupport == null) ? 0 : isSupport.hashCode());
-		result = prime * result + ((maxi == null) ? 0 : maxi.hashCode());
-		result = prime * result + ((mini == null) ? 0 : mini.hashCode());
-		result = prime * result + ((parent == null || parent == this) ? 0 : parent.hashCode());
-		result = prime * result + ((qtyPerc == null) ? 0 : qtyPerc.hashCode());
-		result = prime * result + ((volumeQtyPerc == null) ? 0 : volumeQtyPerc.hashCode());
+		result = prime * result + Objects.hash(bioOrigin, depthLevel, geoOrigin, geoTransfo, ing, isGMO, isIonized, isProcessingAid, isSupport, maxi,
+				mini, parent, qtyPerc, volumeQtyPerc);
 		return result;
 	}
 
@@ -351,90 +339,20 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 		if (getClass() != obj.getClass())
 			return false;
 		IngListDataItem other = (IngListDataItem) obj;
-		if (bioOrigin == null) {
-			if (other.bioOrigin != null)
-				return false;
-		} else if (!bioOrigin.equals(other.bioOrigin))
-			return false;
-		if (depthLevel == null) {
-			if (other.depthLevel != null)
-				return false;
-		} else if (!depthLevel.equals(other.depthLevel))
-			return false;
-		if (geoOrigin == null) {
-			if (other.geoOrigin != null)
-				return false;
-		} else if (!geoOrigin.equals(other.geoOrigin))
-			return false;
-		if (geoTransfo == null) {
-			if (other.geoTransfo != null)
-				return false;
-		} else if (!geoTransfo.equals(other.geoTransfo))
-			return false;
-		if (ing == null) {
-			if (other.ing != null)
-				return false;
-		} else if (!ing.equals(other.ing))
-			return false;
-		if (isGMO == null) {
-			if (other.isGMO != null)
-				return false;
-		} else if (!isGMO.equals(other.isGMO))
-			return false;
-		if (isIonized == null) {
-			if (other.isIonized != null)
-				return false;
-		} else if (!isIonized.equals(other.isIonized))
-			return false;
-		if (isManual == null) {
-			if (other.isManual != null)
-				return false;
-		} else if (!isManual.equals(other.isManual))
-			return false;
-		if (isProcessingAid == null) {
-			if (other.isProcessingAid != null)
-				return false;
-		} else if (!isProcessingAid.equals(other.isProcessingAid))
-			return false;
-		if (isSupport == null) {
-			if (other.isSupport != null)
-				return false;
-		} else if (!isSupport.equals(other.isSupport))
-			return false;
-		if (maxi == null) {
-			if (other.maxi != null)
-				return false;
-		} else if (!maxi.equals(other.maxi))
-			return false;
-		if (mini == null) {
-			if (other.mini != null)
-				return false;
-		} else if (!mini.equals(other.mini))
-			return false;
-		if (parent == null) {
-			if (other.parent != null)
-				return false;
-		} else if (!parent.equals(other.parent))
-			return false;
-		if (qtyPerc == null) {
-			if (other.qtyPerc != null)
-				return false;
-		} else if (!qtyPerc.equals(other.qtyPerc))
-			return false;
-		if (volumeQtyPerc == null) {
-			if (other.volumeQtyPerc != null)
-				return false;
-		} else if (!volumeQtyPerc.equals(other.volumeQtyPerc))
-			return false;
-		return true;
+		return Objects.equals(bioOrigin, other.bioOrigin) && Objects.equals(depthLevel, other.depthLevel)
+				&& Objects.equals(geoOrigin, other.geoOrigin) && Objects.equals(geoTransfo, other.geoTransfo) && Objects.equals(ing, other.ing)
+				&& Objects.equals(isGMO, other.isGMO) && Objects.equals(isIonized, other.isIonized)
+				&& Objects.equals(isProcessingAid, other.isProcessingAid) && Objects.equals(isSupport, other.isSupport)
+				&& Objects.equals(maxi, other.maxi) && Objects.equals(mini, other.mini) && Objects.equals(parent, other.parent)
+				&& Objects.equals(qtyPerc, other.qtyPerc) && Objects.equals(volumeQtyPerc, other.volumeQtyPerc);
 	}
 
 	@Override
 	public String toString() {
 		return "IngListDataItem [qtyPerc=" + qtyPerc + ", volumeQtyPerc=" + volumeQtyPerc + ", geoOrigin=" + geoOrigin + ", geoTransfo=" + geoTransfo
-				+ ", bioOrigin=" + bioOrigin + ", isGMO=" + isGMO + ", isIonized=" + isIonized + ", ing=" + ing + ", isManual=" + isManual
-				+ ", isProcessingAid=" + isProcessingAid + ", isSupport=" + isSupport + ", depthLevel=" + depthLevel + ", parent=" + parent
-				+ ", mini=" + mini + ", maxi=" + maxi + "]";
+				+ ", bioOrigin=" + bioOrigin + ", isGMO=" + isGMO + ", isIonized=" + isIonized + ", ing=" + ing + ", isProcessingAid="
+				+ isProcessingAid + ", isSupport=" + isSupport + ", depthLevel=" + depthLevel + ", parent=" + parent + ", mini=" + mini + ", maxi="
+				+ maxi + "]";
 	}
 
 	@Override
