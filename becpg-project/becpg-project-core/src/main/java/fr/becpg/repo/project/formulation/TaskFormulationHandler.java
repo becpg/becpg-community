@@ -249,7 +249,7 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 			// If we haven't made any progress then a cycle must exist in
 			// the graph and we wont be able to calculate the critical path
 			if (!progress) {
-				logger.warn("Cyclic dependency, algorithm stopped!");
+				logger.warn("Cyclic dependency, algorithm stopped for project "+ projectData.getName()+" ("+projectData.getNodeRef()+")");
 				return;
 			}
 		}
@@ -420,7 +420,7 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 			// If we haven't made any progress then a cycle must exist in
 			// the graph and we wont be able to calculate the critical path
 			if (!progress) {
-				logger.warn("Cyclic dependency, algorithm stopped!");
+				logger.warn("Cyclic dependency, algorithm stopped for "+ projectData.getName()+" ("+projectData.getNodeRef()+")");
 				return false;
 			}
 		}
@@ -474,6 +474,7 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 			// Check if all brothers are closed
 			// TODO refactor brethen tasks
 
+			
 			for (TaskListDataItem brotherTask : ProjectHelper.getBrethrenTask(projectData, task.getTask())) {
 				if (!task.getTask().getRefusedTask().equals(brotherTask) && TaskState.InProgress.equals(brotherTask.getTaskState())) {
 					shouldRefused = false;
