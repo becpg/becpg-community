@@ -29,13 +29,33 @@ import fr.becpg.repo.RepoConsts;
 @Component
 public class MLTextHelper {
 
-	private static String supportedLocales;
+	private static List<Locale> supportedLocales = new LinkedList<>();
+	private static String supportedLocalesText = "";
 
 	private static boolean shouldExtractMLText;
 
 	@Value("${beCPG.multilinguale.supportedLocales}")
 	public void setSupportedLocales(String supportedLocales) {
-		MLTextHelper.supportedLocales = supportedLocales;
+
+		List<Locale> ret = new LinkedList<>();
+
+		if (supportedLocales != null) {
+			String[] locales = supportedLocales.split(",");
+			for (String key : locales) {
+				ret.add(parseLocale(key));
+			}
+		}
+
+		ret.sort((a, b) -> {
+			return localeLabel(a).compareTo(localeLabel(b));
+		});
+
+		MLTextHelper.supportedLocales = ret;
+		MLTextHelper.supportedLocalesText = supportedLocales;
+	}
+
+	public static List<Locale> getSupportedLocales() {
+		return supportedLocales;
 	}
 
 	@Value("${beCPG.multilinguale.shouldExtractMLText}")
@@ -139,36 +159,16 @@ public class MLTextHelper {
 	}
 
 	public static boolean isSupportedLocale(Locale contentLocale) {
-		return (contentLocale != null) && supportedLocales.contains(contentLocale.toString());
-	}
-
-	public static List<Locale> getSupportedLocales() {
-
-		List<Locale> ret = new LinkedList<>();
-
-		if (supportedLocales != null) {
-			String[] locales = supportedLocales.split(",");
-			for (String key : locales) {
-				ret.add(parseLocale(key));
-			}
-		}
-
-		ret.sort((a, b) -> {
-			return localeLabel(a).compareTo(localeLabel(b));
-
-		});
-
-		return ret;
+		return (contentLocale != null) && supportedLocales.contains(contentLocale);
 	}
 
 	public static List<String> getSupportedLocalesList() {
 
-		List<String> ret = new ArrayList<>();
-		if (supportedLocales != null) {
-			ret = Arrays.asList(supportedLocales.split(","));
+		if (supportedLocalesText != null) {
+			return Arrays.asList(supportedLocalesText.split(","));
 		}
 
-		return ret;
+		return new ArrayList<>();
 	}
 
 	public static Locale parseLocale(String key) {
@@ -234,7 +234,7 @@ public class MLTextHelper {
 		MLText ret = new MLText();
 		for (String key : RepoConsts.SUPPORTED_UI_LOCALES.split(",")) {
 
-			if (supportedLocales.contains(key)) {
+			if (supportedLocalesText.contains(key)) {
 				Locale locale = parseLocale(key);
 				List<Object> parsedVariable = new LinkedList<>();
 				if (variables != null) {
@@ -263,7 +263,7 @@ public class MLTextHelper {
 		MLText ret = new MLText();
 
 		for (String key : RepoConsts.SUPPORTED_UI_LOCALES.split(",")) {
-			if (supportedLocales.contains(key)) {
+			if (supportedLocalesText.contains(key)) {
 				Locale locale = parseLocale(key);
 				ret.addValue(locale, callback.run(locale));
 			}

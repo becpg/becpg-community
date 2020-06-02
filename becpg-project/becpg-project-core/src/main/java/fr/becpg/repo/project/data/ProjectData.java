@@ -72,6 +72,8 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	private List<NodeRef> legends = new ArrayList<>();
 	private Integer overdue = 0;
 	private Integer score = 0;
+	private Integer duration;
+	private Integer realDuration;
 	private Date created;
 	private Date modified;
 	private String creator;
@@ -89,6 +91,7 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	private Integer currentReformulateCount;
 	private String formulationChainId;
 	private Boolean updateFormulatedDate = true;
+	private String requirementChecksum;
 	
 	private List<TaskListDataItem> taskList;
 	private List<DeliverableListDataItem> deliverableList;
@@ -177,8 +180,18 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	public void setFormulatedDate(Date formulatedDate) {
 		this.formulatedDate = formulatedDate;
 	}
-
 	
+
+	@AlfProp
+	@AlfQname(qname = "bcpg:requirementChecksum")
+	public String getRequirementChecksum() {
+		return requirementChecksum;
+	}
+
+	public void setRequirementChecksum(String requirementChecksum) {
+		this.requirementChecksum = requirementChecksum;
+	}
+
 	@Override
 	public boolean shouldUpdateFormulatedDate() {
 		return updateFormulatedDate;
@@ -278,6 +291,10 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	public NodeRef getProjectTpl() {
 		return projectTpl;
 	}
+	
+	public NodeRef getFormulatedEntityTpl() {
+		return projectTpl;
+	}
 
 	public void setProjectTpl(NodeRef projectTpl) {
 		this.projectTpl = projectTpl;
@@ -321,6 +338,22 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 
 	public void setOverdue(Integer overdue) {
 		this.overdue = overdue;
+	}
+
+	public Integer getDuration() {
+		return duration;
+	}
+
+	public void setDuration(Integer duration) {
+		this.duration = duration;
+	}
+
+	public Integer getRealDuration() {
+		return realDuration;
+	}
+
+	public void setRealDuration(Integer realDuration) {
+		this.realDuration = realDuration;
 	}
 
 	@AlfProp

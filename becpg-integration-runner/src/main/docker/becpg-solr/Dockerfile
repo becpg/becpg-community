@@ -1,5 +1,4 @@
 FROM openjdk:11
-MAINTAINER beCPG
 
 ENV NEXUS=https://artifacts.alfresco.com/nexus/content/groups/public
 ENV DIST_DIR /opt/alfresco-search-services

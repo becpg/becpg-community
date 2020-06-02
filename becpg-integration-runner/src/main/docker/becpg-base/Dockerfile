@@ -1,5 +1,4 @@
 FROM tomcat:9-jdk11
-MAINTAINER beCPG
 
 ENV NEXUS=https://artifacts.alfresco.com/nexus/content/groups/public
 ENV ALF_VERSION=${alfresco.platform.version}

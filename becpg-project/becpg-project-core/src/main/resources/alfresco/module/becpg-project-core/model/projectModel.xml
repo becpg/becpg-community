@@ -110,6 +110,8 @@
 					<value>TaskStart</value>
 					<value>TaskEnd</value>
 					<value>TaskRefused</value>
+					<value>NotifyDisabled</value>
+					<value>NotifyOnRefused</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -367,7 +369,7 @@
 				<aspect>bcpg:codeAspect</aspect>
 				<aspect>bcpg:entityListsAspect</aspect>
 				<aspect>pjt:completionAspect</aspect>
-				<!-- <aspect>bcpg:entityTplRefAspect</aspect> -->
+				<aspect>bcpg:entityTplRefAspect</aspect>
 			</mandatory-aspects>
 		</type>
 
@@ -481,7 +483,6 @@
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
-
 			</properties>
 			<associations>
 				<association name="pjt:tlPrevTasks">

@@ -20,6 +20,7 @@ package fr.becpg.repo.product.data.productList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -68,9 +69,16 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 		if(getReqMessage()!=null){
 			key +=getReqMessage();
 		} 
+		if(reqType!=null){
+			key+= reqType.toString();
+		}
 		if(reqDataType!=null){
 			key+= reqDataType.toString();
 		}
+		if(regulatoryCode!=null){
+			key+= regulatoryCode.toString();
+		}
+		
 		return key;
 	}
 	
@@ -126,6 +134,7 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 		this.reqDataType = reqDataType != null ? reqDataType : RequirementDataType.Nutrient;
 	}
 	
+	
 	@AlfProp
 	@AlfQname(qname="bcpg:regulatoryCode")
 	public String getRegulatoryCode() {
@@ -156,12 +165,7 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + ((charact == null) ? 0 : charact.hashCode());
-		result = prime * result + ((reqDataType == null) ? 0 : reqDataType.hashCode());
-		result = prime * result + ((reqMlMessage == null) ? 0 : reqMlMessage.hashCode());
-		result = prime * result + ((reqType == null) ? 0 : reqType.hashCode());
-		result = prime * result + ((sort == null) ? 0 : sort.hashCode());
-		result = prime * result + ((sources == null) ? 0 : sources.hashCode());
+		result = prime * result + Objects.hash(charact, regulatoryCode, reqDataType, reqMlMessage, reqType, sort, sources);
 		return result;
 	}
 
@@ -174,31 +178,9 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 		if (getClass() != obj.getClass())
 			return false;
 		ReqCtrlListDataItem other = (ReqCtrlListDataItem) obj;
-		if (charact == null) {
-			if (other.charact != null)
-				return false;
-		} else if (!charact.equals(other.charact))
-			return false;
-		if (reqDataType != other.reqDataType)
-			return false;
-		if (reqMlMessage == null) {
-			if (other.reqMlMessage != null)
-				return false;
-		} else if (!reqMlMessage.equals(other.reqMlMessage))
-			return false;
-		if (reqType != other.reqType)
-			return false;
-		if (sort == null) {
-			if (other.sort != null)
-				return false;
-		} else if (!sort.equals(other.sort))
-			return false;
-		if (sources == null) {
-			if (other.sources != null)
-				return false;
-		} else if (!sources.equals(other.sources))
-			return false;
-		return true;
+		return Objects.equals(charact, other.charact) && Objects.equals(regulatoryCode, other.regulatoryCode) && reqDataType == other.reqDataType
+				&& Objects.equals(reqMlMessage, other.reqMlMessage) && reqType == other.reqType && Objects.equals(sort, other.sort)
+				&& Objects.equals(sources, other.sources);
 	}
 
 	@Override

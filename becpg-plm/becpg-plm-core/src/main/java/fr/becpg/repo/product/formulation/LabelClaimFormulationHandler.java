@@ -24,6 +24,8 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
+import fr.becpg.repo.formulation.spel.SpelFormulaService;
+import fr.becpg.repo.formulation.spel.SpelHelper;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
@@ -33,7 +35,6 @@ import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
-import fr.becpg.repo.product.data.spel.SpelHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 
 /**
@@ -53,7 +54,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 
 	private NodeService mlNodeService;
 
-	private FormulaService formulaService;
+	private SpelFormulaService formulaService;
 
 	private AlfrescoRepository<ProductData> alfrescoRepository;
 
@@ -65,7 +66,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 		this.nodeService = nodeService;
 	}
 
-	public void setFormulaService(FormulaService formulaService) {
+	public void setFormulaService(SpelFormulaService formulaService) {
 		this.formulaService = formulaService;
 	}
 
@@ -105,7 +106,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 		
 		
 		ExpressionParser parser = new SpelExpressionParser();
-		StandardEvaluationContext context = formulaService.createEvaluationContext(productData);
+		StandardEvaluationContext context = formulaService.createEntitySpelContext(productData);
 
 		if ((productData.getLabelClaimList() != null) && !productData.getLabelClaimList().isEmpty()) {
 			if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {

@@ -19,7 +19,7 @@
      define subcomponents such as "Valves" at this level.
      Documentation at /docs/config/server.html
  -->
-<Server port="8005" shutdown="SHUTDOWN">
+<Server port="-1" shutdown="SHUTDOWN">
   <!-- <Listener className="org.apache.catalina.startup.VersionLoggerListener" /> -->
   <!-- Security listener. Documentation at /docs/config/listeners.html
   <Listener className="org.apache.catalina.security.SecurityListener" />
@@ -65,8 +65,8 @@
          Define a non-SSL/TLS HTTP/1.1 Connector on port 8080
     -->
     <Connector URIEncoding="UTF-8"
-                   acceptCount="200"
-                   connectionTimeout="60000"
+                   acceptCount="300"
+                   connectionTimeout="300000"
                    executor="tomcatThreadPool"
                    port="8080" protocol="HTTP/1.1"
               	   redirectPort="8443"  />
@@ -74,8 +74,8 @@
 
     <!-- Define an AJP 1.3 Connector on port 8009 -->
     <Connector port="8009" URIEncoding="UTF-8"
-                   acceptCount="200"
-                   connectionTimeout="60000"
+                   acceptCount="300"
+                   connectionTimeout="300000"
                    executor="tomcatThreadPool"
                    protocol="AJP/1.3" redirectPort="8443"
                    secretRequired="false" 
