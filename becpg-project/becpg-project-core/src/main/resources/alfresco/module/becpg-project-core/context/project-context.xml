@@ -211,13 +211,17 @@
         </property>
     </bean>
     
-    <bean id="projectFormulationTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"  >
-        <property name="jobDetail">
-            <ref bean="projectFormulationJob"/>
+     <bean id="projectFormulationSchedulerAccessor" class="org.alfresco.schedule.AlfrescoSchedulerAccessorBean">
+        <property name="scheduler" ref="schedulerFactory"/>
+        <property name="triggers">
+            <list>
+               <bean id="projectFormulationTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"  >
+			        <property name="jobDetail" ref="projectFormulationJob"/>
+			        <property name="cronExpression" value="${beCPG.project.formulation.cronExpression}" />
+			    </bean>
+			</list>
         </property>
-        <property name="cronExpression">
-            <value>${project.formulation.cronExpression}</value>
-        </property>
+        <property name="enabled" value="${beCPG.project.formulation.enabled}"/>
     </bean>
     
     
