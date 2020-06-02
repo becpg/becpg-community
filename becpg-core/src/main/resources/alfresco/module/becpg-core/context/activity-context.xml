@@ -22,7 +22,7 @@
 
 	<!-- Entity Policies -->
 
-	<bean id="entityActivityPolicy" class="fr.becpg.repo.activity.policy.EntityActivityPolicy" parent="abstractBeCPGPolicy" >
+	<bean id="entityActivityPolicy" class="fr.becpg.repo.activity.policy.EntityActivityPolicy" parent="abstractBeCPGPolicy">
 		<property name="entityDictionaryService" ref="entityDictionaryService" />
 		<property name="entityActivityService" ref="entityActivityService" />
 	</bean>
@@ -30,41 +30,48 @@
 
 	<!-- DataList Extractor -->
 
-    <bean id="activityListExtractor" class="fr.becpg.repo.activity.extractor.ActivityListExtractor" parent="simpleExtractor">
-		<property name="entityActivityService" ref="entityActivityService"/>
-		<property name="dictionaryService" ref="dictionaryService"/>
-		<property name="securityService" ref="securityService"/>
-		<property name="defaultExtractor" value="false"/>
+	<bean id="activityListExtractor" class="fr.becpg.repo.activity.extractor.ActivityListExtractor" parent="simpleExtractor">
+		<property name="entityActivityService" ref="entityActivityService" />
+		<property name="dictionaryService" ref="dictionaryService" />
+		<property name="securityService" ref="securityService" />
+		<property name="defaultExtractor" value="false" />
 	</bean>
 	
 	<!-- Job  -->
-	
-	  <bean id="entityActivityJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
-        <property name="jobClass">
-            <value>fr.becpg.repo.activity.EntityActivityJob</value>
-        </property>
-        <property name="jobDataAsMap">
-            <map>
-                <entry key="entityActivityService">
-                    <ref bean="entityActivityService" />
-                </entry>
-                <entry key="tenantAdminService">
-                    <ref bean="tenantAdminService" />
-                </entry>
-            </map>
-        </property>
-    </bean>
-    
-    
-    
-    <bean id="entityActivityJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"  >
-        <property name="jobDetail">
-            <ref bean="entityActivityJob"/>
-        </property>
-        <property name="cronExpression">
-            <value>${beCPG.activity.cleaner.cronExpression}</value>
-        </property>
-    </bean>
-    
-        
+
+	<bean id="entityActivityJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<property name="jobClass">
+			<value>fr.becpg.repo.activity.EntityActivityJob</value>
+		</property>
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="entityActivityService">
+					<ref bean="entityActivityService" />
+				</entry>
+				<entry key="tenantAdminService">
+					<ref bean="tenantAdminService" />
+				</entry>
+			</map>
+		</property>
+	</bean>
+
+
+	<bean id="entityActivitySchedulerAccessor" class="org.alfresco.schedule.AlfrescoSchedulerAccessorBean">
+		<property name="scheduler" ref="schedulerFactory" />
+		<property name="triggers">
+			<list>
+				<bean id="entityActivityJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+					<property name="jobDetail" ref="entityActivityJob"/>
+					<property name="cronExpression" value="${beCPG.activity.cleaner.cronExpression}"/>
+				</bean>
+			</list>
+		</property>
+		<property name="enabled" value="${beCPG.activity.cleaner.enabled}" />
+	</bean>
+
+
+
+
+
+
 </beans>
