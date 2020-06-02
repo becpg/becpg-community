@@ -75,13 +75,24 @@
         </property>
     </bean>
     
-    <bean id="automaticECOJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"  >
-        <property name="jobDetail">
-            <ref bean="automaticECOJob"/>
-        </property>
-        <property name="cronExpression">
-            <value>${beCPG.eco.automatic.cron}</value>
-        </property>
-    </bean>
+    <bean id="automaticECOJobSchedulerAccessor" class="org.alfresco.schedule.AlfrescoSchedulerAccessorBean">
+		<property name="scheduler" ref="schedulerFactory" />
+		<property name="triggers">
+			<list>
+				<bean id="automaticECOJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"  >
+			        <property name="jobDetail">
+			            <ref bean="automaticECOJob"/>
+			        </property>
+			        <property name="cronExpression">
+			            <value>${beCPG.eco.automatic.cron}</value>
+			        </property>
+			    </bean>
+			</list>
+		</property>
+		<property name="enabled" value="${beCPG.eco.automatic.enable}" />
+	</bean>
+    
+    
+    
    
 </beans>

@@ -26,9 +26,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClientException;
@@ -71,8 +76,12 @@ public class DecernisServiceImpl implements DecernisService {
 
 	public DecernisServiceImpl() {
 		super();
-		restTemplate = new RestTemplate();
-		List<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();
+
+		restTemplate = new RestTemplate(new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()));
+		List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
+		if (CollectionUtils.isEmpty(interceptors)) {
+			interceptors = new ArrayList<>();
+		}
 		interceptors.add(new DecernisRequestInterceptor());
 		restTemplate.setInterceptors(interceptors);
 	}
@@ -115,9 +124,18 @@ public class DecernisServiceImpl implements DecernisService {
 		Map<String, String> params = new HashMap<>();
 		params.put(COMPANY, companyName);
 		params.put(MODULE, module);
-		JSONObject jsonObject = new JSONObject(restTemplate.exchange(url, HttpMethod.GET, createEntity(null), String.class, params).getBody());
-		if (jsonObject.has("count") && (jsonObject.getInt("count") > 0) && jsonObject.has("results")) {
-			return jsonObject;
+
+		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, createEntity(null), String.class, params);
+
+		if ((response != null) && HttpStatus.OK.equals(response.getStatusCode()) && (response.getBody() != null)) {
+
+			JSONObject jsonObject = new JSONObject(response.getBody());
+			if (jsonObject.has("count") && (jsonObject.getInt("count") > 0) && jsonObject.has("results")) {
+				return jsonObject;
+			}
+
+		} else {
+			logger.warn("No response body for :" + url);
 		}
 
 		return null;
@@ -210,69 +228,81 @@ public class DecernisServiceImpl implements DecernisService {
 						if (params.containsKey("query")) {
 							logger.debug("Look for ingredients in decernis by " + params.get("type") + ": " + params.get("query"));
 
-							JSONObject jsonObject = new JSONObject(
-									restTemplate.exchange(url, HttpMethod.GET, createEntity(null), String.class, params).getBody());
+							ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, createEntity(null), String.class, params);
 
-							if (jsonObject.has("count") && (jsonObject.getInt("count") >= 1) && jsonObject.has("results")) {
-								JSONArray results = jsonObject.getJSONArray("results");
-								JSONObject result = results.getJSONObject(0);
-								if (jsonObject.getInt("count") > 1) {
-									result = getRidByIngName(results, ingName);
-								}
-								if (result != null) {
-									rid = result.getString("did");
-									logger.debug("RID of ingredient " + params.get("query") + ": " + rid);
-									nodeService.setProperty(ingListDataItem.getIng(), PLMModel.PROP_REGULATORY_CODE, rid);
-									// Get ingredient numbers (CAS, FEMA, CE)
-									if (result.has("libidents")) {
-										JSONObject libidents = result.getJSONObject("libidents");
-										for (Map.Entry<QName, String> ingNumber : ingNumbers.entrySet()) {
-											if ((ingNumber.getKey() == PLMModel.PROP_CAS_NUMBER) || (ingNumber.getKey() == PLMModel.PROP_CE_NUMBER)
-													|| (ingNumber.getKey() == PLMModel.PROP_FEMA_NUMBER)) {
-												String ingNumberToFill = (String) nodeService.getProperty(ingListDataItem.getIng(),
-														ingNumber.getKey());
-												if (((ingNumberToFill == null) || ingNumberToFill.isEmpty()) && libidents.has(ingNumber.getValue())) {
-													JSONArray numbers = libidents.getJSONArray(ingNumber.getValue());
-													String number = null;
-													if (numbers.length() > 0) {
-														StringBuilder sb = new StringBuilder();
-														for (int i = 0; i < numbers.length(); i++) {
-															sb.append(numbers.getString(i)).append(",");
+							if ((response != null) && HttpStatus.OK.equals(response.getStatusCode()) && (response.getBody() != null)) {
+
+								JSONObject jsonObject = new JSONObject(response.getBody());
+
+								if (jsonObject.has("count") && (jsonObject.getInt("count") >= 1) && jsonObject.has("results")) {
+									JSONArray results = jsonObject.getJSONArray("results");
+									JSONObject result = results.getJSONObject(0);
+									if (jsonObject.getInt("count") > 1) {
+										result = getRidByIngName(results, ingName);
+									}
+									if (result != null) {
+										rid = result.getString("did");
+										logger.debug("RID of ingredient " + params.get("query") + ": " + rid);
+										nodeService.setProperty(ingListDataItem.getIng(), PLMModel.PROP_REGULATORY_CODE, rid);
+										// Get ingredient numbers (CAS, FEMA,
+										// CE)
+										if (result.has("libidents")) {
+											JSONObject libidents = result.getJSONObject("libidents");
+											for (Map.Entry<QName, String> ingNumber : ingNumbers.entrySet()) {
+												if ((ingNumber.getKey() == PLMModel.PROP_CAS_NUMBER)
+														|| (ingNumber.getKey() == PLMModel.PROP_CE_NUMBER)
+														|| (ingNumber.getKey() == PLMModel.PROP_FEMA_NUMBER)) {
+													String ingNumberToFill = (String) nodeService.getProperty(ingListDataItem.getIng(),
+															ingNumber.getKey());
+													if (((ingNumberToFill == null) || ingNumberToFill.isEmpty())
+															&& libidents.has(ingNumber.getValue())) {
+														JSONArray numbers = libidents.getJSONArray(ingNumber.getValue());
+														String number = null;
+														if (numbers.length() > 0) {
+															StringBuilder sb = new StringBuilder();
+															for (int i = 0; i < numbers.length(); i++) {
+																sb.append(numbers.getString(i)).append(",");
+															}
+															number = sb.deleteCharAt(sb.length() - 1).toString();
 														}
-														number = sb.deleteCharAt(sb.length() - 1).toString();
-													}
-													if ((number != null) && !number.isEmpty()) {
-														nodeService.setProperty(ingListDataItem.getIng(), ingNumber.getKey(), number);
+														if ((number != null) && !number.isEmpty()) {
+															logger.debug("Set ingredient RID: " + params.get("query")+" "+ingListDataItem.getIng()+" "+ingNumber.getKey()+" "+number);
+															
+															nodeService.setProperty(ingListDataItem.getIng(), ingNumber.getKey(), number);
+														}
 													}
 												}
 											}
 										}
-									}
 
-								} else {
-									logger.debug("Several RIDs for ingredient " + params.get("query"));
-									errors.add(createReqCtrl(ingListDataItem.getIng(), MLTextHelper.getI18NMessage(MESSAGE_SEVERAL_RID_ING),
+									} else {
+										logger.debug("Several RIDs for ingredient " + params.get("query"));
+										errors.add(createReqCtrl(ingListDataItem.getIng(), MLTextHelper.getI18NMessage(MESSAGE_SEVERAL_RID_ING),
+												RequirementType.Tolerated));
+									}
+								} else if (jsonObject.has("count") && (jsonObject.getInt("count") == 0)) {
+									errors.add(createReqCtrl(ingListDataItem.getIng(), MLTextHelper.getI18NMessage(MESSAGE_NO_RID_ING),
 											RequirementType.Tolerated));
 								}
-							} else if (jsonObject.has("count") && (jsonObject.getInt("count") == 0)) {
+							} else {
 								errors.add(createReqCtrl(ingListDataItem.getIng(), MLTextHelper.getI18NMessage(MESSAGE_NO_RID_ING),
-										RequirementType.Tolerated));
+										RequirementType.Forbidden));
 							}
 						}
-					}
 
-					if ((rid != null) && !rid.isEmpty() && !rid.equals(MISSING_VALUE) && ((function != null) && !function.isEmpty())
-							&& ((ingName != null) && !ingName.isEmpty()) && (ingQtyPerc != null)) {
-						ings.put(rid, ingListDataItem.getIng());
-						JSONObject ingredient = new JSONObject();
-						ingredient.put("name", ingName);
-						ingredient.put("percentage", ingQtyPerc);
-						ingredient.put("ingredient_did", rid);
-						ingredient.put("function", function);
-						ingredient.put("spec_parameters", JSONObject.NULL);
-						ingredient.put("upper_limit", JSONObject.NULL);
-						isEmpty = false;
-						ingredients.put(ingredient);
+						if ((rid != null) && !rid.isEmpty() && !rid.equals(MISSING_VALUE) && ((function != null) && !function.isEmpty())
+								&& ((ingName != null) && !ingName.isEmpty()) && (ingQtyPerc != null)) {
+							ings.put(rid, ingListDataItem.getIng());
+							JSONObject ingredient = new JSONObject();
+							ingredient.put("name", ingName);
+							ingredient.put("percentage", ingQtyPerc);
+							ingredient.put("ingredient_did", rid);
+							ingredient.put("function", function);
+							ingredient.put("spec_parameters", JSONObject.NULL);
+							ingredient.put("upper_limit", JSONObject.NULL);
+							isEmpty = false;
+							ingredients.put(ingredient);
+						}
 					}
 
 				} catch (HttpClientErrorException | HttpServerErrorException e) {
