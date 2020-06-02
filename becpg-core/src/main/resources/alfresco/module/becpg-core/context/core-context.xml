@@ -218,14 +218,24 @@
         </property>
     </bean>
     
-    <bean id="notificationRuleJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"  >
-        <property name="jobDetail">
-            <ref bean="notificationRuleJob"/>
-        </property>
-        <property name="cronExpression">
-            <value>${beCPG.notification.notify.cronExpression}</value>
-        </property>
-    </bean>
+    
+    <bean id="notificationRuleSchedulerAccessor" class="org.alfresco.schedule.AlfrescoSchedulerAccessorBean">
+		<property name="scheduler" ref="schedulerFactory" />
+		<property name="triggers">
+			<list>
+				<bean id="notificationRuleJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"  >
+			        <property name="jobDetail">
+			            <ref bean="notificationRuleJob"/>
+			        </property>
+			        <property name="cronExpression">
+			            <value>${beCPG.notification.notify.cronExpression}</value>
+			        </property>
+			    </bean>
+			</list>
+		</property>
+		<property name="enabled" value="${beCPG.notification.notify.enabled}" />
+	</bean>
+    
     
   	<!--  Overload of IntegrityChecker --> 
     <bean id="integrityChecker" class="fr.becpg.repo.node.integrity.BeCPGIntegrityChecker" init-method="init">

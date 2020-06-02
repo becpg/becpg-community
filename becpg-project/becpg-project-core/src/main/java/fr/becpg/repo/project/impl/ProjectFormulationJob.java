@@ -52,13 +52,14 @@ public class ProjectFormulationJob implements Job {
 		});
 
 		if ((tenantAdminService != null) && tenantAdminService.isEnabled()) {
+			@SuppressWarnings("deprecation")
 			List<Tenant> tenants = tenantAdminService.getAllTenants();
 			for (Tenant tenant : tenants) {
 				String tenantDomain = tenant.getTenantDomain();
 				AuthenticationUtil.runAs(() -> {
 					projectFormulationWorker.executeFormulation();
 					return null;
-				} , tenantAdminService.getDomainUser(AuthenticationUtil.getSystemUserName(), tenantDomain));
+				}, tenantAdminService.getDomainUser(AuthenticationUtil.getSystemUserName(), tenantDomain));
 			}
 		}
 
