@@ -7,6 +7,9 @@ import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 
 public interface DecernisService {
 
+
+	 static final String DECERNIS_CHAIN_ID = "decernis";
+	
 	List<ReqCtrlListDataItem> extractDecernisRequirements(ProductData product, List<String> countries, List<String> usages);
 
 	String createDecernisChecksum(List<String> countries, List<String> usages);
