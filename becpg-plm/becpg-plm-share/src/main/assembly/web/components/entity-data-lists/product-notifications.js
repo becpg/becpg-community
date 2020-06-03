@@ -461,9 +461,12 @@
 								if (regulatoryCode) {
 									desc += '      <div class="rclReq-regulatoryCode">'
 										+ Alfresco.util.encodeHTML(regulatoryCode) + '</div>';
-								}
+									desc += '      <div class="rclReq-title">'
+										+ Alfresco.util.encodeHTML(oRecord.getData("itemData")["prop_bcpg_rclReqMessage"].displayValue.replace(regulatoryCode,"")) + '</div>';
+								} else {
 								desc += '      <div class="rclReq-title">'
 										+ Alfresco.util.encodeHTML(oRecord.getData("itemData")["prop_bcpg_rclReqMessage"].displayValue) + '</div>';
+								}
 								desc += '      <div class="rclReq-content"><ul>';
 
 								if (reqProducts) {
