@@ -141,7 +141,7 @@
 									instance.filterId = (type === "all" && dataType === "All" ? "all" : "filterform");
 									
 									if(dataType == "Regulatorycodes") {
-										instance.filterData =  "{\"prop_bcpg_regulatoryCode\":\"'" + type.replace("@"," ").replace("$","-") +"'\"}";
+										instance.filterData =  "{\"prop_bcpg_regulatoryCode\":\"=" + type.replace("@"," ").replace("$","-") +"\"}";
 									} else {
 									
 										instance.filterData = (type === "all" && dataType === "All" ? undefined : "{"
