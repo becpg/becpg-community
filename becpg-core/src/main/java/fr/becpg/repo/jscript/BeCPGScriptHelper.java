@@ -23,7 +23,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.alfresco.repo.jscript.BaseScopableProcessorExtension;
 import org.alfresco.repo.jscript.ScriptNode;
@@ -109,9 +108,9 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	private RepoService repoService;
 
 	private EntityListDAO entityListDAO;
-	
+
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
-	
+
 	private boolean useBrowserLocale;
 
 	private boolean showEntitiesInTree = false;
@@ -217,7 +216,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public void setShowUnauthorizedWarning(boolean showUnauthorizedWarning) {
 		this.showUnauthorizedWarning = showUnauthorizedWarning;
 	}
-	
+
 	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
@@ -283,7 +282,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public NodeRef assocValue(ScriptNode sourceNode, String assocQname) {
 		return assocValue(sourceNode.getNodeRef(), assocQname);
 	}
-	
+
 	public NodeRef assocValue(String nodeRef, String assocQname) {
 		return assocValue(new NodeRef(nodeRef), assocQname);
 	}
@@ -295,34 +294,41 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public Object assocValues(String nodeRef, String assocQname) {
 		return assocValues(new NodeRef(nodeRef), assocQname);
 	}
-	
+
 	public Object assocValues(NodeRef nodeRef, String assocQname) {
-		return wrapValue( associationService.getTargetAssocs(nodeRef, getQName(assocQname)));
+		return wrapValue(associationService.getTargetAssocs(nodeRef, getQName(assocQname)));
 	}
-	
-	//TODO Perfs
+
+	// TODO Perfs
 	private Object wrapValue(Object object) {
-		return ScriptValueConverter.wrapValue(Context.getCurrentContext().initSafeStandardObjects(),object);
+		return ScriptValueConverter.wrapValue(Context.getCurrentContext().initSafeStandardObjects(), object);
 	}
 
 	public Object assocPropValues(String nodeRef, String assocQname, String propQName) {
-		return assocPropValues(new NodeRef(nodeRef),  assocQname,  propQName);
+		return assocPropValues(new NodeRef(nodeRef), assocQname, propQName);
 	}
-		
+
 	public Object assocPropValues(ScriptNode sourceNode, String assocQname, String propQName) {
 		return assocPropValues(sourceNode.getNodeRef(), assocQname, propQName);
 	}
 
 	public Object assocPropValues(NodeRef nodeRef, String assocQname, String propQName) {
-		return wrapValue( associationService.getTargetAssocs(nodeRef, getQName(assocQname)).stream()
-				.map(o -> nodeService.getProperty(o, getQName(propQName))).filter(el -> el!=null )
-				.collect(Collectors.toList()));
+		List<String> ret = new ArrayList<>();
+		for (NodeRef assoc : associationService.getTargetAssocs(nodeRef, getQName(assocQname))) {
+			if (assoc != null) {
+				String value = (String) nodeService.getProperty(assoc, getQName(propQName));
+				if (value != null) {
+					ret.add(value);
+				}
+			}
+		}
+		return wrapValue(ret);
 	}
 
 	public NodeRef assocAssocValue(String nodeRef, String assocQname, String assocAssocsQname) {
-		 return  assocAssocValue(new NodeRef(nodeRef),  assocQname,  assocAssocsQname);
+		return assocAssocValue(new NodeRef(nodeRef), assocQname, assocAssocsQname);
 	}
-	
+
 	public NodeRef assocAssocValue(ScriptNode sourceNode, String assocQname, String assocAssocsQname) {
 		return assocAssocValue(sourceNode.getNodeRef(), assocQname, assocAssocsQname);
 	}
@@ -342,9 +348,9 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public Object assocAssocValues(NodeRef nodeRef, String assocQname, String assocAssocsQname) {
 		NodeRef assocNodeRef = assocValue(nodeRef, assocQname);
 		if (assocNodeRef != null) {
-			return wrapValue( associationService.getTargetAssocs(assocNodeRef, getQName(assocAssocsQname)));
+			return wrapValue(associationService.getTargetAssocs(assocNodeRef, getQName(assocAssocsQname)));
 		}
-		return wrapValue( new ArrayList<>());
+		return wrapValue(new ArrayList<>());
 	}
 
 	public Serializable assocPropValue(ScriptNode sourceNode, String assocQname, String propQName) {
@@ -366,7 +372,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public void updateAssoc(String nodeRef, String assocQname, Object assocs) {
 		updateAssoc(new NodeRef(nodeRef), assocQname, assocs);
 	}
-	
+
 	public void updateAssoc(NodeRef nodeRef, String assocQname, Object assocs) {
 
 		Object unwrapped = ScriptValueConverter.unwrapValue(assocs);
@@ -400,9 +406,9 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public boolean isSameChecksum(String key, String value, String checksum) {
 		return CheckSumHelper.isSameChecksum(key, value, checksum);
 	}
-	
+
 	public RepositoryEntity findOne(String nodeRef) {
-		if(NodeRef.isNodeRef(nodeRef)) {
+		if (NodeRef.isNodeRef(nodeRef)) {
 			return alfrescoRepository.findOne(new NodeRef(nodeRef));
 		}
 		return null;
