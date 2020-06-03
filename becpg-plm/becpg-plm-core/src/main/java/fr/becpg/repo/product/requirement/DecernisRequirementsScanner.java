@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
@@ -93,12 +91,15 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 							watch.start();
 						}
 
+						formulatedProduct.setFormulationChainId(DecernisService.DECERNIS_CHAIN_ID);
+
 						List<ReqCtrlListDataItem> ret = decernisService.extractDecernisRequirements(formulatedProduct,
 								formulatedProduct.getRegulatoryCountries(), formulatedProduct.getRegulatoryUsages());
 
 						formulatedProduct.setRequirementChecksum(
 								CheckSumHelper.updateChecksum(DECERNIS_KEY, formulatedProduct.getRequirementChecksum(), checkSum));
 						formulatedProduct.setRegulatoryFormulatedDate(new Date());
+						
 
 						return ret;
 
@@ -108,9 +109,11 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 							logger.warn(e, e);
 						}
 
-						return Arrays.asList(new ReqCtrlListDataItem(null, RequirementType.Forbidden,
+						ReqCtrlListDataItem req = new ReqCtrlListDataItem(null, RequirementType.Forbidden,
 								MLTextHelper.getI18NMessage("message.decernis.error", e.getMessage()), null, new ArrayList<NodeRef>(),
-								RequirementDataType.Specification));
+								RequirementDataType.Specification);
+								req.setFormulationChainId(DecernisService.DECERNIS_CHAIN_ID);
+						return Arrays.asList(req);
 
 					} finally {
 						if (logger.isDebugEnabled() && (watch != null)) {
@@ -134,23 +137,7 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 
 			if (!shouldLaunchDecernis) {
 				logger.debug("Decernis requirement is up to date");
-
-				if (formulatedProduct.getReqCtrlList() != null) {
-					Set<ReqCtrlListDataItem> toKeep = new HashSet<>();
-					for (ReqCtrlListDataItem item : formulatedProduct.getReqCtrlList()) {
-						if (RequirementDataType.Specification.equals(item.getReqDataType()) && (item.getRegulatoryCode() != null)
-								&& !item.getRegulatoryCode().isEmpty()) {
-
-							ReqCtrlListDataItem req = new ReqCtrlListDataItem(null, item.getReqType(), item.getReqMlMessage(), item.getCharact(),
-									item.getSources(), item.getReqDataType());
-							req.setRegulatoryCode(item.getRegulatoryCode());
-
-							toKeep.add(req);
-						}
-					}
-
-					formulatedProduct.getReqCtrlList().addAll(toKeep);
-				}
+				
 			}
 
 		}
