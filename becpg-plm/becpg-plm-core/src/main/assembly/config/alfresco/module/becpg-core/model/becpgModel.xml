@@ -2221,6 +2221,11 @@
 						<constraint ref="bcpg:reqTypes" />
 					</constraints>
 				</property>
+				<property name="bcpg:rclFormulationChainId">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="false"/>
+				</property>
 				<property name="bcpg:rclReqMessage">
 					<type>d:mltext</type>
 					<mandatory>false</mandatory>
