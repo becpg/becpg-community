@@ -315,7 +315,8 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 	public Object assocPropValues(NodeRef nodeRef, String assocQname, String propQName) {
 		return wrapValue( associationService.getTargetAssocs(nodeRef, getQName(assocQname)).stream()
-				.map(o -> nodeService.getProperty(o, getQName(propQName))).collect(Collectors.toList()));
+				.map(o -> nodeService.getProperty(o, getQName(propQName))).filter(el -> el!=null )
+				.collect(Collectors.toList()));
 	}
 
 	public NodeRef assocAssocValue(String nodeRef, String assocQname, String assocAssocsQname) {
