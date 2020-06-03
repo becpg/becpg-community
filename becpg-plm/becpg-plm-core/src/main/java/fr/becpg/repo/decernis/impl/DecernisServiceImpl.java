@@ -39,6 +39,8 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import com.ibm.icu.util.Calendar;
+
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.decernis.DecernisService;
@@ -77,13 +79,22 @@ public class DecernisServiceImpl implements DecernisService {
 	public DecernisServiceImpl() {
 		super();
 
-		restTemplate = new RestTemplate(new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()));
-		List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
-		if (CollectionUtils.isEmpty(interceptors)) {
-			interceptors = new ArrayList<>();
+		
+		if(logger.isTraceEnabled()) {
+			restTemplate = new RestTemplate(new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()));
+			
+			
+			List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
+			if (CollectionUtils.isEmpty(interceptors)) {
+				interceptors = new ArrayList<>();
+			}
+			interceptors.add(new DecernisRequestInterceptor());
+			restTemplate.setInterceptors(interceptors);
+		} else {
+			restTemplate = new RestTemplate();
 		}
-		interceptors.add(new DecernisRequestInterceptor());
-		restTemplate.setInterceptors(interceptors);
+		
+		
 	}
 
 	// 1, Food Additives
@@ -103,6 +114,7 @@ public class DecernisServiceImpl implements DecernisService {
 	private static final String USAGE = "usage";
 
 	private static final String MISSING_VALUE = "NA";
+
 
 	private HttpEntity<String> createEntity(String param) {
 		HttpHeaders headers = new HttpHeaders();
@@ -175,8 +187,12 @@ public class DecernisServiceImpl implements DecernisService {
 		ingNumbers.put(PLMModel.PROP_FDA_NUMBER, "FDA Cat.");
 
 		JSONObject ret = new JSONObject();
-		ret.put("spec", nodeService.getProperty(product.getNodeRef(), BeCPGModel.PROP_CODE));
-		ret.put("name", product.getName());
+		
+		String code = (String)nodeService.getProperty(product.getNodeRef(), BeCPGModel.PROP_CODE);
+		 code+=Calendar.getInstance().getTimeInMillis();
+		
+		ret.put("spec", code);
+		ret.put("name", code +" "+product.getName());
 		ret.put(COMPANY, companyName);
 
 		JSONArray ingredients = new JSONArray();
@@ -266,8 +282,9 @@ public class DecernisServiceImpl implements DecernisService {
 															number = sb.deleteCharAt(sb.length() - 1).toString();
 														}
 														if ((number != null) && !number.isEmpty()) {
-															logger.debug("Set ingredient RID: " + params.get("query")+" "+ingListDataItem.getIng()+" "+ingNumber.getKey()+" "+number);
-															
+															logger.debug("Set ingredient RID: " + params.get("query") + " " + ingListDataItem.getIng()
+																	+ " " + ingNumber.getKey() + " " + number);
+
 															nodeService.setProperty(ingListDataItem.getIng(), ingNumber.getKey(), number);
 														}
 													}
@@ -290,19 +307,22 @@ public class DecernisServiceImpl implements DecernisService {
 							}
 						}
 
-						if ((rid != null) && !rid.isEmpty() && !rid.equals(MISSING_VALUE) && ((function != null) && !function.isEmpty())
-								&& ((ingName != null) && !ingName.isEmpty()) && (ingQtyPerc != null)) {
-							ings.put(rid, ingListDataItem.getIng());
-							JSONObject ingredient = new JSONObject();
-							ingredient.put("name", ingName);
-							ingredient.put("percentage", ingQtyPerc);
-							ingredient.put("ingredient_did", rid);
-							ingredient.put("function", function);
-							ingredient.put("spec_parameters", JSONObject.NULL);
-							ingredient.put("upper_limit", JSONObject.NULL);
-							isEmpty = false;
-							ingredients.put(ingredient);
-						}
+					} else {
+						logger.debug("Existing rid for ingredient ("+ ingName +"): "+rid);
+					}
+
+					if ((rid != null) && !rid.isEmpty() && !rid.equals(MISSING_VALUE) && ((function != null) && !function.isEmpty())
+							&& ((ingName != null) && !ingName.isEmpty()) && (ingQtyPerc != null)) {
+						ings.put(rid, ingListDataItem.getIng());
+						JSONObject ingredient = new JSONObject();
+						ingredient.put("name", ingName);
+						ingredient.put("percentage", ingQtyPerc);
+						ingredient.put("ingredient_did", rid);
+						ingredient.put("function", function);
+						ingredient.put("spec_parameters", JSONObject.NULL);
+						ingredient.put("upper_limit", JSONObject.NULL);
+						isEmpty = false;
+						ingredients.put(ingredient);
 					}
 
 				} catch (HttpClientErrorException | HttpServerErrorException e) {
@@ -388,11 +408,13 @@ public class DecernisServiceImpl implements DecernisService {
 		for (String country : countries) {
 			if (isAvaillableCountry(country)) {
 				countryParam.append("&country=" + country);
+			} else {
+				logger.warn("No country found for :"+country);
 			}
 		}
 
 		if (countryParam.toString().isEmpty()) {
-			throw new FormulateException("No available country");
+			throw new FormulateException("No available country: "+countries.toString()+" over "+this.countries.toString());
 		}
 
 		String url = serverUrl + "recipe_analysis?current_company={company}&formula={formula}" + countryParam.toString()
@@ -436,19 +458,21 @@ public class DecernisServiceImpl implements DecernisService {
 										String threshold = (result.has("threshold") && !result.getString("threshold").equals("None")
 												? "(" + result.getString("threshold") + ")"
 												: "");
-										MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_PROHIBITED_ING, country,
-												!usage.isEmpty() ? usage + " - " : "", threshold);
+										MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_PROHIBITED_ING, threshold);
 										ReqCtrlListDataItem reqCtrlItem = createReqCtrl(ings.get(result.getString("did")), reqMessage,
 												RequirementType.Forbidden);
 										reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
 										reqCtrlList.add(reqCtrlItem);
+										logger.debug("Adding prohibited ing :"+result.getString("did"));
+										
 									} else if (result.getString("resultIndicator").toLowerCase().startsWith("not listed")) {
-										MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_NOTLISTED_ING, country,
-												!usage.isEmpty() ? usage + " - " : "");
+										MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_NOTLISTED_ING);
 										ReqCtrlListDataItem reqCtrlItem = createReqCtrl(ings.get(result.getString("did")), reqMessage,
 												RequirementType.Tolerated);
 										reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
 										reqCtrlList.add(reqCtrlItem);
+										
+										logger.debug("Adding not listed ing :"+result.getString("did"));
 									}
 								}
 							}
@@ -463,10 +487,11 @@ public class DecernisServiceImpl implements DecernisService {
 	private ReqCtrlListDataItem createReqCtrl(NodeRef ing, MLText reqCtrlMessage, RequirementType reqType) {
 		ReqCtrlListDataItem reqCtrlItem = new ReqCtrlListDataItem();
 		reqCtrlItem.setReqType(reqType);
+		reqCtrlItem.setCharact(ing);
 		reqCtrlItem.getSources().add(ing);
 		reqCtrlItem.setReqDataType(RequirementDataType.Specification);
 		reqCtrlItem.setReqMlMessage(reqCtrlMessage);
-
+		reqCtrlItem.setFormulationChainId(DECERNIS_CHAIN_ID);
 		return reqCtrlItem;
 
 	}
@@ -491,12 +516,16 @@ public class DecernisServiceImpl implements DecernisService {
 								}
 							}
 						} finally {
+							logger.debug("Deleting: "+recipeId);
+							
 							deleteRecipe(recipeId);
 						}
 					} else {
 						throw new FormulateException("Error sending recipe");
 					}
 
+				} else {
+					logger.debug("No ingredients found in recipe");
 				}
 
 			} else {
@@ -507,7 +536,6 @@ public class DecernisServiceImpl implements DecernisService {
 			logger.error("- error body:" + e.getResponseBodyAsString());
 			throw new FormulateException("Error calling decernis service", e);
 		} catch (Exception e) {
-			logger.error(e, e);
 			throw new FormulateException("Unexpected decernis error", e);
 		}
 
