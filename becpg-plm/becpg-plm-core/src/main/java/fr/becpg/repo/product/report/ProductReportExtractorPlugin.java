@@ -43,6 +43,7 @@ import fr.becpg.repo.product.data.constraints.CostType;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
+import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.packaging.PackagingData;
 import fr.becpg.repo.product.data.packaging.VariantPackagingData;
 import fr.becpg.repo.product.data.productList.AbstractEffectiveVariantListDataItem;
@@ -427,7 +428,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			}
 
 			loadDynamicCharactList(productData.getCompoListView().getDynamicCharactList(), compoListElt);
-			loadReqCtrlList(productData.getReqCtrlList(), compoListElt);
+			loadReqCtrlList(context, productData.getReqCtrlList(), compoListElt);
 		}
 
 	}
@@ -939,7 +940,6 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				Element lcListElt = lcListsElt.addElement(PLMModel.TYPE_LABELCLAIMLIST.getLocalName());
 				loadDataListItemAttributes(dataListItem, lcListElt, context);
 
-				String code = (String) nodeService.getProperty(dataListItem.getLabelClaim(), PLMModel.PROP_LABEL_CLAIM_CODE);
 				boolean isDisplay = isCharactDisplayedForLocale(dataListItem.getLabelClaim());
 				String displayMode = (isDisplay? "O" : "");
 				lcListElt.addAttribute("regulDisplayMode", displayMode);
@@ -1547,18 +1547,22 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		}
 	}
 
-	protected void loadReqCtrlList(List<ReqCtrlListDataItem> reqCtrlList, Element dataListElt) {
-
+	protected void loadReqCtrlList(DefaultExtractorContext context, List<ReqCtrlListDataItem> reqCtrlList, Element dataListElt) {
+		
 		Element reqCtrlListsElt = dataListElt.addElement(PLMModel.TYPE_REQCTRLLIST.getLocalName() + "s");
 		for (ReqCtrlListDataItem r : reqCtrlList) {
+					
 			Element reqCtrlListElt = reqCtrlListsElt.addElement(PLMModel.TYPE_REQCTRLLIST.getLocalName());
-			reqCtrlListElt.addAttribute(PLMModel.PROP_RCL_REQ_MESSAGE.getLocalName(), r.getReqMessage());
-			if (r.getReqType() != null) {
-				reqCtrlListElt.addAttribute(PLMModel.PROP_RCL_REQ_TYPE.getLocalName(), r.getReqType().toString());
+			
+			List<QName> hiddenFields = new ArrayList<>();
+			hiddenFields.add(ContentModel.PROP_NAME);
+			
+			if(!RequirementDataType.Specification.equals(r.getReqDataType())){
+				hiddenFields.add(PLMModel.ASSOC_RCL_SOURCES);
 			}
-			if (r.getReqDataType() != null) {
-				reqCtrlListElt.addAttribute(PLMModel.PROP_RCL_REQ_DATA_TYPE.getLocalName(), r.getReqDataType().toString());
-			}
+			
+			loadDataListItemAttributes(r, reqCtrlListElt, context, hiddenFields);
+	
 		}
 	}
 
