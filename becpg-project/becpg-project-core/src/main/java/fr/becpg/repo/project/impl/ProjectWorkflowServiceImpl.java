@@ -177,7 +177,7 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 					notify = true;
 					break;
 				}
-				if (ProjectNotificationEvent.NotifyDisabled.equals(event)) {
+				if (ProjectNotificationEvent.NotifyDisabled.equals(event) || ProjectNotificationEvent.NotifyOnRefused.equals(event)) {
 					notify = false;
 				}
 			}
