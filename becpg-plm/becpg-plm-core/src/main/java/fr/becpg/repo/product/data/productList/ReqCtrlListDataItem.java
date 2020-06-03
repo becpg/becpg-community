@@ -48,7 +48,20 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 	private List<NodeRef> sources = new LinkedList<>();
 	private RequirementDataType reqDataType;
 	private String regulatoryCode;
+	private String formulationChainId;
 	
+	
+	
+	
+	@AlfProp
+	@AlfQname(qname="bcpg:rclFormulationChainId")
+	public String getFormulationChainId() {
+		return formulationChainId;
+	}
+
+	public void setFormulationChainId(String formulationChainId) {
+		this.formulationChainId = formulationChainId;
+	}
 
 	@AlfProp
 	@AlfQname(qname="bcpg:rclReqType")
@@ -77,6 +90,9 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 		}
 		if(regulatoryCode!=null){
 			key+= regulatoryCode.toString();
+		}
+		if(formulationChainId!=null){
+			key+= formulationChainId.toString();
 		}
 		
 		return key;
@@ -165,7 +181,7 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(charact, regulatoryCode, reqDataType, reqMlMessage, reqType, sort, sources);
+		result = prime * result + Objects.hash(charact, formulationChainId, regulatoryCode, reqDataType, reqMlMessage, reqType, sort, sources);
 		return result;
 	}
 
@@ -178,14 +194,17 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 		if (getClass() != obj.getClass())
 			return false;
 		ReqCtrlListDataItem other = (ReqCtrlListDataItem) obj;
-		return Objects.equals(charact, other.charact) && Objects.equals(regulatoryCode, other.regulatoryCode) && reqDataType == other.reqDataType
+		return Objects.equals(charact, other.charact) && Objects.equals(formulationChainId, other.formulationChainId)
+				&& Objects.equals(regulatoryCode, other.regulatoryCode) && reqDataType == other.reqDataType
 				&& Objects.equals(reqMlMessage, other.reqMlMessage) && reqType == other.reqType && Objects.equals(sort, other.sort)
 				&& Objects.equals(sources, other.sources);
 	}
 
 	@Override
 	public String toString() {
-		return "ReqCtrlListDataItem [nodeRef=" + nodeRef + ", reqType=" + reqType + ", reqMessage=" + reqMlMessage + ", sources=" + sources + ", reqDataType="+reqDataType+"]";
+		return "ReqCtrlListDataItem [reqType=" + reqType + ", reqMlMessage=" + reqMlMessage + ", sort=" + sort + ", charact=" + charact + ", sources="
+				+ sources + ", reqDataType=" + reqDataType + ", regulatoryCode=" + regulatoryCode + ", formulationChainId=" + formulationChainId
+				+ "]";
 	}
 	
 	

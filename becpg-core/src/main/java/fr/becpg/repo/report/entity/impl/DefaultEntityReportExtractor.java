@@ -703,21 +703,24 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		}
 
 		for (AssociationDefinition associationDef : assocs.values()) {
-			if (!associationDef.getName().getNamespaceURI().equals(NamespaceService.RENDITION_MODEL_1_0_URI)
-					&& !associationDef.getName().getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI)
-					&& !associationDef.getName().equals(RuleModel.ASSOC_RULE_FOLDER) && !associationDef.getName().equals(ContentModel.ASSOC_ORIGINAL)
-					&& !associationDef.isChild()) {
-
-				if (!loadTargetAssoc(nodeRef, associationDef, nodeElt, context) || (useCData == false)) {
-
-					List<NodeRef> assocNodes = associationService.getTargetAssocs(nodeRef, associationDef.getName());
-
-					if ((assocNodes != null) && !assocNodes.isEmpty()) {
-						String ret = assocNodes.stream().map(i -> extractName(associationDef.getTargetClass().getName(), i))
-								.collect(Collectors.joining(RepoConsts.LABEL_SEPARATOR));
-						addData(nodeElt, useCData, associationDef.getName(), ret, null, context);
+			if (!hiddenAttributes.contains(associationDef.getName())) {
+			
+				if (!associationDef.getName().getNamespaceURI().equals(NamespaceService.RENDITION_MODEL_1_0_URI)
+						&& !associationDef.getName().getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI)
+						&& !associationDef.getName().equals(RuleModel.ASSOC_RULE_FOLDER) && !associationDef.getName().equals(ContentModel.ASSOC_ORIGINAL)
+						&& !associationDef.isChild()) {
+	
+					if (!loadTargetAssoc(nodeRef, associationDef, nodeElt, context) || (useCData == false)) {
+	
+						List<NodeRef> assocNodes = associationService.getTargetAssocs(nodeRef, associationDef.getName());
+	
+						if ((assocNodes != null) && !assocNodes.isEmpty()) {
+							String ret = assocNodes.stream().map(i -> extractName(associationDef.getTargetClass().getName(), i))
+									.collect(Collectors.joining(RepoConsts.LABEL_SEPARATOR));
+							addData(nodeElt, useCData, associationDef.getName(), ret, null, context);
+						}
+	
 					}
-
 				}
 			}
 		}
