@@ -74,7 +74,7 @@ public class MultiLevelListData {
 	
 	
 	public boolean isLeaf() {
-		return isLeaf;
+		return isLeaf && (tree==null || tree.isEmpty());
 	}
 
 	public void setLeaf(boolean isLeaf) {

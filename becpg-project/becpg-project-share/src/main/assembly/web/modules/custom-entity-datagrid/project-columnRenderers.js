@@ -50,7 +50,7 @@ if (beCPG.module.EntityDataGridRenderers) {
       propertyName : [ "pjt:tlTaskName" ],
       renderer : function(oRecord, data, label, scope) {
       	
-      	var padding = 0, className = oRecord.getData("itemData")["prop_pjt_tlIsMilestone"].value ? "task-milestone" : "task";
+      	var padding = 0, className = oRecord.getData("itemData")["prop_pjt_tlIsMilestone"].value ? "task-milestone" : "task", toogleGroupButton = null;
       	
       	
       	if (oRecord.getData("itemData")["prop_bcpg_depthLevel"] && oRecord.getData("itemData")["prop_bcpg_depthLevel"].value) {
