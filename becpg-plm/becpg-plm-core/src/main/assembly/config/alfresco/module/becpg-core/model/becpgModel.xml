@@ -3232,6 +3232,10 @@
 				<property name="bcpg:servingSize">
 					<type>d:double</type>
 				</property>
+				<property name="bcpg:servingSizeByCountry">
+					<type>d:mltext</type>
+					<index enabled="false"/>
+				</property>
 				<property name="bcpg:servingSizeUnit">
 					<type>d:text</type>
 					<default>g</default>
