@@ -358,7 +358,7 @@ public class EntityDataListWebScript extends AbstractWebScript {
 						&& (securityService.computeAccessMode(entityNodeRefType, itemType) == SecurityService.WRITE_ACCESS)
 						&& isExternalUserAllowed(dataListFilter);
 
-				if (hasWriteAccess && (dataListFilter.getParentNodeRef() != null)) {
+				if (hasWriteAccess && (dataListFilter.getParentNodeRef() != null) && dataType!=null && !dataType.getLocalName().equals(dataListFilter.getDataListName())) {
 					String dataListType = (String) nodeService.getProperty(dataListFilter.getParentNodeRef(), DataListModel.PROP_DATALISTITEMTYPE);
 
 					if ((dataListType != null) && !dataListType.isEmpty()) {
