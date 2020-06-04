@@ -402,7 +402,7 @@ public class DecernisServiceImpl implements DecernisService {
 	 * @throws RestClientException
 	 */
 
-	private JSONObject recipeAnalysis(String recipeId, List<String> countries, String usage) throws RestClientException, JSONException {
+	private JSONObject recipeAnalysis(String recipeId, Set<String> countries, String usage) throws RestClientException, JSONException {
 
 		StringBuilder countryParam = new StringBuilder("");
 		for (String country : countries) {
@@ -437,7 +437,7 @@ public class DecernisServiceImpl implements DecernisService {
 		return null;
 	}
 
-	private List<ReqCtrlListDataItem> createReqCtrl(List<String> countries, JSONObject analysisResults) throws JSONException {
+	private List<ReqCtrlListDataItem> createReqCtrl(Set<String> countries, JSONObject analysisResults) throws JSONException {
 		List<ReqCtrlListDataItem> reqCtrlList = new ArrayList<>();
 
 		for (String country : countries) {
@@ -497,7 +497,7 @@ public class DecernisServiceImpl implements DecernisService {
 	}
 
 	@Override
-	public List<ReqCtrlListDataItem> extractDecernisRequirements(ProductData product, @Nonnull List<String> countries, @Nonnull List<String> usages) {
+	public List<ReqCtrlListDataItem> extractDecernisRequirements(ProductData product, @Nonnull Set<String> countries, @Nonnull Set<String> usages) {
 		List<ReqCtrlListDataItem> ret = new LinkedList<>();
 		try {
 
@@ -543,7 +543,7 @@ public class DecernisServiceImpl implements DecernisService {
 	}
 
 	@Override
-	public String createDecernisChecksum(List<String> countries, List<String> usages) {
+	public String createDecernisChecksum(Set<String> countries, Set<String> usages) {
 		StringBuilder key = new StringBuilder();
 
 		if (countries != null) {
