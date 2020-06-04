@@ -1,0 +1,6 @@
+version: '3'
+services:
+  becpg:
+    environment:
+      CATALINA_OPTS: "-Xmx4G -Duser.language=fr -Duser.country=FR 
+                      -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:8888"
