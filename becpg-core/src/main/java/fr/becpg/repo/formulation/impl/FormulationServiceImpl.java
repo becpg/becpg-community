@@ -50,7 +50,7 @@ import fr.becpg.repo.repository.AlfrescoRepository;
  */
 public class FormulationServiceImpl<T extends FormulatedEntity> implements FormulationService<T>, FormulationPlugin {
 
-	private static final String DEFAULT_CHAIN_ID = "default";
+	
 
 	private AlfrescoRepository<T> alfrescoRepository;
 
@@ -189,7 +189,7 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 
 		} catch (StackOverflowError e) {
 			logger.error(e,e);
-			throw new FormulateException(I18NUtil.getMessage("message.formulate.failure.loop"), e);
+			throw new FormulateException(I18NUtil.getMessage("message.formulate.failure.loop", repositoryEntity.getName(), repositoryEntity.getNodeRef()), e);
 			
 		}
 

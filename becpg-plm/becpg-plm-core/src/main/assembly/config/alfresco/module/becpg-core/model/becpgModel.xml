@@ -2221,6 +2221,11 @@
 						<constraint ref="bcpg:reqTypes" />
 					</constraints>
 				</property>
+				<property name="bcpg:rclFormulationChainId">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="false"/>
+				</property>
 				<property name="bcpg:rclReqMessage">
 					<type>d:mltext</type>
 					<mandatory>false</mandatory>
@@ -3226,6 +3231,10 @@
 				</property>
 				<property name="bcpg:servingSize">
 					<type>d:double</type>
+				</property>
+				<property name="bcpg:servingSizeByCountry">
+					<type>d:mltext</type>
+					<index enabled="false"/>
 				</property>
 				<property name="bcpg:servingSizeUnit">
 					<type>d:text</type>
