@@ -30,7 +30,6 @@ import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.annotation.MultiLevelDataList;
-import fr.becpg.repo.repository.annotation.MultiLevelLeaf;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 /**
@@ -42,7 +41,6 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @AlfType
 @AlfQname(qname = "pjt:taskList")
 @MultiLevelDataList
-@MultiLevelLeaf
 public class TaskListDataItem extends BeCPGDataObject implements CompositeDataItem<TaskListDataItem> {
 
 	/**
