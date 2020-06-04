@@ -269,6 +269,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		public List<Serializable> assocPropValues(NodeRef nodeRef, String assocQname, String propQName) {
 			if (nodeRef != null) {
 				return associationService.getTargetAssocs(nodeRef, getQName(assocQname)).stream().map(o -> propValue(o, propQName))
+						.filter(o-> o!=null)
 						.collect(Collectors.toList());
 			}
 			return null;
