@@ -38,6 +38,8 @@ AMP can be found in target dirs.
 
 Install requirement
 
+$> cp docker-compose.override.yml.sample docker-compose.override.yml
+
 $> ./run.sh install
 
 $> ./run.sh build_start
