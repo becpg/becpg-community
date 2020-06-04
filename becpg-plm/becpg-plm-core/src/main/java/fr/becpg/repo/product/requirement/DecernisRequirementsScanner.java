@@ -61,8 +61,10 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 
 			boolean shouldLaunchDecernis = false;
 
-			String checkSum = decernisService.createDecernisChecksum(formulatedProduct.getRegulatoryCountries(),
-					formulatedProduct.getRegulatoryUsages());
+			Set<String> countries = new HashSet<>(formulatedProduct.getRegulatoryCountries());
+			Set<String> usages = new HashSet<>(formulatedProduct.getRegulatoryUsages());
+
+			String checkSum = decernisService.createDecernisChecksum(countries, usages);
 
 			shouldLaunchDecernis = !CheckSumHelper.isSameChecksum(DECERNIS_KEY, formulatedProduct.getRequirementChecksum(), checkSum);
 
@@ -93,8 +95,9 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 							watch.start();
 						}
 
-						List<ReqCtrlListDataItem> ret = decernisService.extractDecernisRequirements(formulatedProduct,
-								formulatedProduct.getRegulatoryCountries(), formulatedProduct.getRegulatoryUsages());
+						formulatedProduct.setFormulationChainId(DecernisService.DECERNIS_CHAIN_ID);
+
+						List<ReqCtrlListDataItem> ret = decernisService.extractDecernisRequirements(formulatedProduct, countries, usages);
 
 						formulatedProduct.setRequirementChecksum(
 								CheckSumHelper.updateChecksum(DECERNIS_KEY, formulatedProduct.getRequirementChecksum(), checkSum));
@@ -108,9 +111,11 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 							logger.warn(e, e);
 						}
 
-						return Arrays.asList(new ReqCtrlListDataItem(null, RequirementType.Forbidden,
+						ReqCtrlListDataItem req = new ReqCtrlListDataItem(null, RequirementType.Forbidden,
 								MLTextHelper.getI18NMessage("message.decernis.error", e.getMessage()), null, new ArrayList<NodeRef>(),
-								RequirementDataType.Specification));
+								RequirementDataType.Specification);
+						req.setFormulationChainId(DecernisService.DECERNIS_CHAIN_ID);
+						return Arrays.asList(req);
 
 					} finally {
 						if (logger.isDebugEnabled() && (watch != null)) {
@@ -135,22 +140,6 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 			if (!shouldLaunchDecernis) {
 				logger.debug("Decernis requirement is up to date");
 
-				if (formulatedProduct.getReqCtrlList() != null) {
-					Set<ReqCtrlListDataItem> toKeep = new HashSet<>();
-					for (ReqCtrlListDataItem item : formulatedProduct.getReqCtrlList()) {
-						if (RequirementDataType.Specification.equals(item.getReqDataType()) && (item.getRegulatoryCode() != null)
-								&& !item.getRegulatoryCode().isEmpty()) {
-
-							ReqCtrlListDataItem req = new ReqCtrlListDataItem(null, item.getReqType(), item.getReqMlMessage(), item.getCharact(),
-									item.getSources(), item.getReqDataType());
-							req.setRegulatoryCode(item.getRegulatoryCode());
-
-							toKeep.add(req);
-						}
-					}
-
-					formulatedProduct.getReqCtrlList().addAll(toKeep);
-				}
 			}
 
 		}

@@ -71,14 +71,14 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 	public boolean process(ProductData productData) throws FormulateException {
 
 		// Add child requirements
-		if(productData.getReqCtrlList()!=null){
+		if (productData.getReqCtrlList() != null) {
 			appendChildReq(productData, productData.getReqCtrlList(), productData.getCompoListView().getCompoList());
-	
-			mergeReqCtrlList(productData.getReqCtrlList());
-	
+
+			mergeReqCtrlList(productData, productData.getReqCtrlList());
+
 			updateFormulatedCharactInError(productData, productData.getReqCtrlList());
 		}
-		
+
 		return true;
 	}
 
@@ -87,7 +87,7 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 			NodeRef componentProductNodeRef = compoListDataItem.getProduct();
 			if (componentProductNodeRef != null) {
 				ProductData componentProductData = alfrescoRepository.findOne(componentProductNodeRef);
-				if (!componentProductNodeRef.equals(productData.getNodeRef()) && (componentProductData instanceof SemiFinishedProductData)
+				if ((!componentProductNodeRef.equals(productData.getNodeRef()) && (componentProductData instanceof SemiFinishedProductData))
 						|| (componentProductData instanceof FinishedProductData) || (componentProductData instanceof RawMaterialData)) {
 					if ((componentProductData.getCompoListView() != null) && (componentProductData.getReqCtrlList() != null)) {
 						for (ReqCtrlListDataItem tmp : componentProductData.getReqCtrlList()) {
@@ -103,7 +103,7 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 
 	}
 
-	private void mergeReqCtrlList(List<ReqCtrlListDataItem> reqCtrlList) {
+	private void mergeReqCtrlList(ProductData productData, List<ReqCtrlListDataItem> reqCtrlList) {
 
 		if (reqCtrlList != null) {
 			Map<String, ReqCtrlListDataItem> dbReqCtrlList = new HashMap<>();
@@ -144,8 +144,12 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 
 			for (Map.Entry<String, ReqCtrlListDataItem> dbKV : dbReqCtrlList.entrySet()) {
 				if (!newReqCtrlList.containsKey(dbKV.getKey())) {
+					if (dbKV.getValue().getFormulationChainId() == null
+							|| dbKV.getValue().getFormulationChainId().equals(productData.getFormulationChainId())){
+					
 					// remove
 					reqCtrlList.remove(dbKV.getValue());
+							}
 				} else {
 					// update
 					ReqCtrlListDataItem newReqCtrlListDataItem = newReqCtrlList.get(dbKV.getKey());
@@ -228,18 +232,18 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 						return AFTER;
 					} else if (r1.getReqType().equals(RequirementType.Tolerated)) {
 						return BEFORE;
-					} else if(r2.getReqType().equals(RequirementType.Tolerated)) {
+					} else if (r2.getReqType().equals(RequirementType.Tolerated)) {
 						return AFTER;
-					}else if (r1.getReqType().equals(RequirementType.Info)) {
+					} else if (r1.getReqType().equals(RequirementType.Info)) {
 						return BEFORE;
-					} else if(r2.getReqType().equals(RequirementType.Info)) {
+					} else if (r2.getReqType().equals(RequirementType.Info)) {
 						return AFTER;
-					}else if (r1.getReqType().equals(RequirementType.Authorized)) {
+					} else if (r1.getReqType().equals(RequirementType.Authorized)) {
 						return BEFORE;
-					} else if(r2.getReqType().equals(RequirementType.Authorized)) {
+					} else if (r2.getReqType().equals(RequirementType.Authorized)) {
 						return AFTER;
 					}
-				
+
 				} else if (r1.getReqType() != null) {
 					return BEFORE;
 				} else if (r2.getReqType() != null) {

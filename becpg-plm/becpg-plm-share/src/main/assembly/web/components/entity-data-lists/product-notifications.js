@@ -141,7 +141,7 @@
 									instance.filterId = (type === "all" && dataType === "All" ? "all" : "filterform");
 									
 									if(dataType == "Regulatorycodes") {
-										instance.filterData =  "{\"prop_bcpg_regulatoryCode\":\"'" + type.replace("@"," ").replace("$","-") +"'\"}";
+										instance.filterData =  "{\"prop_bcpg_regulatoryCode\":\"=" + type.replace("@"," ").replace("$","-") +"\"}";
 									} else {
 									
 										instance.filterData = (type === "all" && dataType === "All" ? undefined : "{"
@@ -461,9 +461,12 @@
 								if (regulatoryCode) {
 									desc += '      <div class="rclReq-regulatoryCode">'
 										+ Alfresco.util.encodeHTML(regulatoryCode) + '</div>';
-								}
+									desc += '      <div class="rclReq-title">'
+										+ Alfresco.util.encodeHTML(oRecord.getData("itemData")["prop_bcpg_rclReqMessage"].displayValue.replace(regulatoryCode,"")) + '</div>';
+								} else {
 								desc += '      <div class="rclReq-title">'
 										+ Alfresco.util.encodeHTML(oRecord.getData("itemData")["prop_bcpg_rclReqMessage"].displayValue) + '</div>';
+								}
 								desc += '      <div class="rclReq-content"><ul>';
 
 								if (reqProducts) {
