@@ -19,8 +19,30 @@ You should have received a copy of the GNU Lesser General Public License
 along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 
  -->
-<!DOCTYPE beans PUBLIC '-//SPRING//DTD BEAN//EN' 'http://www.springframework.org/dtd/spring-beans.dtd'>
-<beans>	
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+http://www.springframework.org/schema/context
+http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+
+	<bean id="connector.remoteclient" parent="connector.remoteclient.abstract" class="org.alfresco.web.scripts.SlingshotRemoteClient"
+		scope="prototype">
+		<property name="swfEnabled">
+         <value>false</value>
+      </property>
+	<!-- the http.connection.timeout value in milliseconds to apply to HTTP connections -->
+		<property name="connectTimeout">
+			<value>10000</value>
+		</property>
+	<!-- the http.socket.timeout value in milliseconds to apply to HTTP connections -->
+		<property name="readTimeout">
+			<value>300000</value>
+		</property>
+	</bean>
+
+
    <!-- Provide becpg form config -->
 	<bean id="becpg-001-ClientConfig" class="org.springframework.extensions.config.ConfigBootstrap" init-method="register">
 		<property name="configService" ref="web.config" />
@@ -34,7 +56,7 @@ along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 			</list>
 		</property>
 	</bean>
-	 <bean id="becpgResourceBundle" class="org.springframework.extensions.surf.util.ResourceBundleBootstrapComponent">
+	<bean id="becpgResourceBundle" class="org.springframework.extensions.surf.util.ResourceBundleBootstrapComponent">
 		<property name="resourceBundles">
 			<list>
 				<value>alfresco.messages.becpg-share</value>
@@ -92,8 +114,8 @@ along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 			</list>
 		</property>
 	</bean>
-	
-	
+
+
 	<bean id="evaluator.becpg.doclib.action.entity.isBranch" parent="evaluator.doclib.action.hasAspect">
 		<property name="aspects">
 			<list>
@@ -103,24 +125,25 @@ along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 	</bean>
 	
 	<!-- WebScripts -->
-	
-	<bean id="webscript.org.alfresco.modules.entity-datagrid.forms.filterForm.get" class="fr.becpg.web.scripts.forms.FilterFormUIGet" parent="webscript">
-      <property name="configService" ref="web.config" />
-   </bean>
+
+	<bean id="webscript.org.alfresco.modules.entity-datagrid.forms.filterForm.get" class="fr.becpg.web.scripts.forms.FilterFormUIGet"
+		parent="webscript">
+		<property name="configService" ref="web.config" />
+	</bean>
    
    
    <!-- Interceptors -->
-   
-    <bean id="userDashboardInterceptor" class="fr.becpg.web.site.ExternalUserDashboardInterceptor" parent="abstractWebFrameworkInterceptor" />
+
+	<bean id="userDashboardInterceptor" class="fr.becpg.web.site.ExternalUserDashboardInterceptor" parent="abstractWebFrameworkInterceptor" />
    
    
      <!-- Filter for performing SSO Authentication such as NTLM -->
-   <bean id="SSOAuthenticationFilter" class="fr.becpg.web.authentication.BeCPGSSOAuthenticationFilter" init-method="init">
-      <property name="endpoint" value="alfresco" />
-   </bean>
+	<bean id="SSOAuthenticationFilter" class="fr.becpg.web.authentication.BeCPGSSOAuthenticationFilter" init-method="init">
+		<property name="endpoint" value="alfresco" />
+	</bean>
    
    
   	<!-- Locale resolver -->
-    <bean id="localeResolver" class="fr.becpg.web.resolver.BeCPGLocaleResolver" />
-    
+	<bean id="localeResolver" class="fr.becpg.web.resolver.BeCPGLocaleResolver" />
+
 </beans>
