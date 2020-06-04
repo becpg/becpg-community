@@ -349,12 +349,17 @@ public class EntityDataListWebScript extends AbstractWebScript {
 						&& lockService.getLockStatus(entityNodeRefsList.get(0)) == LockStatus.NO_LOCK 
 						&& securityService.computeAccessMode(nodeService.getType(entityNodeRefsList.get(0)), itemType) == SecurityService.WRITE_ACCESS
 						&& isExternalUserAllowed(dataListFilter);
-				
+				if (hasWriteAccess && (dataListFilter.getParentNodeRef() != null) && dataType!=null && !dataType.getLocalName().equals(dataListFilter.getDataListName())) {
+					String dataListType = (String) nodeService.getProperty(dataListFilter.getParentNodeRef(), DataListModel.PROP_DATALISTITEMTYPE);
+
+					if ((dataListType != null) && !dataListType.isEmpty()) {
+						QName dataListTypeQName = QName.createQName(dataListType, namespaceService);
+						hasWriteAccess = securityService.computeAccessMode(entityNodeRefType, dataListTypeQName) == SecurityService.WRITE_ACCESS;
+					}
+				}
 			}
-			
 			dataListFilter.setHasWriteAccess(hasWriteAccess);
 
-			// TODO : #546
 			Date lastModified = extractor.computeLastModified(dataListFilter);
 
 			if (BrowserCacheHelper.shouldReturnNotModified(req, lastModified)) {
