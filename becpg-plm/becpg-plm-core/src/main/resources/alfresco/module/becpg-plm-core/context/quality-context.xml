@@ -26,6 +26,7 @@
     	<property name="nodeService" ref="nodeService"/>
 		<property name="alfrescoRepository" ref="alfrescoRepository" />
 		<property name="entityListDAO" ref="entityListDAO" />
+		<property name="entityTplService" ref="entityTplService" />
 		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
 		<property name="repositoryEntityDefReader" ref="repositoryEntityDefReader" />
 		<property name="namespaceService" ref="namespaceService" />

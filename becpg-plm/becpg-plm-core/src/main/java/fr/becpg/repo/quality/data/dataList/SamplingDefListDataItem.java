@@ -32,6 +32,7 @@ public class SamplingDefListDataItem extends AbstractSamplingListDataItem {
 	 */
 	private static final long serialVersionUID = 622827042336832867L;
 	private Integer qty;
+	private String freqText;
 	private Integer freq;
 	private String freqUnit;
 
@@ -44,6 +45,17 @@ public class SamplingDefListDataItem extends AbstractSamplingListDataItem {
 	public void setQty(Integer qty) {
 		this.qty = qty;
 	}
+	
+	@AlfProp
+	@AlfQname(qname = "qa:sdlFreqText")
+	public String getFreqText() {
+		return freqText;
+	}
+
+	public void setFreqText(String freqText) {
+		this.freqText = freqText;
+	}
+
 
 	@AlfProp
 	@AlfQname(qname = "qa:sdlFreq")
