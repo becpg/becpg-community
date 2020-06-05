@@ -235,11 +235,6 @@
 	<config evaluator="string-compare" condition="DocLibActions">
 		<!-- Action definitions -->
 		<actions>
-		
-			<action id="entity-compare" type="javascript" label="actions.entity.compare">
-				<param name="function">onActionCompareEntity</param>
-				<evaluator>evaluator.becpg.doclib.action.product</evaluator>
-			</action>
 
 			<action id="entityTpl-synchronize-entities" type="javascript" icon="entity-refresh-reports" label="actions.entityTpl-synchronize-entities">
 				<param name="function">onActionEntityTplSynchronizeEntities</param>
