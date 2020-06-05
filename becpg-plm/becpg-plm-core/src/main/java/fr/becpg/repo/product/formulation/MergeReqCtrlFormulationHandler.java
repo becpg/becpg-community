@@ -92,8 +92,13 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 					if ((componentProductData.getCompoListView() != null) && (componentProductData.getReqCtrlList() != null)) {
 						for (ReqCtrlListDataItem tmp : componentProductData.getReqCtrlList()) {
 							if (tmp.getReqDataType() != RequirementDataType.Completion) {
-								reqCtrlList.add(new ReqCtrlListDataItem(null, tmp.getReqType(), tmp.getReqMlMessage(), tmp.getCharact(),
-										tmp.getSources(), tmp.getReqDataType() != null ? tmp.getReqDataType() : RequirementDataType.Nutrient));
+								
+								ReqCtrlListDataItem reqCtl	= new ReqCtrlListDataItem(null, tmp.getReqType(), tmp.getReqMlMessage(), tmp.getCharact(),
+										tmp.getSources(), tmp.getReqDataType() != null ? tmp.getReqDataType() : RequirementDataType.Nutrient);
+								
+								reqCtl.setRegulatoryCode(tmp.getRegulatoryCode());
+								
+								reqCtrlList.add(reqCtl);
 							}
 						}
 					}
