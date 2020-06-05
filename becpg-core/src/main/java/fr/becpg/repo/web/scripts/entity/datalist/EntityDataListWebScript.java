@@ -34,6 +34,7 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.DataListModel;
 import fr.becpg.model.SystemGroup;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.entity.datalist.DataListExtractor;
@@ -342,6 +343,11 @@ public class EntityDataListWebScript extends AbstractWebScript {
 
 			boolean hasWriteAccess = !dataListFilter.isVersionFilter();
 			if (hasWriteAccess && !entityNodeRefsList.isEmpty()) {
+				
+				NodeRef entityNodeRef = entityNodeRefsList.get(0);
+				QName entityNodeRefType = nodeService.getType(entityNodeRef);
+
+				
 				hasWriteAccess = 
 						extractor.hasWriteAccess()
 						&& !nodeService.hasAspect(entityNodeRefsList.get(0), ContentModel.ASPECT_CHECKED_OUT)

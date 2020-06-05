@@ -354,13 +354,16 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 		return transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
 			public NodeRef execute() throws Throwable {
-
+				
+			
 				EntityTestData entityTestData = new EntityTestData();
 				entityTestData.setName("Entity 1");
 				entityTestData.setParentNodeRef(getTestFolderNodeRef());
 
 				alfrescoRepository.save(entityTestData);
 
+			
+				
 				List<NodeRef> productNodeRefs = new ArrayList<>(1);
 				productNodeRefs.add(entityTestData.getNodeRef());
 				ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_SEA_FOOD_REF, PROJECT_HIERARCHY2_CRUSTACEAN_REF,
@@ -382,7 +385,9 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 		return transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
 			public NodeRef execute() throws Throwable {
-
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_ENTITY_TPL_REF);
+				
+				
 				ProjectData projectData = new ProjectData(null, "Pjt", PROJECT_HIERARCHY1_SEA_FOOD_REF, PROJECT_HIERARCHY2_CRUSTACEAN_REF, startDate,
 						endDate, null, planningMode, null, null, null, 0, null);
 				projectData.setParentNodeRef(getTestFolderNodeRef());
