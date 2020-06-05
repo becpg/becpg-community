@@ -29,7 +29,6 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 
 	private static final Log logger = LogFactory.getLog(PhysicoChemCalculatingFormulationHandler.class);
 
-	
 	@Override
 	protected Class<PhysicoChemListDataItem> getInstanceClass() {
 
@@ -48,34 +47,40 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 
 			formulateSimpleList(formulatedProduct, formulatedProduct.getPhysicoChemList(),
 					formulatedProduct.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE)));
-	
+
 			computeFormulatedList(formulatedProduct, formulatedProduct.getPhysicoChemList(), PLMModel.PROP_PHYSICO_CHEM_FORMULA,
 					"message.formulate.physicoChemList.error");
 
 			formulatedProduct.getPhysicoChemList().forEach(n -> {
-				
+
 				String unit = (String) nodeService.getProperty(n.getPhysicoChem(), PLMModel.PROP_PHYSICO_CHEM_UNIT);
-				
 
 				n.setUnit(unit);
-				n.setFormulatedValue(FormulationHelper.flatPercValue(n.getFormulatedValue(),unit));
-				n.setMaxi(FormulationHelper.flatPercValue(n.getMaxi(),unit));
-				n.setMini(FormulationHelper.flatPercValue(n.getMini(),unit));
+				n.setFormulatedValue(FormulationHelper.flatPercValue(n.getFormulatedValue(), unit));
+				n.setMaxi(FormulationHelper.flatPercValue(n.getMaxi(), unit));
+				n.setMini(FormulationHelper.flatPercValue(n.getMini(), unit));
 				n.setType((String) nodeService.getProperty(n.getPhysicoChem(), PLMModel.PROP_PHYSICO_CHEM_TYPE));
-				
+
 			});
 
-			
+		} else if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) || (formulatedProduct instanceof ProductSpecificationData)) {
+			formulatedProduct.getPhysicoChemList().forEach(n -> {
+
+				n.setUnit((String) nodeService.getProperty(n.getPhysicoChem(), PLMModel.PROP_PHYSICO_CHEM_UNIT));
+				n.setType((String) nodeService.getProperty(n.getPhysicoChem(), PLMModel.PROP_PHYSICO_CHEM_TYPE));
+
+			});
+
 		}
+
 		return true;
 	}
 
 	@Override
 	protected boolean accept(ProductData formulatedProduct) {
-		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) 
-				|| (formulatedProduct instanceof ProductSpecificationData)
+		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) || (formulatedProduct instanceof ProductSpecificationData)
 				|| ((formulatedProduct.getPhysicoChemList() == null)
-				&& !alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_PHYSICOCHEMLIST))) {
+						&& !alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_PHYSICOCHEMLIST))) {
 			return false;
 		}
 		return true;
@@ -104,6 +109,5 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 	protected RequirementDataType getRequirementDataType() {
 		return RequirementDataType.Physicochem;
 	}
-
 
 }

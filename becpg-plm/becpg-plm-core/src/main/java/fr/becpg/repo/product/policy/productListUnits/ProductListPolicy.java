@@ -299,6 +299,11 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 					} else if (type.equals(PLMModel.TYPE_PHYSICOCHEMLIST)) {
 						String physicoChemUnit = (String) nodeService.getProperty(targetNodeRef, PLMModel.PROP_PHYSICO_CHEM_UNIT);
 						nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_PHYSICOCHEMLIST_UNIT, physicoChemUnit);
+						
+						String physicoChemType = (String) nodeService.getProperty(targetNodeRef, PLMModel.PROP_PHYSICO_CHEM_TYPE);
+						nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_PHYSICOCHEMLIST_TYPE, physicoChemType);
+						
+						
 					} else if (type.equals(PLMModel.TYPE_LABELCLAIMLIST)) {
 						// labelClaimType
 						String labelClaimType = (String) nodeService.getProperty(targetNodeRef, PLMModel.PROP_LABEL_CLAIM_TYPE);
