@@ -219,7 +219,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 								QName columnName = QName.createQName(dynamicCharactListItem.getColumnName().replaceFirst("_", ":"), namespaceService);
 								
 									String formula = SpelHelper.formatFormula(dynamicCharactListItem.getFormula());
-									logger.debug("Parse formula : " + formula + " (" + dynamicCharactListItem.getName() + ")");
+									logger.debug("Parse formula : " + formula + " (" + dynamicCharactListItem.getTitle() + ")");
 									Expression exp = parser.parseExpression(formula);
 
 									if (nullDynColumnNames.contains(columnName)) {
