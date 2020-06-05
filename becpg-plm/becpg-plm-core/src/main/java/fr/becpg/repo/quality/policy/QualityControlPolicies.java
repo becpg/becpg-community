@@ -45,7 +45,9 @@ public class QualityControlPolicies extends AbstractBeCPGPolicy implements NodeS
 
 	private TransactionService transactionService;
 
-	private String KEY_PREFIX = QualityControlPolicies.class.getName() + "_CONTROL_PLANS_ASSOC_";
+	private String KEY_PREFIX_CTRL_PLAN_ASSOC = QualityControlPolicies.class.getName() + "_CONTROL_PLANS_ASSOC_";
+	private String KEY_PREFIX_PRODUCT_ASSOC = QualityControlPolicies.class.getName() + "_PRODUCT_ASSOC_";
+
 
 	public void setTransactionService(TransactionService transactionService) {
 		this.transactionService = transactionService;
@@ -63,6 +65,9 @@ public class QualityControlPolicies extends AbstractBeCPGPolicy implements NodeS
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, QualityModel.TYPE_QUALITY_CONTROL,
 				QualityModel.ASSOC_QC_CONTROL_PLANS, new JavaBehaviour(this, "onCreateAssociation", NotificationFrequency.TRANSACTION_COMMIT));
 
+		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, QualityModel.TYPE_QUALITY_CONTROL,
+				QualityModel.ASSOC_PRODUCT, new JavaBehaviour(this, "onCreateAssociation", NotificationFrequency.TRANSACTION_COMMIT));
+		
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, QualityModel.TYPE_SAMPLING_LIST,
 				QualityModel.ASSOC_SL_CONTROL_POINT, new JavaBehaviour(this, "onCreateAssociation", NotificationFrequency.TRANSACTION_COMMIT));
 
@@ -90,11 +95,12 @@ public class QualityControlPolicies extends AbstractBeCPGPolicy implements NodeS
 		logger.debug("QualityControlPolicies onCreateAssociation");
 		if (assocRef.getTypeQName().equals(QualityModel.ASSOC_QC_CONTROL_PLANS)) {
 			// Needed as beCPG Code can be create beforeCommit
-			queueNode(KEY_PREFIX + assocRef.getSourceRef().toString(), assocRef.getTargetRef());
-
+			queueNode(KEY_PREFIX_CTRL_PLAN_ASSOC + assocRef.getSourceRef().toString(), assocRef.getTargetRef());
+		} else if (assocRef.getTypeQName().equals(QualityModel.ASSOC_PRODUCT)) {
+			queueNode(KEY_PREFIX_PRODUCT_ASSOC + assocRef.getSourceRef().toString(), assocRef.getTargetRef());
 		} else if (assocRef.getTypeQName().equals(QualityModel.ASSOC_SL_CONTROL_POINT)) {
 			qualityControlService.createControlList(assocRef.getSourceRef());
-		}
+		} 
 	}
 
 	@Override
@@ -111,19 +117,20 @@ public class QualityControlPolicies extends AbstractBeCPGPolicy implements NodeS
 
 	@Override
 	public void onCreateNode(ChildAssociationRef childAssocRef) {
-
+		
 		qualityControlService.createSamplingListId(childAssocRef.getChildRef());
 	}
 
 	@Override
 	protected void doAfterCommit(String key, Set<NodeRef> pendingNodes) {
-
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			for (NodeRef nodeRef : pendingNodes) {
 				if (isNotLocked(nodeRef) && !isWorkingCopyOrVersion(nodeRef)) {
-
-					qualityControlService.createSamplingList(new NodeRef(key.replaceFirst(KEY_PREFIX, "")), nodeRef);
-
+					if (key.startsWith(KEY_PREFIX_CTRL_PLAN_ASSOC)) {
+						qualityControlService.createSamplingList(new NodeRef(key.replaceFirst(KEY_PREFIX_CTRL_PLAN_ASSOC, "")), nodeRef);
+					} else if (key.startsWith(KEY_PREFIX_PRODUCT_ASSOC)) {
+						qualityControlService.copyProductDataList(new NodeRef(key.replaceFirst(KEY_PREFIX_PRODUCT_ASSOC, "")), nodeRef, false);
+					}
 				}
 			}
 			return null;

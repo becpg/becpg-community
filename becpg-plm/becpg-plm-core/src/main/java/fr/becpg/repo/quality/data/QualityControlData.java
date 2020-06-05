@@ -44,6 +44,7 @@ public class QualityControlData extends BeCPGDataObject {
 	private static final long serialVersionUID = 2908648013735858142L;
 	List<NodeRef> controlPlans = new ArrayList<>();
 	Integer samplesCounter;
+	Date nextAnalysisDate;
 	QualityControlState state;
 
 	// batchAspect
@@ -68,7 +69,7 @@ public class QualityControlData extends BeCPGDataObject {
 	public void setControlPlans(List<NodeRef> controlPlans) {
 		this.controlPlans = controlPlans;
 	}
-
+	
 	@AlfProp
 	@AlfQname(qname = "qa:qcSamplesCounter")
 	public Integer getSamplesCounter() {
@@ -77,6 +78,16 @@ public class QualityControlData extends BeCPGDataObject {
 
 	public void setSamplesCounter(Integer samplesCounter) {
 		this.samplesCounter = samplesCounter;
+	}
+	
+	@AlfProp
+	@AlfQname(qname = "qa:qcNextAnalysisDate")
+	public Date getNextAnalysisDate() {
+		return nextAnalysisDate;
+	}
+
+	public void setNextAnalysisDate(Date nextAnalysisDate) {
+		this.nextAnalysisDate = nextAnalysisDate;
 	}
 
 	@AlfProp
@@ -187,22 +198,28 @@ public class QualityControlData extends BeCPGDataObject {
 		super(nodeRef, name);
 	}
 
+	
+
 	@Override
 	public String toString() {
-		return "QualityControlData [controlPlans=" + controlPlans + ", samplesCounter=" + samplesCounter + ", state=" + state + ", batchId=" + batchId + ", orderId=" + orderId
-				+ ", batchStart=" + batchStart + ", batchDuration=" + batchDuration + ", product=" + product + ", client=" + client + ", supplier=" + supplier + ", samplingList="
-				+ samplingList + "]";
+		return "QualityControlData [controlPlans=" + controlPlans + ", samplesCounter=" + samplesCounter
+				+ ", nextAnalysisDate=" + nextAnalysisDate + ", state=" + state + ", batchId=" + batchId + ", orderId="
+				+ orderId + ", batchStart=" + batchStart + ", batchDuration=" + batchDuration + ", product=" + product
+				+ ", client=" + client + ", supplier=" + supplier + ", samplingList=" + samplingList + ", controlList="
+				+ controlList + "]";
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = 1;
+		int result = super.hashCode();
 		result = prime * result + ((batchDuration == null) ? 0 : batchDuration.hashCode());
 		result = prime * result + ((batchId == null) ? 0 : batchId.hashCode());
 		result = prime * result + ((batchStart == null) ? 0 : batchStart.hashCode());
 		result = prime * result + ((client == null) ? 0 : client.hashCode());
+		result = prime * result + ((controlList == null) ? 0 : controlList.hashCode());
 		result = prime * result + ((controlPlans == null) ? 0 : controlPlans.hashCode());
+		result = prime * result + ((nextAnalysisDate == null) ? 0 : nextAnalysisDate.hashCode());
 		result = prime * result + ((orderId == null) ? 0 : orderId.hashCode());
 		result = prime * result + ((product == null) ? 0 : product.hashCode());
 		result = prime * result + ((samplesCounter == null) ? 0 : samplesCounter.hashCode());
@@ -216,7 +233,7 @@ public class QualityControlData extends BeCPGDataObject {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
+		if (!super.equals(obj))
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
@@ -241,10 +258,20 @@ public class QualityControlData extends BeCPGDataObject {
 				return false;
 		} else if (!client.equals(other.client))
 			return false;
+		if (controlList == null) {
+			if (other.controlList != null)
+				return false;
+		} else if (!controlList.equals(other.controlList))
+			return false;
 		if (controlPlans == null) {
 			if (other.controlPlans != null)
 				return false;
 		} else if (!controlPlans.equals(other.controlPlans))
+			return false;
+		if (nextAnalysisDate == null) {
+			if (other.nextAnalysisDate != null)
+				return false;
+		} else if (!nextAnalysisDate.equals(other.nextAnalysisDate))
 			return false;
 		if (orderId == null) {
 			if (other.orderId != null)
@@ -266,10 +293,7 @@ public class QualityControlData extends BeCPGDataObject {
 				return false;
 		} else if (!samplingList.equals(other.samplingList))
 			return false;
-		if (state == null) {
-			if (other.state != null)
-				return false;
-		} else if (!state.equals(other.state))
+		if (state != other.state)
 			return false;
 		if (supplier == null) {
 			if (other.supplier != null)
@@ -279,4 +303,5 @@ public class QualityControlData extends BeCPGDataObject {
 		return true;
 	}
 
+	
 }
