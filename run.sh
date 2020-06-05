@@ -22,9 +22,9 @@ start() {
 
 down() {
 	if [ -d becpg-enterprise ]; then
-    cd becpg-enterprise
-   	 $MVN_EXEC clean validate $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="enterprise-test"
-    cd ..
+	    cd becpg-enterprise
+	   	 $MVN_EXEC clean validate $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="enterprise-test"
+	    cd ..
    	else
    	 $MVN_EXEC clean validate $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="test"
     fi 
@@ -63,7 +63,7 @@ purge() {
 build() {
    if [ -d becpg-enterprise ]; then
     cd becpg-enterprise
-   	 $MVN_EXEC  package $EXTRA_ENV -DskipTests=true  -Dbecpg.dockerbuild.name="enterprise-test"
+   	 $MVN_EXEC  package $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="enterprise-test"
     cd ..
    else
    	 $MVN_EXEC  package $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="test"

@@ -830,8 +830,8 @@ public class FormulationIT extends AbstractFinishedProductTest {
 			SFProduct1.setUnit(ProductUnit.kg);
 			SFProduct1.setQty(1d);
 			List<CompoListDataItem> compoList1 = new ArrayList<>();
-			compoList1.add(new CompoListDataItem(null, null, 1d, null, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList1.add(new CompoListDataItem(null, null, 2d, null, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
+			compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+			compoList1.add(new CompoListDataItem(null, null, null, 2d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
 			SFProduct1.getCompoListView().setCompoList(compoList1);
 			return alfrescoRepository.create(getTestFolderNodeRef(), SFProduct1).getNodeRef();
 

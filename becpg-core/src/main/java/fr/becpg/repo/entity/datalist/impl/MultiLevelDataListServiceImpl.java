@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -123,6 +124,7 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 		if (!parentNodeRefs.contains(entityNodeRef)) {
 			parentNodeRefs.add(entityNodeRef);
 			QName nodeType = nodeService.getType(entityNodeRef);
+			
 
 			if (isExpandedNode(useExpandedCache ? dataListNodeRef : null,
 					(maxDepthLevel == 0 && currDepth == 0) || (maxDepthLevel < 0) || (currDepth < maxDepthLevel), resetTree)) {
@@ -138,10 +140,9 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 						QName secondaryType = entityDictionaryService.getMultiLevelSecondaryPivot(dataListFilter.getDataType());
 
 						if (secondaryType != null) {
-
 							logger.debug("Visiting secondary type:" + secondaryType);
 
-							visitMultiLevelListData(ret, dataListFilter, listsContainerNodeRef, currDepth, maxDepthLevel, nodeType,
+					  		visitMultiLevelListData(ret, dataListFilter, listsContainerNodeRef, currDepth, maxDepthLevel, nodeType,
 									secondaryType, parentNodeRefs, useExpandedCache, resetTree);
 
 						}
@@ -149,8 +150,9 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 					}
 				}
 			}
-
-			if (entityDictionaryService.isMultiLevelLeaf(nodeType)) {
+			
+			
+			if (entityDictionaryService.isMultiLevelLeaf(nodeType) ) {
 				ret.setLeaf(true);
 			}
 		}
@@ -161,7 +163,7 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 			int currDepth, int maxDepthLevel, QName nodeType, QName dataType, Set<NodeRef> parentNodeRefs, boolean useExpandedCache,
 			boolean resetTree) {
 		int access_mode = securityService.computeAccessMode(nodeType, dataType.toPrefixString(namespaceService));
-
+      
 		if (SecurityService.NONE_ACCESS != access_mode) {
 			NodeRef dataListNodeRef = entityListDAO.getList(listsContainerNodeRef, dataType);
 
@@ -176,6 +178,7 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 				
 				for (NodeRef childRef : childRefs) {
 					NodeRef currEntityNodeRef = getEntityNodeRef(childRef);
+					
 					Integer depthLevel = (Integer) nodeService.getProperty(childRef, BeCPGModel.PROP_DEPTH_LEVEL);
 					if (depthLevel == null) {
 						depthLevel = 1;
@@ -189,7 +192,7 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 						if (currEntityNodeRef != null) {
 							if (logger.isDebugEnabled()) {
 								logger.debug("Append level:" + depthLevel + " at currLevel " + currDepth + " for "
-										+ nodeService.getProperty(currEntityNodeRef, org.alfresco.model.ContentModel.PROP_NAME));
+										+ nodeService.getProperty(currEntityNodeRef, ContentModel.PROP_NAME));
 							}
 
 							Set<NodeRef> curVisitedNodeRef = new HashSet<>(parentNodeRefs);
@@ -215,14 +218,16 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 						
 							
 						} else if (!isSecondary) {
-
-							ret.getTree().put(childRef, new MultiLevelListData(new ArrayList<>(), nextDepth));
+							MultiLevelListData tmp = new MultiLevelListData(new ArrayList<>(), nextDepth);
+							tmp.setLeaf(true);
+							ret.getTree().put(childRef, tmp);
 						}
 					}
 				}
+				
+				
 			}
 		}
-
 	}
 
 	private List<NodeRef> getListNodeRef(NodeRef dataListNodeRef, DataListFilter dataListFilter, QName dataType) {

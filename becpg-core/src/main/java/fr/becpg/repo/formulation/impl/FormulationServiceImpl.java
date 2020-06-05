@@ -189,7 +189,7 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 
 		} catch (StackOverflowError e) {
 			logger.error(e,e);
-			throw new FormulateException(I18NUtil.getMessage("message.formulate.failure.loop"), e);
+			throw new FormulateException(I18NUtil.getMessage("message.formulate.failure.loop", repositoryEntity.getName(), repositoryEntity.getNodeRef()), e);
 			
 		}
 
