@@ -157,6 +157,10 @@ public class CompareEntityReportWebScript extends AbstractWebScript {
 					}
 				}
 			}
+			
+			if (entityNodeRefs.isEmpty()) {
+				entityNodeRefs.addAll(entityVersionService.getAllVersionBranches(entity1NodeRef));
+			}
 		}
 
 		if (entity1NodeRef == null) {

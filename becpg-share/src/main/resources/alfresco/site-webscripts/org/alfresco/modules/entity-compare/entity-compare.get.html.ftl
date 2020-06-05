@@ -12,7 +12,7 @@
  		mode: "edit",
         multipleSelectMode: true, 
  		targetLinkTemplate: "${targetLinkTemplate}" ,
- 		dsStr: "becpg/autocomplete/product?classNames=bcpg:rawMaterial,bcpg:finishedProduct,bcpg:semiFinishedProduct,bcpg:resourceProduct,bcpg:packagingMaterial"
+ 		dsStr: "becpg/autocomplete/targetassoc/associations/bcpg:entityV2"
   });
 
 })();
@@ -25,7 +25,7 @@
          <div class="form-fields">
 	         <div class="set">
 		          <div class="form-field">
-		     			<label for="${el}-entities">${msg("label.entities")}:<span class="mandatory-indicator">*</span></label>     
+		     			<label for="${el}-entities">${msg("label.entities")}:</label>     
 						<div id="${el}-entities" class="object-finder">        
 						<div class="yui-ac" >
 							 <div id="${el}-entities-field-autocomplete" class="ac-body" >
