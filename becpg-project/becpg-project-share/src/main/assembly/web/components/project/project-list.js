@@ -451,8 +451,8 @@ var g; // gantt var
                                 {
                                     g = new JSGantt.GanttChart('g', Dom.get(this.id + "-gantt"), g != null ? g
                                             .getFormat() : null);
-                                    g.setDateInputFormat("shortDate");
-                                    g.setDateDisplayFormat("shortDate");
+                                    g.setDateInputFormat("mediumDate");
+                                    g.setDateDisplayFormat("mediumDate");
                                     g.setCaptionType('Resource');
                                     var start = new Date();
                                     var resources = [];
