@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
@@ -59,8 +61,10 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 
 			boolean shouldLaunchDecernis = false;
 
-			String checkSum = decernisService.createDecernisChecksum(formulatedProduct.getRegulatoryCountries(),
-					formulatedProduct.getRegulatoryUsages());
+			Set<String> countries = new HashSet<>(formulatedProduct.getRegulatoryCountries());
+			Set<String> usages = new HashSet<>(formulatedProduct.getRegulatoryUsages());
+
+			String checkSum = decernisService.createDecernisChecksum(countries, usages);
 
 			shouldLaunchDecernis = !CheckSumHelper.isSameChecksum(DECERNIS_KEY, formulatedProduct.getRequirementChecksum(), checkSum);
 
@@ -93,13 +97,11 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 
 						formulatedProduct.setFormulationChainId(DecernisService.DECERNIS_CHAIN_ID);
 
-						List<ReqCtrlListDataItem> ret = decernisService.extractDecernisRequirements(formulatedProduct,
-								formulatedProduct.getRegulatoryCountries(), formulatedProduct.getRegulatoryUsages());
+						List<ReqCtrlListDataItem> ret = decernisService.extractDecernisRequirements(formulatedProduct, countries, usages);
 
 						formulatedProduct.setRequirementChecksum(
 								CheckSumHelper.updateChecksum(DECERNIS_KEY, formulatedProduct.getRequirementChecksum(), checkSum));
 						formulatedProduct.setRegulatoryFormulatedDate(new Date());
-						
 
 						return ret;
 
@@ -112,7 +114,7 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 						ReqCtrlListDataItem req = new ReqCtrlListDataItem(null, RequirementType.Forbidden,
 								MLTextHelper.getI18NMessage("message.decernis.error", e.getMessage()), null, new ArrayList<NodeRef>(),
 								RequirementDataType.Specification);
-								req.setFormulationChainId(DecernisService.DECERNIS_CHAIN_ID);
+						req.setFormulationChainId(DecernisService.DECERNIS_CHAIN_ID);
 						return Arrays.asList(req);
 
 					} finally {
@@ -137,7 +139,7 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 
 			if (!shouldLaunchDecernis) {
 				logger.debug("Decernis requirement is up to date");
-				
+
 			}
 
 		}

@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -96,6 +97,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 
 	private Double netVolume;
 	private Double servingSize;
+	private MLText servingSizeByCountry;
 	private ProductUnit servingSizeUnit;
 	private Double recipeQtyUsed;
 	private Double recipeVolumeUsed;
@@ -627,6 +629,17 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	}
 	
 	
+	@AlfMlText
+	@AlfProp
+	@AlfQname(qname = "bcpg:servingSizeByCountry")
+	public MLText getServingSizeByCountry() {
+		return servingSizeByCountry;
+	}
+
+	public void setServingSizeByCountry(MLText servingSizeByCountry) {
+		this.servingSizeByCountry = servingSizeByCountry;
+	}
+
 	@AlfProp
 	@AlfQname(qname = "bcpg:servingSizeUnit")
 	public ProductUnit getServingSizeUnit() {
@@ -1229,221 +1242,49 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	@Override
 	public String toString() {
 		return "ProductData [hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", legalName=" + legalName + ", title=" + title + ", erpCode="
-				+ erpCode + ", state=" + state + ", unit=" + unit + ", qty=" + qty + ", density=" + density + ", yield=" + yield + ", manualYield="+manualYield+", yieldVolume="
-				+ yieldVolume + ", netWeight=" + netWeight + ", netVolume=" + netVolume + ", servingSize=" + servingSize + ", recipeQtyUsed="
-				+ recipeQtyUsed + ", dropPackagingOfComponents=" + dropPackagingOfComponents + ", tare=" + tare + ", tareUnit=" + tareUnit + ", unitTotalCost=" + unitTotalCost + ", unitPrice=" + unitPrice
-				+ ", profitability=" + profitability + ", breakEven=" + breakEven + ", allergenList=" + allergenList + ", productScores="
-				+ entityScore + "]";
+				+ erpCode + ", state=" + state + ", unit=" + unit + ", qty=" + qty + ", netWeight=" + netWeight + "]";
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = (prime * result) + ((breakEven == null) ? 0 : breakEven.hashCode());
-		result = (prime * result) + ((currentReformulateCount == null) ? 0 : currentReformulateCount.hashCode());
-		result = (prime * result) + ((density == null) ? 0 : density.hashCode());
-		result = (prime * result) + ((erpCode == null) ? 0 : erpCode.hashCode());
-		result = (prime * result) + ((hierarchy1 == null) ? 0 : hierarchy1.hashCode());
-		result = (prime * result) + ((hierarchy2 == null) ? 0 : hierarchy2.hashCode());
-		result = (prime * result) + ((legalName == null) ? 0 : legalName.hashCode());
-		result = (prime * result) + ((netWeight == null) ? 0 : netWeight.hashCode());
-		result = (prime * result) + ((profitability == null) ? 0 : profitability.hashCode());
-		result = (prime * result) + ((qty == null) ? 0 : qty.hashCode());
-		result = (prime * result) + ((recipeQtyUsed == null) ? 0 : recipeQtyUsed.hashCode());
-		result = (prime * result) + ((servingSize == null) ? 0 : servingSize.hashCode());
-		result = (prime * result) + ((servingSizeUnit == null) ? 0 : servingSizeUnit.hashCode());
-		result = (prime * result) + ((state == null) ? 0 : state.hashCode());
-		result = (prime * result) + ((dropPackagingOfComponents == null) ? 0 : dropPackagingOfComponents.hashCode());
-		result = (prime * result) + ((tare == null) ? 0 : tare.hashCode());
-		result = (prime * result) + ((tareUnit == null) ? 0 : tareUnit.hashCode());
-		result = (prime * result) + ((title == null) ? 0 : title.hashCode());
-		result = (prime * result) + ((unit == null) ? 0 : unit.hashCode());
-		result = (prime * result) + ((unitPrice == null) ? 0 : unitPrice.hashCode());
-		result = (prime * result) + ((unitTotalCost == null) ? 0 : unitTotalCost.hashCode());
-		result = (prime * result) + ((variants == null) ? 0 : variants.hashCode());
-		result = (prime * result) + ((yield == null) ? 0 : yield.hashCode());
-		result = (prime * result) + ((manualYield == null) ? 0 : manualYield.hashCode());
-		result = (prime * result) + ((yieldVolume == null) ? 0 : yieldVolume.hashCode());
+		result = prime * result + Objects.hash(clients, density, erpCode, formulatedDate, futureUnitTotalCost, hierarchy1, hierarchy2, ingType,
+				legalName, netVolume, netWeight, netWeightSecondary, netWeightTertiary, nutrientClass, nutrientProfile, nutrientScore, plants,
+				profitability, projectedQty, qty, recipeQtyUsed, recipeQtyUsedWithLossPerc, recipeVolumeUsed, reformulateCount, regulatoryCountries,
+				regulatoryUsages, reportLocales, servingSize, servingSizeByCountry, servingSizeUnit, state, tare, tareUnit, title, unit, unitPrice,
+				unitTotalCost, updateFormulatedDate, weightPrimary, weightSecondary, weightTertiary, yield, yieldVolume);
 		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
+		if (this == obj)
 			return true;
-		}
-		if (!super.equals(obj)) {
+		if (!super.equals(obj))
 			return false;
-		}
-		if (getClass() != obj.getClass()) {
+		if (getClass() != obj.getClass())
 			return false;
-		}
 		ProductData other = (ProductData) obj;
-		if (breakEven == null) {
-			if (other.breakEven != null) {
-				return false;
-			}
-		} else if (!breakEven.equals(other.breakEven)) {
-			return false;
-		}
-		if (currentReformulateCount == null) {
-			if (other.currentReformulateCount != null) {
-				return false;
-			}
-		} else if (!currentReformulateCount.equals(other.currentReformulateCount)) {
-			return false;
-		}
-		if (density == null) {
-			if (other.density != null) {
-				return false;
-			}
-		} else if (!density.equals(other.density)) {
-			return false;
-		}
-		if (erpCode == null) {
-			if (other.erpCode != null) {
-				return false;
-			}
-		} else if (!erpCode.equals(other.erpCode)) {
-			return false;
-		}
-		if (hierarchy1 == null) {
-			if (other.hierarchy1 != null) {
-				return false;
-			}
-		} else if (!hierarchy1.equals(other.hierarchy1)) {
-			return false;
-		}
-		if (hierarchy2 == null) {
-			if (other.hierarchy2 != null) {
-				return false;
-			}
-		} else if (!hierarchy2.equals(other.hierarchy2)) {
-			return false;
-		}
-		if (legalName == null) {
-			if (other.legalName != null) {
-				return false;
-			}
-		} else if (!legalName.equals(other.legalName)) {
-			return false;
-		}
-		if (netWeight == null) {
-			if (other.netWeight != null) {
-				return false;
-			}
-		} else if (!netWeight.equals(other.netWeight)) {
-			return false;
-		}
-		if (profitability == null) {
-			if (other.profitability != null) {
-				return false;
-			}
-		} else if (!profitability.equals(other.profitability)) {
-			return false;
-		}
-		if (qty == null) {
-			if (other.qty != null) {
-				return false;
-			}
-		} else if (!qty.equals(other.qty)) {
-			return false;
-		}
-		if (recipeQtyUsed == null) {
-			if (other.recipeQtyUsed != null) {
-				return false;
-			}
-		} else if (!recipeQtyUsed.equals(other.recipeQtyUsed)) {
-			return false;
-		}
-		if (servingSize == null) {
-			if (other.servingSize != null) {
-				return false;
-			}
-		} else if (!servingSize.equals(other.servingSize)) {
-			return false;
-		}
-		if (servingSizeUnit == null) {
-			if (other.servingSizeUnit != null) {
-				return false;
-			}
-		} else if (!servingSizeUnit.equals(other.servingSizeUnit)) {
-			return false;
-		}
-		if (state != other.state) {
-			return false;
-		}
-		if (dropPackagingOfComponents == null) {
-			if (other.dropPackagingOfComponents != null) {
-				return false;
-			}
-		} else if (!dropPackagingOfComponents.equals(other.dropPackagingOfComponents)) {
-			return false;
-		}
-		if (tare == null) {
-			if (other.tare != null) {
-				return false;
-			}
-		} else if (!tare.equals(other.tare)) {
-			return false;
-		}
-		if (tareUnit != other.tareUnit) {
-			return false;
-		}
-		if (title == null) {
-			if (other.title != null) {
-				return false;
-			}
-		} else if (!title.equals(other.title)) {
-			return false;
-		}
-		if (unit != other.unit) {
-			return false;
-		}
-		if (unitPrice == null) {
-			if (other.unitPrice != null) {
-				return false;
-			}
-		} else if (!unitPrice.equals(other.unitPrice)) {
-			return false;
-		}
-		if (unitTotalCost == null) {
-			if (other.unitTotalCost != null) {
-				return false;
-			}
-		} else if (!unitTotalCost.equals(other.unitTotalCost)) {
-			return false;
-		}
-		if (variants == null) {
-			if (other.variants != null) {
-				return false;
-			}
-		} else if (!variants.equals(other.variants)) {
-			return false;
-		}
-		if (yield == null) {
-			if (other.yield != null) {
-				return false;
-			}
-		} else if (!yield.equals(other.yield)) {
-			return false;
-		}
-		if (manualYield == null) {
-			if (other.manualYield != null) {
-				return false;
-			}
-		} else if (!manualYield.equals(other.manualYield)) {
-			return false;
-		}
-		if (yieldVolume == null) {
-			if (other.yieldVolume != null) {
-				return false;
-			}
-		} else if (!yieldVolume.equals(other.yieldVolume)) {
-			return false;
-		}
-		return true;
+		return Objects.equals(clients, other.clients) && Objects.equals(density, other.density) && Objects.equals(erpCode, other.erpCode)
+				&& Objects.equals(formulatedDate, other.formulatedDate) && Objects.equals(futureUnitTotalCost, other.futureUnitTotalCost)
+				&& Objects.equals(hierarchy1, other.hierarchy1) && Objects.equals(hierarchy2, other.hierarchy2)
+				&& Objects.equals(ingType, other.ingType) && Objects.equals(legalName, other.legalName) && Objects.equals(netVolume, other.netVolume)
+				&& Objects.equals(netWeight, other.netWeight) && Objects.equals(netWeightSecondary, other.netWeightSecondary)
+				&& Objects.equals(netWeightTertiary, other.netWeightTertiary) && Objects.equals(nutrientClass, other.nutrientClass)
+				&& Objects.equals(nutrientProfile, other.nutrientProfile) && Objects.equals(nutrientScore, other.nutrientScore)
+				&& Objects.equals(plants, other.plants) && Objects.equals(profitability, other.profitability)
+				&& Objects.equals(projectedQty, other.projectedQty) && Objects.equals(qty, other.qty)
+				&& Objects.equals(recipeQtyUsed, other.recipeQtyUsed) && Objects.equals(recipeQtyUsedWithLossPerc, other.recipeQtyUsedWithLossPerc)
+				&& Objects.equals(recipeVolumeUsed, other.recipeVolumeUsed) && Objects.equals(reformulateCount, other.reformulateCount)
+				&& Objects.equals(regulatoryCountries, other.regulatoryCountries) && Objects.equals(regulatoryUsages, other.regulatoryUsages)
+				&& Objects.equals(reportLocales, other.reportLocales) && Objects.equals(servingSize, other.servingSize)
+				&& Objects.equals(servingSizeByCountry, other.servingSizeByCountry) && servingSizeUnit == other.servingSizeUnit
+				&& state == other.state && Objects.equals(tare, other.tare) && tareUnit == other.tareUnit && Objects.equals(title, other.title)
+				&& unit == other.unit && Objects.equals(unitPrice, other.unitPrice) && Objects.equals(unitTotalCost, other.unitTotalCost)
+				&& Objects.equals(updateFormulatedDate, other.updateFormulatedDate) && Objects.equals(weightPrimary, other.weightPrimary)
+				&& Objects.equals(weightSecondary, other.weightSecondary) && Objects.equals(weightTertiary, other.weightTertiary)
+				&& Objects.equals(yield, other.yield) && Objects.equals(yieldVolume, other.yieldVolume);
 	}
 
 }
