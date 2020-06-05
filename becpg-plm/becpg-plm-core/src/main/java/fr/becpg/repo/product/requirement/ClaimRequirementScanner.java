@@ -31,12 +31,14 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 		List<ReqCtrlListDataItem> ret = new LinkedList<>();
 
 		if (getDataListVisited(formulatedProduct) != null) {
-			Map<LabelClaimListDataItem, Boolean> specLabelClaimsVisitedMap = new HashMap<>();
+			
 
 			for (Map.Entry<ProductSpecificationData, List<LabelClaimListDataItem>> entry : extractRequirements(specifications).entrySet()) {
 				List<LabelClaimListDataItem> requirements = entry.getValue();
 				ProductSpecificationData specification = entry.getKey();
 
+				Map<LabelClaimListDataItem, Boolean> specLabelClaimsVisitedMap = new HashMap<>();
+				
 				requirements.forEach(extracedSpecDataItem -> {
 					specLabelClaimsVisitedMap.put(extracedSpecDataItem, false);
 				});
@@ -81,7 +83,7 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 						if (logger.isDebugEnabled()) {
 							logger.debug(extractName(specDataItem.getLabelClaim()) + " was not found, raising rclDataItem for spec");
 						}
-						addMissingLabelClaim(ret, specDataItem);
+						addMissingLabelClaim(ret, specification , specDataItem);
 					}
 				});
 			}
@@ -109,10 +111,19 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 		return MLTextHelper.getI18NMessage("message.formulate.labelClaim.value." + labelClaimValue);
 	}
 
-	private void addMissingLabelClaim(List<ReqCtrlListDataItem> ret, LabelClaimListDataItem labelClaim) {
+	private void addMissingLabelClaim(List<ReqCtrlListDataItem> ret, ProductSpecificationData specification, LabelClaimListDataItem labelClaim) {
 		MLText message = MLTextHelper.getI18NMessage(LabelClaimFormulationHandler.MESSAGE_MISSING_CLAIM, extractName(labelClaim.getLabelClaim()));
-		ret.add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, labelClaim.getLabelClaim(), new ArrayList<NodeRef>(),
-				RequirementDataType.Specification));
+		
+		ReqCtrlListDataItem reqCtrl = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, labelClaim.getLabelClaim(), new ArrayList<NodeRef>(),
+				RequirementDataType.Specification);
+
+		if (specification.getRegulatoryCode() != null) {
+			reqCtrl.setRegulatoryCode(specification.getRegulatoryCode());
+		} else {
+			reqCtrl.setRegulatoryCode(specification.getName());
+		}
+		
+		ret.add(reqCtrl);
 	}
 
 	@Override
