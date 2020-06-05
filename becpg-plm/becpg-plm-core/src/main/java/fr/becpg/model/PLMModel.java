@@ -137,6 +137,8 @@ public interface PLMModel {
 	QName TYPE_PHYSICOCHEMLIST = QName.createQName(BeCPGModel.BECPG_URI, "physicoChemList");
 	QName PROP_PHYSICOCHEMLIST_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "pclValue");
 	QName PROP_PHYSICOCHEMLIST_UNIT = QName.createQName(BeCPGModel.BECPG_URI, "pclUnit");
+	QName PROP_PHYSICOCHEMLIST_TYPE = QName.createQName(BeCPGModel.BECPG_URI, "pclType");
+	
 	QName PROP_PHYSICOCHEMLIST_MINI = QName.createQName(BeCPGModel.BECPG_URI, "pclMini");
 	QName PROP_PHYSICOCHEMLIST_MAXI = QName.createQName(BeCPGModel.BECPG_URI, "pclMaxi");
 	QName PROP_PHYSICOCHEMFORMULA_ERROR = QName.createQName(BeCPGModel.BECPG_URI, "physicoChemFormulaErrorLog");
@@ -391,6 +393,7 @@ public interface PLMModel {
 	
 	QName ASPECT_WATER = QName.createQName(BeCPGModel.BECPG_URI, "waterAspect");
 	QName LABELING_RULE_ASPECT =  QName.createQName(BeCPGModel.BECPG_URI, "labelingRuleAspect");
+	
 
 
 	
