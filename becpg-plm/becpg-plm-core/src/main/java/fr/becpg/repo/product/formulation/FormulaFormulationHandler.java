@@ -186,7 +186,8 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 					productData.setNutrientClass(
 							I18NUtil.getMessage("message.formulate.formula.incorrect.nutrientProfile", e.getLocalizedMessage(), Locale.getDefault()));
 					if (logger.isDebugEnabled()) {
-						logger.debug("Error in formula :" + SpelHelper.formatFormula(scoreformula), e);
+						logger.warn("Error in formula :" + SpelHelper.formatFormula(scoreformula));
+						logger.trace(e,e);
 					}
 				}
 			}
@@ -219,7 +220,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 								QName columnName = QName.createQName(dynamicCharactListItem.getColumnName().replaceFirst("_", ":"), namespaceService);
 								
 									String formula = SpelHelper.formatFormula(dynamicCharactListItem.getFormula());
-									logger.debug("Parse formula : " + formula + " (" + dynamicCharactListItem.getName() + ")");
+									logger.debug("Column formula : " + formula + " (" + dynamicCharactListItem.getTitle() + ")");
 									Expression exp = parser.parseExpression(formula);
 
 									if (nullDynColumnNames.contains(columnName)) {
@@ -253,11 +254,11 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 											JSONObject jsonTree = extractJSONTree(productData, dataListItem, value, exp);
 											dataListItem.getExtraProperties().put(columnName, jsonTree.toString());
 											if (logger.isDebugEnabled()) {
-												logger.debug("JsonTree :" + value);
+												logger.debug(" -- json tree value:" + value);
 											}
 										} else {
 											dataListItem.getExtraProperties().put(columnName, (Serializable) value);
-											logger.debug("Value :" + value);
+											logger.debug(" - value :" + value);
 										}
 									}
 
@@ -275,12 +276,12 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 										Expression exp = parser.parseExpression(varFormulaMatcher.group(2));
 										context.setVariable(varFormulaMatcher.group(1), exp.getValue(context));
 									} else {
-										logger.debug("Parse formula : " + formula + " (" + dynamicCharactListItem.getName() + ")");
+										logger.debug("Formula : " + formula + " (" + dynamicCharactListItem.getName() + ")");
 										Expression exp = parser.parseExpression(formula);
 										dynamicCharactListItem.setValue(exp.getValue(context));
 									}
 								}
-								logger.debug("Value :" + dynamicCharactListItem.getValue());
+								logger.debug(" - value :" + dynamicCharactListItem.getValue());
 							}
 						}
 						
@@ -304,8 +305,9 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 						dynamicCharactListItem.setErrorLog(e.getLocalizedMessage());
 
 						if (logger.isDebugEnabled()) {
-							logger.debug("Error in formula :" + dynamicCharactListItem.getFormula() + " (" + dynamicCharactListItem.getName() + ")",
-									e);
+							logger.warn("Error in formula :" + dynamicCharactListItem.getFormula() + " (" + dynamicCharactListItem.getName() + ")");
+							logger.trace(e,e);
+							
 						}
 					}
 				} else {
