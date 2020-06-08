@@ -91,18 +91,18 @@ public class ImportEntityJsonVisitor {
 
 			JSONTokener tokener = new JSONTokener(reader);
 			JSONObject root = new JSONObject(tokener);
-			
+
 			if (logger.isDebugEnabled()) {
 				logger.debug("Visiting: " + root.toString(3));
 			}
 			if (root.has(RemoteEntityService.ELEM_ENTITY)) {
-				
+
 				JSONObject entity = root.getJSONObject(RemoteEntityService.ELEM_ENTITY);
-				
+
 				if (entityNodeRef != null) {
 					entity.put(RemoteEntityService.ATTR_ID, entityNodeRef.getId());
 				}
-				
+
 				return visit(entity, false, null);
 			}
 			return null;
@@ -148,7 +148,7 @@ public class ImportEntityJsonVisitor {
 		}
 
 		if (lookupOnly) {
-			if (entityNodeRef == null ) {
+			if (entityNodeRef == null) {
 				String errMsg = "Cannot find node";
 				if (assocName != null) {
 					errMsg += " for association " + assocName.toPrefixString(namespaceService);
@@ -210,20 +210,21 @@ public class ImportEntityJsonVisitor {
 		}
 
 		if (entity.has(RemoteEntityService.ELEM_DATALISTS)) {
-			visitDataLists(entityNodeRef, entity.getJSONObject(RemoteEntityService.ELEM_DATALISTS), extractParams( entity, "replaceExistingLists", false));
+			visitDataLists(entityNodeRef, entity.getJSONObject(RemoteEntityService.ELEM_DATALISTS),
+					extractParams(entity, "replaceExistingLists", false));
 		}
 
 		return entityNodeRef;
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T> T  extractParams(JSONObject entity, String paramKey, T defaultValue) throws JSONException {
-		if(entity.has(RemoteEntityService.ELEM_PARAMS)) {
+	private <T> T extractParams(JSONObject entity, String paramKey, T defaultValue) throws JSONException {
+		if (entity.has(RemoteEntityService.ELEM_PARAMS)) {
 			JSONObject params = entity.getJSONObject(RemoteEntityService.ELEM_PARAMS);
-			if(params.has(paramKey)) {
+			if (params.has(paramKey)) {
 				return (T) params.get(paramKey);
 			}
-				
+
 		}
 		return defaultValue;
 	}
@@ -292,12 +293,12 @@ public class ImportEntityJsonVisitor {
 
 	@SuppressWarnings("unchecked")
 	private void visitDataLists(NodeRef entityNodeRef, JSONObject datalists, boolean replaceExisting) throws JSONException, BeCPGException {
-		
+
 		NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
 		if (listContainerNodeRef == null) {
 			listContainerNodeRef = entityListDAO.createListContainer(entityNodeRef);
 		}
-		
+
 		Iterator<String> iterator = datalists.keys();
 
 		while (iterator.hasNext()) {
@@ -313,19 +314,19 @@ public class ImportEntityJsonVisitor {
 			Set<NodeRef> listItemToKeep = new HashSet<>();
 
 			JSONArray items = datalists.getJSONArray(key);
-			
+
 			for (int i = 0; i < items.length(); i++) {
 				JSONObject listItem = items.getJSONObject(i);
 				listItem.put(RemoteEntityService.ATTR_PARENT_ID, listNodeRef.getId());
 				if (!listItem.has(RemoteEntityService.ATTR_TYPE)) {
 					listItem.put(RemoteEntityService.ATTR_TYPE, dataListQName);
-				} 
+				}
 				listItemToKeep.add(visit(listItem, false, null));
 			}
-			
-			if(replaceExisting) {
-				for(NodeRef tmp: entityListDAO.getListItems(listNodeRef, dataListQName)) {
-					if(!listItemToKeep.contains(tmp)) {
+
+			if (replaceExisting) {
+				for (NodeRef tmp : entityListDAO.getListItems(listNodeRef, dataListQName)) {
+					if (!listItemToKeep.contains(tmp)) {
 						nodeService.deleteNode(tmp);
 					}
 				}
@@ -349,10 +350,8 @@ public class ImportEntityJsonVisitor {
 
 				AssociationDefinition ad = entityDictionaryService.getAssociation(propQName);
 				if (ad != null) {
-
+					List<NodeRef> tmp = new ArrayList<>();
 					if (entity.get(key) != null) {
-
-						List<NodeRef> tmp = new ArrayList<>();
 
 						if (entity.get(key) instanceof JSONArray) {
 
@@ -379,8 +378,8 @@ public class ImportEntityJsonVisitor {
 
 						}
 
-						assocs.put(propQName, tmp);
 					}
+					assocs.put(propQName, tmp);
 
 				}
 			}
@@ -486,6 +485,8 @@ public class ImportEntityJsonVisitor {
 							}
 
 							nodeProps.put(propQName, value);
+						} else {
+							nodeProps.put(propQName, null);
 						}
 
 					}

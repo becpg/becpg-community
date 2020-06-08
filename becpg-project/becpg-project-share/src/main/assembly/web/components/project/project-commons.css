@@ -3,10 +3,10 @@
 	color: rgb(255, 0, 0);
 }
 
-.project-list .project-cancel-link,.project-list .project-view-link {
+.project-list .project-cancel-link,.project-list .project-view-link, .project-list .workflow-task-link {
 	background: no-repeat scroll 4px 1px;
 	border: 1px solid transparent;
-	padding-left: 30px;
+	padding-left: 20px;
 }
 
 .project-list .project-cancel-link {
@@ -14,6 +14,11 @@
 }
 
 .project-list .project-view-link {
+	background-image: url("../images/workflow-16.png");
+}
+
+
+.project-list .workflow-task-link{
 	background-image: url("../images/workflow-16.png");
 }
 
