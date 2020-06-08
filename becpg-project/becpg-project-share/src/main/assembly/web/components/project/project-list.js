@@ -71,7 +71,8 @@ var g; // gantt var
         	                list : "projectList",
         	                columnFormId: "projectList",
         	                saveFieldUrl : Alfresco.constants.PROXY_URI + "becpg/bulkedit/save",
-        	                extraParams : "tasks"
+        	                extraParams : "tasks",
+        	                hiddenColumns : [ "prop_fm_commentCount" ]
         	            });
         	
         	
