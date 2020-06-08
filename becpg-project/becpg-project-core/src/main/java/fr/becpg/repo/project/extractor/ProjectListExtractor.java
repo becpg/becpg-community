@@ -234,7 +234,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 					}
 					
 
-				} else 
+				} 
 
 				if (VIEW_MY_PROJECTS.equals(dataListFilter.getFilterId())) {
 					String userName = AuthenticationUtil.getFullyAuthenticatedUser();
@@ -271,7 +271,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 
 				results = advSearchService.queryAdvSearch(dataType, beCPGQueryBuilder, dataListFilter.getCriteriaMap(), pagination.getMaxResults());
 
-				if (unionResults != null) {
+				if (unionResults != null  && !(VIEW_RESOURCES.equals(dataListFilter.getExtraParams()) || VIEW_TASKS.equals(dataListFilter.getExtraParams()))) {
 					for (NodeRef tmp : unionResults) {
 						if ((tmp != null) && !results.contains(tmp)) {
 							results.add(tmp);
@@ -281,11 +281,13 @@ public class ProjectListExtractor extends ActivityListExtractor {
 
 				if (VIEW_RESOURCES.equals(dataListFilter.getExtraParams())  || VIEW_TASKS.equals(dataListFilter.getExtraParams()) ) {
 
-					for (Iterator<NodeRef> iterator = results.iterator(); iterator.hasNext();) {
-						NodeRef nodeRef = iterator.next();
-						if ((associationService.getTargetAssoc(nodeRef, ProjectModel.ASSOC_TL_RESOURCES) == null)
-								|| !accept(entityListDAO.getEntity(nodeRef))) {
-							iterator.remove();
+					if(VIEW_RESOURCES.equals(dataListFilter.getExtraParams()) ) {
+						for (Iterator<NodeRef> iterator = results.iterator(); iterator.hasNext();) {
+							NodeRef nodeRef = iterator.next();
+							if ((associationService.getTargetAssoc(nodeRef, ProjectModel.ASSOC_TL_RESOURCES) == null)
+									|| !accept(entityListDAO.getEntity(nodeRef))) {
+								iterator.remove();
+							}
 						}
 					}
 
@@ -300,6 +302,14 @@ public class ProjectListExtractor extends ActivityListExtractor {
 							NodeRef nodeRef = iterator.next();
 							NodeRef entityNodeRef = entityListDAO.getEntity(nodeRef);
 							if (!projectList.contains(entityNodeRef)) {
+								iterator.remove();
+							}
+						}
+					} else if (VIEW_MY_PROJECTS.equals(dataListFilter.getFilterId()) && unionResults!=null) {
+						for (Iterator<NodeRef> iterator = results.iterator(); iterator.hasNext();) {
+							NodeRef nodeRef = iterator.next();
+							NodeRef entityNodeRef = entityListDAO.getEntity(nodeRef);
+							if (!unionResults.contains(entityNodeRef)) {
 								iterator.remove();
 							}
 						}
