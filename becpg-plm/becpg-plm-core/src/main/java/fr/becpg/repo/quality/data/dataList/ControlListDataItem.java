@@ -28,6 +28,7 @@ import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 @AlfType
 @AlfQname(qname = "qa:controlList")
@@ -154,6 +155,7 @@ public class ControlListDataItem extends BeCPGDataObject{
 	}
 
 	@AlfSingleAssoc
+	@DataListIdentifierAttr(isDefaultPivotAssoc=true)
 	@AlfQname(qname = "qa:clMethod")
 	public NodeRef getMethod() {
 		return method;
@@ -164,6 +166,7 @@ public class ControlListDataItem extends BeCPGDataObject{
 	}
 
 	@AlfMultiAssoc
+	@DataListIdentifierAttr(isDefaultPivotAssoc=true)
 	@AlfQname(qname = "qa:clCharacts")
 	public List<NodeRef> getCharacts() {
 		return characts;
