@@ -31,7 +31,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
 import org.alfresco.model.ContentModel;
@@ -110,23 +109,10 @@ NodeServicePolicies.BeforeDeleteNodePolicy, CheckOutCheckInServicePolicies.OnChe
 	private DataSource dataSource;
 
 	private Set<QName> hiddenListQnames = new HashSet<>();
-
 	
 	@Autowired
 	private TenantService tenantService;
 
-	@PostConstruct
-	public void init() {
-//		
-//		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME, BeCPGModel.TYPE_ENTITYLIST_ITEM,
-//				new JavaBehaviour(this, "beforeDeleteNode"));
-//		
-//		
-//		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME, BeCPGModel.TYPE_ENTITY_V2,
-//				new JavaBehaviour(this, "onCheckIn"));
-//		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.OnCheckIn.QNAME, BeCPGModel.TYPE_ENTITY_V2,
-//				new JavaBehaviour(this, "onCheckIn"));
-	}
 
 	@Override
 	public void registerHiddenList(QName listTypeQname) {
