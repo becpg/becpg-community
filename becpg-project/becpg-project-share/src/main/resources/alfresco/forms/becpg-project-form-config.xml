@@ -1350,6 +1350,8 @@
 				<field-visibility>
 					<show id="bcpg:depthLevel" />
 					<show id="bcpg:parentLevel" />
+					<show id="pjt:tlWorkflowInstance" />
+					
 					<show id="pjt:subProjectRef" force="true" />
 					<show id="pjt:tlIsGroup" />
 					<show id="pjt:tlTaskName" />
@@ -1367,6 +1369,11 @@
 					<show id="pjt:tlCapacity" />
 					<show id="pjt:expense" force="true" /> -->
 					
+				   <show id="dataList_pjt:deliverableList" />
+				
+					
+					
+					
 					<show id="pjt:tlStart" />
 					<show id="pjt:tlEnd" />
 					<show id="pjt:completionPercent" />
@@ -1375,6 +1382,8 @@
 					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
+			     	<field id="pjt:tlTaskName" read-only="true" />
+					<field id="pjt:tlWorkflowInstance" label="hidden" />
 					<field id="bcpg:depthLevel" label="hidden" />
 					<field id="bcpg:parentLevel" label="hidden" />
 					<field id="pjt:subProjectRef" label="hidden" />
@@ -1387,7 +1396,7 @@
 					<field id="pjt:tlEnd" read-only="true" />
 					<field id="pjt:tlRealDuration" read-only="true" />
 					<field  id="entity_pjt:project_pjt:project"  label-id="becpg.forms.field.projects.datagrid.project.label" read-only="true" />
-					
+				    <field id="dataList_pjt:deliverableList" label-id="becpg.forms.field.projects.datagrid.deliverableList.label"  read-only="true" /> 
 				<!--	<field id="pjt:tlCapacity" read-only="true" />
 					<field id="pjt:expense" read-only="true" />
 					<field id="pjt:tlLoggedTime" read-only="true" /> -->
