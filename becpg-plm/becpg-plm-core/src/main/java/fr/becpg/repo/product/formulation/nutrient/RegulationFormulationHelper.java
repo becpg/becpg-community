@@ -61,12 +61,10 @@ public class RegulationFormulationHelper {
 		regulations.put("GSO", new GSONutrientRegulation("beCPG/databases/nuts/GSONutrientRegulation.csv"));
 		regulations.put("MA", new EuropeanNutrientRegulation("beCPG/databases/nuts/MoroccanNutrientRegulation.csv"));
 		regulations.put("DZ", new EuropeanNutrientRegulation("beCPG/databases/nuts/AlgerianNutrientRegulation.csv"));
-		
 		regulations.put("IL", new IsraeliNutrientRegulation("beCPG/databases/nuts/IsraeliNutrientRegulation.csv"));
 		regulations.put("TR", new EuropeanNutrientRegulation("beCPG/databases/nuts/TurkishNutrientRegulation.csv"));
 		regulations.put("SG", new MalaysianNutrientRegulation("beCPG/databases/nuts/SingaporeanNutrientRegulation.csv"));
 		regulations.put("CODEX", new EuropeanNutrientRegulation("beCPG/databases/nuts/CODEXNutrientRegulation.csv"));
-
 	}
 
 	public static Double extractValuePerServing(String roundedValue, Locale locale) {
@@ -129,29 +127,25 @@ public class RegulationFormulationHelper {
 	}
 
 	private static String getLocalKey(Locale locale) {
-		if (locale.getCountry().equals("US") || locale.getCountry().equals("CA")
-				|| locale.getCountry().equals("MX") || locale.getCountry().equals("ID")
-				|| locale.getCountry().equals("HK") || locale.getCountry().equals("MY")
-				|| locale.getCountry().equals("IN") || locale.getCountry().equals("KR")
-				|| locale.getCountry().equals("TH") || locale.getCountry().equals("MA")
-				|| locale.getCountry().equals("DZ") || locale.getCountry().equals("IL")
+		if (locale.getCountry().equals("US") || locale.getCountry().equals("CA") || locale.getCountry().equals("MX")
+				|| locale.getCountry().equals("ID") || locale.getCountry().equals("HK") || locale.getCountry().equals("MY")
+				|| locale.getCountry().equals("IN") || locale.getCountry().equals("KR") || locale.getCountry().equals("TH")
+				|| locale.getCountry().equals("MA") || locale.getCountry().equals("DZ") || locale.getCountry().equals("IL")
 				|| locale.getCountry().equals("TR") || locale.getCountry().equals("SG")) {
 			return locale.getCountry();
-		}else if (locale.getLanguage().equals("zh")) {
+		} else if (locale.getLanguage().equals("zh")) {
 			return "CN";
 		} else if (locale.getCountry().equals("AU") || locale.getCountry().equals("NZ")) {
 			return "AU";
 		} else if (locale.getCountry().equals("PR")) {
-			return "US";			
-		} else if (locale.getCountry().equals("AE") || locale.getCountry().equals("BH")
-				|| locale.getCountry().equals("SA") || locale.getCountry().equals("QA")
-				|| locale.getCountry().equals("OM") || locale.getCountry().equals("KW")) {
+			return "US";
+		} else if (locale.getCountry().equals("AE") || locale.getCountry().equals("BH") || locale.getCountry().equals("SA")
+				|| locale.getCountry().equals("QA") || locale.getCountry().equals("OM") || locale.getCountry().equals("KW")) {
 			return "GSO";
-		} else if (locale.getCountry().equals("KE") || locale.getCountry().equals("NG")
-				|| locale.getCountry().equals("GH")) {
+		} else if (locale.getCountry().equals("KE") || locale.getCountry().equals("NG") || locale.getCountry().equals("GH")) {
 			return "CODEX";
 		}
-		
+
 		return "EU";
 	}
 
@@ -214,7 +208,7 @@ public class RegulationFormulationHelper {
 						}
 					}
 
-					if ((nutListValue != null) && (!nutListValue.equals(""))){
+					if ((nutListValue != null) && (!nutListValue.equals(""))) {
 						nutListElt.addAttribute("roundedDisplayValue" + suffix, RegulationFormulationHelper
 								.displayValue(Double.parseDouble(nutListValue), extractValue(roundedValue, locKey), nutCode, locale, locKey));
 						if (locKey.equals("US") || locKey.equals("US_2013")) {
@@ -241,6 +235,8 @@ public class RegulationFormulationHelper {
 			return ((Long) vps).doubleValue();
 		} else if (vps instanceof Number) {
 			return ((Number) vps).doubleValue();
+		} else if (vps instanceof String) {
+			return Double.valueOf((String) vps);
 		}
 		return (Double) vps;
 	}
@@ -312,8 +308,11 @@ public class RegulationFormulationHelper {
 				mini.put(key, regulation.round(n.getMini(), nutCode, nutUnit));
 				maxi.put(key, regulation.round(n.getMaxi(), nutCode, nutUnit));
 
-				if (n.getValuePerServing() != null) {
-					Double vps = regulation.round(n.getValuePerServing(), nutCode, nutUnit);
+				Double servingSize = getServingSize(key, formulatedProduct);
+
+				if ((n.getValue() != null) && (servingSize != null)) {
+					Double valuePerserving = (n.getValue() * (servingSize * 1000d)) / 100;
+					Double vps = regulation.round(valuePerserving, nutCode, nutUnit);
 					valuePerServing.put(key, vps);
 					if ((def != null) && (def.getGda() != null) && (def.getGda() != 0)) {
 						gda.put(key, regulation.roundGDA((100 * vps) / def.getGda(), nutCode));
@@ -330,8 +329,8 @@ public class RegulationFormulationHelper {
 
 						secondaryValue.put(key, regulation.round(tmp, nutCode, nutUnit));
 
-						if (formulatedProduct.getServingSize() != null) {
-							Double tmpPerServing = tmp * (formulatedProduct.getServingSize() / 100d);
+						if (servingSize != null) {
+							Double tmpPerServing = tmp * (servingSize / 100d);
 							secondaryValuePerServing.put(key, regulation.round(tmpPerServing, nutCode, nutUnit));
 						}
 					}
@@ -361,6 +360,28 @@ public class RegulationFormulationHelper {
 			logger.error(e, e);
 		}
 		n.setRoundedValue(jsonRound.toString());
+	}
+
+	private static Double getServingSize(String key, ProductData formulatedProduct) {
+		Double servingSize = formulatedProduct.getServingSize();
+		if (formulatedProduct.getServingSizeByCountry() != null) {
+			for (Locale locale : formulatedProduct.getServingSizeByCountry().getLocales()) {
+				if ((locale != null) && getLocalKey(locale).equals(key)) {
+					String txt = formulatedProduct.getServingSizeByCountry().get(locale);
+					if ((txt != null) && !txt.isEmpty()) {
+						servingSize = parseDouble(txt);
+						break;
+					}
+				}
+			}
+		}
+
+		if ((servingSize != null) && (formulatedProduct.getServingSizeUnit() != null)) {
+			return (servingSize / formulatedProduct.getServingSizeUnit().getUnitFactor());
+		} else if (servingSize != null) {
+			return servingSize / 1000d;
+		}
+		return null;
 	}
 
 	private static List<String> getAvailableRegulations() {
@@ -418,12 +439,15 @@ public class RegulationFormulationHelper {
 			ret.add("TR");
 		}
 		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_AE")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_BH"))
-				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_SA")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_QA"))
-				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_OM")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_KW"))) {
+				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_SA"))
+				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_QA"))
+				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_OM"))
+				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_KW"))) {
 			ret.add("GSO");
 		}
 		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ee_GH")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("en_GH"))
-				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("en_NG")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ig_NG"))
+				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("en_NG"))
+				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ig_NG"))
 				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("en_KE"))) {
 			ret.add("CODEX");
 		}

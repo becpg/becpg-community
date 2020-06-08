@@ -531,8 +531,14 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			if (RepoConsts.MAX_RESULTS_UNLIMITED.equals(maxResults)) {
 				int page = 1;
 
-				logger.debug("Unlimited results ask -  start pagination");
-				List<NodeRef> tmp = search(runnedQuery, getSort(ContentModel.PROP_MODIFIED, false), page, RepoConsts.MAX_RESULTS_256);
+				if(logger.isDebugEnabled()) {
+					logger.debug("Unlimited results ask -  start pagination");
+					if(sortProps!=null && !sortProps.isEmpty()) {
+						logger.warn("No sort in Unlimited search: "+sortProps.toString());
+					}
+				}
+				
+				List<NodeRef> tmp = search(runnedQuery, sortProps, page, RepoConsts.MAX_RESULTS_256);
 
 				if ((tmp != null) && !tmp.isEmpty()) {
 					logger.debug(" - Page 1:" + tmp.size());
@@ -540,7 +546,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 				}
 				while ((tmp != null) && (tmp.size() == RepoConsts.MAX_RESULTS_256)) {
 					page++;
-					tmp = search(runnedQuery, getSort(ContentModel.PROP_MODIFIED, false), page, RepoConsts.MAX_RESULTS_256);
+					tmp = search(runnedQuery, sortProps, page, RepoConsts.MAX_RESULTS_256);
 					if ((tmp != null) && !tmp.isEmpty()) {
 						logger.debug(" - Page " + page + ":" + tmp.size());
 						refs.addAll(tmp);
@@ -845,8 +851,8 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 		if (!propQueriesEqualMap.isEmpty()) {
 			for (Map.Entry<QName, String> propQueryEntry : propQueriesEqualMap.entrySet()) {
-				whereClause.append(" AND ").append(getCmisPrefix(propQueryEntry.getKey())).append(" = '").append(sanitizeProperty(propQueryEntry.getValue()))
-						.append("'");
+				whereClause.append(" AND ").append(getCmisPrefix(propQueryEntry.getKey())).append(" = '")
+						.append(sanitizeProperty(propQueryEntry.getValue())).append("'");
 			}
 		}
 
@@ -922,7 +928,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	private String sanitizeProperty(String prop) {
 		return prop.replaceAll("(?<!\\\\)'", "\\\\'");
 	}
-	
+
 	private String getCmisPrefix(QName tmpQName) {
 		String ret = tmpQName.toPrefixString(namespaceService);
 		PropertyDefinition def = entityDictionaryService.getProperty(tmpQName);
@@ -1185,7 +1191,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 		PermissionCheckedValueMixin.create(nodeRefs);
 
-		return new PagingResults<NodeRef> () {
+		return new PagingResults<>() {
 			@Override
 			public String getQueryExecutionId() {
 				return null; // TODO use Paginated Cache results
@@ -1215,6 +1221,57 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	@Override
 	public String toString() {
 		return buildQuery();
+	}
+
+	@Override
+	public BeCPGQueryBuilder clone() {
+
+		BeCPGQueryBuilder builder = new BeCPGQueryBuilder();
+
+		if (INSTANCE != null) {
+			builder.searchService = INSTANCE.searchService;
+			builder.namespaceService = INSTANCE.namespaceService;
+			builder.defaultSearchTemplate = INSTANCE.defaultSearchTemplate;
+			builder.cannedQueryRegistry = INSTANCE.cannedQueryRegistry;
+			builder.nodeService = INSTANCE.nodeService;
+			builder.entityDictionaryService = INSTANCE.entityDictionaryService;
+			builder.tenantService = INSTANCE.tenantService;
+			builder.includeReportInSearch = INSTANCE.includeReportInSearch;
+		}
+
+		builder.maxResults = this.maxResults;
+		builder.parentNodeRef = this.parentNodeRef;
+		builder.type = this.type;
+		builder.subPath = this.subPath;
+		builder.path = this.path;
+		builder.excludePath = this.excludePath;
+		builder.membersPath = this.membersPath;
+		builder.queryConsistancy = this.queryConsistancy;
+		builder.isExactType = this.isExactType;
+		builder.searchTemplate = this.searchTemplate;
+		builder.operator = this.operator;
+		builder.locale = this.locale;
+		builder.sortProps = this.sortProps;
+		builder.parentNodeRefs.addAll(parentNodeRefs);
+		builder.types.addAll(types);
+		builder.boostedTypes.addAll(boostedTypes);
+		builder.aspects.addAll(aspects);
+		builder.ids.addAll(ids);
+		builder.notIds.addAll(notIds);
+		builder.notNullProps.addAll(notNullProps);
+		builder.nullProps.addAll(nullProps);
+		builder.nullOrUnsetProps.addAll(nullOrUnsetProps);
+		builder.propQueriesMap.putAll(propQueriesMap);
+		builder.propBetweenQueriesMap.putAll(propBetweenQueriesMap);
+		builder.propBetweenOrNullQueriesMap.putAll(propBetweenOrNullQueriesMap);
+		builder.propQueriesEqualMap.putAll(propQueriesEqualMap);
+		builder.ftsQueries.addAll(ftsQueries);
+		builder.excludedAspects.addAll(excludedAspects);
+		builder.excludedTypes.addAll(excludedTypes);
+		builder.excludedPropQueriesMap.putAll(excludedPropQueriesMap);
+
+		return builder;
+
 	}
 
 }

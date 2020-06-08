@@ -91,9 +91,6 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 		if(regulatoryCode!=null){
 			key+= regulatoryCode.toString();
 		}
-		if(formulationChainId!=null){
-			key+= formulationChainId.toString();
-		}
 		
 		return key;
 	}
@@ -181,7 +178,7 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(charact, formulationChainId, regulatoryCode, reqDataType, reqMlMessage, reqType, sort, sources);
+		result = prime * result + Objects.hash(charact, regulatoryCode, reqDataType, reqMlMessage, reqType);
 		return result;
 	}
 
@@ -194,10 +191,8 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 		if (getClass() != obj.getClass())
 			return false;
 		ReqCtrlListDataItem other = (ReqCtrlListDataItem) obj;
-		return Objects.equals(charact, other.charact) && Objects.equals(formulationChainId, other.formulationChainId)
-				&& Objects.equals(regulatoryCode, other.regulatoryCode) && reqDataType == other.reqDataType
-				&& Objects.equals(reqMlMessage, other.reqMlMessage) && reqType == other.reqType && Objects.equals(sort, other.sort)
-				&& Objects.equals(sources, other.sources);
+		return Objects.equals(charact, other.charact) && Objects.equals(regulatoryCode, other.regulatoryCode) && reqDataType == other.reqDataType
+				&& Objects.equals(reqMlMessage, other.reqMlMessage) && reqType == other.reqType;
 	}
 
 	@Override
