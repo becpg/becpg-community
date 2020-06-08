@@ -21,10 +21,10 @@ RUN set -x \
     && unzip -q alfresco-search-services-${SEARCH_SERVICE_VERSION}.zip -d /opt/ \
     && mkdir -p $DIST_DIR/data \
     && rm alfresco-search-services-${SEARCH_SERVICE_VERSION}.zip  \
-    && chown -R ${USERNAME}:${USERNAME} $DIST_DIR \
-    && echo 'SOLR_OPTS="$SOLR_OPTS -Dsolr.data.dir.root=$DIST_DIR/data -Dsolr.solr.model.dir=$DIST_DIR/data/alfrescoModels"' >> $DIST_DIR/solr.in.sh
+    && chown -R ${USERNAME}:${USERNAME} $DIST_DIR 
 
     
+COPY solr.in.sh  $DIST_DIR/solr.in.sh    
 COPY rerank/solrcore.properties  $DIST_DIR/solrhome/templates/rerank/conf/
 COPY shared.properties $DIST_DIR/solrhome/conf/
     

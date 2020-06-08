@@ -99,7 +99,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 				if (logger.isDebugEnabled() && watch !=null) {
 					watch.stop();
 					logger.debug(
-							"query filter " + advSearchPlugin.getClass().getName() + " executed in  " + watch.getTotalTimeSeconds() + " seconds ");
+							"query filter " + advSearchPlugin.getClass().getName() + " executed in  " + watch.getTotalTimeSeconds() + " seconds, new size: "+nodes.size());
 				}
 			}
 		}

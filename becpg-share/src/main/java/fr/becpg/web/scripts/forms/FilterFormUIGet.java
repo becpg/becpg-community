@@ -3,6 +3,7 @@ package fr.becpg.web.scripts.forms;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -93,7 +94,10 @@ public class FilterFormUIGet extends FormUIGet {
 				String[] splitted = fieldId.replace("entity_", "").split("_");
 				String name = splitted[0];
 				FormConfigElement subFormConfig = getFormConfig(splitted[1], "sub-datagrid-filter");
-				List<String> subVisibleFields = getVisibleFields(Mode.CREATE, subFormConfig);
+				List<String> subVisibleFields =  new ArrayList<String>(getVisibleFields(Mode.CREATE, subFormConfig));
+				
+				subVisibleFields.removeAll(visibleFields);
+				subVisibleFields = Collections.unmodifiableList(subVisibleFields);
 
 				formSvcResponse = retrieveFormDefinition(itemKind, splitted[1], subVisibleFields, subFormConfig);
 				if (formSvcResponse.getStatus().getCode() == Status.STATUS_OK && model!=null) {

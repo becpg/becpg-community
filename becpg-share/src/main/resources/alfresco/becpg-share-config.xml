@@ -317,6 +317,10 @@
 	
 	<config evaluator="string-compare" condition="DocLibActions">
 		<actions>
+			<action id="entity-compare" type="javascript" label="actions.entity.compare">
+				<param name="function">onActionCompareEntity</param>
+				<evaluator>evaluator.becpg.doclib.action.entity</evaluator>
+			</action>
 			<action id="entity-view-datalists" type="javascript" label="actions.entity.view-datalists">
 				<param name="function">onActionShowCharact</param>
 				<evaluator>evaluator.becpg.doclib.action.entity</evaluator>

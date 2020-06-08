@@ -670,6 +670,7 @@
 					<show id="cm:description" force="true"/>
 					<show id="bcpg:code" />
 					<show id="qa:qcSamplesCounter" />
+					<show id="qa:qcNextAnalysisDate" />
 					<show id="qa:qcState" />
 					<show id="qa:qcControlPlans" />
 
@@ -700,6 +701,7 @@
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="qa:qcState" read-only="true" set="mainInfo" />
 					<field id="qa:qcSamplesCounter" read-only="true" set="mainInfo" />
+					<field id="qa:qcNextAnalysisDate" read-only="true" set="mainInfo" />
 					<field id="qa:qcControlPlans" set="mainInfo" />
 
 					<set id="product-info" appearance="bordered-panel" label-id="becpg.forms.set.product-info.label" />
@@ -756,6 +758,7 @@
 					<show id="cm:description" force="true"/>
 					<show id="bcpg:code" />
 					<show id="qa:qcSamplesCounter" />
+					<show id="qa:qcNextAnalysisDate" />
 					<show id="qa:qcState" />
 					<show id="qa:qcControlPlans" />
 
@@ -786,6 +789,7 @@
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="qa:qcState" read-only="true" set="mainInfo" />
 					<field id="qa:qcSamplesCounter" read-only="true" set="mainInfo" />
+					<field id="qa:qcNextAnalysisDate" read-only="true" set="mainInfo" />
 					<field id="qa:qcControlPlans" set="mainInfo" />
 
 					<set id="product-info" appearance="bordered-panel" label-id="becpg.forms.set.product-info.label" />
@@ -998,6 +1002,7 @@
 				<field-visibility>
 					<show id="qa:slControlPoint" />
 					<show id="qa:sdlQty" />
+					<show id="qa:sdlFreqText" />
 					<show id="qa:sdlFreq" />
 					<show id="qa:sdlFreqUnit" />
 					<show id="qa:slControlStep" />
@@ -1025,6 +1030,7 @@
 				<field-visibility>
 					<show id="qa:slControlPoint" />
 					<show id="qa:sdlQty" />
+					<show id="qa:sdlFreqText" />
 					<show id="qa:sdlFreq" />
 					<show id="qa:sdlFreqUnit" />
 					<show id="qa:slControlStep" />
@@ -1047,6 +1053,7 @@
 				<field-visibility>
 					<show id="qa:slControlPoint" />
 					<show id="qa:sdlQty" />
+					<show id="qa:sdlFreqText" />
 					<show id="qa:sdlFreq" />
 					<show id="qa:sdlFreqUnit" />
 					<show id="qa:slControlStep" />
