@@ -1,6 +1,7 @@
 (function() {
 
-   var Bubbling = YAHOO.Bubbling, $html = Alfresco.util.encodeHTML;
+	
+   var Bubbling = YAHOO.Bubbling, $html = Alfresco.util.encodeHTML, $siteURL = Alfresco.util.siteURL;
 
    var TASK_EVENTCLASS = Alfresco.util.generateDomId(null, "task");
    var SUBMITTASK_EVENTCLASS = Alfresco.util.generateDomId(null, "submitTask");
@@ -347,6 +348,16 @@
          if(duration.length>0){
              ret +=' ('+duration+')';
          }
+         
+         if (task.permissions.userAccess.edit ){
+	         if (task["itemData"]["prop_pjt_tlWorkflowInstance"] && task["itemData"]["prop_pjt_tlWorkflowInstance"].value
+	        		 && task["itemData"]["prop_pjt_tlWorkflowInstance"].value!=''){
+	        		ret += '<a href="';
+	        	    ret +=  $siteURL('workflow-details?workflowId=' + task["itemData"]["prop_pjt_tlWorkflowInstance"].value+  '&referrer=project-list') + '" class="workflow-task-link" title="' + this.msg("link.title.open-workflow")+'"';
+	                ret +="&nbsp;</a>";
+	            }
+	      }
+          
 
           if (subProject!=null)
           {
@@ -361,6 +372,7 @@
 		          ret += "</a></span>";
 	          }
           }
+       
 
           var commentRef = 'node-' + task.nodeRef + '|' + entityNodeRef;
           
@@ -441,7 +453,7 @@
       getProjectTitle : function PL_getProjectTitle(record, full, large) {
          var propertiesUrl = null, dataListUrl = null, folderUrl = null, version = "";
 
-         var title = record.itemData["prop_cm_name"].displayValue, code = record.itemData["prop_bcpg_code"].displayValue, 
+         var title = record.itemData["prop_cm_name"].displayValue, code = record.itemData["prop_bcpg_code"]!=null ? record.itemData["prop_bcpg_code"].displayValue : "", 
          overdue = '', ret = "";
 
          propertiesUrl = beCPG.util.entityURL(record.siteId, record.nodeRef,"pjt:project", null, "View-properties");
@@ -475,7 +487,7 @@
     	  
           var propertiesUrl = null, dataListUrl = null, version = "";
 
-          var title = record.itemData["prop_cm_name"].displayValue, code = record.itemData["prop_bcpg_code"].displayValue, 
+          var title = record.itemData["prop_cm_name"].displayValue, code = record.itemData["prop_bcpg_code"]!=null ? record.itemData["prop_bcpg_code"].displayValue : "", 
           overdue = '', ret = "", state = record.itemData["prop_pjt_projectState"].value;
 
           var size = oColumn.tooltip!=null ? oColumn.tooltip : 100;
