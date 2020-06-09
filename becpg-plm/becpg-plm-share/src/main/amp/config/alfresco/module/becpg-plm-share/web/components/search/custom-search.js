@@ -537,7 +537,7 @@
 											+ '</a>';
 								}
 								desc += ' ' + me.msg("message.modifiedon") + ' <span class="meta">'
-										+ Alfresco.util.formatDate(oRecord.getData("modifiedOn")) + '</span>';
+										+ oRecord.getData("modifiedOn") + '</span>';
 								desc += '</div>';
 
 								// folder path (if any)
