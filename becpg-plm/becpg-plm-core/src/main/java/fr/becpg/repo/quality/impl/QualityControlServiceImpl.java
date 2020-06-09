@@ -146,11 +146,11 @@ public class QualityControlServiceImpl implements QualityControlService {
 						String freqUnit = null;
 						Integer timeToAdd = null;
 						String timeToAddStr = null;
-						Pattern p = Pattern.compile("[1-9]+[DMWY]+");
+						Pattern p = Pattern.compile("[0-9]+[DMWY]+");
 						Matcher m = p.matcher(freq.trim());
 						if (m.find()) {
-							freqDigit = Integer.parseInt(freq.replaceAll("[^1-9]", ""));
-							freqUnit = freq.trim().replaceAll("[1-9]", "");
+							freqDigit = Integer.parseInt(freq.replaceAll("[^0-9]", ""));
+							freqUnit = freq.trim().replaceAll("[0-9]", "");
 							switch(freqUnit) {
 							case "D":
 								timeToAdd = Calendar.DAY_OF_YEAR;
