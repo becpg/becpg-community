@@ -1,7 +1,6 @@
 package fr.becpg.repo.search;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +14,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
@@ -110,7 +110,19 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 	private static final String CRITERIA_NOTRESPECTED_SPECIFICATIONS = "assoc_bcpg_advNotRespectedProductSpecs_added";
 	private static final String CRITERIA_RESPECTED_SPECIFICATIONS = "assoc_bcpg_advRespectedProductSpecs_added";
+	
+	
+	/*
+	 * Sample conf
+	 * 	"assoc_prova_taste_added|prova:taste|prop_prova_targetDosagePerc-range|prova:targetDosagePerc"
+	    ,"assoc_prova_taste_added|prova:taste|prop_prova_application|prova:application"
+	
+	 */
+	@Value("${beCPG.product.dataListSearchFields}")
+	private String dataListSearchFields = "";
 
+	
+	
 	private static Set<String> keysToExclude = new HashSet<>();
 
 	static {
@@ -182,11 +194,11 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 				nodes = getSearchNodesByIngListCriteria(nodes, criteria);
 				nodes = getSearchNodesByLabelingCriteria(nodes, criteria);
 				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_LABEL_CLAIM, PLMModel.ASSOC_LCL_LABELCLAIM,
-						PLMModel.PROP_LCL_CLAIM_VALUE, "true");
+						PLMModel.PROP_LCL_CLAIM_VALUE, "true", true);
 				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_LABEL_CLAIM_AND, PLMModel.ASSOC_LCL_LABELCLAIM,
-						PLMModel.PROP_LCL_CLAIM_VALUE, "true");
+						PLMModel.PROP_LCL_CLAIM_VALUE, "true", false);
 				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_LABEL_CLAIM_NOT, PLMModel.ASSOC_LCL_LABELCLAIM,
-						PLMModel.PROP_LCL_CLAIM_VALUE, "false");
+						PLMModel.PROP_LCL_CLAIM_VALUE, "false", true);
 
 				nodes = getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_PACKAGING_LIST_PRODUCT, PLMModel.ASSOC_PACKAGINGLIST_PRODUCT, null,
 						null);
@@ -194,46 +206,49 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 				nodes = getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_PROCESS_LIST_RESSOURCE, MPMModel.ASSOC_PL_RESOURCE, null, null);
 
 				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_ING_AND, PLMModel.ASSOC_INGLIST_ING, PLMModel.PROP_INGLIST_QTY_PERC,
-						criteria.get(CRITERIA_ING_RANGE));
+						criteria.get(CRITERIA_ING_RANGE),true);
 
 				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_ALLERGEN, PLMModel.ASSOC_ALLERGENLIST_ALLERGEN,
-						PLMModel.PROP_ALLERGENLIST_VOLUNTARY, "true");
+						PLMModel.PROP_ALLERGENLIST_VOLUNTARY, "true",true);
 				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_ALLERGEN_VOL_AND, PLMModel.ASSOC_ALLERGENLIST_ALLERGEN,
-						PLMModel.PROP_ALLERGENLIST_VOLUNTARY, "true");
+						PLMModel.PROP_ALLERGENLIST_VOLUNTARY, "true",true);
 				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_ALLERGEN_VOL_NOT, PLMModel.ASSOC_ALLERGENLIST_ALLERGEN,
-						PLMModel.PROP_ALLERGENLIST_VOLUNTARY, "false");
+						PLMModel.PROP_ALLERGENLIST_VOLUNTARY, "false",true);
 				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_ALLERGEN_INVOL_AND, PLMModel.ASSOC_ALLERGENLIST_ALLERGEN,
-						PLMModel.PROP_ALLERGENLIST_INVOLUNTARY, "true");
+						PLMModel.PROP_ALLERGENLIST_INVOLUNTARY, "true",true);
 				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_ALLERGEN_INVOL_NOT, PLMModel.ASSOC_ALLERGENLIST_ALLERGEN,
-						PLMModel.PROP_ALLERGENLIST_INVOLUNTARY, "false");
+						PLMModel.PROP_ALLERGENLIST_INVOLUNTARY, "false",true);
 
 				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_COST, PLMModel.ASSOC_COSTLIST_COST, PLMModel.PROP_COSTLIST_VALUE,
-						criteria.get(CRITERIA_COST_RANGE));
+						criteria.get(CRITERIA_COST_RANGE),true);
 				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_COST_1, PLMModel.ASSOC_COSTLIST_COST, PLMModel.PROP_COSTLIST_VALUE,
-						criteria.get(CRITERIA_COST_RANGE_1));
+						criteria.get(CRITERIA_COST_RANGE_1),true);
 				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_COST_2, PLMModel.ASSOC_COSTLIST_COST, PLMModel.PROP_COSTLIST_VALUE,
-						criteria.get(CRITERIA_COST_RANGE_2));
+						criteria.get(CRITERIA_COST_RANGE_2),true);
 
 				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_NUTS, PLMModel.ASSOC_NUTLIST_NUT, PLMModel.PROP_NUTLIST_VALUE,
-						criteria.get(CRITERIA_NUTS_RANGE));
+						criteria.get(CRITERIA_NUTS_RANGE),true);
 				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_NUTS_1, PLMModel.ASSOC_NUTLIST_NUT, PLMModel.PROP_NUTLIST_VALUE,
-						criteria.get(CRITERIA_NUTS_RANGE_1));
+						criteria.get(CRITERIA_NUTS_RANGE_1),true);
 				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_NUTS_2, PLMModel.ASSOC_NUTLIST_NUT, PLMModel.PROP_NUTLIST_VALUE,
-						criteria.get(CRITERIA_NUTS_RANGE_2));
+						criteria.get(CRITERIA_NUTS_RANGE_2),true);
 				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_NUTS_3, PLMModel.ASSOC_NUTLIST_NUT, PLMModel.PROP_NUTLIST_VALUE,
-						criteria.get(CRITERIA_NUTS_RANGE_3));
+						criteria.get(CRITERIA_NUTS_RANGE_3),true);
 
 				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_PHYSICO, PLMModel.ASSOC_PHYSICOCHEMLIST_PHYSICOCHEM,
-						PLMModel.PROP_PHYSICOCHEMLIST_VALUE, criteria.get(CRITERIA_PHYSICO_RANGE));
+						PLMModel.PROP_PHYSICOCHEMLIST_VALUE, criteria.get(CRITERIA_PHYSICO_RANGE),true);
 				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_PHYSICO_1, PLMModel.ASSOC_PHYSICOCHEMLIST_PHYSICOCHEM,
-						PLMModel.PROP_PHYSICOCHEMLIST_VALUE, criteria.get(CRITERIA_PHYSICO_RANGE_1));
+						PLMModel.PROP_PHYSICOCHEMLIST_VALUE, criteria.get(CRITERIA_PHYSICO_RANGE_1),true);
 				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_PHYSICO_2, PLMModel.ASSOC_PHYSICOCHEMLIST_PHYSICOCHEM,
-						PLMModel.PROP_PHYSICOCHEMLIST_VALUE, criteria.get(CRITERIA_PHYSICO_RANGE_2));
+						PLMModel.PROP_PHYSICOCHEMLIST_VALUE, criteria.get(CRITERIA_PHYSICO_RANGE_2),true);
 
 				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_MICROBIO, PLMModel.ASSOC_MICROBIOLIST_MICROBIO,
-						PLMModel.PROP_MICROBIOLIST_VALUE, criteria.get(CRITERIA_MICROBIO_RANGE));
+						PLMModel.PROP_MICROBIOLIST_VALUE, criteria.get(CRITERIA_MICROBIO_RANGE),true);
 
 				nodes = getSearchNodesBySpecificationCriteria(nodes, criteria);
+			
+				nodes = getSearchNodesBySpecificDataLists(nodes, criteria);
+				
 
 			}
 		}
@@ -551,15 +566,40 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		return nodes;
 	}
 
+	
+    /*
+     * TODO handle multifields
+     */
+	private List<NodeRef> getSearchNodesBySpecificDataLists(List<NodeRef> nodes, Map<String, String> criteria) {
+		if(dataListSearchFields !=null && !dataListSearchFields.isBlank()) {
+			for(String field : dataListSearchFields.split(",")) {
+				
+				String criteriaAssocString = field.split("\\|")[0];
+				QName criteriaAssoc = QName.createQName(field.split("\\|")[1],namespaceService);
+				QName criteriaAssocValue = QName.createQName(field.split("\\|")[3],namespaceService);
+				String criteriaValue = criteria.get(field.split("\\|")[2]);
+				
+				
+				nodes = getSearchNodesByListCriteria(nodes, criteria, criteriaAssocString, criteriaAssoc,
+						criteriaAssocValue, criteriaValue,true);
+			}
+		}
+	
+		
+		
+		return nodes;
+	}
+
+	
+	
 	/**
 	 * Take in account criteria on label claim list criteria
 	 *
 	 * @return
 	 */
 	private List<NodeRef> getSearchNodesByListCriteria(List<NodeRef> nodes, Map<String, String> criteria, String criteriaAssocString,
-			QName criteriaAssoc, QName criteriaAssocValue, String criteriaValue) {
+			QName criteriaAssoc, QName criteriaAssocValue, String criteriaValue, boolean isOrOperator) {
 
-		new HashMap<>();
 
 		List<NodeRef> entities = new ArrayList<>();
 
@@ -575,7 +615,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 			if ((propValue != null) && !propValue.isEmpty()) {
 
-				for (EntitySourceAssoc assocRef : associationService.getEntitySourceAssocs(extractNodeRefs(propValue), criteriaAssoc, true)) {
+				for (EntitySourceAssoc assocRef : associationService.getEntitySourceAssocs(extractNodeRefs(propValue), criteriaAssoc, isOrOperator)) {
 
 					NodeRef n = assocRef.getDataListItemNodeRef();
 					if ((criteriaAssocValue != null) && (criteriaValue != null) && !criteriaValue.isEmpty()) {
