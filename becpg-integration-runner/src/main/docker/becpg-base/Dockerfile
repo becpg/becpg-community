@@ -134,7 +134,7 @@ RUN set -x && \
     java -jar /root/alfresco-mmt.jar install /root/amp/ webapps/alfresco -nobackup -directory && \
     rm /root/amp/alfresco-aos-core-${VTI_VERSION}.amp
 
-# I18N
+
 
 # Cloud profiling
 
@@ -142,16 +142,17 @@ RUN mkdir -p /opt/cprof && \
   wget -q -O- https://storage.googleapis.com/cloud-profiler/java/latest/profiler_java_agent.tar.gz \
   | tar xzv -C /opt/cprof
 
+# I18N
 
 RUN set -x && \
     curl --silent --location \
-      https://readonly:YLdy9W5v@www.becpg.fr/becpg-repo/releases/addons/share-becpg-i18n-1.0-9.jar  \
-      -o webapps/share/WEB-INF/lib/share-becpg-i18n-1.0-9.jar  
+      https://readonly:YLdy9W5v@www.becpg.fr/becpg-repo/releases/addons/share-becpg-i18n-1.0-14.jar  \
+      -o webapps/share/WEB-INF/lib/share-becpg-i18n-1.0-14.jar  
 
 RUN set -x && \
     curl --silent --location \
-      https://readonly:YLdy9W5v@www.becpg.fr/becpg-repo/releases/addons/alfresco-becpg-i18n-1.0-9.jar  \
-      -o webapps/alfresco/WEB-INF/lib/alfresco-becpg-i18n-1.0-9.jar  
+      https://readonly:YLdy9W5v@www.becpg.fr/becpg-repo/releases/addons/alfresco-becpg-i18n-1.0-14.jar  \
+      -o webapps/alfresco/WEB-INF/lib/alfresco-becpg-i18n-1.0-14.jar  
       
       
 COPY tomcat/share.xml /usr/local/tomcat/conf/Catalina/localhost/
