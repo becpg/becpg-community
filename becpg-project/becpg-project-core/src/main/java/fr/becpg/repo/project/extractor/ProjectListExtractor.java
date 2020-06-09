@@ -358,6 +358,9 @@ public class ProjectListExtractor extends ActivityListExtractor {
 			
 					@Override
 					public List<Map<String, Object>> extractNestedField(NodeRef nodeRef, AttributeExtractorStructure field) {
+						DataListPagination pagination = (DataListPagination) props.get(PAGINATION);
+						
+						List<Map<String, Object>> ret = new ArrayList<>();
 
 						DataListPagination pagination = (DataListPagination) props.get(PAGINATION);
 						
