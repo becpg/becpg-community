@@ -357,10 +357,13 @@ public class ProjectListExtractor extends ActivityListExtractor {
 
 					@Override
 					public List<Map<String, Object>> extractNestedField(NodeRef nodeRef, AttributeExtractorStructure field) {
+						DataListPagination pagination = (DataListPagination) props.get(PAGINATION);
+						
+						List<Map<String, Object>> ret = new ArrayList<>();
 
 						List<Map<String, Object>> ret = new ArrayList<>();
 						if (field.isDataListItems()) {
-							if ((ProjectModel.TYPE_TASK_LIST.equals(field.getFieldQname()))
+							if ((ProjectModel.TYPE_TASK_LIST.equals(field.getFieldQname()) && (pagination.getPageSize() > 10) )
 									|| BeCPGModel.TYPE_ACTIVITY_LIST.equals(field.getFieldQname())
 									|| (ProjectModel.TYPE_DELIVERABLE_LIST.equals(field.getFieldQname()) && ProjectModel.TYPE_TASK_LIST.equals(itemType))) {
 								// Only in progress tasks
