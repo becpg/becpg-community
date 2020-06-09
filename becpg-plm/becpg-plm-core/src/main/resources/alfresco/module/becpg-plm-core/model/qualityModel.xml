@@ -307,7 +307,7 @@
 					<index enabled="true" />
 				</property>
 				<property name="qa:qcNextAnalysisDate">
-					<type>d:date</type>
+					<type>d:datetime</type>
 					<mandatory>false</mandatory>
 					<index enabled="true" />
 				</property>
@@ -458,11 +458,11 @@
 				</property>
 				<property name="qa:sdlFreq">
 					<type>d:int</type>
-					<mandatory>true</mandatory>					
+					<mandatory>false</mandatory>					
 				</property>
 				<property name="qa:sdlFreqUnit">
 					<type>d:text</type>
-					<mandatory>true</mandatory>
+					<mandatory>false</mandatory>
 					<index enabled="false" />
 					<constraints>
 						<constraint ref="qa:freqUnits" />
