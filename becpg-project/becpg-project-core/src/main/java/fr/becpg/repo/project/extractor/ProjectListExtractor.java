@@ -361,10 +361,6 @@ public class ProjectListExtractor extends ActivityListExtractor {
 						DataListPagination pagination = (DataListPagination) props.get(PAGINATION);
 						
 						List<Map<String, Object>> ret = new ArrayList<>();
-
-						DataListPagination pagination = (DataListPagination) props.get(PAGINATION);
-						
-						List<Map<String, Object>> ret = new ArrayList<>();
 						if (field.isDataListItems()) {
 							if ((ProjectModel.TYPE_TASK_LIST.equals(field.getFieldQname()) && (pagination.getPageSize() > 10) )
 									|| BeCPGModel.TYPE_ACTIVITY_LIST.equals(field.getFieldQname())
