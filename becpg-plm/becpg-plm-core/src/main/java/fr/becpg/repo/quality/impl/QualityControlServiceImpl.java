@@ -140,9 +140,6 @@ public class QualityControlServiceImpl implements QualityControlService {
 				// create samples to take
 
 				if(freqText != null && !freqText.isEmpty()){
-					if (sampleDateTime != null) {
-						sampleDates.add(sampleDateTime);
-					}
 					String[] freqs = freqText.split(",");
 					for(String freq : freqs){
 						Integer freqDigit = null;
@@ -199,6 +196,9 @@ public class QualityControlServiceImpl implements QualityControlService {
 					case "/8hours":
 						freqInHour = 8;
 						break;
+					default: 
+						freqInHour = 1;
+			            break;
 					}
 
 					if ((batchDuration != null) && !"/batch".equals(freq)) {
@@ -214,12 +214,14 @@ public class QualityControlServiceImpl implements QualityControlService {
 						}
 					}
 				}
-
-				for(Date sampleDate : sampleDates){
-					// several samples must be taken
-					for (int z_idx2 = 0; z_idx2 < sdl.getQty(); z_idx2++) {
-						samplingList.add(new SamplingListDataItem(sampleDate, null, sdl.getControlPoint(), sdl.getControlStep(),
-								sdl.getSamplingGroup(), sdl.getControlingGroup(), sdl.getFixingGroup(), sdl.getReaction()));
+				if (!sampleDates.isEmpty()) {
+					qualityControlData.setNextAnalysisDate(sampleDates.get(0));
+					for(Date sampleDate : sampleDates){
+						// several samples must be taken
+						for (int z_idx2 = 0; z_idx2 < sdl.getQty(); z_idx2++) {
+							samplingList.add(new SamplingListDataItem(sampleDate, null, sdl.getControlPoint(), sdl.getControlStep(),
+									sdl.getSamplingGroup(), sdl.getControlingGroup(), sdl.getFixingGroup(), sdl.getReaction()));
+						}
 					}
 				}
 			}
