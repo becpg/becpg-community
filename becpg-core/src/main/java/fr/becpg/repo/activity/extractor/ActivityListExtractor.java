@@ -109,101 +109,103 @@ public class ActivityListExtractor extends SimpleExtractor {
 					ActivityType.valueOf((String) properties.get(BeCPGModel.PROP_ACTIVITYLIST_TYPE)),
 					(String) properties.get(BeCPGModel.PROP_ACTIVITYLIST_DATA));
 
-			if (FormatMode.JSON.equals(mode)) {
-				NodeRef entityNodeRef = null;
-				NodeRef charactNodeRef = null;
-				QName entityType = null;
-				try {
-					if (postLookup.has(EntityActivityService.PROP_ENTITY_NODEREF)
-							&& nodeService.exists(new NodeRef(postLookup.getString(EntityActivityService.PROP_ENTITY_NODEREF)))) {
-						entityNodeRef = new NodeRef(postLookup.getString(EntityActivityService.PROP_ENTITY_NODEREF));
-					}
-
-					if (postLookup.has(EntityActivityService.PROP_CHARACT_NODEREF)
-							&& nodeService.exists(new NodeRef(postLookup.getString(EntityActivityService.PROP_CHARACT_NODEREF)))) {
-						charactNodeRef = new NodeRef(postLookup.getString(EntityActivityService.PROP_CHARACT_NODEREF));
-					}
-
-					if (postLookup.has(EntityActivityService.PROP_ENTITY_TYPE)) {
-						entityType = QName.createQName(postLookup.getString(EntityActivityService.PROP_ENTITY_TYPE));
-					} else if (entityNodeRef != null) {
-						entityType = nodeService.getType(entityNodeRef);
-					}
-
-					if (((entityType != null)
-							&& (postLookup.has(EntityActivityService.PROP_DATALIST_TYPE) && (securityService.computeAccessMode(entityType,
-									postLookup.getString(EntityActivityService.PROP_DATALIST_TYPE)) == SecurityService.NONE_ACCESS)))
-							|| ((charactNodeRef != null) && (permissionService.hasPermission(charactNodeRef, "Read") != AccessStatus.ALLOWED))) {
-
-						// Entity Title
-						if (postLookup.has(EntityActivityService.PROP_TITLE)) {
-							postLookup.put(EntityActivityService.PROP_TITLE, I18NUtil.getMessage("message.becpg.access.denied"));
+			if(postLookup!=null) {
+				if (FormatMode.JSON.equals(mode)) {
+					NodeRef entityNodeRef = null;
+					NodeRef charactNodeRef = null;
+					QName entityType = null;
+					try {
+						if (postLookup.has(EntityActivityService.PROP_ENTITY_NODEREF)
+								&& nodeService.exists(new NodeRef(postLookup.getString(EntityActivityService.PROP_ENTITY_NODEREF)))) {
+							entityNodeRef = new NodeRef(postLookup.getString(EntityActivityService.PROP_ENTITY_NODEREF));
 						}
-						if (postLookup.has(EntityActivityService.PROP_PROPERTIES)) {
-							postLookup.remove(EntityActivityService.PROP_PROPERTIES);
+	
+						if (postLookup.has(EntityActivityService.PROP_CHARACT_NODEREF)
+								&& nodeService.exists(new NodeRef(postLookup.getString(EntityActivityService.PROP_CHARACT_NODEREF)))) {
+							charactNodeRef = new NodeRef(postLookup.getString(EntityActivityService.PROP_CHARACT_NODEREF));
 						}
-
-					} else if (postLookup.has("activityEvent") && postLookup.get("activityEvent").equals(ACTIVITYEVENT_UPDATE)
-							&& postLookup.has(EntityActivityService.PROP_PROPERTIES)) {
-						JSONArray activityProperties = postLookup.getJSONArray(EntityActivityService.PROP_PROPERTIES);
-						JSONArray postActivityProperties = new JSONArray();
-						for (int i = 0; i < activityProperties.length(); i++) {
-							JSONObject activityProperty = activityProperties.getJSONObject(i);
-							JSONObject postProperty = activityProperty;
-							QName propertyName = QName.createQName(activityProperty.getString(EntityActivityService.PROP_TITLE));
-
-							if ((entityType != null)
-									&& (securityService.computeAccessMode(entityType, propertyName) != SecurityService.NONE_ACCESS)) {
-								// Property Title
-								PropertyDefinition propertyDef = dictionaryService.getProperty(propertyName);
-								ClassAttributeDefinition propDef = entityDictionaryService.getPropDef(propertyName);
-								if ((propDef != null) && (propDef.getTitle(dictionaryService) != null)
-										&& (propDef.getTitle(dictionaryService).length() > 0)) {
-									postProperty.put(PROP_TITLE, propDef.getTitle(dictionaryService));
-								} else {
-									postProperty.put(PROP_TITLE, propertyName.toPrefixString());
-								}
-								// Before Property
-								if (activityProperty.has(EntityActivityService.BEFORE)) {
-									Object beforeProperty = activityProperty.get(EntityActivityService.BEFORE);
-									if ((beforeProperty instanceof JSONArray) && (((JSONArray) beforeProperty).length() > 0)) {
-										postProperty.put(EntityActivityService.BEFORE, checkProperty(beforeProperty, propertyDef));
-									} else {
-										postProperty.put(EntityActivityService.BEFORE, beforeProperty);
-									}
-								}
-								// AfterProperty
-								if (activityProperty.has(EntityActivityService.AFTER)) {
-									Object afterProperty = activityProperty.get(EntityActivityService.AFTER);
-									if ((afterProperty instanceof JSONArray) && (((JSONArray) afterProperty).length() > 0)) {
-										postProperty.put(EntityActivityService.AFTER, checkProperty(afterProperty, propertyDef));
-									} else {
-										postProperty.put(EntityActivityService.AFTER, afterProperty);
-									}
-								}
-								postActivityProperties.put(postProperty);
+	
+						if (postLookup.has(EntityActivityService.PROP_ENTITY_TYPE)) {
+							entityType = QName.createQName(postLookup.getString(EntityActivityService.PROP_ENTITY_TYPE));
+						} else if (entityNodeRef != null) {
+							entityType = nodeService.getType(entityNodeRef);
+						}
+	
+						if (((entityType != null)
+								&& (postLookup.has(EntityActivityService.PROP_DATALIST_TYPE) && (securityService.computeAccessMode(entityType,
+										postLookup.getString(EntityActivityService.PROP_DATALIST_TYPE)) == SecurityService.NONE_ACCESS)))
+								|| ((charactNodeRef != null) && (permissionService.hasPermission(charactNodeRef, "Read") != AccessStatus.ALLOWED))) {
+	
+							// Entity Title
+							if (postLookup.has(EntityActivityService.PROP_TITLE)) {
+								postLookup.put(EntityActivityService.PROP_TITLE, I18NUtil.getMessage("message.becpg.access.denied"));
 							}
+							if (postLookup.has(EntityActivityService.PROP_PROPERTIES)) {
+								postLookup.remove(EntityActivityService.PROP_PROPERTIES);
+							}
+	
+						} else if (postLookup.has("activityEvent") && postLookup.get("activityEvent").equals(ACTIVITYEVENT_UPDATE)
+								&& postLookup.has(EntityActivityService.PROP_PROPERTIES)) {
+							JSONArray activityProperties = postLookup.getJSONArray(EntityActivityService.PROP_PROPERTIES);
+							JSONArray postActivityProperties = new JSONArray();
+							for (int i = 0; i < activityProperties.length(); i++) {
+								JSONObject activityProperty = activityProperties.getJSONObject(i);
+								JSONObject postProperty = activityProperty;
+								QName propertyName = QName.createQName(activityProperty.getString(EntityActivityService.PROP_TITLE));
+	
+								if ((entityType != null)
+										&& (securityService.computeAccessMode(entityType, propertyName) != SecurityService.NONE_ACCESS)) {
+									// Property Title
+									PropertyDefinition propertyDef = dictionaryService.getProperty(propertyName);
+									ClassAttributeDefinition propDef = entityDictionaryService.getPropDef(propertyName);
+									if ((propDef != null) && (propDef.getTitle(dictionaryService) != null)
+											&& (propDef.getTitle(dictionaryService).length() > 0)) {
+										postProperty.put(PROP_TITLE, propDef.getTitle(dictionaryService));
+									} else {
+										postProperty.put(PROP_TITLE, propertyName.toPrefixString());
+									}
+									// Before Property
+									if (activityProperty.has(EntityActivityService.BEFORE)) {
+										Object beforeProperty = activityProperty.get(EntityActivityService.BEFORE);
+										if ((beforeProperty instanceof JSONArray) && (((JSONArray) beforeProperty).length() > 0)) {
+											postProperty.put(EntityActivityService.BEFORE, checkProperty(beforeProperty, propertyDef));
+										} else {
+											postProperty.put(EntityActivityService.BEFORE, beforeProperty);
+										}
+									}
+									// AfterProperty
+									if (activityProperty.has(EntityActivityService.AFTER)) {
+										Object afterProperty = activityProperty.get(EntityActivityService.AFTER);
+										if ((afterProperty instanceof JSONArray) && (((JSONArray) afterProperty).length() > 0)) {
+											postProperty.put(EntityActivityService.AFTER, checkProperty(afterProperty, propertyDef));
+										} else {
+											postProperty.put(EntityActivityService.AFTER, afterProperty);
+										}
+									}
+									postActivityProperties.put(postProperty);
+								}
+							}
+							postLookup.put(EntityActivityService.PROP_PROPERTIES, postActivityProperties);
 						}
-						postLookup.put(EntityActivityService.PROP_PROPERTIES, postActivityProperties);
+					} catch (JSONException e) {
+						logger.error(e, e);
 					}
-				} catch (JSONException e) {
-					logger.error(e, e);
+	
+					ret.put("prop_bcpg_alData", postLookup);
+				} else {
+					try {
+						if (postLookup.has("content")) {
+							ret.put("prop_bcpg_alData", postLookup.get("content"));
+						} else {
+							ret.put("prop_bcpg_alData", "");
+						}
+					} catch (JSONException e) {
+						logger.error(e, e);
+					}
 				}
-
-				ret.put("prop_bcpg_alData", postLookup);
 			} else {
-				try {
-					if (postLookup.has("content")) {
-						ret.put("prop_bcpg_alData", postLookup.get("content"));
-					} else {
-						ret.put("prop_bcpg_alData", "");
-					}
-				} catch (JSONException e) {
-					logger.error(e, e);
-				}
+				logger.warn("No activity type for node :" + nodeRef);
 			}
-		} else {
-			logger.warn("No activity type for node :" + nodeRef);
 		}
 
 	}
