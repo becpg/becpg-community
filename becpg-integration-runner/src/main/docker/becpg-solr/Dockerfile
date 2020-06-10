@@ -1,8 +1,9 @@
 FROM openjdk:11
 
-ENV NEXUS=https://artifacts.alfresco.com/nexus/content/groups/public
+
 ENV DIST_DIR /opt/alfresco-search-services
-ENV SEARCH_SERVICE_VERSION=1.4.0
+ENV SEARCH_SERVICE_VERSION=1.4.2
+ENV ZIP_FILE=https://download.alfresco.com/cloudfront/release/community/SearchServices/${SEARCH_SERVICE_VERSION}/alfresco-search-services-${SEARCH_SERVICE_VERSION}.zip
 ARG USERNAME=solr
 ARG USERID=33007
 
@@ -16,10 +17,10 @@ ARG USERID=33007
 RUN set -x \
 	&& useradd  -c "beCPG ${USERNAME}" -M  -s "/bin/bash"  -u "${USERID}" -o   "${USERNAME}" \
     && curl --silent --location \
-      ${NEXUS}/org/alfresco/alfresco-search-services/${SEARCH_SERVICE_VERSION}/alfresco-search-services-${SEARCH_SERVICE_VERSION}.zip \
+      $ZIP_FILE \
       -o alfresco-search-services-${SEARCH_SERVICE_VERSION}.zip  \
     && unzip -q alfresco-search-services-${SEARCH_SERVICE_VERSION}.zip -d /opt/ \
-    && mkdir -p $DIST_DIR/data \
+    && mkdir -p $DIST_DIR/data/solr6Backup/ \
     && rm alfresco-search-services-${SEARCH_SERVICE_VERSION}.zip  \
     && chown -R ${USERNAME}:${USERNAME} $DIST_DIR 
 
