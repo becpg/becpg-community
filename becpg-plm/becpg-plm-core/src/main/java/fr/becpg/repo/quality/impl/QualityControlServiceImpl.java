@@ -133,7 +133,7 @@ public class QualityControlServiceImpl implements QualityControlService {
 				logger.debug("create sample");
 
 				String freqText = sdl.getFreqText();
-				Date sampleDateTime = batchStart;
+				Date sampleDateTime = (batchStart != null ? batchStart : new Date());
 				List<Date> sampleDates = new ArrayList<Date>();
 				Calendar cal = Calendar.getInstance();
 
