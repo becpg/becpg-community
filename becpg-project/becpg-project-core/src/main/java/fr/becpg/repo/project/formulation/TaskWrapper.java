@@ -1,6 +1,7 @@
 package fr.becpg.repo.project.formulation;
 
 import java.time.temporal.ChronoUnit;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -14,9 +15,9 @@ import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
+import fr.becpg.repo.project.data.projectList.TaskState;
 import fr.becpg.repo.project.impl.ProjectHelper;
 
-//TODO Merge with TaskListItem when is over
 public class TaskWrapper implements Comparable<TaskWrapper> {
 
 	private static final int DURATION_DEFAULT = 1;
@@ -82,16 +83,28 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 
 	public Integer getDuration() {
 		return ((task != null) && (task.getDuration() != null)) ? task.getDuration()
-				: (task!=null && Boolean.TRUE.equals(task.getIsMilestone())) ? DURATION_DEFAULT : null;
+				: ((task != null) && Boolean.TRUE.equals(task.getIsMilestone())) ? DURATION_DEFAULT : null;
 	}
 
 	public Integer getRealDuration() {
 
 		if (task != null) {
-			Integer tempDuration = ProjectHelper.calculateRealDuration(task);
-			if (tempDuration != null) {
-				return tempDuration;
+
+			if (TaskState.InProgress.equals(task.getTaskState()) || TaskState.Refused.equals(task.getTaskState())) {
+				Date endDate = ProjectHelper.removeTime(new Date());
+
+				// we wait the overdue of the task to take it in account
+				if ((task.getEnd() != null) && endDate.before(task.getEnd())) {
+					return getDuration();
+				}
+				return ProjectHelper.calculateTaskDuration(task.getStart(), endDate);
+
+			} else if (TaskState.Completed.equals(task.getTaskState())) {
+				return ProjectHelper.calculateTaskDuration(task.getStart(), task.getEnd());
+			} else if(TaskState.Cancelled.equals(task.getTaskState())) {
+				return 0;
 			}
+
 		}
 		return getDuration();
 
@@ -226,17 +239,15 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 
 	public static String print(ProjectData projectData) {
 
-		
-		
 		StringBuilder ret = new StringBuilder();
 		projectData.getTaskList().stream().forEach(t -> {
 			if ((t != null) && (t.getDuration() != null)) {
-				ret.append("\n" + " ".repeat(Math.abs(
-						Math.toIntExact(
-								((t.getStart() != null) && (projectData.getStartDate() != null))
-						? ChronoUnit.DAYS.between(t.getStart().toInstant(),projectData.getStartDate().toInstant())
-						: 0)))  + (t.getIsGroup() ? "#" : "_").repeat(Math.abs(t.getDuration())) + " " + t.getTaskName() + "[ " + t.getStart() + " / "
-						+ t.getEnd() + "] " + " (" + t.getTaskState() +"/"+ t.getDuration() +"/"+ t.getRealDuration()+ ")");
+				ret.append("\n"
+						+ " ".repeat(Math.abs(Math.toIntExact(((t.getStart() != null) && (projectData.getStartDate() != null))
+								? ChronoUnit.DAYS.between(t.getStart().toInstant(), projectData.getStartDate().toInstant())
+								: 0)))
+						+ (t.getIsGroup() ? "#" : "_").repeat(Math.abs(t.getDuration())) + " " + t.getTaskName() + "[ " + t.getStart() + " / "
+						+ t.getEnd() + "] " + " (" + t.getTaskState() + "/" + t.getDuration() + "/" + t.getRealDuration() + ")");
 			}
 		});
 
