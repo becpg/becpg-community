@@ -461,25 +461,6 @@ public class ProjectHelper {
 		return calculateNextDate(startDate, DURATION_NEXT_DAY, false);
 	}
 
-	public static Integer calculateRealDuration(TaskListDataItem task) {
-
-		Date endDate;
-
-		if (TaskState.InProgress.equals(task.getTaskState()) || TaskState.Refused.equals(task.getTaskState())) {
-			endDate = ProjectHelper.removeTime(new Date());
-
-			// we wait the overdue of the task to take it in account
-			if ((task.getEnd() != null) && endDate.before(task.getEnd())) {
-				return null;
-			}
-		} else if (TaskState.Completed.equals(task.getTaskState())) {
-			endDate = task.getEnd();
-		} else {
-			return null;
-		}
-		return calculateTaskDuration(task.getStart(), endDate);
-	}
-
 	@Deprecated
 	public static Integer calculateDuration(TaskListDataItem task) {
 		return task.getDuration() != null ? task.getDuration() : (Boolean.TRUE.equals(task.getIsMilestone())) ? DURATION_DEFAULT : null;
