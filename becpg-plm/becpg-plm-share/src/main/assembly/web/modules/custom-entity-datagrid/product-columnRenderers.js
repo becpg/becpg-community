@@ -449,6 +449,10 @@ if (beCPG.module.EntityDataGridRenderers) {
 							return ret;
 						}
 					}
+					
+					if(data.displayValue !=null && data.displayValue.indexOf("@html") == 0){
+						return  data.displayValue.replace("@html","");
+					}
 
 					return '<span style="color:' + color + ';">' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
 				}
