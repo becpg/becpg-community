@@ -600,12 +600,14 @@ public class ImportEntityXmlVisitor {
 		public void removeExistingAssociations() {
 
 			for (ChildAssociationRef assoc : toRemoveChildAssocsQueue) {
-
-				if (logger.isDebugEnabled()) {
-					logger.debug("Delete childAssoc :" + assoc.toString());
+				if(serviceRegistry.getNodeService().exists(assoc.getChildRef())) {
+					if (logger.isDebugEnabled()) {
+						logger.debug("Delete childAssoc :" + assoc.toString());
+					}
+	
+					
+					serviceRegistry.getNodeService().deleteNode(assoc.getChildRef());
 				}
-
-				serviceRegistry.getNodeService().deleteNode(assoc.getChildRef());
 			}
 
 		}
