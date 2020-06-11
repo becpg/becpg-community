@@ -232,17 +232,8 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + ((compoListUnit == null) ? 0 : compoListUnit.hashCode());
-		result = prime * result + ((declType == null) ? 0 : declType.hashCode());
-		result = prime * result + ((depthLevel == null) ? 0 : depthLevel.hashCode());
-		result = prime * result + ((lossPerc == null) ? 0 : lossPerc.hashCode());
-		result = prime * result + ((overrunPerc == null) ? 0 : overrunPerc.hashCode());
-		result = prime * result + ((parent == null) ? 0 : parent.hashCode());
-		result = prime * result + ((product == null) ? 0 : product.hashCode());
-		result = prime * result + ((qty == null) ? 0 : qty.hashCode());
-		result = prime * result + ((qtySubFormula == null) ? 0 : qtySubFormula.hashCode());
-		result = prime * result + ((volume == null) ? 0 : volume.hashCode());
-		result = prime * result + ((yieldPerc == null) ? 0 : yieldPerc.hashCode());
+		result = prime * result
+				+ Objects.hash(compoListUnit, declType, depthLevel, lossPerc, overrunPerc, parent, product, qty, qtySubFormula, volume, yieldPerc);
 		return result;
 	}
 
@@ -257,56 +248,10 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 		if (getClass() != obj.getClass())
 			return false;
 		CompoListDataItem other = (CompoListDataItem) obj;
-		if (compoListUnit != other.compoListUnit)
-			return false;
-		if (declType != other.declType)
-			return false;
-		if (depthLevel == null) {
-			if (other.depthLevel != null)
-				return false;
-		} else if (!depthLevel.equals(other.depthLevel))
-			return false;
-		if (lossPerc == null) {
-			if (other.lossPerc != null)
-				return false;
-		} else if (!lossPerc.equals(other.lossPerc))
-			return false;
-		if (overrunPerc == null) {
-			if (other.overrunPerc != null)
-				return false;
-		} else if (!overrunPerc.equals(other.overrunPerc))
-			return false;
-		if (parent == null) {
-			if (other.parent != null)
-				return false;
-		} else if (!parent.equals(other.parent))
-			return false;
-		if (product == null) {
-			if (other.product != null)
-				return false;
-		} else if (!product.equals(other.product))
-			return false;
-		if (qty == null) {
-			if (other.qty != null)
-				return false;
-		} else if (!qty.equals(other.qty))
-			return false;
-		if (qtySubFormula == null) {
-			if (other.qtySubFormula != null)
-				return false;
-		} else if (!qtySubFormula.equals(other.qtySubFormula))
-			return false;
-		if (volume == null) {
-			if (other.volume != null)
-				return false;
-		} else if (!volume.equals(other.volume))
-			return false;
-		if (yieldPerc == null) {
-			if (other.yieldPerc != null)
-				return false;
-		} else if (!yieldPerc.equals(other.yieldPerc))
-			return false;
-		return true;
+		return compoListUnit == other.compoListUnit && declType == other.declType && Objects.equals(depthLevel, other.depthLevel)
+				&& Objects.equals(lossPerc, other.lossPerc) && Objects.equals(overrunPerc, other.overrunPerc) && Objects.equals(parent, other.parent)
+				&& Objects.equals(product, other.product) && Objects.equals(qty, other.qty) && Objects.equals(qtySubFormula, other.qtySubFormula)
+				&& Objects.equals(volume, other.volume) && Objects.equals(yieldPerc, other.yieldPerc);
 	}
 
 	@Override
