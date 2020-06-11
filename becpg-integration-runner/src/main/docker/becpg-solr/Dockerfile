@@ -20,13 +20,15 @@ RUN set -x \
       $ZIP_FILE \
       -o alfresco-search-services-${SEARCH_SERVICE_VERSION}.zip  \
     && unzip -q alfresco-search-services-${SEARCH_SERVICE_VERSION}.zip -d /opt/ \
-    && mkdir -p $DIST_DIR/data/solr6Backup/ \
+    && mkdir -p $DIST_DIR/data/solr6Backup/alfresco \
+    && mkdir -p $DIST_DIR/data/solr6Backup/archive \
     && rm alfresco-search-services-${SEARCH_SERVICE_VERSION}.zip  \
     && chown -R ${USERNAME}:${USERNAME} $DIST_DIR 
 
     
 COPY solr.in.sh  $DIST_DIR/solr.in.sh    
 COPY rerank/solrcore.properties  $DIST_DIR/solrhome/templates/rerank/conf/
+COPY rerank/solrconfig.xml  $DIST_DIR/solrhome/templates/rerank/conf/
 COPY shared.properties $DIST_DIR/solrhome/conf/
     
 WORKDIR $DIST_DIR
