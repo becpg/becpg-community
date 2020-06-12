@@ -25,11 +25,18 @@ RUN set -x \
     && rm alfresco-search-services-${SEARCH_SERVICE_VERSION}.zip  \
     && chown -R ${USERNAME}:${USERNAME} $DIST_DIR 
 
+# Cloud profiling
+
+RUN mkdir -p /opt/cprof && \
+  wget -q -O- https://storage.googleapis.com/cloud-profiler/java/latest/profiler_java_agent.tar.gz \
+  | tar xzv -C /opt/cprof
+
     
 COPY solr.in.sh  $DIST_DIR/solr.in.sh    
 COPY rerank/solrcore.properties  $DIST_DIR/solrhome/templates/rerank/conf/
 COPY rerank/solrconfig.xml  $DIST_DIR/solrhome/templates/rerank/conf/
 COPY shared.properties $DIST_DIR/solrhome/conf/
+#COPY log4j.properties $DIST_DIR/logs/
     
 WORKDIR $DIST_DIR
 VOLUME $DIST_DIR/data
