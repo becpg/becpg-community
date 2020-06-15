@@ -84,7 +84,8 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 				logger.debug("Decernis checksum doesn't match: " + formulatedProduct.getRequirementChecksum());
 			}
 
-			if (!FormulationService.FAST_FORMULATION_CHAINID.equals(formulatedProduct.getFormulationChainId())) {
+			if (!FormulationService.FAST_FORMULATION_CHAINID.equals(formulatedProduct.getFormulationChainId())
+					&& ( formulatedProduct.getReformulateCount() ==null || formulatedProduct.getReformulateCount() == formulatedProduct.getCurrentReformulateCount())) {
 
 				if (shouldLaunchDecernis) {
 					StopWatch watch = null;
