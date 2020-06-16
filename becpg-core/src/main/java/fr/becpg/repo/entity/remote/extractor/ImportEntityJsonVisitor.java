@@ -327,6 +327,7 @@ public class ImportEntityJsonVisitor {
 			if (replaceExisting) {
 				for (NodeRef tmp : entityListDAO.getListItems(listNodeRef, dataListQName)) {
 					if (!listItemToKeep.contains(tmp)) {
+						nodeService.addAspect(tmp, ContentModel.ASPECT_TEMPORARY, null);
 						nodeService.deleteNode(tmp);
 					}
 				}
