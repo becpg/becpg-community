@@ -362,7 +362,7 @@ if (beCPG.module.EntityDataGridRenderers) {
       			qty = data.value;
       			unit = " %";
       		}
-      		return Alfresco.util.encodeHTML(beCPG.util.sigFigs(qty,3).toLocaleString() + unit);
+      		return Alfresco.util.encodeHTML(beCPG.util.sigFigs(qty,4).toLocaleString() + unit);
       	}      
       	return "";
       }
@@ -868,7 +868,13 @@ if (beCPG.module.EntityDataGridRenderers) {
 		              for (var j = 0; j <  scope.subCache["idx_"+oColumn.getKeyIndex()].length; j++) {
                         var path =  scope.subCache["idx_"+oColumn.getKeyIndex()][j].path;
                         if(path == oRecord.getData("itemData")["path"] && scope.subCache["idx_"+oColumn.getKeyIndex()][j].displayValue){
-                            return  scope.subCache["idx_"+oColumn.getKeyIndex()][j].displayValue;
+                        	
+                        	if(oColumn.numberFormat && scope.subCache["idx_"+oColumn.getKeyIndex()][j].value!=null){
+                        		 return  beCPG.util.formatNumber(oColumn.numberFormat, scope.subCache["idx_"+oColumn.getKeyIndex()][j].value);	  
+             				} else {
+             					 return  scope.subCache["idx_"+oColumn.getKeyIndex()][j].displayValue;
+             				}
+
                         }
                     }
                 }
@@ -884,7 +890,11 @@ if (beCPG.module.EntityDataGridRenderers) {
                                 scope.subCache = [];
                             }
                             scope.subCache["idx_"+oColumn.getKeyIndex()] = json.sub;
-                            return json.displayValue? json.displayValue : "";
+                            if(oColumn.numberFormat && json.value!=null){
+            				    return  beCPG.util.formatNumber(oColumn.numberFormat, json.value);	   
+            				} else {
+            					return json.displayValue? json.displayValue : "";
+            				}
                         }
     			    }
 			    }
@@ -918,7 +928,12 @@ if (beCPG.module.EntityDataGridRenderers) {
 						return ret;
 					}
 				}
-				return data.displayValue;
+				
+				if(oColumn.numberFormat && data.value!=null){
+				   return  beCPG.util.formatNumber(oColumn.numberFormat, data.value); 
+				} else {
+				   return data.displayValue;
+				}
 			}
 			return "";
 
@@ -961,7 +976,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 					}
 				}
 
-				qty = parseFloat(qty.toPrecision(5)) + unit;
+				qty = beCPG.util.sigFigs(qty,4).toLocaleString() + unit;
 			}
 
 			return Alfresco.util.encodeHTML(qty);
@@ -1054,7 +1069,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 					unit = " L";
 				}
 
-				qty = parseFloat(qty.toPrecision(5)) + unit;
+				qty =  beCPG.util.sigFigs(qty,4).toLocaleString() + unit;
 			}
 
 			return Alfresco.util.encodeHTML(qty);
