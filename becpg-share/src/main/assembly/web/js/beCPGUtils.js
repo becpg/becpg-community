@@ -158,6 +158,12 @@
             return n;   
         }       
     };
+    
+    beCPG.util.formatNumber = function formatNumber(format, value){
+    	return '<span title='+value+'>'+(new Intl.NumberFormat(Alfresco.constants.JS_LOCALE.replace("_","-"), format).format(value))+'</span>';	
+    	
+    };
+    
 
     beCPG.util.convertUnit = function convertUnit(val, fromUnit, toUnit){
     	// by Default toUnit is kg or m or L or perc
