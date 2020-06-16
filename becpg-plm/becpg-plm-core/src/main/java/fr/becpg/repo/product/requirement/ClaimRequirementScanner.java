@@ -97,7 +97,7 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 		ReqCtrlListDataItem reqCtrl = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, labelClaim.getLabelClaim(),
 				new ArrayList<NodeRef>(), RequirementDataType.Specification);
 
-		if (specification.getRegulatoryCode() != null) {
+		if (specification.getRegulatoryCode() != null && !specification.getRegulatoryCode().isBlank()) {
 			reqCtrl.setRegulatoryCode(specification.getRegulatoryCode());
 		} else {
 			reqCtrl.setRegulatoryCode(specification.getName());
@@ -117,7 +117,7 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 		ReqCtrlListDataItem reqCtrl = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, labelClaim.getLabelClaim(), new ArrayList<NodeRef>(),
 				RequirementDataType.Specification);
 
-		if (specification.getRegulatoryCode() != null) {
+		if (specification.getRegulatoryCode() != null && !specification.getRegulatoryCode().isBlank()) {
 			reqCtrl.setRegulatoryCode(specification.getRegulatoryCode());
 		} else {
 			reqCtrl.setRegulatoryCode(specification.getName());

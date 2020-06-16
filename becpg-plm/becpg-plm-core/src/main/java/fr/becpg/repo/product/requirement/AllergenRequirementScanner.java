@@ -47,7 +47,7 @@ public class AllergenRequirementScanner extends AbstractRequirementScanner<Aller
 									ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message,
 											listDataItem.getAllergen(), new ArrayList<NodeRef>(), RequirementDataType.Specification);
 
-									if (specification.getRegulatoryCode() != null) {
+									if (specification.getRegulatoryCode() != null && !specification.getRegulatoryCode().isBlank()) {
 										rclDataItem.setRegulatoryCode(specification.getRegulatoryCode());
 									} else {
 										rclDataItem.setRegulatoryCode(specification.getName());
