@@ -94,7 +94,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 											reqCtrl.setReqDataType(RequirementDataType.Specification);
 										}
 
-										if (specification.getRegulatoryCode() != null) {
+										if (specification.getRegulatoryCode() != null && !specification.getRegulatoryCode().isBlank()) {
 											reqCtrl.setRegulatoryCode(specification.getRegulatoryCode());
 										} else {
 											reqCtrl.setRegulatoryCode(specification.getName());
@@ -232,7 +232,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 										reqCtrl.getSources().add(productNodeRef);
 									}
 
-									if (specification.getRegulatoryCode() != null) {
+									if (specification.getRegulatoryCode() != null && !specification.getRegulatoryCode().isBlank()) {
 										reqCtrl.setRegulatoryCode(specification.getRegulatoryCode());
 									} else {
 										reqCtrl.setRegulatoryCode(specification.getName());
@@ -354,7 +354,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 			reqCtrl.getSources().add(sourceNodeRef);
 		}
 
-		if (specification.getRegulatoryCode() != null) {
+		if (specification.getRegulatoryCode() != null && !specification.getRegulatoryCode().isBlank()) {
 			reqCtrl.setRegulatoryCode(specification.getRegulatoryCode());
 		} else {
 			reqCtrl.setRegulatoryCode(specification.getName());
