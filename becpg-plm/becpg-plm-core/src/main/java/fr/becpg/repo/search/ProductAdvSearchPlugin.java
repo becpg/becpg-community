@@ -1,12 +1,18 @@
 package fr.becpg.repo.search;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import javax.annotation.PostConstruct;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -14,14 +20,18 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.MPMModel;
 import fr.becpg.model.PLMModel;
-import fr.becpg.model.PackModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.datalist.WUsedListService;
@@ -56,110 +66,103 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 	@Autowired
 	private AlfrescoRepository<ProductSpecificationData> alfrescoRepository;
 
-	private static final String CRITERIA_ING = "assoc_bcpg_ingListIng_added";
-	private static final String CRITERIA_ING_AND = "assoc_bcpg_advIlIngAnd_added";
-	private static final String CRITERIA_ING_NOT = "assoc_bcpg_advIlIngNot_added";
-	private static final String CRITERIA_ING_RANGE = "prop_bcpg_ingListQtyPerc-range";
-
-	private static final String CRITERIA_GEO_ORIGIN = "assoc_bcpg_ingListGeoOrigin_added";
-	private static final String CRITERIA_BIO_ORIGIN = "assoc_bcpg_ingListBioOrigin_added";
-
-	private static final String CRITERIA_PHYSICO = "assoc_bcpg_pclPhysicoChem_added";
-	private static final String CRITERIA_PHYSICO_RANGE = "prop_bcpg_pclValue-range";
-	private static final String CRITERIA_PHYSICO_1 = "assoc_bcpg_advPclPhysicoChem1_added";
-	private static final String CRITERIA_PHYSICO_RANGE_1 = "prop_bcpg_advPclValue1-range";
-	private static final String CRITERIA_PHYSICO_2 = "assoc_bcpg_advPclPhysicoChem2_added";
-	private static final String CRITERIA_PHYSICO_RANGE_2 = "prop_bcpg_advPclValue2-range";
-
-	private static final String CRITERIA_COST = "assoc_bcpg_costListCost_added";
-	private static final String CRITERIA_COST_RANGE = "prop_bcpg_costListValue-range";
-	private static final String CRITERIA_COST_1 = "assoc_bcpg_advClCost1_added";
-	private static final String CRITERIA_COST_RANGE_1 = "prop_bcpg_advClCost1-range";
-	private static final String CRITERIA_COST_2 = "assoc_bcpg_advClCost2_added";
-	private static final String CRITERIA_COST_RANGE_2 = "prop_bcpg_advClCost2-range";
-
-	private static final String CRITERIA_NUTS = "assoc_bcpg_nutListNut_added";
-	private static final String CRITERIA_NUTS_RANGE = "prop_bcpg_nutListValue-range";
-	private static final String CRITERIA_NUTS_1 = "assoc_bcpg_advNlNut1_added";
-	private static final String CRITERIA_NUTS_RANGE_1 = "prop_bcpg_advNlValue1-range";
-	private static final String CRITERIA_NUTS_2 = "assoc_bcpg_advNlNut2_added";
-	private static final String CRITERIA_NUTS_RANGE_2 = "prop_bcpg_advNlValue2-range";
-	private static final String CRITERIA_NUTS_3 = "assoc_bcpg_advNlNut3_added";
-	private static final String CRITERIA_NUTS_RANGE_3 = "prop_bcpg_advNlValue3-range";
-
-	private static final String CRITERIA_ALLERGEN = "assoc_bcpg_allergenListAllergen_added";
-	private static final String CRITERIA_ALLERGEN_VOL_AND = "assoc_bcpg_advAlVolAnd_added";
-	private static final String CRITERIA_ALLERGEN_VOL_NOT = "assoc_bcpg_advAlVolNot_added";
-	private static final String CRITERIA_ALLERGEN_INVOL_AND = "assoc_bcpg_advAlInVolAnd_added";
-	private static final String CRITERIA_ALLERGEN_INVOL_NOT = "assoc_bcpg_advAlInVolNot_added";
-
-	private static final String CRITERIA_LABEL_CLAIM = "assoc_bcpg_lclLabelClaim_added";
-	private static final String CRITERIA_LABEL_CLAIM_AND = "assoc_bcpg_advLclClaimAnd_added";
-	private static final String CRITERIA_LABEL_CLAIM_NOT = "assoc_bcpg_advLclClaimNot_added";
-
-	private static final String CRITERIA_MICROBIO = "assoc_bcpg_mblMicrobio_added";
-	private static final String CRITERIA_MICROBIO_RANGE = "prop_bcpg_mblValue-range";
-
-	private static final String CRITERIA_PACK_LABEL = "assoc_pack_llLabel_added";
-
 	private static final String CRITERIA_PACKAGING_LIST_PRODUCT = "assoc_bcpg_packagingListProduct_added";
 	private static final String CRITERIA_PROCESS_LIST_RESSOURCE = "assoc_mpm_plResource_added";
 	private static final String CRITERIA_COMPO_LIST_PRODUCT = "assoc_bcpg_compoListProduct_added";
 
-	private static final String CRITERIA_PACK_LABEL_POSITION = "prop_pack_llPosition";
-
 	private static final String CRITERIA_NOTRESPECTED_SPECIFICATIONS = "assoc_bcpg_advNotRespectedProductSpecs_added";
 	private static final String CRITERIA_RESPECTED_SPECIFICATIONS = "assoc_bcpg_advRespectedProductSpecs_added";
+
+
+	private class DataListSearchFilterField {
+
+		private String operator = "or";
+		private String value;
+		private String htmlId;
+		private QName attributeQname;
+
+	}
+
+	private class DataListSearchFilter {
+
+		private String name;
+		private List<DataListSearchFilterField> assocsFilters = new ArrayList<>();
+		private List<DataListSearchFilterField> propFilters = new ArrayList<>();
+
+		public DataListSearchFilter(String name) {
+			super();
+			this.name = name;
+		}
+
+	}
+
+	List<DataListSearchFilter> dataListSearchFilters = new ArrayList<>();
+
+	@PostConstruct
+	public void init() throws UnsupportedEncodingException, IOException, JSONException {
+
+		Resource res = new ClassPathResource("beCPG/search/productAdvSearch.json");
+
+		BufferedReader streamReader = new BufferedReader(new InputStreamReader(res.getInputStream(), "UTF-8"));
+		StringBuilder responseStrBuilder = new StringBuilder();
+
+		String inputStr;
+		while ((inputStr = streamReader.readLine()) != null) {
+			responseStrBuilder.append(inputStr);
+		}
+
+		JSONObject jsonObject = new JSONObject(responseStrBuilder.toString());
+
+		JSONObject filters = jsonObject.getJSONObject("filters");
+
+		for (@SuppressWarnings("unchecked")
+		Iterator<String> iterator = filters.keys(); iterator.hasNext();) {
+			String filterName = iterator.next();
+
+			JSONArray jsonArray = filters.getJSONArray(filterName);
+
+			DataListSearchFilter filter = new DataListSearchFilter(filterName);
+
+			for (int i = 0; i < jsonArray.length(); i++) {
+
+				JSONObject conf = jsonArray.getJSONObject(i);
+
+				DataListSearchFilterField field = new DataListSearchFilterField();
+
+				field.attributeQname = QName.createQName(conf.getString("attribute"), namespaceService);
+
+				if (conf.has("operator")) {
+					field.operator = conf.getString("operator").toLowerCase();
+				}
+
+				if (conf.has("value")) {
+					field.value = conf.getString("value");
+				}
+
+				if (conf.has("htmlId")) {
+					field.htmlId = conf.getString("htmlId");
+
+					keysToExclude.add(field.htmlId);
+
+				}
+
+				if (entityDictionaryService.isAssoc(field.attributeQname)) {
+					filter.assocsFilters.add(field);
+				} else {
+					filter.propFilters.add(field);
+				}
+
+			}
+
+			dataListSearchFilters.add(filter);
+
+		}
+
+	}
 
 	private static Set<String> keysToExclude = new HashSet<>();
 
 	static {
-		keysToExclude.add(CRITERIA_ING);
-		keysToExclude.add(CRITERIA_ING_AND);
-		keysToExclude.add(CRITERIA_ING_NOT);
-		keysToExclude.add(CRITERIA_ING_RANGE);
-
-		keysToExclude.add(CRITERIA_GEO_ORIGIN);
-		keysToExclude.add(CRITERIA_BIO_ORIGIN);
-
-		keysToExclude.add(CRITERIA_PHYSICO);
-		keysToExclude.add(CRITERIA_PHYSICO_1);
-		keysToExclude.add(CRITERIA_PHYSICO_2);
-		keysToExclude.add(CRITERIA_PHYSICO_RANGE);
-		keysToExclude.add(CRITERIA_PHYSICO_RANGE_1);
-		keysToExclude.add(CRITERIA_PHYSICO_RANGE_2);
-
-		keysToExclude.add(CRITERIA_COST);
-		keysToExclude.add(CRITERIA_COST_1);
-		keysToExclude.add(CRITERIA_COST_2);
-		keysToExclude.add(CRITERIA_COST_RANGE);
-		keysToExclude.add(CRITERIA_COST_RANGE_1);
-		keysToExclude.add(CRITERIA_COST_RANGE_2);
-
-		keysToExclude.add(CRITERIA_NUTS);
-		keysToExclude.add(CRITERIA_NUTS_1);
-		keysToExclude.add(CRITERIA_NUTS_2);
-		keysToExclude.add(CRITERIA_NUTS_3);
-		keysToExclude.add(CRITERIA_NUTS_RANGE);
-		keysToExclude.add(CRITERIA_NUTS_RANGE_1);
-		keysToExclude.add(CRITERIA_NUTS_RANGE_2);
-		keysToExclude.add(CRITERIA_NUTS_RANGE_3);
-
-		keysToExclude.add(CRITERIA_ALLERGEN);
-		keysToExclude.add(CRITERIA_ALLERGEN_VOL_AND);
-		keysToExclude.add(CRITERIA_ALLERGEN_VOL_NOT);
-		keysToExclude.add(CRITERIA_ALLERGEN_INVOL_AND);
-		keysToExclude.add(CRITERIA_ALLERGEN_INVOL_NOT);
-
-		keysToExclude.add(CRITERIA_LABEL_CLAIM);
-		keysToExclude.add(CRITERIA_LABEL_CLAIM_AND);
-		keysToExclude.add(CRITERIA_LABEL_CLAIM_NOT);
-
-		keysToExclude.add(CRITERIA_MICROBIO);
-		keysToExclude.add(CRITERIA_MICROBIO_RANGE);
-
-		keysToExclude.add(CRITERIA_PACK_LABEL);
-		keysToExclude.add(CRITERIA_PACK_LABEL_POSITION);
 
 		keysToExclude.add(CRITERIA_PACKAGING_LIST_PRODUCT);
 		keysToExclude.add(CRITERIA_PROCESS_LIST_RESSOURCE);
@@ -179,59 +182,17 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 			nodes = filterByAssociations(nodes, datatype, criteria);
 
 			if ((datatype != null) && entityDictionaryService.isSubClass(datatype, PLMModel.TYPE_PRODUCT)) {
-				nodes = getSearchNodesByIngListCriteria(nodes, criteria);
-				nodes = getSearchNodesByLabelingCriteria(nodes, criteria);
-				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_LABEL_CLAIM, PLMModel.ASSOC_LCL_LABELCLAIM,
-						PLMModel.PROP_LCL_CLAIM_VALUE, "true");
-				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_LABEL_CLAIM_AND, PLMModel.ASSOC_LCL_LABELCLAIM,
-						PLMModel.PROP_LCL_CLAIM_VALUE, "true");
-				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_LABEL_CLAIM_NOT, PLMModel.ASSOC_LCL_LABELCLAIM,
-						PLMModel.PROP_LCL_CLAIM_VALUE, "false");
+
+				if (dataListSearchFilters != null) {
+					for (DataListSearchFilter filter : dataListSearchFilters) {
+						nodes = getSearchNodesByListCriteria(nodes, criteria, filter);
+					}
+				}
 
 				nodes = getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_PACKAGING_LIST_PRODUCT, PLMModel.ASSOC_PACKAGINGLIST_PRODUCT, null,
 						null);
 				nodes = getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_COMPO_LIST_PRODUCT, PLMModel.ASSOC_COMPOLIST_PRODUCT, null, null);
 				nodes = getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_PROCESS_LIST_RESSOURCE, MPMModel.ASSOC_PL_RESOURCE, null, null);
-
-				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_ING_AND, PLMModel.ASSOC_INGLIST_ING, PLMModel.PROP_INGLIST_QTY_PERC,
-						criteria.get(CRITERIA_ING_RANGE));
-
-				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_ALLERGEN, PLMModel.ASSOC_ALLERGENLIST_ALLERGEN,
-						PLMModel.PROP_ALLERGENLIST_VOLUNTARY, "true");
-				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_ALLERGEN_VOL_AND, PLMModel.ASSOC_ALLERGENLIST_ALLERGEN,
-						PLMModel.PROP_ALLERGENLIST_VOLUNTARY, "true");
-				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_ALLERGEN_VOL_NOT, PLMModel.ASSOC_ALLERGENLIST_ALLERGEN,
-						PLMModel.PROP_ALLERGENLIST_VOLUNTARY, "false");
-				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_ALLERGEN_INVOL_AND, PLMModel.ASSOC_ALLERGENLIST_ALLERGEN,
-						PLMModel.PROP_ALLERGENLIST_INVOLUNTARY, "true");
-				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_ALLERGEN_INVOL_NOT, PLMModel.ASSOC_ALLERGENLIST_ALLERGEN,
-						PLMModel.PROP_ALLERGENLIST_INVOLUNTARY, "false");
-
-				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_COST, PLMModel.ASSOC_COSTLIST_COST, PLMModel.PROP_COSTLIST_VALUE,
-						criteria.get(CRITERIA_COST_RANGE));
-				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_COST_1, PLMModel.ASSOC_COSTLIST_COST, PLMModel.PROP_COSTLIST_VALUE,
-						criteria.get(CRITERIA_COST_RANGE_1));
-				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_COST_2, PLMModel.ASSOC_COSTLIST_COST, PLMModel.PROP_COSTLIST_VALUE,
-						criteria.get(CRITERIA_COST_RANGE_2));
-
-				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_NUTS, PLMModel.ASSOC_NUTLIST_NUT, PLMModel.PROP_NUTLIST_VALUE,
-						criteria.get(CRITERIA_NUTS_RANGE));
-				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_NUTS_1, PLMModel.ASSOC_NUTLIST_NUT, PLMModel.PROP_NUTLIST_VALUE,
-						criteria.get(CRITERIA_NUTS_RANGE_1));
-				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_NUTS_2, PLMModel.ASSOC_NUTLIST_NUT, PLMModel.PROP_NUTLIST_VALUE,
-						criteria.get(CRITERIA_NUTS_RANGE_2));
-				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_NUTS_3, PLMModel.ASSOC_NUTLIST_NUT, PLMModel.PROP_NUTLIST_VALUE,
-						criteria.get(CRITERIA_NUTS_RANGE_3));
-
-				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_PHYSICO, PLMModel.ASSOC_PHYSICOCHEMLIST_PHYSICOCHEM,
-						PLMModel.PROP_PHYSICOCHEMLIST_VALUE, criteria.get(CRITERIA_PHYSICO_RANGE));
-				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_PHYSICO_1, PLMModel.ASSOC_PHYSICOCHEMLIST_PHYSICOCHEM,
-						PLMModel.PROP_PHYSICOCHEMLIST_VALUE, criteria.get(CRITERIA_PHYSICO_RANGE_1));
-				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_PHYSICO_2, PLMModel.ASSOC_PHYSICOCHEMLIST_PHYSICOCHEM,
-						PLMModel.PROP_PHYSICOCHEMLIST_VALUE, criteria.get(CRITERIA_PHYSICO_RANGE_2));
-
-				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_MICROBIO, PLMModel.ASSOC_MICROBIOLIST_MICROBIO,
-						PLMModel.PROP_MICROBIOLIST_VALUE, criteria.get(CRITERIA_MICROBIO_RANGE));
 
 				nodes = getSearchNodesBySpecificationCriteria(nodes, criteria);
 
@@ -239,6 +200,161 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		}
 
 		return nodes;
+	}
+
+	private List<NodeRef> getSearchNodesByListCriteria(List<NodeRef> nodes, Map<String, String> criteria, DataListSearchFilter filter) {
+
+		List<NodeRef> entities = new ArrayList<>();
+
+		StopWatch watch = null;
+		if (logger.isDebugEnabled()) {
+			watch = new StopWatch();
+			watch.start();
+		}
+
+		List<EntitySourceAssoc> entitySourceAssocs = null;
+		List<EntitySourceAssoc> notEntitySourceAssocs = null;
+
+		for (DataListSearchFilterField assocFilter : filter.assocsFilters) {
+			String propValue = null;
+
+			if (assocFilter.value != null) {
+				propValue = assocFilter.value;
+			} else {
+				propValue = criteria.get(assocFilter.htmlId);
+			}
+
+			if (propValue != null) {
+
+				List<EntitySourceAssoc> tmp = associationService.getEntitySourceAssocs(extractNodeRefs(propValue), assocFilter.attributeQname,
+						"or".equals(assocFilter.operator) || "not".equals(assocFilter.operator));
+
+				if ("not".equals(assocFilter.operator)) {
+
+					if (notEntitySourceAssocs == null) {
+						notEntitySourceAssocs = tmp;
+					} else {
+						merge(notEntitySourceAssocs, tmp, true);
+					}
+
+				} else {
+					if (entitySourceAssocs == null) {
+						entitySourceAssocs = tmp;
+					} else {
+						merge(entitySourceAssocs, tmp, true);
+					}
+				}
+
+			}
+		}
+
+		if (entitySourceAssocs != null) {
+
+			if (notEntitySourceAssocs != null) {
+				merge(entitySourceAssocs, notEntitySourceAssocs, false);
+			}
+
+			for (EntitySourceAssoc assocRef : entitySourceAssocs) {
+
+				boolean match = true;
+				for (DataListSearchFilterField propFilter : filter.propFilters) {
+					String criteriaValue = null;
+
+					if (propFilter.value != null) {
+						criteriaValue = propFilter.value;
+					} else {
+						criteriaValue = criteria.get(propFilter.htmlId);
+					}
+
+					if ((criteriaValue != null) && !criteriaValue.isEmpty()) {
+						match = false;
+
+						NodeRef n = assocRef.getDataListItemNodeRef();
+						Object value = nodeService.getProperty(n, propFilter.attributeQname);
+						if (PLMModel.PROP_NUTLIST_VALUE.equals(propFilter.attributeQname) && (value == null)) {
+							value = nodeService.getProperty(n, PLMModel.PROP_NUTLIST_FORMULATED_VALUE);
+						}
+
+						if (value != null) {
+							if (value instanceof String) {
+								if (criteriaValue.equals(value)) {
+									match = true;
+								}
+
+							} else if (value instanceof Boolean) {
+								if (Boolean.valueOf(criteriaValue).equals(value)) {
+									match = true;
+								}
+
+							} else if (value instanceof Double) {
+								String[] splitted = criteriaValue.split("\\|");
+								if (splitted.length == 2) {
+									if (logger.isDebugEnabled()) {
+										logger.debug("filter by range: " + splitted[0] + "->" + splitted[1] + ", value=" + value);
+									}
+									if ((splitted[0].isEmpty() || (((Double) value) >= Double.valueOf(splitted[0])))
+											&& (splitted[1].isEmpty() || (((Double) value) <= Double.valueOf(splitted[1])))) {
+										match = true;
+									}
+								} else if (splitted.length == 1) {
+									if ((splitted[0].isEmpty() || (((Double) value) >= Double.valueOf(splitted[0])))) {
+										match = true;
+									}
+								}
+							}
+						}
+
+					}
+
+				}
+				if (match) {
+					entities.add(assocRef.getEntityNodeRef());
+				}
+
+			}
+
+			nodes.retainAll(entities);
+		} else if (notEntitySourceAssocs != null) {
+			nodes.removeAll(notEntitySourceAssocs.stream().map(a -> a.getEntityNodeRef()).collect(Collectors.toList()));
+
+		}
+
+		if (logger.isDebugEnabled() && (watch != null)) {
+			watch.stop();
+			logger.debug("getSearchNodesByListCriteria " + filter.name + " executed in  " + watch.getTotalTimeSeconds() + " seconds");
+		}
+
+		return nodes;
+
+	}
+
+	private void merge(List<EntitySourceAssoc> sources, List<EntitySourceAssoc> targets, boolean retain) {
+
+		Iterator<EntitySourceAssoc> e = sources.iterator();
+		while (e.hasNext()) {
+			EntitySourceAssoc source = e.next();
+
+			boolean contains = false;
+			for (EntitySourceAssoc target : targets) {
+				if (target.getDataListItemNodeRef().equals(source.getDataListItemNodeRef())
+						&& target.getEntityNodeRef().equals(source.getEntityNodeRef())) {
+					contains = true;
+					break;
+				}
+			}
+
+			if(retain) {
+				if(!contains) {
+					e.remove();
+				}
+			} else {
+				if(contains) {
+					e.remove();
+				}
+			}
+			
+		}
+
 	}
 
 	@Override
@@ -320,83 +436,6 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		if (logger.isDebugEnabled() && (watch != null)) {
 			watch.stop();
 			logger.debug("filterByAssociations executed in  " + watch.getTotalTimeSeconds() + " seconds ");
-		}
-
-		return nodes;
-	}
-
-	/**
-	 * Take in account criteria on ing list criteria
-	 *
-	 * @return
-	 */
-	private List<NodeRef> getSearchNodesByIngListCriteria(List<NodeRef> nodes, Map<String, String> criteria) {
-
-		List<NodeRef> ingListItemsEntity = null;
-
-		StopWatch watch = null;
-		if (logger.isDebugEnabled()) {
-			watch = new StopWatch();
-			watch.start();
-		}
-
-		for (Map.Entry<String, String> criterion : criteria.entrySet()) {
-
-			String key = criterion.getKey();
-			String propValue = criterion.getValue();
-
-			if ((propValue != null) && !propValue.isEmpty()) {
-
-				// criteria on ing
-				if ((key.equals(CRITERIA_ING) || key.equals(CRITERIA_ING_AND))) {
-
-					List<NodeRef> filter = associationService
-							.getEntitySourceAssocs(extractNodeRefs(propValue), PLMModel.ASSOC_INGLIST_ING, key.equals(CRITERIA_ING)).stream()
-							.map(a -> a.getEntityNodeRef()).collect(Collectors.toList());
-
-					if (ingListItemsEntity == null) {
-						ingListItemsEntity = filter;
-					} else {
-						ingListItemsEntity.retainAll(filter);
-					}
-
-				} else if (key.equals(CRITERIA_ING_NOT)) {
-					nodes.removeAll(associationService.getEntitySourceAssocs(extractNodeRefs(propValue), PLMModel.ASSOC_INGLIST_ING, true).stream()
-							.map(a -> a.getEntityNodeRef()).collect(Collectors.toList()));
-
-				} else if (key.equals(CRITERIA_GEO_ORIGIN)) {
-
-					List<NodeRef> filter = associationService
-							.getEntitySourceAssocs(extractNodeRefs(propValue), PLMModel.ASSOC_INGLIST_GEO_ORIGIN, true).stream()
-							.map(a -> a.getEntityNodeRef()).collect(Collectors.toList());
-
-					if (ingListItemsEntity == null) {
-						ingListItemsEntity = filter;
-					} else {
-						ingListItemsEntity.retainAll(filter);
-					}
-				} else if (key.equals(CRITERIA_BIO_ORIGIN) && !propValue.isEmpty()) {
-
-					List<NodeRef> filter = associationService
-							.getEntitySourceAssocs(extractNodeRefs(propValue), PLMModel.ASSOC_INGLIST_BIO_ORIGIN, true).stream()
-							.map(a -> a.getEntityNodeRef()).collect(Collectors.toList());
-					if (ingListItemsEntity == null) {
-						ingListItemsEntity = filter;
-					} else {
-						ingListItemsEntity.retainAll(filter);
-					}
-
-				}
-			}
-		}
-
-		if (ingListItemsEntity != null) {
-			nodes.retainAll(ingListItemsEntity);
-		}
-
-		if (logger.isDebugEnabled() && (watch != null)) {
-			watch.stop();
-			logger.debug("getSearchNodesByIngListCriteria executed in  " + watch.getTotalTimeSeconds() + " seconds ");
 		}
 
 		return nodes;
@@ -497,138 +536,6 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 		return nodes;
 
-	}
-
-	/**
-	 * Take in account criteria on ing list criteria
-	 *
-	 * @return
-	 */
-	private List<NodeRef> getSearchNodesByLabelingCriteria(List<NodeRef> nodes, Map<String, String> criteria) {
-
-		List<NodeRef> labelingListItemsEntity = new ArrayList<>();
-
-		StopWatch watch = null;
-		if (logger.isDebugEnabled()) {
-			watch = new StopWatch();
-			watch.start();
-		}
-
-		if (criteria.containsKey(CRITERIA_PACK_LABEL)) {
-
-			String propValue = criteria.get(CRITERIA_PACK_LABEL);
-
-			// criteria on label
-			if ((propValue != null) && !propValue.isEmpty()) {
-
-				for (EntitySourceAssoc assocRef : associationService.getEntitySourceAssocs(extractNodeRefs(propValue), PackModel.ASSOC_LL_LABEL,
-						true)) {
-
-					NodeRef n = assocRef.getDataListItemNodeRef();
-
-					if (criteria.containsKey(CRITERIA_PACK_LABEL_POSITION) && !criteria.get(CRITERIA_PACK_LABEL_POSITION).isEmpty()) {
-
-						if (criteria.get(CRITERIA_PACK_LABEL_POSITION).equals("\"" + nodeService.getProperty(n, PackModel.PROP_LL_POSITION) + "\"")) {
-							labelingListItemsEntity.add(assocRef.getEntityNodeRef());
-						}
-					} else {
-
-						labelingListItemsEntity.add(assocRef.getEntityNodeRef());
-					}
-				}
-
-				nodes.retainAll(labelingListItemsEntity);
-
-			}
-
-		}
-
-		if (logger.isDebugEnabled() && (watch != null)) {
-			watch.stop();
-			logger.debug("getSearchNodesByLabelingCriteria executed in  " + watch.getTotalTimeSeconds() + " seconds ");
-		}
-
-		return nodes;
-	}
-
-	/**
-	 * Take in account criteria on label claim list criteria
-	 *
-	 * @return
-	 */
-	private List<NodeRef> getSearchNodesByListCriteria(List<NodeRef> nodes, Map<String, String> criteria, String criteriaAssocString,
-			QName criteriaAssoc, QName criteriaAssocValue, String criteriaValue) {
-
-		new HashMap<>();
-
-		List<NodeRef> entities = new ArrayList<>();
-
-		StopWatch watch = null;
-		if (logger.isDebugEnabled()) {
-			watch = new StopWatch();
-			watch.start();
-		}
-
-		if (criteria.containsKey(criteriaAssocString)) {
-
-			String propValue = criteria.get(criteriaAssocString);
-
-			if ((propValue != null) && !propValue.isEmpty()) {
-
-				for (EntitySourceAssoc assocRef : associationService.getEntitySourceAssocs(extractNodeRefs(propValue), criteriaAssoc, true)) {
-
-					NodeRef n = assocRef.getDataListItemNodeRef();
-					if ((criteriaAssocValue != null) && (criteriaValue != null) && !criteriaValue.isEmpty()) {
-						Object value = nodeService.getProperty(n, criteriaAssocValue);
-						if (PLMModel.PROP_NUTLIST_VALUE.equals(criteriaAssocValue) && (value == null)) {
-							value = nodeService.getProperty(n, PLMModel.PROP_NUTLIST_FORMULATED_VALUE);
-						}
-
-						if (value != null) {
-							if (value instanceof String) {
-								if (criteriaValue.equals(value)) {
-									entities.add(assocRef.getEntityNodeRef());
-								}
-
-							} else if (value instanceof Boolean) {
-								if (Boolean.valueOf(criteriaValue).equals(value)) {
-									entities.add(assocRef.getEntityNodeRef());
-								}
-
-							} else if (value instanceof Double) {
-								String[] splitted = criteriaValue.split("\\|");
-								if (splitted.length == 2) {
-									if (logger.isDebugEnabled()) {
-										logger.debug("filter by range: " + splitted[0] + "->" + splitted[1] + ", value=" + value);
-									}
-									if ((splitted[0].isEmpty() || (((Double) value) >= Double.valueOf(splitted[0])))
-											&& (splitted[1].isEmpty() || (((Double) value) <= Double.valueOf(splitted[1])))) {
-										entities.add(assocRef.getEntityNodeRef());
-									}
-								} else if (splitted.length == 1) {
-									if ((splitted[0].isEmpty() || (((Double) value) >= Double.valueOf(splitted[0])))) {
-										entities.add(assocRef.getEntityNodeRef());
-									}
-								}
-							}
-						}
-					} else {
-						entities.add(assocRef.getEntityNodeRef());
-					}
-
-				}
-
-				nodes.retainAll(entities);
-			}
-		}
-
-		if (logger.isDebugEnabled() && (watch != null)) {
-			watch.stop();
-			logger.debug("getSearchNodesByListCriteria " + criteriaAssoc.toPrefixString(namespaceService) + " executed in  "
-					+ watch.getTotalTimeSeconds() + " seconds");
-		}
-
-		return nodes;
 	}
 
 	private List<NodeRef> getSearchNodesByWUsedCriteria(List<NodeRef> nodes, Map<String, String> criteria, String criteriaAssocString,
