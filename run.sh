@@ -20,6 +20,10 @@ start() {
    	 	docker-compose -f $COMPOSE_FILE_PATH -f docker-compose.override.yml up -d --remove-orphans
 }
 
+pull() {
+   	 	docker-compose -f $COMPOSE_FILE_PATH -f docker-compose.override.yml pull 
+}
+
 down() {
 	if [ -d becpg-enterprise ]; then
 	    cd becpg-enterprise
@@ -75,7 +79,7 @@ install() {
 }
 
 tail() {
-    docker-compose -f $COMPOSE_FILE_PATH logs -f --tail=50 becpg
+    docker-compose -f $COMPOSE_FILE_PATH logs -f --tail=50 
 }
 
 test() {
@@ -100,6 +104,11 @@ case "$1" in
     down
     ;;
   start)
+    start
+    tail
+    ;;
+  pull)
+    pull
     start
     tail
     ;;
