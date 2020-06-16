@@ -78,7 +78,7 @@ public abstract class SimpleListRequirementScanner<T extends SimpleListDataItem>
 									ReqCtrlListDataItem reqCtrl = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message,
 											listDataItem.getCharactNodeRef(), new ArrayList<NodeRef>(), RequirementDataType.Specification);
 
-									if (specification.getRegulatoryCode() != null) {
+									if (specification.getRegulatoryCode() != null && !specification.getRegulatoryCode().isBlank()) {
 										reqCtrl.setRegulatoryCode(specification.getRegulatoryCode());
 									} else {
 										reqCtrl.setRegulatoryCode(specification.getName());
