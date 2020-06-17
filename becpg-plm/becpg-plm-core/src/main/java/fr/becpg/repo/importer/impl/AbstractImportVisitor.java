@@ -28,7 +28,6 @@ import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.dictionary.TypeDefinition;
-import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.MLText;
@@ -38,7 +37,6 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -109,7 +107,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	protected HierarchyService hierarchyService;
 
 	protected Repository repositoryHelper;
-	
+
 	protected AssociationService associationService;
 
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
@@ -194,11 +192,10 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 				assocName = QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name));
 			}
 
-			
 			if (importContext.getParentNodeRef() == null) {
 				throw new ImporterException(I18NUtil.getMessage(ImportHelper.MSG_ERROR_NO_PARENT));
 			}
-			
+
 			nodeRef = nodeService.createNode(importContext.getParentNodeRef(), ContentModel.ASSOC_CONTAINS, assocName, importContext.getType(),
 					ImportHelper.cleanProperties(properties)).getChildRef();
 		} else if (importContext.isDoUpdate()) {
@@ -212,12 +209,13 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 				if ((entry.getValue() != null) && ImportHelper.NULL_VALUE.equals(entry.getValue())) {
 					nodeService.removeProperty(nodeRef, entry.getKey());
 				} else {
-					
-					if(entry.getValue()!=null && entry.getValue() instanceof MLText){
+
+					if ((entry.getValue() != null) && (entry.getValue() instanceof MLText)) {
 						boolean mlAware = MLPropertyInterceptor.isMLAware();
 						MLPropertyInterceptor.setMLAware(true);
 						try {
-							nodeService.setProperty(nodeRef, entry.getKey(), ImportHelper.mergeMLText((MLText)entry.getValue(),(MLText)nodeService.getProperty(nodeRef, entry.getKey())));
+							nodeService.setProperty(nodeRef, entry.getKey(),
+									ImportHelper.mergeMLText((MLText) entry.getValue(), (MLText) nodeService.getProperty(nodeRef, entry.getKey())));
 						} finally {
 							MLPropertyInterceptor.setMLAware(mlAware);
 						}
@@ -306,7 +304,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 								}
 
 							} else {
-								if (values.get(z_idx) != null && !values.get(z_idx).isEmpty()) {
+								if ((values.get(z_idx) != null) && !values.get(z_idx).isEmpty()) {
 									value = findPropertyTargetNodeByValue(importContext, propDef, attributeMapping, values.get(z_idx), properties);
 								}
 							}
@@ -383,7 +381,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 		return ret.toString();
 	}
-	
+
 	// DO NOT REMOVED USED in FORMULA
 	public String findNut(String nutCode) {
 		NodeRef ret = findCharact(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, nutCode);
@@ -394,7 +392,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 		return ret.toString();
 	}
-	
+
 	// DO NOT REMOVED USED in FORMULA
 	public String findLabelClaim(String labelClaimCode) {
 		NodeRef ret = findCharact(PLMModel.TYPE_LABEL_CLAIM, PLMModel.PROP_LABEL_CLAIM_CODE, labelClaimCode);
@@ -405,7 +403,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 		return ret.toString();
 	}
-	
+
 	// DO NOT REMOVED USED in FORMULA
 	public String findAllergen(String allergenCode) {
 		NodeRef ret = findCharact(PLMModel.TYPE_ALLERGEN, PLMModel.PROP_ALLERGEN_CODE, allergenCode);
@@ -416,7 +414,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 		return ret.toString();
 	}
-	
+
 	// DO NOT REMOVED USED in FORMULA
 	public String findCharactByProperty(String type, String property, String name) {
 		NodeRef ret = findCharact(QName.createQName(type, namespaceService), QName.createQName(property, namespaceService), name);
@@ -454,7 +452,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 					AssociationDefinition assocDef = (AssociationDefinition) column;
 					String value = values.get(z_idx);
 
-					if (value != null && !value.isEmpty() && !ImportHelper.NULL_VALUE.equals(value)) {
+					if ((value != null) && !value.isEmpty() && !ImportHelper.NULL_VALUE.equals(value)) {
 						QName targetClass = ((AttributeMapping) attributeMapping).getTargetClass();
 						logger.debug("importAssociations targetClass" + targetClass);
 						List<NodeRef> targetRefs = findTargetNodesByValue(importContext, assocDef.isTargetMany(),
@@ -465,33 +463,14 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 							throw new ImporterException(I18NUtil.getMessage(ImportHelper.MSG_ERROR_GET_ASSOC_TARGET, assocDef.getName(), value));
 						}
 
-						// remove associations if needed
-						List<AssociationRef> assocRefs = nodeService.getTargetAssocs(nodeRef, assocDef.getName());
-						for (AssociationRef assocRef : assocRefs) {
-							NodeRef targetRef = assocRef.getTargetRef();
-							if (targetRefs.contains(targetRef)) {
-								logger.debug("Assoc already present");
-								targetRefs.remove(targetRef);
-							} else {
-								logger.debug("Remove assocs :" + assocDef.getName());
-								nodeService.removeAssociation(nodeRef, targetRef, assocDef.getName());
-							}
-						}
+						associationService.update(nodeRef, assocDef.getName(), targetRefs);
 
-						// add new associations, the rest
-						for (NodeRef targetRef : targetRefs) {
-							logger.debug("Add assocs :" + assocDef.getName());
-							nodeService.createAssociation(nodeRef, targetRef, assocDef.getName());
-						}
-					} else if(value != null && value.isEmpty()){
-						logger.debug("Null value, remove assocs :" + assocDef.getName());
-						List<NodeRef> assocs = associationService.getTargetAssocs(nodeRef, assocDef.getName());
-						
-						for(NodeRef targetAssoc : assocs){
-							nodeService.removeAssociation(nodeRef, targetAssoc, assocDef.getName());
-						}
+					} else if ((value != null) && value.isEmpty()) {
+
+						associationService.update(nodeRef, assocDef.getName(), new ArrayList<>());
+
 					} else if (assocDef.isTargetMandatory()) {
-					
+
 						throw new ImporterException(I18NUtil.getMessage(ImportHelper.MSG_ERROR_GET_ASSOC_TARGET, assocDef.getName(), value));
 					}
 				}
@@ -568,7 +547,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 								NodeRef fileNodeRef = createFile(targetFolderNodeRef, file.getName(), file.getName());
 								String mimetype = mimetypeService.guessMimetype(file.getName());
 								try (FileInputStream in = new FileInputStream(file);) {
-								
+
 									ContentCharsetFinder charsetFinder = mimetypeService.getContentCharsetFinder();
 									Charset charset = charsetFinder.getCharset(in, mimetype);
 									String encoding = charset.name();
@@ -676,7 +655,13 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			}
 
 		} finally {
-			IOUtils.closeQuietly(in);
+			try {
+				if (in != null) {
+					in.close();
+				}
+			} catch (final IOException ioe) {
+				// ignore
+			}
 		}
 
 	}
@@ -693,19 +678,17 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		return fileNodeRef;
 	}
 
-
 	@Override
-	public ImportContext loadClassMapping(Object mapping, ImportContext importContext, MappingLoader mappingLoader)
-			throws MappingException {
-		
+	public ImportContext loadClassMapping(Object mapping, ImportContext importContext, MappingLoader mappingLoader) throws MappingException {
+
 		return mappingLoader.loadClassMapping(mapping, importContext);
 	}
-	
+
 	@Override
 	public ImportContext loadMappingColumns(Element mappingElt, List<String> columns, ImportContext importContext) throws MappingException {
 
 		ClassMapping classMapping = importContext.getClassMappings().get(importContext.getType());
-		logger.debug("Type: " + importContext.getType() + ", find matching class mapping: " + classMapping != null);
+		logger.debug(("Type: " + importContext.getType() + ", find matching class mapping: " + classMapping) != null);
 
 		// check COLUMNS respects the mapping and the class attributes
 		List<AbstractAttributeMapping> columnsAttributeMapping = new ArrayList<>();
@@ -723,7 +706,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 						logger.debug("Find matching attribute mapping columnId : " + columnId);
 						columnsAttributeMapping.add(attrMapping);
 						isAttributeMapped = true;
-						if(attrMapping instanceof AttributeMapping && ((AttributeMapping) attrMapping).isMLText()) {
+						if ((attrMapping instanceof AttributeMapping) && ((AttributeMapping) attrMapping).isMLText()) {
 							isMLPropertyDef = true;
 						}
 						break;
@@ -838,18 +821,20 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	 *
 	 * @param importContext
 	 *            the import context
-	 * @param propDef 
+	 * @param propDef
 	 * @param type
 	 *            the type
 	 * @param properties
 	 *            the properties
-	 * @param parentRef TODO
+	 * @param parentRef
+	 *            TODO
 	 * @param codeQName
 	 *            the code q name
 	 * @return the node ref
 	 * @throws ImporterException
 	 */
-	protected NodeRef findNodeByKeyOrCode(ImportContext importContext, PropertyDefinition propDef, QName type, Map<QName, Serializable> properties, NodeRef parentRef) throws ImporterException {
+	protected NodeRef findNodeByKeyOrCode(ImportContext importContext, PropertyDefinition propDef, QName type, Map<QName, Serializable> properties,
+			NodeRef parentRef) throws ImporterException {
 
 		NodeRef nodeRef = null;
 
@@ -861,22 +846,23 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 		// nodeColumnKeys
 		if ((classMapping != null) && !classMapping.getNodeColumnKeys().isEmpty()) {
-			
+
 			for (QName attribute : classMapping.getNodeColumnKeys()) {
 
 				if (logger.isDebugEnabled()) {
 					logger.debug("attribute: " + attribute + " value: " + properties.get(attribute));
 				}
 
-				if (ContentModel.ASSOC_CONTAINS.isMatch(attribute) || BeCPGModel.PROP_LV_VALUE.isMatch(attribute) || BeCPGModel.PROP_LKV_VALUE.isMatch(attribute)) {
-					// query by path				
+				if (ContentModel.ASSOC_CONTAINS.isMatch(attribute) || BeCPGModel.PROP_LV_VALUE.isMatch(attribute)
+						|| BeCPGModel.PROP_LKV_VALUE.isMatch(attribute)) {
+					// query by path
 					NodeRef folderNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(),
 							importContext.getPath());
-					
+
 					queryBuilder.parent(folderNodeRef);
 
 					if (BeCPGModel.PROP_LV_VALUE.isMatch(attribute) || BeCPGModel.PROP_LKV_VALUE.isMatch(attribute)) {
-						if (properties.get(attribute) != null && properties.get(attribute) instanceof MLText) {
+						if ((properties.get(attribute) != null) && (properties.get(attribute) instanceof MLText)) {
 							queryBuilder.andPropEquals(attribute, ((MLText) properties.get(attribute)).getDefaultValue());
 						} else if (properties.get(attribute) != null) {
 							queryBuilder.andPropEquals(attribute, properties.get(attribute).toString());
@@ -905,17 +891,16 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 						queryBuilder.andPropEquals(attribute, value);
 					}
 					doQuery = true;
-				} else if(doQuery == false){
+				} else if (doQuery == false) {
 					logger.warn("Value of NodeColumnKey " + attribute + " is null (or it is not a property).");
 				}
 			}
-			
-			
+
 		} else {
 			logger.debug("nodeColumnKeys is empty type: " + type);
 
 			// look for codeAspect
-			if (entityDictionaryService.getType(type) != null && entityDictionaryService.getType(type).getDefaultAspects() != null) {
+			if ((entityDictionaryService.getType(type) != null) && (entityDictionaryService.getType(type).getDefaultAspects() != null)) {
 				for (AspectDefinition aspectDef : entityDictionaryService.getType(type).getDefaultAspects()) {
 					if (aspectDef.getName().equals(BeCPGModel.ASPECT_CODE) && (properties.get(BeCPGModel.PROP_CODE) != null)) {
 						if (NodeRef.isNodeRef(properties.get(BeCPGModel.PROP_CODE).toString())) {
@@ -940,12 +925,12 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 					return new NodeRef(name.toString());
 				} else {
 					queryBuilder.andPropEquals(propName, name);
-					//#3433 by default look by path or provide mapping
-					if( ContentModel.PROP_NAME.equals(propName) && !(propDef!=null && BeCPGModel.PROP_PARENT_LEVEL.equals(propDef.getName()))) {
+					// #3433 by default look by path or provide mapping
+					if (ContentModel.PROP_NAME.equals(propName) && !((propDef != null) && BeCPGModel.PROP_PARENT_LEVEL.equals(propDef.getName()))) {
 						queryBuilder.parent(importContext.getParentNodeRef());
 					}
 					doQuery = true;
-				} 
+				}
 			} else if ((properties.get(ContentModel.PROP_NAME) != null) && NodeRef.isNodeRef(properties.get(ContentModel.PROP_NAME).toString())) {
 				return new NodeRef(properties.get(ContentModel.PROP_NAME).toString());
 			}
@@ -956,18 +941,18 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		}
 
 		if (doQuery) {
-			
 
-			//#3433
-			if(entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM) && propDef!=null && BeCPGModel.PROP_PARENT_LEVEL.equals(propDef.getName())) {
+			// #3433
+			if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM) && (propDef != null)
+					&& BeCPGModel.PROP_PARENT_LEVEL.equals(propDef.getName())) {
 				queryBuilder.parent(importContext.getParentNodeRef());
 			}
-			
-			if(parentRef != null) {
+
+			if (parentRef != null) {
 				queryBuilder.inParent(parentRef);
 			}
 			logger.debug("findNodeByKeyOrCode: " + queryBuilder.toString());
-			
+
 			for (NodeRef tmpNodeRef : queryBuilder.inDB().ftsLanguage().list()) {
 				if (!nodeService.hasAspect(tmpNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)
 						&& !nodeService.hasAspect(tmpNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)) {
@@ -1002,14 +987,14 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 				for (String v : arrValue) {
 					if (!v.isEmpty()) {
-						NodeRef targetNodeRef = findTargetNodeByValue(importContext,null, targetClass, v, assoc);
+						NodeRef targetNodeRef = findTargetNodeByValue(importContext, null, targetClass, v, assoc);
 						if (targetNodeRef != null) {
 							targetRefs.add(targetNodeRef);
 						}
 					}
 				}
 			} else {
-				NodeRef targetNodeRef = findTargetNodeByValue(importContext,null, targetClass, value, assoc);
+				NodeRef targetNodeRef = findTargetNodeByValue(importContext, null, targetClass, value, assoc);
 				if (targetNodeRef != null) {
 					targetRefs.add(targetNodeRef);
 				}
@@ -1080,7 +1065,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		QName targetClass = propDef.getDataType().getName();
 		if ((attributeMapping instanceof AttributeMapping) && (((AttributeMapping) attributeMapping).getTargetClass() != null)) {
 			targetClass = ((AttributeMapping) attributeMapping).getTargetClass();
-		} else if( propDef!=null && BeCPGModel.PROP_PARENT_LEVEL.equals(propDef.getName()) ) {
+		} else if ((propDef != null) && BeCPGModel.PROP_PARENT_LEVEL.equals(propDef.getName())) {
 			targetClass = importContext.getType();
 		}
 		return findTargetNodeByValue(importContext, propDef, targetClass, value, null);
@@ -1093,34 +1078,36 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	 *
 	 * @param importContext
 	 *            the import context
-	 * @param propDef 
+	 * @param propDef
 	 * @param type
 	 *            the type
 	 * @param value
 	 *            the value
-	 * @param assoc TODO
+	 * @param assoc
+	 *            TODO
 	 * @return the node ref
 	 * @throws InvalidTargetNodeException
 	 * @throws ImporterException
 	 */
-	protected NodeRef findTargetNodeByValue(ImportContext importContext, PropertyDefinition propDef, QName type, String value, QName assoc) throws ImporterException {
+	protected NodeRef findTargetNodeByValue(ImportContext importContext, PropertyDefinition propDef, QName type, String value, QName assoc)
+			throws ImporterException {
 		NodeRef nodeRef = null;
 		NodeRef parentRef = null;
 		String assocPath = null;
-		
+
 		Map<QName, Serializable> properties = new HashMap<>();
 
 		ClassMapping classMapping = importContext.getClassMappings().get(type);
 		boolean doQuery = false;
 
-		if(classMapping != null) {
+		if (classMapping != null) {
 			assocPath = classMapping.getPaths().get(assoc);
 		}
-		
+
 		// look in the cache
 		String key = String.format(CACHE_KEY, type, value);
-		key = StringUtils.isEmpty(assocPath) ? key  : key + assocPath;
-		
+		key = StringUtils.isEmpty(assocPath) ? key : key + assocPath;
+
 		if (importContext.getCacheNodes().containsKey(key)) {
 			nodeRef = importContext.getCacheNodes().get(key);
 		} else {
@@ -1155,18 +1142,18 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 			if (doQuery) {
 
-				if(classMapping != null && StringUtils.isNotEmpty(assocPath)) {
+				if ((classMapping != null) && StringUtils.isNotEmpty(assocPath)) {
 					parentRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(),
 							AbstractBeCPGQueryBuilder.encodePath(assocPath));
 				}
-				
-				
+
 				nodeRef = findNodeByKeyOrCode(importContext, propDef, type, properties, parentRef);
 
 				if (nodeRef == null) {
 					String typeTitle = type.toString();
 					TypeDefinition typeDef = entityDictionaryService.getType(type);
-					if ((typeDef != null) && (typeDef.getTitle(entityDictionaryService.getDictionaryService()) != null) && !typeDef.getTitle(entityDictionaryService.getDictionaryService()).isEmpty()) {
+					if ((typeDef != null) && (typeDef.getTitle(entityDictionaryService.getDictionaryService()) != null)
+							&& !typeDef.getTitle(entityDictionaryService.getDictionaryService()).isEmpty()) {
 						typeTitle = typeDef.getTitle(entityDictionaryService.getDictionaryService());
 					}
 
@@ -1181,7 +1168,5 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 		return nodeRef;
 	}
-
-	
 
 }
