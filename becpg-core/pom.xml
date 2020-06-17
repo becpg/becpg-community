@@ -37,42 +37,14 @@
 		<dependency>
 			<groupId>fr.becpg</groupId>
 			<artifactId>becpg-report</artifactId>
-			<version>2.2.5</version>
+			<version>3.2.0</version>
 			<classifier>client</classifier>
 			<type>jar</type>
 			<exclusions>
-				<exclusion>
-					<groupId>org.eclipse.birt.runtime</groupId>
-					<artifactId>org.eclipse.birt.runtime</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>log4j</groupId>
-					<artifactId>log4j</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.apache.poi</groupId>
-					<artifactId>poi-ooxml</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>fr.becpg.birt</groupId>
-					<artifactId>birt-controls-lib</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>fr.becpg.birt</groupId>
-					<artifactId>birt-controls-lib-ui</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.apache.poi</groupId>
-					<artifactId>poi-ooxml-schemas</artifactId>
-				</exclusion>
+				  <exclusion>
+			            <groupId>*</groupId>
+			            <artifactId>*</artifactId>
+			        </exclusion>
 			</exclusions>
 		</dependency>
 
