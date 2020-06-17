@@ -500,7 +500,7 @@ YAHOO.Bubbling
                      actionName : "product-metadata",
                      hideLabel: true,
                      evaluate : function(asset, entity) {
-                        return asset.name != null && asset.permissions.edit && (asset.name === "compoList" || asset.name === "processList" || asset.name === "packagingList" ) && entity != null && entity.userAccess.edit;
+                        return asset.name != null && asset.permissions.changeState && (asset.name === "compoList" || asset.name === "processList" || asset.name === "packagingList" ) && entity != null && entity.userAccess.edit;
                      },
                      fn : function(instance) {
 
@@ -547,7 +547,7 @@ YAHOO.Bubbling
          actionName : "rapid-link",
          right : false,
          evaluate : function(asset, entity) {
-            return asset.name != null && asset.permissions.edit && (asset.name === "compoList" || asset.name === "processList" || asset.name === "packagingList" ) && entity != null && entity.userAccess.edit ;
+            return asset.name != null && asset.permissions.changeState && (asset.name === "compoList" || asset.name === "processList" || asset.name === "packagingList" ) && entity != null && entity.userAccess.edit ;
          },
          createWidget : function(containerDiv, instance) {
 
