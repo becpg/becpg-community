@@ -1341,7 +1341,7 @@
 					<show id="pjt:completionPercent" />
 					<show id="pjt:tlStart" />
 					<show id="pjt:tlEnd" />
-					<show id="pjt:tlWorkflowInstance" />
+					<!--  <show id="pjt:tlWorkflowInstance" /> -->
 					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 			</form>
