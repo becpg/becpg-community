@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (C) 2010-2018 beCPG. 
+ *  Copyright (C) 2010-2020 beCPG. 
  *   
  *  This file is part of beCPG 
  *   
@@ -247,11 +247,15 @@
 								   		ret = scope.renderers[p_type].call(scope, oRecord, data, p_label, datagrid, i, ii, elCell, oColumn);
 								   } else {  
 						
-									if(oColumn.tooltip){
-										ret = beCPG.util.createTextTooltip(data.displayValue,oColumn.tooltip);
-									} else { 
-									   	ret = $links($html(data.displayValue));
-									}   
+									   if(oColumn.numberFormat && data.value!=null){
+										   ret = beCPG.util.formatNumber(oColumn.numberFormat, data.value);	   
+									   }else {
+											if(oColumn.tooltip){
+												ret = beCPG.util.createTextTooltip(data.displayValue,oColumn.tooltip);
+											} else { 
+											   	ret = $links($html(data.displayValue));
+											}   
+									   }
 								  }
 							   } catch(e){
 								   console.log("Error in column renderer:"+p_type+" - "+p_label+" error "+e);

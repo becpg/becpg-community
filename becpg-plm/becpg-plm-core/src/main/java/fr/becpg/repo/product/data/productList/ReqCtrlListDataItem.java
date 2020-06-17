@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2018 beCPG. 
+ * Copyright (C) 2010-2020 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -43,13 +43,15 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 	private static final long serialVersionUID = -3851143080201225383L;
 	private RequirementType reqType;
 	private MLText reqMlMessage;
-	private Integer sort;
 	private NodeRef charact;
 	private List<NodeRef> sources = new LinkedList<>();
 	private RequirementDataType reqDataType;
 	private String regulatoryCode;
-	private String formulationChainId;
 	
+	// Do not put in hashCode and equals
+	private String formulationChainId;
+	// Do not put in hashCode and equals
+	private Integer sort;
 	
 	
 	
@@ -178,7 +180,7 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(charact, regulatoryCode, reqDataType, reqMlMessage, reqType);
+		result = prime * result + Objects.hash(charact, regulatoryCode, reqDataType, reqMlMessage, reqType, sources);
 		return result;
 	}
 
@@ -192,7 +194,7 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 			return false;
 		ReqCtrlListDataItem other = (ReqCtrlListDataItem) obj;
 		return Objects.equals(charact, other.charact) && Objects.equals(regulatoryCode, other.regulatoryCode) && reqDataType == other.reqDataType
-				&& Objects.equals(reqMlMessage, other.reqMlMessage) && reqType == other.reqType;
+				&& Objects.equals(reqMlMessage, other.reqMlMessage) && reqType == other.reqType && Objects.equals(sources, other.sources);
 	}
 
 	@Override

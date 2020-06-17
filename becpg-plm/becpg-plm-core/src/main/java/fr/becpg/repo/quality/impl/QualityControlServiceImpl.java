@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2018 beCPG.
+ * Copyright (C) 2010-2020 beCPG.
  *
  * This file is part of beCPG
  *
@@ -133,27 +133,24 @@ public class QualityControlServiceImpl implements QualityControlService {
 				logger.debug("create sample");
 
 				String freqText = sdl.getFreqText();
-				Date sampleDateTime = batchStart;
+				Date sampleDateTime = (batchStart != null ? batchStart : new Date());
 				List<Date> sampleDates = new ArrayList<Date>();
 				Calendar cal = Calendar.getInstance();
 
 				// create samples to take
 
 				if(freqText != null && !freqText.isEmpty()){
-					if (sampleDateTime != null) {
-						sampleDates.add(sampleDateTime);
-					}
 					String[] freqs = freqText.split(",");
 					for(String freq : freqs){
 						Integer freqDigit = null;
 						String freqUnit = null;
 						Integer timeToAdd = null;
 						String timeToAddStr = null;
-						Pattern p = Pattern.compile("[1-9]+[DMWY]+");
+						Pattern p = Pattern.compile("[0-9]+[DMWY]+");
 						Matcher m = p.matcher(freq.trim());
 						if (m.find()) {
-							freqDigit = Integer.parseInt(freq.replaceAll("[^1-9]", ""));
-							freqUnit = freq.trim().replaceAll("[1-9]", "");
+							freqDigit = Integer.parseInt(freq.replaceAll("[^0-9]", ""));
+							freqUnit = freq.trim().replaceAll("[0-9]", "");
 							switch(freqUnit) {
 							case "D":
 								timeToAdd = Calendar.DAY_OF_YEAR;
@@ -199,6 +196,9 @@ public class QualityControlServiceImpl implements QualityControlService {
 					case "/8hours":
 						freqInHour = 8;
 						break;
+					default: 
+						freqInHour = 1;
+			            break;
 					}
 
 					if ((batchDuration != null) && !"/batch".equals(freq)) {
@@ -214,12 +214,14 @@ public class QualityControlServiceImpl implements QualityControlService {
 						}
 					}
 				}
-
-				for(Date sampleDate : sampleDates){
-					// several samples must be taken
-					for (int z_idx2 = 0; z_idx2 < sdl.getQty(); z_idx2++) {
-						samplingList.add(new SamplingListDataItem(sampleDate, null, sdl.getControlPoint(), sdl.getControlStep(),
-								sdl.getSamplingGroup(), sdl.getControlingGroup(), sdl.getFixingGroup(), sdl.getReaction()));
+				if (!sampleDates.isEmpty()) {
+					qualityControlData.setNextAnalysisDate(sampleDates.get(0));
+					for(Date sampleDate : sampleDates){
+						// several samples must be taken
+						for (int z_idx2 = 0; z_idx2 < sdl.getQty(); z_idx2++) {
+							samplingList.add(new SamplingListDataItem(sampleDate, null, sdl.getControlPoint(), sdl.getControlStep(),
+									sdl.getSamplingGroup(), sdl.getControlingGroup(), sdl.getFixingGroup(), sdl.getReaction()));
+						}
 					}
 				}
 			}

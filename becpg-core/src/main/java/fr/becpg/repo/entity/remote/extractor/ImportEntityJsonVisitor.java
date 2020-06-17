@@ -210,8 +210,7 @@ public class ImportEntityJsonVisitor {
 		}
 
 		if (entity.has(RemoteEntityService.ELEM_DATALISTS)) {
-			visitDataLists(entityNodeRef, entity.getJSONObject(RemoteEntityService.ELEM_DATALISTS),
-					extractParams(entity, "replaceExistingLists", false));
+			visitDataLists(entity, entityNodeRef, entity.getJSONObject(RemoteEntityService.ELEM_DATALISTS));
 		}
 
 		return entityNodeRef;
@@ -292,8 +291,11 @@ public class ImportEntityJsonVisitor {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void visitDataLists(NodeRef entityNodeRef, JSONObject datalists, boolean replaceExisting) throws JSONException, BeCPGException {
+	private void visitDataLists(JSONObject entity, NodeRef entityNodeRef, JSONObject datalists) throws JSONException, BeCPGException {
 
+		boolean replaceExisting = extractParams(entity, "replaceExistingLists", false);
+		String dataListsToReplace =  extractParams(entity, "dataListsToReplace", "");
+		
 		NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
 		if (listContainerNodeRef == null) {
 			listContainerNodeRef = entityListDAO.createListContainer(entityNodeRef);
@@ -324,9 +326,10 @@ public class ImportEntityJsonVisitor {
 				listItemToKeep.add(visit(listItem, false, null));
 			}
 
-			if (replaceExisting) {
+			if (replaceExisting || dataListsToReplace.contains(key)) {
 				for (NodeRef tmp : entityListDAO.getListItems(listNodeRef, dataListQName)) {
 					if (!listItemToKeep.contains(tmp)) {
+						nodeService.addAspect(tmp, ContentModel.ASPECT_TEMPORARY, null);
 						nodeService.deleteNode(tmp);
 					}
 				}

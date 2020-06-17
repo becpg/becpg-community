@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2018 beCPG.
+ * Copyright (C) 2010-2020 beCPG.
  *
  * This file is part of beCPG
  *
@@ -18,11 +18,11 @@
 package fr.becpg.repo.product.formulation;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -32,17 +32,16 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.PLMModel;
-import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
-import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.impl.BeCPGHashCodeBuilder;
 import fr.becpg.repo.repository.model.FormulatedCharactDataItem;
 
 /**
@@ -68,7 +67,7 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 	}
 
 	@Override
-	public boolean process(ProductData productData) throws FormulateException {
+	public boolean process(ProductData productData) {
 
 		// Add child requirements
 		if (productData.getReqCtrlList() != null) {
@@ -87,21 +86,23 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 			NodeRef componentProductNodeRef = compoListDataItem.getProduct();
 			if (componentProductNodeRef != null) {
 				ProductData componentProductData = alfrescoRepository.findOne(componentProductNodeRef);
-				if ((!componentProductNodeRef.equals(productData.getNodeRef()) && (componentProductData instanceof SemiFinishedProductData))
-						|| (componentProductData instanceof FinishedProductData) || (componentProductData instanceof RawMaterialData)) {
-					if ((componentProductData.getCompoListView() != null) && (componentProductData.getReqCtrlList() != null)) {
-						for (ReqCtrlListDataItem tmp : componentProductData.getReqCtrlList()) {
-							if (tmp.getReqDataType() != RequirementDataType.Completion) {
-								
-								ReqCtrlListDataItem reqCtl	= new ReqCtrlListDataItem(null, tmp.getReqType(), tmp.getReqMlMessage(), tmp.getCharact(),
-										tmp.getSources(), tmp.getReqDataType() != null ? tmp.getReqDataType() : RequirementDataType.Nutrient);
-								
-								reqCtl.setRegulatoryCode(tmp.getRegulatoryCode());
-								
-								reqCtrlList.add(reqCtl);
-							}
+				if (((!componentProductNodeRef.equals(productData.getNodeRef()) && (componentProductData instanceof SemiFinishedProductData))
+						|| (componentProductData instanceof FinishedProductData) || (componentProductData instanceof RawMaterialData)
+
+				) && ((componentProductData.getCompoListView() != null) && (componentProductData.getReqCtrlList() != null))
+
+				) {
+					for (ReqCtrlListDataItem tmp : componentProductData.getReqCtrlList()) {
+						if (tmp.getReqDataType() != RequirementDataType.Completion) {
+
+							ReqCtrlListDataItem reqCtl = new ReqCtrlListDataItem(null, tmp.getReqType(), tmp.getReqMlMessage(), tmp.getCharact(),
+									tmp.getSources(), tmp.getReqDataType() != null ? tmp.getReqDataType() : RequirementDataType.Nutrient);
+
+							reqCtl.setRegulatoryCode(tmp.getRegulatoryCode());
+							reqCtrlList.add(reqCtl);
 						}
 					}
+
 				}
 			}
 		}
@@ -117,29 +118,9 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 
 			for (ReqCtrlListDataItem r : reqCtrlList) {
 				if (r.getNodeRef() != null) {
-					if (dbReqCtrlList.containsKey(r.getKey())) {
-						duplicates.add(r);
-						// Merge sources
-						for (NodeRef tmpref : r.getSources()) {
-							if (!dbReqCtrlList.get(r.getKey()).getSources().contains(tmpref)) {
-								dbReqCtrlList.get(r.getKey()).getSources().add(tmpref);
-							}
-						}
-					} else {
-						dbReqCtrlList.put(r.getKey(), r);
-					}
+					merge(dbReqCtrlList, r, duplicates);
 				} else {
-					if (newReqCtrlList.containsKey(r.getKey())) {
-						duplicates.add(r);
-						// Merge sources
-						for (NodeRef tmpref : r.getSources()) {
-							if (!newReqCtrlList.get(r.getKey()).getSources().contains(tmpref)) {
-								newReqCtrlList.get(r.getKey()).getSources().add(tmpref);
-							}
-						}
-					} else {
-						newReqCtrlList.put(r.getKey(), r);
-					}
+					merge(newReqCtrlList, r, duplicates);
 				}
 			}
 
@@ -147,14 +128,15 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 				reqCtrlList.remove(dup);
 			}
 
+			
 			for (Map.Entry<String, ReqCtrlListDataItem> dbKV : dbReqCtrlList.entrySet()) {
 				if (!newReqCtrlList.containsKey(dbKV.getKey())) {
-					if (dbKV.getValue().getFormulationChainId() == null
-							|| dbKV.getValue().getFormulationChainId().equals(productData.getFormulationChainId())){
 					
-					// remove
-					reqCtrlList.remove(dbKV.getValue());
-							}
+					if ((dbKV.getValue().getFormulationChainId() == null)
+							|| dbKV.getValue().getFormulationChainId().equals(productData.getFormulationChainId())) {
+						// remove
+						reqCtrlList.remove(dbKV.getValue());
+					}
 				} else {
 					// update
 					ReqCtrlListDataItem newReqCtrlListDataItem = newReqCtrlList.get(dbKV.getKey());
@@ -169,6 +151,25 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 			// sort
 			sort(reqCtrlList);
 		}
+	}
+
+	private void merge(Map<String, ReqCtrlListDataItem> reqCtrlList, ReqCtrlListDataItem r, List<ReqCtrlListDataItem> duplicates) {
+		if (reqCtrlList.containsKey(r.getKey())) {
+			ReqCtrlListDataItem dbReq = reqCtrlList.get(r.getKey());
+
+			duplicates.add(r);
+			// Merge sources
+			for (NodeRef tmpref : r.getSources()) {
+
+				if (!dbReq.getSources().contains(tmpref)) {
+					dbReq.getSources().add(tmpref);
+				}
+			}
+			
+		} else {
+			reqCtrlList.put(r.getKey(), r);
+		}
+
 	}
 
 	@SuppressWarnings("unchecked")
@@ -219,50 +220,8 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 	 */
 	private void sort(List<ReqCtrlListDataItem> reqCtrlList) {
 
-		Collections.sort(reqCtrlList, new Comparator<ReqCtrlListDataItem>() {
+		AtomicInteger index = new AtomicInteger();
+		reqCtrlList.stream().sorted(Comparator.comparing(ReqCtrlListDataItem::getReqType)).forEach(r -> r.setSort(index.getAndIncrement()));
 
-			final int BEFORE = -1;
-			final int EQUAL = 0;
-			final int AFTER = 1;
-
-			@Override
-			public int compare(ReqCtrlListDataItem r1, ReqCtrlListDataItem r2) {
-
-				if ((r1.getReqType() != null) && (r2.getReqType() != null)) {
-					if (r1.getReqType().equals(r2.getReqType())) {
-						return EQUAL;
-					} else if (r1.getReqType().equals(RequirementType.Forbidden)) {
-						return BEFORE;
-					} else if (r2.getReqType().equals(RequirementType.Forbidden)) {
-						return AFTER;
-					} else if (r1.getReqType().equals(RequirementType.Tolerated)) {
-						return BEFORE;
-					} else if (r2.getReqType().equals(RequirementType.Tolerated)) {
-						return AFTER;
-					} else if (r1.getReqType().equals(RequirementType.Info)) {
-						return BEFORE;
-					} else if (r2.getReqType().equals(RequirementType.Info)) {
-						return AFTER;
-					} else if (r1.getReqType().equals(RequirementType.Authorized)) {
-						return BEFORE;
-					} else if (r2.getReqType().equals(RequirementType.Authorized)) {
-						return AFTER;
-					}
-
-				} else if (r1.getReqType() != null) {
-					return BEFORE;
-				} else if (r2.getReqType() != null) {
-					return AFTER;
-				}
-
-				return EQUAL;
-			}
-		});
-
-		int i = 0;
-		for (ReqCtrlListDataItem r : reqCtrlList) {
-			r.setSort(i);
-			i++;
-		}
 	}
 }

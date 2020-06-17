@@ -19,6 +19,7 @@ package fr.becpg.repo.repository.impl;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -219,7 +220,7 @@ public class BeCPGHashCodeBuilder {
 			}
 		}
 
-		if (!obj1.getNodeRef().equals(obj2.getNodeRef())) {
+		if (obj1.getNodeRef()!=null && !obj1.getNodeRef().equals(obj2.getNodeRef())) {
 			ret += "nodeRef differs\n";
 		}
 
@@ -593,15 +594,11 @@ public class BeCPGHashCodeBuilder {
 			} else {
 				if (object instanceof RepositoryEntity) {
 					return (total * iConstant) + reflectionAppend((RepositoryEntity) object, visited);
-				} else if (object instanceof List) {
+				} else if (object instanceof Collection<?>) {
 					int tmp = 0;
-					for (Object el : (List<?>) (object)) {
+					for (Object el : (Collection<?>) (object)) {
 						if (el != null) {
-							if (el instanceof RepositoryEntity) {
-								tmp += reflectionAppend((RepositoryEntity) el, visited);
-							} else {
-								tmp += el.hashCode();
-							}
+							tmp += append(total,el,visited);
 						}
 					}
 					return (total * iConstant) + tmp;
