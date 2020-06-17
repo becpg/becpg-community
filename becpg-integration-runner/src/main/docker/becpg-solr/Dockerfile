@@ -1,8 +1,9 @@
 FROM openjdk:11
 
-ENV NEXUS=https://artifacts.alfresco.com/nexus/content/groups/public
+
 ENV DIST_DIR /opt/alfresco-search-services
-ENV SEARCH_SERVICE_VERSION=1.4.0
+ENV SEARCH_SERVICE_VERSION=1.4.2
+ENV ZIP_FILE=https://download.alfresco.com/cloudfront/release/community/SearchServices/${SEARCH_SERVICE_VERSION}/alfresco-search-services-${SEARCH_SERVICE_VERSION}.zip
 ARG USERNAME=solr
 ARG USERID=33007
 
@@ -16,17 +17,26 @@ ARG USERID=33007
 RUN set -x \
 	&& useradd  -c "beCPG ${USERNAME}" -M  -s "/bin/bash"  -u "${USERID}" -o   "${USERNAME}" \
     && curl --silent --location \
-      ${NEXUS}/org/alfresco/alfresco-search-services/${SEARCH_SERVICE_VERSION}/alfresco-search-services-${SEARCH_SERVICE_VERSION}.zip \
+      $ZIP_FILE \
       -o alfresco-search-services-${SEARCH_SERVICE_VERSION}.zip  \
     && unzip -q alfresco-search-services-${SEARCH_SERVICE_VERSION}.zip -d /opt/ \
-    && mkdir -p $DIST_DIR/data \
+    && mkdir -p $DIST_DIR/data/solr6Backup/alfresco \
+    && mkdir -p $DIST_DIR/data/solr6Backup/archive \
     && rm alfresco-search-services-${SEARCH_SERVICE_VERSION}.zip  \
     && chown -R ${USERNAME}:${USERNAME} $DIST_DIR 
+
+# Cloud profiling
+
+RUN mkdir -p /opt/cprof && \
+  wget -q -O- https://storage.googleapis.com/cloud-profiler/java/latest/profiler_java_agent.tar.gz \
+  | tar xzv -C /opt/cprof
 
     
 COPY solr.in.sh  $DIST_DIR/solr.in.sh    
 COPY rerank/solrcore.properties  $DIST_DIR/solrhome/templates/rerank/conf/
+COPY rerank/solrconfig.xml  $DIST_DIR/solrhome/templates/rerank/conf/
 COPY shared.properties $DIST_DIR/solrhome/conf/
+#COPY log4j.properties $DIST_DIR/logs/
     
 WORKDIR $DIST_DIR
 VOLUME $DIST_DIR/data

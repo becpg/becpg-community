@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2018 beCPG.
+ * Copyright (C) 2010-2020 beCPG.
  *
  * This file is part of beCPG
  *
@@ -459,25 +459,6 @@ public class ProjectHelper {
 
 	public static Date calculatePrevEndDate(Date startDate) {
 		return calculateNextDate(startDate, DURATION_NEXT_DAY, false);
-	}
-
-	public static Integer calculateRealDuration(TaskListDataItem task) {
-
-		Date endDate;
-
-		if (TaskState.InProgress.equals(task.getTaskState()) || TaskState.Refused.equals(task.getTaskState())) {
-			endDate = ProjectHelper.removeTime(new Date());
-
-			// we wait the overdue of the task to take it in account
-			if ((task.getEnd() != null) && endDate.before(task.getEnd())) {
-				return null;
-			}
-		} else if (TaskState.Completed.equals(task.getTaskState())) {
-			endDate = task.getEnd();
-		} else {
-			return null;
-		}
-		return calculateTaskDuration(task.getStart(), endDate);
 	}
 
 	@Deprecated

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2018 beCPG.
+ * Copyright (C) 2010-2020 beCPG.
  * 
  * This file is part of beCPG
  * 
@@ -307,8 +307,7 @@ if (beCPG.module.EntityDataGridRenderers) {
           var unit = oRecord._oData.itemData.prop_bcpg_nutListUnit.value;
           
           if (data.value != null) {
-        	  ret+=exp(data.value)+" "+unit;
-        	  
+        	  ret+=data.value+" "+unit;
           }
           
           var formulatedValue = oRecord.getData("itemData")["prop_bcpg_nutListFormulatedValue"];
@@ -362,7 +361,7 @@ if (beCPG.module.EntityDataGridRenderers) {
       			qty = data.value;
       			unit = " %";
       		}
-      		return Alfresco.util.encodeHTML(beCPG.util.sigFigs(qty,3).toLocaleString() + unit);
+      		return Alfresco.util.encodeHTML(beCPG.util.sigFigs(qty,4).toLocaleString() + unit);
       	}      
       	return "";
       }
@@ -448,6 +447,10 @@ if (beCPG.module.EntityDataGridRenderers) {
 							}
 							return ret;
 						}
+					}
+					
+					if(data.displayValue !=null && data.displayValue.indexOf("@html") == 0){
+						return  data.displayValue.replace("@html","");
 					}
 
 					return '<span style="color:' + color + ';">' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
@@ -864,7 +867,13 @@ if (beCPG.module.EntityDataGridRenderers) {
 		              for (var j = 0; j <  scope.subCache["idx_"+oColumn.getKeyIndex()].length; j++) {
                         var path =  scope.subCache["idx_"+oColumn.getKeyIndex()][j].path;
                         if(path == oRecord.getData("itemData")["path"] && scope.subCache["idx_"+oColumn.getKeyIndex()][j].displayValue){
-                            return  scope.subCache["idx_"+oColumn.getKeyIndex()][j].displayValue;
+                        	
+                        	if(oColumn.numberFormat && scope.subCache["idx_"+oColumn.getKeyIndex()][j].value!=null){
+                        		 return  beCPG.util.formatNumber(oColumn.numberFormat, scope.subCache["idx_"+oColumn.getKeyIndex()][j].value);	  
+             				} else {
+             					 return  scope.subCache["idx_"+oColumn.getKeyIndex()][j].displayValue;
+             				}
+
                         }
                     }
                 }
@@ -880,7 +889,11 @@ if (beCPG.module.EntityDataGridRenderers) {
                                 scope.subCache = [];
                             }
                             scope.subCache["idx_"+oColumn.getKeyIndex()] = json.sub;
-                            return json.displayValue? json.displayValue : "";
+                            if(oColumn.numberFormat && json.value!=null){
+            				    return  beCPG.util.formatNumber(oColumn.numberFormat, json.value);	   
+            				} else {
+            					return json.displayValue? json.displayValue : "";
+            				}
                         }
     			    }
 			    }
@@ -914,7 +927,12 @@ if (beCPG.module.EntityDataGridRenderers) {
 						return ret;
 					}
 				}
-				return data.displayValue;
+				
+				if(oColumn.numberFormat && data.value!=null){
+				   return  beCPG.util.formatNumber(oColumn.numberFormat, data.value); 
+				} else {
+				   return data.displayValue;
+				}
 			}
 			return "";
 
@@ -957,7 +975,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 					}
 				}
 
-				qty = parseFloat(qty.toPrecision(5)) + unit;
+				qty = beCPG.util.sigFigs(qty,4).toLocaleString() + unit;
 			}
 
 			return Alfresco.util.encodeHTML(qty);
@@ -1050,7 +1068,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 					unit = " L";
 				}
 
-				qty = parseFloat(qty.toPrecision(5)) + unit;
+				qty =  beCPG.util.sigFigs(qty,4).toLocaleString() + unit;
 			}
 
 			return Alfresco.util.encodeHTML(qty);
@@ -1163,21 +1181,4 @@ if (beCPG.module.EntityDataGridRenderers) {
 		}
 	});
 	
-	
-/* Align cost to the right
-        YAHOO.Bubbling.fire("registerDataGridRenderer", {
-		      propertyName : [ "bcpg:costListValue","bcpg:costListMaxi","bcpg:costListFutureValue"
-		    	  ,"bcpg:costListPreviousValue","bcpg:costListValuePerProduct","bcpg:costListPreviousValuePerProduct",
-		    	  "bcpg:costListFutureValuePerProduct" ],
-		      renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
-		      	
-		    	 if(data.value!=null){
-		    		 Dom.setStyle(elCell, "text-align", "right");  
-		    		 return (new Intl.NumberFormat(Alfresco.constants.JS_LOCALE.replace("_","-") ,{minimumFractionDigits : 4, maximumFractionDigits : 4 })).format( data.value);
-		    	 }
-		    	 return "";
-		    	  
-		    }
-	 });
-	*/
 }

@@ -1,4 +1,4 @@
-<!-- Copyright (C) 2010-2018 beCPG. This file is part of beCPG beCPG is free 
+<!-- Copyright (C) 2010-2020 beCPG. This file is part of beCPG beCPG is free 
 	software: you can redistribute it and/or modify it under the terms of the 
 	GNU Lesser General Public License as published by the Free Software Foundation, 
 	either version 3 of the License, or (at your option) any later version. beCPG 
@@ -1211,6 +1211,7 @@
 					<show id="bcpg:ingListQtyPerc" force="true" />
 					<show id="bcpg:advIlIngNot" force="true" />
 					<show id="bcpg:ingListGeoOrigin" force="true" />
+					<show id="bcpg:advIlGeoOriginNot" force="true" />
 					<show id="bcpg:ingListBioOrigin" force="true" />
 				
 					<!-- Costs -->
@@ -1373,6 +1374,12 @@
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
+					<field id="bcpg:advIlGeoOriginNot" set="ings-criteria">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					
+					
 					<field id="bcpg:ingListBioOrigin" set="ings-criteria">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
@@ -4141,6 +4148,7 @@
 					<show id="bcpg:ingListQtyPerc" force="true" />
 					<show id="bcpg:advIlIngNot" force="true" />
 					<show id="bcpg:ingListGeoOrigin" force="true" />
+					<show id="bcpg:advIlGeoOriginNot" force="true" />
 					<show id="bcpg:ingListBioOrigin" force="true" />
 				
 					<!-- Costs -->
@@ -4285,6 +4293,10 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 					<field id="bcpg:ingListGeoOrigin" set="ings-criteria">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:advIlGeoOriginNot" set="ings-criteria">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
@@ -4829,6 +4841,7 @@
 					<show id="bcpg:ingListQtyPerc" force="true" />
 					<show id="bcpg:advIlIngNot" force="true" />
 					<show id="bcpg:ingListGeoOrigin" force="true" />
+					<show id="bcpg:advIlGeoOriginNot" force="true" />
 					<show id="bcpg:ingListBioOrigin" force="true" />
 				
 					<!-- Costs -->
@@ -4962,6 +4975,10 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 					<field id="bcpg:ingListGeoOrigin" set="ings-criteria">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:advIlGeoOriginNot" set="ings-criteria">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
@@ -7686,10 +7703,11 @@
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden"></field>
+					<field id="bcpg:compoListQtySubFormula" help="{&quot;className&quot;: &quot;align-right&quot;, &quot;numberFormat&quot;:  { &quot;minimumFractionDigits&quot;: 2, &quot;maximumFractionDigits&quot;: 2}}" />
 					<field id="bcpg:compareWithDynColumn" label="hidden" read-only="true"/>
 					<field id="bcpg:compoListQty" read-only="true"></field>
 					<field id="bcpg:compoListVolume" read-only="true"></field>
-					<field id="bcpg:dynamicCharactColumn1" read-only="true" label="hidden"></field>
+					<field id="bcpg:dynamicCharactColumn1"  read-only="true" label="hidden"></field>
 					<field id="bcpg:dynamicCharactColumn2" read-only="true" label="hidden"></field>
 					<field id="bcpg:dynamicCharactColumn3" read-only="true" label="hidden"></field>
 					<field id="bcpg:dynamicCharactColumn4" read-only="true" label="hidden"></field>

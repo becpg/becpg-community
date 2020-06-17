@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2018 beCPG.
+ * Copyright (C) 2010-2020 beCPG.
  *
  * This file is part of beCPG
  *
@@ -215,7 +215,7 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 			logger.info("/*-- Formulation raised " + formulatedProduct.getReqCtrlList().size() + " rclDataItems --*/");
 
 			for (ReqCtrlListDataItem reqCtrlList : formulatedProduct.getReqCtrlList()) {
-				logger.info("/*-- Verify reqCtrlList : " + reqCtrlList.getReqMessage() + " --*/");
+				logger.info("/*-- Verify reqCtrlList : " + reqCtrlList.getReqMessage() + " --*/"+ reqCtrlList.getKey() );
 				logger.info("/*-- This item has " + reqCtrlList.getSources().size() + " sources --*/");
 
 				/*

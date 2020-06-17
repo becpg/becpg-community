@@ -95,7 +95,7 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 
 			tasks.forEach(t -> {
 
-				if(t.getTask()!=null) {
+				if (t.getTask() != null) {
 					if (projectWorkflowService.isWorkflowActive(t.getTask())) {
 						logger.debug("Cancel workflow of project " + projectData.getName() + " for task " + t.getTask().getTaskName());
 						projectWorkflowService.cancelWorkflow(t.getTask());
@@ -249,7 +249,7 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 			// If we haven't made any progress then a cycle must exist in
 			// the graph and we wont be able to calculate the critical path
 			if (!progress) {
-				logger.warn("Cyclic dependency, algorithm stopped for project "+ projectData.getName()+" ("+projectData.getNodeRef()+")");
+				logger.warn("Cyclic dependency, algorithm stopped for project " + projectData.getName() + " (" + projectData.getNodeRef() + ")");
 				return;
 			}
 		}
@@ -374,7 +374,6 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 
 	}
 
-	
 	private boolean visit(ProjectData projectData, Set<TaskWrapper> allTasks, boolean calculateState) {
 		// tasks whose critical cost has been calculated
 		List<TaskWrapper> completed = new LinkedList<>();
@@ -420,7 +419,7 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 			// If we haven't made any progress then a cycle must exist in
 			// the graph and we wont be able to calculate the critical path
 			if (!progress) {
-				logger.warn("Cyclic dependency, algorithm stopped for "+ projectData.getName()+" ("+projectData.getNodeRef()+")");
+				logger.warn("Cyclic dependency, algorithm stopped for " + projectData.getName() + " (" + projectData.getNodeRef() + ")");
 				return false;
 			}
 		}
@@ -461,7 +460,7 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 			} else {
 
 				// previous task are done
-				if (previousDown(task) && ((task.getTask().getManualDate() == null)
+				if (previousDone(task) && ((task.getTask().getManualDate() == null)
 						|| ((task.getTask().getStart() != null) && task.getTask().getStart().before(new Date())))) {
 					task.getTask().setTaskState(TaskState.InProgress);
 				}
@@ -474,7 +473,6 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 			// Check if all brothers are closed
 			// TODO refactor brethen tasks
 
-			
 			for (TaskListDataItem brotherTask : ProjectHelper.getBrethrenTask(projectData, task.getTask())) {
 				if (!task.getTask().getRefusedTask().equals(brotherTask) && TaskState.InProgress.equals(brotherTask.getTaskState())) {
 					shouldRefused = false;
@@ -515,13 +513,13 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 		return reformulate;
 	}
 
-	private boolean previousDown(TaskWrapper task) {
+	private boolean previousDone(TaskWrapper task) {
 
 		for (TaskWrapper t : task.getAncestors()) {
 			if (!(TaskState.Completed.equals(t.getTask().getTaskState()) || TaskState.Cancelled.equals(t.getTask().getTaskState()))) {
 				return false;
 			} else if (TaskState.Cancelled.equals(t.getTask().getTaskState())) {
-				if (!previousDown(t)) {
+				if (!previousDone(t)) {
 					return false;
 				}
 			}
@@ -596,8 +594,8 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 		// all dependencies calculated, critical cost is max
 		// dependency
 		// critical cost, plus our cost
-		int duration = 0;
-		int realDuration = 0;
+		int maxDuration = 0;
+		int maxRealDuration = 0;
 
 		Date startDate = null;
 
@@ -606,15 +604,20 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 		} else {
 
 			for (TaskWrapper t : task.getAncestors()) {
-				if (t.getMaxDuration() > duration) {
-					duration = t.getMaxDuration();
+
+				if ((t.getMaxDuration() != null) && (t.getMaxDuration() > maxDuration)) {
+					maxDuration = t.getMaxDuration();
 				}
 
-				if (t.getMaxRealDuration() > realDuration) {
-					realDuration = t.getMaxRealDuration();
+				if ((t.getMaxRealDuration() != null) && (t.getMaxRealDuration() > maxRealDuration)) {
+					maxRealDuration = t.getMaxRealDuration();
 				}
 
 				Date endDate = t.getTask().getEnd() != null ? t.getTask().getEnd() : t.getTask().getStart();
+
+				if (TaskState.Cancelled.equals(t.getTask().getTaskState())) {
+					endDate = ProjectHelper.calculatePrevEndDate(t.getTask().getStart());
+				}
 
 				if ((startDate == null) || startDate.before(endDate)) {
 					startDate = endDate;
@@ -638,21 +641,21 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 				}
 			}
 
-//	Useless		if ((task.getTask().getEnd() != null)
-//					&& ((projectData.getCompletionDate() == null) || projectData.getCompletionDate().before(task.getTask().getEnd()))) {
-//				projectData.setCompletionDate(task.getTask().getEnd());
-//			}
 		}
-
-		if (task.getDuration() != null) {
-			task.setMaxDuration(duration + task.getDuration());
+		if (!TaskState.Cancelled.equals(task.getTask().getTaskState())) {
+			if (task.getDuration() != null) {
+				task.setMaxDuration(maxDuration + task.getDuration());
+			}
+			
+		} else {
+			task.setMaxDuration(maxDuration);
 		}
-
-		Integer calculatedRealDuration = task.getRealDuration();
-
-		if (calculatedRealDuration != null) {
-			task.getTask().setRealDuration(calculatedRealDuration);
-			task.setMaxRealDuration(realDuration + calculatedRealDuration);
+		
+		Integer realDuration = task.getRealDuration();
+		task.getTask().setRealDuration(realDuration);
+		
+		if (realDuration != null) {
+			task.setMaxRealDuration(maxRealDuration + realDuration);
 		}
 
 	}

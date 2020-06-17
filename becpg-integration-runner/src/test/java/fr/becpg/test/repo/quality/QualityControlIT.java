@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2018 beCPG.
+ * Copyright (C) 2010-2020 beCPG.
  *
  * This file is part of beCPG
  *
@@ -149,8 +149,8 @@ public class QualityControlIT extends PLMBaseTestCase {
 			QualityControlData qualityControlData = (QualityControlData) alfrescoRepository.findOne(qualityControlNodeRef);
 			assertNotNull("Check QC exists", qualityControlData);
 			assertNotNull("Check Sample list", qualityControlData.getSamplingList());
-			assertEquals("10 samples", 10, qualityControlData.getSamplingList().size());
-			assertSame("10 samples", 10, qualityControlData.getSamplesCounter());
+			assertEquals("9 samples", 9, qualityControlData.getSamplingList().size());
+			assertSame("9 samples", 9, qualityControlData.getSamplesCounter());
 			int checks = 0;
 
 			for (SamplingListDataItem sl : qualityControlData.getSamplingList()) {
@@ -188,19 +188,12 @@ public class QualityControlIT extends PLMBaseTestCase {
 					assertEquals("check control point", controlPointNodeRef2, sl.getControlPoint());
 					assertEquals("check control step", controlStepNodeRef, sl.getControlStep());
 					assertEquals("check state", null, sl.getSampleState());
-					assertEquals("check date",qualityControlData.getBatchStart(), sl.getDateTime());
-					checks++;
-					break;
-				case "12247904/7":
-					assertEquals("check control point", controlPointNodeRef2, sl.getControlPoint());
-					assertEquals("check control step", controlStepNodeRef, sl.getControlStep());
-					assertEquals("check state", null, sl.getSampleState());
 					cal.setTime(qualityControlData.getBatchStart());
 			        cal.add(Calendar.MONTH, 1);
 					assertEquals("check date", cal.getTime(), sl.getDateTime());
 					checks++;
 					break;
-				case "12247904/8":
+				case "12247904/7":
 					assertEquals("check control point", controlPointNodeRef2, sl.getControlPoint());
 					assertEquals("check control step", controlStepNodeRef, sl.getControlStep());
 					assertEquals("check state", null, sl.getSampleState());
@@ -209,7 +202,7 @@ public class QualityControlIT extends PLMBaseTestCase {
 					assertEquals("check date", cal.getTime(), sl.getDateTime());
 					checks++;
 					break;
-				case "12247904/9":
+				case "12247904/8":
 					assertEquals("check control point", controlPointNodeRef2, sl.getControlPoint());
 					assertEquals("check control step", controlStepNodeRef, sl.getControlStep());
 					assertEquals("check state", null, sl.getSampleState());
@@ -222,12 +215,12 @@ public class QualityControlIT extends PLMBaseTestCase {
 				
 			}
 
-			assertEquals(8, checks);
+			assertEquals(7, checks);
 
 			// check controlList
 			List<ControlListDataItem> controlList = qualityControlData.getControlList();
 
-			assertEquals(10 * 10, controlList.size());
+			assertEquals(9 * 10, controlList.size());
 			boolean isFirstCLOfSample3 = true;
 
 			// fill controlList (sample1)
