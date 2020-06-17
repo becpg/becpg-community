@@ -38,6 +38,7 @@
 					<value>XLSX</value>
 					<value>DOCX</value>
 					<value>ZIP</value>
+					<value>PPTX</value>
 				</list>
 			</parameter>
 		</constraint>	
