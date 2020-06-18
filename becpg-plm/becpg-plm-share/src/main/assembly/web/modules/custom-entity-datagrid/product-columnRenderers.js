@@ -811,7 +811,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 						html += '<span id="' +htmlId+"#"+ nodeRef+"#"+ suffix+  '" class="onCopyToClipboard"><a href="#" title="'+ scope.msg("label.copy.to.clipboard.title") +'" class="labeling-action clipboard"></a> </span>';
 						html += '<span>&nbsp;&nbsp;</span>';
 					}
-					if(label == "bcpg:illManualValue"){
+					if(label == "bcpg:illManualValue" && editPermission){
 						html += '<span id="' +htmlId+"#"+ nodeRef+"#"+ label+ "#false" + '" class="onShowTranslation"><a href="#" title="'+ scope.msg("label.edit.translation.title") +'" class="labeling-action edit-translation"></a> </span>';
 						html += '<span>&nbsp;</span>';
 					}
