@@ -35,13 +35,18 @@
 			<language locale="en_GH">English - Ghana</language>
 			<language locale="en_IN">English - India</language>
 			<language locale="en_KE">English - Kenya</language>
+			<language locale="en_MW">English - Malawi</language>
 			<language locale="en_NG">English - Nigeria</language>
+			<language locale="en_UG">English - Uganda</language>
+			<language locale="en_ZW">English - Zibabwe</language>
 			<language locale="de">German</language>
 			<language locale="es">Spanish</language>
+			<language locale="es_CO">Spanish - Colombia</language>
 			<language locale="es_MX">Spanish - Mexico</language>
 			<language locale="es_PR">Spanish - Puerto Rico</language>
 			<language locale="fr">French</language>
 			<language locale="fr_CA">French - Canada</language>
+			<language locale="fr_CI">French - Côte d'Ivoire</language>
 			<language locale="it">Italian</language>
 			<language locale="in_ID">Indonesian - Indonesia</language>
 			<language locale="iw_IL">Hebrew - Israel</language>
@@ -53,8 +58,10 @@
 			<language locale="pt">Portuguese</language>
 			<language locale="no">Norwegian</language>
 			<language locale="sv_SE">Swedish - Sweden</language>
+			<language locale="sw_TZ">Swahili - Tanzania</language>
 			<language locale="el">Greek</language>
 			<language locale="pl">Polish</language>
+			<language locale="pt_MZ">Portuguese - Mozambique</language>
 			<language locale="fi_FI">Finnish - Finland</language>
 			<language locale="th_TH">Thai - Thailand</language>
 			<language locale="tr_TR">Turkish - Turkey</language>
@@ -69,6 +76,7 @@
 			<language locale="ar_OM">Arabic - Oman</language>
 			<language locale="ar_KW">Arabic - Kuwait</language>
 			<language locale="ar_DZ">Arabic - Algeria</language>
+			<language locale="bem_ZM">Bemba - Zambia</language>
 			
 			
 			<!-- Others can be use in language only way if country is same than language 
