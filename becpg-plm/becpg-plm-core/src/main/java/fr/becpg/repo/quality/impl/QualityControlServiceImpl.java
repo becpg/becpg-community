@@ -113,7 +113,6 @@ public class QualityControlServiceImpl implements QualityControlService {
 
 	@Override
 	public void createSamplingList(NodeRef qcNodeRef, NodeRef controlPlanNodeRef) {
-
 		QualityControlData qualityControlData = (QualityControlData) alfrescoRepository.findOne(qcNodeRef);
 
 		List<SamplingListDataItem> samplingList = qualityControlData.getSamplingList();
@@ -271,7 +270,6 @@ public class QualityControlServiceImpl implements QualityControlService {
 
 	@Override
 	public void createControlList(NodeRef sampleListNodeRef) {
-
 		NodeRef entityNodeRef = entityListDAO.getEntity(sampleListNodeRef);
 		RepositoryEntity entity = alfrescoRepository.findOne(entityNodeRef);
 		ProductData productData = null;
@@ -529,7 +527,7 @@ public class QualityControlServiceImpl implements QualityControlService {
 
 			if (sl.getSampleState() == null) {
 				isQCControled = false;
-				if (nextAnalysisDate == null) {
+				if (nextAnalysisDate == null || (nextAnalysisDate != null && nextAnalysisDate.after(sl.getDateTime()))) {
 					nextAnalysisDate = sl.getDateTime();
 				}
 			} else if (sl.getSampleState().equals(QualityControlState.NonCompliant)) {
