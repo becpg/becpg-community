@@ -73,7 +73,6 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 	private static final String CRITERIA_NOTRESPECTED_SPECIFICATIONS = "assoc_bcpg_advNotRespectedProductSpecs_added";
 	private static final String CRITERIA_RESPECTED_SPECIFICATIONS = "assoc_bcpg_advRespectedProductSpecs_added";
 
-
 	private class DataListSearchFilterField {
 
 		private String operator = "or";
@@ -224,7 +223,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 				propValue = criteria.get(assocFilter.htmlId);
 			}
 
-			if (propValue != null) {
+			if ((propValue != null) && !propValue.isBlank()) {
 
 				List<EntitySourceAssoc> tmp = associationService.getEntitySourceAssocs(extractNodeRefs(propValue), assocFilter.attributeQname,
 						"or".equals(assocFilter.operator) || "not".equals(assocFilter.operator));
@@ -343,16 +342,16 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 				}
 			}
 
-			if(retain) {
-				if(!contains) {
+			if (retain) {
+				if (!contains) {
 					e.remove();
 				}
 			} else {
-				if(contains) {
+				if (contains) {
 					e.remove();
 				}
 			}
-			
+
 		}
 
 	}
@@ -447,17 +446,20 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 		for (String strNodeRef : arrValues) {
 
-			NodeRef nodeRef = new NodeRef(strNodeRef);
+			if (!strNodeRef.isBlank()) {
 
-			if (nodeService.exists(nodeRef)) {
-				ret.add(nodeRef);
-				if (logger.isDebugEnabled()) {
-					logger.debug("Adding associated search :"
-							+ associationService.getSourcesAssocs(nodeRef, BeCPGModel.ASSOC_LINKED_SEARCH_ASSOCIATION).size());
+				NodeRef nodeRef = new NodeRef(strNodeRef);
 
+				if (nodeService.exists(nodeRef)) {
+					ret.add(nodeRef);
+					if (logger.isDebugEnabled()) {
+						logger.debug("Adding associated search :"
+								+ associationService.getSourcesAssocs(nodeRef, BeCPGModel.ASSOC_LINKED_SEARCH_ASSOCIATION).size());
+
+					}
+
+					ret.addAll(associationService.getSourcesAssocs(nodeRef, BeCPGModel.ASSOC_LINKED_SEARCH_ASSOCIATION));
 				}
-
-				ret.addAll(associationService.getSourcesAssocs(nodeRef, BeCPGModel.ASSOC_LINKED_SEARCH_ASSOCIATION));
 			}
 
 		}
@@ -475,7 +477,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		if (criteria.containsKey(CRITERIA_NOTRESPECTED_SPECIFICATIONS)) {
 
 			String propValue = criteria.get(CRITERIA_NOTRESPECTED_SPECIFICATIONS);
-			if ((propValue != null) && !propValue.isEmpty()) {
+			if ((propValue != null) && !propValue.isBlank()) {
 				for (NodeRef nodeRef : extractNodeRefs(propValue)) {
 
 					ProductSpecificationData productSpecificationData = alfrescoRepository.findOne(nodeRef);
@@ -551,13 +553,15 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 			String propValue = criteria.get(criteriaAssocString);
 
-			List<NodeRef> toFilterByNodes = extractNodeRefs(propValue);
+			if ((propValue != null) && !propValue.isBlank()) {
+				List<NodeRef> toFilterByNodes = extractNodeRefs(propValue);
 
-			if (!toFilterByNodes.isEmpty()) {
+				if (!toFilterByNodes.isEmpty()) {
 
-				MultiLevelListData ret = wUsedListService.getWUsedEntity(toFilterByNodes, WUsedOperator.OR, criteriaAssoc, -1);
-				if (ret != null) {
-					nodes.retainAll(ret.getAllChilds());
+					MultiLevelListData ret = wUsedListService.getWUsedEntity(toFilterByNodes, WUsedOperator.OR, criteriaAssoc, -1);
+					if (ret != null) {
+						nodes.retainAll(ret.getAllChilds());
+					}
 				}
 			}
 
