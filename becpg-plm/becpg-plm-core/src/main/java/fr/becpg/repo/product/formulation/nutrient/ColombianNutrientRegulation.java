@@ -109,9 +109,7 @@ public class ColombianNutrientRegulation extends AbstractNutrientRegulation {
 	protected String displayValueByCode(Double value, Double roundedValue, String nutrientTypeCode, Locale locale) {
 
 		if(value != null && roundedValue != null && nutrientTypeCode != null){
-			if(!nutrientTypeCode.equals(NutrientCode.Sodium) && (isMineral(nutrientTypeCode) || isVitamin(nutrientTypeCode))){
-				return "";
-			} else if (nutrientTypeCode.equals(NutrientCode.Cholesterol) && value > 2 && value < 5) {
+			if (nutrientTypeCode.equals(NutrientCode.Cholesterol) && value > 2 && value < 5) {
 				return "less than 5mg";
 			} else if (nutrientTypeCode.contentEquals(NutrientCode.CarbohydrateWithFiber)
 					|| nutrientTypeCode.contentEquals(NutrientCode.CarbohydrateByDiff) 
