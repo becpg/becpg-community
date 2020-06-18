@@ -527,19 +527,23 @@ public class EntityListsWebScript extends AbstractWebScript {
 				while (it.hasNext()) {
 					NodeRef temp = it.next();
 					String dataListType = (String) nodeService.getProperty(temp, DataListModel.PROP_DATALISTITEMTYPE);
-					int access_mode = securityService.computeAccessMode(nodeType, dataListType);
+					int accessMode = securityService.computeAccessMode(nodeType, dataListType);
 
-					if (SecurityService.NONE_ACCESS != access_mode) {
+					if (SecurityService.NONE_ACCESS != accessMode) {
 						String dataListName = (String) nodeService.getProperty(temp, ContentModel.PROP_NAME);
-						access_mode = securityService.computeAccessMode(nodeType, dataListName);
+						int newAccessMode = securityService.computeAccessMode(nodeType, dataListName);
+						if(newAccessMode < accessMode ) {
+							accessMode = newAccessMode;
+						}
 					}
 
-					if (SecurityService.NONE_ACCESS == access_mode) {
+					
+					if (SecurityService.NONE_ACCESS == accessMode) {
 						if (logger.isTraceEnabled()) {
 							logger.trace("Don't display dataList:" + dataListType);
 						}
 						it.remove();
-					} else if (!isExternalUser && (SecurityService.WRITE_ACCESS == access_mode)
+					} else if (!isExternalUser && (SecurityService.WRITE_ACCESS == accessMode)
 							&& (permissionService.hasPermission(temp, PermissionService.WRITE) == AccessStatus.ALLOWED)) {
 						accessRights.put(temp, true);
 					} else {
