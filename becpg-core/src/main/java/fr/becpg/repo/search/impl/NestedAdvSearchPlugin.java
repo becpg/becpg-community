@@ -94,7 +94,7 @@ public class NestedAdvSearchPlugin implements AdvSearchPlugin {
 	}
 
 	@Override
-	public List<NodeRef> filter(List<NodeRef> nodes, QName datatype, Map<String, String> criteria) {
+	public List<NodeRef> filter(List<NodeRef> nodes, QName datatype, Map<String, String> criteria, SearchConfig searchConfig) {
 		if (criteria != null && !criteria.isEmpty()) {
 			Map<String, Map<String, String>> nested = extractNested(criteria);
 
@@ -154,7 +154,7 @@ public class NestedAdvSearchPlugin implements AdvSearchPlugin {
 	}
 
 	@Override
-	public Set<String> getIgnoredFields(QName datatype) {
+	public Set<String> getIgnoredFields(QName datatype, SearchConfig searchConfig) {
 		return new HashSet<>();
 	}
 

@@ -7,6 +7,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,18 +32,25 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.entity.EntityService;
+import fr.becpg.repo.helper.JsonHelper;
 import fr.becpg.repo.mail.BeCPGMailService;
+import fr.becpg.repo.notification.NotificationRuleFilter;
 import fr.becpg.repo.notification.NotificationRuleService;
 import fr.becpg.repo.notification.data.NotificationRuleListDataItem;
 import fr.becpg.repo.notification.data.NotificationRuleTimeType;
 import fr.becpg.repo.notification.data.VersionFilterType;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.search.AdvSearchPlugin;
+import fr.becpg.repo.search.AdvSearchService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 @Service("notificationRuleService")
@@ -56,6 +64,12 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 	private static final String NOTIFICATION = "notification";
 	private static final String TARGET_PATH = "targetPath";
 	private static final String ENTITYV2_SUBTYPE = "isEntityV2SubType";
+	
+	private static final String QUERY = "query";
+	private static final String ENTITY_FILTER = "entityFilter";
+	private static final String ENTITY_TYPE = "entityType";
+	private static final String NODE_FILTER = "nodeFilter";
+	private static final String CRITERIA = "criteria";
 	
 	private static final String separator = "\\-";
 	
@@ -95,6 +109,14 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 	@Autowired
 	private AlfrescoRepository<NotificationRuleListDataItem> alfrescoRepository;
 
+	@Autowired
+	private EntityService entityService;
+	
+	@Autowired
+	private AdvSearchService advSearchService;
+	
+	@Autowired(required = false)
+	private AdvSearchPlugin[] advSearchPlugins;
 	
 	
 	@Override
@@ -167,11 +189,18 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 			
 			queryBuilder.inSubPath(targetPath.toPrefixString(namespaceService));
 			
-			if (notification.getCondtions() != null && !notification.getCondtions().isEmpty()){
-				queryBuilder.andFTSQuery(notification.getCondtions());
+			NotificationRuleFilter filter = parseAdvFilter(notification.getCondtions());
+			filter.setNodeType(nodeType);
+			
+			if (logger.isDebugEnabled()) {
+				logger.debug("Filter: " + filter);
 			}
 			
-			List<NodeRef> items = queryBuilder.list();
+			if (filter != null && !filter.getQuery().isEmpty()){
+				queryBuilder.andFTSQuery(filter.getQuery());
+			}
+			
+			List<NodeRef> items =  filter(queryBuilder, filter);
 			
 			//Versions history filter
 			Map<NodeRef, Map<String, NodeRef>> itemVersions = new HashMap<>();
@@ -355,7 +384,77 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 		return now.equals(lastDate) || now.isAfter(lastDate);
 	}
 	
+	private List<NodeRef> filter(BeCPGQueryBuilder query, NotificationRuleFilter filter) {
+		List<NodeRef> ret = advSearchService.queryAdvSearch(filter.getNodeType(), query, filter.getNodeCriteria(),
+				RepoConsts.MAX_RESULTS_UNLIMITED);
+		if(filter.getEntityCriteria() != null && filter.getEntityType() != null) {
+			ret = filterByEntityCriteria(ret, filter);
+		}
+		return ret;
+	}
+	
+	private List<NodeRef> filterByEntityCriteria(List<NodeRef> nodes, NotificationRuleFilter filter) {
+		List<NodeRef> ret = new ArrayList<>();
+		if (advSearchPlugins != null) {
+			for(NodeRef nodeRef : nodes) {
+				NodeRef entityRef = entityService.getEntityNodeRef(nodeRef, nodeService.getType(nodeRef));
+				if(matchEntityType(entityRef, filter.getEntityType())) {
+					List<NodeRef> entityList = new ArrayList<>(Collections.singletonList(entityRef));
+					for (AdvSearchPlugin advSearchPlugin : advSearchPlugins) {
+						entityList = advSearchPlugin.filter(entityList, filter.getEntityType(), filter.getEntityCriteria(), advSearchService.getSearchConfig());
+					}
+					
+					if(entityList !=  null && !entityList.isEmpty()) {
+						ret.add(nodeRef);
+					}
+				}
+			}
+		}
+		return ret;
+	}
 
+	private boolean matchEntityType(NodeRef entityRef, QName entityType) {
+		return dictionaryService.isSubClass(nodeService.getType(entityRef), entityType);
+	}
+	
+	private NotificationRuleFilter parseAdvFilter(String jsonString) {
+		NotificationRuleFilter filter = new NotificationRuleFilter();
+		try {
+			if ((jsonString != null) && !jsonString.isEmpty()) {
+				JSONObject filterObject = new JSONObject(jsonString);
+				if(filterObject.has(QUERY)) {
+					filter.setQuery(filterObject.getString(QUERY));
+				}
+				if(filterObject.has(ENTITY_FILTER)) {
+					JSONObject entityFilter = filterObject.getJSONObject(ENTITY_FILTER);
+					if(entityFilter.has(ENTITY_TYPE)) {
+						filter.setEntityType(QName.createQName(entityFilter.getString(ENTITY_TYPE), namespaceService));
+					}
+					if(entityFilter.has(CRITERIA)) {
+						JSONObject entityAssocs = entityFilter.getJSONObject(CRITERIA);
+						filter.setEntityCriteria(JsonHelper.extractCriteria(entityAssocs));
+					}
+				}
+				if(filterObject.has(NODE_FILTER)) {
+					JSONObject nodeFilter = filterObject.getJSONObject(NODE_FILTER);
+					if(nodeFilter.has(CRITERIA)) {
+						JSONObject nodeAssocs = nodeFilter.getJSONObject(CRITERIA);
+						filter.setNodeCriteria(JsonHelper.extractCriteria(nodeAssocs));
+					}
+				}
+			}
+
+		} catch (JSONException e) {
+			if(jsonString.contains("{")) {
+				logger.warn("Invalid JSON notification filter", e);
+			} else {
+				filter.setQuery(jsonString);
+			}
+			 
+		}
+		
+		return filter;
+	}
 	
 
 

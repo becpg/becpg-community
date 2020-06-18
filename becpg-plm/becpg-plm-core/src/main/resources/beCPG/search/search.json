@@ -2,7 +2,7 @@
   "name": "product-adv-search-config",
   "description": "Advanced search configuration file",
   "version": "1.0",
-  "filters":  {
+  "dataListSearchFilters":  {
           "claim1" : [ 
            {"attribute": "bcpg:lclLabelClaim" , "htmlId":"assoc_bcpg_lclLabelClaim_added" },
            {"attribute": "bcpg:lclClaimValue" , "value":"true" }
