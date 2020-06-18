@@ -401,7 +401,7 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 				if(matchEntityType(entityRef, filter.getEntityType())) {
 					List<NodeRef> entityList = new ArrayList<>(Collections.singletonList(entityRef));
 					for (AdvSearchPlugin advSearchPlugin : advSearchPlugins) {
-						entityList = advSearchPlugin.filter(entityList, filter.getEntityType(), filter.getEntityCriteria());
+						entityList = advSearchPlugin.filter(entityList, filter.getEntityType(), filter.getEntityCriteria(), advSearchService.getSearchConfig());
 					}
 					
 					if(entityList !=  null && !entityList.isEmpty()) {

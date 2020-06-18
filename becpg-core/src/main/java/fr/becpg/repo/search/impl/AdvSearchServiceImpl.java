@@ -25,7 +25,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import org.alfresco.service.cmr.dictionary.DictionaryService;
+import org.alfresco.model.ContentModel;
+import org.alfresco.repo.model.Repository;
+import org.alfresco.service.cmr.repository.ContentReader;
+import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
@@ -38,6 +41,8 @@ import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.cache.BeCPGCacheService;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.search.AdvSearchPlugin;
 import fr.becpg.repo.search.AdvSearchService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
@@ -65,10 +70,41 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	private NodeService nodeService;
 
 	@Autowired
-	private DictionaryService dictionaryService;
+	private EntityDictionaryService entityDictionaryService;
+
+	@Autowired
+	private BeCPGCacheService beCPGCacheService;
+
+	@Autowired
+	private ContentService contentService;
+
+	@Autowired
+	private Repository repository;
+
+	public static final String CONFIG_PATH = "/app:company_home/cm:System/cm:Config/cm:search.json";
+	public static final String SEARCH_CONFIG_CACHE_KEY = "SEARCH_CONFIG";
+
+	public SearchConfig getSearchConfig() {
+
+		return beCPGCacheService.getFromCache(AdvSearchService.class.getName(), SEARCH_CONFIG_CACHE_KEY, () -> {
+			SearchConfig searchConfig = new SearchConfig();
+
+			NodeRef configNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(), CONFIG_PATH);
+			if (configNodeRef != null) {
+				ContentReader reader = contentService.getReader(configNodeRef, ContentModel.PROP_CONTENT);
+				String content = reader.getContentString();
+
+				searchConfig.parse(content, namespaceService, entityDictionaryService);
+			}
+			return searchConfig;
+		});
+	}
 
 	@Override
 	public List<NodeRef> queryAdvSearch(QName datatype, BeCPGQueryBuilder beCPGQueryBuilder, Map<String, String> criteria, int maxResults) {
+
+		SearchConfig searchConfig = getSearchConfig();
+
 		logger.debug("advSearch, dataType=" + datatype + ", \ncriteria=" + criteria + "\nplugins: " + Arrays.asList(advSearchPlugins));
 		if (isAssocSearch(criteria) || (maxResults > RepoConsts.MAX_RESULTS_1000)) {
 			maxResults = RepoConsts.MAX_RESULTS_UNLIMITED;
@@ -80,7 +116,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 		if (advSearchPlugins != null) {
 			for (AdvSearchPlugin advSearchPlugin : advSearchPlugins) {
-				ignoredFields.addAll(advSearchPlugin.getIgnoredFields(datatype));
+				ignoredFields.addAll(advSearchPlugin.getIgnoredFields(datatype, searchConfig));
 			}
 		}
 
@@ -95,11 +131,11 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 					watch = new StopWatch();
 					watch.start();
 				}
-				nodes = advSearchPlugin.filter(nodes, datatype, criteria);
-				if (logger.isDebugEnabled() && watch !=null) {
+				nodes = advSearchPlugin.filter(nodes, datatype, criteria, searchConfig);
+				if (logger.isDebugEnabled() && (watch != null)) {
 					watch.stop();
-					logger.debug(
-							"query filter " + advSearchPlugin.getClass().getName() + " executed in  " + watch.getTotalTimeSeconds() + " seconds, new size: "+nodes.size());
+					logger.debug("query filter " + advSearchPlugin.getClass().getName() + " executed in  " + watch.getTotalTimeSeconds()
+							+ " seconds, new size: " + nodes.size());
 				}
 			}
 		}
@@ -210,7 +246,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 										if ((depthLevel != null) && !hierarchyPropName.contains(depthLevel.toString())) {
 											hierarchyPropName = hierarchyPropName.replaceAll("[0-9]", depthLevel.toString());
 										}
-										if (dictionaryService.getProperty(QName.createQName(hierarchyPropName, namespaceService)) == null) {
+										if (entityDictionaryService.getProperty(QName.createQName(hierarchyPropName, namespaceService)) == null) {
 											hierarchyPropName = propName;
 										}
 
@@ -325,7 +361,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 			ret += "\"" + hierarchyName + "\"";
 		}
 
-		if (logger.isDebugEnabled() && watch!=null) {
+		if (logger.isDebugEnabled() && (watch != null)) {
 			watch.stop();
 			logger.debug("getHierarchyQuery executed in  " + watch.getTotalTimeSeconds() + " seconds ");
 		}
