@@ -8389,6 +8389,7 @@
 					<field id="bcpg:lrLocales" label="hidden" read-only="true"></field>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 					<field id="bcpg:illValue" read-only="true" />
+					<field id="bcpg:illManualValue" read-only="true" />
 				</appearance>
 			</form>
 			
