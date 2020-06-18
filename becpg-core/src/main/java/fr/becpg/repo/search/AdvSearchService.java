@@ -23,6 +23,8 @@ import java.util.Map;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
+import fr.becpg.repo.search.impl.SearchConfig;
+
 /**
  * do an advanced search query
  * 
@@ -36,5 +38,8 @@ public interface AdvSearchService {
 
 
 	List<NodeRef> queryAdvSearch(QName datatype, BeCPGQueryBuilder beCPGQueryBuilder, Map<String, String> criteria, int maxResults);
+
+
+	SearchConfig getSearchConfig();
 
 }

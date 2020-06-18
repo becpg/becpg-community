@@ -127,6 +127,7 @@ public class PlmRepoConsts {
 	
 	public static final String PATH_NUT_DATABASES = "NutritionalDatabases";
 	public static final String PATH_CATALOGS = "PropertyCatalogs";
+	public static final String PATH_CONFIG = "Config";
 	public static final String PATH_WORKFLOW_SCRIPTS = "WorkflowScripts";
 	public static final String PATH_MEAT_TYPES = "MeatTypes";
 	
@@ -135,6 +136,7 @@ public class PlmRepoConsts {
 	public static final String PATH_GS1_PALLET_TYPE_CODES = "PalletTypeCodes";
 	public static final String PATH_GS1_PLATFORM_TERM_AND_CONDITIONS_CODES = "PlatformTermsAndConditionsCodes";
 	public static final String PATH_GS1_SORTING_BONUS_CRITERIA = "SortingBonusCriteria";
+
 
 	
 	
