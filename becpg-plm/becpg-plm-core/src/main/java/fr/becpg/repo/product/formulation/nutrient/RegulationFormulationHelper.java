@@ -65,6 +65,8 @@ public class RegulationFormulationHelper {
 		regulations.put("TR", new EuropeanNutrientRegulation("beCPG/databases/nuts/TurkishNutrientRegulation.csv"));
 		regulations.put("SG", new MalaysianNutrientRegulation("beCPG/databases/nuts/SingaporeanNutrientRegulation.csv"));
 		regulations.put("CODEX", new EuropeanNutrientRegulation("beCPG/databases/nuts/CODEXNutrientRegulation.csv"));
+		regulations.put("CO", new ColombianNutrientRegulation("beCPG/databases/nuts/ColombianNutrientRegulation.csv"));
+		
 	}
 
 	public static Double extractValuePerServing(String roundedValue, Locale locale) {
@@ -142,8 +144,13 @@ public class RegulationFormulationHelper {
 		} else if (locale.getCountry().equals("AE") || locale.getCountry().equals("BH") || locale.getCountry().equals("SA")
 				|| locale.getCountry().equals("QA") || locale.getCountry().equals("OM") || locale.getCountry().equals("KW")) {
 			return "GSO";
-		} else if (locale.getCountry().equals("KE") || locale.getCountry().equals("NG") || locale.getCountry().equals("GH")) {
+		} else if (locale.getCountry().equals("KE") || locale.getCountry().equals("NG") || locale.getCountry().equals("GH")
+				|| locale.getCountry().equals("CI") || locale.getCountry().equals("UG") || locale.getCountry().equals("MZ")
+				|| locale.getCountry().equals("MW") || locale.getCountry().equals("TZ") || locale.getCountry().equals("ZM")
+				|| locale.getCountry().equals("ZW")) {
 			return "CODEX";
+		} else if (locale.getCountry().equals("CO")) {
+			return "CO";
 		}
 
 		return "EU";
@@ -438,6 +445,9 @@ public class RegulationFormulationHelper {
 		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("tr_TR"))) {
 			ret.add("TR");
 		}
+		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("es_CO"))) {
+			ret.add("CO");
+		}
 		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_AE")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_BH"))
 				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_SA"))
 				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_QA"))
@@ -446,9 +456,11 @@ public class RegulationFormulationHelper {
 			ret.add("GSO");
 		}
 		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ee_GH")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("en_GH"))
-				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("en_NG"))
-				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ig_NG"))
-				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("en_KE"))) {
+				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("en_NG")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ig_NG"))
+				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("en_KE")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("pt_MZ"))
+				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("sw_TZ")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("fr_CI"))
+				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("en_UG")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("en_MW"))
+				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("en_ZW")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("bem_ZM"))) {
 			ret.add("CODEX");
 		}
 
