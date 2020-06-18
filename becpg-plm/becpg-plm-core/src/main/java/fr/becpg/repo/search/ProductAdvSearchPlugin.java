@@ -1,9 +1,5 @@
 package fr.becpg.repo.search;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -12,20 +8,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
-
+import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
@@ -42,6 +32,9 @@ import fr.becpg.repo.helper.impl.AssociationServiceImpl.EntitySourceAssoc;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.productList.SpecCompatibilityDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.search.impl.DataListSearchFilter;
+import fr.becpg.repo.search.impl.DataListSearchFilterField;
+import fr.becpg.repo.search.impl.SearchConfig;
 
 @Service
 public class ProductAdvSearchPlugin implements AdvSearchPlugin {
@@ -73,96 +66,10 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 	private static final String CRITERIA_NOTRESPECTED_SPECIFICATIONS = "assoc_bcpg_advNotRespectedProductSpecs_added";
 	private static final String CRITERIA_RESPECTED_SPECIFICATIONS = "assoc_bcpg_advRespectedProductSpecs_added";
 
-	private class DataListSearchFilterField {
+	private Set<String> keysToExclude = new HashSet<>();
 
-		private String operator = "or";
-		private String value;
-		private String htmlId;
-		private QName attributeQname;
-
-	}
-
-	private class DataListSearchFilter {
-
-		private String name;
-		private List<DataListSearchFilterField> assocsFilters = new ArrayList<>();
-		private List<DataListSearchFilterField> propFilters = new ArrayList<>();
-
-		public DataListSearchFilter(String name) {
-			super();
-			this.name = name;
-		}
-
-	}
-
-	List<DataListSearchFilter> dataListSearchFilters = new ArrayList<>();
-
-	@PostConstruct
-	public void init() throws UnsupportedEncodingException, IOException, JSONException {
-
-		Resource res = new ClassPathResource("beCPG/search/productAdvSearch.json");
-
-		BufferedReader streamReader = new BufferedReader(new InputStreamReader(res.getInputStream(), "UTF-8"));
-		StringBuilder responseStrBuilder = new StringBuilder();
-
-		String inputStr;
-		while ((inputStr = streamReader.readLine()) != null) {
-			responseStrBuilder.append(inputStr);
-		}
-
-		JSONObject jsonObject = new JSONObject(responseStrBuilder.toString());
-
-		JSONObject filters = jsonObject.getJSONObject("filters");
-
-		for (@SuppressWarnings("unchecked")
-		Iterator<String> iterator = filters.keys(); iterator.hasNext();) {
-			String filterName = iterator.next();
-
-			JSONArray jsonArray = filters.getJSONArray(filterName);
-
-			DataListSearchFilter filter = new DataListSearchFilter(filterName);
-
-			for (int i = 0; i < jsonArray.length(); i++) {
-
-				JSONObject conf = jsonArray.getJSONObject(i);
-
-				DataListSearchFilterField field = new DataListSearchFilterField();
-
-				field.attributeQname = QName.createQName(conf.getString("attribute"), namespaceService);
-
-				if (conf.has("operator")) {
-					field.operator = conf.getString("operator").toLowerCase();
-				}
-
-				if (conf.has("value")) {
-					field.value = conf.getString("value");
-				}
-
-				if (conf.has("htmlId")) {
-					field.htmlId = conf.getString("htmlId");
-
-					keysToExclude.add(field.htmlId);
-
-				}
-
-				if (entityDictionaryService.isAssoc(field.attributeQname)) {
-					filter.assocsFilters.add(field);
-				} else {
-					filter.propFilters.add(field);
-				}
-
-			}
-
-			dataListSearchFilters.add(filter);
-
-		}
-
-	}
-
-	private static Set<String> keysToExclude = new HashSet<>();
-
-	static {
-
+	
+	private void initKeys() {
 		keysToExclude.add(CRITERIA_PACKAGING_LIST_PRODUCT);
 		keysToExclude.add(CRITERIA_PROCESS_LIST_RESSOURCE);
 		keysToExclude.add(CRITERIA_COMPO_LIST_PRODUCT);
@@ -170,20 +77,23 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		keysToExclude.add(CRITERIA_NOTRESPECTED_SPECIFICATIONS);
 		keysToExclude.add(CRITERIA_RESPECTED_SPECIFICATIONS);
 
+		keysToExclude.addAll(SearchConfig.getKeysToExclude());
+		
 	}
 
 	@Override
-	public List<NodeRef> filter(List<NodeRef> nodes, QName datatype, Map<String, String> criteria) {
+	public List<NodeRef> filter(List<NodeRef> nodes, QName datatype, Map<String, String> criteria, SearchConfig searchConfig) {
 
 		boolean isAssocSearch = isAssocSearch(criteria);
 
 		if (isAssocSearch) {
+
 			nodes = filterByAssociations(nodes, datatype, criteria);
 
 			if ((datatype != null) && entityDictionaryService.isSubClass(datatype, PLMModel.TYPE_PRODUCT)) {
 
-				if (dataListSearchFilters != null) {
-					for (DataListSearchFilter filter : dataListSearchFilters) {
+				if (searchConfig.getDataListSearchFilters() != null) {
+					for (DataListSearchFilter filter : searchConfig.getDataListSearchFilters()) {
 						nodes = getSearchNodesByListCriteria(nodes, criteria, filter);
 					}
 				}
@@ -214,21 +124,25 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		List<EntitySourceAssoc> entitySourceAssocs = null;
 		List<EntitySourceAssoc> notEntitySourceAssocs = null;
 
-		for (DataListSearchFilterField assocFilter : filter.assocsFilters) {
+		for (DataListSearchFilterField assocFilter : filter.getAssocsFilters()) {
 			String propValue = null;
 
-			if (assocFilter.value != null) {
-				propValue = assocFilter.value;
+			if (assocFilter.getValue() != null) {
+				propValue = assocFilter.getValue();
 			} else {
-				propValue = criteria.get(assocFilter.htmlId);
+				propValue = criteria.get(assocFilter.getHtmlId());
 			}
 
 			if ((propValue != null) && !propValue.isBlank()) {
 
-				List<EntitySourceAssoc> tmp = associationService.getEntitySourceAssocs(extractNodeRefs(propValue), assocFilter.attributeQname,
-						"or".equals(assocFilter.operator) || "not".equals(assocFilter.operator));
+				List<EntitySourceAssoc> tmp = associationService.getEntitySourceAssocs(extractNodeRefs(propValue), assocFilter.getAttributeQname(),
+						"or".equals(assocFilter.getOperator()) || "not".equals(assocFilter.getOperator()));
 
-				if ("not".equals(assocFilter.operator)) {
+				if(logger.isDebugEnabled()) {
+					logger.debug("filter by " + assocFilter.getAttributeQname() + " size  " + tmp.size() + " items");
+				}
+				
+				if ("not".equals(assocFilter.getOperator())) {
 
 					if (notEntitySourceAssocs == null) {
 						notEntitySourceAssocs = tmp;
@@ -253,24 +167,25 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 				merge(entitySourceAssocs, notEntitySourceAssocs, false);
 			}
 
+			
 			for (EntitySourceAssoc assocRef : entitySourceAssocs) {
 
 				boolean match = true;
-				for (DataListSearchFilterField propFilter : filter.propFilters) {
+				for (DataListSearchFilterField propFilter : filter.getPropFilters()) {
 					String criteriaValue = null;
 
-					if (propFilter.value != null) {
-						criteriaValue = propFilter.value;
+					if (propFilter.getValue() != null) {
+						criteriaValue = propFilter.getValue();
 					} else {
-						criteriaValue = criteria.get(propFilter.htmlId);
+						criteriaValue = criteria.get(propFilter.getHtmlId());
 					}
 
-					if ((criteriaValue != null) && !criteriaValue.isEmpty()) {
+					if ((criteriaValue != null) && !criteriaValue.isBlank()) {
 						match = false;
 
 						NodeRef n = assocRef.getDataListItemNodeRef();
-						Object value = nodeService.getProperty(n, propFilter.attributeQname);
-						if (PLMModel.PROP_NUTLIST_VALUE.equals(propFilter.attributeQname) && (value == null)) {
+						Object value = nodeService.getProperty(n, propFilter.getAttributeQname());
+						if (PLMModel.PROP_NUTLIST_VALUE.equals(propFilter.getAttributeQname()) && (value == null)) {
 							value = nodeService.getProperty(n, PLMModel.PROP_NUTLIST_FORMULATED_VALUE);
 						}
 
@@ -311,8 +226,9 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 				}
 
 			}
-
+			
 			nodes.retainAll(entities);
+
 		} else if (notEntitySourceAssocs != null) {
 			nodes.removeAll(notEntitySourceAssocs.stream().map(a -> a.getEntityNodeRef()).collect(Collectors.toList()));
 
@@ -320,7 +236,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 		if (logger.isDebugEnabled() && (watch != null)) {
 			watch.stop();
-			logger.debug("getSearchNodesByListCriteria " + filter.name + " executed in  " + watch.getTotalTimeSeconds() + " seconds");
+			logger.debug("getSearchNodesByListCriteria " + filter.getName() + " executed in  " + watch.getTotalTimeSeconds() + " seconds");
 		}
 
 		return nodes;
@@ -357,13 +273,20 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 	}
 
 	@Override
-	public Set<String> getIgnoredFields(QName datatype) {
+	public Set<String> getIgnoredFields(QName datatype, SearchConfig searchConfig) {
 		Set<String> ret = new HashSet<>();
 		if ((datatype != null) && entityDictionaryService.isSubClass(datatype, PLMModel.TYPE_PRODUCT)) {
+			
+			if(keysToExclude.isEmpty()) {
+				initKeys();
+			}
+			
 			ret.addAll(keysToExclude);
 		}
 		return ret;
 	}
+
+
 
 	/**
 	 * Take in account criteria on associations (ie :
