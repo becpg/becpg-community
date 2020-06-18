@@ -19,9 +19,6 @@ package fr.becpg.repo.entity.impl;
 
 import java.io.Serializable;
 import java.security.InvalidParameterException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -34,11 +31,7 @@ import java.util.Set;
 import javax.sql.DataSource;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.coci.CheckOutCheckInServicePolicies;
-import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.PolicyComponent;
-import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
@@ -46,7 +39,6 @@ import org.alfresco.service.cmr.repository.CopyService;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -60,7 +52,6 @@ import org.springframework.stereotype.Repository;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
@@ -74,8 +65,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  */
 @Repository("entityListDAO")
 @DependsOn("bcpg.dictionaryBootstrap")
-public class EntityListDAOImplV2 implements EntityListDAO,
-NodeServicePolicies.BeforeDeleteNodePolicy, CheckOutCheckInServicePolicies.OnCheckIn {
+public class EntityListDAOImplV2 implements EntityListDAO {
 
 	private static final Log logger = LogFactory.getLog(EntityListDAOImplV2.class);
 
@@ -96,9 +86,9 @@ NodeServicePolicies.BeforeDeleteNodePolicy, CheckOutCheckInServicePolicies.OnChe
 
 	@Autowired
 	private AssociationService associationService;
-
-	@Autowired
-	private BeCPGCacheService beCPGCacheService;
+//
+//	@Autowired
+//	private BeCPGCacheService beCPGCacheService;
 
 	@Autowired
 	@Qualifier("policyComponent")
@@ -109,9 +99,9 @@ NodeServicePolicies.BeforeDeleteNodePolicy, CheckOutCheckInServicePolicies.OnChe
 	private DataSource dataSource;
 
 	private Set<QName> hiddenListQnames = new HashSet<>();
-	
-	@Autowired
-	private TenantService tenantService;
+//	
+//	@Autowired
+//	private TenantService tenantService;
 
 
 	@Override
@@ -431,54 +421,6 @@ NodeServicePolicies.BeforeDeleteNodePolicy, CheckOutCheckInServicePolicies.OnChe
 		return null;
 	}
 	
-	private static final String SQL_SELECT_ENTITY = "select entity.uuid " + " from alf_node entity "
-			+ " join alf_child_assoc dataListContainerAssoc on (entity.id = dataListContainerAssoc.parent_node_id)"
-			+ " join alf_child_assoc dataListAssoc on (dataListAssoc.parent_node_id = dataListContainerAssoc.child_node_id)"
-			+ " join alf_child_assoc dataListItemAssoc on (dataListItemAssoc.parent_node_id = dataListAssoc.child_node_id)"
-			+ " join alf_node dataListItem on (dataListItem.id = dataListItemAssoc.child_node_id ) "
-			+ " join alf_store dataListItemStore on (  dataListItemStore.id = dataListItem.store_id )" + " where dataListItem.uuid = ?"
-			+ " and dataListItemStore.protocol= ? and dataListItemStore.identifier=?";
-
-
-	public NodeRef getEntityV2(NodeRef listItemNodeRef) {
-		return beCPGCacheService.getFromCache(getCacheName(), listItemNodeRef.getId(), () -> {
-
-			StoreRef storeRef = StoreRef.STORE_REF_WORKSPACE_SPACESSTORE;
-			if (AuthenticationUtil.isMtEnabled()) {
-				storeRef = tenantService.getName(storeRef);
-			}
-
-			try (Connection con = dataSource.getConnection()) {
-
-				try (PreparedStatement statement = con.prepareStatement(SQL_SELECT_ENTITY)) {
-					statement.setString(1, listItemNodeRef.getId());
-					statement.setString(2, storeRef.getProtocol());
-					statement.setString(3, storeRef.getIdentifier());
-
-					try (java.sql.ResultSet res = statement.executeQuery()) {
-						if (res.first()) {
-							return new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, res.getString("uuid"));
-
-						} else {
-							//In transaction
-							logger.warn("Perf issue!!!");
-							NodeRef listNodeRef = nodeService.getPrimaryParent(listItemNodeRef).getParentRef();
-
-							if (listNodeRef != null) {
-								return getEntityFromList(listNodeRef);
-							}
-
-							return null;
-						}
-					}
-				}
-			} catch (SQLException e) {
-				logger.error(e, e);
-			}
-
-			return null;
-		});
-	}
 
 	@Override
 	public NodeRef getEntityFromList(NodeRef listNodeRef) {
@@ -491,31 +433,81 @@ NodeServicePolicies.BeforeDeleteNodePolicy, CheckOutCheckInServicePolicies.OnChe
 
 		return null;
 	}
-
-	@Override
-	public void beforeDeleteNode(NodeRef nodeRef) {
-		beCPGCacheService.removeFromCache(getCacheName(), nodeRef.getId());
-
-	}
 	
-	@Override
-	public void onCheckIn(NodeRef nodeRef) {
-		
-			for (String cacheKey : beCPGCacheService.getCacheKeys(getCacheName())) {
-				if (cacheKey.startsWith(nodeRef.toString())) {
-					if (logger.isDebugEnabled()) {
-						logger.debug("In checkin delete:" + cacheKey);
-					}
+//	private static final String SQL_SELECT_ENTITY = "select entity.uuid " + " from alf_node entity "
+//			+ " join alf_child_assoc dataListContainerAssoc on (entity.id = dataListContainerAssoc.parent_node_id)"
+//			+ " join alf_child_assoc dataListAssoc on (dataListAssoc.parent_node_id = dataListContainerAssoc.child_node_id)"
+//			+ " join alf_child_assoc dataListItemAssoc on (dataListItemAssoc.parent_node_id = dataListAssoc.child_node_id)"
+//			+ " join alf_node dataListItem on (dataListItem.id = dataListItemAssoc.child_node_id ) "
+//			+ " join alf_store dataListItemStore on (  dataListItemStore.id = dataListItem.store_id )" + " where dataListItem.uuid = ?"
+//			+ " and dataListItemStore.protocol= ? and dataListItemStore.identifier=?";
+//
+//
+//	public NodeRef getEntityV2(NodeRef listItemNodeRef) {
+//		return beCPGCacheService.getFromCache(getCacheName(), listItemNodeRef.getId(), () -> {
+//
+//			StoreRef storeRef = StoreRef.STORE_REF_WORKSPACE_SPACESSTORE;
+//			if (AuthenticationUtil.isMtEnabled()) {
+//				storeRef = tenantService.getName(storeRef);
+//			}
+//
+//			try (Connection con = dataSource.getConnection()) {
+//
+//				try (PreparedStatement statement = con.prepareStatement(SQL_SELECT_ENTITY)) {
+//					statement.setString(1, listItemNodeRef.getId());
+//					statement.setString(2, storeRef.getProtocol());
+//					statement.setString(3, storeRef.getIdentifier());
+//
+//					try (java.sql.ResultSet res = statement.executeQuery()) {
+//						if (res.first()) {
+//							return new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, res.getString("uuid"));
+//
+//						} else {
+//							//In transaction
+//							logger.warn("Perf issue!!!");
+//							NodeRef listNodeRef = nodeService.getPrimaryParent(listItemNodeRef).getParentRef();
+//
+//							if (listNodeRef != null) {
+//								return getEntityFromList(listNodeRef);
+//							}
+//
+//							return null;
+//						}
+//					}
+//				}
+//			} catch (SQLException e) {
+//				logger.error(e, e);
+//			}
+//
+//			return null;
+//		});
+//	}
+//
 
-					beCPGCacheService.removeFromCache(getCacheName(), cacheKey);
-				}
-			}
-
-	}
-	
-	private String getCacheName() {
-		return EntityListDAO.class.getName();
-	}
-	
+//	@Override
+//	public void beforeDeleteNode(NodeRef nodeRef) {
+//		beCPGCacheService.removeFromCache(getCacheName(), nodeRef.getId());
+//
+//	}
+//	
+//	@Override
+//	public void onCheckIn(NodeRef nodeRef) {
+//		
+//			for (String cacheKey : beCPGCacheService.getCacheKeys(getCacheName())) {
+//				if (cacheKey.startsWith(nodeRef.toString())) {
+//					if (logger.isDebugEnabled()) {
+//						logger.debug("In checkin delete:" + cacheKey);
+//					}
+//
+//					beCPGCacheService.removeFromCache(getCacheName(), cacheKey);
+//				}
+//			}
+//
+//	}
+//	
+//	private String getCacheName() {
+//		return EntityListDAO.class.getName();
+//	}
+//	
 
 }
