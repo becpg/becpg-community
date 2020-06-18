@@ -21,6 +21,10 @@ import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
 
+import org.alfresco.repo.copy.CopyBehaviourCallback;
+import org.alfresco.repo.copy.CopyDetails;
+import org.alfresco.repo.copy.CopyServicePolicies;
+import org.alfresco.repo.copy.DefaultCopyBehaviourCallback;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.Behaviour.NotificationFrequency;
 import org.alfresco.repo.policy.JavaBehaviour;
@@ -37,7 +41,7 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.quality.QualityControlService;
 
 public class QualityControlPolicies extends AbstractBeCPGPolicy implements NodeServicePolicies.OnCreateAssociationPolicy,
-		NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.BeforeDeleteNodePolicy {
+		NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.BeforeDeleteNodePolicy,CopyServicePolicies.OnCopyNodePolicy {
 
 	private static final Log logger = LogFactory.getLog(QualityControlPolicies.class);
 
@@ -79,7 +83,10 @@ public class QualityControlPolicies extends AbstractBeCPGPolicy implements NodeS
 
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnCreateNodePolicy.QNAME, QualityModel.TYPE_SAMPLING_LIST,
 				new JavaBehaviour(this, "onCreateNode", NotificationFrequency.TRANSACTION_COMMIT));
-
+		
+		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyNodePolicy.QNAME, QualityModel.TYPE_QUALITY_CONTROL,
+				new JavaBehaviour(this, "getCopyCallback"));
+		
 		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME, QualityModel.TYPE_SAMPLING_LIST,
 				new JavaBehaviour(this, "beforeDeleteNode"));
 
@@ -91,7 +98,6 @@ public class QualityControlPolicies extends AbstractBeCPGPolicy implements NodeS
 	@Override
 	//TODO used queueAssoc instead
 	public void onCreateAssociation(AssociationRef assocRef) {
-
 		logger.debug("QualityControlPolicies onCreateAssociation");
 		if (assocRef.getTypeQName().equals(QualityModel.ASSOC_QC_CONTROL_PLANS)) {
 			// Needed as beCPG Code can be create beforeCommit
@@ -117,9 +123,21 @@ public class QualityControlPolicies extends AbstractBeCPGPolicy implements NodeS
 
 	@Override
 	public void onCreateNode(ChildAssociationRef childAssocRef) {
-		
 		qualityControlService.createSamplingListId(childAssocRef.getChildRef());
 	}
+	
+	
+	@Override
+	public CopyBehaviourCallback getCopyCallback(QName classRef, CopyDetails copyDetails) {
+		if (policyBehaviourFilter.isEnabled(QualityModel.TYPE_QUALITY_CONTROL)) {
+			policyBehaviourFilter.disableBehaviour(QualityModel.TYPE_QUALITY_CONTROL);
+		}
+		if (policyBehaviourFilter.isEnabled(QualityModel.TYPE_SAMPLING_LIST)) {
+			policyBehaviourFilter.disableBehaviour(QualityModel.TYPE_SAMPLING_LIST);
+		}
+		return new DefaultCopyBehaviourCallback();
+	}
+	
 
 	@Override
 	protected void doAfterCommit(String key, Set<NodeRef> pendingNodes) {
