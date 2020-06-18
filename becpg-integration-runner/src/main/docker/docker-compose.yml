@@ -87,6 +87,6 @@ services:
           - "8983:8983"  
 
   becpg-report:
-    image:  ${docker.becpg.url}/becpg-report:2.2.5
+    image:  ${docker.becpg.url}/becpg-report:3.2.0
 
  
