@@ -770,13 +770,6 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 	@Override
 	public void cleanActivities() {
-		List<NodeRef> entityTplNodeRefs = getEntityTplToPurge();
-		if (logger.isDebugEnabled()) {
-			logger.debug("Clean activities, Number of entity templates: " + entityTplNodeRefs.size());
-		}
-		for (NodeRef entityTplNodeRef : entityTplNodeRefs) {
-			clearAllActivities(entityTplNodeRef);
-		}
 
 		List<NodeRef> entityNodeRefs = getEntitiesToPurge();
 		if (logger.isDebugEnabled()) {
@@ -828,6 +821,11 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 									Set<String> users = new HashSet<>();
 									Date cronDate = new Date();
+									
+									//Clear all activities of entity templates
+									if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)){
+										clearAllActivities(entityNodeRef);
+									}
 
 									// Get Activity list ordered by the date of creation
 									List<NodeRef> activityListDataItemNodeRefs = entityListDAO.getListItems(activityListNodeRef,
@@ -1033,17 +1031,6 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	private List<NodeRef> getEntitiesToPurge(){
 		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_ENTITY_V2)
-					.excludeAspect(BeCPGModel.ASPECT_ENTITY_TPL)
-					.excludeVersions()
-					.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED);
-			return queryBuilder.list();
-		}, false, true);
-	}
-
-	private List<NodeRef> getEntityTplToPurge(){
-		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_ENTITY_V2)
-					.withAspect(BeCPGModel.ASPECT_ENTITY_TPL)
 					.excludeVersions()
 					.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED);
 			return queryBuilder.list();
