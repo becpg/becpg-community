@@ -45,7 +45,7 @@ import fr.becpg.repo.search.impl.SearchConfig;
 @Service
 public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
-	private static final Log logger = LogFactory.getLog(AdvSearchPlugin.class);
+	private static final Log logger = LogFactory.getLog(ProductAdvSearchPlugin.class);
 
 	@Autowired
 	private NodeService nodeService;
@@ -145,12 +145,11 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 				List<EntitySourceAssoc> tmp = associationService.getEntitySourceAssocs(extractNodeRefs(propValue), assocFilter.getAttributeQname(),
 						"or".equals(assocFilter.getOperator()) || "not".equals(assocFilter.getOperator()));
 
-				if(logger.isDebugEnabled()) {
-					logger.debug("filter by " + assocFilter.getAttributeQname() + " size  " + tmp.size() + " items");
-				}
+			
 				
 				if ("not".equals(assocFilter.getOperator())) {
 
+					
 					if (notEntitySourceAssocs == null) {
 						notEntitySourceAssocs = tmp;
 					} else {
@@ -158,6 +157,8 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 					}
 
 				} else {
+					
+					
 					if (entitySourceAssocs == null) {
 						entitySourceAssocs = tmp;
 					} else {
@@ -165,6 +166,9 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 					}
 				}
 
+				if(logger.isDebugEnabled()) {
+					logger.debug("Found dataList items to filter: " + assocFilter.getAttributeQname() + ", size:  " + tmp.size() + " items, operator: "+assocFilter.getOperator());
+				}
 			}
 		}
 
@@ -201,6 +205,8 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 								if (criteriaValue.equals(value)) {
 									match = true;
 								}
+								
+								
 
 							} else if (value instanceof Boolean) {
 								if (Boolean.valueOf(criteriaValue).equals(value)) {
@@ -210,9 +216,6 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 							} else if (value instanceof Double) {
 								String[] splitted = criteriaValue.split("\\|");
 								if (splitted.length == 2) {
-									if (logger.isDebugEnabled()) {
-										logger.debug("filter by range: " + splitted[0] + "->" + splitted[1] + ", value=" + value);
-									}
 									if ((splitted[0].isEmpty() || (((Double) value) >= Double.valueOf(splitted[0])))
 											&& (splitted[1].isEmpty() || (((Double) value) <= Double.valueOf(splitted[1])))) {
 										match = true;
@@ -223,10 +226,20 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 									}
 								}
 							}
+							
+							
+							if (logger.isDebugEnabled()) {
+								logger.debug(" - filter : ("+propFilter.getHtmlId()+") " + value + "->" + criteriaValue + ", match=" + match);
+							}
+							
 						}
 
 					}
 
+					if(!match) {
+						break;
+					}
+					
 				}
 				if (match) {
 					entities.add(assocRef.getEntityNodeRef());
@@ -384,11 +397,13 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 				if (nodeService.exists(nodeRef)) {
 					ret.add(nodeRef);
 					if (logger.isDebugEnabled()) {
-						logger.debug("Adding associated search :"
-								+ associationService.getSourcesAssocs(nodeRef, BeCPGModel.ASSOC_LINKED_SEARCH_ASSOCIATION).size());
+						int size = associationService.getSourcesAssocs(nodeRef, BeCPGModel.ASSOC_LINKED_SEARCH_ASSOCIATION).size();
+						if(size > 0) {
+							logger.debug("Found linked  associated search to add :"
+									+ size);
+						}
 
 					}
-
 					ret.addAll(associationService.getSourcesAssocs(nodeRef, BeCPGModel.ASSOC_LINKED_SEARCH_ASSOCIATION));
 				}
 			}
