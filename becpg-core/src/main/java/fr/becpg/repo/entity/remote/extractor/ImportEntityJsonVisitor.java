@@ -452,7 +452,7 @@ public class ImportEntityJsonVisitor {
 
 					} else {
 						Serializable value = null;
-						if (entity.get(key) != null) {
+						if (entity.get(key) != null  && ! JSONObject.NULL.equals(entity.get(key))) {
 							if (pd.isMultiValued() && (entity.getJSONArray(key) != null)) {
 
 								value = new ArrayList<Serializable>();
