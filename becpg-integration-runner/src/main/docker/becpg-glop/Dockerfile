@@ -16,7 +16,6 @@ RUN a2enmod wsgi
 
 COPY linrest.com.conf /etc/apache2/sites-available/000-default.conf
 
-RUN sed 's/^Listen 80$/Listen 5000/' -i /etc/apache2/ports.conf
 RUN echo ServerName localhost >> /etc/apache2/apache2.conf
 
 CMD ["apachectl", "-k", "start", "-DFOREGROUND"]
