@@ -321,6 +321,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 		// Property catalogs
 		visitFolder(systemNodeRef, PlmRepoConsts.PATH_CATALOGS);
+		
+		//Config folder
+		visitFolder(systemNodeRef, PlmRepoConsts.PATH_CONFIG);
 
 		beCPGCacheService.clearCache(EntityCatalogService.class.getName());
 		
@@ -498,6 +501,12 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			}
 
 			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/catalogs/*.json");
+
+		}
+		
+		if (Objects.equals(folderName, PlmRepoConsts.PATH_CONFIG)) {
+
+			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/search/*.json");
 
 		}
 
