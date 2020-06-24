@@ -353,8 +353,8 @@
 	         if (task["itemData"]["prop_pjt_tlWorkflowInstance"] && task["itemData"]["prop_pjt_tlWorkflowInstance"].value
 	        		 && task["itemData"]["prop_pjt_tlWorkflowInstance"].value!=''){
 	        		ret += '<a href="';
-	        	    ret +=  $siteURL('workflow-details?workflowId=' + task["itemData"]["prop_pjt_tlWorkflowInstance"].value+  '&referrer=project-list') + '" class="workflow-task-link" title="' + this.msg("link.title.open-workflow")+'"';
-	                ret +="&nbsp;</a>";
+	        	    ret +=  $siteURL('workflow-details?workflowId=' + task["itemData"]["prop_pjt_tlWorkflowInstance"].value+  '&referrer=project-list') + '" class="workflow-task-link" title="' + this.msg("link.title.open-workflow")+'">';
+	                ret +='&nbsp;</a>';
 	            }
 	      }
           

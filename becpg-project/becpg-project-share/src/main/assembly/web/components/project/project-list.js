@@ -157,6 +157,13 @@ var g; // gantt var
                         onReady : function PL_onReady()
                         {
 
+                        	if(this.options.filter == null){
+                        		this.options.filter = {
+                        			"filterId" : "projects",
+                        			"filterData" : "InProgress"
+                        		};
+                        	}
+                        	
 
                             this.widgets.filter = Alfresco.util.createYUIButton(this, "filters", this.onMenuFilterChanged, {
                                 type : "menu",
@@ -577,7 +584,7 @@ var g; // gantt var
                               
                               
                               this.options.filter = filterObj;
-                              this.services.preferences.set("org.alfresco.share.project.list." + (this.options.siteId != null ? this.options.siteId : "home") + ".filter", this.options.filter);
+                              this.services.preferences.set("org.alfresco.share.project.list."+this.view+"." + (this.options.siteId != null && this.options.siteId.length>0 ? this.options.siteId : "home") + ".filter", this.options.filter);
                               
                               YAHOO.Bubbling.fire("changeFilter", filterObj);
                            }
