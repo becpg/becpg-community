@@ -234,9 +234,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 			return;
 		}
 
-		@SuppressWarnings("unchecked")
-		List<SimpleCharactDataItem> simpleCharactDataList = (List<SimpleCharactDataItem>) alfrescoRepository.loadDataList(productData.getNodeRef(),
-				dataListType, dataListType);
+		List<SimpleCharactDataItem> simpleCharactDataList = alfrescoRepository.getList(productData, dataListType, dataListType);
 
 		for (SimpleCharactDataItem simpleCharact : simpleCharactDataList) {
 			if ((simpleCharact != null) && charactDetails.hasElement(simpleCharact.getCharactNodeRef())) {
