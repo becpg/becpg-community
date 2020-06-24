@@ -59,7 +59,7 @@ RETOL;Retinol;81;1;false;true;false;;;;
 RIBF;Riboflavin;52;1;false;true;false;1,2;;mg;true
 NACL;Salt;36;1;false;true;false;;;;
 SE;Selenium;82;1;false;true;false;60;;mcg;true
-NA;Sodium, Na;35;1;true;false;false;;;;
+NA;Sodium, Na;35;1;true;false;false;;;g;
 FIBSOL;Soluble fiber;33;1;false;true;false;;;;
 STARCH;Starch;83;1;false;true;false;;;;
 SUGAR;Sugars total;7;2;true;false;false;;;;
