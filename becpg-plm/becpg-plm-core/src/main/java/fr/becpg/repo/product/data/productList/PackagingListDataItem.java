@@ -27,7 +27,7 @@ import fr.becpg.repo.repository.model.CompositionDataItem;
 @AlfType
 @AlfQname(qname = "bcpg:packagingList")
 @MultiLevelDataList(secondaryPivot = "bcpg:compoList")
-public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem implements CompositionDataItem {
+public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem implements CompositionDataItem, SimpleCharactDataItem {
 
 	private static final long serialVersionUID = -8724448903680191263L;
 
@@ -309,6 +309,27 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 	@Override
 	public QName getComponentAssocName() {
 		return PLMModel.ASSOC_PACKAGINGLIST_PRODUCT;
+	}
+
+       @Override
+	public void setCharactNodeRef(NodeRef nodeRef) {
+		setComponent(nodeRef);
+	}
+
+	@Override
+	public void setValue(Double value) {
+		setQty(value);
+		
+	}
+
+	@Override
+	public NodeRef getCharactNodeRef() {
+		return getComponent();
+	}
+
+	@Override
+	public Double getValue() {
+		return getQty();
 	}
 
 }
