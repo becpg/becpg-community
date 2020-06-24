@@ -121,7 +121,6 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 	@Override
 	public <R> Map<QName, List<? extends RepositoryEntity>> getDataLists(R entity) {
 		return readValueMap(entity, DataList.class, List.class);
-
 	}
 
 	@Override

@@ -17,6 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.product.formulation;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -107,8 +108,8 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		this.mlNodeService = mlNodeService;
 	}
 
-	public T createNewInstance() throws InstantiationException, IllegalAccessException {
-		return getInstanceClass().newInstance();
+	public T createNewInstance() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+		return getInstanceClass().getDeclaredConstructor().newInstance();
 	}
 
 	protected abstract Class<T> getInstanceClass();

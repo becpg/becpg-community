@@ -17,11 +17,12 @@ import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.annotation.InternalField;
 import fr.becpg.repo.repository.annotation.MultiLevelDataList;
 import fr.becpg.repo.repository.model.CompositionDataItem;
+import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 
 @AlfType
 @AlfQname(qname = "bcpg:packagingList")
 @MultiLevelDataList(secondaryPivot = "bcpg:compoList")
-public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem implements CompositionDataItem {
+public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem implements CompositionDataItem, SimpleCharactDataItem {
 
 	/**
 	 * 
@@ -232,5 +233,27 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 	public QName getComponentAssocName() {
 		return PLMModel.ASSOC_PACKAGINGLIST_PRODUCT;
 	}
+	
+	@Override
+	public void setCharactNodeRef(NodeRef nodeRef) {
+		setComponent(nodeRef);
+	}
+
+	@Override
+	public void setValue(Double value) {
+		setQty(value);
+		
+	}
+
+	@Override
+	public NodeRef getCharactNodeRef() {
+		return getComponent();
+	}
+
+	@Override
+	public Double getValue() {
+		return getQty();
+	}
+	
 
 }

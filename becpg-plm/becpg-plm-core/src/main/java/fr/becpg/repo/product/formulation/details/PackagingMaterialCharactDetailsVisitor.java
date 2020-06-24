@@ -72,18 +72,19 @@ public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetails
 
 			for (PackagingListDataItem packagingListDataItem : formulatedProduct
 					.getPackagingList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
-				visitMaterial(formulatedProduct.getNodeRef(), packagingListDataItem, ret, 0, 1);
+				visitMaterial(formulatedProduct, packagingListDataItem, ret, 0, 1);
 			}
 		}
 
 		return ret;
 	}
-	
 
-	private void visitMaterial(NodeRef parent, PackagingListDataItem packagingListDataItem, CharactDetails charactDetails,Integer currLevel, int kitQty) throws FormulateException {
+	private void visitMaterial(ProductData parent, PackagingListDataItem packagingListDataItem, CharactDetails charactDetails, Integer currLevel,
+			int kitQty) throws FormulateException {
 
 		if (nodeService.getType(packagingListDataItem.getProduct()).equals(PLMModel.TYPE_PACKAGINGKIT)) {
-			if ((ProductUnit.PP.equals(packagingListDataItem.getPackagingListUnit()) || ProductUnit.P.equals(packagingListDataItem.getPackagingListUnit())) && packagingListDataItem.getQty() != null){
+			if ((ProductUnit.PP.equals(packagingListDataItem.getPackagingListUnit())
+					|| ProductUnit.P.equals(packagingListDataItem.getPackagingListUnit())) && (packagingListDataItem.getQty() != null)) {
 				kitQty *= packagingListDataItem.getQty().intValue();
 			}
 			ProductData packagingListDataItemProduct = (ProductData) alfrescoRepository.findOne(packagingListDataItem.getProduct());
@@ -93,39 +94,39 @@ public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetails
 				}
 			}
 		} else {
-			visitMaterialPackaging(parent, packagingListDataItem,charactDetails, currLevel, kitQty);
+			visitMaterialPackaging(parent, packagingListDataItem, charactDetails, currLevel, kitQty);
 		}
 
 	}
 
-
-	private void visitMaterialPackaging(NodeRef parent, PackagingListDataItem packagingListDataItem, CharactDetails charactDetails, Integer currLevel, int kitQty) throws FormulateException {
+	private void visitMaterialPackaging(ProductData parent, PackagingListDataItem packagingListDataItem, CharactDetails charactDetails,
+			Integer currLevel, int kitQty) throws FormulateException {
 
 		if (packagingListDataItem.getProduct() == null) {
 			return;
 		}
 
-		if (packagingListDataItem.getPkgLevel() != null && PackagingLevel.Primary.equals(packagingListDataItem.getPkgLevel())){
-			
-			@SuppressWarnings("unchecked")
-			List<SimpleCharactDataItem> simpleCharactDataList = (List<SimpleCharactDataItem>) alfrescoRepository.loadDataList(parent, dataListType, dataListType);
+		if ((packagingListDataItem.getPkgLevel() != null) && PackagingLevel.Primary.equals(packagingListDataItem.getPkgLevel())) {
 
-			PackagingMaterialData packagingProduct = (PackagingMaterialData)alfrescoRepository.findOne(packagingListDataItem.getProduct());
+			List<SimpleCharactDataItem> simpleCharactDataList = alfrescoRepository.getList(parent, dataListType, dataListType);
+
+			PackagingMaterialData packagingProduct = (PackagingMaterialData) alfrescoRepository.findOne(packagingListDataItem.getProduct());
 
 			for (SimpleCharactDataItem simpleCharact : simpleCharactDataList) {
-				if (simpleCharact != null && packagingProduct.getPackagingMaterials() != null 
-						&& packagingProduct.getPackagingMaterials().contains(simpleCharact.getCharactNodeRef()) && charactDetails.hasElement(simpleCharact.getCharactNodeRef())){
+				if ((simpleCharact != null) && (packagingProduct.getPackagingMaterials() != null)
+						&& packagingProduct.getPackagingMaterials().contains(simpleCharact.getCharactNodeRef())
+						&& charactDetails.hasElement(simpleCharact.getCharactNodeRef())) {
 
 					BigDecimal tare = FormulationHelper.getTareInKg(packagingListDataItem, packagingProduct).multiply(new BigDecimal(kitQty));
 
 					ProductUnit packagingUnit = packagingProduct.getUnit();
-					//Convert tare in Kg
-					if(packagingUnit != null) {
+					// Convert tare in Kg
+					if (packagingUnit != null) {
 						tare = tare.divide(new BigDecimal(packagingUnit.getUnitFactor()));
 					}
 
 					Double value = (1000d / packagingProduct.getPackagingMaterials().size()) * tare.doubleValue();
-					
+
 					CharactDetailsValue currentCharactDetailsValue = null;
 
 					if ((value != null) && (simpleCharact.shouldDetailIfZero() || (value != 0d))) {
@@ -135,16 +136,17 @@ public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetails
 									+ packagingProduct.getName() + " - value: " + value);
 						}
 
-						currentCharactDetailsValue = new CharactDetailsValue(parent, packagingProduct.getNodeRef(), packagingListDataItem.getNodeRef(), value, currLevel, null);
+						currentCharactDetailsValue = new CharactDetailsValue(parent.getNodeRef(), packagingProduct.getNodeRef(),
+								packagingListDataItem.getNodeRef(), value, currLevel, null);
 
 						charactDetails.addKeyValue(simpleCharact.getCharactNodeRef(), currentCharactDetailsValue);
-						
+
 					}
 				}
 			}
 		}
 	}
-	
+
 	public CharactDetails visitRecurPMaterial(ProductData subProductData, CharactDetails ret, Integer currLevel, Integer maxLevel, Double subWeight,
 			Double subVol, Double netQty) throws FormulateException {
 
@@ -167,7 +169,7 @@ public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetails
 					}
 
 					ProductData compoListProduct = (ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct());
-					
+
 					// get compoProduct qty
 					Double compoProductQty = compoListProduct.getQty();
 					if (compoProductQty == null) {
@@ -184,8 +186,8 @@ public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetails
 						compoProductQty = FormulationHelper.getNetQtyInLorKg(compoListProduct, 1d);
 					}
 
-
-					visitPart(subProductData.getNodeRef(), compoListProduct, compoListDataItem.getNodeRef(), ret, weightUsed, volUsed, compoProductQty, compoProductQty, currLevel, null);
+					visitPart(subProductData.getNodeRef(), compoListProduct, compoListDataItem.getNodeRef(), ret, weightUsed, volUsed,
+							compoProductQty, compoProductQty, currLevel, null);
 					if (((maxLevel < 0) || (currLevel < maxLevel))
 							&& !entityDictionaryService.isMultiLevelLeaf(nodeService.getType(compoListDataItem.getProduct()))) {
 						visitRecur(compoListProduct, ret, currLevel + 1, maxLevel, weightUsed, volUsed, netQty);
@@ -196,5 +198,5 @@ public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetails
 
 		return ret;
 	}
-	
+
 }
