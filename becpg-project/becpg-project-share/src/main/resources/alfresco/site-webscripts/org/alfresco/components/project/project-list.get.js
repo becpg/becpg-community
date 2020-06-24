@@ -31,13 +31,9 @@ function main()
 	var view = page.url.args.view ? page.url.args.view: "dataTable";
 	
 	var site = page.url.templateArgs.site;
-	var prefs = "org.alfresco.share.project.list";
-
-	if(site!=null && site.length>0){
-	   prefs+="."+site;
-	}
-
-   var preferences = AlfrescoUtil.getPreferences(prefs);
+	var prefs = "org.alfresco.share.project.list."+view +"."+ (site!= null && site.length>0 ? site : "home")
+		
+	var preferences = AlfrescoUtil.getPreferences(prefs);
   
    parseActions(view);
    
@@ -58,7 +54,7 @@ function main()
        dataUrl : page.url.context+"/proxy/alfresco/becpg/entity/datalists/data/node",
        itemUrl : page.url.context+"/proxy/alfresco/becpg/entity/datalists/item/node/",
        simpleView : preferences.simpleView !=null ? preferences.simpleView : false,
-       filter : preferences.filter
+       filter : preferences.filter ? preferences.filter : null
       }
    };
     
