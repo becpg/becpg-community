@@ -144,6 +144,16 @@
 			   var deliverableHtlm = "<ul>";
 
 			   if (idx == 0) {
+				   
+				   deliverables.sort(function (a, b){
+                       if(a!=null && a.sort!=null	
+                       		&& b!=null && b.sort!=null	){
+                       	return a.sort - b.sort;
+                       }
+                   	return 0;
+                   });
+				   
+				   
 				   for (j in deliverables) {
 					   var deliverable = deliverables[j], state = deliverable["itemData"]["prop_pjt_dlState"].value, 
 					   scriptOrder  = deliverable["itemData"]["prop_pjt_dlScriptExecOrder"].value;
