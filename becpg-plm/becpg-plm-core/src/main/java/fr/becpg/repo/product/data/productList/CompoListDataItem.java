@@ -30,7 +30,7 @@ import fr.becpg.repo.repository.model.CompositionDataItem;
 @AlfType
 @AlfQname(qname = "bcpg:compoList")
 @MultiLevelDataList
-public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  implements CompositeDataItem<CompoListDataItem>, CompositionDataItem {
+public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  implements CompositeDataItem<CompoListDataItem>, CompositionDataItem, SimpleCharactDataItem  {
 
 	
 	/**
@@ -418,4 +418,25 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 		return PLMModel.ASSOC_COMPOLIST_PRODUCT;
 	}
 	
+       @Override
+	public void setCharactNodeRef(NodeRef nodeRef) {
+		setComponent(nodeRef);
+	}
+
+	@Override
+	public void setValue(Double value) {
+		setQty(value);
+		
+	}
+
+	@Override
+	public NodeRef getCharactNodeRef() {
+		return getComponent();
+	}
+
+	@Override
+	public Double getValue() {
+		return getQty();
+	}
+
 }
