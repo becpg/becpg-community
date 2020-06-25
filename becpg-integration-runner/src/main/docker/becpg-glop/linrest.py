@@ -25,7 +25,7 @@ def make_variables(data_vars, solver):
 
 def solve(content):
 	if content == None:
-		return "Ouch"
+		raise ProgramSpecificationError("Request was empty")
 	name = "LinearProgram"
 	if "name" in content:
 		name = content["name"]
@@ -101,15 +101,11 @@ def solve(content):
 
 	status = solver.Solve()
 	if status == solver.OPTIMAL or status == solver.FEASIBLE:
-		ret = {
+		return {
 			"value": objective.Value(),
-			"coefficients": {key: var_dict[key].solution_value() for key in var_dict if var_dict[key].solution_value() != 0}
+			"coefficients": {key: var_dict[key].solution_value() for key in var_dict if var_dict[key].solution_value() != 0},
+			"status": "optimal" if status == solver.OPTIMAL else "feasible"
 		}
-		if status == solver.OPTIMAL:
-			ret["status"] = "optimal"
-		else:
-			ret["status"] = "feasible"
-		return ret
 	else:
 		return None
 
