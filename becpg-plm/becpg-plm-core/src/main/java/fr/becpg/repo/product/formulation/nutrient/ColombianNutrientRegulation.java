@@ -15,7 +15,7 @@ public class ColombianNutrientRegulation extends AbstractNutrientRegulation {
 	protected Double roundByCode(Double value, String nutrientTypeCode) {
 
 		if(value != null && nutrientTypeCode != null){
-			if (nutrientTypeCode.equals(NutrientCode.Energykcal)){
+			if (nutrientTypeCode.equals(NutrientCode.Energykcal) || nutrientTypeCode.equals(NutrientCode.EnergykcalUS)){
 				if (value < 5) {
 					return 0.0;
 				} else if (value <= 50) {
@@ -111,14 +111,14 @@ public class ColombianNutrientRegulation extends AbstractNutrientRegulation {
 		if(value != null && roundedValue != null && nutrientTypeCode != null){
 			if (nutrientTypeCode.equals(NutrientCode.Cholesterol) && value > 2 && value < 5) {
 				return "less than 5mg";
-			} else if (nutrientTypeCode.contentEquals(NutrientCode.CarbohydrateWithFiber)
+			} else if ((nutrientTypeCode.contentEquals(NutrientCode.CarbohydrateWithFiber)
 					|| nutrientTypeCode.contentEquals(NutrientCode.CarbohydrateByDiff) 
 					|| nutrientTypeCode.contentEquals(NutrientCode.FiberDietary)
 					|| nutrientTypeCode.contentEquals(NutrientCode.FiberSoluble)
 					|| nutrientTypeCode.contentEquals(NutrientCode.FiberInsoluble)
 					|| nutrientTypeCode.contentEquals(NutrientCode.Sugar)
 					|| nutrientTypeCode.contentEquals(NutrientCode.SugarAdded)
-					|| nutrientTypeCode.contentEquals(NutrientCode.Protein)
+					|| nutrientTypeCode.contentEquals(NutrientCode.Protein))
 					 && value > 0.5 && value < 1 ) {
 				return "less than 1g";
 			}
