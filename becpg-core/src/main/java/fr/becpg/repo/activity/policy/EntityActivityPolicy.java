@@ -42,8 +42,9 @@ import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.repository.L2CacheSupport;
 
-public class EntityActivityPolicy extends AbstractBeCPGPolicy implements  NodeServicePolicies.OnAddAspectPolicy, NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.BeforeDeleteNodePolicy,
-NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnDeleteAssociationPolicy, ContentServicePolicies.OnContentUpdatePolicy{
+public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnAddAspectPolicy,
+		NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.BeforeDeleteNodePolicy, NodeServicePolicies.OnCreateNodePolicy,
+		NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnDeleteAssociationPolicy, ContentServicePolicies.OnContentUpdatePolicy {
 
 	private static final Log logger = LogFactory.getLog(EntityActivityPolicy.class);
 
@@ -51,7 +52,7 @@ NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.OnCreateAssociationP
 	public static final String KEY_QUEUE_DELETED = "EntityActivity_deleted";
 	public static final String KEY_QUEUE_CREATED = "EntityActivity_created";
 	public static final String KEY_QUEUE_UPDATED_STATUS = "EntityActivity_UpdatedStatus";
-	public static final String KEY_QUEUE_ADDED_TPL_ASPECT= "EntityActivity_AddedTplAspect";
+	public static final String KEY_QUEUE_ADDED_TPL_ASPECT = "EntityActivity_AddedTplAspect";
 
 	private static final Set<QName> isIgnoredTypes = new HashSet<>();
 
@@ -86,10 +87,10 @@ NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.OnCreateAssociationP
 	@Override
 	public void doInit() {
 		logger.debug("Init EntityActivityPolicy...");
-		policyComponent.bindClassBehaviour(NodeServicePolicies.OnAddAspectPolicy.QNAME,
-				BeCPGModel.ASPECT_ENTITY_TPL, new JavaBehaviour(this, "onAddAspect"));
-		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME,
-				BeCPGModel.TYPE_ENTITY_V2, new JavaBehaviour(this, "onUpdateProperties"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnAddAspectPolicy.QNAME, BeCPGModel.ASPECT_ENTITY_TPL,
+				new JavaBehaviour(this, "onAddAspect"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, BeCPGModel.TYPE_ENTITY_V2,
+				new JavaBehaviour(this, "onUpdateProperties"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnCreateNodePolicy.QNAME, BeCPGModel.TYPE_ENTITY_V2,
 				new JavaBehaviour(this, "onCreateNode"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME, BeCPGModel.TYPE_ENTITY_V2,
@@ -99,16 +100,16 @@ NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.OnCreateAssociationP
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteAssociationPolicy.QNAME, BeCPGModel.TYPE_ENTITY_V2,
 				new JavaBehaviour(this, "onDeleteAssociation"));
 
-		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME,
-				BeCPGModel.TYPE_ENTITYLIST_ITEM, new JavaBehaviour(this, "onUpdateProperties"));
-		policyComponent.bindClassBehaviour(NodeServicePolicies.OnCreateNodePolicy.QNAME,
-				BeCPGModel.TYPE_ENTITYLIST_ITEM, new JavaBehaviour(this, "onCreateNode"));
-		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME,
-				BeCPGModel.TYPE_ENTITYLIST_ITEM, new JavaBehaviour(this, "beforeDeleteNode"));
-		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME,
-				BeCPGModel.TYPE_ENTITYLIST_ITEM, new JavaBehaviour(this, "onCreateAssociation"));
-		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteAssociationPolicy.QNAME,
-				BeCPGModel.TYPE_ENTITYLIST_ITEM, new JavaBehaviour(this, "onDeleteAssociation"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, BeCPGModel.TYPE_ENTITYLIST_ITEM,
+				new JavaBehaviour(this, "onUpdateProperties"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnCreateNodePolicy.QNAME, BeCPGModel.TYPE_ENTITYLIST_ITEM,
+				new JavaBehaviour(this, "onCreateNode"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME, BeCPGModel.TYPE_ENTITYLIST_ITEM,
+				new JavaBehaviour(this, "beforeDeleteNode"));
+		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, BeCPGModel.TYPE_ENTITYLIST_ITEM,
+				new JavaBehaviour(this, "onCreateAssociation"));
+		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteAssociationPolicy.QNAME, BeCPGModel.TYPE_ENTITYLIST_ITEM,
+				new JavaBehaviour(this, "onDeleteAssociation"));
 
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, ForumModel.TYPE_POST,
 				new JavaBehaviour(this, "onUpdateProperties"));
@@ -117,15 +118,15 @@ NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.OnCreateAssociationP
 		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME, ForumModel.TYPE_POST,
 				new JavaBehaviour(this, "beforeDeleteNode"));
 
-		policyComponent.bindClassBehaviour(ContentServicePolicies.OnContentUpdatePolicy.QNAME,
-				ContentModel.TYPE_CONTENT, new JavaBehaviour(this, "onContentUpdate"));
+		policyComponent.bindClassBehaviour(ContentServicePolicies.OnContentUpdatePolicy.QNAME, ContentModel.TYPE_CONTENT,
+				new JavaBehaviour(this, "onContentUpdate"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnCreateNodePolicy.QNAME, ContentModel.TYPE_CONTENT,
 				new JavaBehaviour(this, "onCreateNode"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME, ContentModel.TYPE_CONTENT,
 				new JavaBehaviour(this, "beforeDeleteNode"));
 
-		policyComponent.bindClassBehaviour(QName.createQName(NamespaceService.ALFRESCO_URI, "getCopyCallback"),
-				BeCPGModel.TYPE_ACTIVITY_LIST, new JavaBehaviour(this, "getCopyCallback"));
+		policyComponent.bindClassBehaviour(QName.createQName(NamespaceService.ALFRESCO_URI, "getCopyCallback"), BeCPGModel.TYPE_ACTIVITY_LIST,
+				new JavaBehaviour(this, "getCopyCallback"));
 
 	}
 
@@ -136,18 +137,17 @@ NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.OnCreateAssociationP
 
 	public boolean ignoreType(QName type, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 		return (type.getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI)
-				|| ((!before.containsKey(type) || before.get(type) == null)  && (after.get(type) == null || after.get(type).equals("")))
-				|| ((!after.containsKey(type) || after.get(type) == null)  && (before.get(type) == null || before.get(type).equals(""))));	
+				|| ((!before.containsKey(type) || (before.get(type) == null)) && ((after.get(type) == null) || after.get(type).equals("")))
+				|| ((!after.containsKey(type) || (after.get(type) == null)) && ((before.get(type) == null) || before.get(type).equals(""))));
 	}
-	
+
 	@Override
 	public void onAddAspect(NodeRef nodeRef, QName aspectTypeQName) {
 		if (policyBehaviourFilter.isEnabled(ContentModel.ASPECT_AUDITABLE) && policyBehaviourFilter.isEnabled(BeCPGModel.ASPECT_SORTABLE_LIST)
 				&& policyBehaviourFilter.isEnabled(BeCPGModel.TYPE_ACTIVITY_LIST)) {
 			if (L2CacheSupport.isThreadLockEnable()) {
 				if (logger.isDebugEnabled()) {
-					logger.debug("Entity [" + Thread.currentThread().getName() + "] is locked  :"
-							+ nodeRef);
+					logger.debug("Entity [" + Thread.currentThread().getName() + "] is locked  :" + nodeRef);
 				}
 				return;
 			}
@@ -182,16 +182,18 @@ NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.OnCreateAssociationP
 			boolean isDifferent = false;
 			boolean isIgnoreState = false;
 			QName type = nodeService.getType(nodeRef);
-			Map<QName, Pair<List<Serializable>, List<Serializable>>> updatedProperties = new HashMap<QName, Pair<List<Serializable>, List<Serializable>>>();
+			Map<QName, Pair<List<Serializable>, List<Serializable>>> updatedProperties = new HashMap<>();
 			if (accept(type)) {
 
 				if ((before != null) && (after != null) && (before.size() < after.size())) {
-					MapDifference<QName,Serializable> diff = Maps.difference(before, after);
-					for(QName afterType : diff.entriesOnlyOnRight().keySet()) {
-						if (!isIgnoredTypes.contains(afterType) && after.get(afterType) != null && after.get(afterType) != "" && !ignoreType(afterType, before,after)) {
+					MapDifference<QName, Serializable> diff = Maps.difference(before, after);
+					for (QName afterType : diff.entriesOnlyOnRight().keySet()) {
+						if (!isIgnoredTypes.contains(afterType) && (after.get(afterType) != null) && (after.get(afterType) != "")
+								&& !ignoreType(afterType, before, after)) {
 							isDifferent = true;
 
-							Pair<List<Serializable>, List<Serializable>> beforeAfterProperties = new Pair<List<Serializable>, List<Serializable>>(null, Arrays.asList(after.get(afterType)));
+							Pair<List<Serializable>, List<Serializable>> beforeAfterProperties = new Pair<>(null,
+									Arrays.asList(after.get(afterType)));
 							updatedProperties.put(afterType, beforeAfterProperties);
 						}
 					}
@@ -200,7 +202,7 @@ NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.OnCreateAssociationP
 
 				if ((before != null) && (after != null)) {
 					for (QName beforeType : before.keySet()) {
-						if (!isIgnoredTypes.contains(beforeType) && !ignoreType(beforeType, before,after)) {
+						if (!isIgnoredTypes.contains(beforeType) && !ignoreType(beforeType, before, after)) {
 
 							if (((before.get(beforeType) == null) && (after.get(beforeType) == null)) || ((before.get(beforeType) != null)
 									&& (after.get(beforeType) != null) && before.get(beforeType).equals(after.get(beforeType)))) {
@@ -211,52 +213,60 @@ NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.OnCreateAssociationP
 									&& !before.get(beforeType).equals(after.get(beforeType)))
 									|| ((before.get(beforeType) == null) || (after.get(beforeType) == null))) {
 
-								if (before.get(beforeType) != null && after.get(beforeType) != null
-										&& before.get(beforeType).getClass().equals(MLText.class)){
-									MLText beforeMlText = (MLText)before.get(beforeType);
-									MLText afterMlText = (MLText)after.get(beforeType);
+								if ((before.get(beforeType) != null) && (after.get(beforeType) != null)
+										&& before.get(beforeType).getClass().equals(MLText.class)) {
+									MLText beforeMlText = (MLText) before.get(beforeType);
+									MLText afterMlText = (MLText) after.get(beforeType);
 									for (Entry<Locale, String> afterEntry : afterMlText.entrySet()) {
-										if ((beforeMlText.containsKey(afterEntry.getKey()) && !afterEntry.getValue().equals(beforeMlText.getValue(afterEntry.getKey())))
-												|| (!beforeMlText.containsKey(afterEntry.getKey()) && !afterEntry.getValue().equals(""))) {
-											isDifferent = true;
-											if (!entityActivityService.isMatchingStateProperty(beforeType)) {
-												Pair<List<Serializable>, List<Serializable>> beforeAfterProperties = new Pair<List<Serializable>, List<Serializable>>(Arrays.asList(before.get(beforeType)), Arrays.asList(after.get(beforeType)));
-												updatedProperties.put(beforeType, beforeAfterProperties);
+
+										if (beforeMlText.containsKey(afterEntry.getKey())) {
+											String afterValue = afterEntry.getValue();
+											String beforeValue = beforeMlText.getValue(afterEntry.getKey());
+
+											if (!(afterValue != null ? afterValue : "").equals(beforeValue != null ? beforeValue : "")) {
+
+												isDifferent = true;
+												if (!entityActivityService.isMatchingStateProperty(beforeType)) {
+													Pair<List<Serializable>, List<Serializable>> beforeAfterProperties = new Pair<>(
+															Arrays.asList(before.get(beforeType)), Arrays.asList(after.get(beforeType)));
+													updatedProperties.put(beforeType, beforeAfterProperties);
+												}
 											}
 										}
 									}
 								} else {
 									isDifferent = true;
 									if (!entityActivityService.isMatchingStateProperty(beforeType)) {
-										Pair<List<Serializable>, List<Serializable>> beforeAfterProperties = new Pair<List<Serializable>, List<Serializable>>(Arrays.asList(before.get(beforeType)), Arrays.asList(after.get(beforeType)));
+										Pair<List<Serializable>, List<Serializable>> beforeAfterProperties = new Pair<>(
+												Arrays.asList(before.get(beforeType)), Arrays.asList(after.get(beforeType)));
 										updatedProperties.put(beforeType, beforeAfterProperties);
 									}
 								}
 							}
-
 
 							if (entityActivityService.isMatchingStateProperty(beforeType)) {
 								if (entityActivityService.isIgnoreStateProperty(beforeType)) {
 									isIgnoreState = true;
 								}
 								entityState = beforeType;
-								beforeState = before.get(entityState) != null ? before.get(entityState).toString(): "";
-								afterState = after.get(entityState) != null ? after.get(entityState).toString(): "";
-							}	
+								beforeState = before.get(entityState) != null ? before.get(entityState).toString() : "";
+								afterState = after.get(entityState) != null ? after.get(entityState).toString() : "";
+							}
 						}
 					}
 				}
 			}
 
 			if (isDifferent) {
-				if (entityState != null && !isIgnoreState) {
+				if ((entityState != null) && !isIgnoreState) {
 					queueNode(KEY_QUEUE_UPDATED_STATUS + DELIMITER + beforeState + DELIMITER + afterState, nodeRef);
 					queueNode(KEY_QUEUE_UPDATED_STATUS, nodeRef);
 				} else {
 					queueNode(KEY_QUEUE_UPDATED, nodeRef);
 				}
-				if (TransactionSupportUtil.getResource(KEY_QUEUE_UPDATED_STATUS + nodeRef.toString()) == null && updatedProperties != null && !updatedProperties.isEmpty()) { 
-					TransactionSupportUtil.bindResource(KEY_QUEUE_UPDATED_STATUS + nodeRef.toString(),updatedProperties); 
+				if ((TransactionSupportUtil.getResource(KEY_QUEUE_UPDATED_STATUS + nodeRef.toString()) == null) && (updatedProperties != null)
+						&& !updatedProperties.isEmpty()) {
+					TransactionSupportUtil.bindResource(KEY_QUEUE_UPDATED_STATUS + nodeRef.toString(), updatedProperties);
 				}
 			}
 		}
@@ -269,42 +279,41 @@ NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.OnCreateAssociationP
 				&& policyBehaviourFilter.isEnabled(BeCPGModel.TYPE_ACTIVITY_LIST)) {
 			if (L2CacheSupport.isThreadLockEnable()) {
 				if (logger.isDebugEnabled()) {
-					logger.debug("Entity [" + Thread.currentThread().getName() + "] is locked  :"
-							+ assocRef);
+					logger.debug("Entity [" + Thread.currentThread().getName() + "] is locked  :" + assocRef);
 				}
 				return;
 			}
 
-
 			QName type = assocRef.getTypeQName();
 
 			if (assocRef.getTargetRef() != null) {
-				Map<QName, Pair<List<Pair<NodeRef,Serializable>>, List<Pair<NodeRef,Serializable>>>> resources = new HashMap<QName, Pair<List<Pair<NodeRef,Serializable>>, List<Pair<NodeRef,Serializable>>>>();
-				if(TransactionSupportUtil.getResource(KEY_QUEUE_UPDATED_STATUS + assocRef.getSourceRef()) != null) {
+				Map<QName, Pair<List<Pair<NodeRef, Serializable>>, List<Pair<NodeRef, Serializable>>>> resources = new HashMap<>();
+				if (TransactionSupportUtil.getResource(KEY_QUEUE_UPDATED_STATUS + assocRef.getSourceRef()) != null) {
 					resources = TransactionSupportUtil.getResource(KEY_QUEUE_UPDATED_STATUS + assocRef.getSourceRef());
-					List<Pair<NodeRef,Serializable>> afterAssocs = new ArrayList<Pair<NodeRef,Serializable>>();
-					List<Pair<NodeRef,Serializable>> beforeAssocs = new ArrayList<Pair<NodeRef,Serializable>>();
+					List<Pair<NodeRef, Serializable>> afterAssocs = new ArrayList<>();
+					List<Pair<NodeRef, Serializable>> beforeAssocs = new ArrayList<>();
 					if (resources.get(type) != null) {
-						if(resources.get(type).getFirst() != null){
+						if (resources.get(type).getFirst() != null) {
 							beforeAssocs = resources.get(type).getFirst();
 						}
-						if(resources.get(type).getSecond() != null) {
+						if (resources.get(type).getSecond() != null) {
 							afterAssocs = resources.get(type).getSecond();
-						}						
+						}
 					}
-					afterAssocs.add(new Pair<NodeRef,Serializable>(assocRef.getTargetRef(), nodeService.getProperty(assocRef.getTargetRef(),ContentModel.PROP_NAME)));
-					Pair<List<Pair<NodeRef,Serializable>>, List<Pair<NodeRef,Serializable>>> beforeAfterAssocs = new Pair<List<Pair<NodeRef,Serializable>>, List<Pair<NodeRef,Serializable>>>(beforeAssocs, afterAssocs);
-					resources.put(type,beforeAfterAssocs);
+					afterAssocs.add(new Pair<>(assocRef.getTargetRef(), nodeService.getProperty(assocRef.getTargetRef(), ContentModel.PROP_NAME)));
+					Pair<List<Pair<NodeRef, Serializable>>, List<Pair<NodeRef, Serializable>>> beforeAfterAssocs = new Pair<>(beforeAssocs,
+							afterAssocs);
+					resources.put(type, beforeAfterAssocs);
 				} else {
-					List<Pair<NodeRef,Serializable>> afterAssocs = new ArrayList<Pair<NodeRef,Serializable>>();
-					afterAssocs.add(new Pair<NodeRef,Serializable>(assocRef.getTargetRef(),nodeService.getProperty(assocRef.getTargetRef(),ContentModel.PROP_NAME)));
-					Pair <List<Pair<NodeRef,Serializable>>,List<Pair<NodeRef,Serializable>>> beforeAfterAssocs = new Pair<List<Pair<NodeRef,Serializable>>, List<Pair<NodeRef,Serializable>>>(null,afterAssocs);
+					List<Pair<NodeRef, Serializable>> afterAssocs = new ArrayList<>();
+					afterAssocs.add(new Pair<>(assocRef.getTargetRef(), nodeService.getProperty(assocRef.getTargetRef(), ContentModel.PROP_NAME)));
+					Pair<List<Pair<NodeRef, Serializable>>, List<Pair<NodeRef, Serializable>>> beforeAfterAssocs = new Pair<>(null, afterAssocs);
 					resources.put(type, beforeAfterAssocs);
 				}
-				if(resources != null && !resources.isEmpty()) {
-					TransactionSupportUtil.bindResource(KEY_QUEUE_UPDATED_STATUS + assocRef.getSourceRef(),resources); 
+				if ((resources != null) && !resources.isEmpty()) {
+					TransactionSupportUtil.bindResource(KEY_QUEUE_UPDATED_STATUS + assocRef.getSourceRef(), resources);
 				}
-				queueNode(KEY_QUEUE_UPDATED, assocRef.getSourceRef());			
+				queueNode(KEY_QUEUE_UPDATED, assocRef.getSourceRef());
 			}
 		}
 	}
@@ -316,45 +325,44 @@ NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.OnCreateAssociationP
 				&& policyBehaviourFilter.isEnabled(BeCPGModel.TYPE_ACTIVITY_LIST)) {
 			if (L2CacheSupport.isThreadLockEnable()) {
 				if (logger.isDebugEnabled()) {
-					logger.debug("Entity [" + Thread.currentThread().getName() + "] is locked  :"
-							+ assocRef);
+					logger.debug("Entity [" + Thread.currentThread().getName() + "] is locked  :" + assocRef);
 				}
 				return;
 			}
 
 			QName type = assocRef.getTypeQName();
 
-			if (assocRef.getTargetRef() != null ) {
-				Map<QName, Pair<List<Pair<NodeRef,Serializable>>, List<Pair<NodeRef,Serializable>>>> resources = new HashMap<QName, Pair<List<Pair<NodeRef,Serializable>>,List<Pair<NodeRef,Serializable>>>>();
-				if(TransactionSupportUtil.getResource(KEY_QUEUE_UPDATED_STATUS + assocRef.getSourceRef()) != null) {
+			if (assocRef.getTargetRef() != null) {
+				Map<QName, Pair<List<Pair<NodeRef, Serializable>>, List<Pair<NodeRef, Serializable>>>> resources = new HashMap<>();
+				if (TransactionSupportUtil.getResource(KEY_QUEUE_UPDATED_STATUS + assocRef.getSourceRef()) != null) {
 					resources = TransactionSupportUtil.getResource(KEY_QUEUE_UPDATED_STATUS + assocRef.getSourceRef());
-					List<Pair<NodeRef,Serializable>> afterAssocs = new ArrayList<Pair<NodeRef,Serializable>>();
-					List<Pair<NodeRef,Serializable>> beforeAssocs = new ArrayList<Pair<NodeRef,Serializable>>();
+					List<Pair<NodeRef, Serializable>> afterAssocs = new ArrayList<>();
+					List<Pair<NodeRef, Serializable>> beforeAssocs = new ArrayList<>();
 					if (resources.get(type) != null) {
-						if(resources.get(type).getFirst() != null){
+						if (resources.get(type).getFirst() != null) {
 							beforeAssocs = resources.get(type).getFirst();
 						}
-						if(resources.get(type) != null) {
+						if (resources.get(type) != null) {
 							afterAssocs = resources.get(type).getSecond();
-						}						
+						}
 					}
-					beforeAssocs.add(new Pair<NodeRef,Serializable>(assocRef.getTargetRef(), nodeService.getProperty(assocRef.getTargetRef(),ContentModel.PROP_NAME)));
-					Pair <List<Pair<NodeRef,Serializable>>,List<Pair<NodeRef,Serializable>>> beforeAfterAssocs = new Pair<List<Pair<NodeRef,Serializable>>, List<Pair<NodeRef,Serializable>>>(beforeAssocs, afterAssocs);
-					resources.put(type,beforeAfterAssocs);
+					beforeAssocs.add(new Pair<>(assocRef.getTargetRef(), nodeService.getProperty(assocRef.getTargetRef(), ContentModel.PROP_NAME)));
+					Pair<List<Pair<NodeRef, Serializable>>, List<Pair<NodeRef, Serializable>>> beforeAfterAssocs = new Pair<>(beforeAssocs,
+							afterAssocs);
+					resources.put(type, beforeAfterAssocs);
 				} else {
-					List<Pair<NodeRef,Serializable>> beforeAssocs = new ArrayList<Pair<NodeRef,Serializable>>();
-					beforeAssocs.add(new Pair<NodeRef,Serializable>(assocRef.getTargetRef(), nodeService.getProperty(assocRef.getTargetRef(),ContentModel.PROP_NAME)));
-					Pair <List<Pair<NodeRef,Serializable>>,List<Pair<NodeRef,Serializable>>> beforeAfterAssocs = new Pair<List<Pair<NodeRef,Serializable>>, List<Pair<NodeRef,Serializable>>>(beforeAssocs, null);
+					List<Pair<NodeRef, Serializable>> beforeAssocs = new ArrayList<>();
+					beforeAssocs.add(new Pair<>(assocRef.getTargetRef(), nodeService.getProperty(assocRef.getTargetRef(), ContentModel.PROP_NAME)));
+					Pair<List<Pair<NodeRef, Serializable>>, List<Pair<NodeRef, Serializable>>> beforeAfterAssocs = new Pair<>(beforeAssocs, null);
 					resources.put(type, beforeAfterAssocs);
 				}
-				if(resources != null && !resources.isEmpty()) {
-					TransactionSupportUtil.bindResource(KEY_QUEUE_UPDATED_STATUS + assocRef.getSourceRef(),resources); 
+				if ((resources != null) && !resources.isEmpty()) {
+					TransactionSupportUtil.bindResource(KEY_QUEUE_UPDATED_STATUS + assocRef.getSourceRef(), resources);
 				}
-				queueNode(KEY_QUEUE_UPDATED, assocRef.getSourceRef());			
+				queueNode(KEY_QUEUE_UPDATED, assocRef.getSourceRef());
 			}
 		}
 	}
-
 
 	@Override
 	public void onContentUpdate(NodeRef nodeRef, boolean newContent) {
@@ -383,8 +391,7 @@ NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.OnCreateAssociationP
 				&& policyBehaviourFilter.isEnabled(BeCPGModel.TYPE_ACTIVITY_LIST)) {
 			if (L2CacheSupport.isThreadLockEnable()) {
 				if (logger.isDebugEnabled()) {
-					logger.debug("Entity [" + Thread.currentThread().getName() + "] is locked  :"
-							+ childAssocRef.getChildRef());
+					logger.debug("Entity [" + Thread.currentThread().getName() + "] is locked  :" + childAssocRef.getChildRef());
 				}
 				return;
 			}
@@ -424,8 +431,7 @@ NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.OnCreateAssociationP
 				QName type = nodeService.getType(nodeRef);
 				switch (key) {
 				case KEY_QUEUE_UPDATED:
-					if (!containsNodeInQueue(KEY_QUEUE_CREATED, nodeRef)
-							&& !containsNodeInQueue(KEY_QUEUE_DELETED, nodeRef)
+					if (!containsNodeInQueue(KEY_QUEUE_CREATED, nodeRef) && !containsNodeInQueue(KEY_QUEUE_DELETED, nodeRef)
 							&& !containsNodeInQueue(KEY_QUEUE_UPDATED_STATUS, nodeRef)) {
 						registerActivity(nodeRef, type, ActivityEvent.Update);
 					}
@@ -443,7 +449,7 @@ NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.OnCreateAssociationP
 						if ((strState != null) && (strState.length > 1)) {
 							entityActivityService.postStateChangeActivity(nodeRef, null, strState[1], strState[2]);
 						}
-						if (TransactionSupportUtil.getResource(KEY_QUEUE_UPDATED_STATUS + nodeRef.toString()) != null){
+						if (TransactionSupportUtil.getResource(KEY_QUEUE_UPDATED_STATUS + nodeRef.toString()) != null) {
 							registerActivity(nodeRef, type, ActivityEvent.Update);
 						}
 					}
@@ -457,8 +463,7 @@ NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.OnCreateAssociationP
 	private boolean accept(QName type) {
 		return (ForumModel.TYPE_POST.equals(type) || ContentModel.TYPE_CONTENT.equals(type)
 				|| entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITY_V2)
-				|| ((entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM))
-						&& !BeCPGModel.TYPE_ACTIVITY_LIST.equals(type)));
+				|| ((entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM)) && !BeCPGModel.TYPE_ACTIVITY_LIST.equals(type)));
 	}
 
 	private void registerActivity(NodeRef actionedUponNodeRef, QName type, ActivityEvent activityEvent) {
@@ -480,8 +485,8 @@ NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.OnCreateAssociationP
 								TransactionSupportUtil.getResource(KEY_QUEUE_UPDATED_STATUS + actionedUponNodeRef.toString()));
 					} else if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITY_V2)) {
 						logger.debug("Action upon entity, post activity");
-						entityActivityService.postEntityActivity(actionedUponNodeRef, ActivityType.Entity,
-								activityEvent, TransactionSupportUtil.getResource(KEY_QUEUE_UPDATED_STATUS + actionedUponNodeRef.toString()));
+						entityActivityService.postEntityActivity(actionedUponNodeRef, ActivityType.Entity, activityEvent,
+								TransactionSupportUtil.getResource(KEY_QUEUE_UPDATED_STATUS + actionedUponNodeRef.toString()));
 					}
 				} else if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITY_V2)) {
 					entityActivityService.clearAllActivities(entityNodeRef);
