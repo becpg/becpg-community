@@ -20,6 +20,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StopWatch;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -82,6 +83,12 @@ public class GlopServiceImpl implements GlopService {
 	@Override
 	public JSONObject optimize(ProductData productData, List<GlopConstraintSpecification> characts, GlopTargetSpecification target)
 			throws GlopException, RestClientException, URISyntaxException, JSONException {
+		StopWatch stopWatch = null;
+		if (logger.isDebugEnabled()) {
+			stopWatch = new StopWatch();
+			stopWatch.start();
+		}
+		
 		Set<CompoListDataItem> variables = new HashSet<>();
 		Map<SimpleCharactDataItem, Map<CompoListDataItem, Double>> constraintContributions = new HashMap<>();
 		Map<String, Map<CompoListDataItem, Double>> specialContributions = new HashMap<>();
@@ -96,11 +103,20 @@ public class GlopServiceImpl implements GlopService {
 
 			SimpleCharactDataItem simpleListDataItem = target.getTarget();
 
-			for (SimpleCharactDataItem listDataItem : alfrescoRepository.getList(componentProductData, simpleListDataItem.getClass())) {
-				if (listDataItem.getCharactNodeRef().equals(simpleListDataItem.getCharactNodeRef())) {
-					addContributions(variables, targetContributions, compoListDataItem,
-							listDataItem.getValue() != null ? listDataItem.getValue() : 0d);
-					break;
+			// Calculate target function
+			if (simpleListDataItem instanceof CompoListDataItem) {
+				// CompoListDataItem require special treatment
+				CompoListDataItem targetCompoListDataItem = (CompoListDataItem) simpleListDataItem;
+				if (compoListDataItem.getProduct().equals(targetCompoListDataItem.getProduct())) {
+					addContributions(variables, targetContributions, compoListDataItem, 1d);
+				}
+			} else {
+				for (SimpleCharactDataItem listDataItem : alfrescoRepository.getList(componentProductData, simpleListDataItem.getClass())) {
+					if (listDataItem.getCharactNodeRef().equals(simpleListDataItem.getCharactNodeRef())) {
+						addContributions(variables, targetContributions, compoListDataItem,
+								listDataItem.getValue() != null ? listDataItem.getValue() : 0d);
+						break;
+					}
 				}
 			}
 
@@ -109,12 +125,20 @@ public class GlopServiceImpl implements GlopService {
 
 				SimpleCharactDataItem constraintListDataItem = entry.getKey();
 
-				for (SimpleCharactDataItem listDataItem : alfrescoRepository.getList(componentProductData, simpleListDataItem.getClass())) {
-					if (listDataItem.getCharactNodeRef().equals(constraintListDataItem.getCharactNodeRef())) {
-						addContributions(variables, entry.getValue(), compoListDataItem,
-								listDataItem.getValue() != null ? listDataItem.getValue() : 0d);
+				if (constraintListDataItem instanceof CompoListDataItem) {
+					// CompoListDataItem require special treatment
+					CompoListDataItem constraintCompoListDataItem = (CompoListDataItem) constraintListDataItem;
+					if (compoListDataItem.getProduct().equals(constraintCompoListDataItem.getProduct())) {
+						addContributions(variables, entry.getValue(), compoListDataItem, 1d);
+					}
+				} else {
+					for (SimpleCharactDataItem listDataItem : alfrescoRepository.getList(componentProductData, constraintListDataItem.getClass())) {
+						if (listDataItem.getCharactNodeRef().equals(constraintListDataItem.getCharactNodeRef())) {
+							addContributions(variables, entry.getValue(), compoListDataItem,
+									listDataItem.getValue() != null ? listDataItem.getValue() : 0d);
 
-						break;
+							break;
+						}
 					}
 				}
 
@@ -129,12 +153,15 @@ public class GlopServiceImpl implements GlopService {
 		// Build JSON
 		JSONObject jsonRequest = buildJsonRequest(variables, characts, constraintContributions, target, targetContributions, specialContributions);
 
-		if (logger.isDebugEnabled()) {
-			logger.debug("Sending " + jsonRequest.toString());
-		}
-
 		// Send request and return result
-		return sendRequest(jsonRequest);
+		JSONObject ret = sendRequest(jsonRequest);
+		
+		if (logger.isDebugEnabled()) {
+			stopWatch.stop();
+			logger.debug("Took " + stopWatch.getTotalTimeMillis() + " ms");
+		}
+		
+		return ret;
 	}
 
 	private void addContributions(Set<CompoListDataItem> variables, Map<CompoListDataItem, Double> contributions, CompoListDataItem compoListDataItem,
@@ -196,7 +223,7 @@ public class GlopServiceImpl implements GlopService {
 
 		URI uri = new URI(serverUrl);
 		if (logger.isDebugEnabled()) {
-			logger.debug("Sending to " + serverUrl);
+			logger.debug("Sending " + request + " to " + serverUrl);
 		}
 		String response = restTemplate.postForObject(uri, requestEntity, String.class);
 		if (response == null) {
