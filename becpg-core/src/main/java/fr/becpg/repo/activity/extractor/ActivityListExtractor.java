@@ -94,13 +94,12 @@ public class ActivityListExtractor extends SimpleExtractor {
 		if (BeCPGModel.TYPE_ACTIVITY_LIST.equals(itemType)) {
 			postLookupActivity(nodeRef, ret, properties, mode);
 		}
-
 		return ret;
 
 	}
 
 	protected void postLookupActivity(NodeRef nodeRef, Map<String, Object> ret, Map<QName, Serializable> properties, FormatMode mode) {
-
+		
 		String activityType = (String) properties.get(BeCPGModel.PROP_ACTIVITYLIST_TYPE);
 		if (activityType != null) {
 
@@ -108,9 +107,8 @@ public class ActivityListExtractor extends SimpleExtractor {
 			JSONObject postLookup = entityActivityService.postActivityLookUp(
 					ActivityType.valueOf((String) properties.get(BeCPGModel.PROP_ACTIVITYLIST_TYPE)),
 					(String) properties.get(BeCPGModel.PROP_ACTIVITYLIST_DATA));
-
 			if(postLookup!=null) {
-				if (FormatMode.JSON.equals(mode)) {
+				if (FormatMode.JSON.equals(mode) || FormatMode.XLSX.equals(mode)) {
 					NodeRef entityNodeRef = null;
 					NodeRef charactNodeRef = null;
 					QName entityType = null;
@@ -190,7 +188,6 @@ public class ActivityListExtractor extends SimpleExtractor {
 					} catch (JSONException e) {
 						logger.error(e, e);
 					}
-	
 					ret.put("prop_bcpg_alData", postLookup);
 				} else {
 					try {
