@@ -94,7 +94,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 
 		Double netQty = FormulationHelper.getNetQtyInLorKg(productData, FormulationHelper.DEFAULT_NET_WEIGHT);
 		Double netWeight = FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT);
-		Double netVol = FormulationHelper.getNetVolume(productData) == null ? 0d : FormulationHelper.getNetVolume(productData);
+		Double netVol = FormulationHelper.getNetVolume(productData, FormulationHelper.DEFAULT_NET_WEIGHT);
 
 		visitRecur(productData, ret, 0, level, netWeight, netVol, netQty);
 
@@ -120,16 +120,17 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 				if (!omit) {
 
 					Double weightUsed = FormulationHelper.getQtyInKg(compoListDataItem);
-					if ((FormulationHelper.getNetWeight(subProductData, FormulationHelper.DEFAULT_NET_WEIGHT) != 0d) && (subWeight != null)) {
-						weightUsed = (weightUsed / FormulationHelper.getNetWeight(subProductData, FormulationHelper.DEFAULT_NET_WEIGHT)) * subWeight;
+					Double netWeight = FormulationHelper.getNetWeight(subProductData, FormulationHelper.DEFAULT_NET_WEIGHT);
+					if (( netWeight!= 0d) && (subWeight != null)) {
+						weightUsed = (weightUsed / netWeight) * subWeight;
 
 					}
 
 					ProductData partProduct = (ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct());
 					Double volUsed = FormulationHelper.getNetVolume(compoListDataItem, partProduct);
-					Double netVol = FormulationHelper.getNetVolume(subProductData);
+					Double netVol = FormulationHelper.getNetVolume(subProductData, FormulationHelper.DEFAULT_NET_WEIGHT);
 					if ((volUsed != null) && (netVol != null) && (netVol != 0d) && (subVol != null)) {
-						volUsed = (volUsed / FormulationHelper.getNetVolume(subProductData)) * subVol;
+						volUsed = (volUsed / netVol) * subVol;
 					}
 
 					ProductData compoListProduct = (ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct());
