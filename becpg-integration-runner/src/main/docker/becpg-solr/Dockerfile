@@ -36,10 +36,12 @@ RUN mkdir -p /opt/cprof && \
 
     
 COPY solr.in.sh  $DIST_DIR/solr.in.sh    
+RUN chmod +x $DIST_DIR/solr.in.sh
 COPY rerank/solrcore.properties  $DIST_DIR/solrhome/templates/rerank/conf/
 COPY rerank/solrconfig.xml  $DIST_DIR/solrhome/templates/rerank/conf/
 COPY shared.properties $DIST_DIR/solrhome/conf/
 COPY search_config_setup.sh $DIST_DIR/solr/bin/
+RUN chmod +x $DIST_DIR/solr/bin/search_config_setup.sh
 #COPY log4j.properties $DIST_DIR/logs/
     
 WORKDIR $DIST_DIR
