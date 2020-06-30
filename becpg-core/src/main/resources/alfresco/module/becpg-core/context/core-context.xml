@@ -255,5 +255,25 @@
          </list>
       </property>
    </bean> 
+   
+   <!-- Overload of SOLR search -->
+
+   <bean id="search.TypeIndexFilter" class="org.alfresco.repo.search.TypeIndexFilter" parent="search.abstractIndexFilter">
+        <property name="ignorePathsForSpecificTypes">
+            <value>true</value>
+        </property>
+        <property name="typesForIgnoringPaths">
+            <list>
+                <value>{http://www.alfresco.org/model/content/1.0}person</value>
+                <value>{http://www.alfresco.org/model/application/1.0}configurations</value>
+                <value>{http://www.alfresco.org/model/content/1.0}authorityContainer</value>
+                <value>{http://www.alfresco.org/model/content/1.0}authority</value>
+                <value>{http://www.alfresco.org/model/content/1.0}systemfolder</value>
+                <value>{http://www.alfresco.org/model/rule/1.0}rule</value>
+            </list>
+        </property>
+   </bean>
+    
+   
     
 </beans>
