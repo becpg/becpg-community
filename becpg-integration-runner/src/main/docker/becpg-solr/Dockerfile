@@ -41,14 +41,13 @@ COPY rerank/solrcore.properties  $DIST_DIR/solrhome/templates/rerank/conf/
 COPY rerank/solrconfig.xml  $DIST_DIR/solrhome/templates/rerank/conf/
 COPY shared.properties $DIST_DIR/solrhome/conf/
 COPY search_config_setup.sh $DIST_DIR/solr/bin/
-RUN  cp -rf solrhome solrhome_init
+RUN  cp -rf $DIST_DIR/solrhome $DIST_DIR/solrhome_init
 RUN chmod +x $DIST_DIR/solr/bin/search_config_setup.sh
 #COPY log4j.properties $DIST_DIR/logs/
     
 WORKDIR $DIST_DIR
 VOLUME $DIST_DIR/data
-VOLUME $DIST_DIR/solrhome
 EXPOSE 8983
 
 USER ${USERNAME}
-CMD export SOLR_CREATE_ALFRESCO_DEFAULTS=alfresco,archive  && $DIST_DIR/solr/bin/search_config_setup.sh "$DIST_DIR/solr/bin/solr start -f"
+CMD  $DIST_DIR/solr/bin/search_config_setup.sh "$DIST_DIR/solr/bin/solr start -f"
