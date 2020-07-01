@@ -16,7 +16,11 @@ SOLR_RERANK_CORE_FILE=$RERANK_TEMPLATE_PATH/solrcore.properties
 SOLR_NORERANK_CORE_FILE=$NORERANK_TEMPLATE_PATH/solrcore.properties
 SOLR_CONTEXT_FILE=$PWD/solr/server/contexts/solr-jetty-context.xml
 
+export SOLR_CREATE_ALFRESCO_DEFAULTS=alfresco,archive
+
 if [[ $REPLICATION_TYPE == "master" ]]; then
+
+   export SOLR_CREATE_ALFRESCO_DEFAULTS=
 
    findStringMaster='<requestHandler name="\/replication" class="org\.alfresco\.solr\.handler\.AlfrescoReplicationHandler">'
 
@@ -46,6 +50,8 @@ if [[ $REPLICATION_TYPE == "master" ]]; then
 fi
 
 if [[ $REPLICATION_TYPE == "slave" ]]; then
+
+    export SOLR_CREATE_ALFRESCO_DEFAULTS=
 
    if [[ $REPLICATION_MASTER_PROTOCOL != https ]]; then
       REPLICATION_MASTER_PROTOCOL=http
