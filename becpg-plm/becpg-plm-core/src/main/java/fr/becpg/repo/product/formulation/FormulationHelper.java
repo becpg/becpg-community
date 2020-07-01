@@ -108,10 +108,10 @@ public class FormulationHelper {
 	}
 
 	public static Double calculateLossPerc(Double parentLossRatio, Double lossPerc) {
-		if(parentLossRatio == null) {
+		if (parentLossRatio == null) {
 			parentLossRatio = 0d;
 		}
-		if(lossPerc == null) {
+		if (lossPerc == null) {
 			lossPerc = 0d;
 		}
 		return 100 * (((1 + (lossPerc / 100)) * (1 + (parentLossRatio / 100))) - 1);
@@ -312,7 +312,7 @@ public class FormulationHelper {
 
 	public static Double getNetQtyForNuts(ProductData formulatedProduct) {
 		if (formulatedProduct.isLiquid()) {
-			return FormulationHelper.getNetVolume(formulatedProduct);
+			return FormulationHelper.getNetVolume(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
 		} else {
 			return FormulationHelper.getNetWeight(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
 		}
@@ -344,21 +344,25 @@ public class FormulationHelper {
 		return qty;
 	}
 
-	public static Double getNetVolume(ProductData formulatedProduct) {
+	public static Double getNetVolume(ProductData formulatedProduct, Double defaultValue) {
 		if ((formulatedProduct.getNetVolume() != null) && (formulatedProduct.getNetVolume() > 0)) {
 			return formulatedProduct.getNetVolume();
 		}
 
 		Double qty = formulatedProduct.getQty();
 		if (qty == null) {
-			return null;
+			if (formulatedProduct.getRecipeVolumeUsed() != null) {
+				return formulatedProduct.getRecipeVolumeUsed();
+			}
+
 		} else {
 			ProductUnit productUnit = formulatedProduct.getUnit();
 			if ((productUnit != null) && productUnit.isVolume()) {
 				return qty / productUnit.getUnitFactor();
 			}
-			return null;
+
 		}
+		return defaultValue;
 	}
 
 	private static Double getNetVolume(Double qty, CompoListDataItem compoListDataItem, ProductData subProductData) {
@@ -423,7 +427,7 @@ public class FormulationHelper {
 					productQty = 1d;
 				}
 
-				 if (compoListUnit.isP()) {
+				if (compoListUnit.isP()) {
 					if ((subProduct.getUnit() != null) && !subProduct.getUnit().isP()) {
 						productQty = 1d;
 					}
@@ -433,8 +437,7 @@ public class FormulationHelper {
 					productQty = getNetQtyInLorKg(subProduct, 1d);
 					qty = getQtyInKg(compoList);
 
-				} 
-				 
+				}
 
 				if ((qty != null) && !qty.isNaN() && !qty.isInfinite()) {
 					if (logger.isDebugEnabled()) {
