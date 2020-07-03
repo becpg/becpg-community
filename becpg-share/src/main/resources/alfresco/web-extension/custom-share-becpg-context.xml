@@ -62,7 +62,6 @@ http://www.springframework.org/schema/context/spring-context-2.5.xsd">
 				<value>alfresco.messages.becpg-share</value>
 				<value>alfresco.messages.becpg-controls</value>
 				<value>alfresco.messages.becpg-model</value>
-				<value>alfresco.messages.common</value>
 			</list>
 		</property>
 	</bean> 
