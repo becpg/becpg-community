@@ -74,6 +74,7 @@ public interface ProjectModel {
 	QName ASSOC_TL_TASKLEGEND = QName.createQName(PROJECT_URI, "tlTaskLegend");
 	QName ASSOC_TL_OBSERVERS = QName.createQName(PROJECT_URI, "tlObservers");
 	QName PROP_TL_WORKFLOW_INSTANCE = QName.createQName(PROJECT_URI, "tlWorkflowInstance");
+	QName PROP_TL_WORKFLOW_TASK_INSTANCE = QName.createQName(PROJECT_URI, "tlWorkflowTaskInstance");
 	QName PROP_TL_FIXED_COST = QName.createQName(PROJECT_URI, "tlFixedCost");
 
 	QName PROP_TL_IS_REFUSED  = QName.createQName(PROJECT_URI, "tlIsRefused");

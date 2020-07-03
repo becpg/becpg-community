@@ -80,6 +80,7 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 		logger.debug("Cancel workflow instance: " + task.getWorkflowInstance());
 		workflowService.cancelWorkflow(task.getWorkflowInstance());
 		task.setWorkflowInstance("");
+		task.setWorkflowTaskInstance("");
 	}
 
 	@Override
@@ -107,11 +108,10 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 			logger.debug("Add group assignees to workflow : " + groupAssignees.size());
 			workflowProps.put(WorkflowModel.ASSOC_GROUP_ASSIGNEES, (Serializable) groupAssignees);
 		}
-		
+
 		workflowProps.put(WorkflowModel.PROP_SEND_EMAIL_NOTIFICATIONS, shouldNotify(projectData, taskListDataItem));
 		workflowProps.put(ProjectModel.ASSOC_WORKFLOW_TASK, taskListDataItem.getNodeRef());
-		workflowProps.put(BeCPGModel.ASSOC_WORKFLOW_ENTITY,projectData.getNodeRef());
-		
+		workflowProps.put(BeCPGModel.ASSOC_WORKFLOW_ENTITY, projectData.getNodeRef());
 
 		// set workflow Initiator as Project Manager
 
@@ -153,11 +153,25 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 				// end task
 				try {
 					workflowService.endTask(startTask.getId(), null);
+
 				} catch (WorkflowException err) {
 					if (logger.isDebugEnabled()) {
 						logger.debug("Failed - caught error during project adhoc workflow transition: " + err.getMessage());
 					}
 					throw err;
+				}
+
+				WorkflowTaskQuery taskQuery = new WorkflowTaskQuery();
+				taskQuery.setProcessId(taskListDataItem.getWorkflowInstance());
+				taskQuery.setTaskState(WorkflowTaskState.IN_PROGRESS);
+
+				List<WorkflowTask> workflowTasks = workflowService.queryTasks(taskQuery, false);
+
+				if (!workflowTasks.isEmpty()) {
+					for (WorkflowTask workflowTask : workflowTasks) {
+						taskListDataItem.setWorkflowTaskInstance(workflowTask.getId());
+						break;
+					}
 				}
 			}
 		} finally {
@@ -169,8 +183,8 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 	private boolean shouldNotify(ProjectData projectData, TaskListDataItem task) {
 		boolean notify = true;
 		List<String> notificationEvents = (List<String>) nodeService.getProperty(task.getNodeRef(), ProjectModel.PROP_OBSERVERS_EVENTS);
-		
-		if (notificationEvents != null && !notificationEvents.isEmpty()) {
+
+		if ((notificationEvents != null) && !notificationEvents.isEmpty()) {
 			for (String notificationEvent : notificationEvents) {
 				ProjectNotificationEvent event = ProjectNotificationEvent.valueOf(notificationEvent);
 				if (ProjectNotificationEvent.NotifyOnRefused.equals(event) && isReopenedAfterRefuse(projectData, task)) {
@@ -182,15 +196,15 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 				}
 			}
 		}
-		
+
 		return notify;
 	}
-	
+
 	private boolean isReopenedAfterRefuse(ProjectData projectData, TaskListDataItem reopenedTask) {
 		boolean isReopenedAfterRefuse = false;
-		for(TaskListDataItem task : projectData.getTaskList()){
-			if (TaskState.Refused.equals(task.getTaskState()) && (reopenedTask.equals(task.getRefusedTask()) 
-					|| (task.getRefusedTasksToReopen() != null && task.getRefusedTasksToReopen().contains(reopenedTask.getNodeRef())))) {
+		for (TaskListDataItem task : projectData.getTaskList()) {
+			if (TaskState.Refused.equals(task.getTaskState()) && (reopenedTask.equals(task.getRefusedTask())
+					|| ((task.getRefusedTasksToReopen() != null) && task.getRefusedTasksToReopen().contains(reopenedTask.getNodeRef())))) {
 				isReopenedAfterRefuse = true;
 				break;
 			}
@@ -219,7 +233,8 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 	private String calculateWorkflowDescription(ProjectData projectData, TaskListDataItem taskListDataItem,
 			List<DeliverableListDataItem> nextDeliverables) {
 
-		String workflowDescription = String.format(WORKFLOW_DESCRIPTION, projectData.getCode(), projectData.getName(), taskListDataItem.getTaskName());
+		String workflowDescription = String.format(WORKFLOW_DESCRIPTION, projectData.getCode(), projectData.getName(),
+				taskListDataItem.getTaskName());
 		return workflowDescription;
 	}
 
@@ -238,20 +253,21 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 	@Override
 	public boolean isWorkflowActive(TaskListDataItem task) {
 
-		if (task!=null && (task.getWorkflowInstance() != null) && !task.getWorkflowInstance().isEmpty()) {
+		if ((task != null) && (task.getWorkflowInstance() != null) && !task.getWorkflowInstance().isEmpty()) {
 			String workflowId = task.getWorkflowInstance();
 			WorkflowInstance workflowInstance = workflowService.getWorkflowById(workflowId);
 			if (workflowInstance != null) {
 				if (workflowInstance.isActive()) {
 					return true;
-				}
-				else{
+				} else {
 					task.setWorkflowInstance("");
+					task.setWorkflowTaskInstance("");
 				}
 			} else {
 				logger.warn(
 						"Workflow instance unknown. WorkflowId: " + workflowId + " task " + task.getNodeRef() + " Task name " + task.getTaskName());
 				task.setWorkflowInstance("");
+				task.setWorkflowTaskInstance("");
 			}
 		}
 
@@ -270,6 +286,7 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 			// task may be reopened so
 			if (!isWorkflowActive(taskListDataItem)) {
 				taskListDataItem.setWorkflowInstance("");
+				taskListDataItem.setWorkflowTaskInstance("");
 			} else {
 
 				if (taskListDataItem.getResources().size() == 0) {
@@ -305,29 +322,28 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 									workflowTask.getProperties(), properties);
 							properties = getWorkflowTaskNewProperties(WorkflowModel.PROP_WORKFLOW_PRIORITY, projectData.getPriority(),
 									workflowTask.getProperties(), properties);
-							
+
 							List<NodeRef> assignees = getAssignees(taskListDataItem.getResources(), false);
 							List<NodeRef> groupAssignees = getAssignees(taskListDataItem.getResources(), true);
-								
+
 							if (taskListDataItem.getResources().size() == 1) {
-								
-								if(assignees.size() == 1) {
-									String userName = (String) nodeService.getProperty(assignees.get(0),
-										ContentModel.PROP_USERNAME);
+
+								if (assignees.size() == 1) {
+									String userName = (String) nodeService.getProperty(assignees.get(0), ContentModel.PROP_USERNAME);
 									properties = getWorkflowTaskNewProperties(ContentModel.PROP_OWNER, userName, workflowTask.getProperties(),
-										properties);
+											properties);
 								} else {
-									properties = getWorkflowTaskNewProperties(WorkflowModel.ASSOC_POOLED_ACTORS,
-											(Serializable) groupAssignees , workflowTask.getProperties(), properties);
-									
+									properties = getWorkflowTaskNewProperties(WorkflowModel.ASSOC_POOLED_ACTORS, (Serializable) groupAssignees,
+											workflowTask.getProperties(), properties);
+
 								}
 							} else {
 
-									properties = getWorkflowTaskNewProperties(WorkflowModel.ASSOC_POOLED_ACTORS,
-											(Serializable) taskListDataItem.getResources(), workflowTask.getProperties(), properties);
-				
+								properties = getWorkflowTaskNewProperties(WorkflowModel.ASSOC_POOLED_ACTORS,
+										(Serializable) taskListDataItem.getResources(), workflowTask.getProperties(), properties);
+
 							}
-							
+
 							if (properties.containsKey(WorkflowModel.ASSOC_POOLED_ACTORS)) {
 								properties.put(ContentModel.PROP_OWNER, null);
 							}
@@ -337,6 +353,8 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 									logger.debug("update task " + taskListDataItem.getTaskName() + " props " + properties);
 								}
 								workflowService.updateTask(workflowTask.getId(), properties, null, null);
+
+								taskListDataItem.setWorkflowTaskInstance(workflowTask.getId());
 							}
 						}
 					}
