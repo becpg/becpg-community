@@ -470,6 +470,10 @@
 					<type>d:text</type>
 					<index enabled="false"/>
 				</property>
+				<property name="pjt:tlWorkflowTaskInstance">
+					<type>d:text</type>
+					<index enabled="false"/>
+				</property>
 				<property name="pjt:tlStart">
 					<type>d:date</type>
 					<index enabled="true">
