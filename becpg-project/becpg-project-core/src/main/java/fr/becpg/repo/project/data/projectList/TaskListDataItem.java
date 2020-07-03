@@ -69,6 +69,7 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	private NodeRef taskLegend;
 	private String workflowName;
 	private String workflowInstance;
+	private String workflowTaskInstance;
 	private TaskManualDate manualDate;
 	private Integer depthLevel;
 	private TaskListDataItem parent;
@@ -320,6 +321,18 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 
 	public void setWorkflowInstance(String workflowInstance) {
 		this.workflowInstance = workflowInstance;
+	}
+
+	
+	
+	@AlfProp
+	@AlfQname(qname = "pjt:tlWorkflowTaskInstance")
+	public String getWorkflowTaskInstance() {
+		return workflowTaskInstance;
+	}
+
+	public void setWorkflowTaskInstance(String workflowTaskInstance) {
+		this.workflowTaskInstance = workflowTaskInstance;
 	}
 
 	@AlfProp
