@@ -45,6 +45,7 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
+import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.project.ProjectWorkflowService;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
@@ -71,6 +72,9 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 
 	@Autowired
 	private NodeService nodeService;
+	
+	@Autowired
+	private AutoNumService autoNumService;
 
 	@Override
 	public void cancelWorkflow(TaskListDataItem task) {
@@ -184,8 +188,13 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 	private String calculateWorkflowDescription(ProjectData projectData, TaskListDataItem taskListDataItem,
 			List<DeliverableListDataItem> nextDeliverables) {
 
-		String workflowDescription = String.format(WORKFLOW_DESCRIPTION, projectData.getCode(), projectData.getName(), taskListDataItem.getTaskName());
+		String workflowDescription = String.format(WORKFLOW_DESCRIPTION, getProjectCode(projectData), projectData.getName(),
+				taskListDataItem.getTaskName());
 		return workflowDescription;
+	}
+
+	private Object getProjectCode(ProjectData projectData) {
+		return projectData.getCode() != null ? projectData.getCode() : autoNumService.getOrCreateBeCPGCode(projectData.getNodeRef());
 	}
 
 	private String getWorkflowDefId(String workflowName) {
