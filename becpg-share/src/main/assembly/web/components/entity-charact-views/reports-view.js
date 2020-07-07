@@ -225,6 +225,19 @@
 
                         },
                         
+                        updateCurrentVersionUrlQueryParams : function ReportViewer_updateCurrentVersionUrlQueryParams(currVersionNodeRef)
+                        {
+                        	var currVersionNodeRefParam = YAHOO.util.History.getQueryStringParameter('currVersionNodeRef');
+                        	currVersionNodeRef = currVersionNodeRef != null ? currVersionNodeRef : YAHOO.util.History.getQueryStringParameter('nodeRef');
+                        	var url = window.location.href;
+                        	if(currVersionNodeRefParam != null){
+                        		url = url.replace(/&currVersionNodeRef=.*/g, "&currVersionNodeRef=" + currVersionNodeRef);
+                        	} else {
+                        		url +=  "&currVersionNodeRef=" + currVersionNodeRef;
+                        	}
+                        	window.history.pushState({path:url},'',url);
+                        },
+                        
                         onVersionChanged : function ReportViewer_onVersionChanged(layer, args)
                         {
                             YAHOO.Bubbling.unsubscribe("versionChangeFilter", this.onVersionChanged, this);
@@ -236,10 +249,13 @@
                             var obj = args[1];
                             if ((obj !== null) && obj.filterId !== null &&  obj.filterId === "version" && obj.filterData !== null)
                             {
-                                this.refresh('components/entity-charact-views/reports-view?currVersionNodeRef='+(this.options.currVersionNodeRef!=null ? this.options.currVersionNodeRef : '{nodeRef}')+'&nodeRef='+ obj.filterData+ (this.options.siteId ? '&site={siteId}' :  ''));   
+                                this.refresh('components/entity-charact-views/reports-view?currVersionNodeRef='+(this.options.currVersionNodeRef!=null ? this.options.currVersionNodeRef : '{nodeRef}')+'&nodeRef='+ obj.filterData+ (this.options.siteId ? '&site={siteId}' :  ''));
+                                this.updateCurrentVersionUrlQueryParams(obj.filterData);
                              } else if(this.options.currVersionNodeRef!=null){
                                  this.refresh('components/entity-charact-views/reports-view?nodeRef='+ this.options.currVersionNodeRef+ (this.options.siteId ? '&site={siteId}' :  ''));   
+                                 this.updateCurrentVersionUrlQueryParams(null);
                              }
+                            
                             
                         }
 
