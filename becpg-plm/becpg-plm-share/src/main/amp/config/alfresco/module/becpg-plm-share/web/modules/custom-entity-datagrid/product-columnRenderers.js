@@ -307,7 +307,7 @@ if (beCPG.module.EntityDataGridRenderers) {
           
           var unit = oRecord._oData.itemData.prop_bcpg_nutListUnit.value;
           
-          if(label!=null && label.indexOf && label.indexOf("100g")>0){
+          if(oColumn.label!=null && oColumn.label.indexOf && oColumn.label.indexOf("100g")>0){
         	  unit = unit.replace("/100g","");
           }
           
@@ -1174,8 +1174,8 @@ if (beCPG.module.EntityDataGridRenderers) {
 		propertyName : [ "bcpg:nutListValuePerServing" ],
 		renderer : function(oRecord, data, label, scope) {
 			if(data.value != null && data.value > 0){
-				var additionalProps = oRecord.getData("itemData")["dt_bcpg_nutListNut"]!=null ? oRecord.getData("itemData")["dt_bcpg_nutListNut"][0].itemData: "";
-				var unit = additionalProps.prop_bcpg_nutUnit.displayValue;
+				var additionalProps = oRecord.getData("itemData")["dt_bcpg_nutListNut"] ? oRecord.getData("itemData")["dt_bcpg_nutListNut"][0].itemData: null;
+				var unit =additionalProps!=null ? additionalProps.prop_bcpg_nutUnit.displayValue : "";
 				
 				return Alfresco.util.encodeHTML(beCPG.util.sigFigs(data.value,3).toLocaleString()+" "+unit);
 				
@@ -1184,21 +1184,5 @@ if (beCPG.module.EntityDataGridRenderers) {
 		}
 	});
 	
-	
-/* Align cost to the right
-        YAHOO.Bubbling.fire("registerDataGridRenderer", {
-		      propertyName : [ "bcpg:costListValue","bcpg:costListMaxi","bcpg:costListFutureValue"
-		    	  ,"bcpg:costListPreviousValue","bcpg:costListValuePerProduct","bcpg:costListPreviousValuePerProduct",
-		    	  "bcpg:costListFutureValuePerProduct" ],
-		      renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
-		      	
-		    	 if(data.value!=null){
-		    		 Dom.setStyle(elCell, "text-align", "right");  
-		    		 return (new Intl.NumberFormat(Alfresco.constants.JS_LOCALE.replace("_","-") ,{minimumFractionDigits : 4, maximumFractionDigits : 4 })).format( data.value);
-		    	 }
-		    	 return "";
-		    	  
-		    }
-	 });
-	*/
+
 }
