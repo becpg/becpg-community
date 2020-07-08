@@ -307,6 +307,10 @@ if (beCPG.module.EntityDataGridRenderers) {
           
           var unit = oRecord._oData.itemData.prop_bcpg_nutListUnit.value;
           
+          if(label!=null && label.indexOf && label.indexOf("100g")>0){
+        	  unit = unit.replace("/100g","");
+          }
+          
           if (data.value != null) {
         	  ret+=exp(data.value)+" "+unit;
         	  
@@ -1155,7 +1159,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 		propertyName : [ "bcpg:nutListValuePerServing" ],
 		renderer : function(oRecord, data, label, scope) {
 			if(data.value != null && data.value > 0){
-				var additionalProps = oRecord.getData("itemData")["dt_bcpg_nutListNut"][0].itemData;
+				var additionalProps = oRecord.getData("itemData")["dt_bcpg_nutListNut"]!=null ? oRecord.getData("itemData")["dt_bcpg_nutListNut"][0].itemData: "";
 				var unit = additionalProps.prop_bcpg_nutUnit.displayValue;
 				
 				return Alfresco.util.encodeHTML(beCPG.util.sigFigs(data.value,3).toLocaleString()+" "+unit);
