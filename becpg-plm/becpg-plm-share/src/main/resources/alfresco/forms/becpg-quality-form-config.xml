@@ -1202,6 +1202,7 @@
 					<show id="qa:clTextCriteria" />
 					<show id="qa:clTextCriteriaLimit" />
 					<show id="qa:clRequired" />
+					<show id="qa:clTemperature" />
 					<show id="qa:clMethod" />
 					<show id="rep:reportKinds" />
 				</field-visibility>
@@ -1234,6 +1235,7 @@
 					<show id="qa:clTextCriteria" />
 					<show id="qa:clTextCriteriaLimit" />
 					<show id="qa:clRequired" />
+					<show id="qa:clTemperature" />
 					<show id="qa:clMethod" />
 					<show id="fm:commentCount" force="true" />
 					<show id="rep:reportKinds" />										
@@ -1262,6 +1264,7 @@
 					<show id="qa:clTextCriteria" />
 					<show id="qa:clTextCriteriaLimit" />
 					<show id="qa:clRequired" />
+					<show id="qa:clTemperature" />
 					<show id="qa:clMethod" />
 					<show id="rep:reportKinds" />
 				</field-visibility>
@@ -1291,6 +1294,7 @@
 				<field-visibility>
 					<show id="qa:clSampleId" />
 					<show id="qa:clType" />
+					<show id="qa:clTemperature" />
 					<show id="qa:clMethod" />
 					<show id="qa:clCharacts" />
 					<show id="qa:clTarget" />
@@ -1306,6 +1310,7 @@
 					<set id="reqInfo" appearance="bordered-panel" label-id="becpg.forms.set.exigences.label" />
 					<field id="qa:clSampleId" set="reqInfo" />
 					<field id="qa:clType" set="reqInfo" />
+					<field id="qa:clTemperature" set="reqInfo" />
 					<field id="qa:clMethod" set="reqInfo" />
 					<field id="qa:clTarget" set="reqInfo" />
 					<field id="qa:clUnit" set="reqInfo" />
@@ -1313,7 +1318,7 @@
 					<field id="qa:clMaxi" set="reqInfo" />
 					<field id="qa:clCharacts" set="reqInfo" />
 					<field id="qa:clRequired" set="reqInfo" />
-
+					
 					<set id="fillInfo" appearance="bordered-panel" label-id="becpg.forms.set.fill-info.label" />
 					<field id="qa:clValue" set="fillInfo" />
 					<field id="qa:clState" set="fillInfo" />
@@ -1324,6 +1329,7 @@
 				<field-visibility>
 					<show id="qa:clSampleId" />
 					<show id="qa:clType" />
+					<show id="qa:clTemperature" />
 					<show id="qa:clMethod" />
 					<show id="qa:clCharacts" />					
 					<show id="qa:clMini" />
@@ -1337,6 +1343,7 @@
 				<appearance>
 					<field id="qa:clSampleId" read-only="true" />
 					<field id="qa:clType" read-only="true" />
+					<field id="qa:clTemperature" read-only="true" />
 					<field id="qa:clMethod" read-only="true" />
 					<field id="qa:clCharacts" read-only="true" />					
 					<field id="qa:clMini" read-only="true" />
@@ -1355,6 +1362,7 @@
 				<field-visibility>
 					<show id="qa:clSampleId" />
 					<show id="qa:clType" />
+					<show id="qa:clTemperature" />
 					<show id="qa:clMethod" />
 					<show id="qa:clCharacts" />
 					<show id="qa:clTarget" />
@@ -1370,6 +1378,7 @@
 					<set id="reqInfo" appearance="bordered-panel" label-id="becpg.forms.set.exigences.label" />
 					<field id="qa:clSampleId" read-only="true" set="reqInfo" />
 					<field id="qa:clType" read-only="true" set="reqInfo" />
+					<field id="qa:clTemperature" read-only="true" set="reqInfo" />
 					<field id="qa:clMethod" read-only="true" set="reqInfo">
 						<control template="/org/alfresco/components/form/controls/association.ftl" />
 					</field>
