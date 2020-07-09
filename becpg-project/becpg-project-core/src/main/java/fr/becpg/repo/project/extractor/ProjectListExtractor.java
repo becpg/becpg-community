@@ -364,7 +364,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 						creatorQuery.andPropQuery(ProjectModel.PROP_PROJECT_STATE, "Planned OR InProgress");
 					}
 
-					creatorQuery.andPropQuery(QName.createQName(prop, namespaceService), AuthenticationUtil.getFullyAuthenticatedUser());
+					creatorQuery.andPropEquals(QName.createQName(prop, namespaceService), AuthenticationUtil.getFullyAuthenticatedUser());
 
 					results.addAll(creatorQuery.list());
 				}
