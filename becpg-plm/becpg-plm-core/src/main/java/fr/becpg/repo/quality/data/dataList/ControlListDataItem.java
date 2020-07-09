@@ -47,7 +47,8 @@ public class ControlListDataItem extends BeCPGDataObject{
 	Double target;
 	String unit;
 	String textCriteria;
-	QualityControlState state;		
+	QualityControlState state;	
+	String temperature;
 	NodeRef method;
 	List<NodeRef> characts = new ArrayList<>();
 	
@@ -153,6 +154,16 @@ public class ControlListDataItem extends BeCPGDataObject{
 	public void setState(QualityControlState state) {
 		this.state = state;
 	}
+	
+	@AlfProp
+	@AlfQname(qname = "qa:clTemperature")
+	public String getTemperature() {
+		return temperature;
+	}
+
+	public void setTemperature(String temperature) {
+		this.temperature = temperature;
+	}
 
 	@AlfSingleAssoc
 	@DataListIdentifierAttr(isDefaultPivotAssoc=true)
@@ -186,7 +197,7 @@ public class ControlListDataItem extends BeCPGDataObject{
 		super(nodeRef, name);
 	}
 
-	public ControlListDataItem(NodeRef nodeRef, String type, Double mini, Double maxi, Boolean required, String sampleId, Double value, Double target, String unit,String textCriteria, QualityControlState state,  NodeRef method, List<NodeRef> characts){
+	public ControlListDataItem(NodeRef nodeRef, String type, Double mini, Double maxi, Boolean required, String sampleId, Double value, Double target, String unit,String textCriteria, QualityControlState state, String temperature, NodeRef method, List<NodeRef> characts){
 		
 		setNodeRef(nodeRef);
 		setType(type);
@@ -199,6 +210,7 @@ public class ControlListDataItem extends BeCPGDataObject{
 		setUnit(unit);
 		setTextCriteria(textCriteria);
 		setState(state);
+		setTemperature(temperature);
 		setMethod(method);
 		setCharacts(characts);
 	}
