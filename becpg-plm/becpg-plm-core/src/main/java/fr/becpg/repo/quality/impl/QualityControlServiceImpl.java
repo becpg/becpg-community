@@ -406,7 +406,7 @@ public class QualityControlServiceImpl implements QualityControlService {
 						textCriteria = cdl.getTextCriteria();
 					}
 					alfrescoRepository.create(listNodeRef, new ControlListDataItem(null, cdl.getType(), mini, maxi, cdl.getRequired(), sl.getSampleId(), null, target,
-							unit, textCriteria, null, cdl.getMethod(), Arrays.asList(n)));
+							unit, textCriteria, null, cdl.getTemperature(), cdl.getMethod(), Arrays.asList(n)));
 				}
 			}
 		}
