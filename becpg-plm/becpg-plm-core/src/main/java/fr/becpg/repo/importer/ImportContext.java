@@ -280,9 +280,16 @@ public class ImportContext {
 	
 
 
-	public String[] nextLine() throws ImporterException{
+	public String[] nextLine() {
+		String[] line = {};
+		try {
+			line = importFileReader.getLineAt(importIndex++, columns);
+		} catch (ImporterException e) {
+			e.printStackTrace();
+			markCurrLineError(e);
+		}
 		
-		return importFileReader.getLineAt(importIndex++, columns);
+		return line;
 		
 	}
 
