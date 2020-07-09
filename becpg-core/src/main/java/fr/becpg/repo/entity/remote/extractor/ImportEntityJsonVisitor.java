@@ -256,7 +256,7 @@ public class ImportEntityJsonVisitor {
 
 		if ((associations != null) && !associations.isEmpty()) {
 
-			List<NodeRef> nodes = queryBuilder.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).inDBIfPossible().ftsLanguage().list();
+			List<NodeRef> nodes = queryBuilder.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).inDBIfPossible().list();
 
 			for (Map.Entry<QName, List<NodeRef>> nestedEntry : associations.entrySet()) {
 
