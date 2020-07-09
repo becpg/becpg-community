@@ -91,6 +91,8 @@ public class PlmRepoConsts {
 	public static final String PATH_CONTROL_CHARACTS = "ControlCharacts";
 	public static final String PATH_CONTROL_UNITS = "ControlUnits";
 	public static final String PATH_CLAIM_DISTRIBUTION_NETWORKS = "ClaimDistributionNetworks";
+	public static final String PATH_CONTROL_TEMPERATURES= "clTemperatures";
+
 	
 
 	// GHS
