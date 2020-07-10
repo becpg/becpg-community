@@ -119,6 +119,15 @@
 		<property name="defaultExtractor" value="true"/>
 	</bean>
 	
+	<bean id="jsonVersionExtractor" class="fr.becpg.repo.entity.datalist.impl.JsonVersionExtractor" init-method="init">
+		<property name="dataListExtractorFactory" ref="dataListExtractorFactory"/>
+		<property name="namespaceService" ref="namespaceService"/>
+		<property name="attributeExtractorService" ref="attributeExtractorService" />
+		<property name="paginatedSearchCache" ref="paginatedSearchCache"/>
+		<property name="entityDictionaryService" ref="entityDictionaryService"/>
+		<property name="defaultExtractor" value="true"/>
+	</bean>
+	
 	 <bean id="smartContentExtractor" class="fr.becpg.repo.entity.datalist.impl.SmartContentExtractor" parent="simpleExtractor">
 	 	<property name="defaultExtractor" value="false"/>
 	 </bean>

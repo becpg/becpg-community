@@ -51,7 +51,7 @@ public class SmartContentExtractor extends SimpleExtractor {
 
 	@Override
 	public boolean applyTo(DataListFilter dataListFilter) {
-		return (dataListFilter.getDataListName() != null) && dataListFilter.getDataListName().startsWith(RepoConsts.SMART_CONTENT_PREFIX);
+		return (dataListFilter.getDataListName() != null) && dataListFilter.getDataListName().startsWith(RepoConsts.SMART_CONTENT_PREFIX) && !dataListFilter.isVersionFilter();
 	}
 
 	@Override

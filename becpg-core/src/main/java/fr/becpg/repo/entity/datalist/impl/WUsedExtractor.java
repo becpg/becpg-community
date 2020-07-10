@@ -287,7 +287,7 @@ public class WUsedExtractor extends MultiLevelExtractor {
 	@Override
 	public boolean applyTo(DataListFilter dataListFilter) {
 		return !dataListFilter.isSimpleItem() && dataListFilter.getDataListName() != null
-				&& dataListFilter.getDataListName().startsWith(RepoConsts.WUSED_PREFIX);
+				&& dataListFilter.getDataListName().startsWith(RepoConsts.WUSED_PREFIX) && !dataListFilter.isVersionFilter();
 	}
 
 	@Override

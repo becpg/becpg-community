@@ -62,6 +62,7 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.dictionary.constraint.DynListConstraint;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
+import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.JsonHelper;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.SiteHelper;
@@ -73,9 +74,20 @@ import fr.becpg.repo.helper.SiteHelper;
  */
 public class JsonEntityVisitor extends AbstractEntityVisitor {
 
+	protected AttributeExtractorService attributeExtractor;
+	
+	private boolean allFields = false;
+	
+	public JsonEntityVisitor(NodeService mlNodeService, NodeService nodeService, NamespaceService namespaceService,
+			EntityDictionaryService entityDictionaryService, ContentService contentService, SiteService siteService,
+			AttributeExtractorService attributeExtractor) {
+		super(mlNodeService, nodeService, namespaceService, entityDictionaryService, contentService, siteService);
+		this.attributeExtractor = attributeExtractor;
+	}
+	
 	public JsonEntityVisitor(NodeService mlNodeService, NodeService nodeService, NamespaceService namespaceService,
 			EntityDictionaryService entityDictionaryService, ContentService contentService, SiteService siteService) {
-		super(mlNodeService, nodeService, namespaceService, entityDictionaryService, contentService, siteService);
+		this(mlNodeService, nodeService, namespaceService, entityDictionaryService, contentService, siteService, null);
 	}
 
 	private enum JsonVisitNodeType {
@@ -84,6 +96,10 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 	
 	
 	private static final Log logger = LogFactory.getLog(JsonEntityVisitor.class);
+	
+	public void setAll(boolean value) {
+		allFields = value;
+	}
 
 	@Override
 	public void visit(NodeRef entityNodeRef, OutputStream result) throws JSONException, IOException {
@@ -203,7 +219,9 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 				entity.put(RemoteEntityService.ELEM_ATTRIBUTES, attributes);
 			}
 		
-
+		if (allFields && attributeExtractor != null) {
+			entity.put("metadata", attributeExtractor.extractMetadata(nodeType, nodeRef));
+		}
 		
 		
 
