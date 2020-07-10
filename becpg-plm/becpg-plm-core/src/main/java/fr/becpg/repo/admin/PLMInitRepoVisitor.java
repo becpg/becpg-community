@@ -1260,7 +1260,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 		try {
 
-			String[] qualityReportResource = { QUALITY_REPORT_EN_RESSOURCE, QUALITY_REPORT_RESSOURCE };
+			String[] qualityReportResource = { QUALITY_REPORT_EN_RESSOURCE, QUALITY_REPORT_RESSOURCE, PRODUCT_REPORT_CSS_RESOURCE };
 
 			ClassDefinition classDef = dictionaryService.getClass(QualityModel.TYPE_QUALITY_CONTROL);
 			if (repoService.getFolderByPath(qualityReportTplsNodeRef, classDef.getTitle(dictionaryService)) == null) {
