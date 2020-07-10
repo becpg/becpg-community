@@ -93,7 +93,7 @@ public class MultiListExtractor extends SimpleExtractor {
 	@Override
 	public boolean applyTo(DataListFilter dataListFilter) {
 		return !dataListFilter.isSimpleItem() && dataListFilter.getDataListName() != null
-				&& dataListFilter.getDataListName().startsWith(MULTI_LIST_EXTRACTOR_PREFIX);
+				&& dataListFilter.getDataListName().startsWith(MULTI_LIST_EXTRACTOR_PREFIX) && !dataListFilter.isVersionFilter();
 	}
 
 	@Override
