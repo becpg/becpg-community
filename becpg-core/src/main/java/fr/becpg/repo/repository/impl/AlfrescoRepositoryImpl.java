@@ -631,13 +631,11 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		}
 
 	}
-	//
-	// @Override
-	// public List<T> loadDataList(NodeRef entityNodeRef, QName
-	// datalistContainerQname, QName datalistQname) {
-	// return loadDataList(entityNodeRef, datalistContainerQname, datalistQname,
-	// L2CacheSupport.getCurrentThreadCache());
-	// }
+	
+	@Override
+	public List<T> loadDataList(NodeRef entityNodeRef, QName datalistContainerQname, QName datalistQname) {
+		return loadDataList(entityNodeRef, datalistContainerQname, datalistQname, L2CacheSupport.getCurrentThreadCache());
+	}
 
 	private List<T> loadDataList(NodeRef entityNodeRef, QName datalistContainerQname, QName datalistQname, Map<NodeRef, RepositoryEntity> caches) {
 
