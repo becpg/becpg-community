@@ -295,33 +295,35 @@
                 <structure>
                     <property name="columnName">batchStart</property>
                     <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">batchStart</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">created</property>
                     <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">created</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">orderId</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">orderId</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">productErpCode</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">productErpCode</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">productLegalName</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">productLegalName</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">productTrademarkRef</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">productTrademarkRef</text-property>
                 </structure>
             </list-property>
@@ -346,12 +348,12 @@
                     <structure>
                         <property name="position">4</property>
                         <property name="name">batchStart</property>
-                        <property name="dataType">string</property>
+                        <property name="dataType">date</property>
                     </structure>
                     <structure>
                         <property name="position">5</property>
                         <property name="name">created</property>
-                        <property name="dataType">string</property>
+                        <property name="dataType">date</property>
                     </structure>
                     <structure>
                         <property name="position">6</property>
@@ -402,15 +404,15 @@
                     <property name="position">4</property>
                     <property name="name">batchStart</property>
                     <property name="nativeName">batchStart</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="dataType">date</property>
+                    <property name="nativeDataType">91</property>
                 </structure>
                 <structure>
                     <property name="position">5</property>
                     <property name="name">created</property>
                     <property name="nativeName">created</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="dataType">date</property>
+                    <property name="nativeDataType">91</property>
                 </structure>
                 <structure>
                     <property name="position">6</property>
@@ -441,7 +443,7 @@
                     <property name="nativeDataType">12</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{name;STRING;/name},{batchId;STRING;/batchId},{productName;STRING;/product/*/name},{batchStart;STRING;/batchStart},{created;STRING;/created},{orderId;STRING;/orderId},{productErpCode;STRING;/product/*/erpCode},{productLegalName;STRING;/product/*/legalName},{productTrademarkRef;STRING;/product/*/trademarkRef}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{name;STRING;/name},{batchId;STRING;/batchId},{productName;STRING;/product/*/name},{batchStart;DATE;/batchStart},{created;DATE;/created},{orderId;STRING;/orderId},{productErpCode;STRING;/product/*/erpCode},{productLegalName;STRING;/product/*/legalName},{productTrademarkRef;STRING;/product/*/trademarkRef}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -858,7 +860,7 @@
                                 <property name="name">created</property>
                                 <text-property name="displayName">created</text-property>
                                 <expression name="expression" type="javascript">dataSetRow["created"]</expression>
-                                <property name="dataType">date-time</property>
+                                <property name="dataType">string</property>
                                 <property name="allowExport">true</property>
                             </structure>
                         </list-property>
@@ -882,7 +884,7 @@
                                 <property name="name">batchStart</property>
                                 <text-property name="displayName">batchStart</text-property>
                                 <expression name="expression" type="javascript">dataSetRow["batchStart"]</expression>
-                                <property name="dataType">date-time</property>
+                                <property name="dataType">string</property>
                                 <property name="allowExport">true</property>
                             </structure>
                         </list-property>
