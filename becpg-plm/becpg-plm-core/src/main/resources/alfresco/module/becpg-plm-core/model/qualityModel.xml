@@ -118,6 +118,19 @@
 				</list>
 			</parameter>
 		</constraint>
+		<constraint name="qa:clTemperatures" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/QualityLists/bcpg:entityLists/clTemperatures</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>bcpg:lvValue</value>
+			</parameter>
+		</constraint>
 		<constraint name="qa:claimSources" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
@@ -845,6 +858,13 @@
 				<property name="qa:clRequired">
 					<type>d:boolean</type>
 					<mandatory>false</mandatory>					
+				</property>
+				<property name="qa:clTemperature">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<constraints>
+						<constraint ref="qa:clTemperatures"/>
+					</constraints>
 				</property>
 			</properties>			
 			<associations>

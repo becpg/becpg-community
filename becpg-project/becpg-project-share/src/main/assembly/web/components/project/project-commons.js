@@ -349,14 +349,19 @@
              ret +=' ('+duration+')';
          }
          
-         if (task.permissions.userAccess.edit ){
-	         if (task["itemData"]["prop_pjt_tlWorkflowInstance"] && task["itemData"]["prop_pjt_tlWorkflowInstance"].value
-	        		 && task["itemData"]["prop_pjt_tlWorkflowInstance"].value!=''){
-	        		ret += '<a href="';
-	        	    ret +=  $siteURL('workflow-details?workflowId=' + task["itemData"]["prop_pjt_tlWorkflowInstance"].value+  '&referrer=project-list') + '" class="workflow-task-link" title="' + this.msg("link.title.open-workflow")+'"';
-	                ret +="&nbsp;</a>";
-	            }
+         if (task["itemData"]["prop_pjt_tlWorkflowTaskInstance"] && task["itemData"]["prop_pjt_tlWorkflowTaskInstance"].value
+	       		 && task["itemData"]["prop_pjt_tlWorkflowTaskInstance"].value!=''
+         	){
+	       		ret += '<a href="';
+	      	    ret +=  $siteURL('task-edit?taskId=' + task["itemData"]["prop_pjt_tlWorkflowTaskInstance"].value+  '&referrer=project-list') + '" class="workflow-task-link" title="' + this.msg("link.title.open-workflow")+'">';
+	            ret +='&nbsp;</a>';
+	      } else if (task["itemData"]["prop_pjt_tlWorkflowInstance"] && task["itemData"]["prop_pjt_tlWorkflowInstance"].value
+	       		 && task["itemData"]["prop_pjt_tlWorkflowInstance"].value!=''){
+	       		ret += '<a href="';
+	      	    ret +=  $siteURL('workflow-details?workflowId=' + task["itemData"]["prop_pjt_tlWorkflowInstance"].value+  '&referrer=project-list') + '" class="workflow-task-link" title="' + this.msg("link.title.open-workflow")+'">';
+	            ret +='&nbsp;</a>';
 	      }
+	     
           
 
           if (subProject!=null)
@@ -399,9 +404,9 @@
 
          var ret = '<span class="delivrable-status delivrable-status-' + deliverable["itemData"]["prop_pjt_dlState"].value + '">';
 
-         var contents = deliverable["itemData"]["assoc_pjt_dlContent"];
+         var contents = deliverable["itemData"]["assoc_pjt_dlContent"]? deliverable["itemData"]["assoc_pjt_dlContent"].value : null
 
-         if (contents.length > 0) {
+         if (contents!=null && contents.length > 0) {
             ret += '<span class="doc-file"><a title="' + this.msg("link.title.open-document") + '" href="' +  beCPG.util.entityURL(contents[0].siteId,contents[0].value, "document") + '"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/' + Alfresco.util
                   .getFileIcon(contents[0].displayValue, "cm:content", 16) + '" /></a></span>';
          }
@@ -411,7 +416,7 @@
              ret += '<span class="doc-url"><a title="' + this.msg("link.title.open-link") + '" href="' + url  + '"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/link-16.png" /></a></span>';
          }
          
-         if(deliverable.permissions.userAccess.edit){
+         if(deliverable.permissions && deliverable.permissions.userAccess.edit){
 	         ret += '<span class="node-' + deliverable.nodeRef + '|' + entityNodeRef + '"><a class="theme-color-1 ' + TASK_EVENTCLASS + '" title="' + this
 	               .msg("link.title.deliverable-edit") + '" >' + deliverable["itemData"]["prop_pjt_dlDescription"].displayValue + '</a></span>';
          } else {

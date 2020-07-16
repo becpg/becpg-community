@@ -182,18 +182,18 @@
              
                   onGanttButtonClick : function PTL_onGanttButtonClick(e, p_obj) {
                      document.location.href = Alfresco.util
-                           .siteURL("project-list?view=gantt"+window.location.hash);
+                           .siteURL("project-list?view=gantt");
                   },
                   onTasksButtonClick : function PTL_onTasksButtonClick(e, p_obj) {
                       document.location.href = Alfresco.util
-                            .siteURL("project-list?view=tasks"+window.location.hash);
+                            .siteURL("project-list?view=tasks");
                    },
                   onResourcesButtonClick : function PTL_onGanttButtonClick(e, p_obj) {
                       document.location.href = Alfresco.util
-                            .siteURL("project-list?view=resources"+window.location.hash);
+                            .siteURL("project-list?view=resources");
                    },
                   onPlanningButtonClick : function PTL_onPlanningButtonClick(e, p_obj) {
-                     document.location.href = Alfresco.util.siteURL("project-list"+window.location.hash);
+                     document.location.href = Alfresco.util.siteURL("project-list");
                   },
                   onExportProjectList : function PTL_onExportProjectList(e, p_obj) {
                      var dt = Alfresco.util.ComponentManager.find({

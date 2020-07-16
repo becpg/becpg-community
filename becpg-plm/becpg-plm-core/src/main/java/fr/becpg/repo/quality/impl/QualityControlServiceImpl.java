@@ -214,13 +214,20 @@ public class QualityControlServiceImpl implements QualityControlService {
 					}
 				}
 				if (!sampleDates.isEmpty()) {
-					qualityControlData.setNextAnalysisDate(sampleDates.get(0));
+					Date nextAnalysisDate = qualityControlData.getNextAnalysisDate();
 					for(Date sampleDate : sampleDates){
+						if (nextAnalysisDate == null || nextAnalysisDate.after(sampleDate)) {
+							nextAnalysisDate = sampleDate;
+						}
 						// several samples must be taken
 						for (int z_idx2 = 0; z_idx2 < sdl.getQty(); z_idx2++) {
+							
 							samplingList.add(new SamplingListDataItem(sampleDate, null, sdl.getControlPoint(), sdl.getControlStep(),
 									sdl.getSamplingGroup(), sdl.getControlingGroup(), sdl.getFixingGroup(), sdl.getReaction()));
 						}
+					}
+					if (nextAnalysisDate != null && !nextAnalysisDate.equals(qualityControlData.getNextAnalysisDate())) {
+						qualityControlData.setNextAnalysisDate(nextAnalysisDate);
 					}
 				}
 			}
@@ -399,7 +406,7 @@ public class QualityControlServiceImpl implements QualityControlService {
 						textCriteria = cdl.getTextCriteria();
 					}
 					alfrescoRepository.create(listNodeRef, new ControlListDataItem(null, cdl.getType(), mini, maxi, cdl.getRequired(), sl.getSampleId(), null, target,
-							unit, textCriteria, null, cdl.getMethod(), Arrays.asList(n)));
+							unit, textCriteria, null, cdl.getTemperature(), cdl.getMethod(), Arrays.asList(n)));
 				}
 			}
 		}
