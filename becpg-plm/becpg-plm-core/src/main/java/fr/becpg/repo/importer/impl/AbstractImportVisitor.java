@@ -65,6 +65,7 @@ import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.remote.extractor.RemoteHelper;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.PropertiesHelper;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.hierarchy.HierarchyService;
 import fr.becpg.repo.importer.ClassMapping;
@@ -189,7 +190,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			}
 			QName assocName = ContentModel.ASSOC_CHILDREN;
 			if ((name != null) && (name.length() > 0)) {
-				assocName = QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name));
+				assocName = QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(PropertiesHelper.cleanName(name)));
 			}
 
 			if (importContext.getParentNodeRef() == null) {
