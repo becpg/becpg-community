@@ -479,6 +479,7 @@ public class ProjectHelper {
 			properties.remove(ProjectModel.PROP_TL_START);
 			properties.remove(ProjectModel.PROP_TL_END);
 			properties.remove(ProjectModel.PROP_TL_WORKFLOW_INSTANCE);
+			properties.remove(ProjectModel.PROP_TL_WORKFLOW_TASK_INSTANCE);
 			properties.remove(ProjectModel.PROP_COMPLETION_PERCENT);
 			if (properties.containsKey(ProjectModel.PROP_TL_STATE) && !TaskState.OnHold.toString().equals(properties.get(ProjectModel.PROP_TL_STATE))
 					&& !TaskState.Cancelled.toString().equals(properties.get(ProjectModel.PROP_TL_STATE))) {

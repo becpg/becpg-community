@@ -825,7 +825,9 @@
          
          //#beCPG
          if((Alfresco.constants.PAGEID === "entity-data-lists" || window.location.href.indexOf("entity-data-lists") > 0 || beCPG.constants.IS_REPORT) && fileurl.indexOf("thumbnails")<0){
-             fileurl = fileurl.replace("/api/","/becpg/report/")+(!beCPG.constants.IS_REPORT ? "&entityNodeRef="+YAHOO.util.History.getQueryStringParameter('nodeRef'):"");
+             var currVersionNodeRef = YAHOO.util.History.getQueryStringParameter('currVersionNodeRef');
+             currVersionNodeRef = currVersionNodeRef != null ? currVersionNodeRef : YAHOO.util.History.getQueryStringParameter('nodeRef');
+        	 fileurl = fileurl.replace("/api/","/becpg/report/")+(!beCPG.constants.IS_REPORT ? "&entityNodeRef=" + currVersionNodeRef : "");
          }
          
          

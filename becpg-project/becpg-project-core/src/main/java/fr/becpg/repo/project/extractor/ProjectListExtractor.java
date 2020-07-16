@@ -121,7 +121,14 @@ public class ProjectListExtractor extends ActivityListExtractor {
 		List<NodeRef> results = getListNodeRef(dataListFilter, dataListFilter.getPagination(), favorites);
 
 		Map<String, Object> props = new HashMap<>();
-		props.put(PROP_ACCESSRIGHT, dataListFilter.hasWriteAccess());
+		if (VIEW_MY_TASKS.equals(dataListFilter.getFilterId()) || VIEW_TASKS.equals(dataListFilter.getFilterId())
+				|| VIEW_RESOURCES.equals(dataListFilter.getExtraParams()) || VIEW_TASKS.equals(dataListFilter.getExtraParams())) {
+			props.put(PROP_ACCESSRIGHT, dataListFilter.hasWriteAccess()
+					&& (securityService.computeAccessMode(ProjectModel.TYPE_PROJECT, ProjectModel.TYPE_TASK_LIST) == SecurityService.WRITE_ACCESS));
+		} else {
+			props.put(PROP_ACCESSRIGHT, dataListFilter.hasWriteAccess());
+		}
+
 		props.put(FILTER_DATA, dataListFilter);
 		props.put(PAGINATION, dataListFilter.getPagination());
 
@@ -203,13 +210,17 @@ public class ProjectListExtractor extends ActivityListExtractor {
 				}
 
 				List<NodeRef> projectResults = null;
-				
-				if(!(VIEW_MY_TASKS.equals(dataListFilter.getFilterId()) || VIEW_TASKS.equals(dataListFilter.getFilterId()))) {
+
+				if (!(VIEW_MY_TASKS.equals(dataListFilter.getFilterId()) || VIEW_TASKS.equals(dataListFilter.getFilterId()))) {
 					projectResults = getProjectResults(dataListFilter, beCPGQueryBuilder, pagination);
 				}
 
 				if (VIEW_MY_TASKS.equals(dataListFilter.getFilterId()) || VIEW_TASKS.equals(dataListFilter.getFilterId())
 						|| VIEW_RESOURCES.equals(dataListFilter.getExtraParams()) || VIEW_TASKS.equals(dataListFilter.getExtraParams())) {
+
+					if (securityService.computeAccessMode(ProjectModel.TYPE_PROJECT, ProjectModel.TYPE_TASK_LIST) == SecurityService.NONE_ACCESS) {
+						return new ArrayList<>();
+					}
 
 					if (VIEW_PROJECTS.equals(dataListFilter.getFilterId())) {
 						beCPGQueryBuilder.clearFTSQuery();
@@ -320,7 +331,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 						creatorQuery.andPropQuery(ProjectModel.PROP_PROJECT_STATE, "Planned OR InProgress");
 					}
 
-					creatorQuery.andPropQuery(QName.createQName(prop, namespaceService), AuthenticationUtil.getFullyAuthenticatedUser());
+					creatorQuery.andPropEquals(QName.createQName(prop, namespaceService), AuthenticationUtil.getFullyAuthenticatedUser());
 
 					results.addAll(creatorQuery.list());
 				}
@@ -355,16 +366,16 @@ public class ProjectListExtractor extends ActivityListExtractor {
 		Map<String, Object> ret = attributeExtractorService.extractNodeData(nodeRef, itemType, properties, metadataFields, mode,
 				new AttributeExtractorService.DataListCallBack() {
 
-			
 					@Override
 					public List<Map<String, Object>> extractNestedField(NodeRef nodeRef, AttributeExtractorStructure field) {
 						DataListPagination pagination = (DataListPagination) props.get(PAGINATION);
-						
+
 						List<Map<String, Object>> ret = new ArrayList<>();
 						if (field.isDataListItems()) {
-							if ((ProjectModel.TYPE_TASK_LIST.equals(field.getFieldQname()) && (pagination.getPageSize() > 10) )
+							if ((ProjectModel.TYPE_TASK_LIST.equals(field.getFieldQname()) && (pagination.getPageSize() > 10))
 									|| BeCPGModel.TYPE_ACTIVITY_LIST.equals(field.getFieldQname())
-									|| (ProjectModel.TYPE_DELIVERABLE_LIST.equals(field.getFieldQname()) && ProjectModel.TYPE_TASK_LIST.equals(itemType))) {
+									|| (ProjectModel.TYPE_DELIVERABLE_LIST.equals(field.getFieldQname())
+											&& ProjectModel.TYPE_TASK_LIST.equals(itemType))) {
 								// Only in progress tasks
 								List<NodeRef> assocRefs;
 								if (BeCPGModel.TYPE_ACTIVITY_LIST.equals(field.getFieldQname())) {
@@ -402,12 +413,13 @@ public class ProjectListExtractor extends ActivityListExtractor {
 										} else {
 											Map<String, Object> metadata = doExtract(itemNodeRef, itemType, field.getChildrens(), mode, properties,
 													props, cache);
-											if((ProjectModel.TYPE_TASK_LIST.equals(field.getFieldQname()))) {
+											if ((ProjectModel.TYPE_TASK_LIST.equals(field.getFieldQname()))) {
 												NodeRef subProjectNoderef = associationService.getTargetAssoc(itemNodeRef,
 														ProjectModel.ASSOC_SUB_PROJECT);
 												if (subProjectNoderef != null) {
 													HashMap<String, Object> commentCount = new HashMap<>(6);
-													Integer count = (Integer) nodeService.getProperty(subProjectNoderef, ForumModel.PROP_COMMENT_COUNT);
+													Integer count = (Integer) nodeService.getProperty(subProjectNoderef,
+															ForumModel.PROP_COMMENT_COUNT);
 													commentCount.put("displayValue", count);
 													commentCount.put("value", count);
 													commentCount.put("metadata", "int");

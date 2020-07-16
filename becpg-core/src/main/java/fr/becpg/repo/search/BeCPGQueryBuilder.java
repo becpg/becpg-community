@@ -292,6 +292,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 	public BeCPGQueryBuilder inDBIfPossible() {
 		queryConsistancy = QueryConsistency.TRANSACTIONAL_IF_POSSIBLE;
+		ftsLanguage();
 		return this;
 	}
 
@@ -1007,6 +1008,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 				sp.addQueryTemplate(DEFAULT_FIELD_NAME, defaultSearchTemplate);
 			}
 		}
+		
 
 		// Force the database use if possible
 		// execute queries transactionally, when possible, and fall back to

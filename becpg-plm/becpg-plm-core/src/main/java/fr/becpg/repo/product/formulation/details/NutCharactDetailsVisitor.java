@@ -41,7 +41,7 @@ public class NutCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 
 		Double netQty = FormulationHelper.getNetQtyForNuts(formulatedProduct);
 		Double netWeight = FormulationHelper.getNetWeight(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
-		Double netVol = FormulationHelper.getNetVolume(formulatedProduct) == null ? 0d : FormulationHelper.getNetVolume(formulatedProduct);
+		Double netVol = FormulationHelper.getNetVolume(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
 
 		visitRecur(formulatedProduct, ret, 0, level, netWeight, netVol, netQty);
 

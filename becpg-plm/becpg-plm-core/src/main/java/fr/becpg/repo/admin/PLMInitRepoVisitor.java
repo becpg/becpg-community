@@ -121,6 +121,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	
 	private static final String NC_REPORT_PATH = "beCPG/birt/document/nonconformity/NCReport.rptdesign";
 	private static final String QUALITY_CONTROL_REPORT_PATH = "beCPG/birt/document/qualitycontrol/QualityControlReport.rptdesign";
+	private static final String QUALITY_CONTROL_AGING_REPORT_PATH = "beCPG/birt/document/qualitycontrol/QualityControlAgingReport.rptdesign";
+	private static final String QUALITY_CONTROL_AGING_NAME = "path.aging";
 	private static final String QUALITY_REPORT_RESSOURCE = "beCPG/birt/document/qualitycontrol/QualityControlReport.properties";
 	private static final String QUALITY_REPORT_EN_RESSOURCE = "beCPG/birt/document/qualitycontrol/QualityControlReport_en.properties";
 	private static final String ECO_REPORT_PATH = "beCPG/birt/document/ecm/ECOReport.rptdesign";
@@ -884,6 +886,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_CONTROL_STEPS, QualityModel.TYPE_CONTROL_STEP);
 		entityLists.put(PlmRepoConsts.PATH_CONTROL_CHARACTS, QualityModel.TYPE_CONTROL_CHARACT);
 		entityLists.put(PlmRepoConsts.PATH_CONTROL_UNITS, BeCPGModel.TYPE_LIST_VALUE);
+		entityLists.put(PlmRepoConsts.PATH_CONTROL_TEMPERATURES, BeCPGModel.TYPE_LIST_VALUE);
 
 		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);
 	}
@@ -1114,6 +1117,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		String productReportPackagingName = I18NUtil.getMessage(PRODUCT_REPORT_TECHNICAL_SHEET_NAME, Locale.getDefault());
 		String productReportCostName = I18NUtil.getMessage(PRODUCT_REPORT_COST_NAME, Locale.getDefault());
 		String productReportRDName = I18NUtil.getMessage(PRODUCT_REPORT_RD_NAME, Locale.getDefault());
+		String qualityControlAgingName = I18NUtil.getMessage(QUALITY_CONTROL_AGING_NAME, Locale.getDefault());
 
 		try {
 
@@ -1256,7 +1260,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 		try {
 
-			String[] qualityReportResource = { QUALITY_REPORT_EN_RESSOURCE, QUALITY_REPORT_RESSOURCE };
+			String[] qualityReportResource = { QUALITY_REPORT_EN_RESSOURCE, QUALITY_REPORT_RESSOURCE, PRODUCT_REPORT_CSS_RESOURCE };
 
 			ClassDefinition classDef = dictionaryService.getClass(QualityModel.TYPE_QUALITY_CONTROL);
 			if (repoService.getFolderByPath(qualityReportTplsNodeRef, classDef.getTitle(dictionaryService)) == null) {
@@ -1268,18 +1272,21 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				for (String element : qualityReportResource) {
 					resources.add(reportTplService.createTplRessource(qualityFolderNodeRef, element, true));
 				}
-
 				NodeRef templateQuality = reportTplService.createTplRptDesign(qualityFolderNodeRef, classDef.getTitle(dictionaryService),
 						QUALITY_CONTROL_REPORT_PATH, ReportType.Document, ReportFormat.PDF, QualityModel.TYPE_QUALITY_CONTROL, true, true, false);
-
+				NodeRef templateQualityAging = reportTplService.createTplRptDesign(qualityFolderNodeRef, classDef.getTitle(dictionaryService) + " - " + qualityControlAgingName,
+						QUALITY_CONTROL_AGING_REPORT_PATH, ReportType.Document, ReportFormat.XLSX, QualityModel.TYPE_QUALITY_CONTROL, true, false, false);
 				if (!resources.isEmpty()) {
 					for (NodeRef resource : resources) {
-						logger.debug("Associating resource: " + resource + " to template: " + templateQuality);
+						logger.debug("Associating resource: " + resource + " to template: " + templateQuality + " and" + templateQualityAging);
 						nodeService.createAssociation(templateQuality, resource, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES);
+						nodeService.createAssociation(templateQualityAging, resource, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES);
+
 					}
 				}
 
 				nodeService.setProperty(templateQuality, ReportModel.PROP_REPORT_LOCALES, (Serializable) Arrays.asList("fr", "en"));
+				nodeService.setProperty(templateQualityAging, ReportModel.PROP_REPORT_LOCALES, (Serializable) Arrays.asList("fr", "en"));
 			}
 
 		} catch (Exception e) {

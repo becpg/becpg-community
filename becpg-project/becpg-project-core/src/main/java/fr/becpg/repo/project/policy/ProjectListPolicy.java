@@ -331,5 +331,6 @@ public class ProjectListPolicy extends ProjectPolicy
 
 		// action duplicate use createNode API
 		nodeService.removeProperty(childRef.getChildRef(), ProjectModel.PROP_TL_WORKFLOW_INSTANCE);
+		nodeService.removeProperty(childRef.getChildRef(), ProjectModel.PROP_TL_WORKFLOW_TASK_INSTANCE);
 	}
 }

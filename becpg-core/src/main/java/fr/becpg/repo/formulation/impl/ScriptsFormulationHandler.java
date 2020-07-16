@@ -29,6 +29,7 @@ import fr.becpg.repo.formulation.spel.SpelFormulaService;
 import fr.becpg.repo.formulation.spel.SpelHelper;
 import fr.becpg.repo.helper.AssociationService;
 
+
 public class ScriptsFormulationHandler extends FormulationBaseHandler<FormulatedEntity> {
 
 	private NodeService nodeService;
@@ -83,14 +84,15 @@ public class ScriptsFormulationHandler extends FormulationBaseHandler<Formulated
 
 			if ((scriptNode != null) && nodeService.exists(scriptNode)
 					&& nodeService.getPath(scriptNode).toPrefixString(namespaceService).startsWith(RepoConsts.SCRIPTS_FULL_PATH)) {
-
+				
+				String scriptName = (String) nodeService.getProperty(scriptNode, ContentModel.PROP_NAME);
+				
 				if(logger.isDebugEnabled()) {
-					logger.debug("Found script template to run:"+(String) nodeService.getProperty(scriptNode, ContentModel.PROP_NAME));
+					logger.debug("Found script template to run:" + scriptName);
 				}
 				
 				
-				if (((String) nodeService.getProperty(scriptNode, ContentModel.PROP_NAME)).endsWith(".spel")) {
-
+				if (scriptName.endsWith(".spel")) {
 					ExpressionParser parser = new SpelExpressionParser();
 					StandardEvaluationContext context = formulaService.createEntitySpelContext(entity);
 					ContentReader reader = contentService.getReader(scriptNode, ContentModel.PROP_CONTENT);
@@ -98,13 +100,26 @@ public class ScriptsFormulationHandler extends FormulationBaseHandler<Formulated
 
 					String[] formulas = SpelHelper.formatMTFormulas(reader.getContentString());
 					for (String formula : formulas) {
-
 						Matcher varFormulaMatcher = SpelHelper.formulaVarPattern.matcher(formula);
 						if (varFormulaMatcher.matches()) {
 							Expression exp = parser.parseExpression(varFormulaMatcher.group(2));
 							context.setVariable(varFormulaMatcher.group(1), exp.getValue(context));
 						} else {
-							parser.parseExpression(formula);
+							try {
+								Expression expression = parser.parseExpression(formula);
+								Object result = expression.getValue(context);
+								if (logger.isDebugEnabled()) {
+									logger.debug("Formula: " + formula);
+									logger.debug("Expression " + expression + " returned " + result);
+								}
+							} catch (Exception e) {
+								logger.error("Error running script : "+e.getMessage(),e);
+//TODO								((ProductData) entity).getReqCtrlList()
+//								.add(new ReqCtrlListDataItem(
+//										null, RequirementType.Tolerated, MLTextHelper.getI18NMessage("message.formulate.script.error",
+//												scriptName, e.getLocalizedMessage()),
+//										null, new ArrayList<NodeRef>(), RequirementDataType.Formulation));
+							}
 						}
 					}
 				} else {
@@ -118,12 +133,11 @@ public class ScriptsFormulationHandler extends FormulationBaseHandler<Formulated
 						scriptService.executeScript(scriptNode, ContentModel.PROP_CONTENT, model);
 					} catch (ScriptException e) {
 						logger.error("Error running script : "+e.getMessage(),e);
-						
-//		TODO				entity.getReqCtrlList()
+// TODO						((ProductData) entity).getReqCtrlList()
 //						.add(new ReqCtrlListDataItem(
-//								null, RequirementType.Tolerated, MLTextHelper.getI18NMessage("message.formulate.labelRule.error",
-//										labelingRuleListDataItem.getName(), e.getLocalizedMessage()),
-//								null, new ArrayList<NodeRef>(), RequirementDataType.Labelling));
+//								null, RequirementType.Tolerated, MLTextHelper.getI18NMessage("message.formulate.script.error",
+//										scriptName, e.getLocalizedMessage()),
+//								null, new ArrayList<NodeRef>(), RequirementDataType.Formulation));
 					}
 				}
 			}
