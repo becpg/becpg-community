@@ -256,6 +256,19 @@
       </property>
    </bean> 
 
-   
+    <!-- Ovverride alfresco copy service -->
+    <bean id="copyService" class="fr.becpg.repo.copy.BecpgCopyServiceImpl" parent="abstractBaseCopyService" init-method="init">
+        <property name="cannedQueryRegistry" ref="copyServiceCannedQueryRegistry"/>
+        <property name="dictionaryService" ref="entityDictionaryService" />
+        <property name="nodeService" ref="NodeService" />
+        <property name="policyComponent" ref="policyComponent" />
+        <property name="behaviourFilter" ref="policyBehaviourFilter" />
+        <property name="ruleService" ref="ruleService" />
+        <property name="permissionService" ref="permissionService" />
+        <property name="publicServiceAccessService" ref="publicServiceAccessService" />
+        <property name="internalNodeService" ref="mlAwareNodeService" />
+        <property name="contentPropertyRestrictionInterceptor" ref="contentPropertyRestrictionInterceptor" />
+    </bean>
+    
     
 </beans>
