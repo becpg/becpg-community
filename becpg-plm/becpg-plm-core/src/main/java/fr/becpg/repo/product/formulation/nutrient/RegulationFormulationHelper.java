@@ -69,7 +69,9 @@ public class RegulationFormulationHelper {
 		regulations.put("SG", new MalaysianNutrientRegulation("beCPG/databases/nuts/SingaporeanNutrientRegulation.csv"));
 		regulations.put("CODEX", new EuropeanNutrientRegulation("beCPG/databases/nuts/CODEXNutrientRegulation.csv"));
 		regulations.put("CO", new ColombianNutrientRegulation("beCPG/databases/nuts/ColombianNutrientRegulation.csv"));
-		
+		regulations.put("RU", new RussianNutrientRegulation("beCPG/databases/nuts/RussianNutrientRegulation.csv"));
+		regulations.put("PK", new IndianNutrientRegulation("beCPG/databases/nuts/CODEXNutrientRegulation.csv"));
+
 	}
 
 	/**
@@ -202,15 +204,18 @@ public class RegulationFormulationHelper {
 	}
 
 	private static String getLocalKey(Locale locale) {
-		if (locale.getCountry().equals("US") || locale.getCountry().equals("CA") || locale.getCountry().equals("MX")
+		if (locale.getCountry().equals("US") || locale.getCountry().equals("CA") || locale.getCountry().equals("AU")
 				|| locale.getCountry().equals("ID") || locale.getCountry().equals("HK") || locale.getCountry().equals("MY")
-				|| locale.getCountry().equals("IN") || locale.getCountry().equals("KR") || locale.getCountry().equals("TH")
-				|| locale.getCountry().equals("MA") || locale.getCountry().equals("DZ") || locale.getCountry().equals("IL")
-				|| locale.getCountry().equals("TR") || locale.getCountry().equals("SG")) {
+				|| locale.getCountry().equals("IL") || locale.getCountry().equals("IN") || locale.getCountry().equals("KR")
+				|| locale.getCountry().equals("MA") || locale.getCountry().equals("MX") || locale.getCountry().equals("DZ")
+				|| locale.getCountry().equals("TR") || locale.getCountry().equals("SG") || locale.getCountry().equals("TH")
+				|| locale.getCountry().equals("PK")) {
 			return locale.getCountry();
 		} else if (locale.getLanguage().equals("zh")) {
 			return "CN";
-		} else if (locale.getCountry().equals("AU") || locale.getCountry().equals("NZ")) {
+		} else if (locale.getLanguage().equals("ru")) {
+			return "RU";
+		} else if (locale.getCountry().equals("NZ")) {
 			return "AU";
 		} else if (locale.getCountry().equals("PR")) {
 			return "US";
@@ -535,6 +540,12 @@ public class RegulationFormulationHelper {
 		}
 		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("es_CO"))) {
 			ret.add("CO");
+		}
+		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("en_PK"))) {
+			ret.add("PK");
+		}
+		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ru"))) {
+			ret.add("RU");
 		}
 		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_AE")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_BH"))
 				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_SA"))
