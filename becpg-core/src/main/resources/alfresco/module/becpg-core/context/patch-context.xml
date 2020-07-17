@@ -147,4 +147,29 @@
         </property>
 	</bean>
 	
+	
+	<bean id="patch.bcpg.copyFromPatch" class="fr.becpg.repo.admin.patch.CopyFromPatch" parent="beCPGBasePatch" >
+        <property name="id"><value>patch.bcpg.patch.bcpg.copyFromPatch</value></property>
+        <property name="description"><value>patch.bcpg.patch.bcpg.copyFromPatch.description</value></property>
+        <property name="fixesFromSchema" value="0"/>
+        <property name="fixesToSchema" value="10057" />
+        <property name="targetSchema" value="10175"/>
+        <property name="requiresTransaction"><value>true</value></property>
+        <property name="applyToTenants"><value>true</value></property>
+         <property name="patchDAO">
+            <ref bean="patchDAO"/>
+        </property>
+        <property name="nodeDAO">
+            <ref bean="nodeDAO"/>
+        </property>
+        <property name="qnameDAO">
+            <ref bean="qnameDAO"/>
+        </property>
+         <property name="policyBehaviourFilter">
+            <ref bean="policyBehaviourFilter"/>
+        </property>
+        <property name="ruleService" ref="ruleService"/>
+	</bean>
+	
+	
 </beans>
