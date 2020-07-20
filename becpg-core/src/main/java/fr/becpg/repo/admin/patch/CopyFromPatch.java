@@ -2,7 +2,9 @@ package fr.becpg.repo.admin.patch;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.batch.BatchProcessWorkProvider;
@@ -13,6 +15,8 @@ import org.alfresco.repo.domain.patch.PatchDAO;
 import org.alfresco.repo.domain.qname.QNameDAO;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.service.cmr.dictionary.DictionaryService;
+import org.alfresco.service.cmr.dictionary.TypeDefinition;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.rule.RuleService;
@@ -40,6 +44,7 @@ public class CopyFromPatch extends AbstractBeCPGPatch {
 	private QNameDAO qnameDAO;
 	private BehaviourFilter policyBehaviourFilter;
 	private RuleService ruleService;
+	private DictionaryService dictionaryService;
 
 	private final int batchThreads = 3;
 	private final int batchSize = 40;
@@ -52,6 +57,24 @@ public class CopyFromPatch extends AbstractBeCPGPatch {
 	@Override
 	protected String applyInternal() throws Exception {
 
+		Set<QName> mapType = new HashSet<>();
+		for (QName type : dictionaryService.getAllTypes()) {
+			TypeDefinition typeDef = dictionaryService.getType(type);
+			if (dictionaryService.isSubClass(typeDef.getName(), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
+				mapType.add(type);
+			}
+		}
+		for (QName type : mapType) {
+			doForType(type);
+		}
+
+		return I18NUtil.getMessage(MSG_SUCCESS);
+	}
+
+	private void doForType(QName type) {
+
+		logger.info("Run patch for type: " + type);
+
 		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<>() {
 			final List<NodeRef> result = new ArrayList<>();
 
@@ -60,7 +83,7 @@ public class CopyFromPatch extends AbstractBeCPGPatch {
 			long minSearchNodeId = 0;
 			long maxSearchNodeId = count;
 
-			final Pair<Long, QName> val = getQnameDAO().getQName(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+			final Pair<Long, QName> val = getQnameDAO().getQName(type);
 
 			@Override
 			public int getTotalEstimatedWorkSize() {
@@ -139,7 +162,6 @@ public class CopyFromPatch extends AbstractBeCPGPatch {
 
 		batchProcessor.process(worker, true);
 
-		return I18NUtil.getMessage(MSG_SUCCESS);
 	}
 
 	public NodeDAO getNodeDAO() {
