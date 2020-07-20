@@ -465,12 +465,14 @@
                           
                           //Convert to number
                           try {
-                               var number = eval(oData.replace(/,/g, '.').replace(/[^-()\d/*+.]/g, ''));
-                         
-	                          // Validate
-	                          if(YAHOO.lang.isNumber(number)) {
-	                              return number;
-	                          }
+                        	  if(!oData.match(/[a-zA-Z_]/)){
+	                               var number = eval(oData.replace(/,/g, '.').replace(/[^-()\d/*+.]/g, ''));
+	                         
+		                          // Validate
+		                          if(YAHOO.lang.isNumber(number)) {
+		                              return number;
+		                          }
+                        	  }
                           } catch(e){
                               return oData;
                           }
