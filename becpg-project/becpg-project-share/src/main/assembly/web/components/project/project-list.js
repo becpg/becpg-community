@@ -580,6 +580,8 @@ var g; // gantt var
 
                               if("all" != filterObj.filterId &&  value.split("|").length>1){
                             	  filterObj.filterData = value.split("|")[1];
+                              } else {
+                            	  filterObj.filterData = "";
                               }
                               
                               
