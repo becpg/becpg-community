@@ -53,6 +53,12 @@ public class CopyFromPatch extends AbstractBeCPGPatch {
 	public void setRuleService(RuleService ruleService) {
 		this.ruleService = ruleService;
 	}
+	
+	public void setDictionaryService(DictionaryService dictionaryService) {
+		this.dictionaryService = dictionaryService;
+	}
+
+
 
 	@Override
 	protected String applyInternal() throws Exception {
