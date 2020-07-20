@@ -157,9 +157,7 @@ public class CopyFromPatch extends AbstractBeCPGPatch {
 
 					nodeService.removeAspect(dataListNodeRef, ContentModel.ASPECT_COPIEDFROM);
 
-				} else {
-					logger.warn("dataListNodeRef doesn't exist : " + dataListNodeRef);
-				}
+				} 
 			}
 
 		};
