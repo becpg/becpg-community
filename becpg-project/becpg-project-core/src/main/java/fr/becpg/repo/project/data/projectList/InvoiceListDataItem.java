@@ -25,9 +25,9 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 /**
  * Planning list (done or to do)
- * 
+ *
  * @author quere
- * 
+ * @version $Id: $Id
  */
 @AlfType
 @AlfQname(qname = "pjt:invoiceList")
@@ -41,39 +41,79 @@ public class InvoiceListDataItem extends BeCPGDataObject  {
 	private Double invoiceAmount;  //ilInvoiceAmount
 	private TaskListDataItem task; //ilTaskRef
 	
+	/**
+	 * <p>Getter for the field <code>budget</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.project.data.projectList.BudgetListDataItem} object.
+	 */
 	@AlfSingleAssoc
 	@AlfQname(qname = "pjt:ilBudgetRef")
 	public BudgetListDataItem getBudget() {
 		return budget;
 	}
+	/**
+	 * <p>Setter for the field <code>budget</code>.</p>
+	 *
+	 * @param budget a {@link fr.becpg.repo.project.data.projectList.BudgetListDataItem} object.
+	 */
 	public void setBudget(BudgetListDataItem budget) {
 		this.budget = budget;
 	}
 
+	/**
+	 * <p>Getter for the field <code>invoiceAmount</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:invoice")
 	public Double getInvoiceAmount() {
 		return invoiceAmount;
 	}
 
+	/**
+	 * <p>Setter for the field <code>invoiceAmount</code>.</p>
+	 *
+	 * @param invoiceAmount a {@link java.lang.Double} object.
+	 */
 	public void setInvoiceAmount(Double invoiceAmount) {
 		this.invoiceAmount = invoiceAmount;
 	}
+	/**
+	 * <p>Getter for the field <code>task</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object.
+	 */
 	@AlfSingleAssoc
 	@AlfQname(qname = "pjt:ilTaskRef")
 	public TaskListDataItem getTask() {
 		return task;
 	}
 
+	/**
+	 * <p>Setter for the field <code>task</code>.</p>
+	 *
+	 * @param task a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object.
+	 */
 	public void setTask(TaskListDataItem task) {
 		this.task = task;
 	}
 	
 	
+	/**
+	 * <p>Constructor for InvoiceListDataItem.</p>
+	 */
 	public InvoiceListDataItem() {
 		super();
 	}
 	
+	/**
+	 * <p>Constructor for InvoiceListDataItem.</p>
+	 *
+	 * @param budget a {@link fr.becpg.repo.project.data.projectList.BudgetListDataItem} object.
+	 * @param invoiceAmount a {@link java.lang.Double} object.
+	 * @param task a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object.
+	 */
 	public InvoiceListDataItem(BudgetListDataItem budget, Double invoiceAmount, TaskListDataItem task ) {
 		super();
 		this.budget = budget;	
@@ -81,6 +121,7 @@ public class InvoiceListDataItem extends BeCPGDataObject  {
 		this.task = task;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -92,6 +133,7 @@ public class InvoiceListDataItem extends BeCPGDataObject  {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -119,6 +161,7 @@ public class InvoiceListDataItem extends BeCPGDataObject  {
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "InvoiceListDataItem [budget=" + budget + ", invoiceAmount="

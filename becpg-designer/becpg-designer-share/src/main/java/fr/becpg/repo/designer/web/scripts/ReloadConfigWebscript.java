@@ -29,8 +29,9 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 
 /**
  * Reload share configuration files
- * @author "Matthieu Laborie"
  *
+ * @author "Matthieu Laborie"
+ * @version $Id: $Id
  */
 public class ReloadConfigWebscript  extends DeclarativeWebScript {
 	
@@ -41,6 +42,8 @@ public class ReloadConfigWebscript  extends DeclarativeWebScript {
 	ConfigService configService;
 	
 	/**
+	 * <p>Setter for the field <code>configService</code>.</p>
+	 *
 	 * @param configService the configService to set
 	 */
 	public void setConfigService(ConfigService configService) {
@@ -48,6 +51,7 @@ public class ReloadConfigWebscript  extends DeclarativeWebScript {
 	}
 
 	
+	/** {@inheritDoc} */
 	protected Map<String, Object> executeImpl(WebScriptRequest req,
 	         Status status) {
 	      Map<String, Object> model = new HashMap<>();

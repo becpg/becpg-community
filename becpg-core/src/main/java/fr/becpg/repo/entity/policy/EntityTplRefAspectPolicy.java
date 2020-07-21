@@ -23,6 +23,7 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
  * The Class EntityFolderPolicy.
  *
  * @author querephi
+ * @version $Id: $Id
  */
 public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy
 		implements NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnAddAspectPolicy {
@@ -33,14 +34,25 @@ public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy
 
 	private EntityTplService entityTplService;
 
+	/**
+	 * <p>Setter for the field <code>associationService</code>.</p>
+	 *
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object.
+	 */
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityTplService</code>.</p>
+	 *
+	 * @param entityTplService a {@link fr.becpg.repo.entity.EntityTplService} object.
+	 */
 	public void setEntityTplService(EntityTplService entityTplService) {
 		this.entityTplService = entityTplService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void doInit() {
 		logger.debug("Init EntityTplPolicy...");
@@ -55,6 +67,7 @@ public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onAddAspect(NodeRef entityNodeRef, QName aspectTypeQName) {
 
@@ -63,6 +76,7 @@ public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onCreateAssociation(AssociationRef assocRef) {
 		if (policyBehaviourFilter.isEnabled(BeCPGModel.ASPECT_ENTITY_TPL_REF)  && policyBehaviourFilter.isEnabled(assocRef.getSourceRef(), BeCPGModel.ASPECT_ENTITY_TPL_REF)) {
@@ -83,6 +97,7 @@ public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 

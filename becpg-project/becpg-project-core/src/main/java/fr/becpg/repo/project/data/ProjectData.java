@@ -44,9 +44,9 @@ import fr.becpg.repo.repository.model.StateableEntity;
 
 /**
  * ProjectData used to manipulate project
- * 
+ *
  * @author quere
- * 
+ * @version $Id: $Id
  */
 @AlfType
 @AlfQname(qname = "pjt:project")
@@ -106,10 +106,30 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 
 
 
+	/**
+	 * <p>Constructor for ProjectData.</p>
+	 */
 	public ProjectData() {
 		super();
 	}
 
+	/**
+	 * <p>Constructor for ProjectData.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param name a {@link java.lang.String} object.
+	 * @param hierarchy1 a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param hierarchy2 a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param startDate a {@link java.util.Date} object.
+	 * @param dueDate a {@link java.util.Date} object.
+	 * @param completionDate a {@link java.util.Date} object.
+	 * @param planningMode a {@link fr.becpg.repo.project.data.PlanningMode} object.
+	 * @param priority a {@link java.lang.Integer} object.
+	 * @param projectState a {@link fr.becpg.repo.project.data.ProjectState} object.
+	 * @param projectTpl a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param completionPercent a {@link java.lang.Integer} object.
+	 * @param entities a {@link java.util.List} object.
+	 */
 	public ProjectData(NodeRef nodeRef, String name, NodeRef hierarchy1, NodeRef hierarchy2, Date startDate, Date dueDate, Date completionDate, 
 			PlanningMode planningMode, Integer priority,ProjectState projectState,
 			NodeRef projectTpl, Integer completionPercent, List<NodeRef> entities) {
@@ -130,407 +150,790 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 
 	
 	
+	/**
+	 * <p>Getter for the field <code>code</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:code")
 	public String getCode() {
 		return code;
 	}
 
+	/**
+	 * <p>Setter for the field <code>code</code>.</p>
+	 *
+	 * @param code a {@link java.lang.String} object.
+	 */
 	public void setCode(String code) {
 		this.code = code;
 	}
 
+	/**
+	 * <p>Getter for the field <code>hierarchy1</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:projectHierarchy1")
 	public NodeRef getHierarchy1() {
 		return hierarchy1;
 	}
 
+	/**
+	 * <p>Setter for the field <code>hierarchy1</code>.</p>
+	 *
+	 * @param hierarchy1 a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void setHierarchy1(NodeRef hierarchy1) {
 		this.hierarchy1 = hierarchy1;
 	}
 
+	/**
+	 * <p>Getter for the field <code>hierarchy2</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:projectHierarchy2")
 	public NodeRef getHierarchy2() {
 		return hierarchy2;
 	}
 
+	/**
+	 * <p>Setter for the field <code>hierarchy2</code>.</p>
+	 *
+	 * @param hierarchy2 a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void setHierarchy2(NodeRef hierarchy2) {
 		this.hierarchy2 = hierarchy2;
 	}
 
+	/**
+	 * <p>Getter for the field <code>startDate</code>.</p>
+	 *
+	 * @return a {@link java.util.Date} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:projectStartDate")
 	public Date getStartDate() {
 		return startDate;
 	}
 
+	/**
+	 * <p>Setter for the field <code>startDate</code>.</p>
+	 *
+	 * @param startDate a {@link java.util.Date} object.
+	 */
 	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
 	}
 	
 
+	/**
+	 * <p>Getter for the field <code>formulatedDate</code>.</p>
+	 *
+	 * @return a {@link java.util.Date} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:formulatedDate")
 	public Date getFormulatedDate() {
 		return formulatedDate;
 	}
 
+	/** {@inheritDoc} */
 	public void setFormulatedDate(Date formulatedDate) {
 		this.formulatedDate = formulatedDate;
 	}
 	
 
+	/**
+	 * <p>Getter for the field <code>requirementChecksum</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:requirementChecksum")
 	public String getRequirementChecksum() {
 		return requirementChecksum;
 	}
 
+	/**
+	 * <p>Setter for the field <code>requirementChecksum</code>.</p>
+	 *
+	 * @param requirementChecksum a {@link java.lang.String} object.
+	 */
 	public void setRequirementChecksum(String requirementChecksum) {
 		this.requirementChecksum = requirementChecksum;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean shouldUpdateFormulatedDate() {
 		return updateFormulatedDate;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void setUpdateFormulatedDate(boolean updateFormulatedDate) {
 		this.updateFormulatedDate = updateFormulatedDate;
 	}
 
+	/**
+	 * <p>Getter for the field <code>reformulateCount</code>.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object.
+	 */
 	public Integer getReformulateCount() {
 		return reformulateCount;
 	}
 
+	/** {@inheritDoc} */
 	public void setReformulateCount(Integer reformulateCount) {
 		this.reformulateCount = reformulateCount;
 	}
 
+	/**
+	 * <p>Getter for the field <code>currentReformulateCount</code>.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object.
+	 */
 	public Integer getCurrentReformulateCount() {
 		return currentReformulateCount;
 	}
 
+	/** {@inheritDoc} */
 	public void setCurrentReformulateCount(Integer currentReformulateCount) {
 		this.currentReformulateCount = currentReformulateCount;
 	}
 	
 	
+	/**
+	 * <p>Getter for the field <code>formulationChainId</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getFormulationChainId() {
 		return formulationChainId;
 	}
 
+	/** {@inheritDoc} */
 	public void setFormulationChainId(String formulationChainId) {
 		this.formulationChainId = formulationChainId;
 	}
 
+	/**
+	 * <p>Getter for the field <code>dueDate</code>.</p>
+	 *
+	 * @return a {@link java.util.Date} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:projectDueDate")
 	public Date getDueDate() {
 		return dueDate;
 	}
 
+	/**
+	 * <p>Setter for the field <code>dueDate</code>.</p>
+	 *
+	 * @param dueDate a {@link java.util.Date} object.
+	 */
 	public void setDueDate(Date dueDate) {
 		this.dueDate = dueDate;
 	}
 
+	/**
+	 * <p>Getter for the field <code>completionDate</code>.</p>
+	 *
+	 * @return a {@link java.util.Date} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:projectCompletionDate")
 	public Date getCompletionDate() {
 		return completionDate;
 	}
 
+	/**
+	 * <p>Setter for the field <code>completionDate</code>.</p>
+	 *
+	 * @param completionDate a {@link java.util.Date} object.
+	 */
 	public void setCompletionDate(Date completionDate) {
 		this.completionDate = completionDate;
 	}
 
+	/**
+	 * <p>Getter for the field <code>planningMode</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.project.data.PlanningMode} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:projectPlanningMode")	
 	public PlanningMode getPlanningMode() {
 		return planningMode;
 	}
 
+	/**
+	 * <p>Setter for the field <code>planningMode</code>.</p>
+	 *
+	 * @param planningMode a {@link fr.becpg.repo.project.data.PlanningMode} object.
+	 */
 	public void setPlanningMode(PlanningMode planningMode) {
 		this.planningMode = planningMode;
 	}
 
+	/**
+	 * <p>Getter for the field <code>priority</code>.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:projectPriority")
 	public Integer getPriority() {
 		return priority;
 	}	
 
+	/**
+	 * <p>Setter for the field <code>priority</code>.</p>
+	 *
+	 * @param priority a {@link java.lang.Integer} object.
+	 */
 	public void setPriority(Integer priority) {
 		this.priority = priority;
 	}
 
+	/**
+	 * <p>Getter for the field <code>projectState</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.project.data.ProjectState} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:projectState")
 	public ProjectState getProjectState() {
 		return projectState;
 	}
 
+	/**
+	 * <p>Setter for the field <code>projectState</code>.</p>
+	 *
+	 * @param projectState a {@link fr.becpg.repo.project.data.ProjectState} object.
+	 */
 	public void setProjectState(ProjectState projectState) {
 		this.projectState = projectState;
 	}
 	
+	/**
+	 * <p>getState.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getState() {
 		return projectState!=null ? projectState.toString() : ProjectState.Planned.toString();
 	}
 
+	/**
+	 * <p>setState.</p>
+	 *
+	 * @param state a {@link java.lang.String} object.
+	 */
 	public void setState(String state) {
 		this.projectState = ProjectState.valueOf(state);
 	}
 	
 
+	/**
+	 * <p>Getter for the field <code>projectTpl</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	@AlfSingleAssoc
 	@AlfQname(qname = "bcpg:entityTplRef")
 	public NodeRef getProjectTpl() {
 		return projectTpl;
 	}
 	
+	/**
+	 * <p>getFormulatedEntityTpl.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public NodeRef getFormulatedEntityTpl() {
 		return projectTpl;
 	}
 
+	/**
+	 * <p>Setter for the field <code>projectTpl</code>.</p>
+	 *
+	 * @param projectTpl a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void setProjectTpl(NodeRef projectTpl) {
 		this.projectTpl = projectTpl;
 	}
 
+	/**
+	 * <p>Getter for the field <code>completionPercent</code>.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:completionPercent")
 	public Integer getCompletionPercent() {
 		return completionPercent;
 	}
 
+	/**
+	 * <p>Setter for the field <code>completionPercent</code>.</p>
+	 *
+	 * @param completionPercent a {@link java.lang.Integer} object.
+	 */
 	public void setCompletionPercent(Integer completionPercent) {
 		this.completionPercent = completionPercent;
 	}
 
+	/**
+	 * <p>Getter for the field <code>entities</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@AlfMultiAssoc
 	@AlfQname(qname = "pjt:projectEntity")
 	public List<NodeRef> getEntities() {
 		return entities;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entities</code>.</p>
+	 *
+	 * @param entities a {@link java.util.List} object.
+	 */
 	public void setEntities(List<NodeRef> entities) {
 		this.entities = entities;
 	}
 
+	/**
+	 * <p>Getter for the field <code>legends</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:projectLegends")
 	public List<NodeRef> getLegends() {
 		return legends;
 	}
 
+	/**
+	 * <p>Setter for the field <code>legends</code>.</p>
+	 *
+	 * @param legends a {@link java.util.List} object.
+	 */
 	public void setLegends(List<NodeRef> legends) {
 		this.legends = legends;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>overdue</code>.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:projectOverdue")
 	public Integer getOverdue() {
 		return overdue;
 	}
 
+	/**
+	 * <p>Setter for the field <code>overdue</code>.</p>
+	 *
+	 * @param overdue a {@link java.lang.Integer} object.
+	 */
 	public void setOverdue(Integer overdue) {
 		this.overdue = overdue;
 	}
 
+	/**
+	 * <p>Getter for the field <code>duration</code>.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object.
+	 */
 	public Integer getDuration() {
 		return duration;
 	}
 
+	/**
+	 * <p>Setter for the field <code>duration</code>.</p>
+	 *
+	 * @param duration a {@link java.lang.Integer} object.
+	 */
 	public void setDuration(Integer duration) {
 		this.duration = duration;
 	}
 
+	/**
+	 * <p>Getter for the field <code>realDuration</code>.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object.
+	 */
 	public Integer getRealDuration() {
 		return realDuration;
 	}
 
+	/**
+	 * <p>Setter for the field <code>realDuration</code>.</p>
+	 *
+	 * @param realDuration a {@link java.lang.Integer} object.
+	 */
 	public void setRealDuration(Integer realDuration) {
 		this.realDuration = realDuration;
 	}
 
+	/**
+	 * <p>Getter for the field <code>score</code>.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:projectScore")
 	public Integer getScore() {
 		return score;
 	}
 
+	/**
+	 * <p>Setter for the field <code>score</code>.</p>
+	 *
+	 * @param score a {@link java.lang.Integer} object.
+	 */
 	public void setScore(Integer score) {
 		this.score = score;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>projectManager</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	@AlfSingleAssoc
 	@AlfQname(qname = "pjt:projectManager")
 	public NodeRef getProjectManager() {
 		return projectManager;
 	}
 
+	/**
+	 * <p>Setter for the field <code>projectManager</code>.</p>
+	 *
+	 * @param projectManager a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void setProjectManager(NodeRef projectManager) {
 		this.projectManager = projectManager;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>created</code>.</p>
+	 *
+	 * @return a {@link java.util.Date} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "cm:created")
 	public Date getCreated() {
 		return created;
 	}
 
+	/**
+	 * <p>Setter for the field <code>created</code>.</p>
+	 *
+	 * @param created a {@link java.util.Date} object.
+	 */
 	public void setCreated(Date created) {
 		this.created = created;
 	}
 
+	/**
+	 * <p>Getter for the field <code>modified</code>.</p>
+	 *
+	 * @return a {@link java.util.Date} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "cm:modified")
 	public Date getModified() {
 		return modified;
 	}
 
+	/**
+	 * <p>Setter for the field <code>modified</code>.</p>
+	 *
+	 * @param modified a {@link java.util.Date} object.
+	 */
 	public void setModified(Date modified) {
 		this.modified = modified;
 	}
 
+	/**
+	 * <p>Getter for the field <code>creator</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "cm:creator")
 	public String getCreator() {
 		return creator;
 	}
 
+	/**
+	 * <p>Setter for the field <code>creator</code>.</p>
+	 *
+	 * @param creator a {@link java.lang.String} object.
+	 */
 	public void setCreator(String creator) {
 		this.creator = creator;
 	}
 
+	/**
+	 * <p>Getter for the field <code>modifier</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "cm:modifier")
 	public String getModifier() {
 		return modifier;
 	}
 
+	/**
+	 * <p>Setter for the field <code>modifier</code>.</p>
+	 *
+	 * @param modifier a {@link java.lang.String} object.
+	 */
 	public void setModifier(String modifier) {
 		this.modifier = modifier;
 	}
 
+	/**
+	 * <p>Getter for the field <code>budgetedCost</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:projectBudgetedCost")
 	public Double getBudgetedCost() {
 		return budgetedCost;
 	}
 
+	/**
+	 * <p>Setter for the field <code>budgetedCost</code>.</p>
+	 *
+	 * @param budgetedCost a {@link java.lang.Double} object.
+	 */
 	public void setBudgetedCost(Double budgetedCost) {
 		this.budgetedCost = budgetedCost;
 	}
 
+	/**
+	 * <p>Getter for the field <code>work</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:projectWork")
 	public Double getWork() {
 		return work;
 	}
 
+	/**
+	 * <p>Setter for the field <code>work</code>.</p>
+	 *
+	 * @param work a {@link java.lang.Double} object.
+	 */
 	public void setWork(Double work) {
 		this.work = work;
 	}
 
 	
+	/**
+	 * <p>Getter for the field <code>currTasks</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@AlfMultiAssoc
 	@AlfQname(qname = "pjt:projectCurrentTasks")
 	public List<NodeRef> getCurrTasks() {
 		return currTasks;
 	}
 
+	/**
+	 * <p>Setter for the field <code>currTasks</code>.</p>
+	 *
+	 * @param currTasks a {@link java.util.List} object.
+	 */
 	public void setCurrTasks(List<NodeRef> currTasks) {
 		this.currTasks = currTasks;
 	}
 
+	/**
+	 * <p>Getter for the field <code>loggedTime</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:projectLoggedTime")
 	public Double getLoggedTime() {
 		return loggedTime;
 	}
 
+	/**
+	 * <p>Setter for the field <code>loggedTime</code>.</p>
+	 *
+	 * @param loggedTime a {@link java.lang.Double} object.
+	 */
 	public void setLoggedTime(Double loggedTime) {
 		this.loggedTime = loggedTime;
 	}
 
+	/**
+	 * <p>Getter for the field <code>taskList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@DataList
 	@AlfQname(qname="pjt:taskList")
 	public List<TaskListDataItem> getTaskList() {
 		return taskList;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>deliverableList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@DataList
 	@AlfQname(qname="pjt:deliverableList")
 	public List<DeliverableListDataItem> getDeliverableList() {
 		return deliverableList;
 	}
 
+	/**
+	 * <p>Setter for the field <code>deliverableList</code>.</p>
+	 *
+	 * @param deliverableList a {@link java.util.List} object.
+	 */
 	public void setDeliverableList(List<DeliverableListDataItem> deliverableList) {
 		this.deliverableList = deliverableList;
 	}
 
+	/**
+	 * <p>Setter for the field <code>taskList</code>.</p>
+	 *
+	 * @param taskList a {@link java.util.List} object.
+	 */
 	public void setTaskList(List<TaskListDataItem> taskList) {
 		this.taskList = taskList;
 	}
 
+	/**
+	 * <p>Getter for the field <code>scoreList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@DataList
 	@AlfQname(qname="pjt:scoreList")
 	public List<ScoreListDataItem> getScoreList() {
 		return scoreList;
 	}
 
+	/**
+	 * <p>Setter for the field <code>scoreList</code>.</p>
+	 *
+	 * @param scoreList a {@link java.util.List} object.
+	 */
 	public void setScoreList(List<ScoreListDataItem> scoreList) {
 		this.scoreList = scoreList;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>logTimeList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@DataList
 	@AlfQname(qname="pjt:logTimeList")
 	public List<LogTimeListDataItem> getLogTimeList() {
 		return logTimeList;
 	}
 
+	/**
+	 * <p>Setter for the field <code>logTimeList</code>.</p>
+	 *
+	 * @param logTimeList a {@link java.util.List} object.
+	 */
 	public void setLogTimeList(List<LogTimeListDataItem> logTimeList) {
 		this.logTimeList = logTimeList;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>budgetList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@DataList
 	@AlfQname(qname="pjt:budgetList")
 	public List<BudgetListDataItem> getBudgetList() {
 		return budgetList;
 	}
+	/**
+	 * <p>Setter for the field <code>budgetList</code>.</p>
+	 *
+	 * @param budgetList a {@link java.util.List} object.
+	 */
 	public void setBudgetList(List<BudgetListDataItem> budgetList) {
 		this.budgetList = budgetList;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>invoiceList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@DataList
 	@AlfQname(qname="pjt:invoiceList")
 	public List<InvoiceListDataItem> getInvoiceList() {
 		return invoiceList;
 	}
+	/**
+	 * <p>Setter for the field <code>invoiceList</code>.</p>
+	 *
+	 * @param invoiceList a {@link java.util.List} object.
+	 */
 	public void setInvoiceList(List<InvoiceListDataItem> invoiceList) {
 		this.invoiceList = invoiceList;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>expenseList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@DataList
 	@AlfQname(qname="pjt:expenseList")
 	public List<ExpenseListDataItem> getExpenseList() {
 		return expenseList;
 	}
 
+	/**
+	 * <p>Setter for the field <code>expenseList</code>.</p>
+	 *
+	 * @param expenseList a {@link java.util.List} object.
+	 */
 	public void setExpenseList(List<ExpenseListDataItem> expenseList) {
 		this.expenseList = expenseList;
 	}
 
 	
+	/** {@inheritDoc} */
 	@Override
 	public String getEntityState() {
 		return projectState!=null ? projectState.toString() : null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -572,6 +975,7 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -748,6 +1152,7 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "ProjectData [hierarchy1=" + hierarchy1 + ", hierarchy2="

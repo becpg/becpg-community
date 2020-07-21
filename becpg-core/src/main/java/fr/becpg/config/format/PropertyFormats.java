@@ -28,8 +28,9 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 /**
  * Format of properties (used for import and reports)
- * @author querephi, matthieu
  *
+ * @author querephi, matthieu
+ * @version $Id: $Id
  */
 public class PropertyFormats {
 
@@ -40,11 +41,24 @@ public class PropertyFormats {
 	protected String datetimeFormat;
 	protected String decimalFormat;
 	
+	  /**
+	   * <p>Constructor for PropertyFormats.</p>
+	   *
+	   * @param useDefaultLocal a boolean.
+	   */
 	  public  PropertyFormats(boolean useDefaultLocal) {
 		  this(useDefaultLocal, "EEE d MMM yyyy","EEE d MMM yyyy HH:mm:ss",   "###,###.####");
 	  }
 	
 
+   /**
+    * <p>Constructor for PropertyFormats.</p>
+    *
+    * @param useDefaultLocal a boolean.
+    * @param dateFormat a {@link java.lang.String} object.
+    * @param datetimeFormat a {@link java.lang.String} object.
+    * @param decimalFormat a {@link java.lang.String} object.
+    */
    public  PropertyFormats(boolean useDefaultLocal,String dateFormat,String datetimeFormat,String decimalFormat) {
 		this.useDefaultLocale = useDefaultLocal;
 		this.dateFormat = dateFormat;
@@ -53,44 +67,92 @@ public class PropertyFormats {
 	}
 
 
+	/**
+	 * <p>Setter for the field <code>maxDecimalPrecision</code>.</p>
+	 *
+	 * @param maxDecimalPrecision a {@link java.lang.Integer} object.
+	 */
 	public void setMaxDecimalPrecision(Integer maxDecimalPrecision) {
 		this.maxDecimalPrecision = maxDecimalPrecision;
 	}
+	/**
+	 * <p>isUseDefaultLocale.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public boolean isUseDefaultLocale() {
 		return useDefaultLocale;
 	}
 
+	/**
+	 * <p>Setter for the field <code>useDefaultLocale</code>.</p>
+	 *
+	 * @param useDefaultLocale a boolean.
+	 */
 	public void setUseDefaultLocale(boolean useDefaultLocale) {
 		localDateFormat.remove();
 		localDateTimeFormat.remove();
 		this.useDefaultLocale = useDefaultLocale;
 	}
 
+	/**
+	 * <p>Setter for the field <code>dateFormat</code>.</p>
+	 *
+	 * @param dateFormat a {@link java.lang.String} object.
+	 */
 	public void setDateFormat(String dateFormat) {
 		localDateFormat.remove();
 		this.dateFormat = dateFormat;
 	}
 
+	/**
+	 * <p>Setter for the field <code>datetimeFormat</code>.</p>
+	 *
+	 * @param datetimeFormat a {@link java.lang.String} object.
+	 */
 	public void setDatetimeFormat(String datetimeFormat) {
 		localDateTimeFormat.remove();
 		this.datetimeFormat = datetimeFormat;
 	}
 
+	/**
+	 * <p>Setter for the field <code>decimalFormat</code>.</p>
+	 *
+	 * @param decimalFormat a {@link java.lang.String} object.
+	 */
 	public void setDecimalFormat(String decimalFormat) {
 		localDecimalFormat.remove();
 		this.decimalFormat = decimalFormat;
 	}
 
 
+	/**
+	 * <p>Constructor for PropertyFormats.</p>
+	 *
+	 * @param useDefaultLocal a boolean.
+	 * @param maxDecimalPrecision a int.
+	 */
 	public PropertyFormats(boolean useDefaultLocal, int maxDecimalPrecision) {
 		this(useDefaultLocal);
 		this.maxDecimalPrecision = maxDecimalPrecision;
 	}
 	
+	/**
+	 * <p>formatDate.</p>
+	 *
+	 * @param o a {@link java.lang.Object} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String formatDate(Object o) {
 		return localDateFormat.get().format(o);
 	}
 
+	/**
+	 * <p>formatDecimal.</p>
+	 *
+	 * @param o a {@link java.lang.Object} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String formatDecimal(Object o) {
 		String ret = null;
 
@@ -134,18 +196,43 @@ public class PropertyFormats {
 		return ret;
 	}
 
+	/**
+	 * <p>formatDateTime.</p>
+	 *
+	 * @param o a {@link java.lang.Object} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String formatDateTime(Object o) {
 		return localDateTimeFormat.get().format(o);
 	}
 
+	/**
+	 * <p>parseDate.</p>
+	 *
+	 * @param dateString a {@link java.lang.String} object.
+	 * @return a {@link java.util.Date} object.
+	 * @throws java.text.ParseException if any.
+	 */
 	public Date parseDate(String dateString) throws ParseException {
 		return localDateFormat.get().parse(dateString);
 	}
 
+	/**
+	 * <p>parseDecimal.</p>
+	 *
+	 * @param decimalString a {@link java.lang.String} object.
+	 * @return a {@link java.lang.Number} object.
+	 * @throws java.text.ParseException if any.
+	 */
 	public Number parseDecimal(String decimalString) throws ParseException {
 		return localDecimalFormat.get().parse(decimalString);
 	}
 
+	/**
+	 * <p>Getter for the field <code>decimalFormat</code>.</p>
+	 *
+	 * @return a {@link java.text.DecimalFormat} object.
+	 */
 	public DecimalFormat getDecimalFormat() {
 		return localDecimalFormat.get();
 	}

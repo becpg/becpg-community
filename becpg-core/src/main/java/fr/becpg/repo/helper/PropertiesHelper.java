@@ -21,14 +21,27 @@ import java.util.regex.Pattern;
 
 import org.alfresco.service.namespace.QName;
 
+/**
+ * <p>PropertiesHelper class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class PropertiesHelper {
 
 
 	/*(.*[\"\*\\\>\<\?\/\:\|]+.*)|(.*[\.]?.*[\.]+$)|(.*[ ]+$)*/
 	
+	/** Constant <code>namePattern</code> */
 	public static final Pattern namePattern =  Pattern.compile("(.*[\\\"\\*\\\\\\>\\<\\?\\/\\:\\|]+.*)|(.*[\\.]?.*[\\.]+$)|(.*[ ]+$)");
 
 	
+	/**
+	 * <p>testName.</p>
+	 *
+	 * @param name a {@link java.lang.String} object.
+	 * @return a boolean.
+	 */
 	public static boolean testName(String name) {
 		
 		return !(namePattern.matcher(name).find());
@@ -49,6 +62,12 @@ public class PropertiesHelper {
 				.replaceAll("\\.$", "").trim(): null;
 	}	
 	
+	/**
+	 * <p>cleanFolderName.</p>
+	 *
+	 * @param name a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	public static String cleanFolderName(String name) {
 		
 		//Case name is a qName

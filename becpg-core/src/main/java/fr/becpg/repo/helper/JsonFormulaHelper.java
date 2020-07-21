@@ -29,23 +29,37 @@ import fr.becpg.config.format.FormatMode;
 import fr.becpg.config.format.PropertyFormatService;
 
 /**
- * @author matthieu
+ * <p>JsonFormulaHelper class.</p>
  *
+ * @author matthieu
+ * @version $Id: $Id
  */
 public class JsonFormulaHelper {
 
 	
 	private static final Log logger = LogFactory.getLog(JsonFormulaHelper.class);
 	
+	/** Constant <code>JSON_COMP_ITEMS="comp"</code> */
 	public static final String JSON_COMP_ITEMS = "comp";
+	/** Constant <code>JSON_VALUE="value"</code> */
 	public static final String JSON_VALUE = "value";
+	/** Constant <code>JSON_NODEREF="nodeRef"</code> */
 	public static final String JSON_NODEREF = "nodeRef";
+	/** Constant <code>JSON_PATH="path"</code> */
 	public static final String JSON_PATH = "path";
+	/** Constant <code>JSON_SUB_VALUES="sub"</code> */
 	public static final String JSON_SUB_VALUES = "sub";
+    /** Constant <code>JSON_DISPLAY_VALUE="displayValue"</code> */
     public static final String JSON_DISPLAY_VALUE = "displayValue";
 	
 	
 	
+	/**
+	 * <p>cleanCompareJSON.</p>
+	 *
+	 * @param value a {@link java.lang.String} object.
+	 * @return a {@link java.lang.Object} object.
+	 */
 	public static Object cleanCompareJSON(String value) {
 		if(value!=null && value.contains(JSON_COMP_ITEMS)) {
 			try {
@@ -73,6 +87,12 @@ public class JsonFormulaHelper {
 		return value;
 	}
 	
+	/**
+	 * <p>formatValue.</p>
+	 *
+	 * @param v a {@link java.lang.Object} object.
+	 * @return a {@link java.lang.Object} object.
+	 */
 	public static Object formatValue(Object v) {
 		
 		if (v != null && (v instanceof Double || v instanceof Float)) {

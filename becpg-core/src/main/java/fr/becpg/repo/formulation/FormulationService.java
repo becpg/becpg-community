@@ -20,21 +20,71 @@ package fr.becpg.repo.formulation;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 
+/**
+ * <p>FormulationService interface.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public interface FormulationService<T extends FormulatedEntity>  {
 	
+	 /** Constant <code>DEFAULT_CHAIN_ID="default"</code> */
 	 static final String DEFAULT_CHAIN_ID = "default";
+	 /** Constant <code>FAST_FORMULATION_CHAINID="fastFormulationChain"</code> */
 	 static final String FAST_FORMULATION_CHAINID = "fastFormulationChain";
 
+     /**
+      * <p>formulate.</p>
+      *
+      * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+      * @param chainId a {@link java.lang.String} object.
+      * @return a T object.
+      * @throws fr.becpg.repo.formulation.FormulateException if any.
+      */
      T formulate(NodeRef entityNodeRef, String chainId) throws FormulateException;
     
+     /**
+      * <p>formulate.</p>
+      *
+      * @param repositoryEntity a T object.
+      * @param chainId a {@link java.lang.String} object.
+      * @return a T object.
+      * @throws fr.becpg.repo.formulation.FormulateException if any.
+      */
      T formulate(T repositoryEntity, String chainId) throws FormulateException;
 	
+     /**
+      * <p>formulate.</p>
+      *
+      * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+      * @return a T object.
+      * @throws fr.becpg.repo.formulation.FormulateException if any.
+      */
      T formulate(NodeRef entityNodeRef) throws FormulateException;
     
+     /**
+      * <p>formulate.</p>
+      *
+      * @param repositoryEntity a T object.
+      * @return a T object.
+      * @throws fr.becpg.repo.formulation.FormulateException if any.
+      */
      T formulate(T repositoryEntity) throws FormulateException;
 
+	/**
+	 * <p>registerFormulationChain.</p>
+	 *
+	 * @param clazz a {@link java.lang.Class} object.
+	 * @param chain a {@link fr.becpg.repo.formulation.FormulationChain} object.
+	 */
 	void registerFormulationChain(Class<T> clazz, FormulationChain<T> chain);
 
+	/**
+	 * <p>shouldFormulate.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a boolean.
+	 */
 	boolean shouldFormulate(NodeRef entityNodeRef);
 	
 }

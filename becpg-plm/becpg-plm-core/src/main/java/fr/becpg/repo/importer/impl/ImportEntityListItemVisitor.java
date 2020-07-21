@@ -44,10 +44,18 @@ import fr.becpg.repo.importer.ImportContext;
 import fr.becpg.repo.importer.ImportVisitor;
 import fr.becpg.repo.importer.ImporterException;
 
+/**
+ * <p>ImportEntityListItemVisitor class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class ImportEntityListItemVisitor extends AbstractImportVisitor implements ImportVisitor {
 
+	/** Constant <code>MSG_ERROR_FIND_ENTITY="import_service.error.err_find_entity"</code> */
 	protected static final String MSG_ERROR_FIND_ENTITY = "import_service.error.err_find_entity";
 
+	/** Constant <code>MSG_ERROR_NO_MAPPING_FOR="import_service.error.no_mapping_for"</code> */
 	protected static final String MSG_ERROR_NO_MAPPING_FOR = "import_service.error.no_mapping_for";
 
 	
@@ -55,11 +63,18 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 
 	private FileFolderService fileFolderService;
 
+	/**
+	 * <p>Setter for the field <code>fileFolderService</code>.</p>
+	 *
+	 * @param fileFolderService a {@link org.alfresco.service.cmr.model.FileFolderService} object.
+	 */
 	public void setFileFolderService(FileFolderService fileFolderService) {
 		this.fileFolderService = fileFolderService;
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * Check if the node exists, according to : - keys or entityCode
 	 */
 	@Override
@@ -318,6 +333,7 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 	
 	
 	
+	/** {@inheritDoc} */
 	@Override
 	protected NodeRef findPropertyTargetNodeByValue(ImportContext importContext, PropertyDefinition propDef,
 			AbstractAttributeMapping attributeMapping, String value, Map<QName, Serializable> properties) throws ImporterException {

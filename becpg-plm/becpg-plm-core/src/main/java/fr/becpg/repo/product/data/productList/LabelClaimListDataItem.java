@@ -31,6 +31,12 @@ import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.annotation.InternalField;
 import fr.becpg.repo.repository.model.AbstractManualDataItem;
 
+/**
+ * <p>LabelClaimListDataItem class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @AlfType
 @AlfQname(qname = "bcpg:labelClaimList")
 public class LabelClaimListDataItem extends AbstractManualDataItem implements  Cloneable {
@@ -39,10 +45,15 @@ public class LabelClaimListDataItem extends AbstractManualDataItem implements  C
 	 * 
 	 */
 	private static final long serialVersionUID = 1232488781703843974L;
+	/** Constant <code>VALUE_TRUE="true"</code> */
 	public static final String VALUE_TRUE = "true";
+	/** Constant <code>VALUE_FALSE="false"</code> */
 	public static final String VALUE_FALSE = "false";
+	/** Constant <code>VALUE_EMPTY=""</code> */
 	public static final String VALUE_EMPTY = "";
+	/** Constant <code>VALUE_NA="na"</code> */
 	public static final String VALUE_NA = "na";
+	/** Constant <code>VALUE_SUITABLE="suitable"</code> */
 	public static final String VALUE_SUITABLE = "suitable";
 	
 	
@@ -53,6 +64,11 @@ public class LabelClaimListDataItem extends AbstractManualDataItem implements  C
 	private String errorLog;
 	private List<NodeRef> missingLabelClaims = new ArrayList<>();
 	
+	/**
+	 * <p>Getter for the field <code>labelClaim</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	@AlfSingleAssoc
 	@AlfQname(qname="bcpg:lclLabelClaim")
 	@InternalField
@@ -60,32 +76,67 @@ public class LabelClaimListDataItem extends AbstractManualDataItem implements  C
 	public NodeRef getLabelClaim() {
 		return labelClaim;
 	}
+	/**
+	 * <p>Setter for the field <code>labelClaim</code>.</p>
+	 *
+	 * @param labelClaim a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void setLabelClaim(NodeRef labelClaim) {
 		this.labelClaim = labelClaim;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>type</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:lclType")
 	public String getType() {
 		return type;
 	}
+	/**
+	 * <p>Setter for the field <code>type</code>.</p>
+	 *
+	 * @param type a {@link java.lang.String} object.
+	 */
 	public void setType(String type) {
 		this.type = type;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>labelClaimValue</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:lclClaimValue")
 	public String getLabelClaimValue() {
 		return labelClaimValue;
 	}
+	/**
+	 * <p>Setter for the field <code>labelClaimValue</code>.</p>
+	 *
+	 * @param labelClaimValue a {@link java.lang.String} object.
+	 */
 	public void setLabelClaimValue(String labelClaimValue) {
 		this.labelClaimValue = labelClaimValue;
 	}
 	
+	/**
+	 * <p>getIsClaimed.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object.
+	 */
 	public Boolean getIsClaimed() {
 		return VALUE_TRUE.equals(labelClaimValue);
 	}
 	
+	/**
+	 * <p>setIsClaimed.</p>
+	 *
+	 * @param isClaimed a {@link java.lang.Boolean} object.
+	 */
 	public void setIsClaimed(Boolean isClaimed) {
 		if(isClaimed){
 			this.labelClaimValue = VALUE_TRUE;
@@ -94,6 +145,11 @@ public class LabelClaimListDataItem extends AbstractManualDataItem implements  C
 		}
 	}
 	
+	/**
+	 * <p>Getter for the field <code>isFormulated</code>.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object.
+	 */
 	@AlfProp
 	@InternalField
 	@AlfQname(qname="bcpg:lclIsFormulated")
@@ -101,34 +157,69 @@ public class LabelClaimListDataItem extends AbstractManualDataItem implements  C
 		return isFormulated;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>isFormulated</code>.</p>
+	 *
+	 * @param isFormulated a {@link java.lang.Boolean} object.
+	 */
 	public void setIsFormulated(Boolean isFormulated) {
 		this.isFormulated = isFormulated;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>errorLog</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@InternalField
 	@AlfQname(qname="bcpg:lclFormulaErrorLog")
 	public String getErrorLog() {
 		return errorLog;
 	}
+	/**
+	 * <p>Setter for the field <code>errorLog</code>.</p>
+	 *
+	 * @param errorLog a {@link java.lang.String} object.
+	 */
 	public void setErrorLog(String errorLog) {
 		this.errorLog = errorLog;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>missingLabelClaims</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@AlfMultiAssoc
 	@InternalField
 	@AlfQname(qname="bcpg:lclMissingLabelClaims")
 	public List<NodeRef> getMissingLabelClaims() {
 		return missingLabelClaims;
 	}
+	/**
+	 * <p>Setter for the field <code>missingLabelClaims</code>.</p>
+	 *
+	 * @param missingLabelClaims a {@link java.util.List} object.
+	 */
 	public void setMissingLabelClaims(List<NodeRef> missingLabelClaims) {
 		this.missingLabelClaims = missingLabelClaims;
 	}
+	/**
+	 * <p>Constructor for LabelClaimListDataItem.</p>
+	 */
 	public LabelClaimListDataItem(){
 		super();
 	}
 	
 	
+	/**
+	 * <p>Constructor for LabelClaimListDataItem.</p>
+	 *
+	 * @param labelClaim a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param type a {@link java.lang.String} object.
+	 * @param isClaimed a {@link java.lang.Boolean} object.
+	 */
 	public LabelClaimListDataItem(NodeRef labelClaim, String type, Boolean isClaimed) {
 		super();
 		this.labelClaim = labelClaim;
@@ -136,6 +227,11 @@ public class LabelClaimListDataItem extends AbstractManualDataItem implements  C
 		this.labelClaimValue = isClaimed ? VALUE_TRUE : VALUE_FALSE;
 	}
 	
+	/**
+	 * <p>Constructor for LabelClaimListDataItem.</p>
+	 *
+	 * @param labelClaimItem a {@link fr.becpg.repo.product.data.productList.LabelClaimListDataItem} object.
+	 */
 	public LabelClaimListDataItem(LabelClaimListDataItem labelClaimItem) {
 		this.labelClaim = labelClaimItem.labelClaim;
 		this.type = labelClaimItem.type;
@@ -144,11 +240,13 @@ public class LabelClaimListDataItem extends AbstractManualDataItem implements  C
 	}
 	
 	
+	/** {@inheritDoc} */
 	@Override
 	public LabelClaimListDataItem clone() {
 		return new LabelClaimListDataItem(this);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -160,6 +258,7 @@ public class LabelClaimListDataItem extends AbstractManualDataItem implements  C
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		return result;
 	}
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -197,6 +296,7 @@ public class LabelClaimListDataItem extends AbstractManualDataItem implements  C
 		return true;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "LabelClaimListDataItem [labelClaim=" + labelClaim + ", type=" + type + ", labelClaimValue=" + labelClaimValue + ", isFormulated="

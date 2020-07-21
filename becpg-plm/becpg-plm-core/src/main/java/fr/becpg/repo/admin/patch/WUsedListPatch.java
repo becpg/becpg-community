@@ -20,6 +20,12 @@ import fr.becpg.model.MPMModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.entity.EntityTplService;
 
+/**
+ * <p>WUsedListPatch class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class WUsedListPatch extends AbstractBeCPGPatch {
 
 	private static final Log logger = LogFactory.getLog(WUsedListPatch.class);
@@ -32,22 +38,43 @@ public class WUsedListPatch extends AbstractBeCPGPatch {
 	private QNameDAO qnameDAO;
 	
 	
+	/**
+	 * <p>Setter for the field <code>nodeDAO</code>.</p>
+	 *
+	 * @param nodeDAO a {@link org.alfresco.repo.domain.node.NodeDAO} object.
+	 */
 	public void setNodeDAO(NodeDAO nodeDAO) {
 		this.nodeDAO = nodeDAO;
 	}
 
+	/**
+	 * <p>Setter for the field <code>patchDAO</code>.</p>
+	 *
+	 * @param patchDAO a {@link org.alfresco.repo.domain.patch.PatchDAO} object.
+	 */
 	public void setPatchDAO(PatchDAO patchDAO) {
 		this.patchDAO = patchDAO;
 	}
 
+	/**
+	 * <p>Setter for the field <code>qnameDAO</code>.</p>
+	 *
+	 * @param qnameDAO a {@link org.alfresco.repo.domain.qname.QNameDAO} object.
+	 */
 	public void setQnameDAO(QNameDAO qnameDAO) {
 		this.qnameDAO = qnameDAO;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityTplService</code>.</p>
+	 *
+	 * @param entityTplService a {@link fr.becpg.repo.entity.EntityTplService} object.
+	 */
 	public void setEntityTplService(EntityTplService entityTplService) {
 		this.entityTplService = entityTplService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected String applyInternal() throws Exception {
 

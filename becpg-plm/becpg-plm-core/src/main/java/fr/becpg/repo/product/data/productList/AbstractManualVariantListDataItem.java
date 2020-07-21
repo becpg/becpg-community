@@ -27,6 +27,12 @@ import fr.becpg.repo.repository.annotation.InternalField;
 import fr.becpg.repo.repository.model.AbstractManualDataItem;
 import fr.becpg.repo.variant.model.VariantDataItem;
 
+/**
+ * <p>Abstract AbstractManualVariantListDataItem class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public abstract class AbstractManualVariantListDataItem extends AbstractManualDataItem implements VariantDataItem {
 
 
@@ -36,6 +42,11 @@ public abstract class AbstractManualVariantListDataItem extends AbstractManualDa
 	private static final long serialVersionUID = 910812503752985666L;
 	private List<NodeRef> variants;
 
+	/**
+	 * <p>Getter for the field <code>variants</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@AlfProp
 	@InternalField
 	@AlfQname(qname="bcpg:variantIds")
@@ -43,10 +54,12 @@ public abstract class AbstractManualVariantListDataItem extends AbstractManualDa
 		return variants;
 	}
 
+	/** {@inheritDoc} */
 	public void setVariants(List<NodeRef> variants) {
 		this.variants = variants;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -55,6 +68,7 @@ public abstract class AbstractManualVariantListDataItem extends AbstractManualDa
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

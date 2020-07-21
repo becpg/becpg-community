@@ -19,8 +19,20 @@ package fr.becpg.repo.entity.datalist;
 
 
 
+/**
+ * <p>DataListSortRegistry interface.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public interface DataListSortRegistry {
 	
+	/**
+	 * <p>getPluginById.</p>
+	 *
+	 * @param pluginId a {@link java.lang.String} object.
+	 * @return a {@link fr.becpg.repo.entity.datalist.DataListSortPlugin} object.
+	 */
 	DataListSortPlugin getPluginById(String pluginId);
 	
 }

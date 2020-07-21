@@ -20,6 +20,7 @@ import fr.becpg.repo.designer.DesignerService;
  * The Class FormControlsWebScript.
  *
  * @author matthieu
+ * @version $Id: $Id
  */
 public class FormControlsWebScript extends DeclarativeWebScript  {
 	
@@ -34,6 +35,8 @@ public class FormControlsWebScript extends DeclarativeWebScript  {
 
 
 	/**
+	 * <p>Setter for the field <code>designerService</code>.</p>
+	 *
 	 * @param designerService the designerService to set
 	 */
 	public void setDesignerService(DesignerService designerService) {
@@ -45,14 +48,11 @@ public class FormControlsWebScript extends DeclarativeWebScript  {
 
 
 	/**
-	 * Retrieve available controls
-	 * 
-	 * url : /becpg/designer/controls.
+	 * {@inheritDoc}
 	 *
-	 * @param req the req
-	 * @param status the status
-	 * @param cache the cache
-	 * @return the map
+	 * Retrieve available controls
+	 *
+	 * url : /becpg/designer/controls.
 	 */
 	@Override
 	protected Map<String, Object> executeImpl(WebScriptRequest req, Status status, Cache cache){

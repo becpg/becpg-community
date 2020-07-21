@@ -32,12 +32,17 @@ import fr.becpg.repo.importer.ImportService;
  * Action used to import text files.
  *
  * @author Quere
+ * @version $Id: $Id
  */
 public class ImporterActionExecuter extends ActionExecuterAbstractBase {
 
+	/** Constant <code>NAME="import-content"</code> */
 	public static final String NAME = "import-content";
+	/** Constant <code>PARAM_DO_NOT_MOVE_NODE="doNotMoveNodeParam"</code> */
 	public static final String PARAM_DO_NOT_MOVE_NODE = "doNotMoveNodeParam";
+	/** Constant <code>CSV_EXTENSION=".csv"</code> */
 	public static final String CSV_EXTENSION = ".csv";
+	/** Constant <code>XLSX_EXTENSION=".xlsx"</code> */
 	public static final String XLSX_EXTENSION = ".xlsx";
 
 	private static final String LOG_STARTING_DATE = "Starting date: ";
@@ -54,20 +59,35 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase {
 	private final TransactionListenerAdapter transactionListener;
 	private ThreadPoolExecutor importThreadExecuter;
 
+	/**
+	 * <p>Setter for the field <code>importService</code>.</p>
+	 *
+	 * @param importService a {@link fr.becpg.repo.importer.ImportService} object.
+	 */
 	public void setImportService(ImportService importService) {
 		this.importService = importService;
 	}
 
+	/**
+	 * <p>Constructor for ImporterActionExecuter.</p>
+	 */
 	public ImporterActionExecuter() {
 		this.transactionListener = new ImportServiceTransactionListener();
 	}
 
 	
+	/**
+	 * <p>Setter for the field <code>importThreadExecuter</code>.</p>
+	 *
+	 * @param importThreadExecuter a {@link java.util.concurrent.ThreadPoolExecutor} object.
+	 */
 	public void setImportThreadExecuter(ThreadPoolExecutor importThreadExecuter) {
 		this.importThreadExecuter = importThreadExecuter;
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * Execute when a file is uploaded
 	 */
 	@Override
@@ -89,6 +109,7 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected void addParameterDefinitions(List<ParameterDefinition> paramList) {
 		paramList.add(

@@ -31,8 +31,10 @@ import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.helper.impl.AbstractExprNameExtractor;
 
 /**
- * @author matthieu
+ * <p>ProjectAttributeExtractorPlugin class.</p>
  *
+ * @author matthieu
+ * @version $Id: $Id
  */
 @Service
 public class ProjectAttributeExtractorPlugin extends AbstractExprNameExtractor {
@@ -42,12 +44,14 @@ public class ProjectAttributeExtractorPlugin extends AbstractExprNameExtractor {
 	private String projectNameFormat;
 
 
+	/** {@inheritDoc} */
 	@Override
 	public Collection<QName> getMatchingTypes() {
 		return Arrays.asList(ProjectModel.TYPE_TASK_LIST, ProjectModel.TYPE_DELIVERABLE_LIST, ProjectModel.TYPE_BUDGET_LIST,
 				ProjectModel.TYPE_INVOICE_LIST, ProjectModel.TYPE_LOG_TIME_LIST,ProjectModel.TYPE_PROJECT);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String extractPropName(QName type, NodeRef nodeRef) {
 		if (ProjectModel.TYPE_DELIVERABLE_LIST.equals(type)) {
@@ -62,6 +66,7 @@ public class ProjectAttributeExtractorPlugin extends AbstractExprNameExtractor {
 		return (String) nodeService.getProperty(nodeRef, ProjectModel.PROP_TL_TASK_NAME);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String extractMetadata(QName type, NodeRef nodeRef) {
 		// TODO task state
@@ -69,6 +74,7 @@ public class ProjectAttributeExtractorPlugin extends AbstractExprNameExtractor {
 		return type.toPrefixString(namespaceService).split(":")[1];
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Integer getPriority() {
 		return 0;

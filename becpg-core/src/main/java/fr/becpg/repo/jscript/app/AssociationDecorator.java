@@ -25,16 +25,35 @@ import org.alfresco.service.namespace.QName;
 import org.json.simple.JSONAware;
 
 /**
- * 
- * @author matthieu
+ * <p>AssociationDecorator interface.</p>
  *
+ * @author matthieu
+ * @version $Id: $Id
  */
 public interface AssociationDecorator {
 
+	/**
+	 * <p>getAssociationNames.</p>
+	 *
+	 * @return a {@link java.util.Set} object.
+	 */
 	Set<QName> getAssociationNames();
 
+	/**
+	 * <p>decorate.</p>
+	 *
+	 * @param qName a {@link org.alfresco.service.namespace.QName} object.
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param targetAssocs a {@link java.util.List} object.
+	 * @return a {@link org.json.simple.JSONAware} object.
+	 */
 	JSONAware decorate(QName qName, NodeRef nodeRef, List<NodeRef> targetAssocs);
 
+	/**
+	 * <p>getAspect.</p>
+	 *
+	 * @return a {@link org.alfresco.service.namespace.QName} object.
+	 */
 	QName getAspect();
 
 }

@@ -39,6 +39,12 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 import fr.becpg.repo.RepoConsts;
 
+/**
+ * <p>ContentHelper class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class ContentHelper {
 
 	private static final Log logger = LogFactory.getLog(ContentHelper.class);
@@ -49,22 +55,52 @@ public class ContentHelper {
 
 	private NodeService nodeService;
 
+	/**
+	 * <p>Setter for the field <code>contentService</code>.</p>
+	 *
+	 * @param contentService a {@link org.alfresco.service.cmr.repository.ContentService} object.
+	 */
 	public void setContentService(ContentService contentService) {
 		this.contentService = contentService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>mimetypeService</code>.</p>
+	 *
+	 * @param mimetypeService a {@link org.alfresco.service.cmr.repository.MimetypeService} object.
+	 */
 	public void setMimetypeService(MimetypeService mimetypeService) {
 		this.mimetypeService = mimetypeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>addFilesResources.</p>
+	 *
+	 * @param folderNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param pattern a {@link java.lang.String} object.
+	 * @return a {@link java.util.List} object.
+	 */
 	public List<NodeRef> addFilesResources(NodeRef folderNodeRef, String pattern) {
 	   return	addFilesResources(folderNodeRef, pattern, false);
 	}
 
+	/**
+	 * <p>addFilesResources.</p>
+	 *
+	 * @param folderNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param pattern a {@link java.lang.String} object.
+	 * @param forceUpdate a boolean.
+	 * @return a {@link java.util.List} object.
+	 */
 	public List<NodeRef> addFilesResources(NodeRef folderNodeRef, String pattern, boolean forceUpdate) {
 		List<NodeRef> ret = new ArrayList<>();
 		

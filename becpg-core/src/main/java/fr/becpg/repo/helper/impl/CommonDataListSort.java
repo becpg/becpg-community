@@ -9,17 +9,29 @@ import org.alfresco.service.cmr.repository.NodeService;
 
 import fr.becpg.model.BeCPGModel;
 
+/**
+ * <p>CommonDataListSort class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class CommonDataListSort implements Comparator<NodeRef>{
 
 	private NodeService nodeService;
 	
 	
+	/**
+	 * <p>Constructor for CommonDataListSort.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public CommonDataListSort(NodeService nodeService) {
 		super();
 		this.nodeService = nodeService;
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public int compare(NodeRef o1, NodeRef o2) {
 		Integer sort1 = (Integer) nodeService.getProperty(o1, BeCPGModel.PROP_SORT);

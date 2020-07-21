@@ -50,9 +50,10 @@ import com.google.gdata.data.dublincore.Date;
 import fr.becpg.repo.designer.DesignerModel;
 
 /**
- * 
- * @author "Matthieu Laborie"
+ * <p>MetaModelVisitor class.</p>
  *
+ * @author "Matthieu Laborie"
+ * @version $Id: $Id
  */
 public class MetaModelVisitor {
 
@@ -63,6 +64,8 @@ public class MetaModelVisitor {
 	private static final Log logger = LogFactory.getLog(MetaModelVisitor.class);
 
 	/**
+	 * <p>Getter for the field <code>nodeService</code>.</p>
+	 *
 	 * @return the nodeService
 	 */
 	public NodeService getNodeService() {
@@ -70,6 +73,8 @@ public class MetaModelVisitor {
 	}
 
 	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
 	 * @param nodeService
 	 *            the nodeService to set
 	 */
@@ -78,6 +83,8 @@ public class MetaModelVisitor {
 	}
 
 	/**
+	 * <p>Getter for the field <code>namespaceService</code>.</p>
+	 *
 	 * @return the namespaceService
 	 */
 	public NamespaceService getNamespaceService() {
@@ -85,6 +92,8 @@ public class MetaModelVisitor {
 	}
 
 	/**
+	 * <p>Setter for the field <code>namespaceService</code>.</p>
+	 *
 	 * @param namespaceService
 	 *            the namespaceService to set
 	 */
@@ -93,6 +102,15 @@ public class MetaModelVisitor {
 	}
 
 	// Here we create nodeRef
+	/**
+	 * <p>visitModelNodeRef.</p>
+	 *
+	 * @param modelNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param model a {@link java.lang.Object} object.
+	 * @throws java.lang.IllegalArgumentException if any.
+	 * @throws java.lang.IllegalAccessException if any.
+	 * @throws java.lang.reflect.InvocationTargetException if any.
+	 */
 	@SuppressWarnings("unchecked")
 	public void visitModelNodeRef(NodeRef modelNodeRef, Object model) throws IllegalArgumentException,
 			IllegalAccessException, InvocationTargetException {
@@ -205,6 +223,15 @@ public class MetaModelVisitor {
 		return name.equals("analyserResourceBundleName") || name.equals("JiBX_bindingList");
 	}
 
+	/**
+	 * <p>visitModelXml.</p>
+	 *
+	 * @param modelNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param out a {@link java.io.OutputStream} object.
+	 * @throws java.lang.IllegalArgumentException if any.
+	 * @throws java.lang.IllegalAccessException if any.
+	 * @throws java.lang.reflect.InvocationTargetException if any.
+	 */
 	public void visitModelXml(NodeRef modelNodeRef, OutputStream out) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 		
 		String name = (String) nodeService.getProperty(modelNodeRef, DesignerModel.PROP_M2_NAME);
@@ -357,6 +384,18 @@ public class MetaModelVisitor {
 		return null;
 	}
 
+	/**
+	 * <p>visitModelTemplate.</p>
+	 *
+	 * @param ret a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param nodeTypeQname a {@link org.alfresco.service.namespace.QName} object.
+	 * @param modelName a {@link java.lang.String} object.
+	 * @param xml a {@link java.io.InputStream} object.
+	 * @throws java.lang.IllegalArgumentException if any.
+	 * @throws java.lang.IllegalAccessException if any.
+	 * @throws java.lang.reflect.InvocationTargetException if any.
+	 * @throws java.lang.ClassNotFoundException if any.
+	 */
 	public void visitModelTemplate(NodeRef ret, QName nodeTypeQname, String modelName, InputStream xml) throws IllegalArgumentException,
 			IllegalAccessException, InvocationTargetException, ClassNotFoundException {
 		logger.debug("Visiting template model for:"+modelName);

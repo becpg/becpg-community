@@ -40,30 +40,42 @@ import fr.becpg.repo.variant.filters.VariantFilters;
  * The Class NutsCalculatingVisitor.
  *
  * @author querephi
+ * @version $Id: $Id
  */
 public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormulationHandler<NutListDataItem> {
 
+	/** Constant <code>UNIT_PER100G="/100g"</code> */
 	public static final String UNIT_PER100G = "/100g";
 
+	/** Constant <code>UNIT_PER100ML="/100mL"</code> */
 	public static final String UNIT_PER100ML = "/100mL";
 
+	/** Constant <code>NUT_FORMULATED="I18NUtil.getMessage(message.formulate.n"{trunked}</code> */
 	public static final String NUT_FORMULATED = I18NUtil.getMessage("message.formulate.nut.formulated");
 
+	/** Constant <code>MESSAGE_MAXIMAL_DAILY_VALUE="message.formulate.nut.maximalDailyValue"</code> */
 	public static final String MESSAGE_MAXIMAL_DAILY_VALUE = "message.formulate.nut.maximalDailyValue";
 
 	private static final Log logger = LogFactory.getLog(NutsCalculatingFormulationHandler.class);
 
 	private boolean propagateModeEnable = false;
 
+	/**
+	 * <p>Setter for the field <code>propagateModeEnable</code>.</p>
+	 *
+	 * @param propagateModeEnable a boolean.
+	 */
 	public void setPropagateModeEnable(boolean propagateModeEnable) {
 		this.propagateModeEnable = propagateModeEnable;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected Class<NutListDataItem> getInstanceClass() {
 		return NutListDataItem.class;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 
@@ -253,6 +265,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 		return ret;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected boolean accept(ProductData formulatedProduct) {
 		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)
@@ -265,6 +278,11 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 
 	/**
 	 * Calculate the nutListUnit
+	 *
+	 * @param productUnit a {@link fr.becpg.repo.product.data.constraints.ProductUnit} object.
+	 * @param servingSizeUnit a {@link fr.becpg.repo.product.data.constraints.ProductUnit} object.
+	 * @param nutUnit a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
 	 */
 	public static String calculateUnit(ProductUnit productUnit, ProductUnit servingSizeUnit, String nutUnit) {
 		if ((nutUnit == null) || nutUnit.contains("/")) {
@@ -275,6 +293,10 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 
 	/**
 	 * Calculate the suffix of nutListUnit
+	 *
+	 * @param productUnit a {@link fr.becpg.repo.product.data.constraints.ProductUnit} object.
+	 * @param servingSizeUnit a {@link fr.becpg.repo.product.data.constraints.ProductUnit} object.
+	 * @return a {@link java.lang.String} object.
 	 */
 	public static String calculateSuffixUnit(ProductUnit productUnit, ProductUnit servingSizeUnit) {
 		if(servingSizeUnit !=null && !servingSizeUnit.equals(ProductUnit.kg)){
@@ -293,11 +315,13 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected List<NutListDataItem> getDataListVisited(ProductData partProduct) {
 		return partProduct.getNutList();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected Map<NodeRef, List<NodeRef>> getMandatoryCharacts(ProductData formulatedProduct, QName componentType) {
 		Map<NodeRef, List<NodeRef>> mandatoryCharacts = new HashMap<>();
@@ -312,6 +336,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 		return mandatoryCharacts;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected RequirementDataType getRequirementDataType() {
 		return RequirementDataType.Nutrient;

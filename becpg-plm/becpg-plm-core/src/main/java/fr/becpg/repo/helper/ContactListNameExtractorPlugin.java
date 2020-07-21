@@ -30,17 +30,21 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.impl.AbstractExprNameExtractor;
 
 /**
- * @author matthieu
+ * <p>ContactListNameExtractorPlugin class.</p>
  *
+ * @author matthieu
+ * @version $Id: $Id
  */
 @Service
 public class ContactListNameExtractorPlugin extends AbstractExprNameExtractor {
 
+	/** {@inheritDoc} */
 	@Override
 	public Collection<QName> getMatchingTypes() {
 		return Collections.singletonList(PLMModel.TYPE_CONTACTLIST);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String extractPropName(QName type, NodeRef nodeRef) {
 		String ret = (String) nodeService.getProperty(nodeRef, PLMModel.PROP_CONTACT_LIST_FIRST_NAME);
@@ -55,6 +59,7 @@ public class ContactListNameExtractorPlugin extends AbstractExprNameExtractor {
 		return ret;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String extractMetadata(QName type, NodeRef nodeRef) {
 		return type.toPrefixString(namespaceService).split(":")[1];

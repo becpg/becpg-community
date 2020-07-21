@@ -18,6 +18,12 @@ import fr.becpg.repo.designer.DesignerModel;
 import fr.becpg.repo.designer.DesignerService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
+/**
+ * <p>DesignerContentUpdatePolicy class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class DesignerContentUpdatePolicy extends AbstractBeCPGPolicy implements ContentServicePolicies.OnContentUpdatePolicy,
 		NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.BeforeDeleteNodePolicy, NodeServicePolicies.OnAddAspectPolicy{
 
@@ -25,10 +31,16 @@ public class DesignerContentUpdatePolicy extends AbstractBeCPGPolicy implements 
 
 	private DesignerService designerService;
 
+	/**
+	 * <p>Setter for the field <code>designerService</code>.</p>
+	 *
+	 * @param designerService a {@link fr.becpg.repo.designer.DesignerService} object.
+	 */
 	public void setDesignerService(DesignerService designerService) {
 		this.designerService = designerService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void doInit() {
 		
@@ -51,6 +63,7 @@ public class DesignerContentUpdatePolicy extends AbstractBeCPGPolicy implements 
 		
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onContentUpdate(NodeRef nodeRef, boolean newContent) {
 		if(!isWorkingCopy(nodeRef)) {
@@ -58,6 +71,7 @@ public class DesignerContentUpdatePolicy extends AbstractBeCPGPolicy implements 
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 		try {
@@ -78,6 +92,7 @@ public class DesignerContentUpdatePolicy extends AbstractBeCPGPolicy implements 
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 		// handles rename actions
@@ -93,6 +108,7 @@ public class DesignerContentUpdatePolicy extends AbstractBeCPGPolicy implements 
 	}
 	
 	
+	/** {@inheritDoc} */
 	@Override
 	public void beforeDeleteNode(NodeRef nodeRef) {
 		if(nodeService.exists(nodeRef) && !isWorkingCopy(nodeRef)){
@@ -107,6 +123,7 @@ public class DesignerContentUpdatePolicy extends AbstractBeCPGPolicy implements 
 		return aspects.contains(ContentModel.ASPECT_WORKING_COPY);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onAddAspect(NodeRef nodeRef, QName aspectTypeQName) {
 		if(!isWorkingCopy(nodeRef)) {

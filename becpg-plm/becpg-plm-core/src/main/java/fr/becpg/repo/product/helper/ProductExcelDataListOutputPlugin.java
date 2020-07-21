@@ -36,6 +36,12 @@ import fr.becpg.repo.helper.JsonFormulaHelper;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
+/**
+ * <p>ProductExcelDataListOutputPlugin class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class ProductExcelDataListOutputPlugin implements ExcelDataListOutputPlugin {
 
@@ -54,11 +60,13 @@ public class ProductExcelDataListOutputPlugin implements ExcelDataListOutputPlug
 	@Autowired
 	private NamespaceService namespaceService;
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isDefault() {
 		return false;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean applyTo(DataListFilter dataListFilter) {
 		return PLMModel.TYPE_COMPOLIST.equals(dataListFilter.getDataType()) || PLMModel.TYPE_PACKAGINGLIST.equals(dataListFilter.getDataType())
@@ -66,11 +74,13 @@ public class ProductExcelDataListOutputPlugin implements ExcelDataListOutputPlug
 				|| PLMModel.TYPE_DYNAMICCHARACTLIST.equals(dataListFilter.getDataType());
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public ExcelFieldTitleProvider getExcelFieldTitleProvider(DataListFilter dataListFilter) {
 		return new DynamicColumnNameResolver(dataListFilter);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<Map<String, Object>> decorate(List<Map<String, Object>> items) throws IOException {
 		try {
@@ -145,6 +155,7 @@ public class ProductExcelDataListOutputPlugin implements ExcelDataListOutputPlug
 		return items;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public PaginatedExtractedItems extractExtrasSheet(DataListFilter dataListFilter) {
 

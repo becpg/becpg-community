@@ -27,18 +27,54 @@ import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 
 /**
  * Class used to manage workflow
- * @author quere
  *
+ * @author quere
+ * @version $Id: $Id
  */
 public interface ProjectWorkflowService {
 
+	/**
+	 * <p>isWorkflowActive.</p>
+	 *
+	 * @param task a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object.
+	 * @return a boolean.
+	 */
 	boolean isWorkflowActive(TaskListDataItem task);
+	/**
+	 * <p>cancelWorkflow.</p>
+	 *
+	 * @param task a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object.
+	 */
 	void cancelWorkflow(TaskListDataItem task);
+	/**
+	 * <p>startWorkflow.</p>
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object.
+	 * @param taskListDataItem a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object.
+	 * @param nextDeliverables a {@link java.util.List} object.
+	 */
 	void startWorkflow(ProjectData projectData, TaskListDataItem taskListDataItem,
 					   List<DeliverableListDataItem> nextDeliverables);
+	/**
+	 * <p>checkWorkflowInstance.</p>
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object.
+	 * @param taskListDataItem a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object.
+	 * @param nextDeliverables a {@link java.util.List} object.
+	 */
 	void checkWorkflowInstance(ProjectData projectData, TaskListDataItem taskListDataItem,
 							   List<DeliverableListDataItem> nextDeliverables);
+	/**
+	 * <p>deleteWorkflowTask.</p>
+	 *
+	 * @param taskListNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	void deleteWorkflowTask(NodeRef taskListNodeRef);
+	/**
+	 * <p>deleteWorkflowById.</p>
+	 *
+	 * @param workflowInstanceId a {@link java.lang.String} object.
+	 */
 	void deleteWorkflowById(String workflowInstanceId);
 	
 }

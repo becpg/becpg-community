@@ -4,10 +4,23 @@ import org.alfresco.repo.webdav.WebDAVHelper;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
+/**
+ * <p>AttachmentHelper class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class AttachmentHelper {
 
 	  private static final String HEADER_USER_AGENT     = "User-Agent";
 	 
+	  /**
+	   * <p>setAttachment.</p>
+	   *
+	   * @param req a {@link org.springframework.extensions.webscripts.WebScriptRequest} object.
+	   * @param res a {@link org.springframework.extensions.webscripts.WebScriptResponse} object.
+	   * @param attachFileName a {@link java.lang.String} object.
+	   */
 	  public  static void setAttachment(WebScriptRequest req, WebScriptResponse res, String attachFileName)
 	    {
 	            String headerValue = "attachment";

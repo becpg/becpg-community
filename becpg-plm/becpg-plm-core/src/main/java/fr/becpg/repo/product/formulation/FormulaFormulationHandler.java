@@ -73,13 +73,15 @@ import fr.becpg.repo.security.BeCPGAccessDeniedException;
  * Use Spring EL to parse formula and compute value
  *
  * @author matthieu
- *
+ * @version $Id: $Id
  */
 public class FormulaFormulationHandler extends FormulationBaseHandler<ProductData> {
 
 	private static final Log logger = LogFactory.getLog(FormulaFormulationHandler.class);
 
+	/** Constant <code>DYN_COLUMN_SIZE=10</code> */
 	public static final int DYN_COLUMN_SIZE = 10;
+	/** Constant <code>DYN_COLUMN_NAME="bcpg:dynamicCharactColumn"</code> */
 	public static final String DYN_COLUMN_NAME = "bcpg:dynamicCharactColumn";
 	
 
@@ -115,26 +117,52 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 
 	private DynamicCharactExecOrder execOrder = DynamicCharactExecOrder.Post;
 
+	/**
+	 * <p>Setter for the field <code>execOrder</code>.</p>
+	 *
+	 * @param execOrder a {@link fr.becpg.repo.product.data.productList.DynamicCharactExecOrder} object.
+	 */
 	public void setExecOrder(DynamicCharactExecOrder execOrder) {
 		this.execOrder = execOrder;
 	}
 
+	/**
+	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
+	 */
 	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
+	/**
+	 * <p>Setter for the field <code>namespaceService</code>.</p>
+	 *
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
+	 */
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>formulaService</code>.</p>
+	 *
+	 * @param formulaService a {@link fr.becpg.repo.formulation.spel.SpelFormulaService} object.
+	 */
 	public void setFormulaService(SpelFormulaService formulaService) {
 		this.formulaService = formulaService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean process(ProductData productData) throws FormulateException {
 
@@ -473,6 +501,12 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 
 	}
 
+	/**
+	 * <p>copyTemplateDynamicCharactList.</p>
+	 *
+	 * @param sourceList a {@link java.util.List} object.
+	 * @param targetList a {@link java.util.List} object.
+	 */
 	protected void copyTemplateDynamicCharactList(List<DynamicCharactListItem> sourceList, List<DynamicCharactListItem> targetList) {
 
 		if ((sourceList != null) && (targetList != null)) {

@@ -61,6 +61,12 @@ import fr.becpg.repo.repository.model.ControlableListDataItem;
 import fr.becpg.repo.repository.model.MinMaxValueDataItem;
 import fr.becpg.repo.repository.model.UnitAwareDataItem;
 
+/**
+ * <p>QualityControlServiceImpl class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class QualityControlServiceImpl implements QualityControlService {
 
 	private static final Log logger = LogFactory.getLog(QualityControlServiceImpl.class);
@@ -80,37 +86,78 @@ public class QualityControlServiceImpl implements QualityControlService {
 		datalistsToCopy.add(MPMModel.TYPE_PROCESSLIST);
 	}
 
+	/**
+	 * <p>Setter for the field <code>sampleIdPattern</code>.</p>
+	 *
+	 * @param sampleIdPattern a {@link java.lang.String} object.
+	 */
 	public void setSampleIdPattern(String sampleIdPattern) {
 		this.sampleIdPattern = sampleIdPattern;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityTplService</code>.</p>
+	 *
+	 * @param entityTplService a {@link fr.becpg.repo.entity.EntityTplService} object.
+	 */
 	public void setEntityTplService(EntityTplService entityTplService) {
 		this.entityTplService = entityTplService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
+	 */
 	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityListDAO</code>.</p>
+	 *
+	 * @param entityListDAO a {@link fr.becpg.repo.entity.EntityListDAO} object.
+	 */
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
 	}
 
+	/**
+	 * <p>setPolicyBehaviourFilter.</p>
+	 *
+	 * @param policyBehaviourFilter a {@link org.alfresco.repo.policy.BehaviourFilter} object.
+	 */
 	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
 	}
 
+	/**
+	 * <p>Setter for the field <code>repositoryEntityDefReader</code>.</p>
+	 *
+	 * @param repositoryEntityDefReader a {@link fr.becpg.repo.repository.RepositoryEntityDefReader} object.
+	 */
 	public void setRepositoryEntityDefReader(RepositoryEntityDefReader<RepositoryEntity> repositoryEntityDefReader) {
 		this.repositoryEntityDefReader = repositoryEntityDefReader;
 	}
 
+	/**
+	 * <p>Setter for the field <code>namespaceService</code>.</p>
+	 *
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
+	 */
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void createSamplingList(NodeRef qcNodeRef, NodeRef controlPlanNodeRef) {
 		QualityControlData qualityControlData = (QualityControlData) alfrescoRepository.findOne(qcNodeRef);
@@ -236,6 +283,7 @@ public class QualityControlServiceImpl implements QualityControlService {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void createSamplingListId(NodeRef sampleListNodeRef) {
 		logger.debug("nodeService.getProperty(sampleListNodeRef, QualityModel.PROP_SL_SAMPLE_ID) " + nodeService.getProperty(sampleListNodeRef, QualityModel.PROP_SL_SAMPLE_ID));
@@ -275,6 +323,7 @@ public class QualityControlServiceImpl implements QualityControlService {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void createControlList(NodeRef sampleListNodeRef) {
 		NodeRef entityNodeRef = entityListDAO.getEntity(sampleListNodeRef);
@@ -413,6 +462,7 @@ public class QualityControlServiceImpl implements QualityControlService {
 	}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void updateControlListState(NodeRef controlListNodeRef) {
 		Double mini = (Double) nodeService.getProperty(controlListNodeRef, QualityModel.PROP_CL_MINI);
@@ -487,6 +537,7 @@ public class QualityControlServiceImpl implements QualityControlService {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void deleteSamplingListId(NodeRef sampleListNodeRef) {
 		NodeRef entityNodeRef = entityListDAO.getEntity(sampleListNodeRef);
@@ -513,6 +564,7 @@ public class QualityControlServiceImpl implements QualityControlService {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void updateQualityControlState(NodeRef sampleNodeRef) {
 		NodeRef entityNodeRef = entityListDAO.getEntity(sampleNodeRef);
@@ -558,6 +610,7 @@ public class QualityControlServiceImpl implements QualityControlService {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void copyProductDataList(NodeRef qcNodeRef, NodeRef productNodeRef, boolean isNewQC) {
 		NodeRef entityTplNodeRef = entityTplService.getEntityTpl(QualityModel.TYPE_QUALITY_CONTROL);

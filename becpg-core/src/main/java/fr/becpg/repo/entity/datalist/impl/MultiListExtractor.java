@@ -33,9 +33,10 @@ import fr.becpg.repo.entity.datalist.data.DataListPagination;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
- * 
+ * <p>MultiListExtractor class.</p>
+ *
  * @author matthieu
- * 
+ * @version $Id: $Id
  */
 public class MultiListExtractor extends SimpleExtractor {
 
@@ -45,10 +46,16 @@ public class MultiListExtractor extends SimpleExtractor {
 
 	private NamespaceService namespaceService;
 
+	/**
+	 * <p>Setter for the field <code>namespaceService</code>.</p>
+	 *
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
+	 */
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected List<NodeRef> getListNodeRef(DataListFilter dataListFilter, DataListPagination pagination) {
 		NodeRef entityNodeRef = dataListFilter.getEntityNodeRef();
@@ -90,17 +97,20 @@ public class MultiListExtractor extends SimpleExtractor {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean applyTo(DataListFilter dataListFilter) {
 		return !dataListFilter.isSimpleItem() && dataListFilter.getDataListName() != null
 				&& dataListFilter.getDataListName().startsWith(MULTI_LIST_EXTRACTOR_PREFIX);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Date computeLastModified(DataListFilter dataListFilter) {
 		return null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean hasWriteAccess() {
 		return false;

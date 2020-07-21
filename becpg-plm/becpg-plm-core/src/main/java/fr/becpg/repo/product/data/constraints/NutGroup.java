@@ -8,6 +8,7 @@ package fr.becpg.repo.product.data.constraints;
  * The Enum NutGroup.
  *
  * @author querephi
+ * @version $Id: $Id
  */
 public enum NutGroup  {
 	

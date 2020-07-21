@@ -10,6 +10,12 @@ import org.springframework.stereotype.Service;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.listvalue.impl.EntityListValuePlugin;
 
+/**
+ * <p>CharactListValuePlugin class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service("charactListValuePlugin")
 public class CharactListValuePlugin extends EntityListValuePlugin {
 
@@ -19,11 +25,13 @@ public class CharactListValuePlugin extends EntityListValuePlugin {
 	@Autowired
 	private CharactValueExtractor charactValueExtractor;
 
+	/** {@inheritDoc} */
 	@Override
 	public String[] getHandleSourceTypes() {
 		return new String[] { SOURCE_TYPE_NUT, SOURCE_TYPE_PHYSICO_CHEM };
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public ListValuePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
 		if (SOURCE_TYPE_NUT.equals(sourceType)) {
@@ -33,6 +41,7 @@ public class CharactListValuePlugin extends EntityListValuePlugin {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected ListValueExtractor<NodeRef> getTargetAssocValueExtractor() {
 		return charactValueExtractor;

@@ -57,6 +57,12 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
+/**
+ * <p>EntityActivityServiceImpl class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service("entityActivityService")
 public class EntityActivityServiceImpl implements EntityActivityService {
 
@@ -115,6 +121,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	@Autowired
 	public DictionaryService dictionaryService;
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isMatchingStateProperty(QName propName) {
 
@@ -127,6 +134,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		return false;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isIgnoreStateProperty(QName propName) {
 
@@ -139,11 +147,13 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		return false;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean postCommentActivity(NodeRef entityNodeRef, NodeRef commentNodeRef, ActivityEvent activityEvent) {
 		return postCommentActivity(entityNodeRef, commentNodeRef, activityEvent, true) != null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef postCommentActivity(NodeRef entityNodeRef, NodeRef commentNodeRef, ActivityEvent activityEvent,
 			boolean notifyObservers) {
@@ -221,6 +231,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean postContentActivity(NodeRef entityNodeRef, NodeRef contentNodeRef, ActivityEvent activityEvent) {
 		if ((contentNodeRef != null) && !nodeService.hasAspect(contentNodeRef, ContentModel.ASPECT_WORKING_COPY)) {
@@ -266,6 +277,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean postMergeBranchActivity(NodeRef branchNodeRef, NodeRef branchToNodeRef, VersionType versionType,
 			String description) {
@@ -310,6 +322,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean postDatalistActivity(NodeRef entityNodeRef, NodeRef datalistNodeRef, ActivityEvent activityEvent,
 			Map<QName, Pair<Serializable, Serializable>> updatedProperties) {
@@ -485,6 +498,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean postStateChangeActivity(NodeRef entityNodeRef, NodeRef datalistNodeRef, String beforeState,
 			String afterState) {
@@ -551,6 +565,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean postVersionActivity(NodeRef entityNodeRef, NodeRef versionNodeRef, String versionLabel) {
 		if ((entityNodeRef != null) && (versionNodeRef != null)) {
@@ -594,6 +609,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		return false;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void mergeActivities(NodeRef fromNodeRef, NodeRef toNodeRef) {
 		try {
@@ -617,6 +633,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean postEntityActivity(NodeRef entityNodeRef, ActivityType activityType, ActivityEvent activityEvent,
 			Map<QName, Pair<List<Serializable>, List<Serializable>>> updatedProperties) {
@@ -726,6 +743,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public JSONObject postActivityLookUp(ActivityType activityType, String value) {
 
@@ -768,6 +786,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	 * 
 	 */
 
+	/** {@inheritDoc} */
 	@Override
 	public void cleanActivities() {
 
@@ -778,6 +797,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		doInBatch(entityNodeRefs, 10);
 	}
 
+	/** {@inheritDoc} */
 	public void clearAllActivities(NodeRef entityTplNodeRef){
 		try {
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
@@ -1019,6 +1039,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		return activitiesNodeRefs;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getEntityNodeRefForActivity(NodeRef nodeRef, QName itemType) {
 		if (nodeService.exists(nodeRef) && !nodeService.hasAspect(nodeRef, ContentModel.ASPECT_WORKING_COPY)

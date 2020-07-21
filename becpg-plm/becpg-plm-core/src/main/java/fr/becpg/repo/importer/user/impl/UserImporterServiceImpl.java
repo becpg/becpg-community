@@ -56,28 +56,38 @@ import fr.becpg.repo.importer.user.UserImporterService;
 import fr.becpg.repo.mail.BeCPGMailService;
 
 /**
+ * <p>UserImporterServiceImpl class.</p>
  *
  * @author matthieu Csv Format:
  *         cm:lastName";"cm:firstName";"cm:email";"cm:telephone";"cm:
  *         organization";"username";"password";"memberships";"groups";"notify"
+ * @version $Id: $Id
  */
 public class UserImporterServiceImpl implements UserImporterService {
 
 	private static final Log logger = LogFactory.getLog(UserImporterService.class);
 
+	/** Constant <code>USERNAME="username"</code> */
 	public static final String USERNAME = "username";
+	/** Constant <code>PASSWORD="password"</code> */
 	public static final String PASSWORD = "password";
+	/** Constant <code>NOTIFY="notify"</code> */
 	public static final String NOTIFY = "notify";
+	/** Constant <code>MEMBERSHIPS="memberships"</code> */
 	public static final String MEMBERSHIPS = "memberships";
+	/** Constant <code>GROUPS="groups"</code> */
 	public static final String GROUPS = "groups";
 
 	/** The Constant SEPARATOR. */
 	private static final char SEPARATOR = ';';
 
+	/** Constant <code>FIELD_SEPARATOR="\\|"</code> */
 	protected static final String FIELD_SEPARATOR = "\\|";
 
+	/** Constant <code>PATH_SEPARATOR="\\/"</code> */
 	protected static final String PATH_SEPARATOR = "\\/";
 
+	/** Constant <code>DEFAULT_PRESET="site-dashboard"</code> */
 	protected static final String DEFAULT_PRESET = "site-dashboard";
 
 	private NodeService nodeService;
@@ -96,38 +106,79 @@ public class UserImporterServiceImpl implements UserImporterService {
 
 	private NamespacePrefixResolver namespacePrefixResolver;
 
+	/**
+	 * <p>Setter for the field <code>namespacePrefixResolver</code>.</p>
+	 *
+	 * @param namespacePrefixResolver a {@link org.alfresco.service.namespace.NamespacePrefixResolver} object.
+	 */
 	public void setNamespacePrefixResolver(NamespacePrefixResolver namespacePrefixResolver) {
 		this.namespacePrefixResolver = namespacePrefixResolver;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>contentService</code>.</p>
+	 *
+	 * @param contentService a {@link org.alfresco.service.cmr.repository.ContentService} object.
+	 */
 	public void setContentService(ContentService contentService) {
 		this.contentService = contentService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>beCPGMailService</code>.</p>
+	 *
+	 * @param beCPGMailService a {@link fr.becpg.repo.mail.BeCPGMailService} object.
+	 */
 	public void setBeCPGMailService(BeCPGMailService beCPGMailService) {
 		this.beCPGMailService = beCPGMailService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>personService</code>.</p>
+	 *
+	 * @param personService a {@link org.alfresco.service.cmr.security.PersonService} object.
+	 */
 	public void setPersonService(PersonService personService) {
 		this.personService = personService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>siteService</code>.</p>
+	 *
+	 * @param siteService a {@link org.alfresco.service.cmr.site.SiteService} object.
+	 */
 	public void setSiteService(SiteService siteService) {
 		this.siteService = siteService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>authorityService</code>.</p>
+	 *
+	 * @param authorityService a {@link org.alfresco.service.cmr.security.AuthorityService} object.
+	 */
 	public void setAuthorityService(AuthorityService authorityService) {
 		this.authorityService = authorityService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>authenticationService</code>.</p>
+	 *
+	 * @param authenticationService a {@link org.alfresco.service.cmr.security.MutableAuthenticationService} object.
+	 */
 	public void setAuthenticationService(MutableAuthenticationService authenticationService) {
 		this.authenticationService = authenticationService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void importUser(NodeRef nodeRef) throws ImporterException {
 		if ((nodeRef == null) || !nodeService.exists(nodeRef)) {

@@ -25,8 +25,9 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 
 /**
  * The Class FormulateWebScript.
- * 
+ *
  * @author querephi
+ * @version $Id: $Id
  */
 public class ChangeOrderWebScript extends AbstractWebScript {
 
@@ -53,26 +54,52 @@ public class ChangeOrderWebScript extends AbstractWebScript {
 
 	private AlfrescoRepository<ChangeOrderData> alfrescoRepository;
 
+	/**
+	 * <p>Setter for the field <code>automaticECOService</code>.</p>
+	 *
+	 * @param automaticECOService a {@link fr.becpg.repo.ecm.AutomaticECOService} object.
+	 */
 	public void setAutomaticECOService(AutomaticECOService automaticECOService) {
 		this.automaticECOService = automaticECOService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>asyncECOService</code>.</p>
+	 *
+	 * @param asyncECOService a {@link fr.becpg.repo.ecm.AsyncECOService} object.
+	 */
 	public void setAsyncECOService(AsyncECOService asyncECOService) {
 		this.asyncECOService = asyncECOService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>ecoService</code>.</p>
+	 *
+	 * @param ecoService a {@link fr.becpg.repo.ecm.ECOService} object.
+	 */
 	public void setEcoService(ECOService ecoService) {
 		this.ecoService = ecoService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
+	 */
 	public void setAlfrescoRepository(AlfrescoRepository<ChangeOrderData> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws WebScriptException {
 		logger.debug("start eco webscript");

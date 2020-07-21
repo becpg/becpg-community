@@ -18,6 +18,12 @@ import fr.becpg.repo.listvalue.impl.EntityListValuePlugin;
 import fr.becpg.repo.product.data.constraints.LabelingRuleType;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
+/**
+ * <p>CalculatedCharactsValuePlugin class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service("calculatedCharactsValuePlugin")
 public class CalculatedCharactsValuePlugin extends EntityListValuePlugin {
 
@@ -26,11 +32,13 @@ public class CalculatedCharactsValuePlugin extends EntityListValuePlugin {
 	@Autowired
 	private CalculatedCharactsValueExtractor calculatedCharactsValueExtractor;
 
+	/** {@inheritDoc} */
 	@Override
 	public String[] getHandleSourceTypes() {
 		return new String[] { SOURCE_TYPE_ECO };
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public ListValuePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
 		List<NodeRef> ret = new LinkedList<>();

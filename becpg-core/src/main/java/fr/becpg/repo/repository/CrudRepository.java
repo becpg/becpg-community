@@ -42,6 +42,7 @@ import java.io.Serializable;
  *
  * @author Oliver Gierke
  * @author Eberhard Wolff
+ * @version $Id: $Id
  */
 public interface CrudRepository<T, ID extends Serializable>  {
 
@@ -49,7 +50,7 @@ public interface CrudRepository<T, ID extends Serializable>  {
 	 * Saves a given entity. Use the returned instance for further operations as
 	 * the save operation might have changed the entity instance completely.
 	 *
-	 * @param entity
+	 * @param entity a T object.
 	 * @return the saved entity
 	 */
 	T save(T entity);
@@ -58,7 +59,8 @@ public interface CrudRepository<T, ID extends Serializable>  {
 	/**
 	 * Saves all given entities.
 	 *
-	 * @param entities
+	 * @param entities a {@link java.lang.Iterable} object.
+	 * @return a {@link java.lang.Iterable} object.
 	 */
 	Iterable<T> save(Iterable<? extends T> entities);
 
@@ -66,10 +68,10 @@ public interface CrudRepository<T, ID extends Serializable>  {
 	/**
 	 * Retrives an entity by its primary key.
 	 *
-	 * @param id
+	 * @param id a ID object.
 	 * @return the entity with the given primary key or {@code null} if none
 	 *         found
-	 * @throws IllegalArgumentException if primaryKey is {@code null}
+	 * @throws java.lang.IllegalArgumentException if primaryKey is {@code null}
 	 */
 	T findOne(ID id);
 
@@ -77,9 +79,9 @@ public interface CrudRepository<T, ID extends Serializable>  {
 	/**
 	 * Returns whether an entity with the given id exists.
 	 *
-	 * @param id
+	 * @param id a ID object.
 	 * @return true if an entity with the given id exists, alse otherwise
-	 * @throws IllegalArgumentException if primaryKey is {@code null}
+	 * @throws java.lang.IllegalArgumentException if primaryKey is {@code null}
 	 */
 	boolean exists(ID id);
 
@@ -102,8 +104,8 @@ public interface CrudRepository<T, ID extends Serializable>  {
 	
 	/**
 	 * Deletes the entity with the given id.
-	 * 
-	 * @param id
+	 *
+	 * @param id a ID object.
 	 */
 	void delete(ID id);
 
@@ -111,7 +113,7 @@ public interface CrudRepository<T, ID extends Serializable>  {
 	/**
 	 * Deletes a given entity.
 	 *
-	 * @param entity
+	 * @param entity a T object.
 	 */
 	void delete(T entity);
 
@@ -119,7 +121,7 @@ public interface CrudRepository<T, ID extends Serializable>  {
 	/**
 	 * Deletes the given entities.
 	 *
-	 * @param entities
+	 * @param entities a {@link java.lang.Iterable} object.
 	 */
 	void delete(Iterable<? extends T> entities);
 

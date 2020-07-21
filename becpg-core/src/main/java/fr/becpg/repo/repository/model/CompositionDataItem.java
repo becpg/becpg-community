@@ -23,22 +23,68 @@ import org.alfresco.service.namespace.QName;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.variant.model.VariantDataItem;
 
+/**
+ * <p>CompositionDataItem interface.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public interface CompositionDataItem extends RepositoryEntity, Cloneable, EffectiveDataItem, VariantDataItem {
 
+	/**
+	 * <p>getComponent.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	NodeRef getComponent();
 	
+	/**
+	 * <p>getComponentAssocName.</p>
+	 *
+	 * @return a {@link org.alfresco.service.namespace.QName} object.
+	 */
 	QName getComponentAssocName();
 
+	/**
+	 * <p>setComponent.</p>
+	 *
+	 * @param targetItem a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	void setComponent(NodeRef targetItem);
 
+	/**
+	 * <p>getQty.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	Double getQty();
 
+	/**
+	 * <p>setQty.</p>
+	 *
+	 * @param d a {@link java.lang.Double} object.
+	 */
 	void setQty(Double d);
 	
+	/**
+	 * <p>getLossPerc.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	Double getLossPerc();
 
+	/**
+	 * <p>setLossPerc.</p>
+	 *
+	 * @param d a {@link java.lang.Double} object.
+	 */
 	void setLossPerc(Double d);
 	
+	/**
+	 * <p>clone.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.repository.model.CompositionDataItem} object.
+	 */
 	CompositionDataItem clone();
 
 }

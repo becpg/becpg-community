@@ -32,7 +32,7 @@ import fr.becpg.repo.report.entity.EntityReportService;
  * Override ou ContentReader ExporterComponent
  *
  * @author matthieu
- *
+ * @version $Id: $Id
  */
 @SuppressWarnings("deprecation")
 public class ReportContentServiceWrapper implements ContentService {
@@ -47,37 +47,61 @@ public class ReportContentServiceWrapper implements ContentService {
 
 	private TransactionService transactionService;
 
+	/**
+	 * <p>Setter for the field <code>contentService</code>.</p>
+	 *
+	 * @param contentService a {@link org.alfresco.service.cmr.repository.ContentService} object.
+	 */
 	public void setContentService(ContentService contentService) {
 		this.contentService = contentService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityReportService</code>.</p>
+	 *
+	 * @param entityReportService a {@link fr.becpg.repo.report.entity.EntityReportService} object.
+	 */
 	public void setEntityReportService(EntityReportService entityReportService) {
 		this.entityReportService = entityReportService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>transactionService</code>.</p>
+	 *
+	 * @param transactionService a {@link org.alfresco.service.transaction.TransactionService} object.
+	 */
 	public void setTransactionService(TransactionService transactionService) {
 		this.transactionService = transactionService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public long getStoreTotalSpace() {
 		return contentService.getStoreTotalSpace();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public long getStoreFreeSpace() {
 		return contentService.getStoreFreeSpace();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public ContentReader getRawReader(String contentUrl) {
 		return contentService.getRawReader(contentUrl);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public ContentReader getReader(NodeRef nodeRef, QName propertyQName) throws InvalidNodeRefException, InvalidTypeException {
 
@@ -116,28 +140,33 @@ public class ReportContentServiceWrapper implements ContentService {
 		return contentService.getReader(nodeRef, propertyQName);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public ContentWriter getWriter(NodeRef nodeRef, QName propertyQName, boolean update) throws InvalidNodeRefException, InvalidTypeException {
 		return contentService.getWriter(nodeRef, propertyQName, update);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public ContentWriter getTempWriter() {
 		return contentService.getTempWriter();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void transform(ContentReader reader, ContentWriter writer) throws NoTransformerException, ContentIOException {
 		contentService.transform(reader, writer);
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void transform(ContentReader reader, ContentWriter writer, Map<String, Object> options) throws NoTransformerException, ContentIOException {
 		contentService.transform(reader, writer, options);
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void transform(ContentReader reader, ContentWriter writer, TransformationOptions options)
 			throws NoTransformerException, ContentIOException {
@@ -145,55 +174,65 @@ public class ReportContentServiceWrapper implements ContentService {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public ContentTransformer getTransformer(String sourceMimetype, String targetMimetype) {
 
 		return contentService.getTransformer(sourceMimetype, targetMimetype);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<ContentTransformer> getTransformers(String sourceUrl, String sourceMimetype, long sourceSize, String targetMimetype,
 			TransformationOptions options) {
 		return contentService.getTransformers(sourceUrl, sourceMimetype, sourceSize, targetMimetype, options);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public ContentTransformer getTransformer(String sourceUrl, String sourceMimetype, long sourceSize, String targetMimetype,
 			TransformationOptions options) {
 		return contentService.getTransformer(sourceUrl, sourceMimetype, sourceSize, targetMimetype, options);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public ContentTransformer getTransformer(String sourceMimetype, String targetMimetype, TransformationOptions options) {
 		return contentService.getTransformer(sourceMimetype, targetMimetype, options);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public long getMaxSourceSizeBytes(String sourceMimetype, String targetMimetype, TransformationOptions options) {
 		return contentService.getMaxSourceSizeBytes(sourceMimetype, targetMimetype, options);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<ContentTransformer> getActiveTransformers(String sourceMimetype, long sourceSize, String targetMimetype,
 			TransformationOptions options) {
 		return contentService.getActiveTransformers(sourceMimetype, sourceSize, targetMimetype, options);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<ContentTransformer> getActiveTransformers(String sourceMimetype, String targetMimetype, TransformationOptions options) {
 		return contentService.getActiveTransformers(sourceMimetype, targetMimetype, options);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public ContentTransformer getImageTransformer() {
 		return contentService.getImageTransformer();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isTransformable(ContentReader reader, ContentWriter writer) {
 		return contentService.isTransformable(reader, writer);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isTransformable(ContentReader reader, ContentWriter writer, TransformationOptions options) {
 		return contentService.isTransformable(reader, writer, options);

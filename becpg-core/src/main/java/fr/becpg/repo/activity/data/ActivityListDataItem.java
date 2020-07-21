@@ -28,9 +28,9 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 /**
  * Activity list of project
- * 
+ *
  * @author matthieu
- * 
+ * @version $Id: $Id
  */
 @AlfType
 @AlfQname(qname = "bcpg:activityList")
@@ -47,45 +47,85 @@ public class ActivityListDataItem extends BeCPGDataObject {
 	private String activityData;
 	private String userId;
 
+	/**
+	 * <p>Getter for the field <code>activityType</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.activity.data.ActivityType} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:alType")
 	public ActivityType getActivityType() {
 		return activityType;
 	}
 
+	/**
+	 * <p>Setter for the field <code>activityType</code>.</p>
+	 *
+	 * @param activityType a {@link fr.becpg.repo.activity.data.ActivityType} object.
+	 */
 	public void setActivityType(ActivityType activityType) {
 		this.activityType = activityType;
 	}
 
+	/**
+	 * <p>Getter for the field <code>activityData</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:alData")
 	public String getActivityData() {
 		return activityData;
 	}
 
+	/**
+	 * <p>Setter for the field <code>activityData</code>.</p>
+	 *
+	 * @param activityData a {@link java.lang.String} object.
+	 */
 	public void setActivityData(String activityData) {
 		this.activityData = activityData;
 	}
 	
+	/**
+	 * <p>getJSONData.</p>
+	 *
+	 * @return a {@link org.json.JSONObject} object.
+	 * @throws org.json.JSONException if any.
+	 */
 	public JSONObject getJSONData() throws JSONException {
 		return new JSONObject(activityData);
 	}
 
+	/**
+	 * <p>Getter for the field <code>userId</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:alUserId")
 	public String getUserId() {
 		return userId;
 	}
 
+	/**
+	 * <p>Setter for the field <code>userId</code>.</p>
+	 *
+	 * @param userId a {@link java.lang.String} object.
+	 */
 	public void setUserId(String userId) {
 		this.userId = userId;
 	}
 
+	/**
+	 * <p>Constructor for ActivityListDataItem.</p>
+	 */
 	public ActivityListDataItem() {
 		super();
 		this.userId = AuthenticationUtil.getFullyAuthenticatedUser();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -96,6 +136,7 @@ public class ActivityListDataItem extends BeCPGDataObject {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -120,6 +161,7 @@ public class ActivityListDataItem extends BeCPGDataObject {
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "ActivityListDataItem [activityType=" + activityType + ", activityData=" + activityData + ", userId=" + userId + "]";

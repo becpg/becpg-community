@@ -30,9 +30,10 @@ import fr.becpg.repo.repository.impl.BeCPGHashCodeBuilder;
 import fr.becpg.repo.repository.impl.LazyLoadingDataList;
 
 /**
+ * <p>DecernisRequirementsScanner class.</p>
  *
  * @author matthieu
- *
+ * @version $Id: $Id
  */
 public class DecernisRequirementsScanner implements RequirementScanner {
 
@@ -44,14 +45,25 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 
 	AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
+	/**
+	 * <p>Setter for the field <code>decernisService</code>.</p>
+	 *
+	 * @param decernisService a {@link fr.becpg.repo.decernis.DecernisService} object.
+	 */
 	public void setDecernisService(DecernisService decernisService) {
 		this.decernisService = decernisService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
+	 */
 	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<ReqCtrlListDataItem> checkRequirements(ProductData formulatedProduct, List<ProductSpecificationData> specifications) {
 

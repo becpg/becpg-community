@@ -29,6 +29,7 @@ import fr.becpg.repo.project.data.projectList.TaskState;
  * The Class SubmitTaskPolicy.
  *
  * @author querephi
+ * @version $Id: $Id
  */
 public class ProjectListPolicy extends ProjectPolicy
 		implements NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.OnCreateAssociationPolicy,
@@ -40,15 +41,27 @@ public class ProjectListPolicy extends ProjectPolicy
 
 	private ProjectActivityService projectActivityService;
 
+	/**
+	 * <p>Setter for the field <code>projectActivityService</code>.</p>
+	 *
+	 * @param projectActivityService a {@link fr.becpg.repo.project.ProjectActivityService} object.
+	 */
 	public void setProjectActivityService(ProjectActivityService projectActivityService) {
 		this.projectActivityService = projectActivityService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>associationService</code>.</p>
+	 *
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object.
+	 */
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * Inits the.
 	 */
 	@Override
@@ -110,6 +123,7 @@ public class ProjectListPolicy extends ProjectPolicy
 				new JavaBehaviour(this, "beforeDeleteNode"));
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 
@@ -251,6 +265,7 @@ public class ProjectListPolicy extends ProjectPolicy
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onDeleteAssociation(AssociationRef assocRef) {
 		if (assocRef.getTypeQName().equals(ProjectModel.ASSOC_SUB_PROJECT)) {
@@ -267,6 +282,7 @@ public class ProjectListPolicy extends ProjectPolicy
 		queueListItem(assocRef.getSourceRef());
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onCreateAssociation(AssociationRef assocRef) {
 		if (assocRef.getTypeQName().equals(ProjectModel.ASSOC_SUB_PROJECT)) {
@@ -288,6 +304,7 @@ public class ProjectListPolicy extends ProjectPolicy
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void beforeDeleteNode(NodeRef nodeRef) {
 		// we need to queue item before delete in order to have WUsed
@@ -326,6 +343,7 @@ public class ProjectListPolicy extends ProjectPolicy
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onCreateNode(ChildAssociationRef childRef) {
 

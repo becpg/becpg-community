@@ -21,6 +21,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.StopWatch;
 
+/**
+ * <p>Abstract FormulationBaseHandler class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public abstract class FormulationBaseHandler<T> implements FormulationHandler<T> {
  
 
@@ -28,10 +34,17 @@ public abstract class FormulationBaseHandler<T> implements FormulationHandler<T>
 	
     private FormulationHandler<T> nextHandler;
  
+    /** {@inheritDoc} */
     public void setNextHandler(FormulationHandler<T> next) {
         nextHandler = next;
     }
  
+    /**
+     * <p>start.</p>
+     *
+     * @param context a T object.
+     * @throws fr.becpg.repo.formulation.FormulateException if any.
+     */
     public void start(T context) throws FormulateException {
     	
     	StopWatch watch = null;

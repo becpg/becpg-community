@@ -17,8 +17,15 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 
 import fr.becpg.model.PLMModel;
 
+/**
+ * <p>BeCPGForumTopicPost class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class BeCPGForumTopicPost extends ForumTopicPost {
 
+	/** {@inheritDoc} */
 	@Override
 	protected Map<String, Object> executeImpl(SiteInfo site, NodeRef nodeRef, TopicInfo topic, PostInfo post, WebScriptRequest req, JSONObject json,
 			Status status, Cache cache) {

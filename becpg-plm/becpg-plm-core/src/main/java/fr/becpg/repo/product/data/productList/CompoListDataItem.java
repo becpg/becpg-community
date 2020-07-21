@@ -21,6 +21,12 @@ import fr.becpg.repo.repository.annotation.InternalField;
 import fr.becpg.repo.repository.annotation.MultiLevelDataList;
 import fr.becpg.repo.repository.model.CompositionDataItem;
 
+/**
+ * <p>CompoListDataItem class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @AlfType
 @AlfQname(qname = "bcpg:compoList")
 @MultiLevelDataList
@@ -55,6 +61,11 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 	private CompoListDataItem parent;
 	
 	
+	/**
+	 * <p>Getter for the field <code>parent</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:parentLevel")
 	@InternalField
@@ -62,10 +73,20 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 		return parent;
 	}
 
+	/**
+	 * <p>Setter for the field <code>parent</code>.</p>
+	 *
+	 * @param parent a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object.
+	 */
 	public void setParent(CompoListDataItem parent) {
 		this.parent = parent;
 	}
 
+	/**
+	 * <p>Getter for the field <code>depthLevel</code>.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:depthLevel")
 	@InternalField
@@ -73,29 +94,55 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 		return depthLevel;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>depthLevel</code>.</p>
+	 *
+	 * @param depthLevel a {@link java.lang.Integer} object.
+	 */
 	public void setDepthLevel(Integer depthLevel) {
 		this.depthLevel = depthLevel;
 	}
 
+	/**
+	 * <p>Getter for the field <code>qty</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:compoListQty")
 	public Double getQty() {
 		return qty;
 	}
 	
+	/** {@inheritDoc} */
 	public void setQty(Double qty) {
 		this.qty = qty;
 	}
+	/**
+	 * <p>Getter for the field <code>qtySubFormula</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:compoListQtySubFormula")	
 	public Double getQtySubFormula() {
 		return qtySubFormula;
 	}
 
+	/**
+	 * <p>Setter for the field <code>qtySubFormula</code>.</p>
+	 *
+	 * @param qtySubFormula a {@link java.lang.Double} object.
+	 */
 	public void setQtySubFormula(Double qtySubFormula) {
 		this.qtySubFormula = qtySubFormula;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>compoListUnit</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.constraints.ProductUnit} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:compoListUnit")
 	public ProductUnit getCompoListUnit() {
@@ -103,30 +150,56 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 	}
 	
 	
+	/**
+	 * <p>Setter for the field <code>compoListUnit</code>.</p>
+	 *
+	 * @param compoListUnit a {@link fr.becpg.repo.product.data.constraints.ProductUnit} object.
+	 */
 	public void setCompoListUnit(ProductUnit compoListUnit) {
 		this.compoListUnit = compoListUnit;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>lossPerc</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:compoListLossPerc")
 	public Double getLossPerc() {
 		return lossPerc;
 	}
 
+	/** {@inheritDoc} */
 	public void setLossPerc(Double lossPerc) {
 		this.lossPerc = lossPerc;
 	}
 
+	/**
+	 * <p>Getter for the field <code>yieldPerc</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:compoListYieldPerc")
 	public Double getYieldPerc() {
 		return yieldPerc;
 	}
 
+	/**
+	 * <p>Setter for the field <code>yieldPerc</code>.</p>
+	 *
+	 * @param yieldPerc a {@link java.lang.Double} object.
+	 */
 	public void setYieldPerc(Double yieldPerc) {
 		this.yieldPerc = yieldPerc;
 	}
 
+	/**
+	 * <p>Getter for the field <code>declType</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.constraints.DeclarationType} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:compoListDeclType")
 	public DeclarationType getDeclType() {
@@ -134,6 +207,11 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 	}
 	
 
+	/**
+	 * <p>Setter for the field <code>declType</code>.</p>
+	 *
+	 * @param declType a {@link fr.becpg.repo.product.data.constraints.DeclarationType} object.
+	 */
 	public void setDeclType(DeclarationType declType) {
 		if(declType==null){
 			declType=DeclarationType.Declare;
@@ -142,26 +220,51 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 		this.declType = declType;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>overrunPerc</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:compoListOverrunPerc")
 	public Double getOverrunPerc() {
 		return overrunPerc;
 	}
 
+	/**
+	 * <p>Setter for the field <code>overrunPerc</code>.</p>
+	 *
+	 * @param overrunPerc a {@link java.lang.Double} object.
+	 */
 	public void setOverrunPerc(Double overrunPerc) {
 		this.overrunPerc = overrunPerc;
 	}
 
+	/**
+	 * <p>Getter for the field <code>volume</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:compoListVolume")
 	public Double getVolume() {
 		return volume;
 	}
 
+	/**
+	 * <p>Setter for the field <code>volume</code>.</p>
+	 *
+	 * @param volume a {@link java.lang.Double} object.
+	 */
 	public void setVolume(Double volume) {
 		this.volume = volume;
 	}
 
+	/**
+	 * <p>Getter for the field <code>product</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	@AlfSingleAssoc
 	@DataListIdentifierAttr
 	@AlfQname(qname="bcpg:compoListProduct")
@@ -170,6 +273,11 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 		return product;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>product</code>.</p>
+	 *
+	 * @param product a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void setProduct(NodeRef product) {
 		this.product = product;
 	}	
@@ -181,6 +289,18 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 		super();
 	}
 	
+	/**
+	 * <p>Constructor for CompoListDataItem.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param parent a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object.
+	 * @param qty a {@link java.lang.Double} object.
+	 * @param qtySubFormula a {@link java.lang.Double} object.
+	 * @param compoListUnit a {@link fr.becpg.repo.product.data.constraints.ProductUnit} object.
+	 * @param lossPerc a {@link java.lang.Double} object.
+	 * @param declType a {@link fr.becpg.repo.product.data.constraints.DeclarationType} object.
+	 * @param product a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public CompoListDataItem(NodeRef nodeRef, CompoListDataItem parent, Double qty, Double qtySubFormula, ProductUnit compoListUnit, Double lossPerc, DeclarationType declType, NodeRef product){
 		super();
 		this.nodeRef=nodeRef;
@@ -201,7 +321,8 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 	
 	/**
 	 * Copy constructor
-	 * @param c
+	 *
+	 * @param c a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object.
 	 */
 	public CompoListDataItem(CompoListDataItem c){
 		super();
@@ -223,11 +344,18 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 	
 
 
+	/**
+	 * <p>parseDeclarationType.</p>
+	 *
+	 * @param declType a {@link java.lang.String} object.
+	 * @return a {@link fr.becpg.repo.product.data.constraints.DeclarationType} object.
+	 */
 	public static DeclarationType parseDeclarationType(String declType) {
 		
 		return (declType != null && !Objects.equals(declType, "")) ? DeclarationType.valueOf(declType) : DeclarationType.Declare;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -239,6 +367,7 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 
 	
 	
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -254,6 +383,7 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 				&& Objects.equals(volume, other.volume) && Objects.equals(yieldPerc, other.yieldPerc);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "CompoListDataItem [depthLevel=" + depthLevel + ", qty=" + qty + ", qtySubFormula=" + qtySubFormula + ", ProductUnit="
@@ -263,22 +393,26 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 				+ "]";
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public CompoListDataItem clone() {
 		return new CompoListDataItem(this);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	@InternalField
 	public NodeRef getComponent() {
 		return getProduct();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void setComponent(NodeRef targetItem) {
 		setProduct(targetItem);		
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public QName getComponentAssocName() {
 		return PLMModel.ASSOC_COMPOLIST_PRODUCT;

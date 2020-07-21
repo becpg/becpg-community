@@ -8,9 +8,9 @@ import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 
 /**
  * Class that represent the mapping for importing a property or an association (node or characteristic or file)
- * 
  *
  * @author querephi
+ * @version $Id: $Id
  */
 public abstract class AbstractAttributeMapping{
 

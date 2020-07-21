@@ -21,8 +21,20 @@ import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+/**
+ * <p>EntityReportAsyncGenerator interface.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public interface EntityReportAsyncGenerator {
 
+	/**
+	 * <p>queueNodes.</p>
+	 *
+	 * @param pendingNodes a {@link java.util.List} object.
+	 * @param notify a boolean.
+	 */
 	void queueNodes(List<NodeRef> pendingNodes, boolean notify);
 
 }

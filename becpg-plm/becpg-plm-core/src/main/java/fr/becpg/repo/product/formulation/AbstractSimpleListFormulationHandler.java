@@ -64,9 +64,17 @@ import fr.becpg.repo.repository.model.MinMaxValueDataItem;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
+/**
+ * <p>Abstract AbstractSimpleListFormulationHandler class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListDataItem> extends FormulationBaseHandler<ProductData> {
 
+	/** Constant <code>UNIT_SEPARATOR="/"</code> */
 	public static final String UNIT_SEPARATOR = "/";
+	/** Constant <code>MESSAGE_UNDEFINED_CHARACT="message.formulate.undefined.charact"</code> */
 	protected static final String MESSAGE_UNDEFINED_CHARACT = "message.formulate.undefined.charact";
 
 	private static final Log logger = LogFactory.getLog(AbstractSimpleListFormulationHandler.class);
@@ -83,45 +91,121 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 	protected SpelFormulaService formulaService;
 
+	/**
+	 * <p>Setter for the field <code>formulaService</code>.</p>
+	 *
+	 * @param formulaService a {@link fr.becpg.repo.formulation.spel.SpelFormulaService} object.
+	 */
 	public void setFormulaService(SpelFormulaService formulaService) {
 		this.formulaService = formulaService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>transientFormulation</code>.</p>
+	 *
+	 * @param transientFormulation a boolean.
+	 */
 	public void setTransientFormulation(boolean transientFormulation) {
 		this.transientFormulation = transientFormulation;
 	}
 
+	/**
+	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
+	 */
 	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityListDAO</code>.</p>
+	 *
+	 * @param entityListDAO a {@link fr.becpg.repo.entity.EntityListDAO} object.
+	 */
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>mlNodeService</code>.</p>
+	 *
+	 * @param mlNodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setMlNodeService(NodeService mlNodeService) {
 		this.mlNodeService = mlNodeService;
 	}
 
+	/**
+	 * <p>createNewInstance.</p>
+	 *
+	 * @return a T object.
+	 * @throws java.lang.InstantiationException if any.
+	 * @throws java.lang.IllegalAccessException if any.
+	 * @throws java.lang.IllegalArgumentException if any.
+	 * @throws java.lang.reflect.InvocationTargetException if any.
+	 * @throws java.lang.NoSuchMethodException if any.
+	 * @throws java.lang.SecurityException if any.
+	 */
 	public T createNewInstance() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
 			NoSuchMethodException, SecurityException {
 		return getInstanceClass().getDeclaredConstructor().newInstance();
 	}
 
+	/**
+	 * <p>getInstanceClass.</p>
+	 *
+	 * @return a {@link java.lang.Class} object.
+	 */
 	protected abstract Class<T> getInstanceClass();
 
+	/**
+	 * <p>accept.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @return a boolean.
+	 */
 	protected abstract boolean accept(ProductData productData);
 
+	/**
+	 * <p>getDataListVisited.</p>
+	 *
+	 * @param partProduct a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @return a {@link java.util.List} object.
+	 */
 	protected abstract List<T> getDataListVisited(ProductData partProduct);
 
+	/**
+	 * <p>getMandatoryCharacts.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @param componentType a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link java.util.Map} object.
+	 */
 	protected abstract Map<NodeRef, List<NodeRef>> getMandatoryCharacts(ProductData formulatedProduct, QName componentType);
 
+	/**
+	 * <p>getRequirementDataType.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.constraints.RequirementDataType} object.
+	 */
 	protected abstract RequirementDataType getRequirementDataType();
 
+	/**
+	 * <p>getMandatoryCharactsFromList.</p>
+	 *
+	 * @param simpleListDataList a {@link java.util.List} object.
+	 * @return a {@link java.util.Map} object.
+	 */
 	protected Map<NodeRef, List<NodeRef>> getMandatoryCharactsFromList(List<T> simpleListDataList) {
 		Map<NodeRef, List<NodeRef>> mandatoryCharacts = new HashMap<>(simpleListDataList.size());
 		for (SimpleListDataItem sl : simpleListDataList) {
@@ -132,6 +216,14 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		return mandatoryCharacts;
 	}
 
+	/**
+	 * <p>formulateSimpleList.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @param simpleListDataList a {@link java.util.List} object.
+	 * @param isFormulatedProduct a boolean.
+	 * @throws fr.becpg.repo.formulation.FormulateException if any.
+	 */
 	protected void formulateSimpleList(ProductData formulatedProduct, List<T> simpleListDataList, boolean isFormulatedProduct)
 			throws FormulateException {
 		logger.debug("formulateSimpleList");
@@ -147,6 +239,12 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 	}
 
+	/**
+	 * <p>cleanSimpleList.</p>
+	 *
+	 * @param simpleListDataList a {@link java.util.List} object.
+	 * @param isFormulatedProduct a boolean.
+	 */
 	protected void cleanSimpleList(List<T> simpleListDataList, boolean isFormulatedProduct) {
 
 		if ((simpleListDataList != null) && isFormulatedProduct) {
@@ -173,6 +271,14 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		}
 	}
 
+	/**
+	 * <p>visitChildren.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @param simpleListDataList a {@link java.util.List} object.
+	 * @param netQtyInLorKg a {@link java.lang.Double} object.
+	 * @throws fr.becpg.repo.formulation.FormulateException if any.
+	 */
 	protected void visitChildren(ProductData formulatedProduct, List<T> simpleListDataList, Double netQtyInLorKg) throws FormulateException {
 
 		Map<NodeRef, Double> totalQtiesValue = new HashMap<>();
@@ -216,6 +322,13 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 	}
 
+	/**
+	 * <p>formulateGenericRawMaterial.</p>
+	 *
+	 * @param simpleListDataList a {@link java.util.List} object.
+	 * @param totalQtiesValue a {@link java.util.Map} object.
+	 * @param netQty a {@link java.lang.Double} object.
+	 */
 	protected void formulateGenericRawMaterial(List<T> simpleListDataList, Map<NodeRef, Double> totalQtiesValue, Double netQty) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Case generic MP adjust value to total");
@@ -230,6 +343,13 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		}
 	}
 
+	/**
+	 * <p>addReqCtrlList.</p>
+	 *
+	 * @param reqCtrlList a {@link java.util.List} object.
+	 * @param mandatoryCharacts a {@link java.util.Map} object.
+	 * @param dataType a {@link fr.becpg.repo.product.data.constraints.RequirementDataType} object.
+	 */
 	protected void addReqCtrlList(List<ReqCtrlListDataItem> reqCtrlList, Map<NodeRef, List<NodeRef>> mandatoryCharacts,
 			RequirementDataType dataType) {
 
@@ -245,6 +365,21 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		}
 	}
 
+	/**
+	 * <p>visitPart.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @param partProduct a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @param simpleListDataList a {@link java.util.List} object.
+	 * @param weightUsed a {@link java.lang.Double} object.
+	 * @param volUsed a {@link java.lang.Double} object.
+	 * @param netQtyInLorKg a {@link java.lang.Double} object.
+	 * @param netWeight a {@link java.lang.Double} object.
+	 * @param mandatoryCharacts a {@link java.util.Map} object.
+	 * @param totalQtiesValue a {@link java.util.Map} object.
+	 * @param isGenericRawMaterial a boolean.
+	 * @throws fr.becpg.repo.formulation.FormulateException if any.
+	 */
 	protected void visitPart(ProductData formulatedProduct, ProductData partProduct, List<T> simpleListDataList, Double weightUsed, Double volUsed,
 			Double netQtyInLorKg, Double netWeight, Map<NodeRef, List<NodeRef>> mandatoryCharacts, Map<NodeRef, Double> totalQtiesValue,
 			boolean isGenericRawMaterial) throws FormulateException {
@@ -313,6 +448,17 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		}
 	}
 
+	/**
+	 * <p>calculate.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @param partProduct a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @param newSimpleListDataItem a {@link fr.becpg.repo.repository.model.SimpleListDataItem} object.
+	 * @param slDataItem a {@link fr.becpg.repo.repository.model.SimpleListDataItem} object.
+	 * @param qtyUsed a {@link java.lang.Double} object.
+	 * @param netQty a {@link java.lang.Double} object.
+	 * @param isGenericRawMaterial a boolean.
+	 */
 	protected void calculate(ProductData formulatedProduct, ProductData partProduct, SimpleListDataItem newSimpleListDataItem,
 			SimpleListDataItem slDataItem, Double qtyUsed, Double netQty, boolean isGenericRawMaterial) {
 
@@ -384,11 +530,26 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		}
 	}
 
+	/**
+	 * <p>extractValue.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @param partProduct a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @param slDataItem a {@link fr.becpg.repo.repository.model.SimpleListDataItem} object.
+	 * @return a {@link java.lang.Double} object.
+	 */
 	protected Double extractValue(ProductData formulatedProduct, ProductData partProduct, SimpleListDataItem slDataItem) {
 
 		return slDataItem.getValue();
 	}
 
+	/**
+	 * <p>addMissingMandatoryCharact.</p>
+	 *
+	 * @param mandatoryCharacts a {@link java.util.Map} object.
+	 * @param charactNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param componentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	protected void addMissingMandatoryCharact(Map<NodeRef, List<NodeRef>> mandatoryCharacts, NodeRef charactNodeRef, NodeRef componentNodeRef) {
 		if (mandatoryCharacts.containsKey(charactNodeRef)) {
 			List<NodeRef> sources = mandatoryCharacts.get(charactNodeRef);
@@ -402,10 +563,23 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		}
 	}
 
+	/**
+	 * <p>isCharactFormulated.</p>
+	 *
+	 * @param sl a {@link fr.becpg.repo.repository.model.SimpleListDataItem} object.
+	 * @return a boolean.
+	 */
 	protected boolean isCharactFormulated(SimpleListDataItem sl) {
 		return (sl.getIsManual() == null) || !sl.getIsManual();
 	}
 
+	/**
+	 * <p>findSimpleListDataItem.</p>
+	 *
+	 * @param simpleList a {@link java.util.List} object.
+	 * @param charactNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a T object.
+	 */
 	protected T findSimpleListDataItem(List<T> simpleList, NodeRef charactNodeRef) {
 		if (charactNodeRef != null) {
 			for (T s : simpleList) {
@@ -417,6 +591,15 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		return null;
 	}
 
+	/**
+	 * <p>computeFormulatedList.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @param formulatedCharactDataItems a {@link java.util.List} object.
+	 * @param propFormula a {@link org.alfresco.service.namespace.QName} object.
+	 * @param errorKey a {@link java.lang.String} object.
+	 * @param <U> a U object.
+	 */
 	protected <U extends FormulatedCharactDataItem> void computeFormulatedList(ProductData formulatedProduct, List<U> formulatedCharactDataItems,
 			QName propFormula, String errorKey) {
 
@@ -517,8 +700,8 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	/**
 	 * Copy missing item from template
 	 *
-	 * @param formulatedProduct
-	 * @param simpleListDataList
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @param simpleListDataList a {@link java.util.List} object.
 	 */
 	@SuppressWarnings("unchecked")
 	protected void synchronizeTemplate(ProductData formulatedProduct, List<T> simpleListDataList) {
@@ -587,6 +770,13 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		}
 	}
 
+	/**
+	 * <p>findParentByCharactName.</p>
+	 *
+	 * @param simpleListDataList a {@link java.util.List} object.
+	 * @param charactNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a T object.
+	 */
 	protected T findParentByCharactName(List<T> simpleListDataList, NodeRef charactNodeRef) {
 		for (T listItem : simpleListDataList) {
 			if ((listItem.getCharactNodeRef() != null) && listItem.getCharactNodeRef().equals(charactNodeRef)) {

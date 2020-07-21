@@ -38,6 +38,7 @@ import fr.becpg.report.client.ReportParams;
  * The Class CompareEntityReportServiceImpl.
  *
  * @author querephi
+ * @version $Id: $Id
  */
 @Service("compareEntityReportService")
 public class CompareEntityReportServiceImpl implements CompareEntityReportService {
@@ -104,6 +105,7 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 	private AssociationService associationService;
 
 
+	/** {@inheritDoc} */
 	@Override
 	public void getComparisonReport(NodeRef entity1, List<NodeRef> entities, NodeRef templateNodeRef, OutputStream out) {
 
@@ -145,6 +147,7 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String getReportFileName(NodeRef tplNodeRef, String defaultName) {
 		String documentName = defaultName;
@@ -211,6 +214,9 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 
 	/**
 	 * Render the comparison as xml data.
+	 *
+	 * @param structCompareResults a {@link java.util.Map} object.
+	 * @return a {@link org.dom4j.Element} object.
 	 */
 	public  Element renderStructComparisonAsXmlData(Map<String, List<StructCompareResultDataItem>> structCompareResults) {
 		Document document = DocumentHelper.createDocument();

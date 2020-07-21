@@ -22,6 +22,12 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * <p>SpelHelper class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class SpelHelper {
 
 	public static class SpelShortcut {
@@ -44,14 +50,26 @@ public class SpelHelper {
 //		shortCuts.add(new SpelShortcut("//.*\n", ""));
 //	}
 	
+	/**
+	 * <p>registerShortcut.</p>
+	 *
+	 * @param shortcut a {@link fr.becpg.repo.formulation.spel.SpelHelper.SpelShortcut} object.
+	 */
 	public static void registerShortcut(SpelShortcut shortcut) {
 		shortCuts.add(shortcut);
 	}
 	
 
 	
+	/** Constant <code>formulaVarPattern</code> */
 	public static final Pattern formulaVarPattern = Pattern.compile("^var\\s+(\\w+)\\s*=(.*)$");
 
+	/**
+	 * <p>formatFormula.</p>
+	 *
+	 * @param formula a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	public static String formatFormula(String formula) {
 		
 		for(SpelShortcut shortCut : shortCuts) {
@@ -64,6 +82,12 @@ public class SpelHelper {
 		return formula.replace("&lt;", "<").replace("&gt;", ">").replace("\n", "").trim();
 	}
 
+	/**
+	 * <p>formatMTFormulas.</p>
+	 *
+	 * @param formula a {@link java.lang.String} object.
+	 * @return an array of {@link java.lang.String} objects.
+	 */
 	public static String[] formatMTFormulas(String formula) {
 		return formatFormula(formula).split(";");
 	}

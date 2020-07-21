@@ -17,9 +17,16 @@ import fr.becpg.repo.activity.data.ActivityListDataItem;
 import fr.becpg.repo.activity.data.ActivityType;
 import fr.becpg.repo.helper.AttributeExtractorService;
 
+/**
+ * <p>EntityActivityStateListener class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class EntityActivityStateListener implements EntityActivityListener {
 
+	/** Constant <code>ENTITY_STATE_ACTIVITY="fr.becpg.entity.state-changed"</code> */
 	public static final String ENTITY_STATE_ACTIVITY = "fr.becpg.entity.state-changed";
 
 	private static Log logger = LogFactory.getLog(EntityActivityStateListener.class);
@@ -36,6 +43,7 @@ public class EntityActivityStateListener implements EntityActivityListener {
 	@Autowired
 	private NodeService nodeService;
 
+	/** {@inheritDoc} */
 	@Override
 	public void notify(NodeRef entityNodeRef, ActivityListDataItem activityListDataItem) {
 		if (ActivityType.State.equals(activityListDataItem.getActivityType())) {

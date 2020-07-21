@@ -44,9 +44,10 @@ import fr.becpg.repo.cache.BeCPGCacheDataProviderCallBack;
 import fr.becpg.repo.cache.BeCPGCacheService;
 
 /**
+ * <p>BeCPGCacheServiceImpl class.</p>
  *
  * @author matthieu
- *
+ * @version $Id: $Id
  */
 public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBean {
 
@@ -64,37 +65,65 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 
 	private final Map<String, DefaultSimpleCache<String, ?>> caches = new ConcurrentHashMap<>();
 
+	/**
+	 * <p>Setter for the field <code>maxCacheItems</code>.</p>
+	 *
+	 * @param maxCacheItems a int.
+	 */
 	public void setMaxCacheItems(int maxCacheItems) {
 		this.maxCacheItems = maxCacheItems;
 	}
 
+	/**
+	 * <p>Getter for the field <code>caches</code>.</p>
+	 *
+	 * @return a {@link java.util.Map} object.
+	 */
 	public Map<String, DefaultSimpleCache<String, ?>> getCaches() {
 		return Collections.unmodifiableMap(caches);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		isDebugEnable = logger.isDebugEnabled();
 
 	}
 
+	/**
+	 * <p>Setter for the field <code>disableAllCache</code>.</p>
+	 *
+	 * @param disableAllCache a boolean.
+	 */
 	public void setDisableAllCache(boolean disableAllCache) {
 		this.disableAllCache = disableAllCache;
 	}
 
+	/**
+	 * <p>Setter for the field <code>tenantAdminService</code>.</p>
+	 *
+	 * @param tenantAdminService a {@link org.alfresco.repo.tenant.TenantAdminService} object.
+	 */
 	public void setTenantAdminService(TenantAdminService tenantAdminService) {
 		this.tenantAdminService = tenantAdminService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>cacheSizes</code>.</p>
+	 *
+	 * @param cacheSizes a {@link java.util.Map} object.
+	 */
 	public void setCacheSizes(Map<String, Integer> cacheSizes) {
 		this.cacheSizes = cacheSizes;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public <T> T getFromCache(String cacheName, String cacheKey, BeCPGCacheDataProviderCallBack<T> cacheDataProviderCallBack) {
 		return getFromCache(cacheName, cacheKey, cacheDataProviderCallBack, false);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public <T> void storeInCache(String cacheName, String cacheKey, T data) {
 		if (!disableAllCache) {
@@ -105,6 +134,7 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public <T> T getFromCache(String cacheName, String cacheKey) {
 		return getFromCache(cacheName, cacheKey, () -> {
@@ -112,6 +142,7 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 		}, false);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 
 	public <T> T getFromCache(final String cacheName, String cacheKey, BeCPGCacheDataProviderCallBack<T> cacheDataProviderCallBack,
@@ -177,6 +208,7 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 		return ret;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void removeFromCache(String cacheName, String cacheKey) {
 		cacheKey = computeCacheKey(cacheKey);
@@ -191,12 +223,14 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Collection<String> getCacheKeys(String cacheName) {
 		SimpleCache<String, ?> cache = getCache(cacheName);
 		return cache.getKeys();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void clearCache(String cacheName) {
 		logger.debug("Clear specific cache: " + cacheName);
@@ -204,6 +238,7 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 		cache.clear();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void clearAllCaches() {
 		logger.debug("Clear all cache");
@@ -242,6 +277,7 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 		return cache;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void printCacheInfos() {
 		for (String cacheName : caches.keySet()) {

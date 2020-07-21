@@ -16,6 +16,12 @@ import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtracto
 import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.report.search.impl.DefaultExcelReportSearchPlugin;
 
+/**
+ * <p>TaskListExcelReportSearch class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class TaskListExcelReportSearch extends DefaultExcelReportSearchPlugin{
 
@@ -23,11 +29,13 @@ public class TaskListExcelReportSearch extends DefaultExcelReportSearchPlugin{
 	@Autowired
 	private ProjectService projectService;
 	
+	/** {@inheritDoc} */
 	@Override
 	public boolean isDefault() {
 		return false;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isApplicable(QName itemType, String[] parameters) {
 
@@ -35,6 +43,7 @@ public class TaskListExcelReportSearch extends DefaultExcelReportSearchPlugin{
 	}
 
 	
+	/** {@inheritDoc} */
 	@Override 
 	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields,
 			Map<QName, Serializable> properties, final Map<NodeRef, Map<String, Object>> cache) {

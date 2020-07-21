@@ -26,8 +26,9 @@ import org.json.JSONObject;
 
 /**
  * Use to store Olap Chart Data
- * @author "Matthieu Laborie"
  *
+ * @author "Matthieu Laborie"
+ * @version $Id: $Id
  */
 public class OlapChartData {
 	
@@ -35,33 +36,67 @@ public class OlapChartData {
 	List<List<Object>> resultsets = new LinkedList<>();
 	
 
+	/**
+	 * <p>addMetadata.</p>
+	 *
+	 * @param olapChartMetadata a {@link fr.becpg.repo.olap.data.OlapChartMetadata} object.
+	 */
 	public void addMetadata(OlapChartMetadata olapChartMetadata) {
 		metadatas.add(olapChartMetadata);
 		
 	}
 
+	/**
+	 * <p>shiftMetadata.</p>
+	 */
 	public void shiftMetadata() {
 		if(!metadatas.isEmpty()){
 			metadatas.remove(0);
 		}
 	}
 
+	/**
+	 * <p>Getter for the field <code>metadatas</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	public List<OlapChartMetadata> getMetadatas() {
 		return metadatas;
 	}
 
+	/**
+	 * <p>Setter for the field <code>metadatas</code>.</p>
+	 *
+	 * @param metadatas a {@link java.util.List} object.
+	 */
 	public void setMetadatas(List<OlapChartMetadata> metadatas) {
 		this.metadatas = metadatas;
 	}
 
+	/**
+	 * <p>Getter for the field <code>resultsets</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	public List<List<Object>> getResultsets() {
 		return resultsets;
 	}
 
+	/**
+	 * <p>Setter for the field <code>resultsets</code>.</p>
+	 *
+	 * @param resultsets a {@link java.util.List} object.
+	 */
 	public void setResultsets(List<List<Object>> resultsets) {
 		this.resultsets = resultsets;
 	}
 
+	/**
+	 * <p>toJSONObject.</p>
+	 *
+	 * @return a {@link org.json.JSONObject} object.
+	 * @throws org.json.JSONException if any.
+	 */
 	public JSONObject toJSONObject() throws JSONException {
 		JSONObject obj = new JSONObject();
 		JSONArray jsonArray = new JSONArray();

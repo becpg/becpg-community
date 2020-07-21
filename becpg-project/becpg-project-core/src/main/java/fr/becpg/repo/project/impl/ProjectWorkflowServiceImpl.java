@@ -58,7 +58,7 @@ import fr.becpg.repo.project.data.projectList.TaskState;
  * Class used to manage workflow
  *
  * @author quere
- *
+ * @version $Id: $Id
  */
 
 @Service("projectWorkflowService")
@@ -79,6 +79,7 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 	@Autowired
 	private AutoNumService autoNumService;
 
+	/** {@inheritDoc} */
 	@Override
 	public void cancelWorkflow(TaskListDataItem task) {
 
@@ -88,6 +89,7 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 		task.setWorkflowTaskInstance("");
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void startWorkflow(final ProjectData projectData, final TaskListDataItem taskListDataItem,
 			final List<DeliverableListDataItem> nextDeliverables) {
@@ -264,6 +266,7 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 		return null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isWorkflowActive(TaskListDataItem task) {
 
@@ -290,6 +293,8 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * Check workflow instance and properties
 	 */
 	@Override
@@ -387,6 +392,7 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 		return newProperties;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void deleteWorkflowTask(NodeRef taskListNodeRef) {
 
@@ -396,6 +402,7 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void deleteWorkflowById(String workflowInstanceId) {
 		WorkflowInstance workflowInstance = workflowService.getWorkflowById(workflowInstanceId);

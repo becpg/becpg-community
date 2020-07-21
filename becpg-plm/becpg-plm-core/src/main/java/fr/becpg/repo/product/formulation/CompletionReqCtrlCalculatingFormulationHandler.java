@@ -29,14 +29,24 @@ import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.model.CompositionDataItem;
 
+/**
+ * <p>CompletionReqCtrlCalculatingFormulationHandler class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationBaseHandler<ProductData> {
 
 	private static final Log logger = LogFactory.getLog(CompletionReqCtrlCalculatingFormulationHandler.class);
 
+	/** Constant <code>MESSAGE_NON_VALIDATED_STATE="message.formulate.nonValidatedState"</code> */
 	public static final String MESSAGE_NON_VALIDATED_STATE = "message.formulate.nonValidatedState";
+	/** Constant <code>MESSAGE_MANDATORY_FIELD_MISSING="message.formulate.mandatory_property"</code> */
 	public static final String MESSAGE_MANDATORY_FIELD_MISSING = "message.formulate.mandatory_property";
+	/** Constant <code>MESSAGE_MANDATORY_FIELD_MISSING_LOCALIZED="message.formulate.mandatory_property_lo"{trunked}</code> */
 	public static final String MESSAGE_MANDATORY_FIELD_MISSING_LOCALIZED = "message.formulate.mandatory_property_localized";
 
+	/** Constant <code>MESSAGE_NON_UNIQUE_FIELD="message.formulate.non-unique-field"</code> */
 	public static final String MESSAGE_NON_UNIQUE_FIELD = "message.formulate.non-unique-field";
 
 	private AlfrescoRepository<ProductData> alfrescoRepository;
@@ -44,18 +54,34 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 	private SpelFormulaService formulaService;
 	private EntityCatalogService entityCatalogService;
 
+	/**
+	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
+	 */
 	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
+	/**
+	 * <p>Setter for the field <code>formulaService</code>.</p>
+	 *
+	 * @param formulaService a {@link fr.becpg.repo.formulation.spel.SpelFormulaService} object.
+	 */
 	public void setFormulaService(SpelFormulaService formulaService) {
 		this.formulaService = formulaService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityCatalogService</code>.</p>
+	 *
+	 * @param entityCatalogService a {@link fr.becpg.repo.entity.catalog.EntityCatalogService} object.
+	 */
 	public void setEntityCatalogService(EntityCatalogService entityCatalogService) {
 		this.entityCatalogService = entityCatalogService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean process(ProductData product) throws FormulateException {
 		if (logger.isDebugEnabled()) {
@@ -222,6 +248,9 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 
 	/**
 	 * Returns if node exists and is in valid state
+	 *
+	 * @param node a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a boolean.
 	 */
 	public boolean checkProductValidity(NodeRef node) {
 		ProductData found = alfrescoRepository.findOne(node);

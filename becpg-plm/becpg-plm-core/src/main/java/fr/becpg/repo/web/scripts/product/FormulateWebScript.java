@@ -31,13 +31,21 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 import fr.becpg.repo.formulation.FormulateException;
 
 //TODO use remote formulation webscript instead
+/**
+ * <p>FormulateWebScript class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Deprecated
 public class FormulateWebScript extends AbstractProductWebscript {
 
+	/** Constant <code>PARAM_FAST="fast"</code> */
 	protected static final String PARAM_FAST = "fast";
 
 	private static final Log logger = LogFactory.getLog(FormulateWebScript.class);
 
+	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws WebScriptException, IOException {
 		logger.debug("start formulate webscript");

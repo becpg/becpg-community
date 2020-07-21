@@ -21,6 +21,7 @@ import fr.becpg.repo.designer.DesignerService;
  * The Class ModelTreeWebScript.
  *
  * @author matthieu
+ * @version $Id: $Id
  */
 public class ModelTreeWebScript extends DeclarativeWebScript  {
 	
@@ -46,6 +47,8 @@ public class ModelTreeWebScript extends DeclarativeWebScript  {
 
 
 	/**
+	 * <p>Setter for the field <code>designerService</code>.</p>
+	 *
 	 * @param designerService the designerService to set
 	 */
 	public void setDesignerService(DesignerService designerService) {
@@ -57,14 +60,11 @@ public class ModelTreeWebScript extends DeclarativeWebScript  {
 
 
 	/**
-	 * Retrieve model Tree
-	 * 
-	 * url : /becpg/designer/tree/node/{store_type}/{store_id}/{id}.
+	 * {@inheritDoc}
 	 *
-	 * @param req the req
-	 * @param status the status
-	 * @param cache the cache
-	 * @return the map
+	 * Retrieve model Tree
+	 *
+	 * url : /becpg/designer/tree/node/{store_type}/{store_id}/{id}.
 	 */
 	@Override
 	protected Map<String, Object> executeImpl(WebScriptRequest req, Status status, Cache cache){

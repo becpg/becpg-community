@@ -55,7 +55,7 @@ import fr.becpg.repo.search.impl.AbstractBeCPGQueryBuilder;
  * Service that manages hierarchies
  *
  * @author quere
- *
+ * @version $Id: $Id
  */
 @Service("hierarchyService")
 public class HierarchyServiceImpl implements HierarchyService {
@@ -75,6 +75,7 @@ public class HierarchyServiceImpl implements HierarchyService {
 	@Autowired
 	private Repository repositoryHelper;
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getHierarchyByPath(String path, NodeRef parentNodeRef, String value) {
 
@@ -87,21 +88,25 @@ public class HierarchyServiceImpl implements HierarchyService {
 		return hierarchyNodeRef;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> getHierarchiesByPath(String path, NodeRef parentNodeRef, String value) {
 		return getLuceneQuery(path, parentNodeRef, BeCPGModel.PROP_LKV_VALUE, value, false).andPropEquals(BeCPGModel.PROP_IS_DELETED, "false").list();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> getAllHierarchiesByPath(String path, String value) {
 		return getLuceneQuery(path, null, BeCPGModel.PROP_LKV_VALUE, value, true).list();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef createRootHierarchy(NodeRef dataListNodeRef, String hierachy1) {
 		return createHierarchy(dataListNodeRef, null, hierachy1);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef createHierarchy(NodeRef dataListNodeRef, NodeRef parentHierachy, String hierachy) {
 
@@ -183,6 +188,7 @@ public class HierarchyServiceImpl implements HierarchyService {
 		return ret;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void classifyByHierarchy(NodeRef containerNodeRef, NodeRef entityNodeRef) {
 		classifyByHierarchy(containerNodeRef, entityNodeRef, null, Locale.getDefault());
@@ -190,12 +196,9 @@ public class HierarchyServiceImpl implements HierarchyService {
 	}
 
 	/**
-	 * Classify according to the hierarchy.
+	 * {@inheritDoc}
 	 *
-	 * @param containerNodeRef
-	 *            : documentLibrary of site
-	 * @param entityNodeRef
-	 *            : entity
+	 * Classify according to the hierarchy.
 	 */
 	@Override
 	public void classifyByHierarchy(final NodeRef containerNodeRef, final NodeRef entityNodeRef, final QName hierarchyQname, Locale locale) {
@@ -264,6 +267,7 @@ public class HierarchyServiceImpl implements HierarchyService {
 		return hierarchyNodeRef;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getOrCreateHierachyFolder(NodeRef entityNodeRef,  QName hierarchyQname , NodeRef destinationNodeRef) {
 		
@@ -300,6 +304,12 @@ public class HierarchyServiceImpl implements HierarchyService {
 		return destinationNodeRef;
 	}
 
+	/**
+	 * <p>isAllQuery.</p>
+	 *
+	 * @param query a {@link java.lang.String} object.
+	 * @return a boolean.
+	 */
 	protected boolean isAllQuery(String query) {
 		return (query != null) && query.trim().equals(SUFFIX_ALL);
 	}

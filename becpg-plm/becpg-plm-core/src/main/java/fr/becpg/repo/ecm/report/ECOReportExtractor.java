@@ -41,6 +41,12 @@ import fr.becpg.repo.report.entity.EntityReportData;
 import fr.becpg.repo.report.entity.EntityReportExtractorPlugin;
 import fr.becpg.repo.repository.AlfrescoRepository;
 
+/**
+ * <p>ECOReportExtractor class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class ECOReportExtractor implements EntityReportExtractorPlugin {
 
@@ -65,6 +71,7 @@ public class ECOReportExtractor implements EntityReportExtractorPlugin {
 	private AlfrescoRepository<ChangeOrderData> alfrescoRepository;
 
 	
+	/** {@inheritDoc} */
 	@Override
 	public EntityReportData extract(NodeRef entityNodeRef, Map<String,String> preferences) {
 
@@ -121,12 +128,14 @@ public class ECOReportExtractor implements EntityReportExtractorPlugin {
 		return ecoElt;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean shouldGenerateReport(NodeRef entityNodeRef, Date generatedReportDate) {
 		return false;
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public EntityReportExtractorPriority getMatchPriority(QName type) {
 		return ECMModel.TYPE_ECO.equals(type) ? EntityReportExtractorPriority.NORMAL: EntityReportExtractorPriority.NONE;

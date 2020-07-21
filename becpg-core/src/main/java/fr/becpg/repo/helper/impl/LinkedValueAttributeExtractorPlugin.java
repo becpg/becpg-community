@@ -33,8 +33,10 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorPlugin;
 
 /**
- * @author matthieu
+ * <p>LinkedValueAttributeExtractorPlugin class.</p>
  *
+ * @author matthieu
+ * @version $Id: $Id
  */
 @Service
 public class LinkedValueAttributeExtractorPlugin implements AttributeExtractorPlugin {
@@ -47,24 +49,28 @@ public class LinkedValueAttributeExtractorPlugin implements AttributeExtractorPl
 	private  NamespaceService namespaceService;
 	 
 	
+	/** {@inheritDoc} */
 	@Override
 	public Collection<QName> getMatchingTypes() {
 		return Collections.singletonList(BeCPGModel.TYPE_LINKED_VALUE);
 	}
 	
 
+	/** {@inheritDoc} */
 	@Override
 	public String extractPropName(QName type, NodeRef nodeRef) {
 		return (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_LKV_VALUE);
 	}
 
 	
+	/** {@inheritDoc} */
 	@Override
 	public String extractMetadata(QName type, NodeRef nodeRef) {
 		return BeCPGModel.PROP_LKV_VALUE.toPrefixString(namespaceService).split(":")[1];
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public Integer getPriority() {
 		return 0;

@@ -10,6 +10,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
  * The Class CharacteristicToCompare.
  *
  * @author querephi
+ * @version $Id: $Id
  */
 public class CharacteristicToCompare {
 
@@ -20,30 +21,61 @@ public class CharacteristicToCompare {
 	private NodeRef nodeRef2;
 	
 	
+	/**
+	 * <p>Getter for the field <code>pivotKey</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getPivotKey() {
 		return pivotKey;
 	}
 
+	/**
+	 * <p>Setter for the field <code>pivotKey</code>.</p>
+	 *
+	 * @param pivotKey a {@link java.lang.String} object.
+	 */
 	public void setPivotKey(String pivotKey) {
 		this.pivotKey = pivotKey;
 	}
 
+	/**
+	 * <p>Getter for the field <code>nodeRef1</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public NodeRef getNodeRef1() {
 		return nodeRef1;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeRef1</code>.</p>
+	 *
+	 * @param nodeRef1 a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void setNodeRef1(NodeRef nodeRef1) {
 		this.nodeRef1 = nodeRef1;
 	}
 
+	/**
+	 * <p>Getter for the field <code>nodeRef2</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public NodeRef getNodeRef2() {
 		return nodeRef2;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeRef2</code>.</p>
+	 *
+	 * @param nodeRef2 a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void setNodeRef2(NodeRef nodeRef2) {
 		this.nodeRef2 = nodeRef2;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -54,6 +86,7 @@ public class CharacteristicToCompare {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -81,11 +114,19 @@ public class CharacteristicToCompare {
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "CharacteristicToCompare [pivotKey=" + pivotKey + ", nodeRef1=" + nodeRef1 + ", nodeRef2=" + nodeRef2 + "]";
 	}
 
+	/**
+	 * <p>Constructor for CharacteristicToCompare.</p>
+	 *
+	 * @param pivotKey a {@link java.lang.String} object.
+	 * @param nodeRef1 a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param nodeRef2 a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public CharacteristicToCompare( String pivotKey, NodeRef nodeRef1, NodeRef nodeRef2) {
 		super();
 		this.pivotKey = pivotKey;

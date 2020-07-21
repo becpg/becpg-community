@@ -38,12 +38,20 @@ import org.springframework.util.StopWatch;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityDictionaryService;
 
+/**
+ * <p>EntityDictionnaryWebScript class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class EntityDictionnaryWebScript extends AbstractWebScript {
 
 	private static final Log logger = LogFactory.getLog(EntityDictionnaryWebScript.class);
 
+	/** Constant <code>PARAM_ITEMTYPE="itemType"</code> */
 	protected static final String PARAM_ITEMTYPE = "itemType";
 
+	/** Constant <code>PARAM_ASSOCNAME="assocName"</code> */
 	protected static final String PARAM_ASSOCNAME = "assocName";
 
 	private EntityDictionaryService entityDictionaryService;
@@ -52,18 +60,34 @@ public class EntityDictionnaryWebScript extends AbstractWebScript {
 
 	private DictionaryService dictionaryService;
 
+	/**
+	 * <p>Setter for the field <code>dictionaryService</code>.</p>
+	 *
+	 * @param dictionaryService a {@link org.alfresco.service.cmr.dictionary.DictionaryService} object.
+	 */
 	public void setDictionaryService(DictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>namespaceService</code>.</p>
+	 *
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
+	 */
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityDictionaryService</code>.</p>
+	 *
+	 * @param entityDictionaryService a {@link fr.becpg.repo.entity.EntityDictionaryService} object.
+	 */
 	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
 		this.entityDictionaryService = entityDictionaryService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
 		StopWatch watch = null;

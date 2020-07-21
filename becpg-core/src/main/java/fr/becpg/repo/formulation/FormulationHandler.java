@@ -19,25 +19,34 @@ package fr.becpg.repo.formulation;
 
 /**
  * A handler in the chain of responsibility scheme.
+ *
  * @param <T> Any type passed as context information.
+ * @author matthieu
+ * @version $Id: $Id
  */
 public interface FormulationHandler<T> {
  
     /**
      * Implements processing element logic in a chain.
+     *
      * @param context Any type passed as context information.
      * @return <code>true</code>, if should call next handler
+     * @throws fr.becpg.repo.formulation.FormulateException if any.
      */
     boolean process(T context) throws FormulateException;
  
     /**
      * Sets next handler for the current one; called in post-processing
+     *
+     * @param next a {@link fr.becpg.repo.formulation.FormulationHandler} object.
      */
     void setNextHandler(FormulationHandler<T> next);
  
     /**
      * Entry point to the handler chain
-     * @throws FormulateException 
+     * 
+     * @param context a T object.
+     * @throws fr.becpg.repo.formulation.FormulateException
      */
     void start(T context) throws FormulateException;
 }

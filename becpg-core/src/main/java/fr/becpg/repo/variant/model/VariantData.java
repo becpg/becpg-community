@@ -22,6 +22,12 @@ import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
+/**
+ * <p>VariantData class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @AlfType
 @AlfQname(qname="bcpg:variant")
 public class VariantData extends BeCPGDataObject {
@@ -36,46 +42,90 @@ public class VariantData extends BeCPGDataObject {
 	private Double recipeVolumeUsed = 0d;
 	
 
+	/**
+	 * <p>reset.</p>
+	 */
 	public void reset() {
 		recipeQtyUsed = 0d;
 		recipeQtyUsedWithLossPerc = 0d;
 		recipeVolumeUsed = 0d;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>isDefaultVariant</code>.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:isDefaultVariant")
 	public Boolean getIsDefaultVariant() {
 		return isDefaultVariant!=null ? isDefaultVariant : false;
 	}
 
+	/**
+	 * <p>Setter for the field <code>isDefaultVariant</code>.</p>
+	 *
+	 * @param isDefaultVariant a {@link java.lang.Boolean} object.
+	 */
 	public void setIsDefaultVariant(Boolean isDefaultVariant) {
 		this.isDefaultVariant = isDefaultVariant;
 	}
 
+	/**
+	 * <p>Getter for the field <code>recipeQtyUsed</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public Double getRecipeQtyUsed() {
 		return recipeQtyUsed;
 	}
 
+	/**
+	 * <p>Setter for the field <code>recipeQtyUsed</code>.</p>
+	 *
+	 * @param recipeQtyUsed a {@link java.lang.Double} object.
+	 */
 	public void setRecipeQtyUsed(Double recipeQtyUsed) {
 		this.recipeQtyUsed = recipeQtyUsed;
 	}
 
+	/**
+	 * <p>Getter for the field <code>recipeQtyUsedWithLossPerc</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public Double getRecipeQtyUsedWithLossPerc() {
 		return recipeQtyUsedWithLossPerc;
 	}
 
+	/**
+	 * <p>Setter for the field <code>recipeQtyUsedWithLossPerc</code>.</p>
+	 *
+	 * @param recipeQtyUsedWithLossPerc a {@link java.lang.Double} object.
+	 */
 	public void setRecipeQtyUsedWithLossPerc(Double recipeQtyUsedWithLossPerc) {
 		this.recipeQtyUsedWithLossPerc = recipeQtyUsedWithLossPerc;
 	}
 
+	/**
+	 * <p>Getter for the field <code>recipeVolumeUsed</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public Double getRecipeVolumeUsed() {
 		return recipeVolumeUsed;
 	}
 
+	/**
+	 * <p>Setter for the field <code>recipeVolumeUsed</code>.</p>
+	 *
+	 * @param recipeVolumeUsed a {@link java.lang.Double} object.
+	 */
 	public void setRecipeVolumeUsed(Double recipeVolumeUsed) {
 		this.recipeVolumeUsed = recipeVolumeUsed;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "VariantData [isDefaultVariant=" + isDefaultVariant + "]";
@@ -83,6 +133,7 @@ public class VariantData extends BeCPGDataObject {
 	
 	
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -91,6 +142,7 @@ public class VariantData extends BeCPGDataObject {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

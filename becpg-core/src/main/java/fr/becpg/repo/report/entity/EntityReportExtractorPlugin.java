@@ -14,6 +14,7 @@ import org.alfresco.service.namespace.QName;
  * generate report.
  *
  * @author querephi
+ * @version $Id: $Id
  */
 public interface EntityReportExtractorPlugin {
 
@@ -31,10 +32,30 @@ public interface EntityReportExtractorPlugin {
 		}
 	}
 
+	/**
+	 * <p>extract.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param preferences a {@link java.util.Map} object.
+	 * @return a {@link fr.becpg.repo.report.entity.EntityReportData} object.
+	 */
 	EntityReportData extract(NodeRef entityNodeRef, Map<String, String> preferences);
 
+	/**
+	 * <p>shouldGenerateReport.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param generatedReportDate a {@link java.util.Date} object.
+	 * @return a boolean.
+	 */
 	boolean shouldGenerateReport(NodeRef entityNodeRef, Date generatedReportDate);
 
+	/**
+	 * <p>getMatchPriority.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link fr.becpg.repo.report.entity.EntityReportExtractorPlugin.EntityReportExtractorPriority} object.
+	 */
 	EntityReportExtractorPriority getMatchPriority(QName type);
 
 

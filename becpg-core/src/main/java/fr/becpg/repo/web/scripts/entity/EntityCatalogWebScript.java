@@ -33,7 +33,7 @@ import fr.becpg.repo.repository.L2CacheSupport;
  * Requires PLM Module
  *
  * @author steven
- *
+ * @version $Id: $Id
  */
 public class EntityCatalogWebScript extends AbstractWebScript {
 
@@ -49,27 +49,53 @@ public class EntityCatalogWebScript extends AbstractWebScript {
 
 	private EntityCatalogService entityCatalogService;
 
+	/**
+	 * <p>Setter for the field <code>ruleService</code>.</p>
+	 *
+	 * @param ruleService a {@link org.alfresco.service.cmr.rule.RuleService} object.
+	 */
 	public void setRuleService(RuleService ruleService) {
 		this.ruleService = ruleService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>policyBehaviourFilter</code>.</p>
+	 *
+	 * @param policyBehaviourFilter a {@link org.alfresco.repo.policy.BehaviourFilter} object.
+	 */
 	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
 		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>formulationService</code>.</p>
+	 *
+	 * @param formulationService a {@link fr.becpg.repo.formulation.FormulationService} object.
+	 */
 	public void setFormulationService(FormulationService<FormulatedEntity> formulationService) {
 		this.formulationService = formulationService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityCatalogService</code>.</p>
+	 *
+	 * @param entityCatalogService a {@link fr.becpg.repo.entity.catalog.EntityCatalogService} object.
+	 */
 	public void setEntityCatalogService(EntityCatalogService entityCatalogService) {
 		this.entityCatalogService = entityCatalogService;
 	}
 
 
+	/** {@inheritDoc} */
 	@SuppressWarnings("unchecked")
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {

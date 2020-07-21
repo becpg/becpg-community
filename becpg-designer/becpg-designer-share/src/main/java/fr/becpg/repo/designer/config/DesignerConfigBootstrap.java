@@ -33,9 +33,11 @@ import org.springframework.extensions.config.ConfigService;
 import org.springframework.extensions.config.source.UrlConfigSource;
 
 /**
- * 
+ * <p>DesignerConfigBootstrap class.</p>
+ *
  * @author "Matthieu Laborie" Patched
  *         ConfigBootstrap to used DesignerUrlConfigSource
+ * @version $Id: $Id
  */
 public class DesignerConfigBootstrap implements BeanNameAware, ConfigDeployer {
 
@@ -58,13 +60,14 @@ public class DesignerConfigBootstrap implements BeanNameAware, ConfigDeployer {
 	 * org.springframework.beans.factory.BeanNameAware#setBeanName(java.lang
 	 * .String)
 	 */
+	/** {@inheritDoc} */
 	public void setBeanName(String name) {
 		this.beanName = name;
 	}
 
 	/**
 	 * Set the configs
-	 * 
+	 *
 	 * @param configs
 	 *            the configs
 	 */
@@ -74,7 +77,7 @@ public class DesignerConfigBootstrap implements BeanNameAware, ConfigDeployer {
 
 	/**
 	 * Sets the ConfigService instance to deploy to
-	 * 
+	 *
 	 * @param configService
 	 *            ConfigService instance to deploy to
 	 */
@@ -85,7 +88,7 @@ public class DesignerConfigBootstrap implements BeanNameAware, ConfigDeployer {
 	/**
 	 * Method called by ConfigService when the configuration files represented
 	 * by this ConfigDeployer need to be initialised.
-	 * 
+	 *
 	 * @return List of ConfigDeployment objects
 	 */
 	public List<ConfigDeployment> initConfig() {
@@ -157,6 +160,11 @@ public class DesignerConfigBootstrap implements BeanNameAware, ConfigDeployer {
 	 * (non-Javadoc)
 	 * 
 	 * @see org.alfresco.config.ConfigDeployer#getSortKey()
+	 */
+	/**
+	 * <p>getSortKey.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
 	 */
 	public String getSortKey() {
 		return this.beanName;

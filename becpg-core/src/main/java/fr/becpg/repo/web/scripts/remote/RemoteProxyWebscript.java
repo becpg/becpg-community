@@ -37,9 +37,9 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 
 /**
  * Act has a remote proxy for webscript
- * 
- * @author matthieu
  *
+ * @author matthieu
+ * @version $Id: $Id
  */
 public class RemoteProxyWebscript extends AbstractWebScript {
 
@@ -53,20 +53,36 @@ public class RemoteProxyWebscript extends AbstractWebScript {
 
 	private char[] remotePwd;
 
+	/**
+	 * <p>Setter for the field <code>remoteServer</code>.</p>
+	 *
+	 * @param remoteServer a {@link java.lang.String} object.
+	 */
 	public void setRemoteServer(String remoteServer) {
 		this.remoteServer = remoteServer;
 	}
 
+	/**
+	 * <p>Setter for the field <code>remoteUser</code>.</p>
+	 *
+	 * @param remoteUser a {@link java.lang.String} object.
+	 */
 	public void setRemoteUser(String remoteUser) {
 		this.remoteUser = remoteUser;
 	}
 
+	/**
+	 * <p>Setter for the field <code>remotePwd</code>.</p>
+	 *
+	 * @param remotePwd an array of {@link char} objects.
+	 */
 	public void setRemotePwd(char[] remotePwd) {
 		if (remotePwd != null) {
 			this.remotePwd = Arrays.copyOf(remotePwd, remotePwd.length);
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
 

@@ -64,6 +64,12 @@ import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
 import fr.becpg.report.client.ReportFormat;
 
+/**
+ * <p>CoreInitVisitor class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class CoreInitVisitor extends AbstractInitVisitorImpl {
 
@@ -94,6 +100,7 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 	@Autowired
 	private BeCPGMailService beCPGMailService;
 
+	/** {@inheritDoc} */
 	@Override
 	public List<SiteInfo> visitContainer(NodeRef companyHome) {
 		logger.info("Run CoreInitVisitor");
@@ -156,6 +163,8 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * Add resources to folder
 	 */
 	@Override
@@ -174,6 +183,8 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * Initialize the rules of the repository
 	 */
 	@Override
@@ -227,6 +238,7 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected void vivitFolderAspects(NodeRef folderNodeRef, String folderName) {
 		switch (folderName) {
@@ -276,6 +288,7 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected void visitPermissions(NodeRef nodeRef, String folderName) {
 		if (Objects.equals(folderName, RepoConsts.PATH_SYSTEM)) {
@@ -284,6 +297,7 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Integer initOrder() {
 		return 0;

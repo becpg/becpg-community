@@ -20,12 +20,19 @@ import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.helper.AttachmentHelper;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 
+/**
+ * <p>CSVDataListOutputWriter class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class CSVDataListOutputWriter implements DataListOutputWriter {
 
 	@Autowired
 	private DictionaryService dictionaryService;
 
+	/** {@inheritDoc} */
 	@Override
 	public void write(WebScriptRequest req, WebScriptResponse res, DataListFilter dataListFilter, PaginatedExtractedItems extractedItems)
 			throws IOException {

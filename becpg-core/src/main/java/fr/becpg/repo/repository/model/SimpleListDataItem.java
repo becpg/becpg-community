@@ -17,11 +17,22 @@
  ******************************************************************************/
 package fr.becpg.repo.repository.model;
 
+/**
+ * <p>SimpleListDataItem interface.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public interface SimpleListDataItem extends ManualDataItem,
 					SimpleCharactDataItem,
 					AspectAwareDataItem,
 					SortableDataItem, Cloneable {
 
+	/**
+	 * <p>clone.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.repository.model.SimpleListDataItem} object.
+	 */
 	SimpleListDataItem clone();
 	
 }

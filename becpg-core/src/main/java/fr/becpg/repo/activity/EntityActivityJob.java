@@ -12,6 +12,12 @@ import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
+/**
+ * <p>EntityActivityJob class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class EntityActivityJob  implements Job {
 
 	private static final String KEY_ENTITY_ACTIVITY_SERVICE = "entityActivityService";
@@ -19,6 +25,7 @@ public class EntityActivityJob  implements Job {
 
 	private static final Log logger = LogFactory.getLog(EntityActivityJob.class);
 
+	/** {@inheritDoc} */
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 

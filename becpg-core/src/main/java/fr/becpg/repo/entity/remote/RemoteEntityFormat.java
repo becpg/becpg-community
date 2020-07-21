@@ -18,6 +18,12 @@
 package fr.becpg.repo.entity.remote;
 
 
+/**
+ * <p>RemoteEntityFormat class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public enum RemoteEntityFormat {
 	xml,csv, xml_excel, xml_all, xml_light, xsd, xsd_excel, json
 }

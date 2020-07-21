@@ -36,6 +36,12 @@ import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
+/**
+ * <p>ReqCtrlListDataItem class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @AlfType
 @AlfQname(qname = "bcpg:reqCtrlList")
 public class ReqCtrlListDataItem extends BeCPGDataObject {
@@ -55,30 +61,60 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 	
 	
 	
+	/**
+	 * <p>Getter for the field <code>formulationChainId</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:rclFormulationChainId")
 	public String getFormulationChainId() {
 		return formulationChainId;
 	}
 
+	/**
+	 * <p>Setter for the field <code>formulationChainId</code>.</p>
+	 *
+	 * @param formulationChainId a {@link java.lang.String} object.
+	 */
 	public void setFormulationChainId(String formulationChainId) {
 		this.formulationChainId = formulationChainId;
 	}
 
+	/**
+	 * <p>Getter for the field <code>reqType</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.constraints.RequirementType} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:rclReqType")
 	public RequirementType getReqType() {
 		return reqType;
 	}
 
+	/**
+	 * <p>Setter for the field <code>reqType</code>.</p>
+	 *
+	 * @param reqType a {@link fr.becpg.repo.product.data.constraints.RequirementType} object.
+	 */
 	public void setReqType(RequirementType reqType) {
 		this.reqType = reqType;
 	}
 
+	/**
+	 * <p>getReqMessage.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getReqMessage() {
 		return reqMlMessage!=null ? MLTextHelper.getClosestValue(reqMlMessage, Locale.getDefault()) : null;
 	}
 	
+	/**
+	 * <p>getKey.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getKey() {
 		String key = "key-";
 		if(getReqMessage()!=null){
@@ -98,6 +134,11 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 	}
 	
 	
+	/**
+	 * <p>Getter for the field <code>reqMlMessage</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object.
+	 */
 	@AlfProp
 	@AlfMlText
 	@AlfQname(qname="bcpg:rclReqMessage")
@@ -105,66 +146,134 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 		return reqMlMessage;
 	}
 
+	/**
+	 * <p>Setter for the field <code>reqMlMessage</code>.</p>
+	 *
+	 * @param reqMlMessage a {@link org.alfresco.service.cmr.repository.MLText} object.
+	 */
 	public void setReqMlMessage(MLText reqMlMessage) {
 		this.reqMlMessage = reqMlMessage;
 	}
 
+	/**
+	 * <p>Getter for the field <code>sort</code>.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:sort")
 	public Integer getSort() {
 		return sort;
 	}
 
+	/**
+	 * <p>Setter for the field <code>sort</code>.</p>
+	 *
+	 * @param sort a {@link java.lang.Integer} object.
+	 */
 	public void setSort(Integer sort) {
 		this.sort = sort;
 	}
 
+	/**
+	 * <p>Getter for the field <code>charact</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	@AlfSingleAssoc
 	@AlfQname(qname="bcpg:rclCharact")
 	public NodeRef getCharact() {
 		return charact;
 	}
 
+	/**
+	 * <p>Setter for the field <code>charact</code>.</p>
+	 *
+	 * @param charact a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void setCharact(NodeRef charact) {
 		this.charact = charact;
 	}
 
+	/**
+	 * <p>Getter for the field <code>sources</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@AlfMultiAssoc
 	@AlfQname(qname="bcpg:rclSources")
 	public List<NodeRef> getSources() {
 		return sources;
 	}
 
+	/**
+	 * <p>Setter for the field <code>sources</code>.</p>
+	 *
+	 * @param sources a {@link java.util.List} object.
+	 */
 	public void setSources(List<NodeRef> sources) {
 		this.sources = sources;
 	}
 
+	/**
+	 * <p>Getter for the field <code>reqDataType</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.constraints.RequirementDataType} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:rclDataType")
 	public RequirementDataType getReqDataType() {
 		return reqDataType;
 	}
 
+	/**
+	 * <p>Setter for the field <code>reqDataType</code>.</p>
+	 *
+	 * @param reqDataType a {@link fr.becpg.repo.product.data.constraints.RequirementDataType} object.
+	 */
 	public void setReqDataType(RequirementDataType reqDataType) {
 		this.reqDataType = reqDataType != null ? reqDataType : RequirementDataType.Nutrient;
 	}
 	
 	
+	/**
+	 * <p>Getter for the field <code>regulatoryCode</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:regulatoryCode")
 	public String getRegulatoryCode() {
 		return regulatoryCode;
 	}
 
+	/**
+	 * <p>Setter for the field <code>regulatoryCode</code>.</p>
+	 *
+	 * @param regulatoryCode a {@link java.lang.String} object.
+	 */
 	public void setRegulatoryCode(String regulatoryCode) {
 		this.regulatoryCode = regulatoryCode;
 	}
 
+	/**
+	 * <p>Constructor for ReqCtrlListDataItem.</p>
+	 */
 	public ReqCtrlListDataItem() {
 		super();
 	}
 
 
+	/**
+	 * <p>Constructor for ReqCtrlListDataItem.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param reqType a {@link fr.becpg.repo.product.data.constraints.RequirementType} object.
+	 * @param reqMessage a {@link org.alfresco.service.cmr.repository.MLText} object.
+	 * @param charact a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param sources a {@link java.util.List} object.
+	 * @param reqDataType a {@link fr.becpg.repo.product.data.constraints.RequirementDataType} object.
+	 */
 	public ReqCtrlListDataItem(NodeRef nodeRef, RequirementType reqType, MLText reqMessage, NodeRef charact, List<NodeRef> sources, RequirementDataType reqDataType){
 		super();
 		this.nodeRef = nodeRef;
@@ -176,6 +285,7 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 	}
 	
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -184,6 +294,7 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -197,6 +308,7 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 				&& Objects.equals(reqMlMessage, other.reqMlMessage) && reqType == other.reqType && Objects.equals(sources, other.sources);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "ReqCtrlListDataItem [reqType=" + reqType + ", reqMlMessage=" + reqMlMessage + ", sort=" + sort + ", charact=" + charact + ", sources="

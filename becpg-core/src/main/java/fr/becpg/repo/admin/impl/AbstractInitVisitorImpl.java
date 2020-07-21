@@ -43,9 +43,11 @@ import fr.becpg.repo.helper.TranslateHelper;
  * Abstract class used to initialize repository, modules.
  *
  * @author querephi
+ * @version $Id: $Id
  */
 public abstract class AbstractInitVisitorImpl implements InitVisitor {
 
+	/** Constant <code>logger</code> */
 	protected static final Log logger = LogFactory.getLog(AbstractInitVisitorImpl.class);
 
 	private static final String LOCALIZATION_PFX_GROUP = "becpg.group";
@@ -68,6 +70,13 @@ public abstract class AbstractInitVisitorImpl implements InitVisitor {
 	@Autowired
 	protected AuthorityService authorityService;
 
+	/**
+	 * <p>visitFolder.</p>
+	 *
+	 * @param parentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param folderPath a {@link java.lang.String} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	protected NodeRef visitFolder(NodeRef parentNodeRef, String folderPath) {
 
 		// get translated message
@@ -97,23 +106,60 @@ public abstract class AbstractInitVisitorImpl implements InitVisitor {
 		return folderNodeRef;
 	}
 
+	/**
+	 * <p>vivitFolderAspects.</p>
+	 *
+	 * @param folderNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param folderName a {@link java.lang.String} object.
+	 */
 	protected void vivitFolderAspects(NodeRef folderNodeRef, String folderName) {
 
 	}
 
+	/**
+	 * <p>visitFiles.</p>
+	 *
+	 * @param folderNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param folderName a {@link java.lang.String} object.
+	 */
 	protected void visitFiles(NodeRef folderNodeRef, String folderName) {
 
 	}
 
+	/**
+	 * <p>visitRules.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param folderName a {@link java.lang.String} object.
+	 */
 	protected void visitRules(NodeRef nodeRef, String folderName) {
 	}
 
+	/**
+	 * <p>visitWF.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param folderName a {@link java.lang.String} object.
+	 */
 	protected void visitWF(NodeRef nodeRef, String folderName) {
 	}
 
+	/**
+	 * <p>visitPermissions.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param folderName a {@link java.lang.String} object.
+	 */
 	protected void visitPermissions(NodeRef nodeRef, String folderName) {
 	}
 
+	/**
+	 * <p>createRuleSpecialiseType.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param applyToChildren a boolean.
+	 * @param type a {@link org.alfresco.service.namespace.QName} object.
+	 */
 	protected void createRuleSpecialiseType(NodeRef nodeRef, boolean applyToChildren, QName type) {
 
 		// Action : apply type
@@ -141,6 +187,14 @@ public abstract class AbstractInitVisitorImpl implements InitVisitor {
 		ruleService.saveRule(nodeRef, rule);
 	}
 
+	/**
+	 * <p>createRuleAspect.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param applyToChildren a boolean.
+	 * @param type a {@link org.alfresco.service.namespace.QName} object.
+	 * @param aspect a {@link org.alfresco.service.namespace.QName} object.
+	 */
 	protected void createRuleAspect(NodeRef nodeRef, boolean applyToChildren, QName type, QName aspect) {
 
 		// action
@@ -174,6 +228,11 @@ public abstract class AbstractInitVisitorImpl implements InitVisitor {
 
 	}
 
+	/**
+	 * <p>createGroups.</p>
+	 *
+	 * @param groups an array of {@link java.lang.String} objects.
+	 */
 	protected void createGroups(String[] groups) {
 
 		Set<String> zones = new HashSet<>();
@@ -207,6 +266,11 @@ public abstract class AbstractInitVisitorImpl implements InitVisitor {
 
 	}
 
+	/**
+	 * <p>addSystemFolderAspect.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	protected void addSystemFolderAspect(NodeRef nodeRef) {
 		if (!nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_SYSTEM_FOLDER)) {
 			nodeService.addAspect(nodeRef, BeCPGModel.ASPECT_SYSTEM_FOLDER, null);

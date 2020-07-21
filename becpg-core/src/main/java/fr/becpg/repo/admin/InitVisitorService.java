@@ -22,7 +22,19 @@ import java.util.List;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.site.SiteInfo;
 
+/**
+ * <p>InitVisitorService interface.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public interface InitVisitorService {
 	
+	/**
+	 * <p>run.</p>
+	 *
+	 * @param companyHomeNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link java.util.List} object.
+	 */
 	List<SiteInfo> run(NodeRef companyHomeNodeRef);
 }

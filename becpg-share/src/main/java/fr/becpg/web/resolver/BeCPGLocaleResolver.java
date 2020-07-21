@@ -16,12 +16,14 @@ import org.springframework.extensions.webscripts.connector.User;
 import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
 
 /**
+ * <p>BeCPGLocaleResolver class.</p>
  *
  * @author matthieu
- *
+ * @version $Id: $Id
  */
 public class BeCPGLocaleResolver extends AcceptHeaderLocaleResolver {
 
+	/** {@inheritDoc} */
 	@Override
 	public Locale resolveLocale(HttpServletRequest request) {
 

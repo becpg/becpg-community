@@ -30,6 +30,12 @@ import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.security.BeCPGAccessDeniedException;
 import fr.becpg.repo.security.SecurityService;
 
+/**
+ * <p>SecurityMethodBeforeAdvice class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class SecurityMethodBeforeAdvice implements MethodBeforeAdvice {
 
 	private SecurityService securityService;
@@ -38,14 +44,25 @@ public class SecurityMethodBeforeAdvice implements MethodBeforeAdvice {
 
 	private static final Log logger = LogFactory.getLog(SecurityMethodBeforeAdvice.class);
 
+	/**
+	 * <p>Setter for the field <code>securityService</code>.</p>
+	 *
+	 * @param securityService a {@link fr.becpg.repo.security.SecurityService} object.
+	 */
 	public void setSecurityService(SecurityService securityService) {
 		this.securityService = securityService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>namespaceService</code>.</p>
+	 *
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
+	 */
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void before(Method m, Object[] args, Object target) throws Throwable {
 

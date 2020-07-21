@@ -28,12 +28,19 @@ import org.alfresco.service.cmr.repository.NodeService;
 import fr.becpg.model.BeCPGModel;
 
 /**
- * 
- * @author matthieu
+ * <p>DesignerHelper class.</p>
  *
+ * @author matthieu
+ * @version $Id: $Id
  */
 public class DesignerHelper {
 
+	/**
+	 * <p>sort.</p>
+	 *
+	 * @param assocs a {@link java.util.List} object.
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public static void sort(List<ChildAssociationRef> assocs, final NodeService nodeService) {
 		Collections.sort(assocs, new Comparator<ChildAssociationRef>() {
 

@@ -5,10 +5,24 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * <p>CheckSumHelper class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class CheckSumHelper {
 	
      private final static Log logger = LogFactory.getLog(CheckSumHelper.class);
 	
+	/**
+	 * <p>updateChecksum.</p>
+	 *
+	 * @param key a {@link java.lang.String} object.
+	 * @param value a {@link java.lang.String} object.
+	 * @param checksum a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	public static  String updateChecksum(String key, String value, String checksum) {
 		try {
 			JSONObject json = null;
@@ -33,6 +47,14 @@ public class CheckSumHelper {
 		return null;
 	}
 
+	/**
+	 * <p>isSameChecksum.</p>
+	 *
+	 * @param key a {@link java.lang.String} object.
+	 * @param value a {@link java.lang.String} object.
+	 * @param checksum a {@link java.lang.String} object.
+	 * @return a boolean.
+	 */
 	public static boolean isSameChecksum(String key, String value, String checksum) {
 		try {
 			if ((value != null)) {

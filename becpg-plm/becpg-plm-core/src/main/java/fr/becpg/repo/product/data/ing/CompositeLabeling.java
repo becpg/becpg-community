@@ -16,8 +16,15 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 
 //TODO voir pour faire mieux avec les heritages Composite<LabelingComponent>
+/**
+ * <p>CompositeLabeling class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class CompositeLabeling extends LabelingComponent {
 
+	/** Constant <code>ROOT="root"</code> */
 	public final static String ROOT = "root";
 
 	private static final long serialVersionUID = 7903326038199131582L;
@@ -36,15 +43,28 @@ public class CompositeLabeling extends LabelingComponent {
 
 	private DeclarationType declarationType;
 	
+	/**
+	 * <p>Constructor for CompositeLabeling.</p>
+	 *
+	 * @param name a {@link java.lang.String} object.
+	 */
 	public CompositeLabeling(String name) {
 		super();
 		this.name = name;
 	}
 
+	/**
+	 * <p>Constructor for CompositeLabeling.</p>
+	 */
 	public CompositeLabeling() {
 		super();
 	}
 
+	/**
+	 * <p>Constructor for CompositeLabeling.</p>
+	 *
+	 * @param compositeLabeling a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object.
+	 */
 	public CompositeLabeling(CompositeLabeling compositeLabeling) {
 		super(compositeLabeling);
 		this.ingType = compositeLabeling.ingType;
@@ -55,6 +75,11 @@ public class CompositeLabeling extends LabelingComponent {
 		this.declarationType = compositeLabeling.declarationType;
 	}
 
+	/**
+	 * <p>Constructor for CompositeLabeling.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object.
+	 */
 	public CompositeLabeling(ProductData productData) {
 		this.name = productData.getName();
 		this.nodeRef = productData.getNodeRef();
@@ -64,6 +89,13 @@ public class CompositeLabeling extends LabelingComponent {
 
 	}
 
+	/**
+	 * <p>clone.</p>
+	 *
+	 * @param list a {@link java.util.List} object.
+	 * @param <T> a T object.
+	 * @return a {@link java.util.List} object.
+	 */
 	@SuppressWarnings("unchecked")
 	protected <T extends CompositeLabeling> List<T> clone(List<T> list) {
 		List<T> ret = new LinkedList<>();
@@ -75,6 +107,12 @@ public class CompositeLabeling extends LabelingComponent {
 		return ret;
 	}
 
+	/**
+	 * <p>clone.</p>
+	 *
+	 * @param list a {@link java.util.Map} object.
+	 * @return a {@link java.util.Map} object.
+	 */
 	protected Map<NodeRef, CompositeLabeling> clone(Map<NodeRef, CompositeLabeling> list) {
 		Map<NodeRef, CompositeLabeling> ret = new LinkedHashMap<>();
 		if (list != null) {
@@ -87,96 +125,205 @@ public class CompositeLabeling extends LabelingComponent {
 
 	
 
+	/**
+	 * <p>Getter for the field <code>ingType</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.ing.IngTypeItem} object.
+	 */
 	public IngTypeItem getIngType() {
 		return ingType;
 	}
 
+	/**
+	 * <p>Setter for the field <code>ingType</code>.</p>
+	 *
+	 * @param ingType a {@link fr.becpg.repo.product.data.ing.IngTypeItem} object.
+	 */
 	public void setIngType(IngTypeItem ingType) {
 		this.ingType = ingType;
 	}
 
+	/**
+	 * <p>Getter for the field <code>declarationType</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.constraints.DeclarationType} object.
+	 */
 	public DeclarationType getDeclarationType() {
 		return declarationType;
 	}
 
+	/**
+	 * <p>Setter for the field <code>declarationType</code>.</p>
+	 *
+	 * @param declarationType a {@link fr.becpg.repo.product.data.constraints.DeclarationType} object.
+	 */
 	public void setDeclarationType(DeclarationType declarationType) {
 		this.declarationType = declarationType;
 	}
 
+	/**
+	 * <p>isGroup.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public boolean isGroup() {
 		return DeclarationType.Group.equals(declarationType) || DeclarationType.Kit.equals(declarationType);
 	}
 
+	/**
+	 * <p>Getter for the field <code>qtyTotal</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public Double getQtyTotal() {
 		return qtyTotal;
 	}
 
+	/**
+	 * <p>Setter for the field <code>qtyTotal</code>.</p>
+	 *
+	 * @param qtyTotal a {@link java.lang.Double} object.
+	 */
 	public void setQtyTotal(Double qtyTotal) {
 		this.qtyTotal = qtyTotal;
 	}
 
+	/**
+	 * <p>Getter for the field <code>evaporatingLoss</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public Double getEvaporatingLoss() {
 		return evaporatingLoss;
 	}
 
+	/**
+	 * <p>Setter for the field <code>evaporatingLoss</code>.</p>
+	 *
+	 * @param evaporatingLoss a {@link java.lang.Double} object.
+	 */
 	public void setEvaporatingLoss(Double evaporatingLoss) {
 		this.evaporatingLoss = evaporatingLoss;
 	}
 
+	/**
+	 * <p>Getter for the field <code>volumeTotal</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public Double getVolumeTotal() {
 		return volumeTotal;
 	}
 
+	/**
+	 * <p>Setter for the field <code>volumeTotal</code>.</p>
+	 *
+	 * @param volumeTotal a {@link java.lang.Double} object.
+	 */
 	public void setVolumeTotal(Double volumeTotal) {
 		this.volumeTotal = volumeTotal;
 	}
 
+	/**
+	 * <p>add.</p>
+	 *
+	 * @param ing a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object.
+	 */
 	public void add(CompositeLabeling ing) {
 		ingList.put(ing.getNodeRef(), ing);
 	}
 
+	/**
+	 * <p>addAtEnd.</p>
+	 *
+	 * @param ing a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object.
+	 */
 	public void addAtEnd(CompositeLabeling ing) {
 		ingListAtEnd.put(ing.getNodeRef(), ing);
 	}
 
+	/**
+	 * <p>remove.</p>
+	 *
+	 * @param ing a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void remove(NodeRef ing) {
 		ingList.remove(ing);
 	}
 
+	/**
+	 * <p>get.</p>
+	 *
+	 * @param grpNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object.
+	 */
 	public CompositeLabeling get(NodeRef grpNodeRef) {
 		return ingList.get(grpNodeRef);
 	}
 
+	/**
+	 * <p>getAtEnd.</p>
+	 *
+	 * @param grpNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object.
+	 */
 	public CompositeLabeling getAtEnd(NodeRef grpNodeRef) {
 		return ingListAtEnd.get(grpNodeRef);
 	}
 
+	/**
+	 * <p>removeAtEnd.</p>
+	 *
+	 * @param ing a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void removeAtEnd(NodeRef ing) {
 		ingListAtEnd.remove(ing);
 
 	}
 
+	/**
+	 * <p>Getter for the field <code>ingListAtEnd</code>.</p>
+	 *
+	 * @return a {@link java.util.Map} object.
+	 */
 	public Map<NodeRef, CompositeLabeling> getIngListAtEnd() {
 		return ingListAtEnd;
 	}
 
+	/**
+	 * <p>Setter for the field <code>ingListAtEnd</code>.</p>
+	 *
+	 * @param ingListAtEnd a {@link java.util.Map} object.
+	 */
 	public void setIngListAtEnd(Map<NodeRef, CompositeLabeling> ingListAtEnd) {
 		this.ingListAtEnd = ingListAtEnd;
 	}
 
+	/**
+	 * <p>Getter for the field <code>ingList</code>.</p>
+	 *
+	 * @return a {@link java.util.Map} object.
+	 */
 	public Map<NodeRef, CompositeLabeling> getIngList() {
 		return ingList;
 	}
 
+	/**
+	 * <p>Setter for the field <code>ingList</code>.</p>
+	 *
+	 * @param ingList a {@link java.util.Map} object.
+	 */
 	public void setIngList(Map<NodeRef, CompositeLabeling> ingList) {
 		this.ingList = ingList;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public CompositeLabeling clone() {
 		return new CompositeLabeling(this);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();

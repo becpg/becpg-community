@@ -18,12 +18,14 @@ import fr.becpg.repo.cache.BeCPGCacheService;
 
 /**
  * Class used to load supported currencies constraints
- * 
+ *
  * @author rabah
+ * @version $Id: $Id
  */
 public class CurrencyConstraint extends ListOfValuesConstraint {
 
 
+	/** Constant <code>UNDIFINED_CONSTRAINT_VALUE="-"</code> */
 	public static final String UNDIFINED_CONSTRAINT_VALUE = "-";
 	private static final String ERR_NON_STRING = "d_dictionary.constraint.string_length.non_string";
 	private static final String ERR_INVALID_VALUE = "d_dictionary.constraint.list_of_values.invalid_value";
@@ -36,18 +38,34 @@ public class CurrencyConstraint extends ListOfValuesConstraint {
 	
 
 
+	/**
+	 * <p>Setter for the field <code>beCPGCacheService</code>.</p>
+	 *
+	 * @param beCPGCacheService a {@link fr.becpg.repo.cache.BeCPGCacheService} object.
+	 */
 	public void setBeCPGCacheService(BeCPGCacheService beCPGCacheService) {
 		CurrencyConstraint.beCPGCacheService = beCPGCacheService;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>propConstraints</code>.</p>
+	 *
+	 * @param propConstraints a {@link java.lang.String} object.
+	 */
 	public void setPropConstraints(String propConstraints) {
 		CurrencyConstraint.propConstraints = propConstraints;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>allowedValuesSuffix</code>.</p>
+	 *
+	 * @param allowedValuesSuffix a {@link java.util.List} object.
+	 */
 	public void setAllowedValuesSuffix(List<String> allowedValuesSuffix) {
 		this.allowedValuesSuffix = allowedValuesSuffix;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void initialize() {
 		if(allowedValuesSuffix != null) {
@@ -55,16 +73,19 @@ public class CurrencyConstraint extends ListOfValuesConstraint {
 		}
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public List<String> getAllowedValues() {
 		return getAllowedValuesFromCache();
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public String getDisplayLabel(String constraintAllowableValue, MessageLookup messageLookup) {
 		return constraintAllowableValue;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	protected void evaluateSingleValue(Object value) {
 		// convert the value to a String
@@ -80,6 +101,11 @@ public class CurrencyConstraint extends ListOfValuesConstraint {
 		}
 	}
 
+	/**
+	 * <p>getAllowedValuesFromCache.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	public  List<String> getAllowedValuesFromCache() {
 		return beCPGCacheService.getFromCache(CurrencyConstraint.class.getName(), getShortName(), () -> {
 			if(propConstraints !=  null) {

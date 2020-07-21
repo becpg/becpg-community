@@ -32,6 +32,12 @@ import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.helper.impl.AbstractExprNameExtractor;
 
 
+/**
+ * <p>VariantAttributeExtractorPlugin class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class VariantAttributeExtractorPlugin extends AbstractExprNameExtractor {
 
@@ -39,16 +45,19 @@ public class VariantAttributeExtractorPlugin extends AbstractExprNameExtractor {
 	private EntityDictionaryService entityDictionaryService;
 
 
+	/** {@inheritDoc} */
 	@Override
 	public Collection<QName> getMatchingTypes() {
 		return entityDictionaryService.getSubTypes(BeCPGModel.TYPE_VARIANT);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String extractPropName(QName type, NodeRef nodeRef) {
 		return (String)nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String extractMetadata(QName type, NodeRef nodeRef) {
 		Boolean isDefault = (Boolean) nodeService.getProperty(nodeRef, BeCPGModel.PROP_IS_DEFAULT_VARIANT);

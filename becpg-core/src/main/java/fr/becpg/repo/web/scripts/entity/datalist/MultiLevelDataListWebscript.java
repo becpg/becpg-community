@@ -25,6 +25,12 @@ import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 import fr.becpg.repo.entity.datalist.impl.MultiLevelExtractor;
 
+/**
+ * <p>MultiLevelDataListWebscript class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class MultiLevelDataListWebscript extends AbstractWebScript {
 
 	private static final String PARAM_NODEREF = "nodeRef";
@@ -42,26 +48,52 @@ public class MultiLevelDataListWebscript extends AbstractWebScript {
 
 	private PreferenceService preferenceService;
 
+	/**
+	 * <p>Setter for the field <code>namespaceService</code>.</p>
+	 *
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
+	 */
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>multiLevelDataListService</code>.</p>
+	 *
+	 * @param multiLevelDataListService a {@link fr.becpg.repo.entity.datalist.MultiLevelDataListService} object.
+	 */
 	public void setMultiLevelDataListService(MultiLevelDataListService multiLevelDataListService) {
 		this.multiLevelDataListService = multiLevelDataListService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityDictionaryService</code>.</p>
+	 *
+	 * @param entityDictionaryService a {@link fr.becpg.repo.entity.EntityDictionaryService} object.
+	 */
 	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
 		this.entityDictionaryService = entityDictionaryService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>preferenceService</code>.</p>
+	 *
+	 * @param preferenceService a {@link org.alfresco.service.cmr.preference.PreferenceService} object.
+	 */
 	public void setPreferenceService(PreferenceService preferenceService) {
 		this.preferenceService = preferenceService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
 

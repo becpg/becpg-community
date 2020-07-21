@@ -14,6 +14,12 @@ import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
+/**
+ * <p>NotificationRuleListDataItem class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @AlfType
 @AlfQname(qname = "bcpg:notificationRuleList")
 public class NotificationRuleListDataItem extends BeCPGDataObject{
@@ -38,162 +44,316 @@ public class NotificationRuleListDataItem extends BeCPGDataObject{
 	
 	
 	
+	/**
+	 * <p>Constructor for NotificationRuleListDataItem.</p>
+	 */
 	public NotificationRuleListDataItem() {
 		super();	
 	}
 
+	/**
+	 * <p>Getter for the field <code>nodeType</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:nrNodeType")
 	public String getNodeType() {
 		return nodeType;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeType</code>.</p>
+	 *
+	 * @param nodeType a {@link java.lang.String} object.
+	 */
 	public void setNodeType(String nodeType) {
 		this.nodeType = nodeType;
 	}
 
+	/**
+	 * <p>Getter for the field <code>dateField</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:nrDateField")
 	public String getDateField() {
 		return dateField;
 	}
 
+	/**
+	 * <p>Setter for the field <code>dateField</code>.</p>
+	 *
+	 * @param dateField a {@link java.lang.String} object.
+	 */
 	public void setDateField(String dateField) {
 		this.dateField = dateField;
 	}
 
+	/**
+	 * <p>Getter for the field <code>target</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	@AlfSingleAssoc
 	@AlfQname(qname="bcpg:nrTarget")
 	public NodeRef getTarget() {
 		return target;
 	}
 
+	/**
+	 * <p>Setter for the field <code>target</code>.</p>
+	 *
+	 * @param target a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void setTarget(NodeRef target) {
 		this.target = target;
 	}
 
+	/**
+	 * <p>Getter for the field <code>condtions</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:nrConditions")
 	public String getCondtions() {
 		return condtions;
 	}
 
+	/**
+	 * <p>Setter for the field <code>condtions</code>.</p>
+	 *
+	 * @param condtions a {@link java.lang.String} object.
+	 */
 	public void setCondtions(String condtions) {
 		this.condtions = condtions;
 	}
 
+	/**
+	 * <p>Getter for the field <code>frequency</code>.</p>
+	 *
+	 * @return a int.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:nrFrequency")
 	public int getFrequency() {
 		return frequency;
 	}
 
+	/**
+	 * <p>Setter for the field <code>frequency</code>.</p>
+	 *
+	 * @param frequency a int.
+	 */
 	public void setFrequency(int frequency) {
 		this.frequency = frequency;
 	}
 
 
+	/**
+	 * <p>Getter for the field <code>days</code>.</p>
+	 *
+	 * @return a int.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:nrTimeNumber")
 	public int getDays() {
 		return days;
 	}
 
+	/**
+	 * <p>Setter for the field <code>days</code>.</p>
+	 *
+	 * @param days a int.
+	 */
 	public void setDays(int days) {
 		this.days = days;
 	}
 
+	/**
+	 * <p>Getter for the field <code>timeType</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.notification.data.NotificationRuleTimeType} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:nrTimeType")
 	public NotificationRuleTimeType getTimeType() {
 		return timeType;
 	}
 
+	/**
+	 * <p>Setter for the field <code>timeType</code>.</p>
+	 *
+	 * @param timeType a {@link fr.becpg.repo.notification.data.NotificationRuleTimeType} object.
+	 */
 	public void setTimeType(NotificationRuleTimeType timeType) {
 		this.timeType = timeType;
 	}
 
+	/**
+	 * <p>Getter for the field <code>authorities</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@AlfMultiAssoc
 	@AlfQname(qname="bcpg:nrNotificationAuthorities")
 	public List<NodeRef> getAuthorities() {
 		return authorities;
 	}
 
+	/**
+	 * <p>Setter for the field <code>authorities</code>.</p>
+	 *
+	 * @param authorities a {@link java.util.List} object.
+	 */
 	public void setAuthorities(List<NodeRef> authorities) {
 		this.authorities = authorities;
 	}
 
+	/**
+	 * <p>Getter for the field <code>subject</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:nrSubject")
 	public String getSubject() {
 		return subject;
 	}
 
+	/**
+	 * <p>Setter for the field <code>subject</code>.</p>
+	 *
+	 * @param subject a {@link java.lang.String} object.
+	 */
 	public void setSubject(String subject) {
 		this.subject = subject;
 	}
 
+	/**
+	 * <p>Getter for the field <code>email</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	@AlfSingleAssoc
 	@AlfQname(qname="bcpg:nrEmail")
 	public NodeRef getEmail() {
 		return email;
 	}
 
+	/**
+	 * <p>Setter for the field <code>email</code>.</p>
+	 *
+	 * @param email a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void setEmail(NodeRef email) {
 		this.email = email;
 	}
 
+	/**
+	 * <p>Getter for the field <code>frequencyStartDate</code>.</p>
+	 *
+	 * @return a {@link java.util.Date} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:nrFrequencyStartDate")
 	public Date getFrequencyStartDate() {
 		return frequencyStartDate;
 	}
 
+	/**
+	 * <p>Setter for the field <code>frequencyStartDate</code>.</p>
+	 *
+	 * @param frequencyStartDate a {@link java.util.Date} object.
+	 */
 	public void setFrequencyStartDate(Date frequencyStartDate) {
 		this.frequencyStartDate = frequencyStartDate;
 	}
 
 
+	/**
+	 * <p>Getter for the field <code>versionFilterType</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.notification.data.VersionFilterType} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:nrVersionFilter")
 	public VersionFilterType getVersionFilterType() {
 		return versionFilterType;
 	}
 
+	/**
+	 * <p>Setter for the field <code>versionFilterType</code>.</p>
+	 *
+	 * @param versionFilterType a {@link fr.becpg.repo.notification.data.VersionFilterType} object.
+	 */
 	public void setVersionFilterType(VersionFilterType versionFilterType) {
 		this.versionFilterType = versionFilterType;
 	}
 
+	/**
+	 * <p>isEnforced.</p>
+	 *
+	 * @return a boolean.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:nrForceNotification")
 	public boolean isEnforced() {
 		return enforced;
 	}
 
+	/**
+	 * <p>Setter for the field <code>enforced</code>.</p>
+	 *
+	 * @param enforced a boolean.
+	 */
 	public void setEnforced(boolean enforced) {
 		this.enforced = enforced;
 	}
 
+	/**
+	 * <p>Getter for the field <code>recurringTime</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.notification.data.RecurringTimeType} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:nrRecurringTimeType")
 	public RecurringTimeType getRecurringTime() {
 		return recurringTime;
 	}
 
+	/**
+	 * <p>Setter for the field <code>recurringTime</code>.</p>
+	 *
+	 * @param recurringTime a {@link fr.becpg.repo.notification.data.RecurringTimeType} object.
+	 */
 	public void setRecurringTime(RecurringTimeType recurringTime) {
 		this.recurringTime = recurringTime;
 	}
 
+	/**
+	 * <p>Getter for the field <code>recurringDay</code>.</p>
+	 *
+	 * @return a {@link java.time.DayOfWeek} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:nrRecurringDay")
 	public DayOfWeek getRecurringDay() {
 		return recurringDay;
 	}
 
+	/**
+	 * <p>Setter for the field <code>recurringDay</code>.</p>
+	 *
+	 * @param recurringDay a {@link java.time.DayOfWeek} object.
+	 */
 	public void setRecurringDay(DayOfWeek recurringDay) {
 		this.recurringDay = recurringDay;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -216,6 +376,7 @@ public class NotificationRuleListDataItem extends BeCPGDataObject{
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -282,6 +443,7 @@ public class NotificationRuleListDataItem extends BeCPGDataObject{
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "NotificationRuleListDataItem [nodeType=" + nodeType + ", dateField=" + dateField + ", condtions=" + condtions + ", target=" + target

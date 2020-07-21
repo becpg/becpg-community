@@ -7,11 +7,25 @@ import org.alfresco.service.namespace.QName;
  * The Interface AutoNumService.
  *
  * @author querephi
+ * @version $Id: $Id
  */
 public interface AutoNumService {
 
+	/**
+	 * <p>getOrCreateCode.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param codeQName a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	String getOrCreateCode(NodeRef nodeRef, QName codeQName);
 
+	/**
+	 * <p>getOrCreateBeCPGCode.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	String getOrCreateBeCPGCode(NodeRef nodeRef);
 
 	/**
@@ -36,16 +50,20 @@ public interface AutoNumService {
 	void deleteAutoNumValue(QName className, QName propertyName);
 
 	/**
-	 * @param type
-	 * @param propertyName
+	 * <p>getAutoNumMatchPattern.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object.
+	 * @param propertyName a {@link org.alfresco.service.namespace.QName} object.
 	 * @return the pattern string for the corresponding code
 	 */
 	String getAutoNumMatchPattern(QName type, QName propertyName);
 
 	/**
-	 * @param type
-	 * @param propertyName
-	 * @param autoNum
+	 * <p>getPrefixedCode.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object.
+	 * @param propertyName a {@link org.alfresco.service.namespace.QName} object.
+	 * @param autoNum a {@link java.lang.Long} object.
 	 * @return the prefixed String for the given type
 	 */
 	String getPrefixedCode(QName type, QName propertyName, Long autoNum);

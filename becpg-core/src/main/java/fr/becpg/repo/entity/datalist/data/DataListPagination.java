@@ -27,9 +27,9 @@ import fr.becpg.repo.RepoConsts;
 
 /**
  * DataList Pagination container
- * 
+ *
  * @author matthieu
- * 
+ * @version $Id: $Id
  */
 public class DataListPagination {
 
@@ -43,10 +43,20 @@ public class DataListPagination {
 	
 	private String queryExecutionId = null;
 
+	/**
+	 * <p>Getter for the field <code>maxResults</code>.</p>
+	 *
+	 * @return a int.
+	 */
 	public int getMaxResults() {
 		return maxResults;
 	}
 
+	/**
+	 * <p>Setter for the field <code>maxResults</code>.</p>
+	 *
+	 * @param maxResults a {@link java.lang.Integer} object.
+	 */
 	public void setMaxResults(Integer maxResults) {
 		if (maxResults == null) {
 			maxResults = -1;
@@ -54,10 +64,20 @@ public class DataListPagination {
 		this.maxResults = maxResults;
 	}
 
+	/**
+	 * <p>Getter for the field <code>pageSize</code>.</p>
+	 *
+	 * @return a int.
+	 */
 	public int getPageSize() {
 		return pageSize;
 	}
 
+	/**
+	 * <p>Setter for the field <code>pageSize</code>.</p>
+	 *
+	 * @param pageSize a {@link java.lang.Integer} object.
+	 */
 	public void setPageSize(Integer pageSize) {
 		if (pageSize == null) {
 			pageSize = RepoConsts.DATA_LISTS_PAGESIZE;
@@ -65,18 +85,38 @@ public class DataListPagination {
 		this.pageSize = pageSize;
 	}
 
+	/**
+	 * <p>Getter for the field <code>fullListSize</code>.</p>
+	 *
+	 * @return a int.
+	 */
 	public int getFullListSize() {
 		return fullListSize;
 	}
 
+	/**
+	 * <p>Setter for the field <code>fullListSize</code>.</p>
+	 *
+	 * @param fullListSize a int.
+	 */
 	public void setFullListSize(int fullListSize) {
 		this.fullListSize = fullListSize;
 	}
 
+	/**
+	 * <p>Getter for the field <code>page</code>.</p>
+	 *
+	 * @return a int.
+	 */
 	public int getPage() {
 		return page;
 	}
 
+	/**
+	 * <p>Setter for the field <code>page</code>.</p>
+	 *
+	 * @param page a {@link java.lang.Integer} object.
+	 */
 	public void setPage(Integer page) {
 		if (page == null) {
 			page = 1;
@@ -85,14 +125,31 @@ public class DataListPagination {
 	}
 
 
+	/**
+	 * <p>Getter for the field <code>queryExecutionId</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getQueryExecutionId() {
 		return queryExecutionId;
 	}
 
+	/**
+	 * <p>Setter for the field <code>queryExecutionId</code>.</p>
+	 *
+	 * @param queryExecutionId a {@link java.lang.String} object.
+	 */
 	public void setQueryExecutionId(String queryExecutionId) {
 		this.queryExecutionId = queryExecutionId;
 	}
 	
+	/**
+	 * <p>paginate.</p>
+	 *
+	 * @param list a {@link java.util.List} object.
+	 * @param <T> a T object.
+	 * @return a {@link java.util.List} object.
+	 */
 	public <T> List<T> paginate(List<T> list) {
 		if (list != null) {
 			fullListSize = list.size();
@@ -105,6 +162,12 @@ public class DataListPagination {
 		return list;
 	}
 
+	/**
+	 * <p>paginate.</p>
+	 *
+	 * @param pageOfNodeInfos a {@link org.alfresco.query.PagingResults} object.
+	 * @return a {@link java.util.List} object.
+	 */
 	public List<NodeRef> paginate(PagingResults<NodeRef> pageOfNodeInfos) {
    		    List<NodeRef> ret = pageOfNodeInfos.getPage();
 
@@ -119,6 +182,7 @@ public class DataListPagination {
 	}
 	
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "DataListPagination [maxResults=" + maxResults + ", pageSize=" + pageSize + ", fullListSize=" + fullListSize + ", page=" + page + "]";

@@ -30,6 +30,7 @@ import fr.becpg.repo.designer.DesignerService;
  * The Class CreateModelElementWebScript.
  *
  * @author matthieu
+ * @version $Id: $Id
  */
 public class CreateModelElementWebScript extends DeclarativeWebScript  {
 	
@@ -74,6 +75,8 @@ public class CreateModelElementWebScript extends DeclarativeWebScript  {
 
 
 	/**
+	 * <p>Setter for the field <code>designerService</code>.</p>
+	 *
 	 * @param designerService the designerService to set
 	 */
 	public void setDesignerService(DesignerService designerService) {
@@ -82,6 +85,8 @@ public class CreateModelElementWebScript extends DeclarativeWebScript  {
 
 
 	/**
+	 * <p>Setter for the field <code>namespaceService</code>.</p>
+	 *
 	 * @param namespaceService the namespaceService to set
 	 */
 	public void setNamespaceService(NamespaceService namespaceService) {
@@ -90,16 +95,13 @@ public class CreateModelElementWebScript extends DeclarativeWebScript  {
 
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * Retrieve model Tree
-	 * 
+	 *
 	 *    <url>/becpg/designer/create/element?nodeRef={nodeRef}</url>
 	 *	  <url>/becpg/designer/dnd/{palette_el_id}?nodeRef={nodeRef}</url>
 	 *	  <url>/becpg/designer/dnd/{store_type}/{store_id}/{id}?nodeRef={nodeRef}</url>
-	 *
-	 * @param req the req
-	 * @param status the status
-	 * @param cache the cache
-	 * @return the map
 	 */
 	@Override
 	protected Map<String, Object> executeImpl(WebScriptRequest req, Status status, Cache cache){

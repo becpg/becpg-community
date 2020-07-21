@@ -49,6 +49,12 @@ import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
 
+/**
+ * <p>Abstract AbstractBeCPGPolicy class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyNodePolicy, CopyServicePolicies.OnCopyCompletePolicy {
 
 	protected BehaviourFilter policyBehaviourFilter;
@@ -70,22 +76,45 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 
 	private static final Log logger = LogFactory.getLog(AbstractBeCPGPolicy.class);
 
+	/**
+	 * <p>Setter for the field <code>policyComponent</code>.</p>
+	 *
+	 * @param policyComponent a {@link org.alfresco.repo.policy.PolicyComponent} object.
+	 */
 	public void setPolicyComponent(PolicyComponent policyComponent) {
 		this.policyComponent = policyComponent;
 	}
 
+	/**
+	 * <p>Setter for the field <code>policyBehaviourFilter</code>.</p>
+	 *
+	 * @param policyBehaviourFilter a {@link org.alfresco.repo.policy.BehaviourFilter} object.
+	 */
 	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
 		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>lockService</code>.</p>
+	 *
+	 * @param lockService a {@link org.alfresco.service.cmr.lock.LockService} object.
+	 */
 	public void setLockService(LockService lockService) {
 		this.lockService = lockService;
 	}
 
+	/**
+	 * <p>init.</p>
+	 */
 	public void init() {
 
 		PropertyCheck.mandatory(this, "policyComponent", policyComponent);
@@ -96,24 +125,37 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 		
 	}
 
+	/**
+	 * <p>disableOnCopyBehaviour.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object.
+	 */
 	public void disableOnCopyBehaviour(QName type) {
 		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyNodePolicy.QNAME, type, new JavaBehaviour(this, "getCopyCallback"));
 		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyCompletePolicy.QNAME, type, new JavaBehaviour(this, "onCopyComplete"));
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public CopyBehaviourCallback getCopyCallback(QName classRef, CopyDetails copyDetails) {
 		policyBehaviourFilter.disableBehaviour(copyDetails.getTargetNodeRef(), classRef);
 		return new DefaultCopyBehaviourCallback();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onCopyComplete(QName classRef, NodeRef sourceNodeRef, NodeRef destinationRef, boolean copyToNewNode, Map<NodeRef, NodeRef> copyMap) {
 
 		policyBehaviourFilter.enableBehaviour(destinationRef, classRef);
 	}
 
+	/**
+	 * <p>isWorkingCopyOrVersion.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a boolean.
+	 */
 	protected boolean isWorkingCopyOrVersion(NodeRef nodeRef) {
 
 		boolean workingCopy = nodeService.hasAspect(nodeRef, ContentModel.ASPECT_WORKING_COPY);
@@ -122,52 +164,121 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 		return workingCopy || isVersionNode(nodeRef);
 	}
 
+	/**
+	 * <p>isBeCPGVersion.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a boolean.
+	 */
 	protected boolean isBeCPGVersion(NodeRef nodeRef) {
 		return nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION);
 	}
 
+	/**
+	 * <p>isEntityTemplate.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a boolean.
+	 */
 	protected boolean isEntityTemplate(NodeRef nodeRef) {
 		return nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_TPL);
 	}
 
+	/**
+	 * <p>isVersionStoreNode.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a boolean.
+	 */
 	protected boolean isVersionStoreNode(NodeRef nodeRef) {
 		return nodeRef.getStoreRef().getIdentifier().equals(Version2Model.STORE_ID);
 	}
 
+	/**
+	 * <p>isVersionNode.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a boolean.
+	 */
 	protected boolean isVersionNode(NodeRef nodeRef) {
 		// Ignore if the node is a working copy or version node
 		return isBeCPGVersion(nodeRef) || isVersionStoreNode(nodeRef);
 	}
 
+	/**
+	 * <p>isNotLocked.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a boolean.
+	 */
 	protected boolean isNotLocked(NodeRef nodeRef) {
 		return nodeService.exists(nodeRef) && (lockService.getLockStatus(nodeRef) == LockStatus.NO_LOCK);
 	}
 
+	/**
+	 * <p>doInit.</p>
+	 */
 	public abstract void doInit();
 
+	/**
+	 * <p>doBeforeCommit.</p>
+	 *
+	 * @param key a {@link java.lang.String} object.
+	 * @param pendingNodes a {@link java.util.Set} object.
+	 * @return a boolean.
+	 */
 	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 		// Do Nothing
 		return false;
 	}
 	
+	/**
+	 * <p>doBeforeAssocsCommit.</p>
+	 *
+	 * @param key a {@link java.lang.String} object.
+	 * @param pendingAssocs a {@link java.util.Set} object.
+	 * @return a boolean.
+	 */
 	protected boolean doBeforeAssocsCommit(String key, Set<AssociationRef> pendingAssocs) {
 		// Do Nothing
 		return false;
 	}
 
+	/**
+	 * <p>Getter for the field <code>keys</code>.</p>
+	 *
+	 * @return a {@link java.util.Set} object.
+	 */
 	public Set<String> getKeys() {
 		return keys;
 	}
 
+	/**
+	 * <p>doAfterCommit.</p>
+	 *
+	 * @param key a {@link java.lang.String} object.
+	 * @param pendingNodes a {@link java.util.Set} object.
+	 */
 	protected void doAfterCommit(String key, Set<NodeRef> pendingNodes) {
 		// Do Nothing
 
 	}
 
+	/**
+	 * <p>queueNode.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	protected void queueNode(NodeRef nodeRef) {
 		queueNode(generateDefaultKey(), nodeRef);
 	}
 
+	/**
+	 * <p>queueNode.</p>
+	 *
+	 * @param key a {@link java.lang.String} object.
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	protected void queueNode(String key, NodeRef nodeRef) {
 		Set<NodeRef> pendingNodes = TransactionSupportUtil.getResource(key);
 		if (pendingNodes == null) {
@@ -179,12 +290,23 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 		pendingNodes.add(nodeRef);
 	}
 	
+	/**
+	 * <p>queueAssoc.</p>
+	 *
+	 * @param associationRef a {@link org.alfresco.service.cmr.repository.AssociationRef} object.
+	 */
 	protected void queueAssoc(AssociationRef associationRef) {
 		queueAssoc(generateDefaultKey(), associationRef);
 		
 	}
 	
 	
+	/**
+	 * <p>queueAssoc.</p>
+	 *
+	 * @param key a {@link java.lang.String} object.
+	 * @param associationRef a {@link org.alfresco.service.cmr.repository.AssociationRef} object.
+	 */
 	protected void queueAssoc(String key, AssociationRef associationRef) {
 		Set<AssociationRef> pendingNodes = TransactionSupportUtil.getResource(key);
 		if (pendingNodes == null) {
@@ -198,11 +320,21 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 	}
 
 
-
+	/**
+	 * <p>unQueueNode.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	protected void unQueueNode(NodeRef nodeRef) {
 		unQueueNode(generateDefaultKey(), nodeRef);
 	}
 
+	/**
+	 * <p>unQueueNode.</p>
+	 *
+	 * @param key a {@link java.lang.String} object.
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	protected void unQueueNode(String key, NodeRef entityNodeRef) {
 		Set<NodeRef> pendingNodes = TransactionSupportUtil.getResource(key);
 		if (pendingNodes != null) {
@@ -210,19 +342,45 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 		}
 	}
 
+	/**
+	 * <p>containsNodeInQueue.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a boolean.
+	 */
 	protected boolean containsNodeInQueue(NodeRef nodeRef) {
 		return containsNodeInQueue(generateDefaultKey(), nodeRef);
 	}
 
+	/**
+	 * <p>containsNodeInQueue.</p>
+	 *
+	 * @param key a {@link java.lang.String} object.
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a boolean.
+	 */
 	protected boolean containsNodeInQueue(String key, NodeRef entityNodeRef) {
 		Set<NodeRef> pendingNodes = TransactionSupportUtil.getResource(key);
 		return (pendingNodes != null) && pendingNodes.contains(entityNodeRef);
 	}
 
+	/**
+	 * <p>generateDefaultKey.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	protected String generateDefaultKey() {
 		return "KEY_" + this.getClass().getName();
 	}
 
+	/**
+	 * <p>isPropChanged.</p>
+	 *
+	 * @param before a {@link java.util.Map} object.
+	 * @param after a {@link java.util.Map} object.
+	 * @param propertyQName a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a boolean.
+	 */
 	protected boolean isPropChanged(Map<QName, Serializable> before, Map<QName, Serializable> after, QName propertyQName) {
 		Serializable beforeProp = before.get(propertyQName);
 		Serializable afterProp = after.get(propertyQName);

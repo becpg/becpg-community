@@ -49,9 +49,10 @@ import fr.becpg.repo.product.data.CharactDetails;
 import fr.becpg.repo.product.data.CharactDetailsValue;
 
 /**
+ * <p>CharactDetailsHelper class.</p>
  *
  * @author matthieu
- *
+ * @version $Id: $Id
  */
 public class CharactDetailsHelper {
 
@@ -62,6 +63,15 @@ public class CharactDetailsHelper {
 	private static final String LEVEL_KEY = I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_depthLevel.title");
 	private static final String PRODUCT_TYPE_KEY = I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_productType.title");
 
+	/**
+	 * <p>toJSONObject.</p>
+	 *
+	 * @param charactDetails a {@link fr.becpg.repo.product.data.CharactDetails} object.
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 * @param attributeExtractorService a {@link fr.becpg.repo.helper.AttributeExtractorService} object.
+	 * @return a {@link org.json.JSONObject} object.
+	 * @throws org.json.JSONException if any.
+	 */
 	public static JSONObject toJSONObject(final CharactDetails charactDetails, final NodeService nodeService,
 			final AttributeExtractorService attributeExtractorService) throws JSONException {
 
@@ -271,6 +281,15 @@ public class CharactDetailsHelper {
 		return I18NUtil.getMessage("entity.datalist.item.details.yaxis.label");
 	}
 
+	/**
+	 * <p>writeXLS.</p>
+	 *
+	 * @param charactDetails a {@link fr.becpg.repo.product.data.CharactDetails} object.
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 * @param attributeExtractorService a {@link fr.becpg.repo.helper.AttributeExtractorService} object.
+	 * @param outputStream a {@link java.io.OutputStream} object.
+	 * @throws java.io.IOException if any.
+	 */
 	public static void writeXLS(CharactDetails charactDetails, NodeService nodeService, AttributeExtractorService attributeExtractorService,
 			OutputStream outputStream) throws IOException {
 		try (XSSFWorkbook workbook = new XSSFWorkbook()) {

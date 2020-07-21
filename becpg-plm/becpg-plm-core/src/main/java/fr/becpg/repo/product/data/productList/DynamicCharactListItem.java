@@ -26,6 +26,12 @@ import fr.becpg.repo.repository.model.ManualDataItem;
 import fr.becpg.repo.repository.model.SortableDataItem;
 import fr.becpg.repo.repository.model.Synchronisable;
 
+/**
+ * <p>DynamicCharactListItem class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @AlfType
 @AlfQname(qname = "bcpg:dynamicCharactList")
 public class DynamicCharactListItem extends BeCPGDataObject implements Synchronisable,ManualDataItem, ColoredDataListItem, SortableDataItem {
@@ -57,6 +63,11 @@ public class DynamicCharactListItem extends BeCPGDataObject implements Synchroni
 
 	private DynamicCharactExecOrder execOrder = DynamicCharactExecOrder.Post;
 	
+	/**
+	 * <p>Getter for the field <code>sort</code>.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object.
+	 */
 	@AlfProp
 	@InternalField
 	@AlfQname(qname="bcpg:sort")
@@ -64,31 +75,53 @@ public class DynamicCharactListItem extends BeCPGDataObject implements Synchroni
 		return sort;
 	}
 
+	/** {@inheritDoc} */
 	public void setSort(Integer sort) {
 		this.sort = sort;
 	}
 	
 	
+	/**
+	 * <p>Getter for the field <code>title</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:dynamicCharactTitle")
 	public String getTitle() {
 		return title;
 	}
 
+	/**
+	 * <p>Setter for the field <code>title</code>.</p>
+	 *
+	 * @param title a {@link java.lang.String} object.
+	 */
 	public void setTitle(String title) {
 		this.title = title;
 	}
 
+	/**
+	 * <p>Getter for the field <code>color</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:color")
 	public String getColor() {
 		return color;
 	}
 
+	/** {@inheritDoc} */
 	public void setColor(String color) {
 		this.color = color;
 	}
 
+	/**
+	 * <p>Getter for the field <code>errorLog</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@InternalField
 	@AlfQname(qname = "bcpg:dynamicCharactErrorLog")
@@ -96,20 +129,40 @@ public class DynamicCharactListItem extends BeCPGDataObject implements Synchroni
 		return errorLog;
 	}
 
+	/**
+	 * <p>Setter for the field <code>errorLog</code>.</p>
+	 *
+	 * @param errorLog a {@link java.lang.String} object.
+	 */
 	public void setErrorLog(String errorLog) {
 		this.errorLog = errorLog;
 	}
 
+	/**
+	 * <p>Getter for the field <code>formula</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:dynamicCharactFormula")
 	public String getFormula() {
 		return formula;
 	}
 
+	/**
+	 * <p>Setter for the field <code>formula</code>.</p>
+	 *
+	 * @param formula a {@link java.lang.String} object.
+	 */
 	public void setFormula(String formula) {
 		this.formula = formula;
 	}
 
+	/**
+	 * <p>Getter for the field <code>value</code>.</p>
+	 *
+	 * @return a {@link java.lang.Object} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:dynamicCharactValue")
 	public Object getValue() {
@@ -117,14 +170,29 @@ public class DynamicCharactListItem extends BeCPGDataObject implements Synchroni
 	}
 	
 	//usefull for spel
+	/**
+	 * <p>getProtectedValue.</p>
+	 *
+	 * @return a {@link java.lang.Object} object.
+	 */
 	public Object getProtectedValue() {
 		return value;
 	}
 
+	/**
+	 * <p>Setter for the field <code>value</code>.</p>
+	 *
+	 * @param value a {@link java.lang.Object} object.
+	 */
 	public void setValue(Object value) {
 		this.value = value;
 	}
 
+	/**
+	 * <p>Getter for the field <code>groupColor</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@InternalField
 	@AlfQname(qname = "bcpg:dynamicCharactGroupColor")
@@ -132,10 +200,20 @@ public class DynamicCharactListItem extends BeCPGDataObject implements Synchroni
 		return groupColor;
 	}
 
+	/**
+	 * <p>Setter for the field <code>groupColor</code>.</p>
+	 *
+	 * @param groupColor a {@link java.lang.String} object.
+	 */
 	public void setGroupColor(String groupColor) {
 		this.groupColor = groupColor;
 	}
 
+	/**
+	 * <p>Getter for the field <code>columnName</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@InternalField
 	@AlfQname(qname = "bcpg:dynamicCharactColumn")
@@ -143,11 +221,21 @@ public class DynamicCharactListItem extends BeCPGDataObject implements Synchroni
 		return columnName;
 	}
 
+	/**
+	 * <p>Setter for the field <code>columnName</code>.</p>
+	 *
+	 * @param columnName a {@link java.lang.String} object.
+	 */
 	public void setColumnName(String columnName) {
 		this.columnName = columnName;
 	}
 	
 
+	/**
+	 * <p>Getter for the field <code>synchronisableState</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.productList.SynchronisableState} object.
+	 */
 	@AlfProp
 	@InternalField
 	@AlfQname(qname = "bcpg:dynamicCharactSynchronisableState")
@@ -155,11 +243,21 @@ public class DynamicCharactListItem extends BeCPGDataObject implements Synchroni
 		return synchronisableState;
 	}
 
+	/**
+	 * <p>Setter for the field <code>synchronisableState</code>.</p>
+	 *
+	 * @param synchronisableState a {@link fr.becpg.repo.product.data.productList.SynchronisableState} object.
+	 */
 	public void setSynchronisableState(SynchronisableState synchronisableState) {
 		this.synchronisableState = synchronisableState;
 	}
 
 
+	/**
+	 * <p>Getter for the field <code>execOrder</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.productList.DynamicCharactExecOrder} object.
+	 */
 	@AlfProp
 	@InternalField
 	@AlfQname(qname = "bcpg:dynamicCharactExecOrder")
@@ -167,6 +265,11 @@ public class DynamicCharactListItem extends BeCPGDataObject implements Synchroni
 		return execOrder;
 	}
 
+	/**
+	 * <p>Setter for the field <code>execOrder</code>.</p>
+	 *
+	 * @param execOrder a {@link fr.becpg.repo.product.data.productList.DynamicCharactExecOrder} object.
+	 */
 	public void setExecOrder(DynamicCharactExecOrder execOrder) {
 		if(execOrder == null){
 			this.execOrder = DynamicCharactExecOrder.Post;
@@ -176,6 +279,11 @@ public class DynamicCharactListItem extends BeCPGDataObject implements Synchroni
 	}
 
 	
+	/**
+	 * <p>Getter for the field <code>multiLevelFormula</code>.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object.
+	 */
 	@AlfProp
 	@InternalField
 	@AlfQname(qname = "bcpg:dynamicCharactMultiLevel")
@@ -183,10 +291,16 @@ public class DynamicCharactListItem extends BeCPGDataObject implements Synchroni
 		return multiLevelFormula;
 	}
 
+	/**
+	 * <p>Setter for the field <code>multiLevelFormula</code>.</p>
+	 *
+	 * @param isMultiLevelFormula a {@link java.lang.Boolean} object.
+	 */
 	public void setMultiLevelFormula(Boolean isMultiLevelFormula) {
 		this.multiLevelFormula = isMultiLevelFormula;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isSynchronisable() {
 		return !SynchronisableState.Template.equals(synchronisableState);
@@ -194,12 +308,14 @@ public class DynamicCharactListItem extends BeCPGDataObject implements Synchroni
 
 	
 
+	/** {@inheritDoc} */
 	@Override
 	@InternalField
 	public Boolean getIsManual() {
 		return SynchronisableState.Manual.equals(synchronisableState);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void setIsManual(Boolean isManual) {
 		if(Boolean.TRUE.equals(isManual)){
@@ -210,11 +326,20 @@ public class DynamicCharactListItem extends BeCPGDataObject implements Synchroni
 		
 	}
 	
+	/**
+	 * <p>Constructor for DynamicCharactListItem.</p>
+	 */
 	public DynamicCharactListItem() {
 		super();
 	}
 
 	
+	/**
+	 * <p>Constructor for DynamicCharactListItem.</p>
+	 *
+	 * @param dynamicCharactTitle a {@link java.lang.String} object.
+	 * @param dynamicCharactFormula a {@link java.lang.String} object.
+	 */
 	public DynamicCharactListItem(String dynamicCharactTitle, String dynamicCharactFormula) {
 		super();
 		this.title = dynamicCharactTitle;
@@ -222,6 +347,7 @@ public class DynamicCharactListItem extends BeCPGDataObject implements Synchroni
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -240,6 +366,7 @@ public class DynamicCharactListItem extends BeCPGDataObject implements Synchroni
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -301,6 +428,7 @@ public class DynamicCharactListItem extends BeCPGDataObject implements Synchroni
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "DynamicCharactListItem [title=" + title + ", formula=" + formula + ", value=" + value + ", multiLevelFormula=" + multiLevelFormula

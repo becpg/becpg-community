@@ -21,9 +21,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * POJO to store list value entry 
- * @author matthieu
+ * POJO to store list value entry
  *
+ * @author matthieu
+ * @version $Id: $Id
  */
 public class ListValueEntry {
 
@@ -34,6 +35,13 @@ public class ListValueEntry {
 	private Map<String,String> metadatas ;
 
 	
+	/**
+	 * <p>Constructor for ListValueEntry.</p>
+	 *
+	 * @param value a {@link java.lang.String} object.
+	 * @param name a {@link java.lang.String} object.
+	 * @param cssClass a {@link java.lang.String} object.
+	 */
 	public ListValueEntry(String value, String name, String cssClass) {
 		super();
 		this.value = value;
@@ -42,6 +50,14 @@ public class ListValueEntry {
 		this.metadatas = new HashMap<>();
 	}
 	
+	/**
+	 * <p>Constructor for ListValueEntry.</p>
+	 *
+	 * @param value a {@link java.lang.String} object.
+	 * @param name a {@link java.lang.String} object.
+	 * @param cssClass a {@link java.lang.String} object.
+	 * @param metadatas a {@link java.util.Map} object.
+	 */
 	public ListValueEntry(String value, String name, String cssClass, Map<String,String> metadatas) {
 		super();
 		this.value = value;
@@ -50,34 +66,74 @@ public class ListValueEntry {
 		this.metadatas = metadatas;
 	}
 
+	/**
+	 * <p>Getter for the field <code>name</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getName() {
 		return name;
 	}
 
+	/**
+	 * <p>Setter for the field <code>name</code>.</p>
+	 *
+	 * @param name a {@link java.lang.String} object.
+	 */
 	public void setName(String name) {
 		this.name = name;
 	}
 
+	/**
+	 * <p>Getter for the field <code>value</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getValue() {
 		return value;
 	}
 
+	/**
+	 * <p>Setter for the field <code>value</code>.</p>
+	 *
+	 * @param value a {@link java.lang.String} object.
+	 */
 	public void setValue(String value) {
 		this.value = value;
 	}
 
+	/**
+	 * <p>Getter for the field <code>cssClass</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getCssClass() {
 		return cssClass;
 	}
 
+	/**
+	 * <p>Setter for the field <code>cssClass</code>.</p>
+	 *
+	 * @param cssClass a {@link java.lang.String} object.
+	 */
 	public void setCssClass(String cssClass) {
 		this.cssClass = cssClass;
 	}
 
+	/**
+	 * <p>Getter for the field <code>metadatas</code>.</p>
+	 *
+	 * @return a {@link java.util.Map} object.
+	 */
 	public Map<String, String> getMetadatas() {
 		return metadatas;
 	}
 
+	/**
+	 * <p>Setter for the field <code>metadatas</code>.</p>
+	 *
+	 * @param metadatas a {@link java.util.Map} object.
+	 */
 	public void setMetadatas(Map<String, String> metadatas) {
 		this.metadatas = metadatas;
 	}

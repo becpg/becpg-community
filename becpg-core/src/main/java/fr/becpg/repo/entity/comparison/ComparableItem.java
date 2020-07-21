@@ -10,6 +10,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
  * The Class ComparableItem.
  *
  * @author querephi
+ * @version $Id: $Id
  */
 public class ComparableItem extends AbstractComparableItem {
 	

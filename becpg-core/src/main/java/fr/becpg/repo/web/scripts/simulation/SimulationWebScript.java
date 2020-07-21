@@ -34,9 +34,10 @@ import fr.becpg.repo.entity.simulation.EntitySimulationService;
 import fr.becpg.repo.search.PaginatedSearchCache;
 
 /**
+ * <p>SimulationWebScript class.</p>
  *
  * @author matthieu
- *
+ * @version $Id: $Id
  */
 public class SimulationWebScript extends AbstractWebScript {
 
@@ -62,11 +63,21 @@ public class SimulationWebScript extends AbstractWebScript {
 	private PaginatedSearchCache paginatedSearchCache;
 
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 	
 	
+	/**
+	 * <p>Setter for the field <code>simulationService</code>.</p>
+	 *
+	 * @param simulationService a {@link fr.becpg.repo.entity.simulation.EntitySimulationService} object.
+	 */
 	public void setSimulationService(EntitySimulationService simulationService) {
 		this.simulationService = simulationService;
 	}
@@ -74,11 +85,17 @@ public class SimulationWebScript extends AbstractWebScript {
 	
 	
 
+	/**
+	 * <p>Setter for the field <code>paginatedSearchCache</code>.</p>
+	 *
+	 * @param paginatedSearchCache a {@link fr.becpg.repo.search.PaginatedSearchCache} object.
+	 */
 	public void setPaginatedSearchCache(PaginatedSearchCache paginatedSearchCache) {
 		this.paginatedSearchCache = paginatedSearchCache;
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
 

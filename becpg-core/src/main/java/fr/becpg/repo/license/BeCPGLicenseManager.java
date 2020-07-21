@@ -18,6 +18,12 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.helper.RepoService;
 
+/**
+ * <p>BeCPGLicenseManager class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service("becpgLicenseManager")
 @DependsOn
 public class BeCPGLicenseManager {
@@ -36,6 +42,11 @@ public class BeCPGLicenseManager {
 	@Autowired
 	private ContentService contentService;
 
+	/**
+	 * <p>getAllowedConcurrentRead.</p>
+	 *
+	 * @return a long.
+	 */
 	public long getAllowedConcurrentRead() {
 		return getLicense().allowedConcurrentRead;
 	}
@@ -91,27 +102,59 @@ public class BeCPGLicenseManager {
 		});
 	}
 
+	/**
+	 * <p>getAllowedConcurrentWrite.</p>
+	 *
+	 * @return a long.
+	 */
 	public long getAllowedConcurrentWrite() {
 		return getLicense().allowedConcurrentWrite;
 	}
 
+	/**
+	 * <p>getAllowedConcurrentSupplier.</p>
+	 *
+	 * @return a long.
+	 */
 	public long getAllowedConcurrentSupplier() {
 		return getLicense().allowedConcurrentSupplier;
 	}
 
+	/**
+	 * <p>getAllowedNamedWrite.</p>
+	 *
+	 * @return a long.
+	 */
 	public long getAllowedNamedWrite() {
 		return getLicense().allowedNamedWrite;
 	}
 
+	/**
+	 * <p>getAllowedNamedRead.</p>
+	 *
+	 * @return a long.
+	 */
 	public long getAllowedNamedRead() {
 		return getLicense().allowedNamedRead;
 	}
 
+	/**
+	 * <p>getLicenseName.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getLicenseName() {
 		return getLicense().licenseName;
 	}
 
 
+	/**
+	 * <p>isValid.</p>
+	 *
+	 * @param licenseKey a {@link java.lang.String} object.
+	 * @param license a {@link fr.becpg.repo.license.BeCPGLicense} object.
+	 * @return a boolean.
+	 */
 	public static boolean isValid(String licenseKey, BeCPGLicense license) {
 
 		String computedKey = computeLicenseKey(license);
@@ -126,6 +169,12 @@ public class BeCPGLicenseManager {
 		return ret;
 	}
 
+	/**
+	 * <p>computeLicenseKey.</p>
+	 *
+	 * @param lisence a {@link fr.becpg.repo.license.BeCPGLicense} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	public static String computeLicenseKey(BeCPGLicense lisence) {
 
 		String key = lisence.licenseName + lisence.allowedNamedRead + lisence.allowedNamedWrite + lisence.allowedConcurrentRead

@@ -33,6 +33,12 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+/**
+ * <p>BPMN2XmlParser class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class BPMN2XmlParser {
 
 	private static final Log logger = LogFactory.getLog(BPMN2XmlParser.class);
@@ -41,6 +47,14 @@ public class BPMN2XmlParser {
 	private final List<String> userTasks = new ArrayList<>();
 	private String processId = null;
 
+	/**
+	 * <p>parse.</p>
+	 *
+	 * @param in a {@link java.io.InputStream} object.
+	 * @throws java.io.IOException if any.
+	 * @throws org.xml.sax.SAXException if any.
+	 * @throws javax.xml.parsers.ParserConfigurationException if any.
+	 */
 	public void parse(InputStream in) throws IOException, SAXException, ParserConfigurationException {
 
 		try {
@@ -113,20 +127,40 @@ public class BPMN2XmlParser {
 	}
 
 
+	/**
+	 * <p>Getter for the field <code>startTasks</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	public List<String> getStartTasks() {
 		return startTasks;
 	}
 
 
+	/**
+	 * <p>Getter for the field <code>userTasks</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	public List<String> getUserTasks() {
 		return userTasks;
 	}
 	
+	/**
+	 * <p>isActivitiWf.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public boolean isActivitiWf(){
 		return (!startTasks.isEmpty() || !userTasks.isEmpty());
 	}
 
 
+	/**
+	 * <p>Getter for the field <code>processId</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getProcessId() {
 		return processId;
 	}

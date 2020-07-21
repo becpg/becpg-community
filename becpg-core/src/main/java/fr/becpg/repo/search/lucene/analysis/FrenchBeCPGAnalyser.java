@@ -28,11 +28,12 @@ import org.apache.lucene.analysis.snowball.SnowballFilter;
 import org.apache.lucene.analysis.standard.StandardTokenizer;
 
 /**
- * 
+ * <p>FrenchBeCPGAnalyser class.</p>
+ *
  * @author "Matthieu Laborie"
- * 
+ *
  * http://snowball.tartarus.org/algorithms/french/stemmer.html
- * 
+ * @version $Id: $Id
  */
 public class FrenchBeCPGAnalyser extends AbstractBeCPGAnalyzer
 {
@@ -42,7 +43,9 @@ public class FrenchBeCPGAnalyser extends AbstractBeCPGAnalyzer
      */
     public static final String[] STOP_WORDS = FrenchStopWords.STOP_WORDS;
     
-    /** Builds an analyzer. */
+    /**
+     * Builds an analyzer.
+     */
     public FrenchBeCPGAnalyser()
     {
         super(STOP_WORDS);
@@ -50,6 +53,7 @@ public class FrenchBeCPGAnalyser extends AbstractBeCPGAnalyzer
 
 
   
+    /** {@inheritDoc} */
     public TokenStream tokenStream(String fieldName, Reader reader, boolean disableStopWords)
     {
         TokenStream result = new StandardTokenizer(reader);

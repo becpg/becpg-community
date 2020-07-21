@@ -43,11 +43,18 @@ import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
+/**
+ * <p>PackagingMaterialCharactDetailsVisitor class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 
 	private static final Log logger = LogFactory.getLog(PackagingMaterialCharactDetailsVisitor.class);
 
+	/** {@inheritDoc} */
 	@Override
 	public CharactDetails visit(ProductData formulatedProduct, List<NodeRef> dataListItems, Integer level) throws FormulateException {
 
@@ -145,6 +152,19 @@ public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetails
 		}
 	}
 	
+	/**
+	 * <p>visitRecurPMaterial.</p>
+	 *
+	 * @param subProductData a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @param ret a {@link fr.becpg.repo.product.data.CharactDetails} object.
+	 * @param currLevel a {@link java.lang.Integer} object.
+	 * @param maxLevel a {@link java.lang.Integer} object.
+	 * @param subWeight a {@link java.lang.Double} object.
+	 * @param subVol a {@link java.lang.Double} object.
+	 * @param netQty a {@link java.lang.Double} object.
+	 * @return a {@link fr.becpg.repo.product.data.CharactDetails} object.
+	 * @throws fr.becpg.repo.formulation.FormulateException if any.
+	 */
 	public CharactDetails visitRecurPMaterial(ProductData subProductData, CharactDetails ret, Integer currLevel, Integer maxLevel, Double subWeight,
 			Double subVol, Double netQty) throws FormulateException {
 

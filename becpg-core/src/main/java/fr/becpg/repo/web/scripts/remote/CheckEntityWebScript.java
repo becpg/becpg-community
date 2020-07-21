@@ -25,12 +25,13 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 
 /**
  * Return OK if entity exist or KO
- * 
+ *
  * @author matthieu
- * 
+ * @version $Id: $Id
  */
 public class CheckEntityWebScript extends AbstractEntityWebScript {
 
+	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
 

@@ -31,6 +31,12 @@ import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
+/**
+ * <p>ForbiddenIngListDataItem class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @AlfType
 @AlfQname(qname = "bcpg:forbiddenIngList")
 public class ForbiddenIngListDataItem extends BeCPGDataObject{
@@ -52,18 +58,33 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject{
 	private List<NodeRef> bioOrigins = new ArrayList<>();
 	
 
+	/**
+	 * <p>Getter for the field <code>reqType</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.constraints.RequirementType} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:filReqType")
 	public RequirementType getReqType() {
 		return reqType;
 	}
 
+	/**
+	 * <p>Setter for the field <code>reqType</code>.</p>
+	 *
+	 * @param reqType a {@link fr.becpg.repo.product.data.constraints.RequirementType} object.
+	 */
 	public void setReqType(RequirementType reqType) {
 		this.reqType = reqType;
 	}
 	
 	
 
+	/**
+	 * <p>Getter for the field <code>reqMessage</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object.
+	 */
 	@AlfProp
 	@AlfMlText
 	@AlfQname(qname="bcpg:filReqMessage")
@@ -71,107 +92,218 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject{
 		return reqMessage;
 	}
 
+	/**
+	 * <p>Setter for the field <code>reqMessage</code>.</p>
+	 *
+	 * @param reqMessage a {@link org.alfresco.service.cmr.repository.MLText} object.
+	 */
 	public void setReqMessage(MLText reqMessage) {
 		this.reqMessage = reqMessage;
 	}
 
+	/**
+	 * <p>Getter for the field <code>qtyPercMaxi</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:filQtyPercMaxi")
 	public Double getQtyPercMaxi() {
 		return qtyPercMaxi;
 	}
 
+	/**
+	 * <p>Setter for the field <code>qtyPercMaxi</code>.</p>
+	 *
+	 * @param qtyPercMaxi a {@link java.lang.Double} object.
+	 */
 	public void setQtyPercMaxi(Double qtyPercMaxi) {
 		this.qtyPercMaxi = qtyPercMaxi;
 	}
 
 
+	/**
+	 * <p>Getter for the field <code>isGMO</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:filIsGMO")
 	public String getIsGMO() {
 		return isGMO;
 	}
 
+	/**
+	 * <p>Setter for the field <code>isGMO</code>.</p>
+	 *
+	 * @param isGMO a {@link java.lang.String} object.
+	 */
 	public void setIsGMO(String isGMO) {
 		this.isGMO = isGMO;
 	}
 	
 
+	/**
+	 * <p>Setter for the field <code>isGMO</code>.</p>
+	 *
+	 * @param isGMO a {@link java.lang.Boolean} object.
+	 */
 	public void setIsGMO(Boolean isGMO) {
 		this.isGMO = isGMO!=null ? isGMO.toString() : null;
 	}
 
 
+	/**
+	 * <p>Getter for the field <code>isIonized</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:filIsIonized")
 	public String getIsIonized() {
 		return isIonized;
 	}
 
+	/**
+	 * <p>Setter for the field <code>isIonized</code>.</p>
+	 *
+	 * @param isIonized a {@link java.lang.Boolean} object.
+	 */
 	public void setIsIonized(Boolean isIonized) {
 		this.isIonized  = isIonized!=null ? isIonized.toString() : null;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>isIonized</code>.</p>
+	 *
+	 * @param isIonized a {@link java.lang.String} object.
+	 */
 	public void setIsIonized(String isIonized) {
 		this.isIonized  = isIonized;
 	}
 	
 
+	/**
+	 * <p>Getter for the field <code>ings</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@AlfMultiAssoc
 	@AlfQname(qname="bcpg:filIngs")
 	public List<NodeRef> getIngs() {
 		return ings;
 	}
 
+	/**
+	 * <p>Setter for the field <code>ings</code>.</p>
+	 *
+	 * @param ings a {@link java.util.List} object.
+	 */
 	public void setIngs(List<NodeRef> ings) {
 		this.ings = ings;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>geoOrigins</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@AlfMultiAssoc
 	@AlfQname(qname="bcpg:filGeoOrigins")
 	public List<NodeRef> getGeoOrigins() {
 		return geoOrigins;
 	}
 
+	/**
+	 * <p>Setter for the field <code>geoOrigins</code>.</p>
+	 *
+	 * @param geoOrigins a {@link java.util.List} object.
+	 */
 	public void setGeoOrigins(List<NodeRef> geoOrigins) {
 		this.geoOrigins = geoOrigins;
 	}
 	
 	
+	/**
+	 * <p>Getter for the field <code>requiredGeoOrigins</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@AlfMultiAssoc
 	@AlfQname(qname="bcpg:filRequiredGeoOrigins")
 	public List<NodeRef> getRequiredGeoOrigins() {
 		return requiredGeoOrigins;
 	}
 
+	/**
+	 * <p>Setter for the field <code>requiredGeoOrigins</code>.</p>
+	 *
+	 * @param requiredGeoOrigins a {@link java.util.List} object.
+	 */
 	public void setRequiredGeoOrigins(List<NodeRef> requiredGeoOrigins) {
 		this.requiredGeoOrigins = requiredGeoOrigins;
 	}
 
+	/**
+	 * <p>Getter for the field <code>geoTransfo</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@AlfMultiAssoc
 	@AlfQname(qname="bcpg:filGeoTransfo")
 	public List<NodeRef> getGeoTransfo() {
 		return geoTransfo;
 	}
 
+	/**
+	 * <p>Setter for the field <code>geoTransfo</code>.</p>
+	 *
+	 * @param geoTransfo a {@link java.util.List} object.
+	 */
 	public void setGeoTransfo(List<NodeRef> geoTransfo) {
 		this.geoTransfo = geoTransfo;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>bioOrigins</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@AlfMultiAssoc
 	@AlfQname(qname="bcpg:filBioOrigins")
 	public List<NodeRef> getBioOrigins() {
 		return bioOrigins;
 	}
 
+	/**
+	 * <p>Setter for the field <code>bioOrigins</code>.</p>
+	 *
+	 * @param bioOrigins a {@link java.util.List} object.
+	 */
 	public void setBioOrigins(List<NodeRef> bioOrigins) {
 		this.bioOrigins = bioOrigins;
 	}
 		
+	/**
+	 * <p>Constructor for ForbiddenIngListDataItem.</p>
+	 */
 	public ForbiddenIngListDataItem() {
 		super();
 	}
 	
+	/**
+	 * <p>Constructor for ForbiddenIngListDataItem.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param reqType a {@link fr.becpg.repo.product.data.constraints.RequirementType} object.
+	 * @param reqMessage a {@link java.lang.String} object.
+	 * @param qtyPercMaxi a {@link java.lang.Double} object.
+	 * @param isGMO a {@link java.lang.Boolean} object.
+	 * @param isIonized a {@link java.lang.Boolean} object.
+	 * @param ings a {@link java.util.List} object.
+	 * @param geoOrigins a {@link java.util.List} object.
+	 * @param bioOrigins a {@link java.util.List} object.
+	 */
 	public ForbiddenIngListDataItem(NodeRef nodeRef, RequirementType reqType, String reqMessage, Double qtyPercMaxi, Boolean isGMO, Boolean isIonized, List<NodeRef> ings, List<NodeRef> geoOrigins, List<NodeRef> bioOrigins)
 	{
 		this.nodeRef = nodeRef;
@@ -185,6 +317,19 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject{
 		this.ings = ings;
 	}
 
+	/**
+	 * <p>Constructor for ForbiddenIngListDataItem.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param reqType a {@link fr.becpg.repo.product.data.constraints.RequirementType} object.
+	 * @param reqMessage a {@link org.alfresco.service.cmr.repository.MLText} object.
+	 * @param qtyPercMaxi a {@link java.lang.Double} object.
+	 * @param isGMO a {@link java.lang.Boolean} object.
+	 * @param isIonized a {@link java.lang.Boolean} object.
+	 * @param ings a {@link java.util.List} object.
+	 * @param geoOrigins a {@link java.util.List} object.
+	 * @param bioOrigins a {@link java.util.List} object.
+	 */
 	public ForbiddenIngListDataItem(NodeRef nodeRef, RequirementType reqType, MLText reqMessage, Double qtyPercMaxi, Boolean isGMO, Boolean isIonized, List<NodeRef> ings, List<NodeRef> geoOrigins, List<NodeRef> bioOrigins)
 	{
 		this.nodeRef = nodeRef;
@@ -198,6 +343,7 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject{
 		this.ings = ings;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -215,6 +361,7 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject{
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -274,6 +421,7 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject{
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "ForbiddenIngListDataItem [reqType=" + reqType + ", reqMessage=" + reqMessage + ", qtyPercMaxi=" + qtyPercMaxi + ", isGMO=" + isGMO

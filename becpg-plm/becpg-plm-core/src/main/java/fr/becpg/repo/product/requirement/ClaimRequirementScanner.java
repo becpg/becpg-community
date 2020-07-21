@@ -20,12 +20,20 @@ import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.formulation.LabelClaimFormulationHandler;
 
+/**
+ * <p>ClaimRequirementScanner class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelClaimListDataItem> {
 
+	/** Constant <code>MESSAGE_NOT_CLAIM="message.formulate.labelClaim.notClaimed"</code> */
 	public static final String MESSAGE_NOT_CLAIM = "message.formulate.labelClaim.notClaimed";
 
 	private static Log logger = LogFactory.getLog(ClaimRequirementScanner.class);
 
+	/** {@inheritDoc} */
 	@Override
 	public List<ReqCtrlListDataItem> checkRequirements(ProductData formulatedProduct, List<ProductSpecificationData> specifications) {
 		List<ReqCtrlListDataItem> ret = new LinkedList<>();
@@ -126,6 +134,7 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 		ret.add(reqCtrl);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected void mergeRequirements(List<LabelClaimListDataItem> ret, List<LabelClaimListDataItem> toAdd) {
 		toAdd.forEach(item -> {
@@ -147,6 +156,7 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 		});
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected List<LabelClaimListDataItem> getDataListVisited(ProductData partProduct) {
 		return partProduct.getLabelClaimList() != null ? partProduct.getLabelClaimList() : new ArrayList<>();

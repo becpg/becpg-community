@@ -53,6 +53,12 @@ import fr.becpg.repo.report.template.ReportType;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.report.client.ReportFormat;
 
+/**
+ * <p>ProjectInitVisitor class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 
@@ -62,6 +68,7 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 
 	private static final String EXPORT_PROJECTS_REPORT_XMLFILE_PATH = "beCPG/birt/project/ExportSearchQuery.xml";
 
+	/** Constant <code>EMAIL_TEMPLATES="./app:dictionary/app:email_templates"</code> */
 	public static final String EMAIL_TEMPLATES = "./app:dictionary/app:email_templates";
 
 	private static final String PROJECT_REPORT_CSS_RESOURCE = "beCPG/birt/project/project-report.css";
@@ -85,6 +92,7 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 	@Autowired
 	private NamespaceService namespaceService;
 
+	/** {@inheritDoc} */
 	@Override
 	public List<SiteInfo> visitContainer(NodeRef companyHome) {
 
@@ -224,10 +232,17 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 		}
 	}
 
+	/**
+	 * <p>createRoleGroup.</p>
+	 *
+	 * @param qName a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	protected String createRoleGroup(QName qName) {
 		return ProjectRepoConsts.PROJECT_GROUP_PREFIX + qName.toPrefixString(namespaceService).replace(":", "_");
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Integer initOrder() {
 		return 2;

@@ -27,9 +27,10 @@ import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.report.client.ReportFormat;
 
 /**
- * 
- * @author rabah, matthieu
+ * <p>EntityReportWebScript class.</p>
  *
+ * @author rabah, matthieu
+ * @version $Id: $Id
  */
 public class EntityReportWebScript extends AbstractEntityWebScript {
 
@@ -42,15 +43,26 @@ public class EntityReportWebScript extends AbstractEntityWebScript {
 	
 	private ContentService contentService;
 
+	/**
+	 * <p>Setter for the field <code>entityReportService</code>.</p>
+	 *
+	 * @param entityReportService a {@link fr.becpg.repo.report.entity.EntityReportService} object.
+	 */
 	public void setEntityReportService(EntityReportService entityReportService) {
 		this.entityReportService = entityReportService;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>contentService</code>.</p>
+	 *
+	 * @param contentService a {@link org.alfresco.service.cmr.repository.ContentService} object.
+	 */
 	public void setContentService(ContentService contentService) {
 		this.contentService = contentService;
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
 

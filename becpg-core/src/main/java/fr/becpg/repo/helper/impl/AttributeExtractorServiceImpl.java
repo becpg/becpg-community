@@ -75,6 +75,12 @@ import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.security.SecurityService;
 
+/**
+ * <p>AttributeExtractorServiceImpl class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service("attributeExtractorService")
 public class AttributeExtractorServiceImpl implements AttributeExtractorService {
 
@@ -316,6 +322,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String getStringValue(PropertyDefinition propertyDef, Serializable v, PropertyFormats propertyFormats) {
 		return getStringValue(propertyDef, v, propertyFormats, true);
@@ -482,6 +489,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 	
 
+	/** {@inheritDoc} */
 	@Override
 	public String extractPropertyForReport(PropertyDefinition propertyDef, Serializable value, boolean formatData) {
 		PropertyFormats propertyFormats = getPropertyFormats(FormatMode.REPORT,false);
@@ -489,6 +497,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		return extractPropertyForReport(propertyDef, value, propertyFormats, formatData);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public String extractPropertyForReport(PropertyDefinition propertyDef, Serializable value, PropertyFormats propertyFormats , boolean formatData) {
 
@@ -552,6 +561,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	 * dt_bcpg_activityList Assocs Field
 	 * bcpg_nutListNut|bcpg_nutGDA|bcpg_nutUL|bcpg_nutUnit -> dt_bcpg_nutListNut
 	 */
+	/** {@inheritDoc} */
 	@Override
 	public List<AttributeExtractorStructure> readExtractStructure(QName itemType, List<String> metadataFields) {
 		List<AttributeExtractorStructure> ret = new LinkedList<>();
@@ -669,6 +679,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		return ret;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, List<String> metadataFields, FormatMode mode) {
 		return extractNodeData(nodeRef, itemType, nodeService.getProperties(nodeRef), readExtractStructure(itemType, metadataFields), mode,
@@ -708,6 +719,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				});
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, Map<QName, Serializable> properties,
 			List<AttributeExtractorStructure> metadataFields, FormatMode mode, AttributeExtractorService.DataListCallBack callback) {
@@ -919,6 +931,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		return null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Map<String, Object> extractCommonNodeData(NodeRef nodeRef) {
 		Map<String, Object> tmp = new HashMap<>(5);
@@ -940,24 +953,28 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		return tmp;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String extractSiteId(NodeRef entityNodeRef) {
 		String path = nodeService.getPath(entityNodeRef).toPrefixString(namespaceService);
 		return SiteHelper.extractSiteId(path);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String extractPropName(NodeRef v) {
 		QName type = nodeService.getType(v);
 		return extractPropName(type, v);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean hasAttributeExtractorPlugin(NodeRef nodeRef) {
 		QName type = nodeService.getType(nodeRef);
 		return getAttributeExtractorPlugin(type, nodeRef) != null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String extractPropName(QName type, NodeRef nodeRef) {
 		String value;
@@ -976,6 +993,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		return value;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String extractMetadata(QName type, NodeRef nodeRef) {
 
@@ -993,6 +1011,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		return metadata;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String[] getTags(NodeRef nodeRef) {
 		String[] result;
@@ -1011,11 +1030,13 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String getPersonDisplayName(String userId) {
 		return personAttributeExtractorPlugin.getPersonDisplayName(userId);
 	}
 
+	/** {@inheritDoc} */
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean matchCriteria(NodeRef nodeRef, Map<String, String> criteriaMap) {
@@ -1115,6 +1136,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public PropertyFormats getPropertyFormats(FormatMode mode, boolean useServerLocale) {
 		return propertyFormatService.getPropertyFormats(mode, useServerLocale);

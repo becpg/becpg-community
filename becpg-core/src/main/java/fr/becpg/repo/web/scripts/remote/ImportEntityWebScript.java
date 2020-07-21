@@ -38,9 +38,9 @@ import fr.becpg.repo.entity.remote.impl.HttpEntityProviderCallback;
 
 /**
  * Import nodeRef List from default remote
- * 
+ *
  * @author matthieu
- * 
+ * @version $Id: $Id
  */
 @Deprecated
 public class ImportEntityWebScript extends AbstractEntityWebScript implements InitializingBean {
@@ -53,18 +53,34 @@ public class ImportEntityWebScript extends AbstractEntityWebScript implements In
 
 	private EntityProviderCallBack entityProviderCallBack;
 
+	/**
+	 * <p>Setter for the field <code>remoteServer</code>.</p>
+	 *
+	 * @param remoteServer a {@link java.lang.String} object.
+	 */
 	public void setRemoteServer(String remoteServer) {
 		this.remoteServer = remoteServer;
 	}
 
+	/**
+	 * <p>Setter for the field <code>remoteUser</code>.</p>
+	 *
+	 * @param remoteUser a {@link java.lang.String} object.
+	 */
 	public void setRemoteUser(String remoteUser) {
 		this.remoteUser = remoteUser;
 	}
 
+	/**
+	 * <p>Setter for the field <code>remotePwd</code>.</p>
+	 *
+	 * @param remotePwd a {@link java.lang.String} object.
+	 */
 	public void setRemotePwd(String remotePwd) {
 		this.remotePwd = remotePwd;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		entityProviderCallBack = new HttpEntityProviderCallback(remoteServer + "/service/becpg/remote/entity", remoteUser, remotePwd,
@@ -72,6 +88,7 @@ public class ImportEntityWebScript extends AbstractEntityWebScript implements In
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
 

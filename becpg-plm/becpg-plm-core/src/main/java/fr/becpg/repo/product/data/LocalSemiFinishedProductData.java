@@ -7,6 +7,12 @@ import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
 
 
+/**
+ * <p>LocalSemiFinishedProductData class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @AlfType
 @AlfQname(qname = "bcpg:localSemiFinishedProduct")
 public class LocalSemiFinishedProductData extends ProductData  {

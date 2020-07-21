@@ -41,10 +41,13 @@ import fr.becpg.repo.search.impl.AbstractBeCPGQueryBuilder;
  * Class used to load the dynamic constraints.
  *
  * @author querephi, matthieu
+ * @version $Id: $Id
  */
 public class DynListConstraint extends ListOfValuesConstraint {
 
+	/** Constant <code>DYN_LIST_CACHE_NAME="DynListConstraintCache"</code> */
 	public static final String DYN_LIST_CACHE_NAME = "DynListConstraintCache";
+	/** Constant <code>UNDIFINED_CONSTRAINT_VALUE="-"</code> */
 	public static final String UNDIFINED_CONSTRAINT_VALUE = "-";
 
 	private static final String ERR_NO_VALUES = "d_dictionary.constraint.list_of_values.no_values";
@@ -68,6 +71,11 @@ public class DynListConstraint extends ListOfValuesConstraint {
 
 	private Boolean addEmptyValue = null;
 
+	/**
+	 * <p>setPath.</p>
+	 *
+	 * @param paths a {@link java.util.List} object.
+	 */
 	public void setPath(List<String> paths) {
 
 		if (paths == null) {
@@ -80,38 +88,79 @@ public class DynListConstraint extends ListOfValuesConstraint {
 		this.paths = paths;
 	}
 
+	/**
+	 * <p>Setter for the field <code>serviceRegistry</code>.</p>
+	 *
+	 * @param serviceRegistry a {@link org.alfresco.service.ServiceRegistry} object.
+	 */
 	public void setServiceRegistry(ServiceRegistry serviceRegistry) {
 		DynListConstraint.serviceRegistry = serviceRegistry;
 	}
 
+	/**
+	 * <p>Setter for the field <code>beCPGCacheService</code>.</p>
+	 *
+	 * @param beCPGCacheService a {@link fr.becpg.repo.cache.BeCPGCacheService} object.
+	 */
 	public void setBeCPGCacheService(BeCPGCacheService beCPGCacheService) {
 		DynListConstraint.beCPGCacheService = beCPGCacheService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>constraintType</code>.</p>
+	 *
+	 * @param constraintType a {@link java.lang.String} object.
+	 */
 	public void setConstraintType(String constraintType) {
 		this.constraintType = constraintType;
 	}
 
+	/**
+	 * <p>Setter for the field <code>constraintProp</code>.</p>
+	 *
+	 * @param constraintProp a {@link java.lang.String} object.
+	 */
 	public void setConstraintProp(String constraintProp) {
 		this.constraintProp = constraintProp;
 	}
 
+	/**
+	 * <p>Setter for the field <code>constraintCode</code>.</p>
+	 *
+	 * @param constraintCode a {@link java.lang.String} object.
+	 */
 	public void setConstraintCode(String constraintCode) {
 		this.constraintCode = constraintCode;
 	}
 
+	/**
+	 * <p>Setter for the field <code>level</code>.</p>
+	 *
+	 * @param level a {@link java.lang.String} object.
+	 */
 	public void setLevel(String level) {
 		this.level = level;
 	}
 
+	/**
+	 * <p>Setter for the field <code>levelProp</code>.</p>
+	 *
+	 * @param levelProp a {@link java.lang.String} object.
+	 */
 	public void setLevelProp(String levelProp) {
 		this.levelProp = levelProp;
 	}
 
+	/**
+	 * <p>Setter for the field <code>addEmptyValue</code>.</p>
+	 *
+	 * @param addEmptyValue a {@link java.lang.Boolean} object.
+	 */
 	public void setAddEmptyValue(Boolean addEmptyValue) {
 		this.addEmptyValue = addEmptyValue;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void initialize() {
 		checkPropertyNotNull("paths", paths);
@@ -124,6 +173,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<String> getAllowedValues() {
 
@@ -137,6 +187,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected void evaluateSingleValue(Object value) {
 		// convert the value to a String
@@ -153,11 +204,24 @@ public class DynListConstraint extends ListOfValuesConstraint {
 
 	}
 
+	/**
+	 * <p>getDisplayLabel.</p>
+	 *
+	 * @param constraintAllowableValue a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getDisplayLabel(String constraintAllowableValue) {
 
 		return getDisplayLabel(constraintAllowableValue,I18NUtil.getLocale());
 	}
 	
+	/**
+	 * <p>getDisplayLabel.</p>
+	 *
+	 * @param constraintAllowableValue a {@link java.lang.String} object.
+	 * @param locale a {@link java.util.Locale} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getDisplayLabel(String constraintAllowableValue, Locale locale) {
 
 		MLText mlText = getMLAwareAllowedValues().get(constraintAllowableValue);
@@ -171,11 +235,17 @@ public class DynListConstraint extends ListOfValuesConstraint {
 		return constraintAllowableValue;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String getDisplayLabel(String constraintAllowableValue, MessageLookup messageLookup) {
 		return getDisplayLabel(constraintAllowableValue);
 	}
 
+	/**
+	 * <p>getMLAwareAllowedValues.</p>
+	 *
+	 * @return a {@link java.util.Map} object.
+	 */
 	public Map<String, MLText> getMLAwareAllowedValues() {
 		return beCPGCacheService.getFromCache(DYN_LIST_CACHE_NAME, getShortName(),
 				() -> serviceRegistry.getTransactionService().getRetryingTransactionHelper().doInTransaction(() -> {

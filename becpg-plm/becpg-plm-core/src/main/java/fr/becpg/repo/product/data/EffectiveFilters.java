@@ -23,16 +23,30 @@ import java.util.function.Predicate;
 import fr.becpg.repo.repository.filters.DataListFilter;
 import fr.becpg.repo.repository.model.EffectiveDataItem;
 
+/**
+ * <p>EffectiveFilters class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class EffectiveFilters<T extends EffectiveDataItem> implements DataListFilter<ProductData, T> {
 
+	/** Constant <code>EFFECTIVE="EFFECTIVE"</code> */
 	public final static String EFFECTIVE = "EFFECTIVE";
+	/** Constant <code>FUTUR="FUTUR"</code> */
 	public final static String FUTUR = "FUTUR";
+	/** Constant <code>ALL="ALL"</code> */
 	public final static String ALL = "ALL";
 
 	private String effectiveState = EFFECTIVE;
 	
 	private Date currentDate = null;
 
+	/**
+	 * <p>Constructor for EffectiveFilters.</p>
+	 *
+	 * @param effectiveState a {@link java.lang.String} object.
+	 */
 	public EffectiveFilters(String effectiveState) {
 		super();
 		this.effectiveState = effectiveState;
@@ -40,6 +54,11 @@ public class EffectiveFilters<T extends EffectiveDataItem> implements DataListFi
 	
 	
 
+	/**
+	 * <p>Constructor for EffectiveFilters.</p>
+	 *
+	 * @param currentDate a {@link java.util.Date} object.
+	 */
 	public EffectiveFilters(Date currentDate) {
 		super();
 		this.currentDate = currentDate;
@@ -48,6 +67,7 @@ public class EffectiveFilters<T extends EffectiveDataItem> implements DataListFi
 
 
 
+	/** {@inheritDoc} */
 	@Override
 	public Predicate<T> createPredicate(final ProductData data) {
 
