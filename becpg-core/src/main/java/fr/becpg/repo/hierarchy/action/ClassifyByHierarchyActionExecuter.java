@@ -33,7 +33,7 @@ public class ClassifyByHierarchyActionExecuter extends ActionExecuterAbstractBas
 	public static final String PARAM_PROP_HIERARCHY = "prop-hierarchy";
 	public static final String PARAM_PROP_LOCALE = "prop-locale";
 	
-	/** The logger. */
+	
 	private static final Log logger = LogFactory.getLog(ClassifyByHierarchyActionExecuter.class);
 	
 	private HierarchyService hierarchyService;

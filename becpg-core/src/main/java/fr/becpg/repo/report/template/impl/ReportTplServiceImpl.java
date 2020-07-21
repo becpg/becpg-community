@@ -67,14 +67,7 @@ public class ReportTplServiceImpl implements ReportTplService {
 	private AssociationService associationService;
 
 	/**
-	 * Get the report templates of the product.
-	 *
-	 * @param productNodeRef
-	 *            the product node ref
-	 * @return the system report templates
-	 * @param:productNodeRef
-	 * @param:tplName the
-	 *                    name of the template or starting by
+	 * Get the system report template
 	 */
 	@Override
 	public List<NodeRef> getSystemReportTemplates(ReportType reportType, QName nodeType) {
@@ -128,12 +121,6 @@ public class ReportTplServiceImpl implements ReportTplService {
 		return (ret != null) && !ret.isEmpty() ? ret.get(0) : null;
 	}
 
-	/**
-	 *
-	 * @param reportType
-	 * @param nodeType
-	 * @return
-	 */
 	@Override
 	public NodeRef getDefaultReportTemplate(ReportType reportType, QName nodeType) {
 		List<NodeRef> ret = getReportTpls(reportType, nodeType, false, true, null);
@@ -144,16 +131,6 @@ public class ReportTplServiceImpl implements ReportTplService {
 	/**
 	 * Create the rptdesign node for the report
 	 *
-	 * @param parentNodeRef
-	 * @param tplName
-	 * @param tplFilePath
-	 * @param reportType
-	 * @param nodeType
-	 * @param isSystemTpl
-	 * @param isDefaultTpl
-	 * @param overrideTpl
-	 * @return
-	 * @throws IOException
 	 */
 	@Override
 	public NodeRef createTplRptDesign(NodeRef parentNodeRef, String tplName, String tplFilePath, ReportType reportType, ReportFormat reportFormat,
@@ -217,10 +194,6 @@ public class ReportTplServiceImpl implements ReportTplService {
 	/**
 	 * Create a ressource for the report
 	 *
-	 * @param parentNodeRef
-	 * @param xmlFilePath
-	 * @param overrideRessource
-	 * @throws IOException
 	 */
 	@Override
 	public NodeRef createTplRessource(NodeRef parentNodeRef, String xmlFilePath, boolean overrideRessource) throws IOException {

@@ -455,13 +455,7 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 			+ " where  assoc.type_qname_id=?  "
 			+ " and q1.qname_id IS NULL and q2.qname_id IS NULL ";
 
-	/**
-	 *
-	 * @param assocs
-	 * @param assocName
-	 * @param orOperator
-	 * @return
-	 */
+
 	@Override
 	public List<EntitySourceAssoc> getEntitySourceAssocs(List<NodeRef> nodeRefs, QName assocTypeQName, boolean isOrOperator) {
 		List<EntitySourceAssoc> ret = null;

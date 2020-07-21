@@ -133,9 +133,6 @@ public class FormulationHelper {
 
 	/**
 	 * Gets the qty of a packaging item
-	 *
-	 * @param packagingListDataItem
-	 * @return
 	 */
 	public static Double getQty(PackagingListDataItem packagingListDataItem, ProductData subProductData) {
 
@@ -168,10 +165,6 @@ public class FormulationHelper {
 
 	/**
 	 * Gets the qty of a process item
-	 *
-	 * @param processListDataItem
-	 * @return
-	 * @throws FormulateException
 	 */
 	public static Double getQty(ProductData formulatedProduct, ProcessListDataItem processListDataItem) throws FormulateException {
 
@@ -219,11 +212,7 @@ public class FormulationHelper {
 		}
 	}
 
-	/**
-	 *
-	 * @param productData
-	 * @return
-	 */
+
 	@Deprecated
 	public static Double getNetWeight(NodeRef nodeRef, NodeService nodeService, Double defaultValue) {
 

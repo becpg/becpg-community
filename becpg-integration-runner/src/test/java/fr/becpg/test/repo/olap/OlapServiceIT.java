@@ -31,7 +31,7 @@ import fr.becpg.test.RepoBaseTestCase;
 
 public class OlapServiceIT extends RepoBaseTestCase {
 
-	/** The logger. */
+	
 	private static final Log logger = LogFactory.getLog(OlapServiceIT.class);
 
 	@Autowired

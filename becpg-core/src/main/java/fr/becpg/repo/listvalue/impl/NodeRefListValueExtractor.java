@@ -31,7 +31,7 @@ import fr.becpg.repo.listvalue.ListValueExtractor;
 
 /**
  * Used to extract properties from nodeRef
- * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
+ * @author "Matthieu Laborie"
  *
  */
 public class NodeRefListValueExtractor implements ListValueExtractor<NodeRef> {

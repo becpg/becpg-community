@@ -29,7 +29,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
  * 
- * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
+ * @author "Matthieu Laborie"
  * 
  */
 @Service("designerInitService")

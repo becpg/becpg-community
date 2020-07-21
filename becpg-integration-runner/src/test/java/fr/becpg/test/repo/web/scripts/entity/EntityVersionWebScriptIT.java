@@ -32,7 +32,7 @@ import fr.becpg.test.utils.TestWebscriptExecuters.Response;
  */
 public class EntityVersionWebScriptIT extends PLMBaseTestCase {
 
-	/** The logger. */
+	
 	private static final Log logger = LogFactory.getLog(EntityVersionWebScriptIT.class);
 
 	@Autowired

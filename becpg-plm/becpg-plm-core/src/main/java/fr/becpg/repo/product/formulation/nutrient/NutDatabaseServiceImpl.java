@@ -6,7 +6,6 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
@@ -36,7 +35,6 @@ import org.springframework.util.StopWatch;
 import com.sun.star.uno.RuntimeException;
 
 import fr.becpg.common.csv.CSVReader;
-import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.dictionary.constraint.DynListConstraint;

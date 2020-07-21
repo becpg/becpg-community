@@ -50,7 +50,7 @@ import fr.becpg.repo.designer.data.FormControl;
 
 /**
  * 
- * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
+ * @author "Matthieu Laborie"
  * 
  */
 public class FormModelVisitor {
@@ -59,23 +59,12 @@ public class FormModelVisitor {
 
 	private NodeService nodeService;
 
-	/**
-	 * @param nodeService
-	 *            the nodeService to set
-	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
 	/**
 	 * Build a list of controls
-	 * 
-	 * @param is
-	 * @return
-	 * @throws SAXException
-	 * @throws IOException
-	 * @throws ParserConfigurationException
-	 * @throws FactoryConfigurationError
 	 */
 	public List<FormControl> visitControls(InputStream is) throws SAXException, IOException, ParserConfigurationException, FactoryConfigurationError {
 		List<FormControl> ret = new LinkedList<>();

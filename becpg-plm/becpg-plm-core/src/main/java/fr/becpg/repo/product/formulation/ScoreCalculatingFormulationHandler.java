@@ -215,9 +215,6 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 
 	/**
 	 * Returns if node exists and is in valid state
-	 *
-	 * @param node
-	 * @return
 	 */
 	public boolean checkProductValidity(NodeRef node) {
 		ProductData found = alfrescoRepository.findOne(node);

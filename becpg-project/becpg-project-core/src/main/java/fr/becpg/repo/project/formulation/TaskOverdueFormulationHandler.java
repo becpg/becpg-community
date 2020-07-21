@@ -59,7 +59,6 @@ public class TaskOverdueFormulationHandler extends FormulationBaseHandler<Projec
 
 	/**
 	 * Checks if notification emails should be sent for each node with notificationParamAspect enabled
-	 * @return 
 	 */
 	@Override
 	public boolean process(ProjectData projectData) {

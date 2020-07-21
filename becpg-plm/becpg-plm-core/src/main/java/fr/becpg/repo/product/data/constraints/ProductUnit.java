@@ -52,7 +52,6 @@ public enum ProductUnit {
 	
    /**
     * Convert factor to Kg L or M
-    * @return
     */
 	public  Double getUnitFactor() {
 		if (this.equals(ProductUnit.mL) || this.equals(ProductUnit.g)) {

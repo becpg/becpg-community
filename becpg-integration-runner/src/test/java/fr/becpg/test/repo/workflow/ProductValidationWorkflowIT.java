@@ -67,7 +67,7 @@ public class ProductValidationWorkflowIT extends AbstractWorkflowTest {
 	private static final QName PROP_pvRDApprovalActor = QName.createQName(WF_URI, "pvRDApprovalActor");
 	protected static final QName PROP_notifyUsers = QName.createQName(WF_URI, "notifyUsers");
 
-	/** The logger. */
+	
 	private static final Log logger = LogFactory.getLog(ProductValidationWorkflowIT.class);
 
 	@Test

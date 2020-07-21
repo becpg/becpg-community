@@ -23,8 +23,6 @@ import java.util.Map;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
-
-//TODO merge with BaseObject and BeCPGDataObject
 public interface RepositoryEntity {
 
 	NodeRef getNodeRef();
@@ -36,10 +34,8 @@ public interface RepositoryEntity {
 	void setName(String name);
 	
 	
-	
 	/**
 	 * Optional Map to put extra props
-	 * @return
 	 */
 	Map<QName, Serializable> getExtraProperties();
 	

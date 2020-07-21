@@ -84,10 +84,6 @@ public class VersionCleanerActionExecuter extends ActionExecuterAbstractBase {
 		this.entityVersionService = entityVersionService;
 	}
 
-	/**
-	 * @see org.alfresco.repo.action.executer.ActionExecuter#execute(org.alfresco.repo.ref.NodeRef,
-	 *      org.alfresco.repo.ref.NodeRef)
-	 */
 	@Override
 	public void executeImpl(Action ruleAction, NodeRef actionedUponNodeRef) {
 		if (nodeService.exists(actionedUponNodeRef)) {
@@ -127,12 +123,6 @@ public class VersionCleanerActionExecuter extends ActionExecuterAbstractBase {
 		}
 	}
 
-	/**
-	 * @param ruleAction
-	 * @param compositeAction
-	 * @param versionConfig
-	 * @param isLastAction
-	 */
 	private boolean parseAction(Action ruleAction, Action compositeAction, VersionCleanerActionConfig versionConfig, boolean isLastAction) {
 		
 		if(logger.isDebugEnabled()) {

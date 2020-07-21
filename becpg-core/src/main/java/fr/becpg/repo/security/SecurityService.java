@@ -23,7 +23,7 @@ import org.alfresco.service.namespace.QName;
 
 /**
  * 
- * @author "Matthieu Laborie <laborima@gmail.com>"
+ * @author "Matthieu Laborie"
  *
  */
 public interface SecurityService {
@@ -37,16 +37,12 @@ public interface SecurityService {
 	
 	/**
 	 * Compute access mode for the given field name on a specific type
-	 * @param nodeType
-	 * @param name
 	 * @return Access Mode status
 	 */
 	int computeAccessMode(QName nodeType, String name);
 	
 	/**
 	 * Compute access mode for the given field name on a specific type
-	 * @param nodeType
-	 * @param name
 	 * @return Access Mode status
 	 */
 	int computeAccessMode(QName nodeType, QName name);
@@ -58,21 +54,16 @@ public interface SecurityService {
 
 	/**
 	 * Extract props list based on existing ACL_GROUPS
-	 * @param item
-	 * @return
 	 */
 	List<String> getAvailablePropNames();
 
 	/**
 	 * Check user is in currentSecurityGroup or isAdmin
-	 * @param securityGroup
-	 * @return
 	 */
 	boolean isCurrentUserAllowed(String securityGroup);
 
 	/**
 	 * List available security roles for user
-	 * @return
 	 */
 	List<String> getUserSecurityRoles();
 

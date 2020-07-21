@@ -129,10 +129,7 @@ public class VersionCleanerActionConfig {
 		return majorToKeep;
 	}
 
-	/**
-	 * @param allVersions
-	 * @return
-	 */
+	
 	public Collection<Version> versionsToDelete(Collection<Version> versions) {
 
 			List<Version> ret = new ArrayList<>(versions);

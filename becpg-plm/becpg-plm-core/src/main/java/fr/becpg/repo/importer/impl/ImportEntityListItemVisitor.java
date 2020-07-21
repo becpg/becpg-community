@@ -50,7 +50,7 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 
 	protected static final String MSG_ERROR_NO_MAPPING_FOR = "import_service.error.no_mapping_for";
 
-	/** The logger. */
+	
 	private static final Log logger = LogFactory.getLog(ImportEntityListItemVisitor.class);
 
 	private FileFolderService fileFolderService;
@@ -61,15 +61,6 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 
 	/**
 	 * Check if the node exists, according to : - keys or entityCode
-	 * 
-	 * @param importContext
-	 *            the import context
-	 * @param type
-	 *            the type
-	 * @param properties
-	 *            the properties
-	 * @return the node ref
-	 * @throws InvalidTargetNodeException
 	 */
 	@Override
 	public NodeRef importNode(ImportContext importContext, List<String> values) throws ParseException, ImporterException {
@@ -214,11 +205,6 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 
 	/**
 	 * Look for the entity list item (check props and assocs match)
-	 * 
-	 * @param listNodeRef
-	 * @param dataListColumnsProps
-	 * @param dataListColumnsAssocs
-	 * @return
 	 */
 	private NodeRef findEntityListItem(ImportContext importContext,
 			NodeRef listNodeRef, Map<QName, String> dataListColumnsProps, Map<QName, List<NodeRef>> dataListColumnsAssocs) {

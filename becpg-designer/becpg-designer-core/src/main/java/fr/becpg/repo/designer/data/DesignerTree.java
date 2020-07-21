@@ -22,7 +22,7 @@ import java.util.List;
 
 /**
  * 
- * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
+ * @author "Matthieu Laborie"
  * Tree model representing the xml tree.
  */
 public class DesignerTree {

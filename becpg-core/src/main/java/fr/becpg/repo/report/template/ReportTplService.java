@@ -37,7 +37,7 @@ public interface ReportTplService {
 	 * Gets the system report templates.
 	 *
 	 * @param nodeType
-	 * @return the system report templates
+ the system report templates
 	 */
 	List<NodeRef> getSystemReportTemplates(ReportType reportType, QName nodeType);
 	
@@ -46,7 +46,6 @@ public interface ReportTplService {
 	 * @param reportType
 	 * @param nodeType
 	 * @param tplName
-	 * @return
 	 */
 	NodeRef getSystemReportTemplate(ReportType reportType, QName nodeType, String tplName);
 	
@@ -55,7 +54,6 @@ public interface ReportTplService {
 	 * @param reportType
 	 * @param nodeType
 	 * @param tplName
-	 * @return
 	 */
 	NodeRef getUserReportTemplate(ReportType reportType, QName nodeType, String tplName);
 	
@@ -64,7 +62,7 @@ public interface ReportTplService {
 	 *
 	 * @param nodeType the node type
 	 * @param tplName the tpl name
-	 * @return the user report templates
+ the user report templates
 	 */
 	List<NodeRef> getUserReportTemplates(ReportType reportType, QName nodeType, String tplName);
 	
@@ -79,7 +77,6 @@ public interface ReportTplService {
 	 * @param isSystemTpl
 	 * @param isDefaultTpl
 	 * @param overrideTpl
-	 * @return
 	 * @throws IOException
 	 */
 	NodeRef createTplRptDesign(NodeRef parentNodeRef, String tplName, String tplFilePath, ReportType reportType, ReportFormat reportFormat, QName nodeType, boolean isSystemTpl, boolean isDefaultTpl, boolean overrideTpl) throws IOException;
@@ -90,7 +87,7 @@ public interface ReportTplService {
 	 * @param xmlFilePath
 	 * @param overrideRessource
 	 * @throws IOException
-	 * @return the created resource
+ the created resource
 	 */
 	NodeRef createTplRessource(NodeRef parentNodeRef, String xmlFilePath, boolean overrideRessource) throws IOException;
 	
@@ -98,21 +95,18 @@ public interface ReportTplService {
 	 * Check the default reports (return one default tpl)
 	 * if there is a user default tpl, remove system default tpl and keep user one
 	 * @param tplsNodeRef
-	 * @return
 	 */
 	List<NodeRef> cleanDefaultTpls(List<NodeRef> tplsNodeRef);
 	
 	/**
 	 * Get the report format
 	 * @param tplNodeRef
-	 * @return
 	 */
 	ReportFormat getReportFormat(NodeRef tplNodeRef);
 
 	/**
 	 * Get the template associated to the report
 	 * @param nodeRef
-	 * @return
 	 */
 	NodeRef getAssociatedReportTemplate(NodeRef nodeRef);
 
@@ -120,7 +114,6 @@ public interface ReportTplService {
 	 * 
 	 * @param reportType
 	 * @param nodeType
-	 * @return
 	 */
 	NodeRef getDefaultReportTemplate(ReportType reportType, QName nodeType);
 }

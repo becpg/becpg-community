@@ -2,9 +2,11 @@ package fr.becpg.model;
 
 /**
  * Param used in advanced deliverable URL
- *  - /share/page/wizard?id=wizard-id&destination={nodeRef}
- *  - /share/page/wizard?id=supplier-mp&nodeRef={pjt:projectEntity}
+ * <code>
+ *  - /share/page/wizard?id=wizard-id&amp;destination={nodeRef}
+ *  - /share/page/wizard?id=supplier-mp&amp;nodeRef={pjt:projectEntity}
  *  - content:{pjt:projectEntity|xpath:./cm:Documents/*}
+ *  </code>
  * @author matthieu
  *
  */

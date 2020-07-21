@@ -29,7 +29,7 @@ import fr.becpg.test.PLMBaseTestCase;
  */
 public class EntityTplServiceIT extends PLMBaseTestCase {
 
-	/** The logger. */
+	
 	private static final Log logger = LogFactory.getLog(EntityTplServiceIT.class);
 
 	@Autowired

@@ -1,9 +1,8 @@
 /*
- * 
+ *
  */
 package fr.becpg.repo.importer;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -21,17 +20,15 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.config.mapping.AbstractAttributeMapping;
 
-// TODO: Auto-generated Javadoc
 /**
  * Context used during import.
- * 
+ *
  * @author querephi
  */
 public class ImportContext {
-	
+
 	private ImportFileReader importFileReader;
-	
-	
+
 	private static final String FORMAT_DATE_FRENCH = "dd/MM/yyyy";
 	private static final String FORMAT_DATE_ENGLISH = "yyyy/MM/dd";
 	private static final String MSG_ERROR_IMPORT_LINE = "import_service.error.err_import_line";
@@ -40,9 +37,9 @@ public class ImportContext {
 	private NodeRef parentNodeRef;
 
 	private NodeRef entityNodeRef;
-	
+
 	private QName listType;
-	
+
 	private QName type;
 
 	private QName entityType;
@@ -75,7 +72,6 @@ public class ImportContext {
 
 	private boolean isSiteDocLib = false;
 
-
 	public NodeRef getParentNodeRef() {
 		return parentNodeRef;
 	}
@@ -85,7 +81,6 @@ public class ImportContext {
 		this.cacheNodes.clear();
 	}
 
-	
 	public QName getListType() {
 		return listType;
 	}
@@ -94,7 +89,6 @@ public class ImportContext {
 		this.listType = listType;
 		this.cacheNodes.clear();
 	}
-	
 
 	public QName getType() {
 		return type;
@@ -114,11 +108,9 @@ public class ImportContext {
 		this.cacheNodes.clear();
 	}
 
-
 	public boolean isDoUpdate() {
 		return doUpdate;
 	}
-
 
 	public void setDoUpdate(boolean doUpdate) {
 		this.doUpdate = doUpdate;
@@ -140,11 +132,9 @@ public class ImportContext {
 		this.importFileName = importFileName;
 	}
 
-
 	public ImportType getImportType() {
 		return importType;
 	}
-
 
 	public void setImportType(ImportType importType) {
 		this.importType = importType;
@@ -166,22 +156,18 @@ public class ImportContext {
 		this.propertyFormats = propertyFormats;
 	}
 
-
 	public List<AbstractAttributeMapping> getColumns() {
 		return columns;
 	}
 
-	
 	public void setColumns(List<AbstractAttributeMapping> columns) {
 		this.columns = columns;
 	}
-
 
 	public Map<QName, ClassMapping> getClassMappings() {
 		return classMappings;
 	}
 
-	
 	public void setClassMappings(Map<QName, ClassMapping> classMappings) {
 		this.classMappings = classMappings;
 	}
@@ -194,15 +180,13 @@ public class ImportContext {
 		this.cacheNodes = cacheNodes;
 	}
 
-	
-
 	public List<String> getLog() {
 		return log;
 	}
 
 	public void setLog(List<String> log) {
 		this.log = log;
-	
+
 	}
 
 	public boolean isSiteDocLib() {
@@ -221,7 +205,6 @@ public class ImportContext {
 		this.entityNodeRef = entityNodeRef;
 	}
 
-
 	public String getPath() {
 		return path;
 	}
@@ -237,24 +220,15 @@ public class ImportContext {
 	public void setDocsBasePath(String docsBasePath) {
 		this.docsBasePath = docsBasePath;
 	}
-	
-	
-	/**
-	 * Constructor
-	 * 
-	 * @param csvReader
-	 * @throws IOException
-	 */
+
 	public ImportContext() {
 		propertyFormats = new PropertyFormats(true);
-		
+
 		String dateFormat = (Locale.getDefault().equals(Locale.FRENCH) || Locale.getDefault().equals(Locale.FRANCE)) ? FORMAT_DATE_FRENCH
 				: FORMAT_DATE_ENGLISH;
 		propertyFormats.setDateFormat(dateFormat);
-		
-	}
 
-	
+	}
 
 	public ImportFileReader getImportFileReader() {
 		return importFileReader;
@@ -263,12 +237,8 @@ public class ImportContext {
 	public void setImportFileReader(ImportFileReader importFileReader) {
 		this.importFileReader = importFileReader;
 	}
-	
-	
-
 
 	private int importIndex = 0;
-
 
 	public int getImportIndex() {
 		return importIndex;
@@ -277,8 +247,6 @@ public class ImportContext {
 	public void setImportIndex(int importIndex) {
 		this.importIndex = importIndex;
 	}
-	
-
 
 	public String[] nextLine() {
 		String[] line = {};
@@ -288,9 +256,9 @@ public class ImportContext {
 			e.printStackTrace();
 			markCurrLineError(e);
 		}
-		
+
 		return line;
-		
+
 	}
 
 	final Set<NodeRef> deletedDataListEntityNodeRefs = new HashSet<>();
@@ -310,24 +278,21 @@ public class ImportContext {
 	}
 
 	public String markCurrLineError(Exception e) {
-		
+
 		// store the exception and continue import...
-		String error = I18NUtil.getMessage(MSG_ERROR_IMPORT_LINE, importFileName,importIndex,
-				new Date(), e.getMessage());
+		String error = I18NUtil.getMessage(MSG_ERROR_IMPORT_LINE, importFileName, importIndex, new Date(), e.getMessage());
 
 		getLog().add(error);
-		importFileReader.reportError(importIndex-1, e.getMessage(), columns.size());
-		
+		importFileReader.reportError(importIndex - 1, e.getMessage(), columns.size());
+
 		return error;
-		
+
 	}
 
 	public String markCurrLineSuccess() {
-		importFileReader.reportSuccess(importIndex-1, columns.size());
-		
+		importFileReader.reportSuccess(importIndex - 1, columns.size());
+
 		return I18NUtil.getMessage(MSG_INFO_IMPORT_LINE, importIndex);
 	}
-
-	
 
 }

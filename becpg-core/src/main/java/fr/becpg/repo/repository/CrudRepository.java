@@ -59,7 +59,6 @@ public interface CrudRepository<T, ID extends Serializable>  {
 	 * Saves all given entities.
 	 *
 	 * @param entities
-	 * @return
 	 */
 	Iterable<T> save(Iterable<? extends T> entities);
 

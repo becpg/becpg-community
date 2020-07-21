@@ -30,7 +30,7 @@ import fr.becpg.repo.designer.data.FormControl;
 
 /**
  * 
- * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
+ * @author "Matthieu Laborie"
  *
  */
 public interface DesignerService {

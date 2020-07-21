@@ -29,7 +29,7 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 
 /**
  * Reload share configuration files
- * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
+ * @author "Matthieu Laborie"
  *
  */
 public class ReloadConfigWebscript  extends DeclarativeWebScript {

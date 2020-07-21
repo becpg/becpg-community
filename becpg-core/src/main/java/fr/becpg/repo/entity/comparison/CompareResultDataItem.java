@@ -7,7 +7,7 @@ import java.util.Arrays;
 
 import org.alfresco.service.namespace.QName;
 
-// TODO: Auto-generated Javadoc
+
 /**
  * The Class CompareResultDataItem.
  *

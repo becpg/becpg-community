@@ -25,7 +25,7 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import fr.becpg.repo.designer.DesignerModel;
 import fr.becpg.repo.designer.DesignerService;
 
-// TODO: Auto-generated Javadoc
+
 /**
  * The Class CreateModelElementWebScript.
  *

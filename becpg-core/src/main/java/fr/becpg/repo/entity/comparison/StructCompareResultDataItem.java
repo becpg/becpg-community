@@ -9,7 +9,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
 
-// TODO: Auto-generated Javadoc
+
 /**
  * The Class StructCompareResultDataItem.
  *

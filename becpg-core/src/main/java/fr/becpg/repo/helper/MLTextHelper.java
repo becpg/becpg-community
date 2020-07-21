@@ -69,10 +69,6 @@ public class MLTextHelper {
 
 	/**
 	 * Try to find the best match for locale or try with default server local
-	 *
-	 * @param mltext
-	 * @param locale
-	 * @return
 	 */
 	public static String getClosestValue(MLText mltext, Locale locale) {
 		String ret = null;

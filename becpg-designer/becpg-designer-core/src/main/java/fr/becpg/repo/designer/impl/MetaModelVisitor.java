@@ -51,7 +51,7 @@ import fr.becpg.repo.designer.DesignerModel;
 
 /**
  * 
- * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
+ * @author "Matthieu Laborie"
  *
  */
 public class MetaModelVisitor {

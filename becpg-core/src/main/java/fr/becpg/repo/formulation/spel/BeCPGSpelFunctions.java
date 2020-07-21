@@ -142,7 +142,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		/**
 		 * Helper @beCPG.propValue($entity, $qname)
 		 *
-		 * @param nodeRef
+		 * @param item
 		 * @param qname
 		 * @return entity property value
 		 */
@@ -192,7 +192,6 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 *
 		 * Set property value on current entity
 		 *
-		 * @param item
 		 * @param qname
 		 * @param value
 		 * @return value being set

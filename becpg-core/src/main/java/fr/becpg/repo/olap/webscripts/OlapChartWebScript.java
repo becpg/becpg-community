@@ -35,7 +35,7 @@ import fr.becpg.repo.olap.data.OlapChart;
 import fr.becpg.repo.olap.data.OlapChartData;
 /**
  * Act as a proxy for OLAP queries
- * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
+ * @author "Matthieu Laborie"
  *
  */
 public class OlapChartWebScript  extends AbstractWebScript
