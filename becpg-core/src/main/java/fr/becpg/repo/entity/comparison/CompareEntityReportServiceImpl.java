@@ -166,14 +166,6 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 
 	/**
 	 * Render the comparison as xml data.
-	 *
-	 * @param entity1NodeRef
-	 *            the entity1 node ref
-	 * @param entitiesNodeRef
-	 *            the entities node ref
-	 * @param compareResult
-	 *            the compare result
-	 * @return the element
 	 */
 	private  Element renderComparisonAsXmlData(NodeRef entity1NodeRef, List<NodeRef> entityNodeRefs, List<CompareResultDataItem> compareResult) {
 		Document document = DocumentHelper.createDocument();
@@ -219,12 +211,6 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 
 	/**
 	 * Render the comparison as xml data.
-	 *
-	 * @param structCompareResults
-	 *            the struct compare results
-	 * @param pivotProperty
-	 *            the pivot property
-	 * @return the element
 	 */
 	public  Element renderStructComparisonAsXmlData(Map<String, List<StructCompareResultDataItem>> structCompareResults) {
 		Document document = DocumentHelper.createDocument();

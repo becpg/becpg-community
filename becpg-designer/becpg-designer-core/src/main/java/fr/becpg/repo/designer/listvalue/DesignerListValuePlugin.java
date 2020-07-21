@@ -46,7 +46,7 @@ import fr.becpg.repo.listvalue.ListValueService;
 
 /**
  * 
- * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
+ * @author "Matthieu Laborie"
  *
  */
 @Service

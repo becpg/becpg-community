@@ -35,7 +35,7 @@ import fr.becpg.repo.helper.AttributeExtractorService;
 
 /**
  *
- * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
+ * @author "Matthieu Laborie"
  *
  */
 @Service("charactValueExtractor")

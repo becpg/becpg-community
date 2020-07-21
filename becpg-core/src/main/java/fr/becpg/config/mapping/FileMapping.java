@@ -8,7 +8,7 @@ import java.util.List;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 
 
-// TODO: Auto-generated Javadoc
+
 /**
  * Class that represent the mapping for importing a characteristic
  * 

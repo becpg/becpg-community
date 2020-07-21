@@ -25,46 +25,33 @@ import org.alfresco.service.cmr.repository.NodeRef;
 
 /**
  * 
- * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
+ * @author "Matthieu Laborie"
  *
  */
 public interface BeCPGMailService {
 
 	/**
 	 * Send a mail to notify user import
-	 * @param personNodeRef
 	 */
 	void sendMailNewUser(NodeRef personNodeRef, String userName, String password, boolean sendToSelf);
 
-
-	/**
-	 * 
-	 * @param emails
-	 * @param title
-	 * @param emailTemplate
-	 * @param templateModel
-	 */
 	void sendMail(List<NodeRef> recipientNodeRefs, String title, String emailTemplate, Map<String, Object> templateModel, boolean sendToSelf);
 
 	void sendMailOnAsyncAction(String userName, String action, String actionUrl, boolean runWithSuccess, double time);
 	
-	
 	NodeRef findTemplateNodeRef(String templateName, NodeRef folderNR);
 
 	/**
-	 * 
 	 * @return the dictionary model mail nodeRef
 	 */
 	NodeRef getEmailTemplatesFolder();
 	
 	/**
-	 * 
 	 * @return the workflow model mail nodeRef
 	 */
 	NodeRef getEmailWorkflowTemplatesFolder();
 
 	/**
-	 * 
 	 * @return the notify model mail nodeRef
 	 */
 	NodeRef getEmailNotifyTemplatesFolder();

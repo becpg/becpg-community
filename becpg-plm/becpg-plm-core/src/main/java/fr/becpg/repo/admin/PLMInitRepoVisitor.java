@@ -219,13 +219,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	
 	@Autowired
 	protected BeCPGCacheService beCPGCacheService;
+	
 	/**
 	 * Initialize the repository with system folders.
-	 *
-	 * @param companyHome
-	 *            the company home
-	 * @param locale
-	 *            : locale of the system
 	 */
 	@Override
 	public List<SiteInfo> visitContainer(NodeRef companyHome) {

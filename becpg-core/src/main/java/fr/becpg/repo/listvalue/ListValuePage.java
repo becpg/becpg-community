@@ -24,7 +24,7 @@ import fr.becpg.repo.RepoConsts;
 
 /**
  * 
- * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
+ * @author "Matthieu Laborie"
  *
  */
  public class ListValuePage {

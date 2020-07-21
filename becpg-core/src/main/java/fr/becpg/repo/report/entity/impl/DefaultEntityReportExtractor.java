@@ -313,7 +313,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		ret.setXmlDataSource(entityElt);
 		ret.setDataObjects(context.getImages());
 
-		if (logger.isDebugEnabled() && watch!=null) {
+		if (logger.isDebugEnabled() && (watch != null)) {
 			watch.stop();
 			logger.debug("extract datasource in  " + watch.getTotalTimeSeconds() + " seconds for node " + entityNodeRef);
 		}
@@ -549,29 +549,18 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		}
 	}
 
-	/**
-	 * Load node attributes.
-	 *
-	 * @param nodeRef
-	 *            the node ref
-	 * @param elt
-	 *            the elt
-	 * @return the element
-	 */
 	protected void loadAttributes(NodeRef nodeRef, Element nodeElt, boolean useCData, List<QName> hiddenAttributes, DefaultExtractorContext context) {
 
-		
-		
 		// properties
 		Map<QName, Serializable> properties = nodeService.getProperties(nodeRef);
-		
-		//versionLabel
+
+		// versionLabel
 		String versionLabelDisplayValue = null;
 		QName versionLabelQName = null;
-		if (properties.containsKey(BeCPGModel.PROP_VERSION_LABEL) && properties.get(BeCPGModel.PROP_VERSION_LABEL) != null
-			&& !"".equals(properties.get(BeCPGModel.PROP_VERSION_LABEL))){
+		if (properties.containsKey(BeCPGModel.PROP_VERSION_LABEL) && (properties.get(BeCPGModel.PROP_VERSION_LABEL) != null)
+				&& !"".equals(properties.get(BeCPGModel.PROP_VERSION_LABEL))) {
 			versionLabelQName = BeCPGModel.PROP_VERSION_LABEL;
-		} else if (properties.containsKey(ContentModel.PROP_VERSION_LABEL) && properties.get(ContentModel.PROP_VERSION_LABEL) != null
+		} else if (properties.containsKey(ContentModel.PROP_VERSION_LABEL) && (properties.get(ContentModel.PROP_VERSION_LABEL) != null)
 				&& !"".equals(properties.get(ContentModel.PROP_VERSION_LABEL))) {
 			versionLabelQName = ContentModel.PROP_VERSION_LABEL;
 		}
@@ -582,13 +571,13 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			}
 			versionLabelDisplayValue = attributeExtractorService.extractPropertyForReport(propertyDef, properties.get(versionLabelQName), false);
 		}
-		
+
 		for (Map.Entry<QName, Serializable> property : properties.entrySet()) {
 
 			// do not display system properties
 			if ((hiddenAttributes == null) || (!hiddenAttributes.contains(property.getKey())
 					&& !NamespaceService.SYSTEM_MODEL_1_0_URI.equals(property.getKey().getNamespaceURI()))) {
-				
+
 				PropertyDefinition propertyDef = dictionaryService.getProperty(property.getKey());
 				if (propertyDef == null) {
 					logger.debug("This property doesn't exist. Name: " + property.getKey() + " nodeRef : " + nodeRef);
@@ -596,7 +585,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 				}
 
 				String value = attributeExtractorService.extractPropertyForReport(propertyDef, property.getValue(), false);
-				
+
 				boolean isDyn = false;
 				boolean isList = false;
 
@@ -646,8 +635,8 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 						}
 					}
 				} else {
-					if (versionLabelDisplayValue != null && 
-							(property.getKey().equals(BeCPGModel.PROP_VERSION_LABEL) || property.getKey().equals(ContentModel.PROP_VERSION_LABEL))) {
+					if ((versionLabelDisplayValue != null) && (property.getKey().equals(BeCPGModel.PROP_VERSION_LABEL)
+							|| property.getKey().equals(ContentModel.PROP_VERSION_LABEL))) {
 						addData(nodeElt, useCData, propertyDef.getName(), versionLabelDisplayValue, null, context);
 					} else {
 						addData(nodeElt, useCData, propertyDef.getName(), value, null, context);
@@ -673,7 +662,8 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 							if ((mlEntry.getKey().getCountry() != null) && !mlEntry.getKey().getCountry().isEmpty()) {
 								code += "_" + mlEntry.getKey().getCountry();
 							}
-							if ((mlTextLocales == null || "".equals(mlTextLocales)) && (context.getPreferences() == null || (context.getPreferences() != null && !context.getPreferences().containsKey("mlTextLocales"))) 
+							if ((((mlTextLocales == null) || "".equals(mlTextLocales)) && ((context.getPreferences() == null)
+									|| ((context.getPreferences() != null) && !context.getPreferences().containsKey("mlTextLocales"))))
 									|| context.prefsContains("mlTextLocales", mlTextLocales, code)) {
 								if ((code != null) && !code.isEmpty()) {
 									Element ret = addData(nodeElt, useCData, propertyDef.getName(), mlEntry.getValue(), code, context);
@@ -704,22 +694,22 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 		for (AssociationDefinition associationDef : assocs.values()) {
 			if (!hiddenAttributes.contains(associationDef.getName())) {
-			
+
 				if (!associationDef.getName().getNamespaceURI().equals(NamespaceService.RENDITION_MODEL_1_0_URI)
 						&& !associationDef.getName().getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI)
-						&& !associationDef.getName().equals(RuleModel.ASSOC_RULE_FOLDER) && !associationDef.getName().equals(ContentModel.ASSOC_ORIGINAL)
-						&& !associationDef.isChild()) {
-	
+						&& !associationDef.getName().equals(RuleModel.ASSOC_RULE_FOLDER)
+						&& !associationDef.getName().equals(ContentModel.ASSOC_ORIGINAL) && !associationDef.isChild()) {
+
 					if (!loadTargetAssoc(nodeRef, associationDef, nodeElt, context) || (useCData == false)) {
-	
+
 						List<NodeRef> assocNodes = associationService.getTargetAssocs(nodeRef, associationDef.getName());
-	
+
 						if ((assocNodes != null) && !assocNodes.isEmpty()) {
 							String ret = assocNodes.stream().map(i -> extractName(associationDef.getTargetClass().getName(), i))
 									.collect(Collectors.joining(RepoConsts.LABEL_SEPARATOR));
 							addData(nodeElt, useCData, associationDef.getName(), ret, null, context);
 						}
-	
+
 					}
 				}
 			}

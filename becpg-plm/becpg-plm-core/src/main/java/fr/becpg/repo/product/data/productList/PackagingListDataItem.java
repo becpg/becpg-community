@@ -23,9 +23,6 @@ import fr.becpg.repo.repository.model.CompositionDataItem;
 @MultiLevelDataList(secondaryPivot = "bcpg:compoList")
 public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem implements CompositionDataItem {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -8724448903680191263L;
 
 	private Double qty = 0d;
@@ -114,22 +111,10 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 		this.product = product;
 	}
 
-	/**
-	 * Instantiates a new compo list data item.
-	 */
 	public PackagingListDataItem() {
 
 	}
 
-	/**
-	 * Instantiates a new packaging list data item.
-	 * 
-	 * @param nodeRef
-	 * @param qty
-	 * @param ProductUnit
-	 * @param pkgLevel
-	 * @param product
-	 */
 	public PackagingListDataItem(NodeRef nodeRef, Double qty, ProductUnit packagingListUnit, PackagingLevel pkgLevel, Boolean isMaster, NodeRef product) {
 
 		setNodeRef(nodeRef);

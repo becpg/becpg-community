@@ -55,19 +55,7 @@ public final class Search extends BaseScopableProcessorExtension{
 	}
 
 	
-	/**
-	 * 
-	 * @param datatype
-	 * @param term
-	 * @param tag
-	 * @param criteria
-	 * @param isRepo
-	 * @param siteId
-	 * @param containerId
-	 * @param sort
-	 * @param maxResults
-	 * @return
-	 */
+
 	public Scriptable queryAdvSearch(String datatype, 
 			String term, String tag, Object criteria, 
 			boolean isRepo, String siteId, String containerId, Object sort,int maxResults){
@@ -75,14 +63,7 @@ public final class Search extends BaseScopableProcessorExtension{
 		
 	}
 	
-	/**
-	 * 
-	 * @param query
-	 * @param criteria
-	 * @param sort
-	 * @param maxResults
-	 * @return
-	 */
+
 	public Scriptable queryAdvSearch(String query, String datatype, Object criteria,  Object sort, int maxResults){
 		return queryAdvSearch(query, datatype, null, null, criteria, true, null, null, sort, maxResults);
 		
@@ -91,15 +72,6 @@ public final class Search extends BaseScopableProcessorExtension{
 
 	/**
 	 * Method a do the query for the advanced search
-	 * @param datatype
-	 * @param term
-	 * @param tag
-	 * @param criteria
-	 * @param sort
-	 * @param isRepo
-	 * @param siteId
-	 * @param containerId
-	 * @return
 	 */
 	public Scriptable queryAdvSearch(String query, String datatype, 
 			String term, String tag, Object criteria,  

@@ -50,7 +50,6 @@ public interface ExportSearchService {
 	 * @param templateNodeRef
 	 * @param searchResults
 	 * @param reportFormat
-	 * @return
 	 */
 	NodeRef createReport(QName nodeType, NodeRef templateNodeRef, List<NodeRef> searchResults, ReportFormat reportFormat);
 }

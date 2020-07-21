@@ -41,7 +41,7 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 @Deprecated 
 public class AdminTenantWebScript extends AbstractWebScript {
 
-	/** The logger. */
+	
 	private static final Log logger = LogFactory.getLog(AdminTenantWebScript.class);
 
 	// request parameter names

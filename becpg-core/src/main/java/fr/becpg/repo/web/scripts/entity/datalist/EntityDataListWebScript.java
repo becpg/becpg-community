@@ -57,7 +57,7 @@ import fr.becpg.repo.web.scripts.WebscriptHelper;
  */
 public class EntityDataListWebScript extends AbstractWebScript {
 
-	/** The logger. */
+	
 	private static final Log logger = LogFactory.getLog(EntityDataListWebScript.class);
 
 	/** The Constant PARAM_FILTER. */

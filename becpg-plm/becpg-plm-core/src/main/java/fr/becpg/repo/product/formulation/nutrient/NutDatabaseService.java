@@ -8,6 +8,11 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import fr.becpg.repo.listvalue.ListValuePage;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 
+/**
+ * 
+ * @author steven
+ *
+ */
 public interface NutDatabaseService {
 
 	/**
@@ -18,9 +23,8 @@ public interface NutDatabaseService {
 	
 	/**
 	 * Autocomplete
-	 * @param dataBaseId - the NodeRef of the CSV File
+	 * @param databaseName - the NodeRef of the CSV File
 	 * @param query - string to match the name of the product
-	 * @return 
 	 */
 	ListValuePage suggest(String databaseName, String query, int pageNum, int pageSize);
 	

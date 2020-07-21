@@ -248,8 +248,8 @@ public class EntityListsWebScript extends AbstractWebScript {
 		return listTypes;
 	}
 
-	private JSONArray makeDatalists(Iterable<NodeRef> lists, NodeRef entity, boolean hasWritePermission,
-			Map<NodeRef, Boolean> accessMap) throws JSONException {
+	private JSONArray makeDatalists(Iterable<NodeRef> lists, NodeRef entity, boolean hasWritePermission, Map<NodeRef, Boolean> accessMap)
+			throws JSONException {
 		final boolean entityIsLocked = lockService.isLocked(entity);
 
 		JSONArray datalist = new JSONArray();
@@ -278,7 +278,7 @@ public class EntityListsWebScript extends AbstractWebScript {
 			if (accessMapListNodeRef == null) {
 				accessMapListNodeRef = false;
 			}
-			permissions.put(KEY_NAME_CHANGE_STATE, ( accessMapListNodeRef) && !entityIsLocked);
+			permissions.put(KEY_NAME_CHANGE_STATE, (accessMapListNodeRef) && !entityIsLocked);
 			object.put(KEY_NAME_PERMISSIONS, permissions);
 
 			datalist.put(object);
@@ -371,16 +371,9 @@ public class EntityListsWebScript extends AbstractWebScript {
 
 	/**
 	 * Suggest values according to query
-	 *
+	 * <code>
 	 * url : /becpg/entitylists/node/{store_type}/{store_id}/{id}.
-	 *
-	 * @param req
-	 *            the req
-	 * @param status
-	 *            the status
-	 * @param cache
-	 *            the cache
-	 * @return the map
+	 * </code>
 	 */
 	@Override
 	final public void execute(WebScriptRequest req, WebScriptResponse res) throws WebScriptException {
@@ -532,12 +525,11 @@ public class EntityListsWebScript extends AbstractWebScript {
 					if (SecurityService.NONE_ACCESS != accessMode) {
 						String dataListName = (String) nodeService.getProperty(temp, ContentModel.PROP_NAME);
 						int newAccessMode = securityService.computeAccessMode(nodeType, dataListName);
-						if(newAccessMode < accessMode ) {
+						if (newAccessMode < accessMode) {
 							accessMode = newAccessMode;
 						}
 					}
 
-					
 					if (SecurityService.NONE_ACCESS == accessMode) {
 						if (logger.isTraceEnabled()) {
 							logger.trace("Don't display dataList:" + dataListType);
@@ -560,7 +552,7 @@ public class EntityListsWebScript extends AbstractWebScript {
 			String retPath = SiteHelper.extractDisplayPath(stringPath, displayPath);
 
 			result.put(RESULT_ENTITY, makeEntity(nodeRef, retPath));
-			result.put(RESULT_CONTAINER, listContainerNodeRef!=null ? listContainerNodeRef.toString(): null);
+			result.put(RESULT_CONTAINER, listContainerNodeRef != null ? listContainerNodeRef.toString() : null);
 
 			// hasWritePermission as it used to appear in the model
 			final boolean effectiveHasWritePermission = hasWritePermission

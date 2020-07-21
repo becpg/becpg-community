@@ -69,20 +69,6 @@ public class Nutrient5CHelper {
 		}
 	}
 
-	/**
-	 *
-	 * @param energyKj
-	 * @param satFat
-	 * @param totalFat
-	 * @param totalSugar
-	 * @param sodium
-	 * @param percFruitsAndVetgs
-	 * @param nspFibre
-	 * @param aoacFibre
-	 * @param protein
-	 * @param category
-	 * @return
-	 */
 
 	public static int compute5CScore(Double energyKj, Double satFat, Double totalFat, Double totalSugar, Double sodium, Double percFruitsAndVetgs,
 			Double nspFibre, Double aoacFibre, Double protein, String category) {

@@ -264,9 +264,6 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 	/**
 	 * Calculate the costListUnit
 	 *
-	 * @param productUnit
-	 * @param costUnit
-	 * @return
 	 */
 	public static String calculateUnit(ProductUnit productUnit, String costUnit, Boolean isFixed) {
 
@@ -279,9 +276,6 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 
 	/**
 	 * Calculate the suffix of the costListUnit
-	 *
-	 * @param productUnit
-	 * @return
 	 */
 	public static String calculateSuffixUnit(ProductUnit productUnit) {
 		if (!keepProductUnit) {

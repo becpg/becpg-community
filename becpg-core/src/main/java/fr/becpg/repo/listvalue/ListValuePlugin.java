@@ -22,7 +22,7 @@ import java.util.Map;
 
 /**
  * 
- * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
+ * @author "Matthieu Laborie"
  *
  */
 public interface ListValuePlugin {

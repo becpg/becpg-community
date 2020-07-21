@@ -402,10 +402,6 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 
 	/**
 	 * Sort allergens by type and name.
-	 *
-	 * @param costList
-	 *            the cost list
-	 * @return the list
 	 */
 	protected void sort(List<AllergenListDataItem> allergenList) {
 

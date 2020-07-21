@@ -5,7 +5,7 @@ package fr.becpg.repo;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
-// TODO: Auto-generated Javadoc
+
 /**
  * The Interface NodeVisitor.
  *

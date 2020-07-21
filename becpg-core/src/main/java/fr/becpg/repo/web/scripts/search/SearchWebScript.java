@@ -39,7 +39,7 @@ import fr.becpg.repo.web.scripts.WebscriptHelper;
  */
 public class SearchWebScript extends AbstractSearchWebScript {
 
-	/** The logger. */
+	
 	private static final Log logger = LogFactory.getLog(SearchWebScript.class);
 
 	private ServiceRegistry serviceRegistry;

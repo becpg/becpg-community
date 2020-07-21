@@ -25,7 +25,7 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import fr.becpg.repo.entity.version.EntityVersionPlugin;
 import fr.becpg.repo.entity.version.EntityVersionService;
 
-// TODO: Auto-generated Javadoc
+
 /**
  * The Class FormCheckInWebScript.
  *

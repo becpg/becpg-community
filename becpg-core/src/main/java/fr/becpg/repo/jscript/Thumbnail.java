@@ -201,7 +201,7 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 		}
 
 		return reportNode;
-
+ 
 	}
 
 	private void cleanThumbnails(NodeRef reportNodeRef) {

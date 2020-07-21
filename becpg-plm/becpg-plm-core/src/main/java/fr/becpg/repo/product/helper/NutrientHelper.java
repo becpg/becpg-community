@@ -4,15 +4,15 @@ import java.util.List;
 
 /**
  * Helper to compute OfCom Nutrient Profile Score
- * 
+ *
  * @author matthieu
  *
  */
 public class NutrientHelper {
 
 	/**
-	 * 
-	 * @param energy
+	 *
+	 * @param energyKj
 	 *            (kJ)
 	 * @param satFat
 	 *            (g)
@@ -20,7 +20,6 @@ public class NutrientHelper {
 	 *            (g)
 	 * @param sodium
 	 *            (mg)
-	 * @return
 	 */
 	public static int ofComNutrientAScore(Double energyKj, Double satFat, Double totalSugar, Double sodium) {
 
@@ -80,14 +79,13 @@ public class NutrientHelper {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param percFruitsAndVetgs
-	 *            Fruit, Veg & Nuts (%)
+	 *            Fruit, Veg and Nuts (%)
 	 * @param fibre
-	 *            AOAC Fibre ' (g)
+	 *            AOAC Fibre (g)
 	 * @param protein
 	 *            Protein (g)
-	 * @return
 	 */
 	public static int ofComNutrientCScore(Double percFruitsAndVetgs, Double fibre, Double protein) {
 		int bScore = 0;

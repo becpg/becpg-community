@@ -41,7 +41,7 @@ import fr.becpg.repo.report.entity.EntityReportData;
  */
 public class DefaultProductReportExtractorIT extends AbstractFinishedProductTest {
 
-	/** The logger. */
+	
 	private static final Log logger = LogFactory.getLog(DefaultProductReportExtractorIT.class);
 
 	@Autowired
