@@ -58,7 +58,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	private static final String MESSAGE_MISSING_INGLIST = "message.formulate.missing.ingList";
 	private static final String MESSAGE_INCORRECT_INGLIST_TOTAL = "message.formulate.incorrect.ingList.total";
 
-	/** The logger. */
+	
 	private static final Log logger = LogFactory.getLog(IngsCalculatingFormulationHandler.class);
 
 	private NodeService nodeService;
@@ -135,13 +135,6 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 	/**
 	 * Calculate the ingredient list of a product.
-	 *
-	 * @param reqCtrlMap
-	 *
-	 * @param productData
-	 *            the product data
-	 * @return the list
-	 * @throws FormulateException
 	 */
 	private void calculateIL(ProductData formulatedProduct, Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap) throws FormulateException {
 
@@ -529,7 +522,6 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	/**
 	 * Sort ingList by qty perc in descending order.
 	 *
-	 * @return the list
 	 */
 	private void sortIL(List<IngListDataItem> ingList) {
 

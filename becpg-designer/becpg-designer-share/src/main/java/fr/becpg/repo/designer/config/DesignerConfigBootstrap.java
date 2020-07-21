@@ -34,7 +34,7 @@ import org.springframework.extensions.config.source.UrlConfigSource;
 
 /**
  * 
- * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>" Patched
+ * @author "Matthieu Laborie" Patched
  *         ConfigBootstrap to used DesignerUrlConfigSource
  */
 public class DesignerConfigBootstrap implements BeanNameAware, ConfigDeployer {

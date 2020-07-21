@@ -19,7 +19,7 @@ package fr.becpg.repo.designer.data;
 
 /**
  * 
- * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
+ * @author "Matthieu Laborie"
  *
  */
 public class FormControl {

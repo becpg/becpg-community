@@ -49,7 +49,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 /**
  * Init designer files and folders
  * 
- * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
+ * @author "Matthieu Laborie"
  * 
  */
 @Service

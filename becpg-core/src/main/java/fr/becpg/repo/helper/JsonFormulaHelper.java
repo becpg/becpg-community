@@ -46,10 +46,6 @@ public class JsonFormulaHelper {
 	
 	
 	
-	/**
-	 * @param strValue1
-	 * @return
-	 */
 	public static Object cleanCompareJSON(String value) {
 		if(value!=null && value.contains(JSON_COMP_ITEMS)) {
 			try {

@@ -12,7 +12,7 @@ import org.alfresco.service.namespace.QName;
 
 import fr.becpg.config.mapping.AbstractAttributeMapping;
 
-// TODO: Auto-generated Javadoc
+
 /**
  * Class used to store the mapping of a type.
  *

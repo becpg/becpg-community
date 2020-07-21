@@ -36,7 +36,7 @@ import fr.becpg.repo.workflow.activiti.nc.NCWorkflowUtils.NCWorkflowUtilsTask;
 /**
  * Create the NC based on NC WF data
  * 
- * @author "Philippe QUÉRÉ <philippe.quere@becpg.fr>"
+ * @author "Philippe QUÉRÉ"
  * 
  */
 public class CreateNC extends BaseJavaDelegate {

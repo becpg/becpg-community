@@ -41,15 +41,15 @@ public interface WUsedListService {
     
     /**
      * Calculate the WUsed entities of the items 
-     * @param entityNodeRef item associated to datalists
+     * @param entityNodeRefs item associated to datalists
      * @param associationName
      * @param filter
      * @param maxDepthLevel
      */
-	MultiLevelListData getWUsedEntity(List<NodeRef> entityNodeRefs, WUsedOperator operator, WUsedFilter filter, QName associationQName, int maxDepthLevel);
+	MultiLevelListData getWUsedEntity(List<NodeRef> entityNodeRefs, WUsedOperator operator, WUsedFilter filter, QName associationName, int maxDepthLevel);
     /**
      * Calculate the WUsed entities of the items 
-     * @param entityNodeRef item associated to datalists
+     * @param entityNodeRefs item associated to datalists
      * @param associationName
      * @param maxDepthLevel
      */

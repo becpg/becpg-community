@@ -282,9 +282,6 @@ public class ProjectHelper {
 
 	/**
 	 * completedPercent is calculated on duration property
-	 *
-	 * @param projectData
-	 * @return
 	 */
 	@Deprecated
 	public static int geProjectCompletionPercent(ProjectData projectData) {

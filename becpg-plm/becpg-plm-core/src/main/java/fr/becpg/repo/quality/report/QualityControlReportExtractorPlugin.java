@@ -40,11 +40,6 @@ public class QualityControlReportExtractorPlugin extends DefaultEntityReportExtr
 	/**
 	 * load the datalists of the product data.
 	 *
-	 * @param productData
-	 *            the product data
-	 * @param dataListsElt
-	 *            the data lists elt
-	 * @return the element
 	 */
 	@Override
 	protected void loadDataLists(NodeRef entityNodeRef, Element dataListsElt,   DefaultExtractorContext context) {

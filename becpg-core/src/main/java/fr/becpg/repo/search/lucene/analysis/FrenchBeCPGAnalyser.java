@@ -29,7 +29,7 @@ import org.apache.lucene.analysis.standard.StandardTokenizer;
 
 /**
  * 
- * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
+ * @author "Matthieu Laborie"
  * 
  * http://snowball.tartarus.org/algorithms/french/stemmer.html
  * 

@@ -9,7 +9,6 @@ public class GTINHelper {
 	/**
 	 * SPEL T(fr.becpg.repo.helper.GTINHelper).generateEAN13Code("455121")
 	 * @param prefix
-	 * @return
 	 * @throws CheckDigitException
 	 */
 	

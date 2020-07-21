@@ -19,7 +19,7 @@ import fr.becpg.test.utils.TestWebscriptExecuters.Response;
  */
 public class AdminModuleWebScriptIT extends RepoBaseTestCase {
 
-	/** The logger. */
+	
 	private static final Log logger = LogFactory.getLog(AdminModuleWebScriptIT.class);
 
 	/**

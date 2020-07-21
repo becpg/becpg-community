@@ -9,7 +9,7 @@ import java.util.Map;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 
-// TODO: Auto-generated Javadoc
+
 /**
  * Comparable item that have children.
  *

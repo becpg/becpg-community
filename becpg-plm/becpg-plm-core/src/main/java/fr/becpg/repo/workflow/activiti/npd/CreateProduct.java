@@ -40,7 +40,7 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 /**
  * Create the product based on data
  *
- * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
+ * @author "Matthieu Laborie"
  *
  */
 public class CreateProduct extends BaseJavaDelegate {

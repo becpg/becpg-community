@@ -23,7 +23,7 @@ import fr.becpg.model.QualityModel;
  * Update the NC based on NC WF data, need a java class to avoid problem with
  * retrying transaction
  * 
- * @author "Philippe QUÉRÉ <philippe.quere@becpg.fr>"
+ * @author "Philippe QUÉRÉ"
  * 
  */
 public class UpdateNC extends ScriptTaskListener {

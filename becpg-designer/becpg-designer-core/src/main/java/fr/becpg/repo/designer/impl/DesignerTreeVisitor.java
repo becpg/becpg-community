@@ -33,7 +33,7 @@ import fr.becpg.repo.designer.data.DesignerTree;
 
 /**
  * 
- * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
+ * @author "Matthieu Laborie"
  * 
  */
 public class DesignerTreeVisitor {

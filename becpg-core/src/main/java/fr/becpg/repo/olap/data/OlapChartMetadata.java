@@ -23,7 +23,7 @@ import org.json.JSONObject;
 
 /**
  * Provide Metadata rapport
- * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
+ * @author "Matthieu Laborie"
  *
  */
 public class OlapChartMetadata {

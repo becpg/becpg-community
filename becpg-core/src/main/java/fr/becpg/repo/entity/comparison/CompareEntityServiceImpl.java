@@ -56,7 +56,7 @@ import fr.becpg.repo.helper.AttributeExtractorService;
 @Service("compareEntityService")
 public class CompareEntityServiceImpl implements CompareEntityService {
 
-	/** The logger. */
+	
 	private static final Log logger = LogFactory.getLog(CompareEntityServiceImpl.class);
 
 	private static final String COMPARISON_SEPARATOR = " - ";

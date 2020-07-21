@@ -13,7 +13,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-// TODO: Auto-generated Javadoc
+
 /**
  * The Class PropertyPermissionTypeFormFilter.
  *
@@ -21,7 +21,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class PropertyPermissionTypeFormFilter  extends AbstractPropertyPermissionFormFilter<TypeDefinition>{
 
-	/** The logger. */
+	
 	private static final Log logger = LogFactory.getLog(PropertyPermissionTypeFormFilter.class);
 	
 	/* (non-Javadoc)

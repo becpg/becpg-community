@@ -83,7 +83,7 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 	
 	private static final String ACTION_CLEAN_VERSIONS = "cleanVersions";
 	
-	/** The logger. */
+	
 	private static final Log logger = LogFactory.getLog(MigrateRepositoryWebScript.class);
 
 

@@ -20,7 +20,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class PropertyPermissionNodeFormFilter extends AbstractPropertyPermissionFormFilter<NodeRef> {
 
-	/** The logger. */
+	
 	private static final Log logger = LogFactory.getLog(PropertyPermissionNodeFormFilter.class);
 	
 	/** The node service. */

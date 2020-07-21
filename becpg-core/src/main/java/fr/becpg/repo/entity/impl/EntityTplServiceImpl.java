@@ -138,12 +138,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 	private ReentrantLock lock = new ReentrantLock();
 
-	/**
-	 * Create the entityTpl
-	 *
-	 * @param entityTplsNodeRef
-	 * @param entityType
-	 */
+
 	@Override
 	public NodeRef createEntityTpl(NodeRef parentNodeRef, QName entityType, String entityTplName, boolean enabled, boolean isDefault,
 			Set<QName> entityLists, Set<String> subFolders) {
@@ -293,9 +288,6 @@ public class EntityTplServiceImpl implements EntityTplService {
 		return listNodeRef;
 	}
 
-	/**
-	 * Get the entityTpl
-	 */
 	@Override
 	public NodeRef getEntityTpl(QName nodeType) {
 

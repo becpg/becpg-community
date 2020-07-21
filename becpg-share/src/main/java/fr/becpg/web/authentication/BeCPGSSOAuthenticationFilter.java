@@ -373,14 +373,7 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
        this.endpoint = endpoint;
     }
     
-    /**
-     * Wraps an {@link HttpServletRequest} if an HTTP header has been configured for
-     * use by an external SSO system to provide the name of an authenticated user.
-     * The wrapper's {@link #getRemoteUser} returns the value of the header but will
-     * defaults to the wrapped method's value if the header is not set.
-     * @param sreq original {@code ServletRequest}
-     * @return either the original {@code sreq} or a wrapped {@code HttpServletRequest}
-     */
+
     protected ServletRequest wrapHeaderAuthenticatedRequest(ServletRequest sreq)
     {
         if (userHeader != null && sreq instanceof HttpServletRequest)

@@ -22,8 +22,6 @@ public enum TareUnit {
 
 	/**
 	 * Convert factor to Kg
-	 * 
-	 * @return
 	 */
 	public Double getUnitFactor() {
 		

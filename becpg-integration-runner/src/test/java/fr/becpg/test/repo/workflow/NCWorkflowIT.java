@@ -60,7 +60,7 @@ public class NCWorkflowIT extends AbstractWorkflowTest {
 	@Autowired
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
-	/** The logger. */
+	
 	private static final Log logger = LogFactory.getLog(NCWorkflowIT.class);
 
 	private NodeRef rawMaterial1NodeRef;

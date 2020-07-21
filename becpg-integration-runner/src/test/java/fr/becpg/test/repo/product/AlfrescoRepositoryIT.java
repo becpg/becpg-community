@@ -39,7 +39,7 @@ import fr.becpg.test.PLMBaseTestCase;
  */
 public class AlfrescoRepositoryIT extends PLMBaseTestCase {
 
-	/** The logger. */
+	
 	private static final Log logger = LogFactory.getLog(AlfrescoRepositoryIT.class);
 
 	@Autowired

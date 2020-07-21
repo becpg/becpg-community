@@ -40,7 +40,7 @@ import fr.becpg.repo.listvalue.ListValueExtractor;
 /**
  * Used to extract properties from product
  * 
- * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
+ * @author "Matthieu Laborie"
  * 
  */
 @Service("targetAssocValueExtractor")
