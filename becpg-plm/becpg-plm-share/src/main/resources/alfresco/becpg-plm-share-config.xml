@@ -197,7 +197,7 @@
           <web-framework>
             <dojo-pages> 
                 <packages> 
-                    <package name="cm" location="/modules/spel-editor/"/> 
+                    <package name="spel" location="modules/spel-editor"/> 
                 </packages>
             </dojo-pages>
           </web-framework>

@@ -47,6 +47,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.stereotype.Repository;
 
+import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -62,6 +64,7 @@ import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.annotation.DataListView;
 import fr.becpg.repo.repository.model.AspectAwareDataItem;
+import fr.becpg.repo.repository.model.DefaultListDataItem;
 
 @Repository("alfrescoRepository")
 public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements AlfrescoRepository<T> {
@@ -80,6 +83,9 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 	@Autowired
 	private EntityListDAO entityListDAO;
+
+	@Autowired
+	private EntityDictionaryService entityDictionaryService;
 
 	@Autowired
 	private AssociationService associationService;
@@ -157,9 +163,8 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 						if (logger.isDebugEnabled()) {
 							logger.debug("Update instanceOf :" + entity.getClass().getName() + " " + entity.getName());
-							logger.debug(" HashDiff :" + BeCPGHashCodeBuilder.printDiff(entity,
-										findOne(entity.getNodeRef(), new HashMap<NodeRef, RepositoryEntity>())));
-
+							logger.debug(" HashDiff :"
+									+ BeCPGHashCodeBuilder.printDiff(entity, findOne(entity.getNodeRef(), new HashMap<NodeRef, RepositoryEntity>())));
 
 						}
 
@@ -400,10 +405,10 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 					}
 
 					if (logger.isDebugEnabled() && deleteNodes) {
-						logger.debug("Nodes to delete :" + ((LazyLoadingDataList<? extends RepositoryEntity>) dataList).getDeletedNodes().size() +" in "+dataListContainerType);
+						logger.debug("Nodes to delete :" + ((LazyLoadingDataList<? extends RepositoryEntity>) dataList).getDeletedNodes().size()
+								+ " in " + dataListContainerType);
 					}
-					
-					
+
 					((LazyLoadingDataList<? extends RepositoryEntity>) dataList).getDeletedNodes().clear();
 				}
 				for (RepositoryEntity dataListItem : dataList) {
@@ -456,7 +461,11 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 		Class<T> entityClass = repositoryEntityDefReader.getEntityClass(type);
 		if (entityClass == null) {
-			throw new IllegalArgumentException("Type is not registered : " + type);
+			if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
+				entityClass = (Class<T>) DefaultListDataItem.class;
+			} else {
+				throw new IllegalArgumentException("Type is not registered : " + type);
+			}
 		}
 
 		try {

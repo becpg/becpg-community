@@ -38,6 +38,11 @@ public class SpelHelper {
 
 	private static List<SpelShortcut> shortCuts = new LinkedList<>();
 	
+	static {
+		//Single line comment should end by \n
+		shortCuts.add(new SpelShortcut("//.*\n", ""));
+	}
+	
 	public static void registerShortcut(SpelShortcut shortcut) {
 		shortCuts.add(shortcut);
 	}
@@ -49,6 +54,8 @@ public class SpelHelper {
 	public static String formatFormula(String formula) {
 		
 		for(SpelShortcut shortCut : shortCuts) {
+			
+			 
 			 Matcher matcher = shortCut.pattern.matcher(formula);
 			 formula = matcher.replaceAll(shortCut.replacement);
 		}

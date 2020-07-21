@@ -416,11 +416,41 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		public Double avg(Collection<Double> range) {
 			return range.stream().mapToDouble(Double::doubleValue).average().getAsDouble();
 		}
+		
+		
+		/**
+		 * @beCPG.extractCustomList($nodeRef, $listType)
+		 * @param listType
+		 * @return list
+		 */
+		public Collection<RepositoryEntity> extractCustomList(NodeRef nodeRef, String listType){
+			return alfrescoRepository.loadDataList(entity.getNodeRef(),  getQName(listType), getQName(listType));
+		}
+		
+		/**
+		 * @beCPG.extractCustomList($listType)
+		 * @param listType
+		 * @return list
+		 */
+		public Collection<RepositoryEntity> extractCustomList(String listType){
+			return extractCustomList(entity.getNodeRef(), listType);
+		}
+		
+		
+		/**
+		 * @beCPG.saveCustomList($range)
+		 *
+		 * @param range
+		 */
+		public void saveCustomList(Collection<RepositoryEntity> range) {
+			alfrescoRepository.save(range);
+		}
 
+		
 		/**
 		 * @beCPG.applyFormulaToList($range, $formula)
 		 *
-		 *                                   @param range
+		 * @param range
 		 * @param formula
 		 */
 		public void applyFormulaToList(Collection<RepositoryEntity> range, String formula) {
