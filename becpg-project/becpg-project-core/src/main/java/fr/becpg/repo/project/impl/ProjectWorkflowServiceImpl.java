@@ -176,7 +176,7 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 				if (!workflowTasks.isEmpty()) {
 					for (WorkflowTask workflowTask : workflowTasks) {
 						Map<QName, Serializable> taskProps =  workflowTask.getProperties();
-						taskProps.put(WorkflowModel.PROP_STATUS, WorkflowConstants.TASK_STATUS_IN_PROGRESS); //TODO 7774
+						taskProps.put(WorkflowModel.PROP_STATUS, WorkflowConstants.TASK_STATUS_IN_PROGRESS);
 						workflowService.updateTask(workflowTask.getId(), taskProps, null, null);
 
 						taskListDataItem.setWorkflowTaskInstance(workflowTask.getId());
