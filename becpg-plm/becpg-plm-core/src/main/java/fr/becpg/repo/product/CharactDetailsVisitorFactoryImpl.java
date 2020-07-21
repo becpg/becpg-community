@@ -24,6 +24,12 @@ import org.alfresco.service.namespace.QName;
 
 import fr.becpg.repo.formulation.FormulateException;
 
+/**
+ * <p>CharactDetailsVisitorFactoryImpl class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class CharactDetailsVisitorFactoryImpl implements CharactDetailsVisitorFactory{
 	
 	
@@ -31,15 +37,26 @@ public class CharactDetailsVisitorFactoryImpl implements CharactDetailsVisitorFa
 	
 	NamespaceService namespaceService;
 	
+	/**
+	 * <p>Setter for the field <code>visitorRegistry</code>.</p>
+	 *
+	 * @param visitorRegistry a {@link java.util.Map} object.
+	 */
 	public void setVisitorRegistry(Map<String, CharactDetailsVisitor> visitorRegistry) {
 		this.visitorRegistry = visitorRegistry;
 	}
 
+	/**
+	 * <p>Setter for the field <code>namespaceService</code>.</p>
+	 *
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
+	 */
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public CharactDetailsVisitor getCharactDetailsVisitor(QName dataType, String dataListName) throws FormulateException {
 		

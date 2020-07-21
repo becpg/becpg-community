@@ -33,18 +33,22 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.impl.AbstractExprNameExtractor;
 
 /**
+ * <p>IngTypeNameExtractorPlugin class.</p>
+ *
  * @author matthieu
- * 
+ * @version $Id: $Id
  */
 @Service
 public class IngTypeNameExtractorPlugin extends AbstractExprNameExtractor {
 
 
+	/** {@inheritDoc} */
 	@Override
 	public Collection<QName> getMatchingTypes() {
 		return Collections.singletonList(PLMModel.TYPE_ING_TYPE_ITEM);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String extractPropName(QName type, NodeRef nodeRef) {
 		MLText tmp = (MLText) mlNodeService.getProperty(nodeRef, BeCPGModel.PROP_LV_VALUE);
@@ -53,6 +57,7 @@ public class IngTypeNameExtractorPlugin extends AbstractExprNameExtractor {
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public String extractMetadata(QName type, NodeRef nodeRef) {
 		return type.toPrefixString(namespaceService).split(":")[1];

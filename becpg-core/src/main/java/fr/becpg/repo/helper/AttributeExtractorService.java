@@ -33,13 +33,17 @@ import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtracto
 
 /**
  * Helper used to manage a property
- * @author querephi
  *
+ * @author querephi
+ * @version $Id: $Id
  */
 public interface AttributeExtractorService {
 
+	/** Constant <code>PROP_SUFFIX="prop_"</code> */
 	public static final String PROP_SUFFIX = "prop_";
+	/** Constant <code>ASSOC_SUFFIX="assoc_"</code> */
 	public static final String ASSOC_SUFFIX = "assoc_";
+	/** Constant <code>DT_SUFFIX="dt_"</code> */
 	public static final String DT_SUFFIX = "dt_";
 	
 	
@@ -63,39 +67,155 @@ public interface AttributeExtractorService {
 	
 	
 
+	/**
+	 * <p>readExtractStructure.</p>
+	 *
+	 * @param itemType a {@link org.alfresco.service.namespace.QName} object.
+	 * @param metadataFields a {@link java.util.List} object.
+	 * @return a {@link java.util.List} object.
+	 */
 	List<AttributeExtractorStructure> readExtractStructure(QName itemType, List<String> metadataFields);
 	
+	/**
+	 * <p>extractNodeData.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param itemType a {@link org.alfresco.service.namespace.QName} object.
+	 * @param metadataFields a {@link java.util.List} object.
+	 * @param mode a {@link fr.becpg.config.format.FormatMode} object.
+	 * @return a {@link java.util.Map} object.
+	 */
 	Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, List<String> metadataFields, FormatMode mode);
 	
+	/**
+	 * <p>extractNodeData.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param itemType a {@link org.alfresco.service.namespace.QName} object.
+	 * @param properties a {@link java.util.Map} object.
+	 * @param metadataFields a {@link java.util.List} object.
+	 * @param mode a {@link fr.becpg.config.format.FormatMode} object.
+	 * @param dataListCallBack a {@link fr.becpg.repo.helper.AttributeExtractorService.DataListCallBack} object.
+	 * @return a {@link java.util.Map} object.
+	 */
 	Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, Map<QName, Serializable> properties, List<AttributeExtractorStructure> metadataFields, FormatMode mode, DataListCallBack dataListCallBack);
 	
+	/**
+	 * <p>extractCommonNodeData.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link java.util.Map} object.
+	 */
 	Map<String, Object> extractCommonNodeData(NodeRef nodeRef);
 	
+    /**
+     * <p>getStringValue.</p>
+     *
+     * @param propertyDef a {@link org.alfresco.service.cmr.dictionary.PropertyDefinition} object.
+     * @param value a {@link java.io.Serializable} object.
+     * @param propertyFormats a {@link fr.becpg.config.format.PropertyFormats} object.
+     * @return a {@link java.lang.String} object.
+     */
     String getStringValue(PropertyDefinition propertyDef, Serializable value, PropertyFormats propertyFormats);
 	
+	/**
+	 * <p>getTags.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return an array of {@link java.lang.String} objects.
+	 */
 	String[] getTags(NodeRef nodeRef);
 
+	/**
+	 * <p>extractPropertyForReport.</p>
+	 *
+	 * @param propertyDef a {@link org.alfresco.service.cmr.dictionary.PropertyDefinition} object.
+	 * @param value a {@link java.io.Serializable} object.
+	 * @param formatData a boolean.
+	 * @return a {@link java.lang.String} object.
+	 */
 	String extractPropertyForReport(PropertyDefinition propertyDef, Serializable value, boolean formatData);
 	
+	/**
+	 * <p>extractPropertyForReport.</p>
+	 *
+	 * @param propertyDef a {@link org.alfresco.service.cmr.dictionary.PropertyDefinition} object.
+	 * @param value a {@link java.io.Serializable} object.
+	 * @param propertyFormats a {@link fr.becpg.config.format.PropertyFormats} object.
+	 * @param formatData a boolean.
+	 * @return a {@link java.lang.String} object.
+	 */
 	@Deprecated
 	String extractPropertyForReport(PropertyDefinition propertyDef, Serializable value, PropertyFormats propertyFormats, boolean formatData);
 	
+	/**
+	 * <p>extractMetadata.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object.
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	String extractMetadata(QName type, NodeRef entityNodeRef);
 
+	/**
+	 * <p>getPersonDisplayName.</p>
+	 *
+	 * @param userId a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	String getPersonDisplayName(String userId);
 
 
+	/**
+	 * <p>extractPropName.</p>
+	 *
+	 * @param v a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	String extractPropName(NodeRef v);
 
+	/**
+	 * <p>extractPropName.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object.
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	String extractPropName(QName type, NodeRef nodeRef);
 
+	/**
+	 * <p>extractSiteId.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	String extractSiteId(NodeRef entityNodeRef);
 
+	/**
+	 * <p>hasAttributeExtractorPlugin.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a boolean.
+	 */
 	boolean hasAttributeExtractorPlugin(NodeRef nodeRef);
 
+	/**
+	 * <p>matchCriteria.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param criteriaMap a {@link java.util.Map} object.
+	 * @return a boolean.
+	 */
 	boolean matchCriteria(NodeRef nodeRef, Map<String, String> criteriaMap);
 
 	
+	/**
+	 * <p>getPropertyFormats.</p>
+	 *
+	 * @param json a {@link fr.becpg.config.format.FormatMode} object.
+	 * @param useServerLocale a boolean.
+	 * @return a {@link fr.becpg.config.format.PropertyFormats} object.
+	 */
 	PropertyFormats getPropertyFormats(FormatMode json,
 			boolean useServerLocale);
 

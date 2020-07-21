@@ -16,6 +16,12 @@ import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.model.AbstractManualDataItem;
 import fr.becpg.repo.repository.model.AspectAwareDataItem;
 
+/**
+ * <p>IngLabelingListDataItem class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @AlfType
 @AlfQname(qname = "bcpg:ingLabelingList")
 public class IngLabelingListDataItem extends AbstractManualDataItem implements AspectAwareDataItem {
@@ -30,6 +36,11 @@ public class IngLabelingListDataItem extends AbstractManualDataItem implements A
 	private List<String> locales;
 
 
+	/**
+	 * <p>Getter for the field <code>grp</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	@AlfSingleAssoc
 	@AlfQname(qname="bcpg:illGrp")
 	public NodeRef getGrp() {
@@ -37,10 +48,20 @@ public class IngLabelingListDataItem extends AbstractManualDataItem implements A
 	}
 
 
+	/**
+	 * <p>Setter for the field <code>grp</code>.</p>
+	 *
+	 * @param grp a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void setGrp(NodeRef grp) {
 		this.grp = grp;
 	}
 
+	/**
+	 * <p>Getter for the field <code>value</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object.
+	 */
 	@AlfMlText
 	@AlfProp
 	@AlfQname(qname="bcpg:illValue")
@@ -49,10 +70,20 @@ public class IngLabelingListDataItem extends AbstractManualDataItem implements A
 	}
 
 	
+	/**
+	 * <p>Setter for the field <code>value</code>.</p>
+	 *
+	 * @param value a {@link org.alfresco.service.cmr.repository.MLText} object.
+	 */
 	public void setValue(MLText value) {
 		this.value = value;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>manualValue</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object.
+	 */
 	@AlfMlText
 	@AlfProp
 	@AlfQname(qname="bcpg:illManualValue")
@@ -61,10 +92,20 @@ public class IngLabelingListDataItem extends AbstractManualDataItem implements A
 	}
 
 	
+	/**
+	 * <p>Setter for the field <code>manualValue</code>.</p>
+	 *
+	 * @param manualValue a {@link org.alfresco.service.cmr.repository.MLText} object.
+	 */
 	public void setManualValue(MLText manualValue) {
 		this.manualValue = manualValue;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>logValue</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:illLogValue")
 	public String getLogValue() {
@@ -72,17 +113,32 @@ public class IngLabelingListDataItem extends AbstractManualDataItem implements A
 	}
 
 
+	/**
+	 * <p>Setter for the field <code>logValue</code>.</p>
+	 *
+	 * @param logValue a {@link java.lang.String} object.
+	 */
 	public void setLogValue(String logValue) {
 		this.logValue = logValue;
 	}
 	
 	
+	/**
+	 * <p>Getter for the field <code>locales</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:lrLocales")
 	public List<String> getLocales() {
 		return locales;
 	}
 
+	/**
+	 * <p>Setter for the field <code>locales</code>.</p>
+	 *
+	 * @param locales a {@link java.util.List} object.
+	 */
 	public void setLocales(List<String> locales) {
 		this.locales = locales;
 	}
@@ -102,6 +158,7 @@ public class IngLabelingListDataItem extends AbstractManualDataItem implements A
 	 * @param nodeRef the node ref
 	 * @param grp the grp
 	 * @param value the value
+	 * @param isManual a {@link java.lang.Boolean} object.
 	 */
 	public IngLabelingListDataItem(NodeRef nodeRef, NodeRef grp, MLText value, Boolean isManual){
 		this.nodeRef = nodeRef;
@@ -112,7 +169,8 @@ public class IngLabelingListDataItem extends AbstractManualDataItem implements A
 	
 	/**
 	 * Copy constructor
-	 * @param i
+	 *
+	 * @param i a {@link fr.becpg.repo.product.data.productList.IngLabelingListDataItem} object.
 	 */
 	public IngLabelingListDataItem(IngLabelingListDataItem i){
 		super(i);
@@ -124,6 +182,7 @@ public class IngLabelingListDataItem extends AbstractManualDataItem implements A
 		
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -136,6 +195,7 @@ public class IngLabelingListDataItem extends AbstractManualDataItem implements A
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -173,6 +233,7 @@ public class IngLabelingListDataItem extends AbstractManualDataItem implements A
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "IngLabelingListDataItem [nodeRef=" + nodeRef + ", grp=" + grp + ", value=" + value + ", isManual=" + isManual + "]";

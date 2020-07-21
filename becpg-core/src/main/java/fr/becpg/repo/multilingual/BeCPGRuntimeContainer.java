@@ -20,8 +20,10 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.helper.MLTextHelper;
 
 /**
+ * <p>BeCPGRuntimeContainer class.</p>
  *
  * @author matthieu Override TenantRepositoryContainer
+ * @version $Id: $Id
  */
 public class BeCPGRuntimeContainer extends TenantRepositoryContainer implements TenantDeployer {
 
@@ -33,18 +35,34 @@ public class BeCPGRuntimeContainer extends TenantRepositoryContainer implements 
 
 	private boolean useBrowserLocale = false;
 
+	/**
+	 * <p>Setter for the field <code>useBrowserLocale</code>.</p>
+	 *
+	 * @param useBrowserLocale a boolean.
+	 */
 	public void setUseBrowserLocale(boolean useBrowserLocale) {
 		this.useBrowserLocale = useBrowserLocale;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>personService</code>.</p>
+	 *
+	 * @param personService a {@link org.alfresco.service.cmr.security.PersonService} object.
+	 */
 	public void setPersonService(PersonService personService) {
 		this.personService = personService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected void transactionedExecute(final WebScript script, final WebScriptRequest scriptReq, final WebScriptResponse scriptRes)
 			throws IOException {
@@ -93,6 +111,12 @@ public class BeCPGRuntimeContainer extends TenantRepositoryContainer implements 
 		return MLTextHelper.parseLocale(loc);
 	}
 
+	/**
+	 * <p>getUserContentLocale.</p>
+	 *
+	 * @param personNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link java.util.Locale} object.
+	 */
 	public Locale getUserContentLocale(NodeRef personNodeRef) {
 		String loc = (String) nodeService.getProperty(personNodeRef, BeCPGModel.PROP_USER_CONTENT_LOCAL);
 		if ((loc == null) || loc.isEmpty()) {

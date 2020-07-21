@@ -15,9 +15,10 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 /**
+ * <p>AddSitePermissionPatch class.</p>
  *
  * @author matthieu
- *
+ * @version $Id: $Id
  */
 public class AddSitePermissionPatch extends AbstractBeCPGPatch {
 
@@ -30,20 +31,36 @@ public class AddSitePermissionPatch extends AbstractBeCPGPatch {
 
 	private AuthorityService authorityService;
 
+	/**
+	 * <p>Setter for the field <code>siteService</code>.</p>
+	 *
+	 * @param siteService a {@link org.alfresco.service.cmr.site.SiteService} object.
+	 */
 	public void setSiteService(SiteService siteService) {
 		this.siteService = siteService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>authorityService</code>.</p>
+	 *
+	 * @param authorityService a {@link org.alfresco.service.cmr.security.AuthorityService} object.
+	 */
 	public void setAuthorityService(AuthorityService authorityService) {
 		this.authorityService = authorityService;
 	}
 	
 	
 
+	/**
+	 * <p>Setter for the field <code>permissionService</code>.</p>
+	 *
+	 * @param permissionService a {@link org.alfresco.service.cmr.security.PermissionService} object.
+	 */
 	public void setPermissionService(PermissionService permissionService) {
 		this.permissionService = permissionService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected String applyInternal() throws Exception {
 
@@ -98,10 +115,11 @@ public class AddSitePermissionPatch extends AbstractBeCPGPatch {
 
 	/**
 	 * Helper method to get the name of the site group
-	 * 
+	 *
 	 * @param shortName
 	 *            site short name
 	 * @return String site group name
+	 * @param withGroupPrefix a boolean.
 	 */
 	public String getSiteGroup(String shortName, boolean withGroupPrefix) {
 		StringBuffer sb = new StringBuffer(64);
@@ -115,7 +133,7 @@ public class AddSitePermissionPatch extends AbstractBeCPGPatch {
 
 	/**
 	 * Helper method to get the name of the site permission group
-	 * 
+	 *
 	 * @param shortName
 	 *            site short name
 	 * @param permission

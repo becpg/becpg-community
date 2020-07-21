@@ -40,6 +40,12 @@ import fr.becpg.config.format.FormatMode;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.SiteHelper;
 
+/**
+ * <p>Abstract AbstractNodeDataExtractor class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public abstract class AbstractNodeDataExtractor implements NodeDataExtractor {
 
 	protected final NodeService nodeService;
@@ -48,30 +54,59 @@ public abstract class AbstractNodeDataExtractor implements NodeDataExtractor {
 
 	protected final AttributeExtractorService attributeExtractorService;
 
+	/** Constant <code>PROP_NODEREF="nodeRef"</code> */
 	protected static final String PROP_NODEREF = "nodeRef";
+	/** Constant <code>PROP_TAGS="tags"</code> */
 	protected static final String PROP_TAGS = "tags";
+	/** Constant <code>PROP_DISPLAYNAME="displayName"</code> */
 	protected static final String PROP_DISPLAYNAME = "displayName";
+	/** Constant <code>PROP_NAME="name"</code> */
 	protected static final String PROP_NAME = "name";
+	/** Constant <code>PROP_TITLE="title"</code> */
 	protected static final String PROP_TITLE = "title";
+	/** Constant <code>PROP_DESCRIPTION="description"</code> */
 	protected static final String PROP_DESCRIPTION = "description";
+	/** Constant <code>PROP_MODIFIER="modifiedByUser"</code> */
 	protected static final String PROP_MODIFIER = "modifiedByUser";
+	/** Constant <code>PROP_MODIFIED="modifiedOn"</code> */
 	protected static final String PROP_MODIFIED = "modifiedOn";
+	/** Constant <code>PROP_CREATED="createdOn"</code> */
 	protected static final String PROP_CREATED = "createdOn";
+	/** Constant <code>PROP_CREATOR="createdByUser"</code> */
 	protected static final String PROP_CREATOR = "createdByUser";
+	/** Constant <code>PROP_PATH="path"</code> */
 	protected static final String PROP_PATH = "path";
+	/** Constant <code>PROP_MODIFIER_DISPLAY="modifiedBy"</code> */
 	protected static final String PROP_MODIFIER_DISPLAY = "modifiedBy";
+	/** Constant <code>PROP_CREATOR_DISPLAY="createdBy"</code> */
 	protected static final String PROP_CREATOR_DISPLAY = "createdBy";
+	/** Constant <code>PROP_NODEDATA="itemData"</code> */
 	protected static final String PROP_NODEDATA = "itemData";
+	/** Constant <code>PROP_TYPE="type"</code> */
 	protected static final String PROP_TYPE = "type";
+	/** Constant <code>PROP_SIZE="size"</code> */
 	protected static final String PROP_SIZE = "size";
+	/** Constant <code>PROP_ITEMTYPE="itemType"</code> */
 	protected static final String PROP_ITEMTYPE = "itemType";
+	/** Constant <code>PROP_SHORTNAME="shortName"</code> */
 	protected static final String PROP_SHORTNAME = "shortName";
+	/** Constant <code>PROP_CONTAINER="container"</code> */
 	protected static final String PROP_CONTAINER = "container";
+	/** Constant <code>PROP_SITE="site"</code> */
 	protected static final String PROP_SITE = "site";
+	/** Constant <code>PROP_ASPECTS="aspects"</code> */
 	protected static final String PROP_ASPECTS = "aspects";
+	/** Constant <code>PROP_METADATA="metadata"</code> */
 	protected static final String PROP_METADATA = "metadata";
+	/** Constant <code>PROP_PERMISSIONS="permissions"</code> */
 	protected static final String PROP_PERMISSIONS = "permissions";
 
+	/**
+	 * <p>Constructor for AbstractNodeDataExtractor.</p>
+	 *
+	 * @param services a {@link org.alfresco.service.ServiceRegistry} object.
+	 * @param attributeExtractorService a {@link fr.becpg.repo.helper.AttributeExtractorService} object.
+	 */
 	public AbstractNodeDataExtractor(ServiceRegistry services, AttributeExtractorService attributeExtractorService) {
 		super();
 		this.attributeExtractorService = attributeExtractorService;
@@ -81,6 +116,7 @@ public abstract class AbstractNodeDataExtractor implements NodeDataExtractor {
 
 	private static final Log logger = LogFactory.getLog(AbstractNodeDataExtractor.class);
 
+	/** {@inheritDoc} */
 	@Override
 	public Map<String, Object> extract(final NodeRef nodeRef) {
 
@@ -147,16 +183,42 @@ public abstract class AbstractNodeDataExtractor implements NodeDataExtractor {
 		}
 	}
 
+	/**
+	 * <p>doExtract.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param itemType a {@link org.alfresco.service.namespace.QName} object.
+	 * @param site a {@link org.alfresco.service.cmr.site.SiteInfo} object.
+	 * @return a {@link java.util.Map} object.
+	 */
 	protected abstract Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, SiteInfo site);
 
+	/**
+	 * <p>getParent.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public NodeRef getParent(NodeRef nodeRef) {
 		return nodeService.getPrimaryParent(nodeRef).getParentRef();
 	}
 
+	/**
+	 * <p>getSize.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link java.lang.Long} object.
+	 */
 	public Long getSize(NodeRef nodeRef) {
 		return getSize((ContentData) nodeService.getProperty(nodeRef, ContentModel.PROP_CONTENT));
 	}
 
+	/**
+	 * <p>getSize.</p>
+	 *
+	 * @param contentData a {@link org.alfresco.service.cmr.repository.ContentData} object.
+	 * @return a {@link java.lang.Long} object.
+	 */
 	public Long getSize(ContentData contentData) {
 		if (contentData == null) {
 			return null;
@@ -164,6 +226,12 @@ public abstract class AbstractNodeDataExtractor implements NodeDataExtractor {
 		return contentData.getSize();
 	}
 
+	/**
+	 * <p>convertDateValue.</p>
+	 *
+	 * @param value a {@link java.io.Serializable} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	protected String convertDateValue(Serializable value) {
 		if (value instanceof Date) {
 			return formatDate((Date) value);
@@ -171,6 +239,12 @@ public abstract class AbstractNodeDataExtractor implements NodeDataExtractor {
 		return null;
 	}
 
+	/**
+	 * <p>formatDate.</p>
+	 *
+	 * @param date a {@link java.util.Date} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	protected String formatDate(Date date) {
 		if (date != null) {
 			return attributeExtractorService.getPropertyFormats(FormatMode.SEARCH, false).formatDate(date);

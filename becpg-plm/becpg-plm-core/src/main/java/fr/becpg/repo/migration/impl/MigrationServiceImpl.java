@@ -53,7 +53,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  * Service to migrate model and data
  *
  * @author quere
- *
+ * @version $Id: $Id
  */
 @Service("migrationService")
 public class MigrationServiceImpl implements MigrationService {
@@ -78,6 +78,7 @@ public class MigrationServiceImpl implements MigrationService {
 	@Qualifier("mtAwareNodeService")
 	private NodeService dbNodeService;
 
+	/** {@inheritDoc} */
 	@Override
 	@Deprecated // Use patch instead
 	public void addMandatoryAspectInMt(final QName type, final QName aspect) {
@@ -105,6 +106,7 @@ public class MigrationServiceImpl implements MigrationService {
 
 	// TODO Use BatchProcessWorkProvider to do batching
 
+	/** {@inheritDoc} */
 	@Override
 	public void addMandatoryAspect(QName type, final QName aspect) {
 
@@ -139,6 +141,7 @@ public class MigrationServiceImpl implements MigrationService {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void removeAspectInMt(final QName type, final QName aspect) {
 		PropertyCheck.mandatory(this, "tenantAdminService", tenantAdminService);
@@ -197,6 +200,7 @@ public class MigrationServiceImpl implements MigrationService {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void migrateAssociationInMt(final QName classQName, final QName sourceAssoc, final QName targetAssoc) {
 		PropertyCheck.mandatory(this, "tenantAdminService", tenantAdminService);
@@ -221,6 +225,7 @@ public class MigrationServiceImpl implements MigrationService {
 		}, AuthenticationUtil.getSystemUserName());
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void migrateAssociation(QName classQName, final QName sourceAssoc, final QName targetAssoc) {
 
@@ -249,6 +254,7 @@ public class MigrationServiceImpl implements MigrationService {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void migratePropertyInMt(final QName classQName, final QName sourceProp, final QName targetProp) {
 		PropertyCheck.mandatory(this, "tenantAdminService", tenantAdminService);
@@ -300,6 +306,7 @@ public class MigrationServiceImpl implements MigrationService {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void cleanOrphanVersion() {
 

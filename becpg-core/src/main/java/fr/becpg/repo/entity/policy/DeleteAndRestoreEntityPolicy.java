@@ -48,9 +48,10 @@ import fr.becpg.repo.helper.PropertiesHelper;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
 /**
+ * <p>DeleteAndRestoreEntityPolicy class.</p>
  *
  * @author matthieu
- *
+ * @version $Id: $Id
  */
 public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnRestoreNodePolicy,
 		NodeServicePolicies.BeforeArchiveNodePolicy, NodeArchiveServicePolicies.BeforePurgeNodePolicy {
@@ -73,40 +74,81 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 
 	private TenantService tenantService;
 
+	/**
+	 * <p>Setter for the field <code>tenantService</code>.</p>
+	 *
+	 * @param tenantService a {@link org.alfresco.repo.tenant.TenantService} object.
+	 */
 	public void setTenantService(TenantService tenantService) {
 		this.tenantService = tenantService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeDAO</code>.</p>
+	 *
+	 * @param nodeDAO a {@link org.alfresco.repo.domain.node.NodeDAO} object.
+	 */
 	public void setNodeDAO(NodeDAO nodeDAO) {
 		this.nodeDAO = nodeDAO;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityDictionaryService</code>.</p>
+	 *
+	 * @param entityDictionaryService a {@link fr.becpg.repo.entity.EntityDictionaryService} object.
+	 */
 	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
 		this.entityDictionaryService = entityDictionaryService;
 	}
 
 	private final static String REMOTE_FILE_NAME = "entity_deleted";
 
+	/**
+	 * <p>Setter for the field <code>remoteEntityService</code>.</p>
+	 *
+	 * @param remoteEntityService a {@link fr.becpg.repo.entity.remote.RemoteEntityService} object.
+	 */
 	public void setRemoteEntityService(RemoteEntityService remoteEntityService) {
 		this.remoteEntityService = remoteEntityService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>contentService</code>.</p>
+	 *
+	 * @param contentService a {@link org.alfresco.service.cmr.repository.ContentService} object.
+	 */
 	public void setContentService(ContentService contentService) {
 		this.contentService = contentService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>dictionaryService</code>.</p>
+	 *
+	 * @param dictionaryService a {@link org.alfresco.service.cmr.dictionary.DictionaryService} object.
+	 */
 	public void setDictionaryService(DictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>attributeExtractorService</code>.</p>
+	 *
+	 * @param attributeExtractorService a {@link fr.becpg.repo.helper.AttributeExtractorService} object.
+	 */
 	public void setAttributeExtractorService(AttributeExtractorService attributeExtractorService) {
 		this.attributeExtractorService = attributeExtractorService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityListDAO</code>.</p>
+	 *
+	 * @param entityListDAO a {@link fr.becpg.repo.entity.EntityListDAO} object.
+	 */
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void doInit() {
 		this.policyComponent.bindClassBehaviour(BeforePurgeNodePolicy.QNAME, BeCPGModel.TYPE_ENTITY_V2, new JavaBehaviour(this, "beforePurgeNode"));
@@ -123,6 +165,7 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onRestoreNode(ChildAssociationRef childAssocRef) {
 		try {
@@ -196,6 +239,7 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void beforeArchiveNode(NodeRef entityNodeRef) {
 
@@ -263,6 +307,7 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 
 	}
 
+	/** Constant <code>KEY_PENDING_DELETE_NODES="DbNodeServiceImpl.pendingDeleteNodes"</code> */
 	public static final String KEY_PENDING_DELETE_NODES = "DbNodeServiceImpl.pendingDeleteNodes";
 
 	private boolean isPendingDelete(NodeRef nodeRef) {
@@ -274,6 +319,7 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 		return nodesPendingDelete.contains(nodeRef);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void beforePurgeNode(NodeRef entityNodeRef) {
 		NodeRef rootArchiveRef = nodeService.getRootNode(entityNodeRef.getStoreRef());

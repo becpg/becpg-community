@@ -56,6 +56,12 @@ import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.security.SecurityService;
 
+/**
+ * <p>ProjectListExtractor class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class ProjectListExtractor extends ActivityListExtractor {
 
 	private static final String PREF_FOLDER_FAVOURITES = "org.alfresco.share.folders.favourites";
@@ -86,31 +92,58 @@ public class ProjectListExtractor extends ActivityListExtractor {
 
 	private static final Log logger = LogFactory.getLog(ProjectListExtractor.class);
 
+	/**
+	 * <p>Setter for the field <code>projectService</code>.</p>
+	 *
+	 * @param projectService a {@link fr.becpg.repo.project.ProjectService} object.
+	 */
 	public void setProjectService(ProjectService projectService) {
 		this.projectService = projectService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>personService</code>.</p>
+	 *
+	 * @param personService a {@link org.alfresco.service.cmr.security.PersonService} object.
+	 */
 	public void setPersonService(PersonService personService) {
 		this.personService = personService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void setSecurityService(SecurityService securityService) {
 		this.securityService = securityService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>preferenceService</code>.</p>
+	 *
+	 * @param preferenceService a {@link org.alfresco.service.cmr.preference.PreferenceService} object.
+	 */
 	public void setPreferenceService(PreferenceService preferenceService) {
 		this.preferenceService = preferenceService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>myProjectAttributes</code>.</p>
+	 *
+	 * @param myProjectAttributes a {@link java.lang.String} object.
+	 */
 	public void setMyProjectAttributes(String myProjectAttributes) {
 		this.myProjectAttributes = myProjectAttributes;
 	}
 
+	/**
+	 * <p>Setter for the field <code>namespaceService</code>.</p>
+	 *
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
+	 */
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public PaginatedExtractedItems extract(DataListFilter dataListFilter, List<String> metadataFields) {
 
@@ -359,6 +392,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields, final FormatMode mode,
 			Map<QName, Serializable> properties, final Map<String, Object> props, final Map<NodeRef, Map<String, Object>> cache) {
@@ -548,11 +582,13 @@ public class ProjectListExtractor extends ActivityListExtractor {
 				: ContentModel.PROP_USERNAME);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean applyTo(DataListFilter dataListFilter) {
 		return (dataListFilter.getDataListName() != null) && dataListFilter.getDataListName().equals(PROJECT_LIST);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Date computeLastModified(DataListFilter dataListFilter) {
 		return null;

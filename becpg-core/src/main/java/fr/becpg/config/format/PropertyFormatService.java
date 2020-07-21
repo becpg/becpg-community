@@ -3,6 +3,12 @@ package fr.becpg.config.format;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 
+/**
+ * <p>PropertyFormatService class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class PropertyFormatService implements InitializingBean {
 
@@ -29,6 +35,7 @@ public class PropertyFormatService implements InitializingBean {
 //			: FORMAT_DATE_ENGLISH;
 //	propertyFormats.setDateFormat(dateFormat);
 //	
+	/** Constant <code>PROCESS_DATETIME_FORMAT="dd MMMM, yyyy"</code> */
 	public static final String PROCESS_DATETIME_FORMAT = "dd MMMM, yyyy";
 	
 	
@@ -38,6 +45,13 @@ public class PropertyFormatService implements InitializingBean {
 	
 	
 
+	/**
+	 * <p>Getter for the field <code>propertyFormats</code>.</p>
+	 *
+	 * @param mode a {@link fr.becpg.config.format.FormatMode} object.
+	 * @param useServerLocale a boolean.
+	 * @return a {@link fr.becpg.config.format.PropertyFormats} object.
+	 */
 	public PropertyFormats getPropertyFormats(FormatMode mode, boolean useServerLocale) {
 		PropertyFormats ret;
 		
@@ -54,12 +68,18 @@ public class PropertyFormatService implements InitializingBean {
 	}
 	private static PropertyFormatService INSTANCE;
 
+	/** {@inheritDoc} */
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		INSTANCE = this;
 
 	}
 
+	/**
+	 * <p>getInstance.</p>
+	 *
+	 * @return a {@link fr.becpg.config.format.PropertyFormatService} object.
+	 */
 	public static PropertyFormatService getInstance() {
 		return INSTANCE;
 	}

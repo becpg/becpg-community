@@ -22,18 +22,30 @@ import org.springframework.context.ApplicationEvent;
 
 /**
  * CheckIn entity event
- * @author quere
  *
+ * @author quere
+ * @version $Id: $Id
  */
 public class CheckInEntityEvent extends ApplicationEvent {
 
 	private static final long serialVersionUID = 6872600105098661778L;	
 	private final NodeRef entityNodeRef;
 	
+	/**
+	 * <p>Getter for the field <code>entityNodeRef</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public NodeRef getEntityNodeRef() {
 		return entityNodeRef;
 	}
 
+	/**
+	 * <p>Constructor for CheckInEntityEvent.</p>
+	 *
+	 * @param source a {@link java.lang.Object} object.
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public CheckInEntityEvent(Object source, NodeRef entityNodeRef) {
 		super(source);
 		

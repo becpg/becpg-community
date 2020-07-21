@@ -34,6 +34,12 @@ import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
+/**
+ * <p>QualityControlData class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @AlfType
 @AlfQname(qname = "qa:qualityControl")
 public class QualityControlData extends BeCPGDataObject {
@@ -60,146 +66,286 @@ public class QualityControlData extends BeCPGDataObject {
 	
 	List<ControlListDataItem> controlList = new LinkedList<>();
 
+	/**
+	 * <p>Getter for the field <code>controlPlans</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@AlfMultiAssoc
 	@AlfQname(qname = "qa:qcControlPlans")
 	public List<NodeRef> getControlPlans() {
 		return controlPlans;
 	}
 
+	/**
+	 * <p>Setter for the field <code>controlPlans</code>.</p>
+	 *
+	 * @param controlPlans a {@link java.util.List} object.
+	 */
 	public void setControlPlans(List<NodeRef> controlPlans) {
 		this.controlPlans = controlPlans;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>samplesCounter</code>.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "qa:qcSamplesCounter")
 	public Integer getSamplesCounter() {
 		return samplesCounter;
 	}
 
+	/**
+	 * <p>Setter for the field <code>samplesCounter</code>.</p>
+	 *
+	 * @param samplesCounter a {@link java.lang.Integer} object.
+	 */
 	public void setSamplesCounter(Integer samplesCounter) {
 		this.samplesCounter = samplesCounter;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>nextAnalysisDate</code>.</p>
+	 *
+	 * @return a {@link java.util.Date} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "qa:qcNextAnalysisDate")
 	public Date getNextAnalysisDate() {
 		return nextAnalysisDate;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nextAnalysisDate</code>.</p>
+	 *
+	 * @param nextAnalysisDate a {@link java.util.Date} object.
+	 */
 	public void setNextAnalysisDate(Date nextAnalysisDate) {
 		this.nextAnalysisDate = nextAnalysisDate;
 	}
 
+	/**
+	 * <p>Getter for the field <code>state</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.quality.data.QualityControlState} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "qa:qcState")
 	public QualityControlState getState() {
 		return state;
 	}
 
+	/**
+	 * <p>Setter for the field <code>state</code>.</p>
+	 *
+	 * @param state a {@link fr.becpg.repo.quality.data.QualityControlState} object.
+	 */
 	public void setState(QualityControlState state) {
 		this.state = state;
 	}
 
+	/**
+	 * <p>Getter for the field <code>batchId</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "qa:batchId")
 	public String getBatchId() {
 		return batchId;
 	}
 
+	/**
+	 * <p>Setter for the field <code>batchId</code>.</p>
+	 *
+	 * @param batchId a {@link java.lang.String} object.
+	 */
 	public void setBatchId(String batchId) {
 		this.batchId = batchId;
 	}
 
+	/**
+	 * <p>Getter for the field <code>orderId</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "qa:orderId")
 	public String getOrderId() {
 		return orderId;
 	}
 
+	/**
+	 * <p>Setter for the field <code>orderId</code>.</p>
+	 *
+	 * @param orderId a {@link java.lang.String} object.
+	 */
 	public void setOrderId(String orderId) {
 		this.orderId = orderId;
 	}
 
+	/**
+	 * <p>Getter for the field <code>batchStart</code>.</p>
+	 *
+	 * @return a {@link java.util.Date} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "qa:batchStart")
 	public Date getBatchStart() {
 		return batchStart;
 	}
 
+	/**
+	 * <p>Setter for the field <code>batchStart</code>.</p>
+	 *
+	 * @param batchStart a {@link java.util.Date} object.
+	 */
 	public void setBatchStart(Date batchStart) {
 		this.batchStart = batchStart;
 	}
 
+	/**
+	 * <p>Getter for the field <code>batchDuration</code>.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "qa:batchDuration")
 	public Integer getBatchDuration() {
 		return batchDuration;
 	}
 
+	/**
+	 * <p>Setter for the field <code>batchDuration</code>.</p>
+	 *
+	 * @param batchDuration a {@link java.lang.Integer} object.
+	 */
 	public void setBatchDuration(Integer batchDuration) {
 		this.batchDuration = batchDuration;
 	}
 
+	/**
+	 * <p>Getter for the field <code>product</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	@AlfSingleAssoc
 	@AlfQname(qname = "qa:product")
 	public NodeRef getProduct() {
 		return product;
 	}
 
+	/**
+	 * <p>Setter for the field <code>product</code>.</p>
+	 *
+	 * @param product a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void setProduct(NodeRef product) {
 		this.product = product;
 	}
 
+	/**
+	 * <p>Getter for the field <code>client</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	@AlfSingleAssoc
 	@AlfQname(qname = "bcpg:clients")
 	public NodeRef getClient() {
 		return client;
 	}
 
+	/**
+	 * <p>Setter for the field <code>client</code>.</p>
+	 *
+	 * @param client a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void setClient(NodeRef client) {
 		this.client = client;
 	}
 
+	/**
+	 * <p>Getter for the field <code>supplier</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	@AlfSingleAssoc
 	@AlfQname(qname = "bcpg:suppliers")
 	public NodeRef getSupplier() {
 		return supplier;
 	}
 
+	/**
+	 * <p>Setter for the field <code>supplier</code>.</p>
+	 *
+	 * @param supplier a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void setSupplier(NodeRef supplier) {
 		this.supplier = supplier;
 	}
 
+	/**
+	 * <p>Getter for the field <code>samplingList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@DataList
 	@AlfQname(qname = "qa:samplingList")
 	public List<SamplingListDataItem> getSamplingList() {
 		return samplingList;
 	}
 
+	/**
+	 * <p>Setter for the field <code>samplingList</code>.</p>
+	 *
+	 * @param samplingList a {@link java.util.List} object.
+	 */
 	public void setSamplingList(List<SamplingListDataItem> samplingList) {
 		this.samplingList = samplingList;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>controlList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@DataList
 	@AlfQname(qname = "qa:controlList")
 	public List<ControlListDataItem> getControlList() {
 		return controlList;
 	}
 
+	/**
+	 * <p>Setter for the field <code>controlList</code>.</p>
+	 *
+	 * @param controlList a {@link java.util.List} object.
+	 */
 	public void setControlList(List<ControlListDataItem> controlList) {
 		this.controlList = controlList;
 	}
 
+	/**
+	 * <p>Constructor for QualityControlData.</p>
+	 */
 	public QualityControlData() {
 		super();
 	}
 
+	/**
+	 * <p>Constructor for QualityControlData.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param name a {@link java.lang.String} object.
+	 */
 	public QualityControlData(NodeRef nodeRef, String name) {
 		super(nodeRef, name);
 	}
 
 	
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "QualityControlData [controlPlans=" + controlPlans + ", samplesCounter=" + samplesCounter
@@ -209,6 +355,7 @@ public class QualityControlData extends BeCPGDataObject {
 				+ controlList + "]";
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -229,6 +376,7 @@ public class QualityControlData extends BeCPGDataObject {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

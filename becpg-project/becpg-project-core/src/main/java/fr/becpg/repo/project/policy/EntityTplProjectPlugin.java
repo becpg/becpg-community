@@ -22,6 +22,12 @@ import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.project.impl.ProjectHelper;
 import fr.becpg.repo.repository.RepositoryEntity;
 
+/**
+ * <p>EntityTplProjectPlugin class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class EntityTplProjectPlugin implements EntityTplPlugin {
 
@@ -37,6 +43,7 @@ public class EntityTplProjectPlugin implements EntityTplPlugin {
 	private BehaviourFilter policyBehaviourFilter;
 
 
+	/** {@inheritDoc} */
 	@Override
 	public void beforeSynchronizeEntity(NodeRef projectNodeRef, NodeRef entityTplNodeRef) {
 		if (ProjectModel.TYPE_PROJECT.equals(nodeService.getType(projectNodeRef)) && !nodeService.hasAspect(projectNodeRef, BeCPGModel.ASPECT_ENTITY_TPL) && policyBehaviourFilter.isEnabled(BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
@@ -59,6 +66,7 @@ public class EntityTplProjectPlugin implements EntityTplPlugin {
 
 	
 	
+	/** {@inheritDoc} */
 	@Override
 	public void synchronizeEntity(NodeRef projectNodeRef, NodeRef projectTplNodeRef) {
 
@@ -77,6 +85,11 @@ public class EntityTplProjectPlugin implements EntityTplPlugin {
 	}
 
 	// TODO : do it in a generic way
+	/**
+	 * <p>initializeNodeRefsAfterCopy.</p>
+	 *
+	 * @param projectNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void initializeNodeRefsAfterCopy(NodeRef projectNodeRef) {
 
 		
@@ -136,6 +149,7 @@ public class EntityTplProjectPlugin implements EntityTplPlugin {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean shouldSynchronizeDataList(RepositoryEntity entity, QName dataListQName) {
 		if (ProjectModel.TYPE_PROJECT.equals(nodeService.getType(entity.getNodeRef())) && ProjectModel.TYPE_TASK_LIST.equals(dataListQName)){
@@ -145,6 +159,7 @@ public class EntityTplProjectPlugin implements EntityTplPlugin {
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public <T extends RepositoryEntity> void synchronizeDataList(RepositoryEntity entity, List<T> dataListItems,
 			List<T> tplDataListItems){

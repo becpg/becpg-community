@@ -22,9 +22,9 @@ import fr.becpg.model.QualityModel;
 /**
  * Update the NC based on NC WF data, need a java class to avoid problem with
  * retrying transaction
- * 
+ *
  * @author "Philippe QUÉRÉ"
- * 
+ * @version $Id: $Id
  */
 public class UpdateNC extends ScriptTaskListener {
 
@@ -34,6 +34,7 @@ public class UpdateNC extends ScriptTaskListener {
 	private NodeService nodeService;
 	private TransactionService transactionService;
 
+	/** {@inheritDoc} */
 	@Override
 	public void notify(final DelegateTask task) {
 

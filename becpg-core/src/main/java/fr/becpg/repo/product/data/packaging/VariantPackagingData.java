@@ -6,7 +6,7 @@ import java.math.BigDecimal;
  * Manage variant
  *
  * @author quere
- *
+ * @version $Id: $Id
  */
 public class VariantPackagingData {
 
@@ -40,50 +40,110 @@ public class VariantPackagingData {
 	private boolean isManualTertiary = true;
 	private boolean isManualSecondary = true;
 
+	/**
+	 * <p>Getter for the field <code>tarePrimary</code>.</p>
+	 *
+	 * @return a {@link java.math.BigDecimal} object.
+	 */
 	public BigDecimal getTarePrimary() {
 		return tarePrimary;
 	}
 
+	/**
+	 * <p>Setter for the field <code>tarePrimary</code>.</p>
+	 *
+	 * @param tarePrimary a {@link java.math.BigDecimal} object.
+	 */
 	public void setTarePrimary(BigDecimal tarePrimary) {
 		this.tarePrimary = tarePrimary;
 	}
 
+	/**
+	 * <p>Getter for the field <code>tareSecondary</code>.</p>
+	 *
+	 * @return a {@link java.math.BigDecimal} object.
+	 */
 	public BigDecimal getTareSecondary() {
 		return tareSecondary;
 	}
 
+	/**
+	 * <p>Setter for the field <code>tareSecondary</code>.</p>
+	 *
+	 * @param tareSecondary a {@link java.math.BigDecimal} object.
+	 */
 	public void setTareSecondary(BigDecimal tareSecondary) {
 		this.tareSecondary = tareSecondary;
 	}
 
+	/**
+	 * <p>Getter for the field <code>tareTertiary</code>.</p>
+	 *
+	 * @return a {@link java.math.BigDecimal} object.
+	 */
 	public BigDecimal getTareTertiary() {
 		return tareTertiary;
 	}
 
+	/**
+	 * <p>Setter for the field <code>tareTertiary</code>.</p>
+	 *
+	 * @param tareTertiary a {@link java.math.BigDecimal} object.
+	 */
 	public void setTareTertiary(BigDecimal tareTertiary) {
 		this.tareTertiary = tareTertiary;
 	}
 
+	/**
+	 * <p>Getter for the field <code>productPerBoxes</code>.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object.
+	 */
 	public Integer getProductPerBoxes() {
 		return productPerBoxes;
 	}
 
+	/**
+	 * <p>Setter for the field <code>productPerBoxes</code>.</p>
+	 *
+	 * @param productPerBoxes a {@link java.lang.Integer} object.
+	 */
 	public void setProductPerBoxes(Integer productPerBoxes) {
 		this.productPerBoxes = productPerBoxes;
 	}
 
+	/**
+	 * <p>Getter for the field <code>boxesPerPallet</code>.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object.
+	 */
 	public Integer getBoxesPerPallet() {
 		return boxesPerPallet;
 	}
 
+	/**
+	 * <p>Setter for the field <code>boxesPerPallet</code>.</p>
+	 *
+	 * @param boxesPerPallet a {@link java.lang.Integer} object.
+	 */
 	public void setBoxesPerPallet(Integer boxesPerPallet) {
 		this.boxesPerPallet = boxesPerPallet;
 	}
 
+	/**
+	 * <p>Getter for the field <code>palletNumberOnGround</code>.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object.
+	 */
 	public Integer getPalletNumberOnGround() {
 		return palletNumberOnGround;
 	}
 
+	/**
+	 * <p>getProductPerPallet.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object.
+	 */
 	public Integer getProductPerPallet() {
 		if ((this.productPerBoxes != null) && (this.boxesPerPallet != null)) {
 			return this.productPerBoxes * this.boxesPerPallet;
@@ -91,156 +151,346 @@ public class VariantPackagingData {
 		return null;
 	}
 
+	/**
+	 * <p>Getter for the field <code>palletLayers</code>.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object.
+	 */
 	public Integer getPalletLayers() {
 		return palletLayers;
 	}
 
+	/**
+	 * <p>Setter for the field <code>palletLayers</code>.</p>
+	 *
+	 * @param palletLayers a {@link java.lang.Integer} object.
+	 */
 	public void setPalletLayers(Integer palletLayers) {
 		this.palletLayers = palletLayers;
 	}
 
+	/**
+	 * <p>Getter for the field <code>palletBoxesPerLayer</code>.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object.
+	 */
 	public Integer getPalletBoxesPerLayer() {
 		return palletBoxesPerLayer;
 	}
 
+	/**
+	 * <p>Setter for the field <code>palletBoxesPerLayer</code>.</p>
+	 *
+	 * @param palletBoxesPerLayer a {@link java.lang.Integer} object.
+	 */
 	public void setPalletBoxesPerLayer(Integer palletBoxesPerLayer) {
 		this.palletBoxesPerLayer = palletBoxesPerLayer;
 	}
 
+	/**
+	 * <p>Getter for the field <code>palletHeight</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public Double getPalletHeight() {
 		return palletHeight;
 	}
 
+	/**
+	 * <p>Setter for the field <code>palletHeight</code>.</p>
+	 *
+	 * @param palletHeight a {@link java.lang.Double} object.
+	 */
 	public void setPalletHeight(Double palletHeight) {
 		this.palletHeight = palletHeight;
 	}
 
+	/**
+	 * <p>Getter for the field <code>height</code>.</p>
+	 *
+	 * @return a {@link java.lang.Float} object.
+	 */
 	public Float getHeight() {
 		return height;
 	}
 
+	/**
+	 * <p>Setter for the field <code>height</code>.</p>
+	 *
+	 * @param height a {@link java.lang.Float} object.
+	 */
 	public void setHeight(Float height) {
 		this.height = height;
 	}
 
+	/**
+	 * <p>Getter for the field <code>width</code>.</p>
+	 *
+	 * @return a {@link java.lang.Float} object.
+	 */
 	public Float getWidth() {
 		return width;
 	}
 
+	/**
+	 * <p>Setter for the field <code>width</code>.</p>
+	 *
+	 * @param width a {@link java.lang.Float} object.
+	 */
 	public void setWidth(Float width) {
 		this.width = width;
 	}
 
+	/**
+	 * <p>Getter for the field <code>depth</code>.</p>
+	 *
+	 * @return a {@link java.lang.Float} object.
+	 */
 	public Float getDepth() {
 		return depth;
 	}
 
+	/**
+	 * <p>Setter for the field <code>depth</code>.</p>
+	 *
+	 * @param depth a {@link java.lang.Float} object.
+	 */
 	public void setDepth(Float depth) {
 		this.depth = depth;
 	}
 
+	/**
+	 * <p>Getter for the field <code>secondaryHeight</code>.</p>
+	 *
+	 * @return a {@link java.lang.Float} object.
+	 */
 	public Float getSecondaryHeight() {
 		return secondaryHeight;
 	}
 
+	/**
+	 * <p>Setter for the field <code>secondaryHeight</code>.</p>
+	 *
+	 * @param secondaryHeight a {@link java.lang.Float} object.
+	 */
 	public void setSecondaryHeight(Float secondaryHeight) {
 		this.secondaryHeight = secondaryHeight;
 	}
 
+	/**
+	 * <p>Getter for the field <code>secondaryWidth</code>.</p>
+	 *
+	 * @return a {@link java.lang.Float} object.
+	 */
 	public Float getSecondaryWidth() {
 		return secondaryWidth;
 	}
 
+	/**
+	 * <p>Setter for the field <code>secondaryWidth</code>.</p>
+	 *
+	 * @param secondaryWidth a {@link java.lang.Float} object.
+	 */
 	public void setSecondaryWidth(Float secondaryWidth) {
 		this.secondaryWidth = secondaryWidth;
 	}
 
+	/**
+	 * <p>Getter for the field <code>secondaryDepth</code>.</p>
+	 *
+	 * @return a {@link java.lang.Float} object.
+	 */
 	public Float getSecondaryDepth() {
 		return secondaryDepth;
 	}
 
+	/**
+	 * <p>Setter for the field <code>secondaryDepth</code>.</p>
+	 *
+	 * @param secondaryDepth a {@link java.lang.Float} object.
+	 */
 	public void setSecondaryDepth(Float secondaryDepth) {
 		this.secondaryDepth = secondaryDepth;
 	}
 
+	/**
+	 * <p>Getter for the field <code>tertiaryWidth</code>.</p>
+	 *
+	 * @return a {@link java.lang.Float} object.
+	 */
 	public Float getTertiaryWidth() {
 		return tertiaryWidth;
 	}
 
+	/**
+	 * <p>Setter for the field <code>tertiaryWidth</code>.</p>
+	 *
+	 * @param tertiaryWidth a {@link java.lang.Float} object.
+	 */
 	public void setTertiaryWidth(Float tertiaryWidth) {
 		this.tertiaryWidth = tertiaryWidth;
 	}
 
+	/**
+	 * <p>Getter for the field <code>tertiaryDepth</code>.</p>
+	 *
+	 * @return a {@link java.lang.Float} object.
+	 */
 	public Float getTertiaryDepth() {
 		return tertiaryDepth;
 	}
 
+	/**
+	 * <p>Setter for the field <code>tertiaryDepth</code>.</p>
+	 *
+	 * @param tertiaryDepth a {@link java.lang.Float} object.
+	 */
 	public void setTertiaryDepth(Float tertiaryDepth) {
 		this.tertiaryDepth = tertiaryDepth;
 	}
 
+	/**
+	 * <p>Setter for the field <code>palletNumberOnGround</code>.</p>
+	 *
+	 * @param palletNumberOnGround a {@link java.lang.Integer} object.
+	 */
 	public void setPalletNumberOnGround(Integer palletNumberOnGround) {
 		this.palletNumberOnGround = palletNumberOnGround;
 	}
 
+	/**
+	 * <p>Getter for the field <code>palletBoxesPerLastLayer</code>.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object.
+	 */
 	public Integer getPalletBoxesPerLastLayer() {
 		return palletBoxesPerLastLayer;
 	}
 
+	/**
+	 * <p>Setter for the field <code>palletBoxesPerLastLayer</code>.</p>
+	 *
+	 * @param palletBoxesPerLastLayer a {@link java.lang.Integer} object.
+	 */
 	public void setPalletBoxesPerLastLayer(Integer palletBoxesPerLastLayer) {
 		this.palletBoxesPerLastLayer = palletBoxesPerLastLayer;
 	}
 
+	/**
+	 * <p>Getter for the field <code>palletStackingMaxWeight</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public Double getPalletStackingMaxWeight() {
 		return palletStackingMaxWeight;
 	}
 
+	/**
+	 * <p>Setter for the field <code>palletStackingMaxWeight</code>.</p>
+	 *
+	 * @param palletStackingMaxWeight a {@link java.lang.Double} object.
+	 */
 	public void setPalletStackingMaxWeight(Double palletStackingMaxWeight) {
 		this.palletStackingMaxWeight = palletStackingMaxWeight;
 	}
 
+	/**
+	 * <p>Getter for the field <code>palletTypeCode</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getPalletTypeCode() {
 		return palletTypeCode;
 	}
 
+	/**
+	 * <p>Setter for the field <code>palletTypeCode</code>.</p>
+	 *
+	 * @param palletTypeCode a {@link java.lang.String} object.
+	 */
 	public void setPalletTypeCode(String palletTypeCode) {
 		this.palletTypeCode = palletTypeCode;
 	}
 
+	/**
+	 * <p>isManualPrimary.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public boolean isManualPrimary() {
 		return isManualPrimary;
 	}
 
+	/**
+	 * <p>setManualPrimary.</p>
+	 *
+	 * @param isManualPrimary a boolean.
+	 */
 	public void setManualPrimary(boolean isManualPrimary) {
 		this.isManualPrimary = isManualPrimary;
 	}
 
+	/**
+	 * <p>isManualTertiary.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public boolean isManualTertiary() {
 		return isManualTertiary;
 	}
 
+	/**
+	 * <p>setManualTertiary.</p>
+	 *
+	 * @param isManualTertiary a boolean.
+	 */
 	public void setManualTertiary(boolean isManualTertiary) {
 		this.isManualTertiary = isManualTertiary;
 	}
 
+	/**
+	 * <p>isManualSecondary.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public boolean isManualSecondary() {
 		return isManualSecondary;
 	}
 
+	/**
+	 * <p>setManualSecondary.</p>
+	 *
+	 * @param isManualSecondary a boolean.
+	 */
 	public void setManualSecondary(boolean isManualSecondary) {
 		this.isManualSecondary = isManualSecondary;
 	}
 	
 	
 
+	/**
+	 * <p>Getter for the field <code>platformTermsAndConditionsCode</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getPlatformTermsAndConditionsCode() {
 		return platformTermsAndConditionsCode;
 	}
 
+	/**
+	 * <p>Setter for the field <code>platformTermsAndConditionsCode</code>.</p>
+	 *
+	 * @param platformTermsAndConditionsCode a {@link java.lang.String} object.
+	 */
 	public void setPlatformTermsAndConditionsCode(String platformTermsAndConditionsCode) {
 		this.platformTermsAndConditionsCode = platformTermsAndConditionsCode;
 	}
 
+	/**
+	 * <p>addTarePrimary.</p>
+	 *
+	 * @param value a {@link java.math.BigDecimal} object.
+	 */
 	public void addTarePrimary(BigDecimal value) {
 		if (getTarePrimary() != null) {
 			setTarePrimary(getTarePrimary().add(value));
@@ -250,6 +500,11 @@ public class VariantPackagingData {
 
 	}
 
+	/**
+	 * <p>addTareTertiary.</p>
+	 *
+	 * @param value a {@link java.math.BigDecimal} object.
+	 */
 	public void addTareTertiary(BigDecimal value) {
 		if (getTareTertiary() != null) {
 			setTareTertiary(getTareTertiary().add(value));
@@ -259,6 +514,11 @@ public class VariantPackagingData {
 
 	}
 
+	/**
+	 * <p>addTareSecondary.</p>
+	 *
+	 * @param value a {@link java.math.BigDecimal} object.
+	 */
 	public void addTareSecondary(BigDecimal value) {
 		if (getTareSecondary() != null) {
 			setTareSecondary(getTareSecondary().add(value));
@@ -268,6 +528,7 @@ public class VariantPackagingData {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "VariantPackagingData [tarePrimary=" + tarePrimary + ", tareSecondary=" + tareSecondary + ", tareTertiary=" + tareTertiary
@@ -279,6 +540,7 @@ public class VariantPackagingData {
 				+ ", tertiaryDepth=" + tertiaryDepth + "]";
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -306,6 +568,7 @@ public class VariantPackagingData {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {

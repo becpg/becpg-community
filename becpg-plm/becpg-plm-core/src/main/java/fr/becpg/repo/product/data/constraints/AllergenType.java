@@ -17,6 +17,12 @@
  ******************************************************************************/
 package fr.becpg.repo.product.data.constraints;
 
+/**
+ * <p>AllergenType class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public enum AllergenType {
 
 	Major,

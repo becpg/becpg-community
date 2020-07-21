@@ -21,6 +21,12 @@ import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.InternalField;
 
+/**
+ * <p>Abstract AbstractManualDataItem class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public abstract class AbstractManualDataItem extends BeCPGDataObject implements ManualDataItem, SortableDataItem {
 
 	
@@ -28,16 +34,29 @@ public abstract class AbstractManualDataItem extends BeCPGDataObject implements 
 	protected Boolean isManual = Boolean.FALSE;
 	protected Integer sort;
 
+	/**
+	 * <p>Constructor for AbstractManualDataItem.</p>
+	 */
 	public AbstractManualDataItem(){
 		super();
 	}
 	
+	/**
+	 * <p>Constructor for AbstractManualDataItem.</p>
+	 *
+	 * @param a a {@link fr.becpg.repo.repository.model.AbstractManualDataItem} object.
+	 */
 	public AbstractManualDataItem(AbstractManualDataItem a) {
 		super(a);
 		this.isManual = a.isManual;
 		this.sort = a.sort;
 	}
 
+	/**
+	 * <p>Getter for the field <code>isManual</code>.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object.
+	 */
 	@AlfProp
 	@InternalField
 	@AlfQname(qname="bcpg:isManualListItem")
@@ -45,10 +64,16 @@ public abstract class AbstractManualDataItem extends BeCPGDataObject implements 
 		return isManual!=null ? isManual : Boolean.FALSE;
 	}
 
+	/** {@inheritDoc} */
 	public void setIsManual(Boolean isManual) {
 		this.isManual = isManual;
 	}
 
+	/**
+	 * <p>Getter for the field <code>sort</code>.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object.
+	 */
 	@AlfProp
 	@InternalField
 	@AlfQname(qname="bcpg:sort")
@@ -56,10 +81,12 @@ public abstract class AbstractManualDataItem extends BeCPGDataObject implements 
 		return sort;
 	}
 
+	/** {@inheritDoc} */
 	public void setSort(Integer sort) {
 		this.sort = sort;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -68,6 +95,7 @@ public abstract class AbstractManualDataItem extends BeCPGDataObject implements 
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

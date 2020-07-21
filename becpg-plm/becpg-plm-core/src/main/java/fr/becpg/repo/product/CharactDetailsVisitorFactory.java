@@ -21,8 +21,22 @@ import org.alfresco.service.namespace.QName;
 
 import fr.becpg.repo.formulation.FormulateException;
 
+/**
+ * <p>CharactDetailsVisitorFactory interface.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public interface CharactDetailsVisitorFactory {
 
+	/**
+	 * <p>getCharactDetailsVisitor.</p>
+	 *
+	 * @param dataType a {@link org.alfresco.service.namespace.QName} object.
+	 * @param dataListName a {@link java.lang.String} object.
+	 * @return a {@link fr.becpg.repo.product.CharactDetailsVisitor} object.
+	 * @throws fr.becpg.repo.formulation.FormulateException if any.
+	 */
 	CharactDetailsVisitor getCharactDetailsVisitor(QName dataType, String dataListName) throws FormulateException;
 
 }

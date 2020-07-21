@@ -32,9 +32,10 @@ import fr.becpg.repo.designer.DesignerModel;
 import fr.becpg.repo.designer.data.DesignerTree;
 
 /**
- * 
+ * <p>DesignerTreeVisitor class.</p>
+ *
  * @author "Matthieu Laborie"
- * 
+ * @version $Id: $Id
  */
 public class DesignerTreeVisitor {
 
@@ -43,6 +44,8 @@ public class DesignerTreeVisitor {
 	private NamespaceService namespaceService;
 
 	/**
+	 * <p>Getter for the field <code>nodeService</code>.</p>
+	 *
 	 * @return the nodeService
 	 */
 	public NodeService getNodeService() {
@@ -50,6 +53,8 @@ public class DesignerTreeVisitor {
 	}
 
 	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
 	 * @param nodeService
 	 *            the nodeService to set
 	 */
@@ -58,6 +63,8 @@ public class DesignerTreeVisitor {
 	}
 
 	/**
+	 * <p>Getter for the field <code>namespaceService</code>.</p>
+	 *
 	 * @return the namespaceService
 	 */
 	public NamespaceService getNamespaceService() {
@@ -65,6 +72,8 @@ public class DesignerTreeVisitor {
 	}
 
 	/**
+	 * <p>Setter for the field <code>namespaceService</code>.</p>
+	 *
 	 * @param namespaceService
 	 *            the namespaceService to set
 	 */
@@ -72,6 +81,12 @@ public class DesignerTreeVisitor {
 		this.namespaceService = namespaceService;
 	}
 
+	/**
+	 * <p>visitModelTreeNodeRef.</p>
+	 *
+	 * @param modelNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link fr.becpg.repo.designer.data.DesignerTree} object.
+	 */
 	public DesignerTree visitModelTreeNodeRef(NodeRef modelNodeRef) {
 		DesignerTree ret = extractModelTreeNode(modelNodeRef);
 		List<ChildAssociationRef> assocs = nodeService.getChildAssocs(modelNodeRef);

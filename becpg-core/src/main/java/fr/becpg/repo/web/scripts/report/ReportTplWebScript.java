@@ -26,7 +26,10 @@ import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
+ * <p>ReportTplWebScript class.</p>
+ *
  * @author querephi
+ * @version $Id: $Id
  */
 public class ReportTplWebScript extends AbstractWebScript {
 
@@ -51,22 +54,43 @@ public class ReportTplWebScript extends AbstractWebScript {
 
 	private EntityReportAsyncGenerator entityReportAsyncGenerator;
 
+	/**
+	 * <p>Setter for the field <code>entityReportAsyncGenerator</code>.</p>
+	 *
+	 * @param entityReportAsyncGenerator a {@link fr.becpg.repo.report.entity.EntityReportAsyncGenerator} object.
+	 */
 	public void setEntityReportAsyncGenerator(EntityReportAsyncGenerator entityReportAsyncGenerator) {
 		this.entityReportAsyncGenerator = entityReportAsyncGenerator;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityReportService</code>.</p>
+	 *
+	 * @param entityReportService a {@link fr.becpg.repo.report.entity.EntityReportService} object.
+	 */
 	public void setEntityReportService(EntityReportService entityReportService) {
 		this.entityReportService = entityReportService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>associationService</code>.</p>
+	 *
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object.
+	 */
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws WebScriptException {
 		logger.debug("start report webscript");

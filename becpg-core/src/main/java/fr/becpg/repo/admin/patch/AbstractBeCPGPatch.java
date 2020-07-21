@@ -33,6 +33,12 @@ import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
+/**
+ * <p>Abstract AbstractBeCPGPatch class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public abstract class AbstractBeCPGPatch extends AbstractPatch {
 
 	private static final Log logger = LogFactory.getLog(AbstractBeCPGPatch.class);
@@ -45,22 +51,48 @@ public abstract class AbstractBeCPGPatch extends AbstractPatch {
 
 	protected ContentHelper contentHelper;
 	
+	/**
+	 * <p>Setter for the field <code>repository</code>.</p>
+	 *
+	 * @param repository a {@link org.alfresco.repo.model.Repository} object.
+	 */
 	public void setRepository(Repository repository) {
 		this.repository = repository;
 	}
 
+	/**
+	 * <p>Setter for the field <code>contentHelper</code>.</p>
+	 *
+	 * @param contentHelper a {@link fr.becpg.repo.helper.ContentHelper} object.
+	 */
 	public void setContentHelper(ContentHelper contentHelper) {
 		this.contentHelper = contentHelper;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>entitySystemService</code>.</p>
+	 *
+	 * @param entitySystemService a {@link fr.becpg.repo.entity.EntitySystemService} object.
+	 */
 	public void setEntitySystemService(EntitySystemService entitySystemService) {
 		this.entitySystemService = entitySystemService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>repoService</code>.</p>
+	 *
+	 * @param repoService a {@link fr.becpg.repo.helper.RepoService} object.
+	 */
 	public void setRepoService(RepoService repoService) {
 		this.repoService = repoService;
 	}
 
+	/**
+	 * <p>searchFolder.</p>
+	 *
+	 * @param xpath a {@link java.lang.String} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	protected NodeRef searchFolder(String xpath) {
 		List<NodeRef> nodeRefs = BeCPGQueryBuilder.createQuery().selectNodesByPath(repository.getRootHome(), xpath);
 		if (nodeRefs.size() > 1) {
@@ -74,6 +106,12 @@ public abstract class AbstractBeCPGPatch extends AbstractPatch {
 		}
 	}
 
+	/**
+	 * <p>updateResource.</p>
+	 *
+	 * @param xPath a {@link java.lang.String} object.
+	 * @param resourcePath a {@link java.lang.String} object.
+	 */
 	protected void updateResource(String xPath, String resourcePath) {
 		NodeRef nodeRef = searchFolder(xPath);
 		if (nodeRef != null) {
@@ -83,6 +121,13 @@ public abstract class AbstractBeCPGPatch extends AbstractPatch {
 	}
 	
 
+	/**
+	 * <p>getFolder.</p>
+	 *
+	 * @param parentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param folderPath a {@link java.lang.String} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public NodeRef getFolder(NodeRef parentNodeRef, String folderPath) {
 		String folderName = TranslateHelper.getTranslatedPath(folderPath);
 		if (folderName == null) {
@@ -91,18 +136,43 @@ public abstract class AbstractBeCPGPatch extends AbstractPatch {
 	}
 	
 	
+	/**
+	 * <p>getSystemCharactsEntity.</p>
+	 *
+	 * @param parentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public NodeRef getSystemCharactsEntity(NodeRef parentNodeRef) {
 		return entitySystemService.getSystemEntity(parentNodeRef, RepoConsts.PATH_CHARACTS);
 	}
 
+	/**
+	 * <p>getSystemListValuesEntity.</p>
+	 *
+	 * @param parentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public NodeRef getSystemListValuesEntity(NodeRef parentNodeRef) {
 		return entitySystemService.getSystemEntity(parentNodeRef, RepoConsts.PATH_LISTS);
 	}
 
+	/**
+	 * <p>getSystemHierachiesEntity.</p>
+	 *
+	 * @param parentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public NodeRef getSystemHierachiesEntity(NodeRef parentNodeRef) {
 		return entitySystemService.getSystemEntity(parentNodeRef, RepoConsts.PATH_PRODUCT_HIERARCHY);
 	}
 
+	/**
+	 * <p>getCharactDataList.</p>
+	 *
+	 * @param systemEntityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param dataListPath a {@link java.lang.String} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public NodeRef getCharactDataList(NodeRef systemEntityNodeRef, String dataListPath) {
 		return entitySystemService.getSystemEntityDataList(systemEntityNodeRef, dataListPath);
 	}

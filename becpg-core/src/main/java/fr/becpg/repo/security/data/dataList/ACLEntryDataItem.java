@@ -28,7 +28,10 @@ import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 /**
+ * <p>ACLEntryDataItem class.</p>
+ *
  * @author matthieu
+ * @version $Id: $Id
  */
 @AlfType
 @AlfQname(qname = "sec:aclEntry")
@@ -92,44 +95,90 @@ public class ACLEntryDataItem extends BeCPGDataObject {
 
 	}
 
+	/**
+	 * <p>Getter for the field <code>propName</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "sec:propName")
 	public String getPropName() {
 		return propName;
 	}
 
+	/**
+	 * <p>Setter for the field <code>propName</code>.</p>
+	 *
+	 * @param propName a {@link java.lang.String} object.
+	 */
 	public void setPropName(String propName) {
 		this.propName = propName;
 	}
 
+	/**
+	 * <p>Getter for the field <code>aclPermission</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "sec:aclPermission")
 	public String getAclPermission() {
 		return aclPermission;
 	}
 
+	/**
+	 * <p>Setter for the field <code>aclPermission</code>.</p>
+	 *
+	 * @param aclPermission a {@link java.lang.String} object.
+	 */
 	public void setAclPermission(String aclPermission) {
 		this.aclPermission = aclPermission;
 	}
 
+	/**
+	 * <p>Getter for the field <code>groupsAssignee</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@AlfMultiAssoc
 	@AlfQname(qname = "sec:groupsAssignee")
 	public List<NodeRef> getGroupsAssignee() {
 		return groupsAssignee;
 	}
 
+	/**
+	 * <p>Setter for the field <code>groupsAssignee</code>.</p>
+	 *
+	 * @param groupsAssignee a {@link java.util.List} object.
+	 */
 	public void setGroupsAssignee(List<NodeRef> groupsAssignee) {
 		this.groupsAssignee = groupsAssignee;
 	}
 
+	/**
+	 * <p>Constructor for ACLEntryDataItem.</p>
+	 */
 	public ACLEntryDataItem() {
 		super();
 	}
 
+	/**
+	 * <p>Constructor for ACLEntryDataItem.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param name a {@link java.lang.String} object.
+	 */
 	public ACLEntryDataItem(NodeRef nodeRef, String name) {
 		super(nodeRef, name);
 	}
 
+	/**
+	 * <p>Constructor for ACLEntryDataItem.</p>
+	 *
+	 * @param propName a {@link java.lang.String} object.
+	 * @param aclPermission a {@link java.lang.String} object.
+	 * @param groupsAssignee a {@link java.util.List} object.
+	 */
 	public ACLEntryDataItem(String propName, String aclPermission, List<NodeRef> groupsAssignee) {
 		super();
 		this.propName = propName;
@@ -137,6 +186,7 @@ public class ACLEntryDataItem extends BeCPGDataObject {
 		this.groupsAssignee = groupsAssignee;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -147,6 +197,7 @@ public class ACLEntryDataItem extends BeCPGDataObject {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -174,11 +225,17 @@ public class ACLEntryDataItem extends BeCPGDataObject {
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "ACLEntryDataItem [propName=" + propName + ", aclPermission=" + aclPermission + ", groupsAssignee=" + groupsAssignee + "]";
 	}
 
+	/**
+	 * <p>getPermissionModel.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.security.data.dataList.ACLEntryDataItem.PermissionModel} object.
+	 */
 	public PermissionModel getPermissionModel() {
 		return new PermissionModel(getAclPermission(), getGroupsAssignee());
 	}

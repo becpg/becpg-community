@@ -35,6 +35,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  * The Class SortableListPolicy.
  *
  * @author querephi
+ * @version $Id: $Id
  */
 public class SortableListPolicy extends AbstractBeCPGPolicy
 		implements NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.OnAddAspectPolicy, NodeServicePolicies.OnDeleteNodePolicy,
@@ -48,19 +49,36 @@ public class SortableListPolicy extends AbstractBeCPGPolicy
 
 	private EntityListDAO entityListDAO;
 
+	/**
+	 * <p>Setter for the field <code>entityDictionaryService</code>.</p>
+	 *
+	 * @param entityDictionaryService a {@link fr.becpg.repo.entity.EntityDictionaryService} object.
+	 */
 	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
 		this.entityDictionaryService = entityDictionaryService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>dataListSortService</code>.</p>
+	 *
+	 * @param dataListSortService a {@link fr.becpg.repo.entity.datalist.DataListSortService} object.
+	 */
 	public void setDataListSortService(DataListSortService dataListSortService) {
 		this.dataListSortService = dataListSortService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityListDAO</code>.</p>
+	 *
+	 * @param entityListDAO a {@link fr.becpg.repo.entity.EntityListDAO} object.
+	 */
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * Inits the.
 	 */
 	@Override
@@ -84,6 +102,7 @@ public class SortableListPolicy extends AbstractBeCPGPolicy
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 		if (policyBehaviourFilter.isEnabled(BeCPGModel.ASPECT_DEPTH_LEVEL)) {
@@ -146,6 +165,7 @@ public class SortableListPolicy extends AbstractBeCPGPolicy
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onAddAspect(NodeRef nodeRef, QName aspect) {
 
@@ -214,6 +234,7 @@ public class SortableListPolicy extends AbstractBeCPGPolicy
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 
@@ -227,6 +248,7 @@ public class SortableListPolicy extends AbstractBeCPGPolicy
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onDeleteNode(ChildAssociationRef childRef, boolean isNodeArchived) {
 		
@@ -240,11 +262,13 @@ public class SortableListPolicy extends AbstractBeCPGPolicy
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public CopyBehaviourCallback getCopyCallback(QName classRef, CopyDetails copyDetails) {
 		return new DepthLevelAspectCopyBehaviourCallback(policyBehaviourFilter);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onCopyComplete(QName classRef, NodeRef sourceNodeRef, NodeRef destinationRef, boolean copyToNewNode, Map<NodeRef, NodeRef> copyMap) {
 

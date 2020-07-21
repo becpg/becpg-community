@@ -42,6 +42,12 @@ import fr.becpg.repo.helper.ExcelHelper.ExcelFieldTitleProvider;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 
+/**
+ * <p>ExcelDataListOutputWriter class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class ExcelDataListOutputWriter implements DataListOutputWriter {
 
@@ -61,6 +67,7 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 	@Qualifier("ServiceRegistry")
 	private ServiceRegistry serviceRegistry;
 
+	/** {@inheritDoc} */
 	@Override
 	public void write(WebScriptRequest req, WebScriptResponse res, DataListFilter dataListFilter, PaginatedExtractedItems extractedItems)
 			throws IOException {

@@ -59,13 +59,24 @@ import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
 
 /**
- * 
+ * <p>ExcelXmlEntityVisitor class.</p>
+ *
  * @author matthieu
- * 
+ * @version $Id: $Id
  */
 public class ExcelXmlEntityVisitor  extends AbstractEntityVisitor{
 
 
+	/**
+	 * <p>Constructor for ExcelXmlEntityVisitor.</p>
+	 *
+	 * @param mlNodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
+	 * @param entityDictionaryService a {@link fr.becpg.repo.entity.EntityDictionaryService} object.
+	 * @param contentService a {@link org.alfresco.service.cmr.repository.ContentService} object.
+	 * @param siteService a {@link org.alfresco.service.cmr.site.SiteService} object.
+	 */
 	public ExcelXmlEntityVisitor(NodeService mlNodeService, NodeService nodeService, NamespaceService namespaceService,
 			EntityDictionaryService entityDictionaryService, ContentService contentService, SiteService siteService) {
 		super(mlNodeService, nodeService, namespaceService, entityDictionaryService, contentService, siteService);
@@ -73,6 +84,7 @@ public class ExcelXmlEntityVisitor  extends AbstractEntityVisitor{
 
 	private static final Log logger = LogFactory.getLog(ExcelXmlEntityVisitor.class);
 
+	/** {@inheritDoc} */
 	public void visit(NodeRef entityNodeRef, OutputStream result) throws XMLStreamException {
 
 		// Create an output factory
@@ -97,6 +109,7 @@ public class ExcelXmlEntityVisitor  extends AbstractEntityVisitor{
 
 	}
 
+	/** {@inheritDoc} */
 	public void visit(List<NodeRef> entities, OutputStream result) throws XMLStreamException {
 		// Create an output factory
 		XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
@@ -126,6 +139,7 @@ public class ExcelXmlEntityVisitor  extends AbstractEntityVisitor{
 
 	}
 
+	/** {@inheritDoc} */
 	public void visitData(NodeRef entityNodeRef, OutputStream result) throws XMLStreamException {
 
 		// Create an output factory

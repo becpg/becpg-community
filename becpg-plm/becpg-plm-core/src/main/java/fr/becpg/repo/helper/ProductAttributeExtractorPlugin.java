@@ -32,8 +32,10 @@ import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.helper.impl.AbstractExprNameExtractor;
 
 /**
+ * <p>ProductAttributeExtractorPlugin class.</p>
+ *
  * @author matthieu
- * 
+ * @version $Id: $Id
  */
 @Service
 public class ProductAttributeExtractorPlugin extends AbstractExprNameExtractor {
@@ -42,10 +44,20 @@ public class ProductAttributeExtractorPlugin extends AbstractExprNameExtractor {
 	private String productNameFormat;
 
 
+	/**
+	 * <p>Setter for the field <code>productNameFormat</code>.</p>
+	 *
+	 * @param productNameFormat a {@link java.lang.String} object.
+	 */
 	public void setProductNameFormat(String productNameFormat) {
 		this.productNameFormat = productNameFormat;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>productNameFormat</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getProductNameFormat() {
 		return productNameFormat;
 	}
@@ -54,16 +66,19 @@ public class ProductAttributeExtractorPlugin extends AbstractExprNameExtractor {
 	private EntityDictionaryService entityDictionaryService;
 
 
+	/** {@inheritDoc} */
 	@Override
 	public Collection<QName> getMatchingTypes() {
 		return entityDictionaryService.getSubTypes(PLMModel.TYPE_PRODUCT);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String extractPropName(QName type, NodeRef nodeRef) {
 		return extractExpr(nodeRef,productNameFormat);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String extractMetadata(QName type, NodeRef nodeRef) {
 		String ret = type.toPrefixString(namespaceService).split(":")[1] + "-" + nodeService.getProperty(nodeRef, PLMModel.PROP_PRODUCT_STATE);

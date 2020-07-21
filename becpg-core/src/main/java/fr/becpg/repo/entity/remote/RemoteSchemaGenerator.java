@@ -26,6 +26,12 @@ import fr.becpg.common.BeCPGException;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
 
+/**
+ * <p>RemoteSchemaGenerator class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service("remoteSchemaGenerator")
 public class RemoteSchemaGenerator {
 
@@ -36,6 +42,12 @@ public class RemoteSchemaGenerator {
 
 	
 	
+	/**
+	 * <p>generateSchema.</p>
+	 *
+	 * @param out a {@link java.io.OutputStream} object.
+	 * @throws fr.becpg.common.BeCPGException if any.
+	 */
 	public void generateSchema(OutputStream out) throws  BeCPGException{
 
 		try {

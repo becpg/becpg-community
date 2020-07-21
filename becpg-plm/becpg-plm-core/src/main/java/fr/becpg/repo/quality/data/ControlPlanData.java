@@ -26,6 +26,12 @@ import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
+/**
+ * <p>ControlPlanData class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @AlfType
 @AlfQname(qname = "qa:controlPlan")
 public class ControlPlanData extends BeCPGDataObject {
@@ -38,16 +44,27 @@ public class ControlPlanData extends BeCPGDataObject {
 	List<SamplingDefListDataItem> samplingDefList = new LinkedList<>();
 
 
+	/**
+	 * <p>Getter for the field <code>samplingDefList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@DataList
 	@AlfQname(qname = "qa:samplingDefList")
 	public List<SamplingDefListDataItem> getSamplingDefList() {
 		return samplingDefList;
 	}
 
+	/**
+	 * <p>Setter for the field <code>samplingDefList</code>.</p>
+	 *
+	 * @param samplingDefList a {@link java.util.List} object.
+	 */
 	public void setSamplingDefList(List<SamplingDefListDataItem> samplingDefList) {
 		this.samplingDefList = samplingDefList;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -56,6 +73,7 @@ public class ControlPlanData extends BeCPGDataObject {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -73,6 +91,7 @@ public class ControlPlanData extends BeCPGDataObject {
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "ControlPlanData [samplingDefList=" + samplingDefList + "]";

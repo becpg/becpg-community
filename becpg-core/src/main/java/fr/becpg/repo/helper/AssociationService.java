@@ -28,20 +28,124 @@ import org.alfresco.service.namespace.QNamePattern;
 
 import fr.becpg.repo.helper.impl.AssociationServiceImpl.EntitySourceAssoc;
 
+/**
+ * <p>AssociationService interface.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public interface AssociationService {
 
+	/**
+	 * <p>update.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param qName a {@link org.alfresco.service.namespace.QName} object.
+	 * @param assocNodeRefs a {@link java.util.List} object.
+	 * @param resetCache a boolean.
+	 */
 	void update(NodeRef nodeRef, QName qName, List<NodeRef> assocNodeRefs, boolean resetCache);
+	/**
+	 * <p>update.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param qName a {@link org.alfresco.service.namespace.QName} object.
+	 * @param assocNodeRefs a {@link java.util.List} object.
+	 */
 	void update(NodeRef nodeRef, QName qName, List<NodeRef> assocNodeRefs);
+	/**
+	 * <p>update.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param qName a {@link org.alfresco.service.namespace.QName} object.
+	 * @param assocNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	void update(NodeRef nodeRef, QName qName, NodeRef assocNodeRef);
+	/**
+	 * <p>getTargetAssoc.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param qName a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	NodeRef getTargetAssoc(NodeRef nodeRef, QName qName);
+	/**
+	 * <p>getTargetAssoc.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param qName a {@link org.alfresco.service.namespace.QName} object.
+	 * @param fromCache a boolean.
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	NodeRef getTargetAssoc(NodeRef nodeRef, QName qName, boolean fromCache);
+	/**
+	 * <p>getTargetAssocs.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param qName a {@link org.alfresco.service.namespace.QName} object.
+	 * @param fromCache a boolean.
+	 * @return a {@link java.util.List} object.
+	 */
 	List<NodeRef> getTargetAssocs(NodeRef nodeRef, QName qName, boolean fromCache);
+	/**
+	 * <p>getTargetAssocs.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param qName a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link java.util.List} object.
+	 */
 	List<NodeRef> getTargetAssocs(NodeRef nodeRef, QName qName);
+	/**
+	 * <p>getChildAssoc.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param qName a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	NodeRef getChildAssoc(NodeRef nodeRef, QName qName);
+	/**
+	 * <p>getChildAssocs.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param qName a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link java.util.List} object.
+	 */
 	List<NodeRef> getChildAssocs(NodeRef nodeRef, QName qName);
+	/**
+	 * <p>getChildAssocs.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param qName a {@link org.alfresco.service.namespace.QName} object.
+	 * @param childTypeQName a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link java.util.List} object.
+	 */
 	List<NodeRef> getChildAssocs(NodeRef nodeRef, QName qName, QName childTypeQName);
+	/**
+	 * <p>getChildAssocs.</p>
+	 *
+	 * @param listNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param assocContains a {@link org.alfresco.service.namespace.QName} object.
+	 * @param listQNameFilter a {@link org.alfresco.service.namespace.QName} object.
+	 * @param sortMap a {@link java.util.Map} object.
+	 * @return a {@link java.util.List} object.
+	 */
 	List<NodeRef> getChildAssocs(NodeRef listNodeRef, QName assocContains, QName listQNameFilter,@Nullable Map<String, Boolean> sortMap);
+	/**
+	 * <p>getSourcesAssocs.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param qNamePattern a {@link org.alfresco.service.namespace.QNamePattern} object.
+	 * @return a {@link java.util.List} object.
+	 */
 	List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QNamePattern qNamePattern);
+	/**
+	 * <p>getEntitySourceAssocs.</p>
+	 *
+	 * @param nodeRefs a {@link java.util.List} object.
+	 * @param assocQName a {@link org.alfresco.service.namespace.QName} object.
+	 * @param isOrOperator a boolean.
+	 * @return a {@link java.util.List} object.
+	 */
 	List<EntitySourceAssoc> getEntitySourceAssocs(List<NodeRef> nodeRefs, QName assocQName, boolean isOrOperator);
 	
 }

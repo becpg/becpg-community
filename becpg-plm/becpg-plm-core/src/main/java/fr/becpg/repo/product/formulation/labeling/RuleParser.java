@@ -26,6 +26,12 @@ import fr.becpg.repo.product.data.constraints.LabelingRuleType;
 import fr.becpg.repo.product.data.ing.DeclarationFilter;
 import fr.becpg.repo.product.data.meat.MeatType;
 
+/**
+ * <p>Abstract RuleParser class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public abstract class RuleParser {
 
 	private static Log logger = LogFactory.getLog(RuleParser.class);
@@ -51,48 +57,111 @@ public abstract class RuleParser {
 	protected boolean showAllGeo = false;
 	
 	
+	/**
+	 * <p>Setter for the field <code>defaultRoundingMode</code>.</p>
+	 *
+	 * @param defaultRoundingMode a {@link java.math.RoundingMode} object.
+	 */
 	public void setDefaultRoundingMode(RoundingMode defaultRoundingMode) {
 		this.defaultRoundingMode = defaultRoundingMode;
 	}
 
+	/**
+	 * <p>Setter for the field <code>defaultPercFormat</code>.</p>
+	 *
+	 * @param defaultPercFormat a {@link java.lang.String} object.
+	 */
 	public void setDefaultPercFormat(String defaultPercFormat) {
 		this.defaultPercFormat = defaultPercFormat;
 	}
 
+	/**
+	 * <p>Setter for the field <code>showAllPerc</code>.</p>
+	 *
+	 * @param showAllPerc a boolean.
+	 */
 	public void setShowAllPerc(boolean showAllPerc) {
 		this.showAllPerc = showAllPerc;
 	}
 
+	/**
+	 * <p>Setter for the field <code>showAllGeo</code>.</p>
+	 *
+	 * @param showAllGeo a boolean.
+	 */
 	public void setShowAllGeo(boolean showAllGeo) {
 		this.showAllGeo = showAllGeo;
 	}
 
+	/**
+	 * <p>Getter for the field <code>aggregateRules</code>.</p>
+	 *
+	 * @return a {@link java.util.Map} object.
+	 */
 	public Map<NodeRef, List<AggregateRule>> getAggregateRules() {
 		return aggregateRules;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>meatContentRules</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	public List<MeatContentRule> getMeatContentRules() {
 		return meatContentRules;
 	}
 
+	/**
+	 * <p>Getter for the field <code>nodeDeclarationFilters</code>.</p>
+	 *
+	 * @return a {@link java.util.Map} object.
+	 */
 	public Map<NodeRef, List<DeclarationFilter>> getNodeDeclarationFilters() {
 		return nodeDeclarationFilters;
 	}
 
+	/**
+	 * <p>Getter for the field <code>declarationFilters</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	public List<DeclarationFilter> getDeclarationFilters() {
 		return declarationFilters;
 	}
 
+	/**
+	 * <p>getLocales.</p>
+	 *
+	 * @return a {@link java.util.Set} object.
+	 */
 	public Set<Locale> getLocales() {
 		return availableLocales;
 	}
 
+	/**
+	 * <p>Constructor for RuleParser.</p>
+	 *
+	 * @param mlNodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public RuleParser(NodeService mlNodeService) {
 		super();
 		this.mlNodeService = mlNodeService;
 		availableLocales = new LinkedHashSet<>();
 	}
 
+	/**
+	 * <p>addRule.</p>
+	 *
+	 * @param ruleNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param name a {@link java.lang.String} object.
+	 * @param components a {@link java.util.List} object.
+	 * @param replacement a {@link java.util.List} object.
+	 * @param label a {@link org.alfresco.service.cmr.repository.MLText} object.
+	 * @param formula a {@link java.lang.String} object.
+	 * @param labeLabelingRuleType a {@link fr.becpg.repo.product.data.constraints.LabelingRuleType} object.
+	 * @param locales a {@link java.util.List} object.
+	 * @return a boolean.
+	 */
 	public boolean addRule(NodeRef ruleNodeRef, String name, List<NodeRef> components, List<NodeRef> replacement, MLText label, String formula,
 			LabelingRuleType labeLabelingRuleType, List<String> locales) {
 
@@ -266,6 +335,16 @@ public abstract class RuleParser {
 		}
 	}
 
+	/**
+	 * <p>rename.</p>
+	 *
+	 * @param components a {@link java.util.List} object.
+	 * @param replacement a {@link java.util.List} object.
+	 * @param label a {@link org.alfresco.service.cmr.repository.MLText} object.
+	 * @param formula a {@link java.lang.String} object.
+	 * @param locales a {@link java.util.List} object.
+	 * @return a boolean.
+	 */
 	public boolean rename(List<NodeRef> components, List<NodeRef> replacement, MLText label, String formula, List<String> locales) {
 		
 		if(components.isEmpty() && replacement.isEmpty() && formula!=null && formula.matches("-?\\d+(\\.\\d+)?")) {

@@ -35,9 +35,10 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.datalist.DataListSortService;
 
 /**
- * 
+ * <p>SortDataListWebScript class.</p>
+ *
  * @author matthieu
- * 
+ * @version $Id: $Id
  */
 public class SortDataListWebScript extends DeclarativeWebScript {
 
@@ -47,6 +48,7 @@ public class SortDataListWebScript extends DeclarativeWebScript {
 
 	private static final String PARAM_STORE_ID = "store_id";
 
+	/** Constant <code>PARAM_ID="id"</code> */
 	protected static final String PARAM_ID = "id";
 
 	private static final String PARAM_SELECTED_NODEREFS = "selectedNodeRefs";
@@ -59,14 +61,25 @@ public class SortDataListWebScript extends DeclarativeWebScript {
 
 	private NodeService nodeService;
 
+	/**
+	 * <p>Setter for the field <code>dataListSortService</code>.</p>
+	 *
+	 * @param dataListSortService a {@link fr.becpg.repo.entity.datalist.DataListSortService} object.
+	 */
 	public void setDataListSortService(DataListSortService dataListSortService) {
 		this.dataListSortService = dataListSortService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected Map<String, Object> executeImpl(WebScriptRequest req, Status status, Cache cache) {
 		logger.debug("call Sort webscript");

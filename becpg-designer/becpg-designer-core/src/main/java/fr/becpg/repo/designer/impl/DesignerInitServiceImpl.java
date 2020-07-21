@@ -28,9 +28,10 @@ import fr.becpg.repo.designer.DesignerInitService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
- * 
+ * <p>DesignerInitServiceImpl class.</p>
+ *
  * @author "Matthieu Laborie"
- * 
+ * @version $Id: $Id
  */
 @Service("designerInitService")
 public class DesignerInitServiceImpl implements DesignerInitService {
@@ -47,18 +48,21 @@ public class DesignerInitServiceImpl implements DesignerInitService {
 	@Qualifier("repositoryHelper")
 	private Repository repository;
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getWorkflowsNodeRef() {
 
 		return BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(), PATH_WORKFLOWS);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getModelsNodeRef() {
 
 		return BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(), PATH_MODELS);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getConfigsNodeRef() {
 

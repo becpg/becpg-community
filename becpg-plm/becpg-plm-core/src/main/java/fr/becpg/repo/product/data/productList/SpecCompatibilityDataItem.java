@@ -27,9 +27,10 @@ import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 /**
- * 
+ * <p>SpecCompatibilityDataItem class.</p>
+ *
  * @author matthieu
- * 
+ * @version $Id: $Id
  */
 @AlfType
 @AlfQname(qname = "bcpg:productSpecCompatibilityList")
@@ -44,43 +45,83 @@ public class SpecCompatibilityDataItem extends BeCPGDataObject {
 	private NodeRef sourceItem;
 	
 	
+	/**
+	 * <p>Constructor for SpecCompatibilityDataItem.</p>
+	 */
 	public SpecCompatibilityDataItem() {
 		super();
 	}
 	
+	/**
+	 * <p>Getter for the field <code>reqType</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.constraints.RequirementType} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:psclReqType")
 	public RequirementType getReqType() {
 		return reqType;
 	}
 
+	/**
+	 * <p>Setter for the field <code>reqType</code>.</p>
+	 *
+	 * @param reqType a {@link fr.becpg.repo.product.data.constraints.RequirementType} object.
+	 */
 	public void setReqType(RequirementType reqType) {
 		this.reqType = reqType;
 	}
 
+	/**
+	 * <p>Getter for the field <code>reqDetails</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:psclReqDetails")
 	public String getReqDetails() {
 		return reqDetails;
 	}
 
+	/**
+	 * <p>Setter for the field <code>reqDetails</code>.</p>
+	 *
+	 * @param reqDetails a {@link java.lang.String} object.
+	 */
 	public void setReqDetails(String reqDetails) {
 		this.reqDetails = reqDetails;
 	}
 
 	
+	/**
+	 * <p>Getter for the field <code>sourceItem</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	@AlfSingleAssoc
 	@AlfQname(qname = "bcpg:psclSourceItem")
 	public NodeRef getSourceItem() {
 		return sourceItem;
 	}
 
+	/**
+	 * <p>Setter for the field <code>sourceItem</code>.</p>
+	 *
+	 * @param sourceItem a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void setSourceItem(NodeRef sourceItem) {
 		this.sourceItem = sourceItem;
 	}
 
 	
 
+	/**
+	 * <p>Constructor for SpecCompatibilityDataItem.</p>
+	 *
+	 * @param reqType a {@link fr.becpg.repo.product.data.constraints.RequirementType} object.
+	 * @param reqDetails a {@link java.lang.String} object.
+	 * @param sourceItem a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public SpecCompatibilityDataItem( RequirementType reqType, String reqDetails, NodeRef sourceItem) {
 		super();
 		this.reqType = reqType;
@@ -88,6 +129,7 @@ public class SpecCompatibilityDataItem extends BeCPGDataObject {
 		this.sourceItem = sourceItem;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -98,6 +140,7 @@ public class SpecCompatibilityDataItem extends BeCPGDataObject {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -122,6 +165,7 @@ public class SpecCompatibilityDataItem extends BeCPGDataObject {
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "SpecCompatibilityDataItem [reqType=" + reqType + ", reqDetails=" + reqDetails + ", sourceItem="

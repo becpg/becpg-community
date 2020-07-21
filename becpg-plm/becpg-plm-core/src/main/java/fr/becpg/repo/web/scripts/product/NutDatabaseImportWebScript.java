@@ -20,6 +20,12 @@ import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.formulation.nutrient.NutDatabaseService;
 import fr.becpg.repo.repository.AlfrescoRepository;
 
+/**
+ * <p>NutDatabaseImportWebScript class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class NutDatabaseImportWebScript extends AbstractWebScript {
 
 	private static final Log logger = LogFactory.getLog(NutDatabaseImportWebScript.class);
@@ -29,10 +35,16 @@ public class NutDatabaseImportWebScript extends AbstractWebScript {
 	
 	private NutDatabaseService nutDatabaseService;
 
+	/**
+	 * <p>Setter for the field <code>nutDatabaseService</code>.</p>
+	 *
+	 * @param nutDatabaseService a {@link fr.becpg.repo.product.formulation.nutrient.NutDatabaseService} object.
+	 */
 	public void setNutDatabaseService(NutDatabaseService nutDatabaseService) {
 		this.nutDatabaseService = nutDatabaseService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) {
 		try {

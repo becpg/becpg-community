@@ -21,6 +21,12 @@ import org.springframework.util.StopWatch;
 
 import fr.becpg.repo.mail.BeCPGMailService;
 
+/**
+ * <p>EntitySimulationServiceImpl class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service("simulationService")
 public class EntitySimulationServiceImpl implements EntitySimulationService {
 
@@ -189,6 +195,7 @@ public class EntitySimulationServiceImpl implements EntitySimulationService {
 		return null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef createSimulationNodeRef(NodeRef entityNodeRef, NodeRef destNodeRef) {
 		EntitySimulationPlugin entitySimulationPlugin = findPlugin(EntitySimulationPlugin.SIMPLE_MODE);
@@ -204,6 +211,7 @@ public class EntitySimulationServiceImpl implements EntitySimulationService {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void simuleDataListItems(NodeRef entityNodeRef, List<NodeRef> dataListItemsNodeRefs) {
 
@@ -214,6 +222,7 @@ public class EntitySimulationServiceImpl implements EntitySimulationService {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef createSimulationNodeRefs(List<NodeRef> nodeRefs, NodeRef destNodeRef, String mode) {
 		Runnable command = new AsyncCreateSimulationNodeRefsCommand(destNodeRef, nodeRefs, mode);

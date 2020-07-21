@@ -39,9 +39,9 @@ import fr.becpg.repo.listvalue.ListValueExtractor;
 
 /**
  * Used to extract properties from product
- * 
+ *
  * @author "Matthieu Laborie"
- * 
+ * @version $Id: $Id
  */
 @Service("targetAssocValueExtractor")
 public class TargetAssocValueExtractor implements ListValueExtractor<NodeRef> {
@@ -58,6 +58,7 @@ public class TargetAssocValueExtractor implements ListValueExtractor<NodeRef> {
 	@Autowired
 	private AttributeExtractorService attributeExtractorService;
 
+	/** {@inheritDoc} */
 	@Override
 	public List<ListValueEntry> extract(List<NodeRef> nodeRefs) {
 

@@ -19,9 +19,16 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.report.search.impl.DefaultExcelReportSearchPlugin;
 
+/**
+ * <p>DynamicCharactExcelReportSearchPlugin class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class DynamicCharactExcelReportSearchPlugin extends DefaultExcelReportSearchPlugin {
 
+	/** {@inheritDoc} */
 	@Override
 	public int fillSheet(XSSFSheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum, String[] parameters,
 			AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache) {
@@ -109,6 +116,7 @@ public class DynamicCharactExcelReportSearchPlugin extends DefaultExcelReportSea
 		return item;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isApplicable(QName itemType, String[] parameters) {
 		String parameter = (parameters != null) && (parameters.length > 0) ? parameters[0] : null;
@@ -116,6 +124,7 @@ public class DynamicCharactExcelReportSearchPlugin extends DefaultExcelReportSea
 				|| MPMModel.TYPE_PROCESSLIST.equals(itemType)) && ((parameter == null) || !parameter.contains("Level"));
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isDefault() {
 		return false;

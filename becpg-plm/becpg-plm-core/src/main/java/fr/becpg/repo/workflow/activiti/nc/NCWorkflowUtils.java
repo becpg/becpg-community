@@ -49,6 +49,12 @@ import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.util.ApplicationContextHelper;
 
+/**
+ * <p>NCWorkflowUtils class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class NCWorkflowUtils {
 
 	private static final Log logger = LogFactory.getLog(NCWorkflowUtils.class);
@@ -72,6 +78,15 @@ public class NCWorkflowUtils {
 
 	}
 
+	/**
+	 * <p>updateNC.</p>
+	 *
+	 * @param ncNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param task a {@link fr.becpg.repo.workflow.activiti.nc.NCWorkflowUtils.NCWorkflowUtilsTask} object.
+	 * @param serviceRegistry a {@link org.alfresco.service.ServiceRegistry} object.
+	 * @throws org.alfresco.service.cmr.model.FileExistsException if any.
+	 * @throws org.alfresco.service.cmr.model.FileNotFoundException if any.
+	 */
 	public static void updateNC(NodeRef ncNodeRef, NCWorkflowUtilsTask task, ServiceRegistry serviceRegistry)
 			throws FileExistsException, FileNotFoundException {
 

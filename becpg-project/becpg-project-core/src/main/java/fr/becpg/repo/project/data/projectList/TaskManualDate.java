@@ -19,8 +19,9 @@ package fr.becpg.repo.project.data.projectList;
 
 /**
  * Task manual date
- * @author quere
  *
+ * @author quere
+ * @version $Id: $Id
  */
 public enum TaskManualDate {
 

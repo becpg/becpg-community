@@ -23,6 +23,12 @@ import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
 
+/**
+ * <p>SamplingDefListDataItem class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @AlfType
 @AlfQname(qname = "qa:samplingDefList")
 public class SamplingDefListDataItem extends AbstractSamplingListDataItem {
@@ -36,51 +42,107 @@ public class SamplingDefListDataItem extends AbstractSamplingListDataItem {
 	private Integer freq;
 	private String freqUnit;
 
+	/**
+	 * <p>Getter for the field <code>qty</code>.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "qa:sdlQty")
 	public Integer getQty() {
 		return qty;
 	}
 
+	/**
+	 * <p>Setter for the field <code>qty</code>.</p>
+	 *
+	 * @param qty a {@link java.lang.Integer} object.
+	 */
 	public void setQty(Integer qty) {
 		this.qty = qty;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>freqText</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "qa:sdlFreqText")
 	public String getFreqText() {
 		return freqText;
 	}
 
+	/**
+	 * <p>Setter for the field <code>freqText</code>.</p>
+	 *
+	 * @param freqText a {@link java.lang.String} object.
+	 */
 	public void setFreqText(String freqText) {
 		this.freqText = freqText;
 	}
 
 
+	/**
+	 * <p>Getter for the field <code>freq</code>.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "qa:sdlFreq")
 	public Integer getFreq() {
 		return freq;
 	}
 
+	/**
+	 * <p>Setter for the field <code>freq</code>.</p>
+	 *
+	 * @param freq a {@link java.lang.Integer} object.
+	 */
 	public void setFreq(Integer freq) {
 		this.freq = freq;
 	}
 
+	/**
+	 * <p>Getter for the field <code>freqUnit</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "qa:sdlFreqUnit")
 	public String getFreqUnit() {
 		return freqUnit;
 	}
 
+	/**
+	 * <p>Setter for the field <code>freqUnit</code>.</p>
+	 *
+	 * @param freqUnit a {@link java.lang.String} object.
+	 */
 	public void setFreqUnit(String freqUnit) {
 		this.freqUnit = freqUnit;
 	}
 
+	/**
+	 * <p>Constructor for SamplingDefListDataItem.</p>
+	 */
 	public SamplingDefListDataItem() {
 		super();
 	}
 
+	/**
+	 * <p>Constructor for SamplingDefListDataItem.</p>
+	 *
+	 * @param qty a {@link java.lang.Integer} object.
+	 * @param freq a {@link java.lang.Integer} object.
+	 * @param freqUnit a {@link java.lang.String} object.
+	 * @param controlPoint a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param controlStep a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param samplingGroup a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param controlingGroup a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param fixingGroup a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param reaction a {@link java.lang.String} object.
+	 */
 	public SamplingDefListDataItem(Integer qty, Integer freq, String freqUnit, NodeRef controlPoint, NodeRef controlStep, NodeRef samplingGroup, NodeRef controlingGroup, NodeRef fixingGroup, String reaction) {
 		super();
 		this.qty = qty;
@@ -94,6 +156,7 @@ public class SamplingDefListDataItem extends AbstractSamplingListDataItem {
 		this.reaction = reaction;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -107,6 +170,7 @@ public class SamplingDefListDataItem extends AbstractSamplingListDataItem {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -149,6 +213,7 @@ public class SamplingDefListDataItem extends AbstractSamplingListDataItem {
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "SamplingDefListDataItem [qty=" + qty + ", freq=" + freq + ", freqUnit=" + freqUnit + ", controlPoint=" + controlPoint + ", controlStep=" + controlStep

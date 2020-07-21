@@ -43,10 +43,12 @@ import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.repository.AlfrescoRepository;
 
 /**
+ * <p>FormulationServiceImpl class.</p>
  *
  * @author matthieu
  * @since 1.5
  * @param <T>
+ * @version $Id: $Id
  */
 public class FormulationServiceImpl<T extends FormulatedEntity> implements FormulationService<T>, FormulationPlugin {
 
@@ -60,14 +62,25 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 
 	private static final Log logger = LogFactory.getLog(FormulationServiceImpl.class);
 
+	/**
+	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
+	 */
 	public void setAlfrescoRepository(AlfrescoRepository<T> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void registerFormulationChain(Class<T> clazz, FormulationChain<T> chain) {
 		if (logger.isDebugEnabled()) {
@@ -87,11 +100,13 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 		formulationChains.put(clazz, chains);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public T formulate(NodeRef entityNodeRef) throws FormulateException {
 		return formulate(entityNodeRef, DEFAULT_CHAIN_ID);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public T formulate(T repositoryEntity) throws FormulateException {
 		Locale currentLocal = I18NUtil.getLocale();
@@ -106,6 +121,7 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public T formulate(NodeRef entityNodeRef, String chainId) throws FormulateException {
 		Locale currentLocal = I18NUtil.getLocale();
@@ -141,6 +157,7 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public T formulate(T repositoryEntity, String chainId) throws FormulateException {
 		try {
@@ -196,6 +213,7 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 		return repositoryEntity;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean shouldFormulate(NodeRef entityNodeRef) {
 
@@ -223,11 +241,13 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 		return null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public FormulationPluginPriority getMatchPriority(QName type) {
 		return FormulationPluginPriority.NORMAL;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void runFormulation(NodeRef entityNodeRef) throws FormulateException {
 		formulate(entityNodeRef);

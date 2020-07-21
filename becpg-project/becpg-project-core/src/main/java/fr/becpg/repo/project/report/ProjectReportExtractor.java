@@ -12,9 +12,16 @@ import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.report.entity.EntityReportExtractorPlugin;
 import fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor;
 
+/**
+ * <p>ProjectReportExtractor class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class ProjectReportExtractor extends DefaultEntityReportExtractor {
 	
+	/** {@inheritDoc} */
 	@Override
 	protected boolean loadTargetAssoc(NodeRef entityNodeRef, AssociationDefinition assocDef, Element entityElt,  DefaultExtractorContext context) {
 		
@@ -42,6 +49,7 @@ public class ProjectReportExtractor extends DefaultEntityReportExtractor {
 		return false;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public EntityReportExtractorPriority getMatchPriority(QName type) {
 		return dictionaryService.isSubClass(type, ProjectModel.TYPE_PROJECT) ? EntityReportExtractorPriority.NORMAL : EntityReportExtractorPriority.NONE;

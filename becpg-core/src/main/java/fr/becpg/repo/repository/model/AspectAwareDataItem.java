@@ -21,20 +21,40 @@ import java.util.Set;
 
 import org.alfresco.service.namespace.QName;
 
+/**
+ * <p>AspectAwareDataItem interface.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public interface AspectAwareDataItem {
 
 	/**
 	 * Optional Set to add extra aspects
+	 *
+	 * @return a {@link java.util.Set} object.
 	 */
 	Set<QName> getAspects();
 
+	/**
+	 * <p>setAspects.</p>
+	 *
+	 * @param aspects a {@link java.util.Set} object.
+	 */
 	void setAspects(Set<QName> aspects);
 
 	/**
 	 * Optional Set to remove extra aspects
+	 *
+	 * @return a {@link java.util.Set} object.
 	 */
 	Set<QName> getAspectsToRemove();
 
+	/**
+	 * <p>setAspectsToRemove.</p>
+	 *
+	 * @param aspectsToRemove a {@link java.util.Set} object.
+	 */
 	void setAspectsToRemove(Set<QName> aspectsToRemove);
 
 }

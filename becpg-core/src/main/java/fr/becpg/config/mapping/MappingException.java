@@ -7,6 +7,7 @@ package fr.becpg.config.mapping;
  * Mapping Exception.
  *
  * @author querephi
+ * @version $Id: $Id
  */
 public class MappingException extends Exception {
 	

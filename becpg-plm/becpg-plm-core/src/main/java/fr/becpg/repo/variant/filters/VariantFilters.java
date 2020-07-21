@@ -28,27 +28,47 @@ import fr.becpg.repo.repository.filters.DataListFilter;
 import fr.becpg.repo.variant.model.VariantData;
 import fr.becpg.repo.variant.model.VariantDataItem;
 
+/**
+ * <p>VariantFilters class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class VariantFilters<T extends VariantDataItem> implements DataListFilter<ProductData, T> {
 
 	private Set<NodeRef> variantNodeRefs = new HashSet<>();
 
 	private Boolean isDefaultVariant = true;
 
+	/**
+	 * <p>Constructor for VariantFilters.</p>
+	 */
 	public VariantFilters() {
 		super();
 	}
 
+	/**
+	 * <p>Constructor for VariantFilters.</p>
+	 *
+	 * @param variantNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public VariantFilters(NodeRef variantNodeRef) {
 		super();
 		this.variantNodeRefs.add(variantNodeRef);
 	}
 
+	/**
+	 * <p>Constructor for VariantFilters.</p>
+	 *
+	 * @param isDefaultVariant a {@link java.lang.Boolean} object.
+	 */
 	public VariantFilters(Boolean isDefaultVariant) {
 		super();
 		this.isDefaultVariant = isDefaultVariant;
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Predicate<T> createPredicate(final ProductData entity) {
 

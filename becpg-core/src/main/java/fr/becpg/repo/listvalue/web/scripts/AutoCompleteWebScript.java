@@ -37,8 +37,9 @@ import fr.becpg.repo.listvalue.ListValueService;
 
 /**
  * The Class AutoCompleteWebScript.
- * 
+ *
  * @author querephi
+ * @version $Id: $Id
  */
 public class AutoCompleteWebScript extends DeclarativeWebScript {
 
@@ -64,22 +65,21 @@ public class AutoCompleteWebScript extends DeclarativeWebScript {
 	private ListValueService listValueService;
 
 
+	/**
+	 * <p>Setter for the field <code>listValueService</code>.</p>
+	 *
+	 * @param listValueService a {@link fr.becpg.repo.listvalue.ListValueService} object.
+	 */
 	public void setListValueService(ListValueService listValueService) {
 		this.listValueService = listValueService;
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * Suggest values according to query
-	 * 
+	 *
 	 * url : becpg/autocomplete/{sourcetype}/{path}?q=&amp;parent=.
-	 * 
-	 * @param req
-	 *            the req
-	 * @param status
-	 *            the status
-	 * @param cache
-	 *            the cache
-	 * @return the map
 	 */
 	@Override
 	protected Map<String, Object> executeImpl(WebScriptRequest req, Status status, Cache cache) {

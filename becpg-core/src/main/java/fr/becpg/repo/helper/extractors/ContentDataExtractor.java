@@ -36,6 +36,12 @@ import fr.becpg.config.format.FormatMode;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.helper.AttributeExtractorService;
 
+/**
+ * <p>ContentDataExtractor class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class ContentDataExtractor extends AbstractNodeDataExtractor  {
 
 	
@@ -45,16 +51,30 @@ public class ContentDataExtractor extends AbstractNodeDataExtractor  {
 	
 
 	
+	/**
+	 * <p>Constructor for ContentDataExtractor.</p>
+	 *
+	 * @param serviceRegistry a {@link org.alfresco.service.ServiceRegistry} object.
+	 * @param attributeExtractorService a {@link fr.becpg.repo.helper.AttributeExtractorService} object.
+	 */
 	public ContentDataExtractor(ServiceRegistry serviceRegistry,AttributeExtractorService attributeExtractorService){
 		super(serviceRegistry,attributeExtractorService);
 	}
 	
+	/**
+	 * <p>Constructor for ContentDataExtractor.</p>
+	 *
+	 * @param metadataFields a {@link java.util.List} object.
+	 * @param serviceRegistry a {@link org.alfresco.service.ServiceRegistry} object.
+	 * @param attributeExtractorService a {@link fr.becpg.repo.helper.AttributeExtractorService} object.
+	 */
 	public ContentDataExtractor(List<String> metadataFields,ServiceRegistry serviceRegistry,AttributeExtractorService attributeExtractorService) {
 		super(serviceRegistry,attributeExtractorService);
 		this.metadataFields = metadataFields;
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	protected Map<String, Object> doExtract(NodeRef nodeRef,QName itemType ,SiteInfo site) {
 		 

@@ -23,10 +23,26 @@ import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.repository.RepositoryEntity;
 
+/**
+ * <p>VariantDataItem interface.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public interface VariantDataItem extends RepositoryEntity {
 
+	/**
+	 * <p>getVariants.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	List<NodeRef> getVariants();
 
+	/**
+	 * <p>setVariants.</p>
+	 *
+	 * @param nodeRefs a {@link java.util.List} object.
+	 */
 	void setVariants(List<NodeRef> nodeRefs);
 	
 }

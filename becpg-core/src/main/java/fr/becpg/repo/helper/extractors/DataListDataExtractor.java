@@ -29,14 +29,27 @@ import org.alfresco.service.namespace.QName;
 import fr.becpg.model.DataListModel;
 import fr.becpg.repo.helper.AttributeExtractorService;
 
+/**
+ * <p>DataListDataExtractor class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class DataListDataExtractor extends AbstractNodeDataExtractor  {
 
 
 
+	/**
+	 * <p>Constructor for DataListDataExtractor.</p>
+	 *
+	 * @param services a {@link org.alfresco.service.ServiceRegistry} object.
+	 * @param attributeExtractorService a {@link fr.becpg.repo.helper.AttributeExtractorService} object.
+	 */
 	public DataListDataExtractor(ServiceRegistry services,AttributeExtractorService attributeExtractorService) {
 		super(services,attributeExtractorService);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected Map<String, Object> doExtract(NodeRef nodeRef,QName itemType, SiteInfo site) {
 	

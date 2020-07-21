@@ -35,9 +35,9 @@ import fr.becpg.repo.workflow.activiti.nc.NCWorkflowUtils.NCWorkflowUtilsTask;
 
 /**
  * Create the NC based on NC WF data
- * 
+ *
  * @author "Philippe QUÉRÉ"
- * 
+ * @version $Id: $Id
  */
 public class CreateNC extends BaseJavaDelegate {
 
@@ -49,26 +49,48 @@ public class CreateNC extends BaseJavaDelegate {
 	private AutoNumService autoNumService;
 	private EntityService entityService;
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/** {@inheritDoc} */
 	public void setServiceRegistry(ServiceRegistry serviceRegistry) {
 		this.serviceRegistry = serviceRegistry;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nonConformityService</code>.</p>
+	 *
+	 * @param nonConformityService a {@link fr.becpg.repo.quality.NonConformityService} object.
+	 */
 	public void setNonConformityService(NonConformityService nonConformityService) {
 		this.nonConformityService = nonConformityService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>autoNumService</code>.</p>
+	 *
+	 * @param autoNumService a {@link fr.becpg.repo.entity.AutoNumService} object.
+	 */
 	public void setAutoNumService(AutoNumService autoNumService) {
 		this.autoNumService = autoNumService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityService</code>.</p>
+	 *
+	 * @param entityService a {@link fr.becpg.repo.entity.EntityService} object.
+	 */
 	public void setEntityService(EntityService entityService) {
 		this.entityService = entityService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void execute(final DelegateExecution task) throws Exception {
 

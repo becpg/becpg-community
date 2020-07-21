@@ -20,9 +20,9 @@ import fr.becpg.repo.repository.model.CompositionDataItem;
 
 /**
  * Allow to simulation composition items
- * 
- * @author matthieu
  *
+ * @author matthieu
+ * @version $Id: $Id
  */
 @Service
 public class DataListSimulationPlugin implements EntitySimulationPlugin {
@@ -41,11 +41,13 @@ public class DataListSimulationPlugin implements EntitySimulationPlugin {
 	@Autowired
 	private EntityVersionService entityVersionService;
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean accept(String simulationMode) {
 		return EntitySimulationPlugin.DATALIST_MODE.equals(simulationMode);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> simulateNodeRefs(NodeRef entityNodeRef, List<NodeRef> dataListItemsNodeRefs) {
 		recurSimule(entityNodeRef, null, dataListItemsNodeRefs);

@@ -31,6 +31,12 @@ import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 
+/**
+ * <p>IngRequirementScanner class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenIngListDataItem> {
 
 	private static Log logger = LogFactory.getLog(IngRequirementScanner.class);
@@ -41,10 +47,16 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 
 	AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
+	/**
+	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
+	 */
 	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<ReqCtrlListDataItem> checkRequirements(ProductData productData, List<ProductSpecificationData> specifications) {
 
@@ -248,6 +260,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected List<ForbiddenIngListDataItem> getDataListVisited(ProductData partProduct) {
 		return ((ProductSpecificationData) partProduct).getForbiddenIngList() != null ? ((ProductSpecificationData) partProduct).getForbiddenIngList()
@@ -362,6 +375,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected void mergeRequirements(List<ForbiddenIngListDataItem> ret, List<ForbiddenIngListDataItem> toAdd) {
 		ret.addAll(toAdd);

@@ -17,6 +17,12 @@ import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.model.AbstractEffectiveDataItem;
 
+/**
+ * <p>PriceListDataItem class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @AlfType
 @AlfQname(qname = "bcpg:priceList")
 public class PriceListDataItem extends AbstractEffectiveDataItem {
@@ -44,93 +50,183 @@ public class PriceListDataItem extends AbstractEffectiveDataItem {
 
 	private List<NodeRef> geoOrigins = new LinkedList<>();
 
+	/**
+	 * <p>Getter for the field <code>geoOrigins</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@AlfMultiAssoc
 	@AlfQname(qname = "bcpg:priceListGeoOrigins")
 	public List<NodeRef> getGeoOrigins() {
 		return geoOrigins;
 	}
 
+	/**
+	 * <p>Setter for the field <code>geoOrigins</code>.</p>
+	 *
+	 * @param geoOrigins a {@link java.util.List} object.
+	 */
 	public void setGeoOrigins(List<NodeRef> geoOrigins) {
 		this.geoOrigins = geoOrigins;
 	}
 
+	/**
+	 * <p>Getter for the field <code>value</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:priceListValue")
 	public Double getValue() {
 		return value;
 	}
 
+	/**
+	 * <p>Setter for the field <code>value</code>.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object.
+	 */
 	public void setValue(Double value) {
 		this.value = value;
 	}
 
+	/**
+	 * <p>Getter for the field <code>unit</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:priceListUnit")
 	public String getUnit() {
 		return unit;
 	}
 
+	/**
+	 * <p>Setter for the field <code>unit</code>.</p>
+	 *
+	 * @param unit a {@link java.lang.String} object.
+	 */
 	public void setUnit(String unit) {
 		this.unit = unit;
 	}
 
+	/**
+	 * <p>Getter for the field <code>purchaseValue</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:priceListPurchaseQty")
 	public Double getPurchaseValue() {
 		return purchaseValue;
 	}
 
+	/**
+	 * <p>Setter for the field <code>purchaseValue</code>.</p>
+	 *
+	 * @param purchaseValue a {@link java.lang.Double} object.
+	 */
 	public void setPurchaseValue(Double purchaseValue) {
 		this.purchaseValue = purchaseValue;
 	}
 
+	/**
+	 * <p>Getter for the field <code>purchaseUnit</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:priceListPurchaseUnit")
 	public String getPurchaseUnit() {
 		return purchaseUnit;
 	}
 
+	/**
+	 * <p>Setter for the field <code>purchaseUnit</code>.</p>
+	 *
+	 * @param purchaseUnit a {@link java.lang.String} object.
+	 */
 	public void setPurchaseUnit(String purchaseUnit) {
 		this.purchaseUnit = purchaseUnit;
 	}
 
+	/**
+	 * <p>Getter for the field <code>prefRank</code>.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:priceListPrefRank")
 	public Integer getPrefRank() {
 		return prefRank;
 	}
 
+	/**
+	 * <p>Setter for the field <code>prefRank</code>.</p>
+	 *
+	 * @param prefRank a {@link java.lang.Integer} object.
+	 */
 	public void setPrefRank(Integer prefRank) {
 		this.prefRank = prefRank;
 	}
 
+	/**
+	 * <p>Getter for the field <code>cost</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	@AlfSingleAssoc
 	@AlfQname(qname = "bcpg:priceListCost")
 	public NodeRef getCost() {
 		return cost;
 	}
 
+	/**
+	 * <p>Setter for the field <code>cost</code>.</p>
+	 *
+	 * @param cost a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void setCost(NodeRef cost) {
 		this.cost = cost;
 	}
 
+	/**
+	 * <p>Getter for the field <code>suppliers</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@AlfMultiAssoc
 	@AlfQname(qname = "bcpg:suppliers")
 	public List<NodeRef> getSuppliers() {
 		return suppliers;
 	}
 
+	/**
+	 * <p>Setter for the field <code>suppliers</code>.</p>
+	 *
+	 * @param suppliers a {@link java.util.List} object.
+	 */
 	public void setSuppliers(List<NodeRef> suppliers) {
 		this.suppliers = suppliers;
 	}
 	
 
+	/**
+	 * <p>Getter for the field <code>plants</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@AlfMultiAssoc
 	@AlfQname(qname = "bcpg:plants")
 	public List<NodeRef> getPlants() {
 		return plants;
 	}
 
+	/**
+	 * <p>Setter for the field <code>plants</code>.</p>
+	 *
+	 * @param plants a {@link java.util.List} object.
+	 */
 	public void setPlants(List<NodeRef> plants) {
 		this.plants = plants;
 	}
@@ -144,17 +240,18 @@ public class PriceListDataItem extends AbstractEffectiveDataItem {
 
 	/**
 	 * Instantiates a new price list data item
-	 * 
-	 * @param nodeRef
-	 * @param value
-	 * @param unit
-	 * @param purchaseValue
-	 * @param purchaseUnit
-	 * @param prefRank
-	 * @param startEffectivity
-	 * @param endEffectivity
-	 * @param cost
-	 * @param suppliers
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param value a {@link java.lang.Double} object.
+	 * @param unit a {@link java.lang.String} object.
+	 * @param purchaseValue a {@link java.lang.Double} object.
+	 * @param purchaseUnit a {@link java.lang.String} object.
+	 * @param prefRank a {@link java.lang.Integer} object.
+	 * @param startEffectivity a {@link java.util.Date} object.
+	 * @param endEffectivity a {@link java.util.Date} object.
+	 * @param cost a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param suppliers a {@link java.util.List} object.
+	 * @param origins a {@link java.util.List} object.
 	 */
 	public PriceListDataItem(NodeRef nodeRef, Double value, String unit, Double purchaseValue, String purchaseUnit, Integer prefRank,
 			Date startEffectivity, Date endEffectivity, NodeRef cost, List<NodeRef> suppliers, List<NodeRef> origins) {
@@ -174,8 +271,8 @@ public class PriceListDataItem extends AbstractEffectiveDataItem {
 
 	/**
 	 * Copy constructor
-	 * 
-	 * @param c
+	 *
+	 * @param c a {@link fr.becpg.repo.product.data.productList.PriceListDataItem} object.
 	 */
 	public PriceListDataItem(PriceListDataItem c) {
 
@@ -192,6 +289,7 @@ public class PriceListDataItem extends AbstractEffectiveDataItem {
 		setGeoOrigins(c.getGeoOrigins());
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -207,6 +305,7 @@ public class PriceListDataItem extends AbstractEffectiveDataItem {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -278,6 +377,7 @@ public class PriceListDataItem extends AbstractEffectiveDataItem {
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "PriceListDataItem [value=" + value + ", unit=" + unit + ", purchaseValue=" + purchaseValue + ", purchaseUnit=" + purchaseUnit

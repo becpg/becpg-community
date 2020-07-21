@@ -23,10 +23,10 @@ import java.util.List;
 
 /**
  * Class representing a hierarchical data list
- * 
+ *
  * @author quere
- * 
  * @param <T>
+ * @version $Id: $Id
  */
 public class Composite<T extends CompositeDataItem<T>> {
 
@@ -34,47 +34,96 @@ public class Composite<T extends CompositeDataItem<T>> {
 
 	private List<Composite<T>> children = new LinkedList<>();
 
+	/**
+	 * <p>Getter for the field <code>data</code>.</p>
+	 *
+	 * @return a T object.
+	 */
 	public T getData() {
 		return data;
 	}
 
+	/**
+	 * <p>Setter for the field <code>data</code>.</p>
+	 *
+	 * @param data a T object.
+	 */
 	public void setData(T data) {
 		this.data = data;
 	}
 
+	/**
+	 * <p>Constructor for Composite.</p>
+	 */
 	public Composite() {
 
 	}
 
+	/**
+	 * <p>Constructor for Composite.</p>
+	 *
+	 * @param data a T object.
+	 */
 	public Composite(T data) {
 
 		this.data = data;
 	}
 
+	/**
+	 * <p>Getter for the field <code>children</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	public List<Composite<T>> getChildren() {
 		return children;
 	}
 
+	/**
+	 * <p>Setter for the field <code>children</code>.</p>
+	 *
+	 * @param children a {@link java.util.List} object.
+	 */
 	public void setChildren(List<Composite<T>> children) {
 		this.children = children;
 	}
 
+	/**
+	 * <p>addChild.</p>
+	 *
+	 * @param component a {@link fr.becpg.repo.data.hierarchicalList.Composite} object.
+	 */
 	public void addChild(Composite<T> component) {
 		children.add(component);
 	}
 
+	/**
+	 * <p>removeChild.</p>
+	 *
+	 * @param component a {@link fr.becpg.repo.data.hierarchicalList.Composite} object.
+	 */
 	public void removeChild(Composite<T> component) {
 		children.remove(component);
 	}
 
+	/**
+	 * <p>isLeaf.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public boolean isLeaf() {
 		return children == null || children.isEmpty();
 	}
 
+	/**
+	 * <p>isRoot.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public boolean isRoot() {
 		return data == null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -84,6 +133,7 @@ public class Composite<T extends CompositeDataItem<T>> {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -107,6 +157,7 @@ public class Composite<T extends CompositeDataItem<T>> {
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();

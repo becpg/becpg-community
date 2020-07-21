@@ -17,11 +17,19 @@
  ******************************************************************************/
 package fr.becpg.repo.product.data.constraints;
 
+/**
+ * <p>TareUnit class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public enum TareUnit {
 	g, kg, lb, oz;
 
 	/**
 	 * Convert factor to Kg
+	 *
+	 * @return a {@link java.lang.Double} object.
 	 */
 	public Double getUnitFactor() {
 		

@@ -27,6 +27,12 @@ import fr.becpg.model.ReportModel;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.jscript.Thumbnail;
 
+/**
+ * <p>ReportQuickShareThumbnailContentGet class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class ReportQuickShareThumbnailContentGet extends QuickShareContentGet {
 	private static final Log logger = LogFactory.getLog(QuickShareContentGet.class);
 
@@ -37,32 +43,59 @@ public class ReportQuickShareThumbnailContentGet extends QuickShareContentGet {
 	private EntityDictionaryService entityDictionaryService;
 	private NodeService nodeService;
 
+	/** {@inheritDoc} */
 	@Override
 	public void setNodeService(NodeService nodeService) {
 		super.setNodeService(nodeService);
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>thumbnail</code>.</p>
+	 *
+	 * @param thumbnail a {@link fr.becpg.repo.jscript.Thumbnail} object.
+	 */
 	public void setThumbnail(Thumbnail thumbnail) {
 		this.thumbnail = thumbnail;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityDictionaryService</code>.</p>
+	 *
+	 * @param entityDictionaryService a {@link fr.becpg.repo.entity.EntityDictionaryService} object.
+	 */
 	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
 		this.entityDictionaryService = entityDictionaryService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>thumbnailService</code>.</p>
+	 *
+	 * @param thumbnailService a {@link org.alfresco.service.cmr.thumbnail.ThumbnailService} object.
+	 */
 	public void setThumbnailService(ThumbnailService thumbnailService) {
 		this.thumbnailService = thumbnailService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>scriptThumbnailService</code>.</p>
+	 *
+	 * @param scriptThumbnailService a {@link org.alfresco.repo.thumbnail.script.ScriptThumbnailService} object.
+	 */
 	public void setScriptThumbnailService(ScriptThumbnailService scriptThumbnailService) {
 		this.scriptThumbnailService = scriptThumbnailService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>serviceRegistry</code>.</p>
+	 *
+	 * @param services a {@link org.alfresco.service.ServiceRegistry} object.
+	 */
 	public void setServiceRegistry(ServiceRegistry services) {
 		this.serviceRegistry = services;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected void executeImpl(NodeRef nodeRef, Map<String, String> templateVars, WebScriptRequest req, WebScriptResponse res,
 			Map<String, Object> model) throws IOException {

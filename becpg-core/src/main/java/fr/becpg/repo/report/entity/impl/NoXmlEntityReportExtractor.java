@@ -10,9 +10,16 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.report.entity.EntityReportData;
 
+/**
+ * <p>NoXmlEntityReportExtractor class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class NoXmlEntityReportExtractor extends DefaultEntityReportExtractor{
 
+	/** {@inheritDoc} */
 	@Override
 	public EntityReportData extract(NodeRef entityNodeRef, Map<String, String> preferences) {
 		

@@ -4,9 +4,10 @@
 package fr.becpg.model;
 
 /**
- * 
- * @author matthieu
+ * <p>ProjectGroup class.</p>
  *
+ * @author matthieu
+ * @version $Id: $Id
  */
 public enum ProjectGroup {
 

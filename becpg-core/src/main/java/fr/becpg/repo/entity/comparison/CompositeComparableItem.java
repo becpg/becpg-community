@@ -14,6 +14,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
  * Comparable item that have children.
  *
  * @author querephi
+ * @version $Id: $Id
  */
 public class CompositeComparableItem extends AbstractComparableItem {
 

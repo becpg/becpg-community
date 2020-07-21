@@ -40,18 +40,20 @@ import fr.becpg.repo.report.search.impl.ExcelReportSearchRenderer;
 import fr.becpg.repo.report.template.ReportTplService;
 
 /**
- * {@link ActionExecuter} for creating an excel file containing content from the
+ * {@link org.alfresco.repo.action.executer.ActionExecuter} for creating an excel file containing content from the
  * repository.
  *
  * The maximum total size of the content which can be downloaded is controlled
  * by the maximumContentSie property. -1 indicates no limit.
  *
  * @author matthieu form Alex Miller code
+ * @version $Id: $Id
  */
 public class ExcelSearchAction extends ActionExecuterAbstractBase {
 
 	private static final String CREATION_ERROR = "Unexpected error creating file for download";
 
+	/** Constant <code>PARAM_TPL_NODEREF="templateNodeRef"</code> */
 	public static final String PARAM_TPL_NODEREF = "templateNodeRef";
 
 	// Dependencies
@@ -66,48 +68,85 @@ public class ExcelSearchAction extends ActionExecuterAbstractBase {
 	private DownloadStatusUpdateService updateService;
 	private ContentService contentService;
 
+	/**
+	 * <p>Setter for the field <code>excelReportSearchRenderer</code>.</p>
+	 *
+	 * @param excelReportSearchRenderer a {@link fr.becpg.repo.report.search.impl.ExcelReportSearchRenderer} object.
+	 */
 	public void setExcelReportSearchRenderer(ExcelReportSearchRenderer excelReportSearchRenderer) {
 		this.excelReportSearchRenderer = excelReportSearchRenderer;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>contentServiceHelper</code>.</p>
+	 *
+	 * @param contentServiceHelper a {@link org.alfresco.repo.download.ContentServiceHelper} object.
+	 */
 	public void setContentServiceHelper(ContentServiceHelper contentServiceHelper) {
 		this.contentServiceHelper = contentServiceHelper;
 	}
 
+	/**
+	 * <p>Setter for the field <code>downloadStorage</code>.</p>
+	 *
+	 * @param downloadStorage a {@link org.alfresco.repo.download.DownloadStorage} object.
+	 */
 	public void setDownloadStorage(DownloadStorage downloadStorage) {
 		this.downloadStorage = downloadStorage;
 	}
 
+	/**
+	 * <p>Setter for the field <code>exporterService</code>.</p>
+	 *
+	 * @param exporterService a {@link org.alfresco.service.cmr.view.ExporterService} object.
+	 */
 	public void setExporterService(ExporterService exporterService) {
 		this.exporterService = exporterService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>transactionHelper</code>.</p>
+	 *
+	 * @param transactionHelper a {@link org.alfresco.repo.transaction.RetryingTransactionHelper} object.
+	 */
 	public void setTransactionHelper(RetryingTransactionHelper transactionHelper) {
 		this.transactionHelper = transactionHelper;
 	}
 
+	/**
+	 * <p>Setter for the field <code>updateService</code>.</p>
+	 *
+	 * @param updateService a {@link org.alfresco.repo.download.DownloadStatusUpdateService} object.
+	 */
 	public void setUpdateService(DownloadStatusUpdateService updateService) {
 		this.updateService = updateService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>contentService</code>.</p>
+	 *
+	 * @param contentService a {@link org.alfresco.service.cmr.repository.ContentService} object.
+	 */
 	public void setContentService(ContentService contentService) {
 		this.contentService = contentService;
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * Create an archive file containing content from the repository.
 	 *
 	 * Uses the {@link ExporterService} with custom exporters to create the
 	 * archive files.
-	 *
-	 * @param actionedUponNodeRef
-	 *            Download node containing information required to create the
-	 *            archive file, and which will eventually have its content
-	 *            updated with the archive file.
 	 */
 	@Override
 	protected void executeImpl(Action action, final NodeRef actionedUponNodeRef) {
@@ -158,6 +197,7 @@ public class ExcelSearchAction extends ActionExecuterAbstractBase {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected void addParameterDefinitions(List<ParameterDefinition> paramList) {
 		paramList.add(new ParameterDefinitionImpl(PARAM_TPL_NODEREF, DataTypeDefinition.NODE_REF, true, "Search template nodeRef"));

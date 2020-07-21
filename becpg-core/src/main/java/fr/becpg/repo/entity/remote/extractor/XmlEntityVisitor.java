@@ -72,14 +72,26 @@ import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.SiteHelper;
 
 /**
+ * <p>XmlEntityVisitor class.</p>
  *
  * @author matthieu
- *
+ * @version $Id: $Id
  */
 public class XmlEntityVisitor extends AbstractEntityVisitor {
 
 	private final AssociationService associationService;
 
+	/**
+	 * <p>Constructor for XmlEntityVisitor.</p>
+	 *
+	 * @param mlNodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
+	 * @param entityDictionaryService a {@link fr.becpg.repo.entity.EntityDictionaryService} object.
+	 * @param contentService a {@link org.alfresco.service.cmr.repository.ContentService} object.
+	 * @param siteService a {@link org.alfresco.service.cmr.site.SiteService} object.
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object.
+	 */
 	public XmlEntityVisitor(NodeService mlNodeService, NodeService nodeService, NamespaceService namespaceService,
 			EntityDictionaryService entityDictionaryService, ContentService contentService, SiteService siteService,
 			 AssociationService associationService) {
@@ -89,6 +101,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 
 	private static final Log logger = LogFactory.getLog(XmlEntityVisitor.class);
 
+	/** {@inheritDoc} */
 	@Override
 	public void visit(NodeRef entityNodeRef, OutputStream result) throws XMLStreamException {
 
@@ -114,6 +127,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void visit(List<NodeRef> entities, OutputStream result) throws XMLStreamException {
 		// Create an output factory
@@ -149,6 +163,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void visitData(NodeRef entityNodeRef, OutputStream result) throws XMLStreamException {
 

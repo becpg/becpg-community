@@ -57,22 +57,38 @@ import fr.becpg.repo.listvalue.ListValuePlugin;
 import fr.becpg.repo.listvalue.ListValueService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
+/**
+ * <p>EntityListValuePlugin class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class EntityListValuePlugin implements ListValuePlugin {
 
 	private static final Log logger = LogFactory.getLog(EntityListValuePlugin.class);
 
 	private static final String PROP_FILTER_BY_ASSOC = "filterByAssoc";
+	/** Constant <code>SOURCE_TYPE_TARGET_ASSOC="targetassoc"</code> */
 	protected static final String SOURCE_TYPE_TARGET_ASSOC = "targetassoc";
+	/** Constant <code>SOURCE_TYPE_LINKED_VALUE="linkedvalue"</code> */
 	protected static final String SOURCE_TYPE_LINKED_VALUE = "linkedvalue";
+	/** Constant <code>SOURCE_TYPE_LINKED_VALUE_ALL="allLinkedvalue"</code> */
 	protected static final String SOURCE_TYPE_LINKED_VALUE_ALL = "allLinkedvalue";
+	/** Constant <code>SOURCE_TYPE_LIST_VALUE="listvalue"</code> */
 	protected static final String SOURCE_TYPE_LIST_VALUE = "listvalue";
+	/** Constant <code>searchTemplate="%(cm:name bcpg:erpCode bcpg:code bcpg:l"{trunked}</code> */
 	protected static final String searchTemplate = "%(cm:name bcpg:erpCode bcpg:code bcpg:legalName)";
+	/** Constant <code>mixedSearchTemplate="%(cm:name bcpg:erpCode bcpg:code bcpg:c"{trunked}</code> */
 	protected static final String mixedSearchTemplate = "%(cm:name bcpg:erpCode bcpg:code bcpg:charactName bcpg:legalName bcpg:lvValue)";
+	/** Constant <code>charactSearchTemplate="%(bcpg:charactName bcpg:legalName)"</code> */
 	protected static final String charactSearchTemplate = "%(bcpg:charactName bcpg:legalName)";
+	/** Constant <code>listValueSearchTemplate="%(bcpg:lvValue bcpg:legalName)"</code> */
 	protected static final String listValueSearchTemplate = "%(bcpg:lvValue bcpg:legalName)";
+	/** Constant <code>personSearchTemplate="%(cm:userName cm:firstName cm:lastName "{trunked}</code> */
 	protected static final String personSearchTemplate = "%(cm:userName cm:firstName cm:lastName cm:email)";
 
+	/** Constant <code>PARAM_VALUES_SEPARATOR=","</code> */
 	protected static final String PARAM_VALUES_SEPARATOR = ",";
 
 	@Autowired
@@ -95,11 +111,13 @@ public class EntityListValuePlugin implements ListValuePlugin {
 	@Autowired
 	protected TargetAssocValueExtractor targetAssocValueExtractor;
 
+	/** {@inheritDoc} */
 	@Override
 	public String[] getHandleSourceTypes() {
 		return new String[] { SOURCE_TYPE_TARGET_ASSOC, SOURCE_TYPE_LINKED_VALUE, SOURCE_TYPE_LINKED_VALUE_ALL, SOURCE_TYPE_LIST_VALUE };
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public ListValuePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
 
@@ -133,8 +151,12 @@ public class EntityListValuePlugin implements ListValuePlugin {
 	 *            the type
 	 * @param query
 	 *            the query
-	 * @param props
+	 * @param props a {@link java.util.Map} object.
 	 * @return the map
+	 * @param path a {@link java.lang.String} object.
+	 * @param pageNum a {@link java.lang.Integer} object.
+	 * @param pageSize a {@link java.lang.Integer} object.
+	 * @param arrClassNames an array of {@link java.lang.String} objects.
 	 */
 	@SuppressWarnings("unchecked")
 	public ListValuePage suggestTargetAssoc(String path, QName type, String query, Integer pageNum, Integer pageSize, String[] arrClassNames,
@@ -257,6 +279,11 @@ public class EntityListValuePlugin implements ListValuePlugin {
 
 	}
 
+	/**
+	 * <p>Getter for the field <code>targetAssocValueExtractor</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.listvalue.ListValueExtractor} object.
+	 */
 	protected ListValueExtractor<NodeRef> getTargetAssocValueExtractor() {
 		return targetAssocValueExtractor;
 	}
@@ -369,6 +396,13 @@ public class EntityListValuePlugin implements ListValuePlugin {
 
 	}
 
+	/**
+	 * <p>filterByClass.</p>
+	 *
+	 * @param queryBuilder a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 * @param arrClassNames an array of {@link java.lang.String} objects.
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 */
 	protected BeCPGQueryBuilder filterByClass(BeCPGQueryBuilder queryBuilder, String[] arrClassNames) {
 
 		if (arrClassNames != null) {
@@ -444,6 +478,13 @@ public class EntityListValuePlugin implements ListValuePlugin {
 	}
 
 	// TODO duplicate in AbstractExprNameExtractor
+	/**
+	 * <p>extractExpr.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param exprFormat a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	protected String extractExpr(NodeRef nodeRef, String exprFormat) {
 		Matcher patternMatcher = Pattern.compile("\\{([^}]+)\\}").matcher(exprFormat);
 		StringBuffer sb = new StringBuffer();
@@ -470,6 +511,13 @@ public class EntityListValuePlugin implements ListValuePlugin {
 		return sb.toString();
 	}
 
+	/**
+	 * <p>extractPropText.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param propQname a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	@SuppressWarnings("unchecked")
 	protected String extractPropText(NodeRef nodeRef, String propQname) {
 		if (nodeService.getProperty(nodeRef, QName.createQName(propQname, namespaceService)) instanceof List) {
@@ -479,14 +527,33 @@ public class EntityListValuePlugin implements ListValuePlugin {
 		return (String) nodeService.getProperty(nodeRef, QName.createQName(propQname, namespaceService));
 	}
 
+	/**
+	 * <p>isAllQuery.</p>
+	 *
+	 * @param query a {@link java.lang.String} object.
+	 * @return a boolean.
+	 */
 	protected boolean isAllQuery(String query) {
 		return BeCPGQueryHelper.isAllQuery(query);
 	}
 
+	/**
+	 * <p>prepareQuery.</p>
+	 *
+	 * @param query a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	protected String prepareQuery(String query) {
 		return BeCPGQueryHelper.prepareQuery(dictionaryService, query);
 	}
 
+	/**
+	 * <p>isQueryMatch.</p>
+	 *
+	 * @param query a {@link java.lang.String} object.
+	 * @param entityName a {@link java.lang.String} object.
+	 * @return a boolean.
+	 */
 	public boolean isQueryMatch(String query, String entityName) {
 
 		return BeCPGQueryHelper.isQueryMatch(query, entityName, dictionaryService);
@@ -495,13 +562,13 @@ public class EntityListValuePlugin implements ListValuePlugin {
 	/**
 	 * Suggest a dalist item
 	 *
-	 * @param entityNodeRef
-	 * @param datalistType
-	 * @param propertyQName
-	 * @param query
-	 * @param pageNum
-	 * @param pageSize
-	 * @return
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param datalistType a {@link org.alfresco.service.namespace.QName} object.
+	 * @param propertyQName a {@link org.alfresco.service.namespace.QName} object.
+	 * @param query a {@link java.lang.String} object.
+	 * @param pageNum a {@link java.lang.Integer} object.
+	 * @param pageSize a {@link java.lang.Integer} object.
+	 * @return a {@link fr.becpg.repo.listvalue.ListValuePage} object.
 	 */
 	protected ListValuePage suggestDatalistItem(NodeRef entityNodeRef, QName datalistType, QName propertyQName, String query, Integer pageNum,
 			Integer pageSize) {

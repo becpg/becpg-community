@@ -14,6 +14,12 @@ import org.springframework.stereotype.Service;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorPlugin;
 
+/**
+ * <p>LabelingAttributeExtractorPlugin class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class LabelingAttributeExtractorPlugin implements AttributeExtractorPlugin {
 
@@ -30,6 +36,7 @@ public class LabelingAttributeExtractorPlugin implements AttributeExtractorPlugi
 	private NodeService nodeService;
 	
 	
+	/** {@inheritDoc} */
 	@Override
 	public String extractPropName(QName type, NodeRef nodeRef) {
 		
@@ -42,16 +49,19 @@ public class LabelingAttributeExtractorPlugin implements AttributeExtractorPlugi
 		return type.toPrefixString();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String extractMetadata(QName type, NodeRef nodeRef) {
 		return PLMModel.TYPE_INGLABELINGLIST.toPrefixString(namespaceService).split(":")[1];
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Collection<QName> getMatchingTypes() {
 		return Collections.singletonList(PLMModel.TYPE_INGLABELINGLIST);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Integer getPriority() {
 		return 0;

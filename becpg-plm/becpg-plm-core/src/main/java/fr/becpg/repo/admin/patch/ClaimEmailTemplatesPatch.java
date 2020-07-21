@@ -25,6 +25,9 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 /**
  * Update claim mail templates
+ *
+ * @author matthieu
+ * @version $Id: $Id
  */
 public class ClaimEmailTemplatesPatch extends AbstractBeCPGPatch {
 
@@ -32,6 +35,7 @@ public class ClaimEmailTemplatesPatch extends AbstractBeCPGPatch {
 
 	private static final String MSG_SUCCESS = "patch.bcpg.plm.claimEmailTemplatesPatch";
 
+	/** {@inheritDoc} */
 	@Override
 	protected String applyInternal() throws Exception {
 

@@ -34,8 +34,9 @@ import fr.becpg.repo.web.scripts.WebscriptHelper;
 
 /**
  * Webscript that send the result of a search
- * 
+ *
  * @author matthieu
+ * @version $Id: $Id
  */
 public class SearchWebScript extends AbstractSearchWebScript {
 
@@ -48,15 +49,18 @@ public class SearchWebScript extends AbstractSearchWebScript {
 
 	
 	/**
+	 * <p>Setter for the field <code>attributeExtractorService</code>.</p>
+	 *
 	 * @param attributeExtractorService the propertyService to set
 	 */
-
 	public void setAttributeExtractorService(AttributeExtractorService attributeExtractorService) {
 		this.attributeExtractorService = attributeExtractorService;
 	}
 
 
 	/**
+	 * <p>Setter for the field <code>serviceRegistry</code>.</p>
+	 *
 	 * @param serviceRegistry
 	 *            the serviceRegistry to set
 	 */
@@ -64,14 +68,7 @@ public class SearchWebScript extends AbstractSearchWebScript {
 		this.serviceRegistry = serviceRegistry;
 	}
 
-	/**
-	 * @param req
-	 *            the req
-	 * @param res
-	 *            the res
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
 

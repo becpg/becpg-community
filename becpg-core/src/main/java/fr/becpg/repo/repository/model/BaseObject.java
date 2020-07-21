@@ -22,10 +22,11 @@ import java.io.Serializable;
 
 
 /**
- * Base class for Model objects.  Child objects should implement toString(), 
+ * Base class for Model objects.  Child objects should implement toString(),
  * equals() and hashCode();
- * 
+ *
  * @author matthieu
+ * @version $Id: $Id
  */
 public abstract class BaseObject implements Serializable {    
 
@@ -33,7 +34,18 @@ public abstract class BaseObject implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1281409754709493657L;
+	/**
+	 * <p>toString.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	public abstract String toString();
+    /** {@inheritDoc} */
     public abstract boolean equals(Object o);
+    /**
+     * <p>hashCode.</p>
+     *
+     * @return a int.
+     */
     public abstract int hashCode();
 }

@@ -22,10 +22,23 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+/**
+ * <p>CompositeHelper class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class CompositeHelper {
 
 	private static final Log logger = LogFactory.getLog(CompositeHelper.class);
 
+	/**
+	 * <p>getHierarchicalCompoList.</p>
+	 *
+	 * @param items a {@link java.util.List} object.
+	 * @param <T> a T object.
+	 * @return a {@link fr.becpg.repo.data.hierarchicalList.Composite} object.
+	 */
 	public static <T extends CompositeDataItem<T>> Composite<T> getHierarchicalCompoList(List<T> items) {
 
 		Composite<T> composite = new Composite<>();

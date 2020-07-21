@@ -26,9 +26,10 @@ import org.apache.commons.logging.LogFactory;
 import fr.becpg.repo.security.SecurityService;
 
 /**
- * 
- * @author "Matthieu Laborie"
+ * <p>BeCPGSecurity class.</p>
  *
+ * @author "Matthieu Laborie"
+ * @version $Id: $Id
  */
 public class BeCPGSecurity extends BaseScopableProcessorExtension{
 
@@ -38,16 +39,33 @@ public class BeCPGSecurity extends BaseScopableProcessorExtension{
     
 	private SecurityService securityService;
 	
+	/**
+	 * <p>setServiceRegistry.</p>
+	 *
+	 * @param serviceRegistry a {@link org.alfresco.service.ServiceRegistry} object.
+	 */
 	public void setServiceRegistry(ServiceRegistry serviceRegistry)
     {
     	this.services = serviceRegistry;
     }
 
+	/**
+	 * <p>Setter for the field <code>securityService</code>.</p>
+	 *
+	 * @param securityService a {@link fr.becpg.repo.security.SecurityService} object.
+	 */
 	public void setSecurityService(SecurityService securityService) {
 		this.securityService = securityService;
 	}
 		
 	
+	/**
+	 * <p>hasWriteAccess.</p>
+	 *
+	 * @param entityNode a {@link org.alfresco.repo.jscript.ScriptNode} object.
+	 * @param dataListType a {@link java.lang.String} object.
+	 * @return a boolean.
+	 */
 	public boolean hasWriteAccess(ScriptNode entityNode,String dataListType){
 		logger.debug(" jscript - hasWriteAccess");
 		return securityService.computeAccessMode(services.getNodeService().getType(entityNode.getNodeRef()), dataListType) 

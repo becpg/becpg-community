@@ -37,9 +37,10 @@ import fr.becpg.repo.listvalue.ListValuePage;
 import fr.becpg.repo.listvalue.ListValuePlugin;
 
 /**
- * 
+ * <p>SecurityListValuePlugin class.</p>
+ *
  * @author "Matthieu Laborie"
- * 
+ * @version $Id: $Id
  */
 @Service
 public class SecurityListValuePlugin implements ListValuePlugin {
@@ -52,11 +53,13 @@ public class SecurityListValuePlugin implements ListValuePlugin {
 	@Qualifier("ServiceRegistry")
 	private ServiceRegistry serviceRegistry;
 
+	/** {@inheritDoc} */
 	@Override
 	public String[] getHandleSourceTypes() {
 		return new String[] { TYPE_ACL_TYPE };
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public ListValuePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
 

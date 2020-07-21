@@ -8,6 +8,7 @@ package fr.becpg.repo.entity.comparison;
  * The Enum StructCompareOperator.
  *
  * @author querephi
+ * @version $Id: $Id
  */
 public enum StructCompareOperator {
 

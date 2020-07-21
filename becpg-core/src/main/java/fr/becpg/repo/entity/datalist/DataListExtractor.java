@@ -24,19 +24,49 @@ import fr.becpg.repo.entity.datalist.data.DataListFilter;
 
 /**
  * Used to extract datalist datas
- * @author matthieu
  *
+ * @author matthieu
+ * @version $Id: $Id
  */
 public interface DataListExtractor {
 
+	/**
+	 * <p>extract.</p>
+	 *
+	 * @param dataListFilter a {@link fr.becpg.repo.entity.datalist.data.DataListFilter} object.
+	 * @param metadataFields a {@link java.util.List} object.
+	 * @return a {@link fr.becpg.repo.entity.datalist.PaginatedExtractedItems} object.
+	 */
 	PaginatedExtractedItems extract(DataListFilter dataListFilter, List<String> metadataFields);
 
+	/**
+	 * <p>applyTo.</p>
+	 *
+	 * @param dataListFilter a {@link fr.becpg.repo.entity.datalist.data.DataListFilter} object.
+	 * @return a boolean.
+	 */
 	boolean applyTo(DataListFilter dataListFilter);
 
+	/**
+	 * <p>isDefaultExtractor.</p>
+	 *
+	 * @return a boolean.
+	 */
 	boolean isDefaultExtractor();
 
+	/**
+	 * <p>computeLastModified.</p>
+	 *
+	 * @param dataListFilter a {@link fr.becpg.repo.entity.datalist.data.DataListFilter} object.
+	 * @return a {@link java.util.Date} object.
+	 */
 	Date computeLastModified(DataListFilter dataListFilter);
 
+	/**
+	 * <p>hasWriteAccess.</p>
+	 *
+	 * @return a boolean.
+	 */
 	boolean hasWriteAccess();
 
 }

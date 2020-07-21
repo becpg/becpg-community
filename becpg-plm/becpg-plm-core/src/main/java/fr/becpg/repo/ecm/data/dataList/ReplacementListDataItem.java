@@ -29,6 +29,12 @@ import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
+/**
+ * <p>ReplacementListDataItem class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @AlfType
 @AlfQname(qname = "ecm:replacementList")
 public class ReplacementListDataItem extends BeCPGDataObject {
@@ -42,50 +48,101 @@ public class ReplacementListDataItem extends BeCPGDataObject {
 	private NodeRef targetItem;
 	private Integer qtyPerc;
 
+	/**
+	 * <p>Getter for the field <code>qtyPerc</code>.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "ecm:rlQtyPerc")
 	public Integer getQtyPerc() {
 		return qtyPerc;
 	}
 
+	/**
+	 * <p>Setter for the field <code>qtyPerc</code>.</p>
+	 *
+	 * @param qtyPerc a {@link java.lang.Integer} object.
+	 */
 	public void setQtyPerc(Integer qtyPerc) {
 		this.qtyPerc = qtyPerc;
 	}
 
+	/**
+	 * <p>Getter for the field <code>revision</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.ecm.data.RevisionType} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "ecm:rlRevisionType")
 	public RevisionType getRevision() {
 		return revision;
 	}
 
+	/**
+	 * <p>Setter for the field <code>revision</code>.</p>
+	 *
+	 * @param revision a {@link fr.becpg.repo.ecm.data.RevisionType} object.
+	 */
 	public void setRevision(RevisionType revision) {
 		this.revision = revision;
 	}
 
+	/**
+	 * <p>Getter for the field <code>sourceItems</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@AlfMultiAssoc
 	@AlfQname(qname = "ecm:rlSourceItems")
 	public List<NodeRef> getSourceItems() {
 		return sourceItems;
 	}
 
+	/**
+	 * <p>Setter for the field <code>sourceItems</code>.</p>
+	 *
+	 * @param sourceItems a {@link java.util.List} object.
+	 */
 	public void setSourceItems(List<NodeRef> sourceItems) {
 		this.sourceItems = sourceItems;
 	}
 
+	/**
+	 * <p>Getter for the field <code>targetItem</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	@AlfSingleAssoc
 	@AlfQname(qname = "ecm:rlTargetItem")
 	public NodeRef getTargetItem() {
 		return targetItem;
 	}
 
+	/**
+	 * <p>Setter for the field <code>targetItem</code>.</p>
+	 *
+	 * @param targetItem a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void setTargetItem(NodeRef targetItem) {
 		this.targetItem = targetItem;
 	}
 
+	/**
+	 * <p>Constructor for ReplacementListDataItem.</p>
+	 */
 	public ReplacementListDataItem() {
 		super();
 	}
 
+	/**
+	 * <p>Constructor for ReplacementListDataItem.</p>
+	 *
+	 * @param revision a {@link fr.becpg.repo.ecm.data.RevisionType} object.
+	 * @param sourceItems a {@link java.util.List} object.
+	 * @param targetItem a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param qtyPerc a {@link java.lang.Integer} object.
+	 */
 	public ReplacementListDataItem(RevisionType revision, List<NodeRef> sourceItems, NodeRef targetItem, Integer qtyPerc) {
 		super();
 		this.revision = revision;
@@ -94,6 +151,7 @@ public class ReplacementListDataItem extends BeCPGDataObject {
 		this.qtyPerc = qtyPerc;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -105,6 +163,7 @@ public class ReplacementListDataItem extends BeCPGDataObject {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -134,6 +193,7 @@ public class ReplacementListDataItem extends BeCPGDataObject {
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "ReplacementListDataItem [revision=" + revision + ", sourceItems=" + sourceItems + ", targetItem=" + targetItem + ", qtyPerc=" + qtyPerc + "]";

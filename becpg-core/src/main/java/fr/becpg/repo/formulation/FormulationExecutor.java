@@ -9,9 +9,10 @@ import org.springframework.stereotype.Service;
 import fr.becpg.repo.formulation.FormulationPlugin.FormulationPluginPriority;
 
 /**
- * 
- * @author matthieu
+ * <p>FormulationExecutor class.</p>
  *
+ * @author matthieu
+ * @version $Id: $Id
  */
 @Service
 public class FormulationExecutor {
@@ -28,6 +29,14 @@ public class FormulationExecutor {
 	
 	
 		
+	/**
+	 * <p>execute.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param async a boolean.
+	 * @return a {@link fr.becpg.repo.formulation.FormulationExecutor.FormulationExecutorState} object.
+	 * @throws fr.becpg.repo.formulation.FormulateException if any.
+	 */
 	public FormulationExecutorState execute(NodeRef  entityNodeRef , boolean async) throws FormulateException {
 		FormulationPlugin plugin = retrievePlugin(entityNodeRef);
 		if(plugin !=null ) {

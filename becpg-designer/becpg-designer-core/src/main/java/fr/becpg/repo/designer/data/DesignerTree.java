@@ -21,9 +21,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 
+ * <p>DesignerTree class.</p>
+ *
  * @author "Matthieu Laborie"
  * Tree model representing the xml tree.
+ * @version $Id: $Id
  */
 public class DesignerTree {
 	
@@ -39,6 +41,11 @@ public class DesignerTree {
 	private String formType;
 	
 	
+	/**
+	 * <p>Constructor for DesignerTree.</p>
+	 *
+	 * @param nodeRef a {@link java.lang.String} object.
+	 */
 	public DesignerTree(String nodeRef) {
 		super();
 		this.nodeRef = nodeRef;
@@ -48,6 +55,8 @@ public class DesignerTree {
 	private List<DesignerTree> childrens = new ArrayList<>();
 
 	/**
+	 * <p>Getter for the field <code>type</code>.</p>
+	 *
 	 * @return the type
 	 */
 	public String getType() {
@@ -55,6 +64,8 @@ public class DesignerTree {
 	}
 
 	/**
+	 * <p>Setter for the field <code>type</code>.</p>
+	 *
 	 * @param type the type to set
 	 */
 	public void setType(String type) {
@@ -62,6 +73,8 @@ public class DesignerTree {
 	}
 
 	/**
+	 * <p>Getter for the field <code>nodeRef</code>.</p>
+	 *
 	 * @return the nodeRef
 	 */
 	public String getNodeRef() {
@@ -69,6 +82,8 @@ public class DesignerTree {
 	}
 
 	/**
+	 * <p>Setter for the field <code>nodeRef</code>.</p>
+	 *
 	 * @param nodeRef the nodeRef to set
 	 */
 	public void setNodeRef(String nodeRef) {
@@ -76,6 +91,8 @@ public class DesignerTree {
 	}
 
 	/**
+	 * <p>Getter for the field <code>name</code>.</p>
+	 *
 	 * @return the name
 	 */
 	public String getName() {
@@ -83,6 +100,8 @@ public class DesignerTree {
 	}
 
 	/**
+	 * <p>Setter for the field <code>name</code>.</p>
+	 *
 	 * @param name the name to set
 	 */
 	public void setName(String name) {
@@ -90,6 +109,8 @@ public class DesignerTree {
 	}
 
 	/**
+	 * <p>Getter for the field <code>childrens</code>.</p>
+	 *
 	 * @return the childrens
 	 */
 	public List<DesignerTree> getChildrens() {
@@ -100,6 +121,8 @@ public class DesignerTree {
 	
 	
 	/**
+	 * <p>Getter for the field <code>description</code>.</p>
+	 *
 	 * @return the description
 	 */
 	public String getDescription() {
@@ -107,6 +130,8 @@ public class DesignerTree {
 	}
 
 	/**
+	 * <p>Setter for the field <code>description</code>.</p>
+	 *
 	 * @param description the description to set
 	 */
 	public void setDescription(String description) {
@@ -114,6 +139,8 @@ public class DesignerTree {
 	}
 
 	/**
+	 * <p>Getter for the field <code>title</code>.</p>
+	 *
 	 * @return the title
 	 */
 	public String getTitle() {
@@ -121,6 +148,8 @@ public class DesignerTree {
 	}
 
 	/**
+	 * <p>Setter for the field <code>title</code>.</p>
+	 *
 	 * @param title the title to set
 	 */
 	public void setTitle(String title) {
@@ -128,6 +157,8 @@ public class DesignerTree {
 	}
 
 	/**
+	 * <p>Setter for the field <code>childrens</code>.</p>
+	 *
 	 * @param childrens the childrens to set
 	 */
 	public void setChildrens(List<DesignerTree> childrens) {
@@ -137,15 +168,27 @@ public class DesignerTree {
 	
 	
 	
+	/**
+	 * <p>Getter for the field <code>formKind</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getFormKind() {
 		return formKind;
 	}
 
+	/**
+	 * <p>Setter for the field <code>formKind</code>.</p>
+	 *
+	 * @param formKind a {@link java.lang.String} object.
+	 */
 	public void setFormKind(String formKind) {
 		this.formKind = formKind;
 	}
 
 	/**
+	 * <p>getIsDraggable.</p>
+	 *
 	 * @return the isDraggable
 	 */
 	public Boolean getIsDraggable() {
@@ -161,6 +204,11 @@ public class DesignerTree {
 		return false;
 	}
 
+	/**
+	 * <p>getAccepts.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	public List<String> getAccepts() {
 		List<String> ret = new ArrayList<>();
 		if ("m2:type".equals(type) || "m2:aspect".equals(type) || "m2:properties".equals(type)
@@ -201,6 +249,8 @@ public class DesignerTree {
 	}
 	
 	/**
+	 * <p>Getter for the field <code>formId</code>.</p>
+	 *
 	 * @return the formId
 	 */
 	public String getFormId() {
@@ -208,6 +258,8 @@ public class DesignerTree {
 	}
 
 	/**
+	 * <p>Setter for the field <code>formId</code>.</p>
+	 *
 	 * @param formId the formId to set
 	 */
 	public void setFormId(String formId) {
@@ -215,6 +267,8 @@ public class DesignerTree {
 	}
 
 	/**
+	 * <p>Getter for the field <code>hasError</code>.</p>
+	 *
 	 * @return the hasError
 	 */
 	public Boolean getHasError() {
@@ -222,6 +276,8 @@ public class DesignerTree {
 	}
 
 	/**
+	 * <p>Setter for the field <code>hasError</code>.</p>
+	 *
 	 * @param hasError the hasError to set
 	 */
 	public void setHasError(Boolean hasError) {
@@ -229,6 +285,8 @@ public class DesignerTree {
 	}
 
 	/**
+	 * <p>Getter for the field <code>subType</code>.</p>
+	 *
 	 * @return the subType
 	 */
 	public String getSubType() {
@@ -236,6 +294,8 @@ public class DesignerTree {
 	}
 
 	/**
+	 * <p>Setter for the field <code>subType</code>.</p>
+	 *
 	 * @param subType the subType to set
 	 */
 	public void setSubType(String subType) {
@@ -243,14 +303,25 @@ public class DesignerTree {
 	}
 	
 
+	/**
+	 * <p>Getter for the field <code>formType</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getFormType() {
 		return formType;
 	}
 
+	/**
+	 * <p>Setter for the field <code>formType</code>.</p>
+	 *
+	 * @param formType a {@link java.lang.String} object.
+	 */
 	public void setFormType(String formType) {
 		this.formType = formType;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -269,6 +340,7 @@ public class DesignerTree {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -336,6 +408,7 @@ public class DesignerTree {
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "DesignerTree [type=" + type + ", formId=" + formId + ", formKind=" + formKind + ", nodeRef=" + nodeRef + ", name=" + name + ", title=" + title + ", description="

@@ -17,6 +17,12 @@
  ******************************************************************************/
 package fr.becpg.repo.product.data.constraints;
 
+/**
+ * <p>PackagingLevel class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public enum PackagingLevel {
 	Primary,
 	Secondary,

@@ -20,27 +20,87 @@ package fr.becpg.repo.cache;
 import java.util.Collection;
 
 /**
- * 
+ * <p>BeCPGCacheService interface.</p>
+ *
  * @author matthieu Tenant Aware Cache
+ * @version $Id: $Id
  */
 public interface BeCPGCacheService {
 
+	/**
+	 * <p>getFromCache.</p>
+	 *
+	 * @param cacheName a {@link java.lang.String} object.
+	 * @param cacheKey a {@link java.lang.String} object.
+	 * @param cacheDataProviderCallBack a {@link fr.becpg.repo.cache.BeCPGCacheDataProviderCallBack} object.
+	 * @param <T> a T object.
+	 * @return a T object.
+	 */
 	<T> T getFromCache(String cacheName, String cacheKey, BeCPGCacheDataProviderCallBack<T> cacheDataProviderCallBack);
 
+	/**
+	 * <p>clearAllCaches.</p>
+	 */
 	void clearAllCaches();
 
+	/**
+	 * <p>removeFromCache.</p>
+	 *
+	 * @param name a {@link java.lang.String} object.
+	 * @param cacheKey a {@link java.lang.String} object.
+	 */
 	void removeFromCache(String name, String cacheKey);
 	
+	/**
+	 * <p>getCacheKeys.</p>
+	 *
+	 * @param cacheName a {@link java.lang.String} object.
+	 * @return a {@link java.util.Collection} object.
+	 */
 	Collection<String> getCacheKeys(String cacheName);
 
+	/**
+	 * <p>printCacheInfos.</p>
+	 */
 	void printCacheInfos();
 
+	/**
+	 * <p>getFromCache.</p>
+	 *
+	 * @param cacheName a {@link java.lang.String} object.
+	 * @param cacheKey a {@link java.lang.String} object.
+	 * @param cacheDataProviderCallBack a {@link fr.becpg.repo.cache.BeCPGCacheDataProviderCallBack} object.
+	 * @param deleteOnTxRollback a boolean.
+	 * @param <T> a T object.
+	 * @return a T object.
+	 */
 	<T> T getFromCache(String cacheName, String cacheKey, BeCPGCacheDataProviderCallBack<T> cacheDataProviderCallBack, boolean deleteOnTxRollback);
 
+	/**
+	 * <p>clearCache.</p>
+	 *
+	 * @param cacheName a {@link java.lang.String} object.
+	 */
 	void clearCache(String cacheName);
 
+	/**
+	 * <p>getFromCache.</p>
+	 *
+	 * @param cacheName a {@link java.lang.String} object.
+	 * @param cacheKey a {@link java.lang.String} object.
+	 * @param <T> a T object.
+	 * @return a T object.
+	 */
 	<T> T getFromCache(String cacheName, String cacheKey);
 
+	/**
+	 * <p>storeInCache.</p>
+	 *
+	 * @param cacheName a {@link java.lang.String} object.
+	 * @param cacheKey a {@link java.lang.String} object.
+	 * @param data a T object.
+	 * @param <T> a T object.
+	 */
 	<T> void storeInCache(String cacheName, String cacheKey, T data);
 
 	

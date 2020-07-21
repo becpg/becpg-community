@@ -13,6 +13,12 @@ import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.MultiLevelLeaf;
 
+/**
+ * <p>RawMaterialData class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @AlfType
 @AlfQname(qname = "bcpg:rawMaterial")
 @MultiLevelLeaf
@@ -25,27 +31,48 @@ public class RawMaterialData extends ProductData {
 	private List<NodeRef> supplierPlants = new ArrayList<>();
 	
 
+	/**
+	 * <p>Getter for the field <code>suppliers</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@AlfMultiAssoc
 	@AlfQname(qname="bcpg:suppliers")
 	public List<NodeRef> getSuppliers() {
 		return suppliers;
 	}
 
+	/**
+	 * <p>Setter for the field <code>suppliers</code>.</p>
+	 *
+	 * @param suppliers a {@link java.util.List} object.
+	 */
 	public void setSuppliers(List<NodeRef> suppliers) {
 		this.suppliers = suppliers;
 	}
 
+	/**
+	 * <p>Getter for the field <code>supplierPlants</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@AlfMultiAssoc
 	@AlfQname(qname="bcpg:supplierPlants")
 	public List<NodeRef> getSupplierPlants() {
 		return supplierPlants;
 	}
 
+	/**
+	 * <p>Setter for the field <code>supplierPlants</code>.</p>
+	 *
+	 * @param supplierPlants a {@link java.util.List} object.
+	 */
 	public void setSupplierPlants(List<NodeRef> supplierPlants) {
 		this.supplierPlants = supplierPlants;
 	}
 	
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -56,6 +83,7 @@ public class RawMaterialData extends ProductData {
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

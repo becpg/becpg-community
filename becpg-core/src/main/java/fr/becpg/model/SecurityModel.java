@@ -19,6 +19,12 @@ package fr.becpg.model;
 
 import org.alfresco.service.namespace.QName;
 
+/**
+ * <p>SecurityModel class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public final class SecurityModel {
 
 	//
@@ -34,18 +40,25 @@ public final class SecurityModel {
 	//
 	// Security Model Definitions
 	//
+	/** Constant <code>MODEL</code> */
 	public final static QName MODEL = QName.createQName(SECURITY_URI, "secmodel");
 
+	/** Constant <code>TYPE_ACL_ENTRY</code> */
 	public final static QName TYPE_ACL_ENTRY = QName.createQName(SECURITY_URI, "aclEntry");
 
+	/** Constant <code>TYPE_ACL_GROUP</code> */
 	public final static QName TYPE_ACL_GROUP = QName.createQName(SECURITY_URI, "aclGroup");
 
+	/** Constant <code>PROP_ACL_GROUP_NODE_TYPE</code> */
 	public final static QName PROP_ACL_GROUP_NODE_TYPE = QName.createQName(SECURITY_URI, "nodeType");
 
+	/** Constant <code>ASSOC_GROUPS_ASSIGNEE</code> */
 	public final static QName ASSOC_GROUPS_ASSIGNEE = QName.createQName(SECURITY_URI, "groupsAssignee");
 
+	/** Constant <code>PROP_ACL_PROPNAME</code> */
 	public final static QName PROP_ACL_PROPNAME = QName.createQName(SECURITY_URI, "propName");
 
+	/** Constant <code>PROP_ACL_PERMISSION</code> */
 	public final static QName PROP_ACL_PERMISSION = QName.createQName(SECURITY_URI, "aclPermission");
 
 }

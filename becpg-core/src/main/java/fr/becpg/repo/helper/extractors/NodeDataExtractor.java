@@ -21,9 +21,21 @@ import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+/**
+ * <p>NodeDataExtractor interface.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public interface NodeDataExtractor {
 
 	
+	/**
+	 * <p>extract.</p>
+	 *
+	 * @param noderef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link java.util.Map} object.
+	 */
 	Map<String,Object> extract(NodeRef noderef);
 	
 	

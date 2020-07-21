@@ -25,6 +25,7 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
  * Store in the name of the product list folder the type of product list.
  *
  * @author querephi
+ * @version $Id: $Id
  */
 public class InitEntityListPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnUpdatePropertiesPolicy {
 
@@ -58,6 +59,8 @@ public class InitEntityListPolicy extends AbstractBeCPGPolicy implements NodeSer
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * Inits the.
 	 */
 	@Override
@@ -71,15 +74,10 @@ public class InitEntityListPolicy extends AbstractBeCPGPolicy implements NodeSer
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * Initialize the name of the datalist with the local name if it is a
 	 * entityDataList.
-	 *
-	 * @param dataListNodeRef
-	 *            the data list node ref
-	 * @param before
-	 *            the before
-	 * @param after
-	 *            the after
 	 */
 	@Override
 	public void onUpdateProperties(NodeRef dataListNodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {

@@ -21,19 +21,51 @@ import org.alfresco.service.cmr.repository.NodeRef;
 
 /**
  * Engineering change order service
- * @author quere
  *
+ * @author quere
+ * @version $Id: $Id
  */
 public interface ECOService {	
 	
+	/**
+	 * <p>calculateWUsedList.</p>
+	 *
+	 * @param ecoNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param selectToApply a boolean.
+	 */
 	void calculateWUsedList(NodeRef ecoNodeRef, boolean selectToApply);
 	
+	/**
+	 * <p>apply.</p>
+	 *
+	 * @param ecoNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a boolean.
+	 */
 	boolean apply(NodeRef ecoNodeRef);
 	
+	/**
+	 * <p>doSimulation.</p>
+	 *
+	 * @param ecoNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a boolean.
+	 */
 	boolean doSimulation(NodeRef ecoNodeRef);
 
+	/**
+	 * <p>setInProgress.</p>
+	 *
+	 * @param ecoNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link java.lang.Boolean} object.
+	 */
 	Boolean setInProgress(NodeRef ecoNodeRef);
 
+	/**
+	 * <p>setInError.</p>
+	 *
+	 * @param ecoNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param e a {@link java.lang.Exception} object.
+	 * @return a {@link java.lang.Boolean} object.
+	 */
 	Boolean setInError(NodeRef ecoNodeRef, Exception e);
 
 

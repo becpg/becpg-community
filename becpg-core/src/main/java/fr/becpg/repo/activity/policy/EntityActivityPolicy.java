@@ -42,16 +42,27 @@ import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.repository.L2CacheSupport;
 
+/**
+ * <p>EntityActivityPolicy class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnAddAspectPolicy,
 		NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.BeforeDeleteNodePolicy, NodeServicePolicies.OnCreateNodePolicy,
 		NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnDeleteAssociationPolicy, ContentServicePolicies.OnContentUpdatePolicy {
 
 	private static final Log logger = LogFactory.getLog(EntityActivityPolicy.class);
 
+	/** Constant <code>KEY_QUEUE_UPDATED="EntityActivity_updated"</code> */
 	public static final String KEY_QUEUE_UPDATED = "EntityActivity_updated";
+	/** Constant <code>KEY_QUEUE_DELETED="EntityActivity_deleted"</code> */
 	public static final String KEY_QUEUE_DELETED = "EntityActivity_deleted";
+	/** Constant <code>KEY_QUEUE_CREATED="EntityActivity_created"</code> */
 	public static final String KEY_QUEUE_CREATED = "EntityActivity_created";
+	/** Constant <code>KEY_QUEUE_UPDATED_STATUS="EntityActivity_UpdatedStatus"</code> */
 	public static final String KEY_QUEUE_UPDATED_STATUS = "EntityActivity_UpdatedStatus";
+	/** Constant <code>KEY_QUEUE_ADDED_TPL_ASPECT="EntityActivity_AddedTplAspect"</code> */
 	public static final String KEY_QUEUE_ADDED_TPL_ASPECT = "EntityActivity_AddedTplAspect";
 
 	private static final Set<QName> isIgnoredTypes = new HashSet<>();
@@ -73,15 +84,27 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 
 	private EntityDictionaryService entityDictionaryService;
 
+	/**
+	 * <p>Setter for the field <code>entityActivityService</code>.</p>
+	 *
+	 * @param entityActivityService a {@link fr.becpg.repo.activity.EntityActivityService} object.
+	 */
 	public void setEntityActivityService(EntityActivityService entityActivityService) {
 		this.entityActivityService = entityActivityService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityDictionaryService</code>.</p>
+	 *
+	 * @param entityDictionaryService a {@link fr.becpg.repo.entity.EntityDictionaryService} object.
+	 */
 	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
 		this.entityDictionaryService = entityDictionaryService;
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * Inits the.
 	 */
 	@Override
@@ -130,17 +153,27 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public CopyBehaviourCallback getCopyCallback(QName classRef, CopyDetails copyDetails) {
 		return DoNothingCopyBehaviourCallback.getInstance();
 	}
 
+	/**
+	 * <p>ignoreType.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object.
+	 * @param before a {@link java.util.Map} object.
+	 * @param after a {@link java.util.Map} object.
+	 * @return a boolean.
+	 */
 	public boolean ignoreType(QName type, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 		return (type.getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI)
 				|| ((!before.containsKey(type) || (before.get(type) == null)) && ((after.get(type) == null) || after.get(type).equals("")))
 				|| ((!after.containsKey(type) || (after.get(type) == null)) && ((before.get(type) == null) || before.get(type).equals(""))));
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onAddAspect(NodeRef nodeRef, QName aspectTypeQName) {
 		if (policyBehaviourFilter.isEnabled(ContentModel.ASPECT_AUDITABLE) && policyBehaviourFilter.isEnabled(BeCPGModel.ASPECT_SORTABLE_LIST)
@@ -158,6 +191,7 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 		if (policyBehaviourFilter.isEnabled(ContentModel.ASPECT_AUDITABLE) && policyBehaviourFilter.isEnabled(BeCPGModel.ASPECT_SORTABLE_LIST)
@@ -272,6 +306,7 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onCreateAssociation(AssociationRef assocRef) {
 
@@ -318,6 +353,7 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onDeleteAssociation(AssociationRef assocRef) {
 
@@ -364,6 +400,7 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onContentUpdate(NodeRef nodeRef, boolean newContent) {
 
@@ -384,6 +421,7 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onCreateNode(ChildAssociationRef childAssocRef) {
 
@@ -403,6 +441,7 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void beforeDeleteNode(NodeRef nodeRef) {
 
@@ -424,6 +463,7 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 		for (NodeRef nodeRef : pendingNodes) {

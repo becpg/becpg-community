@@ -49,9 +49,10 @@ import fr.becpg.repo.designer.DesignerModel;
 import fr.becpg.repo.designer.data.FormControl;
 
 /**
- * 
+ * <p>FormModelVisitor class.</p>
+ *
  * @author "Matthieu Laborie"
- * 
+ * @version $Id: $Id
  */
 public class FormModelVisitor {
 
@@ -59,12 +60,24 @@ public class FormModelVisitor {
 
 	private NodeService nodeService;
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
 	/**
 	 * Build a list of controls
+	 *
+	 * @param is a {@link java.io.InputStream} object.
+	 * @return a {@link java.util.List} object.
+	 * @throws org.xml.sax.SAXException if any.
+	 * @throws java.io.IOException if any.
+	 * @throws javax.xml.parsers.ParserConfigurationException if any.
+	 * @throws javax.xml.parsers.FactoryConfigurationError if any.
 	 */
 	public List<FormControl> visitControls(InputStream is) throws SAXException, IOException, ParserConfigurationException, FactoryConfigurationError {
 		List<FormControl> ret = new LinkedList<>();
@@ -83,6 +96,18 @@ public class FormModelVisitor {
 		return ret;
 	}
 
+	/**
+	 * <p>visitModelTemplate.</p>
+	 *
+	 * @param ret a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param nodeTypeQname a {@link org.alfresco.service.namespace.QName} object.
+	 * @param controlId a {@link java.lang.String} object.
+	 * @param is a {@link java.io.InputStream} object.
+	 * @throws org.xml.sax.SAXException if any.
+	 * @throws java.io.IOException if any.
+	 * @throws javax.xml.parsers.ParserConfigurationException if any.
+	 * @throws javax.xml.parsers.FactoryConfigurationError if any.
+	 */
 	public void visitModelTemplate(NodeRef ret, QName nodeTypeQname, String controlId, InputStream is) throws SAXException, IOException, ParserConfigurationException,
 			FactoryConfigurationError {
 
@@ -118,11 +143,13 @@ public class FormModelVisitor {
 	}
 
 	/**
-	 * @param nodeRef
-	 * @param out
-	 * @throws FactoryConfigurationError
-	 * @throws ParserConfigurationException
-	 * @throws TransformerException
+	 * <p>visitConfigXml.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param out a {@link java.io.OutputStream} object.
+	 * @throws javax.xml.parsers.FactoryConfigurationError
+	 * @throws javax.xml.parsers.ParserConfigurationException
+	 * @throws javax.xml.transform.TransformerException
 	 */
 	public void visitConfigXml(NodeRef nodeRef, OutputStream out) throws ParserConfigurationException, FactoryConfigurationError, TransformerException {
 
@@ -313,13 +340,14 @@ public class FormModelVisitor {
 	}
 
 	/**
-	 * 
-	 * @param configNodeRef
-	 * @param in
-	 * @throws FactoryConfigurationError
-	 * @throws ParserConfigurationException
-	 * @throws IOException
-	 * @throws SAXException
+	 * <p>visitConfigNodeRef.</p>
+	 *
+	 * @param configNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param in a {@link java.io.InputStream} object.
+	 * @throws javax.xml.parsers.FactoryConfigurationError
+	 * @throws javax.xml.parsers.ParserConfigurationException
+	 * @throws java.io.IOException
+	 * @throws org.xml.sax.SAXException
 	 */
 	// <config evaluator="node-type" condition="type">
 	// <forms>
@@ -540,6 +568,13 @@ public class FormModelVisitor {
 		}
 	}
 
+	/**
+	 * <p>visitM2Type.</p>
+	 *
+	 * @param from a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param to a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public NodeRef visitM2Type(NodeRef from, NodeRef to) {
 		String typeName = (String) nodeService.getProperty(from, DesignerModel.PROP_M2_NAME);
 		String parentName = (String) nodeService.getProperty(from, DesignerModel.PROP_M2_PARENT_NAME);
@@ -581,6 +616,13 @@ public class FormModelVisitor {
 		return configElNodeRef;
 	}
 
+	/**
+	 * <p>visitM2Properties.</p>
+	 *
+	 * @param formNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param typeNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public NodeRef visitM2Properties(NodeRef formNodeRef, NodeRef typeNodeRef) {
 
 		List<ChildAssociationRef> assocs = nodeService.getChildAssocs(typeNodeRef);

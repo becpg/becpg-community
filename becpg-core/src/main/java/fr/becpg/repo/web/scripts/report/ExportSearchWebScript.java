@@ -36,6 +36,7 @@ import fr.becpg.report.client.ReportFormat;
  * Webscript that send the result of a search in a report
  *
  * @author querephi, matthieu
+ * @version $Id: $Id
  */
 public class ExportSearchWebScript extends AbstractSearchWebScript {
 
@@ -51,27 +52,37 @@ public class ExportSearchWebScript extends AbstractSearchWebScript {
 
 	private ReportTplService reportTplService;
 
+	/**
+	 * <p>Setter for the field <code>exportSearchService</code>.</p>
+	 *
+	 * @param exportSearchService a {@link fr.becpg.repo.report.search.ExportSearchService} object.
+	 */
 	public void setExportSearchService(ExportSearchService exportSearchService) {
 		this.exportSearchService = exportSearchService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>mimetypeService</code>.</p>
+	 *
+	 * @param mimetypeService a {@link org.alfresco.service.cmr.repository.MimetypeService} object.
+	 */
 	public void setMimetypeService(MimetypeService mimetypeService) {
 		this.mimetypeService = mimetypeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>reportTplService</code>.</p>
+	 *
+	 * @param reportTplService a {@link fr.becpg.repo.report.template.ReportTplService} object.
+	 */
 	public void setReportTplService(ReportTplService reportTplService) {
 		this.reportTplService = reportTplService;
 	}
 
 	/**
-	 * Export search in a report.
+	 * {@inheritDoc}
 	 *
-	 * @param req
-	 *            the req
-	 * @param res
-	 *            the res
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
+	 * Export search in a report.
 	 */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {

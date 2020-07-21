@@ -21,8 +21,19 @@ import java.util.Locale;
 
 import org.springframework.extensions.surf.util.I18NUtil;
 
+/**
+ * <p>CSVPropertyFormats class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class CSVPropertyFormats extends PropertyFormats {
 
+	/**
+	 * <p>Constructor for CSVPropertyFormats.</p>
+	 *
+	 * @param useDefaultLocal a boolean.
+	 */
 	public CSVPropertyFormats(boolean useDefaultLocal) {
 		super(useDefaultLocal);
 

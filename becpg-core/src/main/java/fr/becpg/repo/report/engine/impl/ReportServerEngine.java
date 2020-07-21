@@ -47,7 +47,7 @@ import fr.becpg.report.client.ReportParams;
  * beCPGReportServerClient used to interact with reporting server
  *
  * @author matthieu
- *
+ * @version $Id: $Id
  */
 public class ReportServerEngine extends AbstractBeCPGReportClient implements BeCPGReportEngine {
 
@@ -57,19 +57,31 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 	
 	
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>contentService</code>.</p>
+	 *
+	 * @param contentService a {@link org.alfresco.service.cmr.repository.ContentService} object.
+	 */
 	public void setContentService(ContentService contentService) {
 		this.contentService = contentService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isApplicable(NodeRef templateNodeRef, ReportFormat reportFormat) {
 		return ((String) nodeService.getProperty(templateNodeRef, ContentModel.PROP_NAME)).endsWith(ReportTplService.PARAM_VALUE_DESIGN_EXTENSION);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void createReport(NodeRef tplNodeRef, EntityReportData reportData, OutputStream out, Map<String, Object> params) throws ReportException {
 		StopWatch watch = null;
@@ -157,6 +169,7 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isXmlEngine() {
 		return true;

@@ -48,9 +48,9 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
  * Init designer files and folders
- * 
+ *
  * @author "Matthieu Laborie"
- * 
+ * @version $Id: $Id
  */
 @Service
 public class DesignerInitVisitor extends AbstractInitVisitorImpl  {
@@ -65,6 +65,7 @@ public class DesignerInitVisitor extends AbstractInitVisitorImpl  {
 	private ContentHelper contentHelper;
 	
 	
+	/** {@inheritDoc} */
 	@Override
 	public List<SiteInfo> visitContainer(NodeRef companyHome) {
 		
@@ -81,6 +82,7 @@ public class DesignerInitVisitor extends AbstractInitVisitorImpl  {
 
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	protected void visitRules(NodeRef nodeRef, String folderName) {
 		if (Objects.equals(folderName, PATH_CONFIGS)) {
@@ -96,6 +98,7 @@ public class DesignerInitVisitor extends AbstractInitVisitorImpl  {
 		return BeCPGQueryBuilder.createQuery().selectNodeByPath(configNodeRef, PATH_MODELS);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected void visitFiles(NodeRef folderNodeRef, String folderName) {
 		if (Objects.equals(folderName, PATH_CONFIGS)) {
@@ -143,6 +146,7 @@ public class DesignerInitVisitor extends AbstractInitVisitorImpl  {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Integer initOrder() {
 		return 1;

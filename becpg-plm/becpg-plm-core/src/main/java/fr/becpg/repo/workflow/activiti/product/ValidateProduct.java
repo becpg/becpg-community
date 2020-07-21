@@ -25,9 +25,10 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemState;
 
 /**
- * 
+ * <p>ValidateProduct class.</p>
+ *
  * @author matthieu
- * 
+ * @version $Id: $Id
  */
 public class ValidateProduct extends BaseJavaDelegate {
 
@@ -36,15 +37,26 @@ public class ValidateProduct extends BaseJavaDelegate {
 	private NodeService nodeService;
 	private DictionaryService dictionaryService;
 	
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>dictionaryService</code>.</p>
+	 *
+	 * @param dictionaryService a {@link org.alfresco.service.cmr.dictionary.DictionaryService} object.
+	 */
 	public void setDictionaryService(DictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public void execute(final DelegateExecution task) throws Exception {
 

@@ -20,20 +20,37 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.AssociationService;
 
+/**
+ * <p>BeCPGForumPostPut class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class BeCPGForumPostPut extends ForumPostPut {
 
 	AssociationService associationService;
 
 	AuthorityService authorityService;
 	
+	/**
+	 * <p>Setter for the field <code>associationService</code>.</p>
+	 *
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object.
+	 */
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>authorityService</code>.</p>
+	 *
+	 * @param authorityService a {@link org.alfresco.service.cmr.security.AuthorityService} object.
+	 */
 	public void setAuthorityService(AuthorityService authorityService) {
 		this.authorityService = authorityService;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	protected Map<String, Object> executeImpl(SiteInfo site, NodeRef nodeRef, TopicInfo topic, PostInfo post, WebScriptRequest req, JSONObject json,
 			Status status, Cache cache) {
@@ -130,6 +147,13 @@ public class BeCPGForumPostPut extends ForumPostPut {
 		discussionService.updatePost(post);
 	}
 
+	/**
+	 * <p>updateTopicPermission.</p>
+	 *
+	 * @param topicNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param newUserNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param oldUserNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void updateTopicPermission(NodeRef topicNodeRef, NodeRef newUserNodeRef, NodeRef oldUserNodeRef) {
 		NodeRef discussion = nodeService.getPrimaryParent(topicNodeRef).getParentRef();
 

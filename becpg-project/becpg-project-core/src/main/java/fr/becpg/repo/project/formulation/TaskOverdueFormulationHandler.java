@@ -29,6 +29,12 @@ import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskState;
 import fr.becpg.repo.project.impl.ProjectHelper;
 
+/**
+ * <p>TaskOverdueFormulationHandler class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class TaskOverdueFormulationHandler extends FormulationBaseHandler<ProjectData> {
 
 	private static final Log logger = LogFactory.getLog(TaskOverdueFormulationHandler.class);
@@ -41,23 +47,45 @@ public class TaskOverdueFormulationHandler extends FormulationBaseHandler<Projec
 	private ProjectNotificationService projectNotificationService;
 	private ProjectService projectService;
 
+	/**
+	 * <p>Setter for the field <code>beCPGMailService</code>.</p>
+	 *
+	 * @param beCPGMailService a {@link fr.becpg.repo.mail.BeCPGMailService} object.
+	 */
 	public void setBeCPGMailService(BeCPGMailService beCPGMailService) {
 		this.beCPGMailService = beCPGMailService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>workflowService</code>.</p>
+	 *
+	 * @param workflowService a {@link org.alfresco.service.cmr.workflow.WorkflowService} object.
+	 */
 	public void setWorkflowService(WorkflowService workflowService) {
 		this.workflowService = workflowService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>projectNotificationService</code>.</p>
+	 *
+	 * @param projectNotificationService a {@link fr.becpg.repo.project.ProjectNotificationService} object.
+	 */
 	public void setProjectNotificationService(ProjectNotificationService projectNotificationService) {
 		this.projectNotificationService = projectNotificationService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>projectService</code>.</p>
+	 *
+	 * @param projectService a {@link fr.becpg.repo.project.ProjectService} object.
+	 */
 	public void setProjectService(ProjectService projectService) {
 		this.projectService = projectService;
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * Checks if notification emails should be sent for each node with notificationParamAspect enabled
 	 */
 	@Override
@@ -113,6 +141,13 @@ public class TaskOverdueFormulationHandler extends FormulationBaseHandler<Projec
 		return true;
 	}
 
+	/**
+	 * <p>calculateNextNotificationDate.</p>
+	 *
+	 * @param task a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object.
+	 * @param firstNotificationDate a {@link java.util.Date} object.
+	 * @return a {@link java.util.Date} object.
+	 */
 	public Date calculateNextNotificationDate(TaskListDataItem task, Date firstNotificationDate){
 		if(task.getLastNotification() == null || task.getLastNotification().before(firstNotificationDate)){
 			return firstNotificationDate;
@@ -128,6 +163,12 @@ public class TaskOverdueFormulationHandler extends FormulationBaseHandler<Projec
 	}
 
 	// End 01/08 +5 -> 06/08
+	/**
+	 * <p>calculateFirstNotificationDate.</p>
+	 *
+	 * @param task a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object.
+	 * @return a {@link java.util.Date} object.
+	 */
 	public Date calculateFirstNotificationDate(TaskListDataItem task){
 		Calendar firstNotificationCal = Calendar.getInstance();
 		firstNotificationCal.setTime(task.getEnd());
@@ -135,6 +176,14 @@ public class TaskOverdueFormulationHandler extends FormulationBaseHandler<Projec
 		return ProjectHelper.removeTime(firstNotificationCal.getTime());
 	}
 
+	/**
+	 * <p>sendTaskNotificationEmails.</p>
+	 *
+	 * @param authorities a {@link java.util.List} object.
+	 * @param task a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object.
+	 * @param project a {@link fr.becpg.repo.project.data.ProjectData} object.
+	 * @param workflowTaskId a {@link java.lang.String} object.
+	 */
 	public void sendTaskNotificationEmails(List<NodeRef> authorities, TaskListDataItem task, ProjectData project, String workflowTaskId){
 		Map<String, Object> templateArgs = new HashMap<>();
 		templateArgs.put("date", new Date());
@@ -153,6 +202,12 @@ public class TaskOverdueFormulationHandler extends FormulationBaseHandler<Projec
 	}
 
 
+	/**
+	 * <p>extractWorkflowTask.</p>
+	 *
+	 * @param task a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String extractWorkflowTask(TaskListDataItem task){
 		
 		if(StringUtils.isEmpty(task.getWorkflowInstance())){

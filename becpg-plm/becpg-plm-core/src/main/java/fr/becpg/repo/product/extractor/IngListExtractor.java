@@ -16,6 +16,12 @@ import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.impl.SimpleExtractor;
 
+/**
+ * <p>IngListExtractor class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class IngListExtractor extends SimpleExtractor {
 
 	private static final String ING_LIST = "ingList";
@@ -24,6 +30,7 @@ public class IngListExtractor extends SimpleExtractor {
 
 	private static final String TOTAL_KEY = "prop_bcpg_ingListQtyPerc";
 
+	/** {@inheritDoc} */
 	@Override
 	public PaginatedExtractedItems extract(DataListFilter dataListFilter, List<String> metadataFields) {
 		PaginatedExtractedItems ret = super.extract(dataListFilter, metadataFields);
@@ -99,6 +106,7 @@ public class IngListExtractor extends SimpleExtractor {
 		return total;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean applyTo(DataListFilter dataListFilter) {
 		return (dataListFilter.getDataListName() != null) && dataListFilter.getDataListName().equals(ING_LIST);

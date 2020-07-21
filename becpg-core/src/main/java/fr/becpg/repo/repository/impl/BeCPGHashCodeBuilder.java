@@ -36,7 +36,7 @@ import fr.becpg.repo.repository.model.AspectAwareDataItem;
 
 /**
  * <p>
- * Assists in implementing {@link Object#hashCode()} methods.
+ * Assists in implementing {@link java.lang.Object#hashCode()} methods.
  * </p>
  *
  * <p>
@@ -163,6 +163,13 @@ public class BeCPGHashCodeBuilder {
 		return total;
 	}
 
+	/**
+	 * <p>printDiff.</p>
+	 *
+	 * @param obj1 a {@link fr.becpg.repo.repository.RepositoryEntity} object.
+	 * @param obj2 a {@link fr.becpg.repo.repository.RepositoryEntity} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	public static String printDiff(RepositoryEntity obj1, RepositoryEntity obj2) {
 		String ret = new String();
 
@@ -283,7 +290,7 @@ public class BeCPGHashCodeBuilder {
 	 * @param object
 	 *            the Object to create a <code>hashCode</code> for
 	 * @return int hash code
-	 * @throws IllegalArgumentException
+	 * @throws java.lang.IllegalArgumentException
 	 *             if the object is <code>null</code>
 	 */
 	public static long reflectionHashCode(RepositoryEntity object) {
@@ -528,6 +535,10 @@ public class BeCPGHashCodeBuilder {
 	// Long.hashCode do. Ideally we should switch to >>> at
 	// some stage. There are backwards compat issues, so
 	// that will have to wait for the time being. cf LANG-342.
+	// NOTE: This method uses >> and not >>> as Effective Java and
+	// Long.hashCode do. Ideally we should switch to >>> at
+	// some stage. There are backwards compat issues, so
+	// that will have to wait for the time being. cf LANG-342.
 	private long append(long total, long value) {
 		return (total * iConstant) + ((int) (value ^ (value >> 32)));
 	}
@@ -616,6 +627,8 @@ public class BeCPGHashCodeBuilder {
 	 * @param array
 	 *            the array to add to the <code>hashCode</code>
 	 * @return this
+	 * @param total a long.
+	 * @param visited a {@link java.util.Set} object.
 	 */
 	public long append(long total, Object[] array, Set<RepositoryEntity> visited) {
 		if (array == null) {

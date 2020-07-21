@@ -14,6 +14,12 @@ class ShowRule {
 	Double threshold = null;
 	Set<Locale> locales = new HashSet<>();
 
+	/**
+	 * <p>Constructor for ShowRule.</p>
+	 *
+	 * @param format a {@link java.lang.String} object.
+	 * @param locales a {@link java.util.List} object.
+	 */
 	public ShowRule(String format, List<String> locales) {
 		if(format.contains("|")) {
 			String[] splitted = format.split("\\|");
@@ -38,14 +44,31 @@ class ShowRule {
 		}
 	}
 
+	/**
+	 * <p>matchLocale.</p>
+	 *
+	 * @param locale a {@link java.util.Locale} object.
+	 * @return a boolean.
+	 */
 	public boolean matchLocale(Locale locale) {
 		return locales.isEmpty() || locales.contains(locale);
 	}
 	
+	/**
+	 * <p>matchQty.</p>
+	 *
+	 * @param qtyPerc a {@link java.lang.Double} object.
+	 * @return a boolean.
+	 */
 	public boolean matchQty(Double qtyPerc) {
 		return threshold == null || qtyPerc == null || qtyPerc <= (threshold/100d);
 	}
 
+	/**
+	 * <p>Getter for the field <code>threshold</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public Double getThreshold() {
 		return threshold;
 	}

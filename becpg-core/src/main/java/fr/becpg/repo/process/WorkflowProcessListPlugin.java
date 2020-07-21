@@ -22,6 +22,12 @@ import fr.becpg.config.format.PropertyFormatService;
 import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.repo.web.scripts.process.EntityProcessListPlugin;
 
+/**
+ * <p>WorkflowProcessListPlugin class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service("workflowProcessListPlugin")
 public class WorkflowProcessListPlugin implements EntityProcessListPlugin {
 
@@ -41,6 +47,7 @@ public class WorkflowProcessListPlugin implements EntityProcessListPlugin {
 	@Autowired
 	private PropertyFormatService propertyFormatService;
 
+	/** {@inheritDoc} */
 	@Override
 	public List<Map<String, Object>> buildModel(NodeRef nodeRef) {
 
@@ -72,6 +79,7 @@ public class WorkflowProcessListPlugin implements EntityProcessListPlugin {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String getType() {
 		return "workflow";

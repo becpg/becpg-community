@@ -39,9 +39,9 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 
 /**
  * Utility script methods for budget
- * 
- * @author matthieu
  *
+ * @author matthieu
+ * @version $Id: $Id
  */
 public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 
@@ -53,22 +53,48 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 
 	private NamespaceService namespaceService;
 
+	/**
+	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
+	 */
 	public void setAlfrescoRepository(AlfrescoRepository<ProjectData> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityListDAO</code>.</p>
+	 *
+	 * @param entityListDAO a {@link fr.becpg.repo.entity.EntityListDAO} object.
+	 */
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
 	}
 
+	/**
+	 * <p>Setter for the field <code>namespaceService</code>.</p>
+	 *
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
+	 */
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>calculateBudgetParentValues.</p>
+	 *
+	 * @param listItemNode a {@link org.alfresco.repo.jscript.ScriptNode} object.
+	 * @param qNames an array of {@link java.lang.String} objects.
+	 */
 	public void calculateBudgetParentValues(ScriptNode listItemNode, String[] qNames) {
 
 		NodeRef projectNodeRef = entityListDAO.getEntity(listItemNode.getNodeRef());

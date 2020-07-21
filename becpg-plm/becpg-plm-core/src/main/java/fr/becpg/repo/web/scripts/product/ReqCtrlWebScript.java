@@ -15,9 +15,10 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 import fr.becpg.model.BeCPGModel;
 
 /**
+ * <p>ReqCtrlWebScript class.</p>
  *
  * @author steven
- *
+ * @version $Id: $Id
  */
 public class ReqCtrlWebScript extends AbstractProductWebscript {
 
@@ -25,10 +26,16 @@ public class ReqCtrlWebScript extends AbstractProductWebscript {
 
 	NodeService nodeService;
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
 		NodeRef productNodeRef = getProductNodeRef(req);
