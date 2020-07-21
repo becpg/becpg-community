@@ -206,14 +206,14 @@
 
                         var instance = this;
                         require([
-                    	         "cm/lib/codemirror", "cm/addon/hint/show-hint", "cm/addon/search/searchcursor", "cm/addon/edit/matchbrackets", "cm/mode/javascript/javascript"
+                    	         "spel/lib/codemirror", "spel/addon/hint/show-hint", "spel/addon/search/searchcursor", "spel/addon/edit/matchbrackets", "spel/mode/spel/spel"
                     	       ], function(CodeMirror) {	
                         
                         if(typeof(instance.widgets.brush) == "undefined" || instance.widgets.brush == null){
                         	instance.widgets.brush = new CodeMirror(document.getElementById(instance.id + "-currentValueDisplay"), {
                   				lineNumbers: true,
                   				lineWrapping: true,
-                        		mode: "javascript",
+                        		mode: "spel",
                         		readOnly: true
                    			});
                        	 
@@ -224,7 +224,7 @@
                         	instance.widgets.editor = CodeMirror.fromTextArea(document.getElementById(instance.id + "-editor-textarea"),
                            			{
                            			lineNumbers: true,
-   	                        		mode: "javascript",
+   	                        		mode: "spel",
    	                        		extraKeys: {"Ctrl-Space": "autocomplete"},
    	                        		lineWrapping: true,
    	                        		matchBrackets: true
@@ -268,9 +268,12 @@
                         			             '@beCPG.assocValue($nodeRef?,"bcpg:client")',
                         			             '@beCPG.assocValues($nodeRef?,"bcpg:client")',
                         			             '@beCPG.assocPropValues($nodeRef?,"bcpg:client","cm:name")',
+                        			             '@beCPG.setValue($entity?, $qname, $value)',
                         			             '@beCPG.updateMLText($mlText,$locale,$value)',
                         			             '@beCPG.copy($fromNodeRef,propQnames,listQNames)',
                         			             '@beCPG.runScript($scriptNodeRef)',
+                        			             '@beCPG.extractCustomList($nodeRef?, $listType)',
+                        			             '@beCPG.saveCustomList($range)',
                         			             'isLiquid()',
                         			             'isRawMaterial()',
                         			             'isPackaging()',
