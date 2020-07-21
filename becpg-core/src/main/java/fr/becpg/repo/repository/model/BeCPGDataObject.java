@@ -201,9 +201,12 @@ public  abstract class  BeCPGDataObject  extends BaseObject implements Repositor
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		return "BeCPGDataObject [nodeRef=" + nodeRef + ", parentNodeRef=" + parentNodeRef + ", name=" + name + ", aspects=" + aspects
+				+ ", aspectsToRemove=" + aspectsToRemove + ", extraProperties=" + extraProperties + "]";
+	}
 
-	
-	
 
 	
 }
