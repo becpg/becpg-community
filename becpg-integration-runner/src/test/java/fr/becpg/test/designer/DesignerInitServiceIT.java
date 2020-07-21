@@ -31,7 +31,7 @@ import org.junit.Test;
  */
 public class DesignerInitServiceIT extends AbstractDesignerServiceTest {
 
-	/** The logger. */
+	
 	private static final Log logger = LogFactory.getLog(DesignerInitServiceIT.class);
 
 	@Test

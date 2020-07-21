@@ -18,9 +18,6 @@ import fr.becpg.repo.repository.model.ControlableListDataItem;
 @AlfQname(qname = "bcpg:organoList")
 public class OrganoListDataItem extends BeCPGDataObject implements ControlableListDataItem {
 
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = 6048458461427271748L;
 
 	private String textCriteria;
@@ -70,34 +67,16 @@ public class OrganoListDataItem extends BeCPGDataObject implements ControlableLi
 
 	}
 
-	/**
-	 * Instantiates a new organo list data item.
-	 */
 	public OrganoListDataItem() {
 
 	}
 
-	/**
-	 * Instantiates a new organo list data item.
-	 *
-	 * @param nodeRef
-	 *            the node ref
-	 * @param value
-	 *            the value
-	 * @param organo
-	 *            the organo
-	 */
 	public OrganoListDataItem(NodeRef nodeRef, String textCriteria, NodeRef organo) {
 		setNodeRef(nodeRef);
 		setTextCriteria(textCriteria);
 		setOrgano(organo);
 	}
 
-	/**
-	 * copy constructor
-	 * 
-	 * @param o
-	 */
 	public OrganoListDataItem(OrganoListDataItem o) {
 		setNodeRef(nodeRef);
 		setTextCriteria(textCriteria);

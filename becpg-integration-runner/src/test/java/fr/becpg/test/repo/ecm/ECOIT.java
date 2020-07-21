@@ -77,7 +77,7 @@ import fr.becpg.test.repo.product.AbstractFinishedProductTest;
  */
 public class ECOIT extends AbstractFinishedProductTest {
 
-	/** The logger. */
+	
 	private static final Log logger = LogFactory.getLog(ECOIT.class);
 
 	/** The product service. */

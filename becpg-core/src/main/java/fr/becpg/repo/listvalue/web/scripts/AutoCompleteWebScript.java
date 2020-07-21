@@ -71,7 +71,7 @@ public class AutoCompleteWebScript extends DeclarativeWebScript {
 	/**
 	 * Suggest values according to query
 	 * 
-	 * url : becpg/autocomplete/{sourcetype}/{path}?q=&parent=.
+	 * url : becpg/autocomplete/{sourcetype}/{path}?q=&amp;parent=.
 	 * 
 	 * @param req
 	 *            the req

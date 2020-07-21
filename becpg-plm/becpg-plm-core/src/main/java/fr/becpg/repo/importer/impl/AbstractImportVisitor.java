@@ -819,20 +819,6 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 	/**
 	 * find the node by key properties, according to : - nodeColumnKey - code.
-	 *
-	 * @param importContext
-	 *            the import context
-	 * @param propDef
-	 * @param type
-	 *            the type
-	 * @param properties
-	 *            the properties
-	 * @param parentRef
-	 *            TODO
-	 * @param codeQName
-	 *            the code q name
-	 * @return the node ref
-	 * @throws ImporterException
 	 */
 	protected NodeRef findNodeByKeyOrCode(ImportContext importContext, PropertyDefinition propDef, QName type, Map<QName, Serializable> properties,
 			NodeRef parentRef) throws ImporterException {
@@ -968,13 +954,6 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 	/**
 	 * find the nodes by value (multi-value or single value)
-	 *
-	 * @param importContext
-	 * @param assocDef
-	 * @param value
-	 * @return
-	 * @throws InvalidTargetNodeException
-	 * @throws ImporterException
 	 */
 	protected List<NodeRef> findTargetNodesByValue(ImportContext importContext, boolean isTargetMany, QName targetClass, String value, QName assoc)
 			throws ImporterException {
@@ -1013,14 +992,6 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	 * Find the target node according to the property (no target type associated
 	 * to a property of type nodeRef
 	 *
-	 * @param importContext
-	 * @param attributeMapping
-	 * @param propDef
-	 * @param attributeMapping
-	 * @param value
-	 * @param properties
-	 * @return
-	 * @throws ImporterException
 	 */
 	protected NodeRef findPropertyTargetNodeByValue(ImportContext importContext, PropertyDefinition propDef,
 			AbstractAttributeMapping attributeMapping, String value, Map<QName, Serializable> properties) throws ImporterException {
@@ -1076,19 +1047,6 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	/**
 	 * find the node by value, according to : - nodeColumnKey, take the first -
 	 * - code
-	 *
-	 * @param importContext
-	 *            the import context
-	 * @param propDef
-	 * @param type
-	 *            the type
-	 * @param value
-	 *            the value
-	 * @param assoc
-	 *            TODO
-	 * @return the node ref
-	 * @throws InvalidTargetNodeException
-	 * @throws ImporterException
 	 */
 	protected NodeRef findTargetNodeByValue(ImportContext importContext, PropertyDefinition propDef, QName type, String value, QName assoc)
 			throws ImporterException {

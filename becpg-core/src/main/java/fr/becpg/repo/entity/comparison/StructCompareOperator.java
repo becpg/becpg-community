@@ -3,7 +3,7 @@
  */
 package fr.becpg.repo.entity.comparison;
 
-// TODO: Auto-generated Javadoc
+
 /**
  * The Enum StructCompareOperator.
  *

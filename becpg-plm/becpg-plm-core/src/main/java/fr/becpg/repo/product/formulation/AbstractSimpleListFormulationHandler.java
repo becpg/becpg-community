@@ -17,6 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.product.formulation;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -75,7 +76,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	protected EntityListDAO entityListDAO;
 
 	protected NodeService nodeService;
-	
+
 	protected NodeService mlNodeService;
 
 	protected boolean transientFormulation = false;
@@ -101,14 +102,14 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
-	
 
 	public void setMlNodeService(NodeService mlNodeService) {
 		this.mlNodeService = mlNodeService;
 	}
 
-	public T createNewInstance() throws InstantiationException, IllegalAccessException {
-		return getInstanceClass().newInstance();
+	public T createNewInstance() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
+			NoSuchMethodException, SecurityException {
+		return getInstanceClass().getDeclaredConstructor().newInstance();
 	}
 
 	protected abstract Class<T> getInstanceClass();
@@ -178,9 +179,8 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 		boolean isGenericRawMaterial = formulatedProduct instanceof RawMaterialData;
 
-		
 		Double netWeight = FormulationHelper.getNetWeight(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
-				
+
 		if (formulatedProduct.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 
 			Map<NodeRef, List<NodeRef>> mandatoryCharacts = getMandatoryCharacts(formulatedProduct, PLMModel.TYPE_RAWMATERIAL);
@@ -188,22 +188,21 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 			for (CompoListDataItem compoItem : formulatedProduct
 					.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 				Double weight = FormulationHelper.getQtyInKg(compoItem);
-				//omit item if parent is omitted
+				// omit item if parent is omitted
 				boolean omit = false;
 				CompoListDataItem tmpCompoItem = compoItem;
-				while(tmpCompoItem != null && !omit){
+				while ((tmpCompoItem != null) && !omit) {
 					omit = DeclarationType.Omit.equals(tmpCompoItem.getDeclType());
 					tmpCompoItem = tmpCompoItem.getParent();
 				}
-				
-				if (weight != null && !omit) {
+
+				if ((weight != null) && !omit) {
 
 					ProductData partProduct = (ProductData) alfrescoRepository.findOne(compoItem.getProduct());
 					Double vol = FormulationHelper.getNetVolume(compoItem, partProduct);
 
-					
-					visitPart(formulatedProduct, partProduct,  simpleListDataList, weight, vol, netQtyInLorKg, netWeight, mandatoryCharacts, totalQtiesValue,
-							isGenericRawMaterial);
+					visitPart(formulatedProduct, partProduct, simpleListDataList, weight, vol, netQtyInLorKg, netWeight, mandatoryCharacts,
+							totalQtiesValue, isGenericRawMaterial);
 				}
 			}
 			addReqCtrlList(formulatedProduct.getReqCtrlList(), mandatoryCharacts, getRequirementDataType());
@@ -238,23 +237,17 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		for (Map.Entry<NodeRef, List<NodeRef>> mandatoryCharact : mandatoryCharacts.entrySet()) {
 			if ((mandatoryCharact.getValue() != null) && !mandatoryCharact.getValue().isEmpty()) {
 
-				reqCtrlList.add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, MLTextHelper.getI18NMessage(MESSAGE_UNDEFINED_CHARACT,
-						mlNodeService.getProperty(mandatoryCharact.getKey(), BeCPGModel.PROP_CHARACT_NAME)), mandatoryCharact.getKey(),
-						mandatoryCharact.getValue(), dataType));
+				reqCtrlList.add(new ReqCtrlListDataItem(null, RequirementType.Tolerated,
+						MLTextHelper.getI18NMessage(MESSAGE_UNDEFINED_CHARACT,
+								mlNodeService.getProperty(mandatoryCharact.getKey(), BeCPGModel.PROP_CHARACT_NAME)),
+						mandatoryCharact.getKey(), mandatoryCharact.getValue(), dataType));
 			}
 		}
 	}
 
-	/**
-	 * Visit part.
-	 * @param netVolume 
-	 *
-	 * @param valueCount
-	 *
-	 */
-	protected void visitPart(ProductData formulatedProduct, ProductData partProduct, List<T> simpleListDataList, Double weightUsed, Double volUsed, Double netQtyInLorKg,
-			Double netWeight, Map<NodeRef, List<NodeRef>> mandatoryCharacts, Map<NodeRef, Double> totalQtiesValue, boolean isGenericRawMaterial)
-			throws FormulateException {
+	protected void visitPart(ProductData formulatedProduct, ProductData partProduct, List<T> simpleListDataList, Double weightUsed, Double volUsed,
+			Double netQtyInLorKg, Double netWeight, Map<NodeRef, List<NodeRef>> mandatoryCharacts, Map<NodeRef, Double> totalQtiesValue,
+			boolean isGenericRawMaterial) throws FormulateException {
 
 		if (!(partProduct instanceof LocalSemiFinishedProductData)) {
 
@@ -272,22 +265,22 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 				simpleListDataList.forEach(newSimpleListDataItem -> {
 					if ((newSimpleListDataItem.getCharactNodeRef() != null) && isCharactFormulated(newSimpleListDataItem)) {
 
-						boolean formulateInVol =  partProduct.getUnit()!=null && partProduct.getUnit().isVolume();
+						boolean formulateInVol = (partProduct.getUnit() != null) && partProduct.getUnit().isVolume();
 						boolean forceWeight = false;
-						
+
 						if (newSimpleListDataItem instanceof PhysicoChemListDataItem) {
-							if(FormulationHelper.isCharactFormulatedFromVol(nodeService, newSimpleListDataItem)) {
-								formulateInVol  = true;
+							if (FormulationHelper.isCharactFormulatedFromVol(nodeService, newSimpleListDataItem)) {
+								formulateInVol = true;
 							} else {
 								formulateInVol = false;
 								forceWeight = true;
 							}
 						}
-						
+
 						// calculate charact from qty or vol ?
-						Double qtyUsed =  formulateInVol ? volUsed : weightUsed;
-						Double netQty =  forceWeight ? netWeight : netQtyInLorKg ; 
-						
+						Double qtyUsed = formulateInVol ? volUsed : weightUsed;
+						Double netQty = forceWeight ? netWeight : netQtyInLorKg;
+
 						// look for charact in component
 						SimpleListDataItem slDataItem = componentSimpleListDataList.stream()
 								.filter(s -> newSimpleListDataItem.getCharactNodeRef().equals(s.getCharactNodeRef())).findFirst().orElse(null);
@@ -296,7 +289,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 						if ((slDataItem == null) || (slDataItem.getValue() == null)) {
 							if (!(slDataItem instanceof MinMaxValueDataItem) || ((((MinMaxValueDataItem) slDataItem).getMaxi() == null)
 									&& (((MinMaxValueDataItem) slDataItem).getMini() == null))) {
-								addMissingMandatoryCharact(mandatoryCharacts, newSimpleListDataItem.getCharactNodeRef(),  partProduct.getNodeRef());
+								addMissingMandatoryCharact(mandatoryCharacts, newSimpleListDataItem.getCharactNodeRef(), partProduct.getNodeRef());
 							}
 						}
 
@@ -320,9 +313,8 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		}
 	}
 
-	protected void calculate(ProductData formulatedProduct, ProductData partProduct, SimpleListDataItem newSimpleListDataItem, SimpleListDataItem slDataItem, Double qtyUsed, Double netQty,
-			boolean isGenericRawMaterial) {
-		
+	protected void calculate(ProductData formulatedProduct, ProductData partProduct, SimpleListDataItem newSimpleListDataItem,
+			SimpleListDataItem slDataItem, Double qtyUsed, Double netQty, boolean isGenericRawMaterial) {
 
 		Double formulatedValue = 0d;
 		if (newSimpleListDataItem instanceof FormulatedCharactDataItem) {
@@ -330,7 +322,6 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		} else {
 			formulatedValue = newSimpleListDataItem.getValue();
 		}
-
 
 		Double newValue = formulatedValue != null ? formulatedValue : 0d;
 		Double value = extractValue(formulatedProduct, partProduct, slDataItem);
@@ -394,7 +385,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	}
 
 	protected Double extractValue(ProductData formulatedProduct, ProductData partProduct, SimpleListDataItem slDataItem) {
-		
+
 		return slDataItem.getValue();
 	}
 
@@ -511,8 +502,9 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 					formulatedCharactDataItem.setValue(null);
 					formulatedCharactDataItem.setErrorLog(error);
 
-					ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Tolerated, MLTextHelper.getI18NMessage(errorKey, Locale.getDefault(),
-							mlNodeService.getProperty(formulatedCharactDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME), error),
+					ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Tolerated,
+							MLTextHelper.getI18NMessage(errorKey, Locale.getDefault(),
+									mlNodeService.getProperty(formulatedCharactDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME), error),
 							formulatedCharactDataItem.getCharactNodeRef(), new ArrayList<NodeRef>(), getRequirementDataType());
 					formulatedProduct.getReqCtrlList().add(rclDataItem);
 				}

@@ -137,13 +137,7 @@ public class EntityServiceImpl implements EntityService {
 		return imageNodeRef;
 	}
 
-	/**
-	 *
-	 * @param nodeRef
-	 * @param imgName
-	 * @return List of images nodeRefs
-	 * @throws BeCPGException
-	 */
+	
 	@Override
 	public List<NodeRef> getImages(NodeRef nodeRef) throws BeCPGException {
 
@@ -183,10 +177,6 @@ public class EntityServiceImpl implements EntityService {
 
 	/**
 	 * Load the image associated to the node.
-	 *
-	 * @param nodeRef
-	 *            the node ref
-	 * @return the image
 	 */
 	@Override
 	public byte[] getImage(NodeRef nodeRef) {

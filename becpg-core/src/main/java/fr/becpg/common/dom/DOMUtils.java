@@ -108,7 +108,6 @@ public class DOMUtils {
 	 * @param root
 	 * @param elementName
 	 * @param wantedAttributes
-	 * @return
 	 */
 	public static String[][] getAttributes(Element root, String elementName, String[] wantedAttributes) {
 		NodeList list = root.getElementsByTagName(elementName);
@@ -129,7 +128,6 @@ public class DOMUtils {
 	 * @param root
 	 * @param elementName
 	 * @param attribute
-	 * @return
 	 */
 	public static String getElementAttribute(Element root, String elementName, String attribute) {
 		NodeList list = root.getElementsByTagName(elementName);
@@ -141,7 +139,6 @@ public class DOMUtils {
 	 *
 	 * @param root
 	 * @param elementName
-	 * @return
 	 */
 	public static Element getUniqueElement(Element root, String elementName) {
 		NodeList list = root.getElementsByTagName(elementName);

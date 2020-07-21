@@ -26,7 +26,7 @@ import org.json.JSONObject;
 
 /**
  * Use to store Olap Chart Data
- * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
+ * @author "Matthieu Laborie"
  *
  */
 public class OlapChartData {

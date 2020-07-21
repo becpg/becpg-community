@@ -107,28 +107,6 @@ public class ZipSearchDownloadExporter implements Exporter {
 		return fileCount;
 	}
 
-	/**
-	 * Construct
-	 *
-	 * @param zipFile
-	 *            File
-	 * @param checkOutCheckInService
-	 *            CheckOutCheckInService
-	 * @param nodeService
-	 *            NodeService
-	 * @param transactionHelper
-	 *            RetryingTransactionHelper
-	 * @param updateService
-	 *            DownloadStatusUpdateService
-	 * @param downloadStorage
-	 *            DownloadStorage
-	 * @param downloadNodeRef
-	 *            NodeRef
-	 * @param total
-	 *            long
-	 * @param totalFileCount
-	 *            long
-	 */
 	public ZipSearchDownloadExporter(NamespaceService namespaceService, CheckOutCheckInService checkOutCheckInService, NodeService nodeService,
 			RetryingTransactionHelper transactionHelper, DownloadStatusUpdateService updateService, DownloadStorage downloadStorage,
 			ContentService contentService, NodeRef downloadNodeRef, NodeRef templateNodeRef) {

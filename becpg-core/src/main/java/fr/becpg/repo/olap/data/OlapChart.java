@@ -41,7 +41,7 @@ import fr.becpg.common.dom.DOMUtils;
 /**
  * Store Chart infos
  * 
- * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
+ * @author "Matthieu Laborie"
  *
  */
 public class OlapChart {
@@ -63,7 +63,7 @@ public class OlapChart {
 	}
 
 	public OlapChart(String queryName) {
-		// TODO Auto-generated constructor stub
+		this.queryName = queryName;
 	}
 
 	public String getQueryName() {
@@ -97,14 +97,6 @@ public class OlapChart {
 	/**
 	 * Parse Xml response
 	 * 
-	 * @param buildQueryUrl
-	 * @throws FactoryConfigurationError
-	 * @throws IOException
-	 * @throws SAXException
-	 * @throws MalformedURLException
-	 * @throws ParserConfigurationException
-	 * @throws TransformerException
-	 * @throws JSONException
 	 */
 
 	// <?xml version="1.0" encoding="UTF-8"?>

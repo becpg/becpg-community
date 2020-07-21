@@ -21,7 +21,7 @@ import org.alfresco.service.namespace.QName;
 
 /**
  * 
- * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
+ * @author "Matthieu Laborie"
  * 
  */
 public class DesignerModel {

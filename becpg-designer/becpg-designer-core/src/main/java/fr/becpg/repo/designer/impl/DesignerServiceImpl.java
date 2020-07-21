@@ -72,7 +72,7 @@ import freemarker.template.TemplateException;
 
 /**
  *
- * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
+ * @author "Matthieu Laborie"
  *
  */
 
@@ -483,8 +483,8 @@ public class DesignerServiceImpl implements DesignerService {
 
 	/**
 	 * Handle move of properties from type to aspect from aspect to type from
-	 * type or aspect to form or set --> create field move of field from set to
-	 * form from form to set move of type from model to config --> create form
+	 * type or aspect to form or set --&gt; create field move of field from set to
+	 * form from form to set move of type from model to config --&gt; create form
 	 */
 	@Override
 	public NodeRef moveElement(NodeRef from, NodeRef to) {

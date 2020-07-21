@@ -33,7 +33,7 @@ import fr.becpg.test.PLMBaseTestCase;
  */
 public class DepthLevelListPolicyIT extends PLMBaseTestCase {
 
-	/** The logger. */
+	
 	private static final Log logger = LogFactory.getLog(DepthLevelListPolicyIT.class);
 
 	@Autowired

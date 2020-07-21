@@ -25,16 +25,6 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * 
- * <!-- Chains -->
- * 
- * <util:list id="chainAList" scope="singleton" value-type="Handler"> <ref
- * bean="handler1"/> <ref bean="handler2"/> </util:list>
- * 
- * <bean id="chainA" class="Chain" init-method="init"> <property
- * name="handlers"> <ref bean="chainAList"/> </property> <property
- * name="formulationService" ref="formulationService"/> <property
- * name="contextClass" value="EntityCLass" /> </bean>
- * 
  * Chain of responsibility executor.
  * 
  * @param <T>

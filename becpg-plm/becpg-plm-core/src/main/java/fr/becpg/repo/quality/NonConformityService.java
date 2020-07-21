@@ -28,7 +28,6 @@ public interface NonConformityService {
 	 * 
 	 * @param productNodeRef
 	 *            may be null
-	 * @return
 	 */
 	NodeRef getStorageFolder(NodeRef productNodeRef);
 

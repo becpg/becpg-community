@@ -86,8 +86,7 @@ import fr.becpg.repo.repository.model.AspectAwareDataItem;
  * </pre>
  *
  * <p>
- * If required, the superclass <code>hashCode()</code> can be added using
- * {@link #appendSuper}.
+ * If required, the superclass <code>hashCode()</code> can be added using appendSuper.
  * </p>
  *
  * <p>

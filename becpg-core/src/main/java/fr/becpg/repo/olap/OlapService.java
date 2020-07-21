@@ -29,7 +29,7 @@ import fr.becpg.repo.olap.data.OlapChartData;
 
 /**
  * Act as a proxy to OLAP Engine
- * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
+ * @author "Matthieu Laborie"
  *
  */
 public interface OlapService {

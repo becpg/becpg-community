@@ -61,7 +61,7 @@ import fr.becpg.test.PLMBaseTestCase;
 
 public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 
-	/** The logger. */
+	
 	protected static final Log logger = LogFactory.getLog(AbstractFinishedProductTest.class);
 
 	/** The product service. */

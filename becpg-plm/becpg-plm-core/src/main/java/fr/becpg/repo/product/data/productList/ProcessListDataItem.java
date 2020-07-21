@@ -1,5 +1,5 @@
 /*
- * 
+ *
  */
 package fr.becpg.repo.product.data.productList;
 
@@ -21,36 +21,35 @@ import fr.becpg.repo.repository.model.CompositionDataItem;
 @AlfQname(qname = "mpm:processList")
 @MultiLevelDataList
 public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem implements CompositionDataItem {
-	
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = -8313567761346202059L;
-	private Double qty = 0d;	
+
+	private Double qty = 0d;
 	private Double qtyResource = 0d;
 	private Double rateResource = 0d;
 	private Double yield = 0d;
 	private Double rateProduct = 0d;
-	
+
 	private ProductUnit unit;
-	
-	private NodeRef step;	
+
+	private NodeRef step;
 	private NodeRef product;
 	private NodeRef resource;
 
+	@Override
 	@AlfProp
-	@AlfQname(qname="mpm:plQty")
+	@AlfQname(qname = "mpm:plQty")
 	public Double getQty() {
 		return qty;
 	}
 
+	@Override
 	public void setQty(Double qty) {
 		this.qty = qty;
 	}
 
-	
 	@AlfProp
-	@AlfQname(qname="mpm:plUnit")
+	@AlfQname(qname = "mpm:plUnit")
 	public ProductUnit getUnit() {
 		return unit;
 	}
@@ -60,7 +59,7 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 	}
 
 	@AlfProp
-	@AlfQname(qname="mpm:plQtyResource")
+	@AlfQname(qname = "mpm:plQtyResource")
 	public Double getQtyResource() {
 		return qtyResource;
 	}
@@ -70,7 +69,7 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 	}
 
 	@AlfProp
-	@AlfQname(qname="mpm:plRateResource")
+	@AlfQname(qname = "mpm:plRateResource")
 	public Double getRateResource() {
 		return rateResource;
 	}
@@ -78,9 +77,9 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 	public void setRateResource(Double rateResource) {
 		this.rateResource = rateResource;
 	}
-	
+
 	@AlfProp
-	@AlfQname(qname="mpm:plYield")
+	@AlfQname(qname = "mpm:plYield")
 	public Double getYield() {
 		return yield;
 	}
@@ -88,10 +87,9 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 	public void setYield(Double yield) {
 		this.yield = yield;
 	}
-	
-	
+
 	@AlfProp
-	@AlfQname(qname="mpm:plRateProduct")
+	@AlfQname(qname = "mpm:plRateProduct")
 	public Double getRateProduct() {
 		return rateProduct;
 	}
@@ -99,10 +97,10 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 	public void setRateProduct(Double rateProduct) {
 		this.rateProduct = rateProduct;
 	}
-	
+
 	@AlfSingleAssoc
-	@DataListIdentifierAttr(isDefaultPivotAssoc=false)
-	@AlfQname(qname="mpm:plStep")
+	@DataListIdentifierAttr(isDefaultPivotAssoc = false)
+	@AlfQname(qname = "mpm:plStep")
 	public NodeRef getStep() {
 		return step;
 	}
@@ -110,10 +108,10 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 	public void setStep(NodeRef step) {
 		this.step = step;
 	}
-	
+
 	@AlfSingleAssoc
-	@DataListIdentifierAttr(isDefaultPivotAssoc=false)
-	@AlfQname(qname="mpm:plProduct")
+	@DataListIdentifierAttr(isDefaultPivotAssoc = false)
+	@AlfQname(qname = "mpm:plProduct")
 	public NodeRef getProduct() {
 		return product;
 	}
@@ -121,10 +119,10 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 	public void setProduct(NodeRef product) {
 		this.product = product;
 	}
-	
+
 	@AlfSingleAssoc
-	@DataListIdentifierAttr(isDefaultPivotAssoc=true)
-	@AlfQname(qname="mpm:plResource")
+	@DataListIdentifierAttr(isDefaultPivotAssoc = true)
+	@AlfQname(qname = "mpm:plResource")
 	public NodeRef getResource() {
 		return resource;
 	}
@@ -133,16 +131,13 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 		this.resource = resource;
 	}
 
-	/**
-	 * Instantiates a new process list data item.
-	 */
 	public ProcessListDataItem() {
 		super();
 	}
-	
-	
-	public ProcessListDataItem(NodeRef nodeRef, Double qty, Double qtyResource, Double rateResource, ProductUnit unit, Double yield, Double rateProduct, NodeRef step, NodeRef product, NodeRef resource){
-		
+
+	public ProcessListDataItem(NodeRef nodeRef, Double qty, Double qtyResource, Double rateResource, ProductUnit unit, Double yield,
+			Double rateProduct, NodeRef step, NodeRef product, NodeRef resource) {
+
 		setNodeRef(nodeRef);
 		setQty(qty);
 		setUnit(unit);
@@ -154,13 +149,9 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 		setProduct(product);
 		setResource(resource);
 	}
-	
-	/**
-	 * Copy constructor
-	 * @param c
-	 */
-	public ProcessListDataItem(ProcessListDataItem p){
-		
+
+	public ProcessListDataItem(ProcessListDataItem p) {
+
 		setNodeRef(p.getNodeRef());
 		setQty(p.getQty());
 		setUnit(p.getUnit());
@@ -173,12 +164,11 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 		setResource(p.getResource());
 	}
 
-
 	@Override
 	public CompositionDataItem clone() {
 		return new ProcessListDataItem(this);
 	}
-	
+
 	@Override
 	public String toString() {
 		return "ProcessListDataItem [qty=" + qty + ", qtyResource=" + qtyResource + ", rateResource=" + rateResource + ", yield=" + yield
@@ -189,69 +179,89 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + ((product == null) ? 0 : product.hashCode());
-		result = prime * result + ((qty == null) ? 0 : qty.hashCode());
-		result = prime * result + ((qtyResource == null) ? 0 : qtyResource.hashCode());
-		result = prime * result + ((rateProduct == null) ? 0 : rateProduct.hashCode());
-		result = prime * result + ((rateResource == null) ? 0 : rateResource.hashCode());
-		result = prime * result + ((resource == null) ? 0 : resource.hashCode());
-		result = prime * result + ((step == null) ? 0 : step.hashCode());
-		result = prime * result + ((unit == null) ? 0 : unit.hashCode());
-		result = prime * result + ((yield == null) ? 0 : yield.hashCode());
+		result = (prime * result) + ((product == null) ? 0 : product.hashCode());
+		result = (prime * result) + ((qty == null) ? 0 : qty.hashCode());
+		result = (prime * result) + ((qtyResource == null) ? 0 : qtyResource.hashCode());
+		result = (prime * result) + ((rateProduct == null) ? 0 : rateProduct.hashCode());
+		result = (prime * result) + ((rateResource == null) ? 0 : rateResource.hashCode());
+		result = (prime * result) + ((resource == null) ? 0 : resource.hashCode());
+		result = (prime * result) + ((step == null) ? 0 : step.hashCode());
+		result = (prime * result) + ((unit == null) ? 0 : unit.hashCode());
+		result = (prime * result) + ((yield == null) ? 0 : yield.hashCode());
 		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (!super.equals(obj))
+		}
+		if (!super.equals(obj)) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		ProcessListDataItem other = (ProcessListDataItem) obj;
 		if (product == null) {
-			if (other.product != null)
+			if (other.product != null) {
 				return false;
-		} else if (!product.equals(other.product))
+			}
+		} else if (!product.equals(other.product)) {
 			return false;
+		}
 		if (qty == null) {
-			if (other.qty != null)
+			if (other.qty != null) {
 				return false;
-		} else if (!qty.equals(other.qty))
+			}
+		} else if (!qty.equals(other.qty)) {
 			return false;
+		}
 		if (qtyResource == null) {
-			if (other.qtyResource != null)
+			if (other.qtyResource != null) {
 				return false;
-		} else if (!qtyResource.equals(other.qtyResource))
+			}
+		} else if (!qtyResource.equals(other.qtyResource)) {
 			return false;
+		}
 		if (rateProduct == null) {
-			if (other.rateProduct != null)
+			if (other.rateProduct != null) {
 				return false;
-		} else if (!rateProduct.equals(other.rateProduct))
+			}
+		} else if (!rateProduct.equals(other.rateProduct)) {
 			return false;
+		}
 		if (rateResource == null) {
-			if (other.rateResource != null)
+			if (other.rateResource != null) {
 				return false;
-		} else if (!rateResource.equals(other.rateResource))
+			}
+		} else if (!rateResource.equals(other.rateResource)) {
 			return false;
+		}
 		if (resource == null) {
-			if (other.resource != null)
+			if (other.resource != null) {
 				return false;
-		} else if (!resource.equals(other.resource))
+			}
+		} else if (!resource.equals(other.resource)) {
 			return false;
+		}
 		if (step == null) {
-			if (other.step != null)
+			if (other.step != null) {
 				return false;
-		} else if (!step.equals(other.step))
+			}
+		} else if (!step.equals(other.step)) {
 			return false;
-		if (unit != other.unit)
+		}
+		if (unit != other.unit) {
 			return false;
+		}
 		if (yield == null) {
-			if (other.yield != null)
+			if (other.yield != null) {
 				return false;
-		} else if (!yield.equals(other.yield))
+			}
+		} else if (!yield.equals(other.yield)) {
 			return false;
+		}
 		return true;
 	}
 
@@ -277,11 +287,7 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 	}
 
 	@Override
-	public void setLossPerc(Double d) {		
+	public void setLossPerc(Double d) {
 	}
 
-	
-	
-	
 }
-

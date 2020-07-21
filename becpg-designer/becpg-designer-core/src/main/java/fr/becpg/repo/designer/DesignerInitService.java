@@ -21,7 +21,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 
 /**
  * 
- * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
+ * @author "Matthieu Laborie"
  * 
  */
 public interface DesignerInitService {

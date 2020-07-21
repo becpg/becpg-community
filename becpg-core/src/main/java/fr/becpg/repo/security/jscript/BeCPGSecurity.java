@@ -27,7 +27,7 @@ import fr.becpg.repo.security.SecurityService;
 
 /**
  * 
- * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
+ * @author "Matthieu Laborie"
  *
  */
 public class BeCPGSecurity extends BaseScopableProcessorExtension{
@@ -47,12 +47,7 @@ public class BeCPGSecurity extends BaseScopableProcessorExtension{
 		this.securityService = securityService;
 	}
 		
-	/**
-	 * 
-	 * @param entityNode
-	 * @param dataListType
-	 * @return
-	 */
+	
 	public boolean hasWriteAccess(ScriptNode entityNode,String dataListType){
 		logger.debug(" jscript - hasWriteAccess");
 		return securityService.computeAccessMode(services.getNodeService().getType(entityNode.getNodeRef()), dataListType) 

@@ -84,12 +84,10 @@ public class TranslateHelper {
 	}
 
 	/**
-	 * Returns the MLText with the translations for all the languages supported.
-	 * List defined in {@link RepoConsts}
-	 *
 	 * @param key
 	 *            the key to search for translations
-	 * @return
+	 * @return the MLText with the translations for all the languages supported.
+	 * List defined in {@link RepoConsts}
 	 */
 	public static MLText getTranslatedKey(String key) {
 		MLText res = new MLText();

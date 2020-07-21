@@ -265,10 +265,6 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 
 	/**
 	 * Calculate the nutListUnit
-	 *
-	 * @param productUnit
-	 * @param nutUnit
-	 * @return
 	 */
 	public static String calculateUnit(ProductUnit productUnit, ProductUnit servingSizeUnit, String nutUnit) {
 		if ((nutUnit == null) || nutUnit.contains("/")) {
@@ -279,9 +275,6 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 
 	/**
 	 * Calculate the suffix of nutListUnit
-	 *
-	 * @param productUnit
-	 * @return
 	 */
 	public static String calculateSuffixUnit(ProductUnit productUnit, ProductUnit servingSizeUnit) {
 		if(servingSizeUnit !=null && !servingSizeUnit.equals(ProductUnit.kg)){
