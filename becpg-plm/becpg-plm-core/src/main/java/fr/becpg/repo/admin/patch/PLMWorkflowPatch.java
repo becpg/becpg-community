@@ -30,8 +30,9 @@ import org.springframework.context.ApplicationContextAware;
 
 /**
  * Generic patch that re-deploys a workflow definition
- * 
+ *
  * @author David Caruana
+ * @version $Id: $Id
  */
 public class PLMWorkflowPatch extends AbstractPatch implements ApplicationContextAware
 {
@@ -44,6 +45,7 @@ public class PLMWorkflowPatch extends AbstractPatch implements ApplicationContex
     /* (non-Javadoc)
      * @see org.springframework.context.ApplicationContextAware#setApplicationContext(org.springframework.context.ApplicationContext)
      */
+    /** {@inheritDoc} */
     public void setApplicationContext(ApplicationContext applicationContext)
         throws BeansException
     {
@@ -52,14 +54,15 @@ public class PLMWorkflowPatch extends AbstractPatch implements ApplicationContex
     
     /**
      * Sets the Workflow Definitions
-     * 
-     * @param workflowDefinitions
+     *
+     * @param workflowDefinitions a {@link java.util.List} object.
      */
     public void setWorkflowDefinitions(List<Properties> workflowDefinitions)
     {
         this.workflowDefinitions = workflowDefinitions;
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void checkProperties()
     {
@@ -67,6 +70,7 @@ public class PLMWorkflowPatch extends AbstractPatch implements ApplicationContex
         super.checkProperties();
     }
     
+    /** {@inheritDoc} */
     @Override
     protected String applyInternal() throws Exception
     {

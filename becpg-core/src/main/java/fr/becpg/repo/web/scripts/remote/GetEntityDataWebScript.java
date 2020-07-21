@@ -32,12 +32,13 @@ import fr.becpg.common.BeCPGException;
 
 /**
  * Get entity as XML
- * 
+ *
  * @author matthieu
- * 
+ * @version $Id: $Id
  */
 public class GetEntityDataWebScript extends AbstractEntityWebScript {
 
+	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
 

@@ -19,10 +19,18 @@ package fr.becpg.model;
 
 import org.alfresco.service.namespace.QName;
 
+/**
+ * <p>PublicationModel interface.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public interface PublicationModel {
 
+	/** Constant <code>PUBLICATION_URI="http://www.bcpg.fr/model/publication/1."{trunked}</code> */
 	String PUBLICATION_URI = "http://www.bcpg.fr/model/publication/1.0";
 
+	/** Constant <code>PUBLICATION_PREFIX="bp"</code> */
 	String PUBLICATION_PREFIX = "bp";
 
 	/** 
@@ -36,6 +44,7 @@ public interface PublicationModel {
 
 	QName TYPE_DELIVERY_CHANNEL = QName.createQName(PUBLICATION_URI, "MailingListChannel");
 
+	/** Constant <code>PROP_MAILLING_MEMBERS</code> */
 	QName PROP_MAILLING_MEMBERS = QName.createQName(PUBLICATION_URI, "mailingMembers");
 
 	/**
@@ -43,8 +52,10 @@ public interface PublicationModel {
 	 */
 	QName TYPE_PRODUCT_CATALOG = QName.createQName(PUBLICATION_URI, "productCatalog");
 
+	/** Constant <code>PROP_PRODUCT_CATALOG_ID</code> */
 	QName PROP_PRODUCT_CATALOG_ID = QName.createQName(PUBLICATION_URI, "productCatalogId");
 
+	/** Constant <code>ASSOC_PRODUCT_CATALOGS</code> */
 	QName ASSOC_PRODUCT_CATALOGS = QName.createQName(PUBLICATION_URI, "productCatalogs");
 
 }

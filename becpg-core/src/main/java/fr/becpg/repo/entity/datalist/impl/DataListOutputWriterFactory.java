@@ -11,6 +11,12 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 
+/**
+ * <p>DataListOutputWriterFactory class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service("datalistOutputWriterFactory")
 public class DataListOutputWriterFactory {
 
@@ -21,6 +27,15 @@ public class DataListOutputWriterFactory {
 	@Autowired
 	private JSONDataListOutputWriter jsonDataListOutputWriter;
 
+	/**
+	 * <p>write.</p>
+	 *
+	 * @param req a {@link org.springframework.extensions.webscripts.WebScriptRequest} object.
+	 * @param res a {@link org.springframework.extensions.webscripts.WebScriptResponse} object.
+	 * @param dataListFilter a {@link fr.becpg.repo.entity.datalist.data.DataListFilter} object.
+	 * @param extractedItems a {@link fr.becpg.repo.entity.datalist.PaginatedExtractedItems} object.
+	 * @throws java.io.IOException if any.
+	 */
 	public void write(WebScriptRequest req, WebScriptResponse res, DataListFilter dataListFilter, PaginatedExtractedItems extractedItems) throws IOException {
 		if (RepoConsts.FORMAT_CSV.equals(dataListFilter.getFormat())) {
 			csvDataListOutputWriter.write(req, res, dataListFilter, extractedItems);

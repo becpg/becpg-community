@@ -38,6 +38,12 @@ import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.entity.datalist.DataListSortPlugin;
 import fr.becpg.repo.hierarchy.HierarchyHelper;
 
+/**
+ * <p>ProjectListSortPlugin class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class ProjectListSortPlugin implements DataListSortPlugin {
 
@@ -47,11 +53,13 @@ public class ProjectListSortPlugin implements DataListSortPlugin {
 	@Autowired
 	private NodeService nodeService;
 
+	/** {@inheritDoc} */
 	@Override
 	public String getPluginId() {
 		return PLUGIN_ID;
 	}
 
+	/** {@inheritDoc} */
 	public List<NodeRef> sort(List<NodeRef> projectList, Map<String, Boolean> sortMap) {
 
 		StopWatch watch = null;

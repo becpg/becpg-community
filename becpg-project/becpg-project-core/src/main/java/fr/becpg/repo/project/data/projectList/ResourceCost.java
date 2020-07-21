@@ -7,8 +7,9 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 /**
  * Cost of a resource
- * @author quere
  *
+ * @author quere
+ * @version $Id: $Id
  */
 @AlfType
 @AlfQname(qname = "pjt:resourceCost")
@@ -22,41 +23,73 @@ public class ResourceCost extends BeCPGDataObject {
 	private Double billRate;
 	private Double hoursPerDay;
 
+	/**
+	 * <p>Getter for the field <code>value</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:resourceCostValue")
 	public Double getValue() {
 		return value;
 	}
 
+	/**
+	 * <p>Setter for the field <code>value</code>.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object.
+	 */
 	public void setValue(Double value) {
 		this.value = value;
 	}
 
+	/**
+	 * <p>Getter for the field <code>billRate</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:resourceCostBillRate")
 	public Double getBillRate() {
 		return billRate;
 	}
 
+	/**
+	 * <p>Setter for the field <code>billRate</code>.</p>
+	 *
+	 * @param billRate a {@link java.lang.Double} object.
+	 */
 	public void setBillRate(Double billRate) {
 		this.billRate = billRate;
 	}
 
+	/**
+	 * <p>Getter for the field <code>hoursPerDay</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:resourceCostHoursPerDay")
 	public Double getHoursPerDay() {
 		return hoursPerDay;
 	}
 
+	/**
+	 * <p>Setter for the field <code>hoursPerDay</code>.</p>
+	 *
+	 * @param hoursPerDay a {@link java.lang.Double} object.
+	 */
 	public void setHoursPerDay(Double hoursPerDay) {
 		this.hoursPerDay = hoursPerDay;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "ResourceCost [value=" + value + ", billRate=" + billRate + ", hoursPerDay=" + hoursPerDay + "]";
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -67,6 +100,7 @@ public class ResourceCost extends BeCPGDataObject {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

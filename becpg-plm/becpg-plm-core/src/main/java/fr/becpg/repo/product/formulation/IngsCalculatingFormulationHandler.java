@@ -49,6 +49,7 @@ import fr.becpg.repo.variant.filters.VariantFilters;
  * The Class IngsCalculatingVisitor.
  *
  * @author querephi
+ * @version $Id: $Id
  */
 public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<ProductData> {
 
@@ -67,18 +68,34 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 	protected AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
+	 */
 	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
+	/**
+	 * <p>Setter for the field <code>ingsCalculatingWithYield</code>.</p>
+	 *
+	 * @param ingsCalculatingWithYield a boolean.
+	 */
 	public void setIngsCalculatingWithYield(boolean ingsCalculatingWithYield) {
 		this.ingsCalculatingWithYield = ingsCalculatingWithYield;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 

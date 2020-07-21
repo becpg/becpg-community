@@ -36,6 +36,7 @@ import fr.becpg.repo.helper.AttributeExtractorService;
  * The Class VersionHistoryWebScript.
  *
  * @author querephi
+ * @version $Id: $Id
  */
 public class EntityVersionWebScript extends AbstractWebScript {
 
@@ -56,27 +57,54 @@ public class EntityVersionWebScript extends AbstractWebScript {
 
 	private ServiceRegistry serviceRegistry;
 
+	/**
+	 * <p>Setter for the field <code>attributeExtractorService</code>.</p>
+	 *
+	 * @param attributeExtractorService a {@link fr.becpg.repo.helper.AttributeExtractorService} object.
+	 */
 	public void setAttributeExtractorService(AttributeExtractorService attributeExtractorService) {
 		this.attributeExtractorService = attributeExtractorService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityVersionService</code>.</p>
+	 *
+	 * @param entityVersionService a {@link fr.becpg.repo.entity.version.EntityVersionService} object.
+	 */
 	public void setEntityVersionService(EntityVersionService entityVersionService) {
 		this.entityVersionService = entityVersionService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>personService</code>.</p>
+	 *
+	 * @param personService a {@link org.alfresco.service.cmr.security.PersonService} object.
+	 */
 	public void setPersonService(PersonService personService) {
 		this.personService = personService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>serviceRegistry</code>.</p>
+	 *
+	 * @param serviceRegistry a {@link org.alfresco.service.ServiceRegistry} object.
+	 */
 	public void setServiceRegistry(ServiceRegistry serviceRegistry) {
 		this.serviceRegistry = serviceRegistry;
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * Get entity version history.
 	 */
 	@Override

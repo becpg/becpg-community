@@ -24,6 +24,12 @@ import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
+/**
+ * <p>Abstract AbstractSamplingListDataItem class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public abstract class AbstractSamplingListDataItem extends BeCPGDataObject {
 
 	/**
@@ -37,66 +43,127 @@ public abstract class AbstractSamplingListDataItem extends BeCPGDataObject {
 	protected NodeRef fixingGroup;
 	protected String reaction;
 	
+	/**
+	 * <p>Getter for the field <code>controlPoint</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	@AlfSingleAssoc
 	@AlfQname(qname = "qa:slControlPoint")
 	public NodeRef getControlPoint() {
 		return controlPoint;
 	}
 
+	/**
+	 * <p>Setter for the field <code>controlPoint</code>.</p>
+	 *
+	 * @param controlPoint a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void setControlPoint(NodeRef controlPoint) {
 		this.controlPoint = controlPoint;
 	}
 
+	/**
+	 * <p>Getter for the field <code>controlStep</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	@AlfSingleAssoc
 	@AlfQname(qname = "qa:slControlStep")
 	public NodeRef getControlStep() {
 		return controlStep;
 	}
 
+	/**
+	 * <p>Setter for the field <code>controlStep</code>.</p>
+	 *
+	 * @param controlStep a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void setControlStep(NodeRef controlStep) {
 		this.controlStep = controlStep;
 	}
 
+	/**
+	 * <p>Getter for the field <code>controlingGroup</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	@AlfSingleAssoc
 	@AlfQname(qname = "qa:slControlingGroup")
 	public NodeRef getControlingGroup() {
 		return controlingGroup;
 	}
 
+	/**
+	 * <p>Setter for the field <code>controlingGroup</code>.</p>
+	 *
+	 * @param controlingGroup a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void setControlingGroup(NodeRef controlingGroup) {
 		this.controlingGroup = controlingGroup;
 	}
 
+	/**
+	 * <p>Getter for the field <code>samplingGroup</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	@AlfSingleAssoc
 	@AlfQname(qname = "qa:slSamplingGroup")
 	public NodeRef getSamplingGroup() {
 		return samplingGroup;
 	}
 
+	/**
+	 * <p>Setter for the field <code>samplingGroup</code>.</p>
+	 *
+	 * @param samplingGroup a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void setSamplingGroup(NodeRef samplingGroup) {
 		this.samplingGroup = samplingGroup;
 	}
 
+	/**
+	 * <p>Getter for the field <code>fixingGroup</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	@AlfSingleAssoc
 	@AlfQname(qname = "qa:slFixingGroup")
 	public NodeRef getFixingGroup() {
 		return fixingGroup;
 	}
 
+	/**
+	 * <p>Setter for the field <code>fixingGroup</code>.</p>
+	 *
+	 * @param fixingGroup a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void setFixingGroup(NodeRef fixingGroup) {
 		this.fixingGroup = fixingGroup;
 	}
 
+	/**
+	 * <p>Getter for the field <code>reaction</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "qa:slReaction")
 	public String getReaction() {
 		return reaction;
 	}
 
+	/**
+	 * <p>Setter for the field <code>reaction</code>.</p>
+	 *
+	 * @param reaction a {@link java.lang.String} object.
+	 */
 	public void setReaction(String reaction) {
 		this.reaction = reaction;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -110,6 +177,7 @@ public abstract class AbstractSamplingListDataItem extends BeCPGDataObject {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

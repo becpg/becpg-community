@@ -17,6 +17,12 @@ import fr.becpg.repo.ecm.AsyncECOService;
 import fr.becpg.repo.ecm.ECOService;
 import fr.becpg.repo.mail.BeCPGMailService;
 
+/**
+ * <p>AsyncECOServiceImpl class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service("asyncECOService")
 public class AsyncECOServiceImpl implements AsyncECOService {
 
@@ -39,11 +45,13 @@ public class AsyncECOServiceImpl implements AsyncECOService {
 	@Autowired
 	private TransactionService transactionService;
 
+	/** {@inheritDoc} */
 	@Override
 	public void applyAsync(NodeRef ecoNodeRef) {
 		runAsync(ecoNodeRef, true);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void doSimulationAsync(NodeRef ecoNodeRef) {
 		runAsync(ecoNodeRef, false);

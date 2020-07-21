@@ -34,8 +34,15 @@ import fr.becpg.repo.product.formulation.ProductSpecificationsFormulationHandler
 //- On cherche les cahiers des charges dont la date de modif est > à la date de l'index et on mets à jour l'i
 
 
+/**
+ * <p>ProductSpecificationFormulationJob class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class ProductSpecificationFormulationJob implements Job {
 
+	/** {@inheritDoc} */
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		JobDataMap jobData = context.getJobDetail().getJobDataMap();

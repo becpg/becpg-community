@@ -20,8 +20,10 @@ import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 
 /**
+ * <p>MonitorWebScript class.</p>
  *
  * @author matthieu
+ * @version $Id: $Id
  */
 public class MonitorWebScript extends DeclarativeWebScript {
 
@@ -31,14 +33,25 @@ public class MonitorWebScript extends DeclarativeWebScript {
 	
 	private AbstractAuthenticationService authenticationService;
 
+	/**
+	 * <p>Setter for the field <code>authenticationService</code>.</p>
+	 *
+	 * @param authenticationService a {@link org.alfresco.repo.security.authentication.AbstractAuthenticationService} object.
+	 */
 	public void setAuthenticationService(AbstractAuthenticationService authenticationService) {
 		this.authenticationService = authenticationService;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>contentService</code>.</p>
+	 *
+	 * @param contentService a {@link org.alfresco.service.cmr.repository.ContentService} object.
+	 */
 	public void setContentService(ContentService contentService) {
 		this.contentService = contentService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected Map<String, Object> executeImpl(WebScriptRequest req, Status status, Cache cache) {
 		logger.debug("start admin webscript");

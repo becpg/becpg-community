@@ -3,6 +3,12 @@ package fr.becpg.repo.formulation;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
+/**
+ * <p>FormulationPlugin interface.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public interface FormulationPlugin {
 	
 	enum FormulationPluginPriority {
@@ -19,8 +25,20 @@ public interface FormulationPlugin {
 		}
 	}
 	
+	/**
+	 * <p>getMatchPriority.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link fr.becpg.repo.formulation.FormulationPlugin.FormulationPluginPriority} object.
+	 */
 	FormulationPluginPriority getMatchPriority(QName type);
 
+	/**
+	 * <p>runFormulation.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @throws fr.becpg.repo.formulation.FormulateException if any.
+	 */
 	void runFormulation(NodeRef entityNodeRef) throws FormulateException;
 
 }

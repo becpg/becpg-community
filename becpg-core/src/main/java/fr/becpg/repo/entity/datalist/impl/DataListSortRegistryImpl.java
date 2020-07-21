@@ -23,12 +23,19 @@ import org.springframework.stereotype.Service;
 import fr.becpg.repo.entity.datalist.DataListSortPlugin;
 import fr.becpg.repo.entity.datalist.DataListSortRegistry;
 
+/**
+ * <p>DataListSortRegistryImpl class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service("dataListSortRegistry")
 public class DataListSortRegistryImpl implements DataListSortRegistry {
 
 	@Autowired(required=false)
 	DataListSortPlugin[] plugins;
 
+	/** {@inheritDoc} */
 	@Override
 	public DataListSortPlugin getPluginById(String pluginId) {
 		if (plugins != null) {

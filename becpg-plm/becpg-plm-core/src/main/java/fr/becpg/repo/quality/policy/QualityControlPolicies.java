@@ -40,6 +40,12 @@ import fr.becpg.model.QualityModel;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.quality.QualityControlService;
 
+/**
+ * <p>QualityControlPolicies class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class QualityControlPolicies extends AbstractBeCPGPolicy implements NodeServicePolicies.OnCreateAssociationPolicy,
 		NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.BeforeDeleteNodePolicy,CopyServicePolicies.OnCopyNodePolicy {
 
@@ -53,14 +59,25 @@ public class QualityControlPolicies extends AbstractBeCPGPolicy implements NodeS
 	private String KEY_PREFIX_PRODUCT_ASSOC = QualityControlPolicies.class.getName() + "_PRODUCT_ASSOC_";
 
 
+	/**
+	 * <p>Setter for the field <code>transactionService</code>.</p>
+	 *
+	 * @param transactionService a {@link org.alfresco.service.transaction.TransactionService} object.
+	 */
 	public void setTransactionService(TransactionService transactionService) {
 		this.transactionService = transactionService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>qualityControlService</code>.</p>
+	 *
+	 * @param qualityControlService a {@link fr.becpg.repo.quality.QualityControlService} object.
+	 */
 	public void setQualityControlService(QualityControlService qualityControlService) {
 		this.qualityControlService = qualityControlService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void doInit() {
 
@@ -95,6 +112,7 @@ public class QualityControlPolicies extends AbstractBeCPGPolicy implements NodeS
 		
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	//TODO used queueAssoc instead
 	public void onCreateAssociation(AssociationRef assocRef) {
@@ -109,6 +127,7 @@ public class QualityControlPolicies extends AbstractBeCPGPolicy implements NodeS
 		} 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 
@@ -121,12 +140,14 @@ public class QualityControlPolicies extends AbstractBeCPGPolicy implements NodeS
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onCreateNode(ChildAssociationRef childAssocRef) {
 		qualityControlService.createSamplingListId(childAssocRef.getChildRef());
 	}
 	
 	
+	/** {@inheritDoc} */
 	@Override
 	public CopyBehaviourCallback getCopyCallback(QName classRef, CopyDetails copyDetails) {
 		if (policyBehaviourFilter.isEnabled(QualityModel.TYPE_QUALITY_CONTROL)) {
@@ -139,6 +160,7 @@ public class QualityControlPolicies extends AbstractBeCPGPolicy implements NodeS
 	}
 	
 
+	/** {@inheritDoc} */
 	@Override
 	protected void doAfterCommit(String key, Set<NodeRef> pendingNodes) {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -156,6 +178,7 @@ public class QualityControlPolicies extends AbstractBeCPGPolicy implements NodeS
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void beforeDeleteNode(NodeRef nodeRef) {
 			if (QualityModel.TYPE_CONTROL_LIST.equals(nodeService.getType(nodeRef))) {

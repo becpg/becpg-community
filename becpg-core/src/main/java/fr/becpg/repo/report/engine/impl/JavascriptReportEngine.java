@@ -23,13 +23,15 @@ import fr.becpg.report.client.ReportFormat;
 import fr.becpg.report.client.ReportParams;
 
 /**
+ * <p>JavascriptReportEngine class.</p>
  *
  * @author matthieu
- *
+ * @version $Id: $Id
  */
 @Service
 public class JavascriptReportEngine implements BeCPGReportEngine {
 
+	/** Constant <code>JS_EXTENSION=".js"</code> */
 	public static final String JS_EXTENSION = ".js";
 	
 	private static Log logger = LogFactory.getLog(JavascriptReportEngine.class);
@@ -43,11 +45,13 @@ public class JavascriptReportEngine implements BeCPGReportEngine {
 	@Autowired
 	private ScriptService scriptService;
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isApplicable(NodeRef templateNodeRef, ReportFormat reportFormat) {
 		return ((String) nodeService.getProperty(templateNodeRef, ContentModel.PROP_NAME)).endsWith(JS_EXTENSION);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void createReport(NodeRef tplNodeRef, EntityReportData reportData, OutputStream out, Map<String, Object> params) throws ReportException {
 		StopWatch watch = null;
@@ -77,6 +81,7 @@ public class JavascriptReportEngine implements BeCPGReportEngine {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isXmlEngine() {
 		return false;

@@ -48,6 +48,12 @@ import fr.becpg.repo.entity.version.EntityVersionPlugin;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
+/**
+ * <p>VariantPolicy class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyCompletePolicy, EntityVersionPlugin {
 
 	private static final Log logger = LogFactory.getLog(VariantPolicy.class);
@@ -56,21 +62,36 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 
 	private EntityListDAO entityListDAO;
 	
+	/** Constant <code>KEY_QUEUE_VARIANT="Variant_Item_"</code> */
 	public static final String KEY_QUEUE_VARIANT = "Variant_Item_";
 
+	/**
+	 * <p>Setter for the field <code>entityListDAO</code>.</p>
+	 *
+	 * @param entityListDAO a {@link fr.becpg.repo.entity.EntityListDAO} object.
+	 */
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
 	}
 
+	/**
+	 * <p>Setter for the field <code>copyService</code>.</p>
+	 *
+	 * @param copyService a {@link org.alfresco.service.cmr.repository.CopyService} object.
+	 */
 	public void setCopyService(CopyService copyService) {
 		this.copyService = copyService;
 	}
 
+	/**
+	 * <p>doInit.</p>
+	 */
 	public void doInit() {
 		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyCompletePolicy.QNAME, BeCPGModel.ASPECT_ENTITYLIST_VARIANT, new JavaBehaviour(this,
 				"onCopyComplete"));
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onCopyComplete(QName classRef, final NodeRef sourceNodeRef, final NodeRef destinationRef, boolean copyToNewNode,
 			Map<NodeRef, NodeRef> copyMap) {
@@ -81,6 +102,7 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 		queueNode(KEY_QUEUE_VARIANT + targetEntityRef.toString(), destinationRef);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void doAfterCheckout(NodeRef origNodeRef, final NodeRef workingCopyNodeRef) {
 
@@ -117,6 +139,7 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 	}
 
 	
+	/** {@inheritDoc} */
 	@Override
 	public void doBeforeCheckin(NodeRef origNodeRef,final  NodeRef workingCopyNodeRef) {
 		
@@ -200,6 +223,7 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 		return original;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 		logger.debug("On before commit");
@@ -290,11 +314,13 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 	}
 	
 	
+	/** {@inheritDoc} */
 	@Override
 	public void cancelCheckout(NodeRef origNodeRef, NodeRef workingCopyNodeRef) {
 		// Do nothing
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void impactWUsed(NodeRef entityNodeRef, VersionType versionType, String description) {
 		// Do nothing

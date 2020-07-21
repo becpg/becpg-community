@@ -16,6 +16,12 @@ import org.json.JSONObject;
 
 import fr.becpg.repo.entity.EntityDictionaryService;
 
+/**
+ * <p>SearchConfig class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class SearchConfig {
 
 	private static final Log logger = LogFactory.getLog(SearchConfig.class);
@@ -26,20 +32,42 @@ public class SearchConfig {
 	private static Set<String> keysToExclude = new HashSet<>();
 
 
+	/**
+	 * <p>Getter for the field <code>dataListSearchFilters</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	public List<DataListSearchFilter> getDataListSearchFilters() {
 		return dataListSearchFilters;
 	}
 
+	/**
+	 * <p>Setter for the field <code>dataListSearchFilters</code>.</p>
+	 *
+	 * @param dataListSearchFilters a {@link java.util.List} object.
+	 */
 	public void setDataListSearchFilters(List<DataListSearchFilter> dataListSearchFilters) {
 		this.dataListSearchFilters = dataListSearchFilters;
 	}
 	
 
+	/**
+	 * <p>Getter for the field <code>keysToExclude</code>.</p>
+	 *
+	 * @return a {@link java.util.Set} object.
+	 */
 	public static Set<String> getKeysToExclude() {
 		return keysToExclude;
 	}
 
 
+	/**
+	 * <p>parse.</p>
+	 *
+	 * @param content a {@link java.lang.String} object.
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
+	 * @param entityDictionaryService a {@link fr.becpg.repo.entity.EntityDictionaryService} object.
+	 */
 	public void parse(String content, NamespaceService namespaceService, EntityDictionaryService entityDictionaryService) {
 		try {
 

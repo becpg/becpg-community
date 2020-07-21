@@ -27,6 +27,9 @@ import fr.becpg.repo.admin.patch.AbstractBeCPGPatch;
 
 /**
  * Update claim mail templates
+ *
+ * @author matthieu
+ * @version $Id: $Id
  */
 public class ProjectEmailTemplatesPatch extends AbstractBeCPGPatch {
 
@@ -34,6 +37,7 @@ public class ProjectEmailTemplatesPatch extends AbstractBeCPGPatch {
 
 	private static final String MSG_SUCCESS = "patch.bcpg.project.projectEmailTemplatesPatch";
 
+	/** {@inheritDoc} */
 	@Override
 	protected String applyInternal() throws Exception {
 

@@ -26,6 +26,12 @@ import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
+/**
+ * <p>WorkItemAnalysisData class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @AlfType
 @AlfQname(qname = "qa:workItemAnalysis")
 public class WorkItemAnalysisData extends BeCPGDataObject {
@@ -36,20 +42,34 @@ public class WorkItemAnalysisData extends BeCPGDataObject {
 	private static final long serialVersionUID = -7826247093687640349L;
 	List<ControlListDataItem> controlList = new LinkedList<>();
 
+	/**
+	 * <p>Getter for the field <code>controlList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@DataList
 	@AlfQname(qname = "qa:controlList")
 	public List<ControlListDataItem> getControlList() {
 		return controlList;
 	}
 
+	/**
+	 * <p>Setter for the field <code>controlList</code>.</p>
+	 *
+	 * @param controlList a {@link java.util.List} object.
+	 */
 	public void setControlList(List<ControlListDataItem> controlList) {
 		this.controlList = controlList;
 	}
 
+	/**
+	 * <p>Constructor for WorkItemAnalysisData.</p>
+	 */
 	public WorkItemAnalysisData() {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -58,6 +78,7 @@ public class WorkItemAnalysisData extends BeCPGDataObject {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -75,6 +96,7 @@ public class WorkItemAnalysisData extends BeCPGDataObject {
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "WorkItemAnalysisData [controlList=" + controlList + "]";

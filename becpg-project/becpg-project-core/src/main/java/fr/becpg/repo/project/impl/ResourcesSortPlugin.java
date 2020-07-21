@@ -36,6 +36,12 @@ import fr.becpg.repo.entity.datalist.DataListSortPlugin;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 
+/**
+ * <p>ResourcesSortPlugin class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class ResourcesSortPlugin implements DataListSortPlugin {
 
@@ -49,11 +55,13 @@ public class ResourcesSortPlugin implements DataListSortPlugin {
 	@Autowired
 	private NodeService nodeService;
 
+	/** {@inheritDoc} */
 	@Override
 	public String getPluginId() {
 		return PLUGIN_ID;
 	}
 
+	/** {@inheritDoc} */
 	public List<NodeRef> sort(List<NodeRef> taskList, Map<String, Boolean> sortMap) {
 
 		StopWatch watch = null;

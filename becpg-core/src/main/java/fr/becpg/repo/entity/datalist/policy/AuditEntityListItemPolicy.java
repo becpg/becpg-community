@@ -27,7 +27,10 @@ import fr.becpg.repo.entity.catalog.EntityCatalogService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
 /**
+ * <p>AuditEntityListItemPolicy class.</p>
+ *
  * @author querephi
+ * @version $Id: $Id
  */
 public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnDeleteNodePolicy,
 		NodeServicePolicies.OnUpdateNodePolicy, NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.OnCreateAssociationPolicy,
@@ -43,14 +46,27 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy implements No
 	private EntityCatalogService entityCatalogService;
 	
 
+	/**
+	 * <p>Setter for the field <code>entityCatalogService</code>.</p>
+	 *
+	 * @param entityCatalogService a {@link fr.becpg.repo.entity.catalog.EntityCatalogService} object.
+	 */
 	public void setEntityCatalogService(EntityCatalogService entityCatalogService) {
 		this.entityCatalogService = entityCatalogService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>authenticationService</code>.</p>
+	 *
+	 * @param authenticationService a {@link org.alfresco.service.cmr.security.AuthenticationService} object.
+	 */
 	public void setAuthenticationService(AuthenticationService authenticationService) {
 		this.authenticationService = authenticationService;
 	}
 
+	/**
+	 * <p>doInit.</p>
+	 */
 	public void doInit() {
 		logger.debug("Init AuditEntityListItemPolicy...");
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME, BeCPGModel.TYPE_ENTITYLIST_ITEM, new JavaBehaviour(this,
@@ -67,22 +83,26 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy implements No
 				new JavaBehaviour(this, "onUpdateProperties"));
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onCreateNode(ChildAssociationRef childAssocRef) {
 		queueListNodeRef(KEY_LIST, childAssocRef.getParentRef());
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onDeleteNode(ChildAssociationRef childAssocRef, boolean isNodeArchived) {
 		queueListNodeRef(KEY_LIST, childAssocRef.getParentRef());
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onUpdateNode(NodeRef listItemNodeRef) {
 		queueListNodeRef(KEY_LIST_ITEM, listItemNodeRef);
 	}
 	
 
+	/** {@inheritDoc} */
 	@Override
 	public void onDeleteAssociation(AssociationRef assocRef) {
 		if(!ContentModel.ASSOC_ORIGINAL.equals(assocRef.getTypeQName())) {
@@ -90,6 +110,7 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy implements No
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onCreateAssociation(AssociationRef assocRef) {
 		queueListNodeRef(KEY_LIST_ITEM, assocRef.getSourceRef());
@@ -104,8 +125,9 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy implements No
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * Store in the entity list folder that an item has been deleted.
-	 * 
 	 */
 	@Override
 	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
@@ -162,6 +184,7 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy implements No
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 		 if(!isVersionNode(nodeRef) && isNotLocked(nodeRef)) {

@@ -17,8 +17,19 @@
  ******************************************************************************/
 package fr.becpg.repo.repository.model;
 
+/**
+ * <p>Synchronisable interface.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public interface Synchronisable {
 
+	/**
+	 * <p>isSynchronisable.</p>
+	 *
+	 * @return a boolean.
+	 */
 	boolean isSynchronisable();
 	
 }

@@ -23,6 +23,12 @@ import fr.becpg.repo.entity.datalist.impl.ExcelDataListOutputPlugin;
 import fr.becpg.repo.helper.ExcelHelper.ExcelFieldTitleProvider;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 
+/**
+ * <p>ActivityExcelDataListOutputPlugin class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class ActivityExcelDataListOutputPlugin implements ExcelDataListOutputPlugin {
 
@@ -32,16 +38,19 @@ public class ActivityExcelDataListOutputPlugin implements ExcelDataListOutputPlu
 	@Autowired
 	protected EntityListDAO entityListDAO;
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isDefault() {
 		return false;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean applyTo(DataListFilter dataListFilter) {
 		return BeCPGModel.TYPE_ACTIVITY_LIST.equals(dataListFilter.getDataType());
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<Map<String, Object>> decorate(List<Map<String, Object>> items) throws IOException {
 		try {
@@ -114,6 +123,7 @@ public class ActivityExcelDataListOutputPlugin implements ExcelDataListOutputPlu
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public ExcelFieldTitleProvider getExcelFieldTitleProvider(DataListFilter dataListFilter) {
 		return new  ExcelFieldTitleProvider(){
@@ -131,6 +141,7 @@ public class ActivityExcelDataListOutputPlugin implements ExcelDataListOutputPlu
 		};
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public PaginatedExtractedItems extractExtrasSheet(DataListFilter dataListFilter) {
 		// TODO Auto-generated method stub

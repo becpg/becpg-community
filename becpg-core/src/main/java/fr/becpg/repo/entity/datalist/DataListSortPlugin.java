@@ -22,14 +22,35 @@ import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+/**
+ * <p>DataListSortPlugin interface.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public interface DataListSortPlugin {
 
 
+	/** Constant <code>BEFORE=-1</code> */
 	int BEFORE = -1;
+	/** Constant <code>EQUAL=0</code> */
 	int EQUAL = 0;
+	/** Constant <code>AFTER=1</code> */
 	int AFTER = 1;
 	
+	/**
+	 * <p>getPluginId.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	String getPluginId();
 
+	/**
+	 * <p>sort.</p>
+	 *
+	 * @param projectList a {@link java.util.List} object.
+	 * @param sortMap a {@link java.util.Map} object.
+	 * @return a {@link java.util.List} object.
+	 */
 	List<NodeRef> sort(List<NodeRef> projectList, Map<String, Boolean> sortMap);
 }

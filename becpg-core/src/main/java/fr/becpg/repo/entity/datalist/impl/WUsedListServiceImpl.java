@@ -40,6 +40,12 @@ import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.impl.AssociationServiceImpl.EntitySourceAssoc;
 
+/**
+ * <p>WUsedListServiceImpl class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service("wUsedListService")
 public class WUsedListServiceImpl implements WUsedListService {
 
@@ -53,18 +59,21 @@ public class WUsedListServiceImpl implements WUsedListService {
 	@Autowired
 	private PermissionService permissionService;
 
+	/** {@inheritDoc} */
 	@Override
 	public MultiLevelListData getWUsedEntity(NodeRef entityNodeRef, QName associationName, int maxDepthLevel) {
 		return getWUsedEntity(Collections.singletonList(entityNodeRef), WUsedOperator.AND, null, associationName, 0, maxDepthLevel, new HashSet<>(),
 				new HashMap<>());
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public MultiLevelListData getWUsedEntity(List<NodeRef> entityNodeRefs, WUsedOperator operator, WUsedFilter filter, QName associationName,
 			int maxDepthLevel) {
 		return getWUsedEntity(entityNodeRefs, operator, filter, associationName, 0, maxDepthLevel, new HashSet<>(), new HashMap<>());
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public MultiLevelListData getWUsedEntity(List<NodeRef> entityNodeRefs, WUsedOperator operator, QName associationName, int maxDepthLevel) {
 		return getWUsedEntity(entityNodeRefs, operator, null, associationName, 0, maxDepthLevel, new HashSet<>(), new HashMap<>());

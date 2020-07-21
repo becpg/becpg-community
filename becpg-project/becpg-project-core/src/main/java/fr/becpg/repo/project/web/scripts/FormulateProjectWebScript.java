@@ -34,13 +34,22 @@ import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.project.ProjectService;
 
 //TODO use remote formulation webscript instead
+/**
+ * <p>FormulateProjectWebScript class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Deprecated
 public class FormulateProjectWebScript extends AbstractWebScript {
 	
+	/** Constant <code>PARAM_STORE_TYPE="store_type"</code> */
 	protected static final String PARAM_STORE_TYPE = "store_type";
 
+	/** Constant <code>PARAM_STORE_ID="store_id"</code> */
 	protected static final String PARAM_STORE_ID = "store_id";
 
+	/** Constant <code>PARAM_ID="id"</code> */
 	protected static final String PARAM_ID = "id";
 	
 
@@ -49,10 +58,16 @@ public class FormulateProjectWebScript extends AbstractWebScript {
 	private ProjectService projectService;
 	
 
+	/**
+	 * <p>Setter for the field <code>projectService</code>.</p>
+	 *
+	 * @param projectService a {@link fr.becpg.repo.project.ProjectService} object.
+	 */
 	public void setProjectService(ProjectService projectService) {
 		this.projectService = projectService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws WebScriptException, IOException {
 		logger.debug("start formulate webscript");
@@ -78,6 +93,12 @@ public class FormulateProjectWebScript extends AbstractWebScript {
 		
 	}
 	
+	/**
+	 * <p>getProjectNodeRef.</p>
+	 *
+	 * @param req a {@link org.springframework.extensions.webscripts.WebScriptRequest} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	protected NodeRef getProjectNodeRef(WebScriptRequest req) {
 		Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();	    	
     	String storeType = templateArgs.get(PARAM_STORE_TYPE);
@@ -88,6 +109,11 @@ public class FormulateProjectWebScript extends AbstractWebScript {
 	}
 	
 	
+	/**
+	 * <p>handleFormulationError.</p>
+	 *
+	 * @param e a {@link fr.becpg.repo.formulation.FormulateException} object.
+	 */
 	protected void handleFormulationError(FormulateException e) {
 
 		logger.error(e,e);

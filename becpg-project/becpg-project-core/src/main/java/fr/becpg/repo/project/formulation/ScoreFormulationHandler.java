@@ -29,7 +29,7 @@ import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
  * Project visitor to calculate project score
  *
  * @author quere
- *
+ * @version $Id: $Id
  */
 public class ScoreFormulationHandler extends FormulationBaseHandler<ProjectData> {
 
@@ -37,6 +37,7 @@ public class ScoreFormulationHandler extends FormulationBaseHandler<ProjectData>
 
 	private static final int TOTAL_WEIGHT = 100;
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean process(ProjectData projectData) throws FormulateException {
 

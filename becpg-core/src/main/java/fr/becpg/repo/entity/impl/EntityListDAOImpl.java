@@ -60,9 +60,10 @@ import fr.becpg.repo.helper.impl.CommonDataListSort;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
+ * <p>EntityListDAOImpl class.</p>
  *
  * @author querephi
- *
+ * @version $Id: $Id
  */
 @Repository("entityListDAOV1")
 @DependsOn("bcpg.dictionaryBootstrap")
@@ -95,17 +96,20 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 	private Set<QName> hiddenListQnames = new HashSet<>();
 
+	/** {@inheritDoc} */
 	@Override
 	public void registerHiddenList(QName listTypeQname) {
 		hiddenListQnames.add(listTypeQname);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getListContainer(NodeRef nodeRef) {
 
 		return nodeService.getChildByName(nodeRef, BeCPGModel.ASSOC_ENTITYLISTS, RepoConsts.CONTAINER_DATALISTS);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getList(NodeRef listContainerNodeRef, String name) {
 
@@ -116,6 +120,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 		return listNodeRef;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getList(NodeRef listContainerNodeRef, QName listQName) {
 		if (listQName == null) {
@@ -125,6 +130,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 		return getList(listContainerNodeRef, listQName.getLocalName());
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef createListContainer(NodeRef nodeRef) {
 		Map<QName, Serializable> properties = new HashMap<>();
@@ -136,6 +142,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 		return ret;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef createList(NodeRef listContainerNodeRef, QName listQName) {
 
@@ -170,6 +177,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef createList(NodeRef listContainerNodeRef, String name, QName listQName) {
 
@@ -194,6 +202,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 				.getChildRef();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> getExistingListsNodeRef(NodeRef listContainerNodeRef) {
 
@@ -228,6 +237,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 		return existingLists;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> getListItems(NodeRef dataListNodeRef, QName dataType) {
 
@@ -236,6 +246,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> getListItems(final NodeRef listNodeRef, final QName listQNameFilter, Map<String, Boolean> sortMap) {
 
@@ -251,6 +262,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isEmpty(final NodeRef listNodeRef, final QName listQNameFilter) {
 
@@ -266,6 +278,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getListItem(NodeRef listContainerNodeRef, QName assocQName, NodeRef nodeRef) {
 
@@ -283,12 +296,14 @@ public class EntityListDAOImpl implements EntityListDAO {
 		return null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void copyDataLists(NodeRef sourceNodeRef, NodeRef targetNodeRef, boolean override) {
 
 		copyDataLists(sourceNodeRef, targetNodeRef, null, override);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void copyDataLists(NodeRef sourceNodeRef, NodeRef targetNodeRef, Collection<QName> listQNames, boolean override) {
 
@@ -331,6 +346,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void copyDataList(NodeRef dataListNodeRef, NodeRef entityNodeRef, boolean override) {
 
@@ -377,6 +393,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef createListItem(NodeRef listNodeRef, QName listType, Map<QName, Serializable> properties, Map<QName, List<NodeRef>> associations) {
 
@@ -391,6 +408,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 		return nodeRef;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void moveDataLists(NodeRef sourceNodeRef, NodeRef targetNodeRef) {
 		NodeRef sourceListContainerNodeRef = getListContainer(sourceNodeRef);
@@ -411,6 +429,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getEntity(NodeRef listItemNodeRef) {
 		NodeRef listNodeRef = nodeService.getPrimaryParent(listItemNodeRef).getParentRef();
@@ -422,6 +441,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 		return null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getEntityFromList(NodeRef listNodeRef) {
 

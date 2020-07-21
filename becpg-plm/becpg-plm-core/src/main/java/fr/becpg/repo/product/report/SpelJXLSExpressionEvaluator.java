@@ -18,9 +18,10 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.repository.RepositoryEntity;
 
 /**
+ * <p>SpelJXLSExpressionEvaluator class.</p>
  *
  * @author matthieu
- *
+ * @version $Id: $Id
  */
 public class SpelJXLSExpressionEvaluator implements ExpressionEvaluator {
 
@@ -30,16 +31,28 @@ public class SpelJXLSExpressionEvaluator implements ExpressionEvaluator {
 
 	Expression expression;
 
+	/** {@inheritDoc} */
 	@Override
 	public String getExpression() {
 		return expression.getExpressionString();
 	}
 
+	/**
+	 * <p>Constructor for SpelJXLSExpressionEvaluator.</p>
+	 *
+	 * @param formulaService a {@link fr.becpg.repo.formulation.spel.SpelFormulaService} object.
+	 */
 	public SpelJXLSExpressionEvaluator(SpelFormulaService formulaService) {
 		super();
 		this.formulaService = formulaService;
 	}
 
+	/**
+	 * <p>Constructor for SpelJXLSExpressionEvaluator.</p>
+	 *
+	 * @param formulaService a {@link fr.becpg.repo.formulation.spel.SpelFormulaService} object.
+	 * @param expression a {@link org.springframework.expression.Expression} object.
+	 */
 	public SpelJXLSExpressionEvaluator(SpelFormulaService formulaService, Expression expression) {
 		super();
 		this.formulaService = formulaService;
@@ -48,6 +61,7 @@ public class SpelJXLSExpressionEvaluator implements ExpressionEvaluator {
 
 	
 	
+	/** {@inheritDoc} */
 	@Override
 	public Object evaluate(String expression, Map<String, Object> data) {
 		try {
@@ -93,6 +107,7 @@ public class SpelJXLSExpressionEvaluator implements ExpressionEvaluator {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Object evaluate(Map<String, Object> data) {
 		StandardEvaluationContext context = formulaService.createEntitySpelContext((ProductData) data.get("entity"));

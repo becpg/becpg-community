@@ -22,12 +22,19 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import fr.becpg.repo.importer.ImporterException;
 
 /**
- * 
- * @author matthieu
+ * <p>UserImporterService interface.</p>
  *
+ * @author matthieu
+ * @version $Id: $Id
  */
 public interface UserImporterService {
 
+	/**
+	 * <p>importUser.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @throws fr.becpg.repo.importer.ImporterException if any.
+	 */
 	void importUser(NodeRef nodeRef) throws ImporterException;
 
 

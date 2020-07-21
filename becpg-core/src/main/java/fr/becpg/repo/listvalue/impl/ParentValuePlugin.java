@@ -44,6 +44,12 @@ import fr.becpg.repo.listvalue.ListValuePage;
 import fr.becpg.repo.listvalue.ListValueService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
+/**
+ * <p>ParentValuePlugin class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class ParentValuePlugin extends EntityListValuePlugin {
 
@@ -62,11 +68,13 @@ public class ParentValuePlugin extends EntityListValuePlugin {
 	@Autowired
 	private AttributeExtractorService attributeExtractorService;
 
+	/** {@inheritDoc} */
 	@Override
 	public String[] getHandleSourceTypes() {
 		return new String[] { SOURCE_TYPE_PARENT_VALUE, SOURCE_TYPE_DATA_LIST_CHARACT };
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public ListValuePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
 

@@ -28,6 +28,12 @@ import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtracto
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 
+/**
+ * <p>MultiLevelExcelReportSearchPlugin class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReportSearchPlugin {
 
@@ -36,11 +42,13 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 	@Autowired
 	MultiLevelDataListService multiLevelDataListService;
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isDefault() {
 		return false;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isApplicable(QName itemType, String[] parameters) {
 		String parameter = (parameters != null) && (parameters.length > 0) ? parameters[0] : null;
@@ -48,6 +56,7 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 		return PLMModel.TYPE_PACKAGINGLIST.equals(itemType) || ((parameter != null) && !parameter.isEmpty() && parameter.contains("Level"));
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int fillSheet(XSSFSheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum, String[] parameters,
 			AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache) {
@@ -87,6 +96,21 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 		return rownum;
 	}
 
+	/**
+	 * <p>appendNextLevel.</p>
+	 *
+	 * @param listData a {@link fr.becpg.repo.entity.datalist.data.MultiLevelListData} object.
+	 * @param sheet a {@link org.apache.poi.xssf.usermodel.XSSFSheet} object.
+	 * @param itemType a {@link org.alfresco.service.namespace.QName} object.
+	 * @param metadataFields a {@link java.util.List} object.
+	 * @param cache a {@link java.util.Map} object.
+	 * @param rownum a int.
+	 * @param key a {@link java.io.Serializable} object.
+	 * @param parentQty a {@link java.lang.Double} object.
+	 * @param parameters an array of {@link java.lang.String} objects.
+	 * @param entityItems a {@link java.util.Map} object.
+	 * @return a int.
+	 */
 	protected int appendNextLevel(MultiLevelListData listData, XSSFSheet sheet, QName itemType, List<AttributeExtractorStructure> metadataFields,
 			Map<NodeRef, Map<String, Object>> cache, int rownum, Serializable key, Double parentQty, String[] parameters,
 			Map<String, Object> entityItems) {

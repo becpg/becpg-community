@@ -24,8 +24,9 @@ import org.alfresco.service.cmr.repository.NodeRef;
 
 /**
  * Represent a multiLevel list data
- * @author matthieu
  *
+ * @author matthieu
+ * @version $Id: $Id
  */
 public class MultiLevelListData {
 	
@@ -38,45 +39,92 @@ public class MultiLevelListData {
 
 	private boolean isLeaf = false;
 	
+	/**
+	 * <p>Constructor for MultiLevelListData.</p>
+	 *
+	 * @param entityNodeRefs a {@link java.util.List} object.
+	 * @param depth a int.
+	 */
 	public MultiLevelListData(List<NodeRef> entityNodeRefs,int depth ) {
 		super();
 		this.depth = depth;
 		this.entityNodeRefs = entityNodeRefs;
 	}
 	
+	/**
+	 * <p>Constructor for MultiLevelListData.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param depth a int.
+	 */
 	public MultiLevelListData(NodeRef entityNodeRef,int depth ) {
 		super();
 		this.depth = depth;
 		this.entityNodeRefs = Collections.singletonList(entityNodeRef);
 	}
 
+	/**
+	 * <p>Getter for the field <code>depth</code>.</p>
+	 *
+	 * @return a int.
+	 */
 	public int getDepth() {
 		return depth;
 	}
 
+	/**
+	 * <p>Getter for the field <code>tree</code>.</p>
+	 *
+	 * @return a {@link java.util.Map} object.
+	 */
 	public Map<NodeRef, MultiLevelListData> getTree() {
 		return tree;
 	}
 	
 
+	/**
+	 * <p>getEntityNodeRef.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public NodeRef getEntityNodeRef() {
 		return entityNodeRefs!=null && entityNodeRefs.size()>0 ? entityNodeRefs.get(0) : null;
 	}
 
 	
+	/**
+	 * <p>Getter for the field <code>entityNodeRefs</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	public List<NodeRef> getEntityNodeRefs() {
 		return entityNodeRefs;
 	}
 
+	/**
+	 * <p>getSize.</p>
+	 *
+	 * @return a int.
+	 */
 	public int getSize() {
 		return getSize(this,0);
 	}
 	
 	
+	/**
+	 * <p>isLeaf.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public boolean isLeaf() {
 		return isLeaf && (tree==null || tree.isEmpty());
 	}
 
+	/**
+	 * <p>setLeaf.</p>
+	 *
+	 * @param isLeaf a boolean.
+	 */
 	public void setLeaf(boolean isLeaf) {
 		this.isLeaf = isLeaf;
 	}
@@ -89,6 +137,11 @@ public class MultiLevelListData {
 	}
 	
 	
+	/**
+	 * <p>getAllChilds.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	public List<NodeRef> getAllChilds() {
 		List<NodeRef> ret = new ArrayList<>();
 		
@@ -99,6 +152,11 @@ public class MultiLevelListData {
 		return ret;
 	}
 	
+	/**
+	 * <p>getAllLeafs.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	public List<NodeRef> getAllLeafs() {
 		List<NodeRef> ret = new ArrayList<>();
 		
@@ -112,12 +170,14 @@ public class MultiLevelListData {
 	}
 	
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "MultiLevelListData [depth=" + depth + ", tree=" + tree + ", entityNodeRefs=" + entityNodeRefs + "]";
 	}
 	
 	
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -128,6 +188,7 @@ public class MultiLevelListData {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

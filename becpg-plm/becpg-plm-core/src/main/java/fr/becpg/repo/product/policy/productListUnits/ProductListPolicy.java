@@ -42,6 +42,12 @@ import fr.becpg.repo.product.formulation.AbstractSimpleListFormulationHandler;
 import fr.becpg.repo.product.formulation.CostsCalculatingFormulationHandler;
 import fr.becpg.repo.product.formulation.NutsCalculatingFormulationHandler;
 
+/**
+ * <p>ProductListPolicy class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class ProductListPolicy extends AbstractBeCPGPolicy
 		implements NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnUpdatePropertiesPolicy {
 
@@ -54,14 +60,25 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 
 	private AssociationService associationService;
 
+	/**
+	 * <p>Setter for the field <code>associationService</code>.</p>
+	 *
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object.
+	 */
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityListDAO</code>.</p>
+	 *
+	 * @param entityListDAO a {@link fr.becpg.repo.entity.EntityListDAO} object.
+	 */
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void doInit() {
 		logger.debug("Init productListUnits.ProductListPolicy...");
@@ -92,6 +109,7 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onCreateAssociation(AssociationRef assocRef) {
 
@@ -99,6 +117,7 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onUpdateProperties(NodeRef productNodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 
@@ -107,6 +126,7 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 
@@ -124,6 +144,7 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected boolean doBeforeAssocsCommit(String key, Set<AssociationRef> pendingAssocs) {
 		try {

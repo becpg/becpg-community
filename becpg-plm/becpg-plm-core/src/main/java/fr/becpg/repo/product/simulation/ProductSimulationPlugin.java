@@ -28,6 +28,12 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.repository.model.CompositionDataItem;
 
+/**
+ * <p>ProductSimulationPlugin class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class ProductSimulationPlugin implements EntitySimulationPlugin {
 
@@ -48,11 +54,13 @@ public class ProductSimulationPlugin implements EntitySimulationPlugin {
 	@Autowired
 	private TransactionService transactionService;
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean accept(String simulationMode) {
 		return EntitySimulationPlugin.RECUR_MODE.equals(simulationMode);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> simulateNodeRefs(NodeRef destNodeRef, List<NodeRef> nodeRefs) {
 

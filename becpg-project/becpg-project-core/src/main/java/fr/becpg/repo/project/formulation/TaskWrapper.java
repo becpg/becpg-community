@@ -18,6 +18,12 @@ import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskState;
 import fr.becpg.repo.project.impl.ProjectHelper;
 
+/**
+ * <p>TaskWrapper class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class TaskWrapper implements Comparable<TaskWrapper> {
 
 	private static final int DURATION_DEFAULT = 1;
@@ -32,60 +38,130 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 	private List<TaskWrapper> ancestors = new LinkedList<>();
 	private List<TaskWrapper> childs = new LinkedList<>();
 
+	/**
+	 * <p>Getter for the field <code>task</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object.
+	 */
 	public TaskListDataItem getTask() {
 		return task;
 	}
 
+	/**
+	 * <p>Setter for the field <code>task</code>.</p>
+	 *
+	 * @param task a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object.
+	 */
 	public void setTask(TaskListDataItem task) {
 		this.task = task;
 
 	}
 
+	/**
+	 * <p>Getter for the field <code>descendants</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	public List<TaskWrapper> getDescendants() {
 		return descendants;
 	}
 
+	/**
+	 * <p>Setter for the field <code>descendants</code>.</p>
+	 *
+	 * @param descendants a {@link java.util.List} object.
+	 */
 	public void setDescendants(List<TaskWrapper> descendants) {
 		this.descendants = descendants;
 	}
 
+	/**
+	 * <p>Getter for the field <code>ancestors</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	public List<TaskWrapper> getAncestors() {
 		return ancestors;
 	}
 
+	/**
+	 * <p>Setter for the field <code>ancestors</code>.</p>
+	 *
+	 * @param ancestors a {@link java.util.List} object.
+	 */
 	public void setAncestors(List<TaskWrapper> ancestors) {
 		this.ancestors = ancestors;
 	}
 
+	/**
+	 * <p>Getter for the field <code>childs</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	public List<TaskWrapper> getChilds() {
 		return childs;
 	}
 
+	/**
+	 * <p>Setter for the field <code>childs</code>.</p>
+	 *
+	 * @param childs a {@link java.util.List} object.
+	 */
 	public void setChilds(List<TaskWrapper> childs) {
 		this.childs = childs;
 	}
 
+	/**
+	 * <p>isRoot.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public boolean isRoot() {
 		return ((ancestors == null) || ancestors.isEmpty()) && !isGroup();
 	}
 
+	/**
+	 * <p>isLeaf.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public boolean isLeaf() {
 		return ((descendants == null) || descendants.isEmpty()) && !isGroup();
 	}
 
+	/**
+	 * <p>isSubProject.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public boolean isSubProject() {
 		return (task != null) && (task.getSubProject() != null);
 	}
 
+	/**
+	 * <p>isGroup.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public boolean isGroup() {
 		return (childs != null) && !childs.isEmpty();
 	}
 
+	/**
+	 * <p>getDuration.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object.
+	 */
 	public Integer getDuration() {
 		return ((task != null) && (task.getDuration() != null)) ? task.getDuration()
 				: ((task != null) && Boolean.TRUE.equals(task.getIsMilestone())) ? DURATION_DEFAULT : null;
 	}
 
+	/**
+	 * <p>getRealDuration.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object.
+	 */
 	public Integer getRealDuration() {
 
 		if (task != null) {
@@ -110,26 +186,57 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 
 	}
 
+	/**
+	 * <p>Getter for the field <code>maxDuration</code>.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object.
+	 */
 	public Integer getMaxDuration() {
 		return maxDuration;
 	}
 
+	/**
+	 * <p>Setter for the field <code>maxDuration</code>.</p>
+	 *
+	 * @param maxDuration a {@link java.lang.Integer} object.
+	 */
 	public void setMaxDuration(Integer maxDuration) {
 		this.maxDuration = maxDuration;
 	}
 
+	/**
+	 * <p>Getter for the field <code>maxRealDuration</code>.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object.
+	 */
 	public Integer getMaxRealDuration() {
 		return maxRealDuration;
 	}
 
+	/**
+	 * <p>Setter for the field <code>maxRealDuration</code>.</p>
+	 *
+	 * @param maxRealDuration a {@link java.lang.Integer} object.
+	 */
 	public void setMaxRealDuration(Integer maxRealDuration) {
 		this.maxRealDuration = maxRealDuration;
 	}
 
+	/**
+	 * <p>getStartDateTime.</p>
+	 *
+	 * @return a {@link java.lang.Long} object.
+	 */
 	public Long getStartDateTime() {
 		return (task != null) && (task.getStart() != null) ? task.getStart().getTime() : null;
 	}
 
+	/**
+	 * <p>dependsOf.</p>
+	 *
+	 * @param t a {@link fr.becpg.repo.project.formulation.TaskWrapper} object.
+	 * @return a boolean.
+	 */
 	public boolean dependsOf(TaskWrapper t) {
 		// is t a direct dependency?
 		if (ancestors.contains(t)) {
@@ -144,6 +251,12 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 		return false;
 	}
 
+	/**
+	 * <p>childOf.</p>
+	 *
+	 * @param t a {@link fr.becpg.repo.project.formulation.TaskWrapper} object.
+	 * @return a boolean.
+	 */
 	public boolean childOf(TaskWrapper t) {
 		// is t a direct dependency?
 		if (t.getChilds().contains(this)) {
@@ -153,6 +266,12 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 		return false;
 	}
 
+	/**
+	 * <p>extract.</p>
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object.
+	 * @return a {@link java.util.Set} object.
+	 */
 	public static Set<TaskWrapper> extract(ProjectData projectData) {
 
 		Map<NodeRef, TaskWrapper> cache = new HashMap<>();
@@ -193,6 +312,12 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 		return ret;
 	}
 
+	/**
+	 * <p>calculateMaxDuration.</p>
+	 *
+	 * @param tasks a {@link java.util.Set} object.
+	 * @return a {@link java.lang.Integer} object.
+	 */
 	public static Integer calculateMaxDuration(Set<TaskWrapper> tasks) {
 		// tasks whose critical cost has been calculated
 		HashSet<TaskWrapper> completed = new HashSet<>();
@@ -237,6 +362,12 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 		return completed.stream().map(t -> t.getMaxDuration()).max(Integer::compareTo).orElse(DURATION_DEFAULT);
 	}
 
+	/**
+	 * <p>print.</p>
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	public static String print(ProjectData projectData) {
 
 		StringBuilder ret = new StringBuilder();
@@ -254,6 +385,7 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 		return ret.toString();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	// https://stackoverflow.com/questions/2985317/critical-path-method-algorithm
 	public int compareTo(TaskWrapper o2) {

@@ -37,6 +37,12 @@ import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
+/**
+ * <p>ChangeOrderData class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @AlfType
 @AlfQname(qname = "ecm:changeOrder")
 public class ChangeOrderData extends BeCPGDataObject {
@@ -58,107 +64,212 @@ public class ChangeOrderData extends BeCPGDataObject {
 
 	
 	
+	/**
+	 * <p>Getter for the field <code>description</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "cm:description")
 	public String getDescription() {
 		return description;
 	}
 
+	/**
+	 * <p>Setter for the field <code>description</code>.</p>
+	 *
+	 * @param description a {@link java.lang.String} object.
+	 */
 	public void setDescription(String description) {
 		this.description = description;
 	}
 
+	/**
+	 * <p>Getter for the field <code>code</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:code")
 	public String getCode() {
 		return code;
 	}
 
+	/**
+	 * <p>Setter for the field <code>code</code>.</p>
+	 *
+	 * @param code a {@link java.lang.String} object.
+	 */
 	public void setCode(String code) {
 		this.code = code;
 	}
 
+	/**
+	 * <p>Getter for the field <code>ecoState</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.ecm.ECOState} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "ecm:ecoState")
 	public ECOState getEcoState() {
 		return ecoState;
 	}
 
+	/**
+	 * <p>Setter for the field <code>ecoState</code>.</p>
+	 *
+	 * @param ecoState a {@link fr.becpg.repo.ecm.ECOState} object.
+	 */
 	public void setEcoState(ECOState ecoState) {
 		this.ecoState = ecoState;
 	}
 	
 	
+	/**
+	 * <p>Getter for the field <code>effectiveDate</code>.</p>
+	 *
+	 * @return a {@link java.util.Date} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "ecm:effectiveDate")
 	public Date getEffectiveDate() {
 		return effectiveDate;
 	}
 
+	/**
+	 * <p>Setter for the field <code>effectiveDate</code>.</p>
+	 *
+	 * @param effectiveDate a {@link java.util.Date} object.
+	 */
 	public void setEffectiveDate(Date effectiveDate) {
 		this.effectiveDate = effectiveDate;
 	}
 
+	/**
+	 * <p>Getter for the field <code>ecoType</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.ecm.data.ChangeOrderType} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "ecm:ecoType")
 	public ChangeOrderType getEcoType() {
 		return ecoType;
 	}
 
+	/**
+	 * <p>Setter for the field <code>ecoType</code>.</p>
+	 *
+	 * @param ecoType a {@link fr.becpg.repo.ecm.data.ChangeOrderType} object.
+	 */
 	public void setEcoType(ChangeOrderType ecoType) {
 		this.ecoType = ecoType;
 	}
 
+	/**
+	 * <p>Getter for the field <code>calculatedCharacts</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@AlfMultiAssoc
 	@AlfQname(qname = "ecm:calculatedCharacts")
 	public List<NodeRef> getCalculatedCharacts() {
 		return calculatedCharacts;
 	}
 
+	/**
+	 * <p>Setter for the field <code>calculatedCharacts</code>.</p>
+	 *
+	 * @param calculatedCharacts a {@link java.util.List} object.
+	 */
 	public void setCalculatedCharacts(List<NodeRef> calculatedCharacts) {
 		this.calculatedCharacts = calculatedCharacts;
 	}
 
+	/**
+	 * <p>Getter for the field <code>replacementList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@DataList
 	@AlfQname(qname = "ecm:replacementList")
 	public List<ReplacementListDataItem> getReplacementList() {
 		return replacementList;
 	}
 
+	/**
+	 * <p>Setter for the field <code>replacementList</code>.</p>
+	 *
+	 * @param replacementList a {@link java.util.List} object.
+	 */
 	public void setReplacementList(List<ReplacementListDataItem> replacementList) {
 		this.replacementList = replacementList;
 	}
 
+	/**
+	 * <p>Getter for the field <code>wUsedList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@DataList
 	@AlfQname(qname = "ecm:wUsedList")
 	public List<WUsedListDataItem> getWUsedList() {
 		return wUsedList;
 	}
 
+	/**
+	 * <p>Setter for the field <code>wUsedList</code>.</p>
+	 *
+	 * @param wUsedList a {@link java.util.List} object.
+	 */
 	public void setWUsedList(List<WUsedListDataItem> wUsedList) {
 		this.wUsedList = wUsedList;
 	}
 
+	/**
+	 * <p>Getter for the field <code>simulationList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@DataList
 	@AlfQname(qname = "ecm:calculatedCharactList")
 	public List<SimulationListDataItem> getSimulationList() {
 		return simulationList;
 	}
 
+	/**
+	 * <p>Setter for the field <code>simulationList</code>.</p>
+	 *
+	 * @param simulationList a {@link java.util.List} object.
+	 */
 	public void setSimulationList(List<SimulationListDataItem> simulationList) {
 		this.simulationList = simulationList;
 	}
 
+	/**
+	 * <p>Getter for the field <code>changeUnitList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@DataList
 	@AlfQname(qname = "ecm:changeUnitList")
 	public List<ChangeUnitDataItem> getChangeUnitList() {
 		return changeUnitList;
 	}
 
+	/**
+	 * <p>Setter for the field <code>changeUnitList</code>.</p>
+	 *
+	 * @param changeUnitList a {@link java.util.List} object.
+	 */
 	public void setChangeUnitList(List<ChangeUnitDataItem> changeUnitList) {
 		this.changeUnitList = changeUnitList;
 	}
 
+	/**
+	 * <p>getChangeUnitMap.</p>
+	 *
+	 * @return a {@link java.util.Map} object.
+	 */
 	public Map<NodeRef, ChangeUnitDataItem> getChangeUnitMap() {
 
 		Map<NodeRef, ChangeUnitDataItem> changeUnitMap = new LinkedHashMap<>();
@@ -172,10 +283,21 @@ public class ChangeOrderData extends BeCPGDataObject {
 		return Collections.unmodifiableMap(changeUnitMap);
 	}
 
+	/**
+	 * <p>Constructor for ChangeOrderData.</p>
+	 */
 	public ChangeOrderData() {
 		super();
 	}
 
+	/**
+	 * <p>Constructor for ChangeOrderData.</p>
+	 *
+	 * @param name a {@link java.lang.String} object.
+	 * @param ecoState a {@link fr.becpg.repo.ecm.ECOState} object.
+	 * @param ecoType a {@link fr.becpg.repo.ecm.data.ChangeOrderType} object.
+	 * @param calculatedCharacts a {@link java.util.List} object.
+	 */
 	public ChangeOrderData( String name, ECOState ecoState, ChangeOrderType ecoType, List<NodeRef> calculatedCharacts) {
 		this.name = name;
 		this.ecoState = ecoState;
@@ -183,6 +305,7 @@ public class ChangeOrderData extends BeCPGDataObject {
 		this.calculatedCharacts = calculatedCharacts;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -200,6 +323,7 @@ public class ChangeOrderData extends BeCPGDataObject {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -256,6 +380,7 @@ public class ChangeOrderData extends BeCPGDataObject {
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "ChangeOrderData [code=" + code + ", ecoState=" + ecoState + ", ecoType=" + ecoType + ", calculatedCharacts=" + calculatedCharacts + ", replacementList="

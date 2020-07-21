@@ -40,9 +40,10 @@ import fr.becpg.repo.entity.datalist.DataListSortService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
+ * <p>DataListSortServiceImpl class.</p>
  *
  * @author matthieu, philippe
- *
+ * @version $Id: $Id
  */
 @Service("dataListSortService")
 public class DataListSortServiceImpl implements DataListSortService {
@@ -249,6 +250,7 @@ public class DataListSortServiceImpl implements DataListSortService {
 	}
 	
 
+	/** {@inheritDoc} */
 	@Override
 	public void computeDepthAndSort(Set<NodeRef> nodeRefs) {
 
@@ -331,6 +333,7 @@ public class DataListSortServiceImpl implements DataListSortService {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void deleteChildrens(NodeRef parentNodeRef, NodeRef nodeRef) {
 		try {
@@ -357,6 +360,7 @@ public class DataListSortServiceImpl implements DataListSortService {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void move(NodeRef nodeRef, boolean moveUp) {
 
@@ -444,6 +448,7 @@ public class DataListSortServiceImpl implements DataListSortService {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void insertAfter(NodeRef selectedNodeRef, NodeRef nodeRef) {
 
@@ -571,6 +576,7 @@ public class DataListSortServiceImpl implements DataListSortService {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getLastChild(NodeRef nodeRef) {
 

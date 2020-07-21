@@ -32,13 +32,15 @@ import fr.becpg.report.client.ReportFormat;
 import fr.becpg.report.client.ReportParams;
 
 /**
+ * <p>JXLSReportEngine class.</p>
  *
  * @author matthieu
- *
+ * @version $Id: $Id
  */
 @Service
 public class JXLSReportEngine implements BeCPGReportEngine {
 
+	/** Constant <code>JXLS_EXTENSION=".jxls"</code> */
 	public static final String JXLS_EXTENSION = ".jxls";
 
 	private static Log logger = LogFactory.getLog(JXLSReportEngine.class);
@@ -55,11 +57,13 @@ public class JXLSReportEngine implements BeCPGReportEngine {
 	@Autowired
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isApplicable(NodeRef templateNodeRef, ReportFormat reportFormat) {
 		return ((String) nodeService.getProperty(templateNodeRef, ContentModel.PROP_NAME)).endsWith(JXLS_EXTENSION);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void createReport(NodeRef tplNodeRef, EntityReportData reportData, OutputStream out, Map<String, Object> params) throws ReportException {
 		StopWatch watch = null;
@@ -117,6 +121,7 @@ public class JXLSReportEngine implements BeCPGReportEngine {
 		return name.toLowerCase().substring(0, name.lastIndexOf('.'));
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isXmlEngine() {
 		return false;

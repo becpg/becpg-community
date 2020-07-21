@@ -34,20 +34,33 @@ import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.product.data.productList.SynchronisableState;
 
+/**
+ * <p>LabelingRuleListPolicy class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class LabelingRuleListPolicy extends AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyNodePolicy {
 
 	private EntityListDAO entityListDAO;
 
+	/**
+	 * <p>Setter for the field <code>entityListDAO</code>.</p>
+	 *
+	 * @param entityListDAO a {@link fr.becpg.repo.entity.EntityListDAO} object.
+	 */
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void doInit() {
 		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyNodePolicy.QNAME, PLMModel.TYPE_LABELINGRULELIST,
 				new JavaBehaviour(this, "getCopyCallback"));
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public CopyBehaviourCallback getCopyCallback(QName classRef, CopyDetails copyDetails) {
 		return new LabelingRuleListBehaviourCallback();

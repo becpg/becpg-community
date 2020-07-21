@@ -61,6 +61,12 @@ import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
+/**
+ * <p>AssociationServiceImpl class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class AssociationServiceImpl extends AbstractBeCPGPolicy implements AssociationService, NodeServicePolicies.OnCreateAssociationPolicy,
 		NodeServicePolicies.OnCreateChildAssociationPolicy, NodeServicePolicies.OnDeleteAssociationPolicy,
 		NodeServicePolicies.OnDeleteChildAssociationPolicy, NodeServicePolicies.OnDeleteNodePolicy, CheckOutCheckInServicePolicies.OnCheckIn {
@@ -87,30 +93,61 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 		ignoredAssocs.add(ContentModel.ASSOC_ORIGINAL);
 	}
 
+	/**
+	 * <p>Setter for the field <code>beCPGCacheService</code>.</p>
+	 *
+	 * @param beCPGCacheService a {@link fr.becpg.repo.cache.BeCPGCacheService} object.
+	 */
 	public void setBeCPGCacheService(BeCPGCacheService beCPGCacheService) {
 		this.beCPGCacheService = beCPGCacheService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityDictionaryService</code>.</p>
+	 *
+	 * @param entityDictionaryService a {@link fr.becpg.repo.entity.EntityDictionaryService} object.
+	 */
 	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
 		this.entityDictionaryService = entityDictionaryService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>dataSource</code>.</p>
+	 *
+	 * @param dataSource a DataSource object.
+	 */
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
 	}
 
+	/**
+	 * <p>Setter for the field <code>tenantService</code>.</p>
+	 *
+	 * @param tenantService a {@link org.alfresco.repo.tenant.TenantService} object.
+	 */
 	public void setTenantService(TenantService tenantService) {
 		this.tenantService = tenantService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>namespaceService</code>.</p>
+	 *
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
+	 */
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>qnameDAO</code>.</p>
+	 *
+	 * @param qnameDAO a {@link org.alfresco.repo.domain.qname.QNameDAO} object.
+	 */
 	public void setQnameDAO(QNameDAO qnameDAO) {
 		this.qnameDAO = qnameDAO;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void update(NodeRef nodeRef, QName qName, List<NodeRef> assocNodeRefs, boolean resetCache) {
 
@@ -152,11 +189,13 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void update(NodeRef nodeRef, QName qName, List<NodeRef> assocNodeRefs) {
 		update(nodeRef, qName, assocNodeRefs, false);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void update(NodeRef nodeRef, QName qName, NodeRef assocNodeRef) {
 
@@ -200,11 +239,13 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getTargetAssoc(NodeRef nodeRef, QName qName) {
 		return getTargetAssoc(nodeRef, qName, true);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getTargetAssoc(NodeRef nodeRef, QName qName, boolean fromCache) {
 		List<AssociationRef> assocRefs = getTargetAssocsImpl(nodeRef, qName, fromCache);
@@ -227,22 +268,26 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getChildAssoc(NodeRef nodeRef, QName qName) {
 		List<NodeRef> assocRefs = getChildAssocsImpl(nodeRef, qName, null, null);
 		return (assocRefs != null) && !assocRefs.isEmpty() ? assocRefs.get(0) : null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> getChildAssocs(NodeRef nodeRef, QName qName) {
 		return getChildAssocs(nodeRef, qName, null);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> getChildAssocs(NodeRef nodeRef, QName qName, QName childTypeQName) {
 		return getChildAssocsImpl(nodeRef, qName, childTypeQName, null);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> getChildAssocs(NodeRef listNodeRef, QName qName, QName childTypeQName, Map<String, Boolean> sortMap) {
 		return getChildAssocsImpl(listNodeRef, qName, childTypeQName, sortMap);
@@ -390,6 +435,7 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 		return ret;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> getTargetAssocs(NodeRef nodeRef, QName qName, boolean fromCache) {
 		List<AssociationRef> assocRefs = getTargetAssocsImpl(nodeRef, qName, fromCache);
@@ -401,11 +447,13 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 		return listItems;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> getTargetAssocs(NodeRef nodeRef, QName qName) {
 		return getTargetAssocs(nodeRef, qName, true);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QNamePattern qNamePattern) {
 		List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, qNamePattern);
@@ -456,6 +504,7 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 			+ " and q1.qname_id IS NULL and q2.qname_id IS NULL ";
 
 
+	/** {@inheritDoc} */
 	@Override
 	public List<EntitySourceAssoc> getEntitySourceAssocs(List<NodeRef> nodeRefs, QName assocTypeQName, boolean isOrOperator) {
 		List<EntitySourceAssoc> ret = null;
@@ -587,6 +636,7 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 		return ret;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void doInit() {
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteAssociationPolicy.QNAME, ContentModel.TYPE_CMOBJECT,
@@ -630,12 +680,14 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 		return AssociationService.class.getName() + ".childs";
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onDeleteAssociation(AssociationRef associationRef) {
 		logger.debug("onDeleteAssociation");
 		removeCachedAssoc(assocCacheName(), associationRef.getSourceRef(), associationRef.getTypeQName());
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onCreateAssociation(AssociationRef associationRef) {
 		logger.debug("onCreateAssociation");
@@ -644,6 +696,7 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onDeleteChildAssociation(ChildAssociationRef associationRef) {
 		logger.debug("onDeleteChildAssociation: " + associationRef.getTypeQName());
@@ -652,6 +705,7 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onCreateChildAssociation(ChildAssociationRef associationRef, boolean arg1) {
 		logger.debug("onCreateChildAssociation: " + associationRef.getTypeQName());
@@ -660,6 +714,7 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onDeleteNode(ChildAssociationRef associationRef, boolean arg1) {
 		logger.debug("onDeleteNode: " + associationRef.getTypeQName());
@@ -667,6 +722,7 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 		removeCachedAssoc(childAssocCacheName(), associationRef.getParentRef(), associationRef.getTypeQName());
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onCheckIn(NodeRef nodeRef) {
 		// Bad but not so often

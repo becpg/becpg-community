@@ -11,6 +11,12 @@ import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
+/**
+ * <p>NutDataItem class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @AlfType
 @AlfQname(qname = "bcpg:nut")
 public class NutDataItem extends BeCPGDataObject {
@@ -37,16 +43,31 @@ public class NutDataItem extends BeCPGDataObject {
 
 	private String nutColor;
 	
+	/**
+	 * <p>Getter for the field <code>nutCode</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="gs1:nutrientTypeCode")
 	public String getNutCode() {
 		return nutCode;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nutCode</code>.</p>
+	 *
+	 * @param nutCode a {@link java.lang.String} object.
+	 */
 	public void setNutCode(String nutCode) {
 		this.nutCode = nutCode;
 	}
 
+	/**
+	 * <p>Getter for the field <code>charactName</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object.
+	 */
 	@AlfProp
 	@AlfMlText
 	@AlfQname(qname="bcpg:charactName")
@@ -54,40 +75,80 @@ public class NutDataItem extends BeCPGDataObject {
 		return charactName;
 	}
 
+	/**
+	 * <p>Setter for the field <code>charactName</code>.</p>
+	 *
+	 * @param charactName a {@link org.alfresco.service.cmr.repository.MLText} object.
+	 */
 	public void setCharactName(MLText charactName) {
 		this.charactName = charactName;
 	}
 
+	/**
+	 * <p>Getter for the field <code>nutGroup</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:nutGroup")
 	public String getNutGroup() {
 		return nutGroup;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nutGroup</code>.</p>
+	 *
+	 * @param nutGroup a {@link java.lang.String} object.
+	 */
 	public void setNutGroup(String nutGroup) {
 		this.nutGroup = nutGroup;
 	}
 
+	/**
+	 * <p>Getter for the field <code>nutType</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:nutType")
 	public String getNutType() {
 		return nutType;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nutType</code>.</p>
+	 *
+	 * @param nutType a {@link java.lang.String} object.
+	 */
 	public void setNutType(String nutType) {
 		this.nutType = nutType;
 	}
 
+	/**
+	 * <p>Getter for the field <code>nutUnit</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:nutUnit")
 	public String getNutUnit() {
 		return nutUnit;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nutUnit</code>.</p>
+	 *
+	 * @param nutUnit a {@link java.lang.String} object.
+	 */
 	public void setNutUnit(String nutUnit) {
 		this.nutUnit = nutUnit;
 	}
 
+	/**
+	 * <p>Getter for the field <code>nutGDA</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfMlText
 	@AlfQname(qname="bcpg:nutGDA")
@@ -95,10 +156,20 @@ public class NutDataItem extends BeCPGDataObject {
 		return nutGDA;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nutGDA</code>.</p>
+	 *
+	 * @param nutGDA a {@link java.lang.Double} object.
+	 */
 	public void setNutGDA(Double nutGDA) {
 		this.nutGDA = nutGDA;
 	}
 
+	/**
+	 * <p>Getter for the field <code>nutUL</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfMlText
 	@AlfQname(qname="bcpg:nutUL")
@@ -106,31 +177,57 @@ public class NutDataItem extends BeCPGDataObject {
 		return nutUL;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nutUL</code>.</p>
+	 *
+	 * @param nutUL a {@link java.lang.Double} object.
+	 */
 	public void setNutUL(Double nutUL) {
 		this.nutUL = nutUL;
 	}
 
 
+	/**
+	 * <p>Getter for the field <code>nutFormula</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:nutFormula")
 	public String getNutFormula() {
 		return nutFormula;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nutFormula</code>.</p>
+	 *
+	 * @param nutFormula a {@link java.lang.String} object.
+	 */
 	public void setNutFormula(String nutFormula) {
 		this.nutFormula = nutFormula;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>nutColor</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:color")
 	public String getNutColor() {
 		return nutColor;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nutColor</code>.</p>
+	 *
+	 * @param nutColor a {@link java.lang.String} object.
+	 */
 	public void setNutColor(String nutColor) {
 		this.nutColor = nutColor;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -147,6 +244,7 @@ public class NutDataItem extends BeCPGDataObject {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -204,6 +302,7 @@ public class NutDataItem extends BeCPGDataObject {
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "NutDataItem [nutCode=" + nutCode + ", charactName=" + charactName + ", nutGroup=" + nutGroup + ", nutType=" + nutType + ", nutUnit="

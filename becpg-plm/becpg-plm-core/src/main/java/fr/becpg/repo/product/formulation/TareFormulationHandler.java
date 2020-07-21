@@ -41,6 +41,12 @@ import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
+/**
+ * <p>TareFormulationHandler class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class TareFormulationHandler extends FormulationBaseHandler<ProductData> {
 
 	private static final Log logger = LogFactory.getLog(TareFormulationHandler.class);
@@ -48,6 +54,7 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 	@Autowired
 	protected AlfrescoRepository<ProductData> alfrescoRepository;
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 

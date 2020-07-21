@@ -35,6 +35,12 @@ import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 
+/**
+ * <p>ECOVersionPlugin class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class ECOVersionPlugin implements EntityVersionPlugin {
 
@@ -65,21 +71,25 @@ public class ECOVersionPlugin implements EntityVersionPlugin {
 
 	private static final Log logger = LogFactory.getLog(ECOVersionPlugin.class);
 
+	/** {@inheritDoc} */
 	@Override
 	public void doAfterCheckout(NodeRef origNodeRef, NodeRef workingCopyNodeRef) {
 		// DO Nothing
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void doBeforeCheckin(NodeRef origNodeRef, NodeRef workingCopyNodeRef) {
 		// DO Nothing
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void cancelCheckout(NodeRef origNodeRef, NodeRef workingCopyNodeRef) {
 		// DO Nothing
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void impactWUsed(NodeRef entityNodeRef, VersionType versionType, String description) {
 

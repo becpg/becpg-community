@@ -53,6 +53,12 @@ import fr.becpg.repo.search.AdvSearchPlugin;
 import fr.becpg.repo.search.AdvSearchService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
+/**
+ * <p>NotificationRuleServiceImpl class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service("notificationRuleService")
 public class NotificationRuleServiceImpl implements NotificationRuleService {
 
@@ -119,6 +125,7 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 	private AdvSearchPlugin[] advSearchPlugins;
 	
 	
+	/** {@inheritDoc} */
 	@Override
 	public void sendNotifications() {
 		

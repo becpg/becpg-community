@@ -28,16 +28,35 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 
 import com.ibm.icu.util.Calendar;
 
+/**
+ * <p>Abstract BrowserCacheHelper class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public abstract class BrowserCacheHelper   {
 
 	private static final Log logger = LogFactory.getLog(BrowserCacheHelper.class);
 	
+	/**
+	 * <p>isBrowserHasInCache.</p>
+	 *
+	 * @param req a {@link org.springframework.extensions.webscripts.WebScriptRequest} object.
+	 * @return a boolean.
+	 */
 	public static boolean isBrowserHasInCache(WebScriptRequest req){
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.MONTH, -5);
 		return shouldReturnNotModified(req, cal.getTime());
 	}
 
+	/**
+	 * <p>shouldReturnNotModified.</p>
+	 *
+	 * @param req a {@link org.springframework.extensions.webscripts.WebScriptRequest} object.
+	 * @param lastModified a {@link java.util.Date} object.
+	 * @return a boolean.
+	 */
 	public static boolean shouldReturnNotModified(WebScriptRequest req, Date lastModified) {
 
 		/**

@@ -17,7 +17,10 @@ import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
 /**
+ * <p>DynListPolicy class.</p>
+ *
  * @author matthieu
+ * @version $Id: $Id
  */
 public class DynListPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnDeleteNodePolicy,
 		NodeServicePolicies.OnUpdateNodePolicy, NodeServicePolicies.OnCreateNodePolicy {
@@ -27,10 +30,18 @@ public class DynListPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 	
 	BeCPGCacheService beCPGCacheService;
 	
+	/**
+	 * <p>Setter for the field <code>beCPGCacheService</code>.</p>
+	 *
+	 * @param beCPGCacheService a {@link fr.becpg.repo.cache.BeCPGCacheService} object.
+	 */
 	public void setBeCPGCacheService(BeCPGCacheService beCPGCacheService) {
 		this.beCPGCacheService = beCPGCacheService;
 	}
 
+	/**
+	 * <p>doInit.</p>
+	 */
 	public void doInit() {
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME, BeCPGModel.TYPE_LIST_VALUE, new JavaBehaviour(this,
 				"onDeleteNode"));
@@ -40,21 +51,25 @@ public class DynListPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 				"onCreateNode"));
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onCreateNode(ChildAssociationRef childAssocRef) {
 		queueNode(childAssocRef.getChildRef());
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onDeleteNode(ChildAssociationRef childAssocRef, boolean isNodeArchived) {
 		queueNode(childAssocRef.getChildRef());
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onUpdateNode(NodeRef itemNodeRef) {
 		queueNode(itemNodeRef);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 		if(!pendingNodes.isEmpty()){

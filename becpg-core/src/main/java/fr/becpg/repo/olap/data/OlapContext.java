@@ -24,6 +24,12 @@ import java.util.UUID;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 
+/**
+ * <p>OlapContext class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class OlapContext implements Closeable{
 
 	final CloseableHttpClient session;
@@ -34,26 +40,52 @@ public class OlapContext implements Closeable{
 	
 	final String uuid;
 
+	/**
+	 * <p>Getter for the field <code>session</code>.</p>
+	 *
+	 * @return a {@link org.apache.http.impl.client.CloseableHttpClient} object.
+	 */
 	public CloseableHttpClient getSession() {
 		return session;
 	}
 
 
+	/**
+	 * <p>Getter for the field <code>currentUser</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getCurrentUser() {
 		return currentUser;
 	}
 
 
+	/**
+	 * <p>Getter for the field <code>authToken</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getAuthToken() {
 		return authToken;
 	}
 
 
+	/**
+	 * <p>Getter for the field <code>uuid</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getUuid() {
 		return uuid;
 	}
 
 
+	/**
+	 * <p>Constructor for OlapContext.</p>
+	 *
+	 * @param currentUser a {@link java.lang.String} object.
+	 * @param authToken a {@link java.lang.String} object.
+	 */
 	public OlapContext(String currentUser, String authToken) {
 		super();
 		this.session = HttpClientBuilder.create().build();
@@ -63,6 +95,7 @@ public class OlapContext implements Closeable{
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public void close() throws IOException {
 		session.close();

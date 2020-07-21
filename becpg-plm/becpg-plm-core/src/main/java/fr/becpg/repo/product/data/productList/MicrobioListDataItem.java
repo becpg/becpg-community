@@ -16,6 +16,12 @@ import fr.becpg.repo.repository.model.ControlableListDataItem;
 import fr.becpg.repo.repository.model.MinMaxValueDataItem;
 import fr.becpg.repo.repository.model.UnitAwareDataItem;
 
+/**
+ * <p>MicrobioListDataItem class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @AlfType
 @AlfQname(qname = "bcpg:microbioList")
 public class MicrobioListDataItem extends BeCPGDataObject implements ControlableListDataItem, UnitAwareDataItem, MinMaxValueDataItem {
@@ -36,6 +42,11 @@ public class MicrobioListDataItem extends BeCPGDataObject implements Controlable
 	private NodeRef microbio;
 	
 	
+	/**
+	 * <p>Getter for the field <code>value</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:mblValue")
 	public Double getValue() {
@@ -43,10 +54,16 @@ public class MicrobioListDataItem extends BeCPGDataObject implements Controlable
 	}
 	
 	
+	/** {@inheritDoc} */
 	public void setValue(Double value) {
 		this.value = value;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>unit</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:mblUnit")
 	public String getUnit() {
@@ -54,10 +71,16 @@ public class MicrobioListDataItem extends BeCPGDataObject implements Controlable
 	}
 	
 	
+	/** {@inheritDoc} */
 	public void setUnit(String unit) {
 		this.unit = unit;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>maxi</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:mblMaxi")
 	public Double getMaxi() {
@@ -65,32 +88,50 @@ public class MicrobioListDataItem extends BeCPGDataObject implements Controlable
 	}
 	
 	
+	/** {@inheritDoc} */
 	public void setMaxi(Double maxi) {
 		this.maxi = maxi;
 	}
 	
 	
+	/** {@inheritDoc} */
 	@Override
 	public Double getMini() {
 		return null;
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public void setMini(Double value) {
 		
 	}
 	
+	/**
+	 * <p>Getter for the field <code>textCriteria</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:mblTextCriteria")
 	public String getTextCriteria() {
 		return textCriteria;
 	}
 
+	/**
+	 * <p>Setter for the field <code>textCriteria</code>.</p>
+	 *
+	 * @param textCriteria a {@link java.lang.String} object.
+	 */
 	public void setTextCriteria(String textCriteria) {
 		this.textCriteria = textCriteria;
 	}
 
+	/**
+	 * <p>Getter for the field <code>microbio</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	@AlfSingleAssoc
 	@DataListIdentifierAttr
 	@InternalField
@@ -100,16 +141,23 @@ public class MicrobioListDataItem extends BeCPGDataObject implements Controlable
 	}
 	
 	
+	/**
+	 * <p>Setter for the field <code>microbio</code>.</p>
+	 *
+	 * @param microbio a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void setMicrobio(NodeRef microbio) {
 		this.microbio = microbio;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public void setCharactNodeRef(NodeRef microbio) {
 		this.microbio = microbio;
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getCharactNodeRef() {
 		return microbio;
@@ -132,6 +180,7 @@ public class MicrobioListDataItem extends BeCPGDataObject implements Controlable
 	 * @param unit the unit
 	 * @param maxi the maxi
 	 * @param microbio the microbio
+	 * @param textCriteria a {@link java.lang.String} object.
 	 */
 	public MicrobioListDataItem(NodeRef nodeRef, Double value, String unit, Double maxi, String textCriteria, NodeRef microbio){
 		this.nodeRef = nodeRef;
@@ -144,7 +193,8 @@ public class MicrobioListDataItem extends BeCPGDataObject implements Controlable
 	
 	/**
 	 * Copy constructor
-	 * @param m
+	 *
+	 * @param m a {@link fr.becpg.repo.product.data.productList.MicrobioListDataItem} object.
 	 */
 	public MicrobioListDataItem(MicrobioListDataItem m){
 		setNodeRef(m.getNodeRef());
@@ -155,6 +205,7 @@ public class MicrobioListDataItem extends BeCPGDataObject implements Controlable
 		setMicrobio(m.getMicrobio());
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -168,6 +219,7 @@ public class MicrobioListDataItem extends BeCPGDataObject implements Controlable
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -210,6 +262,7 @@ public class MicrobioListDataItem extends BeCPGDataObject implements Controlable
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "MicrobioListDataItem [nodeRef=" + nodeRef + ", value=" + value + ", unit=" + unit + ", maxi=" + maxi + ", textCriteria=" + textCriteria + ", microbio=" + microbio

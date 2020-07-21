@@ -24,53 +24,63 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
 /**
- * 
- * @author matthieu
+ * <p>EntitySystemService interface.</p>
  *
+ * @author matthieu
+ * @version $Id: $Id
  */
 public interface EntitySystemService {
 
 	/**
-	 * 
-	 * @param parentNodeRef
-	 * @param path
-	 * @param entitySystemDataLists
+	 * <p>createSystemEntity.</p>
+	 *
+	 * @param parentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param path a {@link java.lang.String} object.
+	 * @param entitySystemDataLists a {@link java.util.Map} object.
 	 * @return create systeme entity
 	 */
 	NodeRef createSystemEntity(NodeRef parentNodeRef, String path, Map<String, QName> entitySystemDataLists);
 
 	/**
-	 * 
-	 * @param parentNodeRef
-	 * @param systemEntityPath
+	 * <p>getSystemEntity.</p>
+	 *
+	 * @param parentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param systemEntityPath a {@link java.lang.String} object.
 	 * @return system entity for given systemEntityPath
 	 */
 	NodeRef getSystemEntity(NodeRef parentNodeRef, String systemEntityPath);
 
 	/**
-	 * 
-	 * @param systemEntityNodeRef
-	 * @param dataListPath
+	 * <p>getSystemEntityDataList.</p>
+	 *
+	 * @param systemEntityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param dataListPath a {@link java.lang.String} object.
 	 * @returns system entity datalist
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
 	NodeRef getSystemEntityDataList(NodeRef systemEntityNodeRef, String dataListPath);
 
 	/**
-	 * 
-	 * @param parentNodeRef
-	 * @param systemEntityPath
-	 * @param dataListPath
+	 * <p>getSystemEntityDataList.</p>
+	 *
+	 * @param parentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param systemEntityPath a {@link java.lang.String} object.
+	 * @param dataListPath a {@link java.lang.String} object.
 	 * @return system entity datalist
 	 */
 	NodeRef getSystemEntityDataList(NodeRef parentNodeRef, String systemEntityPath, String dataListPath);
 
 	/**
+	 * <p>getSystemEntities.</p>
+	 *
 	 * @return entities of type TYPE_SYSTEM_ENTITY
 	 */
 	List<NodeRef> getSystemEntities();
 	
 	
 	/**
+	 * <p>getSystemFolders.</p>
+	 *
 	 * @return folders with aspect SYSTEM_FOLDER
 	 */
 	List<NodeRef> getSystemFolders();

@@ -48,9 +48,9 @@ import fr.becpg.repo.designer.DesignerService;
 
 /**
  * Create missing forms and type from workflow definition
- * 
+ *
  * @author matthieu
- * 
+ * @version $Id: $Id
  */
 public class DesignerWorkflowDeployer {
 
@@ -64,28 +64,58 @@ public class DesignerWorkflowDeployer {
 
 	private NamespaceService namespaceService;
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>contentService</code>.</p>
+	 *
+	 * @param contentService a {@link org.alfresco.service.cmr.repository.ContentService} object.
+	 */
 	public void setContentService(ContentService contentService) {
 		this.contentService = contentService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>designerService</code>.</p>
+	 *
+	 * @param designerService a {@link fr.becpg.repo.designer.DesignerService} object.
+	 */
 	public void setDesignerService(DesignerService designerService) {
 		this.designerService = designerService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>dictionaryService</code>.</p>
+	 *
+	 * @param dictionaryService a {@link org.alfresco.service.cmr.dictionary.DictionaryService} object.
+	 */
 	public void setDictionaryService(DictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>namespaceService</code>.</p>
+	 *
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
+	 */
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
 
 	private static final Log logger = LogFactory.getLog(DesignerWorkflowDeployer.class);
 
+	/**
+	 * <p>createMissingFormsAndType.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void createMissingFormsAndType(NodeRef nodeRef) {
 
 		BPMN2XmlParser bpmn2Parser = new BPMN2XmlParser();

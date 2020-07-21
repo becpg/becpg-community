@@ -15,6 +15,12 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorPlugin;
 
+/**
+ * <p>Abstract AbstractExprNameExtractor class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public abstract class AbstractExprNameExtractor implements AttributeExtractorPlugin{
 
 	private final static String ML_PREFIX = "ml_";
@@ -31,6 +37,13 @@ public abstract class AbstractExprNameExtractor implements AttributeExtractorPlu
 
 	
 	
+	/**
+	 * <p>extractExpr.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param exprFormat a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	protected String extractExpr(NodeRef nodeRef, String exprFormat){
 		Matcher patternMatcher = Pattern.compile("\\{([^}]+)\\}").matcher(exprFormat);
 		StringBuffer sb = new StringBuffer();
@@ -69,6 +82,7 @@ public abstract class AbstractExprNameExtractor implements AttributeExtractorPlu
 	}
 	
 	
+	/** {@inheritDoc} */
 	@Override
 	public Integer getPriority() {
 		return 0;

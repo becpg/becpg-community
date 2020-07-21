@@ -10,6 +10,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
  * The Interface NodeVisitor.
  *
  * @author querephi
+ * @version $Id: $Id
  */
 public interface NodeVisitor {
 

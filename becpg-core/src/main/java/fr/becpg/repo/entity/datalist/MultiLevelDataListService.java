@@ -22,10 +22,44 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 
+/**
+ * <p>MultiLevelDataListService interface.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public interface MultiLevelDataListService {
+	/**
+	 * <p>getMultiLevelListData.</p>
+	 *
+	 * @param dataListFilter a {@link fr.becpg.repo.entity.datalist.data.DataListFilter} object.
+	 * @return a {@link fr.becpg.repo.entity.datalist.data.MultiLevelListData} object.
+	 */
 	MultiLevelListData getMultiLevelListData(DataListFilter dataListFilter);
+	/**
+	 * <p>getMultiLevelListData.</p>
+	 *
+	 * @param dataListFilter a {@link fr.becpg.repo.entity.datalist.data.DataListFilter} object.
+	 * @param useExpandedCache a boolean.
+	 * @param resetTree a boolean.
+	 * @return a {@link fr.becpg.repo.entity.datalist.data.MultiLevelListData} object.
+	 */
 	MultiLevelListData getMultiLevelListData(DataListFilter dataListFilter, boolean useExpandedCache, boolean resetTree);
+	/**
+	 * <p>expandOrColapseNode.</p>
+	 *
+	 * @param nodeToExpand a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param expand a boolean.
+	 */
 	void expandOrColapseNode(NodeRef nodeToExpand, boolean expand);
+	/**
+	 * <p>isExpandedNode.</p>
+	 *
+	 * @param entityFolder a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param condition a boolean.
+	 * @param resetTree a boolean.
+	 * @return a boolean.
+	 */
 	boolean isExpandedNode(NodeRef entityFolder, boolean condition, boolean resetTree);
 	
 	

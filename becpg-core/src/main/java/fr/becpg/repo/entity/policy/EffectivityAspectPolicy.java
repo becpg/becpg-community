@@ -35,16 +35,28 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
+/**
+ * <p>EffectivityAspectPolicy class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class EffectivityAspectPolicy extends AbstractBeCPGPolicy
 		implements NodeServicePolicies.OnAddAspectPolicy, CopyServicePolicies.OnCopyNodePolicy {
 
 	private EffectivityAspectCopyBehaviourCallback effectivityAspectCopyBehaviourCallback = new EffectivityAspectCopyBehaviourCallback();
 	private EntityDictionaryService entityDictionaryService;
 
+	/**
+	 * <p>Setter for the field <code>entityDictionaryService</code>.</p>
+	 *
+	 * @param entityDictionaryService a {@link fr.becpg.repo.entity.EntityDictionaryService} object.
+	 */
 	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
 		this.entityDictionaryService = entityDictionaryService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void doInit() {
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnAddAspectPolicy.QNAME, BeCPGModel.ASPECT_EFFECTIVITY,
@@ -53,11 +65,13 @@ public class EffectivityAspectPolicy extends AbstractBeCPGPolicy
 				new JavaBehaviour(this, "getCopyCallback"));
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onAddAspect(NodeRef nodeRef, QName aspectTypeQName) {
 		queueNode(nodeRef);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 		for (NodeRef nodeRef : pendingNodes) {
@@ -71,6 +85,7 @@ public class EffectivityAspectPolicy extends AbstractBeCPGPolicy
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public CopyBehaviourCallback getCopyCallback(QName classRef, CopyDetails copyDetails) {
 		return effectivityAspectCopyBehaviourCallback;

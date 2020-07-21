@@ -12,12 +12,19 @@ import fr.becpg.repo.variant.model.VariantData;
 
 /**
  * Manage packaging data with variants
- * @author quere
  *
+ * @author quere
+ * @version $Id: $Id
  */
 public class PackagingData {
 	private final Map<NodeRef, VariantPackagingData> variants = new HashMap<>();
 
+	/**
+	 * <p>getVariantPackagingData.</p>
+	 *
+	 * @param variantNodeRefs a {@link java.util.List} object.
+	 * @return a {@link java.util.Collection} object.
+	 */
 	public Collection<VariantPackagingData> getVariantPackagingData(List<NodeRef> variantNodeRefs) {
 		if (variantNodeRefs == null || variantNodeRefs.isEmpty()) {
 			return variants.values();
@@ -31,6 +38,11 @@ public class PackagingData {
 		return selectedVariants;
 	}
 
+	/**
+	 * <p>Constructor for PackagingData.</p>
+	 *
+	 * @param variantDataList a {@link java.util.List} object.
+	 */
 	public PackagingData(List<VariantData> variantDataList) {
 		boolean hasDefaultVariant = false;
 
@@ -48,6 +60,11 @@ public class PackagingData {
 		}
 	}
 
+	/**
+	 * <p>Getter for the field <code>variants</code>.</p>
+	 *
+	 * @return a {@link java.util.Map} object.
+	 */
 	public Map<NodeRef, VariantPackagingData> getVariants() {
 		return variants;
 	}

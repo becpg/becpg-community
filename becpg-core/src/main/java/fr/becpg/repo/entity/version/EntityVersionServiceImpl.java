@@ -83,6 +83,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  * - copy working copy to history 1.1 - mv file and datalist to oldNode -
  * versionService merge oldNode
  *
+ * @version $Id: $Id
  */
 @Service("entityVersionService")
 public class EntityVersionServiceImpl implements EntityVersionService {
@@ -158,11 +159,13 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	@Autowired(required = false)
 	private EntityVersionPlugin[] entityVersionPlugins;
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef createVersionAndCheckin(final NodeRef origNodeRef, final NodeRef workingCopyNodeRef, Map<String, Serializable> versionProperties) {
 		return internalCreateVersionAndCheckin(origNodeRef, workingCopyNodeRef, versionProperties, false);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef doCheckOut(final NodeRef origNodeRef, final NodeRef workingCopyNodeRef) {
 
@@ -202,6 +205,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		return workingCopyNodeRef;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void cancelCheckOut(final NodeRef origNodeRef, final NodeRef workingCopyNodeRef) {
 
@@ -227,6 +231,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void afterCancelCheckOut(NodeRef entityNodeRef) {
 		if ((versionService.getVersionHistory(entityNodeRef) == null)
@@ -456,6 +461,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void createInitialVersion(NodeRef entityNodeRef) {
 		if (getVersionHistoryNodeRef(entityNodeRef) == null) {
@@ -481,6 +487,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef createVersion(final NodeRef origNodeRef, Map<String, Serializable> versionProperties) {
 		return internalCreateVersionAndCheckin(origNodeRef, null, versionProperties, true);
@@ -488,11 +495,9 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	}
 
 	/**
-	 * Gets a reference to the version history node for a given 'real' node.
+	 * {@inheritDoc}
 	 *
-	 * @param nodeRef
-	 *            a node reference
-	 * @return a reference to the version history node, null of none
+	 * Gets a reference to the version history node for a given 'real' node.
 	 */
 	@Override
 	public NodeRef getVersionHistoryNodeRef(NodeRef nodeRef) {
@@ -508,9 +513,9 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	}
 
 	/**
-	 * Get the entitys history folder node where we store entity versions.
+	 * {@inheritDoc}
 	 *
-	 * @return the entitys history folder
+	 * Get the entitys history folder node where we store entity versions.
 	 */
 	@Override
 	public NodeRef getEntitiesHistoryFolder() {
@@ -548,6 +553,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		}, true);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void deleteVersionHistory(NodeRef entityNodeRef) {
 		NodeRef versionHistoryRef = getVersionHistoryNodeRef(entityNodeRef);
@@ -565,6 +571,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void deleteEntityVersion(Version version) {
 		NodeRef entityVersion = getEntityVersion(getVersionAssocs(version.getVersionedNodeRef()), version);
@@ -577,11 +584,13 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getEntityVersion(Version version) {
 		return getEntityVersion(getVersionAssocs(version.getVersionedNodeRef()), version);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<EntityVersion> getAllVersions(NodeRef entityNodeRef) {
 
@@ -612,13 +621,9 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	}
 
 	/**
-	 * Get the versions sort by date and node-ide.
+	 * {@inheritDoc}
 	 *
-	 * @param versionHistoryRef
-	 *            the version history ref
-	 * @param nodeRef
-	 *            the node ref
-	 * @return the list
+	 * Get the versions sort by date and node-ide.
 	 */
 	@Override
 	public List<NodeRef> buildVersionHistory(NodeRef versionHistoryRef, NodeRef nodeRef) {
@@ -656,6 +661,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		return versionRefs;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<EntityVersion> getAllVersionAndBranches(NodeRef entityNodeRef) {
 		List<EntityVersion> ret = new LinkedList<>();
@@ -692,6 +698,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		return associationService.getTargetAssoc(branchNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> getAllVersionBranches(NodeRef entityNodeRef) {
 
@@ -863,6 +870,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	}
 	
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef mergeBranch(NodeRef branchNodeRef) {
 
@@ -884,11 +892,13 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	}
 	
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef mergeBranch(NodeRef branchNodeRef, NodeRef branchToNodeRef, VersionType versionType, String description) {
 		return mergeBranch(branchNodeRef, branchToNodeRef, versionType, description, false);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef mergeBranch(NodeRef branchNodeRef, NodeRef branchToNodeRef, VersionType versionType, String description, boolean impactWused) {
 
@@ -1132,6 +1142,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef createBranch(NodeRef entityNodeRef, NodeRef parentRef) {
 		StopWatch watch = null;
@@ -1178,6 +1189,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void impactWUsed(NodeRef entityNodeRef, VersionType versionType, String description) {
 		if (entityVersionPlugins != null) {

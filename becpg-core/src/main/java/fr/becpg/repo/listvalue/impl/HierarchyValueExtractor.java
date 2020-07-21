@@ -12,12 +12,19 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.listvalue.ListValueEntry;
 import fr.becpg.repo.listvalue.ListValueExtractor;
 
+/**
+ * <p>HierarchyValueExtractor class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service("hierarchyValueExtractor")
 public class HierarchyValueExtractor implements ListValueExtractor<NodeRef>{
 
 	@Autowired
 	private NodeService nodeService;
 	
+	/** {@inheritDoc} */
 	@Override
 	public List<ListValueEntry> extract(List<NodeRef> hierarchies) {
 		List<ListValueEntry> suggestions = new ArrayList<>();

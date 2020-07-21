@@ -33,8 +33,10 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorPlugin;
 
 /**
+ * <p>DynamicCharactAttributeExtractorPlugin class.</p>
+ *
  * @author matthieu
- * 
+ * @version $Id: $Id
  */
 @Service
 public class DynamicCharactAttributeExtractorPlugin implements AttributeExtractorPlugin {
@@ -47,24 +49,28 @@ public class DynamicCharactAttributeExtractorPlugin implements AttributeExtracto
 	private  NamespaceService namespaceService;
 	 
 	
+	/** {@inheritDoc} */
 	@Override
 	public Collection<QName> getMatchingTypes() {
 		return Collections.singletonList(PLMModel.TYPE_DYNAMICCHARACTLIST);
 	}
 	
 
+	/** {@inheritDoc} */
 	@Override
 	public String extractPropName(QName type, NodeRef nodeRef) {
 		return (String) nodeService.getProperty(nodeRef, PLMModel.PROP_DYNAMICCHARACT_TITLE);
 	}
 
 	
+	/** {@inheritDoc} */
 	@Override
 	public String extractMetadata(QName type, NodeRef nodeRef) {
 		return PLMModel.TYPE_DYNAMICCHARACTLIST.toPrefixString(namespaceService).split(":")[1];
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public Integer getPriority() {
 		return 0;

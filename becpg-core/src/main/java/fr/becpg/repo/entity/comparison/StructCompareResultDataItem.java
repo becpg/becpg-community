@@ -14,6 +14,7 @@ import org.alfresco.service.namespace.QName;
  * The Class StructCompareResultDataItem.
  *
  * @author querephi
+ * @version $Id: $Id
  */
 public class StructCompareResultDataItem {
 
@@ -85,10 +86,20 @@ public class StructCompareResultDataItem {
 		return operator;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>pivotProperty</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.namespace.QName} object.
+	 */
 	public QName getPivotProperty() {
 		return pivotProperty;
 	}
 
+	/**
+	 * <p>Setter for the field <code>pivotProperty</code>.</p>
+	 *
+	 * @param pivotProperty a {@link org.alfresco.service.namespace.QName} object.
+	 */
 	public void setPivotProperty(QName pivotProperty) {
 		this.pivotProperty = pivotProperty;
 	}
@@ -184,6 +195,7 @@ public class StructCompareResultDataItem {
 	 * @param characteristic2 the characteristic2
 	 * @param properties1 the properties1
 	 * @param properties2 the properties2
+	 * @param pivotProperty a {@link org.alfresco.service.namespace.QName} object.
 	 */
 	public StructCompareResultDataItem(QName entityList, int depthLevel, StructCompareOperator operator, QName pivotProperty, NodeRef characteristic1, NodeRef characteristic2, Map<QName, String> properties1, Map<QName, String> properties2){
 		this.setEntityList(entityList);

@@ -39,9 +39,9 @@ import fr.becpg.repo.project.ProjectService;
 
 /**
  * return Project Module Info
- * 
+ *
  * @author matthieu
- * 
+ * @version $Id: $Id
  */
 public class CompleteProjectTaskWebScript extends AbstractWebScript {
 
@@ -49,10 +49,16 @@ public class CompleteProjectTaskWebScript extends AbstractWebScript {
 
 	private ProjectService projectService;
 
+	/**
+	 * <p>Setter for the field <code>projectService</code>.</p>
+	 *
+	 * @param projectService a {@link fr.becpg.repo.project.ProjectService} object.
+	 */
 	public void setProjectService(ProjectService projectService) {
 		this.projectService = projectService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
 

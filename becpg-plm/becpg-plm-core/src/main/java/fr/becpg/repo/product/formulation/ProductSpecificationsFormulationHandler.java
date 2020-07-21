@@ -46,6 +46,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  * The Class ProductSpecificationsFormulationHandler.
  *
  * @author matthieu
+ * @version $Id: $Id
  */
 public class ProductSpecificationsFormulationHandler extends FormulationBaseHandler<ProductData> {
 
@@ -61,28 +62,54 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 
 	private NodeService nodeService;
 
+	/**
+	 * <p>Setter for the field <code>policyBehaviourFilter</code>.</p>
+	 *
+	 * @param policyBehaviourFilter a {@link org.alfresco.repo.policy.BehaviourFilter} object.
+	 */
 	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
 		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
 
+	/**
+	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
+	 */
 	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
+	/**
+	 * <p>Setter for the field <code>transactionService</code>.</p>
+	 *
+	 * @param transactionService a {@link org.alfresco.service.transaction.TransactionService} object.
+	 */
 	public void setTransactionService(TransactionService transactionService) {
 		this.transactionService = transactionService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>requirementScanners</code>.</p>
+	 *
+	 * @param requirementScanners a {@link java.util.List} object.
+	 */
 	public void setRequirementScanners(List<RequirementScanner> requirementScanners) {
 		this.requirementScanners = requirementScanners;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
 	private Set<NodeRef> lookedSpecification = Collections.synchronizedSet(new HashSet<>());
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 
@@ -206,6 +233,11 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 
 	}
 
+	/**
+	 * <p>run.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public boolean run() {
 		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 

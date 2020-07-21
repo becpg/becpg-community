@@ -23,9 +23,10 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 //2 portions	
 
 /**
- * 
+ * <p>CompositionLexer class.</p>
+ *
  * @author matthieu
- * 
+ * @version $Id: $Id
  */
 public class CompositionLexer {
 
@@ -59,6 +60,12 @@ public class CompositionLexer {
 		}
 	}
 
+	/**
+	 * <p>lex.</p>
+	 *
+	 * @param input a {@link java.lang.String} object.
+	 * @return a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object.
+	 */
 	public static CompoListDataItem lex(String input) {
 
 		input = input.toLowerCase();
@@ -109,6 +116,12 @@ public class CompositionLexer {
 		return compoListDataItem;
 	}
 
+	/**
+	 * <p>lexMultiLine.</p>
+	 *
+	 * @param input a {@link java.lang.String} object.
+	 * @return a {@link java.util.List} object.
+	 */
 	public static List<CompoListDataItem> lexMultiLine(String input) {
 
 		StringTokenizer st = new StringTokenizer(input, "\n");

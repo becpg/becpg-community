@@ -18,7 +18,10 @@ import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.formulation.FormulateException;
 
 /**
+ * <p>EntityTplWebScript class.</p>
+ *
  * @author querephi
+ * @version $Id: $Id
  */
 public class EntityTplWebScript extends AbstractWebScript {
 
@@ -39,14 +42,25 @@ public class EntityTplWebScript extends AbstractWebScript {
 	private EntityTplService entityTplService;
 	
 	
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityTplService</code>.</p>
+	 *
+	 * @param entityTplService a {@link fr.becpg.repo.entity.EntityTplService} object.
+	 */
 	public void setEntityTplService(EntityTplService entityTplService) {
 		this.entityTplService = entityTplService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws WebScriptException {
 		logger.debug("start entityTpl webscript");

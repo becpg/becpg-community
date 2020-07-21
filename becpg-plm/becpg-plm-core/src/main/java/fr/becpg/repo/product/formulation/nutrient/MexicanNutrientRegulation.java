@@ -5,12 +5,24 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Locale;
 
+/**
+ * <p>MexicanNutrientRegulation class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class MexicanNutrientRegulation extends AbstractNutrientRegulation {
 
+	/**
+	 * <p>Constructor for MexicanNutrientRegulation.</p>
+	 *
+	 * @param path a {@link java.lang.String} object.
+	 */
 	public MexicanNutrientRegulation(String path)  {
 		super(path);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected Double roundByCode(Double value, String nutrientTypeCode) {
 
@@ -74,6 +86,7 @@ public class MexicanNutrientRegulation extends AbstractNutrientRegulation {
 		return bd.doubleValue();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected String displayValueByCode(Double value, Double roundedValue, String nutrientTypeCode, Locale locale) {
 
@@ -88,6 +101,7 @@ public class MexicanNutrientRegulation extends AbstractNutrientRegulation {
 		return formatDouble(roundedValue, locale);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Double roundGDA(Double value, String nutrientTypeCode) {
 		if(value != null && (isVitamin(nutrientTypeCode) || isMineral(nutrientTypeCode))){

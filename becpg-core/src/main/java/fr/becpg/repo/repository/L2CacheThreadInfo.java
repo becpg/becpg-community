@@ -15,6 +15,13 @@ class L2CacheThreadInfo implements Serializable{
 	boolean isThreadLockEnable = false;
 	final Map<NodeRef, RepositoryEntity> cache = new HashMap<>();
 	
+	/**
+	 * <p>Constructor for L2CacheThreadInfo.</p>
+	 *
+	 * @param isCacheOnlyEnable a boolean.
+	 * @param isThreadCacheEnable a boolean.
+	 * @param isThreadLockEnable a boolean.
+	 */
 	public L2CacheThreadInfo(boolean isCacheOnlyEnable, boolean isThreadCacheEnable, boolean isThreadLockEnable ) {
 		super();
 		this.isCacheOnlyEnable = isCacheOnlyEnable;
@@ -22,15 +29,20 @@ class L2CacheThreadInfo implements Serializable{
 		this.isThreadLockEnable = isThreadLockEnable;
 	}
 
+	/**
+	 * <p>Constructor for L2CacheThreadInfo.</p>
+	 */
 	public L2CacheThreadInfo() {
 		super();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "L2CacheThreadInfo [isCacheOnlyEnable=" + isCacheOnlyEnable + ", isThreadCacheEnable=" + isThreadCacheEnable + ", isThreadLockEnable=" + isThreadLockEnable + "]";
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -42,6 +54,7 @@ class L2CacheThreadInfo implements Serializable{
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

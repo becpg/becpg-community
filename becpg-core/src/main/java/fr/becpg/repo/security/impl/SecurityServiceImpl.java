@@ -59,6 +59,7 @@ import fr.becpg.repo.security.data.dataList.ACLEntryDataItem.PermissionModel;
  * permission on properties
  *
  * @author "Matthieu Laborie"
+ * @version $Id: $Id
  */
 @Service("securityService")
 public class SecurityServiceImpl implements SecurityService {
@@ -83,11 +84,13 @@ public class SecurityServiceImpl implements SecurityService {
 	@Autowired
 	private BeCPGCacheService beCPGCacheService;
 
+	/** {@inheritDoc} */
 	@Override
 	public int computeAccessMode(QName nodeType, QName propName) {
 		return computeAccessMode(nodeType, propName.toPrefixString(namespaceService));
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int computeAccessMode(QName nodeType, String propName) {
 		StopWatch stopWatch = null;
@@ -146,6 +149,7 @@ public class SecurityServiceImpl implements SecurityService {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void refreshAcls() {
 		beCPGCacheService.clearCache(SecurityService.class.getName());
@@ -190,6 +194,7 @@ public class SecurityServiceImpl implements SecurityService {
 		});
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isCurrentUserAllowed(String securityGroup) {
 		if (!isAdmin()) {
@@ -204,6 +209,7 @@ public class SecurityServiceImpl implements SecurityService {
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<String> getUserSecurityRoles() {
 
@@ -261,6 +267,7 @@ public class SecurityServiceImpl implements SecurityService {
 		return BeCPGQueryBuilder.createQuery().ofType(SecurityModel.TYPE_ACL_GROUP).inDB().list();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<String> getAvailablePropNames() {
 		List<String> ret = new ArrayList<>();

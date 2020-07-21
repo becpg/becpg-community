@@ -74,7 +74,10 @@ import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
 /**
+ * <p>LabelingFormulationHandler class.</p>
+ *
  * @author matthieu
+ * @version $Id: $Id
  */
 public class LabelingFormulationHandler extends FormulationBaseHandler<ProductData> {
 
@@ -92,30 +95,61 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	private boolean ingsCalculatingWithYield = false;
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
+	 */
 	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
+	/**
+	 * <p>Setter for the field <code>mlNodeService</code>.</p>
+	 *
+	 * @param mlNodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setMlNodeService(NodeService mlNodeService) {
 		this.mlNodeService = mlNodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>associationService</code>.</p>
+	 *
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object.
+	 */
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>ingsCalculatingWithYield</code>.</p>
+	 *
+	 * @param ingsCalculatingWithYield a boolean.
+	 */
 	public void setIngsCalculatingWithYield(boolean ingsCalculatingWithYield) {
 		this.ingsCalculatingWithYield = ingsCalculatingWithYield;
 	}
 
+	/**
+	 * <p>Setter for the field <code>formulaService</code>.</p>
+	 *
+	 * @param formulaService a {@link fr.becpg.repo.formulation.spel.SpelFormulaService} object.
+	 */
 	public void setFormulaService(SpelFormulaService formulaService) {
 		this.formulaService = formulaService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 

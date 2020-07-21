@@ -33,6 +33,12 @@ import fr.becpg.repo.project.data.projectList.TaskState;
 import fr.becpg.repo.project.impl.ProjectHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 
+/**
+ * <p>TaskFormulationHandler class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> {
 
 	private static final int COMPLETED = 100;
@@ -50,26 +56,52 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 
 	AlfrescoRepository<ProjectData> alfrescoRepository;
 
+	/**
+	 * <p>Setter for the field <code>projectWorkflowService</code>.</p>
+	 *
+	 * @param projectWorkflowService a {@link fr.becpg.repo.project.ProjectWorkflowService} object.
+	 */
 	public void setProjectWorkflowService(ProjectWorkflowService projectWorkflowService) {
 		this.projectWorkflowService = projectWorkflowService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>projectService</code>.</p>
+	 *
+	 * @param projectService a {@link fr.becpg.repo.project.ProjectService} object.
+	 */
 	public void setProjectService(ProjectService projectService) {
 		this.projectService = projectService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>projectActivityService</code>.</p>
+	 *
+	 * @param projectActivityService a {@link fr.becpg.repo.project.ProjectActivityService} object.
+	 */
 	public void setProjectActivityService(ProjectActivityService projectActivityService) {
 		this.projectActivityService = projectActivityService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
+	 */
 	public void setAlfrescoRepository(AlfrescoRepository<ProjectData> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean process(ProjectData projectData) {
 

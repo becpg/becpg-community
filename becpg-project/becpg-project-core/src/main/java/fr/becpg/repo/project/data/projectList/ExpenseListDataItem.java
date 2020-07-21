@@ -25,9 +25,9 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 /**
  * Planning list (done or to do)
- * 
+ *
  * @author quere
- * 
+ * @version $Id: $Id
  */
 @AlfType
 @AlfQname(qname = "pjt:expenseList")
@@ -41,6 +41,11 @@ public class ExpenseListDataItem extends BeCPGDataObject {
 	private Double expenseAmount; // elExpenseAmount;
 	private TaskListDataItem task; //elTaskRef;
 	
+	/**
+	 * <p>Getter for the field <code>budget</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.project.data.projectList.BudgetListDataItem} object.
+	 */
 	@AlfSingleAssoc
 	@AlfQname(qname = "pjt:elBudgetRef")
 	public BudgetListDataItem getBudget() {
@@ -48,10 +53,20 @@ public class ExpenseListDataItem extends BeCPGDataObject {
 	}
 
 
+	/**
+	 * <p>Setter for the field <code>budget</code>.</p>
+	 *
+	 * @param budget a {@link fr.becpg.repo.project.data.projectList.BudgetListDataItem} object.
+	 */
 	public void setBudget(BudgetListDataItem budget) {
 		this.budget = budget;
 	}
 
+	/**
+	 * <p>Getter for the field <code>expenseAmount</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:expense")
 	public Double getExpenseAmount() {
@@ -59,11 +74,21 @@ public class ExpenseListDataItem extends BeCPGDataObject {
 	}
 
 
+	/**
+	 * <p>Setter for the field <code>expenseAmount</code>.</p>
+	 *
+	 * @param expenseAmount a {@link java.lang.Double} object.
+	 */
 	public void setExpenseAmount(Double expenseAmount) {
 		this.expenseAmount = expenseAmount;
 	}
 
 	
+	/**
+	 * <p>Getter for the field <code>task</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object.
+	 */
 	@AlfSingleAssoc
 	@AlfQname(qname = "pjt:elTaskRef")
 	public TaskListDataItem getTask() {
@@ -71,16 +96,31 @@ public class ExpenseListDataItem extends BeCPGDataObject {
 	}
 
 
+	/**
+	 * <p>Setter for the field <code>task</code>.</p>
+	 *
+	 * @param task a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object.
+	 */
 	public void setTask(TaskListDataItem task) {
 		this.task = task;
 	}
 	
 
+	/**
+	 * <p>Constructor for ExpenseListDataItem.</p>
+	 */
 	public ExpenseListDataItem() {
 		super();
 	}
 
 	
+	/**
+	 * <p>Constructor for ExpenseListDataItem.</p>
+	 *
+	 * @param budget a {@link fr.becpg.repo.project.data.projectList.BudgetListDataItem} object.
+	 * @param expenseAmount a {@link java.lang.Double} object.
+	 * @param task a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object.
+	 */
 	public ExpenseListDataItem(BudgetListDataItem budget, Double expenseAmount, TaskListDataItem task) {
 		super();
 		this.task= task;
@@ -89,6 +129,7 @@ public class ExpenseListDataItem extends BeCPGDataObject {
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -101,6 +142,7 @@ public class ExpenseListDataItem extends BeCPGDataObject {
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -129,6 +171,7 @@ public class ExpenseListDataItem extends BeCPGDataObject {
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "ExpenseListDataItem [budget=" + budget + ", expenseAmount="

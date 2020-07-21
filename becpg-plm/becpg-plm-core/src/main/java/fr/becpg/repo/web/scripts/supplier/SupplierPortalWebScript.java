@@ -53,9 +53,10 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.search.PaginatedSearchCache;
 
 /**
+ * <p>SupplierPortalWebScript class.</p>
  *
  * @author matthieu
- *
+ * @version $Id: $Id
  */
 public class SupplierPortalWebScript extends AbstractWebScript {
 
@@ -90,46 +91,97 @@ public class SupplierPortalWebScript extends AbstractWebScript {
 	private String entityNameTpl = "{entity_cm:name} - UPDATE - {date_YYYY}";
 	private String projectNameTpl = "PJT - {entity_cm:name} - {supplier_cm:name} - UPDATE - {date_YYYY}";
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>associationService</code>.</p>
+	 *
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object.
+	 */
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityVersionService</code>.</p>
+	 *
+	 * @param entityVersionService a {@link fr.becpg.repo.entity.version.EntityVersionService} object.
+	 */
 	public void setEntityVersionService(EntityVersionService entityVersionService) {
 		this.entityVersionService = entityVersionService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
+	 */
 	public void setAlfrescoRepository(AlfrescoRepository<ProjectData> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
+	/**
+	 * <p>Setter for the field <code>namespaceService</code>.</p>
+	 *
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
+	 */
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>paginatedSearchCache</code>.</p>
+	 *
+	 * @param paginatedSearchCache a {@link fr.becpg.repo.search.PaginatedSearchCache} object.
+	 */
 	public void setPaginatedSearchCache(PaginatedSearchCache paginatedSearchCache) {
 		this.paginatedSearchCache = paginatedSearchCache;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityNameTpl</code>.</p>
+	 *
+	 * @param entityNameTpl a {@link java.lang.String} object.
+	 */
 	public void setEntityNameTpl(String entityNameTpl) {
 		this.entityNameTpl = entityNameTpl;
 	}
 
+	/**
+	 * <p>Setter for the field <code>projectNameTpl</code>.</p>
+	 *
+	 * @param projectNameTpl a {@link java.lang.String} object.
+	 */
 	public void setProjectNameTpl(String projectNameTpl) {
 		this.projectNameTpl = projectNameTpl;
 	}
 
+	/**
+	 * <p>Setter for the field <code>repoService</code>.</p>
+	 *
+	 * @param repoService a {@link fr.becpg.repo.helper.RepoService} object.
+	 */
 	public void setRepoService(RepoService repoService) {
 		this.repoService = repoService;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>createBranch</code>.</p>
+	 *
+	 * @param createBranch a boolean.
+	 */
 	public void setCreateBranch(boolean createBranch) {
 		this.createBranch = createBranch;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws WebScriptException, IOException {
 
@@ -209,6 +261,13 @@ public class SupplierPortalWebScript extends AbstractWebScript {
 
 	}
 
+	/**
+	 * <p>createProject.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param projectTemplateNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public NodeRef createProject(NodeRef entityNodeRef, NodeRef projectTemplateNodeRef) {
 
 		Date currentDate = Calendar.getInstance().getTime();

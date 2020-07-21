@@ -81,6 +81,12 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.repository.model.Synchronisable;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
+/**
+ * <p>EntityTplServiceImpl class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service("entityTplService")
 public class EntityTplServiceImpl implements EntityTplService {
 
@@ -139,6 +145,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 	private ReentrantLock lock = new ReentrantLock();
 
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef createEntityTpl(NodeRef parentNodeRef, QName entityType, String entityTplName, boolean enabled, boolean isDefault,
 			Set<QName> entityLists, Set<String> subFolders) {
@@ -223,6 +230,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 		return entityTplNodeRef;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef createWUsedList(NodeRef entityTplNodeRef, QName typeQName, QName assocQName) {
 
@@ -252,6 +260,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 		return listNodeRef;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef createView(NodeRef entityTplNodeRef, QName typeQName, String name) {
 
@@ -288,6 +297,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 		return listNodeRef;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getEntityTpl(QName nodeType) {
 
@@ -313,6 +323,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 		return null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	@SuppressWarnings("unchecked")
 	public void synchronizeEntities(NodeRef tplNodeRef) {
@@ -534,6 +545,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 		return null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void formulateEntities(NodeRef tplNodeRef) {
 		boolean runWithSuccess = true;
@@ -636,6 +648,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 		return entityNodeRefs;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void synchronizeEntity(NodeRef entityNodeRef, NodeRef entityTplNodeRef) {
 		if (entityTplNodeRef != null) {
@@ -733,6 +746,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void removeDataListOnEntities(NodeRef entityTplNodeRef, String entityListName) {
 
@@ -788,6 +802,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef createActivityList(NodeRef entityNodeRef, QName typeActivityList) {
 		// entityLists

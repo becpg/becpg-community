@@ -50,6 +50,12 @@ import fr.becpg.repo.helper.extractors.AbstractNodeDataExtractor;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.search.AdvSearchService;
 
+/**
+ * <p>Abstract AbstractDataListExtractor class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public abstract class AbstractDataListExtractor implements DataListExtractor {
 
 	protected NodeService nodeService;
@@ -70,74 +76,149 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 
 	private boolean isDefaultExtractor = false;
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isDefaultExtractor() {
 		return isDefaultExtractor;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityDictionaryService</code>.</p>
+	 *
+	 * @param entityDictionaryService a {@link fr.becpg.repo.entity.EntityDictionaryService} object.
+	 */
 	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
 		this.entityDictionaryService = entityDictionaryService;
 	}
 
+	/**
+	 * <p>setDefaultExtractor.</p>
+	 *
+	 * @param isDefaultExtractor a boolean.
+	 */
 	public void setDefaultExtractor(boolean isDefaultExtractor) {
 		this.isDefaultExtractor = isDefaultExtractor;
 	}
 
+	/**
+	 * <p>Setter for the field <code>dataListExtractorFactory</code>.</p>
+	 *
+	 * @param dataListExtractorFactory a {@link fr.becpg.repo.entity.datalist.DataListExtractorFactory} object.
+	 */
 	public void setDataListExtractorFactory(DataListExtractorFactory dataListExtractorFactory) {
 		this.dataListExtractorFactory = dataListExtractorFactory;
 	}
 
+	/**
+	 * <p>Setter for the field <code>advSearchService</code>.</p>
+	 *
+	 * @param advSearchService a {@link fr.becpg.repo.search.AdvSearchService} object.
+	 */
 	public void setAdvSearchService(AdvSearchService advSearchService) {
 		this.advSearchService = advSearchService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>services</code>.</p>
+	 *
+	 * @param services a {@link org.alfresco.service.ServiceRegistry} object.
+	 */
 	public void setServices(ServiceRegistry services) {
 		this.services = services;
 	}
 
+	/**
+	 * <p>Setter for the field <code>attributeExtractorService</code>.</p>
+	 *
+	 * @param attributeExtractorService a {@link fr.becpg.repo.helper.AttributeExtractorService} object.
+	 */
 	public void setAttributeExtractorService(AttributeExtractorService attributeExtractorService) {
 		this.attributeExtractorService = attributeExtractorService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>permissionService</code>.</p>
+	 *
+	 * @param permissionService a {@link org.alfresco.service.cmr.security.PermissionService} object.
+	 */
 	public void setPermissionService(PermissionService permissionService) {
 		this.permissionService = permissionService;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>ratingService</code>.</p>
+	 *
+	 * @param ratingService a {@link org.alfresco.service.cmr.rating.RatingService} object.
+	 */
 	public void setRatingService(RatingService ratingService) {
 		this.ratingService = ratingService;
 	}
 
 
 
+	/** Constant <code>PROP_NODE="nodeRef"</code> */
 	public static final String PROP_NODE = "nodeRef";
+	/** Constant <code>PROP_TITLE="title"</code> */
 	public static final String PROP_TITLE = "title";
+	/** Constant <code>PROP_SHORTNAME="shortName"</code> */
 	public static final String PROP_SHORTNAME = "shortName";
+	/** Constant <code>PROP_MODIFIED="modifiedOn"</code> */
 	public static final String PROP_MODIFIED = "modifiedOn";
+	/** Constant <code>PROP_CREATED="createdOn"</code> */
 	public static final String PROP_CREATED = "createdOn";
+	/** Constant <code>PROP_PATH="path"</code> */
 	public static final String PROP_PATH = "path";
+	/** Constant <code>PROP_MODIFIER_DISPLAY="modifiedBy"</code> */
 	public static final String PROP_MODIFIER_DISPLAY = "modifiedBy";
+	/** Constant <code>PROP_CREATOR_DISPLAY="createdBy"</code> */
 	public static final String PROP_CREATOR_DISPLAY = "createdBy";
+	/** Constant <code>PROP_NODEDATA="itemData"</code> */
 	public static final String PROP_NODEDATA = "itemData";
+	/** Constant <code>PROP_PERMISSIONS="permissions"</code> */
 	public static final String PROP_PERMISSIONS = "permissions";
+	/** Constant <code>PROP_ACCESSRIGHT="accessRight"</code> */
 	public static final String PROP_ACCESSRIGHT = "accessRight";
+	/** Constant <code>PROP_SITE="site"</code> */
 	public static final String PROP_SITE = "site";
 	@Deprecated
+	/** Constant <code>PROP_SITE_ID="siteId"</code> */
 	public static final String PROP_SITE_ID = "siteId";
+	/** Constant <code>PROP_CONTAINER="container"</code> */
 	public static final String PROP_CONTAINER = "container";
+	/** Constant <code>PROP_TYPE="itemType"</code> */
 	public static final String PROP_TYPE = "itemType";
+	/** Constant <code>PROP_VERSION="version"</code> */
 	public static final String PROP_VERSION = "version";
+	/** Constant <code>PROP_COLOR="color"</code> */
 	public static final String PROP_COLOR = "color";
 
 	private static final Log logger = LogFactory.getLog(AbstractNodeDataExtractor.class);
 
+	/**
+	 * <p>init.</p>
+	 */
 	public void init() {
 		dataListExtractorFactory.registerExtractor(this);
 	}
 
+	/**
+	 * <p>extractJSON.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param metadataFields a {@link java.util.List} object.
+	 * @param props a {@link java.util.Map} object.
+	 * @param cache a {@link java.util.Map} object.
+	 * @return a {@link java.util.Map} object.
+	 */
 	public Map<String, Object> extractJSON(final NodeRef nodeRef, List<AttributeExtractorStructure> metadataFields, Map<String, Object> props,
 			Map<NodeRef, Map<String, Object>> cache) {
 
@@ -260,6 +341,16 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 		return false;
 	}
 
+	/**
+	 * <p>extractExport.</p>
+	 *
+	 * @param mode a {@link fr.becpg.config.format.FormatMode} object.
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param metadataFields a {@link java.util.List} object.
+	 * @param props a {@link java.util.Map} object.
+	 * @param cache a {@link java.util.Map} object.
+	 * @return a {@link java.util.Map} object.
+	 */
 	protected Map<String, Object> extractExport(FormatMode mode, NodeRef nodeRef, List<AttributeExtractorStructure> metadataFields,
 			Map<String, Object> props, Map<NodeRef, Map<String, Object>> cache) {
 		StopWatch watch = null;
@@ -305,6 +396,12 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 		}
 	}
 
+	/**
+	 * <p>extractPerson.</p>
+	 *
+	 * @param person a {@link java.lang.String} object.
+	 * @return a {@link java.util.Map} object.
+	 */
 	protected Map<String, String> extractPerson(String person) {
 		Map<String, String> ret = new HashMap<>(2);
 		ret.put("value", person);
@@ -312,6 +409,13 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 		return ret;
 	}
 
+	/**
+	 * <p>convertDateValue.</p>
+	 *
+	 * @param value a {@link java.io.Serializable} object.
+	 * @param mode a {@link fr.becpg.config.format.FormatMode} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	protected String convertDateValue(Serializable value, FormatMode mode) {
 		if (value instanceof Date) {
 			return formatDate((Date) value, mode);
@@ -319,6 +423,13 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 		return null;
 	}
 
+	/**
+	 * <p>formatDate.</p>
+	 *
+	 * @param date a {@link java.util.Date} object.
+	 * @param mode a {@link fr.becpg.config.format.FormatMode} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	protected String formatDate(Date date, FormatMode mode) {
 		if (date != null) {
 			return attributeExtractorService.getPropertyFormats(mode,false).formatDate(date);
@@ -330,6 +441,18 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 		return nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM);
 	}
 
+	/**
+	 * <p>doExtract.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param itemType a {@link org.alfresco.service.namespace.QName} object.
+	 * @param metadataFields a {@link java.util.List} object.
+	 * @param mode a {@link fr.becpg.config.format.FormatMode} object.
+	 * @param properties a {@link java.util.Map} object.
+	 * @param extraProps a {@link java.util.Map} object.
+	 * @param cache a {@link java.util.Map} object.
+	 * @return a {@link java.util.Map} object.
+	 */
 	protected abstract Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields,
 			FormatMode mode, Map<QName, Serializable> properties, Map<String, Object> extraProps,
 			Map<NodeRef, Map<String, Object>> cache);

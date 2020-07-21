@@ -24,6 +24,7 @@ import fr.becpg.report.client.ReportFormat;
  * Class used to render the result of a search in a report
  *
  * @author matthieu
+ * @version $Id: $Id
  */
 @Service("exportSearchService")
 public class ExportSearchServiceImpl implements ExportSearchService {
@@ -39,6 +40,7 @@ public class ExportSearchServiceImpl implements ExportSearchService {
 	@Autowired
 	private DownloadStorage downloadStorage;
 
+	/** {@inheritDoc} */
 	@Override
 	public void createReport(QName nodeType, NodeRef templateNodeRef, List<NodeRef> searchResults, ReportFormat reportFormat,
 			OutputStream outputStream) {
@@ -66,6 +68,7 @@ public class ExportSearchServiceImpl implements ExportSearchService {
 		return null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef createReport(QName nodeType, NodeRef templateNodeRef, List<NodeRef> searchResults, ReportFormat reportFormat) {
 

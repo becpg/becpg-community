@@ -27,19 +27,44 @@ import fr.becpg.repo.search.impl.SearchConfig;
 
 /**
  * do an advanced search query
- * 
+ *
  * @author querephi
- * 
+ * @version $Id: $Id
  */
 public interface AdvSearchService {
 
 	
+	/**
+	 * <p>createSearchQuery.</p>
+	 *
+	 * @param datatype a {@link org.alfresco.service.namespace.QName} object.
+	 * @param term a {@link java.lang.String} object.
+	 * @param tag a {@link java.lang.String} object.
+	 * @param isRepo a boolean.
+	 * @param siteId a {@link java.lang.String} object.
+	 * @param containerId a {@link java.lang.String} object.
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 */
 	BeCPGQueryBuilder createSearchQuery(QName datatype, String term, String tag, boolean isRepo, String siteId, String containerId);
 
 
+	/**
+	 * <p>queryAdvSearch.</p>
+	 *
+	 * @param datatype a {@link org.alfresco.service.namespace.QName} object.
+	 * @param beCPGQueryBuilder a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 * @param criteria a {@link java.util.Map} object.
+	 * @param maxResults a int.
+	 * @return a {@link java.util.List} object.
+	 */
 	List<NodeRef> queryAdvSearch(QName datatype, BeCPGQueryBuilder beCPGQueryBuilder, Map<String, String> criteria, int maxResults);
 
 
+	/**
+	 * <p>getSearchConfig.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.search.impl.SearchConfig} object.
+	 */
 	SearchConfig getSearchConfig();
 
 }

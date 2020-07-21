@@ -21,14 +21,26 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+/**
+ * <p>ApplicationContextHelper class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class ApplicationContextHelper implements ApplicationContextAware {
 		
 	private static ApplicationContext ctx = null;
 
+	/**
+	 * <p>getApplicationContext.</p>
+	 *
+	 * @return a {@link org.springframework.context.ApplicationContext} object.
+	 */
 	public static ApplicationContext getApplicationContext() {
 		return ctx;
 	}
 
+	/** {@inheritDoc} */
 	@SuppressWarnings("static-access")
 	public void setApplicationContext(ApplicationContext ctx) throws BeansException {
 		this.ctx = ctx;

@@ -99,6 +99,12 @@ import fr.becpg.report.client.ReportException;
 import fr.becpg.report.client.ReportFormat;
 import fr.becpg.report.client.ReportParams;
 
+/**
+ * <p>EntityReportServiceImpl class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service("entityReportService")
 public class EntityReportServiceImpl implements EntityReportService {
 
@@ -176,6 +182,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 	@Autowired
 	private RuleService ruleService;
 
+	/** {@inheritDoc} */
 	@Override
 	public void generateReports(final NodeRef entityNodeRef) {
 
@@ -494,6 +501,12 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 	}
 
+	/**
+	 * <p>getFromCacheListFolderNodeRef.</p>
+	 *
+	 * @param listPath a {@link java.lang.String} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public NodeRef getFromCacheListFolderNodeRef(String listPath) {
 		return beCPGCacheService.getFromCache(EntityReportServiceImpl.class.getName(), REPORT_LIST_CACHE_KEY + listPath, () -> {
 			NodeRef systemFolderNodeRef = repoService.getFolderByPath(RepoConsts.PATH_SYSTEM);
@@ -720,6 +733,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 		return ret;
 	}
 
+	/** {@inheritDoc} */
 	@SuppressWarnings("unchecked")
 	@Override
 	public void generateReport(final NodeRef entityNodeRef, final NodeRef documentNodeRef) {
@@ -880,6 +894,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 		}, false, true);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void generateReport(NodeRef entityNodeRef, NodeRef templateNodeRef, EntityReportParameters reportParameters, Locale locale,
 			ReportFormat reportFormat, OutputStream outputStream) {
@@ -934,6 +949,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 		});
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	@SuppressWarnings("unchecked")
 	public void generateReport(NodeRef entityNodeRef, NodeRef documentNodeRef, ReportFormat reportFormat, OutputStream outputStream) {
@@ -961,6 +977,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String getXmlReportDataSource(NodeRef entityNodeRef, Locale locale, EntityReportParameters reportParameters) {
 
@@ -1013,6 +1030,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public EntityReportExtractorPlugin retrieveExtractor(NodeRef entityNodeRef) {
 		return retrieveExtractor(entityNodeRef, null);
@@ -1241,6 +1259,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 		return tplsToReturnNodeRef;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void setPermissions(NodeRef tplNodeRef, NodeRef documentNodeRef) {
 
@@ -1266,6 +1285,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 		permissionService.setInheritParentPermissions(documentNodeRef, inheritParentPermissions);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean shouldGenerateReport(NodeRef entityNodeRef, NodeRef documentNodeRef) {
 		StopWatch watch = new StopWatch();
@@ -1340,6 +1360,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getSelectedReport(NodeRef entityNodeRef) {
 
@@ -1386,6 +1407,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 		return ret;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	@Nullable
 	public String getSelectedReportName(NodeRef entityNodeRef) {
@@ -1408,6 +1430,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 		return null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getOrRefreshReport(NodeRef entityNodeRef, NodeRef documentNodeRef) {
 		if (shouldGenerateReport(entityNodeRef, documentNodeRef)) {
@@ -1425,6 +1448,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 		return documentNodeRef;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	@Nullable
 	public NodeRef getEntityNodeRef(NodeRef reportNodeRef) {
@@ -1435,6 +1459,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 		return null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	@Nullable
 	public NodeRef getAssociatedDocumentNodeRef(NodeRef entityNodeRef, NodeRef tplNodeRef, EntityReportParameters reportParameters, Locale locale,

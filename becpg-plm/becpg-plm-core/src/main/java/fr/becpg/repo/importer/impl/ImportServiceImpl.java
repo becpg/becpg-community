@@ -63,6 +63,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  * Import service.
  *
  * @author querephi
+ * @version $Id: $Id
  */
 
 @Service("importService")
@@ -82,6 +83,7 @@ public class ImportServiceImpl implements ImportService {
 	private static final String MSG_ERROR_READING_MAPPING = "import_service.error.err_reading_mapping";
 	private static final String MSG_ERROR_UNDEFINED_LINE = "import_service.error.err_undefined_line";
 
+	/** Constant <code>SEPARATOR=';'</code> */
 	public static final char SEPARATOR = ';';
 
 	private static final int COLUMN_PREFIX = 0;
@@ -141,10 +143,9 @@ public class ImportServiceImpl implements ImportService {
 	private MappingLoaderFactory mappingLoaderFactory;
 
 	/**
-	 * Import a text file
+	 * {@inheritDoc}
 	 *
-	 * @throws ParseException
-	 * @throws IOException
+	 * Import a text file
 	 */
 	@Override
 	public List<String> importText(final NodeRef nodeRef, boolean doUpdate, boolean requiresNewTransaction) throws Exception {
@@ -236,6 +237,7 @@ public class ImportServiceImpl implements ImportService {
 		return importContext.getLog();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void moveImportedFile(final NodeRef nodeRef, final boolean hasFailed, final String titleLog, final String fileLog) {
 
@@ -606,6 +608,7 @@ public class ImportServiceImpl implements ImportService {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void writeLogInFileTitle(final NodeRef nodeRef, final String log, final boolean hasFailed) {
 

@@ -16,10 +16,18 @@ import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 
+/**
+ * <p>AllergenRequirementScanner class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class AllergenRequirementScanner extends AbstractRequirementScanner<AllergenListDataItem> {
 
+	/** Constant <code>MESSAGE_FORBIDDEN_ALLERGEN="message.formulate.allergen.forbidden"</code> */
 	public static final String MESSAGE_FORBIDDEN_ALLERGEN = "message.formulate.allergen.forbidden";
 
+	/** {@inheritDoc} */
 	@Override
 	public List<ReqCtrlListDataItem> checkRequirements(ProductData formulatedProduct, List<ProductSpecificationData> specifications) {
 		List<ReqCtrlListDataItem> ret = new LinkedList<>();
@@ -67,6 +75,7 @@ public class AllergenRequirementScanner extends AbstractRequirementScanner<Aller
 		return ret;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected void mergeRequirements(List<AllergenListDataItem> ret, List<AllergenListDataItem> toAdd) {
 		toAdd.forEach(item -> {
@@ -99,6 +108,7 @@ public class AllergenRequirementScanner extends AbstractRequirementScanner<Aller
 		});
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected List<AllergenListDataItem> getDataListVisited(ProductData partProduct) {
 		return partProduct.getAllergenList() != null ? partProduct.getAllergenList() : new ArrayList<>();

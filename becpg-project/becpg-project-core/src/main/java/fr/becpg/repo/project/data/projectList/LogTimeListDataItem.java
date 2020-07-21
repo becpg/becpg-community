@@ -10,8 +10,9 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 /**
  * Log time list
- * @author quere
  *
+ * @author quere
+ * @version $Id: $Id
  */
 @AlfType
 @AlfQname(qname = "pjt:logTimeList")
@@ -26,56 +27,107 @@ public class LogTimeListDataItem extends BeCPGDataObject {
 	private TaskListDataItem task;
 	private Double invoice;
 	
+	/**
+	 * <p>Getter for the field <code>date</code>.</p>
+	 *
+	 * @return a {@link java.util.Date} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:ltlDate")
 	public Date getDate() {
 		return date;
 	}
 
+	/**
+	 * <p>Setter for the field <code>date</code>.</p>
+	 *
+	 * @param date a {@link java.util.Date} object.
+	 */
 	public void setDate(Date date) {
 		this.date = date;
 	}
 
+	/**
+	 * <p>Getter for the field <code>time</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:ltlTime")
 	public Double getTime() {
 		return time;
 	}
 
+	/**
+	 * <p>Setter for the field <code>time</code>.</p>
+	 *
+	 * @param time a {@link java.lang.Double} object.
+	 */
 	public void setTime(Double time) {
 		this.time = time;
 	}
 
+	/**
+	 * <p>Getter for the field <code>task</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object.
+	 */
 	@AlfSingleAssoc
 	@AlfQname(qname = "pjt:ltlTask")
 	public TaskListDataItem getTask() {
 		return task;
 	}
 
+	/**
+	 * <p>Setter for the field <code>task</code>.</p>
+	 *
+	 * @param task a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object.
+	 */
 	public void setTask(TaskListDataItem task) {
 		this.task = task;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>invoice</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:invoice")
 	public Double getInvoice() {
 		return invoice;
 	}
 
+	/**
+	 * <p>Setter for the field <code>invoice</code>.</p>
+	 *
+	 * @param invoice a {@link java.lang.Double} object.
+	 */
 	public void setInvoice(Double invoice) {
 		this.invoice = invoice;
 	}
 	
+	/**
+	 * <p>Constructor for LogTimeListDataItem.</p>
+	 */
 	public LogTimeListDataItem(){
 		super();
 	}
 	
+	/**
+	 * <p>Constructor for LogTimeListDataItem.</p>
+	 *
+	 * @param date a {@link java.util.Date} object.
+	 * @param time a {@link java.lang.Double} object.
+	 * @param task a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object.
+	 */
 	public LogTimeListDataItem(Date date, Double time, TaskListDataItem task){
 		this.date = date;
 		this.time = time;
 		this.task = task;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -87,6 +139,7 @@ public class LogTimeListDataItem extends BeCPGDataObject {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -119,6 +172,7 @@ public class LogTimeListDataItem extends BeCPGDataObject {
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "LogTimeListDataItem [date=" + date + ", time=" + time + ", task=" + task + ", invoice=" + invoice + "]";

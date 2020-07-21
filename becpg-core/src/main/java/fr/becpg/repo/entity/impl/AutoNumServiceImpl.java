@@ -33,6 +33,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  * The Class AutoNumServiceImpl.
  *
  * @author querephi
+ * @version $Id: $Id
  */
 @Service("autoNumService")
 public class AutoNumServiceImpl implements AutoNumService {
@@ -65,13 +66,9 @@ public class AutoNumServiceImpl implements AutoNumService {
 	private BeCPGCacheService beCPGCacheService;
 
 	/**
-	 * Get the next autoNum value.
+	 * {@inheritDoc}
 	 *
-	 * @param className
-	 *            the class name
-	 * @param propertyName
-	 *            the property name
-	 * @return the auto num value
+	 * Get the next autoNum value.
 	 */
 	@Override
 	public synchronized String getAutoNumValue(QName className, QName propertyName) {
@@ -104,12 +101,9 @@ public class AutoNumServiceImpl implements AutoNumService {
 	}
 
 	/**
-	 * Delete the AutoNum object in db.
+	 * {@inheritDoc}
 	 *
-	 * @param className
-	 *            the class name
-	 * @param propertyName
-	 *            the property name
+	 * Delete the AutoNum object in db.
 	 */
 	@Override
 	public void deleteAutoNumValue(QName className, QName propertyName) {
@@ -125,6 +119,7 @@ public class AutoNumServiceImpl implements AutoNumService {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String getAutoNumMatchPattern(QName type, QName propertyName) {
 		String prefix = DEFAULT_PREFIX;
@@ -157,12 +152,14 @@ public class AutoNumServiceImpl implements AutoNumService {
 		return prefix;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String getPrefixedCode(QName type, QName propertyName, Long autoNumValue) {
 		String prefix = getAutoNumPrefix(type, propertyName);
 		return formatCode(prefix, autoNumValue);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String getOrCreateCode(NodeRef nodeRef, QName codeQName) {
 		// check code is already taken. If yes : this object is a copy of an
@@ -190,6 +187,7 @@ public class AutoNumServiceImpl implements AutoNumService {
 		return code;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String getOrCreateBeCPGCode(NodeRef nodeRef) {
 		return getOrCreateCode(nodeRef, BeCPGModel.PROP_CODE);

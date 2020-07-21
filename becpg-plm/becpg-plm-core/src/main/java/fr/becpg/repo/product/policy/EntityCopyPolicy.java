@@ -20,6 +20,12 @@ import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.entity.policy.CodePolicy;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
+/**
+ * <p>EntityCopyPolicy class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class EntityCopyPolicy extends AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyCompletePolicy {
 
 	private static final Log logger = LogFactory.getLog(CodePolicy.class);
@@ -30,19 +36,36 @@ public class EntityCopyPolicy extends AbstractBeCPGPolicy implements CopyService
 	
 	private EntityService entityService;
 	
+	/**
+	 * <p>Setter for the field <code>namespaceService</code>.</p>
+	 *
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
+	 */
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>propertiesToReset</code>.</p>
+	 *
+	 * @param propertiesToReset a {@link java.lang.String} object.
+	 */
 	public void setPropertiesToReset(String propertiesToReset) {
 		this.propertiesToReset = propertiesToReset;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityService</code>.</p>
+	 *
+	 * @param entityService a {@link fr.becpg.repo.entity.EntityService} object.
+	 */
 	public void setEntityService(EntityService entityService) {
 		this.entityService = entityService;
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * Inits the.
 	 */
 	@Override
@@ -53,6 +76,7 @@ public class EntityCopyPolicy extends AbstractBeCPGPolicy implements CopyService
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onCopyComplete(QName classRef, NodeRef sourceNodeRef, NodeRef destinationRef, boolean copyToNewNode, Map<NodeRef, NodeRef> copyMap) {
 

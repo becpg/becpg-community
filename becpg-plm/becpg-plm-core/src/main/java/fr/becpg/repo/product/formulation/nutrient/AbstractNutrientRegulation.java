@@ -15,10 +15,17 @@ import org.springframework.core.io.ClassPathResource;
 
 import fr.becpg.common.csv.CSVReader;
 
+/**
+ * <p>Abstract AbstractNutrientRegulation class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 
 	private String path;
 	
+	/** Constant <code>logger</code> */
 	protected static Log logger = LogFactory.getLog(AbstractNutrientRegulation.class);
 	
 	protected class NutrientDefinition {
@@ -86,6 +93,11 @@ public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 
 	private Map<String, NutrientDefinition> definitions = null;
 
+	/**
+	 * <p>Constructor for AbstractNutrientRegulation.</p>
+	 *
+	 * @param path a {@link java.lang.String} object.
+	 */
 	public AbstractNutrientRegulation(String path) {
 		this.path = path;
 
@@ -126,6 +138,7 @@ public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 		return null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NutrientDefinition getNutrientDefinition(String nutCode) {
 		//Defers loading
@@ -135,6 +148,7 @@ public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 		return definitions.get(nutCode);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Double round(Double value, String nutrientTypeCode, String nutUnit) {
 
@@ -158,6 +172,7 @@ public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 		return roundValue(value, 1d);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public String displayValue(Double value, Double roundedValue, String nutrientTypeCode, Locale locale) {
 		if (nutrientTypeCode != null && !nutrientTypeCode.isEmpty()) {
@@ -166,6 +181,13 @@ public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 		return formatDouble(roundedValue, locale);
 	}
 	
+	/**
+	 * <p>formatDouble.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object.
+	 * @param locale a {@link java.util.Locale} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	protected String formatDouble(Double value, Locale locale){
 		if(value != null){
 			DecimalFormatSymbols symbols = new DecimalFormatSymbols(locale);
@@ -177,6 +199,13 @@ public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 		}
 	}
 	
+	/**
+	 * <p>roundValue.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object.
+	 * @param delta a {@link java.lang.Double} object.
+	 * @return a {@link java.lang.Double} object.
+	 */
 	protected Double roundValue(Double value, Double delta) {
 		if(value != null){
 			// round by delta (eg: 0.5)
@@ -189,6 +218,12 @@ public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 		}
 	}
 	
+	/**
+	 * <p>isVitamin.</p>
+	 *
+	 * @param nutrientTypeCode a {@link java.lang.String} object.
+	 * @return a boolean.
+	 */
 	protected boolean isVitamin(String nutrientTypeCode){
 		if(nutrientTypeCode!=null){
 			if(nutrientTypeCode.equals(NutrientCode.FolicAcid)
@@ -223,6 +258,12 @@ public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 		return false;
 	}
 	
+	/**
+	 * <p>isMineral.</p>
+	 *
+	 * @param nutrientTypeCode a {@link java.lang.String} object.
+	 * @return a boolean.
+	 */
 	protected boolean isMineral(String nutrientTypeCode){
 		if(nutrientTypeCode!=null){
 			if(nutrientTypeCode.equals(NutrientCode.Calcium)
@@ -248,6 +289,7 @@ public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 		return false;
 	}
 	
+	/** {@inheritDoc} */
 	public Double convertValue(Double value, String nutUnit, String regulUnit){
 		
 		if (value != null && nutUnit != null && regulUnit != null ) { 
@@ -286,6 +328,7 @@ public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 	        for values exactly halfway between two whole numbers or higher (e.g., 2.5 to 2.990 the values shall round up (e.g., 3%)
 	        for values less than halfway between two whole numbers (e.g., 2.01 to 2.49) the values shall round down (e.g., 2%).
 	 */
+	/** {@inheritDoc} */
 	@Override
 	public Double roundGDA(Double value, String nutrientTypeCode) {
 		if (value == null) {
@@ -295,8 +338,24 @@ public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 	}
 	
 
+	/**
+	 * <p>roundByCode.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object.
+	 * @param nutrientTypeCode a {@link java.lang.String} object.
+	 * @return a {@link java.lang.Double} object.
+	 */
 	protected abstract Double roundByCode(Double value, String nutrientTypeCode);
 	
+	/**
+	 * <p>displayValueByCode.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object.
+	 * @param roundedValue a {@link java.lang.Double} object.
+	 * @param nutrientTypeCode a {@link java.lang.String} object.
+	 * @param locale a {@link java.util.Locale} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	protected abstract String displayValueByCode(Double value, Double roundedValue, String nutrientTypeCode, Locale locale);
 
 }

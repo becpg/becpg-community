@@ -27,6 +27,12 @@ import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.security.data.dataList.ACLEntryDataItem;
 
+/**
+ * <p>ACLGroupData class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @AlfType
 @AlfQname(qname = "sec:aclGroup")
 public class ACLGroupData extends BeCPGDataObject {
@@ -40,27 +46,48 @@ public class ACLGroupData extends BeCPGDataObject {
 	
 	List<ACLEntryDataItem> acls = new ArrayList<>();
 
+	/**
+	 * <p>Getter for the field <code>acls</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@DataList
 	@AlfQname(qname = "sec:aclEntry")
 	public List<ACLEntryDataItem> getAcls() {
 		return acls;
 	}
 
+	/**
+	 * <p>Setter for the field <code>acls</code>.</p>
+	 *
+	 * @param acls a {@link java.util.List} object.
+	 */
 	public void setAcls(List<ACLEntryDataItem> acls) {
 		this.acls = acls;
 	}
 
+	/**
+	 * <p>Getter for the field <code>nodeType</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "sec:nodeType")
 	public String getNodeType() {
 		return nodeType;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeType</code>.</p>
+	 *
+	 * @param nodeType a {@link java.lang.String} object.
+	 */
 	public void setNodeType(String nodeType) {
 		this.nodeType =  nodeType;
 	}
 	
 	
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -70,6 +97,7 @@ public class ACLGroupData extends BeCPGDataObject {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -92,6 +120,7 @@ public class ACLGroupData extends BeCPGDataObject {
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "ACLGroupData [nodeType=" + nodeType + ", acls=" + acls + "]";

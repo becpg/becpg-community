@@ -24,6 +24,12 @@ import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
+/**
+ * <p>SimulationCostHelper class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class SimulationCostHelper implements InitializingBean {
 
@@ -35,6 +41,7 @@ public class SimulationCostHelper implements InitializingBean {
 
 	static SimulationCostHelper INSTANCE;
 
+	/** {@inheritDoc} */
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		INSTANCE = this;
@@ -60,12 +67,28 @@ public class SimulationCostHelper implements InitializingBean {
 	/*
 	 * Spel helper do not remove
 	 */
+	/**
+	 * <p>priceListItemByCriteria.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @param cost a {@link java.lang.String} object.
+	 * @param geoOrigins a {@link java.util.List} object.
+	 * @return a {@link fr.becpg.repo.product.data.productList.PriceListDataItem} object.
+	 */
 	public static PriceListDataItem priceListItemByCriteria(ProductData productData, String cost, List<NodeRef> geoOrigins) {
 		return priceListItemByCriteria(productData, new NodeRef(cost), null, geoOrigins);
 	}
 
 	/*
 	 * Spel helper do not remove
+	 */
+	/**
+	 * <p>priceListItemByCriteria.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @param cost a {@link java.lang.String} object.
+	 * @param qtyInKg a {@link java.lang.Double} object.
+	 * @return a {@link fr.becpg.repo.product.data.productList.PriceListDataItem} object.
 	 */
 	public static PriceListDataItem priceListItemByCriteria(ProductData productData, String cost, Double qtyInKg) {
 		return priceListItemByCriteria(productData, new NodeRef(cost), qtyInKg, null);
@@ -74,10 +97,28 @@ public class SimulationCostHelper implements InitializingBean {
 	/*
 	 * Spel helper do not remove
 	 */
+	/**
+	 * <p>priceListItemByCriteria.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @param cost a {@link java.lang.String} object.
+	 * @param qtyInKg a {@link java.lang.Double} object.
+	 * @param geoOrigins a {@link java.util.List} object.
+	 * @return a {@link fr.becpg.repo.product.data.productList.PriceListDataItem} object.
+	 */
 	public static PriceListDataItem priceListItemByCriteria(ProductData productData, String cost, Double qtyInKg, List<NodeRef> geoOrigins) {
 		return priceListItemByCriteria(productData, new NodeRef(cost), qtyInKg, geoOrigins);
 	}
 
+	/**
+	 * <p>priceListItemByCriteria.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @param cost a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param qtyInKg a {@link java.lang.Double} object.
+	 * @param geoOrigins a {@link java.util.List} object.
+	 * @return a {@link fr.becpg.repo.product.data.productList.PriceListDataItem} object.
+	 */
 	public static PriceListDataItem priceListItemByCriteria(ProductData productData, NodeRef cost, Double qtyInKg, List<NodeRef> geoOrigins) {
 		PriceListDataItem ret = null;
 		for (PriceListDataItem priceListDataItem : productData.getPriceList()) {
@@ -125,6 +166,13 @@ public class SimulationCostHelper implements InitializingBean {
 
 	/*
 	 * Spel helper do not remove
+	 */
+	/**
+	 * <p>getComponentQuantity.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @param componentData a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @return a {@link java.lang.Double} object.
 	 */
 	public static Double getComponentQuantity(ProductData formulatedProduct, ProductData componentData) {
 		

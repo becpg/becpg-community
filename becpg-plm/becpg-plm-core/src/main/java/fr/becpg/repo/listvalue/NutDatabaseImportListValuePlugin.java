@@ -12,6 +12,12 @@ import fr.becpg.repo.listvalue.impl.EntityListValuePlugin;
 import fr.becpg.repo.listvalue.impl.FileInfoListValueExtractor;
 import fr.becpg.repo.product.formulation.nutrient.NutDatabaseService;
 
+/**
+ * <p>NutDatabaseImportListValuePlugin class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class NutDatabaseImportListValuePlugin extends EntityListValuePlugin {
 
@@ -23,11 +29,13 @@ public class NutDatabaseImportListValuePlugin extends EntityListValuePlugin {
 
 	private final static Log logger = LogFactory.getLog(NutDatabaseImportListValuePlugin.class);
 
+	/** {@inheritDoc} */
 	@Override
 	public String[] getHandleSourceTypes() {
 		return new String[] { SOURCE_TYPE_NUT_DB, SOURCE_TYPE_DATABASE_SUPPLIERS };
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public ListValuePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
 		logger.debug("suggest src=" + sourceType + ", query=" + query + ", props=" + props);

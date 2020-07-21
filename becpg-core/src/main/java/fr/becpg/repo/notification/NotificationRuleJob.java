@@ -13,6 +13,12 @@ import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
+/**
+ * <p>NotificationRuleJob class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class NotificationRuleJob implements Job {
 	
 	private static final Log logger = LogFactory.getLog(NotificationRuleJob.class);
@@ -22,6 +28,7 @@ public class NotificationRuleJob implements Job {
 	private static final String KEY_TRANSACTION_SERVICE = "transactionService";
 	
 	
+	/** {@inheritDoc} */
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		logger.info("Start of Notification Job.");

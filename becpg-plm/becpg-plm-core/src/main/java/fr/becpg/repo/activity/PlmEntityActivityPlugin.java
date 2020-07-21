@@ -8,6 +8,12 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.model.QualityModel;
 import fr.becpg.repo.entity.EntityDictionaryService;
 
+/**
+ * <p>PlmEntityActivityPlugin class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class PlmEntityActivityPlugin extends DefaultEntityActivityPlugin implements EntityActivityPlugin {	
 	
@@ -15,11 +21,13 @@ public class PlmEntityActivityPlugin extends DefaultEntityActivityPlugin impleme
 	EntityDictionaryService entityDictionaryService;
 	
 	
+	/** {@inheritDoc} */
 	public boolean isMatchingStateProperty(QName propName){
 		return PLMModel.PROP_PRODUCT_STATE.isMatch(propName) || PLMModel.PROP_SUPPLIER_STATE.isMatch(propName)
 				|| QualityModel.PROP_NC_STATE.isMatch(propName);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isMatchingEntityType(QName entityType) {
 		

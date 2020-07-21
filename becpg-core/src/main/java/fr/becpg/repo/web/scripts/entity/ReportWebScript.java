@@ -22,7 +22,10 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 import fr.becpg.repo.report.entity.EntityReportService;
 
 /**
+ * <p>ReportWebScript class.</p>
+ *
  * @author querephi
+ * @version $Id: $Id
  */
 public class ReportWebScript extends AbstractWebScript {
 
@@ -42,18 +45,34 @@ public class ReportWebScript extends AbstractWebScript {
 
 	private EntityReportService entityReportService;
 
+	/**
+	 * <p>Setter for the field <code>entityReportService</code>.</p>
+	 *
+	 * @param entityReportService a {@link fr.becpg.repo.report.entity.EntityReportService} object.
+	 */
 	public void setEntityReportService(EntityReportService entityReportService) {
 		this.entityReportService = entityReportService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>lockService</code>.</p>
+	 *
+	 * @param lockService a {@link org.alfresco.service.cmr.lock.LockService} object.
+	 */
 	public void setLockService(LockService lockService) {
 		this.lockService = lockService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
 		logger.debug("start report webscript");

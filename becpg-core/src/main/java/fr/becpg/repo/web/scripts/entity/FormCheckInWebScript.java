@@ -30,6 +30,7 @@ import fr.becpg.repo.entity.version.EntityVersionService;
  * The Class FormCheckInWebScript.
  *
  * @author querephi
+ * @version $Id: $Id
  */
 public class FormCheckInWebScript extends DeclarativeWebScript {
 
@@ -51,14 +52,25 @@ public class FormCheckInWebScript extends DeclarativeWebScript {
 	
 	
 
+	/**
+	 * <p>Setter for the field <code>entityVersionService</code>.</p>
+	 *
+	 * @param entityVersionService a {@link fr.becpg.repo.entity.version.EntityVersionService} object.
+	 */
 	public void setEntityVersionService(EntityVersionService entityVersionService) {
 		this.entityVersionService = entityVersionService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>checkOutCheckInService</code>.</p>
+	 *
+	 * @param checkOutCheckInService a {@link org.alfresco.service.cmr.coci.CheckOutCheckInService} object.
+	 */
 	public void setCheckOutCheckInService(CheckOutCheckInService checkOutCheckInService) {
 		this.checkOutCheckInService = checkOutCheckInService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected Map<String, Object> executeImpl(WebScriptRequest req, Status status, Cache cache) {
 

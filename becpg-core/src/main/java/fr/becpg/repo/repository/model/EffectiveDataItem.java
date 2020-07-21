@@ -19,15 +19,41 @@ package fr.becpg.repo.repository.model;
 
 import java.util.Date;
 
+/**
+ * <p>EffectiveDataItem interface.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public interface EffectiveDataItem {
 
 
+	/**
+	 * <p>getStartEffectivity.</p>
+	 *
+	 * @return a {@link java.util.Date} object.
+	 */
 	Date getStartEffectivity();
 
+	/**
+	 * <p>setStartEffectivity.</p>
+	 *
+	 * @param startEffectivity a {@link java.util.Date} object.
+	 */
 	void setStartEffectivity(Date startEffectivity);
 	
+	/**
+	 * <p>getEndEffectivity.</p>
+	 *
+	 * @return a {@link java.util.Date} object.
+	 */
 	Date getEndEffectivity();
 
+	/**
+	 * <p>setEndEffectivity.</p>
+	 *
+	 * @param endEffectivity a {@link java.util.Date} object.
+	 */
 	void setEndEffectivity(Date endEffectivity);
 	
 }

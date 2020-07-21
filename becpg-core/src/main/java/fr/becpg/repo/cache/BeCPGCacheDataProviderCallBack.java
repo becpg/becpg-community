@@ -18,12 +18,18 @@
 package fr.becpg.repo.cache;
 
 /**
- * 
- * @author matthieu
+ * <p>BeCPGCacheDataProviderCallBack interface.</p>
  *
+ * @author matthieu
  * @param <T>
+ * @version $Id: $Id
  */
 public interface BeCPGCacheDataProviderCallBack<T> {
 	
+    /**
+     * <p>getData.</p>
+     *
+     * @return a T object.
+     */
     T getData();
 }

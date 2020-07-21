@@ -46,29 +46,41 @@ import fr.becpg.report.client.ReportFormat;
  *
  * @author matthieu
  * @since 1.5.c
+ * @version $Id: $Id
  */
 public class ReportContentGet extends ContentGet {
 	private static final Log logger = LogFactory.getLog(ReportContentGet.class);
  
 	private static final String PARAM_ENTITY_NODEREF = "entityNodeRef";
+	/** Constant <code>PARAM_STORE_TYPE="store_type"</code> */
 	protected static final String PARAM_STORE_TYPE = "store_type";
+	/** Constant <code>PARAM_STORE_ID="store_id"</code> */
 	protected static final String PARAM_STORE_ID = "store_id";
+	/** Constant <code>PARAM_ID="id"</code> */
 	protected static final String PARAM_ID = "id";
+	/** Constant <code>PARAM_PROPERTY="property"</code> */
 	protected static final String PARAM_PROPERTY = "property";
 
 	private EntityReportService entityReportService;
 
 	private NamespaceService namespaceService;
 
+	/** {@inheritDoc} */
 	@Override
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityReportService</code>.</p>
+	 *
+	 * @param entityReportService a {@link fr.becpg.repo.report.entity.EntityReportService} object.
+	 */
 	public void setEntityReportService(EntityReportService entityReportService) {
 		this.entityReportService = entityReportService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void execute(final WebScriptRequest req, final WebScriptResponse res) throws IOException {
 		
