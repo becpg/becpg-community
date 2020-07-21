@@ -49,6 +49,12 @@ import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
+/**
+ * <p>NutDatabaseServiceImpl class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service("nutDatabaseService")
 public class NutDatabaseServiceImpl implements NutDatabaseService {
 
@@ -82,6 +88,7 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 	private final static Log logger = LogFactory.getLog(NutDatabaseServiceImpl.class);
 	private final static String DATABASES_FOLDER = "/app:company_home/cm:System/cm:NutritionalDatabases";
 
+	/** {@inheritDoc} */
 	@Override
 	public List<FileInfo> getNutDatabases() {
 
@@ -93,6 +100,7 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public ListValuePage suggest(String databaseNR, String query, int pageNum, int pageSize) {
 		List<IdentifiedValue> matches = new ArrayList<>();
@@ -132,6 +140,7 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 
 	private static String NUT_CSV_DECIMAL_FORMAT = "###,###.####";
 	
+	/** {@inheritDoc} */
 	@Override
 	public List<NutListDataItem> getNuts(NodeRef databaseFile, String id) {
 		List<NutListDataItem> ret = new ArrayList<>();
@@ -212,6 +221,7 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 		return ret;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef createProduct(NodeRef file, String id, NodeRef dest) {
 
@@ -521,12 +531,19 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String getProductName(NodeRef file, String id) {
 		String[] headerRow = getHeaderRow(file);
 		return getProductName(file, id, extractIdentifierColumnIndex(headerRow), extractNameColumnIndex(headerRow));
 	}
 
+	/**
+	 * <p>extractNutMethod.</p>
+	 *
+	 * @param node a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String extractNutMethod(NodeRef node) {
 		return FilenameUtils.removeExtension((String) nodeService.getProperty(node, ContentModel.PROP_NAME)).toLowerCase().replace("table", "").trim()
 				.toUpperCase();

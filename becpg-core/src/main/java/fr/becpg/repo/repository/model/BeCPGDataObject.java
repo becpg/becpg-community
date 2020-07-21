@@ -31,6 +31,12 @@ import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.InternalField;
 
+/**
+ * <p>Abstract BeCPGDataObject class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public  abstract class  BeCPGDataObject  extends BaseObject implements RepositoryEntity {
 
 	/**
@@ -54,19 +60,34 @@ public  abstract class  BeCPGDataObject  extends BaseObject implements Repositor
 	
 	private transient long dbHashCode;
 	
+	/**
+	 * <p>Getter for the field <code>dbHashCode</code>.</p>
+	 *
+	 * @return a long.
+	 */
 	@InternalField
 	public long getDbHashCode() {
 		return dbHashCode;
 	}
 
+	/** {@inheritDoc} */
 	public void setDbHashCode(long dbHashCode) {
 		this.dbHashCode = dbHashCode;
 	}
 
+	/**
+	 * <p>Constructor for BeCPGDataObject.</p>
+	 */
 	public BeCPGDataObject() {
 		super();
 	}
 
+	/**
+	 * <p>Constructor for BeCPGDataObject.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param name a {@link java.lang.String} object.
+	 */
 	public BeCPGDataObject(NodeRef nodeRef, String name) {
 		super();
 		this.nodeRef = nodeRef;
@@ -74,6 +95,11 @@ public  abstract class  BeCPGDataObject  extends BaseObject implements Repositor
 	}
 	
 
+	/**
+	 * <p>Constructor for BeCPGDataObject.</p>
+	 *
+	 * @param beCPGDataObject a {@link fr.becpg.repo.repository.model.BeCPGDataObject} object.
+	 */
 	public BeCPGDataObject(BeCPGDataObject beCPGDataObject) 
 	{
 	    this.nodeRef = beCPGDataObject.nodeRef;
@@ -85,70 +111,125 @@ public  abstract class  BeCPGDataObject  extends BaseObject implements Repositor
 	    this.dbHashCode = beCPGDataObject.dbHashCode;
 	}
 
+	/**
+	 * <p>Getter for the field <code>nodeRef</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	@InternalField
 	public NodeRef getNodeRef() {
 		return nodeRef;
 	}
 
+	/** {@inheritDoc} */
 	public void setNodeRef(NodeRef nodeRef) {
 		this.nodeRef = nodeRef;
 	}
 
+	/**
+	 * <p>Getter for the field <code>name</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="cm:name")
 	public String getName() {
 		return name;
 	}
 
+	/** {@inheritDoc} */
 	public void setName(String name) {
 		this.name = name;
 	}
 
+	/**
+	 * <p>Getter for the field <code>parentNodeRef</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	@InternalField
 	public NodeRef getParentNodeRef() {
 		return parentNodeRef;
 	}
 
+	/** {@inheritDoc} */
 	public void setParentNodeRef(NodeRef parentNodeRef) {
 		this.parentNodeRef = parentNodeRef;
 	}
 
+	/**
+	 * <p>Getter for the field <code>aspects</code>.</p>
+	 *
+	 * @return a {@link java.util.Set} object.
+	 */
 	@InternalField
 	public Set<QName> getAspects() {
 		return aspects;
 	}
 
+	/**
+	 * <p>Setter for the field <code>aspects</code>.</p>
+	 *
+	 * @param aspects a {@link java.util.Set} object.
+	 */
 	public void setAspects(Set<QName> aspects) {
 		this.aspects = aspects;
 	}
 
+	/**
+	 * <p>Getter for the field <code>aspectsToRemove</code>.</p>
+	 *
+	 * @return a {@link java.util.Set} object.
+	 */
 	@InternalField
 	public Set<QName> getAspectsToRemove() {
 		return aspectsToRemove;
 	}
 
+	/**
+	 * <p>Setter for the field <code>aspectsToRemove</code>.</p>
+	 *
+	 * @param aspectsToRemove a {@link java.util.Set} object.
+	 */
 	public void setAspectsToRemove(Set<QName> aspectsToRemove) {
 		this.aspectsToRemove = aspectsToRemove;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>extraProperties</code>.</p>
+	 *
+	 * @return a {@link java.util.Map} object.
+	 */
 	@InternalField
 	public Map<QName, Serializable> getExtraProperties() {
 		return extraProperties;
 	}
 
+	/** {@inheritDoc} */
 	public void setExtraProperties(Map<QName, Serializable> extraProperties) {
 		this.extraProperties = extraProperties;
 	}
 
+	/**
+	 * <p>isTransient.</p>
+	 *
+	 * @return a boolean.
+	 */
 	@InternalField
 	public boolean isTransient() {
 		return isTransient;
 	}
 
+	/**
+	 * <p>setTransient.</p>
+	 *
+	 * @param isTransient a boolean.
+	 */
 	public void setTransient(boolean isTransient) {
 		this.isTransient = isTransient;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -162,6 +243,7 @@ public  abstract class  BeCPGDataObject  extends BaseObject implements Repositor
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -201,6 +283,7 @@ public  abstract class  BeCPGDataObject  extends BaseObject implements Repositor
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "BeCPGDataObject [nodeRef=" + nodeRef + ", parentNodeRef=" + parentNodeRef + ", name=" + name + ", aspects=" + aspects

@@ -32,6 +32,7 @@ import fr.becpg.repo.search.impl.AbstractBeCPGQueryBuilder;
  * The Class RepoServiceImpl.
  *
  * @author querephi
+ * @version $Id: $Id
  */
 @Service("repoService")
 public class RepoServiceImpl implements RepoService {
@@ -52,6 +53,7 @@ public class RepoServiceImpl implements RepoService {
 	private NamespaceService namespaceService;
 
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getOrCreateFolderByPaths(NodeRef parentNodeRef, List<String> paths) {
 
@@ -64,6 +66,7 @@ public class RepoServiceImpl implements RepoService {
 	}
 
 	
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getOrCreateFolderByPath(NodeRef parentNodeRef, String path, String name) {
 
@@ -83,6 +86,7 @@ public class RepoServiceImpl implements RepoService {
 		return folderNodeRef;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getFolderByPath(NodeRef parentNodeRef, String path) {
 
@@ -95,11 +99,13 @@ public class RepoServiceImpl implements RepoService {
 		return ret;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getFolderByPath(String path) {
 		return getFolderByPath(repository.getCompanyHome(), path);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void moveNode(NodeRef nodeRefToMove, NodeRef destinationNodeRef) {
 
@@ -130,6 +136,7 @@ public class RepoServiceImpl implements RepoService {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String getAvailableName(NodeRef folderNodeRef, String name, boolean forceRename) {
 

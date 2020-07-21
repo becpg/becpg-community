@@ -29,14 +29,27 @@ import org.alfresco.service.namespace.QName;
 
 import fr.becpg.repo.helper.AttributeExtractorService;
 
+/**
+ * <p>ForumDataExtractor class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class ForumDataExtractor extends AbstractNodeDataExtractor  {
 
 
 
+	/**
+	 * <p>Constructor for ForumDataExtractor.</p>
+	 *
+	 * @param services a {@link org.alfresco.service.ServiceRegistry} object.
+	 * @param attributeExtractorService a {@link fr.becpg.repo.helper.AttributeExtractorService} object.
+	 */
 	public ForumDataExtractor(ServiceRegistry services,AttributeExtractorService attributeExtractorService) {
 		super(services,attributeExtractorService);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected Map<String, Object> doExtract(NodeRef nodeRef,QName itemType, SiteInfo site) {
 		

@@ -22,6 +22,12 @@ import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.search.AdvSearchPlugin;
 
+/**
+ * <p>NestedAdvSearchPlugin class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service("nestedAdvSearchPlugin")
 public class NestedAdvSearchPlugin implements AdvSearchPlugin {
 
@@ -42,6 +48,12 @@ public class NestedAdvSearchPlugin implements AdvSearchPlugin {
 
 	private static final Log logger = LogFactory.getLog(NestedAdvSearchPlugin.class);
 
+	/**
+	 * <p>extractNested.</p>
+	 *
+	 * @param criteriaMap a {@link java.util.Map} object.
+	 * @return a {@link java.util.Map} object.
+	 */
 	public Map<String, Map<String, String>> extractNested(Map<String, String> criteriaMap) {
 		Map<String, Map<String, String>> nested = new HashMap<>();
 
@@ -74,6 +86,12 @@ public class NestedAdvSearchPlugin implements AdvSearchPlugin {
 		return nested;
 	}
 
+	/**
+	 * <p>cleanCriteria.</p>
+	 *
+	 * @param criteriaMap a {@link java.util.Map} object.
+	 * @return a {@link java.util.Map} object.
+	 */
 	public Map<String, String> cleanCriteria(Map<String, String> criteriaMap) {
 		Map<String, String> ret = new HashMap<>();
 
@@ -93,6 +111,7 @@ public class NestedAdvSearchPlugin implements AdvSearchPlugin {
 		return ret;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> filter(List<NodeRef> nodes, QName datatype, Map<String, String> criteria, SearchConfig searchConfig) {
 		if (criteria != null && !criteria.isEmpty()) {
@@ -149,10 +168,18 @@ public class NestedAdvSearchPlugin implements AdvSearchPlugin {
 
 	}
 
+	/**
+	 * <p>match.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param criteriaMap a {@link java.util.Map} object.
+	 * @return a boolean.
+	 */
 	public boolean match(NodeRef nodeRef, Map<String, String> criteriaMap) {
 		return attributeExtractorService.matchCriteria(nodeRef, criteriaMap);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Set<String> getIgnoredFields(QName datatype, SearchConfig searchConfig) {
 		return new HashSet<>();

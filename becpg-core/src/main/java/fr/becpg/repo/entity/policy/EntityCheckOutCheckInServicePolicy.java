@@ -46,9 +46,10 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.report.entity.EntityReportAsyncGenerator;
 
 /**
+ * <p>EntityCheckOutCheckInServicePolicy class.</p>
  *
  * @author quere
- *
+ * @version $Id: $Id
  */
 public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy
 		implements CheckOutCheckInServicePolicies.OnCheckOut, CheckOutCheckInServicePolicies.BeforeCheckIn, CheckOutCheckInServicePolicies.OnCheckIn,
@@ -63,19 +64,36 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy
 
 	private RuleService ruleService;
 	
+	/**
+	 * <p>Setter for the field <code>ruleService</code>.</p>
+	 *
+	 * @param ruleService a {@link org.alfresco.service.cmr.rule.RuleService} object.
+	 */
 	public void setRuleService(RuleService ruleService) {
 		this.ruleService = ruleService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityVersionService</code>.</p>
+	 *
+	 * @param entityVersionService a {@link fr.becpg.repo.entity.version.EntityVersionService} object.
+	 */
 	public void setEntityVersionService(EntityVersionService entityVersionService) {
 		this.entityVersionService = entityVersionService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityReportAsyncGenerator</code>.</p>
+	 *
+	 * @param entityReportAsyncGenerator a {@link fr.becpg.repo.report.entity.EntityReportAsyncGenerator} object.
+	 */
 	public void setEntityReportAsyncGenerator(EntityReportAsyncGenerator entityReportAsyncGenerator) {
 		this.entityReportAsyncGenerator = entityReportAsyncGenerator;
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * Inits the.
 	 */
 	@Override
@@ -105,6 +123,7 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onCheckOut(final NodeRef workingCopyNodeRef) {
 		ruleService.disableRules();
@@ -116,6 +135,7 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void beforeCheckIn(NodeRef workingCopyNodeRef, Map<String, Serializable> versionProperties, String contentUrl, boolean keepCheckedOut) {
 		ruleService.disableRules();
@@ -127,6 +147,7 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onCheckIn(NodeRef nodeRef) {
 		if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_EFFECTIVITY)) {
@@ -136,6 +157,7 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy
 		queueNode(nodeRef);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void beforeCancelCheckOut(final NodeRef workingCopyNodeRef) {
 		ruleService.disableRules();
@@ -147,6 +169,7 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void beforePurgeNode(NodeRef entityNodeRef) {
 		ruleService.disableRules();
@@ -158,6 +181,7 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onDeleteNode(ChildAssociationRef childAssocRef, boolean isNodeArchived) {
 
@@ -177,6 +201,7 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onRemoveAspect(NodeRef nodeRef, QName aspectTypeQName) {
 		ruleService.disableRules();
@@ -208,11 +233,13 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy
 		return original;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected void doAfterCommit(String key, Set<NodeRef> pendingNodes) {
 		entityReportAsyncGenerator.queueNodes(new ArrayList<>(pendingNodes), false);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onCancelCheckOut(NodeRef nodeRef) {
 		ruleService.disableRules();

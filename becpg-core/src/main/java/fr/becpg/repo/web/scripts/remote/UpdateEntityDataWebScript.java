@@ -32,10 +32,11 @@ import fr.becpg.repo.entity.remote.RemoteEntityFormat;
  * Update entity with POST xml
  *
  * @author matthieu
- *
+ * @version $Id: $Id
  */
 public class UpdateEntityDataWebScript extends AbstractEntityWebScript {
 
+	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
 

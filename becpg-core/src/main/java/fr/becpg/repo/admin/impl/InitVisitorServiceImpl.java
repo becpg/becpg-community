@@ -32,6 +32,12 @@ import org.springframework.stereotype.Service;
 import fr.becpg.repo.admin.InitVisitor;
 import fr.becpg.repo.admin.InitVisitorService;
 
+/**
+ * <p>InitVisitorServiceImpl class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service("initVisitorService")
 public class InitVisitorServiceImpl implements InitVisitorService {
 
@@ -40,6 +46,7 @@ public class InitVisitorServiceImpl implements InitVisitorService {
 	@Autowired
 	private InitVisitor[] initVisitors;
 
+	/** {@inheritDoc} */
 	@Override
 	public List<SiteInfo> run(NodeRef companyHomeNodeRef) {
 

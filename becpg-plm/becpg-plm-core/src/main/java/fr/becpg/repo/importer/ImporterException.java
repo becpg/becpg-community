@@ -7,6 +7,7 @@ package fr.becpg.repo.importer;
  * Importer Exception.
  *
  * @author querephi
+ * @version $Id: $Id
  */
 public class ImporterException extends Exception {
 
@@ -24,6 +25,12 @@ public class ImporterException extends Exception {
 		super(message);
 	}
 
+	/**
+	 * <p>Constructor for ImporterException.</p>
+	 *
+	 * @param message a {@link java.lang.String} object.
+	 * @param e a {@link java.lang.Exception} object.
+	 */
 	public ImporterException(String message, Exception e) {
 		super(message,e);
 	}

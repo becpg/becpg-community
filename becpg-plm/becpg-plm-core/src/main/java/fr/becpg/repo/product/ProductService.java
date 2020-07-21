@@ -27,7 +27,10 @@ import fr.becpg.repo.product.data.CharactDetails;
 import fr.becpg.repo.product.data.ProductData;
 
 /**
+ * <p>ProductService interface.</p>
+ *
  * @author querephi
+ * @version $Id: $Id
  */
 public interface ProductService {
 		   	       
@@ -35,28 +38,60 @@ public interface ProductService {
 	
     /**
      * Formulate the product (update DB)
+     *
+     * @param productNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+     * @throws fr.becpg.repo.formulation.FormulateException if any.
      */
     void formulate(NodeRef productNodeRef) throws FormulateException;
     
     /**
      * Use fast chain formulation handler if fast param is true
+     *
+     * @param productNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+     * @param fast a boolean.
+     * @throws fr.becpg.repo.formulation.FormulateException if any.
      */
     void formulate(NodeRef productNodeRef, boolean fast)   throws FormulateException;
     
     /**
      * Formulate the product (don't update DB)
+     *
+     * @param productData a {@link fr.becpg.repo.product.data.ProductData} object.
+     * @return a {@link fr.becpg.repo.product.data.ProductData} object.
+     * @throws fr.becpg.repo.formulation.FormulateException if any.
      */
     ProductData formulate(ProductData productData) throws FormulateException;
      
     
+	/**
+	 * <p>formulateDetails.</p>
+	 *
+	 * @param productNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param dataType a {@link org.alfresco.service.namespace.QName} object.
+	 * @param dataListName a {@link java.lang.String} object.
+	 * @param elements a {@link java.util.List} object.
+	 * @param level a {@link java.lang.Integer} object.
+	 * @return a {@link fr.becpg.repo.product.data.CharactDetails} object.
+	 * @throws fr.becpg.repo.formulation.FormulateException if any.
+	 */
 	CharactDetails formulateDetails(NodeRef productNodeRef, QName dataType, String dataListName, List<NodeRef> elements, Integer level) throws FormulateException;
 
 
+	/**
+	 * <p>shouldFormulate.</p>
+	 *
+	 * @param product a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a boolean.
+	 */
 	boolean shouldFormulate(NodeRef product);
 
 	
 	/**
 	 * Formulate a text recipe in Memory
+	 *
+	 * @param recipe a {@link java.lang.String} object.
+	 * @return a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @throws fr.becpg.repo.formulation.FormulateException if any.
 	 */
 	ProductData formulateText(String recipe) throws FormulateException;
 

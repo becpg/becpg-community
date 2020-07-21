@@ -45,6 +45,7 @@ import fr.becpg.repo.variant.filters.VariantFilters;
  * The Class CostCalculatingVisitor.
  *
  * @author querephi
+ * @version $Id: $Id
  */
 public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormulationHandler<CostListDataItem> {
 
@@ -56,30 +57,53 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 
 	private AlfrescoRepository<ProductData> alfrescoRepositoryProductData;
 
+	/** Constant <code>keepProductUnit=false</code> */
 	public static boolean keepProductUnit = false;
 
+	/**
+	 * <p>Setter for the field <code>keepProductUnit</code>.</p>
+	 *
+	 * @param keepProductUnit a boolean.
+	 */
 	public void setKeepProductUnit(boolean keepProductUnit) {
 		CostsCalculatingFormulationHandler.keepProductUnit = keepProductUnit;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityTplService</code>.</p>
+	 *
+	 * @param entityTplService a {@link fr.becpg.repo.entity.EntityTplService} object.
+	 */
 	public void setEntityTplService(EntityTplService entityTplService) {
 		this.entityTplService = entityTplService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>packagingHelper</code>.</p>
+	 *
+	 * @param packagingHelper a {@link fr.becpg.repo.product.formulation.PackagingHelper} object.
+	 */
 	public void setPackagingHelper(PackagingHelper packagingHelper) {
 		this.packagingHelper = packagingHelper;
 	}
 
+	/**
+	 * <p>Setter for the field <code>alfrescoRepositoryProductData</code>.</p>
+	 *
+	 * @param alfrescoRepositoryProductData a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
+	 */
 	public void setAlfrescoRepositoryProductData(AlfrescoRepository<ProductData> alfrescoRepositoryProductData) {
 		this.alfrescoRepositoryProductData = alfrescoRepositoryProductData;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected Class<CostListDataItem> getInstanceClass() {
 
 		return CostListDataItem.class;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 
@@ -155,6 +179,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected void visitChildren(ProductData formulatedProduct, List<CostListDataItem> costList, Double netQty) throws FormulateException {
 
@@ -256,6 +281,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected List<CostListDataItem> getDataListVisited(ProductData partProduct) {
 		return partProduct.getCostList();
@@ -264,6 +290,10 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 	/**
 	 * Calculate the costListUnit
 	 *
+	 * @param productUnit a {@link fr.becpg.repo.product.data.constraints.ProductUnit} object.
+	 * @param costUnit a {@link java.lang.String} object.
+	 * @param isFixed a {@link java.lang.Boolean} object.
+	 * @return a {@link java.lang.String} object.
 	 */
 	public static String calculateUnit(ProductUnit productUnit, String costUnit, Boolean isFixed) {
 
@@ -276,6 +306,9 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 
 	/**
 	 * Calculate the suffix of the costListUnit
+	 *
+	 * @param productUnit a {@link fr.becpg.repo.product.data.constraints.ProductUnit} object.
+	 * @return a {@link java.lang.String} object.
 	 */
 	public static String calculateSuffixUnit(ProductUnit productUnit) {
 		if (!keepProductUnit) {
@@ -413,6 +446,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected Map<NodeRef, List<NodeRef>> getMandatoryCharacts(ProductData formulatedProduct, QName componentType) {
 
@@ -436,6 +470,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		return mandatoryCharacts;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected void synchronizeTemplate(ProductData formulatedProduct, List<CostListDataItem> simpleListDataList) {
 
@@ -580,6 +615,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected Double extractValue(ProductData formulatedProduct, ProductData partProduct, SimpleListDataItem slDataItem) {
 		final Date now = new Date();
@@ -742,6 +778,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected boolean accept(ProductData formulatedProduct) {
 
@@ -752,6 +789,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected RequirementDataType getRequirementDataType() {
 		return RequirementDataType.Cost;

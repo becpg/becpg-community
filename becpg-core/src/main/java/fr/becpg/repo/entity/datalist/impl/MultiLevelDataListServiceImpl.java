@@ -56,6 +56,7 @@ import fr.becpg.repo.security.SecurityService;
  * Extract MultiLevelDataList at corresponding level
  *
  * @author matthieu
+ * @version $Id: $Id
  */
 @Service("multiLevelDataListService")
 public class MultiLevelDataListServiceImpl implements MultiLevelDataListService {
@@ -91,11 +92,13 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 	@Autowired
 	private BeCPGCacheService beCPGCacheService;
 
+	/** {@inheritDoc} */
 	@Override
 	public MultiLevelListData getMultiLevelListData(DataListFilter dataListFilter) {
 		return getMultiLevelListData(dataListFilter, false, false);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public MultiLevelListData getMultiLevelListData(DataListFilter dataListFilter, boolean useExpandedCache, boolean resetTree) {
 		StopWatch watch = null;
@@ -258,6 +261,7 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 		return null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isExpandedNode(NodeRef entityFolder, boolean condition, boolean resetTree) {
 		if (entityFolder != null) {
@@ -291,6 +295,7 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void expandOrColapseNode(NodeRef nodeToExpand, boolean expand) {
 		Map<NodeRef, Boolean> expandedNodes = beCPGCacheService.getFromCache(CACHE_KEY, AuthenticationUtil.getFullyAuthenticatedUser());

@@ -23,11 +23,25 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.site.SiteInfo;
 
 /**
+ * <p>InitVisitor interface.</p>
+ *
  * @author querephi
+ * @version $Id: $Id
  */
 public interface InitVisitor {
 	
+	/**
+	 * <p>visitContainer.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link java.util.List} object.
+	 */
 	List<SiteInfo> visitContainer(NodeRef nodeRef);
 	
+	/**
+	 * <p>initOrder.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object.
+	 */
 	Integer initOrder();
 }

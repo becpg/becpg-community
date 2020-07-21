@@ -22,6 +22,7 @@ import fr.becpg.repo.security.SecurityService;
  * @param <ItemType>
  *            the generic type
  * @author matthieu
+ * @version $Id: $Id
  */
 public abstract class AbstractPropertyPermissionFormFilter<ItemType> extends AbstractFilter<ItemType, NodeRef> {
 
@@ -31,14 +32,30 @@ public abstract class AbstractPropertyPermissionFormFilter<ItemType> extends Abs
 
 	protected NamespacePrefixResolver namespacePrefixResolver;
 
+	/**
+	 * <p>Setter for the field <code>namespacePrefixResolver</code>.</p>
+	 *
+	 * @param namespacePrefixResolver a {@link org.alfresco.service.namespace.NamespacePrefixResolver} object.
+	 */
 	public void setNamespacePrefixResolver(NamespacePrefixResolver namespacePrefixResolver) {
 		this.namespacePrefixResolver = namespacePrefixResolver;
 	}
 
+	/**
+	 * <p>Setter for the field <code>securityService</code>.</p>
+	 *
+	 * @param securityService a {@link fr.becpg.repo.security.SecurityService} object.
+	 */
 	public void setSecurityService(SecurityService securityService) {
 		this.securityService = securityService;
 	}
 
+	/**
+	 * <p>filterFormFields.</p>
+	 *
+	 * @param nodeType a {@link org.alfresco.service.namespace.QName} object.
+	 * @param form a {@link org.alfresco.repo.forms.Form} object.
+	 */
 	protected void filterFormFields(QName nodeType, Form form) {
 		if (form != null && form.getFieldDefinitions() != null) {
 			Iterator<FieldDefinition> it = form.getFieldDefinitions().iterator();

@@ -45,9 +45,10 @@ import fr.becpg.repo.listvalue.ListValuePlugin;
 import fr.becpg.repo.listvalue.ListValueService;
 
 /**
- * 
- * @author "Matthieu Laborie"
+ * <p>DesignerListValuePlugin class.</p>
  *
+ * @author "Matthieu Laborie"
+ * @version $Id: $Id
  */
 @Service
 public class DesignerListValuePlugin implements ListValuePlugin {
@@ -70,12 +71,14 @@ public class DesignerListValuePlugin implements ListValuePlugin {
 	private DesignerService designerService;
 
 
+	/** {@inheritDoc} */
 	@Override
 	public String[] getHandleSourceTypes() {
 		return new String[] { TYPE_PARENT_NAME, TYPE_MANDATORY_ASPECTS, TYPE_PROPERTY_TYPE, TYPE_TARGET_CLASS_NAME,
 				TYPE_CONSTRAINT_REF };
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public ListValuePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
 

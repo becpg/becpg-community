@@ -25,11 +25,13 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 
 /**
  * Delete corresponding entity
- * @author matthieu
  *
+ * @author matthieu
+ * @version $Id: $Id
  */
 public class DeleteEntityWebScript extends AbstractEntityWebScript {
 	
+	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
 		

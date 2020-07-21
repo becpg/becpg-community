@@ -31,8 +31,10 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityDictionaryService;
 
 /**
+ * <p>CharactAttributeExtractorPlugin class.</p>
+ *
  * @author matthieu
- * 
+ * @version $Id: $Id
  */
 @Service
 public class CharactAttributeExtractorPlugin extends AbstractExprNameExtractor {
@@ -43,16 +45,19 @@ public class CharactAttributeExtractorPlugin extends AbstractExprNameExtractor {
 	@Autowired
 	private EntityDictionaryService entityDictionaryService;
 
+	/** {@inheritDoc} */
 	@Override
 	public Collection<QName> getMatchingTypes() {
 		return entityDictionaryService.getSubTypes(BeCPGModel.TYPE_CHARACT);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String extractPropName(QName type, NodeRef nodeRef) {
 		return extractExpr(nodeRef, charactNameFormat);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String extractMetadata(QName type, NodeRef nodeRef) {
 		return type.toPrefixString(namespaceService).split(":")[1];

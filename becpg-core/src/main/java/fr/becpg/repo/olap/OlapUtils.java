@@ -34,10 +34,24 @@ import org.springframework.util.StopWatch;
 import fr.becpg.repo.olap.data.OlapContext;
 import fr.becpg.repo.olap.impl.OlapServiceImpl;
 
+/**
+ * <p>OlapUtils class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class OlapUtils {
 
 	private static final Log logger = LogFactory.getLog(OlapServiceImpl.class);
 
+	/**
+	 * <p>readJsonFromUrl.</p>
+	 *
+	 * @param url a {@link java.lang.String} object.
+	 * @param olapContext a {@link fr.becpg.repo.olap.data.OlapContext} object.
+	 * @return a {@link java.lang.String} object.
+	 * @throws java.io.IOException if any.
+	 */
 	public static String readJsonFromUrl(String url, OlapContext olapContext) throws IOException {
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
@@ -66,6 +80,14 @@ public class OlapUtils {
 		}
 	}
 
+	/**
+	 * <p>sendCreateQueryPostRequest.</p>
+	 *
+	 * @param olapContext a {@link fr.becpg.repo.olap.data.OlapContext} object.
+	 * @param postUrl a {@link java.lang.String} object.
+	 * @param xml a {@link java.lang.String} object.
+	 * @throws java.io.IOException if any.
+	 */
 	public static void sendCreateQueryPostRequest(OlapContext olapContext, String postUrl, String xml) throws IOException {
 
 		if (logger.isDebugEnabled()) {
@@ -96,6 +118,12 @@ public class OlapUtils {
 	}
 
 	// TODO crappy !!!
+	/**
+	 * <p>convert.</p>
+	 *
+	 * @param value a {@link java.lang.String} object.
+	 * @return a {@link java.lang.Object} object.
+	 */
 	public static Object convert(String value) {
 		if (value == null || value.isEmpty()) {
 			return (Long)0L;

@@ -13,14 +13,31 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 
+/**
+ * <p>Abstract AbstractRequirementScanner class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public abstract class AbstractRequirementScanner<T> implements RequirementScanner {
 
 	protected NodeService mlNodeService;
 
+	/**
+	 * <p>Setter for the field <code>mlNodeService</code>.</p>
+	 *
+	 * @param mlNodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setMlNodeService(NodeService mlNodeService) {
 		this.mlNodeService = mlNodeService;
 	}
 
+	/**
+	 * <p>extractRequirements.</p>
+	 *
+	 * @param specifications a {@link java.util.List} object.
+	 * @return a {@link java.util.Map} object.
+	 */
 	public Map<ProductSpecificationData, List<T>> extractRequirements(List<ProductSpecificationData> specifications) {
 		Map<ProductSpecificationData, List<T>> ret = new HashMap<>();
 		if (specifications != null) {
@@ -53,12 +70,30 @@ public abstract class AbstractRequirementScanner<T> implements RequirementScanne
 		return ret;
 	}
 
+	/**
+	 * <p>extractName.</p>
+	 *
+	 * @param charactRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object.
+	 */
 	protected MLText extractName(NodeRef charactRef) {
 		return (MLText) mlNodeService.getProperty(charactRef, BeCPGModel.PROP_CHARACT_NAME);
 	}
 
+	/**
+	 * <p>getDataListVisited.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @return a {@link java.util.List} object.
+	 */
 	protected abstract List<T> getDataListVisited(ProductData productData);
 
+	/**
+	 * <p>mergeRequirements.</p>
+	 *
+	 * @param ret a {@link java.util.List} object.
+	 * @param toAdd a {@link java.util.List} object.
+	 */
 	protected abstract void mergeRequirements(List<T> ret, List<T> toAdd);
 
 }

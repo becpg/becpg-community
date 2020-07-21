@@ -18,12 +18,33 @@
  ******************************************************************************/
 package fr.becpg.repo.data.hierarchicalList;
 
+/**
+ * <p>CompositeDataItem interface.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public interface CompositeDataItem<T> {
 
+	/**
+	 * <p>getDepthLevel.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object.
+	 */
 	Integer getDepthLevel();
      
+	/**
+	 * <p>getParent.</p>
+	 *
+	 * @return a T object.
+	 */
 	T getParent();
 	
+	/**
+	 * <p>setParent.</p>
+	 *
+	 * @param parent a T object.
+	 */
 	void setParent(T parent);
 	
 }

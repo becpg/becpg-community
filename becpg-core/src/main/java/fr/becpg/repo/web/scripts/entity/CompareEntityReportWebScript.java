@@ -46,8 +46,9 @@ import fr.becpg.repo.report.template.ReportType;
 
 /**
  * The Class CompareEntityVersionReportWebScript.
- * 
+ *
  * @author querephi, matthieu
+ * @version $Id: $Id
  */
 public class CompareEntityReportWebScript extends AbstractWebScript {
 
@@ -78,27 +79,53 @@ public class CompareEntityReportWebScript extends AbstractWebScript {
 
 	private ReportTplService reportTplService;
 
+	/**
+	 * <p>Setter for the field <code>compareEntityReportService</code>.</p>
+	 *
+	 * @param compareEntityReportService a {@link fr.becpg.repo.entity.comparison.CompareEntityReportService} object.
+	 */
 	public void setCompareEntityReportService(CompareEntityReportService compareEntityReportService) {
 		this.compareEntityReportService = compareEntityReportService;
 	}
 
 
+	/**
+	 * <p>Setter for the field <code>mimetypeService</code>.</p>
+	 *
+	 * @param mimetypeService a {@link org.alfresco.service.cmr.repository.MimetypeService} object.
+	 */
 	public void setMimetypeService(MimetypeService mimetypeService) {
 		this.mimetypeService = mimetypeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>versionService</code>.</p>
+	 *
+	 * @param versionService a {@link org.alfresco.service.cmr.version.VersionService} object.
+	 */
 	public void setVersionService(VersionService versionService) {
 		this.versionService = versionService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityVersionService</code>.</p>
+	 *
+	 * @param entityVersionService a {@link fr.becpg.repo.entity.version.EntityVersionService} object.
+	 */
 	public void setEntityVersionService(EntityVersionService entityVersionService) {
 		this.entityVersionService = entityVersionService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>reportTplService</code>.</p>
+	 *
+	 * @param reportTplService a {@link fr.becpg.repo.report.template.ReportTplService} object.
+	 */
 	public void setReportTplService(ReportTplService reportTplService) {
 		this.reportTplService = reportTplService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
 		List<NodeRef> entityNodeRefs = new LinkedList<>();

@@ -21,33 +21,54 @@ import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 
 /**
- * 
- * @author matthieu
+ * <p>DeclarationFilterContext class.</p>
  *
+ * @author matthieu
+ * @version $Id: $Id
  */
 public class DeclarationFilterContext {
 
 	CompoListDataItem compoListDataItem;
 	IngListDataItem ingListDataItem;
 
+	/**
+	 * <p>Constructor for DeclarationFilterContext.</p>
+	 *
+	 * @param compoListDataItem a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object.
+	 * @param ingListDataItem a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object.
+	 */
 	public DeclarationFilterContext(CompoListDataItem compoListDataItem, IngListDataItem ingListDataItem) {
 		super();
 		this.compoListDataItem = compoListDataItem;
 		this.ingListDataItem = ingListDataItem;
 	}
 
+	/**
+	 * <p>Constructor for DeclarationFilterContext.</p>
+	 */
 	public DeclarationFilterContext() {
 		super();
 	}
 
+	/**
+	 * <p>Getter for the field <code>compoListDataItem</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object.
+	 */
 	public CompoListDataItem getCompoListDataItem() {
 		return compoListDataItem;
 	}
 
+	/**
+	 * <p>Getter for the field <code>ingListDataItem</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object.
+	 */
 	public IngListDataItem getIngListDataItem() {
 		return ingListDataItem;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "DeclarationFilterContext [compoListDataItem=" + compoListDataItem + ", ingListDataItem=" + ingListDataItem + "]";

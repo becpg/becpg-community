@@ -52,6 +52,12 @@ import fr.becpg.repo.report.template.ReportType;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.report.client.ReportFormat;
 
+/**
+ * <p>ReportTplServiceImpl class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service("reportTplService")
 public class ReportTplServiceImpl implements ReportTplService {
 
@@ -67,6 +73,8 @@ public class ReportTplServiceImpl implements ReportTplService {
 	private AssociationService associationService;
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * Get the system report template
 	 */
 	@Override
@@ -75,6 +83,8 @@ public class ReportTplServiceImpl implements ReportTplService {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * Get the system report template
 	 */
 	@Override
@@ -85,15 +95,11 @@ public class ReportTplServiceImpl implements ReportTplService {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * Get the report templates of the product type that user can choose from
 	 * UI.
-	 *
-	 * @param nodeType
-	 *            the node type
-	 * @param tplName
-	 *            the tpl name
-	 * @return the user report templates
-	 * @param:productType
+
 	 * @param:tplName the
 	 *                    name of the template or starting by
 	 */
@@ -103,14 +109,10 @@ public class ReportTplServiceImpl implements ReportTplService {
 	}
 
 	/**
-	 * Get the report template of the product type by name
+	 * {@inheritDoc}
 	 *
-	 * @param nodeType
-	 *            the node type
-	 * @param tplName
-	 *            the tpl name
-	 * @return the user report templates
-	 * @param:productType
+	 * Get the report template of the product type by name
+
 	 * @param:tplName the
 	 *                    name of the template or starting by
 	 */
@@ -121,6 +123,7 @@ public class ReportTplServiceImpl implements ReportTplService {
 		return (ret != null) && !ret.isEmpty() ? ret.get(0) : null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getDefaultReportTemplate(ReportType reportType, QName nodeType) {
 		List<NodeRef> ret = getReportTpls(reportType, nodeType, false, true, null);
@@ -129,8 +132,9 @@ public class ReportTplServiceImpl implements ReportTplService {
 	}
 
 	/**
-	 * Create the rptdesign node for the report
+	 * {@inheritDoc}
 	 *
+	 * Create the rptdesign node for the report
 	 */
 	@Override
 	public NodeRef createTplRptDesign(NodeRef parentNodeRef, String tplName, String tplFilePath, ReportType reportType, ReportFormat reportFormat,
@@ -192,8 +196,9 @@ public class ReportTplServiceImpl implements ReportTplService {
 	}
 
 	/**
-	 * Create a ressource for the report
+	 * {@inheritDoc}
 	 *
+	 * Create a ressource for the report
 	 */
 	@Override
 	public NodeRef createTplRessource(NodeRef parentNodeRef, String xmlFilePath, boolean overrideRessource) throws IOException {
@@ -235,6 +240,7 @@ public class ReportTplServiceImpl implements ReportTplService {
 		return fileNodeRef;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> cleanDefaultTpls(List<NodeRef> tplsNodeRef) {
 
@@ -271,6 +277,7 @@ public class ReportTplServiceImpl implements ReportTplService {
 		return tplsNodeRef;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public ReportFormat getReportFormat(NodeRef tplNodeRef) {
 
@@ -318,6 +325,7 @@ public class ReportTplServiceImpl implements ReportTplService {
 		return ret;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getAssociatedReportTemplate(NodeRef nodeRef) {
 		return associationService.getTargetAssoc(nodeRef, ReportModel.ASSOC_REPORT_TPL, false);

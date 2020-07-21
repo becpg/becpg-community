@@ -11,11 +11,13 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 /**
+ * <p>AutomaticECOJob class.</p>
  *
  * @author matthieu
  *
  *         Case 1: - Automatic applied changed on wused (Formulation and
  *         Reports) - Changed with Version Case 2: - Create OM
+ * @version $Id: $Id
  */
 // Can be made with a job ?
 // Maybe a policy on entity
@@ -23,9 +25,9 @@ import org.quartz.JobExecutionException;
 // - Product , entity
 // On fait un wused à chaud ?
 // On les mets tous ?
-
 public class AutomaticECOJob implements Job {
 
+	/** {@inheritDoc} */
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		JobDataMap jobData = context.getJobDetail().getJobDataMap();

@@ -36,9 +36,10 @@ import org.alfresco.service.namespace.QName;
 import fr.becpg.repo.entity.EntityDictionaryService;
 
 /**
+ * <p>Abstract AbstractEntityVisitor class.</p>
  *
  * @author matthieu
- *
+ * @version $Id: $Id
  */
 public abstract class AbstractEntityVisitor {
 
@@ -61,18 +62,38 @@ public abstract class AbstractEntityVisitor {
 
 	protected final Set<NodeRef> cacheList = new HashSet<>();
 
+	/**
+	 * <p>Setter for the field <code>dumpAll</code>.</p>
+	 *
+	 * @param dumpAll a boolean.
+	 */
 	public void setDumpAll(boolean dumpAll) {
 		this.dumpAll = dumpAll;
 	}
 
+	/**
+	 * <p>Setter for the field <code>light</code>.</p>
+	 *
+	 * @param light a boolean.
+	 */
 	public void setLight(boolean light) {
 		this.light = light;
 	}
 
+	/**
+	 * <p>Setter for the field <code>filteredLists</code>.</p>
+	 *
+	 * @param filteredLists a {@link java.util.List} object.
+	 */
 	public void setFilteredLists(List<String> filteredLists) {
 		this.filteredLists = filteredLists;
 	}
 
+	/**
+	 * <p>setFilteredFields.</p>
+	 *
+	 * @param fields a {@link java.util.List} object.
+	 */
 	public void setFilteredFields(List<String> fields) {
 
 		if ((fields != null) && !fields.isEmpty()) {
@@ -102,6 +123,12 @@ public abstract class AbstractEntityVisitor {
 
 	}
 
+	/**
+	 * <p>isValidQNameString.</p>
+	 *
+	 * @param qName a {@link java.lang.String} object.
+	 * @return a boolean.
+	 */
 	protected boolean isValidQNameString(String qName) {
 		String[] qnameArray = qName.split(":");
 		if ((qName.indexOf(":") > 0) && (qnameArray.length > 1)) {
@@ -110,6 +137,16 @@ public abstract class AbstractEntityVisitor {
 		return false;
 	}
 
+	/**
+	 * <p>Constructor for AbstractEntityVisitor.</p>
+	 *
+	 * @param mlNodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
+	 * @param entityDictionaryService a {@link fr.becpg.repo.entity.EntityDictionaryService} object.
+	 * @param contentService a {@link org.alfresco.service.cmr.repository.ContentService} object.
+	 * @param siteService a {@link org.alfresco.service.cmr.site.SiteService} object.
+	 */
 	public AbstractEntityVisitor(NodeService mlNodeService, NodeService nodeService, NamespaceService namespaceService,
 			EntityDictionaryService entityDictionaryService, ContentService contentService, SiteService siteService) {
 		super();
@@ -121,12 +158,39 @@ public abstract class AbstractEntityVisitor {
 		this.siteService = siteService;
 	}
 
+	/**
+	 * <p>visit.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param result a {@link java.io.OutputStream} object.
+	 * @throws java.lang.Exception if any.
+	 */
 	public abstract void visit(NodeRef entityNodeRef, OutputStream result) throws Exception;
 
+	/**
+	 * <p>visit.</p>
+	 *
+	 * @param entities a {@link java.util.List} object.
+	 * @param result a {@link java.io.OutputStream} object.
+	 * @throws java.lang.Exception if any.
+	 */
 	public abstract void visit(List<NodeRef> entities, OutputStream result) throws Exception;
 
+	/**
+	 * <p>visitData.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param result a {@link java.io.OutputStream} object.
+	 * @throws java.lang.Exception if any.
+	 */
 	public abstract void visitData(NodeRef entityNodeRef, OutputStream result) throws Exception;
 
+	/**
+	 * <p>writeCDATA.</p>
+	 *
+	 * @param attribute a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	protected String writeCDATA(String attribute) {
 		return attribute != null
 				? attribute.replace("&", "&amp;").replace("\"", "&quot;").replace("\'", "&apos;").replace("<", "&lt;").replace(">", "&gt;")
@@ -134,6 +198,12 @@ public abstract class AbstractEntityVisitor {
 	}
 	
 
+	/**
+	 * <p>shouldDumpAll.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a boolean.
+	 */
 	protected boolean shouldDumpAll(NodeRef nodeRef) {
 		QName nodeType = nodeService.getType(nodeRef).getPrefixedQName(namespaceService);
 

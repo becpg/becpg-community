@@ -32,6 +32,12 @@ import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.quality.NonConformityService;
 
+/**
+ * <p>NonConformityServiceImpl class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class NonConformityServiceImpl implements NonConformityService {
 
 	private static final Log logger = LogFactory.getLog(NonConformityServiceImpl.class);
@@ -40,18 +46,34 @@ public class NonConformityServiceImpl implements NonConformityService {
 	private Repository repositoryHelper;
 	private WorkflowService workflowService;
 
+	/**
+	 * <p>Setter for the field <code>repoService</code>.</p>
+	 *
+	 * @param repoService a {@link fr.becpg.repo.helper.RepoService} object.
+	 */
 	public void setRepoService(RepoService repoService) {
 		this.repoService = repoService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>workflowService</code>.</p>
+	 *
+	 * @param workflowService a {@link org.alfresco.service.cmr.workflow.WorkflowService} object.
+	 */
 	public void setWorkflowService(WorkflowService workflowService) {
 		this.workflowService = workflowService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>repositoryHelper</code>.</p>
+	 *
+	 * @param repositoryHelper a {@link org.alfresco.repo.model.Repository} object.
+	 */
 	public void setRepositoryHelper(Repository repositoryHelper) {
 		this.repositoryHelper = repositoryHelper;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getStorageFolder(NodeRef productNodeRef) {
 
@@ -76,6 +98,7 @@ public class NonConformityServiceImpl implements NonConformityService {
 		return destFolderNodeRef;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void classifyNC(NodeRef ncNodeRef, NodeRef productNodeRef) {
 		logger.debug("Classify NC");
@@ -83,6 +106,7 @@ public class NonConformityServiceImpl implements NonConformityService {
 		repoService.moveNode(ncNodeRef, destFolderNodeRef);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<String> getAssociatedWorkflow(NodeRef ncNodeRef) {
 
@@ -100,6 +124,7 @@ public class NonConformityServiceImpl implements NonConformityService {
 		return ret;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void deleteWorkflows(List<String> instanceIds) {
 		if (logger.isDebugEnabled()) {

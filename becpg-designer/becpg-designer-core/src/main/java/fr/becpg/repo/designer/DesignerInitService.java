@@ -20,20 +20,33 @@ package fr.becpg.repo.designer;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 /**
- * 
+ * <p>DesignerInitService interface.</p>
+ *
  * @author "Matthieu Laborie"
- * 
+ * @version $Id: $Id
  */
 public interface DesignerInitService {
 	
 	
 	/**
-	 * Designer common folders 
+	 * Designer common folders
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
 	NodeRef getWorkflowsNodeRef();
 
+	/**
+	 * <p>getModelsNodeRef.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	NodeRef getModelsNodeRef();
 
+	/**
+	 * <p>getConfigsNodeRef.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	NodeRef getConfigsNodeRef();
 
 

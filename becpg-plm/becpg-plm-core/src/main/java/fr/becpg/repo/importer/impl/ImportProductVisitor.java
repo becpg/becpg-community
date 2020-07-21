@@ -25,30 +25,27 @@ import fr.becpg.repo.importer.ImporterException;
 /**
  * Class used to import a product with its attributes, characteristics and
  * files.
- * 
+ *
  * @author querephi
+ * @version $Id: $Id
  */
 public class ImportProductVisitor extends ImportEntityListAspectVisitor implements ImportVisitor {
 
+	/** Constant <code>MSG_ERROR_PRODUCTHIERARCHY_EMPTY="import_service.error.err_producthierarc"{trunked}</code> */
 	protected static final String MSG_ERROR_PRODUCTHIERARCHY_EMPTY = "import_service.error.err_producthierarchy_empty";
+	/** Constant <code>MSG_ERROR_UNKNOWN_PRODUCTTYPE="import_service.error.err_unknown_produc"{trunked}</code> */
 	protected static final String MSG_ERROR_UNKNOWN_PRODUCTTYPE = "import_service.error.err_unknown_producttype";
+	/** Constant <code>MSG_ERROR_OVERRIDE_EXISTING_ONE="import_service.error.err_override_exist"{trunked}</code> */
 	protected static final String MSG_ERROR_OVERRIDE_EXISTING_ONE = "import_service.error.err_override_existing_one";
 
 	private static final Log logger = LogFactory.getLog(ImportProductVisitor.class);
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * Check if the node exists, according to : - keys or productCode - Path
 	 * where product is classified and name - Path where product is imported and
 	 * name.
-	 * 
-	 * @param importContext
-	 *            the import context
-	 * @param type
-	 *            the type
-	 * @param properties
-	 *            the properties
-	 * @return the node ref
-	 * @throws ImporterException
 	 */
 	@Override
 	protected NodeRef findNode(ImportContext importContext, QName type, Map<QName, Serializable> properties) throws ImporterException {
@@ -86,6 +83,7 @@ public class ImportProductVisitor extends ImportEntityListAspectVisitor implemen
 		return nodeRef;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected NodeRef findPropertyTargetNodeByValue(ImportContext importContext, PropertyDefinition propDef, AbstractAttributeMapping attributeMapping, String value,
 			Map<QName, Serializable> properties) throws ImporterException {

@@ -5,12 +5,24 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Locale;
 
+/**
+ * <p>MalaysianNutrientRegulation class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class MalaysianNutrientRegulation extends AbstractNutrientRegulation {
 
+	/**
+	 * <p>Constructor for MalaysianNutrientRegulation.</p>
+	 *
+	 * @param path a {@link java.lang.String} object.
+	 */
 	public MalaysianNutrientRegulation(String path)  {
 		super(path);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected Double roundByCode(Double value, String nutrientTypeCode) {
 
@@ -37,6 +49,7 @@ public class MalaysianNutrientRegulation extends AbstractNutrientRegulation {
 		return bd.doubleValue();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String displayValueByCode(Double value, Double roundedValue, String nutrientTypeCode, Locale locale) {
 		if (nutrientTypeCode.equals(NutrientCode.Energykcal)

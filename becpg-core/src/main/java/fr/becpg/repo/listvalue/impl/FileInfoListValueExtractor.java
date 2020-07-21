@@ -9,8 +9,15 @@ import org.apache.commons.io.FilenameUtils;
 import fr.becpg.repo.listvalue.ListValueEntry;
 import fr.becpg.repo.listvalue.ListValueExtractor;
 
+/**
+ * <p>FileInfoListValueExtractor class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class FileInfoListValueExtractor implements ListValueExtractor<FileInfo> {
 
+	/** {@inheritDoc} */
 	@Override
 	public List<ListValueEntry> extract(List<FileInfo> values) {
 		List<ListValueEntry> suggestions = new ArrayList<>();

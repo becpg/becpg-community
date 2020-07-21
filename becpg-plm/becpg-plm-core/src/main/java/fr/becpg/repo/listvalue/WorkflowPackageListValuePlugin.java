@@ -36,6 +36,12 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.listvalue.impl.NodeRefListValueExtractor;
 
+/**
+ * <p>WorkflowPackageListValuePlugin class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class WorkflowPackageListValuePlugin implements ListValuePlugin {
 
@@ -52,10 +58,16 @@ public class WorkflowPackageListValuePlugin implements ListValuePlugin {
 	@Autowired
 	private NamespaceService namespaceService;
 
+	/**
+	 * <p>getHandleSourceTypes.</p>
+	 *
+	 * @return an array of {@link java.lang.String} objects.
+	 */
 	public String[] getHandleSourceTypes() {
 		return new String[] { SOURCE_TYPE_WF_PACKAGE };
 	}
 
+	/** {@inheritDoc} */
 	public ListValuePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
 
 		String className = (String) props.get(ListValueService.PROP_CLASS_NAME);

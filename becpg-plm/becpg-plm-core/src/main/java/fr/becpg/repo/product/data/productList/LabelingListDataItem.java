@@ -26,6 +26,12 @@ import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
 
+/**
+ * <p>LabelingListDataItem class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @AlfType
 @AlfQname(qname = "pack:labelingList")
 public class LabelingListDataItem extends AbstractManualDataItem {
@@ -38,6 +44,11 @@ public class LabelingListDataItem extends AbstractManualDataItem {
 	private String type;	
 	private String position;
 	
+	/**
+	 * <p>Getter for the field <code>label</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	@AlfSingleAssoc
 	@AlfQname(qname="pack:llLabel")
 	@DataListIdentifierAttr
@@ -45,34 +56,63 @@ public class LabelingListDataItem extends AbstractManualDataItem {
 		return label;
 	}
 
+	/**
+	 * <p>Setter for the field <code>label</code>.</p>
+	 *
+	 * @param label a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void setLabel(NodeRef label) {
 		this.label = label;
 	}
 
+	/**
+	 * <p>Getter for the field <code>type</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:llType")
 	public String getType() {
 		return type;
 	}
 
+	/**
+	 * <p>Setter for the field <code>type</code>.</p>
+	 *
+	 * @param type a {@link java.lang.String} object.
+	 */
 	public void setType(String type) {
 		this.type = type;
 	}
 
+	/**
+	 * <p>Getter for the field <code>position</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="pack:llPosition")
 	public String getPosition() {
 		return position;
 	}
 
+	/**
+	 * <p>Setter for the field <code>position</code>.</p>
+	 *
+	 * @param position a {@link java.lang.String} object.
+	 */
 	public void setPosition(String position) {
 		this.position = position;
 	}
 
+	/**
+	 * <p>Constructor for LabelingListDataItem.</p>
+	 */
 	public LabelingListDataItem(){
 		super();
 	}	
 	
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -83,6 +123,7 @@ public class LabelingListDataItem extends AbstractManualDataItem {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -110,6 +151,7 @@ public class LabelingListDataItem extends AbstractManualDataItem {
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "LabelingListDataItem [label=" + label + ", type=" + type + ", position=" + position + "]";

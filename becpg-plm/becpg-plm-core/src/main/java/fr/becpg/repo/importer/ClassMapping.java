@@ -17,6 +17,7 @@ import fr.becpg.config.mapping.AbstractAttributeMapping;
  * Class used to store the mapping of a type.
  *
  * @author querephi
+ * @version $Id: $Id
  */
 public class ClassMapping {
 	
@@ -108,14 +109,25 @@ public class ClassMapping {
 
 	
 
+	/**
+	 * <p>Getter for the field <code>paths</code>.</p>
+	 *
+	 * @return a {@link java.util.Map} object.
+	 */
 	public Map<QName, String> getPaths() {
 		return paths;
 	}
 
+	/**
+	 * <p>Setter for the field <code>paths</code>.</p>
+	 *
+	 * @param paths a {@link java.util.Map} object.
+	 */
 	public void setPaths(Map<QName, String> paths) {
 		this.paths = paths;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "ClassMapping [type=" + type + ", nodeColumnKeys=" + nodeColumnKeys + ", dataListColumnKeys="

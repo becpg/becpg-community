@@ -17,6 +17,12 @@ import fr.becpg.repo.repository.annotation.InternalField;
 import fr.becpg.repo.repository.annotation.MultiLevelDataList;
 import fr.becpg.repo.repository.model.CompositionDataItem;
 
+/**
+ * <p>ProcessListDataItem class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @AlfType
 @AlfQname(qname = "mpm:processList")
 @MultiLevelDataList
@@ -36,6 +42,7 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 	private NodeRef product;
 	private NodeRef resource;
 
+	/** {@inheritDoc} */
 	@Override
 	@AlfProp
 	@AlfQname(qname = "mpm:plQty")
@@ -43,61 +50,117 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 		return qty;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void setQty(Double qty) {
 		this.qty = qty;
 	}
 
+	/**
+	 * <p>Getter for the field <code>unit</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.constraints.ProductUnit} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "mpm:plUnit")
 	public ProductUnit getUnit() {
 		return unit;
 	}
 
+	/**
+	 * <p>Setter for the field <code>unit</code>.</p>
+	 *
+	 * @param unit a {@link fr.becpg.repo.product.data.constraints.ProductUnit} object.
+	 */
 	public void setUnit(ProductUnit unit) {
 		this.unit = unit;
 	}
 
+	/**
+	 * <p>Getter for the field <code>qtyResource</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "mpm:plQtyResource")
 	public Double getQtyResource() {
 		return qtyResource;
 	}
 
+	/**
+	 * <p>Setter for the field <code>qtyResource</code>.</p>
+	 *
+	 * @param qtyResource a {@link java.lang.Double} object.
+	 */
 	public void setQtyResource(Double qtyResource) {
 		this.qtyResource = qtyResource;
 	}
 
+	/**
+	 * <p>Getter for the field <code>rateResource</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "mpm:plRateResource")
 	public Double getRateResource() {
 		return rateResource;
 	}
 
+	/**
+	 * <p>Setter for the field <code>rateResource</code>.</p>
+	 *
+	 * @param rateResource a {@link java.lang.Double} object.
+	 */
 	public void setRateResource(Double rateResource) {
 		this.rateResource = rateResource;
 	}
 
+	/**
+	 * <p>Getter for the field <code>yield</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "mpm:plYield")
 	public Double getYield() {
 		return yield;
 	}
 
+	/**
+	 * <p>Setter for the field <code>yield</code>.</p>
+	 *
+	 * @param yield a {@link java.lang.Double} object.
+	 */
 	public void setYield(Double yield) {
 		this.yield = yield;
 	}
 
+	/**
+	 * <p>Getter for the field <code>rateProduct</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "mpm:plRateProduct")
 	public Double getRateProduct() {
 		return rateProduct;
 	}
 
+	/**
+	 * <p>Setter for the field <code>rateProduct</code>.</p>
+	 *
+	 * @param rateProduct a {@link java.lang.Double} object.
+	 */
 	public void setRateProduct(Double rateProduct) {
 		this.rateProduct = rateProduct;
 	}
 
+	/**
+	 * <p>Getter for the field <code>step</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	@AlfSingleAssoc
 	@DataListIdentifierAttr(isDefaultPivotAssoc = false)
 	@AlfQname(qname = "mpm:plStep")
@@ -105,10 +168,20 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 		return step;
 	}
 
+	/**
+	 * <p>Setter for the field <code>step</code>.</p>
+	 *
+	 * @param step a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void setStep(NodeRef step) {
 		this.step = step;
 	}
 
+	/**
+	 * <p>Getter for the field <code>product</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	@AlfSingleAssoc
 	@DataListIdentifierAttr(isDefaultPivotAssoc = false)
 	@AlfQname(qname = "mpm:plProduct")
@@ -116,10 +189,20 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 		return product;
 	}
 
+	/**
+	 * <p>Setter for the field <code>product</code>.</p>
+	 *
+	 * @param product a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void setProduct(NodeRef product) {
 		this.product = product;
 	}
 
+	/**
+	 * <p>Getter for the field <code>resource</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	@AlfSingleAssoc
 	@DataListIdentifierAttr(isDefaultPivotAssoc = true)
 	@AlfQname(qname = "mpm:plResource")
@@ -127,14 +210,36 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 		return resource;
 	}
 
+	/**
+	 * <p>Setter for the field <code>resource</code>.</p>
+	 *
+	 * @param resource a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void setResource(NodeRef resource) {
 		this.resource = resource;
 	}
 
+	/**
+	 * <p>Constructor for ProcessListDataItem.</p>
+	 */
 	public ProcessListDataItem() {
 		super();
 	}
 
+	/**
+	 * <p>Constructor for ProcessListDataItem.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param qty a {@link java.lang.Double} object.
+	 * @param qtyResource a {@link java.lang.Double} object.
+	 * @param rateResource a {@link java.lang.Double} object.
+	 * @param unit a {@link fr.becpg.repo.product.data.constraints.ProductUnit} object.
+	 * @param yield a {@link java.lang.Double} object.
+	 * @param rateProduct a {@link java.lang.Double} object.
+	 * @param step a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param product a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param resource a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public ProcessListDataItem(NodeRef nodeRef, Double qty, Double qtyResource, Double rateResource, ProductUnit unit, Double yield,
 			Double rateProduct, NodeRef step, NodeRef product, NodeRef resource) {
 
@@ -150,6 +255,11 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 		setResource(resource);
 	}
 
+	/**
+	 * <p>Constructor for ProcessListDataItem.</p>
+	 *
+	 * @param p a {@link fr.becpg.repo.product.data.productList.ProcessListDataItem} object.
+	 */
 	public ProcessListDataItem(ProcessListDataItem p) {
 
 		setNodeRef(p.getNodeRef());
@@ -164,17 +274,20 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 		setResource(p.getResource());
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public CompositionDataItem clone() {
 		return new ProcessListDataItem(this);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "ProcessListDataItem [qty=" + qty + ", qtyResource=" + qtyResource + ", rateResource=" + rateResource + ", yield=" + yield
 				+ ", rateProduct=" + rateProduct + ", unit=" + unit + ", step=" + step + ", product=" + product + ", resource=" + resource + "]";
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -191,6 +304,7 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -265,27 +379,32 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	@InternalField
 	public NodeRef getComponent() {
 		return getResource();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void setComponent(NodeRef targetItem) {
 		setResource(targetItem);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public QName getComponentAssocName() {
 		return MPMModel.ASSOC_PL_RESOURCE;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Double getLossPerc() {
 		return null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void setLossPerc(Double d) {
 	}

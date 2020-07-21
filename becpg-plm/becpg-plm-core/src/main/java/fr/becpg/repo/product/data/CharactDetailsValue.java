@@ -2,6 +2,12 @@ package fr.becpg.repo.product.data;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+/**
+ * <p>CharactDetailsValue class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class CharactDetailsValue {
 
 	private NodeRef parentNodeRef;
@@ -16,6 +22,16 @@ public class CharactDetailsValue {
 	private String unit;
 	private String name;
 
+	/**
+	 * <p>Constructor for CharactDetailsValue.</p>
+	 *
+	 * @param parentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param keyNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param compositeNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param value a {@link java.lang.Double} object.
+	 * @param level a {@link java.lang.Integer} object.
+	 * @param unit a {@link java.lang.String} object.
+	 */
 	public CharactDetailsValue(NodeRef parentNodeRef, NodeRef keyNodeRef, NodeRef compositeNodeRef, Double value, Integer level, String unit) {
 		super();
 		this.parentNodeRef = parentNodeRef;
@@ -26,73 +42,158 @@ public class CharactDetailsValue {
 		this.unit = unit;
 	}
 
+	/**
+	 * <p>Getter for the field <code>keyNodeRef</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public NodeRef getKeyNodeRef() {
 		return keyNodeRef;
 	}
 	
 
+	/**
+	 * <p>Getter for the field <code>compositeNodeRef</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public NodeRef getCompositeNodeRef() {
 		return compositeNodeRef;
 	}
 
+	/**
+	 * <p>Setter for the field <code>value</code>.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object.
+	 */
 	public void setValue(Double value) {
 		this.value = value;
 	}
 
 
+	/**
+	 * <p>Getter for the field <code>value</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public Double getValue() {
 		return value != 0d ? value : null;
 	}
 	
 	
+	/**
+	 * <p>Getter for the field <code>level</code>.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object.
+	 */
 	public Integer getLevel() {
 		return level;
 	}
 
+	/**
+	 * <p>Getter for the field <code>unit</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getUnit() {
 		return unit;
 	}
 
+	/**
+	 * <p>Getter for the field <code>previousValue</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public Double getPreviousValue() {
 		return previousValue;
 	}
 
+	/**
+	 * <p>Setter for the field <code>previousValue</code>.</p>
+	 *
+	 * @param previousValue a {@link java.lang.Double} object.
+	 */
 	public void setPreviousValue(Double previousValue) {
 		this.previousValue = previousValue;
 	}
 
+	/**
+	 * <p>Getter for the field <code>futureValue</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public Double getFutureValue() {
 		return futureValue;
 	}
 
+	/**
+	 * <p>Setter for the field <code>futureValue</code>.</p>
+	 *
+	 * @param futureValue a {@link java.lang.Double} object.
+	 */
 	public void setFutureValue(Double futureValue) {
 		this.futureValue = futureValue;
 	}
 
+	/**
+	 * <p>Getter for the field <code>mini</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public Double getMini() {
 		return mini;
 	}
 
+	/**
+	 * <p>Setter for the field <code>mini</code>.</p>
+	 *
+	 * @param mini a {@link java.lang.Double} object.
+	 */
 	public void setMini(Double mini) {
 		this.mini = mini;
 	}
 
+	/**
+	 * <p>Getter for the field <code>maxi</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public Double getMaxi() {
 		return maxi;
 	}
 
+	/**
+	 * <p>Setter for the field <code>maxi</code>.</p>
+	 *
+	 * @param maxi a {@link java.lang.Double} object.
+	 */
 	public void setMaxi(Double maxi) {
 		this.maxi = maxi;
 	}
 
+	/**
+	 * <p>Getter for the field <code>name</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getName() {
 		return name;
 	}
 
+	/**
+	 * <p>Setter for the field <code>name</code>.</p>
+	 *
+	 * @param name a {@link java.lang.String} object.
+	 */
 	public void setName(String name) {
 		this.name = name;
 	}
 
+	/**
+	 * <p>add.</p>
+	 *
+	 * @param caractValue a {@link fr.becpg.repo.product.data.CharactDetailsValue} object.
+	 */
 	public void add(CharactDetailsValue caractValue) {
 		if (caractValue.getValue() != null) {
 			if(value==null) {
@@ -132,6 +233,12 @@ public class CharactDetailsValue {
 	}
 	
 
+	/**
+	 * <p>keyEquals.</p>
+	 *
+	 * @param other a {@link fr.becpg.repo.product.data.CharactDetailsValue} object.
+	 * @return a boolean.
+	 */
 	public boolean keyEquals(CharactDetailsValue other) {
 		if (keyNodeRef == null) {
 			if (other.keyNodeRef != null)
@@ -158,6 +265,7 @@ public class CharactDetailsValue {
 
 	//TODO A refaire issue #4612
 	
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -176,6 +284,7 @@ public class CharactDetailsValue {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -243,6 +352,7 @@ public class CharactDetailsValue {
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "CharactDetailsValue [parentNodeRef=" + parentNodeRef + ", keyNodeRef=" + keyNodeRef + ", compositeNodeRef=" + compositeNodeRef

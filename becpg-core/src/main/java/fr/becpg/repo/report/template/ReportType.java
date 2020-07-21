@@ -17,6 +17,12 @@
  ******************************************************************************/
 package fr.becpg.repo.report.template;
 
+/**
+ * <p>ReportType class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public enum ReportType {
 
 	System, //default
@@ -24,6 +30,12 @@ public enum ReportType {
 	ExportSearch,
 	Compare;
 			
+	/**
+	 * <p>parse.</p>
+	 *
+	 * @param r a {@link java.lang.String} object.
+	 * @return a {@link fr.becpg.repo.report.template.ReportType} object.
+	 */
 	public static ReportType parse(String r){
 		
 		ReportType reportType = ReportType.System;

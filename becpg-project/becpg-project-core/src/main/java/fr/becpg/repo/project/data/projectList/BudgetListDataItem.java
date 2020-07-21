@@ -25,9 +25,9 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 /**
  * Planning list (done or to do)
- * 
+ *
  * @author quere
- * 
+ * @version $Id: $Id
  */
 @AlfType
 @AlfQname(qname = "pjt:budgetList")
@@ -48,10 +48,23 @@ public class BudgetListDataItem extends BeCPGDataObject implements CompositeData
 	private Integer depthLevel;
 	
 
+	/**
+	 * <p>Constructor for BudgetListDataItem.</p>
+	 */
 	public BudgetListDataItem (){
 		super();
 	}
 	
+	/**
+	 * <p>Constructor for BudgetListDataItem.</p>
+	 *
+	 * @param item a {@link java.lang.String} object.
+	 * @param budgetedExpense a {@link java.lang.Double} object.
+	 * @param budgetedInvoice a {@link java.lang.Double} object.
+	 * @param expense a {@link java.lang.Double} object.
+	 * @param invoice a {@link java.lang.Double} object.
+	 * @param profit a {@link java.lang.Double} object.
+	 */
 	public BudgetListDataItem (String item, Double budgetedExpense, Double budgetedInvoice, Double expense, Double invoice, Double profit){
 		this.item = item;
 		this.budgetedExpense= budgetedExpense;
@@ -62,16 +75,27 @@ public class BudgetListDataItem extends BeCPGDataObject implements CompositeData
 	}
 	
 	
+	/**
+	 * <p>Getter for the field <code>item</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:blItem")
 	public String getItem() {
 		return item;
 	}
 
+	/**
+	 * <p>Setter for the field <code>item</code>.</p>
+	 *
+	 * @param item a {@link java.lang.String} object.
+	 */
 	public void setItem(String item) {
 		this.item = item;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	@AlfProp
 	@AlfQname(qname = "bcpg:depthLevel")
@@ -79,10 +103,16 @@ public class BudgetListDataItem extends BeCPGDataObject implements CompositeData
 		return depthLevel;
 	}
 
+	/**
+	 * <p>Setter for the field <code>depthLevel</code>.</p>
+	 *
+	 * @param depthLevel a {@link java.lang.Integer} object.
+	 */
 	public void setDepthLevel(Integer depthLevel) {
 		this.depthLevel = depthLevel;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	@AlfProp
 	@AlfQname(qname = "bcpg:parentLevel")
@@ -90,60 +120,116 @@ public class BudgetListDataItem extends BeCPGDataObject implements CompositeData
 		return this.parent;
 	}
 
+	/**
+	 * <p>Setter for the field <code>parent</code>.</p>
+	 *
+	 * @param parent a {@link fr.becpg.repo.project.data.projectList.BudgetListDataItem} object.
+	 */
 	public void setParent(BudgetListDataItem parent) {
 		this.parent = parent;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>budgetedExpense</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:blBudgetedExpense")
 	public Double getBudgetedExpense() {
 		return budgetedExpense;
 	}
 
+	/**
+	 * <p>Setter for the field <code>budgetedExpense</code>.</p>
+	 *
+	 * @param budgetedExpense a {@link java.lang.Double} object.
+	 */
 	public void setBudgetedExpense(Double budgetedExpense) {
 		this.budgetedExpense = budgetedExpense;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>budgetedInvoice</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:blBudgetedInvoice")
 	public Double getBudgetedInvoice() {
 		return budgetedInvoice;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>budgetedInvoice</code>.</p>
+	 *
+	 * @param budgetedInvoice a {@link java.lang.Double} object.
+	 */
 	public void setBudgetedInvoice(Double budgetedInvoice) {
 		this.budgetedInvoice = budgetedInvoice;
 	}	
 
+	/**
+	 * <p>Getter for the field <code>expense</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:expense")
 	public Double getExpense() {
 		return expense;
 	}
 
+	/**
+	 * <p>Setter for the field <code>expense</code>.</p>
+	 *
+	 * @param actualExpense a {@link java.lang.Double} object.
+	 */
 	public void setExpense(Double actualExpense) {
 		this.expense = actualExpense;
 	}
+	/**
+	 * <p>Getter for the field <code>invoice</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:invoice")
 	public Double getInvoice() {
 		return invoice;
 	}
 
+	/**
+	 * <p>Setter for the field <code>invoice</code>.</p>
+	 *
+	 * @param actualInvoice a {@link java.lang.Double} object.
+	 */
 	public void setInvoice(Double actualInvoice) {
 		this.invoice = actualInvoice;
 	}
+	/**
+	 * <p>Getter for the field <code>profit</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:blProfit")
 	public Double getProfit() {
 		return profit;
 	}
 
+	/**
+	 * <p>Setter for the field <code>profit</code>.</p>
+	 *
+	 * @param profit a {@link java.lang.Double} object.
+	 */
 	public void setProfit(Double profit) {
 		this.profit = profit;
 	}
 	
 	
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -159,6 +245,7 @@ public class BudgetListDataItem extends BeCPGDataObject implements CompositeData
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -211,6 +298,7 @@ public class BudgetListDataItem extends BeCPGDataObject implements CompositeData
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "BudgetListDataItem [item=" + item + ", budgetedExpense=" + budgetedExpense + ", budgetedInvoice=" + budgetedInvoice + ", actualExpense=" + expense + ", actualInvoice="

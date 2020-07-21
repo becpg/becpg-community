@@ -57,10 +57,11 @@ import fr.becpg.repo.project.impl.ProjectHelper;
  * Utility script methods for supplier portal
  *
  * @author matthieu
- *
+ * @version $Id: $Id
  */
 public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 
+	/** Constant <code>SUPPLIER_SITE_ID="supplier-portal"</code> */
 	public static final String SUPPLIER_SITE_ID = "supplier-portal";
 
 	private static final Log logger = LogFactory.getLog(SupplierPortalHelper.class);
@@ -79,39 +80,89 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 
 	private HierarchyService hierarchyService;
 
+	/**
+	 * <p>Setter for the field <code>associationService</code>.</p>
+	 *
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object.
+	 */
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>repository</code>.</p>
+	 *
+	 * @param repository a {@link org.alfresco.repo.model.Repository} object.
+	 */
 	public void setRepository(Repository repository) {
 		this.repository = repository;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>permissionService</code>.</p>
+	 *
+	 * @param permissionService a {@link org.alfresco.service.cmr.security.PermissionService} object.
+	 */
 	public void setPermissionService(PermissionService permissionService) {
 		this.permissionService = permissionService;
 	}
 
+	/**
+	 * <p>assignToSupplier.</p>
+	 *
+	 * @param project a {@link fr.becpg.repo.project.data.ProjectData} object.
+	 * @param task a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object.
+	 * @param entityNodeRef a {@link org.alfresco.repo.jscript.ScriptNode} object.
+	 */
 	public void assignToSupplier(final ProjectData project, final TaskListDataItem task, final ScriptNode entityNodeRef) {
 		assignToSupplier(project, task, entityNodeRef, true);
 	}
 
+	/**
+	 * <p>Setter for the field <code>repoService</code>.</p>
+	 *
+	 * @param repoService a {@link fr.becpg.repo.helper.RepoService} object.
+	 */
 	public void setRepoService(RepoService repoService) {
 		this.repoService = repoService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>siteService</code>.</p>
+	 *
+	 * @param siteService a {@link org.alfresco.service.cmr.site.SiteService} object.
+	 */
 	public void setSiteService(SiteService siteService) {
 		this.siteService = siteService;
 	}
 	
 
+	/**
+	 * <p>Setter for the field <code>hierarchyService</code>.</p>
+	 *
+	 * @param hierarchyService a {@link fr.becpg.repo.hierarchy.HierarchyService} object.
+	 */
 	public void setHierarchyService(HierarchyService hierarchyService) {
 		this.hierarchyService = hierarchyService;
 	}
 
+	/**
+	 * <p>assignToSupplier.</p>
+	 *
+	 * @param project a {@link fr.becpg.repo.project.data.ProjectData} object.
+	 * @param task a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object.
+	 * @param entityNodeRef a {@link org.alfresco.repo.jscript.ScriptNode} object.
+	 * @param moveSupplier a boolean.
+	 */
 	public void assignToSupplier(final ProjectData project, final TaskListDataItem task, final ScriptNode entityNodeRef, boolean moveSupplier) {
 
 		if (task != null) {
@@ -280,10 +331,21 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 		}
 	}
 
+	/**
+	 * <p>validateProjectEntity.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.repo.jscript.ScriptNode} object.
+	 */
 	public void validateProjectEntity(final ScriptNode entityNodeRef) {
 		validateProjectEntity(entityNodeRef, true);
 	}
 
+	/**
+	 * <p>validateProjectEntity.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.repo.jscript.ScriptNode} object.
+	 * @param moveSupplier a boolean.
+	 */
 	public void validateProjectEntity(final ScriptNode entityNodeRef, boolean moveSupplier) {
 		if (entityNodeRef != null) {
 			if (PLMModel.TYPE_SUPPLIER.equals(nodeService.getType(entityNodeRef.getNodeRef()))) {

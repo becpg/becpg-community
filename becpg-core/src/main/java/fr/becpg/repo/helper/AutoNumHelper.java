@@ -10,6 +10,12 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.entity.AutoNumService;
 
+/**
+ * <p>AutoNumHelper class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class AutoNumHelper implements InitializingBean{
 
@@ -26,6 +32,7 @@ public class AutoNumHelper implements InitializingBean{
     
     
 
+	/** {@inheritDoc} */
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		INSTANCE = this;	
@@ -36,11 +43,22 @@ public class AutoNumHelper implements InitializingBean{
 	 * SPEL HELPER
 	 * T(fr.becpg.repo.helper.AutoNumHelper).getAutoNumValue("bcpg:finishedProduct","bcpg:eanCode")
 	 * T(fr.becpg.repo.helper.AutoNumHelper).getOrCreateCode(nodeRef,"bcpg:eanCode")
+	 *
+	 * @param className a {@link java.lang.String} object.
+	 * @param propertyName a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
 	 */
 	public static String getAutoNumValue(String className, String propertyName) {
 	  return INSTANCE.autoNumService.getAutoNumValue( QName.createQName(className, INSTANCE.namespaceService), QName.createQName(propertyName, INSTANCE.namespaceService));
 	}
 	
+	/**
+	 * <p>getOrCreateCode.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param propertyName a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	public static String getOrCreateCode( NodeRef nodeRef,String propertyName) {
 	  return INSTANCE.autoNumService.getOrCreateCode(nodeRef, QName.createQName(propertyName, INSTANCE.namespaceService));
 	}

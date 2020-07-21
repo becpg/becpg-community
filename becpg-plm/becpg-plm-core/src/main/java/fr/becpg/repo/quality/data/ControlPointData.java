@@ -26,6 +26,12 @@ import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
+/**
+ * <p>ControlPointData class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @AlfType
 @AlfQname(qname = "qa:controlPoint")
 public class ControlPointData extends BeCPGDataObject {
@@ -36,16 +42,27 @@ public class ControlPointData extends BeCPGDataObject {
 	private static final long serialVersionUID = 5543494940526679993L;
 	List<ControlDefListDataItem> controlDefList = new LinkedList<>();
 
+	/**
+	 * <p>Getter for the field <code>controlDefList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@DataList
 	@AlfQname(qname = "qa:controlDefList")
 	public List<ControlDefListDataItem> getControlDefList() {
 		return controlDefList;
 	}
 
+	/**
+	 * <p>Setter for the field <code>controlDefList</code>.</p>
+	 *
+	 * @param controlDefList a {@link java.util.List} object.
+	 */
 	public void setControlDefList(List<ControlDefListDataItem> controlDefList) {
 		this.controlDefList = controlDefList;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -54,6 +71,7 @@ public class ControlPointData extends BeCPGDataObject {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -71,6 +89,7 @@ public class ControlPointData extends BeCPGDataObject {
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "ControlPointData [controlDefList=" + controlDefList + "]";

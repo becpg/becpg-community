@@ -33,14 +33,15 @@ import fr.becpg.repo.importer.ImporterException;
 import org.alfresco.repo.forum.CommentService;
 
 /**
- * 
+ * <p>ImportCommentsVisitor class.</p>
+ *
  * @author matthieu
  * Used to add comments to existing products
- * Usage : 
- *  IMPORT_TYPE	Comments	
- *	TYPE	bcpg:finishedProduct	
+ * Usage :
+ *  IMPORT_TYPE	Comments
+ *	TYPE	bcpg:finishedProduct
  *	COLUMNS	bcpg:code	bcpg:productComments
- * 
+ * @version $Id: $Id
  */
 public class ImportCommentsVisitor  extends AbstractImportVisitor {
 
@@ -49,11 +50,17 @@ public class ImportCommentsVisitor  extends AbstractImportVisitor {
 	private CommentService commentService;
 	
 
+	/**
+	 * <p>Setter for the field <code>commentService</code>.</p>
+	 *
+	 * @param commentService a {@link org.alfresco.repo.forum.CommentService} object.
+	 */
 	public void setCommentService(CommentService commentService) {
 		this.commentService = commentService;
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef importNode(ImportContext importContext, List<String> values) throws ParseException, ImporterException {
 	

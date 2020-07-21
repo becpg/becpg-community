@@ -21,14 +21,17 @@ import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.product.formulation.nutrient.AbstractNutrientRegulation.NutrientDefinition;
 
 /**
+ * <p>RegulationFormulationHelper class.</p>
  *
  * @author matthieu
- *
+ * @version $Id: $Id
  */
 public class RegulationFormulationHelper {
 
+	/** Constant <code>logger</code> */
 	protected static final Log logger = LogFactory.getLog(RegulationFormulationHelper.class);
 
+	/** Constant <code>ATTR_NUT_CODE="nutCode"</code> */
 	public static final String ATTR_NUT_CODE = "nutCode";
 	private static final String KEY_VALUE = "v";
 	private static final String KEY_MINI = "min";
@@ -71,42 +74,112 @@ public class RegulationFormulationHelper {
 
 	}
 
+	/**
+	 * <p>extractValuePerServing.</p>
+	 *
+	 * @param roundedValue a {@link java.lang.String} object.
+	 * @param locale a {@link java.util.Locale} object.
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public static Double extractValuePerServing(String roundedValue, Locale locale) {
 		return extractValuePerServing(roundedValue, getLocalKey(locale));
 	}
 
+	/**
+	 * <p>extractMini.</p>
+	 *
+	 * @param roundedValue a {@link java.lang.String} object.
+	 * @param locale a {@link java.util.Locale} object.
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public static Double extractMini(String roundedValue, Locale locale) {
 		return extractMini(roundedValue, getLocalKey(locale));
 	}
 
+	/**
+	 * <p>extractMaxi.</p>
+	 *
+	 * @param roundedValue a {@link java.lang.String} object.
+	 * @param locale a {@link java.util.Locale} object.
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public static Double extractMaxi(String roundedValue, Locale locale) {
 		return extractMaxi(roundedValue, getLocalKey(locale));
 	}
 
+	/**
+	 * <p>extractValue.</p>
+	 *
+	 * @param roundedValue a {@link java.lang.String} object.
+	 * @param locale a {@link java.util.Locale} object.
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public static Double extractValue(String roundedValue, Locale locale) {
 		return extractValue(roundedValue, getLocalKey(locale));
 	}
 
+	/**
+	 * <p>extractValuePerServing.</p>
+	 *
+	 * @param roundedValue a {@link java.lang.String} object.
+	 * @param key a {@link java.lang.String} object.
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public static Double extractValuePerServing(String roundedValue, String key) {
 		return extractValueByKey(roundedValue, KEY_VALUE_PER_SERVING, key);
 	}
 
+	/**
+	 * <p>extractValuePerContainer.</p>
+	 *
+	 * @param roundedValue a {@link java.lang.String} object.
+	 * @param key a {@link java.lang.String} object.
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public static Double extractValuePerContainer(String roundedValue, String key) {
 		return extractValueByKey(roundedValue, KEY_VALUE_PER_CONTAINER, key);
 	}
 
+	/**
+	 * <p>extractMini.</p>
+	 *
+	 * @param roundedValue a {@link java.lang.String} object.
+	 * @param key a {@link java.lang.String} object.
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public static Double extractMini(String roundedValue, String key) {
 		return extractValueByKey(roundedValue, KEY_MINI, key);
 	}
 
+	/**
+	 * <p>extractMaxi.</p>
+	 *
+	 * @param roundedValue a {@link java.lang.String} object.
+	 * @param key a {@link java.lang.String} object.
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public static Double extractMaxi(String roundedValue, String key) {
 		return extractValueByKey(roundedValue, KEY_MAXI, key);
 	}
 
+	/**
+	 * <p>extractValue.</p>
+	 *
+	 * @param roundedValue a {@link java.lang.String} object.
+	 * @param key a {@link java.lang.String} object.
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public static Double extractValue(String roundedValue, String key) {
 		return extractValueByKey(roundedValue, KEY_VALUE, key);
 	}
 
+	/**
+	 * <p>extractGDAPerc.</p>
+	 *
+	 * @param roundedValue a {@link java.lang.String} object.
+	 * @param key a {@link java.lang.String} object.
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public static Double extractGDAPerc(String roundedValue, String key) {
 		return extractValueByKey(roundedValue, KEY_GDA_PERC, key);
 	}
@@ -161,6 +234,14 @@ public class RegulationFormulationHelper {
 		return "EU";
 	}
 
+	/**
+	 * <p>extractXMLAttribute.</p>
+	 *
+	 * @param nutListElt a {@link org.dom4j.Element} object.
+	 * @param roundedValue a {@link java.lang.String} object.
+	 * @param locale a {@link java.util.Locale} object.
+	 * @param isDisplayed a boolean.
+	 */
 	public static void extractXMLAttribute(Element nutListElt, String roundedValue, Locale locale, boolean isDisplayed) {
 		if (roundedValue != null) {
 			String localKey = getLocalKey(locale);
@@ -294,6 +375,13 @@ public class RegulationFormulationHelper {
 	// }
 	// }
 	//
+	/**
+	 * <p>extractRoundedValue.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @param nutCode a {@link java.lang.String} object.
+	 * @param n a {@link fr.becpg.repo.product.data.productList.NutListDataItem} object.
+	 */
 	public static void extractRoundedValue(ProductData formulatedProduct, String nutCode, NutListDataItem n) {
 		JSONObject jsonRound = new JSONObject();
 
@@ -479,6 +567,15 @@ public class RegulationFormulationHelper {
 		return ret;
 	}
 
+	/**
+	 * <p>round.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object.
+	 * @param nutCode a {@link java.lang.String} object.
+	 * @param locale a {@link java.util.Locale} object.
+	 * @param nutUnit a {@link java.lang.String} object.
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public static Double round(Double value, String nutCode, Locale locale, String nutUnit) {
 		return round(value, nutCode, getLocalKey(locale), nutUnit);
 	}
@@ -490,6 +587,15 @@ public class RegulationFormulationHelper {
 		return getRegulation(key).round(value, nutCode, nutUnit);
 	}
 
+	/**
+	 * <p>displayValue.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object.
+	 * @param roundedValue a {@link java.lang.Double} object.
+	 * @param nutCode a {@link java.lang.String} object.
+	 * @param locale a {@link java.util.Locale} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	public static String displayValue(Double value, Double roundedValue, String nutCode, Locale locale) {
 		if (value == null) {
 			return null;
@@ -497,6 +603,16 @@ public class RegulationFormulationHelper {
 		return getRegulation(getLocalKey(locale)).displayValue(value, roundedValue, nutCode, locale);
 	}
 
+	/**
+	 * <p>displayValue.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object.
+	 * @param roundedValue a {@link java.lang.Double} object.
+	 * @param nutCode a {@link java.lang.String} object.
+	 * @param locale a {@link java.util.Locale} object.
+	 * @param regulation a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	public static String displayValue(Double value, Double roundedValue, String nutCode, Locale locale, String regulation) {
 		if (value == null) {
 			return null;
@@ -504,6 +620,14 @@ public class RegulationFormulationHelper {
 		return getRegulation(regulation).displayValue(value, roundedValue, nutCode, locale);
 	}
 
+	/**
+	 * <p>roundGDA.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object.
+	 * @param nutCode a {@link java.lang.String} object.
+	 * @param locale a {@link java.util.Locale} object.
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public static Double roundGDA(Double value, String nutCode, Locale locale) {
 		if (value == null) {
 			return null;

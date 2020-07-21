@@ -71,6 +71,12 @@ import org.springframework.extensions.surf.util.ParameterCheck;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityDictionaryService;
 
+/**
+ * <p>BecpgCopyServiceImpl class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements CopyService{
 
 	  private static Log logger = LogFactory.getLog(BecpgCopyServiceImpl.class);
@@ -99,6 +105,9 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	    private ClassPolicyDelegate<CopyServicePolicies.OnCopyCompletePolicy> onCopyCompleteDelegate;
 	    private ClassPolicyDelegate<CopyServicePolicies.BeforeCopyPolicy> beforeCopyDelegate;
 
+	    /**
+	     * <p>Constructor for BecpgCopyServiceImpl.</p>
+	     */
 	    public BecpgCopyServiceImpl()
 	    {
 	        super();
@@ -107,6 +116,11 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	    
 	    
 	    
+	    /**
+	     * <p>Setter for the field <code>contentPropertyRestrictionInterceptor</code>.</p>
+	     *
+	     * @param contentPropertyRestrictionInterceptor a {@link org.alfresco.repo.node.ContentPropertyRestrictionInterceptor} object.
+	     */
 	    public void setContentPropertyRestrictionInterceptor(ContentPropertyRestrictionInterceptor contentPropertyRestrictionInterceptor) {
 			this.contentPropertyRestrictionInterceptor = contentPropertyRestrictionInterceptor;
 			this.contentPropertyRestrictionInterceptor.setGlobalContentPropertyRestrictionWhiteList(BecpgCopyServiceImpl.class.getName());
@@ -116,7 +130,9 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 
 
 
-		/**
+	    /**
+	     * <p>Setter for the field <code>nodeService</code>.</p>
+	     *
 	     * @param nodeService  the node service
 	     */
 	    public void setNodeService(NodeService nodeService)
@@ -125,6 +141,8 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	    }
 	    
 	    /**
+	     * <p>Setter for the field <code>internalNodeService</code>.</p>
+	     *
 	     * @param internalNodeService    the internal node service
 	     */
 	    public void setInternalNodeService(NodeService internalNodeService) 
@@ -132,17 +150,29 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	        this.internalNodeService = internalNodeService;
 	    }
 	    
+	    /**
+	     * <p>Setter for the field <code>cannedQueryRegistry</code>.</p>
+	     *
+	     * @param cannedQueryRegistry a {@link org.alfresco.util.registry.NamedObjectRegistry} object.
+	     */
 	    public void setCannedQueryRegistry(NamedObjectRegistry<CannedQueryFactory<CopyInfo>> cannedQueryRegistry)
 	    {
 	        this.cannedQueryRegistry = cannedQueryRegistry;
 	    }
 	    
 	    
+	    /**
+	     * <p>Setter for the field <code>dictionaryService</code>.</p>
+	     *
+	     * @param dictionaryService a {@link fr.becpg.repo.entity.EntityDictionaryService} object.
+	     */
 	    public void setDictionaryService(EntityDictionaryService dictionaryService) {
 			this.dictionaryService = dictionaryService;
 		}
 
-		/**
+	    /**
+	     * <p>Setter for the field <code>policyComponent</code>.</p>
+	     *
 	     * @param policyComponent  the policy component
 	     */
 	    public void setPolicyComponent(PolicyComponent policyComponent) 
@@ -151,6 +181,8 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	    }
 
 	    /**
+	     * <p>Setter for the field <code>behaviourFilter</code>.</p>
+	     *
 	     * @param behaviourFilter   used to disable specific behaviours while doing background tasks
 	     */
 	    public void setBehaviourFilter(BehaviourFilter behaviourFilter)
@@ -159,6 +191,8 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	    }
 
 	    /**
+	     * <p>Setter for the field <code>ruleService</code>.</p>
+	     *
 	     * @param ruleService  the rule service
 	     */
 	    public void setRuleService(RuleService ruleService)
@@ -167,6 +201,8 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	    }
 	    
 	    /**
+	     * <p>Setter for the field <code>permissionService</code>.</p>
+	     *
 	     * @param permissionService the permissionService to set
 	     */
 	    public void setPermissionService(PermissionService permissionService)
@@ -175,6 +211,8 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	    }
 
 	    /**
+	     * <p>Setter for the field <code>publicServiceAccessService</code>.</p>
+	     *
 	     * @param publicServiceAccessService the publicServiceAccessService to set
 	     */
 	    public void setPublicServiceAccessService(PublicServiceAccessService publicServiceAccessService)
@@ -212,6 +250,7 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	                new JavaBehaviour(this, "getCallbackForOwnableAspect"));
 	    }
 	    
+	    /** {@inheritDoc} */
 	    public NodeRef copy(
 	            NodeRef sourceNodeRef,
 	            NodeRef targetParentRef, 
@@ -278,6 +317,7 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	        return copiedNodeRef;
 	    }
 	    
+	    /** {@inheritDoc} */
 	    public NodeRef copyAndRename(
 	            NodeRef sourceNodeRef,
 	            NodeRef destinationParent,
@@ -323,7 +363,7 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	    
 	    /**
 	     * {@inheritDoc}
-	     * 
+	     *
 	     * Defer to the standard implementation with copyChildren set to false
 	     */
 	    public NodeRef copy(
@@ -342,7 +382,7 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 
 	    /**
 	     * {@inheritDoc}
-	     * 
+	     *
 	     * Defer to the standard implementation with copyChildren set to false
 	     */
 	    public void copy(NodeRef sourceNodeRef, NodeRef targetNodeRef)
@@ -400,6 +440,7 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	        invokeCopyComplete(sourceNodeRef, targetNodeRef, false, copiedNodeRefs);         
 	    }
 	    
+	    /** {@inheritDoc} */
 	    @Override
 	    public NodeRef getOriginal(NodeRef nodeRef)
 	    {
@@ -418,6 +459,7 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	        }
 	    }
 
+	    /** {@inheritDoc} */
 	    @Override
 	    public List<NodeRef> getCopies(NodeRef nodeRef)
 	    {
@@ -436,6 +478,7 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	        return results;
 	    }
 	    
+	    /** {@inheritDoc} */
 	    @Override
 	    public PagingResults<CopyInfo> getCopies(NodeRef originalNodeRef, PagingRequest pagingRequest)
 	    {
@@ -448,6 +491,7 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	        return query.execute();
 	    }
 
+	    /** {@inheritDoc} */
 	    @Override
 	    public PagingResults<CopyInfo> getCopies(
 	            NodeRef originalNodeRef,
@@ -1372,6 +1416,8 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 
 	    /**
 	     * Callback behaviour for the 'original' assoc ('copiedfrom' aspect).
+	     *
+	     * @param nodeAssocRef a {@link org.alfresco.service.cmr.repository.AssociationRef} object.
 	     */
 	    public void beforeDeleteOriginalAssociation(AssociationRef nodeAssocRef)
 	    {
@@ -1394,8 +1440,10 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	    
 	    /**
 	     * Callback behaviour retrieval for the 'copiedfrom' aspect.
-	     * 
-	     * @return              Returns {@link DoNothingCopyBehaviourCallback} always
+	     *
+	     * @return              Returns {@link org.alfresco.repo.copy.DoNothingCopyBehaviourCallback} always
+	     * @param classRef a {@link org.alfresco.service.namespace.QName} object.
+	     * @param copyDetails a {@link org.alfresco.repo.copy.CopyDetails} object.
 	     */
 	    public CopyBehaviourCallback getCallbackForCopiedFromAspect(QName classRef, CopyDetails copyDetails)
 	    {
@@ -1403,9 +1451,11 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	    }
 	    
 	    /**
-	     * Callback behaviour retrieval for {@link ContentModel#TYPE_FOLDER} aspect.
-	     * 
+	     * Callback behaviour retrieval for {@link org.alfresco.model.ContentModel#TYPE_FOLDER} aspect.
+	     *
 	     * @return              Returns FolderTypeCopyBehaviourCallback.INSTANCE
+	     * @param classRef a {@link org.alfresco.service.namespace.QName} object.
+	     * @param copyDetails a {@link org.alfresco.repo.copy.CopyDetails} object.
 	     */
 	    public CopyBehaviourCallback getCallbackForFolderType(QName classRef, CopyDetails copyDetails)
 	    {
@@ -1462,8 +1512,10 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 
 	    /**
 	     * Callback behaviour retrieval for the 'ownable' aspect.
-	     * 
-	     * @return              Returns {@link DoNothingCopyBehaviourCallback} always
+	     *
+	     * @return              Returns {@link org.alfresco.repo.copy.DoNothingCopyBehaviourCallback} always
+	     * @param classRef a {@link org.alfresco.service.namespace.QName} object.
+	     * @param copyDetails a {@link org.alfresco.repo.copy.CopyDetails} object.
 	     */
 	    public CopyBehaviourCallback getCallbackForOwnableAspect(QName classRef, CopyDetails copyDetails)
 	    {
@@ -1471,6 +1523,8 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	    }
 
 	    /**
+	     * {@inheritDoc}
+	     *
 	     * Determines if top-level node name will be changed during copy according to policies.
 	     */
 	    @Override

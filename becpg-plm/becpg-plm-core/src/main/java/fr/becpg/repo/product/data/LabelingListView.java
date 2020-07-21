@@ -25,6 +25,12 @@ import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.model.BaseObject;
 
+/**
+ * <p>LabelingListView class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class LabelingListView  extends BaseObject {
 
 
@@ -36,28 +42,49 @@ public class LabelingListView  extends BaseObject {
 	private List<LabelingRuleListDataItem> labelingRuleList;
 	
 	
+	/**
+	 * <p>Getter for the field <code>ingLabelingList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@DataList
 	@AlfQname(qname = "bcpg:ingLabelingList")
 	public List<IngLabelingListDataItem> getIngLabelingList() {
 		return ingLabelingList;
 	}
 
+	/**
+	 * <p>Setter for the field <code>ingLabelingList</code>.</p>
+	 *
+	 * @param ingLabelingList a {@link java.util.List} object.
+	 */
 	public void setIngLabelingList(List<IngLabelingListDataItem> ingLabelingList) {
 		this.ingLabelingList = ingLabelingList;
 	}
 	
 
+	/**
+	 * <p>Getter for the field <code>labelingRuleList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@DataList
 	@AlfQname(qname = "bcpg:labelingRuleList")
 	public List<LabelingRuleListDataItem> getLabelingRuleList() {
 		return labelingRuleList;
 	}
 
+	/**
+	 * <p>Setter for the field <code>labelingRuleList</code>.</p>
+	 *
+	 * @param labelingRuleList a {@link java.util.List} object.
+	 */
 	public void setLabelingRuleList(List<LabelingRuleListDataItem> labelingRuleList) {
 		this.labelingRuleList = labelingRuleList;
 	}
 
 	
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -67,6 +94,7 @@ public class LabelingListView  extends BaseObject {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -89,6 +117,7 @@ public class LabelingListView  extends BaseObject {
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "LabelingListView [ingLabelingList=" + ingLabelingList + ", labelingRuleList=" + labelingRuleList + "]";

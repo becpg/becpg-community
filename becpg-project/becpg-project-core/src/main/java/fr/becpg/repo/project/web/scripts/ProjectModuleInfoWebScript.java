@@ -42,7 +42,7 @@ import fr.becpg.repo.project.ProjectService;
  * return Project Module Info
  *
  * @author matthieu
- *
+ * @version $Id: $Id
  */
 public class ProjectModuleInfoWebScript extends AbstractWebScript {
 
@@ -56,14 +56,25 @@ public class ProjectModuleInfoWebScript extends AbstractWebScript {
 
 	private ProjectService projectService;
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>projectService</code>.</p>
+	 *
+	 * @param projectService a {@link fr.becpg.repo.project.ProjectService} object.
+	 */
 	public void setProjectService(ProjectService projectService) {
 		this.projectService = projectService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
 

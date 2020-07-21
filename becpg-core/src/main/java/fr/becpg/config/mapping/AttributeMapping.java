@@ -23,38 +23,66 @@ import org.alfresco.service.namespace.QName;
 
 /**
  * Class that represent the mapping for importing a property or an association of a node
- * 
+ *
  * <column id="modifier" attribute="cm:modifier" />
  * <column id="suppliers" attribute="bcpg:supplierAssoc" />.
  *
  * @author querephi
+ * @version $Id: $Id
  */
 public class AttributeMapping extends AbstractAttributeMapping {
 
 	private QName targetClass;
 	private boolean isMLText = false;
 	
+	/**
+	 * <p>Getter for the field <code>targetClass</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.namespace.QName} object.
+	 */
 	public QName getTargetClass() {
 		return targetClass;
 	}
 
+	/**
+	 * <p>Setter for the field <code>targetClass</code>.</p>
+	 *
+	 * @param targetClass a {@link org.alfresco.service.namespace.QName} object.
+	 */
 	public void setTargetClass(QName targetClass) {
 		this.targetClass = targetClass;
 	}
 
 	
+	/**
+	 * <p>isMLText.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public boolean isMLText() {
 		return isMLText;
 	}
 
+	/**
+	 * <p>setMLText.</p>
+	 *
+	 * @param isMLText a boolean.
+	 */
 	public void setMLText(boolean isMLText) {
 		this.isMLText = isMLText;
 	}
 
+	/**
+	 * <p>Constructor for AttributeMapping.</p>
+	 *
+	 * @param id a {@link java.lang.String} object.
+	 * @param attribute a {@link org.alfresco.service.cmr.dictionary.ClassAttributeDefinition} object.
+	 */
 	public AttributeMapping(String id, ClassAttributeDefinition attribute) {
 		super(id, attribute);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "AttributeMapping [targetClass=" + targetClass + ", isMLText=" + isMLText + ", getId()=" + getId()

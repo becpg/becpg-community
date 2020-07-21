@@ -37,20 +37,35 @@ import fr.becpg.config.format.FormatMode;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.helper.AttributeExtractorService;
 
+/**
+ * <p>BeCPGTaskInstancesGet class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 	private static final Log LOGGER = LogFactory.getLog(BeCPGTaskInstancesGet.class);
 
+	/** Constant <code>PARAM_SEARCH="q"</code> */
 	public static final String PARAM_SEARCH = "q";
+	/** Constant <code>PARAM_SORT="sort"</code> */
 	public static final String PARAM_SORT = "sort";
+	/** Constant <code>PARAM_DIR="dir"</code> */
 	public static final String PARAM_DIR = "dir";
 	private static final QName QNAME_INITIATOR = QName.createQName("wf", "initiator");
 
 	private AttributeExtractorService attributeExtractorService;
 
+	/**
+	 * <p>Setter for the field <code>attributeExtractorService</code>.</p>
+	 *
+	 * @param attributeExtractorService a {@link fr.becpg.repo.helper.AttributeExtractorService} object.
+	 */
 	public void setAttributeExtractorService(AttributeExtractorService attributeExtractorService) {
 		this.attributeExtractorService = attributeExtractorService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected Map<String, Object> buildModel(WorkflowModelBuilder modelBuilder, WebScriptRequest req, Status status, Cache cache) {
 		Map<String, String> params = req.getServiceMatch().getTemplateVars();

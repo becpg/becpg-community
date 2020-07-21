@@ -36,6 +36,12 @@ import fr.becpg.repo.search.impl.DataListSearchFilter;
 import fr.becpg.repo.search.impl.DataListSearchFilterField;
 import fr.becpg.repo.search.impl.SearchConfig;
 
+/**
+ * <p>ProductAdvSearchPlugin class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
@@ -81,6 +87,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> filter(List<NodeRef> nodes, QName datatype, Map<String, String> criteria, SearchConfig searchConfig) {
 
@@ -272,6 +279,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Set<String> getIgnoredFields(QName datatype, SearchConfig searchConfig) {
 		Set<String> ret = new HashSet<>();

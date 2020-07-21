@@ -39,6 +39,12 @@ import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
+/**
+ * <p>Thumbnail class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public final class Thumbnail extends BaseScopableProcessorExtension {
 
 	private static final String THUMB_CACHE_KEY_PREFIX = "thumbCache_";
@@ -56,26 +62,57 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 
 	private ServiceRegistry serviceRegistry;
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityService</code>.</p>
+	 *
+	 * @param entityService a {@link fr.becpg.repo.entity.EntityService} object.
+	 */
 	public void setEntityService(EntityService entityService) {
 		this.entityService = entityService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>beCPGCacheService</code>.</p>
+	 *
+	 * @param beCPGCacheService a {@link fr.becpg.repo.cache.BeCPGCacheService} object.
+	 */
 	public void setBeCPGCacheService(BeCPGCacheService beCPGCacheService) {
 		this.beCPGCacheService = beCPGCacheService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityReportService</code>.</p>
+	 *
+	 * @param entityReportService a {@link fr.becpg.repo.report.entity.EntityReportService} object.
+	 */
 	public void setEntityReportService(EntityReportService entityReportService) {
 		this.entityReportService = entityReportService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>serviceRegistry</code>.</p>
+	 *
+	 * @param serviceRegistry a {@link org.alfresco.service.ServiceRegistry} object.
+	 */
 	public void setServiceRegistry(ServiceRegistry serviceRegistry) {
 		this.serviceRegistry = serviceRegistry;
 	}
 
+	/**
+	 * <p>getThumbnailNode.</p>
+	 *
+	 * @param sourceNode a {@link org.alfresco.repo.jscript.ScriptNode} object.
+	 * @return a {@link org.alfresco.repo.jscript.ScriptNode} object.
+	 */
 	public ScriptNode getThumbnailNode(ScriptNode sourceNode) {
 
 		QName type = nodeService.getType(sourceNode.getNodeRef());
@@ -105,6 +142,12 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 
 	}
 
+	/**
+	 * <p>getOrCreateImageNode.</p>
+	 *
+	 * @param sourceNode a {@link org.alfresco.repo.jscript.ScriptNode} object.
+	 * @return a {@link org.alfresco.repo.jscript.ScriptNode} object.
+	 */
 	public ScriptNode getOrCreateImageNode(ScriptNode sourceNode) {
 		QName type = nodeService.getType(sourceNode.getNodeRef());
 		// Try to find a logo for the specific type
@@ -126,6 +169,12 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 
 	}
 
+	/**
+	 * <p>getReportNode.</p>
+	 *
+	 * @param sourceNode a {@link org.alfresco.repo.jscript.ScriptNode} object.
+	 * @return a {@link org.alfresco.repo.jscript.ScriptNode} object.
+	 */
 	public ScriptNode getReportNode(ScriptNode sourceNode) {
 
 		NodeRef sourceNodeRef = sourceNode.getNodeRef();
@@ -167,6 +216,12 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 
 	}
 
+	/**
+	 * <p>refreshReport.</p>
+	 *
+	 * @param reportNode a {@link org.alfresco.repo.jscript.ScriptNode} object.
+	 * @return a {@link org.alfresco.repo.jscript.ScriptNode} object.
+	 */
 	public ScriptNode refreshReport(ScriptNode reportNode) {
 		NodeRef reportNodeRef = reportNode.getNodeRef();
 

@@ -21,6 +21,12 @@ import fr.becpg.repo.repository.annotation.AlfReadOnly;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataList;
 
+/**
+ * <p>ProductSpecificationData class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @AlfType
 @AlfQname(qname = "bcpg:productSpecification")
 public class ProductSpecificationData extends ProductData {
@@ -45,26 +51,51 @@ public class ProductSpecificationData extends ProductData {
 	private List<NodeRef> specCompatibilityTpls = new ArrayList<>();
 	
 	
+	/**
+	 * <p>Getter for the field <code>regulatoryCode</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:regulatoryCode")
 	public String getRegulatoryCode() {
 		return regulatoryCode;
 	}
 
+	/**
+	 * <p>Setter for the field <code>regulatoryCode</code>.</p>
+	 *
+	 * @param regulatoryCode a {@link java.lang.String} object.
+	 */
 	public void setRegulatoryCode(String regulatoryCode) {
 		this.regulatoryCode = regulatoryCode;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>specCompatibilityLog</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:specCompatibilityLog")
 	public String getSpecCompatibilityLog() {
 		return specCompatibilityLog;
 	}
 
+	/**
+	 * <p>Setter for the field <code>specCompatibilityLog</code>.</p>
+	 *
+	 * @param specCompatibilityLog a {@link java.lang.String} object.
+	 */
 	public void setSpecCompatibilityLog(String specCompatibilityLog) {
 		this.specCompatibilityLog = specCompatibilityLog;
 	}
 
+	/**
+	 * <p>Getter for the field <code>specCompatibilityTpls</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@AlfMultiAssoc
 	@AlfQname(qname = "bcpg:specCompatibilityTpls")
 	@AlfReadOnly
@@ -72,61 +103,117 @@ public class ProductSpecificationData extends ProductData {
 		return specCompatibilityTpls;
 	}
 
+	/**
+	 * <p>Setter for the field <code>specCompatibilityTpls</code>.</p>
+	 *
+	 * @param specCompatibilityTpls a {@link java.util.List} object.
+	 */
 	public void setSpecCompatibilityTpls(List<NodeRef> specCompatibilityTpls) {
 		this.specCompatibilityTpls = specCompatibilityTpls;
 	}
 
+	/**
+	 * <p>Getter for the field <code>specCompatibilityList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@DataList
 	@AlfQname(qname = "bcpg:productSpecCompatibilityList")
 	public List<SpecCompatibilityDataItem> getSpecCompatibilityList() {
 		return specCompatibilityList;
 	}
 
+	/**
+	 * <p>Setter for the field <code>specCompatibilityList</code>.</p>
+	 *
+	 * @param specCompatibilityList a {@link java.util.List} object.
+	 */
 	public void setSpecCompatibilityList(List<SpecCompatibilityDataItem> specCompatibilityList) {
 		this.specCompatibilityList = specCompatibilityList;
 	}
 
+	/**
+	 * <p>Getter for the field <code>labelingRuleList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@DataList
 	@AlfQname(qname = "bcpg:labelingRuleList")
 	public List<LabelingRuleListDataItem> getLabelingRuleList() {
 		return labelingRuleList;
 	}
 
+	/**
+	 * <p>Setter for the field <code>labelingRuleList</code>.</p>
+	 *
+	 * @param labelingRuleList a {@link java.util.List} object.
+	 */
 	public void setLabelingRuleList(List<LabelingRuleListDataItem> labelingRuleList) {
 		this.labelingRuleList = labelingRuleList;
 	}
 
+	/**
+	 * <p>Getter for the field <code>forbiddenIngList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@DataList
 	@AlfQname(qname = "bcpg:forbiddenIngList")
 	public List<ForbiddenIngListDataItem> getForbiddenIngList() {
 		return forbiddenIngList;
 	}
 
+	/**
+	 * <p>Setter for the field <code>forbiddenIngList</code>.</p>
+	 *
+	 * @param forbiddenIngList a {@link java.util.List} object.
+	 */
 	public void setForbiddenIngList(List<ForbiddenIngListDataItem> forbiddenIngList) {
 		this.forbiddenIngList = forbiddenIngList;
 	}
 	
 	
+	/**
+	 * <p>Getter for the field <code>dynamicCharactList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@DataList
 	@AlfQname(qname = "bcpg:dynamicCharactList")
 	public List<DynamicCharactListItem> getDynamicCharactList() {
 		return dynamicCharactList;
 	}
 
+	/**
+	 * <p>Setter for the field <code>dynamicCharactList</code>.</p>
+	 *
+	 * @param dynamicCharactList a {@link java.util.List} object.
+	 */
 	public void setDynamicCharactList(List<DynamicCharactListItem> dynamicCharactList) {
 		this.dynamicCharactList = dynamicCharactList;
 	}
 
+	/**
+	 * <p>Getter for the field <code>resourceParams</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@DataList
 	@AlfQname(qname = "mpm:resourceParam")
 	public List<ResourceParamDataItem> getResourceParams() {
 		return resourceParams;
 	}
 
+	/**
+	 * <p>Setter for the field <code>resourceParams</code>.</p>
+	 *
+	 * @param resourceParams a {@link java.util.List} object.
+	 */
 	public void setResourceParams(List<ResourceParamDataItem> resourceParams) {
 		this.resourceParams = resourceParams;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -136,6 +223,7 @@ public class ProductSpecificationData extends ProductData {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -152,6 +240,7 @@ public class ProductSpecificationData extends ProductData {
 				&& Objects.equals(specCompatibilityTpls, other.specCompatibilityTpls);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "ProductSpecificationData [specCompatibilityLog=" + specCompatibilityLog + ", regulatoryCode=" + regulatoryCode + ", forbiddenIngList="

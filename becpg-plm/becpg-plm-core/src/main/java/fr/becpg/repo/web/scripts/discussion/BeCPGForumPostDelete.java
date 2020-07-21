@@ -21,9 +21,10 @@ import fr.becpg.repo.helper.AssociationService;
 /**
  * This class is the controller for the forum post deleting forum-post.delete
  * webscript.
- * 
+ *
  * @author Nick Burch
  * @since 4.0
+ * @version $Id: $Id
  */
 public class BeCPGForumPostDelete extends ForumPostDelete {
 	private static final String MSG_NODE_MARKED_REMOVED = "forum-post.msg.marked.removed";
@@ -34,14 +35,25 @@ public class BeCPGForumPostDelete extends ForumPostDelete {
 
 	AuthorityService authorityService;
 
+	/**
+	 * <p>Setter for the field <code>associationService</code>.</p>
+	 *
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object.
+	 */
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>authorityService</code>.</p>
+	 *
+	 * @param authorityService a {@link org.alfresco.service.cmr.security.AuthorityService} object.
+	 */
 	public void setAuthorityService(AuthorityService authorityService) {
 		this.authorityService = authorityService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected Map<String, Object> executeImpl(SiteInfo site, NodeRef nodeRef, TopicInfo topic, PostInfo post, WebScriptRequest req, JSONObject json,
 			Status status, Cache cache) {

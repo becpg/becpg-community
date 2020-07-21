@@ -21,6 +21,7 @@ package fr.becpg.repo.importer;
  * Define the type of import.
  *
  * @author querephi
+ * @version $Id: $Id
  */
 public enum ImportType {
 

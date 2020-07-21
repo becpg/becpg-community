@@ -4,6 +4,12 @@
 package fr.becpg.model;
 
 
+/**
+ * <p>EntityListState class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public enum EntityListState {
 	
 		ToValidate,

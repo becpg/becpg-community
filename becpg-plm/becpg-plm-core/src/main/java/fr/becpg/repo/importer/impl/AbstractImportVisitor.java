@@ -80,9 +80,11 @@ import fr.becpg.repo.search.impl.AbstractBeCPGQueryBuilder;
  * Abstract class used to import a node with its attributes and files.
  *
  * @author querephi
+ * @version $Id: $Id
  */
 public class AbstractImportVisitor implements ImportVisitor, ApplicationContextAware {
 
+	/** Constant <code>CACHE_KEY="cKey%s-%s"</code> */
 	protected static final String CACHE_KEY = "cKey%s-%s";
 
 	private static final Log logger = LogFactory.getLog(AbstractImportVisitor.class);
@@ -111,59 +113,121 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 	protected AssociationService associationService;
 
+	/**
+	 * <p>Setter for the field <code>entityListDAO</code>.</p>
+	 *
+	 * @param entityListDAO a {@link fr.becpg.repo.entity.EntityListDAO} object.
+	 */
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) {
 		this.applicationContext = applicationContext;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityDictionaryService</code>.</p>
+	 *
+	 * @param entityDictionaryService a {@link fr.becpg.repo.entity.EntityDictionaryService} object.
+	 */
 	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
 		this.entityDictionaryService = entityDictionaryService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>repoService</code>.</p>
+	 *
+	 * @param repoService a {@link fr.becpg.repo.helper.RepoService} object.
+	 */
 	public void setRepoService(RepoService repoService) {
 		this.repoService = repoService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>contentService</code>.</p>
+	 *
+	 * @param contentService a {@link org.alfresco.service.cmr.repository.ContentService} object.
+	 */
 	public void setContentService(ContentService contentService) {
 		this.contentService = contentService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>mimetypeService</code>.</p>
+	 *
+	 * @param mimetypeService a {@link org.alfresco.service.cmr.repository.MimetypeService} object.
+	 */
 	public void setMimetypeService(MimetypeService mimetypeService) {
 		this.mimetypeService = mimetypeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>namespaceService</code>.</p>
+	 *
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
+	 */
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>autoNumService</code>.</p>
+	 *
+	 * @param autoNumService a {@link fr.becpg.repo.entity.AutoNumService} object.
+	 */
 	public void setAutoNumService(AutoNumService autoNumService) {
 		this.autoNumService = autoNumService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>hierarchyService</code>.</p>
+	 *
+	 * @param hierarchyService a {@link fr.becpg.repo.hierarchy.HierarchyService} object.
+	 */
 	public void setHierarchyService(HierarchyService hierarchyService) {
 		this.hierarchyService = hierarchyService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>repositoryHelper</code>.</p>
+	 *
+	 * @param repositoryHelper a {@link org.alfresco.repo.model.Repository} object.
+	 */
 	public void setRepositoryHelper(Repository repositoryHelper) {
 		this.repositoryHelper = repositoryHelper;
 	}
 
+	/**
+	 * <p>Getter for the field <code>associationService</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.helper.AssociationService} object.
+	 */
 	public AssociationService getAssociationService() {
 		return associationService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>associationService</code>.</p>
+	 *
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object.
+	 */
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef importNode(ImportContext importContext, List<String> values) throws ParseException, ImporterException {
 
@@ -259,11 +323,11 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	/**
 	 * Calculate the properties of the node import
 	 *
-	 * @param importContext
-	 * @param values
-	 * @return
-	 * @throws ParseException
-	 * @throws ImporterException
+	 * @param importContext a {@link fr.becpg.repo.importer.ImportContext} object.
+	 * @param values a {@link java.util.List} object.
+	 * @throws java.text.ParseException
+	 * @throws fr.becpg.repo.importer.ImporterException
+	 * @return a {@link java.util.Map} object.
 	 */
 	@SuppressWarnings("unchecked")
 	protected Map<QName, Serializable> getNodePropertiesToImport(ImportContext importContext, List<String> values)
@@ -373,6 +437,13 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	}
 
 	// DO NOT REMOVED USED in FORMULA
+	/**
+	 * <p>findCharact.</p>
+	 *
+	 * @param type a {@link java.lang.String} object.
+	 * @param name a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String findCharact(String type, String name) {
 		NodeRef ret = findCharact(QName.createQName(type, namespaceService), BeCPGModel.PROP_CHARACT_NAME, name);
 		if (ret == null) {
@@ -384,6 +455,12 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	}
 
 	// DO NOT REMOVED USED in FORMULA
+	/**
+	 * <p>findNut.</p>
+	 *
+	 * @param nutCode a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String findNut(String nutCode) {
 		NodeRef ret = findCharact(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, nutCode);
 		if (ret == null) {
@@ -395,6 +472,12 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	}
 
 	// DO NOT REMOVED USED in FORMULA
+	/**
+	 * <p>findLabelClaim.</p>
+	 *
+	 * @param labelClaimCode a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String findLabelClaim(String labelClaimCode) {
 		NodeRef ret = findCharact(PLMModel.TYPE_LABEL_CLAIM, PLMModel.PROP_LABEL_CLAIM_CODE, labelClaimCode);
 		if (ret == null) {
@@ -406,6 +489,12 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	}
 
 	// DO NOT REMOVED USED in FORMULA
+	/**
+	 * <p>findAllergen.</p>
+	 *
+	 * @param allergenCode a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String findAllergen(String allergenCode) {
 		NodeRef ret = findCharact(PLMModel.TYPE_ALLERGEN, PLMModel.PROP_ALLERGEN_CODE, allergenCode);
 		if (ret == null) {
@@ -417,6 +506,14 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	}
 
 	// DO NOT REMOVED USED in FORMULA
+	/**
+	 * <p>findCharactByProperty.</p>
+	 *
+	 * @param type a {@link java.lang.String} object.
+	 * @param property a {@link java.lang.String} object.
+	 * @param name a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String findCharactByProperty(String type, String property, String name) {
 		NodeRef ret = findCharact(QName.createQName(type, namespaceService), QName.createQName(property, namespaceService), name);
 		if (ret == null) {
@@ -434,11 +531,10 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	/**
 	 * Import the associations of the node
 	 *
-	 * @param importContext
-	 * @param values
-	 * @param nodeRef
-	 * @throws InvalidTargetNodeException
-	 * @throws ImporterException
+	 * @param importContext a {@link fr.becpg.repo.importer.ImportContext} object.
+	 * @param values a {@link java.util.List} object.
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @throws fr.becpg.repo.importer.ImporterException
 	 */
 	protected void importAssociations(ImportContext importContext, List<String> values, NodeRef nodeRef) throws ImporterException {
 
@@ -482,10 +578,11 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	/**
 	 * Import the files of the node
 	 *
-	 * @param importContext
-	 * @param values
-	 * @param nodeRef
-	 * @throws ImporterException
+	 * @param importContext a {@link fr.becpg.repo.importer.ImportContext} object.
+	 * @param values a {@link java.util.List} object.
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @throws fr.becpg.repo.importer.ImporterException
+	 * @throws java.text.ParseException if any.
 	 */
 	protected void importFiles(ImportContext importContext, List<String> values, NodeRef nodeRef) throws ParseException, ImporterException {
 
@@ -679,12 +776,14 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		return fileNodeRef;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public ImportContext loadClassMapping(Object mapping, ImportContext importContext, MappingLoader mappingLoader) throws MappingException {
 
 		return mappingLoader.loadClassMapping(mapping, importContext);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public ImportContext loadMappingColumns(Element mappingElt, List<String> columns, ImportContext importContext) throws MappingException {
 
@@ -792,6 +891,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	 * @param properties
 	 *            the properties
 	 * @return the node ref
+	 * @throws fr.becpg.repo.importer.ImporterException if any.
 	 */
 	protected NodeRef findNode(ImportContext importContext, QName type, Map<QName, Serializable> properties) throws ImporterException {
 
@@ -819,6 +919,14 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 	/**
 	 * find the node by key properties, according to : - nodeColumnKey - code.
+	 *
+	 * @param importContext a {@link fr.becpg.repo.importer.ImportContext} object.
+	 * @param propDef a {@link org.alfresco.service.cmr.dictionary.PropertyDefinition} object.
+	 * @param type a {@link org.alfresco.service.namespace.QName} object.
+	 * @param properties a {@link java.util.Map} object.
+	 * @param parentRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @throws fr.becpg.repo.importer.ImporterException if any.
 	 */
 	protected NodeRef findNodeByKeyOrCode(ImportContext importContext, PropertyDefinition propDef, QName type, Map<QName, Serializable> properties,
 			NodeRef parentRef) throws ImporterException {
@@ -954,6 +1062,14 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 	/**
 	 * find the nodes by value (multi-value or single value)
+	 *
+	 * @param importContext a {@link fr.becpg.repo.importer.ImportContext} object.
+	 * @param isTargetMany a boolean.
+	 * @param targetClass a {@link org.alfresco.service.namespace.QName} object.
+	 * @param value a {@link java.lang.String} object.
+	 * @param assoc a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link java.util.List} object.
+	 * @throws fr.becpg.repo.importer.ImporterException if any.
 	 */
 	protected List<NodeRef> findTargetNodesByValue(ImportContext importContext, boolean isTargetMany, QName targetClass, String value, QName assoc)
 			throws ImporterException {
@@ -992,6 +1108,13 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	 * Find the target node according to the property (no target type associated
 	 * to a property of type nodeRef
 	 *
+	 * @param importContext a {@link fr.becpg.repo.importer.ImportContext} object.
+	 * @param propDef a {@link org.alfresco.service.cmr.dictionary.PropertyDefinition} object.
+	 * @param attributeMapping a {@link fr.becpg.config.mapping.AbstractAttributeMapping} object.
+	 * @param value a {@link java.lang.String} object.
+	 * @param properties a {@link java.util.Map} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @throws fr.becpg.repo.importer.ImporterException if any.
 	 */
 	protected NodeRef findPropertyTargetNodeByValue(ImportContext importContext, PropertyDefinition propDef,
 			AbstractAttributeMapping attributeMapping, String value, Map<QName, Serializable> properties) throws ImporterException {
@@ -1047,6 +1170,14 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	/**
 	 * find the node by value, according to : - nodeColumnKey, take the first -
 	 * - code
+	 *
+	 * @param importContext a {@link fr.becpg.repo.importer.ImportContext} object.
+	 * @param propDef a {@link org.alfresco.service.cmr.dictionary.PropertyDefinition} object.
+	 * @param type a {@link org.alfresco.service.namespace.QName} object.
+	 * @param value a {@link java.lang.String} object.
+	 * @param assoc a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @throws fr.becpg.repo.importer.ImporterException if any.
 	 */
 	protected NodeRef findTargetNodeByValue(ImportContext importContext, PropertyDefinition propDef, QName type, String value, QName assoc)
 			throws ImporterException {

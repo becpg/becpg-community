@@ -51,7 +51,7 @@ import fr.becpg.repo.helper.MLTextHelper;
  * Return or save MLText field
  *
  * @author matthieu
- *
+ * @version $Id: $Id
  */
 public class MultilingualFieldWebScript extends AbstractWebScript {
 
@@ -75,14 +75,25 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 	
 
 
+	/**
+	 * <p>Setter for the field <code>serviceRegistry</code>.</p>
+	 *
+	 * @param serviceRegistry a {@link org.alfresco.service.ServiceRegistry} object.
+	 */
 	public void setServiceRegistry(ServiceRegistry serviceRegistry) {
 		this.serviceRegistry = serviceRegistry;
 	}
 
+	/**
+	 * <p>Setter for the field <code>googleApiKey</code>.</p>
+	 *
+	 * @param googleApiKey a {@link java.lang.String} object.
+	 */
 	public void setGoogleApiKey(String googleApiKey) {
 		this.googleApiKey = googleApiKey;
 	}
 
+	/** {@inheritDoc} */
 	@SuppressWarnings("unchecked")
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {

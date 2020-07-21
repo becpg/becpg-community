@@ -21,19 +21,26 @@ import org.alfresco.repo.dictionary.M2Model;
 
 /**
  * This service is used to read metaModel and write it from xml
- * @author "Matthieu Laborie"
  *
+ * @author "Matthieu Laborie"
+ * @version $Id: $Id
  */
 public interface MetaModelService {
 	
 	
 	/**
 	 * extract M2Model from m2:model node
+	 *
+	 * @param nodeRef a {@link java.lang.String} object.
+	 * @return a {@link org.alfresco.repo.dictionary.M2Model} object.
 	 */
 	M2Model extractM2Model(String nodeRef);
 	
 	/**
 	 * create nodeRef form M2Model
+	 *
+	 * @param model a {@link org.alfresco.repo.dictionary.M2Model} object.
+	 * @return a {@link java.lang.String} object.
 	 */
 	String createModelNodeRef(M2Model model);
 

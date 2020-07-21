@@ -37,6 +37,12 @@ import org.mozilla.javascript.ScriptableObject;
 import fr.becpg.repo.search.AdvSearchService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
+/**
+ * <p>Search class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public final class Search extends BaseScopableProcessorExtension{
 
 	private static final Log logger = LogFactory.getLog(Search.class);
@@ -45,17 +51,41 @@ public final class Search extends BaseScopableProcessorExtension{
     
 	private AdvSearchService advSearchService;
 	
+	/**
+	 * <p>setServiceRegistry.</p>
+	 *
+	 * @param serviceRegistry a {@link org.alfresco.service.ServiceRegistry} object.
+	 */
 	public void setServiceRegistry(ServiceRegistry serviceRegistry)
     {
     	this.services = serviceRegistry;
     }
 		
+	/**
+	 * <p>Setter for the field <code>advSearchService</code>.</p>
+	 *
+	 * @param advSearchService a {@link fr.becpg.repo.search.AdvSearchService} object.
+	 */
 	public void setAdvSearchService(AdvSearchService advSearchService) {
 		this.advSearchService = advSearchService;
 	}
 
 	
 
+	/**
+	 * <p>queryAdvSearch.</p>
+	 *
+	 * @param datatype a {@link java.lang.String} object.
+	 * @param term a {@link java.lang.String} object.
+	 * @param tag a {@link java.lang.String} object.
+	 * @param criteria a {@link java.lang.Object} object.
+	 * @param isRepo a boolean.
+	 * @param siteId a {@link java.lang.String} object.
+	 * @param containerId a {@link java.lang.String} object.
+	 * @param sort a {@link java.lang.Object} object.
+	 * @param maxResults a int.
+	 * @return a {@link org.mozilla.javascript.Scriptable} object.
+	 */
 	public Scriptable queryAdvSearch(String datatype, 
 			String term, String tag, Object criteria, 
 			boolean isRepo, String siteId, String containerId, Object sort,int maxResults){
@@ -64,6 +94,16 @@ public final class Search extends BaseScopableProcessorExtension{
 	}
 	
 
+	/**
+	 * <p>queryAdvSearch.</p>
+	 *
+	 * @param query a {@link java.lang.String} object.
+	 * @param datatype a {@link java.lang.String} object.
+	 * @param criteria a {@link java.lang.Object} object.
+	 * @param sort a {@link java.lang.Object} object.
+	 * @param maxResults a int.
+	 * @return a {@link org.mozilla.javascript.Scriptable} object.
+	 */
 	public Scriptable queryAdvSearch(String query, String datatype, Object criteria,  Object sort, int maxResults){
 		return queryAdvSearch(query, datatype, null, null, criteria, true, null, null, sort, maxResults);
 		
@@ -72,6 +112,18 @@ public final class Search extends BaseScopableProcessorExtension{
 
 	/**
 	 * Method a do the query for the advanced search
+	 *
+	 * @param query a {@link java.lang.String} object.
+	 * @param datatype a {@link java.lang.String} object.
+	 * @param term a {@link java.lang.String} object.
+	 * @param tag a {@link java.lang.String} object.
+	 * @param criteria a {@link java.lang.Object} object.
+	 * @param isRepo a boolean.
+	 * @param siteId a {@link java.lang.String} object.
+	 * @param containerId a {@link java.lang.String} object.
+	 * @param sort a {@link java.lang.Object} object.
+	 * @param maxResults a int.
+	 * @return a {@link org.mozilla.javascript.Scriptable} object.
 	 */
 	public Scriptable queryAdvSearch(String query, String datatype, 
 			String term, String tag, Object criteria,  

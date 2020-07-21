@@ -45,9 +45,10 @@ import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
+ * <p>ProjectDetailsWebScript class.</p>
  *
  * @author rim
- *
+ * @version $Id: $Id
  */
 public class ProjectDetailsWebScript extends AbstractWebScript {
 
@@ -66,28 +67,54 @@ public class ProjectDetailsWebScript extends AbstractWebScript {
 	private PropertyFormatService propertyFormatService;
 	
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
+	 */
 	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityListDAO</code>.</p>
+	 *
+	 * @param entityListDAO a {@link fr.becpg.repo.entity.EntityListDAO} object.
+	 */
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
 	}
 
+	/**
+	 * <p>Setter for the field <code>contentService</code>.</p>
+	 *
+	 * @param contentService a {@link org.alfresco.service.cmr.repository.ContentService} object.
+	 */
 	public void setContentService(ContentService contentService) {
 		this.contentService = contentService;
 	}
 
 	
 	
+	/**
+	 * <p>Setter for the field <code>propertyFormatService</code>.</p>
+	 *
+	 * @param propertyFormatService a {@link fr.becpg.config.format.PropertyFormatService} object.
+	 */
 	public void setPropertyFormatService(PropertyFormatService propertyFormatService) {
 		this.propertyFormatService = propertyFormatService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
 		String nodeRef = req.getParameter(NODE_REF);
@@ -277,6 +304,13 @@ public class ProjectDetailsWebScript extends AbstractWebScript {
 		return false;
 	}
 
+	/**
+	 * <p>getDaysBetween.</p>
+	 *
+	 * @param start a {@link java.util.Date} object.
+	 * @param end a {@link java.util.Date} object.
+	 * @return a int.
+	 */
 	public int getDaysBetween(Date start, Date end) {
 		LocalDate startDate = start.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 		LocalDate endDate = end.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();

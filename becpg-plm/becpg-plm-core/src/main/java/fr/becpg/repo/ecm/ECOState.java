@@ -17,6 +17,12 @@
  ******************************************************************************/
 package fr.becpg.repo.ecm;
 
+/**
+ * <p>ECOState class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public enum ECOState {
 
 	Automatic,

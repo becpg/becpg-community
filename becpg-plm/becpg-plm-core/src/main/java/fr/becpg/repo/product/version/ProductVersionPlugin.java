@@ -21,6 +21,12 @@ import fr.becpg.model.SystemState;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.version.EntityVersionPlugin;
 
+/**
+ * <p>ProductVersionPlugin class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class ProductVersionPlugin implements EntityVersionPlugin {
 
@@ -44,6 +50,7 @@ public class ProductVersionPlugin implements EntityVersionPlugin {
 	String propertiesNotToMerge;
 	
 	
+	/** {@inheritDoc} */
 	@Override
 	public void doAfterCheckout(NodeRef origNodeRef, NodeRef workingCopyNodeRef) {
 		
@@ -56,6 +63,7 @@ public class ProductVersionPlugin implements EntityVersionPlugin {
 		
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void doBeforeCheckin(NodeRef origNodeRef, NodeRef workingCopyNodeRef) {
 		if(entityDictionaryService.isSubClass(nodeService.getType(origNodeRef), PLMModel.TYPE_PRODUCT)){
@@ -92,11 +100,13 @@ public class ProductVersionPlugin implements EntityVersionPlugin {
 		
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void cancelCheckout(NodeRef origNodeRef, NodeRef workingCopyNodeRef) {
 		
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void impactWUsed(NodeRef entityNodeRef, VersionType versionType, String description) {
 			

@@ -60,14 +60,14 @@ import fr.becpg.repo.helper.MLTextHelper;
  * <p>
  * Where {@link org.alfresco.service.cmr.repository.MLText ML text} has been passed in, this
  * will be allowed to pass.
- * 
+ *
  * @see org.alfresco.service.cmr.repository.NodeService#getProperty(NodeRef, QName)
  * @see org.alfresco.service.cmr.repository.NodeService#getProperties(NodeRef)
  * @see org.alfresco.service.cmr.repository.NodeService#setProperty(NodeRef, QName, Serializable)
  * @see org.alfresco.service.cmr.repository.NodeService#setProperties(NodeRef, Map)
- * 
  * @author Derek Hulley
  * @author Philippe Dubois
+ * @version $Id: $Id
  */
 public class BeCPGMLPropertyInterceptor implements MethodInterceptor
 {
@@ -83,6 +83,8 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
     private DictionaryService dictionaryService;
    
     /**
+     * <p>isMLAware.</p>
+     *
      * @return Returns <tt>true</tt> if the current thread has marked itself
      *      as being able to handle {@link MLText d:mltext} types properly.
      */
@@ -91,21 +93,37 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
        return MLPropertyInterceptor.isMLAware();
     }
 
+    /**
+     * <p>Setter for the field <code>nodeService</code>.</p>
+     *
+     * @param bean a {@link org.alfresco.service.cmr.repository.NodeService} object.
+     */
     public void setNodeService(NodeService bean)
     {
         this.nodeService = bean;
     }
 
+    /**
+     * <p>Setter for the field <code>multilingualContentService</code>.</p>
+     *
+     * @param multilingualContentService a {@link org.alfresco.service.cmr.ml.MultilingualContentService} object.
+     */
     public void setMultilingualContentService(MultilingualContentService multilingualContentService)
     {
         this.multilingualContentService = multilingualContentService;
     }
 
+    /**
+     * <p>Setter for the field <code>dictionaryService</code>.</p>
+     *
+     * @param dictionaryService a {@link org.alfresco.service.cmr.dictionary.DictionaryService} object.
+     */
     public void setDictionaryService(DictionaryService dictionaryService)
     {
         this.dictionaryService = dictionaryService;
     }
     
+    /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
     public Object invoke(final MethodInvocation invocation) throws Throwable
     {
@@ -389,6 +407,12 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
     }
     
    
+    /**
+     * <p>getClosestLocale.</p>
+     *
+     * @param collection a {@link java.util.Collection} object.
+     * @return a {@link java.util.Locale} object.
+     */
     public Locale getClosestLocale(Collection<?> collection)
     {
         if (collection.size() == 0)

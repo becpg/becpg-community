@@ -45,6 +45,9 @@ import fr.becpg.repo.search.impl.AbstractBeCPGQueryBuilder;
 
 /**
  * Add physico chemical units on old systems
+ *
+ * @author matthieu
+ * @version $Id: $Id
  */
 public class PhysicoUnitPatch extends AbstractBeCPGPatch {
 
@@ -54,10 +57,16 @@ public class PhysicoUnitPatch extends AbstractBeCPGPatch {
 	
 	private EntityListDAO entityListDAO;
 	
+	/**
+	 * <p>Setter for the field <code>entityListDAO</code>.</p>
+	 *
+	 * @param entityListDAO a {@link fr.becpg.repo.entity.EntityListDAO} object.
+	 */
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected String applyInternal() throws Exception {
 
@@ -120,16 +129,34 @@ public class PhysicoUnitPatch extends AbstractBeCPGPatch {
 		return "PhysicoUnit patch: Success";
 	}
 
+	/**
+	 * <p>Getter for the field <code>policyBehaviourFilter</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.repo.policy.BehaviourFilter} object.
+	 */
 	public BehaviourFilter getPolicyBehaviourFilter() {
 		return policyBehaviourFilter;
 	}
 
+	/**
+	 * <p>Setter for the field <code>policyBehaviourFilter</code>.</p>
+	 *
+	 * @param policyBehaviourFilter a {@link org.alfresco.repo.policy.BehaviourFilter} object.
+	 */
 	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
 		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
 
 	
 	
+	/**
+	 * <p>createSystemEntity.</p>
+	 *
+	 * @param parentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param entityPath a {@link java.lang.String} object.
+	 * @param entitySystemDataLists a {@link java.util.Map} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public NodeRef createSystemEntity(NodeRef parentNodeRef, String entityPath, Map<String, QName> entitySystemDataLists) {
 
 		try {

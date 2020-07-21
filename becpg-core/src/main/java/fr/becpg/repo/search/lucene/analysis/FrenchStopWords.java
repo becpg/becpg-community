@@ -18,8 +18,11 @@
 package fr.becpg.repo.search.lucene.analysis;
 
 /**
+ * <p>FrenchStopWords interface.</p>
+ *
  * @author nicolasr
  * créé le 23 juil. 2003
+ * @version $Id: $Id
  */
 public interface FrenchStopWords {
     String[] STOP_WORDS =
@@ -174,5 +177,6 @@ public interface FrenchStopWords {
             "eut",
             "eussions",
             "eussiez",
+            /** Constant <code>STOP_WORDS</code> */
             "eussent" };
 }

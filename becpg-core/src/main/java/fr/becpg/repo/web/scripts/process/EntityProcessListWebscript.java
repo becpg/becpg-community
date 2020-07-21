@@ -13,17 +13,28 @@ import org.springframework.extensions.webscripts.Cache;
 import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 
+/**
+ * <p>EntityProcessListWebscript class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class EntityProcessListWebscript extends AbstractWorkflowWebscript {
 
+	/** Constant <code>PARAM_STORE_TYPE="store_type"</code> */
 	public static final String PARAM_STORE_TYPE = "store_type";
+	/** Constant <code>PARAM_STORE_ID="store_id"</code> */
 	public static final String PARAM_STORE_ID = "store_id";
+	/** Constant <code>PARAM_NODE_ID="id"</code> */
 	public static final String PARAM_NODE_ID = "id";
+	/** Constant <code>PARAM_ALL_TYPE="all"</code> */
 	public static final String PARAM_ALL_TYPE = "all";
 	
 	
 	@Autowired
 	private EntityProcessListPlugin[] processPlugins;
 	
+	/** {@inheritDoc} */
 	@Override
 	protected Map<String, Object> buildModel(WorkflowModelBuilder modelBuilder, WebScriptRequest req, Status status, Cache cache){
 		

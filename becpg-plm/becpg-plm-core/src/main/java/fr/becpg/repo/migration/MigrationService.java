@@ -21,19 +21,62 @@ import org.alfresco.service.namespace.QName;
 
 /**
  * Service to migrate model and data
- * @author quere
  *
+ * @author quere
+ * @version $Id: $Id
  */
 public interface MigrationService {
 
 	//MT
+	/**
+	 * <p>addMandatoryAspectInMt.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object.
+	 * @param aspect a {@link org.alfresco.service.namespace.QName} object.
+	 */
 	void addMandatoryAspectInMt(final QName type, final QName aspect);
+	/**
+	 * <p>removeAspectInMt.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object.
+	 * @param aspect a {@link org.alfresco.service.namespace.QName} object.
+	 */
 	void removeAspectInMt(final QName type, final QName aspect);
+	/**
+	 * <p>migrateAssociationInMt.</p>
+	 *
+	 * @param classQName a {@link org.alfresco.service.namespace.QName} object.
+	 * @param sourceAssoc a {@link org.alfresco.service.namespace.QName} object.
+	 * @param targetAssoc a {@link org.alfresco.service.namespace.QName} object.
+	 */
 	void migrateAssociationInMt(final QName classQName, final QName sourceAssoc, final QName targetAssoc);
+	/**
+	 * <p>migratePropertyInMt.</p>
+	 *
+	 * @param classQName a {@link org.alfresco.service.namespace.QName} object.
+	 * @param sourceAssoc a {@link org.alfresco.service.namespace.QName} object.
+	 * @param targetAssoc a {@link org.alfresco.service.namespace.QName} object.
+	 */
 	void migratePropertyInMt(final QName classQName, final QName sourceAssoc, final QName targetAssoc);
 	
 	//Non MT
+	/**
+	 * <p>addMandatoryAspect.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object.
+	 * @param aspect a {@link org.alfresco.service.namespace.QName} object.
+	 */
 	void addMandatoryAspect(QName type, QName aspect);
+	/**
+	 * <p>migrateAssociation.</p>
+	 *
+	 * @param classQName a {@link org.alfresco.service.namespace.QName} object.
+	 * @param sourceAssoc a {@link org.alfresco.service.namespace.QName} object.
+	 * @param targetAssoc a {@link org.alfresco.service.namespace.QName} object.
+	 */
 	void migrateAssociation(QName classQName, QName sourceAssoc, QName targetAssoc);
+	/**
+	 * <p>cleanOrphanVersion.</p>
+	 */
 	void cleanOrphanVersion();
 }

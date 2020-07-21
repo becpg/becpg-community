@@ -98,7 +98,7 @@ import fr.becpg.repo.security.SecurityService;
  * Engineering change order service implementation
  *
  * @author quere
- *
+ * @version $Id: $Id
  */
 @Service("ecoService")
 public class ECOServiceImpl implements ECOService {
@@ -129,11 +129,13 @@ public class ECOServiceImpl implements ECOService {
 	@Autowired
 	private SecurityService securityService;
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean doSimulation(NodeRef ecoNodeRef) {
 		return doRun(ecoNodeRef, ECOState.Simulated);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean apply(NodeRef ecoNodeRef) {
 		if (securityService.isCurrentUserAllowed(ECMGroup.ApplyChangeOrder.toString())) {
@@ -249,6 +251,7 @@ public class ECOServiceImpl implements ECOService {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void calculateWUsedList(NodeRef ecoNodeRef, boolean isWUsedImpacted) {
 
@@ -868,6 +871,12 @@ public class ECOServiceImpl implements ECOService {
 		changeUnitDataItem.setReqDetails(reqDetails);
 	}
 
+	/**
+	 * <p>evaluateWUsedAssociations.</p>
+	 *
+	 * @param targetAssocNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link java.util.List} object.
+	 */
 	public List<QName> evaluateWUsedAssociations(NodeRef targetAssocNodeRef) {
 		List<QName> wUsedAssociations = new ArrayList<>();
 
@@ -952,6 +961,7 @@ public class ECOServiceImpl implements ECOService {
 		return null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Boolean setInProgress(NodeRef ecoNodeRef) {
 		ChangeOrderData om = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
@@ -964,6 +974,7 @@ public class ECOServiceImpl implements ECOService {
 		return false;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Boolean setInError(NodeRef ecoNodeRef, Exception e) {
 

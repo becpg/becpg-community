@@ -18,9 +18,10 @@
 package fr.becpg.repo.formulation;
 
 /**
- * 
- * @author "Matthieu Laborie"
+ * <p>FormulateException class.</p>
  *
+ * @author "Matthieu Laborie"
+ * @version $Id: $Id
  */
 public class FormulateException extends RuntimeException {
 
@@ -29,18 +30,37 @@ public class FormulateException extends RuntimeException {
 	 */
 	private static final long serialVersionUID = 5347708146713098876L;
 
+	/**
+	 * <p>Constructor for FormulateException.</p>
+	 */
 	public FormulateException() {
 		super();
 	}
 
+	/**
+	 * <p>Constructor for FormulateException.</p>
+	 *
+	 * @param message a {@link java.lang.String} object.
+	 * @param cause a {@link java.lang.Throwable} object.
+	 */
 	public FormulateException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
+	/**
+	 * <p>Constructor for FormulateException.</p>
+	 *
+	 * @param message a {@link java.lang.String} object.
+	 */
 	public FormulateException(String message) {
 		super(message);
 	}
 
+	/**
+	 * <p>Constructor for FormulateException.</p>
+	 *
+	 * @param cause a {@link java.lang.Throwable} object.
+	 */
 	public FormulateException(Throwable cause) {
 		super(cause);
 	}

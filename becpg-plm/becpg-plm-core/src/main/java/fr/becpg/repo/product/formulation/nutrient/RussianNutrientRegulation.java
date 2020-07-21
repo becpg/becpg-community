@@ -5,12 +5,24 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Locale;
 
+/**
+ * <p>RussianNutrientRegulation class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class RussianNutrientRegulation extends AbstractNutrientRegulation {
 
+	/**
+	 * <p>Constructor for RussianNutrientRegulation.</p>
+	 *
+	 * @param path a {@link java.lang.String} object.
+	 */
 	public RussianNutrientRegulation(String path)  {
 		super(path);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected Double roundByCode(Double value, String nutrientTypeCode) {
 
@@ -43,6 +55,7 @@ public class RussianNutrientRegulation extends AbstractNutrientRegulation {
 		return bd.doubleValue();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected String displayValueByCode(Double value, Double roundedValue, String nutrientTypeCode, Locale locale) {
 		return formatDouble(roundedValue, locale);

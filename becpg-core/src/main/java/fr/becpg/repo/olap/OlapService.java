@@ -29,19 +29,50 @@ import fr.becpg.repo.olap.data.OlapChartData;
 
 /**
  * Act as a proxy to OLAP Engine
- * @author "Matthieu Laborie"
  *
+ * @author "Matthieu Laborie"
+ * @version $Id: $Id
  */
 public interface OlapService {
 
+	/**
+	 * <p>retrieveOlapCharts.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	List<OlapChart> retrieveOlapCharts();
 	
+	/**
+	 * <p>retrieveOlapChartsFromSaiku.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 * @throws java.io.IOException if any.
+	 * @throws org.json.JSONException if any.
+	 */
 	List<OlapChart> retrieveOlapChartsFromSaiku() throws IOException, JSONException;
 	
+	/**
+	 * <p>retrieveChartData.</p>
+	 *
+	 * @param olapQueryId a {@link java.lang.String} object.
+	 * @return a {@link fr.becpg.repo.olap.data.OlapChartData} object.
+	 * @throws java.io.IOException if any.
+	 * @throws org.json.JSONException if any.
+	 */
 	OlapChartData retrieveChartData(String olapQueryId) throws IOException, JSONException;
 
+	/**
+	 * <p>getOlapQueriesFolder.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	NodeRef getOlapQueriesFolder();
 
+	/**
+	 * <p>getSSOUrl.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	String getSSOUrl();
 	
 }

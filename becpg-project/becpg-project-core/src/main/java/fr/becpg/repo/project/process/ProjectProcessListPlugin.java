@@ -22,6 +22,12 @@ import fr.becpg.repo.project.data.ProjectState;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.web.scripts.process.EntityProcessListPlugin;
 
+/**
+ * <p>ProjectProcessListPlugin class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service("projectProcessListPlugin")
 public class ProjectProcessListPlugin implements EntityProcessListPlugin {
 	
@@ -40,6 +46,7 @@ public class ProjectProcessListPlugin implements EntityProcessListPlugin {
 	@Autowired
 	private PropertyFormatService propertyFormatService;
 	
+	/** {@inheritDoc} */
 	@Override
 	public List<Map<String, Object>> buildModel(NodeRef nodeRef){
 		
@@ -110,6 +117,7 @@ public class ProjectProcessListPlugin implements EntityProcessListPlugin {
 	}
 	  
 	
+	/** {@inheritDoc} */
 	@Override
 	public String getType() {
 		return ProjectModel.TYPE_PROJECT.getLocalName();

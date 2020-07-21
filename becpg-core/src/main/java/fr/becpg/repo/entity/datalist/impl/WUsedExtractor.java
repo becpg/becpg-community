@@ -46,9 +46,10 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.search.impl.NestedAdvSearchPlugin;
 
 /**
- * 
+ * <p>WUsedExtractor class.</p>
+ *
  * @author matthieu
- * 
+ * @version $Id: $Id
  */
 public class WUsedExtractor extends MultiLevelExtractor {
 
@@ -60,18 +61,34 @@ public class WUsedExtractor extends MultiLevelExtractor {
 
 	private NestedAdvSearchPlugin nestedAdvSearchPlugin;
 
+	/**
+	 * <p>Setter for the field <code>wUsedListService</code>.</p>
+	 *
+	 * @param wUsedListService a {@link fr.becpg.repo.entity.datalist.WUsedListService} object.
+	 */
 	public void setwUsedListService(WUsedListService wUsedListService) {
 		this.wUsedListService = wUsedListService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>namespaceService</code>.</p>
+	 *
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
+	 */
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nestedAdvSearchPlugin</code>.</p>
+	 *
+	 * @param nestedAdvSearchPlugin a {@link fr.becpg.repo.search.impl.NestedAdvSearchPlugin} object.
+	 */
 	public void setNestedAdvSearchPlugin(NestedAdvSearchPlugin nestedAdvSearchPlugin) {
 		this.nestedAdvSearchPlugin = nestedAdvSearchPlugin;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public PaginatedExtractedItems extract(DataListFilter dataListFilter, List<String> metadataFields) {
 
@@ -263,6 +280,7 @@ public class WUsedExtractor extends MultiLevelExtractor {
 
 	
 
+	/** {@inheritDoc} */
 	@SuppressWarnings("unchecked")
 	@Override
 	public Map<String, Object> extractJSON(NodeRef nodeRef, List<AttributeExtractorStructure> metadataFields, Map<String, Object> props,
@@ -284,17 +302,20 @@ public class WUsedExtractor extends MultiLevelExtractor {
 		return ret;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean applyTo(DataListFilter dataListFilter) {
 		return !dataListFilter.isSimpleItem() && dataListFilter.getDataListName() != null
 				&& dataListFilter.getDataListName().startsWith(RepoConsts.WUSED_PREFIX);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Date computeLastModified(DataListFilter dataListFilter) {
 		return null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean hasWriteAccess() {
 		return false;

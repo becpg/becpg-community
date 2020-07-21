@@ -18,6 +18,12 @@ import fr.becpg.repo.repository.annotation.InternalField;
 import fr.becpg.repo.repository.annotation.MultiLevelDataList;
 import fr.becpg.repo.repository.model.CompositionDataItem;
 
+/**
+ * <p>PackagingListDataItem class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @AlfType
 @AlfQname(qname = "bcpg:packagingList")
 @MultiLevelDataList(secondaryPivot = "bcpg:compoList")
@@ -39,66 +45,123 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 
 	private NodeRef product;
 
+	/**
+	 * <p>Getter for the field <code>qty</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:packagingListQty")
 	public Double getQty() {
 		return qty;
 	}
 
+	/** {@inheritDoc} */
 	public void setQty(Double qty) {
 		this.qty = qty;
 	}
 
+	/**
+	 * <p>Getter for the field <code>packagingListUnit</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.constraints.ProductUnit} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:packagingListUnit")
 	public ProductUnit getPackagingListUnit() {
 		return packagingListUnit;
 	}
 
+	/**
+	 * <p>Setter for the field <code>packagingListUnit</code>.</p>
+	 *
+	 * @param packagingListUnit a {@link fr.becpg.repo.product.data.constraints.ProductUnit} object.
+	 */
 	public void setPackagingListUnit(ProductUnit packagingListUnit) {
 		this.packagingListUnit = packagingListUnit;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>lossPerc</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:packagingListLossPerc")
 	public Double getLossPerc() {
 		return lossPerc;
 	}
 
+	/** {@inheritDoc} */
 	public void setLossPerc(Double lossPerc) {
 		this.lossPerc = lossPerc;
 	}
 
+	/**
+	 * <p>Getter for the field <code>pkgLevel</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.constraints.PackagingLevel} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:packagingListPkgLevel")
 	public PackagingLevel getPkgLevel() {
 		return pkgLevel;
 	}
 
+	/**
+	 * <p>Setter for the field <code>pkgLevel</code>.</p>
+	 *
+	 * @param pkgLevel a {@link fr.becpg.repo.product.data.constraints.PackagingLevel} object.
+	 */
 	public void setPkgLevel(PackagingLevel pkgLevel) {
 		this.pkgLevel = pkgLevel;
 	}
 
+	/**
+	 * <p>Getter for the field <code>isMaster</code>.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:packagingListIsMaster")
 	public Boolean getIsMaster() {
 		return isMaster;
 	}
 
+	/**
+	 * <p>Setter for the field <code>isMaster</code>.</p>
+	 *
+	 * @param isMaster a {@link java.lang.Boolean} object.
+	 */
 	public void setIsMaster(Boolean isMaster) {
 		this.isMaster = isMaster;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>isRecycle</code>.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:packagingListIsRecycle")
 	public Boolean getIsRecycle() {
 		return isRecycle;
 	}
 
+	/**
+	 * <p>Setter for the field <code>isRecycle</code>.</p>
+	 *
+	 * @param isRecycle a {@link java.lang.Boolean} object.
+	 */
 	public void setIsRecycle(Boolean isRecycle) {
 		this.isRecycle = isRecycle;
 	}
 
+	/**
+	 * <p>Getter for the field <code>product</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	@AlfSingleAssoc
 	@DataListIdentifierAttr
 	@InternalField
@@ -107,14 +170,32 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 		return product;
 	}
 
+	/**
+	 * <p>Setter for the field <code>product</code>.</p>
+	 *
+	 * @param product a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void setProduct(NodeRef product) {
 		this.product = product;
 	}
 
+	/**
+	 * <p>Constructor for PackagingListDataItem.</p>
+	 */
 	public PackagingListDataItem() {
 
 	}
 
+	/**
+	 * <p>Constructor for PackagingListDataItem.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param qty a {@link java.lang.Double} object.
+	 * @param packagingListUnit a {@link fr.becpg.repo.product.data.constraints.ProductUnit} object.
+	 * @param pkgLevel a {@link fr.becpg.repo.product.data.constraints.PackagingLevel} object.
+	 * @param isMaster a {@link java.lang.Boolean} object.
+	 * @param product a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public PackagingListDataItem(NodeRef nodeRef, Double qty, ProductUnit packagingListUnit, PackagingLevel pkgLevel, Boolean isMaster, NodeRef product) {
 
 		setNodeRef(nodeRef);
@@ -125,6 +206,11 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 		setProduct(product);
 	}
 
+	/**
+	 * <p>Constructor for PackagingListDataItem.</p>
+	 *
+	 * @param c a {@link fr.becpg.repo.product.data.productList.PackagingListDataItem} object.
+	 */
 	public PackagingListDataItem(PackagingListDataItem c) {
 		super();
 		this.nodeRef = c.nodeRef;
@@ -136,6 +222,7 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 		this.product = c.product;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -150,6 +237,7 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -191,28 +279,33 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "PackagingListDataItem [qty=" + qty + ", packagingListUnit=" + packagingListUnit + ", lossPerc=" + lossPerc + ", pkgLevel=" + pkgLevel
 				+ ", isMaster=" + isMaster + ", isRecycle=" + isRecycle + ", product=" + product + "]";
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public PackagingListDataItem clone() {
 		return new PackagingListDataItem(this);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	@InternalField
 	public NodeRef getComponent() {
 		return getProduct();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void setComponent(NodeRef targetItem) {
 		setProduct(targetItem);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public QName getComponentAssocName() {
 		return PLMModel.ASSOC_PACKAGINGLIST_PRODUCT;

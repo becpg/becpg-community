@@ -13,6 +13,12 @@ import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 import fr.becpg.repo.search.PaginatedSearchCache;
 
+/**
+ * <p>PaginatedSearchCacheImpl class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service("paginatedSearchCache")
 public class PaginatedSearchCacheImpl  implements PaginatedSearchCache {
 
@@ -25,6 +31,7 @@ public class PaginatedSearchCacheImpl  implements PaginatedSearchCache {
 		BeCPGCacheService beCPGCacheService;
 
 	
+		/** {@inheritDoc} */
 		@Override
 		public List<NodeRef> getSearchResults(String queryId) {
 			List<NodeRef> ret = null;
@@ -54,6 +61,7 @@ public class PaginatedSearchCacheImpl  implements PaginatedSearchCache {
 			return ret;
 		}
 
+		/** {@inheritDoc} */
 		@Override
 		public String storeSearchResults(List<NodeRef> results) {
 			String queryExecutionId = GUID.generate();
@@ -63,6 +71,7 @@ public class PaginatedSearchCacheImpl  implements PaginatedSearchCache {
 		
 		
 
+		/** {@inheritDoc} */
 		@Override
 		public MultiLevelListData getSearchMultiLevelResults(String queryId) {
 			if(queryId!=null){
@@ -71,6 +80,7 @@ public class PaginatedSearchCacheImpl  implements PaginatedSearchCache {
 			return null;
 		}
 
+		/** {@inheritDoc} */
 		@Override
 		public String storeMultiLevelSearchResults(MultiLevelListData listData) {
 			String queryExecutionId = GUID.generate();

@@ -19,10 +19,19 @@ package fr.becpg.model;
 
 import org.alfresco.service.namespace.QName;
 
+/**
+ * <p>ClaimWorkflowModel class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class ClaimWorkflowModel {
 
+	/** Constant <code>NC_URI="http://www.bcpg.fr/model/nc-workflow/1."{trunked}</code> */
 	public static final String NC_URI = "http://www.bcpg.fr/model/nc-workflow/1.0";
+	/** Constant <code>PROP_REJECTED_STATE</code> */
 	public static final QName PROP_REJECTED_STATE = QName.createQName(NC_URI, "claimRejectedState");
+	/** Constant <code>PROP_REJECTED_CAUSE</code> */
 	public static final QName PROP_REJECTED_CAUSE = QName.createQName(NC_URI, "claimRejectedCause");
 	
 	

@@ -39,6 +39,12 @@ import fr.becpg.repo.importer.MappingLoaderFactory;
 import fr.becpg.repo.importer.MappingType;
 
 
+/**
+ * <p>XmlMappingLoader class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service("xmlMappingLoader")
 public class XmlMappingLoader implements MappingLoader {
 	
@@ -58,6 +64,7 @@ public class XmlMappingLoader implements MappingLoader {
     	mappingLoaderFactory.register(this);
     }
     	
+	/** {@inheritDoc} */
 	@Override
 	public ImportContext loadClassMapping(Object mapping, ImportContext importContext) throws MappingException {
 		Element mappingsElt = (Element) mapping;
@@ -285,6 +292,7 @@ public class XmlMappingLoader implements MappingLoader {
 	}
 	
 	
+	/** {@inheritDoc} */
 	@Override
 	public boolean applyTo(MappingType mappingType) {
 		return MappingType.XML.equals(mappingType);

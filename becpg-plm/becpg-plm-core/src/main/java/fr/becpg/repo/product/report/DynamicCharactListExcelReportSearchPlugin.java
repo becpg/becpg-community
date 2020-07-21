@@ -18,11 +18,18 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.report.search.impl.DefaultExcelReportSearchPlugin;
 
+/**
+ * <p>DynamicCharactListExcelReportSearchPlugin class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class DynamicCharactListExcelReportSearchPlugin extends DefaultExcelReportSearchPlugin {
 	
 	
 
+	/** {@inheritDoc} */
 	@Override
 	public int fillSheet(XSSFSheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum, String[] parameters,
 			AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache) {
@@ -70,11 +77,13 @@ public class DynamicCharactListExcelReportSearchPlugin extends DefaultExcelRepor
 	
 
 	
+	/** {@inheritDoc} */
 	@Override
 	public boolean isApplicable(QName itemType, String[] parameters) {
 		return PLMModel.TYPE_DYNAMICCHARACTLIST.equals(itemType);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public boolean isDefault() {
 		return false;

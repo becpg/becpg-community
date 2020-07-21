@@ -24,6 +24,12 @@ import fr.becpg.repo.entity.datalist.DataListExtractor;
 import fr.becpg.repo.entity.datalist.DataListExtractorFactory;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 
+/**
+ * <p>DataListExtractorFactoryImpl class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class DataListExtractorFactoryImpl implements DataListExtractorFactory {
 
 
@@ -32,6 +38,7 @@ public class DataListExtractorFactoryImpl implements DataListExtractorFactory {
 	
 	final List<DataListExtractor> extractors = new ArrayList<>();
 	
+	/** {@inheritDoc} */
 	@Override
 	public void registerExtractor(DataListExtractor extractor){
 		if(extractor.isDefaultExtractor()){
@@ -42,6 +49,7 @@ public class DataListExtractorFactoryImpl implements DataListExtractorFactory {
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public DataListExtractor getExtractor(DataListFilter dataListFilter) {
 	

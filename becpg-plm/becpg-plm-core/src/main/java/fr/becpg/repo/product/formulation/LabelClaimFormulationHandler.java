@@ -38,16 +38,19 @@ import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 
 /**
+ * <p>LabelClaimFormulationHandler class.</p>
  *
  * @author matthieu
- *
+ * @version $Id: $Id
  */
 public class LabelClaimFormulationHandler extends FormulationBaseHandler<ProductData> {
 
 	private static final Log logger = LogFactory.getLog(LabelClaimFormulationHandler.class);
 
+	/** Constant <code>MESSAGE_MISSING_CLAIM="message.formulate.labelClaim.missing"</code> */
 	public static final String MESSAGE_MISSING_CLAIM = "message.formulate.labelClaim.missing";
 
+	/** Constant <code>MESSAGE_LABELCLAIM_ERROR="message.formulate.labelClaim.error"</code> */
 	public static final String MESSAGE_LABELCLAIM_ERROR = "message.formulate.labelClaim.error";
 
 	private NodeService nodeService;
@@ -58,22 +61,43 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 
 	private AlfrescoRepository<ProductData> alfrescoRepository;
 
+	/**
+	 * <p>Setter for the field <code>mlNodeService</code>.</p>
+	 *
+	 * @param mlNodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setMlNodeService(NodeService mlNodeService) {
 		this.mlNodeService = mlNodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>formulaService</code>.</p>
+	 *
+	 * @param formulaService a {@link fr.becpg.repo.formulation.spel.SpelFormulaService} object.
+	 */
 	public void setFormulaService(SpelFormulaService formulaService) {
 		this.formulaService = formulaService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
+	 */
 	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean process(ProductData productData) throws FormulateException {
 

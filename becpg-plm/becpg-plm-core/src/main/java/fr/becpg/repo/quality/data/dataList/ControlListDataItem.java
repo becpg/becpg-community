@@ -30,6 +30,12 @@ import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
+/**
+ * <p>ControlListDataItem class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @AlfType
 @AlfQname(qname = "qa:controlList")
 public class ControlListDataItem extends BeCPGDataObject{
@@ -52,119 +58,234 @@ public class ControlListDataItem extends BeCPGDataObject{
 	NodeRef method;
 	List<NodeRef> characts = new ArrayList<>();
 	
+	/**
+	 * <p>Getter for the field <code>type</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "qa:clType")
 	public String getType() {
 		return type;
 	}
 
+	/**
+	 * <p>Setter for the field <code>type</code>.</p>
+	 *
+	 * @param type a {@link java.lang.String} object.
+	 */
 	public void setType(String type) {
 		this.type = type;
 	}
 	
 	
 
+	/**
+	 * <p>Getter for the field <code>mini</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "qa:clMini")
 	public Double getMini() {
 		return mini;
 	}
 
+	/**
+	 * <p>Setter for the field <code>mini</code>.</p>
+	 *
+	 * @param mini a {@link java.lang.Double} object.
+	 */
 	public void setMini(Double mini) {
 		this.mini = mini;
 	}
 
+	/**
+	 * <p>Getter for the field <code>maxi</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "qa:clMaxi")
 	public Double getMaxi() {
 		return maxi;
 	}
 
+	/**
+	 * <p>Setter for the field <code>maxi</code>.</p>
+	 *
+	 * @param maxi a {@link java.lang.Double} object.
+	 */
 	public void setMaxi(Double maxi) {
 		this.maxi = maxi;
 	}
 
+	/**
+	 * <p>Getter for the field <code>required</code>.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "qa:clRequired")
 	public Boolean getRequired() {
 		return required;
 	}
 
+	/**
+	 * <p>Setter for the field <code>required</code>.</p>
+	 *
+	 * @param required a {@link java.lang.Boolean} object.
+	 */
 	public void setRequired(Boolean required) {
 		this.required = required;
 	}
 
+	/**
+	 * <p>Getter for the field <code>sampleId</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "qa:clSampleId")
 	public String getSampleId() {
 		return sampleId;
 	}
 
+	/**
+	 * <p>Setter for the field <code>sampleId</code>.</p>
+	 *
+	 * @param sampleId a {@link java.lang.String} object.
+	 */
 	public void setSampleId(String sampleId) {
 		this.sampleId = sampleId;
 	}
 
+	/**
+	 * <p>Getter for the field <code>value</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "qa:clValue")
 	public Double getValue() {
 		return value;
 	}
 
+	/**
+	 * <p>Setter for the field <code>value</code>.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object.
+	 */
 	public void setValue(Double value) {
 		this.value = value;
 	}
 	
 	
+	/**
+	 * <p>Getter for the field <code>textCriteria</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "qa:clTextCriteria")
 	public String getTextCriteria() {
 		return textCriteria;
 	}
 
+	/**
+	 * <p>Setter for the field <code>textCriteria</code>.</p>
+	 *
+	 * @param textCriteria a {@link java.lang.String} object.
+	 */
 	public void setTextCriteria(String textCriteria) {
 		this.textCriteria = textCriteria;
 	}
 
+	/**
+	 * <p>Getter for the field <code>target</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "qa:clTarget")
 	public Double getTarget() {
 		return target;
 	}
 
+	/**
+	 * <p>Setter for the field <code>target</code>.</p>
+	 *
+	 * @param target a {@link java.lang.Double} object.
+	 */
 	public void setTarget(Double target) {
 		this.target = target;
 	}
 
+	/**
+	 * <p>Getter for the field <code>unit</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "qa:clUnit")
 	public String getUnit() {
 		return unit;
 	}
 
+	/**
+	 * <p>Setter for the field <code>unit</code>.</p>
+	 *
+	 * @param unit a {@link java.lang.String} object.
+	 */
 	public void setUnit(String unit) {
 		this.unit = unit;
 	}
 
+	/**
+	 * <p>Getter for the field <code>state</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.quality.data.QualityControlState} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "qa:clState")
 	public QualityControlState getState() {
 		return state;
 	}
 
+	/**
+	 * <p>Setter for the field <code>state</code>.</p>
+	 *
+	 * @param state a {@link fr.becpg.repo.quality.data.QualityControlState} object.
+	 */
 	public void setState(QualityControlState state) {
 		this.state = state;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>temperature</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "qa:clTemperature")
 	public String getTemperature() {
 		return temperature;
 	}
 
+	/**
+	 * <p>Setter for the field <code>temperature</code>.</p>
+	 *
+	 * @param temperature a {@link java.lang.String} object.
+	 */
 	public void setTemperature(String temperature) {
 		this.temperature = temperature;
 	}
 
+	/**
+	 * <p>Getter for the field <code>method</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	@AlfSingleAssoc
 	@DataListIdentifierAttr(isDefaultPivotAssoc=true)
 	@AlfQname(qname = "qa:clMethod")
@@ -172,10 +293,20 @@ public class ControlListDataItem extends BeCPGDataObject{
 		return method;
 	}
 
+	/**
+	 * <p>Setter for the field <code>method</code>.</p>
+	 *
+	 * @param method a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void setMethod(NodeRef method) {
 		this.method = method;
 	}
 
+	/**
+	 * <p>Getter for the field <code>characts</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@AlfMultiAssoc
 	@DataListIdentifierAttr(isDefaultPivotAssoc=true)
 	@AlfQname(qname = "qa:clCharacts")
@@ -183,20 +314,52 @@ public class ControlListDataItem extends BeCPGDataObject{
 		return characts;
 	}
 
+	/**
+	 * <p>Setter for the field <code>characts</code>.</p>
+	 *
+	 * @param characts a {@link java.util.List} object.
+	 */
 	public void setCharacts(List<NodeRef> characts) {
 		this.characts = characts;
 	}
 	
 	
 
+	/**
+	 * <p>Constructor for ControlListDataItem.</p>
+	 */
 	public ControlListDataItem() {
 		super();
 	}
 
+	/**
+	 * <p>Constructor for ControlListDataItem.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param name a {@link java.lang.String} object.
+	 */
 	public ControlListDataItem(NodeRef nodeRef, String name) {
 		super(nodeRef, name);
 	}
 
+	/**
+	 * <p>Constructor for ControlListDataItem.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param type a {@link java.lang.String} object.
+	 * @param mini a {@link java.lang.Double} object.
+	 * @param maxi a {@link java.lang.Double} object.
+	 * @param required a {@link java.lang.Boolean} object.
+	 * @param sampleId a {@link java.lang.String} object.
+	 * @param value a {@link java.lang.Double} object.
+	 * @param target a {@link java.lang.Double} object.
+	 * @param unit a {@link java.lang.String} object.
+	 * @param textCriteria a {@link java.lang.String} object.
+	 * @param state a {@link fr.becpg.repo.quality.data.QualityControlState} object.
+	 * @param temperature a {@link java.lang.String} object.
+	 * @param method a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param characts a {@link java.util.List} object.
+	 */
 	public ControlListDataItem(NodeRef nodeRef, String type, Double mini, Double maxi, Boolean required, String sampleId, Double value, Double target, String unit,String textCriteria, QualityControlState state, String temperature, NodeRef method, List<NodeRef> characts){
 		
 		setNodeRef(nodeRef);
@@ -215,6 +378,17 @@ public class ControlListDataItem extends BeCPGDataObject{
 		setCharacts(characts);
 	}
 	
+	/**
+	 * <p>Constructor for ControlListDataItem.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param sampleId a {@link java.lang.String} object.
+	 * @param value a {@link java.lang.Double} object.
+	 * @param target a {@link java.lang.Double} object.
+	 * @param unit a {@link java.lang.String} object.
+	 * @param state a {@link fr.becpg.repo.quality.data.QualityControlState} object.
+	 * @param controlDefListDataItem a {@link fr.becpg.repo.quality.data.dataList.ControlDefListDataItem} object.
+	 */
 	public ControlListDataItem(NodeRef nodeRef, String sampleId, Double value, Double target, String unit, QualityControlState state, ControlDefListDataItem controlDefListDataItem){
 		
 		setNodeRef(nodeRef);
@@ -232,6 +406,7 @@ public class ControlListDataItem extends BeCPGDataObject{
 		setCharacts(controlDefListDataItem.getCharacts());
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -250,6 +425,7 @@ public class ControlListDataItem extends BeCPGDataObject{
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -317,6 +493,7 @@ public class ControlListDataItem extends BeCPGDataObject{
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "ControlListDataItem [type=" + type + ", mini=" + mini + ", maxi=" + maxi + ", required=" + required + ", sampleId=" + sampleId + ", value=" + value + ", target="

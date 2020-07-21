@@ -76,6 +76,7 @@ import fr.becpg.repo.security.SecurityService;
  * The Class ProductListsWebScript.
  *
  * @author querephi
+ * @version $Id: $Id
  */
 public class EntityListsWebScript extends AbstractWebScript {
 
@@ -169,50 +170,110 @@ public class EntityListsWebScript extends AbstractWebScript {
 
 	private LockService lockService;
 
+	/**
+	 * <p>Setter for the field <code>permissionService</code>.</p>
+	 *
+	 * @param permissionService a {@link org.alfresco.service.cmr.security.PermissionService} object.
+	 */
 	public void setPermissionService(PermissionService permissionService) {
 		this.permissionService = permissionService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>securityService</code>.</p>
+	 *
+	 * @param securityService a {@link fr.becpg.repo.security.SecurityService} object.
+	 */
 	public void setSecurityService(SecurityService securityService) {
 		this.securityService = securityService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityListDAO</code>.</p>
+	 *
+	 * @param entityListDAO a {@link fr.becpg.repo.entity.EntityListDAO} object.
+	 */
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityTplService</code>.</p>
+	 *
+	 * @param entityTplService a {@link fr.becpg.repo.entity.EntityTplService} object.
+	 */
 	public void setEntityTplService(EntityTplService entityTplService) {
 		this.entityTplService = entityTplService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>namespaceService</code>.</p>
+	 *
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
+	 */
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>transactionService</code>.</p>
+	 *
+	 * @param transactionService a {@link org.alfresco.service.transaction.TransactionService} object.
+	 */
 	public void setTransactionService(TransactionService transactionService) {
 		this.transactionService = transactionService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>dictionaryService</code>.</p>
+	 *
+	 * @param dictionaryService a {@link org.alfresco.service.cmr.dictionary.DictionaryService} object.
+	 */
 	public void setDictionaryService(DictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>authorityService</code>.</p>
+	 *
+	 * @param authorityService a {@link org.alfresco.service.cmr.security.AuthorityService} object.
+	 */
 	public void setAuthorityService(AuthorityService authorityService) {
 		this.authorityService = authorityService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>associationService</code>.</p>
+	 *
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object.
+	 */
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>policyBehaviourFilter</code>.</p>
+	 *
+	 * @param policyBehaviourFilter a {@link org.alfresco.repo.policy.BehaviourFilter} object.
+	 */
 	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
 		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
 
+	/**
+	 * <p>Setter for the field <code>lockService</code>.</p>
+	 *
+	 * @param lockService a {@link org.alfresco.service.cmr.lock.LockService} object.
+	 */
 	public void setLockService(LockService lockService) {
 		this.lockService = lockService;
 	}
@@ -370,6 +431,8 @@ public class EntityListsWebScript extends AbstractWebScript {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * Suggest values according to query
 	 * <code>
 	 * url : /becpg/entitylists/node/{store_type}/{store_id}/{id}.

@@ -35,6 +35,12 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.listvalue.impl.EntityListValuePlugin;
 
+/**
+ * <p>VariantListValuePlugin class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class VariantListValuePlugin extends EntityListValuePlugin {
 
@@ -45,11 +51,13 @@ public class VariantListValuePlugin extends EntityListValuePlugin {
 	@Autowired
 	private AssociationService associationService;
 
+	/** {@inheritDoc} */
 	@Override
 	public String[] getHandleSourceTypes() {
 		return new String[] { SOURCE_TYPE_VARIANT_LIST };
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public ListValuePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
 		NodeRef entityNodeRef = new NodeRef((String) props.get(ListValueService.PROP_NODEREF));

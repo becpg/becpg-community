@@ -33,13 +33,20 @@ import fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
+/**
+ * <p>QualityControlReportExtractorPlugin class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class QualityControlReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 
 	/**
-	 * load the datalists of the product data.
+	 * {@inheritDoc}
 	 *
+	 * load the datalists of the product data.
 	 */
 	@Override
 	protected void loadDataLists(NodeRef entityNodeRef, Element dataListsElt,   DefaultExtractorContext context) {
@@ -68,6 +75,7 @@ public class QualityControlReportExtractorPlugin extends DefaultEntityReportExtr
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected boolean loadTargetAssoc(NodeRef entityNodeRef, AssociationDefinition assocDef, Element entityElt,   DefaultExtractorContext context) {
 
@@ -94,6 +102,7 @@ public class QualityControlReportExtractorPlugin extends DefaultEntityReportExtr
 
 	
 
+	/** {@inheritDoc} */
 	@Override
 	public EntityReportExtractorPriority getMatchPriority(QName type) {
 		return QualityModel.TYPE_QUALITY_CONTROL.equals(type) ? EntityReportExtractorPriority.NORMAL : EntityReportExtractorPriority.NONE;

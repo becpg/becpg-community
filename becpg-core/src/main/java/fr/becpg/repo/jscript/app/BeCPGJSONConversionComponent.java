@@ -35,16 +35,32 @@ import org.json.simple.JSONObject;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.security.SecurityService;
 
+/**
+ * <p>BeCPGJSONConversionComponent class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class BeCPGJSONConversionComponent extends JSONConversionComponent {
 
 	private AssociationService associationService;
 
 	private SecurityService securityService;
 
+	/**
+	 * <p>Setter for the field <code>securityService</code>.</p>
+	 *
+	 * @param securityService a {@link fr.becpg.repo.security.SecurityService} object.
+	 */
 	public void setSecurityService(SecurityService securityService) {
 		this.securityService = securityService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>associationService</code>.</p>
+	 *
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object.
+	 */
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
@@ -56,6 +72,8 @@ public class BeCPGJSONConversionComponent extends JSONConversionComponent {
 
 	/**
 	 * Register a property decorator;
+	 *
+	 * @param associationDecorator a {@link fr.becpg.repo.jscript.app.AssociationDecorator} object.
 	 */
 	public void registerAssociationDecorator(AssociationDecorator associationDecorator) {
 		for (QName assocName : associationDecorator.getAssociationNames()) {
@@ -68,6 +86,8 @@ public class BeCPGJSONConversionComponent extends JSONConversionComponent {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * Convert a node reference to a JSON string. Selects the correct converter
 	 * based on selection implementation.
 	 */
@@ -104,6 +124,13 @@ public class BeCPGJSONConversionComponent extends JSONConversionComponent {
 		return json.toJSONString();
 	}
 
+	/**
+	 * <p>associationsToJSON.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param useShortQNames a boolean.
+	 * @return a {@link org.json.simple.JSONObject} object.
+	 */
 	@SuppressWarnings("unchecked")
 	protected JSONObject associationsToJSON(NodeRef nodeRef, boolean useShortQNames) {
 		JSONObject assocsToJSON = new JSONObject();
@@ -156,6 +183,7 @@ public class BeCPGJSONConversionComponent extends JSONConversionComponent {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@SuppressWarnings("unchecked")
 	@Override
 	protected JSONObject userPermissionsToJSON(final NodeRef nodeRef) {

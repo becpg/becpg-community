@@ -47,6 +47,12 @@ import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.product.formulation.PackagingHelper;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
+/**
+ * <p>CostCharactDetailsVisitor class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 
@@ -54,10 +60,16 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 
 	private PackagingHelper packagingHelper;
 
+	/**
+	 * <p>Setter for the field <code>packagingHelper</code>.</p>
+	 *
+	 * @param packagingHelper a {@link fr.becpg.repo.product.formulation.PackagingHelper} object.
+	 */
 	public void setPackagingHelper(PackagingHelper packagingHelper) {
 		this.packagingHelper = packagingHelper;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public CharactDetails visit(ProductData formulatedProduct, List<NodeRef> dataListItems, Integer level) throws FormulateException {
 
@@ -108,6 +120,19 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 		return ret;
 	}
 
+	/**
+	 * <p>visitRecurCost.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @param ret a {@link fr.becpg.repo.product.data.CharactDetails} object.
+	 * @param currLevel a {@link java.lang.Integer} object.
+	 * @param maxLevel a {@link java.lang.Integer} object.
+	 * @param subQuantity a {@link java.lang.Double} object.
+	 * @param netQty a {@link java.lang.Double} object.
+	 * @param unitProvider a SimpleCharactUnitProvider object.
+	 * @return a {@link fr.becpg.repo.product.data.CharactDetails} object.
+	 * @throws fr.becpg.repo.formulation.FormulateException if any.
+	 */
 	public CharactDetails visitRecurCost(ProductData formulatedProduct, CharactDetails ret, Integer currLevel, Integer maxLevel, Double subQuantity,
 			Double netQty, SimpleCharactUnitProvider unitProvider) throws FormulateException {
 

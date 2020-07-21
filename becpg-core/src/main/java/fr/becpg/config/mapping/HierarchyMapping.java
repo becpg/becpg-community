@@ -21,12 +21,12 @@ import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 
 /**
  * Class that represent the mapping for importing a hierarchy
- * 
+ *
  * <column id="lkvValue2" type="Hierarchy" attribute="bcpg:lkvValue"
  * parentLevel="lkvValue1" parentLevelAttribute="bcpg:parentLevel" />
- * 
+ *
  * @author matthieu
- * 
+ * @version $Id: $Id
  */
 public class HierarchyMapping extends AbstractAttributeMapping {
 
@@ -36,32 +36,71 @@ public class HierarchyMapping extends AbstractAttributeMapping {
 
 	private ClassAttributeDefinition parentLevelAttribute;
 
+	/**
+	 * <p>Getter for the field <code>parentLevelColumn</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getParentLevelColumn() {
 		return parentLevelColumn;
 	}
 
+	/**
+	 * <p>Setter for the field <code>parentLevelColumn</code>.</p>
+	 *
+	 * @param parentLevelColumn a {@link java.lang.String} object.
+	 */
 	public void setParentLevelColumn(String parentLevelColumn) {
 		this.parentLevelColumn = parentLevelColumn;
 	}
 
 	
+	/**
+	 * <p>Getter for the field <code>path</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getPath() {
 		return path;
 	}
 
+	/**
+	 * <p>Setter for the field <code>path</code>.</p>
+	 *
+	 * @param path a {@link java.lang.String} object.
+	 */
 	public void setPath(String path) {
 		this.path = path;
 	}
 
 
+	/**
+	 * <p>Getter for the field <code>parentLevelAttribute</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.dictionary.ClassAttributeDefinition} object.
+	 */
 	public ClassAttributeDefinition getParentLevelAttribute() {
 		return parentLevelAttribute;
 	}
 
+	/**
+	 * <p>Setter for the field <code>parentLevelAttribute</code>.</p>
+	 *
+	 * @param parentLevelAttribute a {@link org.alfresco.service.cmr.dictionary.ClassAttributeDefinition} object.
+	 */
 	public void setParentLevelAttribute(ClassAttributeDefinition parentLevelAttribute) {
 		this.parentLevelAttribute = parentLevelAttribute;
 	}
 
+	/**
+	 * <p>Constructor for HierarchyMapping.</p>
+	 *
+	 * @param id a {@link java.lang.String} object.
+	 * @param attribute a {@link org.alfresco.service.cmr.dictionary.ClassAttributeDefinition} object.
+	 * @param parentLevelColumn a {@link java.lang.String} object.
+	 * @param path a {@link java.lang.String} object.
+	 * @param parentLevelAttribute a {@link org.alfresco.service.cmr.dictionary.ClassAttributeDefinition} object.
+	 */
 	public HierarchyMapping(String id, ClassAttributeDefinition attribute, String parentLevelColumn, String path,  ClassAttributeDefinition parentLevelAttribute) {
 		super(id, attribute);
 		this.parentLevelColumn = parentLevelColumn;

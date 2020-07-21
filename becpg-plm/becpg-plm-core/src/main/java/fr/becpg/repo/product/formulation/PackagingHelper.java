@@ -29,6 +29,12 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.variant.filters.VariantFilters;
 import fr.becpg.repo.variant.model.VariantData;
 
+/**
+ * <p>PackagingHelper class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class PackagingHelper implements InitializingBean {
 
@@ -36,6 +42,7 @@ public class PackagingHelper implements InitializingBean {
 
 	private static PackagingHelper INSTANCE = null;
 
+	/** {@inheritDoc} */
 	@Override
 	public void afterPropertiesSet() {
 		INSTANCE = this;
@@ -52,11 +59,23 @@ public class PackagingHelper implements InitializingBean {
 	@Autowired
 	protected AlfrescoRepository<ProductData> alfrescoRepository;
 
+	/**
+	 * <p>getDefaultVariantPackagingData.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @return a {@link fr.becpg.repo.product.data.packaging.VariantPackagingData} object.
+	 */
 	public VariantPackagingData getDefaultVariantPackagingData(ProductData productData) {
 		PackagingData packagingData = getPackagingData(productData);
 		return packagingData.getVariants().get(getDefaultVariant(productData));
 	}
 
+	/**
+	 * <p>getPackagingData.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @return a {@link fr.becpg.repo.product.data.packaging.PackagingData} object.
+	 */
 	public PackagingData getPackagingData(ProductData productData) {
 		PackagingData packagingData = new PackagingData(productData.getVariants());
 		if (productData.hasPackagingListEl()) {
@@ -213,6 +232,12 @@ public class PackagingHelper implements InitializingBean {
 		}
 	}
 
+	/**
+	 * <p>flatPackagingList.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @return a {@link java.util.List} object.
+	 */
 	public static List<PackagingListDataItem> flatPackagingList(ProductData productData) {
 		return INSTANCE.flatPackagingList(productData, 1d);
 	}

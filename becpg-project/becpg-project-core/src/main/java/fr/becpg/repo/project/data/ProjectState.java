@@ -21,14 +21,19 @@ import fr.becpg.repo.project.data.projectList.TaskState;
 
 /**
  * Project task
- * 
- * @author quere
  *
+ * @author quere
+ * @version $Id: $Id
  */
 public enum ProjectState {
 
 	Planned, InProgress, OnHold, Cancelled, Completed;
 
+	/**
+	 * <p>toTaskState.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.project.data.projectList.TaskState} object.
+	 */
 	public TaskState toTaskState() {
 		switch (this) {
 		case Planned:

@@ -17,11 +17,23 @@
  ******************************************************************************/
 package fr.becpg.repo.helper;
 
+/**
+ * <p>CompanyHomeHelper class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class CompanyHomeHelper {
 
 	static final String USER_SPACE_QNAME_PATH = "/app:company_home/app:user_homes/";
 	
 	
+	/**
+	 * <p>isInUserHome.</p>
+	 *
+	 * @param path a {@link java.lang.String} object.
+	 * @return a boolean.
+	 */
 	public static boolean isInUserHome(String path) {
 		boolean isInUserHome = false;
 

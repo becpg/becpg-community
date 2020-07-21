@@ -29,45 +29,161 @@ import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.dictionary.TypeDefinition;
 import org.alfresco.service.namespace.QName;
 
+/**
+ * <p>EntityDictionaryService interface.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public interface EntityDictionaryService {
 
+	/**
+	 * <p>getDefaultPivotAssoc.</p>
+	 *
+	 * @param dataListItemType a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link org.alfresco.service.namespace.QName} object.
+	 */
 	QName getDefaultPivotAssoc(QName dataListItemType);
 	
+	/**
+	 * <p>isMultiLevelDataList.</p>
+	 *
+	 * @param dataListItemType a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a boolean.
+	 */
 	boolean isMultiLevelDataList(QName dataListItemType);
 	
+	/**
+	 * <p>isMultiLevelLeaf.</p>
+	 *
+	 * @param entityType a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a boolean.
+	 */
 	boolean isMultiLevelLeaf(QName entityType);
 
+	/**
+	 * <p>getPivotAssocDefs.</p>
+	 *
+	 * @param sourceType a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link java.util.List} object.
+	 */
 	List<AssociationDefinition> getPivotAssocDefs(QName sourceType);
 
+	/**
+	 * <p>getTargetType.</p>
+	 *
+	 * @param createQName a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link org.alfresco.service.namespace.QName} object.
+	 */
 	QName getTargetType(QName createQName);
 	
+	/**
+	 * <p>getSubTypes.</p>
+	 *
+	 * @param typeQname a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link java.util.Collection} object.
+	 */
 	Collection<QName> getSubTypes(QName typeQname);
 
+	/**
+	 * <p>getPropDef.</p>
+	 *
+	 * @param fieldQname a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link org.alfresco.service.cmr.dictionary.ClassAttributeDefinition} object.
+	 */
 	ClassAttributeDefinition getPropDef(QName fieldQname);
 
+	/**
+	 * <p>findMatchingPropDef.</p>
+	 *
+	 * @param itemType a {@link org.alfresco.service.namespace.QName} object.
+	 * @param newItemType a {@link org.alfresco.service.namespace.QName} object.
+	 * @param fieldQname a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link org.alfresco.service.cmr.dictionary.ClassAttributeDefinition} object.
+	 */
 	ClassAttributeDefinition findMatchingPropDef(QName itemType, QName newItemType, QName fieldQname);
 	
+	/**
+	 * <p>isSubClass.</p>
+	 *
+	 * @param subClass a {@link org.alfresco.service.namespace.QName} object.
+	 * @param subClassOf a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a boolean.
+	 */
 	boolean isSubClass(QName subClass, QName subClassOf);
 
+	/**
+	 * <p>getMultiLevelSecondaryPivot.</p>
+	 *
+	 * @param dataListItemType a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link org.alfresco.service.namespace.QName} object.
+	 */
 	QName getMultiLevelSecondaryPivot(QName dataListItemType);
 
+	/**
+	 * <p>registerPropDefMapping.</p>
+	 *
+	 * @param orig a {@link org.alfresco.service.namespace.QName} object.
+	 * @param dest a {@link org.alfresco.service.namespace.QName} object.
+	 */
 	void registerPropDefMapping(QName orig, QName dest);
 	
 
+	/**
+	 * <p>isAssoc.</p>
+	 *
+	 * @param propQname a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a boolean.
+	 */
 	boolean isAssoc(QName propQname);
 
 	
 	//Override
+	/**
+	 * <p>getType.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link org.alfresco.service.cmr.dictionary.TypeDefinition} object.
+	 */
 	TypeDefinition getType(QName type);
 
+	/**
+	 * <p>getAspect.</p>
+	 *
+	 * @param aspect a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link org.alfresco.service.cmr.dictionary.AspectDefinition} object.
+	 */
 	AspectDefinition getAspect(QName aspect);
 
+	/**
+	 * <p>getClass.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link org.alfresco.service.cmr.dictionary.ClassDefinition} object.
+	 */
 	ClassDefinition getClass(QName type);
 
+	/**
+	 * <p>getProperty.</p>
+	 *
+	 * @param key a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link org.alfresco.service.cmr.dictionary.PropertyDefinition} object.
+	 */
 	PropertyDefinition getProperty(QName key);
 
+	/**
+	 * <p>getAssociation.</p>
+	 *
+	 * @param qName a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link org.alfresco.service.cmr.dictionary.AssociationDefinition} object.
+	 */
 	AssociationDefinition getAssociation(QName qName);
 
+	/**
+	 * <p>getDictionaryService.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.dictionary.DictionaryService} object.
+	 */
 	DictionaryService getDictionaryService();
 
 

@@ -9,6 +9,12 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.entity.version.EntityVersionService;
 
+/**
+ * <p>EntitySimpleSimulationPlugin class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class EntitySimpleSimulationPlugin implements EntitySimulationPlugin{
 
@@ -17,11 +23,13 @@ public class EntitySimpleSimulationPlugin implements EntitySimulationPlugin{
 	private EntityVersionService entityVersionService;
 	
 	
+	/** {@inheritDoc} */
 	@Override
 	public boolean accept(String simulationMode) {
 		return EntitySimulationPlugin.SIMPLE_MODE.equals(simulationMode);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> simulateNodeRefs(NodeRef destNodeRef, List<NodeRef> entityNodeRefs) {
 		List<NodeRef> ret = new ArrayList<>();

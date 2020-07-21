@@ -44,13 +44,17 @@ import fr.becpg.repo.variant.model.VariantDataItem;
  * The Class AllergensCalculatingVisitor.
  *
  * @author querephi
+ * @version $Id: $Id
  */
 public class AllergensCalculatingFormulationHandler extends FormulationBaseHandler<ProductData> {
 
+	/** Constant <code>MESSAGE_FORBIDDEN_ALLERGEN="message.formulate.allergen.forbidden"</code> */
 	public static final String MESSAGE_FORBIDDEN_ALLERGEN = "message.formulate.allergen.forbidden";
 
+	/** Constant <code>MESSAGE_NOT_VALIDATED_ALLERGEN="message.formulate.allergen.notValidated"</code> */
 	public static final String MESSAGE_NOT_VALIDATED_ALLERGEN = "message.formulate.allergen.notValidated";
 
+	/** Constant <code>MESSAGE_NULL_PERC="message.formulate.allergen.error.nullQt"{trunked}</code> */
 	public static final String MESSAGE_NULL_PERC = "message.formulate.allergen.error.nullQtyPerc";
 	
 	private static final Log logger = LogFactory.getLog(AllergensCalculatingFormulationHandler.class);
@@ -64,24 +68,45 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 	
 	private AllergenRequirementScanner allergenRequirementScanner;
 
+	/**
+	 * <p>Setter for the field <code>allergenRequirementScanner</code>.</p>
+	 *
+	 * @param allergenRequirementScanner a {@link fr.becpg.repo.product.requirement.AllergenRequirementScanner} object.
+	 */
 	public void setAllergenRequirementScanner(AllergenRequirementScanner allergenRequirementScanner) {
 		this.allergenRequirementScanner = allergenRequirementScanner;
 	}
 
+	/**
+	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
+	 */
 	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
 	
 	
+	/**
+	 * <p>Setter for the field <code>mlNodeService</code>.</p>
+	 *
+	 * @param mlNodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setMlNodeService(NodeService mlNodeService) {
 		this.mlNodeService = mlNodeService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 
@@ -402,6 +427,8 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 
 	/**
 	 * Sort allergens by type and name.
+	 *
+	 * @param allergenList a {@link java.util.List} object.
 	 */
 	protected void sort(List<AllergenListDataItem> allergenList) {
 

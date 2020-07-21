@@ -18,14 +18,16 @@ import fr.becpg.repo.search.lucene.analysis.EnglishBeCPGAnalyser;
 import fr.becpg.repo.search.lucene.analysis.FrenchBeCPGAnalyser;
 
 /**
- * 
- * @author matthieu
+ * <p>BeCPGQueryHelper class.</p>
  *
+ * @author matthieu
+ * @version $Id: $Id
  */
 public class BeCPGQueryHelper {
 
 	private static final Log logger = LogFactory.getLog(BeCPGQueryHelper.class);
 
+	/** Constant <code>SUFFIX_ALL="*"</code> */
 	public static final String SUFFIX_ALL = "*";
 
 	private static final String SUFFIX_SPACE = " ";
@@ -34,6 +36,14 @@ public class BeCPGQueryHelper {
 
 	private static final Analyzer luceneAnaLyzer = null;
 
+	/**
+	 * <p>isQueryMatch.</p>
+	 *
+	 * @param query a {@link java.lang.String} object.
+	 * @param entityName a {@link java.lang.String} object.
+	 * @param dictionaryService a {@link org.alfresco.service.cmr.dictionary.DictionaryService} object.
+	 * @return a boolean.
+	 */
 	public static boolean isQueryMatch(String query, String entityName, DictionaryService dictionaryService) {
 		if (query != null) {
 
@@ -104,6 +114,13 @@ public class BeCPGQueryHelper {
 	}
 
 	// TODO escape + - && || ! ( ) { } [ ] ^ " ~ * ? : \
+	/**
+	 * <p>prepareQuery.</p>
+	 *
+	 * @param dictionaryService a {@link org.alfresco.service.cmr.dictionary.DictionaryService} object.
+	 * @param query a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	public static String prepareQuery(DictionaryService dictionaryService, String query) {
 
 		logger.debug("Query before prepare:" + query);
@@ -179,6 +196,12 @@ public class BeCPGQueryHelper {
 		return luceneAnaLyzer;
 	}
 
+	/**
+	 * <p>isAllQuery.</p>
+	 *
+	 * @param query a {@link java.lang.String} object.
+	 * @return a boolean.
+	 */
 	public static boolean isAllQuery(String query) {
 		return (query != null) && query.trim().equals(BeCPGQueryHelper.SUFFIX_ALL);
 	}

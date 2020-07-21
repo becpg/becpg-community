@@ -40,6 +40,12 @@ import fr.becpg.repo.product.data.productList.ResourceParamListItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
+/**
+ * <p>ProcessCalculatingFormulationHandler class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler<ProductData> {
 
 	private static final Log logger = LogFactory.getLog(ProcessCalculatingFormulationHandler.class);
@@ -48,14 +54,25 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 
 	private PackagingHelper packagingHelper;
 
+	/**
+	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
+	 */
 	public void setAlfrescoRepository(AlfrescoRepository<ResourceProductData> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
+	/**
+	 * <p>Setter for the field <code>packagingHelper</code>.</p>
+	 *
+	 * @param packagingHelper a {@link fr.becpg.repo.product.formulation.PackagingHelper} object.
+	 */
 	public void setPackagingHelper(PackagingHelper packagingHelper) {
 		this.packagingHelper = packagingHelper;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 

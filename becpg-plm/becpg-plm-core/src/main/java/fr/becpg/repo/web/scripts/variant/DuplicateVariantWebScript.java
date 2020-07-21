@@ -58,8 +58,15 @@ import fr.becpg.repo.repository.model.CompositionDataItem;
 import fr.becpg.repo.variant.filters.VariantFilters;
 import fr.becpg.repo.variant.model.VariantDataItem;
 
+/**
+ * <p>DuplicateVariantWebScript class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class DuplicateVariantWebScript extends AbstractWebScript {
 
+	/** Constant <code>PARAM_NODEREF="nodeRef"</code> */
 	protected static final String PARAM_NODEREF = "nodeRef";
 
 	private static final Log logger = LogFactory.getLog(DuplicateVariantWebScript.class);
@@ -72,22 +79,43 @@ public class DuplicateVariantWebScript extends AbstractWebScript {
 
 	private AlfrescoRepository<ProductData> alfrescoRepository;
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>serviceRegistry</code>.</p>
+	 *
+	 * @param serviceRegistry a {@link org.alfresco.service.ServiceRegistry} object.
+	 */
 	public void setServiceRegistry(ServiceRegistry serviceRegistry) {
 		this.serviceRegistry = serviceRegistry;
 	}
 
+	/**
+	 * <p>Setter for the field <code>copyService</code>.</p>
+	 *
+	 * @param copyService a {@link org.alfresco.service.cmr.repository.CopyService} object.
+	 */
 	public void setCopyService(CopyService copyService) {
 		this.copyService = copyService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
+	 */
 	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws WebScriptException, IOException {
 		logger.debug("start duplicate variant webscript");

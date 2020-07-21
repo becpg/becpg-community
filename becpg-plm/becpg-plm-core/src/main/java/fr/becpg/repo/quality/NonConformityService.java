@@ -21,20 +21,44 @@ import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+/**
+ * <p>NonConformityService interface.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public interface NonConformityService {
 
 	/**
 	 * Calculate the storage folder (product NC or default)
-	 * 
+	 *
 	 * @param productNodeRef
 	 *            may be null
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
 	NodeRef getStorageFolder(NodeRef productNodeRef);
 
+	/**
+	 * <p>classifyNC.</p>
+	 *
+	 * @param ncNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param productNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	@Deprecated
 	void classifyNC(NodeRef ncNodeRef, NodeRef productNodeRef);
 
+	/**
+	 * <p>getAssociatedWorkflow.</p>
+	 *
+	 * @param ncNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link java.util.List} object.
+	 */
 	List<String> getAssociatedWorkflow(NodeRef ncNodeRef);
 	
+	/**
+	 * <p>deleteWorkflows.</p>
+	 *
+	 * @param instanceIds a {@link java.util.List} object.
+	 */
 	void deleteWorkflows(List<String> instanceIds);
 }

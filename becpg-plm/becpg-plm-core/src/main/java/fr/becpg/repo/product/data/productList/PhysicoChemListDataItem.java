@@ -18,6 +18,12 @@ import fr.becpg.repo.repository.model.MinMaxValueDataItem;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
 import fr.becpg.repo.repository.model.UnitAwareDataItem;
 
+/**
+ * <p>PhysicoChemListDataItem class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @AlfType
 @AlfQname(qname = "bcpg:physicoChemList")
 public class PhysicoChemListDataItem extends AbstractManualDataItem implements SimpleListDataItem, MinMaxValueDataItem, UnitAwareDataItem, FormulatedCharactDataItem, ControlableListDataItem{
@@ -43,6 +49,11 @@ public class PhysicoChemListDataItem extends AbstractManualDataItem implements S
 	private String type;
 	
 
+	/**
+	 * <p>Getter for the field <code>type</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:pclType")
 	public String getType() {
@@ -50,11 +61,21 @@ public class PhysicoChemListDataItem extends AbstractManualDataItem implements S
 	}
 
 
+	/**
+	 * <p>Setter for the field <code>type</code>.</p>
+	 *
+	 * @param type a {@link java.lang.String} object.
+	 */
 	public void setType(String type) {
 		this.type = type;
 	}
 
 	
+	/**
+	 * <p>Getter for the field <code>value</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:pclValue")
 	public Double getValue() {
@@ -64,12 +85,18 @@ public class PhysicoChemListDataItem extends AbstractManualDataItem implements S
 	
 
 
+	/** {@inheritDoc} */
 	public void setValue(Double value) {
 		this.value = value;
 	}
 	
 
 	
+	/**
+	 * <p>Getter for the field <code>unit</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:pclUnit")
 	public String getUnit() {
@@ -77,10 +104,16 @@ public class PhysicoChemListDataItem extends AbstractManualDataItem implements S
 	}
 	
 	
+	/** {@inheritDoc} */
 	public void setUnit(String unit) {
 		this.unit = unit;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>mini</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:pclMini")
 	public Double getMini() {
@@ -88,20 +121,32 @@ public class PhysicoChemListDataItem extends AbstractManualDataItem implements S
 	}
 	
 	
+	/** {@inheritDoc} */
 	public void setMini(Double mini) {
 		this.mini = mini;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>maxi</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:pclMaxi")
 	public Double getMaxi() {
 		return maxi;
 	}
 	
+	/** {@inheritDoc} */
 	public void setMaxi(Double maxi) {
 		this.maxi = maxi;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>physicoChem</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	@AlfSingleAssoc
 	@DataListIdentifierAttr
 	@AlfQname(qname="bcpg:pclPhysicoChem")
@@ -110,18 +155,25 @@ public class PhysicoChemListDataItem extends AbstractManualDataItem implements S
 		return physicoChem;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	@InternalField
 	public NodeRef getCharactNodeRef() {
 		return getPhysicoChem();
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public void setCharactNodeRef(NodeRef nodeRef) {
 		setPhysicoChem(nodeRef);		
 	}
 	
 	
+	/**
+	 * <p>Getter for the field <code>isFormulated</code>.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object.
+	 */
 	@AlfProp
 	@InternalField
 	@AlfQname(qname="bcpg:physicoChemIsFormulated")
@@ -130,11 +182,13 @@ public class PhysicoChemListDataItem extends AbstractManualDataItem implements S
 	}
 
 
+	/** {@inheritDoc} */
 	public void setIsFormulated(Boolean isFormulated) {
 		this.isFormulated = isFormulated;
 	}
 	
 
+	/** {@inheritDoc} */
 	@AlfProp
 	@InternalField
 	@AlfQname(qname="bcpg:physicoChemFormulaErrorLog")
@@ -143,16 +197,19 @@ public class PhysicoChemListDataItem extends AbstractManualDataItem implements S
 		return errorLog;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void setErrorLog(String errorLog) {
 		this.errorLog = errorLog;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Double getFormulatedValue() {
 		return getValue();
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public void setFormulatedValue(Double formulatedValue) {
 		 setValue(formulatedValue);
@@ -160,6 +217,7 @@ public class PhysicoChemListDataItem extends AbstractManualDataItem implements S
 
 	
 	
+	/** {@inheritDoc} */
 	@Override
 	public String getTextCriteria() {
 		return null;
@@ -175,13 +233,17 @@ public class PhysicoChemListDataItem extends AbstractManualDataItem implements S
 	}
 	
 	
+	/**
+	 * <p>Constructor for PhysicoChemListDataItem.</p>
+	 */
 	public PhysicoChemListDataItem() {
 		super();
 	}
 	
 	/**
 	 * Copy constructor
-	 * @param p 
+	 *
+	 * @param p a {@link fr.becpg.repo.product.data.productList.PhysicoChemListDataItem} object.
 	 */
 	public PhysicoChemListDataItem(PhysicoChemListDataItem p){
 		super(p);
@@ -212,12 +274,14 @@ public class PhysicoChemListDataItem extends AbstractManualDataItem implements S
 		this.physicoChem = physicoChem;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public PhysicoChemListDataItem clone() {
 		return new PhysicoChemListDataItem(this);
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -231,6 +295,7 @@ public class PhysicoChemListDataItem extends AbstractManualDataItem implements S
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -269,12 +334,14 @@ public class PhysicoChemListDataItem extends AbstractManualDataItem implements S
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "PhysicoChemListDataItem [value=" + value + ", unit=" + unit + ", mini=" + mini + ", maxi=" + maxi + ", physicoChem=" + physicoChem + ", isManual=" + isManual
 				+ ", nodeRef=" + nodeRef + ", name=" + name + "]";
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Boolean shouldDetailIfZero() {
 		return true;

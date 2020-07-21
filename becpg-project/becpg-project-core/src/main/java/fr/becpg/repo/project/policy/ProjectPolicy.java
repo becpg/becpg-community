@@ -32,13 +32,16 @@ import fr.becpg.repo.repository.AlfrescoRepository;
  * The Class ProjectPolicy.
  *
  * @author querephi
+ * @version $Id: $Id
  */
 public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnUpdatePropertiesPolicy, EntityVersionPlugin {
 
 	private static final Log logger = LogFactory.getLog(ProjectPolicy.class);
 
+	/** Constant <code>KEY_DELETED_TASK_LIST_ITEM="DeletedTaskListItem"</code> */
 	protected static final String KEY_DELETED_TASK_LIST_ITEM = "DeletedTaskListItem";
 
+	/** Constant <code>KEY_PROJECT_ITEM="ProjectItem"</code> */
 	protected static final String KEY_PROJECT_ITEM = "ProjectItem";
 
 	protected ProjectService projectService;
@@ -46,23 +49,45 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 	protected ProjectWorkflowService projectWorkflowService;
 	protected EntityListDAO entityListDAO;
 
+	/**
+	 * <p>Setter for the field <code>entityListDAO</code>.</p>
+	 *
+	 * @param entityListDAO a {@link fr.becpg.repo.entity.EntityListDAO} object.
+	 */
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
 	}
 
+	/**
+	 * <p>Setter for the field <code>projectWorkflowService</code>.</p>
+	 *
+	 * @param projectWorkflowService a {@link fr.becpg.repo.project.ProjectWorkflowService} object.
+	 */
 	public void setProjectWorkflowService(ProjectWorkflowService projectWorkflowService) {
 		this.projectWorkflowService = projectWorkflowService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>projectService</code>.</p>
+	 *
+	 * @param projectService a {@link fr.becpg.repo.project.ProjectService} object.
+	 */
 	public void setProjectService(ProjectService projectService) {
 		this.projectService = projectService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
+	 */
 	public void setAlfrescoRepository(AlfrescoRepository<ProjectData> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * Inits the.
 	 */
 	@Override
@@ -76,6 +101,7 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 		super.disableOnCopyBehaviour(ProjectModel.TYPE_PROJECT);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 
@@ -111,6 +137,11 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 		}
 	}
 
+	/**
+	 * <p>queueListItem.</p>
+	 *
+	 * @param listItemNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void queueListItem(NodeRef listItemNodeRef) {
 		NodeRef projectNodeRef = entityListDAO.getEntity(listItemNodeRef);
 		if (projectNodeRef != null) {
@@ -118,11 +149,13 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected void queueNode(NodeRef nodeRef) {
 		super.queueNode(KEY_PROJECT_ITEM, nodeRef);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected boolean doBeforeCommit(String key, final Set<NodeRef> pendingNodes) {
 
@@ -143,22 +176,26 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void doAfterCheckout(NodeRef origNodeRef, NodeRef workingCopyNodeRef) {
 		queueNode(origNodeRef);
 		queueNode(workingCopyNodeRef);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void doBeforeCheckin(NodeRef origNodeRef, NodeRef workingCopyNodeRef) {
 		queueNode(origNodeRef);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void cancelCheckout(NodeRef origNodeRef, NodeRef workingCopyNodeRef) {
 		queueNode(origNodeRef);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void impactWUsed(NodeRef entityNodeRef, VersionType versionType, String description) {
 		// TODO Auto-generated method stub

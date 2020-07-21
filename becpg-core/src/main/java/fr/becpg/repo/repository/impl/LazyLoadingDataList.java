@@ -25,9 +25,11 @@ import java.util.ListIterator;
 import java.util.Set;
 
 /**
- * 
+ * <p>LazyLoadingDataList class.</p>
+ *
  * @author matthieu
  * @param <E>
+ * @version $Id: $Id
  */
 public class LazyLoadingDataList<E> implements List<E>  {
 
@@ -45,17 +47,32 @@ public class LazyLoadingDataList<E> implements List<E>  {
 	
 	final Set<E> deletedNodes  = new HashSet<>();
 
+	/**
+	 * <p>Setter for the field <code>dataProvider</code>.</p>
+	 *
+	 * @param dataProvider a {@link fr.becpg.repo.repository.impl.LazyLoadingDataList.DataProvider} object.
+	 */
 	public void setDataProvider(DataProvider<E> dataProvider) {
 		this.dataProvider = dataProvider;
 	}
 	
 
+	/**
+	 * <p>Getter for the field <code>deletedNodes</code>.</p>
+	 *
+	 * @return a {@link java.util.Set} object.
+	 */
 	public Set<E> getDeletedNodes() {
 		return deletedNodes;
 	}
 	
 	
 	
+	/**
+	 * <p>isLoaded.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public boolean isLoaded() {
 		return loaded;
 	}
@@ -74,42 +91,49 @@ public class LazyLoadingDataList<E> implements List<E>  {
 
 	// List interfaces methods
 	
+	/** {@inheritDoc} */
 	@Override
 	public int size() {
 		return  getList().size();
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isEmpty() {
 		return getList().isEmpty();
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean contains(Object o) {
 		return getList().contains(o);
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public Iterator<E> iterator() {
 		return getList().iterator();
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public Object[] toArray() {
 		return getList().toArray();
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public <T> T[] toArray(T[] a) {
 		return getList().toArray( a);
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean add(E e) {
 		deletedNodes.remove(e);
@@ -117,6 +141,7 @@ public class LazyLoadingDataList<E> implements List<E>  {
 	}
 
 
+	/** {@inheritDoc} */
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean remove(Object o) {
@@ -125,12 +150,14 @@ public class LazyLoadingDataList<E> implements List<E>  {
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean containsAll(Collection<?> c) {
 		return getList().containsAll(c);
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean addAll(Collection<? extends E> c) {
 		deletedNodes.removeAll(c);
@@ -138,6 +165,7 @@ public class LazyLoadingDataList<E> implements List<E>  {
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean addAll(int index, Collection<? extends E> c) {
 		deletedNodes.removeAll(c);
@@ -145,6 +173,7 @@ public class LazyLoadingDataList<E> implements List<E>  {
 	}
 
 
+	/** {@inheritDoc} */
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean removeAll(Collection<?> c) {
@@ -153,6 +182,7 @@ public class LazyLoadingDataList<E> implements List<E>  {
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean retainAll(Collection<?> c) {
 		boolean modified = false;
@@ -170,6 +200,7 @@ public class LazyLoadingDataList<E> implements List<E>  {
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public void clear() {
 		deletedNodes.addAll(getList());
@@ -177,17 +208,20 @@ public class LazyLoadingDataList<E> implements List<E>  {
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public E get(int index) {
 		return getList().get(index);
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public E set(int index, E element) {
 		return getList().set(index, element);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void add(int index, E element) {
 		deletedNodes.remove(element);
@@ -195,6 +229,7 @@ public class LazyLoadingDataList<E> implements List<E>  {
 		
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public E remove(int index) {
 		
@@ -203,36 +238,42 @@ public class LazyLoadingDataList<E> implements List<E>  {
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public int indexOf(Object o) {
 		return getList().indexOf(o);
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public int lastIndexOf(Object o) {
 		return getList().lastIndexOf(o);
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public ListIterator<E> listIterator() {
 		return getList().listIterator();
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public ListIterator<E> listIterator(int index) {
 		return getList().listIterator(index);
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public List<E> subList(int fromIndex, int toIndex) {
 		return getList().subList(fromIndex, toIndex);
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "LazyLoadingDataList [backedList=" + backedList + ", loaded=" + loaded + ", deletedNodes=" + deletedNodes + "]";

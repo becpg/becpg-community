@@ -6,6 +6,12 @@ package fr.becpg.repo.product.data;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
 
+/**
+ * <p>FinishedProductData class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @AlfType
 @AlfQname(qname = "bcpg:finishedProduct")
 public class FinishedProductData extends ProductData {
