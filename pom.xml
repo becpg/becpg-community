@@ -459,6 +459,24 @@
 		<module>becpg-plm/becpg-plm-share</module>
 	    <module>becpg-integration-runner</module> 
 	 </modules>
+	 
+	 <reporting>
+	    <excludeDefaults>true</excludeDefaults>
+	    <plugins>
+	      <plugin>
+	        <groupId>org.apache.maven.plugins</groupId>
+	        <artifactId>maven-javadoc-plugin</artifactId>
+	        <version>3.2.0</version>
+	        <reportSets>
+	          <reportSet>
+	            <reports>
+	              <report>aggregate-no-fork</report>
+	            </reports>
+	          </reportSet>
+	        </reportSets>
+	      </plugin>
+	    </plugins>
+	  </reporting>
 
 	<dependencies>
 
