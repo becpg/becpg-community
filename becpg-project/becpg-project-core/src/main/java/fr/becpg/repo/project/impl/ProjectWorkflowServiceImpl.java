@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.workflow.WorkflowConstants;
 import org.alfresco.repo.workflow.WorkflowModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -171,8 +172,13 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 
 				List<WorkflowTask> workflowTasks = workflowService.queryTasks(taskQuery, false);
 
+				
 				if (!workflowTasks.isEmpty()) {
 					for (WorkflowTask workflowTask : workflowTasks) {
+						Map<QName, Serializable> taskProps =  workflowTask.getProperties();
+						taskProps.put(WorkflowModel.PROP_STATUS, WorkflowConstants.TASK_STATUS_IN_PROGRESS); //TODO 7774
+						workflowService.updateTask(workflowTask.getId(), taskProps, null, null);
+
 						taskListDataItem.setWorkflowTaskInstance(workflowTask.getId());
 						break;
 					}
