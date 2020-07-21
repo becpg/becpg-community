@@ -960,9 +960,9 @@
 		<forms>
 			<form>
 				<field-visibility>
-					<show id="bcpg:controlCharactType" force="true" />
+					<show id="qa:controlCharactType" force="true" />
 					<show id="bcpg:charactName" />
-					<show id="cm:title" />
+					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:code" />
 				</field-visibility>
@@ -975,18 +975,18 @@
 		<forms>
 			<form>
 				<field-visibility>
-					<show id="bcpg:controlCharactType" force="true" />
+					<show id="qa:controlCharactType" force="true" />
 					<show id="bcpg:charactName" />
-					<show id="cm:title" />
+					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:code" />
 				</field-visibility>
 			</form>
 			<form id="datagrid">
 				<field-visibility>
-					<show id="bcpg:controlCharactType" force="true" />
-					<show id="bcpg:charactName" />
-					<show id="cm:title" />
+					<show id="qa:controlCharactType" force="true" />
+					<show id="bcpg:charactName" force="true" />
+					<show id="cm:title" force="true" />
 					<show id="bcpg:code" />
 				</field-visibility>
 			</form>
