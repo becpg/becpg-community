@@ -39,8 +39,14 @@ public class RussianNutrientRegulation extends AbstractNutrientRegulation {
 				}
 			} else if (nutrientTypeCode.contentEquals(NutrientCode.CarbohydrateByDiff) 
 					|| nutrientTypeCode.contentEquals(NutrientCode.CarbohydrateWithFiber)
+					|| nutrientTypeCode.contentEquals(NutrientCode.Sugar)
+					|| nutrientTypeCode.contentEquals(NutrientCode.SugarAdded)
 					|| nutrientTypeCode.contentEquals(NutrientCode.Protein)
-					|| nutrientTypeCode.contentEquals(NutrientCode.Fat)) {
+					|| nutrientTypeCode.contentEquals(NutrientCode.Fat)
+					|| nutrientTypeCode.contentEquals(NutrientCode.FatTrans)
+					|| nutrientTypeCode.contentEquals(NutrientCode.FatSaturated)
+					|| nutrientTypeCode.contentEquals(NutrientCode.FatPolyunsaturated)
+					|| nutrientTypeCode.contentEquals(NutrientCode.FatMonounsaturated)) {
 				if (value < 0.5) {
 					return 0.0;
 				} else if (value <= 10) {

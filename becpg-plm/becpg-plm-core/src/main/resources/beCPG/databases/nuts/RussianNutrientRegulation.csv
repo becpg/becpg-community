@@ -52,7 +52,7 @@ OA;Organic acids, total;82;1;false;true;false;;;;
 PANTAC;Panto acid;47;1;false;true;false;6;;mg;
 P;Phosphorus, P;50;1;false;true;false;800;;mg;
 POLYL;Polyols total;16;1;false;true;false;;;;
-K;Potassium, k;48;2;false;true;false;3500;;mg;
+K;Potassium, k;48;1;false;true;false;3500;;mg;
 PRO-;Protein;4;1;true;false;false;75;;g;
 CARTBEQ;Provitamin A (b-carotene equivalents);83;1;false;true;false;;;;
 PROCNT;Raw proteins (N x 6.25);5;1;false;true;false;;;;
