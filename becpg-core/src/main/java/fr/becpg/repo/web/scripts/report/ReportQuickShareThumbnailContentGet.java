@@ -98,7 +98,7 @@ public class ReportQuickShareThumbnailContentGet extends QuickShareContentGet {
 		ScriptNode node = new ScriptNode(nodeRef, serviceRegistry, scope);
 
 		if ((nodeRef != null) && entityDictionaryService.isSubClass(nodeService.getType(nodeRef), ReportModel.TYPE_REPORT)) {
-			node = thumbnail.refreshReport(node);
+			node = new ScriptNode(thumbnail.refreshReport(node).getNodeRef(), serviceRegistry, scope);
 		}
 
 		NodeRef thumbnailNodeRef = thumbnailService.getThumbnailByName(nodeRef, ContentModel.PROP_CONTENT, thumbnailName);
@@ -126,8 +126,10 @@ public class ReportQuickShareThumbnailContentGet extends QuickShareContentGet {
 
 			// Queue the creation of the thumbnail if appropriate
 			if (fc) {
-				ScriptNode thumbnailNode = node.createThumbnail(thumbnailName, false);
+				ScriptNode thumbnailNode = node.createThumbnail(thumbnailName, false, true);
 				if (thumbnailNode != null) {
+					
+					
 					thumbnailNodeRef = thumbnailNode.getNodeRef();
 				}
 			} else {
