@@ -46,8 +46,8 @@ public class CopyFromPatch extends AbstractBeCPGPatch {
 	private RuleService ruleService;
 	private DictionaryService dictionaryService;
 
-	private final int batchThreads = 3;
-	private final int batchSize = 40;
+	private final int batchThreads = 5;
+	private final int batchSize = 1000;
 	private final long count = batchThreads * batchSize;
 
 	/**
@@ -133,7 +133,7 @@ public class CopyFromPatch extends AbstractBeCPGPatch {
 		};
 
 		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("CopyFromPatch", transactionService.getRetryingTransactionHelper(),
-				workProvider, batchThreads, batchSize, applicationEventPublisher, logger, 1000);
+				workProvider, batchThreads, batchSize, applicationEventPublisher, logger, 10000);
 
 		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<>() {
 
