@@ -14,7 +14,7 @@ echo -e " \e[91mCopyright (C) 2010-2020 beCPG.\e[0m"
 
 export COMPOSE_FILE_PATH=${PWD}/becpg-integration-runner/target/docker-compose.yml
 
-export MVN_EXEC="mvn"
+export MVN_EXEC="${PWD}/mvnw"
 
 start() {
    	 	docker-compose -f $COMPOSE_FILE_PATH up -d --remove-orphans
