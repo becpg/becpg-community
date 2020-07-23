@@ -37,11 +37,12 @@ public class SpelHelper {
 	}
 
 	private static List<SpelShortcut> shortCuts = new LinkedList<>();
-	
-	static {
-		//Single line comment should end by \n
-		shortCuts.add(new SpelShortcut("//.*\n", ""));
-	}
+
+// breaks nodeRef;	
+//	static {
+//		//Single line comment should end by \n
+//		shortCuts.add(new SpelShortcut("//.*\n", ""));
+//	}
 	
 	public static void registerShortcut(SpelShortcut shortcut) {
 		shortCuts.add(shortcut);
