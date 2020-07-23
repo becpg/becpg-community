@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.security.authentication.AuthenticationException;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.site.SiteModel;
 import org.alfresco.service.cmr.repository.ContentIOException;
@@ -218,10 +219,12 @@ public class UserImporterServiceImpl implements UserImporterService {
 
 			AuthenticationUtil.runAsSystem(() -> {
 
-				if (!authenticationService.authenticationExists(username)) {
+				try {
 					// create user
 					authenticationService.createAuthentication(username, password.toCharArray());
 
+				} catch (AuthenticationException e) {
+					// Do nothing
 				}
 
 				if (!personService.personExists(username)) {
