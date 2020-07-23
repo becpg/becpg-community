@@ -22,7 +22,7 @@
 			         <select id="${el}-locale-picker" name="-" onChange="addFormFieldForLocale();return false;">
                             <option value="-" >${msg("locale.choose")}</option>
 							<#list langs?sort_by(["label"]) as language>
-                              <#if currentLocale != language.key>
+                              <#if currentLocale != language.key || args.allowCurrentLocale??>
 								<option value="${language.key}"  >${language.label}</option>
                                </#if>
 							</#list>
@@ -32,7 +32,7 @@
 					
 	         <#list mlFields?sort_by(["localeLabel"]) as mlField>
 				<#assign description=mlField.description!""?html>
-                <#if mlField.locale != currentLocale>
+                <#if mlField.locale != currentLocale || args.allowCurrentLocale??>
 	         	<div class="form-field">
       				<label for="${el}-${mlField.locale}"><#if args.label?? >${label?html}<#elseif mlField.label??>${mlField.label?html}<#else> ${mlField.localeLabel}</#if>:&nbsp;
       						<span class="locale-icon"><img class="icon16_11" title="${mlField.localeLabel}" tabindex="0" src="${url.context}/res/components/images/flags/${mlField.country?lower_case}.png">&nbsp;(${mlField.localeLabel})<span>&nbsp;&nbsp;
