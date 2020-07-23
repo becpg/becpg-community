@@ -76,7 +76,7 @@
 
 
 	<bean id="userImporterService" class="fr.becpg.repo.importer.user.impl.UserImporterServiceImpl">
-		<property name="authenticationService" ref="authenticationService" />
+		<property name="authenticationService" ref="AuthenticationService" />
 		<property name="contentService" ref="contentService" />
 		<property name="nodeService" ref="nodeService" />
 		<property name="personService" ref="personService" />
