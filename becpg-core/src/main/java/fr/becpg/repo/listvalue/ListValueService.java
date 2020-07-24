@@ -25,40 +25,66 @@ import java.util.Map;
  * The Interface ListValueService.
  *
  * @author querephi
+ * @version $Id: $Id
  */
 public interface ListValueService {
 
+	/** Constant <code>SUGGEST_PAGE_SIZE=10</code> */
 	int SUGGEST_PAGE_SIZE = 10;
 	
+	/** Constant <code>PROP_SOURCE_TYPE="sourcetype"</code> */
 	String PROP_SOURCE_TYPE = "sourcetype";
 	
+	/** Constant <code>PROP_CLASS_NAME="className"</code> */
 	String PROP_CLASS_NAME = "className";
 	
+	/** Constant <code>PROP_ATTRIBUTE_NAME="attributeName"</code> */
 	String PROP_ATTRIBUTE_NAME = "attributeName";
 	
+	/** Constant <code>PROP_PATH="path"</code> */
 	String PROP_PATH = "path";
 	
+	/** Constant <code>PROP_PARENT="parent"</code> */
 	String PROP_PARENT = "parent";
 	
+	/** Constant <code>PROP_NODEREF="nodeRef"</code> */
 	String PROP_NODEREF = "nodeRef";
 	
+	/** Constant <code>PROP_ENTITYNODEREF="entityNodeRef"</code> */
 	String PROP_ENTITYNODEREF = "entityNodeRef";
 	
+	/** Constant <code>PROP_LOCALE="locale"</code> */
 	String PROP_LOCALE = "locale";
 
+	/** Constant <code>PROP_CLASS_NAMES="classNames"</code> */
 	String PROP_CLASS_NAMES = "classNames";
 	
+	/** Constant <code>PROP_EXCLUDE_CLASS_NAMES="excludeClassNames"</code> */
 	String PROP_EXCLUDE_CLASS_NAMES = "excludeClassNames";
 
+	/** Constant <code>PROP_PRODUCT_TYPE="productType"</code> */
 	String PROP_PRODUCT_TYPE = "productType";
 
+	/** Constant <code>EXTRA_PARAM="extra"</code> */
 	String EXTRA_PARAM = "extra";
 
+	/** Constant <code>PROP_FILTER="filter"</code> */
 	String PROP_FILTER = "filter";
 
+	/** Constant <code>PROP_EXCLUDE_PROPS="excludeProps"</code> */
 	String PROP_EXCLUDE_PROPS = "excludeProps";
 	
 	
+	/**
+	 * <p>suggestBySourceType.</p>
+	 *
+	 * @param sourceType a {@link java.lang.String} object.
+	 * @param query a {@link java.lang.String} object.
+	 * @param pageNum a {@link java.lang.Integer} object.
+	 * @param pageSize a {@link java.lang.Integer} object.
+	 * @param props a {@link java.util.Map} object.
+	 * @return a {@link fr.becpg.repo.listvalue.ListValuePage} object.
+	 */
 	ListValuePage suggestBySourceType(String sourceType, String query, Integer pageNum,
 									  Integer pageSize, Map<String, Serializable> props);
 }

@@ -21,12 +21,39 @@ import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+/**
+ * <p>EntityProviderCallBack interface.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public interface EntityProviderCallBack {
 
+	/**
+	 * <p>provideNode.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param destNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param cache a {@link java.util.Map} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	NodeRef provideNode(NodeRef nodeRef, NodeRef destNodeRef, Map<NodeRef, NodeRef> cache);
 	
+	/**
+	 * <p>provideNode.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param cache a {@link java.util.Map} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	NodeRef provideNode(NodeRef nodeRef,Map<NodeRef, NodeRef> cache);
 
+	/**
+	 * <p>provideContent.</p>
+	 *
+	 * @param origNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param destNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	void provideContent(NodeRef origNodeRef, NodeRef destNodeRef);
 
 }

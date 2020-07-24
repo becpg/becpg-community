@@ -17,8 +17,24 @@
  ******************************************************************************/
 package fr.becpg.repo.repository.model;
 
+/**
+ * <p>ManualDataItem interface.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public interface ManualDataItem {
 
+	/**
+	 * <p>getIsManual.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object.
+	 */
 	Boolean getIsManual();
+	/**
+	 * <p>setIsManual.</p>
+	 *
+	 * @param isManual a {@link java.lang.Boolean} object.
+	 */
 	void setIsManual(Boolean isManual);
 }

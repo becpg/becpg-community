@@ -48,6 +48,12 @@ import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 import fr.becpg.repo.repository.model.UnitAwareDataItem;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
+/**
+ * <p>SimpleCharactDetailsVisitor class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 
@@ -61,18 +67,34 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 
 	protected QName dataListType;
 
+	/**
+	 * <p>Setter for the field <code>entityDictionaryService</code>.</p>
+	 *
+	 * @param entityDictionaryService a {@link fr.becpg.repo.entity.EntityDictionaryService} object.
+	 */
 	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
 		this.entityDictionaryService = entityDictionaryService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
+	 */
 	public void setAlfrescoRepository(AlfrescoRepository<? extends RepositoryEntity> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void setDataListType(QName dataListType) {
 		this.dataListType = dataListType;
@@ -83,6 +105,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public CharactDetails visit(ProductData productData, List<NodeRef> dataListItems, Integer level) throws FormulateException {
 
@@ -101,6 +124,19 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 		return ret;
 	}
 
+	/**
+	 * <p>visitRecur.</p>
+	 *
+	 * @param subProductData a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @param ret a {@link fr.becpg.repo.product.data.CharactDetails} object.
+	 * @param currLevel a {@link java.lang.Integer} object.
+	 * @param maxLevel a {@link java.lang.Integer} object.
+	 * @param subWeight a {@link java.lang.Double} object.
+	 * @param subVol a {@link java.lang.Double} object.
+	 * @param netQty a {@link java.lang.Double} object.
+	 * @return a {@link fr.becpg.repo.product.data.CharactDetails} object.
+	 * @throws fr.becpg.repo.formulation.FormulateException if any.
+	 */
 	public CharactDetails visitRecur(ProductData subProductData, CharactDetails ret, Integer currLevel, Integer maxLevel, Double subWeight,
 			Double subVol, Double netQty) throws FormulateException {
 
@@ -147,6 +183,12 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 		return ret;
 	}
 
+	/**
+	 * <p>createCharactDetails.</p>
+	 *
+	 * @param dataListItems a {@link java.util.List} object.
+	 * @return a {@link fr.becpg.repo.product.data.CharactDetails} object.
+	 */
 	protected CharactDetails createCharactDetails(List<NodeRef> dataListItems) {
 
 		List<NodeRef> tmp = new ArrayList<>();
@@ -165,6 +207,21 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 		return ret;
 	}
 
+	/**
+	 * <p>visitPart.</p>
+	 *
+	 * @param parent a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @param componentDataList a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param charactDetails a {@link fr.becpg.repo.product.data.CharactDetails} object.
+	 * @param weightUsed a {@link java.lang.Double} object.
+	 * @param volUsed a {@link java.lang.Double} object.
+	 * @param netQtyInLorKg a {@link java.lang.Double} object.
+	 * @param netWeight a {@link java.lang.Double} object.
+	 * @param currLevel a {@link java.lang.Integer} object.
+	 * @param unitProvider a {@link fr.becpg.repo.product.formulation.details.SimpleCharactDetailsVisitor.SimpleCharactUnitProvider} object.
+	 * @throws fr.becpg.repo.formulation.FormulateException if any.
+	 */
 	protected void visitPart(NodeRef parent, ProductData productData, NodeRef componentDataList, CharactDetails charactDetails, Double weightUsed, Double volUsed,
 			Double netQtyInLorKg, Double netWeight, Integer currLevel, SimpleCharactUnitProvider unitProvider) throws FormulateException {
 

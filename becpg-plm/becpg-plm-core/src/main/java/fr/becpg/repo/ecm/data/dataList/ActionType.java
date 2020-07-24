@@ -17,6 +17,12 @@
  ******************************************************************************/
 package fr.becpg.repo.ecm.data.dataList;
 
+/**
+ * <p>ActionType class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public enum ActionType {
 	Replace,
 	Delete,

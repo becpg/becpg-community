@@ -47,24 +47,36 @@ import fr.becpg.repo.repository.model.FormulatedCharactDataItem;
  * Merge ReqCtrlListDataItem to avoid duplication of items and sort them
  *
  * @author quere
- *
+ * @version $Id: $Id
  */
 public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<ProductData> {
 
+	/** Constant <code>logger</code> */
 	protected static Log logger = LogFactory.getLog(MergeReqCtrlFormulationHandler.class);
 
 	private AlfrescoRepository<ProductData> alfrescoRepository;
 
 	private NodeService nodeService;
 
+	/**
+	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
+	 */
 	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean process(ProductData productData) {
 

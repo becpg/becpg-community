@@ -2,6 +2,12 @@ package fr.becpg.repo.product.formulation.labeling;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+/**
+ * <p>ReconstituableDataItem class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class ReconstituableDataItem {
 	
 	private NodeRef productNodeRef;
@@ -14,6 +20,15 @@ public class ReconstituableDataItem {
 	
 	private NodeRef targetIngNodeRef;
 
+	/**
+	 * <p>Constructor for ReconstituableDataItem.</p>
+	 *
+	 * @param productNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param rate a {@link java.lang.Double} object.
+	 * @param priority a {@link java.lang.Integer} object.
+	 * @param diluentIngNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param targetIngNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public ReconstituableDataItem(NodeRef productNodeRef, Double rate, Integer priority, NodeRef diluentIngNodeRef, NodeRef targetIngNodeRef) {
 		super();
 		this.productNodeRef = productNodeRef;
@@ -27,26 +42,52 @@ public class ReconstituableDataItem {
 		this.targetIngNodeRef = targetIngNodeRef;
 	}
 
+	/**
+	 * <p>Getter for the field <code>productNodeRef</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public NodeRef getProductNodeRef() {
 		return productNodeRef;
 	}
 
+	/**
+	 * <p>Getter for the field <code>rate</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public Double getRate() {
 		return rate;
 	}
 
+	/**
+	 * <p>Getter for the field <code>priority</code>.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object.
+	 */
 	public Integer getPriority() {
 		return priority;
 	}
 
+	/**
+	 * <p>Getter for the field <code>diluentIngNodeRef</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public NodeRef getDiluentIngNodeRef() {
 		return diluentIngNodeRef;
 	}
 
+	/**
+	 * <p>Getter for the field <code>targetIngNodeRef</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public NodeRef getTargetIngNodeRef() {
 		return targetIngNodeRef;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -59,6 +100,7 @@ public class ReconstituableDataItem {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -96,6 +138,7 @@ public class ReconstituableDataItem {
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "ReconstituableDataItem [productNodeRef=" + productNodeRef + ", rate=" + rate + ", priority=" + priority + ", diluentIngNodeRef=" + diluentIngNodeRef + ", targetIngNodeRef="

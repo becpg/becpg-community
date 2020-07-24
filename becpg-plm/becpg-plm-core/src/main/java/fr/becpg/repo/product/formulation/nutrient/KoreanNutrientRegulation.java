@@ -5,12 +5,24 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Locale;
 
+/**
+ * <p>KoreanNutrientRegulation class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class KoreanNutrientRegulation extends AbstractNutrientRegulation {
 
+	/**
+	 * <p>Constructor for KoreanNutrientRegulation.</p>
+	 *
+	 * @param path a {@link java.lang.String} object.
+	 */
 	public KoreanNutrientRegulation(String path)  {
 		super(path);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected Double roundByCode(Double value, String nutrientTypeCode) {
 
@@ -67,6 +79,7 @@ public class KoreanNutrientRegulation extends AbstractNutrientRegulation {
 		return bd.doubleValue();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected String displayValueByCode(Double value, Double roundedValue, String nutrientTypeCode, Locale locale) {
 
@@ -85,6 +98,7 @@ public class KoreanNutrientRegulation extends AbstractNutrientRegulation {
 		return formatDouble(roundedValue, locale);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Double roundGDA(Double value, String nutrientTypeCode) {
 		if(value != null){

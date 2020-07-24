@@ -37,9 +37,10 @@ import fr.becpg.repo.report.entity.EntityReportAsyncGenerator;
 import fr.becpg.repo.report.entity.EntityReportService;
 
 /**
+ * <p>EntityReportAsyncGeneratorImpl class.</p>
  *
  * @author matthieu
- *
+ * @version $Id: $Id
  */
 public class EntityReportAsyncGeneratorImpl implements EntityReportAsyncGenerator {
 
@@ -56,14 +57,25 @@ public class EntityReportAsyncGeneratorImpl implements EntityReportAsyncGenerato
 	@Autowired
 	private TransactionService transactionService;
 
+	/**
+	 * <p>Setter for the field <code>threadExecuter</code>.</p>
+	 *
+	 * @param threadExecuter a {@link java.util.concurrent.ThreadPoolExecutor} object.
+	 */
 	public void setThreadExecuter(ThreadPoolExecutor threadExecuter) {
 		this.threadExecuter = threadExecuter;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityReportService</code>.</p>
+	 *
+	 * @param entityReportService a {@link fr.becpg.repo.report.entity.EntityReportService} object.
+	 */
 	public void setEntityReportService(EntityReportService entityReportService) {
 		this.entityReportService = entityReportService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void queueNodes(List<NodeRef> pendingNodes, boolean notify) {
 		logger.debug("Queue nodes for async report generation");

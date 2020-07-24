@@ -27,19 +27,24 @@ import fr.becpg.repo.variant.filters.VariantFilters;
  * https://www.fsai.ie/uploadedFiles/Site/FAQs/meat_content_calculation.pdf
  *
  * @author matthieu
- *
+ * @version $Id: $Id
  */
-
 public class MeatContentFormulationHandler extends FormulationBaseHandler<ProductData> {
 
 	private static Log logger = LogFactory.getLog(MeatContentFormulationHandler.class);
 
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
+	/**
+	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
+	 */
 	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 

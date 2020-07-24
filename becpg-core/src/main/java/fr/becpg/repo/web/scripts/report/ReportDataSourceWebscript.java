@@ -31,6 +31,12 @@ import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.report.entity.EntityReportParameters;
 import fr.becpg.repo.report.entity.EntityReportService;
 
+/**
+ * <p>ReportDataSourceWebscript class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class ReportDataSourceWebscript extends AbstractWebScript {
 
 	private static final String PARAM_NODEREF = "nodeRef";
@@ -39,6 +45,8 @@ public class ReportDataSourceWebscript extends AbstractWebScript {
 	EntityReportService entityReportService;
 
 	/**
+	 * <p>Setter for the field <code>entityReportService</code>.</p>
+	 *
 	 * @param entityReportService
 	 *            the entityReportService to set
 	 */
@@ -46,14 +54,7 @@ public class ReportDataSourceWebscript extends AbstractWebScript {
 		this.entityReportService = entityReportService;
 	}
 
-	/**
-	 * @param req
-	 *            the req
-	 * @param res
-	 *            the res
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
 

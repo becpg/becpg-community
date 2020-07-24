@@ -67,9 +67,10 @@ import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.repository.L2CacheSupport;
 
 /**
+ * <p>RemoteEntityServiceImpl class.</p>
  *
  * @author matthieu
- *
+ * @version $Id: $Id
  */
 @Service("remoteEntityService")
 public class RemoteEntityServiceImpl implements RemoteEntityService {
@@ -123,22 +124,34 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 
 	private static final Log logger = LogFactory.getLog(RemoteEntityServiceImpl.class);
 
+	/** {@inheritDoc} */
 	@Override
 	public void getEntity(NodeRef entityNodeRef, OutputStream out, RemoteEntityFormat format) throws BeCPGException {
 		getEntity(entityNodeRef, out, format, null, null);
 	}
 
 	
+	/**
+	 * <p>Getter for the field <code>transactionService</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.transaction.TransactionService} object.
+	 */
 	public TransactionService getTransactionService() {
 		return transactionService;
 	}
 
+	/**
+	 * <p>Getter for the field <code>policyBehaviourFilter</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.repo.policy.BehaviourFilter} object.
+	 */
 	public BehaviourFilter getPolicyBehaviourFilter() {
 		return policyBehaviourFilter;
 	}
 
 
 
+	/** {@inheritDoc} */
 	@Override
 	public void getEntity(NodeRef entityNodeRef, OutputStream out, RemoteEntityFormat format, List<String> fields, List<String> lists)
 			throws BeCPGException {
@@ -208,6 +221,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef createOrUpdateEntity(NodeRef entityNodeRef, InputStream in, RemoteEntityFormat format,
 			EntityProviderCallBack entityProviderCallBack) throws BeCPGException {
@@ -233,6 +247,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 		throw new BeCPGException("Unknown format " + format.toString());
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef internalCreateOrUpdateEntity(NodeRef entityNodeRef, NodeRef destNodeRef, InputStream in, RemoteEntityFormat format,
 			EntityProviderCallBack entityProviderCallBack, Map<NodeRef, NodeRef> cache) {
@@ -276,6 +291,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void listEntities(List<NodeRef> entities, OutputStream result, RemoteEntityFormat format, List<String> fields) throws BeCPGException {
 		if (format.equals(RemoteEntityFormat.xml)) {
@@ -307,6 +323,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void getEntityData(NodeRef entityNodeRef, OutputStream result, RemoteEntityFormat format, List<String> fields) throws BeCPGException {
 		if (RemoteEntityFormat.xml.equals(format)) {
@@ -339,6 +356,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void addOrUpdateEntityData(NodeRef entityNodeRef, InputStream in, RemoteEntityFormat format) throws BeCPGException {
 		if (RemoteEntityFormat.xml.equals(format)) {

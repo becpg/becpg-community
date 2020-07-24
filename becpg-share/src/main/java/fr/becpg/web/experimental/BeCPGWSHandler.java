@@ -16,6 +16,12 @@ import javax.websocket.server.ServerEndpoint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+/**
+ * <p>BeCPGWSHandler class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @ServerEndpoint(value = "/becpgws/{store_type}/{store_id}/{id}/{user}")
 public class BeCPGWSHandler {
 
@@ -23,6 +29,13 @@ public class BeCPGWSHandler {
 
 	private static final Log logger = LogFactory.getLog(BeCPGWSHandler.class);
 
+	/**
+	 * <p>onOpen.</p>
+	 *
+	 * @param session a {@link javax.websocket.Session} object.
+	 * @param room a {@link java.lang.String} object.
+	 * @param user a {@link java.lang.String} object.
+	 */
 	@OnOpen
 	public void onOpen(Session session, @PathParam("id") final String room, @PathParam("user") final String user) {
 		logger.debug("Connected ... " + session.getId() + " to room " + room);
@@ -45,6 +58,12 @@ public class BeCPGWSHandler {
 		}
 	}
 
+	/**
+	 * <p>onMessage.</p>
+	 *
+	 * @param message a {@link java.lang.String} object.
+	 * @param session a {@link javax.websocket.Session} object.
+	 */
 	@OnMessage
 	public void onMessage(String message, Session session) {
 
@@ -63,6 +82,12 @@ public class BeCPGWSHandler {
 
 	}
 
+	/**
+	 * <p>onClose.</p>
+	 *
+	 * @param session a {@link javax.websocket.Session} object.
+	 * @param closeReason a {@link javax.websocket.CloseReason} object.
+	 */
 	@OnClose
 	public void onClose(Session session, CloseReason closeReason) {
 		logger.debug(String.format("Session %s closed because of %s", session.getId(), closeReason));
@@ -83,6 +108,12 @@ public class BeCPGWSHandler {
 		}
 	}
 
+	/**
+	 * <p>onError.</p>
+	 *
+	 * @param session a {@link javax.websocket.Session} object.
+	 * @param thr a {@link java.lang.Throwable} object.
+	 */
 	@OnError
 	public void onError(Session session, Throwable thr) {
 		if (!session.isOpen()) {

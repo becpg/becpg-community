@@ -71,7 +71,7 @@ import fr.becpg.repo.helper.TranslateHelper;
  * Entity Service implementation
  *
  * @author querephi
- *
+ * @version $Id: $Id
  */
 @Service("entityService")
 public class EntityServiceImpl implements EntityService {
@@ -108,14 +108,9 @@ public class EntityServiceImpl implements EntityService {
 	}
 
 	/**
-	 * Load an image in the folder Images.
+	 * {@inheritDoc}
 	 *
-	 * @param nodeRef
-	 *            the node ref
-	 * @param imgName
-	 *            the img name
-	 * @return the image
-	 * @throws BeCPGException
+	 * Load an image in the folder Images.
 	 */
 	@Override
 	public NodeRef getImage(NodeRef nodeRef, String imgName) throws BeCPGException {
@@ -137,13 +132,8 @@ public class EntityServiceImpl implements EntityService {
 		return imageNodeRef;
 	}
 
-	/**
-	 *
-	 * @param nodeRef
-	 * @param imgName
-	 * @return List of images nodeRefs
-	 * @throws BeCPGException
-	 */
+	
+	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> getImages(NodeRef nodeRef) throws BeCPGException {
 
@@ -159,6 +149,7 @@ public class EntityServiceImpl implements EntityService {
 		return ret;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getImageFolder(NodeRef nodeRef) throws BeCPGException {
 
@@ -182,11 +173,9 @@ public class EntityServiceImpl implements EntityService {
 	}
 
 	/**
-	 * Load the image associated to the node.
+	 * {@inheritDoc}
 	 *
-	 * @param nodeRef
-	 *            the node ref
-	 * @return the image
+	 * Load the image associated to the node.
 	 */
 	@Override
 	public byte[] getImage(NodeRef nodeRef) {
@@ -226,6 +215,7 @@ public class EntityServiceImpl implements EntityService {
 		return "jpg";
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void writeImages(NodeRef nodeRef, Map<String, byte[]> images) throws BeCPGException {
 
@@ -265,6 +255,7 @@ public class EntityServiceImpl implements EntityService {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getEntityDefaultImage(NodeRef entityNodeRef) throws BeCPGException {
 
@@ -285,6 +276,7 @@ public class EntityServiceImpl implements EntityService {
 		return getImage(entityNodeRef, getDefaultImageName(nodeService.getType(entityNodeRef)));
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String getDefaultImageName(QName entityTypeQName) {
 		String imgName = TranslateHelper.getTranslatedPath(RepoConsts.PATH_LOGO_IMAGE + "." + entityTypeQName.getLocalName());
@@ -298,6 +290,7 @@ public class EntityServiceImpl implements EntityService {
 		return imgName;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef createDefaultImage(NodeRef entityNodeRef) {
 		NodeRef imagesFolderNodeRef = getOrCreateImageFolder(entityNodeRef);
@@ -313,16 +306,19 @@ public class EntityServiceImpl implements EntityService {
 				.getChildRef();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean hasAssociatedImages(QName type) {
 		return entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITY_V2);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getOrCreateDocumentsFolder(NodeRef entityNodeRef) {
 		return getDocumentsFolder(entityNodeRef, true);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getDocumentsFolder(NodeRef entityNodeRef, boolean create) {
 		String documentsFolderName = TranslateHelper.getTranslatedPath(RepoConsts.PATH_DOCUMENTS);
@@ -333,6 +329,7 @@ public class EntityServiceImpl implements EntityService {
 		return documentsFolderNodeRef;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef createOrCopyFrom(final NodeRef sourceNodeRef, final NodeRef parentNodeRef, final QName entityType, final String entityName) {
 		NodeRef ret;
@@ -382,11 +379,13 @@ public class EntityServiceImpl implements EntityService {
 		return workingCopyName;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void copyFiles(NodeRef sourceNodeRef, NodeRef targetNodeRef) {
 		copyOrMoveFiles(sourceNodeRef, targetNodeRef, true);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void moveFiles(NodeRef sourceNodeRef, NodeRef targetNodeRef) {
 		copyOrMoveFiles(sourceNodeRef, targetNodeRef, false);
@@ -446,6 +445,7 @@ public class EntityServiceImpl implements EntityService {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void deleteFiles(NodeRef entityNodeRef, boolean deleteArchivedNodes) {
 
@@ -472,6 +472,7 @@ public class EntityServiceImpl implements EntityService {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void deleteDataLists(NodeRef entityNodeRef, boolean deleteArchivedNodes) {
 
@@ -481,6 +482,7 @@ public class EntityServiceImpl implements EntityService {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getEntityNodeRef(NodeRef nodeRef, QName itemType) {
 		return getEntityNodeRef(nodeRef, itemType, new HashSet<NodeRef>());
@@ -527,6 +529,7 @@ public class EntityServiceImpl implements EntityService {
 		return null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean changeEntityListStates(NodeRef entityNodeRef, EntityListState state) {
 

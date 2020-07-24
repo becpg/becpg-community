@@ -22,11 +22,12 @@ import java.util.List;
 
 import fr.becpg.repo.RepoConsts;
 
-/**
- * 
- * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
- *
- */
+ /**
+  * <p>ListValuePage class.</p>
+  *
+  * @author "Matthieu Laborie"
+  * @version $Id: $Id
+  */
  public class ListValuePage {
         
         private final List<ListValueEntry> results;
@@ -36,6 +37,15 @@ import fr.becpg.repo.RepoConsts;
         
         
         @SuppressWarnings("unchecked")
+		/**
+		 * <p>Constructor for ListValuePage.</p>
+		 *
+		 * @param fullList a {@link java.util.List} object.
+		 * @param pageNum a {@link java.lang.Integer} object.
+		 * @param pageSize a {@link java.lang.Integer} object.
+		 * @param listValueExtractor a {@link fr.becpg.repo.listvalue.ListValueExtractor} object.
+		 * @param <T> a T object.
+		 */
 		public <T> ListValuePage(List<T> fullList, Integer pageNum, Integer pageSize, ListValueExtractor<T> listValueExtractor) {
         	if(pageNum==null || pageNum <1){
         		pageNum = 1;
@@ -69,18 +79,38 @@ import fr.becpg.repo.RepoConsts;
      
 
 
+		/**
+		 * <p>Getter for the field <code>results</code>.</p>
+		 *
+		 * @return a {@link java.util.List} object.
+		 */
 		public List<ListValueEntry> getResults() {
 			return results;
 		}
 
+		/**
+		 * <p>getPageNumber.</p>
+		 *
+		 * @return a {@link java.lang.Integer} object.
+		 */
 		public Integer getPageNumber() {
 			return page;
 		}
 
+		/**
+		 * <p>getObjectsPerPage.</p>
+		 *
+		 * @return a {@link java.lang.Integer} object.
+		 */
 		public Integer getObjectsPerPage() {
 			return pageSize;
 		}
 
+		/**
+		 * <p>Getter for the field <code>fullListSize</code>.</p>
+		 *
+		 * @return a {@link java.lang.Integer} object.
+		 */
 		public Integer getFullListSize() {
 			return fullListSize;
 		}

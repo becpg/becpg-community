@@ -22,6 +22,12 @@ import fr.becpg.repo.listvalue.ListValueExtractor;
 import fr.becpg.repo.listvalue.ListValuePage;
 import fr.becpg.repo.listvalue.ListValuePlugin;
 
+/**
+ * <p>NotificationRuleListValue class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class NotificationRuleListValue implements ListValuePlugin {
 
@@ -36,11 +42,13 @@ public class NotificationRuleListValue implements ListValuePlugin {
 	private ServiceRegistry serviceRegistry;
 	
 	
+	/** {@inheritDoc} */
 	@Override
 	public String[] getHandleSourceTypes() {
 		return new String [] { ENTITY_TYPE_VALUE, PROP_DATE_VALUE };
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public ListValuePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
 		switch(sourceType){

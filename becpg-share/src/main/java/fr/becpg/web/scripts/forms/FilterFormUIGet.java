@@ -27,8 +27,10 @@ import org.springframework.extensions.webscripts.connector.Response;
 import org.springframework.extensions.webscripts.json.JSONWriter;
 
 /**
- * 
+ * <p>FilterFormUIGet class.</p>
+ *
  * @author Matthieu
+ * @version $Id: $Id
  */
 public class FilterFormUIGet extends FormUIGet {
 	
@@ -38,6 +40,7 @@ public class FilterFormUIGet extends FormUIGet {
 
 	private static final Log logger = LogFactory.getLog(FilterFormUIGet.class);
 
+	/** {@inheritDoc} */
 	@SuppressWarnings("unchecked")
 	protected Map<String, Object> generateModel(String itemKind, String itemId, WebScriptRequest request, Status status, Cache cache) {
 		Map<String, Object> model = null;
@@ -217,18 +220,9 @@ public class FilterFormUIGet extends FormUIGet {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * Generates the POST body to send to the FormService.
-	 * 
-	 * @param itemKind
-	 *            The form item kind
-	 * @param itemId
-	 *            The form item id
-	 * @param visibleFields
-	 *            The list of field names to return or null to return all fields
-	 * @param formConfig
-	 *            The form configuration
-	 * @return ByteArrayInputStream representing the POST body
-	 * @throws IOException
 	 */
 	protected ByteArrayInputStream generateFormDefPostBody(String itemKind, String itemId, List<String> visibleFields, FormConfigElement formConfig)
 			throws IOException {
@@ -286,6 +280,13 @@ public class FilterFormUIGet extends FormUIGet {
 	}
 	
 	
+    /**
+     * <p>testFormConfig.</p>
+     *
+     * @param itemId a {@link java.lang.String} object.
+     * @param formId a {@link java.lang.String} object.
+     * @return a {@link org.alfresco.web.config.forms.FormConfigElement} object.
+     */
     protected FormConfigElement testFormConfig(String itemId, String formId)
     {
         FormConfigElement formConfig = null;

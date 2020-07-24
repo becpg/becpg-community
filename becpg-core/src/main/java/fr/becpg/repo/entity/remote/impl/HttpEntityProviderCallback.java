@@ -31,6 +31,12 @@ import fr.becpg.repo.entity.remote.EntityProviderCallBack;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
 
+/**
+ * <p>HttpEntityProviderCallback class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class HttpEntityProviderCallback implements EntityProviderCallBack {
 
 	private static final Log logger = LogFactory.getLog(HttpEntityProviderCallback.class);
@@ -45,6 +51,14 @@ public class HttpEntityProviderCallback implements EntityProviderCallBack {
 
 	private Map<NodeRef, NodeRef> visitedNodes = new HashMap<>();
 
+	/**
+	 * <p>Constructor for HttpEntityProviderCallback.</p>
+	 *
+	 * @param remoteServer a {@link java.lang.String} object.
+	 * @param remoteUser a {@link java.lang.String} object.
+	 * @param remotePwd a {@link java.lang.String} object.
+	 * @param remoteEntityService a {@link fr.becpg.repo.entity.remote.RemoteEntityService} object.
+	 */
 	public HttpEntityProviderCallback(String remoteServer, String remoteUser, String remotePwd, RemoteEntityService remoteEntityService) {
 		super();
 		this.remoteServer = remoteServer;
@@ -53,11 +67,13 @@ public class HttpEntityProviderCallback implements EntityProviderCallBack {
 		this.remoteEntityService = remoteEntityService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef provideNode(NodeRef nodeRef, Map<NodeRef, NodeRef> cache) throws BeCPGException {
 		return provideNode(nodeRef, null, cache);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef provideNode(NodeRef nodeRef, NodeRef destNodeRef, Map<NodeRef, NodeRef> cache) throws BeCPGException {
 		try {
@@ -117,6 +133,7 @@ public class HttpEntityProviderCallback implements EntityProviderCallBack {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void provideContent(NodeRef origNodeRef, NodeRef destNodeRef) throws BeCPGException {
 

@@ -48,14 +48,24 @@ import fr.becpg.repo.project.ProjectActivityService;
 import fr.becpg.repo.project.ProjectNotificationService;
 import fr.becpg.repo.repository.AlfrescoRepository;
 
+/**
+ * <p>ProjectActivityServiceImpl class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service("projectActivityService")
 public class ProjectActivityServiceImpl implements ProjectActivityService, EntityActivityListener, EntityActivityPlugin {
 
 	private static final String PROJECT_ACTIVITY_TYPE = "fr.becpg.project";
 
+	/** Constant <code>PROJECT_STATE_ACTIVITY="PROJECT_ACTIVITY_TYPE + .project-state"</code> */
 	public static final String PROJECT_STATE_ACTIVITY = PROJECT_ACTIVITY_TYPE + ".project-state";
+	/** Constant <code>TASK_STATE_ACTIVITY="PROJECT_ACTIVITY_TYPE + .task-state"</code> */
 	public static final String TASK_STATE_ACTIVITY = PROJECT_ACTIVITY_TYPE + ".task-state";
+	/** Constant <code>DELIVERABLE_STATE_ACTIVITY="PROJECT_ACTIVITY_TYPE + .deliverable-st"{trunked}</code> */
 	public static final String DELIVERABLE_STATE_ACTIVITY = PROJECT_ACTIVITY_TYPE + ".deliverable-state";
+	/** Constant <code>COMMENT_CREATED_ACTIVITY="org.alfresco.comments.comment-created"</code> */
 	public static final String COMMENT_CREATED_ACTIVITY = "org.alfresco.comments.comment-created";
 
 	private static final Log logger = LogFactory.getLog(ProjectActivityServiceImpl.class);
@@ -93,6 +103,7 @@ public class ProjectActivityServiceImpl implements ProjectActivityService, Entit
 	@Autowired
 	EntityDictionaryService entityDictionaryService;
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isMatchingStateProperty(QName propName){
 		return ProjectModel.PROP_PROJECT_STATE.isMatch(propName) ||  ProjectModel.PROP_TL_STATE.isMatch(propName) || ProjectModel.PROP_DL_STATE.isMatch(propName);
@@ -100,6 +111,7 @@ public class ProjectActivityServiceImpl implements ProjectActivityService, Entit
 
 	
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isIgnoreStateProperty(QName propName) {
 		return ProjectModel.PROP_TL_STATE.isMatch(propName) || ProjectModel.PROP_DL_STATE.isMatch(propName);
@@ -107,12 +119,14 @@ public class ProjectActivityServiceImpl implements ProjectActivityService, Entit
 
 	
 	
+	/** {@inheritDoc} */
 	@Override
 	public boolean isMatchingEntityType(QName entityType) {
 		return entityDictionaryService.isSubClass(entityType, ProjectModel.TYPE_PROJECT);
 	}
 
 	
+	/** {@inheritDoc} */
 	@Override
 	public void postTaskStateChangeActivity(NodeRef taskNodeRef,NodeRef commentNodeRef, String beforeState, String afterState, boolean notifyOnly) {
 
@@ -147,6 +161,7 @@ public class ProjectActivityServiceImpl implements ProjectActivityService, Entit
 	
 
 
+	/** {@inheritDoc} */
 	@Override
 	public void postDeliverableStateChangeActivity(NodeRef deliverableNodeRef, String beforeState, String afterState, boolean notifyOnly) {
 
@@ -201,6 +216,7 @@ public class ProjectActivityServiceImpl implements ProjectActivityService, Entit
 		return entityListDAO.getEntity(listItemNodeRef);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void notify(NodeRef entityNodeRef, fr.becpg.repo.activity.data.ActivityListDataItem activityListDataItem) {
 		if (fr.becpg.repo.activity.data.ActivityType.Comment.equals(activityListDataItem.getActivityType())) {

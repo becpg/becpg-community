@@ -5,12 +5,12 @@ package fr.becpg.config.mapping;
 
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 
-// TODO: Auto-generated Javadoc
+
 /**
  * Class that represent the mapping for importing a property or an association (node or characteristic or file)
- * 
  *
  * @author querephi
+ * @version $Id: $Id
  */
 public abstract class AbstractAttributeMapping{
 

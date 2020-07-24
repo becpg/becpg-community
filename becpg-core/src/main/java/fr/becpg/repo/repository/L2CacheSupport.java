@@ -25,6 +25,12 @@ import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.RepoConsts;
 
+/**
+ * <p>L2CacheSupport class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class L2CacheSupport {
 
 	private static final ThreadLocal<L2CacheThreadInfo> threadLocalCache = ThreadLocal.withInitial(() -> {
@@ -35,6 +41,12 @@ public class L2CacheSupport {
 		void run();
 	}
 
+	/**
+	 * <p>getCurrentThreadCache.</p>
+	 *
+	 * @param <T> a T object.
+	 * @return a {@link java.util.Map} object.
+	 */
 	public static <T> Map<NodeRef, RepositoryEntity> getCurrentThreadCache() {
 		if (threadLocalCache.get().isThreadCacheEnable) {
 			return threadLocalCache.get().cache;
@@ -42,22 +54,48 @@ public class L2CacheSupport {
 		return new HashMap<>();
 	}
 
+	/**
+	 * <p>isCacheOnlyEnable.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public static boolean isCacheOnlyEnable() {
 		return threadLocalCache.get().isThreadCacheEnable && threadLocalCache.get().isCacheOnlyEnable;
 	}
 
+	/**
+	 * <p>generateNodeRef.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public static NodeRef generateNodeRef() {
 		return new NodeRef(RepoConsts.SPACES_STORE, "simu-" + UUID.randomUUID().toString());
 	}
 
+	/**
+	 * <p>isThreadCacheEnable.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public static boolean isThreadCacheEnable() {
 		return threadLocalCache.get().isThreadCacheEnable;
 	}
 
+	/**
+	 * <p>isThreadLockEnable.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public static boolean isThreadLockEnable() {
 		return threadLocalCache.get().isThreadLockEnable;
 	}
 
+	/**
+	 * <p>doInCacheContext.</p>
+	 *
+	 * @param action a {@link fr.becpg.repo.repository.L2CacheSupport.Action} object.
+	 * @param isCacheOnlyEnable a boolean.
+	 */
 	public static void doInCacheContext(Action action, boolean isCacheOnlyEnable) {
 		L2CacheThreadInfo previousContext = threadLocalCache.get();
 		try {
@@ -68,6 +106,13 @@ public class L2CacheSupport {
 		}
 	}
 
+	/**
+	 * <p>doInCacheContext.</p>
+	 *
+	 * @param action a {@link fr.becpg.repo.repository.L2CacheSupport.Action} object.
+	 * @param isCacheOnlyEnable a boolean.
+	 * @param isThreadLockEnable a boolean.
+	 */
 	public static void doInCacheContext(Action action, boolean isCacheOnlyEnable, boolean isThreadLockEnable) {
 		L2CacheThreadInfo previousContext = threadLocalCache.get();
 		try {

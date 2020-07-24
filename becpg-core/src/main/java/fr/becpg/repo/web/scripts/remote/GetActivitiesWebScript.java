@@ -56,10 +56,11 @@ import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
  * Get activities as XML
  *
  * @author matthieu
- *
+ * @version $Id: $Id
  */
 public class GetActivitiesWebScript extends AbstractWebScript {
 
+	/** Constant <code>PARAM_FEED_ID="feedDBID"</code> */
 	protected static final String PARAM_FEED_ID = "feedDBID";
 
 	private ActivityService activityService;
@@ -72,28 +73,54 @@ public class GetActivitiesWebScript extends AbstractWebScript {
 
 	private ContentService contentService;
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>namespaceService</code>.</p>
+	 *
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
+	 */
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>contentService</code>.</p>
+	 *
+	 * @param contentService a {@link org.alfresco.service.cmr.repository.ContentService} object.
+	 */
 	public void setContentService(ContentService contentService) {
 		this.contentService = contentService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>activityService</code>.</p>
+	 *
+	 * @param activityService a {@link org.alfresco.service.cmr.activities.ActivityService} object.
+	 */
 	public void setActivityService(ActivityService activityService) {
 		this.activityService = activityService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>siteService</code>.</p>
+	 *
+	 * @param siteService a {@link org.alfresco.service.cmr.site.SiteService} object.
+	 */
 	public void setSiteService(SiteService siteService) {
 		this.siteService = siteService;
 	}
 
 	private static Log logger = LogFactory.getLog(GetActivitiesWebScript.class);
 
+	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
 
@@ -140,6 +167,13 @@ public class GetActivitiesWebScript extends AbstractWebScript {
 
 	}
 
+	/**
+	 * <p>visit.</p>
+	 *
+	 * @param feedEntries a {@link org.alfresco.query.PagingResults} object.
+	 * @param result a {@link java.io.OutputStream} object.
+	 * @throws javax.xml.stream.XMLStreamException if any.
+	 */
 	public void visit(PagingResults<ActivityFeedEntity> feedEntries, OutputStream result) throws XMLStreamException {
 
 		// Create an output factory

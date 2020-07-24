@@ -26,6 +26,12 @@ import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
 
+/**
+ * <p>LabelListDataItem class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @AlfType
 @AlfQname(qname = "pack:labelingList")
 public class LabelListDataItem extends AbstractManualDataItem {
@@ -38,44 +44,85 @@ public class LabelListDataItem extends AbstractManualDataItem {
 	private String type;
 	private String position;
 	
+	/**
+	 * <p>Getter for the field <code>label</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	@AlfSingleAssoc
 	@AlfQname(qname="pack:llLabel")
 	@DataListIdentifierAttr
 	public NodeRef getLabel() {
 		return label;
 	}
+	/**
+	 * <p>Setter for the field <code>label</code>.</p>
+	 *
+	 * @param label a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void setLabel(NodeRef label) {
 		this.label = label;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>type</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="pack:llType")
 	public String getType() {
 		return type;
 	}
+	/**
+	 * <p>Setter for the field <code>type</code>.</p>
+	 *
+	 * @param type a {@link java.lang.String} object.
+	 */
 	public void setType(String type) {
 		this.type = type;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>position</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="pack:llPosition")
 	public String getPosition() {
 		return position;
 	}
+	/**
+	 * <p>Setter for the field <code>position</code>.</p>
+	 *
+	 * @param position a {@link java.lang.String} object.
+	 */
 	public void setPosition(String position) {
 		this.position = position;
 	}
 	
+	/**
+	 * <p>Constructor for LabelListDataItem.</p>
+	 */
 	public LabelListDataItem(){
 		super();
 	}
 	
+	/**
+	 * <p>Constructor for LabelListDataItem.</p>
+	 *
+	 * @param label a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param type a {@link java.lang.String} object.
+	 * @param position a {@link java.lang.String} object.
+	 */
 	public LabelListDataItem(NodeRef label, String type, String  position) {
 		super();
 		this.label = label;
 		this.type = type;
 		this.position = position;
 	}
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -85,6 +132,7 @@ public class LabelListDataItem extends AbstractManualDataItem {
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		return result;
 	}
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -111,6 +159,7 @@ public class LabelListDataItem extends AbstractManualDataItem {
 			return false;
 		return true;
 	}
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "LabelListDataItem [label=" + label + ", type=" + type + ", position=" + position + "]";

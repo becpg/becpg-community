@@ -30,6 +30,12 @@ import fr.becpg.repo.formulation.spel.SpelHelper;
 import fr.becpg.repo.helper.AssociationService;
 
 
+/**
+ * <p>ScriptsFormulationHandler class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class ScriptsFormulationHandler extends FormulationBaseHandler<FormulatedEntity> {
 
 	private NodeService nodeService;
@@ -45,36 +51,72 @@ public class ScriptsFormulationHandler extends FormulationBaseHandler<Formulated
 	private AssociationService associationService;
 	
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>namespaceService</code>.</p>
+	 *
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
+	 */
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>scriptService</code>.</p>
+	 *
+	 * @param scriptService a {@link org.alfresco.service.cmr.repository.ScriptService} object.
+	 */
 	public void setScriptService(ScriptService scriptService) {
 		this.scriptService = scriptService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>formulaService</code>.</p>
+	 *
+	 * @param formulaService a {@link fr.becpg.repo.formulation.spel.SpelFormulaService} object.
+	 */
 	public void setFormulaService(SpelFormulaService formulaService) {
 		this.formulaService = formulaService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>contentService</code>.</p>
+	 *
+	 * @param contentService a {@link org.alfresco.service.cmr.repository.ContentService} object.
+	 */
 	public void setContentService(ContentService contentService) {
 		this.contentService = contentService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>associationService</code>.</p>
+	 *
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object.
+	 */
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>logger</code>.</p>
+	 *
+	 * @param logger a {@link org.apache.commons.logging.Log} object.
+	 */
 	public static void setLogger(Log logger) {
 		ScriptsFormulationHandler.logger = logger;
 	}
 
 	private static Log logger = LogFactory.getLog(ScriptsFormulationHandler.class);
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean process(FormulatedEntity entity) throws FormulateException {
 

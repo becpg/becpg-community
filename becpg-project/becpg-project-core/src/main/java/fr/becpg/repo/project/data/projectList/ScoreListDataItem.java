@@ -26,9 +26,9 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 /**
  * Score list of project
- * 
+ *
  * @author quere
- * 
+ * @version $Id: $Id
  */
 @AlfType
 @AlfQname(qname = "pjt:scoreList")
@@ -43,44 +43,91 @@ public class ScoreListDataItem extends BeCPGDataObject {
 	private Integer score;
 
 	
+	/**
+	 * <p>Getter for the field <code>criterion</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:slCriterion")
 	public String getCriterion() {
 		return criterion;
 	}
 
+	/**
+	 * <p>Setter for the field <code>criterion</code>.</p>
+	 *
+	 * @param criterion a {@link java.lang.String} object.
+	 */
 	public void setCriterion(String criterion) {
 		this.criterion = criterion;
 	}
 
+	/**
+	 * <p>Getter for the field <code>weight</code>.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:slWeight")
 	public Integer getWeight() {
 		return weight;
 	}
 
+	/**
+	 * <p>Setter for the field <code>weight</code>.</p>
+	 *
+	 * @param weight a {@link java.lang.Integer} object.
+	 */
 	public void setWeight(Integer weight) {
 		this.weight = weight;
 	}
 
+	/**
+	 * <p>Getter for the field <code>score</code>.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:slScore")
 	public Integer getScore() {
 		return score;
 	}
 
+	/**
+	 * <p>Setter for the field <code>score</code>.</p>
+	 *
+	 * @param score a {@link java.lang.Integer} object.
+	 */
 	public void setScore(Integer score) {
 		this.score = score;
 	}
 	
+	/**
+	 * <p>Constructor for ScoreListDataItem.</p>
+	 */
 	public ScoreListDataItem() {
 		super();
 	}
 
+	/**
+	 * <p>Constructor for ScoreListDataItem.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param name a {@link java.lang.String} object.
+	 */
 	public ScoreListDataItem(NodeRef nodeRef, String name) {
 		super(nodeRef, name);
 	}
 
+	/**
+	 * <p>Constructor for ScoreListDataItem.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param criterion a {@link java.lang.String} object.
+	 * @param weight a {@link java.lang.Integer} object.
+	 * @param score a {@link java.lang.Integer} object.
+	 */
 	public ScoreListDataItem(NodeRef nodeRef, String criterion, Integer weight, Integer score) {
 		super();
 		this.nodeRef = nodeRef;
@@ -89,6 +136,11 @@ public class ScoreListDataItem extends BeCPGDataObject {
 		this.score = score;
 	}
 	
+	/**
+	 * <p>Constructor for ScoreListDataItem.</p>
+	 *
+	 * @param s a {@link fr.becpg.repo.project.data.projectList.ScoreListDataItem} object.
+	 */
 	public ScoreListDataItem(ScoreListDataItem s) {
 		super();
 		this.nodeRef = s.getNodeRef();
@@ -97,11 +149,13 @@ public class ScoreListDataItem extends BeCPGDataObject {
 		this.score = s.getScore();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "ScoreListDataItem [criterion=" + criterion + ", weight=" + weight + ", score=" + score + "]";
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -112,6 +166,7 @@ public class ScoreListDataItem extends BeCPGDataObject {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

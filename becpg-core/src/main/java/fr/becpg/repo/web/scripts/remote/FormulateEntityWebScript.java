@@ -35,16 +35,22 @@ import fr.becpg.repo.formulation.FormulationExecutor.FormulationExecutorState;
  * Formulate entity
  *
  * @author matthieu
- *
+ * @version $Id: $Id
  */
 public class FormulateEntityWebScript extends AbstractEntityWebScript {
 
 	FormulationExecutor formulationExecutor;
 
+	/**
+	 * <p>Setter for the field <code>formulationExecutor</code>.</p>
+	 *
+	 * @param formulationExecutor a {@link fr.becpg.repo.formulation.FormulationExecutor} object.
+	 */
 	public void setFormulationExecutor(FormulationExecutor formulationExecutor) {
 		this.formulationExecutor = formulationExecutor;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
 
@@ -75,6 +81,11 @@ public class FormulateEntityWebScript extends AbstractEntityWebScript {
 
 	}
 
+	/**
+	 * <p>handleFormulationError.</p>
+	 *
+	 * @param e a {@link fr.becpg.repo.formulation.FormulateException} object.
+	 */
 	protected void handleFormulationError(FormulateException e) {
 
 		logger.error(e, e);

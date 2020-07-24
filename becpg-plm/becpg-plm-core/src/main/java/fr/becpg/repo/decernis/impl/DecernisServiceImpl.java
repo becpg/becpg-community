@@ -52,6 +52,12 @@ import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 
+/**
+ * <p>DecernisServiceImpl class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service("decernisService")
 public class DecernisServiceImpl implements DecernisService {
 
@@ -76,6 +82,9 @@ public class DecernisServiceImpl implements DecernisService {
 
 	private RestTemplate restTemplate;
 
+	/**
+	 * <p>Constructor for DecernisServiceImpl.</p>
+	 */
 	public DecernisServiceImpl() {
 		super();
 
@@ -496,6 +505,7 @@ public class DecernisServiceImpl implements DecernisService {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<ReqCtrlListDataItem> extractDecernisRequirements(ProductData product, @Nonnull Set<String> countries, @Nonnull Set<String> usages) {
 		List<ReqCtrlListDataItem> ret = new LinkedList<>();
@@ -542,6 +552,7 @@ public class DecernisServiceImpl implements DecernisService {
 		return ret;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String createDecernisChecksum(Set<String> countries, Set<String> usages) {
 		StringBuilder key = new StringBuilder();

@@ -24,21 +24,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * 
- * <!-- Chains -->
- * 
- * <util:list id="chainAList" scope="singleton" value-type="Handler"> <ref
- * bean="handler1"/> <ref bean="handler2"/> </util:list>
- * 
- * <bean id="chainA" class="Chain" init-method="init"> <property
- * name="handlers"> <ref bean="chainAList"/> </property> <property
- * name="formulationService" ref="formulationService"/> <property
- * name="contextClass" value="EntityCLass" /> </bean>
- * 
+ *
  * Chain of responsibility executor.
- * 
+ *
  * @param <T>
  *            Any type passed as context information.
+ * @author matthieu
+ * @version $Id: $Id
  */
 public class FormulationChain<T extends FormulatedEntity> {
 	private final Log logger = LogFactory.getLog(FormulationChain.class);
@@ -53,26 +45,54 @@ public class FormulationChain<T extends FormulatedEntity> {
 
 	private boolean updateFormulatedDate = true;
 
+	/**
+	 * <p>Setter for the field <code>updateFormulatedDate</code>.</p>
+	 *
+	 * @param updateFormulatedDate a boolean.
+	 */
 	public void setUpdateFormulatedDate(boolean updateFormulatedDate) {
 		this.updateFormulatedDate = updateFormulatedDate;
 	}
 
+	/**
+	 * <p>Setter for the field <code>chainId</code>.</p>
+	 *
+	 * @param chainId a {@link java.lang.String} object.
+	 */
 	public void setChainId(String chainId) {
 		this.chainId = chainId;
 	}
 
+	/**
+	 * <p>Getter for the field <code>chainId</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getChainId() {
 		return chainId;
 	}
 
+	/**
+	 * <p>Setter for the field <code>formulationService</code>.</p>
+	 *
+	 * @param formulationService a {@link fr.becpg.repo.formulation.FormulationService} object.
+	 */
 	public void setFormulationService(FormulationService<T> formulationService) {
 		this.formulationService = formulationService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>contextClass</code>.</p>
+	 *
+	 * @param contextClass a {@link java.lang.Class} object.
+	 */
 	public void setContextClass(Class<T> contextClass) {
 		this.contextClass = contextClass;
 	}
 
+	/**
+	 * <p>init.</p>
+	 */
 	public void init() {
 		if (handlers != null && !handlers.isEmpty()) {
 			prepareHandlerChain();
@@ -80,6 +100,12 @@ public class FormulationChain<T extends FormulatedEntity> {
 		}
 	}
 
+	/**
+	 * <p>executeChain.</p>
+	 *
+	 * @param context a T object.
+	 * @throws fr.becpg.repo.formulation.FormulateException if any.
+	 */
 	public void executeChain(T context) throws FormulateException {
 		if (handlers != null && !handlers.isEmpty()) {
 			handlers.get(0).start(context);
@@ -88,7 +114,7 @@ public class FormulationChain<T extends FormulatedEntity> {
 
 	/**
 	 * Sets handler list. Intended to be injected.
-	 * 
+	 *
 	 * @param handlers
 	 *            Handler list.
 	 */
@@ -97,6 +123,11 @@ public class FormulationChain<T extends FormulatedEntity> {
 	}
 
 
+	/**
+	 * <p>Getter for the field <code>handlers</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	public List<FormulationHandler<T>> getHandlers() {
 		return handlers;
 	}
@@ -124,6 +155,11 @@ public class FormulationChain<T extends FormulatedEntity> {
 		}
 	}
 
+	/**
+	 * <p>shouldUpdateFormulatedDate.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public boolean shouldUpdateFormulatedDate() {
 		return updateFormulatedDate;
 	}

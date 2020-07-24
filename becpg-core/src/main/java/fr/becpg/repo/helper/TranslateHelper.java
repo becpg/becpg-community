@@ -27,6 +27,12 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.repo.RepoConsts;
 
+/**
+ * <p>TranslateHelper class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class TranslateHelper {
 
 	private static final String PATH_MSG_PFX = "path.";
@@ -56,10 +62,23 @@ public class TranslateHelper {
 
 	}
 
+	/**
+	 * <p>getTranslatedPathMLText.</p>
+	 *
+	 * @param name a {@link java.lang.String} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object.
+	 */
 	public static MLText getTranslatedPathMLText(String name) {
 		return getTranslatedKey(PATH_MSG_PFX + name.toLowerCase());
 	}
 
+	/**
+	 * <p>getTranslatedBoolean.</p>
+	 *
+	 * @param b a {@link java.lang.Boolean} object.
+	 * @param useDefaultLocale a boolean.
+	 * @return a {@link java.lang.String} object.
+	 */
 	public static String getTranslatedBoolean(Boolean b, boolean useDefaultLocale) {
 
 		String translation;
@@ -73,6 +92,14 @@ public class TranslateHelper {
 		return translation;
 	}
 
+	/**
+	 * <p>getConstraint.</p>
+	 *
+	 * @param constraintName a {@link java.lang.String} object.
+	 * @param value a {@link java.lang.String} object.
+	 * @param useDefaultLocale a boolean.
+	 * @return a {@link java.lang.String} object.
+	 */
 	public static String getConstraint(String constraintName, String value, boolean useDefaultLocale) {
 
 		if (useDefaultLocale) {
@@ -84,12 +111,12 @@ public class TranslateHelper {
 	}
 
 	/**
-	 * Returns the MLText with the translations for all the languages supported.
-	 * List defined in {@link RepoConsts}
+	 * <p>getTranslatedKey.</p>
 	 *
 	 * @param key
 	 *            the key to search for translations
-	 * @return
+	 * @return the MLText with the translations for all the languages supported.
+	 * List defined in {@link fr.becpg.repo.RepoConsts}
 	 */
 	public static MLText getTranslatedKey(String key) {
 		MLText res = new MLText();
@@ -107,6 +134,13 @@ public class TranslateHelper {
 		return res;
 	}
 
+	/**
+	 * <p>getTemplateModelMLText.</p>
+	 *
+	 * @param classQName a {@link org.alfresco.service.namespace.QName} object.
+	 * @param key a {@link java.lang.String} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object.
+	 */
 	public static MLText getTemplateModelMLText(QName classQName, String key) {
 		String localName = classQName.getLocalName();
 		String shortPrefix = classQName.getPrefixString().split(":")[0];
@@ -120,14 +154,34 @@ public class TranslateHelper {
 		return getTranslatedKey(shortPrefix + "_" + shortPrefix + "model.type." + shortPrefix + "_" + localName + "." + key);
 	}
 
+	/**
+	 * <p>getTemplateTitleMLText.</p>
+	 *
+	 * @param classQName a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object.
+	 */
 	public static MLText getTemplateTitleMLText(QName classQName) {
 		return getTemplateModelMLText(classQName, "title");
 	}
 
+	/**
+	 * <p>getTemplateDescriptionMLText.</p>
+	 *
+	 * @param classQName a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object.
+	 */
 	public static MLText getTemplateDescriptionMLText(QName classQName) {
 		return getTemplateModelMLText(classQName, "description");
 	}
 
+	/**
+	 * <p>getConstraint.</p>
+	 *
+	 * @param constraintName a {@link java.lang.String} object.
+	 * @param value a {@link java.lang.String} object.
+	 * @param locale a {@link java.util.Locale} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	public static String getConstraint(String constraintName, String value, Locale locale) {
 
 		String translation = null;

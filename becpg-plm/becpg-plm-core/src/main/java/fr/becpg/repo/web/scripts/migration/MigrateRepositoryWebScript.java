@@ -49,8 +49,9 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
  * The Class MigrateRepositoryWebScript.
- * 
+ *
  * @author querephi
+ * @version $Id: $Id
  */
 public class MigrateRepositoryWebScript extends AbstractWebScript {	
 	
@@ -83,7 +84,7 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 	
 	private static final String ACTION_CLEAN_VERSIONS = "cleanVersions";
 	
-	/** The logger. */
+	
 	private static final Log logger = LogFactory.getLog(MigrateRepositoryWebScript.class);
 
 
@@ -107,48 +108,99 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 	
 	protected RepoService repoService;
 
+	/**
+	 * <p>Setter for the field <code>associationService</code>.</p>
+	 *
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object.
+	 */
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>policyBehaviourFilter</code>.</p>
+	 *
+	 * @param policyBehaviourFilter a {@link org.alfresco.repo.policy.BehaviourFilter} object.
+	 */
 	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
 		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
 
+	/**
+	 * <p>Setter for the field <code>mlNodeService</code>.</p>
+	 *
+	 * @param mlNodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setMlNodeService(NodeService mlNodeService) {
 		this.mlNodeService = mlNodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>personService</code>.</p>
+	 *
+	 * @param personService a {@link org.alfresco.service.cmr.security.PersonService} object.
+	 */
 	public void setPersonService(PersonService personService) {
 		this.personService = personService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>namespaceService</code>.</p>
+	 *
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
+	 */
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>migrationService</code>.</p>
+	 *
+	 * @param migrationService a {@link fr.becpg.repo.migration.MigrationService} object.
+	 */
 	public void setMigrationService(MigrationService migrationService) {
 		this.migrationService = migrationService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
+	 */
 	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
+	/**
+	 * <p>Setter for the field <code>transactionService</code>.</p>
+	 *
+	 * @param transactionService a {@link org.alfresco.service.transaction.TransactionService} object.
+	 */
 	public void setTransactionService(TransactionService transactionService) {
 		this.transactionService = transactionService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>repoService</code>.</p>
+	 *
+	 * @param repoService a {@link fr.becpg.repo.helper.RepoService} object.
+	 */
 	public void setRepoService(RepoService repoService) {
 		this.repoService = repoService;
 	}
 
 
 
+	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws WebScriptException {
 		logger.debug("start migration");

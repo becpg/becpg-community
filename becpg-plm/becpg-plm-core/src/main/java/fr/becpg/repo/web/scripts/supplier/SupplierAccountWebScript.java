@@ -32,6 +32,12 @@ import fr.becpg.model.SystemGroup;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.mail.BeCPGMailService;
 
+/**
+ * <p>SupplierAccountWebScript class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class SupplierAccountWebScript extends AbstractWebScript {
 
 	private static final Log logger = LogFactory.getLog(SupplierAccountWebScript.class);
@@ -55,34 +61,70 @@ public class SupplierAccountWebScript extends AbstractWebScript {
 
 	AssociationService associationService;
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>personService</code>.</p>
+	 *
+	 * @param personService a {@link org.alfresco.service.cmr.security.PersonService} object.
+	 */
 	public void setPersonService(PersonService personService) {
 		this.personService = personService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>authorityService</code>.</p>
+	 *
+	 * @param authorityService a {@link org.alfresco.service.cmr.security.AuthorityService} object.
+	 */
 	public void setAuthorityService(AuthorityService authorityService) {
 		this.authorityService = authorityService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>transactionService</code>.</p>
+	 *
+	 * @param transactionService a {@link org.alfresco.service.transaction.TransactionService} object.
+	 */
 	public void setTransactionService(TransactionService transactionService) {
 		this.transactionService = transactionService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>mailService</code>.</p>
+	 *
+	 * @param mailService a {@link fr.becpg.repo.mail.BeCPGMailService} object.
+	 */
 	public void setMailService(BeCPGMailService mailService) {
 		this.mailService = mailService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>authenticationService</code>.</p>
+	 *
+	 * @param authenticationService a {@link org.alfresco.service.cmr.security.MutableAuthenticationService} object.
+	 */
 	public void setAuthenticationService(MutableAuthenticationService authenticationService) {
 		this.authenticationService = authenticationService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>associationService</code>.</p>
+	 *
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object.
+	 */
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
 

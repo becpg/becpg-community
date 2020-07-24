@@ -28,6 +28,12 @@ import fr.becpg.repo.variant.model.VariantData;
 import fr.becpg.repo.variant.model.VariantDataItem;
 import fr.becpg.repo.variant.model.VariantEntity;
 
+/**
+ * <p>DataListItemSpelContext class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class  DataListItemSpelContext<T extends RepositoryEntity> implements SpelFormulaContext<T>{
 	
 	private  T entity;
@@ -36,30 +42,60 @@ public class  DataListItemSpelContext<T extends RepositoryEntity> implements Spe
 	
 
 
+	/**
+	 * <p>Constructor for DataListItemSpelContext.</p>
+	 *
+	 * @param formulaService a {@link fr.becpg.repo.formulation.spel.SpelFormulaService} object.
+	 */
 	public DataListItemSpelContext(SpelFormulaService formulaService) {
 		this.formulaService = formulaService;
 	}
 
 
+	/**
+	 * <p>Getter for the field <code>entity</code>.</p>
+	 *
+	 * @return a T object.
+	 */
 	public T getEntity() {
 		return entity;
 	}
 
 
+	/**
+	 * <p>Setter for the field <code>entity</code>.</p>
+	 *
+	 * @param entity a T object.
+	 */
 	public void setEntity(T entity) {
 		this.entity = entity;
 	}
 
 
+	/**
+	 * <p>Getter for the field <code>dataListItem</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.repository.RepositoryEntity} object.
+	 */
 	public RepositoryEntity getDataListItem() {
 		return dataListItem;
 	}
 
+	/**
+	 * <p>Setter for the field <code>dataListItem</code>.</p>
+	 *
+	 * @param dataListItem a {@link fr.becpg.repo.repository.RepositoryEntity} object.
+	 */
 	public void setDataListItem(RepositoryEntity dataListItem) {
 		this.dataListItem = dataListItem;
 	}
 
 
+	/**
+	 * <p>getDataListItemEntity.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.repository.RepositoryEntity} object.
+	 */
 	public RepositoryEntity getDataListItemEntity() {
 		if (dataListItem instanceof CompositionDataItem) {
 
@@ -70,6 +106,11 @@ public class  DataListItemSpelContext<T extends RepositoryEntity> implements Spe
 		return null;
 	}
 
+    /**
+     * <p>getVariantData.</p>
+     *
+     * @return a {@link fr.becpg.repo.variant.model.VariantData} object.
+     */
     public VariantData getVariantData() {
 		if (entity != null && entity instanceof VariantEntity) {
 			if (((VariantEntity)entity).getVariants() != null) {
@@ -91,11 +132,25 @@ public class  DataListItemSpelContext<T extends RepositoryEntity> implements Spe
 
     
     
+	/**
+	 * <p>sum.</p>
+	 *
+	 * @param range a {@link java.util.Collection} object.
+	 * @param formula a {@link java.lang.String} object.
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public Double sum(Collection<RepositoryEntity> range, String formula) {
 		return formulaService.aggreate(entity, range, formula, Operator.SUM);
 	}
 	
 	
+	/**
+	 * <p>avg.</p>
+	 *
+	 * @param range a {@link java.util.Collection} object.
+	 * @param formula a {@link java.lang.String} object.
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public Double avg(Collection<RepositoryEntity> range, String formula) {
 		return formulaService.aggreate(entity, range, formula, Operator.AVG);
 	}

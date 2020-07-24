@@ -46,15 +46,15 @@ import org.springframework.extensions.webscripts.connector.ConnectorSession;
 import org.springframework.extensions.webscripts.connector.RemoteClient;
 
 /**
- * Extends the {@link AlfrescoConnector} to allow the connection from Share
+ * Extends the {@link org.springframework.extensions.webscripts.connector.AlfrescoConnector} to allow the connection from Share
  * to the Alfresco Repository to use a configurable HTTP header for the
  * authenticated user name. Allows both Share and Repository to use the same
  * HTTP header, when an external SSO is unable to provide the user name in the
  * default Alfresco Repository header {@code "X-Alfresco-Remote-User"}.
  * <p>
- * The user name from the header is also used by {@link SSOAuthenticationFilter}
+ * The user name from the header is also used by {@link org.alfresco.web.site.servlet.SSOAuthenticationFilter}
  * for incoming request to Share to return the user name from
- * {@link HttpServletRequest#getRemoteUser}.
+ * {@link javax.servlet.http.HttpServletRequest#getRemoteUser}.
  * <p>
  * The name of the header to be used is defined in the userHeader element of the
  * Alfresco Connector definition (see share-config-custom.xml.sample). Also note
@@ -80,15 +80,16 @@ import org.springframework.extensions.webscripts.connector.RemoteClient;
  * <pre>
  * external.authentication.userIdPattern=
  * </pre>
- * 
+ *
  * When using the default Alfresco Repository header (X-Alfresco-Remote-User") Share and the
  * Alfresco Repository must be protected against direct access from other clients. The same is
  * true when using a configurable header. The reason is that Share and Alfresco just accept the
  * header value as valid. Without this protection, it would be possible to log in as any user
  * simply by setting the header.
- * 
+ *
  * @author adavis
  * @author kroast
+ * @version $Id: $Id
  */
 public class BeCPGExternalConnector extends RequestCachingConnector
 {
@@ -126,6 +127,12 @@ public class BeCPGExternalConnector extends RequestCachingConnector
     public static final String CS_PARAM_USER_ID_PATTERN = "userIdPattern";
     
     
+    /**
+     * <p>Constructor for BeCPGExternalConnector.</p>
+     *
+     * @param descriptor a {@link org.springframework.extensions.config.RemoteConfigElement.ConnectorDescriptor} object.
+     * @param endpoint a {@link java.lang.String} object.
+     */
     public BeCPGExternalConnector(ConnectorDescriptor descriptor, String endpoint)
     {
         super(descriptor, endpoint);
@@ -152,6 +159,8 @@ public class BeCPGExternalConnector extends RequestCachingConnector
     }
     
     /**
+     * {@inheritDoc}
+     *
      * Overrides super method to set the CS_PARAM_USER_HEADER. This method is
      * always called at the end of {@link ConnectorService#getConnector} when
      * it constructs a {@link Connector}.
@@ -165,6 +174,8 @@ public class BeCPGExternalConnector extends RequestCachingConnector
     }
 
     /**
+     * {@inheritDoc}
+     *
      * Overrides the super method to add the HTTP header used by an external SSO
      * to provide the authenticated user name when calling alfresco from share.
      */

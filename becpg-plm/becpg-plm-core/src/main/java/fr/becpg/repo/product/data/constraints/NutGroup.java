@@ -3,11 +3,12 @@
  */
 package fr.becpg.repo.product.data.constraints;
 
-// TODO: Auto-generated Javadoc
+
 /**
  * The Enum NutGroup.
  *
  * @author querephi
+ * @version $Id: $Id
  */
 public enum NutGroup  {
 	

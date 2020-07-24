@@ -19,8 +19,9 @@ package fr.becpg.repo.project.data.projectList;
 
 /**
  * Task state
- * @author quere
  *
+ * @author quere
+ * @version $Id: $Id
  */
 public enum TaskState {
 

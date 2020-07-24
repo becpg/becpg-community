@@ -49,6 +49,7 @@ import fr.becpg.repo.variant.filters.VariantFilters;
  * The Class IngsCalculatingVisitor.
  *
  * @author querephi
+ * @version $Id: $Id
  */
 public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<ProductData> {
 
@@ -58,7 +59,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	private static final String MESSAGE_MISSING_INGLIST = "message.formulate.missing.ingList";
 	private static final String MESSAGE_INCORRECT_INGLIST_TOTAL = "message.formulate.incorrect.ingList.total";
 
-	/** The logger. */
+	
 	private static final Log logger = LogFactory.getLog(IngsCalculatingFormulationHandler.class);
 
 	private NodeService nodeService;
@@ -67,18 +68,34 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 	protected AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
+	 */
 	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
+	/**
+	 * <p>Setter for the field <code>ingsCalculatingWithYield</code>.</p>
+	 *
+	 * @param ingsCalculatingWithYield a boolean.
+	 */
 	public void setIngsCalculatingWithYield(boolean ingsCalculatingWithYield) {
 		this.ingsCalculatingWithYield = ingsCalculatingWithYield;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 
@@ -135,13 +152,6 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 	/**
 	 * Calculate the ingredient list of a product.
-	 *
-	 * @param reqCtrlMap
-	 *
-	 * @param productData
-	 *            the product data
-	 * @return the list
-	 * @throws FormulateException
 	 */
 	private void calculateIL(ProductData formulatedProduct, Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap) throws FormulateException {
 
@@ -529,7 +539,6 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	/**
 	 * Sort ingList by qty perc in descending order.
 	 *
-	 * @return the list
 	 */
 	private void sortIL(List<IngListDataItem> ingList) {
 

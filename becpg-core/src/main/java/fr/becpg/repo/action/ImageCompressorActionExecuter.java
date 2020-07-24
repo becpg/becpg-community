@@ -26,6 +26,7 @@ import org.apache.commons.logging.LogFactory;
  * Action used to compress, transform an image
  *
  * @author querephi
+ * @version $Id: $Id
  */
 public class ImageCompressorActionExecuter extends ActionExecuterAbstractBase{
 	
@@ -34,24 +35,37 @@ public class ImageCompressorActionExecuter extends ActionExecuterAbstractBase{
 
 	/** The Constant NAME. */
 	public static final String NAME = "compress-image";
+	/** Constant <code>PARAM_CONVERT_COMMAND="convert-command"</code> */
 	public static final String PARAM_CONVERT_COMMAND = "convert-command";
 	
-	/** The logger. */
+	
 	private static final Log logger = LogFactory.getLog(ImageCompressorActionExecuter.class);
 	
 	private ContentService contentService;
 	private ContentTransformer imageMagickContentTransformer;
 	
+	/**
+	 * <p>Setter for the field <code>contentService</code>.</p>
+	 *
+	 * @param contentService a {@link org.alfresco.service.cmr.repository.ContentService} object.
+	 */
 	public void setContentService(ContentService contentService) {
 		this.contentService = contentService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>imageMagickContentTransformer</code>.</p>
+	 *
+	 * @param imageMagickContentTransformer a {@link org.alfresco.repo.content.transform.ContentTransformer} object.
+	 */
 	public void setImageMagickContentTransformer(
 			ContentTransformer imageMagickContentTransformer) {
 		this.imageMagickContentTransformer = imageMagickContentTransformer;
 	}
 	
 	/**
+	 * {@inheritDoc}
+	 *
 	 * Add parameter definitions
 	 */
 	@Override
@@ -60,6 +74,7 @@ public class ImageCompressorActionExecuter extends ActionExecuterAbstractBase{
 		paramList.add(new ParameterDefinitionImpl(PARAM_CONVERT_COMMAND, DataTypeDefinition.TEXT, false, getParamDisplayLabel(PARAM_CONVERT_COMMAND)));
 	}	
 
+	/** {@inheritDoc} */
 	@Override
 	protected void executeImpl(Action action, NodeRef nodeRef) {
 				

@@ -47,6 +47,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.stereotype.Repository;
 
+import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -62,7 +64,14 @@ import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.annotation.DataListView;
 import fr.becpg.repo.repository.model.AspectAwareDataItem;
+import fr.becpg.repo.repository.model.DefaultListDataItem;
 
+/**
+ * <p>AlfrescoRepositoryImpl class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Repository("alfrescoRepository")
 public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements AlfrescoRepository<T> {
 
@@ -82,14 +91,19 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 	private EntityListDAO entityListDAO;
 
 	@Autowired
+	private EntityDictionaryService entityDictionaryService;
+
+	@Autowired
 	private AssociationService associationService;
 
+	/** {@inheritDoc} */
 	@Override
 	public T create(NodeRef parentNodeRef, T entity) {
 		entity.setParentNodeRef(parentNodeRef);
 		return save(entity);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public T save(T entity) {
 
@@ -213,6 +227,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		return entity;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isDirty(T entity) {
 
@@ -350,6 +365,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getOrCreateDataListContainer(T entity) {
 		NodeRef listContainerNodeRef = entityListDAO.getListContainer(entity.getNodeRef());
@@ -359,6 +375,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		return listContainerNodeRef;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	@SuppressWarnings("unchecked")
 	public void saveDataList(NodeRef listContainerNodeRef, QName dataListContainerType, QName dataListType,
@@ -421,6 +438,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Iterable<T> save(Iterable<? extends T> entities) {
 		List<T> ret = new ArrayList<>();
@@ -431,6 +449,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		return ret;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public T findOne(NodeRef id) {
 		if (id == null) {
@@ -455,7 +474,11 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 		Class<T> entityClass = repositoryEntityDefReader.getEntityClass(type);
 		if (entityClass == null) {
-			throw new IllegalArgumentException("Type is not registered : " + type);
+			if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
+				entityClass = (Class<T>) DefaultListDataItem.class;
+			} else {
+				throw new IllegalArgumentException("Type is not registered : " + type);
+			}
 		}
 
 		try {
@@ -632,6 +655,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public List<T> loadDataList(NodeRef entityNodeRef, QName datalistContainerQname, QName datalistQname) {
 		return loadDataList(entityNodeRef, datalistContainerQname, datalistQname, L2CacheSupport.getCurrentThreadCache());
@@ -658,32 +682,38 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		return new LinkedList<>();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean exists(NodeRef id) {
 		return nodeService.exists(id);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Iterable<T> findAll() {
 		throw new UnsupportedOperationException();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public long count() {
 		throw new UnsupportedOperationException();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void delete(NodeRef id) {
 		nodeService.deleteNode(id);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void delete(T entity) {
 		nodeService.deleteNode(entity.getNodeRef());
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void delete(Iterable<? extends T> entities) {
 		for (T entity : entities) {
@@ -691,6 +721,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void deleteAll() {
 		for (T entity : findAll()) {
@@ -698,6 +729,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean hasDataList(RepositoryEntity entity, QName datalistContainerQname) {
 
@@ -717,6 +749,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		return false;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean hasDataList(NodeRef entityNodeRef, QName datalistContainerQname) {
 		if (entityNodeRef != null) {
@@ -733,6 +766,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		return false;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isRegisteredType(QName type) {
 		return repositoryEntityDefReader.getEntityClass(type) != null;

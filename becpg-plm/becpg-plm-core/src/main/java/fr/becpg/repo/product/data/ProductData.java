@@ -61,6 +61,12 @@ import fr.becpg.repo.repository.model.StateableEntity;
 import fr.becpg.repo.variant.model.VariantData;
 import fr.becpg.repo.variant.model.VariantEntity;
 
+/**
+ * <p>ProductData class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class ProductData extends AbstractEffectiveDataItem implements FormulatedEntity, HierarchicalEntity, StateableEntity, AspectAwareDataItem, VariantEntity {
 
 	
@@ -218,6 +224,11 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private List<String> reportLocales;
 	private List<ProductData> compareWithEntities;
 
+	/**
+	 * <p>Getter for the field <code>productSpecifications</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@AlfMultiAssoc(isEntity = true)
 	@AlfQname(qname = "bcpg:productSpecifications")
 	@AlfReadOnly
@@ -225,10 +236,20 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		return productSpecifications;
 	}
 
+	/**
+	 * <p>Setter for the field <code>productSpecifications</code>.</p>
+	 *
+	 * @param productSpecifications a {@link java.util.List} object.
+	 */
 	public void setProductSpecifications(List<ProductSpecificationData> productSpecifications) {
 		this.productSpecifications = productSpecifications;
 	}
 
+	/**
+	 * <p>Getter for the field <code>clients</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@AlfMultiAssoc(isEntity = true)
 	@AlfQname(qname = "bcpg:clients")
 	@AlfReadOnly
@@ -236,10 +257,20 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		return clients;
 	}
 
+	/**
+	 * <p>Setter for the field <code>clients</code>.</p>
+	 *
+	 * @param clients a {@link java.util.List} object.
+	 */
 	public void setClients(List<ClientData> clients) {
 		this.clients = clients;
 	}
 
+	/**
+	 * <p>Getter for the field <code>compareWithEntities</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@AlfMultiAssoc(isEntity = true)
 	@AlfQname(qname = "bcpg:compareWithEntities")
 	@AlfReadOnly
@@ -247,10 +278,20 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		return compareWithEntities;
 	}
 
+	/**
+	 * <p>Setter for the field <code>compareWithEntities</code>.</p>
+	 *
+	 * @param compareWithEntities a {@link java.util.List} object.
+	 */
 	public void setCompareWithEntities(List<ProductData> compareWithEntities) {
 		this.compareWithEntities = compareWithEntities;
 	}
 
+	/**
+	 * <p>Getter for the field <code>variants</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@AlfMultiAssoc(isChildAssoc = true, isEntity = true)
 	@AlfQname(qname = "bcpg:variants")
 	@AlfReadOnly
@@ -258,18 +299,34 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		return variants;
 	}
 
+	/**
+	 * <p>Setter for the field <code>variants</code>.</p>
+	 *
+	 * @param variants a {@link java.util.List} object.
+	 */
 	public void setVariants(List<VariantData> variants) {
 		this.variants = variants;
 	}
 
+	/**
+	 * <p>Getter for the field <code>defaultVariantData</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.variant.model.VariantData} object.
+	 */
 	public VariantData getDefaultVariantData() {
 		return defaultVariantData;
 	}
 
+	/**
+	 * <p>Setter for the field <code>defaultVariantData</code>.</p>
+	 *
+	 * @param defaultVariantData a {@link fr.becpg.repo.variant.model.VariantData} object.
+	 */
 	public void setDefaultVariantData(VariantData defaultVariantData) {
 		this.defaultVariantData = defaultVariantData;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	@AlfProp
 	@AlfQname(qname = "bcpg:productHierarchy1")
@@ -277,10 +334,16 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		return hierarchy1;
 	}
 
+	/**
+	 * <p>Setter for the field <code>hierarchy1</code>.</p>
+	 *
+	 * @param hierarchy1 a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void setHierarchy1(NodeRef hierarchy1) {
 		this.hierarchy1 = hierarchy1;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	@AlfProp
 	@AlfQname(qname = "bcpg:productHierarchy2")
@@ -288,10 +351,16 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		return hierarchy2;
 	}
 
+	/**
+	 * <p>Setter for the field <code>hierarchy2</code>.</p>
+	 *
+	 * @param hierarchy2 a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void setHierarchy2(NodeRef hierarchy2) {
 		this.hierarchy2 = hierarchy2;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	@AlfProp
 	@AlfQname(qname = "bcpg:formulatedDate")
@@ -299,30 +368,48 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		return formulatedDate;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void setFormulatedDate(Date formulatedDate) {
 		this.formulatedDate = formulatedDate;
 	}
 	
 	
+	/** {@inheritDoc} */
 	@Override
 	public boolean shouldUpdateFormulatedDate() {
 		return updateFormulatedDate;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void setUpdateFormulatedDate(boolean updateFormulatedDate) {
 		this.updateFormulatedDate = updateFormulatedDate;
 	}
 
+	/**
+	 * <p>Getter for the field <code>isUpToDate</code>.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object.
+	 */
 	public Boolean getIsUpToDate() {
 		return isUpToDate;
 	}
 
+	/**
+	 * <p>Setter for the field <code>isUpToDate</code>.</p>
+	 *
+	 * @param isUpToDate a {@link java.lang.Boolean} object.
+	 */
 	public void setIsUpToDate(Boolean isUpToDate) {
 		this.isUpToDate = isUpToDate;
 	}
 
+	/**
+	 * <p>Getter for the field <code>modifiedDate</code>.</p>
+	 *
+	 * @return a {@link java.util.Date} object.
+	 */
 	@AlfProp
 	@AlfReadOnly
 	@AlfQname(qname = "cm:modified")
@@ -330,10 +417,20 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		return modifiedDate;
 	}
 
+	/**
+	 * <p>Setter for the field <code>modifiedDate</code>.</p>
+	 *
+	 * @param modifiedDate a {@link java.util.Date} object.
+	 */
 	public void setModifiedDate(Date modifiedDate) {
 		this.modifiedDate = modifiedDate;
 	}
 
+	/**
+	 * <p>Getter for the field <code>legalName</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object.
+	 */
 	@AlfMlText
 	@AlfProp
 	@AlfQname(qname = "bcpg:legalName")
@@ -341,15 +438,30 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		return legalName;
 	}
 
+	/**
+	 * <p>Setter for the field <code>legalName</code>.</p>
+	 *
+	 * @param legalName a {@link org.alfresco.service.cmr.repository.MLText} object.
+	 */
 	public void setLegalName(MLText legalName) {
 		this.legalName = legalName;
 	}
 
 	
+	/**
+	 * <p>Setter for the field <code>legalName</code>.</p>
+	 *
+	 * @param legalName a {@link java.lang.String} object.
+	 */
 	public void setLegalName(String legalName) {
 		this.legalName = new MLText(legalName);
 	}
 	
+	/**
+	 * <p>Getter for the field <code>pluralLegalName</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object.
+	 */
 	@AlfMlText
 	@AlfProp
 	@AlfQname(qname = "bcpg:pluralLegalName")
@@ -357,278 +469,573 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		return pluralLegalName;
 	}
 
+	/**
+	 * <p>Setter for the field <code>pluralLegalName</code>.</p>
+	 *
+	 * @param pluralLegalName a {@link org.alfresco.service.cmr.repository.MLText} object.
+	 */
 	public void setPluralLegalName(MLText pluralLegalName) {
 		this.pluralLegalName = pluralLegalName;
 	}
 
+	/**
+	 * <p>Getter for the field <code>title</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "cm:title")
 	public String getTitle() {
 		return title;
 	}
 
+	/**
+	 * <p>Setter for the field <code>title</code>.</p>
+	 *
+	 * @param title a {@link java.lang.String} object.
+	 */
 	public void setTitle(String title) {
 		this.title = title;
 	}
 
+	/**
+	 * <p>Getter for the field <code>erpCode</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:erpCode")
 	public String getErpCode() {
 		return erpCode;
 	}
 
+	/**
+	 * <p>Setter for the field <code>erpCode</code>.</p>
+	 *
+	 * @param erpCode a {@link java.lang.String} object.
+	 */
 	public void setErpCode(String erpCode) {
 		this.erpCode = erpCode;
 	}
 
+	/**
+	 * <p>Getter for the field <code>state</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.model.SystemState} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:productState")
 	public SystemState getState() {
 		return state;
 	}
 
+	/**
+	 * <p>Setter for the field <code>state</code>.</p>
+	 *
+	 * @param state a {@link fr.becpg.model.SystemState} object.
+	 */
 	public void setState(SystemState state) {
 		this.state = state;
 	}
 
+	/**
+	 * <p>Getter for the field <code>unit</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.constraints.ProductUnit} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:productUnit")
 	public ProductUnit getUnit() {
 		return unit;
 	}
 
+	/**
+	 * <p>Setter for the field <code>unit</code>.</p>
+	 *
+	 * @param unit a {@link fr.becpg.repo.product.data.constraints.ProductUnit} object.
+	 */
 	public void setUnit(ProductUnit unit) {
 		this.unit = unit;
 	}
 
+	/**
+	 * <p>Getter for the field <code>entityTpl</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.ProductData} object.
+	 */
 	@AlfSingleAssoc(isEntity = true)
 	@AlfQname(qname = "bcpg:entityTplRef")
 	public ProductData getEntityTpl() {
 		return entityTpl;
 	}
 
+	/**
+	 * <p>getFormulatedEntityTpl.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public NodeRef getFormulatedEntityTpl() {
 		return entityTpl!=null ? entityTpl.getNodeRef() : null;
 	}
 
 	
+	/**
+	 * <p>Setter for the field <code>entityTpl</code>.</p>
+	 *
+	 * @param entityTpl a {@link fr.becpg.repo.product.data.ProductData} object.
+	 */
 	public void setEntityTpl(ProductData entityTpl) {
 		this.entityTpl = entityTpl;
 	}
 
+	/**
+	 * <p>Getter for the field <code>plants</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@AlfMultiAssoc
 	@AlfQname(qname = "bcpg:plants")
 	public List<NodeRef> getPlants() {
 		return plants;
 	}
 
+	/**
+	 * <p>Setter for the field <code>plants</code>.</p>
+	 *
+	 * @param plants a {@link java.util.List} object.
+	 */
 	public void setPlants(List<NodeRef> plants) {
 		this.plants = plants;
 	}
 
 	
+	/**
+	 * <p>Getter for the field <code>ingType</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.ing.IngTypeItem} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:ingTypeV2")
 	public IngTypeItem getIngType() {
 		return ingType;
 	}
 
+	/**
+	 * <p>Setter for the field <code>ingType</code>.</p>
+	 *
+	 * @param ingType a {@link fr.becpg.repo.product.data.ing.IngTypeItem} object.
+	 */
 	public void setIngType(IngTypeItem ingType) {
 		this.ingType = ingType;
 	}
 
+	/**
+	 * <p>Getter for the field <code>defaultVariantPackagingData</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.packaging.VariantPackagingData} object.
+	 */
 	public VariantPackagingData getDefaultVariantPackagingData() {
 		return defaultVariantPackagingData;
 	}
 
+	/**
+	 * <p>Setter for the field <code>defaultVariantPackagingData</code>.</p>
+	 *
+	 * @param defaultVariantPackagingData a {@link fr.becpg.repo.product.data.packaging.VariantPackagingData} object.
+	 */
 	public void setDefaultVariantPackagingData(VariantPackagingData defaultVariantPackagingData) {
 		this.defaultVariantPackagingData = defaultVariantPackagingData;
 	}
 
+	/**
+	 * <p>Getter for the field <code>qty</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:productQty")
 	public Double getQty() {
 		return qty;
 	}
 
+	/**
+	 * <p>Setter for the field <code>qty</code>.</p>
+	 *
+	 * @param qty a {@link java.lang.Double} object.
+	 */
 	public void setQty(Double qty) {
 		this.qty = qty;
 	}
 
+	/**
+	 * <p>Getter for the field <code>density</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:productDensity")
 	public Double getDensity() {
 		return density;
 	}
 
+	/**
+	 * <p>Setter for the field <code>density</code>.</p>
+	 *
+	 * @param density a {@link java.lang.Double} object.
+	 */
 	public void setDensity(Double density) {
 		this.density = density;
 	}
 
+	/**
+	 * <p>Getter for the field <code>yield</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:productYield")
 	public Double getYield() {
 		return yield;
 	}
 
+	/**
+	 * <p>Setter for the field <code>yield</code>.</p>
+	 *
+	 * @param yield a {@link java.lang.Double} object.
+	 */
 	public void setYield(Double yield) {
 		this.yield = yield;
 	}
 
+	/**
+	 * <p>Getter for the field <code>manualYield</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public Double getManualYield() {
 		return manualYield;
 	}
 
+	/**
+	 * <p>Setter for the field <code>manualYield</code>.</p>
+	 *
+	 * @param manualYield a {@link java.lang.Double} object.
+	 */
 	public void setManualYield(Double manualYield) {
 		this.manualYield = manualYield;
 	}
 
+	/**
+	 * <p>Getter for the field <code>secondaryYield</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public Double getSecondaryYield() {
 		return secondaryYield;
 	}
 
+	/**
+	 * <p>Setter for the field <code>secondaryYield</code>.</p>
+	 *
+	 * @param secondaryYield a {@link java.lang.Double} object.
+	 */
 	public void setSecondaryYield(Double secondaryYield) {
 		this.secondaryYield = secondaryYield;
 	}
 
+	/**
+	 * <p>Getter for the field <code>yieldVolume</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public Double getYieldVolume() {
 		return yieldVolume;
 	}
 
+	/**
+	 * <p>Setter for the field <code>yieldVolume</code>.</p>
+	 *
+	 * @param yieldVolume a {@link java.lang.Double} object.
+	 */
 	public void setYieldVolume(Double yieldVolume) {
 		this.yieldVolume = yieldVolume;
 	}
 
+	/**
+	 * <p>Getter for the field <code>productLossPerc</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:productLossPerc")
 	public Double getProductLossPerc() {
 		return productLossPerc;
 	}
 
+	/**
+	 * <p>Setter for the field <code>productLossPerc</code>.</p>
+	 *
+	 * @param lossPerc a {@link java.lang.Double} object.
+	 */
 	public void setProductLossPerc(Double lossPerc) {
 		this.productLossPerc = lossPerc;
 	}
 	
 	
+	/**
+	 * <p>Getter for the field <code>componentLossPerc</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:componentLossPerc")
 	public Double getComponentLossPerc() {
 		return componentLossPerc;
 	}
 
+	/**
+	 * <p>Setter for the field <code>componentLossPerc</code>.</p>
+	 *
+	 * @param componentLossPerc a {@link java.lang.Double} object.
+	 */
 	public void setComponentLossPerc(Double componentLossPerc) {
 		this.componentLossPerc = componentLossPerc;
 	}
 
+	/**
+	 * <p>Getter for the field <code>recipeQtyUsedWithLossPerc</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public Double getRecipeQtyUsedWithLossPerc() {
 		return recipeQtyUsedWithLossPerc;
 	}
 
+	/**
+	 * <p>Setter for the field <code>recipeQtyUsedWithLossPerc</code>.</p>
+	 *
+	 * @param recipeQtyUsedWithLossPerc a {@link java.lang.Double} object.
+	 */
 	public void setRecipeQtyUsedWithLossPerc(Double recipeQtyUsedWithLossPerc) {
 		this.recipeQtyUsedWithLossPerc = recipeQtyUsedWithLossPerc;
 	}
 
+	/**
+	 * <p>Getter for the field <code>recipeQtyUsed</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:productCompoQtyUsed")
 	public Double getRecipeQtyUsed() {
 		return recipeQtyUsed;
 	}
 
+	/**
+	 * <p>Setter for the field <code>recipeQtyUsed</code>.</p>
+	 *
+	 * @param recipeQtyUsed a {@link java.lang.Double} object.
+	 */
 	public void setRecipeQtyUsed(Double recipeQtyUsed) {
 		this.recipeQtyUsed = recipeQtyUsed;
 	}
 
+	/**
+	 * <p>Getter for the field <code>recipeVolumeUsed</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:productCompoVolumeUsed")
 	public Double getRecipeVolumeUsed() {
 		return recipeVolumeUsed;
 	}
 
+	/**
+	 * <p>Setter for the field <code>recipeVolumeUsed</code>.</p>
+	 *
+	 * @param recipeVolumeUsed a {@link java.lang.Double} object.
+	 */
 	public void setRecipeVolumeUsed(Double recipeVolumeUsed) {
 		this.recipeVolumeUsed = recipeVolumeUsed;
 	}
 
+	/**
+	 * <p>Getter for the field <code>netWeight</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:netWeight")
 	public Double getNetWeight() {
 		return netWeight;
 	}
 
+	/**
+	 * <p>Setter for the field <code>netWeight</code>.</p>
+	 *
+	 * @param netWeight a {@link java.lang.Double} object.
+	 */
 	public void setNetWeight(Double netWeight) {
 		this.netWeight = netWeight;
 	}
 
+	/**
+	 * <p>Getter for the field <code>weightPrimary</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public Double getWeightPrimary() {
 		return weightPrimary;
 	}
 
+	/**
+	 * <p>Setter for the field <code>weightPrimary</code>.</p>
+	 *
+	 * @param weightPrimary a {@link java.lang.Double} object.
+	 */
 	public void setWeightPrimary(Double weightPrimary) {
 		this.weightPrimary = weightPrimary;
 	}
 
+	/**
+	 * <p>Getter for the field <code>netWeightSecondary</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public Double getNetWeightSecondary() {
 		return netWeightSecondary;
 	}
 
+	/**
+	 * <p>Setter for the field <code>netWeightSecondary</code>.</p>
+	 *
+	 * @param netWeightSecondary a {@link java.lang.Double} object.
+	 */
 	public void setNetWeightSecondary(Double netWeightSecondary) {
 		this.netWeightSecondary = netWeightSecondary;
 	}
 
+	/**
+	 * <p>Getter for the field <code>weightSecondary</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public Double getWeightSecondary() {
 		return weightSecondary;
 	}
 
+	/**
+	 * <p>Setter for the field <code>weightSecondary</code>.</p>
+	 *
+	 * @param weightSecondary a {@link java.lang.Double} object.
+	 */
 	public void setWeightSecondary(Double weightSecondary) {
 		this.weightSecondary = weightSecondary;
 	}
 
+	/**
+	 * <p>Getter for the field <code>netWeightTertiary</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public Double getNetWeightTertiary() {
 		return netWeightTertiary;
 	}
 
+	/**
+	 * <p>Setter for the field <code>netWeightTertiary</code>.</p>
+	 *
+	 * @param netWeightTertiary a {@link java.lang.Double} object.
+	 */
 	public void setNetWeightTertiary(Double netWeightTertiary) {
 		this.netWeightTertiary = netWeightTertiary;
 	}
 
+	/**
+	 * <p>Getter for the field <code>weightTertiary</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public Double getWeightTertiary() {
 		return weightTertiary;
 	}
 
+	/**
+	 * <p>Setter for the field <code>weightTertiary</code>.</p>
+	 *
+	 * @param weightTertiary a {@link java.lang.Double} object.
+	 */
 	public void setWeightTertiary(Double weightTertiary) {
 		this.weightTertiary = weightTertiary;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>dropPackagingOfComponents</code>.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:dropPackagingOfComponents")
 	public Boolean getDropPackagingOfComponents() {
 		return dropPackagingOfComponents;
 	}
 
+	/**
+	 * <p>Setter for the field <code>dropPackagingOfComponents</code>.</p>
+	 *
+	 * @param dropPackagingOfComponents a {@link java.lang.Boolean} object.
+	 */
 	public void setDropPackagingOfComponents(Boolean dropPackagingOfComponents) {
 		this.dropPackagingOfComponents = dropPackagingOfComponents;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>netVolume</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:netVolume")
 	public Double getNetVolume() {
 		return netVolume;
 	}
 
+	/**
+	 * <p>Setter for the field <code>netVolume</code>.</p>
+	 *
+	 * @param netVolume a {@link java.lang.Double} object.
+	 */
 	public void setNetVolume(Double netVolume) {
 		this.netVolume = netVolume;
 	}
 
+	/**
+	 * <p>Getter for the field <code>servingSize</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:servingSize")
 	public Double getServingSize() {
 		return servingSize;
 	}
 
+	/**
+	 * <p>Setter for the field <code>servingSize</code>.</p>
+	 *
+	 * @param servingSize a {@link java.lang.Double} object.
+	 */
 	public void setServingSize(Double servingSize) {
 		this.servingSize = servingSize;
 	}
 	
 	
+	/**
+	 * <p>Getter for the field <code>servingSizeByCountry</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object.
+	 */
 	@AlfMlText
 	@AlfProp
 	@AlfQname(qname = "bcpg:servingSizeByCountry")
@@ -636,130 +1043,260 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		return servingSizeByCountry;
 	}
 
+	/**
+	 * <p>Setter for the field <code>servingSizeByCountry</code>.</p>
+	 *
+	 * @param servingSizeByCountry a {@link org.alfresco.service.cmr.repository.MLText} object.
+	 */
 	public void setServingSizeByCountry(MLText servingSizeByCountry) {
 		this.servingSizeByCountry = servingSizeByCountry;
 	}
 
+	/**
+	 * <p>Getter for the field <code>servingSizeUnit</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.constraints.ProductUnit} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:servingSizeUnit")
 	public ProductUnit getServingSizeUnit() {
 		return servingSizeUnit;
 	}
 
+	/**
+	 * <p>Setter for the field <code>servingSizeUnit</code>.</p>
+	 *
+	 * @param servingSizeUnit a {@link fr.becpg.repo.product.data.constraints.ProductUnit} object.
+	 */
 	public void setServingSizeUnit(ProductUnit servingSizeUnit) {
 		this.servingSizeUnit = servingSizeUnit;
 	}
 
+	/**
+	 * <p>Getter for the field <code>tare</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "pack:tare")
 	public Double getTare() {
 		return tare;
 	}
 
+	/**
+	 * <p>Setter for the field <code>tare</code>.</p>
+	 *
+	 * @param tare a {@link java.lang.Double} object.
+	 */
 	public void setTare(Double tare) {
 		this.tare = tare;
 	}
 
+	/**
+	 * <p>Getter for the field <code>tareUnit</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.constraints.TareUnit} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "pack:tareUnit")
 	public TareUnit getTareUnit() {
 		return tareUnit;
 	}
 
+	/**
+	 * <p>Setter for the field <code>tareUnit</code>.</p>
+	 *
+	 * @param tareUnit a {@link fr.becpg.repo.product.data.constraints.TareUnit} object.
+	 */
 	public void setTareUnit(TareUnit tareUnit) {
 		this.tareUnit = tareUnit;
 	}
 
+	/**
+	 * <p>Getter for the field <code>unitTotalCost</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:unitTotalCost")
 	public Double getUnitTotalCost() {
 		return unitTotalCost;
 	}
 
+	/**
+	 * <p>Setter for the field <code>unitTotalCost</code>.</p>
+	 *
+	 * @param unitTotalCost a {@link java.lang.Double} object.
+	 */
 	public void setUnitTotalCost(Double unitTotalCost) {
 		this.unitTotalCost = unitTotalCost;
 	}
 
+	/**
+	 * <p>Getter for the field <code>previousUnitTotalCost</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:previousUnitTotalCost")
 	public Double getPreviousUnitTotalCost() {
 		return previousUnitTotalCost;
 	}
 
+	/**
+	 * <p>Setter for the field <code>previousUnitTotalCost</code>.</p>
+	 *
+	 * @param previousUnitTotalCost a {@link java.lang.Double} object.
+	 */
 	public void setPreviousUnitTotalCost(Double previousUnitTotalCost) {
 		this.previousUnitTotalCost = previousUnitTotalCost;
 	}
 
+	/**
+	 * <p>Getter for the field <code>geoOrigins</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@AlfMultiAssoc
 	@AlfQname(qname = "bcpg:productGeoOrigin")
 	public List<NodeRef> getGeoOrigins() {
 		return geoOrigins;
 	}
 
+	/**
+	 * <p>Setter for the field <code>geoOrigins</code>.</p>
+	 *
+	 * @param geoOrigins a {@link java.util.List} object.
+	 */
 	public void setGeoOrigins(List<NodeRef> geoOrigins) {
 		this.geoOrigins = geoOrigins;
 	}
 
+	/**
+	 * <p>Getter for the field <code>futureUnitTotalCost</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:futureUnitTotalCost")
 	public Double getFutureUnitTotalCost() {
 		return futureUnitTotalCost;
 	}
 
+	/**
+	 * <p>Setter for the field <code>futureUnitTotalCost</code>.</p>
+	 *
+	 * @param futureUnitTotalCost a {@link java.lang.Double} object.
+	 */
 	public void setFutureUnitTotalCost(Double futureUnitTotalCost) {
 		this.futureUnitTotalCost = futureUnitTotalCost;
 	}
 
+	/**
+	 * <p>Getter for the field <code>unitPrice</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:unitPrice")
 	public Double getUnitPrice() {
 		return unitPrice;
 	}
 
+	/**
+	 * <p>Setter for the field <code>unitPrice</code>.</p>
+	 *
+	 * @param unitPrice a {@link java.lang.Double} object.
+	 */
 	public void setUnitPrice(Double unitPrice) {
 		this.unitPrice = unitPrice;
 	}
 
+	/**
+	 * <p>Getter for the field <code>profitability</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:profitability")
 	public Double getProfitability() {
 		return profitability;
 	}
 
+	/**
+	 * <p>Setter for the field <code>profitability</code>.</p>
+	 *
+	 * @param profitability a {@link java.lang.Double} object.
+	 */
 	public void setProfitability(Double profitability) {
 		this.profitability = profitability;
 	}
 
+	/**
+	 * <p>Getter for the field <code>nutrientScore</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:nutrientProfilingScore")
 	public Double getNutrientScore() {
 		return nutrientScore;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nutrientScore</code>.</p>
+	 *
+	 * @param nutrientScore a {@link java.lang.Double} object.
+	 */
 	public void setNutrientScore(Double nutrientScore) {
 		this.nutrientScore = nutrientScore;
 	}
 
+	/**
+	 * <p>Getter for the field <code>nutrientClass</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:nutrientProfilingClass")
 	public String getNutrientClass() {
 		return nutrientClass;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nutrientClass</code>.</p>
+	 *
+	 * @param nutrientClass a {@link java.lang.String} object.
+	 */
 	public void setNutrientClass(String nutrientClass) {
 		this.nutrientClass = nutrientClass;
 	}
 
+	/**
+	 * <p>Getter for the field <code>nutrientProfile</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	@AlfSingleAssoc
 	@AlfQname(qname = "bcpg:nutrientProfileRef")
 	public NodeRef getNutrientProfile() {
 		return nutrientProfile;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nutrientProfile</code>.</p>
+	 *
+	 * @param nutrientProfile a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void setNutrientProfile(NodeRef nutrientProfile) {
 		this.nutrientProfile = nutrientProfile;
 	}
 
+	/**
+	 * <p>Getter for the field <code>meatContentData</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:meatContentData")
 	@InternalField
@@ -775,6 +1312,11 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		}
 	}
 
+	/**
+	 * <p>Setter for the field <code>meatContentData</code>.</p>
+	 *
+	 * @param meatContentdata a {@link java.lang.String} object.
+	 */
 	public void setMeatContentData(String meatContentdata) {
 		try {
 			meatContentData = MeatContentData.parseJsonString(meatContentdata);
@@ -784,21 +1326,42 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	}
 
 	
+	/**
+	 * <p>Getter for the field <code>meatType</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:meatType")
 	public String getMeatType() {
 		return meatType;
 	}
 
+	/**
+	 * <p>Setter for the field <code>meatType</code>.</p>
+	 *
+	 * @param meatType a {@link java.lang.String} object.
+	 */
 	public void setMeatType(String meatType) {
 		this.meatType = meatType;
 	}
 
 	// Spel Helper
+	/**
+	 * <p>meatContentByType.</p>
+	 *
+	 * @param type a {@link java.lang.String} object.
+	 * @return a {@link fr.becpg.repo.product.data.meat.MeatContentData} object.
+	 */
 	public MeatContentData meatContentByType(String type) {
 		return meatContentData.get(type);
 	}
 	
+	/**
+	 * <p>meatContentApplied.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String meatContentApplied() {
 	  String ret = "";
 	  for(String key : meatContentData.keySet()) {
@@ -810,238 +1373,478 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	
 	
 
+	/**
+	 * <p>getMeatContents.</p>
+	 *
+	 * @return a {@link java.util.Map} object.
+	 */
 	public Map<String, MeatContentData> getMeatContents() {
 		return meatContentData;
 	}
 
+	/**
+	 * <p>Getter for the field <code>breakEven</code>.</p>
+	 *
+	 * @return a {@link java.lang.Long} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:breakEven")
 	public Long getBreakEven() {
 		return breakEven;
 	}
 
+	/**
+	 * <p>Setter for the field <code>breakEven</code>.</p>
+	 *
+	 * @param breakEven a {@link java.lang.Long} object.
+	 */
 	public void setBreakEven(Long breakEven) {
 		this.breakEven = breakEven;
 	}
 
+	/**
+	 * <p>Getter for the field <code>projectedQty</code>.</p>
+	 *
+	 * @return a {@link java.lang.Long} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:projectedQty")
 	public Long getProjectedQty() {
 		return projectedQty;
 	}
 
+	/**
+	 * <p>Setter for the field <code>projectedQty</code>.</p>
+	 *
+	 * @param projectedQty a {@link java.lang.Long} object.
+	 */
 	public void setProjectedQty(Long projectedQty) {
 		this.projectedQty = projectedQty;
 	}
 
+	/**
+	 * <p>Getter for the field <code>allergenList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@DataList
 	@AlfQname(qname = "bcpg:allergenList")
 	public List<AllergenListDataItem> getAllergenList() {
 		return allergenList;
 	}
 
+	/**
+	 * <p>Setter for the field <code>allergenList</code>.</p>
+	 *
+	 * @param allergenList a {@link java.util.List} object.
+	 */
 	public void setAllergenList(List<AllergenListDataItem> allergenList) {
 		this.allergenList = allergenList;
 	}
 
+	/**
+	 * <p>Getter for the field <code>costList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@DataList
 	@AlfQname(qname = "bcpg:costList")
 	public List<CostListDataItem> getCostList() {
 		return costList;
 	}
 
+	/**
+	 * <p>Setter for the field <code>costList</code>.</p>
+	 *
+	 * @param costList a {@link java.util.List} object.
+	 */
 	public void setCostList(List<CostListDataItem> costList) {
 		this.costList = costList;
 	}
 
+	/**
+	 * <p>Getter for the field <code>priceList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@DataList
 	@AlfQname(qname = "bcpg:priceList")
 	public List<PriceListDataItem> getPriceList() {
 		return priceList;
 	}
 
+	/**
+	 * <p>Setter for the field <code>priceList</code>.</p>
+	 *
+	 * @param priceList a {@link java.util.List} object.
+	 */
 	public void setPriceList(List<PriceListDataItem> priceList) {
 		this.priceList = priceList;
 	}
 
+	/**
+	 * <p>Getter for the field <code>ingList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@DataList
 	@AlfQname(qname = "bcpg:ingList")
 	public List<IngListDataItem> getIngList() {
 		return ingList;
 	}
 
+	/**
+	 * <p>Setter for the field <code>ingList</code>.</p>
+	 *
+	 * @param ingList a {@link java.util.List} object.
+	 */
 	public void setIngList(List<IngListDataItem> ingList) {
 		this.ingList = ingList;
 	}
 
+	/**
+	 * <p>Getter for the field <code>nutList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@DataList
 	@AlfQname(qname = "bcpg:nutList")
 	public List<NutListDataItem> getNutList() {
 		return nutList;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nutList</code>.</p>
+	 *
+	 * @param nutList a {@link java.util.List} object.
+	 */
 	public void setNutList(List<NutListDataItem> nutList) {
 		this.nutList = nutList;
 	}
 
+	/**
+	 * <p>Getter for the field <code>organoList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@DataList
 	@AlfQname(qname = "bcpg:organoList")
 	public List<OrganoListDataItem> getOrganoList() {
 		return organoList;
 	}
 
+	/**
+	 * <p>Setter for the field <code>organoList</code>.</p>
+	 *
+	 * @param organoList a {@link java.util.List} object.
+	 */
 	public void setOrganoList(List<OrganoListDataItem> organoList) {
 		this.organoList = organoList;
 	}
 
+	/**
+	 * <p>Getter for the field <code>microbioList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@DataList
 	@AlfQname(qname = "bcpg:microbioList")
 	public List<MicrobioListDataItem> getMicrobioList() {
 		return microbioList;
 	}
 
+	/**
+	 * <p>Setter for the field <code>microbioList</code>.</p>
+	 *
+	 * @param microbioList a {@link java.util.List} object.
+	 */
 	public void setMicrobioList(List<MicrobioListDataItem> microbioList) {
 		this.microbioList = microbioList;
 	}
 
+	/**
+	 * <p>Getter for the field <code>physicoChemList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@DataList
 	@AlfQname(qname = "bcpg:physicoChemList")
 	public List<PhysicoChemListDataItem> getPhysicoChemList() {
 		return physicoChemList;
 	}
 
+	/**
+	 * <p>Setter for the field <code>physicoChemList</code>.</p>
+	 *
+	 * @param physicoChemList a {@link java.util.List} object.
+	 */
 	public void setPhysicoChemList(List<PhysicoChemListDataItem> physicoChemList) {
 		this.physicoChemList = physicoChemList;
 	}
 
+	/**
+	 * <p>Getter for the field <code>labelClaimList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@DataList
 	@AlfQname(qname = "bcpg:labelClaimList")
 	public List<LabelClaimListDataItem> getLabelClaimList() {
 		return labelClaimList;
 	}
 
+	/**
+	 * <p>Setter for the field <code>labelClaimList</code>.</p>
+	 *
+	 * @param labelClaimList a {@link java.util.List} object.
+	 */
 	public void setLabelClaimList(List<LabelClaimListDataItem> labelClaimList) {
 		this.labelClaimList = labelClaimList;
 	}
 
+	/**
+	 * <p>Getter for the field <code>controlDefList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@DataList
 	@AlfQname(qname = "qa:controlDefList")
 	public List<ControlDefListDataItem> getControlDefList() {
 		return controlDefList;
 	}
 
+	/**
+	 * <p>Setter for the field <code>controlDefList</code>.</p>
+	 *
+	 * @param controlDefList a {@link java.util.List} object.
+	 */
 	public void setControlDefList(List<ControlDefListDataItem> controlDefList) {
 		this.controlDefList = controlDefList;
 	}
 
+	/**
+	 * <p>Getter for the field <code>resourceParamList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@DataList
 	@AlfQname(qname = "mpm:resourceParamList")
 	public List<ResourceParamListItem> getResourceParamList() {
 		return resourceParamList;
 	}
 
+	/**
+	 * <p>Setter for the field <code>resourceParamList</code>.</p>
+	 *
+	 * @param resourceParamList a {@link java.util.List} object.
+	 */
 	public void setResourceParamList(List<ResourceParamListItem> resourceParamList) {
 		this.resourceParamList = resourceParamList;
 	}
 
+	/**
+	 * <p>Getter for the field <code>labelingList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@DataList
 	@AlfQname(qname = "pack:labelingList")
 	public List<LabelingListDataItem> getLabelingList() {
 		return labelingList;
 	}
 
+	/**
+	 * <p>Setter for the field <code>labelingList</code>.</p>
+	 *
+	 * @param labelingList a {@link java.util.List} object.
+	 */
 	public void setLabelingList(List<LabelingListDataItem> labelingList) {
 		this.labelingList = labelingList;
 	}
 
+	/**
+	 * <p>Getter for the field <code>labelingListView</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.LabelingListView} object.
+	 */
 	@DataListView
 	@AlfQname(qname = "bcpg:ingLabelingList")
 	public LabelingListView getLabelingListView() {
 		return labelingListView;
 	}
 
+	/**
+	 * <p>Setter for the field <code>labelingListView</code>.</p>
+	 *
+	 * @param labelingListView a {@link fr.becpg.repo.product.data.LabelingListView} object.
+	 */
 	public void setLabelingListView(LabelingListView labelingListView) {
 		this.labelingListView = labelingListView;
 	}
 
+	/**
+	 * <p>Getter for the field <code>reqCtrlList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@DataList
 	@AlfQname(qname = "bcpg:reqCtrlList")
 	public List<ReqCtrlListDataItem> getReqCtrlList() {
 		return reqCtrlList;
 	}
 
+	/**
+	 * <p>Setter for the field <code>reqCtrlList</code>.</p>
+	 *
+	 * @param reqCtrlList a {@link java.util.List} object.
+	 */
 	public void setReqCtrlList(List<ReqCtrlListDataItem> reqCtrlList) {
 		this.reqCtrlList = reqCtrlList;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>packMaterialList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@DataList
 	@AlfQname(qname = "pack:packMaterialList")
 	public List<PackMaterialListDataItem> getPackMaterialList() {
 		return packMaterialList;
 	}
 
+	/**
+	 * <p>Setter for the field <code>packMaterialList</code>.</p>
+	 *
+	 * @param packMaterialList a {@link java.util.List} object.
+	 */
 	public void setPackMaterialList(List<PackMaterialListDataItem> packMaterialList) {
 		this.packMaterialList = packMaterialList;
 	}
 
+	/**
+	 * <p>Getter for the field <code>compoListView</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.CompoListView} object.
+	 */
 	@DataListView
 	@AlfQname(qname = "bcpg:compoList")
 	public CompoListView getCompoListView() {
 		return compoListView;
 	}
 
+	/**
+	 * <p>Getter for the field <code>entityScore</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:entityScore")
 	public String getEntityScore() {
 		return entityScore;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityScore</code>.</p>
+	 *
+	 * @param string a {@link java.lang.String} object.
+	 */
 	public void setEntityScore(String string) {
 		this.entityScore = string;
 	}
 
+	/**
+	 * <p>Getter for the field <code>reportLocales</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "rep:reportLocales")
 	public List<String> getReportLocales() {
 		return reportLocales;
 	}
 
+	/**
+	 * <p>Setter for the field <code>reportLocales</code>.</p>
+	 *
+	 * @param reportLocales a {@link java.util.List} object.
+	 */
 	public void setReportLocales(List<String> reportLocales) {
 		this.reportLocales = reportLocales;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>regulatoryCountries</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	public List<String> getRegulatoryCountries() {
 		return regulatoryCountries;
 	}
 
+	/**
+	 * <p>Setter for the field <code>regulatoryCountries</code>.</p>
+	 *
+	 * @param regulatoryCountries a {@link java.util.List} object.
+	 */
 	public void setRegulatoryCountries(List<String> regulatoryCountries) {
 		this.regulatoryCountries = regulatoryCountries;
 	}
 
+	/**
+	 * <p>Getter for the field <code>regulatoryUsages</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	public List<String> getRegulatoryUsages() {
 		return regulatoryUsages;
 	}
 
+	/**
+	 * <p>Setter for the field <code>regulatoryUsages</code>.</p>
+	 *
+	 * @param regulatoryUsages a {@link java.util.List} object.
+	 */
 	public void setRegulatoryUsages(List<String> regulatoryUsages) {
 		this.regulatoryUsages = regulatoryUsages;
 	}
 
+	/**
+	 * <p>Getter for the field <code>regulatoryFormulatedDate</code>.</p>
+	 *
+	 * @return a {@link java.util.Date} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:regulatoryFormulatedDate")
 	public Date getRegulatoryFormulatedDate() {
 		return regulatoryFormulatedDate;
 	}
 
+	/**
+	 * <p>Setter for the field <code>regulatoryFormulatedDate</code>.</p>
+	 *
+	 * @param regulatoryFormulatedDate a {@link java.util.Date} object.
+	 */
 	public void setRegulatoryFormulatedDate(Date regulatoryFormulatedDate) {
 		this.regulatoryFormulatedDate = regulatoryFormulatedDate;
 	}
 
+	/**
+	 * <p>Getter for the field <code>requirementChecksum</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:requirementChecksum")
 	public String getRequirementChecksum() {
 		return requirementChecksum;
 	}
 
+	/**
+	 * <p>Setter for the field <code>requirementChecksum</code>.</p>
+	 *
+	 * @param requirementChecksum a {@link java.lang.String} object.
+	 */
 	public void setRequirementChecksum(String requirementChecksum) {
 		this.requirementChecksum = requirementChecksum;
 	}
@@ -1057,14 +1860,31 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		return list;
 	}
 
+	/**
+	 * <p>getCompoList.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	public List<CompoListDataItem> getCompoList() {
 		return getCompoList(Collections.emptyList());
 	}
 
+	/**
+	 * <p>getCompoList.</p>
+	 *
+	 * @param filter a {@link fr.becpg.repo.repository.filters.DataListFilter} object.
+	 * @return a {@link java.util.List} object.
+	 */
 	public List<CompoListDataItem> getCompoList(DataListFilter<ProductData, CompoListDataItem> filter) {
 		return getCompoList(Collections.singletonList(filter));
 	}
 
+	/**
+	 * <p>getCompoList.</p>
+	 *
+	 * @param filters a {@link java.util.List} object.
+	 * @return a {@link java.util.List} object.
+	 */
 	public List<CompoListDataItem> getCompoList(List<DataListFilter<ProductData, CompoListDataItem>> filters) {
 		if ((compoListView != null) && (compoListView.getCompoList() != null)) {
 			return filterList(compoListView.getCompoList(), filters);
@@ -1072,36 +1892,80 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		return null;
 	}
 
+	/**
+	 * <p>hasCompoListEl.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public boolean hasCompoListEl() {
 		return hasCompoListEl(Collections.emptyList());
 	}
 
+	/**
+	 * <p>hasCompoListEl.</p>
+	 *
+	 * @param filter a {@link fr.becpg.repo.repository.filters.DataListFilter} object.
+	 * @return a boolean.
+	 */
 	public boolean hasCompoListEl(DataListFilter<ProductData, CompoListDataItem> filter) {
 		return hasCompoListEl(Collections.singletonList(filter));
 	}
 
+	/**
+	 * <p>hasCompoListEl.</p>
+	 *
+	 * @param filters a {@link java.util.List} object.
+	 * @return a boolean.
+	 */
 	public boolean hasCompoListEl(List<DataListFilter<ProductData, CompoListDataItem>> filters) {
 		return (compoListView != null) && (compoListView.getCompoList() != null) && !getCompoList(filters).isEmpty();
 	}
 
+	/**
+	 * <p>Setter for the field <code>compoListView</code>.</p>
+	 *
+	 * @param compoListView a {@link fr.becpg.repo.product.data.CompoListView} object.
+	 */
 	public void setCompoListView(CompoListView compoListView) {
 		this.compoListView = compoListView;
 	}
 
+	/**
+	 * <p>Getter for the field <code>processListView</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.ProcessListView} object.
+	 */
 	@DataListView
 	@AlfQname(qname = "mpm:processList")
 	public ProcessListView getProcessListView() {
 		return processListView;
 	}
 
+	/**
+	 * <p>getProcessList.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	public List<ProcessListDataItem> getProcessList() {
 		return getProcessList(Collections.emptyList());
 	}
 
+	/**
+	 * <p>getProcessList.</p>
+	 *
+	 * @param filter a {@link fr.becpg.repo.repository.filters.DataListFilter} object.
+	 * @return a {@link java.util.List} object.
+	 */
 	public List<ProcessListDataItem> getProcessList(DataListFilter<ProductData, ProcessListDataItem> filter) {
 		return getProcessList(Collections.singletonList(filter));
 	}
 
+	/**
+	 * <p>getProcessList.</p>
+	 *
+	 * @param filters a {@link java.util.List} object.
+	 * @return a {@link java.util.List} object.
+	 */
 	public List<ProcessListDataItem> getProcessList(List<DataListFilter<ProductData, ProcessListDataItem>> filters) {
 		if ((processListView != null) && (processListView.getProcessList() != null)) {
 			return filterList(processListView.getProcessList(), filters);
@@ -1109,36 +1973,80 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		return null;
 	}
 
+	/**
+	 * <p>hasProcessListEl.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public boolean hasProcessListEl() {
 		return hasProcessListEl(Collections.emptyList());
 	}
 
+	/**
+	 * <p>hasProcessListEl.</p>
+	 *
+	 * @param filter a {@link fr.becpg.repo.repository.filters.DataListFilter} object.
+	 * @return a boolean.
+	 */
 	public boolean hasProcessListEl(DataListFilter<ProductData, ProcessListDataItem> filter) {
 		return hasProcessListEl(Collections.singletonList(filter));
 	}
 
+	/**
+	 * <p>hasProcessListEl.</p>
+	 *
+	 * @param filters a {@link java.util.List} object.
+	 * @return a boolean.
+	 */
 	public boolean hasProcessListEl(List<DataListFilter<ProductData, ProcessListDataItem>> filters) {
 		return (processListView != null) && (processListView.getProcessList() != null) && !getProcessList(filters).isEmpty();
 	}
 
+	/**
+	 * <p>Setter for the field <code>processListView</code>.</p>
+	 *
+	 * @param processListView a {@link fr.becpg.repo.product.data.ProcessListView} object.
+	 */
 	public void setProcessListView(ProcessListView processListView) {
 		this.processListView = processListView;
 	}
 
+	/**
+	 * <p>Getter for the field <code>packagingListView</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.PackagingListView} object.
+	 */
 	@DataListView
 	@AlfQname(qname = "bcpg:packagingList")
 	public PackagingListView getPackagingListView() {
 		return packagingListView;
 	}
 
+	/**
+	 * <p>getPackagingList.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	public List<PackagingListDataItem> getPackagingList() {
 		return getPackagingList(Collections.emptyList());
 	}
 
+	/**
+	 * <p>getPackagingList.</p>
+	 *
+	 * @param filter a {@link fr.becpg.repo.repository.filters.DataListFilter} object.
+	 * @return a {@link java.util.List} object.
+	 */
 	public List<PackagingListDataItem> getPackagingList(DataListFilter<ProductData, PackagingListDataItem> filter) {
 		return getPackagingList(Collections.singletonList(filter));
 	}
 
+	/**
+	 * <p>getPackagingList.</p>
+	 *
+	 * @param filters a {@link java.util.List} object.
+	 * @return a {@link java.util.List} object.
+	 */
 	public List<PackagingListDataItem> getPackagingList(List<DataListFilter<ProductData, PackagingListDataItem>> filters) {
 		if ((packagingListView != null) && (packagingListView.getPackagingList() != null)) {
 			return filterList(packagingListView.getPackagingList(), filters);
@@ -1146,26 +2054,54 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		return null;
 	}
 
+	/**
+	 * <p>hasPackagingListEl.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public boolean hasPackagingListEl() {
 		return hasPackagingListEl(Collections.emptyList());
 	}
 
+	/**
+	 * <p>hasPackagingListEl.</p>
+	 *
+	 * @param filter a {@link fr.becpg.repo.repository.filters.DataListFilter} object.
+	 * @return a boolean.
+	 */
 	public boolean hasPackagingListEl(DataListFilter<ProductData, PackagingListDataItem> filter) {
 		return hasPackagingListEl(Collections.singletonList(filter));
 	}
 
+	/**
+	 * <p>hasPackagingListEl.</p>
+	 *
+	 * @param filters a {@link java.util.List} object.
+	 * @return a boolean.
+	 */
 	public boolean hasPackagingListEl(List<DataListFilter<ProductData, PackagingListDataItem>> filters) {
 		return (packagingListView != null) && (packagingListView.getPackagingList() != null) && !getPackagingList(filters).isEmpty();
 	}
 
+	/**
+	 * <p>Setter for the field <code>packagingListView</code>.</p>
+	 *
+	 * @param packagingListView a {@link fr.becpg.repo.product.data.PackagingListView} object.
+	 */
 	public void setPackagingListView(PackagingListView packagingListView) {
 		this.packagingListView = packagingListView;
 	}
 
+	/**
+	 * <p>getViews.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	public List<AbstractProductDataView> getViews() {
 		return Arrays.asList(compoListView, packagingListView, processListView);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String getEntityState() {
 		return state != null ? state.toString() : null;
@@ -1174,6 +2110,11 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	// Formula helpers
 
 	
+	/**
+	 * <p>isLiquid.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public boolean isLiquid() {
 		if(servingSizeUnit != null && !servingSizeUnit.equals(ProductUnit.kg) && servingSizeUnit.isVolume()){
 			return true;
@@ -1182,52 +2123,87 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		}
 	}
 
+	/**
+	 * <p>isRawMaterial.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public boolean isRawMaterial() {
 		return this instanceof RawMaterialData;
 	}
 
+	/**
+	 * <p>isPackaging.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public boolean isPackaging() {
 		return this instanceof PackagingMaterialData;
 	}
 
+	/**
+	 * <p>isPackagingKit.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public boolean isPackagingKit() {
 		return this instanceof PackagingKitData;
 	}
 
+	/**
+	 * <p>isSemiFinished.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public boolean isSemiFinished() {
 		return this instanceof SemiFinishedProductData;
 	}
 
+	/**
+	 * <p>isLocalSemiFinished.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public boolean isLocalSemiFinished() {
 		return this instanceof LocalSemiFinishedProductData;
 	}
 
 	
+	/** {@inheritDoc} */
 	@Override
 	public Integer getReformulateCount() {
 		return reformulateCount;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void setReformulateCount(Integer reformulateCount) {
 		this.reformulateCount = reformulateCount;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Integer getCurrentReformulateCount() {
 		return currentReformulateCount;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void setCurrentReformulateCount(Integer currentReformulateCount) {
 		this.currentReformulateCount = currentReformulateCount;
 	}
 
 	
+	/**
+	 * <p>Getter for the field <code>formulationChainId</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getFormulationChainId() {
 		return formulationChainId;
 	}
 
+	/** {@inheritDoc} */
 	public void setFormulationChainId(String formulationChainId) {
 		this.formulationChainId = formulationChainId;
 	}
@@ -1239,12 +2215,14 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		super();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "ProductData [hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", legalName=" + legalName + ", title=" + title + ", erpCode="
 				+ erpCode + ", state=" + state + ", unit=" + unit + ", qty=" + qty + ", netWeight=" + netWeight + "]";
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -1257,6 +2235,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

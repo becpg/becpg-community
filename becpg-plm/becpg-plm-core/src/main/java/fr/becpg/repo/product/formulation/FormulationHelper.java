@@ -35,25 +35,39 @@ import fr.becpg.repo.repository.model.SimpleCharactDataItem;
  * The Class FormulationHelper.
  *
  * @author querephi
+ * @version $Id: $Id
  */
 public class FormulationHelper {
 
+	/** Constant <code>DEFAULT_NET_WEIGHT</code> */
 	public static final Double DEFAULT_NET_WEIGHT = 0d;
 
+	/** Constant <code>DEFAULT_COMPONANT_QUANTITY</code> */
 	public static final Double DEFAULT_COMPONANT_QUANTITY = 0d;
 
+	/** Constant <code>DEFAULT_DENSITY</code> */
 	public static final Double DEFAULT_DENSITY = 1d;
 
+	/** Constant <code>QTY_FOR_PIECE</code> */
 	public static final Double QTY_FOR_PIECE = 1d;
 
+	/** Constant <code>DEFAULT_YIELD</code> */
 	public static final Double DEFAULT_YIELD = 100d;
 
+	/** Constant <code>DEFAULT_OVERRUN</code> */
 	public static final Double DEFAULT_OVERRUN = 0d;
 
+	/** Constant <code>MISSING_NUMBER_OF_PRODUCT_PER_BOX="message.formulate.missing.numberOfProdu"{trunked}</code> */
 	public static final String MISSING_NUMBER_OF_PRODUCT_PER_BOX = "message.formulate.missing.numberOfProductPerBox";
 
 	private static final Log logger = LogFactory.getLog(FormulationHelper.class);
 
+	/**
+	 * <p>getQtyInKg.</p>
+	 *
+	 * @param compoListDataItem a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object.
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public static Double getQtyInKg(CompoListDataItem compoListDataItem) {
 		if ((compoListDataItem.getQty() == null) || compoListDataItem.getQty().isNaN() || compoListDataItem.getQty().isInfinite()) {
 			compoListDataItem.setQty(DEFAULT_COMPONANT_QUANTITY);
@@ -61,11 +75,26 @@ public class FormulationHelper {
 		return compoListDataItem.getQty();
 	}
 
+	/**
+	 * <p>getYield.</p>
+	 *
+	 * @param compoListDataItem a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object.
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public static Double getYield(CompoListDataItem compoListDataItem) {
 		return (compoListDataItem.getYieldPerc() != null) && (compoListDataItem.getYieldPerc() != 0d) && !compoListDataItem.getYieldPerc().isNaN()
 				&& !compoListDataItem.getYieldPerc().isInfinite() ? compoListDataItem.getYieldPerc() : DEFAULT_YIELD;
 	}
 
+	/**
+	 * <p>getQtyForCost.</p>
+	 *
+	 * @param compoListDataItem a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object.
+	 * @param parentLossRatio a {@link java.lang.Double} object.
+	 * @param componentProduct a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @param keepProductUnit a boolean.
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public static Double getQtyForCost(CompoListDataItem compoListDataItem, Double parentLossRatio, ProductData componentProduct,
 			boolean keepProductUnit) {
 		Double lossPerc = FormulationHelper.calculateLossPerc(parentLossRatio != null ? parentLossRatio : 0d,
@@ -107,6 +136,13 @@ public class FormulationHelper {
 		return DEFAULT_COMPONANT_QUANTITY;
 	}
 
+	/**
+	 * <p>calculateLossPerc.</p>
+	 *
+	 * @param parentLossRatio a {@link java.lang.Double} object.
+	 * @param lossPerc a {@link java.lang.Double} object.
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public static Double calculateLossPerc(Double parentLossRatio, Double lossPerc) {
 		if (parentLossRatio == null) {
 			parentLossRatio = 0d;
@@ -125,6 +161,14 @@ public class FormulationHelper {
 		return (1 + (lossPerc / 100)) * qty;
 	}
 
+	/**
+	 * <p>getQtyForCost.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @param packagingListDataItem a {@link fr.becpg.repo.product.data.productList.PackagingListDataItem} object.
+	 * @param subProductData a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public static Double getQtyForCost(ProductData formulatedProduct, PackagingListDataItem packagingListDataItem, ProductData subProductData) {
 		Double lossPerc = packagingListDataItem.getLossPerc() != null ? packagingListDataItem.getLossPerc() : 0d;
 		lossPerc = calculateLossPerc(formulatedProduct.getProductLossPerc(), lossPerc);
@@ -134,8 +178,9 @@ public class FormulationHelper {
 	/**
 	 * Gets the qty of a packaging item
 	 *
-	 * @param packagingListDataItem
-	 * @return
+	 * @param packagingListDataItem a {@link fr.becpg.repo.product.data.productList.PackagingListDataItem} object.
+	 * @param subProductData a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @return a {@link java.lang.Double} object.
 	 */
 	public static Double getQty(PackagingListDataItem packagingListDataItem, ProductData subProductData) {
 
@@ -169,9 +214,10 @@ public class FormulationHelper {
 	/**
 	 * Gets the qty of a process item
 	 *
-	 * @param processListDataItem
-	 * @return
-	 * @throws FormulateException
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @param processListDataItem a {@link fr.becpg.repo.product.data.productList.ProcessListDataItem} object.
+	 * @return a {@link java.lang.Double} object.
+	 * @throws fr.becpg.repo.formulation.FormulateException if any.
 	 */
 	public static Double getQty(ProductData formulatedProduct, ProcessListDataItem processListDataItem) throws FormulateException {
 
@@ -219,10 +265,14 @@ public class FormulationHelper {
 		}
 	}
 
+
 	/**
+	 * <p>getNetWeight.</p>
 	 *
-	 * @param productData
-	 * @return
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 * @param defaultValue a {@link java.lang.Double} object.
+	 * @return a {@link java.lang.Double} object.
 	 */
 	@Deprecated
 	public static Double getNetWeight(NodeRef nodeRef, NodeService nodeService, Double defaultValue) {
@@ -261,6 +311,13 @@ public class FormulationHelper {
 		return defaultValue;
 	}
 
+	/**
+	 * <p>getNetWeight.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @param defaultValue a {@link java.lang.Double} object.
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public static Double getNetWeight(ProductData productData, Double defaultValue) {
 
 		Double netWeight = productData.getNetWeight();
@@ -290,6 +347,13 @@ public class FormulationHelper {
 		return defaultValue;
 	}
 
+	/**
+	 * <p>getNetQtyInLorKg.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @param defaultValue a {@link java.lang.Double} object.
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public static Double getNetQtyInLorKg(ProductData formulatedProduct, Double defaultValue) {
 		ProductUnit productUnit = formulatedProduct.getUnit();
 		if (productUnit != null) {
@@ -310,6 +374,12 @@ public class FormulationHelper {
 		return defaultValue;
 	}
 
+	/**
+	 * <p>getNetQtyForNuts.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public static Double getNetQtyForNuts(ProductData formulatedProduct) {
 		if (formulatedProduct.isLiquid()) {
 			return FormulationHelper.getNetVolume(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
@@ -318,6 +388,12 @@ public class FormulationHelper {
 		}
 	}
 
+	/**
+	 * <p>getServingSizeInLorKg.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public static Double getServingSizeInLorKg(ProductData formulatedProduct) {
 		if ((formulatedProduct.getServingSize() != null) && (formulatedProduct.getServingSizeUnit() != null)) {
 			return (formulatedProduct.getServingSize() / formulatedProduct.getServingSizeUnit().getUnitFactor());
@@ -327,6 +403,13 @@ public class FormulationHelper {
 		return null;
 	}
 
+	/**
+	 * <p>getQtyFromComposition.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @param defaultValue a {@link java.lang.Double} object.
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public static Double getQtyFromComposition(ProductData formulatedProduct, Double defaultValue) {
 		return getQtyFromComposition(formulatedProduct, formulatedProduct.getUnit(), defaultValue);
 
@@ -344,6 +427,13 @@ public class FormulationHelper {
 		return qty;
 	}
 
+	/**
+	 * <p>getNetVolume.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @param defaultValue a {@link java.lang.Double} object.
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public static Double getNetVolume(ProductData formulatedProduct, Double defaultValue) {
 		if ((formulatedProduct.getNetVolume() != null) && (formulatedProduct.getNetVolume() > 0)) {
 			return formulatedProduct.getNetVolume();
@@ -391,6 +481,13 @@ public class FormulationHelper {
 		return null;
 	}
 
+	/**
+	 * <p>getNetVolume.</p>
+	 *
+	 * @param compoListDataItem a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object.
+	 * @param subProductData a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public static Double getNetVolume(CompoListDataItem compoListDataItem, ProductData subProductData) {
 
 		Double qty = FormulationHelper.getQtyInKg(compoListDataItem);
@@ -398,6 +495,15 @@ public class FormulationHelper {
 		return getNetVolume(qty, compoListDataItem, subProductData);
 	}
 
+	/**
+	 * <p>calculateValue.</p>
+	 *
+	 * @param totalValue a {@link java.lang.Double} object.
+	 * @param qtyUsed a {@link java.lang.Double} object.
+	 * @param value a {@link java.lang.Double} object.
+	 * @param netWeight a {@link java.lang.Double} object.
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public static Double calculateValue(Double totalValue, Double qtyUsed, Double value, Double netWeight) {
 
 		if ((totalValue == null) && (value == null)) {
@@ -414,6 +520,13 @@ public class FormulationHelper {
 		return totalValue + value;
 	}
 
+	/**
+	 * <p>getTareInKg.</p>
+	 *
+	 * @param compoList a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object.
+	 * @param subProduct a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @return a {@link java.math.BigDecimal} object.
+	 */
 	public static BigDecimal getTareInKg(CompoListDataItem compoList, ProductData subProduct) {
 
 		ProductUnit compoListUnit = compoList.getCompoListUnit();
@@ -458,6 +571,13 @@ public class FormulationHelper {
 		return BigDecimal.valueOf(0d);
 	}
 
+	/**
+	 * <p>getTareInKg.</p>
+	 *
+	 * @param packList a {@link fr.becpg.repo.product.data.productList.PackagingListDataItem} object.
+	 * @param subProductData a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @return a {@link java.math.BigDecimal} object.
+	 */
 	public static BigDecimal getTareInKg(PackagingListDataItem packList, ProductData subProductData) {
 
 		BigDecimal tare = BigDecimal.valueOf(0d);
@@ -480,6 +600,12 @@ public class FormulationHelper {
 		return tare;
 	}
 
+	/**
+	 * <p>getTareInKg.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @return a {@link java.math.BigDecimal} object.
+	 */
 	public static BigDecimal getTareInKg(ProductData productData) {
 
 		Double tare = productData.getTare();
@@ -491,6 +617,13 @@ public class FormulationHelper {
 		}
 	}
 
+	/**
+	 * <p>getTareInKg.</p>
+	 *
+	 * @param tare a {@link java.lang.Double} object.
+	 * @param tareUnit a {@link fr.becpg.repo.product.data.constraints.TareUnit} object.
+	 * @return a {@link java.math.BigDecimal} object.
+	 */
 	public static BigDecimal getTareInKg(Double tare, TareUnit tareUnit) {
 		if ((tare == null) || (tareUnit == null)) {
 			return null;
@@ -499,6 +632,12 @@ public class FormulationHelper {
 		}
 	}
 
+	/**
+	 * <p>getNetQtyForCost.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public static Double getNetQtyForCost(ProductData formulatedProduct) {
 		if (formulatedProduct instanceof PackagingKitData) {
 			return FormulationHelper.QTY_FOR_PIECE;
@@ -516,6 +655,14 @@ public class FormulationHelper {
 		}
 	}
 
+	/**
+	 * <p>getQtyForCostByPackagingLevel.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @param packagingListDataItem a {@link fr.becpg.repo.product.data.productList.PackagingListDataItem} object.
+	 * @param subProductData a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public static Double getQtyForCostByPackagingLevel(ProductData formulatedProduct, PackagingListDataItem packagingListDataItem,
 			ProductData subProductData) {
 
@@ -567,6 +714,13 @@ public class FormulationHelper {
 		return qty;
 	}
 
+	/**
+	 * <p>isCharactFormulatedFromVol.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 * @param sl a {@link fr.becpg.repo.repository.model.SimpleCharactDataItem} object.
+	 * @return a boolean.
+	 */
 	public static boolean isCharactFormulatedFromVol(NodeService nodeService, SimpleCharactDataItem sl) {
 		if (sl instanceof PhysicoChemListDataItem) {
 			Boolean isFormulatedFromVol = (Boolean) nodeService.getProperty(sl.getCharactNodeRef(), PLMModel.PROP_PHYSICO_CHEM_FORMULATED_FROM_VOL);
@@ -575,6 +729,13 @@ public class FormulationHelper {
 		return false;
 	}
 
+	/**
+	 * <p>getComponentLossPerc.</p>
+	 *
+	 * @param componentProduct a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @param compoListDataItem a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object.
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public static Double getComponentLossPerc(ProductData componentProduct, CompoListDataItem compoListDataItem) {
 		if (compoListDataItem.getLossPerc() != null) {
 			return compoListDataItem.getLossPerc();
@@ -582,6 +743,13 @@ public class FormulationHelper {
 		return componentProduct.getComponentLossPerc() != null ? componentProduct.getComponentLossPerc() : 0d;
 	}
 
+	/**
+	 * <p>flatPercValue.</p>
+	 *
+	 * @param formulatedValue a {@link java.lang.Double} object.
+	 * @param unit a {@link java.lang.String} object.
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public static Double flatPercValue(Double formulatedValue, String unit) {
 		if ((formulatedValue != null) && (unit != null) && (unit.equals("%") || unit.equals("Perc"))) {
 			if (formulatedValue > 100d) {

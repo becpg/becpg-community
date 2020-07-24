@@ -9,6 +9,12 @@ import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.helper.MLTextHelper;
 
+/**
+ * <p>MeatContentRule class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class MeatContentRule {
 
 	NodeRef replacement;
@@ -17,6 +23,12 @@ public class MeatContentRule {
 	
 	Set<Locale> locales = new HashSet<>();
 
+	/**
+	 * <p>Constructor for MeatContentRule.</p>
+	 *
+	 * @param meatType a {@link java.lang.String} object.
+	 * @param locales a {@link java.util.List} object.
+	 */
 	public MeatContentRule(String meatType, List<String> locales) {
 		super();
 		this.meatType = meatType;
@@ -29,34 +41,71 @@ public class MeatContentRule {
 
 	}
 
+	/**
+	 * <p>Getter for the field <code>meatType</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getMeatType() {
 		return meatType;
 	}
 
+	/**
+	 * <p>Setter for the field <code>meatType</code>.</p>
+	 *
+	 * @param meatType a {@link java.lang.String} object.
+	 */
 	public void setMeatType(String meatType) {
 		this.meatType = meatType;
 	}
 
+	/**
+	 * <p>Getter for the field <code>replacement</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public NodeRef getReplacement() {
 		return replacement;
 	}
 
+	/**
+	 * <p>Setter for the field <code>replacement</code>.</p>
+	 *
+	 * @param replacement a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void setReplacement(NodeRef replacement) {
 		this.replacement = replacement;
 	}
 
+	/**
+	 * <p>matchLocale.</p>
+	 *
+	 * @param locale a {@link java.util.Locale} object.
+	 * @return a boolean.
+	 */
 	public boolean matchLocale(Locale locale) {
 		return locales.isEmpty() || locales.contains(locale);
 	}
 
+	/**
+	 * <p>Getter for the field <code>component</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public NodeRef getComponent() {
 		return component;
 	}
 
+	/**
+	 * <p>Setter for the field <code>component</code>.</p>
+	 *
+	 * @param component a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void setComponent(NodeRef component) {
 		this.component = component;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -68,6 +117,7 @@ public class MeatContentRule {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -97,6 +147,7 @@ public class MeatContentRule {
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "MeatContentRule [replacement=" + replacement + ", meatType=" + meatType + ", component=" + component + ", locales=" + locales + "]";

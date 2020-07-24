@@ -11,10 +11,17 @@ import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 
+/**
+ * <p>DecernisRequestInterceptor class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class DecernisRequestInterceptor implements ClientHttpRequestInterceptor {
 
     final static Logger log = LoggerFactory.getLogger(DecernisRequestInterceptor.class);
 
+    /** {@inheritDoc} */
     @Override
     public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
         traceRequest(request, body);

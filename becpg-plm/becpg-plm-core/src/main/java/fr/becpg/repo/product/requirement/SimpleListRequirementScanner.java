@@ -21,12 +21,19 @@ import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.repository.model.MinMaxValueDataItem;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
 
+/**
+ * <p>Abstract SimpleListRequirementScanner class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public abstract class SimpleListRequirementScanner<T extends SimpleListDataItem> extends AbstractRequirementScanner<T> {
 
 	private static final String MESSAGE_UNDEFINED_VALUE = "message.formulate.undefined.value";
 
 	private static Log logger = LogFactory.getLog(SimpleListRequirementScanner.class);
 
+	/** {@inheritDoc} */
 	@Override
 	public List<ReqCtrlListDataItem> checkRequirements(ProductData formulatedProduct, List<ProductSpecificationData> specifications) {
 		List<ReqCtrlListDataItem> ret = new LinkedList<>();
@@ -98,8 +105,14 @@ public abstract class SimpleListRequirementScanner<T extends SimpleListDataItem>
 		return ret;
 	}
 
+	/**
+	 * <p>getSpecErrorMessageKey.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	protected abstract String getSpecErrorMessageKey();
 
+	/** {@inheritDoc} */
 	@Override
 	protected void mergeRequirements(List<T> ret, List<T> toAdd) {
 		toAdd.forEach(item -> {

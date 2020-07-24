@@ -37,6 +37,7 @@
 			<language locale="en_KE">English - Kenya</language>
 			<language locale="en_MW">English - Malawi</language>
 			<language locale="en_NG">English - Nigeria</language>
+			<language locale="en_PK">English - Pakistan</language>
 			<language locale="en_UG">English - Uganda</language>
 			<language locale="en_ZW">English - Zibabwe</language>
 			<language locale="de">German</language>
@@ -57,6 +58,7 @@
 			<language locale="ru">Russian</language>
 			<language locale="pt">Portuguese</language>
 			<language locale="no">Norwegian</language>
+			<language locale="sr_RS">Serbian - Serbia</language>
 			<language locale="sv_SE">Swedish - Sweden</language>
 			<language locale="sw_TZ">Swahili - Tanzania</language>
 			<language locale="el">Greek</language>

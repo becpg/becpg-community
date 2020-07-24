@@ -25,6 +25,12 @@ import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
+/**
+ * <p>SimulationListDataItem class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @AlfType
 @AlfQname(qname="ecm:calculatedCharactList")
 public class SimulationListDataItem extends BeCPGDataObject{
@@ -39,58 +45,121 @@ public class SimulationListDataItem extends BeCPGDataObject{
 	private Object targetValue;
 	private Integer sort;
 	
+	/**
+	 * <p>Getter for the field <code>sourceItem</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	@AlfSingleAssoc
 	@AlfQname(qname="ecm:cclSourceItem")
 	public NodeRef getSourceItem() {
 		return sourceItem;
 	}
+	/**
+	 * <p>Setter for the field <code>sourceItem</code>.</p>
+	 *
+	 * @param sourceItem a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void setSourceItem(NodeRef sourceItem) {
 		this.sourceItem = sourceItem;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>charact</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	@AlfSingleAssoc
 	@AlfQname(qname="ecm:cclCharact")
 	public NodeRef getCharact() {
 		return charact;
 	}
+	/**
+	 * <p>Setter for the field <code>charact</code>.</p>
+	 *
+	 * @param charact a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void setCharact(NodeRef charact) {
 		this.charact = charact;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>sourceValue</code>.</p>
+	 *
+	 * @return a {@link java.lang.Object} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="ecm:cclSourceValue")
 	public Object getSourceValue() {
 		return sourceValue;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>sourceValue</code>.</p>
+	 *
+	 * @param sourceValue a {@link java.lang.Object} object.
+	 */
 	public void setSourceValue(Object sourceValue) {
 		this.sourceValue = sourceValue;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>targetValue</code>.</p>
+	 *
+	 * @return a {@link java.lang.Object} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="ecm:cclTargetValue")
 	public Object getTargetValue() {
 		return targetValue;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>targetValue</code>.</p>
+	 *
+	 * @param targetValue a {@link java.lang.Object} object.
+	 */
 	public void setTargetValue(Object targetValue) {
 		this.targetValue = targetValue;
 	}
 
+	/**
+	 * <p>Getter for the field <code>sort</code>.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:sort")
 	public Integer getSort() {
 		return sort;
 	}
 
+	/**
+	 * <p>Setter for the field <code>sort</code>.</p>
+	 *
+	 * @param sort a {@link java.lang.Integer} object.
+	 */
 	public void setSort(Integer sort) {
 		this.sort = sort;
 	}
 	
+	/**
+	 * <p>Constructor for SimulationListDataItem.</p>
+	 */
 	public SimulationListDataItem() {
 		super();
 	}
 	
+	/**
+	 * <p>Constructor for SimulationListDataItem.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param sourceItem a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param charact a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param sourceValue a {@link java.lang.Object} object.
+	 * @param targetValue a {@link java.lang.Object} object.
+	 * @param sort a {@link java.lang.Integer} object.
+	 */
 	public SimulationListDataItem(NodeRef nodeRef, NodeRef sourceItem, NodeRef charact, Object sourceValue, Object targetValue, Integer sort){
 		this.nodeRef=nodeRef;
 		this.sourceItem=sourceItem;
@@ -100,6 +169,7 @@ public class SimulationListDataItem extends BeCPGDataObject{
 		this.sort=sort;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -112,6 +182,7 @@ public class SimulationListDataItem extends BeCPGDataObject{
 		return result;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -151,6 +222,7 @@ public class SimulationListDataItem extends BeCPGDataObject{
 		return true;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "SimulationListDataItem [sourceItem=" + sourceItem + ", charact=" + charact + ", sourceValue=" + sourceValue + ", targetValue=" + targetValue + "]";

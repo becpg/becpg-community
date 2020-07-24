@@ -29,26 +29,39 @@ import fr.becpg.repo.project.data.projectList.TaskState;
  * Class used to manage notification
  *
  * @author quere
- *
+ * @version $Id: $Id
  */
 @Service("projectNotificationService")
 public class ProjectNotificationServiceImpl implements ProjectNotificationService {
 
 	private static final Log logger = LogFactory.getLog(ProjectNotificationServiceImpl.class);
 
+	/** Constant <code>MAIL_TEMPLATE="/app:company_home/app:dictionary/app:em"{trunked}</code> */
 	public static final String MAIL_TEMPLATE = "/app:company_home/app:dictionary/app:email_templates/cm:project/cm:project-observer-email.html.ftl";
 
+	/** Constant <code>ARG_ACTIVITY_TYPE="activityType"</code> */
 	public static final String ARG_ACTIVITY_TYPE = "activityType";
+	/** Constant <code>ARG_ACTIVITY_EVENT="activityEvent"</code> */
 	public static final String ARG_ACTIVITY_EVENT = "activityEvent";
+	/** Constant <code>ARG_TASK_TITLE="taskTitle"</code> */
 	public static final String ARG_TASK_TITLE = "taskTitle";
+	/** Constant <code>ARG_TASK_DESCRIPTION="taskDescription"</code> */
 	public static final String ARG_TASK_DESCRIPTION = "taskDescription";
+	/** Constant <code>ARG_DELIVERABLE_TITLE="deliverableDescription"</code> */
 	public static final String ARG_DELIVERABLE_TITLE = "deliverableDescription";
+	/** Constant <code>ARG_BEFORE_STATE="beforeState"</code> */
 	public static final String ARG_BEFORE_STATE = "beforeState";
+	/** Constant <code>ARG_AFTER_STATE="afterState"</code> */
 	public static final String ARG_AFTER_STATE = "afterState";
+	/** Constant <code>ARG_COMMENT="comment"</code> */
 	public static final String ARG_COMMENT = "comment";
+	/** Constant <code>ARG_PROJECT="project"</code> */
 	public static final String ARG_PROJECT = "project";
+	/** Constant <code>ARG_TASK_STATE="taskState"</code> */
 	public static final String ARG_TASK_STATE = "taskState";
+	/** Constant <code>ARG_TASK="task"</code> */
 	public static final String ARG_TASK = "task";
+	/** Constant <code>ARG_TASK_COMMENT="taskComment"</code> */
 	public static final String ARG_TASK_COMMENT = "taskComment";
 
 	private static final String PREFIX_LOCALIZATION_TASK_NAME = "listconstraint.pjt_taskStates.";
@@ -67,6 +80,7 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 	@Autowired
 	private BeCPGMailService beCPGMailService;
 
+	/** {@inheritDoc} */
 	@Override
 	public void notifyTaskStateChanged(NodeRef projectNodeRef, NodeRef taskNodeRef, String beforeState, String afterState) {
 
@@ -89,6 +103,7 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 		notifyObservers(projectNodeRef, taskNodeRef, subject, templateArgs, MAIL_TEMPLATE);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String createSubject(NodeRef projectNodeRef, NodeRef taskNodeRef, String afterStateMsg) {
 
@@ -102,6 +117,7 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void notifyComment(NodeRef commentNodeRef, ActivityEvent activityEvent, NodeRef projectNodeRef, NodeRef taskNodeRef,
 			NodeRef deliverableNodeRef) {

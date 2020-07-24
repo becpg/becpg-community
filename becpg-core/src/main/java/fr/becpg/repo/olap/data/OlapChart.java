@@ -40,9 +40,9 @@ import fr.becpg.common.dom.DOMUtils;
 
 /**
  * Store Chart infos
- * 
- * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
  *
+ * @author "Matthieu Laborie"
+ * @version $Id: $Id
  */
 public class OlapChart {
 
@@ -56,55 +56,100 @@ public class OlapChart {
 
 	private static final Log logger = LogFactory.getLog(OlapChart.class);
 
+	/**
+	 * <p>Constructor for OlapChart.</p>
+	 *
+	 * @param fileInfo a {@link org.alfresco.service.cmr.model.FileInfo} object.
+	 */
 	public OlapChart(FileInfo fileInfo) {
 		super();
 		this.queryName = fileInfo.getName().replace(".saiku", "");
 		this.nodeRef = fileInfo.getNodeRef();
 	}
 
+	/**
+	 * <p>Constructor for OlapChart.</p>
+	 *
+	 * @param queryName a {@link java.lang.String} object.
+	 */
 	public OlapChart(String queryName) {
-		// TODO Auto-generated constructor stub
+		this.queryName = queryName;
 	}
 
+	/**
+	 * <p>Getter for the field <code>queryName</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getQueryName() {
 		return queryName;
 	}
 
+	/**
+	 * <p>Getter for the field <code>queryId</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getQueryId() {
 		return queryId;
 	}
 
+	/**
+	 * <p>Getter for the field <code>mdx</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getMdx() {
 		return mdx;
 	}
 
+	/**
+	 * <p>Getter for the field <code>cube</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getCube() {
 		return cube;
 	}
 
+	/**
+	 * <p>Getter for the field <code>type</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getType() {
 		return type;
 	}
 
+	/**
+	 * <p>Getter for the field <code>xml</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getXml() {
 		return xml;
 	}
 
+	/**
+	 * <p>Getter for the field <code>nodeRef</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public NodeRef getNodeRef() {
 		return nodeRef;
 	}
 
 	/**
 	 * Parse Xml response
-	 * 
-	 * @param buildQueryUrl
-	 * @throws FactoryConfigurationError
-	 * @throws IOException
-	 * @throws SAXException
-	 * @throws MalformedURLException
-	 * @throws ParserConfigurationException
-	 * @throws TransformerException
-	 * @throws JSONException
+	 *
+	 * @param xml a {@link java.lang.String} object.
+	 * @throws java.net.MalformedURLException if any.
+	 * @throws org.xml.sax.SAXException if any.
+	 * @throws java.io.IOException if any.
+	 * @throws javax.xml.parsers.ParserConfigurationException if any.
+	 * @throws javax.xml.parsers.FactoryConfigurationError if any.
+	 * @throws javax.xml.transform.TransformerException if any.
+	 * @throws org.json.JSONException if any.
 	 */
 
 	// <?xml version="1.0" encoding="UTF-8"?>
@@ -136,6 +181,12 @@ public class OlapChart {
 		}
 	}
 
+	/**
+	 * <p>toJSONObject.</p>
+	 *
+	 * @return a {@link org.json.JSONObject} object.
+	 * @throws org.json.JSONException if any.
+	 */
 	public JSONObject toJSONObject() throws JSONException {
 		JSONObject obj = new JSONObject();
 		obj.put("queryName", queryName);
@@ -147,6 +198,11 @@ public class OlapChart {
 		return obj;
 	}
 
+	/**
+	 * <p>Setter for the field <code>queryId</code>.</p>
+	 *
+	 * @param queryId a {@link java.lang.String} object.
+	 */
 	public void setQueryId(String queryId) {
 		this.queryId = queryId;
 	}

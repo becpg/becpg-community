@@ -51,6 +51,8 @@ import fr.becpg.repo.repository.annotation.AlfProp;
  *
  * Register custom beCPG SPEL helper accessible with @beCPG.
  *
+ * @author matthieu
+ * @version $Id: $Id
  */
 @Service
 public class BeCPGSpelFunctions implements CustomSpelFunctions {
@@ -87,11 +89,13 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 	@Autowired
 	private AttributeExtractorService attributeExtractorService;
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean match(String beanName) {
 		return beanName.equals("beCPG");
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Object create(RepositoryEntity repositoryEntity) {
 		return new BeCPGSpelFunctionsWrapper(repositoryEntity);
@@ -109,10 +113,9 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		/**
 		 * Helper @beCPG.findOne($nodeRef)
 		 *
-		 * Example :
-		 *
-		 * @beCPG.findOne(nodeRef).qty
-		 *
+		 *<code>
+		 * 	Example : @beCPG.findOne(nodeRef).qty
+		 *</code>
 		 * @param nodeRef
 		 * @return repository entity for nodeRef
 		 */
@@ -125,9 +128,9 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 
 		/**
 		 * Helper @beCPG.propValue($nodeRef, $qname)
-		 *
+		 *<code>
 		 * Example : @beCPG.propValue(nodeRef,'bcpg:productQty')
-		 *
+		 *</code>
 		 * @param nodeRef
 		 * @param qname
 		 * @return node property value
@@ -142,7 +145,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		/**
 		 * Helper @beCPG.propValue($entity, $qname)
 		 *
-		 * @param nodeRef
+		 * @param item
 		 * @param qname
 		 * @return entity property value
 		 */
@@ -192,7 +195,6 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 *
 		 * Set property value on current entity
 		 *
-		 * @param item
 		 * @param qname
 		 * @param value
 		 * @return value being set
@@ -416,11 +418,41 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		public Double avg(Collection<Double> range) {
 			return range.stream().mapToDouble(Double::doubleValue).average().getAsDouble();
 		}
+		
+		
+		/**
+		 * @beCPG.extractCustomList($nodeRef, $listType)
+		 * @param listType
+		 * @return list
+		 */
+		public Collection<RepositoryEntity> extractCustomList(NodeRef nodeRef, String listType){
+			return alfrescoRepository.loadDataList(entity.getNodeRef(),  getQName(listType), getQName(listType));
+		}
+		
+		/**
+		 * @beCPG.extractCustomList($listType)
+		 * @param listType
+		 * @return list
+		 */
+		public Collection<RepositoryEntity> extractCustomList(String listType){
+			return extractCustomList(entity.getNodeRef(), listType);
+		}
+		
+		
+		/**
+		 * @beCPG.saveCustomList($range)
+		 *
+		 * @param range
+		 */
+		public void saveCustomList(Collection<RepositoryEntity> range) {
+			alfrescoRepository.save(range);
+		}
 
+		
 		/**
 		 * @beCPG.applyFormulaToList($range, $formula)
 		 *
-		 *                                   @param range
+		 * @param range
 		 * @param formula
 		 */
 		public void applyFormulaToList(Collection<RepositoryEntity> range, String formula) {

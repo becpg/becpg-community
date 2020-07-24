@@ -14,9 +14,10 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 /**
- * 
+ * <p>PLMUndeployWorkflowPatch class.</p>
+ *
  * @author matthieu
- * 
+ * @version $Id: $Id
  */
 public class PLMUndeployWorkflowPatch extends AbstractPatch implements ApplicationContextAware {
 	private static final String MSG_SUCCESS = "patch.bcpg.plm.undeployWorkflowPatch";
@@ -27,26 +28,42 @@ public class PLMUndeployWorkflowPatch extends AbstractPatch implements Applicati
 
 	private ApplicationContext applicationContext;
 
+	/** Constant <code>PROJECT_OLD_NPD_URI="http://www.alfresco.org/model/npd-workf"{trunked}</code> */
 	public static final String PROJECT_OLD_NPD_URI = "http://www.alfresco.org/model/npd-workflow/1.0";
 
+	/** Constant <code>PROJECT_OLD_WF_URI="http://www.alfresco.org/model/project-w"{trunked}</code> */
 	public static final String PROJECT_OLD_WF_URI = "http://www.alfresco.org/model/project-workflow/1.0";
 
+	/** Constant <code>PROJECT_NPD_URI="http://www.becpg.fr/model/npd-workflow/"{trunked}</code> */
 	public static final String PROJECT_NPD_URI = "http://www.becpg.fr/model/npd-workflow/1.0";
 
+	/** Constant <code>PROJECT_WF_URI="http://www.becpg.fr/model/project-workf"{trunked}</code> */
 	public static final String PROJECT_WF_URI = "http://www.becpg.fr/model/project-workflow/1.0";
 
+	/** {@inheritDoc} */
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 		this.applicationContext = applicationContext;
 	}
 
+	/**
+	 * <p>Getter for the field <code>workflowService</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.workflow.WorkflowService} object.
+	 */
 	public WorkflowService getWorkflowService() {
 		return workflowService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>workflowService</code>.</p>
+	 *
+	 * @param workflowService a {@link org.alfresco.service.cmr.workflow.WorkflowService} object.
+	 */
 	public void setWorkflowService(WorkflowService workflowService) {
 		this.workflowService = workflowService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected String applyInternal() throws Exception {
 

@@ -33,15 +33,18 @@ import fr.becpg.repo.importer.ImporterException;
 import fr.becpg.repo.importer.user.UserImporterService;
 
 /**
- * 
+ * <p>UserImporterActionExecuter class.</p>
+ *
  * @author matthieu
- * 
+ * @version $Id: $Id
  */
 public class UserImporterActionExecuter extends ActionExecuterAbstractBase {
 	
 	private static final Log _logger = LogFactory.getLog(UserImporterActionExecuter.class);
 
+	/** Constant <code>NAME="import-user"</code> */
 	public static final String NAME = "import-user";
+	/** Constant <code>PARAM_VALUE_EXTENSION=".csv"</code> */
 	public static final String PARAM_VALUE_EXTENSION = ".csv";
 	
 	private static final String LOG_STARTING_DATE = "Starting date: ";	
@@ -55,6 +58,11 @@ public class UserImporterActionExecuter extends ActionExecuterAbstractBase {
 	
 	private NodeService nodeService;
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
@@ -68,10 +76,16 @@ public class UserImporterActionExecuter extends ActionExecuterAbstractBase {
 		this.importService = importService;
 	}	
 
+	/**
+	 * <p>Setter for the field <code>userImporterService</code>.</p>
+	 *
+	 * @param userImporterService a {@link fr.becpg.repo.importer.user.UserImporterService} object.
+	 */
 	public void setUserImporterService(UserImporterService userImporterService) {
 		this.userImporterService = userImporterService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected void executeImpl(Action action, NodeRef actionedUponNodeRef) {
 		// import file
@@ -104,6 +118,7 @@ public class UserImporterActionExecuter extends ActionExecuterAbstractBase {
     	}        
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected void addParameterDefinitions(List<ParameterDefinition> paramList) {
 

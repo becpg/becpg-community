@@ -29,6 +29,12 @@ import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
+/**
+ * <p>ProjectFormulationJob class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class ProjectFormulationJob implements Job {
 
 	private static final String KEY_PROJECT_FORMULATION_WORKER = "projectFormulationWorker";
@@ -36,6 +42,7 @@ public class ProjectFormulationJob implements Job {
 
 	private static final Log logger = LogFactory.getLog(ProjectFormulationJob.class);
 
+	/** {@inheritDoc} */
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 

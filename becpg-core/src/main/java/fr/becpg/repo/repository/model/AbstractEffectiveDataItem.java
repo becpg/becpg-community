@@ -23,6 +23,12 @@ import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.InternalField;
 
+/**
+ * <p>Abstract AbstractEffectiveDataItem class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public abstract class AbstractEffectiveDataItem extends BeCPGDataObject implements EffectiveDataItem {
 
 	/**
@@ -35,6 +41,7 @@ public abstract class AbstractEffectiveDataItem extends BeCPGDataObject implemen
 	protected Date endEffectivity;
 	
 	
+	/** {@inheritDoc} */
 	@AlfProp
 	@AlfQname(qname="bcpg:startEffectivity")
 	@InternalField
@@ -43,11 +50,13 @@ public abstract class AbstractEffectiveDataItem extends BeCPGDataObject implemen
 		return startEffectivity;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public void setStartEffectivity(Date startEffectivity) {
 		this.startEffectivity = startEffectivity;
 	}
 
+	/** {@inheritDoc} */
 	@AlfProp
 	@AlfQname(qname="bcpg:endEffectivity")
 	@InternalField
@@ -56,11 +65,13 @@ public abstract class AbstractEffectiveDataItem extends BeCPGDataObject implemen
 		return endEffectivity;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public void setEndEffectivity(Date endEffectivity) {
 		this.endEffectivity = endEffectivity;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -70,6 +81,7 @@ public abstract class AbstractEffectiveDataItem extends BeCPGDataObject implemen
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

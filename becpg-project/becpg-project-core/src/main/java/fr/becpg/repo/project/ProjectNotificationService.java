@@ -23,13 +23,39 @@ import fr.becpg.repo.activity.data.ActivityEvent;
 
 /**
  * Class used to manage notification
- * @author quere
  *
+ * @author quere
+ * @version $Id: $Id
  */
 public interface ProjectNotificationService {
 
+	/**
+	 * <p>notifyTaskStateChanged.</p>
+	 *
+	 * @param projectNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param taskNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param beforeState a {@link java.lang.String} object.
+	 * @param afterState a {@link java.lang.String} object.
+	 */
 	void notifyTaskStateChanged(NodeRef projectNodeRef, NodeRef taskNodeRef, String beforeState, String afterState);
+	/**
+	 * <p>notifyComment.</p>
+	 *
+	 * @param commentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param activityEvent a {@link fr.becpg.repo.activity.data.ActivityEvent} object.
+	 * @param projectNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param taskNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param deliverableNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	void notifyComment(NodeRef commentNodeRef, ActivityEvent activityEvent, NodeRef projectNodeRef, NodeRef taskNodeRef, NodeRef deliverableNodeRef);
+	/**
+	 * <p>createSubject.</p>
+	 *
+	 * @param projectNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param taskNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param afterStateMsg a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	String createSubject(NodeRef projectNodeRef, NodeRef taskNodeRef, String afterStateMsg);
 	
 }

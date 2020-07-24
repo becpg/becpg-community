@@ -24,6 +24,12 @@ import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.model.CompositionDataItem;
 
+/**
+ * <p>CompoListView class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class CompoListView extends AbstractProductDataView {
 
 	/**
@@ -32,23 +38,35 @@ public class CompoListView extends AbstractProductDataView {
 	private static final long serialVersionUID = 1646699257033977776L;
 	private List<CompoListDataItem> compoList;
 	
+	/**
+	 * <p>Getter for the field <code>compoList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@DataList
 	@AlfQname(qname="bcpg:compoList")
 	public List<CompoListDataItem> getCompoList() {
 		return compoList;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<? extends CompositionDataItem> getMainDataList() {
 		return getCompoList();
 	}
 
+	/**
+	 * <p>Setter for the field <code>compoList</code>.</p>
+	 *
+	 * @param compoList a {@link java.util.List} object.
+	 */
 	public void setCompoList(List<CompoListDataItem> compoList) {
 		this.compoList = compoList;
 	}
 
 	
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -57,6 +75,7 @@ public class CompoListView extends AbstractProductDataView {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -74,6 +93,7 @@ public class CompoListView extends AbstractProductDataView {
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "CompoListView [compoList=" + compoList + "]";

@@ -36,6 +36,13 @@ import org.json.simple.JSONObject;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.report.entity.EntityReportService;
 
+/**
+ * <p>ReportAssociationDecorator class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
+@Deprecated //Use webscript instead for retrieve reports in ADF
 public class ReportAssociationDecorator extends fr.becpg.repo.jscript.app.BaseAssociationDecorator {
 	private static final Log logger = LogFactory.getLog(ReportAssociationDecorator.class);
 
@@ -44,10 +51,16 @@ public class ReportAssociationDecorator extends fr.becpg.repo.jscript.app.BaseAs
 
 	private final static String CONTENT_DOWNLOAD_API_URL = "becpg/report/node/content/{0}/{1}/{2}/{3}?entityNodeRef={4}";
 
+	/**
+	 * <p>Setter for the field <code>entityReportService</code>.</p>
+	 *
+	 * @param entityReportService a {@link fr.becpg.repo.report.entity.EntityReportService} object.
+	 */
 	public void setEntityReportService(EntityReportService entityReportService) {
 		this.entityReportService = entityReportService;
 	}
 
+	/** {@inheritDoc} */
 	@SuppressWarnings("unchecked")
 	public JSONAware decorate(QName propertyName, NodeRef nodeRef, List<NodeRef> assocs) {
 		JSONArray array = new JSONArray();
@@ -103,6 +116,7 @@ public class ReportAssociationDecorator extends fr.becpg.repo.jscript.app.BaseAs
 		return array;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public QName getAspect() {
 		return ReportModel.ASPECT_REPORT_ENTITY;

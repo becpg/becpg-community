@@ -29,16 +29,25 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.product.ProductService;
 
+/**
+ * <p>Abstract AbstractProductWebscript class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public abstract class AbstractProductWebscript extends AbstractWebScript
 {	
 	
 		private static final Log logger = LogFactory.getLog(AbstractProductWebscript.class);
 		
 		//request parameter names
+		/** Constant <code>PARAM_STORE_TYPE="store_type"</code> */
 		protected static final String PARAM_STORE_TYPE = "store_type";
 
+		/** Constant <code>PARAM_STORE_ID="store_id"</code> */
 		protected static final String PARAM_STORE_ID = "store_id";
 
+		/** Constant <code>PARAM_ID="id"</code> */
 		protected static final String PARAM_ID = "id";
 		
 		
@@ -55,6 +64,12 @@ public abstract class AbstractProductWebscript extends AbstractWebScript
 		}
 		
 		
+		/**
+		 * <p>getProductNodeRef.</p>
+		 *
+		 * @param req a {@link org.springframework.extensions.webscripts.WebScriptRequest} object.
+		 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+		 */
 		protected NodeRef getProductNodeRef(WebScriptRequest req) {
 			Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();	    	
 	    	String storeType = templateArgs.get(PARAM_STORE_TYPE);
@@ -65,6 +80,11 @@ public abstract class AbstractProductWebscript extends AbstractWebScript
 		}
 		
 		
+		/**
+		 * <p>handleFormulationError.</p>
+		 *
+		 * @param e a {@link fr.becpg.repo.formulation.FormulateException} object.
+		 */
 		protected void handleFormulationError(FormulateException e) {
 
 			logger.error(e,e);

@@ -52,7 +52,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  * productLists), for the UI so it respects rights.
  *
  * @author querephi
- *
+ * @version $Id: $Id
  */
 
 @Service("advSearchService")
@@ -81,9 +81,16 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	@Autowired
 	private Repository repository;
 
+	/** Constant <code>CONFIG_PATH="/app:company_home/cm:System/cm:Config/c"{trunked}</code> */
 	public static final String CONFIG_PATH = "/app:company_home/cm:System/cm:Config/cm:search.json";
+	/** Constant <code>SEARCH_CONFIG_CACHE_KEY="SEARCH_CONFIG"</code> */
 	public static final String SEARCH_CONFIG_CACHE_KEY = "SEARCH_CONFIG";
 
+	/**
+	 * <p>getSearchConfig.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.search.impl.SearchConfig} object.
+	 */
 	public SearchConfig getSearchConfig() {
 
 		return beCPGCacheService.getFromCache(AdvSearchService.class.getName(), SEARCH_CONFIG_CACHE_KEY, () -> {
@@ -100,6 +107,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		});
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> queryAdvSearch(QName datatype, BeCPGQueryBuilder beCPGQueryBuilder, Map<String, String> criteria, int maxResults) {
 
@@ -143,6 +151,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		return nodes;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public BeCPGQueryBuilder createSearchQuery(QName datatype, String term, String tag, boolean isRepo, String siteId, String containerId) {
 		BeCPGQueryBuilder beCPGQueryBuilder = BeCPGQueryBuilder.createQuery();
@@ -313,6 +322,12 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		return escapeValue(cleanQuery);
 	}
 
+	/**
+	 * <p>escapeValue.</p>
+	 *
+	 * @param value a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	protected String escapeValue(String value) {
 		StringBuilder buf = new StringBuilder();
 		for (int i = 0; i < value.length(); i++) {

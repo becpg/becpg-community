@@ -3,11 +3,12 @@
  */
 package fr.becpg.repo.importer;
 
-// TODO: Auto-generated Javadoc
+
 /**
  * The Enum ValueType.
  *
  * @author querephi
+ * @version $Id: $Id
  */
 public enum ValueType {
 

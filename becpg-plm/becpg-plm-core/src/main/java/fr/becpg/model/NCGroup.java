@@ -17,6 +17,12 @@
  ******************************************************************************/
 package fr.becpg.model;
 
+/**
+ * <p>NCGroup class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public enum NCGroup {
 	ClaimAnalysis, ClaimClassification, ClaimTreatment, ClaimResponse, ClaimClosing, ClaimStart,
 

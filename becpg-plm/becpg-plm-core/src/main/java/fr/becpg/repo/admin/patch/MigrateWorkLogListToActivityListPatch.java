@@ -32,6 +32,12 @@ import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.repository.AlfrescoRepository;
 
+/**
+ * <p>MigrateWorkLogListToActivityListPatch class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class MigrateWorkLogListToActivityListPatch extends AbstractBeCPGPatch {
 
 	private static final Log logger = LogFactory.getLog(MigrateWorkLogListToActivityListPatch.class);
@@ -52,6 +58,7 @@ public class MigrateWorkLogListToActivityListPatch extends AbstractBeCPGPatch {
 	private BehaviourFilter policyBehaviourFilter;
 	private AlfrescoRepository<ActivityListDataItem> alfrescoRepository;
 
+	/** {@inheritDoc} */
 	@Override
 	protected String applyInternal() throws Exception {
 
@@ -152,66 +159,146 @@ public class MigrateWorkLogListToActivityListPatch extends AbstractBeCPGPatch {
 
 	}
 
+	/**
+	 * <p>Getter for the field <code>nodeDAO</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.repo.domain.node.NodeDAO} object.
+	 */
 	public NodeDAO getNodeDAO() {
 		return nodeDAO;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeDAO</code>.</p>
+	 *
+	 * @param nodeDAO a {@link org.alfresco.repo.domain.node.NodeDAO} object.
+	 */
 	public void setNodeDAO(NodeDAO nodeDAO) {
 		this.nodeDAO = nodeDAO;
 	}
 
+	/**
+	 * <p>Getter for the field <code>patchDAO</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.repo.domain.patch.PatchDAO} object.
+	 */
 	public PatchDAO getPatchDAO() {
 		return patchDAO;
 	}
 
+	/**
+	 * <p>Setter for the field <code>patchDAO</code>.</p>
+	 *
+	 * @param patchDAO a {@link org.alfresco.repo.domain.patch.PatchDAO} object.
+	 */
 	public void setPatchDAO(PatchDAO patchDAO) {
 		this.patchDAO = patchDAO;
 	}
 
+	/**
+	 * <p>Getter for the field <code>qnameDAO</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.repo.domain.qname.QNameDAO} object.
+	 */
 	public QNameDAO getQnameDAO() {
 		return qnameDAO;
 	}
 
+	/**
+	 * <p>Setter for the field <code>qnameDAO</code>.</p>
+	 *
+	 * @param qnameDAO a {@link org.alfresco.repo.domain.qname.QNameDAO} object.
+	 */
 	public void setQnameDAO(QNameDAO qnameDAO) {
 		this.qnameDAO = qnameDAO;
 	}
 
+	/**
+	 * <p>Getter for the field <code>ruleService</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.rule.RuleService} object.
+	 */
 	public RuleService getRuleService() {
 		return ruleService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>ruleService</code>.</p>
+	 *
+	 * @param ruleService a {@link org.alfresco.service.cmr.rule.RuleService} object.
+	 */
 	public void setRuleService(RuleService ruleService) {
 		this.ruleService = ruleService;
 	}
 
+	/**
+	 * <p>Getter for the field <code>policyBehaviourFilter</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.repo.policy.BehaviourFilter} object.
+	 */
 	public BehaviourFilter getPolicyBehaviourFilter() {
 		return policyBehaviourFilter;
 	}
 
+	/**
+	 * <p>Setter for the field <code>policyBehaviourFilter</code>.</p>
+	 *
+	 * @param policyBehaviourFilter a {@link org.alfresco.repo.policy.BehaviourFilter} object.
+	 */
 	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
 		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
 
+	/**
+	 * <p>Getter for the field <code>entityListDAO</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.entity.EntityListDAO} object.
+	 */
 	public EntityListDAO getEntityListDAO() {
 		return entityListDAO;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityListDAO</code>.</p>
+	 *
+	 * @param entityListDAO a {@link fr.becpg.repo.entity.EntityListDAO} object.
+	 */
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
 	}
 
+	/**
+	 * <p>Getter for the field <code>alfrescoRepository</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
+	 */
 	public AlfrescoRepository<ActivityListDataItem> getAlfrescoRepository() {
 		return alfrescoRepository;
 	}
 
+	/**
+	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
+	 */
 	public void setAlfrescoRepository(AlfrescoRepository<ActivityListDataItem> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
+	/**
+	 * <p>Getter for the field <code>entityTplService</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.entity.EntityTplService} object.
+	 */
 	public EntityTplService getEntityTplService() {
 		return entityTplService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityTplService</code>.</p>
+	 *
+	 * @param entityTplService a {@link fr.becpg.repo.entity.EntityTplService} object.
+	 */
 	public void setEntityTplService(EntityTplService entityTplService) {
 		this.entityTplService = entityTplService;
 	}

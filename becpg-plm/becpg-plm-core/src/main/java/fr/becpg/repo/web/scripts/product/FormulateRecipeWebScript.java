@@ -31,6 +31,12 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.product.data.ProductData;
 
+/**
+ * <p>FormulateRecipeWebScript class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class FormulateRecipeWebScript extends AbstractProductWebscript {
 
 	private static final String PARAM_RECIPE = "recipe";
@@ -40,6 +46,7 @@ public class FormulateRecipeWebScript extends AbstractProductWebscript {
 
 	private static final Log logger = LogFactory.getLog(FormulateRecipeWebScript.class);
 
+	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res)  throws IOException {
 		logger.debug("start formulate webscript");

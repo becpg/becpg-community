@@ -22,13 +22,20 @@ import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 
 /**
  * Class that represent the mapping for importing a property formula or an association of a node
- * 
+ *
  * <column id="labelClaimFormula" type="Formula" attribute="bcpg:labelClaimFormula" />
  *
  * @author querephi
+ * @version $Id: $Id
  */
 public class FormulaMapping extends AbstractAttributeMapping {
 
+	/**
+	 * <p>Constructor for FormulaMapping.</p>
+	 *
+	 * @param id a {@link java.lang.String} object.
+	 * @param attribute a {@link org.alfresco.service.cmr.dictionary.ClassAttributeDefinition} object.
+	 */
 	public FormulaMapping(String id, ClassAttributeDefinition attribute) {
 		super(id, attribute);
 	}

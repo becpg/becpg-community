@@ -35,7 +35,7 @@ import fr.becpg.test.utils.TestWebscriptExecuters.Response;
  */
 public class SearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 
-	/** The logger. */
+	
 	private static final Log logger = LogFactory.getLog(SearchWebScriptIT.class);
 
 	@Test

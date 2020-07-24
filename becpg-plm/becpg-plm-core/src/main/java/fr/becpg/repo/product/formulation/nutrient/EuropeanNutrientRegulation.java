@@ -5,12 +5,24 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Locale;
 
+/**
+ * <p>EuropeanNutrientRegulation class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class EuropeanNutrientRegulation extends AbstractNutrientRegulation {
 
+	/**
+	 * <p>Constructor for EuropeanNutrientRegulation.</p>
+	 *
+	 * @param path a {@link java.lang.String} object.
+	 */
 	public EuropeanNutrientRegulation(String path)  {
 		super(path);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	protected Double roundByCode(Double value, String nutrientTypeCode) {
 		
@@ -74,6 +86,7 @@ public class EuropeanNutrientRegulation extends AbstractNutrientRegulation {
 		return bd.doubleValue();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected String displayValueByCode(Double value, Double roundedValue, String nutrientTypeCode, Locale locale) {
 		
@@ -96,6 +109,7 @@ public class EuropeanNutrientRegulation extends AbstractNutrientRegulation {
 		return formatDouble(roundedValue, locale);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public Double roundGDA(Double value, String nutrientTypeCode) {
 		if (value == null) {

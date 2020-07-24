@@ -19,6 +19,12 @@ import fr.becpg.repo.repository.model.AspectAwareDataItem;
 import fr.becpg.repo.repository.model.ControlableListDataItem;
 import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 
+/**
+ * <p>AllergenListDataItem class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @AlfType
 @AlfQname(qname = "bcpg:allergenList")
 public class AllergenListDataItem extends AbstractManualVariantListDataItem implements SimpleCharactDataItem, AspectAwareDataItem, ControlableListDataItem {
@@ -32,28 +38,37 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem impl
 	private NodeRef allergen;
 	
 	
+	/** {@inheritDoc} */
 	@Override
 	public void setCharactNodeRef(NodeRef nodeRef) {
 		this.allergen = nodeRef;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void setValue(Double value) {
 		 this.qtyPerc = value;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	@InternalField
 	public NodeRef getCharactNodeRef() {
 		return allergen;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Double getValue() {
 		return qtyPerc;
 	}
 	
 	
+	/**
+	 * <p>Getter for the field <code>qtyPerc</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@InternalField
 	@AlfQname(qname="bcpg:allergenListQtyPerc")
@@ -61,11 +76,21 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem impl
 		return qtyPerc;
 	}
 
+	/**
+	 * <p>Setter for the field <code>qtyPerc</code>.</p>
+	 *
+	 * @param qtyPerc a {@link java.lang.Double} object.
+	 */
 	public void setQtyPerc(Double qtyPerc) {
 		this.qtyPerc = qtyPerc;
 	}
 
 
+	/**
+	 * <p>Getter for the field <code>voluntary</code>.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:allergenListVoluntary")
 	public Boolean getVoluntary() {
@@ -73,11 +98,21 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem impl
 	}
 	
 
+	/**
+	 * <p>Setter for the field <code>voluntary</code>.</p>
+	 *
+	 * @param voluntary a {@link java.lang.Boolean} object.
+	 */
 	public void setVoluntary(Boolean voluntary) {
 		this.voluntary = voluntary;
 	}
 	
 
+	/**
+	 * <p>Getter for the field <code>inVoluntary</code>.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:allergenListInVoluntary")
 	public Boolean getInVoluntary() {
@@ -85,11 +120,21 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem impl
 	}
 	
 	
+	/**
+	 * <p>Setter for the field <code>inVoluntary</code>.</p>
+	 *
+	 * @param inVoluntary a {@link java.lang.Boolean} object.
+	 */
 	public void setInVoluntary(Boolean inVoluntary) {
 		this.inVoluntary = inVoluntary;
 	}
 	
 
+	/**
+	 * <p>Getter for the field <code>voluntarySources</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@AlfMultiAssoc
 	@InternalField
 	@AlfQname(qname="bcpg:allergenListVolSources")
@@ -98,15 +143,26 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem impl
 	}
 	
 	
+	/**
+	 * <p>Setter for the field <code>voluntarySources</code>.</p>
+	 *
+	 * @param voluntarySources a {@link java.util.List} object.
+	 */
 	public void setVoluntarySources(List<NodeRef> voluntarySources) {
 		this.voluntarySources = voluntarySources;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public String getTextCriteria() {
 		return null;
 	}
 
+	/**
+	 * <p>Getter for the field <code>inVoluntarySources</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@AlfMultiAssoc
 	@InternalField
 	@AlfQname(qname="bcpg:allergenListInVolSources")
@@ -115,11 +171,21 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem impl
 	}
 	
 	
+	/**
+	 * <p>Setter for the field <code>inVoluntarySources</code>.</p>
+	 *
+	 * @param inVoluntarySources a {@link java.util.List} object.
+	 */
 	public void setInVoluntarySources(List<NodeRef> inVoluntarySources) {
 		this.inVoluntarySources = inVoluntarySources;
 	}
 	
 
+	/**
+	 * <p>Getter for the field <code>allergen</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	@AlfSingleAssoc
 	@InternalField
 	@AlfQname(qname="bcpg:allergenListAllergen")
@@ -129,16 +195,36 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem impl
 	}
 	
 	
+	/**
+	 * <p>Setter for the field <code>allergen</code>.</p>
+	 *
+	 * @param allergen a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void setAllergen(NodeRef allergen) {
 		this.allergen = allergen;
 	}
 	
 	
 	
+	/**
+	 * <p>Constructor for AllergenListDataItem.</p>
+	 */
 	public AllergenListDataItem(){
 		super();
 	}
 	
+	/**
+	 * <p>Constructor for AllergenListDataItem.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param qtyPerc a {@link java.lang.Double} object.
+	 * @param voluntary a {@link java.lang.Boolean} object.
+	 * @param inVoluntary a {@link java.lang.Boolean} object.
+	 * @param voluntarySources a {@link java.util.List} object.
+	 * @param inVoluntarySources a {@link java.util.List} object.
+	 * @param allergen a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param isManual a {@link java.lang.Boolean} object.
+	 */
 	public AllergenListDataItem(NodeRef nodeRef,Double qtyPerc, Boolean voluntary, Boolean inVoluntary, List<NodeRef> voluntarySources, List<NodeRef> inVoluntarySources, NodeRef allergen, Boolean isManual){
 		super();
 		this.nodeRef = nodeRef;
@@ -151,6 +237,7 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem impl
 		this.isManual = isManual;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -164,6 +251,7 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem impl
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -208,6 +296,7 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem impl
 
 
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "AllergenListDataItem [voluntary=" + voluntary + ", inVoluntary=" + inVoluntary + ", voluntarySources=" + voluntarySources + ", inVoluntarySources="

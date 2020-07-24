@@ -24,6 +24,12 @@ import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.model.CompositionDataItem;
 
+/**
+ * <p>PackagingListView class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class PackagingListView extends AbstractProductDataView {
 
 	/**
@@ -33,22 +39,34 @@ public class PackagingListView extends AbstractProductDataView {
 	private List<PackagingListDataItem> packagingList;
 	
 	
+	/**
+	 * <p>Getter for the field <code>packagingList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@DataList
 	@AlfQname(qname="bcpg:packagingList")
 	public List<PackagingListDataItem> getPackagingList() {
 		return packagingList;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public List<? extends CompositionDataItem> getMainDataList() {
 		return getPackagingList();
 	}
 
 
+	/**
+	 * <p>Setter for the field <code>packagingList</code>.</p>
+	 *
+	 * @param packagingList a {@link java.util.List} object.
+	 */
 	public void setPackagingList(List<PackagingListDataItem> packagingList) {
 		this.packagingList = packagingList;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -58,6 +76,7 @@ public class PackagingListView extends AbstractProductDataView {
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -76,6 +95,7 @@ public class PackagingListView extends AbstractProductDataView {
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "PackagingListView [packagingList=" + packagingList + "]";

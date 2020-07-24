@@ -35,6 +35,12 @@ import fr.becpg.repo.repository.model.AbstractManualDataItem;
 import fr.becpg.repo.repository.model.AspectAwareDataItem;
 import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 
+/**
+ * <p>IngListDataItem class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @AlfType
 @AlfQname(qname = "bcpg:ingList")
 public class IngListDataItem extends AbstractManualDataItem  implements SimpleCharactDataItem, AspectAwareDataItem, CompositeDataItem<IngListDataItem> {
@@ -74,37 +80,72 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 	private Double maxi;
 	
 	
+	/**
+	 * <p>Getter for the field <code>qtyPerc</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:ingListQtyPerc")
 	public Double getQtyPerc() {
 		return qtyPerc;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>qtyPerc</code>.</p>
+	 *
+	 * @param qtyPerc a {@link java.lang.Double} object.
+	 */
 	public void setQtyPerc(Double qtyPerc) {
 		this.qtyPerc = qtyPerc;
 	}
 	
 	
+	/**
+	 * <p>Getter for the field <code>mini</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:ingListQtyMini")
 	public Double getMini() {
 		return mini;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>mini</code>.</p>
+	 *
+	 * @param mini a {@link java.lang.Double} object.
+	 */
 	public void setMini(Double mini) {
 		this.mini = mini;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>maxi</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:ingListQtyMaxi")
 	public Double getMaxi() {
 		return maxi;
 	}
 
+	/**
+	 * <p>Setter for the field <code>maxi</code>.</p>
+	 *
+	 * @param maxi a {@link java.lang.Double} object.
+	 */
 	public void setMaxi(Double maxi) {
 		this.maxi = maxi;
 	}
 
+	/**
+	 * <p>Getter for the field <code>volumeQtyPerc</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:ingListVolumeQtyPerc")
 	public Double getVolumeQtyPerc() {
@@ -112,11 +153,21 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 	}
 
 
+	/**
+	 * <p>Setter for the field <code>volumeQtyPerc</code>.</p>
+	 *
+	 * @param volumeQtyPerc a {@link java.lang.Double} object.
+	 */
 	public void setVolumeQtyPerc(Double volumeQtyPerc) {
 		this.volumeQtyPerc = volumeQtyPerc;
 	}
 
 
+	/**
+	 * <p>Getter for the field <code>geoOrigin</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@AlfMultiAssoc
 	@AlfQname(qname="bcpg:ingListGeoOrigin")
 	public List<NodeRef> getGeoOrigin() {
@@ -124,20 +175,40 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 	}
 	
 
+	/**
+	 * <p>Setter for the field <code>geoOrigin</code>.</p>
+	 *
+	 * @param geoOrigin a {@link java.util.List} object.
+	 */
 	public void setGeoOrigin(List<NodeRef> geoOrigin) {
 		this.geoOrigin = geoOrigin;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>geoTransfo</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@AlfMultiAssoc
 	@AlfQname(qname="bcpg:ingListGeoTransfo")
 	public List<NodeRef> getGeoTransfo() {
 		return geoTransfo;
 	}
 
+	/**
+	 * <p>Setter for the field <code>geoTransfo</code>.</p>
+	 *
+	 * @param geoTransfo a {@link java.util.List} object.
+	 */
 	public void setGeoTransfo(List<NodeRef> geoTransfo) {
 		this.geoTransfo = geoTransfo;
 	}
 
+	/**
+	 * <p>Getter for the field <code>bioOrigin</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@AlfMultiAssoc
 	@AlfQname(qname="bcpg:ingListBioOrigin")
 	public List<NodeRef> getBioOrigin() {
@@ -145,10 +216,20 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 	}
 	
 
+	/**
+	 * <p>Setter for the field <code>bioOrigin</code>.</p>
+	 *
+	 * @param bioOrigin a {@link java.util.List} object.
+	 */
 	public void setBioOrigin(List<NodeRef> bioOrigin) {
 		this.bioOrigin = bioOrigin;
 	}
 
+	/**
+	 * <p>Getter for the field <code>isGMO</code>.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:ingListIsGMO")
 	public Boolean getIsGMO() {
@@ -156,12 +237,22 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 	}
 	
 
+	/**
+	 * <p>Setter for the field <code>isGMO</code>.</p>
+	 *
+	 * @param isGMO a {@link java.lang.Boolean} object.
+	 */
 	public void setIsGMO(Boolean isGMO) {
 		this.isGMO = isGMO;
 	}
 	
 	
 	
+	/**
+	 * <p>Getter for the field <code>isProcessingAid</code>.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:ingListIsProcessingAid")
 	public Boolean getIsProcessingAid() {
@@ -169,16 +260,31 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 	}
 
 
+	/**
+	 * <p>Setter for the field <code>isProcessingAid</code>.</p>
+	 *
+	 * @param isProcessingAid a {@link java.lang.Boolean} object.
+	 */
 	public void setIsProcessingAid(Boolean isProcessingAid) {
 		this.isProcessingAid = isProcessingAid;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>isSupport</code>.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:ingListIsSupport")
 	public Boolean getIsSupport() {
 		return isSupport;
 	}
 
+	/**
+	 * <p>Setter for the field <code>isSupport</code>.</p>
+	 *
+	 * @param isSupport a {@link java.lang.Boolean} object.
+	 */
 	public void setIsSupport(Boolean isSupport) {
 		this.isSupport = isSupport;
 	}
@@ -186,6 +292,11 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 	
 	
 
+	/**
+	 * <p>Getter for the field <code>isIonized</code>.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:ingListIsIonized")
 	public Boolean getIsIonized() {
@@ -195,11 +306,21 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 
 	
 
+	/**
+	 * <p>Setter for the field <code>isIonized</code>.</p>
+	 *
+	 * @param isIonized a {@link java.lang.Boolean} object.
+	 */
 	public void setIsIonized(Boolean isIonized) {
 		this.isIonized = isIonized;
 	}
 	
 	
+	/**
+	 * <p>Getter for the field <code>ing</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	@AlfSingleAssoc
 	@DataListIdentifierAttr
 	@AlfQname(qname="bcpg:ingListIng")
@@ -209,23 +330,31 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 	}
 	
 
+	/**
+	 * <p>Setter for the field <code>ing</code>.</p>
+	 *
+	 * @param ing a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void setIng(NodeRef ing) {
 		this.ing = ing;
 	}
 	
 	//////////////////////////////
 	
+	/** {@inheritDoc} */
 	@Override
 	@InternalField
 	public NodeRef getCharactNodeRef() {
 		return ing;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Double getValue() {
 		return qtyPerc;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void setCharactNodeRef(NodeRef nodeRef) {
 		setIng(nodeRef);
@@ -233,12 +362,14 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public void setValue(Double value) {
 		setQtyPerc(value);
 		
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	@AlfProp
 	@InternalField
@@ -247,10 +378,16 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 		return depthLevel;
 	}
 
+	/**
+	 * <p>Setter for the field <code>depthLevel</code>.</p>
+	 *
+	 * @param depthLevel a {@link java.lang.Integer} object.
+	 */
 	public void setDepthLevel(Integer depthLevel) {
 		this.depthLevel = depthLevel;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	@AlfProp
 	@InternalField
@@ -260,6 +397,7 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public void setParent(IngListDataItem parent) {
 		this.parent = parent;		
@@ -274,6 +412,19 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 	}
 	
 
+	/**
+	 * <p>Constructor for IngListDataItem.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param qtyPerc a {@link java.lang.Double} object.
+	 * @param geoOrigin a {@link java.util.List} object.
+	 * @param bioOrigin a {@link java.util.List} object.
+	 * @param isGMO a {@link java.lang.Boolean} object.
+	 * @param isIonized a {@link java.lang.Boolean} object.
+	 * @param processingAid a {@link java.lang.Boolean} object.
+	 * @param ing a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param isManual a {@link java.lang.Boolean} object.
+	 */
 	public IngListDataItem(NodeRef nodeRef,	Double qtyPerc, List<NodeRef> geoOrigin, List<NodeRef> bioOrigin, Boolean isGMO, Boolean isIonized, Boolean processingAid, NodeRef ing, Boolean isManual)
 	{
 		setNodeRef(nodeRef);
@@ -287,6 +438,22 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 		setIsProcessingAid(processingAid);
 	}
 	
+	/**
+	 * <p>Constructor for IngListDataItem.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param ingList a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object.
+	 * @param qtyPerc a {@link java.lang.Double} object.
+	 * @param geoOrigin a {@link java.util.List} object.
+	 * @param geoTransfo a {@link java.util.List} object.
+	 * @param bioOrigin a {@link java.util.List} object.
+	 * @param isGMO a {@link java.lang.Boolean} object.
+	 * @param isIonized a {@link java.lang.Boolean} object.
+	 * @param processingAid a {@link java.lang.Boolean} object.
+	 * @param isSupport a {@link java.lang.Boolean} object.
+	 * @param ing a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param isManual a {@link java.lang.Boolean} object.
+	 */
 	public IngListDataItem(NodeRef nodeRef, IngListDataItem ingList, Double qtyPerc, List<NodeRef> geoOrigin, List<NodeRef> geoTransfo, List<NodeRef> bioOrigin, Boolean isGMO, Boolean isIonized, Boolean processingAid, Boolean isSupport, NodeRef ing, Boolean isManual)
 	{
 		setNodeRef(nodeRef);
@@ -305,7 +472,8 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 	
 	/**
 	 * Copy contructor
-	 * @param i
+	 *
+	 * @param i a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object.
 	 */
 	public IngListDataItem(IngListDataItem i){
 		
@@ -321,6 +489,7 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 		setIsSupport(i.getIsSupport());
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -330,6 +499,7 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -347,6 +517,7 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 				&& Objects.equals(qtyPerc, other.qtyPerc) && Objects.equals(volumeQtyPerc, other.volumeQtyPerc);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "IngListDataItem [qtyPerc=" + qtyPerc + ", volumeQtyPerc=" + volumeQtyPerc + ", geoOrigin=" + geoOrigin + ", geoTransfo=" + geoTransfo
@@ -355,6 +526,7 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 				+ maxi + "]";
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Boolean shouldDetailIfZero() {
 		return true;

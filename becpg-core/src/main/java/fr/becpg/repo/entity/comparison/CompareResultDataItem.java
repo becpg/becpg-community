@@ -7,11 +7,12 @@ import java.util.Arrays;
 
 import org.alfresco.service.namespace.QName;
 
-// TODO: Auto-generated Javadoc
+
 /**
  * The Class CompareResultDataItem.
  *
  * @author querephi
+ * @version $Id: $Id
  */
 public class CompareResultDataItem {
 
@@ -28,56 +29,125 @@ public class CompareResultDataItem {
 	private boolean isDifferent = false;
 
 	
+	/**
+	 * <p>Getter for the field <code>entityList</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.namespace.QName} object.
+	 */
 	public QName getEntityList() {
 		return entityList;
 	}
 	
+	/**
+	 * <p>setProductList.</p>
+	 *
+	 * @param entityList a {@link org.alfresco.service.namespace.QName} object.
+	 */
 	public void setProductList(QName entityList) {
 		this.entityList = entityList;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>property</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.namespace.QName} object.
+	 */
 	public QName getProperty() {
 		return property;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>property</code>.</p>
+	 *
+	 * @param property a {@link org.alfresco.service.namespace.QName} object.
+	 */
 	public void setProperty(QName property) {
 		this.property = property;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>values</code>.</p>
+	 *
+	 * @return an array of {@link java.lang.String} objects.
+	 */
 	public String[] getValues() {
 		return values;
 	}
 
+	/**
+	 * <p>Setter for the field <code>values</code>.</p>
+	 *
+	 * @param values an array of {@link java.lang.String} objects.
+	 */
 	public void setValues(String[] values) {
 		this.values = values; 
 	}
 
+	/**
+	 * <p>isDifferent.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public boolean isDifferent() {
 		return isDifferent; 
 	}
 
+	/**
+	 * <p>setDifferent.</p>
+	 *
+	 * @param isDifferent a boolean.
+	 */
 	public void setDifferent(boolean isDifferent) {
 		this.isDifferent = isDifferent;
 	}
 
+	/**
+	 * <p>Getter for the field <code>pivotKey</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getPivotKey() {
 		return pivotKey;
 	}
 
+	/**
+	 * <p>Setter for the field <code>pivotKey</code>.</p>
+	 *
+	 * @param pivotKey a {@link java.lang.String} object.
+	 */
 	public void setPivotKey(String pivotKey) {
 		this.pivotKey = pivotKey;
 	}
 	
 	
 
+	/**
+	 * <p>Getter for the field <code>charactName</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getCharactName() {
 		return charactName;
 	}
 
+	/**
+	 * <p>Setter for the field <code>charactName</code>.</p>
+	 *
+	 * @param charactName a {@link java.lang.String} object.
+	 */
 	public void setCharactName(String charactName) {
 		this.charactName = charactName;
 	}
 
+	/**
+	 * <p>Constructor for CompareResultDataItem.</p>
+	 *
+	 * @param entityList a {@link org.alfresco.service.namespace.QName} object.
+	 * @param charactName a {@link java.lang.String} object.
+	 * @param pivotKey a {@link java.lang.String} object.
+	 * @param property a {@link org.alfresco.service.namespace.QName} object.
+	 * @param values an array of {@link java.lang.String} objects.
+	 */
 	public CompareResultDataItem(QName entityList,String charactName,  String pivotKey, QName property, String[] values){
 		setProductList(entityList);
 		setPivotKey(pivotKey);
@@ -86,6 +156,7 @@ public class CompareResultDataItem {
 		setValues(values);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -98,6 +169,7 @@ public class CompareResultDataItem {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

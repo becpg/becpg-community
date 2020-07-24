@@ -39,13 +39,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * {@link ActionExecuter} for creating an archive (ie. zip) file containing
+ * {@link org.alfresco.repo.action.executer.ActionExecuter} for creating an archive (ie. zip) file containing
  * content from the repository.
- * 
+ *
  * The maximum total size of the content which can be downloaded is controlled
  * by the maximumContentSie property. -1 indicates no limit.
  *
  * @author matthieu form Alex Miller code
+ * @version $Id: $Id
  */
 public class ZipSearchAction extends ActionExecuterAbstractBase {
 	private static final Logger log = LoggerFactory.getLogger(ZipSearchAction.class);
@@ -54,6 +55,7 @@ public class ZipSearchAction extends ActionExecuterAbstractBase {
 	private static final String TEMP_FILE_PREFIX = "download";
 	private static final String TEMP_FILE_SUFFIX = ".zip";
 
+	/** Constant <code>PARAM_TPL_NODEREF="templateNodeRef"</code> */
 	public static final String PARAM_TPL_NODEREF = "templateNodeRef";
 
 	// Dependencies
@@ -69,38 +71,83 @@ public class ZipSearchAction extends ActionExecuterAbstractBase {
 	private long maximumContentSize = -1l;
 
 	
+	/**
+	 * <p>Setter for the field <code>checkOutCheckInService</code>.</p>
+	 *
+	 * @param checkOutCheckInService a {@link org.alfresco.service.cmr.coci.CheckOutCheckInService} object.
+	 */
 	public void setCheckOutCheckInService(CheckOutCheckInService checkOutCheckInService) {
 		this.checkOutCheckInService = checkOutCheckInService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>contentServiceHelper</code>.</p>
+	 *
+	 * @param contentServiceHelper a {@link org.alfresco.repo.download.ContentServiceHelper} object.
+	 */
 	public void setContentServiceHelper(ContentServiceHelper contentServiceHelper) {
 		this.contentServiceHelper = contentServiceHelper;
 	}
 
+	/**
+	 * <p>Setter for the field <code>downloadStorage</code>.</p>
+	 *
+	 * @param downloadStorage a {@link org.alfresco.repo.download.DownloadStorage} object.
+	 */
 	public void setDownloadStorage(DownloadStorage downloadStorage) {
 		this.downloadStorage = downloadStorage;
 	}
 
+	/**
+	 * <p>Setter for the field <code>exporterService</code>.</p>
+	 *
+	 * @param exporterService a {@link org.alfresco.service.cmr.view.ExporterService} object.
+	 */
 	public void setExporterService(ExporterService exporterService) {
 		this.exporterService = exporterService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>transactionHelper</code>.</p>
+	 *
+	 * @param transactionHelper a {@link org.alfresco.repo.transaction.RetryingTransactionHelper} object.
+	 */
 	public void setTransactionHelper(RetryingTransactionHelper transactionHelper) {
 		this.transactionHelper = transactionHelper;
 	}
 
+	/**
+	 * <p>Setter for the field <code>updateService</code>.</p>
+	 *
+	 * @param updateService a {@link org.alfresco.repo.download.DownloadStatusUpdateService} object.
+	 */
 	public void setUpdateService(DownloadStatusUpdateService updateService) {
 		this.updateService = updateService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>contentService</code>.</p>
+	 *
+	 * @param contentService a {@link org.alfresco.service.cmr.repository.ContentService} object.
+	 */
 	public void setContentService(ContentService contentService) {
 		this.contentService = contentService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>maximumContentSize</code>.</p>
+	 *
+	 * @param maximumContentSize a long.
+	 */
 	public void setMaximumContentSize(long maximumContentSize) {
 		this.maximumContentSize = maximumContentSize;
 	}
@@ -108,20 +155,22 @@ public class ZipSearchAction extends ActionExecuterAbstractBase {
 	
 	
 	
+	/**
+	 * <p>Setter for the field <code>namespaceService</code>.</p>
+	 *
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
+	 */
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * Create an archive file containing content from the repository.
-	 * 
+	 *
 	 * Uses the {@link ExporterService} with custom exporters to create the
 	 * archive files.
-	 * 
-	 * @param actionedUponNodeRef
-	 *            Download node containing information required to create the
-	 *            archive file, and which will eventually have its content
-	 *            updated with the archive file.
 	 */
 	@Override
 	protected void executeImpl(Action action, final NodeRef actionedUponNodeRef) {
@@ -176,6 +225,7 @@ public class ZipSearchAction extends ActionExecuterAbstractBase {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 
 	protected void addParameterDefinitions(List<ParameterDefinition> paramList) {

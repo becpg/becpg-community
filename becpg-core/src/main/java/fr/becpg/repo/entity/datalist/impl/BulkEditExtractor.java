@@ -34,9 +34,10 @@ import fr.becpg.repo.entity.datalist.data.DataListPagination;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
+ * <p>BulkEditExtractor class.</p>
  *
  * @author matthieu
- *
+ * @version $Id: $Id
  */
 public class BulkEditExtractor extends SimpleExtractor {
 
@@ -46,30 +47,40 @@ public class BulkEditExtractor extends SimpleExtractor {
 
 	private final Log logger = LogFactory.getLog(BulkEditExtractor.class);
 
+	/**
+	 * <p>Setter for the field <code>namespaceService</code>.</p>
+	 *
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
+	 */
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean applyTo(DataListFilter dataListFilter) {
 		return !dataListFilter.isSimpleItem() && BULK_EDIT_NAME.equals(dataListFilter.getDataListName());
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Date computeLastModified(DataListFilter dataListFilter) {
 		return null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean hasWriteAccess() {
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isDefaultExtractor() {
 		return false;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected List<NodeRef> getListNodeRef(DataListFilter dataListFilter, DataListPagination pagination) {
 

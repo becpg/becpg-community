@@ -2,16 +2,22 @@ package fr.becpg.model;
 
 /**
  * Param used in advanced deliverable URL
- *  - /share/page/wizard?id=wizard-id&destination={nodeRef}
- *  - /share/page/wizard?id=supplier-mp&nodeRef={pjt:projectEntity}
+ * <code>
+ *  - /share/page/wizard?id=wizard-id&amp;destination={nodeRef}
+ *  - /share/page/wizard?id=supplier-mp&amp;nodeRef={pjt:projectEntity}
  *  - content:{pjt:projectEntity|xpath:./cm:Documents/*}
- * @author matthieu
+ *  </code>
  *
+ * @author matthieu
+ * @version $Id: $Id
  */
 public class DeliverableUrl {
 
+	/** Constant <code>CONTENT_URL_PREFIX="content:"</code> */
 	public final static String CONTENT_URL_PREFIX = "content:";
+	/** Constant <code>NODEREF_URL_PARAM="nodeRef"</code> */
 	public final static String NODEREF_URL_PARAM = "nodeRef";
+	/** Constant <code>XPATH_URL_PREFIX="xpath:"</code> */
 	public final static String XPATH_URL_PREFIX = "xpath:";
 	
 }

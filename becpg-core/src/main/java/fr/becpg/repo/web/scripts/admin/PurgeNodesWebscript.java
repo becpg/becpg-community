@@ -36,7 +36,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  * Purge all nodes in specific folderNodeRef
  *
  * @author matthieu
- *
+ * @version $Id: $Id
  */
 public class PurgeNodesWebscript extends AbstractWebScript {
 
@@ -56,26 +56,56 @@ public class PurgeNodesWebscript extends AbstractWebScript {
 
 	private NodeService nodeService;
 
+	/**
+	 * <p>Setter for the field <code>entityDictionaryService</code>.</p>
+	 *
+	 * @param entityDictionaryService a {@link fr.becpg.repo.entity.EntityDictionaryService} object.
+	 */
 	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
 		this.entityDictionaryService = entityDictionaryService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>transactionService</code>.</p>
+	 *
+	 * @param transactionService a {@link org.alfresco.service.transaction.TransactionService} object.
+	 */
 	public void setTransactionService(TransactionService transactionService) {
 		this.transactionService = transactionService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>ruleService</code>.</p>
+	 *
+	 * @param ruleService a {@link org.alfresco.service.cmr.rule.RuleService} object.
+	 */
 	public void setRuleService(RuleService ruleService) {
 		this.ruleService = ruleService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>policyBehaviourFilter</code>.</p>
+	 *
+	 * @param policyBehaviourFilter a {@link org.alfresco.repo.policy.BehaviourFilter} object.
+	 */
 	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
 		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>tenantService</code>.</p>
+	 *
+	 * @param tenantService a {@link org.alfresco.repo.tenant.TenantService} object.
+	 */
 	public void setTenantService(TenantService tenantService) {
 		this.tenantService = tenantService;
 	}
@@ -85,6 +115,7 @@ public class PurgeNodesWebscript extends AbstractWebScript {
 	private final int batchThreads = 3;
 	private final int batchSize = 40;
 
+	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
 		String nodeRef = req.getParameter(PARAM_FOLDER_NODEREF);

@@ -43,16 +43,23 @@ import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.version.EntityVersionService;
 
 /**
+ * <p>VersionCleanerActionExecuter class.</p>
+ *
  * @author matthieu
- * 
+ * @version $Id: $Id
  */
 public class VersionCleanerActionExecuter extends ActionExecuterAbstractBase {
 
+	/** Constant <code>NAME="version-cleaner"</code> */
 	public static final String NAME = "version-cleaner";
 
+	/** Constant <code>PARAM_VERSION_TYPE="versionType"</code> */
 	public static final String PARAM_VERSION_TYPE = "versionType";
+	/** Constant <code>PARAM_NUMBER_OF_VERSION="numberOfVersion"</code> */
 	public static final String PARAM_NUMBER_OF_VERSION = "numberOfVersion";
+	/** Constant <code>PARAM_NUMBER_OF_DAY="numberOfDay"</code> */
 	public static final String PARAM_NUMBER_OF_DAY = "numberOfDay";
+	/** Constant <code>PARAM_NUMBER_BY_DAY="numberByDay"</code> */
 	public static final String PARAM_NUMBER_BY_DAY = "numberByDay";
 
 	private final Log logger = LogFactory.getLog(VersionCleanerActionExecuter.class);
@@ -64,30 +71,52 @@ public class VersionCleanerActionExecuter extends ActionExecuterAbstractBase {
 	
 	private EntityDictionaryService entityDictionaryService;
 
+	/**
+	 * <p>Setter for the field <code>versionService</code>.</p>
+	 *
+	 * @param versionService a {@link org.alfresco.service.cmr.version.VersionService} object.
+	 */
 	public void setVersionService(VersionService versionService) {
 		this.versionService = versionService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>ruleService</code>.</p>
+	 *
+	 * @param ruleService a {@link org.alfresco.service.cmr.rule.RuleService} object.
+	 */
 	public void setRuleService(RuleService ruleService) {
 		this.ruleService = ruleService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>entityDictionaryService</code>.</p>
+	 *
+	 * @param entityDictionaryService a {@link fr.becpg.repo.entity.EntityDictionaryService} object.
+	 */
 	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
 		this.entityDictionaryService = entityDictionaryService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityVersionService</code>.</p>
+	 *
+	 * @param entityVersionService a {@link fr.becpg.repo.entity.version.EntityVersionService} object.
+	 */
 	public void setEntityVersionService(EntityVersionService entityVersionService) {
 		this.entityVersionService = entityVersionService;
 	}
 
-	/**
-	 * @see org.alfresco.repo.action.executer.ActionExecuter#execute(org.alfresco.repo.ref.NodeRef,
-	 *      org.alfresco.repo.ref.NodeRef)
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void executeImpl(Action ruleAction, NodeRef actionedUponNodeRef) {
 		if (nodeService.exists(actionedUponNodeRef)) {
@@ -127,12 +156,6 @@ public class VersionCleanerActionExecuter extends ActionExecuterAbstractBase {
 		}
 	}
 
-	/**
-	 * @param ruleAction
-	 * @param compositeAction
-	 * @param versionConfig
-	 * @param isLastAction
-	 */
 	private boolean parseAction(Action ruleAction, Action compositeAction, VersionCleanerActionConfig versionConfig, boolean isLastAction) {
 		
 		if(logger.isDebugEnabled()) {
@@ -157,6 +180,7 @@ public class VersionCleanerActionExecuter extends ActionExecuterAbstractBase {
 		return isLastAction;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected void addParameterDefinitions(List<ParameterDefinition> paramList) {
 		paramList.add(new ParameterDefinitionImpl(PARAM_VERSION_TYPE, DataTypeDefinition.TEXT, true, getParamDisplayLabel(PARAM_VERSION_TYPE)));

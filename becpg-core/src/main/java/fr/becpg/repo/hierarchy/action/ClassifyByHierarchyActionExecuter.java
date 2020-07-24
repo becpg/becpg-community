@@ -24,16 +24,20 @@ import fr.becpg.repo.hierarchy.HierarchyService;
  * Action used to classify an entity according to its hierarchy.
  *
  * @author querephi
+ * @version $Id: $Id
  */
 public class ClassifyByHierarchyActionExecuter extends ActionExecuterAbstractBase{
 
 	/** The Constant NAME. */
 	public static final String NAME = "classify-by-hierarchy";
+	/** Constant <code>PARAM_DESTINATION_FOLDER="destination-folder"</code> */
 	public static final String PARAM_DESTINATION_FOLDER = "destination-folder";
+	/** Constant <code>PARAM_PROP_HIERARCHY="prop-hierarchy"</code> */
 	public static final String PARAM_PROP_HIERARCHY = "prop-hierarchy";
+	/** Constant <code>PARAM_PROP_LOCALE="prop-locale"</code> */
 	public static final String PARAM_PROP_LOCALE = "prop-locale";
 	
-	/** The logger. */
+	
 	private static final Log logger = LogFactory.getLog(ClassifyByHierarchyActionExecuter.class);
 	
 	private HierarchyService hierarchyService;
@@ -41,18 +45,29 @@ public class ClassifyByHierarchyActionExecuter extends ActionExecuterAbstractBas
 	private NamespaceService namespaceService;
 	
 	
+	/**
+	 * <p>Setter for the field <code>hierarchyService</code>.</p>
+	 *
+	 * @param hierarchyService a {@link fr.becpg.repo.hierarchy.HierarchyService} object.
+	 */
 	public void setHierarchyService(HierarchyService hierarchyService) {
 		this.hierarchyService = hierarchyService;
 	}
 	
 	
 
+	/**
+	 * <p>Setter for the field <code>namespaceService</code>.</p>
+	 *
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
+	 */
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
 
 
 
+	/** {@inheritDoc} */
 	@Override
 	protected void executeImpl(Action action, NodeRef nodeRef) {
 		logger.debug("Start ClassifyByHierarchyActionExecuter");
@@ -74,6 +89,7 @@ public class ClassifyByHierarchyActionExecuter extends ActionExecuterAbstractBas
 		hierarchyService.classifyByHierarchy(approveFolder, nodeRef, hierarchyQname, locale);		
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected void addParameterDefinitions(List<ParameterDefinition> paramList) {
 		paramList.add(new ParameterDefinitionImpl(PARAM_DESTINATION_FOLDER, DataTypeDefinition.NODE_REF, true, getParamDisplayLabel(PARAM_DESTINATION_FOLDER)));

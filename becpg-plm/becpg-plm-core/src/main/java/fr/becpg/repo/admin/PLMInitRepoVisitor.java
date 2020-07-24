@@ -97,10 +97,12 @@ import fr.becpg.report.client.ReportFormat;
  *
  *         - rules - specialize type - import - document generation - WF -
  *         validation folder -
+ * @version $Id: $Id
  */
 @Service
 public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
+	/** Constant <code>logger</code> */
 	protected static final Log logger = LogFactory.getLog(PLMInitRepoVisitor.class);
 
 	private static final String SIMULATION_SITE_ID = "simulation";
@@ -219,13 +221,11 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	
 	@Autowired
 	protected BeCPGCacheService beCPGCacheService;
+	
 	/**
-	 * Initialize the repository with system folders.
+	 * {@inheritDoc}
 	 *
-	 * @param companyHome
-	 *            the company home
-	 * @param locale
-	 *            : locale of the system
+	 * Initialize the repository with system folders.
 	 */
 	@Override
 	public List<SiteInfo> visitContainer(NodeRef companyHome) {
@@ -467,6 +467,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * Add resources to folder
 	 */
 	@Override
@@ -526,6 +528,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * Initialize the rules of the repository
 	 */
 	@Override
@@ -675,6 +679,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * Initialize the permissions of the repository
 	 */
 	@Override
@@ -1385,6 +1391,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Integer initOrder() {
 		return 3;

@@ -26,6 +26,12 @@ import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
 
+/**
+ * <p>SamplingListDataItem class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @AlfType
 @AlfQname(qname = "qa:samplingList")
 public class SamplingListDataItem extends AbstractSamplingListDataItem {
@@ -38,40 +44,85 @@ public class SamplingListDataItem extends AbstractSamplingListDataItem {
 	private String sampleId;
 	private QualityControlState sampleState;
 
+	/**
+	 * <p>Getter for the field <code>dateTime</code>.</p>
+	 *
+	 * @return a {@link java.util.Date} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "qa:slDateTime")
 	public Date getDateTime() {
 		return dateTime;
 	}
 
+	/**
+	 * <p>Setter for the field <code>dateTime</code>.</p>
+	 *
+	 * @param dateTime a {@link java.util.Date} object.
+	 */
 	public void setDateTime(Date dateTime) {
 		this.dateTime = dateTime;
 	}
 
+	/**
+	 * <p>Getter for the field <code>sampleId</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "qa:slSampleId")
 	public String getSampleId() {
 		return sampleId;
 	}
 
+	/**
+	 * <p>Setter for the field <code>sampleId</code>.</p>
+	 *
+	 * @param sampleId a {@link java.lang.String} object.
+	 */
 	public void setSampleId(String sampleId) {
 		this.sampleId = sampleId;
 	}
 
+	/**
+	 * <p>Getter for the field <code>sampleState</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.quality.data.QualityControlState} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "qa:slSampleState")
 	public QualityControlState getSampleState() {
 		return sampleState;
 	}
 
+	/**
+	 * <p>Setter for the field <code>sampleState</code>.</p>
+	 *
+	 * @param sampleState a {@link fr.becpg.repo.quality.data.QualityControlState} object.
+	 */
 	public void setSampleState(QualityControlState sampleState) {
 		this.sampleState = sampleState;
 	}
 
+	/**
+	 * <p>Constructor for SamplingListDataItem.</p>
+	 */
 	public SamplingListDataItem() {
 		super();
 	}
 
+	/**
+	 * <p>Constructor for SamplingListDataItem.</p>
+	 *
+	 * @param dateTime a {@link java.util.Date} object.
+	 * @param sampleState a {@link fr.becpg.repo.quality.data.QualityControlState} object.
+	 * @param controlPoint a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param controlStep a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param samplingGroup a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param controlingGroup a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param fixingGroup a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param reaction a {@link java.lang.String} object.
+	 */
 	public SamplingListDataItem(Date dateTime, QualityControlState sampleState, NodeRef controlPoint, NodeRef controlStep, NodeRef samplingGroup, NodeRef controlingGroup, NodeRef fixingGroup, String reaction) {
 		super();
 		this.dateTime = dateTime;
@@ -84,6 +135,7 @@ public class SamplingListDataItem extends AbstractSamplingListDataItem {
 		this.reaction = reaction;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -96,6 +148,7 @@ public class SamplingListDataItem extends AbstractSamplingListDataItem {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -133,6 +186,7 @@ public class SamplingListDataItem extends AbstractSamplingListDataItem {
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "SamplingListDataItem [dateTime=" + dateTime + ", sampleId=" + sampleId + ", sampleState=" + sampleState + ", controlPoint=" + controlPoint + ", controlStep="

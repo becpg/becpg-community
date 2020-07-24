@@ -74,7 +74,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  * Project service that manage project
  *
  * @author quere
- *
+ * @version $Id: $Id
  */
 
 @Service("projectService")
@@ -114,6 +114,7 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin {
 	@Autowired
 	SysAdminParams sysAdminParams;
 
+	/** {@inheritDoc} */
 	@Override
 	public void openDeliverable(NodeRef deliverableNodeRef) {
 
@@ -126,6 +127,7 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void reopenTask(NodeRef taskNodeRef) {
 
@@ -142,11 +144,13 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> getTaskLegendList() {
 		return BeCPGQueryBuilder.createQuery().ofType(ProjectModel.TYPE_TASK_LEGEND).addSort(BeCPGModel.PROP_SORT, true).inDB().list();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getProjectsContainer(String siteId) {
 		if ((siteId != null) && (siteId.length() > 0)) {
@@ -155,6 +159,7 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin {
 		return null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void formulate(NodeRef projectNodeRef) throws FormulateException {
 		if (nodeService.getType(projectNodeRef).equals(ProjectModel.TYPE_PROJECT)) {
@@ -205,6 +210,7 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void deleteTask(NodeRef taskListNodeRef) {
 
@@ -231,6 +237,7 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void submitTask(NodeRef nodeRef, String taskComment) {
 		try {
@@ -275,6 +282,7 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef refusedTask(NodeRef nodeRef, String taskComment) {
 
@@ -316,12 +324,14 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef refusedTask(NodeRef nodeRef) {
 		nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_IS_REFUSED, false);
 		return nodeRef;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef reassignTask(NodeRef taskNodeRef, String user) {
 
@@ -351,6 +361,7 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> extractResources(NodeRef projectNodeRef, List<NodeRef> resources) {
 		List<NodeRef> ret = new ArrayList<>();
@@ -402,6 +413,7 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getReassignedResource(NodeRef resource) {
 
@@ -427,6 +439,7 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin {
 		return null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String getDeliverableUrl(NodeRef projectNodeRef, String url) {
 		if ((url != null) && url.contains("{")) {
@@ -484,6 +497,7 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin {
 		return (authorityName != null) && authorityName.startsWith(PermissionService.GROUP_PREFIX + ProjectRepoConsts.PROJECT_GROUP_PREFIX);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void updateProjectPermission(NodeRef projectNodeRef, NodeRef taskListNodeRef, NodeRef resourceNodeRef, boolean allow) {
 		if (ProjectModel.TYPE_PROJECT.equals(nodeService.getType(projectNodeRef))) {
@@ -525,6 +539,7 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void runScript(ProjectData project, TaskListDataItem task, NodeRef scriptNode) {
 
@@ -548,6 +563,7 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Long getNbProjectsByLegend(NodeRef legendNodeRef, String siteId) {
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(ProjectModel.TYPE_PROJECT)
@@ -563,12 +579,14 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin {
 		return queryBuilder.count();
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public FormulationPluginPriority getMatchPriority(QName type) {
 		return entityDictionaryService.isSubClass(type, ProjectModel.TYPE_PROJECT) ? FormulationPluginPriority.NORMAL : FormulationPluginPriority.NONE;
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void runFormulation(NodeRef entityNodeRef) throws FormulateException {
 		formulate(entityNodeRef);

@@ -26,11 +26,24 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 
+/**
+ * <p>WebscriptHelper class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class WebscriptHelper {
 
 
+	/** Constant <code>PARAM_FIELDS="metadataFields"</code> */
 	public static final String PARAM_FIELDS = "metadataFields";
 	
+	/**
+	 * <p>extractMetadataFields.</p>
+	 *
+	 * @param req a {@link org.springframework.extensions.webscripts.WebScriptRequest} object.
+	 * @return a {@link java.util.List} object.
+	 */
 	public static List<String> extractMetadataFields(WebScriptRequest req){
 	
 		String fields = req.getParameter(PARAM_FIELDS);
@@ -48,6 +61,13 @@ public class WebscriptHelper {
 	
 	
 
+	/**
+	 * <p>extractSortMap.</p>
+	 *
+	 * @param sort a {@link java.lang.String} object.
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
+	 * @return a {@link java.util.Map} object.
+	 */
 	public static  Map<String, Boolean> extractSortMap(String sort, NamespaceService namespaceService) {
 
 		Map<String, Boolean> sortMap = new HashMap<>();

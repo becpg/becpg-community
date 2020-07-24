@@ -89,42 +89,70 @@ import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.RepositoryEntityDefReader;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
+/**
+ * <p>DefaultEntityReportExtractor class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin {
 
 	private static final Log logger = LogFactory.getLog(DefaultEntityReportExtractor.class);
 
+	/** Constant <code>TAG_ENTITY="entity"</code> */
 	protected static final String TAG_ENTITY = "entity";
 
+	/** Constant <code>TAG_DATALISTS="dataLists"</code> */
 	protected static final String TAG_DATALISTS = "dataLists";
+	/** Constant <code>TAG_ATTRIBUTES="attributes"</code> */
 	protected static final String TAG_ATTRIBUTES = "attributes";
+	/** Constant <code>TAG_ATTRIBUTE="attribute"</code> */
 	protected static final String TAG_ATTRIBUTE = "attribute";
+	/** Constant <code>TAG_VERSIONS="versions"</code> */
 	protected static final String TAG_VERSIONS = "versions";
+	/** Constant <code>TAG_VERSION="version"</code> */
 	protected static final String TAG_VERSION = "version";
+	/** Constant <code>ATTR_SET="set"</code> */
 	protected static final String ATTR_SET = "set";
+	/** Constant <code>ATTR_NAME="name"</code> */
 	protected static final String ATTR_NAME = "name";
+	/** Constant <code>ATTR_VALUE="value"</code> */
 	protected static final String ATTR_VALUE = "value";
+	/** Constant <code>ATTR_ITEM_TYPE="itemType"</code> */
 	protected static final String ATTR_ITEM_TYPE = "itemType";
+	/** Constant <code>ATTR_ASPECTS="aspects"</code> */
 	protected static final String ATTR_ASPECTS = "aspects";
+	/** Constant <code>TAG_IMAGES="images"</code> */
 	protected static final String TAG_IMAGES = "images";
+	/** Constant <code>TAG_IMAGE="image"</code> */
 	protected static final String TAG_IMAGE = "image";
+	/** Constant <code>ATTR_ENTITY_NODEREF="entityNodeRef"</code> */
 	protected static final String ATTR_ENTITY_NODEREF = "entityNodeRef";
+	/** Constant <code>ATTR_ENTITY_TYPE="entityType"</code> */
 	protected static final String ATTR_ENTITY_TYPE = "entityType";
+	/** Constant <code>PRODUCT_IMG_ID="Img%d"</code> */
 	protected static final String PRODUCT_IMG_ID = "Img%d";
+	/** Constant <code>ATTR_IMAGE_ID="id"</code> */
 	protected static final String ATTR_IMAGE_ID = "id";
+	/** Constant <code>AVATAR_IMG_ID="avatar"</code> */
 	protected static final String AVATAR_IMG_ID = "avatar";
+	/** Constant <code>REPORT_LOGO_ID="report_logo"</code> */
 	protected static final String REPORT_LOGO_ID = "report_logo";
 	private static final String TAG_COMMENTS = "comments";
 	private static final String TAG_COMMENT = "comment";
 
+	/** Constant <code>VALUE_NULL=""</code> */
 	protected static final String VALUE_NULL = "";
 
 	private static final String REGEX_REMOVE_CHAR = "[^\\p{L}\\p{N}]";
 
+	/** Constant <code>hiddenNodeAttributes</code> */
 	protected static final ArrayList<QName> hiddenNodeAttributes = new ArrayList<>(Arrays.asList(ContentModel.PROP_NODE_REF,
 			ContentModel.PROP_NODE_UUID, ContentModel.PROP_STORE_IDENTIFIER, ContentModel.PROP_STORE_NAME, ContentModel.PROP_STORE_PROTOCOL,
 			ContentModel.PROP_CONTENT, BeCPGModel.PROP_ENTITY_SCORE, ContentModel.PROP_PREFERENCE_VALUES, ContentModel.PROP_PERSONDESC));
 
+	/** Constant <code>hiddenDataListItemAttributes</code> */
 	protected static final ArrayList<QName> hiddenDataListItemAttributes = new ArrayList<>(
 			Arrays.asList(ContentModel.PROP_CREATED, ContentModel.PROP_CREATOR, ContentModel.PROP_MODIFIED, ContentModel.PROP_MODIFIER));
 	private static final QName FORUM_TO_TOPIC_ASSOC_QNAME = QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "Comments");
@@ -292,6 +320,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public EntityReportData extract(NodeRef entityNodeRef, Map<String, String> preferences) {
 
@@ -313,7 +342,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		ret.setXmlDataSource(entityElt);
 		ret.setDataObjects(context.getImages());
 
-		if (logger.isDebugEnabled() && watch!=null) {
+		if (logger.isDebugEnabled() && (watch != null)) {
 			watch.stop();
 			logger.debug("extract datasource in  " + watch.getTotalTimeSeconds() + " seconds for node " + entityNodeRef);
 		}
@@ -321,6 +350,13 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		return ret;
 	}
 
+	/**
+	 * <p>extractEntity.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param entityElt a {@link org.dom4j.Element} object.
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor.DefaultExtractorContext} object.
+	 */
 	public void extractEntity(NodeRef entityNodeRef, Element entityElt, DefaultExtractorContext context) {
 
 		// load images
@@ -346,6 +382,13 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		loadVersions(entityNodeRef, entityElt);
 	}
 
+	/**
+	 * <p>extractEntityImages.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param imgsElt a {@link org.dom4j.Element} object.
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor.DefaultExtractorContext} object.
+	 */
 	protected void extractEntityImages(NodeRef entityNodeRef, Element imgsElt, DefaultExtractorContext context) {
 
 		int cnt = imgsElt.selectNodes(TAG_IMAGE) != null ? imgsElt.selectNodes(TAG_IMAGE).size() : 1;
@@ -367,6 +410,15 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		}
 	}
 
+	/**
+	 * <p>extractImage.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param imgNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param imgId a {@link java.lang.String} object.
+	 * @param imgsElt a {@link org.dom4j.Element} object.
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor.DefaultExtractorContext} object.
+	 */
 	protected void extractImage(NodeRef entityNodeRef, NodeRef imgNodeRef, String imgId, Element imgsElt, DefaultExtractorContext context) {
 
 		if (ApplicationModel.TYPE_FILELINK.equals(nodeService.getType(imgNodeRef))) {
@@ -392,6 +444,15 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	}
 
 	// render target assocs (plants...special cases)
+	/**
+	 * <p>loadTargetAssoc.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param assocDef a {@link org.alfresco.service.cmr.dictionary.AssociationDefinition} object.
+	 * @param entityElt a {@link org.dom4j.Element} object.
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor.DefaultExtractorContext} object.
+	 * @return a boolean.
+	 */
 	protected boolean loadTargetAssoc(NodeRef entityNodeRef, AssociationDefinition assocDef, Element entityElt, DefaultExtractorContext context) {
 		boolean isExtracted = false;
 		if ((assocDef != null) && (assocDef.getName() != null)) {
@@ -438,6 +499,13 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		return isExtracted;
 	}
 
+	/**
+	 * <p>isMultiLinesAttribute.</p>
+	 *
+	 * @param attribute a {@link org.alfresco.service.namespace.QName} object.
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor.DefaultExtractorContext} object.
+	 * @return a boolean.
+	 */
 	protected boolean isMultiLinesAttribute(QName attribute, DefaultExtractorContext context) {
 		if (context.prefsContains("multilineProperties", multilineProperties, attribute.toPrefixString(namespaceService))) {
 			return true;
@@ -445,6 +513,13 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		return false;
 	}
 
+	/**
+	 * <p>loadDataLists.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param dataListsElt a {@link org.dom4j.Element} object.
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor.DefaultExtractorContext} object.
+	 */
 	protected void loadDataLists(NodeRef entityNodeRef, Element dataListsElt, DefaultExtractorContext context) {
 
 		NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
@@ -476,6 +551,12 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		}
 	}
 
+	/**
+	 * <p>addDataListState.</p>
+	 *
+	 * @param xmlNode a {@link org.dom4j.Element} object.
+	 * @param listNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	protected void addDataListState(Element xmlNode, NodeRef listNodeRef) {
 		if (xmlNode.attributeValue(BeCPGModel.PROP_ENTITYLIST_STATE.getLocalName()) == null) {
 			if ((listNodeRef != null) && nodeService.exists(listNodeRef)) {
@@ -490,6 +571,14 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		}
 	}
 
+	/**
+	 * <p>loadDataList.</p>
+	 *
+	 * @param dataListsElt a {@link org.dom4j.Element} object.
+	 * @param listNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param dataListQName a {@link org.alfresco.service.namespace.QName} object.
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor.DefaultExtractorContext} object.
+	 */
 	protected void loadDataList(Element dataListsElt, NodeRef listNodeRef, QName dataListQName, DefaultExtractorContext context) {
 		List<NodeRef> dataListItems = entityListDAO.getListItems(listNodeRef, dataListQName);
 		if ((dataListItems != null) && !dataListItems.isEmpty()) {
@@ -504,10 +593,25 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		}
 	}
 
+	/**
+	 * <p>loadDataListItemAttributes.</p>
+	 *
+	 * @param dataListItem a {@link fr.becpg.repo.repository.model.BeCPGDataObject} object.
+	 * @param nodeElt a {@link org.dom4j.Element} object.
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor.DefaultExtractorContext} object.
+	 */
 	protected void loadDataListItemAttributes(BeCPGDataObject dataListItem, Element nodeElt, DefaultExtractorContext context) {
 		loadDataListItemAttributes(dataListItem, nodeElt, context, new ArrayList<>());
 	}
 
+	/**
+	 * <p>loadNodeAttributes.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param nodeElt a {@link org.dom4j.Element} object.
+	 * @param useCData a boolean.
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor.DefaultExtractorContext} object.
+	 */
 	protected void loadNodeAttributes(NodeRef nodeRef, Element nodeElt, boolean useCData, DefaultExtractorContext context) {
 		if ((nodeRef != null) && nodeService.exists(nodeRef)) {
 			loadAttributes(nodeRef, nodeElt, useCData, hiddenNodeAttributes, context);
@@ -515,6 +619,14 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		}
 	}
 
+	/**
+	 * <p>loadDataListItemAttributes.</p>
+	 *
+	 * @param dataListItem a {@link fr.becpg.repo.repository.model.BeCPGDataObject} object.
+	 * @param nodeElt a {@link org.dom4j.Element} object.
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor.DefaultExtractorContext} object.
+	 * @param hiddentAttributes a {@link java.util.List} object.
+	 */
 	protected void loadDataListItemAttributes(BeCPGDataObject dataListItem, Element nodeElt, DefaultExtractorContext context,
 			List<QName> hiddentAttributes) {
 		hiddentAttributes.addAll(hiddenNodeAttributes);
@@ -538,6 +650,13 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		}
 	}
 
+	/**
+	 * <p>loadDataListItemAttributes.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param nodeElt a {@link org.dom4j.Element} object.
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor.DefaultExtractorContext} object.
+	 */
 	protected void loadDataListItemAttributes(NodeRef nodeRef, Element nodeElt, DefaultExtractorContext context) {
 		List<QName> hiddentAttributes = new ArrayList<>();
 		hiddentAttributes.addAll(hiddenNodeAttributes);
@@ -550,28 +669,26 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	}
 
 	/**
-	 * Load node attributes.
+	 * <p>loadAttributes.</p>
 	 *
-	 * @param nodeRef
-	 *            the node ref
-	 * @param elt
-	 *            the elt
-	 * @return the element
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param nodeElt a {@link org.dom4j.Element} object.
+	 * @param useCData a boolean.
+	 * @param hiddenAttributes a {@link java.util.List} object.
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor.DefaultExtractorContext} object.
 	 */
 	protected void loadAttributes(NodeRef nodeRef, Element nodeElt, boolean useCData, List<QName> hiddenAttributes, DefaultExtractorContext context) {
 
-		
-		
 		// properties
 		Map<QName, Serializable> properties = nodeService.getProperties(nodeRef);
-		
-		//versionLabel
+
+		// versionLabel
 		String versionLabelDisplayValue = null;
 		QName versionLabelQName = null;
-		if (properties.containsKey(BeCPGModel.PROP_VERSION_LABEL) && properties.get(BeCPGModel.PROP_VERSION_LABEL) != null
-			&& !"".equals(properties.get(BeCPGModel.PROP_VERSION_LABEL))){
+		if (properties.containsKey(BeCPGModel.PROP_VERSION_LABEL) && (properties.get(BeCPGModel.PROP_VERSION_LABEL) != null)
+				&& !"".equals(properties.get(BeCPGModel.PROP_VERSION_LABEL))) {
 			versionLabelQName = BeCPGModel.PROP_VERSION_LABEL;
-		} else if (properties.containsKey(ContentModel.PROP_VERSION_LABEL) && properties.get(ContentModel.PROP_VERSION_LABEL) != null
+		} else if (properties.containsKey(ContentModel.PROP_VERSION_LABEL) && (properties.get(ContentModel.PROP_VERSION_LABEL) != null)
 				&& !"".equals(properties.get(ContentModel.PROP_VERSION_LABEL))) {
 			versionLabelQName = ContentModel.PROP_VERSION_LABEL;
 		}
@@ -582,13 +699,13 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			}
 			versionLabelDisplayValue = attributeExtractorService.extractPropertyForReport(propertyDef, properties.get(versionLabelQName), false);
 		}
-		
+
 		for (Map.Entry<QName, Serializable> property : properties.entrySet()) {
 
 			// do not display system properties
 			if ((hiddenAttributes == null) || (!hiddenAttributes.contains(property.getKey())
 					&& !NamespaceService.SYSTEM_MODEL_1_0_URI.equals(property.getKey().getNamespaceURI()))) {
-				
+
 				PropertyDefinition propertyDef = dictionaryService.getProperty(property.getKey());
 				if (propertyDef == null) {
 					logger.debug("This property doesn't exist. Name: " + property.getKey() + " nodeRef : " + nodeRef);
@@ -596,7 +713,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 				}
 
 				String value = attributeExtractorService.extractPropertyForReport(propertyDef, property.getValue(), false);
-				
+
 				boolean isDyn = false;
 				boolean isList = false;
 
@@ -646,8 +763,8 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 						}
 					}
 				} else {
-					if (versionLabelDisplayValue != null && 
-							(property.getKey().equals(BeCPGModel.PROP_VERSION_LABEL) || property.getKey().equals(ContentModel.PROP_VERSION_LABEL))) {
+					if ((versionLabelDisplayValue != null) && (property.getKey().equals(BeCPGModel.PROP_VERSION_LABEL)
+							|| property.getKey().equals(ContentModel.PROP_VERSION_LABEL))) {
 						addData(nodeElt, useCData, propertyDef.getName(), versionLabelDisplayValue, null, context);
 					} else {
 						addData(nodeElt, useCData, propertyDef.getName(), value, null, context);
@@ -673,7 +790,8 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 							if ((mlEntry.getKey().getCountry() != null) && !mlEntry.getKey().getCountry().isEmpty()) {
 								code += "_" + mlEntry.getKey().getCountry();
 							}
-							if ((mlTextLocales == null || "".equals(mlTextLocales)) && (context.getPreferences() == null || (context.getPreferences() != null && !context.getPreferences().containsKey("mlTextLocales"))) 
+							if ((((mlTextLocales == null) || "".equals(mlTextLocales)) && ((context.getPreferences() == null)
+									|| ((context.getPreferences() != null) && !context.getPreferences().containsKey("mlTextLocales"))))
 									|| context.prefsContains("mlTextLocales", mlTextLocales, code)) {
 								if ((code != null) && !code.isEmpty()) {
 									Element ret = addData(nodeElt, useCData, propertyDef.getName(), mlEntry.getValue(), code, context);
@@ -704,22 +822,22 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 		for (AssociationDefinition associationDef : assocs.values()) {
 			if (!hiddenAttributes.contains(associationDef.getName())) {
-			
+
 				if (!associationDef.getName().getNamespaceURI().equals(NamespaceService.RENDITION_MODEL_1_0_URI)
 						&& !associationDef.getName().getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI)
-						&& !associationDef.getName().equals(RuleModel.ASSOC_RULE_FOLDER) && !associationDef.getName().equals(ContentModel.ASSOC_ORIGINAL)
-						&& !associationDef.isChild()) {
-	
+						&& !associationDef.getName().equals(RuleModel.ASSOC_RULE_FOLDER)
+						&& !associationDef.getName().equals(ContentModel.ASSOC_ORIGINAL) && !associationDef.isChild()) {
+
 					if (!loadTargetAssoc(nodeRef, associationDef, nodeElt, context) || (useCData == false)) {
-	
+
 						List<NodeRef> assocNodes = associationService.getTargetAssocs(nodeRef, associationDef.getName());
-	
+
 						if ((assocNodes != null) && !assocNodes.isEmpty()) {
 							String ret = assocNodes.stream().map(i -> extractName(associationDef.getTargetClass().getName(), i))
 									.collect(Collectors.joining(RepoConsts.LABEL_SEPARATOR));
 							addData(nodeElt, useCData, associationDef.getName(), ret, null, context);
 						}
-	
+
 					}
 				}
 			}
@@ -780,6 +898,17 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 	}
 
+	/**
+	 * <p>addData.</p>
+	 *
+	 * @param nodeElt a {@link org.dom4j.Element} object.
+	 * @param useCData a boolean.
+	 * @param propertyQName a {@link org.alfresco.service.namespace.QName} object.
+	 * @param value a {@link java.lang.String} object.
+	 * @param suffix a {@link java.lang.String} object.
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor.DefaultExtractorContext} object.
+	 * @return a {@link org.dom4j.Element} object.
+	 */
 	protected Element addData(Element nodeElt, boolean useCData, QName propertyQName, String value, String suffix, DefaultExtractorContext context) {
 		if (useCData || isMultiLinesAttribute(propertyQName, context)) {
 			return addCDATA(nodeElt, propertyQName, value, suffix);
@@ -793,15 +922,33 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		}
 	}
 
+	/**
+	 * <p>getPropNameOfType.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link org.alfresco.service.namespace.QName} object.
+	 */
 	protected QName getPropNameOfType(QName type) {
 		return null;
 	}
 
+	/**
+	 * <p>generateKeyAttribute.</p>
+	 *
+	 * @param attributeName a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	protected String generateKeyAttribute(String attributeName) {
 
 		return StringUtils.stripAccents(attributeName.replaceAll(REGEX_REMOVE_CHAR, "").toLowerCase());
 	}
 
+	/**
+	 * <p>loadVersions.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param entityElt a {@link org.dom4j.Element} object.
+	 */
 	protected void loadVersions(NodeRef entityNodeRef, Element entityElt) {
 
 		VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);
@@ -821,6 +968,12 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		}
 	}
 
+	/**
+	 * <p>extractNames.</p>
+	 *
+	 * @param nodeRefs a {@link java.util.List} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	protected String extractNames(List<NodeRef> nodeRefs) {
 		String value = VALUE_NULL;
 		for (NodeRef nodeRef : nodeRefs) {
@@ -832,6 +985,12 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		return value;
 	}
 
+	/**
+	 * <p>extractAspects.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	protected String extractAspects(NodeRef nodeRef) {
 		String value = VALUE_NULL;
 		for (QName aspect : nodeService.getAspects(nodeRef)) {
@@ -845,6 +1004,12 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 	/**
 	 * Extract target(s) association
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param assocDef a {@link org.alfresco.service.cmr.dictionary.AssociationDefinition} object.
+	 * @param assocElt a {@link org.dom4j.Element} object.
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor.DefaultExtractorContext} object.
+	 * @param extractDataList a boolean.
 	 */
 	protected void extractTargetAssoc(NodeRef entityNodeRef, AssociationDefinition assocDef, Element assocElt, DefaultExtractorContext context,
 			boolean extractDataList) {
@@ -887,6 +1052,15 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		}
 	}
 
+	/**
+	 * <p>addCDATA.</p>
+	 *
+	 * @param nodeElt a {@link org.dom4j.Element} object.
+	 * @param propertyQName a {@link org.alfresco.service.namespace.QName} object.
+	 * @param eltValue a {@link java.lang.String} object.
+	 * @param suffix a {@link java.lang.String} object.
+	 * @return a {@link org.dom4j.Element} object.
+	 */
 	protected Element addCDATA(Element nodeElt, QName propertyQName, String eltValue, String suffix) {
 		if ((eltValue == null) || eltValue.isEmpty()) {
 			return null;
@@ -905,6 +1079,12 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 	}
 
+	/**
+	 * <p>appendPrefix.</p>
+	 *
+	 * @param propertyQName a {@link org.alfresco.service.namespace.QName} object.
+	 * @param cDATAElt a {@link org.dom4j.Element} object.
+	 */
 	protected void appendPrefix(QName propertyQName, Element cDATAElt) {
 		Collection<String> prefixes = namespaceService.getPrefixes(propertyQName.getNamespaceURI());
 		if (!prefixes.isEmpty()) {
@@ -915,6 +1095,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	}
 
 	// Check that images has not been update
+	/** {@inheritDoc} */
 	@Override
 	public boolean shouldGenerateReport(NodeRef entityNodeRef, Date generatedReportDate) {
 		NodeRef imagesFolderNodeRef = nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS,
@@ -934,6 +1115,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		return false;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public EntityReportExtractorPriority getMatchPriority(QName type) {
 		return EntityReportExtractorPriority.LOW;

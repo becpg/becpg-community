@@ -15,6 +15,13 @@ class RenameRule {
 
 	Set<Locale> locales = new HashSet<>();
 
+	/**
+	 * <p>Constructor for RenameRule.</p>
+	 *
+	 * @param mlText a {@link org.alfresco.service.cmr.repository.MLText} object.
+	 * @param pluralMlText a {@link org.alfresco.service.cmr.repository.MLText} object.
+	 * @param locales a {@link java.util.List} object.
+	 */
 	public RenameRule(MLText mlText, MLText pluralMlText, List<String> locales) {
 		this.mlText = mlText;
 		this.pluralMlText = pluralMlText;
@@ -26,10 +33,23 @@ class RenameRule {
 		}
 	}
 
+	/**
+	 * <p>matchLocale.</p>
+	 *
+	 * @param locale a {@link java.util.Locale} object.
+	 * @return a boolean.
+	 */
 	public boolean matchLocale(Locale locale) {
 		return locales.isEmpty() || locales.contains(locale);
 	}
 
+	/**
+	 * <p>getClosestValue.</p>
+	 *
+	 * @param locale a {@link java.util.Locale} object.
+	 * @param plural a boolean.
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getClosestValue(Locale locale, boolean plural) {
 		String ret = null;
 

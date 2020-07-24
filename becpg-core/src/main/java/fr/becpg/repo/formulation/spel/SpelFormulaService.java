@@ -17,6 +17,12 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.security.aop.SecurityMethodBeforeAdvice;
 
+/**
+ * <p>SpelFormulaService class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service("formulaService")
 public class SpelFormulaService {
 
@@ -44,6 +50,13 @@ public class SpelFormulaService {
 		});
 	}
 
+	/**
+	 * <p>createSecurityProxy.</p>
+	 *
+	 * @param entity a T object.
+	 * @param <T> a T object.
+	 * @return a T object.
+	 */
 	@SuppressWarnings("unchecked")
 	public <T extends RepositoryEntity> T createSecurityProxy(T entity) {
 		ProxyFactory factory = new ProxyFactory();
@@ -52,6 +65,13 @@ public class SpelFormulaService {
 		return ((T) factory.getProxy());
 	}
 
+	/**
+	 * <p>createEntitySpelContext.</p>
+	 *
+	 * @param entity a T object.
+	 * @param <T> a T object.
+	 * @return a {@link org.springframework.expression.spel.support.StandardEvaluationContext} object.
+	 */
 	public <T extends RepositoryEntity> StandardEvaluationContext createEntitySpelContext(T entity) {
 		StandardEvaluationContext context = new StandardEvaluationContext(createSecurityProxy(entity));
 		registerCustomFunctions(entity, context);
@@ -72,10 +92,26 @@ public class SpelFormulaService {
 		return context;
 	}
 
+	/**
+	 * <p>createDataListItemSpelContext.</p>
+	 *
+	 * @param entity a T object.
+	 * @param dataListItem a {@link fr.becpg.repo.repository.RepositoryEntity} object.
+	 * @param <T> a T object.
+	 * @return a {@link org.springframework.expression.spel.support.StandardEvaluationContext} object.
+	 */
 	public <T extends RepositoryEntity> StandardEvaluationContext createDataListItemSpelContext(T entity, RepositoryEntity dataListItem) {
 		return createDataListItemSpelContext(entity, dataListItem, true);
 	}
 
+	/**
+	 * <p>createCustomSpelContext.</p>
+	 *
+	 * @param entity a T object.
+	 * @param formulaContext a {@link fr.becpg.repo.formulation.spel.SpelFormulaContext} object.
+	 * @param <T> a T object.
+	 * @return a {@link org.springframework.expression.spel.support.StandardEvaluationContext} object.
+	 */
 	public <T extends RepositoryEntity> StandardEvaluationContext createCustomSpelContext(T entity, SpelFormulaContext<T> formulaContext) {
 		StandardEvaluationContext context = new StandardEvaluationContext(formulaContext);
 		formulaContext.setEntity(createSecurityProxy(entity));
@@ -83,12 +119,29 @@ public class SpelFormulaService {
 		return context;
 	}
 
+	/**
+	 * <p>createItemSpelContext.</p>
+	 *
+	 * @param entity a {@link fr.becpg.repo.repository.RepositoryEntity} object.
+	 * @param item a T object.
+	 * @param <T> a T object.
+	 * @return a {@link org.springframework.expression.spel.support.StandardEvaluationContext} object.
+	 */
 	public <T> StandardEvaluationContext createItemSpelContext(RepositoryEntity entity, T item) {
 		StandardEvaluationContext dataContext = new StandardEvaluationContext(item);
 		registerCustomFunctions(entity, dataContext);
 		return dataContext;
 	}
 
+	/**
+	 * <p>aggreate.</p>
+	 *
+	 * @param entity a {@link fr.becpg.repo.repository.RepositoryEntity} object.
+	 * @param range a {@link java.util.Collection} object.
+	 * @param formula a {@link java.lang.String} object.
+	 * @param operator a {@link fr.becpg.repo.formulation.spel.SpelFormulaContext.Operator} object.
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public Double aggreate(RepositoryEntity entity, Collection<RepositoryEntity> range, String formula, SpelFormulaContext.Operator operator) {
 
 		if (logger.isDebugEnabled()) {
@@ -116,6 +169,13 @@ public class SpelFormulaService {
 		return sum;
 	}
 
+	/**
+	 * <p>applyToList.</p>
+	 *
+	 * @param entity a {@link fr.becpg.repo.repository.RepositoryEntity} object.
+	 * @param range a {@link java.util.Collection} object.
+	 * @param formula a {@link java.lang.String} object.
+	 */
 	public void applyToList(RepositoryEntity entity, Collection<RepositoryEntity> range, String formula) {
 
 		ExpressionParser parser = new SpelExpressionParser();
@@ -129,6 +189,12 @@ public class SpelFormulaService {
 
 	}
 
+	/**
+	 * <p>findOne.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link fr.becpg.repo.repository.RepositoryEntity} object.
+	 */
 	public RepositoryEntity findOne(NodeRef nodeRef) {
 		return createSecurityProxy(alfrescoRepository.findOne(nodeRef));
 	}

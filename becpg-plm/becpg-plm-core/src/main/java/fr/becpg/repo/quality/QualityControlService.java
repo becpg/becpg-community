@@ -19,13 +19,57 @@ package fr.becpg.repo.quality;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+/**
+ * <p>QualityControlService interface.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public interface QualityControlService {
 
+	/**
+	 * <p>createSamplingList.</p>
+	 *
+	 * @param qcNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param controlPlanNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	void createSamplingList(NodeRef qcNodeRef, NodeRef controlPlanNodeRef);
+	/**
+	 * <p>createControlList.</p>
+	 *
+	 * @param sampleListNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	void createControlList(NodeRef sampleListNodeRef);
+	/**
+	 * <p>updateControlListState.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	void updateControlListState(NodeRef nodeRef);
+	/**
+	 * <p>createSamplingListId.</p>
+	 *
+	 * @param sampleListNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	void createSamplingListId(NodeRef sampleListNodeRef);
+	/**
+	 * <p>updateQualityControlState.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	void updateQualityControlState(NodeRef nodeRef);
+	/**
+	 * <p>deleteSamplingListId.</p>
+	 *
+	 * @param sampleListNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	void deleteSamplingListId(NodeRef sampleListNodeRef);
+	/**
+	 * <p>copyProductDataList.</p>
+	 *
+	 * @param qcNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param productNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param isnewQC a boolean.
+	 */
 	void copyProductDataList(NodeRef qcNodeRef, NodeRef productNodeRef, boolean isnewQC);
 }

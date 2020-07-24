@@ -23,18 +23,23 @@ import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
 
 /**
+ * <p>PhysicoChemCalculatingFormulationHandler class.</p>
+ *
  * @author querephi
+ * @version $Id: $Id
  */
 public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleListFormulationHandler<PhysicoChemListDataItem> {
 
 	private static final Log logger = LogFactory.getLog(PhysicoChemCalculatingFormulationHandler.class);
 
+	/** {@inheritDoc} */
 	@Override
 	protected Class<PhysicoChemListDataItem> getInstanceClass() {
 
 		return PhysicoChemListDataItem.class;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 
@@ -76,6 +81,7 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected boolean accept(ProductData formulatedProduct) {
 		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) || (formulatedProduct instanceof ProductSpecificationData)
@@ -86,11 +92,13 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected List<PhysicoChemListDataItem> getDataListVisited(ProductData partProduct) {
 		return partProduct.getPhysicoChemList();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected boolean isCharactFormulated(SimpleListDataItem sl) {
 		if (!super.isCharactFormulated(sl)) {
@@ -100,11 +108,13 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 		return isFormulated != null ? isFormulated : false;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected Map<NodeRef, List<NodeRef>> getMandatoryCharacts(ProductData formulatedProduct, QName componentType) {
 		return getMandatoryCharactsFromList(formulatedProduct.getPhysicoChemList());
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected RequirementDataType getRequirementDataType() {
 		return RequirementDataType.Physicochem;

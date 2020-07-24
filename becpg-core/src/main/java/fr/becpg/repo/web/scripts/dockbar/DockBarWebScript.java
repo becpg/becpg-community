@@ -54,9 +54,9 @@ import fr.becpg.repo.web.scripts.WebscriptHelper;
 
 /**
  * return product history
- * 
+ *
  * @author matthieu
- * 
+ * @version $Id: $Id
  */
 public class DockBarWebScript extends AbstractWebScript {
 
@@ -79,18 +79,34 @@ public class DockBarWebScript extends AbstractWebScript {
 	private ServiceRegistry serviceRegistry;
 	
 
+	/**
+	 * <p>Setter for the field <code>serviceRegistry</code>.</p>
+	 *
+	 * @param serviceRegistry a {@link org.alfresco.service.ServiceRegistry} object.
+	 */
 	public void setServiceRegistry(ServiceRegistry serviceRegistry) {
 		this.serviceRegistry = serviceRegistry;
 	}
 
+	/**
+	 * <p>Setter for the field <code>attributeExtractorService</code>.</p>
+	 *
+	 * @param attributeExtractorService a {@link fr.becpg.repo.helper.AttributeExtractorService} object.
+	 */
 	public void setAttributeExtractorService(AttributeExtractorService attributeExtractorService) {
 		this.attributeExtractorService = attributeExtractorService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>preferenceService</code>.</p>
+	 *
+	 * @param preferenceService a {@link org.alfresco.service.cmr.preference.PreferenceService} object.
+	 */
 	public void setPreferenceService(PreferenceService preferenceService) {
 		this.preferenceService = preferenceService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
 

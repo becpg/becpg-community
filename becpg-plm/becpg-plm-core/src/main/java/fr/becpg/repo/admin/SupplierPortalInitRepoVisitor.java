@@ -35,6 +35,12 @@ import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
+/**
+ * <p>SupplierPortalInitRepoVisitor class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 
@@ -65,6 +71,7 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 	@Autowired
 	private AssociationService associationService;
 
+	/** {@inheritDoc} */
 	@Override
 	public List<SiteInfo> visitContainer(NodeRef companyHome) {
 		logger.info("Run SupplierPortalInitRepoVisitor ...");
@@ -184,6 +191,7 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Integer initOrder() {
 		return 4;

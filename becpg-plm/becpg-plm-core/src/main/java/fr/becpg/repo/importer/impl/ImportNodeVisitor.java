@@ -9,6 +9,7 @@ import fr.becpg.repo.importer.ImportVisitor;
  * Class used to import a node with its attributes and files.
  *
  * @author querephi
+ * @version $Id: $Id
  */
 public class ImportNodeVisitor extends AbstractImportVisitor implements ImportVisitor {
 	

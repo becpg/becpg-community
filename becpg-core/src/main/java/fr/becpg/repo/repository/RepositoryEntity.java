@@ -23,37 +23,85 @@ import java.util.Map;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
-
-//TODO merge with BaseObject and BeCPGDataObject
+/**
+ * <p>RepositoryEntity interface.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public interface RepositoryEntity {
 
+	/**
+	 * <p>getNodeRef.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	NodeRef getNodeRef();
+	/**
+	 * <p>setNodeRef.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	void setNodeRef(NodeRef nodeRef);
 	
+	/**
+	 * <p>getParentNodeRef.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	NodeRef getParentNodeRef();
+	/**
+	 * <p>setParentNodeRef.</p>
+	 *
+	 * @param parentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	void setParentNodeRef(NodeRef parentNodeRef);
+	/**
+	 * <p>getName.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	String getName();
+	/**
+	 * <p>setName.</p>
+	 *
+	 * @param name a {@link java.lang.String} object.
+	 */
 	void setName(String name);
-	
 	
 	
 	/**
 	 * Optional Map to put extra props
-	 * @return
+	 *
+	 * @return a {@link java.util.Map} object.
 	 */
 	Map<QName, Serializable> getExtraProperties();
 	
 	
+	/**
+	 * <p>setExtraProperties.</p>
+	 *
+	 * @param extraProperties a {@link java.util.Map} object.
+	 */
 	void setExtraProperties(Map<QName, Serializable> extraProperties);
 
 	/**
 	 * Test if the entity is transiant
+	 *
+	 * @return a boolean.
 	 */
 	boolean isTransient();
 	
 	/**
 	 * Use to determine if changes has applied
+	 *
+	 * @param hashCode a long.
 	 */
 	void setDbHashCode(long hashCode);
+	/**
+	 * <p>getDbHashCode.</p>
+	 *
+	 * @return a long.
+	 */
 	long getDbHashCode();
 }

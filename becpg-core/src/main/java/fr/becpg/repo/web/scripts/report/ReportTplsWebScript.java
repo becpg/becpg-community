@@ -40,6 +40,7 @@ import fr.becpg.repo.report.template.ReportType;
  * The Class ExportSearchTplsWebScript.
  *
  * @author querephi, matthieu
+ * @version $Id: $Id
  */
 public class ReportTplsWebScript extends DeclarativeWebScript {
 
@@ -54,18 +55,34 @@ public class ReportTplsWebScript extends DeclarativeWebScript {
 
 	private AssociationService associationService;
 
+	/**
+	 * <p>Setter for the field <code>namespaceService</code>.</p>
+	 *
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
+	 */
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>reportTplService</code>.</p>
+	 *
+	 * @param reportTplService a {@link fr.becpg.repo.report.template.ReportTplService} object.
+	 */
 	public void setReportTplService(ReportTplService reportTplService) {
 		this.reportTplService = reportTplService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>associationService</code>.</p>
+	 *
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object.
+	 */
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected Map<String, Object> executeImpl(WebScriptRequest req, Status status, Cache cache) {
 

@@ -8,6 +8,7 @@ package fr.becpg.repo.product.data.constraints;
  * The Enum ProductUnit.
  *
  * @author querephi
+ * @version $Id: $Id
  */
 public enum ProductUnit {
 
@@ -16,44 +17,86 @@ public enum ProductUnit {
 	
 
 
+	/**
+	 * <p>getUnit.</p>
+	 *
+	 * @param productUnit a {@link java.lang.String} object.
+	 * @return a {@link fr.becpg.repo.product.data.constraints.ProductUnit} object.
+	 */
 	public static ProductUnit getUnit(String productUnit) {
 		return ((productUnit != null) && !productUnit.isEmpty()) ? ProductUnit.valueOf(productUnit) : ProductUnit.kg;
 	}
 	
+	/**
+	 * <p>isVolume.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public  boolean isVolume() {
 		return L.equals(this) || mL.equals(this) || cL.equals(this) || isGal();
 	}
 
+	/**
+	 * <p>isWeight.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public  boolean isWeight() {
 		return kg.equals(this) || g.equals(this) || mg.equals(this) || isLb();
 	}
 
+	/**
+	 * <p>isP.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public  boolean isP() {
 		return P.equals(this) || m2.equals(this)|| m3.equals(this) || isM();
 	}
 
 	
+	/**
+	 * <p>isM.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public boolean isM() {
 		return m.equals(this)  || in.equals(this)|| ft.equals(this) || mm.equals(this);
 	}
 
+	/**
+	 * <p>isLb.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public boolean isLb() {
 		return lb.equals(this) || oz.equals(this);
 	}
 	
+	/**
+	 * <p>isGal.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public boolean isGal() {
 		return fl_oz.equals(this) || cp.equals(this) || gal.equals(this);
 	}
 	
 
+	/**
+	 * <p>isPerc.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public boolean isPerc() {
 		return Perc.equals(this);
 	}
 	
-   /**
-    * Convert factor to Kg L or M
-    * @return
-    */
+	/**
+	 * Convert factor to Kg L or M
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public  Double getUnitFactor() {
 		if (this.equals(ProductUnit.mL) || this.equals(ProductUnit.g)) {
 			return  1000d;
@@ -86,6 +129,12 @@ public enum ProductUnit {
 	}
 	
 
+	/**
+	 * <p>kgToLb.</p>
+	 *
+	 * @param kgValue a {@link java.lang.Double} object.
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public static Double kgToLb(Double kgValue) {
 		if(kgValue !=null) {
 			return kgValue * 2.204622622d;
@@ -93,6 +142,12 @@ public enum ProductUnit {
 		return null;
 	}
 	
+	/**
+	 * <p>lbToKg.</p>
+	 *
+	 * @param kgValue a {@link java.lang.Double} object.
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public static Double lbToKg(Double kgValue) {
 		if(kgValue !=null) {
 			return kgValue / 2.204622622d;
@@ -101,6 +156,12 @@ public enum ProductUnit {
 	}
 	
 
+	/**
+	 * <p>LToGal.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object.
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public static Double LToGal(Double value) {
 		if(value !=null) {
 			return value * 0.264172d;
@@ -108,6 +169,12 @@ public enum ProductUnit {
 		return null;
 	}
 	
+	/**
+	 * <p>GalToL.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object.
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public static Double GalToL(Double value) {
 		if(value !=null) {
 			return value / 0.264172d;
@@ -116,6 +183,12 @@ public enum ProductUnit {
 	}
 	
 
+	/**
+	 * <p>lbToOz.</p>
+	 *
+	 * @param lbValue a {@link java.lang.Double} object.
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public static Double lbToOz(Double lbValue) {
 		if(lbValue!=null) {
 			return lbValue * 16d;
@@ -124,6 +197,11 @@ public enum ProductUnit {
 	}
 	
 	
+	/**
+	 * <p>getMainUnit.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.constraints.ProductUnit} object.
+	 */
 	public ProductUnit getMainUnit() {
 		if (this.equals(ProductUnit.lb) || this.equals(ProductUnit.oz)) {
 			return ProductUnit.lb;
@@ -142,6 +220,12 @@ public enum ProductUnit {
 	}
 	
 
+	/**
+	 * <p>extractUnit.</p>
+	 *
+	 * @param unit a {@link java.lang.String} object.
+	 * @return a {@link fr.becpg.repo.product.data.constraints.ProductUnit} object.
+	 */
 	public static ProductUnit extractUnit(String unit) {
 
 			switch (unit.trim()) {

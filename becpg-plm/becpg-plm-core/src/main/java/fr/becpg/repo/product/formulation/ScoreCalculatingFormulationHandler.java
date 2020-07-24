@@ -29,7 +29,7 @@ import fr.becpg.repo.repository.model.CompositionDataItem;
  * Computes product completion score
  *
  * @author steven
- *
+ * @version $Id: $Id
  */
 public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<ProductData> {
 
@@ -37,10 +37,16 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 
 	private AlfrescoRepository<ProductData> alfrescoRepository;
 
+	/**
+	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
+	 */
 	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean process(ProductData product) {
 
@@ -216,8 +222,8 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 	/**
 	 * Returns if node exists and is in valid state
 	 *
-	 * @param node
-	 * @return
+	 * @param node a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a boolean.
 	 */
 	public boolean checkProductValidity(NodeRef node) {
 		ProductData found = alfrescoRepository.findOne(node);

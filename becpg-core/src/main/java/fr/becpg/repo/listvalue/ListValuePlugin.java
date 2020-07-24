@@ -21,26 +21,29 @@ import java.io.Serializable;
 import java.util.Map;
 
 /**
- * 
- * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
+ * <p>ListValuePlugin interface.</p>
  *
+ * @author "Matthieu Laborie"
+ * @version $Id: $Id
  */
 public interface ListValuePlugin {
 
 
 	/**
-	 * 
+	 * <p>getHandleSourceTypes.</p>
+	 *
 	 * @return sourceType that the plugin handle
 	 */
 	String[] getHandleSourceTypes();
 
 	/**
-	 * 
-	 * @param sourceType
-	 * @param query
-	 * @param pageNum
-	 * @param pageSize
-	 * @param props
+	 * <p>suggest.</p>
+	 *
+	 * @param sourceType a {@link java.lang.String} object.
+	 * @param query a {@link java.lang.String} object.
+	 * @param pageNum a {@link java.lang.Integer} object.
+	 * @param pageSize a {@link java.lang.Integer} object.
+	 * @param props a {@link java.util.Map} object.
 	 * @return Suggested values page
 	 */
 	ListValuePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props);

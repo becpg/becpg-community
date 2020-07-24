@@ -21,19 +21,29 @@ import fr.becpg.repo.web.scripts.remote.AbstractEntityWebScript;
  * Webscript that copy a datalist to another entity
  *
  * @author matthieu
+ * @version $Id: $Id
  */
 public class CopyDataListWebScript extends AbstractEntityWebScript {
 
+	/** Constant <code>PARAM_STORE_TYPE="store_type"</code> */
 	protected static final String PARAM_STORE_TYPE = "store_type";
+	/** Constant <code>PARAM_STORE_ID="store_id"</code> */
 	protected static final String PARAM_STORE_ID = "store_id";
+	/** Constant <code>PARAM_ID="id"</code> */
 	protected static final String PARAM_ID = "id";
 
 	private EntityListDAO entityListDAO;
 
+	/**
+	 * <p>Setter for the field <code>entityListDAO</code>.</p>
+	 *
+	 * @param entityListDAO a {@link fr.becpg.repo.entity.EntityListDAO} object.
+	 */
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
 

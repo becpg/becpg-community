@@ -6,7 +6,7 @@ import java.util.List;
  * Helper to compute 5C Nutrient Profile Score
  *
  * @author matthieu
- *
+ * @version $Id: $Id
  */
 public class Nutrient5CHelper {
 
@@ -69,21 +69,22 @@ public class Nutrient5CHelper {
 		}
 	}
 
-	/**
-	 *
-	 * @param energyKj
-	 * @param satFat
-	 * @param totalFat
-	 * @param totalSugar
-	 * @param sodium
-	 * @param percFruitsAndVetgs
-	 * @param nspFibre
-	 * @param aoacFibre
-	 * @param protein
-	 * @param category
-	 * @return
-	 */
 
+	/**
+	 * <p>compute5CScore.</p>
+	 *
+	 * @param energyKj a {@link java.lang.Double} object.
+	 * @param satFat a {@link java.lang.Double} object.
+	 * @param totalFat a {@link java.lang.Double} object.
+	 * @param totalSugar a {@link java.lang.Double} object.
+	 * @param sodium a {@link java.lang.Double} object.
+	 * @param percFruitsAndVetgs a {@link java.lang.Double} object.
+	 * @param nspFibre a {@link java.lang.Double} object.
+	 * @param aoacFibre a {@link java.lang.Double} object.
+	 * @param protein a {@link java.lang.Double} object.
+	 * @param category a {@link java.lang.String} object.
+	 * @return a int.
+	 */
 	public static int compute5CScore(Double energyKj, Double satFat, Double totalFat, Double totalSugar, Double sodium, Double percFruitsAndVetgs,
 			Double nspFibre, Double aoacFibre, Double protein, String category) {
 
@@ -240,6 +241,14 @@ public class Nutrient5CHelper {
 		return Math.round(toRound*10)/10d;
 	}
 
+	/**
+	 * <p>buildNutrientClass.</p>
+	 *
+	 * @param score a {@link java.lang.Double} object.
+	 * @param ranges a {@link java.util.List} object.
+	 * @param clazz a {@link java.util.List} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	public static String buildNutrientClass(Double score, List<Double> ranges, List<String> clazz) {
 		if (score != null) {
 			for (int i = 0; i < ranges.size(); i++) {

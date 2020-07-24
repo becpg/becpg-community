@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.workflow.WorkflowConstants;
 import org.alfresco.repo.workflow.WorkflowModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -57,7 +58,7 @@ import fr.becpg.repo.project.data.projectList.TaskState;
  * Class used to manage workflow
  *
  * @author quere
- *
+ * @version $Id: $Id
  */
 
 @Service("projectWorkflowService")
@@ -78,6 +79,7 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 	@Autowired
 	private AutoNumService autoNumService;
 
+	/** {@inheritDoc} */
 	@Override
 	public void cancelWorkflow(TaskListDataItem task) {
 
@@ -87,6 +89,7 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 		task.setWorkflowTaskInstance("");
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void startWorkflow(final ProjectData projectData, final TaskListDataItem taskListDataItem,
 			final List<DeliverableListDataItem> nextDeliverables) {
@@ -171,8 +174,13 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 
 				List<WorkflowTask> workflowTasks = workflowService.queryTasks(taskQuery, false);
 
+				
 				if (!workflowTasks.isEmpty()) {
 					for (WorkflowTask workflowTask : workflowTasks) {
+						Map<QName, Serializable> taskProps =  workflowTask.getProperties();
+						taskProps.put(WorkflowModel.PROP_STATUS, WorkflowConstants.TASK_STATUS_IN_PROGRESS);
+						workflowService.updateTask(workflowTask.getId(), taskProps, null, null);
+
 						taskListDataItem.setWorkflowTaskInstance(workflowTask.getId());
 						break;
 					}
@@ -258,6 +266,7 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 		return null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isWorkflowActive(TaskListDataItem task) {
 
@@ -284,6 +293,8 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * Check workflow instance and properties
 	 */
 	@Override
@@ -381,6 +392,7 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 		return newProperties;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void deleteWorkflowTask(NodeRef taskListNodeRef) {
 
@@ -390,6 +402,7 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void deleteWorkflowById(String workflowInstanceId) {
 		WorkflowInstance workflowInstance = workflowService.getWorkflowById(workflowInstanceId);

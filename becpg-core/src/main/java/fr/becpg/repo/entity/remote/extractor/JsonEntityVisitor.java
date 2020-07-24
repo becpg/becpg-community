@@ -68,21 +68,26 @@ import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.SiteHelper;
 
 /**
+ * <p>JsonEntityVisitor class.</p>
  *
  * @author matthieu
- *
+ * @version $Id: $Id
  */
 public class JsonEntityVisitor extends AbstractEntityVisitor {
 
-	protected AttributeExtractorService attributeExtractor;
-	
-	private boolean allFields = false;
-	
+	/**
+	 * <p>Constructor for JsonEntityVisitor.</p>
+	 *
+	 * @param mlNodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
+	 * @param entityDictionaryService a {@link fr.becpg.repo.entity.EntityDictionaryService} object.
+	 * @param contentService a {@link org.alfresco.service.cmr.repository.ContentService} object.
+	 * @param siteService a {@link org.alfresco.service.cmr.site.SiteService} object.
+	 */
 	public JsonEntityVisitor(NodeService mlNodeService, NodeService nodeService, NamespaceService namespaceService,
-			EntityDictionaryService entityDictionaryService, ContentService contentService, SiteService siteService,
-			AttributeExtractorService attributeExtractor) {
+			EntityDictionaryService entityDictionaryService, ContentService contentService, SiteService siteService) {
 		super(mlNodeService, nodeService, namespaceService, entityDictionaryService, contentService, siteService);
-		this.attributeExtractor = attributeExtractor;
 	}
 	
 	public JsonEntityVisitor(NodeService mlNodeService, NodeService nodeService, NamespaceService namespaceService,
@@ -101,6 +106,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 		allFields = value;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void visit(NodeRef entityNodeRef, OutputStream result) throws JSONException, IOException {
 
@@ -116,6 +122,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void visit(List<NodeRef> entities, OutputStream result) throws JSONException, IOException {
 
@@ -139,6 +146,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 	
 	
 
+	/** {@inheritDoc} */
 	@Override
 	public void visitData(NodeRef entityNodeRef, OutputStream result) throws JSONException, IOException {
 		JSONObject data = new JSONObject();

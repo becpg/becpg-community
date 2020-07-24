@@ -26,8 +26,15 @@ import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.DataListPagination;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
+/**
+ * <p>SmartContentExtractor class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class SmartContentExtractor extends SimpleExtractor {
 
+	/** {@inheritDoc} */
 	@Override
 	protected List<NodeRef> getListNodeRef(DataListFilter dataListFilter, DataListPagination pagination) {
 
@@ -49,11 +56,13 @@ public class SmartContentExtractor extends SimpleExtractor {
 		return (String) nodeService.getProperty(parentNodeRef, org.alfresco.model.ContentModel.PROP_DESCRIPTION);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean applyTo(DataListFilter dataListFilter) {
 		return (dataListFilter.getDataListName() != null) && dataListFilter.getDataListName().startsWith(RepoConsts.SMART_CONTENT_PREFIX) && !dataListFilter.isVersionFilter();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean hasWriteAccess() {
 		return false;

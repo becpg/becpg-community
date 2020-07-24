@@ -109,11 +109,12 @@ import org.springframework.web.util.WebUtils;
 /**
  * SSO Authentication Filter Class for web-tier, supporting NTLM and Kerberos challenges from the repository tier.
  * Thanks to Sylvain Chambon for contributing the Kerberos delegation code.
- * 
+ *
  * @author Kevin Roast
  * @author gkspencer
  * @author Sylvain Chambon
  * @author dward
+ * @version $Id: $Id
  */
 @SuppressWarnings("deprecation")
 public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, CallbackHandler, ApplicationContextAware
@@ -362,24 +363,29 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
             logger.info("SSOAuthenticationFilter initialised.");
     }
     
+    /** {@inheritDoc} */
     @Override
     public void setApplicationContext(ApplicationContext applicationContext)
     {
         this.context = applicationContext;
     }
  
+    /**
+     * <p>Setter for the field <code>endpoint</code>.</p>
+     *
+     * @param endpoint a {@link java.lang.String} object.
+     */
     public void setEndpoint(String endpoint)
     {
        this.endpoint = endpoint;
     }
     
+
     /**
-     * Wraps an {@link HttpServletRequest} if an HTTP header has been configured for
-     * use by an external SSO system to provide the name of an authenticated user.
-     * The wrapper's {@link #getRemoteUser} returns the value of the header but will
-     * defaults to the wrapped method's value if the header is not set.
-     * @param sreq original {@code ServletRequest}
-     * @return either the original {@code sreq} or a wrapped {@code HttpServletRequest}
+     * <p>wrapHeaderAuthenticatedRequest.</p>
+     *
+     * @param sreq a {@link javax.servlet.ServletRequest} object.
+     * @return a {@link javax.servlet.ServletRequest} object.
      */
     protected ServletRequest wrapHeaderAuthenticatedRequest(ServletRequest sreq)
     {
@@ -445,6 +451,7 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
         return sreq;
     }
     
+    /** {@inheritDoc} */
     @Override
     public void doFilter(ServletContext context, ServletRequest request,
             ServletResponse response, FilterChain chain) throws IOException,
@@ -456,13 +463,14 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 
     /**
      * Run the filter
-     * 
+     *
      * @param sreq ServletRequest
      * @param sresp ServletResponse
      * @param chain FilterChain
-     * 
      * @exception IOException
      * @exception ServletException
+     * @throws java.io.IOException if any.
+     * @throws javax.servlet.ServletException if any.
      */
     public void doFilter(ServletRequest sreq, ServletResponse sresp, FilterChain chain)
         throws IOException, ServletException
@@ -787,10 +795,12 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 
     /**
      * JAAS callback handler
-     * 
+     *
      * @param callbacks Callback[]
      * @exception IOException
      * @exception UnsupportedCallbackException
+     * @throws java.io.IOException if any.
+     * @throws javax.security.auth.callback.UnsupportedCallbackException if any.
      */
     public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException
     {
@@ -937,6 +947,9 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 
     /* (non-Javadoc)
      * @see javax.servlet.Filter#destroy()
+     */
+    /**
+     * <p>destroy.</p>
      */
     public void destroy()
     {
@@ -1530,12 +1543,21 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
         }
     }
 
+    /** Constant <code>SESSION_ATTRIBUTE_KEY_USER_GROUPS="_alf_USER_GROUPS"</code> */
     public static String SESSION_ATTRIBUTE_KEY_USER_GROUPS = "_alf_USER_GROUPS";
 
+    /** Constant <code>PARAM_USERNAME="username"</code> */
     protected static final String PARAM_USERNAME = "username";
     
     
     
+	/**
+	 * <p>beforeSuccess.</p>
+	 *
+	 * @param request a {@link javax.servlet.http.HttpServletRequest} object.
+	 * @param response a {@link javax.servlet.http.HttpServletResponse} object.
+	 * @throws java.lang.Exception if any.
+	 */
 	protected void beforeSuccess(HttpServletRequest request, HttpServletResponse response) throws Exception
     {
         try

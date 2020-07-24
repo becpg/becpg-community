@@ -25,25 +25,76 @@ import org.alfresco.service.namespace.QName;
 /**
  * Should implement Spring Data
  * Used to retrieve entity from repository
- * @author matthieu
  *
+ * @author matthieu
  * @param <T>
  * @since 1.5
+ * @version $Id: $Id
  */
 public interface AlfrescoRepository<T extends RepositoryEntity>  extends CrudRepository<T, NodeRef> {
 
+	/**
+	 * <p>hasDataList.</p>
+	 *
+	 * @param entity a {@link fr.becpg.repo.repository.RepositoryEntity} object.
+	 * @param datalistContainerQname a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a boolean.
+	 */
 	boolean hasDataList(RepositoryEntity entity, QName datalistContainerQname);
+	/**
+	 * <p>hasDataList.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param datalistContainerQname a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a boolean.
+	 */
 	boolean hasDataList(NodeRef entityNodeRef, QName datalistContainerQname);
-	
-	@Deprecated // Partial use of cache only
+	/**
+	 * <p>loadDataList.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param datalistContainerQname a {@link org.alfresco.service.namespace.QName} object.
+	 * @param datalistQname a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link java.util.List} object.
+	 */
 	List<T> loadDataList(NodeRef entityNodeRef, QName datalistContainerQname, QName datalistQname);
-	<R extends RepositoryEntity> List<R> getList(RepositoryEntity entity, Class<R> clazz);
-	<R extends RepositoryEntity> List<R> getList(RepositoryEntity entity, QName datalistContainerQname, QName datalistQname);
-	
+	/**
+	 * <p>create.</p>
+	 *
+	 * @param parentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param entity a T object.
+	 * @return a T object.
+	 */
 	T create(NodeRef parentNodeRef, T entity);
+	/**
+	 * <p>getOrCreateDataListContainer.</p>
+	 *
+	 * @param entity a T object.
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	NodeRef getOrCreateDataListContainer(T entity);
+	/**
+	 * <p>saveDataList.</p>
+	 *
+	 * @param listContainerNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param dataListContainerType a {@link org.alfresco.service.namespace.QName} object.
+	 * @param dataListType a {@link org.alfresco.service.namespace.QName} object.
+	 * @param dataList a {@link java.util.List} object.
+	 */
 	void saveDataList(NodeRef listContainerNodeRef, QName dataListContainerType, QName dataListType, List<? extends RepositoryEntity> dataList);
+	/**
+	 * <p>isRegisteredType.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a boolean.
+	 */
 	boolean isRegisteredType(QName type);
+	/**
+	 * <p>isDirty.</p>
+	 *
+	 * @param entity a T object.
+	 * @return a boolean.
+	 */
 	boolean isDirty(T entity);
 	
 }

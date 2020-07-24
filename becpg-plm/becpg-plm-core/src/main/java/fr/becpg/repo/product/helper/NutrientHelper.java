@@ -4,15 +4,16 @@ import java.util.List;
 
 /**
  * Helper to compute OfCom Nutrient Profile Score
- * 
- * @author matthieu
  *
+ * @author matthieu
+ * @version $Id: $Id
  */
 public class NutrientHelper {
 
 	/**
-	 * 
-	 * @param energy
+	 * <p>ofComNutrientAScore.</p>
+	 *
+	 * @param energyKj
 	 *            (kJ)
 	 * @param satFat
 	 *            (g)
@@ -20,7 +21,7 @@ public class NutrientHelper {
 	 *            (g)
 	 * @param sodium
 	 *            (mg)
-	 * @return
+	 * @return a int.
 	 */
 	public static int ofComNutrientAScore(Double energyKj, Double satFat, Double totalSugar, Double sodium) {
 
@@ -80,14 +81,15 @@ public class NutrientHelper {
 	}
 
 	/**
-	 * 
+	 * <p>ofComNutrientCScore.</p>
+	 *
 	 * @param percFruitsAndVetgs
-	 *            Fruit, Veg & Nuts (%)
+	 *            Fruit, Veg and Nuts (%)
 	 * @param fibre
-	 *            AOAC Fibre ' (g)
+	 *            AOAC Fibre (g)
 	 * @param protein
 	 *            Protein (g)
-	 * @return
+	 * @return a int.
 	 */
 	public static int ofComNutrientCScore(Double percFruitsAndVetgs, Double fibre, Double protein) {
 		int bScore = 0;
@@ -130,6 +132,14 @@ public class NutrientHelper {
 		return bScore;
 	}
 
+	/**
+	 * <p>buildNutrientClass.</p>
+	 *
+	 * @param score a {@link java.lang.Double} object.
+	 * @param ranges a {@link java.util.List} object.
+	 * @param clazz a {@link java.util.List} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	public static String buildNutrientClass(Double score, List<Double> ranges, List<String> clazz) {
 		if (score != null) {
 			for (int i = 0; i < ranges.size(); i++) {

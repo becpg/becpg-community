@@ -31,14 +31,16 @@ import fr.becpg.repo.importer.ImporterException;
  * Class used to import a product that has the productAspect but it is not a
  * Product (ie: product template, product microbio criteria, etc...) with its
  * attributes, characteristics and files.
- * 
+ *
  * @author querephi
+ * @version $Id: $Id
  */
 public class ImportEntityListAspectVisitor extends AbstractImportVisitor implements ImportVisitor {
 
-	/** The logger. */
+	
 	private static final Log logger = LogFactory.getLog(ImportEntityListAspectVisitor.class);
 
+	/** Constant <code>CACHE_KEY="cKey%s-%s"</code> */
 	protected static final String CACHE_KEY = "cKey%s-%s";
 
 	/*
@@ -48,6 +50,7 @@ public class ImportEntityListAspectVisitor extends AbstractImportVisitor impleme
 	 * fr.becpg.repo.importer.AbstractImportVisitor#importNode(fr.becpg.repo
 	 * .importer.ImportContext, java.util.List)
 	 */
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef importNode(ImportContext importContext, List<String> values) throws ParseException, ImporterException {
 
@@ -140,15 +143,9 @@ public class ImportEntityListAspectVisitor extends AbstractImportVisitor impleme
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * Check if the node exists, according to : - keys or productCode
-	 * 
-	 * @param importContext
-	 *            the import context
-	 * @param type
-	 *            the type
-	 * @param properties
-	 *            the properties
-	 * @return the node ref
 	 */
 	@Override
 	protected NodeRef findNode(ImportContext importContext, QName type, Map<QName, Serializable> properties) throws ImporterException {

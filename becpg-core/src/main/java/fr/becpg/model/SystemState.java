@@ -5,8 +5,9 @@ package fr.becpg.model;
 
 /**
  * System state of a node
- * @author querephi
  *
+ * @author querephi
+ * @version $Id: $Id
  */
 public enum SystemState {
 	
@@ -18,6 +19,12 @@ public enum SystemState {
 		Archived;
 		
 		
+		/**
+		 * <p>getSystemState.</p>
+		 *
+		 * @param systemState a {@link java.lang.String} object.
+		 * @return a {@link fr.becpg.model.SystemState} object.
+		 */
 		public static SystemState getSystemState(String systemState) {	
 		   return (systemState != null && systemState.length()>0) ? SystemState.valueOf(systemState) : SystemState.Simulation;		
 		}

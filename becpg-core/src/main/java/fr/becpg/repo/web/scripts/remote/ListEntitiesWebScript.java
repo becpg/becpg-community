@@ -30,10 +30,17 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.common.BeCPGException;
 
+/**
+ * <p>ListEntitiesWebScript class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class ListEntitiesWebScript extends AbstractEntityWebScript {
 
 
 	
+	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
 		List<NodeRef> entities = findEntities(req);

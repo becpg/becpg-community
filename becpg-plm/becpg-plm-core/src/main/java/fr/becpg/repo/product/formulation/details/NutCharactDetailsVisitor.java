@@ -27,9 +27,16 @@ import fr.becpg.repo.product.data.CharactDetails;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 
+/**
+ * <p>NutCharactDetailsVisitor class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class NutCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 
+	/** {@inheritDoc} */
 	@Override
 	public CharactDetails visit(ProductData formulatedProduct, List<NodeRef> dataListItems, Integer level) throws FormulateException {
 

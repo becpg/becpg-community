@@ -31,8 +31,9 @@ import fr.becpg.repo.listvalue.ListValueExtractor;
 
 /**
  * Used to extract properties from nodeRef
- * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
  *
+ * @author "Matthieu Laborie"
+ * @version $Id: $Id
  */
 public class NodeRefListValueExtractor implements ListValueExtractor<NodeRef> {
 
@@ -42,6 +43,12 @@ public class NodeRefListValueExtractor implements ListValueExtractor<NodeRef> {
 	
 	
 
+	/**
+	 * <p>Constructor for NodeRefListValueExtractor.</p>
+	 *
+	 * @param propName a {@link org.alfresco.service.namespace.QName} object.
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public NodeRefListValueExtractor(QName propName,NodeService nodeService) {
 		super();
 		propNames  = new HashSet<>();
@@ -49,6 +56,12 @@ public class NodeRefListValueExtractor implements ListValueExtractor<NodeRef> {
 		this.nodeService = nodeService;
 	}
 	
+	/**
+	 * <p>Constructor for NodeRefListValueExtractor.</p>
+	 *
+	 * @param propNames a {@link java.util.Set} object.
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public NodeRefListValueExtractor(Set<QName> propNames,NodeService nodeService) {
 		super();
 		this.propNames = propNames;
@@ -56,6 +69,7 @@ public class NodeRefListValueExtractor implements ListValueExtractor<NodeRef> {
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public List<ListValueEntry> extract(List<NodeRef> nodeRefs) {
 		List<ListValueEntry> suggestions = new ArrayList<>();

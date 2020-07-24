@@ -17,6 +17,12 @@
  ******************************************************************************/
 package fr.becpg.repo.security;
 
+/**
+ * <p>BeCPGAccessDeniedException class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class BeCPGAccessDeniedException extends RuntimeException {
 
 	/**
@@ -24,6 +30,11 @@ public class BeCPGAccessDeniedException extends RuntimeException {
 	 */
 	private static final long serialVersionUID = -56874971164233072L;
 	
+	/**
+	 * <p>Constructor for BeCPGAccessDeniedException.</p>
+	 *
+	 * @param methodQName a {@link java.lang.String} object.
+	 */
 	public BeCPGAccessDeniedException(String methodQName) {
 		super(methodQName);
 	}

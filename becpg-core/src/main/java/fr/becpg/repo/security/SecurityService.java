@@ -22,9 +22,10 @@ import java.util.List;
 import org.alfresco.service.namespace.QName;
 
 /**
- * 
- * @author "Matthieu Laborie <laborima@gmail.com>"
+ * <p>SecurityService interface.</p>
  *
+ * @author "Matthieu Laborie"
+ * @version $Id: $Id
  */
 public interface SecurityService {
 
@@ -32,22 +33,26 @@ public interface SecurityService {
 	 * Access status
 	 */
 	int NONE_ACCESS = 0;
+	/** Constant <code>READ_ACCESS=1</code> */
 	int READ_ACCESS = 1;
+	/** Constant <code>WRITE_ACCESS=2</code> */
 	int WRITE_ACCESS = 2;
 	
 	/**
 	 * Compute access mode for the given field name on a specific type
-	 * @param nodeType
-	 * @param name
+	 *
 	 * @return Access Mode status
+	 * @param nodeType a {@link org.alfresco.service.namespace.QName} object.
+	 * @param name a {@link java.lang.String} object.
 	 */
 	int computeAccessMode(QName nodeType, String name);
 	
 	/**
 	 * Compute access mode for the given field name on a specific type
-	 * @param nodeType
-	 * @param name
+	 *
 	 * @return Access Mode status
+	 * @param nodeType a {@link org.alfresco.service.namespace.QName} object.
+	 * @param name a {@link org.alfresco.service.namespace.QName} object.
 	 */
 	int computeAccessMode(QName nodeType, QName name);
 	
@@ -58,21 +63,23 @@ public interface SecurityService {
 
 	/**
 	 * Extract props list based on existing ACL_GROUPS
-	 * @param item
-	 * @return
+	 *
+	 * @return a {@link java.util.List} object.
 	 */
 	List<String> getAvailablePropNames();
 
 	/**
 	 * Check user is in currentSecurityGroup or isAdmin
-	 * @param securityGroup
-	 * @return
+	 *
+	 * @param securityGroup a {@link java.lang.String} object.
+	 * @return a boolean.
 	 */
 	boolean isCurrentUserAllowed(String securityGroup);
 
 	/**
 	 * List available security roles for user
-	 * @return
+	 *
+	 * @return a {@link java.util.List} object.
 	 */
 	List<String> getUserSecurityRoles();
 

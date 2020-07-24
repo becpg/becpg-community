@@ -67,9 +67,10 @@ import fr.becpg.repo.helper.PropertiesHelper;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
+ * <p>ImportEntityXmlVisitor class.</p>
  *
  * @author matthieu
- *
+ * @version $Id: $Id
  */
 public class ImportEntityXmlVisitor {
 
@@ -86,16 +87,33 @@ public class ImportEntityXmlVisitor {
 
 	private final AssociationService associationService;
 
+	/**
+	 * <p>Setter for the field <code>entityProviderCallBack</code>.</p>
+	 *
+	 * @param entityProviderCallBack a {@link fr.becpg.repo.entity.remote.EntityProviderCallBack} object.
+	 */
 	public void setEntityProviderCallBack(EntityProviderCallBack entityProviderCallBack) {
 		this.entityProviderCallBack = entityProviderCallBack;
 	}
 
+	/**
+	 * <p>Setter for the field <code>cache</code>.</p>
+	 *
+	 * @param cache a {@link java.util.Map} object.
+	 */
 	public void setCache(Map<NodeRef, NodeRef> cache) {
 		this.cache = cache;
 	}
 
 	private static final Log logger = LogFactory.getLog(ImportEntityXmlVisitor.class);
 
+	/**
+	 * <p>Constructor for ImportEntityXmlVisitor.</p>
+	 *
+	 * @param serviceRegistry a {@link org.alfresco.service.ServiceRegistry} object.
+	 * @param entityDictionaryService a {@link fr.becpg.repo.entity.EntityDictionaryService} object.
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object.
+	 */
 	public ImportEntityXmlVisitor(ServiceRegistry serviceRegistry, EntityDictionaryService entityDictionaryService,
 			AssociationService associationService) {
 		super();
@@ -104,6 +122,17 @@ public class ImportEntityXmlVisitor {
 		this.associationService = associationService;
 	}
 
+	/**
+	 * <p>visit.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param destNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param in a {@link java.io.InputStream} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @throws java.io.IOException if any.
+	 * @throws org.xml.sax.SAXException if any.
+	 * @throws javax.xml.parsers.ParserConfigurationException if any.
+	 */
 	public NodeRef visit(NodeRef entityNodeRef, NodeRef destNodeRef, InputStream in)
 			throws IOException, SAXException, ParserConfigurationException {
 
@@ -119,6 +148,15 @@ public class ImportEntityXmlVisitor {
 
 	}
 
+	/**
+	 * <p>visitData.</p>
+	 *
+	 * @param in a {@link java.io.InputStream} object.
+	 * @param out a {@link java.io.OutputStream} object.
+	 * @throws java.io.IOException if any.
+	 * @throws org.xml.sax.SAXException if any.
+	 * @throws javax.xml.parsers.ParserConfigurationException if any.
+	 */
 	public void visitData(InputStream in, OutputStream out) throws IOException, SAXException, ParserConfigurationException {
 			SAXParserFactory factory = SAXParserFactory.newInstance();
 			SAXParser saxParser = factory.newSAXParser();

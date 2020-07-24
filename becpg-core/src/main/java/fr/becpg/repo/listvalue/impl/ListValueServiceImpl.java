@@ -20,6 +20,7 @@ import fr.becpg.repo.listvalue.ListValueService;
  * The Class ListValueServiceImpl.
  *
  * @author Matthieu
+ * @version $Id: $Id
  */
 @Service("listValueService")
 public class ListValueServiceImpl implements ListValueService {
@@ -33,6 +34,7 @@ public class ListValueServiceImpl implements ListValueService {
 	private ListValuePlugin[] listValuePlugins;
 	
 
+	/** {@inheritDoc} */
 	@Override
 	public ListValuePage suggestBySourceType(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String,Serializable> extraProps) {
 		

@@ -19,6 +19,9 @@ package fr.becpg.repo.product.data.constraints;
 
 /**
  * author : querephi
+ *
+ * @author matthieu
+ * @version $Id: $Id
  */
 public enum DeclarationType {
 	

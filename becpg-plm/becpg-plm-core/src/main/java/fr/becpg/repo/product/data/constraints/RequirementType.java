@@ -17,6 +17,12 @@
  ******************************************************************************/
 package fr.becpg.repo.product.data.constraints;
 
+/**
+ * <p>RequirementType class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public enum RequirementType {
 
 	/*
@@ -24,6 +30,12 @@ public enum RequirementType {
 	 */
 	Forbidden, Tolerated, Info, Authorized;
 
+	/**
+	 * <p>fromString.</p>
+	 *
+	 * @param type a {@link java.lang.String} object.
+	 * @return a {@link fr.becpg.repo.product.data.constraints.RequirementType} object.
+	 */
 	public static RequirementType fromString(String type) {
 		try {
 			return RequirementType.valueOf(type);

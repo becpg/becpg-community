@@ -36,32 +36,49 @@ import fr.becpg.repo.search.AdvSearchService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.web.scripts.WebscriptHelper;
 
+/**
+ * <p>Abstract AbstractSearchWebScript class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public abstract class AbstractSearchWebScript extends AbstractWebScript {
 
+	/** Constant <code>PARAM_QUERY="query"</code> */
 	protected static final String PARAM_QUERY = "query";
 
+	/** Constant <code>PARAM_SORT="sort"</code> */
 	protected static final String PARAM_SORT = "sort";
 
+	/** Constant <code>PARAM_TERM="term"</code> */
 	protected static final String PARAM_TERM = "term";
 
+	/** Constant <code>PARAM_TAG="tag"</code> */
 	protected static final String PARAM_TAG = "tag";
 
+	/** Constant <code>PARAM_CONTAINER="container"</code> */
 	protected static final String PARAM_CONTAINER = "container";
 
+	/** Constant <code>PARAM_SITE="site"</code> */
 	protected static final String PARAM_SITE = "site";
 
+	/** Constant <code>PARAM_REPOSITORY="repo"</code> */
 	protected static final String PARAM_REPOSITORY = "repo";
 
+	/** Constant <code>PARAM_NODEREF="nodeRef"</code> */
 	protected static final String PARAM_NODEREF = "nodeRef";
 
+	/** Constant <code>PARAM_ITEMTYPE="itemType"</code> */
 	protected static final String PARAM_ITEMTYPE = "itemType";
 
 	/** Pagination **/
 
 	protected static final String PARAM_PAGE = "page";
 
+	/** Constant <code>PARAM_PAGE_SIZE="pageSize"</code> */
 	protected static final String PARAM_PAGE_SIZE = "pageSize";
 
+	/** Constant <code>PARAM_MAX_RESULTS="maxResults"</code> */
 	protected static final String PARAM_MAX_RESULTS = "maxResults";
 
 	/** Services **/
@@ -72,18 +89,41 @@ public abstract class AbstractSearchWebScript extends AbstractWebScript {
 
 	protected NamespaceService namespaceService;
 
+	/**
+	 * <p>Setter for the field <code>advSearchService</code>.</p>
+	 *
+	 * @param advSearchService a {@link fr.becpg.repo.search.AdvSearchService} object.
+	 */
 	public void setAdvSearchService(AdvSearchService advSearchService) {
 		this.advSearchService = advSearchService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>namespaceService</code>.</p>
+	 *
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
+	 */
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>doSearch.</p>
+	 *
+	 * @param req a {@link org.springframework.extensions.webscripts.WebScriptRequest} object.
+	 * @param maxResults a {@link java.lang.Integer} object.
+	 * @return a {@link java.util.List} object.
+	 * @throws org.json.JSONException if any.
+	 */
 	protected List<NodeRef> doSearch(WebScriptRequest req, Integer maxResults) throws JSONException {
 
 		String query = req.getParameter(PARAM_QUERY);

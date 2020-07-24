@@ -74,11 +74,11 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
 /**
+ * <p>DesignerServiceImpl class.</p>
  *
- * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
- *
+ * @author "Matthieu Laborie"
+ * @version $Id: $Id
  */
-
 public class DesignerServiceImpl implements DesignerService {
 
 	private static String BECPG_CONFIG_CUSTOM = "becpg-config-custom.xml";
@@ -115,54 +115,112 @@ public class DesignerServiceImpl implements DesignerService {
 
 	private static final Log logger = LogFactory.getLog(DesignerServiceImpl.class);
 
+	/**
+	 * <p>Setter for the field <code>designerInitService</code>.</p>
+	 *
+	 * @param designerInitService a {@link fr.becpg.repo.designer.DesignerInitService} object.
+	 */
 	public void setDesignerInitService(DesignerInitService designerInitService) {
 		this.designerInitService = designerInitService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>mimetypeService</code>.</p>
+	 *
+	 * @param mimetypeService a {@link org.alfresco.service.cmr.repository.MimetypeService} object.
+	 */
 	public void setMimetypeService(MimetypeService mimetypeService) {
 		this.mimetypeService = mimetypeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>policyBehaviourFilter</code>.</p>
+	 *
+	 * @param policyBehaviourFilter a {@link org.alfresco.repo.policy.BehaviourFilter} object.
+	 */
 	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
 		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
 
+	/**
+	 * <p>Setter for the field <code>dictionaryDAO</code>.</p>
+	 *
+	 * @param dictionaryDAO a {@link org.alfresco.repo.dictionary.DictionaryDAO} object.
+	 */
 	public void setDictionaryDAO(DictionaryDAO dictionaryDAO) {
 		this.dictionaryDAO = dictionaryDAO;
 	}
 
+	/**
+	 * <p>Setter for the field <code>dictionaryService</code>.</p>
+	 *
+	 * @param dictionaryService a {@link org.alfresco.service.cmr.dictionary.DictionaryService} object.
+	 */
 	public void setDictionaryService(DictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
 	}
 
-	public void setFormJsonVisitor(FormJsonVisitor formJsonVisitor) {
+        public void setFormJsonVisitor(FormJsonVisitor formJsonVisitor) {
 		this.formJsonVisitor = formJsonVisitor;
 	}
 
+	/**
+	 * <p>Setter for the field <code>configPath</code>.</p>
+	 *
+	 * @param configPath a {@link java.lang.String} object.
+	 */
 	public void setConfigPath(String configPath) {
 		this.configPath = configPath;
 	}
 
+	/**
+	 * <p>Setter for the field <code>contentService</code>.</p>
+	 *
+	 * @param contentService a {@link org.alfresco.service.cmr.repository.ContentService} object.
+	 */
 	public void setContentService(ContentService contentService) {
 		this.contentService = contentService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>metaModelVisitor</code>.</p>
+	 *
+	 * @param metaModelVisitor a {@link fr.becpg.repo.designer.impl.MetaModelVisitor} object.
+	 */
 	public void setMetaModelVisitor(MetaModelVisitor metaModelVisitor) {
 		this.metaModelVisitor = metaModelVisitor;
 	}
 
+	/**
+	 * <p>Setter for the field <code>formModelVisitor</code>.</p>
+	 *
+	 * @param formModelVisitor a {@link fr.becpg.repo.designer.impl.FormModelVisitor} object.
+	 */
 	public void setFormModelVisitor(FormModelVisitor formModelVisitor) {
 		this.formModelVisitor = formModelVisitor;
 	}
 
+	/**
+	 * <p>Setter for the field <code>designerTreeVisitor</code>.</p>
+	 *
+	 * @param designerTreeVisitor a {@link fr.becpg.repo.designer.impl.DesignerTreeVisitor} object.
+	 */
 	public void setDesignerTreeVisitor(DesignerTreeVisitor designerTreeVisitor) {
 		this.designerTreeVisitor = designerTreeVisitor;
 	}
 
+	/**
+	 * <p>init.</p>
+	 */
 	public void init() {
 		logger.debug("Init DesignerServiceImpl");
 
@@ -175,6 +233,7 @@ public class DesignerServiceImpl implements DesignerService {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef createModelAspectNode(NodeRef parentNode, InputStream modelXml) {
 		logger.debug("call createModelAspectNode");
@@ -200,6 +259,7 @@ public class DesignerServiceImpl implements DesignerService {
 		return modelNodeRef;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void writeXml(NodeRef nodeRef) {
 
@@ -237,6 +297,7 @@ public class DesignerServiceImpl implements DesignerService {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void publish(NodeRef nodeRef) {
 		if (nodeService.hasAspect(nodeRef, DesignerModel.ASPECT_MODEL)) {
@@ -270,6 +331,7 @@ public class DesignerServiceImpl implements DesignerService {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef findModelNodeRef(NodeRef nodeRef) {
 
@@ -301,6 +363,12 @@ public class DesignerServiceImpl implements DesignerService {
 		return modelNodeRef;
 	}
 
+	/**
+	 * <p>findConfigNodeRef.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public NodeRef findConfigNodeRef(NodeRef nodeRef) {
 
 		if (!BECPG_CONFIG_CUSTOM.equals(nodeService.getProperty(nodeRef, ContentModel.PROP_NAME))) {
@@ -314,6 +382,7 @@ public class DesignerServiceImpl implements DesignerService {
 		return null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public DesignerTree getDesignerTree(NodeRef nodeRef) {
 		NodeRef treeNodeRef = null;
@@ -385,6 +454,7 @@ public class DesignerServiceImpl implements DesignerService {
 		return configNodeRef;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef createModelElement(NodeRef parentNodeRef, QName nodeTypeQname, QName assocQname, Map<QName, Serializable> props,
 			String modelTemplate) {
@@ -455,6 +525,7 @@ public class DesignerServiceImpl implements DesignerService {
 		return null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String prefixName(NodeRef elementRef, String name) {
 
@@ -480,6 +551,7 @@ public class DesignerServiceImpl implements DesignerService {
 		return name;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<FormControl> getFormControls() {
 		// Allow to init designer if not (TODO Move that to get configs
@@ -491,9 +563,11 @@ public class DesignerServiceImpl implements DesignerService {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * Handle move of properties from type to aspect from aspect to type from
-	 * type or aspect to form or set --> create field move of field from set to
-	 * form from form to set move of type from model to config --> create form
+	 * type or aspect to form or set --&gt; create field move of field from set to
+	 * form from form to set move of type from model to config --&gt; create form
 	 */
 	@Override
 	public NodeRef moveElement(NodeRef from, NodeRef to) {
@@ -574,6 +648,7 @@ public class DesignerServiceImpl implements DesignerService {
 		return ret;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef findOrCreateModel(String modelName, String modelTemplate, Map<String, Object> templateContext) {
 
@@ -591,6 +666,7 @@ public class DesignerServiceImpl implements DesignerService {
 		return ret;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef findOrCreateConfig(String configName, String modelTemplate, Map<String, Object> templateContext) {
 
@@ -640,6 +716,7 @@ public class DesignerServiceImpl implements DesignerService {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void unpublish(NodeRef nodeRef) {
 		policyBehaviourFilter.disableBehaviour(nodeRef);
@@ -659,6 +736,7 @@ public class DesignerServiceImpl implements DesignerService {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void createAndPublishConfig(NodeRef nodeRef) {
 		policyBehaviourFilter.disableBehaviour(DesignerModel.ASPECT_CONFIG);
@@ -687,6 +765,7 @@ public class DesignerServiceImpl implements DesignerService {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void unpublish(String fileName) {
 		File configDir = new File(configPath);

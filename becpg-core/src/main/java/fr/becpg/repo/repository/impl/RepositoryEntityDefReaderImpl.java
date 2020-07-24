@@ -56,6 +56,12 @@ import fr.becpg.repo.repository.annotation.MultiLevelDataList;
 import fr.becpg.repo.repository.annotation.MultiLevelLeaf;
 import fr.becpg.repo.repository.model.BaseObject;
 
+/**
+ * <p>RepositoryEntityDefReaderImpl class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Repository("repositoryEntityDefReader")
 public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefReader<T> , ApplicationListener<ContextRefreshedEvent> {
 
@@ -67,6 +73,7 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 	
 	private final Map<QName, Class<T>> domainMapping = new HashMap<>();
 
+	/** {@inheritDoc} */
 	@Override
 	@SuppressWarnings("unchecked")
 	public void onApplicationEvent(ContextRefreshedEvent refreshEvent) {
@@ -93,47 +100,56 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 	}
 	
 
+	/** {@inheritDoc} */
 	@Override
 	public Map<QName, T> getEntityProperties(T entity) {
 		return readValueMap(entity, AlfProp.class, RepositoryEntity.class);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Map<QName, Serializable> getProperties(T entity) {
 		return readValueMap(entity, AlfProp.class, Serializable.class);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Map<QName, NodeRef> getSingleAssociations(T entity) {
 		return readValueMap(entity, AlfSingleAssoc.class, NodeRef.class);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Map<QName, T> getSingleEntityAssociations(T entity) {
 		return readValueMap(entity, AlfSingleAssoc.class, RepositoryEntity.class);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Map<QName, List<NodeRef>> getMultipleAssociations(T entity) {
 		return readValueMap(entity, AlfMultiAssoc.class, List.class);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public <R> Map<QName, List<? extends RepositoryEntity>> getDataLists(R entity) {
 		return readValueMap(entity, DataList.class, List.class);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Map<QName, T> getDataListViews(T entity) {
 		return readValueMap(entity, DataListView.class, BaseObject.class);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Map<QName, Serializable> getIdentifierAttributes(T entity) {
 		return readValueMap(entity, DataListIdentifierAttr.class, Serializable.class);
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public QName getType(Class<? extends RepositoryEntity> clazz) {
 		if (clazz.getAnnotation(AlfQname.class) != null) {
@@ -144,6 +160,7 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 		throw new RuntimeException("No @AlfQname annotation in class : "+clazz.getName());
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public QName readQName(Method readMethod) {
 		String qName = readMethod.getAnnotation(AlfQname.class).qname();
@@ -184,11 +201,13 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 		return o;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Class<T> getEntityClass(QName type) {
 		return domainMapping.get(type);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public QName getDefaultPivoAssocName(QName entityDataListQname) {
 		Class<T> entityClass = getEntityClass(entityDataListQname);
@@ -217,18 +236,21 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 		return null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isMultiLevelDataList(QName dataListItemType) {
 		Class<T> entityClass = getEntityClass(dataListItemType);
 		return entityClass != null && entityClass.isAnnotationPresent(MultiLevelDataList.class);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isMultiLevelLeaf(QName entityType) {
 		Class<T> entityClass = getEntityClass(entityType);
 		return entityClass != null && entityClass.isAnnotationPresent(MultiLevelLeaf.class);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public QName getMultiLevelSecondaryPivot(QName dataListItemType) {
 		Class<T> entityClass = getEntityClass(dataListItemType);

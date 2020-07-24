@@ -27,26 +27,119 @@ import org.alfresco.service.namespace.QName;
 
 /**
  * Read informations from annotations
- * 
+ *
+ * @author matthieu
+ * @version $Id: $Id
  */
 public interface RepositoryEntityDefReader<T> {
 	
+	/**
+	 * <p>getEntityProperties.</p>
+	 *
+	 * @param entity a T object.
+	 * @return a {@link java.util.Map} object.
+	 */
 	Map<QName, T> getEntityProperties(T entity);
+	/**
+	 * <p>getProperties.</p>
+	 *
+	 * @param entity a T object.
+	 * @return a {@link java.util.Map} object.
+	 */
 	Map<QName, Serializable> getProperties(T entity);
+    /**
+     * <p>getSingleAssociations.</p>
+     *
+     * @param entity a T object.
+     * @return a {@link java.util.Map} object.
+     */
     Map<QName, NodeRef> getSingleAssociations(T entity);	
+    /**
+     * <p>getMultipleAssociations.</p>
+     *
+     * @param entity a T object.
+     * @return a {@link java.util.Map} object.
+     */
     Map<QName, List<NodeRef>> getMultipleAssociations(T entity);
+    /**
+     * <p>getDataLists.</p>
+     *
+     * @param entity a R object.
+     * @param <R> a R object.
+     * @return a {@link java.util.Map} object.
+     */
     <R> Map<QName, List<? extends RepositoryEntity>> getDataLists(R entity);
+    /**
+     * <p>getSingleEntityAssociations.</p>
+     *
+     * @param entity a T object.
+     * @return a {@link java.util.Map} object.
+     */
     Map<QName, T> getSingleEntityAssociations(T entity);
+    /**
+     * <p>getDataListViews.</p>
+     *
+     * @param entity a T object.
+     * @return a {@link java.util.Map} object.
+     */
     Map<QName, ?> getDataListViews(T entity);
+    /**
+     * <p>getIdentifierAttributes.</p>
+     *
+     * @param entity a T object.
+     * @return a {@link java.util.Map} object.
+     */
     Map<QName, Serializable> getIdentifierAttributes(T entity);
     
+	/**
+	 * <p>getType.</p>
+	 *
+	 * @param clazz a {@link java.lang.Class} object.
+	 * @return a {@link org.alfresco.service.namespace.QName} object.
+	 */
 	QName getType(Class<? extends RepositoryEntity> clazz);
+	/**
+	 * <p>readQName.</p>
+	 *
+	 * @param method a {@link java.lang.reflect.Method} object.
+	 * @return a {@link org.alfresco.service.namespace.QName} object.
+	 */
 	QName readQName(Method method);
+	/**
+	 * <p>getEntityClass.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link java.lang.Class} object.
+	 */
 	Class<T> getEntityClass(QName type);
 	
+	/**
+	 * <p>getDefaultPivoAssocName.</p>
+	 *
+	 * @param dataListItemType a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link org.alfresco.service.namespace.QName} object.
+	 */
 	QName getDefaultPivoAssocName(QName dataListItemType);
+	/**
+	 * <p>isMultiLevelDataList.</p>
+	 *
+	 * @param dataListItemType a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a boolean.
+	 */
 	boolean isMultiLevelDataList(QName dataListItemType);
+	/**
+	 * <p>isMultiLevelLeaf.</p>
+	 *
+	 * @param entityType a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a boolean.
+	 */
 	boolean isMultiLevelLeaf(QName entityType);
+	/**
+	 * <p>getMultiLevelSecondaryPivot.</p>
+	 *
+	 * @param dataListItemType a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link org.alfresco.service.namespace.QName} object.
+	 */
 	QName getMultiLevelSecondaryPivot(QName dataListItemType);
 	
 	

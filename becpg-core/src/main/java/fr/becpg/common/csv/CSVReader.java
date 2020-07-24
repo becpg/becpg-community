@@ -42,9 +42,9 @@ import java.util.List;
 
 /**
  * A very simple CSV reader released under a commercial-friendly license.
- * 
+ *
  * @author Glen Smith
- * 
+ * @version $Id: $Id
  */
 public class CSVReader implements AutoCloseable {
 
@@ -76,7 +76,7 @@ public class CSVReader implements AutoCloseable {
 
     /**
      * Constructs CSVReader using a comma for the separator.
-     * 
+     *
      * @param reader
      *            the reader to an underlying CSV source.
      */
@@ -86,7 +86,7 @@ public class CSVReader implements AutoCloseable {
 
     /**
      * Constructs CSVReader with supplied separator.
-     * 
+     *
      * @param reader
      *            the reader to an underlying CSV source.
      * @param separator
@@ -100,7 +100,7 @@ public class CSVReader implements AutoCloseable {
 
     /**
      * Constructs CSVReader with supplied separator and quote char.
-     * 
+     *
      * @param reader
      *            the reader to an underlying CSV source.
      * @param separator
@@ -114,7 +114,7 @@ public class CSVReader implements AutoCloseable {
     
     /**
      * Constructs CSVReader with supplied separator and quote char.
-     * 
+     *
      * @param reader
      *            the reader to an underlying CSV source.
      * @param separator
@@ -122,7 +122,7 @@ public class CSVReader implements AutoCloseable {
      * @param quotechar
      *            the character to use for quoted elements
      * @param line
-     *            the line number to skip for start reading 
+     *            the line number to skip for start reading
      */
     public CSVReader(Reader reader, char separator, char quotechar, int line) {
         this.br = new BufferedReader(reader);
@@ -131,16 +131,15 @@ public class CSVReader implements AutoCloseable {
         this.skipLines = line;
     }
 
-    /**
-     * Reads the entire file into a List with each element being a String[] of
-     * tokens.
-     * 
-     * @return a List of String[], with each String[] representing a line of the
-     *         file.
-     * 
-     * @throws IOException
-     *             if bad things happen during the read
-     */
+	/**
+	 * Reads the entire file into a List with each element being a String[] of
+	 * tokens.
+	 *
+	 * @return a List of String[], with each String[] representing a line of the
+	 *         file.
+	 * @throws java.io.IOException
+	 *             if bad things happen during the read
+	 */
 	public List<String[]> readAll() throws IOException {
 
         List<String[]> allElements = new ArrayList<>();
@@ -155,11 +154,10 @@ public class CSVReader implements AutoCloseable {
 
     /**
      * Reads the next line from the buffer and converts to a string array.
-     * 
+     *
      * @return a string array with each comma-separated element as a separate
      *         entry.
-     * 
-     * @throws IOException
+     * @throws java.io.IOException
      *             if bad things happen during the read
      */
     public String[] readNext() throws IOException {
@@ -252,9 +250,9 @@ public class CSVReader implements AutoCloseable {
     }
 
     /**
+     * {@inheritDoc}
+     *
      * Closes the underlying reader.
-     * 
-     * @throws IOException if the close fails
      */
 	@Override
     public void close() throws IOException{

@@ -55,6 +55,12 @@ import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
+/**
+ * <p>AutomaticECOServiceImpl class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service("automaticECOService")
 public class AutomaticECOServiceImpl implements AutomaticECOService {
 
@@ -110,6 +116,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 	@Autowired
 	private EntityVersionService entityVersionService;
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean addAutomaticChangeEntry(final NodeRef entityNodeRef, final ChangeOrderData currentUserChangeOrderData) {
 
@@ -213,6 +220,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 		return repoService.getFolderByPath("/" + RepoConsts.PATH_SYSTEM + "/" + PlmRepoConsts.PATH_ECO);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean applyAutomaticEco() {
 
@@ -457,6 +465,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 		return null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public ChangeOrderData createAutomaticEcoForUser(String name) {
 		NodeRef parentNodeRef = getChangeOrderFolder();
@@ -472,6 +481,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 		return changeOrderData;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public ChangeOrderData getCurrentUserChangeOrderData() {
 		String curUserName = AuthenticationUtil.getFullyAuthenticatedUser();

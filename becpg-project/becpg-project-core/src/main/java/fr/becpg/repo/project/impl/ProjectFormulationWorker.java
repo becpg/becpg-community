@@ -33,6 +33,12 @@ import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.project.data.ProjectState;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
+/**
+ * <p>ProjectFormulationWorker class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class ProjectFormulationWorker {
 
 	private static final Log logger = LogFactory.getLog(ProjectFormulationWorker.class);
@@ -40,17 +46,35 @@ public class ProjectFormulationWorker {
 	private ProjectService projectService;
 	private TransactionService transactionService;
 
+	/**
+	 * <p>Setter for the field <code>projectService</code>.</p>
+	 *
+	 * @param projectService a {@link fr.becpg.repo.project.ProjectService} object.
+	 */
 	public void setProjectService(ProjectService projectService) {
 		this.projectService = projectService;
 	}
 
+	/**
+	 * <p>setPolicyBehaviourFilter.</p>
+	 *
+	 * @param policyBehaviourFilter a {@link org.alfresco.repo.policy.BehaviourFilter} object.
+	 */
 	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
 	}
 
+	/**
+	 * <p>Setter for the field <code>transactionService</code>.</p>
+	 *
+	 * @param transactionService a {@link org.alfresco.service.transaction.TransactionService} object.
+	 */
 	public void setTransactionService(TransactionService transactionService) {
 		this.transactionService = transactionService;
 	}
 
+	/**
+	 * <p>executeFormulation.</p>
+	 */
 	public void executeFormulation() {
 
 		List<NodeRef> projectNodeRefs = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {

@@ -23,6 +23,12 @@ import java.util.Map;
 
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 
+/**
+ * <p>PaginatedExtractedItems class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class PaginatedExtractedItems {
 	
 
@@ -33,32 +39,68 @@ public class PaginatedExtractedItems {
 	int fullListSize;
 	
 
+	/**
+	 * <p>Constructor for PaginatedExtractedItems.</p>
+	 *
+	 * @param pageSize a {@link java.lang.Integer} object.
+	 */
 	public PaginatedExtractedItems(Integer pageSize) {
 		items = new ArrayList<>(pageSize);
 	}
 
 	
+	/**
+	 * <p>addItem.</p>
+	 *
+	 * @param item a {@link java.util.Map} object.
+	 * @return a boolean.
+	 */
 	public boolean addItem(Map<String, Object> item){
 		return items.add(item);
 	}
 	
+	/**
+	 * <p>getPageItems.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	public List<Map<String, Object>> getPageItems() {
 		return items;
 	}
 
 
+	/**
+	 * <p>Getter for the field <code>fullListSize</code>.</p>
+	 *
+	 * @return a int.
+	 */
 	public int getFullListSize() {
 		return fullListSize;
 	}
 
+	/**
+	 * <p>Setter for the field <code>fullListSize</code>.</p>
+	 *
+	 * @param fullListSize a int.
+	 */
 	public void setFullListSize(int fullListSize) {
 		this.fullListSize = fullListSize;
 	}
 
+	/**
+	 * <p>Getter for the field <code>computedFields</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	public List<AttributeExtractorStructure> getComputedFields() {
 		return computedFields;
 	}
 
+	/**
+	 * <p>Setter for the field <code>computedFields</code>.</p>
+	 *
+	 * @param computedFields a {@link java.util.List} object.
+	 */
 	public void setComputedFields(List<AttributeExtractorStructure> computedFields) {
 		this.computedFields = computedFields;
 	}

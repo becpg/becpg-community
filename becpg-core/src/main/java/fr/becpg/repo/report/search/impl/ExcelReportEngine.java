@@ -13,11 +13,18 @@ import fr.becpg.report.client.ReportException;
 import fr.becpg.report.client.ReportFormat;
 import fr.becpg.report.client.ReportParams;
 
+/**
+ * <p>ExcelReportEngine class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class ExcelReportEngine implements BeCPGReportEngine {
 
 	@Autowired
 	ExcelReportSearchRenderer renderer;
 
+	/** {@inheritDoc} */
 	@Override
 	public void createReport(NodeRef tplNodeRef, EntityReportData reportData, OutputStream out, Map<String, Object> params) throws ReportException {
 
@@ -26,11 +33,13 @@ public class ExcelReportEngine implements BeCPGReportEngine {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isApplicable(NodeRef templateNodeRef, ReportFormat reportFormat) {
 		return renderer.isApplicable(templateNodeRef, reportFormat);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isXmlEngine() {
 		return false;

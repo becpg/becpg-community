@@ -47,6 +47,12 @@ import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtracto
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.search.PaginatedSearchCache;
 
+/**
+ * <p>SimpleExtractor class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class SimpleExtractor extends AbstractDataListExtractor {
 
 	protected EntityListDAO entityListDAO;
@@ -59,22 +65,43 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 
 	private static final Log logger = LogFactory.getLog(SimpleExtractor.class);
 
+	/**
+	 * <p>Setter for the field <code>paginatedSearchCache</code>.</p>
+	 *
+	 * @param paginatedSearchCache a {@link fr.becpg.repo.search.PaginatedSearchCache} object.
+	 */
 	public void setPaginatedSearchCache(PaginatedSearchCache paginatedSearchCache) {
 		this.paginatedSearchCache = paginatedSearchCache;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityListDAO</code>.</p>
+	 *
+	 * @param entityListDAO a {@link fr.becpg.repo.entity.EntityListDAO} object.
+	 */
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
 	}
 
+	/**
+	 * <p>Setter for the field <code>dataListSortRegistry</code>.</p>
+	 *
+	 * @param dataListSortRegistry a {@link fr.becpg.repo.entity.datalist.DataListSortRegistry} object.
+	 */
 	public void setDataListSortRegistry(DataListSortRegistry dataListSortRegistry) {
 		this.dataListSortRegistry = dataListSortRegistry;
 	}
 
+	/**
+	 * <p>Setter for the field <code>associationService</code>.</p>
+	 *
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object.
+	 */
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public PaginatedExtractedItems extract(DataListFilter dataListFilter, List<String> metadataFields) {
 
@@ -108,6 +135,13 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 		return ret;
 	}
 
+	/**
+	 * <p>getListNodeRef.</p>
+	 *
+	 * @param dataListFilter a {@link fr.becpg.repo.entity.datalist.data.DataListFilter} object.
+	 * @param pagination a {@link fr.becpg.repo.entity.datalist.data.DataListPagination} object.
+	 * @return a {@link java.util.List} object.
+	 */
 	protected List<NodeRef> getListNodeRef(DataListFilter dataListFilter, DataListPagination pagination) {
 
 		List<NodeRef> results = paginatedSearchCache.getSearchResults(pagination.getQueryExecutionId());
@@ -179,6 +213,7 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 		return pagination.paginate(results);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Date computeLastModified(DataListFilter dataListFilter) {
 		// if (dataListFilter.getParentNodeRef() != null) {
@@ -189,6 +224,7 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 		return null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields,
 			final FormatMode mode, Map<QName, Serializable> properties, final Map<String, Object> props,
@@ -251,11 +287,13 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 				});
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean applyTo(DataListFilter dataListFilter) {
 		return false;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean hasWriteAccess() {
 		return true;

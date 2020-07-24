@@ -21,16 +21,47 @@ import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.repository.RepositoryEntity;
 
+/**
+ * <p>SimpleCharactDataItem interface.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public interface SimpleCharactDataItem extends RepositoryEntity {
 
+	/**
+	 * <p>setCharactNodeRef.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	void setCharactNodeRef(NodeRef nodeRef);
 
+	/**
+	 * <p>setValue.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object.
+	 */
 	void setValue(Double value);
 
+	/**
+	 * <p>getCharactNodeRef.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	NodeRef getCharactNodeRef();
 
+	/**
+	 * <p>getValue.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	Double getValue();
 	
+	/**
+	 * <p>shouldDetailIfZero.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object.
+	 */
 	default Boolean shouldDetailIfZero(){
 		return false;
 	}

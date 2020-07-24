@@ -53,7 +53,7 @@ public class SecurityServiceIT extends RepoBaseTestCase {
 	private String grp2;
 	private String grp3;
 
-	/** The logger. */
+	
 	private static final Log logger = LogFactory.getLog(SecurityServiceIT.class);
 
 	@Autowired

@@ -19,10 +19,33 @@ package fr.becpg.repo.project;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+/**
+ * <p>ProjectActivityService interface.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public interface ProjectActivityService {
 
+	/**
+	 * <p>postTaskStateChangeActivity.</p>
+	 *
+	 * @param taskNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param commentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param beforeState a {@link java.lang.String} object.
+	 * @param afterState a {@link java.lang.String} object.
+	 * @param notifyOnly a boolean.
+	 */
 	void postTaskStateChangeActivity(NodeRef taskNodeRef,  NodeRef commentNodeRef ,String beforeState,String afterState, boolean notifyOnly);
 	
+	/**
+	 * <p>postDeliverableStateChangeActivity.</p>
+	 *
+	 * @param deliverableNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param beforeState a {@link java.lang.String} object.
+	 * @param afterState a {@link java.lang.String} object.
+	 * @param notifyOnly a boolean.
+	 */
 	void postDeliverableStateChangeActivity(NodeRef deliverableNodeRef,String beforeState,String afterState, boolean notifyOnly);
 
 
