@@ -97,4 +97,8 @@ public interface AlfrescoRepository<T extends RepositoryEntity>  extends CrudRep
 	 */
 	boolean isDirty(T entity);
 	
+	
+	<R extends RepositoryEntity> List<R> getList(RepositoryEntity entity, Class<R> clazz);
+	<R extends RepositoryEntity> List<R> getList(RepositoryEntity entity, QName datalistContainerQname, QName datalistQname);
+	
 }
