@@ -156,7 +156,8 @@
 			var nodeRef = fieldId.split("#")[1], field=fieldId.split("#")[2], readOnly = fieldId.split("#")[3];
 			
 			new Alfresco.module.SimpleDialog(nodeRef+"-multilingualForm").setOptions({
-              templateUrl : Alfresco.constants.URL_SERVICECONTEXT + "modules/multilingual-form/multilingual-form?nodeRef=" + nodeRef + "&field=" + field + (readOnly == "true" ? "&readonly=true" : "&textarea=true&htmlEditor=true"),
+              templateUrl : Alfresco.constants.URL_SERVICECONTEXT + "modules/multilingual-form/multilingual-form?nodeRef=" + nodeRef + "&field=" + field +
+              				(readOnly == "true" ? "&readonly=true" : "&textarea=true&htmlEditor=true&allowCurrentLocale=true"),
               actionUrl : Alfresco.constants.PROXY_URI + "becpg/form/multilingual/field/" + field + "?nodeRef=" + nodeRef,
               validateOnSubmit : false,
               destroyOnHide : true,
