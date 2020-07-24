@@ -31,7 +31,7 @@ import fr.becpg.repo.product.data.productList.CostListDataItem;
 /**
  * This <code>class</code> is a test case of the purge functionality
  *
- * @see EntityActivityService#cleanActivities().
+ * @see EntityActivityService#cleanActivities()
  *
  * @since beCPG-PLM 2.2.2
  *
@@ -586,11 +586,11 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 	/**
 	 * Change node time creation to a custom date
 	 *
-	 * @param nodeRef,
-	 *            nodeRef of entity
+	 * @param nodeRef 
+	 * nodeRef of entity
 	 *
-	 * @param customDate,
-	 *            new date creation of entity
+	 * @param customDate 
+	 * new date creation of entity
 	 *
 	 */
 	private void changeCreatedNodeDate(NodeRef nodeRef, Date customDate) {
@@ -609,7 +609,7 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 	 * Legacy method to change <code>@cm:created</code> of activities for the
 	 * passed entity
 	 *
-	 * @param nodeRef,
+	 * @param nodeRef
 	 *            the entity nodeRef
 	 *
 	 */
