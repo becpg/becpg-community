@@ -105,8 +105,10 @@
                             
                             // Parse the date
                             var dateEl = Dom.get(this.id + '-modifyDate');
-                            dateEl.innerHTML = Alfresco.util.formatDate(Alfresco.util.fromISO8601(dateEl.innerHTML),
-                                  Alfresco.util.message("date-format.default"));
+                            if(dateEl!=null){
+                            	dateEl.innerHTML = Alfresco.util.formatDate(Alfresco.util.fromISO8601(dateEl.innerHTML),
+                            			Alfresco.util.message("date-format.default"));
+                            }
                             
                             //Favourite
                             new Alfresco.Favourite(this.id + '-favourite').setOptions({
