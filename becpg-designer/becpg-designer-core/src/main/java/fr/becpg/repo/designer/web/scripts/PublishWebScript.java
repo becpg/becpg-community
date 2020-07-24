@@ -16,11 +16,12 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 
 import fr.becpg.repo.designer.DesignerService;
 
-// TODO: Auto-generated Javadoc
+
 /**
  * The Class PublishWebScript.
  *
  * @author matthieu
+ * @version $Id: $Id
  */
 public class PublishWebScript extends DeclarativeWebScript  {
 	
@@ -38,6 +39,8 @@ public class PublishWebScript extends DeclarativeWebScript  {
 	
 
 	/**
+	 * <p>Setter for the field <code>designerService</code>.</p>
+	 *
 	 * @param designerService the designerService to set
 	 */
 	public void setDesignerService(DesignerService designerService) {
@@ -46,15 +49,12 @@ public class PublishWebScript extends DeclarativeWebScript  {
 
 
 	/**
-	 * Publish 
-	 * 
+	 * {@inheritDoc}
+	 *
+	 * Publish
+	 *
 	 * url : /becpg/designer/model/publish?nodeRef={nodeRef}.
 	 * url : /becpg/designer/form/publish?nodeRef={nodeRef}.
-	 *
-	 * @param req the req
-	 * @param status the status
-	 * @param cache the cache
-	 * @return the map
 	 */
 	@Override
 	protected Map<String, Object> executeImpl(WebScriptRequest req, Status status, Cache cache){

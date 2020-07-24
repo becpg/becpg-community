@@ -59,6 +59,12 @@ import fr.becpg.report.client.ReportException;
 import fr.becpg.report.client.ReportFormat;
 import fr.becpg.report.client.ReportParams;
 
+/**
+ * <p>ReportServerSearchRenderer class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class ReportServerSearchRenderer implements SearchReportRenderer {
 
@@ -115,10 +121,13 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 	private static final String TAG_FILE = "file";
 	private static final String TAG_SITE = "siteId";
 	private static final String ATTR_ID = "id";
+	/** Constant <code>VALUE_NULL=""</code> */
 	public static final String VALUE_NULL = "";
 
+	/** Constant <code>KEY_IMAGE_NODE_IMG="%s-%s"</code> */
 	public static final String KEY_IMAGE_NODE_IMG = "%s-%s";
 
+	/** {@inheritDoc} */
 	@Override
 	public void renderReport(NodeRef templateNodeRef, List<NodeRef> searchResults, ReportFormat reportFormat, OutputStream outputStream) {
 
@@ -158,6 +167,7 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isApplicable(NodeRef templateNodeRef, ReportFormat reportFormat) {
 		return ((String) nodeService.getProperty(templateNodeRef, ContentModel.PROP_NAME)).endsWith(ReportTplService.PARAM_VALUE_DESIGN_EXTENSION);
@@ -452,6 +462,7 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 		return BeCPGQueryBuilder.createQuery().ofType(type).andPropQuery(ContentModel.PROP_NAME, name).singleValue();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void executeAction(NodeRef templateNodeRef, NodeRef downloadNode, ReportFormat reportFormat) {
 		// TODO Auto-generated method stub

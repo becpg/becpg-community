@@ -20,10 +20,21 @@ import org.alfresco.service.namespace.QName;
 
 import fr.becpg.repo.entity.EntityDictionaryService;
 
+/**
+ * <p>BeCPGOwnableServiceImpl class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class BeCPGOwnableServiceImpl extends OwnableServiceImpl {
 
 	private boolean disableOwner = false;
 
+	/**
+	 * <p>Setter for the field <code>disableOwner</code>.</p>
+	 *
+	 * @param disableOwner a boolean.
+	 */
 	public void setDisableOwner(boolean disableOwner) {
 		this.disableOwner = disableOwner;
 	}
@@ -33,6 +44,11 @@ public class BeCPGOwnableServiceImpl extends OwnableServiceImpl {
 	
 	
 	
+	/**
+	 * <p>Setter for the field <code>entityDictionaryService</code>.</p>
+	 *
+	 * @param entityDictionaryService a {@link fr.becpg.repo.entity.EntityDictionaryService} object.
+	 */
 	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
 		this.entityDictionaryService = entityDictionaryService;
 	}
@@ -46,41 +62,41 @@ public class BeCPGOwnableServiceImpl extends OwnableServiceImpl {
 	
 	
 
+	/**
+	 * <p>Constructor for BeCPGOwnableServiceImpl.</p>
+	 */
 	public BeCPGOwnableServiceImpl() {
 		super();
 	}
 
 	// IOC
 
+	/** {@inheritDoc} */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 		super.setNodeService(nodeService);
 	}
 
 
+	/** {@inheritDoc} */
 	public void setTenantService(TenantService tenantService) {
 		this.tenantService = tenantService;
 		super.setTenantService(tenantService);
 	}
 
+	/** {@inheritDoc} */
 	public void setStoresToIgnorePolicies(Set<String> storesToIgnorePolicies) {
 		this.storesToIgnorePolicies = storesToIgnorePolicies;
 		super.setStoresToIgnorePolicies(storesToIgnorePolicies);
 	}
 
-	/**
-	 * @param ownerCache
-	 *            a transactionally-safe cache of node owners
-	 */
+	/** {@inheritDoc} */
 	public void setNodeOwnerCache(SimpleCache<NodeRef, String> ownerCache) {
 		this.nodeOwnerCache = ownerCache;
 		super.setNodeOwnerCache(ownerCache);
 	}
 
-	/**
-	 * @param renditionService
-	 *            the renditionService to set
-	 */
+	/** {@inheritDoc} */
 	public void setRenditionService(RenditionService renditionService) {
 		this.renditionService = renditionService;
 		super.setRenditionService(renditionService);
@@ -105,6 +121,7 @@ public class BeCPGOwnableServiceImpl extends OwnableServiceImpl {
 
 	// OwnableService implementation
 
+	/** {@inheritDoc} */
 	@Override
 	public String getOwner(NodeRef nodeRef) {
 		String userName = nodeOwnerCache.get(nodeRef);

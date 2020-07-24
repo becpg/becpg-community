@@ -21,16 +21,51 @@ import java.util.Set;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+/**
+ * <p>DataListSortService interface.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public interface DataListSortService {
 
+	/**
+	 * <p>getLastChild.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	NodeRef getLastChild(NodeRef nodeRef);
 
+	/**
+	 * <p>insertAfter.</p>
+	 *
+	 * @param selectedNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	void insertAfter(NodeRef selectedNodeRef, NodeRef nodeRef);
 
+	/**
+	 * <p>computeDepthAndSort.</p>
+	 *
+	 * @param nodeRefs a {@link java.util.Set} object.
+	 */
 	void computeDepthAndSort(Set<NodeRef> nodeRefs);
 
+	/**
+	 * <p>move.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param moveUp a boolean.
+	 */
 	void move(NodeRef nodeRef, boolean moveUp);
 
+	/**
+	 * <p>deleteChildrens.</p>
+	 *
+	 * @param parentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	void deleteChildrens(NodeRef parentNodeRef, NodeRef nodeRef);
 	
 }

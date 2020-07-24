@@ -48,8 +48,10 @@ import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtracto
 import fr.becpg.repo.security.SecurityService;
 
 /**
+ * <p>ActivityListExtractor class.</p>
  *
  * @author matthieu Extract activity Fields
+ * @version $Id: $Id
  */
 public class ActivityListExtractor extends SimpleExtractor {
 
@@ -63,18 +65,34 @@ public class ActivityListExtractor extends SimpleExtractor {
 
 	static final String ACTIVITYEVENT_UPDATE = "Update";
 
+	/**
+	 * <p>Setter for the field <code>entityActivityService</code>.</p>
+	 *
+	 * @param entityActivityService a {@link fr.becpg.repo.activity.EntityActivityService} object.
+	 */
 	public void setEntityActivityService(EntityActivityService entityActivityService) {
 		this.entityActivityService = entityActivityService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>dictionaryService</code>.</p>
+	 *
+	 * @param dictionaryService a {@link org.alfresco.service.cmr.dictionary.DictionaryService} object.
+	 */
 	public void setDictionaryService(DictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>securityService</code>.</p>
+	 *
+	 * @param securityService a {@link fr.becpg.repo.security.SecurityService} object.
+	 */
 	public void setSecurityService(SecurityService securityService) {
 		this.securityService = securityService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected List<NodeRef> getListNodeRef(DataListFilter dataListFilter, DataListPagination pagination) {
 
@@ -87,6 +105,7 @@ public class ActivityListExtractor extends SimpleExtractor {
 		return super.getListNodeRef(dataListFilter, pagination);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields, FormatMode mode,
 			Map<QName, Serializable> properties, Map<String, Object> props, Map<NodeRef, Map<String, Object>> cache) {
@@ -98,6 +117,14 @@ public class ActivityListExtractor extends SimpleExtractor {
 
 	}
 
+	/**
+	 * <p>postLookupActivity.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param ret a {@link java.util.Map} object.
+	 * @param properties a {@link java.util.Map} object.
+	 * @param mode a {@link fr.becpg.config.format.FormatMode} object.
+	 */
 	protected void postLookupActivity(NodeRef nodeRef, Map<String, Object> ret, Map<QName, Serializable> properties, FormatMode mode) {
 		
 		String activityType = (String) properties.get(BeCPGModel.PROP_ACTIVITYLIST_TYPE);
@@ -207,6 +234,13 @@ public class ActivityListExtractor extends SimpleExtractor {
 
 	}
 
+	/**
+	 * <p>checkProperty.</p>
+	 *
+	 * @param property a {@link java.lang.Object} object.
+	 * @param propertyDef a {@link org.alfresco.service.cmr.dictionary.PropertyDefinition} object.
+	 * @return a {@link org.json.JSONArray} object.
+	 */
 	public JSONArray checkProperty(Object property, PropertyDefinition propertyDef) {
 		boolean updateProperty = true;
 		JSONArray propertyArray = (JSONArray) property;
@@ -256,11 +290,13 @@ public class ActivityListExtractor extends SimpleExtractor {
 		return propertyArray;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean applyTo(DataListFilter dataListFilter) {
 		return (dataListFilter.getDataType() != null) && dataListFilter.getDataType().equals(BeCPGModel.TYPE_ACTIVITY_LIST);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean hasWriteAccess() {
 		return false;

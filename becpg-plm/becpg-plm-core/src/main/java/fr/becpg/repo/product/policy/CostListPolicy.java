@@ -31,25 +31,45 @@ import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
+/**
+ * <p>CostListPolicy class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class CostListPolicy extends AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyNodePolicy {
 
 	private EntityListDAO entityListDAO;
 	
 	private AssociationService associationService;
 
+	/**
+	 * <p>Setter for the field <code>entityListDAO</code>.</p>
+	 *
+	 * @param entityListDAO a {@link fr.becpg.repo.entity.EntityListDAO} object.
+	 */
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
 	}
 
+	/**
+	 * <p>Setter for the field <code>associationService</code>.</p>
+	 *
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object.
+	 */
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
 
+	/**
+	 * <p>doInit.</p>
+	 */
 	public void doInit() {
 		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyNodePolicy.QNAME, PLMModel.TYPE_COSTLIST, new JavaBehaviour(this, "getCopyCallback"));
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public CopyBehaviourCallback getCopyCallback(QName classRef, CopyDetails copyDetails) {
 		return new CostListBehaviourCallback();

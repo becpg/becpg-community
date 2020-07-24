@@ -24,19 +24,18 @@ import org.springframework.extensions.surf.extensibility.impl.DefaultSubComponen
 
 /**
  * Test url parameters agains evaluator params
- * @author matthieu
  *
+ * @author matthieu
+ * @version $Id: $Id
  */
 public class UrlParamsEvaluator extends DefaultSubComponentEvaluator
 {
 	
 	
     /**
-     * Returns true all url parameters values match 
+     * {@inheritDoc}
      *
-     * @param context
-     * @param params
-     * @return true if all url parameters values match 
+     * Returns true all url parameters values match
      */
     @Override
     public boolean evaluate(RequestContext context, Map<String, String> params)

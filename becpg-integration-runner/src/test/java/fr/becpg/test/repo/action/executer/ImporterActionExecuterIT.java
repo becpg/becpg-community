@@ -36,7 +36,7 @@ public class ImporterActionExecuterIT extends PLMBaseTestCase {
 
 	private static final String FILENAME_IMPORT_CSV = "import.csv";
 
-	/** The logger. */
+	
 	private static final Log logger = LogFactory.getLog(ImporterActionExecuterIT.class);
 
 	@Autowired

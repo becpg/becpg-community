@@ -34,7 +34,7 @@ import fr.becpg.test.PLMBaseTestCase;
  */
 public class SortableListPolicyIT extends PLMBaseTestCase {
 
-	/** The logger. */
+	
 	private static final Log logger = LogFactory.getLog(SortableListPolicyIT.class);
 
 	@Autowired

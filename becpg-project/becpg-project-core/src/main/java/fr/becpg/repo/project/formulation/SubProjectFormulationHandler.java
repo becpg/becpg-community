@@ -28,9 +28,10 @@ import fr.becpg.repo.project.impl.ProjectHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 
 /**
+ * <p>SubProjectFormulationHandler class.</p>
  *
  * @author matthieu
- *
+ * @version $Id: $Id
  */
 public class SubProjectFormulationHandler extends FormulationBaseHandler<ProjectData> {
 
@@ -50,30 +51,61 @@ public class SubProjectFormulationHandler extends FormulationBaseHandler<Project
 
 	private AssociationService associationService;
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>namespaceService</code>.</p>
+	 *
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
+	 */
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
+	 */
 	public void setAlfrescoRepository(AlfrescoRepository<ProjectData> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
+	/**
+	 * <p>Setter for the field <code>projectActivityService</code>.</p>
+	 *
+	 * @param projectActivityService a {@link fr.becpg.repo.project.ProjectActivityService} object.
+	 */
 	public void setProjectActivityService(ProjectActivityService projectActivityService) {
 		this.projectActivityService = projectActivityService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>propsToCopyToParent</code>.</p>
+	 *
+	 * @param propsToCopyToParent a {@link java.lang.String} object.
+	 */
 	public void setPropsToCopyToParent(String propsToCopyToParent) {
 		this.propsToCopyToParent = propsToCopyToParent;
 	}
 
+	/**
+	 * <p>Setter for the field <code>propsToCopyFromParent</code>.</p>
+	 *
+	 * @param propsToCopyFromParent a {@link java.lang.String} object.
+	 */
 	public void setPropsToCopyFromParent(String propsToCopyFromParent) {
 		this.propsToCopyFromParent = propsToCopyFromParent;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean process(ProjectData projectData) throws FormulateException {
 
@@ -192,10 +224,20 @@ public class SubProjectFormulationHandler extends FormulationBaseHandler<Project
 		return true;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityDictionaryService</code>.</p>
+	 *
+	 * @param entityDictionaryService a {@link fr.becpg.repo.entity.EntityDictionaryService} object.
+	 */
 	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
 		this.entityDictionaryService = entityDictionaryService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>associationService</code>.</p>
+	 *
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object.
+	 */
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}

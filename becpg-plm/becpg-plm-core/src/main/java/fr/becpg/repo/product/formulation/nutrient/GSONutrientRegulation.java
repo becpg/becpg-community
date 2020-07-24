@@ -5,12 +5,24 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Locale;
 
+/**
+ * <p>GSONutrientRegulation class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class GSONutrientRegulation extends AbstractNutrientRegulation {
 	
+	/**
+	 * <p>Constructor for GSONutrientRegulation.</p>
+	 *
+	 * @param path a {@link java.lang.String} object.
+	 */
 	public GSONutrientRegulation(String path)  {
 		super(path);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected Double roundByCode(Double value, String nutrientTypeCode) {
 		if(value != null && nutrientTypeCode != null){
@@ -77,6 +89,7 @@ public class GSONutrientRegulation extends AbstractNutrientRegulation {
 		return bd.doubleValue();
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public String displayValueByCode(Double value, Double roundedValue, String nutrientTypeCode, Locale locale) {
 		return formatDouble(roundedValue, new Locale("en"));

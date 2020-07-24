@@ -45,8 +45,10 @@ import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorPlugin;
 
 /**
- * @author matthieu
+ * <p>PersonAttributeExtractorPlugin class.</p>
  *
+ * @author matthieu
+ * @version $Id: $Id
  */
 @Service
 public class PersonAttributeExtractorPlugin implements AttributeExtractorPlugin {
@@ -69,12 +71,14 @@ public class PersonAttributeExtractorPlugin implements AttributeExtractorPlugin 
 	@Autowired
 	TenantService tenantService;
 	
+	/** {@inheritDoc} */
 	@Override
 	public Collection<QName> getMatchingTypes() {
 		return Arrays.asList(ContentModel.TYPE_PERSON,ContentModel.TYPE_AUTHORITY_CONTAINER,ContentModel.TYPE_AUTHORITY);
 	}
 	
 
+	/** {@inheritDoc} */
 	@Override
 	public String extractPropName(@Nonnull QName type,@Nonnull NodeRef nodeRef) {
 		if (type.equals(ContentModel.TYPE_AUTHORITY_CONTAINER)) {
@@ -84,6 +88,7 @@ public class PersonAttributeExtractorPlugin implements AttributeExtractorPlugin 
 	}
 
 	
+	/** {@inheritDoc} */
 	@Override
 	public String extractMetadata(@Nonnull QName type,@Nonnull NodeRef nodeRef) {
 		if (type.equals(ContentModel.TYPE_AUTHORITY_CONTAINER)) {
@@ -93,6 +98,12 @@ public class PersonAttributeExtractorPlugin implements AttributeExtractorPlugin 
 	}
 
 	
+	/**
+	 * <p>getPersonDisplayName.</p>
+	 *
+	 * @param userId a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getPersonDisplayName(String userId) {
 		if (userId == null) {
 			return "";
@@ -133,6 +144,7 @@ public class PersonAttributeExtractorPlugin implements AttributeExtractorPlugin 
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public Integer getPriority() {
 		return 0;

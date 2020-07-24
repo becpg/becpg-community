@@ -1,6 +1,12 @@
 package fr.becpg.repo.license;
 
 
+/**
+ * <p>BeCPGLicense class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class BeCPGLicense {
 
 	String licenseName = "beCPG OO License";
@@ -12,6 +18,16 @@ public class BeCPGLicense {
 	
 	
 
+	/**
+	 * <p>Constructor for BeCPGLicense.</p>
+	 *
+	 * @param licenseName a {@link java.lang.String} object.
+	 * @param allowedConcurrentRead a long.
+	 * @param allowedConcurrentWrite a long.
+	 * @param allowedConcurrentSupplier a long.
+	 * @param allowedNamedWrite a long.
+	 * @param allowedNamedRead a long.
+	 */
 	public BeCPGLicense(String licenseName, long allowedConcurrentRead, long allowedConcurrentWrite, long allowedConcurrentSupplier,
 			long allowedNamedWrite, long allowedNamedRead) {
 		super();
@@ -23,10 +39,14 @@ public class BeCPGLicense {
 		this.allowedNamedRead = allowedNamedRead;
 	}
 
+	/**
+	 * <p>Constructor for BeCPGLicense.</p>
+	 */
 	public BeCPGLicense() {
 		// TODO Auto-generated constructor stub
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -40,6 +60,7 @@ public class BeCPGLicense {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -67,6 +88,7 @@ public class BeCPGLicense {
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "License [licenseName=" + licenseName + ", allowedConcurrentRead=" + allowedConcurrentRead + ", allowedConcurrentWrite="

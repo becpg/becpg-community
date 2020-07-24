@@ -21,6 +21,12 @@ import fr.becpg.repo.product.data.ResourceProductData;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.repository.RepositoryEntity;
 
+/**
+ * <p>ProcessListEntityTplPlugin class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class ProcessListEntityTplPlugin implements EntityTplPlugin {
 
@@ -29,17 +35,20 @@ public class ProcessListEntityTplPlugin implements EntityTplPlugin {
 	@Autowired
 	private NodeService nodeService;
 
+	/** {@inheritDoc} */
 	@Override
 	public void synchronizeEntity(NodeRef entityNodeRef, NodeRef entityTplNodeRef) {
 
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public void beforeSynchronizeEntity(NodeRef projectNodeRef, NodeRef entityTplNodeRef) {
 		  // Default plugin for spring injection or it will break designer
 		   //Do nothing
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean shouldSynchronizeDataList(RepositoryEntity entity, QName dataListQName) {
 		boolean ret = (entity instanceof ResourceProductData) && MPMModel.TYPE_PROCESSLIST.equals(dataListQName);
@@ -51,6 +60,7 @@ public class ProcessListEntityTplPlugin implements EntityTplPlugin {
 		return ret;
 	}
 
+	/** {@inheritDoc} */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public <T extends RepositoryEntity> void synchronizeDataList(RepositoryEntity entity, List<T> dataListItems, List<T> tplDataListItems) {

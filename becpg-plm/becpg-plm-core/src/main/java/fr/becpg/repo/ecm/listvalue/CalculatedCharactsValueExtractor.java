@@ -13,6 +13,12 @@ import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.listvalue.ListValueEntry;
 import fr.becpg.repo.listvalue.impl.TargetAssocValueExtractor;
 
+/**
+ * <p>CalculatedCharactsValueExtractor class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service("calculatedCharactsValueExtractor")
 public class CalculatedCharactsValueExtractor extends TargetAssocValueExtractor {
 
@@ -22,6 +28,7 @@ public class CalculatedCharactsValueExtractor extends TargetAssocValueExtractor 
 	@Autowired
 	private EntityListDAO entityListDAO;
 
+	/** {@inheritDoc} */
 	@Override
 	public List<ListValueEntry> extract(List<NodeRef> nodeRefs) {
 		List<ListValueEntry> suggestions = new ArrayList<>();

@@ -18,9 +18,10 @@
 package fr.becpg.repo.product.data.constraints;
 
 /**
- * 
- * @author matthieu
+ * <p>LabelingRuleType class.</p>
  *
+ * @author matthieu
+ * @version $Id: $Id
  */
 public enum LabelingRuleType {
 

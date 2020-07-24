@@ -23,9 +23,9 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 
 /**
  * Calculate budget
- * 
+ *
  * @author quere
- * 
+ * @version $Id: $Id
  */
 public class BudgetFormulationHandler extends FormulationBaseHandler<ProjectData> {
 
@@ -37,18 +37,34 @@ public class BudgetFormulationHandler extends FormulationBaseHandler<ProjectData
 	
 	protected AlfrescoRepository<ProjectData> alfrescoRepository;
 	
+	/**
+	 * <p>Setter for the field <code>associationService</code>.</p>
+	 *
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object.
+	 */
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
+	 */
 	public void setAlfrescoRepository(AlfrescoRepository<ProjectData> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean process(ProjectData projectData) throws FormulateException {
 

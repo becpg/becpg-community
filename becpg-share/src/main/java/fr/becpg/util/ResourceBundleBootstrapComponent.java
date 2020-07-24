@@ -28,14 +28,20 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 /**
  * Allow to override I18N
- * @author matthieu
  *
+ * @author matthieu
+ * @version $Id: $Id
  */
 public class ResourceBundleBootstrapComponent
 {
 
 	private static final Log logger = LogFactory.getLog(ResourceBundleBootstrapComponent.class);
 	
+	/**
+	 * <p>setResourceBundles.</p>
+	 *
+	 * @param resourceBundles a {@link java.util.List} object.
+	 */
 	public void setResourceBundles(List<String> resourceBundles)
 	{
 		

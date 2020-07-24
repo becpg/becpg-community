@@ -33,6 +33,12 @@ import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.listvalue.impl.EntityListValuePlugin;
 
+/**
+ * <p>SupplierPlantValuePlugin class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class SupplierPlantValuePlugin extends EntityListValuePlugin {
 
@@ -47,10 +53,16 @@ public class SupplierPlantValuePlugin extends EntityListValuePlugin {
 	@Autowired 
 	private PersonService personService;
 
+	/**
+	 * <p>getHandleSourceTypes.</p>
+	 *
+	 * @return an array of {@link java.lang.String} objects.
+	 */
 	public String[] getHandleSourceTypes() {
 		return new String[] { SOURCE_TYPE_SUPPLIER_PLANTS};
 	}
 
+	/** {@inheritDoc} */
 	public ListValuePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize,
 			Map<String, Serializable> props) {
 		

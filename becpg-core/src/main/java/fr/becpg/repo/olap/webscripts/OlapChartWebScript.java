@@ -35,8 +35,9 @@ import fr.becpg.repo.olap.data.OlapChart;
 import fr.becpg.repo.olap.data.OlapChartData;
 /**
  * Act as a proxy for OLAP queries
- * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
  *
+ * @author "Matthieu Laborie"
+ * @version $Id: $Id
  */
 public class OlapChartWebScript  extends AbstractWebScript
 {
@@ -48,6 +49,11 @@ public class OlapChartWebScript  extends AbstractWebScript
 	private OlapService olapService;
 	
 	
+    /**
+     * <p>Setter for the field <code>olapService</code>.</p>
+     *
+     * @param olapService a {@link fr.becpg.repo.olap.OlapService} object.
+     */
     public void setOlapService(OlapService olapService) {
 		this.olapService = olapService;
 	}
@@ -56,6 +62,7 @@ public class OlapChartWebScript  extends AbstractWebScript
 	/* (non-Javadoc)
      * @see org.springframework.extensions.webscripts.WebScript#execute(org.springframework.extensions.webscripts.WebScriptRequest, org.springframework.extensions.webscripts.WebScriptResponse)
      */
+    /** {@inheritDoc} */
     @Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws WebScriptException
     {

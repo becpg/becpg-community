@@ -8,6 +8,7 @@ package fr.becpg.common;
  * beCPG Exception.
  *
  * @author querephi
+ * @version $Id: $Id
  */
 public class BeCPGException extends RuntimeException {
 	
@@ -25,14 +26,28 @@ public class BeCPGException extends RuntimeException {
 		super(message);
 	}
 
+	/**
+	 * <p>Constructor for BeCPGException.</p>
+	 */
 	public BeCPGException() {
 		super();
 	}
 
+	/**
+	 * <p>Constructor for BeCPGException.</p>
+	 *
+	 * @param message a {@link java.lang.String} object.
+	 * @param cause a {@link java.lang.Throwable} object.
+	 */
 	public BeCPGException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
+	/**
+	 * <p>Constructor for BeCPGException.</p>
+	 *
+	 * @param cause a {@link java.lang.Throwable} object.
+	 */
 	public BeCPGException(Throwable cause) {
 		super(cause);
 	}

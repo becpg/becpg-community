@@ -49,6 +49,12 @@ import fr.becpg.repo.olap.data.OlapChartData;
 import fr.becpg.repo.olap.data.OlapChartMetadata;
 import fr.becpg.repo.olap.data.OlapContext;
 
+/**
+ * <p>OlapServiceImpl class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service("olapService")
 public class OlapServiceImpl implements OlapService {
 
@@ -83,34 +89,70 @@ public class OlapServiceImpl implements OlapService {
 	@Autowired
 	private TenantService tenantService;
 
+	/**
+	 * <p>Setter for the field <code>instanceName</code>.</p>
+	 *
+	 * @param instanceName a {@link java.lang.String} object.
+	 */
 	public void setInstanceName(String instanceName) {
 		this.instanceName = instanceName;
 	}
 
+	/**
+	 * <p>Setter for the field <code>tenantService</code>.</p>
+	 *
+	 * @param tenantService a {@link org.alfresco.repo.tenant.TenantService} object.
+	 */
 	public void setTenantService(TenantService tenantService) {
 		this.tenantService = tenantService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>authenticationService</code>.</p>
+	 *
+	 * @param authenticationService a {@link org.alfresco.service.cmr.security.AuthenticationService} object.
+	 */
 	public void setAuthenticationService(AuthenticationService authenticationService) {
 		this.authenticationService = authenticationService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>olapServerUrl</code>.</p>
+	 *
+	 * @param olapServerUrl a {@link java.lang.String} object.
+	 */
 	public void setOlapServerUrl(String olapServerUrl) {
 		this.olapServerUrl = olapServerUrl;
 	}
 
+	/**
+	 * <p>Setter for the field <code>fileFolderService</code>.</p>
+	 *
+	 * @param fileFolderService a {@link org.alfresco.service.cmr.model.FileFolderService} object.
+	 */
 	public void setFileFolderService(FileFolderService fileFolderService) {
 		this.fileFolderService = fileFolderService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>contentService</code>.</p>
+	 *
+	 * @param contentService a {@link org.alfresco.service.cmr.repository.ContentService} object.
+	 */
 	public void setContentService(ContentService contentService) {
 		this.contentService = contentService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>repoService</code>.</p>
+	 *
+	 * @param repoService a {@link fr.becpg.repo.helper.RepoService} object.
+	 */
 	public void setRepoService(RepoService repoService) {
 		this.repoService = repoService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<OlapChart> retrieveOlapCharts() {
 		List<OlapChart> olapCharts = new ArrayList<>();
@@ -136,11 +178,13 @@ public class OlapServiceImpl implements OlapService {
 		return olapCharts;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getOlapQueriesFolder() {
 		return repoService.getFolderByPath("/" + RepoConsts.PATH_SYSTEM + "/" + RepoConsts.PATH_OLAP_QUERIES);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<OlapChart> retrieveOlapChartsFromSaiku() throws IOException, JSONException {
 
@@ -175,6 +219,8 @@ public class OlapServiceImpl implements OlapService {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * Parse [
 	 * [{"value":"null","properties":{},"type":"COLUMN_HEADER"},{"value":
 	 * "Oct","properties":{},"type":"COLUMN_HEADER"}]
@@ -191,9 +237,6 @@ public class OlapServiceImpl implements OlapService {
 	 * :"0","dimension":"Type de produit"
 	 * },"type":"ROW_HEADER"},{"value":"14","properties"
 	 * :null,"type":"DATA_CELL"}]]
-	 * 
-	 * @throws JSONException
-	 * @throws IOException
 	 */
 	@Override
 	public OlapChartData retrieveChartData(String olapQueryId) throws IOException, JSONException {
@@ -260,6 +303,7 @@ public class OlapServiceImpl implements OlapService {
 		return currentUserName;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String getSSOUrl() {
 		if(enabled){

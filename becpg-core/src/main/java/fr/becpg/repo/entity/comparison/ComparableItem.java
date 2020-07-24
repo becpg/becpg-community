@@ -5,11 +5,12 @@ package fr.becpg.repo.entity.comparison;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
-// TODO: Auto-generated Javadoc
+
 /**
  * The Class ComparableItem.
  *
  * @author querephi
+ * @version $Id: $Id
  */
 public class ComparableItem extends AbstractComparableItem {
 	

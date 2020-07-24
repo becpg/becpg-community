@@ -26,14 +26,17 @@ import org.apache.lucene.analysis.TokenStream;
 
 /**
  * Supprime les accents des mots
- * 
+ *
  * @author tom
+ * @version $Id: $Id
  */
 public class AccentFilter extends TokenFilter {
 	private static final HashMap<String,String> substitutions = initSubstitutions();
 
 	/**
-	 * @param input
+	 * <p>Constructor for AccentFilter.</p>
+	 *
+	 * @param input a {@link org.apache.lucene.analysis.TokenStream} object.
 	 */
 	public AccentFilter(TokenStream input) {
 		super(input);
@@ -231,7 +234,11 @@ public class AccentFilter extends TokenFilter {
 	
 	
 	/**
+	 * <p>next.</p>
+	 *
 	 * @see org.apache.lucene.analysis.TokenStream#next()
+	 * @return a {@link org.apache.lucene.analysis.Token} object.
+	 * @throws java.io.IOException if any.
 	 */
 	@SuppressWarnings("deprecation")
 	public Token next() throws IOException {
@@ -253,7 +260,10 @@ public class AccentFilter extends TokenFilter {
 	}
 
 	/**
-	 * @param termText
+	 * <p>killAccent.</p>
+	 *
+	 * @param termText a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
 	 */
 	public String killAccent(String termText) {
 		char chars[] = termText.toCharArray();

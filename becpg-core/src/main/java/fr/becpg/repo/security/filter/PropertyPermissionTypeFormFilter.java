@@ -13,20 +13,22 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-// TODO: Auto-generated Javadoc
+
 /**
  * The Class PropertyPermissionTypeFormFilter.
  *
  * @author querephi
+ * @version $Id: $Id
  */
 public class PropertyPermissionTypeFormFilter  extends AbstractPropertyPermissionFormFilter<TypeDefinition>{
 
-	/** The logger. */
+	
 	private static final Log logger = LogFactory.getLog(PropertyPermissionTypeFormFilter.class);
 	
 	/* (non-Javadoc)
 	 * @see fr.becpg.repo.form.processor.PropertyPermissionFormFilter#afterGenerate(java.lang.Object, java.util.List, java.util.List, org.alfresco.repo.forms.Form, java.util.Map)
 	 */
+	/** {@inheritDoc} */
 	@Override
 	public void afterGenerate(TypeDefinition type, List<String> fields,
 			List<String> forcedFields, Form form, Map<String, Object> context) {
@@ -39,6 +41,7 @@ public class PropertyPermissionTypeFormFilter  extends AbstractPropertyPermissio
 	/* (non-Javadoc)
 	 * @see fr.becpg.repo.form.processor.PropertyPermissionFormFilter#afterPersist(java.lang.Object, org.alfresco.repo.forms.FormData, org.alfresco.service.cmr.repository.NodeRef)
 	 */
+	/** {@inheritDoc} */
 	@Override
 	public void afterPersist(TypeDefinition type, FormData data, NodeRef arg2) {
 		// TODO Auto-generated method stub		
@@ -47,6 +50,7 @@ public class PropertyPermissionTypeFormFilter  extends AbstractPropertyPermissio
 	/* (non-Javadoc)
 	 * @see fr.becpg.repo.form.processor.PropertyPermissionFormFilter#beforeGenerate(java.lang.Object, java.util.List, java.util.List, org.alfresco.repo.forms.Form, java.util.Map)
 	 */
+	/** {@inheritDoc} */
 	@Override
 	public void beforeGenerate(TypeDefinition type, List<String> fields,
 			List<String> forcedFields, Form form, Map<String, Object> context) {
@@ -55,6 +59,7 @@ public class PropertyPermissionTypeFormFilter  extends AbstractPropertyPermissio
 	/* (non-Javadoc)
 	 * @see fr.becpg.repo.form.processor.PropertyPermissionFormFilter#beforePersist(java.lang.Object, org.alfresco.repo.forms.FormData)
 	 */
+	/** {@inheritDoc} */
 	@Override
 	public void beforePersist(TypeDefinition type, FormData data) {
 		// TODO Auto-generated method stub

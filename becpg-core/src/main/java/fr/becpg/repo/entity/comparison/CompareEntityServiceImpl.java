@@ -52,11 +52,12 @@ import fr.becpg.repo.helper.AttributeExtractorService;
  * Compare several entities (properties, datalists and composite datalists).
  *
  * @author querephi
+ * @version $Id: $Id
  */
 @Service("compareEntityService")
 public class CompareEntityServiceImpl implements CompareEntityService {
 
-	/** The logger. */
+	
 	private static final Log logger = LogFactory.getLog(CompareEntityServiceImpl.class);
 
 	private static final String COMPARISON_SEPARATOR = " - ";
@@ -93,6 +94,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 	@Value("${beCPG.comparison.pivots}")
 	private String customPivots;
 
+	/** {@inheritDoc} */
 	@Override
 	public List<CompareResultDataItem> compare(NodeRef entity1, List<NodeRef> entities, List<CompareResultDataItem> compareResult,
 			Map<String, List<StructCompareResultDataItem>> structCompareResults) {
@@ -548,6 +550,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		return null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void compareStructDatalist(NodeRef entity1NodeRef, NodeRef entity2NodeRef, QName datalistType,
 			Map<String, List<StructCompareResultDataItem>> structCompareResults) {

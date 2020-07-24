@@ -57,6 +57,7 @@ import fr.becpg.repo.importer.annotation.MLText;
  * Service to load the annotation mapping.
  *
  * @author rabah
+ * @version $Id: $Id
  */
 
 @Service("annotationMappingLoader")
@@ -81,6 +82,7 @@ public class AnnotationMappingLoader implements MappingLoader {
 		mappingLoaderFactory.register(this);
 	}
 
+	/** {@inheritDoc} */
 	@SuppressWarnings("unchecked")
 	@Override
 	public ImportContext loadClassMapping(Object mapping, ImportContext importContext) throws MappingException {
@@ -335,6 +337,7 @@ public class AnnotationMappingLoader implements MappingLoader {
 		return ret;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean applyTo(MappingType mappingType) {
 		return MappingType.ANNOTATION.equals(mappingType);

@@ -31,7 +31,7 @@ import fr.becpg.repo.search.impl.AbstractBeCPGQueryBuilder;
  * Copy prop value of cm:name in bcpg:lvValue to support mlText
  *
  * @author matthieu
- *
+ * @version $Id: $Id
  */
 public class PMMaterialPatch extends AbstractBeCPGPatch {
 
@@ -51,10 +51,16 @@ public class PMMaterialPatch extends AbstractBeCPGPatch {
 	private final int batchSize = 40;
 	private final long count = batchThreads * batchSize;
 
+	/**
+	 * <p>Setter for the field <code>ruleService</code>.</p>
+	 *
+	 * @param ruleService a {@link org.alfresco.service.cmr.rule.RuleService} object.
+	 */
 	public void setRuleService(RuleService ruleService) {
 		this.ruleService = ruleService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected String applyInternal() throws Exception {
 
@@ -161,34 +167,74 @@ public class PMMaterialPatch extends AbstractBeCPGPatch {
 
 	}
 
+	/**
+	 * <p>Getter for the field <code>nodeDAO</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.repo.domain.node.NodeDAO} object.
+	 */
 	public NodeDAO getNodeDAO() {
 		return nodeDAO;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeDAO</code>.</p>
+	 *
+	 * @param nodeDAO a {@link org.alfresco.repo.domain.node.NodeDAO} object.
+	 */
 	public void setNodeDAO(NodeDAO nodeDAO) {
 		this.nodeDAO = nodeDAO;
 	}
 
+	/**
+	 * <p>Getter for the field <code>patchDAO</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.repo.domain.patch.PatchDAO} object.
+	 */
 	public PatchDAO getPatchDAO() {
 		return patchDAO;
 	}
 
+	/**
+	 * <p>Setter for the field <code>patchDAO</code>.</p>
+	 *
+	 * @param patchDAO a {@link org.alfresco.repo.domain.patch.PatchDAO} object.
+	 */
 	public void setPatchDAO(PatchDAO patchDAO) {
 		this.patchDAO = patchDAO;
 	}
 
+	/**
+	 * <p>Getter for the field <code>qnameDAO</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.repo.domain.qname.QNameDAO} object.
+	 */
 	public QNameDAO getQnameDAO() {
 		return qnameDAO;
 	}
 
+	/**
+	 * <p>Setter for the field <code>qnameDAO</code>.</p>
+	 *
+	 * @param qnameDAO a {@link org.alfresco.repo.domain.qname.QNameDAO} object.
+	 */
 	public void setQnameDAO(QNameDAO qnameDAO) {
 		this.qnameDAO = qnameDAO;
 	}
 
+	/**
+	 * <p>Setter for the field <code>policyBehaviourFilter</code>.</p>
+	 *
+	 * @param policyBehaviourFilter a {@link org.alfresco.repo.policy.BehaviourFilter} object.
+	 */
 	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
 		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
 
+	/**
+	 * <p>Setter for the field <code>associationService</code>.</p>
+	 *
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object.
+	 */
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}

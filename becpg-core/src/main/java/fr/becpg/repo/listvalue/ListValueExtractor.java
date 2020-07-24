@@ -19,8 +19,20 @@ package fr.becpg.repo.listvalue;
 
 import java.util.List;
 
+/**
+ * <p>ListValueExtractor interface.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public interface ListValueExtractor<T> {
 
+	/**
+	 * <p>extract.</p>
+	 *
+	 * @param values a {@link java.util.List} object.
+	 * @return a {@link java.util.List} object.
+	 */
 	List<ListValueEntry> extract(List<T> values);
 
 }

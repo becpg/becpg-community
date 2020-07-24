@@ -35,6 +35,12 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.listvalue.impl.EntityListValuePlugin;
 import fr.becpg.repo.repository.annotation.InternalField;
 
+/**
+ * <p>SpelEditorListValuePlugin class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class SpelEditorListValuePlugin extends EntityListValuePlugin {
 
@@ -42,10 +48,16 @@ public class SpelEditorListValuePlugin extends EntityListValuePlugin {
 
 	private static final String SOURCE_TYPE_SPELEDITOR = "speleditor";
 
+	/**
+	 * <p>getHandleSourceTypes.</p>
+	 *
+	 * @return an array of {@link java.lang.String} objects.
+	 */
 	public String[] getHandleSourceTypes() {
 		return new String[] { SOURCE_TYPE_SPELEDITOR };
 	}
 
+	/** {@inheritDoc} */
 	public ListValuePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
 
 		String className = (String) props.get(ListValueService.PROP_CLASS_NAME);

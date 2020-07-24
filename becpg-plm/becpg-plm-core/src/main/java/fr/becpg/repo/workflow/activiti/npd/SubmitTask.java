@@ -24,7 +24,7 @@ import fr.becpg.util.ApplicationContextHelper;
  * Submit a workflow task
  *
  * @author quere
- *
+ * @version $Id: $Id
  */
 public class SubmitTask extends ScriptTaskListener {
 
@@ -36,6 +36,7 @@ public class SubmitTask extends ScriptTaskListener {
 
 	private ProjectService projectService;
 
+	/** {@inheritDoc} */
 	@Override
 	public void notify(final DelegateTask task) {
 

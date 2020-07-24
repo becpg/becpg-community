@@ -30,9 +30,9 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 /**
  * Deliverable list of project
- * 
+ *
  * @author quere
- * 
+ * @version $Id: $Id
  */
 @AlfType
 @AlfQname(qname = "pjt:deliverableList")
@@ -50,39 +50,74 @@ public class DeliverableListDataItem extends BeCPGDataObject {
 	private Integer completionPercent = 0;
 	private NodeRef content;
 
+	/**
+	 * <p>Getter for the field <code>tasks</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@AlfMultiAssoc
 	@AlfQname(qname = "pjt:dlTask")
 	public List<NodeRef> getTasks() {
 		return tasks;
 	}
 
+	/**
+	 * <p>Setter for the field <code>tasks</code>.</p>
+	 *
+	 * @param tasks a {@link java.util.List} object.
+	 */
 	public void setTasks(List<NodeRef> tasks) {
 		this.tasks = tasks;
 	}
 
 	
+	/**
+	 * <p>Getter for the field <code>url</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:dlUrl")
 	public String getUrl() {
 		return url;
 	}
 
+	/**
+	 * <p>Setter for the field <code>url</code>.</p>
+	 *
+	 * @param url a {@link java.lang.String} object.
+	 */
 	public void setUrl(String url) {
 		this.url = url;
 	}
 
 	
+	/**
+	 * <p>Getter for the field <code>scriptOrder</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.project.data.projectList.DeliverableScriptOrder} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:dlScriptExecOrder")
 	public DeliverableScriptOrder getScriptOrder() {
 		return scriptOrder;
 	}
 
+	/**
+	 * <p>Setter for the field <code>scriptOrder</code>.</p>
+	 *
+	 * @param scriptOrder a {@link fr.becpg.repo.project.data.projectList.DeliverableScriptOrder} object.
+	 */
 	public void setScriptOrder(DeliverableScriptOrder scriptOrder) {
 		this.scriptOrder = scriptOrder;
 	}
 
 
+	/**
+	 * <p>Getter for the field <code>state</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.project.data.projectList.DeliverableState} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:dlState")
 	public DeliverableState getState() {
@@ -90,49 +125,103 @@ public class DeliverableListDataItem extends BeCPGDataObject {
 	}
 	
 	
+	/**
+	 * <p>Setter for the field <code>state</code>.</p>
+	 *
+	 * @param state a {@link fr.becpg.repo.project.data.projectList.DeliverableState} object.
+	 */
 	public void setState(DeliverableState state) {
 		this.state = state;
 	}
 	
 
+	/**
+	 * <p>Getter for the field <code>description</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:dlDescription")
 	public String getDescription() {
 		return description;
 	}
 
+	/**
+	 * <p>Setter for the field <code>description</code>.</p>
+	 *
+	 * @param description a {@link java.lang.String} object.
+	 */
 	public void setDescription(String description) {
 		this.description = description;
 	}
 
+	/**
+	 * <p>Getter for the field <code>completionPercent</code>.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:completionPercent")
 	public Integer getCompletionPercent() {
 		return completionPercent;
 	}
 
+	/**
+	 * <p>Setter for the field <code>completionPercent</code>.</p>
+	 *
+	 * @param completionPercent a {@link java.lang.Integer} object.
+	 */
 	public void setCompletionPercent(Integer completionPercent) {
 		this.completionPercent = completionPercent;
 	}
 
+	/**
+	 * <p>Getter for the field <code>content</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	@AlfSingleAssoc
 	@AlfQname(qname = "pjt:dlContent")
 	public NodeRef getContent() {
 		return content;
 	}
 
+	/**
+	 * <p>Setter for the field <code>content</code>.</p>
+	 *
+	 * @param content a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void setContent(NodeRef content) {
 		this.content = content;
 	}
 
+	/**
+	 * <p>Constructor for DeliverableListDataItem.</p>
+	 */
 	public DeliverableListDataItem() {
 		super();
 	}
 
+	/**
+	 * <p>Constructor for DeliverableListDataItem.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param name a {@link java.lang.String} object.
+	 */
 	public DeliverableListDataItem(NodeRef nodeRef, String name) {
 		super(nodeRef, name);
 	}
 
+	/**
+	 * <p>Constructor for DeliverableListDataItem.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param tasks a {@link java.util.List} object.
+	 * @param state a {@link fr.becpg.repo.project.data.projectList.DeliverableState} object.
+	 * @param description a {@link java.lang.String} object.
+	 * @param completionPercent a {@link java.lang.Integer} object.
+	 * @param content a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public DeliverableListDataItem(NodeRef nodeRef, List<NodeRef> tasks, DeliverableState state, String description, Integer completionPercent, NodeRef content) {
 		this.nodeRef = nodeRef;
 		this.tasks = tasks;
@@ -142,6 +231,11 @@ public class DeliverableListDataItem extends BeCPGDataObject {
 		this.content = content;
 	}
 
+	/**
+	 * <p>Constructor for DeliverableListDataItem.</p>
+	 *
+	 * @param d a {@link fr.becpg.repo.project.data.projectList.DeliverableListDataItem} object.
+	 */
 	public DeliverableListDataItem(DeliverableListDataItem d) {
 		super();
 		this.nodeRef = d.getNodeRef();
@@ -152,6 +246,7 @@ public class DeliverableListDataItem extends BeCPGDataObject {
 		this.content = d.getContent();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -166,6 +261,7 @@ public class DeliverableListDataItem extends BeCPGDataObject {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -207,6 +303,7 @@ public class DeliverableListDataItem extends BeCPGDataObject {
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "DeliverableListDataItem [tasks=" + tasks + ", state=" + state + ", description=" + description + ", url=" + url + ", scriptOrder="

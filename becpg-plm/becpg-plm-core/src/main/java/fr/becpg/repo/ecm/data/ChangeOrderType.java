@@ -17,6 +17,12 @@
  ******************************************************************************/
 package fr.becpg.repo.ecm.data;
 
+/**
+ * <p>ChangeOrderType class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public enum ChangeOrderType {
 
 	Replacement,

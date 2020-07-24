@@ -20,6 +20,12 @@ import fr.becpg.repo.entity.datalist.DataListSortService;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 
+/**
+ * <p>JSONDataListOutputWriter class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class JSONDataListOutputWriter implements DataListOutputWriter {
 
@@ -31,6 +37,7 @@ public class JSONDataListOutputWriter implements DataListOutputWriter {
 	@Autowired
 	private DataListSortService dataListSortService;
 
+	/** {@inheritDoc} */
 	@Override
 	public void write(WebScriptRequest req, WebScriptResponse res, DataListFilter dataListFilter, PaginatedExtractedItems extractedItems) throws IOException {
 		try {

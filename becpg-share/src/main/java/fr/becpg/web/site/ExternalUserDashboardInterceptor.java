@@ -42,8 +42,9 @@ import org.springframework.web.context.request.WebRequest;
 /**
  * Framework interceptor responsible for constructing user dashboards if one has
  * not already been initialised and persisted for the current user.
- * 
+ *
  * @author Kevin Roast, ML
+ * @version $Id: $Id
  */
 public class ExternalUserDashboardInterceptor extends AbstractWebFrameworkInterceptor {
 	private static final Pattern PATTERN_DASHBOARD_PATH = Pattern.compile(".*/user/([^/]*)/dashboard");
@@ -76,6 +77,7 @@ public class ExternalUserDashboardInterceptor extends AbstractWebFrameworkInterc
 	 * org.springframework.web.context.request.WebRequestInterceptor#preHandle
 	 * (org.springframework.web.context.request.WebRequest)
 	 */
+	/** {@inheritDoc} */
 	@Override
 	public void preHandle(WebRequest request) throws Exception {
 		final RequestContext rc = ThreadLocalRequestContext.getRequestContext();
@@ -153,6 +155,7 @@ public class ExternalUserDashboardInterceptor extends AbstractWebFrameworkInterc
 	 * (org.springframework.web.context.request.WebRequest,
 	 * org.springframework.ui.ModelMap)
 	 */
+	/** {@inheritDoc} */
 	@Override
 	public void postHandle(WebRequest request, ModelMap model) throws Exception {
 	}
@@ -164,6 +167,7 @@ public class ExternalUserDashboardInterceptor extends AbstractWebFrameworkInterc
 	 * org.springframework.web.context.request.WebRequestInterceptor#afterCompletion
 	 * (org.springframework.web.context.request.WebRequest, java.lang.Exception)
 	 */
+	/** {@inheritDoc} */
 	@Override
 	public void afterCompletion(WebRequest request, Exception ex) throws Exception {
 	}

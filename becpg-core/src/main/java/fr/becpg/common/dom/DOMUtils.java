@@ -54,12 +54,19 @@ import org.xml.sax.SAXException;
  * Méthodes utilitaires pour extraire des infos d'un DOM.
  *
  * @author tom, matthieu
- *
+ * @version $Id: $Id
  */
 public class DOMUtils {
 
 	private static final Log logger = LogFactory.getLog(DOMUtils.class);
 
+	/**
+	 * <p>getElementText.</p>
+	 *
+	 * @param root a {@link org.w3c.dom.Element} object.
+	 * @param elementName a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	public static String getElementText(Element root, String elementName) {
 		NodeList list = root.getElementsByTagName(elementName);
 		if (list.getLength() == 0) {
@@ -69,6 +76,12 @@ public class DOMUtils {
 		return txtElem == null ? null : txtElem.getData();
 	}
 
+	/**
+	 * <p>getElementText.</p>
+	 *
+	 * @param root a {@link org.w3c.dom.Element} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	public static String getElementText(Element root) {
 		Text txtElem = (Text) root.getFirstChild();
 		if (txtElem != null) {
@@ -78,6 +91,13 @@ public class DOMUtils {
 		}
 	}
 
+	/**
+	 * <p>getTexts.</p>
+	 *
+	 * @param root a {@link org.w3c.dom.Element} object.
+	 * @param elementName a {@link java.lang.String} object.
+	 * @return an array of {@link java.lang.String} objects.
+	 */
 	public static String[] getTexts(Element root, String elementName) {
 		NodeList list = root.getElementsByTagName(elementName);
 		String[] ret = new String[list.getLength()];
@@ -105,10 +125,10 @@ public class DOMUtils {
 	 *
 	 * { { "a", "ba" } { "b", "bb" } }
 	 *
-	 * @param root
-	 * @param elementName
-	 * @param wantedAttributes
-	 * @return
+	 * @param root a {@link org.w3c.dom.Element} object.
+	 * @param elementName a {@link java.lang.String} object.
+	 * @param wantedAttributes an array of {@link java.lang.String} objects.
+	 * @return an array of {@link java.lang.String} objects.
 	 */
 	public static String[][] getAttributes(Element root, String elementName, String[] wantedAttributes) {
 		NodeList list = root.getElementsByTagName(elementName);
@@ -126,10 +146,10 @@ public class DOMUtils {
 	 * Renvoie la valeur de l'attribut donné, d'un élément donné qui doit être
 	 * unique sous l'élément racine
 	 *
-	 * @param root
-	 * @param elementName
-	 * @param attribute
-	 * @return
+	 * @param root a {@link org.w3c.dom.Element} object.
+	 * @param elementName a {@link java.lang.String} object.
+	 * @param attribute a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
 	 */
 	public static String getElementAttribute(Element root, String elementName, String attribute) {
 		NodeList list = root.getElementsByTagName(elementName);
@@ -139,30 +159,63 @@ public class DOMUtils {
 	/**
 	 * Renvoie une élément qui doit être unique dans le document.
 	 *
-	 * @param root
-	 * @param elementName
-	 * @return
+	 * @param root a {@link org.w3c.dom.Element} object.
+	 * @param elementName a {@link java.lang.String} object.
+	 * @return a {@link org.w3c.dom.Element} object.
 	 */
 	public static Element getUniqueElement(Element root, String elementName) {
 		NodeList list = root.getElementsByTagName(elementName);
 		return (Element) list.item(0);
 	}
 
+	/**
+	 * <p>getUniqueXPathElement.</p>
+	 *
+	 * @param root a {@link org.w3c.dom.Element} object.
+	 * @param xpath a {@link java.lang.String} object.
+	 * @return a {@link org.w3c.dom.Element} object.
+	 * @throws javax.xml.xpath.XPathExpressionException if any.
+	 */
 	public static Element getUniqueXPathElement(Element root, String xpath) throws XPathExpressionException {
 		XPath xpa = XPathFactory.newInstance().newXPath();
 		return (Element) xpa.evaluate(xpath, root, XPathConstants.NODE);
 	}
 
+	/**
+	 * <p>getUniqueXPathTextElement.</p>
+	 *
+	 * @param root a {@link org.w3c.dom.Element} object.
+	 * @param xpath a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
+	 * @throws javax.xml.xpath.XPathExpressionException if any.
+	 */
 	public static String getUniqueXPathTextElement(Element root, String xpath) throws XPathExpressionException {
 		XPath xpa = XPathFactory.newInstance().newXPath();
 		return (String) xpa.evaluate(xpath, root, XPathConstants.STRING);
 	}
 
+	/**
+	 * <p>getXPathNodes.</p>
+	 *
+	 * @param root a {@link org.w3c.dom.Element} object.
+	 * @param xpath a {@link java.lang.String} object.
+	 * @return a {@link org.w3c.dom.NodeList} object.
+	 * @throws javax.xml.xpath.XPathExpressionException if any.
+	 */
 	public static NodeList getXPathNodes(Element root, String xpath) throws XPathExpressionException {
 		XPath xpa = XPathFactory.newInstance().newXPath();
 		return (NodeList) xpa.evaluate(xpath, root, XPathConstants.NODESET);
 	}
 
+	/**
+	 * <p>findElementWithUniqueAttribute.</p>
+	 *
+	 * @param root a {@link org.w3c.dom.Element} object.
+	 * @param elementName a {@link java.lang.String} object.
+	 * @param attribute a {@link java.lang.String} object.
+	 * @param attributeValue a {@link java.lang.String} object.
+	 * @return a {@link org.w3c.dom.Element} object.
+	 */
 	public static Element findElementWithUniqueAttribute(Element root, String elementName, String attribute, String attributeValue) {
 		NodeList list = root.getElementsByTagName(elementName);
 		for (int i = 0; i < list.getLength(); i++) {
@@ -174,6 +227,14 @@ public class DOMUtils {
 		return null;
 	}
 
+	/**
+	 * <p>createElementAndText.</p>
+	 *
+	 * @param parent a {@link org.w3c.dom.Element} object.
+	 * @param elementName a {@link java.lang.String} object.
+	 * @param text a {@link java.lang.String} object.
+	 * @return a {@link org.w3c.dom.Element} object.
+	 */
 	public static Element createElementAndText(Element parent, String elementName, String text) {
 		if (text == null) {
 			throw new NullPointerException("element '" + elementName + "' with null text.");
@@ -185,16 +246,38 @@ public class DOMUtils {
 		return el;
 	}
 
+	/**
+	 * <p>createElement.</p>
+	 *
+	 * @param parent a {@link org.w3c.dom.Element} object.
+	 * @param elementName a {@link java.lang.String} object.
+	 * @return a {@link org.w3c.dom.Element} object.
+	 */
 	public static Element createElement(Element parent, String elementName) {
 		Element el = parent.getOwnerDocument().createElement(elementName);
 		parent.appendChild(el);
 		return el;
 	}
 
+	/**
+	 * <p>serialise.</p>
+	 *
+	 * @param doc a {@link org.w3c.dom.Document} object.
+	 * @param out a {@link java.io.OutputStream} object.
+	 * @throws javax.xml.transform.TransformerException if any.
+	 */
 	public static void serialise(Document doc, OutputStream out) throws TransformerException {
 		serialise(doc, out, true);
 	}
 
+	/**
+	 * <p>serialise.</p>
+	 *
+	 * @param doc a {@link org.w3c.dom.Document} object.
+	 * @param out a {@link java.io.OutputStream} object.
+	 * @param keepXmlDecl a boolean.
+	 * @throws javax.xml.transform.TransformerException if any.
+	 */
 	public static void serialise(Document doc, OutputStream out, boolean keepXmlDecl) throws TransformerException {
 		TransformerFactory factory = TransformerFactory.newInstance();
 		factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
@@ -210,12 +293,29 @@ public class DOMUtils {
 		tf.transform(input, output);
 	}
 
+	/**
+	 * <p>logDom.</p>
+	 *
+	 * @param logSource a {@link java.lang.Object} object.
+	 * @param doc a {@link org.w3c.dom.Document} object.
+	 * @throws javax.xml.transform.TransformerException if any.
+	 */
 	public static void logDom(Object logSource, Document doc) throws TransformerException {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		serialise(doc, out);
 		logger.info(new String(out.toByteArray()));
 	}
 
+	/**
+	 * <p>parse.</p>
+	 *
+	 * @param is a {@link java.io.InputStream} object.
+	 * @return a {@link org.w3c.dom.Document} object.
+	 * @throws org.xml.sax.SAXException if any.
+	 * @throws java.io.IOException if any.
+	 * @throws javax.xml.parsers.ParserConfigurationException if any.
+	 * @throws javax.xml.parsers.FactoryConfigurationError if any.
+	 */
 	public static Document parse(InputStream is) throws SAXException, IOException, ParserConfigurationException, FactoryConfigurationError {
 		DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
 		domFactory.setNamespaceAware(true);
@@ -224,6 +324,13 @@ public class DOMUtils {
 		return builder.parse(is, StandardCharsets.UTF_8.toString());
 	}
 
+	/**
+	 * <p>createDoc.</p>
+	 *
+	 * @return a {@link org.w3c.dom.Document} object.
+	 * @throws javax.xml.parsers.ParserConfigurationException if any.
+	 * @throws javax.xml.parsers.FactoryConfigurationError if any.
+	 */
 	public static Document createDoc() throws ParserConfigurationException, FactoryConfigurationError {
 		DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
 		domFactory.setNamespaceAware(true);
@@ -232,6 +339,14 @@ public class DOMUtils {
 		return builder.newDocument();
 	}
 
+	/**
+	 * <p>createDoc.</p>
+	 *
+	 * @param rootNodeName a {@link java.lang.String} object.
+	 * @return a {@link org.w3c.dom.Element} object.
+	 * @throws javax.xml.parsers.ParserConfigurationException if any.
+	 * @throws javax.xml.parsers.FactoryConfigurationError if any.
+	 */
 	public static Element createDoc(String rootNodeName) throws ParserConfigurationException, FactoryConfigurationError {
 		Document ret = createDoc();
 		Element root = ret.createElement(rootNodeName);

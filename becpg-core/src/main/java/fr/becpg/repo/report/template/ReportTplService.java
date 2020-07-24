@@ -25,11 +25,21 @@ import org.alfresco.service.namespace.QName;
 
 import fr.becpg.report.client.ReportFormat;
 
+/**
+ * <p>ReportTplService interface.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public interface ReportTplService {
 
+	/** Constant <code>PARAM_VALUE_DESIGN_EXTENSION=".rptdesign"</code> */
 	String PARAM_VALUE_DESIGN_EXTENSION = ".rptdesign";
+	/** Constant <code>PARAM_VALUE_XLSXREPORT_EXTENSION=".xlsx"</code> */
 	String PARAM_VALUE_XLSXREPORT_EXTENSION = ".xlsx";
+	/** Constant <code>PARAM_VALUE_XMLREPORT_EXTENSION=".xml"</code> */
 	String PARAM_VALUE_XMLREPORT_EXTENSION = ".xml";
+	/** Constant <code>PARAM_VALUE_XLSMREPORT_EXTENSION=".xlsm"</code> */
 	String PARAM_VALUE_XLSMREPORT_EXTENSION =  ".xlsm";
 	
 	
@@ -37,25 +47,29 @@ public interface ReportTplService {
 	 * Gets the system report templates.
 	 *
 	 * @param nodeType
-	 * @return the system report templates
+	 * the system report templates
+	 * @param reportType a {@link fr.becpg.repo.report.template.ReportType} object.
+	 * @return a {@link java.util.List} object.
 	 */
 	List<NodeRef> getSystemReportTemplates(ReportType reportType, QName nodeType);
 	
 	/**
 	 * Gets the system report template.
-	 * @param reportType
-	 * @param nodeType
-	 * @param tplName
-	 * @return
+	 *
+	 * @param reportType a {@link fr.becpg.repo.report.template.ReportType} object.
+	 * @param nodeType a {@link org.alfresco.service.namespace.QName} object.
+	 * @param tplName a {@link java.lang.String} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
 	NodeRef getSystemReportTemplate(ReportType reportType, QName nodeType, String tplName);
 	
 	/**
 	 * Get the user template by name
-	 * @param reportType
-	 * @param nodeType
-	 * @param tplName
-	 * @return
+	 *
+	 * @param reportType a {@link fr.becpg.repo.report.template.ReportType} object.
+	 * @param nodeType a {@link org.alfresco.service.namespace.QName} object.
+	 * @param tplName a {@link java.lang.String} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
 	NodeRef getUserReportTemplate(ReportType reportType, QName nodeType, String tplName);
 	
@@ -64,63 +78,72 @@ public interface ReportTplService {
 	 *
 	 * @param nodeType the node type
 	 * @param tplName the tpl name
-	 * @return the user report templates
+	 * the user report templates
+	 * @param reportType a {@link fr.becpg.repo.report.template.ReportType} object.
+	 * @return a {@link java.util.List} object.
 	 */
 	List<NodeRef> getUserReportTemplates(ReportType reportType, QName nodeType, String tplName);
 	
 	/**
 	 * Create the rptdesign node for the report
-	 * @param parentNodeRef
-	 * @param tplName
-	 * @param tplFilePath
-	 * @param reportType
-	 * @param reportFormat
-	 * @param nodeType
-	 * @param isSystemTpl
-	 * @param isDefaultTpl
-	 * @param overrideTpl
-	 * @return
-	 * @throws IOException
+	 *
+	 * @param parentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param tplName a {@link java.lang.String} object.
+	 * @param tplFilePath a {@link java.lang.String} object.
+	 * @param reportType a {@link fr.becpg.repo.report.template.ReportType} object.
+	 * @param reportFormat a {@link fr.becpg.report.client.ReportFormat} object.
+	 * @param nodeType a {@link org.alfresco.service.namespace.QName} object.
+	 * @param isSystemTpl a boolean.
+	 * @param isDefaultTpl a boolean.
+	 * @param overrideTpl a boolean.
+	 * @throws java.io.IOException
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
 	NodeRef createTplRptDesign(NodeRef parentNodeRef, String tplName, String tplFilePath, ReportType reportType, ReportFormat reportFormat, QName nodeType, boolean isSystemTpl, boolean isDefaultTpl, boolean overrideTpl) throws IOException;
 	
 	/**
 	 * Create a resource for the report
-	 * @param parentNodeRef
-	 * @param xmlFilePath
-	 * @param overrideRessource
-	 * @throws IOException
-	 * @return the created resource
+	 *
+	 * @param parentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param xmlFilePath a {@link java.lang.String} object.
+	 * @param overrideRessource a boolean.
+	 * @throws java.io.IOException
+	 * the created resource
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
 	NodeRef createTplRessource(NodeRef parentNodeRef, String xmlFilePath, boolean overrideRessource) throws IOException;
 	
 	/**
 	 * Check the default reports (return one default tpl)
 	 * if there is a user default tpl, remove system default tpl and keep user one
-	 * @param tplsNodeRef
-	 * @return
+	 *
+	 * @param tplsNodeRef a {@link java.util.List} object.
+	 * @return a {@link java.util.List} object.
 	 */
 	List<NodeRef> cleanDefaultTpls(List<NodeRef> tplsNodeRef);
 	
 	/**
 	 * Get the report format
-	 * @param tplNodeRef
-	 * @return
+	 *
+	 * @param tplNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link fr.becpg.report.client.ReportFormat} object.
 	 */
 	ReportFormat getReportFormat(NodeRef tplNodeRef);
 
 	/**
 	 * Get the template associated to the report
-	 * @param nodeRef
-	 * @return
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
 	NodeRef getAssociatedReportTemplate(NodeRef nodeRef);
 
 	/**
-	 * 
-	 * @param reportType
-	 * @param nodeType
-	 * @return
+	 * <p>getDefaultReportTemplate.</p>
+	 *
+	 * @param reportType a {@link fr.becpg.repo.report.template.ReportType} object.
+	 * @param nodeType a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
 	NodeRef getDefaultReportTemplate(ReportType reportType, QName nodeType);
 }

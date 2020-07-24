@@ -24,18 +24,33 @@ import org.alfresco.service.namespace.QName;
 import fr.becpg.model.BeCPGModel;
 
 /**
- * 
- * @author matthieu
+ * <p>HierarchyHelper class.</p>
  *
+ * @author matthieu
+ * @version $Id: $Id
  */
 public class HierarchyHelper {
 
+	/** Constant <code>HIERARCHY_SUFFIX="_Hierarchy"</code> */
 	public final static String HIERARCHY_SUFFIX = "_Hierarchy";
 	
+	/**
+	 * <p>getHierarchyPathName.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	public static String getHierarchyPathName(QName type) {
 		return type.getLocalName()+HIERARCHY_SUFFIX;
 	}
 
+	/**
+	 * <p>getHierachyName.</p>
+	 *
+	 * @param hierarchyNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	public static String getHierachyName(NodeRef hierarchyNodeRef, NodeService nodeService) {
 		if(hierarchyNodeRef!=null){
 			return (String)nodeService.getProperty(hierarchyNodeRef, BeCPGModel.PROP_LKV_VALUE);
@@ -43,6 +58,13 @@ public class HierarchyHelper {
 		return null;
 	}
 
+	/**
+	 * <p>getParentHierachy.</p>
+	 *
+	 * @param hierarchyNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public static NodeRef getParentHierachy(NodeRef hierarchyNodeRef, NodeService nodeService) {
 		return (NodeRef) nodeService.getProperty(hierarchyNodeRef, BeCPGModel.PROP_PARENT_LEVEL);
 	}

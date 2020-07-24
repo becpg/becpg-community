@@ -40,8 +40,8 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 /**
  * Create the product based on data
  *
- * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
- *
+ * @author "Matthieu Laborie"
+ * @version $Id: $Id
  */
 public class CreateProduct extends BaseJavaDelegate {
 
@@ -59,26 +59,52 @@ public class CreateProduct extends BaseJavaDelegate {
 
 	private RepoService repoService;
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
+	 */
 	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityService</code>.</p>
+	 *
+	 * @param entityService a {@link fr.becpg.repo.entity.EntityService} object.
+	 */
 	public void setEntityService(EntityService entityService) {
 		this.entityService = entityService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>productService</code>.</p>
+	 *
+	 * @param productService a {@link fr.becpg.repo.product.ProductService} object.
+	 */
 	public void setProductService(ProductService productService) {
 		this.productService = productService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>repoService</code>.</p>
+	 *
+	 * @param repoService a {@link fr.becpg.repo.helper.RepoService} object.
+	 */
 	public void setRepoService(RepoService repoService) {
 		this.repoService = repoService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void execute(final DelegateExecution task) throws Exception {
 

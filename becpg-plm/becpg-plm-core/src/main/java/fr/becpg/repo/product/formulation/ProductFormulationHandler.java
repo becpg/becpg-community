@@ -52,6 +52,12 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.model.CompositionDataItem;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
+/**
+ * <p>ProductFormulationHandler class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class ProductFormulationHandler extends FormulationBaseHandler<ProductData> {
 
 	private static final String MESSAGE_MISSING_UNIT = "message.formulate.missing.unit";
@@ -59,6 +65,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 	private static final String MESSAGE_WRONG_UNIT = "message.formulate.wrong.unit";
 	private static final String MESSAGE_MISSING_TARE = "message.formulate.missing.tare";
 
+	/** Constant <code>logger</code> */
 	protected static final Log logger = LogFactory.getLog(ProductFormulationHandler.class);
 
 	private NodeService nodeService;
@@ -71,26 +78,52 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 
 	private boolean formulateChildren = false;
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>lockService</code>.</p>
+	 *
+	 * @param lockService a {@link org.alfresco.service.cmr.lock.LockService} object.
+	 */
 	public void setLockService(LockService lockService) {
 		this.lockService = lockService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>productService</code>.</p>
+	 *
+	 * @param productService a {@link fr.becpg.repo.product.ProductService} object.
+	 */
 	public void setProductService(ProductService productService) {
 		this.productService = productService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
+	 */
 	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
+	/**
+	 * <p>Setter for the field <code>formulateChildren</code>.</p>
+	 *
+	 * @param formulateChildren a boolean.
+	 */
 	public void setFormulateChildren(boolean formulateChildren) {
 		this.formulateChildren = formulateChildren;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean process(ProductData productData) throws FormulateException {
 

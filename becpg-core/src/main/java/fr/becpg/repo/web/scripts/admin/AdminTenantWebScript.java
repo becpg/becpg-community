@@ -34,14 +34,15 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 
 /**
  * The Class AdminTenantWebScript.
- * 
+ *
  * @author matthieu
  * Deprected since 4.2 see TenantPost
+ * @version $Id: $Id
  */
-@Deprecated 
+@Deprecated
 public class AdminTenantWebScript extends AbstractWebScript {
 
-	/** The logger. */
+	
 	private static final Log logger = LogFactory.getLog(AdminTenantWebScript.class);
 
 	// request parameter names
@@ -66,18 +67,38 @@ public class AdminTenantWebScript extends AbstractWebScript {
 
 	//Spring IoC
 	
+	/**
+	 * <p>Setter for the field <code>tenantAdminService</code>.</p>
+	 *
+	 * @param tenantAdminService a {@link org.alfresco.repo.tenant.TenantAdminService} object.
+	 */
 	public void setTenantAdminService(TenantAdminService tenantAdminService) {
 		this.tenantAdminService = tenantAdminService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>tenantService</code>.</p>
+	 *
+	 * @param tenantService a {@link org.alfresco.repo.tenant.TenantService} object.
+	 */
 	public void setTenantService(TenantService tenantService) {
 		this.tenantService = tenantService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>authorityService</code>.</p>
+	 *
+	 * @param authorityService a {@link org.alfresco.service.cmr.security.AuthorityService} object.
+	 */
 	public void setAuthorityService(AuthorityService authorityService) {
 		this.authorityService = authorityService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>authenticationService</code>.</p>
+	 *
+	 * @param authenticationService a {@link org.alfresco.service.cmr.security.AuthenticationService} object.
+	 */
 	public void setAuthenticationService(AuthenticationService authenticationService) {
 		this.authenticationService = authenticationService;
 	}
@@ -90,6 +111,7 @@ public class AdminTenantWebScript extends AbstractWebScript {
 	 * springframework.extensions.webscripts.WebScriptRequest,
 	 * org.springframework.extensions.webscripts.WebScriptResponse)
 	 */
+	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws WebScriptException {
 

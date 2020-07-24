@@ -19,42 +19,68 @@ package fr.becpg.model;
 
 import org.alfresco.service.namespace.QName;
 
+/**
+ * <p>GS1Model interface.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public interface GS1Model {
 
+	/** Constant <code>GS1_URI="http://www.bcpg.fr/model/gs1/1.0"</code> */
 	String GS1_URI = "http://www.bcpg.fr/model/gs1/1.0";
 
+	/** Constant <code>BECPG_PREFIX="gs1"</code> */
 	String BECPG_PREFIX = "gs1";
 
+	/** Constant <code>MODEL</code> */
 	QName MODEL = QName.createQName(GS1_URI, "gs1Model");
 
+	/** Constant <code>ASPECT_MEASURES_ASPECT</code> */
 	QName ASPECT_MEASURES_ASPECT = QName.createQName(GS1_URI, "measuresAspect");
 
+	/** Constant <code>PROP_WEIGHT</code> */
 	QName PROP_WEIGHT = QName.createQName(GS1_URI, "weight");
+	/** Constant <code>PROP_SECONDARY_WEIGHT</code> */
 	QName PROP_SECONDARY_WEIGHT = QName.createQName(GS1_URI, "secondaryWeight");
+	/** Constant <code>PROP_TERTIARY_WEIGHT</code> */
 	QName PROP_TERTIARY_WEIGHT = QName.createQName(GS1_URI, "tertiaryWeight");
+	/** Constant <code>PROP_SECONDARY_NET_WEIGHT</code> */
 	QName PROP_SECONDARY_NET_WEIGHT = QName.createQName(GS1_URI, "secondaryNetWeight");
+	/** Constant <code>PROP_TERTIARY_NET_WEIGHT</code> */
 	QName PROP_TERTIARY_NET_WEIGHT = QName.createQName(GS1_URI, "tertiaryNetWeight");
 
+	/** Constant <code>PROP_NUTRIENT_TYPE_CODE</code> */
 	QName PROP_NUTRIENT_TYPE_CODE = QName.createQName(GS1_URI, "nutrientTypeCode");
 
+	/** Constant <code>PROP_WIDTH</code> */
 	QName PROP_WIDTH = QName.createQName(GS1_URI, "width");
 
+	/** Constant <code>PROP_DEPTH</code> */
 	QName PROP_DEPTH = QName.createQName(GS1_URI, "depth");
 
+	/** Constant <code>PROP_HEIGHT</code> */
 	QName PROP_HEIGHT = QName.createQName(GS1_URI, "height");
 
+	/** Constant <code>PROP_SECONDARY_WIDTH</code> */
 	QName PROP_SECONDARY_WIDTH = QName.createQName(GS1_URI, "secondaryWidth");
 
+	/** Constant <code>PROP_SECONDARY_DEPTH</code> */
 	QName PROP_SECONDARY_DEPTH = QName.createQName(GS1_URI, "secondaryDepth");
 
+	/** Constant <code>PROP_SECONDARY_HEIGHT</code> */
 	QName PROP_SECONDARY_HEIGHT = QName.createQName(GS1_URI, "secondaryHeight");
 
+	/** Constant <code>PROP_TERTIARY_WIDTH</code> */
 	QName PROP_TERTIARY_WIDTH = QName.createQName(GS1_URI, "tertiaryWidth");
 
+	/** Constant <code>PROP_TERTIARY_DEPTH</code> */
 	QName PROP_TERTIARY_DEPTH = QName.createQName(GS1_URI, "tertiaryDepth");
 
+	/** Constant <code>PROP_PALLET_TYPE_CODE</code> */
 	QName PROP_PALLET_TYPE_CODE  = QName.createQName(GS1_URI, "palletTypeCode");
 
+	/** Constant <code>PROP_PLATFORMTERMSANSCONDITION_CODE</code> */
 	QName PROP_PLATFORMTERMSANSCONDITION_CODE  = QName.createQName(GS1_URI, "platformTermsAndConditionsCode");
 
 }

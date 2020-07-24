@@ -54,18 +54,26 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  * Abstract remote entity webscript
  *
  * @author matthieu
- *
+ * @version $Id: $Id
  */
 public abstract class AbstractEntityWebScript extends AbstractWebScript {
 
+	/** Constant <code>logger</code> */
 	protected static final Log logger = LogFactory.getLog(AbstractEntityWebScript.class);
 
+	/** Constant <code>PARAM_QUERY="query"</code> */
 	protected static final String PARAM_QUERY = "query";
+	/** Constant <code>PARAM_PATH="path"</code> */
 	protected static final String PARAM_PATH = "path";
+	/** Constant <code>PARAM_FORMAT="format"</code> */
 	protected static final String PARAM_FORMAT = "format";
+	/** Constant <code>PARAM_NODEREF="nodeRef"</code> */
 	protected static final String PARAM_NODEREF = "nodeRef";
+	/** Constant <code>PARAM_ALL_VERSION="allVersion"</code> */
 	protected static final String PARAM_ALL_VERSION = "allVersion";
+	/** Constant <code>PARAM_FIELDS="fields"</code> */
 	protected static final String PARAM_FIELDS = "fields";
+	/** Constant <code>PARAM_LISTS="lists"</code> */
 	protected static final String PARAM_LISTS = "lists";
 
 	/** http://localhost:8080/alfresco/services/becpg/remote/entity **/
@@ -76,6 +84,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	 */
 	protected static final String PARAM_CALLBACK_USER = "callbackUser";
 
+	/** Constant <code>PARAM_CALLBACK_PASSWORD="callbackPassword"</code> */
 	protected static final String PARAM_CALLBACK_PASSWORD = "callbackPassword";
 
 	private static final String PARAM_MAX_RESULTS = "maxResults";
@@ -90,22 +99,48 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 
 	protected PermissionService permissionService;
 
+	/**
+	 * <p>Setter for the field <code>mimetypeService</code>.</p>
+	 *
+	 * @param mimetypeService a {@link org.alfresco.service.cmr.repository.MimetypeService} object.
+	 */
 	public void setMimetypeService(MimetypeService mimetypeService) {
 		this.mimetypeService = mimetypeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>remoteEntityService</code>.</p>
+	 *
+	 * @param remoteEntityService a {@link fr.becpg.repo.entity.remote.RemoteEntityService} object.
+	 */
 	public void setRemoteEntityService(RemoteEntityService remoteEntityService) {
 		this.remoteEntityService = remoteEntityService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>permissionService</code>.</p>
+	 *
+	 * @param permissionService a {@link org.alfresco.service.cmr.security.PermissionService} object.
+	 */
 	public void setPermissionService(PermissionService permissionService) {
 		this.permissionService = permissionService;
 	}
 
+	/**
+	 * <p>findEntities.</p>
+	 *
+	 * @param req a {@link org.springframework.extensions.webscripts.WebScriptRequest} object.
+	 * @return a {@link java.util.List} object.
+	 */
 	protected List<NodeRef> findEntities(WebScriptRequest req) {
 
 		String path = decodeParam(req.getParameter(PARAM_PATH));
@@ -162,6 +197,12 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 
 	}
 
+	/**
+	 * <p>findEntity.</p>
+	 *
+	 * @param req a {@link org.springframework.extensions.webscripts.WebScriptRequest} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	protected NodeRef findEntity(WebScriptRequest req) {
 
 		String nodeRef = req.getParameter(PARAM_NODEREF);
@@ -189,6 +230,14 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		throw new IllegalStateException("No entity found for this parameters");
 	}
 
+	/**
+	 * <p>sendOKStatus.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param resp a {@link org.springframework.extensions.webscripts.WebScriptResponse} object.
+	 * @param format a {@link fr.becpg.repo.entity.remote.RemoteEntityFormat} object.
+	 * @throws java.io.IOException if any.
+	 */
 	protected void sendOKStatus(NodeRef entityNodeRef, WebScriptResponse resp, RemoteEntityFormat format) throws IOException {
 		if ((resp != null) && (resp.getWriter() != null) && (entityNodeRef != null)) {
 			if(RemoteEntityFormat.json.equals(format)) {
@@ -210,6 +259,12 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		}
 	}
 
+	/**
+	 * <p>getEntityProviderCallback.</p>
+	 *
+	 * @param req a {@link org.springframework.extensions.webscripts.WebScriptRequest} object.
+	 * @return a {@link fr.becpg.repo.entity.remote.EntityProviderCallBack} object.
+	 */
 	protected EntityProviderCallBack getEntityProviderCallback(WebScriptRequest req) {
 
 		String callBack = req.getParameter(PARAM_CALLBACK);
@@ -223,6 +278,12 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		return null;
 	}
 
+	/**
+	 * <p>getFormat.</p>
+	 *
+	 * @param req a {@link org.springframework.extensions.webscripts.WebScriptRequest} object.
+	 * @return a {@link fr.becpg.repo.entity.remote.RemoteEntityFormat} object.
+	 */
 	protected RemoteEntityFormat getFormat(WebScriptRequest req) {
 		String format = req.getParameter(PARAM_FORMAT);
 		if ((format != null) && RemoteEntityFormat.csv.toString().equalsIgnoreCase(format)) {
@@ -245,6 +306,12 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		return RemoteEntityFormat.xml;
 	}
 
+	/**
+	 * <p>getContentType.</p>
+	 *
+	 * @param req a {@link org.springframework.extensions.webscripts.WebScriptRequest} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	protected String getContentType(WebScriptRequest req) {
 		RemoteEntityFormat format = getFormat(req);
 		if (RemoteEntityFormat.csv.equals(format)) {
@@ -257,6 +324,12 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		}
 	}
 
+	/**
+	 * <p>extractFields.</p>
+	 *
+	 * @param req a {@link org.springframework.extensions.webscripts.WebScriptRequest} object.
+	 * @return a {@link java.util.List} object.
+	 */
 	public List<String> extractFields(WebScriptRequest req) {
 		Set<String> fields = new HashSet<>();
 		String fieldsParams = req.getParameter(PARAM_FIELDS);
@@ -272,6 +345,12 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		return new ArrayList<>(fields);
 	}
 
+	/**
+	 * <p>extractLists.</p>
+	 *
+	 * @param req a {@link org.springframework.extensions.webscripts.WebScriptRequest} object.
+	 * @return a {@link java.util.List} object.
+	 */
 	public List<String> extractLists(WebScriptRequest req) {
 		List<String> lists = new ArrayList<>();
 		String listsParams = req.getParameter(PARAM_LISTS);

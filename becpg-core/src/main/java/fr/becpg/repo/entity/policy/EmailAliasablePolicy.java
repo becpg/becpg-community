@@ -19,8 +19,9 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
 /**
  * The Class EmailAliasablePolicy.
- * 
+ *
  * @author querephi
+ * @version $Id: $Id
  */
 public class EmailAliasablePolicy extends AbstractBeCPGPolicy implements 
 			NodeServicePolicies.OnAddAspectPolicy,
@@ -31,6 +32,9 @@ public class EmailAliasablePolicy extends AbstractBeCPGPolicy implements
 
 	private static final Log logger = LogFactory.getLog(EmailAliasablePolicy.class);
 
+	/**
+	 * <p>doInit.</p>
+	 */
 	public void doInit() {
 		logger.debug("Init EmailAlisablePolicy...");
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnAddAspectPolicy.QNAME, EmailServerModel.ASPECT_ALIASABLE, new JavaBehaviour(this, "onAddAspect"));
@@ -40,11 +44,13 @@ public class EmailAliasablePolicy extends AbstractBeCPGPolicy implements
 		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.BeforeCancelCheckOut.QNAME, EmailServerModel.ASPECT_ALIASABLE, new JavaBehaviour(this, "beforeCancelCheckOut"));
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public void onAddAspect(NodeRef nodeRef, QName type) {
 		queueNode(nodeRef);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {		
 		for (NodeRef nodeRef : pendingNodes) {
@@ -55,6 +61,7 @@ public class EmailAliasablePolicy extends AbstractBeCPGPolicy implements
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void beforeCheckOut(NodeRef nodeRef, NodeRef destinationParentNodeRef, QName destinationAssocTypeQName,
 			QName destinationAssocQName) {
@@ -63,16 +70,19 @@ public class EmailAliasablePolicy extends AbstractBeCPGPolicy implements
 		}		
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public void onCheckOut(NodeRef workingCopyNodeRef) {
 		setAliasOnNode(workingCopyNodeRef);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onCheckIn(NodeRef nodeRef) {
 		setAliasOnNode(nodeRef);
 	}	
 	
+	/** {@inheritDoc} */
 	@Override
 	public void beforeCancelCheckOut(final NodeRef workingCopyNodeRef){	
 		setAliasOnNode(workingCopyNodeRef);

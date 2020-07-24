@@ -1,5 +1,5 @@
 /*
- * 
+ *
  */
 package fr.becpg.repo.importer;
 
@@ -11,44 +11,44 @@ import org.dom4j.Element;
 
 import fr.becpg.config.mapping.MappingException;
 
-
-// TODO: Auto-generated Javadoc
 /**
- * The Interface ImportVisitor.
+ * <p>ImportVisitor interface.</p>
  *
  * @author querephi
+ * @version $Id: $Id
  */
 public interface ImportVisitor {
 
 	/**
-	 * Import node.
+	 * <p>importNode.</p>
 	 *
-	 * @param importContext the import context
-	 * @param values the values
-	 * @return the node ref
-	 * @throws ParseException the parse exception
+	 * @param importContext a {@link fr.becpg.repo.importer.ImportContext} object.
+	 * @param values a {@link java.util.List} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @throws java.text.ParseException if any.
+	 * @throws fr.becpg.repo.importer.ImporterException if any.
 	 */
-	NodeRef importNode(ImportContext importContext, List<String>values) throws ParseException, ImporterException;
-	
+	NodeRef importNode(ImportContext importContext, List<String> values) throws ParseException, ImporterException;
+
 	/**
-	 * Load class mapping.
+	 * <p>loadClassMapping.</p>
 	 *
-	 * @param mappingElt the mapping elt
-	 * @param importContext the import context
-	 * @param mappingLoader the mapping loader
-	 * @return the import context
-	 * @throws ImporterException the be cpg exception
+	 * @param mapping a {@link java.lang.Object} object.
+	 * @param importContext a {@link fr.becpg.repo.importer.ImportContext} object.
+	 * @param mappingLoader a {@link fr.becpg.repo.importer.MappingLoader} object.
+	 * @return a {@link fr.becpg.repo.importer.ImportContext} object.
+	 * @throws fr.becpg.config.mapping.MappingException if any.
 	 */
-	ImportContext loadClassMapping(Object mapping, ImportContext importContext, MappingLoader mappingLoader) throws MappingException ;
-	
+	ImportContext loadClassMapping(Object mapping, ImportContext importContext, MappingLoader mappingLoader) throws MappingException;
+
 	/**
-	 * Load mapping columns.
+	 * <p>loadMappingColumns.</p>
 	 *
-	 * @param mappingElt the mapping elt
-	 * @param columns the columns
-	 * @param importContext the import context
-	 * @return the import context
-	 * @throws ImporterException the be cpg exception
+	 * @param mappingElt a {@link org.dom4j.Element} object.
+	 * @param columns a {@link java.util.List} object.
+	 * @param importContext a {@link fr.becpg.repo.importer.ImportContext} object.
+	 * @return a {@link fr.becpg.repo.importer.ImportContext} object.
+	 * @throws fr.becpg.config.mapping.MappingException if any.
 	 */
 	ImportContext loadMappingColumns(Element mappingElt, List<String> columns, ImportContext importContext) throws MappingException;
 }

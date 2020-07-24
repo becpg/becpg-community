@@ -23,6 +23,12 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemGroup;
 import fr.becpg.repo.helper.AssociationService;
 
+/**
+ * <p>BeCPGForumTopicsFilteredGet class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class BeCPGForumTopicsFilteredGet extends ForumTopicsFilteredGet {
 
 
@@ -32,15 +38,26 @@ public class BeCPGForumTopicsFilteredGet extends ForumTopicsFilteredGet {
 	AuthorityService authorityService;
 	
 	
+	/**
+	 * <p>Setter for the field <code>associationService</code>.</p>
+	 *
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object.
+	 */
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>authorityService</code>.</p>
+	 *
+	 * @param authorityService a {@link org.alfresco.service.cmr.security.AuthorityService} object.
+	 */
 	public void setAuthorityService(AuthorityService authorityService) {
 		this.authorityService = authorityService;
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	protected PagingResults<TopicInfo> doSearch(Pair<String, String> searchQuery, boolean sortAscending, PagingRequest paging) {
 		
@@ -98,6 +115,7 @@ public class BeCPGForumTopicsFilteredGet extends ForumTopicsFilteredGet {
 	 * Renders out the list of topics TODO Fetch the post data in one go, rather
 	 * than one at a time
 	 */
+	/** {@inheritDoc} */
 	@Override
 	protected Map<String, Object> renderTopics(List<TopicInfo> topics, Pair<Integer, Integer> size, PagingRequest paging, SiteInfo site) {
 		Map<String, Object> model = new HashMap<String, Object>();

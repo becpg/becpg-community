@@ -30,6 +30,12 @@ import fr.becpg.model.QualityModel;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.quality.NonConformityService;
 
+/**
+ * <p>NonConformityPolicies class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class NonConformityPolicies extends AbstractBeCPGPolicy implements NodeServicePolicies.BeforeDeleteNodePolicy {
 
 
@@ -37,10 +43,16 @@ public class NonConformityPolicies extends AbstractBeCPGPolicy implements NodeSe
 	
 	private NonConformityService nonConformityService;
 
+	/**
+	 * <p>Setter for the field <code>nonConformityService</code>.</p>
+	 *
+	 * @param nonConformityService a {@link fr.becpg.repo.quality.NonConformityService} object.
+	 */
 	public void setNonConformityService(NonConformityService nonConformityService) {
 		this.nonConformityService = nonConformityService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void doInit() {
 
@@ -49,6 +61,7 @@ public class NonConformityPolicies extends AbstractBeCPGPolicy implements NodeSe
 	}
 
 
+	/** {@inheritDoc} */
 	public void beforeDeleteNode(NodeRef ncNodeRef) {
 		for(String instance : nonConformityService.getAssociatedWorkflow(ncNodeRef)){
 			queueNode(new NodeRef(new StoreRef("tmp", "wfInstance"), instance));
@@ -59,6 +72,7 @@ public class NonConformityPolicies extends AbstractBeCPGPolicy implements NodeSe
 	
 	
 	
+	/** {@inheritDoc} */
 	@Override
 	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 		List<String> instanceIds = new ArrayList<>();

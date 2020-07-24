@@ -18,33 +18,42 @@
 package fr.becpg.repo.designer.data;
 
 /**
- * 
- * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
+ * <p>FormControl class.</p>
  *
+ * @author "Matthieu Laborie"
+ * @version $Id: $Id
  */
 public class FormControl {
 
 	private String id;
 	private String description;
 	/**
+	 * <p>Getter for the field <code>id</code>.</p>
+	 *
 	 * @return the id
 	 */
 	public String getId() {
 		return id;
 	}
 	/**
+	 * <p>Setter for the field <code>id</code>.</p>
+	 *
 	 * @param id the id to set
 	 */
 	public void setId(String id) {
 		this.id = id;
 	}
 	/**
+	 * <p>Getter for the field <code>description</code>.</p>
+	 *
 	 * @return the description
 	 */
 	public String getDescription() {
 		return description;
 	}
 	/**
+	 * <p>Setter for the field <code>description</code>.</p>
+	 *
 	 * @param description the description to set
 	 */
 	public void setDescription(String description) {
@@ -53,6 +62,7 @@ public class FormControl {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -64,6 +74,7 @@ public class FormControl {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -88,6 +99,7 @@ public class FormControl {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "FormControl [id=" + id + ", description=" + description + "]";

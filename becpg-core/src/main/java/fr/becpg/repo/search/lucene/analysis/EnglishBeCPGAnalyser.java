@@ -28,10 +28,12 @@ import org.apache.lucene.analysis.snowball.SnowballFilter;
 import org.apache.lucene.analysis.standard.StandardTokenizer;
 
 /**
- * 
- * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
- * 
+ * <p>EnglishBeCPGAnalyser class.</p>
+ *
+ * @author "Matthieu Laborie"
+ *
  *  http://snowball.tartarus.org/algorithms/english/stemmer.html
+ * @version $Id: $Id
  */
 public class EnglishBeCPGAnalyser extends AbstractBeCPGAnalyzer {
 
@@ -41,12 +43,15 @@ public class EnglishBeCPGAnalyser extends AbstractBeCPGAnalyzer {
 	 */
 	public static final String[] STOP_WORDS = StopAnalyzer.ENGLISH_STOP_WORDS;
 
-	/** Builds an analyzer. */
+	/**
+	 * Builds an analyzer.
+	 */
 	public EnglishBeCPGAnalyser() {
 		super(STOP_WORDS);
 	}
 
 
+	/** {@inheritDoc} */
 	public TokenStream tokenStream(String fieldName, Reader reader, boolean disableStopWords) {
 		TokenStream result = new StandardTokenizer(reader);
 		result = new AlfrescoStandardFilter(result);

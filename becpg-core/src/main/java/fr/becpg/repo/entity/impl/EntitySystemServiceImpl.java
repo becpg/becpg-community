@@ -42,9 +42,10 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.search.impl.AbstractBeCPGQueryBuilder;
 
 /**
+ * <p>EntitySystemServiceImpl class.</p>
  *
  * @author matthieu
- *
+ * @version $Id: $Id
  */
 @Service("entitySystemService")
 public class EntitySystemServiceImpl implements EntitySystemService {
@@ -58,6 +59,7 @@ public class EntitySystemServiceImpl implements EntitySystemService {
 	@Autowired
 	private NodeService nodeService;
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef createSystemEntity(NodeRef parentNodeRef, String entityPath, Map<String, QName> entitySystemDataLists) {
 
@@ -117,11 +119,13 @@ public class EntitySystemServiceImpl implements EntitySystemService {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getSystemEntity(NodeRef parentNodeRef, String systemEntityPath) {
 		return BeCPGQueryBuilder.createQuery().selectNodeByPath(parentNodeRef, AbstractBeCPGQueryBuilder.encodePath(systemEntityPath));
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getSystemEntityDataList(NodeRef systemEntityNodeRef, String dataListPath) {
 		String entityName = TranslateHelper.getTranslatedPath(dataListPath);
@@ -130,11 +134,13 @@ public class EntitySystemServiceImpl implements EntitySystemService {
 		return entityListDAO.getList(entityListDAO.getListContainer(systemEntityNodeRef), dataListPath);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getSystemEntityDataList(NodeRef parentNodeRef, String systemEntityPath, String dataListPath) {
 		return getSystemEntityDataList(getSystemEntity(parentNodeRef, systemEntityPath), dataListPath);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> getSystemEntities() {
 
@@ -149,6 +155,7 @@ public class EntitySystemServiceImpl implements EntitySystemService {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> getSystemFolders() {
 		return BeCPGQueryBuilder.createQuery().ofType(ContentModel.TYPE_FOLDER).withAspect(BeCPGModel.ASPECT_SYSTEM_FOLDER).inDB().list();

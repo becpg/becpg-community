@@ -22,9 +22,10 @@ import org.springframework.stereotype.Component;
 import fr.becpg.repo.RepoConsts;
 
 /**
+ * <p>MLTextHelper class.</p>
  *
  * @author matthieu
- *
+ * @version $Id: $Id
  */
 @Component
 public class MLTextHelper {
@@ -34,6 +35,11 @@ public class MLTextHelper {
 
 	private static boolean shouldExtractMLText;
 
+	/**
+	 * <p>Setter for the field <code>supportedLocales</code>.</p>
+	 *
+	 * @param supportedLocales a {@link java.lang.String} object.
+	 */
 	@Value("${beCPG.multilinguale.supportedLocales}")
 	public void setSupportedLocales(String supportedLocales) {
 
@@ -54,15 +60,30 @@ public class MLTextHelper {
 		MLTextHelper.supportedLocalesText = supportedLocales;
 	}
 
+	/**
+	 * <p>Getter for the field <code>supportedLocales</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	public static List<Locale> getSupportedLocales() {
 		return supportedLocales;
 	}
 
+	/**
+	 * <p>Setter for the field <code>shouldExtractMLText</code>.</p>
+	 *
+	 * @param shouldExtractMLText a boolean.
+	 */
 	@Value("${beCPG.multilinguale.shouldExtractMLText}")
 	public void setshouldExtractMLText(boolean shouldExtractMLText) {
 		MLTextHelper.shouldExtractMLText = shouldExtractMLText;
 	}
 
+	/**
+	 * <p>shouldExtractMLText.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public static boolean shouldExtractMLText() {
 		return shouldExtractMLText;
 	}
@@ -70,9 +91,9 @@ public class MLTextHelper {
 	/**
 	 * Try to find the best match for locale or try with default server local
 	 *
-	 * @param mltext
-	 * @param locale
-	 * @return
+	 * @param mltext a {@link org.alfresco.service.cmr.repository.MLText} object.
+	 * @param locale a {@link java.util.Locale} object.
+	 * @return a {@link java.lang.String} object.
 	 */
 	public static String getClosestValue(MLText mltext, Locale locale) {
 		String ret = null;
@@ -109,14 +130,33 @@ public class MLTextHelper {
 
 	}
 
+	/**
+	 * <p>isDefaultLocale.</p>
+	 *
+	 * @param locale a {@link java.util.Locale} object.
+	 * @return a boolean.
+	 */
 	public static boolean isDefaultLocale(Locale locale) {
 		return (locale != null) && locale.equals(getNearestLocale(Locale.getDefault(), new HashSet<>(getSupportedLocales())));
 	}
 
+	/**
+	 * <p>getNearestLocale.</p>
+	 *
+	 * @param locale a {@link java.util.Locale} object.
+	 * @return a {@link java.util.Locale} object.
+	 */
 	public static Locale getNearestLocale(Locale locale) {
 		return getNearestLocale(locale, new HashSet<>(getSupportedLocales()));
 	}
 
+	/**
+	 * <p>getNearestLocale.</p>
+	 *
+	 * @param templateLocale a {@link java.util.Locale} object.
+	 * @param options a {@link java.util.Set} object.
+	 * @return a {@link java.util.Locale} object.
+	 */
 	public static Locale getNearestLocale(Locale templateLocale, Set<Locale> options) {
 		if (options.isEmpty()) // No point if there are no options
 		{
@@ -158,10 +198,21 @@ public class MLTextHelper {
 
 	}
 
+	/**
+	 * <p>isSupportedLocale.</p>
+	 *
+	 * @param contentLocale a {@link java.util.Locale} object.
+	 * @return a boolean.
+	 */
 	public static boolean isSupportedLocale(Locale contentLocale) {
 		return (contentLocale != null) && supportedLocales.contains(contentLocale);
 	}
 
+	/**
+	 * <p>getSupportedLocalesList.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	public static List<String> getSupportedLocalesList() {
 
 		if (supportedLocalesText != null) {
@@ -171,6 +222,12 @@ public class MLTextHelper {
 		return new ArrayList<>();
 	}
 
+	/**
+	 * <p>parseLocale.</p>
+	 *
+	 * @param key a {@link java.lang.String} object.
+	 * @return a {@link java.util.Locale} object.
+	 */
 	public static Locale parseLocale(String key) {
 		if (key.contains("_")) {
 			return new Locale(key.split("_")[0], key.split("_")[1]);
@@ -179,6 +236,14 @@ public class MLTextHelper {
 
 	}
 
+	/**
+	 * <p>getValueOrDefault.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param propCharactName a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	public static String getValueOrDefault(NodeService nodeService, NodeRef nodeRef, QName propCharactName) {
 		String ret = (String) nodeService.getProperty(nodeRef, propCharactName);
 
@@ -196,6 +261,12 @@ public class MLTextHelper {
 		return ret;
 	}
 
+	/**
+	 * <p>localeKey.</p>
+	 *
+	 * @param locale a {@link java.util.Locale} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	public static String localeKey(Locale locale) {
 		String ret = locale.getLanguage();
 		if ((locale.getCountry() != null) && !locale.getCountry().isEmpty()) {
@@ -204,6 +275,12 @@ public class MLTextHelper {
 		return ret;
 	}
 
+	/**
+	 * <p>localeLabel.</p>
+	 *
+	 * @param locale a {@link java.util.Locale} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	public static String localeLabel(Locale locale) {
 		String ret = locale.getDisplayLanguage();
 		if ((locale.getCountry() != null) && !locale.getCountry().isEmpty()) {
@@ -212,6 +289,12 @@ public class MLTextHelper {
 		return ret;
 	}
 
+	/**
+	 * <p>isEmpty.</p>
+	 *
+	 * @param mlText a {@link org.alfresco.service.cmr.repository.MLText} object.
+	 * @return a boolean.
+	 */
 	public static boolean isEmpty(MLText mlText) {
 		for (String value : mlText.values()) {
 			if ((value != null) && !value.isEmpty()) {
@@ -221,6 +304,12 @@ public class MLTextHelper {
 		return true;
 	}
 
+	/**
+	 * <p>extractLocales.</p>
+	 *
+	 * @param locales a {@link java.util.List} object.
+	 * @return a {@link java.util.Set} object.
+	 */
 	public static Set<Locale> extractLocales(List<String> locales) {
 		Set<Locale> ret = new LinkedHashSet<>();
 
@@ -230,6 +319,13 @@ public class MLTextHelper {
 		return ret;
 	}
 
+	/**
+	 * <p>getI18NMessage.</p>
+	 *
+	 * @param messageKey a {@link java.lang.String} object.
+	 * @param variables a {@link java.lang.Object} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object.
+	 */
 	public static MLText getI18NMessage(String messageKey, Object... variables) {
 		MLText ret = new MLText();
 		for (String key : RepoConsts.SUPPORTED_UI_LOCALES.split(",")) {
@@ -259,6 +355,12 @@ public class MLTextHelper {
 		public String run(Locale locale);
 	}
 
+	/**
+	 * <p>createMLTextI18N.</p>
+	 *
+	 * @param callback a {@link fr.becpg.repo.helper.MLTextHelper.MLTextCallback} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object.
+	 */
 	public static MLText createMLTextI18N(MLTextCallback callback) {
 		MLText ret = new MLText();
 
@@ -271,6 +373,13 @@ public class MLTextHelper {
 		return ret;
 	}
 
+	/**
+	 * <p>merge.</p>
+	 *
+	 * @param toMergeTo a {@link org.alfresco.service.cmr.repository.MLText} object.
+	 * @param toMergeFrom a {@link org.alfresco.service.cmr.repository.MLText} object.
+	 * @return a {@link java.io.Serializable} object.
+	 */
 	public static Serializable merge(MLText toMergeTo, MLText toMergeFrom) {
 
 		for (Map.Entry<Locale, String> entry : toMergeFrom.entrySet()) {

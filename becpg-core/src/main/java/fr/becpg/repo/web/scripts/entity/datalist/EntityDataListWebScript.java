@@ -54,22 +54,27 @@ import fr.becpg.repo.web.scripts.WebscriptHelper;
  * Webscript that send the result of a datalist
  *
  * @author matthieu
+ * @version $Id: $Id
  */
 public class EntityDataListWebScript extends AbstractWebScript {
 
-	/** The logger. */
+	
 	private static final Log logger = LogFactory.getLog(EntityDataListWebScript.class);
 
 	/** The Constant PARAM_FILTER. */
 
 	protected static final String PARAM_FILTER_ID = "filterId";
 
+	/** Constant <code>PARAM_FILTER="filter"</code> */
 	protected static final String PARAM_FILTER = "filter";
 
+	/** Constant <code>PARAM_FILTER_DATA="filterData"</code> */
 	protected static final String PARAM_FILTER_DATA = "filterData";
 
+	/** Constant <code>PARAM_FILTER_PARAMS="filterParams"</code> */
 	protected static final String PARAM_FILTER_PARAMS = "filterParams";
 
+	/** Constant <code>PARAM_DATA_LIST_NAME="dataListName"</code> */
 	protected static final String PARAM_DATA_LIST_NAME = "dataListName";
 
 	/**
@@ -82,8 +87,10 @@ public class EntityDataListWebScript extends AbstractWebScript {
 	 */
 	protected static final String PARAM_CONTAINER = "container";
 
+	/** Constant <code>PARAM_SITE="site"</code> */
 	protected static final String PARAM_SITE = "site";
 
+	/** Constant <code>PARAM_REPOSITORY="repo"</code> */
 	protected static final String PARAM_REPOSITORY = "repo";
 
 	// request parameter names
@@ -96,33 +103,44 @@ public class EntityDataListWebScript extends AbstractWebScript {
 	/** The Constant PARAM_ID. */
 	protected static final String PARAM_ID = "id";
 
+	/** Constant <code>PARAM_LOCALE="locale"</code> */
 	protected static final String PARAM_LOCALE = "locale";
 
+	/** Constant <code>PARAM_FIELDS="fields"</code> */
 	protected static final String PARAM_FIELDS = "fields";
 
 	/** The Constant PARAM_NODEREF. */
 	protected static final String PARAM_ENTITY_NODEREF = "entityNodeRef";
 
+	/** Constant <code>PARAM_ITEMTYPE="itemType"</code> */
 	protected static final String PARAM_ITEMTYPE = "itemType";
 
+	/** Constant <code>PARAM_EXTRA_PARAMS="extraParams"</code> */
 	protected static final String PARAM_EXTRA_PARAMS = "extraParams";
 
 	/** Pagination **/
 
 	protected static final String PARAM_SORT = "sort";
 
+	/** Constant <code>PARAM_SORT_ID="sortId"</code> */
 	protected static final String PARAM_SORT_ID = "sortId";
 
+	/** Constant <code>PARAM_PAGE="page"</code> */
 	protected static final String PARAM_PAGE = "page";
 
+	/** Constant <code>PARAM_PAGE_SIZE="pageSize"</code> */
 	protected static final String PARAM_PAGE_SIZE = "pageSize";
 
+	/** Constant <code>PARAM_MAX_RESULTS="maxResults"</code> */
 	protected static final String PARAM_MAX_RESULTS = "maxResults";
 
+	/** Constant <code>PARAM_QUERY_EXECUTION_ID="queryExecutionId"</code> */
 	protected static final String PARAM_QUERY_EXECUTION_ID = "queryExecutionId";
 
+	/** Constant <code>PARAM_GUESS_CONTAINER="guessContainer"</code> */
 	protected static final String PARAM_GUESS_CONTAINER = "guessContainer";
 
+	/** Constant <code>PARAM_EFFECTIVE_FILTER_ON="effectiveFilterOn"</code> */
 	protected static final String PARAM_EFFECTIVE_FILTER_ON = "effectiveFilterOn";
 
 	private NodeService nodeService;
@@ -141,46 +159,79 @@ public class EntityDataListWebScript extends AbstractWebScript {
 
 	private boolean effectiveFilterEnabled = false;
 
+	/**
+	 * <p>Setter for the field <code>effectiveFilterEnabled</code>.</p>
+	 *
+	 * @param effectiveFilterEnabled a boolean.
+	 */
 	public void setEffectiveFilterEnabled(boolean effectiveFilterEnabled) {
 		this.effectiveFilterEnabled = effectiveFilterEnabled;
 	}
 
+	/**
+	 * <p>Setter for the field <code>datalistOutputWriterFactory</code>.</p>
+	 *
+	 * @param datalistOutputWriterFactory a {@link fr.becpg.repo.entity.datalist.impl.DataListOutputWriterFactory} object.
+	 */
 	public void setDatalistOutputWriterFactory(DataListOutputWriterFactory datalistOutputWriterFactory) {
 		this.datalistOutputWriterFactory = datalistOutputWriterFactory;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>securityService</code>.</p>
+	 *
+	 * @param securityService a {@link fr.becpg.repo.security.SecurityService} object.
+	 */
 	public void setSecurityService(SecurityService securityService) {
 		this.securityService = securityService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>namespaceService</code>.</p>
+	 *
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
+	 */
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>dataListExtractorFactory</code>.</p>
+	 *
+	 * @param dataListExtractorFactory a {@link fr.becpg.repo.entity.datalist.DataListExtractorFactory} object.
+	 */
 	public void setDataListExtractorFactory(DataListExtractorFactory dataListExtractorFactory) {
 		this.dataListExtractorFactory = dataListExtractorFactory;
 	}
 
+	/**
+	 * <p>Setter for the field <code>authorityService</code>.</p>
+	 *
+	 * @param authorityService a {@link org.alfresco.service.cmr.security.AuthorityService} object.
+	 */
 	public void setAuthorityService(AuthorityService authorityService) {
 		this.authorityService = authorityService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>lockService</code>.</p>
+	 *
+	 * @param lockService a {@link org.alfresco.service.cmr.lock.LockService} object.
+	 */
 	public void setLockService(LockService lockService) {
 		this.lockService = lockService;
 	}
 
-	/**
-	 * @param req
-	 *            the req
-	 * @param res
-	 *            the res
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
 
@@ -427,6 +478,13 @@ public class EntityDataListWebScript extends AbstractWebScript {
 		return false;
 	}
 
+	/**
+	 * <p>getNumParameter.</p>
+	 *
+	 * @param req a {@link org.springframework.extensions.webscripts.WebScriptRequest} object.
+	 * @param paramName a {@link java.lang.String} object.
+	 * @return a {@link java.lang.Integer} object.
+	 */
 	protected Integer getNumParameter(WebScriptRequest req, String paramName) {
 		String param = req.getParameter(paramName);
 

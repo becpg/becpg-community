@@ -7,6 +7,12 @@ import java.util.Map;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * <p>MeatContentData class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class MeatContentData {
 
 	Double qtyPerc = 0d;
@@ -71,6 +77,11 @@ public class MeatContentData {
 
 	Double fatPerc = 0d;
 
+	/**
+	 * <p>Constructor for MeatContentData.</p>
+	 *
+	 * @param meatTypeKey a {@link java.lang.String} object.
+	 */
 	public MeatContentData(String meatTypeKey) {
 		super();
 
@@ -93,6 +104,9 @@ public class MeatContentData {
 
 	}
 
+	/**
+	 * <p>calculateMeatContent.</p>
+	 */
 	public void calculateMeatContent() {
 
 		if(qtyPerc!=null && qtyPerc!=0d) {
@@ -153,46 +167,101 @@ public class MeatContentData {
 
 	}
 
+	/**
+	 * <p>Getter for the field <code>fatLimitPerc</code>.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object.
+	 */
 	public Integer getFatLimitPerc() {
 		return fatLimitPerc;
 	}
 
+	/**
+	 * <p>Getter for the field <code>colLimitPerc</code>.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object.
+	 */
 	public Integer getColLimitPerc() {
 		return colLimitPerc;
 	}
 
+	/**
+	 * <p>Getter for the field <code>maxFat</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public Double getMaxFat() {
 		return maxFat;
 	}
 
+	/**
+	 * <p>Getter for the field <code>maxCol</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public Double getMaxCol() {
 		return maxCol;
 	}
 
+	/**
+	 * <p>Getter for the field <code>exColPerc</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public Double getExColPerc() {
 		return exColPerc;
 	}
 
+	/**
+	 * <p>Getter for the field <code>exCTPerc</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public Double getExCTPerc() {
 		return exCTPerc;
 	}
 
+	/**
+	 * <p>Getter for the field <code>exFatPerc</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public Double getExFatPerc() {
 		return exFatPerc;
 	}
 
+	/**
+	 * <p>Getter for the field <code>meatContent</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public Double getMeatContent() {
 		return meatContent;
 	}
 
+	/**
+	 * <p>Getter for the field <code>proteinPerc</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public Double getProteinPerc() {
 		return proteinPerc;
 	}
 
+	/**
+	 * <p>Setter for the field <code>proteinPerc</code>.</p>
+	 *
+	 * @param proteinPerc a {@link java.lang.Double} object.
+	 */
 	public void setProteinPerc(Double proteinPerc) {
 		this.proteinPerc = proteinPerc;
 	}
 	
+	/**
+	 * <p>addProteinPerc.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object.
+	 */
 	public void addProteinPerc(Double value) {
 		if(proteinPerc!=null) {
 			proteinPerc+=value;
@@ -201,10 +270,20 @@ public class MeatContentData {
 		}
 	}
 
+	/**
+	 * <p>Getter for the field <code>collagenPerc</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public Double getCollagenPerc() {
 		return collagenPerc;
 	}
 	
+	/**
+	 * <p>addCollagenPerc.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object.
+	 */
 	public void addCollagenPerc(Double value) {
 		if(collagenPerc!=null) {
 			collagenPerc+=value;
@@ -213,11 +292,21 @@ public class MeatContentData {
 		}
 	}
 
+	/**
+	 * <p>Setter for the field <code>collagenPerc</code>.</p>
+	 *
+	 * @param collagenPerc a {@link java.lang.Double} object.
+	 */
 	public void setCollagenPerc(Double collagenPerc) {
 		this.collagenPerc = collagenPerc;
 	}
 	
 	
+	/**
+	 * <p>addQtyPerc.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object.
+	 */
 	public void addQtyPerc(Double value) {
 		if(qtyPerc!=null) {
 			qtyPerc+=value;
@@ -226,22 +315,47 @@ public class MeatContentData {
 		}
 	}
 
+	/**
+	 * <p>Getter for the field <code>qtyPerc</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public Double getQtyPerc() {
 		return qtyPerc;
 	}
 
+	/**
+	 * <p>Setter for the field <code>qtyPerc</code>.</p>
+	 *
+	 * @param qtyPerc a {@link java.lang.Double} object.
+	 */
 	public void setQtyPerc(Double qtyPerc) {
 		this.qtyPerc = qtyPerc;
 	}
 
+	/**
+	 * <p>Getter for the field <code>fatPerc</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public Double getFatPerc() {
 		return fatPerc;
 	}
 
+	/**
+	 * <p>Setter for the field <code>fatPerc</code>.</p>
+	 *
+	 * @param fatPerc a {@link java.lang.Double} object.
+	 */
 	public void setFatPerc(Double fatPerc) {
 		this.fatPerc = fatPerc;
 	}
 	
+	/**
+	 * <p>addFatPerc.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object.
+	 */
 	public void addFatPerc(Double value) {
 		if(fatPerc!=null) {
 			fatPerc+=value;
@@ -250,6 +364,12 @@ public class MeatContentData {
 		}
 	}
 
+	/**
+	 * <p>merge.</p>
+	 *
+	 * @param meatContentData a {@link fr.becpg.repo.product.data.meat.MeatContentData} object.
+	 * @param partQtyPerc a {@link java.lang.Double} object.
+	 */
 	public void merge(MeatContentData meatContentData, Double partQtyPerc) {
 		
 		if (fatPerc == null) {
@@ -287,6 +407,13 @@ public class MeatContentData {
 
 	}
 
+	/**
+	 * <p>toJsonString.</p>
+	 *
+	 * @param meatContentData a {@link java.util.Map} object.
+	 * @return a {@link java.lang.String} object.
+	 * @throws org.json.JSONException if any.
+	 */
 	public static String toJsonString(Map<String, MeatContentData> meatContentData) throws JSONException {
 		if(meatContentData ==null || meatContentData.isEmpty()) {
 			return null;
@@ -308,6 +435,13 @@ public class MeatContentData {
 		return ret;
 	}
 
+	/**
+	 * <p>parseJsonString.</p>
+	 *
+	 * @param meatContentdata a {@link java.lang.String} object.
+	 * @return a {@link java.util.Map} object.
+	 * @throws org.json.JSONException if any.
+	 */
 	public static Map<String, MeatContentData> parseJsonString(String meatContentdata) throws JSONException {
 		Map<String, MeatContentData> ret = new HashMap<>();
 		if (meatContentdata != null) {
@@ -331,6 +465,7 @@ public class MeatContentData {
 		return ret;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -350,6 +485,7 @@ public class MeatContentData {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -422,10 +558,16 @@ public class MeatContentData {
 		return true;
 	}
 	
+	/**
+	 * <p>isApplied.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public boolean isApplied() {
 		return meatContent!=null && meatContent < 100;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "MAXFat=" + maxFat 
@@ -441,6 +583,11 @@ public class MeatContentData {
 	}
 	
 	
+	/**
+	 * <p>toHTMLString.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String toHTMLString() {
 		return "<table><th><td>MAX<sub>FAT</sub></td><td>MAX<sub>COL</sub></td><td>MEAT</td></th>"+
 				"<tr><td>"+maxFat+"</td><td>"+maxCol+"</td><td>"+meatContent+"</td></tr>"

@@ -46,6 +46,12 @@ import fr.becpg.repo.entity.datalist.impl.MultiLevelExtractor;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.listvalue.impl.EntityListValuePlugin;
 
+/**
+ * <p>CompoListValuePlugin class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class CompoListValuePlugin extends EntityListValuePlugin {
 
@@ -68,11 +74,13 @@ public class CompoListValuePlugin extends EntityListValuePlugin {
 	@Autowired
 	private PermissionService permissionService;
 
+	/** {@inheritDoc} */
 	@Override
 	public String[] getHandleSourceTypes() {
 		return new String[] { SOURCE_TYPE_COMPOLIST_PARENT_LEVEL };
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public ListValuePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
 

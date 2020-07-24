@@ -42,6 +42,7 @@ import org.apache.commons.logging.LogFactory;
  * Hook on workflow deployer that create corresponding model
  *
  * @author matthieu
+ * @version $Id: $Id
  */
 public class WorkflowDefinitionType
 		implements ContentServicePolicies.OnContentUpdatePolicy, NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.OnUpdateNodePolicy {
@@ -71,10 +72,20 @@ public class WorkflowDefinitionType
 		this.policyComponent = policyComponent;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>designerWorkflowDeployer</code>.</p>
+	 *
+	 * @param designerWorkflowDeployer a {@link fr.becpg.repo.designer.workflow.DesignerWorkflowDeployer} object.
+	 */
 	public void setDesignerWorkflowDeployer(DesignerWorkflowDeployer designerWorkflowDeployer) {
 		this.designerWorkflowDeployer = designerWorkflowDeployer;
 	}
@@ -102,10 +113,9 @@ public class WorkflowDefinitionType
 	}
 
 	/**
-	 * On content update behaviour implementation
+	 * {@inheritDoc}
 	 *
-	 * @param nodeRef
-	 *            the node reference whose content has been updated
+	 * On content update behaviour implementation
 	 */
 	@Override
 	public void onContentUpdate(NodeRef nodeRef, boolean newContent) {
@@ -134,6 +144,7 @@ public class WorkflowDefinitionType
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onCreateNode(ChildAssociationRef childAssocRef) {
 
@@ -151,6 +162,7 @@ public class WorkflowDefinitionType
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onUpdateNode(NodeRef nodeRef) {
 

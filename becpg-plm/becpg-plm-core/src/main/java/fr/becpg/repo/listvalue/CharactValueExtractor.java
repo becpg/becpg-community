@@ -34,9 +34,10 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.AttributeExtractorService;
 
 /**
+ * <p>CharactValueExtractor class.</p>
  *
- * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
- *
+ * @author "Matthieu Laborie"
+ * @version $Id: $Id
  */
 @Service("charactValueExtractor")
 public class CharactValueExtractor implements ListValueExtractor<NodeRef> {
@@ -50,6 +51,7 @@ public class CharactValueExtractor implements ListValueExtractor<NodeRef> {
 	@Autowired
 	private AttributeExtractorService attributeExtractorService;
 
+	/** {@inheritDoc} */
 	@Override
 	public List<ListValueEntry> extract(List<NodeRef> nodeRefs) {
 		

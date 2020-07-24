@@ -44,32 +44,38 @@ import fr.becpg.repo.importer.ImportContext;
 import fr.becpg.repo.importer.ImportVisitor;
 import fr.becpg.repo.importer.ImporterException;
 
+/**
+ * <p>ImportEntityListItemVisitor class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class ImportEntityListItemVisitor extends AbstractImportVisitor implements ImportVisitor {
 
+	/** Constant <code>MSG_ERROR_FIND_ENTITY="import_service.error.err_find_entity"</code> */
 	protected static final String MSG_ERROR_FIND_ENTITY = "import_service.error.err_find_entity";
 
+	/** Constant <code>MSG_ERROR_NO_MAPPING_FOR="import_service.error.no_mapping_for"</code> */
 	protected static final String MSG_ERROR_NO_MAPPING_FOR = "import_service.error.no_mapping_for";
 
-	/** The logger. */
+	
 	private static final Log logger = LogFactory.getLog(ImportEntityListItemVisitor.class);
 
 	private FileFolderService fileFolderService;
 
+	/**
+	 * <p>Setter for the field <code>fileFolderService</code>.</p>
+	 *
+	 * @param fileFolderService a {@link org.alfresco.service.cmr.model.FileFolderService} object.
+	 */
 	public void setFileFolderService(FileFolderService fileFolderService) {
 		this.fileFolderService = fileFolderService;
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * Check if the node exists, according to : - keys or entityCode
-	 * 
-	 * @param importContext
-	 *            the import context
-	 * @param type
-	 *            the type
-	 * @param properties
-	 *            the properties
-	 * @return the node ref
-	 * @throws InvalidTargetNodeException
 	 */
 	@Override
 	public NodeRef importNode(ImportContext importContext, List<String> values) throws ParseException, ImporterException {
@@ -214,11 +220,6 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 
 	/**
 	 * Look for the entity list item (check props and assocs match)
-	 * 
-	 * @param listNodeRef
-	 * @param dataListColumnsProps
-	 * @param dataListColumnsAssocs
-	 * @return
 	 */
 	private NodeRef findEntityListItem(ImportContext importContext,
 			NodeRef listNodeRef, Map<QName, String> dataListColumnsProps, Map<QName, List<NodeRef>> dataListColumnsAssocs) {
@@ -332,6 +333,7 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 	
 	
 	
+	/** {@inheritDoc} */
 	@Override
 	protected NodeRef findPropertyTargetNodeByValue(ImportContext importContext, PropertyDefinition propDef,
 			AbstractAttributeMapping attributeMapping, String value, Map<QName, Serializable> properties) throws ImporterException {

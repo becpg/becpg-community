@@ -25,6 +25,12 @@ import fr.becpg.config.mapping.AbstractAttributeMapping;
 import fr.becpg.repo.importer.ImportFileReader;
 import fr.becpg.repo.importer.ImporterException;
 
+/**
+ * <p>ImportExcelFileReader class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class ImportExcelFileReader implements ImportFileReader {
 
 	private XSSFWorkbook workbook;
@@ -32,6 +38,13 @@ public class ImportExcelFileReader implements ImportFileReader {
 
 	private PropertyFormats propertyFormats;
 
+	/**
+	 * <p>Constructor for ImportExcelFileReader.</p>
+	 *
+	 * @param is a {@link java.io.InputStream} object.
+	 * @param propertyFormats a {@link fr.becpg.config.format.PropertyFormats} object.
+	 * @throws java.io.IOException if any.
+	 */
 	public ImportExcelFileReader(InputStream is, PropertyFormats propertyFormats) throws IOException {
 		workbook = new XSSFWorkbook(is);
 		if (workbook.getNumberOfSheets() > 0) {
@@ -40,6 +53,7 @@ public class ImportExcelFileReader implements ImportFileReader {
 		this.propertyFormats = propertyFormats;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String[] getLineAt(int importIndex, List<AbstractAttributeMapping> columns) throws ImporterException{
 		String[] line = null;
@@ -108,6 +122,7 @@ public class ImportExcelFileReader implements ImportFileReader {
 		return line.toArray(new String[line.size()]);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int getTotalLineCount() {
 		int rowCount = sheet.getLastRowNum() ;
@@ -123,6 +138,7 @@ public class ImportExcelFileReader implements ImportFileReader {
 		return rowCount + 1;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void reportError(int importIndex, String errorMsg, int columnIdx) {
 		if (sheet != null && importIndex < sheet.getLastRowNum() + 1) {
@@ -149,6 +165,7 @@ public class ImportExcelFileReader implements ImportFileReader {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void writeErrorInFile(ContentWriter writer) throws IOException {
 		if (workbook != null) {
@@ -160,6 +177,7 @@ public class ImportExcelFileReader implements ImportFileReader {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void reportSuccess(int index, int columnIdx) {
 		if (sheet != null && index < sheet.getLastRowNum() + 1) {

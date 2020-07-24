@@ -8,6 +8,12 @@ import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 
+/**
+ * <p>ResourceParamListItem class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @AlfType
 @AlfQname(qname = "mpm:resourceParamList")
 public class ResourceParamListItem  extends AbstractManualVariantListDataItem {
@@ -24,63 +30,118 @@ public class ResourceParamListItem  extends AbstractManualVariantListDataItem {
 	private NodeRef resource;
 	
 	
+	/**
+	 * <p>Getter for the field <code>paramType</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="mpm:rplParamType")
 	public String getParamType() {
 		return paramType;
 	}
+	/**
+	 * <p>Setter for the field <code>paramType</code>.</p>
+	 *
+	 * @param paramType a {@link java.lang.String} object.
+	 */
 	public void setParamType(String paramType) {
 		this.paramType = paramType;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>paramValue</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname="mpm:rplParamValue")
 	public String getParamValue() {
 		return paramValue;
 	}
+	/**
+	 * <p>Setter for the field <code>paramValue</code>.</p>
+	 *
+	 * @param paramValue a {@link java.lang.String} object.
+	 */
 	public void setParamValue(String paramValue) {
 		this.paramValue = paramValue;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>step</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	@AlfSingleAssoc
 	@AlfQname(qname="mpm:rplStepRef")
 	public NodeRef getStep() {
 		return step;
 	}
+	/**
+	 * <p>Setter for the field <code>step</code>.</p>
+	 *
+	 * @param step a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void setStep(NodeRef step) {
 		this.step = step;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>param</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	@AlfSingleAssoc
 	@AlfQname(qname="mpm:rplParamRef")
 	@DataListIdentifierAttr
 	public NodeRef getParam() {
 		return param;
 	}
+	/**
+	 * <p>Setter for the field <code>param</code>.</p>
+	 *
+	 * @param param a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void setParam(NodeRef param) {
 		this.param = param;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>resource</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	@AlfSingleAssoc
 	@AlfQname(qname="mpm:rplResourceRef")
 	public NodeRef getResource() {
 		return resource;
 	}
+	/**
+	 * <p>Setter for the field <code>resource</code>.</p>
+	 *
+	 * @param resource a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void setResource(NodeRef resource) {
 		this.resource = resource;
 	}
 	
 	
+	/**
+	 * <p>Constructor for ResourceParamListItem.</p>
+	 */
 	public ResourceParamListItem() {
 		super();
 	}
 	
 	
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "ResourceParamListItem [paramType=" + paramType + ", paramValue=" + paramValue + ", step=" + step + ", param=" + param + ", resource="
 				+ resource + "]";
 	}
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -92,6 +153,7 @@ public class ResourceParamListItem  extends AbstractManualVariantListDataItem {
 		result = prime * result + ((step == null) ? 0 : step.hashCode());
 		return result;
 	}
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

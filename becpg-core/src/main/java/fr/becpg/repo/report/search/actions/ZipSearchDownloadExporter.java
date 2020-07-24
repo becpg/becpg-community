@@ -54,6 +54,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  * Handler for exporting node content to a ZIP file
  *
  * @author Matthieu
+ * @version $Id: $Id
  */
 public class ZipSearchDownloadExporter implements Exporter {
 	private static Logger log = LoggerFactory.getLogger(ZipSearchDownloadExporter.class);
@@ -99,35 +100,36 @@ public class ZipSearchDownloadExporter implements Exporter {
 	private NodeService nodeService;
 	private ContentService contentService;
 
+	/**
+	 * <p>Getter for the field <code>size</code>.</p>
+	 *
+	 * @return a long.
+	 */
 	public long getSize() {
 		return size;
 	}
 
+	/**
+	 * <p>Getter for the field <code>fileCount</code>.</p>
+	 *
+	 * @return a long.
+	 */
 	public long getFileCount() {
 		return fileCount;
 	}
 
 	/**
-	 * Construct
+	 * <p>Constructor for ZipSearchDownloadExporter.</p>
 	 *
-	 * @param zipFile
-	 *            File
-	 * @param checkOutCheckInService
-	 *            CheckOutCheckInService
-	 * @param nodeService
-	 *            NodeService
-	 * @param transactionHelper
-	 *            RetryingTransactionHelper
-	 * @param updateService
-	 *            DownloadStatusUpdateService
-	 * @param downloadStorage
-	 *            DownloadStorage
-	 * @param downloadNodeRef
-	 *            NodeRef
-	 * @param total
-	 *            long
-	 * @param totalFileCount
-	 *            long
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
+	 * @param checkOutCheckInService a {@link org.alfresco.service.cmr.coci.CheckOutCheckInService} object.
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 * @param transactionHelper a {@link org.alfresco.repo.transaction.RetryingTransactionHelper} object.
+	 * @param updateService a {@link org.alfresco.repo.download.DownloadStatusUpdateService} object.
+	 * @param downloadStorage a {@link org.alfresco.repo.download.DownloadStorage} object.
+	 * @param contentService a {@link org.alfresco.service.cmr.repository.ContentService} object.
+	 * @param downloadNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param templateNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
 	public ZipSearchDownloadExporter(NamespaceService namespaceService, CheckOutCheckInService checkOutCheckInService, NodeService nodeService,
 			RetryingTransactionHelper transactionHelper, DownloadStatusUpdateService updateService, DownloadStorage downloadStorage,
@@ -184,6 +186,11 @@ public class ZipSearchDownloadExporter implements Exporter {
 
 	}
 
+	/**
+	 * <p>setZipFile.</p>
+	 *
+	 * @param zipFile a {@link java.io.File} object.
+	 */
 	public void setZipFile(File zipFile) {
 		try {
 			this.outputStream = new FileOutputStream(zipFile);
@@ -192,6 +199,7 @@ public class ZipSearchDownloadExporter implements Exporter {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void start(final ExporterContext context) {
 		if (outputStream != null) {
@@ -205,6 +213,7 @@ public class ZipSearchDownloadExporter implements Exporter {
 
 	Map<String, Set<NodeRef>> cache = new HashMap<>();
 
+	/** {@inheritDoc} */
 	@Override
 	public void startNode(NodeRef entityNodeRef) {
 
@@ -273,6 +282,7 @@ public class ZipSearchDownloadExporter implements Exporter {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void end() {
 		if (outputStream != null) {
@@ -395,174 +405,216 @@ public class ZipSearchDownloadExporter implements Exporter {
 		}, false, true);
 	}
 
+	/**
+	 * <p>getNextSequenceNumber.</p>
+	 *
+	 * @return a int.
+	 */
 	public int getNextSequenceNumber() {
 		return sequenceNumber++;
 	}
 
+	/**
+	 * <p>Getter for the field <code>done</code>.</p>
+	 *
+	 * @return a long.
+	 */
 	public long getDone() {
 		return done;
 	}
 
+	/**
+	 * <p>getFilesAdded.</p>
+	 *
+	 * @return a long.
+	 */
 	public long getFilesAdded() {
 		return filesAddedCount;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void startNamespace(String prefix, String uri) {
 		// TODO Auto-generated method stub
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void endNamespace(String prefix) {
 		// TODO Auto-generated method stub
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void endNode(NodeRef nodeRef) {
 		// TODO Auto-generated method stub
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void startReference(NodeRef nodeRef, QName childName) {
 		// TODO Auto-generated method stub
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void endReference(NodeRef nodeRef) {
 		// TODO Auto-generated method stub
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void startAspects(NodeRef nodeRef) {
 		// TODO Auto-generated method stub
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void startAspect(NodeRef nodeRef, QName aspect) {
 		// TODO Auto-generated method stub
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void endAspect(NodeRef nodeRef, QName aspect) {
 		// TODO Auto-generated method stub
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void endAspects(NodeRef nodeRef) {
 		// TODO Auto-generated method stub
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void startACL(NodeRef nodeRef) {
 		// TODO Auto-generated method stub
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void permission(NodeRef nodeRef, AccessPermission permission) {
 		// TODO Auto-generated method stub
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void endACL(NodeRef nodeRef) {
 		// TODO Auto-generated method stub
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void startProperties(NodeRef nodeRef) {
 		// TODO Auto-generated method stub
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void startProperty(NodeRef nodeRef, QName property) {
 		// TODO Auto-generated method stub
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void endProperty(NodeRef nodeRef, QName property) {
 		// TODO Auto-generated method stub
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void endProperties(NodeRef nodeRef) {
 		// TODO Auto-generated method stub
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void startValueCollection(NodeRef nodeRef, QName property) {
 		// TODO Auto-generated method stub
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void startValueMLText(NodeRef nodeRef, Locale locale, boolean isNull) {
 		// TODO Auto-generated method stub
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void endValueMLText(NodeRef nodeRef) {
 		// TODO Auto-generated method stub
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void value(NodeRef nodeRef, QName property, Object value, int index) {
 		// TODO Auto-generated method stub
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void content(NodeRef nodeRef, QName property, InputStream content, ContentData contentData, int index) {
 		// TODO Auto-generated method stub
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void endValueCollection(NodeRef nodeRef, QName property) {
 		// TODO Auto-generated method stub
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void startAssocs(NodeRef nodeRef) {
 		// TODO Auto-generated method stub
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void startAssoc(NodeRef nodeRef, QName assoc) {
 		// TODO Auto-generated method stub
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void endAssoc(NodeRef nodeRef, QName assoc) {
 		// TODO Auto-generated method stub
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void endAssocs(NodeRef nodeRef) {
 		// TODO Auto-generated method stub
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void warning(String warning) {
 		// TODO Auto-generated method stub

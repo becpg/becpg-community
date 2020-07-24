@@ -28,7 +28,7 @@ import fr.becpg.test.PLMBaseTestCase;
  */
 public class ProductListAttributesPolicyIT extends PLMBaseTestCase {
 
-	/** The logger. */
+	
 	private static final Log logger = LogFactory.getLog(ProductListAttributesPolicyIT.class);
 
 	final Set<QName> dataLists = new HashSet<>();

@@ -43,6 +43,12 @@ import fr.becpg.repo.project.data.projectList.TaskManualDate;
 import fr.becpg.repo.project.data.projectList.TaskState;
 import fr.becpg.repo.project.formulation.TaskWrapper;
 
+/**
+ * <p>ProjectHelper class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class ProjectHelper {
 
 	private static final int DURATION_DEFAULT = 1;
@@ -51,6 +57,12 @@ public class ProjectHelper {
 	private static final Log logger = LogFactory.getLog(ProjectHelper.class);
 	
 	
+	/**
+	 * <p>isOnHold.</p>
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object.
+	 * @return a boolean.
+	 */
 	public static boolean isOnHold(ProjectData projectData) {
 		return projectData.getAspects().contains(ContentModel.ASPECT_CHECKED_OUT)
 				|| projectData.getAspects().contains(ContentModel.ASPECT_WORKING_COPY)
@@ -60,6 +72,13 @@ public class ProjectHelper {
 
 	
 
+	/**
+	 * <p>getTask.</p>
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object.
+	 * @param taskListNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object.
+	 */
 	@Deprecated
 	public static TaskListDataItem getTask(ProjectData projectData, NodeRef taskListNodeRef) {
 
@@ -75,6 +94,13 @@ public class ProjectHelper {
 
 	/*
 	 * Return all tasks including subproject tasks exclude groups
+	 */
+	/**
+	 * <p>getNextTasks.</p>
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object.
+	 * @param taskListNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link java.util.List} object.
 	 */
 	@Deprecated
 	public static List<TaskListDataItem> getNextTasks(ProjectData projectData, NodeRef taskListNodeRef) {
@@ -92,6 +118,13 @@ public class ProjectHelper {
 		return taskList;
 	}
 
+	/**
+	 * <p>getPrevTasks.</p>
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object.
+	 * @param taskListDataItem a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object.
+	 * @return a {@link java.util.List} object.
+	 */
 	@Deprecated
 	public static List<TaskListDataItem> getPrevTasks(ProjectData projectData, TaskListDataItem taskListDataItem) {
 
@@ -106,6 +139,12 @@ public class ProjectHelper {
 		return taskList;
 	}
 
+	/**
+	 * <p>getLastTasks.</p>
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object.
+	 * @return a {@link java.util.List} object.
+	 */
 	@Deprecated
 	public static List<TaskListDataItem> getLastTasks(ProjectData projectData) {
 
@@ -120,6 +159,13 @@ public class ProjectHelper {
 		return taskList;
 	}
 
+	/**
+	 * <p>getChildrenTasks.</p>
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object.
+	 * @param taskListDataItem a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object.
+	 * @return a {@link java.util.List} object.
+	 */
 	@Deprecated
 	public static List<TaskListDataItem> getChildrenTasks(ProjectData projectData, TaskListDataItem taskListDataItem) {
 
@@ -132,6 +178,13 @@ public class ProjectHelper {
 		return taskList;
 	}
 
+	/**
+	 * <p>getBrethrenTask.</p>
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object.
+	 * @param nextTask a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object.
+	 * @return a {@link java.util.List} object.
+	 */
 	@Deprecated
 	public static List<TaskListDataItem> getBrethrenTask(ProjectData projectData, TaskListDataItem nextTask) {
 		List<TaskListDataItem> taskList = new ArrayList<>();
@@ -151,6 +204,15 @@ public class ProjectHelper {
 
 	
 
+	/**
+	 * <p>reOpenRefusePath.</p>
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object.
+	 * @param nextTask a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object.
+	 * @param refusedTask a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object.
+	 * @param refusedTasksToReopen a {@link java.util.List} object.
+	 * @param projectActivityService a {@link fr.becpg.repo.project.ProjectActivityService} object.
+	 */
 	public static void reOpenRefusePath(ProjectData projectData, TaskListDataItem nextTask, TaskListDataItem refusedTask,
 			List<NodeRef> refusedTasksToReopen, ProjectActivityService projectActivityService) {
 
@@ -199,6 +261,12 @@ public class ProjectHelper {
 
 	}
 
+	/**
+	 * <p>getSourceTasks.</p>
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object.
+	 * @return a {@link java.util.List} object.
+	 */
 	@Deprecated
 	public static List<TaskListDataItem> getSourceTasks(ProjectData projectData) {
 
@@ -221,6 +289,13 @@ public class ProjectHelper {
 		return taskList;
 	}
 
+	/**
+	 * <p>getDeliverables.</p>
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object.
+	 * @param taskListNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link java.util.List} object.
+	 */
 	public static List<DeliverableListDataItem> getDeliverables(ProjectData projectData, NodeRef taskListNodeRef) {
 
 		List<DeliverableListDataItem> deliverableList = new ArrayList<>();
@@ -234,6 +309,12 @@ public class ProjectHelper {
 		return deliverableList;
 	}
 
+	/**
+	 * <p>areTasksDone.</p>
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object.
+	 * @return a boolean.
+	 */
 	@Deprecated
 	public static boolean areTasksDone(ProjectData projectData) {
 
@@ -249,6 +330,13 @@ public class ProjectHelper {
 		return true;
 	}
 
+	/**
+	 * <p>areTasksDone.</p>
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object.
+	 * @param taskNodeRefs a {@link java.util.List} object.
+	 * @return a boolean.
+	 */
 	@Deprecated
 	public static boolean areTasksDone(ProjectData projectData, List<NodeRef> taskNodeRefs) {
 
@@ -283,8 +371,8 @@ public class ProjectHelper {
 	/**
 	 * completedPercent is calculated on duration property
 	 *
-	 * @param projectData
-	 * @return
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object.
+	 * @return a int.
 	 */
 	@Deprecated
 	public static int geProjectCompletionPercent(ProjectData projectData) {
@@ -308,6 +396,12 @@ public class ProjectHelper {
 		return totalWork != 0 ? (100 * workDone) / totalWork : 0;
 	}
 
+	/**
+	 * <p>getLastEndDate.</p>
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object.
+	 * @return a {@link java.util.Date} object.
+	 */
 	@Deprecated
 	public static Date getLastEndDate(ProjectData projectData) {
 		Date endDate = null;
@@ -320,6 +414,12 @@ public class ProjectHelper {
 		return endDate;
 	}
 
+	/**
+	 * <p>getLastEndDate.</p>
+	 *
+	 * @param tasks a {@link java.util.Set} object.
+	 * @return a {@link java.util.Date} object.
+	 */
 	public static Date getLastEndDate(Set<TaskWrapper> tasks) {
 		Date endDate = null;
 		for (TaskWrapper task : tasks) {
@@ -333,12 +433,24 @@ public class ProjectHelper {
 	}
 	
 
+	/**
+	 * <p>getFirstStartDate.</p>
+	 *
+	 * @param tasks a {@link java.util.Set} object.
+	 * @return a {@link java.util.Date} object.
+	 */
 	public static Date getFirstStartDate(Set<TaskWrapper> tasks) {
 		
 		return tasks.stream().filter(e -> e.isRoot() && (e.getTask()!=null && e.getTask().getStart() != null)).map(e -> e.getTask().getStart())
 				.min(Date::compareTo).orElse(null);
 	}
 
+	/**
+	 * <p>getFirstStartDate.</p>
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object.
+	 * @return a {@link java.util.Date} object.
+	 */
 	@Deprecated
 	public static Date getFirstStartDate(ProjectData projectData) {
 		List<TaskListDataItem> tasks = getNextTasks(projectData, null);
@@ -351,6 +463,12 @@ public class ProjectHelper {
 		return startDate;
 	}
 
+	/**
+	 * <p>setTaskStartDate.</p>
+	 *
+	 * @param t a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object.
+	 * @param startDate a {@link java.util.Date} object.
+	 */
 	public static void setTaskStartDate(TaskListDataItem t, Date startDate) {
 		logger.debug("task: " + t.getTaskName() + ", state: " + t.getTaskState() + ", start: " + startDate+", is group:"+t.getIsGroup());
 		if ((t.getIsGroup() || t.isPlanned() || TaskState.Cancelled.equals(t.getTaskState())
@@ -359,6 +477,12 @@ public class ProjectHelper {
 		}
 	}
 
+	/**
+	 * <p>setTaskEndDate.</p>
+	 *
+	 * @param t a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object.
+	 * @param endDate a {@link java.util.Date} object.
+	 */
 	public static void setTaskEndDate(TaskListDataItem t, Date endDate) {
 		logger.debug("task: " + t.getTaskName() + ", state: " + t.getTaskState() + ", end: " + endDate+", is group:"+t.getIsGroup());
 		if ((t.getIsGroup() || t.isPlanned() || TaskState.Cancelled.equals(t.getTaskState()) || TaskState.InProgress.equals(t.getTaskState()))
@@ -367,6 +491,12 @@ public class ProjectHelper {
 		}
 	}
 
+	/**
+	 * <p>removeTime.</p>
+	 *
+	 * @param date a {@link java.util.Date} object.
+	 * @return a {@link java.util.Date} object.
+	 */
 	public static Date removeTime(Date date) {
 		if (date == null) {
 			return null;
@@ -381,6 +511,14 @@ public class ProjectHelper {
 		}
 	}
 
+	/**
+	 * <p>calculateNextDate.</p>
+	 *
+	 * @param startDate a {@link java.util.Date} object.
+	 * @param duration a {@link java.lang.Integer} object.
+	 * @param isPlanned a boolean.
+	 * @return a {@link java.util.Date} object.
+	 */
 	public static Date calculateNextDate(Date startDate, Integer duration, boolean isPlanned) {
 
 		logger.debug("startDate: " + startDate);
@@ -412,11 +550,24 @@ public class ProjectHelper {
 		return calendar.getTime();
 	}
 
+	/**
+	 * <p>isWorkingDate.</p>
+	 *
+	 * @param calendar a {@link java.util.Calendar} object.
+	 * @return a boolean.
+	 */
 	public static boolean isWorkingDate(Calendar calendar) {
 		// saturday == 7 || sunday == 1
 		return (calendar.get(Calendar.DAY_OF_WEEK) != 7) && (calendar.get(Calendar.DAY_OF_WEEK) != 1);
 	}
 
+	/**
+	 * <p>calculateTaskDuration.</p>
+	 *
+	 * @param startDate a {@link java.util.Date} object.
+	 * @param endDate a {@link java.util.Date} object.
+	 * @return a {@link java.lang.Integer} object.
+	 */
 	public static Integer calculateTaskDuration(Date startDate, Date endDate) {
 
 		if ((startDate == null) || (endDate == null)) {
@@ -445,27 +596,66 @@ public class ProjectHelper {
 		return duration;
 	}
 
+	/**
+	 * <p>calculateEndDate.</p>
+	 *
+	 * @param startDate a {@link java.util.Date} object.
+	 * @param duration a {@link java.lang.Integer} object.
+	 * @return a {@link java.util.Date} object.
+	 */
 	public static Date calculateEndDate(Date startDate, Integer duration) {
 		return calculateNextDate(startDate, duration, true);
 	}
 
+	/**
+	 * <p>calculateNextStartDate.</p>
+	 *
+	 * @param endDate a {@link java.util.Date} object.
+	 * @return a {@link java.util.Date} object.
+	 */
 	public static Date calculateNextStartDate(Date endDate) {
 		return calculateNextDate(endDate, DURATION_NEXT_DAY, true);
 	}
 
+	/**
+	 * <p>calculateStartDate.</p>
+	 *
+	 * @param endDate a {@link java.util.Date} object.
+	 * @param duration a {@link java.lang.Integer} object.
+	 * @return a {@link java.util.Date} object.
+	 */
 	public static Date calculateStartDate(Date endDate, Integer duration) {
 		return calculateNextDate(endDate, duration, false);
 	}
 
+	/**
+	 * <p>calculatePrevEndDate.</p>
+	 *
+	 * @param startDate a {@link java.util.Date} object.
+	 * @return a {@link java.util.Date} object.
+	 */
 	public static Date calculatePrevEndDate(Date startDate) {
 		return calculateNextDate(startDate, DURATION_NEXT_DAY, false);
 	}
 
+	/**
+	 * <p>calculateDuration.</p>
+	 *
+	 * @param task a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object.
+	 * @return a {@link java.lang.Integer} object.
+	 */
 	@Deprecated
 	public static Integer calculateDuration(TaskListDataItem task) {
 		return task.getDuration() != null ? task.getDuration() : (Boolean.TRUE.equals(task.getIsMilestone())) ? DURATION_DEFAULT : null;
 	}
 
+	/**
+	 * <p>setTaskState.</p>
+	 *
+	 * @param task a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object.
+	 * @param state a {@link fr.becpg.repo.project.data.projectList.TaskState} object.
+	 * @param projectActivityService a {@link fr.becpg.repo.project.ProjectActivityService} object.
+	 */
 	public static void setTaskState(TaskListDataItem task, TaskState state, ProjectActivityService projectActivityService) {
 		if (!state.equals(task.getTaskState())) {
 			projectActivityService.postTaskStateChangeActivity(task.getNodeRef(), null, task.getTaskState().toString(), state.toString(), true);
@@ -473,6 +663,13 @@ public class ProjectHelper {
 		}
 	}
 
+	/**
+	 * <p>resetProperties.</p>
+	 *
+	 * @param classQName a {@link org.alfresco.service.namespace.QName} object.
+	 * @param properties a {@link java.util.Map} object.
+	 * @return a {@link java.util.Map} object.
+	 */
 	public static Map<QName, Serializable> resetProperties(QName classQName, Map<QName, Serializable> properties) {
 
 		if (ProjectModel.TYPE_TASK_LIST.equals(classQName)) {
@@ -494,6 +691,12 @@ public class ProjectHelper {
 		return properties;
 	}
 
+	/**
+	 * <p>hasPlannedDuration.</p>
+	 *
+	 * @param task a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object.
+	 * @return a boolean.
+	 */
 	public static boolean hasPlannedDuration(TaskListDataItem task) {
 
 		if ((task != null) && ((task.getDuration() != null) || (Boolean.TRUE.equals(task.getIsMilestone())))) {

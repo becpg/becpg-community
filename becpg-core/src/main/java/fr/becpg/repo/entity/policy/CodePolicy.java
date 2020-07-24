@@ -19,8 +19,9 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
 /**
  * The Class CodePolicy.
- * 
+ *
  * @author querephi
+ * @version $Id: $Id
  */
 public class CodePolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnAddAspectPolicy {
 
@@ -30,11 +31,17 @@ public class CodePolicy extends AbstractBeCPGPolicy implements NodeServicePolici
 
 	private AutoNumService autoNumService;
 
+	/** {@inheritDoc} */
 	public void setPolicyComponent(PolicyComponent policyComponent) {
 		this.policyComponent = policyComponent;
 	}
 
 
+	/**
+	 * <p>Setter for the field <code>autoNumService</code>.</p>
+	 *
+	 * @param autoNumService a {@link fr.becpg.repo.entity.AutoNumService} object.
+	 */
 	public void setAutoNumService(AutoNumService autoNumService) {
 		this.autoNumService = autoNumService;
 	}
@@ -48,6 +55,7 @@ public class CodePolicy extends AbstractBeCPGPolicy implements NodeServicePolici
 
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public void onAddAspect(NodeRef nodeRef, QName type) {
 		
@@ -55,6 +63,7 @@ public class CodePolicy extends AbstractBeCPGPolicy implements NodeServicePolici
 		queueNode(nodeRef);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 		

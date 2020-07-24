@@ -45,9 +45,10 @@ import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
+ * <p>ImportEntityJsonVisitor class.</p>
  *
  * @author matthieu
- *
+ * @version $Id: $Id
  */
 public class ImportEntityJsonVisitor {
 
@@ -75,6 +76,15 @@ public class ImportEntityJsonVisitor {
 
 	EntityListDAO entityListDAO;
 
+	/**
+	 * <p>Constructor for ImportEntityJsonVisitor.</p>
+	 *
+	 * @param entityDictionaryService a {@link fr.becpg.repo.entity.EntityDictionaryService} object.
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object.
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 * @param entityListDAO a {@link fr.becpg.repo.entity.EntityListDAO} object.
+	 */
 	public ImportEntityJsonVisitor(EntityDictionaryService entityDictionaryService, NamespaceService namespaceService,
 			AssociationService associationService, NodeService nodeService, EntityListDAO entityListDAO) {
 		super();
@@ -85,6 +95,16 @@ public class ImportEntityJsonVisitor {
 		this.entityListDAO = entityListDAO;
 	}
 
+	/**
+	 * <p>visit.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param in a {@link java.io.InputStream} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @throws java.io.IOException if any.
+	 * @throws org.json.JSONException if any.
+	 * @throws fr.becpg.common.BeCPGException if any.
+	 */
 	public NodeRef visit(NodeRef entityNodeRef, InputStream in) throws IOException, JSONException, BeCPGException {
 
 		try (Reader reader = new InputStreamReader(in)) {

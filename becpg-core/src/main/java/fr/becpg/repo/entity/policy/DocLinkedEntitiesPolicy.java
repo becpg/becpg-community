@@ -27,7 +27,10 @@ import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
 /**
+ * <p>DocLinkedEntitiesPolicy class.</p>
+ *
  * @author matthieu
+ * @version $Id: $Id
  */
 public class DocLinkedEntitiesPolicy extends AbstractBeCPGPolicy
 		implements NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnDeleteAssociationPolicy {
@@ -41,14 +44,25 @@ public class DocLinkedEntitiesPolicy extends AbstractBeCPGPolicy
 
 	private AssociationService associationService;
 
+	/**
+	 * <p>Setter for the field <code>entityService</code>.</p>
+	 *
+	 * @param entityService a {@link fr.becpg.repo.entity.EntityService} object.
+	 */
 	public void setEntityService(EntityService entityService) {
 		this.entityService = entityService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>associationService</code>.</p>
+	 *
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object.
+	 */
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void doInit() {
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, BeCPGModel.ASPECT_DOC_LINKED_ENTITIES,
@@ -98,6 +112,7 @@ public class DocLinkedEntitiesPolicy extends AbstractBeCPGPolicy
 		return nodeService.getChildByName(destRef, ContentModel.ASSOC_CONTAINS, name) != null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onDeleteAssociation(AssociationRef associationRef) {
 		if (BeCPGModel.ASSOC_DOC_LINKED_ENTITIES.equals(associationRef.getTypeQName())
@@ -112,6 +127,7 @@ public class DocLinkedEntitiesPolicy extends AbstractBeCPGPolicy
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onCreateAssociation(AssociationRef associationRef) {
 		if (BeCPGModel.ASSOC_DOC_LINKED_ENTITIES.equals(associationRef.getTypeQName())
@@ -126,6 +142,7 @@ public class DocLinkedEntitiesPolicy extends AbstractBeCPGPolicy
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 		for (NodeRef entityNodeRef : pendingNodes) {

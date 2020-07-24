@@ -26,12 +26,19 @@ import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
 
+/**
+ * <p>IngTypeItem class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @AlfType
 @AlfQname(qname = "bcpg:ingTypeItem")
 public class IngTypeItem extends LabelingComponent{
 
 	private static final long serialVersionUID = 182156222574786727L;
 
+    /** Constant <code>DEFAULT_GROUP</code> */
     public static final IngTypeItem DEFAULT_GROUP = new IngTypeItem();
 
 	private static final String LAST_GROUP = "LastGroup";
@@ -49,10 +56,18 @@ public class IngTypeItem extends LabelingComponent{
 	private NodeRef origNodeRef;
 	
 	
+	/**
+	 * <p>Constructor for IngTypeItem.</p>
+	 */
 	public IngTypeItem(){
 		super();
 	}
 
+	/**
+	 * <p>Constructor for IngTypeItem.</p>
+	 *
+	 * @param ingTypeItem a {@link fr.becpg.repo.product.data.ing.IngTypeItem} object.
+	 */
 	public IngTypeItem(IngTypeItem ingTypeItem) {
 		super(ingTypeItem);
 		this.decThreshold = ingTypeItem.decThreshold;
@@ -63,6 +78,11 @@ public class IngTypeItem extends LabelingComponent{
 	}
 
 	
+	/**
+	 * <p>Getter for the field <code>isDoNotDeclare</code>.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:ingTypeDoNotDeclare")
 	public Boolean getIsDoNotDeclare() {
@@ -71,23 +91,48 @@ public class IngTypeItem extends LabelingComponent{
 	
 
 
+	/**
+	 * <p>doNotDeclare.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public boolean doNotDeclare() {
 		return Boolean.TRUE.equals(this.isDoNotDeclare);
 	}
 
+	/**
+	 * <p>Setter for the field <code>isDoNotDeclare</code>.</p>
+	 *
+	 * @param doNotDeclare a {@link java.lang.Boolean} object.
+	 */
 	public void setIsDoNotDeclare(Boolean doNotDeclare) {
 		this.isDoNotDeclare = doNotDeclare;
 	}
 
 
+	/**
+	 * <p>Getter for the field <code>origNodeRef</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public NodeRef getOrigNodeRef() {
 		return origNodeRef;
 	}
 
+	/**
+	 * <p>Setter for the field <code>origNodeRef</code>.</p>
+	 *
+	 * @param origNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void setOrigNodeRef(NodeRef origNodeRef) {
 		this.origNodeRef = origNodeRef;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>isLastGroup</code>.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:ingTypeIsLastGroup")
 	public Boolean getIsLastGroup() {
@@ -95,34 +140,69 @@ public class IngTypeItem extends LabelingComponent{
 	}
 	
 	
+	/**
+	 * <p>lastGroup.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public boolean lastGroup() {
 		return Boolean.TRUE.equals(isLastGroup) || LAST_GROUP.equals(lvValue);
 	}
 
+	/**
+	 * <p>Setter for the field <code>isLastGroup</code>.</p>
+	 *
+	 * @param isLastGroup a {@link java.lang.Boolean} object.
+	 */
 	public void setIsLastGroup(Boolean isLastGroup) {
 		this.isLastGroup = isLastGroup;
 	}
 
+	/**
+	 * <p>Getter for the field <code>lvCode</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:lvCode")
 	public String getLvCode() {
 		return lvCode;
 	}
 
+	/**
+	 * <p>Setter for the field <code>lvCode</code>.</p>
+	 *
+	 * @param lvCode a {@link java.lang.String} object.
+	 */
 	public void setLvCode(String lvCode) {
 		this.lvCode = lvCode;
 	}
 
+	/**
+	 * <p>Getter for the field <code>lvValue</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:lvValue")
 	public String getLvValue() {
 		return lvValue;
 	}
 
+	/**
+	 * <p>Setter for the field <code>lvValue</code>.</p>
+	 *
+	 * @param lvValue a {@link java.lang.String} object.
+	 */
 	public void setLvValue(String lvValue) {
 		this.lvValue = lvValue;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>decThreshold</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:ingTypeDecThreshold")
 	public Double getDecThreshold() {
@@ -130,10 +210,16 @@ public class IngTypeItem extends LabelingComponent{
 	}
 
 
+	/**
+	 * <p>Setter for the field <code>decThreshold</code>.</p>
+	 *
+	 * @param decThreshold a {@link java.lang.Double} object.
+	 */
 	public void setDecThreshold(Double decThreshold) {
 		this.decThreshold = decThreshold;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public String getLegalName(Locale locale) {
 		String ret = MLTextHelper.getClosestValue(legalName, locale);
@@ -145,16 +231,19 @@ public class IngTypeItem extends LabelingComponent{
 		return ret;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public IngTypeItem clone() {
 		return new IngTypeItem(this);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "IngTypeItem [decThreshold=" + decThreshold + ", lvValue=" + lvValue + "]";
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -168,6 +257,7 @@ public class IngTypeItem extends LabelingComponent{
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

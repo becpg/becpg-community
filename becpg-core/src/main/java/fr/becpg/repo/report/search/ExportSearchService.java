@@ -30,27 +30,30 @@ import fr.becpg.report.client.ReportFormat;
  * The Interface ExportSearchService.
  *
  * @author querephi,matthieu
+ * @version $Id: $Id
  */
 public interface ExportSearchService {
 
 	/**
 	 * Create a report from searchResults
-	 * @param nodeType
-	 * @param templateNodeRef
-	 * @param searchResults
-	 * @param reportFormat
-	 * @param outputStream
+	 *
+	 * @param nodeType a {@link org.alfresco.service.namespace.QName} object.
+	 * @param templateNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param searchResults a {@link java.util.List} object.
+	 * @param reportFormat a {@link fr.becpg.report.client.ReportFormat} object.
+	 * @param outputStream a {@link java.io.OutputStream} object.
 	 */
 	void createReport(QName nodeType, NodeRef templateNodeRef, List<NodeRef> searchResults, ReportFormat reportFormat, OutputStream outputStream);
 
 	
 	/**
 	 * Create report asynchronously
-	 * @param nodeType
-	 * @param templateNodeRef
-	 * @param searchResults
-	 * @param reportFormat
-	 * @return
+	 *
+	 * @param nodeType a {@link org.alfresco.service.namespace.QName} object.
+	 * @param templateNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param searchResults a {@link java.util.List} object.
+	 * @param reportFormat a {@link fr.becpg.report.client.ReportFormat} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
 	NodeRef createReport(QName nodeType, NodeRef templateNodeRef, List<NodeRef> searchResults, ReportFormat reportFormat);
 }

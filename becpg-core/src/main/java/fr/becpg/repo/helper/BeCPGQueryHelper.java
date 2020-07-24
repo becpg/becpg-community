@@ -17,20 +17,33 @@ import fr.becpg.repo.search.lucene.analysis.AbstractBeCPGAnalyzer;
 import fr.becpg.repo.search.lucene.analysis.EnglishBeCPGAnalyser;
 import fr.becpg.repo.search.lucene.analysis.FrenchBeCPGAnalyser;
 
+/**
+ * <p>BeCPGQueryHelper class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class BeCPGQueryHelper {
 
 	private static final Log logger = LogFactory.getLog(BeCPGQueryHelper.class);
-	
+
+	/** Constant <code>SUFFIX_ALL="*"</code> */
 	public static final String SUFFIX_ALL = "*";
-	
+
 	private static final String SUFFIX_SPACE = " ";
 	private static final String SUFFIX_DOUBLE_QUOTE = "\"";
 	private static final String SUFFIX_SIMPLE_QUOTE = "'";
-	
-	
-	
+
 	private static final Analyzer luceneAnaLyzer = null;
 
+	/**
+	 * <p>isQueryMatch.</p>
+	 *
+	 * @param query a {@link java.lang.String} object.
+	 * @param entityName a {@link java.lang.String} object.
+	 * @param dictionaryService a {@link org.alfresco.service.cmr.dictionary.DictionaryService} object.
+	 * @return a boolean.
+	 */
 	public static boolean isQueryMatch(String query, String entityName, DictionaryService dictionaryService) {
 		if (query != null) {
 
@@ -44,7 +57,6 @@ public class BeCPGQueryHelper {
 				logger.debug("Analyzing " + entityName + " with query " + query + " using analyzer : " + analyzer.getClass().getName());
 			}
 
-			
 			TokenStream querySource = null;
 			Reader queryReader;
 			TokenStream productNameSource = null;
@@ -101,22 +113,15 @@ public class BeCPGQueryHelper {
 		return false;
 	}
 
-	
-	
-	
-	
-	
-	
-
+	// TODO escape + - && || ! ( ) { } [ ] ^ " ~ * ? : \
 	/**
-	 * Prepare query. //TODO escape + - && || ! ( ) { } [ ] ^ " ~ * ? : \
+	 * <p>prepareQuery.</p>
 	 *
-	 * @param query
-	 *            the query
-	 * @return the string
-	 * @throws IOException
+	 * @param dictionaryService a {@link org.alfresco.service.cmr.dictionary.DictionaryService} object.
+	 * @param query a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
 	 */
-	public static String prepareQuery(DictionaryService dictionaryService, String query ) {
+	public static String prepareQuery(DictionaryService dictionaryService, String query) {
 
 		logger.debug("Query before prepare:" + query);
 		if ((query != null) && !(query.endsWith(SUFFIX_ALL) || query.endsWith(SUFFIX_SPACE) || query.endsWith(SUFFIX_DOUBLE_QUOTE)
@@ -191,19 +196,14 @@ public class BeCPGQueryHelper {
 		return luceneAnaLyzer;
 	}
 
-
-
-
-
-
-
-
+	/**
+	 * <p>isAllQuery.</p>
+	 *
+	 * @param query a {@link java.lang.String} object.
+	 * @return a boolean.
+	 */
 	public static boolean isAllQuery(String query) {
 		return (query != null) && query.trim().equals(BeCPGQueryHelper.SUFFIX_ALL);
 	}
-	
-	
-	
-	
 
 }

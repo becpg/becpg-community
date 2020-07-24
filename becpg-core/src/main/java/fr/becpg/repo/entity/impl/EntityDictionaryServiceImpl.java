@@ -41,8 +41,10 @@ import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.RepositoryEntityDefReader;
 
 /**
- * 
+ * <p>EntityDictionaryServiceImpl class.</p>
+ *
  * @author matthieu Fast and cached access to dataDictionnary
+ * @version $Id: $Id
  */
 @Service("entityDictionaryService")
 public class EntityDictionaryServiceImpl implements EntityDictionaryService {
@@ -60,32 +62,38 @@ public class EntityDictionaryServiceImpl implements EntityDictionaryService {
 	@Autowired
 	public RepositoryEntityDefReader<RepositoryEntity> repositoryEntityDefReader;
 
+	/** {@inheritDoc} */
 	@Override
 	public QName getDefaultPivotAssoc(QName dataListItemType) {
 		return repositoryEntityDefReader.getDefaultPivoAssocName(dataListItemType);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isMultiLevelDataList(QName dataListItemType) {
 		return repositoryEntityDefReader.isMultiLevelDataList(dataListItemType);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public boolean isMultiLevelLeaf(QName entityType) {
 		return repositoryEntityDefReader.isMultiLevelLeaf(entityType);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public QName getMultiLevelSecondaryPivot(QName dataListItemType) {
 		return repositoryEntityDefReader.getMultiLevelSecondaryPivot(dataListItemType);
 	}
 	
+   /** {@inheritDoc} */
    @Override
    public void registerPropDefMapping(QName orig, QName dest){
 	   propDefMapping.put(orig, dest);
    }
 	
 	
+	/** {@inheritDoc} */
 	@Override
 	public List<AssociationDefinition> getPivotAssocDefs(QName sourceType) {
 		List<AssociationDefinition> ret = new ArrayList<>();
@@ -98,11 +106,13 @@ public class EntityDictionaryServiceImpl implements EntityDictionaryService {
 		return ret;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public QName getTargetType(QName assocName) {
 		return dictionaryService.getAssociation(assocName).getTargetClass().getName();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public ClassAttributeDefinition findMatchingPropDef(QName itemType, QName newItemType, QName fieldQname) {
 		
@@ -122,6 +132,7 @@ public class EntityDictionaryServiceImpl implements EntityDictionaryService {
 	}
 	
 	
+	/** {@inheritDoc} */
 	@Override
 	public ClassAttributeDefinition getPropDef(final QName fieldQname) {
 
@@ -138,6 +149,7 @@ public class EntityDictionaryServiceImpl implements EntityDictionaryService {
 				});
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isSubClass(final QName className, final QName ofClassName) {
 		return beCPGCacheService.getFromCache(EntityDictionaryServiceImpl.class.getName(), className.toString() + "_" + ofClassName.toString() + ".isSubClass",
@@ -148,6 +160,7 @@ public class EntityDictionaryServiceImpl implements EntityDictionaryService {
 				});
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Collection<QName> getSubTypes(final QName typeQname) {
 		return beCPGCacheService.getFromCache(EntityDictionaryServiceImpl.class.getName(), typeQname.toString() + ".getSubTypes",
@@ -160,6 +173,7 @@ public class EntityDictionaryServiceImpl implements EntityDictionaryService {
 
 	
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isAssoc(QName assocName) {
 		return dictionaryService.getAssociation(assocName)!=null;
@@ -167,31 +181,37 @@ public class EntityDictionaryServiceImpl implements EntityDictionaryService {
 
 
 	
+	/** {@inheritDoc} */
 	@Override
 	public TypeDefinition getType(QName type) {
 		return dictionaryService.getType(type);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public AspectDefinition getAspect(QName aspect) {
 		return dictionaryService.getAspect(aspect);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public PropertyDefinition getProperty(QName key) {
 		return dictionaryService.getProperty(key);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public AssociationDefinition getAssociation(QName qName) {
 		return dictionaryService.getAssociation(qName);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public DictionaryService getDictionaryService() {
 		return dictionaryService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public ClassDefinition getClass(QName type) {
 		return dictionaryService.getClass(type);

@@ -27,9 +27,10 @@ import org.alfresco.service.cmr.repository.MLText;
 import fr.becpg.repo.helper.MLTextHelper;
 
 /**
- * 
- * @author matthieu
+ * <p>SeparatorRule class.</p>
  *
+ * @author matthieu
+ * @version $Id: $Id
  */
 public class SeparatorRule {
 
@@ -39,6 +40,13 @@ public class SeparatorRule {
 
 	private MLText mlText;
 
+	/**
+	 * <p>Constructor for SeparatorRule.</p>
+	 *
+	 * @param mlText a {@link org.alfresco.service.cmr.repository.MLText} object.
+	 * @param threshold a {@link java.lang.Double} object.
+	 * @param locales a {@link java.util.List} object.
+	 */
 	public SeparatorRule( MLText mlText, Double threshold, List<String> locales) {
 		super();
 		this.threshold = threshold;
@@ -50,20 +58,41 @@ public class SeparatorRule {
 		}
 	}
 	
+	/**
+	 * <p>isThreshold.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public boolean isThreshold(){
 		return threshold!=null;
 	}
 	
 	
+	/**
+	 * <p>Setter for the field <code>threshold</code>.</p>
+	 *
+	 * @param threshold a {@link java.lang.Double} object.
+	 */
 	public void setThreshold(Double threshold) {
 		this.threshold = threshold;
 	}
 	
 
+	/**
+	 * <p>Getter for the field <code>threshold</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public Double getThreshold() {
 		return threshold;
 	}
 
+	/**
+	 * <p>getClosestValue.</p>
+	 *
+	 * @param locale a {@link java.util.Locale} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getClosestValue(Locale locale) {
 		String ret = null;
 
@@ -75,6 +104,12 @@ public class SeparatorRule {
 	}
 
 
+	/**
+	 * <p>matchLocale.</p>
+	 *
+	 * @param locale a {@link java.util.Locale} object.
+	 * @return a boolean.
+	 */
 	public boolean matchLocale(Locale locale) {
 		return locales.isEmpty() || locales.contains(locale);
 	}

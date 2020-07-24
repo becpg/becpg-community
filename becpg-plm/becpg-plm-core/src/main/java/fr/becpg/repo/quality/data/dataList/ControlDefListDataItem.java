@@ -24,6 +24,12 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
 
+/**
+ * <p>ControlDefListDataItem class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @AlfType
 @AlfQname(qname = "qa:controlDefList")
 public class ControlDefListDataItem extends ControlListDataItem {
@@ -34,6 +40,17 @@ public class ControlDefListDataItem extends ControlListDataItem {
 	private static final long serialVersionUID = 2821254496316637207L;
 
 	
+	/**
+	 * <p>Constructor for ControlDefListDataItem.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param type a {@link java.lang.String} object.
+	 * @param mini a {@link java.lang.Double} object.
+	 * @param maxi a {@link java.lang.Double} object.
+	 * @param required a {@link java.lang.Boolean} object.
+	 * @param method a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param characts a {@link java.util.List} object.
+	 */
 	public ControlDefListDataItem(NodeRef nodeRef, String type, Double mini, Double maxi, Boolean required, NodeRef method, List<NodeRef> characts){
 		setNodeRef(nodeRef);
 		setType(type);
@@ -44,15 +61,25 @@ public class ControlDefListDataItem extends ControlListDataItem {
 		setCharacts(characts);
 	}
 
+	/**
+	 * <p>Constructor for ControlDefListDataItem.</p>
+	 */
 	public ControlDefListDataItem() {
 		super();
 	}
 
+	/**
+	 * <p>Constructor for ControlDefListDataItem.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param name a {@link java.lang.String} object.
+	 */
 	public ControlDefListDataItem(NodeRef nodeRef, String name) {
 		super(nodeRef, name);
 	}
 
 	
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "ControlDefListDataItem [type=" + type + ", mini=" + mini + ", maxi=" + maxi + ", required=" + required + ", method=" + method + ", characts=" + characts + "]";

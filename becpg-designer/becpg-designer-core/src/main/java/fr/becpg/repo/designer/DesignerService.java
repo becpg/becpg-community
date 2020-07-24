@@ -29,38 +29,128 @@ import fr.becpg.repo.designer.data.DesignerTree;
 import fr.becpg.repo.designer.data.FormControl;
 
 /**
- * 
- * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
+ * <p>DesignerService interface.</p>
  *
+ * @author "Matthieu Laborie"
+ * @version $Id: $Id
  */
 public interface DesignerService {
 
+	/**
+	 * <p>createModelAspectNode.</p>
+	 *
+	 * @param parentNode a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param modelXml a {@link java.io.InputStream} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	NodeRef createModelAspectNode(NodeRef parentNode, InputStream modelXml);
 
+	/**
+	 * <p>writeXml.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	void writeXml(NodeRef nodeRef);
 	
+	/**
+	 * <p>getDesignerTree.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link fr.becpg.repo.designer.data.DesignerTree} object.
+	 */
 	DesignerTree getDesignerTree(NodeRef nodeRef);
 	
+	/**
+	 * <p>createModelElement.</p>
+	 *
+	 * @param parentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param typeName a {@link org.alfresco.service.namespace.QName} object.
+	 * @param assocName a {@link org.alfresco.service.namespace.QName} object.
+	 * @param props a {@link java.util.Map} object.
+	 * @param modelTemplate a {@link java.lang.String} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	NodeRef createModelElement(NodeRef parentNodeRef, QName typeName, QName assocName, Map<QName, Serializable> props, String modelTemplate);
 
+	/**
+	 * <p>prefixName.</p>
+	 *
+	 * @param elementRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param name a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	String prefixName(NodeRef elementRef, String name);
 
+	/**
+	 * <p>findModelNodeRef.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	NodeRef findModelNodeRef(NodeRef nodeRef);
 
+	/**
+	 * <p>publish.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	void publish(NodeRef nodeRef);
 
+	/**
+	 * <p>getFormControls.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	List<FormControl> getFormControls();
 
+	/**
+	 * <p>moveElement.</p>
+	 *
+	 * @param from a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param to a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	NodeRef moveElement(NodeRef from, NodeRef to);
 
+	/**
+	 * <p>findOrCreateModel.</p>
+	 *
+	 * @param modelName a {@link java.lang.String} object.
+	 * @param modelTemplate a {@link java.lang.String} object.
+	 * @param templateContext a {@link java.util.Map} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	NodeRef findOrCreateModel(String modelName, String modelTemplate, Map<String, Object> templateContext);
 
+	/**
+	 * <p>findOrCreateConfig.</p>
+	 *
+	 * @param configName a {@link java.lang.String} object.
+	 * @param modelTemplate a {@link java.lang.String} object.
+	 * @param templateContext a {@link java.util.Map} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	NodeRef findOrCreateConfig(String configName, String modelTemplate, Map<String, Object> templateContext);
 	
+	/**
+	 * <p>createAndPublishConfig.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	void createAndPublishConfig(NodeRef nodeRef);
 
+	/**
+	 * <p>unpublish.</p>
+	 *
+	 * @param parentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	void unpublish(NodeRef parentNodeRef);
 	
+	/**
+	 * <p>unpublish.</p>
+	 *
+	 * @param fileName a {@link java.lang.String} object.
+	 */
 	void unpublish(String fileName);
 
 	String export(NodeRef nodeRef) ;

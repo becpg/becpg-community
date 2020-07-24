@@ -17,11 +17,18 @@ import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AttributeExtractorService;
 
+/**
+ * <p>BeCPGIntegrityChecker class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class BeCPGIntegrityChecker extends IntegrityChecker {
 
 	private static final String MSG_INTEGRITY_MULTIPLICITY = "integrity-checker.association-multiplicity-error";
 	private static final String MSG_INTEGRITY_CONSTRAINT = "integrity-checker.constraint-error";
 
+	/** Constant <code>targetNodeRefRegex</code> */
 	public final static Pattern targetNodeRefRegex = Pattern.compile("   Source Node: (.*)", Pattern.MULTILINE);
 
 	private EntityDictionaryService entityDictionaryService;
@@ -32,18 +39,34 @@ public class BeCPGIntegrityChecker extends IntegrityChecker {
 
 	private NodeService nodeService;
 
+	/**
+	 * <p>Setter for the field <code>entityDictionaryService</code>.</p>
+	 *
+	 * @param entityDictionaryService a {@link fr.becpg.repo.entity.EntityDictionaryService} object.
+	 */
 	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
 		this.entityDictionaryService = entityDictionaryService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>attributeExtractorService</code>.</p>
+	 *
+	 * @param attributeExtractorService a {@link fr.becpg.repo.helper.AttributeExtractorService} object.
+	 */
 	public void setAttributeExtractorService(AttributeExtractorService attributeExtractorService) {
 		this.attributeExtractorService = attributeExtractorService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityListDAO</code>.</p>
+	 *
+	 * @param entityListDAO a {@link fr.becpg.repo.entity.EntityListDAO} object.
+	 */
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void setNodeService(NodeService nodeService) {
 		// Important do not remove
@@ -52,6 +75,8 @@ public class BeCPGIntegrityChecker extends IntegrityChecker {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * Runs several types of checks, querying specifically for events that will
 	 * necessitate each type of test.
 	 * <p>

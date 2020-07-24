@@ -20,9 +20,21 @@ package fr.becpg.repo.repository.filters;
 import java.util.function.Predicate;
 
 
+/**
+ * <p>DataListFilter interface.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public interface DataListFilter<T,K> {
 	
 	
+	/**
+	 * <p>createPredicate.</p>
+	 *
+	 * @param data a T object.
+	 * @return a {@link java.util.function.Predicate} object.
+	 */
 	Predicate<K> createPredicate(T data);
 	
 	

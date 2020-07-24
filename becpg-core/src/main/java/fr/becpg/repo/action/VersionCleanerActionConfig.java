@@ -54,6 +54,12 @@ import org.alfresco.service.cmr.version.VersionType;
  * toutes les versions de l'historique.
  */
 
+/**
+ * <p>VersionCleanerActionConfig class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class VersionCleanerActionConfig {
 
 	private enum VersionCleanerType {
@@ -67,6 +73,14 @@ public class VersionCleanerActionConfig {
 	Integer numberOfDayMajor;
 	Integer numberByDayMajor;
 
+	/**
+	 * <p>setConfig.</p>
+	 *
+	 * @param versionTypeString a {@link java.lang.String} object.
+	 * @param numberOfVersion a {@link java.lang.Integer} object.
+	 * @param numberOfDay a {@link java.lang.Integer} object.
+	 * @param numberByDay a {@link java.lang.Integer} object.
+	 */
 	public void setConfig(String versionTypeString, Integer numberOfVersion, Integer numberOfDay, Integer numberByDay) {
 		VersionCleanerType versionType = VersionCleanerType.valueOf(versionTypeString);
 
@@ -129,9 +143,12 @@ public class VersionCleanerActionConfig {
 		return majorToKeep;
 	}
 
+	
 	/**
-	 * @param allVersions
-	 * @return
+	 * <p>versionsToDelete.</p>
+	 *
+	 * @param versions a {@link java.util.Collection} object.
+	 * @return a {@link java.util.Collection} object.
 	 */
 	public Collection<Version> versionsToDelete(Collection<Version> versions) {
 
@@ -158,6 +175,12 @@ public class VersionCleanerActionConfig {
 			return ret;
 	}
 
+	/**
+	 * <p>removeTime.</p>
+	 *
+	 * @param date a {@link java.util.Date} object.
+	 * @return a {@link java.util.Date} object.
+	 */
 	public Date removeTime(Date date) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
@@ -168,6 +191,7 @@ public class VersionCleanerActionConfig {
 		return cal.getTime();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "VersionConfig [numberOfVersionMinor=" + numberOfVersionMinor + ", numberOfDayMinor=" + numberOfDayMinor + ", numberByDayMinor=" + numberByDayMinor

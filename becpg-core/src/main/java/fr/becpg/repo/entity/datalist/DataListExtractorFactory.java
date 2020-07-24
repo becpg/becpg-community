@@ -19,11 +19,28 @@ package fr.becpg.repo.entity.datalist;
 
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 
+/**
+ * <p>DataListExtractorFactory interface.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public interface DataListExtractorFactory {
 
 	
+	/**
+	 * <p>getExtractor.</p>
+	 *
+	 * @param dataListFilter a {@link fr.becpg.repo.entity.datalist.data.DataListFilter} object.
+	 * @return a {@link fr.becpg.repo.entity.datalist.DataListExtractor} object.
+	 */
 	DataListExtractor getExtractor(DataListFilter dataListFilter);
 
+	/**
+	 * <p>registerExtractor.</p>
+	 *
+	 * @param extractor a {@link fr.becpg.repo.entity.datalist.DataListExtractor} object.
+	 */
 	void registerExtractor(DataListExtractor extractor);
 
 	

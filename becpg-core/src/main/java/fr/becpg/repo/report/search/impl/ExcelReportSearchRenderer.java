@@ -37,6 +37,12 @@ import fr.becpg.repo.report.search.actions.ExcelSearchAction;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.report.client.ReportFormat;
 
+/**
+ * <p>ExcelReportSearchRenderer class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class ExcelReportSearchRenderer implements SearchReportRenderer {
 
@@ -63,6 +69,7 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 	@Autowired
 	private ExcelReportSearchPlugin[] excelReportSearchPlugins;
 
+	/** {@inheritDoc} */
 	@Override
 	public void renderReport(NodeRef tplNodeRef, List<NodeRef> searchResults, ReportFormat reportFormat, OutputStream outputStream) {
 
@@ -154,6 +161,13 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 		
 	}
 
+	/**
+	 * <p>readHeader.</p>
+	 *
+	 * @param sheet a {@link org.apache.poi.xssf.usermodel.XSSFSheet} object.
+	 * @param mainType a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link fr.becpg.repo.report.search.impl.ExcelReportSearchRenderer.ExcelSheetExportContext} object.
+	 */
 	public ExcelSheetExportContext readHeader(XSSFSheet sheet, QName mainType) {
 		int rownum = 0;
 		Row headerRow = sheet.getRow(rownum++);
@@ -200,6 +214,14 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 		return null;
 	}
 
+	/**
+	 * <p>fillSheet.</p>
+	 *
+	 * @param sheet a {@link org.apache.poi.xssf.usermodel.XSSFSheet} object.
+	 * @param searchResults a {@link java.util.List} object.
+	 * @param excelSheetExportContext a {@link fr.becpg.repo.report.search.impl.ExcelReportSearchRenderer.ExcelSheetExportContext} object.
+	 * @return a {@link org.alfresco.service.namespace.QName} object.
+	 */
 	public QName fillSheet(XSSFSheet sheet, List<NodeRef> searchResults, ExcelSheetExportContext excelSheetExportContext) {
 		if (excelSheetExportContext != null) {
 			ExcelReportSearchPlugin plugin = null;
@@ -294,6 +316,7 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 		return attributeExtractorService.readExtractStructure(itemType, metadataFields);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isApplicable(NodeRef templateNodeRef, ReportFormat reportFormat) {
 		return ReportFormat.XLSX.equals(reportFormat) &&  (((String) nodeService.getProperty(templateNodeRef, ContentModel.PROP_NAME))
@@ -301,6 +324,7 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 				.endsWith(ReportTplService.PARAM_VALUE_XLSMREPORT_EXTENSION));
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void executeAction(NodeRef templateNodeRef, NodeRef downloadNode, ReportFormat reportFormat) {
 		Action action = actionService.createAction("excelSearchAction");

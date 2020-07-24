@@ -24,6 +24,12 @@ import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.model.CompositionDataItem;
 
+/**
+ * <p>ProcessListView class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class ProcessListView extends AbstractProductDataView {
 
 	/**
@@ -33,6 +39,11 @@ public class ProcessListView extends AbstractProductDataView {
 	private List<ProcessListDataItem> processList;
 	
 	
+	/**
+	 * <p>Getter for the field <code>processList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	@DataList
 	@AlfQname(qname="mpm:processList")
 	public List<ProcessListDataItem> getProcessList() {
@@ -40,16 +51,23 @@ public class ProcessListView extends AbstractProductDataView {
 	}
 
 	
+	/** {@inheritDoc} */
 	@Override
 	public List<? extends CompositionDataItem> getMainDataList() {
 		return getProcessList();
 	}
 	
+	/**
+	 * <p>Setter for the field <code>processList</code>.</p>
+	 *
+	 * @param processList a {@link java.util.List} object.
+	 */
 	public void setProcessList(List<ProcessListDataItem> processList) {
 		this.processList = processList;
 	}
 
 	
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -58,6 +76,7 @@ public class ProcessListView extends AbstractProductDataView {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -76,6 +95,7 @@ public class ProcessListView extends AbstractProductDataView {
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "ProcessListView [processList=" + processList + "]";

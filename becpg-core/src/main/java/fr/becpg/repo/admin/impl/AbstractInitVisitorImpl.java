@@ -43,139 +43,159 @@ import fr.becpg.repo.helper.TranslateHelper;
  * Abstract class used to initialize repository, modules.
  *
  * @author querephi
+ * @version $Id: $Id
  */
-public abstract class AbstractInitVisitorImpl implements InitVisitor {		
-	
+public abstract class AbstractInitVisitorImpl implements InitVisitor {
+
+	/** Constant <code>logger</code> */
 	protected static final Log logger = LogFactory.getLog(AbstractInitVisitorImpl.class);
-	
 
 	private static final String LOCALIZATION_PFX_GROUP = "becpg.group";
-	
+
 	@Autowired
 	protected NodeService nodeService;
-	
+
 	@Autowired
 	protected FileFolderService fileFolderService;
-	
+
 	@Autowired
 	protected RuleService ruleService;
-	
+
 	@Autowired
 	protected RepoService repoService;
 
 	@Autowired
 	protected ActionService actionService;
-	
+
 	@Autowired
 	protected AuthorityService authorityService;
 
-		
 	/**
-	 * Visit folder.
+	 * <p>visitFolder.</p>
 	 *
-	 * @param parentNodeRef the parent node ref
-	 * @param folderPath the folder path
-	 * @param locale the locale
-	 * @return the node ref
+	 * @param parentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param folderPath a {@link java.lang.String} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
 	protected NodeRef visitFolder(NodeRef parentNodeRef, String folderPath) {
-		
-		//get translated message			
-		String folderName = TranslateHelper.getTranslatedPath(folderPath);		
-		if(folderName == null){
+
+		// get translated message
+		String folderName = TranslateHelper.getTranslatedPath(folderPath);
+		if (folderName == null) {
 			folderName = folderPath;
-		}				
-		NodeRef folderNodeRef = repoService.getFolderByPath(parentNodeRef, folderPath);		
-	    if(folderNodeRef == null){
+		}
+		NodeRef folderNodeRef = repoService.getFolderByPath(parentNodeRef, folderPath);
+		if (folderNodeRef == null) {
 
-	    	logger.info("Create folder, path: " + folderPath + " - translatedName: " + folderName);	    		    	
-	    	//logger.debug("QName: " + QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, folderPath));
-	    	
-	    	folderNodeRef = repoService.getOrCreateFolderByPath(parentNodeRef, folderPath, folderName);
-	    	nodeService.setProperty(folderNodeRef, ContentModel.PROP_TITLE, TranslateHelper.getTranslatedPathMLText(folderPath));
-	    	
-	    	visitRules(folderNodeRef, folderPath);
-	    	visitWF(folderNodeRef, folderPath);	    	
-	    }
-	    
-	    visitPermissions(folderNodeRef, folderPath);
-	    visitFiles(folderNodeRef, folderPath);
-	    vivitFolderAspects(folderNodeRef, folderPath);
-	    
-	    return folderNodeRef;
-	}
-	
-	protected void vivitFolderAspects(NodeRef folderNodeRef, String folderName) {
+			logger.info("Create folder, path: " + folderPath + " - translatedName: " + folderName);
+			// logger.debug("QName: " +
+			// QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+			// folderPath));
 
-		
-	}
+			folderNodeRef = repoService.getOrCreateFolderByPath(parentNodeRef, folderPath, folderName);
+			nodeService.setProperty(folderNodeRef, ContentModel.PROP_TITLE, TranslateHelper.getTranslatedPathMLText(folderPath));
 
-	protected void visitFiles(NodeRef folderNodeRef, String folderName) {
-		
+			visitRules(folderNodeRef, folderPath);
+			visitWF(folderNodeRef, folderPath);
+		}
+
+		visitPermissions(folderNodeRef, folderPath);
+		visitFiles(folderNodeRef, folderPath);
+		vivitFolderAspects(folderNodeRef, folderPath);
+
+		return folderNodeRef;
 	}
 
 	/**
-	 * Visit rules.
+	 * <p>vivitFolderAspects.</p>
 	 *
-	 * @param nodeRef the node ref
-	 * @param folderName the folder name
+	 * @param folderNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param folderName a {@link java.lang.String} object.
+	 */
+	protected void vivitFolderAspects(NodeRef folderNodeRef, String folderName) {
+
+	}
+
+	/**
+	 * <p>visitFiles.</p>
+	 *
+	 * @param folderNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param folderName a {@link java.lang.String} object.
+	 */
+	protected void visitFiles(NodeRef folderNodeRef, String folderName) {
+
+	}
+
+	/**
+	 * <p>visitRules.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param folderName a {@link java.lang.String} object.
 	 */
 	protected void visitRules(NodeRef nodeRef, String folderName) {
 	}
-	
+
 	/**
-	 * Visit wf.
+	 * <p>visitWF.</p>
 	 *
-	 * @param nodeRef the node ref
-	 * @param folderName the folder name
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param folderName a {@link java.lang.String} object.
 	 */
 	protected void visitWF(NodeRef nodeRef, String folderName) {
 	}
-	
+
 	/**
-	 * Visit permissions.
+	 * <p>visitPermissions.</p>
 	 *
-	 * @param nodeRef the node ref
-	 * @param folderName the folder name
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param folderName a {@link java.lang.String} object.
 	 */
 	protected void visitPermissions(NodeRef nodeRef, String folderName) {
 	}
-	
+
 	/**
-	 * Creates the rule specialise type.
+	 * <p>createRuleSpecialiseType.</p>
 	 *
-	 * @param nodeRef the node ref
-	 * @param applyToChildren the apply to children
-	 * @param type the type
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param applyToChildren a boolean.
+	 * @param type a {@link org.alfresco.service.namespace.QName} object.
 	 */
-	protected void createRuleSpecialiseType(NodeRef nodeRef, boolean applyToChildren, QName type){
-		
-	    // Action : apply type
-	    Map<String,Serializable> params = new HashMap<>();
-  	  	params.put(SpecialiseTypeActionExecuter.PARAM_TYPE_NAME, type);
-	    CompositeAction compositeAction = actionService.createCompositeAction();
-	    Action myAction= actionService.createAction(SpecialiseTypeActionExecuter.NAME, params);
-	    compositeAction.addAction(myAction);
-	    	   
-	    // Conditions for the Rule : type must be different
-	    ActionCondition actionCondition = actionService.createActionCondition(IsSubTypeEvaluator.NAME);
-	    actionCondition.setParameterValue(IsSubTypeEvaluator.PARAM_TYPE, type);
-	    actionCondition.setInvertCondition(true);
-	    compositeAction.addActionCondition(actionCondition);
-	   	    
-	    // Create Rule
+	protected void createRuleSpecialiseType(NodeRef nodeRef, boolean applyToChildren, QName type) {
+
+		// Action : apply type
+		Map<String, Serializable> params = new HashMap<>();
+		params.put(SpecialiseTypeActionExecuter.PARAM_TYPE_NAME, type);
+		CompositeAction compositeAction = actionService.createCompositeAction();
+		Action myAction = actionService.createAction(SpecialiseTypeActionExecuter.NAME, params);
+		compositeAction.addAction(myAction);
+
+		// Conditions for the Rule : type must be different
+		ActionCondition actionCondition = actionService.createActionCondition(IsSubTypeEvaluator.NAME);
+		actionCondition.setParameterValue(IsSubTypeEvaluator.PARAM_TYPE, type);
+		actionCondition.setInvertCondition(true);
+		compositeAction.addActionCondition(actionCondition);
+
+		// Create Rule
 		Rule rule = new Rule();
-	    rule.setTitle("Specialise type");
-	    rule.setDescription("Every item created will have this type");
-	    rule.applyToChildren(applyToChildren);
-	    rule.setExecuteAsynchronously(false);
-	    rule.setRuleDisabled(false);
-	    rule.setRuleType(RuleType.INBOUND);
-	    rule.setAction(compositeAction);	    	       	    
-	    ruleService.saveRule(nodeRef, rule);
+		rule.setTitle("Specialise type");
+		rule.setDescription("Every item created will have this type");
+		rule.applyToChildren(applyToChildren);
+		rule.setExecuteAsynchronously(false);
+		rule.setRuleDisabled(false);
+		rule.setRuleType(RuleType.INBOUND);
+		rule.setAction(compositeAction);
+		ruleService.saveRule(nodeRef, rule);
 	}
-	
-	protected void createRuleAspect(NodeRef nodeRef, boolean applyToChildren, QName type , QName aspect) {
+
+	/**
+	 * <p>createRuleAspect.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param applyToChildren a boolean.
+	 * @param type a {@link org.alfresco.service.namespace.QName} object.
+	 * @param aspect a {@link org.alfresco.service.namespace.QName} object.
+	 */
+	protected void createRuleAspect(NodeRef nodeRef, boolean applyToChildren, QName type, QName aspect) {
 
 		// action
 		CompositeAction compositeAction = actionService.createCompositeAction();
@@ -185,11 +205,11 @@ public abstract class AbstractInitVisitorImpl implements InitVisitor {
 		compositeAction.addAction(action);
 
 		// Conditions for the Rule : type must be equals
-	    ActionCondition typeCondition = actionService.createActionCondition(IsSubTypeEvaluator.NAME);
-	    typeCondition.setParameterValue(IsSubTypeEvaluator.PARAM_TYPE, type);
-	    typeCondition.setInvertCondition(false);
+		ActionCondition typeCondition = actionService.createActionCondition(IsSubTypeEvaluator.NAME);
+		typeCondition.setParameterValue(IsSubTypeEvaluator.PARAM_TYPE, type);
+		typeCondition.setInvertCondition(false);
 		compositeAction.addActionCondition(typeCondition);
-		
+
 		ActionCondition aspectCondition = actionService.createActionCondition(HasAspectEvaluator.NAME);
 		aspectCondition.setParameterValue(HasAspectEvaluator.PARAM_ASPECT, aspect);
 		aspectCondition.setInvertCondition(true);
@@ -200,19 +220,24 @@ public abstract class AbstractInitVisitorImpl implements InitVisitor {
 		rule.setTitle("Add entityTpl aspect");
 		rule.setDescription("Add entityTpl aspect to the created node");
 		rule.applyToChildren(applyToChildren);
-	    rule.setExecuteAsynchronously(false);
-	    rule.setRuleDisabled(false);
+		rule.setExecuteAsynchronously(false);
+		rule.setRuleDisabled(false);
 		rule.setRuleType(RuleType.INBOUND);
-		rule.setAction(compositeAction);		
+		rule.setAction(compositeAction);
 		ruleService.saveRule(nodeRef, rule);
 
 	}
-	
+
+	/**
+	 * <p>createGroups.</p>
+	 *
+	 * @param groups an array of {@link java.lang.String} objects.
+	 */
 	protected void createGroups(String[] groups) {
 
 		Set<String> zones = new HashSet<>();
 		zones.add(AuthorityService.ZONE_APP_DEFAULT);
-		//#3204 zones.add(AuthorityService.ZONE_APP_SHARE);
+		// #3204 zones.add(AuthorityService.ZONE_APP_SHARE);
 		zones.add(AuthorityService.ZONE_AUTH_ALFRESCO);
 
 		for (String group : groups) {
@@ -226,10 +251,11 @@ public abstract class AbstractInitVisitorImpl implements InitVisitor {
 			} else {
 				Set<String> zonesAdded = authorityService.getAuthorityZones(PermissionService.GROUP_PREFIX + group);
 				Set<String> zonesToAdd = new HashSet<>();
-				for (String zone : zones)
+				for (String zone : zones) {
 					if (!zonesAdded.contains(zone)) {
 						zonesToAdd.add(zone);
 					}
+				}
 
 				if (!zonesToAdd.isEmpty()) {
 					logger.debug("Add group to zone: " + groupName + " - " + zonesToAdd.toString());
@@ -238,10 +264,14 @@ public abstract class AbstractInitVisitorImpl implements InitVisitor {
 			}
 		}
 
-		
 	}
-	
-	protected void addSystemFolderAspect(NodeRef nodeRef){
+
+	/**
+	 * <p>addSystemFolderAspect.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
+	protected void addSystemFolderAspect(NodeRef nodeRef) {
 		if (!nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_SYSTEM_FOLDER)) {
 			nodeService.addAspect(nodeRef, BeCPGModel.ASPECT_SYSTEM_FOLDER, null);
 		}

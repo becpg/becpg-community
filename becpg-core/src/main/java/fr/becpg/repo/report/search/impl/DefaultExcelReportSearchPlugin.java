@@ -34,6 +34,12 @@ import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.ExcelHelper;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 
+/**
+ * <p>DefaultExcelReportSearchPlugin class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 
@@ -58,6 +64,7 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 	@Autowired
 	protected EntityDictionaryService entityDictionaryService;
 
+	/** {@inheritDoc} */
 	@Override
 	public int fillSheet(XSSFSheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum, String[] parameters,
 			AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache) {
@@ -96,6 +103,15 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 
 	}
 
+	/**
+	 * <p>getEntityProperties.</p>
+	 *
+	 * @param itemNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param itemType a {@link org.alfresco.service.namespace.QName} object.
+	 * @param metadataFields a {@link java.util.List} object.
+	 * @param cache a {@link java.util.Map} object.
+	 * @return a {@link java.util.Map} object.
+	 */
 	protected Map<String, Object> getEntityProperties(NodeRef itemNodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields,
 			Map<NodeRef, Map<String, Object>> cache) {
 		
@@ -106,6 +122,19 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 		return tmp;
 	}
 
+	/**
+	 * <p>fillRow.</p>
+	 *
+	 * @param sheet a {@link org.apache.poi.xssf.usermodel.XSSFSheet} object.
+	 * @param itemNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param itemType a {@link org.alfresco.service.namespace.QName} object.
+	 * @param metadataFields a {@link java.util.List} object.
+	 * @param cache a {@link java.util.Map} object.
+	 * @param rownum a int.
+	 * @param key a {@link java.io.Serializable} object.
+	 * @param entityItems a {@link java.util.Map} object.
+	 * @return a int.
+	 */
 	protected int fillRow(XSSFSheet sheet, NodeRef itemNodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields,
 			Map<NodeRef, Map<String, Object>> cache, int rownum, Serializable key, Map<String, Object> entityItems) {
 
@@ -142,6 +171,16 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 		return rownum;
 	}
 
+	/**
+	 * <p>doExtract.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param itemType a {@link org.alfresco.service.namespace.QName} object.
+	 * @param metadataFields a {@link java.util.List} object.
+	 * @param properties a {@link java.util.Map} object.
+	 * @param cache a {@link java.util.Map} object.
+	 * @return a {@link java.util.Map} object.
+	 */
 	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields,
 			Map<QName, Serializable> properties, final Map<NodeRef, Map<String, Object>> cache) {
 		
@@ -223,6 +262,13 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 		}
 	}
 
+	/**
+	 * <p>eval.</p>
+	 *
+	 * @param formula a {@link java.lang.String} object.
+	 * @param values a {@link java.util.Map} object.
+	 * @return a {@link java.lang.Object} object.
+	 */
 	protected Object eval(String formula, Map<String, Object> values) {
 
 		if(formula.startsWith("dyn_")){
@@ -239,11 +285,13 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public boolean isDefault() {
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isApplicable(QName itemType, String[] parameters) {
 		return false;

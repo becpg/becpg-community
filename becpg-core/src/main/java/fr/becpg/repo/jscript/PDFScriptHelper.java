@@ -22,6 +22,12 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.pdmodel.PDDocument;
 
+/**
+ * <p>PDFScriptHelper class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class PDFScriptHelper extends BaseScopableProcessorExtension {
 	
 	private static final String FILE_MIMETYPE = "application/pdf";
@@ -31,20 +37,42 @@ public class PDFScriptHelper extends BaseScopableProcessorExtension {
 	private DictionaryService dictionaryService;
 	
 	
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>contentService</code>.</p>
+	 *
+	 * @param contentService a {@link org.alfresco.service.cmr.repository.ContentService} object.
+	 */
 	public void setContentService(ContentService contentService) {
 		this.contentService = contentService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>dictionaryService</code>.</p>
+	 *
+	 * @param dictionaryService a {@link org.alfresco.service.cmr.dictionary.DictionaryService} object.
+	 */
 	public void setDictionaryService(DictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
 	}
 
 	private static Log logger = LogFactory.getLog(PDFScriptHelper.class);
 
+	/**
+	 * <p>appendPDF.</p>
+	 *
+	 * @param targetPDFNode a {@link org.alfresco.repo.jscript.ScriptNode} object.
+	 * @param toAppendPDFNode a {@link org.alfresco.repo.jscript.ScriptNode} object.
+	 * @return a {@link org.alfresco.repo.jscript.ScriptNode} object.
+	 */
 	public ScriptNode appendPDF(ScriptNode targetPDFNode, ScriptNode toAppendPDFNode) {
 		
 		logger.debug("Append PDF "+toAppendPDFNode.getName()+" to "+targetPDFNode.getName());

@@ -19,8 +19,9 @@ package fr.becpg.repo.project.data;
 
 /**
  * Formulation mode
- * @author quere
  *
+ * @author quere
+ * @version $Id: $Id
  */
 public enum PlanningMode {
 

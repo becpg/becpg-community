@@ -17,10 +17,23 @@
  ******************************************************************************/
 package fr.becpg.repo.helper;
 
+/**
+ * <p>SiteHelper class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class SiteHelper {
 
+	/** Constant <code>SITES_SPACE_QNAME_PATH="/app:company_home/st:sites/"</code> */
 	public static final String SITES_SPACE_QNAME_PATH = "/app:company_home/st:sites/";
 
+	/**
+	 * <p>extractContainerId.</p>
+	 *
+	 * @param path a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	public static String extractContainerId(String path) {
 
 		String containerId = null;
@@ -41,6 +54,12 @@ public class SiteHelper {
 		return containerId;
 	}
 
+	/**
+	 * <p>isSitePath.</p>
+	 *
+	 * @param path a {@link java.lang.String} object.
+	 * @return a boolean.
+	 */
 	public static boolean isSitePath(String path) {
 		boolean isSitePath = false;
 
@@ -51,6 +70,12 @@ public class SiteHelper {
 		return isSitePath;
 	}
 
+	/**
+	 * <p>extractSiteId.</p>
+	 *
+	 * @param path a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	public static String extractSiteId(String path) {
 		String siteId = null;
 		if (isSitePath(path)) {
@@ -66,6 +91,13 @@ public class SiteHelper {
 
 	}
 
+	/**
+	 * <p>extractDisplayPath.</p>
+	 *
+	 * @param path a {@link java.lang.String} object.
+	 * @param displayPath a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	public static String extractDisplayPath(String path, String displayPath) {
 		String ret = "";
 

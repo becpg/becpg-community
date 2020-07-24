@@ -31,6 +31,12 @@ import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
+/**
+ * <p>Abstract LabelingComponent class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public abstract class LabelingComponent extends BeCPGDataObject implements RepositoryEntity, Comparable<LabelingComponent>, Cloneable {
 
 	private static final long serialVersionUID = 270866664168102414L;
@@ -49,10 +55,18 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 
 	private Set<NodeRef> geoOrigins = new HashSet<>();
 
+	/**
+	 * <p>Constructor for LabelingComponent.</p>
+	 */
 	public LabelingComponent() {
 		super();
 	}
 
+	/**
+	 * <p>Constructor for LabelingComponent.</p>
+	 *
+	 * @param abstractLabelingComponent a {@link fr.becpg.repo.product.data.ing.LabelingComponent} object.
+	 */
 	public LabelingComponent(LabelingComponent abstractLabelingComponent) {
 		super(abstractLabelingComponent);
 		this.pluralLegalName = abstractLabelingComponent.pluralLegalName;
@@ -66,6 +80,11 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 	}
 
 
+	/**
+	 * <p>Getter for the field <code>legalName</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object.
+	 */
 	@AlfMlText
 	@AlfProp
 	@AlfQname(qname = "bcpg:legalName")
@@ -73,10 +92,21 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 		return legalName;
 	}
 
+	/**
+	 * <p>Setter for the field <code>legalName</code>.</p>
+	 *
+	 * @param legalName a {@link org.alfresco.service.cmr.repository.MLText} object.
+	 */
 	public void setLegalName(MLText legalName) {
 		this.legalName = legalName;
 	}
 
+	/**
+	 * <p>Getter for the field <code>legalName</code>.</p>
+	 *
+	 * @param locale a {@link java.util.Locale} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getLegalName(Locale locale) {
 		String ret = MLTextHelper.getClosestValue(legalName, locale);
 
@@ -87,6 +117,11 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 		return ret;
 	}
 
+	/**
+	 * <p>Getter for the field <code>pluralLegalName</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object.
+	 */
 	@AlfMlText
 	@AlfProp
 	@AlfQname(qname = "bcpg:pluralLegalName")
@@ -94,10 +129,21 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 		return pluralLegalName;
 	}
 
+	/**
+	 * <p>Setter for the field <code>pluralLegalName</code>.</p>
+	 *
+	 * @param pluralLegalName a {@link org.alfresco.service.cmr.repository.MLText} object.
+	 */
 	public void setPluralLegalName(MLText pluralLegalName) {
 		this.pluralLegalName = pluralLegalName;
 	}
 
+	/**
+	 * <p>Getter for the field <code>pluralLegalName</code>.</p>
+	 *
+	 * @param locale a {@link java.util.Locale} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getPluralLegalName(Locale locale) {
 		String ret = MLTextHelper.getClosestValue(pluralLegalName, locale);
 
@@ -108,49 +154,101 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 		return ret;
 	}
 
+	/**
+	 * <p>isPlural.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public boolean isPlural() {
 		return isPlural && (pluralLegalName != null) && !MLTextHelper.isEmpty(pluralLegalName);
 	}
 
+	/**
+	 * <p>setPlural.</p>
+	 *
+	 * @param isPlural a boolean.
+	 */
 	public void setPlural(boolean isPlural) {
 		this.isPlural = isPlural;
 	}
 
+	/**
+	 * <p>Getter for the field <code>qty</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public Double getQty() {
 		return qty;
 	}
 
+	/**
+	 * <p>Setter for the field <code>qty</code>.</p>
+	 *
+	 * @param qty a {@link java.lang.Double} object.
+	 */
 	public void setQty(Double qty) {
 		this.qty = qty;
 	}
 
+	/**
+	 * <p>Getter for the field <code>volume</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public Double getVolume() {
 		return volume;
 	}
 
+	/**
+	 * <p>Setter for the field <code>volume</code>.</p>
+	 *
+	 * @param volume a {@link java.lang.Double} object.
+	 */
 	public void setVolume(Double volume) {
 		this.volume = volume;
 	}
 
+	/**
+	 * <p>Getter for the field <code>allergens</code>.</p>
+	 *
+	 * @return a {@link java.util.Set} object.
+	 */
 	public Set<NodeRef> getAllergens() {
 		return allergens;
 	}
 
+	/**
+	 * <p>Setter for the field <code>allergens</code>.</p>
+	 *
+	 * @param allergens a {@link java.util.Set} object.
+	 */
 	public void setAllergens(Set<NodeRef> allergens) {
 		this.allergens = allergens;
 	}
 
+	/**
+	 * <p>Getter for the field <code>geoOrigins</code>.</p>
+	 *
+	 * @return a {@link java.util.Set} object.
+	 */
 	public Set<NodeRef> getGeoOrigins() {
 		return geoOrigins;
 	}
 
+	/**
+	 * <p>Setter for the field <code>geoOrigins</code>.</p>
+	 *
+	 * @param geoOrigins a {@link java.util.Set} object.
+	 */
 	public void setGeoOrigins(Set<NodeRef> geoOrigins) {
 		this.geoOrigins = geoOrigins;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public abstract LabelingComponent clone();
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -165,6 +263,7 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -225,12 +324,14 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "LabelingComponent [qty=" + qty + ", volume=" + volume + ", legalName=" + legalName + ", nodeRef=" + nodeRef + ", name=" + name
 				+ "]";
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int compareTo(LabelingComponent lblComponent) {
 

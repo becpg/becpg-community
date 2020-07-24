@@ -29,19 +29,34 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
+/**
+ * <p>DynamicCharactListPolicy class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class DynamicCharactListPolicy extends AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyNodePolicy {
 
 	private EntityListDAO entityListDAO;
 	
 	
+	/**
+	 * <p>Setter for the field <code>entityListDAO</code>.</p>
+	 *
+	 * @param entityListDAO a {@link fr.becpg.repo.entity.EntityListDAO} object.
+	 */
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
 	}
 
+	/**
+	 * <p>doInit.</p>
+	 */
 	public void doInit() {
 		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyNodePolicy.QNAME, PLMModel.TYPE_DYNAMICCHARACTLIST, new JavaBehaviour(this, "getCopyCallback"));
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public CopyBehaviourCallback getCopyCallback(QName classRef, CopyDetails copyDetails) {
 		return new DynamicCharactListBehaviourCallback();

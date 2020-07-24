@@ -38,6 +38,12 @@ import fr.becpg.repo.listvalue.ListValuePage;
 import fr.becpg.repo.listvalue.ListValuePlugin;
 import fr.becpg.repo.listvalue.ListValueService;
 
+/**
+ * <p>EntityVersionsListValuePlugin class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class EntityVersionsListValuePlugin implements ListValuePlugin {
 
@@ -50,11 +56,13 @@ public class EntityVersionsListValuePlugin implements ListValuePlugin {
 	@Qualifier("NodeService")
 	private NodeService nodeService;
 
+	/** {@inheritDoc} */
 	@Override
 	public String[] getHandleSourceTypes() {
 		return new String[] { SOURCE_TYPE_BRANCHES };
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public ListValuePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
 

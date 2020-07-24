@@ -40,40 +40,66 @@ import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 
+/**
+ * <p>MultiLevelExtractor class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class MultiLevelExtractor extends SimpleExtractor {
 
 	private final static Log logger = LogFactory.getLog(MultiLevelExtractor.class);
 
+	/** Constant <code>PROP_DEPTH="depth"</code> */
 	public static final String PROP_DEPTH = "depth";
 
+	/** Constant <code>PROP_LEAF="isLeaf"</code> */
 	public static final String PROP_LEAF = "isLeaf";
 
+	/** Constant <code>PROP_OPEN="open"</code> */
 	public static final String PROP_OPEN = "open";
 
+	/** Constant <code>PROP_ENTITYNODEREF="entityNodeRef"</code> */
 	public static final String PROP_ENTITYNODEREF = "entityNodeRef";
 
+	/** Constant <code>PROP_REVERSE_ASSOC="reverseAssoc"</code> */
 	public static final String PROP_REVERSE_ASSOC = "reverseAssoc";
 
+	/** Constant <code>PROP_ROOT_ENTITYNODEREF="rootEntityNodeRef"</code> */
 	public static final String PROP_ROOT_ENTITYNODEREF = "rootEntityNodeRef";
 
+	/** Constant <code>PREF_DEPTH_PREFIX="fr.becpg.MultiLevelExtractor."</code> */
 	public static final String PREF_DEPTH_PREFIX = "fr.becpg.MultiLevelExtractor.";
 
+	/** Constant <code>PROP_IS_MULTI_LEVEL="isMultiLevel"</code> */
 	public static final String PROP_IS_MULTI_LEVEL = "isMultiLevel";
 
+	/** Constant <code>PROP_DISABLE_TREE="disableTree"</code> */
 	public static final String PROP_DISABLE_TREE = "disableTree";
 
 	MultiLevelDataListService multiLevelDataListService;
 
 	PreferenceService preferenceService;
 
+	/**
+	 * <p>Setter for the field <code>preferenceService</code>.</p>
+	 *
+	 * @param preferenceService a {@link org.alfresco.service.cmr.preference.PreferenceService} object.
+	 */
 	public void setPreferenceService(PreferenceService preferenceService) {
 		this.preferenceService = preferenceService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>multiLevelDataListService</code>.</p>
+	 *
+	 * @param multiLevelDataListService a {@link fr.becpg.repo.entity.datalist.MultiLevelDataListService} object.
+	 */
 	public void setMultiLevelDataListService(MultiLevelDataListService multiLevelDataListService) {
 		this.multiLevelDataListService = multiLevelDataListService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public PaginatedExtractedItems extract(DataListFilter dataListFilter, List<String> metadataFields) {
 
@@ -130,6 +156,19 @@ public class MultiLevelExtractor extends SimpleExtractor {
 		return ret;
 	}
 
+	/**
+	 * <p>appendNextLevel.</p>
+	 *
+	 * @param ret a {@link fr.becpg.repo.entity.datalist.PaginatedExtractedItems} object.
+	 * @param metadataFields a {@link java.util.List} object.
+	 * @param listData a {@link fr.becpg.repo.entity.datalist.data.MultiLevelListData} object.
+	 * @param currIndex a int.
+	 * @param startIndex a int.
+	 * @param pageSize a int.
+	 * @param props a {@link java.util.Map} object.
+	 * @param dataListFilter a {@link fr.becpg.repo.entity.datalist.data.DataListFilter} object.
+	 * @return a int.
+	 */
 	protected int appendNextLevel(PaginatedExtractedItems ret, List<String> metadataFields, MultiLevelListData listData, int currIndex,
 			int startIndex, int pageSize, Map<String, Object> props, DataListFilter dataListFilter) {
 
@@ -186,6 +225,7 @@ public class MultiLevelExtractor extends SimpleExtractor {
 		return currIndex;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields,
 			FormatMode mode, Map<QName, Serializable> properties, Map<String, Object> extraProps,
@@ -258,6 +298,7 @@ public class MultiLevelExtractor extends SimpleExtractor {
 		return tmp;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean applyTo(DataListFilter dataListFilter) {
 		return !dataListFilter.isSimpleItem() && (dataListFilter.getDataType() != null)
@@ -269,6 +310,7 @@ public class MultiLevelExtractor extends SimpleExtractor {
 				&& !dataListFilter.isVersionFilter();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Date computeLastModified(DataListFilter dataListFilter) {
 		if (!dataListFilter.isDepthDefined()) {

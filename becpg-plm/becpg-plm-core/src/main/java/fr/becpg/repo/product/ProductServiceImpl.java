@@ -50,7 +50,10 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
 
 /**
+ * <p>ProductServiceImpl class.</p>
+ *
  * @author querephi
+ * @version $Id: $Id
  */
 @Service("productService")
 public class ProductServiceImpl implements ProductService, InitializingBean, FormulationPlugin {
@@ -80,17 +83,20 @@ public class ProductServiceImpl implements ProductService, InitializingBean, For
 	private EntityTplService entityTplService;
 	
 
+	/** {@inheritDoc} */
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		entityDictionaryService.registerPropDefMapping(PLMModel.PROP_PACKAGINGLIST_QTY, PLMModel.PROP_COMPOLIST_QTY_SUB_FORMULA);
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void formulate(NodeRef productNodeRef) throws FormulateException {
 		formulate(productNodeRef, false);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void formulate(NodeRef productNodeRef, boolean fast) throws FormulateException {
 		try {
@@ -119,11 +125,13 @@ public class ProductServiceImpl implements ProductService, InitializingBean, For
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public ProductData formulate(ProductData productData) throws FormulateException {
 		return formulationService.formulate(productData);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public CharactDetails formulateDetails(NodeRef productNodeRef, QName datatType, String dataListName, List<NodeRef> elements, Integer level)
 			throws FormulateException {
@@ -134,11 +142,13 @@ public class ProductServiceImpl implements ProductService, InitializingBean, For
 		return visitor.visit(productData, elements, level);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean shouldFormulate(NodeRef productNodeRef) {
 		return formulationService.shouldFormulate(productNodeRef);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public ProductData formulateText(String recipe) throws FormulateException {
 
@@ -173,12 +183,14 @@ public class ProductServiceImpl implements ProductService, InitializingBean, For
 		return productData;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public FormulationPluginPriority getMatchPriority(QName type) {
 		return entityDictionaryService.isSubClass(type, PLMModel.TYPE_PRODUCT) ? FormulationPluginPriority.NORMAL : FormulationPluginPriority.NONE;
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void runFormulation(NodeRef entityNodeRef) throws FormulateException {
 		formulate(entityNodeRef, false);

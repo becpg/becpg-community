@@ -23,14 +23,26 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemGroup;
 
+/**
+ * <p>BeCPGForumPostGet class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class BeCPGForumPostGet extends AbstractDiscussionWebScript {
 
 	AuthorityService authorityService;
 
+	/**
+	 * <p>Setter for the field <code>authorityService</code>.</p>
+	 *
+	 * @param authorityService a {@link org.alfresco.service.cmr.security.AuthorityService} object.
+	 */
 	public void setAuthorityService(AuthorityService authorityService) {
 		this.authorityService = authorityService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected Map<String, Object> executeImpl(SiteInfo site, NodeRef nodeRef, TopicInfo topic, PostInfo post, WebScriptRequest req, JSONObject json,
 			Status status, Cache cache) {

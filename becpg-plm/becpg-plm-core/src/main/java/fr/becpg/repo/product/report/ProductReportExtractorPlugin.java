@@ -75,11 +75,19 @@ import fr.becpg.repo.repository.model.CompositionDataItem;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.variant.model.VariantData;
 
+/**
+ * <p>ProductReportExtractorPlugin class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
+	/** Constant <code>KEY_PRODUCT_IMAGE="productImage"</code> */
 	protected static final String KEY_PRODUCT_IMAGE = "productImage";
 
+	/** Constant <code>DATALIST_SPECIFIC_EXTRACTOR</code> */
 	protected static final List<QName> DATALIST_SPECIFIC_EXTRACTOR = Arrays.asList(PLMModel.TYPE_COMPOLIST, PLMModel.TYPE_PACKAGINGLIST,
 			MPMModel.TYPE_PROCESSLIST, PLMModel.TYPE_MICROBIOLIST, PLMModel.TYPE_INGLABELINGLIST, PLMModel.TYPE_NUTLIST, PLMModel.TYPE_ORGANOLIST,
 			PLMModel.TYPE_INGLIST, PLMModel.TYPE_FORBIDDENINGLIST, PLMModel.TYPE_LABELINGRULELIST, PLMModel.TYPE_REQCTRLLIST,
@@ -87,7 +95,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	private static final Log logger = LogFactory.getLog(ProductReportExtractorPlugin.class);
 
+	/** Constant <code>ATTR_LANGUAGE="language"</code> */
 	protected static final String ATTR_LANGUAGE = "language";
+	/** Constant <code>ATTR_LANGUAGE_CODE="languageCode"</code> */
 	protected static final String ATTR_LANGUAGE_CODE = "languageCode";
 
 	private static final String ATTR_PKG_TARE_LEVEL_1 = "tarePkgLevel1";
@@ -144,13 +154,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	}
 
 	/**
-	 * load the datalists of the product data.
+	 * {@inheritDoc}
 	 *
-	 * @param productData
-	 *            the product data
-	 * @param dataListsElt
-	 *            the data lists elt
-	 * @return the element
+	 * load the datalists of the product data.
 	 */
 	@Override
 	protected void loadDataLists(NodeRef entityNodeRef, Element dataListsElt, DefaultExtractorContext context) {
@@ -396,6 +402,12 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 						dataListQName.toPrefixString(namespaceService)+"|"+type.toPrefixString(namespaceService));
 	}
 
+	/**
+	 * <p>isCharactDisplayedForLocale.</p>
+	 *
+	 * @param charact a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a boolean.
+	 */
 	public boolean isCharactDisplayedForLocale(NodeRef charact) {
 		if (mlNodeService.hasAspect(charact, ReportModel.ASPECT_REPORT_LOCALES)) {
 			@SuppressWarnings("unchecked")
@@ -1376,6 +1388,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		return rawMaterials;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected boolean loadTargetAssoc(NodeRef entityNodeRef, AssociationDefinition assocDef, Element entityElt, DefaultExtractorContext context) {
 
@@ -1485,6 +1498,13 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		return value == null ? VALUE_NULL : toString(value.doubleValue());
 	}
 
+	/**
+	 * <p>loadVariants.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @param entityElt a {@link org.dom4j.Element} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	protected NodeRef loadVariants(ProductData productData, Element entityElt) {
 		NodeRef defaultVariantNodeRef = null;
 
@@ -1507,6 +1527,12 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		return defaultVariantNodeRef;
 	}
 
+	/**
+	 * <p>extractVariants.</p>
+	 *
+	 * @param variantNodeRefs a {@link java.util.List} object.
+	 * @param dataItemElt a {@link org.dom4j.Element} object.
+	 */
 	protected void extractVariants(List<NodeRef> variantNodeRefs, Element dataItemElt) {
 
 		if ((variantNodeRefs != null) && !variantNodeRefs.isEmpty()) {
@@ -1536,6 +1562,12 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		}
 	}
 
+	/**
+	 * <p>loadDynamicCharactList.</p>
+	 *
+	 * @param dynamicCharactList a {@link java.util.List} object.
+	 * @param dataListElt a {@link org.dom4j.Element} object.
+	 */
 	protected void loadDynamicCharactList(List<DynamicCharactListItem> dynamicCharactList, Element dataListElt) {
 
 		Element dynCharactListElt = dataListElt.addElement(PLMModel.TYPE_DYNAMICCHARACTLIST.getLocalName() + "s");
@@ -1547,6 +1579,13 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		}
 	}
 
+	/**
+	 * <p>loadReqCtrlList.</p>
+	 *
+	 * @param context a DefaultExtractorContext object.
+	 * @param reqCtrlList a {@link java.util.List} object.
+	 * @param dataListElt a {@link org.dom4j.Element} object.
+	 */
 	protected void loadReqCtrlList(DefaultExtractorContext context, List<ReqCtrlListDataItem> reqCtrlList, Element dataListElt) {
 		
 		Element reqCtrlListsElt = dataListElt.addElement(PLMModel.TYPE_REQCTRLLIST.getLocalName() + "s");
@@ -1566,6 +1605,15 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		}
 	}
 
+	/**
+	 * <p>loadProductData.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param partProductNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param dataListItemElt a {@link org.dom4j.Element} object.
+	 * @param context a DefaultExtractorContext object.
+	 * @param costType a {@link fr.becpg.repo.product.data.constraints.CostType} object.
+	 */
 	protected void loadProductData(NodeRef entityNodeRef, NodeRef partProductNodeRef, Element dataListItemElt, DefaultExtractorContext context, CostType costType) {
 		if (partProductNodeRef != null) {
 
@@ -1652,6 +1700,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected boolean isMultiLinesAttribute(QName attribute, DefaultExtractorContext context) {
 		if (attribute != null) {
@@ -1674,6 +1723,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		return false;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected QName getPropNameOfType(QName type) {
 		if ((type != null) && type.equals(PLMModel.TYPE_CERTIFICATION)) {
@@ -1685,6 +1735,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public EntityReportExtractorPriority getMatchPriority(QName type) {
 		return entityDictionaryService.isSubClass(type, PLMModel.TYPE_PRODUCT) ? EntityReportExtractorPriority.NORMAL

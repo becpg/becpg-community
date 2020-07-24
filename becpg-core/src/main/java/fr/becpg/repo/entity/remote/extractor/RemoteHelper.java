@@ -23,9 +23,22 @@ import org.alfresco.service.namespace.QName;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityDictionaryService;
 
+/**
+ * <p>RemoteHelper class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class RemoteHelper {
 	
 
+	/**
+	 * <p>getPropName.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object.
+	 * @param dictionaryService a {@link fr.becpg.repo.entity.EntityDictionaryService} object.
+	 * @return a {@link org.alfresco.service.namespace.QName} object.
+	 */
 	public static QName getPropName(QName type, EntityDictionaryService dictionaryService) {
 		if(dictionaryService.isSubClass(type, BeCPGModel.TYPE_LINKED_VALUE)){
 			return BeCPGModel.PROP_LKV_VALUE;
@@ -39,6 +52,12 @@ public class RemoteHelper {
 		return ContentModel.PROP_NAME;
 	}
 
+	/**
+	 * <p>isJSONValue.</p>
+	 *
+	 * @param propType a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a boolean.
+	 */
 	public static boolean isJSONValue(QName propType) {
 		return BeCPGModel.PROP_ENTITY_SCORE.equals(propType) || BeCPGModel.PROP_ACTIVITYLIST_DATA.equals(propType);
 	}

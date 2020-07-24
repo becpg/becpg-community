@@ -8,14 +8,14 @@ import java.util.List;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 
 
-// TODO: Auto-generated Javadoc
+
 /**
  * Class that represent the mapping for importing a characteristic
- * 
- * 		<column id="produit.jpg" attribute="cm:content" path="cm:Images" type="File" />
- *				
- * @author querephi
  *
+ * 		<column id="produit.jpg" attribute="cm:content" path="cm:Images" type="File" />
+ *
+ * @author querephi
+ * @version $Id: $Id
  */
 public class FileMapping extends AbstractAttributeMapping {
 

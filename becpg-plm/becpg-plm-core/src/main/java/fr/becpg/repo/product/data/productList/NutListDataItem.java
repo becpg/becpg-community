@@ -20,6 +20,12 @@ import fr.becpg.repo.repository.model.MinMaxValueDataItem;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
 import fr.becpg.repo.repository.model.UnitAwareDataItem;
 
+/**
+ * <p>NutListDataItem class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @AlfType
 @AlfQname(qname = "bcpg:nutList")
 public class NutListDataItem extends AbstractManualDataItem implements SimpleListDataItem, MinMaxValueDataItem, FormulatedCharactDataItem,
@@ -62,6 +68,7 @@ public class NutListDataItem extends AbstractManualDataItem implements SimpleLis
 
 	private String roundedValue;
 
+	/** {@inheritDoc} */
 	@Override
 	@AlfProp
 	@InternalField
@@ -70,10 +77,16 @@ public class NutListDataItem extends AbstractManualDataItem implements SimpleLis
 		return depthLevel;
 	}
 
+	/**
+	 * <p>Setter for the field <code>depthLevel</code>.</p>
+	 *
+	 * @param depthLevel a {@link java.lang.Integer} object.
+	 */
 	public void setDepthLevel(Integer depthLevel) {
 		this.depthLevel = depthLevel;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	@AlfProp
 	@InternalField
@@ -82,25 +95,39 @@ public class NutListDataItem extends AbstractManualDataItem implements SimpleLis
 		return this.parent;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void setParent(NutListDataItem parent) {
 		this.parent = parent;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Double getValue() {
 		return manualValue != null ? manualValue : formulatedValue;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void setValue(Double value) {
 		this.formulatedValue = value;
 	}
 
+	/**
+	 * <p>value.</p>
+	 *
+	 * @param key a {@link java.lang.String} object.
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public Double value(String key) {
 		return RegulationFormulationHelper.extractValue(getRoundedValue(), key);
 	}
 
+	/**
+	 * <p>Getter for the field <code>manualValue</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@InternalField
 	@AlfQname(qname = "bcpg:nutListValue")
@@ -108,10 +135,16 @@ public class NutListDataItem extends AbstractManualDataItem implements SimpleLis
 		return manualValue;
 	}
 
+	/**
+	 * <p>Setter for the field <code>manualValue</code>.</p>
+	 *
+	 * @param manualValue a {@link java.lang.Double} object.
+	 */
 	public void setManualValue(Double manualValue) {
 		this.manualValue = manualValue;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	@AlfProp
 	@InternalField
@@ -120,11 +153,13 @@ public class NutListDataItem extends AbstractManualDataItem implements SimpleLis
 		return formulatedValue;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void setFormulatedValue(Double formulatedValue) {
 		this.formulatedValue = formulatedValue;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	@AlfProp
 	@AlfQname(qname = "bcpg:nutListUnit")
@@ -132,11 +167,13 @@ public class NutListDataItem extends AbstractManualDataItem implements SimpleLis
 		return unit;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void setUnit(String unit) {
 		this.unit = unit;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	@AlfProp
 	@AlfQname(qname = "bcpg:nutListMini")
@@ -144,15 +181,23 @@ public class NutListDataItem extends AbstractManualDataItem implements SimpleLis
 		return mini;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void setMini(Double mini) {
 		this.mini = mini;
 	}
 
+	/**
+	 * <p>mini.</p>
+	 *
+	 * @param key a {@link java.lang.String} object.
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public Double mini(String key) {
 		return RegulationFormulationHelper.extractMini(getRoundedValue(), key);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	@AlfProp
 	@AlfQname(qname = "bcpg:nutListMaxi")
@@ -160,76 +205,150 @@ public class NutListDataItem extends AbstractManualDataItem implements SimpleLis
 		return maxi;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void setMaxi(Double maxi) {
 		this.maxi = maxi;
 	}
 
+	/**
+	 * <p>maxi.</p>
+	 *
+	 * @param key a {@link java.lang.String} object.
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public Double maxi(String key) {
 		return  RegulationFormulationHelper.extractMaxi(getRoundedValue(), key);
 	}
 
+	/**
+	 * <p>Getter for the field <code>valuePerServing</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:nutListValuePerServing")
 	public Double getValuePerServing() {
 		return valuePerServing;
 	}
 
+	/**
+	 * <p>Setter for the field <code>valuePerServing</code>.</p>
+	 *
+	 * @param valuePerServing a {@link java.lang.Double} object.
+	 */
 	public void setValuePerServing(Double valuePerServing) {
 		this.valuePerServing = valuePerServing;
 	}
 
+	/**
+	 * <p>valuePerServing.</p>
+	 *
+	 * @param key a {@link java.lang.String} object.
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public Double valuePerServing(String key) {
 		return RegulationFormulationHelper.extractValuePerServing(getRoundedValue(), key);
 	}
 
+	/**
+	 * <p>Getter for the field <code>gdaPerc</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:nutListGDAPerc")
 	public Double getGdaPerc() {
 		return gdaPerc;
 	}
 
+	/**
+	 * <p>Setter for the field <code>gdaPerc</code>.</p>
+	 *
+	 * @param gdaPerc a {@link java.lang.Double} object.
+	 */
 	public void setGdaPerc(Double gdaPerc) {
 		this.gdaPerc = gdaPerc;
 	}
 
 	
+	/**
+	 * <p>gdaPerc.</p>
+	 *
+	 * @param key a {@link java.lang.String} object.
+	 * @return a {@link java.lang.Double} object.
+	 */
 	public Double gdaPerc(String key) {
 		return RegulationFormulationHelper.extractGDAPerc(getRoundedValue(), key);
 	}
 
 	
 	
+	/**
+	 * <p>Getter for the field <code>lossPerc</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:nutListLossPerc")
 	public Double getLossPerc() {
 		return lossPerc;
 	}
 
+	/**
+	 * <p>Setter for the field <code>lossPerc</code>.</p>
+	 *
+	 * @param lossPerc a {@link java.lang.Double} object.
+	 */
 	public void setLossPerc(Double lossPerc) {
 		this.lossPerc = lossPerc;
 	}
 
+	/**
+	 * <p>Getter for the field <code>group</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:nutListGroup")
 	public String getGroup() {
 		return group;
 	}
 
+	/**
+	 * <p>Setter for the field <code>group</code>.</p>
+	 *
+	 * @param group a {@link java.lang.String} object.
+	 */
 	public void setGroup(String group) {
 		this.group = group;
 	}
 
+	/**
+	 * <p>Getter for the field <code>method</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:nutListMethod")
 	public String getMethod() {
 		return method;
 	}
 
+	/**
+	 * <p>Setter for the field <code>method</code>.</p>
+	 *
+	 * @param method a {@link java.lang.String} object.
+	 */
 	public void setMethod(String method) {
 		this.method = method;
 	}
 
+	/**
+	 * <p>Getter for the field <code>nut</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	@AlfSingleAssoc
 	@InternalField
 	@AlfQname(qname = "bcpg:nutListNut")
@@ -238,12 +357,14 @@ public class NutListDataItem extends AbstractManualDataItem implements SimpleLis
 		return nut;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	@InternalField
 	public NodeRef getCharactNodeRef() {
 		return getNut();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void setCharactNodeRef(NodeRef nodeRef) {
 		setNut(nodeRef);
@@ -259,6 +380,7 @@ public class NutListDataItem extends AbstractManualDataItem implements SimpleLis
 		this.nut = nut;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	@AlfProp
 	@InternalField
@@ -267,11 +389,13 @@ public class NutListDataItem extends AbstractManualDataItem implements SimpleLis
 		return isFormulated;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void setIsFormulated(Boolean isFormulated) {
 		this.isFormulated = isFormulated;
 	}
 
+	/** {@inheritDoc} */
 	@AlfProp
 	@InternalField
 	@AlfQname(qname = "bcpg:nutListFormulaErrorLog")
@@ -280,22 +404,34 @@ public class NutListDataItem extends AbstractManualDataItem implements SimpleLis
 		return errorLog;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void setErrorLog(String errorLog) {
 		this.errorLog = errorLog;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String getTextCriteria() {
 		return null;
 	}
 
+	/**
+	 * <p>Getter for the field <code>roundedValue</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:nutListRoundedValue")
 	public String getRoundedValue() {
 		return roundedValue;
 	}
 
+	/**
+	 * <p>Setter for the field <code>roundedValue</code>.</p>
+	 *
+	 * @param roundedValue a {@link java.lang.String} object.
+	 */
 	public void setRoundedValue(String roundedValue) {
 		this.roundedValue = roundedValue;
 	}
@@ -320,6 +456,9 @@ public class NutListDataItem extends AbstractManualDataItem implements SimpleLis
 	 *            the group
 	 * @param nut
 	 *            the nut
+	 * @param mini a {@link java.lang.Double} object.
+	 * @param maxi a {@link java.lang.Double} object.
+	 * @param isManual a {@link java.lang.Boolean} object.
 	 */
 	public NutListDataItem(NodeRef nodeRef, Double value, String unit, Double mini, Double maxi, String group, NodeRef nut, Boolean isManual) {
 		setNodeRef(nodeRef);
@@ -334,8 +473,8 @@ public class NutListDataItem extends AbstractManualDataItem implements SimpleLis
 
 	/**
 	 * Copy constructor
-	 * 
-	 * @param n
+	 *
+	 * @param n a {@link fr.becpg.repo.product.data.productList.NutListDataItem} object.
 	 */
 	public NutListDataItem(NutListDataItem n) {
 		super(n);
@@ -355,11 +494,13 @@ public class NutListDataItem extends AbstractManualDataItem implements SimpleLis
 		this.roundedValue = n.roundedValue;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NutListDataItem clone() {
 		return new NutListDataItem(this);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -383,6 +524,7 @@ public class NutListDataItem extends AbstractManualDataItem implements SimpleLis
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -510,6 +652,7 @@ public class NutListDataItem extends AbstractManualDataItem implements SimpleLis
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "NutListDataItem [manualValue=" + manualValue + ", formulatedValue=" + formulatedValue + ", unit=" + unit + ", mini=" + mini

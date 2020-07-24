@@ -26,8 +26,10 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.repository.L2CacheSupport;
 
 /**
- * 
+ * <p>AutomaticECOPolicy class.</p>
+ *
  * @author matthieu Add automatic change order
+ * @version $Id: $Id
  */
 public class AutomaticECOPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnUpdatePropertiesPolicy {
 
@@ -43,28 +45,50 @@ public class AutomaticECOPolicy extends AbstractBeCPGPolicy implements NodeServi
 
 	JavaBehaviour onUpdatePropertiesBehaviour;
 	
+	/**
+	 * <p>Setter for the field <code>automaticRecordVersionType</code>.</p>
+	 *
+	 * @param automaticRecordVersionType a {@link java.lang.String} object.
+	 */
 	public void setAutomaticRecordVersionType(String automaticRecordVersionType) {
 		this.automaticRecordVersionType = automaticRecordVersionType;
 	}
 
+	/**
+	 * <p>setEnable.</p>
+	 *
+	 * @param isEnable a boolean.
+	 */
 	public void setEnable(boolean isEnable) {
 		this.isEnable = isEnable;
 	}
 
+	/**
+	 * <p>Setter for the field <code>automaticECOService</code>.</p>
+	 *
+	 * @param automaticECOService a {@link fr.becpg.repo.ecm.AutomaticECOService} object.
+	 */
 	public void setAutomaticECOService(AutomaticECOService automaticECOService) {
 		this.automaticECOService = automaticECOService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityVersionService</code>.</p>
+	 *
+	 * @param entityVersionService a {@link fr.becpg.repo.entity.version.EntityVersionService} object.
+	 */
 	public void setEntityVersionService(EntityVersionService entityVersionService) {
 		this.entityVersionService = entityVersionService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void doInit() {
 		onUpdatePropertiesBehaviour = new JavaBehaviour(this, "onUpdateProperties", Behaviour.NotificationFrequency.TRANSACTION_COMMIT);
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, PLMModel.TYPE_PRODUCT, onUpdatePropertiesBehaviour);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 		if (isEnable && before.containsKey(ContentModel.PROP_MODIFIED) && after.containsKey(ContentModel.PROP_MODIFIED)
@@ -96,6 +120,7 @@ public class AutomaticECOPolicy extends AbstractBeCPGPolicy implements NodeServi
 
 
 
+	/** {@inheritDoc} */
 	@Override
 	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 

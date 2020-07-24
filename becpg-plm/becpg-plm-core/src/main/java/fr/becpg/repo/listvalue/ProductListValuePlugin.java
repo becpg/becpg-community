@@ -43,6 +43,12 @@ import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
+/**
+ * <p>ProductListValuePlugin class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class ProductListValuePlugin extends EntityListValuePlugin {
 
@@ -60,11 +66,13 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 	@Autowired
 	private ReportTplService reportTplService;
 
+	/** {@inheritDoc} */
 	@Override
 	public String[] getHandleSourceTypes() {
 		return new String[] { SOURCE_TYPE_PRODUCT, SOURCE_TYPE_PRODUCT_REPORT };
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public ListValuePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
 

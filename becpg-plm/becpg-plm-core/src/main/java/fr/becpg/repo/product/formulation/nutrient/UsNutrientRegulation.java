@@ -5,12 +5,24 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Locale;
 
+/**
+ * <p>UsNutrientRegulation class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class UsNutrientRegulation extends AbstractNutrientRegulation {
 
+	/**
+	 * <p>Constructor for UsNutrientRegulation.</p>
+	 *
+	 * @param path a {@link java.lang.String} object.
+	 */
 	public UsNutrientRegulation(String path) {
 		super(path);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected Double roundByCode(Double value, String nutrientTypeCode) {
 
@@ -109,6 +121,7 @@ public class UsNutrientRegulation extends AbstractNutrientRegulation {
 		return bd.doubleValue();
 	}
 
+	/** {@inheritDoc} */
 	protected String displayValueByCode(Double value, Double roundedValue, String nutrientTypeCode, Locale locale) {
 		if(value != null){
 			if (nutrientTypeCode.equals(NutrientCode.Cholesterol) && value<=5 && value >= 2) {
@@ -151,6 +164,7 @@ public class UsNutrientRegulation extends AbstractNutrientRegulation {
 		return formatDouble(roundedValue, locale);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Double roundGDA(Double value, String nutrientTypeCode) {
 		if(value != null && 

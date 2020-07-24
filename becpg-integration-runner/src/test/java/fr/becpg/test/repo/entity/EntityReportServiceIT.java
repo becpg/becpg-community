@@ -36,7 +36,7 @@ import fr.becpg.test.PLMBaseTestCase;
  */
 public class EntityReportServiceIT extends PLMBaseTestCase {
 
-	/** The logger. */
+	
 	private static final Log logger = LogFactory.getLog(EntityReportServiceIT.class);
 
 	@Autowired
