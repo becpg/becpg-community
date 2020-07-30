@@ -49,6 +49,7 @@ import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.repository.Path;
 import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.cmr.version.Version;
 import org.alfresco.service.cmr.version.VersionHistory;
@@ -79,6 +80,7 @@ import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
+import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.report.entity.EntityImageInfo;
 import fr.becpg.repo.report.entity.EntityReportData;
@@ -363,6 +365,9 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		Element imgsElt = entityElt.addElement(TAG_IMAGES);
 		extractEntityImages(entityNodeRef, imgsElt, context);
 
+		// extract site info
+		extractSiteInfo(entityNodeRef, entityElt);
+		
 		// add attributes at <product/> tag
 		loadNodeAttributes(entityNodeRef, entityElt, true, context);
 
@@ -380,6 +385,12 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 		// render versions
 		loadVersions(entityNodeRef, entityElt);
+	}
+
+	private void extractSiteInfo(NodeRef entityNodeRef, Element entityElt) {
+		Element siteElt = entityElt.addElement("site");
+		Path path = nodeService.getPath(entityNodeRef);
+		siteElt.addAttribute("id", SiteHelper.extractSiteId(path.toPrefixString(namespaceService)));
 	}
 
 	/**
