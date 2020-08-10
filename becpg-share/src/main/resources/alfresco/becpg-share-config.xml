@@ -39,6 +39,7 @@
 			<language locale="en_NG">English - Nigeria</language>
 			<language locale="en_PK">English - Pakistan</language>
 			<language locale="en_UG">English - Uganda</language>
+			<language locale="en_ZA">English - South Africa</language>
 			<language locale="en_ZW">English - Zibabwe</language>
 			<language locale="de">German</language>
 			<language locale="es">Spanish</language>
@@ -72,12 +73,14 @@
 			<language locale="zh_SG">Chinese - Singapore</language>
 			<language locale="ar_AE">Arabic - United Arab Emirates</language>
 			<language locale="ar_BH">Arabic - Bahrain</language>
-			<language locale="ar_SA">Arabic - Saudi Arabia</language>
-			<language locale="ar_MA">Arabic - Morocco</language>
-			<language locale="ar_QA">Arabic - Qatar</language>
-			<language locale="ar_OM">Arabic - Oman</language>
-			<language locale="ar_KW">Arabic - Kuwait</language>
 			<language locale="ar_DZ">Arabic - Algeria</language>
+			<language locale="ar_EG">Arabic - Egypt</language>
+			<language locale="ar_KW">Arabic - Kuwait</language>
+			<language locale="ar_MA">Arabic - Morocco</language>
+			<language locale="ar_OM">Arabic - Oman</language>
+			<language locale="ar_QA">Arabic - Qatar</language>
+			<language locale="ar_SA">Arabic - Saudi Arabia</language>
+			<language locale="ar_TN">Arabic - Tunisia</language>
 			<language locale="bem_ZM">Bemba - Zambia</language>
 			
 			
