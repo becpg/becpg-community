@@ -678,16 +678,16 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			loadComments(nodeRef, nodeElt, context);
 		}
 	}
-
-(??)	/**
-(??)	 * Load node attributes.
-(??)	 *
-(??)	 * @param nodeRef
-(??)	 *            the node ref
-(??)	 * @param elt
-(??)	 *            the elt
-(??)	 * @return the element
-(??)	 */
+	
+	/**
+	* <p>loadAttributes.</p>
+	*
+	* @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	* @param nodeElt a {@link org.dom4j.Element} object.
+	* @param useCData a boolean.
+	* @param hiddenAttributes a {@link java.util.List} object.
+	* @param context a {@link fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor.DefaultExtractorContext} object.
+	*/
 	protected void loadAttributes(NodeRef nodeRef, Element nodeElt, boolean useCData, List<QName> hiddenAttributes, DefaultExtractorContext context) {
 
 		// properties
