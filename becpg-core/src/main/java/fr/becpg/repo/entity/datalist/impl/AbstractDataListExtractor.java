@@ -131,6 +131,8 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 	public static final String PROP_TYPE = "itemType";
 	public static final String PROP_VERSION = "version";
 	public static final String PROP_COLOR = "color";
+	/** Constant <code>PROP_USERACCESS="userAccess"</code> */
+	public static final String PROP_USERACCESS = "userAccess";
 
 	private static final Log logger = LogFactory.getLog(AbstractNodeDataExtractor.class);
 
@@ -182,7 +184,7 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 
 			boolean hasWrite = (permissionService.hasPermission(nodeRef, "Write") == AccessStatus.ALLOWED);
 			
-			permissions.put("userAccess", userAccess);
+			permissions.put(PROP_USERACCESS, userAccess);
 			userAccess.put("delete", accessRight && (permissionService.hasPermission(nodeRef, "Delete") == AccessStatus.ALLOWED));
 			userAccess.put("create", accessRight && (permissionService.hasPermission(nodeRef, "CreateChildren") == AccessStatus.ALLOWED));
 			userAccess.put("edit", accessRight && hasWrite);

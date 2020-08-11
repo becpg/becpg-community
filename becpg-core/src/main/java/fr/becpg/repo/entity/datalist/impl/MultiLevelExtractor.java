@@ -77,7 +77,6 @@ public class MultiLevelExtractor extends SimpleExtractor {
 	@Override
 	public PaginatedExtractedItems extract(DataListFilter dataListFilter, List<String> metadataFields) {
 
-		// boolean multiLevelExtract = true;
 		boolean resetTree = false;
 
 		if (!dataListFilter.isDepthDefined()) {
@@ -85,29 +84,8 @@ public class MultiLevelExtractor extends SimpleExtractor {
 			dataListFilter.updateMaxDepth(depth);
 		} else {
 			resetTree = updateDepthUserPref(dataListFilter);
-			// if (dataListFilter.getMaxDepth() == 0) {
-			// dataListFilter.updateMaxDepth(-1);
-			// }
 		}
-
-		// if (!multiLevelExtract) {
-		// if (dataListFilter.isGuessContainer() &&
-		// (dataListFilter.getEntityNodeRef() != null)) {
-		// NodeRef listsContainerNodeRef =
-		// entityListDAO.getListContainer(dataListFilter.getEntityNodeRef());
-		// if (listsContainerNodeRef != null) {
-		// NodeRef dataListNodeRef =
-		// entityListDAO.getList(listsContainerNodeRef,
-		// dataListFilter.getDataType());
-		// if (dataListNodeRef != null) {
-		// dataListFilter.setParentNodeRef(dataListNodeRef);
-		// }
-		// }
-		// }
-		// return super.extract(dataListFilter, metadataFields);
-		//
-		// }
-
+	
 		int pageSize = dataListFilter.getPagination().getPageSize();
 		int startIndex = (dataListFilter.getPagination().getPage() - 1) * dataListFilter.getPagination().getPageSize();
 
