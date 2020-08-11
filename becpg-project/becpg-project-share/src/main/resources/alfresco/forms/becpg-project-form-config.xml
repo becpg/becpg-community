@@ -396,28 +396,36 @@
 					
 				</field-visibility>
 				<appearance>
-					<!-- <field id="dataList_pjt:deliverableList" label-id="becpg.forms.field.projects.datagrid.deliverableList.label" 
-						/> -->
+					
+					<field id="bcpg:code"
+						 read-only="true" label="datasource" />	 
+					<field id="pjt:projectCompletionDate"
+						 read-only="true"  label="datasource" />
+					<field id="pjt:projectDueDate"
+						 read-only="true"  label="datasource" />
+					<field id="pjt:projectState"  label="datasource" />		 
+						 	 
+					
 					<field id="cm:name"
 						 read-only="true" />
 					<field id="pjt:projectOverdue"
 						 read-only="true"  label="hidden" />
-					<field id="pjt:projectCompletionDate"
-						 read-only="true"  label="hidden" />	 
-						 
 					<field id="pjt:completionPercent"
 						 read-only="true"  label="hidden" />	 
-						 
 					<field id="dataList_pjt:taskList"
 						label-id="becpg.forms.field.projects.datagrid.taskList.label" />
 					<field  help="{&quot;width&quot;:265}" id="dataList_bcpg:activityList"
 						label-id="becpg.forms.field.projects.datagrid.activityList.label" />
 					<field id="pjt:projectStartDate"
 						label="hidden" />
+				
+						
 					<field id="fm:commentCount" label="hidden" />	
 					
 					<!-- <field id="pjt:projectPriority"
 						label="hidden" /> -->
+					<!-- <field id="dataList_pjt:deliverableList" label-id="becpg.forms.field.projects.datagrid.deliverableList.label" 
+						/> -->
 				</appearance>
 
 			</form>
@@ -451,12 +459,18 @@
 					<show id="pjt:projectPriority" />	
 				</field-visibility>
 				<appearance>
-					 <field id="bcpg:code" mandatory="false" read-only="false"/>
+					 <field id="bcpg:code"
+						 read-only="true" label="datasource" />	 
+					<field id="pjt:projectCompletionDate"
+						 read-only="true"  label="datasource" />
+					<field id="pjt:projectDueDate"
+						 read-only="true"  label="datasource" />
+					<field id="pjt:projectState"  label="datasource" />
+
 			          <field id="cm:name" mandatory="false" read-only="true"/>
 			          <field help="{&quot;width&quot;:90}" id="pjt:projectOverdue" mandatory="false" read-only="true"/>
 			          <field id="pjt:projectStartDate" label-id="becpg.forms.field.projects.datagrid.projectStartDate.label"  mandatory="false" read-only="true"/>
-			          <field id="pjt:projectDueDate" mandatory="false" read-only="false"/>
-			          <field id="pjt:projectState" mandatory="false" read-only="false"/>
+			 
 			          <field id="pjt:projectHierarchy1" mandatory="false" read-only="false"/>
 			          <field id="pjt:projectHierarchy2" mandatory="false" read-only="false"/>
 			          <field id="pjt:completionPercent" mandatory="false" read-only="false"/>
@@ -491,6 +505,15 @@
 				<appearance>
 					<!-- <field id="dataList_pjt:deliverableList" label-id="becpg.forms.field.projects.datagrid.deliverableList.label" 
 						/> -->
+						
+					<field id="bcpg:code"
+						 read-only="true" label="datasource" />	 
+					<field id="pjt:projectCompletionDate"
+						 read-only="true"  label="datasource" />
+					<field id="pjt:projectDueDate"
+						 read-only="true"  label="datasource" />
+					<field id="pjt:projectState"  label="datasource" />
+						
 					<field id="dataList_pjt:taskList"
 						label-id="becpg.forms.field.projects.datagrid.taskList.label" />
 					<field id="dataList_bcpg:activityList"
@@ -1350,7 +1373,8 @@
 				<field-visibility>
 					<show id="bcpg:depthLevel" />
 					<show id="bcpg:parentLevel" />
-					<!--  <show id="pjt:tlWorkflowInstance" /> -->
+					<show id="pjt:tlWorkflowInstance" force="true" />
+					<show id="pjt:tlWorkflowTaskInstance" force="true" />
 					
 					<show id="pjt:subProjectRef" force="true" />
 					<show id="pjt:tlIsGroup" />
@@ -1370,9 +1394,6 @@
 					<show id="pjt:expense" force="true" /> -->
 					
 				 <!--  <show id="dataList_pjt:deliverableList" />  -->
-				
-					
-					
 					
 					<show id="pjt:tlStart" />
 					<show id="pjt:tlEnd" />
@@ -1383,15 +1404,16 @@
 				</field-visibility>
 				<appearance>
 			     	<field id="pjt:tlTaskName" read-only="true" />
-					<!-- <field id="pjt:tlWorkflowInstance" label="hidden" /> -->
-					<field id="bcpg:depthLevel" label="hidden" />
-					<field id="bcpg:parentLevel" label="hidden" />
-					<field id="pjt:subProjectRef" label="hidden" />
-					<field id="pjt:tlIsGroup" label="hidden" />
-					<field id="pjt:tlPrevTasks" label="hidden" />
+					<field id="pjt:tlWorkflowInstance" label="datasource" />
+					<field id="pjt:tlWorkflowTaskInstance" label="datasource" />
+					<field id="bcpg:depthLevel" label="datasource" />
+					<field id="bcpg:parentLevel" label="datasource" />
+					<field id="pjt:subProjectRef" label="datasource" />
+					<field id="pjt:tlIsGroup" label="datasource" />
+					<field id="pjt:tlPrevTasks" label="datasource" />
 					<field id="pjt:invoice" read-only="true" />
 					<field id="pjt:expense" read-only="true" />					
-					<field id="pjt:tlIsMilestone" label="hidden" />
+					<field id="pjt:tlIsMilestone" label="datasource" />
 					<field id="pjt:tlStart" read-only="true" />
 					<field id="pjt:tlEnd" read-only="true" />
 					<field id="pjt:tlRealDuration" read-only="true" />
@@ -1400,7 +1422,7 @@
 				<!--	<field id="pjt:tlCapacity" read-only="true" />
 					<field id="pjt:expense" read-only="true" />
 					<field id="pjt:tlLoggedTime" read-only="true" /> -->
-					<field id="pjt:tlTaskLegend" label="hidden" />
+					<field id="pjt:tlTaskLegend" label="datasource" />
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 				</appearance>
 			</form>
