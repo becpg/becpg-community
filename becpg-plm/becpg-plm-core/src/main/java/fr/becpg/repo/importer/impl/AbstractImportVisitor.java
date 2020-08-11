@@ -470,6 +470,23 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 		return ret.toString();
 	}
+	
+	// DO NOT REMOVED USED in FORMULA
+		/**
+		 * <p>findIng.</p>
+		 *
+		 * @param ingName a {@link java.lang.String} object.
+		 * @return a {@link java.lang.String} object.
+		 */
+		public String findIng(String ingName) {
+			NodeRef ret = findCharact(PLMModel.TYPE_ING, BeCPGModel.PROP_CHARACT_NAME, ingName);
+			if (ret == null) {
+				logger.error("Cannot find ing (" + ingName + ")");
+				return null;
+			}
+
+			return ret.toString();
+		}
 
 	// DO NOT REMOVED USED in FORMULA
 	/**
