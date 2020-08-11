@@ -71,6 +71,15 @@
 					   
 					   var tasks = oRecord.getData("itemData")["dt_pjt_taskList"];
 
+					   tasks.sort(function (a, b){
+	                       if(a!=null && a.sort!=null	
+	                       		&& b!=null && b.sort!=null	){
+	                       	return a.sort - b.sort;
+	                       }
+	                   	return 0;
+	                   });
+					   
+					   
 					   var moreTasksHtlm = "";
 					   var taskHtlm = "<ul>";
 					   var count =0;
