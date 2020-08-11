@@ -1353,8 +1353,8 @@
                             {
                                 var column = this.datalistColumns[i];
                                 var key = this.dataResponseFields[i];
-                                if (this.options.hiddenColumns.length < 1 || !beCPG.util.contains(
-                                        this.options.hiddenColumns, key))
+                                if ((this.options.hiddenColumns.length < 1 || !beCPG.util.contains(
+                                        this.options.hiddenColumns, key)) && column.label != "datasource")
                                 {
                              
                                 	
