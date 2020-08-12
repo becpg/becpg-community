@@ -1,0 +1,76 @@
+package fr.becpg.repo.form.column.decorator;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.alfresco.model.ForumModel;
+import org.alfresco.service.cmr.dictionary.DictionaryService;
+import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.namespace.QName;
+
+import fr.becpg.model.PLMModel;
+import fr.becpg.repo.entity.datalist.data.DataListFilter;
+import fr.becpg.repo.helper.ExcelHelper.ExcelFieldTitleProvider;
+import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
+
+public class DynamicColumnNameResolver implements ExcelFieldTitleProvider, DataGridFormFieldTitleProvider {
+
+	private NodeService nodeService;
+	private DictionaryService dictionaryService;
+	
+	Map<String, String> dynamicColumnNames = new HashMap<>();
+	
+	public DynamicColumnNameResolver(DataListFilter filter, NodeService nodeService, DictionaryService dictionaryService) {
+		this.nodeService =  nodeService;
+		this.dictionaryService = dictionaryService;
+		if(filter.getParentNodeRef() != null) {
+			for (NodeRef nodeRef : BeCPGQueryBuilder.createQuery().parent(filter.getParentNodeRef()).ofType(PLMModel.TYPE_DYNAMICCHARACTLIST)
+					.isNotNull(PLMModel.PROP_DYNAMICCHARACT_COLUMN).inDB().list()) {
+
+				dynamicColumnNames.put(((String) nodeService.getProperty(nodeRef, PLMModel.PROP_DYNAMICCHARACT_COLUMN)).replace("bcpg_", ""),
+						(String) nodeService.getProperty(nodeRef, PLMModel.PROP_DYNAMICCHARACT_TITLE));
+
+			}
+
+		}
+
+	}
+
+	@Override
+	public String getTitle(AttributeExtractorStructure field) {
+		String title  = getTitle(field.getFieldDef().getName());
+		return title != null ? title : field.getFieldDef().getTitle(dictionaryService);
+	}
+
+	@Override
+	public String getTitle(QName field) {
+		String fieldName = field.getLocalName().replace("bcpg:", "");
+		if (dynamicColumnNames.containsKey(fieldName)) {
+			return dynamicColumnNames.get(fieldName);
+		}
+		return null;
+	}
+
+	@Override
+	public boolean isAllowed(AttributeExtractorStructure field) {
+		return isAllowed(field.getFieldDef().getName());
+	}
+
+	@Override
+	public boolean isAllowed(QName field) {
+		String fieldName =  field.getLocalName().replace("bcpg:", "");
+		if (fieldName.contains("dynamicCharactColumn")) {
+			if (!dynamicColumnNames.containsKey(fieldName)) {
+				return false;
+			}
+		} else if (PLMModel.PROP_COMPARE_WITH_DYN_COLUMN.equals(field)
+				|| ForumModel.PROP_COMMENT_COUNT.equals(field)) {
+			return false;
+		}
+		return true;
+	}
+
+
+}
