@@ -19,6 +19,7 @@
 	<shortname>beCPG form service</shortname>
 	<description>Retrieve form definition</description>
 	<url>/becpg/form?itemId={nodeRef?}&amp;itemKind={itemKind?}&amp;formId={formId?}&amp;siteId={sitedId?}</url>
+	<url>/becpg/form?itemId={nodeRef?}&amp;itemKind={itemKind?}&amp;formId={formId?}&amp;siteId={sitedId?}&amp;entityNodeRef={entityNodeRef}</url>
 	<format default="json">argument</format>
 	<authentication>user</authentication>
 	<transaction allow="readonly" buffersize="0">required</transaction>

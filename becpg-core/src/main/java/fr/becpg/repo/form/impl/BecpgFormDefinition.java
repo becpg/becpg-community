@@ -7,12 +7,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
 
+import fr.becpg.repo.form.column.decorator.DataGridFormFieldTitleProvider;
 import org.alfresco.repo.forms.AssociationFieldDefinition;
 import org.alfresco.repo.forms.FieldDefinition;
 import org.alfresco.repo.forms.Form;
 import org.alfresco.repo.forms.FormData.FieldData;
 import org.alfresco.repo.forms.PropertyFieldDefinition;
 import org.alfresco.repo.forms.PropertyFieldDefinition.FieldConstraint;
+import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.QName;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -105,7 +108,7 @@ public class BecpgFormDefinition {
 		return object;
 	}
 
-	public JSONObject merge(Form form) throws JSONException {
+	public JSONObject merge(Form form, DataGridFormFieldTitleProvider resolver) throws JSONException {
 		JSONObject ret = new JSONObject();
 
 		for (JSONObject tab : tabs.values()) {
@@ -126,7 +129,7 @@ public class BecpgFormDefinition {
 				boolean found = true;
 
 				if (!sets.containsKey(id)) {
-					found = loadDef(toClone, form);
+					found = loadDef(toClone, form ,resolver);
 				}
 
 				if (!cloned.containsKey(id)) {
@@ -202,7 +205,7 @@ public class BecpgFormDefinition {
 		}
 	}
 
-	private boolean loadDef(JSONObject field, Form form) throws JSONException {
+	private boolean loadDef(JSONObject field, Form form, DataGridFormFieldTitleProvider resolver) throws JSONException {
 		String id = field.getString("id");
 
 		boolean loaded = false;
@@ -222,8 +225,13 @@ public class BecpgFormDefinition {
 						field.put("value", fieldDefinition.getDefaultValue());
 					}
 
-					if (!field.has("name")) {
-						field.put("name", fieldDefinition.getLabel());
+					QName fieldQName  = QName.createQName(id);
+					if (!field.has("name") || (resolver != null && resolver.isAllowed(fieldQName))) {
+						if (resolver != null && resolver.isAllowed(fieldQName)) {
+							field.put("name", resolver.getTitle(fieldQName));
+						} else {
+							field.put("name", fieldDefinition.getLabel());
+						}
 					}
 
 					field.put("dataKey", fieldDefinition.getDataKeyName());
