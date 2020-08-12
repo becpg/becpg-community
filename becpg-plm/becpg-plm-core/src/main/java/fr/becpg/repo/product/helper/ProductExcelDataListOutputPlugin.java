@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.alfresco.model.ForumModel;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -30,11 +29,10 @@ import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.impl.AbstractDataListExtractor;
 import fr.becpg.repo.entity.datalist.impl.ExcelDataListOutputPlugin;
 import fr.becpg.repo.entity.datalist.impl.MultiLevelExtractor;
+import fr.becpg.repo.form.column.decorator.DynamicColumnNameResolver;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.ExcelHelper.ExcelFieldTitleProvider;
 import fr.becpg.repo.helper.JsonFormulaHelper;
-import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
-import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
  * <p>ProductExcelDataListOutputPlugin class.</p>
@@ -77,7 +75,7 @@ public class ProductExcelDataListOutputPlugin implements ExcelDataListOutputPlug
 	/** {@inheritDoc} */
 	@Override
 	public ExcelFieldTitleProvider getExcelFieldTitleProvider(DataListFilter dataListFilter) {
-		return new DynamicColumnNameResolver(dataListFilter);
+		return new DynamicColumnNameResolver(dataListFilter, nodeService, dictionaryService);
 	}
 
 	/** {@inheritDoc} */
@@ -228,48 +226,5 @@ public class ProductExcelDataListOutputPlugin implements ExcelDataListOutputPlug
 		return items.containsKey(MultiLevelExtractor.PROP_IS_MULTI_LEVEL) && (Boolean) items.get(MultiLevelExtractor.PROP_IS_MULTI_LEVEL);
 	}
 
-	public class DynamicColumnNameResolver implements ExcelFieldTitleProvider {
-
-		Map<String, String> dynamicColumnNames = new HashMap<>();
-
-		public DynamicColumnNameResolver(DataListFilter filter) {
-
-			if(filter.getParentNodeRef()!=null) {
-				for (NodeRef nodeRef : BeCPGQueryBuilder.createQuery().parent(filter.getParentNodeRef()).ofType(PLMModel.TYPE_DYNAMICCHARACTLIST)
-						.isNotNull(PLMModel.PROP_DYNAMICCHARACT_COLUMN).inDB().list()) {
-	
-					dynamicColumnNames.put(((String) nodeService.getProperty(nodeRef, PLMModel.PROP_DYNAMICCHARACT_COLUMN)).replace("bcpg_", ""),
-							(String) nodeService.getProperty(nodeRef, PLMModel.PROP_DYNAMICCHARACT_TITLE));
-	
-				}
-			}
-
-		}
-
-		@Override
-		public String getTitle(AttributeExtractorStructure field) {
-
-			if (dynamicColumnNames.containsKey(field.getFieldDef().getName().getLocalName())) {
-				return dynamicColumnNames.get(field.getFieldDef().getName().getLocalName());
-			}
-
-			return field.getFieldDef().getTitle(dictionaryService);
-		}
-
-		@Override
-		public boolean isAllowed(AttributeExtractorStructure field) {
-			if (field.getFieldDef().getName().getLocalName().contains("dynamicCharactColumn")) {
-				if (!dynamicColumnNames.containsKey(field.getFieldDef().getName().getLocalName())) {
-					return false;
-				}
-			} else if (PLMModel.PROP_COMPARE_WITH_DYN_COLUMN.equals(field.getFieldDef().getName())
-					|| ForumModel.PROP_COMMENT_COUNT.equals(field.getFieldDef().getName())) {
-				return false;
-			}
-
-			return true;
-		}
-
-	}
 
 }
