@@ -74,8 +74,9 @@ public class RegulationFormulationHelper {
 		regulations.put("ZA", new SouthAfricanNutrientRegulation("beCPG/databases/nuts/SouthAfricanNutrientRegulation.csv"));
 		regulations.put("TN", new GSONutrientRegulation("beCPG/databases/nuts/TunisianNutrientRegulation.csv"));
 		regulations.put("EG", new GSONutrientRegulation("beCPG/databases/nuts/EgyptianNutrientRegulation.csv"));
-
-
+		regulations.put("CL", new ChileanNutrientRegulation("beCPG/databases/nuts/ChileanNutrientRegulation.csv"));
+		regulations.put("UY", new BrazilianNutrientRegulation("beCPG/databases/nuts/UruguayanNutrientRegulation.csv"));
+		regulations.put("BR", new BrazilianNutrientRegulation("beCPG/databases/nuts/BrazilianNutrientRegulation.csv"));
 	}
 
 	/**
@@ -214,7 +215,8 @@ public class RegulationFormulationHelper {
 				|| locale.getCountry().equals("MA") || locale.getCountry().equals("MX") || locale.getCountry().equals("DZ")
 				|| locale.getCountry().equals("TR") || locale.getCountry().equals("SG") || locale.getCountry().equals("TH")
 				|| locale.getCountry().equals("PK") || locale.getCountry().equals("ZA") || locale.getCountry().equals("TN")
-				|| locale.getCountry().equals("EG")) {
+				|| locale.getCountry().equals("EG") || locale.getCountry().equals("CL") || locale.getCountry().equals("UY")
+				|| locale.getCountry().equals("BR")) {
 			return locale.getCountry();
 		} else if (locale.getLanguage().equals("zh")) {
 			return "CN";
@@ -560,6 +562,15 @@ public class RegulationFormulationHelper {
 		}
 		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_TN"))) {
 			ret.add("TN");
+		}
+		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("es_CL"))) {
+			ret.add("CL");
+		}
+		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("es_UY"))) {
+			ret.add("UY");
+		}
+		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("pt_BR"))) {
+			ret.add("BR");
 		}
 		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_AE")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_BH"))
 				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_SA"))
