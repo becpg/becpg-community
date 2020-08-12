@@ -19,6 +19,7 @@ package fr.becpg.repo.web.scripts.form;
 
 import java.io.IOException;
 
+import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
@@ -49,6 +50,8 @@ public class FormGetWebScript extends AbstractWebScript {
 	private static final String PARAM_FORMID = "formId";
 
 	private static final String PARAM_RELOAD = "reload";
+	
+	private static final String PARAM_NODE_REF = "entityNodeRef";
 
 	private BecpgFormService becpgFormService;
 	
@@ -65,6 +68,7 @@ public class FormGetWebScript extends AbstractWebScript {
 		String itemId = req.getParameter(PARAM_ITEMID);
 		String formId = req.getParameter(PARAM_FORMID);
 		String siteId = req.getParameter(PARAM_SITEID);
+		String entityNodeRef = req.getParameter(PARAM_NODE_REF);
 
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
@@ -80,8 +84,8 @@ public class FormGetWebScript extends AbstractWebScript {
 				becpgFormService.reloadConfig();
 				ret.put("SUCCESS", true);
 			} else {
-
-				ret = becpgFormService.getForm(itemKind, itemId, formId, siteId);
+				NodeRef nodeRef = (entityNodeRef != null && !entityNodeRef.isEmpty()) ? new NodeRef(entityNodeRef) : null;
+				ret = becpgFormService.getForm(itemKind, itemId, formId, siteId, nodeRef);
 
 			}
 			res.setContentType("application/json");

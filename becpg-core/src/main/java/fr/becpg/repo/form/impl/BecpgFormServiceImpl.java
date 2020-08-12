@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import fr.becpg.repo.form.column.decorator.ColumnDecorator;
+import fr.becpg.repo.form.column.decorator.DataGridFormFieldTitleProvider;
 import org.alfresco.repo.forms.Form;
 import org.alfresco.repo.forms.FormService;
 import org.alfresco.repo.forms.Item;
@@ -34,8 +36,11 @@ public class BecpgFormServiceImpl implements BecpgFormService, ApplicationContex
 	ApplicationContext applicationContext;
 
 	List<String> resourceBundles;
+
 	List<String> configs;
 
+	List<ColumnDecorator> decorators;
+	
 	FormService formService;
 
 	private NodeService nodeService;
@@ -54,6 +59,11 @@ public class BecpgFormServiceImpl implements BecpgFormService, ApplicationContex
 
 	public FormService getFormService() {
 		return formService;
+	}
+
+
+	public void setDecorators(List<ColumnDecorator> decorators) {
+		this.decorators = decorators;
 	}
 
 	public void setFormService(FormService formService) {
@@ -114,18 +124,27 @@ public class BecpgFormServiceImpl implements BecpgFormService, ApplicationContex
 
 		}
 	}
-
+	
 	@Override
-	public JSONObject getForm(String itemKind, String itemId, String formId, String siteId) throws BeCPGException, JSONException {
+	public JSONObject getForm(String itemKind, String itemId, String formId, String siteId, NodeRef entityNodeRef) throws BeCPGException, JSONException {
 
 		Item item = new Item(itemKind, itemId);
 
 		BecpgFormDefinition definition = getFormDefinition(item, formId, siteId);
+		DataGridFormFieldTitleProvider resolver = null;
+		if(entityNodeRef != null){
+			for(ColumnDecorator decorator : decorators) {
+				if(decorator.match(item)) {
+					resolver = decorator.createTitleResolver(entityNodeRef, item);
+				}
+			}
+		}
 
 		Form form = formService.getForm(new Item(itemKind, itemId), definition.getFields(), definition.getForcedFields(), null);
 
-		return definition.merge(form);
+		return definition.merge(form, resolver);
 	}
+	
 
 	private BecpgFormDefinition getFormDefinition(Item item, String formId, String siteId) throws BeCPGException {
 
