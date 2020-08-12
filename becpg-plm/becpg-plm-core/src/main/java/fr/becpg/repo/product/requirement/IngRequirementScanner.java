@@ -32,7 +32,9 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 
 /**
- * <p>IngRequirementScanner class.</p>
+ * <p>
+ * IngRequirementScanner class.
+ * </p>
  *
  * @author matthieu
  * @version $Id: $Id
@@ -48,9 +50,12 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 	AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
 	/**
-	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
+	 * <p>
+	 * Setter for the field <code>alfrescoRepository</code>.
+	 * </p>
 	 *
-	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
+	 * @param alfrescoRepository
+	 *            a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
 	 */
 	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
@@ -64,9 +69,9 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 
 		if ((productData.getIngList() != null) && !productData.getIngList().isEmpty()) {
 
-			boolean checkAutorized = false;
-
 			for (Map.Entry<ProductSpecificationData, List<ForbiddenIngListDataItem>> entry : extractRequirements(specifications).entrySet()) {
+				boolean checkAutorized = false;
+				
 				List<ForbiddenIngListDataItem> requirements = entry.getValue();
 				ProductSpecificationData specification = entry.getKey();
 
@@ -106,10 +111,15 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 											reqCtrl.setReqDataType(RequirementDataType.Specification);
 										}
 
-										if (specification.getRegulatoryCode() != null && !specification.getRegulatoryCode().isBlank()) {
+										if ((specification.getRegulatoryCode() != null) && !specification.getRegulatoryCode().isBlank()) {
 											reqCtrl.setRegulatoryCode(specification.getRegulatoryCode());
 										} else {
 											reqCtrl.setRegulatoryCode(specification.getName());
+										}
+
+										if ((ingListDataItem.getQtyPerc() != null) && (fil.getQtyPercMaxi() != null)
+												&& (ingListDataItem.getQtyPerc() != 0)) {
+											reqCtrl.setReqMaxQty((fil.getQtyPercMaxi() / ingListDataItem.getQtyPerc()) * 100d);
 										}
 
 									}
@@ -227,9 +237,10 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 										curMessage = MLTextHelper.getI18NMessage(MESSAGE_FORBIDDEN_ING,
 												mlNodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME));
 									}
-									;
 
-									logger.debug("Adding not respected for: " + curMessage);
+									if (logger.isDebugEnabled()) {
+										logger.debug("Adding not respected for: " + curMessage);
+									}
 
 									ReqCtrlListDataItem reqCtrl = reqCtrlMap.get(fil.getNodeRef());
 									if (reqCtrl == null) {
@@ -244,7 +255,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 										reqCtrl.getSources().add(productNodeRef);
 									}
 
-									if (specification.getRegulatoryCode() != null && !specification.getRegulatoryCode().isBlank()) {
+									if ((specification.getRegulatoryCode() != null) && !specification.getRegulatoryCode().isBlank()) {
 										reqCtrl.setRegulatoryCode(specification.getRegulatoryCode());
 									} else {
 										reqCtrl.setRegulatoryCode(specification.getName());
@@ -367,7 +378,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 			reqCtrl.getSources().add(sourceNodeRef);
 		}
 
-		if (specification.getRegulatoryCode() != null && !specification.getRegulatoryCode().isBlank()) {
+		if ((specification.getRegulatoryCode() != null) && !specification.getRegulatoryCode().isBlank()) {
 			reqCtrl.setRegulatoryCode(specification.getRegulatoryCode());
 		} else {
 			reqCtrl.setRegulatoryCode(specification.getName());
