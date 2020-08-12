@@ -272,6 +272,9 @@ public interface PLMModel {
 	QName PROP_RCL_REQ_MESSAGE = QName.createQName(BeCPGModel.BECPG_URI, "rclReqMessage");
 	/** Constant <code>ASSOC_RCL_SOURCES</code> */
 	QName ASSOC_RCL_SOURCES = QName.createQName(BeCPGModel.BECPG_URI, "rclSources");
+	/** Constant <code>ASSOC_RCL_CHARACT</code> */
+	QName ASSOC_RCL_CHARACT = QName.createQName(BeCPGModel.BECPG_URI, "rclCharact");
+	
 	/** Constant <code>PROP_RCL_REQ_DATA_TYPE</code> */
 	QName PROP_RCL_REQ_DATA_TYPE = QName.createQName(BeCPGModel.BECPG_URI, "rclDataType");
 	
