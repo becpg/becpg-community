@@ -421,6 +421,49 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		
 		
 		/**
+		 * @beCPG.max($range, $formula)
+		 *
+		 *                    @param range
+		 * @param formula
+		 * @return get max of formula results apply on range
+		 */
+		public Double max(Collection<RepositoryEntity> range, String formula) {
+			return formulaService.aggreate(entity, range, formula, SpelFormulaContext.Operator.MAX);
+		}
+
+		/**
+		 * @beCPG.max($range)
+		 *
+		 *                    @param range
+		 * @return get max of range of double
+		 */
+		public Double max(Collection<Double> range) {
+			return range.stream().mapToDouble(Double::doubleValue).max().getAsDouble();
+		}
+		
+		/**
+		 * @beCPG.min($range, $formula)
+		 *
+		 *                    @param range
+		 * @param formula
+		 * @return get min of formula results apply on range
+		 */
+		public Double min(Collection<RepositoryEntity> range, String formula) {
+			return formulaService.aggreate(entity, range, formula, SpelFormulaContext.Operator.MIN);
+		}
+
+		/**
+		 * @beCPG.min($range)
+		 *
+		 *                    @param range
+		 * @return get min of range of double
+		 */
+		public Double min(Collection<Double> range) {
+			return range.stream().mapToDouble(Double::doubleValue).min().getAsDouble();
+		}
+		
+		
+		/**
 		 * @beCPG.extractCustomList($nodeRef, $listType)
 		 * @param listType
 		 * @return list
