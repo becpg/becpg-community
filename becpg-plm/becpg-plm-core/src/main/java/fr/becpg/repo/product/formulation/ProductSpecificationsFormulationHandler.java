@@ -225,6 +225,10 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 			}
 
 			for (RequirementScanner scanner : requirementScanners) {
+				if(logger.isDebugEnabled()) {
+					logger.debug("Running RequirementScanner: "+scanner.getClass().getName());
+				}
+				
 				formulatedProduct.getReqCtrlList().addAll(scanner.checkRequirements(formulatedProduct, formulatedProduct.getProductSpecifications()));
 			}
 		}

@@ -12,7 +12,7 @@ public interface  SpelFormulaContext<T extends RepositoryEntity> {
 	
 
 	public enum Operator {
-		SUM,AVG,PERC
+		SUM,AVG,PERC,MIN,MAX
 	}
 
 	/**

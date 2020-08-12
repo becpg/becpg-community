@@ -118,6 +118,7 @@
 				<field-visibility>
 					<show id="cm:name" />
 					<show id="cm:title" force="true" />
+					<show id="bcpg:regulatoryCode" force="true" />
 					<show id="cm:description" />
 					<show id="bcpg:productSpecifications" force="true" />
 					<show id="bcpg:specCompatibilityTpls" force="true" />
@@ -151,6 +152,7 @@
 				<field-visibility>
 					<show id="cm:name" />
 					<show id="cm:title" force="true" />
+					<show id="bcpg:regulatoryCode" force="true" />
 					<show id="cm:description" />
 					<show id="bcpg:productSpecifications" force="true" />
 					<show id="bcpg:specCompatibilityTpls" force="true" />
@@ -8885,13 +8887,18 @@
 					<show id="bcpg:ingListGeoOrigin" />
 					<show id="bcpg:ingListGeoTransfo" />
 					<show id="bcpg:ingListBioOrigin" />
+					<show id="dataList_bcpg:reqCtrlList" />
 					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden"></field>
 					<field id="bcpg:ingListVolumeQtyPerc" label="hidden"></field>
 					<field id="bcpg:depthLevel" label="hidden"></field>
+					<field id="dataList_bcpg:reqCtrlList"
+						label-id="becpg.forms.field.compliance.label" />		
 					<field id="fm:commentCount" label="hidden" read-only="true" />
+					
+					
 				</appearance>
 			</form>
 		</forms>
@@ -9692,6 +9699,16 @@
 					<field label="hidden" id="bcpg:rclSources" />
 				</appearance>
 			</form>
+			
+			<form id="sub-datagrid">
+				<field-visibility>
+					<show id="bcpg:rclReqType" />
+					<show id="bcpg:rclReqMessage" />
+					<show id="bcpg:regulatoryCode" force="true"/>
+					<show id="bcpg:rclReqMaxQty" />
+				</field-visibility>
+			</form>
+			
 			<form id="filter">
 				<field-visibility>
 					<show id="bcpg:rclReqType" />

@@ -49,6 +49,7 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 	private static final long serialVersionUID = -3851143080201225383L;
 	private RequirementType reqType;
 	private MLText reqMlMessage;
+	private Double reqMaxQty;
 	private NodeRef charact;
 	private List<NodeRef> sources = new LinkedList<>();
 	private RequirementDataType reqDataType;
@@ -79,6 +80,27 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 	 */
 	public void setFormulationChainId(String formulationChainId) {
 		this.formulationChainId = formulationChainId;
+	}
+
+	
+	/**
+	 * <p>Getter for the field <code>rclReqMaxQty</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
+	@AlfProp
+	@AlfQname(qname="bcpg:rclReqMaxQty")
+	public Double getReqMaxQty() {
+		return reqMaxQty;
+	}
+
+	/**
+	 * <p>Setter for the field <code>rclReqMaxQty</code>.</p>
+	 *
+	 * @param formulationChainId a {@link java.lang.Double} object.
+	 */
+	public void setReqMaxQty(Double reqMaxQty) {
+		this.reqMaxQty = reqMaxQty;
 	}
 
 	/**
@@ -285,16 +307,14 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 	}
 	
 
-	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(charact, regulatoryCode, reqDataType, reqMlMessage, reqType, sources);
+		result = prime * result + Objects.hash(charact, reqMaxQty, regulatoryCode, reqDataType, reqMlMessage, reqType, sources);
 		return result;
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -304,16 +324,16 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 		if (getClass() != obj.getClass())
 			return false;
 		ReqCtrlListDataItem other = (ReqCtrlListDataItem) obj;
-		return Objects.equals(charact, other.charact) && Objects.equals(regulatoryCode, other.regulatoryCode) && reqDataType == other.reqDataType
+		return Objects.equals(charact, other.charact) && Objects.equals(reqMaxQty, other.reqMaxQty)
+				&& Objects.equals(regulatoryCode, other.regulatoryCode) && reqDataType == other.reqDataType
 				&& Objects.equals(reqMlMessage, other.reqMlMessage) && reqType == other.reqType && Objects.equals(sources, other.sources);
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return "ReqCtrlListDataItem [reqType=" + reqType + ", reqMlMessage=" + reqMlMessage + ", sort=" + sort + ", charact=" + charact + ", sources="
-				+ sources + ", reqDataType=" + reqDataType + ", regulatoryCode=" + regulatoryCode + ", formulationChainId=" + formulationChainId
-				+ "]";
+		return "ReqCtrlListDataItem [reqType=" + reqType + ", reqMlMessage=" + reqMlMessage + ", rclReqMaxQty=" + reqMaxQty + ", charact="
+				+ charact + ", sources=" + sources + ", reqDataType=" + reqDataType + ", regulatoryCode=" + regulatoryCode + ", formulationChainId="
+				+ formulationChainId + ", sort=" + sort + "]";
 	}
 	
 	
