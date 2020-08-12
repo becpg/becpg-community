@@ -50,6 +50,8 @@
  * 
  * classifyByHierarchy(productNode, folderNode, propHierarchy?) classify node by hierarchy 
  * 
+ * classifyByPropAndHierarchy(productNode, folderNode, propHierarchy?, propPathName?, locale?) classify node by prop and hierarchy 
+ * 
  * isInSite(productNode, siteId) returns true if node is in siteId
  * 
  * isInUserFolder(productNode) returns true if node is in user folder
@@ -406,6 +408,73 @@ function classifyByHierarchy(productNode, folderNode, propHierarchy) {
 		action.execute(productNode.nodeRef);
 	}
 }
+
+
+/**
+* Classify node by Hierarchy
+* @param productNode
+* @param folderNode Classification start on this folderNode
+* @param propHierarchy
+* @param propPathName correspond to a property of 'productNode' or a property of a assocs of productNode, exemple: "bcpg:plant|bcpg:geoOrigine|bcpg:isoCOde".
+* @param locale if 'propPathName' is a ML Property, locale specifies which language to use to naming subfolder.
+* @returns void
+*/
+//beta
+function classifyByPropAndHierarchy(productNode, folderNode, propHierarchy, propPathName, locale) {
+
+	if (isEmpty(propPathName)) {
+
+		classifyByHierarchy(productNode, folderNode, propHierarchy);
+
+	} else if (propPathName.split('|').length == 1) {
+
+		var subFolderName = propValue(productNode, propPathName);
+
+		if (!isEmpty(locale)) {
+			subFolderName = getMLConstraint(getProp(productNode, propPathName), propPathName, locale);
+		}
+
+		folderNode = getOrCreateFolder(folderNode, subFolderName);
+		classifyByHierarchy(productNode, folderNode, propHierarchy);
+
+	} else {
+
+		var assocs = propPathName.split('|'), assocName = assocs.shift(), property = assocs[assocs.length - 1], finalAssoc = classifyByPropAndHierarchy_extractAssoc(productNode,
+				assocName, assocs), subFolderName = propValue(finalAssoc, property);
+
+		if (!isEmpty(locale)) {
+			subFolderName = getMLConstraint(getProp(productNode, propPathName), propPathName, locale);
+		}
+
+		folderNode = getOrCreateFolder(folderNode, subFolderName);
+		classifyByHierarchy(productNode, folderNode, propHierarchy);
+
+	}
+}
+
+function classifyByPropAndHierarchy_extractAssoc(node, assocName, assocsArray) {
+
+	if (assocsArray.length == 0) {
+		return node;
+	}
+	var nextAssocName = assocsArray.shift(), nextNode = assocValue(node, assocName);
+
+	if (nextNode == "") {
+		return "";
+	}
+
+	classifyByPropAndHierarchy_extractAssoc(nextNode, nextAssocName, assocsArray);
+}
+
+function getOrCreateFolder(folderNode, targetFolder) {
+
+	if (folderNode.childByNamePath(targetFolder)) { 
+		return folderNode.childByNamePath(targetFolder);
+	} else { 
+		return folderNode.createFolder(targetFolder);
+	}
+}
+
 
 /**
  * 
