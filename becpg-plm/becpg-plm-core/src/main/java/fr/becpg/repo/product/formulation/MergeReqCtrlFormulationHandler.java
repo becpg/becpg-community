@@ -152,6 +152,7 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 					// update
 					ReqCtrlListDataItem newReqCtrlListDataItem = newReqCtrlList.get(dbKV.getKey());
 					dbKV.getValue().setReqType(newReqCtrlListDataItem.getReqType());
+					dbKV.getValue().setReqMaxQty(newReqCtrlListDataItem.getReqMaxQty());
 					dbKV.getValue().setSources(newReqCtrlListDataItem.getSources());
 					dbKV.getValue().setCharact(newReqCtrlListDataItem.getCharact());
 					dbKV.getValue().setReqDataType(newReqCtrlListDataItem.getReqDataType());

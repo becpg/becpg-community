@@ -156,7 +156,13 @@ public class SpelFormulaService {
 			StandardEvaluationContext context = createDataListItemSpelContext(entity, item, false);
 			Double value = exp.getValue(context, Double.class);
 			if (value != null) {
-				sum += value;
+				if(SpelFormulaContext.Operator.MIN.equals(operator)) {
+					sum = Math.min(sum, value);
+				} else if(SpelFormulaContext.Operator.MAX.equals(operator)) {
+					sum = Math.max(sum, value);
+				} else {
+					sum += value;
+				}
 				count++;
 			} else {
 				logger.debug("Value is null for [" + formula + "] on " + item.toString());

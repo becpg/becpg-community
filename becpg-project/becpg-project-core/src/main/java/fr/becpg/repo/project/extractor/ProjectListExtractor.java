@@ -77,6 +77,8 @@ public class ProjectListExtractor extends ActivityListExtractor {
 	private static final String VIEW_RESOURCES = "resources";
 	private static final String VIEW_ENTITY_PROJECTS = "entity-projects";
 	private static final String PROJECT_LIST = "projectList";
+	
+	private static final String PROP_SORT = "sort";
 
 	private String myProjectAttributes = "pjt:projectManager,cm:creator";
 
@@ -91,6 +93,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 	private NamespaceService namespaceService;
 
 	private static final Log logger = LogFactory.getLog(ProjectListExtractor.class);
+	
 
 	/**
 	 * <p>Setter for the field <code>projectService</code>.</p>
@@ -263,7 +266,8 @@ public class ProjectListExtractor extends ActivityListExtractor {
 					beCPGQueryBuilder.ofType(dataType);
 
 					beCPGQueryBuilder.excludeProp(ProjectModel.PROP_TL_IS_EXCLUDE_FROM_SEARCH, Boolean.TRUE.toString());
-
+					beCPGQueryBuilder.excludeProp(ProjectModel.PROP_TL_IS_GROUP, Boolean.TRUE.toString());
+					
 					if ((dataListFilter.getCriteriaMap() != null) && !dataListFilter.getCriteriaMap().containsKey("prop_pjt_tlState")) {
 						dataListFilter.getCriteriaMap().put("prop_pjt_tlState", "\"Planned\",\"InProgress\"");
 					}
@@ -403,7 +407,6 @@ public class ProjectListExtractor extends ActivityListExtractor {
 					@Override
 					public List<Map<String, Object>> extractNestedField(NodeRef nodeRef, AttributeExtractorStructure field) {
 						DataListPagination pagination = (DataListPagination) props.get(PAGINATION);
-
 						List<Map<String, Object>> ret = new ArrayList<>();
 						if (field.isDataListItems()) {
 							if ((ProjectModel.TYPE_TASK_LIST.equals(field.getFieldQname()) && (pagination.getPageSize() > 10))
@@ -438,6 +441,9 @@ public class ProjectListExtractor extends ActivityListExtractor {
 										Map<QName, Serializable> properties = nodeService.getProperties(itemNodeRef);
 										tmp.put(PROP_TYPE, itemType.toPrefixString(services.getNamespaceService()));
 										tmp.put(PROP_NODE, itemNodeRef);
+										
+										tmp.put(PROP_SORT, nodeService.getProperty(itemNodeRef, BeCPGModel.PROP_SORT));
+										
 										tmp.put(PROP_PERMISSIONS, permissions);
 										if (BeCPGModel.TYPE_ACTIVITY_LIST.equals(field.getFieldQname())) {
 											Map<String, Object> tmp2 = doExtract(itemNodeRef, itemType, field.getChildrens(), mode, properties, props,

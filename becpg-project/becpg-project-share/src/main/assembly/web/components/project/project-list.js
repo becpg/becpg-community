@@ -114,8 +114,7 @@ var g; // gantt var
 
                             return groupName;
                         },
-                        hiddenColumns : [ "prop_pjt_projectHierarchy1", "prop_pjt_projectHierarchy2", "prop_bcpg_code",
-                                "prop_pjt_projectCompletionDate", "prop_pjt_projectDueDate", "prop_pjt_projectState" ],
+                        hiddenColumns : [ "prop_pjt_projectHierarchy1", "prop_pjt_projectHierarchy2" ],
                         formWidth : "65em"
 
                     });
