@@ -39,6 +39,7 @@ import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransacti
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.lock.LockService;
+import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -419,19 +420,14 @@ public class EntityListsWebScript extends AbstractWebScript {
 			result.put(KEY_NAME_VARIANT, variants);
 		}
 
-		// NOTE: not properly tested yet
-		List<ChildAssociationRef> compareAssociations = new ArrayList<>();
+		List<AssociationRef> compareAssociations = new ArrayList<>();
 		if (nodeService.hasAspect(entity, BeCPGModel.ASPECT_COMPARE_WITH)) {
-			for (ChildAssociationRef association : nodeService.getChildAssocs(entity)) {
-				if (association.getTypeQName().isMatch(BeCPGModel.ASSOC_COMPARE_WITH_ENTITIES)) {
-					compareAssociations.add(association);
-				}
-			}
+			compareAssociations = nodeService.getTargetAssocs(entity, BeCPGModel.ASSOC_COMPARE_WITH_ENTITIES);
 		}
 		if (!compareAssociations.isEmpty()) {
 			JSONArray compareWithEntities = new JSONArray();
-			for (ChildAssociationRef association : compareAssociations) {
-				NodeRef compareWithEntity = association.getChildRef();
+			for (AssociationRef association : compareAssociations) {
+				NodeRef compareWithEntity = association.getTargetRef();
 				JSONObject obj = new JSONObject();
 				obj.put(KEY_NAME_NODE_REF, compareWithEntity.toString());
 				obj.put(KEY_NAME_NAME, nodeService.getProperty(compareWithEntity, ContentModel.PROP_NAME));
@@ -439,7 +435,6 @@ public class EntityListsWebScript extends AbstractWebScript {
 			}
 			result.put(KEY_NAME_COMPARE_WITH_ENTITIES, compareWithEntities);
 		}
-
 		return result;
 	}
 

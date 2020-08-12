@@ -39,12 +39,15 @@
 			<language locale="en_NG">English - Nigeria</language>
 			<language locale="en_PK">English - Pakistan</language>
 			<language locale="en_UG">English - Uganda</language>
+			<language locale="en_ZA">English - South Africa</language>
 			<language locale="en_ZW">English - Zibabwe</language>
 			<language locale="de">German</language>
 			<language locale="es">Spanish</language>
+			<language locale="es_CL">Spanish - Chile</language>
 			<language locale="es_CO">Spanish - Colombia</language>
 			<language locale="es_MX">Spanish - Mexico</language>
 			<language locale="es_PR">Spanish - Puerto Rico</language>
+			<language locale="es_UY">Spanish - Uruguay</language>
 			<language locale="fr">French</language>
 			<language locale="fr_CA">French - Canada</language>
 			<language locale="fr_CI">French - Côte d'Ivoire</language>
@@ -57,6 +60,7 @@
 			<language locale="nl">Dutch</language>
 			<language locale="ru">Russian</language>
 			<language locale="pt">Portuguese</language>
+			<language locale="pt_BR">Portuguese - Brazil</language>
 			<language locale="no">Norwegian</language>
 			<language locale="sr_RS">Serbian - Serbia</language>
 			<language locale="sv_SE">Swedish - Sweden</language>
@@ -72,12 +76,14 @@
 			<language locale="zh_SG">Chinese - Singapore</language>
 			<language locale="ar_AE">Arabic - United Arab Emirates</language>
 			<language locale="ar_BH">Arabic - Bahrain</language>
-			<language locale="ar_SA">Arabic - Saudi Arabia</language>
-			<language locale="ar_MA">Arabic - Morocco</language>
-			<language locale="ar_QA">Arabic - Qatar</language>
-			<language locale="ar_OM">Arabic - Oman</language>
-			<language locale="ar_KW">Arabic - Kuwait</language>
 			<language locale="ar_DZ">Arabic - Algeria</language>
+			<language locale="ar_EG">Arabic - Egypt</language>
+			<language locale="ar_KW">Arabic - Kuwait</language>
+			<language locale="ar_MA">Arabic - Morocco</language>
+			<language locale="ar_OM">Arabic - Oman</language>
+			<language locale="ar_QA">Arabic - Qatar</language>
+			<language locale="ar_SA">Arabic - Saudi Arabia</language>
+			<language locale="ar_TN">Arabic - Tunisia</language>
 			<language locale="bem_ZM">Bemba - Zambia</language>
 			
 			
