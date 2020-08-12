@@ -1187,4 +1187,60 @@ if (beCPG.module.EntityDataGridRenderers) {
 		}
 	});
 	
+	
+	 YAHOO.Bubbling.fire("registerDataGridRenderer", {
+		   propertyName : "bcpg:reqCtrlList",
+		   renderer : function(oRecord, data, label, scope, idx, length, elCell, oColumn) {
+			   var oData = oRecord.getData();
+			   if(data["itemData"]){
+
+				   if (idx == 0) {
+					   
+					   var reqCtrlList = oRecord.getData("itemData")["dt_bcpg_reqCtrlList"];
+
+					   var reqHtlm = "<ul>";
+
+					   for (j in reqCtrlList) {
+						   var reqCtrl = reqCtrlList[j];
+						   var desc ="";
+						   
+						   var reqType = reqCtrl["itemData"]["prop_bcpg_rclReqType"].value;
+						   
+						   desc += '<div class="rclReq-details">';
+						   if (reqType) {
+							   desc += '<span class="reqType' + reqType + '" title="'
+							   + Alfresco.util.encodeHTML(scope.msg("data.reqtype." + reqType.toLowerCase())) + '">&nbsp;</span>';
+						   }
+						   if (reqCtrl["itemData"]["prop_bcpg_regulatoryCode"] && reqCtrl["itemData"]["prop_bcpg_regulatoryCode"].value!=null && reqCtrl["itemData"]["prop_bcpg_regulatoryCode"].value.length>1) {
+							   var regulatoryCode = reqCtrl["itemData"]["prop_bcpg_regulatoryCode"].value;   
+							   desc += '      <span class="rclReq-regulatoryCode" title="'
+								   + beCPG.util.encodeAttr(reqCtrl["itemData"]["prop_bcpg_rclReqMessage"].displayValue.replace(regulatoryCode,"")) +'"  >'
+								   + Alfresco.util.encodeHTML(regulatoryCode);
+								if(reqCtrl["itemData"]["prop_bcpg_rclReqMaxQty"] && reqCtrl["itemData"]["prop_bcpg_rclReqMaxQty"].value!=null){
+									desc += " ("+reqCtrl["itemData"]["prop_bcpg_rclReqMaxQty"].displayValue+" %)";
+								}   
+								   
+							   desc += '</span>';
+						   } else {
+							   desc += '      <span class="rclReq-title">'
+								   + Alfresco.util.encodeHTML(reqCtrl["itemData"]["prop_bcpg_rclReqMessage"].displayValue) + '</span>';
+						   }
+						   desc += "</div>";					  
+
+						   reqHtlm += "<li>" + desc + "</li>";
+						  
+					   }
+					   reqHtlm += "</ul>";
+
+					   return reqHtlm;
+
+				   }
+
+				   return null;
+			       
+			       
+			   }
+		   }
+		});
+	
 }

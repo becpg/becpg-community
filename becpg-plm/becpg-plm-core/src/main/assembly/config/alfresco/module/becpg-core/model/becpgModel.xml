@@ -2231,6 +2231,11 @@
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
+				<property name="bcpg:rclReqMaxQty">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
 				<property name="bcpg:rclDataType">
 					<type>d:text</type>
 					<mandatory>false</mandatory>

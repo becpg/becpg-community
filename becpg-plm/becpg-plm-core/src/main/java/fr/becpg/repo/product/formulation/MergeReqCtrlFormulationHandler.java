@@ -41,7 +41,6 @@ import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
-import fr.becpg.repo.repository.impl.BeCPGHashCodeBuilder;
 import fr.becpg.repo.repository.model.FormulatedCharactDataItem;
 
 /**
@@ -153,6 +152,7 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 					// update
 					ReqCtrlListDataItem newReqCtrlListDataItem = newReqCtrlList.get(dbKV.getKey());
 					dbKV.getValue().setReqType(newReqCtrlListDataItem.getReqType());
+					dbKV.getValue().setReqMaxQty(newReqCtrlListDataItem.getReqMaxQty());
 					dbKV.getValue().setSources(newReqCtrlListDataItem.getSources());
 					dbKV.getValue().setCharact(newReqCtrlListDataItem.getCharact());
 					dbKV.getValue().setReqDataType(newReqCtrlListDataItem.getReqDataType());
