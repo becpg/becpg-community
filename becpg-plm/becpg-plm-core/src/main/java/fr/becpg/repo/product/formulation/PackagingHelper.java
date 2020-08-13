@@ -80,7 +80,7 @@ public class PackagingHelper implements InitializingBean {
 		PackagingData packagingData = new PackagingData(productData.getVariants());
 		if (productData.hasPackagingListEl()) {
 			for (PackagingListDataItem dataItem : productData.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-				loadPackagingItem(dataItem, packagingData, dataItem.getVariants());
+				loadPackagingItem(dataItem, packagingData, dataItem.getVariants(), 1d);
 			}
 		}
 
@@ -126,22 +126,22 @@ public class PackagingHelper implements InitializingBean {
 		return defaultVariantNodeRef;
 	}
 
-	private void loadPackagingItem(PackagingListDataItem dataItem, PackagingData packagingData,  List<NodeRef> currentVariants ) {
+	private void loadPackagingItem(PackagingListDataItem dataItem, PackagingData packagingData,  List<NodeRef> currentVariants , double subQty) {
 
 		if (nodeService.getType(dataItem.getProduct()).equals(PLMModel.TYPE_PACKAGINGKIT)) {
-			loadPackagingKit(dataItem, packagingData, currentVariants);
+			loadPackagingKit(dataItem, packagingData, currentVariants, subQty);
 		} else {
-			loadPackaging(dataItem, packagingData, currentVariants);
+			loadPackaging(dataItem, packagingData, currentVariants, subQty);
 		}
 	}
 
-	private void loadPackaging(PackagingListDataItem dataItem, PackagingData packagingData, List<NodeRef> currentVariants) {
+	private void loadPackaging(PackagingListDataItem dataItem, PackagingData packagingData, List<NodeRef> currentVariants, double subQty) {
 		QName nodeType = nodeService.getType(dataItem.getProduct());
 
 		// Sum tare (don't take in account packagingKit)
 		if ((dataItem.getPkgLevel() != null) && !PLMModel.TYPE_PACKAGINGKIT.equals(nodeType) && (dataItem.getProduct() != null)) {
 			for (VariantPackagingData variantPackagingData : packagingData.getVariantPackagingData(currentVariants)) {
-				BigDecimal tare = FormulationHelper.getTareInKg(dataItem, alfrescoRepository.findOne(dataItem.getProduct()));
+				BigDecimal tare = FormulationHelper.getTareInKg(dataItem, alfrescoRepository.findOne(dataItem.getProduct())).multiply(new BigDecimal(subQty));
 
 				if (PackagingLevel.Primary.equals(dataItem.getPkgLevel())) {
 					variantPackagingData.addTarePrimary(tare);
@@ -221,13 +221,17 @@ public class PackagingHelper implements InitializingBean {
 	}
 
 	// manage 2 level depth
-	private void loadPackagingKit(PackagingListDataItem dataItem, PackagingData packagingData,  List<NodeRef> currentVariants) {
+	private void loadPackagingKit(PackagingListDataItem dataItem, PackagingData packagingData,  List<NodeRef> currentVariants, double subQty) {
 
-		loadPackaging(dataItem, packagingData, currentVariants);
+		if (dataItem.getQty()!=null &&  ProductUnit.P.equals(dataItem.getPackagingListUnit()) ) {
+			subQty *= dataItem.getQty();
+		}
+		
+		loadPackaging(dataItem, packagingData, currentVariants, subQty);
 		ProductData packagingKitData = alfrescoRepository.findOne(dataItem.getProduct());
 		if (packagingKitData.hasPackagingListEl()) {
 			for (PackagingListDataItem p : packagingKitData.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-				loadPackagingItem(p,packagingData, currentVariants);
+				loadPackagingItem(p,packagingData, currentVariants, subQty);
 			}
 		}
 	}
