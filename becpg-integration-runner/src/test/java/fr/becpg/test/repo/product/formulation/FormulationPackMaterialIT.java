@@ -162,7 +162,9 @@ public class FormulationPackMaterialIT extends PLMBaseTestCase {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			NodeRef listContainerNodeRef = entityListDAO.getListContainer(finishedProductNodeRef);
-			entityListDAO.createList(listContainerNodeRef, PackModel.PACK_MATERIAL_LIST_TYPE);
+			if(entityListDAO.getList(listContainerNodeRef, PackModel.PACK_MATERIAL_LIST_TYPE) == null) {
+				entityListDAO.createList(listContainerNodeRef, PackModel.PACK_MATERIAL_LIST_TYPE);
+			}
 			productService.formulate(finishedProductNodeRef);
 
 			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
