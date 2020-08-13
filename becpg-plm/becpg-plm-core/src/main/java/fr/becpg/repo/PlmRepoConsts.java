@@ -207,6 +207,8 @@ public class PlmRepoConsts {
 	public static final String PATH_REPORTS_EXPORT_SEARCH_NON_CONFORMITIES = "ExportNCSynthesis";
 	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_SUPPLIERS_CONTACTS="ExportSuppliersContacts"</code> */
 	public static final String PATH_REPORTS_EXPORT_SEARCH_SUPPLIERS_CONTACTS = "ExportSuppliersContacts";
+	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_QUALITY_CONTROLS="ExportSuppliersContacts"</code> */
+	public static final String PATH_REPORTS_EXPORT_SEARCH_QUALITY_CONTROLS = "ExportQualityControls";
 	/** Constant <code>PATH_REPORTS_ECO="ECOReports"</code> */
 	public static final String PATH_REPORTS_ECO = "ECOReports";
 	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_PACKAGINGMATERIALS="ExportPackagingMaterials"</code> */
