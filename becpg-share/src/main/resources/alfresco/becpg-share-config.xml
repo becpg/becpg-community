@@ -43,9 +43,11 @@
 			<language locale="en_ZW">English - Zibabwe</language>
 			<language locale="de">German</language>
 			<language locale="es">Spanish</language>
+			<language locale="es_CL">Spanish - Chile</language>
 			<language locale="es_CO">Spanish - Colombia</language>
 			<language locale="es_MX">Spanish - Mexico</language>
 			<language locale="es_PR">Spanish - Puerto Rico</language>
+			<language locale="es_UY">Spanish - Uruguay</language>
 			<language locale="fr">French</language>
 			<language locale="fr_CA">French - Canada</language>
 			<language locale="fr_CI">French - Côte d'Ivoire</language>
@@ -58,6 +60,7 @@
 			<language locale="nl">Dutch</language>
 			<language locale="ru">Russian</language>
 			<language locale="pt">Portuguese</language>
+			<language locale="pt_BR">Portuguese - Brazil</language>
 			<language locale="no">Norwegian</language>
 			<language locale="sr_RS">Serbian - Serbia</language>
 			<language locale="sv_SE">Swedish - Sweden</language>
