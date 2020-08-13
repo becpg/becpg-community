@@ -64,7 +64,7 @@ STARCH;Starch;83;1;false;true;false;;;;
 SUGAR;Sugars total;6;2;true;false;true;;;g;
 THIA;Thiamin;50;1;false;true;false;1,2;;mg;
 FAT;Total lipid (fat);8;1;true;false;true;;;g;
-FAPUN3F;Total omega 3 fatty acids;13;2;true;false;true;;;g;
+FAPUN3F;Total omega 3 fatty acids;13;2;true;false;true;;;mg;
 FATRN;Total trans fatty acids;10;2;true;false;true;;;g;
 TRP;Tryptophan;54;1;false;true;false;;;;
 VITA-;Vitamin A;36;1;false;true;false;900;;mcg;
