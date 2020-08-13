@@ -60,7 +60,7 @@ RIBF;Riboflavin;53;1;false;true;false;1,3;;mg;
 NACL;Salt;36;1;false;true;false;;;;
 SE;Selenium;71;1;false;true;false;34;;mcg;
 NA;Sodium, Na;35;1;true;false;false;;;;
-FIBSOL;;;34;1;false;true;false;;;;
+FIBSOL;Soluble fiber;34;1;false;true;false;;;;
 STARCH;Starch;84;1;false;true;false;;;;
 SUGAR;Sugars total;5;1;false;true;false;;;;
 THIA;Thiamin;52;1;false;true;false;1,2;;mg;
