@@ -97,7 +97,7 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 			}
 
 			if (!FormulationService.FAST_FORMULATION_CHAINID.equals(formulatedProduct.getFormulationChainId())
-					&& ( formulatedProduct.getReformulateCount() ==null || formulatedProduct.getReformulateCount() == formulatedProduct.getCurrentReformulateCount())) {
+					&& ( formulatedProduct.getReformulateCount() ==null || formulatedProduct.getReformulateCount().equals(formulatedProduct.getCurrentReformulateCount()))) {
 
 				if (shouldLaunchDecernis) {
 					StopWatch watch = null;
