@@ -41,10 +41,11 @@ public class ChileanNutrientRegulation extends AbstractNutrientRegulation {
 			}
 			if (nutrientTypeCode.equals(NutrientCode.CarbohydrateWithFiber) || nutrientTypeCode.equals(NutrientCode.CarbohydrateByDiff)
 					|| nutrientTypeCode.equals(NutrientCode.Sugar) || nutrientTypeCode.equals(NutrientCode.SugarAdded)
-					|| nutrientTypeCode.equals(NutrientCode.Protein) || nutrientTypeCode.equals(NutrientCode.Fat)
-					|| nutrientTypeCode.equals(NutrientCode.FiberDietary) || nutrientTypeCode.equals(NutrientCode.FatSaturated)
-					|| nutrientTypeCode.equals(NutrientCode.FatTrans) || nutrientTypeCode.contentEquals(NutrientCode.FiberSoluble)
-					|| nutrientTypeCode.contentEquals(NutrientCode.FiberInsoluble)) {
+					|| nutrientTypeCode.equals(NutrientCode.Protein) || nutrientTypeCode.equals(NutrientCode.Cholesterol)
+					|| nutrientTypeCode.equals(NutrientCode.Fat) || nutrientTypeCode.equals(NutrientCode.FatSaturated)
+					|| nutrientTypeCode.equals(NutrientCode.FatTrans) || nutrientTypeCode.equals(NutrientCode.FatPolyunsaturated)
+					|| nutrientTypeCode.equals(NutrientCode.FatMonounsaturated) || nutrientTypeCode.equals(NutrientCode.FiberDietary)
+					|| nutrientTypeCode.contentEquals(NutrientCode.FiberSoluble) || nutrientTypeCode.contentEquals(NutrientCode.FiberInsoluble)) {
 				if (value <= 0.5){
 					return 0.0;
 				} else if (value < 10) {
