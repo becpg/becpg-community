@@ -168,8 +168,8 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 								if (packMateriDataItem.getPmlWeight() != null) {
 									if ((compoProductQty != null) && !compoProductQty.isNaN() && !compoProductQty.isInfinite()
 											&& (compoProductQty != 0d)) {
-										BigDecimal plmWeight = new BigDecimal(packMateriDataItem.getPmlWeight(), MathContext.DECIMAL64)
-												.multiply(new BigDecimal(qtyUsed)).divide(new BigDecimal(compoProductQty), MathContext.DECIMAL64);
+										BigDecimal plmWeight = BigDecimal.valueOf(packMateriDataItem.getPmlWeight())
+												.multiply(BigDecimal.valueOf(qtyUsed)).divide(BigDecimal.valueOf(compoProductQty), MathContext.DECIMAL64);
 										if (toUpdate.containsKey(packMateriDataItem.getNodeRef())) {
 											BigDecimal newPlmWeight = toUpdate.get(packMateriDataItem.getPmlMaterial()).add(plmWeight);
 											toUpdate.put(packMateriDataItem.getPmlMaterial(), newPlmWeight);
@@ -215,20 +215,21 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 
 			PackagingMaterialData packagingProduct = (PackagingMaterialData) alfrescoRepository.findOne(dataItem.getProduct());
 
-			BigDecimal tare = FormulationHelper.getTareInKg(dataItem, packagingProduct).multiply(new BigDecimal(subQty*1000d));
-			
+			BigDecimal tare = FormulationHelper.getTareInKg(dataItem, packagingProduct).multiply(BigDecimal.valueOf(subQty*1000d));
+
 			if (alfrescoRepository.hasDataList(packagingProduct, PackModel.PACK_MATERIAL_LIST_TYPE) 
 					&& packagingProduct.getPackMaterialList() != null ) {
 
 				for (PackMaterialListDataItem packMateriDataItem : packagingProduct.getPackMaterialList()) {
 					if (packMateriDataItem.getPmlWeight() != null) {
 						
-						BigDecimal plmWeight = new BigDecimal(packMateriDataItem.getPmlWeight(), MathContext.DECIMAL64)
+						BigDecimal plmWeight = BigDecimal.valueOf(packMateriDataItem.getPmlWeight())
 								.multiply(tare);
+						
 						
 						BigDecimal productTare = FormulationHelper.getTareInKg(packagingProduct);
 						if(productTare!=null) {
-							 plmWeight = plmWeight.divide(productTare);
+							 plmWeight = plmWeight.divide(productTare.multiply(BigDecimal.valueOf(1000d)));
 						}
 							
 						if (toUpdate.containsKey(packMateriDataItem.getNodeRef())) {
@@ -243,7 +244,7 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 			} else if ((packagingProduct.getPackagingMaterials() != null) && (packagingProduct.getPackagingMaterials().size() > 0)) {
 
 
-				BigDecimal tareByMaterial = tare.divide(new BigDecimal(packagingProduct.getPackagingMaterials().size(), MathContext.DECIMAL64));
+				BigDecimal tareByMaterial = tare.divide(BigDecimal.valueOf(packagingProduct.getPackagingMaterials().size()));
 				for (NodeRef packagingMaterial : packagingProduct.getPackagingMaterials()) {
 					if (toUpdate.containsKey(packagingMaterial)) {
 						BigDecimal newTare = toUpdate.get(packagingMaterial).add(tareByMaterial);
