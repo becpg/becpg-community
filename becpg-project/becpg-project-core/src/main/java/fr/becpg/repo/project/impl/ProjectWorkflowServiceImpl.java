@@ -75,7 +75,7 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 
 	@Autowired
 	private NodeService nodeService;
-	
+
 	@Autowired
 	private AutoNumService autoNumService;
 
@@ -174,16 +174,13 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 
 				List<WorkflowTask> workflowTasks = workflowService.queryTasks(taskQuery, false);
 
-				
 				if (!workflowTasks.isEmpty()) {
-					for (WorkflowTask workflowTask : workflowTasks) {
-						Map<QName, Serializable> taskProps =  workflowTask.getProperties();
-						taskProps.put(WorkflowModel.PROP_STATUS, WorkflowConstants.TASK_STATUS_IN_PROGRESS);
-						workflowService.updateTask(workflowTask.getId(), taskProps, null, null);
+					Map<QName, Serializable> taskProps = workflowTasks.get(0).getProperties();
+					taskProps.put(WorkflowModel.PROP_STATUS, WorkflowConstants.TASK_STATUS_IN_PROGRESS);
+					workflowService.updateTask(workflowTasks.get(0).getId(), taskProps, null, null);
 
-						taskListDataItem.setWorkflowTaskInstance(workflowTask.getId());
-						break;
-					}
+					taskListDataItem.setWorkflowTaskInstance(workflowTasks.get(0).getId());
+
 				}
 			}
 		} finally {

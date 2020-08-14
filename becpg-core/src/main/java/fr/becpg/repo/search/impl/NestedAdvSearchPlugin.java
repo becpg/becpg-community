@@ -161,7 +161,7 @@ public class NestedAdvSearchPlugin implements AdvSearchPlugin {
 			}
 		}
 
-		if (logger.isDebugEnabled()) {
+		if (logger.isDebugEnabled() && watch!=null) {
 			watch.stop();
 			logger.debug("filterWithNested executed in  " + watch.getTotalTimeSeconds() + " seconds ");
 		}
