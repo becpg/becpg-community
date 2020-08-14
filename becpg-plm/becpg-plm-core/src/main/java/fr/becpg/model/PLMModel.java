@@ -12,6 +12,7 @@ import org.alfresco.service.namespace.QName;
  * @version $Id: $Id
  */
 public interface PLMModel {
+	
 
 	// product
 	/** Constant <code>TYPE_PRODUCT</code> */
