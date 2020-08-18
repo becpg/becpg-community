@@ -48,7 +48,7 @@ public class CopyFromPatch extends AbstractBeCPGPatch {
 
 	private final int batchThreads = 5;
 	private final int batchSize = 1000;
-	private final long count = batchThreads * batchSize;
+	private final long count = (long)batchThreads * (long)batchSize;
 
 	/**
 	 * <p>Setter for the field <code>ruleService</code>.</p>
