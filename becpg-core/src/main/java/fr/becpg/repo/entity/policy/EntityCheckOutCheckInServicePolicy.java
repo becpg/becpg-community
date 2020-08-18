@@ -165,7 +165,7 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy
 		try {
 
 			// instead
-			// If we are permanantly deleting the node then we need to
+			// If we are permanently deleting the node then we need to
 			// remove
 			// the associated version history
 			if (isNodeArchived == false)
