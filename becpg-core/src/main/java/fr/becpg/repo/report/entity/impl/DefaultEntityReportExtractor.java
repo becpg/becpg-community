@@ -832,7 +832,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		}
 
 		for (AssociationDefinition associationDef : assocs.values()) {
-			if (!hiddenAttributes.contains(associationDef.getName())) {
+			if (hiddenAttributes==null || !hiddenAttributes.contains(associationDef.getName())) {
 
 				if (!associationDef.getName().getNamespaceURI().equals(NamespaceService.RENDITION_MODEL_1_0_URI)
 						&& !associationDef.getName().getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI)

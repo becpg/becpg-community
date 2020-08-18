@@ -462,7 +462,6 @@ public class ImportContext {
 		try {
 			line = importFileReader.getLineAt(importIndex++, columns);
 		} catch (ImporterException e) {
-			e.printStackTrace();
 			markCurrLineError(e);
 		}
 

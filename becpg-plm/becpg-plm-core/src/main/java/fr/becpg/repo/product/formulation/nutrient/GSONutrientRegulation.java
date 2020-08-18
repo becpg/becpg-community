@@ -52,10 +52,10 @@ public class GSONutrientRegulation extends AbstractNutrientRegulation {
 					return 0.0;
 				}
 			} else if (nutrientTypeCode.equals(NutrientCode.Sodium)) {
-				if (value >= 1000) {
-					return roundValue(value, 100d);
-				} else if (value > 5) {
-					return roundValue(value, 10d);
+				if (value >= 1) {
+					return roundValue(value, 0.1d);
+				} else if (value > 0.005) {
+					return roundValue(value, 0.01d);
 				} else {
 					return 0.0;
 				}

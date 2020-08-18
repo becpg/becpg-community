@@ -159,7 +159,9 @@ public class CharactDetailsPackMaterialFormulationIT extends AbstractFinishedPro
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			NodeRef listContainerNodeRef = entityListDAO.getListContainer(finishedProductNodeRef);
-			entityListDAO.createList(listContainerNodeRef, PackModel.PACK_MATERIAL_LIST_TYPE);
+			if(entityListDAO.getList(listContainerNodeRef, PackModel.PACK_MATERIAL_LIST_TYPE) == null) {
+				entityListDAO.createList(listContainerNodeRef, PackModel.PACK_MATERIAL_LIST_TYPE);
+			}
 
 			// formulate Details
 			List<NodeRef> packMaterialNodeRefs = new ArrayList<>();
