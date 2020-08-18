@@ -139,9 +139,10 @@ public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetails
 								BigDecimal plmWeight = new BigDecimal(packMateriDataItem.getPmlWeight(), MathContext.DECIMAL64).multiply(tare);
 
 								BigDecimal productTare = FormulationHelper.getTareInKg(packagingProduct);
-								if (productTare != null) {
-									plmWeight = plmWeight.divide(productTare);
+								if(productTare!=null) {
+									 plmWeight = plmWeight.divide(productTare.multiply(BigDecimal.valueOf(1000d)));
 								}
+								
 								Double value = plmWeight.doubleValue();
 
 								if ((value != null) && (simpleCharact.shouldDetailIfZero() || (value != 0d))) {
