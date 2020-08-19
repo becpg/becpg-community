@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2020 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG.
  *  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
@@ -30,8 +30,10 @@ import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.action.evaluator.ComparePropertyValueEvaluator;
+import org.alfresco.repo.action.evaluator.HasAspectEvaluator;
 import org.alfresco.repo.action.evaluator.IsSubTypeEvaluator;
 import org.alfresco.repo.action.evaluator.compare.ComparePropertyValueOperation;
+import org.alfresco.repo.action.executer.AddFeaturesActionExecuter;
 import org.alfresco.repo.action.executer.SpecialiseTypeActionExecuter;
 import org.alfresco.repo.dictionary.DictionaryDAO;
 import org.alfresco.repo.domain.qname.QNameDAO;
@@ -56,6 +58,7 @@ import fr.becpg.model.SecurityModel;
 import fr.becpg.model.SystemGroup;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityTplService;
+import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.ContentHelper;
 import fr.becpg.repo.helper.TranslateHelper;
@@ -65,7 +68,9 @@ import fr.becpg.repo.report.template.ReportType;
 import fr.becpg.report.client.ReportFormat;
 
 /**
- * <p>CoreInitVisitor class.</p>
+ * <p>
+ * CoreInitVisitor class.
+ * </p>
  *
  * @author matthieu
  * @version $Id: $Id
@@ -96,9 +101,12 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 
 	@Autowired
 	private PermissionService permissionService;
-	
+
 	@Autowired
 	private BeCPGMailService beCPGMailService;
+
+	@Autowired
+	private EntityVersionService entityVersionService;
 
 	/** {@inheritDoc} */
 	@Override
@@ -113,7 +121,7 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 		}
 
 		visitGroups();
-		
+
 		// System
 		NodeRef systemNodeRef = visitFolder(companyHome, RepoConsts.PATH_SYSTEM);
 
@@ -139,27 +147,67 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 
 		// MailTemplates
 		contentHelper.addFilesResources(beCPGMailService.getEmailNotifyTemplatesFolder(), "classpath*:beCPG/mails/notify/*.ftl");
-		
+
 		// license
 		visitFolder(systemNodeRef, RepoConsts.PATH_LICENSE);
-		
+
+		// version
+		visitVersionFolder(entityVersionService.getEntitiesHistoryFolder());
+
 		return new ArrayList<>();
 	}
 
-	private void visitGroups() {
-		
-		createGroups(new String[] { SystemGroup.SystemMgr.toString(), SystemGroup.OlapUser.toString(), SystemGroup.ExternalUser.toString(), SystemGroup.SecurityRole.toString() , SystemGroup.LanguageMgr.toString()});
+	private void visitVersionFolder(NodeRef entitiesHistoryFolder) {
 
-		createGroups(new String[] {SystemGroup.LicenseReadConcurrent.toString(),SystemGroup.LicenseWriteConcurrent.toString(),SystemGroup.LicenseReadNamed.toString(),SystemGroup.LicenseWriteNamed.toString(),SystemGroup.LicenseSupplierConcurrent.toString() });
-	
-		
+		if (!ruleService.hasRules(entitiesHistoryFolder)) {
+			CompositeAction compositeAction = actionService.createCompositeAction();
+			Map<String, Serializable> params = new HashMap<>();
+			params.put(AddFeaturesActionExecuter.PARAM_ASPECT_NAME, ContentModel.ASPECT_INDEX_CONTROL);
+			params.put(ContentModel.PROP_IS_INDEXED.toString(), Boolean.FALSE);
+			Action action = actionService.createAction(AddFeaturesActionExecuter.NAME, params);
+			compositeAction.addAction(action);
+
+			// Conditions for the Rule : type must be equals
+			ActionCondition typeCondition = actionService.createActionCondition(IsSubTypeEvaluator.NAME);
+			typeCondition.setParameterValue(IsSubTypeEvaluator.PARAM_TYPE, ContentModel.TYPE_CMOBJECT);
+			typeCondition.setInvertCondition(false);
+			compositeAction.addActionCondition(typeCondition);
+
+			ActionCondition aspectCondition = actionService.createActionCondition(HasAspectEvaluator.NAME);
+			aspectCondition.setParameterValue(HasAspectEvaluator.PARAM_ASPECT, ContentModel.ASPECT_INDEX_CONTROL);
+			aspectCondition.setInvertCondition(true);
+			compositeAction.addActionCondition(aspectCondition);
+
+			// rule
+			Rule rule = new Rule();
+			rule.setTitle("Add no Index aspect");
+			rule.setDescription("Add no Index aspect to the created node");
+			rule.applyToChildren(true);
+			rule.setExecuteAsynchronously(true);
+			rule.setRuleDisabled(false);
+			rule.setRuleType(RuleType.INBOUND);
+			rule.setAction(compositeAction);
+			ruleService.saveRule(entitiesHistoryFolder, rule);
+		}
+
+	}
+
+	private void visitGroups() {
+
+		createGroups(new String[] { SystemGroup.SystemMgr.toString(), SystemGroup.OlapUser.toString(), SystemGroup.ExternalUser.toString(),
+				SystemGroup.SecurityRole.toString(), SystemGroup.LanguageMgr.toString() });
+
+		createGroups(new String[] { SystemGroup.LicenseReadConcurrent.toString(), SystemGroup.LicenseWriteConcurrent.toString(),
+				SystemGroup.LicenseReadNamed.toString(), SystemGroup.LicenseWriteNamed.toString(),
+				SystemGroup.LicenseSupplierConcurrent.toString() });
+
 		Set<String> authorities = authorityService.getContainedAuthorities(AuthorityType.GROUP,
 				PermissionService.GROUP_PREFIX + SystemGroup.LicenseSupplierConcurrent.toString(), true);
 		if (!authorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.ExternalUser.toString())) {
 			authorityService.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.LicenseSupplierConcurrent.toString(),
 					PermissionService.GROUP_PREFIX + SystemGroup.ExternalUser.toString());
 		}
-		
+
 	}
 
 	/**
@@ -258,7 +306,6 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 
 		// reports folder
 		NodeRef reportsNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_REPORTS);
-		
 
 		// compare report
 		try {
@@ -267,8 +314,8 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 					TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_COMPARE_ENTITIES), COMPARE_ENTITIES_REPORT_PATH, ReportType.Compare,
 					ReportFormat.PDF, null, false, true, false);
 
-			List<NodeRef> resources = contentHelper
-					.addFilesResources(compareProductFolderNodeRef, "classpath*:beCPG/birt/system/*.properties", false);
+			List<NodeRef> resources = contentHelper.addFilesResources(compareProductFolderNodeRef, "classpath*:beCPG/birt/system/*.properties",
+					false);
 			associationService.update(compareReportNodeRef, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES, resources);
 
 		} catch (IOException e) {
@@ -284,7 +331,8 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 		// visit acls
 		Set<QName> dataLists = new LinkedHashSet<>();
 		dataLists.add(SecurityModel.TYPE_ACL_ENTRY);
-		NodeRef entityTplNodeRef = entityTplService.createEntityTpl(entityTplsNodeRef, SecurityModel.TYPE_ACL_GROUP, null, true, true, dataLists, null);
+		NodeRef entityTplNodeRef = entityTplService.createEntityTpl(entityTplsNodeRef, SecurityModel.TYPE_ACL_GROUP, null, true, true, dataLists,
+				null);
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
 	}
 
@@ -292,8 +340,8 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 	@Override
 	protected void visitPermissions(NodeRef nodeRef, String folderName) {
 		if (Objects.equals(folderName, RepoConsts.PATH_SYSTEM)) {
-			permissionService
-					.setPermission(nodeRef, PermissionService.GROUP_PREFIX + SystemGroup.SystemMgr.toString(), PermissionService.COORDINATOR, true);
+			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + SystemGroup.SystemMgr.toString(), PermissionService.COORDINATOR,
+					true);
 		}
 	}
 
