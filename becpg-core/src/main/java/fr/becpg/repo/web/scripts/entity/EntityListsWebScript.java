@@ -64,12 +64,14 @@ import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
+import fr.becpg.model.ReportModel;
 import fr.becpg.model.SecurityModel;
 import fr.becpg.model.SystemGroup;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.SiteHelper;
+import fr.becpg.repo.report.jscript.ReportAssociationDecorator;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.security.SecurityService;
 
@@ -93,6 +95,7 @@ public class EntityListsWebScript extends AbstractWebScript {
 
 	private static final String RESULT_ACL_TYPE_NODE = "aclTypeNode";
 
+	private static final String RESULT_REPORTS = "reports";
 	private static final String KEY_NAME_NAME = "name";
 
 	private static final String KEY_NAME_TITLE = "title";
@@ -170,6 +173,8 @@ public class EntityListsWebScript extends AbstractWebScript {
 	private BehaviourFilter policyBehaviourFilter;
 
 	private LockService lockService;
+
+	private ReportAssociationDecorator reportAssociationDecorator;
 
 	/**
 	 * <p>Setter for the field <code>permissionService</code>.</p>
@@ -268,6 +273,11 @@ public class EntityListsWebScript extends AbstractWebScript {
 	 */
 	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
 		this.policyBehaviourFilter = policyBehaviourFilter;
+	}
+        
+
+        public void setReportAssociationDecorator(ReportAssociationDecorator reportAssociationDecorator) {
+		this.reportAssociationDecorator = reportAssociationDecorator;
 	}
 
 	/**
@@ -608,6 +618,11 @@ public class EntityListsWebScript extends AbstractWebScript {
 			String displayPath = path.toDisplayPath(nodeService, permissionService);
 
 			String retPath = SiteHelper.extractDisplayPath(stringPath, displayPath);
+			
+                        if (nodeService.hasAspect(nodeRef, ReportModel.ASPECT_REPORT_ENTITY)) {
+				result.put(RESULT_REPORTS, reportAssociationDecorator.decorate(ReportModel.ASSOC_REPORTS, nodeRef,
+						associationService.getTargetAssocs(nodeRef, ReportModel.ASSOC_REPORTS)));
+			}
 
 			result.put(RESULT_ENTITY, makeEntity(nodeRef, retPath));
 			result.put(RESULT_CONTAINER, listContainerNodeRef != null ? listContainerNodeRef.toString() : null);
