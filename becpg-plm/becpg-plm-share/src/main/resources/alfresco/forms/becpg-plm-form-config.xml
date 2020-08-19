@@ -5918,7 +5918,7 @@
 						</control>
 					</field>
 					<field id="bcpg:ingCEECode" />
-					<fiels id="bcpg:casNumber"/>
+					<field id="bcpg:casNumber"/>
 					<field id="bcpg:ceNumber" />
 					<field id="bcpg:ecNumber" />
 					<field id="bcpg:fdaNumber" />
