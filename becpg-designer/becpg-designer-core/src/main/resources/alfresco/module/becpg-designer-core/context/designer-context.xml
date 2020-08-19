@@ -59,6 +59,10 @@
 	<bean id="formModelVisitor" class="fr.becpg.repo.designer.impl.FormModelVisitor">
 		<property name="nodeService" ref="nodeService" />
 	</bean>
+	
+	<bean id="formJsonVisitor" class="fr.becpg.repo.designer.impl.FormJsonVisitor">
+		<property name="nodeService" ref="nodeService" />
+	</bean>
 
 	<bean id="designerService" class="fr.becpg.repo.designer.impl.DesignerServiceImpl"
 		init-method="init">
@@ -73,6 +77,7 @@
 		<property name="mimetypeService" ref="mimetypeService" />
 		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
 		<property name="dictionaryDAO" ref="dictionaryDAO" />
+		<property name="formJsonVisitor" ref="formJsonVisitor"/>
 	</bean>
 
 
@@ -122,6 +127,11 @@
 
 
 	<bean id="webscript.fr.becpg.designer.publish.post" class="fr.becpg.repo.designer.web.scripts.PublishWebScript"
+		parent="webscript">
+		<property name="designerService" ref="designerService" />
+	</bean>
+	
+	<bean id="webscript.fr.becpg.designer.export.get" class="fr.becpg.repo.designer.web.scripts.ExportWebScript"
 		parent="webscript">
 		<property name="designerService" ref="designerService" />
 	</bean>

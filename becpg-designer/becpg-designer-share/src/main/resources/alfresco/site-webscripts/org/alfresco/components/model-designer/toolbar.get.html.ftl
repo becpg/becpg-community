@@ -56,6 +56,13 @@
 		               </span>
 		            </span>
 		         </div>
+		         <div class="export">
+		            <span id="${el}-exportButton" class="yui-button yui-push-button">
+		               <span class="first-child">
+		                  <button type="button">${msg('button.export')}</button>
+		               </span>
+		            </span>
+		         </div>
 		      </div>
 		   </div>
 		</div>

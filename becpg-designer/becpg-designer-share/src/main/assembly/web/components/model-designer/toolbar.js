@@ -87,12 +87,21 @@
 		                        value : "publish"
 		                     });
 		               
+		               
+		               
 		               this.widgets.unPublishButton = Alfresco.util.createYUIButton(this, "unPublishButton", this.onUnPublish,
 			                     {
 			                        disabled : true,
 			                        value : "unPublish"
 			                     });
 		               
+		               
+		               this.widgets.publishButton = Alfresco.util.createYUIButton(this, "exportButton", this.onExport,
+			                     {
+			                        disabled : true,
+			                        value : "export"
+			                     });
+			               
 
 		               this.widgets.previewButton = Alfresco.util.createYUIButton(this, "previewButton", this.onPreview,
 		                     {
@@ -143,6 +152,11 @@
 		                  scope : this,
 		                  execScripts : false
 		               });
+
+	               },
+	               onExport : function DesignerToolbar_onExport(e, p_obj) {
+	            	   window.open(Alfresco.constants.PROXY_URI + "becpg/designer/form/export?nodeRef="
+	  	                     + this.tree.modelNodeRef, "_blank");
 
 	               },
 	               onUnPublish : function DesignerToolbar_onUnPublish(e, p_obj) {
@@ -554,9 +568,13 @@
 			               if (node.itemType == "m2:model" || node.itemType == "dsg:config") {
 				               this.widgets.publishButton.set("disabled", this.readOnly || false);
 				               this.widgets.unPublishButton.set("disabled", this.readOnly || false);
+				               if(node.itemType == "dsg:config"){
+				            	   this.widgets.exportButton.set("disabled", this.readOnly || false);
+				               }
 			               } else {
 				               this.widgets.publishButton.set("disabled", true);
 				               this.widgets.unPublishButton.set("disabled", true);
+				               this.widgets.exportButton.set("disabled", true);
 			               }
 		               } else {
 			               this.widgets.newRowButton.set("disabled", true);
