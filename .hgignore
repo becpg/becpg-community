@@ -52,7 +52,6 @@ syntax: regexp
 # System Files
 ^becpg-ui/.DS_Store
 ^becpg-ui/Thumbs.db
-
 # Default ignored files
 .idea/workspace.xml
 .idea/*
