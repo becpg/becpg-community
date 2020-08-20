@@ -1,24 +1,24 @@
 package fr.becpg.repo.form.impl;
 
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.HashSet;
 
-import fr.becpg.repo.form.column.decorator.DataGridFormFieldTitleProvider;
 import org.alfresco.repo.forms.AssociationFieldDefinition;
 import org.alfresco.repo.forms.FieldDefinition;
 import org.alfresco.repo.forms.Form;
 import org.alfresco.repo.forms.FormData.FieldData;
 import org.alfresco.repo.forms.PropertyFieldDefinition;
 import org.alfresco.repo.forms.PropertyFieldDefinition.FieldConstraint;
-import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import fr.becpg.repo.form.column.decorator.DataGridFormFieldTitleProvider;
 
 public class BecpgFormDefinition {
 
