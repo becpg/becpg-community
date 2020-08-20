@@ -436,7 +436,8 @@ YAHOO.Bubbling
                             	 || asset.name === "ingLabelingList" || asset.name === "nutList" || asset.name === "labelClaimList" 
                                  || asset.name === "costList" || asset.name === "physicoChemList"
                                 || asset.name === "ingList" || asset.name === "allergenList" || asset.name === "priceList"
-                                || asset.name === "resourceParamList"		)
+                                || asset.name === "resourceParamList"
+								|| asset.name === "controlDefList"	)
                                && entity != null && (beCPG.util.contains(entity.aspects,
                                        "bcpg:productAspect") || entity.type == "bcpg:productSpecification" ) && entity.userAccess.edit;
                      },
