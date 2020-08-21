@@ -178,6 +178,12 @@
 		<property name="createBranch" value="${beCPG.sendToSupplier.createBranch}"/>	
 	</bean>
 	
+	<bean id="webscript.fr.becpg.project.sendToProject.post" class="fr.becpg.repo.web.scripts.project.ProjectEntityAssociationWebScript" parent="webscript">
+		<property name="alfrescoRepository" ref="alfrescoRepository" />
+		<property name="associationService" ref="associationService"/>
+		<property name="repoService" ref="repoService"/>
+	</bean>
+	
 	<bean id="webscript.fr.becpg.supplier.createSupplier.post" class="fr.becpg.repo.web.scripts.supplier.SupplierAccountWebScript" parent="webscript">
 		<property name="nodeService" ref="NodeService" />
 		<property name="personService" ref="PersonService" />
