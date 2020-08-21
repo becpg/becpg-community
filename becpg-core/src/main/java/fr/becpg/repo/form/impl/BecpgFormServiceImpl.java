@@ -31,6 +31,12 @@ import org.springframework.core.io.Resource;
 import fr.becpg.common.BeCPGException;
 import fr.becpg.repo.form.BecpgFormService;
 
+/**
+ * <p>BecpgFormServiceImpl class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class BecpgFormServiceImpl implements BecpgFormService, ApplicationContextAware, InitializingBean {
 
 	ApplicationContext applicationContext;
@@ -57,58 +63,111 @@ public class BecpgFormServiceImpl implements BecpgFormService, ApplicationContex
 
 	private static final String WILDCARD = "*";
 
+	/**
+	 * <p>Getter for the field <code>formService</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.repo.forms.FormService} object.
+	 */
 	public FormService getFormService() {
 		return formService;
 	}
 
 
+	/**
+	 * <p>Setter for the field <code>decorators</code>.</p>
+	 *
+	 * @param decorators a {@link java.util.List} object.
+	 */
 	public void setDecorators(List<ColumnDecorator> decorators) {
 		this.decorators = decorators;
 	}
 
+	/**
+	 * <p>Setter for the field <code>formService</code>.</p>
+	 *
+	 * @param formService a {@link org.alfresco.repo.forms.FormService} object.
+	 */
 	public void setFormService(FormService formService) {
 		this.formService = formService;
 	}
 
+	/**
+	 * <p>Getter for the field <code>nodeService</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public NodeService getNodeService() {
 		return nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Getter for the field <code>namespaceService</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.namespace.NamespaceService} object.
+	 */
 	public NamespaceService getNamespaceService() {
 		return namespaceService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>namespaceService</code>.</p>
+	 *
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
+	 */
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
 
+	/**
+	 * <p>Getter for the field <code>shareFormParser</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.form.impl.ShareFormParser} object.
+	 */
 	public ShareFormParser getShareFormParser() {
 		return shareFormParser;
 	}
 
+	/**
+	 * <p>Setter for the field <code>shareFormParser</code>.</p>
+	 *
+	 * @param shareFormParser a {@link fr.becpg.repo.form.impl.ShareFormParser} object.
+	 */
 	public void setShareFormParser(ShareFormParser shareFormParser) {
 		this.shareFormParser = shareFormParser;
 	}
 
+	/**
+	 * <p>Setter for the field <code>configs</code>.</p>
+	 *
+	 * @param configs a {@link java.util.List} object.
+	 */
 	public void setConfigs(List<String> configs) {
 		this.configs = configs;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 		this.applicationContext = applicationContext;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		reloadConfig();
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void reloadConfig() throws IOException {
 		definitions = new HashMap<>();
@@ -125,6 +184,7 @@ public class BecpgFormServiceImpl implements BecpgFormService, ApplicationContex
 		}
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public JSONObject getForm(String itemKind, String itemId, String formId, String siteId, NodeRef entityNodeRef) throws BeCPGException, JSONException {
 

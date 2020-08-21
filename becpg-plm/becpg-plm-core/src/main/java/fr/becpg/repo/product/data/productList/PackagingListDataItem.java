@@ -20,7 +20,9 @@ import fr.becpg.repo.repository.model.CompositionDataItem;
 import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 
 /**
- * <p>PackagingListDataItem class.</p>
+ * <p>
+ * PackagingListDataItem class.
+ * </p>
  *
  * @author matthieu
  * @version $Id: $Id
@@ -35,19 +37,21 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 	private Double qty = 0d;
 
 	private ProductUnit packagingListUnit;
-	
+
 	private Double lossPerc = 0d;
 
 	private PackagingLevel pkgLevel;
 
 	private Boolean isMaster;
-	
+
 	private Boolean isRecycle;
 
 	private NodeRef product;
 
 	/**
-	 * <p>Getter for the field <code>qty</code>.</p>
+	 * <p>
+	 * Getter for the field <code>qty</code>.
+	 * </p>
 	 *
 	 * @return a {@link java.lang.Double} object.
 	 */
@@ -63,9 +67,12 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 	}
 
 	/**
-	 * <p>Getter for the field <code>packagingListUnit</code>.</p>
+	 * <p>
+	 * Getter for the field <code>packagingListUnit</code>.
+	 * </p>
 	 *
-	 * @return a {@link fr.becpg.repo.product.data.constraints.ProductUnit} object.
+	 * @return a {@link fr.becpg.repo.product.data.constraints.ProductUnit}
+	 *         object.
 	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:packagingListUnit")
@@ -74,21 +81,27 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 	}
 
 	/**
-	 * <p>Setter for the field <code>packagingListUnit</code>.</p>
+	 * <p>
+	 * Setter for the field <code>packagingListUnit</code>.
+	 * </p>
 	 *
-	 * @param packagingListUnit a {@link fr.becpg.repo.product.data.constraints.ProductUnit} object.
+	 * @param packagingListUnit
+	 *            a {@link fr.becpg.repo.product.data.constraints.ProductUnit}
+	 *            object.
 	 */
 	public void setPackagingListUnit(ProductUnit packagingListUnit) {
 		this.packagingListUnit = packagingListUnit;
 	}
-	
+
 	/**
-	 * <p>Getter for the field <code>lossPerc</code>.</p>
+	 * <p>
+	 * Getter for the field <code>lossPerc</code>.
+	 * </p>
 	 *
 	 * @return a {@link java.lang.Double} object.
 	 */
 	@AlfProp
-	@AlfQname(qname="bcpg:packagingListLossPerc")
+	@AlfQname(qname = "bcpg:packagingListLossPerc")
 	public Double getLossPerc() {
 		return lossPerc;
 	}
@@ -99,9 +112,12 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 	}
 
 	/**
-	 * <p>Getter for the field <code>pkgLevel</code>.</p>
+	 * <p>
+	 * Getter for the field <code>pkgLevel</code>.
+	 * </p>
 	 *
-	 * @return a {@link fr.becpg.repo.product.data.constraints.PackagingLevel} object.
+	 * @return a {@link fr.becpg.repo.product.data.constraints.PackagingLevel}
+	 *         object.
 	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:packagingListPkgLevel")
@@ -110,16 +126,23 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 	}
 
 	/**
-	 * <p>Setter for the field <code>pkgLevel</code>.</p>
+	 * <p>
+	 * Setter for the field <code>pkgLevel</code>.
+	 * </p>
 	 *
-	 * @param pkgLevel a {@link fr.becpg.repo.product.data.constraints.PackagingLevel} object.
+	 * @param pkgLevel
+	 *            a
+	 *            {@link fr.becpg.repo.product.data.constraints.PackagingLevel}
+	 *            object.
 	 */
 	public void setPkgLevel(PackagingLevel pkgLevel) {
 		this.pkgLevel = pkgLevel;
 	}
 
 	/**
-	 * <p>Getter for the field <code>isMaster</code>.</p>
+	 * <p>
+	 * Getter for the field <code>isMaster</code>.
+	 * </p>
 	 *
 	 * @return a {@link java.lang.Boolean} object.
 	 */
@@ -130,16 +153,21 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 	}
 
 	/**
-	 * <p>Setter for the field <code>isMaster</code>.</p>
+	 * <p>
+	 * Setter for the field <code>isMaster</code>.
+	 * </p>
 	 *
-	 * @param isMaster a {@link java.lang.Boolean} object.
+	 * @param isMaster
+	 *            a {@link java.lang.Boolean} object.
 	 */
 	public void setIsMaster(Boolean isMaster) {
 		this.isMaster = isMaster;
 	}
-	
+
 	/**
-	 * <p>Getter for the field <code>isRecycle</code>.</p>
+	 * <p>
+	 * Getter for the field <code>isRecycle</code>.
+	 * </p>
 	 *
 	 * @return a {@link java.lang.Boolean} object.
 	 */
@@ -150,16 +178,21 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 	}
 
 	/**
-	 * <p>Setter for the field <code>isRecycle</code>.</p>
+	 * <p>
+	 * Setter for the field <code>isRecycle</code>.
+	 * </p>
 	 *
-	 * @param isRecycle a {@link java.lang.Boolean} object.
+	 * @param isRecycle
+	 *            a {@link java.lang.Boolean} object.
 	 */
 	public void setIsRecycle(Boolean isRecycle) {
 		this.isRecycle = isRecycle;
 	}
 
 	/**
-	 * <p>Getter for the field <code>product</code>.</p>
+	 * <p>
+	 * Getter for the field <code>product</code>.
+	 * </p>
 	 *
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
@@ -172,32 +205,49 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 	}
 
 	/**
-	 * <p>Setter for the field <code>product</code>.</p>
+	 * <p>
+	 * Setter for the field <code>product</code>.
+	 * </p>
 	 *
-	 * @param product a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param product
+	 *            a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
 	public void setProduct(NodeRef product) {
 		this.product = product;
 	}
 
 	/**
-	 * <p>Constructor for PackagingListDataItem.</p>
+	 * <p>
+	 * Constructor for PackagingListDataItem.
+	 * </p>
 	 */
 	public PackagingListDataItem() {
 
 	}
 
 	/**
-	 * <p>Constructor for PackagingListDataItem.</p>
+	 * <p>
+	 * Constructor for PackagingListDataItem.
+	 * </p>
 	 *
-	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param qty a {@link java.lang.Double} object.
-	 * @param packagingListUnit a {@link fr.becpg.repo.product.data.constraints.ProductUnit} object.
-	 * @param pkgLevel a {@link fr.becpg.repo.product.data.constraints.PackagingLevel} object.
-	 * @param isMaster a {@link java.lang.Boolean} object.
-	 * @param product a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param nodeRef
+	 *            a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param qty
+	 *            a {@link java.lang.Double} object.
+	 * @param packagingListUnit
+	 *            a {@link fr.becpg.repo.product.data.constraints.ProductUnit}
+	 *            object.
+	 * @param pkgLevel
+	 *            a
+	 *            {@link fr.becpg.repo.product.data.constraints.PackagingLevel}
+	 *            object.
+	 * @param isMaster
+	 *            a {@link java.lang.Boolean} object.
+	 * @param product
+	 *            a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
-	public PackagingListDataItem(NodeRef nodeRef, Double qty, ProductUnit packagingListUnit, PackagingLevel pkgLevel, Boolean isMaster, NodeRef product) {
+	public PackagingListDataItem(NodeRef nodeRef, Double qty, ProductUnit packagingListUnit, PackagingLevel pkgLevel, Boolean isMaster,
+			NodeRef product) {
 
 		setNodeRef(nodeRef);
 		setQty(qty);
@@ -208,9 +258,14 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 	}
 
 	/**
-	 * <p>Constructor for PackagingListDataItem.</p>
+	 * <p>
+	 * Constructor for PackagingListDataItem.
+	 * </p>
 	 *
-	 * @param c a {@link fr.becpg.repo.product.data.productList.PackagingListDataItem} object.
+	 * @param c
+	 *            a
+	 *            {@link fr.becpg.repo.product.data.productList.PackagingListDataItem}
+	 *            object.
 	 */
 	public PackagingListDataItem(PackagingListDataItem c) {
 		super();
@@ -305,33 +360,36 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 	public void setComponent(NodeRef targetItem) {
 		setProduct(targetItem);
 	}
-	
+
 	/** {@inheritDoc} */
 	@Override
 	public QName getComponentAssocName() {
 		return PLMModel.ASSOC_PACKAGINGLIST_PRODUCT;
 	}
-	
+
+	/** {@inheritDoc} */
 	@Override
 	public void setCharactNodeRef(NodeRef nodeRef) {
 		setComponent(nodeRef);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void setValue(Double value) {
 		setQty(value);
-		
+
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getCharactNodeRef() {
 		return getComponent();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Double getValue() {
 		return getQty();
 	}
-	
 
 }

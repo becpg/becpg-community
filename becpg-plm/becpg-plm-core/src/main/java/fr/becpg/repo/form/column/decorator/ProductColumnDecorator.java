@@ -12,6 +12,12 @@ import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 
+/**
+ * <p>ProductColumnDecorator class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class ProductColumnDecorator implements ColumnDecorator {
 	
 	private NodeService nodeService;
@@ -20,28 +26,50 @@ public class ProductColumnDecorator implements ColumnDecorator {
 	private EntityListDAO entityListDAO;
 
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>dictionaryService</code>.</p>
+	 *
+	 * @param dictionaryService a {@link org.alfresco.service.cmr.dictionary.DictionaryService} object.
+	 */
 	public void setDictionaryService(DictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>namespaceService</code>.</p>
+	 *
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
+	 */
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityListDAO</code>.</p>
+	 *
+	 * @param entityListDAO a {@link fr.becpg.repo.entity.EntityListDAO} object.
+	 */
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean match(Item item) {
 		return item.getId().equals(PLMModel.TYPE_PACKAGINGLIST.getLocalName()) || item.getKind().equals(PLMModel.TYPE_COMPOLIST.getLocalName());
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public DataGridFormFieldTitleProvider createTitleResolver(NodeRef entityNodeRef, Item item) {
 		DataListFilter filter = new DataListFilter(); 

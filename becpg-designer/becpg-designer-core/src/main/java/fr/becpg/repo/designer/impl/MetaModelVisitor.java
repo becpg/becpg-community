@@ -108,6 +108,7 @@ public class MetaModelVisitor {
 	 * @param modelNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param model a {@link java.lang.Object} object.
 	 * @throws java.lang.IllegalArgumentException if any.
+	 * @throws java.lang.IllegalArgumentException if any.
 	 * @throws java.lang.IllegalAccessException if any.
 	 * @throws java.lang.reflect.InvocationTargetException if any.
 	 */
@@ -228,6 +229,7 @@ public class MetaModelVisitor {
 	 *
 	 * @param modelNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param out a {@link java.io.OutputStream} object.
+	 * @throws java.lang.IllegalArgumentException if any.
 	 * @throws java.lang.IllegalArgumentException if any.
 	 * @throws java.lang.IllegalAccessException if any.
 	 * @throws java.lang.reflect.InvocationTargetException if any.
@@ -391,6 +393,7 @@ public class MetaModelVisitor {
 	 * @param nodeTypeQname a {@link org.alfresco.service.namespace.QName} object.
 	 * @param modelName a {@link java.lang.String} object.
 	 * @param xml a {@link java.io.InputStream} object.
+	 * @throws java.lang.IllegalArgumentException if any.
 	 * @throws java.lang.IllegalArgumentException if any.
 	 * @throws java.lang.IllegalAccessException if any.
 	 * @throws java.lang.reflect.InvocationTargetException if any.
