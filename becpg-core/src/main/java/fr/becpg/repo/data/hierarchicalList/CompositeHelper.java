@@ -36,7 +36,6 @@ public class CompositeHelper {
 	 * <p>getHierarchicalCompoList.</p>
 	 *
 	 * @param items a {@link java.util.List} object.
-	 * @param <T> a T object.
 	 * @return a {@link fr.becpg.repo.data.hierarchicalList.Composite} object.
 	 */
 	public static <T extends CompositeDataItem<T>> Composite<T> getHierarchicalCompoList(List<T> items) {

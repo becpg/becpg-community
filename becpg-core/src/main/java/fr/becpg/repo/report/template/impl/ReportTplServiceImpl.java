@@ -99,7 +99,6 @@ public class ReportTplServiceImpl implements ReportTplService {
 	 *
 	 * Get the report templates of the product type that user can choose from
 	 * UI.
-
 	 * @param:tplName the
 	 *                    name of the template or starting by
 	 */
@@ -112,7 +111,6 @@ public class ReportTplServiceImpl implements ReportTplService {
 	 * {@inheritDoc}
 	 *
 	 * Get the report template of the product type by name
-
 	 * @param:tplName the
 	 *                    name of the template or starting by
 	 */

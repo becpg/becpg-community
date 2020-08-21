@@ -96,5 +96,26 @@ public interface AlfrescoRepository<T extends RepositoryEntity>  extends CrudRep
 	 * @return a boolean.
 	 */
 	boolean isDirty(T entity);
+        
+	/**
+	 * <p>getList.</p>
+	 *
+	 * @param entity a {@link fr.becpg.repo.repository.RepositoryEntity} object.
+	 * @param clazz a {@link java.lang.Class} object.
+	 * @param <R> a R object.
+	 * @return a {@link java.util.List} object.
+	 */
+	<R extends RepositoryEntity> List<R> getList(RepositoryEntity entity, Class<R> clazz);
+	/**
+	 * <p>getList.</p>
+	 *
+	 * @param entity a {@link fr.becpg.repo.repository.RepositoryEntity} object.
+	 * @param datalistContainerQname a {@link org.alfresco.service.namespace.QName} object.
+	 * @param datalistQname a {@link org.alfresco.service.namespace.QName} object.
+	 * @param <R> a R object.
+	 * @return a {@link java.util.List} object.
+	 */
+	<R extends RepositoryEntity> List<R> getList(RepositoryEntity entity, QName datalistContainerQname, QName datalistQname);
+	
 	
 }
