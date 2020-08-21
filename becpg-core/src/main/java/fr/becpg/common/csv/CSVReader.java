@@ -137,8 +137,7 @@ public class CSVReader implements AutoCloseable {
 	 *
 	 * @return a List of String[], with each String[] representing a line of the
 	 *         file.
-	 * @throws java.io.IOException
-	 *             if bad things happen during the read
+	 * @throws java.io.IOException if any.
 	 */
 	public List<String[]> readAll() throws IOException {
 
@@ -157,8 +156,7 @@ public class CSVReader implements AutoCloseable {
      *
      * @return a string array with each comma-separated element as a separate
      *         entry.
-     * @throws java.io.IOException
-     *             if bad things happen during the read
+     * @throws java.io.IOException if any.
      */
     public String[] readNext() throws IOException {
 

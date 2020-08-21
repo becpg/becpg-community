@@ -144,7 +144,6 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 
 	/** {@inheritDoc} */
 	@Override
-
 	public <T> T getFromCache(final String cacheName, String cacheKey, BeCPGCacheDataProviderCallBack<T> cacheDataProviderCallBack,
 			boolean deleteOnTxRollback) {
 

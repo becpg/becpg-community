@@ -51,13 +51,14 @@ public class GlopTargetSpecification {
 	 *
 	 * @param obj
 	 *            the JSON to add the target to
-	 * @throws JSONException
+	 * @throws org.json.JSONException
 	 *             if the operation failed
 	 */
 	public void putIntoJson(JSONObject obj) throws JSONException {
 		obj.put("task", task);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "GlopTargetSpecification [target=" + target + ", task=" + task + "]";

@@ -2,17 +2,13 @@ package fr.becpg.repo.designer.impl;
 
 import java.util.List;
 
-import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.InvalidNodeRefException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONArray;
 
 import fr.becpg.repo.designer.DesignerModel;
 
@@ -20,24 +16,33 @@ import fr.becpg.repo.designer.DesignerModel;
 
 
 //https://github.com/Alfresco/alfresco-ng2-components/blob/development/lib/core/form/components/widgets/core/form-field.model.ts
+/**
+ * <p>FormJsonVisitor class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class FormJsonVisitor {
 
 	private NodeService nodeService;
 	
 	
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
 	/**
-	 * @param nodeRef
-	 * @param out
-	 * @throws FactoryConfigurationError
-	 * @throws ParserConfigurationException
-	 * @throws TransformerException
-	 * @throws JSONException
-	 * @throws InvalidNodeRefException
+	 * <p>visit.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param ret a {@link org.json.JSONObject} object.
+	 * @throws org.json.JSONException
 	 */
 	public void visit(NodeRef nodeRef, JSONObject ret) throws JSONException {
 

@@ -369,7 +369,7 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	 * @return a {@link fr.becpg.repo.project.data.PlanningMode} object.
 	 */
 	@AlfProp
-	@AlfQname(qname = "pjt:projectPlanningMode")	
+	@AlfQname(qname = "pjt:projectPlanningMode")
 	public PlanningMode getPlanningMode() {
 		return planningMode;
 	}

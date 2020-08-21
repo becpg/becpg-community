@@ -227,7 +227,6 @@ public class ZipSearchAction extends ActionExecuterAbstractBase {
 
 	/** {@inheritDoc} */
 	@Override
-
 	protected void addParameterDefinitions(List<ParameterDefinition> paramList) {
 		paramList.add(new ParameterDefinitionImpl(PARAM_TPL_NODEREF, DataTypeDefinition.NODE_REF, true, "Search template nodeRef"));
 	}
