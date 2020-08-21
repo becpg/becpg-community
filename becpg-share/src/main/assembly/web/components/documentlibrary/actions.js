@@ -2512,6 +2512,65 @@
       
       
       /**
+       * Send to project 
+       *
+       */
+      onActionSendToProject: function DLTB_onActionSendToProject(records){
+    	  var p_record = records[0];
+    	  var entities = [];
+    	  for( var record in records){
+    		  entities.push(records[record].nodeRef);
+    	  }
+	    	   
+            var actionUrl = Alfresco.constants.PROXY_URI + 'becpg/project/send-to-project?entities='+entities.join(",");
+	
+	        this.modules.sendToProject = new Alfresco.module.SimpleDialog(this.id + "-sendToProject").setOptions({
+	        	  width : "33em",
+	              templateUrl : Alfresco.constants.URL_SERVICECONTEXT + "modules/project/send-to-project",
+	              actionUrl : actionUrl,
+	              validateOnSubmit : false,
+	              destroyOnHide: true,
+				  firstFocus : this.id + "-sendToProject-projectTpl-field",
+				  doBeforeFormSubmit : {
+					  fn : function onActionSendToProject_doBeforeFormSubmit(form) {
+						  Alfresco.util.PopupManager.displayMessage({
+			                	 text : this.msg("message.send-to-project.inprogress"),
+			                	 displayTime : 0
+			       		    	});
+					  },
+					  scope : this
+				  },
+				  onSuccess : {
+					  fn : function onActionSendToProject_success(response) {
+						  if (response.json) {
+							  this.modules.sendToProject.hide();
+							   window.location.href = beCPG.util.entityURL(null,response.json.persistedObject);
+						  }
+					  },
+					  scope : this
+				  },
+				  onFailure : {
+					  fn : function onActionSendToProject_failure(response) {
+						  this.modules.sendToProject.hide();
+						  if(response.json && response.json.message){
+							  Alfresco.util.PopupManager.displayMessage({
+								  text : response.json.message
+							  });  
+						  } else {
+							  Alfresco.util.PopupManager.displayMessage({
+								  text : this.msg("message.import.failure")
+							  });
+						  }
+					  },
+					  scope : this
+				  }
+			  });
+	        
+	        this.modules.sendToProject.show();
+      },
+      
+      
+      /**
        * Quick Share documents 
        *
        */
