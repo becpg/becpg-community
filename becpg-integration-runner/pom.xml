@@ -243,6 +243,25 @@
 							</resources>
 						</configuration>
 					</execution>
+					<execution>
+						<id>copy-forms-messages</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/becpg-test/becpg-plm/messages</outputDirectory>
+							<resources>
+								<resource>
+									<directory>../becpg-plm/becpg-plm-share/src/main/resources/alfresco/messages</directory>
+									<filtering>false</filtering>
+									<includes>
+										<include>becpg-forms*.properties</include>
+									</includes>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 

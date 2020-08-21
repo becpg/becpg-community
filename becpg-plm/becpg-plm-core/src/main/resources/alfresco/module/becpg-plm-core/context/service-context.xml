@@ -37,7 +37,8 @@
 			<list>
 				<value>alfresco/module/${pom.artifactId}/messages/paths</value>
 				<value>alfresco/module/${pom.artifactId}/messages/plm</value>
-				<value>alfresco/module/${pom.artifactId}/messages/import-service</value>					
+				<value>alfresco/module/${pom.artifactId}/messages/import-service</value>	
+				<value>alfresco/module/${pom.artifactId}/messages/becpg-forms</value>				
 			</list>
 		</property>
 	</bean>

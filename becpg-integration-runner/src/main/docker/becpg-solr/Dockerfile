@@ -1,6 +1,5 @@
 FROM openjdk:11
 
-
 ENV DIST_DIR /opt/alfresco-search-services
 ENV SEARCH_SERVICE_VERSION=1.4.2
 ENV ZIP_FILE=https://download.alfresco.com/cloudfront/release/community/SearchServices/${SEARCH_SERVICE_VERSION}/alfresco-search-services-${SEARCH_SERVICE_VERSION}.zip
