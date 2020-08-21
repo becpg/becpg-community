@@ -25,8 +25,7 @@ import fr.becpg.repo.repository.model.SimpleCharactDataItem;
  * Register custom Glop SPEL helper accessible with @glop.
  *
  * <h1>Usage</h1> In the composition list, add a dynamic formula making a call
- * to {@code @glop.optimize()}. The first parameter should be {@code #this}. The
- * second should be an object of the following structure:
+ * to {@code @glop.optimize()}. The parameter should be an object of the following structure:
  * <ul>
  * <li>{@code target} is an object describing the target function and is
  * comprised of:
@@ -79,7 +78,7 @@ import fr.becpg.repo.repository.model.SimpleCharactDataItem;
  * </ul>
  *
  * Special constraints are constraints that require more than one data item to
- * create. Currently, the only special constraint is {@code "total_qty"} which
+ * create. Currently, the only special constraint is {@code "recipeQtyUsed"} which
  * evaluates as the total quantity of components in the product.
  *
  * @author pierrecolin
@@ -161,7 +160,8 @@ public class GlopSpelFunctions implements CustomSpelFunctions {
 		}
 
 		@SuppressWarnings("unchecked")
-		public Map<String, Serializable> optimize(ProductData product, Map<String, ?> problem) {
+		public Map<String, Serializable> optimize(Map<String, ?> problem) {
+			Map<String, Serializable> errorRet = new HashMap<>();
 			Map<String, ?> target = getTarget(problem);
 			SimpleCharactDataItem targetItem = (SimpleCharactDataItem) target.get("var");
 			String targetTask = (String) target.get("task");
@@ -169,7 +169,8 @@ public class GlopSpelFunctions implements CustomSpelFunctions {
 
 			Object objConstraints = problem.get("constraints");
 			if (!(objConstraints instanceof Collection<?>)) {
-				throw new IllegalArgumentException("constraints must be a collection");
+				errorRet.put("Error", "constraints must be a collection");
+				return errorRet;
 			}
 			Collection<?> constraints = (Collection<?>) objConstraints;
 			List<GlopConstraintSpecification> fullConstraints = new ArrayList<>();
@@ -188,16 +189,20 @@ public class GlopSpelFunctions implements CustomSpelFunctions {
 				}
 			}
 			try {
-				JSONObject response = glopService.optimize(product, fullConstraints, fullTarget);
+				JSONObject response = glopService.optimize((ProductData) entity, fullConstraints, fullTarget);
 				return translate(response);
 			} catch (GlopException e) {
-				throw new RuntimeException("Linear program is unfeasible", e);
+				errorRet.put("Error", "Linear program is unfeasible: " + e);
+				return errorRet;
 			} catch (JSONException e) {
-				throw new RuntimeException("Failed to build request to send to the Glop server", e);
+				errorRet.put("Error", "Failed to build request to send to the Glop server: " + e);
+				return errorRet;
 			} catch (URISyntaxException e) {
-				throw new RuntimeException("Glop server URI has a syntax error", e);
+				errorRet.put("Error", "Glop server URI has a syntax error: " + e);
+				return errorRet;
 			} catch (RestClientException e) {
-				throw new RuntimeException("Failed to send request to the Glop server: " + e.getMessage(), e);
+				errorRet.put("Error", "Failed to send reques to the Glop server: " + e);
+				return errorRet;
 			}
 		}
 	}
