@@ -1,5 +1,4 @@
 FROM ${docker.becpg.url}/becpg-base:${docker.becpg.tag}
-MAINTAINER beCPG
 
 RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - && apt-get install -y nodejs  && curl -L https://www.npmjs.com/install.sh | sh  && npm install -g less      
 
@@ -65,6 +64,7 @@ COPY extensions/becpg-integration-runner-${project.version}-tests.jar $TOMCAT_DI
 
 
 COPY forms $TOMCAT_DIR/webapps/alfresco/WEB-INF/classes/beCPG/forms/
+COPY becpg-plm $TOMCAT_DIR/webapps/alfresco/WEB-INF/classes/alfresco/module/becpg-plm-core/
 
 WORKDIR /root
 
