@@ -34,6 +34,7 @@ COPY becpg-designer-share-${project.version}.amp /root/amp/
 COPY becpg-plm-share-${project.version}.amp /root/amp/
 
 
+
 RUN set -x && \
 	 java -jar /root/alfresco-mmt.jar install /root/amp/becpg-core-${project.version}.amp webapps/alfresco -nobackup -force && \
 	 java -jar /root/alfresco-mmt.jar install /root/amp/becpg-project-core-${project.version}.amp webapps/alfresco -nobackup -force && \
@@ -62,6 +63,8 @@ COPY share/share-config-custom.xml $TOMCAT_DIR/shared/classes/alfresco/web-exten
 COPY extensions/*.jar $TOMCAT_DIR/webapps/alfresco/WEB-INF/lib/
 COPY extensions/becpg-integration-runner-${project.version}-tests.jar $TOMCAT_DIR/webapps/alfresco/WEB-INF/lib/
 
+
+COPY forms $TOMCAT_DIR/webapps/alfresco/WEB-INF/classes/beCPG/forms/
 
 WORKDIR /root
 

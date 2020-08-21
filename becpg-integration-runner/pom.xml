@@ -210,6 +210,39 @@
 							</resources>
 						</configuration>
 					</execution>
+					<execution>
+						<id>copy-forms-config</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/becpg-test/forms</outputDirectory>
+							<resources>
+								<resource>
+									<directory>../becpg-share/src/main/resources/alfresco/forms</directory>
+									<filtering>false</filtering>
+									<includes>
+										<include>*-config.xml</include>
+									</includes>
+								</resource>
+								<resource>
+									<directory>../becpg-plm/becpg-plm-share/src/main/resources/alfresco/forms</directory>
+									<filtering>false</filtering>
+									<includes>
+										<include>*-config.xml</include>
+									</includes>
+								</resource>
+								<resource>
+									<directory>../becpg-project/becpg-project-share/src/main/resources/alfresco/forms</directory>
+									<filtering>false</filtering>
+									<includes>
+										<include>*-config.xml</include>
+									</includes>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 

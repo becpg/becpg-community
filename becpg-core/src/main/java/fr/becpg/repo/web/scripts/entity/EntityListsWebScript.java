@@ -96,7 +96,6 @@ public class EntityListsWebScript extends AbstractWebScript {
 	private static final String RESULT_ACL_TYPE_NODE = "aclTypeNode";
 
 	private static final String RESULT_REPORTS = "reports";
-
 	private static final String KEY_NAME_NAME = "name";
 
 	private static final String KEY_NAME_TITLE = "title";
@@ -176,7 +175,6 @@ public class EntityListsWebScript extends AbstractWebScript {
 	private LockService lockService;
 
 	private ReportAssociationDecorator reportAssociationDecorator;
-
 
 	/**
 	 * <p>Setter for the field <code>permissionService</code>.</p>
@@ -282,7 +280,6 @@ public class EntityListsWebScript extends AbstractWebScript {
 		this.reportAssociationDecorator = reportAssociationDecorator;
 	}
 
-
 	/**
 	 * <p>Setter for the field <code>lockService</code>.</p>
 	 *
@@ -323,8 +320,8 @@ public class EntityListsWebScript extends AbstractWebScript {
 		return listTypes;
 	}
 
-	private JSONArray makeDatalists(Iterable<NodeRef> lists, NodeRef entity, boolean hasWritePermission,
-			Map<NodeRef, Boolean> accessMap) throws JSONException {
+	private JSONArray makeDatalists(Iterable<NodeRef> lists, NodeRef entity, boolean hasWritePermission, Map<NodeRef, Boolean> accessMap)
+			throws JSONException {
 		final boolean entityIsLocked = lockService.isLocked(entity);
 
 		JSONArray datalist = new JSONArray();
@@ -621,8 +618,8 @@ public class EntityListsWebScript extends AbstractWebScript {
 			String displayPath = path.toDisplayPath(nodeService, permissionService);
 
 			String retPath = SiteHelper.extractDisplayPath(stringPath, displayPath);
-
-			if (nodeService.hasAspect(nodeRef, ReportModel.ASPECT_REPORT_ENTITY)) {
+			
+                        if (nodeService.hasAspect(nodeRef, ReportModel.ASPECT_REPORT_ENTITY)) {
 				result.put(RESULT_REPORTS, reportAssociationDecorator.decorate(ReportModel.ASSOC_REPORTS, nodeRef,
 						associationService.getTargetAssocs(nodeRef, ReportModel.ASSOC_REPORTS)));
 			}
