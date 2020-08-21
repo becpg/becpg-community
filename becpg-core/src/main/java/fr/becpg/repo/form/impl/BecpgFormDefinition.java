@@ -20,6 +20,12 @@ import org.json.JSONObject;
 
 import fr.becpg.repo.form.column.decorator.DataGridFormFieldTitleProvider;
 
+/**
+ * <p>BecpgFormDefinition class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class BecpgFormDefinition {
 
 	private List<String> forcedFields = new LinkedList<>();
@@ -108,6 +114,14 @@ public class BecpgFormDefinition {
 		return object;
 	}
 
+	/**
+	 * <p>merge.</p>
+	 *
+	 * @param form a {@link org.alfresco.repo.forms.Form} object.
+	 * @param resolver a {@link fr.becpg.repo.form.column.decorator.DataGridFormFieldTitleProvider} object.
+	 * @return a {@link org.json.JSONObject} object.
+	 * @throws org.json.JSONException if any.
+	 */
 	public JSONObject merge(Form form, DataGridFormFieldTitleProvider resolver) throws JSONException {
 		JSONObject ret = new JSONObject();
 
@@ -377,19 +391,42 @@ public class BecpgFormDefinition {
 		return found;
 	}
 
+	/**
+	 * <p>Getter for the field <code>forcedFields</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	public List<String> getForcedFields() {
 		return forcedFields;
 	}
 
+	/**
+	 * <p>Getter for the field <code>fields</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	public List<String> getFields() {
 		return fields;
 	}
 
+	/**
+	 * <p>addTab.</p>
+	 *
+	 * @param tabId a {@link java.lang.String} object.
+	 * @param tab a {@link org.json.JSONObject} object.
+	 */
 	public void addTab(String tabId, JSONObject tab) {
 		tabs.put(tabId, tab);
 
 	}
 
+	/**
+	 * <p>addSet.</p>
+	 *
+	 * @param parentId a {@link java.lang.String} object.
+	 * @param set a {@link org.json.JSONObject} object.
+	 * @throws org.json.JSONException if any.
+	 */
 	public void addSet(String parentId, JSONObject set) throws JSONException {
 		if (tabs.containsKey(parentId)) {
 			set.put("tab", parentId);
@@ -414,6 +451,14 @@ public class BecpgFormDefinition {
 
 	}
 
+	/**
+	 * <p>addField.</p>
+	 *
+	 * @param parentId a {@link java.lang.String} object.
+	 * @param field a {@link org.json.JSONObject} object.
+	 * @param force a boolean.
+	 * @throws org.json.JSONException if any.
+	 */
 	public void addField(String parentId, JSONObject field, boolean force) throws JSONException {
 		if (tabs.containsKey(parentId)) {
 			field.put("tab", parentId);

@@ -35,7 +35,7 @@ import fr.becpg.repo.form.BecpgFormService;
  * Return or save MLText field
  *
  * @author matthieu
- *
+ * @version $Id: $Id
  */
 public class FormGetWebScript extends AbstractWebScript {
 
@@ -56,11 +56,17 @@ public class FormGetWebScript extends AbstractWebScript {
 	private BecpgFormService becpgFormService;
 	
 
+	/**
+	 * <p>Setter for the field <code>becpgFormService</code>.</p>
+	 *
+	 * @param becpgFormService a {@link fr.becpg.repo.form.BecpgFormService} object.
+	 */
 	public void setBecpgFormService(BecpgFormService becpgFormService) {
 		this.becpgFormService = becpgFormService;
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
 

@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 
 import fr.becpg.repo.formulation.spel.CustomSpelFunctions;
-import fr.becpg.repo.glop.impl.GlopServiceImpl;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.repository.RepositoryEntity;
@@ -26,8 +25,7 @@ import fr.becpg.repo.repository.model.SimpleCharactDataItem;
  * Register custom Glop SPEL helper accessible with @glop.
  *
  * <h1>Usage</h1> In the composition list, add a dynamic formula making a call
- * to {@code @glop.optimize()}. The first parameter should be {@code #this}. The
- * second should be an object of the following structure:
+ * to {@code @glop.optimize()}. The parameter should be an object of the following structure:
  * <ul>
  * <li>{@code target} is an object describing the target function and is
  * comprised of:
@@ -80,11 +78,12 @@ import fr.becpg.repo.repository.model.SimpleCharactDataItem;
  * </ul>
  *
  * Special constraints are constraints that require more than one data item to
- * create. Currently, the only special constraint is {@code "total_qty"} which
+ * create. Currently, the only special constraint is {@code "recipeQtyUsed"} which
  * evaluates as the total quantity of components in the product.
  *
  * @author pierrecolin
  * @see fr.becpg.repo.glop.GlopService
+ * @version $Id: $Id
  */
 @Service
 public class GlopSpelFunctions implements CustomSpelFunctions {
@@ -95,11 +94,13 @@ public class GlopSpelFunctions implements CustomSpelFunctions {
 	@Autowired
 	private GlopService glopService;
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean match(String beanName) {
 		return beanName.equals("glop");
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Object create(RepositoryEntity repositoryEntity) {
 		return new GlopSpelFunctionsWrapper(repositoryEntity);
@@ -162,7 +163,7 @@ public class GlopSpelFunctions implements CustomSpelFunctions {
 		}
 
 		@SuppressWarnings("unchecked")
-		public Map<String, Serializable> optimize(ProductData product, Map<String, ?> problem) {
+		public Map<String, Serializable> optimize(Map<String, ?> problem) {
 			Map<String, Serializable> errorRet = new HashMap<>();
 			Map<String, ?> target = getTarget(problem);
 			SimpleCharactDataItem targetItem = (SimpleCharactDataItem) target.get("var");
@@ -191,7 +192,7 @@ public class GlopSpelFunctions implements CustomSpelFunctions {
 				}
 			}
 			try {
-				JSONObject response = glopService.optimize(product, fullConstraints, fullTarget);
+				JSONObject response = glopService.optimize((ProductData) entity, fullConstraints, fullTarget);
 				return translate(response);
 			} catch (GlopException e) {
 				errorRet.put("Error", "Linear program is unfeasible: " + e);

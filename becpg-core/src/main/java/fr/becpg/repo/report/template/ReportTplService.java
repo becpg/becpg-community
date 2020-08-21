@@ -96,8 +96,8 @@ public interface ReportTplService {
 	 * @param isSystemTpl a boolean.
 	 * @param isDefaultTpl a boolean.
 	 * @param overrideTpl a boolean.
-	 * @throws java.io.IOException
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @throws java.io.IOException if any.
 	 */
 	NodeRef createTplRptDesign(NodeRef parentNodeRef, String tplName, String tplFilePath, ReportType reportType, ReportFormat reportFormat, QName nodeType, boolean isSystemTpl, boolean isDefaultTpl, boolean overrideTpl) throws IOException;
 	
@@ -107,9 +107,8 @@ public interface ReportTplService {
 	 * @param parentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param xmlFilePath a {@link java.lang.String} object.
 	 * @param overrideRessource a boolean.
-	 * @throws java.io.IOException
-	 * the created resource
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @throws java.io.IOException if any.
 	 */
 	NodeRef createTplRessource(NodeRef parentNodeRef, String xmlFilePath, boolean overrideRessource) throws IOException;
 	

@@ -2,8 +2,9 @@ package fr.becpg.repo.glop;
 
 /**
  * Represents a Glop service failure. Currently used for when the linear problem is unfeasible.
- * 
+ *
  * @author pierrecolin
+ * @version $Id: $Id
  */
 public class GlopException extends Exception {
 

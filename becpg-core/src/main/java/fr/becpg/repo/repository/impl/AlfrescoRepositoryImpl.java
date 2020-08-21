@@ -654,7 +654,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		}
 
 	}
-	
+
 	/** {@inheritDoc} */
 	@Override
 	public List<T> loadDataList(NodeRef entityNodeRef, QName datalistContainerQname, QName datalistQname) {
@@ -772,13 +772,15 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		return repositoryEntityDefReader.getEntityClass(type) != null;
 	}
 
-	@Override
+        /** {@inheritDoc} */
+        @Override
 	public <R extends RepositoryEntity> List<R> getList(RepositoryEntity entity, Class<R> clazz) {
 		QName qName = repositoryEntityDefReader.getType(clazz);
 		return getList(entity, qName, qName);
 
 	}
 
+	/** {@inheritDoc} */
 	@SuppressWarnings("unchecked")
 	@Override
 	public <R extends RepositoryEntity> List<R> getList(RepositoryEntity entity, QName datalistContainerQname, QName datalistQname) {
@@ -811,5 +813,6 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 		return new ArrayList<>();
 	}
+
 
 }

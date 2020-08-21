@@ -15,6 +15,12 @@ import fr.becpg.repo.helper.ExcelHelper.ExcelFieldTitleProvider;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
+/**
+ * <p>DynamicColumnNameResolver class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class DynamicColumnNameResolver implements ExcelFieldTitleProvider, DataGridFormFieldTitleProvider {
 
 	private NodeService nodeService;
@@ -22,6 +28,13 @@ public class DynamicColumnNameResolver implements ExcelFieldTitleProvider, DataG
 	
 	Map<String, String> dynamicColumnNames = new HashMap<>();
 	
+	/**
+	 * <p>Constructor for DynamicColumnNameResolver.</p>
+	 *
+	 * @param filter a {@link fr.becpg.repo.entity.datalist.data.DataListFilter} object.
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 * @param dictionaryService a {@link org.alfresco.service.cmr.dictionary.DictionaryService} object.
+	 */
 	public DynamicColumnNameResolver(DataListFilter filter, NodeService nodeService, DictionaryService dictionaryService) {
 		this.nodeService =  nodeService;
 		this.dictionaryService = dictionaryService;
@@ -38,12 +51,14 @@ public class DynamicColumnNameResolver implements ExcelFieldTitleProvider, DataG
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String getTitle(AttributeExtractorStructure field) {
 		String title  = getTitle(field.getFieldDef().getName());
 		return title != null ? title : field.getFieldDef().getTitle(dictionaryService);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String getTitle(QName field) {
 		String fieldName = field.getLocalName().replace("bcpg:", "");
@@ -53,11 +68,13 @@ public class DynamicColumnNameResolver implements ExcelFieldTitleProvider, DataG
 		return null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isAllowed(AttributeExtractorStructure field) {
 		return isAllowed(field.getFieldDef().getName());
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isAllowed(QName field) {
 		String fieldName =  field.getLocalName().replace("bcpg:", "");

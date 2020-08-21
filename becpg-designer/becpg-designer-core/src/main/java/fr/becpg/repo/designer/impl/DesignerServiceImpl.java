@@ -160,6 +160,11 @@ public class DesignerServiceImpl implements DesignerService {
 		this.dictionaryService = dictionaryService;
 	}
 
+        /**
+         * <p>Setter for the field <code>formJsonVisitor</code>.</p>
+         *
+         * @param formJsonVisitor a {@link fr.becpg.repo.designer.impl.FormJsonVisitor} object.
+         */
         public void setFormJsonVisitor(FormJsonVisitor formJsonVisitor) {
 		this.formJsonVisitor = formJsonVisitor;
 	}
@@ -782,6 +787,7 @@ public class DesignerServiceImpl implements DesignerService {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String export(NodeRef nodeRef) {
 		try {

@@ -19,6 +19,7 @@ import fr.becpg.repo.designer.DesignerService;
  * The Class PublishWebScript.
  *
  * @author matthieu
+ * @version $Id: $Id
  */
 public class ExportWebScript extends AbstractWebScript   {
 	
@@ -35,6 +36,8 @@ public class ExportWebScript extends AbstractWebScript   {
 	
 
 	/**
+	 * <p>Setter for the field <code>designerService</code>.</p>
+	 *
 	 * @param designerService the designerService to set
 	 */
 	public void setDesignerService(DesignerService designerService) {
@@ -43,14 +46,11 @@ public class ExportWebScript extends AbstractWebScript   {
 
 
 	/**
-	 * Publish 
-	 * 
-	 * url : /becpg/designer/form/export?nodeRef={nodeRef}.
+	 * {@inheritDoc}
 	 *
-	 * @param req the req
-	 * @param status the status
-	 * @param cache the cache
-	 * @return the map
+	 * Publish
+	 *
+	 * url : /becpg/designer/form/export?nodeRef={nodeRef}.
 	 */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {

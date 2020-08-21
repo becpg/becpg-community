@@ -221,8 +221,7 @@ public class ImportHelper {
 	 * @param pos
 	 *            the pos
 	 * @return the serializable
-	 * @throws java.text.ParseException
-	 *             the parse exception
+	 * @throws java.text.ParseException if any.
 	 */
 	public static Serializable loadPropertyValue(ImportContext importContext, List<String> values, int pos) throws ParseException {
 

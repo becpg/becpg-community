@@ -73,6 +73,7 @@ public class SouthAfricanNutrientRegulation extends AbstractNutrientRegulation {
 		return  roundValue(value, 1d);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected String displayValueByCode(Double value, Double roundedValue, String nutrientTypeCode, Locale locale) {
 		return formatDouble(roundedValue, locale);
