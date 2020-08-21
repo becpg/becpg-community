@@ -772,4 +772,45 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		return repositoryEntityDefReader.getEntityClass(type) != null;
 	}
 
+        /** {@inheritDoc} */
+        @Override
+	public <R extends RepositoryEntity> List<R> getList(RepositoryEntity entity, Class<R> clazz) {
+		QName qName = repositoryEntityDefReader.getType(clazz);
+		return getList(entity, qName, qName);
+
+	}
+
+	/** {@inheritDoc} */
+	@SuppressWarnings("unchecked")
+	@Override
+	public <R extends RepositoryEntity> List<R> getList(RepositoryEntity entity, QName datalistContainerQname, QName datalistQname) {
+
+		if (datalistContainerQname.equals(datalistQname)) {
+
+			Map<QName, List<? extends RepositoryEntity>> datalists = repositoryEntityDefReader.getDataLists(entity);
+			if ((datalists != null) && !datalists.isEmpty()) {
+				for (Map.Entry<QName, List<? extends RepositoryEntity>> dataListEntry : datalists.entrySet()) {
+					if (dataListEntry.getKey().equals(datalistQname)) {
+						return (List<R>) dataListEntry.getValue();
+					}
+				}
+			}
+		}
+
+		Map<QName, ?> datalistViews = repositoryEntityDefReader.getDataListViews((T) entity);
+		for (Map.Entry<QName, ?> dataListViewEntry : datalistViews.entrySet()) {
+			if (dataListViewEntry.getKey().equals(datalistContainerQname)) {
+				Map<QName, List<? extends RepositoryEntity>> viewDatalists = repositoryEntityDefReader.getDataLists(dataListViewEntry.getValue());
+				if ((viewDatalists != null) && !viewDatalists.isEmpty()) {
+					for (Map.Entry<QName, List<? extends RepositoryEntity>> dataListEntry : viewDatalists.entrySet()) {
+						if (dataListEntry.getKey().equals(datalistQname)) {
+							return (List<R>) dataListEntry.getValue();
+						}
+					}
+				}
+			}
+		}
+
+		return new ArrayList<>();
+	}
 }

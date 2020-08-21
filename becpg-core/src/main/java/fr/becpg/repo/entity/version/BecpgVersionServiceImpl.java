@@ -13,10 +13,17 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 
+/**
+ * <p>BecpgVersionServiceImpl class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class BecpgVersionServiceImpl extends Version2ServiceImpl {
 
 	private static Log logger = LogFactory.getLog(BecpgVersionServiceImpl.class);
 
+	/** {@inheritDoc} */
 	@Override
 	protected void defaultOnCreateVersion(QName classRef, NodeRef nodeRef, Map<String, Serializable> versionProperties, PolicyScope nodeDetails) {
 		if (logger.isDebugEnabled()) {

@@ -325,9 +325,9 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	 *
 	 * @param importContext a {@link fr.becpg.repo.importer.ImportContext} object.
 	 * @param values a {@link java.util.List} object.
-	 * @throws java.text.ParseException
-	 * @throws fr.becpg.repo.importer.ImporterException
 	 * @return a {@link java.util.Map} object.
+	 * @throws java.text.ParseException if any.
+	 * @throws fr.becpg.repo.importer.ImporterException if any.
 	 */
 	@SuppressWarnings("unchecked")
 	protected Map<QName, Serializable> getNodePropertiesToImport(ImportContext importContext, List<String> values)
@@ -551,7 +551,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	 * @param importContext a {@link fr.becpg.repo.importer.ImportContext} object.
 	 * @param values a {@link java.util.List} object.
 	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @throws fr.becpg.repo.importer.ImporterException
+	 * @throws fr.becpg.repo.importer.ImporterException if any.
 	 */
 	protected void importAssociations(ImportContext importContext, List<String> values, NodeRef nodeRef) throws ImporterException {
 
@@ -598,8 +598,8 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	 * @param importContext a {@link fr.becpg.repo.importer.ImportContext} object.
 	 * @param values a {@link java.util.List} object.
 	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @throws fr.becpg.repo.importer.ImporterException
 	 * @throws java.text.ParseException if any.
+	 * @throws fr.becpg.repo.importer.ImporterException if any.
 	 */
 	protected void importFiles(ImportContext importContext, List<String> values, NodeRef nodeRef) throws ParseException, ImporterException {
 

@@ -44,7 +44,7 @@ public class TaskListExcelReportSearch extends DefaultExcelReportSearchPlugin{
 
 	
 	/** {@inheritDoc} */
-	@Override 
+	@Override
 	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields,
 			Map<QName, Serializable> properties, final Map<NodeRef, Map<String, Object>> cache) {
 		

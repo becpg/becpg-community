@@ -97,7 +97,7 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 	/**
 	 * <p>Setter for the field <code>rclReqMaxQty</code>.</p>
 	 *
-	 * @param formulationChainId a {@link java.lang.Double} object.
+	 * @param reqMaxQty a {@link java.lang.Double} object.
 	 */
 	public void setReqMaxQty(Double reqMaxQty) {
 		this.reqMaxQty = reqMaxQty;
@@ -307,6 +307,7 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 	}
 	
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -315,6 +316,7 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -329,6 +331,7 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 				&& Objects.equals(reqMlMessage, other.reqMlMessage) && reqType == other.reqType && Objects.equals(sources, other.sources);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "ReqCtrlListDataItem [reqType=" + reqType + ", reqMlMessage=" + reqMlMessage + ", rclReqMaxQty=" + reqMaxQty + ", charact="

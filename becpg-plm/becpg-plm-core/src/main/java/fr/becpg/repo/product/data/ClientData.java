@@ -40,7 +40,7 @@ public class ClientData extends BeCPGDataObject implements HierarchicalEntity, S
 	 * @return a {@link fr.becpg.model.SystemState} object.
 	 */
 	@AlfProp
-	@AlfQname(qname = "bcpg:clientState")	
+	@AlfQname(qname = "bcpg:clientState")
 	public SystemState getState() {
 		return state;
 	}

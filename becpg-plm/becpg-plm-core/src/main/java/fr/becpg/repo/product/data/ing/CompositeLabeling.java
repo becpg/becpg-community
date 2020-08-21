@@ -93,7 +93,6 @@ public class CompositeLabeling extends LabelingComponent {
 	 * <p>clone.</p>
 	 *
 	 * @param list a {@link java.util.List} object.
-	 * @param <T> a T object.
 	 * @return a {@link java.util.List} object.
 	 */
 	@SuppressWarnings("unchecked")
