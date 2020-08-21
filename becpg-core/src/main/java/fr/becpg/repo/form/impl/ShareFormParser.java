@@ -21,6 +21,12 @@ import org.xml.sax.SAXException;
 
 import fr.becpg.common.dom.DOMUtils;
 
+/**
+ * <p>ShareFormParser class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class ShareFormParser {
 
 	private static Log logger = LogFactory.getLog(ShareFormParser.class);
@@ -57,6 +63,17 @@ public class ShareFormParser {
 	// </forms>
 	// </config>
 
+	/**
+	 * <p>visitConfig.</p>
+	 *
+	 * @param definitions a {@link java.util.Map} object.
+	 * @param in a {@link java.io.InputStream} object.
+	 * @throws org.xml.sax.SAXException if any.
+	 * @throws java.io.IOException if any.
+	 * @throws javax.xml.parsers.ParserConfigurationException if any.
+	 * @throws javax.xml.parsers.FactoryConfigurationError if any.
+	 * @throws org.json.JSONException if any.
+	 */
 	public void visitConfig(Map<String, Map<String, BecpgFormDefinition>> definitions, InputStream in)
 			throws SAXException, IOException, ParserConfigurationException, FactoryConfigurationError, JSONException {
 		logger.debug("visitConfigNodeRef");

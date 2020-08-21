@@ -147,9 +147,9 @@ public class FormModelVisitor {
 	 *
 	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param out a {@link java.io.OutputStream} object.
-	 * @throws javax.xml.parsers.FactoryConfigurationError
-	 * @throws javax.xml.parsers.ParserConfigurationException
-	 * @throws javax.xml.transform.TransformerException
+	 * @throws javax.xml.parsers.ParserConfigurationException if any.
+	 * @throws javax.xml.parsers.FactoryConfigurationError if any.
+	 * @throws javax.xml.transform.TransformerException if any.
 	 */
 	public void visitConfigXml(NodeRef nodeRef, OutputStream out) throws ParserConfigurationException, FactoryConfigurationError, TransformerException {
 
@@ -344,10 +344,10 @@ public class FormModelVisitor {
 	 *
 	 * @param configNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param in a {@link java.io.InputStream} object.
-	 * @throws javax.xml.parsers.FactoryConfigurationError
-	 * @throws javax.xml.parsers.ParserConfigurationException
-	 * @throws java.io.IOException
-	 * @throws org.xml.sax.SAXException
+	 * @throws org.xml.sax.SAXException if any.
+	 * @throws java.io.IOException if any.
+	 * @throws javax.xml.parsers.ParserConfigurationException if any.
+	 * @throws javax.xml.parsers.FactoryConfigurationError if any.
 	 */
 	// <config evaluator="node-type" condition="type">
 	// <forms>

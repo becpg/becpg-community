@@ -83,6 +83,7 @@ import fr.becpg.repo.repository.model.SimpleCharactDataItem;
  *
  * @author pierrecolin
  * @see fr.becpg.repo.glop.GlopService
+ * @version $Id: $Id
  */
 @Service
 public class GlopSpelFunctions implements CustomSpelFunctions {
@@ -93,11 +94,13 @@ public class GlopSpelFunctions implements CustomSpelFunctions {
 	@Autowired
 	private GlopService glopService;
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean match(String beanName) {
 		return beanName.equals("glop");
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Object create(RepositoryEntity repositoryEntity) {
 		return new GlopSpelFunctionsWrapper(repositoryEntity);

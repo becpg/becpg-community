@@ -276,6 +276,11 @@ public class EntityListsWebScript extends AbstractWebScript {
 	}
         
 
+        /**
+         * <p>Setter for the field <code>reportAssociationDecorator</code>.</p>
+         *
+         * @param reportAssociationDecorator a {@link fr.becpg.repo.report.jscript.ReportAssociationDecorator} object.
+         */
         public void setReportAssociationDecorator(ReportAssociationDecorator reportAssociationDecorator) {
 		this.reportAssociationDecorator = reportAssociationDecorator;
 	}
