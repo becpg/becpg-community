@@ -134,7 +134,7 @@ public class GlopConstraintSpecification implements Serializable {
 			Set<CompoListDataItem> variables) {
 		if (isSpecial()) {
 			Double coef = null;
-			if (special.equals("total_qty")) {
+			if (special.equals("recipeQtyUsed")) {
 				coef = 1d;
 			}
 			specialContributions.get(special).put(compoListDataItem, coef);
