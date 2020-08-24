@@ -220,8 +220,12 @@ public class EntityTplServiceImpl implements EntityTplService {
 					MLText classTitleMLText = TranslateHelper.getTemplateTitleMLText(classDef.getName());
 					MLText classDescritptionMLText = TranslateHelper.getTemplateDescriptionMLText(classDef.getName());
 
-					mlNodeService.setProperty(listNodeRef, ContentModel.PROP_TITLE, MLTextHelper.merge(title, classTitleMLText));
-					mlNodeService.setProperty(listNodeRef, ContentModel.PROP_DESCRIPTION, MLTextHelper.merge(description, classDescritptionMLText));
+					if(title!=null && classTitleMLText!=null) {
+						mlNodeService.setProperty(listNodeRef, ContentModel.PROP_TITLE, MLTextHelper.merge(title, classTitleMLText));
+					}
+					if(description!=null && classDescritptionMLText!=null) {
+						mlNodeService.setProperty(listNodeRef, ContentModel.PROP_DESCRIPTION, MLTextHelper.merge(description, classDescritptionMLText));
+					}
 
 				}
 			}
