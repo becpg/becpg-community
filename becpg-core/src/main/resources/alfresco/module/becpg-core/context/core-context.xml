@@ -298,5 +298,4 @@
             <value>${version.store.versionComparatorClass}</value>
         </property>
     </bean>
-    
 </beans>
