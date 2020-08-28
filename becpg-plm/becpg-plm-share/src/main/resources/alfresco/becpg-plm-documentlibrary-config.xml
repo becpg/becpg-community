@@ -143,6 +143,11 @@
 				
 
 		</indicators>
+		
+		 <multi-select>
+	         <action type="action-link" id="onActionAssignWorkflow" icon="document-assign-workflow" label="menu.selected-items.assign-workflow"/>
+	     </multi-select>
+	      
 	</config>
 	<config evaluator="string-compare" condition="DocumentLibrary" replace="true">
 		<create-content>
@@ -275,13 +280,7 @@
 				<evaluator negate="true">evaluator.becpg.doclib.action.entity.isSystemEntity</evaluator>
 			</action>
 			
-			<!-- Send to validation 
-			 // For next release
-			<action id="start-process" type="javascript" label="actions.entity.start-process" icon="document-assign-workflow">
-				<param name="function">onActionStartProcess</param>
-			</action>
 			
-			-->
 			
 		</actions>
 
@@ -294,16 +293,6 @@
 				<action index="111" id="entityTpl-synchronize-entities" />
 				<action index="112" id="entityTpl-formulate-entities" />
 				<action index="113" id="entityTpl-wused" />
-				<action index="400" id="start-process" />
-			</actionGroup>
-
-
-			<actionGroup id="document-details">
-				<action index="400" id="start-process" />
-			</actionGroup>
-
-			<actionGroup id="document-browse">
-				<action index="400" id="start-process" />
 			</actionGroup>
 
 		</actionGroups>

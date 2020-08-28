@@ -178,12 +178,6 @@
 		<property name="createBranch" value="${beCPG.sendToSupplier.createBranch}"/>	
 	</bean>
 	
-	<bean id="webscript.fr.becpg.project.sendToProject.post" class="fr.becpg.repo.web.scripts.project.ProjectEntityAssociationWebScript" parent="webscript">
-		<property name="alfrescoRepository" ref="alfrescoRepository" />
-		<property name="associationService" ref="associationService"/>
-		<property name="repoService" ref="repoService"/>
-	</bean>
-	
 	<bean id="webscript.fr.becpg.supplier.createSupplier.post" class="fr.becpg.repo.web.scripts.supplier.SupplierAccountWebScript" parent="webscript">
 		<property name="nodeService" ref="NodeService" />
 		<property name="personService" ref="PersonService" />
@@ -197,12 +191,13 @@
 	
 	<bean id="webscript.fr.becpg.workflow.startProcess.get" class="fr.becpg.repo.web.scripts.workflow.StartProcessWebscript" parent="webscript">
 		<property name="nodeService" ref="NodeService" />
-		<property name="namespaceService" ref="NamespaceService" />
+		<property name="serviceRegistry" ref="ServiceRegistry" />
 		<property name="scriptService" ref="scriptService"/>
 		<property name="repository" ref="repositoryHelper" />
 		<property name="searchService" ref="searchService" />
 		<property name="contentService" ref="contentService"/>
-		<property name="authorityService" ref="authorityService"/>	
+		<property name="authorityService" ref="authorityService"/>
+		<property name="workflowService" ref="WorkflowService"/>	
 	</bean>
 
 	<alias name="webscript.fr.becpg.workflow.startProcess.get" alias="webscript.fr.becpg.workflow.startProcess.post" />

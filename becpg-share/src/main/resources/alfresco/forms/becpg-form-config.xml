@@ -109,6 +109,15 @@
 	</config>
 
 
+   <config evaluator="model-type" condition="cm:content">
+		<forms>
+				<form id="content-validation">
+					<field-visibility>
+						<show id="cm:name" />
+					</field-visibility>
+			</form>
+		</forms>
+	</config>
 
 
 
