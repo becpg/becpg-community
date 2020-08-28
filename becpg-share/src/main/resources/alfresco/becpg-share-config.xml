@@ -378,35 +378,6 @@
 			</action>
 			
 
-		<!-- 	<action id="entity-checkin" type="javascript" label="actions.document.checkin-entity">
-				<param name="function">onActionCheckInEntity</param>
-				<permissions>
-					<permission allow="true">Write</permission>
-				</permissions>
-				<evaluator>evaluator.becpg.doclib.action.entity.isWorkingCopy
-				</evaluator>
-			</action>
-			
-			
-			<action id="entity-checkout" type="javascript" label="actions.document.checkout-entity">
-				<param name="function">onActionCheckOutEntity</param>
-				<permissions>
-					<permission allow="true">Write</permission>
-				</permissions>
-				<evaluator negate="true">evaluator.becpg.doclib.action.entity.isSystemEntity</evaluator>
-				<evaluator negate="true">evaluator.becpg.doclib.action.entity.isWorkingCopy</evaluator>
-				<evaluator negate="true">evaluator.doclib.action.notEditable</evaluator>
-			</action>
-			Cancel editing (cancel checkout)
-			<action id="entity-cancel-editing" type="javascript" label="actions.document.cancel-checkout-entity">
-				<param name="function">onActionCancelCheckOutEntity</param>
-				<permissions>
-					<permission allow="true">CancelCheckOut</permission>
-				</permissions>
-				<evaluator>evaluator.doclib.action.isWorkingCopy</evaluator>
-			</action>
-		 -->
-
 			<action id="entity-view-documents" type="javascript" label="actions.entity.view-documents">
 				<param name="function">onActionShowDocs</param>
 			</action>
@@ -466,13 +437,7 @@
 				<evaluator>evaluator.doclib.metadata.isLocked</evaluator>
 				<evaluator>evaluator.doclib.action.isWorkingCopy</evaluator>
 			</action>
-			
-			<action id="view-associated-workflow" type="javascript" icon="document-assign-workflow" label="actions.entity.associated-workflow">
-				<param name="function">onActionViewAssociatedWorkflow</param>
-				<evaluator>evaluator.becpg.doclib.action.entity</evaluator>
-			</action>
-			
-			
+
 			<!-- Associated process -->
 			<action id="entity-show-associated-process" type="javascript" label="actions.entity.associated-process" icon="document-assign-workflow">
 				<param name="function">onActionShowAssociatedProcess</param>
@@ -546,7 +511,6 @@
 				<action index="370" id="document-cloud-unsync" />
 				<action index="380" id="document-view-in-cloud" />
 				<action index="390" id="document-request-sync" />
-				<!-- <action index="500" id="view-associated-workflow" /> -->
 				<action index="510" id="entity-show-associated-process" />
 				
 			</actionGroup>

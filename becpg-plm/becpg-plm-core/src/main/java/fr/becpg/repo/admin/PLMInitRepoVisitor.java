@@ -528,9 +528,11 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		if (Objects.equals(folderName, PlmRepoConsts.PATH_CONFIG)) {
 
 			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/search/*.json");
+			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/script/workflow/*.json");
 
 		}
 
+		
 		if (Objects.equals(folderName, PlmRepoConsts.PATH_WORKFLOW_SCRIPTS)) {
 			for (NodeRef scriptNodeRef : contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/script/workflow/*.js")) {
 				String title = (String) nodeService.getProperty(scriptNodeRef, ContentModel.PROP_TITLE);
