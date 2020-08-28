@@ -15,7 +15,7 @@
 	 	<hideMyFiles>false</hideMyFiles>
 	</config>
 
-
+	<!-- Deprecated -->
 	<config evaluator="string-compare" condition="Workflow">
 		<permission-workflows default="allow">
 			<permission-workflow name="activiti$claimProcess">

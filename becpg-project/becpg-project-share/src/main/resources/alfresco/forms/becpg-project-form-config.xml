@@ -361,6 +361,39 @@
 					</field>
 				</appearance>
 			</form>
+			<form id="create-process">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="bcpg:entityTplRef" force="true" />
+					<show id="pjt:projectEntity" />
+					<show id="pjt:projectState" />
+				</field-visibility>
+				<appearance>
+					<field id="cm:name" />
+					<field id="bcpg:entityTplRef">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pjt:project?classNames=pjt:project,bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse
+							</control-param>
+							<control-param name="showTooltip">false</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+			<form id="associate-process">
+				<field-visibility>
+					<show id="bcpg:entityTplRef" force="true" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:entityTplRef" labelId="becpg.forms.set.project.label">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pjt:project</control-param>
+							<control-param name="showTooltip">false</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
 			<!-- Allow to add custom fields to TaskList
 		   <form id="taskList">
 			  <field-visibility>

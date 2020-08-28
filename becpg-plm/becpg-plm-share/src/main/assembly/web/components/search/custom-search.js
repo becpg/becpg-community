@@ -17,7 +17,7 @@
 		this.selectedItems = {};
 
 		YAHOO.Bubbling.on("selectedItemsChanged", this.onSelectedItemsChanged, this);
-		
+		YAHOO.Bubbling.on("registerAction", this.onRegisterAction, this);
 
 		return this;
 	};
@@ -1376,7 +1376,7 @@
 					               }
 					            }
 					         });
-					      },
+					      }
 
 
 					});
