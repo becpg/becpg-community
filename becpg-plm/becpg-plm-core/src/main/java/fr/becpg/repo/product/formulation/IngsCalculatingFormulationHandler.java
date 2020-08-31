@@ -59,7 +59,6 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	private static final String MESSAGE_MISSING_INGLIST = "message.formulate.missing.ingList";
 	private static final String MESSAGE_INCORRECT_INGLIST_TOTAL = "message.formulate.incorrect.ingList.total";
 
-	
 	private static final Log logger = LogFactory.getLog(IngsCalculatingFormulationHandler.class);
 
 	private NodeService nodeService;
@@ -69,27 +68,37 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	protected AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
 	/**
-	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 * <p>
+	 * Setter for the field <code>nodeService</code>.
+	 * </p>
 	 *
-	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 * @param nodeService
+	 *            a {@link org.alfresco.service.cmr.repository.NodeService}
+	 *            object.
 	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
 	/**
-	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
+	 * <p>
+	 * Setter for the field <code>alfrescoRepository</code>.
+	 * </p>
 	 *
-	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
+	 * @param alfrescoRepository
+	 *            a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
 	 */
 	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
 	/**
-	 * <p>Setter for the field <code>ingsCalculatingWithYield</code>.</p>
+	 * <p>
+	 * Setter for the field <code>ingsCalculatingWithYield</code>.
+	 * </p>
 	 *
-	 * @param ingsCalculatingWithYield a boolean.
+	 * @param ingsCalculatingWithYield
+	 *            a boolean.
 	 */
 	public void setIngsCalculatingWithYield(boolean ingsCalculatingWithYield) {
 		this.ingsCalculatingWithYield = ingsCalculatingWithYield;
@@ -413,6 +422,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			Double mini = ingListDataItem.getMini();
 			Double maxi = ingListDataItem.getMaxi();
 
+			
 			if (qty != null) {
 				qty *= FormulationHelper.getYield(compoListDataItem) / 100;
 
@@ -445,7 +455,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 							volumeQty + ((ingListDataItem.getVolumeQtyPerc() * compoListDataItem.getVolume()) / 100));
 				}
 
-			}
+			} 
 
 			// Calculate geo origins
 			for (NodeRef geoOrigin : ingListDataItem.getGeoOrigin()) {
@@ -551,8 +561,8 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 			int i = 1;
 
-			byParent.getOrDefault(nullPlaceholder, Collections.emptyList()).stream()
-					.sorted(Comparator.comparingDouble(IngListDataItem::getQtyPerc).thenComparing(IngListDataItem::getName))
+			byParent.getOrDefault(nullPlaceholder, Collections.emptyList()).stream().sorted(Comparator
+					.comparing(IngListDataItem::getQtyPerc, Comparator.nullsLast(Comparator.naturalOrder())).thenComparing(IngListDataItem::getName))
 					.collect(Collectors.toList()).forEach(processor::add);
 
 			while (!processor.isEmpty()) {
