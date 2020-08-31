@@ -232,7 +232,7 @@ public class RegulationFormulationHelper {
 		} else if (locale.getCountry().equals("KE") || locale.getCountry().equals("NG") || locale.getCountry().equals("GH")
 				|| locale.getCountry().equals("CI") || locale.getCountry().equals("UG") || locale.getCountry().equals("MZ")
 				|| locale.getCountry().equals("MW") || locale.getCountry().equals("TZ") || locale.getCountry().equals("ZM")
-				|| locale.getCountry().equals("ZW")) {
+				|| locale.getCountry().equals("ZW") || locale.getCountry().equals("KH") || locale.getCountry().equals("MM") ) {
 			return "CODEX";
 		} else if (locale.getCountry().equals("CO")) {
 			return "CO";
@@ -584,7 +584,8 @@ public class RegulationFormulationHelper {
 				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("en_KE")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("pt_MZ"))
 				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("sw_TZ")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("fr_CI"))
 				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("en_UG")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("en_MW"))
-				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("en_ZW")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("bem_ZM"))) {
+				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("en_ZW")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("bem_ZM"))
+				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("km_KH")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("my_MM"))) {
 			ret.add("CODEX");
 		}
 
