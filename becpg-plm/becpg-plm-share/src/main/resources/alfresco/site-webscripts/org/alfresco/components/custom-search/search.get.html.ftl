@@ -139,7 +139,7 @@
 					         <div class="bd">
 					             <ul>			                
 					                 <li><a type="" rel="" href="#" ><span class="onActionDownload">${msg("menu.selected-items.download")}</span></a></li>
-					                 <li><a type="" rel="" href="#" ><span class="onActionAssignWorkflow">${msg("menu.selected-items.assign-workflow")}</span></a></li>
+					                 <li><a type="" rel="" href="#" ><span class="onActionAssignWorkflow">${msg("menu.selected-items.assign-process")}</span></a></li>
 					                 <li><a type="" rel="content" href="#" ><span class="onActionQuickShare">${msg("menu.selected-items.quick-share")}</span></a></li>
 	                                 <#-- <li><a type="" rel="" href="#" ><span class="onActionCopyTo">${msg("menu.selected-items.copy")}</span></a></li> -->
 	                                 <#-- <li><a type="" rel="delete" href="#" ><span class="onActionMoveTo">${msg("menu.selected-items.move")}</span></a></li> -->
