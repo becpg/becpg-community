@@ -385,7 +385,7 @@
 					<show id="bcpg:entityTplRef" force="true" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:entityTplRef" labelId="becpg.forms.set.project.label">
+					<field id="bcpg:entityTplRef" label-id="becpg.forms.set.project.label">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pjt:project</control-param>
@@ -1152,6 +1152,7 @@
 			<!-- Data Grid view -->
 			<form id="filter">
 				<field-visibility>
+				    <show id="pjt:tlTaskName" />
 					<show id="bcpg:depthLevel" />
 					<show id="pjt:tlTaskLegend" />
 					<show id="pjt:tlResources" />
