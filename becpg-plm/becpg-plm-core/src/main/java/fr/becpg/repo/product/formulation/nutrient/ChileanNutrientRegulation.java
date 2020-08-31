@@ -49,6 +49,8 @@ public class ChileanNutrientRegulation extends AbstractNutrientRegulation {
 				if (value <= 0.5){
 					return 0.0;
 				} else if (value < 10) {
+					return roundValue(value,0.01d);	
+				} else if (value < 100) {
 					return roundValue(value,0.1d);	
 				} else {
 					return roundValue(value,1d);	
@@ -56,6 +58,8 @@ public class ChileanNutrientRegulation extends AbstractNutrientRegulation {
 			} else if (nutrientTypeCode.equals(NutrientCode.Sodium)) {
 				if (value <= 35) {
 					return 0.0;
+				} else if (value < 100) {
+					return roundValue(value,0.1d);	
 				} else {
 					return roundValue(value,1d);	
 				}
