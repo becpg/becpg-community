@@ -1744,6 +1744,25 @@
 			if (Dom.hasClass(this.id, 'alf-true-fullscreen')) {
 				parentElement = Dom.get(this.id);
 			}
+			
+			//beCPG
+			var entityPath = this.currentPath;
+			
+			if(this.options.entityMode ){
+				
+				// Handle a single record being provided...
+				if (typeof record.length === "undefined") {
+					entityPath = record.location.repoPath;
+				} else {
+					entityPath = record[0].location.repoPath;
+				}
+				
+				if(entityPath.indexOf("documentLibrary")>0){
+					entityPath = entityPath.substring(entityPath.indexOf("documentLibrary")+15, entityPath.length)
+				}
+				
+			}
+			
 
 			this.modules.copyMoveTo.setOptions(
 				{
@@ -1751,7 +1770,7 @@
 					mode: mode,
 					siteId: this.options.siteId,
 					containerId: this.options.containerId,
-					path: this.currentPath,
+					path: entityPath,
 					files: record,
 					/* Fix for MNT-12432. Do not overwrite this.modules.copyMoveTo.options.rootNode option if repoBrowsing is enabled. Could cause Repository tab view inconsistency */
 					rootNode: this.options.repositoryBrowsing ? this.modules.copyMoveTo.options.rootNode : this.options.rootNode,
