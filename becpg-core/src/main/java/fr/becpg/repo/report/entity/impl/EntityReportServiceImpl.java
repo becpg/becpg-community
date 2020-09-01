@@ -353,7 +353,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 														
 														if(!Boolean.TRUE.equals(includeReportInSearch)) {
 															nodeService.setProperty(documentNodeRef, ContentModel.PROP_IS_INDEXED, false);
-														else {
+														} else {
 															nodeService.setProperty(documentNodeRef, ContentModel.PROP_IS_INDEXED, true);
 															nodeService.setProperty(documentNodeRef, ContentModel.PROP_IS_CONTENT_INDEXED, false);
 														}
