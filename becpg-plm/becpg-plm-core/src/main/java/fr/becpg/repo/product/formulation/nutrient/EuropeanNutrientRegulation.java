@@ -89,7 +89,9 @@ public class EuropeanNutrientRegulation extends AbstractNutrientRegulation {
 	/** {@inheritDoc} */
 	@Override
 	protected String displayValueByCode(Double value, Double roundedValue, String nutrientTypeCode, Locale locale) {
-		
+		if ("MM".equals(locale.getCountry())) {
+			locale = new Locale("en");
+		}
 		if(value != null && roundedValue != null && nutrientTypeCode != null){
 			if (nutrientTypeCode.equals(NutrientCode.FatSaturated) && value<=0.1) {
 				return "< " + formatDouble(0.1, locale);
