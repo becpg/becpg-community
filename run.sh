@@ -24,6 +24,10 @@ pull() {
    	 	docker-compose -f $COMPOSE_FILE_PATH -f docker-compose.override.yml pull 
 }
 
+pull() {
+   	 	docker-compose -f $COMPOSE_FILE_PATH -f docker-compose.override.yml pull 
+}
+
 down() {
 	if [ -d becpg-enterprise ]; then
 	    cd becpg-enterprise
