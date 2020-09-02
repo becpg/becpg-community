@@ -59,7 +59,8 @@ function runAction(p_params)
       "cm:creator": true,
       "cm:modified": true,
       "cm:modifier": true,
-      "bcpg:sort": true
+      "bcpg:sort": true,
+      "fm:commentCount" : true
    };
    
    var hasParent = false;

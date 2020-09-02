@@ -120,6 +120,9 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 	@Value("${beCPG.report.title.format}")
 	private String reportTitleFormat;
+	
+	@Value("${beCPG.report.includeReportInSearch}")
+	private Boolean includeReportInSearch;
 
 	@Autowired
 	private NamespaceService namespaceService;
@@ -353,7 +356,14 @@ public class EntityReportServiceImpl implements EntityReportService {
 														nodeService.setProperty(documentNodeRef, ContentModel.PROP_NAME, documentName);
 
 														nodeService.setProperty(documentNodeRef, ContentModel.PROP_TITLE, documentTitle);
-
+														
+														if(!Boolean.TRUE.equals(includeReportInSearch)) {
+															nodeService.setProperty(documentNodeRef, ContentModel.PROP_IS_INDEXED, false);
+														} else {
+															nodeService.setProperty(documentNodeRef, ContentModel.PROP_IS_INDEXED, true);
+															nodeService.setProperty(documentNodeRef, ContentModel.PROP_IS_CONTENT_INDEXED, false);
+														}
+														
 														if (reportParameters.isEmpty()) {
 															nodeService.removeProperty(documentNodeRef, ReportModel.PROP_REPORT_TEXT_PARAMETERS);
 														} else {
@@ -865,7 +875,14 @@ public class EntityReportServiceImpl implements EntityReportService {
 								nodeService.setProperty(documentNodeRef, ContentModel.PROP_NAME, documentName);
 
 								nodeService.setProperty(documentNodeRef, ContentModel.PROP_TITLE, documentTitle);
-
+								
+								if(!Boolean.TRUE.equals(includeReportInSearch)) {
+									nodeService.setProperty(documentNodeRef, ContentModel.PROP_IS_INDEXED, false);
+								}  else {
+									nodeService.setProperty(documentNodeRef, ContentModel.PROP_IS_INDEXED, true);
+									nodeService.setProperty(documentNodeRef, ContentModel.PROP_IS_CONTENT_INDEXED, false);
+								}
+								
 								nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_IS_DEFAULT, isDefault);
 
 							}
