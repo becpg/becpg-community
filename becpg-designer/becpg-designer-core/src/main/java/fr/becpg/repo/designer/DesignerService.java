@@ -153,14 +153,6 @@ public interface DesignerService {
 	 */
 	void unpublish(String fileName);
 
-	/**
-	 * <p>export.</p>
-	 *
-	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @return a {@link java.lang.String} object.
-	 */
-	String export(NodeRef nodeRef) ;
-	
 
 	
 }
