@@ -98,6 +98,7 @@
 		<property name="associationService" ref="associationService" />
 		<property name="policyBehaviourFilter" ref="policyBehaviourFilter"/>
 		<property name="lockService" ref="lockService" />
+		<property name="reportAssociationDecorator" ref="reportAssociationDecorator"/>
 	</bean>
 
 	<bean id="webscript.fr.becpg.entity.entityDictionnary.get" class="fr.becpg.repo.web.scripts.entity.EntityDictionnaryWebScript" parent="webscript">
