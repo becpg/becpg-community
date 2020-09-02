@@ -1,6 +1,21 @@
-/*
- *  Copyright (C) 2010-2011 beCPG. All rights reserved.
- */
+/*******************************************************************************
+ * Copyright (C) 2010-2020 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with beCPG.
+ *  If not, see <http://www.gnu.org/licenses/>.
+ ******************************************************************************/
 package fr.becpg.repo.admin;
 
 import java.io.IOException;
@@ -57,6 +72,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ECMGroup;
 import fr.becpg.model.ECMModel;
 import fr.becpg.model.GHSModel;
+import fr.becpg.model.GS1Model;
 import fr.becpg.model.MPMModel;
 import fr.becpg.model.NCGroup;
 import fr.becpg.model.PLMGroup;
@@ -595,8 +611,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 			// rule
 			rule = new Rule();
-			rule.setRuleType(RuleType.INBOUND);
-			rule.setRuleType(RuleType.UPDATE);
+			rule.setRuleTypes(Arrays.asList(RuleType.INBOUND, RuleType.UPDATE));
 			rule.setAction(compositeAction);
 			rule.applyToChildren(true);
 			rule.setTitle("import xlsx file");
@@ -629,8 +644,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 			// rule
 			Rule rule = new Rule();
-			rule.setRuleType(RuleType.INBOUND);
-			rule.setRuleType(RuleType.UPDATE);
+			rule.setRuleTypes(Arrays.asList(RuleType.INBOUND, RuleType.UPDATE));
 			rule.setAction(compositeAction);
 			rule.applyToChildren(true);
 			rule.setTitle("import user");
@@ -778,6 +792,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_PRECAUTION_OF_USE, PLMModel.TYPE_PRECAUTION_OF_USE);
 		entityLists.put(PlmRepoConsts.PATH_LABELING_TEMPLATES, PackModel.TYPE_LABELING_TEMPLATE);
 		entityLists.put(PlmRepoConsts.PATH_LABEL, PackModel.TYPE_LABEL);
+		entityLists.put(PlmRepoConsts.PATH_GS1_TARGET_MARKETS, GS1Model.TYPE_TARGET_MARKET);
+		entityLists.put(PlmRepoConsts.PATH_GS1_DUTY_FEE_TAXES, GS1Model.TYPE_DUTY_FEE_TAX);
 
 		entityLists.put(RepoConsts.PATH_NOTIFICATIONS, BeCPGModel.TYPE_NOTIFICATIONRULELIST);
 
