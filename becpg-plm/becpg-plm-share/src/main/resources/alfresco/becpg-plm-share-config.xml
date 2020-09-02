@@ -139,10 +139,12 @@
             <!-- Characteristics -->
             <list id="Notifications" index="0"/>
             <list id="GeoOrigins" index="10"/>
+            <list id="TargetMarkets" index="15"/>
             <list id="Subsidiaries" index="20"/>
             <list id="Certifications" index="30"/>
             <list id="Plants" index="40"/>
             <list id="CustomsCodes" index="50"/>
+            <list id="DutyFeeTax" index="55"/>
             <list id="StorageConditions" index="60"/>
             <list id="PrecautionOfUse" index="70"/>
             <list id="Organos" index="80"/>

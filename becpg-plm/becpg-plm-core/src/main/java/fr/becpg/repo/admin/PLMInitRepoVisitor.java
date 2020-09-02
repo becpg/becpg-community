@@ -72,6 +72,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ECMGroup;
 import fr.becpg.model.ECMModel;
 import fr.becpg.model.GHSModel;
+import fr.becpg.model.GS1Model;
 import fr.becpg.model.MPMModel;
 import fr.becpg.model.NCGroup;
 import fr.becpg.model.PLMGroup;
@@ -814,6 +815,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_PRECAUTION_OF_USE, PLMModel.TYPE_PRECAUTION_OF_USE);
 		entityLists.put(PlmRepoConsts.PATH_LABELING_TEMPLATES, PackModel.TYPE_LABELING_TEMPLATE);
 		entityLists.put(PlmRepoConsts.PATH_LABEL, PackModel.TYPE_LABEL);
+		entityLists.put(PlmRepoConsts.PATH_GS1_TARGET_MARKETS, GS1Model.TYPE_TARGET_MARKET);
+		entityLists.put(PlmRepoConsts.PATH_GS1_DUTY_FEE_TAXES, GS1Model.TYPE_DUTY_FEE_TAX);
 
 		entityLists.put(RepoConsts.PATH_NOTIFICATIONS, BeCPGModel.TYPE_NOTIFICATIONRULELIST);
 

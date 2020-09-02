@@ -210,10 +210,12 @@
 					<show id="bcpg:eanCodeLevel2"  />
 					<show id="bcpg:eanCodeLevel3" />
 					<show id="bcpg:customsCodeRef" />
+					<show id="gs1:dutyFeeTaxes" />
 					<show id="bcpg:subsidiaryRef" force="true" />
 					<show id="bcpg:trademarkRef" force="true" />
 					<show id="bcpg:plants" force="true" />
 					<show id="bcpg:productGeoOrigin"  force="true"  />
+					<show id="gs1:targetMarkets" />
 					<show id="bcpg:clients" />
 					<show id="bcpg:suppliers" />
 					<show id="bcpg:entityTplRef" force="true" />
@@ -485,12 +487,25 @@
 							<control-param name="showLink">false</control-param>							
 						</control>
 					</field>
+					<field id="gs1:dutyFeeTaxes" set="mainInfo" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="showLink">false</control-param>							
+						</control>
+					</field>
 					<field id="bcpg:subsidiaryRef" set="mainInfo" />
 					<field id="bcpg:plants" set="mainInfo" />
 					<field id="bcpg:productGeoOrigin"  set="mainInfo"  />
+					<field id="gs1:targetMarkets" set="mainInfo" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="showLink">false</control-param>							
+						</control>
+					</field>
 					<field id="bcpg:trademarkRef" set="mainInfo" />
 					<field id="bcpg:clients" set="mainInfo" />
 					<field id="bcpg:suppliers" set="mainInfo" />
+					
 					<field id="bcpg:entityTplRef" set="mainInfo">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -10409,5 +10424,129 @@
 			</form>
 		</forms>
 	</config>
+	
+	
+	
+	
+	<config evaluator="model-type" condition="gs1:dutyFeeTax">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="gs1:dutyFeeTaxCode" />
+					<show id="gs1:dutyFeeTaxCountry" />												
+				</field-visibility>
+				<appearance>
+					<field id="gs1:dutyFeeTaxCountry">
+						<control
+								template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+								<control-param name="showLink">false</control-param>							
+							</control>
+					</field>
+				</appearance>							
+			</form>
+			<form id="filter">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="gs1:dutyFeeTaxCode" />
+					<show id="gs1:dutyFeeTaxCountry" />												
+				</field-visibility>
+				<appearance>
+					<field id="gs1:dutyFeeTaxCountry">
+						<control
+								template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+								<control-param name="showLink">false</control-param>							
+							</control>
+					</field>
+				</appearance>					
+			</form>
+			<form id="datagrid">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="gs1:dutyFeeTaxCode" />
+					<show id="gs1:dutyFeeTaxCountry" />		
+				</field-visibility>			
+			</form>
+		</forms>
+	</config>
+	<config evaluator="node-type" condition="gs1:dutyFeeTax">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="gs1:dutyFeeTaxCode" />
+					<show id="gs1:dutyFeeTaxCountry" />												
+				</field-visibility>
+				<appearance>
+					<field id="gs1:dutyFeeTaxCountry">
+						<control
+								template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+								<control-param name="showLink">false</control-param>							
+							</control>
+					</field>
+				</appearance>							
+			</form>
+		</forms>
+	</config>
+	
+	
+	<config evaluator="model-type" condition="gs1:targetMarket">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="gs1:targetMarketCountries" />												
+				</field-visibility>
+				<appearance>
+					<field id="gs1:targetMarketCountries">
+						<control
+								template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+								<control-param name="showLink">false</control-param>							
+							</control>
+					</field>
+				</appearance>							
+			</form>
+			<form id="filter">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="gs1:targetMarketCountries" />												
+				</field-visibility>
+				<appearance>
+					<field id="gs1:targetMarketCountries">
+						<control
+								template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+								<control-param name="showLink">false</control-param>							
+							</control>
+					</field>
+				</appearance>					
+			</form>
+			<form id="datagrid">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="gs1:targetMarketCountries" />		
+				</field-visibility>			
+			</form>
+		</forms>
+	</config>
+	<config evaluator="node-type" condition="gs1:targetMarket">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="gs1:targetMarketCountries" />												
+				</field-visibility>
+				<appearance>
+					<field id="gs1:targetMarketCountries">
+						<control
+								template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+								<control-param name="showLink">false</control-param>							
+							</control>
+					</field>
+				</appearance>							
+			</form>
+		</forms>
+	</config>
+	
+	
 
 </alfresco-config>
