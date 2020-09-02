@@ -83,4 +83,11 @@ public interface GS1Model {
 	/** Constant <code>PROP_PLATFORMTERMSANSCONDITION_CODE</code> */
 	QName PROP_PLATFORMTERMSANSCONDITION_CODE  = QName.createQName(GS1_URI, "platformTermsAndConditionsCode");
 
+	/** Constant <code>TYPE_TARGET_MARKET</code> */
+	QName TYPE_TARGET_MARKET  = QName.createQName(GS1_URI, "targetMarket");
+	
+	/** Constant <code>TYPE_DUTY_FEE_TAX</code> */
+	QName TYPE_DUTY_FEE_TAX  = QName.createQName(GS1_URI, "dutyFeeTax");
+	
+
 }
