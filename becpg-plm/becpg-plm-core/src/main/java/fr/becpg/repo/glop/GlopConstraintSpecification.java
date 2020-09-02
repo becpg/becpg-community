@@ -16,6 +16,7 @@ import fr.becpg.repo.repository.model.SimpleCharactDataItem;
  *
  * @author pierrecolin
  * @see fr.becpg.repo.glop.GlopService
+ * @version $Id: $Id
  */
 public class GlopConstraintSpecification implements Serializable {
 
@@ -24,6 +25,7 @@ public class GlopConstraintSpecification implements Serializable {
 	 */
 	private static final long serialVersionUID = 7861470148317601534L;
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		if (isSpecial()) {
@@ -50,7 +52,7 @@ public class GlopConstraintSpecification implements Serializable {
 	 *            the lowest accepted value for the item
 	 * @param maxValue
 	 *            the highest accepted value for the item
-	 * @throws IllegalArgumentException
+	 * @throws java.lang.IllegalArgumentException
 	 *             if {@code minValue > maxValue}
 	 */
 	public GlopConstraintSpecification(SimpleCharactDataItem data, Double minValue, Double maxValue) throws IllegalArgumentException {
@@ -73,7 +75,7 @@ public class GlopConstraintSpecification implements Serializable {
 	 *            the lowest accepted value
 	 * @param maxValue
 	 *            the highest accepted value
-	 * @throws IllegalArgumentException
+	 * @throws java.lang.IllegalArgumentException
 	 *             if {@code minValue > maxValue}
 	 */
 	public GlopConstraintSpecification(String special, Double minValue, Double maxValue) throws IllegalArgumentException {
@@ -161,7 +163,7 @@ public class GlopConstraintSpecification implements Serializable {
 	 * @param specialContributions
 	 *            the map of special constraints
 	 * @return the JSON representation of the constraint
-	 * @throws JSONException
+	 * @throws org.json.JSONException
 	 *             if the creation failed
 	 */
 	public JSONObject toJson(Map<SimpleCharactDataItem, Map<CompoListDataItem, Double>> constraintContributions,
