@@ -651,7 +651,7 @@
 						from
 							taskList a inner join pjt_project b on a.entityNodeRef = b.nodeRef 
 						<#if !isAdmin>	
-						  where instanceId = ${instanceId}
+						  where a.instanceId = ${instanceId}
 						</#if>						
 					</SQL>
 				</View>
