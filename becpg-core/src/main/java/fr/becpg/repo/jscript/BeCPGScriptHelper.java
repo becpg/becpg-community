@@ -743,6 +743,14 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		}
 		return null;
 	}
+	
+	public RepositoryEntity save(RepositoryEntity entity) {
+		return alfrescoRepository.save(entity);
+	}
+	
+	public void setExtraValue(RepositoryEntity entity, String qName,  Object value) {
+		 entity.getExtraProperties().put(getQName(qName), (Serializable) ScriptValueConverter.unwrapValue(value));
+	}
 
 	/**
 	 * <p>getMessage.</p>
