@@ -40,6 +40,8 @@
  * 
  * setValue(node, propName, value) Set property value checking if property changed returns if property has changed
  * 
+ * setExtraValue(entity, propName, value) Set property value on repositoryEntity
+ * 
  * updateMLText(node, propQName, locale, value) Update multilingual value
  * 
  * i18n(key, params?) returns i18n message for current locale
@@ -306,6 +308,20 @@ function setValue(node, propName, value){
 	}
 	return false;
 }
+
+
+/**
+ * Set property value on entity
+ * @param entity
+ * @param propName
+ * @param value
+ * @returns if property has changed
+ */
+function setExtraValue(entity, propName, value){
+	bcpg.setExtraValue(entity,propName,value);
+	return true
+}
+
 
 /**
  * Copy association association value to node association
