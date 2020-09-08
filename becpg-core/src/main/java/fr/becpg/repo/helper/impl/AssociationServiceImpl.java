@@ -53,12 +53,14 @@ import org.alfresco.service.namespace.RegexQNamePattern;
 import org.alfresco.util.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
 /**
@@ -365,7 +367,7 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 		if ((sortFieldQName != null) && (sortDirection != null)) {
 			DataTypeDefinition dateType = entityDictionaryService.getProperty(sortFieldQName).getDataType();
 			String fieldType = "string_value";
-
+			sortOrderSql = "";
 			if (DataTypeDefinition.INT.equals(dateType.getName()) || DataTypeDefinition.LONG.equals(dateType.getName())) {
 				fieldType = "long_value";
 			} else if (DataTypeDefinition.DOUBLE.equals(dateType.getName())) {
@@ -379,10 +381,19 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 			sql = "select alf_node.uuid, alf_node_properties." + fieldType + ", alf_node.audit_created " + "from alf_node "
 					+ "left join alf_node_properties " + "on (alf_node_properties.node_id = alf_node.id "
 					+ "and alf_node_properties.qname_id=(select id from alf_qname " + "where ns_id=(select id from alf_namespace where uri='"
-					+ sortFieldQName.getNamespaceURI() + "') " + "and local_name='" + sortFieldQName.getLocalName() + "') " + ") ";
+					+ sortFieldQName.getNamespaceURI() + "') " + "and local_name='" + sortFieldQName.getLocalName() + "') ";
 
-			sortOrderSql = " order by alf_node_properties." + fieldType + " " + sortDirection + ", alf_node.audit_created " + createSortDirection;
+			if (DataTypeDefinition.MLTEXT.equals(dateType.getName())) {
+				
+				sql += "and alf_node_properties.locale_id in (select id from alf_locale where locale_str like '"+MLTextHelper.localeKey(I18NUtil.getContentLocale())+"%' ) ";
+				sortOrderSql = " group by alf_node.uuid";
+			}
+			
+			sql +=") ";
+						
+			sortOrderSql += " order by alf_node_properties." + fieldType + " " + sortDirection + ", alf_node.audit_created " + createSortDirection;
 
+			
 		}
 
 		sql += "where alf_node.store_id=(select id from alf_store where protocol='" + storeRef.getProtocol() + "' and identifier='"
