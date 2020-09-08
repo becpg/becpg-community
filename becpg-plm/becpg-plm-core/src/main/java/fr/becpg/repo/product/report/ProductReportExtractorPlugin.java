@@ -1439,7 +1439,13 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		}
 
 		partElt.addAttribute(BeCPGModel.PROP_DEPTH_LEVEL.getLocalName(), Integer.toString(level));
-		if ((dataItem.getPkgLevel() != null) && (dataItem.getQty() != null) && (dataItem.getPackagingListUnit() != null)) {
+		PackagingLevel packLevel = dataItem.getPkgLevel();
+		
+		if(packLevel == null) {
+			packLevel = PackagingLevel.Primary;
+		}
+
+		if ((dataItem.getQty() != null) && (dataItem.getPackagingListUnit() != null)) {
 			double sfQty = sfQtyForCost / (1 + (parentLossRatio / 100));
 			// we display the quantity used in the SF
 			// partElt.addAttribute(PLMModel.PROP_PACKAGINGLIST_QTY.getLocalName(),
@@ -1449,12 +1455,12 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				qty = qty / dataItem.getPackagingListUnit().getUnitFactor();
 			}
 			Double qtyForProduct = 0d;
-			if (dataItem.getPkgLevel().equals(PackagingLevel.Primary)) {
+			if (packLevel.equals(PackagingLevel.Primary)) {
 				qtyForProduct = qty * sfQty;
-			} else if (dataItem.getPkgLevel().equals(PackagingLevel.Secondary) && (defaultVariantPackagingData.getProductPerBoxes() != null)
+			} else if (packLevel.equals(PackagingLevel.Secondary) && (defaultVariantPackagingData.getProductPerBoxes() != null)
 					&& (defaultVariantPackagingData.getProductPerBoxes() != 0)) {
 				qtyForProduct = (qty * sfQty) / defaultVariantPackagingData.getProductPerBoxes();
-			} else if (dataItem.getPkgLevel().equals(PackagingLevel.Tertiary) && (defaultVariantPackagingData.getProductPerPallet() != null)
+			} else if (packLevel.equals(PackagingLevel.Tertiary) && (defaultVariantPackagingData.getProductPerPallet() != null)
 					&& (defaultVariantPackagingData.getProductPerPallet() != 0)) {
 				qtyForProduct = (qty * sfQty) / defaultVariantPackagingData.getProductPerPallet();
 			}
@@ -1462,8 +1468,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			partElt.addAttribute(ATTR_QTY_FOR_COST, Double.toString(
 					qtyForProduct * (1 + (parentLossRatio / 100)) * (1 + ((dataItem.getLossPerc() != null ? dataItem.getLossPerc() : 0d) / 100))));
 			
-			partElt.addAttribute(PLMModel.PROP_PRODUCT_DROP_PACKAGING_OF_COMPONENTS.getLocalName(), Boolean.toString((!dataItem.getPkgLevel().equals(PackagingLevel.Primary) && isPackagingOfComponent) || dropPackagingOfComponents));
-		}
+			partElt.addAttribute(PLMModel.PROP_PRODUCT_DROP_PACKAGING_OF_COMPONENTS.getLocalName(), Boolean.toString((!packLevel.equals(PackagingLevel.Primary) && isPackagingOfComponent) || dropPackagingOfComponents));
+		} 
 		return partElt;
 	}
 
