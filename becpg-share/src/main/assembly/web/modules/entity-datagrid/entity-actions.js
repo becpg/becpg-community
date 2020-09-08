@@ -641,7 +641,7 @@
 			            	this.widgets.columnsListPanel.hide();
 			            	
 			            	setTimeout(function(){
-			            		YAHOO.Bubbling.fire(me.scopeId + "scopedActiveDataListChanged", 
+			            		YAHOO.Bubbling.fire("activeDataListChanged", 
 			            	    		{clearCache :true}
 			            	    );
 			            	}, 1000);
