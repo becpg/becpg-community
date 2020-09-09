@@ -262,6 +262,7 @@
                         			             '@beCPG.avg($arrayOfDouble)',
                         			             '@beCPG.min($arrayOfDouble)',
                         			             '@beCPG.max($arrayOfDouble)',
+												 '@beCPG.findDuplicates($range)',
                         			             '@beCPG.formatNumber($number,$format?)',
                         			             '@beCPG.formatDate($date,$format?)',
                         			             '@beCPG.filter($range,$formula)',
@@ -272,6 +273,7 @@
                         			             '@beCPG.assocValue($nodeRef?,"bcpg:client")',
                         			             '@beCPG.assocValues($nodeRef?,"bcpg:client")',
                         			             '@beCPG.assocPropValues($nodeRef?,"bcpg:client","cm:name")',
+												 '@beCPG.assocAssocValues($nodeRef?,"bcpg:client","bcpg:plant")',
                         			             '@beCPG.setValue($entity?, $qname, $value)',
                         			             '@beCPG.updateMLText($mlText,$locale,$value)',
                         			             '@beCPG.copy($fromNodeRef,propQnames,listQNames)',
@@ -284,7 +286,9 @@
                         			             'isPackaging()',
                         			             'isPackagingKit()',
                         			             'isSemiFinished()',
-                        			             'isLocalSemiFinished()'
+                        			             'isLocalSemiFinished()',
+												 'addError($msg)',
+											     'addWarning($msg)'
                         			             ],
                         			             
                         			      from: CodeMirror.Pos(cur.line, start),
