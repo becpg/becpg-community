@@ -21,6 +21,8 @@ import fr.becpg.model.SystemState;
 import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.hierarchy.HierarchicalEntity;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
+import fr.becpg.repo.product.data.constraints.RequirementDataType;
+import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.constraints.TareUnit;
 import fr.becpg.repo.product.data.ing.IngTypeItem;
 import fr.becpg.repo.product.data.meat.MeatContentData;
@@ -1097,6 +1099,15 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 
 	// Formula helpers
 
+	public void addWarning(String msg) {
+		reqCtrlList.add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, new MLText(msg), null, new ArrayList<NodeRef>(),
+				RequirementDataType.Formulation));
+	}
+
+	public void addError(String msg) {
+		reqCtrlList.add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, new MLText(msg), null, new ArrayList<NodeRef>(),
+				RequirementDataType.Formulation));
+	}
 	
 	public boolean isLiquid() {
 		if(servingSizeUnit != null && !servingSizeUnit.equals(ProductUnit.kg) && servingSizeUnit.isVolume()){

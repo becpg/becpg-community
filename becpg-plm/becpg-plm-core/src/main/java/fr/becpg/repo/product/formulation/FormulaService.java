@@ -161,8 +161,97 @@ public class FormulaService {
 			return associationService.getTargetAssoc(nodeRef, QName.createQName(qname, namespaceService));
 		}
 
+		public NodeRef assocValue(String qname) {
+			return assocValue(productData.getNodeRef(), qname);
+		}
+
+		public NodeRef assocValue(RepositoryEntity entity, String qname) {
+			return assocValue(entity.getNodeRef(), qname);
+		}
+
 		public List<NodeRef> assocValues(NodeRef nodeRef, String qname) {
 			return associationService.getTargetAssocs(nodeRef, QName.createQName(qname, namespaceService));
+		}
+
+		public List<NodeRef> assocValues(RepositoryEntity entity, String qname) {
+			return assocValues(entity.getNodeRef(), qname);
+		}
+
+		public List<NodeRef> assocValues(String qname) {
+			return assocValues(productData.getNodeRef(), qname);
+		}
+
+		public void setAssocs(NodeRef nodeRef, String qname, List<NodeRef> assocNodeRefs) {
+			associationService.update(nodeRef, getQName(qname), assocNodeRefs, true);
+		}
+
+		public void setAssocs(RepositoryEntity entity, String qname, List<NodeRef> assocNodeRefs) {
+			associationService.update(entity.getNodeRef(), getQName(qname), assocNodeRefs, true);
+		}
+
+		public void setAssocs(String qname, List<NodeRef> assocNodeRefs) {
+			associationService.update(productData.getNodeRef(), getQName(qname), assocNodeRefs, true);
+		}
+
+		public void setAssoc(NodeRef nodeRef, String qname, NodeRef assocNodeRef) {
+			associationService.update(nodeRef, getQName(qname), assocNodeRef);
+		}
+
+		public void setAssoc(String qname, NodeRef assocNodeRef) {
+			associationService.update(productData.getNodeRef(), getQName(qname), assocNodeRef);
+		}
+
+		public void setAssoc(RepositoryEntity entity, String qname, NodeRef assocNodeRef) {
+			associationService.update(entity.getNodeRef(), getQName(qname), assocNodeRef);
+		}
+
+		public List<Serializable> assocPropValues(NodeRef nodeRef, String assocQname, String propQName) {
+			if (nodeRef != null) {
+				return associationService.getTargetAssocs(nodeRef, getQName(assocQname)).stream().map(o -> propValue(o, propQName))
+						.filter(o -> o != null).collect(Collectors.toList());
+			}
+			return null;
+		}
+
+		public List<Serializable> assocPropValues(RepositoryEntity entity, String assocQname, String propQName) {
+			return assocPropValues(entity.getNodeRef(), assocQname, propQName);
+		}
+
+		public List<Serializable> assocPropValues(String assocQname, String propQName) {
+			return assocPropValues(productData.getNodeRef(), assocQname, propQName);
+		}
+
+		public List<NodeRef> assocAssocValues(NodeRef nodeRef, String assocQname, String assocAssocQName) {
+			if (nodeRef != null) {
+				return associationService.getTargetAssocs(nodeRef, getQName(assocQname)).stream().map(o -> assocValue(o, assocAssocQName))
+						.filter(o -> o != null).collect(Collectors.toList());
+			}
+			return null;
+		}
+
+		public List<NodeRef> assocAssocValues(RepositoryEntity entity, String assocQname, String assocAssocQName) {
+			return assocAssocValues(entity.getNodeRef(), assocQname, assocAssocQName);
+		}
+
+		public List<NodeRef> assocAssocValues(String assocQname, String assocAssocQName) {
+			return assocAssocValues(productData.getNodeRef(), assocQname, assocAssocQName);
+		}
+
+		public Serializable assocPropValue(NodeRef nodeRef, String assocQname, String propQName) {
+			NodeRef assocNodeRef = assocValue(nodeRef, assocQname);
+			if (assocNodeRef != null) {
+				return propValue(assocNodeRef, propQName);
+			}
+			return null;
+		}
+
+		public Serializable assocPropValue(String assocQname, String propQName) {
+			return assocPropValue(productData.getNodeRef(), assocQname, propQName);
+		}
+
+		public <T> Set<T> findDuplicates(Collection<? extends T> collection) {
+			Set<T> uniques = new HashSet<>();
+			return collection.stream().filter(e -> !uniques.add(e)).collect(Collectors.toSet());
 		}
 
 		public QName getQName(String qName) {
@@ -173,8 +262,6 @@ public class FormulaService {
 			item.getExtraProperties().put(QName.createQName(qname, namespaceService), value);
 			return value;
 		}
-
-	
 
 		public MLText updateMLText(MLText mlText, String locale, String value) {
 
@@ -194,10 +281,10 @@ public class FormulaService {
 		public void runScript(String scriptNode) {
 			runScript(new NodeRef(scriptNode));
 		}
-		
+
 		public void runScript(NodeRef scriptNode) {
 			// Checking script path for security
-			
+
 			if ((scriptNode != null) && nodeService.exists(scriptNode)
 					&& nodeService.getPath(scriptNode).toPrefixString(namespaceService).startsWith(RepoConsts.SCRIPTS_FULL_PATH)) {
 
