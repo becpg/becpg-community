@@ -1244,12 +1244,26 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 				// Calculate qty
 				Double qty = FormulationHelper.getQtyInKg(compoListDataItem);
+				Double componentYield = FormulationHelper.getYield(compoListDataItem);
 
+				if( componentYield!=100d) {
+					if(yield == null) {
+						yield = 100d;
+					}
+					yield *= componentYield / 100d;
+				}
+				
+				
+				boolean applyYield = (ingsCalculatingWithYield || labelingFormulaContext.isIngsLabelingWithYield()) && (qty != null)
+						&& (yield != null) && (yield != 100d);
+				
 				if (qty != null) {
 
 					qty *= LabelingFormulaContext.PRECISION_FACTOR;
 					if (!isLocalSemiFinished) {
-						qty *= FormulationHelper.getYield(compoListDataItem) / 100;
+						if(! applyYield ) {
+							qty *= componentYield / 100d;
+						}
 					}
 
 				}
@@ -1263,7 +1277,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				volume *= LabelingFormulaContext.PRECISION_FACTOR;
 
 				if (!isLocalSemiFinished) {
-					volume *= FormulationHelper.getYield(compoListDataItem) / 100;
+					if(! applyYield ) {
+						volume *=  componentYield / 100d;
+					}
 				}
 
 				if ((qty != null) && (ratio != null)) {
@@ -1274,8 +1290,6 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					volume *= ratio;
 				}
 
-				boolean applyYield = (ingsCalculatingWithYield || labelingFormulaContext.isIngsLabelingWithYield()) && (qty != null)
-						&& (yield != null) && (yield != 100d);
 				boolean applyWaterLost = applyYield && recipeQtyUsed !=null && nodeService.hasAspect(productNodeRef, PLMModel.ASPECT_WATER);
 				if (applyWaterLost) {
 
