@@ -195,7 +195,12 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 							|| type.isMatch(PLMModel.TYPE_FINISHEDPRODUCT)) && (compoItem.getDeclType() != DeclarationType.Omit)) {
 						Double qty = FormulationHelper.getQtyInKg(compoItem);
 						if (qty != null) {
-							totalQtyUsed += (applyYield(qty, formulatedProduct.getYield()) * FormulationHelper.getYield(compoItem)) / 100;
+							
+							if (!ingsCalculatingWithYield ) { 
+								qty *= FormulationHelper.getYield(compoItem) / 100d;
+							}
+							
+							totalQtyUsed += applyYield(qty, formulatedProduct.getYield() * FormulationHelper.getYield(compoItem) / 100d );
 						}
 
 						Double vol = compoItem.getVolume();
@@ -424,8 +429,10 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 			
 			if (qty != null) {
-				qty *= FormulationHelper.getYield(compoListDataItem) / 100;
-
+				if (!ingsCalculatingWithYield ) { 
+					qty *= FormulationHelper.getYield(compoListDataItem) / 100;
+				}
+				
 				if ((qtyIng != null)) {
 					Double valueToAdd = qty * qtyIng;
 					totalQtyIng += valueToAdd;
