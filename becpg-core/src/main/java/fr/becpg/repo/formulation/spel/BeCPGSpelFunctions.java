@@ -113,9 +113,10 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		/**
 		 * Helper @beCPG.findOne($nodeRef)
 		 *
-		 *<code>
+		 * <code>
 		 * 	Example : @beCPG.findOne(nodeRef).qty
 		 *</code>
+		 * 
 		 * @param nodeRef
 		 * @return repository entity for nodeRef
 		 */
@@ -127,10 +128,10 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * Helper @beCPG.propValue($nodeRef, $qname)
-		 *<code>
+		 * Helper @beCPG.propValue($nodeRef, $qname) <code>
 		 * Example : @beCPG.propValue(nodeRef,'bcpg:productQty')
 		 *</code>
+		 * 
 		 * @param nodeRef
 		 * @param qname
 		 * @return node property value
@@ -202,28 +203,45 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		public Serializable setValue(String qname, Serializable value) {
 			return setValue(entity, qname, value);
 		}
-		
-		
+
 		/**
 		 * Helper @beCPG.setAssocs($nodeRef, $qname, $assocNodeRefs)
+		 * 
 		 * @param nodeRef
 		 * @param qname
 		 * @param assocNodeRefs
 		 */
 		public void setAssocs(NodeRef nodeRef, String qname, List<NodeRef> assocNodeRefs) {
-			associationService.update(nodeRef,getQName(qname), assocNodeRefs, true);
+			associationService.update(nodeRef, getQName(qname), assocNodeRefs, true);
+		}
+
+		public void setAssocs(RepositoryEntity entity, String qname, List<NodeRef> assocNodeRefs) {
+			associationService.update(entity.getNodeRef(), getQName(qname), assocNodeRefs, true);
+		}
+
+		public void setAssocs(String qname, List<NodeRef> assocNodeRefs) {
+			associationService.update(entity.getNodeRef(), getQName(qname), assocNodeRefs, true);
 		}
 
 		/**
 		 * Helper @beCPG.setAssoc($nodeRef, $qname, $assocNodeRef)
+		 * 
 		 * @param nodeRef
 		 * @param qname
 		 * @param assocNodeRef
 		 */
 		public void setAssoc(NodeRef nodeRef, String qname, NodeRef assocNodeRef) {
-			associationService.update(nodeRef,getQName(qname), assocNodeRef);
+			associationService.update(nodeRef, getQName(qname), assocNodeRef);
 		}
-		
+
+		public void setAssoc(String qname, NodeRef assocNodeRef) {
+			associationService.update(entity.getNodeRef(), getQName(qname), assocNodeRef);
+		}
+
+		public void setAssoc(RepositoryEntity entity, String qname, NodeRef assocNodeRef) {
+			associationService.update(entity.getNodeRef(), getQName(qname), assocNodeRef);
+		}
+
 		/**
 		 * Helper @beCPG.assocValue($nodeRef, $qname)
 		 *
@@ -242,6 +260,10 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 			return assocValue(entity.getNodeRef(), qname);
 		}
 
+		public NodeRef assocValue(RepositoryEntity entity, String qname) {
+			return assocValue(entity.getNodeRef(), qname);
+		}
+
 		/**
 		 * Helper @beCPG.assocValues($entity, $qname)
 		 *
@@ -254,6 +276,10 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 				return associationService.getTargetAssocs(nodeRef, getQName(qname));
 			}
 			return null;
+		}
+
+		public List<NodeRef> assocValues(RepositoryEntity entity, String qname) {
+			return assocValues(entity.getNodeRef(), qname);
 		}
 
 		public List<NodeRef> assocValues(String qname) {
@@ -271,16 +297,50 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		public List<Serializable> assocPropValues(NodeRef nodeRef, String assocQname, String propQName) {
 			if (nodeRef != null) {
 				return associationService.getTargetAssocs(nodeRef, getQName(assocQname)).stream().map(o -> propValue(o, propQName))
-						.filter(o-> o!=null)
-						.collect(Collectors.toList());
+						.filter(o -> o != null).collect(Collectors.toList());
 			}
 			return null;
+		}
+		
+		public List<Serializable> assocPropValues(RepositoryEntity entity ,String assocQname, String propQName) {
+			return assocPropValues(entity.getNodeRef(), assocQname, propQName);
 		}
 
 		public List<Serializable> assocPropValues(String assocQname, String propQName) {
 			return assocPropValues(entity.getNodeRef(), assocQname, propQName);
 		}
 
+		
+		
+		/**
+		 * Helper @beCPG.assocAssocValues($nodeRef, $assocQname, $assocAssocQName)
+		 *
+		 * @param nodeRef
+		 * @param assocAssocQName
+		 * @param propQName
+		 * @return collection of association association values
+		 */
+		public List<NodeRef> assocAssocValues(NodeRef nodeRef, String assocQname, String assocAssocQName) {
+			if (nodeRef != null) {
+				return associationService.getTargetAssocs(nodeRef, getQName(assocQname)).stream().map(o -> assocValue(o, assocAssocQName))
+						.filter(o -> o != null).collect(Collectors.toList());
+			}
+			return null;
+		}
+
+		public List<NodeRef> assocAssocValues(RepositoryEntity entity, String assocQname, String assocAssocQName) {
+			return assocAssocValues(entity.getNodeRef(), assocQname, assocAssocQName);
+		}
+		
+		public List<NodeRef> assocAssocValues(String assocQname, String assocAssocQName) {
+			return assocAssocValues(entity.getNodeRef(), assocQname, assocAssocQName);
+		}
+		
+		
+		
+		
+		
+		
 		/**
 		 * Helper @beCPG.assocPropValue($nodeRef, $assocQname, $propQName)
 		 *
@@ -311,6 +371,19 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 			return assocPropValue(entity.getNodeRef(), assocQname, propQName);
 		}
 
+		/**
+		 * Helper @beCPG.findDuplicates($collection)
+		 *
+		 * @return Set of duplicates
+		 */
+		public <T> Set<T> findDuplicates(Collection<? extends T> collection) {
+			    Set<T> uniques = new HashSet<>();
+			    return collection.stream()
+			        .filter(e -> !uniques.add(e))
+			        .collect(Collectors.toSet());
+			  }
+		
+		
 		/**
 		 * Helper @beCPG.getQName($qname)
 		 *
@@ -418,8 +491,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		public Double avg(Collection<Double> range) {
 			return range.stream().mapToDouble(Double::doubleValue).average().getAsDouble();
 		}
-		
-		
+
 		/**
 		 * @beCPG.max($range, $formula)
 		 *
@@ -440,7 +512,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		public Double max(Collection<Double> range) {
 			return range.stream().mapToDouble(Double::doubleValue).max().getAsDouble();
 		}
-		
+
 		/**
 		 * @beCPG.min($range, $formula)
 		 *
@@ -461,41 +533,36 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		public Double min(Collection<Double> range) {
 			return range.stream().mapToDouble(Double::doubleValue).min().getAsDouble();
 		}
-		
-		
+
 		/**
-		 * @beCPG.extractCustomList($nodeRef, $listType)
-		 * @param listType
+		 * @beCPG.extractCustomList($nodeRef, $listType) @param listType
 		 * @return list
 		 */
-		public Collection<RepositoryEntity> extractCustomList(NodeRef nodeRef, String listType){
-			return alfrescoRepository.loadDataList(entity.getNodeRef(),  getQName(listType), getQName(listType));
+		public Collection<RepositoryEntity> extractCustomList(NodeRef nodeRef, String listType) {
+			return alfrescoRepository.loadDataList(entity.getNodeRef(), getQName(listType), getQName(listType));
 		}
-		
+
 		/**
-		 * @beCPG.extractCustomList($listType)
-		 * @param listType
+		 * @beCPG.extractCustomList($listType) @param listType
 		 * @return list
 		 */
-		public Collection<RepositoryEntity> extractCustomList(String listType){
+		public Collection<RepositoryEntity> extractCustomList(String listType) {
 			return extractCustomList(entity.getNodeRef(), listType);
 		}
-		
-		
+
 		/**
 		 * @beCPG.saveCustomList($range)
 		 *
-		 * @param range
+		 *                               @param range
 		 */
 		public void saveCustomList(Collection<RepositoryEntity> range) {
 			alfrescoRepository.save(range);
 		}
 
-		
 		/**
 		 * @beCPG.applyFormulaToList($range, $formula)
 		 *
-		 * @param range
+		 *                                   @param range
 		 * @param formula
 		 */
 		public void applyFormulaToList(Collection<RepositoryEntity> range, String formula) {
@@ -522,29 +589,26 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 			return null;
 		}
 
-		
 		/**
 		 * @beCPG.children($parent, $compositeList)
-		 * 
-		 * @param <T>
+		 *
+		 *                          @param <T>
 		 * @param parent
 		 * @param compositeList
 		 * @return children of parent item
 		 */
 		public <T> Collection<CompositeDataItem<T>> children(CompositeDataItem<T> parent, Collection<CompositeDataItem<T>> compositeList) {
-				List<CompositeDataItem<T>> ret = new ArrayList<>();
-				for (CompositeDataItem<T> item : compositeList) {
-					if (item.getParent() != null) {
-						if (parent.equals(item.getParent())) {
-							ret.add(item);
-						}
+			List<CompositeDataItem<T>> ret = new ArrayList<>();
+			for (CompositeDataItem<T> item : compositeList) {
+				if (item.getParent() != null) {
+					if (parent.equals(item.getParent())) {
+						ret.add(item);
 					}
 				}
-				return ret;
 			}
-			
-		
-		
+			return ret;
+		}
+
 		/**
 		 * @beCPG.formatNumber($number)
 		 *
@@ -599,8 +663,8 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 *
 		 * @beCPG.copy($fromNodeRef, $propQNames, $listQNames)
 		 *
-		 *                           Copy properties from a entity to
-		 *                           current entity
+		 *                           Copy properties from a entity to current
+		 *                           entity
 		 *
 		 *                           Example: @beCPG.copy(compoListView.compoList[0].product,{"bcpg:suppliers","bcpg:legalName"},{"bcpg:costList"});
 		 *
