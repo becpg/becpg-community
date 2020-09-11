@@ -644,6 +644,20 @@ div.filterButtonsBar {
 }
 
 
+.datagrid .yui-dt th.align-right {
+	text-align: right;
+}
+
+.datagrid .yui-dt th.align-center {
+	text-align: center;
+}
+
+.datagrid .yui-dt th.align-justify {
+	text-align: justify;
+}
+
+
+
 /* Tooltip */
 
 div.dt-tooltip {
