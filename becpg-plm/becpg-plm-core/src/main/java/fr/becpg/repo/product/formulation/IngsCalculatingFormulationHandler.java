@@ -195,12 +195,15 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 							|| type.isMatch(PLMModel.TYPE_FINISHEDPRODUCT)) && (compoItem.getDeclType() != DeclarationType.Omit)) {
 						Double qty = FormulationHelper.getQtyInKg(compoItem);
 						if (qty != null) {
-							
-							if (!ingsCalculatingWithYield ) { 
+
+							if (!ingsCalculatingWithYield) {
 								qty *= FormulationHelper.getYield(compoItem) / 100d;
 							}
-							
-							totalQtyUsed += applyYield(qty, formulatedProduct.getYield() * FormulationHelper.getYield(compoItem) / 100d );
+
+							totalQtyUsed += applyYield(qty,
+									formulatedProduct.getYield() != null
+											? (formulatedProduct.getYield() * FormulationHelper.getYield(compoItem) / 100d)
+											: null);
 						}
 
 						Double vol = compoItem.getVolume();
@@ -427,12 +430,11 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			Double mini = ingListDataItem.getMini();
 			Double maxi = ingListDataItem.getMaxi();
 
-			
 			if (qty != null) {
-				if (!ingsCalculatingWithYield ) { 
+				if (!ingsCalculatingWithYield) {
 					qty *= FormulationHelper.getYield(compoListDataItem) / 100;
 				}
-				
+
 				if ((qtyIng != null)) {
 					Double valueToAdd = qty * qtyIng;
 					totalQtyIng += valueToAdd;
@@ -462,7 +464,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 							volumeQty + ((ingListDataItem.getVolumeQtyPerc() * compoListDataItem.getVolume()) / 100));
 				}
 
-			} 
+			}
 
 			// Calculate geo origins
 			for (NodeRef geoOrigin : ingListDataItem.getGeoOrigin()) {
