@@ -740,6 +740,11 @@
 					            searchAllSites = args.searchAllSites;
 					         }
 
+							var searchRepository = this.searchRepository;
+							if (args.searchRepository !== undefined) {
+								searchRepository = args.searchRepository;
+							}
+
 							// call webscript
 							var url = Alfresco.constants.PROXY_URI + "becpg/report/exportsearch/" + args.reportTpl.replace("://", "/") + "/"
 									+ encodeURI(args.reportFileName);
@@ -757,7 +762,7 @@
 								}
 							}
 							
-							 if(this.options.siteId.length !== 0 && !searchAllSites) { 
+							 if(this.options.siteId.length !== 0 && !searchAllSites && !searchRepository) { 
 							    url +="&site=" + this.options.siteId + "&repo=false"; } 
 							 else {
 								url += "&site=&repo=true";
