@@ -409,8 +409,14 @@
 			</Hierarchy>
 		</Dimension>
 		
+		<Dimension  name="userName" caption="${msg("jsolap.userName.title")}" >
+			<Hierarchy name="users" caption="${msg("jsolap.userName.caption")}" hasAll="true" allMemberCaption="${msg("jsolap.userName.caption")}" >
+				<Level name="userName" caption="${msg("jsolap.userName.title")}" column="user_id" type="String" />
+			</Hierarchy>
+		</Dimension>
+		
 		<Dimension  name="user" caption="${msg("jsolap.user.title")}" foreignKey="user_id" >
-			<Hierarchy name="users" caption="${msg("jsolap.users.title")}" primaryKey="user_id" hasAll="true" allMemberCaption="${msg("jsolap.users.title")}" >
+			<Hierarchy name="users" caption="${msg("jsolap.user.caption")}" primaryKey="user_id" hasAll="true" allMemberCaption="${msg("jsolap.user.caption")}" >
 			   <Table name="becpg_activities_names" alias="becpg_activities_names">
 					<SQL dialect="generic">
 						<#if !isAdmin>becpg_activities_names.instance_id = ${instanceId} AND </#if> becpg_activities_names.site_id IS NULL AND becpg_activities_names.entity_id IS NULL
