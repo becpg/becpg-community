@@ -52,7 +52,7 @@ public class StandardExcelDataListOutputPlugin implements ExcelDataListOutputPlu
 
 			@Override
 			public boolean isAllowed(AttributeExtractorStructure field) {
-				return !ForumModel.PROP_COMMENT_COUNT.equals(field.getFieldDef().getName());
+				return field.getFieldDef()!=null && !ForumModel.PROP_COMMENT_COUNT.equals(field.getFieldDef().getName());
 			}
 			
 		};
