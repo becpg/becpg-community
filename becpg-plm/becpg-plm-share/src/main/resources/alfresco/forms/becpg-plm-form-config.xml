@@ -8342,6 +8342,11 @@
 					<show id="bcpg:costListPreviousValue" />
 					<show id="bcpg:costListFutureValue" />
 					<show id="bcpg:costListValuePerProduct" />
+					<show id="bcpg:variantColumn1" force="true" />
+					<show id="bcpg:variantColumn2" force="true" />
+					<show id="bcpg:variantColumn3" force="true" />
+					<show id="bcpg:variantColumn4" force="true" />
+					<show id="bcpg:variantColumn5" force="true" />
 					<show id="bcpg:isManualListItem" force="true" />
 					<show id="bcpg:plants" force="true" />
 					<show id="bcpg:costListComponent" />
@@ -8352,7 +8357,12 @@
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden"></field>
-					<field id="bcpg:depthLevel" label="hidden"></field>					
+					<field id="bcpg:depthLevel" label="hidden"></field>	
+					<field id="bcpg:variantColumn1" read-only="true" label="hidden"></field>
+					<field id="bcpg:variantColumn2" read-only="true" label="hidden"></field>
+					<field id="bcpg:variantColumn3" read-only="true" label="hidden"></field>
+					<field id="bcpg:variantColumn4" read-only="true" label="hidden"></field>
+					<field id="bcpg:variantColumn5" read-only="true" label="hidden"></field>				
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 					<field id="bcpg:costListIsFormulated"  label="hidden"/>
 					<field id="bcpg:costListFormulaErrorLog"  label="hidden"/>
@@ -9102,6 +9112,11 @@
 					<show id="bcpg:nutListMini" />
 					<show id="bcpg:nutListMaxi" />
 					<show id="bcpg:nutListValuePerServing" force="true" />
+					<show id="bcpg:variantColumn1" force="true" />
+					<show id="bcpg:variantColumn2" force="true" />
+					<show id="bcpg:variantColumn3" force="true" />
+					<show id="bcpg:variantColumn4" force="true" />
+					<show id="bcpg:variantColumn5" force="true" />
 					<show id="bcpg:nutListGDAPerc" force="true" />
 					<show id="bcpg:nutListLossPerc" />
 					<show id="bcpg:nutListMethod" />
@@ -9116,6 +9131,11 @@
 					<field id="bcpg:depthLevel" label="hidden"></field>
 					<field id="bcpg:nutListFormulatedValue" label="hidden" read-only="true" />
 					<field id="bcpg:nutListUnit" read-only="true" label="hidden"></field>
+					<field id="bcpg:variantColumn1" read-only="true" label="hidden"></field>
+					<field id="bcpg:variantColumn2" read-only="true" label="hidden"></field>
+					<field id="bcpg:variantColumn3" read-only="true" label="hidden"></field>
+					<field id="bcpg:variantColumn4" read-only="true" label="hidden"></field>
+					<field id="bcpg:variantColumn5" read-only="true" label="hidden"></field>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 					<field id="bcpg:nutListIsFormulated" label="hidden"/>
 					<field id="bcpg:nutListFormulaErrorLog" label="hidden"/>
@@ -9372,6 +9392,11 @@
 					<show id="bcpg:pclType" />
 					<show id="bcpg:pclMini" />
 					<show id="bcpg:pclMaxi" />
+					<show id="bcpg:variantColumn1" force="true" />
+					<show id="bcpg:variantColumn2" force="true" />
+					<show id="bcpg:variantColumn3" force="true" />
+					<show id="bcpg:variantColumn4" force="true" />
+					<show id="bcpg:variantColumn5" force="true" />
 					<show id="bcpg:pclTextCriteria" />
 					<show id="fm:commentCount" force="true" />
 					<show id="bcpg:physicoChemIsFormulated" />
@@ -9382,6 +9407,11 @@
 					<field id="bcpg:variantIds" label="hidden"></field>
 					<field id="bcpg:pclUnit" read-only="true"></field>
 				    <field id="bcpg:pclType" read-only="true"></field>
+				    <field id="bcpg:variantColumn1" read-only="true" label="hidden"></field>
+					<field id="bcpg:variantColumn2" read-only="true" label="hidden"></field>
+					<field id="bcpg:variantColumn3" read-only="true" label="hidden"></field>
+					<field id="bcpg:variantColumn4" read-only="true" label="hidden"></field>
+					<field id="bcpg:variantColumn5" read-only="true" label="hidden"></field>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 					<field id="bcpg:physicoChemIsFormulated" label="hidden"/>
 					<field id="bcpg:physicoChemFormulaErrorLog" label="hidden"/>
@@ -10101,6 +10131,7 @@
 					<show id="cm:name" />
 					<show id="bcpg:isDefaultVariant" />
 					<show id="bcpg:color" force="true" />
+					<show id="bcpg:variantColumn" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:color">
@@ -10121,6 +10152,7 @@
 					<show id="cm:name" />
 					<show id="bcpg:isDefaultVariant" />
 					<show id="bcpg:color" force="true" />
+					<show id="bcpg:variantColumn" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:color">

@@ -529,6 +529,18 @@
 				</list>
 			</parameter>
 		</constraint>
+		<constraint name="bcpg:variantColumns" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>bcpg_variantColumn1</value>
+					<value>bcpg_variantColumn2</value>
+					<value>bcpg_variantColumn3</value>
+					<value>bcpg_variantColumn4</value>
+					<value>bcpg_variantColumn5</value>
+				</list>
+			</parameter>
+		</constraint>
 		<constraint name="bcpg:synchronisableStates" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -2484,6 +2496,17 @@
 				<property name="bcpg:isDefaultVariant">
 					<type>d:boolean</type>
 				</property>
+				 <property name="bcpg:variantColumn">
+                    <type>d:text</type>
+                    <index enabled="true">
+                        <atomic>false</atomic>
+                        <stored>false</stored>
+                        <tokenised>false</tokenised>
+                    </index>
+                    <constraints>
+                        <constraint ref="bcpg:variantColumns" />
+                    </constraints>
+                </property>
 			</properties>
 		</type>
 
@@ -3618,6 +3641,31 @@
 				</property>
 				<property name="bcpg:dynamicCharactColumn10">
 					<type>d:any</type>
+					<index enabled="false" />
+				</property>
+			</properties>
+		</aspect>
+		
+		<aspect name="bcpg:variantColumnsAspect">
+			<properties>
+				<property name="bcpg:variantColumn1">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:variantColumn2">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:variantColumn3">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:variantColumn4">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:variantColumn5">
+					<type>d:double</type>
 					<index enabled="false" />
 				</property>
 			</properties>
