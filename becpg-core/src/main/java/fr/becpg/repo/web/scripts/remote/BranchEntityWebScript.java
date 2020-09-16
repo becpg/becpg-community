@@ -18,34 +18,24 @@
 package fr.becpg.repo.web.scripts.remote;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 
-import org.alfresco.repo.version.VersionModel;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.version.Version;
-import org.alfresco.service.cmr.version.VersionType;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.common.BeCPGException;
-import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.version.EntityVersionService;
 
 /**
- * Update entity with POST xml
+ * Create entity branch
  *
  * @author matthieu
  * @version $Id: $Id
  */
-public class UpdateEntityWebScript extends AbstractEntityWebScript {
+public class BranchEntityWebScript extends AbstractEntityWebScript {
 
-	private static final String PARAM_CREATE_VERSION = "createVersion";
-	private static final String PARAM_MAJOR_VERSION = "majorVersion";
-	private static final String PARAM_DESCRIPTION = "versionDescription";
+	private static final String PARAM_DEST_NODEREF = "destNodeRef";
 
 	private EntityVersionService entityVersionService;
 
@@ -59,32 +49,22 @@ public class UpdateEntityWebScript extends AbstractEntityWebScript {
 
 		NodeRef entityNodeRef = findEntity(req);
 
-		if ("true".equals(req.getParameter(PARAM_CREATE_VERSION))) {
-			String description = "";
-
-			if (req.getParameter(PARAM_DESCRIPTION) != null) {
-				description = req.getParameter(PARAM_DESCRIPTION);
-			}
-
-			VersionType versionType = VersionType.MINOR;
-
-			if (req.getParameter(PARAM_MAJOR_VERSION) != null) {
-				versionType = "true".equals(req.getParameter(PARAM_MAJOR_VERSION)) ? VersionType.MAJOR : VersionType.MINOR;
-			}
-
-			Map<String, Serializable> properties = new HashMap<>();
-			properties.put(VersionModel.PROP_VERSION_TYPE, versionType);
-			properties.put(Version.PROP_DESCRIPTION, description);
-
-			entityVersionService.createVersion(entityNodeRef, properties);
-
+		if (logger.isDebugEnabled()) {
+			logger.debug("Branch entity: " + entityNodeRef);
 		}
-		logger.debug("Update entity: " + entityNodeRef);
-		try (InputStream in = req.getContent().getInputStream()) {
-			RemoteEntityFormat format = getFormat(req);
-			sendOKStatus(remoteEntityService.createOrUpdateEntity(entityNodeRef, in, format, getEntityProviderCallback(req)), resp, format);
+
+		NodeRef destNodeRef = null;
+		if (req.getParameter(PARAM_DEST_NODEREF) != null) {
+			destNodeRef = new NodeRef(req.getParameter(PARAM_DEST_NODEREF));
+		} else {
+			destNodeRef = nodeService.getPrimaryParent(entityNodeRef).getParentRef();
+		}
+
+		try {
+			sendOKStatus(entityVersionService.createBranch(entityNodeRef, destNodeRef), resp, getFormat(req));
+
 		} catch (BeCPGException e) {
-			logger.error("Cannot import entity", e);
+			logger.error("Cannot branch entity", e);
 			throw new WebScriptException(e.getMessage());
 		}
 
