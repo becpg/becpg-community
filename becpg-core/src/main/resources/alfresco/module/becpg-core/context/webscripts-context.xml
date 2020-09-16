@@ -233,6 +233,7 @@
 	</bean>
 
 	<bean id="webscript.fr.becpg.remote.entity.post" class="fr.becpg.repo.web.scripts.remote.UpdateEntityWebScript" parent="abstractEntityWebScript">
+		<property name="entityVersionService" ref="entityVersionService" />
 	</bean>
 
 	<bean id="webscript.fr.becpg.remote.import.post" class="fr.becpg.repo.web.scripts.remote.ImportEntityWebScript" parent="abstractEntityWebScript">
@@ -248,6 +249,7 @@
 	</bean>
 
 	<bean id="webscript.fr.becpg.remote.entityData.post" class="fr.becpg.repo.web.scripts.remote.UpdateEntityDataWebScript" parent="abstractEntityWebScript">
+		
 	</bean>
 
 	<bean id="webscript.fr.becpg.remote.entity.put" class="fr.becpg.repo.web.scripts.remote.CreateEntityWebScript" parent="abstractEntityWebScript">
@@ -278,6 +280,17 @@
     <bean id="webscript.fr.becpg.remote.formulate.get" class="fr.becpg.repo.web.scripts.remote.FormulateEntityWebScript" parent="abstractEntityWebScript">
     	 <property name="formulationExecutor" ref="formulationExecutor" />
 	</bean>		
+		
+		
+	<bean id="webscript.fr.becpg.remote.merge.post" class="fr.becpg.repo.web.scripts.remote.MergeEntityWebScript" parent="abstractEntityWebScript">
+		<property name="entityVersionService" ref="entityVersionService" />
+	</bean>
+	
+	
+	<bean id="webscript.fr.becpg.remote.branch.post" class="fr.becpg.repo.web.scripts.remote.BranchEntityWebScript" parent="abstractEntityWebScript">
+		<property name="entityVersionService" ref="entityVersionService" />
+	</bean>
+		
 		
 	<!-- dockbar -->
 	<bean id="webscript.fr.becpg.dockbar.dockbar.get" class="fr.becpg.repo.web.scripts.dockbar.DockBarWebScript" parent="webscript">
