@@ -13,12 +13,12 @@ import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.annotation.InternalField;
-import fr.becpg.repo.repository.model.AbstractManualDataItem;
 import fr.becpg.repo.repository.model.ControlableListDataItem;
 import fr.becpg.repo.repository.model.FormulatedCharactDataItem;
 import fr.becpg.repo.repository.model.MinMaxValueDataItem;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
 import fr.becpg.repo.repository.model.UnitAwareDataItem;
+import fr.becpg.repo.repository.model.VariantAwareDataItem;
 
 /**
  * <p>NutListDataItem class.</p>
@@ -28,7 +28,7 @@ import fr.becpg.repo.repository.model.UnitAwareDataItem;
  */
 @AlfType
 @AlfQname(qname = "bcpg:nutList")
-public class NutListDataItem extends AbstractManualDataItem implements SimpleListDataItem, MinMaxValueDataItem, FormulatedCharactDataItem,
+public class NutListDataItem extends VariantAwareDataItem implements SimpleListDataItem, MinMaxValueDataItem, FormulatedCharactDataItem,
 		UnitAwareDataItem, ControlableListDataItem, CompositeDataItem<NutListDataItem> {
 
 	/**
@@ -435,6 +435,7 @@ public class NutListDataItem extends AbstractManualDataItem implements SimpleLis
 	public void setRoundedValue(String roundedValue) {
 		this.roundedValue = roundedValue;
 	}
+	
 
 	/**
 	 * Instantiates a new nut list data item.

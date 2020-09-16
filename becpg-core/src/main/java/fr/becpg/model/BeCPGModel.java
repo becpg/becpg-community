@@ -268,5 +268,7 @@ public final class BeCPGModel {
 	public static final QName PROP_VARIANTIDS = QName.createQName(BECPG_URI, "variantIds");
 	/** Constant <code>PROP_IS_DEFAULT_VARIANT</code> */
 	public static final QName PROP_IS_DEFAULT_VARIANT = QName.createQName(BECPG_URI, "isDefaultVariant");
-
+	/** Constant <code>PROP_IS_DEFAULT_VARIANT</code> */
+	public static final QName PROP_VARIANT_COLUMN = QName.createQName(BECPG_URI, "variantColumn");
+	
 }

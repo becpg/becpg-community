@@ -619,6 +619,25 @@ if (beCPG.module.EntityDataGridRenderers) {
 			return null;
 		}
 	});
+	
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+		propertyName : ["bcpg:variantColumn1","bcpg:variantColumn2","bcpg:variantColumn3","bcpg:variantColumn4","bcpg:variantColumn5"],
+		renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
+
+			if (data.value != null){
+				if (oColumn.label == ""){
+					var columnLabel = scope.msg("becpg.forms.column") + " " +  label.charAt(label.length-1);
+					YAHOO.Bubbling.fire("columnRenamed", {
+						columnId : "prop_" + label.replace(":","_"),
+						label : columnLabel
+					});
+					Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
+				}
+				return data.value;
+			}
+			return "";
+		}
+	});
 
 	YAHOO.Bubbling.on("onDatalistColumnsReady", function(layer, args) {
 		var obj = args[1];

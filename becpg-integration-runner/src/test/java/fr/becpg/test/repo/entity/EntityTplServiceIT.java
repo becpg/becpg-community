@@ -3,13 +3,19 @@
  */
 package fr.becpg.test.repo.entity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
+import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.QName;
+import org.alfresco.service.namespace.RegexQNamePattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
@@ -56,13 +62,27 @@ public class EntityTplServiceIT extends PLMBaseTestCase {
 		}, false, true);
 
 		final NodeRef rm1NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-
+			
+			//add variants on template
+			Map<QName, Serializable> props = new HashMap<>();
+			props.put(ContentModel.PROP_NAME, "variant");
+			props.put(BeCPGModel.PROP_IS_DEFAULT_VARIANT, true);
+			NodeRef variantNodeRef = nodeService
+					.createNode(rmTplNodeRef, BeCPGModel.ASSOC_VARIANTS, BeCPGModel.ASSOC_VARIANTS, BeCPGModel.TYPE_VARIANT, props)
+					.getChildRef();
+			
 			RawMaterialData rmTplData = (RawMaterialData) alfrescoRepository.findOne(rmTplNodeRef);
 			RawMaterialData rm1Data = new RawMaterialData();
-			rm1Data.setName("Raw material 1");
+			rm1Data.setName("Raw material 1");			
 			rm1Data.setEntityTpl(rmTplData);
 			rm1Data = (RawMaterialData) alfrescoRepository.create(getTestFolderNodeRef(), rm1Data);
 
+			List<ChildAssociationRef> rm1Variants = nodeService.getChildAssocs(rm1Data.getNodeRef(), BeCPGModel.ASSOC_VARIANTS,
+					RegexQNamePattern.MATCH_ALL);
+			logger.debug("Check if variant exists");
+			assertEquals(1,rm1Variants.size());
+			assertEquals(variantNodeRef,rm1Variants.get(0).getChildRef());
+			
 			assertTrue(rm1Data.getCostList() == null);
 
 			// add costList on template
@@ -73,7 +93,9 @@ public class EntityTplServiceIT extends PLMBaseTestCase {
 			alfrescoRepository.save(rmTplData);
 
 			assertEquals(2, rmTplData.getCostList().size());
-
+			
+			
+			
 			return rm1Data.getNodeRef();
 		}, false, true);
 
