@@ -144,12 +144,15 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		List<NodeRef> refs = queryBuilder.list();
 
 		if ((refs != null) && !refs.isEmpty()) {
-			logger.info("Returning " + refs.size() + " entities");
-
+			if (logger.isDebugEnabled()) {
+				logger.debug("Returning " + refs.size() + " entities");
+			}
 			return refs;
 		}
 
-		logger.info("No entities found for query " + queryBuilder.toString());
+		if (logger.isDebugEnabled()) {
+			logger.debug("No entities found for query " + queryBuilder.toString());
+		}
 		return new ArrayList<>();
 
 	}
