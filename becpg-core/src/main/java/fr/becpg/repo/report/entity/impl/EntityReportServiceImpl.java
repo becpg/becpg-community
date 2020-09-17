@@ -346,7 +346,9 @@ public class EntityReportServiceImpl implements EntityReportService {
 														I18NUtil.setContentLocale(Locale.getDefault());
 
 														nodeService.setProperty(documentNodeRef, ContentModel.PROP_MODIFIED, generatedDate);
-
+														nodeService.setProperty(documentNodeRef, ContentModel.PROP_MODIFIER, AuthenticationUtil.getSystemUserName());
+														
+														
 														nodeService.setProperty(documentNodeRef, ContentModel.PROP_NAME, documentName);
 
 														nodeService.setProperty(documentNodeRef, ContentModel.PROP_TITLE, documentTitle);
@@ -847,6 +849,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 								}
 
 								nodeService.setProperty(documentNodeRef, ContentModel.PROP_MODIFIED, generatedDate);
+
+								nodeService.setProperty(documentNodeRef, ContentModel.PROP_MODIFIER, AuthenticationUtil.getSystemUserName());
 
 								nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_IS_DIRTY, false);
 
