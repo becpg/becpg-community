@@ -1015,7 +1015,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 		if (!propQueriesEqualMap.isEmpty()) {
 			for (Map.Entry<QName, String> propQueryEntry : propQueriesEqualMap.entrySet()) {
-				runnedQuery.append(mandatory(getCondContainsValue(propQueryEntry.getKey(), "=\"" + propQueryEntry.getValue() + "\"")));
+				runnedQuery.append(mandatory(getCondContainsValue(propQueryEntry.getKey(), "\"=" + propQueryEntry.getValue() + "\"")));
 			}
 		}
 
