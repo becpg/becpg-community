@@ -14,7 +14,6 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 
 import fr.becpg.repo.formulation.spel.SpelFormulaService;
 import fr.becpg.repo.formulation.spel.SpelHelper;
-import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.repository.RepositoryEntity;
 
 /**
@@ -73,9 +72,9 @@ public class SpelJXLSExpressionEvaluator implements ExpressionEvaluator {
 			StandardEvaluationContext context = null;
 
 			 if (data.containsKey("dataListItem")) {
-				context = formulaService.createDataListItemSpelContext((ProductData) data.get("entity"), (RepositoryEntity) data.get("dataListItem"));
+				context = formulaService.createDataListItemSpelContext((RepositoryEntity) data.get("entity"), (RepositoryEntity) data.get("dataListItem"));
 			} else if (data.containsKey("entity")) {
-				context = formulaService.createEntitySpelContext((ProductData) data.get("entity"));
+				context = formulaService.createEntitySpelContext((RepositoryEntity) data.get("entity"));
 			} else {
 				context = new StandardEvaluationContext(data);
 			}
@@ -110,7 +109,7 @@ public class SpelJXLSExpressionEvaluator implements ExpressionEvaluator {
 	/** {@inheritDoc} */
 	@Override
 	public Object evaluate(Map<String, Object> data) {
-		StandardEvaluationContext context = formulaService.createEntitySpelContext((ProductData) data.get("entity"));
+		StandardEvaluationContext context = formulaService.createEntitySpelContext((RepositoryEntity) data.get("entity"));
 
 		return expression.getValue(context);
 	}
