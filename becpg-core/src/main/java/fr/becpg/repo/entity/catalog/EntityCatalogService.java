@@ -40,6 +40,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.extensions.surf.util.ISO8601DateFormat;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.helper.AssociationService;
@@ -543,17 +544,14 @@ public class EntityCatalogService {
 		List<NodeRef> queryResults = new ArrayList<>();
 		if ((value != null) && !value.isEmpty()) {
 
-			queryResults = BeCPGQueryBuilder.createQuery().ofType(typeQName).andNotID(productNodeRef).excludeDefaults()
-					.andPropEquals(propQName, value).inDBIfPossible().list();
+			queryResults = BeCPGQueryBuilder.createQuery().ofType(typeQName).andNotID(productNodeRef)
+					.andPropEquals(propQName, value).inDB().list();
 
 			List<NodeRef> falsePositives = new ArrayList<>();
 
-			// Lucene equals is actually contains, remove results that contain
-			// but do not equal value
+			//Remove version 
 			for (NodeRef result : queryResults) {
-				Serializable resultProp = nodeService.getProperty(result, propQName);
-
-				if ((resultProp != null) && !resultProp.equals(value)) {
+				if(nodeService.hasAspect(result, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
 
 					falsePositives.add(result);
 				}
