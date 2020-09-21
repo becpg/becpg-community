@@ -218,6 +218,16 @@ public abstract class AbstractBeCPGQueryBuilder {
 		return (SearchService.LANGUAGE_LUCENE.equals(language) ? " +" : " AND +") + condType;
 	}
 	
+	/**
+	 * <p>equalsQuery.</p>
+	 *
+	 * @param condType a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
+	 */
+	protected String equalsQuery(String condType) {
+		return (SearchService.LANGUAGE_LUCENE.equals(language) ? " +" : " AND =") + condType;
+	}
+	
 
 	/**
 	 * <p>prohibided.</p>
