@@ -126,7 +126,14 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 			cleanSimpleList(formulatedProduct.getCostList(), hasCompoEl);
 			synchronizeTemplate(formulatedProduct, formulatedProduct.getCostList());
 			visitChildren(formulatedProduct, formulatedProduct.getCostList(), FormulationHelper.getNetQtyForCost(formulatedProduct), null);
-			for (VariantData variant : formulatedProduct.getVariants()) {
+			List<VariantData> variants = new ArrayList<VariantData>(formulatedProduct.getVariants());
+			if (formulatedProduct.getEntityTpl() != null) {
+				List<VariantData> entityTplVariants = formulatedProduct.getEntityTpl().getVariants();
+				if (entityTplVariants != null && !entityTplVariants.isEmpty()) {
+					variants.addAll(entityTplVariants);
+				}
+			}
+			for (VariantData variant : variants) {
 				visitChildren(formulatedProduct, formulatedProduct.getCostList(), FormulationHelper.getNetQtyForCost(formulatedProduct),variant);
 			}
 			
