@@ -7661,6 +7661,7 @@
 					<show id="bcpg:compoListYieldPerc" />
 					<show id="bcpg:compoListLossPerc" />
 					<show id="bcpg:compoListDeclType" />
+					<show id="bcpg:variantIds" force="true" />
 				</field-visibility>
 
 				<appearance>
@@ -7683,6 +7684,12 @@
 					<field id="bcpg:parentLevel">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/compoListParentLevel
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:variantIds">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/variantList
 							</control-param>
 						</control>
 					</field>
@@ -7936,6 +7943,7 @@
 					<show id="bcpg:packagingListLossPerc" />
 					<show id="bcpg:packagingListPkgLevel" />
 					<show id="bcpg:packagingListIsMaster" />
+					<show id="bcpg:variantIds" force="true" />
 				</field-visibility>
 
 				<appearance>
@@ -7959,7 +7967,12 @@
 						</control>
 					</field>
 					<field id="bcpg:packagingListIsMaster" help-id="becpg.forms.help.packagingListIsMaster"/>
-			
+					<field id="bcpg:variantIds">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/variantList
+							</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 
