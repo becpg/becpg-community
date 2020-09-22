@@ -236,7 +236,14 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		if (isFormulatedProduct) {
 			visitChildren(formulatedProduct, simpleListDataList,
 					FormulationHelper.getNetQtyInLorKg(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT),null);
-			for (VariantData variant : formulatedProduct.getVariants()) {
+			List<VariantData> variants = new ArrayList<VariantData>(formulatedProduct.getVariants());
+			if (formulatedProduct.getEntityTpl() != null) {
+				List<VariantData> entityTplVariants = formulatedProduct.getEntityTpl().getVariants();
+				if (entityTplVariants != null && !entityTplVariants.isEmpty()) {
+					variants.addAll(entityTplVariants);
+				}
+			}
+			for (VariantData variant : variants) {
 				visitChildren(formulatedProduct, simpleListDataList,
 						FormulationHelper.getNetQtyInLorKg(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT), variant);
 			}

@@ -295,7 +295,13 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 		
 		NodeRef entityNodeRef = importContext.getEntityNodeRef();
 		if (entityNodeRef != null && value != null && !value.isEmpty()) {
-			List<NodeRef> variants = associationService.getChildAssocs(entityNodeRef, BeCPGModel.ASSOC_VARIANTS);
+			List<NodeRef> variants = new ArrayList<NodeRef>(associationService.getChildAssocs(entityNodeRef, BeCPGModel.ASSOC_VARIANTS));
+			NodeRef entityTplNodeRef = associationService.getTargetAssoc(entityNodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF);
+			List<NodeRef> entityTplVariants = associationService.getChildAssocs(entityTplNodeRef, BeCPGModel.ASSOC_VARIANTS);
+			if (entityTplVariants != null && !entityTplVariants.isEmpty()) {
+				variants.addAll(entityTplVariants);
+			}
+
 			boolean isDefault = false;
 			String name = value;
 			if (value.contains("|")) {

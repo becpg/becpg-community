@@ -633,7 +633,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 					});
 					Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
 				}
-				return data.value;
+				return beCPG.util.sigFigs(data.value,3).toLocaleString();
 			}
 			return "";
 		}
