@@ -74,7 +74,9 @@ import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
 /**
- * <p>LabelingFormulationHandler class.</p>
+ * <p>
+ * LabelingFormulationHandler class.
+ * </p>
  *
  * @author matthieu
  * @version $Id: $Id
@@ -96,54 +98,75 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	private boolean ingsCalculatingWithYield = false;
 
 	/**
-	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 * <p>
+	 * Setter for the field <code>nodeService</code>.
+	 * </p>
 	 *
-	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 * @param nodeService
+	 *            a {@link org.alfresco.service.cmr.repository.NodeService}
+	 *            object.
 	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
 	/**
-	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
+	 * <p>
+	 * Setter for the field <code>alfrescoRepository</code>.
+	 * </p>
 	 *
-	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
+	 * @param alfrescoRepository
+	 *            a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
 	 */
 	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
 	/**
-	 * <p>Setter for the field <code>mlNodeService</code>.</p>
+	 * <p>
+	 * Setter for the field <code>mlNodeService</code>.
+	 * </p>
 	 *
-	 * @param mlNodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 * @param mlNodeService
+	 *            a {@link org.alfresco.service.cmr.repository.NodeService}
+	 *            object.
 	 */
 	public void setMlNodeService(NodeService mlNodeService) {
 		this.mlNodeService = mlNodeService;
 	}
 
 	/**
-	 * <p>Setter for the field <code>associationService</code>.</p>
+	 * <p>
+	 * Setter for the field <code>associationService</code>.
+	 * </p>
 	 *
-	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object.
+	 * @param associationService
+	 *            a {@link fr.becpg.repo.helper.AssociationService} object.
 	 */
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
 
 	/**
-	 * <p>Setter for the field <code>ingsCalculatingWithYield</code>.</p>
+	 * <p>
+	 * Setter for the field <code>ingsCalculatingWithYield</code>.
+	 * </p>
 	 *
-	 * @param ingsCalculatingWithYield a boolean.
+	 * @param ingsCalculatingWithYield
+	 *            a boolean.
 	 */
 	public void setIngsCalculatingWithYield(boolean ingsCalculatingWithYield) {
 		this.ingsCalculatingWithYield = ingsCalculatingWithYield;
 	}
 
 	/**
-	 * <p>Setter for the field <code>formulaService</code>.</p>
+	 * <p>
+	 * Setter for the field <code>formulaService</code>.
+	 * </p>
 	 *
-	 * @param formulaService a {@link fr.becpg.repo.formulation.spel.SpelFormulaService} object.
+	 * @param formulaService
+	 *            a {@link fr.becpg.repo.formulation.spel.SpelFormulaService}
+	 *            object.
 	 */
 	public void setFormulaService(SpelFormulaService formulaService) {
 		this.formulaService = formulaService;
@@ -432,23 +455,34 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			NodeRef allergen = allergenListDataItem.getAllergen();
 			if (allergenListDataItem.getVoluntary()) {
 				if (AllergenType.Major.toString().equals(nodeService.getProperty(allergen, PLMModel.PROP_ALLERGEN_TYPE))) {
-					labelingFormulaContext.getAllergens().add(allergen);
+					appendAllergen(labelingFormulaContext.getAllergens(), allergen, allergenListDataItem.getQtyPerc());
 				}
 			} else if (allergenListDataItem.getInVoluntary()) {
 				if (AllergenType.Major.toString().equals(nodeService.getProperty(allergen, PLMModel.PROP_ALLERGEN_TYPE))) {
-					labelingFormulaContext.getInVolAllergens().add(allergen);
+					appendAllergen(labelingFormulaContext.getInVolAllergens(), allergen, allergenListDataItem.getQtyPerc());
 					for (NodeRef inVoluntarySource : allergenListDataItem.getInVoluntarySources()) {
 						QName inVoluntarySourceType = nodeService.getType(inVoluntarySource);
 
 						if (PLMModel.TYPE_RAWMATERIAL.equals(inVoluntarySourceType)) {
-							labelingFormulaContext.getInVolAllergensRawMaterial().add(allergen);
+							appendAllergen(labelingFormulaContext.getInVolAllergensRawMaterial(), allergen, allergenListDataItem.getQtyPerc());
 						} else if (PLMModel.TYPE_RESOURCEPRODUCT.equals(inVoluntarySourceType)) {
-							labelingFormulaContext.getInVolAllergensProcess().add(allergen);
+							appendAllergen(labelingFormulaContext.getInVolAllergensProcess(), allergen, allergenListDataItem.getQtyPerc());
 						}
 					}
 				}
 			}
 		}
+	}
+
+	private void appendAllergen(Map<NodeRef, Double> toAppendTo, NodeRef allergen, Double qtyPerc) {
+		Double qty = qtyPerc;
+
+		if (toAppendTo.containsKey(allergen) && (qty != null) && (toAppendTo.get(allergen) != null)) {
+			qty += toAppendTo.get(allergen);
+		}
+
+		toAppendTo.put(allergen, qty);
+
 	}
 
 	private void applyMeatContentRules(ProductData formulatedProduct, CompositeLabeling parent, LabelingFormulaContext labelingFormulaContext) {
@@ -1246,22 +1280,21 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				Double qty = FormulationHelper.getQtyInKg(compoListDataItem);
 				Double componentYield = FormulationHelper.getYield(compoListDataItem);
 
-				if( componentYield!=100d) {
-					if(yield == null) {
+				if (componentYield != 100d) {
+					if (yield == null) {
 						yield = 100d;
 					}
 					yield *= componentYield / 100d;
 				}
-				
-				
+
 				boolean applyYield = (ingsCalculatingWithYield || labelingFormulaContext.isIngsLabelingWithYield()) && (qty != null)
 						&& (yield != null) && (yield != 100d);
-				
+
 				if (qty != null) {
 
 					qty *= LabelingFormulaContext.PRECISION_FACTOR;
 					if (!isLocalSemiFinished) {
-						if(! applyYield ) {
+						if (!applyYield) {
 							qty *= componentYield / 100d;
 						}
 					}
@@ -1277,8 +1310,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				volume *= LabelingFormulaContext.PRECISION_FACTOR;
 
 				if (!isLocalSemiFinished) {
-					if(! applyYield ) {
-						volume *=  componentYield / 100d;
+					if (!applyYield) {
+						volume *= componentYield / 100d;
 					}
 				}
 
@@ -1290,7 +1323,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					volume *= ratio;
 				}
 
-				boolean applyWaterLost = applyYield && recipeQtyUsed !=null && nodeService.hasAspect(productNodeRef, PLMModel.ASPECT_WATER);
+				boolean applyWaterLost = applyYield && (recipeQtyUsed != null) && nodeService.hasAspect(productNodeRef, PLMModel.ASPECT_WATER);
 				if (applyWaterLost) {
 
 					if (logger.isTraceEnabled()) {
@@ -1299,16 +1332,16 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 					// Override declaration type
 					declarationType = DeclarationType.DoNotDetails;
-					
+
 					EvaporatedDataItem evaporatedDataItem = null;
-					for(EvaporatedDataItem tmp: labelingFormulaContext.getEvaporatedDataItems()) {
-						if(tmp.getProductNodeRef().equals(productNodeRef)) {
+					for (EvaporatedDataItem tmp : labelingFormulaContext.getEvaporatedDataItems()) {
+						if (tmp.getProductNodeRef().equals(productNodeRef)) {
 							evaporatedDataItem = tmp;
 							break;
 						}
 					}
-					
-					if(evaporatedDataItem==null) {
+
+					if (evaporatedDataItem == null) {
 						labelingFormulaContext.getEvaporatedDataItems().add(new EvaporatedDataItem(productNodeRef, 100d, qty));
 					} else {
 						evaporatedDataItem.addQty(qty);
@@ -1431,17 +1464,17 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 									}
 
 									if (composite.isLeaf() && (compositeLabeling.getQtyTotal() != null)) {
-										
-										Double yieldQty =  applyYield(qty, yield, applyYield);
+
+										Double yieldQty = applyYield(qty, yield, applyYield);
 										Double evaporatingLoss = qty - yieldQty;
-										
+
 										if (logger.isTraceEnabled()) {
-											logger.trace("Add to totalQty: " + yieldQty + " yield: " + yield +" evaporating: "+evaporatingLoss);
+											logger.trace("Add to totalQty: " + yieldQty + " yield: " + yield + " evaporating: " + evaporatingLoss);
 
 										}
 
 										compositeLabeling.setQtyTotal(yieldQty + compositeLabeling.getQtyTotal());
-										compositeLabeling.setEvaporatingLoss(evaporatingLoss+compositeLabeling.getEvaporatingLoss());
+										compositeLabeling.setEvaporatingLoss(evaporatingLoss + compositeLabeling.getEvaporatingLoss());
 									}
 
 								}
@@ -1469,17 +1502,17 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 										logger.trace("Set totalQty: " + applyYield(qty, yield, applyYield) + " yield: " + yield);
 
 									}
-									Double yieldQty =  applyYield(qty, yield, applyYield);
+									Double yieldQty = applyYield(qty, yield, applyYield);
 									Double evaporatingLoss = qty - yieldQty;
-									
+
 									if (logger.isTraceEnabled()) {
-										logger.trace("Add to totalQty: " + yieldQty + " yield: " + yield+" evaporating: "+evaporatingLoss);
+										logger.trace("Add to totalQty: " + yieldQty + " yield: " + yield + " evaporating: " + evaporatingLoss);
 
 									}
 
-									compositeLabeling.setQtyTotal(yieldQty );
+									compositeLabeling.setQtyTotal(yieldQty);
 									compositeLabeling.setEvaporatingLoss(evaporatingLoss);
-									
+
 									compositeLabeling.setVolumeTotal(applyYield(volume, yield, applyYield));
 								}
 								if (DeclarationType.DoNotDetailsAtEnd.equals(declarationType)) {
@@ -1560,16 +1593,15 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						// Update parent qty
 						if (qty != null) {
 
-							
 							if (!DeclarationType.DoNotDetailsAtEnd.equals(declarationType)) {
-								Double yieldQty =  applyYield(qty, yield, applyYield);
+								Double yieldQty = applyYield(qty, yield, applyYield);
 								Double evaporatingLoss = qty - yieldQty;
-								
+
 								if (logger.isTraceEnabled()) {
-									logger.trace("Add to parent totalQty: " + yieldQty + " yield: " + yield+" evaporating: "+evaporatingLoss);
+									logger.trace("Add to parent totalQty: " + yieldQty + " yield: " + yield + " evaporating: " + evaporatingLoss);
 
 								}
-								
+
 								parent.setQtyTotal(parent.getQtyTotal() + yieldQty);
 								parent.setEvaporatingLoss(parent.getEvaporatingLoss() + evaporatingLoss);
 							}
@@ -1594,8 +1626,6 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		}
 
 	}
-
-	
 
 	private void fillAllergensAndGeos(CompositeLabeling compositeLabeling, ProductData productData) {
 		for (AllergenListDataItem allergenListDataItem : productData.getAllergenList()) {
@@ -1639,33 +1669,32 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		}
 		return component.getName();
 	}
-	
-	
+
 	private void applyEvaporation(CompositeLabeling parent, List<EvaporatedDataItem> evaporatedDataItems) {
-		if (!evaporatedDataItems.isEmpty() ) {
+		if (!evaporatedDataItems.isEmpty()) {
 			if (logger.isTraceEnabled()) {
 				logger.trace(" Before applyEvaporation \n " + parent.toString());
 			}
 			Double evaporatingLost = parent.getEvaporatingLoss();
-			
+
 			evaporatedDataItems.stream().forEach(evaporatedDataItem -> {
 
 				CompositeLabeling productLabelItem = parent.get(evaporatedDataItem.getProductNodeRef());
 				if ((productLabelItem != null) && (productLabelItem.getQty() != null)) {
 
-					if(logger.isDebugEnabled()) {
-						logger.debug("Apply water lost : qty "+evaporatingLost * evaporatedDataItem.getRate()/100d+ " over "+parent.getQtyTotal());
-						
+					if (logger.isDebugEnabled()) {
+						logger.debug("Apply water lost : qty " + ((evaporatingLost * evaporatedDataItem.getRate()) / 100d) + " over "
+								+ parent.getQtyTotal());
+
 					}
-					productLabelItem.setQty(productLabelItem.getQty()  - (evaporatingLost * evaporatedDataItem.getRate()/100d));
+					productLabelItem.setQty(productLabelItem.getQty() - ((evaporatingLost * evaporatedDataItem.getRate()) / 100d));
 
 				}
 			});
 
 		}
-		
+
 	}
-	
 
 	private void applyReconstitution(CompositeLabeling parent, List<ReconstituableDataItem> reconstituableDataItems) {
 
