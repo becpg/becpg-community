@@ -76,6 +76,9 @@ public class UpdateEntityWebScript extends AbstractEntityWebScript {
 			properties.put(VersionModel.PROP_VERSION_TYPE, versionType);
 			properties.put(Version.PROP_DESCRIPTION, description);
 
+			// Create first version if needed
+			entityVersionService.createInitialVersion(entityNodeRef);
+			
 			entityVersionService.createVersion(entityNodeRef, properties);
 
 		}
