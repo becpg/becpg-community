@@ -21,7 +21,9 @@ import org.json.JSONObject;
 import fr.becpg.repo.form.column.decorator.DataGridFormFieldTitleProvider;
 
 /**
- * <p>BecpgFormDefinition class.</p>
+ * <p>
+ * BecpgFormDefinition class.
+ * </p>
  *
  * @author matthieu
  * @version $Id: $Id
@@ -56,7 +58,7 @@ public class BecpgFormDefinition {
 		}
 		return result;
 	}
-	
+
 	private static JSONArray filterTabs(JSONArray tabs, Set<String> tabIds) throws JSONException {
 		final int size = tabs.length();
 		JSONArray result = new JSONArray();
@@ -68,7 +70,7 @@ public class BecpgFormDefinition {
 		}
 		return result;
 	}
-	
+
 	private static JSONObject filter(JSONObject object, Set<String> tabIds) {
 		try {
 			if (isContainerRepresentation(object)) {
@@ -108,19 +110,26 @@ public class BecpgFormDefinition {
 				}
 			}
 		} catch (JSONException e) {
-				// Ignore exception; this will simply skip deeper filtering
+			// Ignore exception; this will simply skip deeper filtering
 		}
-		
+
 		return object;
 	}
 
 	/**
-	 * <p>merge.</p>
+	 * <p>
+	 * merge.
+	 * </p>
 	 *
-	 * @param form a {@link org.alfresco.repo.forms.Form} object.
-	 * @param resolver a {@link fr.becpg.repo.form.column.decorator.DataGridFormFieldTitleProvider} object.
+	 * @param form
+	 *            a {@link org.alfresco.repo.forms.Form} object.
+	 * @param resolver
+	 *            a
+	 *            {@link fr.becpg.repo.form.column.decorator.DataGridFormFieldTitleProvider}
+	 *            object.
 	 * @return a {@link org.json.JSONObject} object.
-	 * @throws org.json.JSONException if any.
+	 * @throws org.json.JSONException
+	 *             if any.
 	 */
 	public JSONObject merge(Form form, DataGridFormFieldTitleProvider resolver) throws JSONException {
 		JSONObject ret = new JSONObject();
@@ -143,7 +152,7 @@ public class BecpgFormDefinition {
 				boolean found = true;
 
 				if (!sets.containsKey(id)) {
-					found = loadDef(toClone, form ,resolver);
+					found = loadDef(toClone, form, resolver);
 				}
 
 				if (!cloned.containsKey(id)) {
@@ -187,10 +196,12 @@ public class BecpgFormDefinition {
 							columnJson = set.getJSONObject("fields").getJSONArray(colName);
 						} else {
 							JSONObject tmp = new JSONObject();
-							if (set.has("fields")) {
-								tmp = set.getJSONObject("fields");
-							} else {
-								set.put("fields", tmp);
+							if (set != null) {
+								if (set.has("fields")) {
+									tmp = set.getJSONObject("fields");
+								} else {
+									set.put("fields", tmp);
+								}
 							}
 
 							tmp.put(colName, columnJson);
@@ -209,7 +220,7 @@ public class BecpgFormDefinition {
 	private void loadData(JSONObject field, Form form) throws JSONException {
 		if (field.has("dataKey")) {
 			String key = field.getString("dataKey");
-			if (key != null && form.getFormData() != null) {
+			if ((key != null) && (form.getFormData() != null)) {
 				FieldData data = form.getFormData().getFieldData(key);
 
 				if (data != null) {
@@ -239,9 +250,9 @@ public class BecpgFormDefinition {
 						field.put("value", fieldDefinition.getDefaultValue());
 					}
 
-					QName fieldQName  = QName.createQName(id);
-					if (!field.has("name") || (resolver != null && resolver.isAllowed(fieldQName))) {
-						if (resolver != null && resolver.isAllowed(fieldQName)) {
+					QName fieldQName = QName.createQName(id);
+					if (!field.has("name") || ((resolver != null) && resolver.isAllowed(fieldQName))) {
+						if ((resolver != null) && resolver.isAllowed(fieldQName)) {
 							field.put("name", resolver.getTitle(fieldQName));
 						} else {
 							field.put("name", fieldDefinition.getLabel());
@@ -256,15 +267,13 @@ public class BecpgFormDefinition {
 
 						boolean isList = false;
 						if (((PropertyFieldDefinition) fieldDefinition).getConstraints() != null) {
-							for (FieldConstraint constraint : ((PropertyFieldDefinition) fieldDefinition)
-									.getConstraints()) {
+							for (FieldConstraint constraint : ((PropertyFieldDefinition) fieldDefinition).getConstraints()) {
 
-								if (constraint.getType() == "LIST") {
+								if ( "LIST".equals(constraint.getType())) {
 									isList = true;
 									if (constraint.getParameters().containsKey("allowedValues")) {
 
-										for (String option : ((List<String>) constraint.getParameters()
-												.get("allowedValues"))) {
+										for (String option : ((List<String>) constraint.getParameters().get("allowedValues"))) {
 											JSONObject optionJson = new JSONObject();
 											if (option.indexOf('|') > 0) {
 												optionJson.put("id", option.split("\\|")[0]);
@@ -360,8 +369,7 @@ public class BecpgFormDefinition {
 							field.put("params", jsonParams);
 						}
 
-						jsonParams.put("endpointType",
-								((AssociationFieldDefinition) fieldDefinition).getEndpointType());
+						jsonParams.put("endpointType", ((AssociationFieldDefinition) fieldDefinition).getEndpointType());
 						jsonParams.put("endpointMany", ((AssociationFieldDefinition) fieldDefinition).isEndpointMany());
 
 						if (((AssociationFieldDefinition) fieldDefinition).isEndpointMandatory()) {
@@ -392,7 +400,9 @@ public class BecpgFormDefinition {
 	}
 
 	/**
-	 * <p>Getter for the field <code>forcedFields</code>.</p>
+	 * <p>
+	 * Getter for the field <code>forcedFields</code>.
+	 * </p>
 	 *
 	 * @return a {@link java.util.List} object.
 	 */
@@ -401,7 +411,9 @@ public class BecpgFormDefinition {
 	}
 
 	/**
-	 * <p>Getter for the field <code>fields</code>.</p>
+	 * <p>
+	 * Getter for the field <code>fields</code>.
+	 * </p>
 	 *
 	 * @return a {@link java.util.List} object.
 	 */
@@ -410,10 +422,14 @@ public class BecpgFormDefinition {
 	}
 
 	/**
-	 * <p>addTab.</p>
+	 * <p>
+	 * addTab.
+	 * </p>
 	 *
-	 * @param tabId a {@link java.lang.String} object.
-	 * @param tab a {@link org.json.JSONObject} object.
+	 * @param tabId
+	 *            a {@link java.lang.String} object.
+	 * @param tab
+	 *            a {@link org.json.JSONObject} object.
 	 */
 	public void addTab(String tabId, JSONObject tab) {
 		tabs.put(tabId, tab);
@@ -421,11 +437,16 @@ public class BecpgFormDefinition {
 	}
 
 	/**
-	 * <p>addSet.</p>
+	 * <p>
+	 * addSet.
+	 * </p>
 	 *
-	 * @param parentId a {@link java.lang.String} object.
-	 * @param set a {@link org.json.JSONObject} object.
-	 * @throws org.json.JSONException if any.
+	 * @param parentId
+	 *            a {@link java.lang.String} object.
+	 * @param set
+	 *            a {@link org.json.JSONObject} object.
+	 * @throws org.json.JSONException
+	 *             if any.
 	 */
 	public void addSet(String parentId, JSONObject set) throws JSONException {
 		if (tabs.containsKey(parentId)) {
@@ -452,12 +473,18 @@ public class BecpgFormDefinition {
 	}
 
 	/**
-	 * <p>addField.</p>
+	 * <p>
+	 * addField.
+	 * </p>
 	 *
-	 * @param parentId a {@link java.lang.String} object.
-	 * @param field a {@link org.json.JSONObject} object.
-	 * @param force a boolean.
-	 * @throws org.json.JSONException if any.
+	 * @param parentId
+	 *            a {@link java.lang.String} object.
+	 * @param field
+	 *            a {@link org.json.JSONObject} object.
+	 * @param force
+	 *            a boolean.
+	 * @throws org.json.JSONException
+	 *             if any.
 	 */
 	public void addField(String parentId, JSONObject field, boolean force) throws JSONException {
 		if (tabs.containsKey(parentId)) {

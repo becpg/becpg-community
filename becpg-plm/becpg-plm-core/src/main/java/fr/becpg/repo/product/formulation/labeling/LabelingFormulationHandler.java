@@ -1712,17 +1712,17 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 					if ((ingLabelItem != null) && (ingLabelItem.getQty() != null) && (reconstituableData.getRate() != 0d)) {
 
-						BigDecimal rate = new BigDecimal(reconstituableData.getRate());
-						BigDecimal productQty = new BigDecimal(productLabelItem.getQty());
-						BigDecimal ingQty = new BigDecimal(ingLabelItem.getQty());
-						BigDecimal ingVol = new BigDecimal(ingLabelItem.getVolume());
-						BigDecimal productVol = new BigDecimal(productLabelItem.getVolume());
+						BigDecimal rate = BigDecimal.valueOf(reconstituableData.getRate());
+						BigDecimal productQty = BigDecimal.valueOf(productLabelItem.getQty());
+						BigDecimal ingQty = BigDecimal.valueOf(ingLabelItem.getQty());
+						BigDecimal ingVol = BigDecimal.valueOf(ingLabelItem.getVolume());
+						BigDecimal productVol = BigDecimal.valueOf(productLabelItem.getVolume());
 
 						BigDecimal diluentQty = productQty.multiply(rate).subtract(productQty);
 
 						BigDecimal realDiluentQty = ingQty.min(diluentQty);
 
-						BigDecimal realDiluentQtyRatio = (diluentQty.compareTo(BigDecimal.ZERO) == 0) ? (new BigDecimal(1d))
+						BigDecimal realDiluentQtyRatio = (diluentQty.compareTo(BigDecimal.ZERO) == 0) ? (BigDecimal.valueOf(1d))
 								: realDiluentQty.divide(diluentQty, 10, RoundingMode.HALF_UP);
 
 						BigDecimal realQty = realDiluentQty.add(productQty.multiply(realDiluentQtyRatio)).divide(rate, 10, RoundingMode.HALF_UP);
@@ -1733,7 +1733,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						BigDecimal diluentVolume = rate.multiply(productVol).subtract(productVol);
 
 						BigDecimal readlDiluentvolume = ingVol.min(diluentVolume);
-						BigDecimal readlDiluentvolumeRatio = (diluentVolume.compareTo(BigDecimal.ZERO) == 0) ? (new BigDecimal(1d))
+						BigDecimal readlDiluentvolumeRatio = (diluentVolume.compareTo(BigDecimal.ZERO) == 0) ? (BigDecimal.valueOf(1d))
 								: readlDiluentvolume.divide(diluentVolume, 10, RoundingMode.HALF_UP);
 
 						BigDecimal realVol = readlDiluentvolume.add(productVol.multiply(readlDiluentvolumeRatio)).divide(rate, 10,
@@ -1750,8 +1750,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							parent.add(targetLabelItem);
 						}
 
-						targetLabelItem.setQty(new BigDecimal(targetLabelItem.getQty()).add(realQty).add(realDiluentQty).doubleValue());
-						targetLabelItem.setVolume(new BigDecimal(targetLabelItem.getVolume()).add(realVol).add(readlDiluentvolume).doubleValue());
+						targetLabelItem.setQty(BigDecimal.valueOf(targetLabelItem.getQty()).add(realQty).add(realDiluentQty).doubleValue());
+						targetLabelItem.setVolume(BigDecimal.valueOf(targetLabelItem.getVolume()).add(realVol).add(readlDiluentvolume).doubleValue());
 
 						if (logger.isTraceEnabled()) {
 							logger.trace("Applying reconstitution:" + getName(productLabelItem) + " with " + getName(ingLabelItem) + " to "

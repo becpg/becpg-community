@@ -514,8 +514,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			Element packagingListElt = dataListsElt.addElement(PLMModel.TYPE_PACKAGINGLIST.getLocalName() + "s");
 			addDataListState(packagingListElt, productData.getPackagingList().get(0).getParentNodeRef());
 
-			BigDecimal netWeightPrimary = new BigDecimal(
-					FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT).toString());
+			BigDecimal netWeightPrimary = BigDecimal.valueOf(FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT));
 
 			// display tare, net weight and gross weight
 			BigDecimal tarePrimary = FormulationHelper.getTareInKg(productData.getTare(), productData.getTareUnit());
@@ -544,10 +543,10 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 				if (variantPackagingData.getProductPerBoxes() != null) {
 
-					BigDecimal tareSecondary = tarePrimary.multiply(new BigDecimal(variantPackagingData.getProductPerBoxes()))
+					BigDecimal tareSecondary = tarePrimary.multiply(BigDecimal.valueOf(variantPackagingData.getProductPerBoxes()))
 							.add(variantPackagingData.getTareSecondary());
 
-					BigDecimal netWeightSecondary = netWeightPrimary.multiply(new BigDecimal(variantPackagingData.getProductPerBoxes()));
+					BigDecimal netWeightSecondary = netWeightPrimary.multiply(BigDecimal.valueOf(variantPackagingData.getProductPerBoxes()));
 					BigDecimal grossWeightSecondary = tareSecondary.add(netWeightSecondary);
 
 					packgLevelMesuresElt.addAttribute(ATTR_PKG_TARE_LEVEL_2, toString(tareSecondary));
@@ -557,9 +556,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 					if (variantPackagingData.getBoxesPerPallet() != null) {
 
-						BigDecimal tareTertiary = tareSecondary.multiply(new BigDecimal(variantPackagingData.getBoxesPerPallet()))
+						BigDecimal tareTertiary = tareSecondary.multiply(BigDecimal.valueOf(variantPackagingData.getBoxesPerPallet()))
 								.add(variantPackagingData.getTareTertiary());
-						BigDecimal netWeightTertiary = netWeightSecondary.multiply(new BigDecimal(variantPackagingData.getBoxesPerPallet()));
+						BigDecimal netWeightTertiary = netWeightSecondary.multiply(BigDecimal.valueOf(variantPackagingData.getBoxesPerPallet()));
 						packgLevelMesuresElt.addAttribute(ATTR_PKG_TARE_LEVEL_3, toString(tareTertiary));
 						packgLevelMesuresElt.addAttribute(ATTR_PKG_NET_WEIGHT_LEVEL_3, toString(netWeightTertiary));
 						packgLevelMesuresElt.addAttribute(ATTR_PKG_GROSS_WEIGHT_LEVEL_3, toString(tareTertiary.add(netWeightTertiary)));
@@ -1560,7 +1559,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				}
 
 			}
-			dataItemElt.addAttribute(BeCPGModel.PROP_IS_DEFAULT_VARIANT.getLocalName(), isDefault.toString());
+			dataItemElt.addAttribute(BeCPGModel.PROP_IS_DEFAULT_VARIANT.getLocalName(), isDefault!=null ? isDefault.toString(): Boolean.FALSE.toString());
 			dataItemElt.addAttribute(BeCPGModel.PROP_VARIANTIDS.getLocalName(), variantNames);
 		} else {
 			dataItemElt.addAttribute(BeCPGModel.PROP_VARIANTIDS.getLocalName(), "");

@@ -11,10 +11,10 @@ import org.alfresco.service.namespace.QName;
 public class GHSModel {
 
 	/** Constant <code>GHS_URI="http://www.bcpg.fr/model/ghs/1.0"</code> */
-	public static  String GHS_URI = "http://www.bcpg.fr/model/ghs/1.0";
+	public static final String GHS_URI = "http://www.bcpg.fr/model/ghs/1.0";
 
 	/** Constant <code>GHS_PREFIX="gsh"</code> */
-	public static  String GHS_PREFIX = "gsh";
+	public static final String GHS_PREFIX = "gsh";
 
 	/** Constant <code>MODEL</code> */
 	public static final  QName MODEL = QName.createQName(GHS_URI, "ghsModel");
