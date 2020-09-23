@@ -17,11 +17,10 @@
  ******************************************************************************/
 package fr.becpg.repo.report.entity.impl;
 
-import java.util.Collections;
-import java.util.HashSet;
+import java.util.Calendar;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -30,14 +29,15 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.ConcurrencyFailureException;
-import org.springframework.util.StopWatch;
 
 import fr.becpg.repo.mail.BeCPGMailService;
 import fr.becpg.repo.report.entity.EntityReportAsyncGenerator;
 import fr.becpg.repo.report.entity.EntityReportService;
 
 /**
- * <p>EntityReportAsyncGeneratorImpl class.</p>
+ * <p>
+ * EntityReportAsyncGeneratorImpl class.
+ * </p>
  *
  * @author matthieu
  * @version $Id: $Id
@@ -53,23 +53,29 @@ public class EntityReportAsyncGeneratorImpl implements EntityReportAsyncGenerato
 	@Autowired
 	private BeCPGMailService beCPGMailService;
 
-
 	@Autowired
 	private TransactionService transactionService;
 
 	/**
-	 * <p>Setter for the field <code>threadExecuter</code>.</p>
+	 * <p>
+	 * Setter for the field <code>threadExecuter</code>.
+	 * </p>
 	 *
-	 * @param threadExecuter a {@link java.util.concurrent.ThreadPoolExecutor} object.
+	 * @param threadExecuter
+	 *            a {@link java.util.concurrent.ThreadPoolExecutor} object.
 	 */
 	public void setThreadExecuter(ThreadPoolExecutor threadExecuter) {
 		this.threadExecuter = threadExecuter;
 	}
 
 	/**
-	 * <p>Setter for the field <code>entityReportService</code>.</p>
+	 * <p>
+	 * Setter for the field <code>entityReportService</code>.
+	 * </p>
 	 *
-	 * @param entityReportService a {@link fr.becpg.repo.report.entity.EntityReportService} object.
+	 * @param entityReportService
+	 *            a {@link fr.becpg.repo.report.entity.EntityReportService}
+	 *            object.
 	 */
 	public void setEntityReportService(EntityReportService entityReportService) {
 		this.entityReportService = entityReportService;
@@ -83,19 +89,19 @@ public class EntityReportAsyncGeneratorImpl implements EntityReportAsyncGenerato
 		EntityReportAsyncNotificationCallback callBack = null;
 
 		if (notify) {
-			callBack = new EntityReportAsyncNotificationCallback(new HashSet<>(pendingNodes));
+			callBack = new EntityReportAsyncNotificationCallback();
 		}
 
 		for (NodeRef entityNodeRef : pendingNodes) {
 
 			Runnable command = new ProductReportGenerator(entityNodeRef, callBack);
 			if (!threadExecuter.getQueue().contains(command)) {
+
 				threadExecuter.execute(command);
 			} else {
 				if (callBack != null) {
-					callBack.notify(entityNodeRef);
+					callBack.notify();
 				}
-
 				logger.warn("Report job already in queue for " + entityNodeRef);
 				logger.info("Report active task size " + threadExecuter.getActiveCount());
 				logger.info("Report queue size " + threadExecuter.getTaskCount());
@@ -105,32 +111,32 @@ public class EntityReportAsyncGeneratorImpl implements EntityReportAsyncGenerato
 
 	}
 
-
 	private class EntityReportAsyncNotificationCallback {
 
-		Set<NodeRef> workingSet = Collections.synchronizedSet(new HashSet<NodeRef>());
+		private AtomicInteger counter;
+		private Long timeStamp;
+		private String userName;
 
-		private StopWatch watch = new StopWatch();
-		private String userName = AuthenticationUtil.getFullyAuthenticatedUser();
+		public EntityReportAsyncNotificationCallback() {
 
-		public EntityReportAsyncNotificationCallback(Set<NodeRef> workingSet) {
-			super();
-			this.workingSet = workingSet;
-			watch.start();
+			this.counter = new AtomicInteger(0);
+			this.timeStamp = Calendar.getInstance().getTimeInMillis();
+			this.userName = AuthenticationUtil.getFullyAuthenticatedUser();
 		}
 
-		public void notify(NodeRef nodeRef) {
-			workingSet.remove(nodeRef);
+		public void register() {
+			counter.incrementAndGet();
+		}
 
-			if (workingSet.isEmpty()) {
-				// Send mail after refresh
-				watch.stop();
+		public void notifyEnd() {
+
+			if (counter.decrementAndGet() == 0) {
 
 				AuthenticationUtil.runAs(() -> {
 					transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-						beCPGMailService.sendMailOnAsyncAction(userName, "generate-reports", null ,
-								true, watch.getTotalTimeSeconds());
+						beCPGMailService.sendMailOnAsyncAction(userName, "generate-reports", null, true,
+								(Calendar.getInstance().getTimeInMillis() - timeStamp) / 1000);
 
 						return null;
 					}, true, true);
@@ -150,6 +156,7 @@ public class EntityReportAsyncGeneratorImpl implements EntityReportAsyncGenerato
 		private ProductReportGenerator(NodeRef entityNodeRef, EntityReportAsyncNotificationCallback callback) {
 			this.entityNodeRef = entityNodeRef;
 			this.callback = callback;
+			this.callback.register();
 		}
 
 		@Override
@@ -163,14 +170,13 @@ public class EntityReportAsyncGeneratorImpl implements EntityReportAsyncGenerato
 					}
 					logger.error("Unable to generate product reports ", e);
 
-				} finally {
-
-					if (callback != null) {
-						callback.notify(entityNodeRef);
-					}
 				}
 				return null;
 			}, false, true);
+
+			if (callback != null) {
+				callback.notifyEnd();
+			}
 		}
 
 		@Override
