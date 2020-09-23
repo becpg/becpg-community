@@ -27,6 +27,8 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -77,7 +79,9 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 
 /**
- * <p>LabelingFormulaContext class.</p>
+ * <p>
+ * LabelingFormulaContext class.
+ * </p>
  *
  * @author matthieu
  * @version $Id: $Id
@@ -88,9 +92,9 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 	/** Constant <code>PRECISION_FACTOR=100</code> */
 	public static final int PRECISION_FACTOR = 100;
-	
-	/** Constant <code>ALLERGEN_DETECTION_PATTERN</code> */
-	public final static Pattern ALLERGEN_DETECTION_PATTERN = Pattern.compile("<b>|<u>|<i>|[A-Z]{3}|\\p{Lu}{3}");
+
+	public static final Pattern ALLERGEN_DETECTION_PATTERN = Pattern.compile(
+			"(<\\s*up[^>]*>.*?<\\s*/\\s*up>|<\\s*b[^>]*>.*?<\\s*/\\s*b>|<\\s*u[^>]*>.*?<\\s*/\\s*u>|<\\s*i[^>]*>.*?<\\s*/\\s*i>|[A-Z]{3,}|\\p{Lu}{3,})");
 
 	private CompositeLabeling lblCompositeContext;
 
@@ -105,11 +109,11 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	private List<ReconstituableDataItem> reconstituableDataItems = new ArrayList<>();
 
 	private List<EvaporatedDataItem> evaporatedDataItems = new ArrayList<>();
-	
-	private Set<NodeRef> allergens = new HashSet<>();
-	private Set<NodeRef> inVolAllergens = new HashSet<>();
-	private Set<NodeRef> inVolAllergensProcess = new HashSet<>();
-	private Set<NodeRef> inVolAllergensRawMaterial = new HashSet<>();
+
+	private Map<NodeRef, Double> allergens = new HashMap<>();
+	private Map<NodeRef, Double> inVolAllergens = new HashMap<>();
+	private Map<NodeRef, Double> inVolAllergensProcess = new HashMap<>();
+	private Map<NodeRef, Double> inVolAllergensRawMaterial = new HashMap<>();
 
 	private Set<NodeRef> toApplyThresholdItems = new HashSet<>();
 
@@ -120,7 +124,9 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	private ProductData entity;
 
 	/**
-	 * <p>Getter for the field <code>locale</code>.</p>
+	 * <p>
+	 * Getter for the field <code>locale</code>.
+	 * </p>
 	 *
 	 * @return a {@link java.util.Locale} object.
 	 */
@@ -129,34 +135,46 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	/**
-	 * <p>Setter for the field <code>locale</code>.</p>
+	 * <p>
+	 * Setter for the field <code>locale</code>.
+	 * </p>
 	 *
-	 * @param locale a {@link java.util.Locale} object.
+	 * @param locale
+	 *            a {@link java.util.Locale} object.
 	 */
 	public void setLocale(Locale locale) {
 		this.locale = locale;
 	}
 
 	/**
-	 * <p>Getter for the field <code>entity</code>.</p>
+	 * <p>
+	 * Getter for the field <code>entity</code>.
+	 * </p>
 	 *
 	 * @return a {@link fr.becpg.repo.product.data.ProductData} object.
 	 */
+	@Override
 	public ProductData getEntity() {
 		return entity;
 	}
 
 	/**
-	 * <p>Setter for the field <code>entity</code>.</p>
+	 * <p>
+	 * Setter for the field <code>entity</code>.
+	 * </p>
 	 *
-	 * @param entity a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @param entity
+	 *            a {@link fr.becpg.repo.product.data.ProductData} object.
 	 */
+	@Override
 	public void setEntity(ProductData entity) {
 		this.entity = entity;
 	}
 
 	/**
-	 * <p>Getter for the field <code>errors</code>.</p>
+	 * <p>
+	 * Getter for the field <code>errors</code>.
+	 * </p>
 	 *
 	 * @return a {@link java.util.List} object.
 	 */
@@ -165,61 +183,76 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	/**
-	 * <p>Setter for the field <code>errors</code>.</p>
+	 * <p>
+	 * Setter for the field <code>errors</code>.
+	 * </p>
 	 *
-	 * @param errors a {@link java.util.List} object.
+	 * @param errors
+	 *            a {@link java.util.List} object.
 	 */
 	public void setErrors(List<ReqCtrlListDataItem> errors) {
 		this.errors = errors;
 	}
 
 	/**
-	 * <p>Getter for the field <code>allergens</code>.</p>
+	 * <p>
+	 * Getter for the field <code>allergens</code>.
+	 * </p>
 	 *
 	 * @return a {@link java.util.Set} object.
 	 */
-	public Set<NodeRef> getAllergens() {
+	public Map<NodeRef, Double> getAllergens() {
 		return allergens;
 	}
 
 	/**
-	 * <p>Getter for the field <code>inVolAllergens</code>.</p>
+	 * <p>
+	 * Getter for the field <code>inVolAllergens</code>.
+	 * </p>
 	 *
 	 * @return a {@link java.util.Set} object.
 	 */
-	public Set<NodeRef> getInVolAllergens() {
+	public Map<NodeRef, Double> getInVolAllergens() {
 		return inVolAllergens;
 	}
 
 	/**
-	 * <p>Getter for the field <code>inVolAllergensProcess</code>.</p>
+	 * <p>
+	 * Getter for the field <code>inVolAllergensProcess</code>.
+	 * </p>
 	 *
 	 * @return a {@link java.util.Set} object.
 	 */
-	public Set<NodeRef> getInVolAllergensProcess() {
+	public Map<NodeRef, Double> getInVolAllergensProcess() {
 		return inVolAllergensProcess;
 	}
 
 	/**
-	 * <p>Getter for the field <code>inVolAllergensRawMaterial</code>.</p>
+	 * <p>
+	 * Getter for the field <code>inVolAllergensRawMaterial</code>.
+	 * </p>
 	 *
 	 * @return a {@link java.util.Set} object.
 	 */
-	public Set<NodeRef> getInVolAllergensRawMaterial() {
+	public Map<NodeRef, Double> getInVolAllergensRawMaterial() {
 		return inVolAllergensRawMaterial;
 	}
 
 	/**
-	 * <p>Getter for the field <code>reconstituableDataItems</code>.</p>
+	 * <p>
+	 * Getter for the field <code>reconstituableDataItems</code>.
+	 * </p>
 	 *
 	 * @return a {@link java.util.List} object.
 	 */
 	public List<ReconstituableDataItem> getReconstituableDataItems() {
 		return reconstituableDataItems;
 	}
-	
+
 	/**
-	 * <p>Getter for the field <code>evaporatedDataItems</code>.</p>
+	 * <p>
+	 * Getter for the field <code>evaporatedDataItems</code>.
+	 * </p>
 	 *
 	 * @return a {@link java.util.List} object.
 	 */
@@ -228,16 +261,21 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	/**
-	 * <p>getCompositeLabeling.</p>
+	 * <p>
+	 * getCompositeLabeling.
+	 * </p>
 	 *
-	 * @return a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object.
+	 * @return a {@link fr.becpg.repo.product.data.ing.CompositeLabeling}
+	 *         object.
 	 */
 	public CompositeLabeling getCompositeLabeling() {
 		return lblCompositeContext;
 	}
 
 	/**
-	 * <p>Getter for the field <code>toApplyThresholdItems</code>.</p>
+	 * <p>
+	 * Getter for the field <code>toApplyThresholdItems</code>.
+	 * </p>
 	 *
 	 * @return a {@link java.util.Set} object.
 	 */
@@ -246,38 +284,55 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	/**
-	 * <p>setCompositeLabeling.</p>
+	 * <p>
+	 * setCompositeLabeling.
+	 * </p>
 	 *
-	 * @param compositeLabeling a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object.
+	 * @param compositeLabeling
+	 *            a {@link fr.becpg.repo.product.data.ing.CompositeLabeling}
+	 *            object.
 	 */
 	public void setCompositeLabeling(CompositeLabeling compositeLabeling) {
 		this.lblCompositeContext = compositeLabeling;
 	}
 
 	/**
-	 * <p>Getter for the field <code>mergedLblCompositeContext</code>.</p>
+	 * <p>
+	 * Getter for the field <code>mergedLblCompositeContext</code>.
+	 * </p>
 	 *
-	 * @return a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object.
+	 * @return a {@link fr.becpg.repo.product.data.ing.CompositeLabeling}
+	 *         object.
 	 */
 	public CompositeLabeling getMergedLblCompositeContext() {
 		return mergedLblCompositeContext;
 	}
 
 	/**
-	 * <p>Setter for the field <code>mergedLblCompositeContext</code>.</p>
+	 * <p>
+	 * Setter for the field <code>mergedLblCompositeContext</code>.
+	 * </p>
 	 *
-	 * @param mergedLblCompositeContext a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object.
+	 * @param mergedLblCompositeContext
+	 *            a {@link fr.becpg.repo.product.data.ing.CompositeLabeling}
+	 *            object.
 	 */
 	public void setMergedLblCompositeContext(CompositeLabeling mergedLblCompositeContext) {
 		this.mergedLblCompositeContext = mergedLblCompositeContext;
 	}
 
 	/**
-	 * <p>Constructor for LabelingFormulaContext.</p>
+	 * <p>
+	 * Constructor for LabelingFormulaContext.
+	 * </p>
 	 *
-	 * @param mlNodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
-	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object.
-	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
+	 * @param mlNodeService
+	 *            a {@link org.alfresco.service.cmr.repository.NodeService}
+	 *            object.
+	 * @param associationService
+	 *            a {@link fr.becpg.repo.helper.AssociationService} object.
+	 * @param alfrescoRepository
+	 *            a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
 	 */
 	public LabelingFormulaContext(NodeService mlNodeService, AssociationService associationService,
 			AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
@@ -286,6 +341,23 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		this.associationService = associationService;
 	}
 
+	/**
+	 *
+	 * Supported tag <b>bold</b> <u>underline</u> <i>italic</i>
+	 * <up>uppercase</up> <lo>lowercase</lo> <ca>capitalize</ca>
+	 * 
+	 * i,u, b are html tag and will be print as it into label up, lo, ca will
+	 * replace containing text with transformed text value and remove tag lo
+	 * will be the first transformation appended then ca then up.
+	 * 
+	 * For exemple if you define detailsDefaultFormat = "<ca>{0}</ca>
+	 * (<lo>{2}</lo>) and allergenReplacementPattern = "<up>$1</up>" for
+	 * following labelling <ca>sugar</ca>,<ca>garniture</ca> (
+	 * <lo><up>Milk</up>, Lactose (<up>Milk</up>), Sugar</lo>) you will get
+	 * Sugar, Garniture ( MILK, lactose (MILK), sugar)
+	 *
+	 * 
+	 */
 	private String ingDefaultFormat = "{0} [{3}]";
 	private String groupDefaultFormat = "<b>{0}:</b> {2}";
 	private String groupListDefaultFormat = "<b>{0}</b>";
@@ -327,7 +399,9 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	private Integer maxPrecision = 4;
 
 	/**
-	 * <p>isShouldBreakIngType.</p>
+	 * <p>
+	 * isShouldBreakIngType.
+	 * </p>
 	 *
 	 * @return a boolean.
 	 */
@@ -336,43 +410,57 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	/**
-	 * <p>Setter for the field <code>shouldBreakIngType</code>.</p>
+	 * <p>
+	 * Setter for the field <code>shouldBreakIngType</code>.
+	 * </p>
 	 *
-	 * @param shouldBreakIngType a boolean.
+	 * @param shouldBreakIngType
+	 *            a boolean.
 	 */
 	public void setShouldBreakIngType(boolean shouldBreakIngType) {
 		this.shouldBreakIngType = shouldBreakIngType;
 	}
 
 	/**
-	 * <p>Setter for the field <code>disableAllergensForLocales</code>.</p>
+	 * <p>
+	 * Setter for the field <code>disableAllergensForLocales</code>.
+	 * </p>
 	 *
-	 * @param disableAllergensForLocales a {@link java.lang.String} object.
+	 * @param disableAllergensForLocales
+	 *            a {@link java.lang.String} object.
 	 */
 	public void setDisableAllergensForLocales(String disableAllergensForLocales) {
 		this.disableAllergensForLocales = disableAllergensForLocales;
 	}
 
 	/**
-	 * <p>Setter for the field <code>useVolume</code>.</p>
+	 * <p>
+	 * Setter for the field <code>useVolume</code>.
+	 * </p>
 	 *
-	 * @param useVolume a boolean.
+	 * @param useVolume
+	 *            a boolean.
 	 */
 	public void setUseVolume(boolean useVolume) {
 		this.useVolume = useVolume;
 	}
 
 	/**
-	 * <p>Setter for the field <code>showIngCEECode</code>.</p>
+	 * <p>
+	 * Setter for the field <code>showIngCEECode</code>.
+	 * </p>
 	 *
-	 * @param showIngCEECode a boolean.
+	 * @param showIngCEECode
+	 *            a boolean.
 	 */
 	public void setShowIngCEECode(boolean showIngCEECode) {
 		this.showIngCEECode = showIngCEECode;
 	}
 
 	/**
-	 * <p>isIngsLabelingWithYield.</p>
+	 * <p>
+	 * isIngsLabelingWithYield.
+	 * </p>
 	 *
 	 * @return a boolean.
 	 */
@@ -381,16 +469,21 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	/**
-	 * <p>Setter for the field <code>ingsLabelingWithYield</code>.</p>
+	 * <p>
+	 * Setter for the field <code>ingsLabelingWithYield</code>.
+	 * </p>
 	 *
-	 * @param ingsLabelingWithYield a boolean.
+	 * @param ingsLabelingWithYield
+	 *            a boolean.
 	 */
 	public void setIngsLabelingWithYield(boolean ingsLabelingWithYield) {
 		this.ingsLabelingWithYield = ingsLabelingWithYield;
 	}
 
 	/**
-	 * <p>Getter for the field <code>yield</code>.</p>
+	 * <p>
+	 * Getter for the field <code>yield</code>.
+	 * </p>
 	 *
 	 * @return a {@link java.lang.Double} object.
 	 */
@@ -399,9 +492,12 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	/**
-	 * <p>Setter for the field <code>yield</code>.</p>
+	 * <p>
+	 * Setter for the field <code>yield</code>.
+	 * </p>
 	 *
-	 * @param yield a {@link java.lang.Double} object.
+	 * @param yield
+	 *            a {@link java.lang.Double} object.
 	 */
 	public void setYield(Double yield) {
 		this.yield = yield;
@@ -409,169 +505,225 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	/**
-	 * <p>Setter for the field <code>ingDefaultFormat</code>.</p>
+	 * <p>
+	 * Setter for the field <code>ingDefaultFormat</code>.
+	 * </p>
 	 *
-	 * @param ingDefaultFormat a {@link java.lang.String} object.
+	 * @param ingDefaultFormat
+	 *            a {@link java.lang.String} object.
 	 */
 	public void setIngDefaultFormat(String ingDefaultFormat) {
 		this.ingDefaultFormat = ingDefaultFormat;
 	}
 
 	/**
-	 * <p>Setter for the field <code>groupDefaultFormat</code>.</p>
+	 * <p>
+	 * Setter for the field <code>groupDefaultFormat</code>.
+	 * </p>
 	 *
-	 * @param groupDefaultFormat a {@link java.lang.String} object.
+	 * @param groupDefaultFormat
+	 *            a {@link java.lang.String} object.
 	 */
 	public void setGroupDefaultFormat(String groupDefaultFormat) {
 		this.groupDefaultFormat = groupDefaultFormat;
 	}
 
 	/**
-	 * <p>Setter for the field <code>groupListDefaultFormat</code>.</p>
+	 * <p>
+	 * Setter for the field <code>groupListDefaultFormat</code>.
+	 * </p>
 	 *
-	 * @param groupListDefaultFormat a {@link java.lang.String} object.
+	 * @param groupListDefaultFormat
+	 *            a {@link java.lang.String} object.
 	 */
 	public void setGroupListDefaultFormat(String groupListDefaultFormat) {
 		this.groupListDefaultFormat = groupListDefaultFormat;
 	}
 
 	/**
-	 * <p>Setter for the field <code>uncapitalizeLegalName</code>.</p>
+	 * <p>
+	 * Setter for the field <code>uncapitalizeLegalName</code>.
+	 * </p>
 	 *
-	 * @param uncapitalizeLegalName a boolean.
+	 * @param uncapitalizeLegalName
+	 *            a boolean.
 	 */
 	public void setUncapitalizeLegalName(boolean uncapitalizeLegalName) {
 		this.uncapitalizeLegalName = uncapitalizeLegalName;
 	}
 
 	/**
-	 * <p>Setter for the field <code>detailsDefaultFormat</code>.</p>
+	 * <p>
+	 * Setter for the field <code>detailsDefaultFormat</code>.
+	 * </p>
 	 *
-	 * @param detailsDefaultFormat a {@link java.lang.String} object.
+	 * @param detailsDefaultFormat
+	 *            a {@link java.lang.String} object.
 	 */
 	public void setDetailsDefaultFormat(String detailsDefaultFormat) {
 		this.detailsDefaultFormat = detailsDefaultFormat;
 	}
 
 	/**
-	 * <p>Setter for the field <code>ingTypeDefaultFormat</code>.</p>
+	 * <p>
+	 * Setter for the field <code>ingTypeDefaultFormat</code>.
+	 * </p>
 	 *
-	 * @param ingTypeDefaultFormat a {@link java.lang.String} object.
+	 * @param ingTypeDefaultFormat
+	 *            a {@link java.lang.String} object.
 	 */
 	public void setIngTypeDefaultFormat(String ingTypeDefaultFormat) {
 		this.ingTypeDefaultFormat = ingTypeDefaultFormat;
 	}
 
 	/**
-	 * <p>Setter for the field <code>subIngsDefaultFormat</code>.</p>
+	 * <p>
+	 * Setter for the field <code>subIngsDefaultFormat</code>.
+	 * </p>
 	 *
-	 * @param subIngsDefaultFormat a {@link java.lang.String} object.
+	 * @param subIngsDefaultFormat
+	 *            a {@link java.lang.String} object.
 	 */
 	public void setSubIngsDefaultFormat(String subIngsDefaultFormat) {
 		this.subIngsDefaultFormat = subIngsDefaultFormat;
 	}
 
 	/**
-	 * <p>Setter for the field <code>htmlTableRowFormat</code>.</p>
+	 * <p>
+	 * Setter for the field <code>htmlTableRowFormat</code>.
+	 * </p>
 	 *
-	 * @param htmlTableRowFormat a {@link java.lang.String} object.
+	 * @param htmlTableRowFormat
+	 *            a {@link java.lang.String} object.
 	 */
 	public void setHtmlTableRowFormat(String htmlTableRowFormat) {
 		this.htmlTableRowFormat = htmlTableRowFormat;
 	}
 
 	/**
-	 * <p>Setter for the field <code>ingTypeDecThresholdFormat</code>.</p>
+	 * <p>
+	 * Setter for the field <code>ingTypeDecThresholdFormat</code>.
+	 * </p>
 	 *
-	 * @param ingTypeDecThresholdFormat a {@link java.lang.String} object.
+	 * @param ingTypeDecThresholdFormat
+	 *            a {@link java.lang.String} object.
 	 */
 	public void setIngTypeDecThresholdFormat(String ingTypeDecThresholdFormat) {
 		this.ingTypeDecThresholdFormat = ingTypeDecThresholdFormat;
 	}
 
 	/**
-	 * <p>Setter for the field <code>defaultSeparator</code>.</p>
+	 * <p>
+	 * Setter for the field <code>defaultSeparator</code>.
+	 * </p>
 	 *
-	 * @param defaultSeparator a {@link java.lang.String} object.
+	 * @param defaultSeparator
+	 *            a {@link java.lang.String} object.
 	 */
 	public void setDefaultSeparator(String defaultSeparator) {
 		this.defaultSeparator = defaultSeparator;
 	}
 
 	/**
-	 * <p>Setter for the field <code>atEndSeparator</code>.</p>
+	 * <p>
+	 * Setter for the field <code>atEndSeparator</code>.
+	 * </p>
 	 *
-	 * @param atEndSeparator a {@link java.lang.String} object.
+	 * @param atEndSeparator
+	 *            a {@link java.lang.String} object.
 	 */
 	public void setAtEndSeparator(String atEndSeparator) {
 		this.atEndSeparator = atEndSeparator;
 	}
 
 	/**
-	 * <p>Setter for the field <code>groupDefaultSeparator</code>.</p>
+	 * <p>
+	 * Setter for the field <code>groupDefaultSeparator</code>.
+	 * </p>
 	 *
-	 * @param groupDefaultSeparator a {@link java.lang.String} object.
+	 * @param groupDefaultSeparator
+	 *            a {@link java.lang.String} object.
 	 */
 	public void setGroupDefaultSeparator(String groupDefaultSeparator) {
 		this.groupDefaultSeparator = groupDefaultSeparator;
 	}
 
 	/**
-	 * <p>Setter for the field <code>ingTypeDefaultSeparator</code>.</p>
+	 * <p>
+	 * Setter for the field <code>ingTypeDefaultSeparator</code>.
+	 * </p>
 	 *
-	 * @param ingTypeDefaultSeparator a {@link java.lang.String} object.
+	 * @param ingTypeDefaultSeparator
+	 *            a {@link java.lang.String} object.
 	 */
 	public void setIngTypeDefaultSeparator(String ingTypeDefaultSeparator) {
 		this.ingTypeDefaultSeparator = ingTypeDefaultSeparator;
 	}
 
 	/**
-	 * <p>Setter for the field <code>allergensSeparator</code>.</p>
+	 * <p>
+	 * Setter for the field <code>allergensSeparator</code>.
+	 * </p>
 	 *
-	 * @param allergensSeparator a {@link java.lang.String} object.
+	 * @param allergensSeparator
+	 *            a {@link java.lang.String} object.
 	 */
 	public void setAllergensSeparator(String allergensSeparator) {
 		this.allergensSeparator = allergensSeparator;
 	}
 
 	/**
-	 * <p>Setter for the field <code>geoOriginsSeparator</code>.</p>
+	 * <p>
+	 * Setter for the field <code>geoOriginsSeparator</code>.
+	 * </p>
 	 *
-	 * @param geoOriginsSeparator a {@link java.lang.String} object.
+	 * @param geoOriginsSeparator
+	 *            a {@link java.lang.String} object.
 	 */
 	public void setGeoOriginsSeparator(String geoOriginsSeparator) {
 		this.geoOriginsSeparator = geoOriginsSeparator;
 	}
 
 	/**
-	 * <p>Setter for the field <code>allergenReplacementPattern</code>.</p>
+	 * <p>
+	 * Setter for the field <code>allergenReplacementPattern</code>.
+	 * </p>
 	 *
-	 * @param allergenReplacementPattern a {@link java.lang.String} object.
+	 * @param allergenReplacementPattern
+	 *            a {@link java.lang.String} object.
 	 */
 	public void setAllergenReplacementPattern(String allergenReplacementPattern) {
 		this.allergenReplacementPattern = allergenReplacementPattern;
 	}
 
 	/**
-	 * <p>Setter for the field <code>qtyPrecisionThreshold</code>.</p>
+	 * <p>
+	 * Setter for the field <code>qtyPrecisionThreshold</code>.
+	 * </p>
 	 *
-	 * @param qtyPrecisionThreshold a {@link java.lang.Double} object.
+	 * @param qtyPrecisionThreshold
+	 *            a {@link java.lang.Double} object.
 	 */
 	public void setQtyPrecisionThreshold(Double qtyPrecisionThreshold) {
 		this.qtyPrecisionThreshold = qtyPrecisionThreshold;
 	}
 
 	/**
-	 * <p>Setter for the field <code>maxPrecision</code>.</p>
+	 * <p>
+	 * Setter for the field <code>maxPrecision</code>.
+	 * </p>
 	 *
-	 * @param maxPrecision a {@link java.lang.Integer} object.
+	 * @param maxPrecision
+	 *            a {@link java.lang.Integer} object.
 	 */
 	public void setMaxPrecision(Integer maxPrecision) {
 		this.maxPrecision = maxPrecision;
 	}
 
 	/**
-	 * <p>isLabelingByLanguage.</p>
+	 * <p>
+	 * isLabelingByLanguage.
+	 * </p>
 	 *
 	 * @return a boolean.
 	 */
@@ -580,18 +732,24 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	/**
-	 * <p>Setter for the field <code>labelingByLanguage</code>.</p>
+	 * <p>
+	 * Setter for the field <code>labelingByLanguage</code>.
+	 * </p>
 	 *
-	 * @param labelingByLanguage a boolean.
+	 * @param labelingByLanguage
+	 *            a boolean.
 	 */
 	public void setLabelingByLanguage(boolean labelingByLanguage) {
 		this.labelingByLanguage = labelingByLanguage;
 	}
 
 	/**
-	 * <p>Setter for the field <code>force100Perc</code>.</p>
+	 * <p>
+	 * Setter for the field <code>force100Perc</code>.
+	 * </p>
 	 *
-	 * @param force100Perc a boolean.
+	 * @param force100Perc
+	 *            a boolean.
 	 */
 	public void setForce100Perc(boolean force100Perc) {
 		this.force100Perc = force100Perc;
@@ -621,10 +779,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				return applyRoundingMode(new MessageFormat(groupDefaultFormat, I18NUtil.getContentLocale()), qty);
 			}
 			if (DeclarationType.Detail.equals(((CompositeLabeling) lblComponent).getDeclarationType())) {
-				if (lblComponent instanceof IngItem) {
-					if (!((CompositeLabeling) lblComponent).getIngList().isEmpty()) {
-						return applyRoundingMode(new MessageFormat(subIngsDefaultFormat, I18NUtil.getContentLocale()), qty);
-					}
+				if ((lblComponent instanceof IngItem) && !((CompositeLabeling) lblComponent).getIngList().isEmpty()) {
+					return applyRoundingMode(new MessageFormat(subIngsDefaultFormat, I18NUtil.getContentLocale()), qty);
 				}
 				return applyRoundingMode(new MessageFormat(detailsDefaultFormat, I18NUtil.getContentLocale()), qty);
 			}
@@ -674,7 +830,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		decimalFormat.setRoundingMode(roundingMode);
 		if ((qty != null) && (qty > -1) && (qty != 0d)) {
 			int maxNum = decimalFormat.getMaximumFractionDigits();
-			while (((Math.pow(10, (double)maxNum + 2d) * (double)qty) < 1)) {
+			while (((Math.pow(10, maxNum + 2d) * qty) < 1)) {
 				if (maxNum >= maxPrecision) {
 					decimalFormat.setRoundingMode(maxRoundingMode);
 					decimalFormat.setMaximumFractionDigits(maxNum);
@@ -696,9 +852,13 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	/**
-	 * <p>getLegalIngName.</p>
+	 * <p>
+	 * getLegalIngName.
+	 * </p>
 	 *
-	 * @param lblComponent a {@link fr.becpg.repo.product.data.ing.LabelingComponent} object.
+	 * @param lblComponent
+	 *            a {@link fr.becpg.repo.product.data.ing.LabelingComponent}
+	 *            object.
 	 * @return a {@link java.lang.String} object.
 	 */
 	public String getLegalIngName(LabelingComponent lblComponent) {
@@ -731,10 +891,10 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			}
 		} else {
 
-			if (showIngCEECode && (lblComponent instanceof IngItem)) {
-				if ((((IngItem) lblComponent).getIngCEECode() != null) && !((IngItem) lblComponent).getIngCEECode().isEmpty()) {
-					ingLegalName = ((IngItem) lblComponent).getIngCEECode();
-				}
+			if (showIngCEECode && (lblComponent instanceof IngItem)
+					&& ((((IngItem) lblComponent).getIngCEECode() != null) && !((IngItem) lblComponent).getIngCEECode().isEmpty())) {
+				ingLegalName = ((IngItem) lblComponent).getIngCEECode();
+
 			}
 		}
 
@@ -742,11 +902,11 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			ingLegalName = uncapitalize(ingLegalName);
 		}
 
-		if (!lblComponent.getAllergens().isEmpty()) {
-			if (((lblComponent instanceof CompositeLabeling) && ((CompositeLabeling) lblComponent).getIngList().isEmpty())
-					|| (lblComponent instanceof IngItem)) {
-				ingLegalName = createAllergenAwareLabel(ingLegalName, lblComponent.getAllergens());
-			}
+		if (!lblComponent.getAllergens().isEmpty()
+				&& (((lblComponent instanceof CompositeLabeling) && ((CompositeLabeling) lblComponent).getIngList().isEmpty())
+						|| (lblComponent instanceof IngItem))) {
+			ingLegalName = createAllergenAwareLabel(ingLegalName, lblComponent.getAllergens());
+
 		}
 
 		if (qty != null) {
@@ -777,9 +937,9 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 		DecimalFormatSymbols symbols = new DecimalFormatSymbols(I18NUtil.getContentLocale());
 		if ((lblComponent != null)) {
-			
+
 			boolean lookThreshold = false;
-			
+
 			if (showAllPerc) {
 				if (lblComponent instanceof IngTypeItem) {
 					NodeRef ingItemNodeRef = ((IngTypeItem) lblComponent).getOrigNodeRef() != null ? ((IngTypeItem) lblComponent).getOrigNodeRef()
@@ -795,12 +955,11 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 			} else if (showPercRules.containsKey(lblComponent.getNodeRef())) {
 				ShowRule showRule = showPercRules.get(lblComponent.getNodeRef());
-				if (showRule.matchLocale(I18NUtil.getLocale())
-						&& showRule.matchQty(qty)) {
+				if (showRule.matchLocale(I18NUtil.getLocale()) && showRule.matchQty(qty)) {
 					decimalFormat = new DecimalFormat((showRule.format != null) && !showRule.format.isEmpty() ? showRule.format : defaultPercFormat,
 							symbols);
-					
-					if(showRule.roundingMode!=null) {
+
+					if (showRule.roundingMode != null) {
 						roundingMode = showRule.roundingMode;
 					}
 				} else {
@@ -810,24 +969,22 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			} else {
 				lookThreshold = true;
 			}
-			
-			if(lookThreshold ) {
+
+			if (lookThreshold) {
 				Double threshold = 100d;
-				for(ShowRule showRule : showPercRulesByThreshold) {
-					if(showRule.matchLocale(I18NUtil.getLocale()) 
-								&& showRule.matchQty(qty) && showRule.getThreshold() < threshold) {
-							decimalFormat = new DecimalFormat((showRule.format != null) && !showRule.format.isEmpty() ? showRule.format : defaultPercFormat,
-									symbols);
-							
-							if(showRule.roundingMode!=null) {
-								roundingMode = showRule.roundingMode;
-							}
-							
-							threshold = showRule.getThreshold();
-					}	
+				for (ShowRule showRule : showPercRulesByThreshold) {
+					if (showRule.matchLocale(I18NUtil.getLocale()) && showRule.matchQty(qty) && (showRule.getThreshold() < threshold)) {
+						decimalFormat = new DecimalFormat(
+								(showRule.format != null) && !showRule.format.isEmpty() ? showRule.format : defaultPercFormat, symbols);
+
+						if (showRule.roundingMode != null) {
+							roundingMode = showRule.roundingMode;
+						}
+
+						threshold = showRule.getThreshold();
+					}
 				}
 			}
-				
 
 		}
 		if (decimalFormat != null) {
@@ -844,25 +1001,27 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return StringUtils.uncapitalize(legalName);
 	}
 
-
 	private String createAllergenAwareLabel(String ingLegalName, Set<NodeRef> allergens) {
-
-		if (ALLERGEN_DETECTION_PATTERN.matcher(ingLegalName).find() || isAllergensDisableForLocale()) {
+		if (isAllergensDisableForLocale()) {
 			return ingLegalName;
+		}
+
+		Matcher ma = ALLERGEN_DETECTION_PATTERN.matcher(ingLegalName);
+		if (ma.find() && (ma.group(1) != null)) {
+			return ma.replaceAll(allergenReplacementPattern);
 		}
 
 		StringBuilder ret = new StringBuilder();
 		for (NodeRef allergen : allergens) {
 			if (!isAllergenDisableForLocale(allergen)) {
 				boolean shouldAppend = true;
-				if (getAllergens().contains(allergen)) {
+				if (getAllergens().keySet().contains(allergen)) {
 					String allergenName = getCharactName(allergen);
 					if ((allergenName != null) && !allergenName.isEmpty()) {
 						if (ret.length() > 0) {
 							ret.append(allergensSeparator);
 						} else {
-							Matcher ma = Pattern.compile("\\b(" + Pattern.quote(allergenName) + "(s?))\\b", Pattern.CASE_INSENSITIVE)
-									.matcher(ingLegalName);
+							ma = Pattern.compile("\\b(" + Pattern.quote(allergenName) + "(s?))\\b", Pattern.CASE_INSENSITIVE).matcher(ingLegalName);
 							if (ma.find() && (ma.group(1) != null)) {
 								ingLegalName = ma.replaceAll(allergenReplacementPattern);
 								shouldAppend = false;
@@ -921,14 +1080,20 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	private String createAllergenAwareLabel(String ingLegalName, List<LabelingComponent> ingList) {
-		Set<NodeRef> allergens = new HashSet<>();
+		Map<NodeRef, Double> tmp = new HashMap<>();
 		for (LabelingComponent ing : ingList) {
 			for (NodeRef allergen : ing.getAllergens()) {
-				allergens.add(allergen);
+				Double qty = ing.getQty();
+
+				if (tmp.containsKey(allergen) && (qty != null) && (tmp.get(allergen) != null)) {
+					qty += tmp.get(allergen);
+				}
+
+				tmp.put(allergen, qty);
 			}
 		}
 
-		return createAllergenAwareLabel(ingLegalName, allergens);
+		return createAllergenAwareLabel(ingLegalName, sorted(tmp));
 	}
 
 	private String getCharactName(NodeRef charact) {
@@ -948,7 +1113,9 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	/**
-	 * <p>render.</p>
+	 * <p>
+	 * render.
+	 * </p>
 	 *
 	 * @return a {@link java.lang.String} object.
 	 */
@@ -957,9 +1124,12 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	/**
-	 * <p>render.</p>
+	 * <p>
+	 * render.
+	 * </p>
 	 *
-	 * @param showGroup a boolean.
+	 * @param showGroup
+	 *            a boolean.
 	 * @return a {@link java.lang.String} object.
 	 */
 	public String render(boolean showGroup) {
@@ -974,24 +1144,26 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				total = getTotal(lblCompositeContext);
 			}
 
-			return renderCompositeIng(lblCompositeContext, 1d, total, false);
+			return decorate(renderCompositeIng(lblCompositeContext, 1d, total, false));
 		} else {
 			if (force100Perc) {
 				total = getTotal(mergedLblCompositeContext);
 			}
 
-			return renderCompositeIng(mergedLblCompositeContext, 1d, total, false);
+			return decorate(renderCompositeIng(mergedLblCompositeContext, 1d, total, false));
 		}
 
 	}
 
 	/**
-	 * <p>renderGroupList.</p>
+	 * <p>
+	 * renderGroupList.
+	 * </p>
 	 *
 	 * @return a {@link java.lang.String} object.
 	 */
 	public String renderGroupList() {
-		StringBuffer ret = new StringBuffer();
+		StringBuilder ret = new StringBuilder();
 
 		if (logger.isTraceEnabled()) {
 			logger.trace(" Render Group list ");
@@ -1014,55 +1186,72 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			}
 		}
 
-		return cleanLabel(ret);
+		return decorate(ret.toString());
 	}
 
 	/**
-	 * <p>renderAllergens.</p>
+	 * <p>
+	 * renderAllergens.
+	 * </p>
 	 *
 	 * @return a {@link java.lang.String} object.
 	 */
 	public String renderAllergens() {
-		return renderAllergens(this.allergens);
+		return renderAllergens(sorted(this.allergens));
 	}
 
 	/**
-	 * <p>renderInvoluntaryAllergens.</p>
+	 * <p>
+	 * renderInvoluntaryAllergens.
+	 * </p>
 	 *
 	 * @return a {@link java.lang.String} object.
 	 */
 	public String renderInvoluntaryAllergens() {
-		return renderAllergens(this.inVolAllergens);
+		return renderAllergens(sorted(this.inVolAllergens));
 
 	}
 
 	/**
-	 * <p>renderInvoluntaryAllergenInProcess.</p>
+	 * <p>
+	 * renderInvoluntaryAllergenInProcess.
+	 * </p>
 	 *
 	 * @return a {@link java.lang.String} object.
 	 */
 	public String renderInvoluntaryAllergenInProcess() {
-		return renderAllergens(this.inVolAllergensProcess);
+		return renderAllergens(sorted(this.inVolAllergensProcess));
 
 	}
 
 	/**
-	 * <p>renderInvoluntaryInRawMaterial.</p>
+	 * <p>
+	 * renderInvoluntaryInRawMaterial.
+	 * </p>
 	 *
 	 * @return a {@link java.lang.String} object.
 	 */
 	public String renderInvoluntaryInRawMaterial() {
-		return renderAllergens(this.inVolAllergensRawMaterial);
+		return renderAllergens(sorted(this.inVolAllergensRawMaterial));
+	}
+
+	private Set<NodeRef> sorted(Map<NodeRef, Double> toSortHashMap) {
+		return toSortHashMap.entrySet().stream()
+				.sorted(Comparator.comparing(Map.Entry<NodeRef, Double>::getValue, Comparator.nullsLast(Comparator.naturalOrder())))
+				.map(Map.Entry<NodeRef, Double>::getKey).collect(Collectors.toSet());
 	}
 
 	/**
-	 * <p>renderAllergens.</p>
+	 * <p>
+	 * renderAllergens.
+	 * </p>
 	 *
-	 * @param allergensList a {@link java.util.Set} object.
+	 * @param allergensList
+	 *            a {@link java.util.Set} object.
 	 * @return a {@link java.lang.String} object.
 	 */
 	public String renderAllergens(Set<NodeRef> allergensList) {
-		StringBuffer ret = new StringBuffer();
+		StringBuilder ret = new StringBuilder();
 
 		if (logger.isTraceEnabled()) {
 			logger.trace(" Render Allergens list ");
@@ -1077,12 +1266,14 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			}
 		}
 
-		return ret.toString();
+		return decorate(ret.toString());
 
 	}
 
 	/**
-	 * <p>renderAsHtmlTable.</p>
+	 * <p>
+	 * renderAsHtmlTable.
+	 * </p>
 	 *
 	 * @return a {@link java.lang.String} object.
 	 */
@@ -1091,27 +1282,39 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	/**
-	 * <p>renderAsHtmlTable.</p>
+	 * <p>
+	 * renderAsHtmlTable.
+	 * </p>
 	 *
-	 * @param styleCss a {@link java.lang.String} object.
-	 * @param showTotal a boolean.
+	 * @param styleCss
+	 *            a {@link java.lang.String} object.
+	 * @param showTotal
+	 *            a boolean.
 	 * @return a {@link java.lang.String} object.
 	 */
 	public String renderAsHtmlTable(String styleCss, boolean showTotal) {
 		return renderAsHtmlTable(styleCss, showTotal, false);
 	}
 
+	private static String UNSUPPORTED_ING_TYPE = "Unsupported ing type. Name: %s";
+	private static String REMOVING_NULL_QTY = "Removing ing with qty of 0: %s";
+
 	/**
-	 * <p>renderAsHtmlTable.</p>
+	 * <p>
+	 * renderAsHtmlTable.
+	 * </p>
 	 *
-	 * @param styleCss a {@link java.lang.String} object.
-	 * @param showTotal a boolean.
-	 * @param force100Perc a boolean.
+	 * @param styleCss
+	 *            a {@link java.lang.String} object.
+	 * @param showTotal
+	 *            a boolean.
+	 * @param force100Perc
+	 *            a boolean.
 	 * @return a {@link java.lang.String} object.
 	 */
 	public String renderAsHtmlTable(String styleCss, boolean showTotal, boolean force100Perc) {
-		StringBuffer ret = new StringBuffer();
-		StringBuffer tableContent = new StringBuffer();
+		StringBuilder ret = new StringBuilder();
+		StringBuilder tableContent = new StringBuilder();
 
 		BigDecimal total = BigDecimal.valueOf(0d);
 
@@ -1177,7 +1380,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 					if (!shouldSkip(component.getNodeRef(), qtyPerc)) {
 
-						String subLabel = new String();
+						String subLabel = "";
 						if (component instanceof CompositeLabeling) {
 
 							Double subRatio = qtyPerc;
@@ -1189,10 +1392,10 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 									new Object[] { ingName, qtyPerc, renderCompositeIng((CompositeLabeling) component, subRatio, null, true), null });
 
 						} else {
-							logger.error("Unsupported ing type. Name: " + component.getName());
+							logger.error(String.format(UNSUPPORTED_ING_TYPE, component.getName()));
 						}
 
-						if ((subLabel != null) && !subLabel.toString().isEmpty()) {
+						if ((subLabel != null) && !subLabel.isEmpty()) {
 							if (first) {
 								first = false;
 								firstLabel = subLabel;
@@ -1209,7 +1412,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 						}
 
 					} else {
-						logger.debug("Removing ing with qty of 0: " + ingName);
+						logger.debug(String.format(REMOVING_NULL_QTY, ingName));
 					}
 
 				}
@@ -1241,12 +1444,14 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		}
 
 		ret.append("</table>");
-		return cleanLabel(ret);
+		return decorate(ret.toString());
 
 	}
 
 	/**
-	 * <p>renderAsFlatHtmlTable.</p>
+	 * <p>
+	 * renderAsFlatHtmlTable.
+	 * </p>
 	 *
 	 * @return a {@link java.lang.String} object.
 	 */
@@ -1255,10 +1460,14 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	/**
-	 * <p>renderAsFlatHtmlTable.</p>
+	 * <p>
+	 * renderAsFlatHtmlTable.
+	 * </p>
 	 *
-	 * @param styleCss a {@link java.lang.String} object.
-	 * @param showTotal a boolean.
+	 * @param styleCss
+	 *            a {@link java.lang.String} object.
+	 * @param showTotal
+	 *            a boolean.
 	 * @return a {@link java.lang.String} object.
 	 */
 	public String renderAsFlatHtmlTable(String styleCss, boolean showTotal) {
@@ -1282,19 +1491,24 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	/**
-	 * <p>renderAsFlatHtmlTable.</p>
+	 * <p>
+	 * renderAsFlatHtmlTable.
+	 * </p>
 	 *
-	 * @param styleCss a {@link java.lang.String} object.
-	 * @param showTotal a boolean.
-	 * @param force100Perc a boolean.
+	 * @param styleCss
+	 *            a {@link java.lang.String} object.
+	 * @param showTotal
+	 *            a boolean.
+	 * @param force100Perc
+	 *            a boolean.
 	 * @return a {@link java.lang.String} object.
 	 */
 	public String renderAsFlatHtmlTable(String styleCss, boolean showTotal, boolean force100Perc) {
 
 		BigDecimal total = BigDecimal.valueOf(0d);
 
-		StringBuffer tableContent = new StringBuffer();
-		StringBuffer ret = new StringBuffer();
+		StringBuilder tableContent = new StringBuilder();
+		StringBuilder ret = new StringBuilder();
 
 		try {
 			shouldBreakIngType = true;
@@ -1302,7 +1516,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			tableContent.append("<table cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"" + styleCss + "\" rules=\"none\">");
 
 			List<HtmlTableStruct> flatList = flatCompositeLabeling(lblCompositeContext, 1d, 0);
-			if (flatList.size() > 0) {
+			if (!flatList.isEmpty()) {
 
 				boolean first = true;
 				for (HtmlTableStruct tmp : flatList) {
@@ -1342,7 +1556,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 			tableContent.append("</table>");
 
-			return cleanLabel(tableContent);
+			return decorate(tableContent.toString());
 		} finally {
 			shouldBreakIngType = false;
 		}
@@ -1351,11 +1565,11 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 	private String indent(String label, Integer level) {
 		if ((level != null) && (level > 0)) {
-			String indent = "";
+			StringBuilder indent = new StringBuilder();
 			for (int i = 0; i < level; i++) {
-				indent += "&nbsp;&nbsp;";
+				indent.append("&nbsp;&nbsp;");
 			}
-			return indent + label;
+			return indent.append(label).toString();
 
 		}
 
@@ -1407,11 +1621,11 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 						ret.addAll(flatCompositeLabeling((CompositeLabeling) component, subRatio, level + 1));
 
 					} else {
-						logger.error("Unsupported ing type. Name: " + component.getName());
+						logger.error(String.format(UNSUPPORTED_ING_TYPE, component.getName()));
 					}
 
 				} else {
-					logger.debug("Removing ing with qty of 0: " + ingName);
+					logger.debug(String.format(REMOVING_NULL_QTY, ingName));
 				}
 
 			}
@@ -1426,8 +1640,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		if (nodeDeclarationFilters.containsKey(nodeRef)) {
 			for (DeclarationFilter declarationFilter : nodeDeclarationFilters.get(nodeRef)) {
 				if (DeclarationType.DoNotDetails.equals(declarationFilter.getDeclarationType())
-						&& matchFormule(declarationFilter, new DeclarationFilterContext())
-						&& declarationFilter.matchLocale(currentLocale)) {
+						&& matchFormule(declarationFilter, new DeclarationFilterContext()) && declarationFilter.matchLocale(currentLocale)) {
 					return true;
 				}
 			}
@@ -1452,7 +1665,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		decimalFormat.setRoundingMode(roundingMode);
 		if ((qty != null) && (qty > -1) && (qty != 0d)) {
 			int maxNum = decimalFormat.getMaximumFractionDigits();
-			while (((Math.pow(10, (double)maxNum + (double)2) * (double)qty) < 1)) {
+			while (((Math.pow(10, (double) maxNum + (double) 2) * qty) < 1)) {
 				if (maxNum >= maxPrecision) {
 					decimalFormat.setRoundingMode(RoundingMode.FLOOR);
 					decimalFormat.setMaximumFractionDigits(maxNum);
@@ -1472,7 +1685,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				logger.error(e, e);
 			}
 		}
-		return  BigDecimal.valueOf(qty != null ? qty : 0d);
+		return BigDecimal.valueOf(qty != null ? qty : 0d);
 
 	}
 
@@ -1483,7 +1696,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				return roundeedValue(qty, (DecimalFormat) format, defaultRoundingMode);
 			}
 		}
-		return  BigDecimal.valueOf(qty);
+		return BigDecimal.valueOf(qty);
 
 	}
 
@@ -1511,11 +1724,9 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 					qtyPerc = (useVolume ? volumePerc : qtyPerc);
 
-					if (!shouldSkip(component.getNodeRef(), qtyPerc)) {
+					if (!shouldSkip(component.getNodeRef(), qtyPerc) && (qtyPerc != null)) {
+						total = total.add(roundeedValue(qtyPerc, component));
 
-						if (qtyPerc != null) {
-							total = total.add(roundeedValue(qtyPerc, component));
-						}
 					}
 				}
 			}
@@ -1525,7 +1736,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	private String renderCompositeIng(CompositeLabeling compositeLabeling, Double ratio, BigDecimal total, boolean hideGeo) {
-		StringBuffer ret = new StringBuffer();
+		StringBuilder ret = new StringBuilder();
 		boolean appendEOF = false;
 		boolean first = true;
 
@@ -1607,18 +1818,19 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			}
 
 		}
-		
-		if(!compositeLabeling.getIngListAtEnd().isEmpty()) {	
+
+		if (!compositeLabeling.getIngListAtEnd().isEmpty()) {
 			if (ret.length() > 0) {
-			 ret.append(atEndSeparator);
+				ret.append(atEndSeparator);
 			}
-			ret.append(renderLabelingComponent(compositeLabeling,compositeLabeling.getIngListAtEnd().values().stream().collect(Collectors.toList()), false, null, null, true));
+			ret.append(renderLabelingComponent(compositeLabeling, compositeLabeling.getIngListAtEnd().values().stream().collect(Collectors.toList()),
+					false, null, null, true));
 		}
-		
-		return cleanLabel(ret);
+
+		return ret.toString().trim();
 	}
 
-	Double totalPrecision = 1 / Math.pow(10, (double)maxPrecision + (double)2);
+	Double totalPrecision = 1 / Math.pow(10, (double) maxPrecision + (double) 2);
 
 	private StringBuilder renderLabelingComponent(CompositeLabeling parent, List<LabelingComponent> subComponents, boolean isIngType, Double ratio,
 			BigDecimal total, boolean hideGeo) {
@@ -1653,9 +1865,9 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 			if (!shouldSkip(component.getNodeRef(), qtyPerc)) {
 
-				String toAppend = new String();
+				String toAppend = "";
 
-				 if (component instanceof CompositeLabeling) {
+				if (component instanceof CompositeLabeling) {
 
 					MessageFormat formater = getIngTextFormat(component, qtyPerc);
 					Double subRatio = qtyPerc;
@@ -1675,7 +1887,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 					first = false;
 
 				} else {
-					logger.error("Unsupported ing type. Name: " + component.getName());
+					logger.error(String.format(UNSUPPORTED_ING_TYPE, component.getName()));
 				}
 
 				if ((toAppend != null) && !toAppend.isEmpty()) {
@@ -1697,7 +1909,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				}
 
 			} else {
-				logger.debug("Removing ing with qty of 0: " + ingName);
+				logger.debug(String.format(REMOVING_NULL_QTY, ingName));
 			}
 
 		}
@@ -1777,9 +1989,12 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	/**
-	 * <p>createJsonLog.</p>
+	 * <p>
+	 * createJsonLog.
+	 * </p>
 	 *
-	 * @param mergedLabeling a boolean.
+	 * @param mergedLabeling
+	 *            a boolean.
 	 * @return a {@link java.lang.String} object.
 	 */
 	public String createJsonLog(boolean mergedLabeling) {
@@ -1810,7 +2025,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			}
 
 			tree.put("name", getName(component));
-			tree.put("legal", cleanLabel(getLegalIngName(component, null, component.isPlural(), false)));
+			tree.put("legal", decorate(getLegalIngName(component, null, component.isPlural(), false)));
 			if ((component.getVolume() != null) && (totalVol != null) && (totalVol > 0)) {
 				tree.put("vol", (component.getVolume() / totalVol) * 100);
 			}
@@ -1819,11 +2034,11 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			}
 			if (!component.getAllergens().isEmpty()
 					&& (!(component instanceof CompositeLabeling) || ((CompositeLabeling) component).getIngList().isEmpty())) {
-				JSONArray allergens = new JSONArray();
+				JSONArray tmp = new JSONArray();
 				for (NodeRef allergen : component.getAllergens()) {
-					allergens.add(getCharactName(allergen));
+					tmp.add(getCharactName(allergen));
 				}
-				tree.put("allergens", allergens);
+				tree.put("allergens", tmp);
 			}
 
 			if (!component.getGeoOrigins().isEmpty()
@@ -1845,13 +2060,13 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				JSONArray children = new JSONArray();
 				for (Map.Entry<IngTypeItem, List<LabelingComponent>> kv : getSortedIngListByType(composite).entrySet()) {
 
-					if ((kv.getKey() != null) && (getLegalIngName(kv.getKey(), null,false, false) != null)) {
+					if ((kv.getKey() != null) && (getLegalIngName(kv.getKey(), null, false, false) != null)) {
 
 						JSONObject ingTypeJson = new JSONObject();
 						ingTypeJson.put("nodeRef", kv.getKey().getNodeRef().toString());
 						ingTypeJson.put("cssClass", "ingType");
 						ingTypeJson.put("name", getName(kv.getKey()));
-						ingTypeJson.put("legal", cleanLabel(getLegalIngName(kv.getKey(), null,
+						ingTypeJson.put("legal", decorate(getLegalIngName(kv.getKey(), null,
 								(kv.getValue().size() > 1) || (!kv.getValue().isEmpty() && kv.getValue().get(0).isPlural()), false)));
 
 						if ((kv.getKey().getQty() != null) && (totalQty != null) && (totalQty > 0)) {
@@ -1877,29 +2092,36 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 				tree.put("children", children);
 
-			} 
+			}
 
 		}
 
 		return tree;
 	}
 
-	private String cleanLabel(String buffer) {
-		if (buffer != null) {
-			return buffer.replaceAll(" null| \\(null\\)| \\(\\)| \\[null\\]", "").replaceAll(":,", ",").replaceAll(":$", "")
-					.replaceAll(">null<", "><").trim();
+	private String decorate(String input) {
+		if (input != null) {
+
+			for (LabelingDecorator labelingDecorator : labelingDecorators) {
+				if (labelingDecorator.matchLocale(I18NUtil.getLocale())) {
+					input = labelingDecorator.decorate(input);
+				}
+			}
+
+			return input.replaceAll(" null| \\(null\\)| \\(\\)| \\[null\\]", "").replaceAll(":,", ",").replaceAll(":$", "").replaceAll(">null<",
+					"><").replaceAll("  ", "").trim();
 		}
 		return "";
 	}
 
-	private String cleanLabel(StringBuffer buffer) {
-		return cleanLabel(buffer.toString());
-	}
-
 	/**
-	 * <p>isGroup.</p>
+	 * <p>
+	 * isGroup.
+	 * </p>
 	 *
-	 * @param component a {@link fr.becpg.repo.product.data.ing.LabelingComponent} object.
+	 * @param component
+	 *            a {@link fr.becpg.repo.product.data.ing.LabelingComponent}
+	 *            object.
 	 * @return a boolean.
 	 */
 	public boolean isGroup(LabelingComponent component) {
@@ -1907,11 +2129,18 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	/**
-	 * <p>computeQtyPerc.</p>
+	 * <p>
+	 * computeQtyPerc.
+	 * </p>
 	 *
-	 * @param parent a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object.
-	 * @param component a {@link fr.becpg.repo.product.data.ing.LabelingComponent} object.
-	 * @param ratio a {@link java.lang.Double} object.
+	 * @param parent
+	 *            a {@link fr.becpg.repo.product.data.ing.CompositeLabeling}
+	 *            object.
+	 * @param component
+	 *            a {@link fr.becpg.repo.product.data.ing.LabelingComponent}
+	 *            object.
+	 * @param ratio
+	 *            a {@link java.lang.Double} object.
 	 * @return a {@link java.lang.Double} object.
 	 */
 	public Double computeQtyPerc(CompositeLabeling parent, LabelingComponent component, Double ratio) {
@@ -1927,11 +2156,18 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	/**
-	 * <p>computeVolumePerc.</p>
+	 * <p>
+	 * computeVolumePerc.
+	 * </p>
 	 *
-	 * @param parent a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object.
-	 * @param component a {@link fr.becpg.repo.product.data.ing.LabelingComponent} object.
-	 * @param ratio a {@link java.lang.Double} object.
+	 * @param parent
+	 *            a {@link fr.becpg.repo.product.data.ing.CompositeLabeling}
+	 *            object.
+	 * @param component
+	 *            a {@link fr.becpg.repo.product.data.ing.LabelingComponent}
+	 *            object.
+	 * @param ratio
+	 *            a {@link java.lang.Double} object.
 	 * @return a {@link java.lang.Double} object.
 	 */
 	public Double computeVolumePerc(CompositeLabeling parent, LabelingComponent component, Double ratio) {
@@ -1981,17 +2217,15 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				}
 
 				// If Omit
-				if (nodeDeclarationFilters.containsKey(ingType.getNodeRef())) {
+				if ((ingType != null) && nodeDeclarationFilters.containsKey(ingType.getNodeRef())) {
 					boolean shouldBreak = false;
 					for (DeclarationFilter declarationFilter : nodeDeclarationFilters.get(ingType.getNodeRef())) {
 						if (DeclarationType.Omit.equals(declarationFilter.getDeclarationType())
-								&& matchFormule(declarationFilter, new DeclarationFilterContext())
-								&& declarationFilter.matchLocale(currentLocale)) {
+								&& matchFormule(declarationFilter, new DeclarationFilterContext()) && declarationFilter.matchLocale(currentLocale)) {
 							shouldBreak = true;
 							break;
 						} else if ((DeclarationType.DoNotDeclare.equals(declarationFilter.getDeclarationType()) && !declarationFilter.isThreshold()
-								&& matchFormule(declarationFilter, new DeclarationFilterContext())
-								&& declarationFilter.matchLocale(currentLocale))) {
+								&& matchFormule(declarationFilter, new DeclarationFilterContext()) && declarationFilter.matchLocale(currentLocale))) {
 							ingType = null;
 							break;
 						}
@@ -2163,10 +2397,17 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	/**
-	 * <p>matchFormule.</p>
+	 * <p>
+	 * matchFormule.
+	 * </p>
 	 *
-	 * @param declarationFilter a {@link fr.becpg.repo.product.data.ing.DeclarationFilter} object.
-	 * @param declarationFilterContext a {@link fr.becpg.repo.product.data.spel.DeclarationFilterContext} object.
+	 * @param declarationFilter
+	 *            a {@link fr.becpg.repo.product.data.ing.DeclarationFilter}
+	 *            object.
+	 * @param declarationFilterContext
+	 *            a
+	 *            {@link fr.becpg.repo.product.data.spel.DeclarationFilterContext}
+	 *            object.
 	 * @return a boolean.
 	 */
 	public boolean matchFormule(DeclarationFilter declarationFilter, DeclarationFilterContext declarationFilterContext) {
@@ -2186,10 +2427,12 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 				return ret;
 			} catch (Exception e) {
-		
-				getEntity().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, MLTextHelper.getI18NMessage("message.formulate.labelRule.error", declarationFilter.getRuleName(),
-						e.getLocalizedMessage()), null,
-						new ArrayList<NodeRef>(), RequirementDataType.Labelling));
+
+				getEntity().getReqCtrlList()
+						.add(new ReqCtrlListDataItem(
+								null, RequirementType.Tolerated, MLTextHelper.getI18NMessage("message.formulate.labelRule.error",
+										declarationFilter.getRuleName(), e.getLocalizedMessage()),
+								null, new ArrayList<NodeRef>(), RequirementDataType.Labelling));
 				if (logger.isDebugEnabled()) {
 					logger.debug("Cannot evaluate formula :" + declarationFilter.getFormula() + " on " + declarationFilterContext.toString(), e);
 				}
