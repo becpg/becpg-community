@@ -23,12 +23,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.service.namespace.RegexQNamePattern;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
@@ -42,10 +44,9 @@ import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
-
-import fr.becpg.repo.product.formulation.nutrient.NutrientCode;
-import fr.becpg.repo.product.formulation.nutrient.RegulationFormulationHelper;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
+
+
 
 /**
  * Test variant columns calculation
@@ -160,13 +161,20 @@ public class FormulationVariantColumnsIT extends AbstractFinishedProductTest {
 			ProductData finishedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
 
 			assertNotNull(finishedProduct.getVariants());
-			assertEquals(4,finishedProduct.getVariants().size());
+			assertEquals(3,finishedProduct.getVariants().size());
 			assertEquals(5,finishedProduct.getCompoListView().getCompoList().size());
 			//Add variant to composition
-			finishedProduct.getCompoListView().getCompoList().get(0).setVariants(Collections.singletonList(finishedProduct.getVariants().get(0).getNodeRef()));
+			List<ChildAssociationRef> tplVariants = nodeService.getChildAssocs(entityTpl.getNodeRef(), BeCPGModel.ASSOC_VARIANTS,
+											RegexQNamePattern.MATCH_ALL);
+			assertNotNull(tplVariants);
+			assertEquals(1, tplVariants.size());
+			NodeRef tplVariant = tplVariants.get(0).getChildRef();
+			
+			finishedProduct.getCompoListView().getCompoList().get(0).setVariants(Collections.singletonList(tplVariant));
+			finishedProduct.getCompoListView().getCompoList().get(1).setVariants(Collections.singletonList(tplVariant));
 
-			for (int i=1; i<5; i++) {
-				finishedProduct.getCompoListView().getCompoList().get(i).setVariants(Collections.singletonList(finishedProduct.getVariants().get(i-1).getNodeRef()));
+			for (int i=2; i<5; i++) {
+				finishedProduct.getCompoListView().getCompoList().get(i).setVariants(Collections.singletonList(finishedProduct.getVariants().get(i-2).getNodeRef()));
 			}
 			alfrescoRepository.save(finishedProduct);
 			productService.formulate(finishedProductNodeRef);

@@ -38,7 +38,6 @@ import org.alfresco.service.cmr.dictionary.TypeDefinition;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.AssociationRef;
-import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.InvalidNodeRefException;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -47,7 +46,6 @@ import org.alfresco.service.cmr.rule.Rule;
 import org.alfresco.service.cmr.rule.RuleService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.service.namespace.RegexQNamePattern;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -692,26 +690,6 @@ public class EntityTplServiceImpl implements EntityTplService {
 					}
 				}
 				
-				// copy variants
-				List<ChildAssociationRef> tplVariants = nodeService.getChildAssocs(entityTplNodeRef, BeCPGModel.ASSOC_VARIANTS,
-						RegexQNamePattern.MATCH_ALL);
-				List<ChildAssociationRef> entityVariants = nodeService.getChildAssocs(entityNodeRef, BeCPGModel.ASSOC_VARIANTS,
-						RegexQNamePattern.MATCH_ALL);
-				boolean contains = false;
-				for (ChildAssociationRef tplVariant : tplVariants) {
-					if (tplVariant.getChildRef() != null) {
-						contains = false;
-						for (ChildAssociationRef entityVariant : entityVariants) {
-							if (tplVariant.getChildRef().equals(entityVariant.getChildRef())){
-								contains = true;
-							}
-						}
-						if (!contains) {
-							nodeService.addChild(entityNodeRef, tplVariant.getChildRef(), BeCPGModel.ASSOC_VARIANTS, BeCPGModel.ASSOC_VARIANTS);
-						}
-					}
-				}
-
 				for (EntityTplPlugin entityTplPlugin : entityTplPlugins) {
 					entityTplPlugin.synchronizeEntity(entityNodeRef, entityTplNodeRef);
 				}

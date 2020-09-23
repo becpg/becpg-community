@@ -20,8 +20,6 @@ package fr.becpg.repo.repository.model;
 import java.io.Serializable;
 
 import org.alfresco.service.namespace.QName;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.variant.model.VariantData;
