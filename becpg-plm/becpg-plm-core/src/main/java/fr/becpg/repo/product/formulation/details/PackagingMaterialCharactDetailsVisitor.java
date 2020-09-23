@@ -124,7 +124,7 @@ public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetails
 
 			PackagingMaterialData packagingProduct = (PackagingMaterialData) alfrescoRepository.findOne(packagingListDataItem.getProduct());
 
-			BigDecimal tare = FormulationHelper.getTareInKg(packagingListDataItem, packagingProduct).multiply(new BigDecimal(subQty*1000d));
+			BigDecimal tare = FormulationHelper.getTareInKg(packagingListDataItem, packagingProduct).multiply(BigDecimal.valueOf(subQty*1000d));
 
 			if (alfrescoRepository.hasDataList(packagingProduct, PackModel.PACK_MATERIAL_LIST_TYPE)
 					&& (packagingProduct.getPackMaterialList() != null)) {
@@ -136,7 +136,7 @@ public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetails
 							if ((simpleCharact != null) && packMateriDataItem.getPmlMaterial().equals(simpleCharact.getCharactNodeRef())
 									&& charactDetails.hasElement(simpleCharact.getCharactNodeRef())) {
 
-								BigDecimal plmWeight = new BigDecimal(packMateriDataItem.getPmlWeight(), MathContext.DECIMAL64).multiply(tare);
+								BigDecimal plmWeight = BigDecimal.valueOf(packMateriDataItem.getPmlWeight()).multiply(tare);
 
 								BigDecimal productTare = FormulationHelper.getTareInKg(packagingProduct);
 								if(productTare!=null) {
@@ -171,7 +171,7 @@ public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetails
 							&& charactDetails.hasElement(simpleCharact.getCharactNodeRef())) {
 
 						BigDecimal tareByMaterial = tare
-								.divide(new BigDecimal(packagingProduct.getPackagingMaterials().size(), MathContext.DECIMAL64));
+								.divide(BigDecimal.valueOf(packagingProduct.getPackagingMaterials().size()));
 
 						Double value = tareByMaterial.doubleValue();
 
