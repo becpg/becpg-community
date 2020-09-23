@@ -56,6 +56,17 @@ public abstract class RuleParser {
 	protected boolean showAllPerc = false;
 	protected boolean showAllGeo = false;
 	
+
+	protected List<LabelingDecorator> labelingDecorators = new LinkedList<>();
+	
+	
+	{
+		labelingDecorators.add(new LowerCaseDecorator());
+		labelingDecorators.add(new CapitalizeDecorator());
+		labelingDecorators.add(new UppercaseDecorator());		
+		labelingDecorators.add(new FrenchTypoDecorator());
+	}
+	
 	
 	/**
 	 * <p>Setter for the field <code>defaultRoundingMode</code>.</p>
@@ -302,7 +313,7 @@ public abstract class RuleParser {
 				try {
 					aggregateRule.setQty(Double.valueOf(qtys[i]));
 				} catch (NumberFormatException e) {
-					logger.error(e, e);
+					logger.info("Cannot read double value" +qtys[i]+" for rule: "+ ruleNodeRef);
 				}
 			}
 			aggregateRule.setComponents(components);
