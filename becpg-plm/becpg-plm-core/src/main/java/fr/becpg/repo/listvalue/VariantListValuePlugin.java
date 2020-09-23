@@ -25,6 +25,7 @@ import java.util.Map;
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.apache.commons.collections.ListUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,9 +72,13 @@ public class VariantListValuePlugin extends EntityListValuePlugin {
 		if(logger.isDebugEnabled()){
 			logger.debug("VariantListValuePlugin sourceType: " + sourceType + " - entityNodeRef: " + entityNodeRef);
 		}
-
-		List<NodeRef> ret = associationService.getChildAssocs(entityNodeRef, BeCPGModel.ASSOC_VARIANTS);
-	
+		List<NodeRef> ret = new ArrayList<NodeRef>(associationService.getChildAssocs(entityNodeRef, BeCPGModel.ASSOC_VARIANTS));
+		NodeRef entityTplNodeRef = associationService.getTargetAssoc(entityNodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF);
+		List<NodeRef> entityTplVariants = associationService.getChildAssocs(entityTplNodeRef, BeCPGModel.ASSOC_VARIANTS);
+		if (entityTplVariants != null && !entityTplVariants.isEmpty()) {
+			ret.addAll(entityTplVariants);
+		}
+		
 		return new ListValuePage(ret, pageNum, pageSize, new VariantListValueExtractor());
 
 	}

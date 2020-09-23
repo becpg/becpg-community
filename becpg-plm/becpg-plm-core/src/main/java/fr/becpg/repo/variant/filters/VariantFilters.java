@@ -17,7 +17,9 @@
  ******************************************************************************/
 package fr.becpg.repo.variant.filters;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -73,7 +75,14 @@ public class VariantFilters<T extends VariantDataItem> implements DataListFilter
 	public Predicate<T> createPredicate(final ProductData entity) {
 
 		if ((variantNodeRefs.isEmpty()) && (entity.getVariants() != null)) {
-			for (VariantData variant : entity.getVariants()) {
+			List<VariantData> variants = new ArrayList<VariantData>(entity.getVariants());
+			if (entity.getEntityTpl() != null) {
+				List<VariantData> entityTplVariants = entity.getEntityTpl().getVariants();
+				if (entityTplVariants != null && !entityTplVariants.isEmpty()) {
+					variants.addAll(entityTplVariants);
+				}
+			}
+			for (VariantData variant : variants) {
 				if (variant.getIsDefaultVariant()) {
 					this.variantNodeRefs.add(variant.getNodeRef());
 				}

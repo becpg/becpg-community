@@ -249,6 +249,7 @@
 					<show id="mpm:plQtyResource" />
 					<show id="mpm:plRateResource" />
 					<show id="mpm:plUnit" />
+					<show id="bcpg:variantIds" force="true" />
 				</field-visibility>
 				<appearance>	
 					<field id="mpm:plUnit">
@@ -268,6 +269,12 @@
 					<field id="mpm:plResource">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:variantIds">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/variantList
+							</control-param>
+						</control>
 					</field>
 				</appearance>
 			</form>

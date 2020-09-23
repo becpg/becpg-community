@@ -63,25 +63,11 @@ public class EntityTplServiceIT extends PLMBaseTestCase {
 
 		final NodeRef rm1NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			
-			//add variants on template
-			Map<QName, Serializable> props = new HashMap<>();
-			props.put(ContentModel.PROP_NAME, "variant");
-			props.put(BeCPGModel.PROP_IS_DEFAULT_VARIANT, true);
-			NodeRef variantNodeRef = nodeService
-					.createNode(rmTplNodeRef, BeCPGModel.ASSOC_VARIANTS, BeCPGModel.ASSOC_VARIANTS, BeCPGModel.TYPE_VARIANT, props)
-					.getChildRef();
-			
 			RawMaterialData rmTplData = (RawMaterialData) alfrescoRepository.findOne(rmTplNodeRef);
 			RawMaterialData rm1Data = new RawMaterialData();
 			rm1Data.setName("Raw material 1");			
 			rm1Data.setEntityTpl(rmTplData);
 			rm1Data = (RawMaterialData) alfrescoRepository.create(getTestFolderNodeRef(), rm1Data);
-
-			List<ChildAssociationRef> rm1Variants = nodeService.getChildAssocs(rm1Data.getNodeRef(), BeCPGModel.ASSOC_VARIANTS,
-					RegexQNamePattern.MATCH_ALL);
-			logger.debug("Check if variant exists");
-			assertEquals(1,rm1Variants.size());
-			assertEquals(variantNodeRef,rm1Variants.get(0).getChildRef());
 			
 			assertTrue(rm1Data.getCostList() == null);
 
@@ -93,8 +79,7 @@ public class EntityTplServiceIT extends PLMBaseTestCase {
 			alfrescoRepository.save(rmTplData);
 
 			assertEquals(2, rmTplData.getCostList().size());
-			
-			
+					
 			
 			return rm1Data.getNodeRef();
 		}, false, true);
