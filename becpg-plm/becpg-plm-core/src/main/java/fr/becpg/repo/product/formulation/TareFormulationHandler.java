@@ -83,8 +83,8 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 			tarePrimary = tarePrimary.add(variantPackagingData.getTarePrimary());
 		}
 
-		BigDecimal netWeightPrimary = new BigDecimal(
-				FormulationHelper.getNetWeight(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT).toString());
+		BigDecimal netWeightPrimary = BigDecimal.valueOf(
+				FormulationHelper.getNetWeight(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT));
 
 		BigDecimal weightPrimary = tarePrimary.add(netWeightPrimary);
 
@@ -92,20 +92,20 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 
 		if ((variantPackagingData != null) && (variantPackagingData.getProductPerBoxes() != null)) {
 
-			BigDecimal tareSecondary = tarePrimary.multiply(new BigDecimal(variantPackagingData.getProductPerBoxes()))
+			BigDecimal tareSecondary = tarePrimary.multiply(BigDecimal.valueOf(variantPackagingData.getProductPerBoxes()))
 					.add(variantPackagingData.getTareSecondary());
 
-			BigDecimal netWeightSecondary = netWeightPrimary.multiply(new BigDecimal(variantPackagingData.getProductPerBoxes()));
+			BigDecimal netWeightSecondary = netWeightPrimary.multiply(BigDecimal.valueOf(variantPackagingData.getProductPerBoxes()));
 			BigDecimal weightSecondary = tareSecondary.add(netWeightSecondary);
 			formulatedProduct.setWeightSecondary(weightSecondary.doubleValue());
 			formulatedProduct.setNetWeightSecondary(netWeightSecondary.doubleValue());
 
 			if (variantPackagingData.getBoxesPerPallet() != null) {
 
-				BigDecimal tareTertiary = tareSecondary.multiply(new BigDecimal(variantPackagingData.getBoxesPerPallet()))
+				BigDecimal tareTertiary = tareSecondary.multiply(BigDecimal.valueOf(variantPackagingData.getBoxesPerPallet()))
 						.add(variantPackagingData.getTareTertiary());
 
-				BigDecimal netWeightTertiary = netWeightSecondary.multiply(new BigDecimal(variantPackagingData.getBoxesPerPallet()));
+				BigDecimal netWeightTertiary = netWeightSecondary.multiply(BigDecimal.valueOf(variantPackagingData.getBoxesPerPallet()));
 				BigDecimal weightTertiary = tareTertiary.add(netWeightTertiary);
 				formulatedProduct.setWeightTertiary(weightTertiary.doubleValue());
 				formulatedProduct.setNetWeightTertiary(netWeightTertiary.doubleValue());

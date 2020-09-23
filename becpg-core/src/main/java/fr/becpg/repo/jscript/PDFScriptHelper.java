@@ -124,7 +124,9 @@ public class PDFScriptHelper extends BaseScopableProcessorExtension {
 						writer.putContent(file);
 
 						// Clean up
-						file.delete();
+						if(!file.delete()) {
+							logger.error("Cannot delete file: "+file.getName());
+						}
 					}
 				} catch (FileExistsException e) {
 					throw new AlfrescoRuntimeException("Failed to process file.", e);
@@ -158,7 +160,9 @@ public class PDFScriptHelper extends BaseScopableProcessorExtension {
 			}
 
 			if (tempDir != null) {
-				tempDir.delete();
+				if(!tempDir.delete()) {
+					logger.error("Cannot delete dir: "+tempDir.getName());
+				}
 			}
 		}
 

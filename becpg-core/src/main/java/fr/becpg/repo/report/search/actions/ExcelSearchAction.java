@@ -8,7 +8,6 @@ import java.util.List;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.action.ParameterDefinitionImpl;
-import org.alfresco.repo.action.executer.ActionExecuter;
 import org.alfresco.repo.action.executer.ActionExecuterAbstractBase;
 import org.alfresco.repo.download.ContentServiceHelper;
 import org.alfresco.repo.download.DownloadCancelledException;
@@ -35,6 +34,8 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ParameterCheck;
 import org.alfresco.util.TempFileProvider;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.repo.report.search.impl.ExcelReportSearchRenderer;
 import fr.becpg.repo.report.template.ReportTplService;
@@ -57,6 +58,8 @@ public class ExcelSearchAction extends ActionExecuterAbstractBase {
 	public static final String PARAM_TPL_NODEREF = "templateNodeRef";
 
 	// Dependencies
+	
+	private static Log logger = LogFactory.getLog(ExcelSearchAction.class);
 
 	private ExcelReportSearchRenderer excelReportSearchRenderer;
 
@@ -190,7 +193,9 @@ public class ExcelSearchAction extends ActionExecuterAbstractBase {
 			} catch (DownloadCancelledException ex) {
 				downloadCancelled(actionedUponNodeRef, handler);
 			} finally {
-				tempFile.delete();
+				if(!tempFile.delete()) {
+					logger.error("Cannot delete dir: "+tempFile.getName());
+				}
 			}
 			return null;
 		}, downloadRequest.getOwner());

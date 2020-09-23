@@ -256,7 +256,7 @@ public class CanadianNutrientRegulation extends AbstractNutrientRegulation {
 			
 		}
 		
-		BigDecimal bd = new BigDecimal(value);
+		BigDecimal bd = BigDecimal.valueOf(value);
 		bd = bd.round(new MathContext(3,RoundingMode.HALF_EVEN));
 		return bd.doubleValue();
 	}

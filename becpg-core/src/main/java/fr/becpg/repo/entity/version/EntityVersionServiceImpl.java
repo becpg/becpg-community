@@ -243,9 +243,10 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 	private NodeRef internalCreateVersionAndCheckin(final NodeRef origNodeRef, final NodeRef workingCopyNodeRef,
 			Map<String, Serializable> versionProperties, boolean createAlfrescoVersion) {
-		StopWatch watch = new StopWatch();
+		StopWatch watch = null;
 
 		if (logger.isDebugEnabled()) {
+			watch = new StopWatch();
 			watch.start();
 			logger.debug("createEntityVersion: " + origNodeRef + " versionProperties: " + versionProperties);
 		}
@@ -356,7 +357,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			return versionNodeRef;
 
 		} finally {
-			if (logger.isDebugEnabled() && watch!=null) {
+			if (logger.isDebugEnabled() && (watch != null)) {
 				watch.stop();
 				logger.debug("internalCreateVersionAndCheckin run in  " + watch.getTotalTimeSeconds() + " s");
 			}
@@ -707,20 +708,18 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		// Look for primary parent
 		NodeRef tmp;
 
-
 		List<NodeRef> ret = new LinkedList<>();
-		if(primaryParentNodeRef!=null) {
+		if (primaryParentNodeRef != null) {
 			do {
 				tmp = associationService.getTargetAssoc(primaryParentNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY);
 				if (tmp != null) {
 					primaryParentNodeRef = tmp;
 				}
 			} while (tmp != null);
-	
-			
+
 			ret.add(primaryParentNodeRef);
 			ret.addAll(getAllChildVersionBranches(primaryParentNodeRef));
-	
+
 			Collections.sort(ret, (o1, o2) -> {
 				Date d1 = (Date) nodeService.getProperty(o1, ContentModel.PROP_CREATED);
 				Date d2 = (Date) nodeService.getProperty(o2, ContentModel.PROP_CREATED);
@@ -868,29 +867,26 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			throw new CheckOutCheckInServiceException(MSG_ERR_NOT_AUTHENTICATED);
 		}
 	}
-	
 
 	/** {@inheritDoc} */
 	@Override
 	public NodeRef mergeBranch(NodeRef branchNodeRef) {
 
-		String versionType = (String)nodeService.getProperty(branchNodeRef,  BeCPGModel.PROP_AUTO_MERGE_VERSIONTYPE);
-		if(versionType == null) {
+		String versionType = (String) nodeService.getProperty(branchNodeRef, BeCPGModel.PROP_AUTO_MERGE_VERSIONTYPE);
+		if (versionType == null) {
 			versionType = VersionType.MINOR.toString();
 		}
-		Boolean impactWused = (Boolean)nodeService.getProperty(branchNodeRef,  BeCPGModel.PROP_AUTO_MERGE_IMPACTWUSED);
-		if(impactWused == null) {
+		Boolean impactWused = (Boolean) nodeService.getProperty(branchNodeRef, BeCPGModel.PROP_AUTO_MERGE_IMPACTWUSED);
+		if (impactWused == null) {
 			impactWused = false;
 		}
-		String description = (String)nodeService.getProperty(branchNodeRef,  BeCPGModel.PROP_AUTO_MERGE_COMMENTS);
-		if(description == null) {
+		String description = (String) nodeService.getProperty(branchNodeRef, BeCPGModel.PROP_AUTO_MERGE_COMMENTS);
+		if (description == null) {
 			description = "";
 		}
-		
-		return mergeBranch(branchNodeRef, null
-				, VersionType.valueOf(versionType), description, impactWused);
+
+		return mergeBranch(branchNodeRef, null, VersionType.valueOf(versionType), description, impactWused);
 	}
-	
 
 	/** {@inheritDoc} */
 	@Override
@@ -906,9 +902,8 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			branchToNodeRef = associationService.getTargetAssoc(branchNodeRef, BeCPGModel.ASSOC_AUTO_MERGE_TO);
 		}
 
-		
 		if (permissionService.hasPermission(branchToNodeRef, BeCPGPermissions.MERGE_ENTITY) == AccessStatus.ALLOWED) {
-		
+
 			if (branchToNodeRef != null) {
 
 				StopWatch watch = null;
@@ -964,7 +959,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				} finally {
 					MLPropertyInterceptor.setMLAware(mlAware);
 
-					if (logger.isDebugEnabled() && watch!=null) {
+					if (logger.isDebugEnabled() && (watch != null)) {
 						watch.stop();
 						logger.debug("createBranch run in  " + watch.getTotalTimeSeconds() + " seconds ");
 
@@ -1042,17 +1037,17 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				for (NodeRef sourceNodeRef : sources) {
 					policyBehaviourFilter.disableBehaviour(sourceNodeRef, ContentModel.ASPECT_AUDITABLE);
 					try {
-						//nodeService.removeAspect(sourceNodeRef, BeCPGModel.ASPECT_ENTITY_BRANCH);
+						// nodeService.removeAspect(sourceNodeRef,
+						// BeCPGModel.ASPECT_ENTITY_BRANCH);
 						associationService.update(sourceNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY, branchToNodeRef);
-						
+
 						if (nodeService.hasAspect(branchToNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
 							nodeService.setProperty(sourceNodeRef, BeCPGModel.PROP_BRANCH_FROM_VERSION_LABEL,
 									nodeService.getProperty(branchToNodeRef, ContentModel.PROP_VERSION_LABEL));
 						} else {
 							nodeService.setProperty(sourceNodeRef, BeCPGModel.PROP_BRANCH_FROM_VERSION_LABEL, RepoConsts.INITIAL_VERSION);
 						}
-						
-						
+
 					} finally {
 						policyBehaviourFilter.enableBehaviour(sourceNodeRef, ContentModel.ASPECT_AUDITABLE);
 					}
@@ -1181,7 +1176,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		} finally {
 			MLPropertyInterceptor.setMLAware(mlAware);
 
-			if (logger.isDebugEnabled()) {
+			if (logger.isDebugEnabled() && (watch != null)) {
 				watch.stop();
 				logger.debug("createBranch run in  " + watch.getTotalTimeSeconds() + " seconds ");
 
@@ -1240,6 +1235,5 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 		return name;
 	}
-
 
 }
