@@ -141,7 +141,7 @@ public class SecurityServiceImpl implements SecurityService {
 
 			return SecurityService.WRITE_ACCESS;
 		} finally {
-			if (logger.isDebugEnabled()) {
+			if (logger.isDebugEnabled() && stopWatch!=null) {
 				stopWatch.stop();
 				logger.debug("Compute Access Mode takes : " + stopWatch.getTotalTimeSeconds() + "s");
 			}

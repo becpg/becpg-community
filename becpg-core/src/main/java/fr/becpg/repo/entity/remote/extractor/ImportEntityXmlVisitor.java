@@ -33,6 +33,7 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -137,6 +138,7 @@ public class ImportEntityXmlVisitor {
 			throws IOException, SAXException, ParserConfigurationException {
 
 			SAXParserFactory factory = SAXParserFactory.newInstance();
+			factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
 			SAXParser saxParser = factory.newSAXParser();
 
 			EntityXmlHandler handler = new EntityXmlHandler(entityNodeRef, destNodeRef);
@@ -159,6 +161,8 @@ public class ImportEntityXmlVisitor {
 	 */
 	public void visitData(InputStream in, OutputStream out) throws IOException, SAXException, ParserConfigurationException {
 			SAXParserFactory factory = SAXParserFactory.newInstance();
+		    factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+			
 			SAXParser saxParser = factory.newSAXParser();
 
 			EntityDataXmlHandler handler = new EntityDataXmlHandler(out);

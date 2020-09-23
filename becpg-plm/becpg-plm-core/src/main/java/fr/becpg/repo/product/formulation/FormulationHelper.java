@@ -557,9 +557,9 @@ public class FormulationHelper {
 						logger.debug("Compo tare [" + subProduct.getName() + "]: " + tare + " qty " + qty + " productQty " + productQty);
 					}
 					if ((productQty != null) && !productQty.isNaN() && !productQty.isInfinite() && (productQty != 0d)) {
-						return tare.multiply(new BigDecimal(qty)).divide(new BigDecimal(productQty), MathContext.DECIMAL64);
+						return tare.multiply(BigDecimal.valueOf(qty)).divide(BigDecimal.valueOf(productQty), MathContext.DECIMAL64);
 					} else {
-						return tare.multiply(new BigDecimal(qty));
+						return tare.multiply(BigDecimal.valueOf(qty));
 					}
 				} else {
 					logger.error("Qty/ProductQty is NaN or 0 or infinite:" + qty + " " + productQty + " for " + compoList.getProduct());
@@ -585,11 +585,11 @@ public class FormulationHelper {
 
 		if ((qty != null) && !qty.isNaN() && !qty.isInfinite()) {
 			if ((packList.getPackagingListUnit() != null) && packList.getPackagingListUnit().isWeight()) {
-				tare = new BigDecimal(qty);
+				tare = BigDecimal.valueOf(qty);
 			} else {
 				BigDecimal t = FormulationHelper.getTareInKg(subProductData);
 				if (t != null) {
-					tare = t.multiply(new BigDecimal(qty));
+					tare = t.multiply(BigDecimal.valueOf(qty));
 				}
 			}
 		}
@@ -628,7 +628,7 @@ public class FormulationHelper {
 		if ((tare == null) || (tareUnit == null)) {
 			return null;
 		} else {
-			return (new BigDecimal(tare)).divide(new BigDecimal(tareUnit.getUnitFactor()), MathContext.DECIMAL64);
+			return (BigDecimal.valueOf(tare)).divide(BigDecimal.valueOf(tareUnit.getUnitFactor()), MathContext.DECIMAL64);
 		}
 	}
 

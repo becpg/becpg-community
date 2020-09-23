@@ -140,7 +140,7 @@ public class ProjectListSortPlugin implements DataListSortPlugin {
 			}
 		});
 
-		if (logger.isDebugEnabled()) {
+		if (logger.isDebugEnabled() && watch!=null) {
 			watch.stop();
 			logger.debug("Project List sorted in " + watch.getTotalTimeSeconds() + " seconds - size results " + projectList.size());
 		}

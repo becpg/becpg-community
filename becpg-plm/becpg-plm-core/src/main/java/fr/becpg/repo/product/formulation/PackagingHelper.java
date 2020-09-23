@@ -141,7 +141,7 @@ public class PackagingHelper implements InitializingBean {
 		// Sum tare (don't take in account packagingKit)
 		if ((dataItem.getPkgLevel() != null) && !PLMModel.TYPE_PACKAGINGKIT.equals(nodeType) && (dataItem.getProduct() != null)) {
 			for (VariantPackagingData variantPackagingData : packagingData.getVariantPackagingData(currentVariants)) {
-				BigDecimal tare = FormulationHelper.getTareInKg(dataItem, alfrescoRepository.findOne(dataItem.getProduct())).multiply(new BigDecimal(subQty));
+				BigDecimal tare = FormulationHelper.getTareInKg(dataItem, alfrescoRepository.findOne(dataItem.getProduct())).multiply( BigDecimal.valueOf(subQty));
 
 				if (PackagingLevel.Primary.equals(dataItem.getPkgLevel())) {
 					variantPackagingData.addTarePrimary(tare);
