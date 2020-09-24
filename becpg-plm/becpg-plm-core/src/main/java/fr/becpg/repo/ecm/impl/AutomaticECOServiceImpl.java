@@ -13,9 +13,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.alfresco.error.ExceptionStackUtil;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.service.cmr.preference.PreferenceService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -25,7 +27,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
@@ -258,8 +259,9 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 								try {
 									ecoService.calculateWUsedList(ecoNodeRef, true);
 								} catch (Exception e) {
-									if (e instanceof ConcurrencyFailureException) {
-										throw (ConcurrencyFailureException) e;
+									Throwable validCause = ExceptionStackUtil.getCause(e, RetryingTransactionHelper.RETRY_EXCEPTIONS);
+									if (validCause != null) {
+										throw (RuntimeException) validCause;
 									}
 									logger.error(e, e);
 									return false;
@@ -281,8 +283,9 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 										}
 
 									} catch (Exception e) {
-										if (e instanceof ConcurrencyFailureException) {
-											throw (ConcurrencyFailureException) e;
+										Throwable validCause = ExceptionStackUtil.getCause(e, RetryingTransactionHelper.RETRY_EXCEPTIONS);
+										if (validCause != null) {
+											throw (RuntimeException) validCause;
 										}
 										logger.error(e, e);
 										return false;
@@ -328,8 +331,9 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 					});
 
 				} catch (Exception e) {
-					if (e instanceof ConcurrencyFailureException) {
-						throw (ConcurrencyFailureException) e;
+					Throwable validCause = ExceptionStackUtil.getCause(e, RetryingTransactionHelper.RETRY_EXCEPTIONS);
+					if (validCause != null) {
+						throw (RuntimeException) validCause;
 					}
 					logger.error("Cannot merge node:" + entityNodeRef, e);
 				}
@@ -386,8 +390,9 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 							return wUsedData.getAllLeafs();
 						}
 					} catch (Exception e) {
-						if (e instanceof ConcurrencyFailureException) {
-							throw (ConcurrencyFailureException) e;
+						Throwable validCause = ExceptionStackUtil.getCause(e, RetryingTransactionHelper.RETRY_EXCEPTIONS);
+						if (validCause != null) {
+							throw (RuntimeException) validCause;
 						}
 						logger.error(e, e);
 					}
@@ -425,8 +430,9 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 							}, false, true);
 
 						} catch (Exception e) {
-							if (e instanceof ConcurrencyFailureException) {
-								throw (ConcurrencyFailureException) e;
+							Throwable validCause = ExceptionStackUtil.getCause(e, RetryingTransactionHelper.RETRY_EXCEPTIONS);
+							if (validCause != null) {
+								throw (RuntimeException) validCause;
 							}
 							logger.error("Cannot reformulate node:" + toReformulate, e);
 							return false;

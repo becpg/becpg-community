@@ -22,13 +22,14 @@ import java.util.List;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.alfresco.error.ExceptionStackUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.ConcurrencyFailureException;
 
 import fr.becpg.repo.mail.BeCPGMailService;
 import fr.becpg.repo.report.entity.EntityReportAsyncGenerator;
@@ -99,9 +100,7 @@ public class EntityReportAsyncGeneratorImpl implements EntityReportAsyncGenerato
 
 				threadExecuter.execute(command);
 			} else {
-				if (callBack != null) {
-					callBack.notify();
-				}
+				
 				logger.warn("Report job already in queue for " + entityNodeRef);
 				logger.info("Report active task size " + threadExecuter.getActiveCount());
 				logger.info("Report queue size " + threadExecuter.getTaskCount());
@@ -131,12 +130,11 @@ public class EntityReportAsyncGeneratorImpl implements EntityReportAsyncGenerato
 		public void notifyEnd() {
 
 			if (counter.decrementAndGet() == 0) {
-
 				AuthenticationUtil.runAs(() -> {
 					transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 						beCPGMailService.sendMailOnAsyncAction(userName, "generate-reports", null, true,
-								(Calendar.getInstance().getTimeInMillis() - timeStamp) / 1000);
+								(Calendar.getInstance().getTimeInMillis() - timeStamp) / 1000d);
 
 						return null;
 					}, true, true);
@@ -165,8 +163,9 @@ public class EntityReportAsyncGeneratorImpl implements EntityReportAsyncGenerato
 				try {
 					entityReportService.generateReports(entityNodeRef);
 				} catch (Exception e) {
-					if (e instanceof ConcurrencyFailureException) {
-						throw (ConcurrencyFailureException) e;
+					Throwable validCause = ExceptionStackUtil.getCause(e, RetryingTransactionHelper.RETRY_EXCEPTIONS);
+					if (validCause != null) {
+						throw (RuntimeException) validCause;
 					}
 					logger.error("Unable to generate product reports ", e);
 
