@@ -328,15 +328,6 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	}
 
 	/**
-	 * <p>Setter for the field <code>variants</code>.</p>
-	 *
-	 * @param variants a {@link java.util.List} object.
-	 */
-	public void setVariants(List<VariantData> variants) {
-		this.variants = variants;
-	}
-
-	/**
 	 * <p>Getter for the field <code>defaultVariantData</code>.</p>
 	 *
 	 * @return a {@link fr.becpg.repo.variant.model.VariantData} object.
