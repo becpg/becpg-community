@@ -25,12 +25,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.alfresco.error.ExceptionStackUtil;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.rule.RuleModel;
 import org.alfresco.repo.rule.RuntimeRuleService;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
+import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.InvalidAspectException;
@@ -51,7 +53,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
@@ -82,7 +83,9 @@ import fr.becpg.repo.repository.model.Synchronisable;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
- * <p>EntityTplServiceImpl class.</p>
+ * <p>
+ * EntityTplServiceImpl class.
+ * </p>
  *
  * @author matthieu
  * @version $Id: $Id
@@ -143,7 +146,6 @@ public class EntityTplServiceImpl implements EntityTplService {
 	BeCPGMailService beCPGMailService;
 
 	private ReentrantLock lock = new ReentrantLock();
-
 
 	/** {@inheritDoc} */
 	@Override
@@ -220,11 +222,12 @@ public class EntityTplServiceImpl implements EntityTplService {
 					MLText classTitleMLText = TranslateHelper.getTemplateTitleMLText(classDef.getName());
 					MLText classDescritptionMLText = TranslateHelper.getTemplateDescriptionMLText(classDef.getName());
 
-					if(title!=null && classTitleMLText!=null) {
+					if ((title != null) && (classTitleMLText != null)) {
 						mlNodeService.setProperty(listNodeRef, ContentModel.PROP_TITLE, MLTextHelper.merge(title, classTitleMLText));
 					}
-					if(description!=null && classDescritptionMLText!=null) {
-						mlNodeService.setProperty(listNodeRef, ContentModel.PROP_DESCRIPTION, MLTextHelper.merge(description, classDescritptionMLText));
+					if ((description != null) && (classDescritptionMLText != null)) {
+						mlNodeService.setProperty(listNodeRef, ContentModel.PROP_DESCRIPTION,
+								MLTextHelper.merge(description, classDescritptionMLText));
 					}
 
 				}
@@ -466,18 +469,22 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 							try {
 								fileFolderService.copy(folder.getNodeRef(), entityNodeRef, null);
-							} catch (ConcurrencyFailureException e) {
-								throw e;
 							} catch (Exception e) {
+								Throwable validCause = ExceptionStackUtil.getCause(e, RetryingTransactionHelper.RETRY_EXCEPTIONS);
+								if (validCause != null) {
+									throw (RuntimeException) validCause;
+								}
 								logger.warn("Unable to synchronize folder " + folder.getName() + " of node " + entityNodeRef + ": " + e.getMessage());
 							}
 						}
 					}
 
 				});
-			} catch (ConcurrencyFailureException e) {
-				throw e;
 			} catch (Exception e) {
+				Throwable validCause = ExceptionStackUtil.getCause(e, RetryingTransactionHelper.RETRY_EXCEPTIONS);
+				if (validCause != null) {
+					throw (RuntimeException) validCause;
+				}
 				runWithSuccess = false;
 				logger.error(e, e);
 
@@ -572,9 +579,11 @@ public class EntityTplServiceImpl implements EntityTplService {
 					}
 
 				});
-			} catch (ConcurrencyFailureException e) {
-				throw e;
 			} catch (Exception e) {
+				Throwable validCause = ExceptionStackUtil.getCause(e, RetryingTransactionHelper.RETRY_EXCEPTIONS);
+				if (validCause != null) {
+					throw (RuntimeException) validCause;
+				}
 				runWithSuccess = false;
 			} finally {
 				lock.unlock();
@@ -787,12 +796,11 @@ public class EntityTplServiceImpl implements EntityTplService {
 					nodeService.deleteNode(tplListNodeRef);
 				}
 
-			} catch (ConcurrencyFailureException e) {
-				throw e;
-			}
-
-			catch (Exception e) {
-
+			} catch (Exception e) {
+				Throwable validCause = ExceptionStackUtil.getCause(e, RetryingTransactionHelper.RETRY_EXCEPTIONS);
+				if (validCause != null) {
+					throw (RuntimeException) validCause;
+				}
 				runWithSuccess = false;
 			} finally {
 				lock.unlock();

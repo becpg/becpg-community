@@ -6,8 +6,10 @@ package fr.becpg.repo.workflow.activiti.product;
 import java.util.List;
 
 import org.activiti.engine.delegate.DelegateExecution;
+import org.alfresco.error.ExceptionStackUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
+import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.repo.workflow.WorkflowModel;
 import org.alfresco.repo.workflow.activiti.ActivitiScriptNode;
 import org.alfresco.repo.workflow.activiti.BaseJavaDelegate;
@@ -19,7 +21,6 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.RegexQNamePattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.dao.ConcurrencyFailureException;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemState;
@@ -87,8 +88,9 @@ public class ValidateProduct extends BaseJavaDelegate {
 						}
 					}
 				} catch (Exception e) {
-					if (e instanceof ConcurrencyFailureException) {
-						throw (ConcurrencyFailureException) e;
+					Throwable validCause = ExceptionStackUtil.getCause(e, RetryingTransactionHelper.RETRY_EXCEPTIONS);
+					if (validCause != null) {
+						throw (RuntimeException) validCause;
 					}
 					logger.error("Failed to approve product", e);
 					throw e;

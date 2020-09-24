@@ -44,7 +44,6 @@ public class UpdateNC extends ScriptTaskListener {
 		final NodeRef pkgNodeRef = ((ActivitiScriptNode) task.getVariable("bpm_package")).getNodeRef();
 
 		// use retrying transaction to avoid exception
-		// ConcurrencyFailureException
 		RetryingTransactionCallback<List<String>> actionCallback = new RetryingTransactionCallback<List<String>>() {
 			@Override
 			public List<String> execute() throws Exception {

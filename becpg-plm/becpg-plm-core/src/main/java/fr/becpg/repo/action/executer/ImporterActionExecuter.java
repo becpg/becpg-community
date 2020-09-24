@@ -11,11 +11,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import org.alfresco.error.ExceptionStackUtil;
 import org.alfresco.repo.action.ParameterDefinitionImpl;
 import org.alfresco.repo.action.executer.ActionExecuterAbstractBase;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.repo.transaction.AlfrescoTransactionSupport;
+import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.service.cmr.action.Action;
 import org.alfresco.service.cmr.action.ParameterDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
@@ -24,7 +26,6 @@ import org.alfresco.util.transaction.TransactionListenerAdapter;
 import org.alfresco.util.transaction.TransactionSupportUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.dao.ConcurrencyFailureException;
 
 import fr.becpg.repo.importer.ImportService;
 
@@ -197,9 +198,10 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase {
 
 				} catch (Exception e) {
 					
-					if (e instanceof ConcurrencyFailureException) {
-						throw (ConcurrencyFailureException) e;
-					} 
+					Throwable validCause = ExceptionStackUtil.getCause(e, RetryingTransactionHelper.RETRY_EXCEPTIONS);
+					if (validCause != null) {
+						throw (RuntimeException) validCause;
+					}
 					
 					hasFailed = true;
 					logger.error("Failed to import file text", e);
