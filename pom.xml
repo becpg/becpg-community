@@ -150,6 +150,7 @@
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<sonar.jacoco.reportPaths>${maven.multiModuleProjectDirectory}/target/jacoco.exec</sonar.jacoco.reportPaths>
+		<sonar.coverage.jacoco.xmlReportPaths>${maven.multiModuleProjectDirectory}/becpg-integration-runner/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
 		<sonar.scm.disabled>true</sonar.scm.disabled>
 		<sonar.ws.timeout>3600</sonar.ws.timeout>
 		<sonar.language>java</sonar.language>
@@ -308,7 +309,6 @@
 					</executions>
 					<configuration>
 						<runOrder>alphabetical</runOrder>
-						 <argLine>${jacoco.agent.argLine}</argLine>
 					</configuration>
 					<dependencies>
 						<dependency>
@@ -448,6 +448,15 @@
 				</configuration>
 			</plugin>
 
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.0</version>
+				<configuration>
+					<release>11</release>
+				</configuration>
+			</plugin>
+
 		</plugins>
 	</build>
 
@@ -560,24 +569,6 @@
 	<profiles>
 
 
-		<profile>
-			<id>java11</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-compiler-plugin</artifactId>
-						<version>3.8.0</version>
-						<configuration>
-							<release>11</release>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
 
 		<profile>
 			<id>sonar</id>
@@ -586,14 +577,14 @@
 					<plugin>
 						<groupId>org.jacoco</groupId>
 						<artifactId>jacoco-maven-plugin</artifactId>
-						<version>0.8.4</version>
+						<version>0.8.6</version>
 						<configuration>
 							<destFile>${sonar.jacoco.reportPaths}</destFile>
 							<dataFile>${sonar.jacoco.reportPaths}</dataFile>
 							<append>true</append>
-							<excludes>
-								<exclude>org/alfresco/**</exclude>
-							</excludes>
+							<includes>
+								<include>fr/becpg/**</include>
+							</includes>
 						</configuration>
 						<executions>
 
@@ -601,6 +592,13 @@
 								<id>pre-unit-test</id>
 								<goals>
 									<goal>prepare-agent</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>report-test-report</id>
+								<phase>test</phase>
+								<goals>
+									<goal>report-aggregate</goal>
 								</goals>
 							</execution>
 
@@ -611,6 +609,13 @@
 									<goal>prepare-agent</goal>
 								</goals>
 
+							</execution>
+							<execution>
+								<id>report-integration-test-report</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>report-aggregate</goal>
+								</goals>
 							</execution>
 
 						</executions>
