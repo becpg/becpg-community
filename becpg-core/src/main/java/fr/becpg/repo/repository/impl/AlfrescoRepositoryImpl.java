@@ -31,7 +31,9 @@ import java.util.TreeSet;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.alfresco.error.ExceptionStackUtil;
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
@@ -44,7 +46,6 @@ import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.PropertyAccessorFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.stereotype.Repository;
 
 import fr.becpg.model.BeCPGModel;
@@ -527,8 +528,9 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 			return entity;
 
 		} catch (Exception e) {
-			if (e instanceof ConcurrencyFailureException) {
-				throw (ConcurrencyFailureException) e;
+			Throwable validCause = ExceptionStackUtil.getCause(e, RetryingTransactionHelper.RETRY_EXCEPTIONS);
+			if (validCause != null) {
+				throw (RuntimeException) validCause;
 			}
 			logger.error("Cannot load entity: " + id, e);
 			throw new UnsupportedOperationException(e);

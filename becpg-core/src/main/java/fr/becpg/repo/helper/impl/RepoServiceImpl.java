@@ -8,8 +8,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.alfresco.error.ExceptionStackUtil;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.model.Repository;
+import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -19,7 +21,6 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.RepoConsts;
@@ -129,8 +130,9 @@ public class RepoServiceImpl implements RepoService {
 		try {
 			fileFolderService.move(nodeRefToMove, destinationNodeRef, name);
 		} catch (Exception e) {
-			if (e instanceof ConcurrencyFailureException) {
-				throw (ConcurrencyFailureException) e;
+			Throwable validCause = ExceptionStackUtil.getCause(e, RetryingTransactionHelper.RETRY_EXCEPTIONS);
+			if (validCause != null) {
+				throw (RuntimeException) validCause;
 			}
 			logger.error("Failed to move node", e);
 		}

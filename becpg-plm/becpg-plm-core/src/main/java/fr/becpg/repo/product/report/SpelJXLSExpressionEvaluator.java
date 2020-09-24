@@ -3,10 +3,11 @@ package fr.becpg.repo.product.report;
 import java.util.Map;
 import java.util.regex.Matcher;
 
+import org.alfresco.error.ExceptionStackUtil;
+import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jxls.expression.ExpressionEvaluator;
-import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
@@ -95,8 +96,9 @@ public class SpelJXLSExpressionEvaluator implements ExpressionEvaluator {
 				}
 			}
 		} catch (Exception e) {
-			if (e instanceof ConcurrencyFailureException) {
-				throw (ConcurrencyFailureException) e;
+			Throwable validCause = ExceptionStackUtil.getCause(e, RetryingTransactionHelper.RETRY_EXCEPTIONS);
+			if (validCause != null) {
+				throw (RuntimeException) validCause;
 			}
 			logger.error("wrong expression: "+expression ,e);
 		}
