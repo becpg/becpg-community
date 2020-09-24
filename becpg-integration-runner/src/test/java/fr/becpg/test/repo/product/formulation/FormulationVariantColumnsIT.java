@@ -26,11 +26,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.service.namespace.RegexQNamePattern;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
@@ -44,6 +41,7 @@ import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
+import fr.becpg.repo.variant.model.VariantData;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
 
@@ -159,19 +157,15 @@ public class FormulationVariantColumnsIT extends AbstractFinishedProductTest {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			int checks = 0;
 			ProductData finishedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
-
-			assertNotNull(finishedProduct.getVariants());
-			assertEquals(3,finishedProduct.getVariants().size());
+			List<VariantData> variants = finishedProduct.getVariants();
+			
+			assertNotNull(variants);
+			assertEquals(4,variants.size());
 			assertEquals(5,finishedProduct.getCompoListView().getCompoList().size());
 			//Add variant to composition
-			List<ChildAssociationRef> tplVariants = nodeService.getChildAssocs(entityTpl.getNodeRef(), BeCPGModel.ASSOC_VARIANTS,
-											RegexQNamePattern.MATCH_ALL);
-			assertNotNull(tplVariants);
-			assertEquals(1, tplVariants.size());
-			NodeRef tplVariant = tplVariants.get(0).getChildRef();
 			
-			finishedProduct.getCompoListView().getCompoList().get(0).setVariants(Collections.singletonList(tplVariant));
-			finishedProduct.getCompoListView().getCompoList().get(1).setVariants(Collections.singletonList(tplVariant));
+			finishedProduct.getCompoListView().getCompoList().get(0).setVariants(Collections.singletonList(variants.get(variants.size()-1).getNodeRef()));
+			finishedProduct.getCompoListView().getCompoList().get(1).setVariants(Collections.singletonList(variants.get(variants.size()-1).getNodeRef()));
 
 			for (int i=2; i<5; i++) {
 				finishedProduct.getCompoListView().getCompoList().get(i).setVariants(Collections.singletonList(finishedProduct.getVariants().get(i-2).getNodeRef()));

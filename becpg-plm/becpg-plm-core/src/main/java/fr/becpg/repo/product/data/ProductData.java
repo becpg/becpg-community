@@ -203,6 +203,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	 */
 
 	private List<VariantData> variants;
+	private List<VariantData> localVariants;
 	private VariantPackagingData defaultVariantPackagingData;
 	private VariantData defaultVariantData;
 
@@ -297,7 +298,32 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	@AlfMultiAssoc(isChildAssoc = true, isEntity = true)
 	@AlfQname(qname = "bcpg:variants")
 	@AlfReadOnly
+	public List<VariantData> getLocalVariants() {
+		return localVariants;
+	}
+
+	/**
+	 * <p>Setter for the field <code>variants</code>.</p>
+	 *
+	 * @param variants a {@link java.util.List} object.
+	 */
+	public void setLocalVariants(List<VariantData> localVariants) {
+		this.localVariants = localVariants;
+	}
+	
+	/**
+	 * <p>Getter for the all variants.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	public List<VariantData> getVariants() {
+		variants = localVariants != null ? new ArrayList<>(localVariants): new ArrayList<>();
+		if (entityTpl != null) {
+			List<VariantData> entityTplVariants = entityTpl.getLocalVariants();
+			if (entityTplVariants != null && !entityTplVariants.isEmpty()) {
+				variants.addAll(entityTplVariants);
+			}
+		}
 		return variants;
 	}
 
