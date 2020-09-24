@@ -62,7 +62,7 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 	private static final Log logger = LogFactory.getLog(ImportEntityListItemVisitor.class);
 
 	private FileFolderService fileFolderService;
-
+	
 	/**
 	 * <p>Setter for the field <code>fileFolderService</code>.</p>
 	 *
@@ -297,11 +297,13 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 		if (entityNodeRef != null && value != null && !value.isEmpty()) {
 			List<NodeRef> variants = new ArrayList<NodeRef>(associationService.getChildAssocs(entityNodeRef, BeCPGModel.ASSOC_VARIANTS));
 			NodeRef entityTplNodeRef = associationService.getTargetAssoc(entityNodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF);
-			List<NodeRef> entityTplVariants = associationService.getChildAssocs(entityTplNodeRef, BeCPGModel.ASSOC_VARIANTS);
-			if (entityTplVariants != null && !entityTplVariants.isEmpty()) {
-				variants.addAll(entityTplVariants);
+			if (entityTplNodeRef != null) {
+				List<NodeRef> entityTplVariants = associationService.getChildAssocs(entityTplNodeRef, BeCPGModel.ASSOC_VARIANTS);
+				if (entityTplVariants != null && !entityTplVariants.isEmpty()) {
+					variants.addAll(entityTplVariants);
+				}
 			}
-
+			
 			boolean isDefault = false;
 			String name = value;
 			if (value.contains("|")) {
