@@ -33,10 +33,12 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import org.alfresco.error.ExceptionStackUtil;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.forum.CommentService;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
+import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.repo.version.VersionBaseModel;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -49,7 +51,6 @@ import org.alfresco.util.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
@@ -517,8 +518,9 @@ public class ECOServiceImpl implements ECOService {
 								isSimulation, true);
 						AuthenticationUtil.runAsSystem(actionRunAs);
 					} catch (Exception e) {
-						if (e instanceof ConcurrencyFailureException) {
-							throw (ConcurrencyFailureException) e;
+						Throwable validCause = ExceptionStackUtil.getCause(e, RetryingTransactionHelper.RETRY_EXCEPTIONS);
+						if (validCause != null) {
+							throw (RuntimeException) validCause;
 						}
 
 						changeUnitDataItem.setTreated(false);
@@ -981,8 +983,8 @@ public class ECOServiceImpl implements ECOService {
 		List<String> errors = new ArrayList<>();
 
 		ChangeOrderData ecoData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
-		if (!(e instanceof ConcurrencyFailureException)) {
-
+		Throwable validCause = ExceptionStackUtil.getCause(e, RetryingTransactionHelper.RETRY_EXCEPTIONS);
+		if (validCause == null) {
 			errors.add("OM in error ");
 			errors.add("Error message: " + e.getMessage());
 

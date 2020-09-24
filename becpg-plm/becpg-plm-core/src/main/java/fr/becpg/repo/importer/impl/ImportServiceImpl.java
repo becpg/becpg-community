@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.charset.Charset;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -16,10 +15,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.alfresco.error.ExceptionStackUtil;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.content.MimetypeMap;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.policy.BehaviourFilter;
+import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.ContentIOException;
@@ -41,7 +42,6 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
@@ -314,8 +314,8 @@ public class ImportServiceImpl implements ImportService {
 		Element mappingElt = null;
 		String[] arrStr;
 
-		Map<String,Object> annotationMapping = new HashMap<>();
-		
+		Map<String, Object> annotationMapping = new HashMap<>();
+
 		while ((importContext.getImportIndex() < lastIndex) && ((arrStr = importContext.nextLine()) != null)) {
 			if (arrStr.length > 0) {
 				String prefix = PropertiesHelper.cleanValue(arrStr[COLUMN_PREFIX]);
@@ -328,7 +328,8 @@ public class ImportServiceImpl implements ImportService {
 					importContext.setPath(cleanPath(pathValue));
 
 					if (pathValue.isEmpty()) {
-						throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, ImportHelper.PFX_PATH, importContext.getImportIndex()));
+						throw new ImporterException(
+								I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, ImportHelper.PFX_PATH, importContext.getImportIndex()));
 					}
 
 					if (pathValue.startsWith(PATH_SITES) || pathValue.startsWith(RepoConsts.PATH_SEPARATOR + PATH_SITES)) {
@@ -356,7 +357,8 @@ public class ImportServiceImpl implements ImportService {
 
 					String importTypeValue = arrStr[COLUMN_IMPORT_TYPE];
 					if (importTypeValue.isEmpty()) {
-						throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, ImportHelper.PFX_IMPORT_TYPE, importContext.getImportIndex()));
+						throw new ImporterException(
+								I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, ImportHelper.PFX_IMPORT_TYPE, importContext.getImportIndex()));
 					}
 
 					ImportType importType = ImportType.valueOf(importTypeValue);
@@ -378,7 +380,8 @@ public class ImportServiceImpl implements ImportService {
 
 					String typeValue = arrStr[COLUMN_LIST_TYPE];
 					if (typeValue.isEmpty()) {
-						throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, ImportHelper.PFX_LIST_TYPE, importContext.getImportIndex()));
+						throw new ImporterException(
+								I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, ImportHelper.PFX_LIST_TYPE, importContext.getImportIndex()));
 					}
 
 					QName type = QName.createQName(typeValue, nameSpaceService);
@@ -390,7 +393,8 @@ public class ImportServiceImpl implements ImportService {
 
 					String typeValue = arrStr[COLUMN_TYPE];
 					if (typeValue.isEmpty()) {
-						throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, ImportHelper.PFX_TYPE, importContext.getImportIndex()));
+						throw new ImporterException(
+								I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, ImportHelper.PFX_TYPE, importContext.getImportIndex()));
 					}
 
 					QName type = QName.createQName(typeValue, nameSpaceService);
@@ -402,7 +406,8 @@ public class ImportServiceImpl implements ImportService {
 
 					String typeValue = arrStr[COLUMN_ENTITY_TYPE];
 					if (typeValue.isEmpty()) {
-						throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, ImportHelper.PFX_ENTITY_TYPE, importContext.getImportIndex()));
+						throw new ImporterException(
+								I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, ImportHelper.PFX_ENTITY_TYPE, importContext.getImportIndex()));
 					}
 
 					QName entityType = QName.createQName(typeValue, nameSpaceService);
@@ -421,15 +426,16 @@ public class ImportServiceImpl implements ImportService {
 					}
 
 				} else if (prefix.equals(ImportHelper.PFX_COLUMS)) {
-					
-					if(annotationMapping != null && !annotationMapping.isEmpty()) {
+
+					if ((annotationMapping != null) && !annotationMapping.isEmpty()) {
 						annotationMapping.put(ImportHelper.PFX_COLUMS, Arrays.asList(arrStr));
-						importContext = importNodeVisitor.loadClassMapping(annotationMapping, importContext,  mappingLoaderFactory.getMappingLoader(MappingType.ANNOTATION));
+						importContext = importNodeVisitor.loadClassMapping(annotationMapping, importContext,
+								mappingLoaderFactory.getMappingLoader(MappingType.ANNOTATION));
 					}
-					
+
 					boolean undefinedColumns = true;
 					List<String> columns = new ArrayList<>(arrStr.length);
-					
+
 					for (int z_idx = 1; z_idx < arrStr.length; z_idx++) {
 						if (!arrStr[z_idx].isEmpty()) {
 							columns.add(arrStr[z_idx]);
@@ -437,35 +443,38 @@ public class ImportServiceImpl implements ImportService {
 						}
 					}
 					if (undefinedColumns) {
-						throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, ImportHelper.PFX_COLUMS, importContext.getImportIndex()));
+						throw new ImporterException(
+								I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, ImportHelper.PFX_COLUMS, importContext.getImportIndex()));
 					}
-					
+
 					importContext = importNodeVisitor.loadMappingColumns(mappingElt, columns, importContext);
 
 				} else if (prefix.equals(ImportHelper.PFX_COLUMNS_PARAMS)) {
 					@SuppressWarnings("unchecked")
-					List<List<String>> columnsParams = (List<List<String>>)annotationMapping.get(ImportHelper.PFX_COLUMNS_PARAMS);
-					if(columnsParams == null) {
+					List<List<String>> columnsParams = (List<List<String>>) annotationMapping.get(ImportHelper.PFX_COLUMNS_PARAMS);
+					if (columnsParams == null) {
 						columnsParams = new ArrayList<>();
 					}
 					columnsParams.add(Arrays.asList(arrStr));
 					annotationMapping.put(ImportHelper.PFX_COLUMNS_PARAMS, columnsParams);
-					
+
 					if (annotationMapping.isEmpty()) {
-						throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, ImportHelper.PFX_MAPPING, importContext.getImportIndex()));
+						throw new ImporterException(
+								I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, ImportHelper.PFX_MAPPING, importContext.getImportIndex()));
 					}
-					
-					
+
 				} else if (prefix.equals(ImportHelper.PFX_MAPPING)) {
 
 					String mappingValue = arrStr[COLUMN_MAPPING];
 					if (mappingValue.isEmpty()) {
-						throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, ImportHelper.PFX_MAPPING, importContext.getImportIndex()));
+						throw new ImporterException(
+								I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, ImportHelper.PFX_MAPPING, importContext.getImportIndex()));
 					}
 
 					mappingElt = loadMapping(mappingValue);
-					importContext = importNodeVisitor.loadClassMapping(mappingElt, importContext,  mappingLoaderFactory.getMappingLoader(MappingType.XML));
-					
+					importContext = importNodeVisitor.loadClassMapping(mappingElt, importContext,
+							mappingLoaderFactory.getMappingLoader(MappingType.XML));
+
 				} else if (prefix.equals(ImportHelper.PFX_VALUES)) {
 
 					try {
@@ -484,7 +493,8 @@ public class ImportServiceImpl implements ImportService {
 						}
 
 						if (undefinedValues) {
-							throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, ImportHelper.PFX_VALUES, importContext.getImportIndex()));
+							throw new ImporterException(
+									I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, ImportHelper.PFX_VALUES, importContext.getImportIndex()));
 						}
 
 						// disable policy
@@ -522,18 +532,17 @@ public class ImportServiceImpl implements ImportService {
 						}
 					} catch (Exception e) {
 
-						if (e instanceof ConcurrencyFailureException) {
-							throw (ConcurrencyFailureException) e;
-						} else if (importContext.isStopOnFirstError()) {
-							throw e;
-						} else {
-							// store the exception and the printStack and
-							// continue
-							// import...
-							// Do not remove that
-							String errorMessage = importContext.markCurrLineError(e);
-							logger.error(errorMessage, e);
+						Throwable validCause = ExceptionStackUtil.getCause(e, RetryingTransactionHelper.RETRY_EXCEPTIONS);
+						if (validCause != null) {
+							throw (RuntimeException) validCause;
 						}
+						if (importContext.isStopOnFirstError()) {
+							throw e;
+						}
+
+						String errorMessage = importContext.markCurrLineError(e);
+						logger.error(errorMessage, e);
+
 					} finally {
 						// enable policy
 						for (QName disabledPolicy : importContext.getDisabledPolicies()) {
@@ -586,7 +595,6 @@ public class ImportServiceImpl implements ImportService {
 
 		return mappingElt;
 	}
-	
 
 	private void createLogFile(NodeRef parentNodeRef, String fileName, String content) throws IOException {
 

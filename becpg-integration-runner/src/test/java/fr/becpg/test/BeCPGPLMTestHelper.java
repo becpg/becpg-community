@@ -247,4 +247,8 @@ public class BeCPGPLMTestHelper {
 
 	}
 
+	public static void deleteUser(String userName) {
+		PLMBaseTestCase.INSTANCE2.personService.deletePerson(userName);
+	}
+
 }
