@@ -95,14 +95,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 			synchronizeTemplate(formulatedProduct, formulatedProduct.getNutList());
 			
 			nutsCalculateingProcess(formulatedProduct, null);
-			List<VariantData> variants = new ArrayList<VariantData>(formulatedProduct.getVariants());
-			if (formulatedProduct.getEntityTpl() != null) {
-				List<VariantData> entityTplVariants = formulatedProduct.getEntityTpl().getVariants();
-				if (entityTplVariants != null && !entityTplVariants.isEmpty()) {
-					variants.addAll(entityTplVariants);
-				}
-			}
-			for (VariantData variant: variants) {
+			for (VariantData variant: formulatedProduct.getVariants()) {
 				nutsCalculateingProcess(formulatedProduct, variant);
 			}
 			

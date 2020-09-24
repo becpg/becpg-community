@@ -74,15 +74,8 @@ public class VariantFilters<T extends VariantDataItem> implements DataListFilter
 	@Override
 	public Predicate<T> createPredicate(final ProductData entity) {
 
-		if ((variantNodeRefs.isEmpty()) && (entity.getVariants() != null)) {
-			List<VariantData> variants = new ArrayList<VariantData>(entity.getVariants());
-			if (entity.getEntityTpl() != null) {
-				List<VariantData> entityTplVariants = entity.getEntityTpl().getVariants();
-				if (entityTplVariants != null && !entityTplVariants.isEmpty()) {
-					variants.addAll(entityTplVariants);
-				}
-			}
-			for (VariantData variant : variants) {
+		if ((variantNodeRefs.isEmpty()) && (entity.getVariants() != null)) {			
+			for (VariantData variant : entity.getVariants()) {
 				if (variant.getIsDefaultVariant()) {
 					this.variantNodeRefs.add(variant.getNodeRef());
 				}
