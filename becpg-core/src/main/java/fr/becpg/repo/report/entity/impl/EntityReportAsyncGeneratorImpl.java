@@ -154,7 +154,9 @@ public class EntityReportAsyncGeneratorImpl implements EntityReportAsyncGenerato
 		private ProductReportGenerator(NodeRef entityNodeRef, EntityReportAsyncNotificationCallback callback) {
 			this.entityNodeRef = entityNodeRef;
 			this.callback = callback;
-			this.callback.register();
+			if (callback != null) {
+				this.callback.register();
+			}
 		}
 
 		@Override
