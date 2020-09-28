@@ -564,66 +564,8 @@
 			</exclusions>
 		</dependency>
 
-
 	</dependencies>
-	<profiles>
 
-
-
-		<profile>
-			<id>sonar</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.jacoco</groupId>
-						<artifactId>jacoco-maven-plugin</artifactId>
-						<version>0.8.6</version>
-						<configuration>
-							<destFile>${sonar.jacoco.reportPaths}</destFile>
-							<dataFile>${sonar.jacoco.reportPaths}</dataFile>
-							<append>true</append>
-							<includes>
-								<include>fr/becpg/**</include>
-							</includes>
-						</configuration>
-						<executions>
-
-							<execution>
-								<id>pre-unit-test</id>
-								<goals>
-									<goal>prepare-agent</goal>
-								</goals>
-							</execution>
-							<execution>
-								<id>report-test-report</id>
-								<phase>test</phase>
-								<goals>
-									<goal>report-aggregate</goal>
-								</goals>
-							</execution>
-
-							<execution>
-								<id>pre-integration-test</id>
-								<phase>pre-integration-test</phase>
-								<goals>
-									<goal>prepare-agent</goal>
-								</goals>
-
-							</execution>
-							<execution>
-								<id>report-integration-test-report</id>
-								<phase>verify</phase>
-								<goals>
-									<goal>report-aggregate</goal>
-								</goals>
-							</execution>
-
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 
 
 </project>
