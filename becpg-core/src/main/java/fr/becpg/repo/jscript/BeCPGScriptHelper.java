@@ -826,6 +826,12 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 		return new ScriptNode(retNodeRef, serviceRegistry);
 	}
+	
+	
+	
+	public void updateLastVersionLabel(ScriptNode entity,String versionLabel) {
+		entityVersionService.updateLastVersionLabel(entity.getNodeRef(), versionLabel);
+	}
 
 	/**
 	 * <p>moveAndRename.</p>
