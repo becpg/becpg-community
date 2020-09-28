@@ -189,4 +189,13 @@ public interface EntityVersionService {
 	 */
 	NodeRef mergeBranch(NodeRef branchNodeRef);
 
+
+	/**
+	 * <p>updateLastVersionLabel.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param versionLabel a {@link java.lang.String} object.
+	 */
+	void updateLastVersionLabel(NodeRef entityNodeRef, String versionLabel);
+
 }
