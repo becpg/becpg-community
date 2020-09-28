@@ -21,6 +21,7 @@ import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
+import fr.becpg.repo.repository.model.VariantAwareDataItem;
 
 /**
  * <p>PhysicoChemCalculatingFormulationHandler class.</p>
@@ -64,6 +65,11 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 				n.setFormulatedValue(FormulationHelper.flatPercValue(n.getFormulatedValue(), unit));
 				n.setMaxi(FormulationHelper.flatPercValue(n.getMaxi(), unit));
 				n.setMini(FormulationHelper.flatPercValue(n.getMini(), unit));
+				if (n instanceof VariantAwareDataItem) {
+					for (int i=1; i<=VariantAwareDataItem.VARIANT_COLUMN_SIZE ; i++) {
+						((VariantAwareDataItem)n).setValue(FormulationHelper.flatPercValue(((VariantAwareDataItem)n).getValue(VariantAwareDataItem.VARIANT_COLUMN_NAME+i), unit), VariantAwareDataItem.VARIANT_COLUMN_NAME+i);
+					}
+				}
 				n.setType((String) nodeService.getProperty(n.getPhysicoChem(), PLMModel.PROP_PHYSICO_CHEM_TYPE));
 
 			});
