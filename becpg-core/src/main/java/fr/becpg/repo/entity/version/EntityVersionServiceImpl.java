@@ -208,6 +208,24 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 	/** {@inheritDoc} */
 	@Override
+	public void updateLastVersionLabel(final NodeRef entityNodeRef, final String versionLabel) {
+
+		// Create first version if needed
+		createInitialVersion(entityNodeRef);
+
+		NodeRef versionHistoryNodeRef = getVersionHistoryNodeRef(entityNodeRef);
+		if (versionHistoryNodeRef != null) {
+			nodeService.setProperty(versionHistoryNodeRef, BeCPGModel.PROP_VERSION_LABEL, versionLabel);
+		}
+
+		Version currentVersion = versionService.getCurrentVersion(entityNodeRef);
+		if (currentVersion != null) {
+			nodeService.setProperty(currentVersion.getFrozenStateNodeRef(), ContentModel.PROP_VERSION_LABEL, versionLabel);
+		}
+	}
+
+	/** {@inheritDoc} */
+	@Override
 	public void cancelCheckOut(final NodeRef origNodeRef, final NodeRef workingCopyNodeRef) {
 
 		AuthenticationUtil.runAsSystem(() -> {
@@ -546,9 +564,9 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				}
 			} catch (Exception e) {
 				Throwable validCause = ExceptionStackUtil.getCause(e, RetryingTransactionHelper.RETRY_EXCEPTIONS);
-			    if(validCause!=null) {
-			    	throw (RuntimeException)validCause;
-			    }
+				if (validCause != null) {
+					throw (RuntimeException) validCause;
+				}
 				logger.error("Failed to get entitysHistory", e);
 			}
 
