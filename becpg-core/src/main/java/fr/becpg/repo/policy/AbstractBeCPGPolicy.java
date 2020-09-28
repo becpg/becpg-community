@@ -18,6 +18,7 @@
 package fr.becpg.repo.policy;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -70,9 +71,9 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 	protected BeCPGPolicyTransactionListener postTransactionListener = new BeCPGPolicyTransactionListener("post");
 
 
-	private final Set<String> keys = new LinkedHashSet<>();
+	private final Set<String> keys = Collections.synchronizedSet(new LinkedHashSet<>());
 	
-	private final Set<String> assocKeys = new LinkedHashSet<>();
+	private final Set<String> assocKeys = Collections.synchronizedSet( new LinkedHashSet<>());
 
 	private static final Log logger = LogFactory.getLog(AbstractBeCPGPolicy.class);
 
@@ -459,14 +460,14 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 			
 			
 			if(keysToRemove!=null && !keysToRemove.isEmpty()) {
-				for (String key : keys) {
+				for (String key : keysToRemove) {
 					TransactionSupportUtil.bindResource(key, null);
 				}
 				AlfrescoTransactionSupport.bindListener(postTransactionListener);
 			}
 			
 			if(assocsToRemove!=null && !assocsToRemove.isEmpty()) {
-				for (String key : assocKeys) {
+				for (String key : assocsToRemove) {
 					TransactionSupportUtil.bindResource(key, null);
 				}
 				AlfrescoTransactionSupport.bindListener(postTransactionListener);
