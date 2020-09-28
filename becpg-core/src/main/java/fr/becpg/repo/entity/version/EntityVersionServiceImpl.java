@@ -106,6 +106,10 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	private NodeService nodeService;
 
 	@Autowired
+	@Qualifier("mtAwareNodeService")
+	private NodeService dbNodeService;
+
+	@Autowired
 	private CopyService copyService;
 
 	@Autowired
@@ -213,14 +217,18 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		// Create first version if needed
 		createInitialVersion(entityNodeRef);
 
-		NodeRef versionHistoryNodeRef = getVersionHistoryNodeRef(entityNodeRef);
-		if (versionHistoryNodeRef != null) {
-			nodeService.setProperty(versionHistoryNodeRef, BeCPGModel.PROP_VERSION_LABEL, versionLabel);
-		}
-
 		Version currentVersion = versionService.getCurrentVersion(entityNodeRef);
 		if (currentVersion != null) {
-			nodeService.setProperty(currentVersion.getFrozenStateNodeRef(), ContentModel.PROP_VERSION_LABEL, versionLabel);
+			NodeRef versionNodeRef = new NodeRef(new StoreRef(StoreRef.PROTOCOL_WORKSPACE, Version2Model.STORE_ID),
+					currentVersion.getFrozenStateNodeRef().getId());
+			dbNodeService.setProperty(versionNodeRef, Version2Model.PROP_QNAME_VERSION_LABEL, versionLabel);
+
+			NodeRef entityVersion = getEntityVersion(currentVersion);
+			if (entityVersion != null) {
+				nodeService.setProperty(entityVersion, BeCPGModel.PROP_VERSION_LABEL, versionLabel);
+			}
+
+			nodeService.setProperty(entityNodeRef, ContentModel.PROP_VERSION_LABEL, versionLabel);
 		}
 	}
 
