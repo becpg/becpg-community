@@ -69,6 +69,17 @@ public interface EntityDictionaryService {
 	 */
 	List<AssociationDefinition> getPivotAssocDefs(QName sourceType);
 
+
+	/**
+	 * <p>getPivotAssocDefs.</p>
+	 *
+	 * @param sourceType a {@link org.alfresco.service.namespace.QName} object.
+	 * @param exactMatch a {@link java.lang.Boolean} object.
+	 * @return a {@link java.util.List} object.
+	 */
+	List<AssociationDefinition> getPivotAssocDefs(QName sourceType, boolean exactMatch);
+	
+	
 	/**
 	 * <p>getTargetType.</p>
 	 *
@@ -185,6 +196,7 @@ public interface EntityDictionaryService {
 	 * @return a {@link org.alfresco.service.cmr.dictionary.DictionaryService} object.
 	 */
 	DictionaryService getDictionaryService();
+
 
 
 }

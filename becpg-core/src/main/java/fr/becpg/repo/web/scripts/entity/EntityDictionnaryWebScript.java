@@ -120,11 +120,12 @@ public class EntityDictionnaryWebScript extends AbstractWebScript {
 			
 			QName parentQname = entityDictionaryService.getClass(dataType).getParentName();
 			
-			if(assocDefs.isEmpty() || (!BeCPGModel.TYPE_ENTITY_V2.equals(parentQname) 
+			if(BeCPGModel.TYPE_CHARACT.equals(parentQname) || assocDefs.isEmpty() || (!BeCPGModel.TYPE_ENTITY_V2.equals(parentQname) 
 					&& entityDictionaryService.isSubClass(parentQname, BeCPGModel.TYPE_ENTITY_V2))) {
 				//Try assocs on parent
-				assocDefs.addAll(entityDictionaryService.getPivotAssocDefs(parentQname));
+				assocDefs.addAll(entityDictionaryService.getPivotAssocDefs(parentQname,true));
 			}
+			
 			
 			
 			for (AssociationDefinition assocDef : assocDefs) {
