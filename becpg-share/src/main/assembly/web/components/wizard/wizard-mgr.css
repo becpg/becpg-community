@@ -1,6 +1,4 @@
 
-.clearfix {
-}
 .clearfix:before, .clearfix:after {
     content: "";
     display: table;
@@ -150,12 +148,6 @@ div.wizard-content {
 }
 
 
-.wizard > .content > .body ul {
-    list-style: disc outside none !important;
-}
-.wizard > .content > .body ul > li {
-    display: list-item;
-}
 .wizard > .content > .body > iframe {
     border: 0 none;
     height: 100%;
@@ -195,10 +187,6 @@ div.wizard-content {
 .wizard > .actions .disabled a, .wizard > .actions .disabled a:hover, .wizard > .actions .disabled a:active {
     background: none repeat scroll 0 0 rgb(238, 238, 238);
     color: rgb(170, 170, 170);
-}
-.wizard > .loading {
-}
-.wizard > .loading .spinner {
 }
 
 .tabcontrol > .steps {
@@ -308,10 +296,6 @@ div.wizard-content {
 **/
 
 
-.wizard .documents {
-	
-}
-
 .wizard .dashlet {
     z-index: auto;
     margin: 5px 0px 20px 0;
@@ -359,25 +343,6 @@ div.wizard-content {
 .wizard .datagrid .yui-dt-col-actions {
 	border-right: none;
 }
-
-
-/*
-.wizard  .dashlet  .toolbar {
-	height: 28px;
-	margin: 0px;
-	padding: 0x;
-	border-bottom: none;
-}
-
- .yui-skin-lightTheme .wizard .yui-dt table,
-  .wizard .yui-dt-col-actions{
-	border-collapse: collapse;
-	border-right:none;
-}
-
-.wizard .datagrid .yui-dt-col-actions  {
-    border-right:none;
-} */
 
 
 /**
