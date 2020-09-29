@@ -92,14 +92,19 @@ public class EntityDictionaryServiceImpl implements EntityDictionaryService {
 	   propDefMapping.put(orig, dest);
    }
 	
+   /** {@inheritDoc} */
+	@Override
+	public List<AssociationDefinition> getPivotAssocDefs(QName sourceType) {
+		return getPivotAssocDefs(sourceType, false);
+	}
 	
 	/** {@inheritDoc} */
 	@Override
-	public List<AssociationDefinition> getPivotAssocDefs(QName sourceType) {
+	public List<AssociationDefinition> getPivotAssocDefs(QName sourceType, boolean exactMatch) {
 		List<AssociationDefinition> ret = new ArrayList<>();
 		for (QName assocQName : dictionaryService.getAllAssociations()) {
 			AssociationDefinition assocDef = dictionaryService.getAssociation(assocQName);
-			if (isSubClass(assocDef.getTargetClass().getName(), sourceType)) {
+			if ((exactMatch && assocDef.getTargetClass().getName().equals(sourceType)) ||  (!exactMatch && isSubClass(assocDef.getTargetClass().getName(), sourceType))) {
 				ret.add(assocDef);
 			}
 		}
