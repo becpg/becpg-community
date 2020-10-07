@@ -628,7 +628,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 					matchPlant = true;
 					if ((priceListDataItem.getCost() != null) && priceListDataItem.getCost().equals(slDataItem.getCharactNodeRef())) {
 
-						if ((item == null) || (priceListDataItem.getPrefRank() > item.getPrefRank())) {
+						if ((item == null ||  item.getPrefRank() == null) || (priceListDataItem.getPrefRank()!=null  && priceListDataItem.getPrefRank() > item.getPrefRank())) {
 							if (((priceListDataItem.getStartEffectivity() == null)
 									|| (priceListDataItem.getStartEffectivity().getTime() <= now.getTime()))
 									&& ((priceListDataItem.getEndEffectivity() == null)

@@ -75,7 +75,7 @@ public class PropertiesHelper {
 			name = QName.splitPrefixedQName(name)[1];
 		}
 		
-		String ret = name!=null? name.replaceAll("([\"*\\><?/:|])", "-").trim(): null;
+		String ret = name!=null? name.replaceAll("_x0020_", " ").replaceAll("([\"*\\><?/:|])", "-").trim(): null;
 		return ret!=null ? ret.replaceAll("\\.","-"): null;
 	}	
 	
