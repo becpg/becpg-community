@@ -63,10 +63,16 @@
                   Dom.addClass(p_dialog.id+"-dialog","large-dialog");
                 }
 			   
-		        if(this.parentInputNodeRef!=null ){
-                	Dom.get(p_dialog.id + "_prop_bcpg_parentLevel-added").value = this.parentInputNodeRef;
-		        	Bubbling.fire(p_dialog.id + "_prop_bcpg_parentLevel" + "refreshContent", this.parentInputNodeRef, this );
-		        }
+			   var propInputNodeRefs = {};
+			   propInputNodeRefs["bcpg_parentLevel"] = this.parentInputNodeRef;
+			   propInputNodeRefs["bcpg_variantIds"] = this.variantInputNodeRef;
+			   
+			   for(var prop in propInputNodeRefs) {
+				   if(propInputNodeRefs[prop] != null) {
+	                	Dom.get(p_dialog.id + "_prop_"+prop+"-added").value = propInputNodeRefs[prop];
+			        	Bubbling.fire(p_dialog.id + "_prop_"+prop + "refreshContent", propInputNodeRefs[prop], this );
+			        }
+			   }
 
 		   };
 
@@ -100,13 +106,16 @@
 		      doBeforeFormSubmit : {
 		         fn : function() {
 			         var checkBoxEl = Dom.get(this.id + "-createRow" + "-form-bulkAction");
-
-			         var parentInput =   Dom.get(this.id + "-createRow_prop_bcpg_parentLevel-added");
 			         
+			         var parentInput =   Dom.get(this.id + "-createRow_prop_bcpg_parentLevel-added");
+			         var variantInput =   Dom.get(this.id + "-createRow_prop_bcpg_variantIds-added");
+			         me.parentInputNodeRef = null;
+			         me.variantInputNodeRef = null;
 			         if(parentInput !=null && parentInput.value!=null && parentInput.value.length>0){
 			        	 me.parentInputNodeRef = parentInput.value;
-			         } else {
-			        	 me.parentInputNodeRef = null;
+			         }
+			         if(variantInput !=null && variantInput.value!=null && variantInput.value.length>0){
+			        	 me.variantInputNodeRef = variantInput.value;
 			         }
 	
 			         if (checkBoxEl && checkBoxEl.checked) {
