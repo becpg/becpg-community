@@ -58,6 +58,7 @@ public class ImportEntityJsonVisitor {
 
 	{
 		ignoredKeys.add(RemoteEntityService.ATTR_TYPE);
+		ignoredKeys.add(RemoteEntityService.ATTR_NAME);
 		ignoredKeys.add(RemoteEntityService.ATTR_PATH);
 		ignoredKeys.add(RemoteEntityService.ATTR_NODEREF);
 		ignoredKeys.add(RemoteEntityService.ELEM_ATTRIBUTES);
@@ -125,7 +126,8 @@ public class ImportEntityJsonVisitor {
 
 				return visit(entity, false, null);
 			}
-			return null;
+			
+			throw new BeCPGException("No entity found in JSON");
 
 		}
 
@@ -134,7 +136,6 @@ public class ImportEntityJsonVisitor {
 	private NodeRef visit(JSONObject entity, boolean lookupOnly, QName assocName) throws JSONException, BeCPGException {
 
 		QName type = null;
-		String path = null;
 
 		QName propName = ContentModel.PROP_NAME;
 
@@ -143,18 +144,24 @@ public class ImportEntityJsonVisitor {
 			propName = RemoteHelper.getPropName(type, entityDictionaryService);
 		}
 
-		if (entity.has(RemoteEntityService.ATTR_PATH)) {
-			path = entity.getString(RemoteEntityService.ATTR_PATH);
-		}
+		
 
 		NodeRef parentNodeRef = null;
 
 		if (entity.has(RemoteEntityService.ATTR_PARENT_ID)) {
 			parentNodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, entity.getString(RemoteEntityService.ATTR_PARENT_ID));
 		}
+		
+		if ((parentNodeRef== null || !nodeService.exists(parentNodeRef)) && entity.has(RemoteEntityService.ATTR_PATH)) {
+			parentNodeRef = findNodeByPath(entity.getString(RemoteEntityService.ATTR_PATH));
+		}
 
 		Map<QName, Serializable> properties = jsonToProperties(entity);
 		Map<QName, List<NodeRef>> associations = jsonToAssocs(entity);
+		
+		if(!properties.containsKey(propName) && entity.has(RemoteEntityService.ATTR_NAME)) {
+			properties.put(propName, entity.getString(RemoteEntityService.ATTR_NAME));
+		}
 
 		NodeRef entityNodeRef = null;
 
@@ -164,7 +171,7 @@ public class ImportEntityJsonVisitor {
 
 		if ((entityNodeRef == null) || !nodeService.exists(entityNodeRef)) {
 
-			entityNodeRef = findNode(type, parentNodeRef, path, properties, associations);
+			entityNodeRef = findNode(type, parentNodeRef, properties, associations);
 		}
 
 		if (lookupOnly) {
@@ -180,6 +187,10 @@ public class ImportEntityJsonVisitor {
 				if (!associations.isEmpty()) {
 					errMsg += ", with associations " + associations.toString();
 				}
+				
+				if(parentNodeRef!=null) {
+					errMsg += ", in path " +parentNodeRef;
+				}
 
 				throw new BeCPGException(errMsg);
 			}
@@ -193,11 +204,6 @@ public class ImportEntityJsonVisitor {
 		}
 
 		if (entityNodeRef == null) {
-
-			if ((parentNodeRef == null) || !nodeService.exists(parentNodeRef)) {
-				parentNodeRef = findNodeByPath(path);
-
-			}
 
 			String name = (String) properties.get(propName);
 
@@ -248,20 +254,25 @@ public class ImportEntityJsonVisitor {
 		return defaultValue;
 	}
 
-	private NodeRef findNode(QName type, NodeRef parentNodeRef, String path, Map<QName, Serializable> properties,
+	private NodeRef findNode(QName type, NodeRef parentNodeRef, Map<QName, Serializable> properties,
 			Map<QName, List<NodeRef>> associations) {
+		if(properties.isEmpty() && associations.isEmpty()) {
+			return null;
+		}
+		
 		if (logger.isDebugEnabled()) {
-			logger.debug("Try to find node of type: " + type + " in " + path);
-			logger.debug(" - properties : " + properties.toString());
-			logger.debug(" - assocs : " + associations.toString());
+			logger.debug("Try to find node of type: " + type + " in " + parentNodeRef);
+			if(!properties.isEmpty()) {
+				logger.debug(" - properties : " + properties.toString());
+			}
+			if(!associations.isEmpty()) {
+				logger.debug(" - assocs : " + associations.toString());
+			}
 		}
 
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery();
 		if (type != null) {
 			queryBuilder = queryBuilder.ofType(type);
-		}
-		if (path != null) {
-			queryBuilder = queryBuilder.inPath(path);
 		}
 
 		if (parentNodeRef != null) {
