@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+
 import fr.becpg.repo.helper.MLTextHelper;
 
 class ShowRule {
@@ -20,7 +22,7 @@ class ShowRule {
 	 * @param format a {@link java.lang.String} object.
 	 * @param locales a {@link java.util.List} object.
 	 */
-	public ShowRule(String format, List<String> locales) {
+	public ShowRule(@Nonnull String format, List<String> locales) {
 		if(format.contains("|")) {
 			String[] splitted = format.split("\\|");
 			

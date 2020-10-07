@@ -119,7 +119,8 @@ public class DocLinkedEntitiesPolicy extends AbstractBeCPGPolicy
 				&& policyBehaviourFilter.isEnabled(ContentModel.ASPECT_AUDITABLE)
 				&& policyBehaviourFilter.isEnabled(associationRef.getSourceRef(), ContentModel.ASPECT_AUDITABLE)
 				&& !isWorkingCopyOrVersion(associationRef.getSourceRef())
-				&& !nodeService.hasAspect(associationRef.getSourceRef(), ContentModel.ASPECT_CHECKED_OUT)) {
+				&& !nodeService.hasAspect(associationRef.getSourceRef(), ContentModel.ASPECT_CHECKED_OUT)
+				&& !nodeService.hasAspect(associationRef.getTargetRef(), ContentModel.ASPECT_PENDING_DELETE)) {
 			NodeRef destRef = entityService.getOrCreateDocumentsFolder(associationRef.getTargetRef());
 
 			deleteLink(associationRef.getSourceRef(), destRef);
