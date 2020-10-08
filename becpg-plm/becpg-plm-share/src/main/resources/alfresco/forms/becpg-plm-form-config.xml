@@ -982,7 +982,12 @@
 					<field id="rep:reportParameters" >
 					  	<control template="/org/alfresco/components/form/controls/checkboxmany.ftl"/>
 					</field>
-					<field id="rep:reportTpls" />
+					<field id="rep:reportTpls" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/rep:reportTpl?excludeProps=rep:reportTplIsSystem%7Cfalse,rep:reportTplIsDisabled%7Cfalse,rep:reportTplType%7CExportSearch,rep:reportTplType%7CCompare,rep:reportTplType%7CSystem</control-param>
+						</control>
+					</field>
 				</appearance>		
 	         </form>
 			<form id="supplier-mp">
@@ -2263,7 +2268,12 @@
 					<field id="rep:reportParameters" >
 					  	<control template="/org/alfresco/components/form/controls/checkboxmany.ftl"/>
 					</field>
-					<field id="rep:reportTpls" />
+					<field id="rep:reportTpls" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/rep:reportTpl?excludeProps=rep:reportTplIsSystem%7Cfalse,rep:reportTplIsDisabled%7Cfalse,rep:reportTplType%7CExportSearch,rep:reportTplType%7CCompare,rep:reportTplType%7CSystem</control-param>
+						</control>
+					</field>
 				</appearance>		
 	         </form>
 		</forms>
@@ -2650,7 +2660,12 @@
 					</field>
 					<field id="bcpg:componentLossPerc" set="mainInfo" />
 					
-					<field id="rep:reportTpls" set="mainInfo" />
+					<field id="rep:reportTpls" set="mainInfo" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/rep:reportTpl?excludeProps=rep:reportTplIsSystem%7Cfalse,rep:reportTplIsDisabled%7Cfalse,rep:reportTplType%7CExportSearch,rep:reportTplType%7CCompare,rep:reportTplType%7CSystem</control-param>
+						</control>
+					</field>
 					<field id="rep:reportLocales" set="mainInfo" >
 						<control template="/org/alfresco/components/form/controls/mtlangue.ftl"/>
 					</field>
@@ -2821,7 +2836,12 @@
 					<field id="rep:reportParameters"  >
 					  	<control template="/org/alfresco/components/form/controls/checkboxmany.ftl"/>
 					</field>
-					<field id="rep:reportTpls" />
+					<field id="rep:reportTpls" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/rep:reportTpl?excludeProps=rep:reportTplIsSystem%7Cfalse,rep:reportTplIsDisabled%7Cfalse,rep:reportTplType%7CExportSearch,rep:reportTplType%7CCompare,rep:reportTplType%7CSystem</control-param>
+						</control>
+					</field>
 				</appearance>		
 	         </form>
 			<form id="supplier-pack">
@@ -3680,7 +3700,12 @@
 					<field id="rep:reportParameters" set="mainInfo" >
 					  	<control template="/org/alfresco/components/form/controls/checkboxmany.ftl"/>
 					</field>
-					<field id="rep:reportTpls" />
+					<field id="rep:reportTpls" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/rep:reportTpl?excludeProps=rep:reportTplIsSystem%7Cfalse,rep:reportTplIsDisabled%7Cfalse,rep:reportTplType%7CExportSearch,rep:reportTplType%7CCompare,rep:reportTplType%7CSystem</control-param>
+						</control>
+					</field>
 				</appearance>		
 	         </form>
 			<form id="supplier-mp">
@@ -4780,7 +4805,12 @@
 					<field id="rep:reportParameters"  >
 					  	<control template="/org/alfresco/components/form/controls/checkboxmany.ftl"/>
 					</field>
-					<field id="rep:reportTpls" />
+					<field id="rep:reportTpls" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/rep:reportTpl?excludeProps=rep:reportTplIsSystem%7Cfalse,rep:reportTplIsDisabled%7Cfalse,rep:reportTplType%7CExportSearch,rep:reportTplType%7CCompare,rep:reportTplType%7CSystem</control-param>
+						</control>
+					</field>
 				</appearance>		
 	         </form>
 			<form id="formulation">
@@ -7424,7 +7454,12 @@
 				<field id="rep:reportParameters"  >
 					  	<control template="/org/alfresco/components/form/controls/checkboxmany.ftl"/>
 					</field>
-				<field id="rep:reportTpls" />
+				<field id="rep:reportTpls" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/rep:reportTpl?excludeProps=rep:reportTplIsSystem%7Cfalse,rep:reportTplIsDisabled%7Cfalse,rep:reportTplType%7CExportSearch,rep:reportTplType%7CCompare,rep:reportTplType%7CSystem</control-param>
+						</control>
+					</field>
 			</appearance>		
          </form>
 		</forms>
