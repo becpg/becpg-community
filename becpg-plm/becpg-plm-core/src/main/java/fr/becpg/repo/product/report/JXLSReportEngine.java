@@ -5,7 +5,6 @@ import java.io.OutputStream;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.service.cmr.repository.ContentIOException;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -104,8 +103,6 @@ public class JXLSReportEngine implements BeCPGReportEngine {
 			transformer.getTransformationConfig().setExpressionEvaluator(evaluator);
 
 			JxlsHelper.getInstance().processTemplate(context, transformer);
-		} catch (ContentIOException e) {
-			throw new ReportException(e);
 		} catch (IOException e) {
 			throw new ReportException(e);
 		}

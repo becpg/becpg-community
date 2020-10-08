@@ -92,6 +92,19 @@ test() {
     $MVN_EXEC verify $EXTRA_ENV -pl becpg-integration-runner
 }
 
+reindex() {
+	docker-compose -f $COMPOSE_FILE_PATH -f docker-compose.override.yml stop solr
+	
+	cd /var/lib/docker/volumes/target_solr_data/_data
+	
+	rm -rf archive
+	rm -rf alfrescoModels/*
+	rm -rf workspace
+	
+	cd -
+	docker-compose -f $COMPOSE_FILE_PATH -f docker-compose.override.yml start solr
+}
+
 
 case "$1" in
   install)
@@ -134,9 +147,12 @@ case "$1" in
   test)
     test
     ;;
+  reindex)
+    reindex
+    ;;
   visualvm)
     jvisualvm --openjmx localhost:9091
     ;;
   *)
-    echo "Usage: $0 {install|build_start|build_test|start|stop|purge|tail|test|deploy_fast|visualvm}"
+    echo "Usage: $0 {install|build_start|build_test|start|stop|purge|tail|test|deploy_fast|visualvm|reindex}"
 esac

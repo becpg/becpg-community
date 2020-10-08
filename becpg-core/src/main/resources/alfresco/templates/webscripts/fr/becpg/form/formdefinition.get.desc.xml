@@ -22,5 +22,5 @@
 	<url>/becpg/form?itemId={nodeRef?}&amp;itemKind={itemKind?}&amp;formId={formId?}&amp;siteId={sitedId?}&amp;entityNodeRef={entityNodeRef}</url>
 	<format default="json">argument</format>
 	<authentication>user</authentication>
-	<transaction allow="readonly" buffersize="0">required</transaction>
+	<transaction allow="readonly">required</transaction>
 </webscript>

@@ -3,7 +3,6 @@ package fr.becpg.repo.entity.remote.extractor;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -108,9 +107,7 @@ public class ImportEntityJsonVisitor {
 	 */
 	public NodeRef visit(NodeRef entityNodeRef, InputStream in) throws IOException, JSONException, BeCPGException {
 
-		try (Reader reader = new InputStreamReader(in)) {
-
-			JSONTokener tokener = new JSONTokener(reader);
+			JSONTokener tokener = new JSONTokener(new InputStreamReader(in));
 			JSONObject root = new JSONObject(tokener);
 
 			if (logger.isDebugEnabled()) {
@@ -129,7 +126,6 @@ public class ImportEntityJsonVisitor {
 			
 			throw new BeCPGException("No entity found in JSON");
 
-		}
 
 	}
 

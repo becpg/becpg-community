@@ -100,7 +100,11 @@ public class SpelJXLSExpressionEvaluator implements ExpressionEvaluator {
 			if (validCause != null) {
 				throw (RuntimeException) validCause;
 			}
-			logger.error("wrong expression: "+expression ,e);
+			if(logger.isDebugEnabled()) {
+				logger.debug(e,e);
+			}
+			
+			return "Wrong expression: "+expression+" - "+e.getMessage();
 		}
 		
 
@@ -111,9 +115,11 @@ public class SpelJXLSExpressionEvaluator implements ExpressionEvaluator {
 	/** {@inheritDoc} */
 	@Override
 	public Object evaluate(Map<String, Object> data) {
+
 		StandardEvaluationContext context = formulaService.createEntitySpelContext((RepositoryEntity) data.get("entity"));
 
 		return expression.getValue(context);
+		
 	}
 
 }
