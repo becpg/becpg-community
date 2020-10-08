@@ -18,20 +18,17 @@
 package fr.becpg.repo.web.scripts.remote;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.alfresco.repo.version.VersionModel;
+import org.alfresco.repo.version.VersionBaseModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.version.Version;
 import org.alfresco.service.cmr.version.VersionType;
-import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
-import fr.becpg.common.BeCPGException;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.version.EntityVersionService;
 
@@ -73,23 +70,20 @@ public class UpdateEntityWebScript extends AbstractEntityWebScript {
 			}
 
 			Map<String, Serializable> properties = new HashMap<>();
-			properties.put(VersionModel.PROP_VERSION_TYPE, versionType);
+			properties.put(VersionBaseModel.PROP_VERSION_TYPE, versionType);
 			properties.put(Version.PROP_DESCRIPTION, description);
 
 			// Create first version if needed
 			entityVersionService.createInitialVersion(entityNodeRef);
-			
+
 			entityVersionService.createVersion(entityNodeRef, properties);
 
 		}
 		logger.debug("Update entity: " + entityNodeRef);
-		try (InputStream in = req.getContent().getInputStream()) {
-			RemoteEntityFormat format = getFormat(req);
-			sendOKStatus(remoteEntityService.createOrUpdateEntity(entityNodeRef, in, format, getEntityProviderCallback(req)), resp, format);
-		} catch (BeCPGException e) {
-			logger.error("Cannot import entity", e);
-			throw new WebScriptException(e.getMessage());
-		}
+		RemoteEntityFormat format = getFormat(req);
+		NodeRef newNodeRef = remoteEntityService.createOrUpdateEntity(entityNodeRef, req.getContent().getInputStream(), format,
+				getEntityProviderCallback(req));
+		sendOKStatus(newNodeRef, resp, format);
 
 	}
 }

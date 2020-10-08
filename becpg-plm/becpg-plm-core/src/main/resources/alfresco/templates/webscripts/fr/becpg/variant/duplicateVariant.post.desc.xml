@@ -22,6 +22,6 @@
 	<url>/becpg/variant/duplicate?nodeRef={nodeRef}</url>
 	<format default="json">argument</format>
 	<authentication>user</authentication>
-	<transaction allow="readwrite" buffersize="0">required</transaction>
+	<transaction allow="readwrite">required</transaction>
 	<lifecycle>public_api</lifecycle>
 </webscript>

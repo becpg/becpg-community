@@ -23,5 +23,5 @@
 	<url>/becpg/report/{type}/templates</url>
 	<format default="json">argument</format>
 	<authentication>user</authentication>
-	<transaction allow="readonly" buffersize="0">required</transaction>
+	<transaction allow="readonly" >required</transaction>
 </webscript>

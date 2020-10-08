@@ -175,6 +175,7 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 			}
 		}
 
+		
 		// add nodes that are not in db
 		if (assocNodeRefs != null) {
 			for (NodeRef n : assocNodeRefs) {
@@ -200,29 +201,8 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 	/** {@inheritDoc} */
 	@Override
 	public void update(NodeRef nodeRef, QName qName, NodeRef assocNodeRef) {
-
-		List<AssociationRef> assocRefs = getTargetAssocsImpl(nodeRef, qName, false);
-		boolean hasChanged = false;
-
-		boolean createAssoc = true;
-		if (!assocRefs.isEmpty() && (assocRefs.get(0).getTargetRef() != null)) {
-			if (assocRefs.get(0).getTargetRef().equals(assocNodeRef)) {
-				createAssoc = false;
-			} else {
-				hasChanged = true;
-				nodeService.removeAssociation(nodeRef, assocRefs.get(0).getTargetRef(), qName);
-			}
-		}
-
-		if (createAssoc && (assocNodeRef != null)) {
-			hasChanged = true;
-			nodeService.createAssociation(nodeRef, assocNodeRef, qName);
-		}
-
-		if (hasChanged) {
-			removeCachedAssoc(assocCacheName(), nodeRef, qName);
-		}
-
+		update(nodeRef, qName,assocNodeRef!=null ? Arrays.asList(assocNodeRef): null, false);
+	
 	}
 
 	private void removeCachedAssoc(String cacheName, NodeRef nodeRef, QName qName) {

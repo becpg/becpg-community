@@ -22,11 +22,9 @@ import java.io.InputStream;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.io.IOUtils;
-import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
-import fr.becpg.common.BeCPGException;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 
 /**
@@ -51,15 +49,12 @@ public class CreateEntityWebScript extends AbstractEntityWebScript {
 			}
 		}
 
-		try (InputStream in = req.getContent().getInputStream()) {
-			RemoteEntityFormat format = getFormat(req);
-			
-			NodeRef entityNodeRef = remoteEntityService.createOrUpdateEntity(null, in, format, getEntityProviderCallback(req));
-			sendOKStatus(entityNodeRef, resp, format);
-		} catch (BeCPGException e) {
-			logger.error("Cannot import entity", e);
-			throw new WebScriptException(e.getMessage());
-		}
+		RemoteEntityFormat format = getFormat(req);
+
+		NodeRef entityNodeRef = remoteEntityService.createOrUpdateEntity(null, req.getContent().getInputStream(), format,
+				getEntityProviderCallback(req));
+
+		sendOKStatus(entityNodeRef, resp, RemoteEntityFormat.json);
 
 	}
 

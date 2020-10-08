@@ -41,6 +41,7 @@ import javax.xml.parsers.SAXParserFactory;
 import org.alfresco.model.ContentModel;
 import org.alfresco.model.ForumModel;
 import org.alfresco.service.ServiceRegistry;
+import org.alfresco.service.cmr.repository.AssociationExistsException;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.MLText;
@@ -283,6 +284,10 @@ public class ImportEntityXmlVisitor {
 			}
 
 			if (!qName.startsWith("metadata:")) {
+				
+				if(attributes.getValue(RemoteEntityService.ATTR_CREATE_IN_PATH)!=null) {
+					forceCreateInPath = Boolean.TRUE.toString().equals(attributes.getValue(RemoteEntityService.ATTR_CREATE_IN_PATH));
+				}
 
 				String type = attributes.getValue(RemoteEntityService.ATTR_TYPE);
 				typeStack.push(type);
@@ -405,8 +410,12 @@ public class ImportEntityXmlVisitor {
 										logger.debug("Create association : " + currAssoc.peek().toPrefixString(serviceRegistry.getNamespaceService())
 												+ " value " + node + " for type " + serviceRegistry.getNodeService().getType(node).toPrefixString(serviceRegistry.getNamespaceService()));
 									}
-									
-									serviceRegistry.getNodeService().createAssociation(curNodeRef.peek(), node, currAssoc.peek());
+									try {
+										serviceRegistry.getNodeService().createAssociation(curNodeRef.peek(), node, currAssoc.peek());
+									} catch (AssociationExistsException e) {
+										// association already exists
+										//TODO doesn't handle yet association update
+									}
 
 								}
 

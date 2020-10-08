@@ -16,29 +16,39 @@ import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtracto
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
- * <p>DynamicColumnNameResolver class.</p>
+ * <p>
+ * DynamicColumnNameResolver class.
+ * </p>
  *
  * @author matthieu
  * @version $Id: $Id
  */
 public class DynamicColumnNameResolver implements ExcelFieldTitleProvider, DataGridFormFieldTitleProvider {
 
-	private NodeService nodeService;
 	private DictionaryService dictionaryService;
-	
+
 	Map<String, String> dynamicColumnNames = new HashMap<>();
-	
+
 	/**
-	 * <p>Constructor for DynamicColumnNameResolver.</p>
+	 * <p>
+	 * Constructor for DynamicColumnNameResolver.
+	 * </p>
 	 *
-	 * @param filter a {@link fr.becpg.repo.entity.datalist.data.DataListFilter} object.
-	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
-	 * @param dictionaryService a {@link org.alfresco.service.cmr.dictionary.DictionaryService} object.
+	 * @param filter
+	 *            a {@link fr.becpg.repo.entity.datalist.data.DataListFilter}
+	 *            object.
+	 * @param nodeService
+	 *            a {@link org.alfresco.service.cmr.repository.NodeService}
+	 *            object.
+	 * @param dictionaryService
+	 *            a
+	 *            {@link org.alfresco.service.cmr.dictionary.DictionaryService}
+	 *            object.
 	 */
 	public DynamicColumnNameResolver(DataListFilter filter, NodeService nodeService, DictionaryService dictionaryService) {
-		this.nodeService =  nodeService;
+
 		this.dictionaryService = dictionaryService;
-		if(filter.getParentNodeRef() != null) {
+		if (filter.getParentNodeRef() != null) {
 			for (NodeRef nodeRef : BeCPGQueryBuilder.createQuery().parent(filter.getParentNodeRef()).ofType(PLMModel.TYPE_DYNAMICCHARACTLIST)
 					.isNotNull(PLMModel.PROP_DYNAMICCHARACT_COLUMN).inDB().list()) {
 
@@ -54,7 +64,7 @@ public class DynamicColumnNameResolver implements ExcelFieldTitleProvider, DataG
 	/** {@inheritDoc} */
 	@Override
 	public String getTitle(AttributeExtractorStructure field) {
-		String title  = getTitle(field.getFieldDef().getName());
+		String title = getTitle(field.getFieldDef().getName());
 		return title != null ? title : field.getFieldDef().getTitle(dictionaryService);
 	}
 
@@ -77,17 +87,15 @@ public class DynamicColumnNameResolver implements ExcelFieldTitleProvider, DataG
 	/** {@inheritDoc} */
 	@Override
 	public boolean isAllowed(QName field) {
-		String fieldName =  field.getLocalName().replace("bcpg:", "");
+		String fieldName = field.getLocalName().replace("bcpg:", "");
 		if (fieldName.contains("dynamicCharactColumn")) {
 			if (!dynamicColumnNames.containsKey(fieldName)) {
 				return false;
 			}
-		} else if (PLMModel.PROP_COMPARE_WITH_DYN_COLUMN.equals(field)
-				|| ForumModel.PROP_COMMENT_COUNT.equals(field)) {
+		} else if (PLMModel.PROP_COMPARE_WITH_DYN_COLUMN.equals(field) || ForumModel.PROP_COMMENT_COUNT.equals(field)) {
 			return false;
 		}
 		return true;
 	}
-
 
 }

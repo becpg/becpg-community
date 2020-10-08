@@ -242,7 +242,6 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	protected void sendOKStatus(NodeRef entityNodeRef, WebScriptResponse resp, RemoteEntityFormat format) throws IOException {
 		if ((resp != null) && (resp.getWriter() != null) && (entityNodeRef != null)) {
 			if(RemoteEntityFormat.json.equals(format)) {
-				
 				JSONObject ret = new JSONObject();
 				try {
 					ret.put("nodeRef", entityNodeRef);
@@ -367,7 +366,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	}
 
 	private String decodeParam(String param)   {
-		if ((param != null) && Base64.isBase64(param)) {
+		if ((param != null) && !param.isBlank() && !"none".equals(param) && Base64.isBase64(param)) {
 		     try {
 				 Inflater decompresser = new Inflater();
 				 byte[] compressedData = Base64.decodeBase64(param);
@@ -379,7 +378,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 
 		    	 return (new String(output, 0, decompressedDataLength, "UTF-8")).replaceAll("=", "bcpg:");
 			} catch (DataFormatException | UnsupportedEncodingException e) {
-				logger.error(e,e);
+				logger.error("Error decoding param: "+ param,e);
 			}
 		}
 		return param;

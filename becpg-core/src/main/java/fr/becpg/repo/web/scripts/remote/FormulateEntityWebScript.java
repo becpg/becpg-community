@@ -66,7 +66,7 @@ public class FormulateEntityWebScript extends AbstractEntityWebScript {
 			}
 
 		} catch (FormulateException e) {
-			handleFormulationError(e);
+			throw new WebScriptException(e.getMessage(),e);
 		} catch (AccessDeniedException e) {
 			throw new WebScriptException(Status.STATUS_UNAUTHORIZED, "You have no right to see this node");
 		} catch (SocketException e1) {
@@ -81,15 +81,4 @@ public class FormulateEntityWebScript extends AbstractEntityWebScript {
 
 	}
 
-	/**
-	 * <p>handleFormulationError.</p>
-	 *
-	 * @param e a {@link fr.becpg.repo.formulation.FormulateException} object.
-	 */
-	protected void handleFormulationError(FormulateException e) {
-
-		logger.error(e, e);
-		throw new WebScriptException(e.getMessage());
-
-	}
 }
