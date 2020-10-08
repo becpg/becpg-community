@@ -22,11 +22,9 @@ import java.io.InputStream;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.io.IOUtils;
-import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
-import fr.becpg.common.BeCPGException;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 
 /**
