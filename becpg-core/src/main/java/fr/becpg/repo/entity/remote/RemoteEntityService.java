@@ -62,6 +62,8 @@ public interface RemoteEntityService {
 	String ATTR_CODE = "code";
 	/** Constant <code>ATTR_ID="id"</code> */
 	String ATTR_ID = "id";
+	
+	String ATTR_CREATE_IN_PATH = "createInPath";
 
 	/** Constant <code>CHARACT_ATTR_PATH="charactPath"</code> */
 	String CHARACT_ATTR_PATH = "charactPath";

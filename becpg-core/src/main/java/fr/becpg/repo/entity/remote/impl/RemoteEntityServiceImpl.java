@@ -217,7 +217,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 			}, false, true);
 
 			if (rets.isEmpty()) {
-				throw new BeCPGException("Cannot create or update entity :" + entityNodeRef + " at format " + format);
+				throw new BeCPGException("Cannot create or update entity :" + entityNodeRef + " at format " + format+" -  results is empty");
 			}
 
 			return rets.iterator().next();
@@ -257,7 +257,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 					}
 				} catch (IOException | ParserConfigurationException | SAXException | JSONException e) {
 					logger.error("Cannot create or update entity :" + entityNodeRef + " at format " + format, e);
-					throw new BeCPGException("Cannot create or update entity :" + entityNodeRef + " at format " + format, e);
+					throw new BeCPGException("Cannot create or update entity :" + entityNodeRef + " at format " + format+ " - "+e.getMessage(), e);
 				}
 		
 
