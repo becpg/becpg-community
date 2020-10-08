@@ -176,7 +176,7 @@
                                 };
                                 // Instantiate the AutoComplete
                                 me.widgets.oAC = new YAHOO.widget.AutoComplete(me.fieldHtmlId, me.fieldHtmlId + "-container", oDS);
-                                me.widgets.oAC.queryDelay = .1;
+                                me.widgets.oAC.queryDelay = .5;
                                 me.widgets.oAC.page = 1;
                                 me.widgets.oAC.maxResultsDisplayed = 15;
                                 me.widgets.oAC.forceSelection = false;
