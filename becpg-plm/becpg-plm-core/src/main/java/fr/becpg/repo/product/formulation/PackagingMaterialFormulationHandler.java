@@ -232,7 +232,7 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 							 plmWeight = plmWeight.divide(productTare.multiply(BigDecimal.valueOf(1000d)));
 						}
 							
-						if (toUpdate.containsKey(packMateriDataItem.getNodeRef())) {
+						if (toUpdate.containsKey(packMateriDataItem.getPmlMaterial())) {
 							BigDecimal newPlmWeight = toUpdate.get(packMateriDataItem.getPmlMaterial()).add(plmWeight);
 							toUpdate.put(packMateriDataItem.getPmlMaterial(), newPlmWeight);
 						} else {
