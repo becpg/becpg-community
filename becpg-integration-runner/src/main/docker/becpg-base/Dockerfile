@@ -5,7 +5,7 @@ ENV ALF_VERSION=${alfresco.platform.version}
 ENV VTI_VERSION=${alfresco.aos.version}
 ENV ALF_SHARE_VERSION=${alfresco.share.version}
 ENV MYSQL_CONNECTOR=${mysql.connector.version}
-ENV SUPPORT_TOOLS_VERSION=1.1.0.0-amp
+ENV SUPPORT_TOOLS_VERSION=1.2.0.0-beCPG-amp
 
 WORKDIR /usr/local/tomcat/
 
