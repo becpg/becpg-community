@@ -152,7 +152,7 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 	/** {@inheritDoc} */
 	@Override
 	public void update(NodeRef nodeRef, QName qName, List<NodeRef> assocNodeRefs, boolean resetCache) {
-
+ 
 		List<AssociationRef> dbAssocNodeRefs = getTargetAssocsImpl(nodeRef, qName, false);
 		List<NodeRef> dbTargetNodeRefs = new ArrayList<>();
 
@@ -179,16 +179,17 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 		// add nodes that are not in db
 		if (assocNodeRefs != null) {
 			for (NodeRef n : assocNodeRefs) {
-				if (!dbTargetNodeRefs.contains(n) && nodeService.exists(n)) {
-					dbTargetNodeRefs.add(n);
-					hasChanged = true;
-					nodeService.createAssociation(nodeRef, n, qName);
+				if (!dbTargetNodeRefs.contains(n) && nodeService.exists(n)) {	
+						nodeService.createAssociation(nodeRef, n, qName);
+						dbTargetNodeRefs.add(n);
+						hasChanged = true;
 				}
 			}
 		}
 		if (hasChanged) {
 			removeCachedAssoc(assocCacheName(), nodeRef, qName);
 		}
+ 
 
 	}
 

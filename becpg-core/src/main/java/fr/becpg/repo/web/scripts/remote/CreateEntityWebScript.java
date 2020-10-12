@@ -54,7 +54,7 @@ public class CreateEntityWebScript extends AbstractEntityWebScript {
 		NodeRef entityNodeRef = remoteEntityService.createOrUpdateEntity(null, req.getContent().getInputStream(), format,
 				getEntityProviderCallback(req));
 
-		sendOKStatus(entityNodeRef, resp, RemoteEntityFormat.json);
+		sendOKStatus(entityNodeRef, resp, format);
 
 	}
 
