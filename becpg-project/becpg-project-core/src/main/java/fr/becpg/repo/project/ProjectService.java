@@ -153,4 +153,6 @@ public interface ProjectService {
 	 */
         NodeRef refusedTask(NodeRef nodeRef);
 
+	 boolean updateProjectState(NodeRef projectNodeRef, String beforeState, String afterState);
+
 }

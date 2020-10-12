@@ -68,6 +68,8 @@ public interface ProjectModel {
 	QName PROP_TL_START = QName.createQName(PROJECT_URI, "tlStart");
 	QName PROP_TL_END = QName.createQName(PROJECT_URI, "tlEnd");
 	QName PROP_TL_STATE = QName.createQName(PROJECT_URI, "tlState");
+	QName PROP_TL_PREVIOUS_STATE = QName.createQName(PROJECT_URI, "tlPreviousState");
+	
 	QName ASSOC_TL_PREV_TASKS = QName.createQName(PROJECT_URI, "tlPrevTasks");
 	QName ASSOC_TL_REFUSED_TASK_REF = QName.createQName(PROJECT_URI, "tlRefusedTaskRef");
 	QName ASSOC_TL_RESOURCES = QName.createQName(PROJECT_URI, "tlResources");

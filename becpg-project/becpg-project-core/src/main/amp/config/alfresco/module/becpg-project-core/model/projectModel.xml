@@ -448,7 +448,6 @@
 				<property name="pjt:tlWorkflowInstance">
 					<type>d:text</type>
 				</property>
-				
 				<property name="pjt:tlStart">
 					<type>d:date</type>
 					<index enabled="false" />
@@ -460,6 +459,12 @@
 				<property name="pjt:tlState">
 					<type>d:text</type>
 					<default>Planned</default>
+					<constraints>
+						<constraint ref="pjt:taskStates" />
+					</constraints>
+				</property>
+				<property name="pjt:tlPreviousState">
+					<type>d:text</type>
 					<constraints>
 						<constraint ref="pjt:taskStates" />
 					</constraints>

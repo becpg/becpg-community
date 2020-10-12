@@ -49,7 +49,6 @@ public class ProjectCalculatePlanningDatesTest extends AbstractProjectTestCase {
 
 				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 
-				logger.info("Load : " + projectData.toString());
 
 				// check initialization
 				assertNotNull(projectData);
@@ -91,10 +90,10 @@ public class ProjectCalculatePlanningDatesTest extends AbstractProjectTestCase {
 			@Override
 			public NodeRef execute() throws Throwable {
 				
-				// start project				
-//				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
-//				projectData.setProjectState(ProjectState.InProgress);
-//				alfrescoRepository.save(projectData);
+				logger.info("Update project state");
+				
+				// start project
+				nodeService.setProperty(projectNodeRef, ProjectModel.PROP_PROJECT_STATE, ProjectState.Planned);
 				nodeService.setProperty(projectNodeRef, ProjectModel.PROP_PROJECT_STATE, ProjectState.InProgress);
 
 				return null;
