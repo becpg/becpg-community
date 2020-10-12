@@ -138,7 +138,7 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 							if ((compoProductQty != null) && !compoProductQty.isNaN() && !compoProductQty.isInfinite() && (compoProductQty != 0d)) {
 								BigDecimal plmWeight = new BigDecimal(packMateriDataItem.getPmlWeight(), MathContext.DECIMAL64)
 										.multiply(new BigDecimal(qtyUsed)).divide(new BigDecimal(compoProductQty), MathContext.DECIMAL64);
-								if (toUpdate.containsKey(packMateriDataItem.getNodeRef())) {
+								if (toUpdate.containsKey(packMateriDataItem.getPmlMaterial())) {
 									BigDecimal newPlmWeight = toUpdate.get(packMateriDataItem.getPmlMaterial()).add(plmWeight);
 									toUpdate.put(packMateriDataItem.getPmlMaterial(), newPlmWeight);
 								} else {
