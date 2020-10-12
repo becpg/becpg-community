@@ -142,9 +142,9 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 		if (assocNodeRefs != null) {
 			for (NodeRef n : assocNodeRefs) {
 				if (!dbTargetNodeRefs.contains(n) && nodeService.exists(n)) {
+					nodeService.createAssociation(nodeRef, n, qName);
 					dbTargetNodeRefs.add(n);
 					hasChanged = true;
-					nodeService.createAssociation(nodeRef, n, qName);
 				}
 			}
 		}
@@ -161,29 +161,7 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 
 	@Override
 	public void update(NodeRef nodeRef, QName qName, NodeRef assocNodeRef) {
-
-		List<AssociationRef> assocRefs = getTargetAssocsImpl(nodeRef, qName, false);
-		boolean hasChanged = false;
-
-		boolean createAssoc = true;
-		if (!assocRefs.isEmpty() && (assocRefs.get(0).getTargetRef() != null)) {
-			if (assocRefs.get(0).getTargetRef().equals(assocNodeRef)) {
-				createAssoc = false;
-			} else {
-				hasChanged = true;
-				nodeService.removeAssociation(nodeRef, assocRefs.get(0).getTargetRef(), qName);
-			}
-		}
-
-		if (createAssoc && (assocNodeRef != null)) {
-			hasChanged = true;
-			nodeService.createAssociation(nodeRef, assocNodeRef, qName);
-		}
-
-		if (hasChanged) {
-			removeCachedAssoc(assocCacheName(), nodeRef, qName);
-		}
-
+		update(nodeRef, qName, assocNodeRef != null ? Arrays.asList(assocNodeRef) : null, false);
 	}
 
 	private void removeCachedAssoc(String cacheName, NodeRef nodeRef, QName qName) {
@@ -339,16 +317,16 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 					+ sortFieldQName.getNamespaceURI() + "') " + "and local_name='" + sortFieldQName.getLocalName() + "') ";
 
 			if (DataTypeDefinition.MLTEXT.equals(dateType.getName())) {
-				
-				sql += "and alf_node_properties.locale_id in (select id from alf_locale where locale_str like '"+MLTextHelper.localeKey(I18NUtil.getContentLocale())+"%' ) ";
+
+				sql += "and alf_node_properties.locale_id in (select id from alf_locale where locale_str like '"
+						+ MLTextHelper.localeKey(I18NUtil.getContentLocale()) + "%' ) ";
 				sortOrderSql = " group by alf_node.uuid";
 			}
-			
-			sql +=") ";
-						
+
+			sql += ") ";
+
 			sortOrderSql += " order by alf_node_properties." + fieldType + " " + sortDirection + ", alf_node.audit_created " + createSortDirection;
 
-			
 		}
 
 		sql += "where alf_node.store_id=(select id from alf_store where protocol='" + storeRef.getProtocol() + "' and identifier='"
@@ -462,17 +440,10 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 			+ " join alf_node targetNode on (targetNode.id = assoc.target_node_id) "
 			+ " join alf_store targetNodeStore on (  targetNodeStore.id = targetNode.store_id and targetNodeStore.protocol= ? and targetNodeStore.identifier=?) "
 			+ " left join alf_node_aspects q1 on (q1.qname_id = ? and q1.node_id=entity.id)"
-			+ " left join alf_node_aspects q2 on (q2.qname_id = ? and q2.node_id=dataListItem.id)"
-			+ " where  assoc.type_qname_id=?  "
+			+ " left join alf_node_aspects q2 on (q2.qname_id = ? and q2.node_id=dataListItem.id)" + " where  assoc.type_qname_id=?  "
 			+ " and q1.qname_id IS NULL and q2.qname_id IS NULL ";
 
-	/**
-	 *
-	 * @param assocs
-	 * @param assocName
-	 * @param orOperator
-	 * @return
-	 */
+
 	@Override
 	public List<EntitySourceAssoc> getEntitySourceAssocs(List<NodeRef> nodeRefs, QName assocTypeQName, boolean isOrOperator) {
 		List<EntitySourceAssoc> ret = null;
@@ -580,7 +551,7 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 					statement.setLong(3, aspectQnameId);
 					statement.setLong(4, aspectQnameId);
 					statement.setLong(5, typeQNameId);
-					
+
 					try (java.sql.ResultSet res = statement.executeQuery()) {
 						while (res.next()) {
 							NodeRef entityNodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, res.getString("entity"));

@@ -20,5 +20,5 @@
   <description>Compare nutrients from different products</description>
   <url>/modules/nut-database/nut-comparer</url>
   <authentication>user</authentication>
-  <transaction allow="readonly" buffersize="0">required</transaction>
+  <transaction allow="readonly" >required</transaction>
 </webscript>
