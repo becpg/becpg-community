@@ -196,21 +196,21 @@ public class QualityControlServiceImpl implements QualityControlService {
 						Matcher m = p.matcher(freq.trim());
 						if (m.find()) {
 							freqDigit = Integer.parseInt(freq.replaceAll("[^0-9]", ""));
-							freqUnit = freq.trim().replaceAll("[0-9]", "");
+							freqUnit = freq.trim().replaceAll("[0-9]", "").toLowerCase();
 							switch(freqUnit) {
-							case "D":
+							case "d":
 								timeToAdd = Calendar.DAY_OF_YEAR;
 								timeToAddStr = "day";
 								break;
-							case "W":
+							case "w":
 								timeToAdd = Calendar.WEEK_OF_YEAR;
 								timeToAddStr = "week";
 								break;
-							case "M":
+							case "m":
 								timeToAdd = Calendar.MONTH;
 								timeToAddStr = "month";
 								break;
-							case "Y":
+							case "y":
 								timeToAdd = Calendar.YEAR;
 								timeToAddStr = "year";
 								break;
@@ -558,7 +558,7 @@ public class QualityControlServiceImpl implements QualityControlService {
 
 				}
 				qualityControlData.getControlList().removeAll(toRemove);
-
+				nodeService.setProperty(sampleListNodeRef, QualityModel.PROP_SL_SAMPLE_STATE, QualityControlState.Compliant);
 				updateQualityControlState(qualityControlData);
 			}
 		}
@@ -567,14 +567,17 @@ public class QualityControlServiceImpl implements QualityControlService {
 	/** {@inheritDoc} */
 	@Override
 	public void updateQualityControlState(NodeRef sampleNodeRef) {
-		NodeRef entityNodeRef = entityListDAO.getEntity(sampleNodeRef);
-		if (!nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_PENDING_DELETE)) {
-			RepositoryEntity entity = alfrescoRepository.findOne(entityNodeRef);
-			if(entity instanceof QualityControlData){
-				QualityControlData qualityControlData = (QualityControlData) alfrescoRepository.findOne(entityNodeRef);
-				updateQualityControlState(qualityControlData);
+		if (nodeService.exists(sampleNodeRef)) {
+			NodeRef entityNodeRef = entityListDAO.getEntity(sampleNodeRef);
+			if (!nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_PENDING_DELETE)) {
+				RepositoryEntity entity = alfrescoRepository.findOne(entityNodeRef);
+				if(entity instanceof QualityControlData){
+					QualityControlData qualityControlData = (QualityControlData) alfrescoRepository.findOne(entityNodeRef);
+					updateQualityControlState(qualityControlData);
+				}
 			}
 		}
+		
 	}
 
 	private void updateQualityControlState(QualityControlData qualityControlData) {
@@ -593,7 +596,7 @@ public class QualityControlServiceImpl implements QualityControlService {
 				isQCCompliant = false;
 			}
 		}
-
+		
 		logger.debug("QC isQCControled : " + isQCControled + " isQCCompliant " + isQCCompliant);
 		qualityControlData.setState(null);
 		if (isQCControled) {
@@ -602,6 +605,7 @@ public class QualityControlServiceImpl implements QualityControlService {
 			} else {
 				qualityControlData.setState(QualityControlState.NonCompliant);
 			}
+
 		} else if (nextAnalysisDate != null){
 			qualityControlData.setNextAnalysisDate(nextAnalysisDate);
 		}
@@ -612,7 +616,7 @@ public class QualityControlServiceImpl implements QualityControlService {
 
 	/** {@inheritDoc} */
 	@Override
-	public void copyProductDataList(NodeRef qcNodeRef, NodeRef productNodeRef, boolean isNewQC) {
+	public void copyProductDataList(NodeRef qcNodeRef, NodeRef productNodeRef) {
 		NodeRef entityTplNodeRef = entityTplService.getEntityTpl(QualityModel.TYPE_QUALITY_CONTROL);
 		for (QName datalistToCopy : datalistsToCopy) {
 			NodeRef productDatalistNoderef = getDataListNodeRef(productNodeRef, datalistToCopy);
