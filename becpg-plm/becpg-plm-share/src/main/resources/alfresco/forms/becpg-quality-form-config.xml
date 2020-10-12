@@ -1179,7 +1179,11 @@
 					<show id="qa:slSampleId" />
 					<show id="qa:slDateTime" />
 					<show id="qa:slSampleState" />
+					<show id="fm:commentCount" force="true" />
 				</field-visibility>
+				<appearance>
+					<field id="fm:commentCount" label="hidden" read-only="true" />
+				</appearance>
 			</form>
 		</forms>
 	</config>
@@ -1339,6 +1343,7 @@
 					<show id="qa:clValue" />
 					<show id="qa:clState" />
 					<show id="qa:clRequired" />
+					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="qa:clSampleId" read-only="true" />
@@ -1350,6 +1355,7 @@
 					<field id="qa:clMaxi" read-only="true" />
 					<field id="qa:clUnit" read-only="true" />
 					<field id="qa:clRequired" read-only="true" />
+					<field id="fm:commentCount" label="hidden" read-only="true" />
 				</appearance>
 			</form>
 		</forms>
