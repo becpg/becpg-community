@@ -51,15 +51,12 @@ public class CreateEntityWebScript extends AbstractEntityWebScript {
 			}
 		}
 
-		try (InputStream in = req.getContent().getInputStream()) {
-			RemoteEntityFormat format = getFormat(req);
-			
-			NodeRef entityNodeRef = remoteEntityService.createOrUpdateEntity(null, in, format, getEntityProviderCallback(req));
-			sendOKStatus(entityNodeRef, resp, format);
-		} catch (BeCPGException e) {
-			logger.error("Cannot import entity", e);
-			throw new WebScriptException(e.getMessage());
-		}
+		RemoteEntityFormat format = getFormat(req);
+
+		NodeRef entityNodeRef = remoteEntityService.createOrUpdateEntity(null, req.getContent().getInputStream(), format,
+				getEntityProviderCallback(req));
+
+		sendOKStatus(entityNodeRef, resp, format);
 
 	}
 
