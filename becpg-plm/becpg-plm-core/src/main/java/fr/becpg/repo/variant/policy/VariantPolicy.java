@@ -134,7 +134,7 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 						
 						//On initial version while branch merging  
 						if(childAssocs != null && !childAssocs.isEmpty()) {
-							for(String key : getKeys()) {
+							for(String key :  getKeyRegistry(KEY_REGISTRY)) {
 								if (key.startsWith(KEY_QUEUE_VARIANT)){
 									Set<NodeRef> pendingNodes = new HashSet<>();
 									Set<NodeRef> tempPendingNodes = TransactionSupportUtil.getResource(key);
