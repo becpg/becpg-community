@@ -3,7 +3,6 @@ package fr.becpg.repo.entity.remote.extractor;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,6 +57,7 @@ public class ImportEntityJsonVisitor {
 
 	{
 		ignoredKeys.add(RemoteEntityService.ATTR_TYPE);
+		ignoredKeys.add(RemoteEntityService.ATTR_NAME);
 		ignoredKeys.add(RemoteEntityService.ATTR_PATH);
 		ignoredKeys.add(RemoteEntityService.ATTR_NODEREF);
 		ignoredKeys.add(RemoteEntityService.ELEM_ATTRIBUTES);
@@ -75,6 +75,8 @@ public class ImportEntityJsonVisitor {
 	NodeService nodeService;
 
 	EntityListDAO entityListDAO;
+	
+	private Map<NodeRef, NodeRef> cache = new HashMap<>();
 
 	/**
 	 * <p>Constructor for ImportEntityJsonVisitor.</p>
@@ -107,9 +109,7 @@ public class ImportEntityJsonVisitor {
 	 */
 	public NodeRef visit(NodeRef entityNodeRef, InputStream in) throws IOException, JSONException, BeCPGException {
 
-		try (Reader reader = new InputStreamReader(in)) {
-
-			JSONTokener tokener = new JSONTokener(reader);
+			JSONTokener tokener = new JSONTokener(new InputStreamReader(in));
 			JSONObject root = new JSONObject(tokener);
 
 			if (logger.isDebugEnabled()) {
@@ -125,16 +125,15 @@ public class ImportEntityJsonVisitor {
 
 				return visit(entity, false, null);
 			}
-			return null;
+			
+			throw new BeCPGException("No entity found in JSON");
 
-		}
 
 	}
 
 	private NodeRef visit(JSONObject entity, boolean lookupOnly, QName assocName) throws JSONException, BeCPGException {
 
 		QName type = null;
-		String path = null;
 
 		QName propName = ContentModel.PROP_NAME;
 
@@ -143,28 +142,42 @@ public class ImportEntityJsonVisitor {
 			propName = RemoteHelper.getPropName(type, entityDictionaryService);
 		}
 
-		if (entity.has(RemoteEntityService.ATTR_PATH)) {
-			path = entity.getString(RemoteEntityService.ATTR_PATH);
-		}
+		
 
 		NodeRef parentNodeRef = null;
 
 		if (entity.has(RemoteEntityService.ATTR_PARENT_ID)) {
 			parentNodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, entity.getString(RemoteEntityService.ATTR_PARENT_ID));
 		}
+		
+		if ((parentNodeRef== null || !nodeService.exists(parentNodeRef)) && entity.has(RemoteEntityService.ATTR_PATH)) {
+			parentNodeRef = findNodeByPath(entity.getString(RemoteEntityService.ATTR_PATH));
+		}
 
 		Map<QName, Serializable> properties = jsonToProperties(entity);
 		Map<QName, List<NodeRef>> associations = jsonToAssocs(entity);
-
-		NodeRef entityNodeRef = null;
-
-		if (entity.has(RemoteEntityService.ATTR_ID)) {
-			entityNodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, entity.getString(RemoteEntityService.ATTR_ID));
+		
+		if(!properties.containsKey(propName) && entity.has(RemoteEntityService.ATTR_NAME)) {
+			properties.put(propName, entity.getString(RemoteEntityService.ATTR_NAME));
 		}
 
-		if ((entityNodeRef == null) || !nodeService.exists(entityNodeRef)) {
+		NodeRef entityNodeRef = null;
+		NodeRef jsonEntityNodeRef = null;
+		if (entity.has(RemoteEntityService.ATTR_ID)) {
+			jsonEntityNodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, entity.getString(RemoteEntityService.ATTR_ID));
+			if(cache.containsKey(jsonEntityNodeRef)) {
+				entityNodeRef = cache.get(jsonEntityNodeRef);
+			} else {
+				entityNodeRef = jsonEntityNodeRef;
+			}
+			
+		}
 
-			entityNodeRef = findNode(type, parentNodeRef, path, properties, associations);
+		if ((entityNodeRef == null) ||  !nodeService.exists(entityNodeRef) ) {
+			
+			entityNodeRef = findNode(type, parentNodeRef, properties, associations);
+			cache.put(jsonEntityNodeRef, entityNodeRef);
+			
 		}
 
 		if (lookupOnly) {
@@ -180,6 +193,10 @@ public class ImportEntityJsonVisitor {
 				if (!associations.isEmpty()) {
 					errMsg += ", with associations " + associations.toString();
 				}
+				
+				if(parentNodeRef!=null) {
+					errMsg += ", in path " +parentNodeRef;
+				}
 
 				throw new BeCPGException(errMsg);
 			}
@@ -193,11 +210,6 @@ public class ImportEntityJsonVisitor {
 		}
 
 		if (entityNodeRef == null) {
-
-			if ((parentNodeRef == null) || !nodeService.exists(parentNodeRef)) {
-				parentNodeRef = findNodeByPath(path);
-
-			}
 
 			String name = (String) properties.get(propName);
 
@@ -214,6 +226,10 @@ public class ImportEntityJsonVisitor {
 					.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
 							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name)), type, properties)
 					.getChildRef();
+			
+			if(jsonEntityNodeRef!=null) {
+				cache.put(jsonEntityNodeRef, entityNodeRef);
+			}
 
 		} else {
 			for (Entry<QName, Serializable> prop : properties.entrySet()) {
@@ -248,20 +264,25 @@ public class ImportEntityJsonVisitor {
 		return defaultValue;
 	}
 
-	private NodeRef findNode(QName type, NodeRef parentNodeRef, String path, Map<QName, Serializable> properties,
+	private NodeRef findNode(QName type, NodeRef parentNodeRef, Map<QName, Serializable> properties,
 			Map<QName, List<NodeRef>> associations) {
+		if(properties.isEmpty() && associations.isEmpty()) {
+			return null;
+		}
+		
 		if (logger.isDebugEnabled()) {
-			logger.debug("Try to find node of type: " + type + " in " + path);
-			logger.debug(" - properties : " + properties.toString());
-			logger.debug(" - assocs : " + associations.toString());
+			logger.debug("Try to find node of type: " + type + " in " + parentNodeRef);
+			if(!properties.isEmpty()) {
+				logger.debug(" - properties : " + properties.toString());
+			}
+			if(!associations.isEmpty()) {
+				logger.debug(" - assocs : " + associations.toString());
+			}
 		}
 
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery();
 		if (type != null) {
 			queryBuilder = queryBuilder.ofType(type);
-		}
-		if (path != null) {
-			queryBuilder = queryBuilder.inPath(path);
 		}
 
 		if (parentNodeRef != null) {
@@ -549,6 +570,10 @@ public class ImportEntityJsonVisitor {
 	 */
 	public QName createQName(String qnameStr) {
 		try {
+			if(qnameStr!=null && qnameStr.contains("|")) {
+				qnameStr = qnameStr.split("|")[0];
+			}
+			
 			QName qname;
 			if (qnameStr.indexOf(QName.NAMESPACE_BEGIN) != -1) {
 				qname = QName.createQName(qnameStr);
