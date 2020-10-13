@@ -75,6 +75,8 @@ public class ImportEntityJsonVisitor {
 	NodeService nodeService;
 
 	EntityListDAO entityListDAO;
+	
+	private Map<NodeRef, NodeRef> cache = new HashMap<>();
 
 	/**
 	 * <p>Constructor for ImportEntityJsonVisitor.</p>
@@ -160,14 +162,22 @@ public class ImportEntityJsonVisitor {
 		}
 
 		NodeRef entityNodeRef = null;
-
+		NodeRef jsonEntityNodeRef = null;
 		if (entity.has(RemoteEntityService.ATTR_ID)) {
-			entityNodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, entity.getString(RemoteEntityService.ATTR_ID));
+			jsonEntityNodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, entity.getString(RemoteEntityService.ATTR_ID));
+			if(cache.containsKey(jsonEntityNodeRef)) {
+				entityNodeRef = cache.get(jsonEntityNodeRef);
+			} else {
+				entityNodeRef = jsonEntityNodeRef;
+			}
+			
 		}
 
-		if ((entityNodeRef == null) || !nodeService.exists(entityNodeRef)) {
-
+		if ((entityNodeRef == null) ||  !nodeService.exists(entityNodeRef) ) {
+			
 			entityNodeRef = findNode(type, parentNodeRef, properties, associations);
+			cache.put(jsonEntityNodeRef, entityNodeRef);
+			
 		}
 
 		if (lookupOnly) {
@@ -216,6 +226,10 @@ public class ImportEntityJsonVisitor {
 					.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
 							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name)), type, properties)
 					.getChildRef();
+			
+			if(jsonEntityNodeRef!=null) {
+				cache.put(jsonEntityNodeRef, entityNodeRef);
+			}
 
 		} else {
 			for (Entry<QName, Serializable> prop : properties.entrySet()) {
@@ -556,6 +570,10 @@ public class ImportEntityJsonVisitor {
 	 */
 	public QName createQName(String qnameStr) {
 		try {
+			if(qnameStr!=null && qnameStr.contains("|")) {
+				qnameStr = qnameStr.split("|")[0];
+			}
+			
 			QName qname;
 			if (qnameStr.indexOf(QName.NAMESPACE_BEGIN) != -1) {
 				qname = QName.createQName(qnameStr);
