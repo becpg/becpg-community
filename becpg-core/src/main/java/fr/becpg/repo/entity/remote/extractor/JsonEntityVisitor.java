@@ -259,7 +259,13 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 								if (listItemRefs != null && !listItemRefs.isEmpty()) {
 									JSONArray list = new JSONArray();
-									entityLists.put(dataListTypeQName.toPrefixString(namespaceService), list);
+
+									if (!entityLists.has(dataListType)) {
+										entityLists.put(dataListType, list);
+									} else {
+										entityLists.put(dataListType + "|" + (String) nodeService.getProperty(listNodeRef, ContentModel.PROP_NAME),
+												list);
+									}
 
 									for (ChildAssociationRef listItemRef : listItemRefs) {
 
