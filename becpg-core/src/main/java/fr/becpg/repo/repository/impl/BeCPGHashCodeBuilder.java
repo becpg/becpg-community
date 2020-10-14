@@ -122,7 +122,7 @@ public class BeCPGHashCodeBuilder {
 	/**
 	 * Constant to use in building the hashCode.
 	 */
-	private final int iConstant = 37;
+	private static final int iConstant = 37;
 
 	
 	private  long reflectionAppend(RepositoryEntity object, Set<RepositoryEntity> visited ) {
@@ -171,7 +171,7 @@ public class BeCPGHashCodeBuilder {
 	 * @return a {@link java.lang.String} object.
 	 */
 	public static String printDiff(RepositoryEntity obj1, RepositoryEntity obj2) {
-		String ret = new String();
+		String ret = "";
 
 		BeanWrapper beanWrapper1 = PropertyAccessorFactory.forBeanPropertyAccess(obj1);
 		BeanWrapper beanWrapper2 = PropertyAccessorFactory.forBeanPropertyAccess(obj2);
