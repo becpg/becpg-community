@@ -142,8 +142,6 @@ public class ImportEntityJsonVisitor {
 			propName = RemoteHelper.getPropName(type, entityDictionaryService);
 		}
 
-		
-
 		NodeRef parentNodeRef = null;
 
 		if (entity.has(RemoteEntityService.ATTR_PARENT_ID)) {
@@ -154,7 +152,7 @@ public class ImportEntityJsonVisitor {
 			if( entity.has(RemoteEntityService.ATTR_PATH)) {
 				parentNodeRef = findNodeByPath(entity.getString(RemoteEntityService.ATTR_PATH));
 			} else {
-				parentNodeRef = findNodeByPath(null);
+				parentNodeRef = null;
 			}
 		}
 
@@ -221,6 +219,10 @@ public class ImportEntityJsonVisitor {
 				name = RemoteEntityService.EMPTY_NAME_PREFIX + UUID.randomUUID().toString();
 			}
 
+			if(parentNodeRef == null ) {
+				parentNodeRef = findNodeByPath(null);
+			}
+			
 			if (logger.isDebugEnabled()) {
 				logger.debug("Node not found creating: " + name + " in " + parentNodeRef);
 
