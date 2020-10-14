@@ -9059,6 +9059,74 @@
 					
 				</appearance>
 			</form>
+			<form id="filter">
+				<field-visibility>
+					<show id="bcpg:ingListIng" />
+					<show id="bcpg:ingListQtyPerc" />
+					<show id="bcpg:ingListQtyMini" />
+					<show id="bcpg:ingListQtyMaxi" />
+					<show id="bcpg:ingListIsGMO" />
+					<show id="bcpg:ingListIsIonized" />
+					<show id="bcpg:ingListIsProcessingAid" />
+					<show id="bcpg:ingListIsSupport" />
+					<show id="bcpg:ingListGeoOrigin" />
+					<show id="bcpg:ingListGeoTransfo" />
+					<show id="bcpg:ingListBioOrigin" />
+				</field-visibility>
+
+				<appearance>
+					<field id="bcpg:ingListIng">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:ingListQtyPerc">
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">perc</control-param>
+						</control>
+					</field>
+					
+					<field id="bcpg:ingListIsGMO">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">,false|data.boolean.false,true|data.boolean.true
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:ingListIsIonized">
+					<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">,false|data.boolean.false,true|data.boolean.true
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:ingListIsProcessingAid">
+					<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">,false|data.boolean.false,true|data.boolean.true
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:ingListIsSupport">
+					<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">,false|data.boolean.false,true|data.boolean.true
+							</control-param>
+						</control>
+					</field>
+					
+					<field id="bcpg:ingListGeoOrigin">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:ingListGeoTransfo">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:ingListBioOrigin">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					
+					
+				</appearance>
+			</form>
 		</forms>
 	</config>
 	<!-- bcpg:ingList type (existing nodes) -->
