@@ -150,8 +150,12 @@ public class ImportEntityJsonVisitor {
 			parentNodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, entity.getString(RemoteEntityService.ATTR_PARENT_ID));
 		}
 		
-		if ((parentNodeRef== null || !nodeService.exists(parentNodeRef)) && entity.has(RemoteEntityService.ATTR_PATH)) {
-			parentNodeRef = findNodeByPath(entity.getString(RemoteEntityService.ATTR_PATH));
+		if ((parentNodeRef== null || !nodeService.exists(parentNodeRef))) {
+			if( entity.has(RemoteEntityService.ATTR_PATH)) {
+				parentNodeRef = findNodeByPath(entity.getString(RemoteEntityService.ATTR_PATH));
+			} else {
+				parentNodeRef = findNodeByPath(null);
+			}
 		}
 
 		Map<QName, Serializable> properties = jsonToProperties(entity);
