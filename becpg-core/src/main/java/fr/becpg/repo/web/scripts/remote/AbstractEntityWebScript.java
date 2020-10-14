@@ -20,9 +20,12 @@ package fr.becpg.repo.web.scripts.remote;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
 
@@ -365,18 +368,32 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		return lists;
 	}
 
-	private String decodeParam(String param)   {
-		if ((param != null) && !param.isBlank() && !"none".equals(param) && Base64.isBase64(param)) {
+
+	//TODO move that to CompressParamHelper in becpg-tools
+	private static final String BASE_64_PREFIX = "b64-";
+	
+	private static final Map<String,String> replacementMaps = new HashMap<>();
+	{
+		replacementMaps.put("bcpg:", "§");
+	}
+	
+	
+	private static  String decodeParam(String param)   {
+		if ((param != null) && param.startsWith(BASE_64_PREFIX) ) {
 		     try {
 				 Inflater decompresser = new Inflater();
-				 byte[] compressedData = Base64.decodeBase64(param);
+				 byte[] compressedData = Base64.decodeBase64(param.replaceFirst(BASE_64_PREFIX, ""));
 			     decompresser.setInput(compressedData, 0, compressedData.length);
 			     byte[] output = new byte[100000];
 			     
 			     int decompressedDataLength = decompresser.inflate(output);
 			     decompresser.end();
-
-		    	 return (new String(output, 0, decompressedDataLength, "UTF-8")).replaceAll("=", "bcpg:");
+			     String ret = (new String(output, 0, decompressedDataLength, "UTF-8"));
+			     for(Entry<String,String> entry: replacementMaps.entrySet()) {
+			    	 ret = ret.replaceAll( entry.getValue(), entry.getKey());
+					}
+			     
+		    	 return ret;
 			} catch (DataFormatException | UnsupportedEncodingException e) {
 				logger.error("Error decoding param: "+ param,e);
 			}
