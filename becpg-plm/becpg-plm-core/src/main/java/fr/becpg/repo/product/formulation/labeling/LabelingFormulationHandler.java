@@ -501,8 +501,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				if (prev == null) {
 					prev = component;
 				} else {
-					if ((prev.getDeclarationType() == null || component.getDeclarationType() == null)
-							|| (prev.getDeclarationType() != null && prev.getDeclarationType().equals(component.getDeclarationType()))) {
+					if ((prev.getIngType() == null || component.getIngType() == null)
+							||  prev.getIngType().equals(component.getIngType())) {
+						
 						merge(prev, component);
 						parent.remove(component.getNodeRef());
 
