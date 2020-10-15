@@ -18,6 +18,7 @@
 package fr.becpg.repo.product.data.ing;
 
 import java.util.Locale;
+import java.util.Objects;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
@@ -161,12 +162,7 @@ public class IngTypeItem extends LabelingComponent{
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + ((decThreshold == null) ? 0 : decThreshold.hashCode());
-		result = prime * result + ((isDoNotDeclare == null) ? 0 : isDoNotDeclare.hashCode());
-		result = prime * result + ((isLastGroup == null) ? 0 : isLastGroup.hashCode());
-		result = prime * result + ((lvCode == null) ? 0 : lvCode.hashCode());
-		result = prime * result + ((lvValue == null) ? 0 : lvValue.hashCode());
-		result = prime * result + ((origNodeRef == null) ? 0 : origNodeRef.hashCode());
+		result = prime * result + Objects.hash(decThreshold, isDoNotDeclare, isLastGroup, lvCode, lvValue, origNodeRef);
 		return result;
 	}
 
@@ -179,37 +175,9 @@ public class IngTypeItem extends LabelingComponent{
 		if (getClass() != obj.getClass())
 			return false;
 		IngTypeItem other = (IngTypeItem) obj;
-		if (decThreshold == null) {
-			if (other.decThreshold != null)
-				return false;
-		} else if (!decThreshold.equals(other.decThreshold))
-			return false;
-		if (isDoNotDeclare == null) {
-			if (other.isDoNotDeclare != null)
-				return false;
-		} else if (!isDoNotDeclare.equals(other.isDoNotDeclare))
-			return false;
-		if (isLastGroup == null) {
-			if (other.isLastGroup != null)
-				return false;
-		} else if (!isLastGroup.equals(other.isLastGroup))
-			return false;
-		if (lvCode == null) {
-			if (other.lvCode != null)
-				return false;
-		} else if (!lvCode.equals(other.lvCode))
-			return false;
-		if (lvValue == null) {
-			if (other.lvValue != null)
-				return false;
-		} else if (!lvValue.equals(other.lvValue))
-			return false;
-		if (origNodeRef == null) {
-			if (other.origNodeRef != null)
-				return false;
-		} else if (!origNodeRef.equals(other.origNodeRef))
-			return false;
-		return true;
+		return Objects.equals(decThreshold, other.decThreshold) && Objects.equals(isDoNotDeclare, other.isDoNotDeclare)
+				&& Objects.equals(isLastGroup, other.isLastGroup) && Objects.equals(lvCode, other.lvCode) && Objects.equals(lvValue, other.lvValue)
+				&& Objects.equals(origNodeRef, other.origNodeRef);
 	}
 
 
