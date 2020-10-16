@@ -55,6 +55,7 @@ public class ControlListDataItem extends BeCPGDataObject{
 	String textCriteria;
 	QualityControlState state;	
 	String temperature;
+	Integer dayNumber;
 	NodeRef method;
 	List<NodeRef> characts = new ArrayList<>();
 	
@@ -323,7 +324,25 @@ public class ControlListDataItem extends BeCPGDataObject{
 		this.characts = characts;
 	}
 	
-	
+	/**
+	 * <p>Getter for the field <code>dayNumber</code>.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object.
+	 */
+	@AlfProp
+	@AlfQname(qname = "qa:clDayNumber")
+	public Integer getDayNumber() {
+		return dayNumber;
+	}
+
+	/**
+	 * <p>Setter for the field <code>dayNumber</code>.</p>
+	 *
+	 * @param dayNumber a {@link java.lang.Integer} object.
+	 */
+	public void setDayNumber(Integer dayNumber) {
+		this.dayNumber = dayNumber;
+	}
 
 	/**
 	 * <p>Constructor for ControlListDataItem.</p>
@@ -360,7 +379,7 @@ public class ControlListDataItem extends BeCPGDataObject{
 	 * @param method a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param characts a {@link java.util.List} object.
 	 */
-	public ControlListDataItem(NodeRef nodeRef, String type, Double mini, Double maxi, Boolean required, String sampleId, Double value, Double target, String unit,String textCriteria, QualityControlState state, String temperature, NodeRef method, List<NodeRef> characts){
+	public ControlListDataItem(NodeRef nodeRef, String type, Double mini, Double maxi, Boolean required, String sampleId, Double value, Double target, String unit,String textCriteria, QualityControlState state, String temperature, Integer dayNumber, NodeRef method, List<NodeRef> characts){
 		
 		setNodeRef(nodeRef);
 		setType(type);
@@ -374,6 +393,7 @@ public class ControlListDataItem extends BeCPGDataObject{
 		setTextCriteria(textCriteria);
 		setState(state);
 		setTemperature(temperature);
+		setDayNumber(dayNumber);
 		setMethod(method);
 		setCharacts(characts);
 	}
