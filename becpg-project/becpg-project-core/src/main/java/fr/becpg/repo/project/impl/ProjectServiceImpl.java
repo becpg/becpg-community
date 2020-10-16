@@ -17,6 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.project.impl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -143,7 +144,6 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin {
 		nodeService.setProperty(taskNodeRef, ProjectModel.PROP_TL_TASK_COMMENT, null);
 
 	}
-	
 
 	@Override
 	public boolean updateProjectState(NodeRef projectNodeRef, String beforeState, String afterState) {
@@ -152,51 +152,53 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin {
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
 			policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
 			policyBehaviourFilter.disableBehaviour(ProjectModel.ASPECT_BUDGET);
-				if (ProjectState.InProgress.toString().equals(afterState)) {
-					if(beforeState == null || beforeState.isEmpty() || ProjectState.Planned.toString().equals(beforeState)) {
-		
-						Date startDate = ProjectHelper.removeTime(new Date());
-						nodeService.setProperty(projectNodeRef, ProjectModel.PROP_PROJECT_START_DATE, startDate);
-						ProjectData projectData = alfrescoRepository.findOne(projectNodeRef);
-						for (TaskListDataItem taskListDataItem : ProjectHelper.getNextTasks(projectData, null)) {
-							if(taskListDataItem.getSubProject() == null) {
-								nodeService.setProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_START, startDate);
-							}
-						}
-					} else {
-						ProjectData projectData = alfrescoRepository.findOne(projectNodeRef);
-						for(TaskListDataItem taskListDataItem : projectData.getTaskList()) {
-							String previousState = (String) nodeService.getProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_PREVIOUS_STATE);
-							if(previousState!=null && !previousState.isEmpty()) {
-								nodeService.setProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_PREVIOUS_STATE,null);
-								nodeService.setProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_STATE, previousState);
-							}
-							
-						}
-						
-					}
-					return true;
-				} else if (ProjectState.Cancelled.toString().equals(afterState) || ProjectState.OnHold.toString().equals(afterState)  || ProjectState.Completed.toString().equals(beforeState)) {
-					
+			if (ProjectState.InProgress.toString().equals(afterState)) {
+				if ((beforeState == null) || beforeState.isEmpty() || ProjectState.Planned.toString().equals(beforeState)) {
+
+					Date startDate = ProjectHelper.removeTime(new Date());
+					nodeService.setProperty(projectNodeRef, ProjectModel.PROP_PROJECT_START_DATE, startDate);
 					ProjectData projectData = alfrescoRepository.findOne(projectNodeRef);
-					for(TaskListDataItem taskListDataItem : projectData.getTaskList()) {
-						if(TaskState.InProgress.equals(taskListDataItem.getTaskState())) {
-							nodeService.setProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_PREVIOUS_STATE, taskListDataItem.getState());
-							nodeService.setProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_STATE, afterState);
-							if(taskListDataItem.getSubProject()!=null) {
-								String previousState  =  (String) nodeService.getProperty(taskListDataItem.getSubProject(), ProjectModel.PROP_TL_PREVIOUS_STATE);
-								if(!afterState.equals(previousState)) {
-									nodeService.setProperty(taskListDataItem.getSubProject(), ProjectModel.PROP_PROJECT_STATE,afterState);
-									updateProjectState(taskListDataItem.getSubProject(),  previousState,  afterState) ;
-								}
-							}
-							
+					for (TaskListDataItem taskListDataItem : ProjectHelper.getNextTasks(projectData, null)) {
+						if (taskListDataItem.getSubProject() == null) {
+							nodeService.setProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_START, startDate);
 						}
 					}
-					
-					return true;
-					
+				} else {
+					ProjectData projectData = alfrescoRepository.findOne(projectNodeRef);
+					for (TaskListDataItem taskListDataItem : projectData.getTaskList()) {
+						String previousState = (String) nodeService.getProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_PREVIOUS_STATE);
+						if ((previousState != null) && !previousState.isEmpty()) {
+							nodeService.setProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_PREVIOUS_STATE, null);
+							nodeService.setProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_STATE, previousState);
+						}
+
+					}
+
 				}
+				return true;
+			} else if (ProjectState.Cancelled.toString().equals(afterState) || ProjectState.OnHold.toString().equals(afterState)
+					|| ProjectState.Completed.toString().equals(beforeState)) {
+
+				ProjectData projectData = alfrescoRepository.findOne(projectNodeRef);
+				for (TaskListDataItem taskListDataItem : projectData.getTaskList()) {
+					if (TaskState.InProgress.equals(taskListDataItem.getTaskState())) {
+						nodeService.setProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_PREVIOUS_STATE, taskListDataItem.getState());
+						nodeService.setProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_STATE, afterState);
+						if (taskListDataItem.getSubProject() != null) {
+							String previousState = (String) nodeService.getProperty(taskListDataItem.getSubProject(),
+									ProjectModel.PROP_TL_PREVIOUS_STATE);
+							if (!afterState.equals(previousState)) {
+								nodeService.setProperty(taskListDataItem.getSubProject(), ProjectModel.PROP_PROJECT_STATE, afterState);
+								updateProjectState(taskListDataItem.getSubProject(), previousState, afterState);
+							}
+						}
+
+					}
+				}
+
+				return true;
+
+			}
 		} finally {
 			policyBehaviourFilter.enableBehaviour(ProjectModel.ASPECT_BUDGET);
 			policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_TASK_LIST);
@@ -205,7 +207,6 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin {
 
 		return false;
 	}
-	
 
 	/** {@inheritDoc} */
 	@Override
@@ -503,6 +504,12 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin {
 	}
 
 	/** {@inheritDoc} */
+	// {nodeRef} --> replace with project nodeRef
+	// {nodeRef|propName} --> replace with project property
+	// {nodeRef|xpath:./path} --> replace with nodeRef found in relative project path
+	// {assocName} --> replace with association nodeRef
+	// {assocName|propName} --> replace with association property
+	// {assocName|xpath:./path} --> replace with nodeRef found in relative assoc path
 	@Override
 	public String getDeliverableUrl(NodeRef projectNodeRef, String url) {
 		if ((url != null) && url.contains("{")) {
@@ -512,8 +519,9 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin {
 
 				String assocQname = patternMatcher.group(1);
 				String replacement = "";
-				if (DeliverableUrl.NODEREF_URL_PARAM.equals(assocQname)) {
-					replacement += projectNodeRef;
+				if ((assocQname != null) && assocQname.startsWith(DeliverableUrl.NODEREF_URL_PARAM)) {
+					String[] splitted = assocQname.split("\\|");
+					replacement += extractDeliverableProp(projectNodeRef, splitted);
 
 				} else {
 					String[] splitted = assocQname.split("\\|");
@@ -523,19 +531,9 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin {
 							if (replacement.length() > 0) {
 								replacement += ",";
 							}
-							if (splitted.length > 1) {
-								if (splitted[1].startsWith(DeliverableUrl.XPATH_URL_PREFIX)) {
-									replacement += BeCPGQueryBuilder.createQuery().selectNodeByPath(assoc.getTargetRef(),
-											splitted[1].substring(DeliverableUrl.XPATH_URL_PREFIX.length()));
-								} else {
-									replacement += nodeService.getProperty(assoc.getTargetRef(), QName.createQName(splitted[1], namespaceService));
-								}
-							} else {
-								replacement += assoc.getTargetRef();
-							}
+							replacement += extractDeliverableProp(assoc.getTargetRef(), splitted);
 						}
 					}
-
 				}
 
 				patternMatcher.appendReplacement(sb, replacement != null ? replacement : "");
@@ -546,6 +544,21 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin {
 
 		}
 		return url;
+	}
+
+	private String extractDeliverableProp(NodeRef nodeRef, String[] splitted) {
+		NodeRef ret = null;
+		if (splitted.length > 1) {
+			if (splitted[1].startsWith(DeliverableUrl.XPATH_URL_PREFIX)) {
+				ret = BeCPGQueryBuilder.createQuery().selectNodeByPath(nodeRef, splitted[1].substring(DeliverableUrl.XPATH_URL_PREFIX.length()));
+			} else {
+				Serializable tmp = nodeService.getProperty(nodeRef, QName.createQName(splitted[1], namespaceService));
+				return tmp != null ? tmp.toString() : "";
+			}
+		} else {
+			ret = nodeRef;
+		}
+		return ret != null ? ret.toString() : "";
 	}
 
 	private QName extractRolePropName(String authorityName) {
@@ -641,11 +654,12 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin {
 		}
 		return queryBuilder.count();
 	}
-	
+
 	/** {@inheritDoc} */
 	@Override
 	public FormulationPluginPriority getMatchPriority(QName type) {
-		return entityDictionaryService.isSubClass(type, ProjectModel.TYPE_PROJECT) ? FormulationPluginPriority.NORMAL : FormulationPluginPriority.NONE;
+		return entityDictionaryService.isSubClass(type, ProjectModel.TYPE_PROJECT) ? FormulationPluginPriority.NORMAL
+				: FormulationPluginPriority.NONE;
 
 	}
 
@@ -654,6 +668,5 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin {
 	public void runFormulation(NodeRef entityNodeRef) throws FormulateException {
 		formulate(entityNodeRef);
 	}
-
 
 }
