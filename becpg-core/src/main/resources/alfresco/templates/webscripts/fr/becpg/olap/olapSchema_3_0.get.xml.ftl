@@ -134,7 +134,7 @@
 							doc->>"$.bcpg_erpCode" as erpCode,
 							doc->>"$.bcpg_legalName" as legalName,
 							doc->>"$.bcpg_productState" as productState,
-							doc->>"$.bcpg_productType" as productType,
+							doc->>"$.type" as productType,
 							doc->>"$.cm_versionLabel" as versionLabel
 						from
 							bcpg_product
@@ -1484,6 +1484,8 @@
 										b.nodeRef,
 										b.doc->>"$.bcpg_productHierarchy1[0]" as productHierarchy1,
 										b.doc->>"$.bcpg_productHierarchy2[0]" as productHierarchy2,
+										b.doc->>"$.bcpg_productState" as productState,
+										b.doc->>"$.type" as productType,
 										b.doc->>"$.cm_versionLabel" as versionLabel
 									from
 										compoList a left join  bcpg_product b on a.doc->>"$.bcpg_compoListProduct_bcpg_nodeRef[0]" = b.nodeRef
@@ -1499,6 +1501,32 @@
 				</Level>
 				<Level name="entity_noderef" caption="${msg("jsolap.componentName.title")}" table="compoList" column="nodeRef" nameColumn="name" type="String"   >
 				</Level>
+				<Level approxRowCount="5" name="productState" caption="${msg("jsolap.componentState.title")}" table="compoList" column="productState"  type="String"   >
+				  <NameExpression>
+					  <SQL dialect="generic" >
+					  <![CDATA[CASE WHEN productState='Simulation' THEN '${msg("listconstraint.bcpg_systemState.Simulation")}'
+	                            WHEN productState='ToValidate' THEN '${msg("listconstraint.bcpg_systemState.ToValidate")}'
+	                            WHEN productState='Valid' THEN '${msg("listconstraint.bcpg_systemState.Valid")}'
+	                            WHEN productState='Refused' THEN '${msg("listconstraint.bcpg_systemState.Refused")}'
+	                            WHEN productState='Archived' THEN '${msg("listconstraint.bcpg_systemState.Archived")}'
+	                            ELSE 'Vide'
+	                           END]]></SQL>
+             		 </NameExpression>
+				</Level>
+				<Level approxRowCount="10" name="productType" caption="${msg("jsolap.componentType.title")}" table="compoList" column="productType" nameColumn="productType" type="String"   >
+					<NameExpression>
+					  <SQL dialect="generic" >
+					  <![CDATA[CASE WHEN productType='bcpg:rawMaterial' THEN "${msg('bcpg_bcpgmodel.type.bcpg_rawMaterial.title')}"
+	                            WHEN productType='bcpg:finishedProduct' THEN "${msg('bcpg_bcpgmodel.type.bcpg_finishedProduct.title')}"
+	                            WHEN productType='bcpg:semiFinishedProduct' THEN "${msg('bcpg_bcpgmodel.type.bcpg_semiFinishedProduct.title')}"
+	                            WHEN productType='bcpg:packagingMaterial' THEN "${msg('bcpg_bcpgmodel.type.bcpg_packagingMaterial.title')}"
+	                            WHEN productType='bcpg:packagingKit' THEN "${msg('bcpg_bcpgmodel.type.bcpg_packagingKit.title')}"
+	                            WHEN productType='bcpg:localSemiFinishedProduct' THEN "${msg('bcpg_bcpgmodel.type.bcpg_localSemiFinishedProduct.title')}"
+	                            WHEN productType='bcpg:resourceProduct' THEN "${msg('bcpg_bcpgmodel.type.bcpg_resourceProduct.title')}"
+	                            ELSE 'Vide'
+	                           END]]></SQL>
+             		 </NameExpression>
+				</Level>		
 				<Level name="versionLabel" caption="${msg("jsolap.componentVersionLabel.title")}" table="compoList" column="versionLabel" type="String" />
 			</Hierarchy>
 		</Dimension>
