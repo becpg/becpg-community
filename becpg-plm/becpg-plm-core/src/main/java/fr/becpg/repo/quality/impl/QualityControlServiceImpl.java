@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -191,7 +192,6 @@ public class QualityControlServiceImpl implements QualityControlService {
 						Integer freqDigit = null;
 						String freqUnit = null;
 						Integer timeToAdd = null;
-						String timeToAddStr = null;
 						Pattern p = Pattern.compile("[0-9]+[DMWY]+");
 						Matcher m = p.matcher(freq.trim());
 						if (m.find()) {
@@ -200,24 +200,20 @@ public class QualityControlServiceImpl implements QualityControlService {
 							switch(freqUnit) {
 							case "d":
 								timeToAdd = Calendar.DAY_OF_YEAR;
-								timeToAddStr = "day";
 								break;
 							case "w":
 								timeToAdd = Calendar.WEEK_OF_YEAR;
-								timeToAddStr = "week";
 								break;
 							case "m":
 								timeToAdd = Calendar.MONTH;
-								timeToAddStr = "month";
 								break;
 							case "y":
 								timeToAdd = Calendar.YEAR;
-								timeToAddStr = "year";
 								break;
 
 							}
 							if (sampleDateTime != null && freqDigit != null && timeToAdd != null) {
-								logger.debug("Update sample time add: " + freqDigit + " " + timeToAddStr + " to " + sampleDateTime);
+								logger.debug("Update sample time add: " + freqDigit + " " + freqUnit + " to " + sampleDateTime);
 						        cal.setTime(sampleDateTime);
 						        cal.add(timeToAdd, freqDigit);
 								sampleDates.add(cal.getTime());
@@ -329,9 +325,10 @@ public class QualityControlServiceImpl implements QualityControlService {
 		NodeRef entityNodeRef = entityListDAO.getEntity(sampleListNodeRef);
 		RepositoryEntity entity = alfrescoRepository.findOne(entityNodeRef);
 		ProductData productData = null;
-
+		QualityControlData qualityControlData = null;
+		
 		if(entity instanceof QualityControlData){
-			QualityControlData qualityControlData = (QualityControlData) entity;
+			qualityControlData = (QualityControlData) entity;
 			if (qualityControlData.getProduct() != null) {
 
 				logger.debug("createControlList - load product");
@@ -377,6 +374,7 @@ public class QualityControlServiceImpl implements QualityControlService {
 					Double maxi = null;
 					String unit = null;
 					String textCriteria = null;
+					Integer dayNumber = null;
 
 					if (productData != null) {
 
@@ -454,8 +452,17 @@ public class QualityControlServiceImpl implements QualityControlService {
 					if ((cdl.getTextCriteria() != null) && !cdl.getTextCriteria().isEmpty()) {
 						textCriteria = cdl.getTextCriteria();
 					}
+					if (sl.getDateTime()!= null && qualityControlData != null) {
+						Date batchStart = qualityControlData.getBatchStart();
+						batchStart = (batchStart != null ? batchStart : (Date) nodeService.getProperty(entityNodeRef, ContentModel.PROP_CREATED));
+						if (batchStart != null) {
+							 Long diffDate = sl.getDateTime().getTime() - batchStart.getTime();
+							 diffDate = TimeUnit.DAYS.convert(diffDate, TimeUnit.MILLISECONDS);
+							 dayNumber = diffDate.intValue();
+						}
+					}
 					alfrescoRepository.create(listNodeRef, new ControlListDataItem(null, cdl.getType(), mini, maxi, cdl.getRequired(), sl.getSampleId(), null, target,
-							unit, textCriteria, null, cdl.getTemperature(), cdl.getMethod(), Arrays.asList(n)));
+							unit, textCriteria, null, cdl.getTemperature(), dayNumber, cdl.getMethod(), Arrays.asList(n)));
 				}
 			}
 		}

@@ -20,12 +20,11 @@ package fr.becpg.repo.listvalue.impl;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.dictionary.IndexTokenisationMode;
@@ -49,7 +48,9 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.BeCPGQueryHelper;
+import fr.becpg.repo.helper.impl.AbstractExprNameExtractor;
 import fr.becpg.repo.hierarchy.HierarchyService;
 import fr.becpg.repo.listvalue.ListValueExtractor;
 import fr.becpg.repo.listvalue.ListValuePage;
@@ -64,7 +65,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  * @version $Id: $Id
  */
 @Service
-public class EntityListValuePlugin implements ListValuePlugin {
+public class EntityListValuePlugin extends AbstractExprNameExtractor implements ListValuePlugin {
 
 	private static final Log logger = LogFactory.getLog(EntityListValuePlugin.class);
 
@@ -110,7 +111,9 @@ public class EntityListValuePlugin implements ListValuePlugin {
 	private EntityListDAO entityListDAO;
 	@Autowired
 	protected TargetAssocValueExtractor targetAssocValueExtractor;
-
+	@Autowired
+	private AttributeExtractorService attributeExtractorService;
+	
 	/** {@inheritDoc} */
 	@Override
 	public String[] getHandleSourceTypes() {
@@ -287,7 +290,7 @@ public class EntityListValuePlugin implements ListValuePlugin {
 	protected ListValueExtractor<NodeRef> getTargetAssocValueExtractor() {
 		return targetAssocValueExtractor;
 	}
-
+	
 	/**
 	 * Suggest linked value according to query
 	 *
@@ -477,56 +480,6 @@ public class EntityListValuePlugin implements ListValuePlugin {
 		return queryBuilder;
 	}
 
-	// TODO duplicate in AbstractExprNameExtractor
-	/**
-	 * <p>extractExpr.</p>
-	 *
-	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param exprFormat a {@link java.lang.String} object.
-	 * @return a {@link java.lang.String} object.
-	 */
-	protected String extractExpr(NodeRef nodeRef, String exprFormat) {
-		Matcher patternMatcher = Pattern.compile("\\{([^}]+)\\}").matcher(exprFormat);
-		StringBuffer sb = new StringBuffer();
-		while (patternMatcher.find()) {
-
-			String propQname = patternMatcher.group(1);
-			String replacement = "";
-			if (propQname.contains("|")) {
-				for (String propQnameAlt : propQname.split("\\|")) {
-					replacement = extractPropText(nodeRef, propQnameAlt);
-					if ((replacement != null) && !replacement.isEmpty()) {
-						break;
-					}
-				}
-
-			} else {
-				replacement = extractPropText(nodeRef, propQname);
-			}
-
-			patternMatcher.appendReplacement(sb, replacement != null ? replacement.replace("$", "") : "");
-
-		}
-		patternMatcher.appendTail(sb);
-		return sb.toString();
-	}
-
-	/**
-	 * <p>extractPropText.</p>
-	 *
-	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param propQname a {@link java.lang.String} object.
-	 * @return a {@link java.lang.String} object.
-	 */
-	@SuppressWarnings("unchecked")
-	protected String extractPropText(NodeRef nodeRef, String propQname) {
-		if (nodeService.getProperty(nodeRef, QName.createQName(propQname, namespaceService)) instanceof List) {
-			return ((List<String>) nodeService.getProperty(nodeRef, QName.createQName(propQname, namespaceService))).stream()
-					.collect(Collectors.joining(","));
-		}
-		return (String) nodeService.getProperty(nodeRef, QName.createQName(propQname, namespaceService));
-	}
-
 	/**
 	 * <p>isAllQuery.</p>
 	 *
@@ -587,6 +540,21 @@ public class EntityListValuePlugin implements ListValuePlugin {
 		}
 
 		return new ListValuePage(queryBuilder.list(), pageNum, pageSize, new NodeRefListValueExtractor(propertyQName, nodeService));
+	}
+	
+	@Override
+	public String extractPropName(QName type, NodeRef nodeRef) {
+		return attributeExtractorService.extractPropName(type, nodeRef);
+	}
+
+	@Override
+	public String extractMetadata(QName type, NodeRef nodeRef) {
+		return attributeExtractorService.extractMetadata(type, nodeRef);
+	}
+
+	@Override
+	public Collection<QName> getMatchingTypes() {
+		return Collections.singletonList(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 	}
 
 }

@@ -1297,6 +1297,7 @@
 			<form>
 				<field-visibility>
 					<show id="qa:clSampleId" />
+					<show id="qa:clDayNumber" />
 					<show id="qa:clType" />
 					<show id="qa:clTemperature" />
 					<show id="qa:clMethod" />
@@ -1313,6 +1314,7 @@
 				<appearance>
 					<set id="reqInfo" appearance="bordered-panel" label-id="becpg.forms.set.exigences.label" />
 					<field id="qa:clSampleId" set="reqInfo" />
+					<field id="qa:clDayNumber" set="reqInfo" />
 					<field id="qa:clType" set="reqInfo" />
 					<field id="qa:clTemperature" set="reqInfo" />
 					<field id="qa:clMethod" set="reqInfo" />
@@ -1332,6 +1334,7 @@
 			<form id="datagrid">
 				<field-visibility>
 					<show id="qa:clSampleId" />
+					<show id="qa:clDayNumber" />
 					<show id="qa:clType" />
 					<show id="qa:clTemperature" />
 					<show id="qa:clMethod" />
@@ -1347,6 +1350,7 @@
 				</field-visibility>
 				<appearance>
 					<field id="qa:clSampleId" read-only="true" />
+					<field id="qa:clDayNumber" read-only="true" />
 					<field id="qa:clType" read-only="true" />
 					<field id="qa:clTemperature" read-only="true" />
 					<field id="qa:clMethod" read-only="true" />
@@ -1367,6 +1371,7 @@
 			<form>
 				<field-visibility>
 					<show id="qa:clSampleId" />
+					<show id="qa:clDayNumber" />
 					<show id="qa:clType" />
 					<show id="qa:clTemperature" />
 					<show id="qa:clMethod" />
@@ -1383,6 +1388,7 @@
 				<appearance>
 					<set id="reqInfo" appearance="bordered-panel" label-id="becpg.forms.set.exigences.label" />
 					<field id="qa:clSampleId" read-only="true" set="reqInfo" />
+					<field id="qa:clDayNumber" read-only="true" set="reqInfo" />
 					<field id="qa:clType" read-only="true" set="reqInfo" />
 					<field id="qa:clTemperature" read-only="true" set="reqInfo" />
 					<field id="qa:clMethod" read-only="true" set="reqInfo">

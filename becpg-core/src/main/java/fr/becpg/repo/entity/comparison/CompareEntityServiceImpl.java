@@ -93,6 +93,9 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 
 	@Value("${beCPG.comparison.pivots}")
 	private String customPivots;
+	
+	@Value("${beCPG.comparison.name.format}")
+	private String customNames;
 
 	/** {@inheritDoc} */
 	@Override
@@ -522,7 +525,24 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 
 			// compare properties of characteristics
 			for (CharacteristicToCompare c : characteristicsToCmp) {
-				compareNode(dataListType, extractCharactName(c, entityDictionaryService.getDefaultPivotAssoc(dataListType))
+				String dataListShortName = dataListType.getPrefixString();
+				String charactName = extractCharactName(c, entityDictionaryService.getDefaultPivotAssoc(dataListType));
+				if ((customNames != null) && customNames.contains(dataListShortName)) {
+					String nameFormat = "";
+					String[] dataTypesSplit = customNames.split(",");
+					for (String dataType : dataTypesSplit) {
+						if (dataType.contains(dataListShortName)) {
+							// example of custom names string:
+							// bcpg:compoList|{bcpg:compoListProduct}-{bcpg:instruction},qa:controlList|{qa:clCharacts}-{qa:clDayNumber}-{qa:clUnit}
+							nameFormat = dataType.split(Pattern.quote("|"))[1];
+						}
+					}
+					if (!nameFormat.isEmpty()) {
+						charactName = attributeExtractorService.extractPropName(nameFormat, c.getNodeRef1());
+					}
+				}
+
+				compareNode(dataListType, charactName
 						, c.getPivotKey(), c.getNodeRef1(), c.getNodeRef2(), nbEntities, comparisonPosition,
 						true, comparisonMap);
 			}
