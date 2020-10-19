@@ -314,9 +314,11 @@
                              var choice = question.choices[j];
                              
                              if(this.formRuntime!=null && question.mandatory){
-                                 if(choice.list!=null && !choice.checkboxes && !choice.hasValidation){
+                                 if(choice.list!=null  && !choice.hasValidation){
                                 	 choice.hasValidation = true;
-                                     this.formRuntime.addValidation(this.id+'-select_'+question.id+'_'+choice.id, Alfresco.forms.validation.mandatory, null, "keyup");
+									if(!choice.checkboxes){
+                                    	 this.formRuntime.addValidation(this.id+'-select_'+question.id+'_'+choice.id, Alfresco.forms.validation.mandatory, null, "keyup");
+									}
                                  } else {
                                 	 if(choice.label != "hidden" && !choice.hasValidation){
                                 		 choice.hasValidation = true;
