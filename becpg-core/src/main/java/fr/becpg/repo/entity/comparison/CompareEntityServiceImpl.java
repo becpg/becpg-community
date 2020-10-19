@@ -526,7 +526,8 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 			// compare properties of characteristics
 			for (CharacteristicToCompare c : characteristicsToCmp) {
 				String dataListShortName = dataListType.getPrefixString();
-				String charactName = extractCharactName(c, entityDictionaryService.getDefaultPivotAssoc(dataListType));
+				NodeRef itemNodeRef = (c.getNodeRef1() == null ? c.getNodeRef2() : c.getNodeRef1());
+				String charactName = extractCharactName(itemNodeRef, entityDictionaryService.getDefaultPivotAssoc(dataListType));
 				if ((customNames != null) && customNames.contains(dataListShortName)) {
 					String nameFormat = "";
 					String[] dataTypesSplit = customNames.split(",");
@@ -537,8 +538,8 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 							nameFormat = dataType.split(Pattern.quote("|"))[1];
 						}
 					}
-					if (!nameFormat.isEmpty()) {
-						charactName = attributeExtractorService.extractPropName(nameFormat, c.getNodeRef1());
+					if (!nameFormat.isEmpty() && itemNodeRef != null) {
+						charactName = attributeExtractorService.extractPropName(nameFormat, itemNodeRef);
 					}
 				}
 
@@ -550,11 +551,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		}
 	}
 
-	private String extractCharactName(CharacteristicToCompare c, QName pivotAssoc) {
-		NodeRef itemNodeRef =  c.getNodeRef1();
-		if(itemNodeRef==null) {
-			itemNodeRef = c.getNodeRef2();
-		}
+	private String extractCharactName(NodeRef itemNodeRef, QName pivotAssoc) {
 		if(itemNodeRef!=null) {
 			if (pivotAssoc != null) {
 				NodeRef part = associationService.getTargetAssoc(itemNodeRef, pivotAssoc);
