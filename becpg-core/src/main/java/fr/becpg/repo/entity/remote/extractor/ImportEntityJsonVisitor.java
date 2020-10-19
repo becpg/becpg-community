@@ -581,7 +581,7 @@ public class ImportEntityJsonVisitor {
 			}
 			
 			QName qname;
-			if (qnameStr.indexOf(QName.NAMESPACE_BEGIN) != -1) {
+			if (qnameStr!=null && qnameStr.indexOf(QName.NAMESPACE_BEGIN) != -1) {
 				qname = QName.createQName(qnameStr);
 			} else {
 				qname = QName.createQName(qnameStr, namespaceService);

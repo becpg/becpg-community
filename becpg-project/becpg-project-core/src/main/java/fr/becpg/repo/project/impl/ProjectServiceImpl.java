@@ -523,7 +523,7 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin {
 					String[] splitted = assocQname.split("\\|");
 					replacement += extractDeliverableProp(projectNodeRef, splitted);
 
-				} else {
+				} else if(assocQname!=null){
 					String[] splitted = assocQname.split("\\|");
 					List<AssociationRef> assocs = nodeService.getTargetAssocs(projectNodeRef, QName.createQName(splitted[0], namespaceService));
 					if (assocs != null) {
