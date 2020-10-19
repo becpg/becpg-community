@@ -2234,7 +2234,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 						break;
 					}
 
-				} else if (ingType.doNotDeclare() && !ingType.lastGroup()) {
+				} else if (ingType != null && ingType.doNotDeclare() && !ingType.lastGroup()) {
 					ingType = null;
 				}
 
