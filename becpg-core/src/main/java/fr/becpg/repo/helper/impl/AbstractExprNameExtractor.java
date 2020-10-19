@@ -12,8 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.extensions.surf.util.I18NUtil;
 
-import fr.becpg.repo.helper.MLTextHelper;
+import fr.becpg.repo.entity.EntityDictionaryService;
+import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorPlugin;
+import fr.becpg.repo.helper.MLTextHelper;
 
 /**
  * <p>Abstract AbstractExprNameExtractor class.</p>
@@ -24,10 +27,10 @@ import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorPlugin;
 public abstract class AbstractExprNameExtractor implements AttributeExtractorPlugin{
 
 	private final static String ML_PREFIX = "ml_";
-	
+
 	@Autowired
 	protected NodeService nodeService;
-	
+
 	@Autowired
 	@Qualifier("mlAwareNodeService")
 	protected NodeService mlNodeService;
@@ -35,8 +38,15 @@ public abstract class AbstractExprNameExtractor implements AttributeExtractorPlu
 	@Autowired
 	protected NamespaceService namespaceService;
 
-	
-	
+	@Autowired
+	private EntityDictionaryService dictionaryService;
+
+	@Autowired
+	private AssociationService associationService;
+
+	@Autowired
+	private AttributeExtractorService attributeExtractorService;
+
 	/**
 	 * <p>extractExpr.</p>
 	 *
@@ -44,7 +54,7 @@ public abstract class AbstractExprNameExtractor implements AttributeExtractorPlu
 	 * @param exprFormat a {@link java.lang.String} object.
 	 * @return a {@link java.lang.String} object.
 	 */
-	protected String extractExpr(NodeRef nodeRef, String exprFormat){
+	public String extractExpr(NodeRef nodeRef, String exprFormat){
 		Matcher patternMatcher = Pattern.compile("\\{([^}]+)\\}").matcher(exprFormat);
 		StringBuffer sb = new StringBuffer();
 		while (patternMatcher.find()) {
@@ -70,22 +80,31 @@ public abstract class AbstractExprNameExtractor implements AttributeExtractorPlu
 		return sb.toString();
 	}
 
-
-
 	private String extractPropText(NodeRef nodeRef, String propQname) {
+		String ret = "";
 		if(propQname.startsWith(ML_PREFIX)){
-		     MLText tmp = (MLText) mlNodeService.getProperty(nodeRef, QName.createQName(propQname.substring(3), namespaceService));
-		     return  MLTextHelper.getClosestValue(tmp, I18NUtil.getContentLocale());
-		} else {
-			return (String) nodeService.getProperty(nodeRef, QName.createQName(propQname, namespaceService));
+			MLText tmp = (MLText) mlNodeService.getProperty(nodeRef, QName.createQName(propQname.substring(3), namespaceService));
+			return  MLTextHelper.getClosestValue(tmp, I18NUtil.getContentLocale());
 		}
+		QName qname = QName.createQName(propQname, namespaceService);
+		if (nodeRef != null && qname != null) {
+			if (dictionaryService.getAssociation(qname) != null) {
+				NodeRef assoc = associationService.getTargetAssoc(nodeRef, qname);
+				if (assoc != null) {
+					ret = attributeExtractorService.extractPropName(assoc);
+				}
+			} else if (nodeService.getProperty(nodeRef, QName.createQName(propQname, namespaceService)) != null) {
+				ret = String.valueOf(nodeService.getProperty(nodeRef, QName.createQName(propQname, namespaceService)));
+			}
+		}
+		return ret;
 	}
-	
-	
+
+
 	/** {@inheritDoc} */
 	@Override
 	public Integer getPriority() {
 		return 0;
 	}
-	
+
 }

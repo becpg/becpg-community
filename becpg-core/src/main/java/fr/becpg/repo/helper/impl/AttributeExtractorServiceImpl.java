@@ -409,7 +409,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 								value += constraintName != null
 										? TranslateHelper.getConstraint(constraintName, tempValue, propertyFormats.isUseDefaultLocale())
-										: tempValue;
+												: tempValue;
 							}
 						}
 					}
@@ -432,7 +432,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 					} else {
 						value = constraintName != null
 								? TranslateHelper.getConstraint(constraintName, v.toString(), propertyFormats.isUseDefaultLocale())
-								: v.toString();
+										: v.toString();
 					}
 				}
 			}
@@ -487,16 +487,16 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		return value;
 	}
 
-	
+
 
 	/** {@inheritDoc} */
 	@Override
 	public String extractPropertyForReport(PropertyDefinition propertyDef, Serializable value, boolean formatData) {
 		PropertyFormats propertyFormats = getPropertyFormats(FormatMode.REPORT,false);
-	
+
 		return extractPropertyForReport(propertyDef, value, propertyFormats, formatData);
 	}
-	
+
 	/** {@inheritDoc} */
 	@Override
 	public String extractPropertyForReport(PropertyDefinition propertyDef, Serializable value, PropertyFormats propertyFormats , boolean formatData) {
@@ -685,38 +685,38 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		return extractNodeData(nodeRef, itemType, nodeService.getProperties(nodeRef), readExtractStructure(itemType, metadataFields), mode,
 				new DataListCallBack() {
 
-					@Override
-					public List<Map<String, Object>> extractNestedField(NodeRef nodeRef, AttributeExtractorStructure field) {
-						List<Map<String, Object>> ret = new ArrayList<>();
+			@Override
+			public List<Map<String, Object>> extractNestedField(NodeRef nodeRef, AttributeExtractorStructure field) {
+				List<Map<String, Object>> ret = new ArrayList<>();
 
-						if (field.getFieldDef() instanceof AssociationDefinition) {
-							List<NodeRef> assocRefs;
-							if (((AssociationDefinition) field.getFieldDef()).isChild()) {
-								assocRefs = associationService.getChildAssocs(nodeRef, field.getFieldDef().getName());
-							} else {
-								assocRefs = associationService.getTargetAssocs(nodeRef, field.getFieldDef().getName());
-							}
-							for (NodeRef itemNodeRef : assocRefs) {
-								addExtracted(itemNodeRef, field, new HashMap<>(), ret);
-							}
-
-						}
-						return ret;
+				if (field.getFieldDef() instanceof AssociationDefinition) {
+					List<NodeRef> assocRefs;
+					if (((AssociationDefinition) field.getFieldDef()).isChild()) {
+						assocRefs = associationService.getChildAssocs(nodeRef, field.getFieldDef().getName());
+					} else {
+						assocRefs = associationService.getTargetAssocs(nodeRef, field.getFieldDef().getName());
+					}
+					for (NodeRef itemNodeRef : assocRefs) {
+						addExtracted(itemNodeRef, field, new HashMap<>(), ret);
 					}
 
-					private void addExtracted(NodeRef itemNodeRef, AttributeExtractorStructure field, Map<NodeRef, Map<String, Object>> cache,
-							List<Map<String, Object>> ret) {
-						if (cache.containsKey(itemNodeRef)) {
-							ret.add(cache.get(itemNodeRef));
-						} else {
-							if (permissionService.hasPermission(itemNodeRef, "Read") == AccessStatus.ALLOWED) {
-								QName itemType = nodeService.getType(itemNodeRef);
-								Map<QName, Serializable> properties = nodeService.getProperties(itemNodeRef);
-								ret.add(extractNodeData(itemNodeRef, itemType, properties, field.getChildrens(), mode, null));
-							}
-						}
+				}
+				return ret;
+			}
+
+			private void addExtracted(NodeRef itemNodeRef, AttributeExtractorStructure field, Map<NodeRef, Map<String, Object>> cache,
+					List<Map<String, Object>> ret) {
+				if (cache.containsKey(itemNodeRef)) {
+					ret.add(cache.get(itemNodeRef));
+				} else {
+					if (permissionService.hasPermission(itemNodeRef, "Read") == AccessStatus.ALLOWED) {
+						QName itemType = nodeService.getType(itemNodeRef);
+						Map<QName, Serializable> properties = nodeService.getProperties(itemNodeRef);
+						ret.add(extractNodeData(itemNodeRef, itemType, properties, field.getChildrens(), mode, null));
 					}
-				});
+				}
+			}
+		});
 	}
 
 	/** {@inheritDoc} */
@@ -736,7 +736,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		for (AttributeExtractorStructure field : metadataFields) {
 			if (field.isNested()) {
 				List<Map<String, Object>> extracted = callback.extractNestedField(nodeRef, field);
-				
+
 				if ((FormatMode.CSV.equals(mode) || FormatMode.XLSX.equals(mode)) && !extracted.isEmpty()) {
 
 					if (extracted.size() > 1) {
@@ -990,6 +990,18 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			value = I18NUtil.getMessage("message.becpg.access.denied");
 		}
 
+		return value;
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public String extractPropName(String format, NodeRef nodeRef) {
+		String value;
+		if (permissionService.hasReadPermission(nodeRef) == AccessStatus.ALLOWED) {
+			value = ((CharactAttributeExtractorPlugin) getAttributeExtractorPlugin(BeCPGModel.TYPE_CHARACT, nodeRef)).extractExpr(nodeRef, format);
+		} else {
+			value = I18NUtil.getMessage("message.becpg.access.denied");
+		}
 		return value;
 	}
 
