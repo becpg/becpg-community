@@ -515,7 +515,7 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin {
 				if (DeliverableUrl.NODEREF_URL_PARAM.equals(assocQname)) {
 					replacement += projectNodeRef;
 
-				} else {
+				} else if(assocQname!=null){
 					String[] splitted = assocQname.split("\\|");
 					List<AssociationRef> assocs = nodeService.getTargetAssocs(projectNodeRef, QName.createQName(splitted[0], namespaceService));
 					if (assocs != null) {
