@@ -866,6 +866,10 @@
 						<constraint ref="qa:clTemperatures"/>
 					</constraints>
 				</property>
+				<property name="qa:clDayNumber">
+					<type>d:int</type>
+					<mandatory>false</mandatory>					
+				</property>
 			</properties>			
 			<associations>
 				<association name="qa:clMethod">

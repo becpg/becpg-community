@@ -19,7 +19,6 @@
 package fr.becpg.repo.listvalue.impl;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
