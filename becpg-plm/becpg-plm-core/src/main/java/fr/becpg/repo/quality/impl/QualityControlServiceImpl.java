@@ -189,14 +189,15 @@ public class QualityControlServiceImpl implements QualityControlService {
 				if(freqText != null && !freqText.isEmpty()){
 					String[] freqs = freqText.split(",");
 					for(String freq : freqs){
+						freq = freq.trim().toLowerCase();
 						Integer freqDigit = null;
 						String freqUnit = null;
 						Integer timeToAdd = null;
-						Pattern p = Pattern.compile("[0-9]+[DMWY]+");
-						Matcher m = p.matcher(freq.trim());
+						Pattern p = Pattern.compile("[0-9]+[dmwy]+");
+						Matcher m = p.matcher(freq);
 						if (m.find()) {
 							freqDigit = Integer.parseInt(freq.replaceAll("[^0-9]", ""));
-							freqUnit = freq.trim().replaceAll("[0-9]", "").toLowerCase();
+							freqUnit = freq.replaceAll("[0-9]", "");
 							switch(freqUnit) {
 							case "d":
 								timeToAdd = Calendar.DAY_OF_YEAR;
@@ -210,12 +211,13 @@ public class QualityControlServiceImpl implements QualityControlService {
 							case "y":
 								timeToAdd = Calendar.YEAR;
 								break;
-
+							default:
+								break;
 							}
 							if (sampleDateTime != null && freqDigit != null && timeToAdd != null) {
 								logger.debug("Update sample time add: " + freqDigit + " " + freqUnit + " to " + sampleDateTime);
-						        cal.setTime(sampleDateTime);
-						        cal.add(timeToAdd, freqDigit);
+								cal.setTime(sampleDateTime);
+								cal.add(timeToAdd, freqDigit);
 								sampleDates.add(cal.getTime());
 							}
 						}
@@ -240,7 +242,7 @@ public class QualityControlServiceImpl implements QualityControlService {
 						break;
 					default: 
 						freqInHour = 1;
-			            break;
+						break;
 					}
 
 					if ((batchDuration != null) && !"/batch".equals(freq)) {
@@ -264,7 +266,7 @@ public class QualityControlServiceImpl implements QualityControlService {
 						}
 						// several samples must be taken
 						for (int z_idx2 = 0; z_idx2 < sdl.getQty(); z_idx2++) {
-							
+
 							samplingList.add(new SamplingListDataItem(sampleDate, null, sdl.getControlPoint(), sdl.getControlStep(),
 									sdl.getSamplingGroup(), sdl.getControlingGroup(), sdl.getFixingGroup(), sdl.getReaction()));
 						}
@@ -326,7 +328,7 @@ public class QualityControlServiceImpl implements QualityControlService {
 		RepositoryEntity entity = alfrescoRepository.findOne(entityNodeRef);
 		ProductData productData = null;
 		QualityControlData qualityControlData = null;
-		
+
 		if(entity instanceof QualityControlData){
 			qualityControlData = (QualityControlData) entity;
 			if (qualityControlData.getProduct() != null) {
@@ -352,121 +354,121 @@ public class QualityControlServiceImpl implements QualityControlService {
 			productData = (ProductData)entity;
 		}
 
-	SamplingListDataItem sl = (SamplingListDataItem) alfrescoRepository.findOne(sampleListNodeRef);
-	NodeRef listContainerNodeRef = alfrescoRepository.getOrCreateDataListContainer(entity);
-	NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, QualityModel.TYPE_CONTROL_LIST);
-	if(listNodeRef == null){
-		listNodeRef = entityListDAO.createList(listContainerNodeRef, QualityModel.TYPE_CONTROL_LIST);
-	}
+		SamplingListDataItem sl = (SamplingListDataItem) alfrescoRepository.findOne(sampleListNodeRef);
+		NodeRef listContainerNodeRef = alfrescoRepository.getOrCreateDataListContainer(entity);
+		NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, QualityModel.TYPE_CONTROL_LIST);
+		if(listNodeRef == null){
+			listNodeRef = entityListDAO.createList(listContainerNodeRef, QualityModel.TYPE_CONTROL_LIST);
+		}
 
-	ControlPointData controlPointData = (ControlPointData) alfrescoRepository.findOne(sl.getControlPoint());
-	if (controlPointData.getControlDefList() != null) {
+		ControlPointData controlPointData = (ControlPointData) alfrescoRepository.findOne(sl.getControlPoint());
+		if (controlPointData.getControlDefList() != null) {
 
-		logger.debug("calculateControlList, controlPointData.getControlDefList(): " + controlPointData.getControlDefList().size());
+			logger.debug("calculateControlList, controlPointData.getControlDefList(): " + controlPointData.getControlDefList().size());
 
-		for (ControlDefListDataItem cdl : controlPointData.getControlDefList()) {
-			if (cdl.getCharacts() != null) {
-				logger.debug("characts size : " + cdl.getCharacts().size());
-				for (NodeRef n : cdl.getCharacts()) {
+			for (ControlDefListDataItem cdl : controlPointData.getControlDefList()) {
+				if (cdl.getCharacts() != null) {
+					logger.debug("characts size : " + cdl.getCharacts().size());
+					for (NodeRef n : cdl.getCharacts()) {
 
-					Double target = null;
-					Double mini = null;
-					Double maxi = null;
-					String unit = null;
-					String textCriteria = null;
-					Integer dayNumber = null;
+						Double target = null;
+						Double mini = null;
+						Double maxi = null;
+						String unit = null;
+						String textCriteria = null;
+						Integer dayNumber = null;
 
-					if (productData != null) {
+						if (productData != null) {
 
-						if (cdl.getType().startsWith("bcpg_")) {
-							QName dataListQName = QName.createQName(cdl.getType().replace("_", ":"), namespaceService);
+							if (cdl.getType().startsWith("bcpg_")) {
+								QName dataListQName = QName.createQName(cdl.getType().replace("_", ":"), namespaceService);
 
-							logger.debug("Looking for list : " + dataListQName);
+								logger.debug("Looking for list : " + dataListQName);
 
-							Map<QName, List<? extends RepositoryEntity>> datalists = repositoryEntityDefReader.getDataLists(productData);
-							@SuppressWarnings("unchecked")
-							List<BeCPGDataObject> dataListItems = (List<BeCPGDataObject>) datalists.get(dataListQName);
+								Map<QName, List<? extends RepositoryEntity>> datalists = repositoryEntityDefReader.getDataLists(productData);
+								@SuppressWarnings("unchecked")
+								List<BeCPGDataObject> dataListItems = (List<BeCPGDataObject>) datalists.get(dataListQName);
 
-							if (dataListItems != null) {
-								for (RepositoryEntity dataListItem : dataListItems) {
+								if (dataListItems != null) {
+									for (RepositoryEntity dataListItem : dataListItems) {
 
-									if (dataListItem instanceof ControlableListDataItem) {
-										ControlableListDataItem controlableListDataItem = (ControlableListDataItem) dataListItem;
-										if (n.equals(controlableListDataItem.getCharactNodeRef())) {
+										if (dataListItem instanceof ControlableListDataItem) {
+											ControlableListDataItem controlableListDataItem = (ControlableListDataItem) dataListItem;
+											if (n.equals(controlableListDataItem.getCharactNodeRef())) {
 
-											logger.debug("Find matching charact in list : " + controlableListDataItem.getCharactNodeRef() + " "
-													+ dataListQName);
+												logger.debug("Find matching charact in list : " + controlableListDataItem.getCharactNodeRef() + " "
+														+ dataListQName);
 
-											target = controlableListDataItem.getValue();
-											textCriteria = controlableListDataItem.getTextCriteria();
-											if (controlableListDataItem instanceof UnitAwareDataItem) {
-												unit = ((UnitAwareDataItem) controlableListDataItem).getUnit();
-											}
-											if (controlableListDataItem instanceof MinMaxValueDataItem) {
-												mini = ((MinMaxValueDataItem) controlableListDataItem).getMini();
-												maxi = ((MinMaxValueDataItem) controlableListDataItem).getMaxi();
+												target = controlableListDataItem.getValue();
+												textCriteria = controlableListDataItem.getTextCriteria();
+												if (controlableListDataItem instanceof UnitAwareDataItem) {
+													unit = ((UnitAwareDataItem) controlableListDataItem).getUnit();
+												}
+												if (controlableListDataItem instanceof MinMaxValueDataItem) {
+													mini = ((MinMaxValueDataItem) controlableListDataItem).getMini();
+													maxi = ((MinMaxValueDataItem) controlableListDataItem).getMaxi();
+												}
 											}
 										}
 									}
-								}
 
+								}
+							}
+
+						}
+
+						if (cdl.getTarget() != null) {
+							target = cdl.getTarget();
+
+							if (cdl.getMini() != null) {
+								mini = cdl.getMini();
+							}
+							if (cdl.getMaxi() != null) {
+								maxi = cdl.getMaxi();
+							}
+
+						} else if( target!=null  && (cdl.getMini() != null || cdl.getMaxi()!=null)) {
+
+							if (cdl.getMini() != null) {
+								mini =  target - cdl.getMini();
+							}
+
+							if (cdl.getMaxi() != null) {
+								maxi = target +  cdl.getMaxi();
+							}
+
+						} else {
+							if (cdl.getMini() != null) {
+								mini = cdl.getMini();
+							}
+							if (cdl.getMaxi() != null) {
+								maxi = cdl.getMaxi();
 							}
 						}
 
+
+
+						if ((cdl.getUnit() != null) && !cdl.getUnit().isEmpty()) {
+							unit = cdl.getUnit();
+						}
+						if ((cdl.getTextCriteria() != null) && !cdl.getTextCriteria().isEmpty()) {
+							textCriteria = cdl.getTextCriteria();
+						}
+						if (sl.getDateTime()!= null && qualityControlData != null) {
+							Date batchStart = qualityControlData.getBatchStart();
+							batchStart = (batchStart != null ? batchStart : (Date) nodeService.getProperty(entityNodeRef, ContentModel.PROP_CREATED));
+							if (batchStart != null) {
+								Long diffDate = sl.getDateTime().getTime() - batchStart.getTime();
+								diffDate = TimeUnit.DAYS.convert(diffDate, TimeUnit.MILLISECONDS);
+								dayNumber = diffDate.intValue();
+							}
+						}
+						alfrescoRepository.create(listNodeRef, new ControlListDataItem(null, cdl.getType(), mini, maxi, cdl.getRequired(), sl.getSampleId(), null, target,
+								unit, textCriteria, null, cdl.getTemperature(), dayNumber, cdl.getMethod(), Arrays.asList(n)));
 					}
-
-					if (cdl.getTarget() != null) {
-						target = cdl.getTarget();
-
-						if (cdl.getMini() != null) {
-							mini = cdl.getMini();
-						}
-						if (cdl.getMaxi() != null) {
-							maxi = cdl.getMaxi();
-						}
-
-					} else if( target!=null  && (cdl.getMini() != null || cdl.getMaxi()!=null)) {
-
-						if (cdl.getMini() != null) {
-							mini =  target - cdl.getMini();
-						}
-
-						if (cdl.getMaxi() != null) {
-							maxi = target +  cdl.getMaxi();
-						}
-
-					} else {
-						if (cdl.getMini() != null) {
-							mini = cdl.getMini();
-						}
-						if (cdl.getMaxi() != null) {
-							maxi = cdl.getMaxi();
-						}
-					}
-
-
-
-					if ((cdl.getUnit() != null) && !cdl.getUnit().isEmpty()) {
-						unit = cdl.getUnit();
-					}
-					if ((cdl.getTextCriteria() != null) && !cdl.getTextCriteria().isEmpty()) {
-						textCriteria = cdl.getTextCriteria();
-					}
-					if (sl.getDateTime()!= null && qualityControlData != null) {
-						Date batchStart = qualityControlData.getBatchStart();
-						batchStart = (batchStart != null ? batchStart : (Date) nodeService.getProperty(entityNodeRef, ContentModel.PROP_CREATED));
-						if (batchStart != null) {
-							 Long diffDate = sl.getDateTime().getTime() - batchStart.getTime();
-							 diffDate = TimeUnit.DAYS.convert(diffDate, TimeUnit.MILLISECONDS);
-							 dayNumber = diffDate.intValue();
-						}
-					}
-					alfrescoRepository.create(listNodeRef, new ControlListDataItem(null, cdl.getType(), mini, maxi, cdl.getRequired(), sl.getSampleId(), null, target,
-							unit, textCriteria, null, cdl.getTemperature(), dayNumber, cdl.getMethod(), Arrays.asList(n)));
 				}
 			}
 		}
-	}
 	}
 
 	/** {@inheritDoc} */
@@ -584,7 +586,7 @@ public class QualityControlServiceImpl implements QualityControlService {
 				}
 			}
 		}
-		
+
 	}
 
 	private void updateQualityControlState(QualityControlData qualityControlData) {
@@ -603,7 +605,7 @@ public class QualityControlServiceImpl implements QualityControlService {
 				isQCCompliant = false;
 			}
 		}
-		
+
 		logger.debug("QC isQCControled : " + isQCControled + " isQCCompliant " + isQCCompliant);
 		qualityControlData.setState(null);
 		if (isQCControled) {
