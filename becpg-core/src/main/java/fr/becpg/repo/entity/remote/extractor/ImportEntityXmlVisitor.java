@@ -866,7 +866,7 @@ public class ImportEntityXmlVisitor {
 			}
 
 			if (ret == null) {
-				if (forceCreateInPath) {
+				if (forceCreateInPath && parentPath!=null) {
 					String path = parentPath.substring(0, parentPath.lastIndexOf("/"));
 					String name = parentPath.substring(parentPath.lastIndexOf("/")+1, parentPath.length());
 				
