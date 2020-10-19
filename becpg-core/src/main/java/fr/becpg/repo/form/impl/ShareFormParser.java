@@ -104,7 +104,7 @@ public class ShareFormParser {
 
 			String formId = elem.getAttribute("id");
 
-			if ((formId == null) || (formId == "-") || formId.isEmpty()) {
+			if ((formId == null) || ("-".equals(formId)) || formId.isEmpty()) {
 				if ("model".equals(evaluator)) {
 					formId = "create";
 				} else {
