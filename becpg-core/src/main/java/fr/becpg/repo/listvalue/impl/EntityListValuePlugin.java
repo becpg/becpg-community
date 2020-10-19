@@ -20,8 +20,6 @@ package fr.becpg.repo.listvalue.impl;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,9 +46,7 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
-import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.BeCPGQueryHelper;
-import fr.becpg.repo.helper.impl.AbstractExprNameExtractor;
 import fr.becpg.repo.hierarchy.HierarchyService;
 import fr.becpg.repo.listvalue.ListValueExtractor;
 import fr.becpg.repo.listvalue.ListValuePage;
@@ -65,7 +61,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  * @version $Id: $Id
  */
 @Service
-public class EntityListValuePlugin extends AbstractExprNameExtractor implements ListValuePlugin {
+public class EntityListValuePlugin  implements ListValuePlugin {
 
 	private static final Log logger = LogFactory.getLog(EntityListValuePlugin.class);
 
@@ -111,8 +107,6 @@ public class EntityListValuePlugin extends AbstractExprNameExtractor implements 
 	private EntityListDAO entityListDAO;
 	@Autowired
 	protected TargetAssocValueExtractor targetAssocValueExtractor;
-	@Autowired
-	private AttributeExtractorService attributeExtractorService;
 	
 	/** {@inheritDoc} */
 	@Override
@@ -542,19 +536,5 @@ public class EntityListValuePlugin extends AbstractExprNameExtractor implements 
 		return new ListValuePage(queryBuilder.list(), pageNum, pageSize, new NodeRefListValueExtractor(propertyQName, nodeService));
 	}
 	
-	@Override
-	public String extractPropName(QName type, NodeRef nodeRef) {
-		return attributeExtractorService.extractPropName(type, nodeRef);
-	}
-
-	@Override
-	public String extractMetadata(QName type, NodeRef nodeRef) {
-		return attributeExtractorService.extractMetadata(type, nodeRef);
-	}
-
-	@Override
-	public Collection<QName> getMatchingTypes() {
-		return Collections.singletonList(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-	}
-
+	
 }
