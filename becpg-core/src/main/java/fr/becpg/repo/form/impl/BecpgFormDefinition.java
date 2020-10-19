@@ -230,6 +230,7 @@ public class BecpgFormDefinition {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private boolean loadDef(JSONObject field, Form form, DataGridFormFieldTitleProvider resolver) throws JSONException {
 		String id = field.getString("id");
 
@@ -286,21 +287,21 @@ public class BecpgFormDefinition {
 										}
 
 									}
-								} else if (constraint.getType() == "REGEXP") {
+								} else if ("REGEXP".equals(constraint.getType()) ) {
 									if (constraint.getParameters().containsKey("expression")) {
 										field.put("regexPattern", constraint.getParameters().get("expression"));
 									}
 									if (constraint.getParameters().containsKey("requiresMatch")) {
 										// TODO
 									}
-								} else if (constraint.getType() == "MIN-MAX") {
+								} else if ("MIN-MAX".equals(constraint.getType() ) ) {
 									if (constraint.getParameters().containsKey("minValue")) {
 										field.put("minValue", constraint.getParameters().get("minValue"));
 									}
 									if (constraint.getParameters().containsKey("maxValue")) {
 										field.put("maxValue", constraint.getParameters().get("maxValue"));
 									}
-								} else if (constraint.getType() == "LENGTH") {
+								} else if ("LENGTH".equals(constraint.getType())) {
 									if (constraint.getParameters().containsKey("minLength")) {
 										field.put("minLength", constraint.getParameters().get("minLength"));
 
