@@ -44,7 +44,7 @@
 	         <span  id="${fieldHtmlId}-${field.id?replace("prop_","")}" class="viewmode-value <#if field.dataType == "mltext">viewmode-mltext</#if>" ><#if fieldValue == "">${msg("form.control.novalue")}<#else>${fieldValue}</#if></span>
 	      </div>
 	   <#else>
-      <label for="${fieldHtmlId}">${field.label?html}:<#if field.mandatory><span class="mandatory-indicator">${msg("form.required.fields.marker")}</span></#if> <@formLib.renderLocaleImage field=field textarea=true/></label>
+      <label for="${fieldHtmlId}">${field.label?html}:<#if field.mandatory><span class="mandatory-indicator">${msg("form.required.fields.marker")}</span></#if><#if field.control.params.maxLength??><@formLib.renderLocaleImage field=field textarea=true maxLength=field.control.params.maxLength?number/> <#else><@formLib.renderLocaleImage field=field textarea=true/></#if></label>
 	      <textarea id="${fieldHtmlId}" name="${field.name}" rows="${rows}" cols="${columns}" tabindex="0"
 	                <#if field.description??>title="${field.description}"</#if>
 	                <#if field.control.params.styleClass??>class="${field.control.params.styleClass}"</#if>

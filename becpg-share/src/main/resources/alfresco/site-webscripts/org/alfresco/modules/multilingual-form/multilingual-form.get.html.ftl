@@ -157,9 +157,9 @@ var addFormFieldForLocale = function(){
 			      this.editors[mlFieldHtmlId] = editor;
 				</#if>
 				
-		   	 varHtml+="<textarea rows=\"2\" cols=\"60\" title=\"${description?js_string}\" tabindex=\"0\"	 name=\""+lc+"\" id=\"${el}-"+lc+"\"></textarea>";
+		   	 varHtml+="<textarea rows=\"2\" cols=\"60\" title=\"${description?js_string}\" tabindex=\"0\" name=\""+lc+"\" id=\"${el}-"+lc+"\"" <#if args.maxLength??>+" maxLength=\"${args.maxLength}\""</#if>+"></textarea>";
 		   	 <#else>
-		   	 varHtml+="<input type=\"text\" title=\"${description?js_string}\" tabindex=\"0\"	 name=\""+lc+"\" id=\"${el}-"+lc+"\"></input>";
+		   	 varHtml+="<input type=\"text\" title=\"${description?js_string}\" tabindex=\"0\"	 name=\""+lc+"\" id=\"${el}-"+lc+"\"" <#if args.maxLength??>+" maxLength=\"${args.maxLength}\""</#if>+"></input>";
 		  	 </#if>
 		  	 varHtml +="</div>";
 		  	 var htmlEl = document.createElement("div");
