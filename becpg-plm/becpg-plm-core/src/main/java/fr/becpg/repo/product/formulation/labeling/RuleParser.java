@@ -61,8 +61,8 @@ public abstract class RuleParser {
 	
 	
 	{
-		labelingDecorators.add(new LowerCaseDecorator());
 		labelingDecorators.add(new CapitalizeDecorator());
+		labelingDecorators.add(new LowerCaseDecorator());
 		labelingDecorators.add(new UppercaseDecorator());		
 		labelingDecorators.add(new FrenchTypoDecorator());
 	}

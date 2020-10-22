@@ -383,7 +383,7 @@ public class ImportEntityXmlVisitor {
 								}
 							}
 
-							if (node == null) {
+							if (node == null || !serviceRegistry.getNodeService().exists(node)) {
 								throw new SAXException("Cannot add node to assoc, node not found : " + name);
 							}
 

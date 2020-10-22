@@ -31,6 +31,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -109,6 +110,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	private List<ReconstituableDataItem> reconstituableDataItems = new ArrayList<>();
 
 	private List<EvaporatedDataItem> evaporatedDataItems = new ArrayList<>();
+
+	private Set<String> detectedAllergens = new LinkedHashSet<>();
 
 	private Map<NodeRef, Double> allergens = new HashMap<>();
 	private Map<NodeRef, Double> inVolAllergens = new HashMap<>();
@@ -347,14 +350,14 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 * <up>uppercase</up> <lo>lowercase</lo> <ca>capitalize</ca>
 	 * 
 	 * i,u, b are html tag and will be print as it into label up, lo, ca will
-	 * replace containing text with transformed text value and remove tag lo
-	 * will be the first transformation appended then ca then up.
+	 * replace containing text with transformed text value and remove tag ca
+	 * will be the first transformation appended then lo then up.
 	 * 
 	 * For exemple if you define detailsDefaultFormat = "<ca>{0}</ca>
 	 * (<lo>{2}</lo>) and allergenReplacementPattern = "<up>$1</up>" for
 	 * following labelling <ca>sugar</ca>,<ca>garniture</ca> (
-	 * <lo><up>Milk</up>, Lactose (<up>Milk</up>), Sugar</lo>) you will get
-	 * Sugar, Garniture ( MILK, lactose (MILK), sugar)
+	 * <lo><up>Milk</up>, <ca>Lactose</ca> (<up>Milk</up>), <ca>Sugar</ca></lo>)
+	 * you will get Sugar, Garniture ( MILK, lactose (MILK), sugar)
 	 *
 	 * 
 	 */
@@ -365,6 +368,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	private String ingTypeDefaultFormat = "{0}: {2} [{3}]";
 	private String ingTypeDecThresholdFormat = "{0} [{3}]";
 	private String subIngsDefaultFormat = "{0} ({2}) [{3}]";
+
+	private String allergenDetailsFormat = "{0} ({2})";
 	private String allergenReplacementPattern = "<b>$1</b>";
 	private String htmlTableRowFormat = "<tr><td style=\"border: solid 1px !important;padding: 5px;\" >{0}</td>"
 			+ "<td style=\"border: solid 1px !important;padding: 5px;\" >{2}</td>"
@@ -526,6 +531,18 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 */
 	public void setGroupDefaultFormat(String groupDefaultFormat) {
 		this.groupDefaultFormat = groupDefaultFormat;
+	}
+
+	/**
+	 * <p>
+	 * Setter for the field <code>allergenDetailsFormat</code>.
+	 * </p>
+	 *
+	 * @param allergenDetailsFormat
+	 *            a {@link java.lang.String} object.
+	 */
+	public void setAllergenDetailsFormat(String allergenDetailsFormat) {
+		this.allergenDetailsFormat = allergenDetailsFormat;
 	}
 
 	/**
@@ -1001,6 +1018,10 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return StringUtils.uncapitalize(legalName);
 	}
 
+	private static final String[] ESCAPED_ALLERGEN_TAGS = new String[] {
+		"<b>","</b>","<u>","</u>","<i>","</i>","<up>","</up>"
+	};
+	
 	private String createAllergenAwareLabel(String ingLegalName, Set<NodeRef> allergens) {
 		if (isAllergensDisableForLocale()) {
 			return ingLegalName;
@@ -1008,7 +1029,13 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 		Matcher ma = ALLERGEN_DETECTION_PATTERN.matcher(ingLegalName);
 		if (ma.find() && (ma.group(1) != null)) {
-			return ma.replaceAll(allergenReplacementPattern);
+			String allergenName = ma.group(1);
+			for(String toEscape :  ESCAPED_ALLERGEN_TAGS) {
+				allergenName = allergenName.replace(toEscape, "");
+			}
+			
+			detectedAllergens.add(allergenName);
+			return ma.replaceAll(allergenReplacementPattern.replace("$1", allergenName));
 		}
 
 		StringBuilder ret = new StringBuilder();
@@ -1023,6 +1050,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 						} else {
 							ma = Pattern.compile("\\b(" + Pattern.quote(allergenName) + "(s?))\\b", Pattern.CASE_INSENSITIVE).matcher(ingLegalName);
 							if (ma.find() && (ma.group(1) != null)) {
+
+								detectedAllergens.add(ma.group(1));
 								ingLegalName = ma.replaceAll(allergenReplacementPattern);
 								shouldAppend = false;
 							} else {
@@ -1032,6 +1061,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 										ma = Pattern.compile("\\b(" + Pattern.quote(subAllergenName) + "(s?))\\b", Pattern.CASE_INSENSITIVE)
 												.matcher(ingLegalName);
 										if (ma.find() && (ma.group(1) != null)) {
+											detectedAllergens.add(ma.group(1));
 											ingLegalName = ma.replaceAll(allergenReplacementPattern);
 											shouldAppend = false;
 										}
@@ -1040,13 +1070,14 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 							}
 						}
 						if (shouldAppend) {
+							detectedAllergens.add(allergenName);
 							ret.append(allergenName.replaceFirst("(.*)", allergenReplacementPattern));
 						}
 					}
 				}
 			}
 		}
-		return applyRoundingMode(new MessageFormat(detailsDefaultFormat), null).format(new Object[] { ingLegalName, null, ret.toString(), null });
+		return applyRoundingMode(new MessageFormat(allergenDetailsFormat), null).format(new Object[] { ingLegalName, null, ret.toString(), null });
 	}
 
 	Set<Locale> disableAllergensForLocalesCache = null;
@@ -1198,6 +1229,31 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 */
 	public String renderAllergens() {
 		return renderAllergens(sorted(this.allergens));
+	}
+	
+	/**
+	 * <p>
+	 * renderDetectedAllergens.
+	 * </p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
+	public String renderDetectedAllergens() {
+		StringBuilder ret = new StringBuilder();
+
+		if (logger.isTraceEnabled()) {
+			logger.trace(" Render Allergens list ");
+		}
+
+		for (String allergen : detectedAllergens) {
+			if (ret.length() > 0) {
+				ret.append(allergensSeparator);
+			}
+			ret.append(allergen);
+		}
+
+		return decorate(ret.toString());
+
 	}
 
 	/**
@@ -2108,8 +2164,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				}
 			}
 
-			return input.replaceAll(" null| \\(null\\)| \\(\\)| \\[null\\]", "").replaceAll(":,", ",").replaceAll(":$", "").replaceAll(">null<",
-					"><").replaceAll("  ", "").trim();
+			return input.replaceAll(" null| \\(null\\)| \\(\\)| \\[null\\]", "").replaceAll(":,", ",").replaceAll(":$", "").replaceAll(">null<", "><")
+					.replaceAll("  ", "").trim();
 		}
 		return "";
 	}
