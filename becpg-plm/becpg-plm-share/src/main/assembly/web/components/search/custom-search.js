@@ -1234,7 +1234,7 @@
 					       */
 					      _onActionDeleteConfirm: function DLTB__onActionDeleteConfirm(records)
 					      {
-					         var multipleRecords = [], i, ii;
+					         var multipleRecords = [], i, ii, me = this;
 					         for (i = 0, ii = records.length; i < ii; i++)
 					         {
 					            multipleRecords.push(records[i].nodeRef);
@@ -1244,8 +1244,7 @@
 					         var fnSuccess = function DLTB__oADC_success(data, records)
 					         {
 					            var result;
-					            var successFileCount = 0;
-					            var successFolderCount = 0;
+					            var successCount = 0;
 					            
 					            // Did the operation succeed?
 					            if (!data.json.overallSuccess)
@@ -1257,7 +1256,6 @@
 					               return;
 					            }
 					            
-					            YAHOO.Bubbling.fire("filesDeleted");
 					            
 					            for (i = 0, ii = data.json.totalResults; i < ii; i++)
 					            {
@@ -1265,86 +1263,18 @@
 					               
 					               if (result.success)
 					               {
-					                  if (result.type == "folder")
-					                  {
-					                     successFolderCount++;
-					                  }
-					                  else
-					                  {
-					                     successFileCount++;
-					                  }
 					                  
-					                  YAHOO.Bubbling.fire(result.type == "folder" ? "folderDeleted" : "fileDeleted",
-					                  {
-					                     multiple: true,
-					                     nodeRef: result.nodeRef
-					                  });
+					                  successCount++;
+					                
 					               }
 					            }
-					            
-					            // Activities, in Site mode only
-					            var successCount = successFolderCount + successFileCount;
-					            if (Alfresco.util.isValueSet(this.options.siteId))
-					            {
-					               var activityData;
-					               
-					               if (successCount > 0)
-					               {
-					                  if (successCount < this.options.groupActivitiesAt)
-					                  {
-					                     // Below cutoff for grouping Activities into one
-					                     for (i = 0; i < successCount; i++)
-					                     {
-					                        activityData =
-					                        {
-					                           fileName: data.json.results[i].id,
-					                           nodeRef: data.json.results[i].nodeRef,
-					                           path: this.currentPath,
-					                           parentNodeRef : this.doclistMetadata.parent.nodeRef
-					                        };
-					                        
-					                        if (data.json.results[i].type == "folder")
-					                        {
-					                           this.modules.actions.postActivity(this.options.siteId, "folder-deleted", "documentlibrary", activityData);
-					                        }
-					                        else
-					                        {
-					                           this.modules.actions.postActivity(this.options.siteId, "file-deleted", "documentlibrary", activityData);
-					                        }
-					                     }
-					                  }
-					                  else
-					                  {
-					                     if (successFileCount > 0)
-					                     {
-					                        // grouped into one message
-					                        activityData =
-					                        {
-					                           fileCount: successFileCount,
-					                           path: this.currentPath,
-					                           parentNodeRef : this.doclistMetadata.parent.nodeRef
-					                        };
-					                        this.modules.actions.postActivity(this.options.siteId, "files-deleted", "documentlibrary", activityData);
-					                     }
-					                     if (successFolderCount > 0)
-					                     {
-					                        // grouped into one message
-					                        activityData =
-					                        {
-					                           fileCount: successFolderCount,
-					                           path: this.currentPath,
-					                           parentNodeRef : this.doclistMetadata.parent.nodeRef
-					                        };
-					                        this.modules.actions.postActivity(this.options.siteId, "folders-deleted", "documentlibrary", activityData);
-					                     }
-					                  }
-					               }
-					            }
-
+					          
 					            Alfresco.util.PopupManager.displayMessage(
 					            {
 					               text: this.msg("message.multiple-delete.success", successCount)
 					            });
+
+								me.refreshSearch({});
 					         };
 					         
 					         // Construct the data object for the genericAction call
