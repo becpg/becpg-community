@@ -203,7 +203,7 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 	/** Constant <code>PROP_USERACCESS="userAccess"</code> */
 	public static final String PROP_USERACCESS = "userAccess";
 
-	private static final Log logger = LogFactory.getLog(AbstractNodeDataExtractor.class);
+	private static final Log logger = LogFactory.getLog(AbstractDataListExtractor.class);
 
 	/**
 	 * <p>init.</p>
