@@ -202,6 +202,8 @@
         <property name="jobClass">
             <value>fr.becpg.repo.notification.NotificationRuleJob</value>
         </property>
+        <property name="group" value="beCPG"/>
+        <property name="description" value="Run notification rules" />
         <property name="jobDataAsMap">
             <map>
                 <entry key="notificationRuleService">
@@ -213,6 +215,9 @@
                 <entry key="transactionService">
                     <ref bean="transactionService" />
                 </entry>
+                <entry key="jobLockService">
+	               <ref bean="jobLockService" />
+	           </entry>
             </map>
         </property>
     </bean>
