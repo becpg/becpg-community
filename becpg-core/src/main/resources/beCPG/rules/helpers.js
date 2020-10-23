@@ -68,7 +68,7 @@
  * 
  * generateEAN13Code(prefix) returns generate EAN13 code with autonum corresponding to prefix
  * 
- * setPermissionAsSystem(node, permission, authority) Set permissions as system
+ * setPermissionAsSystem(node, permission, authority) Set permissions as system, node can be node or nodeRef
  * 
  * allowWrite(node, authority) Set write permissions as system bypassing rights
  * 
