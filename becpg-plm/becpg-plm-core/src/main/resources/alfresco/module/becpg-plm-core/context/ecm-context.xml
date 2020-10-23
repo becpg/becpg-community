@@ -63,6 +63,8 @@
         <property name="jobClass">
             <value>fr.becpg.repo.ecm.AutomaticECOJob</value>
         </property>
+        <property name="group" value="beCPG"/>
+        <property name="description" value="Run modified where used formulation" />
         <property name="jobDataAsMap">
             <map>
                 <entry key="automaticECOService">
@@ -71,6 +73,10 @@
                 <entry key="tenantAdminService">
                     <ref bean="tenantAdminService" />
                 </entry>
+                <entry key="jobLockService">
+	               <ref bean="jobLockService" />
+	           </entry>
+                
             </map>
         </property>
     </bean>
