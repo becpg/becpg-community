@@ -200,6 +200,8 @@
         <property name="jobClass">
             <value>fr.becpg.repo.project.impl.ProjectFormulationJob</value>
         </property>
+        <property name="group" value="beCPG"/>
+        <property name="description" value="Run project formulation" />
         <property name="jobDataAsMap">
             <map>
                 <entry key="projectFormulationWorker">
@@ -208,6 +210,9 @@
                 <entry key="tenantAdminService">
                     <ref bean="tenantAdminService" />
                 </entry>
+	            <entry key="jobLockService">
+	               <ref bean="jobLockService" />
+	           </entry>
             </map>
         </property>
     </bean>
