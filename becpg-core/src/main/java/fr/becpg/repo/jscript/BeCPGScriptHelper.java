@@ -391,9 +391,13 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 			for (ConstraintDefinition constraint : propertyDef.getConstraints()) {
 				if (constraint.getConstraint() instanceof DynListConstraint) {
 					dynListConstraint = (DynListConstraint) constraint.getConstraint();
-					break;
+					
 				} else if ("LIST".equals(constraint.getConstraint().getType())) {
 					constraintName = constraint.getRef().toPrefixString(namespaceService).replace(":", "_");
+					
+				}
+				
+				if(constraintName!=null || dynListConstraint!=null) {
 					break;
 				}
 			}
@@ -942,7 +946,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 			logger.warn("No results found for queryId: " + queryId);
 		}
 
-		return null;
+		return new String[] {};
 	}
 
 	/**
@@ -956,6 +960,13 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public boolean setPermissionAsSystem(ScriptNode sourceNode, String permission, String authority) {
 		return AuthenticationUtil.runAsSystem(() -> {
 			permissionService.setPermission(sourceNode.getNodeRef(), authority, permission, true);
+			return true;
+		});
+	}
+	
+	public boolean setPermissionAsSystem(String nodeRef, String permission, String authority) {
+		return AuthenticationUtil.runAsSystem(() -> {
+			permissionService.setPermission(new NodeRef(nodeRef), authority, permission, true);
 			return true;
 		});
 	}
