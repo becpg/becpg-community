@@ -81,16 +81,22 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	@Autowired
 	private Repository repository;
 
-	/** Constant <code>CONFIG_PATH="/app:company_home/cm:System/cm:Config/c"{trunked}</code> */
+	/**
+	 * Constant
+	 * <code>CONFIG_PATH="/app:company_home/cm:System/cm:Config/c"{trunked}</code>
+	 */
 	public static final String CONFIG_PATH = "/app:company_home/cm:System/cm:Config/cm:search.json";
 	/** Constant <code>SEARCH_CONFIG_CACHE_KEY="SEARCH_CONFIG"</code> */
 	public static final String SEARCH_CONFIG_CACHE_KEY = "SEARCH_CONFIG";
 
 	/**
-	 * <p>getSearchConfig.</p>
+	 * <p>
+	 * getSearchConfig.
+	 * </p>
 	 *
 	 * @return a {@link fr.becpg.repo.search.impl.SearchConfig} object.
 	 */
+	@Override
 	public SearchConfig getSearchConfig() {
 
 		return beCPGCacheService.getFromCache(AdvSearchService.class.getName(), SEARCH_CONFIG_CACHE_KEY, () -> {
@@ -245,7 +251,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 									List<String> hierarchyNodes = new ArrayList<>();
 									String[] results = hierarchyQuery.split(",");
 									for (String result : results) {
-										result = result.replaceAll("\"", "");
+										result = result.replace("\"", "");
 										hierarchyNodes.add(result);
 									}
 
@@ -261,7 +267,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 									}
 
-									String hierarchyNodesString = hierarchyNodes.toString().replaceAll(", ", "\" OR @" + hierarchyPropName + ":\"")
+									String hierarchyNodesString = hierarchyNodes.toString().replace(", ", "\" OR @" + hierarchyPropName + ":\"")
 											.replaceAll(Pattern.quote("["), "\"").replaceAll(Pattern.quote("]"), "\"");
 									StringBuilder hierarchiesQuery = new StringBuilder();
 									hierarchiesQuery.append("@");
@@ -291,7 +297,6 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 								// poivre AND noir
 								// sushi AND (saumon OR thon) AND -dorade
 								// formQuery += (first ? "" : " AND ") +
-								// propName + ":\"" + propValue + "\"";
 
 								queryBuilder.andPropQuery(QName.createQName(propName, namespaceService), cleanValue(propValue));
 							}
@@ -313,19 +318,22 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	}
 
 	private String cleanValue(String propValue) {
-		String cleanQuery = propValue.replaceAll("\\.", "").replaceAll("#", "");
+		String cleanQuery = propValue.replace(".", "").replace("#", "");
 
 		if (cleanQuery.contains("\",\"")) {
-			cleanQuery = cleanQuery.replaceAll("\",\"", "\" OR \"");
+			cleanQuery = cleanQuery.replace("\",\"", "\" OR \"");
 		}
 
 		return escapeValue(cleanQuery);
 	}
 
 	/**
-	 * <p>escapeValue.</p>
+	 * <p>
+	 * escapeValue.
+	 * </p>
 	 *
-	 * @param value a {@link java.lang.String} object.
+	 * @param value
+	 *            a {@link java.lang.String} object.
 	 * @return a {@link java.lang.String} object.
 	 */
 	protected String escapeValue(String value) {
@@ -367,20 +375,20 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 			nodes = queryBuilder.list();
 		}
 
-		String ret = "";
+		StringBuilder ret = new StringBuilder();
 		if ((nodes != null) && !nodes.isEmpty()) {
 			for (NodeRef node : nodes) {
-				ret += " \"" + node.toString() + "\"";
+				ret.append(" \"" + node.toString() + "\"");
 			}
 		} else {
-			ret += "\"" + hierarchyName + "\"";
+			ret.append("\"" + hierarchyName + "\"");
 		}
 
 		if (logger.isDebugEnabled() && (watch != null)) {
 			watch.stop();
 			logger.debug("getHierarchyQuery executed in  " + watch.getTotalTimeSeconds() + " seconds ");
 		}
-		return ret;
+		return ret.toString();
 	}
 
 	private Integer getHierarchyLevel(NodeRef hierarchyNodeRef) {
