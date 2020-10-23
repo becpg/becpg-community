@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2010-2018 beCPG.
+Copyright (C) 2010-2020 beCPG.
 
 This file is part of beCPG
 
@@ -19,9 +19,6 @@ along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  */
 package fr.becpg.repo.search;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,8 +29,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
-
-import javax.sql.DataSource;
 
 import org.alfresco.model.ApplicationModel;
 import org.alfresco.model.ContentModel;
@@ -50,11 +45,9 @@ import org.alfresco.repo.search.impl.querymodel.QueryModelException;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.permissions.PermissionCheckedValue.PermissionCheckedValueMixin;
 import org.alfresco.repo.tenant.TenantService;
-import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
-import org.alfresco.service.cmr.dictionary.DictionaryService;
+import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.cmr.search.LimitBy;
 import org.alfresco.service.cmr.search.QueryConsistency;
 import org.alfresco.service.cmr.search.ResultSet;
@@ -77,12 +70,17 @@ import org.springframework.util.StopWatch;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.search.impl.AbstractBeCPGQueryBuilder;
 
 /**
- * @author matthieu
+ * <p>
+ * BeCPGQueryBuilder class.
+ * </p>
  *
+ * @author matthieu
+ * @version $Id: $Id
  */
 @Service("beCPGQueryBuilder")
 public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements InitializingBean {
@@ -106,23 +104,19 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	private NamedObjectRegistry<CannedQueryFactory<NodeRef>> cannedQueryRegistry;
 
 	@Autowired
-	private DictionaryService dictionaryService;
+	private EntityDictionaryService entityDictionaryService;
 
 	@Autowired
 	private TenantService tenantService;
 
 	@Value("${beCPG.defaultSearchTemplate}")
 	private String defaultSearchTemplate;
-	
+
 	@Value("${beCPG.report.includeReportInSearch}")
 	private Boolean includeReportInSearch = false;
 
 	@Autowired
 	private NodeService nodeService;
-
-	@Autowired
-	@Qualifier("dataSource")
-	private DataSource dataSource;
 
 	private Integer maxResults = RepoConsts.MAX_RESULTS_256;
 	private NodeRef parentNodeRef;
@@ -134,6 +128,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	private final Set<QName> aspects = new HashSet<>();
 	private String subPath = null;
 	private String path = null;
+	private String inSite = null;
 	private String excludePath = null;
 	private String membersPath = null;
 	private final Set<NodeRef> ids = new HashSet<>();
@@ -150,18 +145,26 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	private final Set<QName> excludedAspects = new HashSet<>();
 	private final Set<QName> excludedTypes = new HashSet<>();
 	private final Map<QName, String> excludedPropQueriesMap = new HashMap<>();
-	private QueryConsistency queryConsistancy = QueryConsistency.EVENTUAL;
+	private QueryConsistency queryConsistancy = QueryConsistency.DEFAULT;
 	private boolean isExactType = false;
 	private String searchTemplate = null;
 	private SearchParameters.Operator operator = null;
 	private Locale locale = Locale.getDefault();
 
+	/** {@inheritDoc} */
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		INSTANCE = this;
 
 	}
 
+	/**
+	 * <p>
+	 * isInit.
+	 * </p>
+	 *
+	 * @return a boolean.
+	 */
 	public boolean isInit() {
 		return INSTANCE != null;
 	}
@@ -171,6 +174,13 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 	}
 
+	/**
+	 * <p>
+	 * createQuery.
+	 * </p>
+	 *
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 */
 	public static BeCPGQueryBuilder createQuery() {
 		BeCPGQueryBuilder builder = new BeCPGQueryBuilder();
 		if (INSTANCE != null) {
@@ -179,65 +189,169 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			builder.defaultSearchTemplate = INSTANCE.defaultSearchTemplate;
 			builder.cannedQueryRegistry = INSTANCE.cannedQueryRegistry;
 			builder.nodeService = INSTANCE.nodeService;
-			builder.dictionaryService = INSTANCE.dictionaryService;
+			builder.entityDictionaryService = INSTANCE.entityDictionaryService;
 			builder.tenantService = INSTANCE.tenantService;
-			builder.dataSource = INSTANCE.dataSource;
 			builder.includeReportInSearch = INSTANCE.includeReportInSearch;
 		}
 		return builder;
 	}
 
+	/**
+	 * <p>
+	 * ofType.
+	 * </p>
+	 *
+	 * @param typeQname
+	 *            a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 */
 	public BeCPGQueryBuilder ofType(QName typeQname) {
 		this.type = typeQname;
 		return this;
 	}
 
+	/**
+	 * <p>
+	 * ofExactType.
+	 * </p>
+	 *
+	 * @param typeQname
+	 *            a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 */
 	public BeCPGQueryBuilder ofExactType(QName typeQname) {
 		this.isExactType = true;
 		return ofType(typeQname);
 	}
 
+	/**
+	 * <p>
+	 * inType.
+	 * </p>
+	 *
+	 * @param typeQname
+	 *            a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 */
 	public BeCPGQueryBuilder inType(QName typeQname) {
-		types.add(typeQname);
+		if (!typeQname.equals(type)) {
+			types.add(typeQname);
+		}
+
 		return this;
 	}
 
+	/**
+	 * <p>
+	 * inBoostedType.
+	 * </p>
+	 *
+	 * @param typeQname
+	 *            a {@link org.alfresco.service.namespace.QName} object.
+	 * @param boostFactor
+	 *            a {@link java.lang.Integer} object.
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 */
 	public BeCPGQueryBuilder inBoostedType(QName typeQname, Integer boostFactor) {
+		if (!typeQname.equals(type)) {
+			type = null;
+		}
 		boostedTypes.add(new Pair<>(typeQname, boostFactor));
 		return this;
 	}
 
+	/**
+	 * <p>
+	 * withAspect.
+	 * </p>
+	 *
+	 * @param aspect
+	 *            a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 */
 	public BeCPGQueryBuilder withAspect(QName aspect) {
 		excludedAspects.remove(aspect);
 		aspects.add(aspect);
 		return this;
 	}
 
+	/**
+	 * <p>
+	 * includeAspect.
+	 * </p>
+	 *
+	 * @param aspect
+	 *            a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 */
 	public BeCPGQueryBuilder includeAspect(QName aspect) {
 		excludedAspects.remove(aspect);
 		return this;
 	}
 
+	/**
+	 * <p>
+	 * inParent.
+	 * </p>
+	 *
+	 * @param parentNodeRef
+	 *            a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 */
 	public BeCPGQueryBuilder inParent(NodeRef parentNodeRef) {
 		parentNodeRefs.add(parentNodeRef);
 		return this;
 	}
 
+	/**
+	 * <p>
+	 * maxResults.
+	 * </p>
+	 *
+	 * @param maxResults
+	 *            a int.
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 */
 	public BeCPGQueryBuilder maxResults(int maxResults) {
 		this.maxResults = maxResults;
 		return this;
 	}
 
+	/**
+	 * <p>
+	 * andOperator.
+	 * </p>
+	 *
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 */
 	public BeCPGQueryBuilder andOperator() {
 		this.operator = SearchParameters.Operator.AND;
 		return this;
 	}
 
+	/**
+	 * <p>
+	 * locale.
+	 * </p>
+	 *
+	 * @param locale
+	 *            a {@link java.util.Locale} object.
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 */
 	public BeCPGQueryBuilder locale(Locale locale) {
 		this.locale = locale;
 		return this;
 	}
 
+	/**
+	 * <p>
+	 * parent.
+	 * </p>
+	 *
+	 * @param parentNodeRef
+	 *            a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 */
 	public BeCPGQueryBuilder parent(NodeRef parentNodeRef) {
 		if (this.parentNodeRef != null) {
 			logger.warn("ParentNodeRef is already set for this query.( old:" + this.parentNodeRef + " -  new: " + parentNodeRef + ")");
@@ -247,6 +361,15 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		return this;
 	}
 
+	/**
+	 * <p>
+	 * members.
+	 * </p>
+	 *
+	 * @param path
+	 *            a {@link java.lang.String} object.
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 */
 	public BeCPGQueryBuilder members(String path) {
 		if (this.membersPath != null) {
 			logger.warn("Path is already set for this query.( old:" + this.membersPath + " -  new: " + path + ")");
@@ -256,6 +379,15 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		return this;
 	}
 
+	/**
+	 * <p>
+	 * inPath.
+	 * </p>
+	 *
+	 * @param path
+	 *            a {@link java.lang.String} object.
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 */
 	public BeCPGQueryBuilder inPath(String path) {
 		if (this.path != null) {
 			logger.warn("Path is already set for this query.( old:" + this.path + " -  new: " + path + ")");
@@ -265,6 +397,15 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		return this;
 	}
 
+	/**
+	 * <p>
+	 * inSubPath.
+	 * </p>
+	 *
+	 * @param subPath
+	 *            a {@link java.lang.String} object.
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 */
 	public BeCPGQueryBuilder inSubPath(String subPath) {
 		if (this.path != null) {
 			logger.warn("Path is already set for this query.( old:" + this.path + " -  new: " + path + ")");
@@ -277,6 +418,15 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		return this;
 	}
 
+	/**
+	 * <p>
+	 * excludePath.
+	 * </p>
+	 *
+	 * @param excludePath
+	 *            a {@link java.lang.String} object.
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 */
 	public BeCPGQueryBuilder excludePath(String excludePath) {
 		if (this.path != null) {
 			logger.warn("Path is already set for this query.( old:" + this.path + " -  new: " + path + ")");
@@ -289,45 +439,104 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		return this;
 	}
 
+	/**
+	 * <p>
+	 * inDB.
+	 * </p>
+	 *
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 */
 	public BeCPGQueryBuilder inDB() {
 		queryConsistancy = QueryConsistency.TRANSACTIONAL;
 		cmisLanguage();
 		return this;
 	}
 
+	/**
+	 * <p>
+	 * inDBIfPossible.
+	 * </p>
+	 *
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 */
 	public BeCPGQueryBuilder inDBIfPossible() {
 		queryConsistancy = QueryConsistency.TRANSACTIONAL_IF_POSSIBLE;
+		ftsLanguage();
 		return this;
 	}
 
+	/**
+	 * <p>
+	 * cmisLanguage.
+	 * </p>
+	 *
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 */
 	public BeCPGQueryBuilder cmisLanguage() {
 		this.language = SearchService.LANGUAGE_CMIS_ALFRESCO;
 		return this;
 	}
 
+	/**
+	 * <p>
+	 * inSite.
+	 * </p>
+	 *
+	 * @param siteId
+	 *            a {@link java.lang.String} object.
+	 * @param containerId
+	 *            a {@link java.lang.String} object.
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 */
 	public BeCPGQueryBuilder inSite(String siteId, String containerId) {
-		String path = SiteHelper.SITES_SPACE_QNAME_PATH;
 
-		if ((siteId != null) && (siteId.length() > 0)) {
-			path += "cm:" + ISO9075.encode(siteId);
+		if ((containerId == null) || containerId.isBlank() || "documentLibrary".equals(containerId)) {
+			if (this.inSite != null) {
+				logger.warn("Site is already set for this query.( old:" + this.inSite + " -  new: " + siteId + ")");
+			}
+			inSite = siteId;
 		} else {
-			path += "*";
-		}
-		if ((containerId != null) && (containerId.length() > 0)) {
-			path += "/cm:" + ISO9075.encode(containerId);
-		}
-		// recursive //*
-		path += "/";
-		inPath(path);
 
+			String path = SiteHelper.SITES_SPACE_QNAME_PATH;
+
+			if ((siteId != null) && (siteId.length() > 0)) {
+				path += "cm:" + ISO9075.encode(siteId);
+			} else {
+				path += "*";
+			}
+			path += "/cm:" + ISO9075.encode(containerId);
+
+			// recursive //*
+			path += "/";
+			inPath(path);
+
+		}
 		return this;
 	}
 
+	/**
+	 * <p>
+	 * andID.
+	 * </p>
+	 *
+	 * @param nodeRef
+	 *            a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 */
 	public BeCPGQueryBuilder andID(NodeRef nodeRef) {
 		this.ids.add(nodeRef);
 		return this;
 	}
 
+	/**
+	 * <p>
+	 * andNotID.
+	 * </p>
+	 *
+	 * @param nodeRef
+	 *            a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 */
 	public BeCPGQueryBuilder andNotID(NodeRef nodeRef) {
 		if (!ids.contains(nodeRef)) {
 			this.notIds.add(nodeRef);
@@ -337,6 +546,15 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		return this;
 	}
 
+	/**
+	 * <p>
+	 * andNotIDs.
+	 * </p>
+	 *
+	 * @param nodeRefs
+	 *            a {@link java.util.Set} object.
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 */
 	public BeCPGQueryBuilder andNotIDs(Set<NodeRef> nodeRefs) {
 		this.notIds.addAll(nodeRefs);
 		return this;
@@ -344,21 +562,59 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 	Map<String, Boolean> sortProps = new TreeMap<>();
 
+	/**
+	 * <p>
+	 * addSort.
+	 * </p>
+	 *
+	 * @param sortMap
+	 *            a {@link java.util.Map} object.
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 */
 	public BeCPGQueryBuilder addSort(Map<String, Boolean> sortMap) {
 		this.sortProps = sortMap;
 		return this;
 	}
 
+	/**
+	 * <p>
+	 * addSort.
+	 * </p>
+	 *
+	 * @param propToSort
+	 *            a {@link org.alfresco.service.namespace.QName} object.
+	 * @param sortOrder
+	 *            a boolean.
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 */
 	public BeCPGQueryBuilder addSort(QName propToSort, boolean sortOrder) {
 		sortProps.put(getSortProp(propToSort), sortOrder);
 		return this;
 	}
 
+	/**
+	 * <p>
+	 * isNotNull.
+	 * </p>
+	 *
+	 * @param propQName
+	 *            a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 */
 	public BeCPGQueryBuilder isNotNull(QName propQName) {
 		notNullProps.add(propQName);
 		return this;
 	}
 
+	/**
+	 * <p>
+	 * isNull.
+	 * </p>
+	 *
+	 * @param propQName
+	 *            a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 */
 	public BeCPGQueryBuilder isNull(QName propQName) {
 		if (!notNullProps.contains(propQName)) {
 			nullProps.add(propQName);
@@ -368,6 +624,15 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		return this;
 	}
 
+	/**
+	 * <p>
+	 * isNullOrUnset.
+	 * </p>
+	 *
+	 * @param propQName
+	 *            a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 */
 	public BeCPGQueryBuilder isNullOrUnset(QName propQName) {
 		if (!notNullProps.contains(propQName)) {
 			nullOrUnsetProps.add(propQName);
@@ -377,16 +642,43 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		return this;
 	}
 
+	/**
+	 * <p>
+	 * andFTSQuery.
+	 * </p>
+	 *
+	 * @param ftsQuery
+	 *            a {@link java.lang.String} object.
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 */
 	public BeCPGQueryBuilder andFTSQuery(String ftsQuery) {
 		ftsQueries.add(ftsQuery);
 		return this;
 	}
 
+	/**
+	 * <p>
+	 * clearFTSQuery.
+	 * </p>
+	 *
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 */
 	public BeCPGQueryBuilder clearFTSQuery() {
 		ftsQueries.clear();
 		return this;
 	}
 
+	/**
+	 * <p>
+	 * andPropEquals.
+	 * </p>
+	 *
+	 * @param propQName
+	 *            a {@link org.alfresco.service.namespace.QName} object.
+	 * @param value
+	 *            a {@link java.lang.String} object.
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 */
 	public BeCPGQueryBuilder andPropEquals(QName propQName, String value) {
 		if (value == null) {
 			isNull(propQName);
@@ -400,6 +692,17 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		return this;
 	}
 
+	/**
+	 * <p>
+	 * andPropQuery.
+	 * </p>
+	 *
+	 * @param propQName
+	 *            a {@link org.alfresco.service.namespace.QName} object.
+	 * @param propQuery
+	 *            a {@link java.lang.String} object.
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 */
 	public BeCPGQueryBuilder andPropQuery(QName propQName, String propQuery) {
 		if (propQuery == null) {
 			isNull(propQName);
@@ -423,21 +726,67 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 				|| "NOTEMPTY".equalsIgnoreCase(value);
 	}
 
+	/**
+	 * <p>
+	 * andBetween.
+	 * </p>
+	 *
+	 * @param propQName
+	 *            a {@link org.alfresco.service.namespace.QName} object.
+	 * @param start
+	 *            a {@link java.lang.String} object.
+	 * @param end
+	 *            a {@link java.lang.String} object.
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 */
 	public BeCPGQueryBuilder andBetween(QName propQName, String start, String end) {
 		propBetweenQueriesMap.put(propQName, new Pair<>(start, end));
 		return this;
 	}
 
+	/**
+	 * <p>
+	 * andBetweenOrNull.
+	 * </p>
+	 *
+	 * @param propQName
+	 *            a {@link org.alfresco.service.namespace.QName} object.
+	 * @param start
+	 *            a {@link java.lang.String} object.
+	 * @param end
+	 *            a {@link java.lang.String} object.
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 */
 	public BeCPGQueryBuilder andBetweenOrNull(QName propQName, String start, String end) {
 		propBetweenOrNullQueriesMap.put(propQName, new Pair<>(start, end));
 		return this;
 	}
 
+	/**
+	 * <p>
+	 * excludeProp.
+	 * </p>
+	 *
+	 * @param propName
+	 *            a {@link org.alfresco.service.namespace.QName} object.
+	 * @param query
+	 *            a {@link java.lang.String} object.
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 */
 	public BeCPGQueryBuilder excludeProp(QName propName, String query) {
 		excludedPropQueriesMap.put(propName, query);
 		return this;
 	}
 
+	/**
+	 * <p>
+	 * excludeType.
+	 * </p>
+	 *
+	 * @param type
+	 *            a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 */
 	public BeCPGQueryBuilder excludeType(QName type) {
 		if (!types.contains(type) && !type.equals(this.type)) {
 			excludedTypes.add(type);
@@ -445,6 +794,15 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		return this;
 	}
 
+	/**
+	 * <p>
+	 * excludeAspect.
+	 * </p>
+	 *
+	 * @param aspect
+	 *            a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 */
 	public BeCPGQueryBuilder excludeAspect(QName aspect) {
 		if (!aspects.contains(aspect)) {
 			excludedAspects.add(aspect);
@@ -455,17 +813,38 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		return this;
 	}
 
+	/**
+	 * <p>
+	 * excludeVersions.
+	 * </p>
+	 *
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 */
 	public BeCPGQueryBuilder excludeVersions() {
 		excludeAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION);
 		return this;
 	}
 
+	/**
+	 * <p>
+	 * excludeDefaults.
+	 * </p>
+	 *
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 */
 	public BeCPGQueryBuilder excludeDefaults() {
 		excludeVersions();
 		excludeSystems();
 		return this;
 	}
 
+	/**
+	 * <p>
+	 * excludeSystems.
+	 * </p>
+	 *
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 */
 	public BeCPGQueryBuilder excludeSystems() {
 		excludeAspect(BeCPGModel.ASPECT_ENTITY_TPL);
 		excludeAspect(BeCPGModel.ASPECT_HIDDEN_FOLDER);
@@ -474,6 +853,13 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		return this;
 	}
 
+	/**
+	 * <p>
+	 * excludeSearch.
+	 * </p>
+	 *
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 */
 	public BeCPGQueryBuilder excludeSearch() {
 
 		excludeDefaults();
@@ -481,7 +867,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		excludeType(ContentModel.TYPE_FAILED_THUMBNAIL);
 		excludeType(ContentModel.TYPE_RATING);
 		excludeType(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-		if(!includeReportInSearch) {
+		if (!includeReportInSearch) {
 			excludeType(ReportModel.TYPE_REPORT);
 		}
 		excludeType(ForumModel.TYPE_FORUM);
@@ -494,12 +880,34 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		return this;
 	}
 
+	/**
+	 * <p>
+	 * selectNodeByPath.
+	 * </p>
+	 *
+	 * @param parentNodeRef
+	 *            a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param xPath
+	 *            a {@link java.lang.String} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public NodeRef selectNodeByPath(NodeRef parentNodeRef, String xPath) {
 		this.maxResults = RepoConsts.MAX_RESULTS_SINGLE_VALUE;
 		List<NodeRef> ret = selectNodesByPath(parentNodeRef, xPath);
 		return (ret != null) && !ret.isEmpty() ? ret.get(0) : null;
 	}
 
+	/**
+	 * <p>
+	 * selectNodesByPath.
+	 * </p>
+	 *
+	 * @param parentNodeRef
+	 *            a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param xPath
+	 *            a {@link java.lang.String} object.
+	 * @return a {@link java.util.List} object.
+	 */
 	public List<NodeRef> selectNodesByPath(NodeRef parentNodeRef, String xPath) {
 		List<NodeRef> ret = null;
 		StopWatch watch = new StopWatch();
@@ -522,6 +930,13 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		return ret;
 	}
 
+	/**
+	 * <p>
+	 * list.
+	 * </p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	public List<NodeRef> list() {
 
 		StopWatch watch = new StopWatch();
@@ -533,11 +948,17 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 		try {
 
-			if (RepoConsts.MAX_RESULTS_UNLIMITED == maxResults) {
+			if (RepoConsts.MAX_RESULTS_UNLIMITED.equals(maxResults)) {
 				int page = 1;
 
-				logger.debug("Unlimited results ask -  start pagination");
-				List<NodeRef> tmp = search(runnedQuery, getSort(ContentModel.PROP_MODIFIED, false), page, RepoConsts.MAX_RESULTS_256);
+				if (logger.isDebugEnabled()) {
+					logger.debug("Unlimited results ask -  start pagination");
+					if ((sortProps != null) && !sortProps.isEmpty()) {
+						logger.warn("No sort in Unlimited search: " + sortProps.toString());
+					}
+				}
+
+				List<NodeRef> tmp = search(runnedQuery, sortProps, page, RepoConsts.MAX_RESULTS_256);
 
 				if ((tmp != null) && !tmp.isEmpty()) {
 					logger.debug(" - Page 1:" + tmp.size());
@@ -545,7 +966,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 				}
 				while ((tmp != null) && (tmp.size() == RepoConsts.MAX_RESULTS_256)) {
 					page++;
-					tmp = search(runnedQuery, getSort(ContentModel.PROP_MODIFIED, false), page, RepoConsts.MAX_RESULTS_256);
+					tmp = search(runnedQuery, sortProps, page, RepoConsts.MAX_RESULTS_256);
 					if ((tmp != null) && !tmp.isEmpty()) {
 						logger.debug(" - Page " + page + ":" + tmp.size());
 						refs.addAll(tmp);
@@ -565,7 +986,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			}
 
 			if (logger.isDebugEnabled()) {
-				int tmpIndex = (RepoConsts.MAX_RESULTS_SINGLE_VALUE == maxResults ? 4 : 3);
+				int tmpIndex = (RepoConsts.MAX_RESULTS_SINGLE_VALUE.equals(maxResults) ? 4 : 3);
 
 				logger.debug("[" + Thread.currentThread().getStackTrace()[tmpIndex].getClassName() + " "
 						+ Thread.currentThread().getStackTrace()[tmpIndex].getLineNumber() + "] " + runnedQuery + " executed in  "
@@ -576,6 +997,13 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		return refs;
 	}
 
+	/**
+	 * <p>
+	 * singleValue.
+	 * </p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public NodeRef singleValue() {
 
 		this.maxResults = RepoConsts.MAX_RESULTS_SINGLE_VALUE;
@@ -622,6 +1050,10 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			runnedQuery.append(prohibided(getCondExactPath(excludePath)));
 		} else if (subPath != null) {
 			runnedQuery.append(mandatory(getCondSubPath(subPath)));
+		}
+		
+		if(inSite!=null) {
+			runnedQuery.append(mandatory(getCondSite(inSite)));
 		}
 
 		if (!parentNodeRefs.isEmpty()) {
@@ -794,6 +1226,8 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			throw new IllegalStateException("members not supported for CMIS search");
 		} else if (path != null) {
 			throw new IllegalStateException("path not supported for CMIS search");
+		} else if (inSite != null) {
+			throw new IllegalStateException("site not supported for CMIS search");
 		}
 
 		if (!types.isEmpty()) {
@@ -850,8 +1284,8 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 		if (!propQueriesEqualMap.isEmpty()) {
 			for (Map.Entry<QName, String> propQueryEntry : propQueriesEqualMap.entrySet()) {
-				whereClause.append(" AND ").append(getCmisPrefix(propQueryEntry.getKey())).append(" = '").append(propQueryEntry.getValue())
-						.append("'");
+				whereClause.append(" AND ").append(getCmisPrefix(propQueryEntry.getKey())).append(" = '")
+						.append(sanitizeProperty(propQueryEntry.getValue())).append("'");
 			}
 		}
 
@@ -924,11 +1358,16 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 	}
 
+	private String sanitizeProperty(String prop) {
+		return prop.replaceAll("(?<!\\\\)'", "\\\\'");
+	}
+
 	private String getCmisPrefix(QName tmpQName) {
 		String ret = tmpQName.toPrefixString(namespaceService);
-		QName aspect = dictionaryService.getProperty(tmpQName) != null ? dictionaryService.getProperty(tmpQName).getContainerClass().getName() : null;
-		if ((dictionaryService.getProperty(tmpQName) != null) && dictionaryService.getProperty(tmpQName).getContainerClass().isAspect()
-				&& !aspect.isMatch(ContentModel.ASPECT_AUDITABLE)) {
+		PropertyDefinition def = entityDictionaryService.getProperty(tmpQName);
+
+		QName aspect = def != null ? def.getContainerClass().getName() : null;
+		if ((def != null) && def.getContainerClass().isAspect() && (aspect != null) && !aspect.isMatch(ContentModel.ASPECT_AUDITABLE)) {
 			this.aspects.add(aspect);
 			ret = aspect.getLocalName() + "." + ret;
 		} else {
@@ -953,11 +1392,27 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		return SearchService.LANGUAGE_CMIS_ALFRESCO.equals(language);
 	}
 
+	/**
+	 * <p>
+	 * inSearchTemplate.
+	 * </p>
+	 *
+	 * @param searchTemplate
+	 *            a {@link java.lang.String} object.
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 */
 	public BeCPGQueryBuilder inSearchTemplate(String searchTemplate) {
 		this.searchTemplate = searchTemplate;
 		return this;
 	}
 
+	/**
+	 * <p>
+	 * ftsLanguage.
+	 * </p>
+	 *
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 */
 	public BeCPGQueryBuilder ftsLanguage() {
 		this.language = SearchService.LANGUAGE_FTS_ALFRESCO;
 		return this;
@@ -976,7 +1431,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		sp.setExcludeTenantFilter(false);
 
 		if (logger.isDebugEnabled() && (language != null)) {
-			logger.debug("Use search language:" + language.toString());
+			logger.debug("Use search language:" + language);
 		}
 
 		sp.setLanguage(language);
@@ -993,6 +1448,9 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 				sp.setDefaultOperator(operator);
 			}
 			if (searchTemplate != null) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("searchTemplate:" + searchTemplate);
+				}
 				sp.addQueryTemplate(DEFAULT_FIELD_NAME, searchTemplate);
 			} else {
 				sp.addQueryTemplate(DEFAULT_FIELD_NAME, defaultSearchTemplate);
@@ -1004,19 +1462,9 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		// eventual consistency; or
 		sp.setQueryConsistency(queryConsistancy);
 
-		// No more lucene search
-		// if (QueryConsistency.TRANSACTIONAL.equals(queryConsistancy)) {
-		// logger.trace("Transactionnal Search");
-		// // Will ensure coherency between solr and lucene
-		// sp.excludeDataInTheCurrentTransaction(false);
-		// }
-
 		if (maxResults == RepoConsts.MAX_RESULTS_UNLIMITED) {
 			sp.setLimitBy(LimitBy.UNLIMITED);
 		} else {
-			// if (isDBSearch() && notIds.size() > 0) {
-			// maxResults = maxResults + notIds.size();
-			// }
 			sp.setLimit(maxResults);
 			sp.setMaxItems(maxResults);
 			sp.setLimitBy(LimitBy.FINAL_SIZE);
@@ -1061,6 +1509,13 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		return nodes;
 	}
 
+	/**
+	 * <p>
+	 * count.
+	 * </p>
+	 *
+	 * @return a {@link java.lang.Long} object.
+	 */
 	public Long count() {
 
 		String runnedQuery = buildQuery();
@@ -1091,6 +1546,15 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		return ret;
 	}
 
+	/**
+	 * <p>
+	 * extractSortQname.
+	 * </p>
+	 *
+	 * @param sortProp
+	 *            a {@link java.lang.String} object.
+	 * @return a {@link org.alfresco.service.namespace.QName} object.
+	 */
 	public QName extractSortQname(String sortProp) {
 		if (sortProp.indexOf(QName.NAMESPACE_BEGIN) != -1) {
 			return QName.createQName(sortProp.replace("@", ""));
@@ -1100,110 +1564,15 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 	}
 
-	public List<NodeRef> fastChildrenByType() {
-
-		List<NodeRef> ret = new LinkedList<>();
-		QName sortFieldQName = null;
-		String sortDirection = null;
-		String createSortDirection = "ASC";
-		QName dataTypeQName = null;
-
-		StoreRef storeRef = StoreRef.STORE_REF_WORKSPACE_SPACESSTORE;
-		if (AuthenticationUtil.isMtEnabled()) {
-			storeRef = tenantService.getName(storeRef);
-		}
-
-		if (type != null) {
-			dataTypeQName = type;
-		} else if (!types.isEmpty()) {
-			dataTypeQName = types.iterator().next();
-			logger.warn("Only one TYPE is allowed in fastChildrenByType");
-		}
-
-		int count = 0;
-		for (Map.Entry<String, Boolean> entry : sortProps.entrySet()) {
-			if ("cm:created".equals(entry.getKey().replace("@", ""))
-					|| ("{http://www.alfresco.org/model/content/1.0}created").equals(entry.getKey().replace("@", ""))) {
-				createSortDirection = entry.getValue() ? "ASC" : "DESC";
-			} else {
-				if (count > 0) {
-					logger.warn("Only one sort dir is allowed in fastChildrenByType");
-					break;
-				}
-
-				if (entry.getKey().indexOf(QName.NAMESPACE_BEGIN) != -1) {
-					sortFieldQName = QName.createQName(entry.getKey().replace("@", ""));
-				} else {
-					sortFieldQName = QName.createQName(entry.getKey().replace("@", ""), namespaceService);
-				}
-				sortDirection = entry.getValue() ? "ASC" : "DESC";
-				count++;
-			}
-		}
-
-		if ((dataTypeQName != null)) {
-
-			String sql = "select alf_node.uuid, alf_node.audit_created from alf_node ";
-
-			String sortOrderSql = " order by alf_node.audit_created " + createSortDirection;
-
-			if ((sortFieldQName != null) && (sortDirection != null)) {
-				DataTypeDefinition dateType = dictionaryService.getProperty(sortFieldQName).getDataType();
-				String fieldType = "string_value";
-
-				if (DataTypeDefinition.INT.equals(dateType.getName()) || DataTypeDefinition.LONG.equals(dateType.getName())) {
-					fieldType = "long_value";
-				} else if (DataTypeDefinition.DOUBLE.equals(dateType.getName())) {
-					fieldType = "double_value";
-				} else if (DataTypeDefinition.FLOAT.equals(dateType.getName())) {
-					fieldType = "float_value";
-				} else if (DataTypeDefinition.BOOLEAN.equals(dateType.getName())) {
-					fieldType = "boolean_value";
-				}
-
-				sql = "select alf_node.uuid, alf_node_properties." + fieldType + ", alf_node.audit_created " + "from alf_node "
-						+ "left join alf_node_properties " + "on (alf_node_properties.node_id = alf_node.id "
-						+ "and alf_node_properties.qname_id=(select id from alf_qname " + "where ns_id=(select id from alf_namespace where uri='"
-						+ sortFieldQName.getNamespaceURI() + "') " + "and local_name='" + sortFieldQName.getLocalName() + "') " + ") ";
-
-				sortOrderSql = " order by alf_node_properties." + fieldType + " " + sortDirection + ", alf_node.audit_created " + createSortDirection;
-
-			}
-
-			sql += "where alf_node.store_id=(select id from alf_store where protocol='" + storeRef.getProtocol() + "' and identifier='"
-					+ storeRef.getIdentifier() + "') " + "and alf_node.type_qname_id=(select id from alf_qname "
-					+ "where ns_id=(select id from alf_namespace where uri='" + dataTypeQName.getNamespaceURI() + "') " + "and local_name='"
-					+ type.getLocalName() + "') " + "and id in (select child_node_id from alf_child_assoc where "
-					+ "parent_node_id = (select id from alf_node where uuid='" + parentNodeRef.getId() + "'"
-					+ " and store_id=(select id from alf_store where protocol='" + storeRef.getProtocol() + "'" + " and identifier='"
-					+ storeRef.getIdentifier() + "') )) ";
-
-			sql += sortOrderSql;
-
-			if (logger.isTraceEnabled()) {
-				logger.trace("Searching with: " + sql);
-			}
-			try (Connection con = dataSource.getConnection()) {
-
-				try (PreparedStatement statement = con.prepareStatement(sql)) {
-					try (java.sql.ResultSet res = statement.executeQuery()) {
-						while (res.next()) {
-							NodeRef nodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, res.getString("uuid"));
-							if (nodeService.exists(nodeRef)) {
-								ret.add(nodeRef);
-							}
-						}
-					}
-				}
-			} catch (SQLException e) {
-				logger.error("Error running : " + sql, e);
-			}
-
-		}
-
-		return ret;
-	}
-
+	/**
+	 * <p>
+	 * childFileFolders.
+	 * </p>
+	 *
+	 * @param pageRequest
+	 *            a {@link org.alfresco.query.PagingRequest} object.
+	 * @return a {@link org.alfresco.query.PagingResults} object.
+	 */
 	public PagingResults<NodeRef> childFileFolders(PagingRequest pageRequest) {
 
 		StopWatch watch = new StopWatch();
@@ -1286,7 +1655,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 		PermissionCheckedValueMixin.create(nodeRefs);
 
-		return new PagingResults<NodeRef>() {
+		return new PagingResults<>() {
 			@Override
 			public String getQueryExecutionId() {
 				return null; // TODO use Paginated Cache results
@@ -1313,9 +1682,63 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		};
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return buildQuery();
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public BeCPGQueryBuilder clone() {
+
+		BeCPGQueryBuilder builder = new BeCPGQueryBuilder();
+
+		if (INSTANCE != null) {
+			builder.searchService = INSTANCE.searchService;
+			builder.namespaceService = INSTANCE.namespaceService;
+			builder.defaultSearchTemplate = INSTANCE.defaultSearchTemplate;
+			builder.cannedQueryRegistry = INSTANCE.cannedQueryRegistry;
+			builder.nodeService = INSTANCE.nodeService;
+			builder.entityDictionaryService = INSTANCE.entityDictionaryService;
+			builder.tenantService = INSTANCE.tenantService;
+			builder.includeReportInSearch = INSTANCE.includeReportInSearch;
+		}
+
+		builder.maxResults = this.maxResults;
+		builder.parentNodeRef = this.parentNodeRef;
+		builder.type = this.type;
+		builder.subPath = this.subPath;
+		builder.path = this.path;
+		builder.inSite = this.inSite;
+		builder.excludePath = this.excludePath;
+		builder.membersPath = this.membersPath;
+		builder.queryConsistancy = this.queryConsistancy;
+		builder.isExactType = this.isExactType;
+		builder.searchTemplate = this.searchTemplate;
+		builder.operator = this.operator;
+		builder.locale = this.locale;
+		builder.sortProps = this.sortProps;
+		builder.parentNodeRefs.addAll(parentNodeRefs);
+		builder.types.addAll(types);
+		builder.boostedTypes.addAll(boostedTypes);
+		builder.aspects.addAll(aspects);
+		builder.ids.addAll(ids);
+		builder.notIds.addAll(notIds);
+		builder.notNullProps.addAll(notNullProps);
+		builder.nullProps.addAll(nullProps);
+		builder.nullOrUnsetProps.addAll(nullOrUnsetProps);
+		builder.propQueriesMap.putAll(propQueriesMap);
+		builder.propBetweenQueriesMap.putAll(propBetweenQueriesMap);
+		builder.propBetweenOrNullQueriesMap.putAll(propBetweenOrNullQueriesMap);
+		builder.propQueriesEqualMap.putAll(propQueriesEqualMap);
+		builder.ftsQueries.addAll(ftsQueries);
+		builder.excludedAspects.addAll(excludedAspects);
+		builder.excludedTypes.addAll(excludedTypes);
+		builder.excludedPropQueriesMap.putAll(excludedPropQueriesMap);
+
+		return builder;
+
 	}
 
 }

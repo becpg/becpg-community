@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2010-2018 beCPG. 
+Copyright (C) 2010-2020 beCPG. 
  
 This file is part of beCPG 
  
@@ -31,30 +31,40 @@ import org.alfresco.util.ISO9075;
 import fr.becpg.repo.RepoConsts;
 
 /**
+ * <p>Abstract AbstractBeCPGQueryBuilder class.</p>
+ *
  * @author matthieu
- * 
+ * @version $Id: $Id
  */
 public abstract class AbstractBeCPGQueryBuilder {
 
-	private final String QUERY_COND_PROP_EQUAL_VALUE = "%s:\"%s\"";
-	private final String QUERY_COND_PROP_CONTAINS_VALUE = "%s:%s";
-	private final String QUERY_COND_PROP_ISNULL_VALUE = "ISNULL:\"%s\"";
-	private final String QUERY_COND_PROP_ISNULL_OR_ISUNSET_VALUE = "(ISNULL:\"%s\" OR ISUNSET:\"%s\")";
+	private static final String QUERY_COND_PROP_EQUAL_VALUE = "%s:\"%s\"";
+	private static final String QUERY_COND_PROP_CONTAINS_VALUE = "%s:%s";
+	private static final String QUERY_COND_PROP_ISNULL_VALUE = "ISNULL:\"%s\"";
+	private static final String QUERY_COND_PROP_ISNULL_OR_ISUNSET_VALUE = "(ISNULL:\"%s\" OR ISUNSET:\"%s\")";
 	
-	private final String QUERY_COND_PATH = "PATH:\"/app:company_home/%s/*\"";
-	private final String QUERY_SUB_PATH = "PATH:\"/app:company_home/%s//*\"";
-	private final String QUERY_COND_EXACT_PATH = "PATH:\"%s\"";
-	private final String QUERY_COND_MEMBERS = "PATH:\"/app:company_home/%s/member\"";
-	private final String QUERY_COND_ID = "ID:\"%s\"";
+	private static final String QUERY_COND_PATH = "PATH:\"/app:company_home/%s/*\"";
+	private static final String QUERY_SUB_PATH = "PATH:\"/app:company_home/%s//*\"";
+	private static final String QUERY_COND_EXACT_PATH = "PATH:\"%s\"";
+	private static final String QUERY_COND_MEMBERS = "PATH:\"/app:company_home/%s/member\"";
+	private static final String QUERY_COND_ID = "ID:\"%s\"";
 
-	private final String QUERY_COND_PARENT = "PARENT:\"%s\"";
-	private final String QUERY_COND_TYPE = "TYPE:\"%s\"";
-	private final String QUERY_COND_EXACT_TYPE = "EXACTTYPE:\"%s\"";
-	private final String QUERY_COND_ASPECT = "ASPECT:\"%s\"";
-	private final String QUERY_COND = " %s %s";
+	private static final String QUERY_COND_PARENT = "PARENT:\"%s\"";
+	private static final String QUERY_COND_TYPE = "TYPE:\"%s\"";
+	private static final String QUERY_COND_SITE = "SITE:\"%s\"";
+	private static final String QUERY_COND_EXACT_TYPE = "EXACTTYPE:\"%s\"";
+	private static final String QUERY_COND_ASPECT = "ASPECT:\"%s\"";
+	private static final String QUERY_COND = " %s %s";
 
 	protected String language = SearchService.LANGUAGE_LUCENE;
 
+	/**
+	 * <p>getCondEqualValue.</p>
+	 *
+	 * @param property a {@link org.alfresco.service.namespace.QName} object.
+	 * @param value a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	protected String getCondEqualValue(QName property, String value) {
 		if (value == null || value.isEmpty()) {
 			return getCondIsNullValue(property);
@@ -64,105 +74,270 @@ public abstract class AbstractBeCPGQueryBuilder {
 		}
 	}
 
+	/**
+	 * <p>getCondEqualID.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	protected String getCondEqualID(NodeRef nodeRef) {
 
 		return String.format(QUERY_COND_ID, nodeRef);
 	}
 
+	/**
+	 * <p>getCondContainsValue.</p>
+	 *
+	 * @param property a {@link org.alfresco.service.namespace.QName} object.
+	 * @param value a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	protected String getCondContainsValue(QName property, String value) {
 
 		return String
 				.format(QUERY_COND_PROP_CONTAINS_VALUE, SearchService.LANGUAGE_LUCENE.equals(language) ? "@"+escapeQName(property) : property, value);
 	}
 
+	/**
+	 * <p>getCondIsNullValue.</p>
+	 *
+	 * @param property a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	protected String getCondIsNullValue(QName property) {
 		return String.format(QUERY_COND_PROP_ISNULL_VALUE, property);
 	}
 	
+	/**
+	 * <p>getCondIsNullOrIsUnsetValue.</p>
+	 *
+	 * @param property a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	protected String getCondIsNullOrIsUnsetValue(QName property) {
 		return String.format(QUERY_COND_PROP_ISNULL_OR_ISUNSET_VALUE, property, property);
 	}
 	
+	/**
+	 * <p>getCondExactPath.</p>
+	 *
+	 * @param path a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	protected String getCondExactPath(String path) {
 		return String.format(QUERY_COND_EXACT_PATH,path);
 	}
 
+	/**
+	 * <p>getCondPath.</p>
+	 *
+	 * @param path a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	protected String getCondPath(String path) {
 		return String.format(QUERY_COND_PATH, encodePath(path));
 	}
 	
+	/**
+	 * <p>getCondSubPath.</p>
+	 *
+	 * @param path a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	protected String getCondSubPath(String path) {
 		return String.format(QUERY_SUB_PATH, encodePath(path));
 	}
 
+	/**
+	 * <p>getCondMembers.</p>
+	 *
+	 * @param path a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	protected String getCondMembers(String path) {
 		return String.format(QUERY_COND_MEMBERS, encodePath(path));
 	}
 
+	/**
+	 * <p>getCondParent.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	protected String getCondParent(NodeRef nodeRef) {
 		return String.format(QUERY_COND_PARENT, nodeRef);
 	}
 
+	/**
+	 * <p>getCondType.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	protected String getCondType(QName type) {
 		return String.format(QUERY_COND_TYPE, type);
 	}
 	
+	/**
+	 * <p>getCondSite.</p>
+	 *
+	 * @param siteId a {@link java.lang.String}  object.
+	 * @return a {@link java.lang.String} object.
+	 */
+	protected String getCondSite(String siteId) {
+		return String.format(QUERY_COND_SITE, siteId);
+	}
+	
+	/**
+	 * <p>getCondExactType.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	protected String getCondExactType(QName type) {
 		return String.format(QUERY_COND_EXACT_TYPE, type);
 	}
 
+	/**
+	 * <p>getCondAspect.</p>
+	 *
+	 * @param aspect a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	protected String getCondAspect(QName aspect) {
 		return String.format(QUERY_COND_ASPECT, aspect);
 	}
 
+	/**
+	 * <p>getCond.</p>
+	 *
+	 * @param cond a {@link java.lang.String} object.
+	 * @param operator a {@link org.alfresco.service.cmr.search.SearchParameters.Operator} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	protected String getCond(String cond, Operator operator) {
 		return String.format(QUERY_COND, operator != null ? operator : "", cond);
 	}
 
+	/**
+	 * <p>mandatory.</p>
+	 *
+	 * @param condType a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	protected String mandatory(String condType) {
 		return (SearchService.LANGUAGE_LUCENE.equals(language) ? " +" : " AND +") + condType;
 	}
 	
+	/**
+	 * <p>equalsQuery.</p>
+	 *
+	 * @param condType a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	protected String equalsQuery(String condType) {
 		return (SearchService.LANGUAGE_LUCENE.equals(language) ? " +" : " AND =") + condType;
 	}
+	
 
+	/**
+	 * <p>prohibided.</p>
+	 *
+	 * @param condType a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	protected String prohibided(String condType) {		
 		return (SearchService.LANGUAGE_LUCENE.equals(language) ? " -" : /*SearchService.LANGUAGE_FTS_ALFRESCO.equals(language) ? " AND NOT =" :*/ " AND -") + condType;
 	}
 
+	/**
+	 * <p>or.</p>
+	 *
+	 * @param condType a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	protected String or(String condType) {
 		return  (SearchService.LANGUAGE_LUCENE.equals(language) ? " " : " OR " ) + condType;
 	}
 	
+	/**
+	 * <p>optional.</p>
+	 *
+	 * @param condType a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	protected String optional(String condType) {
 		return   " " + condType;
 	}
 	
+	/**
+	 * <p>boost.</p>
+	 *
+	 * @param condType a {@link java.lang.String} object.
+	 * @param boostFactor a {@link java.lang.Integer} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	protected String boost(String condType,Integer boostFactor) {
 		return condType+"^"+boostFactor;
 	}
 
+	/**
+	 * <p>startGroup.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	protected String startGroup() {
 		return "(";
 	}
 
+	/**
+	 * <p>endGroup.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	protected String endGroup() {
 		return ")";
 	}
 
+	/**
+	 * <p>getGroup.</p>
+	 *
+	 * @param op1 a {@link java.lang.String} object.
+	 * @param op2 a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	protected String getGroup(String op1, String op2) {
 		return " (" + op1 + " " + op2 + ")";
 	}
 	
+	/**
+	 * <p>getMandatoryOrGroup.</p>
+	 *
+	 * @param op1 a {@link java.lang.String} object.
+	 * @param op2 a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	protected String getMandatoryOrGroup(String op1, String op2) {
 		return " AND (" + op1 + " OR " + op2 + ")";
 	}
 
+	/**
+	 * <p>getSortProp.</p>
+	 *
+	 * @param field a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	protected String getSortProp(QName field) {
 		return "@" + field;
 	}
 
+	/**
+	 * <p>getSort.</p>
+	 *
+	 * @param field a {@link org.alfresco.service.namespace.QName} object.
+	 * @param asc a boolean.
+	 * @return a {@link java.util.Map} object.
+	 */
 	protected Map<String, Boolean> getSort(QName field, boolean asc) {
 		Map<String, Boolean> sort = new HashMap<>();
 		sort.put(getSortProp(field), asc);
@@ -170,10 +345,22 @@ public abstract class AbstractBeCPGQueryBuilder {
 		return sort;
 	}
 
+	/**
+	 * <p>getSort.</p>
+	 *
+	 * @param field a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link java.util.Map} object.
+	 */
 	protected Map<String, Boolean> getSort(QName field) {
 		return getSort(field, true);
 	}
 
+	/**
+	 * <p>escapeQName.</p>
+	 *
+	 * @param qName a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	protected String escapeQName(QName qName) {
 		String string = qName.toString();
 		StringBuilder buf = new StringBuilder(string.length() + 4);
@@ -187,6 +374,12 @@ public abstract class AbstractBeCPGQueryBuilder {
 		return buf.toString();
 	}
 
+	/**
+	 * <p>encodePath.</p>
+	 *
+	 * @param path a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	static public String encodePath(String path) {
 		
 		if (path.indexOf("/app:company_home/") == 0) {
