@@ -38,22 +38,23 @@ import fr.becpg.repo.RepoConsts;
  */
 public abstract class AbstractBeCPGQueryBuilder {
 
-	private final String QUERY_COND_PROP_EQUAL_VALUE = "%s:\"%s\"";
-	private final String QUERY_COND_PROP_CONTAINS_VALUE = "%s:%s";
-	private final String QUERY_COND_PROP_ISNULL_VALUE = "ISNULL:\"%s\"";
-	private final String QUERY_COND_PROP_ISNULL_OR_ISUNSET_VALUE = "(ISNULL:\"%s\" OR ISUNSET:\"%s\")";
+	private static final String QUERY_COND_PROP_EQUAL_VALUE = "%s:\"%s\"";
+	private static final String QUERY_COND_PROP_CONTAINS_VALUE = "%s:%s";
+	private static final String QUERY_COND_PROP_ISNULL_VALUE = "ISNULL:\"%s\"";
+	private static final String QUERY_COND_PROP_ISNULL_OR_ISUNSET_VALUE = "(ISNULL:\"%s\" OR ISUNSET:\"%s\")";
 	
-	private final String QUERY_COND_PATH = "PATH:\"/app:company_home/%s/*\"";
-	private final String QUERY_SUB_PATH = "PATH:\"/app:company_home/%s//*\"";
-	private final String QUERY_COND_EXACT_PATH = "PATH:\"%s\"";
-	private final String QUERY_COND_MEMBERS = "PATH:\"/app:company_home/%s/member\"";
-	private final String QUERY_COND_ID = "ID:\"%s\"";
+	private static final String QUERY_COND_PATH = "PATH:\"/app:company_home/%s/*\"";
+	private static final String QUERY_SUB_PATH = "PATH:\"/app:company_home/%s//*\"";
+	private static final String QUERY_COND_EXACT_PATH = "PATH:\"%s\"";
+	private static final String QUERY_COND_MEMBERS = "PATH:\"/app:company_home/%s/member\"";
+	private static final String QUERY_COND_ID = "ID:\"%s\"";
 
-	private final String QUERY_COND_PARENT = "PARENT:\"%s\"";
-	private final String QUERY_COND_TYPE = "TYPE:\"%s\"";
-	private final String QUERY_COND_EXACT_TYPE = "EXACTTYPE:\"%s\"";
-	private final String QUERY_COND_ASPECT = "ASPECT:\"%s\"";
-	private final String QUERY_COND = " %s %s";
+	private static final String QUERY_COND_PARENT = "PARENT:\"%s\"";
+	private static final String QUERY_COND_TYPE = "TYPE:\"%s\"";
+	private static final String QUERY_COND_SITE = "SITE:\"%s\"";
+	private static final String QUERY_COND_EXACT_TYPE = "EXACTTYPE:\"%s\"";
+	private static final String QUERY_COND_ASPECT = "ASPECT:\"%s\"";
+	private static final String QUERY_COND = " %s %s";
 
 	protected String language = SearchService.LANGUAGE_LUCENE;
 
@@ -175,6 +176,16 @@ public abstract class AbstractBeCPGQueryBuilder {
 	 */
 	protected String getCondType(QName type) {
 		return String.format(QUERY_COND_TYPE, type);
+	}
+	
+	/**
+	 * <p>getCondSite.</p>
+	 *
+	 * @param siteId a {@link java.lang.String}  object.
+	 * @return a {@link java.lang.String} object.
+	 */
+	protected String getCondSite(String siteId) {
+		return String.format(QUERY_COND_SITE, siteId);
 	}
 	
 	/**
