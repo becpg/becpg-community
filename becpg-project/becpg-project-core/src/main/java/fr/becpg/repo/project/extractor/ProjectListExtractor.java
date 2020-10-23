@@ -230,7 +230,6 @@ public class ProjectListExtractor extends ActivityListExtractor {
 		List<NodeRef> results = new LinkedList<>();
 
 		// pjt:project
-		QName dataType = dataListFilter.getDataType();
 		BeCPGQueryBuilder beCPGQueryBuilder = dataListFilter.getSearchQuery().excludeDefaults();
 
 		if (VIEW_ENTITY_PROJECTS.equals(dataListFilter.getFilterId())) {
@@ -262,7 +261,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 						beCPGQueryBuilder.clearFTSQuery();
 					}
 
-					dataType = ProjectModel.TYPE_TASK_LIST;
+					QName dataType = ProjectModel.TYPE_TASK_LIST;
 					beCPGQueryBuilder.ofType(dataType);
 
 					beCPGQueryBuilder.excludeProp(ProjectModel.PROP_TL_IS_EXCLUDE_FROM_SEARCH, Boolean.TRUE.toString());
@@ -285,7 +284,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 					}
 
 					results = advSearchService.queryAdvSearch(dataType, beCPGQueryBuilder, dataListFilter.getCriteriaMap(),
-							pagination.getMaxResults());
+							VIEW_MY_TASKS.equals(dataListFilter.getFilterId()) ? RepoConsts.MAX_RESULTS_UNLIMITED: pagination.getMaxResults());
 
 					if (VIEW_RESOURCES.equals(dataListFilter.getExtraParams())) {
 						for (Iterator<NodeRef> iterator = results.iterator(); iterator.hasNext();) {
