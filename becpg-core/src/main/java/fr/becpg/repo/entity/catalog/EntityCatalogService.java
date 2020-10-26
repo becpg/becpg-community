@@ -40,43 +40,77 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.extensions.surf.util.ISO8601DateFormat;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
+/**
+ * <p>
+ * EntityCatalogService class.
+ * </p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service("entityCatalogService")
 public class EntityCatalogService {
 
+	/** Constant <code>logger</code> */
 	public static final Log logger = LogFactory.getLog(EntityCatalogService.class);
 
+	/** Constant <code>PROP_CATALOGS="catalogs"</code> */
 	public static final String PROP_CATALOGS = "catalogs";
+	/** Constant <code>PROP_MISSING_FIELDS="missingFields"</code> */
 	public static final String PROP_MISSING_FIELDS = "missingFields";
+	/** Constant <code>PROP_UNIQUE_FIELDS="uniqueFields"</code> */
 	public static final String PROP_UNIQUE_FIELDS = "uniqueFields";
+	/** Constant <code>PROP_NON_UNIQUE_FIELDS="nonUniqueFields"</code> */
 	public static final String PROP_NON_UNIQUE_FIELDS = "nonUniqueFields";
+	/** Constant <code>PROP_I18N_MESSAGES="i18nMessages"</code> */
 	public static final String PROP_I18N_MESSAGES = "i18nMessages";
+	/** Constant <code>PROP_DISPLAY_NAME="displayName"</code> */
 	public static final String PROP_DISPLAY_NAME = "displayName";
+	/** Constant <code>PROP_FIELDS="fields"</code> */
 	public static final String PROP_FIELDS = "fields";
+	/** Constant <code>PROP_LABEL="label"</code> */
 	public static final String PROP_LABEL = "label";
+	/** Constant <code>PROP_ID="id"</code> */
 	public static final String PROP_ID = "id";
+	/** Constant <code>PROP_LOCALES="locales"</code> */
 	public static final String PROP_LOCALES = "locales";
+	/** Constant <code>PROP_SCORE="score"</code> */
 	public static final String PROP_SCORE = "score";
+	/** Constant <code>PROP_LOCALE="locale"</code> */
 	public static final String PROP_LOCALE = "locale";
+	/** Constant <code>PROP_ENTITY_TYPE="entityType"</code> */
 	public static final String PROP_ENTITY_TYPE = "entityType";
+	/** Constant <code>PROP_COLOR="color"</code> */
 	public static final String PROP_COLOR = "color";
+	/** Constant <code>PROP_ENTITY_FILTER="entityFilter"</code> */
 	public static final String PROP_ENTITY_FILTER = "entityFilter";
+	/** Constant <code>PROP_OPERATOR="operator"</code> */
 	public static final String PROP_OPERATOR = "operator";
+	/** Constant <code>PROP_CATALOG_MODIFIED_DATE="modifiedDate"</code> */
 	public static final String PROP_CATALOG_MODIFIED_DATE = "modifiedDate";
+	/** Constant <code>PROP_FORMULA="formula"</code> */
 	public static final String PROP_FORMULA = "formula";
+	/** Constant <code>PROP_CATALOG_MODIFIED_FIELD="modifiedField"</code> */
 	public static final String PROP_CATALOG_MODIFIED_FIELD = "modifiedField";
+	/** Constant <code>PROP_AUDITED_FIELDS="auditedFields"</code> */
 	public static final String PROP_AUDITED_FIELDS = "auditedFields";
+	/** Constant <code>PROP_VALUE="value"</code> */
 	public static final String PROP_VALUE = "value";
+	/** Constant <code>PROP_ENTITIES="entities"</code> */
 	public static final String PROP_ENTITIES = "entities";
 
-	public static final String CATALOGS_PATH = "/app:company_home/cm:System/cm:PropertyCatalogs";
+	/** Constant <code>CATALOG_DEFS="CATALOG_DEFS"</code> */
 	public static final String CATALOG_DEFS = "CATALOG_DEFS";
 
+	/** Constant <code>MESSAGE_OR="message.formulate.or"</code> */
 	public static final String MESSAGE_OR = "message.formulate.or";
 
 	@Autowired
@@ -101,6 +135,13 @@ public class EntityCatalogService {
 	@Autowired
 	private AssociationService associationService;
 
+	/**
+	 * <p>
+	 * getCatalogsDef.
+	 * </p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	public List<JSONArray> getCatalogsDef() {
 
 		return beCPGCacheService.getFromCache(EntityCatalogService.class.getName(), CATALOG_DEFS, () -> {
@@ -139,53 +180,66 @@ public class EntityCatalogService {
 	}
 
 	private NodeRef getCatalogFolderNodeRef() {
-		return BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(), CATALOGS_PATH);
+		return BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(), RepoConsts.CATALOGS_PATH);
 	}
 
-	public void updateAuditedField(NodeRef entityNodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after,
-			Set<NodeRef> listNodeRefs) {
+	/**
+	 * <p>
+	 * updateAuditedField.
+	 * </p>
+	 *
+	 * @param entityNodeRef
+	 *            a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param before
+	 *            a {@link java.util.Map} object.
+	 * @param after
+	 *            a {@link java.util.Map} object.
+	 * @param listNodeRefs
+	 *            a {@link java.util.Set} object.
+	 */
+	public void updateAuditedField(NodeRef entityNodeRef,Set<QName>  diffQnames, Set<NodeRef> listNodeRefs) {
 		try {
-			if (((before != null) && (after != null)) || (listNodeRefs != null)) {
+			if ((diffQnames!=null) || (listNodeRefs != null)) {
 
 				for (JSONArray catalogDef : getCatalogsDef()) {
+
 					for (int i = 0; i < catalogDef.length(); i++) {
 						JSONObject catalog = catalogDef.getJSONObject(i);
-						if (catalog.has(PROP_CATALOG_MODIFIED_FIELD)) {
+						if (isMatchEntityType(catalog, nodeService.getType(entityNodeRef), namespaceService)
+								&& catalog.has(PROP_CATALOG_MODIFIED_FIELD)) {
+
 							Set<QName> auditedFields = getAuditedFields(catalog, namespaceService);
 							if ((auditedFields != null) && !auditedFields.isEmpty()) {
-								QName catalogModifiedDate = QName.createQName(catalog.getString(PROP_CATALOG_MODIFIED_FIELD), namespaceService);
-
-								if (isMatchEntityType(catalog, nodeService.getType(entityNodeRef), namespaceService)) {
-
-									if (listNodeRefs != null) {
-										for (NodeRef listNodeRef : listNodeRefs) {
-											QName listType = QName.createQName(
-													(String) nodeService.getProperty(listNodeRef, DataListModel.PROP_DATALISTITEMTYPE),
-													namespaceService);
-											if (auditedFields.contains(listType)) {
-												if (logger.isDebugEnabled()) {
-													logger.debug("Catalog list changed update date: " + catalogModifiedDate);
-												}
-												nodeService.setProperty(entityNodeRef, catalogModifiedDate, new Date());
-												break;
-											}
-										}
-
-									} else {
-										for (QName beforeType : before.keySet()) {
-											Serializable beforeValue = before.get(beforeType);
-											if (auditedFields.contains(beforeType)
-													&& (((beforeValue == null)  && (after.get(beforeType) != null)) || (beforeValue != null && !beforeValue.equals(after.get(beforeType))))) {
-												if (logger.isDebugEnabled()) {
-													logger.debug("Catalog properties changed update date: " + catalogModifiedDate);
-												}
-												nodeService.setProperty(entityNodeRef, catalogModifiedDate, new Date());
-												break;
-											}
+								QName changedField = null;
+								if ((listNodeRefs != null) && !listNodeRefs.isEmpty()) {
+									for (NodeRef listNodeRef : listNodeRefs) {
+										QName listType = QName.createQName(
+												(String) nodeService.getProperty(listNodeRef, DataListModel.PROP_DATALISTITEMTYPE), namespaceService);
+										if (auditedFields.contains(listType)) {
+											changedField = listType;
+											break;
 										}
 									}
+								} else if (diffQnames!=null && !diffQnames.isEmpty()) {
+									for (QName diffQName : diffQnames) {
+										if (auditedFields.contains(diffQName)) {
+											changedField = diffQName;
+											break;
+										}
+									}
+
+								} 
+
+								if (changedField != null) {
+									QName catalogModifiedDate = QName.createQName(catalog.getString(PROP_CATALOG_MODIFIED_FIELD), namespaceService);
+									if (logger.isDebugEnabled()) {
+										logger.debug("Audited field " + changedField + " has changed, update date: " + catalogModifiedDate);
+									}
+									nodeService.setProperty(entityNodeRef, catalogModifiedDate, new Date());
+
 								}
 							}
+
 						}
 					}
 				}
@@ -197,6 +251,22 @@ public class EntityCatalogService {
 
 	}
 
+	/**
+	 * <p>
+	 * isMatchEntityType.
+	 * </p>
+	 *
+	 * @param catalog
+	 *            a {@link org.json.JSONObject} object.
+	 * @param productType
+	 *            a {@link org.alfresco.service.namespace.QName} object.
+	 * @param namespaceService
+	 *            a {@link org.alfresco.service.namespace.NamespaceService}
+	 *            object.
+	 * @return a boolean.
+	 * @throws org.json.JSONException
+	 *             if any.
+	 */
 	public boolean isMatchEntityType(JSONObject catalog, QName productType, NamespaceService namespaceService) throws JSONException {
 		JSONArray catalogEntityTypes = (catalog.has(PROP_ENTITY_TYPE)) ? catalog.getJSONArray(PROP_ENTITY_TYPE) : new JSONArray();
 
@@ -210,6 +280,19 @@ public class EntityCatalogService {
 		return false;
 	}
 
+	/**
+	 * <p>
+	 * getLocales.
+	 * </p>
+	 *
+	 * @param reportLocales
+	 *            a {@link java.util.List} object.
+	 * @param catalog
+	 *            a {@link org.json.JSONObject} object.
+	 * @return a {@link java.util.Set} object.
+	 * @throws org.json.JSONException
+	 *             if any.
+	 */
 	public Set<String> getLocales(List<String> reportLocales, JSONObject catalog) throws JSONException {
 		Set<String> langs = new HashSet<>();
 
@@ -230,6 +313,20 @@ public class EntityCatalogService {
 		return langs;
 	}
 
+	/**
+	 * <p>
+	 * getAuditedFields.
+	 * </p>
+	 *
+	 * @param catalog
+	 *            a {@link org.json.JSONObject} object.
+	 * @param namespaceService
+	 *            a {@link org.alfresco.service.namespace.NamespaceService}
+	 *            object.
+	 * @return a {@link java.util.Set} object.
+	 * @throws org.json.JSONException
+	 *             if any.
+	 */
 	public Set<QName> getAuditedFields(JSONObject catalog, NamespaceService namespaceService) throws JSONException {
 		Set<QName> ret = new HashSet<>();
 
@@ -249,13 +346,47 @@ public class EntityCatalogService {
 
 		public boolean matchFormula(String formula);
 	}
-	
-	public JSONArray formulateCatalogs(NodeRef entityNodeRef, List<String> locales,
-			EntityCatalogMatcher entityCatalogMatcher) throws JSONException {
+
+	/**
+	 * <p>
+	 * formulateCatalogs.
+	 * </p>
+	 *
+	 * @param entityNodeRef
+	 *            a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param locales
+	 *            a {@link java.util.List} object.
+	 * @param entityCatalogMatcher
+	 *            a
+	 *            {@link fr.becpg.repo.entity.catalog.EntityCatalogService.EntityCatalogMatcher}
+	 *            object.
+	 * @return a {@link org.json.JSONArray} object.
+	 * @throws org.json.JSONException
+	 *             if any.
+	 */
+	public JSONArray formulateCatalogs(NodeRef entityNodeRef, List<String> locales, EntityCatalogMatcher entityCatalogMatcher) throws JSONException {
 		return formulateCatalog(null, entityNodeRef, locales, entityCatalogMatcher);
 	}
 
-
+	/**
+	 * <p>
+	 * formulateCatalog.
+	 * </p>
+	 *
+	 * @param catalogId
+	 *            a {@link java.lang.String} object.
+	 * @param entityNodeRef
+	 *            a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param locales
+	 *            a {@link java.util.List} object.
+	 * @param entityCatalogMatcher
+	 *            a
+	 *            {@link fr.becpg.repo.entity.catalog.EntityCatalogService.EntityCatalogMatcher}
+	 *            object.
+	 * @return a {@link org.json.JSONArray} object.
+	 * @throws org.json.JSONException
+	 *             if any.
+	 */
 	public JSONArray formulateCatalog(String catalogId, NodeRef entityNodeRef, List<String> locales, EntityCatalogMatcher entityCatalogMatcher)
 			throws JSONException {
 		JSONArray ret = new JSONArray();
@@ -321,8 +452,7 @@ public class EntityCatalogService {
 									? catalog.getJSONArray(EntityCatalogService.PROP_UNIQUE_FIELDS)
 									: new JSONArray();
 
-							JSONArray nonUniqueFields = extractNonUniqueFields(entityNodeRef, catalog.getString(EntityCatalogService.PROP_LABEL),
-									properties, uniqueFields, i18nMessages);
+							JSONArray nonUniqueFields = extractNonUniqueFields(entityNodeRef, uniqueFields, i18nMessages);
 
 							for (String lang : langs) {
 
@@ -366,20 +496,32 @@ public class EntityCatalogService {
 		return ret;
 	}
 
-	private JSONArray extractNonUniqueFields(NodeRef productNodeRef, String catalogName, Map<QName, Serializable> properties, JSONArray uniqueFields, JSONObject i18nMessages)
-			throws JSONException {
+	private JSONArray extractNonUniqueFields(NodeRef productNodeRef, JSONArray uniqueFields, JSONObject i18nMessages) throws JSONException {
 		JSONArray res = new JSONArray();
 
 		if (productNodeRef != null) {
 			for (int i = 0; i < uniqueFields.length(); i++) {
 
-				String field = uniqueFields.getString(i);
+				String fieldDef = uniqueFields.getString(i);
+				String field;
+				QName typeQName = nodeService.getType(productNodeRef);
+				QName propQName = null;
 
-				QName propQName = QName.createQName(field, namespaceService);
+				if (fieldDef.contains("|")) {
+					propQName = QName.createQName(fieldDef.split("\\|")[0], namespaceService);
+					typeQName = QName.createQName(fieldDef.split("\\|")[1], namespaceService);
+					field = fieldDef.split("\\|")[0];
+
+				} else {
+					propQName = QName.createQName(fieldDef, namespaceService);
+					field = fieldDef;
+				}
+
 				Serializable propValue = nodeService.getProperty(productNodeRef, propQName);
 
 				if (propValue != null) {
-					List<NodeRef> propDuplicates = getPropertyDuplicates(productNodeRef, propQName, propValue.toString());
+
+					List<NodeRef> propDuplicates = getPropertyDuplicates(productNodeRef, typeQName, propQName, propValue.toString());
 
 					if (!(propDuplicates.isEmpty())) {
 
@@ -391,6 +533,33 @@ public class EntityCatalogService {
 						nonUniqueField.put(EntityCatalogService.PROP_DISPLAY_NAME, propTitle);
 						nonUniqueField.put(EntityCatalogService.PROP_VALUE, propValue);
 						nonUniqueField.put(EntityCatalogService.PROP_ENTITIES, toJsonArray(propDuplicates));
+
+						MLText displayMLName = MLTextHelper.createMLTextI18N(loc -> {
+							Locale old = I18NUtil.getLocale();
+							String ret = "";
+							try {
+								I18NUtil.setLocale(loc);
+								return getFieldDisplayName(classDef, i18nMessages.has(field) ? i18nMessages.getString(field) : null);
+
+							} catch (JSONException e) {
+								logger.error(e, e);
+							} finally {
+								I18NUtil.setLocale(old);
+							}
+
+							return ret;
+
+						});
+
+						if (displayMLName != null) {
+							for (Map.Entry<Locale, String> mlEntry : displayMLName.entrySet()) {
+								String code = MLTextHelper.localeKey(mlEntry.getKey());
+								if ((code != null) && !code.isEmpty() && (mlEntry.getValue() != null)) {
+									nonUniqueField.put(EntityCatalogService.PROP_DISPLAY_NAME + "_" + code, mlEntry.getValue());
+
+								}
+							}
+						}
 
 						res.put(nonUniqueField);
 
@@ -410,22 +579,18 @@ public class EntityCatalogService {
 		return ret;
 	}
 
-	private List<NodeRef> getPropertyDuplicates(NodeRef productNodeRef, QName propQName, String value) {
+	private List<NodeRef> getPropertyDuplicates(NodeRef productNodeRef, QName typeQName, QName propQName, String value) {
 
 		List<NodeRef> queryResults = new ArrayList<>();
 		if ((value != null) && !value.isEmpty()) {
 
-			queryResults = BeCPGQueryBuilder.createQuery().ofType(nodeService.getType(productNodeRef)).andNotID(productNodeRef).excludeDefaults()
-					.andPropEquals(propQName, value).inDBIfPossible().list();
+			queryResults = BeCPGQueryBuilder.createQuery().ofType(typeQName).andNotID(productNodeRef).andPropEquals(propQName, value).inDB().list();
 
 			List<NodeRef> falsePositives = new ArrayList<>();
 
-			// Lucene equals is actually contains, remove results that contain
-			// but do not equal value
+			// Remove version
 			for (NodeRef result : queryResults) {
-				Serializable resultProp = nodeService.getProperty(result, propQName);
-
-				if ((resultProp != null) && !resultProp.equals(value)) {
+				if (nodeService.hasAspect(result, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
 
 					falsePositives.add(result);
 				}
@@ -439,8 +604,8 @@ public class EntityCatalogService {
 		return queryResults;
 	}
 
-	private JSONArray extractMissingFields(NodeRef entityNodeRef, Map<QName, Serializable> properties, JSONArray reqFields, JSONObject i18nMessages, String lang)
-			throws JSONException {
+	private JSONArray extractMissingFields(NodeRef entityNodeRef, Map<QName, Serializable> properties, JSONArray reqFields, JSONObject i18nMessages,
+			String lang) throws JSONException {
 		JSONArray ret = new JSONArray();
 
 		for (int i = 0; i < reqFields.length(); i++) {
@@ -508,7 +673,7 @@ public class EntityCatalogService {
 
 			if (!present && !ignore) {
 				logger.debug("\tfield " + field + " is absent...");
-				ret.put(createMissingFields(entityNodeRef, splitFields, i18nMessages));
+				ret.put(createMissingFields(splitFields, i18nMessages));
 			}
 
 		}
@@ -541,12 +706,12 @@ public class EntityCatalogService {
 		return res;
 	}
 
-	private JSONObject createMissingFields(NodeRef enrityNodeRef, List<String> fields, JSONObject i18nMessages) throws JSONException {
+	private JSONObject createMissingFields(List<String> fields, JSONObject i18nMessages) throws JSONException {
 
 		JSONObject field = new JSONObject();
 
-		String id = "";
-		String displayName = "";
+		StringBuilder id = new StringBuilder();
+		StringBuilder displayName = new StringBuilder();
 		String lang = null;
 
 		for (int i = 0; i < fields.size(); ++i) {
@@ -564,21 +729,73 @@ public class EntityCatalogService {
 				break;
 			}
 
-			id += classDef.getName().toPrefixString(namespaceService) + (i == (fields.size() - 1) ? "" : "|");
-			displayName += getFieldDisplayName(classDef, i18nMessages.has(currentField) ? i18nMessages.getString(currentField) : null) + (i == (fields.size() - 1) ? "" : " " + I18NUtil.getMessage(MESSAGE_OR) + " ");
+			String i18nKey = i18nMessages.has(currentField) ? i18nMessages.getString(currentField) : null;
+
+			id.append(classDef.getName().toPrefixString(namespaceService) + (i == (fields.size() - 1) ? "" : "|"));
+			displayName
+					.append(getFieldDisplayName(classDef, i18nKey) + (i == (fields.size() - 1) ? "" : " " + I18NUtil.getMessage(MESSAGE_OR) + " "));
+
 		}
 
 		if (lang != null) {
 			field.put(EntityCatalogService.PROP_LOCALE, lang);
 		}
 
-		field.put(EntityCatalogService.PROP_ID, id);
-		field.put(EntityCatalogService.PROP_DISPLAY_NAME, displayName);
+		field.put(EntityCatalogService.PROP_ID, id.toString());
+		field.put(EntityCatalogService.PROP_DISPLAY_NAME, displayName.toString());
+
+		MLText displayMLName = MLTextHelper.createMLTextI18N(loc -> {
+			Locale old = I18NUtil.getLocale();
+			StringBuilder ret = new StringBuilder();
+			try {
+				I18NUtil.setLocale(loc);
+
+				for (int i = 0; i < fields.size(); ++i) {
+					String currentField = fields.get(i);
+					ClassAttributeDefinition classDef = formatQnameString(currentField);
+
+					String i18nKey = i18nMessages.has(currentField) ? i18nMessages.getString(currentField) : null;
+
+					ret.append(
+							getFieldDisplayName(classDef, i18nKey) + (i == (fields.size() - 1) ? "" : " " + I18NUtil.getMessage(MESSAGE_OR) + " "));
+				}
+			} catch (JSONException e) {
+				logger.error(e, e);
+			} finally {
+				I18NUtil.setLocale(old);
+			}
+
+			return ret.toString();
+
+		});
+
+		if (displayMLName != null) {
+			for (Map.Entry<Locale, String> mlEntry : displayMLName.entrySet()) {
+				String code = MLTextHelper.localeKey(mlEntry.getKey());
+				if ((code != null) && !code.isEmpty() && (mlEntry.getValue() != null)) {
+					field.put(EntityCatalogService.PROP_DISPLAY_NAME + "_" + code, mlEntry.getValue());
+
+				}
+			}
+		}
 
 		return field;
 
 	}
-	
+
+	/**
+	 * <p>
+	 * getFieldDisplayName.
+	 * </p>
+	 *
+	 * @param classDef
+	 *            a
+	 *            {@link org.alfresco.service.cmr.dictionary.ClassAttributeDefinition}
+	 *            object.
+	 * @param messageKey
+	 *            a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getFieldDisplayName(ClassAttributeDefinition classDef, String messageKey) {
 		String displayName = messageKey != null ? I18NUtil.getMessage(messageKey) : classDef.getTitle(dictionaryService);
 		return displayName != null ? displayName : messageKey;
@@ -600,5 +817,4 @@ public class EntityCatalogService {
 		return res;
 	}
 
-	
 }
