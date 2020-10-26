@@ -23,21 +23,25 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.alfresco.error.ExceptionStackUtil;
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.domain.node.NodeDAO;
 import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.util.Pair;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -173,23 +177,23 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 						if (logger.isDebugEnabled()) {
 							logger.debug("Update instanceOf :" + entity.getClass().getName() + " " + entity.getName());
 							logger.debug(" HashDiff :"
-									+ BeCPGHashCodeBuilder.printDiff(entity, findOne(entity.getNodeRef(), new HashMap<NodeRef, RepositoryEntity>())));
+									+ BeCPGHashCodeBuilder.printDiff(entity, findOne(entity.getNodeRef(), new HashMap<>())));
 
 						}
 
-						Map<QName, Serializable> propToAdd = new HashMap<>();
-
+						nodeService.addProperties(entity.getNodeRef(), properties);
+						
+						
+						//TODO verify why is needed?
+						Set<QName> propsToDelete = new HashSet<>();
 						for (Map.Entry<QName, Serializable> prop : properties.entrySet()) {
 							if (prop.getValue() == null) {
-								nodeService.removeProperty(entity.getNodeRef(), prop.getKey());
-							} else {
-								propToAdd.put(prop.getKey(), prop.getValue());
-							}
-
+								propsToDelete.add(prop.getKey());
+							} 
 						}
+						removeProperties(entity.getNodeRef(),propsToDelete);
 
-						nodeService.addProperties(entity.getNodeRef(), propToAdd);
-
+						
 					}
 
 					saveAssociations(entity);
@@ -816,5 +820,26 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		return new ArrayList<>();
 	}
 
+	@Autowired
+	NodeDAO nodeDAO;
 
+
+	private void removeProperties(NodeRef nodeRef, Set<QName> qnames)
+    {
+		
+		qnames.remove(ContentModel.PROP_NAME);
+        // Get the node
+        Pair<Long, NodeRef> nodePair = nodeDAO.getNodePair(nodeRef);
+        
+        if (nodePair != null)
+        {
+	        
+	        // Remove
+	        nodeDAO.removeNodeProperties(nodePair.getFirst(), qnames);
+        }
+        
+   
+    }
+	
+	
 }

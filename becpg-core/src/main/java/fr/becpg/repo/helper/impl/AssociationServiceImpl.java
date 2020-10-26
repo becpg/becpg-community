@@ -32,6 +32,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nonnull;
 import javax.sql.DataSource;
 
 import org.alfresco.model.ContentModel;
@@ -162,10 +163,7 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 			// remove from db
 
 			for (AssociationRef assocRef : dbAssocNodeRefs) {
-				if (assocNodeRefs == null) {
-					nodeService.removeAssociation(nodeRef, assocRef.getTargetRef(), qName);
-					hasChanged = true;
-				} else if (!assocNodeRefs.contains(assocRef.getTargetRef())) {
+				if (assocNodeRefs == null || !assocNodeRefs.contains(assocRef.getTargetRef())) {
 					nodeService.removeAssociation(nodeRef, assocRef.getTargetRef(), qName);
 					hasChanged = true;
 				} else {
@@ -255,7 +253,7 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 	@Override
 	public NodeRef getChildAssoc(NodeRef nodeRef, QName qName) {
 		List<NodeRef> assocRefs = getChildAssocsImpl(nodeRef, qName, null, null);
-		return (assocRefs != null) && !assocRefs.isEmpty() ? assocRefs.get(0) : null;
+		return !assocRefs.isEmpty() ? assocRefs.get(0) : null;
 	}
 
 	/** {@inheritDoc} */
@@ -276,11 +274,11 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 		return getChildAssocsImpl(listNodeRef, qName, childTypeQName, sortMap);
 	}
 
-	private List<NodeRef> getChildAssocsImpl(final NodeRef nodeRef, final QName qName, final QName childType, final Map<String, Boolean> sortProps) {
+	private @Nonnull List<NodeRef> getChildAssocsImpl(final NodeRef nodeRef, final QName qName, final QName childType, final Map<String, Boolean> sortProps) {
 
 		if ((childType != null) && (sortProps != null) && !sortProps.isEmpty() && !isDefaultSort(sortProps)) {
 			// No cache if specific sort
-			return dbChildAssocSearch(nodeRef, qName, childType, sortProps);
+			return dbChildAssocSearch(nodeRef, childType, sortProps);
 		}
 
 		final String cacheKey = createCacheKey(nodeRef, qName, childType);
@@ -289,12 +287,12 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 		List<NodeRef> ret = beCPGCacheService.getFromCache(cacheName, cacheKey, () -> {
 
 			if ((childType != null) && (sortProps != null) && !sortProps.isEmpty()) {
-				return dbChildAssocSearch(nodeRef, qName, childType, sortProps);
+				return dbChildAssocSearch(nodeRef, childType, sortProps);
 			}
 
 			return nodeService.getChildAssocs(nodeRef, qName, RegexQNamePattern.MATCH_ALL, true).stream()
 					.filter(n -> (childType == null) || nodeService.getType(n.getChildRef()).equals(childType))
-					.map(assocRef -> assocRef.getChildRef()).collect(Collectors.toCollection(LinkedList::new));
+					.map(ChildAssociationRef::getChildRef).collect(Collectors.toCollection(LinkedList::new));
 
 		}, true);
 
@@ -308,7 +306,7 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 				&& sortProps.get("@cm:created");
 	}
 
-	private List<NodeRef> dbChildAssocSearch(final NodeRef nodeRef, final QName qName, final QName childType, Map<String, Boolean> sortProps) {
+	private List<NodeRef> dbChildAssocSearch(final NodeRef nodeRef, final QName childType, Map<String, Boolean> sortProps) {
 
 		List<NodeRef> ret = new LinkedList<>();
 		QName sortFieldQName = null;
@@ -324,7 +322,7 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 		for (Map.Entry<String, Boolean> entry : sortProps.entrySet()) {
 			if ("cm:created".equals(entry.getKey().replace("@", ""))
 					|| ("{http://www.alfresco.org/model/content/1.0}created").equals(entry.getKey().replace("@", ""))) {
-				createSortDirection = entry.getValue() ? "ASC" : "DESC";
+				createSortDirection = Boolean.TRUE.equals(entry.getValue()) ? "ASC" : "DESC";
 			} else {
 				if (count > 0) {
 					logger.warn("Only one sort dir is allowed in getChildAssocsImplV2");
@@ -336,7 +334,7 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 				} else {
 					sortFieldQName = QName.createQName(entry.getKey().replace("@", ""), namespaceService);
 				}
-				sortDirection = entry.getValue() ? "ASC" : "DESC";
+				sortDirection = Boolean.TRUE.equals(entry.getValue()) ? "ASC" : "DESC";
 				count++;
 			}
 		}

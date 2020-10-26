@@ -7,7 +7,6 @@ import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.repo.copy.CopyBehaviourCallback;
 import org.alfresco.repo.copy.CopyDetails;
 import org.alfresco.repo.copy.CopyServicePolicies;
@@ -158,9 +157,7 @@ public class SortableListPolicy extends AbstractBeCPGPolicy
 				}
 
 				hasChanged = true;
-			} else if ((beforeParentLevel != null) && !beforeParentLevel.equals(afterParentLevel)) {// parentLevel
-																									// is
-																									// null
+			} else if ((beforeParentLevel != null) && !beforeParentLevel.equals(afterParentLevel)) {// parentLevel																							// null
 				hasChanged = true;
 			} else {
 				hasChanged = false;
