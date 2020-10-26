@@ -655,9 +655,12 @@ public interface PLMModel {
 	/** Constant <code>LABELING_RULE_ASPECT</code> */
 	QName LABELING_RULE_ASPECT =  QName.createQName(BeCPGModel.BECPG_URI, "labelingRuleAspect");
 	
-
-
-	
+	/** Constant <code>PROP_MODIFIED_CATALOG1</code> */
+	QName PROP_MODIFIED_CATALOG1 =  QName.createQName(BeCPGModel.BECPG_URI, "modifiedCatalog1");
+	/** Constant <code>PROP_MODIFIED_CATALOG2</code> */
+	QName PROP_MODIFIED_CATALOG2 =  QName.createQName(BeCPGModel.BECPG_URI, "modifiedCatalog2");
+	/** Constant <code>PROP_MODIFIED_CATALOG3</code> */
+	QName PROP_MODIFIED_CATALOG3 =  QName.createQName(BeCPGModel.BECPG_URI, "modifiedCatalog3");
 	
 	
 }
