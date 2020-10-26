@@ -219,13 +219,13 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 
 	public void onCreateEntityAssociation(AssociationRef assocRef) {
 		if (!isVersionNode(assocRef.getSourceRef()) && isNotLocked(assocRef.getSourceRef())) {
-			entityCatalogService.updateAuditedField(assocRef.getSourceRef(),  Set.of(assocRef.getTypeQName()), null);
+			entityCatalogService.updateAuditedField(assocRef.getSourceRef(),  new HashSet<>(Arrays.asList(assocRef.getTypeQName())), null);
 		}
 	}
 
 	public void onDeleteEntityAssociation(AssociationRef assocRef) {
 		if (!isVersionNode(assocRef.getSourceRef()) && isNotLocked(assocRef.getSourceRef())) {
-			entityCatalogService.updateAuditedField(assocRef.getSourceRef(), Set.of(assocRef.getTypeQName()), null);
+			entityCatalogService.updateAuditedField(assocRef.getSourceRef(),  new HashSet<>(Arrays.asList(assocRef.getTypeQName())), null);
 		}
 	}
 
