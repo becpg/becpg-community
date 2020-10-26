@@ -11,7 +11,8 @@ import org.alfresco.service.cmr.repository.StoreRef;
  * @author querephi
  *
  */
-public class RepoConsts {
+public class RepoConsts
+{
 
 	
 	public static final String FULL_PATH_THUMBNAIL = "/cm:System/cm:Icons";	
@@ -173,6 +174,9 @@ public class RepoConsts {
 
 	public static final String PATH_LICENSE = "license";
 
+	
+	/** Constant <code>CATALOGS_PATH="/app:company_home/cm:System/cm:Property"{trunked}</code> */
+	public static final String CATALOGS_PATH = "/app:company_home/cm:System/cm:PropertyCatalogs";
 
 	
 }
