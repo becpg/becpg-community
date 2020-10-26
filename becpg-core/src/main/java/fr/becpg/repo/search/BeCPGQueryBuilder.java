@@ -490,7 +490,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	 */
 	public BeCPGQueryBuilder inSite(String siteId, String containerId) {
 
-		if ((containerId == null) || containerId.isBlank() || "documentLibrary".equals(containerId)) {
+		if ((containerId == null) || containerId.isEmpty() || "documentLibrary".equals(containerId)) {
 			if (this.inSite != null) {
 				logger.warn("Site is already set for this query.( old:" + this.inSite + " -  new: " + siteId + ")");
 			}
@@ -948,7 +948,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 		try {
 
-			if (RepoConsts.MAX_RESULTS_UNLIMITED.equals(maxResults)) {
+			if (new Integer(RepoConsts.MAX_RESULTS_UNLIMITED).equals(maxResults)) {
 				int page = 1;
 
 				if (logger.isDebugEnabled()) {
@@ -986,7 +986,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			}
 
 			if (logger.isDebugEnabled()) {
-				int tmpIndex = (RepoConsts.MAX_RESULTS_SINGLE_VALUE.equals(maxResults) ? 4 : 3);
+				int tmpIndex = (new Integer(RepoConsts.MAX_RESULTS_SINGLE_VALUE).equals(maxResults) ? 4 : 3);
 
 				logger.debug("[" + Thread.currentThread().getStackTrace()[tmpIndex].getClassName() + " "
 						+ Thread.currentThread().getStackTrace()[tmpIndex].getLineNumber() + "] " + runnedQuery + " executed in  "
@@ -1655,7 +1655,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 		PermissionCheckedValueMixin.create(nodeRefs);
 
-		return new PagingResults<>() {
+		return new PagingResults<NodeRef>() {
 			@Override
 			public String getQueryExecutionId() {
 				return null; // TODO use Paginated Cache results

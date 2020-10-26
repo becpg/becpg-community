@@ -30,6 +30,7 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.catalog.EntityCatalogService;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.ClientData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
@@ -42,9 +43,9 @@ import fr.becpg.test.PLMBaseTestCase;
  * @author matthieu
  *
  */
-public class EntityCatalogIT extends PLMBaseTestCase {
+public class EntityCatalogTest extends PLMBaseTestCase {
 
-	private static final Log logger = LogFactory.getLog(EntityCatalogIT.class);
+	private static final Log logger = LogFactory.getLog(EntityCatalogTest.class);
 	private static final String CATALOG_STRING = "{\"id\":\"incoFinishedProduct\",\"label\":\"EU 1169/2011 (INCO)\",\"entityType\":[\"bcpg:finishedProduct\"],\"uniqueFields\":[\"bcpg:erpCode\",\"cm:name\"],\"fields\":[\"bcpg:legalName\",\"bcpg:useByDate|bcpg:bestBeforeDate\",\"bcpg:storageConditionsRef|bcpg:preparationTips\",\"cm:title\"],\"auditedFields\": [\"cm:name\",\"bcpg:compoList\"],\"modifiedField\": \"bcpg:modifiedCatalog1\"}";
 
 	@Autowired
@@ -56,6 +57,9 @@ public class EntityCatalogIT extends PLMBaseTestCase {
 
 	@Autowired
 	private EntityListDAO entityListDAO;
+	
+	@Autowired
+	private AssociationService associationService;
 
 	@Autowired
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
@@ -65,7 +69,7 @@ public class EntityCatalogIT extends PLMBaseTestCase {
 		super.setUp();
 
 		cacheService.clearCache(EntityCatalogService.class.getName());
-		ClassPathResource resource = new ClassPathResource("fr/becpg/test/repo/entity/catalog/audited_fields.json");
+		ClassPathResource resource = new ClassPathResource("beCPG/test/audited_fields.json");
 		try (InputStream in = resource.getInputStream()) {
 			List<JSONArray> res = new ArrayList<>();
 			res.add(new JSONArray(IOUtils.toString(in, "UTF-8")));
@@ -203,10 +207,9 @@ public class EntityCatalogIT extends PLMBaseTestCase {
 			client.setName("EntityCatalogServiceIT - client");
 			client.setParentNodeRef(getTestFolderNodeRef());
 			alfrescoRepository.save(client);
-
-			sampleProduct.setClients(Arrays.asList(client));
-
-			return alfrescoRepository.save(sampleProduct);
+			
+			associationService.update(sampleProduct.getNodeRef(), PLMModel.ASSOC_CLIENTS, Arrays.asList(client.getNodeRef()));
+			return null;
 
 		});
 
@@ -216,11 +219,13 @@ public class EntityCatalogIT extends PLMBaseTestCase {
 
 			sampleProduct.setClients(new ArrayList<>());
 
-			return alfrescoRepository.save(sampleProduct);
+			associationService.update(sampleProduct.getNodeRef(), PLMModel.ASSOC_CLIENTS, new ArrayList<>());
+			
+			return null;
 
 		});
 
-		timestamps = checkIsAudited(sampleProduct.getNodeRef(), timestamps, true);
+		checkIsAudited(sampleProduct.getNodeRef(), timestamps, true);
 
 	}
 
