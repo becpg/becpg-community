@@ -1,14 +1,13 @@
-/*
- *  Copyright (C) 2010-2011 beCPG. All rights reserved.
- */
 package fr.becpg.test.repo.entity.catalog;
 
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -17,11 +16,20 @@ import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 
 import fr.becpg.model.PLMModel;
+import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.entity.catalog.EntityCatalogService;
 import fr.becpg.repo.product.data.ClientData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
@@ -30,9 +38,21 @@ import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.test.PLMBaseTestCase;
 
 /**
+ *
  * @author matthieu
+ *
  */
-public class EntityCatalogServiceIT extends PLMBaseTestCase {
+public class EntityCatalogIT extends PLMBaseTestCase {
+
+	private static final Log logger = LogFactory.getLog(EntityCatalogIT.class);
+	private static final String CATALOG_STRING = "{\"id\":\"incoFinishedProduct\",\"label\":\"EU 1169/2011 (INCO)\",\"entityType\":[\"bcpg:finishedProduct\"],\"uniqueFields\":[\"bcpg:erpCode\",\"cm:name\"],\"fields\":[\"bcpg:legalName\",\"bcpg:useByDate|bcpg:bestBeforeDate\",\"bcpg:storageConditionsRef|bcpg:preparationTips\",\"cm:title\"],\"auditedFields\": [\"cm:name\",\"bcpg:compoList\"],\"modifiedField\": \"bcpg:modifiedCatalog1\"}";
+
+	@Autowired
+	private NamespaceService namespaceService;
+	@Autowired
+	private EntityCatalogService entityCatalogService;
+	@Autowired
+	private BeCPGCacheService cacheService;
 
 	@Autowired
 	private EntityListDAO entityListDAO;
@@ -40,11 +60,29 @@ public class EntityCatalogServiceIT extends PLMBaseTestCase {
 	@Autowired
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
+	@Override
+	public void setUp() throws Exception {
+		super.setUp();
+
+		cacheService.clearCache(EntityCatalogService.class.getName());
+		ClassPathResource resource = new ClassPathResource("fr/becpg/test/repo/entity/catalog/audited_fields.json");
+		try (InputStream in = resource.getInputStream()) {
+			List<JSONArray> res = new ArrayList<>();
+			res.add(new JSONArray(IOUtils.toString(in, "UTF-8")));
+			cacheService.storeInCache(EntityCatalogService.class.getName(), EntityCatalogService.CATALOG_DEFS, res);
+		}
+	}
+
+	@Override
+	public void tearDown() throws Exception {
+		super.tearDown();
+		cacheService.clearCache(EntityCatalogService.class.getName());
+	}
+
 	@Test
 	public void testAuditedFields() {
 
-	
-		final NodeRef sfNodeRef = (NodeRef) inWriteTx(() -> {
+		final NodeRef sfNodeRef = inWriteTx(() -> {
 
 			SemiFinishedProductData sfData = new SemiFinishedProductData();
 			sfData.setName("EntityCatalogServiceIT");
@@ -60,7 +98,7 @@ public class EntityCatalogServiceIT extends PLMBaseTestCase {
 		});
 
 		final SemiFinishedProductData sampleProduct = (SemiFinishedProductData) inReadTx(() -> alfrescoRepository.findOne(sfNodeRef));
-		
+
 		long timestamps = Calendar.getInstance().getTimeInMillis();
 
 		/*
@@ -183,6 +221,21 @@ public class EntityCatalogServiceIT extends PLMBaseTestCase {
 		});
 
 		timestamps = checkIsAudited(sampleProduct.getNodeRef(), timestamps, true);
+
+	}
+
+	@Test
+	public void catalogHelperTest() {
+		JSONObject catalog;
+		try {
+			catalog = new JSONObject(CATALOG_STRING);
+			assertTrue(entityCatalogService.isMatchEntityType(catalog, PLMModel.TYPE_FINISHEDPRODUCT, namespaceService));
+			assertFalse(entityCatalogService.isMatchEntityType(catalog, PLMModel.TYPE_RAWMATERIAL, namespaceService));
+			assertEquals(new HashSet<>(Arrays.asList(new QName[] { ContentModel.PROP_NAME, QName.createQName("bcpg:compoList", namespaceService) })),
+					entityCatalogService.getAuditedFields(catalog, namespaceService));
+		} catch (JSONException e) {
+			logger.error("Unable to load catalog", e);
+		}
 
 	}
 
