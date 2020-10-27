@@ -30,6 +30,7 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.catalog.EntityCatalogService;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.ClientData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
@@ -56,6 +57,9 @@ public class EntityCatalogIT extends PLMBaseTestCase {
 
 	@Autowired
 	private EntityListDAO entityListDAO;
+	
+	@Autowired
+	private AssociationService associationService;
 
 	@Autowired
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
@@ -65,7 +69,7 @@ public class EntityCatalogIT extends PLMBaseTestCase {
 		super.setUp();
 
 		cacheService.clearCache(EntityCatalogService.class.getName());
-		ClassPathResource resource = new ClassPathResource("fr/becpg/test/repo/entity/catalog/audited_fields.json");
+		ClassPathResource resource = new ClassPathResource("beCPG/test/audited_fields.json");
 		try (InputStream in = resource.getInputStream()) {
 			List<JSONArray> res = new ArrayList<>();
 			res.add(new JSONArray(IOUtils.toString(in, "UTF-8")));
@@ -203,10 +207,9 @@ public class EntityCatalogIT extends PLMBaseTestCase {
 			client.setName("EntityCatalogServiceIT - client");
 			client.setParentNodeRef(getTestFolderNodeRef());
 			alfrescoRepository.save(client);
-
-			sampleProduct.setClients(Arrays.asList(client));
-
-			return alfrescoRepository.save(sampleProduct);
+			
+			associationService.update(sampleProduct.getNodeRef(), PLMModel.ASSOC_CLIENTS, Arrays.asList(client.getNodeRef()));
+			return null;
 
 		});
 
@@ -216,11 +219,13 @@ public class EntityCatalogIT extends PLMBaseTestCase {
 
 			sampleProduct.setClients(new ArrayList<>());
 
-			return alfrescoRepository.save(sampleProduct);
+			associationService.update(sampleProduct.getNodeRef(), PLMModel.ASSOC_CLIENTS, new ArrayList<>());
+			
+			return null;
 
 		});
 
-		timestamps = checkIsAudited(sampleProduct.getNodeRef(), timestamps, true);
+		checkIsAudited(sampleProduct.getNodeRef(), timestamps, true);
 
 	}
 
