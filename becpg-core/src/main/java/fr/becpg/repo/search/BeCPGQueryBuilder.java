@@ -490,7 +490,8 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	 */
 	public BeCPGQueryBuilder inSite(String siteId, String containerId) {
 
-		if ((containerId == null) || containerId.isBlank() || "documentLibrary".equals(containerId)) {
+		if (siteId!=null && !siteId.isBlank() 
+				&& ( (containerId == null) || containerId.isBlank() || "documentLibrary".equals(containerId))) {
 			if (this.inSite != null) {
 				logger.warn("Site is already set for this query.( old:" + this.inSite + " -  new: " + siteId + ")");
 			}
