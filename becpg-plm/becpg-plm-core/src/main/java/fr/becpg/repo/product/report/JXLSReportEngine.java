@@ -115,7 +115,7 @@ public class JXLSReportEngine implements BeCPGReportEngine {
 	}
 
 	private String cleanName(String name) {
-		return name.toLowerCase().substring(0, name.lastIndexOf('.'));
+		return name.indexOf('.') > 0 ? name.toLowerCase().substring(0, name.lastIndexOf('.')): name;
 	}
 
 	/** {@inheritDoc} */
