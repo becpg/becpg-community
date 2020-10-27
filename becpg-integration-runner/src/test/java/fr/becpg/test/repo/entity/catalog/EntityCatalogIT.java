@@ -43,9 +43,9 @@ import fr.becpg.test.PLMBaseTestCase;
  * @author matthieu
  *
  */
-public class EntityCatalogTest extends PLMBaseTestCase {
+public class EntityCatalogIT extends PLMBaseTestCase {
 
-	private static final Log logger = LogFactory.getLog(EntityCatalogTest.class);
+	private static final Log logger = LogFactory.getLog(EntityCatalogIT.class);
 	private static final String CATALOG_STRING = "{\"id\":\"incoFinishedProduct\",\"label\":\"EU 1169/2011 (INCO)\",\"entityType\":[\"bcpg:finishedProduct\"],\"uniqueFields\":[\"bcpg:erpCode\",\"cm:name\"],\"fields\":[\"bcpg:legalName\",\"bcpg:useByDate|bcpg:bestBeforeDate\",\"bcpg:storageConditionsRef|bcpg:preparationTips\",\"cm:title\"],\"auditedFields\": [\"cm:name\",\"bcpg:compoList\"],\"modifiedField\": \"bcpg:modifiedCatalog1\"}";
 
 	@Autowired
