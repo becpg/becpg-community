@@ -380,4 +380,15 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 	protected void doInitRepo(boolean shouldInit) {
 	}
+	
+	protected <R> R inReadTx(RetryingTransactionCallback<R> callBack) {
+		return transactionService.getRetryingTransactionHelper()
+		.doInTransaction(callBack , true, true);
+	}
+	
+	protected <R> R inWriteTx(RetryingTransactionCallback<R> callBack) {
+		return transactionService.getRetryingTransactionHelper()
+		.doInTransaction(callBack , false, true);
+	}
+	
 }
