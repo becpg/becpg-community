@@ -75,7 +75,9 @@ import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.search.impl.AbstractBeCPGQueryBuilder;
 
 /**
- * <p>BeCPGQueryBuilder class.</p>
+ * <p>
+ * BeCPGQueryBuilder class.
+ * </p>
  *
  * @author matthieu
  * @version $Id: $Id
@@ -126,6 +128,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	private final Set<QName> aspects = new HashSet<>();
 	private String subPath = null;
 	private String path = null;
+	private String inSite = null;
 	private String excludePath = null;
 	private String membersPath = null;
 	private final Set<NodeRef> ids = new HashSet<>();
@@ -156,7 +159,9 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/**
-	 * <p>isInit.</p>
+	 * <p>
+	 * isInit.
+	 * </p>
 	 *
 	 * @return a boolean.
 	 */
@@ -170,7 +175,9 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/**
-	 * <p>createQuery.</p>
+	 * <p>
+	 * createQuery.
+	 * </p>
 	 *
 	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
 	 */
@@ -190,9 +197,12 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/**
-	 * <p>ofType.</p>
+	 * <p>
+	 * ofType.
+	 * </p>
 	 *
-	 * @param typeQname a {@link org.alfresco.service.namespace.QName} object.
+	 * @param typeQname
+	 *            a {@link org.alfresco.service.namespace.QName} object.
 	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
 	 */
 	public BeCPGQueryBuilder ofType(QName typeQname) {
@@ -201,9 +211,12 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/**
-	 * <p>ofExactType.</p>
+	 * <p>
+	 * ofExactType.
+	 * </p>
 	 *
-	 * @param typeQname a {@link org.alfresco.service.namespace.QName} object.
+	 * @param typeQname
+	 *            a {@link org.alfresco.service.namespace.QName} object.
 	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
 	 */
 	public BeCPGQueryBuilder ofExactType(QName typeQname) {
@@ -212,9 +225,12 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/**
-	 * <p>inType.</p>
+	 * <p>
+	 * inType.
+	 * </p>
 	 *
-	 * @param typeQname a {@link org.alfresco.service.namespace.QName} object.
+	 * @param typeQname
+	 *            a {@link org.alfresco.service.namespace.QName} object.
 	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
 	 */
 	public BeCPGQueryBuilder inType(QName typeQname) {
@@ -226,10 +242,14 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/**
-	 * <p>inBoostedType.</p>
+	 * <p>
+	 * inBoostedType.
+	 * </p>
 	 *
-	 * @param typeQname a {@link org.alfresco.service.namespace.QName} object.
-	 * @param boostFactor a {@link java.lang.Integer} object.
+	 * @param typeQname
+	 *            a {@link org.alfresco.service.namespace.QName} object.
+	 * @param boostFactor
+	 *            a {@link java.lang.Integer} object.
 	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
 	 */
 	public BeCPGQueryBuilder inBoostedType(QName typeQname, Integer boostFactor) {
@@ -241,9 +261,12 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/**
-	 * <p>withAspect.</p>
+	 * <p>
+	 * withAspect.
+	 * </p>
 	 *
-	 * @param aspect a {@link org.alfresco.service.namespace.QName} object.
+	 * @param aspect
+	 *            a {@link org.alfresco.service.namespace.QName} object.
 	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
 	 */
 	public BeCPGQueryBuilder withAspect(QName aspect) {
@@ -253,9 +276,12 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/**
-	 * <p>includeAspect.</p>
+	 * <p>
+	 * includeAspect.
+	 * </p>
 	 *
-	 * @param aspect a {@link org.alfresco.service.namespace.QName} object.
+	 * @param aspect
+	 *            a {@link org.alfresco.service.namespace.QName} object.
 	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
 	 */
 	public BeCPGQueryBuilder includeAspect(QName aspect) {
@@ -264,9 +290,12 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/**
-	 * <p>inParent.</p>
+	 * <p>
+	 * inParent.
+	 * </p>
 	 *
-	 * @param parentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param parentNodeRef
+	 *            a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
 	 */
 	public BeCPGQueryBuilder inParent(NodeRef parentNodeRef) {
@@ -275,9 +304,12 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/**
-	 * <p>maxResults.</p>
+	 * <p>
+	 * maxResults.
+	 * </p>
 	 *
-	 * @param maxResults a int.
+	 * @param maxResults
+	 *            a int.
 	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
 	 */
 	public BeCPGQueryBuilder maxResults(int maxResults) {
@@ -286,7 +318,9 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/**
-	 * <p>andOperator.</p>
+	 * <p>
+	 * andOperator.
+	 * </p>
 	 *
 	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
 	 */
@@ -296,9 +330,12 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/**
-	 * <p>locale.</p>
+	 * <p>
+	 * locale.
+	 * </p>
 	 *
-	 * @param locale a {@link java.util.Locale} object.
+	 * @param locale
+	 *            a {@link java.util.Locale} object.
 	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
 	 */
 	public BeCPGQueryBuilder locale(Locale locale) {
@@ -307,9 +344,12 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/**
-	 * <p>parent.</p>
+	 * <p>
+	 * parent.
+	 * </p>
 	 *
-	 * @param parentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param parentNodeRef
+	 *            a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
 	 */
 	public BeCPGQueryBuilder parent(NodeRef parentNodeRef) {
@@ -322,9 +362,12 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/**
-	 * <p>members.</p>
+	 * <p>
+	 * members.
+	 * </p>
 	 *
-	 * @param path a {@link java.lang.String} object.
+	 * @param path
+	 *            a {@link java.lang.String} object.
 	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
 	 */
 	public BeCPGQueryBuilder members(String path) {
@@ -337,9 +380,12 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/**
-	 * <p>inPath.</p>
+	 * <p>
+	 * inPath.
+	 * </p>
 	 *
-	 * @param path a {@link java.lang.String} object.
+	 * @param path
+	 *            a {@link java.lang.String} object.
 	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
 	 */
 	public BeCPGQueryBuilder inPath(String path) {
@@ -352,9 +398,12 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/**
-	 * <p>inSubPath.</p>
+	 * <p>
+	 * inSubPath.
+	 * </p>
 	 *
-	 * @param subPath a {@link java.lang.String} object.
+	 * @param subPath
+	 *            a {@link java.lang.String} object.
 	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
 	 */
 	public BeCPGQueryBuilder inSubPath(String subPath) {
@@ -370,9 +419,12 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/**
-	 * <p>excludePath.</p>
+	 * <p>
+	 * excludePath.
+	 * </p>
 	 *
-	 * @param excludePath a {@link java.lang.String} object.
+	 * @param excludePath
+	 *            a {@link java.lang.String} object.
 	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
 	 */
 	public BeCPGQueryBuilder excludePath(String excludePath) {
@@ -388,7 +440,9 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/**
-	 * <p>inDB.</p>
+	 * <p>
+	 * inDB.
+	 * </p>
 	 *
 	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
 	 */
@@ -399,7 +453,9 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/**
-	 * <p>inDBIfPossible.</p>
+	 * <p>
+	 * inDBIfPossible.
+	 * </p>
 	 *
 	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
 	 */
@@ -410,7 +466,9 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/**
-	 * <p>cmisLanguage.</p>
+	 * <p>
+	 * cmisLanguage.
+	 * </p>
 	 *
 	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
 	 */
@@ -420,34 +478,49 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/**
-	 * <p>inSite.</p>
+	 * <p>
+	 * inSite.
+	 * </p>
 	 *
-	 * @param siteId a {@link java.lang.String} object.
-	 * @param containerId a {@link java.lang.String} object.
+	 * @param siteId
+	 *            a {@link java.lang.String} object.
+	 * @param containerId
+	 *            a {@link java.lang.String} object.
 	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
 	 */
 	public BeCPGQueryBuilder inSite(String siteId, String containerId) {
-		String path = SiteHelper.SITES_SPACE_QNAME_PATH;
 
-		if ((siteId != null) && (siteId.length() > 0)) {
-			path += "cm:" + ISO9075.encode(siteId);
+		if ((containerId == null) || containerId.isBlank() || "documentLibrary".equals(containerId)) {
+			if (this.inSite != null) {
+				logger.warn("Site is already set for this query.( old:" + this.inSite + " -  new: " + siteId + ")");
+			}
+			inSite = siteId;
 		} else {
-			path += "*";
-		}
-		if ((containerId != null) && (containerId.length() > 0)) {
-			path += "/cm:" + ISO9075.encode(containerId);
-		}
-		// recursive //*
-		path += "/";
-		inPath(path);
 
+			String path = SiteHelper.SITES_SPACE_QNAME_PATH;
+
+			if ((siteId != null) && (siteId.length() > 0)) {
+				path += "cm:" + ISO9075.encode(siteId);
+			} else {
+				path += "*";
+			}
+			path += "/cm:" + ISO9075.encode(containerId);
+
+			// recursive //*
+			path += "/";
+			inPath(path);
+
+		}
 		return this;
 	}
 
 	/**
-	 * <p>andID.</p>
+	 * <p>
+	 * andID.
+	 * </p>
 	 *
-	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param nodeRef
+	 *            a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
 	 */
 	public BeCPGQueryBuilder andID(NodeRef nodeRef) {
@@ -456,9 +529,12 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/**
-	 * <p>andNotID.</p>
+	 * <p>
+	 * andNotID.
+	 * </p>
 	 *
-	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param nodeRef
+	 *            a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
 	 */
 	public BeCPGQueryBuilder andNotID(NodeRef nodeRef) {
@@ -471,9 +547,12 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/**
-	 * <p>andNotIDs.</p>
+	 * <p>
+	 * andNotIDs.
+	 * </p>
 	 *
-	 * @param nodeRefs a {@link java.util.Set} object.
+	 * @param nodeRefs
+	 *            a {@link java.util.Set} object.
 	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
 	 */
 	public BeCPGQueryBuilder andNotIDs(Set<NodeRef> nodeRefs) {
@@ -484,9 +563,12 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	Map<String, Boolean> sortProps = new TreeMap<>();
 
 	/**
-	 * <p>addSort.</p>
+	 * <p>
+	 * addSort.
+	 * </p>
 	 *
-	 * @param sortMap a {@link java.util.Map} object.
+	 * @param sortMap
+	 *            a {@link java.util.Map} object.
 	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
 	 */
 	public BeCPGQueryBuilder addSort(Map<String, Boolean> sortMap) {
@@ -495,10 +577,14 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/**
-	 * <p>addSort.</p>
+	 * <p>
+	 * addSort.
+	 * </p>
 	 *
-	 * @param propToSort a {@link org.alfresco.service.namespace.QName} object.
-	 * @param sortOrder a boolean.
+	 * @param propToSort
+	 *            a {@link org.alfresco.service.namespace.QName} object.
+	 * @param sortOrder
+	 *            a boolean.
 	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
 	 */
 	public BeCPGQueryBuilder addSort(QName propToSort, boolean sortOrder) {
@@ -507,9 +593,12 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/**
-	 * <p>isNotNull.</p>
+	 * <p>
+	 * isNotNull.
+	 * </p>
 	 *
-	 * @param propQName a {@link org.alfresco.service.namespace.QName} object.
+	 * @param propQName
+	 *            a {@link org.alfresco.service.namespace.QName} object.
 	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
 	 */
 	public BeCPGQueryBuilder isNotNull(QName propQName) {
@@ -518,9 +607,12 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/**
-	 * <p>isNull.</p>
+	 * <p>
+	 * isNull.
+	 * </p>
 	 *
-	 * @param propQName a {@link org.alfresco.service.namespace.QName} object.
+	 * @param propQName
+	 *            a {@link org.alfresco.service.namespace.QName} object.
 	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
 	 */
 	public BeCPGQueryBuilder isNull(QName propQName) {
@@ -533,9 +625,12 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/**
-	 * <p>isNullOrUnset.</p>
+	 * <p>
+	 * isNullOrUnset.
+	 * </p>
 	 *
-	 * @param propQName a {@link org.alfresco.service.namespace.QName} object.
+	 * @param propQName
+	 *            a {@link org.alfresco.service.namespace.QName} object.
 	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
 	 */
 	public BeCPGQueryBuilder isNullOrUnset(QName propQName) {
@@ -548,9 +643,12 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/**
-	 * <p>andFTSQuery.</p>
+	 * <p>
+	 * andFTSQuery.
+	 * </p>
 	 *
-	 * @param ftsQuery a {@link java.lang.String} object.
+	 * @param ftsQuery
+	 *            a {@link java.lang.String} object.
 	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
 	 */
 	public BeCPGQueryBuilder andFTSQuery(String ftsQuery) {
@@ -559,7 +657,9 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/**
-	 * <p>clearFTSQuery.</p>
+	 * <p>
+	 * clearFTSQuery.
+	 * </p>
 	 *
 	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
 	 */
@@ -569,10 +669,14 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/**
-	 * <p>andPropEquals.</p>
+	 * <p>
+	 * andPropEquals.
+	 * </p>
 	 *
-	 * @param propQName a {@link org.alfresco.service.namespace.QName} object.
-	 * @param value a {@link java.lang.String} object.
+	 * @param propQName
+	 *            a {@link org.alfresco.service.namespace.QName} object.
+	 * @param value
+	 *            a {@link java.lang.String} object.
 	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
 	 */
 	public BeCPGQueryBuilder andPropEquals(QName propQName, String value) {
@@ -589,10 +693,14 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/**
-	 * <p>andPropQuery.</p>
+	 * <p>
+	 * andPropQuery.
+	 * </p>
 	 *
-	 * @param propQName a {@link org.alfresco.service.namespace.QName} object.
-	 * @param propQuery a {@link java.lang.String} object.
+	 * @param propQName
+	 *            a {@link org.alfresco.service.namespace.QName} object.
+	 * @param propQuery
+	 *            a {@link java.lang.String} object.
 	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
 	 */
 	public BeCPGQueryBuilder andPropQuery(QName propQName, String propQuery) {
@@ -619,11 +727,16 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/**
-	 * <p>andBetween.</p>
+	 * <p>
+	 * andBetween.
+	 * </p>
 	 *
-	 * @param propQName a {@link org.alfresco.service.namespace.QName} object.
-	 * @param start a {@link java.lang.String} object.
-	 * @param end a {@link java.lang.String} object.
+	 * @param propQName
+	 *            a {@link org.alfresco.service.namespace.QName} object.
+	 * @param start
+	 *            a {@link java.lang.String} object.
+	 * @param end
+	 *            a {@link java.lang.String} object.
 	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
 	 */
 	public BeCPGQueryBuilder andBetween(QName propQName, String start, String end) {
@@ -632,11 +745,16 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/**
-	 * <p>andBetweenOrNull.</p>
+	 * <p>
+	 * andBetweenOrNull.
+	 * </p>
 	 *
-	 * @param propQName a {@link org.alfresco.service.namespace.QName} object.
-	 * @param start a {@link java.lang.String} object.
-	 * @param end a {@link java.lang.String} object.
+	 * @param propQName
+	 *            a {@link org.alfresco.service.namespace.QName} object.
+	 * @param start
+	 *            a {@link java.lang.String} object.
+	 * @param end
+	 *            a {@link java.lang.String} object.
 	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
 	 */
 	public BeCPGQueryBuilder andBetweenOrNull(QName propQName, String start, String end) {
@@ -645,10 +763,14 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/**
-	 * <p>excludeProp.</p>
+	 * <p>
+	 * excludeProp.
+	 * </p>
 	 *
-	 * @param propName a {@link org.alfresco.service.namespace.QName} object.
-	 * @param query a {@link java.lang.String} object.
+	 * @param propName
+	 *            a {@link org.alfresco.service.namespace.QName} object.
+	 * @param query
+	 *            a {@link java.lang.String} object.
 	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
 	 */
 	public BeCPGQueryBuilder excludeProp(QName propName, String query) {
@@ -657,9 +779,12 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/**
-	 * <p>excludeType.</p>
+	 * <p>
+	 * excludeType.
+	 * </p>
 	 *
-	 * @param type a {@link org.alfresco.service.namespace.QName} object.
+	 * @param type
+	 *            a {@link org.alfresco.service.namespace.QName} object.
 	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
 	 */
 	public BeCPGQueryBuilder excludeType(QName type) {
@@ -670,9 +795,12 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/**
-	 * <p>excludeAspect.</p>
+	 * <p>
+	 * excludeAspect.
+	 * </p>
 	 *
-	 * @param aspect a {@link org.alfresco.service.namespace.QName} object.
+	 * @param aspect
+	 *            a {@link org.alfresco.service.namespace.QName} object.
 	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
 	 */
 	public BeCPGQueryBuilder excludeAspect(QName aspect) {
@@ -686,7 +814,9 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/**
-	 * <p>excludeVersions.</p>
+	 * <p>
+	 * excludeVersions.
+	 * </p>
 	 *
 	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
 	 */
@@ -696,7 +826,9 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/**
-	 * <p>excludeDefaults.</p>
+	 * <p>
+	 * excludeDefaults.
+	 * </p>
 	 *
 	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
 	 */
@@ -707,7 +839,9 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/**
-	 * <p>excludeSystems.</p>
+	 * <p>
+	 * excludeSystems.
+	 * </p>
 	 *
 	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
 	 */
@@ -720,7 +854,9 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/**
-	 * <p>excludeSearch.</p>
+	 * <p>
+	 * excludeSearch.
+	 * </p>
 	 *
 	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
 	 */
@@ -745,10 +881,14 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/**
-	 * <p>selectNodeByPath.</p>
+	 * <p>
+	 * selectNodeByPath.
+	 * </p>
 	 *
-	 * @param parentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param xPath a {@link java.lang.String} object.
+	 * @param parentNodeRef
+	 *            a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param xPath
+	 *            a {@link java.lang.String} object.
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
 	public NodeRef selectNodeByPath(NodeRef parentNodeRef, String xPath) {
@@ -758,10 +898,14 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/**
-	 * <p>selectNodesByPath.</p>
+	 * <p>
+	 * selectNodesByPath.
+	 * </p>
 	 *
-	 * @param parentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param xPath a {@link java.lang.String} object.
+	 * @param parentNodeRef
+	 *            a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param xPath
+	 *            a {@link java.lang.String} object.
 	 * @return a {@link java.util.List} object.
 	 */
 	public List<NodeRef> selectNodesByPath(NodeRef parentNodeRef, String xPath) {
@@ -787,7 +931,9 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/**
-	 * <p>list.</p>
+	 * <p>
+	 * list.
+	 * </p>
 	 *
 	 * @return a {@link java.util.List} object.
 	 */
@@ -805,13 +951,13 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			if (RepoConsts.MAX_RESULTS_UNLIMITED.equals(maxResults)) {
 				int page = 1;
 
-				if(logger.isDebugEnabled()) {
+				if (logger.isDebugEnabled()) {
 					logger.debug("Unlimited results ask -  start pagination");
-					if(sortProps!=null && !sortProps.isEmpty()) {
-						logger.warn("No sort in Unlimited search: "+sortProps.toString());
+					if ((sortProps != null) && !sortProps.isEmpty()) {
+						logger.warn("No sort in Unlimited search: " + sortProps.toString());
 					}
 				}
-				
+
 				List<NodeRef> tmp = search(runnedQuery, sortProps, page, RepoConsts.MAX_RESULTS_256);
 
 				if ((tmp != null) && !tmp.isEmpty()) {
@@ -852,7 +998,9 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/**
-	 * <p>singleValue.</p>
+	 * <p>
+	 * singleValue.
+	 * </p>
 	 *
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
@@ -902,6 +1050,10 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			runnedQuery.append(prohibided(getCondExactPath(excludePath)));
 		} else if (subPath != null) {
 			runnedQuery.append(mandatory(getCondSubPath(subPath)));
+		}
+		
+		if(inSite!=null) {
+			runnedQuery.append(mandatory(getCondSite(inSite)));
 		}
 
 		if (!parentNodeRefs.isEmpty()) {
@@ -1074,6 +1226,8 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			throw new IllegalStateException("members not supported for CMIS search");
 		} else if (path != null) {
 			throw new IllegalStateException("path not supported for CMIS search");
+		} else if (inSite != null) {
+			throw new IllegalStateException("site not supported for CMIS search");
 		}
 
 		if (!types.isEmpty()) {
@@ -1239,9 +1393,12 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/**
-	 * <p>inSearchTemplate.</p>
+	 * <p>
+	 * inSearchTemplate.
+	 * </p>
 	 *
-	 * @param searchTemplate a {@link java.lang.String} object.
+	 * @param searchTemplate
+	 *            a {@link java.lang.String} object.
 	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
 	 */
 	public BeCPGQueryBuilder inSearchTemplate(String searchTemplate) {
@@ -1250,7 +1407,9 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/**
-	 * <p>ftsLanguage.</p>
+	 * <p>
+	 * ftsLanguage.
+	 * </p>
 	 *
 	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
 	 */
@@ -1272,7 +1431,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		sp.setExcludeTenantFilter(false);
 
 		if (logger.isDebugEnabled() && (language != null)) {
-			logger.debug("Use search language:" + language.toString());
+			logger.debug("Use search language:" + language);
 		}
 
 		sp.setLanguage(language);
@@ -1297,26 +1456,15 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 				sp.addQueryTemplate(DEFAULT_FIELD_NAME, defaultSearchTemplate);
 			}
 		}
-		
 
 		// Force the database use if possible
 		// execute queries transactionally, when possible, and fall back to
 		// eventual consistency; or
 		sp.setQueryConsistency(queryConsistancy);
 
-		// No more lucene search
-		// if (QueryConsistency.TRANSACTIONAL.equals(queryConsistancy)) {
-		// logger.trace("Transactionnal Search");
-		// // Will ensure coherency between solr and lucene
-		// sp.excludeDataInTheCurrentTransaction(false);
-		// }
-
 		if (maxResults == RepoConsts.MAX_RESULTS_UNLIMITED) {
 			sp.setLimitBy(LimitBy.UNLIMITED);
 		} else {
-			// if (isDBSearch() && notIds.size() > 0) {
-			// maxResults = maxResults + notIds.size();
-			// }
 			sp.setLimit(maxResults);
 			sp.setMaxItems(maxResults);
 			sp.setLimitBy(LimitBy.FINAL_SIZE);
@@ -1362,7 +1510,9 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/**
-	 * <p>count.</p>
+	 * <p>
+	 * count.
+	 * </p>
 	 *
 	 * @return a {@link java.lang.Long} object.
 	 */
@@ -1397,9 +1547,12 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/**
-	 * <p>extractSortQname.</p>
+	 * <p>
+	 * extractSortQname.
+	 * </p>
 	 *
-	 * @param sortProp a {@link java.lang.String} object.
+	 * @param sortProp
+	 *            a {@link java.lang.String} object.
 	 * @return a {@link org.alfresco.service.namespace.QName} object.
 	 */
 	public QName extractSortQname(String sortProp) {
@@ -1412,9 +1565,12 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/**
-	 * <p>childFileFolders.</p>
+	 * <p>
+	 * childFileFolders.
+	 * </p>
 	 *
-	 * @param pageRequest a {@link org.alfresco.query.PagingRequest} object.
+	 * @param pageRequest
+	 *            a {@link org.alfresco.query.PagingRequest} object.
 	 * @return a {@link org.alfresco.query.PagingResults} object.
 	 */
 	public PagingResults<NodeRef> childFileFolders(PagingRequest pageRequest) {
@@ -1554,6 +1710,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		builder.type = this.type;
 		builder.subPath = this.subPath;
 		builder.path = this.path;
+		builder.inSite = this.inSite;
 		builder.excludePath = this.excludePath;
 		builder.membersPath = this.membersPath;
 		builder.queryConsistancy = this.queryConsistancy;

@@ -12,7 +12,8 @@ import org.alfresco.service.cmr.repository.StoreRef;
  * @author querephi
  * @version $Id: $Id
  */
-public class RepoConsts {
+public class RepoConsts
+{
 
 	
 	/** Constant <code>FULL_PATH_THUMBNAIL="/cm:System/cm:Icons"</code> */
@@ -246,6 +247,9 @@ public class RepoConsts {
 
 	/** Constant <code>SUPPORTED_UI_LOCALES="en,en_US,fr,sv_SE,fi,es,it,pt,ru,de"</code> */
 	public static final String SUPPORTED_UI_LOCALES =  "en,en_US,fr,sv_SE,fi,es,it,pt,ru,de";
+	
+	/** Constant <code>CATALOGS_PATH="/app:company_home/cm:System/cm:Property"{trunked}</code> */
+	public static final String CATALOGS_PATH = "/app:company_home/cm:System/cm:PropertyCatalogs";
 
 	
 }

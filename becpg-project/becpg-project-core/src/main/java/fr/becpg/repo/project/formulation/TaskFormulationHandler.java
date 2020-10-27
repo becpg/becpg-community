@@ -539,8 +539,10 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 
 		}
 
-		logger.debug("Visit task : " + task.getTask().getTaskName() + " - state before: " + currentTaskState + ", after: "
-				+ task.getTask().getTaskState() + ", reformulate: " + reformulate);
+		if(logger.isDebugEnabled()) {
+			logger.debug("Visit task : " + task.getTask().getTaskName() + " - state before: " + currentTaskState + ", after: "
+					+ task.getTask().getTaskState() + ", reformulate: " + reformulate+ " isRefused: "+ task.getTask().getIsRefused());
+		}
 
 		return reformulate;
 	}
