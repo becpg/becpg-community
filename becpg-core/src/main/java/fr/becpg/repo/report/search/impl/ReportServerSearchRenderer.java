@@ -1,7 +1,5 @@
 package fr.becpg.repo.report.search.impl;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -9,6 +7,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
@@ -36,7 +38,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
-import fr.becpg.common.BeCPGException;
 import fr.becpg.config.mapping.AttributeMapping;
 import fr.becpg.config.mapping.CharacteristicMapping;
 import fr.becpg.config.mapping.FileMapping;
@@ -60,7 +61,9 @@ import fr.becpg.report.client.ReportFormat;
 import fr.becpg.report.client.ReportParams;
 
 /**
- * <p>ReportServerSearchRenderer class.</p>
+ * <p>
+ * ReportServerSearchRenderer class.
+ * </p>
  *
  * @author matthieu
  * @version $Id: $Id
@@ -136,7 +139,7 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 
 			Map<String, Object> params = new HashMap<>();
 			params.put(ReportParams.PARAM_FORMAT, reportFormat);
-			params.put(ReportParams.PARAM_IMAGES, new HashMap<EntityImageInfo, byte[]>());
+			params.put(ReportParams.PARAM_IMAGES, new ConcurrentHashMap<EntityImageInfo, byte[]>());
 
 			EntityReportData reportData = new EntityReportData();
 
@@ -158,12 +161,10 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 
 			reportServerEngine.createReport(templateNodeRef, reportData, outputStream, params);
 
-		} catch (ReportException e) {
+		} catch (ReportException | MappingException | InterruptedException e) {
 
 			logger.error("Failed to run report: ", e);
-		} catch (MappingException e) {
-			logger.error("Failed to run report: ", e);
-		}
+		} 
 
 	}
 
@@ -175,35 +176,33 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 
 	/**
 	 * Generate Xml export data.
+	 * @throws InterruptedException 
 	 *
-	 * @param queryElt
-	 *            the query elt
-	 * @param exportElt
-	 *            the export elt
-	 * @param task
-	 *            the task
-	 * @param nodeRefList
-	 *            the node ref list
-	 * @return the i run and render task
 	 */
 	private Map<String, Object> loadReportData(ReportServerSearchContext exportSearchCtx, Element exportElt, Map<String, Object> params,
-			List<NodeRef> nodeRefList) {
+			List<NodeRef> nodeRefList) throws InterruptedException {
 
 		logger.debug("start loadReportData " + nodeRefList.size());
 		Element nodesElt = exportElt.addElement(TAG_NODES);
 		Element filesElt = exportElt.addElement(TAG_FILES);
-		Integer z_idx = 1;
+		Integer idx = 1;
+		
+
+	      ExecutorService imageExecutor = Executors.newFixedThreadPool(1);
 
 		for (NodeRef nodeRef : nodeRefList) {
 
 			Element nodeElt = nodesElt.addElement(TAG_NODE);
-			nodeElt.addAttribute(ATTR_ID, z_idx.toString());
+			nodeElt.addAttribute(ATTR_ID, idx.toString());
 
-			params = exportNode(exportSearchCtx, nodeElt, filesElt, params, nodeRef);
+			params = exportNode(exportSearchCtx, nodeElt, filesElt, params, nodeRef, imageExecutor);
 
-			z_idx++;
+			idx++;
 		}
 
+		imageExecutor.shutdown();
+	    imageExecutor.awaitTermination(5, TimeUnit.MINUTES);
+		
 		logger.debug("End loadReportData");
 
 		return params;
@@ -211,24 +210,16 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 
 	/**
 	 * Export properties and associations of a node.
+	 * @param imageExecutor 
 	 *
-	 * @param queryElt
-	 *            the query elt
-	 * @param nodeElt
-	 *            the node elt
-	 * @param task
-	 *            the task
-	 * @param nodeRef
-	 *            the node ref
-	 * @return the i run and render task
 	 */
 	private Map<String, Object> exportNode(ReportServerSearchContext exportSearchCtx, Element nodeElt, Element filesElt, Map<String, Object> params,
-			NodeRef nodeRef) {
+			NodeRef nodeRef, ExecutorService imageExecutor) {
 
 		// export class attributes
 		for (AttributeMapping attributeMapping : exportSearchCtx.getAttributeColumns()) {
 
-			String value = getColumnValue(exportSearchCtx, nodeRef, attributeMapping.getAttribute());
+			String value = getColumnValue(nodeRef, attributeMapping.getAttribute());
 			nodeElt.addAttribute(attributeMapping.getId(), value);
 		}
 
@@ -245,7 +236,7 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 
 					if (linkNodeRef != null) {
 
-						String value = getColumnValue(exportSearchCtx, linkNodeRef, characteristicMapping.getAttribute());
+						String value = getColumnValue(linkNodeRef, characteristicMapping.getAttribute());
 						nodeElt.addAttribute(characteristicMapping.getId(), value);
 					}
 				}
@@ -266,14 +257,16 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 		for (FileMapping fileMapping : exportSearchCtx.getFileColumns()) {
 
 			NodeRef tempNodeRef = nodeRef;
-			for (String p : fileMapping.getPath()) {
-
-				if (tempNodeRef != null) {
-					tempNodeRef = nodeService.getChildByName(tempNodeRef, ContentModel.ASSOC_CONTAINS, p);
+			if(tempNodeRef!=null) {
+				for (String p : fileMapping.getPath()) {
+	
+					if (tempNodeRef != null) {
+						tempNodeRef = nodeService.getChildByName(tempNodeRef, ContentModel.ASSOC_CONTAINS, p);
+					} else {
+						break;
+					}
 				}
 			}
-
-			logger.debug("tempNodeRef: " + tempNodeRef);
 
 			if (tempNodeRef != null) {
 
@@ -286,20 +279,28 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 				String id = String.format(KEY_IMAGE_NODE_IMG, nodeElt.valueOf(QUERY_ATTR_GET_ID), fileMapping.getId());
 				fileAttributes.put(ATTR_ID, id);
 
+				
 				// file content
 				if (fileMapping.getAttribute().getName().isMatch(ContentModel.PROP_CONTENT)) {
+				
+					 NodeRef imageNodeRef = tempNodeRef;
+					@SuppressWarnings("unchecked")
+					Map<EntityImageInfo, byte[]> images = (Map<EntityImageInfo, byte[]>) params.get(ReportParams.PARAM_IMAGES);
+					
+			        imageExecutor.submit(()  -> {
+		            	byte[] imageBytes = entityService.getImage(imageNodeRef);
+						if (imageBytes != null) {
+							
+							images.put(new EntityImageInfo(id, null, null, null), imageBytes);
+						}
+		            });
+					
 
-					byte[] imageBytes = entityService.getImage(tempNodeRef);
-					if (imageBytes != null) {
-
-						@SuppressWarnings("unchecked")
-						Map<EntityImageInfo, byte[]> images = (Map<EntityImageInfo, byte[]>) params.get(ReportParams.PARAM_IMAGES);
-						images.put(new EntityImageInfo(id, null, null, null), imageBytes);
-					}
+					
 				}
 				// class attribute
 				else {
-					String value = getColumnValue(exportSearchCtx, nodeRef, fileMapping.getAttribute());
+					String value = getColumnValue(nodeRef, fileMapping.getAttribute());
 					fileAttributes.put(fileMapping.getId(), value);
 				}
 			}
@@ -319,14 +320,8 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 
 	/**
 	 * Gets the column value.
-	 *
-	 * @param nodeRef
-	 *            the node ref
-	 * @param qName
-	 *            the q name
-	 * @return the column value
 	 */
-	private String getColumnValue(ReportServerSearchContext exportSearchCtx, NodeRef nodeRef, ClassAttributeDefinition attribute) {
+	private String getColumnValue(NodeRef nodeRef, ClassAttributeDefinition attribute) {
 
 		String value = VALUE_NULL;
 
@@ -353,14 +348,6 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 
 	/**
 	 * Load the query file.
-	 *
-	 * @param templateNodeRef
-	 *            the template node ref
-	 * @param queryFileName
-	 *            the query file name
-	 * @return the query
-	 * @throws MappingException
-	 * @throws BeCPGException
 	 */
 	private ReportServerSearchContext getQuery(NodeRef templateNodeRef) throws MappingException {
 
@@ -376,10 +363,10 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 		}
 
 		ContentReader reader = contentService.getReader(queryNodeRef, ContentModel.PROP_CONTENT);
-		SAXReader saxReader = new SAXReader();
 
-		try (InputStream is = reader.getContentInputStream()) {
-			Document doc = saxReader.read(is);
+		try {
+			SAXReader saxReader = new SAXReader();
+			Document doc = saxReader.read(reader.getContentInputStream());
 			queryElt = doc.getRootElement();
 
 			// attributes
@@ -451,7 +438,7 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 				exportSearchCtx.getFileColumns().add(attributeMapping);
 			}
 
-		} catch (DocumentException | ContentIOException | IOException e) {
+		} catch (DocumentException | ContentIOException e) {
 			logger.error("Failed to read the query file", e);
 		}
 
@@ -465,8 +452,7 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 	/** {@inheritDoc} */
 	@Override
 	public void executeAction(NodeRef templateNodeRef, NodeRef downloadNode, ReportFormat reportFormat) {
-		// TODO Auto-generated method stub
-
+		throw new IllegalStateException("Not supported");
 	}
 
 }
