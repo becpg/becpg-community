@@ -306,7 +306,6 @@ public class EntityReportServiceImpl implements EntityReportService {
 															writer.setMimetype(mimetype);
 															Map<String, Object> params = new HashMap<>();
 
-															params.put(ReportParams.PARAM_IMAGES, reportData.getDataObjects());
 															params.put(ReportParams.PARAM_FORMAT, ReportFormat.valueOf(reportFormat));
 															params.put(ReportParams.PARAM_LANG, MLTextHelper.localeKey(locale));
 															params.put(ReportParams.PARAM_ASSOCIATED_TPL_FILES, associationService
@@ -833,7 +832,6 @@ public class EntityReportServiceImpl implements EntityReportService {
 								writer.setMimetype(mimetype);
 								Map<String, Object> params = new HashMap<>();
 
-								params.put(ReportParams.PARAM_IMAGES, reportData.getDataObjects());
 								params.put(ReportParams.PARAM_FORMAT, ReportFormat.valueOf(reportFormat));
 								params.put(ReportParams.PARAM_LANG, MLTextHelper.localeKey(locale));
 								params.put(ReportParams.PARAM_ASSOCIATED_TPL_FILES,
@@ -937,7 +935,6 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 					Map<String, Object> params = new HashMap<>();
 
-					params.put(ReportParams.PARAM_IMAGES, reportData.getDataObjects());
 					params.put(ReportParams.PARAM_FORMAT, reportFormat);
 					params.put(ReportParams.PARAM_LANG, MLTextHelper.localeKey(locale));
 					params.put(ReportParams.PARAM_ASSOCIATED_TPL_FILES,

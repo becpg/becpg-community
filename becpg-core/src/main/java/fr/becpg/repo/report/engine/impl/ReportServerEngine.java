@@ -116,8 +116,7 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 
 				reportSession.setTemplateId(templateId);
 
-				@SuppressWarnings("unchecked")
-				final Map<EntityImageInfo, byte[]> images = (Map<EntityImageInfo, byte[]>) params.get(ReportParams.PARAM_IMAGES);
+				final Map<EntityImageInfo, byte[]> images = reportData.getDataObjects();
 
 				if (images != null) {
 					for (Map.Entry<EntityImageInfo, byte[]> entry : images.entrySet()) {
