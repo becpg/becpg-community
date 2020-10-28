@@ -67,6 +67,9 @@ public class ReportModel {
 	/** Constant <code>PROP_REPORT_TPL_SEARCH_QUERY</code> */
 	public static final QName PROP_REPORT_TPL_SEARCH_QUERY = QName.createQName(REPORT_URI, "reportTplSearchQuery");
 
+	/** Constant <code>PROP_REPORT_TPL_SEARCH_LIMIT</code> */
+	public static final QName PROP_REPORT_TPL_SEARCH_LIMIT = QName.createQName(REPORT_URI, "reportTplSearchLimit");
+
 	// reportEntity
 	/** Constant <code>ASPECT_REPORT_ENTITY</code> */
 	public static final QName ASPECT_REPORT_ENTITY = QName.createQName(REPORT_URI, "reportEntityAspect");

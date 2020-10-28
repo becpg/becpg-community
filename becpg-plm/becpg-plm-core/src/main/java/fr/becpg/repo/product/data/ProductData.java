@@ -162,7 +162,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private List<String> regulatoryUsages = new ArrayList<>();
 	private Date regulatoryFormulatedDate;
 	
-	/* 
+	/** 
 	 * JSON Data { 
 	 *   decernis: "checksum" 
 	 * }
@@ -1382,11 +1382,11 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	 * @return a {@link java.lang.String} object.
 	 */
 	public String meatContentApplied() {
-	  String ret = "";
-	  for(String key : meatContentData.keySet()) {
-		  ret+= key +": "+ meatContentData.get(key).getMeatContent()+"%\n";
+	  StringBuilder ret  = new StringBuilder();
+	  for(Map.Entry<String, MeatContentData> val : meatContentData.entrySet()) {
+		  ret.append(val.getKey() +": "+ val.getValue().getMeatContent()+"%\n");
 	   }
-	  return ret;
+	  return ret.toString();
 		
 	}
 	
@@ -2129,12 +2129,12 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	// Formula helpers
 
 	public void addWarning(String msg) {
-		reqCtrlList.add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, new MLText(msg), null, new ArrayList<NodeRef>(),
+		reqCtrlList.add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, new MLText(msg), null, new ArrayList<>(),
 				RequirementDataType.Formulation));
 	}
 
 	public void addError(String msg) {
-		reqCtrlList.add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, new MLText(msg), null, new ArrayList<NodeRef>(),
+		reqCtrlList.add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, new MLText(msg), null, new ArrayList<>(),
 				RequirementDataType.Formulation));
 	}
 	

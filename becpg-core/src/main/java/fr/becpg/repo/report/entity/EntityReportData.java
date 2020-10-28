@@ -17,8 +17,8 @@
  ******************************************************************************/
 package fr.becpg.repo.report.entity;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.dom4j.Element;
 
@@ -32,7 +32,7 @@ public class EntityReportData {
 	
 	private Element xmlDataSource;
 	
-	private Map<EntityImageInfo, byte[]> dataObjects = new HashMap<>();
+	private Map<EntityImageInfo, byte[]> dataObjects = new ConcurrentHashMap<>();
 	/**
 	 * <p>Getter for the field <code>xmlDataSource</code>.</p>
 	 *
