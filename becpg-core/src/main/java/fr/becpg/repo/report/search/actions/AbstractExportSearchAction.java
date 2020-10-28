@@ -162,9 +162,7 @@ public abstract class AbstractExportSearchAction extends ActionExecuterAbstractB
 	}
 
 	
-	
-	
-	public void setMimeTypeService(MimetypeService mimetypeService) {
+	public void setMimetypeService(MimetypeService mimetypeService) {
 		this.mimetypeService = mimetypeService;
 	}
 
