@@ -331,7 +331,7 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 		Action action = actionService.createAction(ExcelSearchAction.NAME);
 		action.setExecuteAsynchronously(true);
 		action.setParameterValue(AbstractExportSearchAction.PARAM_TPL_NODEREF, templateNodeRef);
-		action.setParameterValue(AbstractExportSearchAction.PARAM_FORMAT, reportFormat);
+		action.setParameterValue(AbstractExportSearchAction.PARAM_FORMAT, reportFormat.toString());
 		actionService.executeAction(action, downloadNode);
 
 	}
