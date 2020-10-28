@@ -768,7 +768,7 @@
 								url += "&site=&repo=true";
 							}
 
-							if (args.reportFileName.indexOf(".zip") > 0 || args.reportTplName.indexOf(".xlsx") > 0 || args.reportTplName.indexOf(".xlsm") > 0) {
+							if (args.reportFileName.indexOf(".zip") > 0 || args.reportTplName.indexOf(".xlsx") > 0 || args.reportTplName.indexOf(".xlsm") > 0 || args.reportTplName.indexOf(".rptdesign") > 0) {
 
 								url += "&async=true";
 
