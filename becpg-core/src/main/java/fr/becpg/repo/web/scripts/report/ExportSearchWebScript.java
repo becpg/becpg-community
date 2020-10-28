@@ -95,7 +95,6 @@ public class ExportSearchWebScript extends AbstractSearchWebScript {
 		NodeRef templateNodeRef = new NodeRef(storeType, storeId, nodeId);
 		String query = req.getParameter(PARAM_QUERY);
 
-		Boolean async = "true".equals(req.getParameter("async"));
 
 		if ((query == null) || query.isEmpty()) {
 			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "'query' argument cannot be null or empty");
@@ -105,18 +104,25 @@ public class ExportSearchWebScript extends AbstractSearchWebScript {
 			JSONObject jsonObject = new JSONObject(query);
 
 			QName datatype = QName.createQName(jsonObject.getString("datatype"), namespaceService);
+			
+			Integer searchLimit = (Integer) nodeService.getProperty(templateNodeRef, ReportModel.PROP_REPORT_TPL_SEARCH_LIMIT);
+			if(searchLimit == null  || searchLimit < 1) {
+				searchLimit = RepoConsts.MAX_RESULTS_5000;
+			} else {
+				searchLimit = Math.min(searchLimit, RepoConsts.MAX_RESULTS_5000);
+			}
 
 			List<NodeRef> resultNodeRefs = null;
 			String aftsQuery = (String) nodeService.getProperty(templateNodeRef, ReportModel.PROP_REPORT_TPL_SEARCH_QUERY);
 			if ((aftsQuery != null) && !aftsQuery.isEmpty()) {
-				resultNodeRefs = BeCPGQueryBuilder.createQuery().andFTSQuery(aftsQuery).maxResults(RepoConsts.MAX_RESULTS_5000).list();
+				resultNodeRefs = BeCPGQueryBuilder.createQuery().andFTSQuery(aftsQuery).maxResults(searchLimit).list();
 			} else {
-				resultNodeRefs = doSearch(req, RepoConsts.MAX_RESULTS_5000);
+				resultNodeRefs = doSearch(req, searchLimit);
 			}
 
 			ReportFormat reportFormat = reportTplService.getReportFormat(templateNodeRef);
 
-			if (async) {
+			if ("true".equals(req.getParameter("async"))) {
 
 				NodeRef downloadNodeRef = exportSearchService.createReport(datatype, templateNodeRef, resultNodeRefs, reportFormat);
 

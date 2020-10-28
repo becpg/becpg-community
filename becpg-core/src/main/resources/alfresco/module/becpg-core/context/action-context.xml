@@ -72,8 +72,22 @@
       <property name="contentService" ref="contentService"/>
       <property name="updateService" ref="downloadStatusUpdateService"/>
       <property name="excelReportSearchRenderer" ref="excelReportSearchRenderer"/>
+      <property name="mimetypeService" ref="MimetypeService" />
    </bean>
     
+    
+    <bean id="reportSearchAction" class="fr.becpg.repo.report.search.actions.ReportSearchAction" parent="action-executer">
+      <property name="contentServiceHelper" ref="downloadContentServiceHelper" />
+      <property name="downloadStorage" ref="downloadStorage" />
+      <property name="exporterService" ref="downloadExporterComponent" />
+      <property name="nodeService" ref="nodeService" />
+      <property name="publicAction" value="false"/>
+      <property name="transactionHelper" ref="retryingTransactionHelper"/>
+      <property name="contentService" ref="contentService"/>
+      <property name="updateService" ref="downloadStatusUpdateService"/>
+      <property name="reportServerSearchRenderer" ref="reportServerSearchRenderer"/>
+      <property name="mimetypeService" ref="MimetypeService" />
+   </bean>
     
     
     <!-- I18N -->

@@ -86,8 +86,7 @@ public class JXLSReportEngine implements BeCPGReportEngine {
 
 			context.putVar("entity", alfrescoRepository.findOne((NodeRef) params.get(BeCPGReportEngine.PARAM_ENTITY_NODEREF)));
 			
-			@SuppressWarnings("unchecked")
-			final Map<EntityImageInfo, byte[]> images = (Map<EntityImageInfo, byte[]>) params.get(ReportParams.PARAM_IMAGES);
+			final Map<EntityImageInfo, byte[]> images = reportData.getDataObjects();
 
 			if (images != null) {
 				for (Map.Entry<EntityImageInfo, byte[]> entry : images.entrySet()) {
