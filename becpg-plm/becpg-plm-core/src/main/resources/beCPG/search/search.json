@@ -89,15 +89,15 @@
          
         "physico1":  [ 
            {"attribute": "bcpg:pclPhysicoChem" , "htmlId":"assoc_bcpg_pclPhysicoChem_added" },
-           {"attribute": "bcpg:pvlValue" , "htmlId":"prop_bcpg_pclValue-range" }
+           {"attribute": "bcpg:pclValue" , "htmlId":"prop_bcpg_pclValue-range" }
          ], 
 		"physico2":       [ 
            {"attribute": "bcpg:pclPhysicoChem" , "htmlId":"assoc_bcpg_advPclPhysicoChem1_added" },
-           {"attribute": "bcpg:pvlValue" , "htmlId":"prop_bcpg_advPclValue1-range" }
+           {"attribute": "bcpg:pclValue" , "htmlId":"prop_bcpg_advPclValue1-range" }
          ], 
          "physico3": [ 
            {"attribute": "bcpg:pclPhysicoChem" , "htmlId":"assoc_bcpg_advPclPhysicoChem2_added" },
-           {"attribute": "bcpg:pvlValue" , "htmlId":"prop_bcpg_advPclValue2-range" }
+           {"attribute": "bcpg:pclValue" , "htmlId":"prop_bcpg_advPclValue2-range" }
          ],
 
         "microbio1": [ 
