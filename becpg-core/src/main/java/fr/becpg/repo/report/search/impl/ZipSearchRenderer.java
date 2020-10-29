@@ -53,7 +53,7 @@ public class ZipSearchRenderer  implements SearchReportRenderer {
 	/** {@inheritDoc} */
 	@Override
 	public void executeAction(NodeRef templateNodeRef, NodeRef downloadNode, ReportFormat reportFormat) {
-		    Action action = actionService.createAction("zipSearchAction");
+		    Action action = actionService.createAction(ZipSearchAction.NAME);
 	        action.setExecuteAsynchronously(true);
 	        action.setParameterValue(ZipSearchAction.PARAM_TPL_NODEREF, templateNodeRef);
 	        actionService.executeAction(action, downloadNode);
