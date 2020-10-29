@@ -380,7 +380,7 @@ public abstract class AbstractBeCPGQueryBuilder {
 	 * @param path a {@link java.lang.String} object.
 	 * @return a {@link java.lang.String} object.
 	 */
-	static public String encodePath(String path) {
+	public static String encodePath(String path) {
 		
 		if (path.indexOf("/app:company_home/") == 0) {
 			path = path.replace("/app:company_home/", "");

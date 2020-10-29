@@ -259,10 +259,9 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 								try {
 									ecoService.calculateWUsedList(ecoNodeRef, true);
 								} catch (Exception e) {
-									Throwable validCause = ExceptionStackUtil.getCause(e, RetryingTransactionHelper.RETRY_EXCEPTIONS);
-									if (validCause != null) {
-										throw (RuntimeException) validCause;
-									}
+									if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+										 throw e;
+					                }
 									logger.error(e, e);
 									return false;
 								}
@@ -283,10 +282,9 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 										}
 
 									} catch (Exception e) {
-										Throwable validCause = ExceptionStackUtil.getCause(e, RetryingTransactionHelper.RETRY_EXCEPTIONS);
-										if (validCause != null) {
-											throw (RuntimeException) validCause;
-										}
+										if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+											 throw e;
+						                }
 										logger.error(e, e);
 										return false;
 									}
@@ -331,10 +329,9 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 					});
 
 				} catch (Exception e) {
-					Throwable validCause = ExceptionStackUtil.getCause(e, RetryingTransactionHelper.RETRY_EXCEPTIONS);
-					if (validCause != null) {
-						throw (RuntimeException) validCause;
-					}
+					 if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+						 throw e;
+	                  }
 					logger.error("Cannot merge node:" + entityNodeRef, e);
 				}
 
@@ -409,7 +406,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 				if (!formulatedEntities.contains(toReformulate)) {
 
 					ret = ret && formulatedEntities.add(toReformulate);
-
+					
 					transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 						if (logger.isDebugEnabled()) {
 							logger.debug("Reformulating product: " + nodeService.getProperty(toReformulate, ContentModel.PROP_NAME) + " ("
@@ -430,10 +427,9 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 							}, false, true);
 
 						} catch (Exception e) {
-							Throwable validCause = ExceptionStackUtil.getCause(e, RetryingTransactionHelper.RETRY_EXCEPTIONS);
-							if (validCause != null) {
-								throw (RuntimeException) validCause;
-							}
+							 if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+								 throw e;
+			                  }
 							logger.error("Cannot reformulate node:" + toReformulate, e);
 							return false;
 						} finally {

@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.alfresco.error.ExceptionStackUtil;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.forum.CommentService;
 import org.alfresco.repo.policy.BehaviourFilter;
@@ -925,10 +924,9 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 							}
 
 						} catch (Exception e) {
-						    Throwable validCause = ExceptionStackUtil.getCause(e, RetryingTransactionHelper.RETRY_EXCEPTIONS);
-						    if(validCause!=null) {
-						    	throw validCause;
-						    }
+							 if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+								 throw e;
+			                  }
 							logger.error(e,e);
 						} finally {
 							logger.debug("Purge terminated with sucess: ");

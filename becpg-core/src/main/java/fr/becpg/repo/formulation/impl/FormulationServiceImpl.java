@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import org.alfresco.error.ExceptionStackUtil;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.node.integrity.IntegrityChecker;
 import org.alfresco.repo.transaction.RetryingTransactionHelper;
@@ -167,7 +166,7 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 
 	/** {@inheritDoc} */
 	@Override
-	public T formulate(T repositoryEntity, String chainId) throws FormulateException {
+	public T formulate(T repositoryEntity, String chainId) {
 		try {
 
 			FormulationChain<T> chain = getChain(repositoryEntity.getClass(), chainId);
@@ -203,10 +202,9 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 			}
 		} catch (Throwable e) {
 
-			Throwable validCause = ExceptionStackUtil.getCause(e, RetryingTransactionHelper.RETRY_EXCEPTIONS);
-			if (validCause != null) {
-				throw (RuntimeException) validCause;
-			}
+			 if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+				 throw e;
+              }
 
 			logger.error(e, e);
 			if (e instanceof FormulateException) {

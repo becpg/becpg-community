@@ -18,7 +18,9 @@ import fr.becpg.repo.ecm.ECOService;
 import fr.becpg.repo.mail.BeCPGMailService;
 
 /**
- * <p>AsyncECOServiceImpl class.</p>
+ * <p>
+ * AsyncECOServiceImpl class.
+ * </p>
  *
  * @author matthieu
  * @version $Id: $Id
@@ -110,22 +112,20 @@ public class AsyncECOServiceImpl implements AsyncECOService {
 						logger.warn("ECO already InProgress:" + ecoNodeRef);
 					}
 				} catch (Exception e) {
-					transactionService.getRetryingTransactionHelper().doInTransaction(() -> ecoService.setInError(ecoNodeRef, e), false, true);	
+					
+					transactionService.getRetryingTransactionHelper().doInTransaction(() -> ecoService.setInError(ecoNodeRef, e), false, true);
 					logger.error("Unable to apply eco ", e);
 
-				} finally {
-					// Send mail after ECO
-					transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-
-						beCPGMailService.sendMailOnAsyncAction(userName, apply ? "eco.apply" : "eco.simulate", ASYNC_ACTION_URL_PREFIX + ecoNodeRef,
-								true, watch.getTotalTimeSeconds());
-
-						return null;
-					}, true, false);
-
 				}
+				// Send mail after ECO
+				return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-				return null;
+					beCPGMailService.sendMailOnAsyncAction(userName, apply ? "eco.apply" : "eco.simulate", ASYNC_ACTION_URL_PREFIX + ecoNodeRef, true,
+							watch.getTotalTimeSeconds());
+
+					return null;
+				}, true, false);
+
 			}, userName);
 
 		}

@@ -33,12 +33,9 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import org.alfresco.error.ExceptionStackUtil;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.forum.CommentService;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
-import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.repo.version.VersionBaseModel;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -270,7 +267,7 @@ public class ECOServiceImpl implements ECOService {
 			if (ecoData.getReplacementList() != null) {
 
 				int sort = 1;
-				
+
 				for (ReplacementListDataItem replacementListDataItem : ecoData.getReplacementList()) {
 
 					List<NodeRef> replacements = getSourceItems(ecoData, replacementListDataItem);
@@ -282,7 +279,7 @@ public class ECOServiceImpl implements ECOService {
 						parent.setIsWUsedImpacted(true);
 						parent.setDepthLevel(1);
 						parent.setSort(sort++);
-						
+
 						// parent.setLink(replacementListDataItem.getNodeRef());
 
 						ecoData.getWUsedList().add(parent);
@@ -514,15 +511,10 @@ public class ECOServiceImpl implements ECOService {
 					};
 
 					try {
-						RunAsWork<Object> actionRunAs = () -> transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback,
-								isSimulation, true);
-						AuthenticationUtil.runAsSystem(actionRunAs);
+						AuthenticationUtil.runAsSystem(() -> transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback,
+								isSimulation, true));
 					} catch (Exception e) {
-						Throwable validCause = ExceptionStackUtil.getCause(e, RetryingTransactionHelper.RETRY_EXCEPTIONS);
-						if (validCause != null) {
-							throw (RuntimeException) validCause;
-						}
-
+					
 						changeUnitDataItem.setTreated(false);
 						changeUnitDataItem.setErrorMsg(e.getMessage());
 						errors.add("Change unit in Error: " + changeUnitDataItem.getNodeRef());
@@ -703,7 +695,7 @@ public class ECOServiceImpl implements ECOService {
 
 		for (Map.Entry<NodeRef, Set<Pair<NodeRef, Integer>>> replacement : replacements.entrySet()) {
 			Set<T> components = items.stream().filter(filter).filter(c -> replacement.getKey().equals(c.getComponent())).collect(Collectors.toSet());
-			if (components.size() > 0) {
+			if (!components.isEmpty()) {
 				boolean first = true;
 				for (Pair<NodeRef, Integer> target : replacement.getValue()) {
 
@@ -874,9 +866,12 @@ public class ECOServiceImpl implements ECOService {
 	}
 
 	/**
-	 * <p>evaluateWUsedAssociations.</p>
+	 * <p>
+	 * evaluateWUsedAssociations.
+	 * </p>
 	 *
-	 * @param targetAssocNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param targetAssocNodeRef
+	 *            a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @return a {@link java.util.List} object.
 	 */
 	public List<QName> evaluateWUsedAssociations(NodeRef targetAssocNodeRef) {
@@ -983,20 +978,18 @@ public class ECOServiceImpl implements ECOService {
 		List<String> errors = new ArrayList<>();
 
 		ChangeOrderData ecoData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
-		Throwable validCause = ExceptionStackUtil.getCause(e, RetryingTransactionHelper.RETRY_EXCEPTIONS);
-		if (validCause == null) {
-			errors.add("OM in error ");
-			errors.add("Error message: " + e.getMessage());
 
-			try (StringWriter buffer = new StringWriter()) {
-				try (PrintWriter printer = new PrintWriter(buffer)) {
-					e.printStackTrace(printer);
-				}
-				errors.add("StackTrace : " + buffer.toString());
-			} catch (IOException e1) {
-				// Nothing can be done here
+		errors.add("OM in error ");
+		errors.add("Error message: " + e.getMessage());
 
+		try (StringWriter buffer = new StringWriter()) {
+			try (PrintWriter printer = new PrintWriter(buffer)) {
+				e.printStackTrace(printer);
 			}
+			errors.add("StackTrace : " + buffer.toString());
+		} catch (IOException e1) {
+			// Nothing can be done here
+
 		}
 
 		if (!ECOState.InError.equals(ecoData.getEcoState())) {
