@@ -283,8 +283,9 @@ public class ProjectListExtractor extends ActivityListExtractor {
 						}
 					}
 
+					//5000 results is Unlimited 
 					results = advSearchService.queryAdvSearch(dataType, beCPGQueryBuilder, dataListFilter.getCriteriaMap(),
-							VIEW_MY_TASKS.equals(dataListFilter.getFilterId()) ? RepoConsts.MAX_RESULTS_UNLIMITED: pagination.getMaxResults());
+							VIEW_MY_TASKS.equals(dataListFilter.getFilterId()) ? RepoConsts.MAX_RESULTS_5000: pagination.getMaxResults());
 
 					if (VIEW_RESOURCES.equals(dataListFilter.getExtraParams())) {
 						for (Iterator<NodeRef> iterator = results.iterator(); iterator.hasNext();) {
