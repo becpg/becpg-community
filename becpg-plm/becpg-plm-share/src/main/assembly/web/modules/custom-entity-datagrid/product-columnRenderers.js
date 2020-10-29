@@ -165,7 +165,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 	});
 
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-		propertyName : [ "qa:slControlPoint" ],
+		propertyName : [ "qa:slControlPoint", "qa:clControlPoint" ],
 		renderer : function(oRecord, data, label, scope) {
 			var url = beCPG.util.entityURL(data.siteId, data.value);
 			return '<span class="controlPoint"><a href="' + url + '">' + Alfresco.util.encodeHTML(data.displayValue) + '</a></span>';
