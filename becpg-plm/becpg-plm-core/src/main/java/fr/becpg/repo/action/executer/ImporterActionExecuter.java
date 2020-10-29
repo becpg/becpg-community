@@ -11,13 +11,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ThreadPoolExecutor;
 
-import org.alfresco.error.ExceptionStackUtil;
 import org.alfresco.repo.action.ParameterDefinitionImpl;
 import org.alfresco.repo.action.executer.ActionExecuterAbstractBase;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.repo.transaction.AlfrescoTransactionSupport;
-import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.service.cmr.action.Action;
 import org.alfresco.service.cmr.action.ParameterDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
@@ -76,7 +74,6 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase {
 		this.transactionListener = new ImportServiceTransactionListener();
 	}
 
-	
 	/**
 	 * <p>Setter for the field <code>importThreadExecuter</code>.</p>
 	 *
@@ -174,9 +171,7 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase {
 				try {
 
 					/*
-					 * need a new transaction, otherwise impossible to do
-					 * another action like create a content do it in several
-					 * transaction to avoid timeout connection
+					 * need a new transaction, otherwise impossible to do another action like create a content do it in several transaction to avoid timeout connection
 					 */
 					List<String> errors = importService.importText(nodeRef, true, true);
 
@@ -197,34 +192,29 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase {
 					}
 
 				} catch (Exception e) {
-					
-					Throwable validCause = ExceptionStackUtil.getCause(e, RetryingTransactionHelper.RETRY_EXCEPTIONS);
-					if (validCause != null) {
-						throw (RuntimeException) validCause;
-					}
-					
+
 					hasFailed = true;
 					logger.error("Failed to import file text", e);
 
 					// set printStackTrance in description
-					StringWriter sw = new StringWriter();
-					PrintWriter pw = new PrintWriter(sw);
-					e.printStackTrace(pw);
-					String stackTrace = sw.toString();
-					unhandledLog = LOG_ERROR + stackTrace;
+					try (StringWriter sw = new StringWriter()) {
+						try (PrintWriter pw = new PrintWriter(sw)) {
+							e.printStackTrace(pw);
+							String stackTrace = sw.toString();
+							unhandledLog = LOG_ERROR + stackTrace;
+						}
+					}
 				} finally {
 					endlog = LOG_ENDING_DATE + Calendar.getInstance().getTime().toString();
 				}
 
-				String log = startlog + LOG_SEPARATOR 
-						+ (unhandledLog != null ? unhandledLog + LOG_SEPARATOR : "") 
-						+ (first50ErrorsLog.isEmpty()? "" : first50ErrorsLog + LOG_SEPARATOR)
+				String log = startlog + LOG_SEPARATOR + (unhandledLog != null ? unhandledLog + LOG_SEPARATOR : "")
+						+ (first50ErrorsLog.isEmpty() ? "" : first50ErrorsLog + LOG_SEPARATOR)
 						+ (after50ErrorsLog.isEmpty() ? "" : LOG_ERROR_MAX_REACHED + LOG_SEPARATOR) + endlog;
 
-				String allLog = startlog + LOG_SEPARATOR 
-						+ (unhandledLog != null ? unhandledLog + LOG_SEPARATOR : "") 
-						+ (first50ErrorsLog.isEmpty()? "" : first50ErrorsLog + LOG_SEPARATOR)
-						+ (after50ErrorsLog.isEmpty() ? "" : after50ErrorsLog + LOG_SEPARATOR )  + endlog;
+				String allLog = startlog + LOG_SEPARATOR + (unhandledLog != null ? unhandledLog + LOG_SEPARATOR : "")
+						+ (first50ErrorsLog.isEmpty() ? "" : first50ErrorsLog + LOG_SEPARATOR)
+						+ (after50ErrorsLog.isEmpty() ? "" : after50ErrorsLog + LOG_SEPARATOR) + endlog;
 
 				// set log, stackTrace and move file
 				if ((doNotMoveNode == null) || Boolean.FALSE.equals(doNotMoveNode)) {

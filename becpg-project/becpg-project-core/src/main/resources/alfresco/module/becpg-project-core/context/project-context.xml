@@ -190,7 +190,6 @@
    <!-- Worker -->
 	<bean id="projectFormulationWorker" class="fr.becpg.repo.project.impl.ProjectFormulationWorker">
 		<property name="projectService" ref="projectService" />
-		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
 		<property name="transactionService" ref="transactionService" />
 	</bean>
 

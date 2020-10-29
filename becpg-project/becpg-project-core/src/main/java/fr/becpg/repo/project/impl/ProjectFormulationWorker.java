@@ -20,9 +20,6 @@ package fr.becpg.repo.project.impl;
 import java.util.Date;
 import java.util.List;
 
-import org.alfresco.error.ExceptionStackUtil;
-import org.alfresco.repo.policy.BehaviourFilter;
-import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.transaction.TransactionService;
 import org.alfresco.util.ISO8601DateFormat;
@@ -54,14 +51,6 @@ public class ProjectFormulationWorker {
 	 */
 	public void setProjectService(ProjectService projectService) {
 		this.projectService = projectService;
-	}
-
-	/**
-	 * <p>setPolicyBehaviourFilter.</p>
-	 *
-	 * @param policyBehaviourFilter a {@link org.alfresco.repo.policy.BehaviourFilter} object.
-	 */
-	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
 	}
 
 	/**
@@ -109,10 +98,6 @@ public class ProjectFormulationWorker {
 				}, false, true);
 
 			} catch (Exception e) {
-				Throwable validCause = ExceptionStackUtil.getCause(e, RetryingTransactionHelper.RETRY_EXCEPTIONS);
-				if (validCause != null) {
-					throw (RuntimeException) validCause;
-				}
 				logger.error("Cannot reformulate project:" + projectNodeRef, e);
 			}
 

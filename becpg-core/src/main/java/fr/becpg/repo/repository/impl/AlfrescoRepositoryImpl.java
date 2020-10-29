@@ -33,10 +33,8 @@ import java.util.TreeSet;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.alfresco.error.ExceptionStackUtil;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.domain.node.NodeDAO;
-import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
@@ -72,7 +70,9 @@ import fr.becpg.repo.repository.model.AspectAwareDataItem;
 import fr.becpg.repo.repository.model.DefaultListDataItem;
 
 /**
- * <p>AlfrescoRepositoryImpl class.</p>
+ * <p>
+ * AlfrescoRepositoryImpl class.
+ * </p>
  *
  * @author matthieu
  * @version $Id: $Id
@@ -176,24 +176,21 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 						if (logger.isDebugEnabled()) {
 							logger.debug("Update instanceOf :" + entity.getClass().getName() + " " + entity.getName());
-							logger.debug(" HashDiff :"
-									+ BeCPGHashCodeBuilder.printDiff(entity, findOne(entity.getNodeRef(), new HashMap<>())));
+							logger.debug(" HashDiff :" + BeCPGHashCodeBuilder.printDiff(entity, findOne(entity.getNodeRef(), new HashMap<>())));
 
 						}
 
 						nodeService.addProperties(entity.getNodeRef(), properties);
-						
-						
-						//TODO verify why is needed?
+
+						// TODO verify why is needed?
 						Set<QName> propsToDelete = new HashSet<>();
 						for (Map.Entry<QName, Serializable> prop : properties.entrySet()) {
 							if (prop.getValue() == null) {
 								propsToDelete.add(prop.getKey());
-							} 
+							}
 						}
-						removeProperties(entity.getNodeRef(),propsToDelete);
+						removeProperties(entity.getNodeRef(), propsToDelete);
 
-						
 					}
 
 					saveAssociations(entity);
@@ -531,11 +528,8 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 			return entity;
 
-		} catch (Exception e) {
-			Throwable validCause = ExceptionStackUtil.getCause(e, RetryingTransactionHelper.RETRY_EXCEPTIONS);
-			if (validCause != null) {
-				throw (RuntimeException) validCause;
-			}
+		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | InstantiationException e) {
+
 			logger.error("Cannot load entity: " + id, e);
 			throw new UnsupportedOperationException(e);
 		}
@@ -778,8 +772,8 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		return repositoryEntityDefReader.getEntityClass(type) != null;
 	}
 
-        /** {@inheritDoc} */
-        @Override
+	/** {@inheritDoc} */
+	@Override
 	public <R extends RepositoryEntity> List<R> getList(RepositoryEntity entity, Class<R> clazz) {
 		QName qName = repositoryEntityDefReader.getType(clazz);
 		return getList(entity, qName, qName);
@@ -823,23 +817,18 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 	@Autowired
 	NodeDAO nodeDAO;
 
+	private void removeProperties(NodeRef nodeRef, Set<QName> qnames) {
 
-	private void removeProperties(NodeRef nodeRef, Set<QName> qnames)
-    {
-		
 		qnames.remove(ContentModel.PROP_NAME);
-        // Get the node
-        Pair<Long, NodeRef> nodePair = nodeDAO.getNodePair(nodeRef);
-        
-        if (nodePair != null)
-        {
-	        
-	        // Remove
-	        nodeDAO.removeNodeProperties(nodePair.getFirst(), qnames);
-        }
-        
-   
-    }
-	
-	
+		// Get the node
+		Pair<Long, NodeRef> nodePair = nodeDAO.getNodePair(nodeRef);
+
+		if (nodePair != null) {
+
+			// Remove
+			nodeDAO.removeNodeProperties(nodePair.getFirst(), qnames);
+		}
+
+	}
+
 }

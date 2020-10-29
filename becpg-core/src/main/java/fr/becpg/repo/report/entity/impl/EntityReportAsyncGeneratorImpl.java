@@ -22,9 +22,7 @@ import java.util.List;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.alfresco.error.ExceptionStackUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
@@ -100,7 +98,7 @@ public class EntityReportAsyncGeneratorImpl implements EntityReportAsyncGenerato
 
 				threadExecuter.execute(command);
 			} else {
-				
+
 				logger.warn("Report job already in queue for " + entityNodeRef);
 				logger.info("Report active task size " + threadExecuter.getActiveCount());
 				logger.info("Report queue size " + threadExecuter.getTaskCount());
@@ -161,20 +159,17 @@ public class EntityReportAsyncGeneratorImpl implements EntityReportAsyncGenerato
 
 		@Override
 		public void run() {
-			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-				try {
+			try {
+				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 					entityReportService.generateReports(entityNodeRef);
-				} catch (Exception e) {
-					Throwable validCause = ExceptionStackUtil.getCause(e, RetryingTransactionHelper.RETRY_EXCEPTIONS);
-					if (validCause != null) {
-						throw (RuntimeException) validCause;
-					}
-					logger.error("Unable to generate product reports ", e);
+					return null;
+				}, false, true);
 
-				}
-				return null;
-			}, false, true);
+			} catch (Exception e) {
 
+				logger.error("Unable to generate product reports ", e);
+
+			}
 			if (callback != null) {
 				callback.notifyEnd();
 			}

@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.charset.Charset;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -15,7 +16,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.alfresco.error.ExceptionStackUtil;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.content.MimetypeMap;
 import org.alfresco.repo.model.Repository;
@@ -45,6 +45,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.config.mapping.MappingException;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.PropertiesHelper;
@@ -148,7 +149,7 @@ public class ImportServiceImpl implements ImportService {
 	 * Import a text file
 	 */
 	@Override
-	public List<String> importText(final NodeRef nodeRef, boolean doUpdate, boolean requiresNewTransaction) throws Exception {
+	public List<String> importText(final NodeRef nodeRef, boolean doUpdate, boolean requiresNewTransaction)  {
 
 		logger.debug("start import");
 
@@ -307,9 +308,11 @@ public class ImportServiceImpl implements ImportService {
 	 * @param importContext
 	 * @param lastIndex
 	 * @return
-	 * @throws Exception
+	 * @throws ImporterException 
+	 * @throws MappingException 
+	 * @throws IOException 
 	 */
-	private ImportContext importInBatch(ImportContext importContext, final int lastIndex) throws Exception {
+	private ImportContext importInBatch(ImportContext importContext, final int lastIndex) throws ImporterException, MappingException, IOException, ParseException  {
 
 		Element mappingElt = null;
 		String[] arrStr;
@@ -521,7 +524,7 @@ public class ImportServiceImpl implements ImportService {
 							logger.debug(successMessage);
 						}
 
-					} catch (ImporterException e) {
+					} catch (ImporterException | ParseException e) {
 
 						if (importContext.isStopOnFirstError()) {
 							throw e;
@@ -532,10 +535,10 @@ public class ImportServiceImpl implements ImportService {
 						}
 					} catch (Exception e) {
 
-						Throwable validCause = ExceptionStackUtil.getCause(e, RetryingTransactionHelper.RETRY_EXCEPTIONS);
-						if (validCause != null) {
-							throw (RuntimeException) validCause;
-						}
+						if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+						    throw e;
+		                }
+						
 						if (importContext.isStopOnFirstError()) {
 							throw e;
 						}
@@ -568,7 +571,7 @@ public class ImportServiceImpl implements ImportService {
 	 * @throws ContentIOException
 	 */
 
-	private Element loadMapping(String name) throws ImporterException, ContentIOException, IOException {
+	private Element loadMapping(String name) throws ImporterException, IOException {
 
 		Element mappingElt = null;
 

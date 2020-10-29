@@ -3,7 +3,6 @@ package fr.becpg.repo.product.report;
 import java.util.Map;
 import java.util.regex.Matcher;
 
-import org.alfresco.error.ExceptionStackUtil;
 import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -18,7 +17,9 @@ import fr.becpg.repo.formulation.spel.SpelHelper;
 import fr.becpg.repo.repository.RepositoryEntity;
 
 /**
- * <p>SpelJXLSExpressionEvaluator class.</p>
+ * <p>
+ * SpelJXLSExpressionEvaluator class.
+ * </p>
  *
  * @author matthieu
  * @version $Id: $Id
@@ -38,9 +39,13 @@ public class SpelJXLSExpressionEvaluator implements ExpressionEvaluator {
 	}
 
 	/**
-	 * <p>Constructor for SpelJXLSExpressionEvaluator.</p>
+	 * <p>
+	 * Constructor for SpelJXLSExpressionEvaluator.
+	 * </p>
 	 *
-	 * @param formulaService a {@link fr.becpg.repo.formulation.spel.SpelFormulaService} object.
+	 * @param formulaService
+	 *            a {@link fr.becpg.repo.formulation.spel.SpelFormulaService}
+	 *            object.
 	 */
 	public SpelJXLSExpressionEvaluator(SpelFormulaService formulaService) {
 		super();
@@ -48,10 +53,15 @@ public class SpelJXLSExpressionEvaluator implements ExpressionEvaluator {
 	}
 
 	/**
-	 * <p>Constructor for SpelJXLSExpressionEvaluator.</p>
+	 * <p>
+	 * Constructor for SpelJXLSExpressionEvaluator.
+	 * </p>
 	 *
-	 * @param formulaService a {@link fr.becpg.repo.formulation.spel.SpelFormulaService} object.
-	 * @param expression a {@link org.springframework.expression.Expression} object.
+	 * @param formulaService
+	 *            a {@link fr.becpg.repo.formulation.spel.SpelFormulaService}
+	 *            object.
+	 * @param expression
+	 *            a {@link org.springframework.expression.Expression} object.
 	 */
 	public SpelJXLSExpressionEvaluator(SpelFormulaService formulaService, Expression expression) {
 		super();
@@ -59,21 +69,20 @@ public class SpelJXLSExpressionEvaluator implements ExpressionEvaluator {
 		this.expression = expression;
 	}
 
-	
-	
 	/** {@inheritDoc} */
 	@Override
 	public Object evaluate(String expression, Map<String, Object> data) {
 		try {
 
-			if(expression!=null && expression.startsWith("IMG_")) {
-					return data.get(expression);
+			if ((expression != null) && expression.startsWith("IMG_")) {
+				return data.get(expression);
 			}
-			
+
 			StandardEvaluationContext context = null;
 
-			 if (data.containsKey("dataListItem")) {
-				context = formulaService.createDataListItemSpelContext((RepositoryEntity) data.get("entity"), (RepositoryEntity) data.get("dataListItem"));
+			if (data.containsKey("dataListItem")) {
+				context = formulaService.createDataListItemSpelContext((RepositoryEntity) data.get("entity"),
+						(RepositoryEntity) data.get("dataListItem"));
 			} else if (data.containsKey("entity")) {
 				context = formulaService.createEntitySpelContext((RepositoryEntity) data.get("entity"));
 			} else {
@@ -96,17 +105,15 @@ public class SpelJXLSExpressionEvaluator implements ExpressionEvaluator {
 				}
 			}
 		} catch (Exception e) {
-			Throwable validCause = ExceptionStackUtil.getCause(e, RetryingTransactionHelper.RETRY_EXCEPTIONS);
-			if (validCause != null) {
-				throw (RuntimeException) validCause;
+			if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+				throw e;
 			}
-			if(logger.isDebugEnabled()) {
-				logger.debug(e,e);
+			if (logger.isDebugEnabled()) {
+				logger.debug(e, e);
 			}
-			
-			return "Wrong expression: "+expression+" - "+e.getMessage();
+
+			return "Wrong expression: " + expression + " - " + e.getMessage();
 		}
-		
 
 		return "";
 
@@ -119,7 +126,7 @@ public class SpelJXLSExpressionEvaluator implements ExpressionEvaluator {
 		StandardEvaluationContext context = formulaService.createEntitySpelContext((RepositoryEntity) data.get("entity"));
 
 		return expression.getValue(context);
-		
+
 	}
 
 }

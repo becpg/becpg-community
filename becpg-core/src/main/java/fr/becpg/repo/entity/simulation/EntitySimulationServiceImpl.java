@@ -4,10 +4,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ThreadPoolExecutor;
 
-import org.alfresco.error.ExceptionStackUtil;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.Path;
@@ -23,7 +21,9 @@ import org.springframework.util.StopWatch;
 import fr.becpg.repo.mail.BeCPGMailService;
 
 /**
- * <p>EntitySimulationServiceImpl class.</p>
+ * <p>
+ * EntitySimulationServiceImpl class.
+ * </p>
  *
  * @author matthieu
  * @version $Id: $Id
@@ -96,30 +96,25 @@ public class EntitySimulationServiceImpl implements EntitySimulationService {
 				runWithSuccess = true;
 
 			} catch (Exception e) {
-				Throwable validCause = ExceptionStackUtil.getCause(e, RetryingTransactionHelper.RETRY_EXCEPTIONS);
-			    if(validCause!=null) {
-			    	throw (RuntimeException)validCause;
-			    }
 				runWithSuccess = false;
 				logger.error("Unable to simulate entities ", e);
 
-			} finally {
-				// Send Mail after simulation
-				AuthenticationUtil.runAs(() -> {
-					transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-						watch.stop();
-						Path folderPath = nodeService.getPath(destNodeRef);
-						String destinationPath = folderPath.subPath(2, folderPath.size() - 1).toDisplayPath(nodeService, permissionService) + "/"
-								+ nodeService.getProperty(destNodeRef, ContentModel.PROP_NAME);
-
-						beCPGMailService.sendMailOnAsyncAction(userName, "simulation", ASYNC_ACTION_URL_PREFIX + destinationPath, runWithSuccess,
-								watch.getTotalTimeSeconds());
-
-						return null;
-					}, true, false);
-					return null;
-				}, userName);
 			}
+			// Send Mail after simulation
+			AuthenticationUtil.runAs(() -> {
+				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+					watch.stop();
+					Path folderPath = nodeService.getPath(destNodeRef);
+					String destinationPath = folderPath.subPath(2, folderPath.size() - 1).toDisplayPath(nodeService, permissionService) + "/"
+							+ nodeService.getProperty(destNodeRef, ContentModel.PROP_NAME);
+
+					beCPGMailService.sendMailOnAsyncAction(userName, "simulation", ASYNC_ACTION_URL_PREFIX + destinationPath, runWithSuccess,
+							watch.getTotalTimeSeconds());
+
+					return null;
+				}, true, false);
+				return null;
+			}, userName);
 
 		}
 

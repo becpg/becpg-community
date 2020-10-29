@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.alfresco.error.ExceptionStackUtil;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.rule.RuleModel;
@@ -37,8 +36,10 @@ import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransacti
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.InvalidAspectException;
 import org.alfresco.service.cmr.dictionary.TypeDefinition;
+import org.alfresco.service.cmr.model.FileExistsException;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
+import org.alfresco.service.cmr.model.FileNotFoundException;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.InvalidNodeRefException;
 import org.alfresco.service.cmr.repository.MLText;
@@ -469,11 +470,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 							try {
 								fileFolderService.copy(folder.getNodeRef(), entityNodeRef, null);
-							} catch (Exception e) {
-								Throwable validCause = ExceptionStackUtil.getCause(e, RetryingTransactionHelper.RETRY_EXCEPTIONS);
-								if (validCause != null) {
-									throw (RuntimeException) validCause;
-								}
+							} catch (FileExistsException | FileNotFoundException e) {
 								logger.warn("Unable to synchronize folder " + folder.getName() + " of node " + entityNodeRef + ": " + e.getMessage());
 							}
 						}
@@ -481,9 +478,8 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 				});
 			} catch (Exception e) {
-				Throwable validCause = ExceptionStackUtil.getCause(e, RetryingTransactionHelper.RETRY_EXCEPTIONS);
-				if (validCause != null) {
-					throw (RuntimeException) validCause;
+				if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+					throw e;
 				}
 				runWithSuccess = false;
 				logger.error(e, e);
@@ -580,9 +576,8 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 				});
 			} catch (Exception e) {
-				Throwable validCause = ExceptionStackUtil.getCause(e, RetryingTransactionHelper.RETRY_EXCEPTIONS);
-				if (validCause != null) {
-					throw (RuntimeException) validCause;
+				if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+					throw e;
 				}
 				runWithSuccess = false;
 			} finally {
@@ -797,9 +792,8 @@ public class EntityTplServiceImpl implements EntityTplService {
 				}
 
 			} catch (Exception e) {
-				Throwable validCause = ExceptionStackUtil.getCause(e, RetryingTransactionHelper.RETRY_EXCEPTIONS);
-				if (validCause != null) {
-					throw (RuntimeException) validCause;
+				if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+					throw e;
 				}
 				runWithSuccess = false;
 			} finally {

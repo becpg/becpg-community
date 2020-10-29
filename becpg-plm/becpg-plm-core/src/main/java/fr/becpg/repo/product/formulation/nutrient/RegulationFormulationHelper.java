@@ -12,6 +12,7 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.MLTextHelper;
@@ -191,9 +192,9 @@ public class RegulationFormulationHelper {
 
 	private static Double extractValueByKey(String roundedValue, String item, String key) {
 
-		JSONObject jsonRound;
 		try {
-			jsonRound = new JSONObject(roundedValue);
+			JSONTokener tokener = new JSONTokener(roundedValue);
+			JSONObject jsonRound = new JSONObject(tokener);
 			if (jsonRound.has(item)) {
 				JSONObject value = (JSONObject) jsonRound.get(item);
 				if (value.has(key)) {
