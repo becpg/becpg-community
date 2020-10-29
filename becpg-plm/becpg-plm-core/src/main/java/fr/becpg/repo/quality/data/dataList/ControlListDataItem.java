@@ -55,9 +55,10 @@ public class ControlListDataItem extends BeCPGDataObject{
 	String textCriteria;
 	QualityControlState state;	
 	String temperature;
-	Integer dayNumber;
+	String timePeriod;
 	NodeRef method;
 	List<NodeRef> characts = new ArrayList<>();
+	NodeRef controlPoint;
 	
 	/**
 	 * <p>Getter for the field <code>type</code>.</p>
@@ -325,23 +326,43 @@ public class ControlListDataItem extends BeCPGDataObject{
 	}
 	
 	/**
-	 * <p>Getter for the field <code>dayNumber</code>.</p>
+	 * <p>Getter for the field <code>controlPoint</code>.</p>
 	 *
-	 * @return a {@link java.lang.Integer} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
-	@AlfProp
-	@AlfQname(qname = "qa:clDayNumber")
-	public Integer getDayNumber() {
-		return dayNumber;
+	@AlfSingleAssoc
+	@AlfQname(qname = "qa:clControlPoint")
+	public NodeRef getControlPoint() {
+		return controlPoint;
 	}
 
 	/**
-	 * <p>Setter for the field <code>dayNumber</code>.</p>
+	 * <p>Setter for the field <code>controlPoint</code>.</p>
 	 *
-	 * @param dayNumber a {@link java.lang.Integer} object.
+	 * @param controlPoint a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
-	public void setDayNumber(Integer dayNumber) {
-		this.dayNumber = dayNumber;
+	public void setControlPoint(NodeRef controlPoint) {
+		this.controlPoint = controlPoint;
+	}
+	
+	/**
+	 * <p>Getter for the field <code>timePeriod</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
+	@AlfProp
+	@AlfQname(qname = "qa:clTimePeriod")
+	public String getTimePeriod() {
+		return timePeriod;
+	}
+
+	/**
+	 * <p>Setter for the field <code>timePeriod</code>.</p>
+	 *
+	 * @param timePeriod a {@link java.lang.String} object.
+	 */
+	public void setTimePeriod(String timePeriod) {
+		this.timePeriod = timePeriod;
 	}
 
 	/**
@@ -378,8 +399,9 @@ public class ControlListDataItem extends BeCPGDataObject{
 	 * @param temperature a {@link java.lang.String} object.
 	 * @param method a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param characts a {@link java.util.List} object.
+	 * @param controlPoint a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
-	public ControlListDataItem(NodeRef nodeRef, String type, Double mini, Double maxi, Boolean required, String sampleId, Double value, Double target, String unit,String textCriteria, QualityControlState state, String temperature, Integer dayNumber, NodeRef method, List<NodeRef> characts){
+	public ControlListDataItem(NodeRef nodeRef, String type, Double mini, Double maxi, Boolean required, String sampleId, Double value, Double target, String unit,String textCriteria, QualityControlState state, String temperature, String timePeriod, NodeRef method, List<NodeRef> characts, NodeRef controlPoint){
 		
 		setNodeRef(nodeRef);
 		setType(type);
@@ -393,9 +415,10 @@ public class ControlListDataItem extends BeCPGDataObject{
 		setTextCriteria(textCriteria);
 		setState(state);
 		setTemperature(temperature);
-		setDayNumber(dayNumber);
+		setTimePeriod(timePeriod);
 		setMethod(method);
 		setCharacts(characts);
+		setControlPoint(controlPoint);
 	}
 	
 	/**
