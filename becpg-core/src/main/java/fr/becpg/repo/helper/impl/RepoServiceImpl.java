@@ -69,8 +69,9 @@ public class RepoServiceImpl implements RepoService {
 	public NodeRef getOrCreateFolderByPath(NodeRef parentNodeRef, String path, String name) {
 
 		NodeRef folderNodeRef = getFolderByPath(parentNodeRef, path);
-
+        
 		if (folderNodeRef == null) {
+			 logger.error("Folder not found:"+AbstractBeCPGQueryBuilder.encodePath(path));
 			logger.debug("Create folder : " + name + "  ");
 			folderNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, PropertiesHelper.cleanFolderName(name));
 			if (folderNodeRef == null) {

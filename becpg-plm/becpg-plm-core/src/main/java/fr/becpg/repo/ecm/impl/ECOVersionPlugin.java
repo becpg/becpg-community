@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StopWatch;
 
 import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.RepoConsts;
@@ -36,7 +35,9 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 
 /**
- * <p>ECOVersionPlugin class.</p>
+ * <p>
+ * ECOVersionPlugin class.
+ * </p>
  *
  * @author matthieu
  * @version $Id: $Id
@@ -129,89 +130,80 @@ public class ECOVersionPlugin implements EntityVersionPlugin {
 
 		@Override
 		public void run() {
-			StopWatch watch = new StopWatch();
-			watch.start();
 
-			try {
-				AuthenticationUtil.runAs(() -> {
-					NodeRef ecoNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			AuthenticationUtil.runAs(() -> {
+				NodeRef ecoNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-						NodeRef parentNodeRef = getChangeOrderFolder();
+					NodeRef parentNodeRef = getChangeOrderFolder();
 
-						String name = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
+					String name = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
 
-						if (logger.isDebugEnabled()) {
-							logger.debug("Creating new impactWUsed change order");
-						}
-						ChangeOrderData changeOrderData = (ChangeOrderData) alfrescoRepository.create(parentNodeRef,
-								new ChangeOrderData(generateEcoName(name), ECOState.Automatic, ChangeOrderType.ImpactWUsed, null));
+					if (logger.isDebugEnabled()) {
+						logger.debug("Creating new impactWUsed change order");
+					}
+					ChangeOrderData changeOrderData = (ChangeOrderData) alfrescoRepository.create(parentNodeRef,
+							new ChangeOrderData(generateEcoName(name), ECOState.Automatic, ChangeOrderType.ImpactWUsed, null));
 
-						changeOrderData.setDescription(description);
+					changeOrderData.setDescription(description);
 
-						List<ReplacementListDataItem> replacementList = changeOrderData.getReplacementList();
+					List<ReplacementListDataItem> replacementList = changeOrderData.getReplacementList();
 
-						if (replacementList == null) {
-							replacementList = new ArrayList<>();
-						}
-						RevisionType revisionType = VersionType.MAJOR.equals(versionType) ? RevisionType.Major : RevisionType.Minor;
+					if (replacementList == null) {
+						replacementList = new ArrayList<>();
+					}
+					RevisionType revisionType = VersionType.MAJOR.equals(versionType) ? RevisionType.Major : RevisionType.Minor;
 
-						replacementList.add(new ReplacementListDataItem(revisionType, Collections.singletonList(entityNodeRef), entityNodeRef, 100));
+					replacementList.add(new ReplacementListDataItem(revisionType, Collections.singletonList(entityNodeRef), entityNodeRef, 100));
 
-						if (logger.isDebugEnabled()) {
-							logger.debug("Adding nodeRef " + entityNodeRef + " to automatic change order :" + changeOrderData.getName());
-							logger.debug("Revision type : " + revisionType);
-						}
-
-						changeOrderData.setReplacementList(replacementList);
-						alfrescoRepository.save(changeOrderData);
-
-						return changeOrderData.getNodeRef();
-
-					}, false, true);
-
-					boolean ret = transactionService.getRetryingTransactionHelper().doInTransaction(() -> ecoService.setInProgress(ecoNodeRef), false,
-							true);
-					try {
-						if (ret) {
-							ret = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-								ecoService.calculateWUsedList(ecoNodeRef, true);
-								return true;
-							}, false, true);
-
-							if (ret) {
-								transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-									if (ecoService.apply(ecoNodeRef) && deleteOnApply) {
-										logger.debug("It's applied and deleteOnApply is set to true, deleting ECO with NR=" + ecoNodeRef);
-										nodeService.deleteNode(ecoNodeRef);
-									}
-
-									return true;
-
-								}, false, true);
-							} else {
-								logger.warn("Cannot calculate wused:" + ecoNodeRef);
-							}
-
-						} else {
-							logger.warn("ECO already InProgress:" + ecoNodeRef);
-						}
-
-					} catch (Exception e) {
-						if (nodeService.exists(ecoNodeRef)) {
-							transactionService.getRetryingTransactionHelper().doInTransaction(() -> ecoService.setInError(ecoNodeRef, e), false,
-									true);
-						}
-						logger.error("Unable to apply eco ", e);
+					if (logger.isDebugEnabled()) {
+						logger.debug("Adding nodeRef " + entityNodeRef + " to automatic change order :" + changeOrderData.getName());
+						logger.debug("Revision type : " + revisionType);
 					}
 
-					return null;
-				}, this.userName);
+					changeOrderData.setReplacementList(replacementList);
+					alfrescoRepository.save(changeOrderData);
 
-			} catch (Exception e) {
+					return changeOrderData.getNodeRef();
 
-				logger.error("Unable to apply eco ", e);
+				}, false, true);
 
-			}
+				boolean ret = transactionService.getRetryingTransactionHelper().doInTransaction(() -> ecoService.setInProgress(ecoNodeRef), false,
+						true);
+				try {
+					if (ret) {
+						ret = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+							ecoService.calculateWUsedList(ecoNodeRef, true);
+							return true;
+						}, false, true);
+
+						if (ret) {
+							transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+								if (ecoService.apply(ecoNodeRef) && deleteOnApply) {
+									logger.debug("It's applied and deleteOnApply is set to true, deleting ECO with NR=" + ecoNodeRef);
+									nodeService.deleteNode(ecoNodeRef);
+								}
+
+								return true;
+
+							}, false, true);
+						} else {
+							logger.warn("Cannot calculate wused:" + ecoNodeRef);
+						}
+
+					} else {
+						logger.warn("ECO already InProgress:" + ecoNodeRef);
+					}
+
+				} catch (Exception e) {
+					if (nodeService.exists(ecoNodeRef)) {
+						transactionService.getRetryingTransactionHelper().doInTransaction(() -> ecoService.setInError(ecoNodeRef, e), false, true);
+					}
+					logger.error("Unable to apply eco ", e);
+				}
+
+				return null;
+			}, this.userName);
+
 		}
 
 		@Override

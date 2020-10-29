@@ -15,10 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.alfresco.error.ExceptionStackUtil;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
-import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -64,45 +62,62 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 	private NodeService nodeService;
 
 	/**
-	 * <p>Setter for the field <code>policyBehaviourFilter</code>.</p>
+	 * <p>
+	 * Setter for the field <code>policyBehaviourFilter</code>.
+	 * </p>
 	 *
-	 * @param policyBehaviourFilter a {@link org.alfresco.repo.policy.BehaviourFilter} object.
+	 * @param policyBehaviourFilter
+	 *            a {@link org.alfresco.repo.policy.BehaviourFilter} object.
 	 */
 	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
 		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
 
 	/**
-	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
+	 * <p>
+	 * Setter for the field <code>alfrescoRepository</code>.
+	 * </p>
 	 *
-	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
+	 * @param alfrescoRepository
+	 *            a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
 	 */
 	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
 	/**
-	 * <p>Setter for the field <code>transactionService</code>.</p>
+	 * <p>
+	 * Setter for the field <code>transactionService</code>.
+	 * </p>
 	 *
-	 * @param transactionService a {@link org.alfresco.service.transaction.TransactionService} object.
+	 * @param transactionService
+	 *            a {@link org.alfresco.service.transaction.TransactionService}
+	 *            object.
 	 */
 	public void setTransactionService(TransactionService transactionService) {
 		this.transactionService = transactionService;
 	}
 
 	/**
-	 * <p>Setter for the field <code>requirementScanners</code>.</p>
+	 * <p>
+	 * Setter for the field <code>requirementScanners</code>.
+	 * </p>
 	 *
-	 * @param requirementScanners a {@link java.util.List} object.
+	 * @param requirementScanners
+	 *            a {@link java.util.List} object.
 	 */
 	public void setRequirementScanners(List<RequirementScanner> requirementScanners) {
 		this.requirementScanners = requirementScanners;
 	}
 
 	/**
-	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 * <p>
+	 * Setter for the field <code>nodeService</code>.
+	 * </p>
 	 *
-	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 * @param nodeService
+	 *            a {@link org.alfresco.service.cmr.repository.NodeService}
+	 *            object.
 	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
@@ -226,10 +241,10 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 			}
 
 			for (RequirementScanner scanner : requirementScanners) {
-				if(logger.isDebugEnabled()) {
-					logger.debug("Running RequirementScanner: "+scanner.getClass().getName());
+				if (logger.isDebugEnabled()) {
+					logger.debug("Running RequirementScanner: " + scanner.getClass().getName());
 				}
-				
+
 				formulatedProduct.getReqCtrlList().addAll(scanner.checkRequirements(formulatedProduct, formulatedProduct.getProductSpecifications()));
 			}
 		}
@@ -239,14 +254,16 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 	}
 
 	/**
-	 * <p>run.</p>
+	 * <p>
+	 * run.
+	 * </p>
 	 *
 	 * @return a boolean.
 	 */
 	public boolean run() {
-		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		try {
+			return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-			try {
 				for (NodeRef productSpecificationNodeRef : BeCPGQueryBuilder.createQuery().ofType(PLMModel.TYPE_PRODUCT_SPECIFICATION)
 						.excludeDefaults().list()) {
 					if (Boolean.TRUE.equals(nodeService.getProperty(productSpecificationNodeRef, PLMModel.PROP_SPEC_COMPATIBILITY_JOB_ON))) {
@@ -286,17 +303,15 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 
 					}
 				}
-			} catch (Exception e) {
-				Throwable validCause = ExceptionStackUtil.getCause(e, RetryingTransactionHelper.RETRY_EXCEPTIONS);
-				if (validCause != null) {
-					throw (RuntimeException) validCause;
-				}
-				logger.error(e, e);
-				return false;
-			}
-			return true;
 
-		}, false, true);
+				return true;
+
+			}, false, true);
+
+		} catch (Exception e) {
+			logger.error(e, e);
+			return false;
+		}
 
 	}
 

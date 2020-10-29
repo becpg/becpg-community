@@ -6,7 +6,6 @@ package fr.becpg.repo.workflow.activiti.npd;
 import java.util.List;
 
 import org.activiti.engine.delegate.DelegateExecution;
-import org.alfresco.error.ExceptionStackUtil;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
@@ -195,6 +194,9 @@ public class CreateProduct extends BaseJavaDelegate {
 				try {
 					productService.formulate(productNodeRef);
 				} catch (Exception e1) {
+					if (RetryingTransactionHelper.extractRetryCause(e1) != null) {
+						throw e1;
+					}
 					logger.debug(e1, e1); // newly created cannot be formulate
 				}
 
@@ -202,11 +204,10 @@ public class CreateProduct extends BaseJavaDelegate {
 				nodeService.createAssociation(projectNodeRef, productNodeRef, ProjectModel.ASSOC_PROJECT_ENTITY);
 
 			} catch (Exception e) {
-				Throwable validCause = ExceptionStackUtil.getCause(e, RetryingTransactionHelper.RETRY_EXCEPTIONS);
-				if (validCause != null) {
-					throw (RuntimeException) validCause;
+				if (RetryingTransactionHelper.extractRetryCause(e) == null) {
+					logger.error("Failed to create product", e);
 				}
-				logger.error("Failed to create product", e);
+
 				throw e;
 			}
 

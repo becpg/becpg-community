@@ -9,7 +9,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.alfresco.error.ExceptionStackUtil;
 import org.alfresco.model.ContentModel;
 import org.alfresco.model.ImapModel;
 import org.alfresco.query.PagingRequest;
@@ -406,7 +405,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 		List<EntityVersion> versions = getAllVersions(origNodeRef);
 
-		if ((versions != null) && (versions.size() > 0)) {
+		if ((versions != null) && (!versions.isEmpty())) {
 
 			int index = 0;
 
@@ -519,7 +518,6 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	@Override
 	public NodeRef createVersion(final NodeRef origNodeRef, Map<String, Serializable> versionProperties) {
 		return internalCreateVersionAndCheckin(origNodeRef, null, versionProperties, true);
-
 	}
 
 	/**
@@ -571,9 +569,8 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 					});
 				}
 			} catch (Exception e) {
-				Throwable validCause = ExceptionStackUtil.getCause(e, RetryingTransactionHelper.RETRY_EXCEPTIONS);
-				if (validCause != null) {
-					throw (RuntimeException) validCause;
+				if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+					throw e;
 				}
 				logger.error("Failed to get entitysHistory", e);
 			}
