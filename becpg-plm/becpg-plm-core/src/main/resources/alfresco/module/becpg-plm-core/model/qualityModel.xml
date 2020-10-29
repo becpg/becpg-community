@@ -499,6 +499,11 @@
 					<mandatory>true</mandatory>
 					<index enabled="false" />
 				</property>
+				<property name="qa:slTimePeriod">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
 				<property name="qa:slSampleId">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
@@ -866,9 +871,10 @@
 						<constraint ref="qa:clTemperatures"/>
 					</constraints>
 				</property>
-				<property name="qa:clDayNumber">
-					<type>d:int</type>
-					<mandatory>false</mandatory>					
+				<property name="qa:clTimePeriod">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
 				</property>
 			</properties>			
 			<associations>
@@ -892,6 +898,17 @@
 						<class>bcpg:charact</class>
 						<mandatory enforced="false">true</mandatory>
 						<many>true</many>
+					</target>
+				</association>
+				<association name="qa:clControlPoint">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>qa:controlPoint</class>
+						<mandatory enforced="false">false</mandatory>
+						<many>false</many>
 					</target>
 				</association>
 			</associations>

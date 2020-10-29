@@ -1296,8 +1296,9 @@
 			<!-- Create item form -->
 			<form>
 				<field-visibility>
+					<show id="qa:clControlPoint" />
 					<show id="qa:clSampleId" />
-					<show id="qa:clDayNumber" />
+					<show id="qa:clTimePeriod" />
 					<show id="qa:clType" />
 					<show id="qa:clTemperature" />
 					<show id="qa:clMethod" />
@@ -1313,8 +1314,9 @@
 
 				<appearance>
 					<set id="reqInfo" appearance="bordered-panel" label-id="becpg.forms.set.exigences.label" />
+					<field id="qa:clControlPoint" set="reqInfo" />
 					<field id="qa:clSampleId" set="reqInfo" />
-					<field id="qa:clDayNumber" set="reqInfo" />
+					<field id="qa:clTimePeriod" set="reqInfo" />
 					<field id="qa:clType" set="reqInfo" />
 					<field id="qa:clTemperature" set="reqInfo" />
 					<field id="qa:clMethod" set="reqInfo" />
@@ -1333,8 +1335,9 @@
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
+					<show id="qa:clControlPoint" />					
 					<show id="qa:clSampleId" />
-					<show id="qa:clDayNumber" />
+					<show id="qa:clTimePeriod" />
 					<show id="qa:clType" />
 					<show id="qa:clTemperature" />
 					<show id="qa:clMethod" />
@@ -1349,8 +1352,9 @@
 					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
+					<field help="{&quot;width&quot;:200}" id="qa:clControlPoint" read-only="true" />
 					<field id="qa:clSampleId" read-only="true" />
-					<field id="qa:clDayNumber" read-only="true" />
+					<field id="qa:clTimePeriod" read-only="true" />
 					<field id="qa:clType" read-only="true" />
 					<field id="qa:clTemperature" read-only="true" />
 					<field id="qa:clMethod" read-only="true" />
@@ -1370,8 +1374,9 @@
 			<!-- Data List pop-up edit form -->
 			<form>
 				<field-visibility>
+					<show id="qa:clControlPoint" />
 					<show id="qa:clSampleId" />
-					<show id="qa:clDayNumber" />
+					<show id="qa:clTimePeriod" />
 					<show id="qa:clType" />
 					<show id="qa:clTemperature" />
 					<show id="qa:clMethod" />
@@ -1387,8 +1392,9 @@
 
 				<appearance>
 					<set id="reqInfo" appearance="bordered-panel" label-id="becpg.forms.set.exigences.label" />
+					<field id="qa:clControlPoint" read-only="true" set="reqInfo" />
 					<field id="qa:clSampleId" read-only="true" set="reqInfo" />
-					<field id="qa:clDayNumber" read-only="true" set="reqInfo" />
+					<field id="qa:clTimePeriod" read-only="true" set="reqInfo" />
 					<field id="qa:clType" read-only="true" set="reqInfo" />
 					<field id="qa:clTemperature" read-only="true" set="reqInfo" />
 					<field id="qa:clMethod" read-only="true" set="reqInfo">
