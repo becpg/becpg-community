@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.alfresco.error.ExceptionStackUtil;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
@@ -33,8 +32,6 @@ import org.alfresco.repo.workflow.WorkflowModel;
 import org.alfresco.repo.workflow.activiti.ActivitiScriptNode;
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.dictionary.AspectDefinition;
-import org.alfresco.service.cmr.model.FileExistsException;
-import org.alfresco.service.cmr.model.FileNotFoundException;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -88,8 +85,7 @@ public class NCWorkflowUtils {
 	 * @throws org.alfresco.service.cmr.model.FileExistsException if any.
 	 * @throws org.alfresco.service.cmr.model.FileNotFoundException if any.
 	 */
-	public static void updateNC(NodeRef ncNodeRef, NCWorkflowUtilsTask task, ServiceRegistry serviceRegistry)
-			throws FileExistsException, FileNotFoundException {
+	public static void updateNC(NodeRef ncNodeRef, NCWorkflowUtilsTask task, ServiceRegistry serviceRegistry) {
 
 		RunAsWork<NodeRef> actionRunAs = () -> {
 			try {
@@ -163,11 +159,10 @@ public class NCWorkflowUtils {
 				}
 
 			} catch (Exception e) {
-				Throwable validCause = ExceptionStackUtil.getCause(e, RetryingTransactionHelper.RETRY_EXCEPTIONS);
-				if (validCause != null) {
-					throw (RuntimeException) validCause;
+				if (RetryingTransactionHelper.extractRetryCause(e) == null) {
+					logger.error("Failed to update nc", e);
 				}
-				logger.error("Failed to create nc", e);
+
 				throw e;
 			}
 

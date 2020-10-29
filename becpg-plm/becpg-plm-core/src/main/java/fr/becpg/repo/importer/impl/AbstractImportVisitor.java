@@ -249,9 +249,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		if (nodeRef == null) {
 			String name = getName(importContext.getType(), properties);
 
-			if (logger.isDebugEnabled()) {
-				logger.debug("create node. Type: " + importContext.getType() + " - Properties: " + properties);
-			}
+			
 			QName assocName = ContentModel.ASSOC_CHILDREN;
 			if ((name != null) && (name.length() > 0)) {
 				assocName = QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(PropertiesHelper.cleanName(name)));
@@ -263,6 +261,10 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 			nodeRef = nodeService.createNode(importContext.getParentNodeRef(), ContentModel.ASSOC_CONTAINS, assocName, importContext.getType(),
 					ImportHelper.cleanProperties(properties)).getChildRef();
+			
+			if (logger.isDebugEnabled()) {
+				logger.debug("create node ("+nodeRef+"). Type: " + importContext.getType() + " - Properties: " + properties);
+			}
 		} else if (importContext.isDoUpdate()) {
 
 			if (logger.isDebugEnabled()) {
@@ -275,7 +277,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 					nodeService.removeProperty(nodeRef, entry.getKey());
 				} else {
 
-					if ((entry.getValue() != null) && (entry.getValue() instanceof MLText)) {
+					if ((entry.getValue() instanceof MLText)) {
 						boolean mlAware = MLPropertyInterceptor.isMLAware();
 						MLPropertyInterceptor.setMLAware(true);
 						try {
@@ -754,7 +756,6 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 				throw new ImporterException(I18NUtil.getMessage(ImportHelper.MSG_ERROR_FILE_BAD_PREFIX, value));
 			}
 
-			if (in != null) {
 				// create file if it doesn't exist
 				NodeRef fileNodeRef = createFile(targetFolderNodeRef, mappingFileName, mappingId);
 
@@ -766,8 +767,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 				ContentWriter writer = contentService.getWriter(fileNodeRef, ContentModel.PROP_CONTENT, true);
 				writer.setMimetype(mimetype);
 				writer.setEncoding(encoding);
-				writer.putContent(in);
-			}
+			
 
 		} finally {
 			try {
@@ -891,8 +891,8 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 		importContext.setColumns(columnsAttributeMapping);
 
-		if (logger.isDebugEnabled()) {
-			logger.debug("importContext.getColumns() " + importContext.getColumns());
+		if (logger.isTraceEnabled()) {
+			logger.trace("importContext.getColumns() " + importContext.getColumns());
 		}
 
 		return importContext;
@@ -974,7 +974,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 					queryBuilder.parent(folderNodeRef);
 
 					if (BeCPGModel.PROP_LV_VALUE.isMatch(attribute) || BeCPGModel.PROP_LKV_VALUE.isMatch(attribute)) {
-						if ((properties.get(attribute) != null) && (properties.get(attribute) instanceof MLText)) {
+						if ( (properties.get(attribute) instanceof MLText)) {
 							queryBuilder.andPropEquals(attribute, ((MLText) properties.get(attribute)).getDefaultValue());
 						} else if (properties.get(attribute) != null) {
 							queryBuilder.andPropEquals(attribute, properties.get(attribute).toString());
@@ -1003,7 +1003,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 						queryBuilder.andPropEquals(attribute, value);
 					}
 					doQuery = true;
-				} else if (doQuery == false) {
+				} else if (!doQuery) {
 					logger.warn("Value of NodeColumnKey " + attribute + " is null (or it is not a property).");
 				}
 			}
@@ -1033,8 +1033,8 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 				String name = getName(type, properties);
 
-				if (NodeRef.isNodeRef(name.toString())) {
-					return new NodeRef(name.toString());
+				if (NodeRef.isNodeRef(name)) {
+					return new NodeRef(name);
 				} else {
 					queryBuilder.andPropEquals(propName, name);
 					// #3433 by default look by path or provide mapping
@@ -1177,7 +1177,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		QName targetClass = propDef.getDataType().getName();
 		if ((attributeMapping instanceof AttributeMapping) && (((AttributeMapping) attributeMapping).getTargetClass() != null)) {
 			targetClass = ((AttributeMapping) attributeMapping).getTargetClass();
-		} else if ((propDef != null) && BeCPGModel.PROP_PARENT_LEVEL.equals(propDef.getName())) {
+		} else if ( BeCPGModel.PROP_PARENT_LEVEL.equals(propDef.getName())) {
 			targetClass = importContext.getType();
 		}
 		return findTargetNodeByValue(importContext, propDef, targetClass, value, null);

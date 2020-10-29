@@ -11,7 +11,6 @@ import java.util.Set;
 
 import org.activiti.engine.delegate.DelegateExecution;
 import org.alfresco.email.server.EmailServerModel;
-import org.alfresco.error.ExceptionStackUtil;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
@@ -164,11 +163,10 @@ public class CreateNC extends BaseJavaDelegate {
 					nodeService.addChild(pkgNodeRef, ncNodeRef, WorkflowModel.ASSOC_PACKAGE_CONTAINS, qName);
 
 				} catch (Exception e) {
-					Throwable validCause = ExceptionStackUtil.getCause(e, RetryingTransactionHelper.RETRY_EXCEPTIONS);
-					if (validCause != null) {
-						throw (RuntimeException) validCause;
-					}
-					logger.error("Failed to create nc", e);
+					 if (RetryingTransactionHelper.extractRetryCause(e) == null) {
+						 logger.error("Failed to create nc", e);
+	                 }
+					
 					throw e;
 				}
 
