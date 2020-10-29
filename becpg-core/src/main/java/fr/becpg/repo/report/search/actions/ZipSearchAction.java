@@ -60,6 +60,8 @@ public class ZipSearchAction extends ActionExecuterAbstractBase {
 	public static final String PARAM_TPL_NODEREF = "templateNodeRef";
 	private static final Log logger = LogFactory.getLog(ZipSearchAction.class);
 
+	public static final String NAME = "zipSearchAction";
+
 	// Dependencies
 	private CheckOutCheckInService checkOutCheckInService;
 	private ContentServiceHelper contentServiceHelper;
@@ -180,7 +182,7 @@ public class ZipSearchAction extends ActionExecuterAbstractBase {
 
 		NodeRef templateNodeRef =  (NodeRef) action.getParameterValue(PARAM_TPL_NODEREF);
 		
-		ParameterCheck.mandatory("templateNodeRef", templateNodeRef);
+		ParameterCheck.mandatory(PARAM_TPL_NODEREF, templateNodeRef);
 		
 		// Get the download request data and set up the exporter crawler
 		// parameters.
