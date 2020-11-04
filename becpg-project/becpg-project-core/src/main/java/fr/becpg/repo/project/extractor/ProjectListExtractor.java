@@ -187,6 +187,12 @@ public class ProjectListExtractor extends ActivityListExtractor {
 		List<NodeRef> results = new LinkedList<>();
 
 		// pjt:project
+               if (dataListFilter.isDefaultSort()) {
+			Map<String, Boolean> sortMap = new LinkedHashMap<>();
+			sortMap.put("@cm:created", false);
+			dataListFilter.setSortMap(sortMap);
+		}
+
 		QName dataType = dataListFilter.getDataType();
 		BeCPGQueryBuilder beCPGQueryBuilder = dataListFilter.getSearchQuery().excludeDefaults();
 

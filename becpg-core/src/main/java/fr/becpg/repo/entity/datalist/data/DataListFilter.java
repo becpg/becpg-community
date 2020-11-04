@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2018 beCPG.
+ * Copyright (C) 2010-2020 beCPG.
  *
  * This file is part of beCPG
  *
@@ -35,20 +35,33 @@ import org.alfresco.util.ISO9075;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
+/**
+ * <p>DataListFilter class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class DataListFilter {
 
+	/** Constant <code>PATH_FILTER="path"</code> */
 	public static final String PATH_FILTER = "path";
 
+	/** Constant <code>NODE_PATH_FILTER="nodePath"</code> */
 	public static final String NODE_PATH_FILTER = "nodePath";
 
+	/** Constant <code>NODE_FILTER="node"</code> */
 	public static final String NODE_FILTER = "node";
 
+	/** Constant <code>ALL_FILTER="all"</code> */
 	public static final String ALL_FILTER = "all";
 
+	/** Constant <code>FORM_FILTER="filterform"</code> */
 	public static final String FORM_FILTER = "filterform";
 
+	/** Constant <code>FTS_FILTER="fts"</code> */
 	public static final String FTS_FILTER = "fts";
 
+	/** Constant <code>PROP_DEPTH_LEVEL="prop_bcpg_depthLevel"</code> */
 	public static final String PROP_DEPTH_LEVEL = "prop_bcpg_depthLevel";
 
 	private static final String VERSION_FILTER = "version";
@@ -93,16 +106,31 @@ public class DataListFilter {
 
 	private boolean hasWriteAccess = false;
 
+	private boolean isDefaultSort = true;
+
+	/**
+	 * <p>Constructor for DataListFilter.</p>
+	 */
 	public DataListFilter() {
 		super();
 		sortMap.put("@bcpg:sort", true);
 		sortMap.put("@cm:created", true);
 	}
 
+	/**
+	 * <p>Getter for the field <code>entityNodeRefs</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	public List<NodeRef> getEntityNodeRefs() {
 		return entityNodeRefs;
 	}
 
+	/**
+	 * <p>getEntityNodeRef.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public NodeRef getEntityNodeRef() {
 		if ((entityNodeRefs != null) && !entityNodeRefs.isEmpty()) {
 			return entityNodeRefs.get(0);
@@ -110,90 +138,209 @@ public class DataListFilter {
 		return null;
 	}
 
+	/**
+	 * <p>Getter for the field <code>filterId</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getFilterId() {
 		return filterId;
 	}
 
+	/**
+	 * <p>Getter for the field <code>format</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getFormat() {
 		return format;
 	}
 
+	/**
+	 * <p>Setter for the field <code>format</code>.</p>
+	 *
+	 * @param format a {@link java.lang.String} object.
+	 */
 	public void setFormat(String format) {
 		this.format = format;
 	}
 
+	/**
+	 * <p>Getter for the field <code>criteriaMap</code>.</p>
+	 *
+	 * @return a {@link java.util.Map} object.
+	 */
 	public Map<String, String> getCriteriaMap() {
 		return criteriaMap;
 	}
 
+	/**
+	 * <p>Getter for the field <code>sortMap</code>.</p>
+	 *
+	 * @return a {@link java.util.Map} object.
+	 */
 	public Map<String, Boolean> getSortMap() {
 		return sortMap;
 	}
 
+	/**
+	 * <p>isDepthDefined.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public boolean isDepthDefined() {
 		return (criteriaMap != null) && (criteriaMap.get(PROP_DEPTH_LEVEL) != null);
 	}
 
+	/**
+	 * <p>Getter for the field <code>parentNodeRef</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public NodeRef getParentNodeRef() {
 		return parentNodeRef;
 	}
 
+	/**
+	 * <p>Setter for the field <code>parentNodeRef</code>.</p>
+	 *
+	 * @param parentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void setParentNodeRef(NodeRef parentNodeRef) {
 		this.parentNodeRef = parentNodeRef;
 	}
 
+	/**
+	 * <p>isGuessContainer.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public boolean isGuessContainer() {
 		return guessContainer;
 	}
 
+	/**
+	 * <p>isDefaultSort.</p>
+	 *
+	 * @return a boolean.
+	 */
+	public boolean isDefaultSort() {
+		return isDefaultSort;
+	}
+
+	/**
+	 * <p>Setter for the field <code>guessContainer</code>.</p>
+	 *
+	 * @param guessContainer a boolean.
+	 */
 	public void setGuessContainer(boolean guessContainer) {
 		this.guessContainer = guessContainer;
 	}
 
+	/**
+	 * <p>isRepo.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public boolean isRepo() {
 		return isRepo;
 	}
 
+	/**
+	 * <p>setRepo.</p>
+	 *
+	 * @param isRepo a boolean.
+	 */
 	public void setRepo(boolean isRepo) {
 		this.isRepo = isRepo;
 	}
-	
+
+	/**
+	 * <p>isEffectiveFilterOn.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public boolean isEffectiveFilterOn() {
 		return effectiveFilterOn;
 	}
 
+	/**
+	 * <p>Setter for the field <code>effectiveFilterOn</code>.</p>
+	 *
+	 * @param effectiveFilterOn a boolean.
+	 */
 	public void setEffectiveFilterOn(boolean effectiveFilterOn) {
 		this.effectiveFilterOn = effectiveFilterOn;
 	}
 
+	/**
+	 * <p>Getter for the field <code>siteId</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getSiteId() {
 		return siteId;
 	}
 
+	/**
+	 * <p>Setter for the field <code>siteId</code>.</p>
+	 *
+	 * @param siteId a {@link java.lang.String} object.
+	 */
 	public void setSiteId(String siteId) {
 		this.siteId = siteId;
 	}
 
+	/**
+	 * <p>Getter for the field <code>containerId</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getContainerId() {
 		return containerId;
 	}
 
+	/**
+	 * <p>Setter for the field <code>containerId</code>.</p>
+	 *
+	 * @param containerId a {@link java.lang.String} object.
+	 */
 	public void setContainerId(String containerId) {
 		this.containerId = containerId;
 	}
 
+	/**
+	 * <p>Getter for the field <code>dataListName</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getDataListName() {
 		return dataListName;
 	}
 
+	/**
+	 * <p>Setter for the field <code>dataListName</code>.</p>
+	 *
+	 * @param dataListName a {@link java.lang.String} object.
+	 */
 	public void setDataListName(String dataListName) {
 		this.dataListName = dataListName;
 	}
 
+	/**
+	 * <p>Getter for the field <code>filterData</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getFilterData() {
 		return filterData;
 	}
 
+	/**
+	 * <p>getMaxDepth.</p>
+	 *
+	 * @return a int.
+	 */
 	public int getMaxDepth() {
 		int maxLevel = 1;
 		if (isDepthDefined()) {
@@ -206,6 +353,11 @@ public class DataListFilter {
 		return maxLevel;
 	}
 
+	/**
+	 * <p>updateMaxDepth.</p>
+	 *
+	 * @param depth a int.
+	 */
 	public void updateMaxDepth(int depth) {
 		if (criteriaMap == null) {
 			criteriaMap = new HashMap<>();
@@ -217,84 +369,186 @@ public class DataListFilter {
 		}
 	}
 
+	/**
+	 * <p>Getter for the field <code>filterParams</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getFilterParams() {
 		return filterParams;
 	}
 
+	/**
+	 * <p>Setter for the field <code>filterParams</code>.</p>
+	 *
+	 * @param filterParams a {@link java.lang.String} object.
+	 */
 	public void setFilterParams(String filterParams) {
 		this.filterParams = filterParams;
 	}
 
+	/**
+	 * <p>Setter for the field <code>filterId</code>.</p>
+	 *
+	 * @param filterId a {@link java.lang.String} object.
+	 */
 	public void setFilterId(String filterId) {
 		this.filterId = filterId;
 	}
 
+	/**
+	 * <p>Setter for the field <code>filterData</code>.</p>
+	 *
+	 * @param filterData a {@link java.lang.String} object.
+	 */
 	public void setFilterData(String filterData) {
 		this.filterData = filterData;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityNodeRefs</code>.</p>
+	 *
+	 * @param entityNodeRefs a {@link java.util.List} object.
+	 */
 	public void setEntityNodeRefs(List<NodeRef> entityNodeRefs) {
 		this.entityNodeRefs = entityNodeRefs;
 	}
 
+	/**
+	 * <p>Setter for the field <code>criteriaMap</code>.</p>
+	 *
+	 * @param criteriaMap a {@link java.util.Map} object.
+	 */
 	public void setCriteriaMap(Map<String, String> criteriaMap) {
 		this.criteriaMap = criteriaMap;
 	}
 
+	/**
+	 * <p>Setter for the field <code>sortMap</code>.</p>
+	 *
+	 * @param sortMap a {@link java.util.Map} object.
+	 */
 	public void setSortMap(Map<String, Boolean> sortMap) {
 		if ((sortMap != null) && !sortMap.isEmpty()) {
+			this.isDefaultSort = false;
 			this.sortMap = sortMap;
 		}
 	}
 
+	/**
+	 * <p>Getter for the field <code>sortId</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getSortId() {
 		return sortId;
 	}
 
+	/**
+	 * <p>Setter for the field <code>sortId</code>.</p>
+	 *
+	 * @param sortId a {@link java.lang.String} object.
+	 */
 	public void setSortId(String sortId) {
 		this.sortId = sortId;
 	}
 
+	/**
+	 * <p>Getter for the field <code>dataType</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.namespace.QName} object.
+	 */
 	public QName getDataType() {
 		return dataType;
 	}
 
+	/**
+	 * <p>Setter for the field <code>dataType</code>.</p>
+	 *
+	 * @param dataType a {@link org.alfresco.service.namespace.QName} object.
+	 */
 	public void setDataType(QName dataType) {
 		this.dataType = dataType;
 	}
 
+	/**
+	 * <p>getSearchQuery.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 */
 	public BeCPGQueryBuilder getSearchQuery() {
 		return getSearchQuery(this.parentNodeRef);
 	}
 
+	/**
+	 * <p>Getter for the field <code>nodeRef</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public NodeRef getNodeRef() {
 		return nodeRef;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeRef</code>.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
 	public void setNodeRef(NodeRef nodeRef) {
 		this.nodeRef = nodeRef;
 	}
 
+	/**
+	 * <p>Getter for the field <code>extraParams</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getExtraParams() {
 		return extraParams;
 	}
 
+	/**
+	 * <p>Setter for the field <code>extraParams</code>.</p>
+	 *
+	 * @param extraParams a {@link java.lang.String} object.
+	 */
 	public void setExtraParams(String extraParams) {
 		this.extraParams = extraParams;
 	}
 
+	/**
+	 * <p>Getter for the field <code>pagination</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.entity.datalist.data.DataListPagination} object.
+	 */
 	public DataListPagination getPagination() {
 		return pagination;
 	}
 
+	/**
+	 * <p>hasWriteAccess.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public boolean hasWriteAccess() {
 		return hasWriteAccess;
 	}
 
+	/**
+	 * <p>Setter for the field <code>hasWriteAccess</code>.</p>
+	 *
+	 * @param hasWriteAccess a boolean.
+	 */
 	public void setHasWriteAccess(boolean hasWriteAccess) {
 		this.hasWriteAccess = hasWriteAccess;
 	}
 
+	/**
+	 * <p>getSearchQuery.</p>
+	 *
+	 * @param parentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 */
 	public BeCPGQueryBuilder getSearchQuery(NodeRef parentNodeRef) {
 
 		BeCPGQueryBuilder queryBuilder = createFilterQuery();
@@ -336,10 +590,10 @@ public class DataListFilter {
 			Calendar startCal = Calendar.getInstance();
 
 			String fromQuery = startCal.get(Calendar.YEAR) + "\\-" + (startCal.get(Calendar.MONTH) + 1) + "\\-" + startCal.get(Calendar.DAY_OF_MONTH);
-			
+
 			queryBuilder.andBetweenOrNull(BeCPGModel.PROP_START_EFFECTIVITY, "MIN", fromQuery);
-			queryBuilder.andBetweenOrNull(BeCPGModel.PROP_END_EFFECTIVITY,  fromQuery, "MAX");
-			
+			queryBuilder.andBetweenOrNull(BeCPGModel.PROP_END_EFFECTIVITY, fromQuery, "MAX");
+
 		}
 
 		if (filterId != null) {
@@ -402,14 +656,29 @@ public class DataListFilter {
 		return queryBuilder;
 	}
 
+	/**
+	 * <p>isSimpleItem.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public boolean isSimpleItem() {
 		return nodeRef != null;
 	}
 
+	/**
+	 * <p>isAllFilter.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public boolean isAllFilter() {
 		return (filterId != null) && filterId.equals(ALL_FILTER) && (parentNodeRef != null) && effectiveFilterOn == false;
 	}
 
+	/**
+	 * <p>isVersionFilter.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public boolean isVersionFilter() {
 		return (filterId != null) && filterId.equals(VERSION_FILTER);
 	}
@@ -418,6 +687,7 @@ public class DataListFilter {
 		return AuthenticationUtil.getFullyAuthenticatedUser();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "DataListFilter [filterId=" + filterId + ", filterParams=" + filterParams + ", dataListName=" + dataListName + ", entityNodeRefs="
@@ -427,6 +697,7 @@ public class DataListFilter {
 				+ format + ", effectiveFilterOn=" + effectiveFilterOn + ", pagination=" + pagination + ", hasWriteAccess=" + hasWriteAccess + "]";
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -449,6 +720,7 @@ public class DataListFilter {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
