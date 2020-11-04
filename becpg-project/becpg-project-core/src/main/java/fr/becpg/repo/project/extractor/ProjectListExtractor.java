@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -230,6 +231,12 @@ public class ProjectListExtractor extends ActivityListExtractor {
 		List<NodeRef> results = new LinkedList<>();
 
 		// pjt:project
+		if (dataListFilter.isDefaultSort()) {
+			Map<String, Boolean> sortMap = new LinkedHashMap<>();
+			sortMap.put("@cm:created", false);
+			dataListFilter.setSortMap(sortMap);
+		}
+
 		BeCPGQueryBuilder beCPGQueryBuilder = dataListFilter.getSearchQuery().excludeDefaults();
 
 		if (VIEW_ENTITY_PROJECTS.equals(dataListFilter.getFilterId())) {
@@ -266,7 +273,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 
 					beCPGQueryBuilder.excludeProp(ProjectModel.PROP_TL_IS_EXCLUDE_FROM_SEARCH, Boolean.TRUE.toString());
 					beCPGQueryBuilder.excludeProp(ProjectModel.PROP_TL_IS_GROUP, Boolean.TRUE.toString());
-					
+
 					if ((dataListFilter.getCriteriaMap() != null) && !dataListFilter.getCriteriaMap().containsKey("prop_pjt_tlState")) {
 						dataListFilter.getCriteriaMap().put("prop_pjt_tlState", "\"Planned\",\"InProgress\"");
 					}
@@ -285,7 +292,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 
 					//5000 results is Unlimited 
 					results = advSearchService.queryAdvSearch(dataType, beCPGQueryBuilder, dataListFilter.getCriteriaMap(),
-							VIEW_MY_TASKS.equals(dataListFilter.getFilterId()) ? RepoConsts.MAX_RESULTS_5000: pagination.getMaxResults());
+							VIEW_MY_TASKS.equals(dataListFilter.getFilterId()) ? RepoConsts.MAX_RESULTS_5000 : pagination.getMaxResults());
 
 					if (VIEW_RESOURCES.equals(dataListFilter.getExtraParams())) {
 						for (Iterator<NodeRef> iterator = results.iterator(); iterator.hasNext();) {
