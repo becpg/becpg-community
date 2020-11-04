@@ -507,40 +507,40 @@
 		 *           be actioned, or an Array thereof
 		 */
 	   onActionDuplicate : function EntityDataGrid_onActionDuplicate(p_items) {
-		   var me = this, items = YAHOO.lang.isArray(p_items) ? p_items : [ p_items ], destinationNodeRef = this.modules.dataGrid.datalistMeta.nodeRef!=null ? new Alfresco.util.NodeRef(
-		         this.modules.dataGrid.datalistMeta.nodeRef): new Alfresco.util.NodeRef(
-				         this.modules.dataGrid.options.parentNodeRef), nodeRefs = [];
-
-		   var fnActionDuplicateConfirm = function EntityDataGrid__onActionDuplicate_confirm(items) {
-		   for ( var i = 0, ii = items.length; i < ii; i++) {
-			   nodeRefs.push(items[i].nodeRef);
+			   var me = this, items = YAHOO.lang.isArray(p_items) ? p_items : [ p_items ], destinationNodeRef = this.modules.dataGrid.datalistMeta.nodeRef!=null ? new Alfresco.util.NodeRef(
+			         this.modules.dataGrid.datalistMeta.nodeRef): new Alfresco.util.NodeRef(
+					         this.modules.dataGrid.options.parentNodeRef), nodeRefs = [];
+	
+			   var fnActionDuplicateConfirm = function EntityDataGrid__onActionDuplicate_confirm(items) {
+			   for ( var i = 0, ii = items.length; i < ii; i++) {
+				   nodeRefs.push(items[i].nodeRef);
+			   }
+	
+			   this.modules.actions.genericAction({
+			      success : {
+			         event : {
+			            name : this.scopeId + "dataItemsDuplicated",
+			            obj : {
+				            items : items
+			            }
+			         },
+			         message : this.msg("message.duplicate.success", items.length)
+			      },
+			      failure : {
+				      message : this.msg("message.duplicate.failure")
+			      },
+			      webscript : {
+			         method : Alfresco.util.Ajax.POST,
+			         name : "duplicate/node/" + destinationNodeRef.uri
+			      },
+			      config : {
+			         requestContentType : Alfresco.util.Ajax.JSON,
+			         dataObj : {
+				         nodeRefs : nodeRefs
+			         }
+			      }
+			   });
 		   }
-
-		   this.modules.actions.genericAction({
-		      success : {
-		         event : {
-		            name : this.scopeId + "dataItemsDuplicated",
-		            obj : {
-			            items : items
-		            }
-		         },
-		         message : this.msg("message.duplicate.success", items.length)
-		      },
-		      failure : {
-			      message : this.msg("message.duplicate.failure")
-		      },
-		      webscript : {
-		         method : Alfresco.util.Ajax.POST,
-		         name : "duplicate/node/" + destinationNodeRef.uri
-		      },
-		      config : {
-		         requestContentType : Alfresco.util.Ajax.JSON,
-		         dataObj : {
-			         nodeRefs : nodeRefs
-		         }
-		      }
-		   });
-	   }
 		   Alfresco.util.PopupManager.displayPrompt({
 			      title : this.msg("message.confirm.duplicate.title", items.length),
 			      text : this.msg("message.confirm.duplicate.description", items.length),
