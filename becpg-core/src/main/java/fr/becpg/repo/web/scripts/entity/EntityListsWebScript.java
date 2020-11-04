@@ -459,7 +459,7 @@ public class EntityListsWebScript extends AbstractWebScript {
 	 * </code>
 	 */
 	@Override
-	final public void execute(WebScriptRequest req, WebScriptResponse res) throws WebScriptException {
+	public final void execute(WebScriptRequest req, WebScriptResponse res)  {
 		JSONObject result = new JSONObject();
 		try {
 			// Always return in browser local
@@ -483,8 +483,6 @@ public class EntityListsWebScript extends AbstractWebScript {
 			// entity
 			// lists
 			boolean skipFilter = false;
-
-			// Date lastModified = null;
 
 			// We get datalist for a given aclGroup
 			if ((aclMode != null) && SecurityModel.TYPE_ACL_GROUP.equals(nodeType)) {
