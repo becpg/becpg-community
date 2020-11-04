@@ -106,6 +106,8 @@ public class DataListFilter {
 
 	private boolean hasWriteAccess = false;
 
+	private boolean isDefaultSort = true;
+
 	/**
 	 * <p>Constructor for DataListFilter.</p>
 	 */
@@ -218,6 +220,15 @@ public class DataListFilter {
 	}
 
 	/**
+	 * <p>isDefaultSort.</p>
+	 *
+	 * @return a boolean.
+	 */
+	public boolean isDefaultSort() {
+		return isDefaultSort;
+	}
+
+	/**
 	 * <p>Setter for the field <code>guessContainer</code>.</p>
 	 *
 	 * @param guessContainer a boolean.
@@ -243,7 +254,7 @@ public class DataListFilter {
 	public void setRepo(boolean isRepo) {
 		this.isRepo = isRepo;
 	}
-	
+
 	/**
 	 * <p>isEffectiveFilterOn.</p>
 	 *
@@ -419,6 +430,7 @@ public class DataListFilter {
 	 */
 	public void setSortMap(Map<String, Boolean> sortMap) {
 		if ((sortMap != null) && !sortMap.isEmpty()) {
+			this.isDefaultSort = false;
 			this.sortMap = sortMap;
 		}
 	}
@@ -578,10 +590,10 @@ public class DataListFilter {
 			Calendar startCal = Calendar.getInstance();
 
 			String fromQuery = startCal.get(Calendar.YEAR) + "\\-" + (startCal.get(Calendar.MONTH) + 1) + "\\-" + startCal.get(Calendar.DAY_OF_MONTH);
-			
+
 			queryBuilder.andBetweenOrNull(BeCPGModel.PROP_START_EFFECTIVITY, "MIN", fromQuery);
-			queryBuilder.andBetweenOrNull(BeCPGModel.PROP_END_EFFECTIVITY,  fromQuery, "MAX");
-			
+			queryBuilder.andBetweenOrNull(BeCPGModel.PROP_END_EFFECTIVITY, fromQuery, "MAX");
+
 		}
 
 		if (filterId != null) {
