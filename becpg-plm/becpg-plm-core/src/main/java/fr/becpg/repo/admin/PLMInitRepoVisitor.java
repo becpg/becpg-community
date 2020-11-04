@@ -593,7 +593,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 			// rule
 			Rule rule = new Rule();
-			rule.setRuleType(RuleType.INBOUND);
+			rule.setRuleTypes(Arrays.asList(RuleType.INBOUND, RuleType.UPDATE));
 			rule.setAction(compositeAction);
 			rule.applyToChildren(true);
 			rule.setTitle("import csv file");
