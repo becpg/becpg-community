@@ -96,6 +96,19 @@ div.constraintsList .scrollableList {
 	padding-left: 22px;
 }
 
+.datalist-toolbar .onActionGroup, .datagrid .onActionGroup a {
+	background: transparent
+		url(../../components/documentlibrary/actions/document-copy-to-16.png)
+		no-repeat 12px 4px;
+	padding-left: 22px;
+}
+
+.datalist-toolbar .onActionDuplicateChilds, .datagrid .onActionDuplicateChilds a {
+	background: transparent
+		url(../../components/documentlibrary/actions/folder-manage-rules-16.png)
+		no-repeat 12px 4px;
+	padding-left: 22px;
+}
 
 .formulation-view .datagrid-bar .new-row span.first-child {
 	background: url(../images/add-row-16.png) no-repeat 8px 4px;
