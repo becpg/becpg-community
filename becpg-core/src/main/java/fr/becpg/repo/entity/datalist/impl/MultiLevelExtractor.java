@@ -111,7 +111,7 @@ public class MultiLevelExtractor extends SimpleExtractor {
 		} else {
 			resetTree = updateDepthUserPref(dataListFilter);
 		}
-	
+
 		int pageSize = dataListFilter.getPagination().getPageSize();
 		int startIndex = (dataListFilter.getPagination().getPage() - 1) * dataListFilter.getPagination().getPageSize();
 
@@ -126,8 +126,8 @@ public class MultiLevelExtractor extends SimpleExtractor {
 		Map<String, Object> props = new HashMap<>();
 		props.put(PROP_ROOT_ENTITYNODEREF, dataListFilter.getEntityNodeRef());
 		props.put(PROP_PATH, "");
-		
-		appendNextLevel(ret, metadataFields, listData, 0, startIndex, pageSize, props, dataListFilter);
+
+		appendNextLevel(ret, metadataFields, null, listData, 0, startIndex, pageSize, props, dataListFilter);
 
 		ret.setFullListSize(listData.getSize());
 
@@ -147,7 +147,7 @@ public class MultiLevelExtractor extends SimpleExtractor {
 	 * @param dataListFilter a {@link fr.becpg.repo.entity.datalist.data.DataListFilter} object.
 	 * @return a int.
 	 */
-	protected int appendNextLevel(PaginatedExtractedItems ret, List<String> metadataFields, MultiLevelListData listData, int currIndex,
+	protected int appendNextLevel(PaginatedExtractedItems ret, List<String> metadataFields,NodeRef parentNodeRef, MultiLevelListData listData, int currIndex,
 			int startIndex, int pageSize, Map<String, Object> props, DataListFilter dataListFilter) {
 
 		Map<NodeRef, Map<String, Object>> cache = new HashMap<>();
@@ -160,6 +160,7 @@ public class MultiLevelExtractor extends SimpleExtractor {
 			props.put(PROP_DEPTH, entry.getValue().getDepth());
 			props.put(PROP_ENTITYNODEREF, entityNodeRef);
 			props.put(PROP_PATH, curPath + "/" + entry.getKey().getId());
+		
 
 			if ((currIndex >= startIndex) && (currIndex < (startIndex + pageSize))) {
 
@@ -170,10 +171,8 @@ public class MultiLevelExtractor extends SimpleExtractor {
 
 					if (entry.getValue().isLeaf()) {
 						props.put(PROP_LEAF, true);
-					} else if (multiLevelDataListService.isExpandedNode(nodeRef,
-							(!entry.getValue().getTree().isEmpty() || (dataListFilter.getMaxDepth() < 0)
-									|| (entry.getValue().getDepth() < dataListFilter.getMaxDepth())),
-							false)) {
+					} else if (multiLevelDataListService.isExpandedNode(nodeRef, (!entry.getValue().getTree().isEmpty()
+							|| (dataListFilter.getMaxDepth() < 0) || (entry.getValue().getDepth() < dataListFilter.getMaxDepth())), false)) {
 						props.put(PROP_OPEN, true);
 					}
 				}
@@ -189,88 +188,74 @@ public class MultiLevelExtractor extends SimpleExtractor {
 				}
 
 				if (RepoConsts.FORMAT_CSV.equals(dataListFilter.getFormat()) || RepoConsts.FORMAT_XLSX.equals(dataListFilter.getFormat())) {
-					ret.addItem(extractExport(
-							RepoConsts.FORMAT_XLSX.equals(dataListFilter.getFormat()) ? FormatMode.XLSX : FormatMode.CSV,
-							nodeRef, ret.getComputedFields(), props, cache));
+					ret.addItem(extractExport(RepoConsts.FORMAT_XLSX.equals(dataListFilter.getFormat()) ? FormatMode.XLSX : FormatMode.CSV, nodeRef,
+							ret.getComputedFields(), props, cache));
 				} else {
 					ret.addItem(extractJSON(nodeRef, ret.getComputedFields(), props, cache));
 				}
 			} else if (currIndex >= (startIndex + pageSize)) {
 				return currIndex;
 			}
-			currIndex = appendNextLevel(ret, metadataFields, entry.getValue(), currIndex + 1, startIndex, pageSize, props, dataListFilter);
+			currIndex = appendNextLevel(ret, metadataFields, nodeRef, entry.getValue(), currIndex + 1, startIndex, pageSize, props, dataListFilter);
 		}
 		return currIndex;
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields,
-			FormatMode mode, Map<QName, Serializable> properties, Map<String, Object> extraProps,
-			Map<NodeRef, Map<String, Object>> cache) {
+	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields, FormatMode mode,
+			Map<QName, Serializable> properties, Map<String, Object> extraProps, Map<NodeRef, Map<String, Object>> cache) {
 
 		Map<String, Object> tmp = super.doExtract(nodeRef, itemType, metadataFields, mode, properties, extraProps, cache);
 
-		if (FormatMode.JSON.equals(mode)) {
+		if (FormatMode.JSON.equals(mode) || FormatMode.CSV.equals(mode) || FormatMode.XLSX.equals(mode)) {
 			if (extraProps.get(PROP_DEPTH) != null) {
-				@SuppressWarnings("unchecked")
-				Map<String, Object> depth = (Map<String, Object>) tmp.get("prop_bcpg_depthLevel");
-				if (depth == null) {
-					depth = new HashMap<>();
-				}
-
-				Integer value = (Integer) extraProps.get(PROP_DEPTH);
-				depth.put("value", value);
-				depth.put("displayValue", value);
-
-				tmp.put("prop_bcpg_depthLevel", depth);
-			}
-
-			if (extraProps.get(PROP_LEAF) != null) {
-				tmp.put(PROP_LEAF, extraProps.get(PROP_LEAF));
-			}
-
-			if (extraProps.get(PROP_OPEN) != null) {
-				tmp.put(PROP_OPEN, extraProps.get(PROP_OPEN));
-			}
-
-			if (extraProps.get(PROP_ROOT_ENTITYNODEREF) != null) {
-				if (!extraProps.get(PROP_ROOT_ENTITYNODEREF).equals(entityListDAO.getEntity(nodeRef))) {
-					tmp.put(PROP_IS_MULTI_LEVEL, true);
-					if (extraProps.get(PROP_PATH) != null) {
-						tmp.put(PROP_PATH, extraProps.get(PROP_PATH));
+				if (FormatMode.JSON.equals(mode)) {
+					@SuppressWarnings("unchecked")
+					Map<String, Object> depth = (Map<String, Object>) tmp.get("prop_bcpg_depthLevel");
+					if (depth == null) {
+						depth = new HashMap<>();
 					}
+
+					Integer value = (Integer) extraProps.get(PROP_DEPTH);
+					depth.put("value", value);
+					depth.put("displayValue", value);
+
+					tmp.put("prop_bcpg_depthLevel", depth);
+				} else {
+					tmp.put("prop_bcpg_depthLevel", extraProps.get(PROP_DEPTH).toString());
 				}
 			}
 
-			if ((extraProps.get(PROP_ENTITYNODEREF) != null) && (extraProps.get(PROP_REVERSE_ASSOC) != null)) {
-				// TODO better if retrieved from cache
-				NodeRef entityNodeRef = (NodeRef) extraProps.get(PROP_ENTITYNODEREF);
-
-				String assocName = (String) extraProps.get(PROP_REVERSE_ASSOC);
-
-				tmp.put("assoc_" + assocName.replaceFirst(":", "_"), attributeExtractorService.extractCommonNodeData(entityNodeRef));
-			}
-		} else if (FormatMode.CSV.equals(mode) || FormatMode.XLSX.equals(mode)) {
-			if (extraProps.get(PROP_DEPTH) != null) {
-				tmp.put("prop_bcpg_depthLevel", extraProps.get(PROP_DEPTH).toString());
-			}
-
-			if (extraProps.get(PROP_ROOT_ENTITYNODEREF) != null) {
-				if (!extraProps.get(PROP_ROOT_ENTITYNODEREF).equals(entityListDAO.getEntity(nodeRef))) {
-					tmp.put(PROP_IS_MULTI_LEVEL, true);
-					if (extraProps.get(PROP_PATH) != null) {
-						tmp.put(PROP_PATH, extraProps.get(PROP_PATH));
-					}
+			if (FormatMode.JSON.equals(mode)) {
+				if (extraProps.get(PROP_LEAF) != null) {
+					tmp.put(PROP_LEAF, extraProps.get(PROP_LEAF));
+				}
+	
+				if (extraProps.get(PROP_OPEN) != null) {
+					tmp.put(PROP_OPEN, extraProps.get(PROP_OPEN));
 				}
 			}
 
 			if ((extraProps.get(PROP_ENTITYNODEREF) != null) && (extraProps.get(PROP_REVERSE_ASSOC) != null)) {
 				NodeRef entityNodeRef = (NodeRef) extraProps.get(PROP_ENTITYNODEREF);
 				String assocName = (String) extraProps.get(PROP_REVERSE_ASSOC);
-
-				tmp.put("assoc_" + assocName.replaceFirst(":", "_"), attributeExtractorService.extractPropName(entityNodeRef));
+				if (FormatMode.JSON.equals(mode)) {
+					// TODO better if retrieved from cache
+					tmp.put("assoc_" + assocName.replaceFirst(":", "_"), attributeExtractorService.extractCommonNodeData(entityNodeRef));
+				} else {
+					tmp.put("assoc_" + assocName.replaceFirst(":", "_"), attributeExtractorService.extractPropName(entityNodeRef));
+				}
 			}
+			
+			if ((extraProps.get(PROP_ROOT_ENTITYNODEREF) != null)
+					&& !extraProps.get(PROP_ROOT_ENTITYNODEREF).equals(entityListDAO.getEntity(nodeRef))) {
+				tmp.put(PROP_IS_MULTI_LEVEL, true);
+				if (extraProps.get(PROP_PATH) != null) {
+					tmp.put(PROP_PATH, extraProps.get(PROP_PATH));
+				}
+			}
+
 		}
 
 		return tmp;
@@ -281,10 +266,7 @@ public class MultiLevelExtractor extends SimpleExtractor {
 	public boolean applyTo(DataListFilter dataListFilter) {
 		return !dataListFilter.isSimpleItem() && (dataListFilter.getDataType() != null)
 				&& entityDictionaryService.isMultiLevelDataList(dataListFilter.getDataType())
-				&& !dataListFilter.getDataListName().startsWith(RepoConsts.WUSED_PREFIX) && !dataListFilter.getDataListName().equals("projectList") // TODO
-																																					// should
-																																					// be
-																																					// better
+				&& !dataListFilter.getDataListName().startsWith(RepoConsts.WUSED_PREFIX) && !dataListFilter.getDataListName().equals("projectList") // TODO better
 				&& !dataListFilter.isVersionFilter();
 	}
 
