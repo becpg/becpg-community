@@ -366,9 +366,10 @@ public class DesignerServiceImpl implements DesignerService {
 			try {
 				if (reader != null) {
 					File file = new File(path);
-					if (!file.exists() || file.createNewFile()) {
-						try (InputStream in = reader.getContentInputStream(); OutputStream out = new FileOutputStream(file)) {
-							IOUtils.copy(in, out);
+	
+					if (file.exists() || file.createNewFile()) {
+						try (OutputStream out = new FileOutputStream(file)) {
+							IOUtils.copy(reader.getContentInputStream(), out);
 						}
 					}
 				}
