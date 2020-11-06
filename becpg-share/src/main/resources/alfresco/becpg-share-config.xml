@@ -23,6 +23,7 @@
 			<language locale="pt">Portuguese</language>
 			<language locale="ru">Russian</language>
 			<language locale="de">German</language>
+			<language locale="tr">Turkish</language>
 		</ui-languages>
 	
 	
@@ -87,7 +88,6 @@
 			<language locale="ar_SA">Arabic - Saudi Arabia</language>
 			<language locale="ar_TN">Arabic - Tunisia</language>
 			<language locale="bem_ZM">Bemba - Zambia</language>
-			
 			
 			<!-- Others can be use in language only way if country is same than language 
 			
