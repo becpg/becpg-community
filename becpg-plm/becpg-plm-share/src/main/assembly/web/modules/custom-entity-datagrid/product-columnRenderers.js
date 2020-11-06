@@ -28,9 +28,12 @@ if (beCPG.module.EntityDataGridRenderers) {
 			var url = beCPG.util.entityURL(data.siteId, data.value), version = "";
 			var toogleGroupButton = null;
 			var padding = 0;
+			var tr = scope.widgets.dataTable.getTrEl(elCell);
 
 			if (oRecord.getData("itemData")["prop_bcpg_depthLevel"] && oRecord.getData("itemData")["prop_bcpg_depthLevel"].value) {
 				 padding = (oRecord.getData("itemData")["prop_bcpg_depthLevel"].value - 1) * 25;
+			
+				Dom.addClass( tr , "mtl-level-"+oRecord.getData("itemData")["prop_bcpg_depthLevel"].value);
 			}
 			
 			if (label == "mpm:plProduct" || label == "bcpg:compoListProduct" || label == "bcpg:packagingListProduct" || label == "mpm:plResource") {
@@ -53,8 +56,12 @@ if (beCPG.module.EntityDataGridRenderers) {
 					toogleGroupButton = '<div id="group_'+( oRecord.getData("itemData")["open"]?"expanded":"collapsed")+'_'+ oRecord.getData("nodeRef")+'" style="margin-left:' + padding
 							+ 'px;" class="onCollapsedAndExpanded" ><a href="#" class="'+scope.id + '-action-link"><span class="gicon ggroup-'
 							+( oRecord.getData("itemData")["open"]?"expanded":"collapsed")+'"></span></a></div>';
+					Dom.addClass( tr, "mtl-"+( oRecord.getData("itemData")["open"]?"expanded":"collapsed"));		
+							
 				} else if( true === oRecord.getData("itemData")["isLeaf"] ){
 					padding +=25;
+					
+					Dom.addClass( tr, "mtl-leaf");
 				}
 			}
 			
