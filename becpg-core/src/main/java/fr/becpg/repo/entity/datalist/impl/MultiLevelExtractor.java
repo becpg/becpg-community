@@ -127,7 +127,7 @@ public class MultiLevelExtractor extends SimpleExtractor {
 		props.put(PROP_ROOT_ENTITYNODEREF, dataListFilter.getEntityNodeRef());
 		props.put(PROP_PATH, "");
 
-		appendNextLevel(ret, metadataFields, null, listData, 0, startIndex, pageSize, props, dataListFilter);
+		appendNextLevel(ret, metadataFields, listData, 0, startIndex, pageSize, props, dataListFilter);
 
 		ret.setFullListSize(listData.getSize());
 
@@ -147,7 +147,7 @@ public class MultiLevelExtractor extends SimpleExtractor {
 	 * @param dataListFilter a {@link fr.becpg.repo.entity.datalist.data.DataListFilter} object.
 	 * @return a int.
 	 */
-	protected int appendNextLevel(PaginatedExtractedItems ret, List<String> metadataFields,NodeRef parentNodeRef, MultiLevelListData listData, int currIndex,
+	protected int appendNextLevel(PaginatedExtractedItems ret, List<String> metadataFields, MultiLevelListData listData, int currIndex,
 			int startIndex, int pageSize, Map<String, Object> props, DataListFilter dataListFilter) {
 
 		Map<NodeRef, Map<String, Object>> cache = new HashMap<>();
@@ -196,7 +196,7 @@ public class MultiLevelExtractor extends SimpleExtractor {
 			} else if (currIndex >= (startIndex + pageSize)) {
 				return currIndex;
 			}
-			currIndex = appendNextLevel(ret, metadataFields, nodeRef, entry.getValue(), currIndex + 1, startIndex, pageSize, props, dataListFilter);
+			currIndex = appendNextLevel(ret, metadataFields, entry.getValue(), currIndex + 1, startIndex, pageSize, props, dataListFilter);
 		}
 		return currIndex;
 	}
