@@ -114,10 +114,10 @@
         }
         else
         {
-            if (url.indexOf("repository") > 0  || url.indexOf("sharedfiles")>0)
+            if (url.indexOf("repository") >= 0  || url.indexOf("sharedfiles")>=0)
             {
                 url += '?path=' + encodeURIComponent('/' + path.split('/').slice(2).join('/') + '/' + name);
-            } else if( url.indexOf("myfiles")>0) {
+            } else if( url.indexOf("myfiles")>=0) {
                 url += '?path=' + encodeURIComponent('/' + path.split('/').slice(4).join('/') + '/' + name);
             }
             else
@@ -127,7 +127,7 @@
 
         }
 
-        if (url !== null)
+        if (url != null)
         {
             url = $siteURL(url,
             {
@@ -217,7 +217,7 @@
     			val=   val / 39.37008;
     			break;
     		case "mil":
-    			val=   val / 39370,079;
+    			val=   val / 39370.079;
     			break;
     		default:
     			break;
@@ -296,7 +296,7 @@
     {
         // Mandatory parameter check
         if (!YAHOO.lang.isString(siteId) || siteId.length === 0 || !YAHOO.lang.isString(activityType) || activityType.length === 0 || !YAHOO.lang
-                .isString(title) || title.length === 0 || !YAHOO.lang.isObject(data) === null || !(YAHOO.lang
+                .isString(title) || title.length === 0 || !YAHOO.lang.isObject(data) == null || !(YAHOO.lang
                 .isString(data.nodeRef) || YAHOO.lang.isString(data.parentNodeRef)))
         {
             return;
