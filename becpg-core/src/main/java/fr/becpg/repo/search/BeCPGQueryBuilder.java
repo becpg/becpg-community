@@ -490,7 +490,8 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	 */
 	public BeCPGQueryBuilder inSite(String siteId, String containerId) {
 
-		if ((containerId == null) || containerId.isEmpty() || "documentLibrary".equals(containerId)) {
+		if (siteId!=null && !siteId.isEmpty() 
+				&& ( (containerId == null) || containerId.isEmpty() || "documentLibrary".equals(containerId))) {
 			if (this.inSite != null) {
 				logger.warn("Site is already set for this query.( old:" + this.inSite + " -  new: " + siteId + ")");
 			}
@@ -499,13 +500,13 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 			String path = SiteHelper.SITES_SPACE_QNAME_PATH;
 
-			if ((siteId != null) && (siteId.length() > 0)) {
+			if ((siteId != null) && (!siteId.isEmpty())) {
 				path += "cm:" + ISO9075.encode(siteId);
 			} else {
 				path += "*";
 			}
 	
-			if ((containerId != null) && (containerId.length() > 0)) {
+			if ((containerId != null) && (!containerId.isEmpty())) {
 	 			path += "/cm:" + ISO9075.encode(containerId);
 			}
 
