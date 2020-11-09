@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -187,7 +188,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 		List<NodeRef> results = new LinkedList<>();
 
 		// pjt:project
-               if (dataListFilter.isDefaultSort()) {
+          if (dataListFilter.isDefaultSort()) {
 			Map<String, Boolean> sortMap = new LinkedHashMap<>();
 			sortMap.put("@cm:created", false);
 			dataListFilter.setSortMap(sortMap);
