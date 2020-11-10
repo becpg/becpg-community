@@ -185,7 +185,6 @@ public class EntityServiceImpl implements EntityService {
 		if (reader != null) {
 			try (FastByteArrayOutputStream out = new FastByteArrayOutputStream(IMAGE_BUFFER_SIZE)) {
 				
-				ImageIO.setUseCache(false);
 				BufferedImage image = ImageIO.read(reader.getContentInputStream());
 
 				if (image != null) {

@@ -180,7 +180,7 @@
 					hideLabel: true,
 					evaluate: function(asset, entity) {
 						return asset.name != null &&
-							(asset.name != "View-documents" || asset.name != "View-reports" || asset.name != "activityList" || asset.name != "WUsed")
+							(asset.name != "View-documents" && asset.name != "View-reports" && asset.name != "activityList" && asset.name != "WUsed")
 							&& entity != null && (beCPG.util.contains(entity.aspects,
 								"bcpg:productAspect") || entity.type == "bcpg:productSpecification" || entity.type == "pjt:project") && entity.userAccess.edit;
 					},
