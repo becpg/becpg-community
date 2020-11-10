@@ -150,6 +150,16 @@
 		<property name="associationService" ref="associationService" />
 		<property name="repoService" ref="repoService" />
 	</bean>
+	
+	<!-- Formulation javascript helper -->
+	
+	<bean id="bFormulationScriptHelper" parent="baseJavaScriptExtension" class="fr.becpg.repo.jscript.FormulationScriptHelper">
+		<property name="extensionName">
+			<value>bFormulation</value>
+		</property>
+		<property name="nodeService" ref="NodeService" />
+	</bean>
+
 
 	<!-- Supplier portal -->
 	<bean id="bSupplierPortalScript" parent="baseJavaScriptExtension" class="fr.becpg.repo.jscript.SupplierPortalHelper">
