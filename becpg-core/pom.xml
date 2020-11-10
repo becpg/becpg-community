@@ -88,12 +88,13 @@
         </dependency>
 
 
-		<!-- Image IO -->
+		<!-- Image IO To slow
 		 <dependency>
 	        <groupId>com.twelvemonkeys.imageio</groupId>
 	        <artifactId>imageio-jpeg</artifactId>
 	        <version>3.6</version>
-	    </dependency>
+	    </dependency> 
+	    -->
 	    <dependency>
 	        <groupId>com.twelvemonkeys.imageio</groupId>
 	        <artifactId>imageio-tiff</artifactId>
