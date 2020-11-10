@@ -45,8 +45,8 @@ function runAction(p_params) {
 				nodeRef = itemNode.nodeRef;
 				result =
 				{
-					nodeRef: nodeRef,
-					oldNodeRef: nodeRef,
+					nodeRef: nodeRef.toString(),
+					oldNodeRef: nodeRef.toString(),
 					action: "groupItems",
 					success: false
 				};
@@ -57,14 +57,17 @@ function runAction(p_params) {
 						toGroupItem = itemNode;
 						result.success = true;
 					} else {
-						result.nodeRef = toGroupItem.nodeRef.toString();
-		
-						var qty1 = toGroupItem.properties["bcpg:compoListQtySubFormula"];
-						var qty2 = itemNode.properties["bcpg:compoListQtySubFormula"];
-						if (qty1 != null && qty2 != null) {
-							toGroupItem.properties["bcpg:compoListQtySubFormula"] = qty1 + qty2;
+							var unit1 = itemNode.properties["bcpg:compoListUnit"];
+							var unit2 = toGroupItem.properties["bcpg:compoListUnit"];
+							if(unit1 == unit2){
+							result.nodeRef = toGroupItem.nodeRef.toString();
+							var qty1 = toGroupItem.properties["bcpg:compoListQtySubFormula"];
+							var qty2 = itemNode.properties["bcpg:compoListQtySubFormula"];
+							if (qty1 != null && qty2 != null) {
+								toGroupItem.properties["bcpg:compoListQtySubFormula"] = qty1 + qty2;
+							}
+							itemNode.remove();
 						}
-						itemNode.remove();
 						result.success = true;
 					}
 
