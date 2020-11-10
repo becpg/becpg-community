@@ -76,7 +76,7 @@
  *  
  * deleteGroupPermission(node, group) Remove specific group permissions
  *  
- * clearPermissions(node, inherit) Remove permissions set on node
+ * clearPermissions(node, inherit) Remove permissions as system set on node, node can be node or nodeRef
  * 
  * copyList( sourceNode, destNode ,  listQname)  Copy one list from sourceNode to destNode
  * 

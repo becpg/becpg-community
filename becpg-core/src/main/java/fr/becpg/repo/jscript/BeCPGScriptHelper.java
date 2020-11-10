@@ -941,7 +941,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public String[] getSearchResults(String queryId) {
 		List<NodeRef> ret = paginatedSearchCache.getSearchResults(queryId);
 		if (ret != null) {
-			return ret.stream().map(n -> n.toString()).toArray(String[]::new);
+			return ret.stream().map(NodeRef::toString).toArray(String[]::new);
 		} else {
 			logger.warn("No results found for queryId: " + queryId);
 		}
@@ -958,15 +958,16 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 * @return a boolean.
 	 */
 	public boolean setPermissionAsSystem(ScriptNode sourceNode, String permission, String authority) {
-		return AuthenticationUtil.runAsSystem(() -> {
-			permissionService.setPermission(sourceNode.getNodeRef(), authority, permission, true);
-			return true;
-		});
+		return setPermissionAsSystem(sourceNode.getNodeRef(),permission,authority);
 	}
 	
 	public boolean setPermissionAsSystem(String nodeRef, String permission, String authority) {
+		return setPermissionAsSystem(new NodeRef(nodeRef),permission,authority);
+	}
+	
+	public boolean setPermissionAsSystem(NodeRef nodeRef, String permission, String authority) {
 		return AuthenticationUtil.runAsSystem(() -> {
-			permissionService.setPermission(new NodeRef(nodeRef), authority, permission, true);
+			permissionService.setPermission(nodeRef, authority, permission, true);
 			return true;
 		});
 	}
@@ -979,8 +980,16 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 * @return a boolean.
 	 */
 	public boolean allowWrite(ScriptNode sourceNode, String authority) {
+		return allowWrite(sourceNode.getNodeRef(), authority);
+	}
+	
+	public boolean allowWrite(String nodeRef,  String authority) {
+		return allowWrite(new NodeRef(nodeRef), authority);
+	}
+	
+	public boolean allowWrite(NodeRef nodeRef, String authority) {
 		return AuthenticationUtil.runAsSystem(() -> {
-			permissionService.setPermission(sourceNode.getNodeRef(), authority, PermissionService.EDITOR, true);
+			permissionService.setPermission(nodeRef, authority, PermissionService.EDITOR, true);
 			return true;
 		});
 	}
@@ -993,8 +1002,16 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 * @return a boolean.
 	 */
 	public boolean allowRead(ScriptNode sourceNode, String authority) {
+		return allowRead(sourceNode.getNodeRef(), authority);
+	}
+
+	public boolean allowRead(String nodeRef, String authority) {
+		return allowWrite(new NodeRef(nodeRef), authority);
+	}
+
+	public boolean allowRead(NodeRef nodeRef, String authority) {
 		return AuthenticationUtil.runAsSystem(() -> {
-			permissionService.setPermission(sourceNode.getNodeRef(), authority, PermissionService.READ, true);
+			permissionService.setPermission(nodeRef, authority, PermissionService.READ, true);
 			return true;
 		});
 	}
@@ -1007,13 +1024,21 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 * @return a boolean.
 	 */
 	public boolean clearPermissions(ScriptNode sourceNode, boolean inherit) {
+		return clearPermissions(sourceNode.getNodeRef(),inherit);
+	}
+
+	public boolean clearPermissions(String nodeRef, boolean inherit) {
+		return clearPermissions(new NodeRef(nodeRef),inherit);
+	}
+	
+	public boolean clearPermissions(NodeRef nodeRef, boolean inherit) {
 		return AuthenticationUtil.runAsSystem(() -> {
-			permissionService.deletePermissions(sourceNode.getNodeRef());
-			permissionService.setInheritParentPermissions(sourceNode.getNodeRef(), inherit);
+			permissionService.deletePermissions(nodeRef);
+			permissionService.setInheritParentPermissions(nodeRef, inherit);
 			return true;
 		});
 	}
-
+	
 	/**
 	 * <p>deleteGroupPermission.</p>
 	 *
@@ -1022,12 +1047,20 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 * @return a boolean.
 	 */
 	public boolean deleteGroupPermission(ScriptNode sourceNode, String authority) {
+		return deleteGroupPermission(sourceNode.getNodeRef(), authority);
+	}
+	
+	public boolean deleteGroupPermission(String nodeRef, String authority) {
+		return deleteGroupPermission(new NodeRef(nodeRef), authority);
+	}
+	
+	public boolean deleteGroupPermission(NodeRef nodeRef, String authority) {
 		return AuthenticationUtil.runAsSystem(() -> {
-			Set<AccessPermission> permissions = permissionService.getAllSetPermissions(sourceNode.getNodeRef());
-			clearPermissions(sourceNode, false);
+			Set<AccessPermission> permissions = permissionService.getAllSetPermissions(nodeRef);
+			clearPermissions(nodeRef, false);
 			for (AccessPermission permission : permissions) {
 				if (!permission.getAuthority().equals(authority)) {
-					permissionService.setPermission(sourceNode.getNodeRef(), permission.getAuthority(), permission.getPermission(), true);
+					permissionService.setPermission(nodeRef, permission.getAuthority(), permission.getPermission(), true);
 				}
 			}
 			return true;
