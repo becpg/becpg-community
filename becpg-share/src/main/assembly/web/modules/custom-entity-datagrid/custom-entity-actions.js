@@ -537,7 +537,7 @@
 				      webscript : {
 				         method : Alfresco.util.Ajax.POST,
                          stem : Alfresco.constants.PROXY_URI + "becpg/datalists/action/",
-				         name : "group/node/" + destinationNodeRef.uri
+				         name : "group/node/" + destinationNodeRef.uri+"?allPages="+me.allPages+"&queryExecutionId="+me.queryExecutionId
 				      },
 				      config : {
 				         requestContentType : Alfresco.util.Ajax.JSON,
