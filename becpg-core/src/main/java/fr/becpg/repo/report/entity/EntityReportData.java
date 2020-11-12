@@ -17,8 +17,8 @@
  ******************************************************************************/
 package fr.becpg.repo.report.entity;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.dom4j.Element;
 
@@ -32,7 +32,8 @@ public class EntityReportData {
 	
 	private Element xmlDataSource;
 	
-	private Map<EntityImageInfo, byte[]> dataObjects = new ConcurrentHashMap<>();
+	private Set<EntityImageInfo> images = new HashSet<>();
+	
 	/**
 	 * <p>Getter for the field <code>xmlDataSource</code>.</p>
 	 *
@@ -49,24 +50,15 @@ public class EntityReportData {
 	public void setXmlDataSource(Element xmlDataSource) {
 		this.xmlDataSource = xmlDataSource;
 	}
-	/**
-	 * <p>Getter for the field <code>dataObjects</code>.</p>
-	 *
-	 * @return the dataObjects
-	 */
-	public Map<EntityImageInfo, byte[]> getDataObjects() {
-		return dataObjects;
-	}
-	/**
-	 * <p>Setter for the field <code>dataObjects</code>.</p>
-	 *
-	 * @param dataObjects the dataObjects to set
-	 */
-	public void setDataObjects(Map<EntityImageInfo, byte[]> dataObjects) {
-		this.dataObjects = dataObjects;
-	}
 	
 	
+	public Set<EntityImageInfo> getImages() {
+		return images;
+	}
+	
+	public void setImages(Set<EntityImageInfo> images) {
+		this.images = images;
+	}
 	/**
 	 * <p>setParameters.</p>
 	 *

@@ -24,6 +24,7 @@
 	 <property name="nodeService" ref="nodeService"/>
 	 <property name="reportServerUrl" value="${becpg.reportServerUrl}"/>
 	 <property name="contentService" ref="contentService"/>
+	  <property name="entityService" ref="entityService"/>
 	</bean>
 	
 	

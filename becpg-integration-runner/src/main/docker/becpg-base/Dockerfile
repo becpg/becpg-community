@@ -142,32 +142,6 @@ RUN mkdir -p /opt/cprof && \
   wget -q -O- https://storage.googleapis.com/cloud-profiler/java/latest/profiler_java_agent.tar.gz \
   | tar xzv -C /opt/cprof
 
-#Add JAI and ImageIO for great speedy speed.
-WORKDIR /tmp
-# A little logic that will fetch the JAI and JAI ImageIO tar file if it
-# is not available locally in the resources dir
-RUN if [ ! -f /tmp/resources/jai-1_1_3-lib-linux-amd64.tar.gz ]; then \
-    wget http://download.java.net/media/jai/builds/release/1_1_3/jai-1_1_3-lib-linux-amd64.tar.gz -P ./resources;\
-    fi; \
-    if [ ! -f /tmp/resources/jai_imageio-1_1-lib-linux-amd64.tar.gz ]; then \
-    wget http://download.java.net/media/jai-imageio/builds/release/1.1/jai_imageio-1_1-lib-linux-amd64.tar.gz -P ./resources;\
-    fi; \
-    mv resources/jai-1_1_3-lib-linux-amd64.tar.gz ./ && \
-    mv resources/jai_imageio-1_1-lib-linux-amd64.tar.gz ./ && \
-    gunzip -c jai-1_1_3-lib-linux-amd64.tar.gz | tar xf - && \
-    gunzip -c jai_imageio-1_1-lib-linux-amd64.tar.gz | tar xf - && \
-    mv /tmp/jai-1_1_3/lib/*.jar $JAVA_HOME/lib/ && \
-    mv /tmp/jai-1_1_3/lib/*.so $JAVA_HOME/lib/ && \
-    mv /tmp/jai_imageio-1_1/lib/*.jar $JAVA_HOME/lib/ && \
-    mv /tmp/jai_imageio-1_1/lib/*.so $JAVA_HOME/lib/ && \
-    rm /tmp/jai-1_1_3-lib-linux-amd64.tar.gz && \
-    rm -r /tmp/jai-1_1_3 && \
-    rm /tmp/jai_imageio-1_1-lib-linux-amd64.tar.gz && \
-    rm -r /tmp/jai_imageio-1_1
-WORKDIR /usr/local/tomcat/
-      
-
-
 # I18N
 
 RUN set -x && \
