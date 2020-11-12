@@ -454,7 +454,6 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			imgElt.addAttribute(ContentModel.PROP_NAME.getLocalName(), imgInfo.getName());
 			imgElt.addAttribute(ContentModel.PROP_TITLE.getLocalName(), imgInfo.getTitle());
 			addCDATA(imgElt, ContentModel.PROP_DESCRIPTION, imgInfo.getDescription(), null);
-
 			context.getReportData().getImages().add(imgInfo);
 		}
 	}
