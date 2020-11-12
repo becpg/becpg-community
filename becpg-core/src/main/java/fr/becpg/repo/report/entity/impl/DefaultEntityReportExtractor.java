@@ -238,17 +238,15 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		boolean isInDataListContext = false;
 
 		Map<String, String> preferences;
-		Map<EntityImageInfo, byte[]> images = new HashMap<>();
 		Set<NodeRef> extractedNodes = new HashSet<>();
 
+		EntityReportData reportData = new EntityReportData();
+		
 		public DefaultExtractorContext(Map<String, String> preferences) {
 			super();
 			this.preferences = preferences;
 		}
 
-		public Map<EntityImageInfo, byte[]> getImages() {
-			return images;
-		}
 
 		public Map<String, String> getPreferences() {
 			return preferences;
@@ -256,6 +254,11 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 		public Set<NodeRef> getExtractedNodes() {
 			return extractedNodes;
+		}
+		
+
+		public EntityReportData getReportData() {
+			return reportData;
 		}
 
 		public boolean prefsContains(String key, String defaultValue, String query) {
@@ -332,7 +335,6 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			watch.start();
 		}
 
-		EntityReportData ret = new EntityReportData();
 
 		DefaultExtractorContext context = new DefaultExtractorContext(preferences);
 
@@ -341,15 +343,14 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 		extractEntity(entityNodeRef, entityElt, context);
 
-		ret.setXmlDataSource(entityElt);
-		ret.setDataObjects(context.getImages());
+		context.getReportData().setXmlDataSource(entityElt);
 
 		if (logger.isDebugEnabled() && (watch != null)) {
 			watch.stop();
 			logger.debug("extract datasource in  " + watch.getTotalTimeSeconds() + " seconds for node " + entityNodeRef);
 		}
 
-		return ret;
+		return context.getReportData();
 	}
 
 	/**
@@ -436,11 +437,15 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			imgNodeRef = (NodeRef) nodeService.getProperty(imgNodeRef, ContentModel.PROP_LINK_DESTINATION);
 		}
 
-		byte[] imageBytes = entityService.getImage(imgNodeRef);
-		if (imageBytes != null) {
-			EntityImageInfo imgInfo = new EntityImageInfo(imgId, (String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_NAME),
-					(String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_TITLE),
-					(String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_DESCRIPTION));
+		if (imgNodeRef != null) {
+			EntityImageInfo imgInfo = new EntityImageInfo(imgId,imgNodeRef);
+			
+			
+			imgInfo.setName((String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_NAME));
+			imgInfo.setTitle((String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_TITLE));
+			imgInfo.setDescription((String)nodeService.getProperty(imgNodeRef, ContentModel.PROP_DESCRIPTION));
+			
+			
 
 			Element imgElt = imgsElt.addElement(TAG_IMAGE);
 			imgElt.addAttribute(ATTR_ENTITY_NODEREF, entityNodeRef.toString());
@@ -450,7 +455,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			imgElt.addAttribute(ContentModel.PROP_TITLE.getLocalName(), imgInfo.getTitle());
 			addCDATA(imgElt, ContentModel.PROP_DESCRIPTION, imgInfo.getDescription(), null);
 
-			context.getImages().put(imgInfo, imageBytes);
+			context.getReportData().getImages().add(imgInfo);
 		}
 	}
 

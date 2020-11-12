@@ -42,7 +42,6 @@ import fr.becpg.config.mapping.MappingException;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
-import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.MLTextHelper;
@@ -88,9 +87,6 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 
 	@Autowired
 	private EntityListDAO entityListDAO;
-
-	@Autowired
-	private EntityService entityService;
 
 	@Autowired
 	private AssociationService associationService;
@@ -255,15 +251,10 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 				// file content
 				if (fileMapping.getAttribute().getName().isMatch(ContentModel.PROP_CONTENT)) {
 
-					NodeRef imageNodeRef = tempNodeRef;
-					Map<EntityImageInfo, byte[]> images = exportSearchCtx.getReportData().getDataObjects();
-
-					byte[] imageBytes = entityService.getImage(imageNodeRef);
-					if (imageBytes != null) {
-
-						images.put(new EntityImageInfo(id, null, null, null), imageBytes);
+					if(tempNodeRef!=null) {
+						exportSearchCtx.getReportData().getImages().add(new EntityImageInfo(id, tempNodeRef));
 					}
-
+					
 				}
 				// class attribute
 				else {
