@@ -33,7 +33,6 @@ import javax.imageio.ImageIO;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.coci.CheckOutCheckInServiceImpl;
-import org.alfresco.repo.content.MimetypeMap;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.virtual.VirtualContentModel;
 import org.alfresco.service.cmr.model.FileFolderService;
@@ -52,7 +51,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.FastByteArrayOutputStream;
+import org.springframework.util.StreamUtils;
 
 import fr.becpg.common.BeCPGException;
 import fr.becpg.model.BeCPGModel;
@@ -97,8 +96,6 @@ public class EntityServiceImpl implements EntityService {
 	private EntityDictionaryService entityDictionaryService;
 
 	private static final Integer MAX_DEPTH_LEVEL = 6;
-
-	private static final Integer IMAGE_BUFFER_SIZE = 6;
 
 	private static final Set<QName> IGNORE_PARENT_ASSOC_TYPES = new HashSet<>(7);
 	static {
@@ -175,43 +172,21 @@ public class EntityServiceImpl implements EntityService {
 	 *
 	 * Load the image associated to the node.
 	 */
+
 	@Override
 	public byte[] getImage(NodeRef nodeRef) {
-
-		byte[] imageBytes = null;
 
 		ContentReader reader = contentService.getReader(nodeRef, ContentModel.PROP_CONTENT);
 
 		if (reader != null) {
-			try (FastByteArrayOutputStream out = new FastByteArrayOutputStream(IMAGE_BUFFER_SIZE)) {
-				BufferedImage image = ImageIO.read(reader.getContentInputStream());
-
-				if (image != null) {
-					ImageIO.write(image, guessImageFormat(reader.getMimetype()), out);
-					imageBytes = out.toByteArrayUnsafe();
-				}
-
+			try {
+				return StreamUtils.copyToByteArray(reader.getContentInputStream());
 			} catch (IOException e) {
 				logger.error("Failed to get the content for " + nodeRef, e);
 			}
 		}
 
-		return imageBytes;
-	}
-
-	private String guessImageFormat(String mimeType) {
-
-		switch (mimeType) {
-		case MimetypeMap.MIMETYPE_IMAGE_PNG:
-			return "png";
-		case MimetypeMap.MIMETYPE_IMAGE_TIFF:
-			return "tiff";
-		case MimetypeMap.MIMETYPE_IMAGE_GIF:
-			return "gif";
-		default:
-			return "jpg";
-		}
-
+		return null;
 	}
 
 	/** {@inheritDoc} */

@@ -88,19 +88,19 @@
         </dependency>
 
 
-		<!-- Image IO To slow
+		<!-- Image IO  
 		 <dependency>
 	        <groupId>com.twelvemonkeys.imageio</groupId>
 	        <artifactId>imageio-jpeg</artifactId>
 	        <version>3.6</version>
 	    </dependency> 
-	    -->
+	 
 	    <dependency>
 	        <groupId>com.twelvemonkeys.imageio</groupId>
 	        <artifactId>imageio-tiff</artifactId>
 	        <version>3.6</version>
 	    </dependency>
-	
+		-->
 		 
 		<!-- IText PDF 
 		<dependency>
