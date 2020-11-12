@@ -287,7 +287,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 
 	private void checkCompositionItem(List<ReqCtrlListDataItem> reqCtrlListDataItem, NodeRef productNodeRef, CompoListDataItem c) {
 
-		if (!PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.isMatch(nodeService.getType(productNodeRef))) {
+		if (productNodeRef!=null && !PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.isMatch(nodeService.getType(productNodeRef))) {
 
 			ProductData subComponent = alfrescoRepository.findOne(c.getComponent());
 			
