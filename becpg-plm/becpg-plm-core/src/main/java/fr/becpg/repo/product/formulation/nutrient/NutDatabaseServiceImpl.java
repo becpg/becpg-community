@@ -77,7 +77,7 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 	private DictionaryService dictionaryService;
 
 	@Autowired
-	private NamespaceService NamespaceService;
+	private NamespaceService namespaceService;
 
 	@Autowired
 	private TransactionService transactionService;
@@ -85,8 +85,11 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 	@Autowired
 	private BehaviourFilter policyBehaviourFilter;
 
-	private final static Log logger = LogFactory.getLog(NutDatabaseServiceImpl.class);
-	private final static String DATABASES_FOLDER = "/app:company_home/cm:System/cm:NutritionalDatabases";
+	private static final  Log logger = LogFactory.getLog(NutDatabaseServiceImpl.class);
+	
+	private static final String DATABASES_FOLDER = "/app:company_home/cm:System/cm:NutritionalDatabases";
+	
+	private static final String NUT_CSV_DECIMAL_FORMAT = "###,###.####";
 
 	/** {@inheritDoc} */
 	@Override
@@ -104,8 +107,7 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 	@Override
 	public ListValuePage suggest(String databaseNR, String query, int pageNum, int pageSize) {
 		List<IdentifiedValue> matches = new ArrayList<>();
-		logger.debug("databaseNR: " + databaseNR);
-
+		
 		if ((databaseNR != null) && !databaseNR.isEmpty()) {
 			NodeRef dataBaseFile = new NodeRef(databaseNR);
 			String[] headerRow = getHeaderRow(dataBaseFile);
@@ -138,7 +140,7 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 		return new ListValuePage(matches, pageNum, pageSize, new IdentifiedValueListExtractor());
 	}
 
-	private static String NUT_CSV_DECIMAL_FORMAT = "###,###.####";
+	
 	
 	/** {@inheritDoc} */
 	@Override
@@ -199,7 +201,7 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 							if (nutValue != null) {
 								nut.setManualValue(nutValue.doubleValue());
 							}
-							;
+							
 
 							// nutListGroup
 							String nutGroup = (String) nodeService.getProperty(nutNodeRef, PLMModel.PROP_NUTGROUP);
@@ -269,7 +271,7 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 							if (isInDictionary(headerRow[i]) || (headerRow[i].contains("_") && (isInDictionary(headerRow[i].split("_")[0])))) {
 								String value = extractValueById(file, idSplit, i);
 								logger.debug("setting property qnamed  \"" + headerRow[i] + "\" to value  \"" + value + "\"");
-								QName attributeQName = QName.createQName(headerRow[i], NamespaceService);
+								QName attributeQName = QName.createQName(headerRow[i], namespaceService);
 
 								if (PLMModel.TYPE_SUPPLIER.equals(attributeQName)) {
 									// supplier
@@ -293,12 +295,12 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 							if (isInDictionary(headerRow[i]) || (headerRow[i].contains("_") && (isInDictionary(headerRow[i].split("_")[0])))) {
 								String value = extractValueById(file, idSplit, i);
 								logger.debug("setting property qnamed  \"" + headerRow[i] + "\" to value  \"" + value + "\"");
-								QName attributeQName = QName.createQName(headerRow[i], NamespaceService);
+								QName attributeQName = QName.createQName(headerRow[i], namespaceService);
 
 								if (!(PLMModel.TYPE_SUPPLIER.equals(attributeQName) || PLMModel.PROP_PRODUCT_HIERARCHY1.equals(attributeQName)
 										|| PLMModel.PROP_PRODUCT_HIERARCHY2.equals(attributeQName))
 										&& (dictionaryService.getProperty(attributeQName) != null)) {
-									nodeService.setProperty(productNode, QName.createQName(headerRow[i], NamespaceService), value);
+									nodeService.setProperty(productNode, QName.createQName(headerRow[i], namespaceService), value);
 								}
 							}
 						}
@@ -514,8 +516,8 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 
 	private boolean isInDictionary(String str) {
 		try {
-			return ((dictionaryService.getProperty(QName.createQName(str, NamespaceService)) != null)
-					|| (dictionaryService.getAssociation(QName.createQName(str, NamespaceService)) != null));
+			return ((dictionaryService.getProperty(QName.createQName(str, namespaceService)) != null)
+					|| (dictionaryService.getAssociation(QName.createQName(str, namespaceService)) != null));
 		} catch (NamespaceException e) {
 			return false;
 		}
