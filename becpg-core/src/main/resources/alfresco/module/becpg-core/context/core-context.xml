@@ -60,13 +60,16 @@
 	</bean>
 	
 
-	<bean id="associationService"  parent="abstractBeCPGPolicy" class="fr.becpg.repo.helper.impl.AssociationServiceImpl">
+	<bean id="associationService"  parent="abstractBeCPGPolicy" class="fr.becpg.repo.helper.impl.AssociationServiceImplV2">
 		<property name="beCPGCacheService" ref="beCPGCacheService"/>
 		<property name="entityDictionaryService" ref="entityDictionaryService"/>
 		<property name="namespaceService" ref="namespaceService" />		
 		<property name="tenantService" ref="tenantService" />	
 		<property name="dataSource" ref="dataSource" />	
-		<property name="qnameDAO" ref="qnameDAO" />		
+		<property name="qnameDAO" ref="qnameDAO" />
+		<!-- Caches -->
+		<property name="childsAssocsCache" ref="becpgChildAssocsCache" />
+		<property name="assocsCache" ref="becpgAssocsCache" />
 	</bean>
 
 
@@ -159,13 +162,11 @@
 		<!-- If cache size is not define -->
 		<property name="maxCacheItems" value="100"/>
 		<property name="cacheSizes">
-		   <!-- Cache size is by tenant -->
+		   <!-- Cache define here are tenant aware and local (not clustered)-->
 			<map>
 			  <entry key="fr.becpg.repo.security.SecurityService" value="50" />
 			  <entry key="fr.becpg.repo.entity.version.EntityVersionService" value="10" />
 			  <entry key="fr.becpg.repo.helper.AttributeExtractorService" value="100" />
-			  <entry key="fr.becpg.repo.helper.AssociationService.childs" value="10000" />
-			  <entry key="fr.becpg.repo.helper.AssociationService.assocs" value="200000" />
 			  <entry key="fr.becpg.repo.entity.catalog.EntityCatalogService" value="5" />
 			  <entry key="fr.becpg.repo.jscript.Thumbnail" value="20" />
 			  <entry key="fr.becpg.repo.search.PaginatedSearchCache" value="300" />

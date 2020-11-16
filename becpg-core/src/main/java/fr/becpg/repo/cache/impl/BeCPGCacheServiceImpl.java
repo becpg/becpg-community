@@ -20,6 +20,7 @@ package fr.becpg.repo.cache.impl;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -141,9 +142,37 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 			return null;
 		}, false);
 	}
-
+	
 	/** {@inheritDoc} */
 	@Override
+	public <R extends Serializable,T> T getFromCache(SimpleCache<R, T> cache, R cacheKey, BeCPGCacheDataProviderCallBack<T> cacheDataProviderCallBack){
+	
+		T ret = null;
+		try {
+			ret = disableAllCache ? null : cache.get(cacheKey);
+		} catch (Exception e) {
+			logger.error("Cannot get " + cacheKey + " from cache " , e);
+		}
+
+		if (ret == null) {
+			if (isDebugEnable) {
+				logger.error("Cache miss " + cacheKey);
+			}
+
+			ret = cacheDataProviderCallBack.getData();
+			if (!disableAllCache && (ret != null)) {
+
+				cache.put(cacheKey, ret);
+			} else if(isDebugEnable && ret==null ){
+				logger.error("Data provider is null for "+cacheKey);
+			}
+		} else if (isDebugEnable) {
+			logger.debug("Cache Hit " + cacheKey);
+		}
+		return ret;
+	}
+
+	
 	public <T> T getFromCache(final String cacheName, String cacheKey, BeCPGCacheDataProviderCallBack<T> cacheDataProviderCallBack,
 			boolean deleteOnTxRollback) {
 
@@ -295,5 +324,6 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 		}
 
 	}
+
 
 }
