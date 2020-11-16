@@ -20,8 +20,10 @@ package fr.becpg.repo.product.formulation;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.alfresco.model.ContentModel;
@@ -103,6 +105,7 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 				) && ((componentProductData.getCompoListView() != null) && (componentProductData.getReqCtrlList() != null))
 
 				) {
+					Set<ReqCtrlListDataItem> toAdd = new HashSet<>();
 					for (ReqCtrlListDataItem tmp : componentProductData.getReqCtrlList()) {
 						if (tmp.getReqDataType() != RequirementDataType.Completion) {
 
@@ -110,9 +113,10 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 									tmp.getSources(), tmp.getReqDataType() != null ? tmp.getReqDataType() : RequirementDataType.Nutrient);
 
 							reqCtl.setRegulatoryCode(tmp.getRegulatoryCode());
-							reqCtrlList.add(reqCtl);
+							toAdd.add(reqCtl);
 						}
 					}
+					reqCtrlList.addAll(toAdd);
 
 				}
 			}
@@ -139,10 +143,9 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 				reqCtrlList.remove(dup);
 			}
 
-			
 			for (Map.Entry<String, ReqCtrlListDataItem> dbKV : dbReqCtrlList.entrySet()) {
 				if (!newReqCtrlList.containsKey(dbKV.getKey())) {
-					
+
 					if ((dbKV.getValue().getFormulationChainId() == null)
 							|| dbKV.getValue().getFormulationChainId().equals(productData.getFormulationChainId())) {
 						// remove
@@ -172,12 +175,11 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 			duplicates.add(r);
 			// Merge sources
 			for (NodeRef tmpref : r.getSources()) {
-
 				if (!dbReq.getSources().contains(tmpref)) {
 					dbReq.getSources().add(tmpref);
 				}
 			}
-			
+
 		} else {
 			reqCtrlList.put(r.getKey(), r);
 		}
@@ -200,22 +202,22 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 				}
 				for (FormulatedCharactDataItem sl : simpleList) {
 					if (r.getCharact().equals(sl.getCharactNodeRef())) {
-						String message = r.getReqMessage();
+						StringBuilder message = new StringBuilder(r.getReqMessage());
 						if ((r.getSources() != null) && !r.getSources().isEmpty()) {
 							int i = 0;
-							message += " : ";
+							message.append( " : ");
 							for (NodeRef n : r.getSources()) {
 								if (i > 0) {
-									message += ", ";
+									message .append(", ");
 								} else if (i >= 5) {
-									message += "...";
+									message.append("...");
 									break;
 								}
-								message += nodeService.getProperty(n, ContentModel.PROP_NAME);
+								message .append(nodeService.getProperty(n, ContentModel.PROP_NAME));
 								i++;
 							}
 						}
-						sl.setErrorLog((sl.getErrorLog() != null ? sl.getErrorLog() + ". " : "") + message);
+						sl.setErrorLog((sl.getErrorLog() != null ? sl.getErrorLog() + ". " : "") + message.toString());
 						if (logger.isDebugEnabled()) {
 							logger.debug("setErrorLog " + sl.getErrorLog());
 						}
