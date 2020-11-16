@@ -17,7 +17,10 @@
  ******************************************************************************/
 package fr.becpg.repo.cache;
 
+import java.io.Serializable;
 import java.util.Collection;
+
+import org.alfresco.repo.cache.SimpleCache;
 
 /**
  * <p>BeCPGCacheService interface.</p>
@@ -37,6 +40,8 @@ public interface BeCPGCacheService {
 	 * @return a T object.
 	 */
 	<T> T getFromCache(String cacheName, String cacheKey, BeCPGCacheDataProviderCallBack<T> cacheDataProviderCallBack);
+	
+	<R extends Serializable,T> T getFromCache(SimpleCache<R, T> cache, R cacheKey, BeCPGCacheDataProviderCallBack<T> callback);
 
 	/**
 	 * <p>clearAllCaches.</p>

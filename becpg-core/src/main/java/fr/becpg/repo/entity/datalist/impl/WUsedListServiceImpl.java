@@ -38,7 +38,7 @@ import fr.becpg.repo.entity.datalist.WUsedFilter;
 import fr.becpg.repo.entity.datalist.WUsedListService;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 import fr.becpg.repo.helper.AssociationService;
-import fr.becpg.repo.helper.impl.AssociationServiceImpl.EntitySourceAssoc;
+import fr.becpg.repo.helper.impl.EntitySourceAssoc;
 
 /**
  * <p>WUsedListServiceImpl class.</p>

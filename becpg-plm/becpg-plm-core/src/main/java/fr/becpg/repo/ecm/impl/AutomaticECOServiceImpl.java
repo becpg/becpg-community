@@ -361,7 +361,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 
 		final Set<NodeRef> formulatedEntities = new HashSet<>();
 
-		for (NodeRef entityNodeRef : nodeRefs) {
+		for (final NodeRef entityNodeRef : nodeRefs) {
 
 			List<NodeRef> toReformulates = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 				if (accept(entityNodeRef)) {
