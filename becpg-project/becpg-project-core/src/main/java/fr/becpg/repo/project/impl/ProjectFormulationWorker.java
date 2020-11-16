@@ -27,6 +27,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.ProjectModel;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.project.data.ProjectState;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
@@ -72,14 +73,19 @@ public class ProjectFormulationWorker {
 			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(ProjectModel.TYPE_PROJECT)
 					.andPropEquals(ProjectModel.PROP_PROJECT_STATE, ProjectState.InProgress.toString());
 
-			List<NodeRef> ret = queryBuilder.inDB().list();
+			List<NodeRef> ret = queryBuilder.inDB().maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list();
 
+			queryBuilder = BeCPGQueryBuilder.createQuery().ofType(ProjectModel.TYPE_PROJECT)
+					.andPropEquals(ProjectModel.PROP_PROJECT_STATE, ProjectState.OnHold.toString());
+			
+			ret.addAll(queryBuilder.inDB().maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list());
+			
 			// query
 			queryBuilder = BeCPGQueryBuilder.createQuery().ofType(ProjectModel.TYPE_PROJECT)
 					.andPropEquals(ProjectModel.PROP_PROJECT_STATE, ProjectState.Planned.toString())
 					.andBetween(ProjectModel.PROP_PROJECT_START_DATE, "MIN", ISO8601DateFormat.format(new Date()));
 
-			ret.addAll(queryBuilder.ftsLanguage().list());
+			ret.addAll(queryBuilder.ftsLanguage().maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list());
 
 			return ret;
 
