@@ -26,6 +26,7 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.regex.Matcher;
 
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -43,13 +44,13 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
-import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.formulation.spel.SpelFormulaService;
 import fr.becpg.repo.formulation.spel.SpelHelper;
 import fr.becpg.repo.formulation.spel.SpelHelper.SpelShortcut;
 import fr.becpg.repo.helper.JsonFormulaHelper;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.AbstractProductDataView;
 import fr.becpg.repo.product.data.CompoListView;
 import fr.becpg.repo.product.data.FinishedProductData;
@@ -60,10 +61,13 @@ import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
+import fr.becpg.repo.product.data.constraints.RequirementDataType;
+import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.packaging.VariantPackagingData;
 import fr.becpg.repo.product.data.productList.DynamicCharactExecOrder;
 import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
+import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.repository.model.CompositionDataItem;
@@ -83,29 +87,41 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 	public static final int DYN_COLUMN_SIZE = 10;
 	/** Constant <code>DYN_COLUMN_NAME="bcpg:dynamicCharactColumn"</code> */
 	public static final String DYN_COLUMN_NAME = "bcpg:dynamicCharactColumn";
-	
+
+	private static final String JSON_PATH_SEPARATOR = "/";
 
 	static {
-		SpelHelper.registerShortcut(new SpelShortcut("cost\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]"    , "costList.^[cost.toString() == '$1']"));
-		SpelHelper.registerShortcut(new SpelShortcut("nut\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]"     , "nutList.^[nut.toString() == '$1']"));
-		SpelHelper.registerShortcut(new SpelShortcut("allergen\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]", "allergenList.^[allergen.toString() == '$1']"));
-		SpelHelper.registerShortcut(new SpelShortcut("ing\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]"     , "ingList.^[ing.toString() == '$1']"));
-		SpelHelper.registerShortcut(new SpelShortcut("organo\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]"  , "organoList.^[organo.toString() == '$1']"));
-		SpelHelper.registerShortcut(new SpelShortcut("physico\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]"  ,"physicoChemList.^[physicoChem.toString() == '$1']"));
-		SpelHelper.registerShortcut(new SpelShortcut("microbio\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]" , "microbioList.^[microBio.toString() == '$1']"));
-		SpelHelper.registerShortcut(new SpelShortcut("compo\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]"    , "compoListView.compoList.^[product.toString() == '$1']"));
-		SpelHelper.registerShortcut(new SpelShortcut("process\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]" ,"processListView.processList.^[resource.toString() == '$1']"));
-		SpelHelper.registerShortcut(new SpelShortcut("resParam\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]", "resourceParamList.^[param.toString() == '$1']"));
-		SpelHelper.registerShortcut(new SpelShortcut("pack\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]",	"packagingListView.packagingList.^[product.toString() == '$1']"));
-		SpelHelper.registerShortcut(new SpelShortcut("packaging\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]",	"packagingListView.packagingList.^[product.toString() == '$1']"));
-		SpelHelper.registerShortcut(new SpelShortcut("compoVar\\['(.*?)'\\]","compoListView.dynamicCharactList.^[title == '$1']?.value"));
-		SpelHelper.registerShortcut(new SpelShortcut("packVar\\['(.*?)'\\]","packagingListView.dynamicCharactList.^[title == '$1']?.value"));
-		SpelHelper.registerShortcut(new SpelShortcut("packagingVar\\['(.*?)'\\]","packagingListView.dynamicCharactList.^[title == '$1']?.value"));
-		SpelHelper.registerShortcut(new SpelShortcut("processVar\\['(.*?)'\\]","processListView.dynamicCharactList.^[title == '$1']?.value"));
-		SpelHelper.registerShortcut(new SpelShortcut("labelClaim\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]", "labelClaimList.^[labelClaim.toString() == '$1']"));
-		SpelHelper.registerShortcut(new SpelShortcut("labeling\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]",	"labelingListView.ingLabelingList.^[grp.toString() == '$1']"));
+		SpelHelper
+				.registerShortcut(new SpelShortcut("cost\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]", "costList.^[cost.toString() == '$1']"));
+		SpelHelper.registerShortcut(new SpelShortcut("nut\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]", "nutList.^[nut.toString() == '$1']"));
+		SpelHelper.registerShortcut(
+				new SpelShortcut("allergen\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]", "allergenList.^[allergen.toString() == '$1']"));
+		SpelHelper.registerShortcut(new SpelShortcut("ing\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]", "ingList.^[ing.toString() == '$1']"));
+		SpelHelper.registerShortcut(
+				new SpelShortcut("organo\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]", "organoList.^[organo.toString() == '$1']"));
+		SpelHelper.registerShortcut(
+				new SpelShortcut("physico\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]", "physicoChemList.^[physicoChem.toString() == '$1']"));
+		SpelHelper.registerShortcut(
+				new SpelShortcut("microbio\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]", "microbioList.^[microBio.toString() == '$1']"));
+		SpelHelper.registerShortcut(new SpelShortcut("compo\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]",
+				"compoListView.compoList.^[product.toString() == '$1']"));
+		SpelHelper.registerShortcut(new SpelShortcut("process\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]",
+				"processListView.processList.^[resource.toString() == '$1']"));
+		SpelHelper.registerShortcut(
+				new SpelShortcut("resParam\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]", "resourceParamList.^[param.toString() == '$1']"));
+		SpelHelper.registerShortcut(new SpelShortcut("pack\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]",
+				"packagingListView.packagingList.^[product.toString() == '$1']"));
+		SpelHelper.registerShortcut(new SpelShortcut("packaging\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]",
+				"packagingListView.packagingList.^[product.toString() == '$1']"));
+		SpelHelper.registerShortcut(new SpelShortcut("compoVar\\['(.*?)'\\]", "compoListView.dynamicCharactList.^[title == '$1']?.value"));
+		SpelHelper.registerShortcut(new SpelShortcut("packVar\\['(.*?)'\\]", "packagingListView.dynamicCharactList.^[title == '$1']?.value"));
+		SpelHelper.registerShortcut(new SpelShortcut("packagingVar\\['(.*?)'\\]", "packagingListView.dynamicCharactList.^[title == '$1']?.value"));
+		SpelHelper.registerShortcut(new SpelShortcut("processVar\\['(.*?)'\\]", "processListView.dynamicCharactList.^[title == '$1']?.value"));
+		SpelHelper.registerShortcut(
+				new SpelShortcut("labelClaim\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]", "labelClaimList.^[labelClaim.toString() == '$1']"));
+		SpelHelper.registerShortcut(new SpelShortcut("labeling\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]",
+				"labelingListView.ingLabelingList.^[grp.toString() == '$1']"));
 	}
-	
 
 	private AlfrescoRepository<ProductData> alfrescoRepository;
 
@@ -164,28 +180,25 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 
 	/** {@inheritDoc} */
 	@Override
-	public boolean process(ProductData productData) throws FormulateException {
+	public boolean process(ProductData productData) {
 
-		if (productData.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) 
-				|| productData instanceof ProductSpecificationData) {
-			return true;
+		if (!(productData.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) || (productData instanceof ProductSpecificationData))) {
+
+			if (DynamicCharactExecOrder.Pre.equals(execOrder)) {
+				copyTemplateDynamicCharactLists(productData);
+			}
+
+			ExpressionParser parser = new SpelExpressionParser();
+			StandardEvaluationContext context = formulaService.createEntitySpelContext(productData);
+
+			for (AbstractProductDataView view : productData.getViews()) {
+				computeFormula(productData, parser, context, view);
+			}
+
+			if (DynamicCharactExecOrder.Post.equals(execOrder)) {
+				computeNutrientProfile(productData, parser, context);
+			}
 		}
-
-		if (DynamicCharactExecOrder.Pre.equals(execOrder)) {
-			copyTemplateDynamicCharactLists(productData);
-		}
-
-		ExpressionParser parser = new SpelExpressionParser();
-		StandardEvaluationContext context = formulaService.createEntitySpelContext(productData);
-
-		for (AbstractProductDataView view : productData.getViews()) {
-			computeFormula(productData, parser, context, view);
-		}
-
-		if (DynamicCharactExecOrder.Post.equals(execOrder)) {
-			computeNutrientProfile(productData, parser, context);
-		}
-
 		return true;
 	}
 
@@ -211,11 +224,16 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 								I18NUtil.getMessage("message.formulate.formula.incorrect.type.double", Locale.getDefault()), Locale.getDefault()));
 					}
 				} catch (Exception e) {
-					productData.setNutrientClass(
-							I18NUtil.getMessage("message.formulate.formula.incorrect.nutrientProfile", e.getLocalizedMessage(), Locale.getDefault()));
+					MLText errorMsg = MLTextHelper.getI18NMessage("message.formulate.formula.incorrect.nutrientProfile", e.getLocalizedMessage());
+
+					productData.setNutrientClass(MLTextHelper.getClosestValue(errorMsg, Locale.getDefault()));
+
+					productData.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, errorMsg, null, new ArrayList<>(),
+							RequirementDataType.Formulation));
+
 					if (logger.isDebugEnabled()) {
-						logger.warn("Error in formula :" + SpelHelper.formatFormula(scoreformula));
-						logger.trace(e,e);
+						logger.warn("Error in nutrient score formula :" + SpelHelper.formatFormula(scoreformula));
+						logger.trace(e, e);
 					}
 				}
 			}
@@ -246,50 +264,49 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 							if ((dynamicCharactListItem.getColumnName() != null) && !dynamicCharactListItem.getColumnName().isEmpty()) {
 
 								QName columnName = QName.createQName(dynamicCharactListItem.getColumnName().replaceFirst("_", ":"), namespaceService);
-								
-									String formula = SpelHelper.formatFormula(dynamicCharactListItem.getFormula());
-									logger.debug("Column formula : " + formula + " (" + dynamicCharactListItem.getTitle() + ")");
-									Expression exp = parser.parseExpression(formula);
 
-									if (nullDynColumnNames.contains(columnName)) {
-										nullDynColumnNames.remove(columnName);
-									}
-									for (CompositionDataItem dataListItem : view.getMainDataList()) {
+								String formula = SpelHelper.formatFormula(dynamicCharactListItem.getFormula());
+								logger.debug("Column formula : " + formula + " (" + dynamicCharactListItem.getTitle() + ")");
+								Expression exp = parser.parseExpression(formula);
 
-										Double origQty = dataListItem.getQty();
-										Double qtyPerProduct = getQtyPerProduct(productData, dataListItem);
-										dataListItem.setQty(qtyPerProduct);
+								if (nullDynColumnNames.contains(columnName)) {
+									nullDynColumnNames.remove(columnName);
+								}
+								for (CompositionDataItem dataListItem : view.getMainDataList()) {
 
-										StandardEvaluationContext dataContext = formulaService.createDataListItemSpelContext(productData, dataListItem);
-										Object value = null;
-										try {
-											value = exp.getValue(dataContext);
-										} finally {
-											if ((qtyPerProduct != null) && qtyPerProduct.equals(dataListItem.getQty())) {
-												dataListItem.setQty(origQty);
-											}
-										}
+									Double origQty = dataListItem.getQty();
+									Double qtyPerProduct = getQtyPerProduct(productData, dataListItem);
+									dataListItem.setQty(qtyPerProduct);
 
-										if (!L2CacheSupport.isCacheOnlyEnable()
-												&& ((dynamicCharactListItem.getMultiLevelFormula() != null)
-														&& Boolean.TRUE.equals(dynamicCharactListItem.getMultiLevelFormula()))
-												&& ((view instanceof CompoListView) || (view instanceof PackagingListView))
-												&& ((dataListItem.getComponent() != null) && (PLMModel.TYPE_SEMIFINISHEDPRODUCT
-														.equals(nodeService.getType(dataListItem.getComponent()))
-														|| PLMModel.TYPE_FINISHEDPRODUCT.equals(nodeService.getType(dataListItem.getComponent()))
-														|| PLMModel.TYPE_PACKAGINGKIT.equals(nodeService.getType(dataListItem.getComponent()))))) {
-
-											JSONObject jsonTree = extractJSONTree(productData, dataListItem, value, exp);
-											dataListItem.getExtraProperties().put(columnName, jsonTree.toString());
-											if (logger.isDebugEnabled()) {
-												logger.debug(" -- json tree value:" + value);
-											}
-										} else {
-											dataListItem.getExtraProperties().put(columnName, (Serializable) value);
-											logger.debug(" - value :" + value);
+									StandardEvaluationContext dataContext = formulaService.createDataListItemSpelContext(productData, dataListItem);
+									Object value = null;
+									try {
+										value = exp.getValue(dataContext);
+									} finally {
+										if ((qtyPerProduct != null) && qtyPerProduct.equals(dataListItem.getQty())) {
+											dataListItem.setQty(origQty);
 										}
 									}
 
+									if (!L2CacheSupport.isCacheOnlyEnable()
+											&& ((dynamicCharactListItem.getMultiLevelFormula() != null)
+													&& Boolean.TRUE.equals(dynamicCharactListItem.getMultiLevelFormula()))
+											&& ((view instanceof CompoListView) || (view instanceof PackagingListView))
+											&& ((dataListItem.getComponent() != null) && (PLMModel.TYPE_SEMIFINISHEDPRODUCT
+													.equals(nodeService.getType(dataListItem.getComponent()))
+													|| PLMModel.TYPE_FINISHEDPRODUCT.equals(nodeService.getType(dataListItem.getComponent()))
+													|| PLMModel.TYPE_PACKAGINGKIT.equals(nodeService.getType(dataListItem.getComponent()))))) {
+
+										JSONObject jsonTree = extractJSONTree(productData, dataListItem, value, exp);
+										dataListItem.getExtraProperties().put(columnName, jsonTree.toString());
+										if (logger.isDebugEnabled()) {
+											logger.debug(" -- json tree value:" + value);
+										}
+									} else {
+										dataListItem.getExtraProperties().put(columnName, (Serializable) value);
+										logger.debug(" - value :" + value);
+									}
+								}
 
 								dynamicCharactListItem.setValue(null);
 
@@ -300,11 +317,12 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 
 									Matcher varFormulaMatcher = SpelHelper.formulaVarPattern.matcher(formula);
 									if (varFormulaMatcher.matches()) {
-										logger.debug("Variable formula : " + varFormulaMatcher.group(2) + " (" + varFormulaMatcher.group(1) + ")");
+										logger.debug("Variable formula : [" + dynamicCharactListItem.getTitle() + "] - " + varFormulaMatcher.group(2)
+												+ " (" + varFormulaMatcher.group(1) + ")");
 										Expression exp = parser.parseExpression(varFormulaMatcher.group(2));
 										context.setVariable(varFormulaMatcher.group(1), exp.getValue(context));
 									} else {
-										logger.debug("Formula : " + formula + " (" + dynamicCharactListItem.getName() + ")");
+										logger.debug("Formula :  [" + dynamicCharactListItem.getTitle() + "] - " + formula);
 										Expression exp = parser.parseExpression(formula);
 										dynamicCharactListItem.setValue(exp.getValue(context));
 									}
@@ -312,17 +330,17 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 								logger.debug(" - value :" + dynamicCharactListItem.getValue());
 							}
 						}
-						
-						if ((dynamicCharactListItem.getColumnName() != null) && !dynamicCharactListItem.getColumnName().isEmpty() && dynamicCharactListItem.getIsManual()) {
+
+						if ((dynamicCharactListItem.getColumnName() != null) && !dynamicCharactListItem.getColumnName().isEmpty()
+								&& Boolean.TRUE.equals(dynamicCharactListItem.getIsManual())) {
 
 							QName columnName = QName.createQName(dynamicCharactListItem.getColumnName().replaceFirst("_", ":"), namespaceService);
 							if (nullDynColumnNames.contains(columnName)) {
 								nullDynColumnNames.remove(columnName);
 							}
 
-						} 
+						}
 
-						
 						dynamicCharactListItem.setErrorLog(null);
 					} catch (Exception e) {
 						if ((e.getCause() != null) && (e.getCause().getCause() instanceof BeCPGAccessDeniedException)) {
@@ -332,10 +350,16 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 						}
 						dynamicCharactListItem.setErrorLog(e.getLocalizedMessage());
 
+						productData.getReqCtrlList()
+								.add(new ReqCtrlListDataItem(
+										null, RequirementType.Forbidden, MLTextHelper.getI18NMessage("message.formulate.formula.error",
+												dynamicCharactListItem.getName(), e.getLocalizedMessage()),
+										null, new ArrayList<>(), RequirementDataType.Formulation));
+
 						if (logger.isDebugEnabled()) {
-							logger.warn("Error in formula :" + dynamicCharactListItem.getFormula() + " (" + dynamicCharactListItem.getName() + ")");
-							logger.trace(e,e);
-							
+							logger.warn("Error in formula : [" + dynamicCharactListItem.getTitle() + "] - " + dynamicCharactListItem.getFormula());
+							logger.trace(e, e);
+
 						}
 					}
 				} else {
@@ -352,7 +376,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 
 			// remove null columns
 			for (QName nullDynColumnName : nullDynColumnNames) {
-					for (CompositionDataItem dataListItem : view.getMainDataList()) {
+				for (CompositionDataItem dataListItem : view.getMainDataList()) {
 					dataListItem.getExtraProperties().put(nullDynColumnName, null);
 				}
 			}
@@ -384,7 +408,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 
 		JSONArray subList = new JSONArray();
 
-		String path = "/" + dataListItem.getNodeRef().getId();
+		String path = JSON_PATH_SEPARATOR + dataListItem.getNodeRef().getId();
 
 		extractJSONSubList(productData, dataListItem, exp, path, subList);
 		jsonObject.put(JsonFormulaHelper.JSON_SUB_VALUES, subList);
@@ -454,7 +478,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 
 				StandardEvaluationContext dataContext = formulaService.createDataListItemSpelContext(productData, composite);
 
-				String subPath = path + "/" + composite.getNodeRef().getId();
+				String subPath = path + JSON_PATH_SEPARATOR + composite.getNodeRef().getId();
 
 				Object subValue = exp.getValue(dataContext);
 				subObject.put(JsonFormulaHelper.JSON_VALUE, subValue);
@@ -525,7 +549,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 								targetItem.setName(sourceItem.getName());
 								targetItem.setTitle(sourceItem.getTitle());
 								targetItem.setSort(sourceItem.getSort());
-								if ((targetItem.getIsManual() == null) || !targetItem.getIsManual()) {
+								if ((targetItem.getIsManual() == null) || !Boolean.TRUE.equals(targetItem.getIsManual())) {
 									targetItem.setFormula(sourceItem.getFormula());
 									targetItem.setColumnName(sourceItem.getColumnName());
 									targetItem.setGroupColor(sourceItem.getGroupColor());

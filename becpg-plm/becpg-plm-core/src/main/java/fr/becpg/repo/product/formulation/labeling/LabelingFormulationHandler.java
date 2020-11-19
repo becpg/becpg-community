@@ -249,9 +249,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 									.add(new ReqCtrlListDataItem(
 											null, RequirementType.Tolerated, MLTextHelper.getI18NMessage("message.formulate.labelRule.error",
 													labelingRuleListDataItem.getName(), e.getLocalizedMessage()),
-											null, new ArrayList<NodeRef>(), RequirementDataType.Labelling));
+											null, new ArrayList<>(), RequirementDataType.Labelling));
 							if (logger.isDebugEnabled()) {
-								logger.debug("Error in formula :" + SpelHelper.formatFormula(labelingRuleListDataItem.getFormula()), e);
+								logger.debug("Error label rule formula : ["+labelingRuleListDataItem.getName()+"] - " + SpelHelper.formatFormula(labelingRuleListDataItem.getFormula()), e);
 							}
 						}
 					} else if (!LabelingRuleType.Render.equals(type)) {
