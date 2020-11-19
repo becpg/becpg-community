@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.version.VersionType;
@@ -68,6 +70,9 @@ public class ECOVersionPlugin implements EntityVersionPlugin {
 	private Boolean deleteOnApply = false;
 
 	@Autowired
+	TenantAdminService tenantAdminService;
+
+	@Autowired
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
 	private static final Log logger = LogFactory.getLog(ECOVersionPlugin.class);
@@ -93,8 +98,13 @@ public class ECOVersionPlugin implements EntityVersionPlugin {
 	/** {@inheritDoc} */
 	@Override
 	public void impactWUsed(NodeRef entityNodeRef, VersionType versionType, String description) {
+		String userName = AuthenticationUtil.getFullyAuthenticatedUser();
 
-		Runnable command = new AsyncECOGenerator(entityNodeRef, versionType, description, AuthenticationUtil.getFullyAuthenticatedUser());
+		if (tenantAdminService.isEnabled()) {
+			userName = tenantAdminService.getDomainUser(userName, tenantAdminService.getCurrentUserDomain());
+		}
+
+		Runnable command = new AsyncECOGenerator(entityNodeRef, versionType, description, userName);
 		if (!threadExecuter.getQueue().contains(command)) {
 			threadExecuter.execute(command);
 		} else {
@@ -103,14 +113,6 @@ public class ECOVersionPlugin implements EntityVersionPlugin {
 			logger.info("AsyncECOGenerator queue size " + threadExecuter.getTaskCount());
 		}
 
-	}
-
-	private String generateEcoName(String name) {
-		return name + "-" + I18NUtil.getMessage("plm.ecm.current.name", new Date());
-	}
-
-	private NodeRef getChangeOrderFolder() {
-		return repoService.getFolderByPath("/" + RepoConsts.PATH_SYSTEM + "/" + PlmRepoConsts.PATH_ECO);
 	}
 
 	private class AsyncECOGenerator implements Runnable {
@@ -178,7 +180,7 @@ public class ECOVersionPlugin implements EntityVersionPlugin {
 
 						if (ret) {
 							transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-								if (ecoService.apply(ecoNodeRef) && deleteOnApply) {
+								if (ecoService.apply(ecoNodeRef) && Boolean.TRUE.equals(deleteOnApply)) {
 									logger.debug("It's applied and deleteOnApply is set to true, deleting ECO with NR=" + ecoNodeRef);
 									nodeService.deleteNode(ecoNodeRef);
 								}
@@ -206,15 +208,20 @@ public class ECOVersionPlugin implements EntityVersionPlugin {
 
 		}
 
+		private String generateEcoName(String name) {
+			return name + "-" + I18NUtil.getMessage("plm.ecm.current.name", new Date());
+		}
+
+		private NodeRef getChangeOrderFolder() {
+			return repoService.getFolderByPath("/" + RepoConsts.PATH_SYSTEM + "/" + PlmRepoConsts.PATH_ECO);
+		}
+
 		@Override
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = (prime * result) + getOuterType().hashCode();
-			result = (prime * result) + ((description == null) ? 0 : description.hashCode());
-			result = (prime * result) + ((entityNodeRef == null) ? 0 : entityNodeRef.hashCode());
-			result = (prime * result) + ((userName == null) ? 0 : userName.hashCode());
-			result = (prime * result) + ((versionType == null) ? 0 : versionType.hashCode());
+			result = (prime * result) + getEnclosingInstance().hashCode();
+			result = (prime * result) + Objects.hash(description, entityNodeRef, userName, versionType);
 			return result;
 		}
 
@@ -230,37 +237,14 @@ public class ECOVersionPlugin implements EntityVersionPlugin {
 				return false;
 			}
 			AsyncECOGenerator other = (AsyncECOGenerator) obj;
-			if (!getOuterType().equals(other.getOuterType())) {
+			if (!getEnclosingInstance().equals(other.getEnclosingInstance())) {
 				return false;
 			}
-			if (description == null) {
-				if (other.description != null) {
-					return false;
-				}
-			} else if (!description.equals(other.description)) {
-				return false;
-			}
-			if (entityNodeRef == null) {
-				if (other.entityNodeRef != null) {
-					return false;
-				}
-			} else if (!entityNodeRef.equals(other.entityNodeRef)) {
-				return false;
-			}
-			if (userName == null) {
-				if (other.userName != null) {
-					return false;
-				}
-			} else if (!userName.equals(other.userName)) {
-				return false;
-			}
-			if (versionType != other.versionType) {
-				return false;
-			}
-			return true;
+			return Objects.equals(description, other.description) && Objects.equals(entityNodeRef, other.entityNodeRef)
+					&& Objects.equals(userName, other.userName) && (versionType == other.versionType);
 		}
 
-		private ECOVersionPlugin getOuterType() {
+		private ECOVersionPlugin getEnclosingInstance() {
 			return ECOVersionPlugin.this;
 		}
 
