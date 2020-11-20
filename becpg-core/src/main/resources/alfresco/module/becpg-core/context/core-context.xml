@@ -61,7 +61,6 @@
 	
 
 	<bean id="associationService"  parent="abstractBeCPGPolicy" class="fr.becpg.repo.helper.impl.AssociationServiceImplV2">
-		<property name="beCPGCacheService" ref="beCPGCacheService"/>
 		<property name="entityDictionaryService" ref="entityDictionaryService"/>
 		<property name="namespaceService" ref="namespaceService" />		
 		<property name="tenantService" ref="tenantService" />	

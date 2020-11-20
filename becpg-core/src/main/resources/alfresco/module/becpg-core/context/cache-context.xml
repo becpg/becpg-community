@@ -25,7 +25,7 @@
            http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
 
-  <bean name="becpgAssocsSharedCache" factory-bean="cacheFactory" factory-method="createCache">
+    <bean name="becpgAssocsSharedCache" factory-bean="cacheFactory" factory-method="createCache">
       <constructor-arg value="cache.becpgAssocsCache"/>      
    </bean>
    
@@ -34,7 +34,7 @@
       <constructor-arg value="cache.becpgChildAssocsCache"/>      
    </bean>
 
- 
+
    <bean name="becpgAssocsCache" class="org.alfresco.repo.cache.TransactionalCache">
       <property name="sharedCache">
          <ref bean="becpgAssocsSharedCache" />
