@@ -150,8 +150,6 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 		this.qnameDAO = qnameDAO;
 	}
 
-	/** {@inheritDoc} */
-	@Override
 	public void update(NodeRef nodeRef, QName qName, List<NodeRef> assocNodeRefs, boolean resetCache) {
  
 		List<AssociationRef> dbAssocNodeRefs = getTargetAssocsImpl(nodeRef, qName, false);
@@ -226,8 +224,6 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 		return getTargetAssoc(nodeRef, qName, true);
 	}
 
-	/** {@inheritDoc} */
-	@Override
 	public NodeRef getTargetAssoc(NodeRef nodeRef, QName qName, boolean fromCache) {
 		List<AssociationRef> assocRefs = getTargetAssocsImpl(nodeRef, qName, fromCache);
 		return (assocRefs != null) && !assocRefs.isEmpty() ? assocRefs.get(0).getTargetRef() : null;
@@ -425,8 +421,7 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 		return ret;
 	}
 
-	/** {@inheritDoc} */
-	@Override
+	
 	public List<NodeRef> getTargetAssocs(NodeRef nodeRef, QName qName, boolean fromCache) {
 		List<AssociationRef> assocRefs = getTargetAssocsImpl(nodeRef, qName, fromCache);
 		List<NodeRef> listItems = new LinkedList<>();
