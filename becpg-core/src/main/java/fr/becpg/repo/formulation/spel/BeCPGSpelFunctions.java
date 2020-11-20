@@ -212,15 +212,15 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 * @param assocNodeRefs
 		 */
 		public void setAssocs(NodeRef nodeRef, String qname, List<NodeRef> assocNodeRefs) {
-			associationService.update(nodeRef, getQName(qname), assocNodeRefs, true);
+			associationService.update(nodeRef, getQName(qname), assocNodeRefs);
 		}
 
 		public void setAssocs(RepositoryEntity entity, String qname, List<NodeRef> assocNodeRefs) {
-			associationService.update(entity.getNodeRef(), getQName(qname), assocNodeRefs, true);
+			associationService.update(entity.getNodeRef(), getQName(qname), assocNodeRefs);
 		}
 
 		public void setAssocs(String qname, List<NodeRef> assocNodeRefs) {
-			associationService.update(entity.getNodeRef(), getQName(qname), assocNodeRefs, true);
+			associationService.update(entity.getNodeRef(), getQName(qname), assocNodeRefs);
 		}
 
 		/**

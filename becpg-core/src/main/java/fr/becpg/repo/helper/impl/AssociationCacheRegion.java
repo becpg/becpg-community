@@ -3,6 +3,8 @@ package fr.becpg.repo.helper.impl;
 import java.io.Serializable;
 import java.util.Objects;
 
+import javax.annotation.Nonnull;
+
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
@@ -11,27 +13,21 @@ public class AssociationCacheRegion implements Serializable {
 
 	protected final NodeRef nodeRef;
 	protected final QName assocQName;
-	private final QName childTypeQname;
 
 	private final int hashCode;
 
-	public AssociationCacheRegion(NodeRef nodeRef, QName assocQName) {
-		this(nodeRef, assocQName, null);
-	}
-
-	public AssociationCacheRegion(NodeRef nodeRef, QName assocQName, QName childTypeQname) {
+	public AssociationCacheRegion(@Nonnull NodeRef nodeRef, @Nonnull QName assocQName) {
 		this.nodeRef = nodeRef;
 		this.assocQName = assocQName;
-		this.childTypeQname = childTypeQname;
-		this.hashCode = Objects.hash(nodeRef, assocQName, childTypeQname);
+		this.hashCode = Objects.hash(nodeRef, assocQName);
 	}
 
 	public NodeRef getNodeRef() {
 		return nodeRef;
 	}
-
-	public QName getChildTypeQname() {
-		return childTypeQname;
+	
+	public QName getAssocQName() {
+		return assocQName;
 	}
 
 	@Override

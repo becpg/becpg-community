@@ -36,15 +36,7 @@ import fr.becpg.repo.helper.impl.EntitySourceAssoc;
  */
 public interface AssociationService {
 
-	/**
-	 * <p>update.</p>
-	 *
-	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param qName a {@link org.alfresco.service.namespace.QName} object.
-	 * @param assocNodeRefs a {@link java.util.List} object.
-	 * @param resetCache a boolean.
-	 */
-	void update(NodeRef nodeRef, QName qName, List<NodeRef> assocNodeRefs, boolean resetCache);
+
 	/**
 	 * <p>update.</p>
 	 *
@@ -69,24 +61,6 @@ public interface AssociationService {
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
 	NodeRef getTargetAssoc(NodeRef nodeRef, QName qName);
-	/**
-	 * <p>getTargetAssoc.</p>
-	 *
-	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param qName a {@link org.alfresco.service.namespace.QName} object.
-	 * @param fromCache a boolean.
-	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 */
-	NodeRef getTargetAssoc(NodeRef nodeRef, QName qName, boolean fromCache);
-	/**
-	 * <p>getTargetAssocs.</p>
-	 *
-	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param qName a {@link org.alfresco.service.namespace.QName} object.
-	 * @param fromCache a boolean.
-	 * @return a {@link java.util.List} object.
-	 */
-	List<NodeRef> getTargetAssocs(NodeRef nodeRef, QName qName, boolean fromCache);
 	/**
 	 * <p>getTargetAssocs.</p>
 	 *

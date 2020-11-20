@@ -589,6 +589,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			}
 			try {
 				policyBehaviourFilter.disableBehaviour();
+				//TODO bug here disabling behaviour make association cache not working
 				nodeService.addAspect(versionHistoryRef, ContentModel.ASPECT_TEMPORARY, null);
 				nodeService.deleteNode(versionHistoryRef);
 			} finally {

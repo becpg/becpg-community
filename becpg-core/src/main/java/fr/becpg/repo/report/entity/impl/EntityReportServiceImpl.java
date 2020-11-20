@@ -1228,11 +1228,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 	private void updateReportsAssoc(NodeRef entityNodeRef, List<NodeRef> newReports) {
 
-		// #417 : refresh reports assoc (delete obsolete reports if we rename
-		// entity)
 		if (!nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_WORKING_COPY)) {
-			List<NodeRef> dbReports = associationService.getTargetAssocs(entityNodeRef, ReportModel.ASSOC_REPORTS, false);
-			for (NodeRef dbReport : dbReports) {
+			for (NodeRef dbReport : associationService.getTargetAssocs(entityNodeRef, ReportModel.ASSOC_REPORTS)) {
 				if (!newReports.contains(dbReport)) {
 					logger.debug("delete old report: " + dbReport);
 					nodeService.addAspect(dbReport, ContentModel.ASPECT_TEMPORARY, null);
@@ -1240,9 +1237,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 				}
 			}
 		}
-		// Foec
-
-		associationService.update(entityNodeRef, ReportModel.ASSOC_REPORTS, newReports, true);
+		
+		associationService.update(entityNodeRef, ReportModel.ASSOC_REPORTS, newReports);
 	}
 
 	/**
@@ -1384,7 +1380,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 		String reportName = getSelectedReportName(entityNodeRef);
 
-		List<NodeRef> dbReports = associationService.getTargetAssocs(entityNodeRef, ReportModel.ASSOC_REPORTS, false);
+		List<NodeRef> dbReports = associationService.getTargetAssocs(entityNodeRef, ReportModel.ASSOC_REPORTS);
 
 		NodeRef ret = null;
 
