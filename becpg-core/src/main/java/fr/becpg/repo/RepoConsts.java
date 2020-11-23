@@ -3,8 +3,12 @@
  */
 package fr.becpg.repo;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.alfresco.repo.version.Version2Model;
 import org.alfresco.service.cmr.repository.StoreRef;
+import org.alfresco.service.namespace.QName;
 
 /**
  * beCPG constants for repository
@@ -117,7 +121,16 @@ public class RepoConsts
 	/** Constant <code>MAX_RESULTS_5000</code> */
 	public static final Integer MAX_RESULTS_5000 = 5000;
 	
+
 	
+	public static final Map<String, Boolean> DEFAULT_SORT = new LinkedHashMap<>();
+	
+	static {
+
+		DEFAULT_SORT.put("@bcpg:sort", true);
+		DEFAULT_SORT.put("@cm:created", true);
+		
+	}
 	
 	/*-- IHM --*/
 	/** Constant <code>LABEL_SEPARATOR=", "</code> */

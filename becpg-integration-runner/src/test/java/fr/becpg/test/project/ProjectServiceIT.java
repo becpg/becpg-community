@@ -814,7 +814,7 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 			assertEquals(projectData.getTaskList().get(1).getNodeRef(), prevTasks.get(0));
 
 			// delete task
-			logger.info("Delete task");
+			logger.info("Delete task:"+projectData.getTaskList().get(1).getNodeRef());
 			nodeService.deleteNode(projectData.getTaskList().get(1).getNodeRef());
 
 			return null;
@@ -823,9 +823,11 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
-
+			
 			List<NodeRef> prevTasks = associationService.getTargetAssocs(projectData.getTaskList().get(1).getNodeRef(),
 					ProjectModel.ASSOC_TL_PREV_TASKS);
+			
+			logger.info("Get target assoc task:"+projectData.getTaskList().get(1).getNodeRef()+" "+prevTasks);
 			assertEquals(1, prevTasks.size());
 			assertEquals(projectData.getTaskList().get(0).getNodeRef(), prevTasks.get(0));
 

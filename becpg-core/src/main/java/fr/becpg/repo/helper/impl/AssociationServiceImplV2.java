@@ -87,14 +87,16 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 	private NamespaceService namespaceService;
 
 	private SimpleCache<AssociationCacheRegion, ChildAssocCacheEntry> childsAssocsCache;
-	private SimpleCache<AssociationCacheRegion, List<NodeRef>> assocsCache;
+	private SimpleCache<AssociationCacheRegion, Set<NodeRef>> assocsCache;
 
 	private static Set<QName> ignoredAssocs = new HashSet<>();
+	
 
 	private QNameDAO qnameDAO;
 
 	static {
 		ignoredAssocs.add(ContentModel.ASSOC_ORIGINAL);
+		
 	}
 
 	/**
@@ -146,7 +148,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		this.childsAssocsCache = childsAssocsCache;
 	}
 
-	public void setAssocsCache(SimpleCache<AssociationCacheRegion, List<NodeRef>> assocsCache) {
+	public void setAssocsCache(SimpleCache<AssociationCacheRegion, Set<NodeRef>> assocsCache) {
 		this.assocsCache = assocsCache;
 	}
 
@@ -154,26 +156,31 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 
 	/** {@inheritDoc} */
 	@Override
-	public void update(NodeRef nodeRef, QName qName, List<NodeRef> assocNodeRefs) {
+	public void update(NodeRef nodeRef, QName qName, List<NodeRef> toUpdateNodeRefs) {
 
 		List<NodeRef> dbAssocNodeRefs = getTargetAssocs(nodeRef, qName);
-		List<NodeRef> dbTargetNodeRefs = new ArrayList<>();
-
+        Set<NodeRef> assocNodeRefs = new HashSet<>();
+        if(toUpdateNodeRefs != null) {
+        	assocNodeRefs.addAll(toUpdateNodeRefs);
+        }
+        boolean hasChanged = false; 
+		
 		try {
 			TransactionalResourceHelper.incrementCount(UPDATE_ASSOC_COUNT);
+			
 			if (dbAssocNodeRefs != null) {
 				// remove from db
 
 				for (NodeRef assocRef : dbAssocNodeRefs) {
 					if ((assocNodeRefs == null) || !assocNodeRefs.contains(assocRef)) {
 						try {
-							nodeService.removeAssociation(nodeRef, assocRef, qName);
+							hasChanged = true;
+							if (!nodeService.hasAspect(assocRef, ContentModel.ASPECT_PENDING_DELETE)) {
+								nodeService.removeAssociation(nodeRef, assocRef, qName);
+							}
 						} catch (InvalidNodeRefException e) {
 							logger.error("Node already deleted:"+ nodeRef+ " "+qName);
 						}
-					} else {
-						dbTargetNodeRefs.add(assocRef);// already in
-														// // db
 					}
 				}
 			}
@@ -181,14 +188,17 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 			// add nodes that are not in db
 			if (assocNodeRefs != null) {
 				for (NodeRef n : assocNodeRefs) {
-					if (!dbTargetNodeRefs.contains(n) && nodeService.exists(n)) {
+					if (!dbAssocNodeRefs.contains(n) && nodeService.exists(n)) {
+						hasChanged = true;
 						nodeService.createAssociation(nodeRef, n, qName);
-						dbTargetNodeRefs.add(n);
-					}
+					} 
+					
 				}
 			}
-			assocsCache.put(new AssociationCacheRegion(nodeRef, qName), assocNodeRefs);
-
+		
+			if(hasChanged) {
+				assocsCache.put(new AssociationCacheRegion(nodeRef, qName), assocNodeRefs);
+			}
 		} finally {
 			TransactionalResourceHelper.decrementCount(UPDATE_ASSOC_COUNT, false);
 		}
@@ -205,15 +215,15 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> getTargetAssocs(NodeRef nodeRef, QName qName) {
-
-		return getFromCache(assocsCache, new AssociationCacheRegion(nodeRef, qName), () -> {
+		//always return a new List
+		return new LinkedList<>(getFromCache(assocsCache, new AssociationCacheRegion(nodeRef, qName), () -> {
 			List<AssociationRef> assocRefs = nodeService.getTargetAssocs(nodeRef, qName);
-			List<NodeRef> listItems = new LinkedList<>();
+			Set<NodeRef> listItems = new HashSet<>();
 			for (AssociationRef assocRef : assocRefs) {
 				listItems.add(assocRef.getTargetRef());
 			}
 			return listItems;
-		});
+		}));
 
 	}
 
@@ -252,6 +262,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 	private @Nonnull List<NodeRef> getChildAssocsImpl(final NodeRef nodeRef, final QName qName, final QName childType,
 			final Map<String, Boolean> sortProps) {
 
+		//Faster that in alfresco Search ?
 		if ((childType != null) && (sortProps != null) && !sortProps.isEmpty() && !isDefaultSort(sortProps)) {
 			// No cache if specific sort
 			return dbChildAssocSearch(nodeRef, childType, sortProps);
@@ -260,20 +271,59 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		//Common sort returning from search
 		ChildAssocCacheEntry cachedAssocs = getFromCache(childsAssocsCache, new AssociationCacheRegion(nodeRef, qName), () -> {
 			ChildAssocCacheEntry childAssocCacheEntry = new ChildAssocCacheEntry();
-
-			// get the list of target nodes for each association type
-			for (ChildAssociationRef assocRef : nodeService.getChildAssocs(nodeRef, qName, RegexQNamePattern.MATCH_ALL, true)) {
-				QName type = nodeService.getType(assocRef.getChildRef());
-				childAssocCacheEntry.add(assocRef.getChildRef(), type);
+			
+			for (ChildAssociationRef assocRef : nodeService.getChildAssocs(nodeRef, qName,  RegexQNamePattern.MATCH_ALL, true)) {
+				if(nodeService.exists(assocRef.getChildRef())) {
+					QName type = nodeService.getType(assocRef.getChildRef());
+					childAssocCacheEntry.add(assocRef.getChildRef(), type);
+				}
 			}
 
-			childAssocCacheEntry.sort(new CommonDataListSort(nodeService));
 
 			return childAssocCacheEntry;
 
 		});
+		List<NodeRef> ret = cachedAssocs.get(childType);
 
-		return cachedAssocs.get(childType);
+		
+		//TODO better sort in cache and invalidate cache when sort prop is modified ?
+//		Comparator<NodeRef> comparator = null;
+//		Map<String, Boolean> sortMap = null;
+//		if (sortProps == null || sortProps.isEmpty()) {
+//			sortMap = RepoConsts.DEFAULT_SORT;
+//		} else {
+//			sortMap = sortProps;
+//		}
+//		
+//		for (Map.Entry<String, Boolean> sortEntry : sortMap.entrySet()) {
+//			final QName sortFieldQName;
+//
+//			if (sortEntry.getKey().indexOf(QName.NAMESPACE_BEGIN) != -1) {
+//				sortFieldQName = QName.createQName(sortEntry.getKey().replace("@", ""));
+//			} else {
+//				sortFieldQName = QName.createQName(sortEntry.getKey().replace("@", ""), namespaceService);
+//			}
+//
+//			if (comparator == null) {
+//				comparator = Comparator.comparing(n -> (Comparable) nodeService.getProperty(n, sortFieldQName), Comparator.nullsLast(Comparator.naturalOrder()));
+//			} else {
+//				comparator = comparator.thenComparing(n -> (Comparable) nodeService.getProperty(n, sortFieldQName), Comparator.nullsLast(Comparator.naturalOrder()));
+//			}
+//
+//			if (Boolean.FALSE.equals(sortEntry.getValue())) {
+//				comparator =  comparator.reversed();
+//			}
+//
+//		}
+//		
+//		
+//		if(comparator!=null) {
+//			ret.sort(comparator);
+//		}
+		
+		ret.sort(new CommonDataListSort(nodeService));
+
+		return ret;
 	}
 
 	private boolean isDefaultSort(Map<String, Boolean> sortProps) {
@@ -382,6 +432,9 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		return ret;
 
 	}
+	
+
+	
 
 	/** {@inheritDoc} */
 	@Override
@@ -623,7 +676,9 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 	//// Cache managment
 
 	private void removeCachedAssoc(NodeRef nodeRef, QName qName) {
-		assocsCache.remove(new AssociationCacheRegion(nodeRef, qName));
+		
+		AssociationCacheRegion cacheKey = 	new AssociationCacheRegion(nodeRef, qName);
+		assocsCache.remove(cacheKey);
 	}
 
 	private void removeChildCachedAssoc(NodeRef nodeRef, QName qName) {
@@ -632,14 +687,14 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 
 	private void removeAllCacheAssocs(NodeRef nodeRef) {
 
-		Map<QName, List<NodeRef>> assocs = new HashMap<>();
+		Map<QName, Set<NodeRef>> assocs = new HashMap<>();
 
 		// get the list of target nodes for each association type
 		List<AssociationRef> refs = nodeService.getTargetAssocs(nodeRef, RegexQNamePattern.MATCH_ALL);
 		for (AssociationRef assocRef : refs) {
-			List<NodeRef> listItems = assocs.get(assocRef.getTypeQName());
+			Set<NodeRef> listItems = assocs.get(assocRef.getTypeQName());
 			if (listItems == null) {
-				listItems = new LinkedList<>();
+				listItems = new HashSet<>();
 				assocs.put(assocRef.getTypeQName(), listItems);
 				assocsCache.put(new AssociationCacheRegion(nodeRef, assocRef.getTypeQName()), listItems);
 			}
@@ -660,11 +715,10 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		T ret = cache.get(cacheKey);
 
 		if (ret == null) {
-
+			
 			ret = callback.get();
 			if ((ret != null)) {
 				cache.put(cacheKey, ret);
-
 			}
 		}
 
