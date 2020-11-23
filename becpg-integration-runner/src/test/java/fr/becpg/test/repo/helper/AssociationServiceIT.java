@@ -263,10 +263,10 @@ public class AssociationServiceIT extends PLMBaseTestCase {
 			childNodeRefs = associationService.getChildAssocs(compoListNodeRef, ContentModel.ASSOC_CONTAINS, PLMModel.TYPE_DYNAMICCHARACTLIST);
 			assertEquals("Assert 16", 16, childNodeRefs.size());
 
-			System.out.println("Delete child");
 			nodeService.deleteNode(
 					associationService.getChildAssocs(compoListNodeRef, ContentModel.ASSOC_CONTAINS, PLMModel.TYPE_DYNAMICCHARACTLIST).get(0));
 
+			
 			childNodeRefs = associationService.getChildAssocs(compoListNodeRef, ContentModel.ASSOC_CONTAINS);
 			assertEquals("Assert 16", 16, childNodeRefs.size());
 

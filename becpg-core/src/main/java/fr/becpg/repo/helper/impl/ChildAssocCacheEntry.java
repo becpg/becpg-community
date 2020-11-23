@@ -53,13 +53,6 @@ public class ChildAssocCacheEntry implements Serializable {
 	}
 
 
-	public void sort(CommonDataListSort commonDataListSort) {
-		items.sort(commonDataListSort);
-		for(List<NodeRef> toSort: itemsByType.values()) {
-			toSort.sort(commonDataListSort);
-		}
-	}
-
 
 	
 }

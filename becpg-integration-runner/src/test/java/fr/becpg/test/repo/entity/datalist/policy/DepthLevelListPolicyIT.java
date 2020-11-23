@@ -590,14 +590,17 @@ public class DepthLevelListPolicyIT extends PLMBaseTestCase {
 			final ProductData copiedProductLoaded = alfrescoRepository.findOne(copiedNodeRef);
 			
 			printSort(finishedProductLoaded.getCompoList());
+			logger.debug("copied sort :"+copiedProductLoaded.getName());
 			printSort(copiedProductLoaded.getCompoList());
 			
-			logger.debug("origin " + finishedProductLoaded.getCompoListView().getCompoList().get(1).getParent().getNodeRef());
-			logger.debug("target " + copiedProductLoaded.getCompoListView().getCompoList().get(1).getParent().getNodeRef());
+
 			assertNull(finishedProductLoaded.getCompoListView().getCompoList().get(0).getParent());
 			assertNull(copiedProductLoaded.getCompoListView().getCompoList().get(0).getParent());
 			assertNotNull(finishedProductLoaded.getCompoListView().getCompoList().get(1).getParent());
 			assertNotNull(copiedProductLoaded.getCompoListView().getCompoList().get(1).getParent());
+			
+			logger.debug("origin " + finishedProductLoaded.getCompoListView().getCompoList().get(1).getParent().getNodeRef());
+			logger.debug("target " + copiedProductLoaded.getCompoListView().getCompoList().get(1).getParent().getNodeRef());
 			assertNotSame(finishedProductLoaded.getCompoListView().getCompoList().get(1).getParent().getNodeRef(),
 					copiedProductLoaded.getCompoListView().getCompoList().get(1).getParent().getNodeRef());
 			return null;
