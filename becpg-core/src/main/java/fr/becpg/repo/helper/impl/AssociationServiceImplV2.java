@@ -184,19 +184,25 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 					}
 				}
 			}
+			
+			Set<NodeRef> toRemoveNodeRefs = new HashSet<>();
 
 			// add nodes that are not in db
 			if (assocNodeRefs != null) {
 				for (NodeRef n : assocNodeRefs) {
 					if (!dbAssocNodeRefs.contains(n) && nodeService.exists(n)) {
-						hasChanged = true;
-						nodeService.createAssociation(nodeRef, n, qName);
+						if (!nodeService.hasAspect(n, ContentModel.ASPECT_PENDING_DELETE)) {
+							hasChanged = true;
+							nodeService.createAssociation(nodeRef, n, qName);
+							toRemoveNodeRefs.remove(n);
+						}
 					} 
 					
 				}
 			}
 		
 			if(hasChanged) {
+				assocNodeRefs.removeAll(toRemoveNodeRefs);
 				assocsCache.put(new AssociationCacheRegion(nodeRef, qName), assocNodeRefs);
 			}
 		} finally {

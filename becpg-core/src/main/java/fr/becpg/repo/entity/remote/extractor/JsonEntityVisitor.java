@@ -191,19 +191,14 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 		QName propName = RemoteHelper.getPropName(nodeType, entityDictionaryService);
 		visitPropValue(propName, entity, nodeService.getProperty(nodeRef, propName));
-
-		if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_CODE)) {
-			if (nodeService.getProperty(nodeRef, BeCPGModel.PROP_CODE) != null) {
-				visitPropValue(BeCPGModel.PROP_CODE, entity, nodeService.getProperty(nodeRef, BeCPGModel.PROP_CODE));
-			}
-
+		if (nodeService.getProperty(nodeRef, BeCPGModel.PROP_CODE) != null) {
+			visitPropValue(BeCPGModel.PROP_CODE, entity, nodeService.getProperty(nodeRef, BeCPGModel.PROP_CODE));
 		}
 		// erpCode
-		if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ERP_CODE)) {
-			if (nodeService.getProperty(nodeRef, BeCPGModel.PROP_ERP_CODE) != null) {
-				visitPropValue(BeCPGModel.PROP_ERP_CODE, entity, nodeService.getProperty(nodeRef, BeCPGModel.PROP_ERP_CODE));
-			}
+		if (nodeService.getProperty(nodeRef, BeCPGModel.PROP_ERP_CODE) != null) {
+			visitPropValue(BeCPGModel.PROP_ERP_CODE, entity, nodeService.getProperty(nodeRef, BeCPGModel.PROP_ERP_CODE));
 		}
+		
 
 		if (nodeRef != null) {
 

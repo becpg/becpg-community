@@ -19,6 +19,7 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.formulation.nutrient.NutDatabaseService;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.L2CacheSupport;
 
 /**
  * <p>NutDatabaseImportWebScript class.</p>
@@ -29,11 +30,13 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 public class NutDatabaseImportWebScript extends AbstractWebScript {
 
 	private static final Log logger = LogFactory.getLog(NutDatabaseImportWebScript.class);
-	
+
 	@Autowired
 	private AlfrescoRepository<ProductData> alfrescoRepository;
-	
+
 	private NutDatabaseService nutDatabaseService;
+
+	private static final String SUPPLIER_PARAM = "supplier";
 
 	/**
 	 * <p>Setter for the field <code>nutDatabaseService</code>.</p>
@@ -51,40 +54,46 @@ public class NutDatabaseImportWebScript extends AbstractWebScript {
 
 			JSONObject json = (JSONObject) req.parseContent();
 			String entities = "";
-			
+
 			if ((json != null) && json.has("entities")) {
 				entities = (String) json.get("entities");
 			}
-			
-			NodeRef destNodeRef = null;
+
+			final NodeRef destNodeRef;
 			String destination = req.getParameter("dest");
 			if (destination != null) {
 				destNodeRef = new NodeRef(destination);
-			}
-			
-			Boolean onlyNutsBool = Boolean.valueOf(req.getParameter("onlyNuts"));
-			
-			NodeRef file = null;
-			if ((json != null) && json.has("supplier") && json.getString("supplier") != null && !json.getString("supplier").isEmpty()) {
-				file = new NodeRef(json.getString("supplier"));
 
-				JSONArray ret = new JSONArray();
-				
+				Boolean onlyNutsBool = Boolean.valueOf(req.getParameter("onlyNuts"));
+
+				NodeRef file = null;
+				if ((json != null) && json.has(SUPPLIER_PARAM) && (json.getString(SUPPLIER_PARAM) != null)
+						&& !json.getString(SUPPLIER_PARAM).isEmpty()) {
+					file = new NodeRef(json.getString(SUPPLIER_PARAM));
+
+					JSONArray ret = new JSONArray();
+
 					for (final String entity : entities.split(",")) {
-						logger.debug("using entity: "+entity);
-						
-						if(Boolean.TRUE.equals(onlyNutsBool)){
+						logger.debug("using entity: " + entity);
+
+						if (Boolean.TRUE.equals(onlyNutsBool)) {
 							List<NutListDataItem> nuts = nutDatabaseService.getNuts(file, entity);
-							
-							if(!nuts.isEmpty()){
+
+							if (!nuts.isEmpty()) {
 								logger.debug("Importing nuts in product");
-								ProductData rmData = alfrescoRepository.findOne(destNodeRef);
-								rmData.getNutList().clear();
-								rmData.getNutList().addAll(nuts);
-								alfrescoRepository.save(rmData);
+								L2CacheSupport.doInCacheContext(() -> {
+
+									ProductData rmData = alfrescoRepository.findOne(destNodeRef);
+									rmData.getNutList().clear();
+									rmData.getNutList().addAll(nuts);
+									alfrescoRepository.save(rmData);
+									
+									//TODO entityActivityService.postEntityActivity(productNodeRef, ActivityType.Formulation, ActivityEvent.Update, null);
+									
+								}, false, true);
 								break;
 							}
-							
+
 						} else {
 							//create new raw material
 							logger.debug("importing new RM");
@@ -93,21 +102,18 @@ public class NutDatabaseImportWebScript extends AbstractWebScript {
 							if (entityNodeRef == null) {
 								logger.debug("createProduct returned null");
 							}
-			
+
 							ret.put(entityNodeRef);
 						}
 					}
-				
-	
-				res.setContentType("application/json");
-				res.setContentEncoding("UTF-8");
-				res.getWriter().write(ret.toString());
-			
+
+					res.setContentType("application/json");
+					res.setContentEncoding("UTF-8");
+					res.getWriter().write(ret.toString());
+				}
 			}
-			
-		} catch (JSONException e) {
-			throw new WebScriptException(e.getMessage());
-		} catch (IOException e) {
+
+		} catch (JSONException | IOException e) {
 			throw new WebScriptException(e.getMessage());
 		}
 	}

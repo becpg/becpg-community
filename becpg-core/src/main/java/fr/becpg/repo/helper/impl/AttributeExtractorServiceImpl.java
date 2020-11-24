@@ -127,6 +127,45 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 	@Autowired
 	private PropertyFormatService propertyFormatService;
+	
+	private CommonDataListCallBack commonDataListCallBack = new CommonDataListCallBack();
+	
+	private class CommonDataListCallBack implements DataListCallBack{
+	
+		@Override
+		public List<Map<String, Object>> extractNestedField(NodeRef nodeRef, AttributeExtractorStructure field, FormatMode mode) {
+			List<Map<String, Object>> ret = new ArrayList<>();
+
+			if (field.getFieldDef() instanceof AssociationDefinition) {
+				List<NodeRef> assocRefs;
+				if (((AssociationDefinition) field.getFieldDef()).isChild()) {
+					assocRefs = associationService.getChildAssocs(nodeRef, field.getFieldDef().getName());
+				} else {
+					assocRefs = associationService.getTargetAssocs(nodeRef, field.getFieldDef().getName());
+				}
+				for (NodeRef itemNodeRef : assocRefs) {
+					addExtracted(itemNodeRef, field, new HashMap<>(), ret, mode);
+				}
+
+			}
+			return ret;
+		}
+
+		private void addExtracted(NodeRef itemNodeRef, AttributeExtractorStructure field, Map<NodeRef, Map<String, Object>> cache,
+				List<Map<String, Object>> ret, FormatMode mode) {
+			if (cache.containsKey(itemNodeRef)) {
+				ret.add(cache.get(itemNodeRef));
+			} else {
+				if (permissionService.hasPermission(itemNodeRef, "Read") == AccessStatus.ALLOWED) {
+					QName itemType = nodeService.getType(itemNodeRef);
+					Map<QName, Serializable> properties = nodeService.getProperties(itemNodeRef);
+					ret.add(extractNodeData(itemNodeRef, itemType, properties, field.getChildrens(), mode, null));
+				}
+			}
+		}
+		
+	}
+	
 
 	private AttributeExtractorPlugin getAttributeExtractorPlugin(QName type, NodeRef nodeRef) {
 
@@ -676,45 +715,14 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		}
 		return ret;
 	}
+	
 
 	/** {@inheritDoc} */
 	@Override
 	public Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, List<String> metadataFields, FormatMode mode) {
-		return extractNodeData(nodeRef, itemType, nodeService.getProperties(nodeRef), readExtractStructure(itemType, metadataFields), mode,
-				new DataListCallBack() {
+		return extractNodeData(nodeRef, itemType, nodeService.getProperties(nodeRef), readExtractStructure(itemType, metadataFields), mode, commonDataListCallBack);
 
-					@Override
-					public List<Map<String, Object>> extractNestedField(NodeRef nodeRef, AttributeExtractorStructure field) {
-						List<Map<String, Object>> ret = new ArrayList<>();
-
-						if (field.getFieldDef() instanceof AssociationDefinition) {
-							List<NodeRef> assocRefs;
-							if (((AssociationDefinition) field.getFieldDef()).isChild()) {
-								assocRefs = associationService.getChildAssocs(nodeRef, field.getFieldDef().getName());
-							} else {
-								assocRefs = associationService.getTargetAssocs(nodeRef, field.getFieldDef().getName());
-							}
-							for (NodeRef itemNodeRef : assocRefs) {
-								addExtracted(itemNodeRef, field, new HashMap<>(), ret);
-							}
-
-						}
-						return ret;
-					}
-
-					private void addExtracted(NodeRef itemNodeRef, AttributeExtractorStructure field, Map<NodeRef, Map<String, Object>> cache,
-							List<Map<String, Object>> ret) {
-						if (cache.containsKey(itemNodeRef)) {
-							ret.add(cache.get(itemNodeRef));
-						} else {
-							if (permissionService.hasPermission(itemNodeRef, "Read") == AccessStatus.ALLOWED) {
-								QName itemType = nodeService.getType(itemNodeRef);
-								Map<QName, Serializable> properties = nodeService.getProperties(itemNodeRef);
-								ret.add(extractNodeData(itemNodeRef, itemType, properties, field.getChildrens(), mode, null));
-							}
-						}
-					}
-				});
+				
 	}
 
 	/** {@inheritDoc} */
@@ -733,7 +741,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 		for (AttributeExtractorStructure field : metadataFields) {
 			if (field.isNested()) {
-				List<Map<String, Object>> extracted = callback.extractNestedField(nodeRef, field);
+				List<Map<String, Object>> extracted = callback.extractNestedField(nodeRef, field, mode);
 
 				if ((FormatMode.CSV.equals(mode) || FormatMode.XLSX.equals(mode)) && !extracted.isEmpty()) {
 

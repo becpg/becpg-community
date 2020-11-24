@@ -270,7 +270,9 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 						for (int i = 1; i < headerRow.length; ++i) {
 							if (isInDictionary(headerRow[i]) || (headerRow[i].contains("_") && (isInDictionary(headerRow[i].split("_")[0])))) {
 								String value = extractValueById(file, idSplit, i);
-								logger.debug("setting property qnamed  \"" + headerRow[i] + "\" to value  \"" + value + "\"");
+								if(logger.isDebugEnabled()) {
+									logger.debug("setting property qnamed  \"" + headerRow[i] + "\" to value  \"" + value + "\"");
+								}
 								QName attributeQName = QName.createQName(headerRow[i], namespaceService);
 
 								if (PLMModel.TYPE_SUPPLIER.equals(attributeQName)) {
@@ -294,7 +296,9 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 						for (int i = 1; i < headerRow.length; ++i) {
 							if (isInDictionary(headerRow[i]) || (headerRow[i].contains("_") && (isInDictionary(headerRow[i].split("_")[0])))) {
 								String value = extractValueById(file, idSplit, i);
-								logger.debug("setting property qnamed  \"" + headerRow[i] + "\" to value  \"" + value + "\"");
+								if(logger.isDebugEnabled()) {
+									logger.debug("setting property qnamed  \"" + headerRow[i] + "\" to value  \"" + value + "\"");
+								}
 								QName attributeQName = QName.createQName(headerRow[i], namespaceService);
 
 								if (!(PLMModel.TYPE_SUPPLIER.equals(attributeQName) || PLMModel.PROP_PRODUCT_HIERARCHY1.equals(attributeQName)
@@ -325,9 +329,7 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 
 	private CSVReader getCSVReaderFromNodeRef(NodeRef file) {
 		ContentReader fileReader = contentService.getReader(file, ContentModel.PROP_CONTENT);
-		CSVReader csvReader = new CSVReader(new InputStreamReader(fileReader.getContentInputStream()), ';');
-
-		return csvReader;
+		return new CSVReader(new InputStreamReader(fileReader.getContentInputStream()), ';');
 	}
 
 	private List<IdentifiedValue> getColumn(NodeRef file, int columnIndex) {
@@ -427,7 +429,6 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 				}
 				currentLine = csvReader.readNext();
 			}
-			csvReader.close();
 			return res;
 		} catch (IOException e) {
 			throw new RuntimeException("Error reading product name", e);
@@ -465,7 +466,6 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 				currentLine = csvReader.readNext();
 			}
 
-			csvReader.close();
 			return res;
 
 		} catch (IOException e) {
@@ -526,7 +526,7 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 	private String extractValueById(NodeRef file, String id, int column) {
 		String[] line = getLineByIndex(file, id, extractIdentifierColumnIndex(getHeaderRow(file)));
 
-		if ((line != null) && (line.length > column)) {
+		if (line.length > column) {
 			return line[column];
 		} else {
 			throw new RuntimeException("error extracting value from cell from id " + id + " and column " + column);

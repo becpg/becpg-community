@@ -387,9 +387,11 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 			NodeRef dataListNodeRef = entityListDAO.getList(listContainerNodeRef, dataListContainerType);
 
 			boolean isLazyList = dataList instanceof LazyLoadingDataList;
+			boolean isLoaded = isLazyList && ((LazyLoadingDataList<? extends RepositoryEntity>) dataList).isLoaded();
+			boolean isLoadedOrNotEmpty = (!isLazyList || isLoaded) && !dataList.isEmpty();
 
-			if ((dataListNodeRef == null) && !dataList.isEmpty()
-					&& (!isLazyList || ((LazyLoadingDataList<? extends RepositoryEntity>) dataList).isLoaded())) {
+			if ((dataListNodeRef == null) 
+					&& isLoadedOrNotEmpty ) {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Create dataList of type : " + dataListContainerType);
 				}
@@ -405,7 +407,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 			if (dataListNodeRef != null) {
 
-				if (isLazyList && ((LazyLoadingDataList<? extends RepositoryEntity>) dataList).isLoaded()) {
+				if (isLoaded) {
 
 					boolean deleteNodes = false;
 
@@ -424,14 +426,17 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 					((LazyLoadingDataList<? extends RepositoryEntity>) dataList).getDeletedNodes().clear();
 				}
-				for (RepositoryEntity dataListItem : dataList) {
-					if ((dataListItem.getNodeRef() == null) || nodeService.exists(dataListItem.getNodeRef())) {
-						dataListItem.setParentNodeRef(dataListNodeRef);
-
-						if (logger.isTraceEnabled()) {
-							logger.trace("Save dataList item: " + dataListItem.toString());
+				
+				if(isLoadedOrNotEmpty ) {
+					for (RepositoryEntity dataListItem : dataList) {
+						if ((dataListItem.getNodeRef() == null) || nodeService.exists(dataListItem.getNodeRef())) {
+							dataListItem.setParentNodeRef(dataListNodeRef);
+	
+							if (logger.isTraceEnabled()) {
+								logger.trace("Save dataList item: " + dataListItem.toString());
+							}
+							save((T) dataListItem);
 						}
-						save((T) dataListItem);
 					}
 				}
 
@@ -440,6 +445,9 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 	}
 
+	
+	
+	
 	/** {@inheritDoc} */
 	@Override
 	public Iterable<T> save(Iterable<? extends T> entities) {
