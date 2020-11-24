@@ -66,49 +66,49 @@ public class ReportImageServiceIT extends RepoBaseTestCase {
 			}
 
 			byte[] image1Byte = entityService.getImage(tempImgNodeRef);
-			byte[] image2Byte = twelveMonkeyExtractor(tempImgNodeRef);
+		//	byte[] image2Byte = twelveMonkeyExtractor(tempImgNodeRef);
 
 		
-			return (image1Byte != null) && (image2Byte == null);
+			return (image1Byte != null); //&& (image2Byte == null);
 
 		}, false, true);
 
 	}
 	// Assert twelve monkey is not used because to slow
-	private byte[] twelveMonkeyExtractor(NodeRef nodeRef) {
-		ContentReader reader = contentService.getReader(nodeRef, ContentModel.PROP_CONTENT);
-
-		if (reader != null) {
-
-			try (FastByteArrayOutputStream out = new FastByteArrayOutputStream()) {
-
-				BufferedImage image = ImageIO.read(reader.getContentInputStream());
-
-				if (image != null) {
-					ImageIO.write(image, guessImageFormat(reader.getMimetype()), out);
-					return out.toByteArrayUnsafe();
-				}
-
-			} catch (IOException e) {
-				logger.error("Failed to get the content for " + nodeRef, e);
-			}
-		}
-		return null;
-	}
-
-	private String guessImageFormat(String mimeType) {
-
-		switch (mimeType) {
-		case MimetypeMap.MIMETYPE_IMAGE_PNG:
-			return "png";
-		case MimetypeMap.MIMETYPE_IMAGE_TIFF:
-			return "tiff";
-		case MimetypeMap.MIMETYPE_IMAGE_GIF:
-			return "gif";
-		default:
-			return "jpg";
-		}
-
-	}
+//	private byte[] twelveMonkeyExtractor(NodeRef nodeRef) {
+//		ContentReader reader = contentService.getReader(nodeRef, ContentModel.PROP_CONTENT);
+//
+//		if (reader != null) {
+//
+//			try (FastByteArrayOutputStream out = new FastByteArrayOutputStream()) {
+//
+//				BufferedImage image = ImageIO.read(reader.getContentInputStream());
+//
+//				if (image != null) {
+//					ImageIO.write(image, guessImageFormat(reader.getMimetype()), out);
+//					return out.toByteArrayUnsafe();
+//				}
+//
+//			} catch (IOException e) {
+//				logger.error("Failed to get the content for " + nodeRef, e);
+//			}
+//		}
+//		return null;
+//	}
+//
+//	private String guessImageFormat(String mimeType) {
+//
+//		switch (mimeType) {
+//		case MimetypeMap.MIMETYPE_IMAGE_PNG:
+//			return "png";
+//		case MimetypeMap.MIMETYPE_IMAGE_TIFF:
+//			return "tiff";
+//		case MimetypeMap.MIMETYPE_IMAGE_GIF:
+//			return "gif";
+//		default:
+//			return "jpg";
+//		}
+//
+//	}
 
 }
