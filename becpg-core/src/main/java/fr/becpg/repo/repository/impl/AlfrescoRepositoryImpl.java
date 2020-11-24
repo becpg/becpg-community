@@ -35,6 +35,7 @@ import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.domain.node.NodeDAO;
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
@@ -48,12 +49,14 @@ import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.PropertyAccessorFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Repository;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.repository.RepositoryEntity;
@@ -118,94 +121,63 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 		if (!L2CacheSupport.isCacheOnlyEnable()) {
 
-			if ((entity.getNodeRef() == null) || ((entity.getExtraProperties() != null) && (!entity.getExtraProperties().isEmpty()))
-					|| (createCollisionSafeHashCode(entity) != entity.getDbHashCode())) {
+			if (isDirty(entity)) {
 
-				boolean shouldUpdate = true;
+				Map<QName, Serializable> properties = extractProperties(entity);
 
-				if ((entity.getNodeRef() != null) && (entity.getExtraProperties() != null) && !entity.getExtraProperties().isEmpty()) {
-					if (createCollisionSafeHashCode(entity) == entity.getDbHashCode()) {
-						shouldUpdate = false;
-
-						for (Map.Entry<QName, Serializable> extraProperty : entity.getExtraProperties().entrySet()) {
-							Serializable prop = nodeService.getProperty(entity.getNodeRef(), extraProperty.getKey());
-
-							if (!(((prop == null) && (extraProperty.getValue() == null))
-									|| ((prop != null) && prop.equals(extraProperty.getValue())))) {
-								shouldUpdate = true;
-								if (logger.isDebugEnabled()) {
-									logger.debug("Change detected in " + extraProperty.getKey() + " - actual: " + prop + " - new: "
-											+ extraProperty.getValue());
-								}
-								break;
-							}
-						}
+				if (entity.getNodeRef() == null) {
+					if (logger.isDebugEnabled()) {
+						logger.debug("Create instanceOf :" + entity.getClass().getName());
 					}
-				}
 
-				if (shouldUpdate) {
-
-					Map<QName, Serializable> properties = extractProperties(entity);
-
-					if (entity.getNodeRef() == null) {
-						if (logger.isDebugEnabled()) {
-							logger.debug("Create instanceOf :" + entity.getClass().getName());
+					for (Iterator<Map.Entry<QName, Serializable>> iterator = properties.entrySet().iterator(); iterator.hasNext();) {
+						Map.Entry<QName, Serializable> prop = iterator.next();
+						if (prop.getValue() == null) {
+							iterator.remove();
 						}
-
-						for (Iterator<Map.Entry<QName, Serializable>> iterator = properties.entrySet().iterator(); iterator.hasNext();) {
-							Map.Entry<QName, Serializable> prop = iterator.next();
-							if (prop.getValue() == null) {
-								iterator.remove();
-							}
-
-						}
-
-						String name = entity.getName();
-						if ((name == null) || name.isEmpty()) {
-							name = UUID.randomUUID().toString();
-						}
-
-						properties.put(ContentModel.PROP_NAME, name);
-
-						NodeRef productNodeRef = nodeService.createNode(entity.getParentNodeRef(), ContentModel.ASSOC_CONTAINS,
-								QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name)),
-								repositoryEntityDefReader.getType(entity.getClass()), properties).getChildRef();
-						entity.setNodeRef(productNodeRef);
-
-					} else {
-
-						if (logger.isDebugEnabled()) {
-							logger.debug("Update instanceOf :" + entity.getClass().getName() + " " + entity.getName());
-							logger.debug(" HashDiff :" + BeCPGHashCodeBuilder.printDiff(entity, findOne(entity.getNodeRef(), new HashMap<>())));
-
-						}
-
-						nodeService.addProperties(entity.getNodeRef(), properties);
-
-						// TODO verify why is needed?
-						Set<QName> propsToDelete = new HashSet<>();
-						for (Map.Entry<QName, Serializable> prop : properties.entrySet()) {
-							if (prop.getValue() == null) {
-								propsToDelete.add(prop.getKey());
-							}
-						}
-						removeProperties(entity.getNodeRef(), propsToDelete);
 
 					}
 
-					saveAssociations(entity);
-					saveAspects(entity);
+					String name = entity.getName();
+					if ((name == null) || name.isEmpty()) {
+						name = UUID.randomUUID().toString();
+					}
 
-					entity.setDbHashCode(createCollisionSafeHashCode(entity));
+					properties.put(ContentModel.PROP_NAME, name);
+
+					NodeRef productNodeRef = nodeService.createNode(entity.getParentNodeRef(), ContentModel.ASSOC_CONTAINS,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name)),
+							repositoryEntityDefReader.getType(entity.getClass()), properties).getChildRef();
+					entity.setNodeRef(productNodeRef);
+
 				} else {
-					if (logger.isTraceEnabled()) {
-						logger.trace("Entity " + entity.getName() + " has no change  to save (same extra properties) ");
+
+					if (logger.isDebugEnabled()) {
+						logger.debug("Update instanceOf :" + entity.getClass().getName() + " " + entity.getName());
+						logger.debug(" HashDiff :" + BeCPGHashCodeBuilder.printDiff(entity, findOne(entity.getNodeRef(), new HashMap<>())));
+
 					}
+
+					nodeService.addProperties(entity.getNodeRef(), properties);
+
+					// TODO verify why is needed?
+					Set<QName> propsToDelete = new HashSet<>();
+					for (Map.Entry<QName, Serializable> prop : properties.entrySet()) {
+						if (prop.getValue() == null) {
+							propsToDelete.add(prop.getKey());
+						}
+					}
+					removeProperties(entity.getNodeRef(), propsToDelete);
+
 				}
 
+				saveAssociations(entity);
+				saveAspects(entity);
+
+				entity.setDbHashCode(createCollisionSafeHashCode(entity));
 			} else {
 				if (logger.isTraceEnabled()) {
-					logger.trace("Entity " + entity.getName() + " has no change to save (same hashCode)");
+					logger.trace("Entity " + entity.getName() + " has no change  to save (same extra properties an same hashCode) ");
 				}
 			}
 
@@ -256,10 +228,10 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 					}
 				}
 			}
-
 			return shouldUpdate;
 		}
 		return false;
+
 	}
 
 	private void saveAspects(T entity) {
@@ -267,7 +239,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 			if (((AspectAwareDataItem) entity).getAspects() != null) {
 				for (QName aspect : ((AspectAwareDataItem) entity).getAspects()) {
 					if (!nodeService.hasAspect(entity.getNodeRef(), aspect)) {
-						nodeService.addAspect(entity.getNodeRef(), aspect, new HashMap<QName, Serializable>());
+						nodeService.addAspect(entity.getNodeRef(), aspect, new HashMap<>());
 					}
 				}
 			}
@@ -306,8 +278,6 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 	}
 
 	private void saveAssociations(T entity) {
-
-		// TODO manage child assocs
 
 		for (Map.Entry<QName, T> association : repositoryEntityDefReader.getSingleEntityAssociations(entity).entrySet()) {
 			if ((association.getValue() == null) || !association.getValue().isTransient()) {
@@ -390,8 +360,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 			boolean isLoaded = isLazyList && ((LazyLoadingDataList<? extends RepositoryEntity>) dataList).isLoaded();
 			boolean isLoadedOrNotEmpty = (!isLazyList || isLoaded) && !dataList.isEmpty();
 
-			if ((dataListNodeRef == null) 
-					&& isLoadedOrNotEmpty ) {
+			if ((dataListNodeRef == null) && isLoadedOrNotEmpty) {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Create dataList of type : " + dataListContainerType);
 				}
@@ -426,12 +395,12 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 					((LazyLoadingDataList<? extends RepositoryEntity>) dataList).getDeletedNodes().clear();
 				}
-				
-				if(isLoadedOrNotEmpty ) {
+
+				if (isLoadedOrNotEmpty) {
 					for (RepositoryEntity dataListItem : dataList) {
 						if ((dataListItem.getNodeRef() == null) || nodeService.exists(dataListItem.getNodeRef())) {
 							dataListItem.setParentNodeRef(dataListNodeRef);
-	
+
 							if (logger.isTraceEnabled()) {
 								logger.trace("Save dataList item: " + dataListItem.toString());
 							}
@@ -445,9 +414,6 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 	}
 
-	
-	
-	
 	/** {@inheritDoc} */
 	@Override
 	public Iterable<T> save(Iterable<? extends T> entities) {
@@ -503,7 +469,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 			caches.put(id, entity);
 
-			Map<QName, Serializable> properties = nodeService.getProperties(id);
+			Map<QName, Serializable> properties = mlNodeService.getProperties(id);
 
 			BeanWrapper beanWrapper = new BeanWrapperImpl(entity);
 
@@ -654,11 +620,17 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 				PropertyUtils.setProperty(entity, pd.getName(), Enum.valueOf((Class<Enum>) pd.getPropertyType(), (String) prop));
 			}
 		} else if ((prop != null) && pd.getPropertyType().isAnnotationPresent(AlfType.class)) {
-			PropertyUtils.setProperty(entity, pd.getName(), findOne((NodeRef) prop, caches));
+			if(nodeService.exists((NodeRef) prop)) {
+				PropertyUtils.setProperty(entity, pd.getName(), findOne((NodeRef) prop, caches));
+			}
 		} else if (readMethod.isAnnotationPresent(AlfMlText.class)) {
-			PropertyUtils.setProperty(entity, pd.getName(), mlNodeService.getProperty(entity.getNodeRef(), qname));
-		} else {
 			PropertyUtils.setProperty(entity, pd.getName(), prop);
+		} else {
+			if (prop instanceof MLText) {
+				PropertyUtils.setProperty(entity, pd.getName(), MLTextHelper.getClosestValue((MLText) prop, I18NUtil.getContentLocale()));
+			} else {
+				PropertyUtils.setProperty(entity, pd.getName(), prop);
+			}
 		}
 
 	}

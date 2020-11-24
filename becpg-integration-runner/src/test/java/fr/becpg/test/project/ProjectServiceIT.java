@@ -652,7 +652,7 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 			TaskListDataItem taskListDataItemDB = projectData.getTaskList().get(0);
 			assertEquals(taskListDataItem.getTaskName(), taskListDataItemDB.getTaskName());
 			assertEquals(taskListDataItem.getDuration(), taskListDataItemDB.getDuration());
-			assertEquals(taskListDataItem.getResources(), taskListDataItemDB.getResources());
+			assertTrue(taskListDataItem.getResources().containsAll(taskListDataItemDB.getResources())); //order is not guarenteed
 			assertEquals(2, taskListDataItemDB.getResources().size());
 			checkWorkflowProperties(workflowInstanceId, taskListDataItemDB.getNodeRef(), "Pjt 1 - task1 modified", taskListDataItemDB.getEnd(),
 					taskListDataItemDB.getResources());
