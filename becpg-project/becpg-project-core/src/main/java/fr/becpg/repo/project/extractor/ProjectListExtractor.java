@@ -405,14 +405,14 @@ public class ProjectListExtractor extends ActivityListExtractor {
 
 	/** {@inheritDoc} */
 	@Override
-	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields, final FormatMode mode,
+	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields,  FormatMode mode,
 			Map<QName, Serializable> properties, final Map<String, Object> props, final Map<NodeRef, Map<String, Object>> cache) {
 
 		Map<String, Object> ret = attributeExtractorService.extractNodeData(nodeRef, itemType, properties, metadataFields, mode,
 				new AttributeExtractorService.DataListCallBack() {
 
 					@Override
-					public List<Map<String, Object>> extractNestedField(NodeRef nodeRef, AttributeExtractorStructure field) {
+					public List<Map<String, Object>> extractNestedField(NodeRef nodeRef, AttributeExtractorStructure field, FormatMode mode) {
 						DataListPagination pagination = (DataListPagination) props.get(PAGINATION);
 						List<Map<String, Object>> ret = new ArrayList<>();
 						if (field.isDataListItems()) {

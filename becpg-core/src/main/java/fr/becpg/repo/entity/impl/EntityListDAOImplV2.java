@@ -33,8 +33,6 @@ import javax.sql.DataSource;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.PolicyComponent;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
-import org.alfresco.service.cmr.model.FileFolderService;
-import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.CopyService;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -75,9 +73,6 @@ public class EntityListDAOImplV2 implements EntityListDAO {
 
 	@Autowired
 	private EntityDictionaryService entityDictionaryService;
-
-	@Autowired
-	private FileFolderService fileFolderService;
 
 	@Autowired
 	private NamespaceService namespaceService;
@@ -211,11 +206,9 @@ public class EntityListDAOImplV2 implements EntityListDAO {
 		List<NodeRef> existingLists = new ArrayList<>();
 
 		if (listContainerNodeRef != null) {
-			List<FileInfo> nodes = fileFolderService.listFolders(listContainerNodeRef);
 
-			for (FileInfo node : nodes) {
+			for (NodeRef listNodeRef : associationService.getChildAssocs(listContainerNodeRef, ContentModel.ASSOC_CONTAINS) ) {
 
-				NodeRef listNodeRef = node.getNodeRef();
 				String dataListType = (String) nodeService.getProperty(listNodeRef, DataListModel.PROP_DATALISTITEMTYPE);
 
 				if ((dataListType != null) && !dataListType.isEmpty()) {

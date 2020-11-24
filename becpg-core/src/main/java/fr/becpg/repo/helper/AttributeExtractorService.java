@@ -48,7 +48,7 @@ public interface AttributeExtractorService {
 	
 	interface DataListCallBack {
 		
-		List<Map<String,Object>> extractNestedField(NodeRef nodeRef, AttributeExtractorStructure field);
+		List<Map<String,Object>> extractNestedField(NodeRef nodeRef, AttributeExtractorStructure field, FormatMode mode);
 
 	}
 	
