@@ -122,7 +122,7 @@ public class TranslateHelper {
 		MLText res = new MLText();
 
 		for (String localeString : RepoConsts.SUPPORTED_UI_LOCALES.split(",")) {
-			Locale currentLocale = new Locale(localeString);
+			Locale currentLocale = MLTextHelper.parseLocale(localeString);
 
 			String translation = I18NUtil.getMessage(key, currentLocale);
 
