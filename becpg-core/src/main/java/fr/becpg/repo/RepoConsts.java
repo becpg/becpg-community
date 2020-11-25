@@ -8,7 +8,6 @@ import java.util.Map;
 
 import org.alfresco.repo.version.Version2Model;
 import org.alfresco.service.cmr.repository.StoreRef;
-import org.alfresco.service.namespace.QName;
 
 /**
  * beCPG constants for repository
@@ -259,7 +258,7 @@ public class RepoConsts
 	public static final String PATH_LICENSE = "license";
 
 	/** Constant <code>SUPPORTED_UI_LOCALES="en,en_US,fr,sv_SE,fi,es,it,pt,ru,de"</code> */
-	public static final String SUPPORTED_UI_LOCALES =  "en,en_US,fr,sv_SE,fi,es,it,pt,ru,de";
+	public static final String SUPPORTED_UI_LOCALES =  "en,en_US,fr,sv_SE,fi,es,it,pt,ru,de,tr";
 	
 	/** Constant <code>CATALOGS_PATH="/app:company_home/cm:System/cm:Property"{trunked}</code> */
 	public static final String CATALOGS_PATH = "/app:company_home/cm:System/cm:PropertyCatalogs";
