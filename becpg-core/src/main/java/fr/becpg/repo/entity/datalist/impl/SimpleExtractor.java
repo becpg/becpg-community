@@ -148,7 +148,7 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 
 		if (results == null) {
 
-			results = new LinkedList<NodeRef>();
+			results = new LinkedList<>();
 
 			if (dataListFilter.isGuessContainer() && (dataListFilter.getEntityNodeRef() != null)) {
 				NodeRef listsContainerNodeRef = entityListDAO.getListContainer(dataListFilter.getEntityNodeRef());
