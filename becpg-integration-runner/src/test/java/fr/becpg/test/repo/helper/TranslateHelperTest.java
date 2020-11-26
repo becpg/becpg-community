@@ -1,7 +1,6 @@
 package fr.becpg.test.repo.helper;
 
 import java.util.Locale;
-import java.util.ResourceBundle;
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.junit.Assert;
