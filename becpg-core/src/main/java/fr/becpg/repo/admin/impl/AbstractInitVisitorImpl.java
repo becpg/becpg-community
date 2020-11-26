@@ -15,11 +15,13 @@ import org.alfresco.repo.action.evaluator.HasAspectEvaluator;
 import org.alfresco.repo.action.evaluator.IsSubTypeEvaluator;
 import org.alfresco.repo.action.executer.AddFeaturesActionExecuter;
 import org.alfresco.repo.action.executer.SpecialiseTypeActionExecuter;
+import org.alfresco.repo.node.MLPropertyInterceptor;
 import org.alfresco.service.cmr.action.Action;
 import org.alfresco.service.cmr.action.ActionCondition;
 import org.alfresco.service.cmr.action.ActionService;
 import org.alfresco.service.cmr.action.CompositeAction;
 import org.alfresco.service.cmr.model.FileFolderService;
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.rule.Rule;
@@ -36,6 +38,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.admin.InitVisitor;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
 
@@ -85,16 +88,32 @@ public abstract class AbstractInitVisitorImpl implements InitVisitor {
 			folderName = folderPath;
 		}
 		NodeRef folderNodeRef = repoService.getFolderByPath(parentNodeRef, folderPath);
+		MLText mlTitle = TranslateHelper.getTranslatedPathMLText(folderPath);
+
 		if (folderNodeRef == null) {
 
 			logger.info("Create folder, path: " + folderPath + " - translatedName: " + folderName);
 
-
 			folderNodeRef = repoService.getOrCreateFolderByPath(parentNodeRef, folderPath, folderName);
-			nodeService.setProperty(folderNodeRef, ContentModel.PROP_TITLE, TranslateHelper.getTranslatedPathMLText(folderPath));
+			nodeService.setProperty(folderNodeRef, ContentModel.PROP_TITLE, mlTitle);
 
 			visitRules(folderNodeRef, folderPath);
 			visitWF(folderNodeRef, folderPath);
+		} else {
+			boolean isMLAware = MLPropertyInterceptor.isMLAware();
+			try {
+				MLPropertyInterceptor.setMLAware(true);
+
+				MLText title = (MLText) nodeService.getProperty(folderNodeRef, ContentModel.PROP_TITLE);
+				if (title == null) {
+					nodeService.setProperty(folderNodeRef, ContentModel.PROP_TITLE, mlTitle);
+				} else {
+					nodeService.setProperty(folderNodeRef, ContentModel.PROP_TITLE, MLTextHelper.merge(title, mlTitle));
+				}
+			} finally {
+				MLPropertyInterceptor.setMLAware(isMLAware);
+			}
+
 		}
 
 		visitPermissions(folderNodeRef, folderPath);
