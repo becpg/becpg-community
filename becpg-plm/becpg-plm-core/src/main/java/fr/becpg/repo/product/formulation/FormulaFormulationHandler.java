@@ -187,7 +187,10 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 			if (DynamicCharactExecOrder.Pre.equals(execOrder)) {
 				copyTemplateDynamicCharactLists(productData);
 			}
-
+//			// TODO https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#expressions-spel-compilation
+//			SpelParserConfiguration config = new SpelParserConfiguration(SpelCompilerMode.IMMEDIATE,
+//				    this.getClass().getClassLoader());
+//			
 			ExpressionParser parser = new SpelExpressionParser();
 			StandardEvaluationContext context = formulaService.createEntitySpelContext(productData);
 
@@ -353,7 +356,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 						productData.getReqCtrlList()
 								.add(new ReqCtrlListDataItem(
 										null, RequirementType.Forbidden, MLTextHelper.getI18NMessage("message.formulate.formula.error",
-												dynamicCharactListItem.getName(), e.getLocalizedMessage()),
+												dynamicCharactListItem.getTitle(), e.getLocalizedMessage()),
 										null, new ArrayList<>(), RequirementDataType.Formulation));
 
 						if (logger.isDebugEnabled()) {
