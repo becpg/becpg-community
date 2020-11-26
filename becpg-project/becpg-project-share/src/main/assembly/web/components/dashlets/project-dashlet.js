@@ -293,7 +293,13 @@
                      }
 
                      if (this.searchTerm !== null && this.searchTerm.length > 0) {
-                        req += "AND  +@" + (isTask ? "pjt\\:tlTaskName" : "cm\\:name") + ":(" + this.searchTerm + ")";
+						if(isTask){
+							req += "AND  +@pjt\\:tlTaskName:(" + this.searchTerm + ")";
+						} else {
+							req += "AND (" + this.searchTerm + ")";
+						}
+		
+                       
                      }
 
                      req += ')';
