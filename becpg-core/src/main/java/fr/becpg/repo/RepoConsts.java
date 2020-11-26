@@ -18,6 +18,9 @@ import org.alfresco.service.cmr.repository.StoreRef;
 public class RepoConsts
 {
 
+	private RepoConsts() {
+		//Private constructor
+	}
 	
 	/** Constant <code>FULL_PATH_THUMBNAIL="/cm:System/cm:Icons"</code> */
 	public static final String FULL_PATH_THUMBNAIL = "/cm:System/cm:Icons";	
@@ -257,7 +260,7 @@ public class RepoConsts
 	/** Constant <code>PATH_LICENSE="license"</code> */
 	public static final String PATH_LICENSE = "license";
 
-	/** Constant <code>SUPPORTED_UI_LOCALES="en,en_US,fr,sv_SE,fi,es,it,pt,ru,de"</code> */
+	/** Constant <code>SUPPORTED_UI_LOCALES="en,en_US,fr,sv_SE,fi,es,it,pt,ru,de,tr"</code> */
 	public static final String SUPPORTED_UI_LOCALES =  "en,en_US,fr,sv_SE,fi,es,it,pt,ru,de,tr";
 	
 	/** Constant <code>CATALOGS_PATH="/app:company_home/cm:System/cm:Property"{trunked}</code> */
