@@ -111,7 +111,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 	private List<EvaporatedDataItem> evaporatedDataItems = new ArrayList<>();
 
-	private Set<String> detectedAllergens = new LinkedHashSet<>();
+	private Map<Locale, Set<String>> detectedAllergensByLocale = new HashMap<>();
 
 	private Map<NodeRef, Double> allergens = new HashMap<>();
 	private Map<NodeRef, Double> inVolAllergens = new HashMap<>();
@@ -1026,6 +1026,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		if (isAllergensDisableForLocale()) {
 			return ingLegalName;
 		}
+		
+		Set<String> detectedAllergens = getDetectedAllergens();
 
 		Matcher ma = ALLERGEN_DETECTION_PATTERN.matcher(ingLegalName);
 		if (ma.find() && (ma.group(1) != null)) {
@@ -1033,6 +1035,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			for(String toEscape :  ESCAPED_ALLERGEN_TAGS) {
 				allergenName = allergenName.replace(toEscape, "");
 			}
+			
 			
 			detectedAllergens.add(allergenName);
 			return ma.replaceAll(allergenReplacementPattern.replace("$1", allergenName));
@@ -1244,7 +1247,9 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		if (logger.isTraceEnabled()) {
 			logger.trace(" Render Allergens list ");
 		}
-
+		
+		Set<String> detectedAllergens = getDetectedAllergens();
+		
 		for (String allergen : detectedAllergens) {
 			if (ret.length() > 0) {
 				ret.append(allergensSeparator);
@@ -1254,6 +1259,10 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 		return decorate(ret.toString());
 
+	}
+
+	private Set<String> getDetectedAllergens() {
+		return detectedAllergensByLocale.computeIfAbsent(I18NUtil.getLocale(), r ->  new LinkedHashSet<>());
 	}
 
 	/**
