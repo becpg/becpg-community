@@ -41,6 +41,7 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Value;
 
 import fr.becpg.config.format.FormatMode;
 import fr.becpg.model.BeCPGModel;
@@ -82,6 +83,8 @@ public class ProjectListExtractor extends ActivityListExtractor {
 	private static final String PROP_SORT = "sort";
 
 	private String myProjectAttributes = "pjt:projectManager,cm:creator";
+	
+	private String projectSearchTemplate = "%(cm:name bcpg:code cm:title)";
 
 	private ProjectService projectService;
 
@@ -237,7 +240,9 @@ public class ProjectListExtractor extends ActivityListExtractor {
 			dataListFilter.setSortMap(sortMap);
 		}
 
-		BeCPGQueryBuilder beCPGQueryBuilder = dataListFilter.getSearchQuery().excludeDefaults();
+		BeCPGQueryBuilder beCPGQueryBuilder = dataListFilter.getSearchQuery().excludeDefaults()
+				.andOperator().inSearchTemplate(projectSearchTemplate);
+	
 
 		if (VIEW_ENTITY_PROJECTS.equals(dataListFilter.getFilterId())) {
 			results = associationService.getSourcesAssocs(dataListFilter.getEntityNodeRef(), ProjectModel.ASSOC_PROJECT_ENTITY);
