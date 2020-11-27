@@ -7724,7 +7724,7 @@
 					</field>
 				</appearance>
 			</form>
-
+			
 			<form id="datagrid">
 				<field-visibility>
 					<show id="bcpg:variantIds" force="true" />
@@ -7873,6 +7873,33 @@
 					</field>
 				</appearance>
 			</form>
+			
+			<form id="security">
+				<field-visibility>
+					<show id="bcpg:parentLevel" />
+					<show id="bcpg:variantIds" force="true" />
+					<show id="bcpg:instruction" force="true" />
+					<show id="bcpg:compoListProduct" />
+					<show id="bcpg:compoListQtySubFormula" />
+					<show id="bcpg:compareWithDynColumn" force="true" />
+					<show id="bcpg:compoListUnit" />
+					<show id="bcpg:compoListQty" />
+					<show id="bcpg:compoListYieldPerc" />
+					<show id="bcpg:compoListLossPerc" />
+					<show id="bcpg:dynamicCharactColumn1" force="true" />
+					<show id="bcpg:dynamicCharactColumn2" force="true" />
+					<show id="bcpg:dynamicCharactColumn3" force="true" />
+					<show id="bcpg:dynamicCharactColumn4" force="true" />
+					<show id="bcpg:dynamicCharactColumn5" force="true" />
+					<show id="bcpg:dynamicCharactColumn6" force="true" />
+					<show id="bcpg:dynamicCharactColumn7" force="true" />
+					<show id="bcpg:dynamicCharactColumn8" force="true" />
+					<show id="bcpg:dynamicCharactColumn9" force="true" />
+					<show id="bcpg:dynamicCharactColumn10" force="true" />
+					<show id="bcpg:startEffectivity" force="true" />
+					<show id="bcpg:endEffectivity" force="true" />
+				</field-visibility>
+			</form>
 		</forms>
 	</config>
 
@@ -7975,7 +8002,7 @@
 					</field>
 				</appearance>
 			</form>
-
+			
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
@@ -8129,6 +8156,33 @@
 						</control>
 					</field>
 				</appearance>
+			</form>
+			
+			<form id="security">
+				<field-visibility>
+					<show id="bcpg:variantIds" force="true" />
+					<show id="pack:labelingPosition" force="true" />
+					<show id="bcpg:packagingListProduct" />
+					<show id="bcpg:packagingListQty" />
+					<show id="bcpg:packagingListUnit" />
+					<show id="bcpg:packagingListLossPerc" />
+					<show id="bcpg:packagingListPkgLevel" />
+					<show id="bcpg:packagingListIsMaster" />
+					<show id="bcpg:packagingListIsRecycle" />
+					<show id="bcpg:dynamicCharactColumn1" force="true" />
+					<show id="bcpg:dynamicCharactColumn2" force="true" />
+					<show id="bcpg:dynamicCharactColumn3" force="true" />
+					<show id="bcpg:dynamicCharactColumn4" force="true" />
+					<show id="bcpg:dynamicCharactColumn5" force="true" />
+					<show id="bcpg:dynamicCharactColumn6" force="true" />
+					<show id="bcpg:dynamicCharactColumn7" force="true" />
+					<show id="bcpg:dynamicCharactColumn8" force="true" />
+					<show id="bcpg:dynamicCharactColumn9" force="true" />
+					<show id="bcpg:dynamicCharactColumn10" force="true" />
+					<show id="bcpg:instruction" force="true" />
+					<show id="bcpg:startEffectivity" force="true" />
+					<show id="bcpg:endEffectivity" force="true" />
+				</field-visibility>
 			</form>
 		</forms>
 	</config>
