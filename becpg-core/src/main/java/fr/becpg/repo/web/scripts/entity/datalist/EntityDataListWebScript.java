@@ -1,5 +1,5 @@
 /*
- * 
+ *
  */
 package fr.becpg.repo.web.scripts.entity.datalist;
 
@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
@@ -26,6 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.extensions.webscripts.AbstractWebScript;
 import org.springframework.extensions.webscripts.Cache;
 import org.springframework.extensions.webscripts.WebScriptException;
@@ -43,30 +45,36 @@ import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.impl.DataListOutputWriterFactory;
 import fr.becpg.repo.helper.JsonHelper;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.security.SecurityService;
 import fr.becpg.repo.web.scripts.BrowserCacheHelper;
 import fr.becpg.repo.web.scripts.WebscriptHelper;
 
 /**
  * Webscript that send the result of a datalist
- * 
+ *
  * @author matthieu
+ * @version $Id: $Id
  */
 public class EntityDataListWebScript extends AbstractWebScript {
 
-	/** The logger. */
+	
 	private static final Log logger = LogFactory.getLog(EntityDataListWebScript.class);
 
 	/** The Constant PARAM_FILTER. */
 
 	protected static final String PARAM_FILTER_ID = "filterId";
 
+	/** Constant <code>PARAM_FILTER="filter"</code> */
 	protected static final String PARAM_FILTER = "filter";
 
+	/** Constant <code>PARAM_FILTER_DATA="filterData"</code> */
 	protected static final String PARAM_FILTER_DATA = "filterData";
 
+	/** Constant <code>PARAM_FILTER_PARAMS="filterParams"</code> */
 	protected static final String PARAM_FILTER_PARAMS = "filterParams";
 
+	/** Constant <code>PARAM_DATA_LIST_NAME="dataListName"</code> */
 	protected static final String PARAM_DATA_LIST_NAME = "dataListName";
 
 	/**
@@ -79,8 +87,10 @@ public class EntityDataListWebScript extends AbstractWebScript {
 	 */
 	protected static final String PARAM_CONTAINER = "container";
 
+	/** Constant <code>PARAM_SITE="site"</code> */
 	protected static final String PARAM_SITE = "site";
 
+	/** Constant <code>PARAM_REPOSITORY="repo"</code> */
 	protected static final String PARAM_REPOSITORY = "repo";
 
 	// request parameter names
@@ -93,31 +103,44 @@ public class EntityDataListWebScript extends AbstractWebScript {
 	/** The Constant PARAM_ID. */
 	protected static final String PARAM_ID = "id";
 
+	/** Constant <code>PARAM_LOCALE="locale"</code> */
+	protected static final String PARAM_LOCALE = "locale";
+
+	/** Constant <code>PARAM_FIELDS="fields"</code> */
 	protected static final String PARAM_FIELDS = "fields";
 
 	/** The Constant PARAM_NODEREF. */
 	protected static final String PARAM_ENTITY_NODEREF = "entityNodeRef";
 
+	/** Constant <code>PARAM_ITEMTYPE="itemType"</code> */
 	protected static final String PARAM_ITEMTYPE = "itemType";
 
+	/** Constant <code>PARAM_EXTRA_PARAMS="extraParams"</code> */
 	protected static final String PARAM_EXTRA_PARAMS = "extraParams";
 
 	/** Pagination **/
 
 	protected static final String PARAM_SORT = "sort";
 
+	/** Constant <code>PARAM_SORT_ID="sortId"</code> */
 	protected static final String PARAM_SORT_ID = "sortId";
 
+	/** Constant <code>PARAM_PAGE="page"</code> */
 	protected static final String PARAM_PAGE = "page";
 
+	/** Constant <code>PARAM_PAGE_SIZE="pageSize"</code> */
 	protected static final String PARAM_PAGE_SIZE = "pageSize";
 
+	/** Constant <code>PARAM_MAX_RESULTS="maxResults"</code> */
 	protected static final String PARAM_MAX_RESULTS = "maxResults";
 
+	/** Constant <code>PARAM_QUERY_EXECUTION_ID="queryExecutionId"</code> */
 	protected static final String PARAM_QUERY_EXECUTION_ID = "queryExecutionId";
 
+	/** Constant <code>PARAM_GUESS_CONTAINER="guessContainer"</code> */
 	protected static final String PARAM_GUESS_CONTAINER = "guessContainer";
 
+	/** Constant <code>PARAM_EFFECTIVE_FILTER_ON="effectiveFilterOn"</code> */
 	protected static final String PARAM_EFFECTIVE_FILTER_ON = "effectiveFilterOn";
 
 	private NodeService nodeService;
@@ -125,7 +148,7 @@ public class EntityDataListWebScript extends AbstractWebScript {
 	private SecurityService securityService;
 
 	private LockService lockService;
-	
+
 	private NamespaceService namespaceService;
 
 	private DataListExtractorFactory dataListExtractorFactory;
@@ -136,47 +159,79 @@ public class EntityDataListWebScript extends AbstractWebScript {
 
 	private boolean effectiveFilterEnabled = false;
 
+	/**
+	 * <p>Setter for the field <code>effectiveFilterEnabled</code>.</p>
+	 *
+	 * @param effectiveFilterEnabled a boolean.
+	 */
 	public void setEffectiveFilterEnabled(boolean effectiveFilterEnabled) {
 		this.effectiveFilterEnabled = effectiveFilterEnabled;
 	}
 
+	/**
+	 * <p>Setter for the field <code>datalistOutputWriterFactory</code>.</p>
+	 *
+	 * @param datalistOutputWriterFactory a {@link fr.becpg.repo.entity.datalist.impl.DataListOutputWriterFactory} object.
+	 */
 	public void setDatalistOutputWriterFactory(DataListOutputWriterFactory datalistOutputWriterFactory) {
 		this.datalistOutputWriterFactory = datalistOutputWriterFactory;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>securityService</code>.</p>
+	 *
+	 * @param securityService a {@link fr.becpg.repo.security.SecurityService} object.
+	 */
 	public void setSecurityService(SecurityService securityService) {
 		this.securityService = securityService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>namespaceService</code>.</p>
+	 *
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
+	 */
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>dataListExtractorFactory</code>.</p>
+	 *
+	 * @param dataListExtractorFactory a {@link fr.becpg.repo.entity.datalist.DataListExtractorFactory} object.
+	 */
 	public void setDataListExtractorFactory(DataListExtractorFactory dataListExtractorFactory) {
 		this.dataListExtractorFactory = dataListExtractorFactory;
 	}
 
-
+	/**
+	 * <p>Setter for the field <code>authorityService</code>.</p>
+	 *
+	 * @param authorityService a {@link org.alfresco.service.cmr.security.AuthorityService} object.
+	 */
 	public void setAuthorityService(AuthorityService authorityService) {
 		this.authorityService = authorityService;
 	}
-	
+
+	/**
+	 * <p>Setter for the field <code>lockService</code>.</p>
+	 *
+	 * @param lockService a {@link org.alfresco.service.cmr.lock.LockService} object.
+	 */
 	public void setLockService(LockService lockService) {
 		this.lockService = lockService;
 	}
 
-	/**
-	 * @param req
-	 *            the req
-	 * @param res
-	 *            the res
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
 
@@ -187,7 +242,6 @@ public class EntityDataListWebScript extends AbstractWebScript {
 			logger.debug("EntityDataListWebScript executeImpl()");
 		}
 
-		
 		DataListFilter dataListFilter = new DataListFilter();
 		dataListFilter.getPagination().setMaxResults(getNumParameter(req, PARAM_MAX_RESULTS));
 		dataListFilter.getPagination().setPageSize(getNumParameter(req, PARAM_PAGE_SIZE));
@@ -216,21 +270,25 @@ public class EntityDataListWebScript extends AbstractWebScript {
 			isRepo = false;
 		}
 		dataListFilter.setRepo(isRepo);
-		
-		
+
+		Locale currentLocal = null;
+		if (req.getParameter(PARAM_LOCALE) != null) {
+			currentLocal = I18NUtil.getContentLocale();
+			I18NUtil.setContentLocale(MLTextHelper.parseLocale(req.getParameter(PARAM_LOCALE)));
+		}
+
 		String guessContainer = req.getParameter(PARAM_GUESS_CONTAINER);
 
 		if ("true".equals(guessContainer)) {
 			dataListFilter.setGuessContainer(true);
 		}
-		
 
 		Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();
 		if (templateArgs != null) {
 			String storeType = templateArgs.get(PARAM_STORE_TYPE);
 			String storeId = templateArgs.get(PARAM_STORE_ID);
 			String nodeId = templateArgs.get(PARAM_ID);
-			if (storeType != null && storeId != null && nodeId != null) {
+			if ((storeType != null) && (storeId != null) && (nodeId != null)) {
 				NodeRef nodeRef = new NodeRef(storeType, storeId, nodeId);
 				if (req.getServiceMatch().getPath().contains("/item/node")) {
 					dataListFilter.setNodeRef(nodeRef);
@@ -243,7 +301,7 @@ public class EntityDataListWebScript extends AbstractWebScript {
 
 		String entityNodeRefs = req.getParameter(PARAM_ENTITY_NODEREF);
 		List<NodeRef> entityNodeRefsList = new ArrayList<>();
-		if (entityNodeRefs != null && !entityNodeRefs.isEmpty()) {
+		if ((entityNodeRefs != null) && !entityNodeRefs.isEmpty()) {
 			for (String entityNodeRef : entityNodeRefs.split(",")) {
 				entityNodeRefsList.add(new NodeRef(entityNodeRef));
 			}
@@ -254,7 +312,6 @@ public class EntityDataListWebScript extends AbstractWebScript {
 		String filterData = req.getParameter(PARAM_FILTER_DATA);
 		String filterParams = req.getParameter(PARAM_FILTER_PARAMS);
 		String extraParams = req.getParameter(PARAM_EXTRA_PARAMS);
-		
 
 		try {
 
@@ -267,7 +324,7 @@ public class EntityDataListWebScript extends AbstractWebScript {
 			}
 
 			if (filterId == null) {
-				if (json != null && json.has(PARAM_FILTER)) {
+				if ((json != null) && json.has(PARAM_FILTER)) {
 					JSONObject filterJSON = (JSONObject) json.get(PARAM_FILTER);
 					if (filterJSON != null) {
 						filterId = (String) filterJSON.get(PARAM_FILTER_ID);
@@ -283,9 +340,9 @@ public class EntityDataListWebScript extends AbstractWebScript {
 					filterId = DataListFilter.ALL_FILTER;
 				}
 			}
-			
-			if(extraParams == null){
-				if (json != null && json.has(PARAM_EXTRA_PARAMS) && !json.isNull(PARAM_EXTRA_PARAMS)) {
+
+			if (extraParams == null) {
+				if ((json != null) && json.has(PARAM_EXTRA_PARAMS) && !json.isNull(PARAM_EXTRA_PARAMS)) {
 					extraParams = (String) json.get(PARAM_EXTRA_PARAMS);
 				}
 			}
@@ -295,30 +352,29 @@ public class EntityDataListWebScript extends AbstractWebScript {
 			} else {
 				Integer page = getNumParameter(req, PARAM_PAGE);
 
-				if (page == null && json != null && json.has(PARAM_PAGE)) {
+				if ((page == null) && (json != null) && json.has(PARAM_PAGE)) {
 					page = (Integer) json.get(PARAM_PAGE);
 				}
 				dataListFilter.getPagination().setPage(page);
 			}
 
-			if (json != null && json.has(PARAM_SORT)) {
+			if ((json != null) && json.has(PARAM_SORT)) {
 
 				dataListFilter.setSortMap(WebscriptHelper.extractSortMap((String) json.get(PARAM_SORT), namespaceService));
 			}
 
-			if (json != null && json.has(PARAM_QUERY_EXECUTION_ID) &&  !json.isNull(PARAM_QUERY_EXECUTION_ID)) {
-				dataListFilter.getPagination().setQueryExecutionId( (String) json.get(PARAM_QUERY_EXECUTION_ID));
+			if ((json != null) && json.has(PARAM_QUERY_EXECUTION_ID) && !json.isNull(PARAM_QUERY_EXECUTION_ID)) {
+				dataListFilter.getPagination().setQueryExecutionId((String) json.get(PARAM_QUERY_EXECUTION_ID));
 			}
-			
-			
-			if (filterId.equals(DataListFilter.FORM_FILTER) && filterData != null) {
+
+			if (filterId.equals(DataListFilter.FORM_FILTER) && (filterData != null)) {
 				JSONObject jsonObject = new JSONObject(filterData);
 				dataListFilter.setCriteriaMap(JsonHelper.extractCriteria(jsonObject));
 			}
 
 			List<String> metadataFields = new LinkedList<>();
 
-			if (json != null && json.has(PARAM_FIELDS)) {
+			if ((json != null) && json.has(PARAM_FIELDS)) {
 				JSONArray jsonFields = (JSONArray) json.get(PARAM_FIELDS);
 
 				for (int i = 0; i < jsonFields.length(); i++) {
@@ -342,91 +398,103 @@ public class EntityDataListWebScript extends AbstractWebScript {
 			DataListExtractor extractor = dataListExtractorFactory.getExtractor(dataListFilter);
 
 			boolean hasWriteAccess = !dataListFilter.isVersionFilter();
-			if (hasWriteAccess && !entityNodeRefsList.isEmpty()) {
-				
+			boolean hasReadAccess = true;
+			if(!entityNodeRefsList.isEmpty()) {
 				NodeRef entityNodeRef = entityNodeRefsList.get(0);
 				QName entityNodeRefType = nodeService.getType(entityNodeRef);
-
 				
-				hasWriteAccess = 
-						extractor.hasWriteAccess()
-						&& !nodeService.hasAspect(entityNodeRefsList.get(0), ContentModel.ASPECT_CHECKED_OUT)
-						&& !nodeService.hasAspect(entityNodeRefsList.get(0), BeCPGModel.ASPECT_COMPOSITE_VERSION)
-						&& lockService.getLockStatus(entityNodeRefsList.get(0)) == LockStatus.NO_LOCK 
-						&& securityService.computeAccessMode(nodeService.getType(entityNodeRefsList.get(0)), itemType) == SecurityService.WRITE_ACCESS
-						&& isExternalUserAllowed(dataListFilter);
-				if (hasWriteAccess && (dataListFilter.getParentNodeRef() != null) && dataType!=null && !dataType.getLocalName().equals(dataListFilter.getDataListName())) {
-					String dataListType = (String) nodeService.getProperty(dataListFilter.getParentNodeRef(), DataListModel.PROP_DATALISTITEMTYPE);
+				int accessMode = securityService.computeAccessMode(entityNodeRefType, itemType);
+				hasReadAccess = accessMode != SecurityService.NONE_ACCESS;
+				
+				if (hasReadAccess && hasWriteAccess) {
 
-					if ((dataListType != null) && !dataListType.isEmpty()) {
-						QName dataListTypeQName = QName.createQName(dataListType, namespaceService);
-						hasWriteAccess = securityService.computeAccessMode(entityNodeRefType, dataListTypeQName) == SecurityService.WRITE_ACCESS;
+					hasWriteAccess = extractor.hasWriteAccess() && !nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_CHECKED_OUT)
+							&& !nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)
+							&& (lockService.getLockStatus(entityNodeRef) == LockStatus.NO_LOCK)
+							&& (accessMode == SecurityService.WRITE_ACCESS)
+							&& isExternalUserAllowed(dataListFilter);
+	
+					if (hasWriteAccess && (dataListFilter.getParentNodeRef() != null) && dataType!=null && !dataType.getLocalName().equals(dataListFilter.getDataListName())) {
+						String dataListType = (String) nodeService.getProperty(dataListFilter.getParentNodeRef(), DataListModel.PROP_DATALISTITEMTYPE);
+	
+						if ((dataListType != null) && !dataListType.isEmpty()) {
+							QName dataListTypeQName = QName.createQName(dataListType, namespaceService);
+							hasWriteAccess = securityService.computeAccessMode(entityNodeRefType, dataListTypeQName) == SecurityService.WRITE_ACCESS;
+						}
 					}
 				}
 			}
-			dataListFilter.setHasWriteAccess(hasWriteAccess);
-
-			Date lastModified = extractor.computeLastModified(dataListFilter);
-
-			if (BrowserCacheHelper.shouldReturnNotModified(req, lastModified)) {
-				res.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-				if (logger.isDebugEnabled()) {
-					logger.debug("Send Not_MODIFIED status");
+			PaginatedExtractedItems extractedItems;
+			if(hasReadAccess) {
+				dataListFilter.setHasWriteAccess(hasWriteAccess);
+	
+				Date lastModified = extractor.computeLastModified(dataListFilter);
+	
+				if (BrowserCacheHelper.shouldReturnNotModified(req, lastModified)) {
+					res.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+					if (logger.isDebugEnabled()) {
+						logger.debug("Send Not_MODIFIED status");
+					}
+					return;
 				}
-				return;
+	
+				Cache cache = new Cache(getDescription().getRequiredCache());
+				cache.setIsPublic(false);
+				cache.setMustRevalidate(true);
+				cache.setNeverCache(false);
+				cache.setMaxAge(0L);
+				cache.setLastModified(lastModified);
+				res.setCache(cache);
+	
+				 extractedItems = extractor.extract(dataListFilter, metadataFields);
+			} else {
+				extractedItems = new PaginatedExtractedItems(dataListFilter.getPagination().getPageSize());
 			}
-
-			Cache cache = new Cache(getDescription().getRequiredCache());
-			cache.setIsPublic(false);
-			cache.setMustRevalidate(true);
-			cache.setNeverCache(false);
-			cache.setMaxAge(0L);
-			cache.setLastModified(lastModified);
-			res.setCache(cache);
-
-			PaginatedExtractedItems extractedItems = extractor.extract(dataListFilter, metadataFields);
 			
-			datalistOutputWriterFactory.write(req, res,dataListFilter, extractedItems);
-			
+			datalistOutputWriterFactory.write(req, res, dataListFilter, extractedItems);
 
 		} catch (JSONException e) {
 			throw new WebScriptException("Unable to parse JSON", e);
 		} finally {
+			if (currentLocal != null) {
+				I18NUtil.setContentLocale(currentLocal);
+			}
+
 			if (logger.isDebugEnabled()) {
 				watch.stop();
 				logger.debug("EntityDataListWebScript execute in " + watch.getTotalTimeSeconds() + "s");
 			}
 		}
-			
 
 	}
 
-	
-
 	private boolean isExternalUserAllowed(DataListFilter dataListFilter) {
-		if(dataListFilter.getParentNodeRef() !=null 
-				&& nodeService.exists(dataListFilter.getParentNodeRef())
+		if ((dataListFilter.getParentNodeRef() != null) && nodeService.exists(dataListFilter.getParentNodeRef())
 				&& nodeService.hasAspect(dataListFilter.getParentNodeRef(), BeCPGModel.ASPECT_ENTITYLIST_STATE)
 				&& SystemState.Valid.toString().equals(nodeService.getProperty(dataListFilter.getParentNodeRef(), BeCPGModel.PROP_ENTITYLIST_STATE))
-				&& isCurrentUserExternal()
-				){
+				&& isCurrentUserExternal()) {
 			return false;
-			
+
 		}
 		return true;
 	}
 
 	private boolean isCurrentUserExternal() {
 		for (String currAuth : authorityService.getAuthorities()) {
-			if((PermissionService.GROUP_PREFIX+SystemGroup.ExternalUser.toString()).equals(currAuth)){
+			if ((PermissionService.GROUP_PREFIX + SystemGroup.ExternalUser.toString()).equals(currAuth)) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-
-
+	/**
+	 * <p>getNumParameter.</p>
+	 *
+	 * @param req a {@link org.springframework.extensions.webscripts.WebScriptRequest} object.
+	 * @param paramName a {@link java.lang.String} object.
+	 * @return a {@link java.lang.Integer} object.
+	 */
 	protected Integer getNumParameter(WebScriptRequest req, String paramName) {
 		String param = req.getParameter(paramName);
 
