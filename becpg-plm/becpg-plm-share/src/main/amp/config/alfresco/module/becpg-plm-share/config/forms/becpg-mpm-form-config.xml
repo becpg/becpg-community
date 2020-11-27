@@ -271,6 +271,30 @@
 					</field>
 				</appearance>
 			</form>
+			<form id="security">
+				<field-visibility>
+					<show id="bcpg:variantIds" force="true"/>
+					<show id="mpm:plStep" />->									
+					<show id="mpm:plResource" />
+					<show id="mpm:plQtyResource" />
+					<show id="mpm:plRateResource" />
+					<show id="mpm:plUnit" />
+					<show id="mpm:plRateProduct" />		
+				    <show id="bcpg:dynamicCharactColumn1" force="true" />
+					<show id="bcpg:dynamicCharactColumn2" force="true" />
+					<show id="bcpg:dynamicCharactColumn3" force="true" />
+					<show id="bcpg:dynamicCharactColumn4" force="true" />
+					<show id="bcpg:dynamicCharactColumn5" force="true"/>
+					<show id="bcpg:dynamicCharactColumn6" force="true" />
+					<show id="bcpg:dynamicCharactColumn7" force="true" />
+					<show id="bcpg:dynamicCharactColumn8" force="true" />
+					<show id="bcpg:dynamicCharactColumn9" force="true" />
+					<show id="bcpg:dynamicCharactColumn10" force="true" />
+					<show id="bcpg:startEffectivity" force="true" />
+					<show id="bcpg:endEffectivity" force="true" />
+					<show id="bcpg:instruction" force="true"/>
+				</field-visibility>
+			</form>
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
