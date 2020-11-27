@@ -41,7 +41,6 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Value;
 
 import fr.becpg.config.format.FormatMode;
 import fr.becpg.model.BeCPGModel;
