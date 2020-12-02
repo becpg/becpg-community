@@ -202,6 +202,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	private static final String PRODUCT_REPORT_IMG_TRAFFICLIGHTS_SERVING = "beCPG/birt/document/product/default/images/trafficLights_Serving.png";
 
 	private static final String CLASSIFY_RULE_TITLE = "classifyEntityRule";
+	
+	private static final String ASSOCIATION_RESOURCE_STRING = "Associating resource: ";
+	private static final String TO_TEMPLATE_STRING = " to template: ";
 
 	@Autowired
 	private SiteService siteService;
@@ -222,7 +225,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	private EntityTplService entityTplService;
 
 	@Autowired
-	private BeCPGMailService beCPGMailService;;
+	private BeCPGMailService beCPGMailService;
 
 	@Autowired
 	private EntitySystemService entitySystemService;
@@ -490,14 +493,14 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	 * Add resources to folder
 	 */
 	@Override
-	protected void visitFiles(NodeRef folderNodeRef, String folderName) {
+	protected void visitFiles(NodeRef folderNodeRef, String folderName, boolean folderExists) {
 		if (Objects.equals(folderName, RepoConsts.PATH_ICON)) {
 			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/images/*.png");
 		}
 		if (Objects.equals(folderName, PlmRepoConsts.PATH_MAPPING)) {
 			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/import/mapping/*.xml");
 		}
-		if (Objects.equals(folderName, RepoConsts.PATH_OLAP_QUERIES)) {
+		if (Objects.equals(folderName, RepoConsts.PATH_OLAP_QUERIES) && !folderExists) {
 			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/olap/*.saiku");
 		}
 		if (Objects.equals(folderName, PlmRepoConsts.PATH_NUT_DATABASES)) {
@@ -509,7 +512,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		}
 		if (Objects.equals(folderName, PlmRepoConsts.PATH_CATALOGS)) {
 
-			if (!fileFolderService.listFiles(folderNodeRef).stream().anyMatch(f -> "catalogs.json".equals(f.getName()))) {
+			if (fileFolderService.listFiles(folderNodeRef).stream().noneMatch(f -> "catalogs.json".equals(f.getName()))) {
 				try {
 					JSONArray oldCatalogsArray = new JSONArray(defaultCatalogDefinition);
 					NodeRef oldCatalogFileNR = fileFolderService.create(folderNodeRef, "catalogs.json", ContentModel.TYPE_CONTENT).getNodeRef();
@@ -1224,7 +1227,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 						if (!resources.isEmpty()) {
 							
 							for (NodeRef resource : resources) {
-								logger.debug("Associating resource: " + resource + " to template: " + template);
+								logger.debug(ASSOCIATION_RESOURCE_STRING + resource + TO_TEMPLATE_STRING + template);
 								nodeService.createAssociation(template, resource, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES);
 							}
 							
@@ -1233,7 +1236,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 							
 							if (productType == PLMModel.TYPE_PACKAGINGMATERIAL) {
 								nodeService.setProperty(template, ReportModel.PROP_REPORT_TEXT_PARAMETERS,
-										(Serializable) new String("{ prefs: { assocsToExtract: \"pack:pmMaterialRefs\"  } }"));
+										(Serializable) "{ prefs: { assocsToExtract: \"pack:pmMaterialRefs\"  } }");
 							}
 						}
 					}
@@ -1251,7 +1254,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 							
 							if (!resources.isEmpty()) {
 								for (NodeRef resource : resources) {
-									logger.debug("Associating resource: " + resource + " to template: " + template);
+									logger.debug(ASSOCIATION_RESOURCE_STRING + resource + TO_TEMPLATE_STRING + template);
 									nodeService.createAssociation(template, resource, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES);
 								}
 							}
@@ -1304,7 +1307,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 						QUALITY_CONTROL_AGING_REPORT_PATH, ReportType.Document, ReportFormat.XLSX, QualityModel.TYPE_QUALITY_CONTROL, true, false, false);
 				if (!resources.isEmpty()) {
 					for (NodeRef resource : resources) {
-						logger.debug("Associating resource: " + resource + " to template: " + templateQuality + " and" + templateQualityAging);
+						logger.debug(ASSOCIATION_RESOURCE_STRING + resource + " to template: " + templateQuality + " and" + templateQualityAging);
 						nodeService.createAssociation(templateQuality, resource, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES);
 						nodeService.createAssociation(templateQualityAging, resource, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES);
 
