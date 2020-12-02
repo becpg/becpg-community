@@ -82,6 +82,8 @@ public abstract class AbstractInitVisitorImpl implements InitVisitor {
 	 */
 	protected NodeRef visitFolder(NodeRef parentNodeRef, String folderPath) {
 
+		boolean folderExists = true;
+		
 		// get translated message
 		String folderName = TranslateHelper.getTranslatedPath(folderPath);
 		if (folderName == null) {
@@ -91,6 +93,8 @@ public abstract class AbstractInitVisitorImpl implements InitVisitor {
 		MLText mlTitle = TranslateHelper.getTranslatedPathMLText(folderPath);
 
 		if (folderNodeRef == null) {
+			
+			folderExists = false;
 
 			logger.info("Create folder, path: " + folderPath + " - translatedName: " + folderName);
 
@@ -117,7 +121,7 @@ public abstract class AbstractInitVisitorImpl implements InitVisitor {
 		}
 
 		visitPermissions(folderNodeRef, folderPath);
-		visitFiles(folderNodeRef, folderPath);
+		visitFiles(folderNodeRef, folderPath, folderExists);
 		vivitFolderAspects(folderNodeRef, folderPath);
 
 		return folderNodeRef;
@@ -138,8 +142,9 @@ public abstract class AbstractInitVisitorImpl implements InitVisitor {
 	 *
 	 * @param folderNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param folderName a {@link java.lang.String} object.
+	 * @param folderExists a boolean.
 	 */
-	protected void visitFiles(NodeRef folderNodeRef, String folderName) {
+	protected void visitFiles(NodeRef folderNodeRef, String folderName, boolean folderExists) {
 
 	}
 
