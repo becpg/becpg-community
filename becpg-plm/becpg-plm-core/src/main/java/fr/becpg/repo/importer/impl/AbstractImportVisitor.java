@@ -1259,9 +1259,9 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 				if (nodeRef == null) {
 					String typeTitle = type.toString();
 					TypeDefinition typeDef = entityDictionaryService.getType(type);
-					if ((typeDef != null) && (typeDef.getTitle(entityDictionaryService.getDictionaryService()) != null)
-							&& !typeDef.getTitle(entityDictionaryService.getDictionaryService()).isEmpty()) {
-						typeTitle = typeDef.getTitle(entityDictionaryService.getDictionaryService());
+					if ((typeDef != null) && (typeDef.getTitle(entityDictionaryService) != null)
+							&& !typeDef.getTitle(entityDictionaryService).isEmpty()) {
+						typeTitle = typeDef.getTitle(entityDictionaryService);
 					}
 
 					logger.error(I18NUtil.getMessage(ImportHelper.MSG_ERROR_TARGET_ASSOC_NOT_FOUND, typeTitle, value));

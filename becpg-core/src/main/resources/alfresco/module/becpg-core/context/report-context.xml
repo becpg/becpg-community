@@ -42,7 +42,7 @@
             <ref bean="NamespaceService" />
         </property>
         <property name="dictionaryService">
-            <ref bean="DictionaryService" />
+            <ref bean="cachedDictionaryService" />
         </property>
         <property name="nodeService">
             <ref bean="NodeService" />

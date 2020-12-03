@@ -17,6 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.helper.impl;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -49,6 +50,7 @@ import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.InvalidNodeRefException;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -74,7 +76,8 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
  */
 public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements AssociationService, NodeServicePolicies.OnCreateAssociationPolicy,
 		NodeServicePolicies.OnCreateChildAssociationPolicy, NodeServicePolicies.OnDeleteAssociationPolicy,
-		NodeServicePolicies.OnDeleteChildAssociationPolicy, NodeServicePolicies.OnDeleteNodePolicy, CheckOutCheckInServicePolicies.OnCheckIn {
+		NodeServicePolicies.OnDeleteChildAssociationPolicy, NodeServicePolicies.OnDeleteNodePolicy, CheckOutCheckInServicePolicies.OnCheckIn,
+		NodeServicePolicies.OnUpdatePropertiesPolicy {
 
 	private static final Log logger = LogFactory.getLog(AssociationServiceImplV2.class);
 
@@ -85,7 +88,10 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 	private TenantService tenantService;
 
 	private NamespaceService namespaceService;
+	
+	private CommonDataListSort commonDataListSort;
 
+	//Immutable cluster cache
 	private SimpleCache<AssociationCacheRegion, ChildAssocCacheEntry> childsAssocsCache;
 	private SimpleCache<AssociationCacheRegion, Set<NodeRef>> assocsCache;
 
@@ -99,6 +105,12 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		
 	}
 
+	@Override
+	public void setNodeService(NodeService nodeService) {
+		super.setNodeService(nodeService);
+		commonDataListSort =  new CommonDataListSort(nodeService);
+	}
+	
 	/**
 	 * <p>Setter for the field <code>entityDictionaryService</code>.</p>
 	 *
@@ -221,7 +233,8 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> getTargetAssocs(NodeRef nodeRef, QName qName) {
-		//always return a new List
+		//always return a new List ensuring cache immutability
+		//TO should be better using unmodifiable set
 		return new LinkedList<>(getFromCache(assocsCache, new AssociationCacheRegion(nodeRef, qName), () -> {
 			List<AssociationRef> assocRefs = nodeService.getTargetAssocs(nodeRef, qName);
 			Set<NodeRef> listItems = new HashSet<>();
@@ -264,6 +277,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 	public List<NodeRef> getChildAssocs(NodeRef listNodeRef, QName qName, QName childTypeQName, Map<String, Boolean> sortMap) {
 		return getChildAssocsImpl(listNodeRef, qName, childTypeQName, sortMap);
 	}
+	
 
 	private @Nonnull List<NodeRef> getChildAssocsImpl(final NodeRef nodeRef, final QName qName, final QName childType,
 			final Map<String, Boolean> sortProps) {
@@ -286,50 +300,15 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 			}
 
 
+			childAssocCacheEntry.sort(commonDataListSort);
+			
 			return childAssocCacheEntry;
 
 		});
-		List<NodeRef> ret = cachedAssocs.get(childType);
-
 		
-		//TODO better sort in cache and invalidate cache when sort prop is modified ?
-//		Comparator<NodeRef> comparator = null;
-//		Map<String, Boolean> sortMap = null;
-//		if (sortProps == null || sortProps.isEmpty()) {
-//			sortMap = RepoConsts.DEFAULT_SORT;
-//		} else {
-//			sortMap = sortProps;
-//		}
-//		
-//		for (Map.Entry<String, Boolean> sortEntry : sortMap.entrySet()) {
-//			final QName sortFieldQName;
-//
-//			if (sortEntry.getKey().indexOf(QName.NAMESPACE_BEGIN) != -1) {
-//				sortFieldQName = QName.createQName(sortEntry.getKey().replace("@", ""));
-//			} else {
-//				sortFieldQName = QName.createQName(sortEntry.getKey().replace("@", ""), namespaceService);
-//			}
-//
-//			if (comparator == null) {
-//				comparator = Comparator.comparing(n -> (Comparable) nodeService.getProperty(n, sortFieldQName), Comparator.nullsLast(Comparator.naturalOrder()));
-//			} else {
-//				comparator = comparator.thenComparing(n -> (Comparable) nodeService.getProperty(n, sortFieldQName), Comparator.nullsLast(Comparator.naturalOrder()));
-//			}
-//
-//			if (Boolean.FALSE.equals(sortEntry.getValue())) {
-//				comparator =  comparator.reversed();
-//			}
-//
-//		}
-//		
-//		
-//		if(comparator!=null) {
-//			ret.sort(comparator);
-//		}
 		
-		ret.sort(new CommonDataListSort(nodeService));
 
-		return ret;
+		return cachedAssocs.get(childType);
 	}
 
 	private boolean isDefaultSort(Map<String, Boolean> sortProps) {
@@ -629,6 +608,9 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 				new JavaBehaviour(this, "onCheckIn"));
 		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.OnCheckIn.QNAME, ContentModel.TYPE_AUTHORITY,
 				new JavaBehaviour(this, "onCheckIn"));
+		
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, BeCPGModel.ASPECT_DEPTH_LEVEL,
+				new JavaBehaviour(this, "onUpdateProperties"));
 
 	}
 
@@ -679,6 +661,15 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		removeAllCacheAssocs(nodeRef);
 
 	}
+	
+	/** {@inheritDoc} */
+	@Override
+	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
+		//DEPTH Level has changed remove childAssoc
+		removeChildCachedAssoc(nodeService.getPrimaryParent(nodeRef).getParentRef(), ContentModel.ASSOC_CONTAINS);
+	}
+	
+	
 	//// Cache managment
 
 	private void removeCachedAssoc(NodeRef nodeRef, QName qName) {
