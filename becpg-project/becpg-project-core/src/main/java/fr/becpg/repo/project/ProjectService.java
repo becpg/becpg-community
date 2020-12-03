@@ -18,6 +18,7 @@
 package fr.becpg.repo.project;
 
 import java.util.List;
+import java.util.Set;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
@@ -151,8 +152,8 @@ public interface ProjectService {
 	 * @param taskNodeRef
 	 * @return 
 	 */
-        NodeRef refusedTask(NodeRef nodeRef);
+     NodeRef refusedTask(NodeRef nodeRef);
 
-	 boolean updateProjectState(NodeRef projectNodeRef, String beforeState, String afterState);
+     Set<NodeRef> updateProjectState(NodeRef projectNodeRef, String beforeState, String afterState);
 
 }

@@ -21,8 +21,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -140,7 +142,9 @@ public class ProjectServiceImpl implements ProjectService {
 	
 
 	@Override
-	public boolean updateProjectState(NodeRef projectNodeRef, String beforeState, String afterState) {
+	public Set<NodeRef> updateProjectState(NodeRef projectNodeRef, String beforeState, String afterState) {
+		Set<NodeRef> toReformulates = new HashSet<>();
+		
 		try {
 			// Disable notifications
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
@@ -163,32 +167,40 @@ public class ProjectServiceImpl implements ProjectService {
 							String previousState = (String) nodeService.getProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_PREVIOUS_STATE);
 							if(previousState!=null && !previousState.isEmpty()) {
 								nodeService.setProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_PREVIOUS_STATE,null);
+								if(taskListDataItem.getSubProject()!=null) {
+									nodeService.setProperty(taskListDataItem.getSubProject(), ProjectModel.PROP_PROJECT_STATE, previousState);
+									updateProjectState(taskListDataItem.getSubProject(),  taskListDataItem.getState(),  previousState) ;
+									toReformulates.add(taskListDataItem.getSubProject());
+									
+								}
 								nodeService.setProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_STATE, previousState);
+								
 							}
 							
 						}
 						
 					}
-					return true;
+					toReformulates.add(projectNodeRef);
 				} else if (ProjectState.Cancelled.toString().equals(afterState) || ProjectState.OnHold.toString().equals(afterState)  || ProjectState.Completed.toString().equals(beforeState)) {
 					
 					ProjectData projectData = alfrescoRepository.findOne(projectNodeRef);
 					for(TaskListDataItem taskListDataItem : projectData.getTaskList()) {
 						if(TaskState.InProgress.equals(taskListDataItem.getTaskState())) {
 							nodeService.setProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_PREVIOUS_STATE, taskListDataItem.getState());
-							nodeService.setProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_STATE, afterState);
 							if(taskListDataItem.getSubProject()!=null) {
 								String previousState  =  (String) nodeService.getProperty(taskListDataItem.getSubProject(), ProjectModel.PROP_TL_PREVIOUS_STATE);
 								if(!afterState.equals(previousState)) {
 									nodeService.setProperty(taskListDataItem.getSubProject(), ProjectModel.PROP_PROJECT_STATE,afterState);
 									updateProjectState(taskListDataItem.getSubProject(),  previousState,  afterState) ;
+									toReformulates.add(taskListDataItem.getSubProject());
 								}
 							}
+							nodeService.setProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_STATE, afterState);
 							
 						}
 					}
 					
-					return true;
+					toReformulates.add(projectNodeRef);
 					
 				}
 		} finally {
@@ -197,7 +209,7 @@ public class ProjectServiceImpl implements ProjectService {
 			policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
 		}
 
-		return false;
+		return toReformulates;
 	}
 	
 

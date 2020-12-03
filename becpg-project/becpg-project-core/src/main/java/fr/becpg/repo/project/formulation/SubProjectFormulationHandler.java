@@ -139,7 +139,7 @@ public class SubProjectFormulationHandler extends FormulationBaseHandler<Project
 
 							Serializable value = nodeService.getProperty(task.getSubProject(), propertyQname);
 
-							if ((value instanceof String) && (value != null)) {
+							if ((value instanceof String)) {
 
 								if (propsToCopyToParentTmp.get(propertyQname) != null) {
 									value = propsToCopyToParentTmp.get(propertyQname) + "\n" + value;
