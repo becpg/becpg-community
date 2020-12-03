@@ -257,7 +257,8 @@ public class RegulationFormulationHelper {
 			String nutListValue = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_VALUE.getLocalName());
 			String nutListValuePerServing = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_VALUE_PER_SERVING.getLocalName());
 			try {
-				JSONObject jsonRound = new JSONObject(roundedValue);
+				JSONTokener tokener = new JSONTokener(roundedValue);
+				JSONObject jsonRound = new JSONObject(tokener);
 
 				for (String locKey : getAvailableRegulations()) {
 					NutrientRegulation regulation = getRegulation(locKey);

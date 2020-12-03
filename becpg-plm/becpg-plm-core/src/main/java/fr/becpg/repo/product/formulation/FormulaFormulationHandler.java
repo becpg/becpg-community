@@ -187,19 +187,15 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 			if (DynamicCharactExecOrder.Pre.equals(execOrder)) {
 				copyTemplateDynamicCharactLists(productData);
 			}
-//			// TODO https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#expressions-spel-compilation
-//			SpelParserConfiguration config = new SpelParserConfiguration(SpelCompilerMode.IMMEDIATE,
-//				    this.getClass().getClassLoader());
-//			
-			ExpressionParser parser = new SpelExpressionParser();
+
 			StandardEvaluationContext context = formulaService.createEntitySpelContext(productData);
 
 			for (AbstractProductDataView view : productData.getViews()) {
-				computeFormula(productData, parser, context, view);
+				computeFormula(productData, formulaService.getSpelParser(), context, view);
 			}
 
 			if (DynamicCharactExecOrder.Post.equals(execOrder)) {
-				computeNutrientProfile(productData, parser, context);
+				computeNutrientProfile(productData, formulaService.getSpelParser(), context);
 			}
 		}
 		return true;
