@@ -4,6 +4,7 @@
 package fr.becpg.repo.project.policy;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -101,22 +102,24 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 	@Override
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 
-		boolean formulateProject = false;
+		Set<NodeRef> toReformulates = new HashSet<>();
 		String beforeState = (String) before.get(ProjectModel.PROP_PROJECT_STATE);
 		String afterState = (String) after.get(ProjectModel.PROP_PROJECT_STATE);
 
 		// change state
 		if ((afterState != null) && !afterState.equals(beforeState)) {
-			formulateProject = projectService.updateProjectState(nodeRef, beforeState, afterState);
+			toReformulates.addAll( projectService.updateProjectState(nodeRef, beforeState, afterState));
 		}
 
 		// change tartdate, duedate
 		if (isPropChanged(before, after, ProjectModel.PROP_PROJECT_START_DATE) || isPropChanged(before, after, ProjectModel.PROP_PROJECT_DUE_DATE)) {
-			formulateProject = true;
+			toReformulates.add(nodeRef);
 		}
 
-		if (formulateProject) {
-			queueNode(nodeRef);
+		if (!toReformulates.isEmpty()) {
+			for(NodeRef n : toReformulates) {
+				queueNode(n);
+			}
 		}
 	}
 
