@@ -99,7 +99,7 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 				StandardEvaluationContext context = formulaService.createEntitySpelContext(product);
 
 				if (context != null) {
-					ExpressionParser parser = new SpelExpressionParser();
+					ExpressionParser parser = formulaService.getSpelParser();
 					Expression expression = parser.parseExpression(formula);
 
 					try {

@@ -579,7 +579,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 */
 		public <T> Collection<T> filter(Collection<T> range, String formula) {
 			if (range != null) {
-				ExpressionParser parser = new SpelExpressionParser();
+				ExpressionParser parser = formulaService.getSpelParser();
 				Expression exp = parser.parseExpression(formula);
 
 				return range.stream().filter(p -> {

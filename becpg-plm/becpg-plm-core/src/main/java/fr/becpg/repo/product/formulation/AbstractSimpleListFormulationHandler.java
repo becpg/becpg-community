@@ -628,7 +628,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 		if (formulatedCharactDataItems != null) {
 
-			ExpressionParser parser = new SpelExpressionParser();
+			ExpressionParser parser = formulaService.getSpelParser();
 			StandardEvaluationContext context = formulaService.createEntitySpelContext(formulatedProduct);
 
 			for (FormulatedCharactDataItem formulatedCharactDataItem : formulatedCharactDataItems) {

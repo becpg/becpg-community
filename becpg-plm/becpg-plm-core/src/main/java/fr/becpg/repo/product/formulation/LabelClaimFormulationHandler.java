@@ -129,7 +129,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 
 		
 		
-		ExpressionParser parser = new SpelExpressionParser();
+		ExpressionParser parser = formulaService.getSpelParser();
 		StandardEvaluationContext context = formulaService.createEntitySpelContext(productData);
 
 		if ((productData.getLabelClaimList() != null) && !productData.getLabelClaimList().isEmpty()) {

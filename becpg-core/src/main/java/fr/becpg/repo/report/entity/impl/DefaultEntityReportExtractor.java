@@ -40,8 +40,6 @@ import org.alfresco.service.cmr.dictionary.ConstraintDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
-import org.alfresco.service.cmr.model.FileFolderService;
-import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentReader;
@@ -204,9 +202,6 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 	@Autowired
 	protected VersionService versionService;
-
-	@Autowired
-	protected FileFolderService fileFolderService;
 
 	@Autowired
 	protected AssociationService associationService;
@@ -407,16 +402,16 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		NodeRef imagesFolderNodeRef = nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS,
 				TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));
 		if (imagesFolderNodeRef != null) {
-			for (FileInfo fileInfo : fileFolderService.listFiles(imagesFolderNodeRef)) {
+			for (NodeRef imgNodeRef : associationService.getChildAssocs(imagesFolderNodeRef,  ContentModel.ASSOC_CONTAINS) ) {
 
 				String imgId = String.format(PRODUCT_IMG_ID, cnt);
-
-				if (fileInfo.getName().startsWith(REPORT_LOGO_ID)
-						|| fileInfo.getName().startsWith(I18NUtil.getMessage("report.logo.fileName.prefix", Locale.getDefault()))) {
+				String name = (String) nodeService.getProperty(imagesFolderNodeRef,  ContentModel.PROP_NAME);
+				if (name.startsWith(REPORT_LOGO_ID)
+						||name.startsWith(I18NUtil.getMessage("report.logo.fileName.prefix", Locale.getDefault()))) {
 					imgId = REPORT_LOGO_ID;
 				}
 
-				extractImage(entityNodeRef, fileInfo.getNodeRef(), imgId, imgsElt, context);
+				extractImage(entityNodeRef, imgNodeRef, imgId, imgsElt, context);
 				cnt++;
 			}
 		}
@@ -1120,12 +1115,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			if ((modified == null) || (generatedReportDate == null) || (modified.getTime() > generatedReportDate.getTime())) {
 				return true;
 			}
-			for (FileInfo fileInfo : fileFolderService.listFiles(imagesFolderNodeRef)) {
-				modified = fileInfo.getModifiedDate();
-				if ((modified == null) || (generatedReportDate == null) || (modified.getTime() > generatedReportDate.getTime())) {
-					return true;
-				}
-			}
+			
 		}
 		return false;
 	}
