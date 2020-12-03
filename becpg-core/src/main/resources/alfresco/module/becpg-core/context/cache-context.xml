@@ -25,6 +25,37 @@
            http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
 
+		
+	<!-- Cache -->
+
+	<bean id="beCPGCacheService" class="fr.becpg.repo.cache.impl.BeCPGCacheServiceImpl">
+		<property name="registry" ref="asynchronouslyRefreshedCacheRegistry"/>
+		<property name="disableAllCache" value="false"/>
+		<property name="cacheSizes">
+		   <!-- Cache define here are tenant aware and local (not clustered)-->
+			<map>
+			  <entry key="fr.becpg.repo.security.SecurityService" value="50" />
+			  <entry key="fr.becpg.repo.entity.version.EntityVersionService" value="10" />
+			  <entry key="fr.becpg.repo.helper.AttributeExtractorService" value="100" />
+			  <entry key="fr.becpg.repo.entity.catalog.EntityCatalogService" value="5" />
+			  <entry key="fr.becpg.repo.jscript.Thumbnail" value="20" />
+			  <entry key="fr.becpg.repo.search.PaginatedSearchCache" value="300" />
+			  <entry key="fr.becpg.repo.search.PaginatedSearchCache.multiLevel" value="300" />
+			  <entry key="fr.becpg.repo.entity.datalist.MultiLevelDataListService" value="50" />
+			  <entry key="fr.becpg.repo.entity.impl.EntityDictionaryServiceImpl" value="500" />
+			  <entry key="fr.becpg.repo.license.BeCPGLicenseManager" value="20" />
+			  <entry key="fr.becpg.repo.dictionary.constraint.DynListConstraint" value="100" />
+			  <entry key="fr.becpg.repo.dictionary.constraint.CurrencyConstraint" value="100" />
+			  <entry key="fr.becpg.repo.entity.impl.AutoNumServiceImpl" value="10" />
+			  <entry key="fr.becpg.repo.report.entity.impl.EntityReportServiceImpl" value="10" />
+			  <entry key="fr.becpg.repo.search.AdvSearchService" value="100" />
+			</map>
+		</property>
+	</bean>
+	
+
+
+	<!--  Clusterable cache -->
     <bean name="becpgAssocsSharedCache" factory-bean="cacheFactory" factory-method="createCache">
       <constructor-arg value="cache.becpgAssocsCache"/>      
    </bean>

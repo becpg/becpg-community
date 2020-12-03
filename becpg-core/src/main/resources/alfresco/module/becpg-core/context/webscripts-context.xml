@@ -92,19 +92,19 @@
 		<property name="entityTplService" ref="entityTplService" />
 		<property name="namespaceService" ref="NamespaceService" />
 		<property name="transactionService" ref="TransactionService" />
-		<property name="dictionaryService" ref="DictionaryService" />
+		<property name="dictionaryService" ref="cachedDictionaryService" />
 		<property name="authorityService" ref="AuthorityService" />
 		<property name="permissionService" ref="PermissionService" />
 		<property name="associationService" ref="associationService" />
 		<property name="policyBehaviourFilter" ref="policyBehaviourFilter"/>
 		<property name="lockService" ref="lockService" />
-                <property name="reportAssociationDecorator" ref="reportAssociationDecorator"/>
+        <property name="reportAssociationDecorator" ref="reportAssociationDecorator"/>
 	</bean>
 
 	<bean id="webscript.fr.becpg.entity.entityDictionnary.get" class="fr.becpg.repo.web.scripts.entity.EntityDictionnaryWebScript" parent="webscript">
 		<property name="entityDictionaryService" ref="entityDictionaryService" />
 		<property name="namespaceService" ref="NamespaceService" />
-		<property name="dictionaryService" ref="dictionaryService"/>
+		<property name="dictionaryService" ref="cachedDictionaryService"/>
 	</bean>
 
 	<alias name="webscript.fr.becpg.entity.datalist.data.get" alias="webscript.fr.becpg.entity.datalist.data.post" />
@@ -188,7 +188,7 @@
 	  <property name="namespaceService" ref="NamespaceService" />
       <property name="permissionService" ref="PermissionService" />
       <property name="nodeService" ref="NodeService" />
-      <property name="dictionaryService" ref="DictionaryService" />
+      <property name="dictionaryService" ref="cachedDictionaryService" />
       <property name="mimetypeService" ref="MimetypeService" />
       <property name="delegate" ref="webscript.content.streamer" />
       <property name="contentService" ref="contentService" />

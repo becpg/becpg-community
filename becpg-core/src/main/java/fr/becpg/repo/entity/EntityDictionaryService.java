@@ -20,13 +20,9 @@ package fr.becpg.repo.entity;
 import java.util.Collection;
 import java.util.List;
 
-import org.alfresco.service.cmr.dictionary.AspectDefinition;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
-import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
-import org.alfresco.service.cmr.dictionary.PropertyDefinition;
-import org.alfresco.service.cmr.dictionary.TypeDefinition;
 import org.alfresco.service.namespace.QName;
 
 /**
@@ -35,7 +31,7 @@ import org.alfresco.service.namespace.QName;
  * @author matthieu
  * @version $Id: $Id
  */
-public interface EntityDictionaryService {
+public interface EntityDictionaryService extends DictionaryService {
 
 	/**
 	 * <p>getDefaultPivotAssoc.</p>
@@ -147,55 +143,6 @@ public interface EntityDictionaryService {
 	 * @return a boolean.
 	 */
 	boolean isAssoc(QName propQname);
-
-	
-	//Override
-	/**
-	 * <p>getType.</p>
-	 *
-	 * @param type a {@link org.alfresco.service.namespace.QName} object.
-	 * @return a {@link org.alfresco.service.cmr.dictionary.TypeDefinition} object.
-	 */
-	TypeDefinition getType(QName type);
-
-	/**
-	 * <p>getAspect.</p>
-	 *
-	 * @param aspect a {@link org.alfresco.service.namespace.QName} object.
-	 * @return a {@link org.alfresco.service.cmr.dictionary.AspectDefinition} object.
-	 */
-	AspectDefinition getAspect(QName aspect);
-
-	/**
-	 * <p>getClass.</p>
-	 *
-	 * @param type a {@link org.alfresco.service.namespace.QName} object.
-	 * @return a {@link org.alfresco.service.cmr.dictionary.ClassDefinition} object.
-	 */
-	ClassDefinition getClass(QName type);
-
-	/**
-	 * <p>getProperty.</p>
-	 *
-	 * @param key a {@link org.alfresco.service.namespace.QName} object.
-	 * @return a {@link org.alfresco.service.cmr.dictionary.PropertyDefinition} object.
-	 */
-	PropertyDefinition getProperty(QName key);
-
-	/**
-	 * <p>getAssociation.</p>
-	 *
-	 * @param qName a {@link org.alfresco.service.namespace.QName} object.
-	 * @return a {@link org.alfresco.service.cmr.dictionary.AssociationDefinition} object.
-	 */
-	AssociationDefinition getAssociation(QName qName);
-
-	/**
-	 * <p>getDictionaryService.</p>
-	 *
-	 * @return a {@link org.alfresco.service.cmr.dictionary.DictionaryService} object.
-	 */
-	DictionaryService getDictionaryService();
 
 
 

@@ -52,6 +52,16 @@
 		</property>
 	</bean>
 
+	<!-- cached dictionary -->
+
+    <bean id="entityDictionaryService" class="fr.becpg.repo.entity.impl.EntityDictionaryServiceImpl" parent="dictionaryService" depends-on="bcpg.dictionaryBootstrap" >   
+        <property name="beCPGCacheService" ref="beCPGCacheService"/>
+        <property name="registry" ref="asynchronouslyRefreshedCacheRegistry"/>
+        <property name="repositoryEntityDefReader" ref="repositoryEntityDefReader"/>     
+    </bean>
+    
+    <alias alias="cachedDictionaryService" name="entityDictionaryService"></alias>
+    
 	<!-- Helper -->
 	<bean id="contentHelper" class="fr.becpg.repo.helper.ContentHelper">
 		<property name="contentService" ref="contentService" />
@@ -152,31 +162,7 @@
 	
 	<alias name="advSearchService" alias="AdvSearchService"/>
 	
-	
-	<!-- Cache -->
 
-	<bean id="beCPGCacheService" class="fr.becpg.repo.cache.impl.BeCPGCacheServiceImpl">
-		<property name="tenantAdminService" ref="tenantAdminService"/>
-		<property name="disableAllCache" value="false"/>
-		<!-- If cache size is not define -->
-		<property name="maxCacheItems" value="100"/>
-		<property name="cacheSizes">
-		   <!-- Cache define here are tenant aware and local (not clustered)-->
-			<map>
-			  <entry key="fr.becpg.repo.security.SecurityService" value="50" />
-			  <entry key="fr.becpg.repo.entity.version.EntityVersionService" value="10" />
-			  <entry key="fr.becpg.repo.helper.AttributeExtractorService" value="100" />
-			  <entry key="fr.becpg.repo.entity.catalog.EntityCatalogService" value="5" />
-			  <entry key="fr.becpg.repo.jscript.Thumbnail" value="20" />
-			  <entry key="fr.becpg.repo.search.PaginatedSearchCache" value="300" />
-			  <entry key="fr.becpg.repo.search.PaginatedSearchCache.multiLevel" value="300" />
-			  <entry key="fr.becpg.repo.entity.datalist.MultiLevelDataListService" value="50" />
-			  <entry key="fr.becpg.repo.entity.impl.EntityDictionaryServiceImpl" value="1000" />
-			  <entry key="fr.becpg.repo.license.BeCPGLicenseManager" value="20" />
-			</map>
-		</property>
-	</bean>
-	
 	
 	<bean id="applicationContextHelper" class="fr.becpg.util.ApplicationContextHelper"/>
 
@@ -191,7 +177,7 @@
          <ref bean="multilingualContentService" />
       </property>
       <property name="dictionaryService">
-         <ref bean="dictionaryService" />
+         <ref bean="cachedDictionaryService" />
       </property>
    </bean>
 
@@ -244,7 +230,7 @@
   	<!--  Overload of IntegrityChecker --> 
     <bean id="integrityChecker" class="fr.becpg.repo.node.integrity.BeCPGIntegrityChecker" init-method="init">
       <property name="policyComponent" ref="policyComponent"/>
-      <property name="dictionaryService" ref="dictionaryService" />
+      <property name="dictionaryService" ref="cachedDictionaryService" />
       <property name="nodeService" ref="nodeService" />
       <property name="entityDictionaryService" ref="entityDictionaryService" />
       <property name="entityListDAO" ref="entityListDAO" />
@@ -264,7 +250,7 @@
     <!-- Ovverride alfresco copy service -->
     <bean id="copyService" class="fr.becpg.repo.copy.BecpgCopyServiceImpl" parent="abstractBaseCopyService" init-method="init">
         <property name="cannedQueryRegistry" ref="copyServiceCannedQueryRegistry"/>
-        <property name="dictionaryService" ref="entityDictionaryService" />
+        <property name="dictionaryService" ref="cachedDictionaryService" />
         <property name="nodeService" ref="NodeService" />
         <property name="policyComponent" ref="policyComponent" />
         <property name="behaviourFilter" ref="policyBehaviourFilter" />
@@ -288,7 +274,7 @@
             <ref bean="versionSearchService" />
         </property>
         <property name="dictionaryService">
-            <ref bean="dictionaryService" />
+            <ref bean="cachedDictionaryService" />
         </property>
         <property name="policyComponent">
             <ref bean="policyComponent" />
