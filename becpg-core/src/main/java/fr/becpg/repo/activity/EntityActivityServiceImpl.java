@@ -351,7 +351,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					QName type = nodeService.getType(datalistNodeRef);
 
 					data.put(PROP_CLASSNAME, attributeExtractorService.extractMetadata(type, datalistNodeRef));
-					data.put(PROP_DATALIST_TYPE, entityDictionaryService.toPrefixString(entity));
+					data.put(PROP_DATALIST_TYPE, entityDictionaryService.toPrefixString(type));
 
 					NodeRef charactNodeRef = getMatchingCharactNodeRef(datalistNodeRef);
 
