@@ -56,6 +56,8 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 	private ContentService contentService;
 
 	private EntityService entityService;
+	
+	private String instanceName;
 
 	/**
 	 * <p>Setter for the field <code>nodeService</code>.</p>
@@ -77,6 +79,12 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 
 	public void setEntityService(EntityService entityService) {
 		this.entityService = entityService;
+	}
+	
+	
+
+	public void setInstanceName(String instanceName) {
+		this.instanceName = instanceName;
 	}
 
 	/** {@inheritDoc} */
@@ -102,7 +110,7 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 
 		executeInSession(reportSession -> {
 
-			String templateId = tplNodeRef.toString();
+			String templateId = (instanceName!=null? instanceName:"") + tplNodeRef.toString();
 
 			sendTplFile(reportSession, templateId, tplNodeRef);
 
