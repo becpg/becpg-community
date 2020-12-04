@@ -57,7 +57,8 @@
     <bean id="entityDictionaryService" class="fr.becpg.repo.entity.impl.EntityDictionaryServiceImpl" parent="dictionaryService" depends-on="bcpg.dictionaryBootstrap" >   
         <property name="beCPGCacheService" ref="beCPGCacheService"/>
         <property name="registry" ref="asynchronouslyRefreshedCacheRegistry"/>
-        <property name="repositoryEntityDefReader" ref="repositoryEntityDefReader"/>     
+        <property name="repositoryEntityDefReader" ref="repositoryEntityDefReader"/> 
+        <property name="namespaceService" ref="namespaceService" />	    
     </bean>
     
     <alias alias="cachedDictionaryService" name="entityDictionaryService"></alias>
