@@ -391,15 +391,15 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	private boolean shouldExtractList(boolean isExtractedProduct, DefaultExtractorContext context, QName type, QName dataListQName) {
 		if(isExtractedProduct) {
-			if(context.isNotEmptyPrefs("entityDatalistsToExtract", null) && !context.prefsContains("lists", null, dataListQName.toPrefixString(namespaceService))) {
+			if(context.isNotEmptyPrefs("entityDatalistsToExtract", null) && !context.prefsContains("lists", null, entityDictionaryService.toPrefixString(dataListQName))) {
 				return false;
 			}
 			return true;
 		}
 		
 		return context.multiPrefsEquals("componentDatalistsToExtract", componentDatalistsToExtract,
-				dataListQName.toPrefixString(namespaceService)) || context.multiPrefsEquals("componentDatalistsToExtract", componentDatalistsToExtract,
-						dataListQName.toPrefixString(namespaceService)+"|"+type.toPrefixString(namespaceService));
+				entityDictionaryService.toPrefixString(dataListQName)) || context.multiPrefsEquals("componentDatalistsToExtract", componentDatalistsToExtract,
+						entityDictionaryService.toPrefixString(dataListQName)+"|"+entityDictionaryService.toPrefixString(type));
 	}
 
 	/**
@@ -1579,8 +1579,12 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		for (DynamicCharactListItem dc : dynamicCharactList) {
 			Element dynamicCharact = dynCharactListElt.addElement(PLMModel.TYPE_DYNAMICCHARACTLIST.getLocalName());
 			dynamicCharact.addAttribute(PLMModel.PROP_DYNAMICCHARACT_TITLE.getLocalName(), dc.getTitle());
+			Object ret = null;
+			if(dc.getValue() !=null ) {
+				ret = JsonFormulaHelper.cleanCompareJSON(dc.getValue().toString());
+			}
 			dynamicCharact.addAttribute(PLMModel.PROP_DYNAMICCHARACT_VALUE.getLocalName(),
-					dc.getValue() == null ? VALUE_NULL : JsonFormulaHelper.cleanCompareJSON(dc.getValue().toString()).toString());
+					ret == null ? VALUE_NULL :ret.toString());
 		}
 	}
 
@@ -1627,7 +1631,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			});
 			extractCost(entityNodeRef, partProductNodeRef, dataListItemElt, costType);
 
-			dataListItemElt.addAttribute(ATTR_ITEM_TYPE, nodeService.getType(partProductNodeRef).toPrefixString(namespaceService));
+			dataListItemElt.addAttribute(ATTR_ITEM_TYPE, entityDictionaryService.toPrefixString(nodeService.getType(partProductNodeRef)));
 			dataListItemElt.addAttribute(ATTR_ASPECTS, extractAspects(partProductNodeRef));
 		}
 	}

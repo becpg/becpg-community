@@ -13,6 +13,7 @@ import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
+import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.cache.AsynchronouslyRefreshedCacheRegistry;
 import org.alfresco.util.cache.RefreshableCacheEvent;
@@ -44,6 +45,8 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent implements 
 	private AsynchronouslyRefreshedCacheRegistry registry;
 
 	private RepositoryEntityDefReader<RepositoryEntity> repositoryEntityDefReader;
+	
+	protected NamespaceService namespaceService;
 
 	private Map<QName, QName> propDefMapping = new HashMap<>();
 
@@ -57,6 +60,12 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent implements 
 
 	public void setBeCPGCacheService(BeCPGCacheService beCPGCacheService) {
 		this.beCPGCacheService = beCPGCacheService;
+	}
+	
+	
+
+	public void setNamespaceService(NamespaceService namespaceService) {
+		this.namespaceService = namespaceService;
 	}
 
 	/**
@@ -200,6 +209,13 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent implements 
 	}
 
 
+	@Override
+	public String toPrefixString(QName propertyQName) {
+		return beCPGCacheService.getFromCache(EntityDictionaryServiceImpl.class.getName(), propertyQName.toString() + ".toPrefixString" ,
+				() -> propertyQName.toPrefixString(namespaceService));
+	}
+	
+	
 	/*
 	 * (non-Javadoc)
 	 *
@@ -264,5 +280,6 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent implements 
 		registry.register(this);
 		
 	}
+
 
 }

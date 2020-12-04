@@ -152,7 +152,7 @@ public class ParentValuePlugin extends EntityListValuePlugin {
 		} else {
 			String searchTemplate = "%(";
 			for (QName propertyQName : propertyQNames) {
-				searchTemplate += " " + propertyQName.toPrefixString(namespaceService);
+				searchTemplate += " " + entityDictionaryService.toPrefixString(propertyQName);
 			}
 			searchTemplate += ")";
 

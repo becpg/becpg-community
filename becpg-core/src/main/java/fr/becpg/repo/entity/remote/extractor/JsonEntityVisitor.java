@@ -188,7 +188,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 			}
 		}
 
-		entity.put(RemoteEntityService.ATTR_TYPE, nodeType.toPrefixString(namespaceService));
+		entity.put(RemoteEntityService.ATTR_TYPE, entityDictionaryService.toPrefixString(nodeType));
 
 		QName propName = RemoteHelper.getPropName(nodeType, entityDictionaryService);
 		Map<QName, Serializable> properties = nodeService.getProperties(nodeRef);
@@ -298,7 +298,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 					buffer.write(data, 0, nRead);
 				}
 				buffer.flush();
-				entity.put(ContentModel.PROP_CONTENT.toPrefixString(namespaceService), buffer.toByteArray());
+				entity.put("cm:content", buffer.toByteArray());
 
 			} catch (ContentIOException | IOException e) {
 				throw new JSONException("Cannot serialyze data");
@@ -339,7 +339,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 					List<ChildAssociationRef> assocRefs = nodeService.getChildAssocs(nodeRef);
 					if (assocDef.isTargetMany() && !assocRefs.isEmpty()) {
-						entity.put(nodeType.toPrefixString(namespaceService), jsonAssocs);
+						entity.put(entityDictionaryService.toPrefixString(nodeType), jsonAssocs);
 					}
 
 					for (ChildAssociationRef assocRef : assocRefs) {
@@ -350,7 +350,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 							if (assocDef.isTargetMany()) {
 								jsonAssocs.put(jsonAssocNode);
 							} else {
-								entity.put(nodeType.toPrefixString(namespaceService), jsonAssocNode);
+								entity.put(entityDictionaryService.toPrefixString(nodeType), jsonAssocNode);
 							}
 
 							visitNode(childRef, jsonAssocNode, JsonVisitNodeType.ASSOC);
@@ -378,7 +378,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 					List<AssociationRef> assocRefs = nodeService.getTargetAssocs(nodeRef, assocDef.getName());
 					if (assocDef.isTargetMany() && !assocRefs.isEmpty()) {
-						entity.put(nodeType.toPrefixString(namespaceService), jsonAssocs);
+						entity.put(entityDictionaryService.toPrefixString(nodeType), jsonAssocs);
 					}
 					for (AssociationRef assocRef : assocRefs) {
 						NodeRef childRef = assocRef.getTargetRef();
@@ -387,7 +387,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 						if (assocDef.isTargetMany()) {
 							jsonAssocs.put(jsonAssocNode);
 						} else {
-							entity.put(nodeType.toPrefixString(namespaceService), jsonAssocNode);
+							entity.put(entityDictionaryService.toPrefixString(nodeType), jsonAssocNode);
 						}
 
 						visitNode(childRef, jsonAssocNode, JsonVisitNodeType.ASSOC, nodeType);
@@ -430,13 +430,13 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 						if (DataTypeDefinition.MLTEXT.equals(propertyDefinition.getDataType().getName())
 								&& (mlNodeService.getProperty(nodeRef, propertyDefinition.getName()) instanceof MLText)) {
 							mlValues = (MLText) mlNodeService.getProperty(nodeRef, propertyDefinition.getName());
-							visitMltextAttributes(propName.toPrefixString(namespaceService), entity, mlValues);
+							visitMltextAttributes(entityDictionaryService.toPrefixString(propName), entity, mlValues);
 						} else if (DataTypeDefinition.TEXT.equals(propertyDefinition.getDataType().getName())
 								&& !propertyDefinition.getConstraints().isEmpty()) {
 							for (ConstraintDefinition constraint : propertyDefinition.getConstraints()) {
 								if (constraint.getConstraint() instanceof DynListConstraint) {
 									mlValues = ((DynListConstraint) constraint.getConstraint()).getMLAwareAllowedValues().get(entry.getValue());
-									visitMltextAttributes(propName.toPrefixString(namespaceService), entity, mlValues);
+									visitMltextAttributes(entityDictionaryService.toPrefixString(propName), entity, mlValues);
 									break;
 								}
 							}
@@ -492,22 +492,22 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 	private void visitPropValue(QName propType, JSONObject entity, Serializable value) throws JSONException {
 		if (value instanceof List) {
 			JSONArray tmp = new JSONArray();
-			entity.put(propType.toPrefixString(namespaceService), tmp);
+			entity.put(entityDictionaryService.toPrefixString(propType), tmp);
 			for (Serializable subEl : (List<Serializable>) value) {
 				tmp.put(JsonHelper.formatValue(subEl));
 
 			}
 		} else if (value instanceof NodeRef) {
 			JSONObject node = new JSONObject();
-			entity.put(propType.toPrefixString(namespaceService), node);
+			entity.put(entityDictionaryService.toPrefixString(propType), node);
 			visitNode((NodeRef) value, node, JsonVisitNodeType.ASSOC);
 		} else {
 
 			if (value != null) {
 				if (RemoteHelper.isJSONValue(propType)) {
-					entity.put(propType.toPrefixString(namespaceService), new JSONObject((String) value));
+					entity.put(entityDictionaryService.toPrefixString(propType), new JSONObject((String) value));
 				} else if ((JsonHelper.formatValue(value) != null) && !JsonHelper.formatValue(value).toString().isEmpty()) {
-					entity.put(propType.toPrefixString(namespaceService), JsonHelper.formatValue(value));
+					entity.put(entityDictionaryService.toPrefixString(propType), JsonHelper.formatValue(value));
 				}
 			}
 		}

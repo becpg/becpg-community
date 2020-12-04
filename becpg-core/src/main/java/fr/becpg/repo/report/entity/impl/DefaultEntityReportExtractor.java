@@ -223,6 +223,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 	@Autowired
 	protected EntityReportService entityReportService;
+	
 
 	protected interface DefaultExtractorContextCallBack {
 		public void run();
@@ -371,7 +372,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		aspectsElt.addCDATA(extractAspects(entityNodeRef));
 
 		Element itemTypeElt = entityElt.addElement(ATTR_ITEM_TYPE);
-		itemTypeElt.addCDATA(nodeService.getType(entityNodeRef).toPrefixString(namespaceService));
+		itemTypeElt.addCDATA(entityDictionaryService.toPrefixString(nodeService.getType(entityNodeRef)));
 
 		loadCreator(entityNodeRef, entityElt, imgsElt, context);
 
@@ -468,18 +469,20 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		if ((assocDef != null) && (assocDef.getName() != null)) {
 			boolean extractDataList = false;
 			boolean extractAssoc = false;
+			String prefixedAssocName = entityDictionaryService.toPrefixString(assocDef.getName());
+			
 			if (context.prefsContains("assocsToExtractWithDataList", assocsToExtractWithDataList,
-					assocDef.getName().toPrefixString(namespaceService))) {
+					prefixedAssocName)) {
 				extractDataList = true;
 			}
 
 			if (context.isInDataListContext()) {
 				if (context.prefsContains("assocsToExtractInDataList", assocsToExtractInDataList,
-						assocDef.getName().toPrefixString(namespaceService))) {
+						prefixedAssocName)) {
 					extractAssoc = true;
 				}
 			} else {
-				if (context.prefsContains("assocsToExtract", assocsToExtract, assocDef.getName().toPrefixString(namespaceService))) {
+				if (context.prefsContains("assocsToExtract", assocsToExtract,prefixedAssocName)) {
 					extractAssoc = true;
 				}
 			}
@@ -491,7 +494,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 				isExtracted = true;
 			}
 
-			if (context.prefsContains("assocsToExtractWithImage", assocsToExtractWithImage, assocDef.getName().toPrefixString(namespaceService))) {
+			if (context.prefsContains("assocsToExtractWithImage", assocsToExtractWithImage, prefixedAssocName)) {
 				List<NodeRef> nodeRefs = associationService.getTargetAssocs(entityNodeRef, assocDef.getName());
 				Element imgsElt = (Element) entityElt.getDocument().selectSingleNode(TAG_ENTITY + "/" + TAG_IMAGES);
 				int cnt = imgsElt.selectNodes(TAG_IMAGE) != null ? imgsElt.selectNodes(TAG_IMAGE).size() : 1;
@@ -517,10 +520,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	 * @return a boolean.
 	 */
 	protected boolean isMultiLinesAttribute(QName attribute, DefaultExtractorContext context) {
-		if (context.prefsContains("multilineProperties", multilineProperties, attribute.toPrefixString(namespaceService))) {
-			return true;
-		}
-		return false;
+		return context.prefsContains("multilineProperties", multilineProperties,  entityDictionaryService.toPrefixString(attribute));
 	}
 
 	/**
@@ -781,7 +781,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 					}
 				}
 
-				if (context.prefsContains("mlTextFields", mlTextFields, propertyDef.getName().toPrefixString(namespaceService))) {
+				if (context.prefsContains("mlTextFields", mlTextFields,  entityDictionaryService.toPrefixString(propertyDef.getName()))) {
 					MLText mlValues = null;
 
 					if (DataTypeDefinition.MLTEXT.equals(propertyDef.getDataType().getName())) {
@@ -985,14 +985,16 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	 * @return a {@link java.lang.String} object.
 	 */
 	protected String extractNames(List<NodeRef> nodeRefs) {
-		String value = VALUE_NULL;
+		StringBuilder value = null;
 		for (NodeRef nodeRef : nodeRefs) {
-			if (!value.isEmpty()) {
-				value += RepoConsts.LABEL_SEPARATOR;
+			if (value!=null) {
+				value.append(RepoConsts.LABEL_SEPARATOR);
+			} else  {
+				value = new StringBuilder();
 			}
-			value += (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
+			value.append((String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME));
 		}
-		return value;
+		return value == null ? VALUE_NULL : value.toString();
 	}
 
 	/**
@@ -1002,14 +1004,18 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	 * @return a {@link java.lang.String} object.
 	 */
 	protected String extractAspects(NodeRef nodeRef) {
-		String value = VALUE_NULL;
+		StringBuilder value = null;
 		for (QName aspect : nodeService.getAspects(nodeRef)) {
-			if (!value.isEmpty()) {
-				value += RepoConsts.LABEL_SEPARATOR;
+			if (value!=null) {
+				value.append(RepoConsts.LABEL_SEPARATOR);
+			} else  {
+				value = new StringBuilder();
 			}
-			value += aspect.toPrefixString(namespaceService);
+			
+			value.append( entityDictionaryService.toPrefixString(aspect));
 		}
-		return value;
+		
+		return value == null ? VALUE_NULL : value.toString();
 	}
 
 	/**
@@ -1096,12 +1102,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	 * @param cDATAElt a {@link org.dom4j.Element} object.
 	 */
 	protected void appendPrefix(QName propertyQName, Element cDATAElt) {
-		Collection<String> prefixes = namespaceService.getPrefixes(propertyQName.getNamespaceURI());
-		if (!prefixes.isEmpty()) {
-			// TODO : manage prefix correctly
-			cDATAElt.addAttribute("prefix", prefixes.iterator().next());
-		}
-
+		cDATAElt.addAttribute("prefix",  entityDictionaryService.toPrefixString(propertyQName).split(":")[0]);
 	}
 
 	// Check that images has not been update

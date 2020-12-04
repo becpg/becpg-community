@@ -62,6 +62,8 @@
     
     <alias alias="cachedDictionaryService" name="entityDictionaryService"></alias>
     
+    
+    
 	<!-- Helper -->
 	<bean id="contentHelper" class="fr.becpg.repo.helper.ContentHelper">
 		<property name="contentService" ref="contentService" />
@@ -104,7 +106,6 @@
 	<alias name="remoteEntityService" alias="RemoteEntityService"/>
 
 	<!-- DataLists -->
-	
 	
 	<bean id="dataListExtractorFactory"
 		class="fr.becpg.repo.entity.datalist.impl.DataListExtractorFactoryImpl"/>
@@ -287,6 +288,56 @@
         </property>
         <property name="versionComparatorClass">
             <value>${version.store.versionComparatorClass}</value>
+        </property>
+    </bean>
+    
+    <!-- Ovveride alfresco rule service -->
+    
+     <bean id="ruleService" class="org.alfresco.repo.rule.RuleServiceImpl" init-method="init">
+        <property name="nodeService" ref="NodeService"/>
+        <property name="runtimeNodeService" ref="nodeService"/>
+        <property name="copyService" ref="copyService"/>
+        <property name="actionService" ref="ActionService"/>
+        <property name="runtimeActionService" ref="actionService"/>
+        <property name="dictionaryService" ref="cachedDictionaryService"/>
+        <property name="policyComponent" ref="policyComponent"/>
+        <property name="permissionService" ref="permissionService"/>
+	    <property name="nodeRulesCache" ref="nodeRulesCache"/>
+        <property name="rulesDisabled">
+            <value>false</value>
+        </property>
+   </bean>
+   
+   
+    <bean id="search.fts.alfresco.db" class="org.alfresco.repo.search.impl.solr.DbAftsQueryLanguage" >
+        <property name="dictionaryService" ref="cachedDictionaryService" />
+        <property name="namespaceService" ref="namespaceService" />
+        <property name="factories">
+            <list>
+                <ref bean="search.indexerAndSearcherFactory" />
+            </list>
+        </property>
+        <property name="queryEngine">
+            <ref bean="search.dbQueryEngine" />
+        </property>
+         <property name="metadataIndexCheck1">
+            <ref bean="metadataQueryIndexesCheck" />
+        </property>
+        <property name="metadataIndexCheck2">
+            <ref bean="metadataQueryIndexesCheck2" />
+        </property>
+    </bean>
+    
+    <bean id="search.dbQueryEngineImpl" class="org.alfresco.repo.search.impl.querymodel.impl.db.DBQueryEngine" >
+        <property name="dictionaryService" ref="cachedDictionaryService" />
+        <property name="namespaceService" ref="namespaceService" />
+        <property name="sqlSessionTemplate" ref="repoSqlSessionTemplate"/>
+        <property name="qnameDAO" ref="qnameDAO"/>
+        <property name="nodeService" ref="nodeService"/>
+        <property name="nodeDAO" ref="nodeDAO"/>
+        <property name="tenantService" ref="tenantService"/>
+        <property name="metadataIndexCheck2">
+            <ref bean="metadataQueryIndexesCheck2" />
         </property>
     </bean>
 </beans>

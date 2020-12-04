@@ -411,7 +411,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 						break;
 
 					} else if ("LIST".equals(constraint.getConstraint().getType())) {
-						constraintName = constraint.getRef().toPrefixString(namespaceService).replace(":", "_");
+						constraintName = entityDictionaryService.toPrefixString(constraint.getRef()).replace(":", "_");
 						break;
 					}
 				}
@@ -510,7 +510,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		} else if (dataType.equals(DataTypeDefinition.QNAME.toString())) {
 
 			if (v != null) {
-				String ret = I18NUtil.getMessage("bcpg_bcpgmodel.type." + ((QName) v).toPrefixString(namespaceService).replace(":", "_") + ".title");
+				String ret = I18NUtil.getMessage("bcpg_bcpgmodel.type." + entityDictionaryService.toPrefixString((QName) v).replace(":", "_") + ".title");
 				if (ret == null) {
 					ret = v.toString();
 				}
@@ -1024,7 +1024,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		} else if (type.equals(ContentModel.TYPE_FOLDER)) {
 			metadata = "container";
 		} else {
-			metadata = type.toPrefixString(namespaceService).split(":")[1];
+			metadata = entityDictionaryService.toPrefixString(type).split(":")[1];
 		}
 
 		return metadata;
