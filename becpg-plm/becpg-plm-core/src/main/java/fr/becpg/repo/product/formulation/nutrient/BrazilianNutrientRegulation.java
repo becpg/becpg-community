@@ -42,8 +42,8 @@ public class BrazilianNutrientRegulation extends AbstractNutrientRegulation {
 			if (nutrientTypeCode.equals(NutrientCode.CarbohydrateWithFiber) || nutrientTypeCode.equals(NutrientCode.CarbohydrateByDiff)
 					|| nutrientTypeCode.equals(NutrientCode.Sugar) || nutrientTypeCode.equals(NutrientCode.SugarAdded)
 					|| nutrientTypeCode.equals(NutrientCode.Protein) || nutrientTypeCode.equals(NutrientCode.Fat)
-					|| nutrientTypeCode.equals(NutrientCode.FiberDietary) || nutrientTypeCode.contentEquals(NutrientCode.FiberSoluble)
-					|| nutrientTypeCode.contentEquals(NutrientCode.FiberInsoluble)) {
+					|| nutrientTypeCode.equals(NutrientCode.FiberDietary) || nutrientTypeCode.equals(NutrientCode.FiberSoluble)
+					|| nutrientTypeCode.equals(NutrientCode.FiberInsoluble)) {
 				if (value <= 0.5){
 					return 0.0;
 				} else if (value < 10) {
