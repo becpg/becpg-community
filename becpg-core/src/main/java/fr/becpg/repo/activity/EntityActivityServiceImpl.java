@@ -351,7 +351,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					QName type = nodeService.getType(datalistNodeRef);
 
 					data.put(PROP_CLASSNAME, attributeExtractorService.extractMetadata(type, datalistNodeRef));
-					data.put(PROP_DATALIST_TYPE, type.toPrefixString(namespaceService));
+					data.put(PROP_DATALIST_TYPE, entityDictionaryService.toPrefixString(entity));
 
 					NodeRef charactNodeRef = getMatchingCharactNodeRef(datalistNodeRef);
 
@@ -410,6 +410,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 	}
 
+	// TODO Slow better to have it async
 	private void mergeWithLastActivity(ActivityListDataItem item) {
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.HOUR, -1);

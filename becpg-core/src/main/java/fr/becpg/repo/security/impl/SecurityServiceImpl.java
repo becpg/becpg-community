@@ -28,7 +28,6 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authority.UnknownAuthorityException;
 import org.alfresco.service.cmr.dictionary.AspectDefinition;
-import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.dictionary.TypeDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -47,6 +46,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SecurityModel;
 import fr.becpg.model.SystemGroup;
 import fr.becpg.repo.cache.BeCPGCacheService;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.security.SecurityService;
@@ -67,7 +67,7 @@ public class SecurityServiceImpl implements SecurityService {
 	private static final String ACLS_CACHE_KEY = "ACLS_CACHE_KEY";
 	private static final String USER_ROLE_CACHE_KEY = "ACLS_CACHE_KEY";
 
-	private final static Log logger = LogFactory.getLog(SecurityServiceImpl.class);
+	private static final Log logger = LogFactory.getLog(SecurityServiceImpl.class);
 
 	@Autowired
 	private AlfrescoRepository<ACLGroupData> alfrescoRepository;
@@ -76,7 +76,7 @@ public class SecurityServiceImpl implements SecurityService {
 	private AuthorityService authorityService;
 
 	@Autowired
-	private DictionaryService dictionaryService;
+	private EntityDictionaryService dictionaryService;
 
 	@Autowired
 	private NamespaceService namespaceService;
@@ -87,7 +87,7 @@ public class SecurityServiceImpl implements SecurityService {
 	/** {@inheritDoc} */
 	@Override
 	public int computeAccessMode(QName nodeType, QName propName) {
-		return computeAccessMode(nodeType, propName.toPrefixString(namespaceService));
+		return computeAccessMode(nodeType, dictionaryService.toPrefixString(propName));
 	}
 
 	/** {@inheritDoc} */
@@ -293,11 +293,6 @@ public class SecurityServiceImpl implements SecurityService {
 						aspects = new ArrayList<>();
 					}
 
-					// for (QName aspect : aclGroup.getNodeAspects()) {
-					// AspectDefinition aspectDefinition =
-					// dictionaryService.getAspect(aspect);
-					// aspects.add(aspectDefinition);
-					// }
 
 					for (AspectDefinition aspect : aspects) {
 						if ((aspect != null) && (aspect.getProperties() != null)) {

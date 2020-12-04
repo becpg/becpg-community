@@ -144,6 +144,8 @@ public interface EntityDictionaryService extends DictionaryService {
 	 */
 	boolean isAssoc(QName propQname);
 
+	String toPrefixString(QName propertyQName);
+
 
 
 }

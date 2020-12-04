@@ -1430,7 +1430,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 		String username = AuthenticationUtil.getFullyAuthenticatedUser();
 
 		if (!AuthenticationUtil.SYSTEM_USER_NAME.equals(username)) {
-			String typeName = nodeService.getType(entityNodeRef).toPrefixString(namespaceService).replace(":", "_");
+			String typeName = entityDictionaryService.toPrefixString(nodeService.getType(entityNodeRef)).replace(":", "_");
 
 			Map<String, Serializable> preferences = preferenceService.getPreferences(username);
 

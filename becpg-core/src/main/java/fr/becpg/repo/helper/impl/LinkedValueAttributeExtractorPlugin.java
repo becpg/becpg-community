@@ -45,9 +45,6 @@ public class LinkedValueAttributeExtractorPlugin implements AttributeExtractorPl
 	@Autowired
 	private NodeService nodeService;
 	
-	@Autowired
-	private  NamespaceService namespaceService;
-	 
 	
 	/** {@inheritDoc} */
 	@Override
@@ -66,7 +63,7 @@ public class LinkedValueAttributeExtractorPlugin implements AttributeExtractorPl
 	/** {@inheritDoc} */
 	@Override
 	public String extractMetadata(QName type, NodeRef nodeRef) {
-		return BeCPGModel.PROP_LKV_VALUE.toPrefixString(namespaceService).split(":")[1];
+		return BeCPGModel.PROP_LKV_VALUE.getLocalName();
 	}
 
 
