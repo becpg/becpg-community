@@ -51,6 +51,9 @@ public class RegulationFormulationHelper {
 		regulations.put("EU", new EuropeanNutrientRegulation("beCPG/databases/nuts/EuNutrientRegulation.csv"));
 		regulations.put("US", new UsNutrientRegulation("beCPG/databases/nuts/UsNutrientRegulation_2016.csv"));
 		regulations.put("US_2013", new UsNutrientRegulation("beCPG/databases/nuts/UsNutrientRegulation_2013_2020.csv"));
+		regulations.put("TT", new UsNutrientRegulation("beCPG/databases/nuts/TrinidadTobagoNutrientRegulation.csv"));
+		regulations.put("DO", new UsNutrientRegulation("beCPG/databases/nuts/DominicanRepublicanNutrientRegulation.csv"));
+		regulations.put("PE", new UsNutrientRegulation("beCPG/databases/nuts/PeruvianNutrientRegulation.csv"));
 		regulations.put("CA", new CanadianNutrientRegulation("beCPG/databases/nuts/CanadianNutrientRegulation_2017.csv"));
 		regulations.put("CA_2013", new CanadianNutrientRegulation2013("beCPG/databases/nuts/CanadianNutrientRegulation_2013_2022.csv"));
 		regulations.put("CN", new ChineseNutrientRegulation("beCPG/databases/nuts/ChineseNutrientRegulation.csv"));
@@ -78,6 +81,8 @@ public class RegulationFormulationHelper {
 		regulations.put("CL", new ChileanNutrientRegulation("beCPG/databases/nuts/ChileanNutrientRegulation.csv"));
 		regulations.put("UY", new BrazilianNutrientRegulation("beCPG/databases/nuts/UruguayanNutrientRegulation.csv"));
 		regulations.put("BR", new BrazilianNutrientRegulation("beCPG/databases/nuts/BrazilianNutrientRegulation.csv"));
+		regulations.put("CTA", new CentralAmericanNutrientRegulation("beCPG/databases/nuts/CentralAmericanNutrientRegulation.csv"));
+		
 	}
 
 	/**
@@ -217,7 +222,8 @@ public class RegulationFormulationHelper {
 				|| locale.getCountry().equals("TR") || locale.getCountry().equals("SG") || locale.getCountry().equals("TH")
 				|| locale.getCountry().equals("PK") || locale.getCountry().equals("ZA") || locale.getCountry().equals("TN")
 				|| locale.getCountry().equals("EG") || locale.getCountry().equals("CL") || locale.getCountry().equals("UY")
-				|| locale.getCountry().equals("BR")) {
+				|| locale.getCountry().equals("BR") || locale.getCountry().equals("TT") || locale.getCountry().equals("DO")
+				|| locale.getCountry().equals("PE")){
 			return locale.getCountry();
 		} else if (locale.getLanguage().equals("zh")) {
 			return "CN";
@@ -227,6 +233,10 @@ public class RegulationFormulationHelper {
 			return "AU";
 		} else if (locale.getCountry().equals("PR")) {
 			return "US";
+		} else if (locale.getCountry().equals("PY")) {
+			return "BR";
+		} else if (locale.getCountry().equals("GT") || locale.getCountry().equals("PA") || locale.getCountry().equals("SV")) {
+			return "CTA";
 		} else if (locale.getCountry().equals("AE") || locale.getCountry().equals("BH") || locale.getCountry().equals("SA")
 				|| locale.getCountry().equals("QA") || locale.getCountry().equals("OM") || locale.getCountry().equals("KW")) {
 			return "GSO";
@@ -570,8 +580,21 @@ public class RegulationFormulationHelper {
 		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("es_UY"))) {
 			ret.add("UY");
 		}
-		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("pt_BR"))) {
+		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("pt_BR")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("es_PY"))) {
 			ret.add("BR");
+		}
+		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("en_TT"))){
+			ret.add("TT"); 
+		}
+		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("es_DO"))){
+			ret.add("DO");
+		}
+		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("es_PE"))){
+			ret.add("PE");
+		}
+		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("es_PA")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("es_SV"))
+				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("es_GT"))){
+			ret.add("CTA");
 		}
 		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_AE")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_BH"))
 				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_SA"))

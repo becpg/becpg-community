@@ -39,6 +39,7 @@
 			<language locale="en_MW">English - Malawi</language>
 			<language locale="en_NG">English - Nigeria</language>
 			<language locale="en_PK">English - Pakistan</language>
+			<language locale="en_TT">English - Trinidad and Tobago</language>
 			<language locale="en_UG">English - Uganda</language>
 			<language locale="en_ZA">English - South Africa</language>
 			<language locale="en_ZW">English - Zibabwe</language>
@@ -46,8 +47,14 @@
 			<language locale="es">Spanish</language>
 			<language locale="es_CL">Spanish - Chile</language>
 			<language locale="es_CO">Spanish - Colombia</language>
+			<language locale="es_DO">Spanish - Dominican Republic</language>
+			<language locale="es_GT">Spanish - Guatemala</language>
 			<language locale="es_MX">Spanish - Mexico</language>
+			<language locale="es_PA">Spanish - Panama</language>
+			<language locale="es_PE">Spanish - Peru</language>
 			<language locale="es_PR">Spanish - Puerto Rico</language>
+			<language locale="es_PY">Spanish - Paraguay</language>
+			<language locale="es_SV">Spanish - El Salvador</language>
 			<language locale="es_UY">Spanish - Uruguay</language>
 			<language locale="fr">French</language>
 			<language locale="fr_CA">French - Canada</language>
