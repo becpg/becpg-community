@@ -308,7 +308,7 @@
         </property>
    </bean>
    
-   
+   <!-- 
     <bean id="search.fts.alfresco.db" class="org.alfresco.repo.search.impl.solr.DbAftsQueryLanguage" >
         <property name="dictionaryService" ref="cachedDictionaryService" />
         <property name="namespaceService" ref="namespaceService" />
@@ -340,4 +340,6 @@
             <ref bean="metadataQueryIndexesCheck2" />
         </property>
     </bean>
+    
+     -->
 </beans>
