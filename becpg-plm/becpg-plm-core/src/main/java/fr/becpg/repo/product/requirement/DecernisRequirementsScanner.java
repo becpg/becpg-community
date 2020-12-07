@@ -39,7 +39,7 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 
 	private static Log logger = LogFactory.getLog(DecernisRequirementsScanner.class);
 
-	private final static String DECERNIS_KEY = "decernis";
+	private static final String DECERNIS_KEY = "decernis";
 
 	DecernisService decernisService;
 
