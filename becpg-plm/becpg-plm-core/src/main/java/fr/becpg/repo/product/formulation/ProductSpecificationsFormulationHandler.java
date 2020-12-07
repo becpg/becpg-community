@@ -127,7 +127,7 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 
 	/** {@inheritDoc} */
 	@Override
-	public boolean process(ProductData formulatedProduct) throws FormulateException {
+	public boolean process(ProductData formulatedProduct)  {
 
 		if (formulatedProduct instanceof ProductSpecificationData) {
 			if (!FormulationService.FAST_FORMULATION_CHAINID.equals(formulatedProduct.getFormulationChainId())) {
@@ -138,15 +138,15 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 						if (alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_SPEC_COMPATIBILTY_LIST)) {
 							StopWatch stopWatch = new StopWatch();
 							stopWatch.start();
-							String logs = "Start formulate specification at " + Calendar.getInstance().getTime().toString() + ":\n";
+							StringBuilder logs = new StringBuilder( "Start formulate specification at " + Calendar.getInstance().getTime().toString() + ":\n");
 
 							Map<NodeRef, String> toUpdate = new HashMap<>();
 							Set<NodeRef> toSkipProduct = new HashSet<>();
 							List<NodeRef> productNodeRefs = getProductNodeRefs((ProductSpecificationData) formulatedProduct);
-							logs += "- found " + productNodeRefs.size() + " products to test specification on\n";
+							logs.append( "- found " + productNodeRefs.size() + " products to test specification on\n");
 
 							if (logger.isDebugEnabled()) {
-								logger.debug(logs);
+								logger.debug(logs.toString());
 							}
 
 							for (NodeRef productNodeRef : productNodeRefs) {
@@ -163,17 +163,17 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 
 										for (RequirementScanner scanner : requirementScanners) {
 
-											String reqDetails = null;
+											StringBuilder reqDetails = null;
 
 											for (ReqCtrlListDataItem reqCtrlListDataItem : scanner.checkRequirements(productData,
 													Arrays.asList((ProductSpecificationData) formulatedProduct))) {
 												if (RequirementType.Forbidden.equals(reqCtrlListDataItem.getReqType())
 														&& RequirementDataType.Specification.equals(reqCtrlListDataItem.getReqDataType())) {
 													if (reqDetails == null) {
-														reqDetails = reqCtrlListDataItem.getReqMessage();
+														reqDetails = new StringBuilder(reqCtrlListDataItem.getReqMessage());
 													} else {
-														reqDetails += RepoConsts.LABEL_SEPARATOR;
-														reqDetails += reqCtrlListDataItem.getReqMessage();
+														reqDetails.append(RepoConsts.LABEL_SEPARATOR);
+														reqDetails.append(reqCtrlListDataItem.getReqMessage());
 													}
 												}
 											}
@@ -181,7 +181,7 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 												if (logger.isDebugEnabled()) {
 													logger.debug("Adding Forbidden for " + productNodeRef);
 												}
-												toUpdate.put(productNodeRef, reqDetails);
+												toUpdate.put(productNodeRef, reqDetails.toString());
 											}
 										}
 										return productData;
@@ -214,12 +214,12 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 
 							stopWatch.stop();
 
-							logs += "- found " + toUpdate.size() + " new forbidden products,\n";
-							logs += "- found " + toSkipProduct.size() + " products to skip,\n";
-							logs += "- found " + toRemove.size() + " products to remove,\n";
-							logs += "formulation end in " + stopWatch.getTotalTimeSeconds() + "s at " + Calendar.getInstance().getTime().toString()
-									+ "\n";
-							specificationData.setSpecCompatibilityLog(logs);
+							logs.append( "- found " + toUpdate.size() + " new forbidden products,\n");
+							logs.append( "- found " + toSkipProduct.size() + " products to skip,\n");
+							logs.append( "- found " + toRemove.size() + " products to remove,\n");
+							logs.append( "formulation end in " + stopWatch.getTotalTimeSeconds() + "s at " + Calendar.getInstance().getTime().toString()
+									+ "\n");
+							specificationData.setSpecCompatibilityLog(logs.toString());
 
 						} else {
 							logger.debug("No change unit list");
