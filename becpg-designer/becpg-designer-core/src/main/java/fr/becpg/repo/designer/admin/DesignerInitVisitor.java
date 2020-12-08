@@ -100,7 +100,7 @@ public class DesignerInitVisitor extends AbstractInitVisitorImpl  {
 
 	/** {@inheritDoc} */
 	@Override
-	protected void visitFiles(NodeRef folderNodeRef, String folderName) {
+	protected void visitFiles(NodeRef folderNodeRef, String folderName, boolean folderExists) {
 		if (Objects.equals(folderName, PATH_CONFIGS)) {
 			contentHelper.addFilesResources(folderNodeRef, "classpath:beCPG/designer/extCustomForm.xml");
 			contentHelper.addFilesResources(getModelNodeRef(folderNodeRef), "classpath:beCPG/designer/extCustomModel.xml");

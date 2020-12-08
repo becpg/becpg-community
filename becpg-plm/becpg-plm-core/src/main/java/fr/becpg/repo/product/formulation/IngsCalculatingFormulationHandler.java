@@ -53,6 +53,9 @@ import fr.becpg.repo.variant.filters.VariantFilters;
  */
 public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<ProductData> {
 
+	private static final String MINI_SUFFIX = "-mini";
+	private static final String MAXI_SUFFIX = "-maxi";
+
 	/** The Constant NO_GRP. */
 	public static final String NO_GRP = "-";
 
@@ -238,16 +241,16 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 					ingListDataItem.setQtyPerc(null);
 				}
 
-				Double totalQtyMini = totalQtyIngMap.get(ingListDataItem.getName() + "-mini");
+				Double totalQtyMini = totalQtyIngMap.get(ingListDataItem.getName() + MINI_SUFFIX);
 				if (totalQtyMini != null) {
 
-					ingListDataItem.setMini(totalQtyMini / totalQtyUsed);
+					ingListDataItem.setMini(totalQtyMini);
 				}
 
-				Double totalQtyMaxi = totalQtyIngMap.get(ingListDataItem.getName() + "-maxi");
+				Double totalQtyMaxi = totalQtyIngMap.get(ingListDataItem.getName() + MAXI_SUFFIX);
 				if (totalQtyMaxi != null) {
-
-					ingListDataItem.setMaxi(totalQtyMaxi / totalQtyUsed);
+					
+					ingListDataItem.setMaxi(totalQtyMaxi);
 				}
 
 				// qtyVolumePerc
@@ -412,18 +415,6 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				totalQtyIngMap.put(newIngListDataItem.getName(), totalQtyIng);
 			}
 
-			Double totalQtyMaxi = totalQtyIngMap.get(newIngListDataItem.getName() + "-maxi");
-			if (totalQtyMaxi == null) {
-				totalQtyMaxi = 0d;
-				totalQtyIngMap.put(newIngListDataItem.getName() + "-maxi", totalQtyMaxi);
-			}
-
-			Double totalQtyMini = totalQtyIngMap.get(newIngListDataItem.getName() + "-mini");
-			if (totalQtyMini == null) {
-				totalQtyMini = 0d;
-				totalQtyIngMap.put(newIngListDataItem.getName() + "-mini", totalQtyMini);
-			}
-
 			// Calculate qty
 			Double qty = FormulationHelper.getQtyInKg(compoListDataItem);
 			Double qtyIng = ingListDataItem.getQtyPerc();
@@ -442,15 +433,28 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				}
 
 				if ((maxi != null)) {
-					Double valueToAdd = qty * maxi;
-					totalQtyMaxi += valueToAdd;
-					totalQtyIngMap.put(newIngListDataItem.getName() + "-maxi", totalQtyMaxi);
+					Double totalQtyMaxi = totalQtyIngMap.get(newIngListDataItem.getName() + MAXI_SUFFIX);
+					
+					Double newMaxiValue = 100 * maxi;
+
+					if (totalQtyMaxi == null || newMaxiValue > totalQtyMaxi) {
+						totalQtyMaxi = newMaxiValue;
+					}
+					
+					totalQtyIngMap.put(newIngListDataItem.getName() + MAXI_SUFFIX, totalQtyMaxi);
+
 				}
 
 				if ((mini != null)) {
-					Double valueToAdd = qty * mini;
-					totalQtyMini += valueToAdd;
-					totalQtyIngMap.put(newIngListDataItem.getName() + "-mini", totalQtyMini);
+					Double totalQtyMini = totalQtyIngMap.get(newIngListDataItem.getName() + MINI_SUFFIX);
+
+					Double newMiniValue = 100 * mini;
+					
+					if (totalQtyMini == null || newMiniValue < totalQtyMini) {
+						totalQtyMini = newMiniValue;
+					}
+					
+					totalQtyIngMap.put(newIngListDataItem.getName() + MINI_SUFFIX, totalQtyMini);
 				}
 
 				Double volumeQty = totalQtyVolMap.get(newIngListDataItem.getName());
