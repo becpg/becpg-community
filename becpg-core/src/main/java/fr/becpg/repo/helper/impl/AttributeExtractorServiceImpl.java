@@ -370,33 +370,33 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	@SuppressWarnings("unchecked")
 	private String getStringValue(PropertyDefinition propertyDef, Serializable v, PropertyFormats propertyFormats, boolean formatData) {
 
-		String value = null;
+		StringBuilder value = null;
 
 		if ((v == null) || (propertyDef == null)) {
-			return value;
+			return null;
 		}
 
 		String dataType = propertyDef.getDataType().toString();
 
 		if (dataType.equals(DataTypeDefinition.ASSOC_REF.toString())) {
-			value = extractPropName((NodeRef) v);
+			return extractPropName((NodeRef) v);
 		} else if (dataType.equals(DataTypeDefinition.CATEGORY.toString())) {
 
 			List<NodeRef> categories = (ArrayList<NodeRef>) v;
 
 			for (NodeRef categoryNodeRef : categories) {
 				if (value == null) {
-					value = extractPropName(categoryNodeRef);
+					value = new StringBuilder(extractPropName(categoryNodeRef));
 				} else {
-					value += RepoConsts.LABEL_SEPARATOR + extractPropName(categoryNodeRef);
+					value.append(RepoConsts.LABEL_SEPARATOR);
+					value.append(extractPropName(categoryNodeRef));
 				}
 			}
+			
 		} else if (dataType.equals(DataTypeDefinition.BOOLEAN.toString())
 				|| (dataType.equals(DataTypeDefinition.ANY.toString()) && (v instanceof Boolean))) {
 
-			Boolean b = (Boolean) v;
-
-			value = TranslateHelper.getTranslatedBoolean(b, propertyFormats.isUseDefaultLocale());
+			return TranslateHelper.getTranslatedBoolean((Boolean) v, propertyFormats.isUseDefaultLocale());
 
 		} else if (dataType.equals(DataTypeDefinition.TEXT.toString())) {
 
@@ -411,7 +411,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 						break;
 
 					} else if ("LIST".equals(constraint.getConstraint().getType())) {
-						constraintName = constraint.getRef().toPrefixString(namespaceService).replace(":", "_");
+						constraintName = entityDictionaryService.toPrefixString(constraint.getRef()).replace(":", "_");
 						break;
 					}
 				}
@@ -430,25 +430,25 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				for (String tempValue : values) {
 					if (tempValue != null) {
 						if (value != null) {
-							value += RepoConsts.LABEL_SEPARATOR;
+							value.append(RepoConsts.LABEL_SEPARATOR);
 						} else {
-							value = "";
+							value = new StringBuilder();
 						}
 
 						if (dynListConstraint != null) {
 							if (!formatData) {
-								value += tempValue;
+								value.append(tempValue);
 							} else {
-								value += dynListConstraint.getDisplayLabel(tempValue);
+								value.append(dynListConstraint.getDisplayLabel(tempValue));
 							}
 						} else {
 							if (!formatData) {
-								value += tempValue;
+								value.append(tempValue);
 							} else {
 
-								value += constraintName != null
+								value.append(constraintName != null
 										? TranslateHelper.getConstraint(constraintName, tempValue, propertyFormats.isUseDefaultLocale())
-										: tempValue;
+										: tempValue);
 							}
 						}
 					}
@@ -460,16 +460,16 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 					QName aclPropName = QName.createQName(v.toString(), namespaceService);
 					ClassAttributeDefinition aclDef = entityDictionaryService.getPropDef(aclPropName);
 					if (aclDef != null) {
-						value = aclDef.getTitle(dictionaryService);
+					 return  aclDef.getTitle(dictionaryService);
 					} else {
-						value = v.toString();
+						 return v.toString();
 					}
 
 				} else {
 					if (dynListConstraint != null) {
-						value = dynListConstraint.getDisplayLabel(v.toString());
+						return dynListConstraint.getDisplayLabel(v.toString());
 					} else {
-						value = constraintName != null
+						return constraintName != null
 								? TranslateHelper.getConstraint(constraintName, v.toString(), propertyFormats.isUseDefaultLocale())
 								: v.toString();
 					}
@@ -477,43 +477,44 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			}
 
 		} else if (dataType.equals(DataTypeDefinition.DATE.toString())) {
-			value = propertyFormats.formatDate(v);
+			return propertyFormats.formatDate(v);
 		} else if (dataType.equals(DataTypeDefinition.DATETIME.toString())) {
-			value = propertyFormats.formatDateTime(v);
+			return propertyFormats.formatDateTime(v);
 		} else if (dataType.equals(DataTypeDefinition.NODE_REF.toString())) {
 			if (!propertyDef.isMultiValued()) {
-				value = extractPropName((NodeRef) v);
+				return  extractPropName((NodeRef) v);
 			} else {
 				List<NodeRef> values = (List<NodeRef>) v;
 				if (values != null) {
 					for (NodeRef tempValue : values) {
 						if (tempValue != null) {
 							if (value != null) {
-								value += RepoConsts.LABEL_SEPARATOR;
+								value.append( RepoConsts.LABEL_SEPARATOR);
 							} else {
-								value = "";
+								value = new StringBuilder();
 							}
 
-							value += extractPropName(tempValue);
+							value.append(extractPropName(tempValue));
 						}
 					}
 				}
 			}
 
 		} else if (dataType.equals(DataTypeDefinition.MLTEXT.toString())) {
-			value = v.toString();
+			return  v.toString();
 		} else if (dataType.equals(DataTypeDefinition.DOUBLE.toString()) || dataType.equals(DataTypeDefinition.FLOAT.toString())
 				|| (dataType.equals(DataTypeDefinition.ANY.toString()) && ((v instanceof Double) || (v instanceof Float)))) {
 
-			value = propertyFormats.formatDecimal(v);
+			 return propertyFormats.formatDecimal(v);
 
 		} else if (dataType.equals(DataTypeDefinition.QNAME.toString())) {
 
 			if (v != null) {
-				value = I18NUtil.getMessage("bcpg_bcpgmodel.type." + ((QName) v).toPrefixString(namespaceService).replace(":", "_") + ".title");
-				if (value == null) {
-					value = v.toString();
+				String ret = I18NUtil.getMessage("bcpg_bcpgmodel.type." + entityDictionaryService.toPrefixString((QName) v).replace(":", "_") + ".title");
+				if (ret == null) {
+					ret = v.toString();
 				}
+				return ret;
 
 			}
 		}
@@ -521,9 +522,9 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		else {
 
 			TypeConverter converter = new TypeConverter();
-			value = converter.convert(propertyDef.getDataType(), v).toString();
+			return  converter.convert(propertyDef.getDataType(), v).toString();
 		}
-		return value;
+		return value!=null ? value.toString() : null;
 	}
 
 	/** {@inheritDoc} */
@@ -1023,7 +1024,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		} else if (type.equals(ContentModel.TYPE_FOLDER)) {
 			metadata = "container";
 		} else {
-			metadata = type.toPrefixString(namespaceService).split(":")[1];
+			metadata = entityDictionaryService.toPrefixString(type).split(":")[1];
 		}
 
 		return metadata;

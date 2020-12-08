@@ -74,7 +74,7 @@ public class DynListPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 		if(!pendingNodes.isEmpty()){
 			logger.debug("Clean dynamicListConstraint cache");
-			beCPGCacheService.clearCache(DynListConstraint.DYN_LIST_CACHE_NAME);
+			beCPGCacheService.clearCache(DynListConstraint.class.getName());
 		}
 		return true;
 	}

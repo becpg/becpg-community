@@ -99,7 +99,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 	private static final String EXTENSION_CHARACTER = ".";
 
-	private final static Log logger = LogFactory.getLog(EntityVersionServiceImpl.class);
+	private static final  Log logger = LogFactory.getLog(EntityVersionServiceImpl.class);
 
 	@Autowired
 	private NodeService nodeService;
@@ -279,7 +279,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 		try {
 			NodeRef versionHistoryRef = getVersionHistoryNodeRef(origNodeRef);
-			boolean isInitialVersion = versionHistoryRef == null ? true : false;
+			boolean isInitialVersion = (versionHistoryRef == null);
 
 			if (!isInitialVersion && (entityVersionPlugins != null) && !createAlfrescoVersion) {
 				for (EntityVersionPlugin entityVersionPlugin : entityVersionPlugins) {
@@ -353,8 +353,6 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 			});
 
-			// Map<QName, Serializable> versionProperties =
-			// nodeService.getProperties(versionNodeRef);
 			String versionLabel = getVersionLabel(origNodeRef, versionProperties, isInitialVersion, createAlfrescoVersion);
 
 			String name = nodeService.getProperty(origNodeRef, ContentModel.PROP_NAME) + RepoConsts.VERSION_NAME_DELIMITER + versionLabel;
@@ -928,9 +926,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			branchToNodeRef = associationService.getTargetAssoc(branchNodeRef, BeCPGModel.ASSOC_AUTO_MERGE_TO);
 		}
 
-		if (permissionService.hasPermission(branchToNodeRef, BeCPGPermissions.MERGE_ENTITY) == AccessStatus.ALLOWED) {
-
-			if (branchToNodeRef != null) {
+		if (permissionService.hasPermission(branchToNodeRef, BeCPGPermissions.MERGE_ENTITY) == AccessStatus.ALLOWED && branchToNodeRef != null) {
 
 				StopWatch watch = null;
 
@@ -991,7 +987,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 					}
 				}
-			}
+			
 		}
 		return null;
 	}

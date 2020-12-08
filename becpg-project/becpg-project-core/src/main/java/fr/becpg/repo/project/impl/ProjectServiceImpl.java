@@ -22,8 +22,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -144,68 +146,79 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin {
 		nodeService.setProperty(taskNodeRef, ProjectModel.PROP_TL_TASK_COMMENT, null);
 
 	}
+	
 
 	@Override
-	public boolean updateProjectState(NodeRef projectNodeRef, String beforeState, String afterState) {
+	public Set<NodeRef> updateProjectState(NodeRef projectNodeRef, String beforeState, String afterState) {
+		Set<NodeRef> toReformulates = new HashSet<>();
+		
 		try {
 			// Disable notifications
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
 			policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
 			policyBehaviourFilter.disableBehaviour(ProjectModel.ASPECT_BUDGET);
-			if (ProjectState.InProgress.toString().equals(afterState)) {
-				if ((beforeState == null) || beforeState.isEmpty() || ProjectState.Planned.toString().equals(beforeState)) {
-
-					Date startDate = ProjectHelper.removeTime(new Date());
-					nodeService.setProperty(projectNodeRef, ProjectModel.PROP_PROJECT_START_DATE, startDate);
-					ProjectData projectData = alfrescoRepository.findOne(projectNodeRef);
-					for (TaskListDataItem taskListDataItem : ProjectHelper.getNextTasks(projectData, null)) {
-						if (taskListDataItem.getSubProject() == null) {
-							nodeService.setProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_START, startDate);
-						}
-					}
-				} else {
-					ProjectData projectData = alfrescoRepository.findOne(projectNodeRef);
-					for (TaskListDataItem taskListDataItem : projectData.getTaskList()) {
-						String previousState = (String) nodeService.getProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_PREVIOUS_STATE);
-						if ((previousState != null) && !previousState.isEmpty()) {
-							nodeService.setProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_PREVIOUS_STATE, null);
-							nodeService.setProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_STATE, previousState);
-						}
-
-					}
-
-				}
-				return true;
-			} else if (ProjectState.Cancelled.toString().equals(afterState) || ProjectState.OnHold.toString().equals(afterState)
-					|| ProjectState.Completed.toString().equals(beforeState)) {
-
-				ProjectData projectData = alfrescoRepository.findOne(projectNodeRef);
-				for (TaskListDataItem taskListDataItem : projectData.getTaskList()) {
-					if (TaskState.InProgress.equals(taskListDataItem.getTaskState())) {
-						nodeService.setProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_PREVIOUS_STATE, taskListDataItem.getState());
-						nodeService.setProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_STATE, afterState);
-						if (taskListDataItem.getSubProject() != null) {
-							String previousState = (String) nodeService.getProperty(taskListDataItem.getSubProject(),
-									ProjectModel.PROP_TL_PREVIOUS_STATE);
-							if (!afterState.equals(previousState)) {
-								nodeService.setProperty(taskListDataItem.getSubProject(), ProjectModel.PROP_PROJECT_STATE, afterState);
-								updateProjectState(taskListDataItem.getSubProject(), previousState, afterState);
+				if (ProjectState.InProgress.toString().equals(afterState)) {
+					if(beforeState == null || beforeState.isEmpty() || ProjectState.Planned.toString().equals(beforeState)) {
+		
+						Date startDate = ProjectHelper.removeTime(new Date());
+						nodeService.setProperty(projectNodeRef, ProjectModel.PROP_PROJECT_START_DATE, startDate);
+						ProjectData projectData = alfrescoRepository.findOne(projectNodeRef);
+						for (TaskListDataItem taskListDataItem : ProjectHelper.getNextTasks(projectData, null)) {
+							if(taskListDataItem.getSubProject() == null) {
+								nodeService.setProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_START, startDate);
 							}
 						}
+					} else {
+						ProjectData projectData = alfrescoRepository.findOne(projectNodeRef);
+						for(TaskListDataItem taskListDataItem : projectData.getTaskList()) {
+							String previousState = (String) nodeService.getProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_PREVIOUS_STATE);
+							if(previousState!=null && !previousState.isEmpty()) {
+								nodeService.setProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_PREVIOUS_STATE,null);
+								if(taskListDataItem.getSubProject()!=null) {
+									nodeService.setProperty(taskListDataItem.getSubProject(), ProjectModel.PROP_PROJECT_STATE, previousState);
+									updateProjectState(taskListDataItem.getSubProject(),  taskListDataItem.getState(),  previousState) ;
+									toReformulates.add(taskListDataItem.getSubProject());
+									
+								}
+								nodeService.setProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_STATE, previousState);
+								
+							}
+							
+						}
+						
+					}
+					toReformulates.add(projectNodeRef);
+				} else if (ProjectState.Cancelled.toString().equals(afterState) || ProjectState.OnHold.toString().equals(afterState)  || ProjectState.Completed.toString().equals(beforeState)) {
+					
+					ProjectData projectData = alfrescoRepository.findOne(projectNodeRef);
+					for(TaskListDataItem taskListDataItem : projectData.getTaskList()) {
+						if(TaskState.InProgress.equals(taskListDataItem.getTaskState())) {
+							nodeService.setProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_PREVIOUS_STATE, taskListDataItem.getState());
+							if(taskListDataItem.getSubProject()!=null) {
+								String previousState  =  (String) nodeService.getProperty(taskListDataItem.getSubProject(), ProjectModel.PROP_TL_PREVIOUS_STATE);
+								if(!afterState.equals(previousState)) {
+									nodeService.setProperty(taskListDataItem.getSubProject(), ProjectModel.PROP_PROJECT_STATE,afterState);
+									updateProjectState(taskListDataItem.getSubProject(),  previousState,  afterState) ;
+									toReformulates.add(taskListDataItem.getSubProject());
+								}
+							}
+							nodeService.setProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_STATE, afterState);
+							
+						}
 
 					}
+					
+					toReformulates.add(projectNodeRef);
+					
 				}
 
-				return true;
-
-			}
 		} finally {
 			policyBehaviourFilter.enableBehaviour(ProjectModel.ASPECT_BUDGET);
 			policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_TASK_LIST);
 			policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
 		}
 
-		return false;
+		return toReformulates;
 	}
 
 	/** {@inheritDoc} */

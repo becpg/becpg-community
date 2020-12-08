@@ -110,7 +110,7 @@ public class EntityReportWebScript extends AbstractEntityWebScript {
 		}
 
 
-		try(OutputStream out =  resp.getOutputStream()) {
+		try {
 
 			NodeRef documentNodeRef = entityReportService.getAssociatedDocumentNodeRef(entityNodeRef, templateNodeRef, reportParameters, locale, ReportFormat.valueOf(format.toUpperCase()));
 			if(documentNodeRef!=null) {
@@ -124,14 +124,14 @@ public class EntityReportWebScript extends AbstractEntityWebScript {
 		            throw new WebScriptException(HttpServletResponse.SC_NOT_FOUND, "Unable to locate content for node ref " + documentNodeRef );
 		        }
 
-				IOUtils.copy(reader.getContentInputStream(),out);
+				IOUtils.copy(reader.getContentInputStream(),resp.getOutputStream());
 				
 			} else {			
 				if (logger.isDebugEnabled()) {
 					logger.debug("Generate report for entity: " + entityNodeRef);
 				}
 				entityReportService.generateReport(entityNodeRef, templateNodeRef, reportParameters, locale, ReportFormat.valueOf(format.toUpperCase()),
-						out);
+						resp.getOutputStream());
 			}
 		} catch (SocketException e1) {
 

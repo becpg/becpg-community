@@ -1,6 +1,7 @@
 package fr.becpg.repo.helper.impl;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.Objects;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
+//Immutable sorted cache entry
 public class ChildAssocCacheEntry implements Serializable {
 
 	
@@ -25,11 +27,18 @@ public class ChildAssocCacheEntry implements Serializable {
 	}
 	
 	
+	public void sort(CommonDataListSort commonDataListSort) {
+			items.sort(commonDataListSort);
+			for(List<NodeRef> toSort: itemsByType.values()) {
+					toSort.sort(commonDataListSort);
+			}
+	}
+	
 	public List<NodeRef> get(QName type){
 		if(type == null) {
-			return items;
+			return Collections.unmodifiableList(items);
 		}
-		return itemsByType.computeIfAbsent(type, k ->  new LinkedList<NodeRef>());
+		return Collections.unmodifiableList(itemsByType.computeIfAbsent(type, k ->  new LinkedList<NodeRef>()));
 		
 	}
 

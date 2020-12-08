@@ -12,7 +12,6 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.service.cmr.model.FileExistsException;
 import org.alfresco.service.cmr.model.FileFolderService;
-import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.model.FileNotFoundException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -152,24 +151,16 @@ public class RepoServiceImpl implements RepoService {
 	@Override
 	public String getAvailableName(NodeRef folderNodeRef, String name, boolean forceRename) {
 
-		List<FileInfo> fileInfos = fileFolderService.list(folderNodeRef);
-		if (!fileInfos.isEmpty()) {
-			int count = 0;
-			NodeRef nodeRef = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, name);
-
-			while ((nodeRef != null) || forceRename) {
-				count++;
-				forceRename = false;
-				String nameWithCounter = String.format("%s (%d)", name, count);
-				nodeRef = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, nameWithCounter);
-			}
-
-			if (count > 0) {
-				name = String.format("%s (%d)", name, count);
-			}
-		}
-
-		return name;
+		int count = 0;
+		String nameWithCounter = name;
+        while (this.nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, nameWithCounter) != null || forceRename)
+        {
+        	count++;
+			forceRename = false;
+			nameWithCounter =  String.format("%s (%d)", name, count);
+        }
+       
+		return nameWithCounter;
 	}
 
 }
