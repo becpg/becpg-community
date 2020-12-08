@@ -45,8 +45,6 @@ public class ListValueAttributeExtractorPlugin implements AttributeExtractorPlug
 	@Autowired
 	private NodeService nodeService;
 	
-	@Autowired
-	private  NamespaceService namespaceService;
 	 
 	
 	/** {@inheritDoc} */
@@ -66,7 +64,7 @@ public class ListValueAttributeExtractorPlugin implements AttributeExtractorPlug
 	/** {@inheritDoc} */
 	@Override
 	public String extractMetadata(QName type, NodeRef nodeRef) {
-		return BeCPGModel.PROP_LV_VALUE.toPrefixString(namespaceService).split(":")[1];
+		return BeCPGModel.PROP_LV_VALUE.getLocalName();
 	}
 
 

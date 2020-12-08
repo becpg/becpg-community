@@ -86,7 +86,7 @@ install() {
 }
 
 tail() {
-    docker-compose -f $COMPOSE_FILE_PATH logs -f --tail=50 
+    docker-compose -f $COMPOSE_FILE_PATH logs -f --tail=50 becpg 
 }
 
 test() {

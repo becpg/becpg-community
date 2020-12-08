@@ -155,7 +155,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 		TypeDefinition typeDef = entityDictionaryService.getType(entityType);
 		if (entityTplName == null) {
-			entityTplName = typeDef.getTitle(entityDictionaryService.getDictionaryService());
+			entityTplName = typeDef.getTitle(entityDictionaryService);
 		}
 		// entityTpl
 		Map<QName, Serializable> properties = new HashMap<>();

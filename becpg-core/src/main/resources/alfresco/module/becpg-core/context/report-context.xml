@@ -25,6 +25,7 @@
 	 <property name="reportServerUrl" value="${becpg.reportServerUrl}"/>
 	 <property name="contentService" ref="contentService"/>
 	  <property name="entityService" ref="entityService"/>
+	  <property name="instanceName" value="${becpg.instance.name}"/>
 	</bean>
 	
 	
@@ -42,7 +43,7 @@
             <ref bean="NamespaceService" />
         </property>
         <property name="dictionaryService">
-            <ref bean="DictionaryService" />
+            <ref bean="cachedDictionaryService" />
         </property>
         <property name="nodeService">
             <ref bean="NodeService" />

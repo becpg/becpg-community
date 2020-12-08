@@ -430,7 +430,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 
 						xmlw.writeStartElement(prefix, propName.getLocalName(), propName.getNamespaceURI());
 						xmlw.writeAttribute(RemoteEntityService.ATTR_TYPE,
-								propertyDefinition.getDataType().getName().toPrefixString(namespaceService));
+								entityDictionaryService.toPrefixString(propertyDefinition.getDataType().getName()));
 
 						MLText mlValues = null;
 						if (DataTypeDefinition.MLTEXT.equals(propertyDefinition.getDataType().getName())

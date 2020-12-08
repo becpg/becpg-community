@@ -17,10 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.cache;
 
-import java.io.Serializable;
-import java.util.Collection;
-
-import org.alfresco.repo.cache.SimpleCache;
+import java.util.function.Supplier;
 
 /**
  * <p>BeCPGCacheService interface.</p>
@@ -39,9 +36,8 @@ public interface BeCPGCacheService {
 	 * @param <T> a T object.
 	 * @return a T object.
 	 */
-	<T> T getFromCache(String cacheName, String cacheKey, BeCPGCacheDataProviderCallBack<T> cacheDataProviderCallBack);
+	<T> T getFromCache(String cacheName, String cacheKey, Supplier<T> cacheDataProviderCallBack);
 	
-	<R extends Serializable,T> T getFromCache(SimpleCache<R, T> cache, R cacheKey, BeCPGCacheDataProviderCallBack<T> callback);
 
 	/**
 	 * <p>clearAllCaches.</p>
@@ -56,13 +52,6 @@ public interface BeCPGCacheService {
 	 */
 	void removeFromCache(String name, String cacheKey);
 	
-	/**
-	 * <p>getCacheKeys.</p>
-	 *
-	 * @param cacheName a {@link java.lang.String} object.
-	 * @return a {@link java.util.Collection} object.
-	 */
-	Collection<String> getCacheKeys(String cacheName);
 
 	/**
 	 * <p>printCacheInfos.</p>
@@ -79,7 +68,7 @@ public interface BeCPGCacheService {
 	 * @param <T> a T object.
 	 * @return a T object.
 	 */
-	<T> T getFromCache(String cacheName, String cacheKey, BeCPGCacheDataProviderCallBack<T> cacheDataProviderCallBack, boolean deleteOnTxRollback);
+	<T> T getFromCache(String cacheName, String cacheKey, Supplier<T> cacheDataProviderCallBack, boolean deleteOnTxRollback);
 
 	/**
 	 * <p>clearCache.</p>

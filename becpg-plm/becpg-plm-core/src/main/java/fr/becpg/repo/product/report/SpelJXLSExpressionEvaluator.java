@@ -88,7 +88,7 @@ public class SpelJXLSExpressionEvaluator implements ExpressionEvaluator {
 			} else {
 				context = new StandardEvaluationContext(data);
 			}
-			ExpressionParser parser = new SpelExpressionParser();
+			ExpressionParser parser = formulaService.getSpelParser();
 
 			String[] formulas = SpelHelper.formatMTFormulas(expression);
 			for (String formula : formulas) {
