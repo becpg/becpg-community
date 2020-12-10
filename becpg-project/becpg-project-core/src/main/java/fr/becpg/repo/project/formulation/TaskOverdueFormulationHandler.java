@@ -101,7 +101,7 @@ public class TaskOverdueFormulationHandler extends FormulationBaseHandler<Projec
 						&& task.getNotificationAuthorities() != null 
 						&& !task.getNotificationAuthorities().isEmpty());
 
-				if(!notificationsAreEnabled){
+				if(!Boolean.TRUE.equals(notificationsAreEnabled)){
 					logger.debug("Task "+task.getTaskName()+" does not have notifications enabled, continue..");
 					continue;
 				}
