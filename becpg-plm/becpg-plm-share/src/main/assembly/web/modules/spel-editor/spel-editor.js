@@ -498,10 +498,21 @@
                      nodeRefs = this.options.currentValue.match(regexp);
 
 
+					function removeDups(names) {
+					  var unique = {};
+					  names.forEach(function(i) {
+					    if(!unique[i]) {
+					      unique[i] = true;
+					    }
+					  });
+					  return Object.keys(unique);
+					}
+
+
 					var uniqueNodeRefs = [];
-					$.each(nodeRefs, function(i, el){
-					    if($.inArray(el, uniqueNodeRefs) === -1) uniqueNodeRefs.push(el);
-					});
+					if(nodeRefs!=null){
+						uniqueNodeRefs = removeDups(nodeRefs);
+					}
 
                      function itemsCallBack(response) {
                         var items = null,item,span;
