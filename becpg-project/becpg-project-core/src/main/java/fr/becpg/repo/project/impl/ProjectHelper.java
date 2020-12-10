@@ -522,9 +522,11 @@ public class ProjectHelper {
 	 */
 	public static Date calculateNextDate(Date startDate, Integer duration, boolean isPlanned) {
 
-		logger.debug("startDate: " + startDate);
-		logger.debug("duration: " + duration);
-
+		if(logger.isDebugEnabled()) {
+			logger.debug("calculateNextDate - startDate: " + startDate);
+			logger.debug("calculateNextDate - duration: " + duration);
+		}
+		
 		if (startDate == null) {
 			return null;
 		}
@@ -546,8 +548,10 @@ public class ProjectHelper {
 				i++;
 			}
 		}
-
-		logger.debug("calendar.getTime(): " + calendar.getTime());
+		
+		if(logger.isDebugEnabled()) {
+			logger.debug("calculateNextDate - next date: " + calendar.getTime());
+		}
 		return calendar.getTime();
 	}
 

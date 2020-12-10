@@ -236,7 +236,7 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin {
 
 	/** {@inheritDoc} */
 	@Override
-	public void formulate(NodeRef projectNodeRef) throws FormulateException {
+	public void formulate(NodeRef projectNodeRef)  {
 		if (nodeService.getType(projectNodeRef).equals(ProjectModel.TYPE_PROJECT)) {
 			try {
 
@@ -529,10 +529,10 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin {
 			while (patternMatcher.find()) {
 
 				String assocQname = patternMatcher.group(1);
-				String replacement = "";
+				StringBuilder replacement = new StringBuilder();
 				if ((assocQname != null) && assocQname.startsWith(DeliverableUrl.NODEREF_URL_PARAM)) {
 					String[] splitted = assocQname.split("\\|");
-					replacement += extractDeliverableProp(projectNodeRef, splitted);
+					replacement.append(extractDeliverableProp(projectNodeRef, splitted));
 
 				} else if(assocQname!=null){
 					String[] splitted = assocQname.split("\\|");
@@ -540,14 +540,14 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin {
 					if (assocs != null) {
 						for (AssociationRef assoc : assocs) {
 							if (replacement.length() > 0) {
-								replacement += ",";
+								replacement.append( ",");
 							}
-							replacement += extractDeliverableProp(assoc.getTargetRef(), splitted);
+							replacement.append(extractDeliverableProp(assoc.getTargetRef(), splitted));
 						}
 					}
 				}
 
-				patternMatcher.appendReplacement(sb, replacement != null ? replacement : "");
+				patternMatcher.appendReplacement(sb, replacement != null ? replacement.toString() : "");
 
 			}
 			patternMatcher.appendTail(sb);
