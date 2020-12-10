@@ -993,7 +993,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 	/** {@inheritDoc} */
 	@Override
-	public String extractPropName(String format, NodeRef nodeRef) {
+	public String extractExpr(String format, NodeRef nodeRef) {
 		String value;
 		if (permissionService.hasReadPermission(nodeRef) == AccessStatus.ALLOWED) {
 			value = ((CharactAttributeExtractorPlugin) getAttributeExtractorPlugin(BeCPGModel.TYPE_CHARACT, nodeRef)).extractExpr(nodeRef, format);

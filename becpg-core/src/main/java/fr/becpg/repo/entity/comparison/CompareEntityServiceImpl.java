@@ -539,7 +539,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 						}
 					}
 					if (!nameFormat.isEmpty() && itemNodeRef != null) {
-						charactName = attributeExtractorService.extractPropName(nameFormat, itemNodeRef);
+						charactName = attributeExtractorService.extractExpr(nameFormat, itemNodeRef);
 					}
 				}
 
