@@ -35,6 +35,7 @@ import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
+import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
@@ -181,6 +182,8 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				retainNodes.add(i);
 			}
 		}
+		
+		boolean isRawMaterial = formulatedProduct instanceof RawMaterialData;
 
 		Set<NodeRef> visited = new HashSet<>();
 
@@ -191,7 +194,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				if ((compoItem.getQtySubFormula() != null) && (compoItem.getQtySubFormula() > 0)) {
 					ProductData componentProductData = (ProductData) alfrescoRepository.findOne(compoItem.getProduct());
 					visitILOfPart(formulatedProduct, compoItem, componentProductData, retainNodes, totalQtyIngMap, totalQtyVolMap, reqCtrlMap,
-							visited);
+							visited, isRawMaterial);
 
 					QName type = nodeService.getType(compoItem.getProduct());
 					if ((type != null) && (type.isMatch(PLMModel.TYPE_RAWMATERIAL) || type.isMatch(PLMModel.TYPE_SEMIFINISHEDPRODUCT)
@@ -219,6 +222,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			}
 		}
 
+		
 		formulatedProduct.getIngList().retainAll(retainNodes);
 
 		if (totalQtyUsed != 0) {
@@ -243,14 +247,20 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 				Double totalQtyMini = totalQtyIngMap.get(ingListDataItem.getName() + MINI_SUFFIX);
 				if (totalQtyMini != null) {
-
-					ingListDataItem.setMini(totalQtyMini);
+					if (isRawMaterial) {
+						ingListDataItem.setMini(totalQtyMini);
+					} else {
+						ingListDataItem.setMini(totalQtyMini / totalQtyUsed);
+					}
 				}
 
 				Double totalQtyMaxi = totalQtyIngMap.get(ingListDataItem.getName() + MAXI_SUFFIX);
 				if (totalQtyMaxi != null) {
-					
-					ingListDataItem.setMaxi(totalQtyMaxi);
+					if (isRawMaterial) {
+						ingListDataItem.setMaxi(totalQtyMaxi);
+					} else {
+						ingListDataItem.setMaxi(totalQtyMaxi / totalQtyUsed);
+					}
 				}
 
 				// qtyVolumePerc
@@ -305,11 +315,12 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	 * @param totalQtyIngMap
 	 *            the total qty ing map
 	 * @param totalQtyVolMap
+	 * @param isRawMaterial 
 	 * @throws FormulateException
 	 */
 	private void visitILOfPart(ProductData formulatedProduct, CompoListDataItem compoListDataItem, ProductData componentProductData,
 			List<IngListDataItem> retainNodes, Map<String, Double> totalQtyIngMap, Map<String, Double> totalQtyVolMap,
-			Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap, Set<NodeRef> visited) throws FormulateException {
+			Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap, Set<NodeRef> visited, boolean isRawMaterial) throws FormulateException {
 
 		if (!PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.equals(nodeService.getType(componentProductData.getNodeRef()))
 				&& !visited.contains(componentProductData.getNodeRef())) {
@@ -362,7 +373,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 		// calculate ingList of formulated product
 		calculateILOfPart(compoListDataItem, CompositeHelper.getHierarchicalCompoList(componentProductData.getIngList()),
-				formulatedProduct.getIngList(), retainNodes, totalQtyIngMap, totalQtyVolMap, null);
+				formulatedProduct.getIngList(), retainNodes, totalQtyIngMap, totalQtyVolMap, null, isRawMaterial);
 	}
 
 	/**
@@ -375,11 +386,12 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	 * @param totalQtyIngMap
 	 *            the total qty ing map
 	 * @param totalQtyVolMap
+	 * @param isRawMaterial 
 	 * @throws FormulateException
 	 */
 	private void calculateILOfPart(CompoListDataItem compoListDataItem, Composite<IngListDataItem> compositeIngList, List<IngListDataItem> ingList,
 			List<IngListDataItem> retainNodes, Map<String, Double> totalQtyIngMap, Map<String, Double> totalQtyVolMap,
-			IngListDataItem parentIngListDataItem) throws FormulateException {
+			IngListDataItem parentIngListDataItem, boolean isRawMaterial) throws FormulateException {
 
 		// OMIT is not taken in account
 		if (compoListDataItem.getDeclType() == DeclarationType.Omit) {
@@ -415,6 +427,21 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				totalQtyIngMap.put(newIngListDataItem.getName(), totalQtyIng);
 			}
 
+			Double totalQtyMaxi = totalQtyIngMap.get(newIngListDataItem.getName() + MAXI_SUFFIX);
+			Double totalQtyMini = totalQtyIngMap.get(newIngListDataItem.getName() + MINI_SUFFIX);
+			
+			if (!isRawMaterial) {
+				if (totalQtyMaxi == null) {
+					totalQtyMaxi = 0d;
+					totalQtyIngMap.put(newIngListDataItem.getName() + MAXI_SUFFIX, totalQtyMaxi);
+				}
+				
+				if (totalQtyMini == null) {
+					totalQtyMini = 0d;
+					totalQtyIngMap.put(newIngListDataItem.getName() + MINI_SUFFIX, totalQtyMini);
+				}
+			}
+			
 			// Calculate qty
 			Double qty = FormulationHelper.getQtyInKg(compoListDataItem);
 			Double qtyIng = ingListDataItem.getQtyPerc();
@@ -433,12 +460,17 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				}
 
 				if ((maxi != null)) {
-					Double totalQtyMaxi = totalQtyIngMap.get(newIngListDataItem.getName() + MAXI_SUFFIX);
-					
-					Double newMaxiValue = 100 * maxi;
-
-					if (totalQtyMaxi == null || newMaxiValue > totalQtyMaxi) {
-						totalQtyMaxi = newMaxiValue;
+					if (isRawMaterial) {
+						
+						Double newMaxiValue = 100 * maxi;
+						
+						if (totalQtyMaxi == null || newMaxiValue > totalQtyMaxi) {
+							totalQtyMaxi = newMaxiValue;
+						}
+						
+					} else {
+						Double valueToAdd = qty * maxi;
+						totalQtyMaxi += valueToAdd;
 					}
 					
 					totalQtyIngMap.put(newIngListDataItem.getName() + MAXI_SUFFIX, totalQtyMaxi);
@@ -446,12 +478,15 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				}
 
 				if ((mini != null)) {
-					Double totalQtyMini = totalQtyIngMap.get(newIngListDataItem.getName() + MINI_SUFFIX);
-
-					Double newMiniValue = 100 * mini;
-					
-					if (totalQtyMini == null || newMiniValue < totalQtyMini) {
-						totalQtyMini = newMiniValue;
+					if (isRawMaterial) {
+						Double newMiniValue = 100 * mini;
+						
+						if (totalQtyMini == null || newMiniValue < totalQtyMini) {
+							totalQtyMini = newMiniValue;
+						}
+					} else {
+						Double valueToAdd = qty * mini;
+						totalQtyMini += valueToAdd;
 					}
 					
 					totalQtyIngMap.put(newIngListDataItem.getName() + MINI_SUFFIX, totalQtyMini);
@@ -513,7 +548,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 			// recursive
 			if (!component.isLeaf()) {
-				calculateILOfPart(compoListDataItem, component, ingList, retainNodes, totalQtyIngMap, totalQtyVolMap, newIngListDataItem);
+				calculateILOfPart(compoListDataItem, component, ingList, retainNodes, totalQtyIngMap, totalQtyVolMap, newIngListDataItem, isRawMaterial);
 			}
 		}
 	}
