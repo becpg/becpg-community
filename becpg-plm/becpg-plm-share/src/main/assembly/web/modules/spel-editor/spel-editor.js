@@ -491,11 +491,17 @@
                   _renderFormula : function SpelEditor__renderFormula(updateTextArea) {
 
 
-                     var items = [], instance = this, regexp = new RegExp("(workspace://SpacesStore/[a-z0-9A-Z\-]*)",
+                     var nodeRefs = null, instance = this, regexp = new RegExp("(workspace://SpacesStore/[a-z0-9A-Z\-]*)",
                            "gi");
                      
                      
-                     items = this.options.currentValue.match(regexp);
+                     nodeRefs = this.options.currentValue.match(regexp);
+
+
+					var uniqueNodeRefs = [];
+					$.each(nodeRefs, function(i, el){
+					    if($.inArray(el, uniqueNodeRefs) === -1) uniqueNodeRefs.push(el);
+					});
 
                      function itemsCallBack(response) {
                         var items = null,item,span;
@@ -535,20 +541,20 @@
 
                      }
 
-                     if (items != null && items.length > 0) {
+                     if (uniqueNodeRefs != null && uniqueNodeRefs.length > 0) {
 
                         Alfresco.util.Ajax.jsonRequest({
                            url : Alfresco.constants.PROXY_URI + "api/forms/picker/items",
                            method : "POST",
                            dataObj : {
-                              items : items
+                              items : uniqueNodeRefs
                            },
                            successCallback : {
                               fn : itemsCallBack,
                               scope : this
                            },
                            failureCallback : {
-                              fn : function(response) {
+                              fn : function() {
 
                                  Alfresco.util.PopupManager.displayMessage({
                                     text : this.msg("message.spel-editor.failure")
@@ -587,11 +593,11 @@
                      Dom.get(this.editorId + "-itemType-button").name = "-";
 
                      this.widgets.itemTypeMenu.getMenu().subscribe("click", function(p_sType, p_aArgs) {
-                        var menuItem = p_aArgs[1];
-                        if (menuItem) {
+                        var mItem = p_aArgs[1];
+                        if (mItem) {
                            YAHOO.Bubbling.fire("parentTypeChanged", {
                               eventGroup : me,
-                              item : menuItem.value
+                              item : mItem.value
                            });
                         }
                      });
@@ -779,7 +785,7 @@
                         this.widgets.dataTable1.doBeforeLoadData = function(sRequest, oResponse, oPayload) {
                            if (me.options.selectedParentType) {
 
-                              label = "<span class='" + me.options.selectedParentType.name + "' style='padding-left: 20px;' >" + me
+                             var label = "<span class='" + me.options.selectedParentType.name + "' style='padding-left: 20px;' >" + me
                                     ._formatLabel(me.options.selectedParentType.name) + "</span>";
 
                               me.widgets.itemTypeMenu.set("label", label);
