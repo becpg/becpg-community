@@ -365,7 +365,12 @@
 					<show id="gs1:endAvailabilityDateTime"  />
 					<show id="gs1:publicationDate"  />
 				
-
+					<show id="bcpg:autoMergeDate" force="false" />
+				    <show id="bcpg:autoMergeTo" force="true"  />
+					<show id="bcpg:autoMergeVersionType" />
+					<show id="bcpg:autoMergeComments" />
+					<show id="bcpg:autoMergeImpactWUsed" />
+				
 				</field-visibility>
 				<appearance>
 					<set id="mainTab" label-id="becpg.forms.set.characteristics.label" />
@@ -903,6 +908,22 @@
 					<field id="gs1:startAvailabilityDateTime" help-id="becpg.forms.help.gs1.startAvailabilityDateTime"  set="datesPanel" />
 					<field id="gs1:endAvailabilityDateTime" set="datesPanel" />
 					<field id="gs1:publicationDate" help-id="becpg.forms.help.gs1.publicationDate"  set="datesPanel" />
+
+					<set id="branch" appearance="bordered-panel" label-id="becpg.forms.set.branch.label" />
+					<field id="bcpg:autoMergeDate" set="branch" />
+				    <field id="bcpg:autoMergeTo" set="branch" >
+				    	<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/branches</control-param>
+							<control-param name="urlParamsToPass">itemId</control-param>
+						</control>
+					</field>
+				
+					<field id="bcpg:autoMergeVersionType" set="branch" />
+					<field id="bcpg:autoMergeComments" set="branch" >
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					<field id="bcpg:autoMergeImpactWUsed" set="branch" />
+
 
 				</appearance>
 			</form>
@@ -1913,6 +1934,7 @@
 					<field id="cm:created" set="audit" />
 					<field id="cm:modifier" set="audit" />
 					<field id="cm:modified" set="audit" />
+					
 				</appearance>
 			</form>
 			<!-- Document Library pop-up Edit Metadata form -->
@@ -2578,6 +2600,11 @@
 					<show id="cm:modifier" for-mode="view" />
 					<show id="cm:modified" for-mode="view" />
 
+					<show id="bcpg:autoMergeDate" force="false" />
+				    <show id="bcpg:autoMergeTo" force="true"  />
+					<show id="bcpg:autoMergeVersionType" />
+					<show id="bcpg:autoMergeComments" />
+					<show id="bcpg:autoMergeImpactWUsed" />
 				</field-visibility>
 				<appearance>
 					<set id="mainInfo" appearance="bordered-panel"
@@ -2778,6 +2805,21 @@
 					<field id="cm:created" set="audit" />
 					<field id="cm:modifier" set="audit" />
 					<field id="cm:modified" set="audit" />
+					
+					<set id="branch" appearance="bordered-panel" label-id="becpg.forms.set.branch.label" />
+					<field id="bcpg:autoMergeDate" set="branch" />
+				    <field id="bcpg:autoMergeTo" set="branch" >
+				    	<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/branches</control-param>
+							<control-param name="urlParamsToPass">itemId</control-param>
+						</control>
+					</field>
+				
+					<field id="bcpg:autoMergeVersionType" set="branch" />
+					<field id="bcpg:autoMergeComments" set="branch" >
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					<field id="bcpg:autoMergeImpactWUsed" set="branch" />
 				</appearance>
 			</form>
 			<!-- Document Library pop-up Edit Metadata form -->
@@ -3423,6 +3465,12 @@
 					<show id="cm:created" for-mode="view" />
 					<show id="cm:modifier" for-mode="view" />
 					<show id="cm:modified" for-mode="view" />
+					
+					<show id="bcpg:autoMergeDate" force="false" />
+				    <show id="bcpg:autoMergeTo" force="true"  />
+					<show id="bcpg:autoMergeVersionType" />
+					<show id="bcpg:autoMergeComments" />
+					<show id="bcpg:autoMergeImpactWUsed" />
 
 				</field-visibility>
 				<appearance>
@@ -3684,6 +3732,21 @@
 					<field id="cm:created" set="audit" />
 					<field id="cm:modifier" set="audit" />
 					<field id="cm:modified" set="audit" />
+					
+					<set id="branch" appearance="bordered-panel" label-id="becpg.forms.set.branch.label" />
+					<field id="bcpg:autoMergeDate" set="branch" />
+				    <field id="bcpg:autoMergeTo" set="branch" >
+				    	<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/branches</control-param>
+							<control-param name="urlParamsToPass">itemId</control-param>
+						</control>
+					</field>
+				
+					<field id="bcpg:autoMergeVersionType" set="branch" />
+					<field id="bcpg:autoMergeComments" set="branch" >
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					<field id="bcpg:autoMergeImpactWUsed" set="branch" />
 				</appearance>
 			</form>
 			<form id="reports-parameters">
@@ -4549,6 +4612,11 @@
 					<show id="bcpg:startEffectivity" for-mode="view" />
 					<show id="bcpg:endEffectivity" for-mode="view" />
 					
+					<show id="bcpg:autoMergeDate" force="false" />
+				    <show id="bcpg:autoMergeTo" force="true"  />
+					<show id="bcpg:autoMergeVersionType" />
+					<show id="bcpg:autoMergeComments" />
+					<show id="bcpg:autoMergeImpactWUsed" />
 
 				</field-visibility>
 				<appearance>
@@ -4788,7 +4856,20 @@
 						</control>
 					</field>
 					
-					
+					<set id="branch" appearance="bordered-panel" label-id="becpg.forms.set.branch.label" />
+					<field id="bcpg:autoMergeDate" set="branch" />
+				    <field id="bcpg:autoMergeTo" set="branch" >
+				    	<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/branches</control-param>
+							<control-param name="urlParamsToPass">itemId</control-param>
+						</control>
+					</field>
+				
+					<field id="bcpg:autoMergeVersionType" set="branch" />
+					<field id="bcpg:autoMergeComments" set="branch" >
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					<field id="bcpg:autoMergeImpactWUsed" set="branch" />
 				</appearance>
 			</form>
 			<form id="reports-parameters">
@@ -5444,7 +5525,12 @@
 					<show id="cm:created" for-mode="view" />
 					<show id="cm:modifier" for-mode="view" />
 					<show id="cm:modified" for-mode="view" />
-
+					
+					<show id="bcpg:autoMergeDate" force="false" />
+				    <show id="bcpg:autoMergeTo" force="true"  />
+					<show id="bcpg:autoMergeVersionType" />
+					<show id="bcpg:autoMergeComments" />
+					<show id="bcpg:autoMergeImpactWUsed" />
 				</field-visibility>
 				<appearance>
 					<set id="mainInfo" appearance="bordered-panel"
@@ -5542,7 +5628,21 @@
 					<field id="cm:created" set="audit" />
 					<field id="cm:modifier" set="audit" />
 					<field id="cm:modified" set="audit" />
-
+					
+					<set id="branch" appearance="bordered-panel" label-id="becpg.forms.set.branch.label" />
+					<field id="bcpg:autoMergeDate" set="branch" />
+				    <field id="bcpg:autoMergeTo" set="branch" >
+				    	<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/branches</control-param>
+							<control-param name="urlParamsToPass">itemId</control-param>
+						</control>
+					</field>
+				
+					<field id="bcpg:autoMergeVersionType" set="branch" />
+					<field id="bcpg:autoMergeComments" set="branch" >
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					<field id="bcpg:autoMergeImpactWUsed" set="branch" />
 				</appearance>
 			</form>
 			<!-- Document Library pop-up Edit Metadata form -->

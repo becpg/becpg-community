@@ -203,8 +203,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 	private static final String CLASSIFY_RULE_TITLE = "classifyEntityRule";
 	
-	private static final String ASSOCIATION_RESOURCE_STRING = "Associating resource: ";
-	private static final String TO_TEMPLATE_STRING = " to template: ";
+	private String errorMessage = "Associating resource: %s to template: %s";
 
 	@Autowired
 	private SiteService siteService;
@@ -1227,7 +1226,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 						if (!resources.isEmpty()) {
 							
 							for (NodeRef resource : resources) {
-								logger.debug(ASSOCIATION_RESOURCE_STRING + resource + TO_TEMPLATE_STRING + template);
+								logger.debug(String.format(errorMessage, resource, template));
 								nodeService.createAssociation(template, resource, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES);
 							}
 							
@@ -1254,7 +1253,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 							
 							if (!resources.isEmpty()) {
 								for (NodeRef resource : resources) {
-									logger.debug(ASSOCIATION_RESOURCE_STRING + resource + TO_TEMPLATE_STRING + template);
+									logger.debug(String.format(errorMessage, resource, template));
 									nodeService.createAssociation(template, resource, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES);
 								}
 							}
@@ -1307,7 +1306,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 						QUALITY_CONTROL_AGING_REPORT_PATH, ReportType.Document, ReportFormat.XLSX, QualityModel.TYPE_QUALITY_CONTROL, true, false, false);
 				if (!resources.isEmpty()) {
 					for (NodeRef resource : resources) {
-						logger.debug(ASSOCIATION_RESOURCE_STRING + resource + " to template: " + templateQuality + " and" + templateQualityAging);
+						logger.debug(String.format(errorMessage, resource, templateQuality) + " and" + templateQualityAging);
 						nodeService.createAssociation(templateQuality, resource, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES);
 						nodeService.createAssociation(templateQualityAging, resource, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES);
 
