@@ -147,10 +147,9 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 
 			String filterValue = splitted[1];
 			if ((filterValue != null) && !filterValue.isEmpty()) {
-				if (filterValue.contains("{")) {
-					
+				if (filterValue.contains("{")) {	
 					if (entityNodeRef != null) {
-						filterValue = attributeExtractorService.extractPropName(filterValue,entityNodeRef);
+						filterValue = attributeExtractorService.extractExpr(filterValue,entityNodeRef);
 					}
 				}
 				if ((filterValue != null) && !filterValue.isEmpty() && !filterValue.contains("{")) {
