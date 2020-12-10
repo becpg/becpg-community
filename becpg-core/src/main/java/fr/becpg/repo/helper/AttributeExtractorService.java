@@ -189,7 +189,7 @@ public interface AttributeExtractorService {
 	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @return a {@link java.lang.String} object.
 	 */
-	String extractPropName(String format, NodeRef nodeRef);
+	String extractExpr(String format, NodeRef nodeRef);
 
 	/**
 	 * <p>extractSiteId.</p>
