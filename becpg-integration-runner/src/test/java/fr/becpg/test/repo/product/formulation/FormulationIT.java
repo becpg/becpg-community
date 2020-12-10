@@ -2691,4 +2691,54 @@ public class FormulationIT extends AbstractFinishedProductTest {
 		}, false, true);
 
 	}
+	
+	@Test
+	public void testMiniMaxi() {
+		logger.info("testMiniMaxi");
+
+		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setLegalName("Legal " + name);
+			finishedProduct.setUnit(ProductUnit.kg);
+			finishedProduct.setQty(2d);
+			finishedProduct.setUnitPrice(22.4d);
+			finishedProduct.setDensity(1d);
+			finishedProduct.setServingSize(50d);// 50g
+			finishedProduct.setProjectedQty(10000l);
+			List<CompoListDataItem> compoList = new ArrayList<>();
+			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
+			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
+			finishedProduct.getCompoListView().setCompoList(compoList);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+
+		}, false, true);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			productService.formulate(finishedProductNodeRef);
+
+			FinishedProductData formulatedFinishedProduct = (FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+
+			int checks = 0;
+			for (IngListDataItem ing : formulatedFinishedProduct.getIngList()) {
+				if (ing.getIng().equals(ing1) && ing.getMini() != null && ing.getMaxi() != null) {
+					logger.info("FP ing1 mini: " + ing.getMini() + " maxi: " + ing.getMaxi());
+					checks++;
+					assertEquals(ing.getMini(), 18.333333333333332);
+					assertEquals(ing.getMaxi(), 80.0);
+				} else if (ing.getIng().equals(ing2) && ing.getMini() != null && ing.getMaxi() != null) {
+					logger.info("FP ing2 mini: " + ing.getMini() + " maxi: " + ing.getMaxi());
+					assertEquals(ing.getMini(), 22.666666666666668);
+					assertEquals(ing.getMaxi(), 84.0);
+					checks++;
+				}
+			}
+			assertEquals(2, checks);
+			return null;
+
+		}, false, true);
+
+	}
 }
