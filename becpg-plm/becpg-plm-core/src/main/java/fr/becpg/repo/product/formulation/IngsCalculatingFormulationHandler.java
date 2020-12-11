@@ -422,10 +422,6 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			}
 
 			Double totalQtyIng = totalQtyIngMap.get(newIngListDataItem.getName());
-			if (totalQtyIng == null) {
-				totalQtyIng = 0d;
-				totalQtyIngMap.put(newIngListDataItem.getName(), totalQtyIng);
-			}
 
 			Double totalQtyMaxi = totalQtyIngMap.get(newIngListDataItem.getName() + MAXI_SUFFIX);
 			Double totalQtyMini = totalQtyIngMap.get(newIngListDataItem.getName() + MINI_SUFFIX);
@@ -455,6 +451,9 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 				if ((qtyIng != null)) {
 					Double valueToAdd = qty * qtyIng;
+					if (totalQtyIng == null) {
+						totalQtyIng = 0d;
+					}
 					totalQtyIng += valueToAdd;
 					totalQtyIngMap.put(newIngListDataItem.getName(), totalQtyIng);
 				}
