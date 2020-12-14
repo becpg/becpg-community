@@ -773,8 +773,23 @@
 								url += "&async=true";
 
 								var downloadDialog = Alfresco.getArchiveAndDownloadInstance();
-
-								downloadDialog.mimeType = args.reportFileName.indexOf(".xlsx") > 0 || args.reportFileName.indexOf(".xlsm") > 0 ? "-excel" : "";
+								
+								var isPDF = false;
+								
+								if(args.reportFileName.indexOf(".xlsx") > 0 || args.reportFileName.indexOf(".xlsm") > 0){
+									downloadDialog.mimeType = "-excel";
+								} else if(args.reportFileName.indexOf(".pdf") > 0 ){
+									downloadDialog.mimeType = "-pdf";
+									isPDF = true;
+								}else if(args.reportFileName.indexOf(".doc") > 0 || args.reportFileName.indexOf(".docx") > 0 || args.reportFileName.indexOf(".odt") > 0){
+									downloadDialog.mimeType = "-doc";
+								}else if(args.reportFileName.indexOf(".ppt") > 0 || args.reportFileName.indexOf(".pptx") > 0 ){
+									downloadDialog.mimeType = "-ppt";
+								}else {		
+									downloadDialog.mimeType = "";
+								}
+								
+								
 
 								downloadDialog._resetGUI = function() {
 									// Reset references and the gui before
@@ -798,6 +813,42 @@
 											json.totalFiles);
 								};
 
+							   downloadDialog.handleArchiveComplete =  function() {
+								         // Hide the panel and initiate the download...
+								         this.widgets.cancelOkButton.set("disabled", false);
+								         this.panel.hide();
+								
+								         // Create an empty form and post it to a hidden ifram using GET to avoid confusing the browser to believe we
+								         // are leaving the current page (which would abort the currently running requests, i.e. deletion of the archive
+								
+								         var form = document.createElement("form");
+								         form.method = "GET";
+								         form.action = Alfresco.constants.PROXY_URI + "api/node/content/" + this._currentArchiveNodeURL + "/" + Alfresco.util.encodeURIPath(this._currentArchiveName);
+								         document.body.appendChild(form);
+									
+								
+								         var d = form.ownerDocument;
+										if(isPDF) {
+		 									 var input = d.createElement("input");
+											 input.name="a";
+											 input.value="true";
+											 form.appendChild(input);
+										}
+							
+								         var iframe = d.createElement("iframe");
+								         iframe.style.display = "none";
+								         YAHOO.util.Dom.generateId(iframe, "downloadArchive");
+								         iframe.name = iframe.id;
+								         document.body.appendChild(iframe);
+								
+								         // makes it possible to target the frame properly in IE.
+								         window.frames[iframe.name].name = iframe.name;
+								
+								         form.target = iframe.name;
+								         form.submit();
+								  };
+
+
 								downloadDialog.showExport = function(reportName) {
 
 									// Reset the dialog...
@@ -809,7 +860,7 @@
 									this.panel.show();
 
 									this._currentArchiveName = reportName;
-
+									
 									// Kick off the request...
 
 									// Post the details of the nodeRefs to
