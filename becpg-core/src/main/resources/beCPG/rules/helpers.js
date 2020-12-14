@@ -569,7 +569,7 @@ function createBranch(node, dest, autoMerge){
  * @returns void
  */
 function mergeBranch( node, branchToNode, description, type){
-	bcpg.createBranch( node, branchToNode, description, type);
+	bcpg.mergeBranch( node, branchToNode, description, type);
 }
 
 
