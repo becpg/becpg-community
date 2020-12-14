@@ -615,8 +615,8 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			while (!processor.isEmpty()) {
 				i++;
 				IngListDataItem il = processor.pop();
-				byParent.getOrDefault(il, Collections.emptyList()).stream()
-						.sorted(Comparator.comparingDouble(IngListDataItem::getQtyPerc).thenComparing(IngListDataItem::getName))
+				byParent.getOrDefault(il, Collections.emptyList()).stream().sorted(Comparator
+						.comparing(IngListDataItem::getQtyPerc, Comparator.nullsLast(Comparator.naturalOrder())).thenComparing(IngListDataItem::getName))
 						.collect(Collectors.toList()).forEach(processor::add);
 
 				il.setSort(i);
