@@ -111,7 +111,7 @@ public class ProjectOverdueIT extends AbstractProjectTestCase {
 			alfrescoRepository.save(projectData);
 			projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 			formulationService.formulate(projectData);
-			assertEquals(1, projectData.getOverdue().intValue());
+			assertEquals(4, projectData.getOverdue().intValue());
 
 			return null;
 		}, false, true);
