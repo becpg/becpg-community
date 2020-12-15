@@ -177,9 +177,10 @@ public interface EntityVersionService {
 	 * @param versionType a {@link org.alfresco.service.cmr.version.VersionType} object.
 	 * @param description a {@link java.lang.String} object.
 	 * @param impactWused a boolean.
+	 * @param rename a boolean.
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
-	NodeRef mergeBranch(NodeRef branchNodeRef, NodeRef branchToNodeRef, VersionType versionType, String description, boolean impactWused);
+	NodeRef mergeBranch(NodeRef branchNodeRef, NodeRef branchToNodeRef, VersionType versionType, String description, boolean impactWused, boolean rename);
 
 	/**
 	 * <p>mergeBranch.</p>
