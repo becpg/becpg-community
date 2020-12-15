@@ -426,18 +426,6 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			Double totalQtyMaxi = totalQtyIngMap.get(newIngListDataItem.getName() + MAXI_SUFFIX);
 			Double totalQtyMini = totalQtyIngMap.get(newIngListDataItem.getName() + MINI_SUFFIX);
 			
-			if (!isRawMaterial) {
-				if (totalQtyMaxi == null) {
-					totalQtyMaxi = 0d;
-					totalQtyIngMap.put(newIngListDataItem.getName() + MAXI_SUFFIX, totalQtyMaxi);
-				}
-				
-				if (totalQtyMini == null) {
-					totalQtyMini = 0d;
-					totalQtyIngMap.put(newIngListDataItem.getName() + MINI_SUFFIX, totalQtyMini);
-				}
-			}
-			
 			// Calculate qty
 			Double qty = FormulationHelper.getQtyInKg(compoListDataItem);
 			Double qtyIng = ingListDataItem.getQtyPerc();
@@ -469,6 +457,9 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 						
 					} else {
 						Double valueToAdd = qty * maxi;
+						if (totalQtyMaxi == null) {
+							totalQtyMaxi = 0d;
+						}
 						totalQtyMaxi += valueToAdd;
 					}
 					
@@ -485,6 +476,9 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 						}
 					} else {
 						Double valueToAdd = qty * mini;
+						if (totalQtyMini == null) {
+							totalQtyMini = 0d;
+						}
 						totalQtyMini += valueToAdd;
 					}
 					
@@ -609,14 +603,14 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			int i = 1;
 
 			byParent.getOrDefault(nullPlaceholder, Collections.emptyList()).stream().sorted(Comparator
-					.comparing(IngListDataItem::getQtyPerc, Comparator.nullsLast(Comparator.naturalOrder())).thenComparing(IngListDataItem::getName))
+					.comparing(IngListDataItem::getQtyPerc, Comparator.nullsFirst(Comparator.naturalOrder())).thenComparing(IngListDataItem::getName))
 					.collect(Collectors.toList()).forEach(processor::add);
 
 			while (!processor.isEmpty()) {
 				i++;
 				IngListDataItem il = processor.pop();
 				byParent.getOrDefault(il, Collections.emptyList()).stream().sorted(Comparator
-						.comparing(IngListDataItem::getQtyPerc, Comparator.nullsLast(Comparator.naturalOrder())).thenComparing(IngListDataItem::getName))
+						.comparing(IngListDataItem::getQtyPerc, Comparator.nullsFirst(Comparator.naturalOrder())).thenComparing(IngListDataItem::getName))
 						.collect(Collectors.toList()).forEach(processor::add);
 
 				il.setSort(i);
