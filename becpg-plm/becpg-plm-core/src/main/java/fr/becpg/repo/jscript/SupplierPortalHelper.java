@@ -191,7 +191,7 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 						if (task.getResources() != null) {
 							task.getResources().clear();
 						} else {
-							task.setResources(new ArrayList<NodeRef>());
+							task.setResources(new ArrayList<>());
 						}
 						task.getResources().addAll(accountNodeRefs);
 

@@ -40,6 +40,7 @@ public class FormCheckInWebScript extends DeclarativeWebScript {
 	private static final String MODEL_KEY_NAME_NODEREF = "noderef";
 	private static final String PARAM_BRANCH_TO_NODEREF = "branchToNodeRef";
 	private static final String PARAM_IMPACT_WUSED = "impactWused";
+	private static final String PARAM_RENAME_ON_MERGE = "renameOnMerge";
 	
 
 	private static final String VALUE_TRUE = "true";
@@ -79,6 +80,7 @@ public class FormCheckInWebScript extends DeclarativeWebScript {
 		String description;
 		VersionType versionType;
 		boolean impactWused = false;
+		boolean rename = false;
 		
 		
 		JSONObject json = (JSONObject) req.parseContent();
@@ -95,6 +97,10 @@ public class FormCheckInWebScript extends DeclarativeWebScript {
 				impactWused = true;
 			}
 			
+			if (json.has(PARAM_RENAME_ON_MERGE) && VALUE_TRUE.equals(json.get(PARAM_RENAME_ON_MERGE))) {
+				rename = true;
+			}
+			
 			if (logger.isDebugEnabled()) {
 				logger.debug("branchToNodeRef: " + branchToNodeRef);
 				logger.debug("nodeRef: " + nodeRef);
@@ -109,7 +115,7 @@ public class FormCheckInWebScript extends DeclarativeWebScript {
 		NodeRef newEntityNodeRef = null; 
 
 		if (branchToNodeRef != null) {
-			newEntityNodeRef =  entityVersionService.mergeBranch(nodeRef, branchToNodeRef, versionType, description, impactWused);
+			newEntityNodeRef =  entityVersionService.mergeBranch(nodeRef, branchToNodeRef, versionType, description, impactWused, rename);
 		} else {
 			// Calculate new version
 			Map<String, Serializable> properties = new HashMap<>();
