@@ -397,7 +397,11 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 				projectData.setCompletionDate(ProjectHelper.calculateEndDate(projectData.getStartDate(), projectData.getRealDuration()));
 			}
 		}
-
+		if(logger.isDebugEnabled()) {
+			logger.debug("Project completion date: "+projectData.getCompletionDate());
+		}
+		
+		
 		projectData.setCurrTasks(currTasks);
 		projectData.setLegends(currLegends);
 		projectData.setWork(work);
@@ -454,6 +458,12 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 			}
 		}
 
+		if(logger.isDebugEnabled()) {
+			logger.debug("Project theoric duration: "+projectDuration);
+			logger.debug("Project real duration: "+projectRealDuration);
+			logger.debug("Project overdue: "+(projectRealDuration - projectDuration));
+		}
+		
 		projectData.setDuration(projectDuration);
 		projectData.setRealDuration(projectRealDuration);
 		projectData.setOverdue(projectRealDuration - projectDuration);
