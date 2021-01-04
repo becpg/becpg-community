@@ -139,6 +139,11 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 		return (task != null) && (task.getSubProject() != null);
 	}
 
+	public boolean isCancelled() {
+    	return TaskState.Cancelled.equals(task.getTaskState());
+	}
+	
+	
 	/**
 	 * <p>isGroup.</p>
 	 *
@@ -167,7 +172,8 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 
 		if (task != null) {
 
-			if (TaskState.Planned.equals(task.getTaskState()) || TaskState.InProgress.equals(task.getTaskState()) || TaskState.Refused.equals(task.getTaskState())) {
+			if (TaskState.Planned.equals(task.getTaskState()) || TaskState.InProgress.equals(task.getTaskState())
+					|| TaskState.Refused.equals(task.getTaskState())) {
 				Date endDate = ProjectHelper.removeTime(new Date());
 
 				// we wait the overdue of the task to take it in account
@@ -178,7 +184,7 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 
 			} else if (TaskState.Completed.equals(task.getTaskState())) {
 				return ProjectHelper.calculateTaskDuration(task.getStart(), task.getEnd());
-			} else if(TaskState.Cancelled.equals(task.getTaskState())) {
+			} else if (TaskState.Cancelled.equals(task.getTaskState())) {
 				return 0;
 			}
 
@@ -301,8 +307,8 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 	}
 
 	private static TaskWrapper getOrCreateTaskWrapper(NodeRef nodeRef, Map<NodeRef, TaskWrapper> cache) {
-		return cache.computeIfAbsent(nodeRef, n ->  new TaskWrapper());
-		
+		return cache.computeIfAbsent(nodeRef, n -> new TaskWrapper());
+
 	}
 
 	/**
@@ -335,9 +341,16 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 							critical = t.getMaxDuration();
 						}
 					}
-					if (task.getDuration() != null) {
-						task.setMaxDuration(critical + task.getDuration());
+
+					if (!task.isCancelled()) {
+						if (task.getDuration() != null) {
+							task.setMaxDuration(critical + task.getDuration());
+						}
+
+					} else {
+						task.setMaxDuration(critical);
 					}
+
 					// set task as calculated an remove
 					completed.add(task);
 					it.remove();
@@ -353,6 +366,7 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 		}
 
 		return completed.stream().map(TaskWrapper::getMaxDuration).max(Integer::compareTo).orElse(DURATION_DEFAULT);
+
 	}
 
 	/**
@@ -370,8 +384,9 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 						+ " ".repeat(Math.abs(Math.toIntExact(((t.getStart() != null) && (projectData.getStartDate() != null))
 								? ChronoUnit.DAYS.between(t.getStart().toInstant(), projectData.getStartDate().toInstant())
 								: 0)))
-						+ (t.getIsGroup() ? "#" : "_").repeat(Math.abs(t.getDuration())) + " " + t.getTaskName() + "[ " + t.getStart() + " / "
-						+ t.getEnd() + "] " + " (" + t.getTaskState() + "/" + t.getDuration() + "/" + t.getRealDuration() + ")");
+						+ (Boolean.TRUE.equals(t.getIsGroup()) ? "#" : "_").repeat(Math.abs(t.getDuration())) + " " + t.getTaskName() + "[ "
+						+ t.getStart() + " / " + t.getEnd() + "] " + " (" + t.getTaskState() + "/" + t.getDuration() + "/" + t.getRealDuration()
+						+ ")");
 			}
 		});
 

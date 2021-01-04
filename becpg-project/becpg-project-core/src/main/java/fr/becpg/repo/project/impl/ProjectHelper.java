@@ -309,111 +309,8 @@ public class ProjectHelper {
 		return deliverableList;
 	}
 
-	/**
-	 * <p>areTasksDone.</p>
-	 *
-	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object.
-	 * @return a boolean.
-	 */
-	@Deprecated
-	public static boolean areTasksDone(ProjectData projectData) {
+	
 
-		if ((projectData.getTaskList() != null) && !projectData.getTaskList().isEmpty()) {
-			for (TaskListDataItem t : projectData.getTaskList()) {
-				if (!(TaskState.Completed.equals(t.getTaskState()) || TaskState.Cancelled.equals(t.getTaskState()))) {
-					return false;
-				}
-			}
-		} else {
-			return false;
-		}
-		return true;
-	}
-
-	/**
-	 * <p>areTasksDone.</p>
-	 *
-	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object.
-	 * @param taskNodeRefs a {@link java.util.List} object.
-	 * @return a boolean.
-	 */
-	@Deprecated
-	public static boolean areTasksDone(ProjectData projectData, List<NodeRef> taskNodeRefs) {
-
-		// no task : they are done
-		if (taskNodeRefs.isEmpty()) {
-			return true;
-		}
-
-		List<NodeRef> inProgressTasks = new ArrayList<>();
-		inProgressTasks.addAll(taskNodeRefs);
-
-		if ((projectData.getTaskList() != null) && !projectData.getTaskList().isEmpty()) {
-			for (int i = projectData.getTaskList().size() - 1; i >= 0; i--) {
-				TaskListDataItem t = projectData.getTaskList().get(i);
-
-				if (taskNodeRefs.contains(t.getNodeRef())) {
-
-					if (TaskState.Completed.equals(t.getTaskState())) {
-						inProgressTasks.remove(t.getNodeRef());
-					} else if (TaskState.Cancelled.equals(t.getTaskState())) {
-						if (ProjectHelper.areTasksDone(projectData, t.getPrevTasks())) {
-							inProgressTasks.remove(t.getNodeRef());
-						}
-					}
-				}
-			}
-		}
-
-		return inProgressTasks.isEmpty();
-	}
-
-	/**
-	 * completedPercent is calculated on duration property
-	 *
-	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object.
-	 * @return a int.
-	 */
-	@Deprecated
-	public static int geProjectCompletionPercent(ProjectData projectData) {
-
-		int totalWork = 0;
-		int workDone = 0;
-		for (TaskListDataItem p : projectData.getTaskList()) {
-			Integer duration = p.getDuration() != null ? p.getDuration() : calculateTaskDuration(p.getStart(), p.getEnd());
-			if (duration != null) {
-				if(!TaskState.Cancelled.equals(p.getTaskState())) {
-					totalWork += duration;
-				
-					if (TaskState.Completed.equals(p.getTaskState())) {
-						workDone += duration;
-					} else if(p.getSubProject()!=null && p.getCompletionPercent()!=null) {
-						workDone += (duration * p.getCompletionPercent() / 100);
-					}
-				}
-			}
-		}
-
-		return totalWork != 0 ? (100 * workDone) / totalWork : 0;
-	}
-
-	/**
-	 * <p>getLastEndDate.</p>
-	 *
-	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object.
-	 * @return a {@link java.util.Date} object.
-	 */
-	@Deprecated
-	public static Date getLastEndDate(ProjectData projectData) {
-		Date endDate = null;
-		for (TaskListDataItem task : projectData.getTaskList()) {
-			if ((!task.getIsGroup() || (task.getSubProject() != null))
-					&& ((endDate == null) || ((task.getEnd() != null) && task.getEnd().after(endDate)))) {
-				endDate = task.getEnd();
-			}
-		}
-		return endDate;
-	}
 
 	/**
 	 * <p>getLastEndDate.</p>
@@ -424,7 +321,7 @@ public class ProjectHelper {
 	public static Date getLastEndDate(Set<TaskWrapper> tasks) {
 		Date endDate = null;
 		for (TaskWrapper task : tasks) {
-			if (task.isLeaf() && ((endDate == null) || ((task.getTask().getEnd() != null) && task.getTask().getEnd().after(endDate)))) {
+			if (!task.isCancelled() && !task.isGroup() && ((endDate == null) || ((task.getTask().getEnd() != null) && task.getTask().getEnd().after(endDate)))) {
 				endDate = task.getTask().getEnd();
 			}
 		}
@@ -446,23 +343,7 @@ public class ProjectHelper {
 				.min(Date::compareTo).orElse(null);
 	}
 
-	/**
-	 * <p>getFirstStartDate.</p>
-	 *
-	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object.
-	 * @return a {@link java.util.Date} object.
-	 */
-	@Deprecated
-	public static Date getFirstStartDate(ProjectData projectData) {
-		List<TaskListDataItem> tasks = getNextTasks(projectData, null);
-		Date startDate = null;
-		for (TaskListDataItem task : tasks) {
-			if (((startDate == null) || ((task.getStart() != null) && task.getStart().before(startDate)))) {
-				startDate = task.getStart();
-			}
-		}
-		return startDate;
-	}
+	
 
 	/**
 	 * <p>setTaskStartDate.</p>
