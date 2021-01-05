@@ -165,7 +165,7 @@
 	               </#list>
 	        </select>
 	        	</#if>
-	        <input  id="${fieldHtmlId}-val"  name="${field.name}" type="hidden"  <#if field.value?is_number>value="${field.value?c}"<#else>value="${field.value?html}"</#if>> 
+	        <input  id="${fieldHtmlId}-val"  name="${field.name}" type="hidden"  <#if field.value?is_number>value="${field.value?c}"<#else>value="${field.value?html}"</#if> /> 
 	        <script type="text/javascript">//<![CDATA[
 			(function()
 			{

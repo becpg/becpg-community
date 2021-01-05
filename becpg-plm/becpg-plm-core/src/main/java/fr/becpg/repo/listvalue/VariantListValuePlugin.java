@@ -60,11 +60,17 @@ public class VariantListValuePlugin extends EntityListValuePlugin {
 	/** {@inheritDoc} */
 	@Override
 	public ListValuePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
-		NodeRef entityNodeRef = new NodeRef((String) props.get(ListValueService.PROP_NODEREF));
+		
+		
+		NodeRef entityNodeRef = null;
+		String entityNodeRefStr = (String) props.get(ListValueService.PROP_NODEREF);
+		if(entityNodeRefStr !=null && NodeRef.isNodeRef(entityNodeRefStr)) {
+			entityNodeRef = new NodeRef(entityNodeRefStr);
+		}
 		
 		@SuppressWarnings("unchecked")
 		Map<String, String> extra =  (Map<String, String>) props.get(ListValueService.EXTRA_PARAM);
-		if(extra != null && !extra.isEmpty()){
+		if((entityNodeRef == null || !nodeService.exists(entityNodeRef)) && extra != null && !extra.isEmpty()){
 			NodeRef itemRef =  new NodeRef (extra.get("itemId"));
 			entityNodeRef = getParentEntity(itemRef);
 		}
@@ -79,6 +85,11 @@ public class VariantListValuePlugin extends EntityListValuePlugin {
 	}
 	
 	private NodeRef getParentEntity(NodeRef itemRef){
+		
+		if(dictionaryService.isSubClass(nodeService.getType(itemRef), PLMModel.TYPE_PRODUCT)) {
+			return itemRef;
+		}
+	
 		ChildAssociationRef childAssociationRef = nodeService.getPrimaryParent(itemRef);
 		NodeRef parent = childAssociationRef.getParentRef();
 
