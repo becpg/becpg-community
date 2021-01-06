@@ -138,6 +138,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	@Value("${beCPG.product.report.showDeprecatedXml}")
 	private Boolean showDeprecated = false;
+	
+	@Value("${beCPG.product.report.nutList.localesToExtract}")
+	private String nutLocalesToExtract;
 
 	@Autowired
 	protected PackagingHelper packagingHelper;
@@ -910,7 +913,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 					nutListElt.addAttribute(RegulationFormulationHelper.ATTR_NUT_CODE, nut.getNutCode());
 					nutListElt.addAttribute(BeCPGModel.PROP_COLOR.getLocalName(), nut.getNutColor());
 					boolean isDisplayed = isCharactDisplayedForLocale(dataListItem.getNut());
-					RegulationFormulationHelper.extractXMLAttribute(nutListElt, dataListItem.getRoundedValue(), I18NUtil.getLocale(), isDisplayed);
+					
+					
+					RegulationFormulationHelper.extractXMLAttribute(nutListElt, dataListItem.getRoundedValue(), I18NUtil.getLocale(), isDisplayed, context.getPrefValue("nutLocalesToExtract", nutLocalesToExtract));
 
 					if (showDeprecated) {
 
