@@ -20,7 +20,6 @@ package fr.becpg.repo.report.entity.impl;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -143,6 +142,8 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	protected static final String REPORT_LOGO_ID = "report_logo";
 	private static final String TAG_COMMENTS = "comments";
 	private static final String TAG_COMMENT = "comment";
+	private static final String ATTR_ENTITY_CODE ="entityCode";
+	private static final String ATTR_ENTITY_NAME ="entityName";
 
 	/** Constant <code>VALUE_NULL=""</code> */
 	protected static final String VALUE_NULL = "";
@@ -296,6 +297,16 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 			return false;
 		}
+		
+		public String getPrefValue(String key, String defaultValue) {
+			
+
+			if (preferences.containsKey(key) ) {
+				return preferences.get(key);
+			}
+
+			return defaultValue;
+		}
 
 		public boolean isNotEmptyPrefs(String key, String defaultValue) {
 			if ((defaultValue != null) && !defaultValue.isEmpty()) {
@@ -448,8 +459,15 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			
 
 			Element imgElt = imgsElt.addElement(TAG_IMAGE);
-			imgElt.addAttribute(ATTR_ENTITY_NODEREF, entityNodeRef.toString());
-			imgElt.addAttribute(ATTR_ENTITY_TYPE, nodeService.getType(entityNodeRef).getLocalName());
+			if(entityNodeRef!=null) {
+				imgElt.addAttribute(ATTR_ENTITY_NODEREF, entityNodeRef.toString());
+				imgElt.addAttribute(ATTR_ENTITY_TYPE, nodeService.getType(entityNodeRef).getLocalName());
+				imgElt.addAttribute(ATTR_ENTITY_NAME, (String) nodeService.getProperty(entityNodeRef, 
+						ContentModel.PROP_NAME));
+				if(nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_CODE)) {
+					imgElt.addAttribute(ATTR_ENTITY_CODE, (String) nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_CODE));
+				}
+			}
 			imgElt.addAttribute(ATTR_IMAGE_ID, imgId);
 			imgElt.addAttribute(ContentModel.PROP_NAME.getLocalName(), imgInfo.getName());
 			imgElt.addAttribute(ContentModel.PROP_TITLE.getLocalName(), imgInfo.getTitle());
