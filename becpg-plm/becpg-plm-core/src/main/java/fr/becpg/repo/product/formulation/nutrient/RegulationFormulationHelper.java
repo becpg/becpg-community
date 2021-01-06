@@ -260,7 +260,7 @@ public class RegulationFormulationHelper {
 	 * @param locale a {@link java.util.Locale} object.
 	 * @param isDisplayed a boolean.
 	 */
-	public static void extractXMLAttribute(Element nutListElt, String roundedValue, Locale locale, boolean isDisplayed) {
+	public static void extractXMLAttribute(Element nutListElt, String roundedValue, Locale locale, boolean isDisplayed, String localesToDisplay) {
 		if (roundedValue != null) {
 			String localKey = getLocalKey(locale);
 			String nutCode = nutListElt.attributeValue(ATTR_NUT_CODE);
@@ -271,67 +271,71 @@ public class RegulationFormulationHelper {
 				JSONObject jsonRound = new JSONObject(tokener);
 
 				for (String locKey : getAvailableRegulations()) {
-					NutrientRegulation regulation = getRegulation(locKey);
-					NutrientDefinition def = regulation.getNutrientDefinition(nutCode);
-
-					String suffix = "";
-					if (!locKey.equals(localKey)) {
-						suffix = "_" + locKey;
-					}
-
-					if (def != null) {
-						if (def.getSort() != null) {
-							nutListElt.addAttribute("regulSort" + suffix, "" + def.getSort());
+					
+					if(locKey.equals(localKey) || "all".equals(localesToDisplay) || (localesToDisplay!=null && localesToDisplay.contains(locKey))) {
+					
+						NutrientRegulation regulation = getRegulation(locKey);
+						NutrientDefinition def = regulation.getNutrientDefinition(nutCode);
+	
+						String suffix = "";
+						if (!locKey.equals(localKey)) {
+							suffix = "_" + locKey;
 						}
-						if (def.getDepthLevel() != null) {
-							nutListElt.addAttribute("regulDepthLevel" + suffix, "" + def.getDepthLevel());
-						}
-
-						if (isDisplayed) {
-							if (Boolean.TRUE.equals(def.getMandatory())) {
-								nutListElt.addAttribute("regulDisplayMode" + suffix, "M");
-							} else if (Boolean.TRUE.equals(def.getOptional())) {
-								nutListElt.addAttribute("regulDisplayMode" + suffix, "O");
+	
+						if (def != null) {
+							if (def.getSort() != null) {
+								nutListElt.addAttribute("regulSort" + suffix, "" + def.getSort());
+							}
+							if (def.getDepthLevel() != null) {
+								nutListElt.addAttribute("regulDepthLevel" + suffix, "" + def.getDepthLevel());
+							}
+	
+							if (isDisplayed) {
+								if (Boolean.TRUE.equals(def.getMandatory())) {
+									nutListElt.addAttribute("regulDisplayMode" + suffix, "M");
+								} else if (Boolean.TRUE.equals(def.getOptional())) {
+									nutListElt.addAttribute("regulDisplayMode" + suffix, "O");
+								}
+							}
+	
+							if (def.getBold() != null) {
+								nutListElt.addAttribute("regulBold" + suffix, "" + def.getBold());
+							}
+							if (def.getGda() != null) {
+								nutListElt.addAttribute("regulGDA" + suffix, "" + def.getGda());
+							}
+							if (def.getUl() != null) {
+								nutListElt.addAttribute("regulUL" + suffix, "" + def.getUl());
+							}
+							if (def.getUnit() != null) {
+								nutListElt.addAttribute("regulUnit" + suffix, "" + def.getUnit());
+							}
+							if (def.getShowGDAPerc() != null) {
+								nutListElt.addAttribute("regulShowGDAPerc" + suffix, "" + def.getShowGDAPerc());
 							}
 						}
-
-						if (def.getBold() != null) {
-							nutListElt.addAttribute("regulBold" + suffix, "" + def.getBold());
+	
+						for (Iterator<?> i = jsonRound.keys(); i.hasNext();) {
+							String valueKey = (String) i.next();
+							JSONObject value = (JSONObject) jsonRound.get(valueKey);
+							if (value.has(locKey)) {
+								nutListElt.addAttribute("rounded" + keyToXml(valueKey) + suffix, "" + value.get(locKey));
+							}
 						}
-						if (def.getGda() != null) {
-							nutListElt.addAttribute("regulGDA" + suffix, "" + def.getGda());
+	
+						if ((nutListValue != null) && (!nutListValue.equals(""))) {
+							nutListElt.addAttribute("roundedDisplayValue" + suffix, RegulationFormulationHelper
+									.displayValue(Double.parseDouble(nutListValue), extractValue(roundedValue, locKey), nutCode, locale, locKey));
+							if (locKey.equals("US") || locKey.equals("US_2013")) {
+								nutListElt.addAttribute("roundedDisplayValuePerContainer" + suffix,
+										RegulationFormulationHelper.displayValue(extractValuePerContainer(roundedValue, locKey),
+												extractValuePerContainer(roundedValue, locKey), nutCode, locale, locKey));
+							}
 						}
-						if (def.getUl() != null) {
-							nutListElt.addAttribute("regulUL" + suffix, "" + def.getUl());
+						if ((nutListValuePerServing != null) && (!nutListValuePerServing.equals(""))) {
+							nutListElt.addAttribute("roundedDisplayValuePerServing" + suffix, RegulationFormulationHelper.displayValue(
+									Double.parseDouble(nutListValuePerServing), extractValuePerServing(roundedValue, locKey), nutCode, locale, locKey));
 						}
-						if (def.getUnit() != null) {
-							nutListElt.addAttribute("regulUnit" + suffix, "" + def.getUnit());
-						}
-						if (def.getShowGDAPerc() != null) {
-							nutListElt.addAttribute("regulShowGDAPerc" + suffix, "" + def.getShowGDAPerc());
-						}
-					}
-
-					for (Iterator<?> i = jsonRound.keys(); i.hasNext();) {
-						String valueKey = (String) i.next();
-						JSONObject value = (JSONObject) jsonRound.get(valueKey);
-						if (value.has(locKey)) {
-							nutListElt.addAttribute("rounded" + keyToXml(valueKey) + suffix, "" + value.get(locKey));
-						}
-					}
-
-					if ((nutListValue != null) && (!nutListValue.equals(""))) {
-						nutListElt.addAttribute("roundedDisplayValue" + suffix, RegulationFormulationHelper
-								.displayValue(Double.parseDouble(nutListValue), extractValue(roundedValue, locKey), nutCode, locale, locKey));
-						if (locKey.equals("US") || locKey.equals("US_2013")) {
-							nutListElt.addAttribute("roundedDisplayValuePerContainer" + suffix,
-									RegulationFormulationHelper.displayValue(extractValuePerContainer(roundedValue, locKey),
-											extractValuePerContainer(roundedValue, locKey), nutCode, locale, locKey));
-						}
-					}
-					if ((nutListValuePerServing != null) && (!nutListValuePerServing.equals(""))) {
-						nutListElt.addAttribute("roundedDisplayValuePerServing" + suffix, RegulationFormulationHelper.displayValue(
-								Double.parseDouble(nutListValuePerServing), extractValuePerServing(roundedValue, locKey), nutCode, locale, locKey));
 					}
 				}
 			} catch (JSONException e) {
