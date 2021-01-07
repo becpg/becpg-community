@@ -50,7 +50,7 @@ import fr.becpg.report.client.ReportFormat;
  */
 public class ReportContentGet extends ContentGet {
 	private static final Log logger = LogFactory.getLog(ReportContentGet.class);
- 
+
 	private static final String PARAM_ENTITY_NODEREF = "entityNodeRef";
 	/** Constant <code>PARAM_STORE_TYPE="store_type"</code> */
 	protected static final String PARAM_STORE_TYPE = "store_type";
@@ -83,7 +83,6 @@ public class ReportContentGet extends ContentGet {
 	/** {@inheritDoc} */
 	@Override
 	public void execute(final WebScriptRequest req, final WebScriptResponse res) throws IOException {
-		
 
 		NodeRef nodeRef = null;
 
@@ -100,66 +99,70 @@ public class ReportContentGet extends ContentGet {
 		if (nodeRef == null) {
 			throw new WebScriptException(HttpServletResponse.SC_NOT_FOUND, "No report provided");
 		}
-		
-		String entityNodeRefParam = req.getParameter(PARAM_ENTITY_NODEREF);
-		NodeRef entityNodeRef = null;
-		if ((entityNodeRefParam != null) && !entityNodeRefParam.isEmpty()) {
-			entityNodeRef = new NodeRef(entityNodeRefParam);
-		} else {
-			entityNodeRef = entityReportService.getEntityNodeRef(nodeRef);
-		}
-		
-		if(entityNodeRef != null && nodeService.hasAspect(entityNodeRef, VirtualContentModel.ASPECT_VIRTUAL_DOCUMENT)) {
-            entityNodeRef = new NodeRef((String) nodeService.getProperty(entityNodeRef, VirtualContentModel.PROP_ACTUAL_NODE_REF));
-        }
-		
-		if (entityNodeRef == null) {
-			throw new WebScriptException(HttpServletResponse.SC_NOT_FOUND, "No entity provided");
-		}
-		
-		nodeRef = entityReportService.getOrRefreshReport(entityNodeRef, nodeRef);
 
+
+		// render content
+		QName propertyQName = ContentModel.PROP_CONTENT;
+		String contentPart = templateArgs.get(PARAM_PROPERTY);
+		if ((contentPart.length() > 0) && (contentPart.charAt(0) == ';')) {
+			if (contentPart.length() < 2) {
+				throw new WebScriptException(HttpServletResponse.SC_BAD_REQUEST, "Content property malformed");
+			}
+			String propertyName = contentPart.substring(1);
+			if (propertyName.length() > 0) {
+				propertyQName = QName.createQName(propertyName, namespaceService);
+			}
+		}
+		
+		String format = req.getParameter("format");
 		// determine attachment
 		boolean attach = Boolean.valueOf(req.getParameter("a"));
 
-		String format = req.getParameter("format");
+		if (!"search".equals(format)) {
 
-		if ((format != null) && attach) {
-
-			ReportFormat reportFormat = ReportFormat.valueOf(format.toUpperCase());
-
-			String name = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
-		
-			String mimeType = mimetypeService.getMimetype(format);
-
-			name = FilenameUtils.removeExtension(name) + FilenameUtils.EXTENSION_SEPARATOR_STR + mimetypeService.getExtension(mimeType);
-			
-			logger.debug("Rendering report at format :" + reportFormat.toString() + " mimetype: " + mimeType + " name " + name);
-
-			entityReportService.generateReport(entityNodeRef, nodeRef, reportFormat, res.getOutputStream());
-
-			res.setContentType(mimeType);
-			AttachmentHelper.setAttachment(req, res, name);
-
-			return;
-		} else {
-
-			// render content
-			QName propertyQName = ContentModel.PROP_CONTENT;
-			String contentPart = templateArgs.get(PARAM_PROPERTY);
-			if ((contentPart.length() > 0) && (contentPart.charAt(0) == ';')) {
-				if (contentPart.length() < 2) {
-					throw new WebScriptException(HttpServletResponse.SC_BAD_REQUEST, "Content property malformed");
-				}
-				String propertyName = contentPart.substring(1);
-				if (propertyName.length() > 0) {
-					propertyQName = QName.createQName(propertyName, namespaceService);
-				}
+			String entityNodeRefParam = req.getParameter(PARAM_ENTITY_NODEREF);
+			NodeRef entityNodeRef = null;
+			if ((entityNodeRefParam != null) && !entityNodeRefParam.isEmpty()) {
+				entityNodeRef = new NodeRef(entityNodeRefParam);
+			} else {
+				entityNodeRef = entityReportService.getEntityNodeRef(nodeRef);
 			}
 
+			if ((entityNodeRef != null) && nodeService.hasAspect(entityNodeRef, VirtualContentModel.ASPECT_VIRTUAL_DOCUMENT)) {
+				entityNodeRef = new NodeRef((String) nodeService.getProperty(entityNodeRef, VirtualContentModel.PROP_ACTUAL_NODE_REF));
+			}
+
+			if (entityNodeRef == null) {
+				throw new WebScriptException(HttpServletResponse.SC_NOT_FOUND, "No entity provided");
+			}
+
+			nodeRef = entityReportService.getOrRefreshReport(entityNodeRef, nodeRef);
+
+			if ((format != null) && attach) {
+
+				ReportFormat reportFormat = ReportFormat.valueOf(format.toUpperCase());
+
+				String name = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
+
+				String mimeType = mimetypeService.getMimetype(format);
+
+				name = FilenameUtils.removeExtension(name) + FilenameUtils.EXTENSION_SEPARATOR_STR + mimetypeService.getExtension(mimeType);
+
+				logger.debug("Rendering report at format :" + reportFormat.toString() + " mimetype: " + mimeType + " name " + name);
+
+				entityReportService.generateReport(entityNodeRef, nodeRef, reportFormat, res.getOutputStream());
+
+				res.setContentType(mimeType);
+				AttachmentHelper.setAttachment(req, res, name);
+				return;
+			}
+			
 			// Stream the content
 			streamContentLocal(req, res, nodeRef, attach, propertyQName, null);
+		} else {
+			streamContent(req, res, nodeRef, propertyQName, attach, null, null);
 		}
+	
 
 	}
 

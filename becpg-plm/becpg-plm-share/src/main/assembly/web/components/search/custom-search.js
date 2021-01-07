@@ -774,13 +774,10 @@
 
 								var downloadDialog = Alfresco.getArchiveAndDownloadInstance();
 								
-								var isPDF = false;
-								
 								if(args.reportFileName.indexOf(".xlsx") > 0 || args.reportFileName.indexOf(".xlsm") > 0){
 									downloadDialog.mimeType = "-excel";
 								} else if(args.reportFileName.indexOf(".pdf") > 0 ){
 									downloadDialog.mimeType = "-pdf";
-									isPDF = true;
 								}else if(args.reportFileName.indexOf(".doc") > 0 || args.reportFileName.indexOf(".docx") > 0 || args.reportFileName.indexOf(".odt") > 0){
 									downloadDialog.mimeType = "-doc";
 								}else if(args.reportFileName.indexOf(".ppt") > 0 || args.reportFileName.indexOf(".pptx") > 0 ){
@@ -823,17 +820,21 @@
 								
 								         var form = document.createElement("form");
 								         form.method = "GET";
-								         form.action = Alfresco.constants.PROXY_URI + "api/node/content/" + this._currentArchiveNodeURL + "/" + Alfresco.util.encodeURIPath(this._currentArchiveName);
+								         form.action = Alfresco.constants.PROXY_URI + "becpg/report/node/" + this._currentArchiveNodeURL + "/content/" + Alfresco.util.encodeURIPath(this._currentArchiveName);
 								         document.body.appendChild(form);
 									
 								
 								         var d = form.ownerDocument;
-										if(isPDF) {
-		 									 var input = d.createElement("input");
-											 input.name="a";
-											 input.value="true";
-											 form.appendChild(input);
-										}
+ 			                             var input1 = d.createElement("input");
+											 input1.name="format";
+											 input1.value="search";
+											 form.appendChild(input1);
+
+		 							     var input2 = d.createElement("input");
+											 input2.name="a";
+											 input2.value="true";
+											 form.appendChild(input2);
+										
 							
 								         var iframe = d.createElement("iframe");
 								         iframe.style.display = "none";
