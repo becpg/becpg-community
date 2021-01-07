@@ -86,9 +86,8 @@ public class DataListSortServiceImpl implements DataListSortService {
 
 			AtomicInteger newSort = new AtomicInteger(RepoConsts.SORT_DEFAULT_STEP);
 			BeCPGQueryBuilder.createQuery().parent(listContainer).ofType(dataType).isNotNull(BeCPGModel.PROP_SORT).addSort(BeCPGModel.PROP_SORT, true)
-					.inDB().maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list().forEach(listItem -> {
-						nodeService.setProperty(listItem, BeCPGModel.PROP_SORT, newSort.getAndAdd(RepoConsts.SORT_DEFAULT_STEP));
-					});
+					.inDB().maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list().forEach(listItem -> 
+						nodeService.setProperty(listItem, BeCPGModel.PROP_SORT, newSort.getAndAdd(RepoConsts.SORT_DEFAULT_STEP)));
 		}
 
 		/*
@@ -383,16 +382,11 @@ public class DataListSortServiceImpl implements DataListSortService {
 			NodeRef destNodeRef = list.getNextSiblingNode(nodeRef, moveUp);
 			logger.debug("destNodeRef " + destNodeRef);
 
-			if (destNodeRef == null) {
-
-				// sort = list.getExtractSortOrNormalize(nodeRef, sort, );
-
-				if (!list.checkSortIsFree(sort, nodeRef)) {
-					// several node with same sort
-					list.normalize();
-					sort = (Integer) nodeService.getProperty(nodeRef, BeCPGModel.PROP_SORT);
-					destNodeRef = list.getNextSiblingNode(nodeRef, moveUp);
-				}
+			if (destNodeRef == null && !list.checkSortIsFree(sort, nodeRef)) {
+				// several node with same sort
+				list.normalize();
+				sort = (Integer) nodeService.getProperty(nodeRef, BeCPGModel.PROP_SORT);
+				destNodeRef = list.getNextSiblingNode(nodeRef, moveUp);
 			}
 
 			if (destNodeRef != null) {
@@ -468,7 +462,7 @@ public class DataListSortServiceImpl implements DataListSortService {
 			}
 
 			if (list.exists()) {
-				insertAfter(list, nodeRef, selectedNodeRef, new HashSet<NodeRef>());
+				insertAfter(list, nodeRef, selectedNodeRef, new HashSet<>());
 			}
 		} finally {
 			policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);

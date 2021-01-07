@@ -38,6 +38,16 @@
 						   </div>
 					   </div>
 					</div>
+					<#if args.showActions?? >
+					<div class="form-field">
+					<label for="${el}-action">${msg("label.action")}:</label>
+			        <select id="${el}-action" name="action" tabindex="0" >
+			             <option value="Override" selected="selected" >${msg("label.action.override")}</option>
+			             <option value="Add"  >${msg("label.action.add")}</option>
+			             <option value="Merge" >${msg("label.action.merge")}</option> 
+			         </select>
+			        </div>	
+					</#if>	
 			</div>
 	  	 </div>	
          <div class="bdft">

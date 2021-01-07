@@ -393,6 +393,110 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 	}
 
+
+	@Override
+	public void mergeDataList(NodeRef dataListNodeRef, NodeRef entityNodeRef, boolean appendOnly) {
+		NodeRef targetListContainerNodeRef = getListContainer(entityNodeRef);
+		if (targetListContainerNodeRef != null) {
+
+			String dataListType = (String) nodeService.getProperty(dataListNodeRef, DataListModel.PROP_DATALISTITEMTYPE);
+
+			QName listQName = QName.createQName(dataListType, namespaceService);
+
+			NodeRef existingListNodeRef = findMatchingList(dataListNodeRef, targetListContainerNodeRef);
+
+			if (existingListNodeRef != null) {
+				for (NodeRef itemNodeRef : getListItems(dataListNodeRef, null, null)) {
+					if (appendOnly || (findMatchingListItem(itemNodeRef, existingListNodeRef) == null)) {
+						copyService.copy(itemNodeRef, existingListNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
+					}
+				}
+
+			} else {
+				String name = (String) nodeService.getProperty(dataListNodeRef, ContentModel.PROP_NAME);
+				logger.debug("copy datalist " + listQName);
+				NodeRef newDLNodeRef = copyService.copy(dataListNodeRef, targetListContainerNodeRef, ContentModel.ASSOC_CONTAINS,
+						DataListModel.TYPE_DATALIST, true);
+				nodeService.setProperty(newDLNodeRef, ContentModel.PROP_NAME, name);
+			}
+
+		}
+
+	}
+
+	@SuppressWarnings("unchecked")
+	private NodeRef findMatchingListItem(NodeRef targetItemNodeRef, NodeRef dataListNodeRef) {
+		Set<QName> isIgnoredTypes = new HashSet<>();
+		isIgnoredTypes.add(ContentModel.PROP_NAME);
+		isIgnoredTypes.add(ContentModel.PROP_CREATED);
+		isIgnoredTypes.add(ContentModel.PROP_CREATOR);
+		isIgnoredTypes.add(ContentModel.PROP_MODIFIED);
+		isIgnoredTypes.add(ContentModel.PROP_MODIFIER);
+		isIgnoredTypes.add(ForumModel.PROP_COMMENT_COUNT);
+		isIgnoredTypes.add(BeCPGModel.PROP_SORT);
+		isIgnoredTypes.add(BeCPGModel.PROP_DEPTH_LEVEL);
+
+		NodeRef matchingItemNodeRef = null;
+		Map<QName, Serializable> targetPropertiesAndAssocs = nodeService.getProperties(targetItemNodeRef);
+		for (AssociationRef ref : this.nodeService.getTargetAssocs(targetItemNodeRef, RegexQNamePattern.MATCH_ALL)) {
+			List<NodeRef> nodes = (List<NodeRef>) targetPropertiesAndAssocs.get(ref.getTypeQName());
+			if (nodes == null) {
+				nodes = new ArrayList<>(4);
+			}
+			targetPropertiesAndAssocs.put(ref.getTypeQName(), (Serializable) nodes);
+			nodes.add(ref.getTargetRef());
+		}
+
+		for (NodeRef itemNodeRef : getListItems(dataListNodeRef, null, null)) {
+			Map<QName, Serializable> propertiesAndAssocs = nodeService.getProperties(itemNodeRef);
+			for (AssociationRef ref : this.nodeService.getTargetAssocs(itemNodeRef, RegexQNamePattern.MATCH_ALL)) {
+				List<NodeRef> nodes = (List<NodeRef>) propertiesAndAssocs.get(ref.getTypeQName());
+				if (nodes == null) {
+					nodes = new ArrayList<>(4);
+				}
+				propertiesAndAssocs.put(ref.getTypeQName(), (Serializable) nodes);
+				nodes.add(ref.getTargetRef());
+			}
+			boolean isDifferent = false;
+			MapDifference<QName, Serializable> diff = Maps.difference(targetPropertiesAndAssocs, propertiesAndAssocs);
+			for (QName afterType : diff.entriesDiffering().keySet()) {
+				if (!afterType.getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI) && !isIgnoredTypes.contains(afterType)
+						&& (propertiesAndAssocs.get(afterType) != null) && (propertiesAndAssocs.get(afterType) != "")) {
+
+					isDifferent = true;
+
+					break;
+				}
+			}
+
+			if (!isDifferent) {
+				return itemNodeRef;
+			}
+
+		}
+
+		return matchingItemNodeRef;
+	}
+
+	@Override
+	public NodeRef findMatchingList(NodeRef dataListNodeRef, NodeRef targetListContainerNodeRef) {
+
+		String dataListType = (String) nodeService.getProperty(dataListNodeRef, DataListModel.PROP_DATALISTITEMTYPE);
+		String name = (String) nodeService.getProperty(dataListNodeRef, ContentModel.PROP_NAME);
+		QName listQName = QName.createQName(dataListType, namespaceService);
+
+		NodeRef existingListNodeRef;
+
+		if (name.startsWith(RepoConsts.WUSED_PREFIX) || name.startsWith(RepoConsts.CUSTOM_VIEW_PREFIX)
+				|| name.startsWith(RepoConsts.SMART_CONTENT_PREFIX) || name.contains("@")) {
+			existingListNodeRef = getList(targetListContainerNodeRef, name);
+		} else {
+			existingListNodeRef = getList(targetListContainerNodeRef, listQName);
+		}
+
+		return existingListNodeRef;
+	}
+
 	/** {@inheritDoc} */
 	@Override
 	public NodeRef createListItem(NodeRef listNodeRef, QName listType, Map<QName, Serializable> properties, Map<QName, List<NodeRef>> associations) {
