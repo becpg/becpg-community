@@ -73,8 +73,6 @@
    </#if>
 </div>
 <script type="text/javascript">//<![CDATA[
-YAHOO.util.Event.onAvailable("${fieldHtmlId}",function()
-{
   new beCPG.component.AutoCompletePicker('${controlId}', '${fieldHtmlId}', true).setOptions(
 		   {
 		 		currentValue: "${field.value}",
@@ -119,5 +117,4 @@ YAHOO.util.Event.onAvailable("${fieldHtmlId}",function()
 				urlParamsToPass:"${urlParamsToPass}"
 			</#if>
   });
-});
 //]]></script>
