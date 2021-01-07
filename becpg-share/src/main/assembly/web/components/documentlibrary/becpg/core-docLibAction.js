@@ -177,13 +177,13 @@
     	   
     	   if(dt!=null && dt.length >0 && dt[0].datalistMeta.nodeRef!=null){
 
-    		    var actionUrl = Alfresco.constants.PROXY_URI + 'becpg/entity/datalists/copy/node/' + dt[0].datalistMeta.nodeRef.replace(":/", "");
+    		    var actionUrl = Alfresco.constants.PROXY_URI + 'becpg/entity/datalists/copy/node/' + dt[0].datalistMeta.nodeRef.replace(":/", "")+"?destination=to";
 
 	            this.modules.entityPicker = new Alfresco.module.SimpleDialog(this.id + "-entityPicker").setOptions({
 	               width : "33em",
 	               templateUrl : Alfresco.constants.URL_SERVICECONTEXT + "modules/entity-picker/entity-picker?title="
 	               							+encodeURIComponent(this.msg("message.copy-datalist-to",dt[0].datalistMeta.title))
-	               							+"&entityNodeRef="+p_record.nodeRef,
+	               							+"&entityNodeRef="+p_record.nodeRef+"&showActions=true",
 	               actionUrl : actionUrl,
 	               validateOnSubmit : false,
 	               firstFocus : this.id + "-entityPicker-entity-field",
@@ -206,6 +206,52 @@
     	   } else {
     		   Alfresco.util.PopupManager.displayMessage({
     			   text : this.msg("message.copy-datalist-to.notselected")
+    		   });  
+    	   }
+       }
+    });
+
+
+	
+	YAHOO.Bubbling.fire("registerAction", {
+	       actionName : "onActionImportDataListFrom",
+       fn : function onActionImportDataListFrom(p_record) {
+    	   var dt = Alfresco.util.ComponentManager.find({
+				name : "beCPG.module.EntityDataGrid"
+			});
+    	   
+    	   if(dt!=null && dt.length >0 && dt[0].datalistMeta.nodeRef!=null){
+
+    		    var actionUrl = Alfresco.constants.PROXY_URI + 'becpg/entity/datalists/copy/node/' + dt[0].datalistMeta.nodeRef.replace(":/", "")+"?destination=from";
+
+	            this.modules.entityPicker = new Alfresco.module.SimpleDialog(this.id + "-entityPicker").setOptions({
+	               width : "33em",
+	               templateUrl : Alfresco.constants.URL_SERVICECONTEXT + "modules/entity-picker/entity-picker?title="
+	               							+encodeURIComponent(this.msg("message.import-datalist-from",dt[0].datalistMeta.title))
+	               							+"&entityNodeRef="+p_record.nodeRef+"&showActions=true",
+	               actionUrl : actionUrl,
+	               validateOnSubmit : false,
+	               firstFocus : this.id + "-entityPicker-entity-field",
+	               onSuccess:
+	               {
+	                  fn: function onActionImportDataListFrom_success(response)
+	                  {
+	                	  if(response.json) {
+	                	
+							 Alfresco.util.PopupManager.displayMessage({
+						    			   text : this.msg("message.import-datalist-from.notselected")
+						    	}); 
+	                	  }
+	                  },
+	                  scope: this
+	               }
+	            });
+	            
+	            this.modules.entityPicker.show();
+    		   
+    	   } else {
+    		   Alfresco.util.PopupManager.displayMessage({
+    			   text : this.msg("message.import-datalist-from.notselected")
     		   });  
     	   }
        }
