@@ -31,14 +31,17 @@ import java.util.Set;
 import javax.sql.DataSource;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.model.ForumModel;
 import org.alfresco.repo.policy.PolicyComponent;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
+import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.CopyService;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.service.namespace.RegexQNamePattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +49,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Repository;
+
+import com.google.common.collect.MapDifference;
+import com.google.common.collect.Maps;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
@@ -207,7 +213,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 		if (listContainerNodeRef != null) {
 
-			for (NodeRef listNodeRef : associationService.getChildAssocs(listContainerNodeRef, ContentModel.ASSOC_CONTAINS) ) {
+			for (NodeRef listNodeRef : associationService.getChildAssocs(listContainerNodeRef, ContentModel.ASSOC_CONTAINS)) {
 
 				String dataListType = (String) nodeService.getProperty(listNodeRef, DataListModel.PROP_DATALISTITEMTYPE);
 
@@ -343,7 +349,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 	private void copyDataListInternal(NodeRef dataListNodeRef, NodeRef targetListContainerNodeRef, Collection<QName> listQNames, boolean override) {
 
 		String dataListType = (String) nodeService.getProperty(dataListNodeRef, DataListModel.PROP_DATALISTITEMTYPE);
-		
+
 		QName listQName = QName.createQName(dataListType, namespaceService);
 
 		if ((listQNames == null) || listQNames.contains(listQName)) {
@@ -369,46 +375,98 @@ public class EntityListDAOImpl implements EntityListDAO {
 		}
 
 	}
-	
 
 	@Override
 	public void mergeDataList(NodeRef dataListNodeRef, NodeRef entityNodeRef, boolean appendOnly) {
 		NodeRef targetListContainerNodeRef = getListContainer(entityNodeRef);
 		if (targetListContainerNodeRef != null) {
-		    
+
 			String dataListType = (String) nodeService.getProperty(dataListNodeRef, DataListModel.PROP_DATALISTITEMTYPE);
-			
+
 			QName listQName = QName.createQName(dataListType, namespaceService);
 
+			NodeRef existingListNodeRef = findMatchingList(dataListNodeRef, targetListContainerNodeRef);
 
-				NodeRef existingListNodeRef = findMatchingList(dataListNodeRef, targetListContainerNodeRef);
-
-				if (existingListNodeRef != null) {
-					for(NodeRef itemNodeRef : getListItems(dataListNodeRef, null, null)) {
+			if (existingListNodeRef != null) {
+				for (NodeRef itemNodeRef : getListItems(dataListNodeRef, null, null)) {
+					if (appendOnly || (findMatchingListItem(itemNodeRef, existingListNodeRef) == null)) {
 						copyService.copy(itemNodeRef, existingListNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
 					}
-					
-					
-				}  else {
-					String name = (String) nodeService.getProperty(dataListNodeRef, ContentModel.PROP_NAME);
-					logger.debug("copy datalist " + listQName);
-					NodeRef newDLNodeRef = copyService.copy(dataListNodeRef, targetListContainerNodeRef, ContentModel.ASSOC_CONTAINS,
-							DataListModel.TYPE_DATALIST, true);
-					nodeService.setProperty(newDLNodeRef, ContentModel.PROP_NAME, name);
 				}
-			
+
+			} else {
+				String name = (String) nodeService.getProperty(dataListNodeRef, ContentModel.PROP_NAME);
+				logger.debug("copy datalist " + listQName);
+				NodeRef newDLNodeRef = copyService.copy(dataListNodeRef, targetListContainerNodeRef, ContentModel.ASSOC_CONTAINS,
+						DataListModel.TYPE_DATALIST, true);
+				nodeService.setProperty(newDLNodeRef, ContentModel.PROP_NAME, name);
+			}
+
 		}
-		
+
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	private NodeRef findMatchingListItem(NodeRef targetItemNodeRef, NodeRef dataListNodeRef) {
+		Set<QName> isIgnoredTypes = new HashSet<>();
+		isIgnoredTypes.add(ContentModel.PROP_NAME);
+		isIgnoredTypes.add(ContentModel.PROP_CREATED);
+		isIgnoredTypes.add(ContentModel.PROP_CREATOR);
+		isIgnoredTypes.add(ContentModel.PROP_MODIFIED);
+		isIgnoredTypes.add(ContentModel.PROP_MODIFIER);
+		isIgnoredTypes.add(ForumModel.PROP_COMMENT_COUNT);
+		isIgnoredTypes.add(BeCPGModel.PROP_SORT);
+		isIgnoredTypes.add(BeCPGModel.PROP_DEPTH_LEVEL);
+
+		NodeRef matchingItemNodeRef = null;
+		Map<QName, Serializable> targetPropertiesAndAssocs = nodeService.getProperties(targetItemNodeRef);
+		for (AssociationRef ref : this.nodeService.getTargetAssocs(targetItemNodeRef, RegexQNamePattern.MATCH_ALL)) {
+			List<NodeRef> nodes = (List<NodeRef>) targetPropertiesAndAssocs.get(ref.getTypeQName());
+			if (nodes == null) {
+				nodes = new ArrayList<>(4);
+			}
+			targetPropertiesAndAssocs.put(ref.getTypeQName(), (Serializable) nodes);
+			nodes.add(ref.getTargetRef());
+		}
+
+		for (NodeRef itemNodeRef : getListItems(dataListNodeRef, null, null)) {
+			Map<QName, Serializable> propertiesAndAssocs = nodeService.getProperties(itemNodeRef);
+			for (AssociationRef ref : this.nodeService.getTargetAssocs(itemNodeRef, RegexQNamePattern.MATCH_ALL)) {
+				List<NodeRef> nodes = (List<NodeRef>) propertiesAndAssocs.get(ref.getTypeQName());
+				if (nodes == null) {
+					nodes = new ArrayList<>(4);
+				}
+				propertiesAndAssocs.put(ref.getTypeQName(), (Serializable) nodes);
+				nodes.add(ref.getTargetRef());
+			}
+			boolean isDifferent = false;
+			MapDifference<QName, Serializable> diff = Maps.difference(targetPropertiesAndAssocs, propertiesAndAssocs);
+			for (QName afterType : diff.entriesDiffering().keySet()) {
+				if (!afterType.getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI) && !isIgnoredTypes.contains(afterType)
+						&& (propertiesAndAssocs.get(afterType) != null) && (propertiesAndAssocs.get(afterType) != "")) {
+
+					isDifferent = true;
+
+					break;
+				}
+			}
+
+			if (!isDifferent) {
+				return itemNodeRef;
+			}
+
+		}
+
+		return matchingItemNodeRef;
+	}
+
 	@Override
-	public NodeRef findMatchingList(NodeRef dataListNodeRef,  NodeRef targetListContainerNodeRef) {
-		
+	public NodeRef findMatchingList(NodeRef dataListNodeRef, NodeRef targetListContainerNodeRef) {
 
 		String dataListType = (String) nodeService.getProperty(dataListNodeRef, DataListModel.PROP_DATALISTITEMTYPE);
 		String name = (String) nodeService.getProperty(dataListNodeRef, ContentModel.PROP_NAME);
 		QName listQName = QName.createQName(dataListType, namespaceService);
-		
+
 		NodeRef existingListNodeRef;
 
 		if (name.startsWith(RepoConsts.WUSED_PREFIX) || name.startsWith(RepoConsts.CUSTOM_VIEW_PREFIX)
@@ -418,7 +476,6 @@ public class EntityListDAOImpl implements EntityListDAO {
 			existingListNodeRef = getList(targetListContainerNodeRef, listQName);
 		}
 
-		
 		return existingListNodeRef;
 	}
 
@@ -482,6 +539,5 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 		return null;
 	}
-
 
 }

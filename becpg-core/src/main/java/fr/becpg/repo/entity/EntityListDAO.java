@@ -215,6 +215,12 @@ public interface EntityListDAO {
 	 */
 	boolean isEmpty(NodeRef listNodeRef, QName listQNameFilter);
 
+	/**
+	 * Find list with the same list in other entityListContainer
+	 * @param dataListNodeRef
+	 * @param targetListContainerNodeRef
+	 * @return a nodeRef
+	 */
 	NodeRef findMatchingList(NodeRef dataListNodeRef, NodeRef targetListContainerNodeRef);
 
 }
