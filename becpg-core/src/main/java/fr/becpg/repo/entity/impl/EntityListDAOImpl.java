@@ -385,7 +385,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 				if (existingListNodeRef != null) {
 					for(NodeRef itemNodeRef : getListItems(dataListNodeRef, null, null)) {
-						copyService.copy(itemNodeRef, existingListNodeRef);
+						copyService.copy(itemNodeRef, existingListNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
 					}
 					
 					
