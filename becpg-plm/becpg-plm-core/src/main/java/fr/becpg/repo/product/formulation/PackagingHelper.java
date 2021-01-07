@@ -152,6 +152,12 @@ public class PackagingHelper implements InitializingBean {
 					}
 
 				} else if (PackagingLevel.Tertiary.equals(dataItem.getPkgLevel())) {
+					if (Boolean.TRUE.equals(dataItem.getIsMaster())) {
+						variantPackagingData.setTertiaryWidth(parseFloat((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_WIDTH)));
+						variantPackagingData.setTertiaryDepth(parseFloat((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_LENGTH)));
+					}
+				
+					
 					variantPackagingData.addTareTertiary(tare);
 				}
 			}
