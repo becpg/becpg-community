@@ -61,9 +61,7 @@
    </#if>
 </div>
 <script type="text/javascript">//<![CDATA[
-YAHOO.util.Event.onAvailable("${fieldHtmlId}",function()
-{
-	new beCPG.component.AutoCompletePicker('${fieldHtmlId}', '${fieldHtmlId}', <#if field.dataType == 'noderef' >true<#else>false</#if>).setOptions(
+new beCPG.component.AutoCompletePicker('${fieldHtmlId}', '${fieldHtmlId}', <#if field.dataType == 'noderef' >true<#else>false</#if>).setOptions(
 			   {
 			 		currentValue: "${field.value}",
 			 		mode: "${form.mode}",
@@ -117,5 +115,4 @@ YAHOO.util.Event.onAvailable("${fieldHtmlId}",function()
 				urlParamsToPass:"${urlParamsToPass}"
 			</#if>
 	 });
-});
 //]]></script>
