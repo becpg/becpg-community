@@ -236,11 +236,12 @@
 	               {
 	                  fn: function onActionImportDataListFrom_success(response)
 	                  {
-	                	  if(response.json) {
-	                	
+	                	  if(response.json) {            	
+
 							 Alfresco.util.PopupManager.displayMessage({
-						    			   text : this.msg("message.import-datalist-from.notselected")
-						    	}); 
+						    			   text : this.msg("message.import-datalist-from.success")
+						      }); 
+							  document.location.reload();
 	                	  }
 	                  },
 	                  scope: this
