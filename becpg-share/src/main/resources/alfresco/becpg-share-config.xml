@@ -418,6 +418,11 @@
             <param name="function">onActionCopyDataListTo</param>
             <evaluator>evaluator.doclib.action.editableByCurrentUser</evaluator>
          </action>
+         
+          <action id="datalist-import-from" type="javascript" label="actions.datalist.import-from">
+            <param name="function">onActionImportDataListFrom</param>
+            <evaluator>evaluator.doclib.action.editableByCurrentUser</evaluator>
+         </action>
 			
 		</actions>
 		<actionGroupResolver>becpg.resolver.doclib.actionGroup</actionGroupResolver>

@@ -80,6 +80,17 @@ public interface EntityListDAO {
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
 	NodeRef getList(NodeRef listContainerNodeRef, String name);
+	
+
+	/**
+	 * Get the data list NodeRef.
+	 *
+	 * @param listContainerNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param dataListQName a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
+	NodeRef getList(NodeRef listContainerNodeRef, QName dataListQName);
+
 
 	/**
 	 * Create dataList with specified name and type
@@ -90,15 +101,6 @@ public interface EntityListDAO {
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
 	NodeRef createList(NodeRef listContainerNodeRef, String name, QName type);
-
-	/**
-	 * Get the data list NodeRef.
-	 *
-	 * @param listContainerNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param dataListQName a {@link org.alfresco.service.namespace.QName} object.
-	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 */
-	NodeRef getList(NodeRef listContainerNodeRef, QName dataListQName);
 
 	/**
 	 * Create the data list NodeRef.
@@ -156,6 +158,16 @@ public interface EntityListDAO {
 	 * @param override a boolean.
 	 */
 	void copyDataList(NodeRef dataListNodeRef, NodeRef entityNodeRef, boolean override);
+	
+	/**
+	 * 
+	 * Merge one dataList into another 
+	 * 
+	 * @param dataListNodeRef
+	 * @param entityNodeRef
+	 * @param appendOnly
+	 */
+	void mergeDataList(NodeRef dataListNodeRef,NodeRef entityNodeRef, boolean appendOnly );
 
 	/**
 	 * Copy all data lists
@@ -202,5 +214,7 @@ public interface EntityListDAO {
 	 * @return a boolean.
 	 */
 	boolean isEmpty(NodeRef listNodeRef, QName listQNameFilter);
+
+	NodeRef findMatchingList(NodeRef dataListNodeRef, NodeRef targetListContainerNodeRef);
 
 }
