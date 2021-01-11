@@ -210,6 +210,27 @@
 				<field id="rep:reportTpls" />
 			</appearance>		
          </form>
+          <form id="project-metadata">
+				<field-visibility>
+					<show id="pjt:projectState" />
+					<show id="pjt:projectManager" />
+					<show id="pjt:projectObservers" />
+					<show id="pjt:observersEvents" force="true"  />
+					<show id="pjt:projectEntity" />
+					<show id="pjt:projectDueDate" />
+					<show id="pjt:projectOverdue" />
+					<show id="pjt:projectCompletionDate"  />
+				
+				</field-visibility>
+				<appearance>
+					<field id="pjt:projectManager" help-id="becpg.forms.help.projectManager"/>
+					<field id="pjt:projectObservers" help-id="becpg.forms.help.projectObservers" />
+					<field id="pjt:projectEntity" help-id="becpg.forms.help.projectEntity"  />
+					<field id="pjt:projectPlanningMode" help-id="becpg.forms.help.projectPlanningMode"  />
+					<field id="pjt:projectCompletionDate" read-only="true" />
+					<field id="pjt:projectOverdue"  read-only="true" />
+				</appearance>
+			</form>
 			<!-- Document Library pop-up Edit Metadata form -->
 			<form id="doclib-simple-metadata">
 				<field-visibility>
@@ -1345,9 +1366,12 @@
 					<show id="bcpg:parentLevel" />
 					<show id="pjt:subProjectRef" force="true" />
 					<show id="pjt:tlIsGroup" />
+					<show id="pjt:tlIsCritical" />
 					<show id="pjt:tlTaskName" />
 					<show id="pjt:tlStart" />
 					<show id="pjt:tlEnd" />
+					<show id="pjt:tlTargetStart" />
+					<show id="pjt:tlTargetEnd" />
 					<show id="pjt:tlIsMilestone" />
 					<show id="pjt:tlState" />
 					<show id="pjt:tlResources" />
@@ -1367,6 +1391,7 @@
 					<field id="bcpg:parentLevel" label="hidden" />
 					<field id="pjt:subProjectRef" label="hidden" />
 					<field id="pjt:tlIsGroup" label="hidden" />
+					<field id="pjt:tlIsCritical" label="hidden" />
 					<field id="pjt:tlPrevTasks" label="hidden" />
 					<field id="pjt:invoice" read-only="true" />
 					<field id="pjt:expense" read-only="true" />					
