@@ -195,12 +195,16 @@
       },
       extractDates : function(record, start, isTask) {
 
-         var startDate = null, endDate = null, dueDate = null;
+         var startDate = null, endDate = null, dueDate = null,targetStartDate = null, targetEndDate= null;
 
          if (isTask) {
             startDate = record["itemData"]["prop_pjt_tlStart"].value;
             endDate = record["itemData"]["prop_pjt_tlEnd"].value;
+			targetStartDate = record["itemData"]["prop_pjt_tlTargetStart"]!=null ?  record["itemData"]["prop_pjt_tlTargetStart"].value : null;
+			targetEndDate = record["itemData"]["prop_pjt_tlTargetEnd"]!=null ? record["itemData"]["prop_pjt_tlTargetEnd"].value : null;
 
+ 			targetStartDate = targetStartDate != null ? this.resetDate(Alfresco.util.fromISO8601(targetStartDate)) : null;
+			targetEndDate = targetEndDate != null ? this.resetDate(Alfresco.util.fromISO8601(targetEndDate)) : null;
             endDate = endDate != null ? this.resetDate(Alfresco.util.fromISO8601(endDate)) : null;
             startDate = startDate != null ? this.resetDate(Alfresco.util.fromISO8601(startDate)) : this
                   .resetDate(start);
@@ -221,7 +225,9 @@
 
             return {
                start : startDate,
-               end : endDate
+               end : endDate,
+			   targetStart : targetStartDate,
+   			   targetEnd : targetEndDate
             };
 
          }
@@ -229,15 +235,21 @@
          startDate = record.itemData["prop_pjt_projectStartDate"].value;
          endDate = record.itemData["prop_pjt_projectCompletionDate"].value;
          dueDate = record.itemData["prop_pjt_projectDueDate"].value;
+		 targetStartDate =  record.itemData["prop_pjt_tlTargetStart"]!=null ?  record.itemData["prop_pjt_tlTargetStart"].value : null;
+		 targetEndDate = record.itemData["prop_pjt_tlTargetEnd"]!=null ? record.itemData["prop_pjt_tlTargetEnd"].value : null;
 
          startDate = startDate != null ? this.resetDate(Alfresco.util.fromISO8601(startDate)) : new Date();
          endDate = endDate != null ? this.resetDate(Alfresco.util.fromISO8601(endDate)) : null;
          dueDate = dueDate != null ? this.resetDate(Alfresco.util.fromISO8601(dueDate)) : this.computeDueDate(
                startDate, record);
+		targetStartDate = targetStartDate != null ? this.resetDate(Alfresco.util.fromISO8601(targetStartDate)) : null;
+		targetEndDate = targetEndDate != null ? this.resetDate(Alfresco.util.fromISO8601(targetEndDate)) : null;
          return {
             start : startDate,
             end : endDate,
-            due : dueDate
+            due : dueDate,
+			targetStart : targetStartDate,
+   			targetEnd : targetEndDate
          };
 
       },
