@@ -122,7 +122,7 @@ public class PackagingHelper implements InitializingBean {
 		NodeRef defaultVariantNodeRef = null;
 		if (productData.getVariants() != null) {
 			for (VariantData variantData : productData.getVariants()) {
-				if (variantData.getIsDefaultVariant()) {
+				if (Boolean.TRUE.equals(variantData.getIsDefaultVariant())) {
 					defaultVariantNodeRef = variantData.getNodeRef();
 				}
 			}
@@ -177,6 +177,7 @@ public class PackagingHelper implements InitializingBean {
 				} else if (PackagingLevel.Tertiary.equals(dataItem.getPkgLevel())) {
 					
 					if (Boolean.TRUE.equals(dataItem.getIsMaster())) {
+						variantPackagingData.setManualTertiary(false);
 						variantPackagingData.setTertiaryWidth(parseFloat((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_WIDTH)));
 						variantPackagingData.setTertiaryDepth(parseFloat((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_LENGTH)));
 					}

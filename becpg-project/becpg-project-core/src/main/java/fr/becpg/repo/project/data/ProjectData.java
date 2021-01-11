@@ -61,6 +61,7 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	private NodeRef hierarchy1;
 	private NodeRef hierarchy2;
 	private Date startDate;
+	private Date targetStartDate;
 	private Date dueDate;
 	private Date completionDate;
 	private PlanningMode planningMode = PlanningMode.Planning;
@@ -230,6 +231,14 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 		this.startDate = startDate;
 	}
 	
+
+	public Date getTargetStartDate() {
+		return targetStartDate;
+	}
+
+	public void setTargetStartDate(Date targetStartDate) {
+		this.targetStartDate = targetStartDate;
+	}
 
 	/**
 	 * <p>Getter for the field <code>formulatedDate</code>.</p>
