@@ -255,7 +255,11 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 							}
 
 							Integer duration = ProjectHelper.calculateTaskDuration(task.getTask().getStart(), task.getTask().getEnd());
-
+							
+							if(duration == null) {
+								logger.warn("Parent task should'nt have manually date:"+ task.getTask().getTaskName());
+							}
+							
 							task.getTask().setDuration(duration);
 							task.getTask().setRealDuration(task.getRealDuration());
 							task.getTask().setWork(work);
@@ -463,7 +467,7 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 							reformulate = calculateState(projectData, task) || reformulate;
 						}
 
-						// set task as calculated an remove
+						// set task as calculated and remove
 						completed.add(task);
 
 					}
@@ -658,8 +662,10 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 		Date targetStart = null;
 
 		if (task.isRoot()) {
+			
 			startDate = projectData.getStartDate();
 			targetStart = projectData.getTargetStartDate();
+			
 		} else {
 
 			TaskWrapper criticalTask = null;
@@ -667,6 +673,9 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 
 				if ((t.getMaxDuration() != null) && (t.getMaxDuration() > maxDuration)) {
 					maxDuration = t.getMaxDuration();
+				}
+				
+				if ((t.getMaxDuration() != null) && (t.getMaxDuration() >= maxDuration)) {
 					criticalTask  = t;
 				}
 
@@ -705,8 +714,9 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 
 		}
 		if((task.getTask().getSubProject() == null)) {
+			
+			
 			if ((startDate != null) ) {
-	
 				ProjectHelper.setTaskStartDate(task.getTask(), startDate);
 	
 				if (((task.getTask().getDuration() != null) || (Boolean.TRUE.equals(task.getTask().getIsMilestone())))) {
