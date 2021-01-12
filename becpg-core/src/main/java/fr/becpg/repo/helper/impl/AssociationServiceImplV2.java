@@ -17,7 +17,6 @@
  ******************************************************************************/
 package fr.becpg.repo.helper.impl;
 
-import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -76,8 +75,7 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
  */
 public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements AssociationService, NodeServicePolicies.OnCreateAssociationPolicy,
 		NodeServicePolicies.OnCreateChildAssociationPolicy, NodeServicePolicies.OnDeleteAssociationPolicy,
-		NodeServicePolicies.OnDeleteChildAssociationPolicy, NodeServicePolicies.OnDeleteNodePolicy, CheckOutCheckInServicePolicies.OnCheckIn,
-		NodeServicePolicies.OnUpdatePropertiesPolicy {
+		NodeServicePolicies.OnDeleteChildAssociationPolicy, NodeServicePolicies.OnDeleteNodePolicy, CheckOutCheckInServicePolicies.OnCheckIn {
 
 	private static final Log logger = LogFactory.getLog(AssociationServiceImplV2.class);
 
@@ -609,9 +607,6 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.OnCheckIn.QNAME, ContentModel.TYPE_AUTHORITY,
 				new JavaBehaviour(this, "onCheckIn"));
 		
-		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, BeCPGModel.ASPECT_DEPTH_LEVEL,
-				new JavaBehaviour(this, "onUpdateProperties"));
-
 	}
 
 	/** {@inheritDoc} */
@@ -662,13 +657,6 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 
 	}
 	
-	/** {@inheritDoc} */
-	@Override
-	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
-		//DEPTH Level has changed remove childAssoc
-		removeChildCachedAssoc(nodeService.getPrimaryParent(nodeRef).getParentRef(), ContentModel.ASSOC_CONTAINS);
-	}
-	
 	
 	//// Cache managment
 
@@ -678,7 +666,8 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		assocsCache.remove(cacheKey);
 	}
 
-	private void removeChildCachedAssoc(NodeRef nodeRef, QName qName) {
+	@Override
+	public void removeChildCachedAssoc(NodeRef nodeRef, QName qName) {
 		childsAssocsCache.remove(new AssociationCacheRegion(nodeRef, qName));
 	}
 
