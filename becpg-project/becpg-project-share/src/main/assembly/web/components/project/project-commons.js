@@ -317,7 +317,7 @@
           
           var text = task["itemData"]["prop_pjt_tlTaskName"].displayValue;
           
-          if(task.permissions.userAccess.edit && classGroup == "" ){
+          if(task.permissions.userAccess.edit ){
         	  
         	  if(size && text.length>size){
         		  ret += '<span class="node-' + (subProject!=null ? subProject.value : task.nodeRef) + '|' + entityNodeRef 

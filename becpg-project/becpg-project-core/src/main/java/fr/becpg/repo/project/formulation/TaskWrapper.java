@@ -1,6 +1,7 @@
 package fr.becpg.repo.project.formulation;
 
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -8,10 +9,13 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.project.data.ProjectData;
@@ -28,6 +32,8 @@ import fr.becpg.repo.project.impl.ProjectHelper;
 public class TaskWrapper implements Comparable<TaskWrapper> {
 
 	private static final int DURATION_DEFAULT = 1;
+	
+	private static Log logger = LogFactory.getLog(TaskWrapper.class);
 
 	private TaskListDataItem task;
 
@@ -38,6 +44,18 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 	private List<TaskWrapper> descendants = new LinkedList<>();
 	private List<TaskWrapper> ancestors = new LinkedList<>();
 	private List<TaskWrapper> childs = new LinkedList<>();
+	
+	private TaskWrapper parent = null;
+	
+	
+
+	public TaskWrapper getParent() {
+		return parent;
+	}
+
+	public void setParent(TaskWrapper parent) {
+		this.parent = parent;
+	}
 
 	/**
 	 * <p>Getter for the field <code>task</code>.</p>
@@ -292,18 +310,83 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 
 			if (task.getParent() != null) {
 				TaskWrapper parentGanttData = getOrCreateTaskWrapper(task.getParent().getNodeRef(), cache);
+				parentGanttData.setTask(task.getParent());
 				parentGanttData.getChilds().add(wrapper);
-
+				wrapper.setParent(parentGanttData);
 			}
 		});
 
-		cache.values().forEach(t -> {
-			if (t.isGroup() || t.isSubProject()) {
-				t.getTask().setIsGroup(true);
+		cache.entrySet().forEach(t -> {
+			if(t.getValue().getTask()!=null) {
+
+				if (t.getValue().isGroup() || t.getValue().isSubProject()) {
+					t.getValue().getTask().setIsGroup(true);
+				} else if(t.getValue().getAncestors().isEmpty() && t.getValue().getParent()!=null) {
+					//Append parent ancestors if needed
+					appendParentAncestors(t.getValue().getParent() , t.getValue());
+				}
+			
+			} else {
+				logger.warn("Null task for:"+ t.getKey());
 			}
 		});
 
 		return cache.values().stream().collect(Collectors.toSet());
+	}
+
+	
+	private static void appendParentAncestors(TaskWrapper parent, TaskWrapper t) {
+
+		if(parent.getAncestors().isEmpty() && parent.getParent()!=null) {
+			appendParentAncestors(parent.getParent() , t);
+		} else {
+			appendAncestors(parent.getAncestors(),t);
+		}
+		
+	}
+	
+	private static void appendAncestors(List<TaskWrapper> ancestors, TaskWrapper t) {
+
+		ancestors.forEach( parentAncestor -> {
+			// ancestor is a parent -> Take last child
+			if(!parentAncestor.getChilds().isEmpty()) {	
+				if(t.childOf(parentAncestor)) {
+					// ancestor is a parent and i'm child of -> Append ancestor of him
+					if(parentAncestor.getParent()!=null ) {
+						appendParentAncestors(parentAncestor.getParent(), t);
+					}
+				} else {
+					appendAncestors(parentAncestor.getLastChilds(), t);
+				}
+			} else  {
+				//ancestor is a task -> Append task
+				parentAncestor.getDescendants().add(t);
+				t.getAncestors().add(parentAncestor);
+			}
+			
+		});
+		
+	}
+
+	private List<TaskWrapper> getLastChilds() {
+		List<TaskWrapper> ret = new ArrayList<>();
+		getChilds().forEach( child -> {
+			
+			boolean add = true;
+			for(TaskWrapper descendant: child.getDescendants()) {
+				if(getChilds().contains(descendant)) {
+					ret.addAll(descendant.getLastChilds());
+					add = false;
+				}	
+			}
+			
+			if(add) {
+			   ret.add(child);
+			} 
+			
+		});
+		
+		return ret;
 	}
 
 	private static TaskWrapper getOrCreateTaskWrapper(NodeRef nodeRef, Map<NodeRef, TaskWrapper> cache) {
@@ -386,13 +469,21 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 								: 0)))
 						+ (Boolean.TRUE.equals(t.getIsGroup()) ? "#" : "_").repeat(Math.abs(t.getDuration())) + " " + t.getTaskName() + "[ "
 						+ t.getStart() + " / " + t.getEnd() + "] " + " (" + t.getTaskState() + "/" + t.getDuration() + "/" + t.getRealDuration()
-						+ ")");
+						+ ") ");
 			}
 		});
 
 		return ret.toString();
 	}
 
+	@Override
+	public String toString() {
+		return "TaskWrapper [task=" + task + "]";
+	}
+
+	
+	
+	
 	/** {@inheritDoc} */
 	@Override
 	// https://stackoverflow.com/questions/2985317/critical-path-method-algorithm
@@ -417,5 +508,24 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 		return this.getMaxDuration() - o2.getMaxDuration();
 
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(task);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		TaskWrapper other = (TaskWrapper) obj;
+		return Objects.equals(task, other.task);
+	}
+	
+	
 
 }
