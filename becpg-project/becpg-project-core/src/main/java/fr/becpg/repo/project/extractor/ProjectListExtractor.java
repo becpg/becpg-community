@@ -54,6 +54,8 @@ import fr.becpg.repo.entity.datalist.data.DataListPagination;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.project.ProjectService;
+import fr.becpg.repo.project.data.ProjectState;
+import fr.becpg.repo.project.data.projectList.TaskState;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.security.SecurityService;
 
@@ -78,6 +80,10 @@ public class ProjectListExtractor extends ActivityListExtractor {
 	private static final String VIEW_RESOURCES = "resources";
 	private static final String VIEW_ENTITY_PROJECTS = "entity-projects";
 	private static final String PROJECT_LIST = "projectList";
+	
+	private static final String PROP_PROJECT_STATE = "prop_pjt_projectState";
+	
+	private static final String PROP_PROJECT_LEGEND = "prop_pjt_projectLegends";
 	
 	private static final String PROP_SORT = "sort";
 
@@ -186,12 +192,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 								nodeRef, ret.getComputedFields(), props, cache));
 					} else {
 						Map<String, Object> extracted = extractJSON(nodeRef, ret.getComputedFields(), props, cache);
-						if (favorites.contains(nodeRef)) {
-							extracted.put(PROP_IS_FAVOURITE, true);
-						} else {
-							extracted.put(PROP_IS_FAVOURITE, false);
-						}
-
+						extracted.put(PROP_IS_FAVOURITE, favorites.contains(nodeRef));
 						ret.addItem(extracted);
 					}
 
@@ -278,19 +279,21 @@ public class ProjectListExtractor extends ActivityListExtractor {
 					beCPGQueryBuilder.excludeProp(ProjectModel.PROP_TL_IS_EXCLUDE_FROM_SEARCH, Boolean.TRUE.toString());
 					beCPGQueryBuilder.excludeProp(ProjectModel.PROP_TL_IS_GROUP, Boolean.TRUE.toString());
 
-					if ((dataListFilter.getCriteriaMap() != null) && !dataListFilter.getCriteriaMap().containsKey("prop_pjt_tlState")) {
-						dataListFilter.getCriteriaMap().put("prop_pjt_tlState", "\"Planned\",\"InProgress\"");
+					if ((dataListFilter.getCriteriaMap() != null) && !dataListFilter.getCriteriaMap().containsKey("prop_pjt_tlState") 
+							&& ((dataListFilter.getFilterParams() == null) || !dataListFilter.getFilterParams().contains("tlState"))
+							) {
+						dataListFilter.getCriteriaMap().put("prop_pjt_tlState", TaskState.InProgress.toString());
 					}
 
 					if ((dataListFilter.getCriteriaMap() != null)) {
-						if (dataListFilter.getCriteriaMap().containsKey("prop_pjt_projectState")) {
-							dataListFilter.getCriteriaMap().remove("prop_pjt_projectState");
+						if (dataListFilter.getCriteriaMap().containsKey(PROP_PROJECT_STATE)) {
+							dataListFilter.getCriteriaMap().remove(PROP_PROJECT_STATE);
 						}
 
-						if (dataListFilter.getCriteriaMap().containsKey("prop_pjt_projectLegends")) {
+						if (dataListFilter.getCriteriaMap().containsKey(PROP_PROJECT_LEGEND)) {
 							dataListFilter.getCriteriaMap().put("assoc_pjt_tlTaskLegend_added",
-									dataListFilter.getCriteriaMap().get("prop_pjt_projectLegends"));
-							dataListFilter.getCriteriaMap().remove("prop_pjt_projectLegends");
+									dataListFilter.getCriteriaMap().get(PROP_PROJECT_LEGEND));
+							dataListFilter.getCriteriaMap().remove(PROP_PROJECT_LEGEND);
 						}
 					}
 
@@ -374,9 +377,15 @@ public class ProjectListExtractor extends ActivityListExtractor {
 				} else {
 					BeCPGQueryBuilder creatorQuery = dataListFilter.getSearchQuery().excludeDefaults().clone().ofType(ProjectModel.TYPE_PROJECT);
 
-					if (!criteriaMap.containsKey("prop_pjt_projectState")
+					if (!criteriaMap.containsKey(PROP_PROJECT_STATE)
 							&& ((dataListFilter.getFilterParams() == null) || !dataListFilter.getFilterParams().contains("projectState"))) {
-						creatorQuery.andPropQuery(ProjectModel.PROP_PROJECT_STATE, "Planned OR InProgress");
+						creatorQuery.andPropQuery(ProjectModel.PROP_PROJECT_STATE, ProjectState.InProgress.toString());
+					} else {
+						if(criteriaMap.containsKey(PROP_PROJECT_STATE)) {
+							creatorQuery.andPropQuery(ProjectModel.PROP_PROJECT_STATE,criteriaMap.get(PROP_PROJECT_STATE));
+						} else {
+							creatorQuery.andFTSQuery(dataListFilter.getFilterParams());
+						}
 					}
 
 					creatorQuery.andPropEquals(QName.createQName(prop, namespaceService), AuthenticationUtil.getFullyAuthenticatedUser());
@@ -386,9 +395,9 @@ public class ProjectListExtractor extends ActivityListExtractor {
 
 			}
 
-			if (!criteriaMap.containsKey("prop_pjt_projectState")
+			if (!criteriaMap.containsKey(PROP_PROJECT_STATE)
 					&& ((dataListFilter.getFilterParams() == null) || !dataListFilter.getFilterParams().contains("projectState"))) {
-				criteriaMap.put("prop_pjt_projectState", "\"Planned\",\"InProgress\"");
+				criteriaMap.put(PROP_PROJECT_STATE, ProjectState.InProgress.toString());
 			}
 
 		}
