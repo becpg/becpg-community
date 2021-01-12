@@ -55,8 +55,7 @@ public class ProjectHelper {
 	private static final int DURATION_NEXT_DAY = 2;
 
 	private static final Log logger = LogFactory.getLog(ProjectHelper.class);
-	
-	
+
 	/**
 	 * <p>isOnHold.</p>
 	 *
@@ -69,8 +68,6 @@ public class ProjectHelper {
 				|| projectData.getAspects().contains(BeCPGModel.ASPECT_COMPOSITE_VERSION)
 				|| ProjectState.Cancelled.equals(projectData.getProjectState()) || ProjectState.OnHold.equals(projectData.getProjectState());
 	}
-
-	
 
 	/**
 	 * <p>getTask.</p>
@@ -199,10 +196,6 @@ public class ProjectHelper {
 		}
 		return taskList;
 	}
-	
-	
-
-	
 
 	/**
 	 * <p>reOpenRefusePath.</p>
@@ -309,9 +302,6 @@ public class ProjectHelper {
 		return deliverableList;
 	}
 
-	
-
-
 	/**
 	 * <p>getLastEndDate.</p>
 	 *
@@ -321,15 +311,14 @@ public class ProjectHelper {
 	public static Date getLastEndDate(Set<TaskWrapper> tasks) {
 		Date endDate = null;
 		for (TaskWrapper task : tasks) {
-			if (!task.isCancelled() && !task.isGroup() && ((endDate == null) || ((task.getTask().getEnd() != null) && task.getTask().getEnd().after(endDate)))) {
+			if (!task.isCancelled() && !task.isGroup()
+					&& ((endDate == null) || ((task.getTask().getEnd() != null) && task.getTask().getEnd().after(endDate)))) {
 				endDate = task.getTask().getEnd();
 			}
 		}
-		
-	
+
 		return endDate;
 	}
-	
 
 	/**
 	 * <p>getFirstStartDate.</p>
@@ -338,12 +327,10 @@ public class ProjectHelper {
 	 * @return a {@link java.util.Date} object.
 	 */
 	public static Date getFirstStartDate(Set<TaskWrapper> tasks) {
-		
-		return tasks.stream().filter(e -> e.isRoot() && (e.getTask()!=null && e.getTask().getStart() != null)).map(e -> e.getTask().getStart())
+
+		return tasks.stream().filter(e -> e.isRoot() && ((e.getTask() != null) && (e.getTask().getStart() != null))).map(e -> e.getTask().getStart())
 				.min(Date::compareTo).orElse(null);
 	}
-
-	
 
 	/**
 	 * <p>setTaskStartDate.</p>
@@ -352,9 +339,12 @@ public class ProjectHelper {
 	 * @param startDate a {@link java.util.Date} object.
 	 */
 	public static void setTaskStartDate(TaskListDataItem t, Date startDate) {
-		logger.debug("task: " + t.getTaskName() + ", state: " + t.getTaskState() + ", start: " + startDate+", is group:"+t.getIsGroup());
 		if ((t.getIsGroup() || t.isPlanned() || TaskState.Cancelled.equals(t.getTaskState())
 				|| (TaskState.InProgress.equals(t.getTaskState()) && (t.getStart() == null))) && !TaskManualDate.Start.equals(t.getManualDate())) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("setTaskStartDate: " + t.getTaskName() + ", state: " + t.getTaskState() + ", start: " + startDate + ", is group:"
+						+ t.getIsGroup());
+			}
 			t.setStart(removeTime(startDate));
 		}
 	}
@@ -366,9 +356,12 @@ public class ProjectHelper {
 	 * @param endDate a {@link java.util.Date} object.
 	 */
 	public static void setTaskEndDate(TaskListDataItem t, Date endDate) {
-		logger.debug("task: " + t.getTaskName() + ", state: " + t.getTaskState() + ", end: " + endDate+", is group:"+t.getIsGroup());
 		if ((t.getIsGroup() || t.isPlanned() || TaskState.Cancelled.equals(t.getTaskState()) || TaskState.InProgress.equals(t.getTaskState()))
 				&& !TaskManualDate.End.equals(t.getManualDate())) {
+			if (logger.isDebugEnabled()) {
+				logger.debug(
+						"setTaskEndDate: " + t.getTaskName() + ", state: " + t.getTaskState() + ", end: " + endDate + ", is group:" + t.getIsGroup());
+			}
 			t.setEnd(removeTime(endDate));
 		}
 	}
@@ -403,11 +396,11 @@ public class ProjectHelper {
 	 */
 	public static Date calculateNextDate(Date startDate, Integer duration, boolean isPlanned) {
 
-		if(logger.isDebugEnabled()) {
+		if (logger.isDebugEnabled()) {
 			logger.debug("calculateNextDate - startDate: " + startDate);
 			logger.debug("calculateNextDate - duration: " + duration);
 		}
-		
+
 		if (startDate == null) {
 			return null;
 		}
@@ -429,8 +422,8 @@ public class ProjectHelper {
 				i++;
 			}
 		}
-		
-		if(logger.isDebugEnabled()) {
+
+		if (logger.isDebugEnabled()) {
 			logger.debug("calculateNextDate - next date: " + calendar.getTime());
 		}
 		return calendar.getTime();
@@ -457,12 +450,12 @@ public class ProjectHelper {
 	public static Integer calculateTaskDuration(Date startDate, Date endDate) {
 
 		if ((startDate == null) || (endDate == null)) {
-			logger.debug("startDate or endDate is null. startDate: " + startDate + " - endDate: " + endDate);
+			logger.debug("calculateTaskDuration - startDate or endDate is null. startDate: " + startDate + " - endDate: " + endDate);
 			return null;
 		}
 
 		if (startDate.after(endDate)) {
-			logger.debug("startDate is after endDate : " + startDate + " - " + endDate);
+			logger.debug("calculateTaskDuration - startDate is after endDate : " + startDate + " - " + endDate);
 			return null;
 		}
 
@@ -478,7 +471,9 @@ public class ProjectHelper {
 			startDateCal.add(Calendar.DAY_OF_MONTH, 1);
 		}
 
-		logger.debug("calculateTaskDuration startDate: " + startDate + " - endDate: " + endDate + " - duration: " + duration);
+		if (logger.isDebugEnabled()) {
+			logger.debug("calculateTaskDuration startDate: " + startDate + " - endDate: " + endDate + " - duration: " + duration);
+		}
 		return duration;
 	}
 

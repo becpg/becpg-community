@@ -286,7 +286,7 @@
 		
 		                widget.on("checkedChange", function()
 		                {
-							var el = YAHOO.util.Dom.get("rightside");
+							var el = YAHOO.util.Dom.get("alf-content");
 							
 							if(YAHOO.util.Dom.hasClass(el,"show-critical")){
 								YAHOO.util.Dom.removeClass(el,"show-critical");
