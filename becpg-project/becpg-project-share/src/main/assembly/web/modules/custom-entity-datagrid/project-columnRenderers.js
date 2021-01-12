@@ -219,8 +219,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 			if (data.value != null) {
 				var startDate = oRecord.getData()["itemData"]["prop_pjt_tlStart"].value;
 				var targetStart = data.value;
-				startDate = startDate != null ? scope.resetDate(Alfresco.util.fromISO8601(startDate)) : this
-					.resetDate(start);
+				startDate =  startDate != null ? scope.resetDate(Alfresco.util.fromISO8601(startDate)) : null;
 				targetStart = targetStart != null ? scope.resetDate(Alfresco.util.fromISO8601(targetStart)) : null;
 
 				if (startDate != null && targetStart != null && startDate.getTime() > targetStart.getTime()) {
