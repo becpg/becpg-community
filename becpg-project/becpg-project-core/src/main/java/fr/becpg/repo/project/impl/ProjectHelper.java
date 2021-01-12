@@ -362,6 +362,7 @@ public class ProjectHelper {
 				logger.debug(
 						"setTaskEndDate: " + t.getTaskName() + ", state: " + t.getTaskState() + ", end: " + endDate + ", is group:" + t.getIsGroup());
 			}
+			
 			t.setEnd(removeTime(endDate));
 		}
 	}

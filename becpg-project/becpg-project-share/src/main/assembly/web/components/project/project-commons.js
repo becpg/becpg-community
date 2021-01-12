@@ -382,7 +382,7 @@
              	beCPG.util.entityURL(subProject.siteId, subProject.value,"pjt:project") +'" >';
              ret +="&nbsp;</a>";
           } else {
-	          if(task.permissions.userAccess.edit && task["itemData"]["prop_pjt_tlState"].value == "InProgress"){
+	          if(task.permissions.userAccess.edit && task["itemData"]["prop_pjt_tlState"].value == "InProgress" && classGroup == "" ){
 		          ret += '<span class="node-' + task.nodeRef + '|' + entityNodeRef + '">';
 		          ret += '<a class="submit-task '+SUBMITTASK_EVENTCLASS+'" title="' + this.msg("link.title.submit-task") + '" href="" >';
 		          ret +="&nbsp;";
