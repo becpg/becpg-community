@@ -224,6 +224,17 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 									ProjectHelper.setTaskEndDate(task.getTask(), child.getTask().getEnd());
 								}
 
+								if ((child.getTask().getTargetStart() != null)
+										&& ((task.getTask().getTargetStart() == null) || task.getTask().getTargetStart().after(child.getTask().getTargetStart()))) {
+									task.getTask().setTargetStart(child.getTask().getTargetStart());
+								}
+
+								if ((child.getTask().getTargetEnd() != null)
+										&& ((task.getTask().getTargetEnd() == null) || task.getTask().getTargetEnd().before(child.getTask().getTargetEnd()))) {
+									task.getTask().setTargetEnd(child.getTask().getTargetEnd());
+								}
+								
+								
 								if (child.getTask().getWork() != null) {
 									work += child.getTask().getWork();
 								}
@@ -292,6 +303,7 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 
 		if (PlanningMode.Planning.equals(projectData.getPlanningMode())) {
 			Date startDate = null;
+			Date targetStartDate = null;
 
 			if (!isTpl) {
 				startDate = ProjectHelper.getFirstStartDate(tasks);
@@ -303,7 +315,16 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 					startDate = projectData.getStartDate();
 				}
 			}
+			if (!isTpl) {
+				if(projectData.getDueDate()==null) {
+					targetStartDate = startDate;
+				} else {
+					targetStartDate = ProjectHelper.calculateStartDate(projectData.getDueDate(), TaskWrapper.calculateMaxDuration(tasks));
+				}
+			}
+			
 			projectData.setStartDate(startDate);
+			projectData.setTargetStartDate(targetStartDate);
 			projectData.setCompletionDate(startDate);
 
 		} else {
@@ -323,6 +344,7 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 			}
 			if (!isTpl) {
 				projectData.setStartDate(ProjectHelper.calculateStartDate(endDate, TaskWrapper.calculateMaxDuration(tasks)));
+				projectData.setTargetStartDate(projectData.getStartDate());
 			}
 
 		}
@@ -633,15 +655,19 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 		int maxRealDuration = 0;
 
 		Date startDate = null;
+		Date targetStart = null;
 
 		if (task.isRoot()) {
 			startDate = projectData.getStartDate();
+			targetStart = projectData.getTargetStartDate();
 		} else {
 
+			TaskWrapper criticalTask = null;
 			for (TaskWrapper t : task.getAncestors()) {
 
 				if ((t.getMaxDuration() != null) && (t.getMaxDuration() > maxDuration)) {
 					maxDuration = t.getMaxDuration();
+					criticalTask  = t;
 				}
 
 				if ((t.getMaxRealDuration() != null) && (t.getMaxRealDuration() > maxRealDuration)) {
@@ -649,30 +675,56 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 				}
 
 				Date endDate = t.getTask().getEnd() != null ? t.getTask().getEnd() : t.getTask().getStart();
+				Date targetEnd = t.getTask().getTargetEnd() != null ? t.getTask().getTargetEnd() : t.getTask().getTargetStart();
 
 				if (TaskState.Cancelled.equals(t.getTask().getTaskState())) {
 					endDate = ProjectHelper.calculatePrevEndDate(t.getTask().getStart());
+					targetEnd = ProjectHelper.calculatePrevEndDate(t.getTask().getTargetStart());
 				}
 
 				if ((startDate == null) || startDate.before(endDate)) {
 					startDate = endDate;
 				}
+				
+				if ((targetStart == null) || targetStart.before(targetEnd)) {
+					targetStart = targetEnd;
+				}
 			}
+			
+			if(criticalTask!=null ) {
+				criticalTask.getTask().setIsCritical(true);
+			}
+			
 			if (startDate != null) {
 				startDate = ProjectHelper.calculateNextStartDate(startDate);
 			}
-
-		}
-
-		if ((startDate != null) && (task.getTask().getSubProject() == null)) {
-
-			ProjectHelper.setTaskStartDate(task.getTask(), startDate);
-
-			if (((task.getTask().getDuration() != null) || (Boolean.TRUE.equals(task.getTask().getIsMilestone())))) {
-				Date endDate = ProjectHelper.calculateEndDate(task.getTask().getStart(), task.getTask().getDuration());
-				ProjectHelper.setTaskEndDate(task.getTask(), endDate);
+			
+			if(targetStart !=null) {
+				targetStart = ProjectHelper.calculateNextStartDate(targetStart);
 			}
 
+		}
+		if((task.getTask().getSubProject() == null)) {
+			if ((startDate != null) ) {
+	
+				ProjectHelper.setTaskStartDate(task.getTask(), startDate);
+	
+				if (((task.getTask().getDuration() != null) || (Boolean.TRUE.equals(task.getTask().getIsMilestone())))) {
+					Date endDate = ProjectHelper.calculateEndDate(task.getTask().getStart(), task.getTask().getDuration());
+					ProjectHelper.setTaskEndDate(task.getTask(), endDate);
+				}
+	
+			}
+			
+			if(targetStart!=null) {
+				task.getTask().setTargetStart(ProjectHelper.removeTime(targetStart));
+				
+				if (((task.getTask().getDuration() != null) || (Boolean.TRUE.equals(task.getTask().getIsMilestone())))) {
+					Date targetEnd = ProjectHelper.calculateEndDate(task.getTask().getTargetStart(), task.getTask().getDuration());
+					task.getTask().setTargetEnd(ProjectHelper.removeTime(targetEnd));
+				}
+				
+			}
 		}
 		if (!TaskState.Cancelled.equals(task.getTask().getTaskState())) {
 			if (task.getDuration() != null) {

@@ -53,6 +53,7 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	private Boolean isGroup = false;
 	private Boolean isExcludeFromSearch;
 	private Boolean isRefused;
+	private Boolean isCritical;
 	private Integer duration;
 	private Integer realDuration;
 	private Integer capacity;
@@ -60,6 +61,9 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	private Double loggedTime;
 	private Date start;
 	private Date end;
+	private Date targetStart;
+	private Date targetEnd;
+	
 	private TaskState taskState = TaskState.Planned;
 	private Integer completionPercent = 0;
 	
@@ -214,6 +218,18 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 		this.isExcludeFromSearch = isExcludeFromSearch;
 	}
 
+	
+	
+	@AlfProp
+	@AlfQname(qname = "pjt:tlIsCritical")
+	public Boolean getIsCritical() {
+		return isCritical;
+	}
+
+	public void setIsCritical(Boolean isCritical) {
+		this.isCritical = isCritical;
+	}
+
 	/**
 	 * <p>Getter for the field <code>duration</code>.</p>
 	 *
@@ -352,6 +368,27 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	 */
 	public void setEnd(Date end) {
 		this.end = end;
+	}
+
+	
+	@AlfProp
+	@AlfQname(qname = "pjt:tlTargetStart")
+	public Date getTargetStart() {
+		return targetStart;
+	}
+
+	public void setTargetStart(Date targetStart) {
+		this.targetStart = targetStart;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "pjt:tlTargetEnd")
+	public Date getTargetEnd() {
+		return targetEnd;
+	}
+
+	public void setTargetEnd(Date targetEnd) {
+		this.targetEnd = targetEnd;
 	}
 
 	/**
