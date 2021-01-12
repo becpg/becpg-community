@@ -88,6 +88,18 @@
 }
 
 
+.datalist-toolbar div.flat-button .criticalPathCkeckbox  span.yui-checkbox-button button
+{
+   background: url("../project/images/critical-disabled-16.png") no-repeat 4px 4px;
+}
+
+
+.datalist-toolbar div.flat-button  .criticalPathCkeckbox span.yui-checkbox-button.yui-checkbox-button-checked button
+{
+   background: url("../project/images/critical-16.png") no-repeat 4px 4px;
+}
+
+
 .datalist-toolbar .formulate span.first-child
 {
    background: url(../documentlibrary/actions/entity-refresh-reports-16.png) no-repeat 8px 4px;
@@ -107,7 +119,8 @@
 }
 
 
-.datalist-toolbar .product-metadata span.first-child
+.datalist-toolbar .product-metadata span.first-child,
+.datalist-toolbar .project-metadata span.first-child
 {
    background: url(../documentlibrary/actions/folder-edit-metadata-16.png) no-repeat 8px 4px;
 }
