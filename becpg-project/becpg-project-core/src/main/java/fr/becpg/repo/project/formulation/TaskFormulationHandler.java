@@ -184,8 +184,6 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 
 	private void visitParents(ProjectData projectData, Set<TaskWrapper> tasks, boolean calculateState) {
 
-		Date now = Calendar.getInstance().getTime();
-
 		// tasks whose critical cost has been calculated
 		List<TaskWrapper> completed = new LinkedList<>();
 		// tasks whose critical cost needs to be calculated
@@ -264,9 +262,10 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 							task.getTask().setRealDuration(task.getRealDuration());
 							task.getTask().setWork(work);
 
-							if (calculateState && (task.getTask().getStart() != null) && task.getTask().getStart().before(now)) {
+							if (calculateState) {
 
 								if (hasTaskInProgress) {
+									
 									ProjectHelper.setTaskState(task.getTask(), TaskState.InProgress, projectActivityService);
 								} else if (allTasksPlanned && !allTasksCancelled) {
 									ProjectHelper.setTaskState(task.getTask(), TaskState.Planned, projectActivityService);
@@ -721,6 +720,12 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 	
 				if (((task.getTask().getDuration() != null) || (Boolean.TRUE.equals(task.getTask().getIsMilestone())))) {
 					Date endDate = ProjectHelper.calculateEndDate(task.getTask().getStart(), task.getTask().getDuration());
+					Date now = Calendar.getInstance().getTime();
+
+					if( TaskState.InProgress.equals(task.getTask().getTaskState()) && endDate!=null && endDate.before(now)) {
+						endDate = now;
+					}
+						
 					ProjectHelper.setTaskEndDate(task.getTask(), endDate);
 				}
 	
@@ -814,6 +819,8 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 				return true;
 			}
 
+		} else if(TaskState.Planned.equals(taskListDataItem.getTaskState())){
+			taskListDataItem.setCompletionPercent(0);
 		}
 
 		return false;
