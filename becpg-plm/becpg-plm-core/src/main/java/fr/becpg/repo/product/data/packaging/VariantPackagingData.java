@@ -39,6 +39,7 @@ public class VariantPackagingData {
 	private boolean isManualPrimary = true;
 	private boolean isManualTertiary = true;
 	private boolean isManualSecondary = true;
+	private boolean isManualPalletInformations = true;
 
 	public BigDecimal getTarePrimary() {
 		return tarePrimary;
@@ -169,6 +170,14 @@ public class VariantPackagingData {
 
 	public void setTertiaryWidth(Float tertiaryWidth) {
 		this.tertiaryWidth = tertiaryWidth;
+	}
+
+	public boolean isManualPalletInformations() {
+		return isManualPalletInformations;
+	}
+
+	public void setManualPalletInformations(boolean isManualPalletInformations) {
+		this.isManualPalletInformations = isManualPalletInformations;
 	}
 
 	public Float getTertiaryDepth() {
