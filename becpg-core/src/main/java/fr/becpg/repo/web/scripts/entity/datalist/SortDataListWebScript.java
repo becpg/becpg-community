@@ -118,7 +118,6 @@ public class SortDataListWebScript extends DeclarativeWebScript {
 					model.put("destSort", nodeService.getProperty(toSortNodeRef, BeCPGModel.PROP_SORT));
 				}
 
-				System.out.println(model);
 				return model;
 			
 		}
