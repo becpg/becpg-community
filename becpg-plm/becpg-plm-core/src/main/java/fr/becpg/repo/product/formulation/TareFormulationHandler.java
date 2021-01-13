@@ -27,7 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.GS1Model;
 import fr.becpg.model.PackModel;
-import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
@@ -48,7 +47,7 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 	protected AlfrescoRepository<ProductData> alfrescoRepository;
 
 	@Override
-	public boolean process(ProductData formulatedProduct) throws FormulateException {
+	public boolean process(ProductData formulatedProduct) {
 
 		logger.debug("Tare visitor");
 
@@ -131,6 +130,9 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 				if (!variantPackagingData.isManualTertiary()) {
 					formulatedProduct.getExtraProperties().put(GS1Model.PROP_TERTIARY_WIDTH, variantPackagingData.getTertiaryWidth());
 					formulatedProduct.getExtraProperties().put(GS1Model.PROP_TERTIARY_DEPTH, variantPackagingData.getTertiaryDepth());
+				}
+				
+				if(!variantPackagingData.isManualPalletInformations()) {
 					formulatedProduct.getExtraProperties().put(GS1Model.PROP_PALLET_TYPE_CODE, variantPackagingData.getPalletTypeCode());
 					formulatedProduct.getExtraProperties().put(GS1Model.PROP_PLATFORMTERMSANSCONDITION_CODE, variantPackagingData.getPlatformTermsAndConditionsCode());
 				
