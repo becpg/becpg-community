@@ -247,11 +247,11 @@ public class AnnotationMappingLoader implements MappingLoader {
 						}
 						// Hierarchy
 						if (annotation instanceof Hierarchy) {
-							Hierarchy HierarchyAnnot = (Hierarchy) annotation;
+							Hierarchy hierarchyAnnot = (Hierarchy) annotation;
 							ClassAttributeDefinition parentLevelAttributeDef = null;
-							if ((HierarchyAnnot.getParentLevelAttribute() != null) && !HierarchyAnnot.getParentLevelAttribute().isEmpty()) {
+							if ((hierarchyAnnot.getParentLevelAttribute() != null) && !hierarchyAnnot.getParentLevelAttribute().isEmpty()) {
 
-								attribute = QName.createQName(HierarchyAnnot.getParentLevelAttribute(), namespaceService);
+								attribute = QName.createQName(hierarchyAnnot.getParentLevelAttribute(), namespaceService);
 								parentLevelAttributeDef = dictionaryService.getProperty(attribute);
 								if (parentLevelAttributeDef == null) {
 									parentLevelAttributeDef = dictionaryService.getAssociation(attribute);
@@ -261,8 +261,8 @@ public class AnnotationMappingLoader implements MappingLoader {
 									}
 								}
 							}
-							AbstractAttributeMapping attributeMapping = new HierarchyMapping(HierarchyAnnot.getId(), attributeDef,
-									HierarchyAnnot.getParentLevelColumn(), HierarchyAnnot.getPath(), parentLevelAttributeDef);
+							AbstractAttributeMapping attributeMapping = new HierarchyMapping(hierarchyAnnot.getId(), attributeDef,
+									hierarchyAnnot.getParentLevelColumn(), hierarchyAnnot.getPath(), parentLevelAttributeDef);
 							classMapping.getColumns().add(attributeMapping);
 						}
 
