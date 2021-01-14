@@ -180,69 +180,72 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 			
 			for (EntitySourceAssoc assocRef : entitySourceAssocs) {
+				
+				if(nodes.contains(assocRef.getEntityNodeRef())) {
 
-				boolean match = true;
-				for (DataListSearchFilterField propFilter : filter.getPropFilters()) {
-					String criteriaValue = null;
-
-					if (propFilter.getValue() != null) {
-						criteriaValue = propFilter.getValue();
-					} else {
-						criteriaValue = criteria.get(propFilter.getHtmlId());
-					}
-
-					if ((criteriaValue != null) && !criteriaValue.isBlank()) {
-						match = false;
-
-						NodeRef n = assocRef.getDataListItemNodeRef();
-						Object value = nodeService.getProperty(n, propFilter.getAttributeQname());
-						if (PLMModel.PROP_NUTLIST_VALUE.equals(propFilter.getAttributeQname()) && (value == null)) {
-							value = nodeService.getProperty(n, PLMModel.PROP_NUTLIST_FORMULATED_VALUE);
+					boolean match = true;
+					for (DataListSearchFilterField propFilter : filter.getPropFilters()) {
+						String criteriaValue = null;
+	
+						if (propFilter.getValue() != null) {
+							criteriaValue = propFilter.getValue();
+						} else {
+							criteriaValue = criteria.get(propFilter.getHtmlId());
 						}
-
-						if (value != null) {
-							if (value instanceof String) {
-								if (criteriaValue.equals(value)) {
-									match = true;
+	
+						if ((criteriaValue != null) && !criteriaValue.isBlank()) {
+							match = false;
+	
+							NodeRef n = assocRef.getDataListItemNodeRef();
+							Object value = nodeService.getProperty(n, propFilter.getAttributeQname());
+							if (PLMModel.PROP_NUTLIST_VALUE.equals(propFilter.getAttributeQname()) && (value == null)) {
+								value = nodeService.getProperty(n, PLMModel.PROP_NUTLIST_FORMULATED_VALUE);
+							}
+	
+							if (value != null) {
+								if (value instanceof String) {
+									if (criteriaValue.equals(value)) {
+										match = true;
+									}
+									
+									  
+	
+								} else if (value instanceof Boolean) {
+									if (Boolean.valueOf(criteriaValue).equals(value)) {
+										match = true;
+									}
+	
+								} else if (value instanceof Double) {
+									String[] splitted = criteriaValue.split("\\|");
+									if (splitted.length == 2) {
+										if ((splitted[0].isEmpty() || (((Double) value) >= Double.valueOf(splitted[0])))
+												&& (splitted[1].isEmpty() || (((Double) value) <= Double.valueOf(splitted[1])))) {
+											match = true;
+										}
+									} else if (splitted.length == 1) {
+										if ((splitted[0].isEmpty() || (((Double) value) >= Double.valueOf(splitted[0])))) {
+											match = true;
+										}
+									}
 								}
 								
 								
-
-							} else if (value instanceof Boolean) {
-								if (Boolean.valueOf(criteriaValue).equals(value)) {
-									match = true;
+								if (logger.isDebugEnabled()) {
+									logger.debug(" - filter : ("+propFilter.getHtmlId()+") " + value + "->" + criteriaValue + ", match=" + match);
 								}
-
-							} else if (value instanceof Double) {
-								String[] splitted = criteriaValue.split("\\|");
-								if (splitted.length == 2) {
-									if ((splitted[0].isEmpty() || (((Double) value) >= Double.valueOf(splitted[0])))
-											&& (splitted[1].isEmpty() || (((Double) value) <= Double.valueOf(splitted[1])))) {
-										match = true;
-									}
-								} else if (splitted.length == 1) {
-									if ((splitted[0].isEmpty() || (((Double) value) >= Double.valueOf(splitted[0])))) {
-										match = true;
-									}
-								}
+								
 							}
-							
-							
-							if (logger.isDebugEnabled()) {
-								logger.debug(" - filter : ("+propFilter.getHtmlId()+") " + value + "->" + criteriaValue + ", match=" + match);
-							}
-							
+	
 						}
-
+	
+						if(!match) {
+							break;
+						}
+						
 					}
-
-					if(!match) {
-						break;
+					if (match) {
+						entities.add(assocRef.getEntityNodeRef());
 					}
-					
-				}
-				if (match) {
-					entities.add(assocRef.getEntityNodeRef());
 				}
 
 			}
