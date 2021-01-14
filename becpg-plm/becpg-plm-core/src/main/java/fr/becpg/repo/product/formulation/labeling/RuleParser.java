@@ -214,9 +214,7 @@ public abstract class RuleParser {
 					showAllGeo = true;
 				} else {
 					for (NodeRef component : components) {
-						if(formula!=null && !formula.isBlank()) {
-							showGeoRules.put(component, new ShowRule(formula, locales));
-						}
+						showGeoRules.put(component, new ShowRule((formula != null) && !formula.isEmpty() ? formula : "", locales));
 					}
 				}
 			} else if (LabelingRuleType.Type.equals(labeLabelingRuleType)
