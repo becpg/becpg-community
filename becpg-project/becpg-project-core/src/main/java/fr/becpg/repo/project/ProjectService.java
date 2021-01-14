@@ -50,14 +50,12 @@ public interface ProjectService {
 	/**
 	 * 
 	 * @param projectNodeRef
-	 * @return
 	 */
 	List<NodeRef> getTaskLegendList();
 	
 	/**
 	 * Get the number of inProgress project for this legend
 	 * 
-	 * @return
 	 */
 	Long getNbProjectsByLegend(NodeRef legendNodeRef, String siteId);
 
@@ -65,7 +63,6 @@ public interface ProjectService {
 	 * Get the projects container
 	 * 
 	 * @param siteId
-	 * @return
 	 */
 	NodeRef getProjectsContainer(String siteId);
 
@@ -101,7 +98,6 @@ public interface ProjectService {
 	 * 
 	 * @param projectNodeRef
 	 * @param url
-	 * @return
 	 */
 	String getDeliverableUrl(NodeRef projectNodeRef, String url);
 
@@ -110,7 +106,6 @@ public interface ProjectService {
 	 * Refused a project Task
 	 * @param taskNodeRef
 	 * @param taskComment 
-	 * @return 
 	 */
 	NodeRef refusedTask(NodeRef taskNodeRef, String taskComment);
 
@@ -127,14 +122,12 @@ public interface ProjectService {
 	 * 
 	 * @param projectNodeRef
 	 * @param resources
-	 * @return
 	 */
 	List<NodeRef> extractResources(NodeRef projectNodeRef, List<NodeRef> resources);
 
 	/**
 	 * 
 	 * @param resource
-	 * @return
 	 */
 	NodeRef getReassignedResource(NodeRef resource);
 
@@ -142,7 +135,6 @@ public interface ProjectService {
 	 * 
 	 * @param taskNodeRef
 	 * @param assignee
-	 * @return
 	 */
 	NodeRef reassignTask(NodeRef taskNodeRef, String assignee);
 
@@ -150,7 +142,6 @@ public interface ProjectService {
          /**
 	 * Refused a project Task
 	 * @param taskNodeRef
-	 * @return 
 	 */
      NodeRef refusedTask(NodeRef nodeRef);
 
