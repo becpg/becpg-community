@@ -301,7 +301,7 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin {
 
 				List<NodeRef> nextTaskPrevTaskNodeRefs = associationService.getTargetAssocs(nextTaskAssociationRef, ProjectModel.ASSOC_TL_PREV_TASKS);
 
-				if (nextTaskAssociationRefs.contains(taskListNodeRef)) {
+				if (nextTaskPrevTaskNodeRefs.contains(taskListNodeRef)) {			
 					nextTaskPrevTaskNodeRefs.remove(taskListNodeRef);
 				}
 
