@@ -31,14 +31,17 @@ import java.util.Set;
 import javax.sql.DataSource;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.model.ForumModel;
 import org.alfresco.repo.policy.PolicyComponent;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
+import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.CopyService;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.service.namespace.RegexQNamePattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +49,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Repository;
+
+import com.google.common.collect.MapDifference;
+import com.google.common.collect.Maps;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
@@ -370,57 +376,6 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 	}
 	
-
-	@Override
-	public void mergeDataList(NodeRef dataListNodeRef, NodeRef entityNodeRef, boolean appendOnly) {
-		NodeRef targetListContainerNodeRef = getListContainer(entityNodeRef);
-		if (targetListContainerNodeRef != null) {
-		    
-			String dataListType = (String) nodeService.getProperty(dataListNodeRef, DataListModel.PROP_DATALISTITEMTYPE);
-			
-			QName listQName = QName.createQName(dataListType, namespaceService);
-
-
-				NodeRef existingListNodeRef = findMatchingList(dataListNodeRef, targetListContainerNodeRef);
-
-				if (existingListNodeRef != null) {
-					for(NodeRef itemNodeRef : getListItems(dataListNodeRef, null, null)) {
-						copyService.copy(itemNodeRef, existingListNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
-					}
-					
-					
-				}  else {
-					String name = (String) nodeService.getProperty(dataListNodeRef, ContentModel.PROP_NAME);
-					logger.debug("copy datalist " + listQName);
-					NodeRef newDLNodeRef = copyService.copy(dataListNodeRef, targetListContainerNodeRef, ContentModel.ASSOC_CONTAINS,
-							DataListModel.TYPE_DATALIST, true);
-					nodeService.setProperty(newDLNodeRef, ContentModel.PROP_NAME, name);
-				}
-			
-		}
-		
-	}
-	
-	@Override
-	public NodeRef findMatchingList(NodeRef dataListNodeRef,  NodeRef targetListContainerNodeRef) {
-		
-
-		String dataListType = (String) nodeService.getProperty(dataListNodeRef, DataListModel.PROP_DATALISTITEMTYPE);
-		String name = (String) nodeService.getProperty(dataListNodeRef, ContentModel.PROP_NAME);
-		QName listQName = QName.createQName(dataListType, namespaceService);
-		
-		NodeRef existingListNodeRef;
-
-		if (name.startsWith(RepoConsts.WUSED_PREFIX) || name.startsWith(RepoConsts.CUSTOM_VIEW_PREFIX)
-				|| name.startsWith(RepoConsts.SMART_CONTENT_PREFIX) || name.contains("@")) {
-			existingListNodeRef = getList(targetListContainerNodeRef, name);
-		} else {
-			existingListNodeRef = getList(targetListContainerNodeRef, listQName);
-		}
-
-		
-		return existingListNodeRef;
-	}
 
 
 	@Override
