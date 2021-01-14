@@ -209,6 +209,8 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 
 							task.getTask().setStart(null);
 							task.getTask().setEnd(null);
+							task.getTask().setTargetStart(null);
+							task.getTask().setTargetEnd(null);
 
 							for (TaskWrapper child : task.getChilds()) {
 
@@ -252,14 +254,15 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 
 							}
 
-							Integer duration = ProjectHelper.calculateTaskDuration(task.getTask().getStart(), task.getTask().getEnd());
+							Integer duration = ProjectHelper.calculateTaskDuration(task.getTask().getTargetStart(), task.getTask().getTargetEnd());
+							Integer realDuration = ProjectHelper.calculateTaskDuration(task.getTask().getStart(), task.getTask().getEnd());
 							
 							if(duration == null) {
 								logger.warn("Parent task should'nt have manually date:"+ task.getTask().getTaskName());
 							}
 							
 							task.getTask().setDuration(duration);
-							task.getTask().setRealDuration(task.getRealDuration());
+							task.getTask().setRealDuration(realDuration);
 							task.getTask().setWork(work);
 
 							if (calculateState) {
@@ -274,7 +277,7 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 								} else {
 									ProjectHelper.setTaskState(task.getTask(), TaskState.Completed, projectActivityService);
 								}
-								task.getTask().setCompletionPercent(completionPerc / tasks.size());
+								task.getTask().setCompletionPercent(completionPerc / task.getChilds().size());
 
 							}
 
