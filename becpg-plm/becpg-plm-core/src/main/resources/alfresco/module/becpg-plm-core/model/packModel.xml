@@ -196,6 +196,12 @@
 					<type>d:double</type>
 					<index enabled="false"/>
 				</property>
+				<property name="pack:pmlLevel">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="bcpg:packagingLevel" />
+					</constraints>
+				</property>
 			</properties>
 			
 			<associations>
