@@ -40,7 +40,6 @@ import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.PackMaterialListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.formulation.FormulationHelper;
-import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
 /**
