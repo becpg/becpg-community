@@ -191,7 +191,7 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 		if (task != null) {
 
 			if (TaskState.Planned.equals(task.getTaskState()) || TaskState.InProgress.equals(task.getTaskState())
-					|| TaskState.Refused.equals(task.getTaskState())) {
+					|| TaskState.Refused.equals(task.getTaskState()) || TaskState.OnHold.equals(task.getTaskState())) {
 				Date endDate = ProjectHelper.removeTime(new Date());
 
 				// we wait the overdue of the task to take it in account
