@@ -3396,6 +3396,26 @@
 				</property>
 			</properties>
 		</aspect>
+		
+		<aspect name="bcpg:entityFormatAspect">
+			<properties>
+				<property name="bcpg:entityFormat">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:entityData">
+					<type>d:content</type>
+					<mandatory>false</mandatory>
+					<index enabled="false">
+                        <atomic>true</atomic>
+                        <stored>false</stored>
+                        <tokenised>false</tokenised>
+                    </index>
+				</property>
+			</properties>
+		</aspect>
+
 
 		<aspect name="bcpg:erpCodeAspect">
 			<properties>
