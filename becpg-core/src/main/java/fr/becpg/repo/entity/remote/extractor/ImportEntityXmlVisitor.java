@@ -46,6 +46,7 @@ import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceException;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -269,7 +270,6 @@ public class ImportEntityXmlVisitor {
 
 		private QName currProp = null;
 
-		private QName nodeType = null;
 
 		public EntityXmlHandler(NodeRef entityNodeRef, NodeRef destNodeRef) {
 			this.entityNodeRef = entityNodeRef;
@@ -312,7 +312,7 @@ public class ImportEntityXmlVisitor {
 						nodeRef = entityNodeRef.toString();
 					}
 
-					nodeType = parseQName(qName);
+					QName nodeType = parseQName(qName);
 
 					if (nodeType == null) {
 						nodeType = ContentModel.TYPE_CONTENT;
@@ -388,7 +388,6 @@ public class ImportEntityXmlVisitor {
 							}
 
 							if (!currAssoc.isEmpty() && (currAssoc.peek() != null)) {
-
 								if (currAssocType.peek().equals(RemoteEntityService.NODEREF_TYPE)
 										|| currAssocType.peek().equals(RemoteEntityService.CATEGORY_TYPE)) {
 									if (multipleValues != null) {
@@ -402,7 +401,6 @@ public class ImportEntityXmlVisitor {
 											logger.debug("Set property to : " + currAssoc.peek().toPrefixString(serviceRegistry.getNamespaceService())
 													+ " value " + node + " for type " + type);
 										}
-
 										serviceRegistry.getNodeService().setProperty(curNodeRef.peek(), currAssoc.peek(), node);
 									}
 								} else {
@@ -610,13 +608,13 @@ public class ImportEntityXmlVisitor {
 		private void queueProperties(NodeRef nodeRef, QName propQname, String value) {
 			logger.debug("Queue propertie: " + propQname + " " + value);
 
-			Map<QName, String> properties = propertiesQueue.get(nodeRef);
-			if (properties == null) {
-				properties = new HashMap<>();
+			Map<QName, String> props = propertiesQueue.get(nodeRef);
+			if (props == null) {
+				props = new HashMap<>();
 			}
 
-			properties.put(propQname, value);
-			propertiesQueue.put(nodeRef, properties);
+			props.put(propQname, value);
+			propertiesQueue.put(nodeRef, props);
 		}
 
 		public NodeRef getCurNodeRef() {
@@ -626,8 +624,8 @@ public class ImportEntityXmlVisitor {
 		public void handlePropertiesQueue() throws SAXException {
 
 			for (Map.Entry<NodeRef, Map<QName, String>> entry : propertiesQueue.entrySet()) {
-				Map<QName, String> properties = entry.getValue();
-				for (Map.Entry<QName, String> value : properties.entrySet()) {
+				Map<QName, String> props = entry.getValue();
+				for (Map.Entry<QName, String> value : props.entrySet()) {
 					Matcher nodeRefMatcher = nodeRefPattern.matcher(value.getValue());
 					StringBuffer sb = new StringBuffer();
 					while (nodeRefMatcher.find()) {
@@ -651,7 +649,7 @@ public class ImportEntityXmlVisitor {
 								}
 							}
 
-							if (replacementNode == null) {
+							if (replacementNode == null || !serviceRegistry.getNodeService().exists(replacementNode)) {
 								logger.error("Cannot find replacement node for : " + value.getValue());
 
 							} else {
@@ -664,7 +662,10 @@ public class ImportEntityXmlVisitor {
 
 					}
 					nodeRefMatcher.appendTail(sb);
-					serviceRegistry.getNodeService().setProperty(entry.getKey(), value.getKey(), sb.toString());
+					if(serviceRegistry.getNodeService().exists(entry.getKey())) {
+						serviceRegistry.getNodeService().setProperty(entry.getKey(), value.getKey(), sb.toString());
+					}
+					
 				}
 			}
 		}
