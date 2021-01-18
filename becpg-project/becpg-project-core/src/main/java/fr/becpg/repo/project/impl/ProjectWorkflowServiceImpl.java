@@ -19,6 +19,7 @@ package fr.becpg.repo.project.impl;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -97,8 +98,8 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 		final String workflowDescription = calculateWorkflowDescription(projectData, taskListDataItem, nextDeliverables);
 		final Map<QName, Serializable> workflowProps = new HashMap<>();
 
-		if (taskListDataItem.getEnd() != null) {
-			workflowProps.put(WorkflowModel.PROP_WORKFLOW_DUE_DATE, taskListDataItem.getEnd());
+		if ( computeDueDate(taskListDataItem) != null) {
+			workflowProps.put(WorkflowModel.PROP_WORKFLOW_DUE_DATE, computeDueDate(taskListDataItem));
 		}
 
 		if (projectData.getPriority() != null) {
@@ -186,6 +187,11 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 		} finally {
 			AuthenticationUtil.setFullyAuthenticatedUser(fullyAuthenticatedUser);
 		}
+	}
+
+	private Date computeDueDate(TaskListDataItem taskListDataItem) {
+		
+		return ProjectHelper.calculateEndDate(taskListDataItem.getStart(), taskListDataItem.getDuration());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -305,7 +311,7 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 				taskListDataItem.setWorkflowTaskInstance("");
 			} else {
 
-				if (taskListDataItem.getResources().size() == 0) {
+				if (taskListDataItem.getResources().isEmpty()) {
 					workflowService.cancelWorkflow(taskListDataItem.getWorkflowInstance());
 					return;
 				}
@@ -332,11 +338,13 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 									workflowTask.getProperties(), properties);
 							properties = getWorkflowTaskNewProperties(WorkflowModel.PROP_DESCRIPTION, workflowDescription,
 									workflowTask.getProperties(), properties);
-							properties = getWorkflowTaskNewProperties(WorkflowModel.PROP_WORKFLOW_DUE_DATE, taskListDataItem.getEnd(),
+							properties = getWorkflowTaskNewProperties(WorkflowModel.PROP_WORKFLOW_DUE_DATE, computeDueDate(taskListDataItem),
 									workflowTask.getProperties(), properties);
-							properties = getWorkflowTaskNewProperties(WorkflowModel.PROP_DUE_DATE, taskListDataItem.getEnd(),
+							properties = getWorkflowTaskNewProperties(WorkflowModel.PROP_DUE_DATE, computeDueDate(taskListDataItem),
 									workflowTask.getProperties(), properties);
 							properties = getWorkflowTaskNewProperties(WorkflowModel.PROP_WORKFLOW_PRIORITY, projectData.getPriority(),
+									workflowTask.getProperties(), properties);
+							properties = getWorkflowTaskNewProperties(WorkflowModel.PROP_STATUS,WorkflowConstants.TASK_STATUS_IN_PROGRESS,
 									workflowTask.getProperties(), properties);
 
 							List<NodeRef> assignees = getAssignees(taskListDataItem.getResources(), false);
