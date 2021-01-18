@@ -200,11 +200,105 @@
                          },
                          scope : this
                       }
-                   }).show();	           }
+                   }).show();
+				}
 
 	        });
 	        
 	        
+
+		YAHOO.Bubbling
+			.fire(
+				"registerToolbarButtonAction",
+				{
+					actionName: "project-metadata",
+					hideLabel: true,
+					evaluate: function(asset, entity) {
+						return asset.name != null && ( asset.name === "taskList" ) && entity != null && entity.userAccess.edit;
+					},
+					fn: function(instance) {
+
+						var templateUrl = YAHOO.lang
+							.substitute(
+								Alfresco.constants.URL_SERVICECONTEXT + "components/form?popup=true&formId=project-metadata&itemKind=node&itemId={itemId}&mode=edit&submitType=json&showCancelButton=true",
+								{
+									itemId: this.options.entityNodeRef
+								});
+
+						var editProductMetadata = new Alfresco.module.SimpleDialog(this.id + "-editProjectMetadata");
+
+						editProductMetadata.setOptions(
+							{
+								width: "33em",
+								onSuccess: {
+									fn: function() {
+										YAHOO.Bubbling.fire("metadataRefresh");
+										YAHOO.Bubbling.fire("dirtyDataTable");
+										Alfresco.util.PopupManager.displayMessage(
+											{
+												text: this.msg("message.details.success")
+											});
+									},
+									scope: this
+								},
+								failureMessage: this.msg("message.details.failure"),
+								templateUrl: templateUrl,
+								destroyOnHide: true,
+								doBeforeDialogShow: {
+									fn: function(p_form, p_dialog) {
+										Alfresco.util.populateHTML([p_dialog.id + "-dialogTitle",
+										this.msg("label.project-metadata.title")]);
+									},
+									scope: this
+								}
+
+							}).show();
+
+					}
+				});
+				
+				
+		YAHOO.Bubbling
+			.fire(
+				"registerToolbarButtonAction",
+				{
+					actionName: "show-critical-path",
+					hideLabel: true,
+					evaluate: function(asset, entity) {
+						return asset.name != null && ( asset.name === "taskList" ) && entity != null && entity.userAccess.edit;
+					},
+					 createWidget : function(containerDiv, instance)
+		            {
+		
+		                var divEl = document.createElement("div");
+		
+		                containerDiv.appendChild(divEl);
+		
+		                Dom.addClass(divEl, "criticalPathCkeckbox");
+		
+		                var widget = new YAHOO.widget.Button(
+		                {
+		                    type : "checkbox",
+		                    title : instance.msg("button.toggle-critical-path.description"),
+		                    container : divEl,
+		                    checked : false
+		                });
+		
+		                widget.on("checkedChange", function()
+		                {
+							var el = YAHOO.util.Dom.get("alf-content");
+							
+							if(YAHOO.util.Dom.hasClass(el,"show-critical")){
+								YAHOO.util.Dom.removeClass(el,"show-critical");
+							} else {
+								YAHOO.util.Dom.addClass(el,"show-critical");
+							}
+
+		                });
+		
+		                return widget;
+		            }
+				});
 	        
 	        
     }

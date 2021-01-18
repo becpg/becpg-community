@@ -724,24 +724,31 @@ public class ImportEntityXmlVisitor {
 			NodeRef ret = serviceRegistry.getNodeService().getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, name);
 
 			if (ret == null) {
-				Map<QName, Serializable> properties = new HashMap<>();
-				properties.put(ContentModel.PROP_NAME, name);
-				if ((erpCode != null) && !erpCode.isEmpty()) {
-					properties.put(BeCPGModel.PROP_ERP_CODE, erpCode);
+				if (ContentModel.TYPE_AUTHORITY_CONTAINER.equals(type)) {
+					throw new IllegalStateException("Cannot create  "+name+ ", creating group is not yet implemented");
+					
+				} else {
+				
+				
+					Map<QName, Serializable> props = new HashMap<>();
+					props.put(ContentModel.PROP_NAME, name);
+					if ((erpCode != null) && !erpCode.isEmpty()) {
+						props.put(BeCPGModel.PROP_ERP_CODE, erpCode);
+					}
+	
+					QName assocName = ContentModel.ASSOC_CONTAINS;
+					logger.debug("Creating missing node :" + name + " at path :" + parentNodeRef + ", type = " + type + ", assocName = " + assocName);
+	
+					if (ContentModel.TYPE_CATEGORY.equals(type)) {
+						// fixes tag creation
+						assocName = ContentModel.ASSOC_SUBCATEGORIES;
+					}
+	
+					ret = serviceRegistry.getNodeService()
+							.createNode(parentNodeRef, assocName,
+									QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name)), type, props)
+							.getChildRef();
 				}
-
-				QName assocName = ContentModel.ASSOC_CONTAINS;
-				logger.debug("Creating missing node :" + name + " at path :" + parentNodeRef + ", type = " + type + ", assocName = " + assocName);
-
-				if (ContentModel.TYPE_CATEGORY.equals(type)) {
-					// fixes tag creation
-					assocName = ContentModel.ASSOC_SUBCATEGORIES;
-				}
-
-				ret = serviceRegistry.getNodeService()
-						.createNode(parentNodeRef, assocName,
-								QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name)), type, properties)
-						.getChildRef();
 
 			} else {
 				if (!serviceRegistry.getNodeService().getType(ret).equals(type)) {

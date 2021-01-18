@@ -9,7 +9,7 @@ function main()
         projectEntity = projectNode.assocs["pjt:projectEntity"][0];
     } 
 
-    bSupplier.assignToSupplier(project, task ,projectEntity);
+    bSupplier.assignToSupplier(project, task ,projectEntity, true);
     
 }
 

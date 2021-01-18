@@ -365,8 +365,8 @@
 					<show id="gs1:endAvailabilityDateTime"  />
 					<show id="gs1:publicationDate"  />
 				
-					<show id="bcpg:autoMergeDate" force="false" />
-				    <show id="bcpg:autoMergeTo" force="true"  />
+					<show id="bcpg:autoMergeDate"  />
+				    <show id="bcpg:autoMergeTo"  />
 					<show id="bcpg:autoMergeVersionType" />
 					<show id="bcpg:autoMergeComments" />
 					<show id="bcpg:autoMergeImpactWUsed" />
@@ -2600,8 +2600,8 @@
 					<show id="cm:modifier" for-mode="view" />
 					<show id="cm:modified" for-mode="view" />
 
-					<show id="bcpg:autoMergeDate" force="false" />
-				    <show id="bcpg:autoMergeTo" force="true"  />
+					<show id="bcpg:autoMergeDate"  />
+				    <show id="bcpg:autoMergeTo"   />
 					<show id="bcpg:autoMergeVersionType" />
 					<show id="bcpg:autoMergeComments" />
 					<show id="bcpg:autoMergeImpactWUsed" />
@@ -3466,8 +3466,8 @@
 					<show id="cm:modifier" for-mode="view" />
 					<show id="cm:modified" for-mode="view" />
 					
-					<show id="bcpg:autoMergeDate" force="false" />
-				    <show id="bcpg:autoMergeTo" force="true"  />
+					<show id="bcpg:autoMergeDate"  />
+				    <show id="bcpg:autoMergeTo"   />
 					<show id="bcpg:autoMergeVersionType" />
 					<show id="bcpg:autoMergeComments" />
 					<show id="bcpg:autoMergeImpactWUsed" />
@@ -4612,8 +4612,8 @@
 					<show id="bcpg:startEffectivity" for-mode="view" />
 					<show id="bcpg:endEffectivity" for-mode="view" />
 					
-					<show id="bcpg:autoMergeDate" force="false" />
-				    <show id="bcpg:autoMergeTo" force="true"  />
+					<show id="bcpg:autoMergeDate"  />
+				    <show id="bcpg:autoMergeTo"   />
 					<show id="bcpg:autoMergeVersionType" />
 					<show id="bcpg:autoMergeComments" />
 					<show id="bcpg:autoMergeImpactWUsed" />
@@ -5526,8 +5526,8 @@
 					<show id="cm:modifier" for-mode="view" />
 					<show id="cm:modified" for-mode="view" />
 					
-					<show id="bcpg:autoMergeDate" force="false" />
-				    <show id="bcpg:autoMergeTo" force="true"  />
+					<show id="bcpg:autoMergeDate"  />
+				    <show id="bcpg:autoMergeTo"   />
 					<show id="bcpg:autoMergeVersionType" />
 					<show id="bcpg:autoMergeComments" />
 					<show id="bcpg:autoMergeImpactWUsed" />

@@ -299,8 +299,8 @@ public class CharactDetailsPackMaterialFormulationIT extends AbstractFinishedPro
 			PF1.setUnit(ProductUnit.g);
 
 			List<PackMaterialListDataItem> packMaterial = new ArrayList<>();
-			packMaterial.add(new PackMaterialListDataItem(packMaterial1NodeRef, 10d));
-			packMaterial.add(new PackMaterialListDataItem(packMaterial2NodeRef, 20d));
+			packMaterial.add(new PackMaterialListDataItem(packMaterial1NodeRef, 10d, PackagingLevel.Primary));
+			packMaterial.add(new PackMaterialListDataItem(packMaterial2NodeRef, 20d, PackagingLevel.Primary));
 			PF1.setPackMaterialList(packMaterial);
 			PF1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), PF1).getNodeRef();
 
@@ -316,8 +316,8 @@ public class CharactDetailsPackMaterialFormulationIT extends AbstractFinishedPro
 			SF1.setUnit(ProductUnit.g);
 
 			packMaterial = new ArrayList<>();
-			packMaterial.add(new PackMaterialListDataItem(packMaterial3NodeRef, 30d));
-			packMaterial.add(new PackMaterialListDataItem(packMaterial4NodeRef, 40d));
+			packMaterial.add(new PackMaterialListDataItem(packMaterial3NodeRef, 30d, PackagingLevel.Primary));
+			packMaterial.add(new PackMaterialListDataItem(packMaterial4NodeRef, 40d, PackagingLevel.Primary));
 			SF1.setPackMaterialList(packMaterial);
 			SF1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), SF1).getNodeRef();
 
@@ -333,7 +333,7 @@ public class CharactDetailsPackMaterialFormulationIT extends AbstractFinishedPro
 			rawMaterial1.setUnit(ProductUnit.g);
 
 			packMaterial = new ArrayList<>();
-			packMaterial.add(new PackMaterialListDataItem(packMaterial5NodeRef, 50d));
+			packMaterial.add(new PackMaterialListDataItem(packMaterial5NodeRef, 50d, PackagingLevel.Primary));
 			rawMaterial1.setPackMaterialList(packMaterial);
 			rawMaterial1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial1).getNodeRef();
 

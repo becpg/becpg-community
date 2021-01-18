@@ -42,6 +42,7 @@ public class VariantPackagingData implements Serializable {
 	private boolean isManualPrimary = true;
 	private boolean isManualTertiary = true;
 	private boolean isManualSecondary = true;
+	private boolean isManualPalletInformations = true;
 
 	/**
 	 * <p>Getter for the field <code>tarePrimary</code>.</p>
@@ -449,6 +450,15 @@ public class VariantPackagingData implements Serializable {
 	 */
 	public void setManualTertiary(boolean isManualTertiary) {
 		this.isManualTertiary = isManualTertiary;
+	}
+
+	
+	public boolean isManualPalletInformations() {
+		return isManualPalletInformations;
+	}
+
+	public void setManualPalletInformations(boolean isManualPalletInformations) {
+		this.isManualPalletInformations = isManualPalletInformations;
 	}
 
 	/**
