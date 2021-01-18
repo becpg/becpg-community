@@ -24,8 +24,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
 
@@ -299,6 +299,8 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 			return RemoteEntityFormat.xml_light;
 		} else if ((format != null) && RemoteEntityFormat.json.toString().equalsIgnoreCase(format)) {
 			return RemoteEntityFormat.json;
+		} else if ((format != null) && RemoteEntityFormat.json_all.toString().equalsIgnoreCase(format)) {
+			return RemoteEntityFormat.json_all;
 		} else if ((format != null) && RemoteEntityFormat.xsd.toString().equalsIgnoreCase(format)) {
 			return RemoteEntityFormat.xsd;
 		} else if ((format != null) && RemoteEntityFormat.xsd_excel.toString().equalsIgnoreCase(format)) {

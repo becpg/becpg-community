@@ -39,6 +39,22 @@
 		</property>
 	</bean>
 
+	<bean id="jsonVersionExtractor" class="fr.becpg.repo.entity.datalist.impl.JsonVersionExtractor" init-method="init">
+		<property name="dataListExtractorFactory" ref="dataListExtractorFactory" />
+		<property name="attributeExtractorService" ref="attributeExtractorService" />
+		<property name="paginatedSearchCache" ref="paginatedSearchCache" />
+		<property name="entityDictionaryService" ref="entityDictionaryService" />
+		<property name="nodeService" ref="nodeService" />
+		<property name="entityActivityService" ref="entityActivityService" />
+		<property name="dictionaryService" ref="cachedDictionaryService" />
+		<property name="securityService" ref="securityService" />
+		<property name="defaultExtractor" value="false" />
+		<property name="advSearchService" ref="AdvSearchService" />
+		<property name="services" ref="ServiceRegistry" />
+		<property name="permissionService" ref="permissionService" />
+		<property name="ratingService" ref="ratingService"/>
+	</bean>
+
 	<bean id="becpgCoreBootstrapMessages" class="org.alfresco.i18n.ResourceBundleBootstrapComponent">
 		<property name="resourceBundles">
 			<list>
@@ -308,6 +324,52 @@
             <value>false</value>
         </property>
    </bean>
+   
+   	<bean id="versionCleanerJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<property name="jobClass">
+			<value>fr.becpg.repo.entity.datalist.VersionCleanerJob</value>
+		</property>
+		<property name="group" value="beCPG"/>
+        <property name="description" value="Run version cleanup" />
+       	<property name="jobDataAsMap">
+			<map>
+				<entry key="jobLockService">
+	               <ref bean="jobLockService" />
+	           </entry>
+				<entry key="entityVersionService">
+	               <ref bean="entityVersionService" />
+	           </entry>
+				<entry key="entityFormatService">
+	               <ref bean="entityFormatService" />
+	           </entry>
+				<entry key="nodeService">
+	               <ref bean="nodeService" />
+	           </entry>
+				<entry key="transactionService">
+	               <ref bean="transactionService" />
+	           </entry>
+				<entry key="entityListDAO">
+	               <ref bean="entityListDAO" />
+	           </entry>
+			</map>
+		</property>
+        
+	</bean>
+	
+	<bean id="entityFormatService" class="fr.becpg.repo.entity.datalist.impl.EntityFormatServiceImpl"/>
+
+	<bean id="versionCleanerSchedulerAccessor" class="org.alfresco.schedule.AlfrescoSchedulerAccessorBean">
+		<property name="scheduler" ref="schedulerFactory" />
+		<property name="triggers">
+			<list>
+				<bean id="versionCleanerJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+					<property name="jobDetail" ref="versionCleanerJob"/>
+					<property name="cronExpression" value="${beCPG.version.cleaner.cronExpression}"/>
+				</bean>
+			</list>
+		</property>
+		<property name="enabled" value="${beCPG.version.cleaner.enabled}" />
+	</bean>
    
    <!-- 
     <bean id="search.fts.alfresco.db" class="org.alfresco.repo.search.impl.solr.DbAftsQueryLanguage" >
