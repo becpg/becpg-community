@@ -62,7 +62,7 @@ var g; // gantt var
         } else if(view == "tasks"){
         	 this.setOptions(
         	            {
-        	                sortable : true,
+        	                sortable : false,
         	                localSort : false,
         	                usePagination : true,
         	                configurableColumns : false,

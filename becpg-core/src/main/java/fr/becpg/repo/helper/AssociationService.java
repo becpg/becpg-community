@@ -122,4 +122,7 @@ public interface AssociationService {
 	 */
 	List<EntitySourceAssoc> getEntitySourceAssocs(List<NodeRef> nodeRefs, QName assocQName, boolean isOrOperator);
 	
+	
+	void removeChildCachedAssoc(NodeRef nodeRef, QName qName);
+	
 }

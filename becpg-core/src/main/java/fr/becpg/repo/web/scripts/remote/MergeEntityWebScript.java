@@ -41,6 +41,7 @@ public class MergeEntityWebScript extends AbstractEntityWebScript {
 	private static final String PARAM_DESCRIPTION = "description";
 	private static final String PARAM_BRANCH_TO_NODEREF = "branchToNodeRef";
 	private static final String PARAM_IMPACT_WUSED = "impactWused";
+	private static final String PARAM_RENAME_ON_MERGE = "renameOnMerge";
 
 	private static final String VALUE_TRUE = "true";
 
@@ -82,6 +83,11 @@ public class MergeEntityWebScript extends AbstractEntityWebScript {
 		if (req.getParameter(PARAM_IMPACT_WUSED) != null && VALUE_TRUE.equals(req.getParameter((PARAM_IMPACT_WUSED)))) {
 			impactWused = true;
 		}
+		
+		boolean rename = false;
+		if (req.getParameter(PARAM_RENAME_ON_MERGE) != null && VALUE_TRUE.equals(req.getParameter((PARAM_RENAME_ON_MERGE)))) {
+			rename = true;
+		}
 
 		JSONObject json = (JSONObject) req.parseContent();
 		try {
@@ -112,7 +118,7 @@ public class MergeEntityWebScript extends AbstractEntityWebScript {
 				logger.debug("versionType: " + versionType);
 				logger.debug("impactWused: " + impactWused);
 			}
-			NodeRef newEntityNodeRef = entityVersionService.mergeBranch(entityNodeRef, branchToNodeRef, versionType, description, impactWused);
+			NodeRef newEntityNodeRef = entityVersionService.mergeBranch(entityNodeRef, branchToNodeRef, versionType, description, impactWused, rename);
 
 			if (impactWused) {
 				entityVersionService.impactWUsed(newEntityNodeRef, versionType, description);

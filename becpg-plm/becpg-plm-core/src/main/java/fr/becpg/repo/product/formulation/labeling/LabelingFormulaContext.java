@@ -2009,14 +2009,12 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		if (showAllGeo || ((nodeRef != null) && showGeoRules.containsKey(nodeRef) && showGeoRules.get(nodeRef).matchLocale(I18NUtil.getLocale()))) {
 
 			if ((geoOrigins != null) && !geoOrigins.isEmpty()) {
-				StringBuilder geoOriginsBuffer = new StringBuilder();
+
+				Set<String> geoOriginsBuffer = new HashSet<>();
 				for (NodeRef geoOrigin : geoOrigins) {
-					if (geoOriginsBuffer.length() > 0) {
-						geoOriginsBuffer.append(geoOriginsSeparator);
-					}
-					geoOriginsBuffer.append(getCharactName(geoOrigin));
+					geoOriginsBuffer.add(getCharactName(geoOrigin));
 				}
-				return geoOriginsBuffer.toString();
+				return String.join(geoOriginsSeparator, geoOriginsBuffer);
 			}
 		}
 		return null;

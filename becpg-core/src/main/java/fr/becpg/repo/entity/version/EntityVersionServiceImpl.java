@@ -909,18 +909,18 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			description = "";
 		}
 
-		return mergeBranch(branchNodeRef, null, VersionType.valueOf(versionType), description, impactWused);
+		return mergeBranch(branchNodeRef, null, VersionType.valueOf(versionType), description, impactWused, false);
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public NodeRef mergeBranch(NodeRef branchNodeRef, NodeRef branchToNodeRef, VersionType versionType, String description) {
-		return mergeBranch(branchNodeRef, branchToNodeRef, versionType, description, false);
+		return mergeBranch(branchNodeRef, branchToNodeRef, versionType, description, false, false);
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public NodeRef mergeBranch(NodeRef branchNodeRef, NodeRef branchToNodeRef, VersionType versionType, String description, boolean impactWused) {
+	public NodeRef mergeBranch(NodeRef branchNodeRef, NodeRef branchToNodeRef, VersionType versionType, String description, boolean impactWused, boolean rename) {
 
 		if (branchToNodeRef == null) {
 			branchToNodeRef = associationService.getTargetAssoc(branchNodeRef, BeCPGModel.ASSOC_AUTO_MERGE_TO);
@@ -950,7 +950,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 							policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_ENTITY_BRANCH);
 							policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
 
-							prepareBranchBeforeMerge(branchNodeRef, internalBranchToNodeRef);
+							prepareBranchBeforeMerge(branchNodeRef, internalBranchToNodeRef, rename);
 
 							Map<String, Serializable> properties = new HashMap<>();
 							properties.put(VersionBaseModel.PROP_VERSION_TYPE, versionType);
@@ -992,7 +992,8 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		return null;
 	}
 
-	private void prepareBranchBeforeMerge(NodeRef branchNodeRef, NodeRef branchToNodeRef) {
+	@SuppressWarnings("deprecation")
+	private void prepareBranchBeforeMerge(NodeRef branchNodeRef, NodeRef branchToNodeRef, boolean rename) {
 		if (nodeService.hasAspect(branchToNodeRef, ContentModel.ASPECT_CHECKED_OUT)) {
 			throw new CheckOutCheckInServiceException(MSG_ALREADY_CHECKEDOUT);
 		}
@@ -1033,6 +1034,10 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				mergeComments(branchNodeRef, branchToNodeRef);
 
 				String copyName = (String) this.nodeService.getProperty(branchToNodeRef, ContentModel.PROP_NAME);
+				if(rename) {
+					copyName = (String) this.nodeService.getProperty(branchNodeRef, ContentModel.PROP_NAME);
+				}
+					
 				String workingCopyLabel = I18NUtil.getMessage(MSG_WORKING_COPY_LABEL);
 				copyName = createWorkingCopyName(copyName, workingCopyLabel);
 

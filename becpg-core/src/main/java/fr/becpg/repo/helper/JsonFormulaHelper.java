@@ -64,7 +64,7 @@ public class JsonFormulaHelper {
 	 */
 	public static Object cleanCompareJSON(String value) {
 		if (value != null) {
-			if (value.contains(JSON_COMP_ITEMS)) {
+			if (value.contains(JSON_COMP_ITEMS) && value.contains("{")) {
 				try {
 					JSONTokener tokener = new JSONTokener(value);
 					JSONObject jsonObject = new JSONObject(tokener);
@@ -75,9 +75,9 @@ public class JsonFormulaHelper {
 					}
 					return null;
 				} catch (Exception e) {
-					logger.warn("Cannot parse " + value, e);
+					logger.debug("Cannot parse " + value, e);
 				}
-			} else if (value.contains(JSON_SUB_VALUES)) {
+			} else if (value.contains(JSON_SUB_VALUES) && value.contains("{")) {
 				try {
 					JSONTokener tokener = new JSONTokener(value);
 					JSONObject jsonObject = new JSONObject(tokener);
@@ -86,7 +86,7 @@ public class JsonFormulaHelper {
 					}
 					return "";
 				} catch (Exception e) {
-					logger.warn("Cannot parse " + value, e);
+					logger.debug("Cannot parse " + value, e);
 				}
 			}
 		}
