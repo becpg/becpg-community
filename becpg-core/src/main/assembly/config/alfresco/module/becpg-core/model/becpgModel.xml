@@ -57,6 +57,17 @@
 			</parameter>
 		</constraint>
 		
+		<constraint name="bcpg:entityFormat" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>JSON</value>
+					<value>XML</value>
+					<value>NODE</value>
+				</list>
+			</parameter>
+		</constraint>
+		
 		<constraint name="bcpg:activityTypes" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -591,6 +602,33 @@
 				</property>
 			</properties>
 		</aspect>
+
+		<aspect name="bcpg:entityFormatAspect">
+			<properties>
+				<property name="bcpg:entityFormat">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>false</tokenised>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:entityFormat" />
+					</constraints>
+				</property>
+				<property name="bcpg:entityData">
+					<type>d:content</type>
+					<mandatory>false</mandatory>
+					<index enabled="false">
+                        <atomic>true</atomic>
+                        <stored>false</stored>
+                        <tokenised>false</tokenised>
+                    </index>
+				</property>
+			</properties>
+		</aspect>
+		
 
 		<aspect name="bcpg:hiddenFolder">
 		</aspect>
