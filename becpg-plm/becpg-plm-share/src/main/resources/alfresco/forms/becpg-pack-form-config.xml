@@ -201,7 +201,6 @@
 			<!-- Create item form -->
 			<form>
 				<field-visibility>
-					<show id="pack:pmlLevel" />
 					<show id="pack:pmlMaterial" />
 					<show id="pack:pmlWeight" />
 				</field-visibility>
@@ -223,6 +222,7 @@
 					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
+					<field id="pack:pmlLevel"  read-only="true" />
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 				</appearance>
 			</form>
@@ -253,7 +253,6 @@
 		<forms>
 			<form>
 				<field-visibility>
-					<show id="pack:pmlLevel" />
 					<show id="pack:pmlMaterial" />
 					<show id="pack:pmlWeight" />
 				</field-visibility>
