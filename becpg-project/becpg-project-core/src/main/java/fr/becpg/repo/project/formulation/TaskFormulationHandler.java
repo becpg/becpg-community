@@ -211,6 +211,7 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 							task.getTask().setDue(null);
 							task.getTask().setTargetStart(null);
 							task.getTask().setTargetEnd(null);
+							task.getTask().setManualDate(null);
 
 							for (TaskWrapper child : task.getChilds()) {
 
@@ -258,13 +259,14 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 
 							}
 
-							Integer duration = ProjectHelper.calculateTaskDuration(task.getTask().getTargetStart(), task.getTask().getTargetEnd());
+							Integer duration = ProjectHelper.calculateTaskDuration(task.getTask().getStart(), task.getTask().getDue());
 							Integer realDuration = ProjectHelper.calculateTaskDuration(task.getTask().getStart(), task.getTask().getEnd());
 
-							if (duration == null) {
-								logger.warn("Parent task should'nt have manually date:" + task.getTask().getTaskName());
-							}
 
+							if (duration == null) {
+								logger.warn("Parent task duration is null:" + task.getTask().getTaskName());
+							}
+							
 							task.getTask().setDuration(duration);
 							task.getTask().setRealDuration(realDuration);
 							task.getTask().setWork(work);
@@ -317,21 +319,23 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 
 			if (!isTpl) {
 				startDate = ProjectHelper.getFirstStartDate(tasks);
-			}
-			if (startDate == null) {
-				if (projectData.getStartDate() == null) {
-					startDate = ProjectHelper.calculateNextStartDate(projectData.getCreated());
-				} else {
-					startDate = projectData.getStartDate();
+				if (startDate == null) {
+					if (projectData.getStartDate() == null) {
+						startDate = ProjectHelper.calculateNextStartDate(projectData.getCreated());
+					} else {
+						startDate = projectData.getStartDate();
+					}
 				}
-			}
-			if (!isTpl) {
 				if (projectData.getDueDate() == null) {
 					targetStartDate = startDate;
 				} else {
 					targetStartDate = ProjectHelper.calculateStartDate(projectData.getDueDate(), TaskWrapper.calculateMaxDuration(tasks));
 				}
+			} else {
+				startDate = ProjectHelper.calculateNextStartDate(new Date());
+				targetStartDate = startDate;
 			}
+			
 
 			projectData.setStartDate(startDate);
 			projectData.setTargetStartDate(targetStartDate);
@@ -342,6 +346,8 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 			Date endDate = null;
 			if (!isTpl) {
 				endDate = ProjectHelper.getLastEndDate(tasks);
+			} else {
+				endDate = ProjectHelper.calculatePrevEndDate(new Date());
 			}
 
 			if (endDate == null) {
