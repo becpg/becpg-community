@@ -1368,6 +1368,7 @@
 					<show id="pjt:tlIsGroup" />
 					<show id="pjt:tlIsCritical" />
 					<show id="pjt:tlTaskName" />
+					<show id="pjt:tlDue" />
 					<show id="pjt:tlStart" />
 					<show id="pjt:tlEnd" />
 					<show id="pjt:tlTargetStart" />
@@ -1396,8 +1397,11 @@
 					<field id="pjt:invoice" read-only="true" />
 					<field id="pjt:expense" read-only="true" />					
 					<field id="pjt:tlIsMilestone" label="hidden" />
+					<field id="pjt:tlDue" read-only="true" />
 					<field id="pjt:tlStart" read-only="true" />
 					<field id="pjt:tlEnd" read-only="true" />
+					<field id="pjt:tlTargetStart" read-only="true" />
+					<field id="pjt:tlTargetEnd" read-only="true" />
 					<field id="pjt:tlRealDuration" read-only="true" />
 					<field id="pjt:tlCapacity" read-only="true" />
 					<field id="pjt:expense" read-only="true" />
@@ -1421,6 +1425,7 @@
 					<show id="pjt:tlTaskLegend" />
 					<show id="pjt:tlState" />
 					<show id="pjt:completionPercent" />
+					<show id="pjt:tlDue" />
 					<show id="pjt:tlStart" />
 					<show id="pjt:tlEnd" />
 					<!--  <show id="pjt:tlWorkflowInstance" /> -->
@@ -1454,6 +1459,7 @@
 					
 				 <!--  <show id="dataList_pjt:deliverableList" />  -->
 					
+					<show id="pjt:tlDue" />
 					<show id="pjt:tlStart" />
 					<show id="pjt:tlEnd" />
 					<show id="pjt:completionPercent" />
@@ -1473,6 +1479,7 @@
 					<field id="pjt:invoice" read-only="true" />
 					<field id="pjt:expense" read-only="true" />					
 					<field id="pjt:tlIsMilestone" label="datasource" />
+					<field id="pjt:tlDue" read-only="true" />
 					<field id="pjt:tlStart" read-only="true" />
 					<field id="pjt:tlEnd" read-only="true" />
 					<field id="pjt:tlRealDuration" read-only="true" />
