@@ -208,6 +208,7 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 
 							task.getTask().setStart(null);
 							task.getTask().setEnd(null);
+							task.getTask().setDue(null);
 							task.getTask().setTargetStart(null);
 							task.getTask().setTargetEnd(null);
 
@@ -221,6 +222,11 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 								if ((child.getTask().getEnd() != null)
 										&& ((task.getTask().getEnd() == null) || task.getTask().getEnd().before(child.getTask().getEnd()))) {
 									ProjectHelper.setTaskEndDate(task.getTask(), child.getTask().getEnd());
+								}
+								
+								if ((child.getTask().getDue() != null)
+										&& ((task.getTask().getDue() == null) || task.getTask().getDue().before(child.getTask().getDue()))) {
+									task.getTask().setDue(child.getTask().getDue());
 								}
 
 								if ((child.getTask().getTargetStart() != null) && ((task.getTask().getTargetStart() == null)
@@ -726,13 +732,16 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 				ProjectHelper.setTaskStartDate(task.getTask(), startDate);
 
 				if (((task.getTask().getDuration() != null) || (Boolean.TRUE.equals(task.getTask().getIsMilestone())))) {
-					Date endDate = ProjectHelper.calculateEndDate(task.getTask().getStart(), task.getTask().getDuration());
+					Date dueDate = ProjectHelper.calculateEndDate(task.getTask().getStart(), task.getTask().getDuration());
+					
+					Date endDate = dueDate;
 					Date now = Calendar.getInstance().getTime();
 
-					if (TaskState.InProgress.equals(task.getTask().getTaskState()) && (endDate != null) && endDate.before(now)) {
+					if (TaskState.OnHold.equals(task.getTask().getTaskState()) || TaskState.InProgress.equals(task.getTask().getTaskState()) && (endDate != null) && endDate.before(now)) {
 						endDate = now;
 					}
 
+					task.getTask().setDue(dueDate!=null ? ProjectHelper.removeTime(dueDate): null);
 					ProjectHelper.setTaskEndDate(task.getTask(), endDate);
 				}
 
