@@ -11,8 +11,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.project.data.ProjectData;
@@ -29,8 +27,6 @@ import fr.becpg.repo.project.impl.ProjectHelper;
 public class TaskWrapper implements Comparable<TaskWrapper> {
 
 	private static final int DURATION_DEFAULT = 1;
-
-	private static Log logger = LogFactory.getLog(TaskWrapper.class);
 
 	private TaskListDataItem task;
 
@@ -171,8 +167,14 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 	 * @return a {@link java.lang.Integer} object.
 	 */
 	public Integer getDuration() {
-		return ((task != null) && (task.getDuration() != null)) ? task.getDuration()
-				: ((task != null) && Boolean.TRUE.equals(task.getIsMilestone())) ? DURATION_DEFAULT : null;
+
+		if ((task != null) && (task.getDuration() != null)) {
+			return task.getDuration();
+		} else if ((task != null) && Boolean.TRUE.equals(task.getIsMilestone())) {
+			return DURATION_DEFAULT;
+		}
+
+		return null;
 	}
 
 	/**
@@ -310,7 +312,7 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 
 		projectData.getTaskList().forEach(task -> {
 			TaskWrapper wrapper = getOrCreateTaskWrapper(task.getNodeRef(), cache);
-
+			wrapper.setTask(task);
 			if (wrapper.isParent() || wrapper.isSubProject()) {
 				wrapper.getTask().setIsGroup(true);
 			}
@@ -351,8 +353,10 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 				}
 			} else {
 				//ancestor is a task -> Append task
-				ancestor.getDescendants().add(t);
-				t.getAncestors().add(ancestor);
+				if (ancestor.getTask() != null) {
+					ancestor.getDescendants().add(t);
+					t.getAncestors().add(ancestor);
+				}
 			}
 
 		});
