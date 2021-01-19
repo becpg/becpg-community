@@ -19,11 +19,17 @@ function main() {
 			classifyByHierarchy(document, getDocumentLibraryNodeRef(SIMULATION_SITE_ID));
 		} else if (state == "Archived") {
 			classifyByHierarchy(document, getDocumentLibraryNodeRef(ARCHIVED_SITE_ID));
-		} else if (document.isSubType("pjt:project") && (document.properties["pjt:projectState"] == "Completed" || document.properties["pjt:projectState"] == "Cancelled")) {
-		    classifyByHierarchy(document, getDocumentLibraryNodeRef(ARCHIVED_SITE_ID));
 		} else if (document.isSubType("pjt:project")) {
-		    classifyByHierarchy(document, getDocumentLibraryNodeRef(SIMULATION_SITE_ID));
-		}
+            if (!isInSite(document, SUPPLIER_PORTAL_SITE_ID)) {
+                if(document.properties["pjt:projectState"] == "Completed" || document.properties["pjt:projectState"] == "Cancelled"){
+                    classifyByHierarchy(document, getDocumentLibraryNodeRef(ARCHIVED_SITE_ID));
+                } else {
+                    classifyByHierarchy(document, getDocumentLibraryNodeRef(SIMULATION_SITE_ID));
+                }
+            } else {
+                classifyByHierarchy(document, getDocumentLibraryNodeRef(SUPPLIER_PORTAL_SITE_ID));
+            }
+        }
 
 		//Rename Sample
 		//rename();
