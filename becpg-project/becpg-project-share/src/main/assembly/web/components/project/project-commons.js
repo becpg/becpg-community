@@ -199,13 +199,15 @@
 
          if (isTask) {
             startDate = record["itemData"]["prop_pjt_tlStart"].value;
-            endDate = record["itemData"]["prop_pjt_tlEnd"].value;
+            endDate = record["itemData"]["prop_pjt_tlEnd"]!=null ?record["itemData"]["prop_pjt_tlEnd"].value:null;
+ 			dueDate = record["itemData"]["prop_pjt_tlDue"]!=null ?record["itemData"]["prop_pjt_tlDue"].value: null;
 			targetStartDate = record["itemData"]["prop_pjt_tlTargetStart"]!=null ?  record["itemData"]["prop_pjt_tlTargetStart"].value : null;
 			targetEndDate = record["itemData"]["prop_pjt_tlTargetEnd"]!=null ? record["itemData"]["prop_pjt_tlTargetEnd"].value : null;
 
  			targetStartDate = targetStartDate != null ? this.resetDate(Alfresco.util.fromISO8601(targetStartDate)) : null;
 			targetEndDate = targetEndDate != null ? this.resetDate(Alfresco.util.fromISO8601(targetEndDate)) : null;
             endDate = endDate != null ? this.resetDate(Alfresco.util.fromISO8601(endDate)) : null;
+			dueDate = dueDate != null ? this.resetDate(Alfresco.util.fromISO8601(dueDate)) : null;
             startDate = startDate != null ? this.resetDate(Alfresco.util.fromISO8601(startDate)) : this
                   .resetDate(start);
 
@@ -226,6 +228,7 @@
             return {
                start : startDate,
                end : endDate,
+			   due: dueDate,
 			   targetStart : targetStartDate,
    			   targetEnd : targetEndDate
             };
@@ -502,7 +505,6 @@
       
       getProjectTitleV2 : function PL_getProjectTitle(record, full, oColumn) {
     	  
-          var propertiesUrl = null, dataListUrl = null, version = "";
 
           var title = record.itemData["prop_cm_name"].displayValue, code = record.itemData["prop_bcpg_code"]!=null ? record.itemData["prop_bcpg_code"].displayValue : "", 
           overdue = '', ret = "", state = record.itemData["prop_pjt_projectState"].value;
@@ -583,7 +585,7 @@
     		   
               ret+="<li>";
               
-              var overdue = record.itemData["prop_pjt_projectOverdue"];
+              overdue = record.itemData["prop_pjt_projectOverdue"];
               if(overdue!=null && overdue.value!=null){
             	  ret +=  '<span class="small ' + this.getOverdueClass(record,32) + '" title="'+$html(overdue.value)+ '&nbsp;' + this.msg("overdue.day")+'"></span>';
               }

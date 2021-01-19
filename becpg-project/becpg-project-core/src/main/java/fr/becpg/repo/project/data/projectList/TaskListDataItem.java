@@ -61,6 +61,7 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	private Double loggedTime;
 	private Date start;
 	private Date end;
+	private Date due;
 	private Date targetStart;
 	private Date targetEnd;
 	
@@ -371,6 +372,18 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	}
 
 	
+	
+	
+	@AlfProp
+	@AlfQname(qname = "pjt:tlDue")
+	public Date getDue() {
+		return due;
+	}
+
+	public void setDue(Date due) {
+		this.due = due;
+	}
+
 	@AlfProp
 	@AlfQname(qname = "pjt:tlTargetStart")
 	public Date getTargetStart() {
