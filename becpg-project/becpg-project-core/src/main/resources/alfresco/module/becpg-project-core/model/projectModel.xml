@@ -493,6 +493,14 @@
 						<tokenised>false</tokenised>
 					</index>
 				</property>
+				<property name="pjt:tlDue">
+					<type>d:date</type>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>false</tokenised>
+					</index>
+				</property>
 				<property name="pjt:tlTargetStart">
 					<type>d:date</type>
 					<index enabled="true">
