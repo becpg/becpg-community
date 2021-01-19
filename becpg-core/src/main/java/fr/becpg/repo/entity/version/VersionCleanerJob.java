@@ -2,8 +2,6 @@ package fr.becpg.repo.entity.version;
 
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.schedule.AbstractScheduledLockedJob;
-import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.quartz.DisallowConcurrentExecution;
@@ -12,8 +10,6 @@ import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.PersistJobDataAfterExecution;
-
-import fr.becpg.repo.entity.EntityFormatService;
 
 /**
  * <p>VersionCleanerJob class.</p>
@@ -48,17 +44,19 @@ public class VersionCleanerJob  extends AbstractScheduledLockedJob implements Jo
 	}
 	
 	private boolean cleanVersions(JobDataMap jobData) {
-
-		EntityFormatService entityFormatService = (EntityFormatService) jobData.get("entityFormatService");
-		TransactionService transactionService = (TransactionService) jobData.get("transactionService");
-		NodeService nodeService = (NodeService) jobData.get("nodeService");
 		
-		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			
-			// TODO
-			
-			return true;
-		});
+		return true;
+
+//		EntityFormatService entityFormatService = (EntityFormatService) jobData.get("entityFormatService");
+//		TransactionService transactionService = (TransactionService) jobData.get("transactionService");
+//		NodeService nodeService = (NodeService) jobData.get("nodeService");
+//		
+//		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+//			
+//			// TODO
+//			
+//			return true;
+//		});
 		
 		
 	}

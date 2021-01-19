@@ -327,7 +327,7 @@
    
    	<bean id="versionCleanerJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
 		<property name="jobClass">
-			<value>fr.becpg.repo.entity.datalist.VersionCleanerJob</value>
+			<value>fr.becpg.repo.entity.version.VersionCleanerJob</value>
 		</property>
 		<property name="group" value="beCPG"/>
         <property name="description" value="Run version cleanup" />
