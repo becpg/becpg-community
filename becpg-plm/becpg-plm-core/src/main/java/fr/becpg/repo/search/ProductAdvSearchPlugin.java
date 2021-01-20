@@ -27,6 +27,7 @@ import fr.becpg.repo.entity.datalist.WUsedListService;
 import fr.becpg.repo.entity.datalist.WUsedListService.WUsedOperator;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.impl.AssociationCriteriaFilter;
 import fr.becpg.repo.helper.impl.EntitySourceAssoc;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.productList.SpecCompatibilityDataItem;
@@ -104,10 +105,10 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 					}
 				}
 
-				nodes = getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_PACKAGING_LIST_PRODUCT, PLMModel.ASSOC_PACKAGINGLIST_PRODUCT, null,
+				getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_PACKAGING_LIST_PRODUCT, PLMModel.ASSOC_PACKAGINGLIST_PRODUCT, null,
 						null);
-				nodes = getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_COMPO_LIST_PRODUCT, PLMModel.ASSOC_COMPOLIST_PRODUCT, null, null);
-				nodes = getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_PROCESS_LIST_RESSOURCE, MPMModel.ASSOC_PL_RESOURCE, null, null);
+				getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_COMPO_LIST_PRODUCT, PLMModel.ASSOC_COMPOLIST_PRODUCT, null, null);
+				getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_PROCESS_LIST_RESSOURCE, MPMModel.ASSOC_PL_RESOURCE, null, null);
 
 				nodes = getSearchNodesBySpecificationCriteria(nodes, criteria);
 
@@ -140,11 +141,11 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 			}
 
 			if ((propValue != null) && !propValue.isBlank()) {
+				
+				List<AssociationCriteriaFilter> criteriaFilters = buildCriteriaFilters(criteria, filter);
 
 				List<EntitySourceAssoc> tmp = associationService.getEntitySourceAssocs(extractNodeRefs(propValue), assocFilter.getAttributeQname(),
-						"or".equals(assocFilter.getOperator()) || "not".equals(assocFilter.getOperator()));
-
-			
+						"or".equals(assocFilter.getOperator()) || "not".equals(assocFilter.getOperator()), criteriaFilters);
 				
 				if ("not".equals(assocFilter.getOperator())) {
 
@@ -177,76 +178,11 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 				merge(entitySourceAssocs, notEntitySourceAssocs, false);
 			}
 
-			
 			for (EntitySourceAssoc assocRef : entitySourceAssocs) {
 				
 				if(nodes.contains(assocRef.getEntityNodeRef())) {
-
-					boolean match = true;
-					for (DataListSearchFilterField propFilter : filter.getPropFilters()) {
-						String criteriaValue = null;
-	
-						if (propFilter.getValue() != null) {
-							criteriaValue = propFilter.getValue();
-						} else {
-							criteriaValue = criteria.get(propFilter.getHtmlId());
-						}
-	
-						if ((criteriaValue != null) && !criteriaValue.isBlank()) {
-							match = false;
-	
-							NodeRef n = assocRef.getDataListItemNodeRef();
-							Object value = nodeService.getProperty(n, propFilter.getAttributeQname());
-							if (PLMModel.PROP_NUTLIST_VALUE.equals(propFilter.getAttributeQname()) && (value == null)) {
-								value = nodeService.getProperty(n, PLMModel.PROP_NUTLIST_FORMULATED_VALUE);
-							}
-	
-							if (value != null) {
-								if (value instanceof String) {
-									if (criteriaValue.equals(value)) {
-										match = true;
-									}
-									
-									  
-	
-								} else if (value instanceof Boolean) {
-									if (Boolean.valueOf(criteriaValue).equals(value)) {
-										match = true;
-									}
-	
-								} else if (value instanceof Double) {
-									String[] splitted = criteriaValue.split("\\|");
-									if (splitted.length == 2) {
-										if ((splitted[0].isEmpty() || (((Double) value) >= Double.valueOf(splitted[0])))
-												&& (splitted[1].isEmpty() || (((Double) value) <= Double.valueOf(splitted[1])))) {
-											match = true;
-										}
-									} else if (splitted.length == 1) {
-										if ((splitted[0].isEmpty() || (((Double) value) >= Double.valueOf(splitted[0])))) {
-											match = true;
-										}
-									}
-								}
-								
-								
-								if (logger.isDebugEnabled()) {
-									logger.debug(" - filter : ("+propFilter.getHtmlId()+") " + value + "->" + criteriaValue + ", match=" + match);
-								}
-								
-							}
-	
-						}
-	
-						if(!match) {
-							break;
-						}
-						
-					}
-					if (match) {
-						entities.add(assocRef.getEntityNodeRef());
-					}
+					entities.add(assocRef.getEntityNodeRef());
 				}
-
 			}
 			
 			nodes.retainAll(entities);
@@ -263,6 +199,23 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 		return nodes;
 
+	}
+
+	private List<AssociationCriteriaFilter> buildCriteriaFilters(Map<String, String> criteria, DataListSearchFilter filter) {
+		List<AssociationCriteriaFilter> criteriaFilters = new ArrayList<>();
+
+		for (DataListSearchFilterField propFilter : filter.getPropFilters()) {
+			if (propFilter.getValue() != null) {
+				AssociationCriteriaFilter criteriaFilter = new AssociationCriteriaFilter();
+				criteriaFilter.isProp().propFilter(propFilter).build();
+				criteriaFilters.add(criteriaFilter);
+			} else if (criteria.keySet().contains(propFilter.getHtmlId())) {
+				AssociationCriteriaFilter criteriaFilter = new AssociationCriteriaFilter();
+				criteriaFilter.propFilter(propFilter).criteria(criteria).build();
+				criteriaFilters.add(criteriaFilter);
+			}
+		}
+		return criteriaFilters;
 	}
 
 	private void merge(List<EntitySourceAssoc> sources, List<EntitySourceAssoc> targets, boolean retain) {
