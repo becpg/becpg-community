@@ -133,7 +133,7 @@ public class SortableListPolicy extends AbstractBeCPGPolicy
 
 			// has changed ?
 			boolean hasChanged;
-			if ((afterParentLevel != null) && !afterParentLevel.equals(beforeParentLevel)) {
+			if ((afterParentLevel != null) && !afterParentLevel.equals(beforeParentLevel) && nodeService.exists(nodeRef) && nodeService.exists(afterParentLevel)) {
 
 				if (entityDictionaryService.isSubClass(nodeService.getType(afterParentLevel), BeCPGModel.TYPE_ENTITY_V2)) {
 

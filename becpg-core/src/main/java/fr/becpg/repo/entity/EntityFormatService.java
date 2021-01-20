@@ -36,6 +36,6 @@ public interface EntityFormatService {
 	
 	public String getEntityFormat(NodeRef entityNodeRef);
 	
-	public void convert(NodeRef entityNodeRef, EntityFormat	 toFormat);
+	public void convert(NodeRef entityNodeRef, EntityFormat	toFormat);
 
 }

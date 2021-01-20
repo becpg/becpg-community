@@ -1,21 +1,16 @@
 package fr.becpg.repo.project.formulation;
 
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.project.data.ProjectData;
@@ -32,8 +27,6 @@ import fr.becpg.repo.project.impl.ProjectHelper;
 public class TaskWrapper implements Comparable<TaskWrapper> {
 
 	private static final int DURATION_DEFAULT = 1;
-	
-	private static Log logger = LogFactory.getLog(TaskWrapper.class);
 
 	private TaskListDataItem task;
 
@@ -41,13 +34,11 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 	private Integer maxDuration = 0;
 	private Integer maxRealDuration = 0;
 
-	private List<TaskWrapper> descendants = new LinkedList<>();
-	private List<TaskWrapper> ancestors = new LinkedList<>();
-	private List<TaskWrapper> childs = new LinkedList<>();
-	
+	private Set<TaskWrapper> descendants = new HashSet<>();
+	private Set<TaskWrapper> ancestors = new HashSet<>();
+	private Set<TaskWrapper> childs = new HashSet<>();
+
 	private TaskWrapper parent = null;
-	
-	
 
 	public TaskWrapper getParent() {
 		return parent;
@@ -81,7 +72,7 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 	 *
 	 * @return a {@link java.util.List} object.
 	 */
-	public List<TaskWrapper> getDescendants() {
+	public Set<TaskWrapper> getDescendants() {
 		return descendants;
 	}
 
@@ -90,7 +81,7 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 	 *
 	 * @param descendants a {@link java.util.List} object.
 	 */
-	public void setDescendants(List<TaskWrapper> descendants) {
+	public void setDescendants(Set<TaskWrapper> descendants) {
 		this.descendants = descendants;
 	}
 
@@ -99,7 +90,7 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 	 *
 	 * @return a {@link java.util.List} object.
 	 */
-	public List<TaskWrapper> getAncestors() {
+	public Set<TaskWrapper> getAncestors() {
 		return ancestors;
 	}
 
@@ -108,7 +99,7 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 	 *
 	 * @param ancestors a {@link java.util.List} object.
 	 */
-	public void setAncestors(List<TaskWrapper> ancestors) {
+	public void setAncestors(Set<TaskWrapper> ancestors) {
 		this.ancestors = ancestors;
 	}
 
@@ -117,7 +108,7 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 	 *
 	 * @return a {@link java.util.List} object.
 	 */
-	public List<TaskWrapper> getChilds() {
+	public Set<TaskWrapper> getChilds() {
 		return childs;
 	}
 
@@ -126,7 +117,7 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 	 *
 	 * @param childs a {@link java.util.List} object.
 	 */
-	public void setChilds(List<TaskWrapper> childs) {
+	public void setChilds(Set<TaskWrapper> childs) {
 		this.childs = childs;
 	}
 
@@ -136,7 +127,7 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 	 * @return a boolean.
 	 */
 	public boolean isRoot() {
-		return ((ancestors == null) || ancestors.isEmpty()) && !isGroup();
+		return ((ancestors == null) || ancestors.isEmpty()) && !isParent();
 	}
 
 	/**
@@ -145,7 +136,7 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 	 * @return a boolean.
 	 */
 	public boolean isLeaf() {
-		return ((descendants == null) || descendants.isEmpty()) && !isGroup();
+		return ((descendants == null) || descendants.isEmpty()) && !isParent();
 	}
 
 	/**
@@ -158,16 +149,15 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 	}
 
 	public boolean isCancelled() {
-    	return TaskState.Cancelled.equals(task.getTaskState());
+		return TaskState.Cancelled.equals(task.getTaskState());
 	}
-	
-	
+
 	/**
 	 * <p>isGroup.</p>
 	 *
 	 * @return a boolean.
 	 */
-	public boolean isGroup() {
+	public boolean isParent() {
 		return (childs != null) && !childs.isEmpty();
 	}
 
@@ -177,8 +167,14 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 	 * @return a {@link java.lang.Integer} object.
 	 */
 	public Integer getDuration() {
-		return ((task != null) && (task.getDuration() != null)) ? task.getDuration()
-				: ((task != null) && Boolean.TRUE.equals(task.getIsMilestone())) ? DURATION_DEFAULT : null;
+
+		if ((task != null) && (task.getDuration() != null)) {
+			return task.getDuration();
+		} else if ((task != null) && Boolean.TRUE.equals(task.getIsMilestone())) {
+			return DURATION_DEFAULT;
+		}
+
+		return null;
 	}
 
 	/**
@@ -186,7 +182,7 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 	 *
 	 * @return a {@link java.lang.Integer} object.
 	 */
-	public Integer getRealDuration() {
+	public Integer computeRealDuration() {
 
 		if (task != null) {
 
@@ -297,16 +293,12 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 
 		Map<NodeRef, TaskWrapper> cache = new HashMap<>();
 
+		//First parent
+
 		projectData.getTaskList().forEach(task -> {
 			TaskWrapper wrapper = getOrCreateTaskWrapper(task.getNodeRef(), cache);
 			wrapper.setTask(task);
 			task.setIsGroup(false);
-
-			task.getPrevTasks().forEach(prevTaskNodeRef -> {
-				TaskWrapper prevGanttData = getOrCreateTaskWrapper(prevTaskNodeRef, cache);
-				prevGanttData.getDescendants().add(prevGanttData);
-				wrapper.getAncestors().add(prevGanttData);
-			});
 
 			if (task.getParent() != null) {
 				TaskWrapper parentGanttData = getOrCreateTaskWrapper(task.getParent().getNodeRef(), cache);
@@ -316,76 +308,79 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 			}
 		});
 
-		cache.entrySet().forEach(t -> {
-			if(t.getValue().getTask()!=null) {
+		//Second ancestors
 
-				if (t.getValue().isGroup() || t.getValue().isSubProject()) {
-					t.getValue().getTask().setIsGroup(true);
-				} else if(t.getValue().getAncestors().isEmpty() && t.getValue().getParent()!=null) {
-					//Append parent ancestors if needed
-					appendParentAncestors(t.getValue().getParent() , t.getValue());
-				}
-			
-			} else {
-				logger.warn("Null task for:"+ t.getKey());
+		projectData.getTaskList().forEach(task -> {
+			TaskWrapper wrapper = getOrCreateTaskWrapper(task.getNodeRef(), cache);
+			wrapper.setTask(task);
+			if (wrapper.isParent() || wrapper.isSubProject()) {
+				wrapper.getTask().setIsGroup(true);
 			}
+
+			appendAncestors(wrapper, wrapper, cache);
+
 		});
 
 		return cache.values().stream().collect(Collectors.toSet());
 	}
 
-	
-	private static void appendParentAncestors(TaskWrapper parent, TaskWrapper t) {
+	private static void appendAncestors(TaskWrapper parent, TaskWrapper t, Map<NodeRef, TaskWrapper> cache) {
+		Set<NodeRef> prevTasks = new HashSet<>(parent.getTask().getPrevTasks());
 
-		if(parent.getAncestors().isEmpty() && parent.getParent()!=null) {
-			appendParentAncestors(parent.getParent() , t);
+		if (prevTasks.isEmpty() && (parent.getParent() != null)) {
+			appendAncestors(parent.getParent(), t, cache);
 		} else {
-			appendAncestors(parent.getAncestors(),t);
+			appendAncestors(prevTasks, t, cache);
 		}
-		
-	}
-	
-	private static void appendAncestors(List<TaskWrapper> ancestors, TaskWrapper t) {
 
-		ancestors.forEach( parentAncestor -> {
+	}
+
+	private static void appendAncestors(Set<NodeRef> ancestors, TaskWrapper t, Map<NodeRef, TaskWrapper> cache) {
+
+		ancestors.forEach(ancestorNodeRef -> {
+
+			TaskWrapper ancestor = getOrCreateTaskWrapper(ancestorNodeRef, cache);
+
 			// ancestor is a parent -> Take last child
-			if(!parentAncestor.getChilds().isEmpty()) {	
-				if(t.childOf(parentAncestor)) {
+			if (ancestor.isParent()) {
+				if (t.childOf(ancestor)) {
 					// ancestor is a parent and i'm child of -> Append ancestor of him
-					if(parentAncestor.getParent()!=null ) {
-						appendParentAncestors(parentAncestor.getParent(), t);
+					if (ancestor.getParent() != null) {
+						appendAncestors(ancestor.getParent(), t, cache);
 					}
 				} else {
-					appendAncestors(parentAncestor.getLastChilds(), t);
+					appendAncestors(ancestor.getLastChilds(), t, cache);
 				}
-			} else  {
+			} else {
 				//ancestor is a task -> Append task
-				parentAncestor.getDescendants().add(t);
-				t.getAncestors().add(parentAncestor);
+				if (ancestor.getTask() != null) {
+					ancestor.getDescendants().add(t);
+					t.getAncestors().add(ancestor);
+				}
 			}
-			
+
 		});
-		
+
 	}
 
-	private List<TaskWrapper> getLastChilds() {
-		List<TaskWrapper> ret = new ArrayList<>();
-		getChilds().forEach( child -> {
-			
+	private Set<NodeRef> getLastChilds() {
+		Set<NodeRef> ret = new HashSet<>();
+		getChilds().forEach(child -> {
+
 			boolean add = true;
-			for(TaskWrapper descendant: child.getDescendants()) {
-				if(getChilds().contains(descendant)) {
+			for (TaskWrapper descendant : child.getDescendants()) {
+				if (getChilds().contains(descendant)) {
 					ret.addAll(descendant.getLastChilds());
 					add = false;
-				}	
+				}
 			}
-			
-			if(add) {
-			   ret.add(child);
-			} 
-			
+
+			if (add) {
+				ret.add(child.getTask().getNodeRef());
+			}
+
 		});
-		
+
 		return ret;
 	}
 
@@ -481,9 +476,6 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 		return "TaskWrapper [task=" + task + "]";
 	}
 
-	
-	
-	
 	/** {@inheritDoc} */
 	@Override
 	// https://stackoverflow.com/questions/2985317/critical-path-method-algorithm
@@ -516,16 +508,17 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		TaskWrapper other = (TaskWrapper) obj;
 		return Objects.equals(task, other.task);
 	}
-	
-	
 
 }

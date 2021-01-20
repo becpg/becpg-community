@@ -73,6 +73,9 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 	private EntityListDAO entityListDAO;
 
 	private TenantService tenantService;
+	
+
+	private static final String REMOTE_FILE_NAME = "entity_deleted";
 
 	/**
 	 * <p>Setter for the field <code>tenantService</code>.</p>
@@ -101,7 +104,6 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 		this.entityDictionaryService = entityDictionaryService;
 	}
 
-	private final static String REMOTE_FILE_NAME = "entity_deleted";
 
 	/**
 	 * <p>Setter for the field <code>remoteEntityService</code>.</p>

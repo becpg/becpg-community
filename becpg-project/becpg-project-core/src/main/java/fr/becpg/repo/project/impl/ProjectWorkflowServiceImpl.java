@@ -94,11 +94,11 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 	public void startWorkflow(final ProjectData projectData, final TaskListDataItem taskListDataItem,
 			final List<DeliverableListDataItem> nextDeliverables) {
 
-		final String workflowDescription = calculateWorkflowDescription(projectData, taskListDataItem, nextDeliverables);
+		final String workflowDescription = calculateWorkflowDescription(projectData, taskListDataItem);
 		final Map<QName, Serializable> workflowProps = new HashMap<>();
 
-		if (taskListDataItem.getEnd() != null) {
-			workflowProps.put(WorkflowModel.PROP_WORKFLOW_DUE_DATE, taskListDataItem.getEnd());
+		if (taskListDataItem.getDue() != null) {
+			workflowProps.put(WorkflowModel.PROP_WORKFLOW_DUE_DATE, taskListDataItem.getDue());
 		}
 
 		if (projectData.getPriority() != null) {
@@ -239,12 +239,9 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 		return ret;
 	}
 
-	private String calculateWorkflowDescription(ProjectData projectData, TaskListDataItem taskListDataItem,
-			List<DeliverableListDataItem> nextDeliverables) {
+	private String calculateWorkflowDescription(ProjectData projectData, TaskListDataItem taskListDataItem) {
 
-		String workflowDescription = String.format(WORKFLOW_DESCRIPTION, getProjectCode(projectData), projectData.getName(),
-				taskListDataItem.getTaskName());
-		return workflowDescription;
+		return String.format(WORKFLOW_DESCRIPTION, getProjectCode(projectData), projectData.getName(), taskListDataItem.getTaskName());
 	}
 
 	private Object getProjectCode(ProjectData projectData) {
@@ -305,7 +302,7 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 				taskListDataItem.setWorkflowTaskInstance("");
 			} else {
 
-				if (taskListDataItem.getResources().size() == 0) {
+				if (taskListDataItem.getResources().isEmpty()) {
 					workflowService.cancelWorkflow(taskListDataItem.getWorkflowInstance());
 					return;
 				}
@@ -319,7 +316,7 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 
 				if (!workflowTasks.isEmpty()) {
 
-					String workflowDescription = calculateWorkflowDescription(projectData, taskListDataItem, nextDeliverables);
+					String workflowDescription = calculateWorkflowDescription(projectData, taskListDataItem);
 
 					for (WorkflowTask workflowTask : workflowTasks) {
 						NodeRef taskNodeRef = (NodeRef) workflowTask.getProperties().get(ProjectModel.ASSOC_WORKFLOW_TASK);
@@ -332,11 +329,13 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 									workflowTask.getProperties(), properties);
 							properties = getWorkflowTaskNewProperties(WorkflowModel.PROP_DESCRIPTION, workflowDescription,
 									workflowTask.getProperties(), properties);
-							properties = getWorkflowTaskNewProperties(WorkflowModel.PROP_WORKFLOW_DUE_DATE, taskListDataItem.getEnd(),
+							properties = getWorkflowTaskNewProperties(WorkflowModel.PROP_WORKFLOW_DUE_DATE, taskListDataItem.getDue(),
 									workflowTask.getProperties(), properties);
-							properties = getWorkflowTaskNewProperties(WorkflowModel.PROP_DUE_DATE, taskListDataItem.getEnd(),
+							properties = getWorkflowTaskNewProperties(WorkflowModel.PROP_DUE_DATE, taskListDataItem.getDue(),
 									workflowTask.getProperties(), properties);
 							properties = getWorkflowTaskNewProperties(WorkflowModel.PROP_WORKFLOW_PRIORITY, projectData.getPriority(),
+									workflowTask.getProperties(), properties);
+							properties = getWorkflowTaskNewProperties(WorkflowModel.PROP_STATUS, WorkflowConstants.TASK_STATUS_IN_PROGRESS,
 									workflowTask.getProperties(), properties);
 
 							List<NodeRef> assignees = getAssignees(taskListDataItem.getResources(), false);

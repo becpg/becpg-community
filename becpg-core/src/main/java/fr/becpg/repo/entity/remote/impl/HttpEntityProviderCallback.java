@@ -69,13 +69,13 @@ public class HttpEntityProviderCallback implements EntityProviderCallBack {
 
 	/** {@inheritDoc} */
 	@Override
-	public NodeRef provideNode(NodeRef nodeRef, Map<NodeRef, NodeRef> cache) throws BeCPGException {
+	public NodeRef provideNode(NodeRef nodeRef, Map<NodeRef, NodeRef> cache)  {
 		return provideNode(nodeRef, null, cache);
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public NodeRef provideNode(NodeRef nodeRef, NodeRef destNodeRef, Map<NodeRef, NodeRef> cache) throws BeCPGException {
+	public NodeRef provideNode(NodeRef nodeRef, NodeRef destNodeRef, Map<NodeRef, NodeRef> cache)  {
 		try {
 			String url = remoteServer + "?nodeRef=" + nodeRef.toString();
 			logger.debug("Try getting nodeRef  from : " + url);
