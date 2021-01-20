@@ -2,9 +2,9 @@
 <!DOCTYPE beans PUBLIC '-//SPRING//DTD BEAN//EN' 'http://www.springframework.org/dtd/spring-beans.dtd'>
 
 <beans>
-
+ <!--  
     <bean id="css.theme.handler" parent="css.theme.handler.abstract" class="org.springframework.extensions.surf.ExternalLessCssThemeHandler">
       <property name="cmd"><value>lessc -</value></property>
     </bean>
-
+-->
 </beans>
