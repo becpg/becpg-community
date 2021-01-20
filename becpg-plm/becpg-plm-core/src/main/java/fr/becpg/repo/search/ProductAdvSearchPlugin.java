@@ -192,7 +192,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 		if (logger.isDebugEnabled() && (watch != null)) {
 			watch.stop();
-			logger.debug("getSearchNodesByListCriteria " + filter.getName() + " executed in  " + watch.getTotalTimeSeconds() + " seconds - size after"
+			logger.debug("getSearchNodesByListCriteria " + filter.getName() + " executed in  " + watch.getTotalTimeSeconds() + " seconds - size after "
 					+ nodes.size());
 		}
 
