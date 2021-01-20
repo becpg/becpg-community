@@ -517,9 +517,9 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 						
 						query.append(" join alf_node_properties p" + index + " on (" + propertyName + ".node_id = dataListItem.id "
 								+ "and " + propertyName + ".qname_id= " + qNameId + " and ");
-						
+					
 						if (criteriaFilter.getStringValue() != null) {
-							query.append(propertyName + ".string_value = " + criteriaFilter.getStringValue());
+							query.append(propertyName + ".string_value = '" + criteriaFilter.getStringValue()+"'");
 							
 						} else if (criteriaFilter.getBooleanValue() != null) {
 							query.append(propertyName + ".boolean_value = " + criteriaFilter.getBooleanValue());
