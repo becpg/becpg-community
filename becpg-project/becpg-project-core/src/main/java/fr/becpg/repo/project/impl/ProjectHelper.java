@@ -311,7 +311,7 @@ public class ProjectHelper {
 	public static Date getLastEndDate(Set<TaskWrapper> tasks) {
 		Date endDate = null;
 		for (TaskWrapper task : tasks) {
-			if (!task.isCancelled() && !task.isGroup()
+			if (!task.isCancelled() && !task.isParent()
 					&& ((endDate == null) || ((task.getTask().getEnd() != null) && task.getTask().getEnd().after(endDate)))) {
 				endDate = task.getTask().getEnd();
 			}
@@ -339,7 +339,7 @@ public class ProjectHelper {
 	 * @param startDate a {@link java.util.Date} object.
 	 */
 	public static void setTaskStartDate(TaskListDataItem t, Date startDate) {
-		if ((t.getIsGroup() || t.isPlanned() || TaskState.Cancelled.equals(t.getTaskState())
+		if ((t.getIsGroup() || t.isPlanned()  || TaskState.OnHold.equals(t.getTaskState()) || TaskState.Cancelled.equals(t.getTaskState())
 				|| (TaskState.InProgress.equals(t.getTaskState()) && (t.getStart() == null))) && !TaskManualDate.Start.equals(t.getManualDate())) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("setTaskStartDate: " + t.getTaskName() + ", state: " + t.getTaskState() + ", start: " + startDate + ", is group:"
@@ -356,7 +356,7 @@ public class ProjectHelper {
 	 * @param endDate a {@link java.util.Date} object.
 	 */
 	public static void setTaskEndDate(TaskListDataItem t, Date endDate) {
-		if ((t.getIsGroup() || t.isPlanned() || TaskState.Cancelled.equals(t.getTaskState()) || TaskState.InProgress.equals(t.getTaskState()))
+		if ((t.getIsGroup() || t.isPlanned() || TaskState.OnHold.equals(t.getTaskState()) || TaskState.Cancelled.equals(t.getTaskState()) || TaskState.InProgress.equals(t.getTaskState()))
 				&& !TaskManualDate.End.equals(t.getManualDate())) {
 			if (logger.isDebugEnabled()) {
 				logger.debug(

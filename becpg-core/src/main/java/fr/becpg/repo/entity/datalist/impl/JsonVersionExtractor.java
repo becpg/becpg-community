@@ -525,8 +525,10 @@ public class JsonVersionExtractor extends ActivityListExtractor {
 			logger.error("Failed to extract", e);
 		}
 
-		if (!ret.getPageItems().isEmpty()) {
-			logger.debug("First itemData is " + ret.getPageItems().get(0).get(PROP_NODEDATA));
+		if(logger.isDebugEnabled()) {
+			if (!ret.getPageItems().isEmpty()) {
+				logger.debug("First itemData is " + ret.getPageItems().get(0).get(PROP_NODEDATA));
+			}
 		}
 		return ret;
 	}

@@ -1,4 +1,4 @@
-package fr.becpg.repo.entity.datalist.impl;
+package fr.becpg.repo.entity.impl;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -265,8 +265,11 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 
 	@Override
 	public String getEntityFormat(NodeRef entityNodeRef) {
-		Serializable prop = nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_ENTITY_FORMAT);
-		return prop == null ? null : prop.toString();
+		if(entityNodeRef!=null && nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_FORMAT)) {
+			Serializable prop = nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_ENTITY_FORMAT);
+			return prop == null ? null : prop.toString();
+		}
+		return null;
 	}
 
 }

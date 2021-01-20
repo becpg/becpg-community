@@ -327,7 +327,7 @@
    
    	<bean id="versionCleanerJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
 		<property name="jobClass">
-			<value>fr.becpg.repo.entity.datalist.VersionCleanerJob</value>
+			<value>fr.becpg.repo.entity.version.VersionCleanerJob</value>
 		</property>
 		<property name="group" value="beCPG"/>
         <property name="description" value="Run version cleanup" />
@@ -356,8 +356,6 @@
         
 	</bean>
 	
-	<bean id="entityFormatService" class="fr.becpg.repo.entity.datalist.impl.EntityFormatServiceImpl"/>
-
 	<bean id="versionCleanerSchedulerAccessor" class="org.alfresco.schedule.AlfrescoSchedulerAccessorBean">
 		<property name="scheduler" ref="schedulerFactory" />
 		<property name="triggers">
