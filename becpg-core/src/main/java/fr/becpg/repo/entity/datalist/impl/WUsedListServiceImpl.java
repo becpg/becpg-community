@@ -98,7 +98,7 @@ public class WUsedListServiceImpl implements WUsedListService {
 		if ((entityNodeRefs != null) && !entityNodeRefs.isEmpty() && !parentNodeRefs.contains(entityNodeRefs.get(0))) {
 			parentNodeRefs.addAll(entityNodeRefs);
 
-			appendAssocs(ret, associationService.getEntitySourceAssocs(entityNodeRefs, associationName, WUsedOperator.OR.equals(operator)),
+			appendAssocs(ret, associationService.getEntitySourceAssocs(entityNodeRefs, associationName, WUsedOperator.OR.equals(operator), null),
 					depthLevel, maxDepthLevel, associationName, filter, parentNodeRefs, permCache, WUsedOperator.OR.equals(operator));
 
 		}

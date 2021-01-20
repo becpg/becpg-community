@@ -26,6 +26,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.QNamePattern;
 
+import fr.becpg.repo.helper.impl.AssociationCriteriaFilter;
 import fr.becpg.repo.helper.impl.EntitySourceAssoc;
 
 /**
@@ -120,7 +121,7 @@ public interface AssociationService {
 	 * @param isOrOperator a boolean.
 	 * @return a {@link java.util.List} object.
 	 */
-	List<EntitySourceAssoc> getEntitySourceAssocs(List<NodeRef> nodeRefs, QName assocQName, boolean isOrOperator);
+	List<EntitySourceAssoc> getEntitySourceAssocs(List<NodeRef> nodeRefs, QName assocQName, boolean isOrOperator, List<AssociationCriteriaFilter> criteriaFilters);
 	
 	
 	void removeChildCachedAssoc(NodeRef nodeRef, QName qName);
