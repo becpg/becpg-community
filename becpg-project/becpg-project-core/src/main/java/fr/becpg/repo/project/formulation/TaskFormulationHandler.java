@@ -259,7 +259,7 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 
 							}
 
-							Integer duration = ProjectHelper.calculateTaskDuration(task.getTask().getStart(), task.getTask().getDue());
+							Integer duration = ProjectHelper.calculateTaskDuration(task.getTask().getTargetStart(), task.getTask().getTargetEnd());
 							Integer realDuration = ProjectHelper.calculateTaskDuration(task.getTask().getStart(), task.getTask().getEnd());
 
 
