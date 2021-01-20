@@ -509,33 +509,37 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 				
 				for (AssociationCriteriaFilter criteriaFilter : criteriaFilters) {
 					QName criteriaAttribute = criteriaFilter.getAttributeQname();
-					
-					Long qNameId =  qnameDAO.getQName(criteriaAttribute).getFirst();
-					
-					String propertyName = "p" + index;
-					
-					query.append("join alf_node_properties p" + index + " on (" + propertyName + ".node_id = dataListItem.id "
-							+ "and " + propertyName + ".qname_id= " + qNameId + " and ");
-					
-					if (criteriaFilter.getStringValue() != null) {
-						query.append(propertyName + ".string_value = " + criteriaFilter.getStringValue());
+					Pair<Long,QName> qNameIdPair =  qnameDAO.getQName(criteriaAttribute);
+					if(qNameIdPair!=null) {
+						Long qNameId =  qNameIdPair.getFirst();
 						
-					} else if (criteriaFilter.getBooleanValue() != null) {
-						query.append(propertyName + ".boolean_value = " + criteriaFilter.getBooleanValue());
-					} else {
-						if (criteriaFilter.getMinRange() != null) {
-							query.append(propertyName + ".double_value >= " + criteriaFilter.getMinRange());
-						}
-						if (criteriaFilter.getMaxRange() != null) {
+						String propertyName = "p" + index;
+						
+						query.append(" join alf_node_properties p" + index + " on (" + propertyName + ".node_id = dataListItem.id "
+								+ "and " + propertyName + ".qname_id= " + qNameId + " and ");
+						
+						if (criteriaFilter.getStringValue() != null) {
+							query.append(propertyName + ".string_value = " + criteriaFilter.getStringValue());
+							
+						} else if (criteriaFilter.getBooleanValue() != null) {
+							query.append(propertyName + ".boolean_value = " + criteriaFilter.getBooleanValue());
+						} else {
 							if (criteriaFilter.getMinRange() != null) {
-								query.append(" and ");
+								query.append(propertyName + ".double_value >= " + criteriaFilter.getMinRange());
 							}
-							query.append(propertyName + ".double_value <= " + criteriaFilter.getMaxRange());
+							if (criteriaFilter.getMaxRange() != null) {
+								if (criteriaFilter.getMinRange() != null) {
+									query.append(" and ");
+								}
+								query.append(propertyName + ".double_value <= " + criteriaFilter.getMaxRange());
+							}
 						}
+						query.append(")");
+						
+						index++;
+					} else {
+						logger.warn("No qnameId found for :"+criteriaAttribute);
 					}
-					query.append(")");
-					
-					index++;
 				}
 			}
 			
