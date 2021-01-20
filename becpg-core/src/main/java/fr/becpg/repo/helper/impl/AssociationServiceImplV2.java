@@ -430,7 +430,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		return listItems;
 	}
 
-	private static final String SQL_SELECT_SOURCE_ASSOC_ENTITY = "select entity.uuid as entity, dataListItem.uuid as dataListItem, dataListItem.type_qname_id as dataListItemType, targetNode.uuid as targetNode"
+	private static final String SQL_SELECT_SOURCE_ASSOC_ENTITY_FIRST_PART = "select entity.uuid as entity, dataListItem.uuid as dataListItem, dataListItem.type_qname_id as dataListItemType, targetNode.uuid as targetNode"
 			+ " from alf_node entity " + " join alf_child_assoc dataListContainerAssoc on (entity.id = dataListContainerAssoc.parent_node_id)"
 			+ " join alf_child_assoc dataListAssoc on (dataListAssoc.parent_node_id = dataListContainerAssoc.child_node_id)"
 			+ " join alf_child_assoc dataListItemAssoc on (dataListItemAssoc.parent_node_id = dataListAssoc.child_node_id)"
@@ -439,12 +439,12 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 			+ " join alf_node targetNode on (targetNode.id = assoc.target_node_id) "
 			+ " join alf_store targetNodeStore on (  targetNodeStore.id = targetNode.store_id and targetNodeStore.protocol= ? and targetNodeStore.identifier=?) "
 			+ " left join alf_node_aspects q1 on (q1.qname_id = ? and q1.node_id=entity.id)"
-			+ " left join alf_node_aspects q2 on (q2.qname_id = ? and q2.node_id=dataListItem.id)" + " where  assoc.type_qname_id=?  "
-			+ " and q1.qname_id IS NULL and q2.qname_id IS NULL ";
+			+ " left join alf_node_aspects q2 on (q2.qname_id = ? and q2.node_id=dataListItem.id)";
 
+	private static final String SQL_SELECT_SOURCE_ASSOC_ENTITY_FINAL_PART = " where  assoc.type_qname_id=? and q1.qname_id IS NULL and q2.qname_id IS NULL ";
 	/** {@inheritDoc} */
 	@Override
-	public List<EntitySourceAssoc> getEntitySourceAssocs(List<NodeRef> nodeRefs, QName assocTypeQName, boolean isOrOperator) {
+	public List<EntitySourceAssoc> getEntitySourceAssocs(List<NodeRef> nodeRefs, QName assocTypeQName, boolean isOrOperator, List<AssociationCriteriaFilter> criteriaFilters) {
 		List<EntitySourceAssoc> ret = null;
 
 		StopWatch watch = null;
@@ -460,9 +460,9 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 			if (isAnd) {
 				for (NodeRef nodeRef : nodeRefs) {
 					if (ret == null) {
-						ret = internalEntitySourceAssocs(Arrays.asList(nodeRef), assocTypeQName);
+						ret = internalEntitySourceAssocs(Arrays.asList(nodeRef), assocTypeQName, criteriaFilters);
 					} else {
-						List<EntitySourceAssoc> tmp = internalEntitySourceAssocs(Arrays.asList(nodeRef), assocTypeQName);
+						List<EntitySourceAssoc> tmp = internalEntitySourceAssocs(Arrays.asList(nodeRef), assocTypeQName, criteriaFilters);
 
 						for (Iterator<EntitySourceAssoc> iterator = ret.iterator(); iterator.hasNext();) {
 							EntitySourceAssoc entitySourceAssoc = iterator.next();
@@ -481,7 +481,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 				}
 
 			} else {
-				ret = internalEntitySourceAssocs(nodeRefs, assocTypeQName);
+				ret = internalEntitySourceAssocs(nodeRefs, assocTypeQName, criteriaFilters);
 			}
 
 		}
@@ -494,14 +494,52 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		return ret;
 	}
 
-	private List<EntitySourceAssoc> internalEntitySourceAssocs(List<NodeRef> nodeRefs, QName assocTypeQName) {
+	private List<EntitySourceAssoc> internalEntitySourceAssocs(List<NodeRef> nodeRefs, QName assocTypeQName, List<AssociationCriteriaFilter> criteriaFilters) {
 		List<EntitySourceAssoc> ret = new ArrayList<>();
 
 		if ((nodeRefs != null) && !nodeRefs.isEmpty()) {
 
 			StringBuilder query = new StringBuilder();
 
-			query.append(SQL_SELECT_SOURCE_ASSOC_ENTITY);
+			query.append(SQL_SELECT_SOURCE_ASSOC_ENTITY_FIRST_PART);
+			
+			if (criteriaFilters != null) {
+				
+				int index = 0;
+				
+				for (AssociationCriteriaFilter criteriaFilter : criteriaFilters) {
+					QName criteriaAttribute = criteriaFilter.getAttributeQname();
+					
+					Long qNameId =  qnameDAO.getQName(criteriaAttribute).getFirst();
+					
+					String propertyName = "p" + index;
+					
+					query.append("join alf_node_properties p" + index + " on (" + propertyName + ".node_id = dataListItem.id "
+							+ "and " + propertyName + ".qname_id= " + qNameId + " and ");
+					
+					if (criteriaFilter.getStringValue() != null) {
+						query.append(propertyName + ".string_value = " + criteriaFilter.getStringValue());
+						
+					} else if (criteriaFilter.getBooleanValue() != null) {
+						query.append(propertyName + ".boolean_value = " + criteriaFilter.getBooleanValue());
+					} else {
+						if (criteriaFilter.getMinRange() != null) {
+							query.append(propertyName + ".double_value >= " + criteriaFilter.getMinRange());
+						}
+						if (criteriaFilter.getMaxRange() != null) {
+							if (criteriaFilter.getMinRange() != null) {
+								query.append(" and ");
+							}
+							query.append(propertyName + ".double_value <= " + criteriaFilter.getMaxRange());
+						}
+					}
+					query.append(")");
+					
+					index++;
+				}
+			}
+			
+			query.append(SQL_SELECT_SOURCE_ASSOC_ENTITY_FINAL_PART);
 
 			query.append(" and ( ");
 
@@ -514,7 +552,6 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 				query.append(nodeRef.getId());
 				query.append("'");
 				isFirst = false;
-
 			}
 			query.append(")");
 			query.append("  group by dataListItem.uuid ");
