@@ -1744,25 +1744,25 @@
 			if (Dom.hasClass(this.id, 'alf-true-fullscreen')) {
 				parentElement = Dom.get(this.id);
 			}
-			
+
 			//beCPG
 			var entityPath = this.currentPath;
-			
-			if(this.options.entityMode ){
-				
+
+			if (this.options.entityMode) {
+
 				// Handle a single record being provided...
 				if (typeof record.length === "undefined") {
 					entityPath = record.location.repoPath;
 				} else {
 					entityPath = record[0].location.repoPath;
 				}
-				
-				if(entityPath.indexOf("documentLibrary")>0){
-					entityPath = entityPath.substring(entityPath.indexOf("documentLibrary")+15, entityPath.length)
+
+				if (entityPath.indexOf("documentLibrary") > 0) {
+					entityPath = entityPath.substring(entityPath.indexOf("documentLibrary") + 15, entityPath.length)
 				}
-				
+
 			}
-			
+
 
 			this.modules.copyMoveTo.setOptions(
 				{
@@ -2280,6 +2280,37 @@
 			downloadDialog.show(config);
 		},
 
+
+
+		/**
+		* Add to basket
+		*
+		* @method onActionAddToBasket
+		* @param record {object} Object literal representing the file or folder to be actioned
+		 */
+		onActionAddToBasket: function dlA_onActionAddToBasket(record) {
+			var refresh = false;
+			this.services.basket = new beCPG.service.Basket();
+			if (YAHOO.lang.isArray(record)) {
+				for (var i = 0, il = record.length; i < il; i++) {
+					if (!record[i].jsNode.isContainer) {
+						this.services.basket.add(record[i]);
+						refresh = true;
+					}
+				}
+			}
+			else {
+				if (record.jsNode.isContainer) {
+					this.services.basket.add(record);
+					refresh = true;
+				}
+			}
+			if(refresh){
+				YAHOO.Bubbling.fire("metadataRefresh");
+			}
+
+		},
+
 		/**
 		 * Triggers the archiving and download of the currently selected documents/folders.
 		 *
@@ -2365,6 +2396,7 @@
 															text: me.msg("button.ok"),
 															handler: function DLTB_onActionDelete_cancel() {
 																this.destroy();
+																YAHOO.Bubbling.fire("metadataRefresh");
 															},
 
 															isDefault: true
