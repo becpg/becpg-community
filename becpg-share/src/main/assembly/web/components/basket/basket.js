@@ -66,7 +66,7 @@
 				},
 
 
-				onActionEmptyBasket: function(record) {
+				onActionEmptyBasket: function() {
 					this.services.basket.empty();
 					YAHOO.Bubbling.fire("metadataRefresh");
 				},

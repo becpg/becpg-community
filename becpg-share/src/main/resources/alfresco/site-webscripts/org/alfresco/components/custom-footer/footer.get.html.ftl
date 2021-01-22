@@ -1,12 +1,11 @@
 <@markup id="customFooter-css" target="css"  action="after">
    <#-- CSS Dependencies -->
-  <@link rel="stylesheet" type="text/css" href="${url.context}/res/components/basket/basket.css" group="basket"/> 
+  <@link rel="stylesheet" type="text/css" href="${url.context}/res/components/basket/basket.css" group="footer"/> 
 </@>
 
 <@markup id="customFooter-js"  target="js" action="after">
 	
-   <@script type="text/javascript" src="${url.context}/res/components/basket/basket-service.js"  group="basket" />
-   <@script type="text/javascript" src="${url.context}/res/components/basket/basket.js"  group="basket" />
+   <@script type="text/javascript" src="${url.context}/res/components/basket/basket.js"  group="footer" />
    
     <#if config.scoped["Analytics"]["providers"]??>
     	<#list config.scoped["Analytics"]["providers"].getChildren("provider")?sort_by(["attributes","index"]) as tmp>
@@ -37,10 +36,6 @@
 		   </#if>
 	   </#if>
    </#if>
-</@>
-
-<@markup id="custom-widgets" target="widgets" action="replace">
-   <@createWidgets group="basket"/>
 </@>
 
 <@markup id="basket"  target="html" action="after">
