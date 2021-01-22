@@ -86,7 +86,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 	private TenantService tenantService;
 
 	private NamespaceService namespaceService;
-	
+
 	private CommonDataListSort commonDataListSort;
 
 	//Immutable cluster cache
@@ -94,21 +94,20 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 	private SimpleCache<AssociationCacheRegion, Set<NodeRef>> assocsCache;
 
 	private static Set<QName> ignoredAssocs = new HashSet<>();
-	
 
 	private QNameDAO qnameDAO;
 
 	static {
 		ignoredAssocs.add(ContentModel.ASSOC_ORIGINAL);
-		
+
 	}
 
 	@Override
 	public void setNodeService(NodeService nodeService) {
 		super.setNodeService(nodeService);
-		commonDataListSort =  new CommonDataListSort(nodeService);
+		commonDataListSort = new CommonDataListSort(nodeService);
 	}
-	
+
 	/**
 	 * <p>Setter for the field <code>entityDictionaryService</code>.</p>
 	 *
@@ -169,15 +168,15 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 	public void update(NodeRef nodeRef, QName qName, List<NodeRef> toUpdateNodeRefs) {
 
 		List<NodeRef> dbAssocNodeRefs = getTargetAssocs(nodeRef, qName);
-        Set<NodeRef> assocNodeRefs = new HashSet<>();
-        if(toUpdateNodeRefs != null) {
-        	assocNodeRefs.addAll(toUpdateNodeRefs);
-        }
-        boolean hasChanged = false; 
-		
+		Set<NodeRef> assocNodeRefs = new HashSet<>();
+		if (toUpdateNodeRefs != null) {
+			assocNodeRefs.addAll(toUpdateNodeRefs);
+		}
+		boolean hasChanged = false;
+
 		try {
 			TransactionalResourceHelper.incrementCount(UPDATE_ASSOC_COUNT);
-			
+
 			if (dbAssocNodeRefs != null) {
 				// remove from db
 
@@ -189,12 +188,12 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 								nodeService.removeAssociation(nodeRef, assocRef, qName);
 							}
 						} catch (InvalidNodeRefException e) {
-							logger.error("Node already deleted:"+ nodeRef+ " "+qName);
+							logger.error("Node already deleted:" + nodeRef + " " + qName);
 						}
 					}
 				}
 			}
-			
+
 			Set<NodeRef> toRemoveNodeRefs = new HashSet<>();
 
 			// add nodes that are not in db
@@ -206,12 +205,12 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 							nodeService.createAssociation(nodeRef, n, qName);
 							toRemoveNodeRefs.remove(n);
 						}
-					} 
-					
+					}
+
 				}
 			}
-		
-			if(hasChanged) {
+
+			if (hasChanged) {
 				assocNodeRefs.removeAll(toRemoveNodeRefs);
 				assocsCache.put(new AssociationCacheRegion(nodeRef, qName), assocNodeRefs);
 			}
@@ -275,7 +274,6 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 	public List<NodeRef> getChildAssocs(NodeRef listNodeRef, QName qName, QName childTypeQName, Map<String, Boolean> sortMap) {
 		return getChildAssocsImpl(listNodeRef, qName, childTypeQName, sortMap);
 	}
-	
 
 	private @Nonnull List<NodeRef> getChildAssocsImpl(final NodeRef nodeRef, final QName qName, final QName childType,
 			final Map<String, Boolean> sortProps) {
@@ -289,22 +287,19 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		//Common sort returning from search
 		ChildAssocCacheEntry cachedAssocs = getFromCache(childsAssocsCache, new AssociationCacheRegion(nodeRef, qName), () -> {
 			ChildAssocCacheEntry childAssocCacheEntry = new ChildAssocCacheEntry();
-			
-			for (ChildAssociationRef assocRef : nodeService.getChildAssocs(nodeRef, qName,  RegexQNamePattern.MATCH_ALL, true)) {
-				if(nodeService.exists(assocRef.getChildRef())) {
+
+			for (ChildAssociationRef assocRef : nodeService.getChildAssocs(nodeRef, qName, RegexQNamePattern.MATCH_ALL, true)) {
+				if (nodeService.exists(assocRef.getChildRef())) {
 					QName type = nodeService.getType(assocRef.getChildRef());
 					childAssocCacheEntry.add(assocRef.getChildRef(), type);
 				}
 			}
 
-
 			childAssocCacheEntry.sort(commonDataListSort);
-			
+
 			return childAssocCacheEntry;
 
 		});
-		
-		
 
 		return cachedAssocs.get(childType);
 	}
@@ -415,9 +410,6 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		return ret;
 
 	}
-	
-
-	
 
 	/** {@inheritDoc} */
 	@Override
@@ -442,9 +434,11 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 			+ " left join alf_node_aspects q2 on (q2.qname_id = ? and q2.node_id=dataListItem.id)";
 
 	private static final String SQL_SELECT_SOURCE_ASSOC_ENTITY_FINAL_PART = " where  assoc.type_qname_id=? and q1.qname_id IS NULL and q2.qname_id IS NULL ";
+
 	/** {@inheritDoc} */
 	@Override
-	public List<EntitySourceAssoc> getEntitySourceAssocs(List<NodeRef> nodeRefs, QName assocTypeQName, boolean isOrOperator, List<AssociationCriteriaFilter> criteriaFilters) {
+	public List<EntitySourceAssoc> getEntitySourceAssocs(List<NodeRef> nodeRefs, QName assocTypeQName, boolean isOrOperator,
+			List<AssociationCriteriaFilter> criteriaFilters) {
 		List<EntitySourceAssoc> ret = null;
 
 		StopWatch watch = null;
@@ -494,7 +488,8 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		return ret;
 	}
 
-	private List<EntitySourceAssoc> internalEntitySourceAssocs(List<NodeRef> nodeRefs, QName assocTypeQName, List<AssociationCriteriaFilter> criteriaFilters) {
+	private List<EntitySourceAssoc> internalEntitySourceAssocs(List<NodeRef> nodeRefs, QName assocTypeQName,
+			List<AssociationCriteriaFilter> criteriaFilters) {
 		List<EntitySourceAssoc> ret = new ArrayList<>();
 
 		if ((nodeRefs != null) && !nodeRefs.isEmpty()) {
@@ -502,47 +497,50 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 			StringBuilder query = new StringBuilder();
 
 			query.append(SQL_SELECT_SOURCE_ASSOC_ENTITY_FIRST_PART);
-			
+
 			if (criteriaFilters != null) {
-				
+
 				int index = 0;
-				
+
 				for (AssociationCriteriaFilter criteriaFilter : criteriaFilters) {
 					QName criteriaAttribute = criteriaFilter.getAttributeQname();
-					Pair<Long,QName> qNameIdPair =  qnameDAO.getQName(criteriaAttribute);
-					if(qNameIdPair!=null) {
-						Long qNameId =  qNameIdPair.getFirst();
-						
-						String propertyName = "p" + index;
-						
-						query.append(" join alf_node_properties p" + index + " on (" + propertyName + ".node_id = dataListItem.id "
-								+ "and " + propertyName + ".qname_id= " + qNameId + " and ");
-					
-						if (criteriaFilter.getStringValue() != null) {
-							query.append(propertyName + ".string_value = '" + criteriaFilter.getStringValue()+"'");
-							
-						} else if (criteriaFilter.getBooleanValue() != null) {
-							query.append(propertyName + ".boolean_value = " + criteriaFilter.getBooleanValue());
-						} else {
-							if (criteriaFilter.getMinRange() != null) {
-								query.append(propertyName + ".double_value >= " + criteriaFilter.getMinRange());
-							}
-							if (criteriaFilter.getMaxRange() != null) {
+					if (criteriaFilter.hasValue()) {
+
+						Pair<Long, QName> qNameIdPair = qnameDAO.getQName(criteriaAttribute);
+						if (qNameIdPair != null) {
+							Long qNameId = qNameIdPair.getFirst();
+
+							String propertyName = "p" + index;
+
+							query.append(" join alf_node_properties p" + index + " on (" + propertyName + ".node_id = dataListItem.id " + "and "
+									+ propertyName + ".qname_id= " + qNameId + " and ");
+
+							if (criteriaFilter.getStringValue() != null) {
+								query.append(propertyName + ".string_value = '" + criteriaFilter.getStringValue() + "'");
+
+							} else if (criteriaFilter.getBooleanValue() != null) {
+								query.append(propertyName + ".boolean_value = " + criteriaFilter.getBooleanValue());
+							} else {
 								if (criteriaFilter.getMinRange() != null) {
-									query.append(" and ");
+									query.append(propertyName + ".double_value >= " + criteriaFilter.getMinRange());
 								}
-								query.append(propertyName + ".double_value <= " + criteriaFilter.getMaxRange());
+								if (criteriaFilter.getMaxRange() != null) {
+									if (criteriaFilter.getMinRange() != null) {
+										query.append(" and ");
+									}
+									query.append(propertyName + ".double_value <= " + criteriaFilter.getMaxRange());
+								}
 							}
+							query.append(")");
+
+							index++;
+						} else {
+							logger.warn("No qnameId found for :" + criteriaAttribute);
 						}
-						query.append(")");
-						
-						index++;
-					} else {
-						logger.warn("No qnameId found for :"+criteriaAttribute);
 					}
 				}
 			}
-			
+
 			query.append(SQL_SELECT_SOURCE_ASSOC_ENTITY_FINAL_PART);
 
 			query.append(" and ( ");
@@ -647,7 +645,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 				new JavaBehaviour(this, "onCheckIn"));
 		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.OnCheckIn.QNAME, ContentModel.TYPE_AUTHORITY,
 				new JavaBehaviour(this, "onCheckIn"));
-		
+
 	}
 
 	/** {@inheritDoc} */
@@ -697,13 +695,12 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		removeAllCacheAssocs(nodeRef);
 
 	}
-	
-	
+
 	//// Cache managment
 
 	private void removeCachedAssoc(NodeRef nodeRef, QName qName) {
-		
-		AssociationCacheRegion cacheKey = 	new AssociationCacheRegion(nodeRef, qName);
+
+		AssociationCacheRegion cacheKey = new AssociationCacheRegion(nodeRef, qName);
 		assocsCache.remove(cacheKey);
 	}
 
@@ -742,7 +739,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		T ret = cache.get(cacheKey);
 
 		if (ret == null) {
-			
+
 			ret = callback.get();
 			if ((ret != null)) {
 				cache.put(cacheKey, ret);
