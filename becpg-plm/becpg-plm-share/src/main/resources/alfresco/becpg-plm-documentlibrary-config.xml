@@ -225,17 +225,20 @@
 			</content>
 		</create-content>
 		<create-content-by-template>true</create-content-by-template>
-		
-		
-		
+
 	  <multi-select>
          <action type="action-link" id="onActionDownload" icon="document-download" label="menu.selected-items.download" />
+      	 <!-- beCPG -->
+         <action type="action-link" asset="document" id="onActionQuickShare" icon="quickshare-action-16.png" label="menu.selected-items.quick-share" />
          <action type="action-link" id="onActionCopyTo" icon="document-copy-to" label="menu.selected-items.copy" notAspect="smf:smartFolder,smf:smartFolderChild"/>
          <action type="action-link" id="onActionMoveTo" icon="document-move-to" permission="Delete" label="menu.selected-items.move" notAspect="smf:smartFolder,smf:smartFolderChild"/>
+         <!-- beCPG -->
          <action type="action-link" id="onActionAssignWorkflow" icon="document-assign-workflow" label="menu.selected-items.assign-process"/>
          <action type="action-link" id="onActionDelete" icon="document-delete" permission="Delete" label="menu.selected-items.delete" notAspect="hwf:hybridWorkflow,sys:undeletable,smf:smartFolder" />
          <action type="action-link" id="onActionCloudSync" asset="document" icon="document-cloud-sync"  permission="CreateChildren" label="menu.selected-items.cloudSync" notAspect="sync:syncSetMemberNode,smf:smartFolder,smf:smartFolderChild" syncMode="ON_PREMISE" />
          <action type="action-link" id="onActionCloudSyncRequest" icon="document-request-sync" label="menu.selected-items.cloudRequestSync" hasAspect="sync:syncSetMemberNode" notAspect="smf:smartFolder,smf:smartFolderChild" syncMode="ON_PREMISE" />
+     	 <!-- beCPG -->
+     	 <action type="action-link" asset="document" id="onActionAddToBasket" icon="basket-action-16.png" label="menu.selected-items.basket" />
       </multi-select>
 	
 		

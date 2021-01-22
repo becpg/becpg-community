@@ -1,5 +1,13 @@
-<#-- Please do not remove -->
-<@markup id="google-analytics"  target="js" action="after">
+<@markup id="customFooter-css" target="css"  action="after">
+   <#-- CSS Dependencies -->
+  <@link rel="stylesheet" type="text/css" href="${url.context}/res/components/basket/basket.css" group="basket"/> 
+</@>
+
+<@markup id="customFooter-js"  target="js" action="after">
+	
+   <@script type="text/javascript" src="${url.context}/res/components/basket/basket-service.js"  group="basket" />
+   <@script type="text/javascript" src="${url.context}/res/components/basket/basket.js"  group="basket" />
+   
     <#if config.scoped["Analytics"]["providers"]??>
     	<#list config.scoped["Analytics"]["providers"].getChildren("provider")?sort_by(["attributes","index"]) as tmp>
     		<#assign provider=tmp>
@@ -29,4 +37,25 @@
 		   </#if>
 	   </#if>
    </#if>
+</@>
+
+<@markup id="custom-widgets" target="widgets" action="replace">
+   <@createWidgets group="basket"/>
+</@>
+
+<@markup id="basket"  target="html" action="after">
+  <#assign el=args.htmlid?html>
+  <div id="${el}-basket" class="basket hidden">
+  	  <button class="no-access-check" id="${el}-basket-button" name="basket-button">0</button>
+	 <div id="${el}-basket-menu" class="yuimenu" style="visibility:hidden">
+      <div class="bd">
+			<ul>
+				<li><a href="#" ><span class="onActionShowBasket">${msg("menu.basket.show")}</span></a></li>			                
+				<li><a href="#" ><span class="onActionDownload">${msg("menu.selected-items.download")}</span></a></li>
+				<li><a href="#" ><span class="onActionQuickShare">${msg("menu.selected-items.quick-share")}</span></a></li>
+	            <li><a href="#" ><span class="onActionEmptyBasket">${msg("menu.basket.empty")}</span></a></li>
+	        </ul>
+     </div>
+   </div>			
+  </div>
 </@>
