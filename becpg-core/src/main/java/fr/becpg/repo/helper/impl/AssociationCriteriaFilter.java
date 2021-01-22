@@ -69,4 +69,8 @@ public class AssociationCriteriaFilter {
 		return booleanValue;
 	}
 
+	public boolean hasValue() {
+		return booleanValue!=null || stringValue!=null || minRange!=null || maxRange!=null;
+	}
+
 }
