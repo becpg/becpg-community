@@ -389,14 +389,18 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 	}
 
 	private boolean approxMatch(NodeRef refProductNodeRef, NodeRef toCompareProductNoRef) {
-		// TODO test fuzzy match
-		NodeRef copiedFromRef = associationService.getTargetAssoc(refProductNodeRef, ContentModel.ASSOC_ORIGINAL);
-		NodeRef copiedFromComp = associationService.getTargetAssoc(toCompareProductNoRef, ContentModel.ASSOC_ORIGINAL);
-
-		return ((copiedFromRef != null) && copiedFromRef.equals(toCompareProductNoRef))
-				|| ((copiedFromComp != null) && copiedFromComp.equals(refProductNodeRef))
-				|| nodeService.getProperty(refProductNodeRef, ContentModel.PROP_NAME)
-						.equals(nodeService.getProperty(toCompareProductNoRef, ContentModel.PROP_NAME));
+		
+		if(refProductNodeRef!=null && toCompareProductNoRef!=null) {
+			// TODO test fuzzy match
+			NodeRef copiedFromRef = associationService.getTargetAssoc(refProductNodeRef, ContentModel.ASSOC_ORIGINAL);
+			NodeRef copiedFromComp = associationService.getTargetAssoc(toCompareProductNoRef, ContentModel.ASSOC_ORIGINAL);
+	
+			return ((copiedFromRef != null) && copiedFromRef.equals(toCompareProductNoRef))
+					|| ((copiedFromComp != null) && copiedFromComp.equals(refProductNodeRef))
+					|| nodeService.getProperty(refProductNodeRef, ContentModel.PROP_NAME)
+							.equals(nodeService.getProperty(toCompareProductNoRef, ContentModel.PROP_NAME));
+		}
+		return false;
 	}
 
 	private DynamicCharactListItem getMatchingCharact(DynamicCharactListItem dynamicCharactListItem,

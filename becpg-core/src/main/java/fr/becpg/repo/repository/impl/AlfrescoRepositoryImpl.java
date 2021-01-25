@@ -29,7 +29,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -511,7 +510,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 	private void loadAspects(T entity) {
 		if (entity instanceof AspectAwareDataItem) {
-			((AspectAwareDataItem) entity).setAspects(new TreeSet<>(nodeService.getAspects(entity.getNodeRef())));
+			((AspectAwareDataItem) entity).setAspects(new HashSet<>(nodeService.getAspects(entity.getNodeRef())));
 		}
 
 	}
