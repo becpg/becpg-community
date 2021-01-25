@@ -2,6 +2,8 @@ package fr.becpg.repo.helper.impl;
 
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * <p>DataListSearchFilterField class.</p>
@@ -11,8 +13,10 @@ import org.alfresco.service.namespace.QName;
  */
 public class AssociationCriteriaFilter {
 
-	private Integer minRange;
-	private Integer maxRange;
+	private static Log logger = LogFactory.getLog(AssociationCriteriaFilter.class);
+
+	private Double minRange;
+	private Double maxRange;
 	private String stringValue;
 	private String booleanValue;
 	private QName attributeQname;
@@ -22,26 +26,23 @@ public class AssociationCriteriaFilter {
 		if (DataTypeDefinition.BOOLEAN.equals(dataType.getName())) {
 			booleanValue = criteriaValue;
 		} else if (DataTypeDefinition.DOUBLE.equals(dataType.getName())) {
-			if (isRange) {
+			try {
+				if (isRange) {
 
-				String[] splitted = criteriaValue.split("\\|");
+					String[] splitted = criteriaValue.split("\\|");
 
-				if (splitted.length >= 1) {
-					try {
-						Integer min = Integer.parseInt(criteriaValue.split("\\|")[0]);
-						this.minRange = min;
-					} catch (NumberFormatException e) {
-						// no minRange set
-					}
-					if (splitted.length == 2) {
-						try {
-							Integer max = Integer.parseInt(criteriaValue.split("\\|")[1]);
-							this.maxRange = max;
-						} catch (NumberFormatException e) {
-							// no maxRange set
+					if (splitted.length >= 1) {
+						this.minRange = Double.valueOf(splitted[0]);
+
+						if (splitted.length == 2) {
+							this.maxRange = Double.valueOf(splitted[1]);
 						}
 					}
+				} else {
+					this.minRange = Double.valueOf(criteriaValue);
 				}
+			} catch (NumberFormatException e) {
+				logger.debug("Cannot parse search criteria: " + criteriaValue);
 			}
 		} else {
 			stringValue = criteriaValue;
@@ -53,11 +54,11 @@ public class AssociationCriteriaFilter {
 		return attributeQname;
 	}
 
-	public Integer getMinRange() {
+	public Double getMinRange() {
 		return minRange;
 	}
 
-	public Integer getMaxRange() {
+	public Double getMaxRange() {
 		return maxRange;
 	}
 
@@ -70,6 +71,6 @@ public class AssociationCriteriaFilter {
 	}
 
 	public boolean hasValue() {
-		return booleanValue!=null || stringValue!=null || minRange!=null || maxRange!=null;
+		return (booleanValue != null) || (stringValue != null) || (minRange != null) || (maxRange != null);
 	}
 }
