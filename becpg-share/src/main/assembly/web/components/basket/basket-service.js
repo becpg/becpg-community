@@ -5,6 +5,9 @@
  * @class Alfresco.service.Preferences
  */
 (function() {
+	
+	var BASKET_KEY_PREFIX = "fr.becpg.basket.";
+	
 	/**
 	 * Preferences constructor.
 	 *
@@ -58,7 +61,7 @@
 			},
 
 			key: function(record) {
-				return "basket_" + record.nodeRef.replace(':/','').replaceAll('/','_');
+				return BASKET_KEY_PREFIX + record.nodeRef.replace(':/','').replaceAll('/','_');
 			},
 
 			getRecords: function() {
@@ -66,7 +69,7 @@
 				if (this.isbrowserSupported()) {
 					for (var i = 0; i < localStorage.length; i++) {
 						var key = localStorage.key(i);
-						if (key.indexOf("basket_") == 0) {
+						if (key.indexOf(BASKET_KEY_PREFIX) == 0) {
 							nodes.push(JSON.parse(localStorage.getItem(key)));
 						}
 					}
@@ -76,10 +79,16 @@
 			
 			empty: function() {
 				if (this.isbrowserSupported()) {
-					for (var i = 0; i < localStorage.length; i++) {
-						var key = localStorage.key(i);
-						if (key.indexOf("basket_") == 0) {
-							localStorage.removeItem(key);
+					var hasresults = true;
+					
+					while(hasresults){
+						hasresults = false;
+						for (var i = 0; i < localStorage.length; i++) {
+							var key = localStorage.key(i);
+							if (key.indexOf(BASKET_KEY_PREFIX) == 0) {
+								localStorage.removeItem(key);
+								hasresults = true;
+							}
 						}
 					}
 					YAHOO.Bubbling.fire("basketChanged");
