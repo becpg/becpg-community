@@ -24,6 +24,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
@@ -71,7 +72,9 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 	private NamespaceService namespaceService;
 
 	
-	private final Map<QName, Class<T>> domainMapping = new HashMap<>();
+	private final Map<QName, Class<T>> domainMapping = new ConcurrentHashMap<>();
+	
+	private final Map<String, QName> qnameCache = new ConcurrentHashMap<>();
 
 	/** {@inheritDoc} */
 	@Override
@@ -155,17 +158,16 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 		if (clazz.getAnnotation(AlfQname.class) != null) {
 
 			String qName = clazz.getAnnotation(AlfQname.class).qname();
-			return QName.createQName(qName, namespaceService);
+			return  qnameCache.computeIfAbsent(qName, id -> QName.createQName(id, namespaceService)) ;
 		}
-		throw new RuntimeException("No @AlfQname annotation in class : "+clazz.getName());
+		throw new IllegalStateException("No @AlfQname annotation in class : "+clazz.getName());
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public QName readQName(Method readMethod) {
 		String qName = readMethod.getAnnotation(AlfQname.class).qname();
-		QName fieldQname = QName.createQName(qName, namespaceService);
-		return fieldQname;
+		return qnameCache.computeIfAbsent(qName, id -> QName.createQName(id, namespaceService));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -257,8 +259,7 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 		if(entityClass != null && entityClass.isAnnotationPresent(MultiLevelDataList.class)){
 			String qName = entityClass.getAnnotation(MultiLevelDataList.class).secondaryPivot();
 			if(qName!=null && !qName.isEmpty()){
-				QName fieldQname = QName.createQName(qName, namespaceService);
-				return fieldQname;
+				return qnameCache.computeIfAbsent(qName, id -> QName.createQName(id, namespaceService));
 			}
 			
 		}
