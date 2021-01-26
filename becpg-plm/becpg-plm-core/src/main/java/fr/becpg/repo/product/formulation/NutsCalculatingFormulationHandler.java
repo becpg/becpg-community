@@ -18,7 +18,6 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
-import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
@@ -79,14 +78,14 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 
 	/** {@inheritDoc} */
 	@Override
-	public boolean process(ProductData formulatedProduct) throws FormulateException {
+	public boolean process(ProductData formulatedProduct)  {
 		
 
 		if (accept(formulatedProduct)) {
 			logger.debug("Nuts calculating visitor");
 
 			if (formulatedProduct.getNutList() == null) {
-				formulatedProduct.setNutList(new LinkedList<NutListDataItem>());
+				formulatedProduct.setNutList(new LinkedList<>());
 			}
 			
 			cleanSimpleList(formulatedProduct.getNutList(), formulatedProduct.hasCompoListEl(new VariantFilters<>()) || formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL));
@@ -192,8 +191,8 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 						}
 						if (n instanceof VariantAwareDataItem) {
 							for (int i=1; i<=VariantAwareDataItem.VARIANT_COLUMN_SIZE ; i++) {
-								if (((VariantAwareDataItem)n).getValue(VariantAwareDataItem.VARIANT_COLUMN_NAME+i) != null){
-									((VariantAwareDataItem)n).setValue(((((VariantAwareDataItem)n).getValue(VariantAwareDataItem.VARIANT_COLUMN_NAME+i) * (100 - n.getLossPerc())) / 100), VariantAwareDataItem.VARIANT_COLUMN_NAME+i);
+								if ((n).getValue(VariantAwareDataItem.VARIANT_COLUMN_NAME+i) != null){
+									(n).setValue((((n).getValue(VariantAwareDataItem.VARIANT_COLUMN_NAME+i) * (100 - n.getLossPerc())) / 100), VariantAwareDataItem.VARIANT_COLUMN_NAME+i);
 								}
 							}
 							
@@ -215,7 +214,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 										nut.getCharactName());
 
 								formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message,
-										n.getNut(), new ArrayList<NodeRef>(), RequirementDataType.Specification));
+										n.getNut(), new ArrayList<>(), RequirementDataType.Specification));
 							}
 						}
 					} else {
@@ -303,7 +302,8 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 		if ((nutUnit == null) || nutUnit.contains("/")) {
 			return nutUnit;
 		}
-		return nutUnit += calculateSuffixUnit(productUnit, servingSizeUnit);
+		nutUnit += calculateSuffixUnit(productUnit, servingSizeUnit);
+		return nutUnit;
 	}
 
 	/**
