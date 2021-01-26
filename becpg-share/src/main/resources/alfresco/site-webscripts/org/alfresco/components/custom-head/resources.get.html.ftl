@@ -2,6 +2,7 @@
 <@markup id="custom-alfrescoResources" target="alfrescoResources" action="after">
  	<@script type="text/javascript" src="${url.context}/res/js/beCPG.js" group="template-common"/>
     <@script type="text/javascript" src="${url.context}/res/js/beCPGUtils.js" group="template-common"/>
+    <@script type="text/javascript" src="${url.context}/res/components/basket/basket-service.js"  group="template-common" />
 </@markup>
 
 
