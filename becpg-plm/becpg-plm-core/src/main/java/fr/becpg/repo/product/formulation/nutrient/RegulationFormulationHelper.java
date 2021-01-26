@@ -13,6 +13,7 @@ import org.dom4j.Element;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.MLTextHelper;
@@ -351,7 +352,12 @@ public class RegulationFormulationHelper {
 		} else if (vps instanceof Number) {
 			return ((Number) vps).doubleValue();
 		} else if (vps instanceof String) {
-			return Double.valueOf((String) vps);
+			try {
+			 return Double.valueOf((String) vps);
+			} catch (NumberFormatException e) {
+				logger.error("Cannot parse number:"+ (String) vps);
+				return null;	
+			}
 		}
 		return (Double) vps;
 	}
@@ -492,6 +498,9 @@ public class RegulationFormulationHelper {
 					String txt = formulatedProduct.getServingSizeByCountry().get(locale);
 					if ((txt != null) && !txt.isEmpty()) {
 						servingSize = parseDouble(txt);
+						if(servingSize == null) {
+							formulatedProduct.addError(I18NUtil.getMessage("message.formulate.nut.wrongServingSize",txt,key));
+						}
 						break;
 					}
 				}
