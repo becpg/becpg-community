@@ -262,10 +262,11 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 							Integer duration = ProjectHelper.calculateTaskDuration(task.getTask().getTargetStart(), task.getTask().getTargetEnd());
 							Integer realDuration = ProjectHelper.calculateTaskDuration(task.getTask().getStart(), task.getTask().getEnd());
 
+
 							if (duration == null) {
 								logger.warn("Parent task duration is null:" + task.getTask().getTaskName());
 							}
-
+							
 							task.getTask().setDuration(duration);
 							task.getTask().setRealDuration(realDuration);
 							task.getTask().setWork(work);

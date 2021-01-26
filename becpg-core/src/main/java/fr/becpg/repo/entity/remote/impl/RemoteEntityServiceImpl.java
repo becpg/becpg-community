@@ -63,6 +63,7 @@ import fr.becpg.repo.entity.remote.extractor.ImportEntityXmlVisitor;
 import fr.becpg.repo.entity.remote.extractor.JsonEntityVisitor;
 import fr.becpg.repo.entity.remote.extractor.XmlEntityVisitor;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.repository.L2CacheSupport;
 
 /**
@@ -97,6 +98,9 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	@Qualifier("ContentService")
 	private ContentService contentService;
 
+	@Autowired
+	private AttributeExtractorService attributeExtractor;
+	
 	@Autowired
 	private MimetypeService mimetypeService;
 
@@ -182,6 +186,22 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 			JsonEntityVisitor jsonEntityVisitor = new JsonEntityVisitor(mlNodeService, nodeService, namespaceService, entityDictionaryService,
 					contentService, siteService);
 
+			if ((fields != null) && !fields.isEmpty()) {
+				jsonEntityVisitor.setFilteredFields(fields);
+			}
+			if ((lists != null) && !lists.isEmpty()) {
+				jsonEntityVisitor.setFilteredLists(lists);
+			}
+			try {
+				jsonEntityVisitor.visit(entityNodeRef, out);
+			} catch (Exception e) {
+				throw new BeCPGException("Cannot export entity :" + entityNodeRef + " at format " + format, e);
+			}
+		} else if (format.equals(RemoteEntityFormat.json_all)) {
+			JsonEntityVisitor jsonEntityVisitor = new JsonEntityVisitor(mlNodeService, nodeService, namespaceService, entityDictionaryService,
+					contentService, siteService, attributeExtractor);
+
+			jsonEntityVisitor.setAll(true);
 			if ((fields != null) && !fields.isEmpty()) {
 				jsonEntityVisitor.setFilteredFields(fields);
 			}

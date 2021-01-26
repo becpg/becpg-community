@@ -28,6 +28,14 @@ if (typeof beCPG == "undefined" || !beCPG)
 }
 
 /**
+ * beCPG top-level service namespace.
+ * 
+ * @namespace beCPG
+ * @class beCPG.service
+ */
+beCPG.service = beCPG.service || {};
+
+/**
  * beCPG top-level component namespace.
  * 
  * @namespace beCPG
