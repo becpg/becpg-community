@@ -213,7 +213,7 @@
 								  });  
 							  } else {
 								  Alfresco.util.PopupManager.displayMessage({
-									  text : this.msg("message.import.failure")
+									  text : this.msg("message.send-to-supplier.inprogress")
 								  });
 							  }
 						  },
