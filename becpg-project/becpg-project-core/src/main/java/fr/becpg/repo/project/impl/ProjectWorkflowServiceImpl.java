@@ -84,9 +84,13 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 	public void cancelWorkflow(TaskListDataItem task) {
 
 		logger.debug("Cancel workflow instance: " + task.getWorkflowInstance());
-		workflowService.cancelWorkflow(task.getWorkflowInstance());
-		task.setWorkflowInstance("");
-		task.setWorkflowTaskInstance("");
+		WorkflowInstance instance = workflowService.cancelWorkflow(task.getWorkflowInstance());
+		if(instance == null || !instance.isActive()) {
+			task.setWorkflowInstance("");
+			task.setWorkflowTaskInstance("");
+		} else {
+			logger.error("Cannot cancel worflow:"+ task.getWorkflowInstance());
+		}
 	}
 
 	/** {@inheritDoc} */
