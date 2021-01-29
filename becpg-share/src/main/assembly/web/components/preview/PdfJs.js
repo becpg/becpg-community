@@ -525,11 +525,11 @@
          if (beCPG.constants.SHOW_DOWNLOAD_LINKS 
         		 && (Alfresco.constants.PAGEID === "entity-data-lists" || window.location.pathname.match("/entity-data-lists$") || beCPG.constants.IS_REPORT) )
          {
-        	if(this.attributes.src){
+        	if(this.attributes.src && !(this.wp.getContentUrl().indexOf(".pdf")>0)){
         		downloadMenu.push({ text: this.wp.msg("link.downloadPdf"), value: "", onclick: { fn: this.onDownloadbPDFClick, scope: this } });
         		if(this.wp.getContentUrl().indexOf(".docx")>0){
         			downloadMenu.push({ text: this.wp.msg("link.downloadXlsx"), value: "", onclick: { fn: this.onDownloadXLSXClick, scope: this } });
-        		} else {
+        		} else {name
         			downloadMenu.push({ text: this.wp.msg("link.downloadDocx"), value: "", onclick: { fn: this.onDownloadDOCXClick, scope: this } });
         		}
         		
@@ -537,7 +537,7 @@
         		downloadMenu.push({ text: this.wp.msg("link.downloadXlsx"), value: "", onclick: { fn: this.onDownloadXLSXClick, scope: this } });
         		downloadMenu.push({ text: this.wp.msg("link.downloadDocx"), value: "", onclick: { fn: this.onDownloadDOCXClick, scope: this } });
         	}
-         } else if (this.attributes.src) {
+         } else if (this.attributes.src && !(this.wp.getContentUrl().indexOf(".pdf")>0)) {
             downloadMenu.push({ text: this.wp.msg("link.downloadPdf"), value: "", onclick: { fn: this.onDownloadPDFClick, scope: this } });
          }
          
