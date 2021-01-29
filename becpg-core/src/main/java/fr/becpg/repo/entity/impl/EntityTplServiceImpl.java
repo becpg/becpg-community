@@ -343,14 +343,15 @@ public class EntityTplServiceImpl implements EntityTplService {
 		if (lock.tryLock()) {
 			try {
 
-				logger.debug("synchronizeEntities");
+				
 				RepositoryEntity entityTpl = alfrescoRepository.findOne(tplNodeRef);
 
-				logger.debug("entityTpl" + entityTpl.toString());
 
 				List<NodeRef> entityNodeRefs = getEntitiesToUpdate(tplNodeRef);
-				logger.debug("synchronize entityNodeRefs, size " + entityNodeRefs.size());
-
+				if(logger.isInfoEnable()) {
+					logger.info("Launch synchronizeEntities, size " + entityNodeRefs.size());
+				}
+				
 				doInBatch(entityNodeRefs, 10, entityNodeRef -> {
 
 					final Map<QName, List<? extends RepositoryEntity>> datalistsTpl = repositoryEntityDefReader.getDataLists(entityTpl);
@@ -561,6 +562,10 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 		if (lock.tryLock()) {
 			try {
+				if(logger.isInfoEnable()) {
+					logger.info("Launch formulateEntities, size " + entityNodeRefs.size());
+				}
+				
 				List<NodeRef> entityNodeRefs = getEntitiesToUpdate(tplNodeRef);
 
 				doInBatch(entityNodeRefs, 5, entityNodeRef -> {
