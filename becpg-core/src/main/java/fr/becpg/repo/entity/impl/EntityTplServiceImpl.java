@@ -348,7 +348,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 
 				List<NodeRef> entityNodeRefs = getEntitiesToUpdate(tplNodeRef);
-				if(logger.isInfoEnable()) {
+				if(logger.isInfoEnabled()) {
 					logger.info("Launch synchronizeEntities, size " + entityNodeRefs.size());
 				}
 				
@@ -562,11 +562,12 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 		if (lock.tryLock()) {
 			try {
-				if(logger.isInfoEnable()) {
+			
+				List<NodeRef> entityNodeRefs = getEntitiesToUpdate(tplNodeRef);
+				
+				if(logger.isInfoEnabled()) {
 					logger.info("Launch formulateEntities, size " + entityNodeRefs.size());
 				}
-				
-				List<NodeRef> entityNodeRefs = getEntitiesToUpdate(tplNodeRef);
 
 				doInBatch(entityNodeRefs, 5, entityNodeRef -> {
 					try {
