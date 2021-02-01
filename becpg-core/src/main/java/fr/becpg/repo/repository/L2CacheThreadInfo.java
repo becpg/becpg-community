@@ -11,10 +11,10 @@ class L2CacheThreadInfo implements Serializable{
 
 
 	private static final long serialVersionUID = -7958215882212282888L;
-	boolean isCacheOnlyEnable = false;
-	boolean isThreadCacheEnable = false;
-	boolean isThreadLockEnable = false;
-	final Map<NodeRef, RepositoryEntity> cache = new HashMap<>();
+	private boolean isCacheOnlyEnable = false;
+	private boolean isThreadCacheEnable = false;
+	private boolean isThreadLockEnable = false;
+	private Map<NodeRef, RepositoryEntity> cache = new HashMap<>();
 	
 	/**
 	 * <p>Constructor for L2CacheThreadInfo.</p>
@@ -29,6 +29,27 @@ class L2CacheThreadInfo implements Serializable{
 		this.isThreadCacheEnable = isThreadCacheEnable;
 		this.isThreadLockEnable = isThreadLockEnable;
 	}
+
+	
+	public Map<NodeRef, RepositoryEntity> getCache() {
+		return cache;
+	}
+
+	
+	public boolean isCacheOnlyEnable() {
+		return isCacheOnlyEnable;
+	}
+
+
+	public boolean isThreadCacheEnable() {
+		return isThreadCacheEnable;
+	}
+
+
+	public boolean isThreadLockEnable() {
+		return isThreadLockEnable;
+	}
+
 
 	/**
 	 * <p>Constructor for L2CacheThreadInfo.</p>
