@@ -33,9 +33,7 @@ import fr.becpg.repo.RepoConsts;
  */
 public class L2CacheSupport {
 
-	private static final ThreadLocal<L2CacheThreadInfo> threadLocalCache = ThreadLocal.withInitial(() -> {
-		return new L2CacheThreadInfo();
-	});
+	private static final ThreadLocal<L2CacheThreadInfo> threadLocalCache = ThreadLocal.withInitial(L2CacheThreadInfo::new);
 
 	public interface Action {
 		void run();
@@ -48,10 +46,10 @@ public class L2CacheSupport {
 	 * @return a {@link java.util.Map} object.
 	 */
 	public static <T> Map<NodeRef, RepositoryEntity> getCurrentThreadCache() {
-		if (threadLocalCache.get().isThreadCacheEnable) {
-			return threadLocalCache.get().cache;
+		if (threadLocalCache.get().isThreadCacheEnable()) {
+			return threadLocalCache.get().getCache();
 		}
-		return new HashMap<>();
+		return new HashMap<>(500);
 	}
 
 	/**
@@ -60,7 +58,7 @@ public class L2CacheSupport {
 	 * @return a boolean.
 	 */
 	public static boolean isCacheOnlyEnable() {
-		return threadLocalCache.get().isThreadCacheEnable && threadLocalCache.get().isCacheOnlyEnable;
+		return threadLocalCache.get().isThreadCacheEnable() && threadLocalCache.get().isCacheOnlyEnable();
 	}
 
 	/**
@@ -78,7 +76,7 @@ public class L2CacheSupport {
 	 * @return a boolean.
 	 */
 	public static boolean isThreadCacheEnable() {
-		return threadLocalCache.get().isThreadCacheEnable;
+		return threadLocalCache.get().isThreadCacheEnable();
 	}
 
 	/**
@@ -87,7 +85,7 @@ public class L2CacheSupport {
 	 * @return a boolean.
 	 */
 	public static boolean isThreadLockEnable() {
-		return threadLocalCache.get().isThreadLockEnable;
+		return threadLocalCache.get().isThreadLockEnable();
 	}
 
 	/**
@@ -102,6 +100,7 @@ public class L2CacheSupport {
 			threadLocalCache.set(new L2CacheThreadInfo(isCacheOnlyEnable, true, false));
 			action.run();
 		} finally {
+			threadLocalCache.remove();
 			threadLocalCache.set(previousContext);
 		}
 	}
@@ -119,6 +118,7 @@ public class L2CacheSupport {
 			threadLocalCache.set(new L2CacheThreadInfo(isCacheOnlyEnable, true, isThreadLockEnable));
 			action.run();
 		} finally {
+			threadLocalCache.remove();
 			threadLocalCache.set(previousContext);
 		}
 	}

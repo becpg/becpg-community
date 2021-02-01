@@ -115,10 +115,11 @@ public class ReportContentGet extends ContentGet {
 		}
 		
 		String format = req.getParameter("format");
+		String isSearch = req.getParameter("isSearch");
 		// determine attachment
-		boolean attach = Boolean.valueOf(req.getParameter("a"));
+		boolean attach = Boolean.parseBoolean(req.getParameter("a"));
 
-		if (!"search".equals(format)) {
+		if (!"true".equals(isSearch)) {
 
 			String entityNodeRefParam = req.getParameter(PARAM_ENTITY_NODEREF);
 			NodeRef entityNodeRef = null;
