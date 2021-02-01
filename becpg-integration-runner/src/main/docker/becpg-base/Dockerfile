@@ -162,7 +162,7 @@ COPY tomcat/logging.properties /usr/local/tomcat/conf/logging.properties
 
 COPY becpg/classes /usr/local/tomcat/shared/classes
 
-ENV JAVA_OPTS "-server -Ddir.root=/usr/local/tomcat/data -Djava.awt.headless=true -XX:-DisableExplicitGC -Djava.security.egd=file:/dev/./urandom -Djava.awt.headless=true -Dfile.encoding=UTF-8"
+ENV JAVA_OPTS "-server -Ddir.root=/usr/local/tomcat/data -XX:-DisableExplicitGC -Djava.security.egd=file:/dev/./urandom -Djava.awt.headless=true -Dfile.encoding=UTF-8"
 
 WORKDIR /root
 

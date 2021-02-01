@@ -826,8 +826,8 @@
 								
 								         var d = form.ownerDocument;
  			                             var input1 = d.createElement("input");
-											 input1.name="format";
-											 input1.value="search";
+											 input1.name="isSearch";
+											 input1.value="true";
 											 form.appendChild(input1);
 
 		 							     var input2 = d.createElement("input");
