@@ -141,7 +141,7 @@
 		<test.acs.endpoint.path />
 
 		<becpg.dockerbuild.name>test</becpg.dockerbuild.name>
-		<docker.becpg.url>docker.becpg.fr:443/becpg</docker.becpg.url>
+		<docker.becpg.url>becpg</docker.becpg.url>
 		<docker.becpg.tag>3.2.2</docker.becpg.tag>
 		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
