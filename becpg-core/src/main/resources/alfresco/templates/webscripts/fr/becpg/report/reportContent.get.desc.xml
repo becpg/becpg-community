@@ -27,6 +27,6 @@
   <!-- beCPG Do not remove buffersize=0 
       buffersize wrap response for transactional concurrency failure but it will not work for large stream 
   -->
-  <transaction buffersize="0" >required</transaction>
+  <transaction buffersize="0" allow="readwrite" >required</transaction>
   <lifecycle>internal</lifecycle>
 </webscript>
