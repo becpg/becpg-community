@@ -216,7 +216,8 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 			if ((criteriaValue != null) && !criteriaValue.isBlank()) {
 				QName attributeQName = propFilter.getAttributeQname();
 
-				if (PLMModel.PROP_NUTLIST_VALUE.equals(propFilter.getAttributeQname())) {
+				// Warning : this will be a problem with generic raw materials
+				if (!PLMModel.TYPE_RAWMATERIAL.getPrefixedQName(namespaceService).getPrefixString().equals(criteria.get("datatype")) && PLMModel.PROP_NUTLIST_VALUE.equals(attributeQName)) {
 
 					attributeQName = PLMModel.PROP_NUTLIST_FORMULATED_VALUE;
 

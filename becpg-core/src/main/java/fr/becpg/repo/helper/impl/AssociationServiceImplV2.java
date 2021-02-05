@@ -558,6 +558,10 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 			query.append(")");
 			query.append("  group by dataListItem.uuid ");
 
+			if (qnameDAO.getQName(BeCPGModel.ASPECT_COMPOSITE_VERSION) == null) {
+				return Collections.emptyList();
+			}
+			
 			Long typeQNameId = null;
 			Long aspectQnameId = qnameDAO.getQName(BeCPGModel.ASPECT_COMPOSITE_VERSION).getFirst();
 			if (assocTypeQName != null) {
