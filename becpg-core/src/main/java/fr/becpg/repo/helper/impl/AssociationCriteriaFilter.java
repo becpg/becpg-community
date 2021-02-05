@@ -32,9 +32,11 @@ public class AssociationCriteriaFilter {
 					String[] splitted = criteriaValue.split("\\|");
 
 					if (splitted.length >= 1) {
-						this.minRange = Double.valueOf(splitted[0]);
+						if (splitted[0].length() > 0) {
+							this.minRange = Double.valueOf(splitted[0]);
+						}
 
-						if (splitted.length == 2) {
+						if (splitted.length == 2 && splitted[1].length() > 0) {
 							this.maxRange = Double.valueOf(splitted[1]);
 						}
 					}
