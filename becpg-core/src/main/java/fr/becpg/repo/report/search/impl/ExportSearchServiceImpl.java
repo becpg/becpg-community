@@ -4,7 +4,9 @@
 package fr.becpg.repo.report.search.impl;
 
 import java.io.OutputStream;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.alfresco.repo.download.DownloadStorage;
 import org.alfresco.repo.transaction.RetryingTransactionHelper;
@@ -73,13 +75,16 @@ public class ExportSearchServiceImpl implements ExportSearchService {
 	public NodeRef createReport(QName nodeType, NodeRef templateNodeRef, List<NodeRef> searchResults, ReportFormat reportFormat) {
 
 		ParameterCheck.mandatory("templateNodeRef", templateNodeRef);
+		
+		//TODO search results should be unique, Fix that in search query builder
+		Set<NodeRef> uniqSearchResults = new LinkedHashSet<>(searchResults);
 
 		NodeRef downloadNode = retryingTransactionHelper.doInTransaction(() -> {
 			// Create a download node
 			NodeRef downloadNode1 = downloadStorage.createDownloadNode(false);
 
 			// Add requested nodes
-			for (NodeRef node : searchResults) {
+			for (NodeRef node : uniqSearchResults) {
 				downloadStorage.addNodeToDownload(downloadNode1, node);
 			}
 
