@@ -17,7 +17,6 @@
  ******************************************************************************/
 package fr.becpg.repo.project.impl;
 
-import java.util.Date;
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -26,6 +25,9 @@ import org.alfresco.util.ISO8601DateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.ibm.icu.util.Calendar;
+
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.project.ProjectService;
@@ -70,22 +72,31 @@ public class ProjectFormulationWorker {
 
 		List<NodeRef> projectNodeRefs = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
+			Calendar cal = Calendar.getInstance();
+			
+			cal.set(Calendar.HOUR_OF_DAY, 0);
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.SECOND, 0);
+			cal.set(Calendar.MILLISECOND, 0);
+			
 			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(ProjectModel.TYPE_PROJECT)
-					.andPropEquals(ProjectModel.PROP_PROJECT_STATE, ProjectState.InProgress.toString());
+					.andPropEquals(ProjectModel.PROP_PROJECT_STATE, ProjectState.InProgress.toString())
+					.andBetween(BeCPGModel.PROP_FORMULATED_DATE, "MIN", ISO8601DateFormat.format(cal.getTime()));
 
-			List<NodeRef> ret = queryBuilder.inDB().maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list();
+			List<NodeRef> ret = queryBuilder.inDB().ftsLanguage().maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list();
 
 			queryBuilder = BeCPGQueryBuilder.createQuery().ofType(ProjectModel.TYPE_PROJECT)
-					.andPropEquals(ProjectModel.PROP_PROJECT_STATE, ProjectState.OnHold.toString());
+					.andPropEquals(ProjectModel.PROP_PROJECT_STATE, ProjectState.OnHold.toString())
+					.andBetween(BeCPGModel.PROP_FORMULATED_DATE, "MIN", ISO8601DateFormat.format(cal.getTime()));
 			
-			ret.addAll(queryBuilder.inDB().maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list());
+			ret.addAll(queryBuilder.inDB().ftsLanguage().maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list());
 			
 			// query
 			queryBuilder = BeCPGQueryBuilder.createQuery().ofType(ProjectModel.TYPE_PROJECT)
 					.andPropEquals(ProjectModel.PROP_PROJECT_STATE, ProjectState.Planned.toString())
-					.andBetween(ProjectModel.PROP_PROJECT_START_DATE, "MIN", ISO8601DateFormat.format(new Date()));
+					.andBetween(ProjectModel.PROP_PROJECT_START_DATE, "MIN", ISO8601DateFormat.format(Calendar.getInstance().getTime()));
 
-			ret.addAll(queryBuilder.ftsLanguage().maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list());
+			ret.addAll(queryBuilder.inDB().ftsLanguage().maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list());
 
 			return ret;
 
