@@ -123,9 +123,10 @@ along with beCPG. If not, see <http://www.gnu.org/licenses/>.
   	<!-- Locale resolver -->
     <bean id="localeResolver" class="fr.becpg.web.resolver.BeCPGLocaleResolver" />
     
-    
+    <!--  Remove lessc 
     <bean id="css.theme.handler" parent="css.theme.handler.abstract" class="org.springframework.extensions.surf.ExternalLessCssThemeHandler">
       <property name="cmd"><value>lessc -</value></property>
     </bean>
+    -->
 	
 </beans>
