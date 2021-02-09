@@ -437,9 +437,10 @@
 
 						var templateUrl = YAHOO.lang
 							.substitute(
-								Alfresco.constants.URL_SERVICECONTEXT + "components/form?popup=true&formId=formulation&itemKind=node&itemId={itemId}&mode=edit&submitType=json&showCancelButton=true",
+								Alfresco.constants.URL_SERVICECONTEXT + "components/form?popup=true&formId=formulation&itemKind=node&itemId={itemId}&mode=edit&submitType=json&showCancelButton=true&siteId={siteId}",
 								{
-									itemId: this.options.entityNodeRef
+									itemId: this.options.entityNodeRef,
+									siteId: this.options.siteId!=null ? this.options.siteId : ""
 								});
 
 						var editProductMetadata = new Alfresco.module.SimpleDialog(this.id + "-editProductMetadata");
