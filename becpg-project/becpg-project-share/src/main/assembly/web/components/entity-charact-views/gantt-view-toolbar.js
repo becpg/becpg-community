@@ -140,10 +140,11 @@
 	        	  
 	        	   var templateUrl = YAHOO.lang
                    .substitute(
-                         Alfresco.constants.URL_SERVICECONTEXT + "components/form?formId=formulation&itemKind=type&itemId={itemId}&destination={destination}&mode=create&submitType=json&showCancelButton=true&popup=true",
+                         Alfresco.constants.URL_SERVICECONTEXT + "components/form?formId=formulation&itemKind=type&itemId={itemId}&destination={destination}&mode=create&submitType=json&showCancelButton=true&popup=true&siteId={siteId}",
                          {
                             itemId : "pjt:project",
-                            destination : instance.entity.parentNodeRef
+                            destination : instance.entity.parentNodeRef,
+							siteId: this.options.siteId!=null ? this.options.siteId : ""
                          });
 
 	        	   var createRow = new Alfresco.module.SimpleDialog(instance.id + "-createSubProject");
@@ -220,9 +221,10 @@
 
 						var templateUrl = YAHOO.lang
 							.substitute(
-								Alfresco.constants.URL_SERVICECONTEXT + "components/form?popup=true&formId=project-metadata&itemKind=node&itemId={itemId}&mode=edit&submitType=json&showCancelButton=true",
+								Alfresco.constants.URL_SERVICECONTEXT + "components/form?popup=true&formId=project-metadata&itemKind=node&itemId={itemId}&mode=edit&submitType=json&showCancelButton=true&siteId={siteId}",
 								{
-									itemId: this.options.entityNodeRef
+									itemId: this.options.entityNodeRef,
+									siteId: this.options.siteId!=null ? this.options.siteId : ""
 								});
 
 						var editProductMetadata = new Alfresco.module.SimpleDialog(this.id + "-editProjectMetadata");
