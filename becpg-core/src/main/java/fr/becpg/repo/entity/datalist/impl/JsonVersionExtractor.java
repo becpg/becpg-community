@@ -16,6 +16,7 @@ import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -24,6 +25,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.config.format.FormatMode;
@@ -331,6 +333,12 @@ public class JsonVersionExtractor extends ActivityListExtractor {
 
 			displayName = attributeExtractorService.getStringValue(attribute, cal.getTime(), attributeExtractorService.getPropertyFormats(mode, false));
 
+		} else if (metadata.equals("mltext")) {
+			if (properties.has(attribute.getName().toPrefixString(namespaceService) + "_" + I18NUtil.getLocale().toLanguageTag())) {
+				displayName = properties.getString(attribute.getName().toPrefixString(namespaceService) + "_" + I18NUtil.getLocale().toLanguageTag());
+			} else {
+				displayName = properties.getString(attribute.getName().toPrefixString(namespaceService));
+			}
 		} else {
 			displayName = attributeExtractorService.getStringValue(attribute, seri, attributeExtractorService.getPropertyFormats(mode, false));
 		}
@@ -442,7 +450,7 @@ public class JsonVersionExtractor extends ActivityListExtractor {
 			}
 			
 			if (BeCPGModel.TYPE_ACTIVITY_LIST.equals(dataListFilterQName)) {
-				postLookupActivity(dataListFilter.getEntityNodeRef(), ret, propertiesMap, FormatMode.JSON);
+				postLookupActivity(dataListFilter.getEntityNodeRef(), (Map<String, Object>) ret.get(PROP_NODEDATA), propertiesMap, FormatMode.JSON);
 			}
 			
 			return ret;
@@ -466,9 +474,8 @@ public class JsonVersionExtractor extends ActivityListExtractor {
 					continue;
 				}
 				
-				if (filterData.startsWith("workspace")) {
+				if (filterData.startsWith(StoreRef.PROTOCOL_WORKSPACE)) {
 					NodeRef versionNodeRef = new NodeRef(filterData);
-					
 					return entityFormatService.getEntityData(versionNodeRef);
 				}
 			}
@@ -525,10 +532,8 @@ public class JsonVersionExtractor extends ActivityListExtractor {
 			logger.error("Failed to extract", e);
 		}
 
-		if(logger.isDebugEnabled()) {
-			if (!ret.getPageItems().isEmpty()) {
-				logger.debug("First itemData is " + ret.getPageItems().get(0).get(PROP_NODEDATA));
-			}
+		if(logger.isDebugEnabled() && !ret.getPageItems().isEmpty()) {
+			logger.debug("First itemData is " + ret.getPageItems().get(0).get(PROP_NODEDATA));
 		}
 		return ret;
 	}
@@ -546,7 +551,7 @@ public class JsonVersionExtractor extends ActivityListExtractor {
 					continue;
 				}
 				
-				if (filterData.startsWith("workspace")) {
+				if (filterData.startsWith(StoreRef.PROTOCOL_WORKSPACE)) {
 					targetNodeRef = new NodeRef(filterData);
 				}
 			}

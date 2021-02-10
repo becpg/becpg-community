@@ -37,5 +37,9 @@ public interface EntityFormatService {
 	public String getEntityFormat(NodeRef entityNodeRef);
 	
 	public void convert(NodeRef entityNodeRef, EntityFormat	toFormat);
+	
+	public String extractEntityData(NodeRef entityNodeRef, EntityFormat toFormat);
+
+	void createOrUpdateEntityFromJson(NodeRef entityNodeRef, String entityJson);
 
 }

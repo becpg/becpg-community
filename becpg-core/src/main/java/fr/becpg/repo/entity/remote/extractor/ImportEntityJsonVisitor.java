@@ -78,6 +78,8 @@ public class ImportEntityJsonVisitor {
 	
 	private Map<NodeRef, NodeRef> cache = new HashMap<>();
 
+	private boolean failOnAssociationNotFound;
+
 	/**
 	 * <p>Constructor for ImportEntityJsonVisitor.</p>
 	 *
@@ -123,6 +125,8 @@ public class ImportEntityJsonVisitor {
 					entity.put(RemoteEntityService.ATTR_ID, entityNodeRef.getId());
 				}
 
+				failOnAssociationNotFound = extractParams(entity, "failOnAssociationNotFound", true);
+				
 				return visit(entity, false, null);
 			}
 			
@@ -157,7 +161,7 @@ public class ImportEntityJsonVisitor {
 		}
 
 		Map<QName, Serializable> properties = jsonToProperties(entity);
-		Map<QName, List<NodeRef>> associations = jsonToAssocs(entity);
+		Map<QName, List<NodeRef>> associations = jsonToAssocs(entity, failOnAssociationNotFound);
 		
 		if(!properties.containsKey(propName) && entity.has(RemoteEntityService.ATTR_NAME)) {
 			properties.put(propName, entity.getString(RemoteEntityService.ATTR_NAME));
@@ -208,7 +212,7 @@ public class ImportEntityJsonVisitor {
 
 		if (entity.has(RemoteEntityService.ELEM_ATTRIBUTES)) {
 			properties.putAll(jsonToProperties(entity.getJSONObject(RemoteEntityService.ELEM_ATTRIBUTES)));
-			associations.putAll(jsonToAssocs(entity.getJSONObject(RemoteEntityService.ELEM_ATTRIBUTES)));
+			associations.putAll(jsonToAssocs(entity.getJSONObject(RemoteEntityService.ELEM_ATTRIBUTES), failOnAssociationNotFound));
 		}
 
 		if (entityNodeRef == null) {
@@ -338,7 +342,7 @@ public class ImportEntityJsonVisitor {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void visitDataLists(JSONObject entity, NodeRef entityNodeRef, JSONObject datalists) throws JSONException, BeCPGException {
+	private void visitDataLists(JSONObject entity, NodeRef entityNodeRef, JSONObject datalists) throws JSONException {
 
 		boolean replaceExisting = extractParams(entity, "replaceExistingLists", false);
 		String dataListsToReplace =  extractParams(entity, "dataListsToReplace", "");
@@ -370,7 +374,14 @@ public class ImportEntityJsonVisitor {
 				if (!listItem.has(RemoteEntityService.ATTR_TYPE)) {
 					listItem.put(RemoteEntityService.ATTR_TYPE, dataListQName);
 				}
-				listItemToKeep.add(visit(listItem, false, null));
+				try {
+					listItemToKeep.add(visit(listItem, false, null));
+				} catch (BeCPGException e) {
+					if (failOnAssociationNotFound) {
+						throw e;
+					}
+					
+				}
 			}
 
 			if (replaceExisting || dataListsToReplace.contains(key)) {
@@ -386,9 +397,9 @@ public class ImportEntityJsonVisitor {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Map<QName, List<NodeRef>> jsonToAssocs(JSONObject entity) throws JSONException, BeCPGException {
+	private Map<QName, List<NodeRef>> jsonToAssocs(JSONObject entity, boolean failOnAssociationNotFound) throws JSONException, BeCPGException {
 		Map<QName, List<NodeRef>> assocs = new HashMap<>();
-
+		
 		Iterator<String> iterator = entity.keys();
 
 		while (iterator.hasNext()) {
@@ -412,8 +423,16 @@ public class ImportEntityJsonVisitor {
 								if (!assocEntity.has(RemoteEntityService.ATTR_TYPE)) {
 									assocEntity.put(RemoteEntityService.ATTR_TYPE, ad.getTargetClass().getName());
 								}
-
-								tmp.add(visit(assocEntity, true, propQName));
+								
+								
+								try {
+									tmp.add(visit(assocEntity, true, propQName));
+								} catch (BeCPGException e) {
+									if (failOnAssociationNotFound) {
+										throw e;
+									}
+									
+								}
 
 							}
 
@@ -424,13 +443,25 @@ public class ImportEntityJsonVisitor {
 								assocEntity.put(RemoteEntityService.ATTR_TYPE, ad.getTargetClass().getName());
 							}
 
-							tmp.add(visit(assocEntity, true, propQName));
-
+							try {
+								tmp.add(visit(assocEntity, true, propQName));
+							} catch (BeCPGException e) {
+								if (failOnAssociationNotFound) {
+									throw e;
+								}
+								
+							}
 						}
 
 					}
+
+					if(ad.isTargetMandatory() && tmp.isEmpty()) {
+						throw new BeCPGException("Mandatory association not found");
+					}
+					
 					assocs.put(propQName, tmp);
 
+					
 				}
 			}
 		}
@@ -494,7 +525,26 @@ public class ImportEntityJsonVisitor {
 
 						} else {
 							value = entity.getString(key);
-							nodeProps.put(propQName, value);
+							
+							if (value.startsWith("{") && value.endsWith("}")) {
+								
+								MLText mlText = new MLText();
+
+								String content = value.replace("{", "").replace("}", "");
+								String[] contents = content.split(",");
+								
+								for (String cont : contents) {
+									if (cont.contains(":")) {
+										String locale = cont.split(":")[0];
+										String actualValue = cont.split(":")[1].replace("\"", "");
+										mlText.addValue(MLTextHelper.parseLocale(locale), actualValue);
+									}
+								}
+								
+								nodeProps.put(propQName, mlText);
+							} else {
+								nodeProps.put(propQName, value);
+							}
 						}
 
 					} else {

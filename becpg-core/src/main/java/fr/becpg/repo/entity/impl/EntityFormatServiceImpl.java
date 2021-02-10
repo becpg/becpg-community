@@ -19,7 +19,10 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
@@ -35,7 +38,8 @@ import fr.becpg.repo.entity.remote.RemoteEntityService;
 public class EntityFormatServiceImpl implements EntityFormatService {
 
 	@Autowired
-	protected NodeService nodeService;
+	@Qualifier("mtAwareNodeService")
+	private NodeService dbNodeService;
 
 	@Autowired
 	protected EntityListDAO entityListDAO;
@@ -64,7 +68,7 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 
 	@Override
 	public void setDatalistFormat(NodeRef listNodeRef, EntityFormat format) {
-		nodeService.setProperty(listNodeRef, BeCPGModel.PROP_ENTITY_FORMAT, format);
+		dbNodeService.setProperty(listNodeRef, BeCPGModel.PROP_ENTITY_FORMAT, format);
 	}
 
 	@Override
@@ -84,7 +88,7 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 
 	@Override
 	public String getDatalistFormat(NodeRef listNodeRef) {
-		return nodeService.exists(listNodeRef) ? (String) nodeService.getProperty(listNodeRef, BeCPGModel.PROP_ENTITY_FORMAT) : null;
+		return dbNodeService.exists(listNodeRef) ? (String) dbNodeService.getProperty(listNodeRef, BeCPGModel.PROP_ENTITY_FORMAT) : null;
 	}
 
 	@Override
@@ -111,7 +115,7 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 	@Override
 	public String getDataListData(NodeRef listNodeRef) {
 
-		if (this.nodeService.hasAspect(listNodeRef, BeCPGModel.ASPECT_ENTITY_FORMAT)) {
+		if (this.dbNodeService.hasAspect(listNodeRef, BeCPGModel.ASPECT_ENTITY_FORMAT)) {
 			ContentReader reader = this.contentService.getReader(listNodeRef, BeCPGModel.PROP_ENTITY_DATA);
 			if (reader != null) {
 				return reader.getContentString();
@@ -168,7 +172,7 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 
 		if (!EntityFormat.JSON.toString().equals(fromFormat) && EntityFormat.JSON.equals(toFormat)) {
 
-			String name = (String) nodeService.getProperty(listNodeRef, ContentModel.PROP_NAME);
+			String name = (String) dbNodeService.getProperty(listNodeRef, ContentModel.PROP_NAME);
 
 			if (name.startsWith(RepoConsts.WUSED_PREFIX) || name.startsWith(RepoConsts.CUSTOM_VIEW_PREFIX)
 					|| name.startsWith(RepoConsts.SMART_CONTENT_PREFIX) || name.contains("@")) {
@@ -176,9 +180,9 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 				return;
 			}
 
-			NodeRef entityNodeRef = nodeService.getPrimaryParent(nodeService.getPrimaryParent(listNodeRef).getParentRef()).getParentRef();
+			NodeRef entityNodeRef = dbNodeService.getPrimaryParent(dbNodeService.getPrimaryParent(listNodeRef).getParentRef()).getParentRef();
 
-			QName dataListType = QName.createQName((String) nodeService.getProperty(listNodeRef, DataListModel.PROP_DATALISTITEMTYPE),
+			QName dataListType = QName.createQName((String) dbNodeService.getProperty(listNodeRef, DataListModel.PROP_DATALISTITEMTYPE),
 					namespaceService);
 
 			String json = extractDatalistData(entityNodeRef, dataListType, RemoteEntityFormat.json);
@@ -188,7 +192,7 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 			List<NodeRef> listItems = entityListDAO.getListItems(listNodeRef, dataListType);
 
 			for (NodeRef listItem : listItems) {
-				nodeService.removeChild(listNodeRef, listItem);
+				dbNodeService.removeChild(listNodeRef, listItem);
 			}
 
 			setDatalistFormat(listNodeRef, toFormat);
@@ -198,7 +202,22 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 		}
 
 	}
-
+	
+	@Override
+	public String extractEntityData(NodeRef entityNodeRef, EntityFormat toFormat) {
+		
+		if (EntityFormat.JSON.equals(toFormat)) {
+			try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+				remoteEntityService.getEntity(entityNodeRef, out, RemoteEntityFormat.json_all);
+				return out.toString();
+			} catch (IOException e) {
+				logger.error("Failed to convert entity to JSON format", e);
+			}
+		}
+		
+		return null;
+	}
+	
 	@Override
 	public void convert(NodeRef entityNodeRef, EntityFormat toFormat) {
 
@@ -206,23 +225,14 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 
 		if (!EntityFormat.JSON.toString().equals(fromFormat) && EntityFormat.JSON.equals(toFormat)) {
 
-			String entityJson = null;
-
-			try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-				remoteEntityService.getEntity(entityNodeRef, out, RemoteEntityFormat.json_all);
-				entityJson = out.toString();
-			} catch (IOException e) {
-				logger.error("Failed to convert entity to JSON format", e);
-			}
-
-			setEntityData(entityNodeRef, entityJson);
+			setEntityData(entityNodeRef, extractEntityData(entityNodeRef, EntityFormat.JSON));
 
 			setEntityFormat(entityNodeRef, EntityFormat.JSON);
 			
-			List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(entityNodeRef);
+			List<ChildAssociationRef> childAssocs = dbNodeService.getChildAssocs(entityNodeRef);
 			
 			for (ChildAssociationRef childAssoc : childAssocs) {
-				nodeService.removeChild(entityNodeRef, childAssoc.getChildRef());
+				dbNodeService.removeChild(entityNodeRef, childAssoc.getChildRef());
 			}
 			
 		} else if (EntityFormat.JSON.toString().equals(fromFormat) && EntityFormat.NODE.equals(toFormat)) {
@@ -239,6 +249,32 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 	}
 
 	@Override
+	public void createOrUpdateEntityFromJson(NodeRef entityNodeRef, String entityJson) {
+		
+		try {
+			JSONObject root = new JSONObject(entityJson);
+			
+			if (root.has(RemoteEntityService.ELEM_ENTITY)) {
+				JSONObject entity = root.getJSONObject(RemoteEntityService.ELEM_ENTITY);
+				
+				if (!entity.has(RemoteEntityService.ELEM_PARAMS)) {
+					JSONObject params = new JSONObject();
+					entity.put(RemoteEntityService.ELEM_PARAMS, params);
+				}
+				
+				JSONObject params = entity.getJSONObject(RemoteEntityService.ELEM_PARAMS);
+				params.put("failOnAssociationNotFound", false);
+			}
+
+			ByteArrayInputStream in = new ByteArrayInputStream(root.toString().getBytes());
+			remoteEntityService.createOrUpdateEntity(entityNodeRef, in, RemoteEntityFormat.json, null);
+		} catch (JSONException e) {
+			logger.error("Failed to parse JSON", e);
+		}
+		
+	}
+	
+	@Override
 	public void setEntityData(NodeRef entityNodeRef, String data) {
 		ContentWriter contentWriter = this.contentService.getWriter(entityNodeRef, BeCPGModel.PROP_ENTITY_DATA, true);
 		contentWriter.setEncoding("UTF-8");
@@ -248,7 +284,7 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 
 	@Override
 	public String getEntityData(NodeRef entityNodeRef) {
-		if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_FORMAT)) {
+		if (dbNodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_FORMAT)) {
 			ContentReader reader = this.contentService.getReader(entityNodeRef, BeCPGModel.PROP_ENTITY_DATA);
 			if (reader != null) {
 				return reader.getContentString();
@@ -260,13 +296,13 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 
 	@Override
 	public void setEntityFormat(NodeRef entityNodeRef, EntityFormat format) {
-		nodeService.setProperty(entityNodeRef, BeCPGModel.PROP_ENTITY_FORMAT, format);
+		dbNodeService.setProperty(entityNodeRef, BeCPGModel.PROP_ENTITY_FORMAT, format);
 	}
 
 	@Override
 	public String getEntityFormat(NodeRef entityNodeRef) {
-		if(entityNodeRef!=null && nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_FORMAT)) {
-			Serializable prop = nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_ENTITY_FORMAT);
+		if(entityNodeRef!=null && dbNodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_FORMAT)) {
+			Serializable prop = dbNodeService.getProperty(entityNodeRef, BeCPGModel.PROP_ENTITY_FORMAT);
 			return prop == null ? null : prop.toString();
 		}
 		return null;
