@@ -45,6 +45,7 @@ import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.datalist.MultiLevelDataListService;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
+import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 
@@ -72,6 +73,9 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 
 	@Autowired
 	private NamespaceService namespaceService;
+	
+	@Autowired
+	private EntityVersionService entityVersionService;
 	
 	@Autowired
 	private AssociationService associationService;
@@ -102,12 +106,22 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 	public List<CompareResultDataItem> compare(NodeRef entity1, List<NodeRef> entities, List<CompareResultDataItem> compareResult,
 			Map<String, List<StructCompareResultDataItem>> structCompareResults) {
 
+				
+		if (entityVersionService.isVersion(entity1)) {
+			entity1 = entityVersionService.extractVersion(entity1);
+		}
+		
 		Map<String, CompareResultDataItem> comparisonMap = new LinkedHashMap<>();
 		int pos = 1;
 		int nbEntities = entities.size() + 1;
 
 		for (NodeRef entity : entities) {
 			logger.debug("compare entity " + entity1 + " with entity " + entity + " nbEntities " + nbEntities + " pos " + pos);
+			
+			if (entityVersionService.isVersion(entity)) {
+				entity = entityVersionService.extractVersion(entity);
+			}
+			
 			compareEntities(entity1, entity, nbEntities, pos, comparisonMap, structCompareResults);
 			pos++;
 		}
@@ -984,7 +998,8 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 				|| qName.equals(ReportModel.ASSOC_REPORTS) || qName.equals(BeCPGModel.PROP_VERSION_LABEL) || qName.equals(BeCPGModel.PROP_COLOR)
 				// TODO plugin
 				|| qName.getLocalName().contains("compareWithDynColumn")
-				|| qName.getLocalName().contains("ErrorLog") ) {
+				|| qName.getLocalName().contains("ErrorLog")
+				|| qName.equals(ContentModel.PROP_IS_INDEXED) || qName.equals(ContentModel.PROP_IS_CONTENT_INDEXED)) {
 
 			isCompareable = false;
 		}

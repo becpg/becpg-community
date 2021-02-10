@@ -1263,4 +1263,14 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		return name;
 	}
 
+	@Override
+	public boolean isVersion(NodeRef entity1) {
+		return false;
+	}
+
+	@Override
+	public NodeRef extractVersion(NodeRef entity1) {
+		return null;
+	}
+
 }

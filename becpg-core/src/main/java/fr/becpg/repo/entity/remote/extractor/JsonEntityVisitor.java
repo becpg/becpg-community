@@ -119,7 +119,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 	}
 
 	private enum JsonVisitNodeType {
-		ENTITY, ENTITY_LIST, CONTENT, ASSOC, DATALIST
+		ENTITY, ENTITY_LIST, CONTENT, ASSOC, DATALIST, CHILD_ASSOC
 	}
 
 	private static final Log logger = LogFactory.getLog(JsonEntityVisitor.class);
@@ -189,7 +189,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 		Path path = null;
 
-		if (JsonVisitNodeType.ENTITY.equals(type) || JsonVisitNodeType.CONTENT.equals(type) || JsonVisitNodeType.ASSOC.equals(type)) {
+		if (JsonVisitNodeType.ENTITY.equals(type) || JsonVisitNodeType.CONTENT.equals(type) || JsonVisitNodeType.ASSOC.equals(type) || JsonVisitNodeType.CHILD_ASSOC.equals(type)) {
 
 			if (nodeService.getPrimaryParent(nodeRef) != null) {
 				NodeRef parentRef = nodeService.getPrimaryParent(nodeRef).getParentRef();
@@ -229,7 +229,9 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 		if (JsonVisitNodeType.ENTITY.equals(type)
 				|| JsonVisitNodeType.DATALIST.equals(type) || ((JsonVisitNodeType.ENTITY_LIST.equals(type) || JsonVisitNodeType.CONTENT.equals(type))
 						&& (filteredProperties != null) && !filteredProperties.isEmpty())
-				|| ((nodeType != null) && filteredAssocProperties.containsKey(nodeType))) {
+				|| ((nodeType != null) && filteredAssocProperties.containsKey(nodeType))
+				|| JsonVisitNodeType.CHILD_ASSOC.equals(type)) {
+			
 			// Assoc first
 			visitAssocs(nodeRef, attributes);
 			visitProps(nodeRef, attributes, assocName, properties);
@@ -375,7 +377,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 								entity.put(entityDictionaryService.toPrefixString(nodeType), jsonAssocNode);
 							}
 
-							visitNode(childRef, jsonAssocNode, JsonVisitNodeType.ASSOC);
+							visitNode(childRef, jsonAssocNode, JsonVisitNodeType.CHILD_ASSOC);
 
 						}
 					}
