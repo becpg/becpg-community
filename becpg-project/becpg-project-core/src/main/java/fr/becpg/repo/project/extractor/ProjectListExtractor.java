@@ -79,7 +79,6 @@ public class ProjectListExtractor extends ActivityListExtractor {
 	private static final String FILTER_TASKS = "tasks";
 	private static final String FILTER_MY_TASKS = "my-tasks";
 	private static final String FILTER_MY_PROJECTS = "my-projects";
-	private static final String FILTER_FILTERFORM = "filterform";
 	private static final String FILTER_PROJECTS = "projects";
 	
 	private static final String PROJECT_LIST = "projectList";
@@ -261,8 +260,8 @@ public class ProjectListExtractor extends ActivityListExtractor {
 
 				List<NodeRef> projectResults = null;
 
-				if (!(FILTER_MY_TASKS.equals(dataListFilter.getFilterId())) && 
-						!( FILTER_FILTERFORM.equals(dataListFilter.getFilterId()) && (VIEW_RESOURCES.equals(dataListFilter.getExtraParams()) || VIEW_TASKS.equals(dataListFilter.getExtraParams()) )	
+				if (FILTER_MY_PROJECTS.equals(dataListFilter.getFilterId())
+						|| !( FILTER_MY_TASKS.equals(dataListFilter.getFilterId()) || (VIEW_RESOURCES.equals(dataListFilter.getExtraParams()) || VIEW_TASKS.equals(dataListFilter.getExtraParams()) )	
 						)) {
 					projectResults = getProjectResults(dataListFilter, beCPGQueryBuilder, pagination);
 				}
