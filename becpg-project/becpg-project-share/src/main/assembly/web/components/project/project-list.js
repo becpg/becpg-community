@@ -155,14 +155,29 @@ var g; // gantt var
                          */
                         onReady : function PL_onReady()
                         {
-
-                        	if(this.options.filter == null){
-                        		this.options.filter = {
-                        			"filterId" : "projects",
-                        			"filterData" : "InProgress"
-                        		};
-                        	}
+							var defaultFilter = "projects.InProgress";
+							
+							if (this.view == "resources" || this.view == "tasks")
+						    {
+								defaultFilter = "tasks.InProgress";
+							
+								if(this.options.filter == null){
+		                        	this.options.filter = {
+		                        			"filterId" : "tasks",
+		                        			"filterData" : "InProgress"
+		                        		};
+		                        } 
                         	
+							} else {
+									if(this.options.filter == null){
+		                        		this.options.filter = {
+		                        			"filterId" : "projects",
+		                        			"filterData" : "InProgress"
+		                        		};
+		                        	}
+                        	
+							} 
+
 
                             this.widgets.filter = Alfresco.util.createYUIButton(this, "filters", this.onMenuFilterChanged, {
                                 type : "menu",
@@ -176,7 +191,7 @@ var g; // gantt var
                             });
                             
 
-                            var filterKey = (this.options.filter.filterId ? this.options.filter.filterId + (this.options.filter.filterData ? "." + this.options.filter.filterData : "") : "projects.InProgress");
+                            var filterKey = (this.options.filter.filterId ? this.options.filter.filterId + (this.options.filter.filterData ? "." + this.options.filter.filterData : "") : defaultFilter );
                             this.widgets.filter.set("label", this.msg("filter."+filterKey)+ " " + Alfresco.constants.MENU_ARROW_SYMBOL);
                             
                         	
