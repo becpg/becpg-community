@@ -1192,11 +1192,12 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		}
 
 		if (!ftsQueries.isEmpty()) {
-			runnedQuery.append(mandatory(startGroup()));
 			for (String ftsQuery : ftsQueries) {
-				runnedQuery.append(optional(ftsQuery));
+				runnedQuery.append(mandatory(startGroup()));
+				runnedQuery.append(ftsQuery);
+				runnedQuery.append(endGroup());
 			}
-			runnedQuery.append(endGroup());
+			
 		}
 
 		String ret = runnedQuery.toString();
