@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.repo.helper.JsonHelper;
 import fr.becpg.repo.product.data.RawMaterialData;
-import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.search.AdvSearchService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.test.BeCPGPLMTestHelper;
@@ -36,129 +35,133 @@ public class AdvancedSearchIT extends PLMBaseTestCase {
 
 	@Autowired
 	protected AdvSearchService advSearchService;
-	
+
 	@Autowired
 	protected NamespaceService namespaceService;
-	
-		@Test
-		public void testAdvancedSearch() {
-			
-			NodeRef raw10 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-				
-				NodeRef result = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP search test 1");
-				
-				RawMaterialData rawMaterial = (RawMaterialData) alfrescoRepository.findOne(result);
-				
-				((CostListDataItem) rawMaterial.getCostList().get(0)).setValue(10.0);
-				
-				rawMaterial = (RawMaterialData) alfrescoRepository.save(rawMaterial);
 
-				return result;
+	@Test
+	public void testAdvancedSearch() {
 
-			}, false, true);
-			
-			NodeRef raw20 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-				
-				NodeRef result = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP search test 2");
-				
-				RawMaterialData rawMaterial = (RawMaterialData) alfrescoRepository.findOne(result);
-				
-				((CostListDataItem) rawMaterial.getCostList().get(0)).setValue(20.0);
-				
-				rawMaterial = (RawMaterialData) alfrescoRepository.save(rawMaterial);
+		NodeRef raw10 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-				return result;
+			NodeRef result = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP search test 1");
 
-			}, false, true);
+			RawMaterialData rawMaterial = (RawMaterialData) alfrescoRepository.findOne(result);
 
-			NodeRef raw30 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-				
-				NodeRef result = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP search test 3");
-				
-				RawMaterialData rawMaterial = (RawMaterialData) alfrescoRepository.findOne(result);
-				
-				((CostListDataItem) rawMaterial.getCostList().get(0)).setValue(30.0);
-				
-				rawMaterial = (RawMaterialData) alfrescoRepository.save(rawMaterial);
+			rawMaterial.getCostList().get(0).setValue(10.0);
 
-				return result;
+			rawMaterial = (RawMaterialData) alfrescoRepository.save(rawMaterial);
 
-			}, false, true);
-			
-			NodeRef cost0NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-				
-				NodeRef result = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP search test 4");
-				
-				RawMaterialData rawMaterial = (RawMaterialData) alfrescoRepository.findOne(result);
-				
-				return ((CostListDataItem) rawMaterial.getCostList().get(0)).getCost();
-				
-			}, false, true);
-			
-			waitForSolr();
+			return result;
 
-			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-				
-				String query = "{\"assoc_bcpg_costListCost_added\":\"" + cost0NodeRef.toString() + "\",\"prop_bcpg_costListValue-range\":\"9.1|11.2\",\"datatype\":\"bcpg:rawMaterial\"}";
-				
-				List<NodeRef> results = queryAdvancedSearch(query);
-				
-				assertTrue(results.contains(raw10));
-				
-				assertFalse(results.contains(raw20));
-				
-				assertFalse(results.contains(raw30));
-				
-				query = "{\"assoc_bcpg_costListCost_added\":\"" + cost0NodeRef.toString() + "\",\"prop_bcpg_costListValue-range\":\"19.1|21.2\",\"datatype\":\"bcpg:rawMaterial\"}";
-				
-				results = queryAdvancedSearch(query);
-				
-				assertFalse(results.contains(raw10));
-				
-				assertTrue(results.contains(raw20));
-				
-				assertFalse(results.contains(raw30));
-				
-				query = "{\"assoc_bcpg_costListCost_added\":\"" + cost0NodeRef.toString() + "\",\"prop_bcpg_costListValue-range\":\"|21.2\",\"datatype\":\"bcpg:rawMaterial\"}";
-				
-				results = queryAdvancedSearch(query);
-				
-				assertTrue(results.contains(raw10));
-				
-				assertTrue(results.contains(raw20));
-				
-				assertFalse(results.contains(raw30));
-				
-				query = "{\"assoc_bcpg_costListCost_added\":\"" + cost0NodeRef.toString() + "\",\"prop_bcpg_costListValue-range\":\"15|\",\"datatype\":\"bcpg:rawMaterial\"}";
-				
-				results = queryAdvancedSearch(query);
-				
-				assertFalse(results.contains(raw10));
-				
-				assertTrue(results.contains(raw20));
-				
-				assertTrue(results.contains(raw30));
-				
-				return true;
-			
-			}, false, true);
-			
-		}
-		
-		private List<NodeRef> queryAdvancedSearch(String query) throws InvalidQNameException, NamespaceException, JSONException {
-			QName datatype = null;
-			Map<String, String> criteriaMap = null;
-			
-			JSONObject jsonObject = new JSONObject(query);
-			criteriaMap = JsonHelper.extractCriteria(jsonObject);
-			datatype = QName.createQName(jsonObject.getString("datatype"), namespaceService);
+		}, false, true);
 
-			BeCPGQueryBuilder queryBuilder = advSearchService.createSearchQuery(datatype, "", "", true, "", null);
+		NodeRef raw20 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-			queryBuilder.andOperator();
-			
-			return advSearchService.queryAdvSearch(datatype, queryBuilder, criteriaMap, 251);
+			NodeRef result = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP search test 2");
 
-		}
-	
+			RawMaterialData rawMaterial = (RawMaterialData) alfrescoRepository.findOne(result);
+
+			rawMaterial.getCostList().get(0).setValue(20.0);
+
+			rawMaterial = (RawMaterialData) alfrescoRepository.save(rawMaterial);
+
+			return result;
+
+		}, false, true);
+
+		NodeRef raw30 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			NodeRef result = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP search test 3");
+
+			RawMaterialData rawMaterial = (RawMaterialData) alfrescoRepository.findOne(result);
+
+			rawMaterial.getCostList().get(0).setValue(30.0);
+
+			rawMaterial = (RawMaterialData) alfrescoRepository.save(rawMaterial);
+
+			return result;
+
+		}, false, true);
+
+		NodeRef cost0NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			NodeRef result = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP search test 4");
+
+			RawMaterialData rawMaterial = (RawMaterialData) alfrescoRepository.findOne(result);
+
+			return rawMaterial.getCostList().get(0).getCost();
+
+		}, false, true);
+
+		waitForSolr();
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			String query = "{\"assoc_bcpg_costListCost_added\":\"" + cost0NodeRef.toString()
+					+ "\",\"prop_bcpg_costListValue-range\":\"9.1|11.2\",\"datatype\":\"bcpg:rawMaterial\"}";
+
+			List<NodeRef> results = queryAdvancedSearch(query);
+
+			assertTrue(results.contains(raw10));
+
+			assertFalse(results.contains(raw20));
+
+			assertFalse(results.contains(raw30));
+
+			query = "{\"assoc_bcpg_costListCost_added\":\"" + cost0NodeRef.toString()
+					+ "\",\"prop_bcpg_costListValue-range\":\"19.1|21.2\",\"datatype\":\"bcpg:rawMaterial\"}";
+
+			results = queryAdvancedSearch(query);
+
+			assertFalse(results.contains(raw10));
+
+			assertTrue(results.contains(raw20));
+
+			assertFalse(results.contains(raw30));
+
+			query = "{\"assoc_bcpg_costListCost_added\":\"" + cost0NodeRef.toString()
+					+ "\",\"prop_bcpg_costListValue-range\":\"|21.2\",\"datatype\":\"bcpg:rawMaterial\"}";
+
+			results = queryAdvancedSearch(query);
+
+			assertTrue(results.contains(raw10));
+
+			assertTrue(results.contains(raw20));
+
+			assertFalse(results.contains(raw30));
+
+			query = "{\"assoc_bcpg_costListCost_added\":\"" + cost0NodeRef.toString()
+					+ "\",\"prop_bcpg_costListValue-range\":\"15|\",\"datatype\":\"bcpg:rawMaterial\"}";
+
+			results = queryAdvancedSearch(query);
+
+			assertFalse(results.contains(raw10));
+
+			assertTrue(results.contains(raw20));
+
+			assertTrue(results.contains(raw30));
+
+			return true;
+
+		}, false, true);
+
 	}
+
+	private List<NodeRef> queryAdvancedSearch(String query) throws InvalidQNameException, NamespaceException, JSONException {
+		QName datatype = null;
+		Map<String, String> criteriaMap = null;
+
+		JSONObject jsonObject = new JSONObject(query);
+		criteriaMap = JsonHelper.extractCriteria(jsonObject);
+		datatype = QName.createQName(jsonObject.getString("datatype"), namespaceService);
+
+		BeCPGQueryBuilder queryBuilder = advSearchService.createSearchQuery(datatype, "", "", true, "", null);
+
+		queryBuilder.andOperator();
+
+		return advSearchService.queryAdvSearch(datatype, queryBuilder, criteriaMap, 251);
+
+	}
+
+}
