@@ -767,7 +767,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 				ContentWriter writer = contentService.getWriter(fileNodeRef, ContentModel.PROP_CONTENT, true);
 				writer.setMimetype(mimetype);
 				writer.setEncoding(encoding);
-			
+				writer.putContent(in);
 
 		} finally {
 			try {
