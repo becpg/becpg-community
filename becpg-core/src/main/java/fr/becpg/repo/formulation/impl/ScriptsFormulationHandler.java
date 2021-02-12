@@ -4,9 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 
+import org.alfresco.error.ExceptionStackUtil;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.scripts.ScriptException;
+import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -22,13 +23,13 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
+import fr.becpg.repo.formulation.ReportableEntity;
 import fr.becpg.repo.formulation.spel.SpelFormulaService;
 import fr.becpg.repo.formulation.spel.SpelHelper;
 import fr.becpg.repo.helper.AssociationService;
-
+import fr.becpg.repo.helper.MLTextHelper;
 
 /**
  * <p>ScriptsFormulationHandler class.</p>
@@ -49,7 +50,6 @@ public class ScriptsFormulationHandler extends FormulationBaseHandler<Formulated
 	private ContentService contentService;
 
 	private AssociationService associationService;
-	
 
 	/**
 	 * <p>Setter for the field <code>nodeService</code>.</p>
@@ -118,7 +118,7 @@ public class ScriptsFormulationHandler extends FormulationBaseHandler<Formulated
 
 	/** {@inheritDoc} */
 	@Override
-	public boolean process(FormulatedEntity entity) throws FormulateException {
+	public boolean process(FormulatedEntity entity) {
 
 		if ((entity.getFormulatedEntityTpl() != null) && !entity.getFormulatedEntityTpl().equals(entity.getNodeRef())) {
 
@@ -126,60 +126,58 @@ public class ScriptsFormulationHandler extends FormulationBaseHandler<Formulated
 
 			if ((scriptNode != null) && nodeService.exists(scriptNode)
 					&& nodeService.getPath(scriptNode).toPrefixString(namespaceService).startsWith(RepoConsts.SCRIPTS_FULL_PATH)) {
-				
+
 				String scriptName = (String) nodeService.getProperty(scriptNode, ContentModel.PROP_NAME);
-				
-				if(logger.isDebugEnabled()) {
+
+				if (logger.isDebugEnabled()) {
 					logger.debug("Found script template to run:" + scriptName);
 				}
-				
-				
-				if (scriptName.endsWith(".spel")) {
-					ExpressionParser parser = new SpelExpressionParser();
-					StandardEvaluationContext context = formulaService.createEntitySpelContext(entity);
-					ContentReader reader = contentService.getReader(scriptNode, ContentModel.PROP_CONTENT);
-					
 
-					String[] formulas = SpelHelper.formatMTFormulas(reader.getContentString());
-					for (String formula : formulas) {
-						Matcher varFormulaMatcher = SpelHelper.formulaVarPattern.matcher(formula);
-						if (varFormulaMatcher.matches()) {
-							Expression exp = parser.parseExpression(varFormulaMatcher.group(2));
-							context.setVariable(varFormulaMatcher.group(1), exp.getValue(context));
-						} else {
-							try {
+				try {
+					if (scriptName.endsWith(".spel")) {
+						ExpressionParser parser = new SpelExpressionParser();
+						StandardEvaluationContext context = formulaService.createEntitySpelContext(entity);
+						ContentReader reader = contentService.getReader(scriptNode, ContentModel.PROP_CONTENT);
+
+						String[] formulas = SpelHelper.formatMTFormulas(reader.getContentString());
+						for (String formula : formulas) {
+							Matcher varFormulaMatcher = SpelHelper.formulaVarPattern.matcher(formula);
+							if (varFormulaMatcher.matches()) {
+								Expression exp = parser.parseExpression(varFormulaMatcher.group(2));
+								context.setVariable(varFormulaMatcher.group(1), exp.getValue(context));
+							} else {
+
 								Expression expression = parser.parseExpression(formula);
 								Object result = expression.getValue(context);
 								if (logger.isDebugEnabled()) {
 									logger.debug("Formula: " + formula);
 									logger.debug("Expression " + expression + " returned " + result);
 								}
-							} catch (Exception e) {
-								logger.error("Error running script : "+e.getMessage(),e);
-//TODO								((ProductData) entity).getReqCtrlList()
-//								.add(new ReqCtrlListDataItem(
-//										null, RequirementType.Tolerated, MLTextHelper.getI18NMessage("message.formulate.script.error",
-//												scriptName, e.getLocalizedMessage()),
-//										null, new ArrayList<NodeRef>(), RequirementDataType.Formulation));
+
 							}
 						}
-					}
-				} else {
-					try {
+					} else {
 						String userName = AuthenticationUtil.getFullyAuthenticatedUser();
-	
+
 						Map<String, Object> model = new HashMap<>();
 						model.put("currentUser", userName);
 						model.put("entity", entity);
-	
+
 						scriptService.executeScript(scriptNode, ContentModel.PROP_CONTENT, model);
-					} catch (ScriptException e) {
-						logger.error("Error running script : "+e.getMessage(),e);
-// TODO						((ProductData) entity).getReqCtrlList()
-//						.add(new ReqCtrlListDataItem(
-//								null, RequirementType.Tolerated, MLTextHelper.getI18NMessage("message.formulate.script.error",
-//										scriptName, e.getLocalizedMessage()),
-//								null, new ArrayList<NodeRef>(), RequirementDataType.Formulation));
+
+					}
+				} catch (Exception e) {
+					Throwable validCause = ExceptionStackUtil.getCause(e, RetryingTransactionHelper.RETRY_EXCEPTIONS);
+					if (validCause != null) {
+						throw (RuntimeException) validCause;
+					}
+
+					if (entity instanceof ReportableEntity) {
+						((ReportableEntity) entity)
+								.addError(MLTextHelper.getI18NMessage("message.formulate.script.error", scriptName, e.getLocalizedMessage()));
+						logger.debug("Error running script : " + e.getMessage(), e);
+					} else {
+						logger.error("Error running script : " + e.getMessage(), e);
 					}
 				}
 			}

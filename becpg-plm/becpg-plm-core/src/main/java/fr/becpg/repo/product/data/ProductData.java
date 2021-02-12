@@ -22,6 +22,7 @@ import org.json.JSONException;
 
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.formulation.FormulatedEntity;
+import fr.becpg.repo.formulation.ReportableEntity;
 import fr.becpg.repo.hierarchy.HierarchicalEntity;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
@@ -69,7 +70,7 @@ import fr.becpg.repo.variant.model.VariantEntity;
  * @author matthieu
  * @version $Id: $Id
  */
-public class ProductData extends AbstractEffectiveDataItem implements FormulatedEntity, HierarchicalEntity, StateableEntity, AspectAwareDataItem, VariantEntity {
+public class ProductData extends AbstractEffectiveDataItem implements FormulatedEntity, HierarchicalEntity, StateableEntity, AspectAwareDataItem, VariantEntity, ReportableEntity {
 
 	
 	private static final long serialVersionUID = 764534088277737617L;
@@ -2128,15 +2129,31 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 
 	// Formula helpers
 
+	@Override
 	public void addWarning(String msg) {
-		reqCtrlList.add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, new MLText(msg), null, new ArrayList<>(),
-				RequirementDataType.Formulation));
+		addMessage( new MLText(msg),  RequirementType.Tolerated);
 	}
-
+	
+	@Override
 	public void addError(String msg) {
-		reqCtrlList.add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, new MLText(msg), null, new ArrayList<>(),
+		addMessage( new MLText(msg),  RequirementType.Forbidden);
+	}
+	
+	@Override
+	public void addError(MLText msg) {
+		addMessage( msg,  RequirementType.Forbidden);
+	}
+	
+	@Override
+	public void addInfo(String msg) {
+		addMessage( new MLText(msg),  RequirementType.Info);
+	}
+	
+	private void addMessage(MLText msg,  RequirementType type) {
+		reqCtrlList.add(new ReqCtrlListDataItem(null, type, msg, null, new ArrayList<>(),
 				RequirementDataType.Formulation));
 	}
+	
 	
 	/**
 	 * <p>isLiquid.</p>
