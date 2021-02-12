@@ -10934,6 +10934,63 @@
 		</forms>
 	</config>
 	
+	<config evaluator="model-type" condition="gs1:targetMarket">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="gs1:targetMarketCountries" />												
+				</field-visibility>
+				<appearance>
+					<field id="gs1:targetMarketCountries">
+						<control
+								template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+								<control-param name="showLink">false</control-param>							
+							</control>
+					</field>
+				</appearance>							
+			</form>
+			<form id="filter">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="gs1:targetMarketCountries" />												
+				</field-visibility>
+				<appearance>
+					<field id="gs1:targetMarketCountries">
+						<control
+								template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+								<control-param name="showLink">false</control-param>							
+							</control>
+					</field>
+				</appearance>					
+			</form>
+			<form id="datagrid">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="gs1:targetMarketCountries" />		
+				</field-visibility>			
+			</form>
+		</forms>
+	</config>
+	<config evaluator="node-type" condition="gs1:targetMarket">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="gs1:targetMarketCountries" />												
+				</field-visibility>
+				<appearance>
+					<field id="gs1:targetMarketCountries">
+						<control
+								template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+								<control-param name="showLink">false</control-param>							
+							</control>
+					</field>
+				</appearance>							
+			</form>
+		</forms>
+	</config>
+	
 	
 
 </alfresco-config>

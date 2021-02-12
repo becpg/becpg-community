@@ -26,6 +26,8 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.regex.Matcher;
 
+import org.alfresco.error.ExceptionStackUtil;
+import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
@@ -342,6 +344,10 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 
 						dynamicCharactListItem.setErrorLog(null);
 					} catch (Exception e) {
+						Throwable validCause = ExceptionStackUtil.getCause(e, RetryingTransactionHelper.RETRY_EXCEPTIONS);
+						if (validCause != null) {
+							throw (RuntimeException) validCause;
+						}
 						if ((e.getCause() != null) && (e.getCause().getCause() instanceof BeCPGAccessDeniedException)) {
 							dynamicCharactListItem.setValue("#AccessDenied");
 						} else {
@@ -548,7 +554,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 								targetItem.setName(sourceItem.getName());
 								targetItem.setTitle(sourceItem.getTitle());
 								targetItem.setSort(sourceItem.getSort());
-								if ((targetItem.getIsManual() == null) || !Boolean.TRUE.equals(targetItem.getIsManual())) {
+								if (!Boolean.TRUE.equals(targetItem.getIsManual())) {
 									targetItem.setFormula(sourceItem.getFormula());
 									targetItem.setColumnName(sourceItem.getColumnName());
 									targetItem.setGroupColor(sourceItem.getGroupColor());
