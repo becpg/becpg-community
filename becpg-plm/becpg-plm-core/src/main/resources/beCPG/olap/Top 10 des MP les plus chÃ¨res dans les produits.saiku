@@ -26,7 +26,7 @@
         <Dimensions>
           <Dimension name="productType">
             <Inclusions>
-              <Selection dimension="productType" type="member" node="[productType].[Matière première]" operator="MEMBER" />
+              <Selection dimension="productType" type="member" node="[productType].[bcpg:rawMaterial]" operator="MEMBER" />
             </Inclusions>
             <Exclusions />
           </Dimension>
