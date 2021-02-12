@@ -26,7 +26,7 @@
         <Dimensions>
           <Dimension name="productType">
             <Inclusions>
-              <Selection dimension="productType" type="member" node="[productType].[Produit fini]" operator="MEMBER" />
+              <Selection dimension="productType" type="member" node="[productType].[bcpg:finishedProduct]" operator="MEMBER" />
             </Inclusions>
             <Exclusions />
           </Dimension>
