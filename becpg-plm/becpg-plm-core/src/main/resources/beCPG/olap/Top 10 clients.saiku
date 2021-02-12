@@ -4,9 +4,9 @@
     <Axes>
       <Axis location="ROWS" nonEmpty="true" limitFunction="TopCount" limitFunctionN="10" limitFunctionSortLiteral="[Measures].[productNumber]">
         <Dimensions>
-          <Dimension name="client" hierarchizeMode="PRE" hierarchyConsistent="true">
+          <Dimension name="clients" hierarchizeMode="PRE" hierarchyConsistent="true">
             <Inclusions>
-              <Selection dimension="client" type="level" node="[client].[name]" operator="MEMBERS" />
+              <Selection dimension="clients" type="level" node="[clients].[name]" operator="MEMBERS" />
             </Inclusions>
             <Exclusions />
           </Dimension>
