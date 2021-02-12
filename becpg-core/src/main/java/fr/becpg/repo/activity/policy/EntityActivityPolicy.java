@@ -266,6 +266,19 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 													updatedProperties.put(beforeType, beforeAfterProperties);
 												}
 											}
+										} else {
+											String afterValue = afterEntry.getValue();
+											String beforeValue = "";
+
+											if (!(afterValue != null ? afterValue : "").equals(beforeValue)) {
+
+												isDifferent = true;
+												if (!entityActivityService.isMatchingStateProperty(beforeType)) {
+													Pair<List<Serializable>, List<Serializable>> beforeAfterProperties = new Pair<>(
+															Arrays.asList(before.get(beforeType)), Arrays.asList(after.get(beforeType)));
+													updatedProperties.put(beforeType, beforeAfterProperties);
+												}
+											}
 										}
 									}
 								} else {
