@@ -114,5 +114,6 @@ public interface FormulatedEntity extends RepositoryEntity {
 	 * @return a {@link java.lang.String} object.
 	 */
 	public String getRequirementChecksum();
+	
 
 }
