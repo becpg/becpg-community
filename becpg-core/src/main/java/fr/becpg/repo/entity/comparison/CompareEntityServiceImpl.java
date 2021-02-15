@@ -231,12 +231,12 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 
 				if (fileName1.equals(fileName2)) {
 					ContentData contentRef1 = (ContentData) nodeService.getProperty(fileNodeRef1, ContentModel.PROP_CONTENT);
-					long size1 = contentRef1.getSize();
+					Long size1 = contentRef1!=null ? contentRef1.getSize() :null;
 
 					ContentData contentRef2 = (ContentData) nodeService.getProperty(fileNodeRef2, ContentModel.PROP_CONTENT);
-					long size2 = contentRef2.getSize();
+					Long size2 = contentRef2!=null ? contentRef2.getSize(): null;
 
-					if (size1 != size2) {
+					if (size1!=null && !size1.equals(size2)) {
 						properties1 = new TreeMap<>();
 						properties2 = new TreeMap<>();
 
