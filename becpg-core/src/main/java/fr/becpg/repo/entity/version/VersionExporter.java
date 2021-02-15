@@ -10,6 +10,7 @@ import org.alfresco.repo.version.VersionBaseModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.StoreRef;
+import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 
 public class VersionExporter extends AbstractExporter {
@@ -47,14 +48,16 @@ public class VersionExporter extends AbstractExporter {
 		//Si dossier alors parentNodeRef = currNodeRef
 		// Si le noeud existe (Premier niveau ) alors mettre à jour les propriétés
 
+		String name = (String) props.get(ContentModel.PROP_NAME);
+		
 		NodeRef currNodeRef = dbNodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS,
-				(String) props.get(ContentModel.PROP_NAME));
+				name);
 
 		if (currNodeRef != null) {
 			dbNodeService.setProperties(currNodeRef, props);
 		} else {
 			// "copy" type and properties
-			currNodeRef = dbNodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, nodeType, props).getChildRef();
+			dbNodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,  QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name)), nodeType, props).getChildRef();
 		}
 
 	}

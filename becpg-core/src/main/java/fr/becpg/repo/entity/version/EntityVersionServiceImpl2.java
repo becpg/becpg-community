@@ -98,8 +98,6 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 	@Autowired
 	private NodeService nodeService;
 
-	@Autowired
-	private LockService lockService;
 
 	@Autowired
 	@Qualifier("mtAwareNodeService")
@@ -144,7 +142,6 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 	@Autowired
 	private ContentService contentService;
 
-
 	@Autowired
 	@Qualifier("versionExporterService")
 	private ExporterService exporterService;
@@ -159,6 +156,9 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 	@Autowired
 	private EntityFormatService entityFormatService;
 	
+	@Autowired
+	private LockService lockService;
+
 	/** {@inheritDoc} */
 	@Override
 	public NodeRef createVersionAndCheckin(final NodeRef origNodeRef, final NodeRef workingCopyNodeRef, Map<String, Serializable> versionProperties) {
@@ -434,7 +434,9 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 						entityVersions.add(entityVersion);
 					} else {
 
-						EntityVersion entityVersion = new EntityVersion(version, entityNodeRef, new NodeRef(StoreRef.PROTOCOL_WORKSPACE, Version2Model.STORE_ID, version.getFrozenStateNodeRef().getId()), branchFromNodeRef);
+						EntityVersion entityVersion = new EntityVersion(version, entityNodeRef,
+								new NodeRef(StoreRef.PROTOCOL_WORKSPACE, Version2Model.STORE_ID, version.getFrozenStateNodeRef().getId()),
+								branchFromNodeRef);
 						entityVersions.add(entityVersion);
 					}
 				}
@@ -728,6 +730,8 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 							 */
 
 							// remove assoc (copy used to checkin doesn't do it)
+
+							//TODO Matthieu needed why?
 							removeRemovedAssociation(branchNodeRef, internalBranchToNodeRef);
 
 							// Remove comments
@@ -767,7 +771,7 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 							this.copyService.copy(branchNodeRef, internalBranchToNodeRef);
 
 							/**
-							 * After copie
+							 * After copy
 							 */
 							nodeService.setProperty(internalBranchToNodeRef, ContentModel.PROP_NAME, copyName);
 
@@ -795,26 +799,30 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 							// branchToNodeRef
 							updateBranchAssoc(branchNodeRef, internalBranchToNodeRef);
 
+							//TODO remove that when all version has been converted
 							// Update also version of the node
-							//	Uneeded in V2		   		VersionHistory versionHistory = versionService.getVersionHistory(branchNodeRef);
-							//
-							//								if (versionHistory != null) {
-							//									List<ChildAssociationRef> versionAssocs = getVersionAssocs(branchNodeRef);
-							//
-							//									for (Version version : versionHistory.getAllVersions()) {
-							//										NodeRef entityVersionNodeRef = getEntityVersion(versionAssocs, version);
-							//										if (entityVersionNodeRef != null) {
-							//											updateBranchAssoc(entityVersionNodeRef, internalBranchToNodeRef);
-							//										}
-							//									}
-							//								}
+							VersionHistory versionHistory = versionService.getVersionHistory(branchNodeRef);
+
+							if (versionHistory != null) {
+								List<ChildAssociationRef> versionAssocs = getVersionAssocs(branchNodeRef);
+
+								for (Version version : versionHistory.getAllVersions()) {
+									NodeRef entityVersionNodeRef = getEntityVersion(versionAssocs, version);
+									if (entityVersionNodeRef != null && !isVersion(entityVersionNodeRef)) {
+										updateBranchAssoc(entityVersionNodeRef, internalBranchToNodeRef);
+									}
+								}
+							}
 
 							entityActivityService.postMergeBranchActivity(branchNodeRef, internalBranchToNodeRef, versionType, description);
+							
 
 							// need to unlock original branch as the working_copy_association does not exist
 							lockService.unlock(internalBranchToNodeRef, false, true);
 							nodeService.removeAspect(internalBranchToNodeRef, ContentModel.ASPECT_CHECKED_OUT);
 
+
+						
 							// Delete the working copy
 
 							nodeService.addAspect(branchNodeRef, ContentModel.ASPECT_TEMPORARY, null);
@@ -856,7 +864,6 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 		return null;
 	}
 
-	
 	/** {@inheritDoc} */
 	@Override
 	public NodeRef createVersion(final NodeRef entityNodeRef, Map<String, Serializable> versionProperties) {
@@ -884,19 +891,14 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 					nodeService.setProperty(entityNodeRef, BeCPGModel.PROP_END_EFFECTIVITY, newEffectivity);
 				}
 
-				Map<QName, Serializable> props = new HashMap<>();
-				props.put(BeCPGModel.PROP_ENTITY_FORMAT, EntityFormat.JSON);
-
-				nodeService.addAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_FORMAT, props);
-
 				// extract the JSON data to the current node
 				String jsonData = entityFormatService.extractEntityData(entityNodeRef, EntityFormat.JSON);
 
-				entityFormatService.setEntityData(entityNodeRef, jsonData);
-
 				// create the version node : it contains the JSON data
 				Version newVersion = versionService.createVersion(entityNodeRef, versionProperties);
-				
+
+				entityFormatService.setEntityData( new NodeRef(StoreRef.PROTOCOL_WORKSPACE, Version2Model.STORE_ID, newVersion.getFrozenStateNodeRef().getId()), jsonData);
+
 				// add child assocs to versions
 				ExporterCrawlerParameters crawlerParameters = new ExporterCrawlerParameters();
 
@@ -904,13 +906,11 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 				crawlerParameters.setExportFrom(exportFrom);
 
 				crawlerParameters.setCrawlSelf(false);
-				crawlerParameters.setExcludeChildAssocs(new QName[] { RenditionModel.ASSOC_RENDITION, ForumModel.ASSOC_DISCUSSION });
-				crawlerParameters.setExcludeAspects(new QName[] { ContentModel.ASPECT_WORKING_COPY });
+				crawlerParameters.setExcludeChildAssocs(new QName[] { RenditionModel.ASSOC_RENDITION, ForumModel.ASSOC_DISCUSSION, BeCPGModel.ASSOC_ENTITYLISTS, ContentModel.ASSOC_RATINGS});
+				
 
-				exporterService.exportView(new VersionExporter(entityNodeRef, newVersion.getFrozenStateNodeRef(), dbNodeService), crawlerParameters, null);
-
-				// remove JSON data from the current node
-				nodeService.removeAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_FORMAT);
+				exporterService.exportView(new VersionExporter(entityNodeRef, newVersion.getFrozenStateNodeRef(), dbNodeService), crawlerParameters,
+						null);
 
 				if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_EFFECTIVITY)) {
 					nodeService.setProperty(entityNodeRef, BeCPGModel.PROP_START_EFFECTIVITY, new Date());
@@ -1171,7 +1171,7 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 
 					// reconstructs the folder hierarchy
 					exporterService.exportView(new VersionExporter(versionNodeRef, entity, dbNodeService), crawlerParameters, null);
-					
+
 					entityFormatService.createOrUpdateEntityFromJson(entity, entityJson);
 
 					String name = nodeService.getProperty(entity, ContentModel.PROP_NAME) + RepoConsts.VERSION_NAME_DELIMITER + actualVersion;
