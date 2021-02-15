@@ -19,6 +19,7 @@ import fr.becpg.model.BeCPGModel;
  * @author matthieu
  * @version $Id: $Id
  */
+@Deprecated
 public class BecpgVersionServiceImpl extends Version2ServiceImpl {
 
 	private static Log logger = LogFactory.getLog(BecpgVersionServiceImpl.class);
