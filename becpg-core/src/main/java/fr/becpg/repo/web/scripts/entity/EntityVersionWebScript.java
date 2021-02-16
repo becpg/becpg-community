@@ -165,7 +165,14 @@ public class EntityVersionWebScript extends AbstractWebScript {
 					JSONObject jsonVersion = new JSONObject();
 					// Version info
 					jsonVersion.put("nodeRef", version.getEntityVersionNodeRef());
-					jsonVersion.put("name", nodeService.getProperty(version.getFrozenStateNodeRef(), ContentModel.PROP_NAME));
+					
+					String name = (String) nodeService.getProperty(version.getFrozenStateNodeRef(), ContentModel.PROP_NAME);
+					
+					if (name.endsWith(RepoConsts.VERSION_NAME_DELIMITER + version.getVersionLabel())) {
+						name = name.replace(RepoConsts.VERSION_NAME_DELIMITER + version.getVersionLabel(), "");
+					}
+					
+					jsonVersion.put("name", name);
 					jsonVersion.put("label", version.getVersionLabel());
 					jsonVersion.put("description", version.getDescription());
 
