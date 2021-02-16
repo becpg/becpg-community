@@ -111,7 +111,7 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 			toReformulates.addAll( projectService.updateProjectState(nodeRef, beforeState, afterState));
 		}
 
-		// change tartdate, duedate
+		// change startdate, duedate
 		if (isPropChanged(before, after, ProjectModel.PROP_PROJECT_START_DATE) || isPropChanged(before, after, ProjectModel.PROP_PROJECT_DUE_DATE)) {
 			toReformulates.add(nodeRef);
 		}
