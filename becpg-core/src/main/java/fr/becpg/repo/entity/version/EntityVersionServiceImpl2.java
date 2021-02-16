@@ -143,7 +143,7 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 	private ContentService contentService;
 
 	@Autowired
-	@Qualifier("versionExporterService")
+	@Qualifier("exporterComponent")
 	private ExporterService exporterService;
 
 	@Autowired
@@ -767,14 +767,14 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 							//Add aspect to avoid rename during copy
 							nodeService.addAspect(branchNodeRef, ContentModel.ASPECT_WORKING_COPY, null);
 
+							Date createdDate = (Date) nodeService.getProperty(internalBranchToNodeRef, ContentModel.PROP_CREATED);
+							
 							// Copy the contents of the working copy onto the original
 							this.copyService.copy(branchNodeRef, internalBranchToNodeRef);
-
-							/**
-							 * After copy
-							 */
-							nodeService.setProperty(internalBranchToNodeRef, ContentModel.PROP_NAME, copyName);
-
+							
+							// reset the original createdDate
+							nodeService.setProperty(internalBranchToNodeRef, ContentModel.PROP_CREATED, createdDate);
+							
 							if (branchFromNodeRef != null) {
 								associationService.update(internalBranchToNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY, branchFromNodeRef);
 							}
@@ -827,6 +827,12 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 
 							nodeService.addAspect(branchNodeRef, ContentModel.ASPECT_TEMPORARY, null);
 							nodeService.deleteNode(branchNodeRef);
+
+
+							/**
+							 * After working copy deletion
+							 */
+							nodeService.setProperty(internalBranchToNodeRef, ContentModel.PROP_NAME, copyName);
 
 							return internalBranchToNodeRef;
 
@@ -905,11 +911,17 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 				Location exportFrom = new Location(entityNodeRef);
 				crawlerParameters.setExportFrom(exportFrom);
 
-				crawlerParameters.setCrawlSelf(false);
+				crawlerParameters.setCrawlSelf(true);
 				crawlerParameters.setExcludeChildAssocs(new QName[] { RenditionModel.ASSOC_RENDITION, ForumModel.ASSOC_DISCUSSION, BeCPGModel.ASSOC_ENTITYLISTS, ContentModel.ASSOC_RATINGS});
 				
+				String versionLabel = newVersion.getVersionLabel();
 
-				exporterService.exportView(new VersionExporter(entityNodeRef, newVersion.getFrozenStateNodeRef(), dbNodeService), crawlerParameters,
+				NodeRef versionNode = new NodeRef(StoreRef.PROTOCOL_WORKSPACE, Version2Model.STORE_ID, newVersion.getFrozenStateNodeRef().getId());
+				String name = dbNodeService.getProperty(versionNode, ContentModel.PROP_NAME) + RepoConsts.VERSION_NAME_DELIMITER + versionLabel;
+				dbNodeService.setProperty(versionNode, ContentModel.PROP_NAME, name);
+				dbNodeService.setProperty(versionNode, BeCPGModel.PROP_VERSION_LABEL, versionLabel);
+
+				exporterService.exportView(new VersionExporter(entityNodeRef, versionNode, dbNodeService), crawlerParameters,
 						null);
 
 				if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_EFFECTIVITY)) {
@@ -1101,6 +1113,8 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 
 		NodeRef versionHistoryRef = getVersionHistoryNodeRef(versionNodeRef);
 
+		final String actualVersion = (String) dbNodeService.getProperty(versionNodeRef, Version2Model.PROP_QNAME_VERSION_LABEL);
+		
 		// check if this is an old version node which has already been converted
 		if (versionHistoryRef == null) {
 
@@ -1141,16 +1155,20 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 
 				List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(finalVersionHistoryRef);
 
-				if (!childAssocs.isEmpty()) {
-					entity = childAssocs.get(0).getChildRef();
+				for (ChildAssociationRef childAssoc : childAssocs) {
+					
+					String version = (String) nodeService.getProperty(childAssoc.getChildRef(), BeCPGModel.PROP_VERSION_LABEL);
+					
+					if (actualVersion.equals(version)) {
+						entity = childAssoc.getChildRef();
+						break;
+					}
 				}
-
+				
 				// create the temporary mirror node in EntitiesHistory folder
 				if ((entity == null) || !nodeService.exists(entity)) {
 
 					String entityJson = entityFormatService.getEntityData(versionNodeRef);
-
-					String actualVersion = (String) dbNodeService.getProperty(versionNodeRef, Version2Model.PROP_QNAME_VERSION_LABEL);
 
 					Map<QName, Serializable> props = new HashMap<>();
 					props.put(ContentModel.PROP_NAME, versionNodeRef.getId());
@@ -1165,9 +1183,8 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 					Location exportFrom = new Location(versionNodeRef);
 					crawlerParameters.setExportFrom(exportFrom);
 
-					crawlerParameters.setCrawlSelf(false);
-					crawlerParameters.setExcludeChildAssocs(new QName[] { RenditionModel.ASSOC_RENDITION, ForumModel.ASSOC_DISCUSSION });
-					crawlerParameters.setExcludeAspects(new QName[] { ContentModel.ASPECT_WORKING_COPY });
+					crawlerParameters.setCrawlSelf(true);
+					crawlerParameters.setExcludeChildAssocs(new QName[] { RenditionModel.ASSOC_RENDITION, ForumModel.ASSOC_DISCUSSION, BeCPGModel.ASSOC_ENTITYLISTS, ContentModel.ASSOC_RATINGS});
 
 					// reconstructs the folder hierarchy
 					exporterService.exportView(new VersionExporter(versionNodeRef, entity, dbNodeService), crawlerParameters, null);
