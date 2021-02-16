@@ -256,7 +256,7 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin {
 
 				L2CacheSupport.doInCacheContext(() -> {
 					AuthenticationUtil.runAsSystem(() -> {
-
+						
 						formulationService.formulate(projectNodeRef);
 
 						NodeRef parentProjectNodeRef = associationService.getTargetAssoc(projectNodeRef, ProjectModel.ASSOC_PARENT_PROJECT);
@@ -640,14 +640,20 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin {
 			Map<String, Object> model = new HashMap<>();
 
 			logger.debug("Run task script ");
+		
 
 			model.put("currentUser", userName);
 			model.put("task", task);
 			model.put("project", project);
 			model.put("shareUrl", sysAdminParams.getShareProtocol() + "://" + sysAdminParams.getShareHost() + ":" + sysAdminParams.getSharePort()
 					+ "/" + sysAdminParams.getShareContext());
-
-			scriptService.executeScript(scriptNode, ContentModel.PROP_CONTENT, model);
+			try {
+				policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_PROJECT);
+	
+				scriptService.executeScript(scriptNode, ContentModel.PROP_CONTENT, model);
+			} finally {
+				policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_PROJECT);
+			}
 		}
 
 	}
