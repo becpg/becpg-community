@@ -397,7 +397,7 @@ public class ImportEntityJsonVisitor {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Map<QName, List<NodeRef>> jsonToAssocs(JSONObject entity, boolean failOnAssociationNotFound) throws JSONException, BeCPGException {
+	private Map<QName, List<NodeRef>> jsonToAssocs(JSONObject entity, boolean failOnAssociationNotFound) throws JSONException {
 		Map<QName, List<NodeRef>> assocs = new HashMap<>();
 		
 		Iterator<String> iterator = entity.keys();
@@ -426,7 +426,7 @@ public class ImportEntityJsonVisitor {
 								
 								
 								try {
-									tmp.add(visit(assocEntity, true, propQName));
+									tmp.add(visit(assocEntity, !(ad.isChild()), propQName));
 								} catch (BeCPGException e) {
 									if (failOnAssociationNotFound) {
 										throw e;
@@ -444,7 +444,7 @@ public class ImportEntityJsonVisitor {
 							}
 
 							try {
-								tmp.add(visit(assocEntity, true, propQName));
+								tmp.add(visit(assocEntity, !(ad.isChild()), propQName));
 							} catch (BeCPGException e) {
 								if (failOnAssociationNotFound) {
 									throw e;
@@ -470,7 +470,7 @@ public class ImportEntityJsonVisitor {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Map<QName, Serializable> jsonToProperties(JSONObject entity) throws JSONException, BeCPGException {
+	private Map<QName, Serializable> jsonToProperties(JSONObject entity) throws JSONException {
 		Map<QName, Serializable> nodeProps = new HashMap<>();
 
 		Iterator<String> iterator = entity.keys();
