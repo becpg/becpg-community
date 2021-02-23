@@ -29,6 +29,7 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.common.BeCPGException;
+import fr.becpg.repo.entity.remote.RemoteParams;
 
 /**
  * <p>ListEntitiesWebScript class.</p>
@@ -48,8 +49,14 @@ public class ListEntitiesWebScript extends AbstractEntityWebScript {
 		logger.debug("List entities");
 
 		try (OutputStream out = resp.getOutputStream()){
+			
 
-			remoteEntityService.listEntities(entities, out, getFormat(req), extractFields(req));
+			RemoteParams params = new RemoteParams( getFormat(req));
+			params.setFilteredFields(extractFields(req), namespaceService);
+			params.setFilteredLists(extractLists(req));
+
+
+			remoteEntityService.listEntities(entities, out, params);
 
 			resp.setContentType(getContentType(req));
 			resp.setContentEncoding("UTF-8");
