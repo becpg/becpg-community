@@ -208,6 +208,7 @@
 
 	<bean id="abstractEntityWebScript" parent="webscript" abstract="true">
 		<property name="nodeService" ref="NodeService" />
+		<property name="namespaceService" ref="namespaceService" />
 		<property name="remoteEntityService" ref="RemoteEntityService" />
 		<property name="mimetypeService" ref="MimetypeService" />
 		<property name="permissionService" ref="permissionService" />

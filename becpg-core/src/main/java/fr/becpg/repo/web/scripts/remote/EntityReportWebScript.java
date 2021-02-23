@@ -1,7 +1,6 @@
 package fr.becpg.repo.web.scripts.remote;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.SocketException;
 import java.util.Locale;
 

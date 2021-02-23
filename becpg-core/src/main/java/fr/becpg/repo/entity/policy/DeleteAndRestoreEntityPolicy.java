@@ -43,6 +43,7 @@ import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
+import fr.becpg.repo.entity.remote.RemoteParams;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.PropertiesHelper;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
@@ -216,7 +217,7 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 									policyBehaviourFilter.disableBehaviour(entityNodeRef);
 
 									IntegrityChecker.setWarnInTransaction();
-									remoteEntityService.createOrUpdateEntity(entityNodeRef, in, RemoteEntityFormat.xml, null);
+									remoteEntityService.createOrUpdateEntity(entityNodeRef, in, new RemoteParams(RemoteEntityFormat.xml), null);
 								} catch (IOException e) {
 									logger.error(e, e);
 								} finally {
@@ -280,7 +281,7 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 			writer.setMimetype(MimetypeMap.MIMETYPE_XML);
 
 			try (OutputStream out = writer.getContentOutputStream()) {
-				remoteEntityService.getEntity(entityNodeRef, out, RemoteEntityFormat.xml);
+				remoteEntityService.getEntity(entityNodeRef, out, new RemoteParams(RemoteEntityFormat.xml));
 			} catch (ContentIOException | IOException | BeCPGException e) {
 				logger.error(e, e);
 			}

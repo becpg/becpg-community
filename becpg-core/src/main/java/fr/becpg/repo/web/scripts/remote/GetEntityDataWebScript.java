@@ -29,6 +29,7 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.common.BeCPGException;
+import fr.becpg.repo.entity.remote.RemoteParams;
 
 /**
  * Get entity as XML
@@ -47,8 +48,12 @@ public class GetEntityDataWebScript extends AbstractEntityWebScript {
 		logger.debug("Get entity data: " + entityNodeRef);
 
 		try (OutputStream out = resp.getOutputStream()){
+			
+			RemoteParams params = new RemoteParams( getFormat(req));
+			params.setFilteredFields(extractFields(req), namespaceService);
+			
 
-			remoteEntityService.getEntityData(entityNodeRef, out, getFormat(req), extractFields(req));
+			remoteEntityService.getEntityData(entityNodeRef, out,params);
 
 			resp.setContentType(getContentType(req));
 			resp.setContentEncoding("UTF-8");
