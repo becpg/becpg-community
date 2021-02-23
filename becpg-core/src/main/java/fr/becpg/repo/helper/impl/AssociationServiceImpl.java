@@ -44,6 +44,7 @@ import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
+import org.alfresco.service.cmr.repository.InvalidNodeRefException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.namespace.NamespaceService;
@@ -159,15 +160,19 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 		boolean hasChanged = resetCache;
 
 		if (dbAssocNodeRefs != null) {
-			// remove from db
-
+			// remove from db	
+			
 			for (AssociationRef assocRef : dbAssocNodeRefs) {
-				if (assocNodeRefs == null) {
-					nodeService.removeAssociation(nodeRef, assocRef.getTargetRef(), qName);
-					hasChanged = true;
-				} else if (!assocNodeRefs.contains(assocRef.getTargetRef())) {
-					nodeService.removeAssociation(nodeRef, assocRef.getTargetRef(), qName);
-					hasChanged = true;
+		
+				if ((assocNodeRefs == null) || !assocNodeRefs.contains(assocRef.getTargetRef())) {
+					try {
+						hasChanged = true;
+						if (!nodeService.hasAspect(assocRef.getTargetRef(), ContentModel.ASPECT_PENDING_DELETE)) {
+							nodeService.removeAssociation(nodeRef, assocRef.getTargetRef(), qName);
+						}
+					} catch (InvalidNodeRefException e) {
+						logger.error("Node already deleted:" + nodeRef + " " + qName);
+					}
 				} else {
 					dbTargetNodeRefs.add(assocRef.getTargetRef());// already in
 																	// // db
