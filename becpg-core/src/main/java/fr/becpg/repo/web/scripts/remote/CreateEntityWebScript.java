@@ -26,6 +26,7 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
+import fr.becpg.repo.entity.remote.RemoteParams;
 
 /**
  * Create entity with POST xml
@@ -51,7 +52,7 @@ public class CreateEntityWebScript extends AbstractEntityWebScript {
 
 		RemoteEntityFormat format = getFormat(req);
 
-		NodeRef entityNodeRef = remoteEntityService.createOrUpdateEntity(null, req.getContent().getInputStream(), format,
+		NodeRef entityNodeRef = remoteEntityService.createOrUpdateEntity(null, req.getContent().getInputStream(), new RemoteParams(format),
 				getEntityProviderCallback(req));
 
 		sendOKStatus(entityNodeRef, resp, format);

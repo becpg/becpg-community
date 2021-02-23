@@ -33,6 +33,7 @@ import fr.becpg.repo.entity.EntityFormatService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
+import fr.becpg.repo.entity.remote.RemoteParams;
 
 @Service("entityFormatService")
 public class EntityFormatServiceImpl implements EntityFormatService {
@@ -141,7 +142,10 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 	private String extractDatalistData(NodeRef entityNodeRef, QName dataListType, RemoteEntityFormat format) {
 
 		try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-			remoteEntityService.getEntity(entityNodeRef, out, format, null, Arrays.asList(dataListType.getLocalName()));
+			RemoteParams params = new RemoteParams(format);
+			params.setFilteredLists(Arrays.asList(dataListType.getLocalName()));
+
+			remoteEntityService.getEntity(entityNodeRef, out, params);
 
 			return out.toString();
 		} catch (IOException e) {
@@ -208,7 +212,7 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 		
 		if (EntityFormat.JSON.equals(toFormat)) {
 			try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-				remoteEntityService.getEntity(entityNodeRef, out, RemoteEntityFormat.json_all);
+				remoteEntityService.getEntity(entityNodeRef, out,  new RemoteParams(RemoteEntityFormat.json_all));
 				return out.toString();
 			} catch (IOException e) {
 				logger.error("Failed to convert entity to JSON format", e);
@@ -241,7 +245,7 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 
 			if (entityJson != null) {
 				ByteArrayInputStream in = new ByteArrayInputStream(entityJson.getBytes());
-				remoteEntityService.createOrUpdateEntity(entityNodeRef, in, RemoteEntityFormat.json, null);
+				remoteEntityService.createOrUpdateEntity(entityNodeRef, in,  new RemoteParams(RemoteEntityFormat.json), null);
 			}
 			
 			setEntityFormat(entityNodeRef, EntityFormat.NODE);
@@ -267,7 +271,7 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 			}
 
 			ByteArrayInputStream in = new ByteArrayInputStream(root.toString().getBytes());
-			remoteEntityService.createOrUpdateEntity(entityNodeRef, in, RemoteEntityFormat.json, null);
+			remoteEntityService.createOrUpdateEntity(entityNodeRef, in, new RemoteParams(RemoteEntityFormat.json), null);
 		} catch (JSONException e) {
 			logger.error("Failed to parse JSON", e);
 		}

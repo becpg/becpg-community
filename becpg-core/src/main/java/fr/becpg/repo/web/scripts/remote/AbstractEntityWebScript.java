@@ -18,7 +18,7 @@
 package fr.becpg.repo.web.scripts.remote;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -34,6 +34,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.PermissionService;
+import org.alfresco.service.namespace.NamespaceService;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -101,6 +102,13 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	protected MimetypeService mimetypeService;
 
 	protected PermissionService permissionService;
+	
+	protected NamespaceService namespaceService;
+	
+	
+	public void setNamespaceService(NamespaceService namespaceService) {
+		this.namespaceService = namespaceService;
+	}
 
 	/**
 	 * <p>Setter for the field <code>mimetypeService</code>.</p>
@@ -357,13 +365,22 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	public List<String> extractLists(WebScriptRequest req) {
 		List<String> lists = new ArrayList<>();
 		String listsParams = req.getParameter(PARAM_LISTS);
-		if ((listsParams != null) && (listsParams.length() > 0)) {
+		
+		if ((listsParams != null) && (!listsParams.isEmpty())) {
 
 			String[] splitted = decodeParam(listsParams).split(",");
 			for (String list : splitted) {
 				String[] listName = list.split(":");
-				if ((listName != null) && (listName.length > 1)) {
-					lists.add(listName[1]);
+				if ((listName != null) ) {
+					if(listName.length > 1){
+						if(listName[0].startsWith("!")) {
+							lists.add("!"+listName[1]);
+						} else {
+							lists.add(listName[1]);
+						}
+					} else {
+						lists.add(listName[0]);
+					}
 				}
 			}
 		}
@@ -390,13 +407,13 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 			     
 			     int decompressedDataLength = decompresser.inflate(output);
 			     decompresser.end();
-			     String ret = (new String(output, 0, decompressedDataLength, "UTF-8"));
+			     String ret = (new String(output, 0, decompressedDataLength, StandardCharsets.UTF_8));
 			     for(Entry<String,String> entry: replacementMaps.entrySet()) {
 			    	 ret = ret.replaceAll( entry.getValue(), entry.getKey());
 					}
 			     
 		    	 return ret;
-			} catch (DataFormatException | UnsupportedEncodingException e) {
+			} catch (DataFormatException e) {
 				logger.error("Error decoding param: "+ param,e);
 			}
 		}
