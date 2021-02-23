@@ -117,7 +117,7 @@ public class AnnotationMappingLoader implements MappingLoader {
 							annotation.setTargetClass(typeQName.getPrefixString());
 						}
 
-						logger.debug("Paresed Annotation, " + annotation);
+						logger.debug("Parsed Annotation, " + annotation);
 
 						ClassMapping classMapping = importContext.getClassMappings().get(typeQName) != null
 								? importContext.getClassMappings().get(typeQName)
