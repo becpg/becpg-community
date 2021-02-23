@@ -23,12 +23,15 @@ import java.net.SocketException;
 import java.nio.file.AccessDeniedException;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.common.BeCPGException;
+import fr.becpg.repo.entity.remote.RemoteParams;
 
 /**
  * Get entity as XML
@@ -37,6 +40,8 @@ import fr.becpg.common.BeCPGException;
  * @version $Id: $Id
  */
 public class GetEntityWebScript extends AbstractEntityWebScript {
+
+	private static final String PARAM_PARAMS = "params";
 
 	/** {@inheritDoc} */
 	@Override
@@ -47,8 +52,15 @@ public class GetEntityWebScript extends AbstractEntityWebScript {
 		logger.debug("Get entity: " + entityNodeRef);
 
 		try (OutputStream out = resp.getOutputStream()){
+			
 
-			remoteEntityService.getEntity(entityNodeRef, out, getFormat(req), extractFields(req), extractLists(req));
+			RemoteParams params = new RemoteParams( getFormat(req));
+			params.setFilteredFields(extractFields(req), namespaceService);
+			params.setFilteredLists(extractLists(req));
+			params.setJsonParams(extractParams(req));
+		
+
+			remoteEntityService.getEntity(entityNodeRef, out, params);
 
 			resp.setContentType(getContentType(req));
 			resp.setContentEncoding("UTF-8");
@@ -67,6 +79,20 @@ public class GetEntityWebScript extends AbstractEntityWebScript {
 
 		} 
 			
+	}
+
+	private JSONObject extractParams(WebScriptRequest req) {
+	
+		String params = req.getParameter(PARAM_PARAMS);
+		if(params!=null && !params.isEmpty()) {
+			
+			try {
+				return new JSONObject(params);
+			} catch (JSONException e) {
+				logger.error("Cannot parse params:"+params);
+			}
+		}
+		return null;
 	}
 
 }

@@ -17,6 +17,11 @@ import org.json.JSONObject;
  */
 public class JsonHelper {
 	
+	
+	private JsonHelper() {
+		//Singleton
+	}
+	
 	/**
 	 * <p>extractCriteria.</p>
 	 *

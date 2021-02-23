@@ -30,6 +30,7 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
+import fr.becpg.repo.entity.remote.RemoteParams;
 import fr.becpg.repo.entity.version.EntityVersionService;
 
 /**
@@ -81,7 +82,7 @@ public class UpdateEntityWebScript extends AbstractEntityWebScript {
 		}
 		logger.debug("Update entity: " + entityNodeRef);
 		RemoteEntityFormat format = getFormat(req);
-		NodeRef newNodeRef = remoteEntityService.createOrUpdateEntity(entityNodeRef, req.getContent().getInputStream(), format,
+		NodeRef newNodeRef = remoteEntityService.createOrUpdateEntity(entityNodeRef, req.getContent().getInputStream(),  new RemoteParams( format),
 				getEntityProviderCallback(req));
 		sendOKStatus(newNodeRef, resp, format);
 
