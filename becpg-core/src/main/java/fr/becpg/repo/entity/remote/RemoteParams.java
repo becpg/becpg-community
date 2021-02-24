@@ -132,6 +132,8 @@ public class RemoteParams {
 
 	public boolean shouldExtractList(String listName) {
 		if (filteredLists != null && !filteredLists.isEmpty()) {
+			
+			
 			boolean rejected = false;
 			for (String list : filteredLists) {
 				if (list.startsWith("!")) {
@@ -145,7 +147,6 @@ public class RemoteParams {
 					return true;
 				}
 			}
-
 		
 			return rejected;
 

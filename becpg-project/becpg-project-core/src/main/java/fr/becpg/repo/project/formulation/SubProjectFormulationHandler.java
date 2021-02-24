@@ -15,7 +15,6 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 
 import fr.becpg.repo.entity.EntityDictionaryService;
-import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.project.ProjectActivityService;
@@ -106,7 +105,7 @@ public class SubProjectFormulationHandler extends FormulationBaseHandler<Project
 
 	/** {@inheritDoc} */
 	@Override
-	public boolean process(ProjectData projectData) throws FormulateException {
+	public boolean process(ProjectData projectData) {
 
 		Map<QName, String> propsToCopyToParentTmp = new HashMap<>();
 		Map<QName, List<NodeRef>> assocsToCopyToParentTmp = new HashMap<>();
@@ -125,8 +124,7 @@ public class SubProjectFormulationHandler extends FormulationBaseHandler<Project
 				if ((subProject.getLegends() != null) && !subProject.getLegends().isEmpty()) {
 					task.setTaskLegend(subProject.getLegends().get(0));
 				}
-			
-				
+
 				ProjectState state = subProject.getProjectState();
 				if (state == null) {
 					state = ProjectState.Planned;
