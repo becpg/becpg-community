@@ -212,9 +212,17 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 		
 		if (EntityFormat.JSON.equals(toFormat)) {
 			try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-				remoteEntityService.getEntity(entityNodeRef, out,  new RemoteParams(RemoteEntityFormat.json_all));
+				
+				RemoteParams remoteParams = new RemoteParams(RemoteEntityFormat.json_all);
+				
+				JSONObject jsonParams = new JSONObject();
+				jsonParams.put(RemoteParams.PARAM_APPEND_MLTEXT_CONSTRAINT, "false");
+				
+				remoteParams.setJsonParams(jsonParams);
+				
+				remoteEntityService.getEntity(entityNodeRef, out, remoteParams);
 				return out.toString();
-			} catch (IOException e) {
+			} catch (IOException | JSONException e) {
 				logger.error("Failed to convert entity to JSON format", e);
 			}
 		}

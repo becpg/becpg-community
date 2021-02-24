@@ -162,26 +162,25 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 	/** {@inheritDoc} */
 	@Override
 	public NodeRef createVersionAndCheckin(final NodeRef origNodeRef, final NodeRef workingCopyNodeRef, Map<String, Serializable> versionProperties) {
-		throw new IllegalStateException(NOT_SUPPORTED);
+		 throw new IllegalStateException(NOT_SUPPORTED);
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public NodeRef doCheckOut(final NodeRef origNodeRef, final NodeRef workingCopyNodeRef) {
-		throw new IllegalStateException(NOT_SUPPORTED);
+		 throw new IllegalStateException(NOT_SUPPORTED);
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public void cancelCheckOut(final NodeRef origNodeRef, final NodeRef workingCopyNodeRef) {
-		throw new IllegalStateException(NOT_SUPPORTED);
+		 throw new IllegalStateException(NOT_SUPPORTED);
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public void afterCancelCheckOut(NodeRef entityNodeRef) {
-		throw new IllegalStateException(NOT_SUPPORTED);
-
+		 throw new IllegalStateException(NOT_SUPPORTED);
 	}
 
 	/** {@inheritDoc} */
@@ -684,10 +683,7 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 							  1 - Prepare branch
 							*/
 
-							String copyName = (String) this.nodeService.getProperty(internalBranchToNodeRef, ContentModel.PROP_NAME);
-							if (rename) {
-								copyName = (String) this.nodeService.getProperty(branchNodeRef, ContentModel.PROP_NAME);
-							}
+							String finalBranchName = rename ? (String) this.nodeService.getProperty(branchNodeRef, ContentModel.PROP_NAME) : (String) this.nodeService.getProperty(internalBranchToNodeRef, ContentModel.PROP_NAME);
 
 							nodeService.addAspect(branchNodeRef, ContentModel.ASPECT_LOCKABLE, null);
 
@@ -754,7 +750,8 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 							// Move workingCopyNodeRef DataList to origNodeRef
 							entityService.deleteDataLists(internalBranchToNodeRef, true);
 							entityService.deleteFiles(internalBranchToNodeRef, true);
-
+							
+							
 							entityListDAO.moveDataLists(branchNodeRef, internalBranchToNodeRef);
 							entityService.moveFiles(branchNodeRef, internalBranchToNodeRef);
 
@@ -832,7 +829,7 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 							/**
 							 * After working copy deletion
 							 */
-							nodeService.setProperty(internalBranchToNodeRef, ContentModel.PROP_NAME, copyName);
+							nodeService.setProperty(internalBranchToNodeRef, ContentModel.PROP_NAME, finalBranchName);
 
 							return internalBranchToNodeRef;
 
@@ -904,6 +901,7 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 				Version newVersion = versionService.createVersion(entityNodeRef, versionProperties);
 
 				entityFormatService.setEntityData( new NodeRef(StoreRef.PROTOCOL_WORKSPACE, Version2Model.STORE_ID, newVersion.getFrozenStateNodeRef().getId()), jsonData);
+				entityFormatService.setEntityFormat(new NodeRef(StoreRef.PROTOCOL_WORKSPACE, Version2Model.STORE_ID, newVersion.getFrozenStateNodeRef().getId()), EntityFormat.JSON);
 
 				// add child assocs to versions
 				ExporterCrawlerParameters crawlerParameters = new ExporterCrawlerParameters();
@@ -914,12 +912,16 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 				crawlerParameters.setCrawlSelf(true);
 				crawlerParameters.setExcludeChildAssocs(new QName[] { RenditionModel.ASSOC_RENDITION, ForumModel.ASSOC_DISCUSSION, BeCPGModel.ASSOC_ENTITYLISTS, ContentModel.ASSOC_RATINGS});
 				
+				// TODO Ici ne pas stocker les rapports
+				// le regénéré en async et le stocker dans le versionStore
+				
 				String versionLabel = newVersion.getVersionLabel();
 
 				NodeRef versionNode = new NodeRef(StoreRef.PROTOCOL_WORKSPACE, Version2Model.STORE_ID, newVersion.getFrozenStateNodeRef().getId());
 				String name = dbNodeService.getProperty(versionNode, ContentModel.PROP_NAME) + RepoConsts.VERSION_NAME_DELIMITER + versionLabel;
 				dbNodeService.setProperty(versionNode, ContentModel.PROP_NAME, name);
 				dbNodeService.setProperty(versionNode, BeCPGModel.PROP_VERSION_LABEL, versionLabel);
+				
 
 				exporterService.exportView(new VersionExporter(entityNodeRef, versionNode, dbNodeService), crawlerParameters,
 						null);
@@ -928,7 +930,7 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 					nodeService.setProperty(entityNodeRef, BeCPGModel.PROP_START_EFFECTIVITY, new Date());
 					nodeService.removeProperty(entityNodeRef, BeCPGModel.PROP_END_EFFECTIVITY);
 				}
-
+				
 				if ((versionProperties != null) && versionProperties.containsKey(EntityVersionPlugin.POST_UPDATE_HISTORY_NODEREF)) {
 					NodeRef postUpdateHistoryNodeRef = (NodeRef) versionProperties.get(EntityVersionPlugin.POST_UPDATE_HISTORY_NODEREF);
 					if (postUpdateHistoryNodeRef != null) {
