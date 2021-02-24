@@ -7,9 +7,13 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
@@ -22,6 +26,7 @@ import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransacti
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.version.VersionType;
@@ -56,6 +61,9 @@ import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
+import fr.becpg.util.Diff;
+import fr.becpg.util.DiffMatchPatch;
+import fr.becpg.util.Operation;
 
 /**
  * <p>EntityActivityServiceImpl class.</p>
@@ -65,6 +73,8 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  */
 @Service("entityActivityService")
 public class EntityActivityServiceImpl implements EntityActivityService {
+
+	private static final int ML_TEXT_SIZE_LIMIT = 200;
 
 	private static Log logger = LogFactory.getLog(EntityActivityServiceImpl.class);
 
@@ -374,7 +384,46 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 						List<JSONObject> properties = new ArrayList<JSONObject>();
 						for (Map.Entry<QName, Pair<Serializable, Serializable>> entry : updatedProperties.entrySet()) {
 							JSONObject property = new JSONObject();
-
+							
+							MLText mlTextBefore = null;
+							MLText mlTextAfter = null;
+							
+							if (entry.getValue().getFirst() instanceof List) {
+								for (Object obj : (List<?>) entry.getValue().getFirst()) {
+									if (obj instanceof MLText) {
+										mlTextBefore = (MLText) obj;
+									}
+								}
+							}
+							if (entry.getValue().getSecond() instanceof List) {
+								for (Object obj : (List<?>) entry.getValue().getSecond()) {
+									if (obj instanceof MLText) {
+										mlTextAfter = (MLText) obj;
+									}
+								}
+							}
+							
+							if (mlTextBefore != null && mlTextAfter != null) {
+								
+								Iterator<Entry<Locale, String>> it = mlTextBefore.entrySet().iterator();
+								
+								while (it.hasNext()) {
+									Locale locale = it.next().getKey();
+								
+									if (mlTextBefore.get(locale).length() > ML_TEXT_SIZE_LIMIT || mlTextAfter.get(locale).length() > ML_TEXT_SIZE_LIMIT) {
+										
+										String[] diffs = getBeforeAfterDiffs(mlTextBefore.get(locale), mlTextAfter.get(locale));
+										
+										String textBefore = diffs[0].length() > ML_TEXT_SIZE_LIMIT ? diffs[0].substring(0, ML_TEXT_SIZE_LIMIT) + " ..." : diffs[0];
+										String textAfter = diffs[1].length() > ML_TEXT_SIZE_LIMIT ? diffs[1].substring(0, ML_TEXT_SIZE_LIMIT) + " ..." : diffs[1];
+										
+										mlTextBefore.put(locale, textBefore);
+										mlTextAfter.put(locale, textAfter);
+										
+									}
+								}
+							}
+							
 							property.put(PROP_TITLE, entry.getKey());
 							property.put(BEFORE, entry.getValue().getFirst());
 							if (entry.getKey().equals(ContentModel.PROP_NAME)) {
@@ -408,6 +457,33 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		}
 		return false;
 
+	}
+
+	private String[] getBeforeAfterDiffs(String string1, String string2) {
+		
+		DiffMatchPatch dmp = new DiffMatchPatch();
+		LinkedList<Diff> diffs = dmp.diff_main(string1, string2);
+		
+		StringBuilder beforeBuilder = new StringBuilder();
+		StringBuilder afterBuilder = new StringBuilder();
+		
+		for (Diff diff : diffs) {
+			if (diff.operation == Operation.INSERT) {
+				afterBuilder.append(diff.text);
+			} else if (diff.operation == Operation.DELETE) {
+				beforeBuilder.append(diff.text);
+			} else if (diff.operation == Operation.EQUAL && diff.text.length() < 20) {
+				beforeBuilder.append(diff.text);
+				afterBuilder.append(diff.text);
+			}
+		}
+		
+		String[] ret = new String[2];
+		
+		ret[0] = beforeBuilder.toString();
+		ret[1] = afterBuilder.toString();
+		
+		return ret;
 	}
 
 	// TODO Slow better to have it async
@@ -671,8 +747,47 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 
 							property.put(PROP_TITLE, entry.getKey());
+							
+							MLText mlTextBefore = null;
+							MLText mlTextAfter = null;
+							
+							if (entry.getValue().getFirst() instanceof List) {
+								for (Object obj : (List<?>) entry.getValue().getFirst()) {
+									if (obj instanceof MLText) {
+										mlTextBefore = (MLText) obj;
+									}
+								}
+							}
+							if (entry.getValue().getSecond() instanceof List) {
+								for (Object obj : (List<?>) entry.getValue().getSecond()) {
+									if (obj instanceof MLText) {
+										mlTextAfter = (MLText) obj;
+									}
+								}
+							}
+							
+							if (mlTextBefore != null && mlTextAfter != null) {
+								
+								Iterator<Entry<Locale, String>> it = mlTextBefore.entrySet().iterator();
+								
+								while (it.hasNext()) {
+									Locale locale = it.next().getKey();
+								
+									if (mlTextBefore.get(locale).length() > ML_TEXT_SIZE_LIMIT || mlTextAfter.get(locale).length() > ML_TEXT_SIZE_LIMIT) {
+										
+										String[] diffs = getBeforeAfterDiffs(mlTextBefore.get(locale), mlTextAfter.get(locale));
+										
+										String textBefore = diffs[0].length() > ML_TEXT_SIZE_LIMIT ? diffs[0].substring(0, ML_TEXT_SIZE_LIMIT) + " ..." : diffs[0];
+										String textAfter = diffs[1].length() > ML_TEXT_SIZE_LIMIT ? diffs[1].substring(0, ML_TEXT_SIZE_LIMIT) + " ..." : diffs[1];
+										
+										mlTextBefore.put(locale, textBefore);
+										mlTextAfter.put(locale, textAfter);
+										
+									}
+								}
+							}
+							
 							property.put(BEFORE, entry.getValue().getFirst());
-
 							if (data.has(PROP_TITLE) && data.get(PROP_TITLE) != null
 									&& entry.getKey().equals(ContentModel.PROP_NAME)) {
 								property.put(AFTER, data.get(PROP_TITLE));
