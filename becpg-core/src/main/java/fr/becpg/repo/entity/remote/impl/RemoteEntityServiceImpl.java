@@ -238,7 +238,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 
 			try {
 				if (RemoteEntityFormat.json.equals(format)) {
-					ImportEntityJsonVisitor jsonEntityVisitor = new ImportEntityJsonVisitor(entityDictionaryService, namespaceService,
+					ImportEntityJsonVisitor jsonEntityVisitor = new ImportEntityJsonVisitor(serviceRegistry, entityDictionaryService, namespaceService,
 							associationService, mlNodeService, entityListDAO);
 
 					return jsonEntityVisitor.visit(entityNodeRef, in);
