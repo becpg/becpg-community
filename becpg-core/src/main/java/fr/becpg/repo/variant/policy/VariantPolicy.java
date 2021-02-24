@@ -143,6 +143,8 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 	@Override
 	public void doBeforeCheckin(NodeRef origNodeRef,final  NodeRef workingCopyNodeRef) {
 		
+		final NodeRef finalOrigNode = origNodeRef;
+		
 		if (nodeService.hasAspect(origNodeRef, BeCPGModel.ASPECT_ENTITY_VARIANT) || nodeService.hasAspect(workingCopyNodeRef, BeCPGModel.ASPECT_ENTITY_VARIANT)) {
 			
 			logger.debug("On check in Variant");
@@ -151,7 +153,11 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 				@Override
 				public Void doWork() throws Exception {
 					NodeRef origNodeRef = getCheckedOut(workingCopyNodeRef);
-
+					
+					if (origNodeRef == null) {
+						origNodeRef = finalOrigNode;
+					}
+					
 					if (origNodeRef != null) {
 						List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(origNodeRef, BeCPGModel.ASSOC_VARIANTS,
 								RegexQNamePattern.MATCH_ALL);
