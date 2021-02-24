@@ -953,33 +953,35 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		try {
 
 			if (RepoConsts.MAX_RESULTS_UNLIMITED.equals(maxResults)) {
-				int page = 1;
+//				int page = 1;
 
 				if (logger.isDebugEnabled()) {
-					logger.debug("Unlimited results ask -  start pagination");
-					if ((sortProps != null) && !sortProps.isEmpty()) {
-						logger.warn("No sort in Unlimited search: " + sortProps.toString());
-					}
+					logger.debug("Unlimited results ask");
+//					if ((sortProps != null) && !sortProps.isEmpty()) {
+//						logger.warn("No sort in Unlimited search: " + sortProps.toString());
+//					}
 				}
+//
+//				List<NodeRef> tmp = search(runnedQuery, sortProps, page, RepoConsts.MAX_RESULTS_256);
+//
+//				if ((tmp != null) && !tmp.isEmpty()) {
+//					logger.debug(" - Page 1:" + tmp.size());
+//					refs = tmp;
+//				}
+//				while ((tmp != null) && (tmp.size() == RepoConsts.MAX_RESULTS_256)) {
+//					page++;
+//					tmp = search(runnedQuery, sortProps, page, RepoConsts.MAX_RESULTS_256);
+//					if ((tmp != null) && !tmp.isEmpty()) {
+//						logger.debug(" - Page " + page + ":" + tmp.size());
+//						refs.addAll(tmp);
+//					}
+//				}
 
-				List<NodeRef> tmp = search(runnedQuery, sortProps, page, RepoConsts.MAX_RESULTS_256);
-
-				if ((tmp != null) && !tmp.isEmpty()) {
-					logger.debug(" - Page 1:" + tmp.size());
-					refs = tmp;
-				}
-				while ((tmp != null) && (tmp.size() == RepoConsts.MAX_RESULTS_256)) {
-					page++;
-					tmp = search(runnedQuery, sortProps, page, RepoConsts.MAX_RESULTS_256);
-					if ((tmp != null) && !tmp.isEmpty()) {
-						logger.debug(" - Page " + page + ":" + tmp.size());
-						refs.addAll(tmp);
-					}
-				}
-
-			} else {
-				refs = search(runnedQuery, sortProps, -1, maxResults);
-			}
+			} 
+			
+			
+			refs = search(runnedQuery, sortProps, -1, maxResults);
+			
 
 		} finally {
 
@@ -1469,6 +1471,9 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 		if (maxResults == RepoConsts.MAX_RESULTS_UNLIMITED) {
 			sp.setLimitBy(LimitBy.UNLIMITED);
+			sp.setMaxPermissionChecks(Integer.MAX_VALUE);
+			sp.setLimit(Integer.MAX_VALUE);
+			sp.setMaxItems(Integer.MAX_VALUE);
 		} else {
 			sp.setLimit(maxResults);
 			sp.setMaxItems(maxResults);
@@ -1477,7 +1482,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 		if (page > 0) {
 			sp.setSkipCount((page - 1) * maxResults);
-			sp.setMaxPermissionChecks(page * 1000);
+			sp.setMaxPermissionChecks(page * RepoConsts.MAX_RESULTS_1000);
 		}
 
 		if ((sort != null) && !isCmis()) {
@@ -1501,6 +1506,10 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 					}
 				} else {
 					nodes = new LinkedList<>(result.getNodeRefs());
+				}
+				
+				if(maxResults == RepoConsts.MAX_RESULTS_UNLIMITED && result.hasMore()) {
+					logger.warn("Unlimited search has more results");
 				}
 			}
 		} catch (FTSQueryException | QueryModelException e) {
