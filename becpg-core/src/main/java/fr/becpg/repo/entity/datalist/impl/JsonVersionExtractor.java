@@ -499,7 +499,7 @@ public class JsonVersionExtractor extends ActivityListExtractor {
 			
 			JSONObject datalists = (JSONObject) entity.get("datalists");
 			
-			JSONArray dataListJsonArray = (JSONArray) datalists.get(BCPG_PREFIX + dataListFilter.getDataListName());
+			JSONArray dataListJsonArray = (JSONArray) datalists.get(dataListFilter.getDataType().getPrefixedQName(namespaceService).getPrefixString());
 
 			JSONArray filteredList = filterList(dataListJsonArray, dataListFilter);
 			
