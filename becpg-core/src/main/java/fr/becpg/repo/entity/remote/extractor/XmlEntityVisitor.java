@@ -203,7 +203,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 		String prefix = nodeType.getPrefixString().split(":")[0];
 		String name = (String) nodeService.getProperty(nodeRef, RemoteHelper.getPropName(nodeType, entityDictionaryService));
 		// lists filter
-		if (DataListModel.TYPE_DATALIST.equals(nodeType) && params.shouldExtractList(name)) {
+		if (DataListModel.TYPE_DATALIST.equals(nodeType) && !params.shouldExtractList(name)) {
 			extractLevel--;
 			return;
 		}
