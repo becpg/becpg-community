@@ -498,21 +498,21 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			inSite = siteId;
 		} else {
 
-			String path = SiteHelper.SITES_SPACE_QNAME_PATH;
+			String sitePath = SiteHelper.SITES_SPACE_QNAME_PATH;
 
 			if ((siteId != null) && (siteId.length() > 0)) {
-				path += "cm:" + ISO9075.encode(siteId);
+				sitePath += "cm:" + ISO9075.encode(siteId);
 			} else {
-				path += "*";
+				sitePath += "*";
 			}
 	
 			if ((containerId != null) && (containerId.length() > 0)) {
-	 			path += "/cm:" + ISO9075.encode(containerId);
+				sitePath += "/cm:" + ISO9075.encode(containerId);
 			}
 
 			// recursive //*
-			path += "/";
-			inPath(path);
+			sitePath += "/";
+			inPath(sitePath);
 
 		}
 		return this;
@@ -871,7 +871,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		excludeType(ContentModel.TYPE_FAILED_THUMBNAIL);
 		excludeType(ContentModel.TYPE_RATING);
 		excludeType(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-		if (!includeReportInSearch) {
+		if (!Boolean.TRUE.equals(includeReportInSearch)) {
 			excludeType(ReportModel.TYPE_REPORT);
 		}
 		excludeType(ForumModel.TYPE_FORUM);
@@ -952,31 +952,8 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 		try {
 
-			if (RepoConsts.MAX_RESULTS_UNLIMITED.equals(maxResults)) {
-//				int page = 1;
-
-				if (logger.isDebugEnabled()) {
-					logger.debug("Unlimited results ask");
-//					if ((sortProps != null) && !sortProps.isEmpty()) {
-//						logger.warn("No sort in Unlimited search: " + sortProps.toString());
-//					}
-				}
-//
-//				List<NodeRef> tmp = search(runnedQuery, sortProps, page, RepoConsts.MAX_RESULTS_256);
-//
-//				if ((tmp != null) && !tmp.isEmpty()) {
-//					logger.debug(" - Page 1:" + tmp.size());
-//					refs = tmp;
-//				}
-//				while ((tmp != null) && (tmp.size() == RepoConsts.MAX_RESULTS_256)) {
-//					page++;
-//					tmp = search(runnedQuery, sortProps, page, RepoConsts.MAX_RESULTS_256);
-//					if ((tmp != null) && !tmp.isEmpty()) {
-//						logger.debug(" - Page " + page + ":" + tmp.size());
-//						refs.addAll(tmp);
-//					}
-//				}
-
+			if (RepoConsts.MAX_RESULTS_UNLIMITED.equals(maxResults) && logger.isDebugEnabled()) {
+				logger.debug("Unlimited results ask");
 			} 
 			
 			
@@ -1204,10 +1181,8 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 		String ret = runnedQuery.toString();
 
-		if (SearchService.LANGUAGE_FTS_ALFRESCO.equals(language)) {
-			if (ret.startsWith(" AND")) {
+		if (SearchService.LANGUAGE_FTS_ALFRESCO.equals(language) && ret.startsWith(" AND")) {
 				return ret.replaceFirst(" AND", "");
-			}
 		}
 
 		return ret;
@@ -1340,7 +1315,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 					logger.trace("Add sort :" + kv.getKey() + " " + kv.getValue());
 				}
 				orderBy.append(" ").append(getCmisPrefix(QName.createQName(kv.getKey().replaceFirst("@", ""))))
-						.append(kv.getValue() ? " ASC" : " DESC");
+						.append(Boolean.TRUE.equals(kv.getValue()) ? " ASC" : " DESC");
 			}
 		}
 
