@@ -12,6 +12,8 @@ import org.json.JSONObject;
 
 public class RemoteParams {
 
+	//Export
+	
 	public static final String PARAM_APPEND_CODE = "appendCode";
 
 	public static final String PARAM_APPEND_ERP_CODE = "appendErpCode";
@@ -20,13 +22,17 @@ public class RemoteParams {
 
 	public static final String PARAM_APPEND_NODEREF = "appendNodeRef";
 
+	public static final String PARAM_APPEND_CONTENT = "appendContent";
+
+	//Import
+	
 	public static final String PARAM_REPLACE_EXISTING_LISTS = "replaceExistingLists";
 
 	public static final String PARAM_DATALISTS_TO_REPLACE = "dataListsToReplace";
 
 	public static final String PARAM_FAIL_ON_ASSOC_NOT_FOUND = "failOnAssociationNotFound";
 
-	public static final String PARAM_APPEND_CONTENT = "appendContent";
+	public static final String PARAM_IGNORE_PATH_FOR_SEARCH = "ignorePathOnSearch";
 
 	private RemoteEntityFormat format;
 
