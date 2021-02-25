@@ -41,6 +41,7 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import fr.becpg.common.BeCPGException;
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
@@ -396,7 +397,7 @@ public class ImportEntityJsonVisitor {
 
 	}
 
-	private NodeRef findNode(QName type, NodeRef parentNodeRef, Map<QName, Serializable> properties, Map<QName, List<NodeRef>> associations) {
+	private NodeRef findNode(QName type, NodeRef parentNodeRef, Map<QName, Serializable> properties, Map<QName, List<NodeRef>> associations) throws JSONException {
 		if (properties.isEmpty() && associations.isEmpty()) {
 			return null;
 		}
@@ -415,8 +416,16 @@ public class ImportEntityJsonVisitor {
 		if (type != null) {
 			queryBuilder = queryBuilder.ofType(type);
 		}
+		
+		boolean ignorePath = false;
+		if(properties.containsKey(BeCPGModel.PROP_CODE)  || properties.containsKey(BeCPGModel.PROP_ERP_CODE)
+			&& 	Boolean.TRUE.equals(remoteParams.extractParams(RemoteParams.PARAM_IGNORE_PATH_FOR_SEARCH, Boolean.FALSE))
+				) {
+			ignorePath = true;
+		}
+		
 
-		if (parentNodeRef != null) {
+		if (parentNodeRef != null && !ignorePath) {
 			queryBuilder = queryBuilder.inParent(parentNodeRef);
 		}
 
