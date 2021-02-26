@@ -53,6 +53,14 @@ public class Nutrient5CTest {
 		Assert.assertEquals("C",Nutrient5CHelper.buildNutrientClass(8d,
 				Arrays.asList(new Double[]{18d,10d,2d,-1d}),Arrays.asList(new String[]{"E","D","C","B","A"})));
 	
+                 //#8871
+		
+		// Double energyKj, Double satFat, Double totalFat, Double totalSugar,
+				// Double sodium, Double percFruitsAndVetgs,
+				// Double nspFibre, Double aoacFibre, Double protein, String category
+
+		
+	
 	
 	}
 	
