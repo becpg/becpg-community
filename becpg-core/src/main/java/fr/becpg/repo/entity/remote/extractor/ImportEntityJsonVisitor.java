@@ -680,7 +680,7 @@ public class ImportEntityJsonVisitor {
 					} else if (!isMlText) {
 						Serializable value = null;
 						if ((entity.get(key) != null) && !JSONObject.NULL.equals(entity.get(key))) {
-							if (pd.isMultiValued() && (entity.getJSONArray(key) != null)) {
+							if (pd.isMultiValued() && entity.get(key) instanceof JSONArray ) {
 
 								value = new ArrayList<Serializable>();
 								JSONArray values = entity.getJSONArray(key);

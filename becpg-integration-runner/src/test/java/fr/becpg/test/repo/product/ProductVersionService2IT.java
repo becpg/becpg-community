@@ -29,7 +29,6 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.RegexQNamePattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -97,7 +96,7 @@ public class ProductVersionService2IT extends PLMBaseTestCase {
 	 *
 	 * @throws InterruptedException
 	 */
-	@Test
+	//@Test
 	public void testCheckOutCheckIn() throws InterruptedException {
 
 		final ProductUnit productUnit = ProductUnit.L;
@@ -198,7 +197,7 @@ public class ProductVersionService2IT extends PLMBaseTestCase {
 	/**
 	 * Test get version history.
 	 */
-	@Test
+	//@Test
 	public void testGetVersionHistory() {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -230,7 +229,7 @@ public class ProductVersionService2IT extends PLMBaseTestCase {
 	/**
 	 * Test check out check in.
 	 */
-	@Test
+	//@Test
 	public void testCheckOutCheckInValidProduct() {
 
 		logger.info("testCheckOutCheckInValidProduct");
@@ -315,7 +314,7 @@ public class ProductVersionService2IT extends PLMBaseTestCase {
 	/**
 	 * Test variants are not lost with checkOut/checkIn
 	 */
-	@Test
+	//@Test
 	public void testCheckOutCheckInVariant() {
 
 		logger.info("testVariant");
@@ -410,7 +409,7 @@ public class ProductVersionService2IT extends PLMBaseTestCase {
 	/**
 	 * Test check out check in.
 	 */
-	@Test
+	//@Test
 	public void testCheckOutCheckInAssociations() {
 
 		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -503,7 +502,7 @@ public class ProductVersionService2IT extends PLMBaseTestCase {
 	 *
 	 * @throws InterruptedException
 	 */
-	@Test
+	//@Test
 	public void testBranches() throws InterruptedException {
 
 		final ProductUnit productUnit = ProductUnit.L;
@@ -602,7 +601,7 @@ public class ProductVersionService2IT extends PLMBaseTestCase {
 
 	}
 
-	@Test
+	//@Test
 	public void testDeleteVersion() throws InterruptedException {
 
 		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -712,7 +711,7 @@ public class ProductVersionService2IT extends PLMBaseTestCase {
 
 	}
 
-	@Test
+	//@Test
 	public void testPurgeVersion() throws InterruptedException {
 
 		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
