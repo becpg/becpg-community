@@ -27,9 +27,9 @@ import fr.becpg.test.RepoBaseTestCase;
  *
  * @author matthieu
  */
-public class UnlimitedSearchTest extends RepoBaseTestCase {
+public class UnlimitedSearchIT extends RepoBaseTestCase {
 
-	protected static final Log logger = LogFactory.getLog(UnlimitedSearchTest.class);
+	protected static final Log logger = LogFactory.getLog(UnlimitedSearchIT.class);
 
 	@Test
 	public void testUnlimitedSearch() throws Exception {
