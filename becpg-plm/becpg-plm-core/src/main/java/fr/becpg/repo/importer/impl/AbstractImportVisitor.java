@@ -647,6 +647,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 				}
 
 				String value = values.get(z_idx);
+				NodeRef fileNodeRef = null;
 
 				if ((value != null) && value.startsWith("reg:")) {
 					File docsFolder = new File(importContext.getDocsBasePath());
