@@ -29,7 +29,7 @@ public class Nutrient5CHelper {
 			{ 3.5d, 2.8d, 2.1d, 1.4d, 0.7d }, { 4.7d, 3.7d, 2.8d, 1.9d, 0.9d }, { 8.0d, 6.4d, 4.8d, 3.2d, 1.6d } };
 
 	private static final double[][] fatsACategories = new double[][] { { 3350d, 3015d, 2680d, 2345d, 2010d, 1675d, 1340d, 1005d, 670d, 335d },
-			{ 63d, 57d, 51d, 45d, 39d, 33d, 27d, 21d, 15d, 9d }, { 45d, 40d, 36d, 31d, 27d, 22.5d, 18d, 13.5d, 9d, 4.5d },
+			{ 64d, 58d, 52d, 46d, 40d, 34d, 28d, 22d, 16d, 10d }, { 45d, 40d, 36d, 31d, 27d, 22.5d, 18d, 13.5d, 9d, 4.5d },
 			{ 900d, 810d, 720d, 630d, 540d, 450d, 360d, 270d, 180d, 90d } };
 
 	private static final double[][] fatsCCategories = new double[][] { { -1d, -1d, -1d, -1d, -1d, 80d, -1d, -1d, 60d, 40d },
@@ -133,11 +133,15 @@ public class Nutrient5CHelper {
 			if ((satFat != null) && (totalFat != null)) {
 				score = 10;
 				for (double val : aCategories[1]) {
-					if ((((round(satFat,val) / round(totalFat,val)) * 100) > val) && (val > 0)) {
+					double rounded = ((round(satFat,val) / round(totalFat,val)) * 100);
+					
+					if (((rounded > val) || (score == 10 && rounded == val))) {
 						break;
 					}
 					score--;
 				}
+				
+				
 				aScore += score;
 			}
 		} else if (satFat != null) {
