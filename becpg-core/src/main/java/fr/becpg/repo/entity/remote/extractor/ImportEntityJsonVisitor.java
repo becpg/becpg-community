@@ -293,12 +293,15 @@ public class ImportEntityJsonVisitor {
 				if (parentNodeRef != null) {
 					errMsg += ", in path " + parentNodeRef;
 				}
+				
+				errMsg += ", isInPath " + isInPath+ ", lastRetry:"+context.isLastRetry();
 
 				if (isInPath && !context.isLastRetry()) {
 					// will be create later retry
 					context.setRetry(true);
 					logger.debug("Mark retring for :" + errMsg);
 				} else {
+				
 					throw new BeCPGException(errMsg);
 				}
 			}

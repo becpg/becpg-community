@@ -91,7 +91,6 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 		this.attributeExtractor = attributeExtractor;
 	}
 
-
 	private static final Log logger = LogFactory.getLog(JsonEntityVisitor.class);
 
 	/** {@inheritDoc} */
@@ -161,8 +160,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 		cacheList.add(nodeRef);
 		QName nodeType = nodeService.getType(nodeRef).getPrefixedQName(namespaceService);
 
-		if (JsonVisitNodeType.ENTITY.equals(type) || JsonVisitNodeType.CONTENT.equals(type) || JsonVisitNodeType.ASSOC.equals(type)
-				) {
+		if (JsonVisitNodeType.ENTITY.equals(type) || JsonVisitNodeType.CONTENT.equals(type) || JsonVisitNodeType.ASSOC.equals(type)) {
 
 			if (nodeService.getPrimaryParent(nodeRef) != null) {
 				NodeRef parentRef = nodeService.getPrimaryParent(nodeRef).getParentRef();
@@ -187,8 +185,8 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 		Map<QName, Serializable> properties = nodeService.getProperties(nodeRef);
 
 		visitPropValue(propName, entity, properties.get(propName), context);
-		
-		if(!JsonVisitNodeType.CHILD_ASSOC.equals(type)) {
+
+		if (!JsonVisitNodeType.CHILD_ASSOC.equals(type)) {
 
 			if ((properties.get(BeCPGModel.PROP_CODE) != null)
 					&& Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_CODE, Boolean.TRUE))) {
@@ -199,9 +197,9 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 					&& Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_ERP_CODE, Boolean.TRUE))) {
 				visitPropValue(BeCPGModel.PROP_ERP_CODE, entity, properties.get(BeCPGModel.PROP_ERP_CODE), context);
 			}
-	
+
 			if ((nodeRef != null) && Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_NODEREF, Boolean.TRUE))) {
-	
+
 				entity.put(RemoteEntityService.ATTR_ID, nodeRef.getId());
 			}
 		}
@@ -509,7 +507,19 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 			JSONArray tmp = new JSONArray();
 			entity.put(entityDictionaryService.toPrefixString(propType), tmp);
 			for (Serializable subEl : (List<Serializable>) value) {
-				tmp.put(JsonHelper.formatValue(subEl));
+				if (subEl instanceof NodeRef) {
+					JSONObject node = new JSONObject();
+					tmp.put(node);
+					visitNode((NodeRef) subEl, node, JsonVisitNodeType.ASSOC, context);
+				} else {
+					if (subEl != null) {
+						if (RemoteHelper.isJSONValue(propType)) {
+							tmp.put(new JSONObject((String) subEl));
+						} else if ((JsonHelper.formatValue(subEl) != null) && !JsonHelper.formatValue(subEl).toString().isEmpty()) {
+							tmp.put(JsonHelper.formatValue(subEl));
+						}
+					}
+				}
 
 			}
 		} else if (value instanceof NodeRef) {
