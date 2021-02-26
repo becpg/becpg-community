@@ -661,7 +661,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 								logger.debug(file.getName() + " match regexp " + regexp);
 
-								NodeRef fileNodeRef = createFile(targetFolderNodeRef, file.getName(), file.getName());
+							 fileNodeRef = createFile(targetFolderNodeRef, file.getName(), file.getName());
 								String mimetype = mimetypeService.guessMimetype(file.getName());
 								try (FileInputStream in = new FileInputStream(file);) {
 
@@ -691,21 +691,24 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 						if (value.contains(",")) {
 							int count = 0;
 							for (String fileNameValue : split(value)) {
-								importFileContent(fileNameValue, targetFolderNodeRef, fixFileNameExtension(fileName, fileNameValue, count),
+								fileNodeRef = importFileContent(fileNameValue, targetFolderNodeRef, fixFileNameExtension(fileName, fileNameValue, count),
 										fileMapping.getId() + (count > 0 ? "-" + count : ""));
 								count++;
 							}
 
 						} else {
 
-							importFileContent(value, targetFolderNodeRef, fixFileNameExtension(fileName, value, 0), fileMapping.getId());
+							fileNodeRef = importFileContent(value, targetFolderNodeRef, fixFileNameExtension(fileName, value, 0), fileMapping.getId());
 
 						}
 					}
 					// manage only properties
 					else if (fileMapping.getAttribute() instanceof PropertyDefinition) {
 
-						NodeRef fileNodeRef = nodeService.getChildByName(targetFolderNodeRef, ContentModel.ASSOC_CONTAINS, fileName);
+						
+						 if(fileNodeRef == null) {
+							fileNodeRef = nodeService.getChildByName(targetFolderNodeRef, ContentModel.ASSOC_CONTAINS, fileName);
+						}
 
 						if (fileNodeRef != null) {
 
@@ -731,7 +734,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 	}
 
-	private void importFileContent(String value, NodeRef targetFolderNodeRef, String mappingFileName, String mappingId) throws ImporterException {
+	private NodeRef importFileContent(String value, NodeRef targetFolderNodeRef, String mappingFileName, String mappingId) throws ImporterException {
 		InputStream in = null;
 		try {
 			if ((value.startsWith("classpath:") || value.startsWith("file:") || value.startsWith("url:") || value.startsWith("http:")
@@ -768,6 +771,8 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 				writer.setMimetype(mimetype);
 				writer.setEncoding(encoding);
 				writer.putContent(in);
+				
+				return fileNodeRef;
 
 		} finally {
 			try {
