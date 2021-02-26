@@ -11,6 +11,10 @@ public class Nutrient5CTest {
 
 	@Test
 	public void test5C() {
+
+//		Double energyKj, Double satFat, Double totalFat, Double totalSugar, Double sodium, Double percFruitsAndVetgs,
+//		Double nspFibre, Double aoacFibre, Double protein, String category
+		
 		//#5500 
 		Assert.assertEquals(12,Nutrient5CHelper.compute5CScore(2084d, 2.8d, 22.9d, 4.73d, 672d, 0d, 0d, 4.13d, 5.81d, "Others"));
 		
@@ -33,8 +37,6 @@ public class Nutrient5CTest {
 		Assert.assertEquals(0,Nutrient5CHelper.compute5CScore(368.09999999999997d, 1.6826328584934984d, 4.320793803940095d, 1.4564453550672227d, 262.851279672858d, null, null, 1.9020344065737682d, 5.996492947498318d, "Others"));
 		
 		//#5863
-//		Double energyKj, Double satFat, Double totalFat, Double totalSugar, Double sodium, Double percFruitsAndVetgs,
-//		Double nspFibre, Double aoacFibre, Double protein, String category
 	
 		Assert.assertEquals(20,Nutrient5CHelper.compute5CScore(1166d, 9.3d, 25.3d, 1.4d, (1.91d/2.54d)*1000d,null, null,null, 12d, "Others"));
 		
@@ -53,13 +55,10 @@ public class Nutrient5CTest {
 		Assert.assertEquals("C",Nutrient5CHelper.buildNutrientClass(8d,
 				Arrays.asList(new Double[]{18d,10d,2d,-1d}),Arrays.asList(new String[]{"E","D","C","B","A"})));
 	
-                 //#8871
+            //#8871
 		
-		// Double energyKj, Double satFat, Double totalFat, Double totalSugar,
-				// Double sodium, Double percFruitsAndVetgs,
-				// Double nspFibre, Double aoacFibre, Double protein, String category
 
-		
+		Assert.assertEquals(10, Nutrient5CHelper.compute5CScore(2596.0642d, 15.16d, 70.172d, 0.003d, 159d, 0d, 0d, 0d,  0.15d, "Fats"));
 	
 	
 	}
