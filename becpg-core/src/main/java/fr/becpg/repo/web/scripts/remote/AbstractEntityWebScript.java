@@ -79,6 +79,8 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	protected static final String PARAM_FIELDS = "fields";
 	/** Constant <code>PARAM_LISTS="lists"</code> */
 	protected static final String PARAM_LISTS = "lists";
+	/** Constant <code>PARAM_EXCLUDE_SYSTEMS="excludeSystems"</code> */
+	protected static final String PARAM_EXCLUDE_SYSTEMS = "excludeSystems";
 
 	/** http://localhost:8080/alfresco/services/becpg/remote/entity **/
 	protected static final String PARAM_CALLBACK = "callback";
@@ -173,9 +175,15 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		}
 
 		if ((req.getParameter(PARAM_ALL_VERSION) == null) || "false".equalsIgnoreCase(req.getParameter(PARAM_ALL_VERSION))) {
-			queryBuilder.excludeDefaults();
+			if((req.getParameter(PARAM_EXCLUDE_SYSTEMS) == null) || "true".equalsIgnoreCase(req.getParameter(PARAM_EXCLUDE_SYSTEMS))){
+				queryBuilder.excludeDefaults();
+			} else {
+				queryBuilder.excludeVersions();
+			}
 		} else {
-			queryBuilder.excludeSystems();
+			if((req.getParameter(PARAM_EXCLUDE_SYSTEMS) == null) || "true".equalsIgnoreCase(req.getParameter(PARAM_EXCLUDE_SYSTEMS))){
+				queryBuilder.excludeSystems();
+			}
 		}
 
 		if (maxResults == null) {
