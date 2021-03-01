@@ -224,9 +224,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	@Autowired
 	protected AlfrescoRepository<ProductData> alfrescoRepository;
 
-	@Value("${beCPG.formulation.score.mandatoryFields}")
-	private String defaultCatalogDefinition;
-
 	@Autowired
 	@Qualifier("mlAwareNodeService")
 	protected NodeService mlNodeService;
@@ -499,20 +496,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			}
 		}
 		if (Objects.equals(folderName, PlmRepoConsts.PATH_CATALOGS)) {
-
-			if (!fileFolderService.listFiles(folderNodeRef).stream().anyMatch(f -> "catalogs.json".equals(f.getName()))) {
-				try {
-					JSONArray oldCatalogsArray = new JSONArray(defaultCatalogDefinition);
-					NodeRef oldCatalogFileNR = fileFolderService.create(folderNodeRef, "catalogs.json", ContentModel.TYPE_CONTENT).getNodeRef();
-
-					ContentWriter writer = fileFolderService.getWriter(oldCatalogFileNR);
-					writer.putContent(oldCatalogsArray.toString());
-
-				} catch (JSONException e) {
-					logger.error("Unable to copy old catalogs: ", e);
-				}
-			}
-
 			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/catalogs/*.json");
 
 		}
