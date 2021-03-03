@@ -54,13 +54,10 @@ public class EntityCatalogIT extends PLMBaseTestCase {
 	private EntityCatalogService entityCatalogService;
 	@Autowired
 	private BeCPGCacheService cacheService;
-
 	@Autowired
 	private EntityListDAO entityListDAO;
-	
 	@Autowired
 	private AssociationService associationService;
-
 	@Autowired
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
@@ -207,7 +204,7 @@ public class EntityCatalogIT extends PLMBaseTestCase {
 			client.setName("EntityCatalogServiceIT - client");
 			client.setParentNodeRef(getTestFolderNodeRef());
 			alfrescoRepository.save(client);
-			
+
 			associationService.update(sampleProduct.getNodeRef(), PLMModel.ASSOC_CLIENTS, Arrays.asList(client.getNodeRef()));
 			return null;
 
@@ -220,7 +217,7 @@ public class EntityCatalogIT extends PLMBaseTestCase {
 			sampleProduct.setClients(new ArrayList<>());
 
 			associationService.update(sampleProduct.getNodeRef(), PLMModel.ASSOC_CLIENTS, new ArrayList<>());
-			
+
 			return null;
 
 		});
