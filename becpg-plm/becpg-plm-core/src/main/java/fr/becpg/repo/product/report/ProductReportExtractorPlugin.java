@@ -68,6 +68,7 @@ import fr.becpg.repo.product.formulation.CostsCalculatingFormulationHandler;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.product.formulation.PackagingHelper;
 import fr.becpg.repo.product.formulation.nutrient.RegulationFormulationHelper;
+import fr.becpg.repo.report.entity.EntityReportParameters;
 import fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
@@ -394,14 +395,15 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	private boolean shouldExtractList(boolean isExtractedProduct, DefaultExtractorContext context, QName type, QName dataListQName) {
 		if(isExtractedProduct) {
-			if(context.isNotEmptyPrefs("entityDatalistsToExtract", null) && !context.prefsContains("lists", null, entityDictionaryService.toPrefixString(dataListQName))) {
+			if(context.isNotEmptyPrefs(EntityReportParameters.PARAM_ENTITY_DATALISTS_TO_EXTRACT , null) && 
+					!context.multiPrefsEquals(EntityReportParameters.PARAM_ENTITY_DATALISTS_TO_EXTRACT, null, entityDictionaryService.toPrefixString(dataListQName))) {
 				return false;
 			}
 			return true;
 		}
 		
-		return context.multiPrefsEquals("componentDatalistsToExtract", componentDatalistsToExtract,
-				entityDictionaryService.toPrefixString(dataListQName)) || context.multiPrefsEquals("componentDatalistsToExtract", componentDatalistsToExtract,
+		return context.multiPrefsEquals(EntityReportParameters.PARAM_COMPONENT_DATALISTS_TO_EXTRACT, componentDatalistsToExtract,
+				entityDictionaryService.toPrefixString(dataListQName)) || context.multiPrefsEquals(EntityReportParameters.PARAM_COMPONENT_DATALISTS_TO_EXTRACT, componentDatalistsToExtract,
 						entityDictionaryService.toPrefixString(dataListQName)+"|"+entityDictionaryService.toPrefixString(type));
 	}
 
@@ -480,7 +482,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				loadProcessListItem(productData.getNodeRef(), dataItem, subProductData, processListElt, 1, qty, qtyForCost, context);
 			}
 
-			if (context.isPrefOn("extractInMultiLevel", extractInMultiLevel) && isExtractedProduct) {
+			if (context.isPrefOn(EntityReportParameters.PARAM_EXTRACT_IN_MULTILEVEL, extractInMultiLevel) && isExtractedProduct) {
 
 				if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 
@@ -579,7 +581,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				}
 			}
 
-			if (context.isPrefOn("extractInMultiLevel", extractInMultiLevel) && isExtractedProduct) {
+			if (context.isPrefOn(EntityReportParameters.PARAM_EXTRACT_IN_MULTILEVEL, extractInMultiLevel) && isExtractedProduct) {
 
 				if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 
@@ -826,12 +828,12 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			}
 
 			Element dataListsElt = null;
-			if (context.isNotEmptyPrefs("componentDatalistsToExtract", componentDatalistsToExtract)) {
+			if (context.isNotEmptyPrefs(EntityReportParameters.PARAM_COMPONENT_DATALISTS_TO_EXTRACT, componentDatalistsToExtract)) {
 				dataListsElt = partElt.addElement(TAG_DATALISTS);
 				loadDataLists(dataItem.getProduct(), dataListsElt, context, false);
 			}
 
-			if (context.isPrefOn("extractInMultiLevel", extractInMultiLevel)) {
+			if (context.isPrefOn(EntityReportParameters.PARAM_EXTRACT_IN_MULTILEVEL, extractInMultiLevel)) {
 
 				if ((nodeService.getType(dataItem.getProduct()).equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT)
 						|| nodeService.getType(dataItem.getProduct()).equals(PLMModel.TYPE_FINISHEDPRODUCT))) {

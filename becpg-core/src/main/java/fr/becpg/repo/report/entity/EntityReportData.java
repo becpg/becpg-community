@@ -30,6 +30,8 @@ import org.dom4j.Element;
  */
 public class EntityReportData {
 	
+
+
 	private Element xmlDataSource;
 	
 	private Set<EntityImageInfo> images = new HashSet<>();
