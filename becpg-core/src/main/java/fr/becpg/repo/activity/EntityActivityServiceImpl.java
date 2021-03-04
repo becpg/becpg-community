@@ -607,11 +607,6 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 							JSONObject itemProperty = itemProperties.getJSONObject(j);
 							if (itemProperty.get(PROP_TITLE).equals(activityProperty.get(PROP_TITLE))) {
 								isSameProperty = true;
-//								if (activityProperty.has(BEFORE)) {
-//									itemProperty.put(BEFORE,activityProperty.get(BEFORE));
-//								}else {
-//									itemProperty.put(BEFORE,"");
-//								}
 							}
 						}
 						if (!isSameProperty) {
