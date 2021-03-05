@@ -418,7 +418,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 									
 									newMlTextBefore.put(locale, textBefore);
 									
-									if (textBefore.length() > ML_TEXT_SIZE_LIMIT) {
+									if (textBefore != null && textBefore.length() > ML_TEXT_SIZE_LIMIT) {
 										String textAfter = mlTextAfter != null ? mlTextAfter.get(locale) : null;
 										if (textAfter == null || textAfter.length() <= ML_TEXT_SIZE_LIMIT) {
 											textBefore = textBefore.substring(0, ML_TEXT_SIZE_LIMIT) + " ...";
@@ -448,7 +448,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 									
 									newMlTextAfter.put(locale, textAfter);
 
-									if (textAfter.length() > ML_TEXT_SIZE_LIMIT) {
+									if (textAfter != null && textAfter.length() > ML_TEXT_SIZE_LIMIT) {
 										String textBefore = mlTextBefore != null ? mlTextBefore.get(locale) : null;
 										if (textBefore == null || textBefore.length() <= ML_TEXT_SIZE_LIMIT) {
 											textAfter = textAfter.substring(0, ML_TEXT_SIZE_LIMIT) + " ...";
@@ -835,7 +835,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 									
 									newMlTextBefore.put(locale, textBefore);
 									
-									if (textBefore.length() > ML_TEXT_SIZE_LIMIT) {
+									if (textBefore != null && textBefore.length() > ML_TEXT_SIZE_LIMIT) {
 										String textAfter = mlTextAfter != null ? mlTextAfter.get(locale) : null;
 										if (textAfter == null || textAfter.length() <= ML_TEXT_SIZE_LIMIT) {
 											textBefore = textBefore.substring(0, ML_TEXT_SIZE_LIMIT) + " ...";
@@ -865,7 +865,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 									
 									newMlTextAfter.put(locale, textAfter);
 
-									if (textAfter.length() > ML_TEXT_SIZE_LIMIT) {
+									if (textAfter != null && textAfter.length() > ML_TEXT_SIZE_LIMIT) {
 										String textBefore = mlTextBefore != null ? mlTextBefore.get(locale) : null;
 										if (textBefore == null || textBefore.length() <= ML_TEXT_SIZE_LIMIT) {
 											textAfter = textAfter.substring(0, ML_TEXT_SIZE_LIMIT) + " ...";
