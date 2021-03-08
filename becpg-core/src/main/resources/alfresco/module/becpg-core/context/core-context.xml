@@ -403,4 +403,51 @@
     </bean>
     
      -->
+     
+     <!-- Override SOLR cron backup -->
+     
+     
+    <bean id="search.alfrescoCoreSolrBackupClient" class="org.alfresco.repo.search.impl.solr.SolrBackupClient" >
+        <property name="jobLockService">
+            <ref bean="jobLockService" />
+        </property>
+        <property name="remoteBackupLocation">
+            <value>${solr.backup.alfresco.remoteBackupLocation}</value>
+        </property>
+        <property name="numberToKeep">
+            <value>${solr.backup.alfresco.numberToKeep}</value>
+        </property>
+        <property name="core">
+            <value>${beCPG.solr.alfresco.core}</value>
+        </property>
+        <property name="solrAdminClient">
+            <ref bean="solrAdminClient" />
+        </property>
+        <property name="solrQueryHTTPClient">
+            <ref bean="search.solrQueryHTTPCLient" />
+        </property>
+    </bean>
+    
+    
+    <bean id="search.archiveCoreSolrBackupClient" class="org.alfresco.repo.search.impl.solr.SolrBackupClient" >
+        <property name="jobLockService">
+            <ref bean="jobLockService" />
+        </property>
+        <property name="remoteBackupLocation">
+            <value>${solr.backup.archive.remoteBackupLocation}</value>
+        </property>
+         <property name="numberToKeep">
+            <value>${solr.backup.archive.numberToKeep}</value>
+        </property>
+        <property name="core">
+            <value>${beCPG.solr.archive.core}</value>
+        </property>
+        <property name="solrAdminClient">
+            <ref bean="solrAdminClient" />
+        </property>
+        <property name="solrQueryHTTPClient">
+            <ref bean="search.solrQueryHTTPCLient" />
+        </property>
+    </bean>
+     
 </beans>
