@@ -404,7 +404,7 @@
     
      -->
      
-     <!-- Override SOLR cron backup -->
+     <!-- Override SOLR cron backup 
      
      
     <bean id="search.alfrescoCoreSolrBackupClient" class="org.alfresco.repo.search.impl.solr.SolrBackupClient" >
@@ -449,5 +449,7 @@
             <ref bean="search.solrQueryHTTPCLient" />
         </property>
     </bean>
+    
+    -->
      
 </beans>
