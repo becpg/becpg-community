@@ -663,13 +663,16 @@ public class ImportEntityJsonVisitor {
 
 								MLText mlText = new MLText();
 
-								String content = value.replace("{", "").replace("}", "");
-								String[] contents = content.split(",");
+								String content = value.substring(1, value.length() - 1);
+								
+								String[] contents = content.split("\",\"");
 
 								for (String cont : contents) {
 									if (cont.contains(":")) {
 										String locale = cont.split(":")[0];
-										String actualValue = cont.split(":")[1].replace("\"", "");
+										
+										int index = cont.indexOf(":");
+										String actualValue = cont.substring(index + 1);
 										mlText.addValue(MLTextHelper.parseLocale(locale), actualValue);
 									}
 								}
