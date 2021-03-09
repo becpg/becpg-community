@@ -8555,7 +8555,7 @@
 					<field id="bcpg:lrComponents">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:semiFinishedProduct,bcpg:localSemiFinishedProduct,bcpg:rawMaterial,bcpg:ing,bcpg:ingTypeItem&#38;excludeClassNames=bcpg:entityTplAspect
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:finishedProduct,bcpg:semiFinishedProduct,bcpg:localSemiFinishedProduct,bcpg:rawMaterial,bcpg:ing,bcpg:ingTypeItem&#38;excludeClassNames=bcpg:entityTplAspect
 							</control-param>
 						</control>
 						
@@ -8564,7 +8564,7 @@
 					<field id="bcpg:lrReplacements">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:semiFinishedProduct,bcpg:localSemiFinishedProduct,bcpg:rawMaterial,bcpg:ing,bcpg:ingTypeItem&#38;excludeClassNames=bcpg:entityTplAspect
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:finishedProduct,bcpg:semiFinishedProduct,bcpg:localSemiFinishedProduct,bcpg:rawMaterial,bcpg:ing,bcpg:ingTypeItem&#38;excludeClassNames=bcpg:entityTplAspect
 							</control-param>
 						</control>
 						
@@ -8642,7 +8642,7 @@
 					<field id="bcpg:lrComponents">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:semiFinishedProduct,bcpg:localSemiFinishedProduct,bcpg:rawMaterial,bcpg:ing,bcpg:ingTypeItem&#38;excludeClassNames=bcpg:entityTplAspect
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:finishedProduct,bcpg:semiFinishedProduct,bcpg:localSemiFinishedProduct,bcpg:rawMaterial,bcpg:ing,bcpg:ingTypeItem&#38;excludeClassNames=bcpg:entityTplAspect
 							</control-param>
 						</control>
 						
@@ -8651,7 +8651,7 @@
 					<field id="bcpg:lrReplacements">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:semiFinishedProduct,bcpg:localSemiFinishedProduct,bcpg:rawMaterial,bcpg:ing,bcpg:ingTypeItem&#38;excludeClassNames=bcpg:entityTplAspect
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:finishedProduct,bcpg:semiFinishedProduct,bcpg:localSemiFinishedProduct,bcpg:rawMaterial,bcpg:ing,bcpg:ingTypeItem&#38;excludeClassNames=bcpg:entityTplAspect
 							</control-param>
 						</control>
 						
