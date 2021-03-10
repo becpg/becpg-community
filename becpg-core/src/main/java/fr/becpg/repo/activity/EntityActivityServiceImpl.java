@@ -23,7 +23,9 @@ import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
+import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
+import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.MLText;
@@ -607,6 +609,16 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 							JSONObject itemProperty = itemProperties.getJSONObject(j);
 							if (itemProperty.get(PROP_TITLE).equals(activityProperty.get(PROP_TITLE))) {
 								isSameProperty = true;
+								PropertyDefinition property = dictionaryService.getProperty(QName.createQName((String) activityProperty.get(PROP_TITLE)));
+								
+								if (!property.getDataType().getName().equals(DataTypeDefinition.TEXT) && !property.getDataType().getName().equals(DataTypeDefinition.MLTEXT)) {
+									if (activityProperty.has(BEFORE)) {
+										itemProperty.put(BEFORE,activityProperty.get(BEFORE));
+									} else {
+										itemProperty.put(BEFORE,"");
+									}
+								}
+								
 							}
 						}
 						if (!isSameProperty) {
