@@ -53,7 +53,7 @@
 			</div>
 			<div id="main-view-${el}" class="formulation-view">
 					<div id="full-screen-form" class=" hidden"></div>
-					<div id="${el}-message" class="hidden warning"></div>
+					<div id="compoList-${el}-message" class="hidden warning"></div>
 					
 					<@dataGridDashlet dashletName="compoListDashlet" dashletId="compoList-${el}" hideFilter="true" hideTitle="true" hideToolbar="true" >
 						
