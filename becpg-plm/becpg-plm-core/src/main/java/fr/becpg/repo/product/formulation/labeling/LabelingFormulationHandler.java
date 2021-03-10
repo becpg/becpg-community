@@ -174,7 +174,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	/** {@inheritDoc} */
 	@Override
-	public boolean process(ProductData formulatedProduct) throws FormulateException {
+	public boolean process(ProductData formulatedProduct)  {
 
 		if ((formulatedProduct.getReformulateCount() != null)
 				&& !formulatedProduct.getReformulateCount().equals(formulatedProduct.getCurrentReformulateCount())) {
