@@ -150,11 +150,13 @@ public class ReportContentGet extends ContentGet {
 				name = FilenameUtils.removeExtension(name) + FilenameUtils.EXTENSION_SEPARATOR_STR + mimetypeService.getExtension(mimeType);
 
 				logger.debug("Rendering report at format :" + reportFormat.toString() + " mimetype: " + mimeType + " name " + name);
+				
+				res.setContentType(mimeType);
+				AttachmentHelper.setAttachment(req, res, name);
 
 				entityReportService.generateReport(entityNodeRef, nodeRef, reportFormat, res.getOutputStream());
 
-				res.setContentType(mimeType);
-				AttachmentHelper.setAttachment(req, res, name);
+			
 				return;
 			}
 			
