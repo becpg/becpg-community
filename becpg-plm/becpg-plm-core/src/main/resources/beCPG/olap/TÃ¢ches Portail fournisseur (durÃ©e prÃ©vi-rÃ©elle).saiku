@@ -6,7 +6,7 @@
         <Dimensions>
           <Dimension name="project" hierarchizeMode="PRE" hierarchyConsistent="true">
             <Inclusions>
-              <Selection dimension="project" type="level" node="[project].[entity_noderef]" operator="MEMBERS" />
+              <Selection dimension="project" type="level" node="[project.project_dim].[entity_noderef]" operator="MEMBERS" />
             </Inclusions>
             <Exclusions />
           </Dimension>
