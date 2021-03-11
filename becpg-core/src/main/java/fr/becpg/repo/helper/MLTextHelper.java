@@ -356,8 +356,11 @@ public class MLTextHelper {
 						}
 					}
 				}
-
-				ret.addValue(locale, I18NUtil.getMessage(messageKey, locale, parsedVariable.toArray()));
+				if(parsedVariable.isEmpty()) {
+					ret.addValue(locale, I18NUtil.getMessage(messageKey, locale));
+				} else {
+					ret.addValue(locale, I18NUtil.getMessage(messageKey, locale, parsedVariable.toArray()));
+				}
 
 			}
 
