@@ -30,6 +30,10 @@ import org.alfresco.service.namespace.QName;
 public class PropertiesHelper {
 
 
+	private PropertiesHelper() {
+		//Do Nothing
+	}
+	
 	/*(.*[\"\*\\\>\<\?\/\:\|]+.*)|(.*[\.]?.*[\.]+$)|(.*[ ]+$)*/
 	
 	/** Constant <code>namePattern</code> */
@@ -57,7 +61,7 @@ public class PropertiesHelper {
 	 */
 	public static String cleanName(String name) {
 		return name!=null? name.replaceAll("([\"*\\><?/:|])", "-")
-				.replaceAll("(\n)|(')|(\")", " ")
+				.replaceAll("(\n)|(\")", " ")
 				.replaceAll(Pattern.quote("*"), " ")
 				.replaceAll("\\.$", "")
 				.replace("/", "-")

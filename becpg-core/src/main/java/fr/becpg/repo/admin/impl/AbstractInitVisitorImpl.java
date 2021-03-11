@@ -104,6 +104,10 @@ public abstract class AbstractInitVisitorImpl implements InitVisitor {
 			visitRules(folderNodeRef, folderPath);
 			visitWF(folderNodeRef, folderPath);
 		} else {
+			if(!folderName.equals(nodeService.getProperty(folderNodeRef, ContentModel.PROP_NAME))) {
+				nodeService.setProperty(folderNodeRef, ContentModel.PROP_NAME, folderName);
+			}
+			
 			boolean isMLAware = MLPropertyInterceptor.isMLAware();
 			try {
 				MLPropertyInterceptor.setMLAware(true);
