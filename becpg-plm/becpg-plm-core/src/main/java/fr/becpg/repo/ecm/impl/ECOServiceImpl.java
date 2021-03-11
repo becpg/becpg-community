@@ -72,6 +72,7 @@ import fr.becpg.repo.entity.datalist.WUsedListService.WUsedOperator;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 import fr.becpg.repo.entity.version.EntityVersionPlugin;
 import fr.becpg.repo.entity.version.EntityVersionService;
+import fr.becpg.repo.helper.LargeTextHelper;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.AbstractProductDataView;
@@ -834,7 +835,7 @@ public class ECOServiceImpl implements ECOService {
 	private void checkRequirements(ChangeUnitDataItem changeUnitDataItem, ProductData targetData) {
 
 		RequirementType reqType = null;
-		String reqDetails = null;
+		StringBuilder reqDetails = null;
 
 		if ((targetData.getCompoListView() != null) && (targetData.getReqCtrlList() != null)) {
 			for (ReqCtrlListDataItem rcl : targetData.getReqCtrlList()) {
@@ -845,24 +846,26 @@ public class ECOServiceImpl implements ECOService {
 					reqType = newReqType;
 				} else {
 
-					if (RequirementType.Tolerated.equals(newReqType) && reqType.equals(RequirementType.Info)) {
-						reqType = newReqType;
-					} else if (RequirementType.Forbidden.equals(newReqType) && !reqType.equals(RequirementType.Forbidden)) {
+					if ((RequirementType.Tolerated.equals(newReqType) && reqType.equals(RequirementType.Info))
+							|| (RequirementType.Forbidden.equals(newReqType) && !reqType.equals(RequirementType.Forbidden))) {
 						reqType = newReqType;
 					}
 				}
 
 				if (reqDetails == null) {
-					reqDetails = rcl.getReqMessage();
+					reqDetails = new StringBuilder();
+					reqDetails.append(rcl.getReqMessage());
 				} else {
-					reqDetails += RepoConsts.LABEL_SEPARATOR;
-					reqDetails += rcl.getReqMessage();
+					
+					reqDetails.append(RepoConsts.LABEL_SEPARATOR);
+					reqDetails.append(rcl.getReqMessage());
+					
 				}
 			}
 		}
-
 		changeUnitDataItem.setReqType(reqType);
-		changeUnitDataItem.setReqDetails(reqDetails);
+		changeUnitDataItem.setReqDetails(reqDetails!=null ? LargeTextHelper.elipse(reqDetails.toString()): null);
+		
 	}
 
 	/**

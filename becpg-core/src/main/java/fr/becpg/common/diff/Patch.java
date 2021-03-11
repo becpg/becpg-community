@@ -20,7 +20,7 @@
  * Modifications copyright (C) 2018 Author
  */
 
-package fr.becpg.util;
+package fr.becpg.common.diff;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
