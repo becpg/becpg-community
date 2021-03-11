@@ -74,7 +74,9 @@
 
 							containerDiv : null,
 
-							list : null
+							list : null,
+							
+							maxResults: 50
 
 						},
 
@@ -234,10 +236,10 @@
 									success : function DataTable_loadDataTable_success(oRequest, oResponse, oPayload) {
 										instance.widgets.notificationsDataTable.onDataReturnReplaceRows(oRequest, oResponse, oPayload);
 
-										if (instance.widgets.paginator) {
+									/* if (instance.widgets.paginator) {
 											instance.widgets.paginator.set('totalRecords', oResponse.meta.totalRecords);
 											instance.widgets.paginator.setPage(oResponse.meta.startIndex, true);
-										}
+										} */
 
 									},
 									failure : instance.widgets.notificationsDataTable.onDataReturnReplaceRows,
@@ -259,7 +261,7 @@
 										title : instance.msg("empty.notifications.title"),
 										description : instance.msg("empty.notifications.description")
 									});
-								}
+								} 
 
 								return original_doBeforeLoadData.apply(this, arguments);
 							};
@@ -356,7 +358,7 @@
 														for ( var type in types[dataTypeName]) {
 															var value = types[dataTypeName][type];
 															if(dataTypeName == "RegulatoryCodes"){
-																html += '<li><span class="req-' + dataTypeName.toString().toLowerCase() + '-' + type.replace(" ","@").replace("-","$")
+																html += '<li><span class="req-' + dataTypeName.toString().toLowerCase() + '-' + type.replace(/ /gi,"@").replace(/-/gi,"$")
 																+ '" ><a class="req-filter tag '
 																+ REQFILTER_EVENTCLASS + '" href="#"><span>' + type + 
 																' ('+ value + ')</span></a></li>';
@@ -400,7 +402,7 @@
 						 */
 						getWebscriptUrl : function ProductNotifications_getWebscriptUrl() {
 							return Alfresco.constants.PROXY_URI + "becpg/entity/datalists/data/node"
-									+ "?guessContainer=true&repo=true&itemType=bcpg:reqCtrlList&pageSize=20&dataListName=reqCtrlList&entityNodeRef="
+									+ "?guessContainer=true&repo=true&itemType=bcpg:reqCtrlList&pageSize="+this.options.maxResults+"&dataListName=reqCtrlList&entityNodeRef="
 									+ this.options.entityNodeRef+"&locale="+Alfresco.constants.JS_LOCALE;
 
 						},
