@@ -1,4 +1,4 @@
-package fr.becpg.util;
+package fr.becpg.common.diff;
 
 import java.util.List;
 
