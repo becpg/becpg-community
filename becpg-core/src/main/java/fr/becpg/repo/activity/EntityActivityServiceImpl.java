@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -60,12 +59,10 @@ import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
+import fr.becpg.repo.helper.LargeTextHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
-import fr.becpg.util.Diff;
-import fr.becpg.util.DiffMatchPatch;
-import fr.becpg.util.Operation;
 
 /**
  * <p>EntityActivityServiceImpl class.</p>
@@ -76,11 +73,12 @@ import fr.becpg.util.Operation;
 @Service("entityActivityService")
 public class EntityActivityServiceImpl implements EntityActivityService {
 
-	private static final int ML_TEXT_SIZE_LIMIT = 200;
 
 	private static Log logger = LogFactory.getLog(EntityActivityServiceImpl.class);
 
 	private static final int MAX_PAGE = 50;
+	
+	public static final int ML_TEXT_SIZE_LIMIT = 200;
 
 	private static final Map<String, Boolean> SORT_MAP;
 	static {
@@ -383,7 +381,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 						}
 					}
 					if (activityEvent.equals(ActivityEvent.Update) && updatedProperties != null) {
-						List<JSONObject> properties = new ArrayList<JSONObject>();
+						List<JSONObject> properties = new ArrayList<>();
 						for (Map.Entry<QName, Pair<Serializable, Serializable>> entry : updatedProperties.entrySet()) {
 							JSONObject property = new JSONObject();
 							
@@ -426,9 +424,9 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 											textBefore = textBefore.substring(0, ML_TEXT_SIZE_LIMIT) + " ...";
 											newMlTextBefore.put(locale, textBefore);
 										} else {
-											String[] diffs = getBeforeAfterDiffs(textBefore, textAfter);
+											Pair<String,String> diffs = LargeTextHelper.createTextDiffs(textBefore, textAfter);
 											
-											textBefore = diffs[0].replace(" ", "").equals("") ? textBefore : diffs[0];
+											textBefore = diffs.getFirst().replace(" ", "").equals("") ? textBefore :  diffs.getFirst();
 											textBefore = textBefore.length() > ML_TEXT_SIZE_LIMIT ? textBefore.substring(0, ML_TEXT_SIZE_LIMIT) + " ..." : textBefore;
 											
 											newMlTextBefore.put(locale, textBefore);
@@ -456,9 +454,9 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 											textAfter = textAfter.substring(0, ML_TEXT_SIZE_LIMIT) + " ...";
 											newMlTextAfter.put(locale, textAfter);
 										} else {
-											String[] diffs = getBeforeAfterDiffs(textBefore, textAfter);
+											Pair<String,String> diffs = LargeTextHelper.createTextDiffs(textBefore, textAfter);
 											
-											textAfter = diffs[1].replace(" ", "").equals("") ? textAfter : diffs[1];
+											textAfter = diffs.getSecond().replace(" ", "").equals("") ? textAfter : diffs.getSecond();
 											textAfter = textAfter.length() > ML_TEXT_SIZE_LIMIT ? textAfter.substring(0, ML_TEXT_SIZE_LIMIT) + " ..." : textAfter;
 
 											newMlTextAfter.put(locale, textAfter);
@@ -520,32 +518,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 	}
 
-	private String[] getBeforeAfterDiffs(String string1, String string2) {
-		
-		DiffMatchPatch dmp = new DiffMatchPatch();
-		LinkedList<Diff> diffs = dmp.diff_main(string1, string2);
-		
-		StringBuilder beforeBuilder = new StringBuilder();
-		StringBuilder afterBuilder = new StringBuilder();
-		
-		for (Diff diff : diffs) {
-			if (diff.operation == Operation.INSERT) {
-				afterBuilder.append(diff.text);
-			} else if (diff.operation == Operation.DELETE) {
-				beforeBuilder.append(diff.text);
-			} else if (diff.operation == Operation.EQUAL && diff.text.length() < 20) {
-				beforeBuilder.append(diff.text);
-				afterBuilder.append(diff.text);
-			}
-		}
-		
-		String[] ret = new String[2];
-		
-		ret[0] = beforeBuilder.toString();
-		ret[1] = afterBuilder.toString();
-		
-		return ret;
-	}
+	
 
 	// TODO Slow better to have it async
 	private void mergeWithLastActivity(ActivityListDataItem item) {
@@ -853,9 +826,9 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 											textBefore = textBefore.substring(0, ML_TEXT_SIZE_LIMIT) + " ...";
 											newMlTextBefore.put(locale, textBefore);
 										} else {
-											String[] diffs = getBeforeAfterDiffs(textBefore, textAfter);
+											Pair<String,String> diffs = LargeTextHelper.createTextDiffs(textBefore, textAfter);
 											
-											textBefore = diffs[0].replace(" ", "").equals("") ? textBefore : diffs[0];
+											textBefore = diffs.getFirst().replace(" ", "").equals("") ? textBefore : diffs.getFirst();
 											textBefore = textBefore.length() > ML_TEXT_SIZE_LIMIT ? textBefore.substring(0, ML_TEXT_SIZE_LIMIT) + " ..." : textBefore;
 											
 											newMlTextBefore.put(locale, textBefore);
@@ -883,9 +856,9 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 											textAfter = textAfter.substring(0, ML_TEXT_SIZE_LIMIT) + " ...";
 											newMlTextAfter.put(locale, textAfter);
 										} else {
-											String[] diffs = getBeforeAfterDiffs(textBefore, textAfter);
+											Pair<String,String> diffs = LargeTextHelper.createTextDiffs(textBefore, textAfter);
 											
-											textAfter = diffs[1].replace(" ", "").equals("") ? textAfter : diffs[1];
+											textAfter = diffs.getSecond().replace(" ", "").equals("") ? textAfter :  diffs.getSecond();
 											textAfter = textAfter.length() > ML_TEXT_SIZE_LIMIT ? textAfter.substring(0, ML_TEXT_SIZE_LIMIT) + " ..." : textAfter;
 
 											newMlTextAfter.put(locale, textAfter);
