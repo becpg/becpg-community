@@ -29,5 +29,18 @@ public class TranslateHelperTest {
 		Assert.assertNotEquals(key.get(Locale.ENGLISH),key.get(MLTextHelper.parseLocale("sv_SE")));
 		Assert.assertEquals("Ikoner",key.get(MLTextHelper.parseLocale("sv_SE")));
 	}
+	
+	@Test
+	public void testApostrophe() {
+		I18NUtil.registerResourceBundle( "beCPG.translations.plm" );
+		
+		MLTextHelper initHelper = new MLTextHelper();
+		initHelper.setSupportedLocales(RepoConsts.SUPPORTED_UI_LOCALES);
+		
+		MLText key = MLTextHelper.getI18NMessage("message.formulate.wrong.unit");
+		Assert.assertEquals( RepoConsts.SUPPORTED_UI_LOCALES.split(",").length, key.getLocales().size());
+		Assert.assertEquals(key.get(Locale.FRENCH),"L'unité utilisée n'est pas la bonne.");
+
+	}
 
 }
