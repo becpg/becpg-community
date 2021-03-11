@@ -223,7 +223,7 @@
                                             if(listId2.name.indexOf(me.options.sortOptions[z].id)>-1){
                                                 val2 = me.options.sortOptions[z].sortIndex;
                                             }
-                                            if(val1!=500 && val1!=500){
+                                            if(val1!=500 && val2!=500){
                                             	break;
                                             }
                                         }
