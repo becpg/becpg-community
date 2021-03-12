@@ -20,7 +20,7 @@
 	/**
 	 * YUI Library aliases
 	 */
-	var Dom = YAHOO.util.Dom, Event = YAHOO.util.Event, Selector = YAHOO.util.Selector;
+	var Dom = YAHOO.util.Dom;
 	/**
 	 * Alfresco Slingshot aliases
 	 */
@@ -142,13 +142,13 @@
 									var dataType = splits[1].charAt(0).toUpperCase() + splits[1].slice(1);
 									instance.filterId = (type === "all" && dataType === "All" ? "all" : "filterform");
 									
-									if(dataType == "Regulatorycodes") {
-										instance.filterData =  "{\"prop_bcpg_regulatoryCode\":\"=" + type.replace("@"," ").replace("$","-") +"\"}";
+									if(dataType == "Regulatorycodes" && type!=null) {
+										instance.filterData =  "{\"prop_bcpg_regulatoryCode\":\"=" + type.replace(/@/gi," ").replace(/\$/gi,"-") +"\"}";
 									} else {
 									
 										instance.filterData = (type === "all" && dataType === "All" ? undefined : "{"
 												+ (type !== undefined ? ("\"prop_bcpg_rclReqType\":\"" + type+"\"") : "")
-												+ (dataType !== null ? (type !== undefined ? "," : "") + ("\"prop_bcpg_rclDataType\":\"" + dataType+"\"") : "")
+												+ (dataType != null ? (type !== undefined ? "," : "") + ("\"prop_bcpg_rclDataType\":\"" + dataType+"\"") : "")
 												+ "}");
 									}
 									
@@ -326,7 +326,7 @@
 														this.options.containerDiv.appendChild(errorSpan);
 													}
 
-													errorSpan.innerHTML = (totalForbidden !== undefined && totalForbidden !== null
+													errorSpan.innerHTML = (totalForbidden != undefined && totalForbidden != null
 															&& totalForbidden > 0 ? totalForbidden : "");
 												}
 
@@ -491,7 +491,7 @@
 
 									}
 								}
-								+'</ul></div>';
+								desc += '</ul></div>';
 								desc += '   </div>';
 								desc += '   <div class="clear"></div>';
 								desc += '</div>';
