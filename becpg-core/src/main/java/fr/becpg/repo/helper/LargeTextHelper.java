@@ -1,7 +1,11 @@
 package fr.becpg.repo.helper;
 
+import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Locale;
+import java.util.Map.Entry;
 
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.util.Pair;
 
 import fr.becpg.common.diff.Diff;
@@ -43,6 +47,22 @@ public class LargeTextHelper {
 		}
 
 		return new Pair<>(beforeBuilder.toString(), afterBuilder.toString());
+	}
+
+	public static void elipse(MLText mlText) {
+		
+		if (mlText.toString().length() > TEXT_SIZE_LIMIT) {
+			int localesNumber = mlText.keySet().size();
+			
+			int newTextLength = TEXT_SIZE_LIMIT / localesNumber - 20;
+			
+			Iterator<Entry<Locale, String>> it = mlText.entrySet().iterator();
+
+			while (it.hasNext()) {
+				Locale locale = it.next().getKey();
+				mlText.put(locale, mlText.get(locale).substring(0, newTextLength) + "...");
+			}
+		}
 	}
 
 }

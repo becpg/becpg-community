@@ -407,6 +407,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 							
 							if (mlTextBefore != null) {
 								
+								LargeTextHelper.elipse(mlTextBefore);
+								
 								newMlTextBefore = new MLText();
 								
 								Iterator<Entry<Locale, String>> it = mlTextBefore.entrySet().iterator();
@@ -437,6 +439,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 							
 							if (mlTextAfter != null) {
 								
+								LargeTextHelper.elipse(mlTextAfter);
+
 								newMlTextAfter = new MLText();
 								
 								Iterator<Entry<Locale, String>> it = mlTextAfter.entrySet().iterator();
@@ -584,7 +588,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 								isSameProperty = true;
 								PropertyDefinition property = dictionaryService.getProperty(QName.createQName((String) activityProperty.get(PROP_TITLE)));
 								
-								if (!property.getDataType().getName().equals(DataTypeDefinition.TEXT) && !property.getDataType().getName().equals(DataTypeDefinition.MLTEXT)) {
+								if (property == null || property.getDataType() == null || !DataTypeDefinition.TEXT.equals(property.getDataType().getName()) && !DataTypeDefinition.MLTEXT.equals(property.getDataType().getName())) {
 									if (activityProperty.has(BEFORE)) {
 										itemProperty.put(BEFORE,activityProperty.get(BEFORE));
 									} else {
@@ -809,6 +813,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 							
 							if (mlTextBefore != null) {
 								
+								LargeTextHelper.elipse(mlTextBefore);
+
 								newMlTextBefore = new MLText();
 								
 								Iterator<Entry<Locale, String>> it = mlTextBefore.entrySet().iterator();
@@ -839,6 +845,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 							
 							if (mlTextAfter != null) {
 								
+								LargeTextHelper.elipse(mlTextAfter);
+
 								newMlTextAfter = new MLText();
 								
 								Iterator<Entry<Locale, String>> it = mlTextAfter.entrySet().iterator();
