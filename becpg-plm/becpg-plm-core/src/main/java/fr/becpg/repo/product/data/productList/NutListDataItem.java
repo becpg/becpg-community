@@ -122,6 +122,17 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 	public Double value(String key) {
 		return RegulationFormulationHelper.extractValue(getRoundedValue(), key);
 	}
+	
+	/**
+	 * <p>variantValue.</p>
+	 *
+	 * @param variantColumn a {@link java.lang.String} object.
+	 * @return a {@link java.lang.Double} object.
+	 */
+	public Double variantValue(String variantColumn, String key) {
+		return RegulationFormulationHelper.extractVariantValue(getRoundedValue(), variantColumn, key);
+	}
+	
 
 	/**
 	 * <p>Getter for the field <code>manualValue</code>.</p>
