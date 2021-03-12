@@ -549,8 +549,6 @@
 					select
 						nodeRef,
 						doc->>"$.cm_name" as name,
-						doc->>"$.metadata_siteId" as siteId,
-						doc->>"$.metadata_siteName" as siteName,
 						doc->>"$.bcpg_code" as code,
 						doc->>"$.qa_ncType" as ncType,
 						doc->>"$.qa_ncPriority" as ncPriority,
