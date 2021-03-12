@@ -39,6 +39,7 @@ import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.helper.SimulationCostHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
+import fr.becpg.repo.repository.model.VariantAwareDataItem;
 import fr.becpg.repo.variant.filters.VariantFilters;
 import fr.becpg.repo.variant.model.VariantData;
 
@@ -130,7 +131,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 			for (VariantData variant : formulatedProduct.getVariants()) {
 				visitChildren(formulatedProduct, formulatedProduct.getCostList(), FormulationHelper.getNetQtyForCost(formulatedProduct),variant);
 			}
-			
+
 
 			// simulation: take in account cost of components defined on
 			// formulated product
@@ -610,7 +611,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 								&& (formulatedProduct.getDefaultVariantPackagingData().getProductPerPallet() != null)) {
 							calculateValues(templateCostList, costList, true,
 									(double) formulatedProduct.getDefaultVariantPackagingData().getProductPerPallet()
-											* FormulationHelper.getNetQtyInLorKg(formulatedProduct, 0d));
+									* FormulationHelper.getNetQtyInLorKg(formulatedProduct, 0d));
 						}
 						isCalculated = true;
 					}
@@ -718,6 +719,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 			Double maxi = 0d;
 			Double previousValue = 0d;
 			Double futureValue = 0d;
+			Map<String, Double> variantValues = new HashMap<>();
 			for (Composite<CostListDataItem> component : composite.getChildren()) {
 				calculateParentCost(formulatedProduct, component);
 				CostListDataItem costListDataItem = component.getData();
@@ -736,12 +738,32 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 				if (costListDataItem.getFutureValue() != null) {
 					futureValue += costListDataItem.getFutureValue();
 				}
+				if (costListDataItem instanceof VariantAwareDataItem) {
+					for (int i=1; i<=VariantAwareDataItem.VARIANT_COLUMN_SIZE ; i++) {
+						Double variantValue = ((VariantAwareDataItem)costListDataItem).getValue(VariantAwareDataItem.VARIANT_COLUMN_NAME+i);
+						if (variantValue != null) {
+							if (variantValues.get(VariantAwareDataItem.VARIANT_COLUMN_NAME+i) != null) {
+								variantValues.put(VariantAwareDataItem.VARIANT_COLUMN_NAME+i, variantValues.get(VariantAwareDataItem.VARIANT_COLUMN_NAME+i) + variantValue);
+							} else {
+								variantValues.put(VariantAwareDataItem.VARIANT_COLUMN_NAME+i, variantValue);
+							}
+						}
+					}	
+				}
 			}
 			if (!composite.isRoot()) {
 				composite.getData().setValue(value);
 				composite.getData().setMaxi(maxi);
 				composite.getData().setPreviousValue(previousValue);
 				composite.getData().setFutureValue(futureValue);
+
+				if (composite.getData() instanceof VariantAwareDataItem) {
+					for (int i=1; i<=VariantAwareDataItem.VARIANT_COLUMN_SIZE ; i++) {
+						if (variantValues.get(VariantAwareDataItem.VARIANT_COLUMN_NAME+i) != null) {
+							((VariantAwareDataItem)composite.getData()).setValue(variantValues.get(VariantAwareDataItem.VARIANT_COLUMN_NAME+i), VariantAwareDataItem.VARIANT_COLUMN_NAME+i);
+						}
+					}
+				}
 			}
 		}
 	}
@@ -751,6 +773,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 
 		for (CostListDataItem c : formulatedProduct.getCostList()) {
 			if ((c.getComponentNodeRef() != null) && (c.getParent() != null)) {
+
 				ProductData componentData = alfrescoRepositoryProductData.findOne(c.getComponentNodeRef());
 				Double qtyComponent = SimulationCostHelper.getComponentQuantity(formulatedProduct, componentData);
 
@@ -763,7 +786,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 
 						if (logger.isDebugEnabled()) {
 							logger.debug("add simulationCost " + "c2 value " + c2.getValue() + "c simulated value " + c.getSimulatedValue()
-									+ " qty component " + qtyComponent + " netQty " + netQty);
+							+ " qty component " + qtyComponent + " netQty " + netQty);
 						}
 						if (c2.getValue() != null) {
 							c.setValue(((c.getSimulatedValue() - c2.getValue()) * qtyComponent) / (netQty != 0 ? netQty : 1d));

@@ -21,6 +21,7 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.product.formulation.nutrient.AbstractNutrientRegulation.NutrientDefinition;
+import fr.becpg.repo.repository.model.VariantAwareDataItem;
 
 /**
  * <p>RegulationFormulationHelper class.</p>
@@ -183,6 +184,17 @@ public class RegulationFormulationHelper {
 	 */
 	public static Double extractValue(String roundedValue, String key) {
 		return extractValueByKey(roundedValue, KEY_VALUE, key);
+	}
+	
+	/**
+	 * <p>extractValue.</p>
+	 *
+	 * @param roundedValue a {@link java.lang.String} object.
+	 * @param key a {@link java.lang.String} object.
+	 * @return a {@link java.lang.Double} object.
+	 */
+	public static Double extractVariantValue(String roundedValue, String variantKey, String key) {
+		return extractValueByKey(roundedValue, variantKey, key);
 	}
 
 	/**
@@ -427,7 +439,8 @@ public class RegulationFormulationHelper {
 			JSONObject gda = new JSONObject();
 			JSONObject valuePerContainer = new JSONObject();
 			JSONObject gdaPerContainer = new JSONObject();
-
+			Map<String, JSONObject> variants = new HashMap<>();
+			
 			for (String key : getAvailableRegulations()) {
 
 				String nutUnit = n.getUnit();
@@ -437,7 +450,17 @@ public class RegulationFormulationHelper {
 				value.put(key, regulation.round(n.getValue(), nutCode, nutUnit));
 				mini.put(key, regulation.round(n.getMini(), nutCode, nutUnit));
 				maxi.put(key, regulation.round(n.getMaxi(), nutCode, nutUnit));
-
+				
+				if (n instanceof VariantAwareDataItem) {
+					for (int i=1; i<=VariantAwareDataItem.VARIANT_COLUMN_SIZE ; i++) {
+						if (((VariantAwareDataItem)n).getValue(VariantAwareDataItem.VARIANT_COLUMN_NAME+i) != null){
+							JSONObject variant = new JSONObject();
+							variant.put(key, regulation.round(((VariantAwareDataItem)n).getValue(VariantAwareDataItem.VARIANT_COLUMN_NAME+i), nutCode, nutUnit));
+							variants.put(VariantAwareDataItem.VARIANT_COLUMN_NAME+i, variant);
+						}
+					}
+				}
+					
 				Double servingSize = getServingSize(key, formulatedProduct);
 
 				if ((n.getValue() != null) && (servingSize != null)) {
@@ -465,7 +488,7 @@ public class RegulationFormulationHelper {
 						}
 					}
 				}
-
+				
 				Double containerQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct, 0d);
 				if ((key.equals("US") || key.equals("US_2013")) && (n.getValue() != null)) {
 					Double vpc = regulation.round(n.getValue() * containerQty * 10, nutCode, nutUnit);
@@ -474,7 +497,7 @@ public class RegulationFormulationHelper {
 						gdaPerContainer.put(key, regulation.roundGDA((100 * vpc) / def.getGda(), nutCode));
 					}
 				}
-			}
+			
 
 			jsonRound.put(KEY_VALUE, value);
 			jsonRound.put(KEY_SECONDARY_VALUE, secondaryValue);
@@ -485,6 +508,11 @@ public class RegulationFormulationHelper {
 			jsonRound.put(KEY_GDA_PERC, gda);
 			jsonRound.put(KEY_VALUE_PER_CONTAINER, valuePerContainer);
 			jsonRound.put(KEY_GDA_PERC_PER_CONTAINER, gdaPerContainer);
+			
+			for (String variantKey : variants.keySet()) 
+				jsonRound.put(variantKey, variants.get(variantKey));
+			}
+			
 
 		} catch (JSONException e) {
 			logger.error(e, e);

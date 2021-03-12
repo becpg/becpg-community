@@ -93,9 +93,9 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 			
 			synchronizeTemplate(formulatedProduct, formulatedProduct.getNutList());
 			
-			nutsCalculateingProcess(formulatedProduct, null);
+			nutsCalculatingProcess(formulatedProduct, null);
 			for (VariantData variant: formulatedProduct.getVariants()) {
-				nutsCalculateingProcess(formulatedProduct, variant);
+				nutsCalculatingProcess(formulatedProduct, variant);
 			}
 			
 			if (formulatedProduct.getNutList() != null) {
@@ -110,7 +110,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 		return true;
 	}
 	
-	private void nutsCalculateingProcess(ProductData formulatedProduct, VariantData variant) {
+	private void nutsCalculatingProcess(ProductData formulatedProduct, VariantData variant) {
 		boolean hasCompo = formulatedProduct.hasCompoListEl((variant != null ? new VariantFilters<>(variant.getNodeRef()) : new VariantFilters<>()));
 		if (hasCompo) {
 
@@ -191,11 +191,10 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 						}
 						if (n instanceof VariantAwareDataItem) {
 							for (int i=1; i<=VariantAwareDataItem.VARIANT_COLUMN_SIZE ; i++) {
-								if ((n).getValue(VariantAwareDataItem.VARIANT_COLUMN_NAME+i) != null){
-									(n).setValue((((n).getValue(VariantAwareDataItem.VARIANT_COLUMN_NAME+i) * (100 - n.getLossPerc())) / 100), VariantAwareDataItem.VARIANT_COLUMN_NAME+i);
+								if (((VariantAwareDataItem)n).getValue(VariantAwareDataItem.VARIANT_COLUMN_NAME+i) != null){
+									((VariantAwareDataItem)n).setValue(((((VariantAwareDataItem)n).getValue(VariantAwareDataItem.VARIANT_COLUMN_NAME+i) * (100 - n.getLossPerc())) / 100), VariantAwareDataItem.VARIANT_COLUMN_NAME+i);
 								}
 							}
-							
 						}
 					}
 

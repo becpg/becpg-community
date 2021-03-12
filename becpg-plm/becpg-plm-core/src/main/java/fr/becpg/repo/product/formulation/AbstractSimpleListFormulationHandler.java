@@ -33,7 +33,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
-import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
 
@@ -228,7 +227,6 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	protected void formulateSimpleList(ProductData formulatedProduct, List<T> simpleListDataList, boolean isFormulatedProduct)
 			throws FormulateException {
 		logger.debug("formulateSimpleList");
-
 		cleanSimpleList(simpleListDataList, isFormulatedProduct);
 
 		synchronizeTemplate(formulatedProduct, simpleListDataList);
@@ -301,7 +299,6 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		
 		if (formulatedProduct.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), (variant != null ? new  VariantFilters<>(variant.getNodeRef()) : new VariantFilters<>())))) {
 			Map<NodeRef, List<NodeRef>> mandatoryCharacts = getMandatoryCharacts(formulatedProduct, PLMModel.TYPE_RAWMATERIAL);
-
 			for (CompoListDataItem compoItem : formulatedProduct
 					.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), (variant != null ? new  VariantFilters<>(variant.getNodeRef()) : new VariantFilters<>())))) {
 				Double weight = FormulationHelper.getQtyInKg(compoItem);
@@ -484,7 +481,6 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 		Double newValue = formulatedValue != null ? formulatedValue : 0d;
 		Double value = extractValue(formulatedProduct, partProduct, slDataItem);
-		
 		if (variant != null && newSimpleListDataItem instanceof VariantAwareDataItem) {
 			formulatedValue = ((VariantAwareDataItem)newSimpleListDataItem).getValue(variant);
 			if (value != null) {			
@@ -682,6 +678,21 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 											} catch (Exception e) {
 												((ForecastValueDataItem) formulatedCharactDataItem).setFutureValue(null);
 												((ForecastValueDataItem) formulatedCharactDataItem).setPreviousValue(null);
+												if (logger.isDebugEnabled()) {
+													logger.debug("Error in formula :" + formula, e);
+												}
+											}
+										}
+										
+										if (formula.contains(".value") && (formulatedCharactDataItem instanceof VariantAwareDataItem)) {
+											try {
+												for (int i=1; i<=VariantAwareDataItem.VARIANT_COLUMN_SIZE ; i++) {
+													exp = parser.parseExpression(formula.replace(".value(", ".variantValue(\""+ VariantAwareDataItem.VARIANT_COLUMN_NAME+i + "\"," ));
+													if (((VariantAwareDataItem)formulatedCharactDataItem).getValue(VariantAwareDataItem.VARIANT_COLUMN_NAME+i) != null){
+														((VariantAwareDataItem)formulatedCharactDataItem).setValue((Double) exp.getValue(context), VariantAwareDataItem.VARIANT_COLUMN_NAME+i);
+													}
+												}												
+											} catch (Exception e) {
 												if (logger.isDebugEnabled()) {
 													logger.debug("Error in formula :" + formula, e);
 												}

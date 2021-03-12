@@ -633,14 +633,17 @@ if (beCPG.module.EntityDataGridRenderers) {
 
 			if (data.value != null){
 				if (oColumn.label == ""){
-					var columnLabel = scope.msg("becpg.forms.column") + " " +  label.charAt(label.length-1);
+					var columnLabel = scope.msg("becpg.forms.variant") + " " +  label.charAt(label.length-1);
 					YAHOO.Bubbling.fire("columnRenamed", {
 						columnId : "prop_" + label.replace(":","_"),
 						label : columnLabel
 					});
 					Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
 				}
-				return beCPG.util.sigFigs(data.value,3).toLocaleString();
+				if (scope.datalistMeta.name == "nutList"){
+					return beCPG.util.sigFigs(data.value,3).toLocaleString();
+				}
+				return data.displayValue;
 			}
 			return "";
 		}
