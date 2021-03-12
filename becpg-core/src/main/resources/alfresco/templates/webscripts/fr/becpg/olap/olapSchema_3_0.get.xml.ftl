@@ -549,8 +549,6 @@
 					select
 						nodeRef,
 						doc->>"$.cm_name" as name,
-						doc->>"$.metadata_siteId" as siteId,
-						doc->>"$.metadata_siteName" as siteName,
 						doc->>"$.bcpg_code" as code,
 						doc->>"$.qa_ncType" as ncType,
 						doc->>"$.qa_ncPriority" as ncPriority,
@@ -575,13 +573,6 @@
 					</#if>
 				</SQL>
 			</View>
-			
-		
-		<Dimension name="site" caption="${msg("jsolap.site.title")}">
-			<Hierarchy name="site" caption="${msg("jsolap.site.title")}" hasAll="true" allMemberCaption="${msg("jsolap.site.caption")}">
-				<Level name="site" caption="${msg("jsolap.site.title")}" column="siteName"  type="String" />
-			</Hierarchy>
-		</Dimension>
 		
 		<Dimension  name="designation" caption="${msg("jsolap.incident.title")}" >
 			<Hierarchy name="incident" caption="${msg("jsolap.incident.title")}" hasAll="true" allMemberCaption="${msg("jsolap.incident.caption")}">
@@ -673,6 +664,26 @@
 								}
 						</Script>
 					</MemberFormatter>
+				</Level>
+			</Hierarchy>
+		</Dimension>
+		
+		<Dimension foreignKey="nodeRef"  name="plant" caption="${msg("jsolap.plant.title")}">
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.plant.caption")}" primaryKey="entityNodeRef">
+				<View name="plant" alias="plant">
+								<SQL dialect="generic">
+									select  
+										entityNodeRef,
+										doc->>"$.name" as name,
+										nodeRef
+									from
+										assoc_bcpg_plants
+									<#if !isAdmin>	
+									  where instanceId = ${instanceId}
+									</#if>
+								</SQL>
+				</View>
+				<Level name="name" caption="${msg("jsolap.plant.title")}" column="nodeRef" nameColumn="name" type="String"  >
 				</Level>
 			</Hierarchy>
 		</Dimension>
