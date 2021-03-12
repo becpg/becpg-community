@@ -407,6 +407,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 							
 							if (mlTextBefore != null) {
 								
+								LargeTextHelper.elipse(mlTextBefore);
+								
 								newMlTextBefore = new MLText();
 								
 								Iterator<Entry<Locale, String>> it = mlTextBefore.entrySet().iterator();
@@ -437,6 +439,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 							
 							if (mlTextAfter != null) {
 								
+								LargeTextHelper.elipse(mlTextAfter);
+
 								newMlTextAfter = new MLText();
 								
 								Iterator<Entry<Locale, String>> it = mlTextAfter.entrySet().iterator();
@@ -809,6 +813,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 							
 							if (mlTextBefore != null) {
 								
+								LargeTextHelper.elipse(mlTextBefore);
+
 								newMlTextBefore = new MLText();
 								
 								Iterator<Entry<Locale, String>> it = mlTextBefore.entrySet().iterator();
@@ -839,6 +845,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 							
 							if (mlTextAfter != null) {
 								
+								LargeTextHelper.elipse(mlTextAfter);
+
 								newMlTextAfter = new MLText();
 								
 								Iterator<Entry<Locale, String>> it = mlTextAfter.entrySet().iterator();
