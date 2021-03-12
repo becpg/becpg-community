@@ -56,6 +56,7 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.util.StringUtils;
 
+
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.ReportModel;
@@ -369,6 +370,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	private String ingTypeDecThresholdFormat = "{0} [{3}]";
 	private String subIngsDefaultFormat = "{0} ({2}) [{3}]";
 
+
 	private String allergenDetailsFormat = "{0} ({2})";
 	private String allergenReplacementPattern = "<b>$1</b>";
 	private String htmlTableRowFormat = "<tr><td style=\"border: solid 1px !important;padding: 5px;\" >{0}</td>"
@@ -381,6 +383,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	private String ingTypeDefaultSeparator = RepoConsts.LABEL_SEPARATOR;
 	private String allergensSeparator = RepoConsts.LABEL_SEPARATOR;
 	private String geoOriginsSeparator = RepoConsts.LABEL_SEPARATOR;
+	private String subIngsSeparator = RepoConsts.LABEL_SEPARATOR;
 
 	private boolean showIngCEECode = false;
 	private boolean useVolume = false;
@@ -687,6 +690,19 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 */
 	public void setAllergensSeparator(String allergensSeparator) {
 		this.allergensSeparator = allergensSeparator;
+	}
+
+	
+	/**
+	 * <p>
+	 * Setter for the field <code>subIngsSeparator</code>.
+	 * </p>
+	 *
+	 * @param subIngsSeparator
+	 *            a {@link java.lang.String} object.
+	 */
+	public void setSubIngsSeparator(String subIngsSeparator) {
+		this.subIngsSeparator = subIngsSeparator;
 	}
 
 	/**
@@ -1806,7 +1822,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		boolean first = true;
 
 		boolean applySeparatorRule = true;
-
+		
 		for (Map.Entry<IngTypeItem, List<LabelingComponent>> kv : getSortedIngListByType(compositeLabeling).entrySet()) {
 
 			StringBuilder toAppend = new StringBuilder();
@@ -1843,7 +1859,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 					Double volumePerc = computeVolumePerc(compositeLabeling, kv.getValue().get(0), ratio);
 					qtyPerc = (useVolume ? volumePerc : qtyPerc);
 				}
-
+				
 				toAppend.append(renderLabelingComponent(compositeLabeling, kv.getValue(), false, ratio, first ? total : null, hideGeo));
 			}
 
@@ -1864,11 +1880,20 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 								}
 							}
 							if (applySeparatorRule) {
-								ret.append(defaultSeparator);
+								
+								if(compositeLabeling instanceof IngItem){
+									ret.append( subIngsSeparator );	
+								} else {
+									ret.append(defaultSeparator);
+								}
 							}
 						} else {
-
-							ret.append(defaultSeparator);
+							if(compositeLabeling instanceof IngItem){
+								ret.append( subIngsSeparator );	
+							} else {
+								ret.append(defaultSeparator);
+							}
+							
 						}
 					}
 				}
@@ -1931,7 +1956,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			if (!shouldSkip(component.getNodeRef(), qtyPerc)) {
 
 				String toAppend = "";
-
+				
 				if (component instanceof CompositeLabeling) {
 
 					MessageFormat formater = getIngTextFormat(component, qtyPerc);
@@ -1946,7 +1971,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 					}
 
 					toAppend = formater.format(new Object[] { ingName, qtyPerc,
-							renderCompositeIng((CompositeLabeling) component, subRatio, first ? total : null, hideGeo),
+							renderCompositeIng((CompositeLabeling) component, subRatio,first ? total : null, hideGeo ),
 							hideGeo ? null : geoOriginsLabel });
 
 					first = false;
@@ -1960,7 +1985,14 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 						if (appendEOF) {
 							ret.append("<br/>");
 						} else {
-							ret.append(isIngType ? ingTypeDefaultSeparator : defaultSeparator);
+							if(isIngType) {
+								ret.append( ingTypeDefaultSeparator );	
+							} else if(parent instanceof IngItem){
+								ret.append( subIngsSeparator );	
+							} else {
+								ret.append(defaultSeparator);
+							}
+							
 						}
 					}
 
