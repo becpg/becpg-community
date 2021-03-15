@@ -65,6 +65,10 @@ public interface FormulatedEntity extends RepositoryEntity {
 	 * @return a {@link java.util.Date} object.
 	 */
 	Date getFormulatedDate();
+	
+	
+	
+    Date getModifiedDate();
 
 	/**
 	 * <p>setFormulatedDate.</p>

@@ -23,15 +23,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * <p>AlfSingleAssoc class.</p>
+ * <p>AlfCacheable class.</p>
  *
  * @author matthieu
  * @version $Id: $Id
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface AlfSingleAssoc {
-  boolean isChildAssoc() default false;
-  boolean isEntity() default false;
-  boolean isCacheable()  default false;
+@Target(ElementType.TYPE)
+public @interface AlfCacheable  {
+	
 }
