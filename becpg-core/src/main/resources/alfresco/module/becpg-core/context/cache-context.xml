@@ -54,17 +54,33 @@
 	</bean>
 	
 
-
 	<!--  Clusterable cache -->
-    <bean name="becpgAssocsSharedCache" factory-bean="cacheFactory" factory-method="createCache">
+  
+
+   <bean name="becpgRepositorySharedCache" factory-bean="cacheFactory" factory-method="createCache">
+      <constructor-arg value="cache.becpgRepositoryCache"/>      
+   </bean>
+
+	 <bean name="becpgRepositoryCache" class="org.alfresco.repo.cache.TransactionalCache">
+      <property name="sharedCache">
+         <ref bean="becpgRepositorySharedCache" />
+      </property>
+      <property name="name">
+         <value>fr.becpg.cache.repositoryTransactionnalCache</value>
+      </property>
+      <property name="maxCacheSize" value="${cache.becpgRepositoryCache.tx.maxItems}" />
+      <property name="mutable" value="true" />
+      <property name="allowEqualsChecks" value="false" />
+      <property name="disableSharedCache" value="false" />
+      <property name="tenantAware" value="true" />
+      <property name="cacheStats" ref="cacheStatistics"/>
+      <property name="cacheStatsEnabled" value="${cache.becpgRepositoryCache.tx.statsEnabled}"/> 
+   </bean>
+
+  <bean name="becpgAssocsSharedCache" factory-bean="cacheFactory" factory-method="createCache">
       <constructor-arg value="cache.becpgAssocsCache"/>      
    </bean>
    
-   
-   <bean name="becpgChildAssocsSharedCache" factory-bean="cacheFactory" factory-method="createCache">
-      <constructor-arg value="cache.becpgChildAssocsCache"/>      
-   </bean>
-
 
    <bean name="becpgAssocsCache" class="org.alfresco.repo.cache.TransactionalCache">
       <property name="sharedCache">
@@ -76,9 +92,14 @@
       <property name="maxCacheSize" value="${cache.becpgAssocsCache.tx.maxItems}" />
       <property name="mutable" value="true" />
       <property name="disableSharedCache" value="false" />
-      <property name="tenantAware" value="false" />
+      <property name="tenantAware" value="true" />
       <property name="cacheStats" ref="cacheStatistics"/>
       <property name="cacheStatsEnabled" value="${cache.becpgAssocsCache.tx.statsEnabled}"/> 
+   </bean>
+   
+    
+   <bean name="becpgChildAssocsSharedCache" factory-bean="cacheFactory" factory-method="createCache">
+      <constructor-arg value="cache.becpgChildAssocsCache"/>      
    </bean>
    
    <bean name="becpgChildAssocsCache" class="org.alfresco.repo.cache.TransactionalCache">
@@ -91,7 +112,7 @@
       <property name="maxCacheSize" value="${cache.becpgChildAssocsCache.tx.maxItems}" />
       <property name="mutable" value="true" />
       <property name="disableSharedCache" value="false" />
-      <property name="tenantAware" value="false" />
+      <property name="tenantAware" value="true" />
       <property name="cacheStats" ref="cacheStatistics"/>
       <property name="cacheStatsEnabled" value="${cache.becpgChildAssocsCache.tx.statsEnabled}"/> 
    </bean>
