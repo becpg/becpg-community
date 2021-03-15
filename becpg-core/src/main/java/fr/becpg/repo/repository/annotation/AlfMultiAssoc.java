@@ -33,4 +33,5 @@ import java.lang.annotation.Target;
 public @interface AlfMultiAssoc {
 	boolean isChildAssoc() default false;
 	boolean isEntity() default false;
+	boolean isCacheable()  default false;
 }
