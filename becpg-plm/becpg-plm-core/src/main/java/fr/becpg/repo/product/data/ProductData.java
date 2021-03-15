@@ -583,7 +583,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	 *
 	 * @return a {@link fr.becpg.repo.product.data.ProductData} object.
 	 */
-	@AlfSingleAssoc(isEntity = true)
+	@AlfSingleAssoc(isEntity = true, isCacheable = true)
 	@AlfQname(qname = "bcpg:entityTplRef")
 	public ProductData getEntityTpl() {
 		return entityTpl;
