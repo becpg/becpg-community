@@ -13,6 +13,7 @@ class L2CacheThreadInfo implements Serializable{
 	private static final long serialVersionUID = -7958215882212282888L;
 	private boolean isCacheOnlyEnable = false;
 	private boolean isThreadLockEnable = false;
+	private boolean isThreadCacheEnable = false;
 	private Map<NodeRef, RepositoryEntity> cache = new HashMap<>(500);
 	
 	/**
@@ -22,9 +23,10 @@ class L2CacheThreadInfo implements Serializable{
 	 * @param isThreadCacheEnable a boolean.
 	 * @param isThreadLockEnable a boolean.
 	 */
-	public L2CacheThreadInfo(boolean isCacheOnlyEnable, boolean isThreadLockEnable ) {
+	public L2CacheThreadInfo(boolean isCacheOnlyEnable, boolean isThreadCacheEnable, boolean isThreadLockEnable ) {
 		super();
 		this.isCacheOnlyEnable = isCacheOnlyEnable;
+		this.isThreadCacheEnable = isThreadCacheEnable;
 		this.isThreadLockEnable = isThreadLockEnable;
 	}
 
@@ -39,6 +41,9 @@ class L2CacheThreadInfo implements Serializable{
 	}
 
 
+	public boolean isThreadCacheEnable() {
+		return isThreadCacheEnable;
+	}
 
 	public boolean isThreadLockEnable() {
 		return isThreadLockEnable;
@@ -55,12 +60,12 @@ class L2CacheThreadInfo implements Serializable{
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return "L2CacheThreadInfo [isCacheOnlyEnable=" + isCacheOnlyEnable  + ", isThreadLockEnable=" + isThreadLockEnable + "]";
+		return "L2CacheThreadInfo [isCacheOnlyEnable=" + isCacheOnlyEnable + ", isThreadCacheEnable=" + isThreadCacheEnable + ", isThreadLockEnable=" + isThreadLockEnable + "]";
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(cache, isCacheOnlyEnable, isThreadLockEnable);
+		return Objects.hash(cache, isCacheOnlyEnable, isThreadCacheEnable, isThreadLockEnable);
 	}
 
 	@Override
@@ -72,7 +77,7 @@ class L2CacheThreadInfo implements Serializable{
 		if (getClass() != obj.getClass())
 			return false;
 		L2CacheThreadInfo other = (L2CacheThreadInfo) obj;
-		return Objects.equals(cache, other.cache) && isCacheOnlyEnable == other.isCacheOnlyEnable 
+		return Objects.equals(cache, other.cache) && isCacheOnlyEnable == other.isCacheOnlyEnable && isThreadCacheEnable == other.isThreadCacheEnable
 				&& isThreadLockEnable == other.isThreadLockEnable;
 	}
 	
