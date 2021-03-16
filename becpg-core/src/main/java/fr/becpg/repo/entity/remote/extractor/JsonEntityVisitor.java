@@ -200,7 +200,13 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 			if ((nodeRef != null) && Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_NODEREF, Boolean.TRUE))) {
 
-				entity.put(RemoteEntityService.ATTR_ID, nodeRef.getId());
+				if (JsonVisitNodeType.DATALIST.equals(type)) {
+					if (Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_DATALIST_NODEREF, Boolean.TRUE))) {
+						entity.put(RemoteEntityService.ATTR_ID, nodeRef.getId());
+					}
+				} else {
+					entity.put(RemoteEntityService.ATTR_ID, nodeRef.getId());
+				}
 			}
 		}
 

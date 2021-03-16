@@ -1,15 +1,19 @@
 package fr.becpg.repo.entity.version;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.domain.node.NodeExistsException;
 import org.alfresco.repo.download.AbstractExporter;
+import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.service.namespace.RegexQNamePattern;
 
 public class VersionExporter extends AbstractExporter {
 
@@ -19,9 +23,9 @@ public class VersionExporter extends AbstractExporter {
 	private NodeRef originalNodeRef = null;
 	private NodeRef targetNode = null;
 
-	public VersionExporter(NodeRef originalNodeRef, NodeRef versionNode, NodeService dbNodeService) {
+	public VersionExporter(NodeRef originalNodeRef, NodeRef targetNode, NodeService dbNodeService) {
 		this.originalNodeRef = originalNodeRef;
-		this.targetNode = versionNode;
+		this.targetNode = targetNode;
 		this.dbNodeService = dbNodeService;
 	}
 
@@ -58,6 +62,8 @@ public class VersionExporter extends AbstractExporter {
 			}
 		}
 		
+		props.keySet().removeIf(e -> e.equals(ContentModel.PROP_NODE_UUID));
+		
 		if (referenceNode != null) {
 			dbNodeService.setProperties(referenceNode, props);
 		} else {
@@ -77,5 +83,15 @@ public class VersionExporter extends AbstractExporter {
 		parentNodeRef = dbNodeService.getPrimaryParent(parentNodeRef).getParentRef();
 		
 	}
+	
+	@Override
+	public void end() {
+		
+        List<AssociationRef> nodeAssocRefs = dbNodeService.getTargetAssocs(originalNodeRef, RegexQNamePattern.MATCH_ALL);
 
+        for (AssociationRef nodeAssocRef : nodeAssocRefs) {
+        	dbNodeService.createAssociation(targetNode, nodeAssocRef.getTargetRef(), nodeAssocRef.getTypeQName());
+        }
+	}
+	
 }
