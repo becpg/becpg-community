@@ -22,7 +22,6 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -118,9 +117,9 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		entity.setParentNodeRef(parentNodeRef);
 		return save(entity);
 	}
-	
+
 	enum CacheType {
-		STANDARD ,FORCE_SHARED_CACHE, NO_SHARED_CACHE, NO_CACHE
+		STANDARD, FORCE_SHARED_CACHE, NO_SHARED_CACHE, NO_CACHE
 	}
 
 	/** {@inheritDoc} */
@@ -161,13 +160,12 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name)),
 							repositoryEntityDefReader.getType(entity.getClass()), properties).getChildRef();
 					entity.setNodeRef(productNodeRef);
-			
 
 				} else {
 
 					if (logger.isDebugEnabled()) {
 						logger.debug("Update instanceOf :" + entity.getClass().getName() + " " + entity.getName());
-						logger.debug(" HashDiff :" + BeCPGHashCodeBuilder.printDiff(entity, findOne(entity.getNodeRef(),  CacheType.NO_CACHE)));
+						logger.debug(" HashDiff :" + BeCPGHashCodeBuilder.printDiff(entity, findOne(entity.getNodeRef(), CacheType.NO_CACHE, null)));
 
 					}
 
@@ -186,13 +184,13 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 				saveAssociations(entity);
 				saveAspects(entity);
-//
-//				if(entity instanceof FormulatedEntity) {
-//					((FormulatedEntity)entity).setModifiedDate((Date) nodeService.getProperty(entity.getNodeRef(), ContentModel.PROP_MODIFIED));
-//				}
-				
+				//
+				//				if(entity instanceof FormulatedEntity) {
+				//					((FormulatedEntity)entity).setModifiedDate((Date) nodeService.getProperty(entity.getNodeRef(), ContentModel.PROP_MODIFIED));
+				//				}
+
 				entity.setDbHashCode(createCollisionSafeHashCode(entity));
-				
+
 			} else {
 				if (logger.isTraceEnabled()) {
 					logger.trace("Entity " + entity.getName() + " has no change  to save (same extra properties an same hashCode) ");
@@ -212,8 +210,10 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 			}
 		}
 
-		storeInCache(entity.getNodeRef(), entity,  CacheType.NO_SHARED_CACHE);
-
+		if(L2CacheSupport.isThreadCacheEnable()) {
+			storeInCache(entity.getNodeRef(), entity, L2CacheSupport.getCurrentThreadCache(), CacheType.NO_SHARED_CACHE);
+		}
+		
 		return entity;
 	}
 
@@ -440,96 +440,99 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		}
 		return ret;
 	}
-	
+
 	/** {@inheritDoc} */
 	@Override
 	public T findOne(NodeRef id) {
 		if (id == null) {
 			throw new IllegalArgumentException("NodeRef cannot be null ");
 		}
-
-		return findOne(id, CacheType.STANDARD);
+		
+		return findOne(id, CacheType.STANDARD, L2CacheSupport.getCurrentThreadCache());
 	}
-	
 
-	private T findOne(NodeRef id, CacheType  cacheType) {
+	@SuppressWarnings("unchecked")
+	private T findOne(NodeRef id, CacheType cacheType, Map<NodeRef, RepositoryEntity> caches) {
 		if (id == null) {
 			throw new IllegalArgumentException("NodeRef cannot be null ");
 		}
 
-		T cached = getFormCache(id, cacheType);
-		if(cached!=null) {
+		T cached = getFormCache(id, caches, cacheType);
+		if (cached != null) {
 			return cached;
 		}
 
-		
-			QName type = nodeService.getType(id);
+		QName type = nodeService.getType(id);
 
-			Class<T> entityClass = repositoryEntityDefReader.getEntityClass(type);
-			if (entityClass == null) {
-				if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
-					entityClass = (Class<T>) DefaultListDataItem.class;
-				} else {
-					throw new IllegalArgumentException("Type is not registered : " + type);
-				}
+		Class<T> entityClass = repositoryEntityDefReader.getEntityClass(type);
+		if (entityClass == null) {
+			if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
+				entityClass = (Class<T>) DefaultListDataItem.class;
+			} else {
+				throw new IllegalArgumentException("Type is not registered : " + type);
+			}
+		}
+
+		try {
+
+			final T entity = entityClass.getDeclaredConstructor().newInstance();
+
+			if (logger.isTraceEnabled()) {
+				logger.trace("findOne instanceOf :" + entity.getClass().getName());
 			}
 
-			try {
+			entity.setNodeRef(id);
 
-				T entity = entityClass.getDeclaredConstructor().newInstance();
+			storeInCache(id, entity, caches, cacheType);
 
-				if (logger.isTraceEnabled()) {
-					logger.trace("findOne instanceOf :" + entity.getClass().getName());
-				}
+			Map<QName, Serializable> properties = mlNodeService.getProperties(id);
 
-				entity.setNodeRef(id);
-				
-				storeInCache(id, entity, cacheType);
+			BeanWrapper beanWrapper = new BeanWrapperImpl(entity);
 
-				Map<QName, Serializable> properties = mlNodeService.getProperties(id);
+			for (final PropertyDescriptor pd : beanWrapper.getPropertyDescriptors()) {
 
-				BeanWrapper beanWrapper = new BeanWrapperImpl(entity);
+				Method readMethod = pd.getReadMethod();
 
-				for (final PropertyDescriptor pd : beanWrapper.getPropertyDescriptors()) {
+				if (readMethod != null) {
+					if (readMethod.isAnnotationPresent(AlfProp.class) && readMethod.isAnnotationPresent(AlfQname.class)) {
+						loadProperties(entity, pd, readMethod, properties, caches);
+					} else if (readMethod.isAnnotationPresent(AlfSingleAssoc.class) && readMethod.isAnnotationPresent(AlfQname.class)) {
+						loadAssoc(entity, pd, readMethod, caches, false, readMethod.getAnnotation(AlfSingleAssoc.class).isChildAssoc());
+					} else if (readMethod.isAnnotationPresent(AlfMultiAssoc.class) && readMethod.isAnnotationPresent(AlfQname.class)) {
+						loadAssoc(entity, pd, readMethod, caches, true, readMethod.getAnnotation(AlfMultiAssoc.class).isChildAssoc());
+					} else if (readMethod.isAnnotationPresent(DataListView.class) && readMethod.isAnnotationPresent(AlfQname.class)) {
+						QName datalistViewQname = repositoryEntityDefReader.readQName(readMethod);
+						PropertyUtils.setProperty(entity, pd.getName(),
+								loadDataListView(entity, datalistViewQname, readMethod.getReturnType(), caches));
+					} else if (readMethod.isAnnotationPresent(DataList.class) && readMethod.isAnnotationPresent(AlfQname.class)) {
+						QName datalistQname = repositoryEntityDefReader.readQName(readMethod);
 
-					Method readMethod = pd.getReadMethod();
-
-					if (readMethod != null) {
-						if (readMethod.isAnnotationPresent(AlfProp.class) && readMethod.isAnnotationPresent(AlfQname.class)) {
-							loadProperties(entity, pd, readMethod, properties);
-						} else if (readMethod.isAnnotationPresent(AlfSingleAssoc.class) && readMethod.isAnnotationPresent(AlfQname.class)) {
-							loadAssoc(entity, pd, readMethod, false, readMethod.getAnnotation(AlfSingleAssoc.class).isChildAssoc());
-						} else if (readMethod.isAnnotationPresent(AlfMultiAssoc.class) && readMethod.isAnnotationPresent(AlfQname.class)) {
-							loadAssoc(entity, pd, readMethod, true, readMethod.getAnnotation(AlfMultiAssoc.class).isChildAssoc());
-						} else if (readMethod.isAnnotationPresent(DataListView.class) && readMethod.isAnnotationPresent(AlfQname.class)) {
-							QName datalistViewQname = repositoryEntityDefReader.readQName(readMethod);
-							PropertyUtils.setProperty(entity, pd.getName(), loadDataListView(entity, datalistViewQname, readMethod.getReturnType()));
-						} else if (readMethod.isAnnotationPresent(DataList.class) && readMethod.isAnnotationPresent(AlfQname.class)) {
-							QName datalistQname = repositoryEntityDefReader.readQName(readMethod);
-
-							PropertyUtils.setProperty(entity, pd.getName(), createDataList(entity, pd, datalistQname, null));
-						}
+						PropertyUtils.setProperty(entity, pd.getName(), createDataList(entity, pd, datalistQname, null, caches));
 					}
 				}
-
-				loadAspects(entity);
-
-				entity.setDbHashCode(createCollisionSafeHashCode(entity));
-
-				return entity;
-
-			} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | InstantiationException e) {
-
-				logger.error("Cannot load entity: " + id, e);
-				throw new UnsupportedOperationException(e);
 			}
+
+			loadAspects(entity);
+
+			entity.setDbHashCode(createCollisionSafeHashCode(entity));
+
+			return entity;
+
+		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | InstantiationException e) {
+
+			logger.error("Cannot load entity: " + id, e);
+			throw new UnsupportedOperationException(e);
+		}
 	}
 
-	private void storeInCache(NodeRef id, T entity, CacheType cacheType) {
-		if(!CacheType.NO_CACHE.equals(cacheType)) {
-			L2CacheSupport.getCurrentThreadCache().put(id, entity);
-			if (!L2CacheSupport.isCacheOnlyEnable()) {
-				if ((entity instanceof FormulatedEntity) && (entity.getClass().isAnnotationPresent(AlfCacheable.class) || CacheType.FORCE_SHARED_CACHE.equals(cacheType))) {	
+	private void storeInCache(NodeRef id, T entity, Map<NodeRef, RepositoryEntity> caches, CacheType cacheType) {
+		if (!CacheType.NO_CACHE.equals(cacheType)) {
+			if(caches!=null) {
+				caches.put(id, entity);
+	    	}
+			if (!L2CacheSupport.isCacheOnlyEnable() && !CacheType.NO_SHARED_CACHE.equals(cacheType) ) {
+				if ((entity instanceof FormulatedEntity)
+						&& (CacheType.FORCE_SHARED_CACHE.equals(cacheType) || entity.getClass().isAnnotationPresent(AlfCacheable.class) )) {
 					cache.put(id, (FormulatedEntity) entity);
 				}
 			}
@@ -537,27 +540,40 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 	}
 
-	@SuppressWarnings("unchecked")
-	private T getFormCache(NodeRef id, CacheType cacheType) {
-		if(!CacheType.NO_CACHE.equals(cacheType)) {
-			T ret = (T) L2CacheSupport.getCurrentThreadCache().get(id);
-			if (ret!=null) {
-				return ret;
-			}
 	
-			if (!L2CacheSupport.isCacheOnlyEnable() && !CacheType.NO_SHARED_CACHE.equals(cacheType) ) {
+	/*
+	 * There is 3 level of cache:
+	 *  Standalone call we use a HashMap
+	 *  When in L2cacheContext we use a cache that can survice several call (used by cache only)
+	 *  We use also a sharedCache tha store cacheAble   
+	 */
+	@SuppressWarnings("unchecked")
+	private T getFormCache(NodeRef id, Map<NodeRef, RepositoryEntity> caches, CacheType cacheType) {
+		if (!CacheType.NO_CACHE.equals(cacheType)) {
+			if(caches!=null) {
+				T ret = (T) caches.get(id);
+				if (ret != null) {
+					return ret;
+				}
+			}
+
+			if (!L2CacheSupport.isCacheOnlyEnable() && !CacheType.NO_SHARED_CACHE.equals(cacheType)) {
 				FormulatedEntity entity = cache.get(id);
-					if(entity!=null) {
-		
-					if (EqualsHelper.nullSafeEquals(nodeService.getProperty(id, ContentModel.PROP_MODIFIED),entity.getModifiedDate())
-							&& EqualsHelper.nullSafeEquals(nodeService.getProperty(id, BeCPGModel.PROP_FORMULATED_DATE),  entity.getFormulatedDate())) {
+				if (entity != null) {
+
+					if (EqualsHelper.nullSafeEquals(nodeService.getProperty(id, ContentModel.PROP_MODIFIED), entity.getModifiedDate()) && EqualsHelper
+							.nullSafeEquals(nodeService.getProperty(id, BeCPGModel.PROP_FORMULATED_DATE), entity.getFormulatedDate())) {
+						if(logger.isDebugEnabled()) {
+							logger.info("Found from shared cache: "+entity.getName());
+						}
 						return (T) entity;
 					} else {
-						logger.info("Date mismatch:"+ nodeService.getProperty(id, ContentModel.PROP_MODIFIED)+ " "+entity.getModifiedDate());
-						logger.info("Date mismatch:"+ nodeService.getProperty(id, BeCPGModel.PROP_FORMULATED_DATE)+ " "+entity.getFormulatedDate());
+						if(logger.isDebugEnabled()) {
+							logger.info("Date mismatch:" +  entity.getName()+ " refreshing cache entry");
+						}
 					}
 				}
-	
+
 			}
 		}
 
@@ -571,7 +587,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 	}
 
-	private <R> R loadDataListView(final T entity, QName datalistContainerQname, Class<R> returnType)
+	private <R> R loadDataListView(final T entity, QName datalistContainerQname, Class<R> returnType, Map<NodeRef, RepositoryEntity> caches)
 			throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
 		R ret = returnType.getDeclaredConstructor().newInstance();
@@ -585,7 +601,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 					final QName datalistQname = repositoryEntityDefReader.readQName(readMethod);
 
-					PropertyUtils.setProperty(ret, pd.getName(), createDataList(entity, pd, datalistContainerQname, datalistQname));
+					PropertyUtils.setProperty(ret, pd.getName(), createDataList(entity, pd, datalistContainerQname, datalistQname, caches));
 				}
 			}
 		}
@@ -593,8 +609,8 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		return ret;
 	}
 
-	private List<T> createDataList(final T entity, final PropertyDescriptor pd, final QName datalistContainerQname, final QName datalistQname) {
-			
+	private List<T> createDataList(final T entity, final PropertyDescriptor pd, final QName datalistContainerQname, final QName datalistQname,
+			final Map<NodeRef, RepositoryEntity> caches) {
 		if (logger.isTraceEnabled()) {
 			logger.debug("read dataList : " + pd.getName());
 		}
@@ -603,7 +619,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		dataList.setDataProvider(new LazyLoadingDataList.DataProvider<T>() {
 			@Override
 			public List<T> getData() {
-				return loadDataList(entity.getNodeRef(), datalistContainerQname, datalistQname);
+				return loadDataList(entity.getNodeRef(), datalistContainerQname, datalistQname, caches);
 			}
 
 			@Override
@@ -615,8 +631,8 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		return dataList;
 	}
 
-	private void loadAssoc(T entity, PropertyDescriptor pd, Method readMethod, boolean multiple, boolean isChildAssoc)
-			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+	private void loadAssoc(T entity, PropertyDescriptor pd, Method readMethod, Map<NodeRef, RepositoryEntity> caches, boolean multiple,
+			boolean isChildAssoc) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		if (multiple) {
 			if (logger.isTraceEnabled()) {
 				logger.trace("read multi assoc : " + pd.getName());
@@ -631,7 +647,8 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 			if ((assocRefs != null) && readMethod.getAnnotation(AlfMultiAssoc.class).isEntity()) {
 				List<RepositoryEntity> entities = new LinkedList<>();
 				for (NodeRef nodeRef : assocRefs) {
-					entities.add(findOne(nodeRef, readMethod.getAnnotation(AlfMultiAssoc.class).isCacheable()? CacheType.FORCE_SHARED_CACHE: CacheType.STANDARD));
+					entities.add(findOne(nodeRef,
+							readMethod.getAnnotation(AlfMultiAssoc.class).isCacheable() ? CacheType.FORCE_SHARED_CACHE : CacheType.STANDARD, caches));
 				}
 				PropertyUtils.setProperty(entity, pd.getName(), entities);
 			} else {
@@ -652,7 +669,8 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 			if ((assocRef != null)
 					&& (pd.getPropertyType().isAnnotationPresent(AlfType.class) || readMethod.getAnnotation(AlfSingleAssoc.class).isEntity())) {
-				PropertyUtils.setProperty(entity, pd.getName(), findOne(assocRef, readMethod.getAnnotation(AlfSingleAssoc.class).isCacheable()? CacheType.FORCE_SHARED_CACHE: CacheType.STANDARD));
+				PropertyUtils.setProperty(entity, pd.getName(), findOne(assocRef,
+						readMethod.getAnnotation(AlfSingleAssoc.class).isCacheable() ? CacheType.FORCE_SHARED_CACHE : CacheType.STANDARD, caches));
 			} else {
 				PropertyUtils.setProperty(entity, pd.getName(), assocRef);
 			}
@@ -660,8 +678,8 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private void loadProperties(T entity, PropertyDescriptor pd, Method readMethod, Map<QName, Serializable> properties)
-			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+	private void loadProperties(T entity, PropertyDescriptor pd, Method readMethod, Map<QName, Serializable> properties,
+			Map<NodeRef, RepositoryEntity> caches) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		if (logger.isTraceEnabled()) {
 			logger.trace("read property : " + pd.getName());
 		}
@@ -676,7 +694,8 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 			}
 		} else if ((prop != null) && pd.getPropertyType().isAnnotationPresent(AlfType.class)) {
 			if (nodeService.exists((NodeRef) prop)) {
-				PropertyUtils.setProperty(entity, pd.getName(), findOne((NodeRef) prop));
+				PropertyUtils.setProperty(entity, pd.getName(), findOne((NodeRef) prop,
+						pd.getPropertyType().isAnnotationPresent(AlfCacheable.class) ? CacheType.FORCE_SHARED_CACHE : CacheType.STANDARD, caches));
 			}
 		} else if (readMethod.isAnnotationPresent(AlfMlText.class)) {
 			PropertyUtils.setProperty(entity, pd.getName(), prop);
@@ -693,6 +712,10 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 	/** {@inheritDoc} */
 	@Override
 	public List<T> loadDataList(NodeRef entityNodeRef, QName datalistContainerQname, QName datalistQname) {
+		return loadDataList(entityNodeRef, datalistContainerQname, datalistQname, L2CacheSupport.getCurrentThreadCache());
+	}
+
+	private List<T> loadDataList(NodeRef entityNodeRef, QName datalistContainerQname, QName datalistQname, Map<NodeRef, RepositoryEntity> caches) {
 
 		NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
 
@@ -702,7 +725,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 			if (dataListNodeRef != null) {
 
 				return entityListDAO.getListItems(dataListNodeRef, datalistQname).stream().map(el -> {
-					T ret = findOne(el, CacheType.NO_SHARED_CACHE);
+					T ret = findOne(el, CacheType.NO_SHARED_CACHE, caches);
 					ret.setParentNodeRef(dataListNodeRef);
 					return ret;
 				}).collect(Collectors.toCollection(LinkedList::new));
