@@ -1273,4 +1273,9 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		return null;
 	}
 
+	@Override
+	public boolean isV2Service() {
+		return false;
+	}
+
 }

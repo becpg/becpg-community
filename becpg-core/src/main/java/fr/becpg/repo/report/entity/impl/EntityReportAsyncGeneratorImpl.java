@@ -24,11 +24,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.mail.BeCPGMailService;
 import fr.becpg.repo.report.entity.EntityReportAsyncGenerator;
 import fr.becpg.repo.report.entity.EntityReportService;
@@ -54,6 +57,12 @@ public class EntityReportAsyncGeneratorImpl implements EntityReportAsyncGenerato
 
 	@Autowired
 	private TransactionService transactionService;
+	
+	@Autowired
+	private EntityVersionService entityVersionService;
+	
+	@Autowired
+	private NodeService nodeService;
 
 	/**
 	 * <p>
@@ -148,7 +157,7 @@ public class EntityReportAsyncGeneratorImpl implements EntityReportAsyncGenerato
 		private final NodeRef entityNodeRef;
 
 		private final EntityReportAsyncNotificationCallback callback;
-
+		
 		private ProductReportGenerator(NodeRef entityNodeRef, EntityReportAsyncNotificationCallback callback) {
 			this.entityNodeRef = entityNodeRef;
 			this.callback = callback;
@@ -156,14 +165,27 @@ public class EntityReportAsyncGeneratorImpl implements EntityReportAsyncGenerato
 				this.callback.register();
 			}
 		}
-
+		
 		@Override
 		public void run() {
 			try {
-				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-					entityReportService.generateReports(entityNodeRef);
-					return null;
-				}, false, true);
+				if (entityVersionService.isVersion(entityNodeRef) && nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_ENTITY_FORMAT) != null) {
+
+					AuthenticationUtil.runAsSystem(() ->
+
+					transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+						entityReportService.generateVersionReports(entityVersionService.extractVersion(entityNodeRef), entityNodeRef);
+						return null;
+
+					}, false, true));
+				} else {
+					transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+						entityReportService.generateReports(entityNodeRef);
+						return null;
+					}, false, true);
+
+				}
 
 			} catch (Exception e) {
 
