@@ -202,5 +202,7 @@ public interface EntityVersionService {
 	boolean isVersion(NodeRef entity1);
 
 	NodeRef extractVersion(NodeRef entity1);
+	
+	boolean isV2Service();
 
 }
