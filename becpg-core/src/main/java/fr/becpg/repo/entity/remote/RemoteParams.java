@@ -21,6 +21,8 @@ public class RemoteParams {
 	public static final String PARAM_APPEND_MLTEXT_CONSTRAINT = "appendMlTextConstraint";
 
 	public static final String PARAM_APPEND_NODEREF = "appendNodeRef";
+	
+	public static final String PARAM_APPEND_DATALIST_NODEREF = "appendDataListNodeRef";
 
 	public static final String PARAM_APPEND_CONTENT = "appendContent";
 
@@ -62,6 +64,10 @@ public class RemoteParams {
 	
 	public List<QName> getFilteredProperties() {
 		return filteredProperties;
+	}
+	
+	public void setIgnoredFields(List<QName> ignoredFields) {
+		this.ignoredFields = ignoredFields;
 	}
 
 
