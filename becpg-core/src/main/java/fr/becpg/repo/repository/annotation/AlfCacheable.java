@@ -32,4 +32,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface AlfCacheable  {
 	
+	boolean isCharact() default false;
+	
 }

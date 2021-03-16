@@ -23,6 +23,7 @@ import java.util.Objects;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.helper.MLTextHelper;
+import fr.becpg.repo.repository.annotation.AlfCacheable;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
@@ -35,6 +36,7 @@ import fr.becpg.repo.repository.annotation.AlfType;
  */
 @AlfType
 @AlfQname(qname = "bcpg:ingTypeItem")
+@AlfCacheable
 public class IngTypeItem extends LabelingComponent{
 
 	private static final long serialVersionUID = 182156222574786727L;
