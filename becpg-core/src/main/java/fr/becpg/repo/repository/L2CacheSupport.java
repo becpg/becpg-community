@@ -17,6 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.repository;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -45,7 +46,10 @@ public class L2CacheSupport {
 	 * @return a {@link java.util.Map} object.
 	 */
 	public static <T> Map<NodeRef, RepositoryEntity> getCurrentThreadCache() {
-		return threadLocalCache.get().getCache();
+		if (threadLocalCache.get().isThreadCacheEnable()) {
+			return threadLocalCache.get().getCache();
+		}
+		return new HashMap<>(500);
 	}
 
 	/**
@@ -54,7 +58,7 @@ public class L2CacheSupport {
 	 * @return a boolean.
 	 */
 	public static boolean isCacheOnlyEnable() {
-		return  threadLocalCache.get().isCacheOnlyEnable();
+		return threadLocalCache.get().isThreadCacheEnable() && threadLocalCache.get().isCacheOnlyEnable();
 	}
 
 	/**
@@ -66,7 +70,14 @@ public class L2CacheSupport {
 		return new NodeRef(RepoConsts.SPACES_STORE, "simu-" + UUID.randomUUID().toString());
 	}
 
-	
+	/**
+	 * <p>isThreadCacheEnable.</p>
+	 *
+	 * @return a boolean.
+	 */
+	public static boolean isThreadCacheEnable() {
+		return threadLocalCache.get().isThreadCacheEnable();
+	}
 	/**
 	 * <p>isThreadLockEnable.</p>
 	 *
@@ -85,7 +96,7 @@ public class L2CacheSupport {
 	public static void doInCacheOnly(Action action) {
 		L2CacheThreadInfo previousContext = threadLocalCache.get();
 		try {
-			threadLocalCache.set(new L2CacheThreadInfo(true, false));
+			threadLocalCache.set(new L2CacheThreadInfo(true, true, false));
 			action.run();
 		} finally {
 			threadLocalCache.remove();
@@ -103,7 +114,7 @@ public class L2CacheSupport {
 	public static void doInCacheContext(Action action, boolean isCacheOnlyEnable, boolean isThreadLockEnable) {
 		L2CacheThreadInfo previousContext = threadLocalCache.get();
 		try {
-			threadLocalCache.set(new L2CacheThreadInfo(isCacheOnlyEnable, isThreadLockEnable));
+			threadLocalCache.set(new L2CacheThreadInfo(isCacheOnlyEnable, true, isThreadLockEnable));
 			action.run();
 		} finally {
 			threadLocalCache.remove();
