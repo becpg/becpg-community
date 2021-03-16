@@ -71,6 +71,8 @@ public class JsonVersionExtractor extends ActivityListExtractor {
 	
 	private static final String ATTRIBUTES = "attributes";
 	
+	private static final String TYPE = "type";
+	
 	
 	private static final String[] AL_DATA_PROPS = {"datalistType", "charactType", "entityType", "datalistNodeRef", "entityNodeRef", "className", "title", "charactNodeRef" };
 	
@@ -109,7 +111,7 @@ public class JsonVersionExtractor extends ActivityListExtractor {
 	
 	private boolean canAddObject(JSONObject object, DataListFilter dataListFilter) throws JSONException {
 		
-		if (!object.getString("type").equals(dataListFilter.getDataType().toPrefixString())) {
+		if (!object.getString(TYPE).equals(dataListFilter.getDataType().toPrefixString())) {
 			return false;
 		}
 		
@@ -245,12 +247,12 @@ public class JsonVersionExtractor extends ActivityListExtractor {
 		return ret;
 	}
 
-	private Object extractNodeData(JSONObject properties, ClassAttributeDefinition attribute, FormatMode mode) throws JSONException {
+	private Object extractNodeData(JSONObject properties, ClassAttributeDefinition attribute, FormatMode mode, QName itemType) throws JSONException {
 		if (attribute instanceof PropertyDefinition) {
 			if (attribute.getName().toPrefixString(namespaceService).contains("alData")) {
 				return extractAlData((JSONObject) properties.get(attribute.getName().toPrefixString(namespaceService)));
 			}
-			return extractPropertyNodeData(properties, (PropertyDefinition) attribute, mode);
+			return extractPropertyNodeData(properties, (PropertyDefinition) attribute, mode, itemType);
 		} else if (attribute instanceof AssociationDefinition) {
 			return extractAssociationDefinitionNodeData(properties, (AssociationDefinition) attribute);
 		}
@@ -284,19 +286,32 @@ public class JsonVersionExtractor extends ActivityListExtractor {
 		return ret;
 	}
 
-	private HashMap<String, Object> extractPropertyNodeData(JSONObject properties, PropertyDefinition attribute, FormatMode mode) throws JSONException {
+	private HashMap<String, Object> extractPropertyNodeData(JSONObject properties, PropertyDefinition attribute, FormatMode mode, QName itemType) throws JSONException {
 		String displayName = null;
 		Object value = null;
-		String metadata = null;
+		String metadata = attribute.getDataType().getName().getLocalName();
 		
 		HashMap<String, Object> tmp = new HashMap<>(6);
 
 		if (!properties.has(attribute.getName().toPrefixString(namespaceService))) {
+			
+			if (itemType != null && properties.has(itemType.toPrefixString(namespaceService))) {
+				String id = ((JSONObject) properties.get(itemType.toPrefixString(namespaceService))).getString("id");
+				NodeRef node = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, id);
+				if (nodeService.exists(node)) {
+					value = nodeService.getProperty(node, attribute.getName());
+					displayName = attributeExtractorService.getStringValue(attribute, (Serializable) value, attributeExtractorService.getPropertyFormats(mode, false));
+				}
+			}
+			
+			tmp.put(DISPLAY_VALUE, displayName);
+			tmp.put(VALUE, value);
+			tmp.put(METADATA, metadata);
 			return tmp;
 		}
 		
 		value = properties.getString(attribute.getName().toPrefixString(namespaceService));
-		metadata = attribute.getDataType().getName().getLocalName();
+		
 		Serializable seri = (Serializable) value;
 
 		if (metadata.equals("double")) {
@@ -365,7 +380,7 @@ public class JsonVersionExtractor extends ActivityListExtractor {
 
 	private ClassAttributeDefinition getFieldDef(QName itemType, AttributeExtractorStructure field) {
 
-		if (!field.getItemType().equals(itemType)) {
+		if (itemType != null && !field.getItemType().equals(itemType)) {
 			return entityDictionaryService.findMatchingPropDef(field.getItemType(), itemType, field.getFieldQname());
 		}
 		return field.getFieldDef();
@@ -376,30 +391,60 @@ public class JsonVersionExtractor extends ActivityListExtractor {
 		Map<String, Object> ret = new HashMap<>();
 
 		for (AttributeExtractorStructure field : metadataFields) {
-			ret.put(field.getFieldName(), extractNodeData(properties, getFieldDef(itemType, field), mode));
+			if (field.isNested()) {
+				List<Map<String, Object>> extracted = extractNestedField(properties, field, mode);
+				
+				ret.put(field.getFieldName(), extracted);
+			} else {
+				ret.put(field.getFieldName(), extractNodeData(properties, getFieldDef(itemType, field), mode, itemType));
+			}
 		}
 		
 		return ret;
 	}
 
-	private Map<String, Object> extractJSON(DataListFilter dataListFilter, JSONObject object, List<AttributeExtractorStructure> metadataFields) throws JSONException {
+	private List<Map<String, Object>> extractNestedField(JSONObject properties, AttributeExtractorStructure field, FormatMode mode) throws JSONException {
+		List<Map<String, Object>> ret = new ArrayList<>();
+		if (field.getFieldDef() instanceof AssociationDefinition) {
+			ret.add(extractJSON(null, properties, field.getChildrens(), field));
+		}
+		
+		return ret;
+	}
+
+	private Map<String, Object> extractJSON(DataListFilter dataListFilter, JSONObject object, List<AttributeExtractorStructure> metadataFields, AttributeExtractorStructure field) throws JSONException {
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
 			watch = new StopWatch();
 			watch.start();
 		}
 		try {
-
-			QName itemType = QName.createQName(object.getString("type"), namespaceService);
-			JSONObject properties = object.getJSONObject(ATTRIBUTES);
 			
 			Map<String, Object> ret = new HashMap<>(20);
 			
-			ret.put(PROP_NODE, new NodeRef("workspace://SpacesStore/" + object.getString("id")));
+			QName fieldType = null;
+			
+			if (field == null && object.has(TYPE)) {
+				fieldType = QName.createQName(object.getString(TYPE), namespaceService);
+				ret.put(PROP_TYPE, fieldType.toPrefixString(namespaceService));
+			} else if (field != null && field.getFieldDef() instanceof AssociationDefinition) {
+				ret.put(PROP_TYPE, ((AssociationDefinition) field.getFieldDef()).getTargetClass().getName().toPrefixString(namespaceService));
+			}
+			
+			JSONObject properties = object;
+			
+			if (object.has(ATTRIBUTES)) {
+				properties = object.getJSONObject(ATTRIBUTES);
+			}
+			
+			NodeRef nodeRef = new NodeRef("workspace://SpacesStore/" + object.getString("cm:name"));
+			
+			if (nodeService.exists(nodeRef)) {
+				ret.put(PROP_NODE, nodeRef);
+			}
 			
 			// Skipping condition
 			
-			ret.put(PROP_TYPE, itemType.toPrefixString(namespaceService));
 			
 			// Date parsing test
 			Instant instantCreated = Instant.parse(properties.getString(ContentModel.PROP_CREATED.toPrefixString(namespaceService)));
@@ -409,10 +454,17 @@ public class JsonVersionExtractor extends ActivityListExtractor {
 			ret.put(PROP_MODIFIED, convertDateValue(Date.from(instantModified), FormatMode.JSON));
 			ret.put(PROP_MODIFIER_DISPLAY, extractPerson(properties.getString(ContentModel.PROP_MODIFIER.toPrefixString(namespaceService))));
 			
-			try {
-				ret.put(PROP_COLOR, properties.getString(BeCPGModel.PROP_COLOR.toPrefixString(namespaceService)));
-			} catch (JSONException e) {
-				// Ignore, this just means there is no string or that it isn't a string
+			if (field != null) {
+				if (properties.has(field.getFieldQname().toPrefixString(namespaceService))) {
+					String id = ((JSONObject) properties.get(field.getFieldQname().toPrefixString(namespaceService))).getString("id");
+					NodeRef node = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, id);
+					if (nodeService.exists(node)) {
+						String color = (String) nodeService.getProperty(node, BeCPGModel.PROP_COLOR);
+						if (color != null) {
+							ret.put(PROP_COLOR, color);
+						}
+					}
+				}
 			}
 			
 			Map<String, Map<String, Boolean>> permissions = new HashMap<>(1);
@@ -430,27 +482,29 @@ public class JsonVersionExtractor extends ActivityListExtractor {
 
 			ret.put(PROP_PERMISSIONS, permissions);
 
-			ret.put(PROP_NODEDATA, doExtract(itemType, metadataFields, FormatMode.JSON, properties));
+			ret.put(PROP_NODEDATA, doExtract(field == null ? null : field.getFieldQname(), metadataFields, FormatMode.JSON, properties));
 			
-			QName dataListFilterQName = QName.createQName(BeCPGModel.BECPG_URI, dataListFilter.getDataListName());
-			
-			Map<QName, Serializable> propertiesMap = new HashMap<>();
-			
-			Iterator<?> it = properties.keys();
-			
-			while (it.hasNext()) {
-			    String name = (String) it.next();
-			    if (name.startsWith("cm:")) {
-			    	QName qname = QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name.split("cm:")[1]);
-			    	propertiesMap.put(qname, (Serializable) properties.get(name).toString());
-			    } else if (name.startsWith(BCPG_PREFIX)) {
-			    	QName qname = QName.createQName(BeCPGModel.BECPG_URI, name.split(BCPG_PREFIX)[1]);
-			    	propertiesMap.put(qname, (Serializable) properties.get(name).toString());
-			    }
-			}
-			
-			if (BeCPGModel.TYPE_ACTIVITY_LIST.equals(dataListFilterQName)) {
-				postLookupActivity(dataListFilter.getEntityNodeRef(), (Map<String, Object>) ret.get(PROP_NODEDATA), propertiesMap, FormatMode.JSON);
+			if (dataListFilter != null) {
+				QName dataListFilterQName = QName.createQName(BeCPGModel.BECPG_URI, dataListFilter.getDataListName());
+				
+				Map<QName, Serializable> propertiesMap = new HashMap<>();
+				
+				Iterator<?> it = properties.keys();
+				
+				while (it.hasNext()) {
+					String name = (String) it.next();
+					if (name.startsWith("cm:")) {
+						QName qname = QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name.split("cm:")[1]);
+						propertiesMap.put(qname, (Serializable) properties.get(name).toString());
+					} else if (name.startsWith(BCPG_PREFIX)) {
+						QName qname = QName.createQName(BeCPGModel.BECPG_URI, name.split(BCPG_PREFIX)[1]);
+						propertiesMap.put(qname, (Serializable) properties.get(name).toString());
+					}
+				}
+				
+				if (BeCPGModel.TYPE_ACTIVITY_LIST.equals(dataListFilterQName)) {
+					postLookupActivity(dataListFilter.getEntityNodeRef(), (Map<String, Object>) ret.get(PROP_NODEDATA), propertiesMap, FormatMode.JSON);
+				}
 			}
 			
 			return ret;
@@ -499,11 +553,16 @@ public class JsonVersionExtractor extends ActivityListExtractor {
 			
 			JSONObject datalists = (JSONObject) entity.get("datalists");
 			
+			if (!datalists.has(dataListFilter.getDataType().getPrefixedQName(namespaceService).getPrefixString())) {
+				return ret;
+			}
+			
 			JSONArray dataListJsonArray = (JSONArray) datalists.get(dataListFilter.getDataType().getPrefixedQName(namespaceService).getPrefixString());
 
 			JSONArray filteredList = filterList(dataListJsonArray, dataListFilter);
 			
 			JSONArray results = sortList(filteredList, dataListFilter);
+
 
 			if (results.length() == 0) {
 				logger.warn("List is empty");
@@ -513,14 +572,14 @@ public class JsonVersionExtractor extends ActivityListExtractor {
 				JSONObject object = results.getJSONObject(i);
 				
 				if (ret.getComputedFields() == null) {
-					ret.setComputedFields(attributeExtractorService.readExtractStructure(QName.createQName(object.getString("type"), namespaceService), metadataFields));
+					ret.setComputedFields(attributeExtractorService.readExtractStructure(QName.createQName(object.getString(TYPE), namespaceService), metadataFields));
 				}
 				
 				if (RepoConsts.FORMAT_CSV.equals(dataListFilter.getFormat()) || RepoConsts.FORMAT_XLSX.equals(dataListFilter.getFormat())) {
 					logger.warn("CSV and XLSX unimplemented!");
 				} else {
 					
-					Map<String, Object> item = extractJSON(dataListFilter, object, ret.getComputedFields());
+					Map<String, Object> item = extractJSON(dataListFilter, object, ret.getComputedFields(), null);
 					ret.addItem(item);
 				}
 				
