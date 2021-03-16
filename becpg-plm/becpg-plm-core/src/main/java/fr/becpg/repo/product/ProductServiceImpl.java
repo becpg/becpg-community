@@ -168,12 +168,12 @@ public class ProductServiceImpl implements ProductService, InitializingBean, For
 			logger.debug("Lexer result: " + productData);
 		}
 
-		L2CacheSupport.doInCacheContext(() -> 
+		L2CacheSupport.doInCacheOnly(() -> 
 			AuthenticationUtil.runAsSystem(() -> {
 				formulationService.formulate(productData);
 				return true;
 			})
-		, true);
+		);
 
 		return productData;
 	}
