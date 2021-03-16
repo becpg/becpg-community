@@ -21,6 +21,7 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
 
 import fr.becpg.model.SystemState;
+import fr.becpg.repo.formulation.CacheableEntity;
 import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.ReportableEntity;
 import fr.becpg.repo.hierarchy.HierarchicalEntity;
@@ -70,7 +71,7 @@ import fr.becpg.repo.variant.model.VariantEntity;
  * @author matthieu
  * @version $Id: $Id
  */
-public class ProductData extends AbstractEffectiveDataItem implements FormulatedEntity, HierarchicalEntity, StateableEntity, AspectAwareDataItem, VariantEntity, ReportableEntity {
+public class ProductData extends AbstractEffectiveDataItem implements FormulatedEntity,CacheableEntity, HierarchicalEntity, StateableEntity, AspectAwareDataItem, VariantEntity, ReportableEntity {
 
 	
 	private static final long serialVersionUID = 764534088277737617L;

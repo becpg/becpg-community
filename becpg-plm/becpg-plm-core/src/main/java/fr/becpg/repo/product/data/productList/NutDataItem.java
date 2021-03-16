@@ -3,11 +3,16 @@
  */
 package fr.becpg.repo.product.data.productList;
 
+import java.util.Date;
+
 import org.alfresco.service.cmr.repository.MLText;
 
+import fr.becpg.repo.formulation.CacheableEntity;
+import fr.becpg.repo.repository.annotation.AlfCacheable;
 import fr.becpg.repo.repository.annotation.AlfMlText;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
+import fr.becpg.repo.repository.annotation.AlfReadOnly;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
@@ -19,7 +24,8 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
  */
 @AlfType
 @AlfQname(qname = "bcpg:nut")
-public class NutDataItem extends BeCPGDataObject {
+@AlfCacheable(isCharact = true)
+public class NutDataItem extends BeCPGDataObject implements CacheableEntity {
 
 
 	private static final long serialVersionUID = -4580421935974923617L;
@@ -42,6 +48,30 @@ public class NutDataItem extends BeCPGDataObject {
 	private String nutFormula;
 
 	private String nutColor;
+	
+	private Date modifiedDate;
+	
+	
+	/**
+	 * <p>Getter for the field <code>modifiedDate</code>.</p>
+	 *
+	 * @return a {@link java.util.Date} object.
+	 */
+	@AlfProp
+	@AlfReadOnly
+	@AlfQname(qname = "cm:modified")
+	public Date getModifiedDate() {
+		return modifiedDate;
+	}
+
+	/**
+	 * <p>Setter for the field <code>modifiedDate</code>.</p>
+	 *
+	 * @param modifiedDate a {@link java.util.Date} object.
+	 */
+	public void setModifiedDate(Date modifiedDate) {
+		this.modifiedDate = modifiedDate;
+	}
 	
 	/**
 	 * <p>Getter for the field <code>nutCode</code>.</p>

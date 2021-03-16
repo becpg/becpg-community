@@ -77,6 +77,28 @@
       <property name="cacheStatsEnabled" value="${cache.becpgRepositoryCache.tx.statsEnabled}"/> 
    </bean>
 
+
+   <bean name="becpgCharactSharedCache" factory-bean="cacheFactory" factory-method="createCache">
+      <constructor-arg value="cache.becpgCharactCache"/>      
+   </bean>
+
+	 <bean name="becpgCharactCache" class="org.alfresco.repo.cache.TransactionalCache">
+      <property name="sharedCache">
+         <ref bean="becpgCharactSharedCache" />
+      </property>
+      <property name="name">
+         <value>fr.becpg.cache.charactTransactionnalCache</value>
+      </property>
+      <property name="maxCacheSize" value="${cache.becpgCharactCache.tx.maxItems}" />
+      <property name="mutable" value="true" />
+      <property name="allowEqualsChecks" value="false" />
+      <property name="disableSharedCache" value="false" />
+      <property name="tenantAware" value="true" />
+      <property name="cacheStats" ref="cacheStatistics"/>
+      <property name="cacheStatsEnabled" value="${cache.becpgCharactCache.tx.statsEnabled}"/> 
+   </bean>
+
+
   <bean name="becpgAssocsSharedCache" factory-bean="cacheFactory" factory-method="createCache">
       <constructor-arg value="cache.becpgAssocsCache"/>      
    </bean>
