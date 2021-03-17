@@ -32,15 +32,21 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
+
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.cache.TransactionalCache;
 import org.alfresco.repo.domain.node.NodeDAO;
+import org.alfresco.repo.node.NodeServicePolicies;
+import org.alfresco.repo.policy.JavaBehaviour;
+import org.alfresco.repo.policy.PolicyComponent;
+import org.alfresco.service.cmr.repository.AssociationRef;
+import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.EqualsHelper;
 import org.alfresco.util.Pair;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.logging.Log;
@@ -56,8 +62,6 @@ import org.springframework.stereotype.Repository;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
-import fr.becpg.repo.formulation.CacheableEntity;
-import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -85,7 +89,8 @@ import fr.becpg.repo.repository.model.DefaultListDataItem;
  * @version $Id: $Id
  */
 @Repository("alfrescoRepository")
-public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements AlfrescoRepository<T> {
+public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements AlfrescoRepository<T>, NodeServicePolicies.OnCreateAssociationPolicy,
+ NodeServicePolicies.OnDeleteAssociationPolicy,NodeServicePolicies.OnDeleteNodePolicy, NodeServicePolicies.OnUpdatePropertiesPolicy {
 
 	@Autowired
 	private NodeService nodeService;
@@ -110,11 +115,79 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 	@Autowired
 	@Qualifier("becpgRepositoryCache")
-	private TransactionalCache<NodeRef, CacheableEntity> cache;
+	private TransactionalCache<NodeRef, T> cache;
 
 	@Autowired
 	@Qualifier("becpgCharactCache")
-	private TransactionalCache<NodeRef, CacheableEntity> charactCache;
+	private TransactionalCache<NodeRef, T> charactCache;
+	
+	@Autowired
+	@Qualifier("policyComponent")
+	private PolicyComponent policyComponent;
+	
+
+	enum CacheType {
+		STANDARD, FORCE_SHARED_CACHE, NO_SHARED_CACHE
+	}
+	
+	
+	@PostConstruct
+	public void init() {
+		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteAssociationPolicy.QNAME, BeCPGModel.TYPE_CHARACT,
+				new JavaBehaviour(this, "onDeleteAssociation"));
+		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, BeCPGModel.TYPE_CHARACT,
+				new JavaBehaviour(this, "onCreateAssociation"));
+
+		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteAssociationPolicy.QNAME, BeCPGModel.TYPE_ENTITY_V2,
+				new JavaBehaviour(this, "onDeleteAssociation"));
+		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, BeCPGModel.TYPE_ENTITY_V2,
+				new JavaBehaviour(this, "onCreateAssociation"));
+
+
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME, BeCPGModel.TYPE_ENTITY_V2,
+				new JavaBehaviour(this, "onDeleteNode"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME, BeCPGModel.TYPE_CHARACT,
+				new JavaBehaviour(this, "onDeleteNode"));
+
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, BeCPGModel.TYPE_ENTITY_V2,
+				new JavaBehaviour(this, "onUpdateProperties"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, BeCPGModel.TYPE_CHARACT,
+				new JavaBehaviour(this, "onUpdateProperties"));
+
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public void onDeleteAssociation(AssociationRef associationRef) {
+		purgeCache(associationRef.getSourceRef());
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public void onCreateAssociation(AssociationRef associationRef) {
+		purgeCache(associationRef.getSourceRef());
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public void onDeleteNode(ChildAssociationRef associationRef, boolean arg1) {
+		purgeCache(associationRef.getChildRef());
+	}
+	
+	 @Override
+	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
+		 purgeCache(nodeRef);
+	}
+	 
+	private  void purgeCache(NodeRef nodeRef) {
+		if(logger.isDebugEnabled()) {
+			logger.info("Clear cache of:"+nodeRef);
+		}
+		 cache.remove(nodeRef);
+		 charactCache.remove(nodeRef);
+	}
+
+	
 
 	/** {@inheritDoc} */
 	@Override
@@ -123,9 +196,6 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		return save(entity);
 	}
 
-	enum CacheType {
-		STANDARD, FORCE_SHARED_CACHE, NO_SHARED_CACHE
-	}
 
 	/** {@inheritDoc} */
 	@Override
@@ -151,7 +221,6 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 						if (prop.getValue() == null) {
 							iterator.remove();
 						}
-
 					}
 
 					String name = entity.getName();
@@ -172,7 +241,6 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 						logger.debug("Update instanceOf :" + entity.getClass().getName() + " " + entity.getName());
 						logger.debug(" HashDiff :"
 								+ BeCPGHashCodeBuilder.printDiff(entity, findOne(entity.getNodeRef(), CacheType.NO_SHARED_CACHE, new HashMap<>())));
-
 					}
 
 					nodeService.addProperties(entity.getNodeRef(), properties);
@@ -213,7 +281,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		}
 
 		if (L2CacheSupport.isThreadCacheEnable()) {
-			storeInCache(entity.getNodeRef(), entity, L2CacheSupport.getCurrentThreadCache(), CacheType.NO_SHARED_CACHE);
+			storeInCache(entity.getNodeRef(), entity, L2CacheSupport.getCurrentThreadCache(), CacheType.STANDARD);
 		}
 
 		return entity;
@@ -483,11 +551,14 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 				logger.trace("findOne instanceOf :" + entity.getClass().getName());
 			}
 
-			entity.setNodeRef(id);
-
-			storeInCache(id, entity, localCache, cacheType);
 
 			Map<QName, Serializable> properties = mlNodeService.getProperties(id);
+			
+			entity.setNodeRef(id);
+			entity.setName((String)properties.get(ContentModel.PROP_NAME));
+			
+			storeInCache(id, entity, localCache, cacheType);
+
 
 			BeanWrapper beanWrapper = new BeanWrapperImpl(entity);
 
@@ -533,16 +604,19 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 			localCache.put(id, entity);
 		}
 		if (!L2CacheSupport.isCacheOnlyEnable() && !CacheType.NO_SHARED_CACHE.equals(cacheType)) {
-			if ((entity instanceof CacheableEntity)
-					&& (CacheType.FORCE_SHARED_CACHE.equals(cacheType) || entity.getClass().isAnnotationPresent(AlfCacheable.class))) {
-
-				if (entity.getClass().isAnnotationPresent(AlfCacheable.class) 
-						&& entity.getClass().getAnnotation(AlfCacheable.class).isCharact()) {
-					charactCache.put(id, (CacheableEntity) entity);
-				} else {
-					cache.put(id, (CacheableEntity) entity);
+				if (CacheType.FORCE_SHARED_CACHE.equals(cacheType) || entity.getClass().isAnnotationPresent(AlfCacheable.class)) {
+					
+					if (entity.getClass().isAnnotationPresent(AlfCacheable.class)
+							&& entity.getClass().getAnnotation(AlfCacheable.class).isCharact()) {
+						charactCache.put(id, entity);
+					} else {
+						if(logger.isDebugEnabled()) {
+							logger.info("Store of: "+entity.getName()+ " "+ entity.getNodeRef());
+						}
+						cache.put(id,  entity);
+					}
 				}
-			}
+			
 		}
 
 	}
@@ -561,28 +635,21 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		}
 
 		if (!L2CacheSupport.isCacheOnlyEnable() && !CacheType.NO_SHARED_CACHE.equals(cacheType)) {
-			CacheableEntity entity = charactCache.get(id);
+			T entity = charactCache.get(id);
 			if (entity == null) {
 				entity = cache.get(id);
 			}
 
 			if (entity != null) {
-
-				if (EqualsHelper.nullSafeEquals(entity.getModifiedDate(), nodeService.getProperty(id, ContentModel.PROP_MODIFIED))
-						&& (!(entity instanceof FormulatedEntity) || EqualsHelper.nullSafeEquals((((FormulatedEntity) entity).getFormulatedDate()),
-								nodeService.getProperty(id, BeCPGModel.PROP_FORMULATED_DATE)))) {
-					if (logger.isDebugEnabled()) {
-						logger.info("Found from shared cache: " + entity.getName());
-					}
+				if(logger.isDebugEnabled()) {
+					logger.info("Found from shared cache: " + entity.getName());
+				}
+				
 					if (localCache != null) {
 						localCache.put(id, entity);
 					}
-					return (T) entity;
-				} else {
-					if (logger.isDebugEnabled()) {
-						logger.info("Date mismatch:" + entity.getName() + " refreshing cache entry");
-					}
-				}
+					return  entity;
+				
 			}
 
 		}
