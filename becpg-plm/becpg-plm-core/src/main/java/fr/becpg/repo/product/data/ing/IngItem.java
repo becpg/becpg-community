@@ -3,19 +3,16 @@
  */
 package fr.becpg.repo.product.data.ing;
 
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
-import fr.becpg.repo.formulation.CacheableEntity;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.repository.annotation.AlfCacheable;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
-import fr.becpg.repo.repository.annotation.AlfReadOnly;
 import fr.becpg.repo.repository.annotation.AlfType;
 
 
@@ -28,7 +25,7 @@ import fr.becpg.repo.repository.annotation.AlfType;
 @AlfType
 @AlfQname(qname="bcpg:ing")
 @AlfCacheable(isCharact = true)
-public class IngItem extends CompositeLabeling implements CacheableEntity {	
+public class IngItem extends CompositeLabeling {	
 
 	/**
 	 * 
@@ -46,8 +43,6 @@ public class IngItem extends CompositeLabeling implements CacheableEntity {
 	private IngTypeItem ingType;
 	
 	private Set<NodeRef> pluralParents = new HashSet<>();
-
-	private Date modifiedDate;
 	
 	
 	/**
@@ -92,26 +87,6 @@ public class IngItem extends CompositeLabeling implements CacheableEntity {
 		this.charactName = charactName;
 	}
 	
-	/**
-	 * <p>Getter for the field <code>modifiedDate</code>.</p>
-	 *
-	 * @return a {@link java.util.Date} object.
-	 */
-	@AlfProp
-	@AlfReadOnly
-	@AlfQname(qname = "cm:modified")
-	public Date getModifiedDate() {
-		return modifiedDate;
-	}
-
-	/**
-	 * <p>Setter for the field <code>modifiedDate</code>.</p>
-	 *
-	 * @param modifiedDate a {@link java.util.Date} object.
-	 */
-	public void setModifiedDate(Date modifiedDate) {
-		this.modifiedDate = modifiedDate;
-	}
 	
 
 	/** {@inheritDoc} */
