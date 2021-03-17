@@ -230,7 +230,7 @@ public class ProductVersionService2IT extends PLMBaseTestCase {
 	/**
 	 * Test check out check in.
 	 */
-	@Test
+	//@Test
 	public void testCheckOutCheckInValidProduct() {
 
 		logger.info("testCheckOutCheckInValidProduct");
