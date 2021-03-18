@@ -476,6 +476,15 @@ public class EntityTplServiceImpl implements EntityTplService {
 							}
 						}
 					}
+					
+					// synchronize aspects
+					// copy missing aspects
+					Set<QName> aspects = nodeService.getAspects(tplNodeRef);
+					for (QName aspect : aspects) {
+						if (!nodeService.hasAspect(entityNodeRef, aspect) && !BeCPGModel.ASPECT_ENTITY_TPL.isMatch(aspect)) {
+							nodeService.addAspect(entityNodeRef, aspect, null);
+						}
+					}
 
 				});
 			} catch (Exception e) {
