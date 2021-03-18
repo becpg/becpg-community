@@ -59,13 +59,11 @@ public class AlfrescoRepositoryCacheIT extends PLMBaseTestCase {
 			 
 			 assertEquals( name + " - Cached Spec 2", cachedProductSpec.getProductSpecifications().get(0).getName());
 			
-			 //TODO not working 
-			 // nodeService.setProperty(productSpecificationNodeRef2, ContentModel.PROP_NAME, name + " - Cached Spec 2 bis");
+			 nodeService.setProperty(productSpecificationNodeRef2, ContentModel.PROP_NAME, name + " - Cached Spec 2 bis");
+			 	 
+			 cachedProductSpec = (ProductSpecificationData) alfrescoRepository.findOne(productSpecificationNodeRef1);
 			 
-			 
-			 //cachedProductSpec = (ProductSpecificationData) alfrescoRepository.findOne(productSpecificationNodeRef1);
-			 
-			 //assertEquals( name + " - Cached Spec 2 bis", cachedProductSpec.getProductSpecifications().get(0).getName());
+			 assertEquals( name + " - Cached Spec 2 bis", cachedProductSpec.getProductSpecifications().get(0).getName());
 			 
 			
 			return null;
