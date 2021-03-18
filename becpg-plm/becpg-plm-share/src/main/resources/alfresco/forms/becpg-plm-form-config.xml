@@ -433,6 +433,11 @@
 						label-id="becpg.forms.set.dates.label" parent="publicationTab"
 						template="/org/alfresco/components/form/2-column-set.ftl" />
 
+					<set id="branchTab" label-id="becpg.forms.set.branch.label" />
+
+					<set id="branch" appearance="bordered-panel" label-id="becpg.forms.set.branch.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" parent="branchTab" />
+
 					<!-- Main info -->
 					<field id="cm:name" set="mainInfo" />
 					<field id="cm:title" set="mainInfo" label-id="becpg.forms.field.tradeName">
@@ -909,7 +914,6 @@
 					<field id="gs1:endAvailabilityDateTime" set="datesPanel" />
 					<field id="gs1:publicationDate" help-id="becpg.forms.help.gs1.publicationDate"  set="datesPanel" />
 
-					<set id="branch" appearance="bordered-panel" label-id="becpg.forms.set.branch.label" />
 					<field id="bcpg:autoMergeDate" set="branch" />
 				    <field id="bcpg:autoMergeTo" set="branch" >
 				    	<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
