@@ -775,6 +775,7 @@
 			</associations>
 
 			<mandatory-aspects>
+				<aspect>bcpg:entityTplRefAspect</aspect>
 				<aspect>bcpg:codeAspect</aspect>
 				<aspect>bcpg:entityListsAspect</aspect>
 			</mandatory-aspects>
