@@ -274,8 +274,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			}
 
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			//TODO Test is has composition instead 
-			if (formulatedProduct instanceof RawMaterialData) {
+			
+			
+			if (formulatedProduct instanceof RawMaterialData || !formulatedProduct.hasCompoListEl()) {
 				compoList.add(new CompoListDataItem(null, null, 1d, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, formulatedProduct.getNodeRef()));
 			} else {
 				compoList = formulatedProduct.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()));
