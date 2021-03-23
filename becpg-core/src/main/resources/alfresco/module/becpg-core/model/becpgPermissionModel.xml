@@ -53,7 +53,8 @@
       </permissionGroup>
       
        <permissionGroup name="SiteBranchManager" allowFullControl="false" expose="true">
-         <includePermissionGroup permissionGroup="SiteConsumer" type="st:site" />
+         <includePermissionGroup permissionGroup="Consumer" type="cm:cmobject" />
+         <includePermissionGroup permissionGroup="ReadPermissions" type="sys:base" />
          <includePermissionGroup permissionGroup="MergeEntity" type="bcpg:entityV2" />
       </permissionGroup>
       
