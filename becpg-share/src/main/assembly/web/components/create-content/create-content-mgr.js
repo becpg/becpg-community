@@ -45,6 +45,7 @@
       /* Decoupled event listeners */
       YAHOO.Bubbling.on("formContentReady", this.onFormContentReady, this);
       YAHOO.Bubbling.on("beforeFormRuntimeInit", this.onBeforeFormRuntimeInit, this);
+      YAHOO.Bubbling.on("afterFormRuntimeInit", this.onAfterFormRuntimeInit, this);
       YAHOO.Bubbling.on("formBeforeSubmit", this.onFormBeforeSubmit, this);
       
       
@@ -89,15 +90,25 @@
        */
       onFormContentReady: function CreateContentMgr_onFormContentReady(layer, args)
       {
+	
          // change the default 'Submit' label to be 'Save'
-         var submitButton = args[1].buttons.submit;
-         submitButton.set("label", this.msg("button.create"));
+         this.submitButton = args[1].buttons.submit;
+         this.submitButton.set("label", this.msg("button.create"));
          
          // add a handler to the cancel button
-         var cancelButton = args[1].buttons.cancel;
-         cancelButton.addListener("click", this.onCancelButtonClick, null, this);
+         this.cancelButton = args[1].buttons.cancel;
+         this.cancelButton.addListener("click", this.onCancelButtonClick, null, this);
       },
-      
+
+      /**
+       * Event handler called when the "afterFormRuntimeInit" event is received
+       */
+      onAfterFormRuntimeInit: function CreateContentMgr_onAfterFormRuntimeInit(layer, args)
+      {
+         this.formruntime = args[1].runtime;
+         this.formruntime.setAsReusable(false);
+      },
+
       /**
        * Event handler called when the "beforeFormRuntimeInit" event is received
        */
@@ -179,10 +190,14 @@
        */
       onFormBeforeSubmit: function CreateContentMgr_onFormBeforeSubmit(type, args)
       {
-    	  Alfresco.util.PopupManager.displayMessage({
+		if(this.submitButton){
+			this.submitButton.set('disabled',true);
+		}
+	
+    	 Alfresco.util.PopupManager.displayMessage({
 	            text: this.msg("message.create.please-wait"),
 	            displayTime: 0
-	         });
+	        });
       },
       
       /**
