@@ -221,12 +221,14 @@ public class ProjectListExtractor extends ActivityListExtractor {
 
 		if (favorites != null) {
 			for (String favorite : favorites.split(",")) {
+				if(favorite!=null && !favorite.isBlank()) {
 				try {
 					ret.add(new NodeRef(favorite));
 				} catch (MalformedNodeRefException e) {
 					logger.warn("Favorite nodeRef is malformed : " + favorite);
 				}
 			}
+		}
 		}
 		return ret;
 	}
