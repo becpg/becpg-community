@@ -25,6 +25,7 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteParams;
+import io.opencensus.common.Scope;
 
 /**
  * Update entity with POST xml
@@ -37,14 +38,14 @@ public class UpdateEntityDataWebScript extends AbstractEntityWebScript {
 	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
+		try (Scope scope = tracer.spanBuilder("/remote/post/data").startScopedSpan()) {
+			NodeRef entityNodeRef = findEntity(req);
 
-		NodeRef entityNodeRef = findEntity(req);
+			logger.debug("Update entity: " + entityNodeRef);
 
-		logger.debug("Update entity: " + entityNodeRef);
-
-		RemoteEntityFormat format = getFormat(req);
-		remoteEntityService.addOrUpdateEntityData(entityNodeRef, req.getContent().getInputStream(), new RemoteParams( format));
-		sendOKStatus(entityNodeRef, resp, format);
-
+			RemoteEntityFormat format = getFormat(req);
+			remoteEntityService.addOrUpdateEntityData(entityNodeRef, req.getContent().getInputStream(), new RemoteParams(format));
+			sendOKStatus(entityNodeRef, resp, format);
+		}
 	}
 }

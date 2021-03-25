@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.alfresco.repo.dictionary.CompiledModelsCache;
 import org.alfresco.repo.dictionary.DictionaryComponent;
 import org.alfresco.repo.dictionary.DictionaryDAO;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;

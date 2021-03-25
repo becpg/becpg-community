@@ -106,7 +106,7 @@ public class FormulationChain<T extends FormulatedEntity> {
 	 * @param context a T object.
 	 * @throws fr.becpg.repo.formulation.FormulateException if any.
 	 */
-	public void executeChain(T context) throws FormulateException {
+	public void executeChain(T context)  {
 		if (handlers != null && !handlers.isEmpty()) {
 			handlers.get(0).start(context);
 		}

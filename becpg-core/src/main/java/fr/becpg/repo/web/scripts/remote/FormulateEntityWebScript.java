@@ -30,6 +30,7 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationExecutor;
 import fr.becpg.repo.formulation.FormulationExecutor.FormulationExecutorState;
+import io.opencensus.common.Scope;
 
 /**
  * Formulate entity
@@ -53,32 +54,32 @@ public class FormulateEntityWebScript extends AbstractEntityWebScript {
 	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
+		try (Scope scope = tracer.spanBuilder("/remote/formulate").startScopedSpan()) {
+			NodeRef entityNodeRef = findEntity(req);
 
-		NodeRef entityNodeRef = findEntity(req);
- 
-		logger.debug("Formulate entity: " + entityNodeRef);
+			logger.debug("Formulate entity: " + entityNodeRef);
 
-		try {
-			FormulationExecutorState state = formulationExecutor.execute(entityNodeRef, false);
+			try {
+				FormulationExecutorState state = formulationExecutor.execute(entityNodeRef, false);
 
-			if (FormulationExecutorState.SUCCESS.equals(state)) {
-				sendOKStatus(entityNodeRef, resp, getFormat(req));
+				if (FormulationExecutorState.SUCCESS.equals(state)) {
+					sendOKStatus(entityNodeRef, resp, getFormat(req));
+				}
+
+			} catch (FormulateException e) {
+				throw new WebScriptException(e.getMessage(), e);
+			} catch (AccessDeniedException e) {
+				throw new WebScriptException(Status.STATUS_UNAUTHORIZED, "You have no right to see this node");
+			} catch (SocketException e1) {
+
+				// the client cut the connection - our mission was accomplished
+				// apart from a little error message
+				if (logger.isInfoEnabled()) {
+					logger.info("Client aborted stream read:\n\tcontent", e1);
+				}
+
 			}
-
-		} catch (FormulateException e) {
-			throw new WebScriptException(e.getMessage(),e);
-		} catch (AccessDeniedException e) {
-			throw new WebScriptException(Status.STATUS_UNAUTHORIZED, "You have no right to see this node");
-		} catch (SocketException e1) {
-
-			// the client cut the connection - our mission was accomplished
-			// apart from a little error message
-			if (logger.isInfoEnabled()) {
-				logger.info("Client aborted stream read:\n\tcontent", e1);
-			}
-
 		}
-
 	}
 
 }
