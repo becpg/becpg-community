@@ -13,6 +13,7 @@
 -- the rest of the values used in audit can be deleted from alf_prop_string_value, alf_prop_serializable_value, alf_prop_double_value.
 
 -- create temp tables
+
 create table temp_prop_root_ref
 (
     id BIGINT NOT NULL,
