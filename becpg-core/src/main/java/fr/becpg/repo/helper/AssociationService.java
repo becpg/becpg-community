@@ -126,4 +126,6 @@ public interface AssociationService {
 	
 	void removeChildCachedAssoc(NodeRef nodeRef, QName qName);
 	
+	void removeAllCacheAssocs(NodeRef nodeRef);
+	
 }

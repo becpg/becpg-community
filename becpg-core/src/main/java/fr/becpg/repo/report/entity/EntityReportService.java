@@ -33,7 +33,7 @@ import fr.becpg.report.client.ReportFormat;
 public interface EntityReportService {
 
 	
-	void generateVersionReports(NodeRef entityNodeRef, NodeRef versionNodeRef);
+	void generateReports(NodeRef nodeRefFrom, NodeRef nodeRefTo);
 	
 	/**
 	 * <p>generateReports.</p>

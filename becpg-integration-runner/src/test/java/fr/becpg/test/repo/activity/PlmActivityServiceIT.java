@@ -9,10 +9,7 @@ import java.util.Map;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.forum.CommentService;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.repo.version.VersionBaseModel;
-import org.alfresco.service.cmr.coci.CheckOutCheckInService;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.version.Version;
 import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -54,9 +51,6 @@ public class PlmActivityServiceIT extends AbstractFinishedProductTest {
 
 	@Autowired
 	private EntityVersionService entityVersionService;
-
-	@Autowired
-	private CheckOutCheckInService checkOutCheckInService;
 
 	protected NodeRef getActivityList(NodeRef productNodeRef) {
 		NodeRef listNodeRef = null;
@@ -189,7 +183,10 @@ public class PlmActivityServiceIT extends AbstractFinishedProductTest {
 		assertEquals("Check create Activity", 2, getActivities(productNodeRef, null).size());
 
 		final NodeRef workingCopyNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			return checkOutCheckInService.checkout(productNodeRef);
+			
+			NodeRef destNodeRef = nodeService.getPrimaryParent(productNodeRef).getParentRef();
+
+			return entityVersionService.createBranch(productNodeRef, destNodeRef);
 
 		}, false, true);
 
@@ -197,14 +194,11 @@ public class PlmActivityServiceIT extends AbstractFinishedProductTest {
 		assertEquals("Check if No Activity on working copy", 0, getActivities(workingCopyNodeRef, null).size());
 
 		final NodeRef newRawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			Map<String, Serializable> versionProperties = new HashMap<>();
-			versionProperties.put(Version.PROP_DESCRIPTION, "This is a test version");
-			versionProperties.put(VersionBaseModel.PROP_VERSION_TYPE, VersionType.MAJOR);
-			return checkOutCheckInService.checkin(workingCopyNodeRef, versionProperties);
+			return entityVersionService.mergeBranch(workingCopyNodeRef, productNodeRef, VersionType.MAJOR, "This is a test version");
 		}, false, true);
 
 		// Version activity
-		assertEquals("Check version activity", 3, getActivities(newRawMaterialNodeRef, null).size());
+		assertEquals("Check version activity", entityVersionService.isV2Service() ? 4 : 3, getActivities(newRawMaterialNodeRef, null).size());
 
 	}
 
@@ -237,7 +231,7 @@ public class PlmActivityServiceIT extends AbstractFinishedProductTest {
 		}, false, true);
 
 		// Merge activities
-		assertEquals("Check Merge Activities", 4, getActivities(productNodeRef, null).size());
+		assertEquals("Check Merge Activities", entityVersionService.isV2Service() ? 5 : 4, getActivities(productNodeRef, null).size());
 
 	}
 

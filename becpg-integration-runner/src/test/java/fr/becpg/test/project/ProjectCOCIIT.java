@@ -23,15 +23,15 @@ import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.rule.RuntimeRuleService;
-import org.alfresco.service.cmr.coci.CheckOutCheckInService;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.version.Version;
+import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.project.data.ProjectData;
 
 /**
@@ -45,7 +45,7 @@ public class ProjectCOCIIT extends AbstractProjectTestCase {
 	private static final Log logger = LogFactory.getLog(ProjectCOCIIT.class);
 
 	@Autowired
-	private CheckOutCheckInService checkOutCheckInService;
+	private EntityVersionService entityVersionService;
 
 	@Autowired
 	private RuntimeRuleService ruleService;
@@ -61,7 +61,9 @@ public class ProjectCOCIIT extends AbstractProjectTestCase {
 
 			// Check out
 			logger.info("Check out project " + projectTplNodeRef + ruleService.getSavedRuleFolderAssoc(projectTplNodeRef));
-			NodeRef workingCopyNodeRef = checkOutCheckInService.checkout(projectTplNodeRef);
+			
+			NodeRef destNodeRef = nodeService.getPrimaryParent(projectTplNodeRef).getParentRef();
+			NodeRef workingCopyNodeRef = entityVersionService.createBranch(projectTplNodeRef, destNodeRef);
 
 			ProjectData workingCopyData = (ProjectData) alfrescoRepository.findOne(workingCopyNodeRef);
 			assertTrue(workingCopyData.getDeliverableList().get(0).getTasks().get(0).equals(workingCopyData.getTaskList().get(0).getNodeRef()));
@@ -71,9 +73,7 @@ public class ProjectCOCIIT extends AbstractProjectTestCase {
 
 			// Check in
 			logger.info("Check in project " + workingCopyNodeRef + ruleService.getSavedRuleFolderAssoc(workingCopyNodeRef));
-			Map<String, Serializable> versionProperties = new HashMap<>();
-			versionProperties.put(Version.PROP_DESCRIPTION, "This is a test version");
-			NodeRef newProjectNodeRef = checkOutCheckInService.checkin(workingCopyNodeRef, versionProperties);
+			NodeRef newProjectNodeRef = entityVersionService.mergeBranch(workingCopyNodeRef, projectTplNodeRef, VersionType.MAJOR, "This is a test version");
 
 			logger.info("Check in project done " + newProjectNodeRef + ruleService.getSavedRuleFolderAssoc(newProjectNodeRef));
 
