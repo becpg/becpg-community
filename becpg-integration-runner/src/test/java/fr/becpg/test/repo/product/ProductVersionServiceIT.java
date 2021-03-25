@@ -92,6 +92,10 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 	@Test
 	public void testCheckOutCheckIn() throws InterruptedException {
 
+		if (entityVersionService.isV2Service()) {
+			return;
+		}
+		
 		final ProductUnit productUnit = ProductUnit.L;
 		final int valueAdded = 1;
 
@@ -211,6 +215,10 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 	@Test
 	public void testCancelCheckOut() {
 
+		if (entityVersionService.isV2Service()) {
+			return;
+		}
+		
 		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper()
 				.doInTransaction(() -> BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test report"), false, true);
 
@@ -284,6 +292,10 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 	@Test
 	public void testGetVersionHistory() {
 
+		if (entityVersionService.isV2Service()) {
+			return;
+		}
+		
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			NodeRef rawMaterialNodeRef = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test report");
@@ -316,6 +328,10 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 	@Test
 	public void testCheckOutCheckInValidProduct() {
 
+		if (entityVersionService.isV2Service()) {
+			return;
+		}
+		
 		logger.info("testCheckOutCheckInValidProduct");
 
 		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -400,7 +416,11 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 	 */
 	@Test
 	public void testCheckOutCheckInVariant() {
-
+		
+		if (entityVersionService.isV2Service()) {
+			return;
+		}
+		
 		logger.info("testVariant");
 
 		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -503,6 +523,10 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 	@Test
 	public void testCheckOutCheckInAssociations() {
 
+		if (entityVersionService.isV2Service()) {
+			return;
+		}
+		
 		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			logger.debug("Add versionnable aspect");
 
@@ -587,6 +611,10 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 	@Test
 	public void testBranches() throws InterruptedException {
 
+		if (entityVersionService.isV2Service()) {
+			return;
+		}
+		
 		final ProductUnit productUnit = ProductUnit.L;
 		final int valueAdded = 1;
 
@@ -686,6 +714,10 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 	@Test
 	public void testDeleteVersion() throws InterruptedException {
 
+		if (entityVersionService.isV2Service()) {
+			return;
+		}
+		
 		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			/*-- Create raw material --*/
@@ -800,6 +832,10 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 	@Test
 	public void testPurgeVersion() throws InterruptedException {
 
+		if (entityVersionService.isV2Service()) {
+			return;
+		}
+		
 		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			/*-- Create raw material --*/

@@ -84,7 +84,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  *
  * @version $Id: $Id
  */
-@Service("entityVersionServiceV2")
+@Service("entityVersionService")
 public class EntityVersionServiceImpl2 implements EntityVersionService {
 
 	private static final String NOT_SUPPORTED = "Not supported";
