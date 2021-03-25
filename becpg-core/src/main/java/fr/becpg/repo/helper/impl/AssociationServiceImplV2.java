@@ -711,7 +711,8 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		childsAssocsCache.remove(new AssociationCacheRegion(nodeRef, qName));
 	}
 
-	private void removeAllCacheAssocs(NodeRef nodeRef) {
+	@Override
+	public void removeAllCacheAssocs(NodeRef nodeRef) {
 
 		Map<QName, Set<NodeRef>> assocs = new HashMap<>();
 

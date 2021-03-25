@@ -591,7 +591,9 @@ public class ECOIT extends AbstractFinishedProductTest {
 			return null;
 
 		}, false, true);
-
+		
+		waitForSolr();
+		
 		logger.info("APTER");
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -669,6 +671,8 @@ public class ECOIT extends AbstractFinishedProductTest {
 
 		}, false, true);
 
+		waitForSolr();
+		
 		logger.info("APTER 2");
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 

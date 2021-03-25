@@ -11,14 +11,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.service.cmr.coci.CheckOutCheckInService;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.version.Version;
+import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.QName;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.model.PLMModel;
+import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
@@ -36,10 +36,10 @@ import fr.becpg.test.PLMBaseTestCase;
 public class AssociationServiceIT extends PLMBaseTestCase {
 
 	@Autowired
-	private CheckOutCheckInService checkOutCheckInService;
-
-	@Autowired
 	private AssociationService associationService;
+	
+	@Autowired
+	private EntityVersionService entityVersionService;
 
 	/**
 	 * Test check out check in.
@@ -89,15 +89,14 @@ public class AssociationServiceIT extends PLMBaseTestCase {
 			assertEquals("", 1, targetNodeRefs.size());
 
 			// Check out
-			NodeRef workingCopyNodeRef = checkOutCheckInService.checkout(rawMaterialNodeRef);
+			NodeRef destNodeRef = nodeService.getPrimaryParent(rawMaterialNodeRef).getParentRef();
+			NodeRef workingCopyNodeRef = entityVersionService.createBranch(rawMaterialNodeRef, destNodeRef);
 
 			// add new Supplier
 			associationService.update(workingCopyNodeRef, PLMModel.ASSOC_SUPPLIERS, supplierNodeRefs);
 
 			// check-in
-			Map<String, Serializable> versionProperties = new HashMap<>();
-			versionProperties.put(Version.PROP_DESCRIPTION, "This is a test version");
-			checkOutCheckInService.checkin(workingCopyNodeRef, versionProperties);
+			entityVersionService.mergeBranch(workingCopyNodeRef, rawMaterialNodeRef, VersionType.MAJOR, "This is a test version");
 
 			// check
 			targetNodeRefs = associationService.getTargetAssocs(rawMaterialNodeRef, PLMModel.ASSOC_SUPPLIERS);
@@ -111,13 +110,14 @@ public class AssociationServiceIT extends PLMBaseTestCase {
 			assertEquals("Assert 2", 2, targetNodeRefs.size());
 
 			// Check out
-			workingCopyNodeRef = checkOutCheckInService.checkout(rawMaterialNodeRef);
+			destNodeRef = nodeService.getPrimaryParent(rawMaterialNodeRef).getParentRef();
+			workingCopyNodeRef = entityVersionService.createBranch(rawMaterialNodeRef, destNodeRef);
 
 			// remove Suppliers
 			associationService.update(workingCopyNodeRef, PLMModel.ASSOC_SUPPLIERS, new ArrayList<NodeRef>());
 
 			// check-in
-			checkOutCheckInService.checkin(workingCopyNodeRef, versionProperties);
+			entityVersionService.mergeBranch(workingCopyNodeRef, rawMaterialNodeRef, VersionType.MAJOR, "This is a test version");
 
 			// check
 			targetNodeRefs = associationService.getTargetAssocs(rawMaterialNodeRef, PLMModel.ASSOC_SUPPLIERS);
