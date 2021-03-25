@@ -15,7 +15,12 @@
          <#else>
            <span class="viewmode-value">
 			   <#list values as value>
-			      <img  title="${msg("locale.name.${value}")}" src="${url.context}/res/components/images/flags/${value}.png" />
+			     <#if value?contains("_") >
+				    <#assign localeshort = value?substring(3,5)?lower_case >
+				 <#else>
+					<#assign localeshort = value?substring(0,2)?lower_case >
+			     </#if>  
+			      <img  title="${msg("locale.name.${value}")}" src="${url.context}/res/components/images/flags/${localeshort}.png" />
 			  </#list>
 			</span>
          </#if>
