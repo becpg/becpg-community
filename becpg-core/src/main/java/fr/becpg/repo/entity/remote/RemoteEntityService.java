@@ -104,6 +104,8 @@ public interface RemoteEntityService {
 	/** Constant <code>ATTR_PARENT_ID="parent"</code> */
 	String ATTR_PARENT_ID = "parent";
 	
+	String ATTR_VERSION = "version";
+	
 	String ELEM_CONTENT = "content";
 
 	/**

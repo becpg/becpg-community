@@ -36,6 +36,7 @@ import fr.becpg.repo.activity.extractor.ActivityListExtractor;
 import fr.becpg.repo.entity.EntityFormatService;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
+import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 
@@ -72,6 +73,8 @@ public class JsonVersionExtractor extends ActivityListExtractor {
 	private static final String ATTRIBUTES = "attributes";
 	
 	private static final String TYPE = "type";
+	
+	private static final String VERSION = "version";
 	
 	
 	private static final String[] AL_DATA_PROPS = {"datalistType", "charactType", "entityType", "datalistNodeRef", "entityNodeRef", "className", "title", "charactNodeRef" };
@@ -229,18 +232,28 @@ public class JsonVersionExtractor extends ActivityListExtractor {
 		
 		NodeRef nodeRef = new NodeRef("workspace://SpacesStore/" + object.getString("id"));
 		
+		
+		String displayValue = null;
+		
 		if (nodeService.exists(nodeRef)) {
 			QName type = nodeService.getType(nodeRef);
-			ret.put(DISPLAY_VALUE, attributeExtractorService.extractPropName(type, nodeRef));
+			displayValue = attributeExtractorService.extractPropName(type, nodeRef);
 			ret.put(VALUE, nodeRef.toString());
 		} else {
 			if (object.has(BeCPGModel.PROP_CHARACT_NAME.toPrefixString(namespaceService))) {
-				ret.put(DISPLAY_VALUE, object.getString(BeCPGModel.PROP_CHARACT_NAME.toPrefixString(namespaceService)));
+				displayValue = object.getString(BeCPGModel.PROP_CHARACT_NAME.toPrefixString(namespaceService));
 			} else {
-				ret.put(DISPLAY_VALUE, object.getString(ContentModel.PROP_NAME.toPrefixString(namespaceService)));
+				displayValue = object.getString(ContentModel.PROP_NAME.toPrefixString(namespaceService));
 			}
 		}
 		
+		if (object.has(RemoteEntityService.ATTR_VERSION)) {
+			String versionLabel = (String) object.get(RemoteEntityService.ATTR_VERSION);
+			ret.put(VERSION, versionLabel);
+			displayValue += RepoConsts.VERSION_NAME_DELIMITER + versionLabel;
+		}
+		
+		ret.put(DISPLAY_VALUE, displayValue);
 		ret.put("siteId", SiteHelper.extractSiteId(object.getString("path")));
 		ret.put(METADATA, object.getString(METADATA));
 		

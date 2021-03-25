@@ -214,11 +214,10 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 			try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 				
 				RemoteParams remoteParams = new RemoteParams(RemoteEntityFormat.json_all);
-				remoteParams.setIgnoredFields(Arrays.asList(BeCPGModel.PROP_PARENT_LEVEL));
 				
 				JSONObject jsonParams = new JSONObject();
-				jsonParams.put(RemoteParams.PARAM_APPEND_MLTEXT_CONSTRAINT, "false");
-				jsonParams.put(RemoteParams.PARAM_APPEND_DATALIST_NODEREF, "false");
+				jsonParams.put(RemoteParams.PARAM_APPEND_MLTEXT_CONSTRAINT, false);
+				jsonParams.put(RemoteParams.PARAM_UPDATE_ENTITY_NODEREFS, true);
 				
 				remoteParams.setJsonParams(jsonParams);
 				

@@ -187,30 +187,40 @@ public class EntityReportServiceImpl implements EntityReportService {
 	@Autowired
 	private RuleService ruleService;
 
+	/** {@inheritDoc} */
 	@Override
-	public void generateVersionReports(final NodeRef entityNodeRef, final NodeRef versionNodeRef) {
+	public void generateReports(final NodeRef entityNodeRef) {
+		generateReports(null, entityNodeRef);
+	}
 
-		if (entityNodeRef == null) {
+	@Override
+	public void generateReports(final NodeRef nodeRefFrom, final NodeRef nodeRefTo) {
+		internalGenerateReports(nodeRefFrom != null ? nodeRefFrom : nodeRefTo, nodeRefTo);
+	}
+
+	private void internalGenerateReports(final NodeRef nodeRefFrom, final NodeRef nodeRefTo) {
+
+		if (nodeRefFrom == null) {
 			throw new IllegalArgumentException("nodeRef is null");
 		}
 		
 		L2CacheSupport.doInCacheContext(() -> {
 
 			RunAsWork<Object> actionRunAs = () -> {
-				if (nodeService.exists(entityNodeRef)) {
+				if (nodeService.exists(nodeRefFrom)) {
 					
 					Locale currentLocal = I18NUtil.getLocale();
 					Locale currentContentLocal = I18NUtil.getContentLocale();
 					try {
-						List<NodeRef> newReports = internalGenerateReports(entityNodeRef);
+						List<NodeRef> newReports = getReports(nodeRefFrom);
 
-						updateReportsAssoc(versionNodeRef, newReports);
+						updateReportsAssoc(nodeRefTo, newReports);
 						
 					} finally {
 						I18NUtil.setLocale(currentLocal);
 						I18NUtil.setContentLocale(currentContentLocal);
 						ruleService.enableRules();
-						policyBehaviourFilter.enableBehaviour(entityNodeRef);
+						policyBehaviourFilter.enableBehaviour(nodeRefFrom);
 					}
 				}
 				return true;
@@ -219,39 +229,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 		}, false, true);
 	}
 	
-	/** {@inheritDoc} */
-	@Override
-	public void generateReports(final NodeRef entityNodeRef) {
-
-		if (entityNodeRef == null) {
-			throw new IllegalArgumentException("nodeRef is null");
-		}
-
-		L2CacheSupport.doInCacheContext(() -> {
-
-			RunAsWork<Object> actionRunAs = () -> {
-				if (nodeService.exists(entityNodeRef)) {
-					Locale currentLocal = I18NUtil.getLocale();
-					Locale currentContentLocal = I18NUtil.getContentLocale();
-					try {
-						List<NodeRef> newReports = internalGenerateReports(entityNodeRef);
-						
-						updateReportsAssoc(entityNodeRef, newReports);
-
-					} finally {
-						I18NUtil.setLocale(currentLocal);
-						I18NUtil.setContentLocale(currentContentLocal);
-						ruleService.enableRules();
-						policyBehaviourFilter.enableBehaviour(entityNodeRef);
-					}
-				}
-				return true;
-			};
-			AuthenticationUtil.runAsSystem(actionRunAs);
-		}, false, true);
-	}
-
-	private List<NodeRef> internalGenerateReports(final NodeRef entityNodeRef) {
+	private List<NodeRef> getReports(final NodeRef entityNodeRef) {
 		Locale defaultLocale = MLTextHelper.getNearestLocale(Locale.getDefault());
 
 		I18NUtil.setLocale(defaultLocale);

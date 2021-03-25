@@ -169,24 +169,23 @@ public class EntityReportAsyncGeneratorImpl implements EntityReportAsyncGenerato
 		@Override
 		public void run() {
 			try {
-				if (entityVersionService.isVersion(entityNodeRef) && nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_ENTITY_FORMAT) != null) {
-
-					AuthenticationUtil.runAsSystem(() ->
-
-					transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-
-						entityReportService.generateVersionReports(entityVersionService.extractVersion(entityNodeRef), entityNodeRef);
-						return null;
-
-					}, false, true));
-				} else {
-					transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-						entityReportService.generateReports(entityNodeRef);
-						return null;
-					}, false, true);
-
-				}
-
+				
+				AuthenticationUtil.runAsSystem(() ->
+				
+				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+					
+					NodeRef extractedNode = null;
+					
+					if (entityVersionService.isVersion(entityNodeRef) && nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_ENTITY_FORMAT) != null) {
+						extractedNode = entityVersionService.extractVersion(entityNodeRef);
+					}
+					
+					entityReportService.generateReports(extractedNode, entityNodeRef);
+					
+					return null;
+					
+				}, false, true));
+				
 			} catch (Exception e) {
 
 				logger.error("Unable to generate product reports ", e);

@@ -424,7 +424,7 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 				NodeRef branchFromNodeRef = getBranchFromNodeRef(entityNodeRef);
 				for (Version version : versionHistory.getAllVersions()) {
 					NodeRef entityVersionNodeRef = getEntityVersion(versionAssocs, version);
-					if (entityVersionNodeRef != null) {
+					if (entityVersionNodeRef != null && !nodeService.hasAspect(entityVersionNodeRef, ContentModel.ASPECT_TEMPORARY)) {
 						EntityVersion entityVersion = new EntityVersion(version, entityNodeRef, entityVersionNodeRef, branchFromNodeRef);
 						if (RepoConsts.INITIAL_VERSION.equals(version.getVersionLabel())) {
 							entityVersion.setCreatedDate((Date) nodeService.getProperty(entityNodeRef, ContentModel.PROP_CREATED));
@@ -829,7 +829,14 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 							 * After working copy deletion
 							 */
 							nodeService.setProperty(internalBranchToNodeRef, ContentModel.PROP_NAME, finalBranchName);
-
+							
+							associationService.removeAllCacheAssocs(internalBranchToNodeRef);
+							
+							if (nodeService.hasAspect(internalBranchToNodeRef, BeCPGModel.ASPECT_EFFECTIVITY)) {
+								nodeService.setProperty(internalBranchToNodeRef, BeCPGModel.PROP_START_EFFECTIVITY, new Date());
+								nodeService.removeProperty(internalBranchToNodeRef, BeCPGModel.PROP_END_EFFECTIVITY);
+							}
+							
 							return internalBranchToNodeRef;
 
 						} finally {
@@ -893,11 +900,11 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 					nodeService.setProperty(entityNodeRef, BeCPGModel.PROP_END_EFFECTIVITY, newEffectivity);
 				}
 
-				// extract the JSON data to the current node
-				String jsonData = entityFormatService.extractEntityData(entityNodeRef, EntityFormat.JSON);
-
-				// create the version node : it contains the JSON data
+				// create the version node
 				Version newVersion = versionService.createVersion(entityNodeRef, versionProperties);
+				
+				// extract the JSON data of the current node
+				String jsonData = entityFormatService.extractEntityData(entityNodeRef, EntityFormat.JSON);
 
 				NodeRef versionNode = new NodeRef(StoreRef.PROTOCOL_WORKSPACE, Version2Model.STORE_ID, newVersion.getFrozenStateNodeRef().getId());
 				
@@ -913,8 +920,6 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 				exporterService.exportView(new VersionExporter(entityNodeRef, versionNode, dbNodeService), crawlerParameters,
 						null);
 				
-				// TODO Ici ne pas stocker les rapports
-				// le regénéré en async et le stocker dans le versionStore
 				entityFormatService.setEntityFormat(versionNode, EntityFormat.JSON);
 				entityFormatService.setEntityData(versionNode, jsonData);
 				

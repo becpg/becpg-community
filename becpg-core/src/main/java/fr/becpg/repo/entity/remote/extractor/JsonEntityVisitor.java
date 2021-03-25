@@ -45,10 +45,12 @@ import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.Path;
+import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.util.GUID;
 import org.apache.commons.codec.binary.Base64InputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -197,13 +199,31 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 					&& Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_ERP_CODE, Boolean.TRUE))) {
 				visitPropValue(BeCPGModel.PROP_ERP_CODE, entity, properties.get(BeCPGModel.PROP_ERP_CODE), context);
 			}
-
+			
+			if (nodeService.hasAspect(nodeRef,BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
+				entity.put(RemoteEntityService.ATTR_VERSION, nodeService.getProperty(nodeRef, BeCPGModel.PROP_VERSION_LABEL));
+			} else if (nodeService.hasAspect(nodeRef, ContentModel.ASPECT_VERSIONABLE)) {
+				entity.put(RemoteEntityService.ATTR_VERSION, nodeService.getProperty(nodeRef, ContentModel.PROP_VERSION_LABEL));
+			}
+			
 			if ((nodeRef != null) && Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_NODEREF, Boolean.TRUE))) {
 
-				if (JsonVisitNodeType.DATALIST.equals(type)) {
-					if (Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_DATALIST_NODEREF, Boolean.TRUE))) {
-						entity.put(RemoteEntityService.ATTR_ID, nodeRef.getId());
+				String nodePath = nodeService.getPath(nodeRef).toPrefixString(namespaceService);
+				
+				if (Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_UPDATE_ENTITY_NODEREFS, Boolean.FALSE)) && nodePath.contains(context.getEntityPath(nodeService, namespaceService))) {
+					
+					NodeRef currentNode = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, nodeRef.getId());
+					
+					NodeRef newNode = null;
+					
+					if (context.getCache().containsKey(currentNode)) {
+						newNode = context.getCache().get(currentNode);
+					} else {
+						newNode = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, GUID.generate());
+						context.getCache().put(currentNode, newNode);
 					}
+					
+					entity.put(RemoteEntityService.ATTR_ID, newNode.getId());
 				} else {
 					entity.put(RemoteEntityService.ATTR_ID, nodeRef.getId());
 				}
