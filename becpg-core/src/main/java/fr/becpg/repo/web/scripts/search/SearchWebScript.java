@@ -1,5 +1,5 @@
 /*
- * 
+ *
  */
 package fr.becpg.repo.web.scripts.search;
 
@@ -31,6 +31,9 @@ import fr.becpg.repo.helper.extractors.LinkDataExtractor;
 import fr.becpg.repo.helper.extractors.NodeDataExtractor;
 import fr.becpg.repo.helper.extractors.WikiDataExtractor;
 import fr.becpg.repo.web.scripts.WebscriptHelper;
+import io.opencensus.common.Scope;
+import io.opencensus.trace.Tracer;
+import io.opencensus.trace.Tracing;
 
 /**
  * Webscript that send the result of a search
@@ -40,14 +43,14 @@ import fr.becpg.repo.web.scripts.WebscriptHelper;
  */
 public class SearchWebScript extends AbstractSearchWebScript {
 
-	
 	private static final Log logger = LogFactory.getLog(SearchWebScript.class);
+
+	private static final Tracer tracer = Tracing.getTracer();
 
 	private ServiceRegistry serviceRegistry;
 
 	private AttributeExtractorService attributeExtractorService;
 
-	
 	/**
 	 * <p>Setter for the field <code>attributeExtractorService</code>.</p>
 	 *
@@ -56,7 +59,6 @@ public class SearchWebScript extends AbstractSearchWebScript {
 	public void setAttributeExtractorService(AttributeExtractorService attributeExtractorService) {
 		this.attributeExtractorService = attributeExtractorService;
 	}
-
 
 	/**
 	 * <p>Setter for the field <code>serviceRegistry</code>.</p>
@@ -71,61 +73,57 @@ public class SearchWebScript extends AbstractSearchWebScript {
 	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
+		try (Scope scope = tracer.spanBuilder("/internal/search").startScopedSpan()) {
 
-
-		StopWatch watch = null;
-		if (logger.isDebugEnabled()) {
-			watch = new StopWatch();
-			watch.start();
-			logger.debug("SearchWebScript executeImpl()");
-		}
-		
-		Integer maxResults = getNumParameter(req, PARAM_MAX_RESULTS);
-		Integer page = getNumParameter(req, PARAM_PAGE);
-		Integer pageSize = getNumParameter(req, PARAM_PAGE_SIZE);
-		List<String> metadataFields =  WebscriptHelper.extractMetadataFields(req);
-		
-		try {
-			List<NodeRef> results = doSearch(req, maxResults);
-			
-			if (page == null) {
-				page = 1;
-			}
-
-			if (pageSize == null) {
-				pageSize = 25;
-			}
-			int size = results.size();
-
-			// Pagination
-			if (size > 0) {
-				results = results
-						.subList(Math.max((page - 1) * pageSize, 0), Math.min(page * pageSize, size));
-			}
-
-			JSONObject ret = processResults(results, metadataFields);
-			ret.put("page", page);
-			ret.put("pageSize", pageSize);
-			ret.put("fullListSize", size);
-			
-			res.setContentType("application/json");
-            res.setContentEncoding("UTF-8");
-			res.getWriter().write(ret.toString(3));
-			
-			
-
-		} catch (JSONException e) {
-			throw new WebScriptException("Unable to serialize JSON");
-		} finally {
+			StopWatch watch = null;
 			if (logger.isDebugEnabled()) {
-				watch.stop();
-				logger.debug(   "SearchWebScript execute in "
-						+ watch.getTotalTimeSeconds() +"s");
+				watch = new StopWatch();
+				watch.start();
+				logger.debug("SearchWebScript executeImpl()");
+			}
+
+			Integer maxResults = getNumParameter(req, PARAM_MAX_RESULTS);
+			Integer page = getNumParameter(req, PARAM_PAGE);
+			Integer pageSize = getNumParameter(req, PARAM_PAGE_SIZE);
+			List<String> metadataFields = WebscriptHelper.extractMetadataFields(req);
+
+			try {
+				List<NodeRef> results = doSearch(req, maxResults);
+
+				if (page == null) {
+					page = 1;
+				}
+
+				if (pageSize == null) {
+					pageSize = 25;
+				}
+				int size = results.size();
+
+				// Pagination
+				if (size > 0) {
+					results = results.subList(Math.max((page - 1) * pageSize, 0), Math.min(page * pageSize, size));
+				}
+
+				JSONObject ret = processResults(results, metadataFields);
+				ret.put("page", page);
+				ret.put("pageSize", pageSize);
+				ret.put("fullListSize", size);
+
+				res.setContentType("application/json");
+				res.setContentEncoding("UTF-8");
+				res.getWriter().write(ret.toString(3));
+
+			} catch (JSONException e) {
+				throw new WebScriptException("Unable to serialize JSON");
+			} finally {
+				if (logger.isDebugEnabled()) {
+					watch.stop();
+					logger.debug("SearchWebScript execute in " + watch.getTotalTimeSeconds() + "s");
+				}
 			}
 		}
 
 	}
-
 
 	private Integer getNumParameter(WebScriptRequest req, String paramName) {
 		String param = req.getParameter(paramName);
@@ -141,13 +139,13 @@ public class SearchWebScript extends AbstractSearchWebScript {
 		return ret;
 	}
 
-	private JSONObject processResults(List<NodeRef> results, List<String> metadataFields)
-			throws InvalidNodeRefException, JSONException {
+	private JSONObject processResults(List<NodeRef> results, List<String> metadataFields) throws InvalidNodeRefException, JSONException {
 
 		JSONArray items = new JSONArray();
 
 		for (NodeRef nodeRef : results) {
-			if (serviceRegistry.getNodeService().exists(nodeRef) && serviceRegistry.getPermissionService().hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED) {
+			if (serviceRegistry.getNodeService().exists(nodeRef)
+					&& (serviceRegistry.getPermissionService().hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED)) {
 				items.put(new JSONObject(getExtractor(nodeRef, metadataFields).extract(nodeRef)));
 			}
 		}
@@ -158,7 +156,6 @@ public class SearchWebScript extends AbstractSearchWebScript {
 
 	}
 
-
 	private NodeDataExtractor getExtractor(NodeRef nodeRef, List<String> metadataFields) {
 
 		String path = serviceRegistry.getNodeService().getPath(nodeRef).toPrefixString(namespaceService);
@@ -166,22 +163,22 @@ public class SearchWebScript extends AbstractSearchWebScript {
 		String container = SiteHelper.extractContainerId(path);
 		if (container != null) {
 			switch (container) {
-				case "blog":
-					return new BlogDataExtractor(serviceRegistry, attributeExtractorService);
-				case "discussions":
-					return new ForumDataExtractor(serviceRegistry, attributeExtractorService);
-				case "calendar":
-					return new CalendarDataExtractor(serviceRegistry, attributeExtractorService);
-				case "wiki":
-					return new WikiDataExtractor(serviceRegistry, attributeExtractorService);
-				case "links":
-					return new LinkDataExtractor(serviceRegistry, attributeExtractorService);
-				case "dataLists":
-					return new DataListDataExtractor(serviceRegistry, attributeExtractorService);
+			case "blog":
+				return new BlogDataExtractor(serviceRegistry, attributeExtractorService);
+			case "discussions":
+				return new ForumDataExtractor(serviceRegistry, attributeExtractorService);
+			case "calendar":
+				return new CalendarDataExtractor(serviceRegistry, attributeExtractorService);
+			case "wiki":
+				return new WikiDataExtractor(serviceRegistry, attributeExtractorService);
+			case "links":
+				return new LinkDataExtractor(serviceRegistry, attributeExtractorService);
+			case "dataLists":
+				return new DataListDataExtractor(serviceRegistry, attributeExtractorService);
 			}
 		}
 
-		return new ContentDataExtractor(metadataFields, serviceRegistry,attributeExtractorService);
+		return new ContentDataExtractor(metadataFields, serviceRegistry, attributeExtractorService);
 
 	}
 

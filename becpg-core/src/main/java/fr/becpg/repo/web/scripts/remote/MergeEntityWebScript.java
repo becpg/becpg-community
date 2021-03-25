@@ -28,6 +28,7 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.repo.entity.version.EntityVersionService;
+import io.opencensus.common.Scope;
 
 /**
  * Create entity branch
@@ -54,82 +55,83 @@ public class MergeEntityWebScript extends AbstractEntityWebScript {
 	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
-
-		NodeRef entityNodeRef = findEntity(req);
-
-		if (logger.isDebugEnabled()) {
-			logger.debug("Merge entity: " + entityNodeRef);
-		}
-
-		NodeRef branchToNodeRef = null;
-
-		if (req.getParameter(PARAM_BRANCH_TO_NODEREF) != null) {
-			branchToNodeRef = new NodeRef(req.getParameter(PARAM_BRANCH_TO_NODEREF));
-		}
-
-		String description = "";
-
-		if (req.getParameter(PARAM_DESCRIPTION) != null) {
-			description = req.getParameter(PARAM_DESCRIPTION);
-		}
-
-		VersionType versionType = VersionType.MINOR;
-
-		if (req.getParameter(PARAM_MAJOR_VERSION) != null) {
-			versionType = VALUE_TRUE.equals(req.getParameter(PARAM_MAJOR_VERSION)) ? VersionType.MAJOR : VersionType.MINOR;
-		}
-
-		boolean impactWused = false;
-		if (req.getParameter(PARAM_IMPACT_WUSED) != null && VALUE_TRUE.equals(req.getParameter((PARAM_IMPACT_WUSED)))) {
-			impactWused = true;
-		}
-		
-		boolean rename = false;
-		if (req.getParameter(PARAM_RENAME_ON_MERGE) != null && VALUE_TRUE.equals(req.getParameter((PARAM_RENAME_ON_MERGE)))) {
-			rename = true;
-		}
-
-		JSONObject json = (JSONObject) req.parseContent();
-		try {
-
-			if (json != null) {
-				if (json.has(PARAM_DESCRIPTION)) {
-					description = (String) json.get(PARAM_DESCRIPTION);
-				}
-				if (json.has(PARAM_MAJOR_VERSION)) {
-					versionType = json.get(PARAM_MAJOR_VERSION).equals(VALUE_TRUE) ? VersionType.MAJOR : VersionType.MINOR;
-				}
-				if (json.has(PARAM_BRANCH_TO_NODEREF)) {
-					branchToNodeRef = new NodeRef((String) json.get(PARAM_BRANCH_TO_NODEREF));
-				}
-
-				if (json.has(PARAM_IMPACT_WUSED) && VALUE_TRUE.equals(json.get(PARAM_IMPACT_WUSED))) {
-					impactWused = true;
-				}
-			}
-			if (branchToNodeRef == null) {
-				throw new WebScriptException("Branch nodeRef is mandatory..");
-			}
+		try (Scope scope = tracer.spanBuilder("/remote/merge").startScopedSpan()) {
+			NodeRef entityNodeRef = findEntity(req);
 
 			if (logger.isDebugEnabled()) {
-				logger.debug("branchToNodeRef: " + branchToNodeRef);
-				logger.debug("entityNodeRef: " + entityNodeRef);
-				logger.debug("description: " + description);
-				logger.debug("versionType: " + versionType);
-				logger.debug("impactWused: " + impactWused);
-			}
-			NodeRef newEntityNodeRef = entityVersionService.mergeBranch(entityNodeRef, branchToNodeRef, versionType, description, impactWused, rename);
-
-			if (impactWused) {
-				entityVersionService.impactWUsed(newEntityNodeRef, versionType, description);
+				logger.debug("Merge entity: " + entityNodeRef);
 			}
 
-			sendOKStatus(newEntityNodeRef, resp, getFormat(req));
+			NodeRef branchToNodeRef = null;
 
-		} catch (JSONException e) {
-			logger.error("Cannot merge entity", e);
-			throw new WebScriptException(e.getMessage());
+			if (req.getParameter(PARAM_BRANCH_TO_NODEREF) != null) {
+				branchToNodeRef = new NodeRef(req.getParameter(PARAM_BRANCH_TO_NODEREF));
+			}
+
+			String description = "";
+
+			if (req.getParameter(PARAM_DESCRIPTION) != null) {
+				description = req.getParameter(PARAM_DESCRIPTION);
+			}
+
+			VersionType versionType = VersionType.MINOR;
+
+			if (req.getParameter(PARAM_MAJOR_VERSION) != null) {
+				versionType = VALUE_TRUE.equals(req.getParameter(PARAM_MAJOR_VERSION)) ? VersionType.MAJOR : VersionType.MINOR;
+			}
+
+			boolean impactWused = false;
+			if ((req.getParameter(PARAM_IMPACT_WUSED) != null) && VALUE_TRUE.equals(req.getParameter((PARAM_IMPACT_WUSED)))) {
+				impactWused = true;
+			}
+
+			boolean rename = false;
+			if ((req.getParameter(PARAM_RENAME_ON_MERGE) != null) && VALUE_TRUE.equals(req.getParameter((PARAM_RENAME_ON_MERGE)))) {
+				rename = true;
+			}
+
+			JSONObject json = (JSONObject) req.parseContent();
+			try {
+
+				if (json != null) {
+					if (json.has(PARAM_DESCRIPTION)) {
+						description = (String) json.get(PARAM_DESCRIPTION);
+					}
+					if (json.has(PARAM_MAJOR_VERSION)) {
+						versionType = json.get(PARAM_MAJOR_VERSION).equals(VALUE_TRUE) ? VersionType.MAJOR : VersionType.MINOR;
+					}
+					if (json.has(PARAM_BRANCH_TO_NODEREF)) {
+						branchToNodeRef = new NodeRef((String) json.get(PARAM_BRANCH_TO_NODEREF));
+					}
+
+					if (json.has(PARAM_IMPACT_WUSED) && VALUE_TRUE.equals(json.get(PARAM_IMPACT_WUSED))) {
+						impactWused = true;
+					}
+				}
+				if (branchToNodeRef == null) {
+					throw new WebScriptException("Branch nodeRef is mandatory..");
+				}
+
+				if (logger.isDebugEnabled()) {
+					logger.debug("branchToNodeRef: " + branchToNodeRef);
+					logger.debug("entityNodeRef: " + entityNodeRef);
+					logger.debug("description: " + description);
+					logger.debug("versionType: " + versionType);
+					logger.debug("impactWused: " + impactWused);
+				}
+				NodeRef newEntityNodeRef = entityVersionService.mergeBranch(entityNodeRef, branchToNodeRef, versionType, description, impactWused,
+						rename);
+
+				if (impactWused) {
+					entityVersionService.impactWUsed(newEntityNodeRef, versionType, description);
+				}
+
+				sendOKStatus(newEntityNodeRef, resp, getFormat(req));
+
+			} catch (JSONException e) {
+				logger.error("Cannot merge entity", e);
+				throw new WebScriptException(e.getMessage());
+			}
 		}
-
 	}
 }
