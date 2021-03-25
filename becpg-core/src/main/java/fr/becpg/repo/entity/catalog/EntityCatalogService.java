@@ -584,7 +584,7 @@ public class EntityCatalogService {
 		List<NodeRef> queryResults = new ArrayList<>();
 		if ((value != null) && !value.isEmpty()) {
 
-			queryResults = BeCPGQueryBuilder.createQuery().ofType(typeQName).andNotID(productNodeRef).andPropEquals(propQName, value).inDB().list();
+			queryResults = BeCPGQueryBuilder.createQuery().ofType(typeQName).andNotID(productNodeRef).andPropEquals(propQName, value).inDB().maxResults(10).list();
 
 			List<NodeRef> falsePositives = new ArrayList<>();
 
