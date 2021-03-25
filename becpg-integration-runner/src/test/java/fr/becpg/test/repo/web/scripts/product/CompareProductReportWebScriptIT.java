@@ -11,8 +11,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.version.VersionBaseModel;
-import org.alfresco.service.cmr.coci.CheckOutCheckInService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.QName;
@@ -22,6 +20,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
@@ -43,9 +42,9 @@ import fr.becpg.test.utils.TestWebscriptExecuters.Response;
 public class CompareProductReportWebScriptIT extends AbstractCompareProductTest {
 
 	private static final Log logger = LogFactory.getLog(CompareProductReportWebScriptIT.class);
-
+	
 	@Autowired
-	private CheckOutCheckInService checkOutCheckInService;
+	private EntityVersionService entityVersionService;
 
 	@Test
 	public void testCompareProducts() throws IOException {
@@ -98,13 +97,14 @@ public class CompareProductReportWebScriptIT extends AbstractCompareProductTest 
 			nodeService.addAspect(fpNodeRef1, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
 
 			// CheckOut/CheckIn
-			NodeRef workingCopyNodeRef = checkOutCheckInService.checkout(fpNodeRef1);
-			Map<String, Serializable> properties = new HashMap<>();
-			properties.put(VersionBaseModel.PROP_VERSION_TYPE, VersionType.MAJOR);
-			NodeRef fpv1NodeRef = checkOutCheckInService.checkin(workingCopyNodeRef, properties);
+			NodeRef destNodeRef = nodeService.getPrimaryParent(fpNodeRef1).getParentRef();
+			NodeRef workingCopyNodeRef = entityVersionService.createBranch(fpNodeRef1, destNodeRef);
+
+			NodeRef fpv1NodeRef = entityVersionService.mergeBranch(workingCopyNodeRef, fpNodeRef1, VersionType.MAJOR, "");
 
 			// CheckOut
-			workingCopyNodeRef = checkOutCheckInService.checkout(fpv1NodeRef);
+			destNodeRef = nodeService.getPrimaryParent(fpv1NodeRef).getParentRef();
+			workingCopyNodeRef = entityVersionService.createBranch(fpv1NodeRef, destNodeRef);
 
 			logger.debug("update workingCopy");
 
@@ -147,9 +147,7 @@ public class CompareProductReportWebScriptIT extends AbstractCompareProductTest 
 
 			alfrescoRepository.save(workingCopy);
 
-			properties = new HashMap<>();
-			properties.put(VersionBaseModel.PROP_VERSION_TYPE, VersionType.MINOR);
-			NodeRef fpv2NodeRef = checkOutCheckInService.checkin(workingCopyNodeRef, properties);
+			NodeRef fpv2NodeRef = entityVersionService.mergeBranch(workingCopyNodeRef, fpNodeRef1, VersionType.MAJOR, "");
 			logger.info("nodeService.getProperty(fpv2NodeRef, BeCPGModel.PROP_VERSION_LABEL)"
 					+ nodeService.getProperty(fpv2NodeRef, BeCPGModel.PROP_VERSION_LABEL));
 			// assertEquals("check version", "2.0",
@@ -160,6 +158,10 @@ public class CompareProductReportWebScriptIT extends AbstractCompareProductTest 
 
 		}, false, true);
 
+		// when the version is created, a node in version history folder is created for reports,
+		// wait for this node to be created and use it for comparison
+		waitForSolr();
+		
 		String url = String.format("/becpg/entity/compare/%s/%s/version.pdf", fpNodeRef.toString().replace("://", "/"), "1.0");
 
 		Response response = TestWebscriptExecuters.sendRequest(new GetRequest(url), 200, "admin");

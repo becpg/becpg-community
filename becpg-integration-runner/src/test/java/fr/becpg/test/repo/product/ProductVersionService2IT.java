@@ -38,7 +38,6 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.model.PLMWorkflowModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.model.SystemState;
-import fr.becpg.repo.entity.simulation.EntitySimulationService;
 import fr.becpg.repo.entity.version.EntityVersion;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.helper.AssociationService;
@@ -70,8 +69,7 @@ public class ProductVersionService2IT extends PLMBaseTestCase {
 	private NamespaceService namespaceService;
 
 	@Autowired
-	@Qualifier("entityVersionServiceV2")
-	private EntityVersionService entityVersionServiceV2;
+	private EntityVersionService entityVersionService;
 
 	@Autowired
 	private AssociationService associationService;
@@ -84,9 +82,6 @@ public class ProductVersionService2IT extends PLMBaseTestCase {
 
 	@Autowired
 	private NodeArchiveService nodeArchiveService;
-	
-	@Autowired
-	private EntitySimulationService simulationService;
 	
 	@Autowired
 	@Qualifier("mtAwareNodeService")
@@ -134,7 +129,7 @@ public class ProductVersionService2IT extends PLMBaseTestCase {
 			
 			NodeRef destNodeRef = dbNodeService.getPrimaryParent(rawMaterialNodeRef).getParentRef();
 
-			return simulationService.createSimulationNodeRef(rawMaterialNodeRef, destNodeRef);
+			return entityVersionService.createBranch(rawMaterialNodeRef, destNodeRef);
 
 		}, false, true);
 
@@ -179,7 +174,7 @@ public class ProductVersionService2IT extends PLMBaseTestCase {
 		final NodeRef newRawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			// Check in
-			return entityVersionServiceV2.mergeBranch(workingCopyNodeRef, rawMaterialNodeRef, VersionType.MAJOR, "This is a test version", false, false);
+			return entityVersionService.mergeBranch(workingCopyNodeRef, rawMaterialNodeRef, VersionType.MAJOR, "This is a test version", false, false);
 		}, false, true);
 
 		validateNewVersion(newRawMaterialNodeRef, rawMaterialNodeRef, rawMaterial, productUnit, valueAdded, true);
@@ -261,7 +256,7 @@ public class ProductVersionService2IT extends PLMBaseTestCase {
 			// Check out
 			NodeRef destNodeRef = dbNodeService.getPrimaryParent(rawMaterialNodeRef).getParentRef();
 
-			NodeRef workingCopyNodeRef = simulationService.createSimulationNodeRef(rawMaterialNodeRef, destNodeRef);
+			NodeRef workingCopyNodeRef = entityVersionService.createBranch(rawMaterialNodeRef, destNodeRef);
 
 			logger.info("state " + rawMaterialNodeRef + " - " + dbNodeService.getProperty(workingCopyNodeRef, PLMModel.PROP_PRODUCT_STATE));
 			assertEquals("Check state new version", SystemState.Simulation.toString(),
@@ -270,7 +265,7 @@ public class ProductVersionService2IT extends PLMBaseTestCase {
 			// Check in
 			NodeRef newRawMaterialNodeRef;
 
-			newRawMaterialNodeRef = entityVersionServiceV2.mergeBranch(workingCopyNodeRef, rawMaterialNodeRef, VersionType.MINOR, "This is a test version", false, false);
+			newRawMaterialNodeRef = entityVersionService.mergeBranch(workingCopyNodeRef, rawMaterialNodeRef, VersionType.MINOR, "This is a test version", false, false);
 
 			assertNotNull("Check new version exists", newRawMaterialNodeRef);
 			assertEquals("Check state new version", SystemState.Valid.toString(),
@@ -279,7 +274,7 @@ public class ProductVersionService2IT extends PLMBaseTestCase {
 			VersionHistory versionHistory = versionService.getVersionHistory(newRawMaterialNodeRef);
 			Version version = versionHistory.getVersion("1.1");
 			assertNotNull(version);
-			assertNotNull(entityVersionServiceV2.getEntityVersion(version));
+			assertNotNull(entityVersionService.getEntityVersion(version));
 
 			path = dbNodeService.getPath(rawMaterialNodeRef).toPrefixString(namespaceService);
 			expected = "/app:company_home/cm:rawMaterial/cm:Sea_x0020_food/cm:Fish/";
@@ -288,14 +283,14 @@ public class ProductVersionService2IT extends PLMBaseTestCase {
 			// Check out
 			destNodeRef = dbNodeService.getPrimaryParent(rawMaterialNodeRef).getParentRef();
 
-			workingCopyNodeRef = simulationService.createSimulationNodeRef(rawMaterialNodeRef, destNodeRef);
+			workingCopyNodeRef = entityVersionService.createBranch(rawMaterialNodeRef, destNodeRef);
 
 			logger.info("state " + rawMaterialNodeRef + " - " + dbNodeService.getProperty(workingCopyNodeRef, PLMModel.PROP_PRODUCT_STATE));
 			assertEquals("Check state new version", SystemState.Simulation.toString(),
 					dbNodeService.getProperty(workingCopyNodeRef, PLMModel.PROP_PRODUCT_STATE));
 
 			// Check in
-			newRawMaterialNodeRef = entityVersionServiceV2.mergeBranch(workingCopyNodeRef, rawMaterialNodeRef, VersionType.MINOR, "This is a test version", false, false);
+			newRawMaterialNodeRef = entityVersionService.mergeBranch(workingCopyNodeRef, rawMaterialNodeRef, VersionType.MINOR, "This is a test version", false, false);
 
 			assertNotNull("Check new version exists", newRawMaterialNodeRef);
 			assertEquals("Check state new version", SystemState.Valid.toString(),
@@ -305,7 +300,7 @@ public class ProductVersionService2IT extends PLMBaseTestCase {
 					dbNodeService.getProperty(newRawMaterialNodeRef, BeCPGModel.PROP_ERP_CODE));
 
 			assertEquals("Check state new version", SystemState.Valid.toString(),
-					dbNodeService.getProperty(entityVersionServiceV2.getEntityVersion(version), PLMModel.PROP_PRODUCT_STATE));
+					dbNodeService.getProperty(entityVersionService.getEntityVersion(version), PLMModel.PROP_PRODUCT_STATE));
 
 			return null;
 
@@ -352,7 +347,7 @@ public class ProductVersionService2IT extends PLMBaseTestCase {
 			// Check out
 			NodeRef destNodeRef = dbNodeService.getPrimaryParent(finishedProductNodeRef).getParentRef();
 
-			return simulationService.createSimulationNodeRef(finishedProductNodeRef, destNodeRef);
+			return entityVersionService.createBranch(finishedProductNodeRef, destNodeRef);
 		}, false, true);
 
 		final NodeRef versionNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -366,7 +361,7 @@ public class ProductVersionService2IT extends PLMBaseTestCase {
 					+ dbNodeService.getPath(productData.getCompoListView().getCompoList().get(2).getVariants().get(0)));
 
 			// Check in
-			return entityVersionServiceV2.mergeBranch(workingCopyNodeRef, finishedProductNodeRef, VersionType.MAJOR, "This is a test version", false, false);
+			return entityVersionService.mergeBranch(workingCopyNodeRef, finishedProductNodeRef, VersionType.MAJOR, "This is a test version", false, false);
 
 		}, false, true);
 
@@ -458,13 +453,13 @@ public class ProductVersionService2IT extends PLMBaseTestCase {
 			// Check out
 			NodeRef destNodeRef = dbNodeService.getPrimaryParent(rawMaterialNodeRef).getParentRef();
 
-			NodeRef workingCopyNodeRef = simulationService.createSimulationNodeRef(rawMaterialNodeRef, destNodeRef);
+			NodeRef workingCopyNodeRef = entityVersionService.createBranch(rawMaterialNodeRef, destNodeRef);
 
 			// add new Supplier
 			associationService.update(workingCopyNodeRef, PLMModel.ASSOC_SUPPLIERS, supplierNodeRefs);
 
 			// check-in
-			entityVersionServiceV2.mergeBranch(workingCopyNodeRef, rawMaterialNodeRef, VersionType.MINOR, "This is a test version", false, false);
+			entityVersionService.mergeBranch(workingCopyNodeRef, rawMaterialNodeRef, VersionType.MINOR, "This is a test version", false, false);
 
 			return null;
 
@@ -481,13 +476,13 @@ public class ProductVersionService2IT extends PLMBaseTestCase {
 			
 			NodeRef destNodeRef = dbNodeService.getPrimaryParent(rawMaterialNodeRef).getParentRef();
 
-			NodeRef workingCopyNodeRef = simulationService.createSimulationNodeRef(rawMaterialNodeRef, destNodeRef);
+			NodeRef workingCopyNodeRef = entityVersionService.createBranch(rawMaterialNodeRef, destNodeRef);
 
 			// remove Suppliers
 			associationService.update(workingCopyNodeRef, PLMModel.ASSOC_SUPPLIERS, new ArrayList<NodeRef>());
 
 			// check-in
-			entityVersionServiceV2.mergeBranch(workingCopyNodeRef, rawMaterialNodeRef, VersionType.MINOR, "This is a test version", false, false);
+			entityVersionService.mergeBranch(workingCopyNodeRef, rawMaterialNodeRef, VersionType.MINOR, "This is a test version", false, false);
 
 			// check
 			targetNodeRefs = nodeService.getTargetAssocs(rawMaterialNodeRef, PLMModel.ASSOC_SUPPLIERS);
@@ -534,7 +529,7 @@ public class ProductVersionService2IT extends PLMBaseTestCase {
 
 			// Check out
 			logger.debug("branch nodeRef: " + rawMaterialNodeRef);
-			return entityVersionServiceV2.createBranch(rawMaterialNodeRef, getTestFolderNodeRef());
+			return entityVersionService.createBranch(rawMaterialNodeRef, getTestFolderNodeRef());
 
 		}, false, true);
 
@@ -593,7 +588,7 @@ public class ProductVersionService2IT extends PLMBaseTestCase {
 		assertEquals(dbNodeService.getProperty(branchNodeRef, PLMWorkflowModel.PROP_PV_VALIDATION_DATE), validationDate);
 
 		final NodeRef newRawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(
-				() -> entityVersionServiceV2.mergeBranch(branchNodeRef, rawMaterialNodeRef, VersionType.MAJOR, "This is a test version"), false, true);
+				() -> entityVersionService.mergeBranch(branchNodeRef, rawMaterialNodeRef, VersionType.MAJOR, "This is a test version"), false, true);
 
 		validateNewVersion(newRawMaterialNodeRef, rawMaterialNodeRef, rawMaterial, productUnit, valueAdded, false);
 
@@ -642,14 +637,14 @@ public class ProductVersionService2IT extends PLMBaseTestCase {
 			
 			NodeRef destNodeRef = dbNodeService.getPrimaryParent(rawMaterialNodeRef).getParentRef();
 
-			return simulationService.createSimulationNodeRef(rawMaterialNodeRef, destNodeRef);
+			return entityVersionService.createBranch(rawMaterialNodeRef, destNodeRef);
 
 		}, false, true);
 
 		final NodeRef newRawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			// Check in
-			return entityVersionServiceV2.mergeBranch(workingCopyNodeRef, rawMaterialNodeRef, VersionType.MAJOR, "This is a test version", false, false);
+			return entityVersionService.mergeBranch(workingCopyNodeRef, rawMaterialNodeRef, VersionType.MAJOR, "This is a test version", false, false);
 		}, false, true);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -660,7 +655,7 @@ public class ProductVersionService2IT extends PLMBaseTestCase {
 		}, false, true);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			for (EntityVersion entityVersion : entityVersionServiceV2.getAllVersions(rawMaterialNodeRef)) {
+			for (EntityVersion entityVersion : entityVersionService.getAllVersions(rawMaterialNodeRef)) {
 				assertNull(versionService.getVersionHistory(entityVersion.getEntityVersionNodeRef()));
 			}
 			return null;
@@ -752,14 +747,14 @@ public class ProductVersionService2IT extends PLMBaseTestCase {
 			
 			NodeRef destNodeRef = dbNodeService.getPrimaryParent(rawMaterialNodeRef).getParentRef();
 
-			return simulationService.createSimulationNodeRef(rawMaterialNodeRef, destNodeRef);
+			return entityVersionService.createBranch(rawMaterialNodeRef, destNodeRef);
 
 		}, false, true);
 
 		NodeRef newRawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			// Check in
-			return entityVersionServiceV2.mergeBranch(workingCopyNodeRef, rawMaterialNodeRef, VersionType.MAJOR, "This is a test version", false, false);
+			return entityVersionService.mergeBranch(workingCopyNodeRef, rawMaterialNodeRef, VersionType.MAJOR, "This is a test version", false, false);
 		}, false, true);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -821,7 +816,7 @@ public class ProductVersionService2IT extends PLMBaseTestCase {
 			VersionHistory versionHistory = versionService.getVersionHistory(newRawMaterialNodeRef);
 			Version version = versionHistory.getVersion("1.0");
 			assertNotNull(version);
-			NodeRef entityVersionNodeRef = entityVersionServiceV2.getEntityVersion(version);
+			NodeRef entityVersionNodeRef = entityVersionService.getEntityVersion(version);
 			assertNotNull(entityVersionNodeRef);
 			assertNotNull(getFolderDocuments(entityVersionNodeRef));
 
@@ -847,9 +842,9 @@ public class ProductVersionService2IT extends PLMBaseTestCase {
 				
 				NodeRef destNodeRef = dbNodeService.getPrimaryParent(rawMaterialNodeRef).getParentRef();
 
-				NodeRef workingCopy2NodeRef = simulationService.createSimulationNodeRef(rawMaterialNodeRef, destNodeRef);
+				NodeRef workingCopy2NodeRef = entityVersionService.createBranch(rawMaterialNodeRef, destNodeRef);
 
-				return entityVersionServiceV2.mergeBranch(workingCopy2NodeRef, rawMaterialNodeRef, VersionType.MAJOR, "This is a test version", false, false);
+				return entityVersionService.mergeBranch(workingCopy2NodeRef, rawMaterialNodeRef, VersionType.MAJOR, "This is a test version", false, false);
 			}
 			return rawMaterialNodeRef;
 
@@ -863,7 +858,7 @@ public class ProductVersionService2IT extends PLMBaseTestCase {
 				VersionHistory versionHistory = versionService.getVersionHistory(newRawMaterialNodeRef);
 				Version version = versionHistory.getVersion("3.0");
 				assertNotNull(version);
-				assertNotNull(entityVersionServiceV2.getEntityVersion(version));
+				assertNotNull(entityVersionService.getEntityVersion(version));
 
 				// Check cost Unit has changed after transaction
 				for (int i = 0; i < newRawMaterial.getCostList().size(); i++) {
