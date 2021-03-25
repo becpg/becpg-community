@@ -416,6 +416,9 @@
 			
          <action id="datalist-copy-to" type="javascript" label="actions.datalist.copy-to">
             <param name="function">onActionCopyDataListTo</param>
+            <permissions>
+				 <permission allow="true">Write</permission>
+			</permissions>
             <evaluator>evaluator.doclib.action.editableByCurrentUser</evaluator>
          </action>
          
