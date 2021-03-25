@@ -22,7 +22,7 @@ public class RemoteParams {
 
 	public static final String PARAM_APPEND_NODEREF = "appendNodeRef";
 	
-	public static final String PARAM_APPEND_DATALIST_NODEREF = "appendDataListNodeRef";
+	public static final String PARAM_UPDATE_ENTITY_NODEREFS = "updateEntityNodeRefs";
 
 	public static final String PARAM_APPEND_CONTENT = "appendContent";
 
