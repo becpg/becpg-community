@@ -104,6 +104,10 @@ public class EntityCopyPolicy extends AbstractBeCPGPolicy implements CopyService
 				nodeService.setProperty(destinationRef, PLMModel.PROP_PRODUCT_STATE, SystemState.Simulation);
 			}
 			
+			if (nodeService.getProperty(destinationRef, PLMModel.PROP_SUPPLIER_STATE) != null) {
+				nodeService.setProperty(destinationRef, PLMModel.PROP_SUPPLIER_STATE, SystemState.Simulation);
+			}
+			
 			if (nodeService.hasAspect(destinationRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT)) {
 				nodeService.removeAspect(destinationRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT);
 			}
