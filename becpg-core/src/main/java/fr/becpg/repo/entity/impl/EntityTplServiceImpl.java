@@ -20,6 +20,7 @@ package fr.becpg.repo.entity.impl;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -33,6 +34,7 @@ import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
+import org.alfresco.repo.transfer.TransferModel;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.InvalidAspectException;
 import org.alfresco.service.cmr.dictionary.TypeDefinition;
@@ -99,7 +101,9 @@ public class EntityTplServiceImpl implements EntityTplService {
 	private static final String ENTITY_DATALIST_KEY_PREFIX = "entity-datalist-";
 
 	private static final Log logger = LogFactory.getLog(EntityTplServiceImpl.class);
-
+	
+	private static final Set<QName> isIgnoredAspect = new HashSet<>();
+	
 	@Autowired
 	private NodeService nodeService;
 
@@ -147,6 +151,22 @@ public class EntityTplServiceImpl implements EntityTplService {
 	BeCPGMailService beCPGMailService;
 
 	private ReentrantLock lock = new ReentrantLock();
+	
+	static {
+		isIgnoredAspect.add(ContentModel.ASPECT_VERSIONABLE);
+		isIgnoredAspect.add(ContentModel.ASPECT_TEMPORARY);
+		isIgnoredAspect.add(ContentModel.ASPECT_WORKING_COPY);
+		isIgnoredAspect.add(ContentModel.ASPECT_COPIEDFROM);
+		isIgnoredAspect.add(TransferModel.ASPECT_TRANSFERRED);
+		isIgnoredAspect.add(RuleModel.ASPECT_RULES);
+		isIgnoredAspect.add(BeCPGModel.ASPECT_ENTITY_TPL);
+	};
+	
+	private boolean ignoreAspect(QName aspect) {
+		return (aspect.getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI)
+				|| isIgnoredAspect.contains(aspect));
+	}
+
 
 	/** {@inheritDoc} */
 	@Override
@@ -481,7 +501,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 					// copy missing aspects
 					Set<QName> aspects = nodeService.getAspects(tplNodeRef);
 					for (QName aspect : aspects) {
-						if (!nodeService.hasAspect(entityNodeRef, aspect) && !BeCPGModel.ASPECT_ENTITY_TPL.isMatch(aspect)) {
+						if (!nodeService.hasAspect(entityNodeRef, aspect) && !ignoreAspect(aspect)) {
 							nodeService.addAspect(entityNodeRef, aspect, null);
 						}
 					}
@@ -703,7 +723,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 				// copy missing aspects
 				Set<QName> aspects = nodeService.getAspects(entityTplNodeRef);
 				for (QName aspect : aspects) {
-					if (!nodeService.hasAspect(entityNodeRef, aspect) && !BeCPGModel.ASPECT_ENTITY_TPL.isMatch(aspect)) {
+					if (!nodeService.hasAspect(entityNodeRef, aspect) && !ignoreAspect(aspect)) {
 						nodeService.addAspect(entityNodeRef, aspect, null);
 					}
 				}
