@@ -351,7 +351,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 				if ((key.equals(CRITERIA_ING) || key.equals(CRITERIA_ING_AND))) {
 
 					List<NodeRef> filter = associationService
-							.getEntitySourceAssocs(extractNodeRefs(propValue), PLMModel.ASSOC_INGLIST_ING, key.equals(CRITERIA_ING)).stream()
+							.getEntitySourceAssocs(extractNodeRefs(propValue,key.equals(CRITERIA_ING)), PLMModel.ASSOC_INGLIST_ING, key.equals(CRITERIA_ING)).stream()
 							.map(a -> a.getEntityNodeRef()).collect(Collectors.toList());
 
 					if (ingListItemsEntity == null) {
@@ -361,13 +361,13 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 					}
 
 				} else if (key.equals(CRITERIA_ING_NOT)) {
-					nodes.removeAll(associationService.getEntitySourceAssocs(extractNodeRefs(propValue), PLMModel.ASSOC_INGLIST_ING, true).stream()
+					nodes.removeAll(associationService.getEntitySourceAssocs(extractNodeRefs(propValue,true), PLMModel.ASSOC_INGLIST_ING, true).stream()
 							.map(a -> a.getEntityNodeRef()).collect(Collectors.toList()));
 
 				} else if (key.equals(CRITERIA_GEO_ORIGIN)) {
 
 					List<NodeRef> filter = associationService
-							.getEntitySourceAssocs(extractNodeRefs(propValue), PLMModel.ASSOC_INGLIST_GEO_ORIGIN, true).stream()
+							.getEntitySourceAssocs(extractNodeRefs(propValue,true), PLMModel.ASSOC_INGLIST_GEO_ORIGIN, true).stream()
 							.map(a -> a.getEntityNodeRef()).collect(Collectors.toList());
 
 					if (ingListItemsEntity == null) {
@@ -378,7 +378,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 				} else if (key.equals(CRITERIA_BIO_ORIGIN) && !propValue.isEmpty()) {
 
 					List<NodeRef> filter = associationService
-							.getEntitySourceAssocs(extractNodeRefs(propValue), PLMModel.ASSOC_INGLIST_BIO_ORIGIN, true).stream()
+							.getEntitySourceAssocs(extractNodeRefs(propValue,true), PLMModel.ASSOC_INGLIST_BIO_ORIGIN, true).stream()
 							.map(a -> a.getEntityNodeRef()).collect(Collectors.toList());
 					if (ingListItemsEntity == null) {
 						ingListItemsEntity = filter;
@@ -402,7 +402,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		return nodes;
 	}
 
-	private List<NodeRef> extractNodeRefs(String propValue) {
+	private List<NodeRef> extractNodeRefs(String propValue, boolean isOrOperator) {
 		String[] arrValues = propValue.split(RepoConsts.MULTI_VALUES_SEPARATOR);
 		List<NodeRef> ret = new ArrayList<>();
 
@@ -412,13 +412,14 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 			if (nodeService.exists(nodeRef)) {
 				ret.add(nodeRef);
-				if (logger.isDebugEnabled()) {
-					logger.debug("Adding associated search :"
-							+ associationService.getSourcesAssocs(nodeRef, BeCPGModel.ASSOC_LINKED_SEARCH_ASSOCIATION).size());
-
+				if(isOrOperator) {
+					if (logger.isDebugEnabled()) {
+						logger.debug("Adding associated search :"
+								+ associationService.getSourcesAssocs(nodeRef, BeCPGModel.ASSOC_LINKED_SEARCH_ASSOCIATION).size());
+					}
+	
+					ret.addAll(associationService.getSourcesAssocs(nodeRef, BeCPGModel.ASSOC_LINKED_SEARCH_ASSOCIATION));
 				}
-
-				ret.addAll(associationService.getSourcesAssocs(nodeRef, BeCPGModel.ASSOC_LINKED_SEARCH_ASSOCIATION));
 			}
 
 		}
@@ -437,7 +438,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 			String propValue = criteria.get(CRITERIA_NOTRESPECTED_SPECIFICATIONS);
 			if ((propValue != null) && !propValue.isEmpty()) {
-				for (NodeRef nodeRef : extractNodeRefs(propValue)) {
+				for (NodeRef nodeRef : extractNodeRefs(propValue,false)) {
 
 					ProductSpecificationData productSpecificationData = alfrescoRepository.findOne(nodeRef);
 					List<NodeRef> retainNodes = new ArrayList<>();
@@ -466,7 +467,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 			String propValue = criteria.get(CRITERIA_RESPECTED_SPECIFICATIONS);
 			if ((propValue != null) && !propValue.isEmpty()) {
-				for (NodeRef nodeRef : extractNodeRefs(propValue)) {
+				for (NodeRef nodeRef : extractNodeRefs(propValue,false)) {
 					ProductSpecificationData productSpecificationData = alfrescoRepository.findOne(nodeRef);
 					List<NodeRef> removedNodes = new ArrayList<>();
 					for (NodeRef productNodeRef : nodes) {
@@ -521,7 +522,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 			// criteria on label
 			if ((propValue != null) && !propValue.isEmpty()) {
 
-				for (EntitySourceAssoc assocRef : associationService.getEntitySourceAssocs(extractNodeRefs(propValue), PackModel.ASSOC_LL_LABEL,
+				for (EntitySourceAssoc assocRef : associationService.getEntitySourceAssocs(extractNodeRefs(propValue,true), PackModel.ASSOC_LL_LABEL,
 						true)) {
 
 					NodeRef n = assocRef.getDataListItemNodeRef();
@@ -575,7 +576,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 			if ((propValue != null) && !propValue.isEmpty()) {
 
-				for (EntitySourceAssoc assocRef : associationService.getEntitySourceAssocs(extractNodeRefs(propValue), criteriaAssoc, true)) {
+				for (EntitySourceAssoc assocRef : associationService.getEntitySourceAssocs(extractNodeRefs(propValue,true), criteriaAssoc, true)) {
 
 					NodeRef n = assocRef.getDataListItemNodeRef();
 					if ((criteriaAssocValue != null) && (criteriaValue != null) && !criteriaValue.isEmpty()) {
@@ -644,7 +645,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 			String propValue = criteria.get(criteriaAssocString);
 
-			List<NodeRef> toFilterByNodes = extractNodeRefs(propValue);
+			List<NodeRef> toFilterByNodes = extractNodeRefs(propValue,false);
 
 			if (!toFilterByNodes.isEmpty()) {
 
