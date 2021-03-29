@@ -5875,6 +5875,7 @@
 					<show id="bcpg:regulatoryCode" force="true"/>
 					<show id="bcpg:ingTypeV2"  force="true"/>
 					<show id="bcpg:erpCode" force="true" />
+                                       <show id="bcpg:linkedSearchAssociation" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:charactName" />
@@ -5894,6 +5895,13 @@
 					<field id="bcpg:ingTypeV2">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ingTypeItem
+							</control-param>
+						</control>
+					</field>
+                                        <field id="bcpg:linkedSearchAssociation">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:ing
 							</control-param>
 						</control>
 					</field>
@@ -5922,7 +5930,8 @@
 					<show id="bcpg:regulatoryCode" force="true"/>
 					<show id="bcpg:ingTypeV2"  force="true"/>
 					<show id="bcpg:erpCode" force="true" />
-				</field-visibility>
+                                       <show id="bcpg:linkedSearchAssociation" force="true" />					<show id="bcpg:linkedSearchAssociation" force="true" />				
+                                </field-visibility>
 
 				<appearance>
 
@@ -5943,6 +5952,13 @@
 					<field id="bcpg:ingTypeV2">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ingTypeItem
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:linkedSearchAssociation">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:ing
 							</control-param>
 						</control>
 					</field>
@@ -6003,6 +6019,7 @@
 					<show id="bcpg:regulatoryCode" force="true"/>
 					<show id="bcpg:ingTypeV2"  force="true"/>
 					<show id="bcpg:erpCode" force="true" />
+                                      <show id="bcpg:linkedSearchAssociation" force="true" />
 				</field-visibility>
 			</form>
 		</forms>
