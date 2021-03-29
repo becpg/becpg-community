@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
@@ -141,9 +140,11 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 			}
 
 			if ((propValue != null) && !propValue.isBlank()) {
+				
+				boolean isOrOperator = "or".equals(assocFilter.getOperator()) || "not".equals(assocFilter.getOperator());
 
-				List<EntitySourceAssoc> tmp = associationService.getEntitySourceAssocs(extractNodeRefs(propValue), assocFilter.getAttributeQname(),
-						"or".equals(assocFilter.getOperator()) || "not".equals(assocFilter.getOperator()));
+				List<EntitySourceAssoc> tmp = associationService.getEntitySourceAssocs(extractNodeRefs(propValue,isOrOperator), assocFilter.getAttributeQname(),
+						isOrOperator);
 
 			
 				
@@ -387,7 +388,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		return nodes;
 	}
 
-	private List<NodeRef> extractNodeRefs(String propValue) {
+	private List<NodeRef> extractNodeRefs(String propValue, boolean isOrOperator) {
 		String[] arrValues = propValue.split(RepoConsts.MULTI_VALUES_SEPARATOR);
 		List<NodeRef> ret = new ArrayList<>();
 
@@ -399,15 +400,17 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 				if (nodeService.exists(nodeRef)) {
 					ret.add(nodeRef);
-					if (logger.isDebugEnabled()) {
-						int size = associationService.getSourcesAssocs(nodeRef, BeCPGModel.ASSOC_LINKED_SEARCH_ASSOCIATION).size();
-						if(size > 0) {
-							logger.debug("Found linked  associated search to add :"
-									+ size);
+					if(isOrOperator) {
+						if (logger.isDebugEnabled()) {
+							int size = associationService.getSourcesAssocs(nodeRef, BeCPGModel.ASSOC_LINKED_SEARCH_ASSOCIATION).size();
+							if(size > 0) {
+								logger.debug("Found linked  associated search to add :"
+										+ size);
+							}
+	
 						}
-
+						ret.addAll(associationService.getSourcesAssocs(nodeRef, BeCPGModel.ASSOC_LINKED_SEARCH_ASSOCIATION));
 					}
-					ret.addAll(associationService.getSourcesAssocs(nodeRef, BeCPGModel.ASSOC_LINKED_SEARCH_ASSOCIATION));
 				}
 			}
 
@@ -427,7 +430,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 			String propValue = criteria.get(CRITERIA_NOTRESPECTED_SPECIFICATIONS);
 			if ((propValue != null) && !propValue.isBlank()) {
-				for (NodeRef nodeRef : extractNodeRefs(propValue)) {
+				for (NodeRef nodeRef : extractNodeRefs(propValue,false)) {
 
 					ProductSpecificationData productSpecificationData = alfrescoRepository.findOne(nodeRef);
 					List<NodeRef> retainNodes = new ArrayList<>();
@@ -456,7 +459,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 			String propValue = criteria.get(CRITERIA_RESPECTED_SPECIFICATIONS);
 			if ((propValue != null) && !propValue.isEmpty()) {
-				for (NodeRef nodeRef : extractNodeRefs(propValue)) {
+				for (NodeRef nodeRef : extractNodeRefs(propValue,false)) {
 					ProductSpecificationData productSpecificationData = alfrescoRepository.findOne(nodeRef);
 					List<NodeRef> removedNodes = new ArrayList<>();
 					for (NodeRef productNodeRef : nodes) {
@@ -503,7 +506,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 			String propValue = criteria.get(criteriaAssocString);
 
 			if ((propValue != null) && !propValue.isBlank()) {
-				List<NodeRef> toFilterByNodes = extractNodeRefs(propValue);
+				List<NodeRef> toFilterByNodes = extractNodeRefs(propValue,false);
 
 				if (!toFilterByNodes.isEmpty()) {
 
