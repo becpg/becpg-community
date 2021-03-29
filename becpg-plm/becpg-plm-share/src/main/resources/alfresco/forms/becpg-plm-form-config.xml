@@ -5875,7 +5875,7 @@
 					<show id="bcpg:regulatoryCode" force="true"/>
 					<show id="bcpg:ingTypeV2"  force="true"/>
 					<show id="bcpg:erpCode" force="true" />
-                                       <show id="bcpg:linkedSearchAssociation" force="true" />
+                    <show id="bcpg:linkedSearchAssociation" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:charactName" />
@@ -5898,7 +5898,7 @@
 							</control-param>
 						</control>
 					</field>
-                                        <field id="bcpg:linkedSearchAssociation">
+                     <field id="bcpg:linkedSearchAssociation">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:ing
@@ -5930,8 +5930,8 @@
 					<show id="bcpg:regulatoryCode" force="true"/>
 					<show id="bcpg:ingTypeV2"  force="true"/>
 					<show id="bcpg:erpCode" force="true" />
-                                       <show id="bcpg:linkedSearchAssociation" force="true" />					<show id="bcpg:linkedSearchAssociation" force="true" />				
-                                </field-visibility>
+                    <show id="bcpg:linkedSearchAssociation" force="true" />		
+               </field-visibility>
 
 				<appearance>
 
@@ -6019,7 +6019,7 @@
 					<show id="bcpg:regulatoryCode" force="true"/>
 					<show id="bcpg:ingTypeV2"  force="true"/>
 					<show id="bcpg:erpCode" force="true" />
-                                      <show id="bcpg:linkedSearchAssociation" force="true" />
+                    <show id="bcpg:linkedSearchAssociation" force="true" />
 				</field-visibility>
 			</form>
 		</forms>
