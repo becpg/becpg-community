@@ -266,7 +266,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 		// Lists of characteristics
 		visitSystemCharactsEntity(systemNodeRef, RepoConsts.PATH_CHARACTS);
-		visitFolder(systemNodeRef, RepoConsts.PATH_CHARACTS);
 
 		// Dynamic constraints
 		visitSystemListValuesEntity(systemNodeRef, RepoConsts.PATH_LISTS);
