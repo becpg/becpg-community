@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -40,16 +41,18 @@ import org.alfresco.repo.action.evaluator.compare.ComparePropertyValueOperation;
 import org.alfresco.repo.action.evaluator.compare.ContentPropertyName;
 import org.alfresco.repo.action.executer.ScriptActionExecuter;
 import org.alfresco.repo.content.MimetypeMap;
+import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.site.SiteModel;
 import org.alfresco.service.cmr.action.Action;
 import org.alfresco.service.cmr.action.ActionCondition;
 import org.alfresco.service.cmr.action.CompositeAction;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
-import org.alfresco.service.cmr.repository.ContentWriter;
+import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.cmr.rule.Rule;
 import org.alfresco.service.cmr.rule.RuleType;
 import org.alfresco.service.cmr.security.AuthorityType;
@@ -58,13 +61,11 @@ import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.cmr.site.SiteVisibility;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.service.namespace.RegexQNamePattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
@@ -95,6 +96,9 @@ import fr.becpg.repo.helper.ContentHelper;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.hierarchy.HierarchyHelper;
 import fr.becpg.repo.mail.BeCPGMailService;
+import fr.becpg.repo.notification.data.NotificationRuleTimeType;
+import fr.becpg.repo.notification.data.RecurringTimeType;
+import fr.becpg.repo.notification.data.VersionFilterType;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
@@ -239,6 +243,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	@Autowired
 	protected BeCPGCacheService beCPGCacheService;
 	
+	@Autowired
+	private Repository repository;
+	
 	/**
 	 * {@inheritDoc}
 	 *
@@ -259,6 +266,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 		// Lists of characteristics
 		visitSystemCharactsEntity(systemNodeRef, RepoConsts.PATH_CHARACTS);
+		visitFolder(systemNodeRef, RepoConsts.PATH_CHARACTS);
 
 		// Dynamic constraints
 		visitSystemListValuesEntity(systemNodeRef, RepoConsts.PATH_LISTS);
@@ -315,7 +323,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		// MailTemplates
 		contentHelper.addFilesResources(beCPGMailService.getEmailTemplatesFolder(), "classpath*:beCPG/mails/*.ftl");
 		contentHelper.addFilesResources(beCPGMailService.getEmailWorkflowTemplatesFolder(), "classpath*:beCPG/mails/workflow/*.ftl");
-
+		createRequirementsNotification(systemNodeRef);
+		
 		// Reports
 		visitReports(systemNodeRef);
 
@@ -525,7 +534,54 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 			}
 		}
+		
+	}
 
+	private void createRequirementsNotification(NodeRef systemNodeRef) {
+		
+		NodeRef folderNodeRef = repoService.getFolderByPath(systemNodeRef, RepoConsts.PATH_CHARACTS);
+
+		NodeRef listContainer = folderNodeRef == null ? null : nodeService.getChildByName(folderNodeRef, BeCPGModel.ASSOC_ENTITYLISTS, RepoConsts.CONTAINER_DATALISTS);
+		
+		NodeRef notificationFolder = listContainer == null ? null : nodeService.getChildByName(listContainer, ContentModel.ASSOC_CONTAINS, RepoConsts.PATH_NOTIFICATIONS);
+
+		NodeRef requirementsNotification = notificationFolder == null ? null : nodeService.getChildByName(notificationFolder, ContentModel.ASSOC_CONTAINS, RepoConsts.FORMULATION_ERRORS_NOTIFICATION);
+		
+		if (notificationFolder != null && requirementsNotification == null) {
+			
+			requirementsNotification = nodeService.createNode(notificationFolder, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, BeCPGModel.TYPE_NOTIFICATIONRULELIST).getChildRef();
+			
+			nodeService.setProperty(requirementsNotification, QName.createQName(BeCPGModel.BECPG_URI, "nrConditions"), "{\"query\":\"+@\\{http\\://www.bcpg.fr/model/becpg/1.0\\}rclDataType:\\\"Formulation\\\"\"}");
+			nodeService.setProperty(requirementsNotification, QName.createQName(BeCPGModel.BECPG_URI, "nrDateField"), "cm:created");
+			nodeService.setProperty(requirementsNotification, QName.createQName(BeCPGModel.BECPG_URI, "nrRecurringTimeType"), RecurringTimeType.Day);
+			nodeService.setProperty(requirementsNotification, QName.createQName(BeCPGModel.BECPG_URI, "nrFrequencyStartDate"), new Date());
+			nodeService.setProperty(requirementsNotification, ContentModel.PROP_NAME, RepoConsts.FORMULATION_ERRORS_NOTIFICATION);
+			nodeService.setProperty(requirementsNotification, QName.createQName(BeCPGModel.BECPG_URI, "nrNodeType"), "bcpg:reqCtrlList");
+			nodeService.setProperty(requirementsNotification, QName.createQName(BeCPGModel.BECPG_URI, "nrTimeType"), NotificationRuleTimeType.Before);
+			nodeService.setProperty(requirementsNotification, QName.createQName(BeCPGModel.BECPG_URI, "nrVersionFilter"), VersionFilterType.NONE);
+			nodeService.setProperty(requirementsNotification, QName.createQName(BeCPGModel.BECPG_URI, "nrFrequency"), 7);
+			nodeService.setProperty(requirementsNotification, QName.createQName(BeCPGModel.BECPG_URI, "nrForceNotification"), false);
+			nodeService.setProperty(requirementsNotification, QName.createQName(BeCPGModel.BECPG_URI, "nrTimeNumber"), 0);
+			nodeService.setProperty(requirementsNotification, QName.createQName(BeCPGModel.BECPG_URI, "nrSubject"), "Formulation errors");
+			
+			String mailTemplate = "/app:company_home/app:dictionary/app:email_templates/cm:formulation-errors-notification-rule-list-email.html.ftl";
+			
+			NodeRef companyHomeNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(), mailTemplate);
+			
+			nodeService.setProperty(requirementsNotification, QName.createQName(BeCPGModel.BECPG_URI, "nrEmail"), companyHomeNodeRef);
+			
+			NodeRef adminGroupNodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, "GROUP_ALFRESCO_ADMINISTRATORS");
+			
+			List<ChildAssociationRef> members = nodeService.getChildAssocs(adminGroupNodeRef, ContentModel.ASSOC_MEMBER, RegexQNamePattern.MATCH_ALL);
+			
+			for (ChildAssociationRef member : members) {
+				nodeService.createAssociation(requirementsNotification, member.getChildRef(), QName.createQName(BeCPGModel.BECPG_URI, "nrNotificationAuthorities"));
+			}
+			
+			NodeRef siteRoot = siteService.getSiteRoot();
+			
+			nodeService.createAssociation(requirementsNotification, siteRoot, QName.createQName(BeCPGModel.BECPG_URI, "nrTarget"));
+		}
 	}
 
 	/**

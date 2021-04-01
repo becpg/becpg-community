@@ -193,7 +193,6 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 
 			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(nodeType)
 					.andPropQuery(dateField, notification.getTimeType().equals(NotificationRuleTimeType.Equals)? fromQuery : "[" + fromQuery + " TO " + toQuery + "]");	
-			
 			queryBuilder.inSubPath(targetPath.toPrefixString(namespaceService));
 			
 			NotificationRuleFilter filter = parseAdvFilter(notification.getCondtions());
@@ -234,6 +233,13 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 			templateArgs.put(DATE_FIELD, dictionaryService.getProperty(dateField).getTitle(serviceRegistry.getDictionaryService()));
 			templateArgs.put(TARGET_PATH, destinationPath);
 			templateArgs.put(NOTIFICATION, notification.getNodeRef());
+			
+			if (notification.getEmail() == null) {
+				NodeRef email = (NodeRef) nodeService.getProperty(notificationNodeRef, QName.createQName(BeCPGModel.BECPG_URI, "nrEmail"));
+				if (email != null) {
+					notification.setEmail(email);
+				}
+			}
 			
 			String emailTemplate = notification.getEmail() != null ? nodeService.getPath(notification.getEmail()).toPrefixString(namespaceService)
 					: RepoConsts.EMAIL_NOTIF_RULE_LIST_TEMPLATE;
