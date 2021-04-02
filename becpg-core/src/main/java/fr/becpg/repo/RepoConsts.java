@@ -42,6 +42,8 @@ public class RepoConsts
 	//Notification
 	/** Constant <code>PATH_NOTIFICATIONS="Notifications"</code> */
 	public static final String PATH_NOTIFICATIONS = "Notifications";
+	
+	public static final String FORMULATION_ERRORS_NOTIFICATION = "formulationErrorsNotification";
 			
 	//Security
 	/** Constant <code>PATH_SECURITY="Security"</code> */
