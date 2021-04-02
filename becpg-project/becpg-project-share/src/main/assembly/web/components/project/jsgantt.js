@@ -740,7 +740,7 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
 	 * @return void
 	 */
 
-	JSGantt.GanttChart = function(pGanttVar, pDiv, pFormat) {
+	JSGantt.GanttChart = function(pGanttVar, pDiv, pFormat, pIsMultilevel) {
 
 
 		var preferences = new Alfresco.service.Preferences();
@@ -781,6 +781,8 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
 				vFormat = 'day';
 			}
 		}
+		
+		var vIsMultilevel = pIsMultilevel;
 
 
 		/**
@@ -1562,12 +1564,12 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
 
 							if (vTaskList[i].getOpen() == 1) {
 								gcssClass = "ggroup-expanded";
-							}
+							} 
 
-							if (vTaskList[i].getSubProject() != null) {
+							if (vTaskList[i].getSubProject() != null || vIsMultilevel) {
 								vLeftTable += '<div id="group_' + (vTaskList[i].getOpen() ? "expanded" : "collapsed") + '_' + vcurrDivID + '" style="margin-left:' + vMargin
 									+ 'px;" class="onCollapsedAndExpanded" ><a href="#" class="' + JSGantt.scope.id + '-action-link"><span class="gicon '
-									+ (gcssClass) + '"></span></a></div>'
+									+ (gcssClass) + '"></span></a></div>';
 							} else {
 								vLeftTable += '<div style="margin-left:' + vMargin + 'px;" id="group_' + vcurrDivID + '" class="gicon ' + gcssClass + '" onclick="JSGantt.folder(\'' + vcurrDivID + '\',' + vGanttVar + ');' + vGanttVar + '.DrawDependencies();"></div>';
 							}

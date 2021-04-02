@@ -48,25 +48,34 @@ if (beCPG.module.EntityDataGridRenderers) {
 
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName: ["pjt:tlTaskName"],
-		renderer: function(oRecord, data, label, scope) {
+		renderer: function(oRecord, data, label, scope, z, zz, elCell, oColumn) {
+
+			var task = oRecord.getData();
 
 			var padding = 0, className = oRecord.getData("itemData")["prop_pjt_tlIsMilestone"].value ? "task-milestone" : "task", toogleGroupButton = null;
 
+			var tr = scope.widgets.dataTable.getTrEl(elCell);
 
 			if (oRecord.getData("itemData")["prop_bcpg_depthLevel"] && oRecord.getData("itemData")["prop_bcpg_depthLevel"].value) {
 				padding = (oRecord.getData("itemData")["prop_bcpg_depthLevel"].value - 1) * 25;
+
+				Dom.addClass(tr, "mtl-level-" + oRecord.getData("itemData")["prop_bcpg_depthLevel"].value);
 			}
 
 			if (false === oRecord.getData("itemData")["isLeaf"]) {
 				toogleGroupButton = '<div id="group_' + (oRecord.getData("itemData")["open"] ? "expanded" : "collapsed") + '_' + oRecord.getData("nodeRef") + '" style="margin-left:' + padding
 					+ 'px;" class="onCollapsedAndExpanded" ><a href="#" class="' + scope.id + '-action-link"><span class="gicon ggroup-'
 					+ (oRecord.getData("itemData")["open"] ? "expanded" : "collapsed") + '"></span></a></div>';
+				Dom.addClass(tr, "mtl-" + (oRecord.getData("itemData")["open"] ? "expanded" : "collapsed"));
+
 			} else if (true === oRecord.getData("itemData")["isLeaf"]) {
 				padding += 25;
+
+				Dom.addClass(tr, "mtl-leaf");
 			}
 
 			return (toogleGroupButton != null ? toogleGroupButton : '')
-				+ '<span class="' + className + '" style="margin-left:' + padding + 'px;" >' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
+				+ '<span class="' + className + ' task-status" ' + (toogleGroupButton == null && padding != 0 ? 'style="margin-left:' + padding + 'px;"' : '') + ' >' + scope.getTaskTitle(task, scope.options.entityNodeRef, false, -1, true, true) + '</span>';
 		}
 
 	});
@@ -219,7 +228,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 			if (data.value != null) {
 				var startDate = oRecord.getData()["itemData"]["prop_pjt_tlStart"].value;
 				var targetStart = data.value;
-				startDate =  startDate != null ? scope.resetDate(Alfresco.util.fromISO8601(startDate)) : null;
+				startDate = startDate != null ? scope.resetDate(Alfresco.util.fromISO8601(startDate)) : null;
 				targetStart = targetStart != null ? scope.resetDate(Alfresco.util.fromISO8601(targetStart)) : null;
 
 				if (startDate != null && targetStart != null && startDate.getTime() > targetStart.getTime()) {

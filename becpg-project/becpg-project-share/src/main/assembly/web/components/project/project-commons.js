@@ -296,7 +296,7 @@
          return date;
       },
 
-      getTaskTitle : function PL_getTaskTitle(task, entityNodeRef, showLegend, size) {
+      getTaskTitle : function PL_getTaskTitle(task, entityNodeRef, showLegend, size, hideState, hideDuration) {
     	  var subProject = null, subProjectClass = "";
     	  
     	  if (task["itemData"]["assoc_pjt_subProjectRef"] != null
@@ -316,13 +316,17 @@
     	  }
     	  
     	  
-          var ret = legend + '<span class="task-status task-status-' + task["itemData"]["prop_pjt_tlState"].value +classGroup+subProjectClass+ '">', duration ='';
-          
+          var ret = legend, duration ='';
+
+		  if(!hideState){
+			 ret += '<span class="task-status task-status-' + task["itemData"]["prop_pjt_tlState"].value +classGroup+subProjectClass+ '">';
+		  }          
+
           var text = task["itemData"]["prop_pjt_tlTaskName"].displayValue;
           
           if(task.permissions.userAccess.edit ){
         	  
-        	  if(size && text.length>size){
+        	  if(size && size > -1 && text.length>size){
         		  ret += '<span class="node-' + (subProject!=null ? subProject.value : task.nodeRef) + '|' + entityNodeRef 
         		  + ' text-tooltip se" data-tooltip="'+ beCPG.util.encodeAttr(text) +'"><a href="" class="theme-color-1 ' + TASK_EVENTCLASS + '" title="' + this
 		          .msg("link.title.task-edit") + '" >' + Alfresco.util.encodeHTML(text.substring(0,size).trim())+"..." +"</span>";
@@ -331,7 +335,7 @@
 		          .msg("link.title.task-edit") + '" >' + text +"</span>";
         	  }
           } else {
-        	  if(size && text.length>size){
+        	  if(size && size > -1 && text.length>size){
         		   ret += '<span class="node-' + (subProject!=null ? subProject.value : task.nodeRef) + '|' + entityNodeRef 
     	    		    + ' text-tooltip se" data-tooltip="'+ beCPG.util.encodeAttr(text) +'"><span>'
     	    		  +Alfresco.util.encodeHTML(text.substring(0,size).trim())+"..."+'</span></span>';
@@ -339,28 +343,31 @@
 	        	  ret += '<span class="node-' + (subProject!=null ? subProject.value : task.nodeRef) + '|' + entityNodeRef + '">' + text +"</span>";
         	  }
           }
-          
-          if( task["itemData"]["prop_pjt_tlState"].value == "InProgress"){
-              if(task["itemData"]["prop_pjt_completionPercent"] && 
-                      task["itemData"]["prop_pjt_completionPercent"].value != null)  {
-                  duration += '<span title="' + this.msg("completion.title") + '">' + task["itemData"]["prop_pjt_completionPercent"].displayValue + '%</span>';
-              }              
-          }
-          
-          if(task["itemData"]["prop_pjt_tlRealDuration"] && task["itemData"]["prop_pjt_tlRealDuration"].value!=null &&
-         		 task["itemData"]["prop_pjt_tlRealDuration"].value > task["itemData"]["prop_pjt_tlDuration"].value)  {             
-         	 if(duration.length>0){
-         		 duration+=" - ";
-         	 }
-         	 duration += '<span class="red" title="' + this.msg("overdue.title") + '">' + Alfresco.util.encodeHTML(task["itemData"]["prop_pjt_tlRealDuration"].value - task["itemData"]["prop_pjt_tlDuration"].value)+" "+this
-             .msg("overdue.day")+ '</span>';
-         } 
+		
+		if(!hideDuration){
+		          
+		          if( task["itemData"]["prop_pjt_tlState"].value == "InProgress"){
+		              if(task["itemData"]["prop_pjt_completionPercent"] && 
+		                      task["itemData"]["prop_pjt_completionPercent"].value != null)  {
+		                  duration += '<span title="' + this.msg("completion.title") + '">' + task["itemData"]["prop_pjt_completionPercent"].displayValue + '%</span>';
+		              }              
+		          }
+		          
+		          if(task["itemData"]["prop_pjt_tlRealDuration"] && task["itemData"]["prop_pjt_tlRealDuration"].value!=null &&
+		         		 task["itemData"]["prop_pjt_tlRealDuration"].value > task["itemData"]["prop_pjt_tlDuration"].value)  {             
+		         	 if(duration.length>0){
+		         		 duration+=" - ";
+		         	 }
+		         	 duration += '<span class="red" title="' + this.msg("overdue.title") + '">' + Alfresco.util.encodeHTML(task["itemData"]["prop_pjt_tlRealDuration"].value - task["itemData"]["prop_pjt_tlDuration"].value)+" "+this
+		             .msg("overdue.day")+ '</span>';
+		         }
+		} 
 
          if(task.permissions.userAccess.edit){
         	 ret += '</a>';
          }
 
-         if(duration.length>0){
+         if(!hideDuration && duration.length>0){
              ret +=' ('+duration+')';
          }
          
@@ -410,7 +417,11 @@
         	  ret += '<a class="task-comments '+COMMENT_EVENTCLASS+'" title="' + this.msg("link.title.comment-task") + '" href="" >';
               ret +="&nbsp;";
           }
-          ret += "</a></span></span>";
+          ret += "</a></span>";
+
+		if(!hideState){
+			ret +="</span>";
+		}
           
 
           return ret;

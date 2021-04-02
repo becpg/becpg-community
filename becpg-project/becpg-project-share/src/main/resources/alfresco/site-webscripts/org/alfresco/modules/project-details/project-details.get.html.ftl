@@ -37,7 +37,7 @@
         <div class="chart">
             <div id="${el}-chart"></div>
         </div>
-        <div class="yui-b">
+        <div class="yui-g">
             <div class="yui-u-1-2">
                 <#if projectDetails.startDate?? ><span>${msg("projectdetails.start")}</span>
                 <span class="black-text">${projectDetails.startDate}</span>
@@ -97,7 +97,7 @@
             <div class="yui-g"> 
             	<div class="yui-g first"> 
                     <span class="bold black-text medium-title">${projectDetails.milestoneSum} ${msg("projectdetails.progressstatement.milestones")}</span>
-                	<div class="yui-b myProgress">
+                	<div class="yui-g myProgress">
 	                    <#assign mlReleasedPerc = projectDetails.milestoneReleased/projectDetails.milestoneSum * 100>
 	                    <div class="blueBar" style="width:${mlReleasedPerc?string(",##0")}%">
 	                        <span class=" bar-description black-text">${projectDetails.milestoneReleased} ${msg("projectdetails.legend.realised")}</span>
@@ -132,14 +132,14 @@
         	</div>
     	</div>
         <div class= "hr"></div>
-        <div class="yui-b">
+        <div class="yui-g">
             <div class="myProgress">
                 <div class="mauveBar" style="width:${projectDetails.userTaskCompletionPerc?string(",##0")}%">
                     <span class="bar-description">${projectDetails.userTaskCompletionPerc}% ${msg("projectdetails.legend.realised")}</span>
                 </div>
             </div>
         </div>
-        <div class="yui-b">
+        <div class="yui-g">
             <#assign restUserTaskCompletionPerc = 100 - projectDetails.userTaskCompletionPerc>
             <div class="myProgress">
                 <div class="lightmauveBar" style="width:${restUserTaskCompletionPerc?string(",##0")}%">
@@ -147,7 +147,7 @@
                 </div>
             </div>
         </div>
-        <div class="yui-b">
+        <div class="yui-g">
             <div class="myProgress">
                 <div class="redBar" style="width:${projectDetails.userOverdueTaskCompletionPerc?string(",##0")}%">
                     <span class="bar-description">${projectDetails.userOverdueTaskCompletionPerc}% ${msg("projectdetails.legend.overdue")}</span>
@@ -160,7 +160,7 @@
  <!-- task listing--> 
     <#if projectDetails.taskList.commingTaskList?exists && projectDetails.taskList.commingTaskList?size &gt; 0>
     <div class="project-details-comming-tasks white-block">
-        <div class="yui-b">
+        <div class="yui-g">
             <div class="green-header">
                 <span class="title-block comming-tasks-title">${msg("projectdetails.tasklist.comming")}</span>
                 <span class="black-text bold white-btn">${projectDetails.taskList.commingTaskList?size}</span>
@@ -175,7 +175,7 @@
                 </span>
             </div> 
         </div>
-        <div class="yui-b scrollableList"<#if args.height??>style="height: ${args.height}px;"</#if>>
+        <div class="yui-g scrollableList"<#if args.height??>style="height: ${args.height}px;"</#if>>
             <#list projectDetails.taskList.commingTaskList as task>
                 <div class="<#if task.isAuthenticatedUser>my-tasks</#if> comming-tasks">
                 	<#if task.taskStart ?? >
@@ -193,7 +193,7 @@
     </#if>
 	<#if projectDetails.taskList.overdueTaskList?exists && projectDetails.taskList.overdueTaskList?size &gt; 0>
     <div class="project-details-overdue-tasks white-block">
-        <div class="yui-b">
+        <div class="yui-g">
             <div class="red-header">
                 <span class="title-block overdue-tasks-title">${msg("projectdetails.tasklist.overdue")}</span>
                 <span class="black-text bold white-btn">${projectDetails.taskList.overdueTaskList?size}</span>
@@ -208,7 +208,7 @@
                </span>
             </div>
         </div>
-            <div class="yui-b scrollableList"<#if args.height??>style="height: ${args.height}px;"</#if>>
+            <div class="yui-g scrollableList"<#if args.height??>style="height: ${args.height}px;"</#if>>
                 <#list projectDetails.taskList.overdueTaskList as task>
                     <div class=" <#if task.isAuthenticatedUser>my-tasks</#if> overdue-tasks">
                     	<#if task.taskEnd ??>
@@ -226,12 +226,12 @@
     </#if>
     <#if projectDetails.comments?exists && projectDetails.comments?size &gt; 0>
     <div class="project-details-comments-block white-block">
-        <div class= "yui-b">
+        <div class= "yui-g">
             <span><img src="${url.context}/components/images/comment-16.png"/></span>
             <span class="block-title">${msg("projectdetails.comments")} </span>
         </div>
         <div class= "hr"></div>
-            <div class="yui-b div-resizer scrollableList"<#if args.height??>style="height: ${args.height}px;"</#if>>
+            <div class="div-resizer scrollableList"<#if args.height??>style="height: ${args.height}px;"</#if>>
             <#list projectDetails.comments as comment>
                 <div class="comment-details">
                     <div class="yui-gf">

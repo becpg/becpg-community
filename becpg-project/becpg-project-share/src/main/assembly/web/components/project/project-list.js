@@ -345,7 +345,7 @@ var g; // gantt var
                                 if (recordSet.getLength() != 0)
                                 {
                                     g = new JSGantt.GanttChart('g', Dom.get(this.id + "-gantt"), g != null ? g
-                                            .getFormat() : null);
+                                            .getFormat() : null, false);
                                     g.setDateInputFormat("mediumDate");
                                     g.setDateDisplayFormat("mediumDate");
                                     g.setCaptionType('Resource');

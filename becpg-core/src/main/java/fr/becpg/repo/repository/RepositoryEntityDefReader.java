@@ -142,6 +142,14 @@ public interface RepositoryEntityDefReader<T> {
 	 */
 	QName getMultiLevelSecondaryPivot(QName dataListItemType);
 	
+	/**
+	 * <p>getMultiLevelGroupProperty.</p>
+	 *
+	 * @param dataListItemType a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link org.alfresco.service.namespace.QName} object.
+	 */
+	QName getMultiLevelGroupProperty(QName dataListItemType);
+	
 	
 	
 }

@@ -432,7 +432,12 @@
 					<set appearance="bordered-panel" id="datesPanel"
 						label-id="becpg.forms.set.dates.label" parent="publicationTab"
 						template="/org/alfresco/components/form/2-column-set.ftl" />
-
+					
+					<set id="templateTab" label-id="becpg.forms.set.template.label" />
+					
+					<set id="template" appearance="bordered-panel" label-id="becpg.forms.set.template.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" parent="templateTab" />
+					
 					<set id="branchTab" label-id="becpg.forms.set.branch.label" />
 
 					<set id="branch" appearance="bordered-panel" label-id="becpg.forms.set.branch.label"
