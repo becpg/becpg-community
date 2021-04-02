@@ -101,6 +101,12 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent implements 
 	public QName getMultiLevelSecondaryPivot(QName dataListItemType) {
 		return repositoryEntityDefReader.getMultiLevelSecondaryPivot(dataListItemType);
 	}
+	
+	/** {@inheritDoc} */
+	@Override
+	public QName getMultiLevelGroupProperty(QName dataListItemType) {
+		return repositoryEntityDefReader.getMultiLevelGroupProperty(dataListItemType);
+	}
 
 	/** {@inheritDoc} */
 	@Override
