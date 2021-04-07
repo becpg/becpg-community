@@ -97,6 +97,8 @@ public class ProductVersionPlugin implements EntityVersionPlugin {
 	        	}
 	        }
 	        
+		} else if (nodeService.getProperty(origNodeRef, PLMModel.PROP_SUPPLIER_STATE) != null) {
+	        nodeService.setProperty(workingCopyNodeRef, PLMModel.PROP_SUPPLIER_STATE, nodeService.getProperty(origNodeRef, PLMModel.PROP_SUPPLIER_STATE));
 		}
 		
 	}
