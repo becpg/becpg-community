@@ -74,7 +74,7 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 
 	/** {@inheritDoc} */
 	@Override
-	public boolean process(ProductData formulatedProduct) throws FormulateException {
+	public boolean process(ProductData formulatedProduct) {
 
 		logger.debug("process calculating visitor");
 
@@ -130,10 +130,8 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 							param.setName(null);
 							param.setNodeRef(null);
 							param.setParentNodeRef(null);
-							if (!isMultiLevel || (param.getStep() == null)) {
-								param.setStep(p.getStep());
-							}
 							if (!isMultiLevel || (param.getResource() == null)) {
+								param.setStep(p.getStep());
 								param.setResource(resource.getNodeRef());
 							}
 							param.setVariants(p.getVariants());
