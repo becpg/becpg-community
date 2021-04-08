@@ -44,16 +44,26 @@
 					text to display - defaults to model type if not set labelId = I18N message 
 					id of label text to display description = description text to display descriptionId 
 					= I18N message id of description text to display -->
-				<form labelId="search.form.label.bcpg_finishedProduct" descriptionId="search.form.desc.bcpg_finishedProduct">bcpg:finishedProduct</form>
-				<form labelId="search.form.label.bcpg_semiFinishedProduct" descriptionId="search.form.desc.bcpg_semiFinishedProduct">bcpg:semiFinishedProduct</form>
-				<form labelId="search.form.label.bcpg_packagingMaterial" descriptionId="search.form.desc.bcpg_packagingMaterial">bcpg:packagingMaterial</form>
-				<form labelId="search.form.label.bcpg_packagingKit" descriptionId="search.form.desc.bcpg_packagingKit">bcpg:packagingKit</form>
-				<form labelId="search.form.label.bcpg_rawMaterial" descriptionId="search.form.desc.bcpg_rawMaterial">bcpg:rawMaterial</form>
-				<form labelId="search.form.label.bcpg_resourceProduct" descriptionId="search.form.desc.bcpg_resourceProduct">bcpg:resourceProduct</form>
-				<form labelId="search.form.label.bcpg_client" descriptionId="search.form.desc.bcpg_client">bcpg:client</form>
-				<form labelId="search.form.label.bcpg_supplier" descriptionId="search.form.desc.bcpg_supplier">bcpg:supplier</form>
-				<form labelId="search.form.label.qa_nc" descriptionId="search.form.desc.qa_nc">qa:nc</form>
-				<form labelId="search.form.label.qa_qualityControl" descriptionId="search.form.desc.qa_qualityControl">qa:qualityControl</form>
+<!-- 				<form labelId="search.form.label.bcpg_finishedProduct" descriptionId="search.form.desc.bcpg_finishedProduct">bcpg:finishedProduct</form> -->
+<!-- 				<form labelId="search.form.label.bcpg_semiFinishedProduct" descriptionId="search.form.desc.bcpg_semiFinishedProduct">bcpg:semiFinishedProduct</form> -->
+<!-- 				<form labelId="search.form.label.bcpg_packagingMaterial" descriptionId="search.form.desc.bcpg_packagingMaterial">bcpg:packagingMaterial</form> -->
+<!-- 				<form labelId="search.form.label.bcpg_packagingKit" descriptionId="search.form.desc.bcpg_packagingKit">bcpg:packagingKit</form> -->
+<!-- 				<form labelId="search.form.label.bcpg_rawMaterial" descriptionId="search.form.desc.bcpg_rawMaterial">bcpg:rawMaterial</form> -->
+<!-- 				<form labelId="search.form.label.bcpg_resourceProduct" descriptionId="search.form.desc.bcpg_resourceProduct">bcpg:resourceProduct</form> -->
+<!-- 				<form labelId="search.form.label.bcpg_client" descriptionId="search.form.desc.bcpg_client">bcpg:client</form> -->
+<!-- 				<form labelId="search.form.label.bcpg_supplier" descriptionId="search.form.desc.bcpg_supplier">bcpg:supplier</form> -->
+<!-- 				<form labelId="search.form.label.qa_nc" descriptionId="search.form.desc.qa_nc">qa:nc</form> -->
+<!-- 				<form labelId="search.form.label.qa_qualityControl" descriptionId="search.form.desc.qa_qualityControl">qa:qualityControl</form> -->
+				<form labelId="search.form.label.bcpg_finishedProduct" descriptionId="">bcpg:finishedProduct</form>
+				<form labelId="search.form.label.bcpg_semiFinishedProduct" descriptionId="">bcpg:semiFinishedProduct</form>
+				<form labelId="search.form.label.bcpg_packagingMaterial" descriptionId="">bcpg:packagingMaterial</form>
+				<form labelId="search.form.label.bcpg_packagingKit" descriptionId="">bcpg:packagingKit</form>
+				<form labelId="search.form.label.bcpg_rawMaterial" descriptionId="">bcpg:rawMaterial</form>
+				<form labelId="search.form.label.bcpg_resourceProduct" descriptionId="">bcpg:resourceProduct</form>
+				<form labelId="search.form.label.bcpg_client" descriptionId="">bcpg:client</form>
+				<form labelId="search.form.label.bcpg_supplier" descriptionId="">bcpg:supplier</form>
+				<form labelId="search.form.label.qa_nc" descriptionId="">qa:nc</form>
+				<form labelId="search.form.label.qa_qualityControl" descriptionId="">qa:qualityControl</form>
 			</forms>
 		</advanced-search>
 	</config>
