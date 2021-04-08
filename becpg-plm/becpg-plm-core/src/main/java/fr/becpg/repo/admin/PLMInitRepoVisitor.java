@@ -48,7 +48,6 @@ import org.alfresco.service.cmr.action.ActionCondition;
 import org.alfresco.service.cmr.action.CompositeAction;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
-import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -61,7 +60,6 @@ import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.cmr.site.SiteVisibility;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.service.namespace.RegexQNamePattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,6 +90,7 @@ import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntitySystemService;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.entity.catalog.EntityCatalogService;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.ContentHelper;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.hierarchy.HierarchyHelper;
@@ -245,6 +244,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	
 	@Autowired
 	private Repository repository;
+	
+	@Autowired
+	private AssociationService associationService;
 	
 	/**
 	 * {@inheritDoc}
@@ -565,21 +567,17 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			
 			String mailTemplate = "/app:company_home/app:dictionary/app:email_templates/cm:formulation-errors-notification-rule-list-email.html.ftl";
 			
-			NodeRef companyHomeNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(), mailTemplate);
+			NodeRef mailTemplateNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(), mailTemplate);
 			
-			nodeService.setProperty(requirementsNotification, QName.createQName(BeCPGModel.BECPG_URI, "nrEmail"), companyHomeNodeRef);
+			associationService.update(requirementsNotification, QName.createQName(BeCPGModel.BECPG_URI, "nrEmail"), mailTemplateNodeRef);
 			
 			NodeRef adminGroupNodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, "GROUP_ALFRESCO_ADMINISTRATORS");
 			
-			List<ChildAssociationRef> members = nodeService.getChildAssocs(adminGroupNodeRef, ContentModel.ASSOC_MEMBER, RegexQNamePattern.MATCH_ALL);
-			
-			for (ChildAssociationRef member : members) {
-				nodeService.createAssociation(requirementsNotification, member.getChildRef(), QName.createQName(BeCPGModel.BECPG_URI, "nrNotificationAuthorities"));
-			}
+			associationService.update(requirementsNotification, QName.createQName(BeCPGModel.BECPG_URI, "nrNotificationAuthorities"), adminGroupNodeRef);
 			
 			NodeRef siteRoot = siteService.getSiteRoot();
 			
-			nodeService.createAssociation(requirementsNotification, siteRoot, QName.createQName(BeCPGModel.BECPG_URI, "nrTarget"));
+			associationService.update(requirementsNotification, QName.createQName(BeCPGModel.BECPG_URI, "nrTarget"), siteRoot);
 		}
 	}
 
