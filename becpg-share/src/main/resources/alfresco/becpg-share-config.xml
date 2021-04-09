@@ -241,6 +241,7 @@
 				<aspect name="rep:reportKindAspect" />
 				<aspect name="bp:cataloguable" />
 				<aspect name="bcpg:entityTplAspect" />
+				<aspect name="bcpg:subEntityAspect" />
 				<aspect name="bcpg:entityBranchAspect" />
 				<aspect name="bcpg:docLinkedEntitiesAspect" />
 				<aspect name="bcpg:autoMergeAspect" />
