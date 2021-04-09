@@ -41,7 +41,7 @@ public interface FormulationService<T extends FormulatedEntity>  {
       * @return a T object.
       * @throws fr.becpg.repo.formulation.FormulateException if any.
       */
-     T formulate(NodeRef entityNodeRef, String chainId) throws FormulateException;
+     T formulate(NodeRef entityNodeRef, String chainId);
     
      /**
       * <p>formulate.</p>
@@ -51,7 +51,7 @@ public interface FormulationService<T extends FormulatedEntity>  {
       * @return a T object.
       * @throws fr.becpg.repo.formulation.FormulateException if any.
       */
-     T formulate(T repositoryEntity, String chainId) throws FormulateException;
+     T formulate(T repositoryEntity, String chainId);
 	
      /**
       * <p>formulate.</p>
@@ -60,7 +60,7 @@ public interface FormulationService<T extends FormulatedEntity>  {
       * @return a T object.
       * @throws fr.becpg.repo.formulation.FormulateException if any.
       */
-     T formulate(NodeRef entityNodeRef) throws FormulateException;
+     T formulate(NodeRef entityNodeRef);
     
      /**
       * <p>formulate.</p>
@@ -69,7 +69,7 @@ public interface FormulationService<T extends FormulatedEntity>  {
       * @return a T object.
       * @throws fr.becpg.repo.formulation.FormulateException if any.
       */
-     T formulate(T repositoryEntity) throws FormulateException;
+     T formulate(T repositoryEntity);
 
 	/**
 	 * <p>registerFormulationChain.</p>
