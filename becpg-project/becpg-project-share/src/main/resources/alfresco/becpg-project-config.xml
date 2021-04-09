@@ -42,11 +42,14 @@
    </config>
    
    
-	<config evaluator="string-compare" condition="AdvancedSearch">
+	<config evaluator="string-compare" condition="AdvancedSearch" replace="true">
 		<advanced-search>
 			<!-- Forms for the advanced search type list -->
 			<forms>
-				<form labelId="search.form.label.pjt_project" descriptionId="search.form.desc.pjt_project">pjt:project</form>
+	            <form labelId='search.form.label.cm_content' descriptionId="">cm:content</form>
+	            <form labelId='search.form.label.cm_folder' descriptionId="">cm:folder</form>
+				<form labelId="search.form.label.pjt_project" descriptionId="">pjt:project</form>
+<!-- 				<form labelId="search.form.label.pjt_project" descriptionId="search.form.desc.pjt_project">pjt:project</form> -->
 			</forms>
 		</advanced-search>
 	</config>

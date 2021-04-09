@@ -77,6 +77,7 @@ import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.report.entity.EntityImageInfo;
@@ -879,6 +880,12 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			QName propNameOfType = getPropNameOfType(targetClass);
 
 			if (propNameOfType != null) {
+				
+				if (ContentModel.PROP_TITLE.equals(propNameOfType)) {
+					MLText tmp = (MLText) mlNodeService.getProperty(nodeRef, propNameOfType);
+					return MLTextHelper.getClosestValue(tmp, I18NUtil.getContentLocale());
+				}
+				
 				return (String) nodeService.getProperty(nodeRef, propNameOfType);
 			}
 
