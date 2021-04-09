@@ -202,6 +202,8 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		public Serializable setValue(String qname, Serializable value) {
 			return setValue(entity, qname, value);
 		}
+		
+		
 
 		/**
 		 * Helper @beCPG.setAssocs($nodeRef, $qname, $assocNodeRefs)
@@ -263,6 +265,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 			return assocValue(entity.getNodeRef(), qname);
 		}
 
+		
 		/**
 		 * Helper @beCPG.assocValues($entity, $qname)
 		 *
@@ -283,6 +286,29 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 
 		public List<NodeRef> assocValues(String qname) {
 			return assocValues(entity.getNodeRef(), qname);
+		}
+		
+		
+		/**
+		 * Helper @beCPG.sourcesAssocValues($nodeRef, $qname)
+		 *
+		 * @param nodeRef
+		 * @param qname
+		 * @return association nodeRef
+		 */
+		public List<NodeRef> sourcesAssocValues(NodeRef nodeRef, String qname) {
+			if (nodeRef != null) {
+				return associationService.getSourcesAssocs(nodeRef, getQName(qname));
+			}
+			return null;
+		}
+
+		public List<NodeRef> sourcesAssocValues(RepositoryEntity entity, String qname) {
+			return sourcesAssocValues(entity.getNodeRef(), qname);
+		}
+
+		public List<NodeRef> sourcesAssocValues(String qname) {
+			return sourcesAssocValues(entity.getNodeRef(), qname);
 		}
 
 		/**
@@ -421,7 +447,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		/**
 		 * @beCPG.runScript($nodeRef)
 		 *
-		 *                            @param scriptNode
+		 * @param scriptNode
 		 */
 		public void runScript(String scriptNode) {
 			runScript(new NodeRef(scriptNode));
@@ -463,7 +489,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		/**
 		 * @beCPG.sum($range)
 		 *
-		 *                    @param range
+		 * @param range
 		 * @return sum range of double
 		 */
 		public Double sum(Collection<Double> range) {
@@ -473,7 +499,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		/**
 		 * @beCPG.avg($range, $formula)
 		 *
-		 *                    @param range
+		 * @param range
 		 * @param formula
 		 * @return average of formula results apply on range
 		 */
@@ -494,7 +520,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		/**
 		 * @beCPG.max($range, $formula)
 		 *
-		 *                    @param range
+		 * @param range
 		 * @param formula
 		 * @return get max of formula results apply on range
 		 */
@@ -505,7 +531,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		/**
 		 * @beCPG.max($range)
 		 *
-		 *                    @param range
+		 * @param range
 		 * @return get max of range of double
 		 */
 		public Double max(Collection<Double> range) {
@@ -515,7 +541,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		/**
 		 * @beCPG.min($range, $formula)
 		 *
-		 *                    @param range
+		 * @param range
 		 * @param formula
 		 * @return get min of formula results apply on range
 		 */
@@ -526,7 +552,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		/**
 		 * @beCPG.min($range)
 		 *
-		 *                    @param range
+		 * @param range
 		 * @return get min of range of double
 		 */
 		public Double min(Collection<Double> range) {
@@ -552,7 +578,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		/**
 		 * @beCPG.saveCustomList($range)
 		 *
-		 *                               @param range
+		 * @param range
 		 */
 		public void saveCustomList(Collection<RepositoryEntity> range) {
 			alfrescoRepository.save(range);
@@ -561,7 +587,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		/**
 		 * @beCPG.applyFormulaToList($range, $formula)
 		 *
-		 *                                   @param range
+		 * @param range
 		 * @param formula
 		 */
 		public void applyFormulaToList(Collection<RepositoryEntity> range, String formula) {
@@ -569,9 +595,9 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * @beCPG.filter($range, formula)
+		 * Helper @beCPG.filter($range, formula)
 		 *
-		 *                       @param <T>
+		 * @param <T>
 		 * @param range
 		 * @param formula
 		 * @return filter collection with spel formula
@@ -587,11 +613,47 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 			}
 			return null;
 		}
+		
+		/**
+		 * Helper @beCPG.filterByAssoc($range, $assocQname, $values)
+		 *
+		 * @param <T>
+		 * @param range
+		 * @param assocName
+		 * @param values
+		 * @return filter nodeRef collection by assoc values
+		 */
+		public List<NodeRef> filterByAssoc(Collection<NodeRef> range, String assocName, Collection<NodeRef> values ){
+			if(range!=null) {
+				return range.stream().filter(nodeRef -> {
+					List<NodeRef> assocs = associationService.getTargetAssocs(nodeRef, getQName(assocName));
+					return assocs.containsAll(values);
+				}).collect(Collectors.toList());
+			}
+			return null;
+		}
+		
+		/**
+		 * Helper @beCPG.getOrDefault($range, $index, $defaultValue)
+		 * 
+		 * @param <T>
+		 * @param range
+		 * @param index
+		 * @param defaultValue
+		 * @return defaultValue id list index doesn't exists
+		 */
+		public <T> T getOrDefault(List<T> range,int index, T defaultValue) {
+			if(range!=null && !range.isEmpty() &&  index >= 0 && index < range.size()) {
+				return range.get(index);
+			}
+			return defaultValue;
+		}
+		
 
 		/**
-		 * @beCPG.children($parent, $compositeList)
+		 * Helper  @beCPG.children($parent, $compositeList)
 		 *
-		 *                          @param <T>
+		 * @param <T>
 		 * @param parent
 		 * @param compositeList
 		 * @return children of parent item
@@ -609,9 +671,9 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * @beCPG.formatNumber($number)
+		 * Helper @beCPG.formatNumber($number)
 		 *
-		 *                              @param number
+		 * @param number
 		 * @return standard becpg number format
 		 */
 		public String formatNumber(Number number) {
@@ -619,9 +681,9 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * @beCPG.formatNumber($number, $format )
+		 * Helper @beCPG.formatNumber($number, $format )
 		 *
-		 *                              Example: @beCPG.formatNumber(10,00005,
+		 *    Example: @beCPG.formatNumber(10,00005,
 		 *                              "0.##")
 		 *
 		 * @param number
@@ -633,9 +695,9 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * @beCPG.formatDate($date )
+		 * Helper  @beCPG.formatDate($date )
 		 *
-		 *                         Example: @beCPG.formatNumber(10,00005,
+		 *  Example: @beCPG.formatNumber(10,00005,
 		 *                         "0.##")
 		 *
 		 * @param date
@@ -648,7 +710,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		/**
 		 * @beCPG.formatDate($date, $format )
 		 *
-		 *                          Example: @beCPG.formatDate(new
+		 *  Example: @beCPG.formatDate(new
 		 *                          java.util.Date(),"dd/mm/YYYY" )
 		 *
 		 * @param date
@@ -660,9 +722,9 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 
 		/**
 		 *
-		 * @beCPG.copy($fromNodeRef, $propQNames, $listQNames)
+		 * Helper  @beCPG.copy($fromNodeRef, $propQNames, $listQNames)
 		 *
-		 *                           Copy properties from a entity to current
+		 *                           Copy properties from an entity to current
 		 *                           entity
 		 *
 		 *                           Example: @beCPG.copy(compoListView.compoList[0].product,{"bcpg:suppliers","bcpg:legalName"},{"bcpg:costList"});
