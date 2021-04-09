@@ -47,7 +47,7 @@ public class EntityCatalogWebScript extends AbstractWebScript {
 
 	private RuleService ruleService;
 
-	private EntityCatalogService entityCatalogService;
+	private EntityCatalogService<FormulatedEntity> entityCatalogService;
 
 	/**
 	 * <p>Setter for the field <code>ruleService</code>.</p>
@@ -90,10 +90,9 @@ public class EntityCatalogWebScript extends AbstractWebScript {
 	 *
 	 * @param entityCatalogService a {@link fr.becpg.repo.entity.catalog.EntityCatalogService} object.
 	 */
-	public void setEntityCatalogService(EntityCatalogService entityCatalogService) {
+	public void setEntityCatalogService(EntityCatalogService<FormulatedEntity> entityCatalogService) {
 		this.entityCatalogService = entityCatalogService;
 	}
-
 
 	/** {@inheritDoc} */
 	@SuppressWarnings("unchecked")
@@ -125,13 +124,10 @@ public class EntityCatalogWebScript extends AbstractWebScript {
 						policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 						ruleService.disableRules();
 
-						L2CacheSupport.doInCacheContext(() -> {
-							AuthenticationUtil.runAsSystem(() -> {
-								formulationService.formulate(productNodeRef,FormulationService.FAST_FORMULATION_CHAINID);
-								return true;
-							});
-
-						}, false, true);
+						L2CacheSupport.doInCacheContext(() -> AuthenticationUtil.runAsSystem(() -> {
+							formulationService.formulate(productNodeRef, FormulationService.FAST_FORMULATION_CHAINID);
+							return true;
+						}), false, true);
 
 						formulated = true;
 
@@ -155,7 +151,7 @@ public class EntityCatalogWebScript extends AbstractWebScript {
 				jsonObject = new JSONObject();
 
 				jsonObject.put(EntityCatalogService.PROP_CATALOGS, entityCatalogService.formulateCatalog(catalogId, productNodeRef,
-						(List<String>) nodeService.getProperty(productNodeRef, ReportModel.PROP_REPORT_LOCALES), null));
+						(List<String>) nodeService.getProperty(productNodeRef, ReportModel.PROP_REPORT_LOCALES)));
 			}
 
 			res.setContentType("application/json");

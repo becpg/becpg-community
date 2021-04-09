@@ -44,8 +44,11 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.cache.BeCPGCacheService;
+import fr.becpg.repo.expressions.ExpressionService;
+import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.MLTextHelper;
+import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
@@ -57,7 +60,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  * @version $Id: $Id
  */
 @Service("entityCatalogService")
-public class EntityCatalogService {
+public class EntityCatalogService<T extends FormulatedEntity> {
 
 	/** Constant <code>logger</code> */
 	public static final Log logger = LogFactory.getLog(EntityCatalogService.class);
@@ -92,12 +95,8 @@ public class EntityCatalogService {
 	public static final String PROP_COLOR = "color";
 	/** Constant <code>PROP_ENTITY_FILTER="entityFilter"</code> */
 	public static final String PROP_ENTITY_FILTER = "entityFilter";
-	/** Constant <code>PROP_OPERATOR="operator"</code> */
-	public static final String PROP_OPERATOR = "operator";
 	/** Constant <code>PROP_CATALOG_MODIFIED_DATE="modifiedDate"</code> */
 	public static final String PROP_CATALOG_MODIFIED_DATE = "modifiedDate";
-	/** Constant <code>PROP_FORMULA="formula"</code> */
-	public static final String PROP_FORMULA = "formula";
 	/** Constant <code>PROP_CATALOG_MODIFIED_FIELD="modifiedField"</code> */
 	public static final String PROP_CATALOG_MODIFIED_FIELD = "modifiedField";
 	/** Constant <code>PROP_AUDITED_FIELDS="auditedFields"</code> */
@@ -135,6 +134,12 @@ public class EntityCatalogService {
 	@Autowired
 	private AssociationService associationService;
 
+	@Autowired
+	private ExpressionService<T> expressionService;
+
+	@Autowired
+	private AlfrescoRepository<T> alfrescoRepository;
+
 	/**
 	 * <p>
 	 * getCatalogsDef.
@@ -150,7 +155,6 @@ public class EntityCatalogService {
 
 			// get JSON from file in system
 			NodeRef folder = getCatalogFolderNodeRef();
-			logger.debug("Catalogs folder: " + folder);
 
 			List<FileInfo> files = null;
 			if (folder != null) {
@@ -163,7 +167,6 @@ public class EntityCatalogService {
 					logger.debug("File in catalog folder nr: " + file.getNodeRef());
 					ContentReader reader = contentService.getReader(file.getNodeRef(), ContentModel.PROP_CONTENT);
 					String content = reader.getContentString();
-					logger.debug("Content: " + content);
 					try {
 						res.add(new JSONArray(content));
 					} catch (JSONException e) {
@@ -197,9 +200,9 @@ public class EntityCatalogService {
 	 * @param listNodeRefs
 	 *            a {@link java.util.Set} object.
 	 */
-	public void updateAuditedField(NodeRef entityNodeRef,Set<QName>  diffQnames, Set<NodeRef> listNodeRefs) {
+	public void updateAuditedField(NodeRef entityNodeRef, Set<QName> diffQnames, Set<NodeRef> listNodeRefs) {
 		try {
-			if ((diffQnames!=null) || (listNodeRefs != null)) {
+			if ((diffQnames != null) || (listNodeRefs != null)) {
 
 				for (JSONArray catalogDef : getCatalogsDef()) {
 
@@ -220,7 +223,7 @@ public class EntityCatalogService {
 											break;
 										}
 									}
-								} else if (diffQnames!=null && !diffQnames.isEmpty()) {
+								} else if ((diffQnames != null) && !diffQnames.isEmpty()) {
 									for (QName diffQName : diffQnames) {
 										if (auditedFields.contains(diffQName)) {
 											changedField = diffQName;
@@ -228,7 +231,7 @@ public class EntityCatalogService {
 										}
 									}
 
-								} 
+								}
 
 								if (changedField != null) {
 									QName catalogModifiedDate = QName.createQName(catalog.getString(PROP_CATALOG_MODIFIED_FIELD), namespaceService);
@@ -342,11 +345,6 @@ public class EntityCatalogService {
 		return ret;
 	}
 
-	public interface EntityCatalogMatcher {
-
-		public boolean matchFormula(String formula);
-	}
-
 	/**
 	 * <p>
 	 * formulateCatalogs.
@@ -364,8 +362,12 @@ public class EntityCatalogService {
 	 * @throws org.json.JSONException
 	 *             if any.
 	 */
-	public JSONArray formulateCatalogs(NodeRef entityNodeRef, List<String> locales, EntityCatalogMatcher entityCatalogMatcher) throws JSONException {
-		return formulateCatalog(null, entityNodeRef, locales, entityCatalogMatcher);
+	public JSONArray formulateCatalogs(T formulatedEntity, List<String> locales) throws JSONException {
+		return formulateCatalog(null, formulatedEntity, locales);
+	}
+
+	public JSONArray formulateCatalog(String catalogId, NodeRef entityNodeRef, List<String> locales) throws JSONException {
+		return formulateCatalog(catalogId, alfrescoRepository.findOne(entityNodeRef), locales);
 	}
 
 	/**
@@ -387,109 +389,114 @@ public class EntityCatalogService {
 	 * @throws org.json.JSONException
 	 *             if any.
 	 */
-	public JSONArray formulateCatalog(String catalogId, NodeRef entityNodeRef, List<String> locales, EntityCatalogMatcher entityCatalogMatcher)
-			throws JSONException {
+	public JSONArray formulateCatalog(String catalogId, T formulatedEntity, List<String> locales) throws JSONException {
 		JSONArray ret = new JSONArray();
 
 		List<JSONArray> catalogs = getCatalogsDef();
 
-		if ((!catalogs.isEmpty()) && (entityNodeRef != null) && nodeService.exists(entityNodeRef)) {
+		if ((!catalogs.isEmpty()) && (formulatedEntity.getNodeRef() != null) && nodeService.exists(formulatedEntity.getNodeRef())) {
 			// Break rules !!!!
-			Map<QName, Serializable> properties = nodeService.getProperties(entityNodeRef);
+			Map<QName, Serializable> properties = nodeService.getProperties(formulatedEntity.getNodeRef());
 			String defaultLocale = Locale.getDefault().getLanguage();
-			QName productType = nodeService.getType(entityNodeRef);
+			QName productType = nodeService.getType(formulatedEntity.getNodeRef());
 
 			for (JSONArray catalogDef : catalogs) {
 				for (int i = 0; i < catalogDef.length(); i++) {
 					JSONObject catalog = catalogDef.getJSONObject(i);
 
-					if ((catalogId == null) || catalog.getString(PROP_ID).equals(catalogId)) {
+					if (((catalogId == null) || catalog.getString(PROP_ID).equals(catalogId))
+							&& (isMatchEntityType(catalog, productType, namespaceService))) {
 
-						boolean matchesOnType = isMatchEntityType(catalog, productType, namespaceService);
 						if (catalog.has(EntityCatalogService.PROP_ENTITY_FILTER)) {
-							String filterFormula = catalog.getString(EntityCatalogService.PROP_ENTITY_FILTER);
-							matchesOnType = matchesOnType && ((entityCatalogMatcher == null) || entityCatalogMatcher.matchFormula(filterFormula));
+
+							String condition = catalog.getString(EntityCatalogService.PROP_ENTITY_FILTER);
+
+							if ((condition != null) && !(condition.startsWith("spel") || condition.startsWith("js"))) {
+								condition = "spel(" + condition + ")";
+							}
+
+							if (!Boolean.parseBoolean(expressionService.eval(condition, formulatedEntity).toString())) {
+								logger.debug("Skipping condition doesn't match : [" + condition + "]");
+								continue;
+							}
+
 						}
 
 						if (logger.isDebugEnabled()) {
 							logger.debug("\n\t\t== Catalog \"" + catalog.getString(EntityCatalogService.PROP_LABEL) + "\" ==");
 							logger.debug("Type of product: " + productType);
 							logger.debug("Catalog json: " + catalog);
-							logger.debug("ProductPassesFilter: " + matchesOnType);
 						}
 
 						// if this catalog applies to this type, or this catalog
 						// has
 						// no
 						// type defined (it applies to every entity type)
-						if (matchesOnType) {
 
-							if (logger.isDebugEnabled()) {
-								logger.debug("Formulating for catalog \"" + catalog.getString(EntityCatalogService.PROP_LABEL) + "\"");
+						if (logger.isDebugEnabled()) {
+							logger.debug("Formulating for catalog \"" + catalog.getString(EntityCatalogService.PROP_LABEL) + "\"");
+						}
+						List<String> langs = new LinkedList<>(getLocales(locales, catalog));
+
+						langs.sort((o1, o2) -> {
+							if (o1.equals(defaultLocale)) {
+								return -1;
 							}
-							List<String> langs = new LinkedList<>(getLocales(locales, catalog));
-
-							langs.sort((o1, o2) -> {
-								if (o1.equals(defaultLocale)) {
-									return -1;
-								}
-								if (o2.equals(defaultLocale)) {
-									return 1;
-								}
-								return 0;
-							});
-
-							String color = catalog.has(EntityCatalogService.PROP_COLOR) ? catalog.getString(EntityCatalogService.PROP_COLOR)
-									: "hsl(" + (i * (360 / 7)) + ", 60%, 50%)";
-
-							JSONArray reqFields = catalog.has(EntityCatalogService.PROP_FIELDS)
-									? catalog.getJSONArray(EntityCatalogService.PROP_FIELDS)
-									: new JSONArray();
-							JSONObject i18nMessages = catalog.has(EntityCatalogService.PROP_I18N_MESSAGES)
-									? catalog.getJSONObject(EntityCatalogService.PROP_I18N_MESSAGES)
-									: new JSONObject();
-							JSONArray uniqueFields = catalog.has(EntityCatalogService.PROP_UNIQUE_FIELDS)
-									? catalog.getJSONArray(EntityCatalogService.PROP_UNIQUE_FIELDS)
-									: new JSONArray();
-
-							JSONArray nonUniqueFields = extractNonUniqueFields(entityNodeRef, uniqueFields, i18nMessages);
-
-							for (String lang : langs) {
-
-								JSONObject catalogDesc = new JSONObject();
-
-								logger.debug("=== Catalog name: " + catalog.getString(EntityCatalogService.PROP_LABEL) + ", lang: " + lang);
-
-								JSONArray missingFields = extractMissingFields(entityNodeRef, properties, reqFields, i18nMessages,
-										defaultLocale.equals(lang) ? null : lang);
-								if ((missingFields.length() > 0) || (nonUniqueFields.length() > 0)) {
-
-									catalogDesc.put(EntityCatalogService.PROP_MISSING_FIELDS, missingFields.length() > 0 ? missingFields : null);
-									catalogDesc.put(EntityCatalogService.PROP_NON_UNIQUE_FIELDS,
-											nonUniqueFields.length() > 0 ? nonUniqueFields : null);
-								}
-
-								catalogDesc.put(EntityCatalogService.PROP_LOCALE, defaultLocale.equals(lang) ? null : lang);
-								catalogDesc.put(EntityCatalogService.PROP_SCORE,
-										((reqFields.length() - missingFields.length()) * 100d) / (reqFields.length() > 0 ? reqFields.length() : 1d));
-								catalogDesc.put(EntityCatalogService.PROP_LABEL, catalog.getString(EntityCatalogService.PROP_LABEL));
-								catalogDesc.put(EntityCatalogService.PROP_ID, catalog.getString(EntityCatalogService.PROP_ID));
-								catalogDesc.put(EntityCatalogService.PROP_COLOR, color);
-
-								if (catalog.has(EntityCatalogService.PROP_CATALOG_MODIFIED_FIELD)) {
-									QName catalogModifiedDate = QName.createQName(catalog.getString(EntityCatalogService.PROP_CATALOG_MODIFIED_FIELD),
-											namespaceService);
-									Date modifiedDate = (Date) properties.get(catalogModifiedDate);
-									if (modifiedDate != null) {
-										catalogDesc.put(EntityCatalogService.PROP_CATALOG_MODIFIED_DATE, ISO8601DateFormat.format(modifiedDate));
-									}
-								}
-								ret.put(catalogDesc);
-
+							if (o2.equals(defaultLocale)) {
+								return 1;
 							}
+							return 0;
+						});
+
+						String color = catalog.has(EntityCatalogService.PROP_COLOR) ? catalog.getString(EntityCatalogService.PROP_COLOR)
+								: "hsl(" + (i * (360 / 7)) + ", 60%, 50%)";
+
+						JSONArray reqFields = catalog.has(EntityCatalogService.PROP_FIELDS) ? catalog.getJSONArray(EntityCatalogService.PROP_FIELDS)
+								: new JSONArray();
+						JSONObject i18nMessages = catalog.has(EntityCatalogService.PROP_I18N_MESSAGES)
+								? catalog.getJSONObject(EntityCatalogService.PROP_I18N_MESSAGES)
+								: new JSONObject();
+						JSONArray uniqueFields = catalog.has(EntityCatalogService.PROP_UNIQUE_FIELDS)
+								? catalog.getJSONArray(EntityCatalogService.PROP_UNIQUE_FIELDS)
+								: new JSONArray();
+
+						JSONArray nonUniqueFields = extractNonUniqueFields(formulatedEntity.getNodeRef(), uniqueFields, i18nMessages);
+
+						for (String lang : langs) {
+
+							JSONObject catalogDesc = new JSONObject();
+
+							logger.debug("=== Catalog name: " + catalog.getString(EntityCatalogService.PROP_LABEL) + ", lang: " + lang);
+
+							JSONArray missingFields = extractMissingFields(formulatedEntity.getNodeRef(), properties, reqFields, i18nMessages,
+									defaultLocale.equals(lang) ? null : lang);
+							if ((missingFields.length() > 0) || (nonUniqueFields.length() > 0)) {
+
+								catalogDesc.put(EntityCatalogService.PROP_MISSING_FIELDS, missingFields.length() > 0 ? missingFields : null);
+								catalogDesc.put(EntityCatalogService.PROP_NON_UNIQUE_FIELDS, nonUniqueFields.length() > 0 ? nonUniqueFields : null);
+							}
+
+							catalogDesc.put(EntityCatalogService.PROP_LOCALE, defaultLocale.equals(lang) ? null : lang);
+							catalogDesc.put(EntityCatalogService.PROP_SCORE,
+									((reqFields.length() - missingFields.length()) * 100d) / (reqFields.length() > 0 ? reqFields.length() : 1d));
+							catalogDesc.put(EntityCatalogService.PROP_LABEL, catalog.getString(EntityCatalogService.PROP_LABEL));
+							catalogDesc.put(EntityCatalogService.PROP_ID, catalog.getString(EntityCatalogService.PROP_ID));
+							catalogDesc.put(EntityCatalogService.PROP_COLOR, color);
+
+							if (catalog.has(EntityCatalogService.PROP_CATALOG_MODIFIED_FIELD)) {
+								QName catalogModifiedDate = QName.createQName(catalog.getString(EntityCatalogService.PROP_CATALOG_MODIFIED_FIELD),
+										namespaceService);
+								Date modifiedDate = (Date) properties.get(catalogModifiedDate);
+								if (modifiedDate != null) {
+									catalogDesc.put(EntityCatalogService.PROP_CATALOG_MODIFIED_DATE, ISO8601DateFormat.format(modifiedDate));
+								}
+							}
+							ret.put(catalogDesc);
+
 						}
 					}
 				}
+
 			}
 		}
 
@@ -584,7 +591,8 @@ public class EntityCatalogService {
 		List<NodeRef> queryResults = new ArrayList<>();
 		if ((value != null) && !value.isEmpty()) {
 
-			queryResults = BeCPGQueryBuilder.createQuery().ofType(typeQName).andNotID(productNodeRef).andPropEquals(propQName, value).inDB().maxResults(10).list();
+			queryResults = BeCPGQueryBuilder.createQuery().ofType(typeQName).andNotID(productNodeRef).andPropEquals(propQName, value).inDB()
+					.maxResults(10).list();
 
 			List<NodeRef> falsePositives = new ArrayList<>();
 

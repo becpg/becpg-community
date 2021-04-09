@@ -10,16 +10,10 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.expression.Expression;
-import org.springframework.expression.ExpressionParser;
-import org.springframework.expression.spel.standard.SpelExpressionParser;
-import org.springframework.expression.spel.support.StandardEvaluationContext;
 
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.entity.catalog.EntityCatalogService;
-import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
-import fr.becpg.repo.formulation.spel.SpelFormulaService;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.AbstractProductDataView;
 import fr.becpg.repo.product.data.ProductData;
@@ -51,8 +45,7 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 
 	private AlfrescoRepository<ProductData> alfrescoRepository;
 
-	private SpelFormulaService formulaService;
-	private EntityCatalogService entityCatalogService;
+	private EntityCatalogService<ProductData> entityCatalogService;
 
 	/**
 	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
@@ -64,69 +57,30 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 	}
 
 	/**
-	 * <p>Setter for the field <code>formulaService</code>.</p>
-	 *
-	 * @param formulaService a {@link fr.becpg.repo.formulation.spel.SpelFormulaService} object.
-	 */
-	public void setFormulaService(SpelFormulaService formulaService) {
-		this.formulaService = formulaService;
-	}
-
-	/**
 	 * <p>Setter for the field <code>entityCatalogService</code>.</p>
 	 *
 	 * @param entityCatalogService a {@link fr.becpg.repo.entity.catalog.EntityCatalogService} object.
 	 */
-	public void setEntityCatalogService(EntityCatalogService entityCatalogService) {
+	public void setEntityCatalogService(EntityCatalogService<ProductData> entityCatalogService) {
 		this.entityCatalogService = entityCatalogService;
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public boolean process(ProductData product) throws FormulateException {
-		if (logger.isDebugEnabled()) {
-			logger.debug("===== Calculating score of product " + product.getName() + " =====");
-		}
-
+	public boolean process(ProductData product) {
 		JSONObject scores = new JSONObject();
 
 		try {
 
 			// checks if mandatory fields are present
-			JSONArray catalogs = entityCatalogService.formulateCatalogs(product.getNodeRef(), product.getReportLocales(), formula -> {
-				boolean res = true;
-
-				StandardEvaluationContext context = formulaService.createEntitySpelContext(product);
-
-				if (context != null) {
-					ExpressionParser parser = formulaService.getSpelParser();
-					Expression expression = parser.parseExpression(formula);
-
-					try {
-						Boolean result = (Boolean) (expression.getValue(context));
-						if (logger.isDebugEnabled()) {
-							logger.debug("Expression " + expression + " returned " + result);
-						}
-						res = result.booleanValue();
-					} catch (Exception e) {
-						logger.error("Unable to parse expression " + formula, e);
-						logger.debug("Creating new CtrlListDataItem (method productMatchesOnFormula...)");
-						ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Tolerated,
-								new MLText("Unable to parse formula " + formula), null, new ArrayList<NodeRef>(), RequirementDataType.Completion);
-						product.getReqCtrlList().add(rclDataItem);
-						res = false;
-					}
-				}
-
-				return res;
-			});
+			JSONArray catalogs = entityCatalogService.formulateCatalogs(product, product.getReportLocales());
 
 			// Unique fields :
 
 			extractReqCtrl(product, catalogs);
 
 			ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Tolerated,
-					MLTextHelper.getI18NMessage(MESSAGE_NON_VALIDATED_STATE), null, new ArrayList<NodeRef>(), RequirementDataType.Validation);
+					MLTextHelper.getI18NMessage(MESSAGE_NON_VALIDATED_STATE), null, new ArrayList<>(), RequirementDataType.Validation);
 
 			boolean shouldAdd = false;
 
@@ -134,11 +88,10 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 			for (AbstractProductDataView view : product.getViews()) {
 				if (view.getMainDataList() != null) {
 					for (CompositionDataItem dataItem : view.getMainDataList()) {
-						if (dataItem.getComponent() != null) {
-							if (!checkProductValidity(dataItem.getComponent())) {
-								rclDataItem.getSources().add(dataItem.getComponent());
-								shouldAdd = true;
-							}
+						if ((dataItem.getComponent() != null) && !checkProductValidity(dataItem.getComponent())) {
+							rclDataItem.getSources().add(dataItem.getComponent());
+							shouldAdd = true;
+
 						}
 					}
 				}
@@ -153,7 +106,6 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 		} catch (JSONException e) {
 			logger.error("Cannot create Json Score", e);
 		}
-		
 
 		product.setEntityScore(scores.toString());
 		return true;
@@ -180,8 +132,8 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 								? MLTextHelper.getI18NMessage(MESSAGE_MANDATORY_FIELD_MISSING_LOCALIZED, displayName, catalogName, "(" + lang + ")")
 								: MLTextHelper.getI18NMessage(MESSAGE_MANDATORY_FIELD_MISSING, displayName, catalogName));
 
-						ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, null,
-								new ArrayList<NodeRef>(), RequirementDataType.Completion);
+						ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, null, new ArrayList<>(),
+								RequirementDataType.Completion);
 						rclDataItem.getSources().add(productData.getNodeRef());
 
 						productData.getReqCtrlList().add(rclDataItem);
@@ -241,7 +193,6 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 		List<NodeRef> ret = new ArrayList<>();
 		for (int j = 0; j < jsonArray.length(); j++) {
 			ret.add(new NodeRef(jsonArray.getString(j)));
-
 		}
 		return ret;
 	}

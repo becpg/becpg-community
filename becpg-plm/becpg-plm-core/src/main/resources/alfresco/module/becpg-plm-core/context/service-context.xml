@@ -206,7 +206,7 @@
 		<property name="serviceRegistry" ref="ServiceRegistry" />
 		<property name="scriptService" ref="scriptService"/>
 		<property name="repository" ref="repositoryHelper" />
-		<property name="searchService" ref="searchService" />
+		<property name="expressionService" ref="expressionService"/>
 		<property name="contentService" ref="contentService"/>
 		<property name="authorityService" ref="authorityService"/>
 		<property name="workflowService" ref="WorkflowService"/>	
