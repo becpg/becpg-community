@@ -1484,7 +1484,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 				}
 				
 				if(maxResults == RepoConsts.MAX_RESULTS_UNLIMITED && result.hasMore()) {
-					logger.warn("Unlimited search has more results");
+					logger.warn("Unlimited search has more results: "+nodes.size()+" "+ result.length());
 				}
 			}
 		} catch (FTSQueryException | QueryModelException e) {
