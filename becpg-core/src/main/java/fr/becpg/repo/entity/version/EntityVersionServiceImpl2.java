@@ -507,6 +507,11 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 		if (primaryParentNodeRef != null) {
 			do {
 				tmp = associationService.getTargetAssoc(primaryParentNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY);
+				
+				if (primaryParentNodeRef.equals(tmp)) {
+					break;
+				}
+				
 				if (tmp != null) {
 					primaryParentNodeRef = tmp;
 				}
@@ -538,7 +543,9 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 				NodeRef tmpNodeRef = associationRef.getSourceRef();
 				if (!ret.contains(tmpNodeRef)) {
 					ret.add(tmpNodeRef);
-					ret.addAll(getAllChildVersionBranches(tmpNodeRef));
+					if (!entityNodeRef.equals(tmpNodeRef)) {
+						ret.addAll(getAllChildVersionBranches(tmpNodeRef));
+					}
 				}
 			}
 		}
@@ -968,6 +975,9 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 					nodeService.setProperty(branchNodeRef, BeCPGModel.PROP_BRANCH_FROM_VERSION_LABEL, RepoConsts.INITIAL_VERSION);
 				}
 				nodeService.setAssociations(branchNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY, Collections.singletonList(entityNodeRef));
+				
+				nodeService.setAssociations(branchNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY, Collections.singletonList(branchNodeRef));
+				
 				return branchNodeRef;
 
 			}, false, false);
