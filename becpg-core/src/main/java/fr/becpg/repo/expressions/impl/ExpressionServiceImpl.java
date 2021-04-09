@@ -24,7 +24,7 @@ import fr.becpg.repo.formulation.ReportableEntity;
 import fr.becpg.repo.formulation.spel.SpelFormulaService;
 import fr.becpg.repo.repository.RepositoryEntity;
 
-@Service
+@Service("expressionService")
 public class ExpressionServiceImpl<T extends RepositoryEntity> implements ExpressionService<T> {
 
 	private Log logger = LogFactory.getLog(ExpressionServiceImpl.class);

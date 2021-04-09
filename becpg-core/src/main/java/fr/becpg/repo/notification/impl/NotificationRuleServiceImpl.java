@@ -77,11 +77,12 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 	private static final String NODE_FILTER = "nodeFilter";
 	private static final String CRITERIA = "criteria";
 	
-	private static final String separator = "\\-";
+	private static final String SEPARATOR = "\\-";
 	
 	 private final ThreadLocal<SimpleDateFormat> formatter = new ThreadLocal<SimpleDateFormat>(){
+		 	@Override
 	    	protected SimpleDateFormat initialValue() {
-	    		return new SimpleDateFormat("yyyy" + separator + "MM" + separator + "dd");
+	    		return new SimpleDateFormat("yyyy" + SEPARATOR + "MM" + SEPARATOR + "dd");
 	    	}
 
 		};
@@ -134,8 +135,11 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 		List<Object> entitiesByUser;
 		Map<NodeRef, Object> entities;
 		Path targetPath = null;
-		QName nodeType = null, dateField = null;
-		String destinationPath = null, fromQuery = null, toQuery = null;
+		QName nodeType = null;
+		QName dateField = null;
+		String destinationPath = null;
+		String fromQuery = null;
+		String toQuery = null;
 		
 		
 		for (NodeRef notificationNodeRef : getAllNotificationRule()) {
@@ -234,13 +238,6 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 			templateArgs.put(TARGET_PATH, destinationPath);
 			templateArgs.put(NOTIFICATION, notification.getNodeRef());
 			
-			if (notification.getEmail() == null) {
-				NodeRef email = (NodeRef) nodeService.getProperty(notificationNodeRef, QName.createQName(BeCPGModel.BECPG_URI, "nrEmail"));
-				if (email != null) {
-					notification.setEmail(email);
-				}
-			}
-			
 			String emailTemplate = notification.getEmail() != null ? nodeService.getPath(notification.getEmail()).toPrefixString(namespaceService)
 					: RepoConsts.EMAIL_NOTIF_RULE_LIST_TEMPLATE;
 			
@@ -263,16 +260,13 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 					authorities.add(userName);
 					entitiesByUser = new ArrayList<>();
 					
-					for(NodeRef nodeRef : items){
-						if( AuthenticationUtil.runAs(()->{
-							if(permissionService.hasPermission(nodeRef, PermissionService.READ_PERMISSIONS).equals(AccessStatus.ALLOWED)){
-								return true;
-							}
-							return false;
-						}, userName)){	
-							
+					for (NodeRef nodeRef : items) {
+						if (Boolean.TRUE.equals(AuthenticationUtil.runAs(
+								() -> permissionService.hasPermission(nodeRef, PermissionService.READ_PERMISSIONS).equals(AccessStatus.ALLOWED),
+								userName))) {
+
 							entitiesByUser.add(entities.get(nodeRef));
-							
+
 						}
 					}
 					if(!entitiesByUser.isEmpty() || notification.isEnforced()){			
@@ -296,7 +290,7 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 	private Map<String, NodeRef> getOnlyAssociatedVersions(NodeRef item, VersionFilterType versionType, Date from, Date to) {
 		Map<String, NodeRef> ret = new HashMap<>();
 		    if(from!=null && to !=null && versionService.getVersionHistory(item) != null){
-		    	versionService.getVersionHistory(item).getAllVersions().forEach((version)-> {
+		    	versionService.getVersionHistory(item).getAllVersions().forEach(version-> {
 		    		Date createDate = version.getFrozenModifiedDate();
 		    		if(version.getVersionType().toString().equals(versionType.toString()) && !version.getVersionLabel().equals("1.0") 
 		    				&& (from.equals(to) ? formatter.get().format(createDate).equals(formatter.get().format(from)) : (createDate.after(from) && createDate.before(to)))){
@@ -338,7 +332,7 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 				date = new Date(0L);
 			}else if (strDate.equals("NOW")){
 				date = new Date();
-			}else if(strDate != null){
+			}else {
 				try {
 					date = formatter.get().parse(strDate);
 				} catch (ParseException e) {
@@ -353,8 +347,7 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 	
 	private List<NodeRef> getAllNotificationRule() {
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_NOTIFICATIONRULELIST).inDB();
-		List<NodeRef> notificationsNodeRef = queryBuilder.list();
-		return notificationsNodeRef;
+		return queryBuilder.list();
 	}
 	
 	
