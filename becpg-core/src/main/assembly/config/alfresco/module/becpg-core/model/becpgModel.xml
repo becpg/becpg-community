@@ -629,6 +629,22 @@
 			</properties>
 		</aspect>
 		
+		
+		<aspect name="bcpg:subEntityAspect">
+			<associations>
+					<association name="bcpg:parentEntityRef">
+						<source>
+							<mandatory>true</mandatory>
+							<many>true</many>
+						</source>
+						<target>
+							<class>bcpg:entityV2</class>
+							<mandatory>false</mandatory>
+							<many>false</many>
+						</target>
+				   </association>
+			</associations>
+		</aspect>
 
 		<aspect name="bcpg:hiddenFolder">
 		</aspect>
