@@ -976,8 +976,6 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 				}
 				nodeService.setAssociations(branchNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY, Collections.singletonList(entityNodeRef));
 				
-				nodeService.setAssociations(branchNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY, Collections.singletonList(branchNodeRef));
-				
 				return branchNodeRef;
 
 			}, false, false);
