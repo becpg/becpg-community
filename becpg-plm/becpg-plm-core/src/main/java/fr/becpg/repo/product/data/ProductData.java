@@ -127,6 +127,12 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private Double profitability;
 	private Long breakEven;
 	private Long projectedQty;
+	
+	/* 
+	 * Parent entity
+	 */
+	private ProductData parentEntity;
+	
 
 	/*
 	 * Formulation
@@ -606,6 +612,17 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	 */
 	public void setEntityTpl(ProductData entityTpl) {
 		this.entityTpl = entityTpl;
+	}
+	
+	
+	@AlfSingleAssoc(isEntity = true)
+	@AlfQname(qname = "bcpg:parentEntityRef")
+	public ProductData getParentEntity() {
+		return parentEntity;
+	}
+
+	public void setParentEntity(ProductData parentEntity) {
+		this.parentEntity = parentEntity;
 	}
 
 	/**
