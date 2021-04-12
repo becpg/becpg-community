@@ -209,7 +209,6 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	 * Variants
 	 */
 
-	private List<VariantData> variants;
 	private List<VariantData> localVariants;
 	private VariantPackagingData defaultVariantPackagingData;
 	private VariantData defaultVariantData;
@@ -324,7 +323,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	 * @return a {@link java.util.List} object.
 	 */
 	public List<VariantData> getVariants() {
-		variants = localVariants != null ? new ArrayList<>(localVariants): new ArrayList<>();
+		List<VariantData> variants = localVariants != null ? new ArrayList<>(localVariants): new ArrayList<>();
 		if (entityTpl != null) {
 			List<VariantData> entityTplVariants = entityTpl.getLocalVariants();
 			if (entityTplVariants != null && !entityTplVariants.isEmpty()) {

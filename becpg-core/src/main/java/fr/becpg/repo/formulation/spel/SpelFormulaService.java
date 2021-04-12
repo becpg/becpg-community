@@ -200,14 +200,11 @@ public class SpelFormulaService {
 	 * @param formula a {@link java.lang.String} object.
 	 */
 	public void applyToList(RepositoryEntity entity, Collection<RepositoryEntity> range, String formula) {
-
-	
 		Expression exp = getSpelParser().parseExpression(formula);
 
 		for (RepositoryEntity item : range) {
 			StandardEvaluationContext context = createDataListItemSpelContext(entity, item, false);
-			exp.getValue(context, Double.class);
-
+			exp.getValue(context);
 		}
 
 	}
