@@ -1280,6 +1280,7 @@
 						doc->>"$.bcpg_code" as code,
 						doc->>"$.bcpg_erpCode" as erpCode,
 						doc->>"$.bcpg_legalName" as legalName,
+						doc->>"$.bcpg_nutrientProfilingScore" as nutrientProfilingScore,
 						doc->>"$.bcpg_nutrientProfilingClass" as nutrientProfilingClass,
 						CAST( doc->>"$.cm_created" as DATE) as productDateCreated,
 						CAST( doc->>"$.cm_modified" as DATE) as productDateModified,
@@ -1523,6 +1524,7 @@
 		
 	    <Dimension name="nutritionScale" caption="${msg("jsolap.nutrientScore.title")}">
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.nutrientScore.caption")}" >
+				<Level name="nutrientProfilingScore" caption="${msg("jsolap.nutrientScore.title")}" column="nutrientProfilingScore"  type="String"    />
 				<Level name="nutrientProfilingClass" caption="${msg("jsolap.nutritionClass.title")}" column="nutrientProfilingClass"  type="String"    />
 			</Hierarchy>
 		</Dimension>

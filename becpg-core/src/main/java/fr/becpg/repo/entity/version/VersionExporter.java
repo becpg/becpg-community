@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.domain.node.NodeExistsException;
 import org.alfresco.repo.download.AbstractExporter;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
@@ -62,6 +61,10 @@ public class VersionExporter extends AbstractExporter {
 			}
 		}
 		
+		if (referenceNode == null) {
+			referenceNode = dbNodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, name);
+		}
+		
 		props.keySet().removeIf(e -> e.equals(ContentModel.PROP_NODE_UUID));
 		
 		if (referenceNode != null) {
@@ -87,10 +90,17 @@ public class VersionExporter extends AbstractExporter {
 	@Override
 	public void end() {
 		
-        List<AssociationRef> nodeAssocRefs = dbNodeService.getTargetAssocs(originalNodeRef, RegexQNamePattern.MATCH_ALL);
+        List<AssociationRef> originalAssocRefs = dbNodeService.getTargetAssocs(originalNodeRef, RegexQNamePattern.MATCH_ALL);
+        
+        List<AssociationRef> targetAssocRefs = dbNodeService.getTargetAssocs(targetNode, RegexQNamePattern.MATCH_ALL);
 
-        for (AssociationRef nodeAssocRef : nodeAssocRefs) {
-        	dbNodeService.createAssociation(targetNode, nodeAssocRef.getTargetRef(), nodeAssocRef.getTypeQName());
+        for (AssociationRef nodeAssocRef : originalAssocRefs) {
+        	
+        	AssociationRef assoc = new AssociationRef(targetNode, nodeAssocRef.getTypeQName(), nodeAssocRef.getTargetRef());
+        	
+        	if (!targetAssocRefs.contains(assoc)) {
+        		dbNodeService.createAssociation(targetNode, nodeAssocRef.getTargetRef(), nodeAssocRef.getTypeQName());
+        	}
         }
 	}
 	
