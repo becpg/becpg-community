@@ -40,7 +40,7 @@
                         <#list searchForms as f>
                         <li>
                            <span class="form-type-name" tabindex="0">${f.label?html}</span>
-                           <#if f.description != "">
+                           <#if f.description != "" && (!hideDescription?? || !hideDescription)>
                            	  <span class="form-type-description">${f.description?html}</span>
                            </#if>
                         </li>
