@@ -2,6 +2,7 @@ package fr.becpg.repo.entity.version;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -59,6 +60,7 @@ import org.springframework.util.StopWatch;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.BeCPGModel.EntityFormat;
 import fr.becpg.model.BeCPGPermissions;
+import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.activity.EntityActivityService;
 import fr.becpg.repo.cache.BeCPGCacheService;
@@ -683,7 +685,7 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 							policyBehaviourFilter.disableBehaviour(ImapModel.ASPECT_IMAP_CONTENT);
 
 							createInitialVersion(internalBranchToNodeRef);
-
+							
 							/**
 							 *
 							  1 - Prepare branch
@@ -923,6 +925,8 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 				
 				crawlerParameters.setCrawlSelf(true);
 				crawlerParameters.setExcludeChildAssocs(new QName[] { RenditionModel.ASSOC_RENDITION, ForumModel.ASSOC_DISCUSSION, BeCPGModel.ASSOC_ENTITYLISTS, ContentModel.ASSOC_RATINGS});
+				
+				crawlerParameters.setExcludeNamespaceURIs(Arrays.asList(ReportModel.TYPE_REPORT.getNamespaceURI()).toArray(new String[0]));
 				
 				exporterService.exportView(new VersionExporter(entityNodeRef, versionNode, dbNodeService), crawlerParameters,
 						null);
@@ -1199,6 +1203,8 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 
 					crawlerParameters.setCrawlSelf(true);
 					crawlerParameters.setExcludeChildAssocs(new QName[] { RenditionModel.ASSOC_RENDITION, ForumModel.ASSOC_DISCUSSION, BeCPGModel.ASSOC_ENTITYLISTS, ContentModel.ASSOC_RATINGS});
+
+					crawlerParameters.setExcludeNamespaceURIs(Arrays.asList(ReportModel.TYPE_REPORT.getNamespaceURI()).toArray(new String[0]));
 
 					// reconstructs the folder hierarchy
 					exporterService.exportView(new VersionExporter(versionNodeRef, entity, dbNodeService), crawlerParameters, null);
