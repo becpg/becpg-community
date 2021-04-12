@@ -88,6 +88,8 @@ services:
 
   becpg-report:
     image:  ${docker.becpg.url}/becpg-report:3.2.1
+    user: root
+    
 
   becpg-glop:
     image:  ${docker.becpg.url}/becpg-glop:${docker.becpg.tag}
