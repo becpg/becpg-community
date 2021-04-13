@@ -305,7 +305,7 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 
 	@Override
 	public String getEntityFormat(NodeRef entityNodeRef) {
-		if(entityNodeRef!=null && dbNodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_FORMAT)) {
+		if (entityNodeRef != null && dbNodeService.exists(entityNodeRef) && dbNodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_FORMAT)) {
 			Serializable prop = dbNodeService.getProperty(entityNodeRef, BeCPGModel.PROP_ENTITY_FORMAT);
 			return prop == null ? null : prop.toString();
 		}
