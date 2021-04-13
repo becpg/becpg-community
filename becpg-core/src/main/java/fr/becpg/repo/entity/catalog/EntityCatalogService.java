@@ -45,10 +45,10 @@ import fr.becpg.model.DataListModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.expressions.ExpressionService;
-import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
@@ -60,7 +60,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  * @version $Id: $Id
  */
 @Service("entityCatalogService")
-public class EntityCatalogService<T extends FormulatedEntity> {
+public class EntityCatalogService<T extends RepositoryEntity> {
 
 	/** Constant <code>logger</code> */
 	public static final Log logger = LogFactory.getLog(EntityCatalogService.class);
