@@ -76,6 +76,13 @@
 	background: url(images/columns-conf-16.png) no-repeat 8px 4px;
 }
 
+
+.datalist-toolbar .show-project-details span.first-child
+{
+   background: url(../images/info-16.png) no-repeat 4px 4px;
+}
+
+
 .datalist-toolbar div.flat-button .ganttCkeckbox  span.yui-checkbox-button button
 {
    background: url("../project/images/gantt-16.png") no-repeat 4px 4px;

@@ -48,7 +48,7 @@
                                                 if (recordSet.getLength() != 0)
                                                 {
                                                     g = new JSGantt.GanttChart('g', Dom.get(this.id + "-gantt"), g != null ? g
-                                                            .getFormat() : null);
+                                                            .getFormat() : null, true);
                                                     g.setDateInputFormat("mediumDate");
                                                     g.setDateDisplayFormat("mediumDate");
                                                     g.setCaptionType('Resource');
@@ -85,7 +85,7 @@
                                                         
                                                         var pGroupOpen = 1;
                                                         
-                                                        if ( pSubProject!=null && !task["itemData"]["open"])
+                                                        if (!task["itemData"]["open"])
                                                         {
                                                         	pGroupOpen = 0;
                                                         }	

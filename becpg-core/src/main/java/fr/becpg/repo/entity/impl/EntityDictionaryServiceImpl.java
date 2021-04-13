@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.alfresco.repo.dictionary.CompiledModelsCache;
 import org.alfresco.repo.dictionary.DictionaryComponent;
 import org.alfresco.repo.dictionary.DictionaryDAO;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
@@ -101,6 +100,12 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent implements 
 	@Override
 	public QName getMultiLevelSecondaryPivot(QName dataListItemType) {
 		return repositoryEntityDefReader.getMultiLevelSecondaryPivot(dataListItemType);
+	}
+	
+	/** {@inheritDoc} */
+	@Override
+	public QName getMultiLevelGroupProperty(QName dataListItemType) {
+		return repositoryEntityDefReader.getMultiLevelGroupProperty(dataListItemType);
 	}
 
 	/** {@inheritDoc} */

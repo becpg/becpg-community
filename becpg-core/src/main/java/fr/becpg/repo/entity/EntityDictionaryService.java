@@ -126,6 +126,15 @@ public interface EntityDictionaryService extends DictionaryService {
 	 * @return a {@link org.alfresco.service.namespace.QName} object.
 	 */
 	QName getMultiLevelSecondaryPivot(QName dataListItemType);
+	
+	
+	/**
+	 * <p>getMultiLevelGroupProperty.</p>
+	 *
+	 * @param dataListItemType a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link org.alfresco.service.namespace.QName} object.
+	 */
+	QName getMultiLevelGroupProperty(QName dataListItemType);
 
 	/**
 	 * <p>registerPropDefMapping.</p>
@@ -145,6 +154,7 @@ public interface EntityDictionaryService extends DictionaryService {
 	boolean isAssoc(QName propQname);
 
 	String toPrefixString(QName propertyQName);
+
 
 
 
