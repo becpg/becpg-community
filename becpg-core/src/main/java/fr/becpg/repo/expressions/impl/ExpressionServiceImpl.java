@@ -30,7 +30,7 @@ public class ExpressionServiceImpl<T extends RepositoryEntity> implements Expres
 	private Log logger = LogFactory.getLog(ExpressionServiceImpl.class);
 
 	private static final Pattern jsPattern = Pattern.compile("^js\\((.*)\\)$");
-	private static final Pattern spelPattern = Pattern.compile("^spell\\((.*)\\)$");
+	private static final Pattern spelPattern = Pattern.compile("^spel\\((.*)\\)$");
 
 	private static final String DEBUG_MESG = "Eval: %s";
 
