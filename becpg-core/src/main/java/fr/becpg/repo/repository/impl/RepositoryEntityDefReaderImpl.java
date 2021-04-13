@@ -54,6 +54,7 @@ import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.annotation.DataListView;
 import fr.becpg.repo.repository.annotation.MultiLevelDataList;
+import fr.becpg.repo.repository.annotation.MultiLevelGroup;
 import fr.becpg.repo.repository.annotation.MultiLevelLeaf;
 import fr.becpg.repo.repository.model.BaseObject;
 
@@ -262,6 +263,34 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 				return qnameCache.computeIfAbsent(qName, id -> QName.createQName(id, namespaceService));
 			}
 			
+		}
+		return null;
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public QName getMultiLevelGroupProperty(QName entityDataListQname) {
+		Class<T> entityClass = getEntityClass(entityDataListQname);
+		if (entityClass == null) {
+			if(logger.isDebugEnabled()){
+				logger.debug("Type is not registered : " + entityDataListQname);
+			}
+			return null;
+		}
+
+		BeanWrapper beanWrapper = new BeanWrapperImpl(entityClass);
+
+		for (PropertyDescriptor pd : beanWrapper.getPropertyDescriptors()) {
+			Method readMethod = pd.getReadMethod();
+			if (readMethod != null) {
+				if (readMethod.isAnnotationPresent(MultiLevelGroup.class) && readMethod.isAnnotationPresent(AlfQname.class) 
+					 ) {
+					return readQName(readMethod);
+				}
+			}
+		}
+		if(logger.isDebugEnabled()){
+			logger.debug("No MultiLevelGroup found for "+entityDataListQname);
 		}
 		return null;
 	}

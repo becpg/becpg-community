@@ -52,6 +52,9 @@
       
       this.widgets.actionButtons = {};
 
+       // Preferences service
+       this.services.preferences = new Alfresco.service.Preferences();
+
       // Renderers
       Bubbling.on("registerToolbarButtonAction", this.onRegisterToolbarButtonAction, this);
 

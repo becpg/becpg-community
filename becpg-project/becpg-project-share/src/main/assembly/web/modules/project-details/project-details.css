@@ -16,8 +16,8 @@
 
 .project-details {
 	 margin: 35px auto 5px auto;
-     max-width: 40%;
      border: 1px solid #D3D3D3; 
+     min-width : 30em;
      background: #eee;
      border-top-left-radius: none;
      padding-bottom: 1px;
@@ -97,7 +97,6 @@
 .project-details .myProgress {
     width: 100%;
     background-color: #e7e3e3;
-    margin-botton: 20px;
     margin-top:5px;
 }
 

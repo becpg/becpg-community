@@ -24,6 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
@@ -108,10 +109,10 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 		}
 
 		try {
-			return getMultiLevelListData(dataListFilter, dataListFilter.getEntityNodeRef(), 0, dataListFilter.getMaxDepth(), null,
-					new HashSet<NodeRef>(), useExpandedCache, resetTree);
+			return getMultiLevelListData(dataListFilter, dataListFilter.getEntityNodeRef(), 0, dataListFilter.getMaxDepth(), null, new HashSet<>(),
+					useExpandedCache, resetTree);
 		} finally {
-			if (logger.isDebugEnabled() && watch!=null) {
+			if (logger.isDebugEnabled() && (watch != null)) {
 				watch.stop();
 				logger.debug("getMultiLevelListData at depth " + dataListFilter.getMaxDepth() + " in  " + watch.getTotalTimeSeconds() + "s");
 			}
@@ -127,10 +128,9 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 		if (!parentNodeRefs.contains(entityNodeRef)) {
 			parentNodeRefs.add(entityNodeRef);
 			QName nodeType = nodeService.getType(entityNodeRef);
-			
 
 			if (isExpandedNode(useExpandedCache ? dataListNodeRef : null,
-					(maxDepthLevel == 0 && currDepth == 0) || (maxDepthLevel < 0) || (currDepth < maxDepthLevel), resetTree)) {
+					((maxDepthLevel == 0) && (currDepth == 0)) || (maxDepthLevel < 0) || (currDepth < maxDepthLevel), resetTree)) {
 				logger.debug("getMultiLevelListData depth :" + currDepth + " max " + maxDepthLevel);
 
 				if ((currDepth == 0) || !entityDictionaryService.isMultiLevelLeaf(nodeType)) {
@@ -145,29 +145,27 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 						if (secondaryType != null) {
 							logger.debug("Visiting secondary type:" + secondaryType);
 
-					  		visitMultiLevelListData(ret, dataListFilter, listsContainerNodeRef, currDepth, maxDepthLevel, nodeType,
-									secondaryType, parentNodeRefs, useExpandedCache, resetTree);
+							visitMultiLevelListData(ret, dataListFilter, listsContainerNodeRef, currDepth, maxDepthLevel, nodeType, secondaryType,
+									parentNodeRefs, useExpandedCache, resetTree);
 
 						}
 
 					}
 				}
 			}
-			
-			
-			if (entityDictionaryService.isMultiLevelLeaf(nodeType) ) {
+
+			if (entityDictionaryService.isMultiLevelLeaf(nodeType)) {
 				ret.setLeaf(true);
 			}
 		}
 		return ret;
 	}
 
-	private void visitMultiLevelListData(MultiLevelListData ret, DataListFilter dataListFilter, NodeRef listsContainerNodeRef,
-			int currDepth, int maxDepthLevel, QName nodeType, QName dataType, Set<NodeRef> parentNodeRefs, boolean useExpandedCache,
-			boolean resetTree) {
-		int access_mode = securityService.computeAccessMode(nodeType, dataType.toPrefixString(namespaceService));
-      
-		if (SecurityService.NONE_ACCESS != access_mode) {
+	private void visitMultiLevelListData(MultiLevelListData ret, DataListFilter dataListFilter, NodeRef listsContainerNodeRef, int currDepth,
+			int maxDepthLevel, QName nodeType, QName dataType, Set<NodeRef> parentNodeRefs, boolean useExpandedCache, boolean resetTree) {
+		int accessMode = securityService.computeAccessMode(nodeType, dataType.toPrefixString(namespaceService));
+
+		if (SecurityService.NONE_ACCESS != accessMode) {
 			NodeRef dataListNodeRef = entityListDAO.getList(listsContainerNodeRef, dataType);
 
 			if (dataListNodeRef != null) {
@@ -177,21 +175,20 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 				List<NodeRef> childRefs = getListNodeRef(dataListNodeRef, dataListFilter, dataType);
 				// Adv search already filter by perm
 
-				Map<NodeRef, MultiLevelListData> currTmp = new HashMap<NodeRef, MultiLevelListData>();
-				
+				Map<NodeRef, MultiLevelListData> currTmp = new HashMap<>();
+
 				for (NodeRef childRef : childRefs) {
 					NodeRef currEntityNodeRef = getEntityNodeRef(childRef);
-					
+
 					Integer depthLevel = (Integer) nodeService.getProperty(childRef, BeCPGModel.PROP_DEPTH_LEVEL);
 					if (depthLevel == null) {
 						depthLevel = 1;
 					}
 					int nextDepth = currDepth + depthLevel;
 					NodeRef parentNodeRef = (NodeRef) nodeService.getProperty(childRef, BeCPGModel.PROP_PARENT_LEVEL);
-					if (isExpandedNode(useExpandedCache ? parentNodeRef : null,
-							(maxDepthLevel == 0 && parentNodeRef != null) || (maxDepthLevel < 0) || (nextDepth <= maxDepthLevel) || (depthLevel == 1),
-							resetTree)) {
-
+					if (isExpandedNode(useExpandedCache ? parentNodeRef : null, ((maxDepthLevel == 0) && (parentNodeRef != null))
+							|| (maxDepthLevel < 0) || (nextDepth <= maxDepthLevel) || (depthLevel == 1), resetTree)) {
+						MultiLevelListData tmp;
 						if (currEntityNodeRef != null) {
 							if (logger.isDebugEnabled()) {
 								logger.debug("Append level:" + depthLevel + " at currLevel " + currDepth + " for "
@@ -200,35 +197,31 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 
 							Set<NodeRef> curVisitedNodeRef = new HashSet<>(parentNodeRefs);
 
-							MultiLevelListData tmp = getMultiLevelListData(dataListFilter, currEntityNodeRef, nextDepth, maxDepthLevel, childRef,
-									curVisitedNodeRef, useExpandedCache, resetTree);
-
-							currTmp.put(childRef, tmp);
-							
-							if (!isSecondary || (!tmp.getTree()
-									.isEmpty() /*
-												 * || !isExpandedNode(
-												 * useExpandedCache ? childRef :
-												 * null, true, resetTree)
-												 */)) {
-								if(parentNodeRef!=null && currTmp.containsKey(parentNodeRef)) {
-									currTmp.get(parentNodeRef).getTree().put(childRef, tmp);
-								} else {
-									ret.getTree().put(childRef, tmp);
-								}
-							}
-							
-						
-							
-						} else if (!isSecondary) {
-							MultiLevelListData tmp = new MultiLevelListData(new ArrayList<>(), nextDepth);
-							tmp.setLeaf(true);
-							ret.getTree().put(childRef, tmp);
+							tmp = getMultiLevelListData(dataListFilter, currEntityNodeRef, nextDepth, maxDepthLevel, childRef, curVisitedNodeRef,
+									useExpandedCache, resetTree);
+						} else {
+							tmp = new MultiLevelListData(new ArrayList<>(), nextDepth);
+							tmp.setLeaf(!getIsGroup(childRef));
 						}
+
+						currTmp.put(childRef, tmp);
+
+						if (!isSecondary || (!tmp.getTree().isEmpty())) {
+							if ((parentNodeRef != null) && currTmp.containsKey(parentNodeRef)) {
+								MultiLevelListData parent = currTmp.get(parentNodeRef);
+								parent.getTree().put(childRef, tmp);
+								if(currEntityNodeRef == null && !parent.getTree().isEmpty()) {
+									parent.setLeaf(false);
+								}
+							} else {
+								ret.getTree().put(childRef, tmp);
+							
+							}
+						}
+
 					}
 				}
-				
-				
+
 			}
 		}
 	}
@@ -260,6 +253,16 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 		}
 		return null;
 	}
+	
+
+	private boolean getIsGroup(NodeRef listItemNodeRef) {
+		QName propQname = entityDictionaryService.getMultiLevelGroupProperty(nodeService.getType(listItemNodeRef));
+		if (propQname != null) {
+			return Boolean.TRUE.equals(nodeService.getProperty(listItemNodeRef, propQname));
+		}
+		return false;
+	}
+
 
 	/** {@inheritDoc} */
 	@Override
@@ -293,6 +296,38 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 		protected boolean removeEldestEntry(Entry<NodeRef, Boolean> eldest) {
 			return (size() > this.maxElements);
 		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = super.hashCode();
+			result = (prime * result) + getEnclosingInstance().hashCode();
+			result = (prime * result) + Objects.hash(maxElements);
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (!super.equals(obj)) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
+				return false;
+			}
+			LRUCache other = (LRUCache) obj;
+			if (!getEnclosingInstance().equals(other.getEnclosingInstance())) {
+				return false;
+			}
+			return maxElements == other.maxElements;
+		}
+
+		private MultiLevelDataListServiceImpl getEnclosingInstance() {
+			return MultiLevelDataListServiceImpl.this;
+		}
+
 	}
 
 	/** {@inheritDoc} */

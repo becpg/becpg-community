@@ -48,7 +48,7 @@ import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtracto
  */
 public class MultiLevelExtractor extends SimpleExtractor {
 
-	private final static Log logger = LogFactory.getLog(MultiLevelExtractor.class);
+	private static final Log logger = LogFactory.getLog(MultiLevelExtractor.class);
 
 	/** Constant <code>PROP_DEPTH="depth"</code> */
 	public static final String PROP_DEPTH = "depth";
