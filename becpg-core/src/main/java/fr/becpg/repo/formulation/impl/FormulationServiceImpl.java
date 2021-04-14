@@ -214,7 +214,6 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 				 throw e;
               }
 
-			logger.error(e, e);
 			if (e instanceof FormulateException) {
 				throw (FormulateException) e;
 			}
