@@ -377,7 +377,7 @@ var g; // gantt var
 
                                         var taskList = oRecord.getData("itemData")["dt_pjt_taskList"];
 
-                                        for (j in taskList)
+                                        for (var j in taskList)
                                         {
                                             var task = taskList[j];
                                             var taskId = task.nodeRef;
@@ -416,8 +416,8 @@ var g; // gantt var
                                             
                                             if(task["itemData"]["assoc_pjt_tlResources"].length>0){
                                             	taskOwner = "";
-                                            	for(var z in  task["itemData"]["assoc_pjt_tlResources"]){
-                                            		taskOwner += '<span class="resource-title">' + task["itemData"]["assoc_pjt_tlResources"][z].displayValue + '</span>';                               	
+                                            	for(var zz in  task["itemData"]["assoc_pjt_tlResources"]){
+                                            		taskOwner += '<span class="resource-title">' + task["itemData"]["assoc_pjt_tlResources"][zz].displayValue + '</span>';                               	
                                             	}
                                             }
  
@@ -464,7 +464,7 @@ var g; // gantt var
                                 if (recordSet.getLength() != 0)
                                 {
                                     g = new JSGantt.GanttChart('g', Dom.get(this.id + "-gantt"), g != null ? g
-                                            .getFormat() : null);
+                                            .getFormat() : null, false);
                                     g.setDateInputFormat("mediumDate");
                                     g.setDateDisplayFormat("mediumDate");
                                     g.setCaptionType('Resource');
@@ -481,7 +481,7 @@ var g; // gantt var
                                         	resources[taskOwnerParent] = true;
                                         	var taskOwnerTitle = task["itemData"]["assoc_pjt_tlResources"].length > 0 ? ('<span class="resource-title">' + task["itemData"]["assoc_pjt_tlResources"][0].displayValue + '</span>')
                                         			: null;
-                                            g.AddTaskItem(new JSGantt.TaskItem(taskOwner, taskOwnerTitle, null, null,
+                                            g.AddTaskItem(new JSGantt.TaskItem(taskOwnerParent, taskOwnerTitle, null, null,
                                                     'FFBC00', '', 0, '', 0, 1, 0, 1));
                                             
                                             
@@ -548,16 +548,10 @@ var g; // gantt var
                             filter = (this.options.filter.filterId && filter.filterId != "filterform") ? this.options.filter : filter; 
                             this.options.filter = filter;
                           
-                            if (filter.filterId == "filterform")
+                            if (filter.filterId == "filterform" || filter.filterId == "all" || filter.filterId == "my-projects")
                             {
                             	this.widgets.filter.set("label", $html(this
                                         .msg("filter." + filter.filterId))+ " " + Alfresco.constants.MENU_ARROW_SYMBOL);
-                            	
-                            }
-                            else if (filter.filterId == "all" || filter.filterId == "my-projects")
-                            {
-                            	this.widgets.filter.set("label", $html(this.msg(
-                                        "filter." + filter.filterId))+ " " + Alfresco.constants.MENU_ARROW_SYMBOL);
                             	
                             }
                             else if (filter.filterId == "tag")
