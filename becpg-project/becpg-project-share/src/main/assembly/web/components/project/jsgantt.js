@@ -781,7 +781,7 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
 				vFormat = 'day';
 			}
 		}
-		
+
 		var vIsMultilevel = pIsMultilevel;
 
 
@@ -1165,8 +1165,8 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
 			vDepId = 1;
 		};
 
-		this.scrollToY = function(yPos, vDiv) {
-			var size = parseInt(YAHOO.util.Dom.getStyle(vDiv, 'width').replace("px", ""), 10);
+		this.scrollToY = function(yPos, vDivEl) {
+			var size = parseInt(YAHOO.util.Dom.getStyle(vDivEl, 'width').replace("px", ""), 10);
 			var col1 = YAHOO.util.Dom.get('leftside');
 			var scrollDiv = YAHOO.util.Dom.get('rightside');
 			var max = (size - 350);
@@ -1177,7 +1177,7 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
 			});
 			resize.on('resize', function(ev) {
 				var w = ev.width;
-				var sizeDiv = parseInt(YAHOO.util.Dom.getStyle(vDiv, 'width').replace("px", ""), 10);
+				var sizeDiv = parseInt(YAHOO.util.Dom.getStyle(vDivEl, 'width').replace("px", ""), 10);
 				YAHOO.util.Dom.setStyle(col1, 'height', '');
 				YAHOO.util.Dom.setStyle(scrollDiv, 'width', (sizeDiv - w - 6) + 'px');
 
@@ -1357,580 +1357,580 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
 		 */
 		this.Draw = function() {
 
-				var vMaxDate = new Date();
-				var vMinDate = new Date();
-				var vTmpDate = new Date();
-				var vNxtDate = new Date();
-				var vCurrDate = new Date();
-				var vCurrPosY = 0;
-				var vTaskLeft = 0;
-				var vTaskRight = 0;
-				var vcurrDivID = 0;
-				var vMainTable = "";
-				var vLeftTable = "";
-				var vRightTable = "";
-				var vDateRowStr = "";
-				var vItemRowStr = "";
-				var vColWidth = 0;
-				var vColUnit = 0;
-				var vChartWidth = 0;
-				var vNumDays = 0;
-				var vDayWidth = 0;
-				var vStr = "";
-				var colNumber = 2;
-				var vMargin = 0;
+			var vMaxDate = null;
+			var vMinDate = null;
+			var vTmpDate = new Date();
+			var vNxtDate = new Date();
+			var vCurrDate = new Date();
+			var vCurrPosY = 0;
+			var vTaskLeft = 0;
+			var vTaskRight = 0;
+			var vcurrDivID = 0;
+			var vMainTable = "";
+			var vLeftTable = "";
+			var vRightTable = "";
+			var vDateRowStr = "";
+			var vItemRowStr = "";
+			var vColWidth = 0;
+			var vColUnit = 0;
+			var vChartWidth = 0;
+			var vNumDays = 0;
+			var vDayWidth = 0;
+			var vStr = "";
+			var colNumber = 2;
+			var vMargin = 0;
+
+			if (vShowRes === 1) {
+				colNumber++;
+			}
+			if (vShowDur === 1) {
+				colNumber++;
+			}
+			if (vShowComp === 1) {
+				colNumber++;
+			}
+			if (vShowStartDate === 1) {
+				colNumber++;
+			}
+			if (vShowEndDate === 1) {
+				colNumber++;
+			}
+
+			if (vTaskList.length > 0) {
+
+				// Process all tasks preset parent date and completion %
+				JSGantt.processRows(vTaskList, 0, -1, 1, 1, vIsMultilevel);
+
+				// get overall min/max dates plus padding
+				vMinDate = JSGantt.getMinDate(vTaskList, vFormat);
+				vMaxDate = JSGantt.getMaxDate(vTaskList, vFormat);
+
+				// Calculate chart width variables. vColWidth can be altered
+				// manually
+				// to change each column width
+				// May be smart to make this a parameter of GanttChart or set it
+				// based
+				// on existing pWidth parameter
+				if (vFormat == 'day' || vFormat == 'hour' || vFormat == 'minute') {
+					vColWidth = 22 * vColWidthFactor;
+					vColUnit = 1;
+				} else if (vFormat == 'week') {
+					vColWidth = 37 * vColWidthFactor;
+					vColUnit = 7;
+				} else if (vFormat == 'month') {
+					vColWidth = 37 * vColWidthFactor;
+					vColUnit = 30;
+				} else if (vFormat == 'quarter') {
+					vColWidth = 60 * vColWidthFactor;
+					vColUnit = 90;
+				}
+
+				vNumDays = (vMaxDate.getTime() - vMinDate.getTime()) / (24 * 60 * 60 * 1000);
+				vNumUnits = vNumDays / vColUnit;
+
+				vChartWidth = vNumUnits * vColWidth + 1;
+				vDayWidth = (vColWidth / vColUnit) + (1 / vColUnit);
+
+				vMainTable = '<div class="yui-gd yui-dt">';
+
+				// DRAW the Left-side of the chart (names, resources, comp%)
+				vLeftTable = '<div class="yui-u first" id="leftside"><table cellSpacing="0" cellPadding="0" border="0"><colgroup>';
+
+				vLeftTable += '<col class="ggtaskCheckbox"/><col class="ggTaskTitle  ggCol' + colNumber + '"></col>';
 
 				if (vShowRes === 1) {
-					colNumber++;
+					vLeftTable += '<col class="ggCol' + colNumber + '"></col>';
 				}
 				if (vShowDur === 1) {
-					colNumber++;
+					vLeftTable += '<col class="ggCol' + colNumber + '"></col>';
 				}
 				if (vShowComp === 1) {
-					colNumber++;
+					vLeftTable += '<col class="ggCol' + colNumber + '"></col>';
 				}
 				if (vShowStartDate === 1) {
-					colNumber++;
+					vLeftTable += '<col class="ggCol' + colNumber + '"></col>';
 				}
 				if (vShowEndDate === 1) {
-					colNumber++;
+					vLeftTable += '<col class="ggCol' + colNumber + '"></col>';
 				}
 
-				if (vTaskList.length > 0) {
 
-					// Process all tasks preset parent date and completion %
-					JSGantt.processRows(vTaskList, 0, -1, 1, 1);
+				vLeftTable += '</colgroup><thead><tr class="gheader">';
 
-					// get overall min/max dates plus padding
-					vMinDate = JSGantt.getMinDate(vTaskList, vFormat);
-					vMaxDate = JSGantt.getMaxDate(vTaskList, vFormat);
 
-					// Calculate chart width variables. vColWidth can be altered
-					// manually
-					// to change each column width
-					// May be smart to make this a parameter of GanttChart or set it
-					// based
-					// on existing pWidth parameter
-					if (vFormat == 'day' || vFormat == 'hour' || vFormat == 'minute') {
-						vColWidth = 22 * vColWidthFactor;
-						vColUnit = 1;
+				vLeftTable += '<th  colspan="' + colNumber + '">' + JSGantt.msg("jsgantt.format") + ':&nbsp;';
+
+
+				if (vFormatArr.join().indexOf("minute") != -1) {
+					if (vFormat == 'minute')
+						vLeftTable += '<input type="radio" name="radFormat" value="minute" checked>' + JSGantt.msg("jsgantt.minute");
+					else
+						vLeftTable += '<input type="radio" name="radFormat" onclick="JSGantt.changeFormat(\'minute\',' + vGanttVar + ');" value="minute">' + JSGantt.msg("jsgantt.minute");
+				}
+
+				if (vFormatArr.join().indexOf("hour") != -1) {
+					if (vFormat == 'hour')
+						vLeftTable += '<input type="radio" name="radFormat" value="hour" checked>' + JSGantt.msg("jsgantt.hour");
+					else
+						vLeftTable += '<input type="radio" name="radFormat" onclick="JSGantt.changeFormat(\'hour\',' + vGanttVar + ');" value="hour">' + JSGantt.msg("jsgantt.hour");
+				}
+
+				if (vFormatArr.join().indexOf("day") != -1) {
+					if (vFormat == 'day')
+						vLeftTable += '<input type="radio" name="radFormat" value="day" checked>' + JSGantt.msg("jsgantt.day");
+					else
+						vLeftTable += '<input type="radio" name="radFormat" onclick="JSGantt.changeFormat(\'day\',' + vGanttVar + ');" value="day">' + JSGantt.msg("jsgantt.day");
+				}
+
+				if (vFormatArr.join().indexOf("week") != -1) {
+					if (vFormat == 'week')
+						vLeftTable += '<input type="radio" name="radFormat" value="week" checked>' + JSGantt.msg("jsgantt.week");
+					else
+						vLeftTable += '<input type="radio" name="radFormat" onclick="JSGantt.changeFormat(\'week\',' + vGanttVar + ');" value="week">' + JSGantt.msg("jsgantt.week");
+				}
+
+				if (vFormatArr.join().indexOf("month") != -1) {
+					if (vFormat == 'month')
+						vLeftTable += '<input type="radio" name="radFormat" value="month" checked>' + JSGantt.msg("jsgantt.month");
+					else
+						vLeftTable += '<input type="radio" name="radFormat" onclick="JSGantt.changeFormat(\'month\',' + vGanttVar + ');" value="month">' + JSGantt.msg("jsgantt.month");
+				}
+
+				if (vFormatArr.join().indexOf("quarter") != -1) {
+					if (vFormat == 'quarter')
+						vLeftTable += '<input type="radio" name="radFormat" value="quarter" checked>' + JSGantt.msg("jsgantt.quarter");
+					else
+						vLeftTable += '<input type="radio" name="radFormat" onclick="JSGantt.changeFormat(\'quarter\',' + vGanttVar + ');" value="quarter">' + JSGantt.msg("jsgantt.quarter");
+				}
+
+				// vLeftTable += '<input type="radio" name="other" value="other"
+				// style="display:none"> .';
+
+				vLeftTable += '</th></tr>';
+
+				vLeftTable += '<tr class="gheader">' + ' <th colspan="2"><nobr></nobr></th>';
+
+
+
+				if (vShowRes === 1) {
+					vLeftTable += '  <th class="nowrap" >' + JSGantt.msg("jsgantt.resource") + '</th>';
+				}
+				if (vShowDur === 1) {
+					vLeftTable += '  <th  class="nowrap" >' + JSGantt.msg("jsgantt.duration") + '</th>';
+				}
+				if (vShowComp === 1) {
+					vLeftTable += '  <th  class="nowrap" >' + JSGantt.msg("jsgantt.percomp") + '</th>';
+				}
+				if (vShowStartDate === 1) {
+					vLeftTable += '  <th class="nowrap" >' + JSGantt.msg("jsgantt.begin") + '</th>';
+				}
+				if (vShowEndDate === 1) {
+					vLeftTable += '  <th>' + JSGantt.msg("jsgantt.end") + '</th>';
+				}
+
+				vLeftTable += '</tr></thead><tbody class="yui-dt-data">';
+
+				for (var i = 0; i < vTaskList.length; i++) {
+
+					var vRowType = "row";
+					if (vTaskList[i].getGroup()) {
+						vRowType = "group";
+					}
+
+					vcurrDivID = vTaskList[i].getID();
+
+					var vLineColorStyle = vTaskList[i].getLineColor() ? 'style="background-color:'
+						+ vTaskList[i].getLineColor() + '"' : "";
+
+					if (vTaskList[i].getVisible() === 0) {
+						vLeftTable += '<tr id="child_' + vcurrDivID + '" class="g' + vRowType + ' hidden" ' + vLineColorStyle + ' onMouseover="g.mouseOver(this,\'' + vcurrDivID + '\',\'left\',\'' + vRowType + '\')" onMouseout="g.mouseOut(this,\'' + vcurrDivID + '\',\'left\',\'' + vRowType + '\')">';
+					} else {
+						vLeftTable += '<tr id="child_' + vcurrDivID + '"  class="g' + vRowType + '" ' + vLineColorStyle + ' onMouseover="g.mouseOver(this,\'' + vcurrDivID + '\',\'left\',\'' + vRowType + '\')" onMouseout="g.mouseOut(this,\'' + vcurrDivID + '\',\'left\',\'' + vRowType + '\')">';
+					}
+
+					if (vShowSelect === 1) {
+						vLeftTable += '<td class="ggtaskCheckbox"><input type="checkbox" id="taskChecked-' + vcurrDivID + '" name="taskChecked" onclick="g.selectItem(this,\'' + vcurrDivID + '\');"  ' + (JSGantt.scope.selectedItems[vcurrDivID] ? ' checked="checked">'
+							: '>') + '<label for="taskChecked-' + vcurrDivID + '"></label></td>';
+					}
+
+
+					vLeftTable += '  <td class="ggTaskTitle ggCol' + colNumber + '">';
+
+					vMargin = (vTaskList[i].getLevel() - 1) * 25;
+
+
+					if (vTaskList[i].getGroup()) {
+						var gcssClass = "ggroup-collapsed";
+
+						if (vTaskList[i].getOpen() == 1) {
+							gcssClass = "ggroup-expanded";
+						}
+
+						if (vTaskList[i].getSubProject() != null || vIsMultilevel) {
+							vLeftTable += '<div id="group_' + (vTaskList[i].getOpen() ? "expanded" : "collapsed") + '_' + vcurrDivID + '" style="margin-left:' + vMargin
+								+ 'px;" class="onCollapsedAndExpanded" ><a href="#" class="' + JSGantt.scope.id + '-action-link"><span class="gicon '
+								+ (gcssClass) + '"></span></a></div>';
+						} else {
+							vLeftTable += '<div style="margin-left:' + vMargin + 'px;" id="group_' + vcurrDivID + '" class="gicon ' + gcssClass + '" onclick="JSGantt.folder(\'' + vcurrDivID + '\',' + vGanttVar + ');' + vGanttVar + '.DrawDependencies();"></div>';
+						}
+					} else {
+
+						vLeftTable += '<span  style="margin-left:' + vMargin + 'px;">&nbsp;</span>';
+					}
+
+					if (vTaskList[i].getSubProject() != null) {
+						vLeftTable += '<span class="project-title task-title" > ' + vTaskList[i].getName() + '</span></td>';
+					} else {
+						vLeftTable += '<span class="task-title" > ' + vTaskList[i].getName() + '</span></td>';
+					}
+
+					if (vShowRes === 1) {
+						vLeftTable += '  <td class="ggCol' + colNumber + '"  ><nobr>' + vTaskList[i].getResource() + '</nobr></td>';
+					}
+					if (vShowDur === 1) {
+						vLeftTable += '  <td class="ggCol' + colNumber + '"  ><nobr>' + vTaskList[i].getDuration(vFormat) + '</nobr></td>';
+					}
+					if (vShowComp === 1) {
+
+						vLeftTable += '  <td class="ggCol' + colNumber + '"  ><nobr>' + vTaskList[i].getCompStr() + '</nobr></td>';
+					}
+					if (vShowStartDate === 1) {
+						vLeftTable += '  <td class="ggCol' + colNumber + '"  ><nobr>' + JSGantt.formatDateStr(vTaskList[i].getStart(),
+							vDateDisplayFormat) + '</nobr></td>';
+					}
+					if (vShowEndDate === 1) {
+						vLeftTable += '  <td class="ggCol' + colNumber + '"  ><nobr>' + JSGantt.formatDateStr(vTaskList[i].getEnd(),
+							vDateDisplayFormat) + '</nobr></td>';
+					}
+
+					vLeftTable += '</tr>';
+
+				}
+
+				// DRAW the date format selector at bottom left. Another potential
+				// GanttChart parameter to hide/show this selector
+				vLeftTable += '</td></tr>';
+
+				vLeftTable += '</tbody></table></td>';
+
+				vMainTable += vLeftTable + "</div>";
+
+				// Draw the Chart Rows
+				vRightTable = '<div class="scroll yui-u" id="rightside">' + '<table style="width: ' + vChartWidth + 'px;" cellSpacing="0" cellPadding="0" border="0">' + '<thead><tr class="gheader">';
+
+				vTmpDate.setFullYear(vMinDate.getFullYear(), vMinDate.getMonth(), vMinDate.getDate());
+				vTmpDate.setHours(0);
+				vTmpDate.setMinutes(0);
+
+				// Major Date Header
+				while (vTmpDate.getTime() <= vMaxDate.getTime()) {
+					vStr = vTmpDate.getFullYear() + '';
+					vStr = vStr.substring(0, 4);
+
+					if (vFormat == 'minute') {
+						vRightTable += '<th class="gdatehead"   colspan="60">';
+						vRightTable += JSGantt.formatDateStr(vTmpDate, vDateDisplayFormat) + ' ' + vTmpDate.getHours() + ':00 -' + vTmpDate
+							.getHours() + ':59 </th>';
+						vTmpDate.setHours(vTmpDate.getHours() + 1);
+					}
+
+					if (vFormat == 'hour') {
+						vRightTable += '<th class="gdatehead"   colspan="24">';
+						vRightTable += JSGantt.formatDateStr(vTmpDate, vDateDisplayFormat) + '</th>';
+						vTmpDate.setDate(vTmpDate.getDate() + 1);
+					}
+
+					if (vFormat == 'day') {
+
+						vRightTable += '<th class="gdatehead"   colspan="7"><center>' + vTmpDate.getDate() + ' - ';
+						vTmpDate.setDate(vTmpDate.getDate() + 6);
+						vRightTable += JSGantt.formatDateStr(vTmpDate, vDateDisplayFormat) + '</center></th>';
+						vTmpDate.setDate(vTmpDate.getDate() + 1);
 					} else if (vFormat == 'week') {
-						vColWidth = 37 * vColWidthFactor;
-						vColUnit = 7;
+						vRightTable += '<th class="gdatehead"  width=' + vColWidth + 'px><center>' + vStr + '</center></th>';
+						vTmpDate.setDate(vTmpDate.getDate() + 7);
 					} else if (vFormat == 'month') {
-						vColWidth = 37 * vColWidthFactor;
-						vColUnit = 30;
+						vRightTable += '<th class="gdatehead"  width=' + vColWidth + 'px><center>' + vStr + '</center></th>';
+						vTmpDate.setDate(vTmpDate.getDate() + 1);
+						while (vTmpDate.getDate() > 1) {
+							vTmpDate.setDate(vTmpDate.getDate() + 1);
+						}
 					} else if (vFormat == 'quarter') {
-						vColWidth = 60 * vColWidthFactor;
-						vColUnit = 90;
+						vRightTable += '<th class="gdatehead"   width=' + vColWidth + 'px><center>' + vStr + '</center></th>';
+						vTmpDate.setDate(vTmpDate.getDate() + 81);
+						while (vTmpDate.getDate() > 1) {
+							vTmpDate.setDate(vTmpDate.getDate() + 1);
+						}
 					}
 
-					vNumDays = (vMaxDate.getTime() - vMinDate.getTime()) / (24 * 60 * 60 * 1000);
-					vNumUnits = vNumDays / vColUnit;
+				}
 
-					vChartWidth = vNumUnits * vColWidth + 1;
-					vDayWidth = (vColWidth / vColUnit) + (1 / vColUnit);
+				vRightTable += '</tr><tr class="gheader">';
 
-					vMainTable = '<div class="yui-gd yui-dt">';
-
-					// DRAW the Left-side of the chart (names, resources, comp%)
-					vLeftTable = '<div class="yui-u first" id="leftside"><table cellSpacing="0" cellPadding="0" border="0"><colgroup>';
-
-					vLeftTable += '<col class="ggtaskCheckbox"/><col class="ggTaskTitle  ggCol' + colNumber + '"></col>';
-
-					if (vShowRes === 1) {
-						vLeftTable += '<col class="ggCol' + colNumber + '"></col>';
-					}
-					if (vShowDur === 1) {
-						vLeftTable += '<col class="ggCol' + colNumber + '"></col>';
-					}
-					if (vShowComp === 1) {
-						vLeftTable += '<col class="ggCol' + colNumber + '"></col>';
-					}
-					if (vShowStartDate === 1) {
-						vLeftTable += '<col class="ggCol' + colNumber + '"></col>';
-					}
-					if (vShowEndDate === 1) {
-						vLeftTable += '<col class="ggCol' + colNumber + '"></col>';
-					}
-
-
-					vLeftTable += '</colgroup><thead><tr class="gheader">';
-
-
-					vLeftTable += '<th  colspan="' + colNumber + '">' + JSGantt.msg("jsgantt.format") + ':&nbsp;';
-
-
-					if (vFormatArr.join().indexOf("minute") != -1) {
-						if (vFormat == 'minute')
-							vLeftTable += '<input type="radio" name="radFormat" value="minute" checked>' + JSGantt.msg("jsgantt.minute");
-						else
-							vLeftTable += '<input type="radio" name="radFormat" onclick="JSGantt.changeFormat(\'minute\',' + vGanttVar + ');" value="minute">' + JSGantt.msg("jsgantt.minute");
-					}
-
-					if (vFormatArr.join().indexOf("hour") != -1) {
-						if (vFormat == 'hour')
-							vLeftTable += '<input type="radio" name="radFormat" value="hour" checked>' + JSGantt.msg("jsgantt.hour");
-						else
-							vLeftTable += '<input type="radio" name="radFormat" onclick="JSGantt.changeFormat(\'hour\',' + vGanttVar + ');" value="hour">' + JSGantt.msg("jsgantt.hour");
-					}
-
-					if (vFormatArr.join().indexOf("day") != -1) {
-						if (vFormat == 'day')
-							vLeftTable += '<input type="radio" name="radFormat" value="day" checked>' + JSGantt.msg("jsgantt.day");
-						else
-							vLeftTable += '<input type="radio" name="radFormat" onclick="JSGantt.changeFormat(\'day\',' + vGanttVar + ');" value="day">' + JSGantt.msg("jsgantt.day");
-					}
-
-					if (vFormatArr.join().indexOf("week") != -1) {
-						if (vFormat == 'week')
-							vLeftTable += '<input type="radio" name="radFormat" value="week" checked>' + JSGantt.msg("jsgantt.week");
-						else
-							vLeftTable += '<input type="radio" name="radFormat" onclick="JSGantt.changeFormat(\'week\',' + vGanttVar + ');" value="week">' + JSGantt.msg("jsgantt.week");
-					}
-
-					if (vFormatArr.join().indexOf("month") != -1) {
-						if (vFormat == 'month')
-							vLeftTable += '<input type="radio" name="radFormat" value="month" checked>' + JSGantt.msg("jsgantt.month");
-						else
-							vLeftTable += '<input type="radio" name="radFormat" onclick="JSGantt.changeFormat(\'month\',' + vGanttVar + ');" value="month">' + JSGantt.msg("jsgantt.month");
-					}
-
-					if (vFormatArr.join().indexOf("quarter") != -1) {
-						if (vFormat == 'quarter')
-							vLeftTable += '<input type="radio" name="radFormat" value="quarter" checked>' + JSGantt.msg("jsgantt.quarter");
-						else
-							vLeftTable += '<input type="radio" name="radFormat" onclick="JSGantt.changeFormat(\'quarter\',' + vGanttVar + ');" value="quarter">' + JSGantt.msg("jsgantt.quarter");
-					}
-
-					// vLeftTable += '<input type="radio" name="other" value="other"
-					// style="display:none"> .';
-
-					vLeftTable += '</th></tr>';
-
-					vLeftTable += '<tr class="gheader">' + ' <th colspan="2"><nobr></nobr></th>';
+				// Minor Date header and Cell Rows
+				vTmpDate.setFullYear(vMinDate.getFullYear(), vMinDate.getMonth(), vMinDate.getDate());
+				vNxtDate.setFullYear(vMinDate.getFullYear(), vMinDate.getMonth(), vMinDate.getDate());
+				var vNumCols = 0;
 
 
 
-					if (vShowRes === 1) {
-						vLeftTable += '  <th class="nowrap" >' + JSGantt.msg("jsgantt.resource") + '</th>';
-					}
-					if (vShowDur === 1) {
-						vLeftTable += '  <th  class="nowrap" >' + JSGantt.msg("jsgantt.duration") + '</th>';
-					}
-					if (vShowComp === 1) {
-						vLeftTable += '  <th  class="nowrap" >' + JSGantt.msg("jsgantt.percomp") + '</th>';
-					}
-					if (vShowStartDate === 1) {
-						vLeftTable += '  <th class="nowrap" >' + JSGantt.msg("jsgantt.begin") + '</th>';
-					}
-					if (vShowEndDate === 1) {
-						vLeftTable += '  <th>' + JSGantt.msg("jsgantt.end") + '</th>';
-					}
+				while (vTmpDate.getTime() <= vMaxDate.getTime()) {
+					var cssClass = "ghead", vHeader = "";
 
-					vLeftTable += '</tr></thead><tbody class="yui-dt-data">';
+					if (vFormat == 'minute') {
 
-					for (var i = 0; i < vTaskList.length; i++) {
-
-						var vRowType = "row";
-						if (vTaskList[i].getGroup()) {
-							vRowType = "group";
+						if (vTmpDate.getMinutes() === 0) {
+							cssClass = "ghead current";
+							vCurrPosY = vColWidth * vNumCols;
 						}
 
-						vcurrDivID = vTaskList[i].getID();
+						vHeader = vTmpDate.getMinutes();
+						vTmpDate.setMinutes(vTmpDate.getMinutes() + 1);
+					}
 
-						var vLineColorStyle = vTaskList[i].getLineColor() ? 'style="background-color:'
-							+ vTaskList[i].getLineColor() + '"' : "";
+					else if (vFormat == 'hour') {
 
-						if (vTaskList[i].getVisible() === 0) {
-							vLeftTable += '<tr id="child_' + vcurrDivID + '" class="g' + vRowType + ' hidden" ' + vLineColorStyle + ' onMouseover="g.mouseOver(this,\'' + vcurrDivID + '\',\'left\',\'' + vRowType + '\')" onMouseout="g.mouseOut(this,\'' + vcurrDivID + '\',\'left\',\'' + vRowType + '\')">';
+						if (vTmpDate.getHours() === 0) {
+							cssClass = "ghead current";
+							vCurrPosY = vColWidth * vNumCols;
+						}
+						vHeader = vTmpDate.getHours();
+						vTmpDate.setHours(vTmpDate.getHours() + 1);
+					}
+					else if (vFormat == 'day') {
+
+						if (vTmpDate.getDay() % 6 === 0) {
+							cssClass = "gheadwkend";
+						}
+
+						if (JSGantt.formatDateStr(vCurrDate, 'shortDate') == JSGantt.formatDateStr(vTmpDate, 'shortDate')) {
+							cssClass += " current";
+							vCurrPosY = vColWidth * vNumCols;
+						}
+
+						vHeader = vTmpDate.getDate();
+						vTmpDate.setDate(vTmpDate.getDate() + 1);
+
+					}
+
+					else if (vFormat == 'week') {
+
+						vNxtDate.setDate(vNxtDate.getDate() + 7);
+						if (vCurrDate >= vTmpDate && vCurrDate < vNxtDate) {
+							cssClass = "ghead current";
+							vCurrPosY = vColWidth * vNumCols;
+						}
+						var dateFormat = JSGantt.msg("jsgantt.dateformat");
+						if (dateFormat == 'mm/dd/yyyy') {
+							vHeader = (vTmpDate.getMonth() + 1) + '/' + vTmpDate.getDate();
 						} else {
-							vLeftTable += '<tr id="child_' + vcurrDivID + '"  class="g' + vRowType + '" ' + vLineColorStyle + ' onMouseover="g.mouseOver(this,\'' + vcurrDivID + '\',\'left\',\'' + vRowType + '\')" onMouseout="g.mouseOut(this,\'' + vcurrDivID + '\',\'left\',\'' + vRowType + '\')">';
+							vHeader = vTmpDate.getDate() + '/' + (vTmpDate.getMonth() + 1);
 						}
+						vTmpDate.setDate(vTmpDate.getDate() + 7);
 
-						if (vShowSelect === 1) {
-							vLeftTable += '<td class="ggtaskCheckbox"><input type="checkbox" id="taskChecked-' + vcurrDivID + '" name="taskChecked" onclick="g.selectItem(this,\'' + vcurrDivID + '\');"  ' + (JSGantt.scope.selectedItems[vcurrDivID] ? ' checked="checked">'
-								: '>') + '<label for="taskChecked-' + vcurrDivID + '"></label></td>';
+					}
+					else if (vFormat == 'month') {
+
+						vNxtDate.setFullYear(vTmpDate.getFullYear(), vTmpDate.getMonth(), vMonthDaysArr[vTmpDate.getMonth()]);
+						if (vCurrDate >= vTmpDate && vCurrDate < vNxtDate) {
+							cssClass = "ghead current";
+							vCurrPosY = vColWidth * vNumCols;
 						}
+						vHeader = vMonthArr[vTmpDate.getMonth()].substr(0, 3);
+						vTmpDate.setDate(vTmpDate.getDate() + 1);
 
-
-						vLeftTable += '  <td class="ggTaskTitle ggCol' + colNumber + '">';
-
-						vMargin = (vTaskList[i].getLevel() - 1) * 25;
-
-
-						if (vTaskList[i].getGroup()) {
-							var gcssClass = "ggroup-collapsed";
-
-							if (vTaskList[i].getOpen() == 1) {
-								gcssClass = "ggroup-expanded";
-							} 
-
-							if (vTaskList[i].getSubProject() != null || vIsMultilevel) {
-								vLeftTable += '<div id="group_' + (vTaskList[i].getOpen() ? "expanded" : "collapsed") + '_' + vcurrDivID + '" style="margin-left:' + vMargin
-									+ 'px;" class="onCollapsedAndExpanded" ><a href="#" class="' + JSGantt.scope.id + '-action-link"><span class="gicon '
-									+ (gcssClass) + '"></span></a></div>';
-							} else {
-								vLeftTable += '<div style="margin-left:' + vMargin + 'px;" id="group_' + vcurrDivID + '" class="gicon ' + gcssClass + '" onclick="JSGantt.folder(\'' + vcurrDivID + '\',' + vGanttVar + ');' + vGanttVar + '.DrawDependencies();"></div>';
-							}
-						} else {
-
-							vLeftTable += '<span  style="margin-left:' + vMargin + 'px;">&nbsp;</span>';
+						while (vTmpDate.getDate() > 1) {
+							vTmpDate.setDate(vTmpDate.getDate() + 1);
 						}
-
-						if (vTaskList[i].getSubProject() != null) {
-							vLeftTable += '<span class="project-title task-title" > ' + vTaskList[i].getName() + '</span></td>';
-						} else {
-							vLeftTable += '<span class="task-title" > ' + vTaskList[i].getName() + '</span></td>';
-						}
-
-						if (vShowRes === 1) {
-							vLeftTable += '  <td class="ggCol' + colNumber + '"  ><nobr>' + vTaskList[i].getResource() + '</nobr></td>';
-						}
-						if (vShowDur === 1) {
-							vLeftTable += '  <td class="ggCol' + colNumber + '"  ><nobr>' + vTaskList[i].getDuration(vFormat) + '</nobr></td>';
-						}
-						if (vShowComp === 1) {
-
-							vLeftTable += '  <td class="ggCol' + colNumber + '"  ><nobr>' + vTaskList[i].getCompStr() + '</nobr></td>';
-						}
-						if (vShowStartDate === 1) {
-							vLeftTable += '  <td class="ggCol' + colNumber + '"  ><nobr>' + JSGantt.formatDateStr(vTaskList[i].getStart(),
-								vDateDisplayFormat) + '</nobr></td>';
-						}
-						if (vShowEndDate === 1) {
-							vLeftTable += '  <td class="ggCol' + colNumber + '"  ><nobr>' + JSGantt.formatDateStr(vTaskList[i].getEnd(),
-								vDateDisplayFormat) + '</nobr></td>';
-						}
-
-						vLeftTable += '</tr>';
 
 					}
 
-					// DRAW the date format selector at bottom left. Another potential
-					// GanttChart parameter to hide/show this selector
-					vLeftTable += '</td></tr>';
+					else if (vFormat === 'quarter') {
 
-					vLeftTable += '</tbody></table></td>';
+						vNxtDate.setDate(vNxtDate.getDate() + 122);
+						if (vTmpDate.getMonth() === 0 || vTmpDate.getMonth() === 1 || vTmpDate.getMonth() === 2)
+							vNxtDate.setFullYear(vTmpDate.getFullYear(), 2, 31);
+						else if (vTmpDate.getMonth() === 3 || vTmpDate.getMonth() === 4 || vTmpDate.getMonth() === 5)
+							vNxtDate.setFullYear(vTmpDate.getFullYear(), 5, 30);
+						else if (vTmpDate.getMonth() === 6 || vTmpDate.getMonth() === 7 || vTmpDate.getMonth() === 8)
+							vNxtDate.setFullYear(vTmpDate.getFullYear(), 8, 30);
+						else if (vTmpDate.getMonth() === 9 || vTmpDate.getMonth() === 10 || vTmpDate.getMonth() === 11)
+							vNxtDate.setFullYear(vTmpDate.getFullYear(), 11, 31);
 
-					vMainTable += vLeftTable + "</div>";
+						if (vCurrDate >= vTmpDate && vCurrDate < vNxtDate) {
+							cssClass = "ghead current";
+							vCurrPosY = vColWidth * vNumCols;
+						}
 
-					// Draw the Chart Rows
-					vRightTable = '<div class="scroll yui-u" id="rightside">' + '<table style="width: ' + vChartWidth + 'px;" cellSpacing="0" cellPadding="0" border="0">' + '<thead><tr class="gheader">';
+						vHeader = JSGantt.msg("jsgantt.quarter").substr(0, 3) + '. ' + vQuarterArr[vTmpDate.getMonth()];
+						vTmpDate.setDate(vTmpDate.getDate() + 81);
+						while (vTmpDate.getDate() > 1) {
+							vTmpDate.setDate(vTmpDate.getDate() + 1);
+						}
+
+					}
+
+					vDateRowStr += this.renderDateHeaderCell(cssClass, vColWidth, vHeader);
+					vItemRowStr += this.renderDateCell(cssClass, vColWidth);
+					vNumCols++;
+
+				}
+
+				vRightTable += vDateRowStr + '</tr>';
+				vRightTable += '</thead></table>';
+
+				// Draw each row
+
+				for (i = 0; i < vTaskList.length; i++) {
 
 					vTmpDate.setFullYear(vMinDate.getFullYear(), vMinDate.getMonth(), vMinDate.getDate());
-					vTmpDate.setHours(0);
-					vTmpDate.setMinutes(0);
+					var vTaskStart = vTaskList[i].getStart();
+					var vTaskEnd = vTaskList[i].getEnd();
 
-					// Major Date Header
-					while (vTmpDate.getTime() <= vMaxDate.getTime()) {
-						vStr = vTmpDate.getFullYear() + '';
-						vStr = vStr.substring(0, 4);
 
-						if (vFormat == 'minute') {
-							vRightTable += '<th class="gdatehead"   colspan="60">';
-							vRightTable += JSGantt.formatDateStr(vTmpDate, vDateDisplayFormat) + ' ' + vTmpDate.getHours() + ':00 -' + vTmpDate
-								.getHours() + ':59 </th>';
-							vTmpDate.setHours(vTmpDate.getHours() + 1);
-						}
+					vcurrDivID = vTaskList[i].getID();
 
-						if (vFormat == 'hour') {
-							vRightTable += '<th class="gdatehead"   colspan="24">';
-							vRightTable += JSGantt.formatDateStr(vTmpDate, vDateDisplayFormat) + '</th>';
-							vTmpDate.setDate(vTmpDate.getDate() + 1);
-						}
-
-						if (vFormat == 'day') {
-
-							vRightTable += '<th class="gdatehead"   colspan="7"><center>' + vTmpDate.getDate() + ' - ';
-							vTmpDate.setDate(vTmpDate.getDate() + 6);
-							vRightTable += JSGantt.formatDateStr(vTmpDate, vDateDisplayFormat) + '</center></th>';
-							vTmpDate.setDate(vTmpDate.getDate() + 1);
-						} else if (vFormat == 'week') {
-							vRightTable += '<th class="gdatehead"  width=' + vColWidth + 'px><center>' + vStr + '</center></th>';
-							vTmpDate.setDate(vTmpDate.getDate() + 7);
-						} else if (vFormat == 'month') {
-							vRightTable += '<th class="gdatehead"  width=' + vColWidth + 'px><center>' + vStr + '</center></th>';
-							vTmpDate.setDate(vTmpDate.getDate() + 1);
-							while (vTmpDate.getDate() > 1) {
-								vTmpDate.setDate(vTmpDate.getDate() + 1);
-							}
-						} else if (vFormat == 'quarter') {
-							vRightTable += '<th class="gdatehead"   width=' + vColWidth + 'px><center>' + vStr + '</center></th>';
-							vTmpDate.setDate(vTmpDate.getDate() + 81);
-							while (vTmpDate.getDate() > 1) {
-								vTmpDate.setDate(vTmpDate.getDate() + 1);
-							}
-						}
-
+					// vNumUnits = Math.ceil((vTaskList[i].getEnd() -
+					// vTaskList[i].getStart()) / (24 * 60 * 60 * 1000)) + 1;
+					vNumUnits = (vTaskList[i].getEnd() - vTaskStart) / (24 * 60 * 60 * 1000) + 1;
+					if (vFormat == 'hour' || vFormat == 'minute') {
+						vNumUnits = (vTaskList[i].getEnd() - vTaskStart) / (60 * 1000) + 1;
 					}
 
-					vRightTable += '</tr><tr class="gheader">';
-
-					// Minor Date header and Cell Rows
-					vTmpDate.setFullYear(vMinDate.getFullYear(), vMinDate.getMonth(), vMinDate.getDate());
-					vNxtDate.setFullYear(vMinDate.getFullYear(), vMinDate.getMonth(), vMinDate.getDate());
-					var vNumCols = 0;
-
-
-
-					while (vTmpDate.getTime() <= vMaxDate.getTime()) {
-						var cssClass = "ghead", vHeader = "";
-
-						if (vFormat == 'minute') {
-
-							if (vTmpDate.getMinutes() === 0) {
-								cssClass = "ghead current";
-								vCurrPosY = vColWidth * vNumCols;
-							}
-
-							vHeader = vTmpDate.getMinutes();
-							vTmpDate.setMinutes(vTmpDate.getMinutes() + 1);
-						}
-
-						else if (vFormat == 'hour') {
-
-							if (vTmpDate.getHours() === 0) {
-								cssClass = "ghead current";
-								vCurrPosY = vColWidth * vNumCols;
-							}
-							vHeader = vTmpDate.getHours();
-							vTmpDate.setHours(vTmpDate.getHours() + 1);
-						}
-						else if (vFormat == 'day') {
-
-							if (vTmpDate.getDay() % 6 === 0) {
-								cssClass = "gheadwkend";
-							}
-
-							if (JSGantt.formatDateStr(vCurrDate, 'shortDate') == JSGantt.formatDateStr(vTmpDate, 'shortDate')) {
-								cssClass += " current";
-								vCurrPosY = vColWidth * vNumCols;
-							}
-
-							vHeader = vTmpDate.getDate();
-							vTmpDate.setDate(vTmpDate.getDate() + 1);
-
-						}
-
-						else if (vFormat == 'week') {
-
-							vNxtDate.setDate(vNxtDate.getDate() + 7);
-							if (vCurrDate >= vTmpDate && vCurrDate < vNxtDate) {
-								cssClass = "ghead current";
-								vCurrPosY = vColWidth * vNumCols;
-							}
-							var dateFormat = JSGantt.msg("jsgantt.dateformat");
-							if (dateFormat == 'mm/dd/yyyy') {
-								vHeader = (vTmpDate.getMonth() + 1) + '/' + vTmpDate.getDate();
-							} else {
-								vHeader = vTmpDate.getDate() + '/' + (vTmpDate.getMonth() + 1);
-							}
-							vTmpDate.setDate(vTmpDate.getDate() + 7);
-
-						}
-						else if (vFormat == 'month') {
-
-							vNxtDate.setFullYear(vTmpDate.getFullYear(), vTmpDate.getMonth(), vMonthDaysArr[vTmpDate.getMonth()]);
-							if (vCurrDate >= vTmpDate && vCurrDate < vNxtDate) {
-								cssClass = "ghead current";
-								vCurrPosY = vColWidth * vNumCols;
-							}
-							vHeader = vMonthArr[vTmpDate.getMonth()].substr(0, 3);
-							vTmpDate.setDate(vTmpDate.getDate() + 1);
-
-							while (vTmpDate.getDate() > 1) {
-								vTmpDate.setDate(vTmpDate.getDate() + 1);
-							}
-
-						}
-
-						else if (vFormat === 'quarter') {
-
-							vNxtDate.setDate(vNxtDate.getDate() + 122);
-							if (vTmpDate.getMonth() === 0 || vTmpDate.getMonth() === 1 || vTmpDate.getMonth() === 2)
-								vNxtDate.setFullYear(vTmpDate.getFullYear(), 2, 31);
-							else if (vTmpDate.getMonth() === 3 || vTmpDate.getMonth() === 4 || vTmpDate.getMonth() === 5)
-								vNxtDate.setFullYear(vTmpDate.getFullYear(), 5, 30);
-							else if (vTmpDate.getMonth() === 6 || vTmpDate.getMonth() === 7 || vTmpDate.getMonth() === 8)
-								vNxtDate.setFullYear(vTmpDate.getFullYear(), 8, 30);
-							else if (vTmpDate.getMonth() === 9 || vTmpDate.getMonth() === 10 || vTmpDate.getMonth() === 11)
-								vNxtDate.setFullYear(vTmpDate.getFullYear(), 11, 31);
-
-							if (vCurrDate >= vTmpDate && vCurrDate < vNxtDate) {
-								cssClass = "ghead current";
-								vCurrPosY = vColWidth * vNumCols;
-							}
-
-							vHeader = JSGantt.msg("jsgantt.quarter").substr(0, 3) + '. ' + vQuarterArr[vTmpDate.getMonth()];
-							vTmpDate.setDate(vTmpDate.getDate() + 81);
-							while (vTmpDate.getDate() > 1) {
-								vTmpDate.setDate(vTmpDate.getDate() + 1);
-							}
-
-						}
-
-						vDateRowStr += this.renderDateHeaderCell(cssClass, vColWidth, vHeader);
-						vItemRowStr += this.renderDateCell(cssClass, vColWidth);
-						vNumCols++;
-
+					if (vTaskList[i].getVisible() === 0) {
+						vRightTable += '<div id="childgrid_' + vcurrDivID + '" style="position:relative;" class="hidden" >';
+					} else {
+						vRightTable += '<div id="childgrid_' + vcurrDivID + '" style="position:relative">';
 					}
 
-					vRightTable += vDateRowStr + '</tr>';
-					vRightTable += '</thead></table>';
+					var vTimeFactor = (24 * 60 * 60 * 1000);
 
-					// Draw each row
+					if (vFormat == 'minute') {
+						vTimeFactor = (60 * 1000);
 
-					for (i = 0; i < vTaskList.length; i++) {
+					} else if (vFormat == 'hour') {
+						vTimeFactor = (60 * 60 * 1000);
+					}
 
-						vTmpDate.setFullYear(vMinDate.getFullYear(), vMinDate.getMonth(), vMinDate.getDate());
-						var vTaskStart = vTaskList[i].getStart();
-						var vTaskEnd = vTaskList[i].getEnd();
-						
+					vTaskRight = (vTaskEnd.getTime() - vTaskStart.getTime()) / (vTimeFactor) + 1 / vColUnit;
+					vTaskLeft = Math.ceil((vTaskStart.getTime() - vMinDate.getTime()) / (vTimeFactor));
 
-						vcurrDivID = vTaskList[i].getID();
-
-						// vNumUnits = Math.ceil((vTaskList[i].getEnd() -
-						// vTaskList[i].getStart()) / (24 * 60 * 60 * 1000)) + 1;
-						vNumUnits = (vTaskList[i].getEnd() - vTaskStart) / (24 * 60 * 60 * 1000) + 1;
-						if (vFormat == 'hour' || vFormat == 'minute') {
-							vNumUnits = (vTaskList[i].getEnd() - vTaskStart) / (60 * 1000) + 1;
+					if (g.getCaptionType()) {
+						var vCaptionStr = '';
+						switch (g.getCaptionType()) {
+							case 'Caption':
+								vCaptionStr = vTaskList[i].getCaption();
+								break;
+							case 'Resource':
+								vCaptionStr = vTaskList[i].getResource();
+								break;
+							case 'Duration':
+								vCaptionStr = vTaskList[i].getDuration(vFormat);
+								break;
+							case 'Complete':
+								vCaptionStr = vTaskList[i].getCompStr();
+								break;
 						}
-
-						if (vTaskList[i].getVisible() === 0) {
-							vRightTable += '<div id="childgrid_' + vcurrDivID + '" style="position:relative;" class="hidden" >';
-						} else {
-							vRightTable += '<div id="childgrid_' + vcurrDivID + '" style="position:relative">';
-						}
-
-						var vTimeFactor = (24 * 60 * 60 * 1000);
-
-						if (vFormat == 'minute') {
-							vTimeFactor = (60 * 1000);
-
-						} else if (vFormat == 'hour') {
-							vTimeFactor = (60 * 60 * 1000);
-						}
-
-						vTaskRight = (vTaskEnd.getTime() - vTaskStart.getTime()) / (vTimeFactor) + 1 / vColUnit;
-						vTaskLeft = Math.ceil((vTaskStart.getTime() - vMinDate.getTime()) / (vTimeFactor));
-
-						if (g.getCaptionType()) {
-							var vCaptionStr = '';
-							switch (g.getCaptionType()) {
-								case 'Caption':
-									vCaptionStr = vTaskList[i].getCaption();
-									break;
-								case 'Resource':
-									vCaptionStr = vTaskList[i].getResource();
-									break;
-								case 'Duration':
-									vCaptionStr = vTaskList[i].getDuration(vFormat);
-									break;
-								case 'Complete':
-									vCaptionStr = vTaskList[i].getCompStr();
-									break;
-							}
-						}
+					}
 
 
-						var vClass = "row";
-						if (vTaskList[i].getMile()) {
-							vClass = "mile";
-						} else if (vTaskList[i].getGroup()) {
-							vClass = "group";
-						}
+					var vClass = "row";
+					if (vTaskList[i].getMile()) {
+						vClass = "mile";
+					} else if (vTaskList[i].getGroup()) {
+						vClass = "group";
+					}
 
-						vLineColorStyle = vTaskList[i].getLineColor() ? 'style="background-color:'
-							+ vTaskList[i].getLineColor() + '"' : "";
+					vLineColorStyle = vTaskList[i].getLineColor() ? 'style="background-color:'
+						+ vTaskList[i].getLineColor() + '"' : "";
 
-						vRightTable += '<div><table style="width: ' + vChartWidth + 'px;"><tbody class="yui-dt-data">'
-							+ '<tr id="childrow_' + vcurrDivID + '" ' + vLineColorStyle + ' class="g' + vClass + '" onMouseover="g.mouseOver(this,\''
-							+ vcurrDivID + '\',\'right\',\'' + vClass + '\')" onMouseout="g.mouseOut(this,\''
-							+ vcurrDivID + '\',\'right\',\'' + vClass + '\')">'
-							+ vItemRowStr + '</tr></tbody></table></div>';
-
-
-						if (vTaskList[i].getMile()) {
-
-							// Build date string for Title
-							vDateRowStr = JSGantt.formatDateStr(vTaskStart, vDateDisplayFormat);
-
-							vRightTable += this.renderMile(vcurrDivID, vTaskLeft, vDayWidth, vDateRowStr, vCaptionStr, vTaskList[i]);
+					vRightTable += '<div><table style="width: ' + vChartWidth + 'px;"><tbody class="yui-dt-data">'
+						+ '<tr id="childrow_' + vcurrDivID + '" ' + vLineColorStyle + ' class="g' + vClass + '" onMouseover="g.mouseOver(this,\''
+						+ vcurrDivID + '\',\'right\',\'' + vClass + '\')" onMouseout="g.mouseOut(this,\''
+						+ vcurrDivID + '\',\'right\',\'' + vClass + '\')">'
+						+ vItemRowStr + '</tr></tbody></table></div>';
 
 
-						} else {
+					if (vTaskList[i].getMile()) {
 
-							// Build date string for Title
-							vDateRowStr = JSGantt.formatDateStr(vTaskStart, vDateDisplayFormat) + ' - ' + JSGantt.formatDateStr(
-								vTaskEnd, vDateDisplayFormat);
+						// Build date string for Title
+						vDateRowStr = JSGantt.formatDateStr(vTaskStart, vDateDisplayFormat);
 
-							// Draw Group Bar which has outer div with inner group div and
-							// several small divs to left and right to create angled-end
-							// indicators
-							if (vTaskList[i].getGroup()) {
+						vRightTable += this.renderMile(vcurrDivID, vTaskLeft, vDayWidth, vDateRowStr, vCaptionStr, vTaskList[i]);
 
-								var m = 0, milesDiv = "", vTaskLeftCustom = 0, vDateRowStrCustom = "";
 
-								for (m = i + 1; m < vTaskList.length; m++) {
-									if (!vTaskList[m].getGroup() && vTaskList[m].getMile() && vTaskList[m].getParent() == vcurrDivID) {
-									
-										vTaskLeftCustom = Math.ceil((vTaskList[m].getStart().getTime() - vMinDate.getTime()) / (vTimeFactor));
-										
-										vDateRowStrCustom = JSGantt.formatDateStr(vTaskList[m].getStart(), vDateDisplayFormat);
+					} else {
 
-										if (vDayWidth < 6) {
-											vTaskLeftCustom = vTaskLeftCustom - Math.ceil(6 / vDayWidth);
-										}
+						// Build date string for Title
+						vDateRowStr = JSGantt.formatDateStr(vTaskStart, vDateDisplayFormat) + ' - ' + JSGantt.formatDateStr(
+							vTaskEnd, vDateDisplayFormat);
 
-										milesDiv += '<div style="position:absolute;top:5px; left:' +
-											Math.ceil(vTaskLeftCustom * (vDayWidth) + 1) + 'px; z-index:1; background-color:#'
-											+ vTaskList[m].getColor() + ';" title="' + vDateRowStrCustom + '" class="milestone" >&nbsp;</div>';
+						// Draw Group Bar which has outer div with inner group div and
+						// several small divs to left and right to create angled-end
+						// indicators
+						if (vTaskList[i].getGroup()) {
+
+							var m = 0, milesDiv = "", vTaskLeftCustom = 0, vDateRowStrCustom = "";
+
+							for (m = i + 1; m < vTaskList.length; m++) {
+								if (!vTaskList[m].getGroup() && vTaskList[m].getMile() && vTaskList[m].getParent() == vcurrDivID) {
+
+									vTaskLeftCustom = Math.ceil((vTaskList[m].getStart().getTime() - vMinDate.getTime()) / (vTimeFactor));
+
+									vDateRowStrCustom = JSGantt.formatDateStr(vTaskList[m].getStart(), vDateDisplayFormat);
+
+									if (vDayWidth < 6) {
+										vTaskLeftCustom = vTaskLeftCustom - Math.ceil(6 / vDayWidth);
 									}
+
+									milesDiv += '<div style="position:absolute;top:5px; left:' +
+										Math.ceil(vTaskLeftCustom * (vDayWidth) + 1) + 'px; z-index:1; background-color:#'
+										+ vTaskList[m].getColor() + ';" title="' + vDateRowStrCustom + '" class="milestone" >&nbsp;</div>';
 								}
-
-
-								vRightTable += milesDiv + this.renderGroup(vcurrDivID, vTaskLeft, vTaskRight, vDayWidth, vDateRowStr, vCaptionStr, vTaskList[i]);
-
-							} else {
-								
-									
-								// Draw planned task
-								var vTaskTargetStart = vTaskList[i].getTargetStart();
-								var vTaskTargetEnd = vTaskList[i].getTargetEnd();
-								
-								if(vTaskTargetStart!=null && vTaskTargetEnd!=null){
-									var vTargetTaskRight = (vTaskTargetEnd.getTime() - vTaskTargetStart.getTime()) / (vTimeFactor) + 1 / vColUnit;
-									var vTargetTaskLeft = Math.ceil((vTaskTargetStart.getTime() - vMinDate.getTime()) / (vTimeFactor));
-	
-	
-									vRightTable += this.renderPlanTask(vcurrDivID, vTargetTaskLeft, vTargetTaskRight, vDayWidth,
-									 JSGantt.formatDateStr(vTaskTargetStart, vDateDisplayFormat) + ' - ' + JSGantt.formatDateStr(vTaskTargetEnd, vDateDisplayFormat), vTaskList[i]);
-								}
-
-								// Draw Task Bar which has outer div with enclosed colored
-								// bar
-								// div, and opaque completion div
-								vRightTable += this.renderTask(vcurrDivID, vTaskLeft, vTaskRight, vDayWidth, vDateRowStr, vCaptionStr, vTaskList[i]);
-							
-
 							}
 
 
+							vRightTable += milesDiv + this.renderGroup(vcurrDivID, vTaskLeft, vTaskRight, vDayWidth, vDateRowStr, vCaptionStr, vTaskList[i]);
+
+						} else {
+
+
+							// Draw planned task
+							var vTaskTargetStart = vTaskList[i].getTargetStart();
+							var vTaskTargetEnd = vTaskList[i].getTargetEnd();
+
+							if (vTaskTargetStart != null && vTaskTargetEnd != null) {
+								var vTargetTaskRight = (vTaskTargetEnd.getTime() - vTaskTargetStart.getTime()) / (vTimeFactor) + 1 / vColUnit;
+								var vTargetTaskLeft = Math.ceil((vTaskTargetStart.getTime() - vMinDate.getTime()) / (vTimeFactor));
+
+
+								vRightTable += this.renderPlanTask(vcurrDivID, vTargetTaskLeft, vTargetTaskRight, vDayWidth,
+									JSGantt.formatDateStr(vTaskTargetStart, vDateDisplayFormat) + ' - ' + JSGantt.formatDateStr(vTaskTargetEnd, vDateDisplayFormat), vTaskList[i]);
+							}
+
+							// Draw Task Bar which has outer div with enclosed colored
+							// bar
+							// div, and opaque completion div
+							vRightTable += this.renderTask(vcurrDivID, vTaskLeft, vTaskRight, vDayWidth, vDateRowStr, vCaptionStr, vTaskList[i]);
+
+
 						}
-						vRightTable += '</div>';
+
 
 					}
-
-
-					vMainTable += vRightTable + '</div></div>';
-
-					vDiv.innerHTML = vMainTable;
+					vRightTable += '</div>';
 
 				}
 
 
-				this.scrollToY(vCurrPosY, vDiv);
+				vMainTable += vRightTable + '</div></div>';
+
+				vDiv.innerHTML = vMainTable;
+
+			}
+
+
+			this.scrollToY(vCurrPosY, vDiv);
 
 
 		};
@@ -1944,7 +1944,7 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
 			return '<div id="bardiv_' + vcurrDivID + '" style="position:absolute; top:3px; left:' + Math
 				.ceil(vTaskLeft * (vDayWidth) + 1) + 'px; height: 16px; width:266px; overflow:hidden;z-index:5;">' + '  <div id="taskbar_' + vcurrDivID + '" title="' + vDateRowStr
 				+ '"  class="milestone ' + (vTask.getCompVal() < 100 ? "" : "completed") + '" style="background-color:#' + vTask.getColor() + ';">&nbsp;</div>'
-				+ ((vCaptionStr != null && vCaptionStr.length > 0) ? '<div class="gcaption" style="top:0px; left:20px">' + vCaptionStr + '</div>' : '')+'</div>';
+				+ ((vCaptionStr != null && vCaptionStr.length > 0) ? '<div class="gcaption" style="top:0px; left:20px">' + vCaptionStr + '</div>' : '') + '</div>';
 
 		};
 
@@ -1952,10 +1952,10 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
 			return '<div id="bardiv_' + vcurrDivID + '" class="gtaskdiv" style="position:absolute; left:'
 				+ Math.ceil(vTaskLeft * (vDayWidth) - 1) + 'px; height:18px;z-index:5; width:'
 				+ Math.ceil((vTaskRight) * (vDayWidth) - 1) + 'px">' + '<div id="taskbar_' + vcurrDivID + '" title="' + vDateRowStr
-				+ '" class="gtask'+(vTask.getIsCritical()? ' critical':'')+'" style="background-color:#' + vTask.getColor() + '; width:' + Math.ceil((vTaskRight) * (vDayWidth) - 1) + 'px;"  >'
+				+ '" class="gtask' + (vTask.getIsCritical() ? ' critical' : '') + '" style="background-color:#' + vTask.getColor() + '; width:' + Math.ceil((vTaskRight) * (vDayWidth) - 1) + 'px;"  >'
 				+ '<div class="gcomplete" style="width:' + vTask.getCompStr() + ';">' + '</div>' + '</div>'
 				+ ((vCaptionStr != null && vCaptionStr.length > 0) ? '<div class="gcaption" style="top:-3px; left:'
-					+ (Math.ceil((vTaskRight) * (vDayWidth) - 1) + 6) + 'px">' + vCaptionStr + '</div>' : '')+'</div>';
+					+ (Math.ceil((vTaskRight) * (vDayWidth) - 1) + 6) + 'px">' + vCaptionStr + '</div>' : '') + '</div>';
 
 		};
 
@@ -1976,7 +1976,7 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
 				+ Math.ceil((vTaskRight) * (vDayWidth) - 1) + 'px;">'
 				+ '<div class="ggcomplete" style="width:' + vTask.getCompStr() + '" ></div></div>'
 				+ ((vCaptionStr != null && vCaptionStr.length > 0) ? '<div class="gcaption" style="top:-3px; left:'
-					+ (Math.ceil((vTaskRight) * (vDayWidth) - 1) + 6) + 'px">' + vCaptionStr + '</div>' : '')+'</div>';
+					+ (Math.ceil((vTaskRight) * (vDayWidth) - 1) + 6) + 'px">' + vCaptionStr + '</div>' : '') + '</div>';
 		};
 
 
@@ -2006,10 +2006,10 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
 		 */
 		this.mouseOver = function(pObj, pID, pPos) {
 			var vcurrDivID = 'childrow_' + pID;
-			if (pPos == 'right'){
+			if (pPos == 'right') {
 				vcurrDivID = 'child_' + pID;
 			}
-				
+
 			Dom.addClass(pObj, "highlight");
 			Dom.addClass(vcurrDivID, "highlight");
 		};
@@ -2022,10 +2022,10 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
 		 */
 		this.mouseOut = function(pObj, pID, pPos) {
 			var vcurrDivID = 'childrow_' + pID;
-			if (pPos == 'right'){
+			if (pPos == 'right') {
 				vcurrDivID = 'child_' + pID;
 			}
-				
+
 			Dom.removeClass(pObj, "highlight");
 			Dom.removeClass(vcurrDivID, "highlight");
 
@@ -2053,7 +2053,7 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
 	 *            {Boolean}
 	 * @return void
 	 */
-	JSGantt.processRows = function(pList, pID, pRow, pLevel, pOpen) {
+	JSGantt.processRows = function(pList, pID, pRow, pLevel, pOpen, pIsMultilevel) {
 
 		var vMinDate = new Date();
 		var vMaxDate = new Date();
@@ -2076,26 +2076,31 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
 				vNumKid++;
 
 				if (pList[i].getGroup() === 1) {
-					JSGantt.processRows(vList, pList[i].getID(), i, vLevel + 1, vVisible);
+					JSGantt.processRows(vList, pList[i].getID(), i, vLevel + 1, vVisible, pIsMultilevel);
 				}
 
-				if (vMinSet === 0 || pList[i].getStart() < vMinDate) {
-					vMinDate = pList[i].getStart();
-					vMinSet = 1;
-				}
+				if (!pIsMultilevel) {
+					if (vMinSet === 0 || pList[i].getStart() < vMinDate) {
+						vMinDate = pList[i].getStart();
+						vMinSet = 1;
+					}
 
-				if (vMaxSet === 0 || pList[i].getEnd() > vMaxDate) {
-					vMaxDate = pList[i].getEnd();
-					vMaxSet = 1;
+					if (vMaxSet === 0 || pList[i].getEnd() > vMaxDate) {
+						vMaxDate = pList[i].getEnd();
+						vMaxSet = 1;
+					}
 				}
-
 			}
+
 		}
 
 		if (pRow >= 0 && !pList[pRow].getMile() && pList[pRow].getSubProject() == null) {
-			pList[pRow].setStart(vMinDate);
-			pList[pRow].setEnd(vMaxDate);
+			if (!pIsMultilevel) {
+				pList[pRow].setStart(vMinDate);
+				pList[pRow].setEnd(vMaxDate);
+			}
 			pList[pRow].setNumKid(vNumKid);
+
 		}
 
 	};
@@ -2128,7 +2133,7 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
 		if (pFormat == 'minute' || pFormat == 'hour') {
 			vDate.setHours(0);
 			vDate.setMinutes(0);
-		} 
+		}
 		// Adjust min date to specific format boundaries (first of week or first
 		// of
 		// month)
