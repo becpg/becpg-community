@@ -259,7 +259,7 @@
       computeDueDate : function(start, record) {
          var taskList = record.itemData["dt_pjt_taskList"];
          var ret = start, vstart = start;
-         for (j in taskList) {
+         for (var j in taskList) {
             var task = taskList[j];
             var taskId = task.nodeRef;
 
@@ -625,7 +625,7 @@
       	if(task["itemData"]["assoc_pjt_tlTaskLegend"][0] != null){
       		var id = task["itemData"]["assoc_pjt_tlTaskLegend"][0].value;
 
-            for (i in this.taskLegends) {
+            for (var i in this.taskLegends) {
                if (this.taskLegends[i].id == id) {
                   return this.taskLegends[i].color.replace('#','');
                }
