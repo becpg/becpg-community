@@ -36,11 +36,16 @@ import org.apache.commons.logging.LogFactory;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.FinishedProductData;
+import fr.becpg.repo.product.data.PackagingKitData;
+import fr.becpg.repo.product.data.PackagingMaterialData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
+import fr.becpg.repo.product.data.ResourceProductData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
+import fr.becpg.repo.product.data.productList.PackagingListDataItem;
+import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.model.FormulatedCharactDataItem;
@@ -84,7 +89,7 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 
 		// Add child requirements
 		if (productData.getReqCtrlList() != null) {
-			appendChildReq(productData, productData.getReqCtrlList(), productData.getCompoListView().getCompoList());
+			appendChildReq(productData, productData.getReqCtrlList());
 
 			mergeReqCtrlList(productData, productData.getReqCtrlList());
 
@@ -94,34 +99,54 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 		return true;
 	}
 
-	private void appendChildReq(ProductData productData, List<ReqCtrlListDataItem> reqCtrlList, List<CompoListDataItem> compoList) {
-		for (CompoListDataItem compoListDataItem : compoList) {
+	private void appendChildReq(ProductData productData, List<ReqCtrlListDataItem> reqCtrlList) {
+		for (CompoListDataItem compoListDataItem : productData.getCompoListView().getCompoList()) {
 			NodeRef componentProductNodeRef = compoListDataItem.getProduct();
 			if (componentProductNodeRef != null) {
 				ProductData componentProductData = alfrescoRepository.findOne(componentProductNodeRef);
 				if (((!componentProductNodeRef.equals(productData.getNodeRef()) && (componentProductData instanceof SemiFinishedProductData))
-						|| (componentProductData instanceof FinishedProductData) || (componentProductData instanceof RawMaterialData)
-
-				) && ((componentProductData.getCompoListView() != null) && (componentProductData.getReqCtrlList() != null))
-
-				) {
-					Set<ReqCtrlListDataItem> toAdd = new HashSet<>();
-					for (ReqCtrlListDataItem tmp : componentProductData.getReqCtrlList()) {
-						if (tmp.getReqDataType() != RequirementDataType.Completion) {
-
-							ReqCtrlListDataItem reqCtl = new ReqCtrlListDataItem(null, tmp.getReqType(), tmp.getReqMlMessage(), tmp.getCharact(),
-									tmp.getSources(), tmp.getReqDataType() != null ? tmp.getReqDataType() : RequirementDataType.Nutrient);
-
-							reqCtl.setRegulatoryCode(tmp.getRegulatoryCode());
-							toAdd.add(reqCtl);
-						}
-					}
-					reqCtrlList.addAll(toAdd);
-
+						|| (componentProductData instanceof FinishedProductData) || (componentProductData instanceof RawMaterialData))
+					&& ((componentProductData.getCompoListView() != null) && (componentProductData.getReqCtrlList() != null))) {					
+					reqCtrlList.addAll(reqCtrlToAdd(componentProductData));
 				}
 			}
 		}
-
+		
+		for (PackagingListDataItem packagingListDataItem : productData.getPackagingListView().getPackagingList()) {
+			NodeRef componentProductNodeRef = packagingListDataItem.getProduct();
+			if (componentProductNodeRef != null) {
+				ProductData componentProductData = alfrescoRepository.findOne(componentProductNodeRef);
+				if (((!componentProductNodeRef.equals(productData.getNodeRef()) && (componentProductData instanceof PackagingKitData))
+						|| (componentProductData instanceof PackagingMaterialData)) 
+					&& ((componentProductData.getPackagingListView() != null) && (componentProductData.getReqCtrlList() != null))) {					
+					reqCtrlList.addAll(reqCtrlToAdd(componentProductData));
+				}
+			}
+		}
+		
+		for (ProcessListDataItem processListDataItem : productData.getProcessListView().getProcessList()) {
+			NodeRef componentProductNodeRef = processListDataItem.getResource();
+			if (componentProductNodeRef != null) {
+				ProductData componentProductData = alfrescoRepository.findOne(componentProductNodeRef);
+				if (componentProductData instanceof ResourceProductData
+					&& ((componentProductData.getProcessList() != null) && (componentProductData.getReqCtrlList() != null))) {					
+					reqCtrlList.addAll(reqCtrlToAdd(componentProductData));
+				}
+			}
+		}
+	}
+	
+	private Set<ReqCtrlListDataItem> reqCtrlToAdd(ProductData componentProductData) {
+		Set<ReqCtrlListDataItem> toAdd = new HashSet<>();
+		for (ReqCtrlListDataItem tmp : componentProductData.getReqCtrlList()) {
+			if (tmp.getReqDataType() != RequirementDataType.Completion) {
+				ReqCtrlListDataItem reqCtl = new ReqCtrlListDataItem(null, tmp.getReqType(), tmp.getReqMlMessage(), tmp.getCharact(),
+						tmp.getSources(), tmp.getReqDataType() != null ? tmp.getReqDataType() : RequirementDataType.Nutrient);
+				reqCtl.setRegulatoryCode(tmp.getRegulatoryCode());
+				toAdd.add(reqCtl);
+			}
+		}
+		return toAdd;
 	}
 
 	private void mergeReqCtrlList(ProductData productData, List<ReqCtrlListDataItem> reqCtrlList) {
