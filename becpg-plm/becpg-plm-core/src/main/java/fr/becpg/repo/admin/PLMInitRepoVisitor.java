@@ -928,7 +928,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_HAZARD_STATEMENTS, GHSModel.TYPE_HAZARD_STATEMENT);
 		entityLists.put(PlmRepoConsts.PATH_PRECAUTIONARY_STATEMENTS, GHSModel.TYPE_PRECAUTIONARY_STATEMENT);
 		entityLists.put(PlmRepoConsts.PATH_HAZARD_CATEGORIES, BeCPGModel.TYPE_LIST_VALUE);	
-
+		entityLists.put(PlmRepoConsts.PATH_ONU_CODES, GHSModel.TYPE_ONU_CODE);
+		entityLists.put(PlmRepoConsts.PATH_CLASS_CODES, GHSModel.TYPE_CLASS_CODE);
+		entityLists.put(PlmRepoConsts.PATH_PACKAGING_GROUP_CODES, GHSModel.TYPE_PACKAGING_GROUP_CODE);
 		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);
 	}
 	
