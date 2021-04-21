@@ -184,6 +184,12 @@ public class PlmRepoConsts {
 	public static final String PATH_PRECAUTIONARY_STATEMENTS= "PrecautionaryStatements";
 	/** Constant <code>PATH_HAZARD_CATEGORIES="HazardCategories"</code> */
 	public static final String PATH_HAZARD_CATEGORIES = "HazardCategories";
+	/** Constant <code>PATH_HAZARD_CATEGORIES="OnuCodes"</code> */
+	public static final String PATH_ONU_CODES = "OnuCodes";
+	/** Constant <code>PATH_HAZARD_CATEGORIES="ClassCodes"</code> */
+	public static final String PATH_CLASS_CODES = "ClassCodes";
+	/** Constant <code>PATH_HAZARD_CATEGORIES="PackagingGroupCodes"</code> */
+	public static final String PATH_PACKAGING_GROUP_CODES = "PackagingGroupCodes";
 
 	
 	/** Constant <code>PATH_COMPANIES="Companies"</code> */

@@ -138,7 +138,34 @@
 				</property>
 			</properties>
 		</type>
-
+		
+		<type name="ghs:onuCode">
+			<parent>bcpg:charact</parent>
+			<properties>
+				<property name="ghs:onuCodeNumber">
+					<type>d:text</type>
+				</property>
+			</properties>
+		</type>
+		
+		<type name="ghs:classCode">
+			<parent>bcpg:charact</parent>
+			<properties>
+				<property name="ghs:classCodeNumber">
+					<type>d:text</type>
+				</property>
+			</properties>
+		</type>
+		
+		<type name="ghs:packagingGroupCode">
+			<parent>bcpg:charact</parent>
+			<properties>
+				<property name="ghs:packagingGroupCodeNumber">
+					<type>d:text</type>
+				</property>
+			</properties>
+		</type>
+		
 	</types>
 
 	<aspects>
@@ -220,6 +247,39 @@
 						<class>ghs:personalProtection</class>
 						<mandatory>false</mandatory>
 						<many>true</many>
+					</target>
+				</association>
+				<association name="ghs:sdsOnuCode">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>ghs:onuCode</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="ghs:sdsClassCode">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>ghs:classCode</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="ghs:sdsPackagingGroupCode">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>ghs:packagingGroupCode</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
 					</target>
 				</association>
 			</associations>
