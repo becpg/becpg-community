@@ -27,5 +27,11 @@ public class GHSModel {
 	public static final QName TYPE_HAZARD_STATEMENT = QName.createQName(GHS_URI, "hazardStatement");
 	/** Constant <code>TYPE_PRECAUTIONARY_STATEMENT</code> */
 	public static final QName TYPE_PRECAUTIONARY_STATEMENT = QName.createQName(GHS_URI, "precautionaryStatement");
+	/** Constant <code>TYPE_ONU_CODE</code> */
+	public static final QName TYPE_ONU_CODE = QName.createQName(GHS_URI, "onuCode");
+	/** Constant <code>TYPE_CLASS_CODE</code> */
+	public static final QName TYPE_CLASS_CODE = QName.createQName(GHS_URI, "classCode");
+	/** Constant <code>TYPE_PACKAGING_GROUP_CODE</code> */
+	public static final QName TYPE_PACKAGING_GROUP_CODE = QName.createQName(GHS_URI, "packagingGroupCode");
 
 }
