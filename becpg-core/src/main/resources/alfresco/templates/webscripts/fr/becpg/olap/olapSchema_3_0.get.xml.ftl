@@ -837,6 +837,30 @@
 				</Level>
 			</Hierarchy>
 		</Dimension>
+		
+		<Dimension type="StandardDimension" foreignKey="nodeRef" name="logTime" caption="${msg("jsolap.loggedTime.title")}">
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.loggedTime.caption")}" primaryKey="ltlTaskNodeRef" >
+					<View name="logTimeList" alias="logTimeList">
+								<SQL dialect="generic">
+									select  
+										doc->>"$.pjt_ltlTask_bcpg_nodeRef[0]" as ltlTaskNodeRef,
+										doc->>"$.pjt_ltlTime" as ltlTime,
+										doc->>"$.cm_creator" as ltlcreator,
+										doc->>"$.pjt_ltlType" as ltlType,
+										DATE_FORMAT(doc->>"$.pjt_ltlDate", "%d/%m/%Y") as ltlDate
+									from
+										logTimeList
+									<#if !isAdmin>	
+									  where instanceId = ${instanceId}
+									</#if>
+								</SQL>
+					</View>
+				<Level name="ltlTime" caption="${msg("jsolap.loggedTime.title")}" column="ltlTime" type="String"   />
+				<Level name="ltlcreator" caption="${msg("jsolap.ltlcreator.title")}" column="ltlcreator" type="String"   />
+				<Level name="ltlType" caption="${msg("jsolap.ltlType.title")}" column="ltlType" type="String"   />
+				<Level name="ltlDate" caption="${msg("jsolap.ltlDate.title")}" column="ltlDate" type="String"   />
+			</Hierarchy>
+		</Dimension>
 					
 		<DimensionUsage name="tags" caption="${msg("jsolap.tags.title")}" source="tagsDimension" foreignKey="entityNodeRef" />		
 		
