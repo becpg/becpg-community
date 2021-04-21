@@ -270,7 +270,10 @@
 					<show id="ghs:sdsHazardStatements" />
 					<show id="ghs:sdsPrecautionaryStatements" />
 					<show id="ghs:sdsPersonalProtections" />
-					<show id="ghs:sdsSafetyInstructions"/>					
+					<show id="ghs:sdsSafetyInstructions"/>
+					<show id="ghs:sdsOnuCode"/>
+					<show id="ghs:sdsClassCode"/>
+					<show id="ghs:sdsPackagingGroupCode"/>					
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" />
@@ -704,6 +707,24 @@
 					<field id="ghs:sdsSafetyInstructions" set="security">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">2</control-param>
+						</control>
+					</field>
+					<field id="ghs:sdsOnuCode"  set="security">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="showLink">false</control-param>
+						</control>
+					</field>
+					<field id="ghs:sdsClassCode"  set="security">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="showLink">false</control-param>
+						</control>
+					</field>
+					<field id="ghs:sdsPackagingGroupCode"  set="security">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="showLink">false</control-param>
 						</control>
 					</field>
 
@@ -3473,6 +3494,9 @@
 					<show id="ghs:sdsPrecautionaryStatements" />
 					<show id="ghs:sdsPersonalProtections" />
 					<show id="ghs:sdsSafetyInstructions"/>
+					<show id="ghs:sdsOnuCode"/>
+					<show id="ghs:sdsClassCode"/>
+					<show id="ghs:sdsPackagingGroupCode"/>	
 				
 
 					<!-- tags and categories -->
@@ -3735,8 +3759,24 @@
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>
-					
-					
+					<field id="ghs:sdsOnuCode"  set="security">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="showLink">false</control-param>
+						</control>
+					</field>
+					<field id="ghs:sdsClassCode"  set="security">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="showLink">false</control-param>
+						</control>
+					</field>
+					<field id="ghs:sdsPackagingGroupCode"  set="security">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="showLink">false</control-param>
+						</control>
+					</field>				
 					
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
@@ -4626,6 +4666,9 @@
 					<show id="ghs:sdsPrecautionaryStatements" />
 					<show id="ghs:sdsPersonalProtections" />
 					<show id="ghs:sdsSafetyInstructions"/>
+					<show id="ghs:sdsOnuCode"/>
+					<show id="ghs:sdsClassCode"/>
+					<show id="ghs:sdsPackagingGroupCode"/>	
 				
 					<!-- tags and categories -->
 					<show id="cm:taggable" />
@@ -4858,7 +4901,25 @@
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>
-					
+					<field id="ghs:sdsOnuCode"  set="security">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="showLink">false</control-param>
+						</control>
+					</field>
+					<field id="ghs:sdsClassCode"  set="security">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="showLink">false</control-param>
+						</control>
+					</field>
+					<field id="ghs:sdsPackagingGroupCode"  set="security">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="showLink">false</control-param>
+						</control>
+					</field>
+
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
 						<control>
@@ -6289,6 +6350,7 @@
 					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
+					<show id="bcpg:erpCode" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:charactName" />
@@ -6298,6 +6360,7 @@
 						</control>
 					</field>
 					<field id="bcpg:legalName" />
+					<field id="bcpg:erpCode" />
 				</appearance>
 			</form>
 		</forms>
@@ -6312,6 +6375,7 @@
 					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
+					<show id="bcpg:erpCode" force="true" />
 				</field-visibility>
 
 				<appearance>
@@ -6323,6 +6387,7 @@
 						</control>
 					</field>
 					<field id="bcpg:legalName" />
+					<field id="bcpg:erpCode" />
 				</appearance>
 			</form>
 
@@ -6330,6 +6395,7 @@
 			<form id="filter">
 				<field-visibility>
 					<show id="bcpg:charactName" />
+					<show id="bcpg:erpCode" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:charactName">
@@ -6342,6 +6408,7 @@
 				<field-visibility>
 					<show id="bcpg:charactName" />
 					<show id="bcpg:legalName" />
+					<show id="bcpg:erpCode" force="true" />
 				</field-visibility>
 			</form>
 		</forms>
