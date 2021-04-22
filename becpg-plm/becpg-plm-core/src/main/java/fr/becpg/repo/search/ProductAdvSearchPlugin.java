@@ -8,11 +8,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
+import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.service.namespace.RegexQNamePattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -335,6 +338,12 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 							NodeRef nodeRef = new NodeRef(strNodeRef);
 							if (nodeService.exists(nodeRef)) {
 								nodesToKeep.addAll(associationService.getSourcesAssocs(nodeRef, assocQName));
+								
+								if (nodeService.getType(nodeRef).equals(ContentModel.TYPE_PERSON)) {
+									for (ChildAssociationRef assoc : nodeService.getParentAssocs(nodeRef, ContentModel.ASSOC_MEMBER, RegexQNamePattern.MATCH_ALL)) {
+										nodesToKeep.addAll(associationService.getSourcesAssocs(assoc.getParentRef(), assocQName));
+									}
+								}
 							}
 
 						}
