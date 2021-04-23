@@ -84,6 +84,10 @@ public class HierarchyServiceImpl implements HierarchyService {
 		if (hierarchyNodeRef == null) {
 			hierarchyNodeRef = getLuceneQuery(path, parentNodeRef, BeCPGModel.PROP_LKV_VALUE, value, false).singleValue();
 		}
+		
+		if (hierarchyNodeRef == null) {
+			hierarchyNodeRef = getLuceneQuery(path, parentNodeRef, BeCPGModel.PROP_ERP_CODE, value, false).singleValue();
+		}
 
 		return hierarchyNodeRef;
 	}
