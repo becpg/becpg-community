@@ -15,7 +15,7 @@
 					YAHOO.util.Event.addListener("${fieldHtmlId}#${form.arguments.itemId}#${field.name}", "click", function() {
 							var nodeRef = "${form.arguments.itemId}" , field="${field.name?replace("prop_","")}";
 							new Alfresco.module.SimpleDialog(nodeRef+"-multilingualForm").setOptions({
-				              templateUrl : Alfresco.constants.URL_SERVICECONTEXT + "modules/multilingual-form/multilingual-form?nodeRef=" + nodeRef + "&field=" + field + "&readonly=true" + "&title=${field.label?html}&hideCancel=true",
+				              templateUrl : Alfresco.constants.URL_SERVICECONTEXT + "modules/multilingual-form/multilingual-form?nodeRef=" + nodeRef + "&field=" + field + "&readonly=true" + "&title=${field.label?url}&hideCancel=true",
 				              actionUrl : Alfresco.constants.PROXY_URI + "becpg/form/multilingual/field/" + field + "?nodeRef=" + nodeRef,
 				              validateOnSubmit : false,
 				              destroyOnHide : true,
