@@ -260,7 +260,7 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 	private void sort(List<ReqCtrlListDataItem> reqCtrlList) {
 
 		AtomicInteger index = new AtomicInteger();
-		reqCtrlList.stream().sorted(Comparator.comparing(ReqCtrlListDataItem::getReqType)).forEach(r -> r.setSort(index.getAndIncrement()));
+		reqCtrlList.stream().sorted(Comparator.comparing(ReqCtrlListDataItem::getReqType,Comparator.nullsFirst(Comparator.naturalOrder()))).forEach(r -> r.setSort(index.getAndIncrement()));
 
 	}
 }
