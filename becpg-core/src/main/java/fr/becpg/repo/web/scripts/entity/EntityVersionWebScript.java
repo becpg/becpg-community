@@ -167,6 +167,11 @@ public class EntityVersionWebScript extends AbstractWebScript {
 					jsonVersion.put("siteId", attributeExtractorService.extractSiteId(version.getEntityNodeRef()));
 					jsonVersion.put("itemType", itemType.toPrefixString(serviceRegistry.getNamespaceService()));
 
+					String referenceLabel = (String) nodeService.getProperty(version.getEntityNodeRef(), ContentModel.PROP_VERSION_LABEL);
+					if (referenceLabel == null || referenceLabel.equals(version.getVersionLabel())) {
+						jsonVersion.put("clickableNode", version.getEntityNodeRef());
+					}
+					
 					jsonVersions.put(jsonVersion);
 				}
 			}
