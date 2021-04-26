@@ -277,14 +277,6 @@
          html += '   <span class="' + doc.metadata + (current ? " current" : "") + '" >';
     	 html +=  $html(doc.name);
 
-		if(current){
-        	 html +=  $html(doc.name);
-         } else {
-	        var nodeRef = new Alfresco.util.NodeRef(doc.nodeRef);
-			if (nodeRef.storeId != "version2Store") {
-        	 	html += '<a href="' + beCPG.util.entityURL(null,doc.nodeRef) + '&bcPath=true">'+$html(doc.name)+'</a>';
-			}
-         }
          if(compareURL!=null){
              html += '   <a href="' + compareURL + '" class="compare" title="' + Alfresco.util.message("label.compare") + '">&nbsp;</a>';
          }
