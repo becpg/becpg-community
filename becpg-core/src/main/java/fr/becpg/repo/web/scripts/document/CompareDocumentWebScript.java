@@ -3,6 +3,7 @@ package fr.becpg.repo.web.scripts.document;
 import java.io.IOException;
 import java.util.Map;
 
+import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.version.Version;
 import org.alfresco.service.cmr.version.VersionHistory;
@@ -17,6 +18,7 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.repo.entity.version.EntityVersionService;
+import fr.becpg.repo.helper.AttachmentHelper;
 
 public class CompareDocumentWebScript extends AbstractWebScript {
 
@@ -38,6 +40,9 @@ public class CompareDocumentWebScript extends AbstractWebScript {
 	@Autowired
 	private CompareDocumentService compareDocumentService;
 	
+	@Autowired
+	private MimetypeService mimetypeService;
+
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
 
@@ -83,7 +88,12 @@ public class CompareDocumentWebScript extends AbstractWebScript {
 			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "missing parameters. versionNode");
 		}
 		
-		compareDocumentService.compare(actualNode, versionNode, req, res);
+		String fileName = compareDocumentService.compare(actualNode, versionNode, res.getOutputStream());
+		
+		if (fileName != null) {
+			res.setContentType(mimetypeService.guessMimetype(fileName));
+			AttachmentHelper.setAttachment(req, res, fileName);
+		}
 
 	}
 
