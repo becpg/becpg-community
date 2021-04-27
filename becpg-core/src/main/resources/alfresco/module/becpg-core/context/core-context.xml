@@ -98,6 +98,7 @@
 		<!-- Caches -->
 		<property name="childsAssocsCache" ref="becpgChildAssocsCache" />
 		<property name="assocsCache" ref="becpgAssocsCache" />
+		<property name="registry" ref="asynchronouslyRefreshedCacheRegistry"/>
 	</bean>
 
 
