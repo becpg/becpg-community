@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2020 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.variant.policy;
@@ -104,105 +104,98 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 	@Override
 	public void doAfterCheckout(NodeRef origNodeRef, final NodeRef workingCopyNodeRef) {
 
-		
 		if (nodeService.hasAspect(origNodeRef, BeCPGModel.ASPECT_ENTITY_VARIANT)) {
 			logger.info("On check out Variant");
-			AuthenticationUtil.runAsSystem(new AuthenticationUtil.RunAsWork<Void>() {
-				@Override
-				public Void doWork() throws Exception {
+			AuthenticationUtil.runAsSystem(() -> {
 
-					NodeRef origNodeRef = getCheckedOut(workingCopyNodeRef);
-					
-					// Copy variants
+				NodeRef origNodeRef1 = getCheckedOut(workingCopyNodeRef);
 
-					List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(origNodeRef, BeCPGModel.ASSOC_VARIANTS,
-							RegexQNamePattern.MATCH_ALL);
-					for (ChildAssociationRef childAssoc : childAssocs) {
-						if (logger.isDebugEnabled()) {
-							logger.debug("Copy variant " + nodeService.getProperty(childAssoc.getChildRef(), ContentModel.PROP_NAME)
-									+ " to workingCopy ");
-						}
+				// Copy variants
 
-						copyService.copyAndRename(childAssoc.getChildRef(), workingCopyNodeRef, BeCPGModel.ASSOC_VARIANTS, QName.createQName(
-								NamespaceService.CONTENT_MODEL_1_0_URI,
-								QName.createValidLocalName((String) nodeService.getProperty(childAssoc.getChildRef(), ContentModel.PROP_NAME))),
-								false);
+				List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(origNodeRef1, BeCPGModel.ASSOC_VARIANTS,
+						RegexQNamePattern.MATCH_ALL);
+				for (ChildAssociationRef childAssoc : childAssocs) {
+					if (logger.isDebugEnabled()) {
+						logger.debug(
+								"Copy variant " + nodeService.getProperty(childAssoc.getChildRef(), ContentModel.PROP_NAME) + " to workingCopy ");
 					}
 
-					return null;
-
+					copyService.copyAndRename(childAssoc.getChildRef(), workingCopyNodeRef, BeCPGModel.ASSOC_VARIANTS,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+									QName.createValidLocalName((String) nodeService.getProperty(childAssoc.getChildRef(), ContentModel.PROP_NAME))),
+							false);
 				}
+
+				return null;
+
 			});
 		}
 	}
 
-	
 	/** {@inheritDoc} */
 	@Override
-	public void doBeforeCheckin(NodeRef origNodeRef,final  NodeRef workingCopyNodeRef) {
-		
+	public void doBeforeCheckin(NodeRef origNodeRef, final NodeRef workingCopyNodeRef) {
+
 		final NodeRef finalOrigNode = origNodeRef;
-		
-		if (nodeService.hasAspect(origNodeRef, BeCPGModel.ASPECT_ENTITY_VARIANT) || nodeService.hasAspect(workingCopyNodeRef, BeCPGModel.ASPECT_ENTITY_VARIANT)) {
-			
+
+		if (nodeService.hasAspect(origNodeRef, BeCPGModel.ASPECT_ENTITY_VARIANT)
+				|| nodeService.hasAspect(workingCopyNodeRef, BeCPGModel.ASPECT_ENTITY_VARIANT)) {
+
 			logger.debug("On check in Variant");
 
-			AuthenticationUtil.runAsSystem(new AuthenticationUtil.RunAsWork<Void>() {
-				@Override
-				public Void doWork() throws Exception {
-					NodeRef origNodeRef = getCheckedOut(workingCopyNodeRef);
-					
-					if (origNodeRef == null) {
-						origNodeRef = finalOrigNode;
-					}
-					
-					if (origNodeRef != null) {
-						List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(origNodeRef, BeCPGModel.ASSOC_VARIANTS,
-								RegexQNamePattern.MATCH_ALL);
-						
-						//On initial version while branch merging  
-						if(childAssocs != null && !childAssocs.isEmpty()) {
-							for(String key : new HashSet<>(getKeyRegistry(KEY_REGISTRY))) {
-								if (key.startsWith(KEY_QUEUE_VARIANT)){
-									Set<NodeRef> pendingNodes = new HashSet<>();
-									Set<NodeRef> tempPendingNodes = TransactionSupportUtil.getResource(key);
-									if(tempPendingNodes != null) {
-										pendingNodes.addAll(tempPendingNodes);
-										
-										if(pendingNodes != null && ! pendingNodes.isEmpty()) {
-											updateVariantIds(key, pendingNodes, true);
-										}
-									}
-									
-								}
-							}
-						}
-						
-						for (ChildAssociationRef childAssoc : childAssocs) {
-							if (logger.isDebugEnabled()) {
-								logger.debug("Remove variant on OrigNode " + childAssoc.getChildRef() + " "
-										+ nodeService.getProperty(childAssoc.getChildRef(), ContentModel.PROP_NAME) + " to origNode ");
-							}
-							nodeService.removeChildAssociation(childAssoc);
-						}
+			AuthenticationUtil.runAsSystem(() -> {
+				NodeRef origNodeRef1 = getCheckedOut(workingCopyNodeRef);
 
-						// move variants of working copy
-						childAssocs = nodeService.getChildAssocs(workingCopyNodeRef, BeCPGModel.ASSOC_VARIANTS, RegexQNamePattern.MATCH_ALL);
-						for (ChildAssociationRef childAssoc : childAssocs) {
-							if (logger.isDebugEnabled()) {
-								logger.debug("move variant of workfingCopy " + childAssoc.getChildRef() + " "
-										+ nodeService.getProperty(childAssoc.getChildRef(), ContentModel.PROP_NAME) + " to origNode ");
-							}
-							nodeService.moveNode(childAssoc.getChildRef(), origNodeRef, BeCPGModel.ASSOC_VARIANTS, BeCPGModel.ASSOC_VARIANTS);
-						}
-					}
-
-					return null;
-
+				if (origNodeRef1 == null) {
+					origNodeRef1 = finalOrigNode;
 				}
+
+				if (origNodeRef1 != null) {
+					List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(origNodeRef1, BeCPGModel.ASSOC_VARIANTS,
+							RegexQNamePattern.MATCH_ALL);
+
+					//On initial version while branch merging
+					if ((childAssocs != null) && !childAssocs.isEmpty()) {
+						for (String key : new HashSet<>(getKeyRegistry(KEY_REGISTRY))) {
+							if (key.startsWith(KEY_QUEUE_VARIANT)) {
+								Set<NodeRef> pendingNodes = new HashSet<>();
+								Set<NodeRef> tempPendingNodes = TransactionSupportUtil.getResource(key);
+								if (tempPendingNodes != null) {
+									pendingNodes.addAll(tempPendingNodes);
+
+									if ((pendingNodes != null) && !pendingNodes.isEmpty()) {
+										updateVariantIds(key, pendingNodes, true);
+									}
+								}
+
+							}
+						}
+					}
+
+					for (ChildAssociationRef childAssoc1 : childAssocs) {
+						if (logger.isDebugEnabled()) {
+							logger.debug("Remove variant on OrigNode " + childAssoc1.getChildRef() + " "
+									+ nodeService.getProperty(childAssoc1.getChildRef(), ContentModel.PROP_NAME) + " to origNode ");
+						}
+						nodeService.removeChildAssociation(childAssoc1);
+					}
+
+					// move variants of working copy
+					childAssocs = nodeService.getChildAssocs(workingCopyNodeRef, BeCPGModel.ASSOC_VARIANTS, RegexQNamePattern.MATCH_ALL);
+					for (ChildAssociationRef childAssoc2 : childAssocs) {
+						if (logger.isDebugEnabled()) {
+							logger.debug("move variant of workfingCopy " + childAssoc2.getChildRef() + " "
+									+ nodeService.getProperty(childAssoc2.getChildRef(), ContentModel.PROP_NAME) + " to origNode ");
+						}
+						nodeService.moveNode(childAssoc2.getChildRef(), origNodeRef1, BeCPGModel.ASSOC_VARIANTS, BeCPGModel.ASSOC_VARIANTS);
+					}
+				}
+
+				return null;
+
 			});
 		}
-		
+
 	}
 
 	private NodeRef getCheckedOut(NodeRef nodeRef) {
@@ -229,12 +222,13 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 	@Override
 	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 		logger.debug("On before commit");
-		
-		if(pendingNodes != null && !pendingNodes.isEmpty()) {
+
+		if ((pendingNodes != null) && !pendingNodes.isEmpty()) {
 			updateVariantIds(key, pendingNodes, false);
 		}
 		return false;
 	}
+
 	private void updateVariantIds(String key, Set<NodeRef> pendingNodes, boolean unQueueNode) {
 
 		logger.debug("Pending nodes of " + key + " : " + pendingNodes);
@@ -243,74 +237,72 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 
 			NodeRef targetEntityRef = entityListDAO.getEntity(pendingNodes.iterator().next());
 			List<NodeRef> result = BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_VARIANT).parent(targetEntityRef).inDB().list();
-			
+
 			Map<NodeRef, String> targetEntityVariants = new HashMap<>();
 			result.forEach(variantRef -> targetEntityVariants.put(variantRef, (String) nodeService.getProperty(variantRef, ContentModel.PROP_NAME)));
 			if (logger.isDebugEnabled()) {
 				logger.debug("Search variant of : " + targetEntityRef);
 			}
-			
-			for(NodeRef itemTargetRef : pendingNodes) {
-if (nodeService.exists(itemTargetRef)) {
-				if(unQueueNode) {
-					logger.info("unQueue Node : "+itemTargetRef);
-					unQueueNode(key, itemTargetRef);
-				}
-				
-				@SuppressWarnings("unchecked")
-				List<NodeRef> itemVariantIds = (List<NodeRef>) nodeService.getProperty(itemTargetRef, BeCPGModel.PROP_VARIANTIDS);
-				
-				
-				if(itemVariantIds != null) {
-					Map<NodeRef, String> originVariantIds =  new HashMap<>();
-					itemVariantIds.forEach((variantRef) -> {
-						originVariantIds.put(variantRef, (String)nodeService.getProperty(variantRef, ContentModel.PROP_NAME));
-					});
-					List<NodeRef> newVariantIds = new ArrayList<>();
-					
-					for(NodeRef variantId  : itemVariantIds) {
-						String variantName = originVariantIds.get(variantId);
-						NodeRef newVariantRef = null; 
 
-						if(targetEntityVariants.containsValue(variantName)) {
-							newVariantRef = getKeyByValue(targetEntityVariants, variantName);
-							if (logger.isDebugEnabled()) {
-								logger.debug("Replace variant : " + variantId +" by : " + newVariantRef);
-							}
-						
-						} else {
-							if (logger.isDebugEnabled()) {
-								logger.debug("Create variant : "+ variantName );
-							}
-							
-							Map<QName, Serializable> props = new HashMap<>();
-							props.put(ContentModel.PROP_NAME, variantName);
-							props.put(BeCPGModel.PROP_IS_DEFAULT_VARIANT, nodeService.getProperty(variantId, BeCPGModel.PROP_IS_DEFAULT_VARIANT));
-							newVariantRef =  nodeService.createNode(targetEntityRef, BeCPGModel.ASSOC_VARIANTS, BeCPGModel.ASSOC_VARIANTS, BeCPGModel.TYPE_VARIANT, props).getChildRef();
-							targetEntityVariants.put(newVariantRef, variantName);
-						}
-						if(newVariantRef != null) {
-							newVariantIds.add(newVariantRef);
-						}
+			for (NodeRef itemTargetRef : pendingNodes) {
+				if (nodeService.exists(itemTargetRef)) {
+					if (unQueueNode) {
+						logger.info("unQueue Node : " + itemTargetRef);
+						unQueueNode(key, itemTargetRef);
 					}
-					nodeService.setProperty(itemTargetRef, BeCPGModel.PROP_VARIANTIDS, (Serializable) newVariantIds);
+
+					@SuppressWarnings("unchecked")
+					List<NodeRef> itemVariantIds = (List<NodeRef>) nodeService.getProperty(itemTargetRef, BeCPGModel.PROP_VARIANTIDS);
+
+					if (itemVariantIds != null) {
+						Map<NodeRef, String> originVariantIds = new HashMap<>();
+						itemVariantIds.forEach((variantRef) -> {
+							originVariantIds.put(variantRef, (String) nodeService.getProperty(variantRef, ContentModel.PROP_NAME));
+						});
+						List<NodeRef> newVariantIds = new ArrayList<>();
+
+						for (NodeRef variantId : itemVariantIds) {
+							String variantName = originVariantIds.get(variantId);
+							NodeRef newVariantRef = null;
+
+							if (targetEntityVariants.containsValue(variantName)) {
+								newVariantRef = getKeyByValue(targetEntityVariants, variantName);
+								if (logger.isDebugEnabled()) {
+									logger.debug("Replace variant : " + variantId + " by : " + newVariantRef);
+								}
+
+							} else {
+								if (logger.isDebugEnabled()) {
+									logger.debug("Create variant : " + variantName);
+								}
+
+								Map<QName, Serializable> props = new HashMap<>();
+								props.put(ContentModel.PROP_NAME, variantName);
+								props.put(BeCPGModel.PROP_IS_DEFAULT_VARIANT, nodeService.getProperty(variantId, BeCPGModel.PROP_IS_DEFAULT_VARIANT));
+								newVariantRef = nodeService.createNode(targetEntityRef, BeCPGModel.ASSOC_VARIANTS, BeCPGModel.ASSOC_VARIANTS,
+										BeCPGModel.TYPE_VARIANT, props).getChildRef();
+								targetEntityVariants.put(newVariantRef, variantName);
+							}
+							if (newVariantRef != null) {
+								newVariantIds.add(newVariantRef);
+							}
+						}
+						nodeService.setProperty(itemTargetRef, BeCPGModel.PROP_VARIANTIDS, (Serializable) newVariantIds);
+					}
 				}
-			}
 			}
 		}
 	}
-	
-	
+
 	private <K, V> K getKeyByValue(Map<K, V> map, V value) {
-	    for (Entry<K, V> entry : map.entrySet()) {
-	        if (entry.getValue().equals(value)) {
-	            return entry.getKey();
-	        }
-	    }
-	    return null;
+		for (Entry<K, V> entry : map.entrySet()) {
+			if (entry.getValue().equals(value)) {
+				return entry.getKey();
+			}
+		}
+		return null;
 	}
-	
-	
+
 	/** {@inheritDoc} */
 	@Override
 	public void cancelCheckout(NodeRef origNodeRef, NodeRef workingCopyNodeRef) {
@@ -322,7 +314,5 @@ if (nodeService.exists(itemTargetRef)) {
 	public void impactWUsed(NodeRef entityNodeRef, VersionType versionType, String description) {
 		// Do nothing
 	}
-
-	
 
 }
