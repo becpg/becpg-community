@@ -132,7 +132,6 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 				visitChildren(formulatedProduct, formulatedProduct.getCostList(), FormulationHelper.getNetQtyForCost(formulatedProduct), variant);
 			}
 
-
 			// simulation: take in account cost of components defined on
 			// formulated product
 
@@ -191,22 +190,26 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 	protected void visitChildren(ProductData formulatedProduct, List<CostListDataItem> costList, Double netQty, VariantData variant) {
 		NodeRef variantNodeRef = variant != null ? variant.getNodeRef() : null;
 
-		if (formulatedProduct.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), (variant != null ? new VariantFilters<>(variantNodeRef) : new VariantFilters<>())))) {
+		if (formulatedProduct.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE),
+				(variant != null ? new VariantFilters<>(variantNodeRef) : new VariantFilters<>())))) {
 
 			/*
 			 * Composition
 			 */
 			Map<NodeRef, List<NodeRef>> mandatoryCharacts1 = getMandatoryCharacts(formulatedProduct, PLMModel.TYPE_RAWMATERIAL);
 
-			Composite<CompoListDataItem> composite = CompositeHelper.getHierarchicalCompoList(
-					formulatedProduct.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), (variant != null ? new VariantFilters<>(variantNodeRef) : new VariantFilters<>()))));
-			visitCompoListChildren(formulatedProduct, composite, costList, formulatedProduct.getProductLossPerc(), netQty, mandatoryCharacts1,variant);
+			Composite<CompoListDataItem> composite = CompositeHelper
+					.getHierarchicalCompoList(formulatedProduct.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE),
+							(variant != null ? new VariantFilters<>(variantNodeRef) : new VariantFilters<>()))));
+			visitCompoListChildren(formulatedProduct, composite, costList, formulatedProduct.getProductLossPerc(), netQty, mandatoryCharacts1,
+					variant);
 
 			addReqCtrlList(formulatedProduct.getReqCtrlList(), mandatoryCharacts1, getRequirementDataType());
 
 		}
 
-		if (formulatedProduct.hasPackagingListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), (variant != null ? new VariantFilters<>(variantNodeRef) : new VariantFilters<>())))) {
+		if (formulatedProduct.hasPackagingListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE),
+				(variant != null ? new VariantFilters<>(variantNodeRef) : new VariantFilters<>())))) {
 
 			/*
 			 * PackagingList
@@ -214,7 +217,8 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 			Map<NodeRef, List<NodeRef>> mandatoryCharacts2 = getMandatoryCharacts(formulatedProduct, PLMModel.TYPE_PACKAGINGMATERIAL);
 
 			for (PackagingListDataItem packagingListDataItem : formulatedProduct
-					.getPackagingList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), (variant != null ? new VariantFilters<>(variantNodeRef) : new VariantFilters<>())))) {
+					.getPackagingList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE),
+							(variant != null ? new VariantFilters<>(variantNodeRef) : new VariantFilters<>())))) {
 
 				if ((packagingListDataItem.getProduct() != null)
 						&& ((packagingListDataItem.getIsRecycle() == null) || !packagingListDataItem.getIsRecycle())) {
@@ -230,14 +234,16 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 			addReqCtrlList(formulatedProduct.getReqCtrlList(), mandatoryCharacts2, getRequirementDataType());
 		}
 
-		if (formulatedProduct.hasProcessListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), (variant != null ? new VariantFilters<>(variantNodeRef) : new VariantFilters<>())))) {
+		if (formulatedProduct.hasProcessListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE),
+				(variant != null ? new VariantFilters<>(variantNodeRef) : new VariantFilters<>())))) {
 			/*
 			 * ProcessList
 			 */
 
 			Map<NodeRef, List<NodeRef>> mandatoryCharacts3 = getMandatoryCharacts(formulatedProduct, PLMModel.TYPE_RESOURCEPRODUCT);
 			for (ProcessListDataItem processListDataItem : formulatedProduct
-					.getProcessList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), (variant != null ? new VariantFilters<>(variantNodeRef) : new VariantFilters<>())))) {
+					.getProcessList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE),
+							(variant != null ? new VariantFilters<>(variantNodeRef) : new VariantFilters<>())))) {
 
 				Double qty = FormulationHelper.getQty(formulatedProduct, processListDataItem);
 
@@ -605,7 +611,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 								&& (formulatedProduct.getDefaultVariantPackagingData().getProductPerPallet() != null)) {
 							calculateValues(templateCostList, costList, true,
 									(double) formulatedProduct.getDefaultVariantPackagingData().getProductPerPallet()
-									* FormulationHelper.getNetQtyInLorKg(formulatedProduct, 0d));
+											* FormulationHelper.getNetQtyInLorKg(formulatedProduct, 0d));
 						}
 						isCalculated = true;
 					}
@@ -631,7 +637,8 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 					matchPlant = true;
 					if ((priceListDataItem.getCost() != null) && priceListDataItem.getCost().equals(slDataItem.getCharactNodeRef())) {
 
-						if ((item == null ||  item.getPrefRank() == null) || (priceListDataItem.getPrefRank()!=null  && priceListDataItem.getPrefRank() > item.getPrefRank())) {
+						if (((item == null) || (item.getPrefRank() == null))
+								|| ((priceListDataItem.getPrefRank() != null) && (priceListDataItem.getPrefRank() > item.getPrefRank()))) {
 							if (((priceListDataItem.getStartEffectivity() == null)
 									|| (priceListDataItem.getStartEffectivity().getTime() <= now.getTime()))
 									&& ((priceListDataItem.getEndEffectivity() == null)
@@ -733,16 +740,17 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 					futureValue += costListDataItem.getFutureValue();
 				}
 				if (costListDataItem instanceof VariantAwareDataItem) {
-					for (int i=1; i<=VariantAwareDataItem.VARIANT_COLUMN_SIZE ; i++) {
-						Double variantValue = ((VariantAwareDataItem)costListDataItem).getValue(VariantAwareDataItem.VARIANT_COLUMN_NAME+i);
+					for (int i = 1; i <= VariantAwareDataItem.VARIANT_COLUMN_SIZE; i++) {
+						Double variantValue = ((VariantAwareDataItem) costListDataItem).getValue(VariantAwareDataItem.VARIANT_COLUMN_NAME + i);
 						if (variantValue != null) {
-							if (variantValues.get(VariantAwareDataItem.VARIANT_COLUMN_NAME+i) != null) {
-								variantValues.put(VariantAwareDataItem.VARIANT_COLUMN_NAME+i, variantValues.get(VariantAwareDataItem.VARIANT_COLUMN_NAME+i) + variantValue);
+							if (variantValues.get(VariantAwareDataItem.VARIANT_COLUMN_NAME + i) != null) {
+								variantValues.put(VariantAwareDataItem.VARIANT_COLUMN_NAME + i,
+										variantValues.get(VariantAwareDataItem.VARIANT_COLUMN_NAME + i) + variantValue);
 							} else {
-								variantValues.put(VariantAwareDataItem.VARIANT_COLUMN_NAME+i, variantValue);
+								variantValues.put(VariantAwareDataItem.VARIANT_COLUMN_NAME + i, variantValue);
 							}
 						}
-					}	
+					}
 				}
 			}
 			if (!composite.isRoot()) {
@@ -752,9 +760,10 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 				composite.getData().setFutureValue(futureValue);
 
 				if (composite.getData() instanceof VariantAwareDataItem) {
-					for (int i=1; i<=VariantAwareDataItem.VARIANT_COLUMN_SIZE ; i++) {
-						if (variantValues.get(VariantAwareDataItem.VARIANT_COLUMN_NAME+i) != null) {
-							((VariantAwareDataItem)composite.getData()).setValue(variantValues.get(VariantAwareDataItem.VARIANT_COLUMN_NAME+i), VariantAwareDataItem.VARIANT_COLUMN_NAME+i);
+					for (int i = 1; i <= VariantAwareDataItem.VARIANT_COLUMN_SIZE; i++) {
+						if (variantValues.get(VariantAwareDataItem.VARIANT_COLUMN_NAME + i) != null) {
+							((VariantAwareDataItem) composite.getData()).setValue(variantValues.get(VariantAwareDataItem.VARIANT_COLUMN_NAME + i),
+									VariantAwareDataItem.VARIANT_COLUMN_NAME + i);
 						}
 					}
 				}
@@ -780,7 +789,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 
 						if (logger.isDebugEnabled()) {
 							logger.debug("add simulationCost " + "c2 value " + c2.getValue() + "c simulated value " + c.getSimulatedValue()
-							+ " qty component " + qtyComponent + " netQty " + netQty);
+									+ " qty component " + qtyComponent + " netQty " + netQty);
 						}
 						if (c2.getValue() != null) {
 							c.setValue(((c.getSimulatedValue() - c2.getValue()) * qtyComponent) / (netQty != 0 ? netQty : 1d));
@@ -807,7 +816,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 	@Override
 	protected boolean accept(ProductData formulatedProduct) {
 
-		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) || formulatedProduct instanceof ProductSpecificationData
+		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) || (formulatedProduct instanceof ProductSpecificationData)
 				|| ((formulatedProduct.getCostList() == null) && !alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_COSTLIST))) {
 			return false;
 		}
