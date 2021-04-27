@@ -61,7 +61,6 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 	private CopyService copyService;
 
 	private EntityListDAO entityListDAO;
-	
 	/** Constant <code>KEY_QUEUE_VARIANT="Variant_Item_"</code> */
 	public static final String KEY_QUEUE_VARIANT = "Variant_Item_";
 
@@ -86,9 +85,10 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 	/**
 	 * <p>doInit.</p>
 	 */
+	@Override
 	public void doInit() {
-		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyCompletePolicy.QNAME, BeCPGModel.ASPECT_ENTITYLIST_VARIANT, new JavaBehaviour(this,
-				"onCopyComplete"));
+		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyCompletePolicy.QNAME, BeCPGModel.ASPECT_ENTITYLIST_VARIANT,
+				new JavaBehaviour(this, "onCopyComplete"));
 	}
 
 	/** {@inheritDoc} */
@@ -96,9 +96,7 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 	public void onCopyComplete(QName classRef, final NodeRef sourceNodeRef, final NodeRef destinationRef, boolean copyToNewNode,
 			Map<NodeRef, NodeRef> copyMap) {
 		logger.debug("On copy complete Variant ");
-		
 		NodeRef targetEntityRef = entityListDAO.getEntity(destinationRef);
-		
 		queueNode(KEY_QUEUE_VARIANT + targetEntityRef.toString(), destinationRef);
 	}
 
@@ -213,10 +211,8 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 			List<AssociationRef> assocs = nodeService.getSourceAssocs(nodeRef, ContentModel.ASSOC_WORKING_COPY_LINK);
 			// It is a 1:1 relationship
 			if (!assocs.isEmpty()) {
-				if (logger.isWarnEnabled()) {
-					if (assocs.size() > 1) {
-						logger.warn("Found multiple " + ContentModel.ASSOC_WORKING_COPY_LINK + " associations to node: " + nodeRef);
-					}
+				if (logger.isWarnEnabled() && (assocs.size() > 1)) {
+					logger.warn("Found multiple " + ContentModel.ASSOC_WORKING_COPY_LINK + " associations to node: " + nodeRef);
 				}
 				original = assocs.get(0).getSourceRef();
 			} else {
@@ -239,28 +235,23 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 		}
 		return false;
 	}
-	
-	
-	private void updateVariantIds(String key, Set<NodeRef> pendingNodes, boolean unQueueNode ){
-		
-		logger.debug("Pending nodes of "+ key + " : "+pendingNodes);
-		
-		NodeRef targetEntityRef = entityListDAO.getEntity(pendingNodes.iterator().next());
-		if(!pendingNodes.isEmpty()) {
-			
+	private void updateVariantIds(String key, Set<NodeRef> pendingNodes, boolean unQueueNode) {
+
+		logger.debug("Pending nodes of " + key + " : " + pendingNodes);
+
+		if (!pendingNodes.isEmpty()) {
+
+			NodeRef targetEntityRef = entityListDAO.getEntity(pendingNodes.iterator().next());
 			List<NodeRef> result = BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_VARIANT).parent(targetEntityRef).inDB().list();
 			
 			Map<NodeRef, String> targetEntityVariants = new HashMap<>();
-			
-			result.forEach((variantRef) -> {
-				targetEntityVariants.put(variantRef, (String)nodeService.getProperty(variantRef, ContentModel.PROP_NAME));
-			});
-			
+			result.forEach(variantRef -> targetEntityVariants.put(variantRef, (String) nodeService.getProperty(variantRef, ContentModel.PROP_NAME)));
 			if (logger.isDebugEnabled()) {
 				logger.debug("Search variant of : " + targetEntityRef);
 			}
 			
 			for(NodeRef itemTargetRef : pendingNodes) {
+if (nodeService.exists(itemTargetRef)) {
 				if(unQueueNode) {
 					logger.info("unQueue Node : "+itemTargetRef);
 					unQueueNode(key, itemTargetRef);
@@ -305,7 +296,7 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 					nodeService.setProperty(itemTargetRef, BeCPGModel.PROP_VARIANTIDS, (Serializable) newVariantIds);
 				}
 			}
-			
+			}
 		}
 	}
 	
