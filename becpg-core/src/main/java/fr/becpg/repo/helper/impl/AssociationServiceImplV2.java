@@ -36,6 +36,7 @@ import javax.annotation.Nonnull;
 import javax.sql.DataSource;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.cache.RefreshableCacheListener;
 import org.alfresco.repo.cache.SimpleCache;
 import org.alfresco.repo.coci.CheckOutCheckInServicePolicies;
 import org.alfresco.repo.domain.qname.QNameDAO;
@@ -56,12 +57,16 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.QNamePattern;
 import org.alfresco.service.namespace.RegexQNamePattern;
 import org.alfresco.util.Pair;
+import org.alfresco.util.cache.AsynchronouslyRefreshedCacheRegistry;
+import org.alfresco.util.cache.RefreshableCacheEvent;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.cache.impl.BeCPGCacheServiceImpl;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.MLTextHelper;
@@ -73,9 +78,10 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
  * @author matthieu
  * @version $Id: $Id
  */
-public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements AssociationService, NodeServicePolicies.OnCreateAssociationPolicy,
-		NodeServicePolicies.OnCreateChildAssociationPolicy, NodeServicePolicies.OnDeleteAssociationPolicy,
-		NodeServicePolicies.OnDeleteChildAssociationPolicy, NodeServicePolicies.OnDeleteNodePolicy, CheckOutCheckInServicePolicies.OnCheckIn {
+public class AssociationServiceImplV2 extends AbstractBeCPGPolicy
+		implements AssociationService, NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnCreateChildAssociationPolicy,
+		NodeServicePolicies.OnDeleteAssociationPolicy, NodeServicePolicies.OnDeleteChildAssociationPolicy, NodeServicePolicies.OnDeleteNodePolicy,
+		CheckOutCheckInServicePolicies.OnCheckIn, RefreshableCacheListener, InitializingBean {
 
 	private static final Log logger = LogFactory.getLog(AssociationServiceImplV2.class);
 
@@ -93,6 +99,9 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 	private SimpleCache<AssociationCacheRegion, ChildAssocCacheEntry> childsAssocsCache;
 	private SimpleCache<AssociationCacheRegion, Set<NodeRef>> assocsCache;
 
+	private AsynchronouslyRefreshedCacheRegistry registry;
+	
+
 	private static Set<QName> ignoredAssocs = new HashSet<>();
 
 	private QNameDAO qnameDAO;
@@ -102,6 +111,12 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 
 	}
 
+
+	public void setRegistry(AsynchronouslyRefreshedCacheRegistry registry) {
+		this.registry = registry;
+	}
+
+	
 	@Override
 	public void setNodeService(NodeService nodeService) {
 		super.setNodeService(nodeService);
@@ -559,7 +574,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 			query.append("  group by dataListItem.uuid ");
 
 			Pair<Long, QName> aspectCompositeVersion = qnameDAO.getQName(BeCPGModel.ASPECT_COMPOSITE_VERSION);
-			
+
 			Long typeQNameId = null;
 			Long aspectQnameId = aspectCompositeVersion != null ? aspectCompositeVersion.getFirst() : -1;
 			if (assocTypeQName != null) {
@@ -750,6 +765,29 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		}
 
 		return ret;
+	}
+
+	@Override
+	public void onRefreshableCacheEvent(RefreshableCacheEvent refreshableCacheEvent) {
+		if (BeCPGCacheServiceImpl.class.getName().equals(refreshableCacheEvent.getCacheId()) && "all".equals(refreshableCacheEvent.getKey())) {
+			if (logger.isInfoEnabled()) {
+				logger.info("Clear associations caches: " + refreshableCacheEvent.getCacheId());
+			}
+			assocsCache.clear();
+			childsAssocsCache.clear();
+		}
+
+	}
+
+	@Override
+	public String getCacheId() {
+		return AssociationService.class.getName();
+	}
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		registry.register(this);
+
 	}
 
 }

@@ -219,11 +219,11 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 	}
 
 
+
 	/** {@inheritDoc} */
 	@Override
 	public void clearAllCaches() {
-
-		registry.broadcastEvent(new BeCPGRefreshableCacheEvent(getCacheId(), "all"), false);
+		registry.broadcastEvent(new BeCPGRefreshableCacheEvent(getCacheId(), "all"), true);
 	}
 
 
