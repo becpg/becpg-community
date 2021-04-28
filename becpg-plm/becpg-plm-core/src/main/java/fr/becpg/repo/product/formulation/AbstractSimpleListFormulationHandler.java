@@ -40,7 +40,6 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.data.hierarchicalList.CompositeDataItem;
 import fr.becpg.repo.entity.EntityListDAO;
-import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.formulation.spel.SpelFormulaService;
 import fr.becpg.repo.formulation.spel.SpelHelper;
@@ -91,6 +90,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	protected boolean transientFormulation = false;
 
 	protected SpelFormulaService formulaService;
+
 	/**
 	 * <p>Setter for the field <code>formulaService</code>.</p>
 	 *
@@ -156,8 +156,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	 * @throws java.lang.NoSuchMethodException if any.
 	 * @throws java.lang.SecurityException if any.
 	 */
-	public T createNewInstance() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
-	NoSuchMethodException, SecurityException {
+	public T createNewInstance() throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		return getInstanceClass().getDeclaredConstructor().newInstance();
 	}
 
@@ -210,7 +209,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		Map<NodeRef, List<NodeRef>> mandatoryCharacts = new HashMap<>(simpleListDataList.size());
 		for (SimpleListDataItem sl : simpleListDataList) {
 			if (isCharactFormulated(sl)) {
-				mandatoryCharacts.put(sl.getCharactNodeRef(), new ArrayList<NodeRef>());
+				mandatoryCharacts.put(sl.getCharactNodeRef(), new ArrayList<>());
 			}
 		}
 		return mandatoryCharacts;
@@ -224,8 +223,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	 * @param isFormulatedProduct a boolean.
 	 * @throws fr.becpg.repo.formulation.FormulateException if any.
 	 */
-	protected void formulateSimpleList(ProductData formulatedProduct, List<T> simpleListDataList, boolean isFormulatedProduct)
-			throws FormulateException {
+	protected void formulateSimpleList(ProductData formulatedProduct, List<T> simpleListDataList, boolean isFormulatedProduct) {
 		logger.debug("formulateSimpleList");
 		cleanSimpleList(simpleListDataList, isFormulatedProduct);
 
@@ -233,13 +231,12 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 		if (isFormulatedProduct) {
 			visitChildren(formulatedProduct, simpleListDataList,
-					FormulationHelper.getNetQtyInLorKg(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT),null);
+					FormulationHelper.getNetQtyInLorKg(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT), null);
 			for (VariantData variant : formulatedProduct.getVariants()) {
 				visitChildren(formulatedProduct, simpleListDataList,
 						FormulationHelper.getNetQtyInLorKg(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT), variant);
 			}
 		}
-
 
 	}
 
@@ -266,11 +263,11 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 						((ForecastValueDataItem) sl).setFutureValue(null);
 					}
 					if (sl instanceof VariantAwareDataItem) {
-						for (int i=1; i<=VariantAwareDataItem.VARIANT_COLUMN_SIZE ; i++) {
-							((VariantAwareDataItem)sl).setValue(null, VariantAwareDataItem.VARIANT_COLUMN_NAME+i);
+						for (int i = 1; i <= VariantAwareDataItem.VARIANT_COLUMN_SIZE; i++) {
+							((VariantAwareDataItem) sl).setValue(null, VariantAwareDataItem.VARIANT_COLUMN_NAME + i);
 						}
 					}
-					
+
 					// add detailable aspect
 					if (!sl.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM)) {
 						sl.getAspects().add(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM);
@@ -289,18 +286,19 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	 * @param variant a {@link fr.becpg.repo.variant.model.VariantData} object.
 	 * @throws fr.becpg.repo.formulation.FormulateException if any.
 	 */
-	protected void visitChildren(ProductData formulatedProduct, List<T> simpleListDataList, Double netQtyInLorKg, VariantData variant) throws FormulateException {
+	protected void visitChildren(ProductData formulatedProduct, List<T> simpleListDataList, Double netQtyInLorKg, VariantData variant) {
 
 		Map<NodeRef, Double> totalQtiesValue = new HashMap<>();
 
 		boolean isGenericRawMaterial = formulatedProduct instanceof RawMaterialData;
 
 		Double netWeight = FormulationHelper.getNetWeight(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
-		
-		if (formulatedProduct.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), (variant != null ? new  VariantFilters<>(variant.getNodeRef()) : new VariantFilters<>())))) {
+
+		if (formulatedProduct.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE),
+				(variant != null ? new VariantFilters<>(variant.getNodeRef()) : new VariantFilters<>())))) {
 			Map<NodeRef, List<NodeRef>> mandatoryCharacts = getMandatoryCharacts(formulatedProduct, PLMModel.TYPE_RAWMATERIAL);
-			for (CompoListDataItem compoItem : formulatedProduct
-					.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), (variant != null ? new  VariantFilters<>(variant.getNodeRef()) : new VariantFilters<>())))) {
+			for (CompoListDataItem compoItem : formulatedProduct.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE),
+					(variant != null ? new VariantFilters<>(variant.getNodeRef()) : new VariantFilters<>())))) {
 				Double weight = FormulationHelper.getQtyInKg(compoItem);
 				// omit item if parent is omitted
 				boolean omit = false;
@@ -391,7 +389,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	 */
 	protected void visitPart(ProductData formulatedProduct, ProductData partProduct, List<T> simpleListDataList, Double weightUsed, Double volUsed,
 			Double netQtyInLorKg, Double netWeight, Map<NodeRef, List<NodeRef>> mandatoryCharacts, Map<NodeRef, Double> totalQtiesValue,
-			boolean isGenericRawMaterial, VariantData variant) throws FormulateException {
+			boolean isGenericRawMaterial, VariantData variant) {
 
 		if (!(partProduct instanceof LocalSemiFinishedProductData)) {
 
@@ -440,7 +438,8 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 						// Calculate values
 						if ((slDataItem != null) && (qtyUsed != null)) {
 
-							calculate(formulatedProduct, partProduct, newSimpleListDataItem, slDataItem, qtyUsed, netQty, isGenericRawMaterial, variant);
+							calculate(formulatedProduct, partProduct, newSimpleListDataItem, slDataItem, qtyUsed, netQty, isGenericRawMaterial,
+									variant);
 
 							if ((totalQtiesValue != null) && (slDataItem.getValue() != null)) {
 								Double currentQty = totalQtiesValue.get(newSimpleListDataItem.getCharactNodeRef());
@@ -481,11 +480,11 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 		Double newValue = formulatedValue != null ? formulatedValue : 0d;
 		Double value = extractValue(formulatedProduct, partProduct, slDataItem);
-		if (variant != null && newSimpleListDataItem instanceof VariantAwareDataItem) {
-			formulatedValue = ((VariantAwareDataItem)newSimpleListDataItem).getValue(variant);
-			if (value != null) {			
-				((VariantAwareDataItem) newSimpleListDataItem)
-				.setValue(FormulationHelper.calculateValue(formulatedValue, qtyUsed, value, netQty), variant);
+		if ((variant != null) && (newSimpleListDataItem instanceof VariantAwareDataItem)) {
+			formulatedValue = ((VariantAwareDataItem) newSimpleListDataItem).getValue(variant);
+			if (value != null) {
+				((VariantAwareDataItem) newSimpleListDataItem).setValue(FormulationHelper.calculateValue(formulatedValue, qtyUsed, value, netQty),
+						variant);
 			}
 		} else if (variant == null) {
 			if (value != null) {
@@ -519,30 +518,29 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 			if (newSimpleListDataItem instanceof ForecastValueDataItem) {
 				((ForecastValueDataItem) newSimpleListDataItem)
-				.setPreviousValue(FormulationHelper.calculateValue(((ForecastValueDataItem) newSimpleListDataItem).getPreviousValue(), qtyUsed,
-						((ForecastValueDataItem) slDataItem).getPreviousValue(), netQty));
+						.setPreviousValue(FormulationHelper.calculateValue(((ForecastValueDataItem) newSimpleListDataItem).getPreviousValue(),
+								qtyUsed, ((ForecastValueDataItem) slDataItem).getPreviousValue(), netQty));
 				((ForecastValueDataItem) newSimpleListDataItem)
-				.setFutureValue(FormulationHelper.calculateValue(((ForecastValueDataItem) newSimpleListDataItem).getFutureValue(), qtyUsed,
-						((ForecastValueDataItem) slDataItem).getFutureValue(), netQty));
+						.setFutureValue(FormulationHelper.calculateValue(((ForecastValueDataItem) newSimpleListDataItem).getFutureValue(), qtyUsed,
+								((ForecastValueDataItem) slDataItem).getFutureValue(), netQty));
 			}
-
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("valueToAdd = qtyUsed * value : " + qtyUsed + " * " + slDataItem.getValue());
 				if (newSimpleListDataItem.getNodeRef() != null) {
 					logger.debug("charact: " + nodeService.getProperty(newSimpleListDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME)
-					+ " - newValue : " + newSimpleListDataItem.getValue());
+							+ " - newValue : " + newSimpleListDataItem.getValue());
 					if (newSimpleListDataItem instanceof MinMaxValueDataItem) {
 						logger.debug("charact: " + nodeService.getProperty(newSimpleListDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME)
-						+ " - newMini : " + ((MinMaxValueDataItem) newSimpleListDataItem).getMini());
+								+ " - newMini : " + ((MinMaxValueDataItem) newSimpleListDataItem).getMini());
 						logger.debug("charact: " + nodeService.getProperty(newSimpleListDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME)
-						+ " - newMaxi : " + ((MinMaxValueDataItem) newSimpleListDataItem).getMaxi());
+								+ " - newMaxi : " + ((MinMaxValueDataItem) newSimpleListDataItem).getMaxi());
 					}
 					if (newSimpleListDataItem instanceof ForecastValueDataItem) {
 						logger.debug("charact: " + nodeService.getProperty(newSimpleListDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME)
-						+ " - previousValue : " + ((ForecastValueDataItem) newSimpleListDataItem).getPreviousValue());
+								+ " - previousValue : " + ((ForecastValueDataItem) newSimpleListDataItem).getPreviousValue());
 						logger.debug("charact: " + nodeService.getProperty(newSimpleListDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME)
-						+ " - futureValue : " + ((ForecastValueDataItem) newSimpleListDataItem).getFutureValue());
+								+ " - futureValue : " + ((ForecastValueDataItem) newSimpleListDataItem).getFutureValue());
 					}
 				}
 			}
@@ -573,7 +571,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		if (mandatoryCharacts.containsKey(charactNodeRef)) {
 			List<NodeRef> sources = mandatoryCharacts.get(charactNodeRef);
 			if (sources == null) {
-				sources = mandatoryCharacts.put(charactNodeRef, new ArrayList<NodeRef>());
+				sources = mandatoryCharacts.put(charactNodeRef, new ArrayList<>());
 			}
 			if (!sources.contains(componentNodeRef)) {
 				sources.add(componentNodeRef);
@@ -674,7 +672,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 												((ForecastValueDataItem) formulatedCharactDataItem).setFutureValue((Double) exp.getValue(context));
 												exp = parser.parseExpression(formula.replace(".value", ".previousValue"));
 												((ForecastValueDataItem) formulatedCharactDataItem)
-												.setPreviousValue(((Double) exp.getValue(context)));
+														.setPreviousValue(((Double) exp.getValue(context)));
 											} catch (Exception e) {
 												((ForecastValueDataItem) formulatedCharactDataItem).setFutureValue(null);
 												((ForecastValueDataItem) formulatedCharactDataItem).setPreviousValue(null);
@@ -683,15 +681,18 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 												}
 											}
 										}
-										
+
 										if (formula.contains(".value") && (formulatedCharactDataItem instanceof VariantAwareDataItem)) {
 											try {
-												for (int i=1; i<=VariantAwareDataItem.VARIANT_COLUMN_SIZE ; i++) {
-													exp = parser.parseExpression(formula.replace(".value(", ".variantValue(\""+ VariantAwareDataItem.VARIANT_COLUMN_NAME+i + "\"," ));
-													if (((VariantAwareDataItem)formulatedCharactDataItem).getValue(VariantAwareDataItem.VARIANT_COLUMN_NAME+i) != null){
-														((VariantAwareDataItem)formulatedCharactDataItem).setValue((Double) exp.getValue(context), VariantAwareDataItem.VARIANT_COLUMN_NAME+i);
+												for (int i = 1; i <= VariantAwareDataItem.VARIANT_COLUMN_SIZE; i++) {
+													exp = parser.parseExpression(formula.replace(".value(",
+															".variantValue(\"" + VariantAwareDataItem.VARIANT_COLUMN_NAME + i + "\","));
+													if (((VariantAwareDataItem) formulatedCharactDataItem)
+															.getValue(VariantAwareDataItem.VARIANT_COLUMN_NAME + i) != null) {
+														((VariantAwareDataItem) formulatedCharactDataItem).setValue((Double) exp.getValue(context),
+																VariantAwareDataItem.VARIANT_COLUMN_NAME + i);
 													}
-												}												
+												}
 											} catch (Exception e) {
 												if (logger.isDebugEnabled()) {
 													logger.debug("Error in formula :" + formula, e);
@@ -722,7 +723,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 					ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Tolerated,
 							MLTextHelper.getI18NMessage(errorKey, Locale.getDefault(),
 									mlNodeService.getProperty(formulatedCharactDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME), error),
-							formulatedCharactDataItem.getCharactNodeRef(), new ArrayList<NodeRef>(), getRequirementDataType());
+							formulatedCharactDataItem.getCharactNodeRef(), new ArrayList<>(), getRequirementDataType());
 					formulatedProduct.getReqCtrlList().add(rclDataItem);
 				}
 
