@@ -66,8 +66,8 @@ function main() {
 
 					var mimetype = version.node.getMimetype();
 
-					var isComp = mimetype.contains("pdf") || mimetype.contains("image");
-
+					var isComp = mimetype == null ? false : (mimetype.contains("pdf") || mimetype.contains("image"));
+					
 					versions[versions.length] =
 					{
 						nodeRef: version.node.nodeRef.toString(),
