@@ -449,6 +449,9 @@
 				<property name="bcpg:regulatoryFormulatedDate">
 					<type>d:datetime</type>
 				</property>
+				<property name="bcpg:regulatoryRecipeId">
+					<type>d:text</type>
+				</property>
 				<property name="bcpg:requirementChecksum">
 					<type>d:text</type>
 					<index enabled="false"></index>
