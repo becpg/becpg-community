@@ -214,14 +214,11 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 							ContentReader reader = contentService.getReader(entityDeletedFileNodeRef, ContentModel.PROP_CONTENT);
 							if (reader != null) {
 								try (InputStream in = reader.getContentInputStream()) {
-									policyBehaviourFilter.disableBehaviour(entityNodeRef);
 
 									IntegrityChecker.setWarnInTransaction();
 									remoteEntityService.createOrUpdateEntity(entityNodeRef, in, new RemoteParams(RemoteEntityFormat.xml), null);
 								} catch (IOException e) {
 									logger.error(e, e);
-								} finally {
-									policyBehaviourFilter.enableBehaviour(entityNodeRef);
 								}
 							} else {
 								logger.error("Cannot read content of " + REMOTE_FILE_NAME + "_" + entityNodeRef.getId());
