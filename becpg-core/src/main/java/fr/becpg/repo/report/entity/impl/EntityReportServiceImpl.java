@@ -236,6 +236,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 		I18NUtil.setContentLocale(defaultLocale);
 
 		ruleService.disableRules();
+		//TODO bug here disabling behaviour make association cache not working
 		policyBehaviourFilter.disableBehaviour(entityNodeRef);
 		if (logger.isDebugEnabled()) {
 			logger.debug("Generate reports for entity: " + entityNodeRef + " - "
