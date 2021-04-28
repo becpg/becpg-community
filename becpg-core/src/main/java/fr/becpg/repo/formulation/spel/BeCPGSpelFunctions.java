@@ -530,6 +530,35 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		public Double max(Collection<Double> range) {
 			return range.stream().mapToDouble(Double::doubleValue).max().getAsDouble();
 		}
+		
+		/**
+		 * @beCPG.join($pattern, $range)
+		 *
+		 * @param pattern
+		 * @param range
+		 * @return get join from pattern and range
+		 */
+		public String join(String pattern, List<String> range) {
+			return String.join(pattern, range);	
+		}
+
+		/**
+		 * @beCPG.join($pattern, $range)
+		 * @beCPG.join($pattern, $range1, $range2)
+		 *
+		 * @param pattern
+		 * @param ranges
+		 * @return get join from pattern and ranges
+		 */
+		public String join(String pattern, List<String> range1, List<String> range2) {
+			String ret = "";
+			if (range1 != null && range2 != null && range1.size() == range2.size()) {
+				for(int i =0; i<range1.size();i++) {
+					ret += String.format(pattern,  range1.get(i), range2.get(i));	
+				}
+			}
+			return ret;
+		}
 
 		/**
 		 * @beCPG.min($range, $formula)
@@ -735,7 +764,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 			copy(entity, from, propQNames, listQNames);
 		}
 
-		
+
 		@SuppressWarnings({ "rawtypes", "unchecked" })
 		public void copy(RepositoryEntity to, RepositoryEntity from, Collection<String> propQNames, Collection<String> listQNames) {
 			try {
@@ -772,26 +801,26 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 									QName listQName = QName.createQName(listQName1, namespaceService);
 									if (qname.equals(listQName)) {
 										logger.debug("Setting list : " + listQName + " from repository entity");
-										
+
 										Object data = PropertyUtils.getProperty(from, pd.getName());
 										Object oldData = PropertyUtils.getProperty(to, pd.getName());
-										
+
 										if(data instanceof LazyLoadingDataList) {
 
 											if(oldData instanceof LazyLoadingDataList) {
 												((LazyLoadingDataList) oldData).clear();
 												((LazyLoadingDataList) oldData).addAll(((LazyLoadingDataList) data).copy());
 											} else {
-										    	PropertyUtils.setProperty(to, pd.getName(),((LazyLoadingDataList) data).copy() );
+												PropertyUtils.setProperty(to, pd.getName(),((LazyLoadingDataList) data).copy() );
 											}
-									    } else if(data instanceof Collection){
-									    	if(oldData instanceof LazyLoadingDataList) {
+										} else if(data instanceof Collection){
+											if(oldData instanceof LazyLoadingDataList) {
 												((LazyLoadingDataList) oldData).clear();
 												((LazyLoadingDataList) oldData).addAll((Collection)data);
 											} else {
-										    	PropertyUtils.setProperty(to, pd.getName(),data );
+												PropertyUtils.setProperty(to, pd.getName(),data );
 											}
-									    }
+										}
 										treatedList.add(listQName);
 									}
 
@@ -806,36 +835,36 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 										BaseObject fromView = (BaseObject) PropertyUtils.getProperty(from, pd.getName());
 										BaseObject toView = (BaseObject) PropertyUtils.getProperty(to, pd.getName());
 
-										
+
 										for (final PropertyDescriptor pdView : (new BeanWrapperImpl(toView)).getPropertyDescriptors()) {
-											
+
 											Method viewReadMethod = pdView.getReadMethod();
 
 											if (viewReadMethod.isAnnotationPresent(DataList.class)) {
 												QName viewQname = repositoryEntityDefReader.readQName(viewReadMethod);
 												if (viewQname.equals(listQName)) {
-													
+
 													logger.debug("Setting view : " + listQName + " from repository entity");
-													
+
 													Object data = PropertyUtils.getProperty(fromView, pdView.getName());
 													Object oldData = PropertyUtils.getProperty(toView, pdView.getName());
-													
+
 													if(data instanceof LazyLoadingDataList) {
 
 														if(oldData instanceof LazyLoadingDataList) {
 															((LazyLoadingDataList) oldData).clear();
 															((LazyLoadingDataList) oldData).addAll(((LazyLoadingDataList) data).copy());
 														} else {
-													    	PropertyUtils.setProperty(toView, pdView.getName(),((LazyLoadingDataList) data).copy() );
+															PropertyUtils.setProperty(toView, pdView.getName(),((LazyLoadingDataList) data).copy() );
 														}
-												    } else if(data instanceof Collection){
-												    	if(oldData instanceof LazyLoadingDataList) {
+													} else if(data instanceof Collection){
+														if(oldData instanceof LazyLoadingDataList) {
 															((LazyLoadingDataList) oldData).clear();
 															((LazyLoadingDataList) oldData).addAll((Collection)data);
 														} else {
-													    	PropertyUtils.setProperty(toView, pdView.getName(),data );
+															PropertyUtils.setProperty(toView, pdView.getName(),data );
 														}
-												    }
+													}
 
 
 													treatedList.add(listQName);
@@ -900,5 +929,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 	}
+
+
 
 }
