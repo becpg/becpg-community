@@ -527,6 +527,7 @@ public class DecernisServiceImpl implements DecernisService {
 				if ((data != null) && data.has("ingredients")) {
 					String recipeId = sendRecipe(data);
 					if (recipeId != null) {
+						product.setRegulatoryRecipeId(recipeId);
 						try {
 							for (String usage : usages) {
 								JSONObject analysisResults = recipeAnalysis(recipeId, countries, usage.trim());
@@ -537,9 +538,10 @@ public class DecernisServiceImpl implements DecernisService {
 								}
 							}
 						} finally {
-							logger.debug("Deleting: "+recipeId);
-							
-							deleteRecipe(recipeId);
+							if (product.isTransientRegulatory()) {
+								logger.debug("Deleting: "+recipeId);
+								deleteRecipe(recipeId);
+							}
 						}
 					} else {
 						throw new FormulateException("Error sending recipe");
@@ -578,5 +580,4 @@ public class DecernisServiceImpl implements DecernisService {
 
 		return key.toString();
 	}
-
 }
