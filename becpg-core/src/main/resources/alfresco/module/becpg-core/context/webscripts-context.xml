@@ -159,9 +159,6 @@
 		<property name="reportTplService" ref="reportTplService"/>
 	</bean>
 
-	<bean id="webscript.fr.becpg.document.compareDocument.get" class="fr.becpg.repo.web.scripts.document.CompareDocumentWebScript" parent="webscript">
-	</bean>
-
 	<bean id="webscript.fr.becpg.entity.entityVersion.get" class="fr.becpg.repo.web.scripts.entity.EntityVersionWebScript" parent="webscript">
 		<property name="entityVersionService" ref="entityVersionService" />
 		<property name="nodeService" ref="nodeService" />

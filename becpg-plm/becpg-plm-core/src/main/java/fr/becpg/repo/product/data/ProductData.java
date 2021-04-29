@@ -164,10 +164,11 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	/*
 	 * Compliance 
 	 */
-
 	private List<String> regulatoryCountries = new ArrayList<>();
 	private List<String> regulatoryUsages = new ArrayList<>();
 	private Date regulatoryFormulatedDate;
+	private Boolean isTransientRegulatory;
+	private String regulatoryRecipeId;
 	
 	/** 
 	 * JSON Data { 
@@ -1810,6 +1811,44 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	}
 	
 	/**
+	 * <p>Getter for the field <code>isTransientRegulatory</code>.</p>
+	 *
+	 * @return a Boolean object.
+	 */
+	public Boolean isTransientRegulatory() {
+		return isTransientRegulatory;
+	}
+	
+	/**
+	 * <p>Setter for the field <code>isTransientRegulatory</code>.</p>
+	 *
+	 * @param isTransientRegulatory a Boolean object.
+	 */
+	public void setIsTransientRegulatory(Boolean isTransientRegulatory) {
+		this.isTransientRegulatory = isTransientRegulatory;
+	}	
+	
+	/**
+	 * <p>Getter for the field <code>regulatoryRecipeId</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
+	@AlfProp
+	@AlfQname(qname = "bcpg:regulatoryRecipeId")
+	public String getRegulatoryRecipeId() {
+		return this.regulatoryRecipeId;
+	}
+	
+	/**
+	 * <p>Setter for the field <code>regulatoryRecipeId</code>.</p>
+	 *
+	 * @param regulatoryRecipeId a {@link java.lang.String} object.
+	 */
+	public void setRegulatoryRecipeId(String regulatoryRecipeId) {
+		this.regulatoryRecipeId = regulatoryRecipeId;
+	}
+
+	/**
 	 * <p>Getter for the field <code>regulatoryCountries</code>.</p>
 	 *
 	 * @return a {@link java.util.List} object.
@@ -2291,7 +2330,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		result = prime * result + Objects.hash(clients, density, erpCode, formulatedDate, futureUnitTotalCost, hierarchy1, hierarchy2, ingType,
 				legalName, netVolume, netWeight, netWeightSecondary, netWeightTertiary, nutrientClass, nutrientProfile, nutrientScore, plants,
 				profitability, projectedQty, qty, recipeQtyUsed, recipeQtyUsedWithLossPerc, recipeVolumeUsed, reformulateCount, regulatoryCountries,
-				regulatoryUsages, reportLocales, servingSize, servingSizeByCountry, servingSizeUnit, state, tare, tareUnit, title, unit, unitPrice,
+				regulatoryUsages, isTransientRegulatory, regulatoryRecipeId, reportLocales, servingSize, servingSizeByCountry, servingSizeUnit, state, tare, tareUnit, title, unit, unitPrice,
 				unitTotalCost, updateFormulatedDate, weightPrimary, weightSecondary, weightTertiary, yield, yieldVolume);
 		return result;
 	}
@@ -2318,6 +2357,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 				&& Objects.equals(recipeQtyUsed, other.recipeQtyUsed) && Objects.equals(recipeQtyUsedWithLossPerc, other.recipeQtyUsedWithLossPerc)
 				&& Objects.equals(recipeVolumeUsed, other.recipeVolumeUsed) && Objects.equals(reformulateCount, other.reformulateCount)
 				&& Objects.equals(regulatoryCountries, other.regulatoryCountries) && Objects.equals(regulatoryUsages, other.regulatoryUsages)
+				&& Objects.equals(isTransientRegulatory, other.isTransientRegulatory) && Objects.equals(regulatoryRecipeId, other.regulatoryRecipeId)
 				&& Objects.equals(reportLocales, other.reportLocales) && Objects.equals(servingSize, other.servingSize)
 				&& Objects.equals(servingSizeByCountry, other.servingSizeByCountry) && servingSizeUnit == other.servingSizeUnit
 				&& state == other.state && Objects.equals(tare, other.tare) && tareUnit == other.tareUnit && Objects.equals(title, other.title)
