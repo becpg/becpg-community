@@ -55,13 +55,7 @@
             <groupId>org.alfresco.surf</groupId>
             <artifactId>spring-webscripts</artifactId>
             <scope>provided</scope>
-            <exclusions>
-            	<exclusion>
-            		<groupId>commons-logging</groupId>
-            		<artifactId>commons-logging</artifactId>
-            	</exclusion>
-            </exclusions>
-		</dependency>
+        </dependency>
         
         
 		<!--  Traces -->
@@ -108,48 +102,10 @@
 		<dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <exclusions>
-            	<exclusion>
-            		<groupId>commons-logging</groupId>
-            		<artifactId>commons-logging</artifactId>
-            	</exclusion>
-            </exclusions>
-		</dependency>
+            <scope>provided</scope>
+        </dependency>
 
-		<dependency>
-			<groupId>de.redsix</groupId>
-			<artifactId>pdfcompare</artifactId>
-			<version>1.1.26</version>
-			<exclusions>
-				<exclusion>
-					 <groupId>ch.qos.logback</groupId>
-            		 <artifactId>logback-classic</artifactId>
-				</exclusion>
-				 <exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-api</artifactId>
-				</exclusion>
-				 <exclusion>
-		            <groupId>commons-logging</groupId>
-		            <artifactId>commons-logging</artifactId>
-		        </exclusion>
-			</exclusions>
-		
-		</dependency>
-		
-			
-		<dependency>
- 			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-            <version>1.7.26</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>com.github.romankh3</groupId>
-			<artifactId>image-comparison</artifactId>
-			<version>4.4.0</version>
-		</dependency>
-		
+
 		<!-- Image IO  
 		 <dependency>
 	        <groupId>com.twelvemonkeys.imageio</groupId>
@@ -179,40 +135,6 @@
 		</dependency>
 	-->
 
-		<dependency>
-			<groupId>org.alfresco</groupId>
-			<artifactId>alfresco-repository</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>com.sun.xml.bind</groupId>
-					<artifactId>jaxb-impl</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>javax.xml.bind</groupId>
-					<artifactId>jaxb-api</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>javax.xml.ws</groupId>
-					<artifactId>jaxws-api</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>xalan</groupId>
-					<artifactId>xalan</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>xml-apis</groupId>
-					<artifactId>xml-apis</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-api</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
