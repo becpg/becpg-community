@@ -54,4 +54,19 @@
     	<property name="autoNumService" ref="autoNumService" />
     	<property name="entityService" ref="entityService"/>
     </bean>    
+    
+    <!--  batch -->
+	<bean id="batchFormulationChain" class="fr.becpg.repo.formulation.FormulationChain" init-method="init">
+		<property name="handlers">
+			<list>
+				<bean class="fr.becpg.repo.quality.formulation.BatchFormulationHandler">
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
+				</bean>
+			</list>
+		</property>
+		<property name="formulationService" ref="formulationService" />
+		<property name="contextClass" value="fr.becpg.repo.quality.data.BatchData" />
+	</bean>
+	
+    
 </beans>

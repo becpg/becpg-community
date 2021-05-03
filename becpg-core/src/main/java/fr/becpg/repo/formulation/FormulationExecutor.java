@@ -37,10 +37,10 @@ public class FormulationExecutor {
 	 * @return a {@link fr.becpg.repo.formulation.FormulationExecutor.FormulationExecutorState} object.
 	 * @throws fr.becpg.repo.formulation.FormulateException if any.
 	 */
-	public FormulationExecutorState execute(NodeRef  entityNodeRef , boolean async) throws FormulateException {
+	public FormulationExecutorState execute(NodeRef  entityNodeRef, String chainId , boolean async)  {
 		FormulationPlugin plugin = retrievePlugin(entityNodeRef);
 		if(plugin !=null ) {
-			plugin.runFormulation(entityNodeRef);
+			plugin.runFormulation(entityNodeRef, chainId);
 		}
 		
 		return FormulationExecutorState.SUCCESS;

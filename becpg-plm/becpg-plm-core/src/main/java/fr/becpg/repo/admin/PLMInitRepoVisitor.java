@@ -162,18 +162,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		reportKindCodes.put(PRODUCT_REPORT_PRODUCTION_PATH, "ProductionSheet");
 		reportKindCodes.put(NONE_KIND_REPORT, "None");
 	}
-	
-	// TODO
-	// private static final String EXPORT_SUPPLIER_XLSX_PATH =
-	// "beCPG/birt/exportsearch/product/ExportSuppliers.xlsx";
-	// private static final String EXPORT_PRODUCT_COSTLIST_XLSX_PATH =
-	// "beCPG/birt/exportsearch/product/ExportProductCostList.xlsx";
-	// private static final String EXPORT_RAWMATERIAL_COSTLIST_XLSX_PATH =
-	// "beCPG/birt/exportsearch/product/ExportRawMaterialCostList.xlsx";
-	// private static final String EXPORT_RAWMATERIAL_NUTLIST_XLSX_PATH =
-	// "beCPG/birt/exportsearch/product/ExportRawMaterialNutList.xlsx";
-	// private static final String EXPORT_RAWMATERIAL_ALLERGENLIST_XLSX_PATH =
-	// "beCPG/birt/exportsearch/product/ExportRawMaterialAllergenList.xlsx";
 
 	private static final String EXPORT_INGLABELING_XLSX_PATH = "beCPG/birt/exportsearch/product/ExportIngLabellingList.xlsx";
 	private static final String EXPORT_PACKAGINGMATERIALS_XLSX_PATH = "beCPG/birt/exportsearch/product/ExportPackagingMaterials.xlsx";
@@ -1120,6 +1108,14 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		dataLists.add(QualityModel.TYPE_SAMPLING_LIST);
 		dataLists.add(QualityModel.TYPE_CONTROL_LIST);
 		entityTplNodeRef = entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_QUALITY_CONTROL, null, true, true, dataLists, null);
+		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
+		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_REPORTS);
+		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_DOCUMENTS);
+		
+		//visit batch
+		dataLists.clear();
+		dataLists.add(QualityModel.TYPE_BATCH_ALLOCATION_LIST);
+		entityTplNodeRef = entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_BATCH, null, true, true, dataLists, null);
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_REPORTS);
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_DOCUMENTS);

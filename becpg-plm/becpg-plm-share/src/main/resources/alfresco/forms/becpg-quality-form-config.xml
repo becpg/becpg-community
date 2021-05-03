@@ -17,6 +17,303 @@
 -->
 <alfresco-config>
 
+	
+	<config evaluator="model-type" condition="bcpg:product">
+		<forms>
+
+			<form id="sub-datagrid-export">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="bcpg:productHierarchy1" />
+					<show id="bcpg:productHierarchy2" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:eanCode" force="true" />
+					<show id="bcpg:subsidiaryRef" force="true" />
+					<show id="bcpg:plants" force="true" />
+					<show id="bcpg:trademarkRef" force="true" />
+				</field-visibility>
+				<appearance>
+					<field id="cm:name" label-id="becpg.forms.field.product" />
+					<field id="bcpg:productHierarchy1" label-id="becpg.forms.field.productHierarchy1"/>
+					<field id="bcpg:productHierarchy2" label-id="becpg.forms.field.productHierarchy2"/>
+					<field id="bcpg:plants" label-id="becpg.forms.field.product.plants"/>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	
+	<config evaluator="model-type" condition="bcpg:client">
+		<forms>
+
+			<form id="sub-datagrid-export">
+				<field-visibility>
+
+					<!-- mainInfo -->
+					<show id="cm:name" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:clientTel" />
+					<show id="bcpg:clientEmail" />
+					<show id="bcpg:clientFax" />
+					<!-- bcpg:location type -->
+					<show id="bcpg:locationAddress1" />
+					<show id="bcpg:locationAddress2" />
+					<show id="bcpg:locationAddress3" />
+					<show id="bcpg:locationZip" />
+					<show id="bcpg:locationCity" />
+					<show id="bcpg:locationState" />
+					<show id="bcpg:locationCountry" />
+
+				</field-visibility>
+				<appearance>
+					<field id="cm:name" label-id="becpg.forms.field.claim.client" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	
+	<!-- ______________________________________________ batch _________________________________________ -->
+
+
+	<config evaluator="model-type" condition="qa:batch">
+		<forms>
+			<form id="create">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="bcpg:code" />
+					<show id="qa:batchId"  />
+					<show id="cm:description" force="true" />
+					<show id="qa:product" />
+					<show id="qa:batchQty"/>
+					<show id="qa:batchQtyUnit"/>
+					<show id="qa:batchState"/>
+
+					<!-- auditable -->
+					<show id="cm:creator" for-mode="view" />
+					<show id="cm:created" for-mode="view" />
+					<show id="cm:modifier" for-mode="view" />
+					<show id="cm:modified" for-mode="view" />
+
+				</field-visibility>
+				<appearance>
+					<set id="mainInfo" template="/org/alfresco/components/form/2-column-set.ftl" appearance="bordered-panel" label-id="becpg.forms.set.batch-info.label" />
+					<field id="cm:name" set="mainInfo" />
+					<field id="bcpg:code" read-only="true" set="mainInfo" />
+					<field id="qa:batchId" set="mainInfo" />
+					
+					<field id="cm:description" set="mainInfo" />
+					
+					<field id="qa:batchState" set="mainInfo" >
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">Simulation|status.entity-simulation,Valid|status.entity-valid</control-param>
+						</control>
+					</field>
+					<set id="product-info" appearance="bordered-panel" label-id="becpg.forms.set.product-info.label" />
+					<field id="qa:product" set="product-info" />
+					<field id="qa:batchQty" set="product-info" mandatory="true" />
+					<field id="qa:batchQtyUnit" set="product-info" mandatory="true" >
+						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
+							<control-param name="options">kg,g,lb,oz,L,cL,mL,gal,cp,fl_oz,P|becpg.forms.field.productUnit
+							</control-param>
+						</control>
+					</field>
+					
+					<!-- audit -->
+					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="cm:creator" set="audit" />
+					<field id="cm:created" set="audit" />
+					<field id="cm:modifier" set="audit" />
+					<field id="cm:modified" set="audit" />
+				</appearance>
+			</form>
+
+	
+		</forms>
+	</config>
+	
+		<config evaluator="node-type" condition="qa:batch">
+		<forms>
+			<form >
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="bcpg:code" />
+					<show id="qa:batchId"  />
+					<show id="cm:description" force="true" />
+					<show id="qa:product" />
+					<show id="qa:batchQty"/>
+					<show id="qa:batchQtyUnit"/>
+					<show id="qa:batchState"/>
+
+
+				</field-visibility>
+				<appearance>
+					<set id="mainInfo" template="/org/alfresco/components/form/2-column-set.ftl" appearance="bordered-panel" label-id="becpg.forms.set.batch-info.label" />
+					<field id="cm:name" set="mainInfo" />
+					<field id="bcpg:code" read-only="true" set="mainInfo" />
+					<field id="qa:batchId" set="mainInfo" />
+					
+					<field id="cm:description" set="mainInfo" />
+					
+					<field id="qa:batchState" set="mainInfo" >
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">Simulation|status.entity-simulation,Valid|status.entity-valid</control-param>
+						</control>
+					</field>
+					<set id="product-info" appearance="bordered-panel" label-id="becpg.forms.set.product-info.label" />
+					<field id="qa:product" set="product-info" />
+					<field id="qa:batchQty" set="product-info" mandatory="true"  />
+					<field id="qa:batchQtyUnit" set="product-info" mandatory="true"  >
+						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
+							<control-param name="options">kg,g,lb,oz,L,cL,mL,gal,cp,fl_oz,P|becpg.forms.field.productUnit
+							</control-param>
+						</control>
+					</field>
+		
+				</appearance>
+			</form>
+
+	
+		</forms>
+	</config>
+	
+	
+	
+	<config evaluator="node-type" condition="qa:batchAllocationList">
+		<forms>
+			<!-- Data List pop-up edit form -->
+			<form>
+				<field-visibility>
+					<show id="qa:product" />
+					<show id="qa:batchQty"/>
+					<show id="qa:batchQtyUnit"/>
+					<show id="qa:batchState"/>
+					<show id="qa:batchId"/>
+				</field-visibility>
+				<appearance>
+					<field id="qa:batchQtyUnit"  >
+						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
+							<control-param name="options">kg,g,lb,oz,L,cL,mL,gal,cp,fl_oz,P|becpg.forms.field.productUnit
+							</control-param>
+						</control>
+					</field>
+				</appearance>
+				
+			</form>
+		</forms>
+	</config>
+	<config evaluator="model-type" condition="qa:batchAllocationList">
+		<forms>
+			<!-- Create item form -->
+			<form>
+				<field-visibility>
+					<show id="qa:product" />
+					<show id="qa:batchQty"/>
+					<show id="qa:batchQtyUnit"/>			
+					<show id="qa:batchState"/>
+					<show id="qa:batchId"/>
+				</field-visibility>
+				<appearance>
+					<field id="qa:batchQtyUnit"  >
+						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
+							<control-param name="options">kg,g,lb,oz,L,cL,mL,gal,cp,fl_oz,P|becpg.forms.field.productUnit
+							</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+			<!-- Data Grid view -->
+			<form id="datagrid">
+				<field-visibility>
+					<show id="qa:product" />
+					<show id="qa:batchQty"/>
+					<show id="qa:batchQtyUnit"/>
+					<show id="qa:batchState"/>
+					<show id="qa:batchId"/>
+					<show id="fm:commentCount" force="true" />
+				</field-visibility>
+				<appearance>
+					<field id="fm:commentCount" label="hidden" read-only="true" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	
+	<config evaluator="node-type" condition="qa:stockList">
+		<forms>
+			<!-- Data List pop-up edit form -->
+			<form>
+				<field-visibility>
+					<show id="qa:batchId"/>
+					<show id="qa:batchQty"/>
+					<show id="qa:batchQtyUnit"/>
+					<show id="qa:batchState"/>
+					<show id="qa:productUseByDate" />
+				</field-visibility>
+				<appearance>
+					<field id="qa:batchQtyUnit"  >
+						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
+							<control-param name="options">kg,g,lb,oz,L,cL,mL,gal,cp,fl_oz,P|becpg.forms.field.productUnit
+							</control-param>
+						</control>
+					</field>
+					<field id="qa:batchState"  >
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">ToValidate|status.entity-tovalidate,Valid|status.entity-valid,Refused|status.entity-refused</control-param>
+						</control>
+					</field>
+				</appearance>
+				
+			</form>
+		</forms>
+	</config>
+	<config evaluator="model-type" condition="qa:stockList">
+		<forms>
+			<!-- Create item form -->
+			<form>
+				<field-visibility>
+					<show id="qa:batchId"/>
+					<show id="qa:batchQty"/>
+					<show id="qa:batchQtyUnit"/>
+					<show id="qa:batchState"/>
+					<show id="qa:productUseByDate" />
+				</field-visibility>
+				<appearance>
+					<field id="qa:batchQtyUnit" >
+						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
+							<control-param name="options">kg,g,lb,oz,L,cL,mL,gal,cp,fl_oz,P|becpg.forms.field.productUnit
+							</control-param>
+						</control>
+					</field>
+					<field id="qa:batchState"  >
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">ToValidate|status.entity-tovalidate,Valid|status.entity-valid,Refused|status.entity-refused</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+			<!-- Data Grid view -->
+			<form id="datagrid">
+				<field-visibility>
+					<show id="qa:batchId"/>
+					<show id="qa:batchQty"/>
+					<show id="qa:batchQtyUnit"/>
+					<show id="qa:batchState"/>
+					<show id="qa:productUseByDate" />
+					<show id="fm:commentCount" force="true" />
+				</field-visibility>
+				<appearance>
+					<field id="qa:batchState"  >
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">ToValidate|status.entity-tovalidate,Valid|status.entity-valid,Refused|status.entity-refused</control-param>
+						</control>
+					</field>
+					<field id="fm:commentCount" label="hidden" read-only="true" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	
+	
+
 	<!-- ______________________________________________ Non conformity_________________________________________ -->
 	<!-- qa:nc type (creating nodes nodes) -->
 	<config evaluator="model-type" condition="qa:nc">
@@ -332,58 +629,6 @@
 		</forms>
 	</config>
 	
-	<config evaluator="model-type" condition="bcpg:product">
-		<forms>
-
-			<form id="sub-datagrid-export">
-				<field-visibility>
-					<show id="cm:name" />
-					<show id="bcpg:productHierarchy1" />
-					<show id="bcpg:productHierarchy2" />
-					<show id="bcpg:erpCode" force="true" />
-					<show id="bcpg:eanCode" force="true" />
-					<show id="bcpg:subsidiaryRef" force="true" />
-					<show id="bcpg:plants" force="true" />
-					<show id="bcpg:trademarkRef" force="true" />
-				</field-visibility>
-				<appearance>
-					<field id="cm:name" label-id="becpg.forms.field.product" />
-					<field id="bcpg:productHierarchy1" label-id="becpg.forms.field.productHierarchy1"/>
-					<field id="bcpg:productHierarchy2" label-id="becpg.forms.field.productHierarchy2"/>
-					<field id="bcpg:plants" label-id="becpg.forms.field.product.plants"/>
-				</appearance>
-			</form>
-		</forms>
-	</config>
-	
-	<config evaluator="model-type" condition="bcpg:client">
-		<forms>
-
-			<form id="sub-datagrid-export">
-				<field-visibility>
-
-					<!-- mainInfo -->
-					<show id="cm:name" />
-					<show id="bcpg:erpCode" force="true" />
-					<show id="bcpg:clientTel" />
-					<show id="bcpg:clientEmail" />
-					<show id="bcpg:clientFax" />
-					<!-- bcpg:location type -->
-					<show id="bcpg:locationAddress1" />
-					<show id="bcpg:locationAddress2" />
-					<show id="bcpg:locationAddress3" />
-					<show id="bcpg:locationZip" />
-					<show id="bcpg:locationCity" />
-					<show id="bcpg:locationState" />
-					<show id="bcpg:locationCountry" />
-
-				</field-visibility>
-				<appearance>
-					<field id="cm:name" label-id="becpg.forms.field.claim.client" />
-				</appearance>
-			</form>
-		</forms>
-	</config>
 
 	<!-- qa:nc type (existing nodes) -->
 	<config evaluator="node-type" condition="qa:nc">

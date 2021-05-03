@@ -61,6 +61,7 @@
 				<subtype name="bcpg:productSpecification" />
 				
 				<subtype name="qa:nc" />
+				<subtype name="qa:batch" />
 				<subtype name="bcpg:supplier" />
 				<subtype name="bcpg:client" />
 				<subtype name="ecm:changeOrder" />	
@@ -206,6 +207,10 @@
 			</content>
 			<content id="qualityControl" label="menu.create-content.qualityControl" type="pagelink" index="160" icon="qualityControl">
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=qa:qualityControl&amp;formId=create&amp;isEntity=true
+				</param>
+			</content>
+			<content id="batch" label="menu.create-content.batch" type="pagelink" index="160" icon="batch">
+				<param name="page">create-content?destination={nodeRef}&amp;itemId=qa:batch&amp;formId=create&amp;isEntity=true
 				</param>
 			</content>
 			<content id="changeOrder" label="menu.create-content.eco" type="pagelink" index="170" icon="changeOrder">

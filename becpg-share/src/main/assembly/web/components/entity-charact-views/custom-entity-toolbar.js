@@ -182,7 +182,7 @@
 						return asset.name != null &&
 							(asset.name != "View-documents" && asset.name != "View-reports" && asset.name != "activityList" && asset.name != "WUsed")
 							&& entity != null && (beCPG.util.contains(entity.aspects,
-								"bcpg:productAspect") || entity.type == "bcpg:productSpecification" || entity.type == "pjt:project") && entity.userAccess.edit;
+								"bcpg:productAspect") || entity.type == "bcpg:productSpecification" || entity.type == "qa:batch" || entity.type == "pjt:project") && entity.userAccess.edit;
 					},
 					fn: function(instance) {
 
@@ -199,9 +199,7 @@
 							.request({
 								method: Alfresco.util.Ajax.GET,
 								responseContentType: Alfresco.util.Ajax.JSON,
-								url: Alfresco.constants.PROXY_URI + "becpg/" + (instance.entity != null && instance.entity.type == "pjt:project" ? "project" : "product")
-									+ "/formulate/node/" + this.options.entityNodeRef
-										.replace(":/", ""),
+								url: Alfresco.constants.PROXY_URI + "becpg/remote/formulate?nodeRef=" + this.options.entityNodeRef+"&format=json",
 								successCallback: {
 									fn: function(response) {
 										Alfresco.util.PopupManager.displayMessage({

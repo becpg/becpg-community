@@ -39,6 +39,6 @@ public interface FormulationPlugin {
 	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @throws fr.becpg.repo.formulation.FormulateException if any.
 	 */
-	void runFormulation(NodeRef entityNodeRef) throws FormulateException;
+	void runFormulation(NodeRef entityNodeRef, String chainId);
 
 }

@@ -22,7 +22,6 @@ import java.util.List;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
-import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.product.data.CharactDetails;
 import fr.becpg.repo.product.data.ProductData;
 
@@ -42,16 +41,16 @@ public interface ProductService {
      * @param productNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
      * @throws fr.becpg.repo.formulation.FormulateException if any.
      */
-    void formulate(NodeRef productNodeRef) throws FormulateException;
+    void formulate(NodeRef productNodeRef) ;
     
     /**
      * Use fast chain formulation handler if fast param is true
      *
      * @param productNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-     * @param fast a boolean.
+     * @param chainId a string.
      * @throws fr.becpg.repo.formulation.FormulateException if any.
      */
-    void formulate(NodeRef productNodeRef, boolean fast)   throws FormulateException;
+    void formulate(NodeRef productNodeRef,  String chainId) ;
     
     /**
      * Formulate the product (don't update DB)
@@ -60,7 +59,7 @@ public interface ProductService {
      * @return a {@link fr.becpg.repo.product.data.ProductData} object.
      * @throws fr.becpg.repo.formulation.FormulateException if any.
      */
-    ProductData formulate(ProductData productData) throws FormulateException;
+    ProductData formulate(ProductData productData);
      
     
 	/**
@@ -74,7 +73,7 @@ public interface ProductService {
 	 * @return a {@link fr.becpg.repo.product.data.CharactDetails} object.
 	 * @throws fr.becpg.repo.formulation.FormulateException if any.
 	 */
-	CharactDetails formulateDetails(NodeRef productNodeRef, QName dataType, String dataListName, List<NodeRef> elements, Integer level) throws FormulateException;
+	CharactDetails formulateDetails(NodeRef productNodeRef, QName dataType, String dataListName, List<NodeRef> elements, Integer level);
 
 
 	/**
@@ -93,7 +92,7 @@ public interface ProductService {
 	 * @return a {@link fr.becpg.repo.product.data.ProductData} object.
 	 * @throws fr.becpg.repo.formulation.FormulateException if any.
 	 */
-	ProductData formulateText(String recipe) throws FormulateException;
+	ProductData formulateText(String recipe);
 
 
    

@@ -684,7 +684,7 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin {
 
 	/** {@inheritDoc} */
 	@Override
-	public void runFormulation(NodeRef entityNodeRef) throws FormulateException {
+	public void runFormulation(NodeRef entityNodeRef, String chainId)  {
 		formulate(entityNodeRef);
 	}
 
