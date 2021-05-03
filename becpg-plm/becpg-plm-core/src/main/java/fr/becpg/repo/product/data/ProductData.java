@@ -47,6 +47,7 @@ import fr.becpg.repo.product.data.productList.PriceListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.data.productList.ResourceParamListItem;
+import fr.becpg.repo.quality.data.dataList.StockListDataItem;
 import fr.becpg.repo.quality.data.dataList.ControlDefListDataItem;
 import fr.becpg.repo.repository.annotation.AlfMlText;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
@@ -197,6 +198,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private List<ResourceParamListItem> resourceParamList;
 	private List<ReqCtrlListDataItem> reqCtrlList;
 	private List<PackMaterialListDataItem> packMaterialList;
+	private List<StockListDataItem> stockList;
 
 	/*
 	 * View
@@ -1757,6 +1759,17 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	 */
 	public void setPackMaterialList(List<PackMaterialListDataItem> packMaterialList) {
 		this.packMaterialList = packMaterialList;
+	}
+	
+
+	@DataList
+	@AlfQname(qname = "qa:stockList")
+	public List<StockListDataItem> getStockList() {
+		return stockList;
+	}
+
+	public void setStockList(List<StockListDataItem> stockList) {
+		this.stockList = stockList;
 	}
 
 	/**

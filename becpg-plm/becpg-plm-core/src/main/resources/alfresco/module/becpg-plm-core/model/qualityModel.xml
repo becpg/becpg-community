@@ -440,6 +440,32 @@
 			</mandatory-aspects>
 		</type>
 		
+		<type name="qa:batch">
+			<parent>bcpg:entityV2</parent>
+			<mandatory-aspects>
+				<aspect>qa:batchAspect</aspect>
+			</mandatory-aspects>
+		</type>
+		
+		<type name="qa:stockList">
+			<parent>bcpg:entityListItem</parent>
+			<mandatory-aspects>
+			    <aspect>qa:batchAspect</aspect>
+				<aspect>bcpg:sortableListAspect</aspect>
+			</mandatory-aspects>
+		</type>
+		
+		<type name="qa:batchAllocationList">
+			<parent>bcpg:entityListItem</parent>
+			<mandatory-aspects>
+			    <aspect>qa:batchAspect</aspect>
+				<aspect>bcpg:sortableListAspect</aspect>
+			</mandatory-aspects>
+		</type>
+		
+		
+		
+		
 		<!-- Deprecated To remove after 2.2.4 -->
 		<type name="qa:workLog">
 			<parent>qa:qualityListItem</parent>
@@ -585,6 +611,28 @@
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<index enabled="true" />
+				</property>
+				<property name="qa:batchQty">
+					<type>d:double</type>
+				</property>
+				<property name="qa:batchQtyUnit">
+					<type>d:text</type>
+					<default>kg</default>
+					<constraints>
+						<constraint ref="bcpg:productUnit" />
+					</constraints>
+				</property>
+				<property name="qa:batchState">
+					<type>d:text</type>
+					<default>Simulation</default>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>false</tokenised>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:systemState" />
+					</constraints>
 				</property>
 				<property name="qa:batchStart">
 					<type>d:datetime</type>

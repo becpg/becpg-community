@@ -267,8 +267,8 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 
 	/** {@inheritDoc} */
 	@Override
-	public void runFormulation(NodeRef entityNodeRef) {
-		formulate(entityNodeRef);
+	public void runFormulation(NodeRef entityNodeRef, String chainId) {
+		formulate(entityNodeRef, chainId);
 	}
 
 }

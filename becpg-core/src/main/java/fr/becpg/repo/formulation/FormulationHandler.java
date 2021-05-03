@@ -33,7 +33,7 @@ public interface FormulationHandler<T> {
      * @return <code>true</code>, if should call next handler
      * @throws fr.becpg.repo.formulation.FormulateException if any.
      */
-    boolean process(T context) throws FormulateException;
+    boolean process(T context);
  
     /**
      * Sets next handler for the current one; called in post-processing
@@ -48,5 +48,5 @@ public interface FormulationHandler<T> {
      * @param context a T object.
      * @throws fr.becpg.repo.formulation.FormulateException
      */
-    void start(T context) throws FormulateException;
+    void start(T context);
 }

@@ -92,12 +92,12 @@ public class ProductServiceImpl implements ProductService, InitializingBean, For
 	/** {@inheritDoc} */
 	@Override
 	public void formulate(NodeRef productNodeRef){
-		formulate(productNodeRef, false);
+		formulate(productNodeRef, null);
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public void formulate(NodeRef productNodeRef, boolean fast) {
+	public void formulate(NodeRef productNodeRef, String chainId) {
 		try {
 			policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
 			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
@@ -105,11 +105,11 @@ public class ProductServiceImpl implements ProductService, InitializingBean, For
 
 			L2CacheSupport.doInCacheContext(() -> 
 				AuthenticationUtil.runAsSystem(() -> {
-					if (!fast) {
+					if (chainId == null) {
 						formulationService.formulate(productNodeRef);
 						entityActivityService.postEntityActivity(productNodeRef, ActivityType.Formulation, ActivityEvent.Update, null);
 					} else {
-						formulationService.formulate(productNodeRef, FormulationService.FAST_FORMULATION_CHAINID);
+						formulationService.formulate(productNodeRef, chainId);
 					}
 					return true;
 				}), false, true);
@@ -187,8 +187,8 @@ public class ProductServiceImpl implements ProductService, InitializingBean, For
 
 	/** {@inheritDoc} */
 	@Override
-	public void runFormulation(NodeRef entityNodeRef) {
-		formulate(entityNodeRef, false);
+	public void runFormulation(NodeRef entityNodeRef, String chainId) {
+		formulate(entityNodeRef, chainId);
 	}
 
 }

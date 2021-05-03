@@ -41,6 +41,10 @@ import io.opencensus.common.Scope;
 public class FormulateEntityWebScript extends AbstractEntityWebScript {
 
 	FormulationExecutor formulationExecutor;
+	
+
+	/** Constant <code>PARAM_FAST="fast"</code> */
+	private static final String PARAM_CHAINID = "chainId";
 
 	/**
 	 * <p>Setter for the field <code>formulationExecutor</code>.</p>
@@ -60,7 +64,7 @@ public class FormulateEntityWebScript extends AbstractEntityWebScript {
 			logger.debug("Formulate entity: " + entityNodeRef);
 
 			try {
-				FormulationExecutorState state = formulationExecutor.execute(entityNodeRef, false);
+				FormulationExecutorState state = formulationExecutor.execute(entityNodeRef, req.getParameter(PARAM_CHAINID) , false);
 
 				if (FormulationExecutorState.SUCCESS.equals(state)) {
 					sendOKStatus(entityNodeRef, resp, getFormat(req));

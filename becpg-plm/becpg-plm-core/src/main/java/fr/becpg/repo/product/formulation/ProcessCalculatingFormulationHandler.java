@@ -26,7 +26,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
