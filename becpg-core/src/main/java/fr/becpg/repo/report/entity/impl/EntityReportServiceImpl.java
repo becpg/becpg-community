@@ -212,7 +212,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 					Locale currentLocal = I18NUtil.getLocale();
 					Locale currentContentLocal = I18NUtil.getContentLocale();
 					try {
-						List<NodeRef> newReports = getReports(nodeRefFrom);
+						List<NodeRef> newReports = getReports(nodeRefFrom, nodeRefTo);
 
 						updateReportsAssoc(nodeRefTo, newReports);
 						
@@ -229,7 +229,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 		}, false, true);
 	}
 	
-	private List<NodeRef> getReports(final NodeRef entityNodeRef) {
+	private List<NodeRef> getReports(final NodeRef entityNodeRef, final NodeRef entityNodeTo) {
+		
 		Locale defaultLocale = MLTextHelper.getNearestLocale(Locale.getDefault());
 
 		I18NUtil.setLocale(defaultLocale);
@@ -304,7 +305,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 							String documentTitle = getReportDocumentName(entityNodeRef, tplNodeRef, null, locale, reportParameters,
 									reportParameters.getReportTitleFormat(reportTitleFormat));
 
-							NodeRef documentNodeRef = getReportDocumenNodeRef(entityNodeRef, tplNodeRef, documentName, locale,
+							NodeRef documentNodeRef = getReportDocumenNodeRef(entityNodeTo, tplNodeRef, documentName, locale,
 									reportParameters);
 
 							if (documentNodeRef != null) {
