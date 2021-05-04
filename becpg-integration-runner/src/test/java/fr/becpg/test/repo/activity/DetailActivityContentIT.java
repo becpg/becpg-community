@@ -46,10 +46,12 @@ public class DetailActivityContentIT extends AbstractFinishedProductTest {
 	}
 
 	protected List<NodeRef> getActivities(NodeRef entityNodeRef, Map<String, Boolean> sortMap) {
-		beCPGCacheService.clearAllCaches();
+	
 
 		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			List<NodeRef> ret = new ArrayList<>();
+			beCPGCacheService.clearAllCaches();
+			
 			NodeRef activityListNodeRef = getActivityList(entityNodeRef);
 			if (activityListNodeRef != null) {
 				// All activities of product

@@ -57,7 +57,7 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 
 	private static final String SOURCE_TYPE_PRODUCT_REPORT = "productreport";
 
-	private final static Log logger = LogFactory.getLog(ProductListValuePlugin.class);
+	private static final Log logger = LogFactory.getLog(ProductListValuePlugin.class);
 	
 	@Autowired
 	private AttributeExtractorService attributeExtractorService;

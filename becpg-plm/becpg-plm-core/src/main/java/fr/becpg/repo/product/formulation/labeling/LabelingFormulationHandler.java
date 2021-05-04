@@ -175,7 +175,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	/** {@inheritDoc} */
 	@Override
-	public boolean process(ProductData formulatedProduct)  {
+	public boolean process(ProductData formulatedProduct) {
 
 		if ((formulatedProduct.getReformulateCount() != null)
 				&& !formulatedProduct.getReformulateCount().equals(formulatedProduct.getCurrentReformulateCount())) {
@@ -252,7 +252,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 													labelingRuleListDataItem.getName(), e.getLocalizedMessage()),
 											null, new ArrayList<>(), RequirementDataType.Labelling));
 							if (logger.isDebugEnabled()) {
-								logger.debug("Error label rule formula : ["+labelingRuleListDataItem.getName()+"] - " + SpelHelper.formatFormula(labelingRuleListDataItem.getFormula()), e);
+								logger.debug("Error label rule formula : [" + labelingRuleListDataItem.getName() + "] - "
+										+ SpelHelper.formatFormula(labelingRuleListDataItem.getFormula()), e);
 							}
 						}
 					} else if (!LabelingRuleType.Render.equals(type)) {
@@ -274,8 +275,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			}
 
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			
-			
+
 			if (formulatedProduct instanceof RawMaterialData || !formulatedProduct.hasCompoListEl()) {
 				compoList.add(new CompoListDataItem(null, null, 1d, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, formulatedProduct.getNodeRef()));
 			} else {
@@ -388,7 +388,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 											.add(new ReqCtrlListDataItem(null, RequirementType.Tolerated,
 													MLTextHelper.getI18NMessage("message.formulate.labelRule.error",
 															labelingRuleListDataItem.getName(), e.getLocalizedMessage()),
-													null, new ArrayList<NodeRef>(), RequirementDataType.Labelling));
+													null, new ArrayList<>(), RequirementDataType.Labelling));
 
 									if (logger.isDebugEnabled()) {
 										logger.debug("Error in formula : (" + labelingRuleListDataItem.getNodeRef() + ")"
@@ -572,9 +572,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				if (prev == null) {
 					prev = component;
 				} else {
-					if ((prev.getIngType() == null || component.getIngType() == null)
-							||  prev.getIngType().equals(component.getIngType())) {
-						
+					if ((prev.getIngType() == null || component.getIngType() == null) || prev.getIngType().equals(component.getIngType())) {
+
 						merge(prev, component);
 						parent.remove(component.getNodeRef());
 
@@ -827,19 +826,25 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	}
 
 	private void copyTemplateLabelingRuleList(ProductData formulatedProduct) {
-		if ((formulatedProduct.getEntityTpl() != null) && !formulatedProduct.getEntityTpl().equals(formulatedProduct)) {
+		if ((formulatedProduct.getEntityTpl() != null) && !formulatedProduct.getEntityTpl().equals(formulatedProduct)
+				&& formulatedProduct.getEntityTpl().getLabelingListView().getLabelingRuleList() != null) {
 			for (LabelingRuleListDataItem modelLabelingRuleListDataItem : formulatedProduct.getEntityTpl().getLabelingListView()
 					.getLabelingRuleList()) {
 				if (modelLabelingRuleListDataItem.isSynchronisable()) {
 					boolean contains = false;
-					for (LabelingRuleListDataItem labelingRuleListDataItem : formulatedProduct.getLabelingListView().getLabelingRuleList()) {
-						if (labelingRuleListDataItem.getName().equals(modelLabelingRuleListDataItem.getName())) {
-							contains = true;
-							if ((labelingRuleListDataItem.getIsManual() == null) || !labelingRuleListDataItem.getIsManual()) {
-								labelingRuleListDataItem.update(modelLabelingRuleListDataItem);
+					if (formulatedProduct.getLabelingListView().getLabelingRuleList() != null) {
+						for (LabelingRuleListDataItem labelingRuleListDataItem : formulatedProduct.getLabelingListView().getLabelingRuleList()) {
+							if (labelingRuleListDataItem.getName().equals(modelLabelingRuleListDataItem.getName())) {
+								contains = true;
+								if ((labelingRuleListDataItem.getIsManual() == null)
+										|| !Boolean.TRUE.equals(labelingRuleListDataItem.getIsManual())) {
+									labelingRuleListDataItem.update(modelLabelingRuleListDataItem);
+								}
+								break;
 							}
-							break;
 						}
+					} else {
+						formulatedProduct.getLabelingListView().setLabelingRuleList(new LinkedList<>());
 					}
 
 					if (!contains) {
@@ -847,6 +852,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						modelLabelingRuleListDataItem.setParentNodeRef(null);
 						formulatedProduct.getLabelingListView().getLabelingRuleList().add(modelLabelingRuleListDataItem);
 					}
+
 				}
 			}
 
