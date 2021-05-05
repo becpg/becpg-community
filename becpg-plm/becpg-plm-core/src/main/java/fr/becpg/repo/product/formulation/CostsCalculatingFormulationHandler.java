@@ -5,6 +5,7 @@ package fr.becpg.repo.product.formulation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -21,7 +22,6 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.entity.EntityTplService;
-import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.product.data.ClientData;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.PackagingMaterialData;
@@ -264,7 +264,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 	}
 
 	private void visitCompoListChildren(ProductData formulatedProduct, Composite<CompoListDataItem> composite, List<CostListDataItem> costList,
-			Double parentLossRatio, Double netQty, Map<NodeRef, List<NodeRef>> mandatoryCharacts, VariantData variant) throws FormulateException {
+			Double parentLossRatio, Double netQty, Map<NodeRef, List<NodeRef>> mandatoryCharacts, VariantData variant) {
 
 		Map<NodeRef, Double> totalQtiesValue = new HashMap<>();
 		for (Composite<CompoListDataItem> component : composite.getChildren()) {
@@ -490,9 +490,8 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 	protected void synchronizeTemplate(ProductData formulatedProduct, List<CostListDataItem> simpleListDataList) {
 
 		if ((formulatedProduct.getEntityTpl() != null) && !formulatedProduct.getEntityTpl().equals(formulatedProduct)) {
-			formulatedProduct.getEntityTpl().getCostList().forEach(templateCostList -> {
-				synchronizeCost(formulatedProduct, templateCostList, simpleListDataList, true);
-			});
+			formulatedProduct.getEntityTpl().getCostList()
+					.forEach(templateCostList -> synchronizeCost(formulatedProduct, templateCostList, simpleListDataList, true));
 
 			// check sorting
 			int lastSort = 0;
@@ -537,27 +536,25 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 
 	}
 
-	private void synchronizeCost(ProductData formulatedProduct, CostListDataItem templateCostList, List<CostListDataItem> simpleListDataList,
+	private void synchronizeCost(ProductData formulatedProduct, CostListDataItem templateCostListItem, List<CostListDataItem> costList,
 			boolean isTemplateCost) {
-		// TODO : manage multiple plants
-		NodeRef plantNodeRef = formulatedProduct.getPlants().isEmpty() ? null : formulatedProduct.getPlants().get(0);
 
 		boolean addCost = true;
-		for (CostListDataItem costList : simpleListDataList) {
+		for (CostListDataItem costListItem : costList) {
 			// plants
-			if (templateCostList.getPlants().isEmpty() || templateCostList.getPlants().contains(plantNodeRef)) {
+			if (templateCostListItem.getPlants().isEmpty() || !Collections.disjoint(templateCostListItem.getPlants(), formulatedProduct.getPlants()) ) {
 				// same cost
-				if ((costList.getCost() != null) && costList.getCost().equals(templateCostList.getCost())) {
+				if ((costListItem.getCost() != null) && costListItem.getCost().equals(templateCostListItem.getCost())) {
 					if (isTemplateCost) {
-						if (templateCostList.getParent() != null) {
-							costList.setParent(findParentByCharactName(simpleListDataList, templateCostList.getParent().getCharactNodeRef()));
+						if (templateCostListItem.getParent() != null) {
+							costListItem.setParent(findParentByCharactName(costList, templateCostListItem.getParent().getCharactNodeRef()));
 						} else {
-							costList.setParent(null);
+							costListItem.setParent(null);
 						}
 					}
 					// manual
-					if (!Boolean.TRUE.equals(costList.getIsManual())) {
-						copyTemplateCost(formulatedProduct, templateCostList, costList);
+					if (!Boolean.TRUE.equals(costListItem.getIsManual())) {
+						copyTemplateCost(formulatedProduct, templateCostListItem, costListItem);
 					}
 					addCost = false;
 					break;
@@ -567,14 +564,15 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 			}
 		}
 		if (addCost) {
-			CostListDataItem costListDataItem = new CostListDataItem(templateCostList);
+			CostListDataItem costListDataItem = new CostListDataItem(templateCostListItem);
 			costListDataItem.setNodeRef(null);
+			costListDataItem.setPlants(new ArrayList<>());
 			costListDataItem.setParentNodeRef(null);
 			if (costListDataItem.getParent() != null) {
-				costListDataItem.setParent(findParentByCharactName(simpleListDataList, costListDataItem.getParent().getCharactNodeRef()));
+				costListDataItem.setParent(findParentByCharactName(costList, costListDataItem.getParent().getCharactNodeRef()));
 			}
-			copyTemplateCost(formulatedProduct, templateCostList, costListDataItem);
-			simpleListDataList.add(costListDataItem);
+			copyTemplateCost(formulatedProduct, templateCostListItem, costListDataItem);
+			costList.add(costListDataItem);
 		}
 
 	}
@@ -741,7 +739,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 				}
 				if (costListDataItem instanceof VariantAwareDataItem) {
 					for (int i = 1; i <= VariantAwareDataItem.VARIANT_COLUMN_SIZE; i++) {
-						Double variantValue = ((VariantAwareDataItem) costListDataItem).getValue(VariantAwareDataItem.VARIANT_COLUMN_NAME + i);
+						Double variantValue = costListDataItem.getValue(VariantAwareDataItem.VARIANT_COLUMN_NAME + i);
 						if (variantValue != null) {
 							if (variantValues.get(VariantAwareDataItem.VARIANT_COLUMN_NAME + i) != null) {
 								variantValues.put(VariantAwareDataItem.VARIANT_COLUMN_NAME + i,
@@ -815,12 +813,9 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 	/** {@inheritDoc} */
 	@Override
 	protected boolean accept(ProductData formulatedProduct) {
+		return !(formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) || (formulatedProduct instanceof ProductSpecificationData)
+				|| ((formulatedProduct.getCostList() == null) && !alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_COSTLIST)));
 
-		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) || (formulatedProduct instanceof ProductSpecificationData)
-				|| ((formulatedProduct.getCostList() == null) && !alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_COSTLIST))) {
-			return false;
-		}
-		return true;
 	}
 
 	/** {@inheritDoc} */
