@@ -426,20 +426,18 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 				NodeRef branchFromNodeRef = getBranchFromNodeRef(entityNodeRef);
 				for (Version version : versionHistory.getAllVersions()) {
 					NodeRef entityVersionNodeRef = getEntityVersion(versionAssocs, version);
+					EntityVersion entityVersion = null;
 					if (entityVersionNodeRef != null && !nodeService.hasAspect(entityVersionNodeRef, ContentModel.ASPECT_TEMPORARY)) {
-						EntityVersion entityVersion = new EntityVersion(version, entityNodeRef, entityVersionNodeRef, branchFromNodeRef);
-						if (RepoConsts.INITIAL_VERSION.equals(version.getVersionLabel())) {
-							entityVersion.setCreatedDate((Date) nodeService.getProperty(entityNodeRef, ContentModel.PROP_CREATED));
-						}
-
-						entityVersions.add(entityVersion);
+						entityVersion = new EntityVersion(version, entityNodeRef, entityVersionNodeRef, branchFromNodeRef);
 					} else {
-
-						EntityVersion entityVersion = new EntityVersion(version, entityNodeRef,
+						entityVersion = new EntityVersion(version, entityNodeRef,
 								new NodeRef(StoreRef.PROTOCOL_WORKSPACE, Version2Model.STORE_ID, version.getFrozenStateNodeRef().getId()),
 								branchFromNodeRef);
-						entityVersions.add(entityVersion);
 					}
+					if (RepoConsts.INITIAL_VERSION.equals(version.getVersionLabel())) {
+						entityVersion.setCreatedDate((Date) nodeService.getProperty(entityNodeRef, ContentModel.PROP_CREATED));
+					}
+					entityVersions.add(entityVersion);
 				}
 			}
 		}
@@ -496,7 +494,7 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 			List<EntityVersion> entityVersions = getAllVersions(branchNodeRef);
 
 			if (!entityVersions.isEmpty()) {
-				for (EntityVersion entityVersion : getAllVersions(branchNodeRef)) {
+				for (EntityVersion entityVersion : entityVersions) {
 					ret.add(entityVersion);
 				}
 			} else {
@@ -773,12 +771,14 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 							nodeService.addAspect(branchNodeRef, ContentModel.ASPECT_WORKING_COPY, null);
 
 							Date createdDate = (Date) nodeService.getProperty(internalBranchToNodeRef, ContentModel.PROP_CREATED);
+							String versionLabel = (String) nodeService.getProperty(internalBranchToNodeRef, ContentModel.PROP_VERSION_LABEL);
 							
 							// Copy the contents of the working copy onto the original
 							this.copyService.copy(branchNodeRef, internalBranchToNodeRef);
 							
-							// reset the original createdDate
+							// reset the original createdDate and versionLabel
 							nodeService.setProperty(internalBranchToNodeRef, ContentModel.PROP_CREATED, createdDate);
+							nodeService.setProperty(internalBranchToNodeRef, ContentModel.PROP_VERSION_LABEL, versionLabel);
 							
 							if (branchFromNodeRef != null) {
 								associationService.update(internalBranchToNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY, branchFromNodeRef);
@@ -795,7 +795,12 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 							}
 
 							createVersion(internalBranchToNodeRef, versionProperties);
-
+							
+							if (rename) {
+								Version currentVersion = versionService.getCurrentVersion(internalBranchToNodeRef);
+								dbNodeService.setProperty(getEntityVersion(currentVersion), ContentModel.PROP_NAME, finalBranchName);
+							}
+							
 							/**
 							 * Post create alfresco version
 							 */
