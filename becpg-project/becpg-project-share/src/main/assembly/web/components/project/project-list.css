@@ -101,7 +101,7 @@
 .project-list .projects .yui-dt-data td {
 	border-bottom: 1px dashed #d9d9d9;
 	border-right: medium none;
-	vertical-align: middle;
+	vertical-align: middle !important;
 	 -webkit-hyphens: auto;
 	  -moz-hyphens: auto;
 	  -ms-hyphens: auto;
