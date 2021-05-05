@@ -204,7 +204,7 @@ public class EntityVersionWebScript extends AbstractWebScript {
 
 					String description = (String) nodeService.getProperty(branchNodeRef, ContentModel.PROP_DESCRIPTION);
 					
-					if (description.length() > MAX_DESCRIPTION_LENGTH) {
+					if (description != null && description.length() > MAX_DESCRIPTION_LENGTH) {
 						description = description.substring(0, MAX_DESCRIPTION_LENGTH) + " ...";
 					}
 					
