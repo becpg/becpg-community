@@ -44,6 +44,8 @@ public class EntityVersionWebScript extends AbstractWebScript {
 	private static final String DISPLAY_FORMAT = "dd MMM yyyy HH:mm:ss 'GMT'Z '('zzz')'";
 	private static final String PARAM_MODE = "mode";
 
+	private static final int MAX_DESCRIPTION_LENGTH = 200;
+	
 	private static final Log logger = LogFactory.getLog(EntityVersionWebScript.class);
 
 	private EntityVersionService entityVersionService;
@@ -151,7 +153,14 @@ public class EntityVersionWebScript extends AbstractWebScript {
 
 					jsonVersion.put("name", name);
 					jsonVersion.put("label", version.getVersionLabel());
-					jsonVersion.put("description", version.getDescription());
+					
+					String description = version.getDescription();
+					
+					if (description != null && description.length() > MAX_DESCRIPTION_LENGTH) {
+						description = description.substring(0, MAX_DESCRIPTION_LENGTH) + " ...";
+					}
+					
+					jsonVersion.put("description", description);
 
 					Date createdDate = version.getFrozenModifiedDate();
 
@@ -193,7 +202,13 @@ public class EntityVersionWebScript extends AbstractWebScript {
 						jsonBranch.put("label", RepoConsts.INITIAL_VERSION);
 					}
 
-					jsonBranch.put("description", nodeService.getProperty(branchNodeRef, ContentModel.PROP_DESCRIPTION));
+					String description = (String) nodeService.getProperty(branchNodeRef, ContentModel.PROP_DESCRIPTION);
+					
+					if (description != null && description.length() > MAX_DESCRIPTION_LENGTH) {
+						description = description.substring(0, MAX_DESCRIPTION_LENGTH) + " ...";
+					}
+					
+					jsonBranch.put("description", description);
 					jsonBranch.put("createdDate", displayFormat.format((Date) nodeService.getProperty(branchNodeRef, ContentModel.PROP_CREATED)));
 					jsonBranch.put("createdDateISO",
 							ISO8601DateFormat.format((Date) nodeService.getProperty(branchNodeRef, ContentModel.PROP_CREATED)));
