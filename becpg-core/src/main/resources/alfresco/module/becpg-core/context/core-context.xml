@@ -280,35 +280,6 @@
         <property name="contentPropertyRestrictionInterceptor" ref="contentPropertyRestrictionInterceptor" />
     </bean>
     
-    
-     <!-- Ovverride alfresco version service -->
-    <bean id="versionService" class="fr.becpg.repo.entity.version.BecpgVersionServiceImpl" init-method="initialise">
-        <property name="nodeService">
-            <ref bean="NodeService" />
-        </property>
-        <property name="dbNodeService">
-            <ref bean="mtAwareNodeService" />
-        </property>
-        <property name="searcher">
-            <ref bean="versionSearchService" />
-        </property>
-        <property name="dictionaryService">
-            <ref bean="cachedDictionaryService" />
-        </property>
-        <property name="policyComponent">
-            <ref bean="policyComponent" />
-        </property>
-        <property name="policyBehaviourFilter">
-            <ref bean="policyBehaviourFilter" />
-        </property>
-        <property name="permissionService">
-            <ref bean="permissionService" />
-        </property>
-        <property name="versionComparatorClass">
-            <value>${version.store.versionComparatorClass}</value>
-        </property>
-    </bean>
-    
     <!-- Ovveride alfresco rule service -->
     
      <bean id="ruleService" class="org.alfresco.repo.rule.RuleServiceImpl" init-method="init">
