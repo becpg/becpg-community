@@ -20,9 +20,11 @@ package fr.becpg.repo.entity.impl;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.alfresco.model.ContentModel;
@@ -31,8 +33,8 @@ import org.alfresco.repo.rule.RuleModel;
 import org.alfresco.repo.rule.RuntimeRuleService;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
-import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
+import org.alfresco.repo.transfer.TransferModel;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.InvalidAspectException;
 import org.alfresco.service.cmr.dictionary.TypeDefinition;
@@ -100,6 +102,8 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 	private static final Log logger = LogFactory.getLog(EntityTplServiceImpl.class);
 
+	private static final Set<QName> isIgnoredAspect = new HashSet<>();
+
 	@Autowired
 	private NodeService nodeService;
 
@@ -147,6 +151,20 @@ public class EntityTplServiceImpl implements EntityTplService {
 	BeCPGMailService beCPGMailService;
 
 	private ReentrantLock lock = new ReentrantLock();
+
+	static {
+		isIgnoredAspect.add(ContentModel.ASPECT_VERSIONABLE);
+		isIgnoredAspect.add(ContentModel.ASPECT_TEMPORARY);
+		isIgnoredAspect.add(ContentModel.ASPECT_WORKING_COPY);
+		isIgnoredAspect.add(ContentModel.ASPECT_COPIEDFROM);
+		isIgnoredAspect.add(TransferModel.ASPECT_TRANSFERRED);
+		isIgnoredAspect.add(RuleModel.ASPECT_RULES);
+		isIgnoredAspect.add(BeCPGModel.ASPECT_ENTITY_TPL);
+	};
+
+	private boolean ignoreAspect(QName aspect) {
+		return (aspect.getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI) || isIgnoredAspect.contains(aspect));
+	}
 
 	/** {@inheritDoc} */
 	@Override
@@ -336,23 +354,21 @@ public class EntityTplServiceImpl implements EntityTplService {
 	@SuppressWarnings("unchecked")
 	public void synchronizeEntities(NodeRef tplNodeRef) {
 
-		boolean runWithSuccess = true;
+		boolean runWithSuccess = false;
 		StopWatch watch = new StopWatch();
 		watch.start();
 
 		if (lock.tryLock()) {
 			try {
 
-				
 				RepositoryEntity entityTpl = alfrescoRepository.findOne(tplNodeRef);
 
-
 				List<NodeRef> entityNodeRefs = getEntitiesToUpdate(tplNodeRef);
-				if(logger.isInfoEnabled()) {
+				if (logger.isInfoEnabled()) {
 					logger.info("Launch synchronizeEntities, size " + entityNodeRefs.size());
 				}
-				
-				doInBatch(entityNodeRefs, 10, entityNodeRef -> {
+
+				runWithSuccess = doInBatch(entityNodeRefs, 10, entityNodeRef -> {
 
 					final Map<QName, List<? extends RepositoryEntity>> datalistsTpl = repositoryEntityDefReader.getDataLists(entityTpl);
 
@@ -477,13 +493,16 @@ public class EntityTplServiceImpl implements EntityTplService {
 						}
 					}
 
+					// synchronize aspects
+					// copy missing aspects
+					Set<QName> aspects = nodeService.getAspects(tplNodeRef);
+					for (QName aspect : aspects) {
+						if (!nodeService.hasAspect(entityNodeRef, aspect) && !ignoreAspect(aspect)) {
+							nodeService.addAspect(entityNodeRef, aspect, null);
+						}
+					}
+
 				});
-			} catch (Exception e) {
-				if (RetryingTransactionHelper.extractRetryCause(e) != null) {
-					throw e;
-				}
-				runWithSuccess = false;
-				logger.error(e, e);
 
 			} finally {
 				lock.unlock();
@@ -556,20 +575,20 @@ public class EntityTplServiceImpl implements EntityTplService {
 	/** {@inheritDoc} */
 	@Override
 	public void formulateEntities(NodeRef tplNodeRef) {
-		boolean runWithSuccess = true;
+		boolean runWithSuccess = false;
 		StopWatch watch = new StopWatch();
 		watch.start();
 
 		if (lock.tryLock()) {
 			try {
-			
+
 				List<NodeRef> entityNodeRefs = getEntitiesToUpdate(tplNodeRef);
-				
-				if(logger.isInfoEnabled()) {
+
+				if (logger.isInfoEnabled()) {
 					logger.info("Launch formulateEntities, size " + entityNodeRefs.size());
 				}
 
-				doInBatch(entityNodeRefs, 5, entityNodeRef -> {
+				runWithSuccess = doInBatch(entityNodeRefs, 5, entityNodeRef -> {
 					try {
 						if (logger.isDebugEnabled()) {
 							logger.debug("Formulate : " + entityNodeRef);
@@ -581,11 +600,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 					}
 
 				});
-			} catch (Exception e) {
-				if (RetryingTransactionHelper.extractRetryCause(e) != null) {
-					throw e;
-				}
-				runWithSuccess = false;
+
 			} finally {
 				lock.unlock();
 				watch.stop();
@@ -602,17 +617,24 @@ public class EntityTplServiceImpl implements EntityTplService {
 		void run(NodeRef entityNodeRef);
 	}
 
-	private void doInBatch(final List<NodeRef> entityNodeRefs, final int batchSize, final BatchCallBack batchCallBack) {
+	private boolean doInBatch(final List<NodeRef> entityNodeRefs, final int batchSize, final BatchCallBack batchCallBack) {
 
 		StopWatch watch = null;
 		if (logger.isInfoEnabled()) {
 			watch = new StopWatch();
 			watch.start();
 		}
+		AtomicInteger batchCount = new AtomicInteger(0);
+		AtomicInteger errorCount = new AtomicInteger(0);
+		int total = entityNodeRefs.size() / batchSize;
+
 		L2CacheSupport.doInCacheContext(() -> {
+
 			for (final List<NodeRef> subList : Lists.partition(entityNodeRefs, batchSize)) {
+
 				RunAsWork<Object> actionRunAs = () -> {
 					RetryingTransactionCallback<Object> actionCallback = () -> {
+
 						for (final NodeRef entityNodeRef : subList) {
 							try {
 
@@ -635,8 +657,16 @@ public class EntityTplServiceImpl implements EntityTplService {
 					};
 					return transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback, false, true);
 				};
-				AuthenticationUtil.runAsSystem(actionRunAs);
 
+				try {
+
+					logger.info(" - Run batch:" + (batchCount.getAndIncrement()) + " over " + total);
+					AuthenticationUtil.runAsSystem(actionRunAs);
+				} catch (Exception e) {
+					errorCount.incrementAndGet();
+					logger.error("Error running batch: " + batchCount.get(), e);
+
+				}
 			}
 
 		}, false, true);
@@ -646,6 +676,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 			logger.info("Batch takes " + watch.getTotalTimeSeconds() + " seconds");
 		}
 
+		return errorCount.get() == 0;
 	}
 
 	private List<NodeRef> getEntitiesToUpdate(NodeRef tplNodeRef) {
@@ -694,7 +725,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 				// copy missing aspects
 				Set<QName> aspects = nodeService.getAspects(entityTplNodeRef);
 				for (QName aspect : aspects) {
-					if (!nodeService.hasAspect(entityNodeRef, aspect) && !BeCPGModel.ASPECT_ENTITY_TPL.isMatch(aspect)) {
+					if (!nodeService.hasAspect(entityNodeRef, aspect) && !ignoreAspect(aspect)) {
 						nodeService.addAspect(entityNodeRef, aspect, null);
 					}
 				}
@@ -764,7 +795,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 	@Override
 	public void removeDataListOnEntities(NodeRef entityTplNodeRef, String entityListName) {
 
-		boolean runWithSuccess = true;
+		boolean runWithSuccess = false;
 		StopWatch watch = new StopWatch();
 		watch.start();
 
@@ -773,7 +804,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 				List<NodeRef> entities = getEntitiesToUpdate(entityTplNodeRef);
 
-				doInBatch(entities, 10, entityNodeRef -> {
+				runWithSuccess = doInBatch(entities, 10, entityNodeRef -> {
 
 					NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
 					NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, entityListName);
@@ -797,11 +828,6 @@ public class EntityTplServiceImpl implements EntityTplService {
 					nodeService.deleteNode(tplListNodeRef);
 				}
 
-			} catch (Exception e) {
-				if (RetryingTransactionHelper.extractRetryCause(e) != null) {
-					throw e;
-				}
-				runWithSuccess = false;
 			} finally {
 				lock.unlock();
 				watch.stop();
