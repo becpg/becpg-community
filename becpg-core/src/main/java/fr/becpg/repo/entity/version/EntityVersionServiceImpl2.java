@@ -1054,6 +1054,7 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 				policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
 				policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_ENTITY_BRANCH);
+				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 
 				String newEntityName = repoService.getAvailableName(parentRef,
 						(String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME), true);
@@ -1064,6 +1065,9 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 				} else {
 					nodeService.setProperty(branchNodeRef, BeCPGModel.PROP_BRANCH_FROM_VERSION_LABEL, RepoConsts.INITIAL_VERSION);
 				}
+				nodeService.setProperty(branchNodeRef, ContentModel.PROP_MODIFIED, new Date());
+				nodeService.setProperty(branchNodeRef, ContentModel.PROP_MODIFIER, AuthenticationUtil.getFullyAuthenticatedUser());
+				
 				nodeService.setAssociations(branchNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY, Collections.singletonList(entityNodeRef));
 				
 				return branchNodeRef;
