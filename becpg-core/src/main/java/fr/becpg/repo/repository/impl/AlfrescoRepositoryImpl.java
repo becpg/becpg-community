@@ -40,7 +40,6 @@ import org.alfresco.repo.domain.node.NodeDAO;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.policy.PolicyComponent;
-import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -89,8 +88,7 @@ import fr.becpg.repo.repository.model.DefaultListDataItem;
  * @version $Id: $Id
  */
 @Repository("alfrescoRepository")
-public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements AlfrescoRepository<T>, NodeServicePolicies.OnCreateAssociationPolicy,
-		NodeServicePolicies.OnDeleteAssociationPolicy, NodeServicePolicies.OnDeleteNodePolicy, NodeServicePolicies.OnUpdatePropertiesPolicy {
+public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements AlfrescoRepository<T>, NodeServicePolicies.OnDeleteNodePolicy, NodeServicePolicies.OnUpdatePropertiesPolicy {
 
 	@Autowired
 	private NodeService nodeService;
@@ -131,39 +129,44 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 	@PostConstruct
 	public void init() {
-		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteAssociationPolicy.QNAME, BeCPGModel.TYPE_CHARACT,
-				new JavaBehaviour(this, "onDeleteAssociation"));
-		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, BeCPGModel.TYPE_CHARACT,
-				new JavaBehaviour(this, "onCreateAssociation"));
-
-		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteAssociationPolicy.QNAME, BeCPGModel.TYPE_ENTITY_V2,
-				new JavaBehaviour(this, "onDeleteAssociation"));
-		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, BeCPGModel.TYPE_ENTITY_V2,
-				new JavaBehaviour(this, "onCreateAssociation"));
+//		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteAssociationPolicy.QNAME, BeCPGModel.TYPE_CHARACT,
+//				new JavaBehaviour(this, "onDeleteAssociation"));
+//		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, BeCPGModel.TYPE_CHARACT,
+//				new JavaBehaviour(this, "onCreateAssociation"));
+//
+//		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteAssociationPolicy.QNAME, BeCPGModel.TYPE_ENTITY_V2,
+//				new JavaBehaviour(this, "onDeleteAssociation"));
+//		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, BeCPGModel.TYPE_ENTITY_V2,
+//				new JavaBehaviour(this, "onCreateAssociation"));
 
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME, BeCPGModel.TYPE_ENTITY_V2,
 				new JavaBehaviour(this, "onDeleteNode"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME, BeCPGModel.TYPE_CHARACT,
+				new JavaBehaviour(this, "onDeleteNode"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME, BeCPGModel.TYPE_LIST_VALUE,
 				new JavaBehaviour(this, "onDeleteNode"));
 
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, BeCPGModel.TYPE_ENTITY_V2,
 				new JavaBehaviour(this, "onUpdateProperties"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, BeCPGModel.TYPE_CHARACT,
 				new JavaBehaviour(this, "onUpdateProperties"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, BeCPGModel.TYPE_LIST_VALUE,
+				new JavaBehaviour(this, "onUpdateProperties"));
+
 
 	}
 
-	/** {@inheritDoc} */
-	@Override
-	public void onDeleteAssociation(AssociationRef associationRef) {
-		purgeCache(associationRef.getSourceRef());
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public void onCreateAssociation(AssociationRef associationRef) {
-		purgeCache(associationRef.getSourceRef());
-	}
+//	/** {@inheritDoc} */
+//	@Override
+//	public void onDeleteAssociation(AssociationRef associationRef) {
+//		purgeCache(associationRef.getSourceRef());
+//	}
+//
+//	/** {@inheritDoc} */
+//	@Override
+//	public void onCreateAssociation(AssociationRef associationRef) {
+//		purgeCache(associationRef.getSourceRef());
+//	}
 
 	/** {@inheritDoc} */
 	@Override
