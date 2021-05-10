@@ -1207,7 +1207,7 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 					crawlerParameters.setExportFrom(exportFrom);
 
 					crawlerParameters.setCrawlSelf(true);
-					crawlerParameters.setExcludeChildAssocs(new QName[] { RenditionModel.ASSOC_RENDITION, ForumModel.ASSOC_DISCUSSION, BeCPGModel.ASSOC_ENTITYLISTS, ContentModel.ASSOC_RATINGS});
+					crawlerParameters.setExcludeChildAssocs(new QName[] { QName.createQName(Version2Model.NAMESPACE_URI, VersionBaseModel.CHILD_VERSIONED_ASSOCS), RenditionModel.ASSOC_RENDITION, ForumModel.ASSOC_DISCUSSION, BeCPGModel.ASSOC_ENTITYLISTS, ContentModel.ASSOC_RATINGS});
 
 					crawlerParameters.setExcludeNamespaceURIs(Arrays.asList(ReportModel.TYPE_REPORT.getNamespaceURI()).toArray(new String[0]));
 
