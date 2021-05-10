@@ -470,9 +470,7 @@ public class EntityListsWebScript extends AbstractWebScript {
 			String storeId = templateArgs.get(PARAM_STORE_ID);
 			String nodeId = templateArgs.get(PARAM_ID);
 			String aclMode = req.getParameter(PARAM_ACL_MODE);
-
-			logger.debug("entityListsWebScript executeImpl()");
-
+			
 			List<NodeRef> listsNodeRef = new ArrayList<>();
 			final NodeRef nodeRef = new NodeRef(storeType, storeId, nodeId);
 			NodeRef listContainerNodeRef = null;

@@ -77,7 +77,7 @@ public class VariantListValuePlugin extends EntityListValuePlugin {
 		if(logger.isDebugEnabled()){
 			logger.debug("VariantListValuePlugin sourceType: " + sourceType + " - entityNodeRef: " + entityNodeRef);
 		}
-		List<NodeRef> ret = new ArrayList<NodeRef>(associationService.getChildAssocs(entityNodeRef, BeCPGModel.ASSOC_VARIANTS));
+		List<NodeRef> ret = new ArrayList<>(associationService.getChildAssocs(entityNodeRef, BeCPGModel.ASSOC_VARIANTS));
 		NodeRef entityTplNodeRef = associationService.getTargetAssoc(entityNodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF);
 		if (entityTplNodeRef != null) {
 			List<NodeRef> entityTplVariants = associationService.getChildAssocs(entityTplNodeRef, BeCPGModel.ASSOC_VARIANTS);

@@ -1819,6 +1819,11 @@
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
+				<property name="bcpg:ingListQtyPercWithYield">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
 				<property name="bcpg:ingListQtyMini">
 					<type>d:double</type>
 					<mandatory>false</mandatory>

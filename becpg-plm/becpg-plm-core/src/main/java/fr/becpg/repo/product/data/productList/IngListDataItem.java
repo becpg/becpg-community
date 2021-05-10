@@ -53,6 +53,8 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 
 	private Double qtyPerc = 0d;
 	
+	private Double qtyPercWithYield = 0d;
+	
 	private Double volumeQtyPerc;
 	
 	private List<NodeRef> geoOrigin = new LinkedList<>();
@@ -101,6 +103,17 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 	}
 	
 	
+	
+	@AlfProp
+	@AlfQname(qname="bcpg:ingListQtyPercWithYield")
+	public Double getQtyPercWithYield() {
+		return qtyPercWithYield;
+	}
+
+	public void setQtyPercWithYield(Double qtyPercWithYield) {
+		this.qtyPercWithYield = qtyPercWithYield;
+	}
+
 	/**
 	 * <p>Getter for the field <code>mini</code>.</p>
 	 *
@@ -489,17 +502,15 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 		setIsSupport(i.getIsSupport());
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + Objects.hash(bioOrigin, depthLevel, geoOrigin, geoTransfo, ing, isGMO, isIonized, isProcessingAid, isSupport, maxi,
-				mini, parent, qtyPerc, volumeQtyPerc);
+				mini, parent, qtyPerc, qtyPercWithYield, volumeQtyPerc);
 		return result;
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -514,16 +525,16 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 				&& Objects.equals(isGMO, other.isGMO) && Objects.equals(isIonized, other.isIonized)
 				&& Objects.equals(isProcessingAid, other.isProcessingAid) && Objects.equals(isSupport, other.isSupport)
 				&& Objects.equals(maxi, other.maxi) && Objects.equals(mini, other.mini) && Objects.equals(parent, other.parent)
-				&& Objects.equals(qtyPerc, other.qtyPerc) && Objects.equals(volumeQtyPerc, other.volumeQtyPerc);
+				&& Objects.equals(qtyPerc, other.qtyPerc) && Objects.equals(qtyPercWithYield, other.qtyPercWithYield)
+				&& Objects.equals(volumeQtyPerc, other.volumeQtyPerc);
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return "IngListDataItem [qtyPerc=" + qtyPerc + ", volumeQtyPerc=" + volumeQtyPerc + ", geoOrigin=" + geoOrigin + ", geoTransfo=" + geoTransfo
-				+ ", bioOrigin=" + bioOrigin + ", isGMO=" + isGMO + ", isIonized=" + isIonized + ", ing=" + ing + ", isProcessingAid="
-				+ isProcessingAid + ", isSupport=" + isSupport + ", depthLevel=" + depthLevel + ", parent=" + parent + ", mini=" + mini + ", maxi="
-				+ maxi + "]";
+		return "IngListDataItem [qtyPerc=" + qtyPerc + ", qtyPercWithYield=" + qtyPercWithYield + ", volumeQtyPerc=" + volumeQtyPerc + ", geoOrigin="
+				+ geoOrigin + ", geoTransfo=" + geoTransfo + ", bioOrigin=" + bioOrigin + ", isGMO=" + isGMO + ", isIonized=" + isIonized + ", ing="
+				+ ing + ", isProcessingAid=" + isProcessingAid + ", isSupport=" + isSupport + ", depthLevel=" + depthLevel + ", parent=" + parent
+				+ ", mini=" + mini + ", maxi=" + maxi + "]";
 	}
 
 	/** {@inheritDoc} */
