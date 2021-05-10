@@ -102,7 +102,7 @@ public class RemoteParams {
 						}
 					} else {
 						if(isRejected) {
-						ignoredFields.add(propQname);
+							ignoredFields.add(propQname);
 						} else {
 							filteredProperties.add(propQname);
 						}

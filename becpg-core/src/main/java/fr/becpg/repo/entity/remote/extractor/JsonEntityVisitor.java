@@ -203,15 +203,18 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 				entity.put(RemoteEntityService.ATTR_ID, nodeRef.getId());
 			}
 		}
+		
 
 		JSONObject attributes = new JSONObject();
 		if (JsonVisitNodeType.ENTITY.equals(type) || JsonVisitNodeType.DATALIST.equals(type)
 				|| ((JsonVisitNodeType.ENTITY_LIST.equals(type) || JsonVisitNodeType.CONTENT.equals(type)) && (params.getFilteredProperties() != null)
 						&& !params.getFilteredProperties().isEmpty())
-				|| ((nodeType != null) && params.getFilteredAssocProperties().containsKey(nodeType)) || JsonVisitNodeType.CHILD_ASSOC.equals(type)) {
+				|| ((nodeType != null) && params.getFilteredAssocProperties().containsKey(nodeType))
+				||  ((assocName!=null) && params.getFilteredAssocProperties().containsKey(assocName))
+				|| JsonVisitNodeType.CHILD_ASSOC.equals(type)) {
 
 			// Assoc first
-			visitAssocs(nodeRef, attributes, context);
+			visitAssocs(nodeRef, attributes, assocName, context);
 			visitProps(nodeRef, attributes, assocName, properties, context);
 
 		}
@@ -312,7 +315,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 	}
 
-	private void visitAssocs(NodeRef nodeRef, JSONObject entity, RemoteJSONContext context) throws JSONException {
+	private void visitAssocs(NodeRef nodeRef, JSONObject entity, QName assocName, RemoteJSONContext context) throws JSONException {
 
 		TypeDefinition typeDef = entityDictionaryService.getType(nodeService.getType(nodeRef));
 		if (typeDef != null) {
@@ -376,13 +379,14 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 						&& !assocDef.isChild() && params.shouldExtractField(assocDef.getName())
 
 				) {
+				
+					
 					QName nodeType = assocDef.getName().getPrefixedQName(namespaceService);
-					// fields & assocs filter
-					if ((params.getFilteredProperties() != null) && !params.getFilteredProperties().isEmpty()
-							&& !params.getFilteredProperties().contains(nodeType)) {
+					
+					if(!matchProp(assocName,nodeType)) {
 						continue;
 					}
-
+					
 					JSONArray jsonAssocs = new JSONArray();
 
 					List<AssociationRef> assocRefs = nodeService.getTargetAssocs(nodeRef, assocDef.getName());
@@ -412,6 +416,24 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 	}
 
+	private boolean matchProp(QName assocName, QName propName) {
+		
+		if (((assocName == null) && (params.getFilteredProperties() != null) && !params.getFilteredProperties().isEmpty()
+				&& !params.getFilteredProperties().contains(propName))
+				|| ((assocName != null) && (params.getFilteredAssocProperties() != null)
+						&& !params.getFilteredAssocProperties().isEmpty()
+						&& (!params.getFilteredAssocProperties().containsKey(assocName)
+								|| !params.getFilteredAssocProperties().get(assocName).contains(propName)))
+
+		) {
+			return false;
+		}
+		
+		
+		return true;
+		
+	}
+
 	private void visitProps(NodeRef nodeRef, JSONObject entity, QName assocName, Map<QName, Serializable> props, RemoteJSONContext context)
 			throws JSONException {
 
@@ -427,14 +449,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 						QName propName = entry.getKey().getPrefixedQName(namespaceService);
 
 						// Assoc properties filter
-						if (((assocName == null) && (params.getFilteredProperties() != null) && !params.getFilteredProperties().isEmpty()
-								&& !params.getFilteredProperties().contains(propName))
-								|| ((assocName != null) && (params.getFilteredAssocProperties() != null)
-										&& !params.getFilteredAssocProperties().isEmpty()
-										&& (!params.getFilteredAssocProperties().containsKey(assocName)
-												|| !params.getFilteredAssocProperties().get(assocName).contains(propName)))
-
-						) {
+						if(!matchProp(assocName,propName)) {
 							continue;
 						}
 

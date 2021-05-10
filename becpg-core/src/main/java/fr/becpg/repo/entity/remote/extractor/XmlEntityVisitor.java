@@ -345,6 +345,13 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 
 						continue;
 					}
+					
+					// Assoc properties filter
+					if ((cachedAssocRef != null) && (cachedAssocRef.get(nodeRef) != null) && cachedAssocRef.containsKey(nodeRef)
+							&& !cachedAssocRef.get(nodeRef).contains(nodeType)) {
+						continue;
+					}
+
 
 					xmlw.writeStartElement(prefix, nodeType.getLocalName(), nodeType.getNamespaceURI());
 					xmlw.writeAttribute(RemoteEntityService.ATTR_TYPE, RemoteEntityService.CHILD_ASSOC_TYPE);
@@ -375,6 +382,12 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 							&& !params.getFilteredProperties().contains(nodeType) && (extractLevel == 1)) {
 						continue;
 					}
+					
+					// Assoc properties filter
+					if ((cachedAssocRef != null) && (cachedAssocRef.get(nodeRef) != null) && cachedAssocRef.containsKey(nodeRef)
+							&& !cachedAssocRef.get(nodeRef).contains(nodeType)) {
+						continue;
+					}
 
 					xmlw.writeStartElement(prefix, nodeType.getLocalName(), nodeType.getNamespaceURI());
 
@@ -385,7 +398,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 						// extract assoc properties
 						if (params.getFilteredAssocProperties().containsKey(nodeType)) {
 							cachedAssocRef = Collections.singletonMap(childRef, params.getFilteredAssocProperties().get((nodeType)));
-							visitNode(childRef, xmlw, shouldDumpAll(childRef), true, false);
+							visitNode(childRef, xmlw, true, true, false);
 
 						} else {
 							visitNode(childRef, xmlw, shouldDumpAll(childRef), shouldDumpAll(childRef), false);
