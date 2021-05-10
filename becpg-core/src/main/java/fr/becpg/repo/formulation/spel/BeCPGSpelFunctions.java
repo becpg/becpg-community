@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.node.MLPropertyInterceptor;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.MLText;
@@ -167,6 +168,59 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 			}
 			return null;
 		}
+		
+		/**
+		 * Helper @beCPG.propMLValue($entity, $qname, $locale)
+		 * 
+		 * @param item
+		 * @param qname
+		 * @param locale
+		 * @return
+		 */
+		public String propMLValue(RepositoryEntity item, String qname, String locale) {
+			Serializable value;
+
+			boolean isMLAware = MLPropertyInterceptor.isMLAware();
+			try {
+				MLPropertyInterceptor.setMLAware(true);
+				value = propValue(item, qname);
+			} finally {
+				MLPropertyInterceptor.setMLAware(isMLAware);
+			}
+
+			if (value instanceof MLText) {
+				return MLTextHelper.getClosestValue((MLText) value, MLTextHelper.parseLocale(locale));
+			}
+
+			return null;
+		}
+
+		/**
+		 * Helper @beCPG.propMLValue($nodeRef, $qname, $locale)
+		 * 
+		 * @param nodeRef
+		 * @param qname
+		 * @param locale
+		 * @return
+		 */
+		public String propMLValue(NodeRef nodeRef, String qname, String locale) {
+			MLText value;
+
+			boolean isMLAware = MLPropertyInterceptor.isMLAware();
+			try {
+				MLPropertyInterceptor.setMLAware(true);
+				value = (MLText) nodeService.getProperty(nodeRef, getQName(qname));
+				if(value!=null) {
+					return MLTextHelper.getClosestValue((MLText) value, MLTextHelper.parseLocale(locale));
+				}
+				
+			} finally {
+				MLPropertyInterceptor.setMLAware(isMLAware);
+			}
+
+			return null;
+		}
+		
 
 		/**
 		 * Helper @beCPG.propValue( $qname)
