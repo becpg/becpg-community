@@ -137,6 +137,8 @@ public interface PLMModel {
 	QName TYPE_INGLIST = QName.createQName(BeCPGModel.BECPG_URI, "ingList");
 	/** Constant <code>PROP_INGLIST_QTY_PERC</code> */
 	QName PROP_INGLIST_QTY_PERC = QName.createQName(BeCPGModel.BECPG_URI, "ingListQtyPerc");
+	
+	QName PROP_INGLIST_QTY_PERCWITHYIELD = QName.createQName(BeCPGModel.BECPG_URI, "ingListQtyPercWithYield");
 	/** Constant <code>PROP_INGLIST_IS_GMO</code> */
 	QName PROP_INGLIST_IS_GMO = QName.createQName(BeCPGModel.BECPG_URI, "ingListIsGMO");
 	/** Constant <code>PROP_INGLIST_IS_IONIZED</code> */
@@ -144,7 +146,7 @@ public interface PLMModel {
 	/** Constant <code>PROP_INGLIST_IS_PROCESSING_AID</code> */
 	QName PROP_INGLIST_IS_PROCESSING_AID = QName.createQName(BeCPGModel.BECPG_URI, "ingListIsProcessingAid");
 	/** Constant <code>PROP_INGLIST_DECL_TYPE</code> */
-	QName PROP_INGLIST_DECL_TYPE = QName.createQName(BeCPGModel.BECPG_URI, "bcpg:ingListDeclType");
+	QName PROP_INGLIST_DECL_TYPE = QName.createQName(BeCPGModel.BECPG_URI, "ingListDeclType");
 	/** Constant <code>ASSOC_INGLIST_GEO_ORIGIN</code> */
 	QName ASSOC_INGLIST_GEO_ORIGIN = QName.createQName(BeCPGModel.BECPG_URI, "ingListGeoOrigin");
 	/** Constant <code>ASSOC_INGLIST_BIO_ORIGIN</code> */
@@ -153,7 +155,6 @@ public interface PLMModel {
 	QName ASSOC_INGLIST_ING = QName.createQName(BeCPGModel.BECPG_URI, "ingListIng");
 	
 	
-
 	// nutList
 	/** Constant <code>TYPE_NUTLIST</code> */
 	QName TYPE_NUTLIST = QName.createQName(BeCPGModel.BECPG_URI, "nutList");
@@ -661,6 +662,7 @@ public interface PLMModel {
 	QName PROP_MODIFIED_CATALOG2 =  QName.createQName(BeCPGModel.BECPG_URI, "modifiedCatalog2");
 	/** Constant <code>PROP_MODIFIED_CATALOG3</code> */
 	QName PROP_MODIFIED_CATALOG3 =  QName.createQName(BeCPGModel.BECPG_URI, "modifiedCatalog3");
+
 	
 	
 }

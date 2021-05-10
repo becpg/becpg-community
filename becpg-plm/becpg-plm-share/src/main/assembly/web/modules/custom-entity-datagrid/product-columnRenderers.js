@@ -356,7 +356,7 @@ if (beCPG.module.EntityDataGridRenderers) {
   });
 	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-      propertyName : ["bcpg:allergenListQtyPerc", "bcpg:filQtyPercMaxi", "bcpg:allergenRegulatoryThreshold", "bcpg:ingListQtyPerc"],
+      propertyName : ["bcpg:allergenListQtyPerc", "bcpg:filQtyPercMaxi", "bcpg:allergenRegulatoryThreshold", "bcpg:ingListQtyPerc", "bcpg:ingListQtyPercWithYield"],
       renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
       	if(data.value != null){
       		var unit, qty;
@@ -377,6 +377,7 @@ if (beCPG.module.EntityDataGridRenderers) {
       	return "";
       }
   });
+	
 	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
       propertyName : "bcpg:cost",
