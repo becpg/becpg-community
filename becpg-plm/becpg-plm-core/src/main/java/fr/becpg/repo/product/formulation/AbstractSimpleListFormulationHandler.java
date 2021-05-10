@@ -721,8 +721,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 					formulatedCharactDataItem.setErrorLog(error);
 
 					ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Tolerated,
-							MLTextHelper.getI18NMessage(errorKey, Locale.getDefault(),
-									mlNodeService.getProperty(formulatedCharactDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME), error),
+							MLTextHelper.getI18NMessage(errorKey, mlNodeService.getProperty(formulatedCharactDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME), error),
 							formulatedCharactDataItem.getCharactNodeRef(), new ArrayList<>(), getRequirementDataType());
 					formulatedProduct.getReqCtrlList().add(rclDataItem);
 				}
