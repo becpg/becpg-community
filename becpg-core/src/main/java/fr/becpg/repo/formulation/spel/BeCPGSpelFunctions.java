@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -211,7 +212,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 				MLPropertyInterceptor.setMLAware(true);
 				value = (MLText) nodeService.getProperty(nodeRef, getQName(qname));
 				if(value!=null) {
-					return MLTextHelper.getClosestValue((MLText) value, MLTextHelper.parseLocale(locale));
+					return MLTextHelper.getClosestValue(value, MLTextHelper.parseLocale(locale));
 				}
 				
 			} finally {
@@ -379,7 +380,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		public List<Serializable> assocPropValues(NodeRef nodeRef, String assocQname, String propQName) {
 			if (nodeRef != null) {
 				return associationService.getTargetAssocs(nodeRef, getQName(assocQname)).stream().map(o -> propValue(o, propQName))
-						.filter(o -> o != null).collect(Collectors.toList());
+						.filter(Objects::nonNull).collect(Collectors.toList());
 			}
 			return null;
 		}
@@ -403,7 +404,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		public List<NodeRef> assocAssocValues(NodeRef nodeRef, String assocQname, String assocAssocQName) {
 			if (nodeRef != null) {
 				return associationService.getTargetAssocs(nodeRef, getQName(assocQname)).stream().map(o -> assocValue(o, assocAssocQName))
-						.filter(o -> o != null).collect(Collectors.toList());
+						.filter(Objects::nonNull).collect(Collectors.toList());
 			}
 			return null;
 		}
