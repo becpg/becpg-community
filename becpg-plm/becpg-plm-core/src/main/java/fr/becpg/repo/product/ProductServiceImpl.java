@@ -47,6 +47,9 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.lexer.CompositionLexer;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
+import io.opencensus.common.Scope;
+import io.opencensus.trace.Tracer;
+import io.opencensus.trace.Tracing;
 
 /**
  * <p>ProductServiceImpl class.</p>
@@ -59,6 +62,8 @@ public class ProductServiceImpl implements ProductService, InitializingBean, For
 
 
 	private static final Log logger = LogFactory.getLog(ProductServiceImpl.class);
+	
+	private static final Tracer tracer = Tracing.getTracer();
 
 	@Autowired
 	private AlfrescoRepository<ProductData> alfrescoRepository;
@@ -98,7 +103,7 @@ public class ProductServiceImpl implements ProductService, InitializingBean, For
 	/** {@inheritDoc} */
 	@Override
 	public void formulate(NodeRef productNodeRef, String chainId) {
-		try {
+		try (Scope scope = tracer.spanBuilder("productService.Formulate").startScopedSpan()){
 			policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
 			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);

@@ -84,6 +84,9 @@ import fr.becpg.repo.repository.RepositoryEntityDefReader;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.repository.model.Synchronisable;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
+import io.opencensus.common.Scope;
+import io.opencensus.trace.Tracer;
+import io.opencensus.trace.Tracing;
 
 /**
  * <p>
@@ -101,6 +104,8 @@ public class EntityTplServiceImpl implements EntityTplService {
 	private static final String ENTITY_DATALIST_KEY_PREFIX = "entity-datalist-";
 
 	private static final Log logger = LogFactory.getLog(EntityTplServiceImpl.class);
+	
+	private static final Tracer tracer = Tracing.getTracer();
 	
 	private static final Set<QName> isIgnoredAspect = new HashSet<>();
 	
@@ -590,7 +595,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 		watch.start();
 
 		if (lock.tryLock()) {
-			try {
+			try (Scope scope = tracer.spanBuilder("templateService:Formulate").startScopedSpan()) {
 			
 				List<NodeRef> entityNodeRefs = getEntitiesToUpdate(tplNodeRef);
 				

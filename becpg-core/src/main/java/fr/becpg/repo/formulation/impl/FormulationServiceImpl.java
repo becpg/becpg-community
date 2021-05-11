@@ -137,7 +137,7 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 	@Override
 	public T formulate(NodeRef entityNodeRef, String chainId)  {
 		Locale currentLocal = I18NUtil.getLocale();
-		try(Scope scope = tracer.spanBuilder("formulateEntity").startScopedSpan()) {
+		try(Scope scope = tracer.spanBuilder("formulationService.FormulateEntity").startScopedSpan()) {
 			tracer.getCurrentSpan().addAnnotation("findOne");
 			
 			I18NUtil.setLocale(Locale.getDefault());
@@ -175,7 +175,7 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 	/** {@inheritDoc} */
 	@Override
 	public T formulate(T repositoryEntity, String chainId) {
-		try(Scope scope = tracer.spanBuilder("formulate").startScopedSpan()) {
+		try(Scope scope = tracer.spanBuilder("formulationService.Formulate").startScopedSpan()) {
 
 			FormulationChain<T> chain = getChain(repositoryEntity.getClass(), chainId);
 

@@ -30,10 +30,15 @@ import fr.becpg.repo.helper.extractors.ForumDataExtractor;
 import fr.becpg.repo.helper.extractors.LinkDataExtractor;
 import fr.becpg.repo.helper.extractors.NodeDataExtractor;
 import fr.becpg.repo.helper.extractors.WikiDataExtractor;
+import fr.becpg.repo.telemetry.OpenCensusConfiguration;
 import fr.becpg.repo.web.scripts.WebscriptHelper;
 import io.opencensus.common.Scope;
+import io.opencensus.trace.Sampler;
 import io.opencensus.trace.Tracer;
 import io.opencensus.trace.Tracing;
+import io.opencensus.trace.config.TraceConfig;
+import io.opencensus.trace.config.TraceParams;
+import io.opencensus.trace.samplers.Samplers;
 
 /**
  * Webscript that send the result of a search
@@ -73,46 +78,51 @@ public class SearchWebScript extends AbstractSearchWebScript {
 	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
-		try (Scope scope = tracer.spanBuilder("/internal/search").startScopedSpan()) {
+		
+		TraceConfig traceConfig = Tracing.getTraceConfig();
+		TraceParams activeTraceParams = traceConfig.getActiveTraceParams();
+		Sampler currentSampler = activeTraceParams.getSampler();
+		traceConfig.updateActiveTraceParams(activeTraceParams.toBuilder().setSampler(Samplers.probabilitySampler(OpenCensusConfiguration.ADVANCED_SEARCH_SAMPLING_PROBABILITY)).build());
 
+		try (Scope scope = tracer.spanBuilder("/internal/search").startScopedSpan()) {
 			StopWatch watch = null;
 			if (logger.isDebugEnabled()) {
 				watch = new StopWatch();
 				watch.start();
 				logger.debug("SearchWebScript executeImpl()");
 			}
-
+			
 			Integer maxResults = getNumParameter(req, PARAM_MAX_RESULTS);
 			Integer page = getNumParameter(req, PARAM_PAGE);
 			Integer pageSize = getNumParameter(req, PARAM_PAGE_SIZE);
 			List<String> metadataFields = WebscriptHelper.extractMetadataFields(req);
-
+			
 			try {
 				List<NodeRef> results = doSearch(req, maxResults);
-
+				
 				if (page == null) {
 					page = 1;
 				}
-
+				
 				if (pageSize == null) {
 					pageSize = 25;
 				}
 				int size = results.size();
-
+				
 				// Pagination
 				if (size > 0) {
 					results = results.subList(Math.max((page - 1) * pageSize, 0), Math.min(page * pageSize, size));
 				}
-
+				
 				JSONObject ret = processResults(results, metadataFields);
 				ret.put("page", page);
 				ret.put("pageSize", pageSize);
 				ret.put("fullListSize", size);
-
+				
 				res.setContentType("application/json");
 				res.setContentEncoding("UTF-8");
 				res.getWriter().write(ret.toString(3));
-
+				
 			} catch (JSONException e) {
 				throw new WebScriptException("Unable to serialize JSON");
 			} finally {
@@ -120,8 +130,13 @@ public class SearchWebScript extends AbstractSearchWebScript {
 					watch.stop();
 					logger.debug("SearchWebScript execute in " + watch.getTotalTimeSeconds() + "s");
 				}
+				
 			}
+			
+		} finally {
+			traceConfig.updateActiveTraceParams(activeTraceParams.toBuilder().setSampler(currentSampler).build());
 		}
+
 
 	}
 
