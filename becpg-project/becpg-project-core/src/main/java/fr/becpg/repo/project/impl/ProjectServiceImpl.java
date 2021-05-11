@@ -56,7 +56,6 @@ import fr.becpg.model.ReportModel;
 import fr.becpg.repo.ProjectRepoConsts;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityDictionaryService;
-import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationPlugin;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.AssociationService;
@@ -72,6 +71,9 @@ import fr.becpg.repo.project.policy.ProjectListPolicy;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
+import io.opencensus.common.Scope;
+import io.opencensus.trace.Tracer;
+import io.opencensus.trace.Tracing;
 
 /**
  * Project service that manage project
@@ -85,6 +87,8 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin {
 
 	private static final Log logger = LogFactory.getLog(ProjectServiceImpl.class);
 
+	private static final Tracer tracer = Tracing.getTracer();
+	
 	@Autowired
 	private AlfrescoRepository<ProjectData> alfrescoRepository;
 	@Autowired
@@ -240,7 +244,7 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin {
 	@Override
 	public void formulate(NodeRef projectNodeRef)  {
 		if (nodeService.getType(projectNodeRef).equals(ProjectModel.TYPE_PROJECT)) {
-			try {
+			try (Scope scope = tracer.spanBuilder("projectService.Formulate").startScopedSpan()){
 
 				policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_LOG_TIME_LIST);
 				policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);

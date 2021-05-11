@@ -55,6 +55,10 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
+import io.opencensus.common.Scope;
+import io.opencensus.trace.Tracer;
+import io.opencensus.trace.Tracing;
+import io.opencensus.trace.samplers.Samplers;
 
 /**
  * <p>AutomaticECOServiceImpl class.</p>
@@ -68,6 +72,8 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 	private static final String CURRENT_ECO_PREF = "fr.becpg.ecm.currentEcmNodeRef";
 
 	private static final Log logger = LogFactory.getLog(AutomaticECOService.class);
+	
+	private static final Tracer tracer = Tracing.getTracer();
 
 	@Autowired
 	private RepoService repoService;
@@ -412,7 +418,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 							logger.debug("Reformulating product: " + nodeService.getProperty(toReformulate, ContentModel.PROP_NAME) + " ("
 									+ toReformulate + ") ");
 						}
-						try {
+						try (Scope scope = tracer.spanBuilder("automaticEcoService.Reformulate").startScopedSpan()){
 							policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
 							policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 							policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);

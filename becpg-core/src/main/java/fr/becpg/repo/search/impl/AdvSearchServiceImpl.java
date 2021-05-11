@@ -19,6 +19,7 @@ package fr.becpg.repo.search.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +47,15 @@ import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.search.AdvSearchPlugin;
 import fr.becpg.repo.search.AdvSearchService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
+import fr.becpg.repo.telemetry.OpenCensusConfiguration;
+import io.opencensus.common.Scope;
+import io.opencensus.trace.AttributeValue;
+import io.opencensus.trace.Sampler;
+import io.opencensus.trace.Tracer;
+import io.opencensus.trace.Tracing;
+import io.opencensus.trace.config.TraceConfig;
+import io.opencensus.trace.config.TraceParams;
+import io.opencensus.trace.samplers.Samplers;
 
 /**
  * This class do a search on the repository (association, properties and
@@ -60,6 +70,8 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 	private static final Log logger = LogFactory.getLog(AdvSearchServiceImpl.class);
 
+	private static final Tracer tracer = Tracing.getTracer();
+	
 	@Autowired
 	private NamespaceService namespaceService;
 
@@ -117,41 +129,84 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	@Override
 	public List<NodeRef> queryAdvSearch(QName datatype, BeCPGQueryBuilder beCPGQueryBuilder, Map<String, String> criteria, int maxResults) {
 
-		SearchConfig searchConfig = getSearchConfig();
-
-		logger.debug("advSearch, dataType=" + datatype + ", \ncriteria=" + criteria + "\nplugins: " + Arrays.asList(advSearchPlugins));
-		if (isAssocSearch(criteria) || (maxResults > RepoConsts.MAX_RESULTS_1000)) {
-			maxResults = RepoConsts.MAX_RESULTS_UNLIMITED;
-		} else if (maxResults <= 0) {
-			maxResults = RepoConsts.MAX_RESULTS_1000;
-		}
-
-		Set<String> ignoredFields = new HashSet<>();
-
-		if (advSearchPlugins != null) {
-			for (AdvSearchPlugin advSearchPlugin : advSearchPlugins) {
-				ignoredFields.addAll(advSearchPlugin.getIgnoredFields(datatype, searchConfig));
+		List<NodeRef> nodes = null;
+		
+		TraceConfig traceConfig = Tracing.getTraceConfig();
+		TraceParams activeTraceParams = traceConfig.getActiveTraceParams();
+		
+		Sampler currentSampler = activeTraceParams.getSampler();
+		
+		traceConfig.updateActiveTraceParams(activeTraceParams.toBuilder().setSampler(Samplers.probabilitySampler(OpenCensusConfiguration.ADVANCED_SEARCH_SAMPLING_PROBABILITY)).build());
+		
+		try (Scope scope = tracer.spanBuilder("searchService.QuerySearch").startScopedSpan()) {
+			
+			if (datatype != null) {
+				tracer.getCurrentSpan().putAttribute("datatype", AttributeValue.stringAttributeValue(datatype.getLocalName()));
 			}
-		}
+			
+			Map<String, AttributeValue> attributes = new HashMap<>();
+			
+			if (criteria != null) {
+				criteria.forEach((e, v) -> attributes.put(e, v == null ? null : AttributeValue.stringAttributeValue(v)));
+			}
+			
+			tracer.getCurrentSpan().putAttributes(attributes);
 
-		addCriteriaMap(beCPGQueryBuilder, criteria, ignoredFields);
-
-		List<NodeRef> nodes = beCPGQueryBuilder.maxResults(maxResults).ofType(datatype).inDBIfPossible().list();
-
-		if (advSearchPlugins != null) {
-			StopWatch watch = null;
-			for (AdvSearchPlugin advSearchPlugin : advSearchPlugins) {
-				if (logger.isDebugEnabled()) {
-					watch = new StopWatch();
-					watch.start();
-				}
-				nodes = advSearchPlugin.filter(nodes, datatype, criteria, searchConfig);
-				if (logger.isDebugEnabled() && (watch != null)) {
-					watch.stop();
-					logger.debug("query filter " + advSearchPlugin.getClass().getName() + " executed in  " + watch.getTotalTimeSeconds()
-							+ " seconds, new size: " + nodes.size());
+			tracer.getCurrentSpan().addAnnotation("getSearchConfig");
+			SearchConfig searchConfig = getSearchConfig();
+			
+			logger.debug("advSearch, dataType=" + datatype + ", \ncriteria=" + criteria + "\nplugins: " + Arrays.asList(advSearchPlugins));
+			if (isAssocSearch(criteria) || (maxResults > RepoConsts.MAX_RESULTS_1000)) {
+				maxResults = RepoConsts.MAX_RESULTS_UNLIMITED;
+			} else if (maxResults <= 0) {
+				maxResults = RepoConsts.MAX_RESULTS_1000;
+			}
+			
+			Set<String> ignoredFields = new HashSet<>();
+			
+			if (advSearchPlugins != null) {
+				for (AdvSearchPlugin advSearchPlugin : advSearchPlugins) {
+					ignoredFields.addAll(advSearchPlugin.getIgnoredFields(datatype, searchConfig));
 				}
 			}
+			
+			tracer.getCurrentSpan().addAnnotation("addCriteriaMap");
+			addCriteriaMap(beCPGQueryBuilder, criteria, ignoredFields);
+			
+			beCPGQueryBuilder.maxResults(maxResults).ofType(datatype).inDBIfPossible();
+			
+			try (Scope scope2 = tracer.spanBuilder("beCPGQueryBuilder.List").startScopedSpan()) {
+				tracer.getCurrentSpan().putAttribute("query", AttributeValue.stringAttributeValue(beCPGQueryBuilder.toString()));
+				nodes = beCPGQueryBuilder.list();
+			}
+			
+			if (advSearchPlugins != null) {
+				StopWatch watch = null;
+				for (AdvSearchPlugin advSearchPlugin : advSearchPlugins) {
+					if (logger.isDebugEnabled()) {
+						watch = new StopWatch();
+						watch.start();
+					}
+					try (Scope scope2 = tracer.spanBuilder(advSearchPlugin.getClass().getSimpleName() + ".Filter").startScopedSpan()) {
+						
+						if (datatype != null) {
+							tracer.getCurrentSpan().putAttribute("datatype", AttributeValue.stringAttributeValue(datatype.getLocalName()));
+						}
+						
+						tracer.getCurrentSpan().putAttributes(attributes);
+						
+						nodes = advSearchPlugin.filter(nodes, datatype, criteria, searchConfig);
+					}
+
+					if (logger.isDebugEnabled() && (watch != null)) {
+						watch.stop();
+						logger.debug("query filter " + advSearchPlugin.getClass().getName() + " executed in  " + watch.getTotalTimeSeconds()
+						+ " seconds, new size: " + nodes.size());
+					}
+				}
+			}
+		} finally {
+			traceConfig.updateActiveTraceParams(activeTraceParams.toBuilder().setSampler(currentSampler).build());
 		}
 
 		return nodes;

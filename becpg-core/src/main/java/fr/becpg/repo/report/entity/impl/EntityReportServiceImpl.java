@@ -100,6 +100,11 @@ import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.report.client.ReportException;
 import fr.becpg.report.client.ReportFormat;
 import fr.becpg.report.client.ReportParams;
+import io.opencensus.common.Scope;
+import io.opencensus.trace.Annotation;
+import io.opencensus.trace.AttributeValue;
+import io.opencensus.trace.Tracer;
+import io.opencensus.trace.Tracing;
 
 /**
  * <p>EntityReportServiceImpl class.</p>
@@ -116,6 +121,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 	private static final String REPORT_LIST_CACHE_KEY = "REPORT_KIND_CACHE_KEY";
 
 	private static final Log logger = LogFactory.getLog(EntityReportServiceImpl.class);
+	
+	private static final Tracer tracer = Tracing.getTracer();
 
 	@Value("${beCPG.report.name.format}")
 	private String reportNameFormat;
@@ -195,7 +202,9 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 	@Override
 	public void generateReports(final NodeRef nodeRefFrom, final NodeRef nodeRefTo) {
-		internalGenerateReports(nodeRefFrom != null ? nodeRefFrom : nodeRefTo, nodeRefTo);
+		try (Scope scope = tracer.spanBuilder("reportService.InternalGenerate").startScopedSpan()) {
+			internalGenerateReports(nodeRefFrom != null ? nodeRefFrom : nodeRefTo, nodeRefTo);
+		}
 	}
 
 	private void internalGenerateReports(final NodeRef nodeRefFrom, final NodeRef nodeRefTo) {
@@ -243,6 +252,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 			logger.debug("Generate reports for entity: " + entityNodeRef + " - "
 					+ nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
 		}
+		
 
 		Date generatedDate = Calendar.getInstance().getTime();
 
@@ -284,7 +294,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 			}
 
 			for (Locale locale : entityReportLocales) {
-
+				
 				I18NUtil.setLocale(locale);
 				I18NUtil.setContentLocale(locale);
 
@@ -329,6 +339,12 @@ public class EntityReportServiceImpl implements EntityReportService {
 											BeCPGReportEngine engine = getReportEngine(tplNodeRef,
 													ReportFormat.valueOf(reportFormat));
 
+											HashMap<String, AttributeValue> map = new HashMap<>();
+											map.put("nodeRef", AttributeValue.stringAttributeValue(entityNodeRef.toString()));
+											map.put("locale", AttributeValue.stringAttributeValue(locale.toString()));
+
+											tracer.getCurrentSpan().addAnnotation(Annotation.fromDescriptionAndAttributes("extract", map));
+
 											EntityReportData reportData = retrieveExtractor(entityNodeRef, engine)
 													.extract(entityNodeRef, reportParameters.getPreferences());
 
@@ -358,6 +374,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 															"DataSource XML : \n" + reportData.getXmlDataSource().asXML() + "\n\n");
 												}
 
+												// TODO annotation
 												filterByReportKind(reportData.getXmlDataSource(), tplNodeRef);
 
 												if (logger.isTraceEnabled()) {
@@ -366,7 +383,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 												}
 
 											}
-
+											
 											engine.createReport(tplNodeRef, reportData, writer.getContentOutputStream(), params);
 
 											nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_IS_DIRTY, false);
@@ -768,169 +785,179 @@ public class EntityReportServiceImpl implements EntityReportService {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void generateReport(final NodeRef entityNodeRef, final NodeRef documentNodeRef) {
-
-		if (entityNodeRef == null) {
-			throw new IllegalArgumentException("entityNodeRef is null");
-		}
-
-		if (documentNodeRef == null) {
-			throw new IllegalArgumentException("documentNodeRef is null");
-		}
-
-		L2CacheSupport.doInCacheContext(() -> {
-
-			RunAsWork<Object> actionRunAs = () -> {
-				if (nodeService.exists(entityNodeRef)) {
-					Locale currentLocal = I18NUtil.getLocale();
-					Locale currentContentLocal = I18NUtil.getContentLocale();
-					try {
-						policyBehaviourFilter.disableBehaviour(entityNodeRef);
-						ruleService.disableRules();
-						if (logger.isDebugEnabled()) {
-							logger.debug(
-									"Generate report: " + entityNodeRef + " - " + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
-						}
-
-						Date generatedDate = Calendar.getInstance().getTime();
-
-						StopWatch watch = null;
-						if (logger.isDebugEnabled()) {
-							watch = new StopWatch();
-							watch.start();
-						}
-
-						NodeRef tplNodeRef = associationService.getTargetAssoc(documentNodeRef, ReportModel.ASSOC_REPORT_TPL);
-
-						if (tplNodeRef == null) {
-							throw new IllegalArgumentException("tplNodeRef is null");
-						}
-
-						Locale locale = MLTextHelper.getNearestLocale(Locale.getDefault());
-
-						I18NUtil.setLocale(locale);
-						I18NUtil.setContentLocale(locale);
-
-						Boolean isDefault = (Boolean) this.nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_IS_DEFAULT);
-
-						EntityReportParameters reportParameters = readParameters(EntityReportParameters
-								.createFromJSON((String) nodeService.getProperty(documentNodeRef, ReportModel.PROP_REPORT_TEXT_PARAMETERS)));
-
-						if (nodeService.hasAspect(documentNodeRef, ReportModel.ASPECT_REPORT_LOCALES)) {
-							List<String> langs = (List<String>) nodeService.getProperty(documentNodeRef, ReportModel.PROP_REPORT_LOCALES);
-							if ((langs != null) && !langs.isEmpty()) {
-								locale = MLTextHelper.parseLocale(langs.get(0));
-								I18NUtil.setLocale(locale);
-								I18NUtil.setContentLocale(locale);
-							}
-						}
-
-						if (!MLTextHelper.isDefaultLocale(locale)) {
-							isDefault = false;
-						}
-
-						String reportFormat = (String) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT);
-						String documentName = getReportDocumentName(entityNodeRef, tplNodeRef, reportFormat, locale, reportParameters,
-								reportParameters.getReportNameFormat(reportNameFormat));
-
-						String documentTitle = getReportDocumentName(entityNodeRef, tplNodeRef, null, locale, reportParameters,
-								reportParameters.getReportTitleFormat(reportTitleFormat));
-
-						BeCPGReportEngine engine = getReportEngine(tplNodeRef, ReportFormat.valueOf(reportFormat));
-
-						EntityReportData reportData = retrieveExtractor(entityNodeRef, engine).extract(entityNodeRef,
-								reportParameters.getPreferences());
-
-						reportData.setParameters(reportParameters);
-
+		
+		try (Scope scope = tracer.spanBuilder("reportService.Generate").startScopedSpan()) {
+			
+			if (entityNodeRef == null) {
+				throw new IllegalArgumentException("entityNodeRef is null");
+			}
+			
+			if (documentNodeRef == null) {
+				throw new IllegalArgumentException("documentNodeRef is null");
+			}
+			
+			L2CacheSupport.doInCacheContext(() -> {
+				
+				RunAsWork<Object> actionRunAs = () -> {
+					if (nodeService.exists(entityNodeRef)) {
+						Locale currentLocal = I18NUtil.getLocale();
+						Locale currentContentLocal = I18NUtil.getContentLocale();
 						try {
-							policyBehaviourFilter.disableBehaviour(documentNodeRef, ContentModel.ASPECT_AUDITABLE);
-
-							ContentWriter writer = contentService.getWriter(documentNodeRef, ContentModel.PROP_CONTENT, true);
-
-							if (writer != null) {
-								String mimetype = mimetypeService.guessMimetype(documentName);
-								writer.setMimetype(mimetype);
-								Map<String, Object> params = new HashMap<>();
-
-								params.put(ReportParams.PARAM_FORMAT, ReportFormat.valueOf(reportFormat));
-								params.put(ReportParams.PARAM_LANG, MLTextHelper.localeKey(locale));
-								params.put(ReportParams.PARAM_ASSOCIATED_TPL_FILES,
-										associationService.getTargetAssocs(tplNodeRef, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES));
-								params.put(BeCPGReportEngine.PARAM_DOCUMENT_NODEREF, documentNodeRef);
-								params.put(BeCPGReportEngine.PARAM_ENTITY_NODEREF, entityNodeRef);
-
-								logger.debug("beCPGReportEngine createReport: " + entityNodeRef + " for document " + documentName + " ("
-										+ documentNodeRef + ")");
-
-								if (engine.isXmlEngine()) {
-
-									if (reportData.getXmlDataSource() == null) {
-										throw new IllegalArgumentException("nodeElt is null");
-									}
-
-									filterByReportKind(reportData.getXmlDataSource(), tplNodeRef);
-
-									if (logger.isTraceEnabled()) {
-										logger.trace("Filtered DataSource XML : \n" + reportData.getXmlDataSource().asXML() + "\n\n");
-									}
-
-								}
-
-								engine.createReport(tplNodeRef, reportData, writer.getContentOutputStream(), params);
-
-								I18NUtil.setLocale(Locale.getDefault());
-								I18NUtil.setContentLocale(Locale.getDefault());
-
-								if (reportParameters.isEmpty()) {
-									nodeService.removeProperty(documentNodeRef, ReportModel.PROP_REPORT_TEXT_PARAMETERS);
-								} else {
-									nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_TEXT_PARAMETERS,
-											reportParameters.toJSONString());
-								}
-
-								nodeService.setProperty(documentNodeRef, ContentModel.PROP_MODIFIED, generatedDate);
-
-								nodeService.setProperty(documentNodeRef, ContentModel.PROP_MODIFIER, AuthenticationUtil.getSystemUserName());
-
-								nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_IS_DIRTY, false);
-
-								nodeService.setProperty(documentNodeRef, ContentModel.PROP_NAME, documentName);
-
-								nodeService.setProperty(documentNodeRef, ContentModel.PROP_TITLE, documentTitle);
-								
-								if(!Boolean.TRUE.equals(includeReportInSearch)) {
-									nodeService.setProperty(documentNodeRef, ContentModel.PROP_IS_INDEXED, false);
-								}  else {
-									nodeService.setProperty(documentNodeRef, ContentModel.PROP_IS_INDEXED, true);
-									nodeService.setProperty(documentNodeRef, ContentModel.PROP_IS_CONTENT_INDEXED, false);
-								}
-								
-								nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_IS_DEFAULT, isDefault);
-
+							policyBehaviourFilter.disableBehaviour(entityNodeRef);
+							ruleService.disableRules();
+							if (logger.isDebugEnabled()) {
+								logger.debug(
+										"Generate report: " + entityNodeRef + " - " + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
 							}
+							
+							Date generatedDate = Calendar.getInstance().getTime();
+							
+							StopWatch watch = null;
+							if (logger.isDebugEnabled()) {
+								watch = new StopWatch();
+								watch.start();
+							}
+							
+							NodeRef tplNodeRef = associationService.getTargetAssoc(documentNodeRef, ReportModel.ASSOC_REPORT_TPL);
+							
+							if (tplNodeRef == null) {
+								throw new IllegalArgumentException("tplNodeRef is null");
+							}
+							
+							Locale locale = MLTextHelper.getNearestLocale(Locale.getDefault());
+							
+							I18NUtil.setLocale(locale);
+							I18NUtil.setContentLocale(locale);
+							
+							Boolean isDefault = (Boolean) this.nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_IS_DEFAULT);
+							
+							EntityReportParameters reportParameters = readParameters(EntityReportParameters
+									.createFromJSON((String) nodeService.getProperty(documentNodeRef, ReportModel.PROP_REPORT_TEXT_PARAMETERS)));
+							
+							if (nodeService.hasAspect(documentNodeRef, ReportModel.ASPECT_REPORT_LOCALES)) {
+								List<String> langs = (List<String>) nodeService.getProperty(documentNodeRef, ReportModel.PROP_REPORT_LOCALES);
+								if ((langs != null) && !langs.isEmpty()) {
+									locale = MLTextHelper.parseLocale(langs.get(0));
+									I18NUtil.setLocale(locale);
+									I18NUtil.setContentLocale(locale);
+								}
+							}
+							
+							if (!MLTextHelper.isDefaultLocale(locale)) {
+								isDefault = false;
+							}
+							
+							String reportFormat = (String) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT);
+							String documentName = getReportDocumentName(entityNodeRef, tplNodeRef, reportFormat, locale, reportParameters,
+									reportParameters.getReportNameFormat(reportNameFormat));
+							
+							String documentTitle = getReportDocumentName(entityNodeRef, tplNodeRef, null, locale, reportParameters,
+									reportParameters.getReportTitleFormat(reportTitleFormat));
+							
+							BeCPGReportEngine engine = getReportEngine(tplNodeRef, ReportFormat.valueOf(reportFormat));
+							
+							HashMap<String, AttributeValue> map = new HashMap<>();
+							map.put("nodeRef", AttributeValue.stringAttributeValue(entityNodeRef.toString()));
+							map.put("locale", AttributeValue.stringAttributeValue(locale.toString()));
 
-						} catch (ReportException e) {
-							logger.error("Failed to execute report for template : " + tplNodeRef, e);
+							tracer.getCurrentSpan().addAnnotation(Annotation.fromDescriptionAndAttributes("extract", map));
+
+							EntityReportData reportData = retrieveExtractor(entityNodeRef, engine).extract(entityNodeRef,
+									reportParameters.getPreferences());
+							
+							reportData.setParameters(reportParameters);
+							
+							try {
+								policyBehaviourFilter.disableBehaviour(documentNodeRef, ContentModel.ASPECT_AUDITABLE);
+								
+								ContentWriter writer = contentService.getWriter(documentNodeRef, ContentModel.PROP_CONTENT, true);
+								
+								if (writer != null) {
+									String mimetype = mimetypeService.guessMimetype(documentName);
+									writer.setMimetype(mimetype);
+									Map<String, Object> params = new HashMap<>();
+									
+									params.put(ReportParams.PARAM_FORMAT, ReportFormat.valueOf(reportFormat));
+									params.put(ReportParams.PARAM_LANG, MLTextHelper.localeKey(locale));
+									params.put(ReportParams.PARAM_ASSOCIATED_TPL_FILES,
+											associationService.getTargetAssocs(tplNodeRef, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES));
+									params.put(BeCPGReportEngine.PARAM_DOCUMENT_NODEREF, documentNodeRef);
+									params.put(BeCPGReportEngine.PARAM_ENTITY_NODEREF, entityNodeRef);
+									
+									logger.debug("beCPGReportEngine createReport: " + entityNodeRef + " for document " + documentName + " ("
+											+ documentNodeRef + ")");
+									
+									if (engine.isXmlEngine()) {
+										
+										if (reportData.getXmlDataSource() == null) {
+											throw new IllegalArgumentException("nodeElt is null");
+										}
+										
+										filterByReportKind(reportData.getXmlDataSource(), tplNodeRef);
+										
+										if (logger.isTraceEnabled()) {
+											logger.trace("Filtered DataSource XML : \n" + reportData.getXmlDataSource().asXML() + "\n\n");
+										}
+										
+									}
+									
+									engine.createReport(tplNodeRef, reportData, writer.getContentOutputStream(), params);
+									
+									I18NUtil.setLocale(Locale.getDefault());
+									I18NUtil.setContentLocale(Locale.getDefault());
+									
+									if (reportParameters.isEmpty()) {
+										nodeService.removeProperty(documentNodeRef, ReportModel.PROP_REPORT_TEXT_PARAMETERS);
+									} else {
+										nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_TEXT_PARAMETERS,
+												reportParameters.toJSONString());
+									}
+									
+									nodeService.setProperty(documentNodeRef, ContentModel.PROP_MODIFIED, generatedDate);
+									
+									nodeService.setProperty(documentNodeRef, ContentModel.PROP_MODIFIER, AuthenticationUtil.getSystemUserName());
+									
+									nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_IS_DIRTY, false);
+									
+									nodeService.setProperty(documentNodeRef, ContentModel.PROP_NAME, documentName);
+									
+									nodeService.setProperty(documentNodeRef, ContentModel.PROP_TITLE, documentTitle);
+									
+									if(!Boolean.TRUE.equals(includeReportInSearch)) {
+										nodeService.setProperty(documentNodeRef, ContentModel.PROP_IS_INDEXED, false);
+									}  else {
+										nodeService.setProperty(documentNodeRef, ContentModel.PROP_IS_INDEXED, true);
+										nodeService.setProperty(documentNodeRef, ContentModel.PROP_IS_CONTENT_INDEXED, false);
+									}
+									
+									nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_IS_DEFAULT, isDefault);
+									
+								}
+								
+							} catch (ReportException e) {
+								logger.error("Failed to execute report for template : " + tplNodeRef, e);
+							} finally {
+								policyBehaviourFilter.enableBehaviour(documentNodeRef, ContentModel.ASPECT_AUDITABLE);
+							}
+							
+							if (logger.isDebugEnabled() && watch!=null) {
+								watch.stop();
+								logger.debug("Reports generated in  " + watch.getTotalTimeSeconds() + " seconds for node " + entityNodeRef);
+							}
+							
 						} finally {
-							policyBehaviourFilter.enableBehaviour(documentNodeRef, ContentModel.ASPECT_AUDITABLE);
+							I18NUtil.setLocale(currentLocal);
+							I18NUtil.setContentLocale(currentContentLocal);
+							ruleService.enableRules();
+							policyBehaviourFilter.enableBehaviour(entityNodeRef);
 						}
-
-						if (logger.isDebugEnabled() && watch!=null) {
-							watch.stop();
-							logger.debug("Reports generated in  " + watch.getTotalTimeSeconds() + " seconds for node " + entityNodeRef);
-						}
-
-					} finally {
-						I18NUtil.setLocale(currentLocal);
-						I18NUtil.setContentLocale(currentContentLocal);
-						ruleService.enableRules();
-						policyBehaviourFilter.enableBehaviour(entityNodeRef);
 					}
-				}
-				return true;
-			};
-			AuthenticationUtil.runAsSystem(actionRunAs);
-		}, false, true);
+					return true;
+				};
+				AuthenticationUtil.runAsSystem(actionRunAs);
+			}, false, true);
+		}
+
 	}
 
 	/** {@inheritDoc} */
@@ -940,12 +967,18 @@ public class EntityReportServiceImpl implements EntityReportService {
 		AuthenticationUtil.runAsSystem(() -> {
 			Locale currentLocal = I18NUtil.getLocale();
 			Locale currentContentLocal = I18NUtil.getContentLocale();
-			try {
+			try (Scope scope = tracer.spanBuilder("reportService.Generate").startScopedSpan()) {
 
 				I18NUtil.setLocale(locale);
 				I18NUtil.setContentLocale(locale);
 
 				BeCPGReportEngine engine = getReportEngine(templateNodeRef, reportFormat);
+
+				HashMap<String, AttributeValue> map = new HashMap<>();
+				map.put("nodeRef", AttributeValue.stringAttributeValue(entityNodeRef.toString()));
+				map.put("locale", AttributeValue.stringAttributeValue(locale.toString()));
+
+				tracer.getCurrentSpan().addAnnotation(Annotation.fromDescriptionAndAttributes("extract", map));
 
 				EntityReportData reportData = retrieveExtractor(entityNodeRef, engine).extract(entityNodeRef, reportParameters.getPreferences());
 
