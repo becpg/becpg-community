@@ -606,13 +606,14 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 * @return get join from pattern and ranges
 		 */
 		public String join(String pattern, List<String> range1, List<String> range2) {
-			String ret = "";
+			
+			StringBuilder ret = new StringBuilder();
 			if (range1 != null && range2 != null && range1.size() == range2.size()) {
 				for(int i =0; i<range1.size();i++) {
-					ret += String.format(pattern,  range1.get(i), range2.get(i));	
+					ret.append(String.format(pattern,  range1.get(i), range2.get(i)));	
 				}
 			}
-			return ret;
+			return ret.toString();
 		}
 
 		/**
