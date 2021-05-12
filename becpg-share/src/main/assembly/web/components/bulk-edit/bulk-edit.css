@@ -1,20 +1,27 @@
 .bulk-edit
 {
    padding-top: 0.5em;
-/*   visibility: hidden; */
 }
 
 .bulk-edit .bulk-edit-props-container{
-	 margin-left: 1em;
-	 padding: 10px;
-	 overflow: auto;
+     margin-left: 1em;
+     padding: 10px;
+     overflow: auto;
+
 }
+.bulk-edit .bulk-edit-props-container  tr {
+    display: inline-block;
+ }
 
 .bulk-edit .bulk-edit-props-container  td {
-    padding:3px 10px;
-    min-width : 150px;
+    padding: 2px 20px;
+    display: flex;
+    flex-direction: row;
  }
-  
+ .bulk-edit .bulk-edit-props-container  td label {
+   margin-left: 2px;
+}
+
 /* bulk-edit Metadata */
 .bulk-edit .bulk-edit-meta
 {
@@ -51,7 +58,6 @@
 {
    float: right;
 }
-
 
 .bulk-edit .bulk-edit-bar .show-thumbnails {
     float: right;
@@ -90,8 +96,6 @@
    background-image: url(../images/select-rows-all-16.png);
 }
 
-
-
 .bulk-edit .item-select .selectNone
 {
    background-image: url(../images/select-rows-none-16.png);
@@ -101,7 +105,6 @@
 {
    background-image: url(../images/select-invert-16.png);
 }
-
 
 .bulk-edit .export-csv span.first-child
 {
@@ -114,8 +117,6 @@
    background: url(../images/filetypes/img-file-16.png) no-repeat 12px 4px;
    padding-left: 24px;
 }
-
-
 
 /* Data Table */
 
@@ -196,7 +197,6 @@
     font-size: 108%;
 }
 
-
 .bulk-edit div.warning span.info {
    background: url("../images/states/warning-16.png") no-repeat scroll 0 0 transparent;
    display: inline;
@@ -222,7 +222,6 @@
    background: url(../images/filetypes/generic-file-16.png) no-repeat;
    padding-left: 20px;
 }
-
 
 /* Actions */
 
@@ -276,14 +275,12 @@
    display: none;
 }
 
-
 /* Actions: Icons */
 
 .bulk-edit .action-set a
 {
    background-image: url(../images/generic-file-16.png);
 }
-
 
 .bulk-edit .onActionEdit a
 {
@@ -305,60 +302,54 @@
    padding-left: 32px;
 }
 
-
 .form-container .yui-u
 {
-	margin-left:0px;
+    margin-left:0px;
 }
-	
+
 .alfresco-share .yui-panel .bd .form-container .yui-u.first {
     text-align: left;
 }
 
-
 .form-container .bulk-edit label {
-	display: inline;
+    display: inline;
 }
-
 
 /* Selected Items Menu */
 .bulk-edit .selected-items li {
-	width: auto;
+    width: auto;
 }
 
 .bulk-edit .selected-items li.yuimenuitem-disabled {
-	display: none;
+    display: none;
 }
 
 .bulk-edit .selected-items .yuimenuitemlabel span {
-	background-position: 2px 50%;
-	background-repeat: no-repeat;
-	cursor: pointer;
-	display: block;
-	margin-left: -4px;
-	min-height: 16px;
-	padding: 2px 0px 1px 24px;
+    background-position: 2px 50%;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    display: block;
+    margin-left: -4px;
+    min-height: 16px;
+    padding: 2px 0px 1px 24px;
 }
 
 .bulk-edit .selected-items hr {
-	padding: 0px;
+    padding: 0px;
 }
 
 .bulk-edit .onEditSelected {
-	background-image: url(../../components/images/edit-metadata-16.png);
+    background-image: url(../../components/images/edit-metadata-16.png);
 }
 
 .bulk-edit .onExportAsZip {
-	background-image:  url(../documentlibrary/actions/document-download-16.png);
+    background-image:  url(../documentlibrary/actions/document-download-16.png);
 }
 
 .bulk-edit .onSendToSupplier {
-	background-image:  url(../documentlibrary/actions/user-16.png);
+    background-image:  url(../documentlibrary/actions/user-16.png);
 }
 
 .bulk-edit .onSimulateSelected {
-	background-image: url(../documentlibrary/actions/folder-copy-to-16.png);
+    background-image: url(../documentlibrary/actions/folder-copy-to-16.png);
 }
-
-
-
