@@ -23,8 +23,8 @@ public class OpenCensusConfiguration {
 	public static final TagKey HOST_KEY = TagKey.create("becpg/host");
 	public static final TagKey INSTANCE_KEY = TagKey.create("becpg/instance");
 
-	public static final double ADVANCED_SEARCH_SAMPLING_PROBABILITY = 1d / 10d;
-	
+	public static final double SEARCH_SAMPLING_PROBABILITY = 1d / 10d;
+
 	@PostConstruct
 	public void init() throws IOException {
 		String gcpProjectId = System.getenv("GOOGLE_CLOUD_PROJECT");

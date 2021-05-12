@@ -115,9 +115,9 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 					}
 				}
 				
-				getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_PACKAGING_LIST_PRODUCT, PLMModel.ASSOC_PACKAGINGLIST_PRODUCT, null, null);
-				getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_COMPO_LIST_PRODUCT, PLMModel.ASSOC_COMPOLIST_PRODUCT, null, null);
-				getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_PROCESS_LIST_RESSOURCE, MPMModel.ASSOC_PL_RESOURCE, null, null);
+				getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_PACKAGING_LIST_PRODUCT, PLMModel.ASSOC_PACKAGINGLIST_PRODUCT);
+				getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_COMPO_LIST_PRODUCT, PLMModel.ASSOC_COMPOLIST_PRODUCT);
+				getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_PROCESS_LIST_RESSOURCE, MPMModel.ASSOC_PL_RESOURCE);
 				
 				nodes = getSearchNodesBySpecificationCriteria(nodes, criteria);
 				
@@ -138,6 +138,8 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 			watch.start();
 		}
 
+		tracer.getCurrentSpan().addAnnotation(filter.getName());
+		
 		List<EntitySourceAssoc> entitySourceAssocs = null;
 		List<EntitySourceAssoc> notEntitySourceAssocs = null;
 
@@ -483,23 +485,15 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 	}
 
 	private List<NodeRef> getSearchNodesByWUsedCriteria(List<NodeRef> nodes, Map<String, String> criteria, String criteriaAssocString,
-			QName criteriaAssoc, QName criteriaAssocValue, String criteriaValue) {
+			QName criteriaAssoc) {
 
 		Map<String, AttributeValue> attributes = new HashMap<>();
 		
-		if (criteriaAssocString != null) {
-			attributes.put("criteriaAssocString", AttributeValue.stringAttributeValue(criteriaAssocString));
-		}
-		
 		if (criteriaAssoc != null) {
-			attributes.put("criteriaAssoc", AttributeValue.stringAttributeValue(criteriaAssoc.getLocalName()));
+			attributes.put("wUsedAssoc", AttributeValue.stringAttributeValue(criteriaAssoc.getLocalName()));
 		}
 		
-		if (criteriaValue != null) {
-			attributes.put("criteriaValue", AttributeValue.stringAttributeValue(criteriaValue));
-		}
-		
-		tracer.getCurrentSpan().addAnnotation("getSearchNodesByWUsedCriteria", attributes);
+		tracer.getCurrentSpan().addAnnotation("filterByWUsed", attributes);
 		
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {

@@ -89,7 +89,7 @@ public class ReportContentGet extends ContentGet {
 	@Override
 	public void execute(final WebScriptRequest req, final WebScriptResponse res) throws IOException {
 
-		try (Scope scope = tracer.spanBuilder("/becpg/report").startScopedSpan()) {
+		try (Scope scope = tracer.spanBuilder("/internal/report/get").startScopedSpan()) {
 			NodeRef nodeRef = null;
 			
 			// create map of template vars

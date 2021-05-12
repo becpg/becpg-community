@@ -87,9 +87,6 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.RepositoryEntityDefReader;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
-import io.opencensus.common.Scope;
-import io.opencensus.trace.Tracer;
-import io.opencensus.trace.Tracing;
 
 /**
  * <p>DefaultEntityReportExtractor class.</p>
@@ -101,8 +98,6 @@ import io.opencensus.trace.Tracing;
 public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin {
 
 	private static final Log logger = LogFactory.getLog(DefaultEntityReportExtractor.class);
-
-	private static final Tracer tracer = Tracing.getTracer();
 
 	/** Constant <code>TAG_ENTITY="entity"</code> */
 	protected static final String TAG_ENTITY = "entity";
@@ -341,7 +336,6 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	@Override
 	public EntityReportData extract(NodeRef entityNodeRef, Map<String, String> preferences) {
 
-		try (Scope scope = tracer.spanBuilder("reportExtractor.Extract").startScopedSpan()) {
 			StopWatch watch = null;
 			if (logger.isDebugEnabled()) {
 				watch = new StopWatch();
@@ -364,7 +358,6 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			}
 			
 			return context.getReportData();
-		}
 
 	}
 
