@@ -1044,9 +1044,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	}
 
 	private boolean hasReadAccess(QName nodeType, String propName) {
-
-		return securityService.computeAccessMode(nodeType, propName) != SecurityService.NONE_ACCESS;
-
+	  return securityService.computeAccessMode(null, nodeType, propName) != SecurityService.NONE_ACCESS;
 	}
 
 	/** {@inheritDoc} */

@@ -22,8 +22,6 @@ import org.apache.commons.logging.LogFactory;
 public class PropertyPermissionNodeFormFilter extends AbstractPropertyPermissionFormFilter<NodeRef> {
 
 	
-	private static final Log logger = LogFactory.getLog(PropertyPermissionNodeFormFilter.class);
-	
 	/** The node service. */
 	private NodeService nodeService;	
 	
@@ -43,8 +41,9 @@ public class PropertyPermissionNodeFormFilter extends AbstractPropertyPermission
 	@Override
 	public void afterGenerate(NodeRef item, List<String> fields,
 			List<String> forcedFields, Form form, Map<String, Object> context) {
-		logger.debug("afterGenerate");					
-		filterFormFields(nodeService.getType(item), form);		
+		
+		
+		filterFormFields(item, nodeService.getType(item), form);		
 
 	}
 

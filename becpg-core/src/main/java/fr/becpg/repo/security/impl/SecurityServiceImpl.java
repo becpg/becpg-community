@@ -53,6 +53,7 @@ import fr.becpg.repo.security.SecurityService;
 import fr.becpg.repo.security.data.ACLGroupData;
 import fr.becpg.repo.security.data.dataList.ACLEntryDataItem;
 import fr.becpg.repo.security.data.dataList.ACLEntryDataItem.PermissionModel;
+import fr.becpg.repo.security.plugins.SecurityServicePlugin;
 
 /**
  * Security Service : is in charge to compute acls by node Type. And provide
@@ -83,16 +84,19 @@ public class SecurityServiceImpl implements SecurityService {
 
 	@Autowired
 	private BeCPGCacheService beCPGCacheService;
+	
+	@Autowired
+	private SecurityServicePlugin[] securityPlugins;
 
 	/** {@inheritDoc} */
 	@Override
-	public int computeAccessMode(QName nodeType, QName propName) {
-		return computeAccessMode(nodeType, dictionaryService.toPrefixString(propName));
+	public int computeAccessMode(NodeRef nodeRef, QName nodeType, QName propName) {
+		return computeAccessMode(nodeRef, nodeType, dictionaryService.toPrefixString(propName));
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public int computeAccessMode(QName nodeType, String propName) {
+	public int computeAccessMode(NodeRef nodeRef, QName nodeType, String propName) {
 		StopWatch stopWatch = null;
 		if (logger.isDebugEnabled()) {
 			stopWatch = new StopWatch();
@@ -101,7 +105,6 @@ public class SecurityServiceImpl implements SecurityService {
 		try {
 
 			String key = computeAclKey(nodeType, propName);
-			logger.debug("Compute acl for: " + key);
 			Map<String, List<PermissionModel>> acls = getAcls();
 
 			if (acls.containsKey(key)) {
@@ -118,7 +121,7 @@ public class SecurityServiceImpl implements SecurityService {
 
 				for (PermissionModel permissionModel : perms) {
 
-					if (isInGroup(permissionModel)) {
+					if (isInGroup(nodeRef, nodeType , permissionModel)) {
 						if (permissionModel.isWrite()) {
 							return SecurityService.WRITE_ACCESS;
 						} else if (permissionModel.isReadOnly()) {
@@ -246,12 +249,12 @@ public class SecurityServiceImpl implements SecurityService {
 	}
 
 	/**
-	 * Check if current user is in corresponding group
+	 * Check if current user is in corresponding group or role
 	 */
-	private boolean isInGroup(PermissionModel permissionModel) {
-
-		for (String currAuth : authorityService.getAuthorities()) {
-			if (permissionModel.getGroups().contains(authorityService.getAuthorityNodeRef(currAuth))) {
+	private boolean isInGroup(NodeRef nodeRef, QName nodeType, PermissionModel permissionModel) {
+		
+		for(SecurityServicePlugin plugin : securityPlugins ) {
+			if(plugin.accept(nodeType) && plugin.checkIsInSecurityGroup(nodeRef, permissionModel)) {
 				return true;
 			}
 		}

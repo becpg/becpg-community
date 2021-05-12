@@ -403,7 +403,7 @@ public class EntityDataListWebScript extends AbstractWebScript {
 				NodeRef entityNodeRef = entityNodeRefsList.get(0);
 				QName entityNodeRefType = nodeService.getType(entityNodeRef);
 				
-				int accessMode = securityService.computeAccessMode(entityNodeRefType, itemType);
+				int accessMode = securityService.computeAccessMode(entityNodeRef, entityNodeRefType, itemType);
 				hasReadAccess = accessMode != SecurityService.NONE_ACCESS;
 				
 				if (hasReadAccess && hasWriteAccess) {
@@ -419,7 +419,7 @@ public class EntityDataListWebScript extends AbstractWebScript {
 	
 						if ((dataListType != null) && !dataListType.isEmpty()) {
 							QName dataListTypeQName = QName.createQName(dataListType, namespaceService);
-							hasWriteAccess = securityService.computeAccessMode(entityNodeRefType, dataListTypeQName) == SecurityService.WRITE_ACCESS;
+							hasWriteAccess = securityService.computeAccessMode(entityNodeRef, entityNodeRefType, dataListTypeQName) == SecurityService.WRITE_ACCESS;
 						}
 					}
 				}

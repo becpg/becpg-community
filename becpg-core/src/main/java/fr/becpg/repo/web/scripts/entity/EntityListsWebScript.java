@@ -103,6 +103,8 @@ public class EntityListsWebScript extends AbstractWebScript {
 	private static final String KEY_NAME_DESCRIPTION = "description";
 
 	private static final String KEY_NAME_ENTITY_NAME = "entityName";
+	
+	private static final String KEY_NAME_ENTITY_TYPE = "entityType";
 
 	private static final String KEY_NAME_NODE_REF = "nodeRef";
 
@@ -407,11 +409,10 @@ public class EntityListsWebScript extends AbstractWebScript {
 			nodeRefs.add(entityTplNodeRef);
 		}
 		for (NodeRef nodeRef : nodeRefs) {
-			if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_VARIANT)) {
+			if ((permissionService.hasPermission(nodeRef, "Read")== AccessStatus.ALLOWED) && nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_VARIANT)) {
 				for (ChildAssociationRef association : nodeService.getChildAssocs(nodeRef)) {
 					if (association.getTypeQName().isMatch(BeCPGModel.ASSOC_VARIANTS)) {
 						variantsAssociations.add(association);
-
 					}
 				}
 			}
@@ -599,11 +600,11 @@ public class EntityListsWebScript extends AbstractWebScript {
 				while (it.hasNext()) {
 					NodeRef temp = it.next();
 					String dataListType = (String) nodeService.getProperty(temp, DataListModel.PROP_DATALISTITEMTYPE);
-					int accessMode = securityService.computeAccessMode(nodeType, dataListType);
+					int accessMode = securityService.computeAccessMode(nodeRef, nodeType, dataListType);
 
 					if (SecurityService.NONE_ACCESS != accessMode) {
 						String dataListName = (String) nodeService.getProperty(temp, ContentModel.PROP_NAME);
-						int newAccessMode = securityService.computeAccessMode(nodeType, dataListName);
+						int newAccessMode = securityService.computeAccessMode(nodeRef, nodeType, dataListName);
 						if (newAccessMode < accessMode) {
 							accessMode = newAccessMode;
 						}

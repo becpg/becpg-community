@@ -19,6 +19,7 @@ package fr.becpg.repo.security;
 
 import java.util.List;
 
+import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
 /**
@@ -45,7 +46,7 @@ public interface SecurityService {
 	 * @param nodeType a {@link org.alfresco.service.namespace.QName} object.
 	 * @param name a {@link java.lang.String} object.
 	 */
-	int computeAccessMode(QName nodeType, String name);
+	int computeAccessMode(NodeRef nodeRef, QName nodeType, String name);
 	
 	/**
 	 * Compute access mode for the given field name on a specific type
@@ -54,7 +55,7 @@ public interface SecurityService {
 	 * @param nodeType a {@link org.alfresco.service.namespace.QName} object.
 	 * @param name a {@link org.alfresco.service.namespace.QName} object.
 	 */
-	int computeAccessMode(QName nodeType, QName name);
+	int computeAccessMode(NodeRef nodeRef, QName nodeType, QName name);
 	
 	/**
 	 * Refresh ACLS cache per tenant

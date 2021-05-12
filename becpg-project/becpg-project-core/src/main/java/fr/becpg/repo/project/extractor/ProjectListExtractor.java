@@ -171,7 +171,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 		if (FILTER_MY_TASKS.equals(dataListFilter.getFilterId()) || FILTER_TASKS.equals(dataListFilter.getFilterId())
 				|| VIEW_RESOURCES.equals(dataListFilter.getExtraParams()) || VIEW_TASKS.equals(dataListFilter.getExtraParams())) {
 			props.put(PROP_ACCESSRIGHT, dataListFilter.hasWriteAccess()
-					&& (securityService.computeAccessMode(ProjectModel.TYPE_PROJECT, ProjectModel.TYPE_TASK_LIST) == SecurityService.WRITE_ACCESS));
+					&& (securityService.computeAccessMode(dataListFilter.getEntityNodeRef(), ProjectModel.TYPE_PROJECT, ProjectModel.TYPE_TASK_LIST) == SecurityService.WRITE_ACCESS));
 		} else {
 			props.put(PROP_ACCESSRIGHT, dataListFilter.hasWriteAccess());
 		}
@@ -271,7 +271,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 				if (FILTER_MY_TASKS.equals(dataListFilter.getFilterId()) || FILTER_TASKS.equals(dataListFilter.getFilterId())
 						|| VIEW_RESOURCES.equals(dataListFilter.getExtraParams()) || VIEW_TASKS.equals(dataListFilter.getExtraParams())) {
 
-					if (securityService.computeAccessMode(ProjectModel.TYPE_PROJECT, ProjectModel.TYPE_TASK_LIST) == SecurityService.NONE_ACCESS) {
+					if (securityService.computeAccessMode(dataListFilter.getEntityNodeRef(), ProjectModel.TYPE_PROJECT, ProjectModel.TYPE_TASK_LIST) == SecurityService.NONE_ACCESS) {
 						return new ArrayList<>();
 					}
 
@@ -456,7 +456,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 
 								for (NodeRef itemNodeRef : assocRefs) {
 									if ((permissionService.hasPermission(itemNodeRef, "Read") == AccessStatus.ALLOWED)
-											&& (securityService.computeAccessMode(itemType, field.getFieldQname()) >= SecurityService.READ_ACCESS)) {
+											&& (securityService.computeAccessMode(nodeRef, itemType, field.getFieldQname()) >= SecurityService.READ_ACCESS)) {
 
 										Map<String, Object> tmp = new HashMap<>(4);
 
@@ -466,7 +466,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 										permissions.put("userAccess", userAccess);
 										userAccess.put("edit",
 												(permissionService.hasPermission(itemNodeRef, "Write") == AccessStatus.ALLOWED) && (securityService
-														.computeAccessMode(itemType, field.getFieldQname()) == SecurityService.WRITE_ACCESS));
+														.computeAccessMode(nodeRef,itemType, field.getFieldQname()) == SecurityService.WRITE_ACCESS));
 
 										QName itemType = nodeService.getType(itemNodeRef);
 										Map<QName, Serializable> properties = nodeService.getProperties(itemNodeRef);
