@@ -609,7 +609,9 @@
 				var siteId = this.options.siteId 
 					
 				Alfresco.util.Ajax.jsonGet({
-				url : Alfresco.constants.URL_SERVICECONTEXT + "module/entity-datagrid/config/columns?mode=datagrid-prefs&itemType=" + encodeURIComponent(itemType) + "&clearCache=true" + (this.options.siteId ? "&siteId=" + this.options.siteId : ""),
+				url : Alfresco.constants.URL_SERVICECONTEXT + "module/entity-datagrid/config/columns?mode=datagrid-prefs&itemType=" + encodeURIComponent(itemType) + "&clearCache=true" 
+					+ (this.options.siteId ? "&siteId=" + this.options.siteId : "")
+					+ (this.entity!=null ? "&entityType="+encodeURIComponent(this.entity.type) : ""),
 				successCallback : {
 					fn : function (response) {
 						var prefs = "fr.becpg.formulation.dashlet.custom.datagrid-prefs"+"."+itemType.replace(":","_");

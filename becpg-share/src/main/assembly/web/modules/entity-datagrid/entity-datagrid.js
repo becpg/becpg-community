@@ -946,7 +946,7 @@
                             return this.options.columnsUrl + "?itemType=" + encodeURIComponent(this.options.itemType != null ? this.options.itemType
                                     : this.datalistMeta.itemType) + "&list=" + encodeURIComponent(this.datalistMeta.name != null ? this.datalistMeta.name
                                     : this.options.list) + (formId != null ? "&formId=" + formId : "") + (this.options.clearCache ? "&clearCache=true"
-                                    : "" ) + (this.options.siteId ? "&siteId=" + this.options.siteId : "");
+                                    : "" ) + (this.options.siteId ? "&siteId=" + this.options.siteId : "") + (this.entity!=null ? "&entityType="+encodeURIComponent(this.entity.type) : "");
                         },
 
                         /**
