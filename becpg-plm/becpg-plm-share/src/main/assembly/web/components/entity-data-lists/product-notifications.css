@@ -1,6 +1,4 @@
 
-
-
 .datalist-toolbar  .product-notifications  .loading span.first-child button
 {
    background: url(images/loading.gif) no-repeat 12px 4px;
@@ -17,7 +15,7 @@
 }
 
 .datalist-toolbar  .product-notifications span.warning {
-	background-color: #f44336;
+    background-color: #f44336;
     border: medium none;
     border-radius: 3px;
     box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
@@ -30,42 +28,41 @@
     animation: warning 0.5s;
 }
 
-
 .datalist-toolbar  .product-notifications  .score   span.first-child button{
-	background-image: url("../../components/images/states/percent-gauges-sprite-28.jpg");
-	font-size: 8px;
+    background-image: url("../../components/images/states/percent-gauges-sprite-28.jpg");
+    font-size: 8px;
     height: 28px;
     padding: 0;
     width: 28px;
-    
+
 }
 
 .datalist-toolbar .product-notifications table {
-	border-spacing: 10px 10px;
+    border-spacing: 10px 10px;
+    /* width: 40%; */
 }
 
 .ctrlSumPreview {
-	padding: 0 20px;
+    padding: 0 20px;
 }
 
 .ctrlSumPreview .score {
-	background-image: url("../../components/images/states/percent-gauges-sprite-96.jpg");
-	font-size: 1.33em;
+    background-image: url("../../components/images/states/percent-gauges-sprite-96.jpg");
+    font-size: 1.33em;
     height: 96px;
     padding: 0;
     width: 96px;
     text-align: center;
  }
- 
- 
+
 .ctrlSumPreview .score span {
-	line-height: 96px;
-	display: inline-block;
+    line-height: 96px;
+    display: inline-block;
  }
- 
+
 .ctrlSumPreview > ul {
-	float: left;
-	margin-right: 20px;
+    float: left;
+    margin-right: 20px;
 }
 
 .ctrlSumPreview::after {
@@ -75,374 +72,382 @@
 }
 
 .ctrlSumPreview .title {
-	margin-bottom: 5px;
+    margin-bottom: 5px;
 }
 
 .notifications-list {
-	max-height: 328px;
-	overflow-y: scroll;
-	overflow-x: hidden;
-	margin-top: 10px;
+    max-height: 328px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    margin-top: 10px;
 }
 
 .notifications-panel {
-	z-index: 3;
+    z-index: 3;
 }
-
-
 
 /* large version */
 .ctrlSumPreview .score-1  {
-	background-position : 0px 0px;
+    background-position : 0px 0px;
 }
 
 .ctrlSumPreview  .score-2  {
-	background-position : -96px 0px;
-	animation: score 1s steps(1) 1 forwards;
+    background-position : -96px 0px;
+    animation: score 1s steps(1) 1 forwards;
 }
 
 .ctrlSumPreview  .score-3{
-	background-position : -192px 0px;	
-	animation: score 1s steps(2) 1 forwards;
+    background-position : -192px 0px;    
+    animation: score 1s steps(2) 1 forwards;
 }
-	
+
 .ctrlSumPreview  .score-4  {
-	background-position : -288px 0px;	
-	animation: score 1s steps(3) 1 forwards;
+    background-position : -288px 0px;    
+    animation: score 1s steps(3) 1 forwards;
 }
 
 .ctrlSumPreview  .score-5 {
-	background-position : -384px 0px;	
-	animation: score 1s steps(4) 1 forwards;
+    background-position : -384px 0px;    
+    animation: score 1s steps(4) 1 forwards;
 }
-	
+
 .ctrlSumPreview  .score-6  {
-	background-position : -480px 0px;	
-	animation: score 1s steps(5) 1 forwards;
+    background-position : -480px 0px;    
+    animation: score 1s steps(5) 1 forwards;
 }
 
 .ctrlSumPreview  .score-7 {
-	background-position : -576px 0px;	
-	animation: score 1s steps(6) 1 forwards;
+    background-position : -576px 0px;    
+    animation: score 1s steps(6) 1 forwards;
 }
 
 .ctrlSumPreview  .score-8 {
-	background-position : -672px 0px;	
-	animation: score 1s steps(7) 1 forwards;
+    background-position : -672px 0px;    
+    animation: score 1s steps(7) 1 forwards;
 }
 
 .ctrlSumPreview  .score-9 {
-	background-position : -768px 0px;	
-	animation: score 1s steps(8) 1 forwards;
+    background-position : -768px 0px;    
+    animation: score 1s steps(8) 1 forwards;
 }
-	
+
 .ctrlSumPreview  .score-10{
-	background-position : -864px 0px;	
-	animation: score 1s steps(9) 1 forwards;
+    background-position : -864px 0px;    
+    animation: score 1s steps(9) 1 forwards;
 }
-	
+
 .ctrlSumPreview  .score-11 {
-	background-position : -960px 0px;	
-	animation: score 1s steps(10) 1 forwards;
+    background-position : -960px 0px;    
+    animation: score 1s steps(10) 1 forwards;
 }
 
 .ctrlSumPreview  .score-12{
-	background-position : -1056px 0px;	
-	animation: score 1s steps(11) 1 forwards;
+    background-position : -1056px 0px;    
+    animation: score 1s steps(11) 1 forwards;
 }
 
 .ctrlSumPreview  .score-13 {
-	background-position : -1152px 0px;	
-	animation: score 1s steps(12) 1 forwards;
+    background-position : -1152px 0px;    
+    animation: score 1s steps(12) 1 forwards;
 }
 
 .ctrlSumPreview .score-14 {
-	background-position : -1248px 0px;	
-	animation: score 1s steps(13) 1 forwards;
+    background-position : -1248px 0px;    
+    animation: score 1s steps(13) 1 forwards;
 }
-	
+
 .ctrlSumPreview  .score-15 {
-	background-position : -1344px 0px;	
-	animation: score 1s steps(14) 1 forwards;
+    background-position : -1344px 0px;    
+    animation: score 1s steps(14) 1 forwards;
 }
-	
+
 .ctrlSumPreview  .score-16 {
-	background-position : -1440px 0px;	
-	animation: score 1s steps(15) 1 forwards;
+    background-position : -1440px 0px;    
+    animation: score 1s steps(15) 1 forwards;
 }
 
 .ctrlSumPreview  .score-17 {
-	background-position : -1536px 0px;	
-	animation: score 1s steps(16) 1 forwards;
+    background-position : -1536px 0px;    
+    animation: score 1s steps(16) 1 forwards;
 }
-	
+
 .ctrlSumPreview .score-18 {
-	background-position : -1632px 0px;	
-	animation: score 1s steps(17) 1 forwards;
+    background-position : -1632px 0px;    
+    animation: score 1s steps(17) 1 forwards;
 }
-	
+
 .ctrlSumPreview  .score-19 {
-	background-position : -1728px 0px;	
-	animation: score 1s steps(18) 1 forwards;
+    background-position : -1728px 0px;    
+    animation: score 1s steps(18) 1 forwards;
 }
-		
+
 .ctrlSumPreview  .score-20 {
-	background-position : -1824px 0px;	
-	animation: score 1s steps(19) 1 forwards;
+    background-position : -1824px 0px;    
+    animation: score 1s steps(19) 1 forwards;
 }
 
 /** thumbnail progress */
 
 .datalist-toolbar  .product-notifications .score-1 span.first-child button {
-	background-position : 0px 0px;
+    background-position : 0px 0px;
 }
 
 .datalist-toolbar  .product-notifications .score-2 span.first-child button {
-		background-position : -28px 0px;
-	animation: score 1s steps(1) 1 forwards;
+        background-position : -28px 0px;
+    animation: score 1s steps(1) 1 forwards;
 }
 
 .datalist-toolbar  .product-notifications .score-3 span.first-child button {
-	background-position : -56px 0px;
-	animation: score 1s steps(2) 1 forwards;
+    background-position : -56px 0px;
+    animation: score 1s steps(2) 1 forwards;
 }
-	
+
 .datalist-toolbar  .product-notifications .score-4 span.first-child button {
-	background-position : -84px 0px;
-	animation: score 1s steps(3) 1 forwards;
+    background-position : -84px 0px;
+    animation: score 1s steps(3) 1 forwards;
 }
 
 .datalist-toolbar  .product-notifications .score-5 span.first-child button {
-	background-position : -112px 0px;
-	animation: score 1s steps(4) 1 forwards;
+    background-position : -112px 0px;
+    animation: score 1s steps(4) 1 forwards;
 }
-	
+
 .datalist-toolbar  .product-notifications .score-6 span.first-child button {
-	background-position : -140px 0px;
-	animation: score 1s steps(5) 1 forwards;
+    background-position : -140px 0px;
+    animation: score 1s steps(5) 1 forwards;
 }
 
 .datalist-toolbar  .product-notifications .score-7 span.first-child button {
-	background-position : -168px 0px;
-	animation: score 1s steps(6) 1 forwards;
+    background-position : -168px 0px;
+    animation: score 1s steps(6) 1 forwards;
 }
 
 .datalist-toolbar  .product-notifications .score-8 span.first-child button {
-	background-position : -196px 0px;
-	animation: score 1s steps(7) 1 forwards;
+    background-position : -196px 0px;
+    animation: score 1s steps(7) 1 forwards;
 }
 
 .datalist-toolbar  .product-notifications .score-9 span.first-child button {
-	background-position : -224px 0px;
-	animation: score 1s steps(8) 1 forwards;
+    background-position : -224px 0px;
+    animation: score 1s steps(8) 1 forwards;
 }
-	
+
 .datalist-toolbar  .product-notifications .score-10 span.first-child button {
-	background-position : -252px 0px;
-	animation: score 1s steps(9) 1 forwards;
+    background-position : -252px 0px;
+    animation: score 1s steps(9) 1 forwards;
 }
-	
+
 .datalist-toolbar  .product-notifications .score-11 span.first-child button {
-	background-position : -280px 0px;
-	animation: score 1s steps(10) 1 forwards;
+    background-position : -280px 0px;
+    animation: score 1s steps(10) 1 forwards;
 }
 
 .datalist-toolbar  .product-notifications .score-12 span.first-child button {
-	background-position : -308px 0px;
-	 animation: score 1s steps(11) 1 forwards;
+    background-position : -308px 0px;
+     animation: score 1s steps(11) 1 forwards;
 }
 
 .datalist-toolbar  .product-notifications .score-13 span.first-child button {
-	background-position : -336px 0px;
-	animation: score 1s steps(12) 1 forwards;
+    background-position : -336px 0px;
+    animation: score 1s steps(12) 1 forwards;
 }
 
 .datalist-toolbar  .product-notifications .score-14 span.first-child button {
-	background-position : -364px 0px;
-	animation: score 1s steps(13) 1 forwards;
+    background-position : -364px 0px;
+    animation: score 1s steps(13) 1 forwards;
 }
-	
+
 .datalist-toolbar  .product-notifications .score-15 span.first-child button {
-	background-position : -392px 0px;
-	animation: score 1s steps(14) 1 forwards;
+    background-position : -392px 0px;
+    animation: score 1s steps(14) 1 forwards;
 }
-	
+
 .datalist-toolbar  .product-notifications .score-16 span.first-child button {
-	background-position : -420px 0px;
-	animation: score 1s steps(15) 1 forwards;
+    background-position : -420px 0px;
+    animation: score 1s steps(15) 1 forwards;
 }
 
 .datalist-toolbar  .product-notifications .score-17 span.first-child button {
-	background-position : -448px 0px;
-	animation: score 1s steps(16) 1 forwards;
+    background-position : -448px 0px;
+    animation: score 1s steps(16) 1 forwards;
 }
-	
+
 .datalist-toolbar  .product-notifications .score-18 span.first-child button {
-	background-position : -476px 0px;
-	animation: score 1s steps(17) 1 forwards;
+    background-position : -476px 0px;
+    animation: score 1s steps(17) 1 forwards;
 }
-	
+
 .datalist-toolbar  .product-notifications .score-19 span.first-child button {
-	background-position : -504px 0px;
-	animation: score 1s steps(18) 1 forwards;
+    background-position : -504px 0px;
+    animation: score 1s steps(18) 1 forwards;
 }
-		
+
 .datalist-toolbar  .product-notifications .score-20 span.first-child button {
-	background-position : -532px 0px;
-	animation: score 1s steps(19) 1 forwards;
+    background-position : -532px 0px;
+    animation: score 1s steps(19) 1 forwards;
 }
-
-
-
 
 div.notifications-panel {
-	padding: 10px 0 10px;
-	background-color: white;
-	border: 1px solid #ccc;
-	width: 50em;
-	border-radius:3px;
+    padding: 10px 0 10px;
+    background-color: white;
+    border: 1px solid #ccc;
+    width: 50em;
+    border-radius:3px;
 }
-
 
 .notifications-panel .score  li{
-	background-image: url("../../components/images/states/percent-gauges-sprite.jpg");
-	margin: 0.2em 0.5em 0.5em;
-	display:inline-block;
+    background-image: url("../../components/images/states/percent-gauges-sprite.jpg");
+    margin: 0.2em 0.5em 0.5em;
+    display:inline-block;
 }
-	
 
 .rclFilterElt ul li, .req-all-all {
-	display: inline;
-	padding: 0 2px;
-	margin-left: 5px;
+    display: inline;
+    padding: 2px 2px;
+    margin-left: 5px;
 }
 
 .rclFilterElt > div {
-	overflow-y: auto;
-	max-height: 80px;
-	height: auto;
+    /* overflow: auto; */
+    /* max-height: 140px; */
+    height: auto;
 }
-
-
 
 .req-filter.tag  {
-	background-color: #fefdca;
-	border: 1px solid #ddd;
+    background-color: #fefdca;
+    border: 1px solid #ddd;
 }
-
 
 .rclFilterSelected .req-filter.tag  {
-	background-color: #ddd;
+    background-color: #ddd;
 }
-
 
 div.dataTypeList span.req-all-all{
-	margin: 0px 5px 5px;
+    margin: 0px 5px 5px;
+    /* padding: 0px; */
 }
-
-
 
 div.dataTypeList .title {
-	margin-bottom: 5px;	
+    margin-bottom: 5px;
+    color: #004254;
+    font-weight: bold;
 }
 
-
 .ctrlSumPreview .dataTypeList .rclFilterElt {
-	margin-top: 10px;
+    margin-top: 10px;
+    /* display: flex; */
+    /* column-count: 3; */
+    /* column-count: auto; */
+    /* column-width: 8rem; */
+    /* display: flex; */
 }
 
 .ctrlSumPreview li.title {
-	text-align: center;
+    text-align: center;
+    color: #004254;
+    font-weight: bold;
+}
+.product-notifications .title a.notificationsReqType7 {
+
+    font-size: 11px;
+    color: #004254;
 }
 
 .dataTypeList .rclFilterSelected {
-	background-color: #ddd;
-}
-.dataTypeList span .rclFilterSelected {
-	padding: 1px;
+    color: #FF5722;
+    padding: 1px;
+    border-bottom :3px solid;
+
 }
 
-.rclFilterElt ul {
-	display: inline;
+.dataTypeList span .rclFilterSelected {
+    padding: 1px;
+
 }
+
+.rclFilterElt ul  {
+    display:inline;
+    height:100px;
+}
+.rclFilterElt div {column-count: auto;column-width: 10rem;overflow: hidden;padding: 1px;}
 
 #scoresDiv {
-	margin: 0px 10px 5px;
-	overflow: auto;
-	margin-left: 4px;
-	margin-right: 4px;
+    margin: 0px 10px 5px;
+    overflow: auto;
+    margin-left: 4px;
+    margin-right: 4px;
 }
 
 #scoresDiv > ul{
-	padding: 0.2 em;
-	margin-right: 20px;
-	float: left;
-	text-align: center;
+    padding: 0.2 em;
+    margin-right: 20px;
+    float: left;
+    text-align: center;
 }
 
 #scoreLi{
-	background-image: url("../../components/images/states/percent-gauges-sprite.jpg");
-	margin: 0.2em 0.5em 0.5em;
-	display:inline-block;
+    background-image: url("../../components/images/states/percent-gauges-sprite.jpg");
+    margin: 0.2em 0.5em 0.5em;
+    display:inline-block;
 }
 
 #scoreLi span{
-	display: inherit;
-	text-align: center;
+    display: inherit;
+    text-align: center;
 }
 
 div.dataTypeList {
-	overflow: auto;
+    /* overflow: auto; */
 }
 
-
 .product-notifications .notifications-list  .rclReq-details .icon {
-	float: left;
-	width: 5%;
+    float: left;
+    width: 5%;
 }
 
 .product-notifications .notifications-list  .rclReq-details .rclReq-title {
-	float: right;
-	width: 95%;
-	color: black;
+    float: right;
+    width: 95%;
+    color: black;
 }
 
 .product-notifications .notifications-list  .rclReq-details .rclReq-content {
-	clear: both;
-	list-style-type: disc;
-	margin-left: 6%;
-	padding: 5px;
+    clear: both;
+    list-style-type: disc;
+    margin-left: 6%;
+    padding: 2px;
+    column-count: 2;
+    /* column-width: 8rem; */
 }
 
 .product-notifications .notifications-list .rclReq-details .rclReq-content ul li {
-	list-style-type: disc;
-	min-height: 18px;
+    list-style: none;
+    min-height: 18px;
 }
 
 .product-notifications .notifications-list  .rclReq-details .rclReq-content ol li {
-	list-style-type: decimal;
+    list-style-type: decimal;
 }
 
 .product-notifications .notifications-list  td {
-	background-color: #f8f8f8;
-	padding: 10px;
-	border: 1px solid #ccc !important;
-	
+    background-color: #f8f8f8;
+    padding: 4px;
+    border: 1px solid #ccc !important;
 }
 
 .product-notifications .notifications-list .datagrid-bar .new-row, .product-notifications .datagrid .datagrid-bar .selected-items,
-	.product-notifications .datagrid td.yui-dt-first, .product-notifications .datagrid td.yui-dt-last
-	{
-	display: none;
+    .product-notifications .datagrid td.yui-dt-first, .product-notifications .datagrid td.yui-dt-last
+    {
+    display: none;
 }
 
 .product-notifications .notifications-list  .yui-dt-message .yui-dt-last {
-	display: block;
-	border-top: 1px solid #CCCCCC;
-	border-right: 0px;
+    display: block;
+    border-top: 1px solid #CCCCCC;
+    border-right: 0px;
 }
 
 .product-notifications .notifications-list
 .full-screen .sticky-footer, .full-screen  .sticky-push {
-	height: 0px;
+    height: 0px;
 }
