@@ -9336,6 +9336,27 @@
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 				</appearance>
 			</form>
+			<form id="datagrid-rawMaterial">
+				<field-visibility>
+					<show id="bcpg:variantIds" force="true" />
+					<show id="bcpg:depthLevel" />
+					<show id="bcpg:ingListIng" />
+					<show id="bcpg:ingListQtyPerc" />
+					<show id="bcpg:ingListIsGMO" />
+					<show id="bcpg:ingListIsIonized" />
+					<show id="bcpg:ingListIsProcessingAid" />
+					<show id="bcpg:ingListIsSupport" />
+					<show id="bcpg:ingListGeoOrigin" />
+					<show id="bcpg:ingListGeoTransfo" />
+					<show id="bcpg:ingListBioOrigin" />
+					<show id="fm:commentCount" force="true" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:variantIds" label="hidden"></field>
+					<field id="bcpg:depthLevel" label="hidden"></field>
+					<field id="fm:commentCount" label="hidden" read-only="true" />
+				</appearance>
+			</form>
 			<form id="filter">
 				<field-visibility>
 					<show id="bcpg:ingListIng" />
