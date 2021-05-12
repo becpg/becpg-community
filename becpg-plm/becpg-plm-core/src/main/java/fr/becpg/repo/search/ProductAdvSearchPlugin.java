@@ -1,6 +1,7 @@
 package fr.becpg.repo.search;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -39,6 +40,9 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.search.impl.DataListSearchFilter;
 import fr.becpg.repo.search.impl.DataListSearchFilterField;
 import fr.becpg.repo.search.impl.SearchConfig;
+import io.opencensus.trace.AttributeValue;
+import io.opencensus.trace.Tracer;
+import io.opencensus.trace.Tracing;
 
 /**
  * <p>ProductAdvSearchPlugin class.</p>
@@ -50,6 +54,8 @@ import fr.becpg.repo.search.impl.SearchConfig;
 public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 	private static final Log logger = LogFactory.getLog(ProductAdvSearchPlugin.class);
+
+	private static final Tracer tracer = Tracing.getTracer();
 
 	@Autowired
 	private NodeService nodeService;
@@ -95,27 +101,29 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 	public List<NodeRef> filter(List<NodeRef> nodes, QName datatype, Map<String, String> criteria, SearchConfig searchConfig) {
 
 		boolean isAssocSearch = isAssocSearch(criteria);
-
+		
 		if (isAssocSearch) {
-
+			
+			tracer.getCurrentSpan().addAnnotation("filterByAssociations");
 			nodes = filterByAssociations(nodes, datatype, criteria);
-
+			
 			if ((datatype != null) && entityDictionaryService.isSubClass(datatype, PLMModel.TYPE_PRODUCT)) {
-
+				
 				if (searchConfig.getDataListSearchFilters() != null) {
 					for (DataListSearchFilter filter : searchConfig.getDataListSearchFilters()) {
 						nodes = getSearchNodesByListCriteria(nodes, criteria, filter);
 					}
 				}
-
+				
 				getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_PACKAGING_LIST_PRODUCT, PLMModel.ASSOC_PACKAGINGLIST_PRODUCT, null, null);
 				getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_COMPO_LIST_PRODUCT, PLMModel.ASSOC_COMPOLIST_PRODUCT, null, null);
 				getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_PROCESS_LIST_RESSOURCE, MPMModel.ASSOC_PL_RESOURCE, null, null);
-
+				
 				nodes = getSearchNodesBySpecificationCriteria(nodes, criteria);
-
+				
 			}
 		}
+
 
 		return nodes;
 	}
@@ -477,35 +485,52 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 	private List<NodeRef> getSearchNodesByWUsedCriteria(List<NodeRef> nodes, Map<String, String> criteria, String criteriaAssocString,
 			QName criteriaAssoc, QName criteriaAssocValue, String criteriaValue) {
 
+		Map<String, AttributeValue> attributes = new HashMap<>();
+		
+		if (criteriaAssocString != null) {
+			attributes.put("criteriaAssocString", AttributeValue.stringAttributeValue(criteriaAssocString));
+		}
+		
+		if (criteriaAssoc != null) {
+			attributes.put("criteriaAssoc", AttributeValue.stringAttributeValue(criteriaAssoc.getLocalName()));
+		}
+		
+		if (criteriaValue != null) {
+			attributes.put("criteriaValue", AttributeValue.stringAttributeValue(criteriaValue));
+		}
+		
+		tracer.getCurrentSpan().addAnnotation("getSearchNodesByWUsedCriteria", attributes);
+		
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
 			watch = new StopWatch();
 			watch.start();
 		}
-
+		
 		if (criteria.containsKey(criteriaAssocString)) {
-
+			
 			String propValue = criteria.get(criteriaAssocString);
-
+			
 			if ((propValue != null) && !propValue.isBlank()) {
+				
 				List<NodeRef> toFilterByNodes = extractNodeRefs(propValue,false);
-
+				
 				if (!toFilterByNodes.isEmpty()) {
-
+					
 					MultiLevelListData ret = wUsedListService.getWUsedEntity(toFilterByNodes, WUsedOperator.OR, criteriaAssoc, -1);
 					if (ret != null) {
 						nodes.retainAll(ret.getAllChilds());
 					}
 				}
 			}
-
+			
 		}
-
+		
 		if (logger.isDebugEnabled() && (watch != null)) {
 			watch.stop();
 			logger.debug("getSearchNodesByWUsedCriteria executed in  " + watch.getTotalTimeSeconds() + " seconds ");
 		}
-
+		
 		return nodes;
 	}
 
