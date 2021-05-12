@@ -262,7 +262,7 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 					if (dat != null) {
 
 						String name = getProductName(file, idSplit, idColumn, nameColumn);
-
+						
 						if (name != null) {
 							dat.setName(PropertiesHelper.cleanName(name));
 						}
@@ -302,7 +302,7 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 								QName attributeQName = QName.createQName(headerRow[i], namespaceService);
 
 								if (!(PLMModel.TYPE_SUPPLIER.equals(attributeQName) || PLMModel.PROP_PRODUCT_HIERARCHY1.equals(attributeQName)
-										|| PLMModel.PROP_PRODUCT_HIERARCHY2.equals(attributeQName))
+										|| PLMModel.PROP_PRODUCT_HIERARCHY2.equals(attributeQName) || ContentModel.PROP_NAME.equals(attributeQName))
 										&& (dictionaryService.getProperty(attributeQName) != null)) {
 									nodeService.setProperty(productNode, QName.createQName(headerRow[i], namespaceService), value);
 								}
