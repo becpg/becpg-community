@@ -164,6 +164,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		String query = decodeParam(req.getParameter(PARAM_QUERY));
 		String maxResultsString = req.getParameter(PARAM_MAX_RESULTS);
 
+
 		Integer maxResults = null;
 		if (maxResultsString != null) {
 			try {

@@ -41,6 +41,7 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.ScriptService;
 import org.alfresco.service.cmr.security.AccessPermission;
 import org.alfresco.service.cmr.security.PermissionService;
+import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -56,7 +57,6 @@ import fr.becpg.model.ReportModel;
 import fr.becpg.repo.ProjectRepoConsts;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityDictionaryService;
-import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationPlugin;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.AssociationService;
@@ -72,6 +72,8 @@ import fr.becpg.repo.project.policy.ProjectListPolicy;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
+import fr.becpg.repo.security.data.dataList.ACLEntryDataItem.PermissionModel;
+import fr.becpg.repo.security.plugins.SecurityServicePlugin;
 
 /**
  * Project service that manage project
@@ -81,7 +83,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  */
 
 @Service("projectService")
-public class ProjectServiceImpl implements ProjectService, FormulationPlugin {
+public class ProjectServiceImpl implements ProjectService, FormulationPlugin, SecurityServicePlugin {
 
 	private static final Log logger = LogFactory.getLog(ProjectServiceImpl.class);
 
@@ -113,6 +115,8 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin {
 	private ProjectListPolicy projectListPolicy;
 	@Autowired
 	private EntityDictionaryService entityDictionaryService;
+	@Autowired
+	private PersonService personService;
 
 	@Autowired
 	SysAdminParams sysAdminParams;
@@ -686,6 +690,32 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin {
 	@Override
 	public void runFormulation(NodeRef entityNodeRef, String chainId)  {
 		formulate(entityNodeRef);
+	}
+
+	@Override
+	public boolean checkIsInSecurityGroup(NodeRef nodeRef, PermissionModel permissionModel) {
+		if(nodeRef!=null ) {
+			for(NodeRef groupNodeRef : permissionModel.getGroups()) {
+				String authorityName = authorityDAO.getAuthorityName(groupNodeRef);
+			
+				
+				if(isRoleAuhtority(authorityName)) {
+					
+					List<NodeRef> resources = extractResources(nodeRef, Arrays.asList(groupNodeRef));
+					if(resources.contains(personService.getPerson(AuthenticationUtil.getFullyAuthenticatedUser()))) {
+						return true;
+					}
+				}
+			}
+		}
+		
+		
+		return false;
+	}
+
+	@Override
+	public boolean accept(QName nodeType) {
+		return ProjectModel.TYPE_PROJECT.equals(nodeType);
 	}
 
 }

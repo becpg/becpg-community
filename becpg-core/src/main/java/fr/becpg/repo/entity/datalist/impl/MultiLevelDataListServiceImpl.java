@@ -163,7 +163,7 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 
 	private void visitMultiLevelListData(MultiLevelListData ret, DataListFilter dataListFilter, NodeRef listsContainerNodeRef, int currDepth,
 			int maxDepthLevel, QName nodeType, QName dataType, Set<NodeRef> parentNodeRefs, boolean useExpandedCache, boolean resetTree) {
-		int accessMode = securityService.computeAccessMode(nodeType, dataType.toPrefixString(namespaceService));
+		int accessMode = securityService.computeAccessMode(dataListFilter.getEntityNodeRef() ,nodeType, dataType.toPrefixString(namespaceService));
 
 		if (SecurityService.NONE_ACCESS != accessMode) {
 			NodeRef dataListNodeRef = entityListDAO.getList(listsContainerNodeRef, dataType);
