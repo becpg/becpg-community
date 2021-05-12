@@ -52,9 +52,9 @@ function getArgument(argName, defValue) {
  *            form
  * @return Object representing the configuration or null
  */
-function getFormConfig(itemId, formId, mode, prefixedSiteId) {
+function getFormConfig(itemId, formId, mode, prefixedSiteId, prefixedEntityType) {
 	var formConfig = null;
-
+	
 	// query for configuration for item
 	var nodeConfig = config.scoped[itemId];
 
@@ -65,9 +65,15 @@ function getFormConfig(itemId, formId, mode, prefixedSiteId) {
 		if (formsConfig !== null) {
 			if (formId !== null && formId.length > 0) {
 				// look up the specific form
-				if (formsConfig.getForm(formId + prefixedSiteId) !== null) {
+				if (prefixedEntityType!=null && prefixedEntityType.length > 0 && prefixedSiteId!=null && prefixedSiteId.length > 0 
+				    &&  formsConfig.getForm(formId + prefixedEntityType + prefixedSiteId) !== null) {
+					formId = formId + prefixedEntityType + prefixedSiteId;
+			    } else if (prefixedSiteId!=null && prefixedSiteId.length > 0 && formsConfig.getForm(formId + prefixedSiteId) !== null) {
 					formId += prefixedSiteId;
+				} else if(prefixedEntityType!=null && prefixedEntityType.length > 0 && formsConfig.getForm(formId + prefixedEntityType ) !== null) {
+					formId += prefixedEntityType;
 				}
+				
 				formConfig = formsConfig.getForm(formId);
 			}
 
@@ -202,7 +208,9 @@ function createPostBody(itemKind, itemId, visibleFields, formConfig, mode) {
  * @method main
  */
 function main() {
-	var itemType = getArgument("itemType"), list = getArgument("list"), formId = getArgument("formId"), mode = getArgument("mode"), clearCache = getArgument("clearCache"), siteId = getArgument("siteId");// beCPG
+	var itemType = getArgument("itemType"), list = getArgument("list"), formId = getArgument("formId")
+	, mode = getArgument("mode"), clearCache = getArgument("clearCache"), siteId = getArgument("siteId")
+	, entityType = getArgument("entityType");
 
 	cache.maxAge = 3600; // in seconds
 
@@ -210,18 +218,22 @@ function main() {
 		cache.maxAge = 0;
 	}
 
-
-
 	var prefixedSiteId = siteId ? "-" + siteId : "";
+	
+	var prefixedEntityType = "";
+	
+	if(entityType && entityType.includes(":")){
+		prefixedEntityType = "-"+entityType.split(":")[1];
+	}
 
 	//TODO change label to datasource
 
 	// pass form ui model to FTL
-	model.columns = getColumns(itemType, list, formId, mode, prefixedSiteId);
+	model.columns = getColumns(itemType, list, formId, mode, prefixedSiteId, prefixedEntityType);
 
 }
 
-function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId) {
+function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEntityType ) {
 
 	var columns = [], ret = [];
 
@@ -241,7 +253,7 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId) {
 			formId = formIdArgs;
 		}
 
-		var formConfig = getFormConfig(itemType, formId, mode, prefixedSiteId);
+		var formConfig = getFormConfig(itemType, formId, mode, prefixedSiteId, prefixedEntityType);
 
 		if (formConfig != null) {
 
