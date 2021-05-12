@@ -202,7 +202,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 	@Override
 	public void generateReports(final NodeRef nodeRefFrom, final NodeRef nodeRefTo) {
-		try (Scope scope = tracer.spanBuilder("reportService.InternalGenerate").startScopedSpan()) {
+		try (Scope scope = tracer.spanBuilder("reportService.GenerateReports").startScopedSpan()) {
+	
 			internalGenerateReports(nodeRefFrom != null ? nodeRefFrom : nodeRefTo, nodeRefTo);
 		}
 	}
@@ -253,6 +254,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 					+ nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
 		}
 		
+		tracer.getCurrentSpan().putAttribute("entityNodeRef", AttributeValue.stringAttributeValue(entityNodeRef.toString()));
 
 		Date generatedDate = Calendar.getInstance().getTime();
 
@@ -340,8 +342,10 @@ public class EntityReportServiceImpl implements EntityReportService {
 													ReportFormat.valueOf(reportFormat));
 
 											HashMap<String, AttributeValue> map = new HashMap<>();
-											map.put("nodeRef", AttributeValue.stringAttributeValue(entityNodeRef.toString()));
-											map.put("locale", AttributeValue.stringAttributeValue(locale.toString()));
+											
+											map.put("locale", AttributeValue.stringAttributeValue(MLTextHelper.localeKey(locale)));
+											map.put("format", AttributeValue.stringAttributeValue(reportFormat));
+											map.put("name", AttributeValue.stringAttributeValue(documentName));
 
 											tracer.getCurrentSpan().addAnnotation(Annotation.fromDescriptionAndAttributes("extract", map));
 
@@ -374,7 +378,6 @@ public class EntityReportServiceImpl implements EntityReportService {
 															"DataSource XML : \n" + reportData.getXmlDataSource().asXML() + "\n\n");
 												}
 
-												// TODO annotation
 												filterByReportKind(reportData.getXmlDataSource(), tplNodeRef);
 
 												if (logger.isTraceEnabled()) {
@@ -786,7 +789,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 	@Override
 	public void generateReport(final NodeRef entityNodeRef, final NodeRef documentNodeRef) {
 		
-		try (Scope scope = tracer.spanBuilder("reportService.Generate").startScopedSpan()) {
+		try (Scope scope = tracer.spanBuilder("reportService.GenerateReport").startScopedSpan()) {
 			
 			if (entityNodeRef == null) {
 				throw new IllegalArgumentException("entityNodeRef is null");
@@ -795,6 +798,10 @@ public class EntityReportServiceImpl implements EntityReportService {
 			if (documentNodeRef == null) {
 				throw new IllegalArgumentException("documentNodeRef is null");
 			}
+			
+
+			tracer.getCurrentSpan().putAttribute("entityNodeRef", AttributeValue.stringAttributeValue(entityNodeRef.toString()));
+
 			
 			L2CacheSupport.doInCacheContext(() -> {
 				
@@ -857,8 +864,9 @@ public class EntityReportServiceImpl implements EntityReportService {
 							BeCPGReportEngine engine = getReportEngine(tplNodeRef, ReportFormat.valueOf(reportFormat));
 							
 							HashMap<String, AttributeValue> map = new HashMap<>();
-							map.put("nodeRef", AttributeValue.stringAttributeValue(entityNodeRef.toString()));
-							map.put("locale", AttributeValue.stringAttributeValue(locale.toString()));
+							map.put("locale", AttributeValue.stringAttributeValue(MLTextHelper.localeKey(locale)));
+							map.put("format", AttributeValue.stringAttributeValue(reportFormat));
+							map.put("name", AttributeValue.stringAttributeValue(documentName));
 
 							tracer.getCurrentSpan().addAnnotation(Annotation.fromDescriptionAndAttributes("extract", map));
 
@@ -968,6 +976,9 @@ public class EntityReportServiceImpl implements EntityReportService {
 			Locale currentLocal = I18NUtil.getLocale();
 			Locale currentContentLocal = I18NUtil.getContentLocale();
 			try (Scope scope = tracer.spanBuilder("reportService.Generate").startScopedSpan()) {
+				
+				tracer.getCurrentSpan().putAttribute("entityNodeRef", AttributeValue.stringAttributeValue(entityNodeRef.toString()));
+
 
 				I18NUtil.setLocale(locale);
 				I18NUtil.setContentLocale(locale);
@@ -975,8 +986,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 				BeCPGReportEngine engine = getReportEngine(templateNodeRef, reportFormat);
 
 				HashMap<String, AttributeValue> map = new HashMap<>();
-				map.put("nodeRef", AttributeValue.stringAttributeValue(entityNodeRef.toString()));
-				map.put("locale", AttributeValue.stringAttributeValue(locale.toString()));
+				map.put("locale", AttributeValue.stringAttributeValue(MLTextHelper.localeKey(locale)));
+				map.put("format", AttributeValue.stringAttributeValue(reportFormat.toString()));
 
 				tracer.getCurrentSpan().addAnnotation(Annotation.fromDescriptionAndAttributes("extract", map));
 
@@ -1116,7 +1127,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 		for (EntityReportExtractorPlugin entityReportExtractorPlugin : entityExtractors) {
 			if (engine!=null && !engine.isXmlEngine() && (entityReportExtractorPlugin instanceof NoXmlEntityReportExtractor)) {
-				return entityReportExtractorPlugin;
+				ret = entityReportExtractorPlugin;
+				break;
 			}
 
 			EntityReportExtractorPriority priority = entityReportExtractorPlugin.getMatchPriority(type);
@@ -1127,6 +1139,10 @@ public class EntityReportServiceImpl implements EntityReportService {
 			}
 		}
 
+		if(ret!=null) {
+			tracer.getCurrentSpan().addAnnotation(ret.getClass().getSimpleName());
+		}
+		
 		return ret;
 	}
 

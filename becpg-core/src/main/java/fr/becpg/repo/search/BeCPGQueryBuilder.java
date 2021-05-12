@@ -73,6 +73,12 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.search.impl.AbstractBeCPGQueryBuilder;
+import fr.becpg.repo.telemetry.OpenCensusConfiguration;
+import io.opencensus.common.Scope;
+import io.opencensus.trace.AttributeValue;
+import io.opencensus.trace.Tracer;
+import io.opencensus.trace.Tracing;
+import io.opencensus.trace.samplers.Samplers;
 
 /**
  * <p>
@@ -86,13 +92,15 @@ import fr.becpg.repo.search.impl.AbstractBeCPGQueryBuilder;
 public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements InitializingBean {
 
 	private static final Log logger = LogFactory.getLog(BeCPGQueryBuilder.class);
+	
+	private static final Tracer tracer = Tracing.getTracer();
 
 	private static final String DEFAULT_FIELD_NAME = "keywords";
 
 	private static final String CANNED_QUERY_FILEFOLDER_LIST = "fileFolderGetChildrenCannedQueryFactory";
 
 	private static BeCPGQueryBuilder INSTANCE = null;
-
+	
 	@Autowired
 	@Qualifier("SearchService")
 	private SearchService searchService;
@@ -950,16 +958,17 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 		String runnedQuery = buildQuery();
 
-		try {
+		try (Scope scope = tracer.spanBuilder("search.List").setSampler(Samplers.probabilitySampler(OpenCensusConfiguration.SEARCH_SAMPLING_PROBABILITY)).startScopedSpan())  {
+			
+			tracer.getCurrentSpan().putAttribute("query", AttributeValue.stringAttributeValue(runnedQuery));
 
 			if (RepoConsts.MAX_RESULTS_UNLIMITED.equals(maxResults) && logger.isDebugEnabled()) {
 				logger.debug("Unlimited results ask");
 			} 
 			
-			
 			refs = search(runnedQuery, sortProps, -1, maxResults);
 			
-
+			
 		} finally {
 
 			watch.stop();

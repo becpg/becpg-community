@@ -104,7 +104,7 @@ public class EntityCatalogWebScript extends AbstractWebScript {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
-		try (Scope scope = tracer.spanBuilder("/becpg/entity/catalog").startScopedSpan()){
+		try (Scope scope = tracer.spanBuilder("/internal/catalog").startScopedSpan()){
 			
 			Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();
 			String storeType = templateArgs.get("store_type");
