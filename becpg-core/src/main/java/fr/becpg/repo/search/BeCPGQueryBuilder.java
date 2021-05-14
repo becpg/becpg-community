@@ -960,7 +960,8 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 		try (Scope scope = tracer.spanBuilder("search.List").setSampler(Samplers.probabilitySampler(OpenCensusConfiguration.SEARCH_SAMPLING_PROBABILITY)).startScopedSpan())  {
 			
-			tracer.getCurrentSpan().putAttribute("query", AttributeValue.stringAttributeValue(runnedQuery));
+			tracer.getCurrentSpan().putAttribute("becpg/query", AttributeValue.stringAttributeValue(runnedQuery));
+			tracer.getCurrentSpan().putAttribute("becpg/language", AttributeValue.stringAttributeValue(language));
 
 			if (RepoConsts.MAX_RESULTS_UNLIMITED.equals(maxResults) && logger.isDebugEnabled()) {
 				logger.debug("Unlimited results ask");

@@ -26,9 +26,6 @@ import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.repository.RepositoryEntity;
-import io.opencensus.common.Scope;
-import io.opencensus.trace.Tracer;
-import io.opencensus.trace.Tracing;
 
 /**
  * Gathers product's missing fields info : which ones are missing, and what is
@@ -42,8 +39,6 @@ import io.opencensus.trace.Tracing;
 public class EntityCatalogWebScript extends AbstractWebScript {
 
 	private static final Log logger = LogFactory.getLog(EntityCatalogWebScript.class);
-
-	private static final Tracer tracer = Tracing.getTracer();
 
 	private NodeService nodeService;
 
@@ -104,7 +99,6 @@ public class EntityCatalogWebScript extends AbstractWebScript {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
-		try (Scope scope = tracer.spanBuilder("/internal/catalog").startScopedSpan()){
 			
 			Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();
 			String storeType = templateArgs.get("store_type");
@@ -170,7 +164,6 @@ public class EntityCatalogWebScript extends AbstractWebScript {
 				logger.error(e, e);
 				throw new WebScriptException("Unable to serialize JSON", e);
 			}
-		}
 
 	}
 

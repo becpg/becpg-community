@@ -23,7 +23,9 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
+import fr.becpg.repo.telemetry.OpenCensusConfiguration;
 import io.opencensus.common.Scope;
+import io.opencensus.trace.samplers.Samplers;
 
 /**
  * Return OK if entity exist or KO
@@ -36,7 +38,7 @@ public class CheckEntityWebScript extends AbstractEntityWebScript {
 	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
-		try (Scope scope = tracer.spanBuilder("/remote/check").startScopedSpan()) {
+		try (Scope scope = tracer.spanBuilder("/remote/check").setSampler(Samplers.probabilitySampler(OpenCensusConfiguration.REMOTE_CHECK_SAMPLING_PROBABILITY)).startScopedSpan()) {
 			String nodeRef = req.getParameter(PARAM_NODEREF);
 			if ((nodeRef != null) && (nodeRef.length() > 0)) {
 				NodeRef node = new NodeRef(nodeRef);

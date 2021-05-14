@@ -123,10 +123,10 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	@Override
 	public List<NodeRef> queryAdvSearch(QName datatype, BeCPGQueryBuilder beCPGQueryBuilder, Map<String, String> criteria, int maxResults) {
 		
-		try (Scope scope = tracer.spanBuilder("searchService.AdvSearch").startScopedSpan()) {
+		try (Scope scope = tracer.spanBuilder("search.AdvSearch").startScopedSpan()) {
 			
 			if (datatype != null) {
-				tracer.getCurrentSpan().putAttribute("datatype", AttributeValue.stringAttributeValue(datatype.getLocalName()));
+				tracer.getCurrentSpan().putAttribute("becpg/datatype", AttributeValue.stringAttributeValue(datatype.getLocalName()));
 			}
 			
 			SearchConfig searchConfig = getSearchConfig();

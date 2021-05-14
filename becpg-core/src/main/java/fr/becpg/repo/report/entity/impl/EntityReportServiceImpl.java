@@ -254,7 +254,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 					+ nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
 		}
 		
-		tracer.getCurrentSpan().putAttribute("entityNodeRef", AttributeValue.stringAttributeValue(entityNodeRef.toString()));
+		tracer.getCurrentSpan().putAttribute("becpg/entityNodeRef", AttributeValue.stringAttributeValue(entityNodeRef.toString()));
 
 		Date generatedDate = Calendar.getInstance().getTime();
 
@@ -800,7 +800,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 			}
 			
 
-			tracer.getCurrentSpan().putAttribute("entityNodeRef", AttributeValue.stringAttributeValue(entityNodeRef.toString()));
+			tracer.getCurrentSpan().putAttribute("becpg/entityNodeRef", AttributeValue.stringAttributeValue(entityNodeRef.toString()));
 
 			
 			L2CacheSupport.doInCacheContext(() -> {
@@ -977,7 +977,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 			Locale currentContentLocal = I18NUtil.getContentLocale();
 			try (Scope scope = tracer.spanBuilder("reportService.Generate").startScopedSpan()) {
 				
-				tracer.getCurrentSpan().putAttribute("entityNodeRef", AttributeValue.stringAttributeValue(entityNodeRef.toString()));
+				tracer.getCurrentSpan().putAttribute("becpg/entityNodeRef", AttributeValue.stringAttributeValue(entityNodeRef.toString()));
 
 
 				I18NUtil.setLocale(locale);
