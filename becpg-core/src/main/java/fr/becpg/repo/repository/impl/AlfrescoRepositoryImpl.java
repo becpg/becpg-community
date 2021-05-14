@@ -88,7 +88,8 @@ import fr.becpg.repo.repository.model.DefaultListDataItem;
  * @version $Id: $Id
  */
 @Repository("alfrescoRepository")
-public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements AlfrescoRepository<T>, NodeServicePolicies.OnDeleteNodePolicy, NodeServicePolicies.OnUpdatePropertiesPolicy {
+public class AlfrescoRepositoryImpl<T extends RepositoryEntity>
+		implements AlfrescoRepository<T>, NodeServicePolicies.OnDeleteNodePolicy, NodeServicePolicies.OnUpdatePropertiesPolicy {
 
 	@Autowired
 	private NodeService nodeService;
@@ -129,15 +130,6 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 	@PostConstruct
 	public void init() {
-//		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteAssociationPolicy.QNAME, BeCPGModel.TYPE_CHARACT,
-//				new JavaBehaviour(this, "onDeleteAssociation"));
-//		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, BeCPGModel.TYPE_CHARACT,
-//				new JavaBehaviour(this, "onCreateAssociation"));
-//
-//		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteAssociationPolicy.QNAME, BeCPGModel.TYPE_ENTITY_V2,
-//				new JavaBehaviour(this, "onDeleteAssociation"));
-//		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, BeCPGModel.TYPE_ENTITY_V2,
-//				new JavaBehaviour(this, "onCreateAssociation"));
 
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME, BeCPGModel.TYPE_ENTITY_V2,
 				new JavaBehaviour(this, "onDeleteNode"));
@@ -153,20 +145,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, BeCPGModel.TYPE_LIST_VALUE,
 				new JavaBehaviour(this, "onUpdateProperties"));
 
-
 	}
-
-//	/** {@inheritDoc} */
-//	@Override
-//	public void onDeleteAssociation(AssociationRef associationRef) {
-//		purgeCache(associationRef.getSourceRef());
-//	}
-//
-//	/** {@inheritDoc} */
-//	@Override
-//	public void onCreateAssociation(AssociationRef associationRef) {
-//		purgeCache(associationRef.getSourceRef());
-//	}
 
 	/** {@inheritDoc} */
 	@Override
@@ -174,6 +153,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		purgeCache(associationRef.getChildRef());
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 		purgeCache(nodeRef);
@@ -616,7 +596,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 	}
 
 	/*
-	 * There is 3 level of cache: Standalone call we use a HashMap When in L2cacheContext we use a cache that can survice several call (used by cache only) We use also a sharedCache tha store
+	 * There is 3 level of cache: Standalone call we use a HashMap When in L2cacheContext we use a cache that can survive several call (used by cache only) We use also a sharedCache that store
 	 * cacheAble
 	 */
 	@SuppressWarnings("unchecked")
@@ -653,17 +633,37 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 					Method readMethod = pd.getReadMethod();
 
 					if (readMethod != null) {
+						boolean isRefreshed = false;
 						if (readMethod.isAnnotationPresent(AlfSingleAssoc.class) && readMethod.getAnnotation(AlfSingleAssoc.class).isEntity()) {
-							if (logger.isDebugEnabled()) {
-								logger.info("Refresh: " + entity.getName() + " - " + pd.getName());
-							}
+
 							loadAssoc(entity, pd, readMethod, localCache, false, readMethod.getAnnotation(AlfSingleAssoc.class).isChildAssoc());
+							isRefreshed = true;
 						} else if (readMethod.isAnnotationPresent(AlfMultiAssoc.class) && readMethod.getAnnotation(AlfMultiAssoc.class).isEntity()) {
+
+							loadAssoc(entity, pd, readMethod, localCache, true, readMethod.getAnnotation(AlfMultiAssoc.class).isChildAssoc());
+							isRefreshed = true;
+						} else if (readMethod.isAnnotationPresent(AlfProp.class) && readMethod.isAnnotationPresent(AlfQname.class)
+								&& pd.getPropertyType().isAnnotationPresent(AlfType.class)) {
+
+							Object o = beanWrapper.getPropertyValue(pd.getName());
+
+							if ((o instanceof RepositoryEntity) && (((RepositoryEntity) o).getNodeRef() != null)) {
+
+								PropertyUtils.setProperty(entity, pd.getName(),
+										findOne(((RepositoryEntity) o).getNodeRef(),
+												pd.getPropertyType().isAnnotationPresent(AlfCacheable.class) ? CacheType.FORCE_SHARED_CACHE
+														: CacheType.STANDARD,
+												localCache));
+								isRefreshed = true;
+							}
+
+						}
+						if (isRefreshed) {
 							if (logger.isDebugEnabled()) {
 								logger.info("Refresh: " + entity.getName() + " - " + pd.getName());
 							}
-							loadAssoc(entity, pd, readMethod, localCache, true, readMethod.getAnnotation(AlfMultiAssoc.class).isChildAssoc());
 						}
+
 					}
 				}
 
@@ -978,7 +978,6 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		Pair<Long, NodeRef> nodePair = nodeDAO.getNodePair(nodeRef);
 
 		if (nodePair != null) {
-
 			// Remove
 			nodeDAO.removeNodeProperties(nodePair.getFirst(), qnames);
 		}
