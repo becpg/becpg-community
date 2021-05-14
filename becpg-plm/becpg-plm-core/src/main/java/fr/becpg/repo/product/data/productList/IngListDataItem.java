@@ -53,7 +53,7 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 
 	private Double qtyPerc = 0d;
 	
-	private Double qtyPercWithYield = 0d;
+	private Double qtyPercWithYield = null;
 	
 	private Double volumeQtyPerc;
 	
