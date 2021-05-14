@@ -11,7 +11,6 @@ import java.util.Comparator;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -193,9 +192,10 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 						Double qty = FormulationHelper.getQtyInKg(compoItem);
 						if (qty != null) {
+
 							qty *= FormulationHelper.getYield(compoItem) / 100d;
 							totalQtyUsedWithYield += qty * (formulatedProduct.getYield() != null ? formulatedProduct.getYield() / 100d : 1d);
-							totalQtyUsed += (qty * FormulationHelper.getYield(compoItem)) / 100d;
+							totalQtyUsed += qty;
 						}
 
 						Double vol = compoItem.getVolume();
@@ -223,7 +223,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				}
 
 				Double totalQtyIngWithYield = totalQtyIngMap.get(ingListDataItem.getName() + YIELD_SUFFIX);
-				if (totalQtyIngWithYield != null) {
+				if ((totalQtyIngWithYield != null) && (totalQtyUsedWithYield != 0d) && !isRawMaterial) {
 					Double waterLost = 0d;
 					if ((formulatedProduct.getYield() != null) && (formulatedProduct.getRecipeQtyUsed() != null)
 							&& nodeService.hasAspect(ingListDataItem.getIng(), PLMModel.ASPECT_WATER)) {
@@ -349,7 +349,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		}
 
 		// calculate ingList of formulated product
-		calculateILOfPart(compoListDataItem, CompositeHelper.getHierarchicalCompoList(componentProductData.getIngList()),
+		calculateILOfPart(componentProductData, compoListDataItem, CompositeHelper.getHierarchicalCompoList(componentProductData.getIngList()),
 				formulatedProduct.getIngList(), retainNodes, totalQtyIngMap, totalQtyVolMap, null, isRawMaterial);
 	}
 
@@ -366,8 +366,8 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	 * @param isRawMaterial
 	 * @throws FormulateException
 	 */
-	private void calculateILOfPart(CompoListDataItem compoListDataItem, Composite<IngListDataItem> compositeIngList, List<IngListDataItem> ingList,
-			List<IngListDataItem> retainNodes, Map<String, Double> totalQtyIngMap, Map<String, Double> totalQtyVolMap,
+	private void calculateILOfPart(ProductData componentProductData, CompoListDataItem compoListDataItem, Composite<IngListDataItem> compositeIngList,
+			List<IngListDataItem> ingList, List<IngListDataItem> retainNodes, Map<String, Double> totalQtyIngMap, Map<String, Double> totalQtyVolMap,
 			IngListDataItem parentIngListDataItem, boolean isRawMaterial) {
 
 		// OMIT is not taken in account
@@ -408,7 +408,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			Double qtyForYield = qty;
 			Double qtyIng = ingListDataItem.getQtyPerc();
 			Double qtyIngWithYield = ingListDataItem.getQtyPercWithYield();
-			if (qtyIngWithYield == null) {
+			if ((qtyIngWithYield == null) || (componentProductData instanceof RawMaterialData)) {
 				qtyIngWithYield = qtyIng;
 			}
 
@@ -532,8 +532,8 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 			// recursive
 			if (!component.isLeaf()) {
-				calculateILOfPart(compoListDataItem, component, ingList, retainNodes, totalQtyIngMap, totalQtyVolMap, newIngListDataItem,
-						isRawMaterial);
+				calculateILOfPart(componentProductData, compoListDataItem, component, ingList, retainNodes, totalQtyIngMap, totalQtyVolMap,
+						newIngListDataItem, isRawMaterial);
 			}
 		}
 	}
@@ -542,22 +542,32 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 		if ((ingList != null) && (ingList.getIng() != null)) {
 			for (IngListDataItem i : ingLists) {
-				if (ingList.getIng().equals(i.getIng()) && extractPath(ingList).equals(extractPath(i))) {
-					return i;
+				if (ingList.getIng().equals(i.getIng())) {
+					// check parent
+					IngListDataItem parentIngListDataItem = ingList.getParent();
+					IngListDataItem p = i.getParent();
+					int j = 0;
+					boolean isFound = true;
+					while ((parentIngListDataItem != null) || (p != null)) {
+						if ((j > 256) || (((parentIngListDataItem != null) && (p == null)) || ((parentIngListDataItem == null) && (p != null)))
+								|| ((parentIngListDataItem != null) && (p != null)
+										&& (((parentIngListDataItem.getIng() != null) && !parentIngListDataItem.getIng().equals(p.getIng()))
+												|| ((p.getIng() != null) && !p.getIng().equals(parentIngListDataItem.getIng()))))) {
+							isFound = false;
+							break;
+						}
+
+						parentIngListDataItem = parentIngListDataItem.getParent();
+						p = p.getParent();
+						j++;
+					}
+					if (isFound) {
+						return i;
+					}
 				}
 			}
 		}
 		return null;
-	}
-
-	private String extractPath(IngListDataItem i) {
-		Set<String> visited = new LinkedHashSet<>();
-		IngListDataItem parent = i.getParent();
-		while ((parent != null) && (parent.getNodeRef() != null) && !visited.contains(parent.getNodeRef().getId())) {
-			visited.add(parent.getNodeRef().getId());
-			parent = parent.getParent();
-		}
-		return visited.stream().collect(Collectors.joining("/"));
 	}
 
 	/**
@@ -581,7 +591,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 			while (!processor.isEmpty()) {
 				i++;
-				IngListDataItem il = processor.pop();
+				IngListDataItem il = processor.removeLast();
 				byParent.getOrDefault(il, Collections.emptyList()).stream()
 						.sorted(Comparator.comparing(IngListDataItem::getQtyPerc, Comparator.nullsFirst(Comparator.naturalOrder()))
 								.thenComparing(IngListDataItem::getName))
