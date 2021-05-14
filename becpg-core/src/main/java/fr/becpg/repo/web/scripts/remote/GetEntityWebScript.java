@@ -32,7 +32,9 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.common.BeCPGException;
 import fr.becpg.repo.entity.remote.RemoteParams;
+import fr.becpg.repo.telemetry.OpenCensusConfiguration;
 import io.opencensus.common.Scope;
+import io.opencensus.trace.samplers.Samplers;
 
 /**
  * Get entity as XML
@@ -47,7 +49,7 @@ public class GetEntityWebScript extends AbstractEntityWebScript {
 	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
-		try (Scope scope = tracer.spanBuilder("/remote/get").startScopedSpan()) {
+		try (Scope scope = tracer.spanBuilder("/remote/get").setSampler(Samplers.probabilitySampler(OpenCensusConfiguration.REMOTE_GET_SAMPLING_PROBABILITY)).startScopedSpan()) {
 			NodeRef entityNodeRef = findEntity(req);
 
 			logger.debug("Get entity: " + entityNodeRef);

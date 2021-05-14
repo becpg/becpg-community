@@ -140,8 +140,8 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 		Locale currentLocal = I18NUtil.getLocale();
 		try(Scope scope = tracer.spanBuilder("formulationService.Formulate").startScopedSpan()) {
 			
-			tracer.getCurrentSpan().putAttribute("entityNodeRef", AttributeValue.stringAttributeValue(entityNodeRef.toString()));
-			tracer.getCurrentSpan().putAttribute("chainId", AttributeValue.stringAttributeValue(chainId));
+			tracer.getCurrentSpan().putAttribute("becpg/entityNodeRef", AttributeValue.stringAttributeValue(entityNodeRef.toString()));
+			tracer.getCurrentSpan().putAttribute("becpg/chainId", AttributeValue.stringAttributeValue(chainId));
 			tracer.getCurrentSpan().addAnnotation("findOne");
 			
 			I18NUtil.setLocale(Locale.getDefault());
@@ -181,9 +181,11 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 	public T formulate(T repositoryEntity, String chainId) {
 		try(Scope scope = tracer.spanBuilder("formulationService.FormulateEntity").startScopedSpan()) {
 			
-			tracer.getCurrentSpan().putAttribute("entityName", AttributeValue.stringAttributeValue(repositoryEntity.getName()));
-			if(repositoryEntity.getNodeRef()!=null) {
-				tracer.getCurrentSpan().putAttribute("entityNodeRef", AttributeValue.stringAttributeValue(repositoryEntity.getNodeRef().toString()));
+			if( repositoryEntity.getName()!=null) {
+				tracer.getCurrentSpan().putAttribute("becpg/entityName", AttributeValue.stringAttributeValue(repositoryEntity.getName()));
+			}
+			if( repositoryEntity.getNodeRef()!=null) {
+				tracer.getCurrentSpan().putAttribute("becpg/entityNodeRef", AttributeValue.stringAttributeValue(repositoryEntity.getNodeRef().toString()));
 			}
 
 			FormulationChain<T> chain = getChain(repositoryEntity.getClass(), chainId);

@@ -23,7 +23,9 @@ public class OpenCensusConfiguration {
 	public static final TagKey HOST_KEY = TagKey.create("becpg/host");
 	public static final TagKey INSTANCE_KEY = TagKey.create("becpg/instance");
 
-	public static final double SEARCH_SAMPLING_PROBABILITY = 1d / 10d;
+	public static final double SEARCH_SAMPLING_PROBABILITY = 1d / 50d;
+	public static final double REMOTE_CHECK_SAMPLING_PROBABILITY = 1d / 100d;
+	public static final double REMOTE_GET_SAMPLING_PROBABILITY = 1d / 100d;
 
 	@PostConstruct
 	public void init() throws IOException {
