@@ -19,10 +19,14 @@ public class LargeTextHelper {
 	private LargeTextHelper() {
 		//Do Nothing
 	}
-
+	
 	public static final String elipse(String textBefore) {
-		if(textBefore!=null && textBefore.length()> TEXT_SIZE_LIMIT) {
-			return textBefore.substring(0, TEXT_SIZE_LIMIT) + "...";
+		return elipse(textBefore,TEXT_SIZE_LIMIT);
+	}
+
+	public static final String elipse(String textBefore, int textLength) {
+		if(textBefore!=null && textBefore.length()> textLength) {
+			return textBefore.substring(0, textLength) + "...";
 		}
 		return textBefore;
 	}
@@ -60,7 +64,7 @@ public class LargeTextHelper {
 
 			while (it.hasNext()) {
 				Locale locale = it.next().getKey();
-				mlText.put(locale, mlText.get(locale).substring(0, newTextLength) + "...");
+				mlText.put(locale, elipse(mlText.get(locale),newTextLength));
 			}
 		}
 	}
