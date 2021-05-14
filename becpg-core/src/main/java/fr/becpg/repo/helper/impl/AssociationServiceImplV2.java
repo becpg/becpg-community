@@ -17,6 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.helper.impl;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -81,7 +82,7 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 public class AssociationServiceImplV2 extends AbstractBeCPGPolicy
 		implements AssociationService, NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnCreateChildAssociationPolicy,
 		NodeServicePolicies.OnDeleteAssociationPolicy, NodeServicePolicies.OnDeleteChildAssociationPolicy, NodeServicePolicies.OnDeleteNodePolicy,
-		CheckOutCheckInServicePolicies.OnCheckIn, RefreshableCacheListener, InitializingBean {
+		CheckOutCheckInServicePolicies.OnCheckIn, RefreshableCacheListener, NodeServicePolicies.OnUpdatePropertiesPolicy , InitializingBean {
 
 	private static final Log logger = LogFactory.getLog(AssociationServiceImplV2.class);
 
@@ -662,6 +663,10 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy
 				new JavaBehaviour(this, "onCheckIn"));
 		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.OnCheckIn.QNAME, ContentModel.TYPE_AUTHORITY,
 				new JavaBehaviour(this, "onCheckIn"));
+		
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, BeCPGModel.ASPECT_SORTABLE_LIST,
+				new JavaBehaviour(this, "onUpdateProperties"));
+		
 
 	}
 
@@ -711,6 +716,18 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy
 	public void onCheckIn(NodeRef nodeRef) {
 		removeAllCacheAssocs(nodeRef);
 
+	}
+	
+	
+	/** {@inheritDoc} */
+	@Override
+	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
+		Serializable beforeSort =  before.get(BeCPGModel.PROP_SORT);
+		Serializable afterSort = after.get(BeCPGModel.PROP_SORT);
+		
+		if((beforeSort!=null && !beforeSort.equals(afterSort) )|| (beforeSort == null && afterSort!=null)) {
+			removeChildCachedAssoc(nodeService.getPrimaryParent(nodeRef).getParentRef(), ContentModel.ASSOC_CONTAINS);
+		}
 	}
 
 	//// Cache managment
@@ -789,5 +806,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy
 		registry.register(this);
 
 	}
+
+
 
 }
