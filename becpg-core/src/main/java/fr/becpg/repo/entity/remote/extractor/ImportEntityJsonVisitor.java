@@ -440,7 +440,7 @@ public class ImportEntityJsonVisitor {
 
 		if ((associations != null) && !associations.isEmpty()) {
 
-			List<NodeRef> nodes = queryBuilder.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).inDBIfPossible().list();
+			List<NodeRef> nodes = queryBuilder.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).excludeVersions().inDBIfPossible().list();
 
 			for (Map.Entry<QName, List<NodeRef>> nestedEntry : associations.entrySet()) {
 
@@ -469,7 +469,7 @@ public class ImportEntityJsonVisitor {
 			return (nodes != null) && !nodes.isEmpty() ? nodes.get(0) : null;
 
 		} else {
-			return queryBuilder.inDBIfPossible().ftsLanguage().singleValue();
+			return queryBuilder.inDBIfPossible().excludeVersions().ftsLanguage().singleValue();
 		}
 
 	}
