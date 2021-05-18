@@ -335,11 +335,8 @@ div.dataTypeList .title {
 
 .ctrlSumPreview .dataTypeList .rclFilterElt {
     margin-top: 10px;
-    /* display: flex; */
-    /* column-count: 3; */
-    /* column-count: auto; */
-    /* column-width: 8rem; */
-    /* display: flex; */
+    display: flex;
+    /* height: 100px; */
 }
 
 .ctrlSumPreview li.title {
@@ -347,17 +344,10 @@ div.dataTypeList .title {
     color: #004254;
     font-weight: bold;
 }
-.product-notifications .title a.notificationsReqType7 {
-
-    font-size: 11px;
-    color: #004254;
-}
+.product-notifications .title a.notificationsReqType7 {font-size: 11px;color: #004254;text-decoration-color: #ff642d;}
 
 .dataTypeList .rclFilterSelected {
-    color: #FF5722;
-    padding: 1px;
-    border-bottom :3px solid;
-
+    text-decoration: underline 2px;
 }
 
 .dataTypeList span .rclFilterSelected {
@@ -365,11 +355,33 @@ div.dataTypeList .title {
 
 }
 
+.rclFilterElt a.notificationsReqType7 {
+    text-decoration-color: #ff642d;
+    /* padding-bottom: 1px; */
+}
+.rclFilterElt a.notificationsReqType7:hover {
+    text-decoration-color: #ff642d;
+}
+
 .rclFilterElt ul  {
     display:inline;
     height:100px;
 }
-.rclFilterElt div {column-count: auto;column-width: 10rem;overflow: hidden;padding: 1px;}
+.rclFilterElt div {
+    column-count: 3;
+    column-width: 10rem;
+    padding: 1px;
+    font-size: 13px;
+}
+div .div-regulatorycodes ul li {
+    display: flex;
+}
+
+div .div-regulatorycodes ul li span {
+    display: flex;
+    background-color: lightgrey;
+    /* border-radius: 15px; */
+}
 
 #scoresDiv {
     margin: 0px 10px 5px;
@@ -451,3 +463,4 @@ div.dataTypeList {
 .full-screen .sticky-footer, .full-screen  .sticky-push {
     height: 0px;
 }
+
