@@ -1065,6 +1065,7 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 				} else {
 					nodeService.setProperty(branchNodeRef, BeCPGModel.PROP_BRANCH_FROM_VERSION_LABEL, RepoConsts.INITIAL_VERSION);
 				}
+				nodeService.setProperty(branchNodeRef, ContentModel.PROP_CREATED, new Date());
 				nodeService.setProperty(branchNodeRef, ContentModel.PROP_MODIFIED, new Date());
 				nodeService.setProperty(branchNodeRef, ContentModel.PROP_MODIFIER, AuthenticationUtil.getFullyAuthenticatedUser());
 				

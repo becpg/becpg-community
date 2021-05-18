@@ -336,7 +336,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 										if (((selectedReportNodeRef != null) && (documentNodeRef != null)
 												&& selectedReportNodeRef.toString().equals(documentNodeRef.toString()))
-												|| ((selectedReportNodeRef == null) && Boolean.TRUE.equals(isDefault))) {
+												|| ((selectedReportNodeRef == null) && Boolean.TRUE.equals(isDefault))
+												|| !entityNodeRef.equals(entityNodeTo)) {
 
 											BeCPGReportEngine engine = getReportEngine(tplNodeRef,
 													ReportFormat.valueOf(reportFormat));
