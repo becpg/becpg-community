@@ -140,8 +140,12 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 		Locale currentLocal = I18NUtil.getLocale();
 		try(Scope scope = tracer.spanBuilder("formulationService.Formulate").startScopedSpan()) {
 			
-			tracer.getCurrentSpan().putAttribute("becpg/entityNodeRef", AttributeValue.stringAttributeValue(entityNodeRef.toString()));
-			tracer.getCurrentSpan().putAttribute("becpg/chainId", AttributeValue.stringAttributeValue(chainId));
+			if(entityNodeRef!=null) {
+				tracer.getCurrentSpan().putAttribute("becpg/entityNodeRef", AttributeValue.stringAttributeValue(entityNodeRef.toString()));
+			}
+			if(chainId!=null) {
+				tracer.getCurrentSpan().putAttribute("becpg/chainId", AttributeValue.stringAttributeValue(chainId));
+			}
 			tracer.getCurrentSpan().addAnnotation("findOne");
 			
 			I18NUtil.setLocale(Locale.getDefault());
