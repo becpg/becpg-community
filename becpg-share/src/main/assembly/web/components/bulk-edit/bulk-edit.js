@@ -649,7 +649,7 @@
 							this.populateBulkEdit();
 							this.widgets.showButton.set("disabled", false);
 						},
-
+						
 						/**
 						 * Fired by YUI when parent element is available for
 						 * scripting
@@ -666,6 +666,8 @@
 								menu : "itemTypeSelect-menu",
 								lazyloadmenu : false
 							});
+							
+							
 
 							this.widgets.typeSelect.getMenu().subscribe("click", function(p_sType, p_aArgs) {
 								var menuItem = p_aArgs[1];
@@ -673,6 +675,7 @@
 									me.widgets.typeSelect.set("label", menuItem.cfg.getProperty("text")+ " " + Alfresco.constants.MENU_ARROW_SYMBOL);
 								}
 							});
+							
 
 							// Item Select menu button
 							this.widgets.itemSelect = Alfresco.util.createYUIButton(this, "itemSelect-button", this.onItemSelect, {
@@ -716,6 +719,18 @@
 								return true;
 							};
 							Bubbling.addDefaultAction("action-link", fnActionHandler);
+							
+							// CheckAll Items menu button
+							this.widgets.checkAllbutton = Alfresco.util.createYUIButton(this, "checkAll-button", function() {
+								var items = Selector.query('input[name="propChecked"]');
+								for(var i=0; i<items.length; i++) {
+									if(items[i].type =='checkbox') {
+										items[i].checked =!items[i].checked;
+									}
+								}       
+							
+							});
+							
 
 							this.widgets.showButton = Alfresco.util.createYUIButton(this, "show-button", this.onBulkEditShow, {
 								disabled : false
