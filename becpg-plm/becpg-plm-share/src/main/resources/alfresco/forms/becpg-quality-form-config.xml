@@ -108,7 +108,15 @@
 						</control>
 					</field>
 					<set id="product-info" appearance="bordered-panel" label-id="becpg.forms.set.product-info.label" />
-					<field id="qa:product" set="product-info" />
+					<field id="qa:product" set="product-info" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:product?classNames=bcpg:finishedProduct,bcpg:semiFinishedProduct
+							</control-param>
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
+							</control-param>
+						</control>
+					</field>
 					<field id="qa:batchQty" set="product-info" mandatory="true" />
 					<field id="qa:batchQtyUnit" set="product-info" mandatory="true" >
 						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
@@ -159,7 +167,15 @@
 						</control>
 					</field>
 					<set id="product-info" appearance="bordered-panel" label-id="becpg.forms.set.product-info.label" />
-					<field id="qa:product" set="product-info" />
+					<field id="qa:product" set="product-info" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:product?classNames=bcpg:finishedProduct,bcpg:semiFinishedProduct
+							</control-param>
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
+							</control-param>
+						</control>
+					</field>
 					<field id="qa:batchQty" set="product-info" mandatory="true"  />
 					<field id="qa:batchQtyUnit" set="product-info" mandatory="true"  >
 						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
@@ -170,6 +186,27 @@
 		
 				</appearance>
 			</form>
+				<form id="reports-parameters">
+	         	<field-visibility>
+	         		<show id="rep:reportLocales" force="true" />
+	                <show id="rep:reportParameters" force="true" />
+	                <show id="rep:reportTpls" force="true" />
+	            </field-visibility>
+	            <appearance>
+					<field id="rep:reportLocales" >
+						<control template="/org/alfresco/components/form/controls/mtlangue.ftl"/>
+					</field>
+					<field id="rep:reportParameters" >
+					  	<control template="/org/alfresco/components/form/controls/checkboxmany.ftl"/>
+					</field>
+					<field id="rep:reportTpls" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/rep:reportTpl?excludeProps=rep:reportTplIsSystem%7Cfalse,rep:reportTplIsDisabled%7Cfalse,rep:reportTplType%7CExportSearch,rep:reportTplType%7CCompare,rep:reportTplType%7CSystem</control-param>
+						</control>
+					</field>
+				</appearance>		
+	         </form>
 
 	
 		</forms>
@@ -189,12 +226,17 @@
 					<show id="qa:batchId"/>
 				</field-visibility>
 				<appearance>
-					<field id="qa:batchQtyUnit"  >
+					<field id="qa:product" read-only="true" />
+					<field id="qa:batchQty" read-only="true"/>
+					<field id="qa:batchQtyUnit" read-only="true" >
 						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
 							<control-param name="options">kg,g,lb,oz,L,cL,mL,gal,cp,fl_oz,P|becpg.forms.field.productUnit
 							</control-param>
 						</control>
 					</field>
+					<field id="qa:batchState" read-only="true"/>
+					<field id="qa:batchId" read-only="true"/>
+					
 				</appearance>
 				
 			</form>
@@ -212,12 +254,16 @@
 					<show id="qa:batchId"/>
 				</field-visibility>
 				<appearance>
-					<field id="qa:batchQtyUnit"  >
+					<field id="qa:product" read-only="true" />
+					<field id="qa:batchQty" read-only="true"/>
+					<field id="qa:batchQtyUnit" read-only="true" >
 						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
 							<control-param name="options">kg,g,lb,oz,L,cL,mL,gal,cp,fl_oz,P|becpg.forms.field.productUnit
 							</control-param>
 						</control>
 					</field>
+					<field id="qa:batchState" read-only="true"/>
+					<field id="qa:batchId" read-only="true"/>
 				</appearance>
 			</form>
 			<!-- Data Grid view -->
@@ -231,6 +277,16 @@
 					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
+					<field id="qa:product" read-only="true" />
+					<field id="qa:batchQty" read-only="true"/>
+					<field id="qa:batchQtyUnit" read-only="true" >
+						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
+							<control-param name="options">kg,g,lb,oz,L,cL,mL,gal,cp,fl_oz,P|becpg.forms.field.productUnit
+							</control-param>
+						</control>
+					</field>
+					<field id="qa:batchState" read-only="true"/>
+					<field id="qa:batchId" read-only="true"/>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 				</appearance>
 			</form>
