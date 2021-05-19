@@ -63,6 +63,13 @@
 
     
     <permissionSet expose="selected" type="bcpg:entityV2">
+    
+    	<permissionGroup name="Coordinator" extends="true" expose="true"/>
+        <permissionGroup name="Collaborator" extends="true" expose="true"/>
+        <permissionGroup name="Contributor" extends="true" expose="true"/>
+        <permissionGroup name="Editor" extends="true" expose="true"/>
+        <permissionGroup name="Consumer" extends="true" expose="true"/>
+        <permissionGroup name="RecordAdministrator" extends="true" expose="false"/>
         
         <permissionGroup name="MergeEntity" expose="false" allowFullControl="false"/>
 
