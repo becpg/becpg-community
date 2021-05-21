@@ -264,6 +264,8 @@
 				
 				<!-- Nutrient score -->
 				<css src="/components/form/controls/nutrient-class.css" />
+				<!-- ECO score -->
+				<css src="/components/form/controls/ecoscore-class.css" />
 				<!-- Decision tree -->
 				<css src="/components/form/controls/decision-tree.css" />
 				<js src="/components/form/controls/decision-tree.js" />

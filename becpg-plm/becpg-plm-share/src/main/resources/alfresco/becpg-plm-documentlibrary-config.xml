@@ -19,6 +19,7 @@
 				<aspect name="pack:sizeAspect" />
 				<aspect name="pack:tareAspect" />
 				<aspect name="bcpg:nutrientProfilingScoreAspect" />
+				<aspect name="bcpg:ecoScoreAspect" />
 				<aspect name="pack:pmThicknessAspect" />
 				<aspect name="pack:pmMaterialAspect" />
 				<aspect name="pack:pmIntSizeAspect" />
