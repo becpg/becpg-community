@@ -61,6 +61,8 @@ public interface GS1Model {
 
 	/** Constant <code>PROP_HEIGHT</code> */
 	QName PROP_HEIGHT = QName.createQName(GS1_URI, "height");
+	
+	QName PROP_PACKAGING_TYPE_CODE = QName.createQName(GS1_URI, "gs1:packagingTypeCode");
 
 	/** Constant <code>PROP_SECONDARY_WIDTH</code> */
 	QName PROP_SECONDARY_WIDTH = QName.createQName(GS1_URI, "secondaryWidth");

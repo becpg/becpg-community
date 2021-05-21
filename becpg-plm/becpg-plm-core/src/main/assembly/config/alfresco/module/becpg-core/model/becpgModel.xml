@@ -3869,6 +3869,24 @@
 				</association>
 			</associations>
 		</aspect>
+		
+		
+		<aspect name="bcpg:ecoScoreAspect">
+			<properties>
+				<property name="bcpg:ecoScore">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="bcpg:ecoScoreClass">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="bcpg:ecoScoreCategory">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+				</property>
+			</properties>
+		</aspect>
 
 		<aspect name="bcpg:userLanguageAspect">
 			<properties>
