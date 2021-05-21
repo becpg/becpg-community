@@ -164,21 +164,19 @@ function createPostBody(itemKind, itemId, visibleFields, formConfig, mode) {
 			if (fieldId.indexOf("dataList_") < 0 && fieldId.indexOf("entity_") < 0) {
 
 				postBodyFields.push(fieldId);
-				if (formConfig.isFieldForced(fieldId) && mode != "datagrid-prefs") {
+				if (formConfig.isFieldForced(fieldId) || mode == "datagrid-prefs") {
 					postBodyForcedFields.push(fieldId);
+				} else  {
+					var preferences = AlfrescoUtil.getPreferences("fr.becpg.formulation.dashlet.custom.datagrid-prefs" + "." + itemId.replace(":", "_") + "." + fieldId.replace(":", "_"));
+					
+					if(existInPref(preferences) && isChecked(preferences)){
+						if (logger.isLoggingEnabled()) {
+							logger.log("CHECKED: fr.becpg.formulation.dashlet.custom.datagrid-prefs" + "." + itemId.replace(":", "_") + "." + fieldId.replace(":", "_"));
+						}
+						postBodyForcedFields.push(fieldId);
+					}
+					
 				}
-
-
-				/*
-				//delete field if it's unchecked
-				if(isAllowedOrChecked(fieldId, formConfig, "fields") || mode == "datagrid-prefs"){
-					postBodyFields.push(fieldId);	
-				}
-				//add not forced fields if they're checked 
-				if(isAllowedOrChecked(fieldId, formConfig, "forcedFields") || mode == "datagrid-prefs"){
-					postBodyForcedFields.push(fieldId);
-				}
-				*/
 
 			}
 		}
@@ -187,10 +185,6 @@ function createPostBody(itemKind, itemId, visibleFields, formConfig, mode) {
 		if (postBodyForcedFields.length > 0) {
 			postBody.force = postBodyForcedFields;
 		}
-	}
-
-	if (logger.isLoggingEnabled()) {
-		logger.log("postBody = " + jsonUtils.toJSONString(postBody));
 	}
 
 	return postBody;
@@ -214,8 +208,6 @@ function main() {
 
 	var prefixedSiteId = siteId ? "-" + siteId : "";
 
-	//TODO change label to datasource
-
 	// pass form ui model to FTL
 	model.columns = getColumns(itemType, list, formId, mode, prefixedSiteId);
 
@@ -223,7 +215,7 @@ function main() {
 
 function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId) {
 
-	var columns = [], ret = [];
+	var columns = [], defaultColumns = [], ret = [];
 
 	if (itemType != null && itemType.length > 0) {
 		// get the config for the form
@@ -275,6 +267,14 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId) {
 					logger.log("error = " + formModel.message);
 				}
 				columns = [];
+			}
+			
+			// get default fields
+			if(mode == "datagrid-prefs"){			
+				postBody.force = [];
+				var jsonDefaultFields = connector.post("/api/formdefinitions", jsonUtils.toJSONString(postBody), "application/json");
+				formModel = eval('(' + jsonDefaultFields + ')');			
+			    defaultColumns = formModel.data.definition.fields;
 			}
 
 
@@ -349,13 +349,17 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId) {
 
 							if (mode == "datagrid-prefs") {
 
-								if ((isDefault(fieldId, formModel.data.definition.fields) && !existInPref(preferences))
-									|| (!existInPref(preferences) && formConfig.isFieldForced(fieldId))) {
-									columns[j].checked = true;
-								} else {
+								if(existInPref(preferences)){
 									columns[j].checked = isChecked(preferences);
+								} else {
+									if(isDefault(fieldId, defaultColumns) || formConfig.isFieldForced(fieldId)) {
+										columns[j].checked = true;
+									} else {
+										columns[j].checked = false;
+									}
+									
 								}
-
+								
 							} else {
 								if (existInPref(preferences) && !isChecked(preferences)) {
 									columns[j].label = "datasource";
