@@ -53,6 +53,7 @@
 		<property name="services" ref="ServiceRegistry" />
 		<property name="permissionService" ref="permissionService" />
 		<property name="ratingService" ref="ratingService"/>
+		<property name="priority" value="1"/>
 	</bean>
 
 	<bean id="becpgCoreBootstrapMessages" class="org.alfresco.i18n.ResourceBundleBootstrapComponent">

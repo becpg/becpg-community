@@ -74,6 +74,8 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 	protected RatingService ratingService;
 
 	private boolean isDefaultExtractor = false;
+	
+	private int priority = 0;
 
 	/** {@inheritDoc} */
 	@Override
@@ -440,6 +442,15 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 
 	private boolean isDetaillable(NodeRef nodeRef) {
 		return nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM);
+	}
+	
+	@Override
+	public int getPriority() {
+		return priority;
+	}
+	
+	public void setPriority(int priority) {
+		this.priority = priority;
 	}
 
 	/**
