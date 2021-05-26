@@ -611,6 +611,14 @@ public class QualityControlServiceImpl implements QualityControlService {
 			NodeRef productDatalistNoderef = getDataListNodeRef(productNodeRef, datalistToCopy);
 			if (productDatalistNoderef != null && (getDataListNodeRef(qcNodeRef, datalistToCopy) != null
 					|| getDataListNodeRef(entityTplNodeRef, datalistToCopy) != null)) {
+				NodeRef listContainerNodeRef = entityListDAO.getListContainer(qcNodeRef);
+				if (listContainerNodeRef == null) {
+					listContainerNodeRef = entityListDAO.createListContainer(qcNodeRef);
+				}
+				NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, datalistToCopy);
+				if (listNodeRef == null) {
+					listNodeRef = entityListDAO.createList(listContainerNodeRef, datalistToCopy);
+				}
 				entityListDAO.copyDataList(productDatalistNoderef, qcNodeRef, true);
 			}
 		}
