@@ -68,5 +68,12 @@ public interface DataListExtractor {
 	 * @return a boolean.
 	 */
 	boolean hasWriteAccess();
+	
+	/**
+	 * <p>Defines the extractor priority. Extractor with the highest priority is chosen first. Default priority is 0.</p>
+	 *
+	 * @return an integer.
+	 */
+	int getPriority();
 
 }
