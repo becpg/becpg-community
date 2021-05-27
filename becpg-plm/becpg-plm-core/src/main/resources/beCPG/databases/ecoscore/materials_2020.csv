@@ -1,0 +1,24 @@
+CODE GS1 (https://www.gs1.org/voc/PackagingMaterialTypeCode);ECOTAXE Code;ECOTAXE;TARIF 2020;EcoScore Code;Matériaux;Score (/100);Plastique non recyclable
+METAL_STEEL;;Acier;4,55;;Acier;76;
+METAL_ALUMINUM;;Aluminium;11,45;;Aluminium (lourd > 60mm);72;
+;;Aluminium;11,45;;Aluminium (léger < 60mm);36;
+GLASS;;Verre;1,35;;Verre;81;
+;;Brique;24,61;;Brique (type Tetra Pak);62;
+;PAPER;Papier-carton;16,53;;Carton;91;
+;CLOTH_OR_FABRIC;Bois, liège, textiles...;41,63;;Bois;50;
+;;Bois, liège, textiles...;41,63;;Liège;50;
+;;;;;Cire;25;
+CERAMIC;;Grès, porcelaine, céramique;48,57;;Céramique;0;
+;;Bouteille et flacon en PET clair;28,88;;PET (Bouteille);63;
+;;Bouteille et flacon en PET foncé/coloré, PE ou PP;30,92;;PET (Bouteille);63;
+POLYMER_PET;;Emballage rigide PE, PP ou PET;33,3;;PET;21;
+;;Emballage complexe ou autres résines hors PVC;41,63;;PEHD (Bouteille);50;
+POLYMER_HDPE;;Emballage complexe ou autres résines hors PVC;41,63;;PEHD;21;
+POLYMER_PVC;;Emballage contenant du PVC;48,57;;PVC;0;X
+;;Emballage complexe ou autres résines hors PVC;41,63;;PEBD;21;
+POLYMER_PE;;Emballage souple en PE;36,08;;PE (Gourde);16;
+POLYMER_PP;;Emballage rigide PE, PP ou PET;33,3;;PP;21;
+;;Emballage rigide PE, PP ou PET;33,3;;PP (Gourde);8;
+POLYMER_PLA;;Emballage complexe ou autres résines hors PVC;41,63;;PLA;25;X
+POLYMER_PS;;Emballage rigide en PS;38,85;;PS;0;X
+POLYMER_OTHER;;Emballage complexe ou autres résines hors PVC;41,63;;Autre plastique;0;X

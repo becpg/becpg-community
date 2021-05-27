@@ -154,6 +154,15 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private Double nutrientScore;
 	private String nutrientClass;
 	private NodeRef nutrientProfile;
+	
+	
+	/*
+	 * Eco Score
+	 */
+
+	private Double ecoScore;
+	private String ecoScoreClass;
+	private String ecoScoreCategory;
 
 	/*
 	 * Meat aspect
@@ -1269,6 +1278,38 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	 */
 	public void setProfitability(Double profitability) {
 		this.profitability = profitability;
+	}
+	
+	
+	
+	@AlfProp
+	@AlfQname(qname = "bcpg:ecoScore")
+	public Double getEcoScore() {
+		return ecoScore;
+	}
+
+	public void setEcoScore(Double ecoScore) {
+		this.ecoScore = ecoScore;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "bcpg:ecoScoreClass")
+	public String getEcoScoreClass() {
+		return ecoScoreClass;
+	}
+
+	public void setEcoScoreClass(String ecoScoreClass) {
+		this.ecoScoreClass = ecoScoreClass;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "bcpg:ecoScoreCategory")
+	public String getEcoScoreCategory() {
+		return ecoScoreCategory;
+	}
+
+	public void setEcoScoreCategory(String ecoScoreCategory) {
+		this.ecoScoreCategory = ecoScoreCategory;
 	}
 
 	/**

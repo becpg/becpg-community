@@ -22,6 +22,7 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.product.formulation.score.ScoreCalculatingPlugin;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.model.CompositionDataItem;
 
@@ -36,6 +37,8 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 	private static final Log logger = LogFactory.getLog(ScoreCalculatingFormulationHandler.class);
 
 	private AlfrescoRepository<ProductData> alfrescoRepository;
+	
+	private ScoreCalculatingPlugin[] scorePlugins;
 
 	/**
 	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
@@ -46,9 +49,26 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
+	
+
+
+	public void setScorePlugins(ScoreCalculatingPlugin[] scorePlugins) {
+		this.scorePlugins = scorePlugins;
+	}
+
+
+
+
 	/** {@inheritDoc} */
 	@Override
 	public boolean process(ProductData product) {
+		
+		for(ScoreCalculatingPlugin plugin : scorePlugins) {
+			if(plugin.accept(product)) {
+				plugin.formulateScore(product);
+			}
+		}
+		
 
 		JSONObject scores = new JSONObject();
 
