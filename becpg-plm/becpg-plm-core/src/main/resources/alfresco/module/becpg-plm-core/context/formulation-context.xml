@@ -182,6 +182,11 @@
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.ScoreCalculatingFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
+					<property name="scorePlugins">
+						<list>
+							<ref bean="ecoScore"/>
+						</list>
+					</property>
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.CompareFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
