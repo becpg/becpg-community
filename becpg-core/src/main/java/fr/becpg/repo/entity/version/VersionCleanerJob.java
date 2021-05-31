@@ -57,11 +57,7 @@ public class VersionCleanerJob  extends AbstractScheduledLockedJob implements Jo
 		transactionService = (TransactionService) jobData.get("transactionService");
 		nodeService = (NodeService) jobData.get("nodeService");
 
-		AuthenticationUtil.runAsSystem(() -> transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			
-			return cleanVersions();
-			
-		}, false, false));
+		AuthenticationUtil.runAsSystem(this::cleanVersions);
 
 		logger.info("End of Version cleaner Job.");
 	}
@@ -71,14 +67,26 @@ public class VersionCleanerJob  extends AbstractScheduledLockedJob implements Jo
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.DAY_OF_YEAR, -1);
 		
-		List<NodeRef> nodes = BeCPGQueryBuilder.createQuery().withAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION).inDB().ftsLanguage().maxResults(100).andBetween(ContentModel.PROP_MODIFIED, "MIN", "'" + ISO8601DateFormat.format(cal.getTime()) + "'").list();
+		List<NodeRef> temporaryNodes = BeCPGQueryBuilder.createQuery().withAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION).withAspect(ContentModel.ASPECT_TEMPORARY).inDB().ftsLanguage().maxResults(10).andBetween(ContentModel.PROP_MODIFIED, "MIN", "'" + ISO8601DateFormat.format(cal.getTime()) + "'").list();
 		
-		for (NodeRef node : nodes) {
-			if (nodeService.hasAspect(node, ContentModel.ASPECT_TEMPORARY)) {
-				nodeService.deleteNode(nodeService.getPrimaryParent(node).getParentRef());
-			} else if (!EntityFormat.JSON.toString().equals(entityFormatService.getEntityFormat(node))) {
-				entityFormatService.convert(node, EntityFormat.JSON);
-			}
+		for (NodeRef temporaryNode: temporaryNodes) {
+			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				nodeService.deleteNode(nodeService.getPrimaryParent(temporaryNode).getParentRef());
+				return null;
+			}, false, false);
+			
+			logger.info("deleted node : " + temporaryNode);
+		}
+		
+		List<NodeRef> notConvertedNodes = BeCPGQueryBuilder.createQuery().withAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION).excludeAspect(BeCPGModel.ASPECT_ENTITY_FORMAT).excludeAspect(ContentModel.ASPECT_TEMPORARY).inDB().ftsLanguage().maxResults(10).andBetween(ContentModel.PROP_MODIFIED, "MIN", "'" + ISO8601DateFormat.format(cal.getTime()) + "'").list();
+		
+		for (NodeRef notConvertedNode : notConvertedNodes) {
+			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				entityFormatService.convert(notConvertedNode, EntityFormat.JSON);
+				return null;
+			}, false, false);
+			
+			logger.info("converted node : " + notConvertedNode);
 		}
 		
 		return true;
