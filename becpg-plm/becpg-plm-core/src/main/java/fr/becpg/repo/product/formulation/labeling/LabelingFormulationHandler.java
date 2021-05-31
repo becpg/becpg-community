@@ -38,7 +38,6 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
-import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.formulation.spel.SpelFormulaService;
 import fr.becpg.repo.formulation.spel.SpelHelper;
@@ -85,6 +84,8 @@ import fr.becpg.repo.variant.filters.VariantFilters;
 public class LabelingFormulationHandler extends FormulationBaseHandler<ProductData> {
 
 	private static final Log logger = LogFactory.getLog(LabelingFormulationHandler.class);
+
+	private static final String NULL_ING_ERROR = "message.formulate.labelRule.error.nullIng";
 
 	private NodeService nodeService;
 
@@ -276,7 +277,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 			List<CompoListDataItem> compoList = new ArrayList<>();
 
-			if (formulatedProduct instanceof RawMaterialData || !formulatedProduct.hasCompoListEl()) {
+			if ((formulatedProduct instanceof RawMaterialData) || !formulatedProduct.hasCompoListEl()) {
 				compoList.add(new CompoListDataItem(null, null, 1d, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, formulatedProduct.getNodeRef()));
 			} else {
 				compoList = formulatedProduct.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()));
@@ -456,11 +457,11 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	private void extractAllergens(LabelingFormulaContext labelingFormulaContext, ProductData productData) {
 		for (AllergenListDataItem allergenListDataItem : productData.getAllergenList()) {
 			NodeRef allergen = allergenListDataItem.getAllergen();
-			if (allergenListDataItem.getVoluntary()) {
+			if (Boolean.TRUE.equals(allergenListDataItem.getVoluntary())) {
 				if (AllergenType.Major.toString().equals(nodeService.getProperty(allergen, PLMModel.PROP_ALLERGEN_TYPE))) {
 					appendAllergen(labelingFormulaContext.getAllergens(), allergen, allergenListDataItem.getQtyPerc());
 				}
-			} else if (allergenListDataItem.getInVoluntary()) {
+			} else if (Boolean.TRUE.equals(allergenListDataItem.getInVoluntary())) {
 				if (AllergenType.Major.toString().equals(nodeService.getProperty(allergen, PLMModel.PROP_ALLERGEN_TYPE))) {
 					appendAllergen(labelingFormulaContext.getInVolAllergens(), allergen, allergenListDataItem.getQtyPerc());
 					for (NodeRef inVoluntarySource : allergenListDataItem.getInVoluntarySources()) {
@@ -572,7 +573,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				if (prev == null) {
 					prev = component;
 				} else {
-					if ((prev.getIngType() == null || component.getIngType() == null) || prev.getIngType().equals(component.getIngType())) {
+					if (((prev.getIngType() == null) || (component.getIngType() == null)) || prev.getIngType().equals(component.getIngType())) {
 
 						merge(prev, component);
 						parent.remove(component.getNodeRef());
@@ -642,9 +643,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				}
 			}
 		} else {
-			toRemove.forEach(ing -> {
-				parent.removeAtEnd(ing.getNodeRef());
-			});
+			toRemove.forEach(ing -> parent.removeAtEnd(ing.getNodeRef()));
 		}
 
 	}
@@ -756,9 +755,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	}
 
 	private Map<String, List<LabelingRuleListDataItem>> getLabelingRules(ProductData formulatedProduct) {
-		Map<String, List<LabelingRuleListDataItem>> ret = new TreeMap<>((s1, s2) -> {
-			return s1.compareTo(s2);
-		});
+		Map<String, List<LabelingRuleListDataItem>> ret = new TreeMap<>((s1, s2) -> s1.compareTo(s2));
 		if (formulatedProduct.getLabelingListView().getLabelingRuleList() != null) {
 
 			for (LabelingRuleListDataItem entityLabelingRulList : formulatedProduct.getLabelingListView().getLabelingRuleList()) {
@@ -827,7 +824,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	private void copyTemplateLabelingRuleList(ProductData formulatedProduct) {
 		if ((formulatedProduct.getEntityTpl() != null) && !formulatedProduct.getEntityTpl().equals(formulatedProduct)
-				&& formulatedProduct.getEntityTpl().getLabelingListView().getLabelingRuleList() != null) {
+				&& (formulatedProduct.getEntityTpl().getLabelingListView().getLabelingRuleList() != null)) {
 			for (LabelingRuleListDataItem modelLabelingRuleListDataItem : formulatedProduct.getEntityTpl().getLabelingListView()
 					.getLabelingRuleList()) {
 				if (modelLabelingRuleListDataItem.isSynchronisable()) {
@@ -1123,7 +1120,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				current.setVolume(null);
 
 				return new ReqCtrlListDataItem(null, RequirementType.Forbidden,
-						MLTextHelper.getI18NMessage("message.formulate.labelRule.error.nullIng", getName(current)), null, new ArrayList<NodeRef>(),
+						MLTextHelper.getI18NMessage(NULL_ING_ERROR, getName(current)), null, new ArrayList<>(),
 						RequirementDataType.Labelling);
 			}
 		}
@@ -1261,7 +1258,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	}
 
 	private void visitCompoList(CompositeLabeling parent, Composite<CompoListDataItem> parentComposite, LabelingFormulaContext labelingFormulaContext,
-			Double ratio, Double yield, Double recipeQtyUsed, boolean apply) throws FormulateException {
+			Double ratio, Double yield, Double recipeQtyUsed, boolean apply) {
 
 		Map<String, ReqCtrlListDataItem> errors = new HashMap<>();
 
@@ -1643,7 +1640,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	private void fillAllergensAndGeos(CompositeLabeling compositeLabeling, ProductData productData) {
 		for (AllergenListDataItem allergenListDataItem : productData.getAllergenList()) {
 
-			if (allergenListDataItem.getVoluntary()) {
+			if (Boolean.TRUE.equals(allergenListDataItem.getVoluntary())) {
 				if (AllergenType.Major.toString().equals(nodeService.getProperty(allergenListDataItem.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE))) {
 					compositeLabeling.getAllergens().add(allergenListDataItem.getAllergen());
 				}
@@ -1779,17 +1776,17 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							logger.trace(" - new quantity: " + targetLabelItem.getQty());
 						}
 
-						Double TRESHOLD = 0.00001d;
+						Double threshold = 0.00001d;
 
-						if (targetLabelItem.getQty() < TRESHOLD) {
+						if (targetLabelItem.getQty() < threshold) {
 							parent.getIngList().remove(targetLabelItem.getNodeRef());
 						}
 
-						if (productLabelItem.getQty() < TRESHOLD) {
+						if (productLabelItem.getQty() < threshold) {
 							parent.getIngList().remove(productLabelItem.getNodeRef());
 						}
 
-						if (ingLabelItem.getQty() < TRESHOLD) {
+						if (ingLabelItem.getQty() < threshold) {
 							parent.getIngList().remove(ingLabelItem.getNodeRef());
 						}
 
@@ -1846,7 +1843,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			}
 		}
 
-		if (toAddIngListItem.size() > 0) {
+		if (!toAddIngListItem.isEmpty()) {
 			omitQtyPerc /= toAddIngListItem.size();
 		}
 
@@ -1897,7 +1894,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 					if (product.getAllergenList() != null) {
 						for (AllergenListDataItem allergenListDataItem : product.getAllergenList()) {
-							if (allergenListDataItem.getVoluntary() && allergenListDataItem.getVoluntarySources().contains(ingNodeRef)) {
+							if (Boolean.TRUE.equals(allergenListDataItem.getVoluntary()) && allergenListDataItem.getVoluntarySources().contains(ingNodeRef)) {
 								if (AllergenType.Major.toString()
 										.equals(nodeService.getProperty(allergenListDataItem.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE))) {
 									ingLabelItem.getAllergens().add(allergenListDataItem.getAllergen());
@@ -1920,7 +1917,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 					if (qtyPerc == null) {
 
-						String message = I18NUtil.getMessage("message.formulate.labelRule.error.nullIng", getName(ingLabelItem));
+						String message = I18NUtil.getMessage(NULL_ING_ERROR, getName(ingLabelItem));
 						ReqCtrlListDataItem error = errors.get(message);
 						if (error != null) {
 							if (!error.getSources().contains(product.getNodeRef())) {
@@ -1967,7 +1964,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 						} else {
 
-							String message = I18NUtil.getMessage("message.formulate.labelRule.error.nullIng", getName(ingLabelItem));
+							String message = I18NUtil.getMessage(NULL_ING_ERROR, getName(ingLabelItem));
 							ReqCtrlListDataItem error = errors.get(message);
 							if (error != null) {
 								if (qty == null) {
@@ -2024,7 +2021,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			sourceNodeRefs.add(productNodeRef);
 		}
 		return new ReqCtrlListDataItem(null, RequirementType.Forbidden,
-				MLTextHelper.getI18NMessage("message.formulate.labelRule.error.nullIng", getName(ingItem)), null, sourceNodeRefs,
+				MLTextHelper.getI18NMessage(NULL_ING_ERROR, getName(ingItem)), null, sourceNodeRefs,
 				RequirementDataType.Labelling);
 
 	}

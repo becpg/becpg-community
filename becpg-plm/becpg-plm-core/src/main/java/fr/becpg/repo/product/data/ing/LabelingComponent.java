@@ -73,10 +73,7 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 		this.qty = abstractLabelingComponent.qty;
 		this.volume = abstractLabelingComponent.volume;
 		this.legalName = abstractLabelingComponent.legalName;
-		this.allergens = abstractLabelingComponent.allergens;
-		this.geoOrigins = abstractLabelingComponent.geoOrigins;
 		this.isPlural = abstractLabelingComponent.isPlural;
-
 	}
 
 
