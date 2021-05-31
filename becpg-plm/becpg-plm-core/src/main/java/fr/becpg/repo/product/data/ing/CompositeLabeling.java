@@ -25,7 +25,7 @@ import fr.becpg.repo.product.data.constraints.DeclarationType;
 public class CompositeLabeling extends LabelingComponent {
 
 	/** Constant <code>ROOT="root"</code> */
-	public final static String ROOT = "root";
+	public static final String ROOT = "root";
 
 	private static final long serialVersionUID = 7903326038199131582L;
 
@@ -69,6 +69,7 @@ public class CompositeLabeling extends LabelingComponent {
 		super(compositeLabeling);
 		this.ingType = compositeLabeling.ingType;
 		this.ingList = clone(compositeLabeling.ingList);
+		this.ingListAtEnd = clone(compositeLabeling.ingListAtEnd);
 		this.qtyTotal = compositeLabeling.qtyTotal;
 		this.evaporatingLoss = compositeLabeling.evaporatingLoss;
 		this.volumeTotal = compositeLabeling.volumeTotal;
