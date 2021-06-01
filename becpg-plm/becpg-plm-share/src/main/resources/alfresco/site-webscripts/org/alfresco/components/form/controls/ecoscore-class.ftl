@@ -9,11 +9,11 @@
       	       || field.value == "C"
       	       || field.value == "D"
       	       || field.value == "E")>
-	         <span class="<#if field.value == "A">selected </#if>ecoscore-class-a">A</span>
-	         <span class="<#if field.value == "B">selected </#if>ecoscore-class-b">B</span>
-	         <span class="<#if field.value == "C">selected </#if>ecoscore-class-c">C</span>
-	         <span class="<#if field.value == "D">selected </#if>ecoscore-class-d">D</span>
-	         <span class="<#if field.value == "E">selected </#if>ecoscore-class-e">E</span>
+	         <#if field.value == "A"><span class="ecoscore-class-a"></span> </#if>
+	         <#if field.value == "B"><span class="ecoscore-class-b"></span> </#if>
+	         <#if field.value == "C"><span class="ecoscore-class-c"></span> </#if>
+	         <#if field.value == "D"><span class="ecoscore-class-d"></span> </#if>
+	         <#if field.value == "E"><span class="ecoscore-class-e"></span> </#if>
 	    <#elseif field.value != "">
 	          <span class="ecoscore-class-error" >${field.value?html}</span>
         </#if>

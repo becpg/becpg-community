@@ -102,6 +102,13 @@
 			<nodeColumnKey attribute="bcpg:lvValue" />
 		</nodeColumnKeys>
 	</mapping>
+	
+	  <mapping name="pack:packMaterial">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:lvCode" />
+			<nodeColumnKey attribute="bcpg:lvValue" />
+		</nodeColumnKeys>
+	</mapping>
 
 	<mapping name="bcpg:listValue">
 		<nodeColumnKeys>
