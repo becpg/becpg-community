@@ -1,11 +1,4 @@
 
-span.ecoscore-class {
-  display: table; 
-  width: 100%; 
-  table-layout: fixed; 
-  word-spacing: -2em;
-}
-
 
 .ecoscore-class-a,
 .ecoscore-class-b,
@@ -13,54 +6,39 @@ span.ecoscore-class {
 .ecoscore-class-d,
 .ecoscore-class-e
  {
-    border: 0 none;
-    display: inline-block;
-    font-size: 17px;
-    height: 20px;
-    padding: 7px;
-    text-align: center;
-    width: 15px;
-    word-spacing: normal;
+    height: 50px;
+    width: 100px;
+    display: block;
 }
 
-.selected.ecoscore-class-a,
-.selected.ecoscore-class-b,
-.selected.ecoscore-class-c,
-.selected.ecoscore-class-d,
-.selected.ecoscore-class-e
- {
-    border: 4px solid white;
-    border-radius: 17px;
-    color: white;
-    font-size: 23px;
-    height: 30px;
-    padding: 11px 8px;
-    width: 18px;
- }
 
 .ecoscore-class-a{
-	background: url("../../images/states/ecoscore-class-A.svg") no-repeat;
+	background-image: url("../../images/states/ecoscore-class-A.svg") ;
+	background-size: cover;
 }
 
 
 .ecoscore-class-b{	
-	background: url("../../images/states/ecoscore-class-B.svg") no-repeat;
+	background-image: url("../../images/states/ecoscore-class-B.svg")  ;
+	background-size: cover;
 }
 
 .ecoscore-class-c{	
-	background: url("../../images/states/ecoscore-class-C.svg") no-repeat;
+	background-image: url("../../images/states/ecoscore-class-C.svg")  ;
+	background-size: cover;
 }
 
 .ecoscore-class-d{	
-	background: url("../../images/states/ecoscore-class-D.svg") no-repeat;
+	background-image: url("../../images/states/ecoscore-class-D.svg")  ;
+	background-size: cover;
 }
 
 .ecoscore-class-e{	
-	background: url("../../images/states/ecoscore-class-E.svg") no-repeat;
+	background-image: url("../../images/states/ecoscore-class-E.svg")  ;
+	background-size: cover;
 }
 
 .ecoscore-class-error
 {
 	background: url("../../images/states/warning-16.png") no-repeat;
-	padding-left: 20px;
 }

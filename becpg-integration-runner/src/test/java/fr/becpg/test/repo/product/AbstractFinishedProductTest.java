@@ -468,6 +468,8 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			geoOrigin1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_GEO_ORIGIN, properties).getChildRef();
+			nodeService.setProperty(geoOrigin1, PLMModel.PROP_GEO_ORIGIN_ISOCODE, "FR");
+			
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "geoOrigin2");
 			geoOrigin2 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
