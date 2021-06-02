@@ -5,7 +5,7 @@
 	<groupId>fr.becpg</groupId>
 	<artifactId>becpg-parent</artifactId>
 	<packaging>pom</packaging>
-	<version>3.2.2</version>
+	<version>3.2.3</version>
 	<name>beCPG</name>
 	
 	<description>BeCPG Parent Project</description>
@@ -34,7 +34,7 @@
 		<license>
 			<name>GNU LESSER GENERAL PUBLIC LICENSE</name>
 			<url>http://www.gnu.org/licenses/lgpl-3.0.en.html</url>
-			<comments>Copyright (C) 2010-2020 beCPG. 
+			<comments>Copyright (C) 2010-2021 beCPG. 
   
 			  beCPG is free software: you can redistribute it and/or modify 
 			  it under the terms of the GNU Lesser General Public License as published by 
@@ -143,7 +143,7 @@
 
 		<becpg.dockerbuild.name>test</becpg.dockerbuild.name>
 		<docker.becpg.url>becpg</docker.becpg.url>
-		<docker.becpg.tag>3.2.2</docker.becpg.tag>
+		<docker.becpg.tag>3.2.3</docker.becpg.tag>
 		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
