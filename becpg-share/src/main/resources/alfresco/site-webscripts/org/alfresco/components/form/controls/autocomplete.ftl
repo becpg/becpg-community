@@ -10,7 +10,7 @@
 </#if>
 
 <div class="form-field">
-   <#if form.mode == "view" || field.disabled >
+   <#if form.mode == "view" || (field.disabled && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true")) >
       <div id="${fieldHtmlId}" class="viewmode-field">
          <#if field.mandatory && !(field.value?is_number) && field.value == "">
             <span class="incomplete-warning"><img class="icon16" src="${url.context}/components/form/images/warning-16.png" title="${msg("form.field.incomplete")}" /><span>
@@ -36,7 +36,7 @@
 	                <#if field.description?exists>title="${field.description}"</#if>
 	                <#if field.control.params.maxLength?exists>maxlength="${field.control.params.maxLength}"</#if> 
 	                <#if field.control.params.size?exists>size="${field.control.params.size}"</#if> 
-	                <#if field.disabled>disabled="true"</#if> 
+	                <#if (field.disabled && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true"))>disabled="true"</#if> 
 	                 class="yui-ac-input multi-assoc hidden"  />										
 				<#else>
 		        	<input id="${fieldHtmlId}" type="text" name="${field.name}" tabindex="0"
@@ -44,7 +44,7 @@
 		            <#if field.description?exists>title="${field.description}"</#if>
 		            <#if field.control.params.maxLength?exists>maxlength="${field.control.params.maxLength}"</#if> 
 		            <#if field.control.params.size?exists>size="${field.control.params.size}"</#if> 
-		            <#if field.disabled>disabled="true"</#if> 
+		            <#if (field.disabled && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true"))>disabled="true"</#if> 
 		             class="yui-ac-input"  />
          	</#if> 
          	 <span class="clear" ></span>        	
@@ -65,7 +65,7 @@ new beCPG.component.AutoCompletePicker('${fieldHtmlId}', '${fieldHtmlId}', <#if 
 			   {
 			 		currentValue: "${field.value}",
 			 		mode: "${form.mode}",
-			 		readOnly : ${field.disabled?string},
+			 		readOnly : ${(field.disabled && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true"))?string},
 			<#if field.control.params.parentMode?exists>				 		
                     multipleSelectMode:true,
                     isParentMode : true,
