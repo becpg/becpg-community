@@ -71,6 +71,7 @@
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="showUnauthorizedWarning" value="${beCPG.licence.showWarning}"/>
 		<property name="alfrescoRepository" ref="alfrescoRepository"/>
+		<property name="siteService" ref="siteService"/>
 	</bean>
 	
 	<bean id="pdfScriptHelper" parent="baseJavaScriptExtension" class="fr.becpg.repo.jscript.PDFScriptHelper">
