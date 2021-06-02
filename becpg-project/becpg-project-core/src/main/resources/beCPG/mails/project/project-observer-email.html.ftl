@@ -110,10 +110,10 @@
 			 padding-right:20px;
 		 }
 		 p.Stitle {
-			 font-size:15px;
+			 font-size:12px;
 		 }
 		 p.title {
-			 font-size:25px;
+			 font-size:20px;
       	}
 	}
 
@@ -131,7 +131,7 @@
 			 text-align:center;
 		 }
 		 p.Stitle {
-			 font-size:12px;
+			 font-size:10px;
 		 }
 		 p.title {
 			 margin:0px;
@@ -148,12 +148,12 @@
 		 
     }
 
+
  
       
       --></style>
    </head>
    
-    <#assign projectModifier = people.getPerson(args.project.properties["cm:modifier"])>
 
    <body bgcolor="#dddddd">
       <table width="100%" cellpadding="20" cellspacing="0" border="0" bgcolor="#dddddd">
@@ -175,7 +175,13 @@
 													</td>
 													<td>
 													<p class="title" style="color: #0f515f; font-weight: bold; margin-bottom:0px;" >${args.project.name}</p>
+													<#if (args.project.properties["cm:modifier"])??>
+													<#assign projectModifier = people.getPerson(args.project.properties["cm:modifier"])>
 												  	<p class="Stitle" style="color: #ff642d; font-weight: bold; margin-top:1px;">has been updated by ${projectModifier.properties["cm:firstName"]!""} ${projectModifier.properties["cm:lastName"]!""}</p>
+													  <#else> 
+														<p class="Stitle" style="color: #ff642d; font-weight: bold; margin-top:1px;">has been updated</p>
+
+													</#if>
                                                 	<a title="Open the project" href="${shareUrl}/page/entity-data-lists?list=taskList&nodeRef=${args.project.nodeRef}"><button ><b>Open the project</b></button></a>
 												</td>                                              
                                              </tr>
@@ -198,7 +204,7 @@
 	                                             </#if> 
 	                                             </ul>         
                                              		<#if  args.taskComment??>
-                                             		    <li> Commentaire : </li>
+                                             		    <li>Comment : </li>
                                              			<table width="100%" cellpadding="0" callspacing="0" border="0" bgcolor="#eeeeee" style="padding:10px; border: 1px solid #aaaaaa;">
 		                                                   <tr>
 		                                                      <td>
@@ -211,13 +217,16 @@
 
 									      	
 									<#if args.task?? &&  args.task.sourceAssociations["pjt:dlTask"]??>
-									      	  		
-									      	<p>Deliverables : </p>
-									      	
+									 										
+									    <#assign livrable = "none">
+
 									    <ul>
 									      	<#list args.task.sourceAssociations["pjt:dlTask"] as deliverable>
-												<#if deliverable?? && deliverable.hasPermission("Read")  && (!deliverable.properties["pjt:dlScriptExecOrder"]?? || 
-														deliverable.properties["pjt:dlScriptExecOrder"] == "None" ) && (!deliverable.properties["pjt:dlUrl"]?? || !deliverable.properties["pjt:dlUrl"]?contains("wizard") )>
+												<#if deliverable?? && deliverable.hasPermission("Read")  && (!deliverable.properties["pjt:dlScriptExecOrder"]?? ||  deliverable.properties["pjt:dlScriptExecOrder"] == "None" )>
+														<#if livrable == "none">
+														 <#assign livrable = "livrable">
+															<p>Deliverables :</p>
+														</#if>
 													<li>
 														<div class="delivrable delivrable-status-${deliverable.properties["pjt:dlState"]!"InProgress"}">
 										      			<div class="delivrable-status delivrable-status-${deliverable.properties["pjt:dlState"]!"InProgress"}"></div>

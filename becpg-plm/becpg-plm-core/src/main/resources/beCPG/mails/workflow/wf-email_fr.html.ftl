@@ -106,7 +106,7 @@
                                                 </#if>
                                                                                         
                                                 <p style="padding-top: 10px">
-                                                <#if (args.workflowDueDate)??>Due :&nbsp;&nbsp;<b><red>${args.workflowDueDate?date?string.full}</red></b><br></#if>
+                                                <#if (args.workflowDueDate)??>Échéance :&nbsp;&nbsp;<b><red>${args.workflowDueDate?date?string.full}</red></b><br></#if>
                                                 <#if (args.workflowPriority)??>
                                                    Priorité :&nbsp;&nbsp;
                                                    <b>
@@ -132,8 +132,14 @@
                                                       <b>${item.properties["pjt:tlTaskName"]}</b>
                                                          <#if item.properties["pjt:tlState"]=="Refused">
                                                          <span class="state" style="background-color:#EC6535">refusée</span>
-                                                         <#else>
+                                                         <#elseif item.properties["pjt:tlState"]=="Cancelled">
+                                                         <span class="state" style="background-color:#FF0000">annulée</span>
+                                                         <#elseif item.properties["pjt:tlState"]=="Completed">
                                                          <span class="state" style="background-color:#0F4454">terminée</span>
+                                                          <#elseif item.properties["pjt:tlState"]=="Planned">
+                                                         <span class="state" style="background-color:#708090">planifiée</span>
+                                                         <#elseif item.properties["pjt:tlState"]=="OnHold">
+                                                         <span class="state" style="background-color:#0000CD">en attente</span>
                                                          </p>
                                                          </#if>
                                                          

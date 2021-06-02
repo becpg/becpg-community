@@ -153,7 +153,7 @@ margin-top:3px;
 	                                             </#if>
 	                                             
 	                                             <p>
-	                                                <#if (args.workflowDueDate)??>Due :&nbsp;&nbsp;<b>${args.workflowDueDate?date?string.full}</b><br></#if>
+	                                                <#if (args.workflowDueDate)??>Échéance :&nbsp;&nbsp;<b>${args.workflowDueDate?date?string.full}</b><br></#if>
 	                                                <#if (args.workflowPriority)??>
 	                                                   Priorité :&nbsp;&nbsp;
 	                                                   <b>

@@ -127,7 +127,7 @@ Example 2 show last project comments:
                                           <table width="100%" cellpadding="0" cellspacing="0" border="0">
                                              <tr>
                                                 <td class="flex" style="align-items:center">
-                                                   <img class="img"src="${shareUrl}/res/components/images/task-64.png" alt="" width="64" height="64" border="0"/>
+                                                   <img class="img"src="${shareUrl}/res/components/images/project-email-logo.png" alt="" height="64" border="0"/>
                                                    
                                                      <p style="margin-top:5px">
                                                       <span style="margin:0px;font-size: 20px; color: #0f515f; font-weight: bold;">For information</span><br/>

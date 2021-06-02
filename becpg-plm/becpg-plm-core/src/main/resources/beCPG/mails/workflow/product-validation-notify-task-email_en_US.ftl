@@ -160,7 +160,7 @@ margin-top:3px;
 	                                                   <#if args.workflowPriority == 3>
 	                                                      Low
 	                                                   <#elseif args.workflowPriority == 2>
-	                                                      Average
+	                                                      Medium
 	                                                   <#else>
 	                                                      High
 	                                                   </#if>
