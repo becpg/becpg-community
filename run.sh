@@ -9,7 +9,7 @@ echo -e "888 \"88b d8P  Y8b  \e[32m888        8888888P\"  888  88888\e[0m"
 echo -e "888  888 88888888  \e[32m888    888 888        888    888\e[0m" 
 echo -e "888 d88P Y8b.      \e[32mY88b  d88P 888        Y88b  d88P\e[0m" 
 echo -e "88888P\"   \"Y8888    \e[32m\"Y8888P\"  888         \"Y8888P88\e[0m" 
-echo -e " \e[91mCopyright (C) 2010-2020 beCPG.\e[0m"
+echo -e " \e[91mCopyright (C) 2010-2021 beCPG.\e[0m"
 
 
 export COMPOSE_FILE_PATH=${PWD}/becpg-integration-runner/target/docker-compose.yml
