@@ -216,27 +216,27 @@ public class FormulationPackMaterialIT extends PLMBaseTestCase {
 			properties.put(BeCPGModel.PROP_LV_VALUE, "Alluminium");
 			packMaterial1NodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_VALUE)),
-					BeCPGModel.TYPE_LIST_VALUE, properties).getChildRef();
+					PackModel.TYPE_PACKAGING_MATERIAL, properties).getChildRef();
 			properties.clear();
 			properties.put(BeCPGModel.PROP_LV_VALUE, "Carton");
 			packMaterial2NodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_VALUE)),
-					BeCPGModel.TYPE_LIST_VALUE, properties).getChildRef();
+					PackModel.TYPE_PACKAGING_MATERIAL, properties).getChildRef();
 			properties.clear();
 			properties.put(BeCPGModel.PROP_LV_VALUE, "Fer");
 			packMaterial3NodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_VALUE)),
-					BeCPGModel.TYPE_LIST_VALUE, properties).getChildRef();
+					PackModel.TYPE_PACKAGING_MATERIAL, properties).getChildRef();
 			properties.clear();
 			properties.put(BeCPGModel.PROP_LV_VALUE, "Plastique");
 			packMaterial4NodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_VALUE)),
-					BeCPGModel.TYPE_LIST_VALUE, properties).getChildRef();
+					PackModel.TYPE_PACKAGING_MATERIAL, properties).getChildRef();
 			properties.clear();
 			properties.put(BeCPGModel.PROP_LV_VALUE, "Verre");
 			packMaterial5NodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_VALUE)),
-					BeCPGModel.TYPE_LIST_VALUE, properties).getChildRef();
+					PackModel.TYPE_PACKAGING_MATERIAL, properties).getChildRef();
 
 			/*-- Creation of CompoList Elements --*/
 
