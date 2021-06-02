@@ -147,7 +147,7 @@ Example 2 show last project comments:
                                              </#if>
                                              
                                              <p>
-                                                <#if (args.workflowDueDate)??>Due :&nbsp;&nbsp;<b>${args.workflowDueDate?date?string.full}</b><br></#if>
+                                                <#if (args.workflowDueDate)??>Échéance :&nbsp;&nbsp;<b>${args.workflowDueDate?date?string.full}</b><br></#if>
                                              </p>
                                             
                                           </div>

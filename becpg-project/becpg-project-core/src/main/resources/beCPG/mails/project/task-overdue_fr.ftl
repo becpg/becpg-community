@@ -109,7 +109,7 @@ margin-top:3px;
                                              
                                                 <p style="padding-top:10px; margin:3px 0px 0px 0px">Pour rappel</p><div class="line"></div>
                                                 <p style="margin:0px">Tâche relancée : <b>${args.task}</b>
-                                                <br /><span>Due : <b>${args.dueDate?date}</b></span>.
+                                                <br /><span>Échéance : <b>${args.dueDate?date}</b></span>.
                                                 </p>
                                               
                                                 <br /><a htref="${shareUrl}/page/task-edit?taskId=${args.taskId}"><button ><b>Voir la tâche</b></button></a>

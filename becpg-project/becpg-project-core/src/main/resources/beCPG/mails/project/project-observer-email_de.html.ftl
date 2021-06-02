@@ -211,13 +211,16 @@
 
 									      	
 									<#if args.task?? &&  args.task.sourceAssociations["pjt:dlTask"]??>
-									      	  		
-									      	<p>Ergebnisse : </p>
-									      	
+									 										
+									    <#assign livrable = "none">
+
 									    <ul>
 									      	<#list args.task.sourceAssociations["pjt:dlTask"] as deliverable>
-												<#if deliverable?? && deliverable.hasPermission("Read")  && (!deliverable.properties["pjt:dlScriptExecOrder"]?? || 
-														deliverable.properties["pjt:dlScriptExecOrder"] == "None" ) && (!deliverable.properties["pjt:dlUrl"]?? || !deliverable.properties["pjt:dlUrl"]?contains("wizard") )>
+												<#if deliverable?? && deliverable.hasPermission("Read")  && (!deliverable.properties["pjt:dlScriptExecOrder"]?? ||  deliverable.properties["pjt:dlScriptExecOrder"] == "None" )>
+														<#if livrable == "none">
+														 <#assign livrable = "livrable">
+															<p>Ergebnisse :</p>
+														</#if>
 													<li>
 														<div class="delivrable delivrable-status-${deliverable.properties["pjt:dlState"]!"InProgress"}">
 										      			<div class="delivrable-status delivrable-status-${deliverable.properties["pjt:dlState"]!"InProgress"}"></div>

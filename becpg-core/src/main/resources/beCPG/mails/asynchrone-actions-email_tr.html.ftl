@@ -20,7 +20,7 @@
          border-radius: 5px;
          border : solid 1px #ff642d;
          color:#ff642d;
-         padding: 15px 32px;
+         padding: 10px 15px;
          text-align: center;
          text-decoration: none;
          font-size: 16px;
@@ -104,14 +104,8 @@
                                              
                                              <#if args.url??>
 	                                           	 <table cellpadding="2" cellspacing="0" border="0">
-	                                                 <tr>
-	                                                    <td></td>
-	                                                 </tr>
-	                                                 <tr>
-	                                                    <td>Sonuca erişmek için bağlantıya tıklayın:</td>
-	                                                 </tr>
-	                                                 <tr>
-	                                                 	<a href="${shareUrl}/${args.url}">${shareUrl}/${args.url}</a>
+		                                                 <tr>
+	                                                 	<a href="${shareUrl}/${args.url}"><button><b>Görüntüle</b></button></a>
 	                                                 </tr>                                                                
 												 </table>
 											 </#if>
