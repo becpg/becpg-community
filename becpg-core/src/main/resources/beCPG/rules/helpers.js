@@ -599,8 +599,7 @@ function generateEAN13Code(prefix){
  * @returns document library folder for site
  */
 function getDocumentLibraryNodeRef(siteId) {
-	var site = siteService.getSite(siteId);
-	return site.getContainer("documentLibrary");
+	return bcpg.getDocumentLibraryNodeRef(siteId);
 }
 
 
