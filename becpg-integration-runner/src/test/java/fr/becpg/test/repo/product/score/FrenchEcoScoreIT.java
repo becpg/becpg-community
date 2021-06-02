@@ -1,13 +1,21 @@
 package fr.becpg.test.repo.product.score;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.NamespaceService;
+import org.alfresco.service.namespace.QName;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PackModel;
 import fr.becpg.repo.listvalue.ListValueEntry;
 import fr.becpg.repo.listvalue.ListValuePage;
 import fr.becpg.repo.product.data.RawMaterialData;
@@ -57,6 +65,18 @@ public class FrenchEcoScoreIT extends AbstractFinishedProductTest {
 		rawMaterialData.setIngList(ingList);
 
 		frenchEcoScore.formulateScore(rawMaterialData);
+		
+		/*-- Characteristics --*/
+		Map<QName, Serializable> properties = new HashMap<>();
+
+//	TOCO Cf FormulationPackMaterialIT	/*-- Pack materials --*/
+//		properties.put(BeCPGModel.PROP_LV_VALUE, "Alluminium");
+//		packMaterial1NodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+//				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_VALUE)),
+//				PackModel.TYPE_PACKAGING_MATERIAL, properties).getChildRef();
+//		properties.clear();
+
+
 
 		Assert.assertEquals(rawMaterialData.getEcoScore(), (Double) 53d);
 		Assert.assertEquals(rawMaterialData.getEcoScoreClass(), "C");
