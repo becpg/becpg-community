@@ -2070,14 +2070,14 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				}
 			}
 
-			String declType = (String) nodeService.getProperty(ingListDataItem.getNodeRef(), PLMModel.PROP_INGLIST_DECL_TYPE);
-			if ((declType != null) && !declType.isEmpty()) {
+			DeclarationType declType = ingListDataItem.getDeclType();
+			if ((declType != null)) {
 				if (logger.isTraceEnabled()) {
-					logger.trace(" -- Found declType : " + DeclarationType.valueOf(declType) + " for "
+					logger.trace(" -- Found declType : " + declType + " for "
 							+ nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME));
 				}
 
-				return DeclarationType.valueOf(declType);
+				return declType;
 			}
 
 			if (logger.isTraceEnabled()) {

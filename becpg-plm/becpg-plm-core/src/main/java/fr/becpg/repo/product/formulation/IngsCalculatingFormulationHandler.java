@@ -122,6 +122,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 						il.getGeoOrigin().clear();
 						il.getGeoTransfo().clear();
 						il.getBioOrigin().clear();
+						il.setDeclType(null);
 					}
 				}
 			} else {
@@ -529,6 +530,9 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			if (Boolean.TRUE.equals(ingListDataItem.getIsIonized()) && !Boolean.TRUE.equals(newIngListDataItem.getIsIonized())) {
 				newIngListDataItem.setIsIonized(true);
 			}
+			
+			// Decltype
+			newIngListDataItem.setDeclType(ingListDataItem.getDeclType());
 
 			// recursive
 			if (!component.isLeaf()) {

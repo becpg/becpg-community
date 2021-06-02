@@ -24,6 +24,7 @@ import java.util.Objects;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.data.hierarchicalList.CompositeDataItem;
+import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
@@ -80,6 +81,8 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
     private Double mini;
 	
 	private Double maxi;
+	
+	private DeclarationType declType = DeclarationType.Detail;
 	
 	
 	/**
@@ -350,6 +353,39 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 	 */
 	public void setIng(NodeRef ing) {
 		this.ing = ing;
+	}
+	
+	
+	/**
+	 * <p>
+	 * Getter for the field <code>declType</code>.
+	 * </p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.constraints.DeclarationType}
+	 *         object.
+	 */
+	@AlfProp
+	@AlfQname(qname = "bcpg:ingListDeclType")
+	public DeclarationType getDeclType() {
+		return declType;
+	}
+
+	/**
+	 * <p>
+	 * Setter for the field <code>declType</code>.
+	 * </p>
+	 *
+	 * @param declType
+	 *            a
+	 *            {@link fr.becpg.repo.product.data.constraints.DeclarationType}
+	 *            object.
+	 */
+	public void setDeclType(DeclarationType declType) {
+		if (declType == null) {
+			declType = DeclarationType.Detail;
+		}
+
+		this.declType = declType;
 	}
 	
 	//////////////////////////////
