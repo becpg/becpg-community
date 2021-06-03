@@ -82,7 +82,13 @@ build() {
 }
 
 install() {
+  if [ -d becpg-enterprise ]; then
+    cd becpg-enterprise
     $MVN_EXEC  install $EXTRA_ENV -DskipTests=true -P full
+     cd ..
+   else
+    $MVN_EXEC  install $EXTRA_ENV -DskipTests=true -P full
+  fi
 }
 
 tail() {
