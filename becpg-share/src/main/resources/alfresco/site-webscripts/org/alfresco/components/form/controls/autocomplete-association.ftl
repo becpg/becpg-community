@@ -36,7 +36,7 @@
 
 <#assign controlId = fieldHtmlId + "-cntrl">
 <div class="form-field">
-   <#if form.mode == "view"  ||  field.disabled == true>
+   <#if form.mode == "view"  ||  (field.disabled && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true"))>
       <div id="${controlId}" class="viewmode-field">
          <#if (field.endpointMandatory!false || field.mandatory!false) && field.value == "">
             <span class="incomplete-warning"><img class="icon16" src="${url.context}/components/form/images/warning-16.png" title="${msg("form.field.incomplete")}" /><span>
@@ -57,7 +57,7 @@
 				             <#if field.description??>title="${field.description}"</#if>
 				             <#if field.control.params.maxLength??>maxlength="${field.control.params.maxLength}"</#if> 
 				             <#if field.control.params.size??>size="${field.control.params.size}"</#if> 
-				             <#if field.disabled>disabled="true"</#if> 
+				             <#if (field.disabled && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true"))>disabled="true"</#if> 
 				             class="yui-ac-input<#if multipleSelectMode> multi-assoc</#if>" <#if !multipleSelectMode>value="${field.value}" </#if> />
 				        <span class="clear" ></span>				      
 			      </div>			
@@ -77,7 +77,7 @@
 		   {
 		 		currentValue: "${field.value}",
 		 		mode: "${form.mode}",
-		 		readOnly : ${field.disabled?string},
+		 		readOnly : ${(field.disabled && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true"))?string},
 		        multipleSelectMode: ${multipleSelectMode?string}, 
 		        isMandatory : ${field.mandatory?string},
 		      <#if pageLinkTemplate?? && pageLinkTemplate !="null">
