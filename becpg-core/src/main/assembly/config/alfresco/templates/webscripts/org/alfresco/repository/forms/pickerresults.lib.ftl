@@ -55,6 +55,9 @@
 				<#elseif row.item.typeShort == "bcpg:ingTypeItem" >
 				"name": "${row.item.properties["bcpg:lvValue"]!""}",
 				"title": "${row.item.properties["bcpg:lvValue"]!""}",
+				<#elseif row.item.typeShort == "pack:packMaterial" >
+				"name": "${row.item.properties["bcpg:lvValue"]!""}",
+				"title": "${row.item.properties["bcpg:lvValue"]!""}",
 				<#elseif row.item.typeShort == "bcpg:listValue" >
 				"name": "${row.item.properties["bcpg:lvValue"]!""}",
 				"title": "${row.item.properties["bcpg:lvValue"]!""}",

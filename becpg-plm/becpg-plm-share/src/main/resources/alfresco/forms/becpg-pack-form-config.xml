@@ -207,7 +207,7 @@
 				<appearance>
 					<field id="pack:pmlMaterial">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/listvalue/values/System/Lists/bcpg:entityLists/pmMaterials
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pack:packMaterial
 							</control-param>
 						</control>
 					</field>
@@ -238,7 +238,7 @@
 				<appearance>
 					<field id="pack:pmlMaterial">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/listvalue/values/System/Lists/bcpg:entityLists/pmMaterials
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pack:packMaterial
 							</control-param>
 						</control>
 					</field>
@@ -259,7 +259,7 @@
 				<appearance>
 					<field id="pack:pmlMaterial">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/listvalue/values/System/Lists/bcpg:entityLists/pmMaterials
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pack:packMaterial
 							</control-param>
 						</control>
 					</field>
