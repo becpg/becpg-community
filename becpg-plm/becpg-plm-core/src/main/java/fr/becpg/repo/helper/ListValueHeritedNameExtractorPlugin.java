@@ -19,8 +19,8 @@ along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  */
 package fr.becpg.repo.helper;
 
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -30,22 +30,23 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
+import fr.becpg.model.PackModel;
 import fr.becpg.repo.helper.impl.AbstractExprNameExtractor;
 
 /**
- * <p>IngTypeNameExtractorPlugin class.</p>
+ * <p>ListValueHeritedNameExtractorPlugin class.</p>
  *
  * @author matthieu
  * @version $Id: $Id
  */
 @Service
-public class IngTypeNameExtractorPlugin extends AbstractExprNameExtractor {
+public class ListValueHeritedNameExtractorPlugin extends AbstractExprNameExtractor {
 
 
 	/** {@inheritDoc} */
 	@Override
 	public Collection<QName> getMatchingTypes() {
-		return Collections.singletonList(PLMModel.TYPE_ING_TYPE_ITEM);
+		return Arrays.asList(PLMModel.TYPE_ING_TYPE_ITEM,PackModel.TYPE_PACKAGING_MATERIAL);
 	}
 
 	/** {@inheritDoc} */
