@@ -192,16 +192,19 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity>
 
 				Map<QName, Serializable> properties = extractProperties(entity);
 
+				//Handle null value, it should be add because it add not needed aspects
+				Set<QName> propsToDelete = new HashSet<>();
+				for (Iterator<Map.Entry<QName, Serializable>> iterator = properties.entrySet().iterator(); iterator.hasNext();) {
+					Map.Entry<QName, Serializable> prop = iterator.next();
+					if (prop.getValue() == null) {
+						propsToDelete.add(prop.getKey());
+						iterator.remove();
+					}
+				}
+
 				if (entity.getNodeRef() == null) {
 					if (logger.isDebugEnabled()) {
 						logger.debug("Create instanceOf :" + entity.getClass().getName());
-					}
-
-					for (Iterator<Map.Entry<QName, Serializable>> iterator = properties.entrySet().iterator(); iterator.hasNext();) {
-						Map.Entry<QName, Serializable> prop = iterator.next();
-						if (prop.getValue() == null) {
-							iterator.remove();
-						}
 					}
 
 					String name = entity.getName();
@@ -226,12 +229,6 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity>
 
 					nodeService.addProperties(entity.getNodeRef(), properties);
 
-					Set<QName> propsToDelete = new HashSet<>();
-					for (Map.Entry<QName, Serializable> prop : properties.entrySet()) {
-						if (prop.getValue() == null) {
-							propsToDelete.add(prop.getKey());
-						}
-					}
 					removeProperties(entity.getNodeRef(), propsToDelete);
 
 				}
@@ -316,6 +313,9 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity>
 					}
 				}
 			}
+			
+			//Reload Aspect 
+			((AspectAwareDataItem) entity).setAspects(new HashSet<>(nodeService.getAspects(entity.getNodeRef())));
 		}
 	}
 
