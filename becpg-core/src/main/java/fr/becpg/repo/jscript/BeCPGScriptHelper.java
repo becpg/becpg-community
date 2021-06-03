@@ -37,6 +37,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AccessPermission;
 import org.alfresco.service.cmr.security.PermissionService;
+import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -110,6 +111,8 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	private EntityListDAO entityListDAO;
 
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
+
+	private SiteService siteService;
 
 	private boolean useBrowserLocale;
 
@@ -354,6 +357,10 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 */
 	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
+	}
+	
+	public void setSiteService(SiteService siteService) {
+		this.siteService = siteService;
 	}
 
 	/**
@@ -1112,5 +1119,9 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 */
 	public static String generateEAN13Code(String prefix) throws CheckDigitException {
 		return GTINHelper.createEAN13Code(prefix, AutoNumHelper.getAutoNumValue("bcpg:eanCode", "bcpg:ean13Pref" + prefix));
+	}
+	
+	public NodeRef getDocumentLibraryNodeRef(String siteId) {
+		return AuthenticationUtil.runAsSystem(() -> siteService.getContainer(siteId, "documentLibrary"));
 	}
 }
