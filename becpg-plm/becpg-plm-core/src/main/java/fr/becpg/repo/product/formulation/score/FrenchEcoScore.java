@@ -58,13 +58,13 @@ public class FrenchEcoScore implements ListValuePlugin, ScoreCalculatingPlugin {
 	 *  Nature & Progrès	20 / NATURE_ET_PROGRES
 		Bio Cohérence	20 / BIO_COHERANCE
 		Demeter	20    / DEMETER_LABEL
-
-
+	
+	
 		Groupe 2
 		Bio (EU)	15 /  EU_ORGANIC
-
+	
 		Groupe 3
-
+	
 		HVE	10  / HAUTE_VALEUR_ENVIRONNEMENTALE
 		UTZ	10  / UTZ_CERTIFIED
 		Rainforest	10 / RAINFOREST_ALLIANCE
@@ -73,7 +73,7 @@ public class FrenchEcoScore implements ListValuePlugin, ScoreCalculatingPlugin {
 		Label Rouge	10 / LABEL_ROUGE
 		ASC	10 / AQUACULTURE_STEWARDSHIP_COUNCIL
 		MSC	10 / MARINE_STEWARDSHIP_COUNCIL_LABEL
-	
+
 	 */
 
 	private static final List<String> GROUP1_CLAIM = Arrays.asList("NATURE_ET_PROGRES", "BIO_COHERANCE", "DEMETER_LABEL");
@@ -136,9 +136,8 @@ public class FrenchEcoScore implements ListValuePlugin, ScoreCalculatingPlugin {
 
 		String preparedQuery = BeCPGQueryHelper.prepareQuery(entityDictionaryService, query).replace("*", "");
 
-		matches.addAll(
-				environmentalFootprints.values().stream().filter(res -> BeCPGQueryHelper.isQueryMatch(query, res.value, entityDictionaryService))
-						.limit(100).collect(Collectors.toList()));
+		matches.addAll(environmentalFootprints.values().stream()
+				.filter(res -> BeCPGQueryHelper.isQueryMatch(query, res.value, entityDictionaryService)).limit(100).collect(Collectors.toList()));
 
 		matches.sort((o1, o2) -> {
 
@@ -200,8 +199,6 @@ public class FrenchEcoScore implements ListValuePlugin, ScoreCalculatingPlugin {
 		}
 	}
 
-
-
 	private Integer parseInt(String value) {
 		if ((value != null) && !value.trim().isEmpty()) {
 			return Integer.valueOf(value);
@@ -226,69 +223,70 @@ public class FrenchEcoScore implements ListValuePlugin, ScoreCalculatingPlugin {
 	@Override
 	public boolean formulateScore(ProductData productData) {
 
-		Boolean threatenedSpecies = false;
-		Boolean notRecyclable = false;
-		Boolean isDrink = false;
+		if ((productData.getEcoScoreCategory() != null) && !productData.getEcoScoreCategory().isEmpty()) {
+			Boolean threatenedSpecies = false;
+			Boolean notRecyclable = false;
+			Boolean isDrink = false;
 
-		int packagingMalus = 0;
-		int claimBonus = 0;
-		int acvScore = 0;
-		int transportMalus = 0;
-		int ecoScore = 0;
+			int packagingMalus = 0;
+			int claimBonus = 0;
+			int acvScore = 0;
+			int transportMalus = 0;
+			int ecoScore = 0;
 
-		if (productData.getLabelClaimList() != null) {
-			boolean isASCorMSC = true;
-			for (LabelClaimListDataItem claim : productData.getLabelClaimList()) {
-				if (Boolean.TRUE.equals(claim.getIsClaimed())) {
+			if (productData.getLabelClaimList() != null) {
+				boolean isASCorMSC = true;
+				for (LabelClaimListDataItem claim : productData.getLabelClaimList()) {
+					if (Boolean.TRUE.equals(claim.getIsClaimed())) {
 
-					String code = (String) nodeService.getProperty(claim.getLabelClaim(), PLMModel.PROP_LABEL_CLAIM_CODE);
-					if ((code != null) && !code.isEmpty()) {
+						String code = (String) nodeService.getProperty(claim.getLabelClaim(), PLMModel.PROP_LABEL_CLAIM_CODE);
+						if ((code != null) && !code.isEmpty()) {
 
-						if (GROUP1_CLAIM.contains(code)) {
-							claimBonus += 20;
-						} else if (GROUP2_CLAIM.contains(code)) {
-							claimBonus += 15;
-						} else if (GROUP3_CLAIM.contains(code)) {
-							if (code.contains("STEWARDSHIP_COUNCIL")) {
-								if (isASCorMSC) {
+							if (GROUP1_CLAIM.contains(code)) {
+								claimBonus += 20;
+							} else if (GROUP2_CLAIM.contains(code)) {
+								claimBonus += 15;
+							} else if (GROUP3_CLAIM.contains(code)) {
+								if (code.contains("STEWARDSHIP_COUNCIL")) {
+									if (isASCorMSC) {
+										claimBonus += 10;
+										isASCorMSC = false;
+									}
+
+								} else {
 									claimBonus += 10;
-									isASCorMSC = false;
 								}
-
-							} else {
-								claimBonus += 10;
+							} else if ("THREATENED_SPECIES".equals(code)) {
+								threatenedSpecies = true;
 							}
-						} else if ("THREATENED_SPECIES".equals(code)) {
-							threatenedSpecies = true;
+
 						}
 
 					}
-
 				}
 			}
-		}
 
-		if(claimBonus > 20) {
-			claimBonus = 20;
-		}
+			if (claimBonus > 20) {
+				claimBonus = 20;
+			}
 
-		if (Boolean.TRUE.equals(threatenedSpecies)) {
-			ecoScore = 19;
-		} else {
+			if (Boolean.TRUE.equals(threatenedSpecies)) {
+				ecoScore = 19;
+			} else {
 
-			if (productData.getPackMaterialList() != null) {
+				if (productData.getPackMaterialList() != null) {
 
+					Double score = 100d;
+					for (PackMaterialListDataItem material : productData.getPackMaterialList()) {
 
-				Double score = 100d;
-				for (PackMaterialListDataItem material : productData.getPackMaterialList()) {
-				
 						Integer materialScore = (Integer) nodeService.getProperty(material.getPmlMaterial(), PackModel.PROP_PM_ECOSCORE);
-						if(materialScore == null) {
+						if (materialScore == null) {
 							materialScore = 0;
 						}
-						
+
 						if (!Boolean.TRUE.equals(notRecyclable)) {
-							notRecyclable =  Boolean.TRUE.equals(nodeService.getProperty(material.getPmlMaterial(), PackModel.PROP_PM_ISNOTRECYCLABLE));
+							notRecyclable = Boolean.TRUE
+									.equals(nodeService.getProperty(material.getPmlMaterial(), PackModel.PROP_PM_ISNOTRECYCLABLE));
 						}
 
 						/**
@@ -298,39 +296,42 @@ public class FrenchEcoScore implements ListValuePlugin, ScoreCalculatingPlugin {
 						score -= (100 - materialScore) * material.getPmlWeight();
 						//TODO diviser par le total ?
 
+					}
+
+					packagingMalus = (int) Math.round((score / 10) - 10);
 				}
 
-				packagingMalus = (int) Math.round((score / 10) - 10);
+				if (Boolean.TRUE.equals(notRecyclable)) {
+					ecoScore = 79;
+				} else {
+					ecoScore = 100;
+				}
+
+				acvScore = computeEFScore(productData.getEcoScoreCategory(), isDrink);
+
+				//TODO
+				//Tester claim ORIGINE_FRANCE
+				transportMalus = computeTransportScore(productData);
+
+				if (logger.isDebugEnabled()) {
+					logger.info("Ecoscore details: ");
+					logger.info(" - base: " + ecoScore);
+					logger.info(" - acvScore: " + acvScore);
+					logger.info(" - claimBonus: " + claimBonus);
+					logger.info(" - transportMalus: " + transportMalus);
+					logger.info(" - packagingMalus: " + packagingMalus);
+				}
+
+				ecoScore = Math.min(ecoScore, acvScore + Math.min(25, claimBonus + transportMalus + packagingMalus));
+
 			}
 
-			if (Boolean.TRUE.equals(notRecyclable)) {
-				ecoScore = 79;
-			} else {
-				ecoScore = 100;
-			}
-
-			acvScore = computeEFScore(productData.getEcoScoreCategory(), isDrink);
-
-			//TODO
-			//Tester claim ORIGINE_FRANCE
-			transportMalus = computeTransportScore(productData);
-			
-			if(logger.isDebugEnabled()) {
-				logger.info("Ecoscore details: ");
-				logger.info(" - base: "+ecoScore);
-				logger.info(" - acvScore: "+acvScore);
-				logger.info(" - claimBonus: "+claimBonus);
-				logger.info(" - transportMalus: "+transportMalus);
-				logger.info(" - packagingMalus: "+packagingMalus);
-			}
-			
-
-			ecoScore = Math.min(ecoScore, acvScore + Math.min(25, claimBonus + transportMalus + packagingMalus));
-
+			productData.setEcoScore(ecoScore * 1d);
+			productData.setEcoScoreClass(computeScoreClass(ecoScore));
+		} else {
+			productData.setEcoScore(null);
+			productData.setEcoScoreClass(null);
 		}
-
-		productData.setEcoScore(ecoScore * 1d);
-		productData.setEcoScoreClass(computeScoreClass(ecoScore));
 
 		return true;
 
@@ -383,17 +384,16 @@ public class FrenchEcoScore implements ListValuePlugin, ScoreCalculatingPlugin {
 						int transportScoreByCountry = 100;
 						int politicalScoreByCountry = 100;
 
-						if (ingListDataItem.getGeoOrigin() != null &&  ! ingListDataItem.getGeoOrigin().isEmpty()) {
+						if ((ingListDataItem.getGeoOrigin() != null) && !ingListDataItem.getGeoOrigin().isEmpty()) {
 							for (NodeRef geoOrigin : ingListDataItem.getGeoOrigin()) {
 								String geoCode = (String) nodeService.getProperty(geoOrigin, PLMModel.PROP_GEO_ORIGIN_ISOCODE);
 								if (countryScores.containsKey(geoCode)) {
-										transportScoreByCountry = Math.min(transportScoreByCountry, countryScores.get(geoCode).getFirst());
-								
-									  politicalScoreByCountry = Math.min(transportScoreByCountry, countryScores.get(geoCode).getSecond());
-									
-									
-									logger.debug("Found transportScoreByCountry: " +transportScoreByCountry+" for "+geoCode);
-									logger.debug("Found politicalScoreByCountry: " +politicalScoreByCountry+" for "+geoCode);
+									transportScoreByCountry = Math.min(transportScoreByCountry, countryScores.get(geoCode).getFirst());
+
+									politicalScoreByCountry = Math.min(transportScoreByCountry, countryScores.get(geoCode).getSecond());
+
+									logger.debug("Found transportScoreByCountry: " + transportScoreByCountry + " for " + geoCode);
+									logger.debug("Found politicalScoreByCountry: " + politicalScoreByCountry + " for " + geoCode);
 								} else {
 									transportScoreByCountry = 0;
 									politicalScoreByCountry = 0;
@@ -404,8 +404,8 @@ public class FrenchEcoScore implements ListValuePlugin, ScoreCalculatingPlugin {
 							politicalScoreByCountry = 0;
 						}
 
-						transportScore += transportScoreByCountry * ingListDataItem.getQtyPerc()/100d;
-						politicalScore += politicalScoreByCountry * ingListDataItem.getQtyPerc()/100d;
+						transportScore += (transportScoreByCountry * ingListDataItem.getQtyPerc()) / 100d;
+						politicalScore += (politicalScoreByCountry * ingListDataItem.getQtyPerc()) / 100d;
 					}
 
 				}
@@ -418,7 +418,7 @@ public class FrenchEcoScore implements ListValuePlugin, ScoreCalculatingPlugin {
 	}
 
 	private boolean isWater(NodeRef ing) {
-		
+
 		return nodeService.hasAspect(ing, PLMModel.ASPECT_WATER);
 	}
 
