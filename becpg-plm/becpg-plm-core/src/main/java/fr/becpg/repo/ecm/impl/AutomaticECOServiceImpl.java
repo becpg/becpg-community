@@ -58,7 +58,6 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 import io.opencensus.common.Scope;
 import io.opencensus.trace.Tracer;
 import io.opencensus.trace.Tracing;
-import io.opencensus.trace.samplers.Samplers;
 
 /**
  * <p>AutomaticECOServiceImpl class.</p>
