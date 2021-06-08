@@ -944,6 +944,7 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 				String name = dbNodeService.getProperty(versionNode, ContentModel.PROP_NAME) + RepoConsts.VERSION_NAME_DELIMITER + versionLabel;
 				dbNodeService.setProperty(versionNode, ContentModel.PROP_NAME, name);
 				dbNodeService.setProperty(versionNode, BeCPGModel.PROP_VERSION_LABEL, versionLabel);
+				dbNodeService.setProperty(versionNode, Version2Model.PROP_QNAME_FROZEN_MODIFIED, new Date());
 				
 
 				if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_EFFECTIVITY)) {
