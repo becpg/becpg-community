@@ -21,6 +21,7 @@
 
 	if (beCPG.component.EntityDataListToolbar) {
 		var PREF_VIEW_MODE = "org.alfresco.share.project.gantt.mode"
+    	var PREF_SHOW_TARGET_DATE =  "org.alfresco.share.project.gantt.showTargetDate";
 
 		YAHOO.Bubbling.fire("registerToolbarButtonAction",
 			{
@@ -200,8 +201,55 @@
 			}
 
 		});
+		
+		YAHOO.Bubbling
+			.fire(
+				"registerToolbarButtonAction",
+				{
+					actionName: "show-target-dates",
+					hideLabel: true,
+					evaluate: function(asset, entity) {
+						return asset.name != null && (asset.name === "taskList") && entity != null && entity.userAccess.edit;
+					},
+					createWidget: function(containerDiv, instance) {
 
+						var divEl = document.createElement("div");
 
+						containerDiv.appendChild(divEl);
+
+						Dom.addClass(divEl, "targetDatesCkeckbox");
+						
+						var showTargetDateOn = "true" === Alfresco.util.findValueByDotNotation(instance.services.preferences.get(), PREF_SHOW_TARGET_DATE);
+						
+						if(showTargetDateOn){
+							var el = YAHOO.util.Dom.get("alf-content");
+							YAHOO.util.Dom.addClass(el, "show-target-dates");
+						}
+
+						var widget = new YAHOO.widget.Button(
+							{
+								type: "checkbox",
+								title: instance.msg("button.toggle-target-dates.description"),
+								container: divEl,
+								checked: showTargetDateOn
+							});
+
+						widget.on("checkedChange", function() {
+							var el = YAHOO.util.Dom.get("alf-content");
+
+							if (YAHOO.util.Dom.hasClass(el, "show-target-dates")) {
+								YAHOO.util.Dom.removeClass(el, "show-target-dates");
+								instance.services.preferences.set(PREF_SHOW_TARGET_DATE, "false");
+							} else {
+								YAHOO.util.Dom.addClass(el, "show-target-dates");
+								instance.services.preferences.set(PREF_SHOW_TARGET_DATE, "true");
+							}
+
+						});
+
+						return widget;
+					}
+				});
 
 		YAHOO.Bubbling
 			.fire(

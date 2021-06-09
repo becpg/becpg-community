@@ -30,7 +30,8 @@ var g = null; // uggly gantt var
      */
 	var $isValueSet = Alfresco.util.isValueSet;
 
-	var PREF_VIEW_MODE = "org.alfresco.share.project.gantt.mode"
+	var PREF_VIEW_MODE = "org.alfresco.share.project.gantt.mode";
+	
 
 	beCPG.module.GanttViewRenderer = function() {
 		// Renderers
@@ -140,6 +141,7 @@ var g = null; // uggly gantt var
 
 				this.refreshView();
 			},
+			
 			refreshView: function GanttView_refreshView() {
 
 				if (this.options.viewMode != "gantt") {
