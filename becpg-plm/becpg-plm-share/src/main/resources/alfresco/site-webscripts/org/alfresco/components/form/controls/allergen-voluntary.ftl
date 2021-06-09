@@ -1,4 +1,5 @@
 <#assign isTrue=false>
+<#assign isFalse=false>
 <#if field.value??>
  <#if field.value?is_boolean>
     <#assign isTrue=field.value>
