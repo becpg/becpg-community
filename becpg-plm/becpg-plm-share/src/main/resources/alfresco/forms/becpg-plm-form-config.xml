@@ -8606,7 +8606,9 @@
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:allergenListInVoluntary" />
+					<field id="bcpg:allergenListInVoluntary" >
+						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+					</field>
 					
 					
 					<field id="bcpg:allergenListVolSources">
@@ -8652,6 +8654,15 @@
 					<show id="entity_bcpg:allergenListAllergen_bcpg:product"
 						for-mode="view" />
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:allergenListVoluntary" >
+						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+					</field>
+					<field id="bcpg:allergenListInVoluntary" >
+						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+					</field>
+				
+				</appearance>
 			</form>
 		</forms>
 	</config>
@@ -8708,7 +8719,9 @@
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:allergenListInVoluntary" />
+					<field id="bcpg:allergenListInVoluntary"  >
+						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+					</field>
 					<field id="bcpg:allergenListVolSources">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -9632,6 +9645,8 @@
 					<show id="bcpg:nutListUnit" />
 					<show id="bcpg:nutListMini" />
 					<show id="bcpg:nutListMaxi" />
+					<show id="bcpg:nutListFormulatedMini" />
+					<show id="bcpg:nutListFormulatedMaxi" />
 					<show id="bcpg:nutListValuePerServing" force="true" />
 					<show id="bcpg:variantColumn1" force="true" />
 					<show id="bcpg:variantColumn2" force="true" />
@@ -9651,6 +9666,8 @@
 					<field id="bcpg:variantIds" label="hidden"></field>
 					<field id="bcpg:depthLevel" label="hidden"></field>
 					<field id="bcpg:nutListFormulatedValue" label="hidden" read-only="true" />
+				    <field id="bcpg:nutListFormulatedMaxi" label="hidden" read-only="true" />
+					<field id="bcpg:nutListFormulatedMini" label="hidden" read-only="true" />
 					<field id="bcpg:nutListUnit" read-only="true" label="hidden"></field>
 					<field id="bcpg:variantColumn1" read-only="true" label="hidden"></field>
 					<field id="bcpg:variantColumn2" read-only="true" label="hidden"></field>
@@ -9700,6 +9717,8 @@
 					<show id="bcpg:nutListUnit" />
 					<show id="bcpg:nutListMini" />
 					<show id="bcpg:nutListMaxi" />
+					<show id="bcpg:nutListFormulatedMini" />
+					<show id="bcpg:nutListFormulatedMaxi" />
 					<show id="bcpg:nutListValuePerServing" force="true" />
 					<show id="bcpg:nutListGDAPerc" force="true" />
 					<show id="bcpg:nutListLossPerc" />
@@ -9713,41 +9732,16 @@
 					<field id="bcpg:variantIds" label="hidden"></field>
 					<field id="bcpg:depthLevel" label="hidden"></field>
 					<field id="bcpg:nutListFormulatedValue" label="hidden" read-only="true" />
+					
+				    <field id="bcpg:nutListFormulatedMaxi" label="hidden" read-only="true" />
+					<field id="bcpg:nutListFormulatedMini" label="hidden" read-only="true" />
 					<field id="bcpg:nutListUnit" read-only="true" label="hidden"></field>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 					<field id="bcpg:nutListIsFormulated" label="hidden"/>
 					<field id="bcpg:nutListFormulaErrorLog" label="hidden"/>
 				</appearance>
 			</form>
-			<form id="datagridWUsed">
-				<field-visibility>
-					<show id="bcpg:variantIds" force="true" />
-					<show id="bcpg:depthLevel" />
-					<show id="bcpg:nutListNut" />
-					<show id="bcpg:nutListValue" />
-					<show id="bcpg:nutListFormulatedValue" />
-					<show id="bcpg:nutListUnit" />
-					<show id="bcpg:nutListMini" />
-					<show id="bcpg:nutListMaxi" />
-					<show id="bcpg:nutListValuePerServing" force="true" />
-					<show id="bcpg:nutListGDAPerc" force="true" />
-					<show id="bcpg:nutListLossPerc" />
-					<show id="bcpg:nutListMethod" />
-					<show id="fm:commentCount" force="true" />
-					<show id="bcpg:nutListIsFormulated" />
-					<show id="bcpg:nutListFormulaErrorLog" />					
-					<show id="entity_bcpg:nutListNut_bcpg:nut" force="true"/>
-				</field-visibility>
-				<appearance>
-					<field id="bcpg:variantIds" label="hidden"></field>
-					<field id="bcpg:depthLevel" label="hidden"></field>
-					<field id="bcpg:nutListFormulatedValue" label="hidden" read-only="true" />
-					<field id="bcpg:nutListUnit" read-only="true" label="hidden"></field>
-					<field id="fm:commentCount" label="hidden" read-only="true" />
-					<field id="bcpg:nutListIsFormulated" label="hidden"/>
-					<field id="bcpg:nutListFormulaErrorLog" label="hidden"/>
-				</appearance>
-			</form>
+			
 
 			<form id="filter">
 				<field-visibility>

@@ -1,4 +1,5 @@
 <#assign isTrue=false>
+<#assign isFalse=false>
 <#if field.value??>
  <#if field.value?is_boolean>
     <#assign isTrue=field.value>
@@ -17,7 +18,7 @@
          <span class="viewmode-value"><#if isTrue>${msg("data.boolean.true")}<#elseif isFalse>${msg("data.boolean.false")}<#else>${msg("data.boolean.empty")}</#if></span>
       </div>
    <#else>
-        <label>${field.label?html}:</label>
+        <label >${field.label?html}:</label>
         <@formLib.renderFieldHelp field=field />
         <div class="form-field-boolean" id="${fieldHtmlId}" >
 		 
@@ -42,44 +43,6 @@
 		     <label for="${fieldHtmlId}-empty"> ${msg("data.boolean.empty")} </label>
 		
 		</div>
-		
-      <script type="text/javascript">
-          (function(){
-				function allergenVoluntaryToogleVisible(){
-					var val = YAHOO.util.Dom.get("${fieldHtmlId}-true").checked;
-					if(YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_allergenListDecisionTree")){
-						if(val){
-							YAHOO.util.Dom.addClass(YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_allergenListDecisionTree-cntrl").parentNode,"hidden");
-							YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_allergenListDecisionTree").value = "";
-						    YAHOO.util.Dom.addClass(YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_allergenListInVoluntary").parentNode,"hidden");
-							YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_allergenListInVoluntary-false").checked = true;
-						} else {
-						 if(YAHOO.util.Dom.hasClass(YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_allergenListDecisionTree-cntrl").parentNode,"hidden")){
-						   YAHOO.util.Dom.removeClass(YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_allergenListDecisionTree-cntrl").parentNode,"hidden");
-			 			   YAHOO.util.Dom.removeClass(YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_allergenListInVoluntary").parentNode,"hidden");
-			 			   YAHOO.Bubbling.fire("refreshDecisionTree");	
-			 			  }
-						}
-					}
-				
-	           }
-	           YAHOO.Bubbling.on("beforeFormRuntimeInit", function (layer, args)
-	     			 {	
-			            allergenVoluntaryToogleVisible();
-						YAHOO.util.Event.addListener("${fieldHtmlId}-true", "change", function(){
-			               allergenVoluntaryToogleVisible();
-			         	});
-			            YAHOO.util.Event.addListener("${fieldHtmlId}-false", "change", function(){
-			               allergenVoluntaryToogleVisible();
-			         	});
-			         	YAHOO.util.Event.addListener("${fieldHtmlId}-empty", "change", function(){
-			               allergenVoluntaryToogleVisible();
-			         	});
-	         	}, this);
-         	})();
-         </script>
+      
    </#if>
 </div>
-
-
-
