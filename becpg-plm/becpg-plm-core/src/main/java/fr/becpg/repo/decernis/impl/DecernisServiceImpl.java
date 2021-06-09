@@ -43,6 +43,7 @@ import com.ibm.icu.util.Calendar;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
+import fr.becpg.repo.decernis.DecernisMode;
 import fr.becpg.repo.decernis.DecernisService;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.helper.MLTextHelper;
@@ -528,19 +529,21 @@ public class DecernisServiceImpl implements DecernisService {
 					String recipeId = sendRecipe(data);
 					if (recipeId != null) {
 						product.setRegulatoryRecipeId(recipeId);
-						try {
-							for (String usage : usages) {
-								JSONObject analysisResults = recipeAnalysis(recipeId, countries, usage.trim());
-								if (analysisResults != null) {
-									ret.addAll(createReqCtrl(countries, analysisResults));
-								} else {
-									throw new FormulateException("Error analysing recipe");
+						if(!DecernisMode.DECERNIS_ONLY.equals(product.getRegulatoryMode())) {
+							try {
+								for (String usage : usages) {
+									JSONObject analysisResults = recipeAnalysis(recipeId, countries, usage.trim());
+									if (analysisResults != null) {
+										ret.addAll(createReqCtrl(countries, analysisResults));
+									} else {
+										throw new FormulateException("Error analysing recipe");
+									}
 								}
-							}
-						} finally {
-							if (product.isTransientRegulatory()) {
-								logger.debug("Deleting: "+recipeId);
-								deleteRecipe(recipeId);
+							} finally {
+								if (!DecernisMode.BOTH.equals(product.getRegulatoryMode())) {
+									logger.debug("Deleting: "+recipeId);
+									deleteRecipe(recipeId);
+								}
 							}
 						}
 					} else {
