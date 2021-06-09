@@ -36,7 +36,6 @@ import javax.annotation.PostConstruct;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.cache.TransactionalCache;
-import org.alfresco.repo.domain.node.NodeDAO;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.policy.PolicyComponent;
@@ -46,7 +45,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.Pair;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -967,21 +965,13 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity>
 
 		return new ArrayList<>();
 	}
-
-	@Autowired
-	NodeDAO nodeDAO;
-
+	
+	
 	private void removeProperties(NodeRef nodeRef, Set<QName> qnames) {
-
 		qnames.remove(ContentModel.PROP_NAME);
-		// Get the node
-		Pair<Long, NodeRef> nodePair = nodeDAO.getNodePair(nodeRef);
-
-		if (nodePair != null) {
-			// Remove
-			nodeDAO.removeNodeProperties(nodePair.getFirst(), qnames);
+		for(QName qname: qnames) {
+			nodeService.removeProperty(nodeRef, qname);
 		}
-
 	}
 
 }
