@@ -61,7 +61,7 @@
 			},
 
 			key: function(record) {
-				return BASKET_KEY_PREFIX + record.nodeRef.replace(':/','').replaceAll(/\//g,'_');
+				return BASKET_KEY_PREFIX + record.nodeRef.replace(':/','').replace(/\//g,'_');
 			},
 
 			getRecords: function() {
