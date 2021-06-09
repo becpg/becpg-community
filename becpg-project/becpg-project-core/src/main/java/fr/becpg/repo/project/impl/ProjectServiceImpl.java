@@ -505,7 +505,7 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 	public NodeRef getReassignedResource(NodeRef resource) {
 
 		if ((resource != null) && (nodeService.getProperty(resource, ProjectModel.PROP_QNAME_DELEGATION_STATE) != null)
-				&& ((boolean) nodeService.getProperty(resource, ProjectModel.PROP_QNAME_DELEGATION_STATE) == true)) {
+				&& (Boolean.TRUE.equals(nodeService.getProperty(resource, ProjectModel.PROP_QNAME_DELEGATION_STATE)))) {
 
 			Date delegationStart = (Date) nodeService.getProperty(resource, ProjectModel.PROP_QNAME_DELEGATION_START);
 			Date delegationEnd = (Date) nodeService.getProperty(resource, ProjectModel.PROP_QNAME_DELEGATION_END);

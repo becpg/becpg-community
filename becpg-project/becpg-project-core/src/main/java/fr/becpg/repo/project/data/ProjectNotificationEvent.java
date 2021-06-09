@@ -7,5 +7,5 @@ package fr.becpg.repo.project.data;
  * @version $Id: $Id
  */
 public enum ProjectNotificationEvent {
-   All, Comment, TaskStart, TaskEnd, TaskRefused, TaskCancelled, NotifyDisabled, NotifyOnRefused
+   All, Comment, TaskStart, TaskEnd, TaskRefused, TaskCancelled, NotifyDisabled, NotifyOnRefused, Properties
 }

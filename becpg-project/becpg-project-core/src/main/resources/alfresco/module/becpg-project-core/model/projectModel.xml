@@ -110,6 +110,7 @@
 					<value>TaskStart</value>
 					<value>TaskEnd</value>
 					<value>TaskRefused</value>
+					<value>Properties</value>
 					<value>NotifyDisabled</value>
 					<value>NotifyOnRefused</value>
 				</list>
