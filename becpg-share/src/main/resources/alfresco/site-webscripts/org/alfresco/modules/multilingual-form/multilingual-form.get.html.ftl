@@ -2,6 +2,7 @@
 
 <#assign el=args.htmlid?html>
 <#assign label=args.label!"">
+<#assign guessedLabel="">
 <#assign description="">
 
 
@@ -38,6 +39,8 @@
       						<span class="locale-icon"><img class="icon16_11" title="${mlField.localeLabel}" tabindex="0" src="${url.context}/res/components/images/flags/${mlField.country?lower_case}.png">&nbsp;(${mlField.localeLabel})<span>&nbsp;&nbsp;
       						<span class="translate-icon" onClick="suggestTranslate('${el}-${mlField.locale}','${mlField.locale}');" ><img class="icon16" title="${msg("translate.suggest")}" tabindex="0" src="${url.context}/res/components/images/translate-16.png"><span>
       				</label>
+      				<#assign guessedLabel=mlField.label!"">
+      				
       				<#if !args.htmlEditor??>
 		      			<#if args.textarea??>
 		      				<textarea rows="2" cols="60" title="${mlField.description!""?html}" tabindex="0"
@@ -67,7 +70,7 @@
 						   //]]></script>
 						   
 						   <textarea rows="2" columns="60" title="${mlField.description!""?html}" tabindex="0"
-						   		id="${mlFieldHtmlId}" name="${mlField.locale}" > ${mlField.value} </textarea>
+						   		id="${mlFieldHtmlId}" name="${mlField.locale}" >${mlField.value!""}</textarea>
 			      	 </#if>		
 	      		</div>
                </#if>
@@ -136,7 +139,7 @@ var addFormFieldForLocale = function(){
 	  	if(document.getElementById("${el}-"+lc) == null && lc!="-"){
    
 		   	 varHtml +="<div class=\"form-field\"><label for=\"${el}-"+lc
-		   	         +"\">${label?js_string}:&nbsp;<span class=\"locale-icon\">"
+		   	         +"\"><#if args.label?? >${label?js_string}<#else>${guessedLabel!""}</#if>:&nbsp;<span class=\"locale-icon\">"
 		   	         +"<img class=\"icon16_11\" tabindex=\"0\" src=\"${url.context}/res/components/images/flags/"+country+".png\"/>&nbsp;("+lbl+")</span>&nbsp;&nbsp;"
 		   	         +"<span class=\"translate-icon\" onClick=\"suggestTranslate('${el}-"+lc+"','"+lc+"');\" >"
 		   	         +"<img class=\"icon16\" title=\"${msg("translate.suggest")}\" tabindex=\"0\" src=\"${url.context}/res/components/images/translate-16.png\">"
