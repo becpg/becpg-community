@@ -140,6 +140,9 @@ public class EntityCatalogService<T extends RepositoryEntity> {
 	@Autowired
 	private AlfrescoRepository<T> alfrescoRepository;
 
+	@Autowired
+	private EntityCatalogObserver[] observers;
+
 	/**
 	 * <p>
 	 * getCatalogsDef.
@@ -208,9 +211,9 @@ public class EntityCatalogService<T extends RepositoryEntity> {
 
 					for (int i = 0; i < catalogDef.length(); i++) {
 						JSONObject catalog = catalogDef.getJSONObject(i);
-						if (isMatchEntityType(catalog, nodeService.getType(entityNodeRef), namespaceService)
-								&& catalog.has(PROP_CATALOG_MODIFIED_FIELD)) {
-
+						QName type = nodeService.getType(entityNodeRef);
+						if (isMatchEntityType(catalog, type, namespaceService) && catalog.has(PROP_CATALOG_MODIFIED_FIELD)
+								&& isMatchFilter(catalog, entityNodeRef)) {
 							Set<QName> auditedFields = getAuditedFields(catalog, namespaceService);
 							if ((auditedFields != null) && !auditedFields.isEmpty()) {
 								QName changedField = null;
@@ -233,13 +236,20 @@ public class EntityCatalogService<T extends RepositoryEntity> {
 
 								}
 
+								
+								
 								if (changedField != null) {
 									QName catalogModifiedDate = QName.createQName(catalog.getString(PROP_CATALOG_MODIFIED_FIELD), namespaceService);
 									if (logger.isDebugEnabled()) {
 										logger.debug("Audited field " + changedField + " has changed, update date: " + catalogModifiedDate);
 									}
+									
 									nodeService.setProperty(entityNodeRef, catalogModifiedDate, new Date());
-
+									for (EntityCatalogObserver observer : observers) {
+										if (observer.accept(type, entityNodeRef)) {
+											observer.notifyAuditedFieldChange(catalog.getString(PROP_ID), entityNodeRef);
+										}
+									}
 								}
 							}
 
@@ -252,6 +262,33 @@ public class EntityCatalogService<T extends RepositoryEntity> {
 			logger.error("Unable to update catalog's properties!!", e);
 		}
 
+	}
+
+	private boolean isMatchFilter(JSONObject catalog, NodeRef entityNodeRef) throws JSONException {
+		if (catalog.has(EntityCatalogService.PROP_ENTITY_FILTER)) {
+			return isMatchFilter(catalog, alfrescoRepository.findOne(entityNodeRef));
+		}
+		return true;
+
+	}
+
+	private boolean isMatchFilter(JSONObject catalog, T entity) throws JSONException {
+
+		if (catalog.has(EntityCatalogService.PROP_ENTITY_FILTER)) {
+
+			String condition = catalog.getString(EntityCatalogService.PROP_ENTITY_FILTER);
+
+			if ((condition != null) && !(condition.startsWith("spel") || condition.startsWith("js"))) {
+				condition = "spel(" + condition + ")";
+			}
+
+			if (!Boolean.parseBoolean(expressionService.eval(condition, entity).toString())) {
+				logger.debug("Skipping condition doesn't match : [" + condition + "]");
+				return false;
+			}
+
+		}
+		return true;
 	}
 
 	/**
@@ -405,22 +442,7 @@ public class EntityCatalogService<T extends RepositoryEntity> {
 					JSONObject catalog = catalogDef.getJSONObject(i);
 
 					if (((catalogId == null) || catalog.getString(PROP_ID).equals(catalogId))
-							&& (isMatchEntityType(catalog, productType, namespaceService))) {
-
-						if (catalog.has(EntityCatalogService.PROP_ENTITY_FILTER)) {
-
-							String condition = catalog.getString(EntityCatalogService.PROP_ENTITY_FILTER);
-
-							if ((condition != null) && !(condition.startsWith("spel") || condition.startsWith("js"))) {
-								condition = "spel(" + condition + ")";
-							}
-
-							if (!Boolean.parseBoolean(expressionService.eval(condition, formulatedEntity).toString())) {
-								logger.debug("Skipping condition doesn't match : [" + condition + "]");
-								continue;
-							}
-
-						}
+							&& (isMatchEntityType(catalog, productType, namespaceService)) && isMatchFilter(catalog, formulatedEntity)) {
 
 						if (logger.isDebugEnabled()) {
 							logger.debug("\n\t\t== Catalog \"" + catalog.getString(EntityCatalogService.PROP_LABEL) + "\" ==");
