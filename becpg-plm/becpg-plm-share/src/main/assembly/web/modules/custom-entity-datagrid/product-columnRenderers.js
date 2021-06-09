@@ -86,7 +86,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 		renderer : function(oRecord, data, label, scope) {
 			if (data.value) {
 				return '<span class="red">' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
-			}
+			} 
 			return Alfresco.util.encodeHTML(data.displayValue);
 		}
 
@@ -294,7 +294,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 	
 	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-      propertyName : "bcpg:nutListValue",
+      propertyName : ["bcpg:nutListValue","bcpg:nutListMini","bcpg:nutListMaxi"],
       renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
           var ret = "";
           
@@ -321,7 +321,16 @@ if (beCPG.module.EntityDataGridRenderers) {
         	  ret+=data.value+" "+unit;
           }
           
-          var formulatedValue = oRecord.getData("itemData")["prop_bcpg_nutListFormulatedValue"];
+          var key ="prop_bcpg_nutListFormulatedValue";
+
+		if(oColumn.field == "prop_bcpg_nutListMini"){
+			key = "prop_bcpg_nutListFormulatedMini";
+		} else if(oColumn.field == "prop_bcpg_nutListMaxi"){
+			key = "prop_bcpg_nutListFormulatedMaxi";
+		}
+
+          
+          var formulatedValue = oRecord.getData("itemData")[key];
           if(formulatedValue!=null && formulatedValue.value!=null ){
               if(ret.length>0){
                   ret+= '&nbsp;&nbsp;(' + exp(formulatedValue.value) + ')';
@@ -334,9 +343,8 @@ if (beCPG.module.EntityDataGridRenderers) {
       }
 
   });
-	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-      propertyName : ["bcpg:nutListMini", "bcpg:nutListMaxi", "bcpg:nutListValuePerServing"],
+      propertyName : ["bcpg:nutListValuePerServing"],
       renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
       	if(data.value != null){
       		return Alfresco.util.encodeHTML(beCPG.util.sigFigs(data.value,3).toLocaleString());
@@ -827,10 +835,12 @@ if (beCPG.module.EntityDataGridRenderers) {
 				
 				if (data.value != null){
 					if(data.displayValue == null || data.displayValue == ""){
-						displayValue = "<i>"+scope.msg("label.empty")+"</i>";
+						displayValue = "<i>"+scope.msg("label.labelling.available")+"</i>";
 					}
-				}else {
-					displayValue = "";
+				} else {
+					if(data.displayValue == null || data.displayValue == ""){
+						displayValue = "<i>"+scope.msg("label.labelling.empty")+"</i>";
+					}	
 				}
 					
 					
@@ -853,8 +863,10 @@ if (beCPG.module.EntityDataGridRenderers) {
 					html += '<span id="' +htmlId+"#"+ nodeRef+"#"+ label+ "#false" + '" class="onShowTranslation"><a href="#" title="'+ scope.msg("label.edit.translation.title") +'" class="labeling-action edit-translation"></a> </span>';
 					html += '<span>&nbsp;</span>';
 				}
-				html += '<span id="' +htmlId+"#"+ nodeRef+"#"+ label+ "#true" + '" class="onShowTranslation"><a href="#" title="'+ scope.msg("label.show.translation.title") +'" class="labeling-action show-translation" ></a></span>';
-				html += '</div>';
+				if (data.value != null){
+					html += '<span id="' +htmlId+"#"+ nodeRef+"#"+ label+ "#true" + '" class="onShowTranslation"><a href="#" title="'+ scope.msg("label.show.translation.title") +'" class="labeling-action show-translation" ></a></span>';
+					html += '</div>';
+				}
 			
 			
 				html += '</div>';

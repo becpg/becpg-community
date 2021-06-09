@@ -52,6 +52,7 @@ import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
+import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -308,7 +309,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 					tmpCompoItem = tmpCompoItem.getParent();
 				}
 
-				if ((weight != null) && !omit) {
+				if ((weight != null) && !omit  && compoItem!=null) {
 
 					ProductData partProduct = (ProductData) alfrescoRepository.findOne(compoItem.getProduct());
 					Double vol = FormulationHelper.getNetVolume(compoItem, partProduct);
@@ -399,9 +400,8 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 				logger.debug("simpleListDataList  is null or empty");
 
-				mandatoryCharacts.keySet().forEach(charactNodeRef -> {
-					addMissingMandatoryCharact(mandatoryCharacts, charactNodeRef, partProduct.getNodeRef());
-				});
+				mandatoryCharacts.keySet().forEach(charactNodeRef -> 
+					addMissingMandatoryCharact(mandatoryCharacts, charactNodeRef, partProduct.getNodeRef()));
 			} else {
 
 				simpleListDataList.forEach(newSimpleListDataItem -> {
@@ -471,7 +471,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	protected void calculate(ProductData formulatedProduct, ProductData partProduct, SimpleListDataItem newSimpleListDataItem,
 			SimpleListDataItem slDataItem, Double qtyUsed, Double netQty, boolean isGenericRawMaterial, VariantData variant) {
 
-		Double formulatedValue = 0d;
+		Double formulatedValue;
 		if (newSimpleListDataItem instanceof FormulatedCharactDataItem) {
 			formulatedValue = ((FormulatedCharactDataItem) newSimpleListDataItem).getFormulatedValue();
 		} else {
@@ -494,8 +494,18 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 			}
 			if (slDataItem instanceof MinMaxValueDataItem) {
 				Double newMini = ((MinMaxValueDataItem) newSimpleListDataItem).getMini();
+				if(newSimpleListDataItem instanceof NutListDataItem) {
+					newMini = ((NutListDataItem) newSimpleListDataItem).getFormulatedMini();
+				}
+				
+				
 				Double miniValue = ((MinMaxValueDataItem) slDataItem).getMini();
 				Double newMaxi = ((MinMaxValueDataItem) newSimpleListDataItem).getMaxi();
+				
+				if(newSimpleListDataItem instanceof NutListDataItem) {
+					newMaxi = ((NutListDataItem) newSimpleListDataItem).getFormulatedMaxi();
+				}
+				
 				Double maxiValue = ((MinMaxValueDataItem) slDataItem).getMaxi();
 				if (isGenericRawMaterial) {
 					if ((miniValue != null) && ((newMini == null) || ((newMini != null) && (newMini > miniValue)))) {
@@ -569,10 +579,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	 */
 	protected void addMissingMandatoryCharact(Map<NodeRef, List<NodeRef>> mandatoryCharacts, NodeRef charactNodeRef, NodeRef componentNodeRef) {
 		if (mandatoryCharacts.containsKey(charactNodeRef)) {
-			List<NodeRef> sources = mandatoryCharacts.get(charactNodeRef);
-			if (sources == null) {
-				sources = mandatoryCharacts.put(charactNodeRef, new ArrayList<>());
-			}
+			List<NodeRef> sources = mandatoryCharacts.computeIfAbsent(charactNodeRef, k -> new ArrayList<>());
 			if (!sources.contains(componentNodeRef)) {
 				sources.add(componentNodeRef);
 			}

@@ -170,6 +170,11 @@ public interface PLMModel {
 	QName PROP_NUTLIST_UNIT = QName.createQName(BeCPGModel.BECPG_URI, "nutListUnit");
 	/** Constant <code>PROP_NUTLIST_MINI</code> */
 	QName PROP_NUTLIST_MINI = QName.createQName(BeCPGModel.BECPG_URI, "nutListMini");
+	
+
+	QName PROP_NUTLIST_FORMULATED_MINI = QName.createQName(BeCPGModel.BECPG_URI, "nutListFormulatedMini");
+	
+	QName PROP_NUTLIST_FORMULATED_MAXI = QName.createQName(BeCPGModel.BECPG_URI, "nutListFormulatedMaxi");
 	/** Constant <code>PROP_NUTLIST_MAXI</code> */
 	QName PROP_NUTLIST_MAXI = QName.createQName(BeCPGModel.BECPG_URI, "nutListMaxi");
 	/** Constant <code>PROP_NUTLIST_GROUP</code> */

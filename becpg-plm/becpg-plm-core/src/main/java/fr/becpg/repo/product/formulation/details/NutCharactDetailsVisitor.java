@@ -22,7 +22,6 @@ import java.util.List;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.springframework.stereotype.Service;
 
-import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.product.data.CharactDetails;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.formulation.FormulationHelper;
@@ -38,7 +37,7 @@ public class NutCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 
 	/** {@inheritDoc} */
 	@Override
-	public CharactDetails visit(ProductData formulatedProduct, List<NodeRef> dataListItems, Integer level) throws FormulateException {
+	public CharactDetails visit(ProductData formulatedProduct, List<NodeRef> dataListItems, Integer level)  {
 
 		CharactDetails ret = createCharactDetails(dataListItems);
 
