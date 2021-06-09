@@ -384,9 +384,6 @@
                       
                   };
                    
-                   
-                   
-                   
                    break;
                case "boolean":
                    editor = new YAHOO.widget.RadioCellEditor({
@@ -396,9 +393,31 @@
                        }, {
                            label : scope.msg("data.boolean.false"),
                            value : false
-                       } ],
+                       },{
+                           label : scope.msg("data.boolean.empty"),
+                           value : ""
+                       } ], 
+					  validator : function(oData) {
+                          if(!oData || oData.length<1){
+                             if(column.mandatory){
+                                return undefined;
+                             }
+                             return null;
+                          }
+						 return oData;
+						},
                        disableBtns:true
                    });
+				  editor.resetForm = function() {
+					    for(var i=0, j=this.radios.length; i<j; i++) {
+					        var elRadio = this.radios[i];
+					        if(this.value === elRadio.value || this.value==null &&  elRadio.value=="") {
+					            elRadio.checked = true;
+					            return;
+					        }
+					    }
+					};
+
                    break;
                case "float":
                case "int":
@@ -608,9 +627,8 @@
                                    .msg("date-format.defaultDateOnly"));
                            oNewValue = Alfresco.util.formatDate(oNewValue, "yyyy-mm-dd'T'HH:MM:ss");
                        } else if (oSelf instanceof YAHOO.widget.RadioCellEditor) {
-                          
-                          oNewValue = "true" === oNewValue;
-                          oDisplayValue = oNewValue ? scope.msg("data.boolean.true") : scope.msg("data.boolean.false");
+	
+                          oDisplayValue = "true" === oNewValue ? scope.msg("data.boolean.true") :( "false" === oNewValue ? scope.msg("data.boolean.false") : "");
                           
                        } else if (oSelf instanceof YAHOO.widget.DropdownCellEditor ) { 
                     	   

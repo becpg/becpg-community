@@ -492,6 +492,8 @@
 				</list>
 			</parameter>
 		</constraint>
+		
+		
 		<constraint name="bcpg:labelClaimTypes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
@@ -1495,13 +1497,9 @@
 				</property>
 				<property name="bcpg:allergenListVoluntary">
 					<type>d:boolean</type>
-					<mandatory enforced="true">true</mandatory>
-					<default>false</default>
 				</property>
 				<property name="bcpg:allergenListInVoluntary">
 					<type>d:boolean</type>
-					<mandatory enforced="true">true</mandatory>
-					<default>false</default>
 				</property>
 				<property name="bcpg:allergenListDecisionTree">
 					<type>d:text</type>
@@ -1991,6 +1989,16 @@
 					<index enabled="false" />
 				</property>
 				<property name="bcpg:nutListMaxi">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:nutListFormulatedMini">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:nutListFormulatedMaxi">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="false" />
