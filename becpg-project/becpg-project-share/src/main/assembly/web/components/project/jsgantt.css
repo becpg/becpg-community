@@ -204,6 +204,11 @@ td.ggtaskCheckbox {
 
 .gtaskplandiv {
 	top:3px;
+	display:none;
+}
+
+.show-target-dates .gtaskplandiv {
+	display:block;
 }
 
 .show-critical .critical {
