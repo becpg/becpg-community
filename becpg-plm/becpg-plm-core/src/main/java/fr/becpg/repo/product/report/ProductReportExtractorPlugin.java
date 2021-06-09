@@ -908,6 +908,18 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 						value = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_FORMULATED_VALUE.getLocalName());
 						nutListElt.addAttribute(PLMModel.PROP_NUTLIST_VALUE.getLocalName(), value);
 					}
+					
+					value = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_MINI.getLocalName());
+					if ((value == null) || value.isEmpty()) {
+						value = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_FORMULATED_MINI.getLocalName());
+						nutListElt.addAttribute(PLMModel.PROP_NUTLIST_MINI.getLocalName(), value);
+					}
+					
+					value = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_MAXI.getLocalName());
+					if ((value == null) || value.isEmpty()) {
+						value = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_FORMULATED_MAXI.getLocalName());
+						nutListElt.addAttribute(PLMModel.PROP_NUTLIST_MAXI.getLocalName(), value);
+					}
 
 					if (dataListItem.getErrorLog() != null && !dataListItem.getErrorLog().isEmpty()) {
 						nutListElt.addAttribute(PLMModel.PROP_NUTLIST_FORMULA_ERROR.getLocalName(), "Error");

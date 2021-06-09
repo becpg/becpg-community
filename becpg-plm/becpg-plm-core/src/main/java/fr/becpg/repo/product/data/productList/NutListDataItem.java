@@ -3,6 +3,8 @@
  */
 package fr.becpg.repo.product.data.productList;
 
+import java.util.Objects;
+
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.data.hierarchicalList.CompositeDataItem;
@@ -41,11 +43,15 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 	private Double formulatedValue;
 
 	private String unit;
+	
+	private Double manualMini;
 
-	private Double mini;
+	private Double formulatedMini;
+	
+	private Double manualMaxi;
 
-	private Double maxi;
-
+	private Double formulatedMaxi;
+	
 	private Double valuePerServing;
 
 	private Double gdaPerc;
@@ -183,19 +189,39 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 	public void setUnit(String unit) {
 		this.unit = unit;
 	}
-
+	
 	/** {@inheritDoc} */
 	@Override
-	@AlfProp
-	@AlfQname(qname = "bcpg:nutListMini")
 	public Double getMini() {
-		return mini;
+		return manualMini != null ? manualMini : formulatedMini;
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public void setMini(Double mini) {
-		this.mini = mini;
+		this.formulatedMini = mini;
+	}
+
+
+	@AlfProp
+	@AlfQname(qname = "bcpg:nutListMini")
+	public Double getManualMini() {
+		return manualMini;
+	}
+
+	public void setManualMini(Double manualMini) {
+		this.manualMini = manualMini;
+	}
+	
+	
+	@AlfProp
+	@AlfQname(qname = "bcpg:nutListFormulatedMini")
+	public Double getFormulatedMini() {
+		return formulatedMini;
+	}
+
+	public void setFormulatedMini(Double formulatedMini) {
+		this.formulatedMini = formulatedMini;
 	}
 
 	/**
@@ -208,18 +234,40 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 		return RegulationFormulationHelper.extractMini(getRoundedValue(), key);
 	}
 
+	
+
 	/** {@inheritDoc} */
 	@Override
-	@AlfProp
-	@AlfQname(qname = "bcpg:nutListMaxi")
 	public Double getMaxi() {
-		return maxi;
+		return manualMaxi != null ? manualMaxi : formulatedMaxi;
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public void setMaxi(Double maxi) {
-		this.maxi = maxi;
+	public void setMaxi(Double mini) {
+		this.formulatedMaxi = mini;
+	}
+
+
+	@AlfProp
+	@AlfQname(qname = "bcpg:nutListMaxi")
+	public Double getManualMaxi() {
+		return manualMaxi;
+	}
+
+	public void setManualMaxi(Double manualMaxi) {
+		this.manualMaxi = manualMaxi;
+	}
+	
+	
+	@AlfProp
+	@AlfQname(qname = "bcpg:nutListFormulatedMaxi")
+	public Double getFormulatedMaxi() {
+		return formulatedMaxi;
+	}
+
+	public void setFormulatedMaxi(Double formulatedMaxi) {
+		this.formulatedMaxi = formulatedMaxi;
 	}
 
 	/**
@@ -493,8 +541,10 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 		this.manualValue = n.manualValue;
 		this.formulatedValue = n.formulatedValue;
 		this.unit = n.unit;
-		this.mini = n.mini;
-		this.maxi = n.maxi;
+		this.manualMini = n.manualMini;
+		this.formulatedMini = n.formulatedMini;
+		this.manualMaxi = n.manualMaxi;
+		this.formulatedMaxi = n.formulatedMaxi;
 		this.valuePerServing = n.valuePerServing;
 		this.gdaPerc = n.gdaPerc;
 		this.lossPerc = n.lossPerc;
@@ -512,165 +562,41 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 		return new NutListDataItem(this);
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = (prime * result) + ((depthLevel == null) ? 0 : depthLevel.hashCode());
-		result = (prime * result) + ((errorLog == null) ? 0 : errorLog.hashCode());
-		result = (prime * result) + ((formulatedValue == null) ? 0 : formulatedValue.hashCode());
-		result = (prime * result) + ((gdaPerc == null) ? 0 : gdaPerc.hashCode());
-		result = (prime * result) + ((group == null) ? 0 : group.hashCode());
-		result = (prime * result) + ((isFormulated == null) ? 0 : isFormulated.hashCode());
-		result = (prime * result) + ((lossPerc == null) ? 0 : lossPerc.hashCode());
-		result = (prime * result) + ((manualValue == null) ? 0 : manualValue.hashCode());
-		result = (prime * result) + ((maxi == null) ? 0 : maxi.hashCode());
-		result = (prime * result) + ((method == null) ? 0 : method.hashCode());
-		result = (prime * result) + ((mini == null) ? 0 : mini.hashCode());
-		result = (prime * result) + ((nut == null) ? 0 : nut.hashCode());
-		result = (prime * result) + ((parent == null) ? 0 : parent.hashCode());
-		result = (prime * result) + ((roundedValue == null) ? 0 : roundedValue.hashCode());
-		result = (prime * result) + ((unit == null) ? 0 : unit.hashCode());
-		result = (prime * result) + ((valuePerServing == null) ? 0 : valuePerServing.hashCode());
+		result = prime * result + Objects.hash(depthLevel, errorLog, formulatedMaxi, formulatedMini, formulatedValue, gdaPerc, group, isFormulated,
+				lossPerc, manualMaxi, manualMini, manualValue, method, nut, parent, roundedValue, unit, valuePerServing);
 		return result;
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
+		if (this == obj)
 			return true;
-		}
-		if (!super.equals(obj)) {
+		if (!super.equals(obj))
 			return false;
-		}
-		if (getClass() != obj.getClass()) {
+		if (getClass() != obj.getClass())
 			return false;
-		}
 		NutListDataItem other = (NutListDataItem) obj;
-		if (depthLevel == null) {
-			if (other.depthLevel != null) {
-				return false;
-			}
-		} else if (!depthLevel.equals(other.depthLevel)) {
-			return false;
-		}
-		if (errorLog == null) {
-			if (other.errorLog != null) {
-				return false;
-			}
-		} else if (!errorLog.equals(other.errorLog)) {
-			return false;
-		}
-		if (formulatedValue == null) {
-			if (other.formulatedValue != null) {
-				return false;
-			}
-		} else if (!formulatedValue.equals(other.formulatedValue)) {
-			return false;
-		}
-		if (gdaPerc == null) {
-			if (other.gdaPerc != null) {
-				return false;
-			}
-		} else if (!gdaPerc.equals(other.gdaPerc)) {
-			return false;
-		}
-		if (group == null) {
-			if (other.group != null) {
-				return false;
-			}
-		} else if (!group.equals(other.group)) {
-			return false;
-		}
-		if (isFormulated == null) {
-			if (other.isFormulated != null) {
-				return false;
-			}
-		} else if (!isFormulated.equals(other.isFormulated)) {
-			return false;
-		}
-		if (lossPerc == null) {
-			if (other.lossPerc != null) {
-				return false;
-			}
-		} else if (!lossPerc.equals(other.lossPerc)) {
-			return false;
-		}
-		if (manualValue == null) {
-			if (other.manualValue != null) {
-				return false;
-			}
-		} else if (!manualValue.equals(other.manualValue)) {
-			return false;
-		}
-		if (maxi == null) {
-			if (other.maxi != null) {
-				return false;
-			}
-		} else if (!maxi.equals(other.maxi)) {
-			return false;
-		}
-		if (method == null) {
-			if (other.method != null) {
-				return false;
-			}
-		} else if (!method.equals(other.method)) {
-			return false;
-		}
-		if (mini == null) {
-			if (other.mini != null) {
-				return false;
-			}
-		} else if (!mini.equals(other.mini)) {
-			return false;
-		}
-		if (nut == null) {
-			if (other.nut != null) {
-				return false;
-			}
-		} else if (!nut.equals(other.nut)) {
-			return false;
-		}
-		if (parent == null) {
-			if (other.parent != null) {
-				return false;
-			}
-		} else if (!parent.equals(other.parent)) {
-			return false;
-		}
-		if (roundedValue == null) {
-			if (other.roundedValue != null) {
-				return false;
-			}
-		} else if (!roundedValue.equals(other.roundedValue)) {
-			return false;
-		}
-		if (unit == null) {
-			if (other.unit != null) {
-				return false;
-			}
-		} else if (!unit.equals(other.unit)) {
-			return false;
-		}
-		if (valuePerServing == null) {
-			if (other.valuePerServing != null) {
-				return false;
-			}
-		} else if (!valuePerServing.equals(other.valuePerServing)) {
-			return false;
-		}
-		return true;
+		return Objects.equals(depthLevel, other.depthLevel) && Objects.equals(errorLog, other.errorLog)
+				&& Objects.equals(formulatedMaxi, other.formulatedMaxi) && Objects.equals(formulatedMini, other.formulatedMini)
+				&& Objects.equals(formulatedValue, other.formulatedValue) && Objects.equals(gdaPerc, other.gdaPerc)
+				&& Objects.equals(group, other.group) && Objects.equals(isFormulated, other.isFormulated) && Objects.equals(lossPerc, other.lossPerc)
+				&& Objects.equals(manualMaxi, other.manualMaxi) && Objects.equals(manualMini, other.manualMini)
+				&& Objects.equals(manualValue, other.manualValue) && Objects.equals(method, other.method) && Objects.equals(nut, other.nut)
+				&& Objects.equals(parent, other.parent) && Objects.equals(roundedValue, other.roundedValue) && Objects.equals(unit, other.unit)
+				&& Objects.equals(valuePerServing, other.valuePerServing);
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return "NutListDataItem [manualValue=" + manualValue + ", formulatedValue=" + formulatedValue + ", unit=" + unit + ", mini=" + mini
-				+ ", maxi=" + maxi + ", valuePerServing=" + valuePerServing + ", gdaPerc=" + gdaPerc + ", lossPerc=" + lossPerc + ", group=" + group
-				+ ", method=" + method + ", nut=" + nut + ", isFormulated=" + isFormulated + ", errorLog=" + errorLog + ", depthLevel=" + depthLevel
-				+ ", parent=" + parent + ", roundedValue=" + roundedValue + "]";
+		return "NutListDataItem [manualValue=" + manualValue + ", formulatedValue=" + formulatedValue + ", unit=" + unit + ", manualMini="
+				+ manualMini + ", formulatedMini=" + formulatedMini + ", manualMaxi=" + manualMaxi + ", formulatedMaxi=" + formulatedMaxi
+				+ ", valuePerServing=" + valuePerServing + ", gdaPerc=" + gdaPerc + ", lossPerc=" + lossPerc + ", group=" + group + ", method="
+				+ method + ", nut=" + nut + ", isFormulated=" + isFormulated + ", errorLog=" + errorLog + ", depthLevel=" + depthLevel + ", parent="
+				+ parent + ", roundedValue=" + roundedValue + "]";
 	}
 
 }
