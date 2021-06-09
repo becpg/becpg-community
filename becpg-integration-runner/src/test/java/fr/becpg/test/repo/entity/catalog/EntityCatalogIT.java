@@ -51,7 +51,7 @@ public class EntityCatalogIT extends PLMBaseTestCase {
 	@Autowired
 	private NamespaceService namespaceService;
 	@Autowired
-	private EntityCatalogService entityCatalogService;
+	private EntityCatalogService<RepositoryEntity> entityCatalogService;
 	@Autowired
 	private BeCPGCacheService cacheService;
 	@Autowired

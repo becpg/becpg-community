@@ -28,6 +28,7 @@ import com.google.common.collect.Maps;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.catalog.EntityCatalogService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
+import fr.becpg.repo.repository.RepositoryEntity;
 
 /**
  * <p>
@@ -48,7 +49,7 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 
 	private AuthenticationService authenticationService;
 
-	private EntityCatalogService entityCatalogService;
+	private EntityCatalogService<RepositoryEntity> entityCatalogService;
 
 	/**
 	 * <p>
@@ -59,7 +60,7 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 	 *            a {@link fr.becpg.repo.entity.catalog.EntityCatalogService}
 	 *            object.
 	 */
-	public void setEntityCatalogService(EntityCatalogService entityCatalogService) {
+	public void setEntityCatalogService(EntityCatalogService<RepositoryEntity> entityCatalogService) {
 		this.entityCatalogService = entityCatalogService;
 	}
 
@@ -103,6 +104,7 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 				new JavaBehaviour(this, "onDeleteAssociation"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, BeCPGModel.TYPE_ENTITY_V2,
 				new JavaBehaviour(this, "onUpdateProperties"));
+		
 	}
 
 	/** {@inheritDoc} */
