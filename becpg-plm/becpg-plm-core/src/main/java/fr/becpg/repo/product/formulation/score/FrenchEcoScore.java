@@ -77,7 +77,7 @@ public class FrenchEcoScore implements ListValuePlugin, ScoreCalculatingPlugin {
 	 */
 
 	private static final List<String> GROUP1_CLAIM = Arrays.asList("NATURE_ET_PROGRES", "BIO_COHERANCE", "DEMETER_LABEL");
-	private static final List<String> GROUP2_CLAIM = Arrays.asList("EU_ORGANIC");
+	private static final List<String> GROUP2_CLAIM = Arrays.asList("EU_ORGANIC","ORGANIC");
 	private static final List<String> GROUP3_CLAIM = Arrays.asList("HAUTE_VALEUR_ENVIRONNEMENTALE", "UTZ_CERTIFIED", "RAINFOREST_ALLIANCE",
 			"FAIR_TRADE_MARK", "BLEU_BLANC_COEUR", "LABEL_ROUGE", "AQUACULTURE_STEWARDSHIP_COUNCIL", "MARINE_STEWARDSHIP_COUNCIL_LABEL");
 
@@ -268,7 +268,7 @@ public class FrenchEcoScore implements ListValuePlugin, ScoreCalculatingPlugin {
 
 			if (claimBonus > 20) {
 				claimBonus = 20;
-			}
+			} 
 
 			if (Boolean.TRUE.equals(threatenedSpecies)) {
 				ecoScore = 19;
@@ -276,6 +276,16 @@ public class FrenchEcoScore implements ListValuePlugin, ScoreCalculatingPlugin {
 
 				if (productData.getPackMaterialList() != null) {
 
+					Double totalWeight = 0d;
+					
+					for (PackMaterialListDataItem material : productData.getPackMaterialList()) {
+						totalWeight += material.getPmlWeight();
+					}
+					
+					if (totalWeight == 0d) {
+						totalWeight = 1d;
+					}
+					
 					Double score = 100d;
 					for (PackMaterialListDataItem material : productData.getPackMaterialList()) {
 
@@ -293,8 +303,7 @@ public class FrenchEcoScore implements ListValuePlugin, ScoreCalculatingPlugin {
 						 * Pas de prise en compte du ratio par type d'emballage car nous travaillons
 						 * en qté exacte de matériaux
 						 */
-						score -= (100 - materialScore) * material.getPmlWeight();
-						//TODO diviser par le total ?
+						score -= (100 - materialScore) * material.getPmlWeight() / totalWeight;
 
 					}
 
@@ -309,9 +318,7 @@ public class FrenchEcoScore implements ListValuePlugin, ScoreCalculatingPlugin {
 
 				acvScore = computeEFScore(productData.getEcoScoreCategory(), isDrink);
 
-				//TODO
-				//Tester claim ORIGINE_FRANCE
-				transportMalus = computeTransportScore(productData);
+				transportMalus = computeTransportAndPoliticalScore(productData);
 
 				if (logger.isDebugEnabled()) {
 					logger.info("Ecoscore details: ");
@@ -363,7 +370,7 @@ public class FrenchEcoScore implements ListValuePlugin, ScoreCalculatingPlugin {
 
 	//	SUSTAINABLE_PALM_OIL_RSPO
 
-	private int computeTransportScore(ProductData productData) {
+	private int computeTransportAndPoliticalScore(ProductData productData) {
 
 		//Defers loading
 		if (countryScores == null) {
@@ -390,7 +397,7 @@ public class FrenchEcoScore implements ListValuePlugin, ScoreCalculatingPlugin {
 								if (countryScores.containsKey(geoCode)) {
 									transportScoreByCountry = Math.min(transportScoreByCountry, countryScores.get(geoCode).getFirst());
 
-									politicalScoreByCountry = Math.min(transportScoreByCountry, countryScores.get(geoCode).getSecond());
+									politicalScoreByCountry = Math.min(politicalScoreByCountry, countryScores.get(geoCode).getSecond());
 
 									logger.debug("Found transportScoreByCountry: " + transportScoreByCountry + " for " + geoCode);
 									logger.debug("Found politicalScoreByCountry: " + politicalScoreByCountry + " for " + geoCode);
@@ -414,7 +421,7 @@ public class FrenchEcoScore implements ListValuePlugin, ScoreCalculatingPlugin {
 
 		}
 
-		return (int) Math.round((transportScore * 0.15d) + ((politicalScore / 10d) - 5));
+		return (int) (Math.round((transportScore * 0.15d)) + Math.round(((politicalScore / 10d) - 5)));
 	}
 
 	private boolean isWater(NodeRef ing) {
