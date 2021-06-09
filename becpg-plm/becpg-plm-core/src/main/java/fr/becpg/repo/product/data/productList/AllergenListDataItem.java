@@ -5,6 +5,7 @@ package fr.becpg.repo.product.data.productList;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
@@ -31,8 +32,9 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem impl
 
 	private static final long serialVersionUID = -6746076643301742367L;
 	private Double qtyPerc;
-	private Boolean voluntary = false;
-	private Boolean inVoluntary = false;
+	private Boolean voluntary = null;
+	private Boolean inVoluntary = null;
+	private String allergenValue = null; 
 	private List<NodeRef> voluntarySources = new ArrayList<>();
 	private List<NodeRef> inVoluntarySources = new ArrayList<>();
 	private NodeRef allergen;
@@ -41,26 +43,26 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem impl
 	/** {@inheritDoc} */
 	@Override
 	public void setCharactNodeRef(NodeRef nodeRef) {
-		this.allergen = nodeRef;
+		setAllergen(nodeRef);
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public void setValue(Double value) {
-		 this.qtyPerc = value;
+		setQtyPerc(value);
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	@InternalField
 	public NodeRef getCharactNodeRef() {
-		return allergen;
+		return getAllergen();
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public Double getValue() {
-		return qtyPerc;
+		return getQtyPerc();
 	}
 	
 	
@@ -129,6 +131,17 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem impl
 		this.inVoluntary = inVoluntary;
 	}
 	
+	
+	
+	@AlfProp
+	@AlfQname(qname="bcpg:allergenValue")
+	public String getAllergenValue() {
+		return allergenValue;
+	}
+
+	public void setAllergenValue(String allergenValue) {
+		this.allergenValue = allergenValue;
+	}
 
 	/**
 	 * <p>Getter for the field <code>voluntarySources</code>.</p>
@@ -237,21 +250,14 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem impl
 		this.isManual = isManual;
 	}
 	
-	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + ((allergen == null) ? 0 : allergen.hashCode());
-		result = prime * result + ((inVoluntary == null) ? 0 : inVoluntary.hashCode());
-		result = prime * result + ((inVoluntarySources == null) ? 0 : inVoluntarySources.hashCode());
-		result = prime * result + ((qtyPerc == null) ? 0 : qtyPerc.hashCode());
-		result = prime * result + ((voluntary == null) ? 0 : voluntary.hashCode());
-		result = prime * result + ((voluntarySources == null) ? 0 : voluntarySources.hashCode());
+		result = prime * result + Objects.hash(allergen, allergenValue, inVoluntary, inVoluntarySources, qtyPerc, voluntary, voluntarySources);
 		return result;
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -261,52 +267,21 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem impl
 		if (getClass() != obj.getClass())
 			return false;
 		AllergenListDataItem other = (AllergenListDataItem) obj;
-		if (allergen == null) {
-			if (other.allergen != null)
-				return false;
-		} else if (!allergen.equals(other.allergen))
-			return false;
-		if (inVoluntary == null) {
-			if (other.inVoluntary != null)
-				return false;
-		} else if (!inVoluntary.equals(other.inVoluntary))
-			return false;
-		if (inVoluntarySources == null) {
-			if (other.inVoluntarySources != null)
-				return false;
-		} else if (!inVoluntarySources.equals(other.inVoluntarySources))
-			return false;
-		if (qtyPerc == null) {
-			if (other.qtyPerc != null)
-				return false;
-		} else if (!qtyPerc.equals(other.qtyPerc))
-			return false;
-		if (voluntary == null) {
-			if (other.voluntary != null)
-				return false;
-		} else if (!voluntary.equals(other.voluntary))
-			return false;
-		if (voluntarySources == null) {
-			if (other.voluntarySources != null)
-				return false;
-		} else if (!voluntarySources.equals(other.voluntarySources))
-			return false;
-		return true;
+		return Objects.equals(allergen, other.allergen) && Objects.equals(allergenValue, other.allergenValue)
+				&& Objects.equals(inVoluntary, other.inVoluntary) && Objects.equals(inVoluntarySources, other.inVoluntarySources)
+				&& Objects.equals(qtyPerc, other.qtyPerc) && Objects.equals(voluntary, other.voluntary)
+				&& Objects.equals(voluntarySources, other.voluntarySources);
 	}
 
 
 
-	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return "AllergenListDataItem [voluntary=" + voluntary + ", inVoluntary=" + inVoluntary + ", voluntarySources=" + voluntarySources + ", inVoluntarySources="
-				+ inVoluntarySources + ", allergen=" + allergen + ", isManual=" + isManual + ", nodeRef=" + nodeRef + ", parentNodeRef=" + parentNodeRef + ", name=" + name + "]";
+		return "AllergenListDataItem [qtyPerc=" + qtyPerc + ", voluntary=" + voluntary + ", inVoluntary=" + inVoluntary + ", allergenValue="
+				+ allergenValue + ", voluntarySources=" + voluntarySources + ", inVoluntarySources=" + inVoluntarySources + ", allergen=" + allergen
+				+ "]";
 	}
 
 
-
-
-	
-	
 	
 }

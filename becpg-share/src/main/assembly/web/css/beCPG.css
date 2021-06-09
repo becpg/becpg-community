@@ -141,6 +141,52 @@
 	width: 85% !important;
 }
 
+
+/** Boolean **/
+
+.form-field-boolean {
+	display: flex;
+	overflow: hidden;
+}
+
+.form-field-boolean input {
+	position: absolute !important;
+	clip: rect(0, 0, 0, 0);
+	height: 1px;
+	width: 1px;
+	border: 0;
+	overflow: hidden;
+}
+
+.form-field-boolean label {
+	line-height: 1;
+	text-align: center;
+	padding: 10px !important;
+	margin-right: -1px;
+	border: 1px solid #ccc; ;
+	transition: all 0.1s ease-in-out;
+}
+
+.form-field-boolean label:hover {
+	cursor: pointer;
+}
+
+.form-field-boolean input:checked + label {
+	background-color: #125380;
+	color: #ffffff;
+	box-shadow: none;
+}
+
+.form-field-boolean label:first-of-type {
+	border-radius: 4px 0 0 4px;
+}
+
+.form-field-boolean label:last-of-type {
+	border-radius: 0 4px 4px 0;
+}
+
+
+
 /** Tab **/
 .share-form .form-container .yui-navset .yui-content {
 	background-color: #F5FFF2;
