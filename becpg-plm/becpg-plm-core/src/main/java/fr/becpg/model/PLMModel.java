@@ -384,7 +384,7 @@ public interface PLMModel {
 	/** Constant <code>TYPE_GEO_ORIGIN</code> */
 	QName TYPE_GEO_ORIGIN = QName.createQName(BeCPGModel.BECPG_URI, "geoOrigin");
 	/** Constant <code>PROP_GEO_ORIGIN_ISOCODE</code> */
-	QName PROP_GEO_ORIGIN_ISOCODE = QName.createQName(BeCPGModel.BECPG_URI, "bioOriginISOCode");
+	QName PROP_GEO_ORIGIN_ISOCODE = QName.createQName(BeCPGModel.BECPG_URI, "geoOriginISOCode");
 
 	// bioOrigin
 	/** Constant <code>TYPE_BIO_ORIGIN</code> */

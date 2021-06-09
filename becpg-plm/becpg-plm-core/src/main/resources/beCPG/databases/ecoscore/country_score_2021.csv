@@ -1,4 +1,4 @@
-bcpg:geoOriginISOCode;Pays;"Score Approvisionnement local (/100)";"Score Politique environnementale (/100)"
+"bcpg:geoOriginISOCode;Pays;""Score Approvisionnement local (/100)"";""Score Politique environnementale (/100)"""
 #N/D;Monde;0;0
 AF;Afghanistan;0;0
 ZA;Afrique du Sud;0;0
@@ -10,7 +10,7 @@ AO;Angola;0;0
 AI;Anguilla;47;50
 AQ;Antarctique;0;50
 AG;Antigua-et-Barbuda;53;5
-#N/D;Antilles néerlandaises;52;50
+ANT;Antilles néerlandaises;52;50
 SA;Arabie Saoudite;0;0
 AR;Argentine;0;16
 AM;Arménie;21;16
@@ -20,7 +20,7 @@ AT;Autriche;65;92
 AZ;Azerbaïdjan;18;0
 BS;Bahamas;54;0
 BH;Bahreïn;29;12
-#N/D;Bande de Gaza;61;50
+PS-GZA;Bande de Gaza;61;50
 BD;Bangladesh;13;0
 BB;Barbade;57;0
 BE;Belgique;85;74
@@ -28,12 +28,12 @@ BZ;Belize;44;0
 BJ;Bénin;30;0
 BM;Bermudes;0;50
 BT;Bhoutan;0;0
-#N/D;Biélorussie;37;18
-#N/D;Bolivie;0;0
+BLR;Biélorussie;37;18
+BO;Bolivie;0;0
 BA;Bosnie-Herzégovine;43;0
 BW;Botswana;0;0
 BR;Brésil;0;13
-#N/D;Brunei;0;50
+BRN;Brunei;0;50
 BG;Bulgarie;15;29
 BF;Burkina Faso;0;0
 BI;Burundi;0;0
@@ -44,13 +44,13 @@ CV;Cap-Vert;65;50
 CL;Chili;0;24
 CN;Chine;0;0
 CY;Chypre;37;51
-#N/D;Cité du Vatican;55;50
+VAT;Cité du Vatican;55;50
 CO;Colombie;13;17
 KM;Comores;24;0
-#N/D;Congo [RDC];0;50
-#N/D;Congo [République];8;50
-#N/D;Corée du Nord;0;50
-#N/D;Corée du Sud;0;55
+COD;Congo [RDC];0;50
+COG;Congo [République];8;50
+PRK;Corée du Nord;0;50
+KOR;Corée du Sud;0;55
 CR;Costa Rica;37;16
 CI;Côte d'Ivoire;37;50
 HR;Croatie;37;46
@@ -66,10 +66,10 @@ ER;Érythrée;50;0
 ES;Espagne;58;77
 EE;Estonie;50;52
 US;États-Unis;0;63
-#N/D;États-Unis, îles Vierges;58;50
+VIR;États-Unis,îles Vierges;58;50
 ET;Éthiopie;17;0
 EUR;Europe;8;29
-#N/D;Falkland Islands [Islas Malvinas] (Îles Malouines);0;50
+FLK;Falkland Islands [Islas Malvinas] (Îles Malouines);0;50
 FJ;Fidji;0;0
 FI;Finlande;42;90
 FR;France;100;93
@@ -89,10 +89,10 @@ GG;Guernesey;76;50
 GN;Guinée;43;0
 GQ;Guinée équatoriale;48;0
 GW;Guinée-Bissau;69;0
-#N/D;Guyane;40;0
+GUY;Guyane;40;0
 HT;Haïti;30;0
 HN;Honduras;34;0
-#N/D;Hong Kong;0;50
+HKG;Hong Kong;0;50
 HU;Hongrie;48;48
 #N/D;Île Heard et îles McDonald;0;50
 #N/D;Îles Caïmans;25;50
@@ -107,8 +107,8 @@ HU;Hongrie;48;48
 VG;Îles Vierges britanniques;56;50
 IN;Inde;0;0
 ID;Indonésie;0;0
-#N/D;Irak;0;0
-#N/D;Iran;0;4
+IRQ;Irak;0;0
+IRN;Iran;0;4
 IE;Irlande;55;73
 IS;Islande;61;72
 IL;Israël;58;53
@@ -121,25 +121,25 @@ KZ;Kazakhstan;0;0
 KE;Kenya;0;0
 KG;Kirghizistan;0;0
 KI;Kiribati;0;0
-#N/D;Kosovo;41;50
+XXK;Kosovo;41;50
 KW;Koweït;25;19
 #N/D;L'île Bouvet;0;50
 #N/D;L'île Christmas;0;50
 #N/D;L'île de Man;80;50
 #N/D;L'île de Norfolk;0;50
-#N/D;La Guyane française;47;50
-#N/D;Laos;0;0
-#N/D;Le Salvador;29;0
+GF;La Guyane française;47;50
+LAO;Laos;0;0
+SLV;Le Salvador;29;0
 LS;Lesotho;8;0
 LV;Lettonie;54;42
 LB;Liban;62;0
-#N/D;Liberia;57;0
-#N/D;Libye;30;50
+LBR;Liberia;57;0
+LBY;Libye;30;50
 LI;Liechtenstein;12;50
 LT;Lituanie;38;45
 LU;Luxembourg;82;99
 MO;Macao;0;50
-#N/D;Macédoine [FYROM];60;50
+MKD;Macédoine [FYROM];60;50
 MG;Madagascar;0;0
 MY;Malaisie;0;4
 MW;Malawi;0;0
@@ -152,21 +152,21 @@ MU;Maurice;20;0
 MR;Mauritanie;38;0
 YT;Mayotte;21;50
 MX;Mexique;0;17
-#N/D;Micronésie;0;0
-#N/D;Moldavie;20;0
+FSM;Micronésie;0;0
+MDA;Moldavie;20;0
 MC;Monaco;51;50
 #N/D;Monde;0;0
 MN;Mongolie;0;0
 ME;Monténégro;47;0
 MS;Montserrat;54;50
 MZ;Mozambique;5;0
-#N/D;Myanmar [Birmanie];0;50
+MMR;Myanmar [Birmanie];0;50
 NA;Namibie;3;0
 NR;Nauru;0;50
 NP;Népal;0;0
 NI;Nicaragua;21;0
 NE;Niger;0;0
-#N/D;Nigeria;11;0
+NGA;Nigeria;11;0
 #N/D;Niue;0;50
 NO;Norvège;62;87
 NC;Nouvelle-Calédonie;0;50
@@ -187,13 +187,13 @@ PF;Polynésie française;0;50
 PR;Porto Rico;53;50
 PT;Portugal;46;57
 QA;Qatar;27;0
-#N/D;République centrafricaine;0;0
-#N/D;République dominicaine;51;0
-#N/D;République tchèque;65;68
+CAF;République centrafricaine;0;0
+DOM;République dominicaine;51;0
+CZE;République tchèque;65;68
 RE;Réunion;8;50
 RO;Roumanie;8;50
 GB;Royaume-Uni;76;97
-#N/D;Russie;0;11
+RUS;Russie;0;11
 RW;Rwanda;0;0
 EH;Sahara occidental;53;50
 #N/D;Saint Vincent et les Grenadines;52;5
@@ -220,10 +220,10 @@ CH;Suisse;93;97
 SR;Suriname;41;0
 #N/D;Svalbard et Jan Mayen;0;50
 SZ;Swaziland;13;50
-#N/D;Syrie;45;50
+SYR;Syrie;45;50
 TJ;Tadjikistan;0;0
-#N/D;Taïwan;0;29
-#N/D;Tanzanie;0;0
+TWN;Taïwan;0;29
+TZA;Tanzanie;0;0
 TD;Tchad;0;0
 #N/D;Territoire britannique de l'océan Indien;0;50
 #N/D;Territoires français du Sud;0;50
@@ -241,28 +241,28 @@ TV;Tuvalu;0;50
 UA;Ukraine;15;8
 UY;Uruguay;10;7
 VU;Vanuatu;0;0
-#N/D;Venezuela;25;10
-#N/D;Vietnam;0;50
+VEN;Venezuela;25;10
+VNM;Vietnam;0;50
 WF;Wallis et Futuna;0;50
 YE;Yémen;21;50
 ZM;Zambie;0;0
 ZW;Zimbabwe;0;0
-#N/D;Océan Arctique;0;50
-#N/D;Atlantique Nord-Ouest;0;50
-#N/D;Atlantique Nord-Est;66;50
-#N/D;Atlantique Centre-Ouest;0;50
-#N/D;Atlantique Centre-Est;0;50
+FAO 18;Océan Arctique;0;50
+FAO 21;Atlantique Nord-Ouest;0;50
+FAO 27;Atlantique Nord-Est;66;50
+FAO 31;Atlantique Centre-Ouest;0;50
+FAO 34;Atlantique Centre-Est;0;50
 #N/D;Méditéranée et mer Noire;66;50
-#N/D;Atlantique Sud-Ouest;0;50
-#N/D;Atlantique Sud-Est;0;50
-#N/D;Atlantique Antarctique;0;50
-#N/D;Océan Indien Ouest;0;50
-#N/D;Océan Indien Est;0;50
-#N/D;Océan Indien Antarctique;0;50
-#N/D;Pacifique Nord-Ouest;0;50
-#N/D;Pacifique Nord-Est;0;50
-#N/D;Pacifique Centre-Ouest;0;50
-#N/D;Pacifique Centre-Est;0;50
-#N/D;Pacifique Sud-Ouest;0;50
-#N/D;Pacifique Sud-Est;0;50
-#N/D;Pacifique Antarctique;0;50
+FAO 41;Atlantique Sud-Ouest;0;50
+FAO 47;Atlantique Sud-Est;0;50
+FAO 48;Atlantique Antarctique;0;50
+FAO 51;Océan Indien Ouest;0;50
+FAO 57;Océan Indien Est;0;50
+FAO 58;Océan Indien Antarctique;0;50
+FAO 61;Pacifique Nord-Ouest;0;50
+FAO 67;Pacifique Nord-Est;0;50
+FAO 71;Pacifique Centre-Ouest;0;50
+FAO 77;Pacifique Centre-Est;0;50
+FAO 81;Pacifique Sud-Ouest;0;50
+FAO 87;Pacifique Sud-Est;0;50
+FAO 88;Pacifique Antarctique;0;50
