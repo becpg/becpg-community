@@ -21,6 +21,7 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
 
 import fr.becpg.model.SystemState;
+import fr.becpg.repo.decernis.DecernisMode;
 import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.ReportableEntity;
 import fr.becpg.repo.hierarchy.HierarchicalEntity;
@@ -177,7 +178,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private List<String> regulatoryCountries = new ArrayList<>();
 	private List<String> regulatoryUsages = new ArrayList<>();
 	private Date regulatoryFormulatedDate;
-	private Boolean isTransientRegulatory;
+	private DecernisMode regulatoryMode = DecernisMode.BECPG_ONLY;
 	private String regulatoryRecipeId;
 	
 	/** 
@@ -1864,24 +1865,16 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		this.reportLocales = reportLocales;
 	}
 	
-	/**
-	 * <p>Getter for the field <code>isTransientRegulatory</code>.</p>
-	 *
-	 * @return a Boolean object.
-	 */
-	public Boolean isTransientRegulatory() {
-		return isTransientRegulatory;
+
+	
+	public DecernisMode getRegulatoryMode() {
+		return regulatoryMode;
 	}
-	
-	/**
-	 * <p>Setter for the field <code>isTransientRegulatory</code>.</p>
-	 *
-	 * @param isTransientRegulatory a Boolean object.
-	 */
-	public void setIsTransientRegulatory(Boolean isTransientRegulatory) {
-		this.isTransientRegulatory = isTransientRegulatory;
-	}	
-	
+
+	public void setRegulatoryMode(String regulatoryMode) {
+		this.regulatoryMode = DecernisMode.valueOf(regulatoryMode);
+	}
+
 	/**
 	 * <p>Getter for the field <code>regulatoryRecipeId</code>.</p>
 	 *
@@ -2384,7 +2377,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		result = prime * result + Objects.hash(clients, density, erpCode, formulatedDate, futureUnitTotalCost, hierarchy1, hierarchy2, ingType,
 				legalName, netVolume, netWeight, netWeightSecondary, netWeightTertiary, nutrientClass, nutrientProfile, nutrientScore, plants,
 				profitability, projectedQty, qty, recipeQtyUsed, recipeQtyUsedWithLossPerc, recipeVolumeUsed, reformulateCount, regulatoryCountries,
-				regulatoryUsages, isTransientRegulatory, regulatoryRecipeId, reportLocales, servingSize, servingSizeByCountry, servingSizeUnit, state, tare, tareUnit, title, unit, unitPrice,
+				regulatoryUsages, regulatoryMode, regulatoryRecipeId, reportLocales, servingSize, servingSizeByCountry, servingSizeUnit, state, tare, tareUnit, title, unit, unitPrice,
 				unitTotalCost, updateFormulatedDate, weightPrimary, weightSecondary, weightTertiary, yield, yieldVolume);
 		return result;
 	}
@@ -2411,7 +2404,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 				&& Objects.equals(recipeQtyUsed, other.recipeQtyUsed) && Objects.equals(recipeQtyUsedWithLossPerc, other.recipeQtyUsedWithLossPerc)
 				&& Objects.equals(recipeVolumeUsed, other.recipeVolumeUsed) && Objects.equals(reformulateCount, other.reformulateCount)
 				&& Objects.equals(regulatoryCountries, other.regulatoryCountries) && Objects.equals(regulatoryUsages, other.regulatoryUsages)
-				&& Objects.equals(isTransientRegulatory, other.isTransientRegulatory) && Objects.equals(regulatoryRecipeId, other.regulatoryRecipeId)
+				&& Objects.equals(regulatoryMode, other.regulatoryMode) && Objects.equals(regulatoryRecipeId, other.regulatoryRecipeId)
 				&& Objects.equals(reportLocales, other.reportLocales) && Objects.equals(servingSize, other.servingSize)
 				&& Objects.equals(servingSizeByCountry, other.servingSizeByCountry) && servingSizeUnit == other.servingSizeUnit
 				&& state == other.state && Objects.equals(tare, other.tare) && tareUnit == other.tareUnit && Objects.equals(title, other.title)
