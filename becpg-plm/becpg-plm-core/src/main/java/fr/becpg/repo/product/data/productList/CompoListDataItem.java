@@ -458,13 +458,11 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem
 				&& Objects.equals(volume, other.volume) && Objects.equals(yieldPerc, other.yieldPerc);
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return "CompoListDataItem [depthLevel=" + depthLevel + ", qty=" + qty + ", qtySubFormula=" + qtySubFormula + ", ProductUnit=" + compoListUnit
-				+ ", lossPerc=" + lossPerc + ", yieldPerc=" + yieldPerc + ", declType=" + declType + ", overrunPerc=" + overrunPerc + ", volume="
-				+ volume + ", product=" + product + ", parent=" + parent + ", startEffectivity=" + startEffectivity + ", endEffectivity="
-				+ endEffectivity + ", nodeRef=" + nodeRef + ", aspects=" + aspects + ", extraProperties=" + extraProperties + "]";
+		return "CompoListDataItem [depthLevel=" + depthLevel + ", qty=" + qty + ", qtySubFormula=" + qtySubFormula + ", compoListUnit="
+				+ compoListUnit + ", lossPerc=" + lossPerc + ", yieldPerc=" + yieldPerc + ", declType=" + declType + ", overrunPerc=" + overrunPerc
+				+ ", volume=" + volume + ", product=" + product + "]";
 	}
 
 	/** {@inheritDoc} */
