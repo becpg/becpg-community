@@ -337,6 +337,9 @@
 				<entry key="entityListDAO">
 	               <ref bean="entityListDAO" />
 	           </entry>
+	           <entry key="tenantAdminService">
+                    <ref bean="tenantAdminService" />
+               </entry>
 			</map>
 		</property>
         
