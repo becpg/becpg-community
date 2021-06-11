@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.tenant.Tenant;
+import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.schedule.AbstractScheduledLockedJob;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -42,6 +44,8 @@ public class VersionCleanerJob  extends AbstractScheduledLockedJob implements Jo
 
 	private NodeService nodeService;
 
+	TenantAdminService tenantAdminService;
+
 	public VersionCleanerJob() {
 		super();
 	}
@@ -56,8 +60,21 @@ public class VersionCleanerJob  extends AbstractScheduledLockedJob implements Jo
 		entityFormatService = (EntityFormatService) jobData.get("entityFormatService");
 		transactionService = (TransactionService) jobData.get("transactionService");
 		nodeService = (NodeService) jobData.get("nodeService");
-
+		tenantAdminService = (TenantAdminService) jobData.get("tenantAdminService");
+		
 		AuthenticationUtil.runAsSystem(this::cleanVersions);
+
+		if ((tenantAdminService != null) && tenantAdminService.isEnabled()) {
+			@SuppressWarnings("deprecation")
+			List<Tenant> tenants = tenantAdminService.getAllTenants();
+			for (Tenant tenant : tenants) {
+				String tenantDomain = tenant.getTenantDomain();
+				AuthenticationUtil.runAs(() -> {
+					cleanVersions();
+					return null;
+				}, tenantAdminService.getDomainUser(AuthenticationUtil.getSystemUserName(), tenantDomain));
+			}
+		}
 
 		logger.info("End of Version cleaner Job.");
 	}
