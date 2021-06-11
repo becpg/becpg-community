@@ -249,8 +249,8 @@ public class ActivityListExtractor extends SimpleExtractor {
 			try {
 				if (propertyArray.getString(i).contains("workspace")) {
 					NodeRef nodeRef = null;
-					String name = null;
-					if (Pattern.matches("(.*,.*)", propertyArray.getString(i))) {
+				 	String name = null;
+					if (Pattern.matches("\\(.*,.*\\)", propertyArray.getString(i))) {
 						String nodeRefString = propertyArray.getString(i).substring(propertyArray.getString(i).indexOf("(") + 1,
 								propertyArray.getString(i).indexOf(","));
 						nodeRef = new NodeRef(nodeRefString);
