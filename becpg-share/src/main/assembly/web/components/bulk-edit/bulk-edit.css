@@ -7,16 +7,10 @@
      margin-left: 1em;
      padding: 10px;
      overflow: auto;
-
 }
-.bulk-edit .bulk-edit-props-container  tr {
-    display: inline-block;
- }
 
 .bulk-edit .bulk-edit-props-container  td {
-    padding: 2px 20px;
-    display: flex;
-    flex-direction: row;
+ padding: 2px 20px;
  }
  .bulk-edit .bulk-edit-props-container  td label {
    margin-left: 2px;
