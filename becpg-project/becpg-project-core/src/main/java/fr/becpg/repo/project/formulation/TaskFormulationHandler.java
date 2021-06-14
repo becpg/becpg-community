@@ -617,6 +617,7 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 
 			for (NodeRef resource : projectService.extractResources(projectData.getNodeRef(), taskListDataItem.getResources())) {
 				NodeRef reassignResource = projectService.getReassignedResource(resource);
+				
 				NodeRef toAdd = resource;
 				// check delegation
 				if (reassignResource != null) {
@@ -649,6 +650,8 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 			}
 
 			taskListDataItem.setResources(resources);
+			taskListDataItem.setObservers(projectService.extractResources(projectData.getNodeRef(), taskListDataItem.getObservers()));
+
 
 		}
 
