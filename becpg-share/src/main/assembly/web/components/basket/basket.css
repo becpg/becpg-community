@@ -39,5 +39,15 @@
 
 
 .basket-popup li {
-	text-align: left;
+	
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.basket-delete {
+	background-image: url("../images/delete-16.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    cursor: pointer;
+    padding: 1em;
 }
