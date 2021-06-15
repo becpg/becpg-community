@@ -3885,7 +3885,7 @@
 					<type>d:double</type>
 					<mandatory>false</mandatory>
 				</property>
-				<property name="bcpg:ecoScoreClass">
+				<property name="bcpg:ecoScoreResult">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 				</property>

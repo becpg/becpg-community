@@ -48,8 +48,8 @@ import fr.becpg.repo.product.data.productList.PriceListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.data.productList.ResourceParamListItem;
-import fr.becpg.repo.quality.data.dataList.StockListDataItem;
 import fr.becpg.repo.quality.data.dataList.ControlDefListDataItem;
+import fr.becpg.repo.quality.data.dataList.StockListDataItem;
 import fr.becpg.repo.repository.annotation.AlfMlText;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
@@ -162,7 +162,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	 */
 
 	private Double ecoScore;
-	private String ecoScoreClass;
+	private String ecoScoreResult;
 	private String ecoScoreCategory;
 
 	/*
@@ -1294,13 +1294,13 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	}
 
 	@AlfProp
-	@AlfQname(qname = "bcpg:ecoScoreClass")
-	public String getEcoScoreClass() {
-		return ecoScoreClass;
+	@AlfQname(qname = "bcpg:ecoScoreResult")
+	public String getEcoScoreResult() {
+		return ecoScoreResult;
 	}
 
-	public void setEcoScoreClass(String ecoScoreClass) {
-		this.ecoScoreClass = ecoScoreClass;
+	public void setEcoScoreResult(String ecoScoreResult) {
+		this.ecoScoreResult = ecoScoreResult;
 	}
 
 	@AlfProp

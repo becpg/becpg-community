@@ -1,22 +1,26 @@
+<#assign fieldValue = field.value>
 <div class="form-field">
    <div class="viewmode-field">
       <span class="viewmode-label">${field.label?html}:</span>
-      <span class="viewmode-value ecoscore-class">
-      	<#if field.value != "" 
-      	   && (
-      	       field.value == "A"
-      	       || field.value == "B"
-      	       || field.value == "C"
-      	       || field.value == "D"
-      	       || field.value == "E")>
-	         <#if field.value == "A"><span class="ecoscore-class-a"></span> </#if>
-	         <#if field.value == "B"><span class="ecoscore-class-b"></span> </#if>
-	         <#if field.value == "C"><span class="ecoscore-class-c"></span> </#if>
-	         <#if field.value == "D"><span class="ecoscore-class-d"></span> </#if>
-	         <#if field.value == "E"><span class="ecoscore-class-e"></span> </#if>
-	    <#elseif field.value != "">
-	          <span class="ecoscore-class-error" >${field.value?html}</span>
-        </#if>
-      </span>
+      <#if fieldValue != "" && fieldValue?eval??>
+		<#assign ecoScore = fieldValue?eval>
+        <span title="${fieldValue?html}" class="viewmode-value ecoscore-class">
+	      	<#if ecoScore.scoreClass != "" 
+	      	   && (
+	      	       ecoScore.scoreClass == "A"
+	      	       || ecoScore.scoreClass == "B"
+	      	       || ecoScore.scoreClass == "C"
+	      	       || ecoScore.scoreClass == "D"
+	      	       || ecoScore.scoreClass == "E")>
+		         <#if ecoScore.scoreClass == "A"><span class="ecoscore-class-a"></span> </#if>
+		         <#if ecoScore.scoreClass == "B"><span class="ecoscore-class-b"></span> </#if>
+		         <#if ecoScore.scoreClass == "C"><span class="ecoscore-class-c"></span> </#if>
+		         <#if ecoScore.scoreClass == "D"><span class="ecoscore-class-d"></span> </#if>
+		         <#if ecoScore.scoreClass == "E"><span class="ecoscore-class-e"></span> </#if>
+		    <#elseif ecoScore.scoreClass != "">
+		          <span class="ecoscore-class-error" >${ecoScore.scoreClass?html}</span>
+	        </#if>
+     	 </span>
+       </#if>
    </div>
 </div>
