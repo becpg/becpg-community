@@ -295,6 +295,7 @@
 				<list>
 					<value>ShowPerc</value>
 					<value>ShowGeo</value>
+					<value>ShowBio</value>
 					<value>Rename</value>
 					<value>Detail</value>
 					<value>DoNotDetails</value>

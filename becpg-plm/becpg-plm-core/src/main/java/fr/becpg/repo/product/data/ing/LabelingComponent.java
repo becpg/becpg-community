@@ -19,6 +19,7 @@ package fr.becpg.repo.product.data.ing;
 
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 
 import org.alfresco.service.cmr.repository.MLText;
@@ -54,6 +55,8 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 	private Set<NodeRef> allergens = new HashSet<>();
 
 	private Set<NodeRef> geoOrigins = new HashSet<>();
+	
+	private Set<NodeRef> bioOrigins = new HashSet<>();
 
 	/**
 	 * <p>Constructor for LabelingComponent.</p>
@@ -74,6 +77,9 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 		this.volume = abstractLabelingComponent.volume;
 		this.legalName = abstractLabelingComponent.legalName;
 		this.isPlural = abstractLabelingComponent.isPlural;
+		this.allergens = new HashSet<>(abstractLabelingComponent.allergens);
+		this.geoOrigins = new HashSet<>(abstractLabelingComponent.geoOrigins);
+		this.bioOrigins = new HashSet<>(abstractLabelingComponent.bioOrigins);
 	}
 
 
@@ -223,6 +229,25 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 		this.allergens = allergens;
 	}
 
+	
+	/**
+	 * <p>Getter for the field <code>bioOrigins</code>.</p>
+	 *
+	 * @return a {@link java.util.Set} object.
+	 */
+	public Set<NodeRef> getBioOrigins() {
+		return bioOrigins;
+	}
+
+	/**
+	 * <p>Setter for the field <code>geoOrigins</code>.</p>
+	 *
+	 * @param bioOrigins a {@link java.util.Set} object.
+	 */
+	public void setBioOrigins(Set<NodeRef> bioOrigins) {
+		this.bioOrigins = bioOrigins;
+	}
+	
 	/**
 	 * <p>Getter for the field <code>geoOrigins</code>.</p>
 	 *
@@ -245,80 +270,26 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 	@Override
 	public abstract LabelingComponent clone();
 
-	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = (prime * result) + ((allergens == null) ? 0 : allergens.hashCode());
-		result = (prime * result) + ((geoOrigins == null) ? 0 : geoOrigins.hashCode());
-		result = (prime * result) + (isPlural ? 1231 : 1237);
-		result = (prime * result) + ((legalName == null) ? 0 : legalName.hashCode());
-		result = (prime * result) + ((pluralLegalName == null) ? 0 : pluralLegalName.hashCode());
-		result = (prime * result) + ((qty == null) ? 0 : qty.hashCode());
-		result = (prime * result) + ((volume == null) ? 0 : volume.hashCode());
+		result = prime * result + Objects.hash(allergens, bioOrigins, geoOrigins, isPlural, legalName, pluralLegalName, qty, volume);
 		return result;
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
+		if (this == obj)
 			return true;
-		}
-		if (!super.equals(obj)) {
+		if (!super.equals(obj))
 			return false;
-		}
-		if (getClass() != obj.getClass()) {
+		if (getClass() != obj.getClass())
 			return false;
-		}
 		LabelingComponent other = (LabelingComponent) obj;
-		if (allergens == null) {
-			if (other.allergens != null) {
-				return false;
-			}
-		} else if (!allergens.equals(other.allergens)) {
-			return false;
-		}
-		if (geoOrigins == null) {
-			if (other.geoOrigins != null) {
-				return false;
-			}
-		} else if (!geoOrigins.equals(other.geoOrigins)) {
-			return false;
-		}
-		if (isPlural != other.isPlural) {
-			return false;
-		}
-		if (legalName == null) {
-			if (other.legalName != null) {
-				return false;
-			}
-		} else if (!legalName.equals(other.legalName)) {
-			return false;
-		}
-		if (pluralLegalName == null) {
-			if (other.pluralLegalName != null) {
-				return false;
-			}
-		} else if (!pluralLegalName.equals(other.pluralLegalName)) {
-			return false;
-		}
-		if (qty == null) {
-			if (other.qty != null) {
-				return false;
-			}
-		} else if (!qty.equals(other.qty)) {
-			return false;
-		}
-		if (volume == null) {
-			if (other.volume != null) {
-				return false;
-			}
-		} else if (!volume.equals(other.volume)) {
-			return false;
-		}
-		return true;
+		return Objects.equals(allergens, other.allergens) && Objects.equals(bioOrigins, other.bioOrigins)
+				&& Objects.equals(geoOrigins, other.geoOrigins) && isPlural == other.isPlural && Objects.equals(legalName, other.legalName)
+				&& Objects.equals(pluralLegalName, other.pluralLegalName) && Objects.equals(qty, other.qty) && Objects.equals(volume, other.volume);
 	}
 
 	/** {@inheritDoc} */

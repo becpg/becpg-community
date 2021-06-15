@@ -56,7 +56,6 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.util.StringUtils;
 
-
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.ReportModel;
@@ -349,18 +348,18 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 *
 	 * Supported tag <b>bold</b> <u>underline</u> <i>italic</i>
 	 * <up>uppercase</up> <lo>lowercase</lo> <ca>capitalize</ca>
-	 * 
+	 *
 	 * i,u, b are html tag and will be print as it into label up, lo, ca will
 	 * replace containing text with transformed text value and remove tag ca
 	 * will be the first transformation appended then lo then up.
-	 * 
+	 *
 	 * For exemple if you define detailsDefaultFormat = "<ca>{0}</ca>
 	 * (<lo>{2}</lo>) and allergenReplacementPattern = "<up>$1</up>" for
 	 * following labelling <ca>sugar</ca>,<ca>garniture</ca> (
 	 * <lo><up>Milk</up>, <ca>Lactose</ca> (<up>Milk</up>), <ca>Sugar</ca></lo>)
 	 * you will get Sugar, Garniture ( MILK, lactose (MILK), sugar)
 	 *
-	 * 
+	 *
 	 */
 	private String ingDefaultFormat = "{0} [{3}]";
 	private String groupDefaultFormat = "<b>{0}:</b> {2}";
@@ -369,7 +368,6 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	private String ingTypeDefaultFormat = "{0}: {2} [{3}]";
 	private String ingTypeDecThresholdFormat = "{0} [{3}]";
 	private String subIngsDefaultFormat = "{0} ({2}) [{3}]";
-
 
 	private String allergenDetailsFormat = "{0} ({2})";
 	private String allergenReplacementPattern = "<b>$1</b>";
@@ -383,6 +381,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	private String ingTypeDefaultSeparator = RepoConsts.LABEL_SEPARATOR;
 	private String allergensSeparator = RepoConsts.LABEL_SEPARATOR;
 	private String geoOriginsSeparator = RepoConsts.LABEL_SEPARATOR;
+	private String bioOriginsSeparator = RepoConsts.LABEL_SEPARATOR;
 	private String subIngsSeparator = RepoConsts.LABEL_SEPARATOR;
 
 	private boolean showIngCEECode = false;
@@ -692,7 +691,6 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		this.allergensSeparator = allergensSeparator;
 	}
 
-	
 	/**
 	 * <p>
 	 * Setter for the field <code>subIngsSeparator</code>.
@@ -715,6 +713,18 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 */
 	public void setGeoOriginsSeparator(String geoOriginsSeparator) {
 		this.geoOriginsSeparator = geoOriginsSeparator;
+	}
+
+	/**
+	 * <p>
+	 * Setter for the field <code>geoOriginsSeparator</code>.
+	 * </p>
+	 *
+	 * @param bioOriginsSeparator
+	 *            a {@link java.lang.String} object.
+	 */
+	public void setBioOriginsSeparator(String bioOriginsSeparator) {
+		this.bioOriginsSeparator = bioOriginsSeparator;
 	}
 
 	/**
@@ -935,10 +945,9 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			ingLegalName = uncapitalize(ingLegalName);
 		}
 
-		if (!lblComponent.getAllergens().isEmpty()
-				&& (((lblComponent instanceof CompositeLabeling) && ((CompositeLabeling) lblComponent).getIngList().isEmpty())
-						|| (lblComponent instanceof IngItem))) {
-			ingLegalName = createAllergenAwareLabel(ingLegalName, lblComponent.getAllergens());
+		if (!lblComponent.getAllergens().isEmpty()) {
+			ingLegalName = createAllergenAwareLabel(ingLegalName, lblComponent.getAllergens(),
+					!((lblComponent instanceof CompositeLabeling) && ((CompositeLabeling) lblComponent).getIngList().isEmpty()));
 
 		}
 
@@ -1034,25 +1043,22 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return StringUtils.uncapitalize(legalName);
 	}
 
-	private static final String[] ESCAPED_ALLERGEN_TAGS = new String[] {
-		"<b>","</b>","<u>","</u>","<i>","</i>","<up>","</up>"
-	};
-	
-	private String createAllergenAwareLabel(String ingLegalName, Set<NodeRef> allergens) {
+	private static final String[] ESCAPED_ALLERGEN_TAGS = new String[] { "<b>", "</b>", "<u>", "</u>", "<i>", "</i>", "<up>", "</up>" };
+
+	private String createAllergenAwareLabel(String ingLegalName, Set<NodeRef> allergens, boolean boldOnly) {
 		if (isAllergensDisableForLocale()) {
 			return ingLegalName;
 		}
-		
+
 		Set<String> detectedAllergens = getDetectedAllergens();
 
 		Matcher ma = ALLERGEN_DETECTION_PATTERN.matcher(ingLegalName);
 		if (ma.find() && (ma.group(1) != null)) {
 			String allergenName = ma.group(1);
-			for(String toEscape :  ESCAPED_ALLERGEN_TAGS) {
+			for (String toEscape : ESCAPED_ALLERGEN_TAGS) {
 				allergenName = allergenName.replace(toEscape, "");
 			}
-			
-			
+
 			detectedAllergens.add(allergenName);
 			return ma.replaceAll(allergenReplacementPattern.replace("$1", allergenName));
 		}
@@ -1060,7 +1066,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		StringBuilder ret = new StringBuilder();
 		for (NodeRef allergen : allergens) {
 			if (!isAllergenDisableForLocale(allergen)) {
-				boolean shouldAppend = true;
+				boolean shouldAppend = !boldOnly;
 				if (getAllergens().keySet().contains(allergen)) {
 					String allergenName = getCharactName(allergen);
 					if ((allergenName != null) && !allergenName.isEmpty()) {
@@ -1143,7 +1149,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			}
 		}
 
-		return createAllergenAwareLabel(ingLegalName, sorted(tmp));
+		return createAllergenAwareLabel(ingLegalName, sorted(tmp), false);
 	}
 
 	private String getCharactName(NodeRef charact) {
@@ -1194,13 +1200,13 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				total = getTotal(lblCompositeContext);
 			}
 
-			return decorate(renderCompositeIng(lblCompositeContext, 1d, total, false));
+			return decorate(renderCompositeIng(lblCompositeContext, 1d, total, false, false));
 		} else {
 			if (force100Perc) {
 				total = getTotal(mergedLblCompositeContext);
 			}
 
-			return decorate(renderCompositeIng(mergedLblCompositeContext, 1d, total, false));
+			return decorate(renderCompositeIng(mergedLblCompositeContext, 1d, total, false, false));
 		}
 
 	}
@@ -1249,7 +1255,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	public String renderAllergens() {
 		return renderAllergens(sorted(this.allergens));
 	}
-	
+
 	/**
 	 * <p>
 	 * renderDetectedAllergens.
@@ -1263,9 +1269,9 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		if (logger.isTraceEnabled()) {
 			logger.trace(" Render Allergens list ");
 		}
-		
+
 		Set<String> detectedAllergens = getDetectedAllergens();
-		
+
 		for (String allergen : detectedAllergens) {
 			if (ret.length() > 0) {
 				ret.append(allergensSeparator);
@@ -1278,7 +1284,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	private Set<String> getDetectedAllergens() {
-		return detectedAllergensByLocale.computeIfAbsent(I18NUtil.getLocale(), r ->  new LinkedHashSet<>());
+		return detectedAllergensByLocale.computeIfAbsent(I18NUtil.getLocale(), r -> new LinkedHashSet<>());
 	}
 
 	/**
@@ -1405,7 +1411,6 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		String firstLabel = "";
 		Double firstQtyPerc = 0d;
 		String firstGeo = "";
-
 		for (Map.Entry<IngTypeItem, List<LabelingComponent>> kv : getSortedIngListByType(lblCompositeContext).entrySet()) {
 
 			if ((kv.getKey() != null) && (getLegalIngName(kv.getKey(), null, false, false) != null)) {
@@ -1425,9 +1430,11 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				}
 
 				String geoOriginsLabel = createGeoOriginsLabel(null, kv.getValue());
+				String bioOriginsLabel = createBioOriginsLabel(null, kv.getValue());
 
 				String subLabel = getIngTextFormat(kv.getKey(), qtyPerc).format(new Object[] { ingTypeLegalName, null,
-						doNotDetailsDeclType ? null : renderLabelingComponent(lblCompositeContext, kv.getValue(), true, 1d, null, true), null });
+						doNotDetailsDeclType ? null : renderLabelingComponent(lblCompositeContext, kv.getValue(), true, 1d, null, true, true),
+						null });
 
 				if ((subLabel != null) && !subLabel.isEmpty()) {
 
@@ -1439,7 +1446,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 						firstGeo = geoOriginsLabel != null ? geoOriginsLabel : "";
 					} else {
 						tableContent.append(applyRoundingMode(new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale()), qtyPerc)
-								.format(new Object[] { subLabel, qtyPerc, geoOriginsLabel != null ? geoOriginsLabel : "" }));
+								.format(new Object[] { subLabel, qtyPerc, geoOriginsLabel != null ? geoOriginsLabel : "",
+										bioOriginsLabel != null ? bioOriginsLabel : "" }));
 					}
 					if (qtyPerc != null) {
 						total = total.add(roundeedValue(qtyPerc, new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale())));
@@ -1456,6 +1464,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 					String ingName = getLegalIngName(component, null, false, false);
 					String geoOriginsLabel = createGeoOriginsLabel(null, component.getGeoOrigins());
+					String bioOriginsLabel = createBioOriginsLabel(null, component.getBioOrigins());
 
 					qtyPerc = (useVolume ? volumePerc : qtyPerc);
 
@@ -1469,8 +1478,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 								subRatio = 1d;
 							}
 
-							subLabel = getIngTextFormat(component, qtyPerc).format(
-									new Object[] { ingName, qtyPerc, renderCompositeIng((CompositeLabeling) component, subRatio, null, true), null });
+							subLabel = getIngTextFormat(component, qtyPerc).format(new Object[] { ingName, qtyPerc,
+									renderCompositeIng((CompositeLabeling) component, subRatio, null, true, true), null });
 
 						} else {
 							logger.error(String.format(UNSUPPORTED_ING_TYPE, component.getName()));
@@ -1484,7 +1493,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 								firstGeo = geoOriginsLabel != null ? geoOriginsLabel : "";
 							} else {
 								tableContent.append(applyRoundingMode(new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale()), qtyPerc)
-										.format(new Object[] { subLabel, qtyPerc, geoOriginsLabel != null ? geoOriginsLabel : "" }));
+										.format(new Object[] { subLabel, qtyPerc, geoOriginsLabel != null ? geoOriginsLabel : "",
+												bioOriginsLabel != null ? bioOriginsLabel : "" }));
 							}
 
 							if (qtyPerc != null) {
@@ -1559,12 +1569,14 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		String label;
 		Double qtyPerc;
 		String geoOriginsLabel;
+		String bioOriginsLabel;
 		Integer level;
 
-		public HtmlTableStruct(String label, Double qtyPerc, String geoOriginsLabel, Integer level) {
+		public HtmlTableStruct(String label, Double qtyPerc, String geoOriginsLabel, String bioOriginsLabel, Integer level) {
 			super();
 			this.label = label;
 			this.geoOriginsLabel = geoOriginsLabel;
+			this.bioOriginsLabel = bioOriginsLabel;
 			this.qtyPerc = qtyPerc;
 			this.level = level;
 		}
@@ -1611,7 +1623,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 						}
 
 						ret.append(applyRoundingMode(new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale()), tmp.qtyPerc)
-								.format(new Object[] { indent(tmp.label, tmp.level), tmp.qtyPerc, tmp.geoOriginsLabel }));
+								.format(new Object[] { indent(tmp.label, tmp.level), tmp.qtyPerc, tmp.geoOriginsLabel, tmp.bioOriginsLabel }));
 					}
 				}
 
@@ -1623,8 +1635,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 					Double qtyPerc = roundeedValue(flatList.get(0).qtyPerc, new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale()))
 							.add(diffValue).doubleValue();
 
-					tableContent.append(applyTotalRoundingMode(new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale()))
-							.format(new Object[] { flatList.get(0).label, qtyPerc, flatList.get(0).geoOriginsLabel }));
+					tableContent.append(applyTotalRoundingMode(new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale())).format(
+							new Object[] { flatList.get(0).label, qtyPerc, flatList.get(0).geoOriginsLabel, flatList.get(0).bioOriginsLabel }));
 
 				}
 				tableContent.append(ret);
@@ -1688,6 +1700,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				}
 
 				String geoOriginsLabel = createGeoOriginsLabel(component.getNodeRef(), component.getGeoOrigins());
+				String bioOriginsLabel = createBioOriginsLabel(component.getNodeRef(), component.getBioOrigins());
 
 				if (!shouldSkip(component.getNodeRef(), qtyPerc)) {
 					if (component instanceof CompositeLabeling) {
@@ -1697,7 +1710,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 							subRatio = 1d;
 						}
 
-						ret.add(new HtmlTableStruct(ingName, qtyPerc, geoOriginsLabel != null ? geoOriginsLabel : "", level));
+						ret.add(new HtmlTableStruct(ingName, qtyPerc, geoOriginsLabel != null ? geoOriginsLabel : "",
+								bioOriginsLabel != null ? bioOriginsLabel : "", level));
 
 						ret.addAll(flatCompositeLabeling((CompositeLabeling) component, subRatio, level + 1));
 
@@ -1816,13 +1830,13 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 	}
 
-	private String renderCompositeIng(CompositeLabeling compositeLabeling, Double ratio, BigDecimal total, boolean hideGeo) {
+	private String renderCompositeIng(CompositeLabeling compositeLabeling, Double ratio, BigDecimal total, boolean hideGeo, boolean hideBio) {
 		StringBuilder ret = new StringBuilder();
 		boolean appendEOF = false;
 		boolean first = true;
 
 		boolean applySeparatorRule = true;
-		
+
 		for (Map.Entry<IngTypeItem, List<LabelingComponent>> kv : getSortedIngListByType(compositeLabeling).entrySet()) {
 
 			StringBuilder toAppend = new StringBuilder();
@@ -1847,11 +1861,12 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				}
 
 				String geoOriginsLabel = createGeoOriginsLabel(kv.getKey().getNodeRef(), kv.getValue());
+				String bioOriginsLabel = createBioOriginsLabel(kv.getKey().getNodeRef(), kv.getValue());
 
 				toAppend.append(getIngTextFormat(kv.getKey(), qtyPerc).format(new Object[] { ingTypeLegalName, qtyPerc,
 						doNotDetailsDeclType ? null
-								: renderLabelingComponent(compositeLabeling, kv.getValue(), true, ratio, first ? total : null, hideGeo),
-						hideGeo ? null : geoOriginsLabel }));
+								: renderLabelingComponent(compositeLabeling, kv.getValue(), true, ratio, first ? total : null, hideGeo, hideBio),
+						hideGeo ? null : geoOriginsLabel, hideBio ? null : bioOriginsLabel }));
 
 			} else {
 				if (!kv.getValue().isEmpty()) {
@@ -1859,8 +1874,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 					Double volumePerc = computeVolumePerc(compositeLabeling, kv.getValue().get(0), ratio);
 					qtyPerc = (useVolume ? volumePerc : qtyPerc);
 				}
-				
-				toAppend.append(renderLabelingComponent(compositeLabeling, kv.getValue(), false, ratio, first ? total : null, hideGeo));
+
+				toAppend.append(renderLabelingComponent(compositeLabeling, kv.getValue(), false, ratio, first ? total : null, hideGeo, hideBio));
 			}
 
 			first = false;
@@ -1880,20 +1895,20 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 								}
 							}
 							if (applySeparatorRule) {
-								
-								if(compositeLabeling instanceof IngItem){
-									ret.append( subIngsSeparator );	
+
+								if (compositeLabeling instanceof IngItem) {
+									ret.append(subIngsSeparator);
 								} else {
 									ret.append(defaultSeparator);
 								}
 							}
 						} else {
-							if(compositeLabeling instanceof IngItem){
-								ret.append( subIngsSeparator );	
+							if (compositeLabeling instanceof IngItem) {
+								ret.append(subIngsSeparator);
 							} else {
 								ret.append(defaultSeparator);
 							}
-							
+
 						}
 					}
 				}
@@ -1914,7 +1929,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				ret.append(atEndSeparator);
 			}
 			ret.append(renderLabelingComponent(compositeLabeling, compositeLabeling.getIngListAtEnd().values().stream().collect(Collectors.toList()),
-					false, null, null, true));
+					false, null, null, true, true));
 		}
 
 		return ret.toString().trim();
@@ -1923,7 +1938,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	Double totalPrecision = 1 / Math.pow(10, (double) maxPrecision + (double) 2);
 
 	private StringBuilder renderLabelingComponent(CompositeLabeling parent, List<LabelingComponent> subComponents, boolean isIngType, Double ratio,
-			BigDecimal total, boolean hideGeo) {
+			BigDecimal total, boolean hideGeo, boolean hideBio) {
 
 		StringBuilder ret = new StringBuilder();
 
@@ -1945,6 +1960,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			String ingName = getLegalIngName(component, qtyPerc, false, first && (total != null));
 
 			String geoOriginsLabel = createGeoOriginsLabel(component.getNodeRef(), component.getGeoOrigins());
+			String bioOriginsLabel = createBioOriginsLabel(component.getNodeRef(), component.getBioOrigins());
 
 			if (logger.isDebugEnabled()) {
 
@@ -1956,7 +1972,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			if (!shouldSkip(component.getNodeRef(), qtyPerc)) {
 
 				String toAppend = "";
-				
+
 				if (component instanceof CompositeLabeling) {
 
 					MessageFormat formater = getIngTextFormat(component, qtyPerc);
@@ -1971,8 +1987,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 					}
 
 					toAppend = formater.format(new Object[] { ingName, qtyPerc,
-							renderCompositeIng((CompositeLabeling) component, subRatio,first ? total : null, hideGeo ),
-							hideGeo ? null : geoOriginsLabel });
+							renderCompositeIng((CompositeLabeling) component, subRatio, first ? total : null, hideGeo, hideBio),
+							hideGeo ? null : geoOriginsLabel, hideBio ? null : bioOriginsLabel });
 
 					first = false;
 
@@ -1985,14 +2001,14 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 						if (appendEOF) {
 							ret.append("<br/>");
 						} else {
-							if(isIngType) {
-								ret.append( ingTypeDefaultSeparator );	
-							} else if(parent instanceof IngItem){
-								ret.append( subIngsSeparator );	
+							if (isIngType) {
+								ret.append(ingTypeDefaultSeparator);
+							} else if (parent instanceof IngItem) {
+								ret.append(subIngsSeparator);
 							} else {
 								ret.append(defaultSeparator);
 							}
-							
+
 						}
 					}
 
@@ -2047,6 +2063,44 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 					geoOriginsBuffer.add(getCharactName(geoOrigin));
 				}
 				return String.join(geoOriginsSeparator, geoOriginsBuffer);
+			}
+		}
+		return null;
+	}
+
+	private String createBioOriginsLabel(NodeRef nodeRef, List<LabelingComponent> components) {
+
+		if (showAllBio || ((nodeRef != null) && showBioRules.containsKey(nodeRef) && showBioRules.get(nodeRef).matchLocale(I18NUtil.getLocale()))) {
+
+			if ((components != null) && !components.isEmpty()) {
+
+				Set<NodeRef> bioOrigins = new HashSet<>();
+
+				for (LabelingComponent component : components) {
+					if (component.getBioOrigins() != null) {
+						bioOrigins.addAll(component.getBioOrigins());
+					}
+				}
+
+				return createBioOriginsLabel(null, bioOrigins);
+			}
+
+		}
+
+		return null;
+	}
+
+	private String createBioOriginsLabel(NodeRef nodeRef, Set<NodeRef> bioOrigins) {
+
+		if (showAllBio || ((nodeRef != null) && showBioRules.containsKey(nodeRef) && showBioRules.get(nodeRef).matchLocale(I18NUtil.getLocale()))) {
+
+			if ((bioOrigins != null) && !bioOrigins.isEmpty()) {
+
+				Set<String> bioOriginsBuffer = new HashSet<>();
+				for (NodeRef bioOrigin : bioOrigins) {
+					bioOriginsBuffer.add(getCharactName(bioOrigin));
+				}
+				return String.join(bioOriginsSeparator, bioOriginsBuffer);
 			}
 		}
 		return null;
@@ -2143,6 +2197,15 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 					geoOrigins.add(getCharactName(geoOrigin));
 				}
 				tree.put("geoOrigins", geoOrigins);
+			}
+
+			if (!component.getBioOrigins().isEmpty()
+					&& (!(component instanceof CompositeLabeling) || ((CompositeLabeling) component).getIngList().isEmpty())) {
+				JSONArray bioOrigins = new JSONArray();
+				for (NodeRef bioOrigin : component.getBioOrigins()) {
+					bioOrigins.add(getCharactName(bioOrigin));
+				}
+				tree.put("bioOrigins", bioOrigins);
 			}
 
 			if (component instanceof CompositeLabeling) {
@@ -2329,7 +2392,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 						break;
 					}
 
-				} else if (ingType != null && ingType.doNotDeclare() && !ingType.lastGroup()) {
+				} else if ((ingType != null) && ingType.doNotDeclare() && !ingType.lastGroup()) {
 					ingType = null;
 				}
 
