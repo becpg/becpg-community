@@ -16,6 +16,8 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.util.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
@@ -224,92 +226,33 @@ public class FrenchEcoScore implements ListValuePlugin, ScoreCalculatingPlugin {
 	public boolean formulateScore(ProductData productData) {
 
 		if ((productData.getEcoScoreCategory() != null) && !productData.getEcoScoreCategory().isEmpty()) {
-			Boolean threatenedSpecies = false;
+			Boolean hasThreatenedSpecies = false;
 			Boolean notRecyclable = false;
 			Boolean isDrink = false;
 
 			int packagingMalus = 0;
 			int claimBonus = 0;
 			int acvScore = 0;
-			int transportMalus = 0;
+			int transportScore = 0;
+			int politicalScore = 0;
 			int ecoScore = 0;
+			
+			List<LabelClaimListDataItem> labelClaimList = productData.getLabelClaimList();
+			
+			claimBonus = computeClaimBonus(labelClaimList);
+			
+			hasThreatenedSpecies = hasThreatenedSpecies(labelClaimList);
 
-			if (productData.getLabelClaimList() != null) {
-				boolean isASCorMSC = true;
-				for (LabelClaimListDataItem claim : productData.getLabelClaimList()) {
-					if (Boolean.TRUE.equals(claim.getIsClaimed())) {
-
-						String code = (String) nodeService.getProperty(claim.getLabelClaim(), PLMModel.PROP_LABEL_CLAIM_CODE);
-						if ((code != null) && !code.isEmpty()) {
-
-							if (GROUP1_CLAIM.contains(code)) {
-								claimBonus += 20;
-							} else if (GROUP2_CLAIM.contains(code)) {
-								claimBonus += 15;
-							} else if (GROUP3_CLAIM.contains(code)) {
-								if (code.contains("STEWARDSHIP_COUNCIL")) {
-									if (isASCorMSC) {
-										claimBonus += 10;
-										isASCorMSC = false;
-									}
-
-								} else {
-									claimBonus += 10;
-								}
-							} else if ("THREATENED_SPECIES".equals(code)) {
-								threatenedSpecies = true;
-							}
-
-						}
-
-					}
-				}
-			}
-
-			if (claimBonus > 20) {
-				claimBonus = 20;
-			} 
-
-			if (Boolean.TRUE.equals(threatenedSpecies)) {
+			if (Boolean.TRUE.equals(hasThreatenedSpecies)) {
 				ecoScore = 19;
 			} else {
 
-				if (productData.getPackMaterialList() != null) {
-
-					Double totalWeight = 0d;
-					
-					for (PackMaterialListDataItem material : productData.getPackMaterialList()) {
-						totalWeight += material.getPmlWeight();
-					}
-					
-					if (totalWeight == 0d) {
-						totalWeight = 1d;
-					}
-					
-					Double score = 100d;
-					for (PackMaterialListDataItem material : productData.getPackMaterialList()) {
-
-						Integer materialScore = (Integer) nodeService.getProperty(material.getPmlMaterial(), PackModel.PROP_PM_ECOSCORE);
-						if (materialScore == null) {
-							materialScore = 0;
-						}
-
-						if (!Boolean.TRUE.equals(notRecyclable)) {
-							notRecyclable = Boolean.TRUE
-									.equals(nodeService.getProperty(material.getPmlMaterial(), PackModel.PROP_PM_ISNOTRECYCLABLE));
-						}
-
-						/**
-						 * Pas de prise en compte du ratio par type d'emballage car nous travaillons
-						 * en qté exacte de matériaux
-						 */
-						score -= (100 - materialScore) * material.getPmlWeight() / totalWeight;
-
-					}
-
-					packagingMalus = (int) Math.round((score / 10) - 10);
-				}
-
+				 List<PackMaterialListDataItem> packMaterialList = productData.getPackMaterialList();
+				
+				packagingMalus = computePackagingMalus(packMaterialList);
+				
+				notRecyclable = isNotRecyclable(packMaterialList);
+				
 				if (Boolean.TRUE.equals(notRecyclable)) {
 					ecoScore = 79;
 				} else {
@@ -318,30 +261,161 @@ public class FrenchEcoScore implements ListValuePlugin, ScoreCalculatingPlugin {
 
 				acvScore = computeEFScore(productData.getEcoScoreCategory(), isDrink);
 
-				transportMalus = computeTransportAndPoliticalScore(productData);
+				int[] result = computeTransportAndPoliticalScore(productData);
+				
+				transportScore = result[0];
+				politicalScore = result[1];
 
 				if (logger.isDebugEnabled()) {
 					logger.info("Ecoscore details: ");
 					logger.info(" - base: " + ecoScore);
 					logger.info(" - acvScore: " + acvScore);
 					logger.info(" - claimBonus: " + claimBonus);
-					logger.info(" - transportMalus: " + transportMalus);
+					logger.info(" - transportScore: " + transportScore);
+					logger.info(" - politicalScore: " + politicalScore);
 					logger.info(" - packagingMalus: " + packagingMalus);
 				}
 
-				ecoScore = Math.min(ecoScore, acvScore + Math.min(25, claimBonus + transportMalus + packagingMalus));
+				ecoScore = Math.min(ecoScore, acvScore + Math.min(25, claimBonus + transportScore + politicalScore + packagingMalus));
 
 			}
 
+			JSONObject ecoScoreResult = new JSONObject();
+			
+			try {
+				ecoScoreResult.put("ecoScore", ecoScore);
+				ecoScoreResult.put("scoreClass", computeScoreClass(ecoScore));
+				ecoScoreResult.put("acvScore", acvScore);
+				ecoScoreResult.put("claimBonus", claimBonus);
+				ecoScoreResult.put("transportScore", transportScore);
+				ecoScoreResult.put("politicalScore", politicalScore);
+				ecoScoreResult.put("packagingMalus", packagingMalus);
+			} catch (JSONException e) {
+				logger.error(e.getMessage(), e);
+			}
+			
 			productData.setEcoScore(ecoScore * 1d);
-			productData.setEcoScoreClass(computeScoreClass(ecoScore));
+			productData.setEcoScoreResult(ecoScoreResult.toString());
+			
 		} else {
 			productData.setEcoScore(null);
-			productData.setEcoScoreClass(null);
+			productData.setEcoScoreResult(null);
 		}
 
 		return true;
 
+	}
+
+	private Boolean hasThreatenedSpecies(List<LabelClaimListDataItem> labelClaimList) {
+		
+		Boolean hasThreatenedSpecies = false;
+		
+		if (labelClaimList != null) {
+			for (LabelClaimListDataItem claim : labelClaimList) {
+				if (Boolean.TRUE.equals(claim.getIsClaimed())) {
+
+					String code = (String) nodeService.getProperty(claim.getLabelClaim(), PLMModel.PROP_LABEL_CLAIM_CODE);
+					if ((code != null) && !code.isEmpty() && "THREATENED_SPECIES".equals(code)) {
+						hasThreatenedSpecies = Boolean.TRUE;
+						break;
+					}
+				}
+			}
+		}
+		
+		return hasThreatenedSpecies;
+	}
+
+	private Boolean isNotRecyclable(List<PackMaterialListDataItem> packMaterialList) {
+		
+		Boolean notRecyclable = false;
+		
+		if (packMaterialList != null) {
+			for (PackMaterialListDataItem material : packMaterialList) {
+				if (!Boolean.TRUE.equals(notRecyclable)) {
+					notRecyclable = Boolean.TRUE.equals(nodeService.getProperty(material.getPmlMaterial(), PackModel.PROP_PM_ISNOTRECYCLABLE));
+				}
+			}
+
+		}
+		return notRecyclable;
+	}
+
+	private int computeClaimBonus(List<LabelClaimListDataItem> labelClaimList) {
+		
+		int claimBonus = 0;
+		
+		if (labelClaimList != null) {
+			boolean isASCorMSC = true;
+			for (LabelClaimListDataItem claim : labelClaimList) {
+				if (Boolean.TRUE.equals(claim.getIsClaimed())) {
+
+					String code = (String) nodeService.getProperty(claim.getLabelClaim(), PLMModel.PROP_LABEL_CLAIM_CODE);
+					if ((code != null) && !code.isEmpty()) {
+
+						if (GROUP1_CLAIM.contains(code)) {
+							claimBonus += 20;
+						} else if (GROUP2_CLAIM.contains(code)) {
+							claimBonus += 15;
+						} else if (GROUP3_CLAIM.contains(code)) {
+							if (code.contains("STEWARDSHIP_COUNCIL")) {
+								if (isASCorMSC) {
+									claimBonus += 10;
+									isASCorMSC = false;
+								}
+
+							} else {
+								claimBonus += 10;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		if (claimBonus > 20) {
+			claimBonus = 20;
+		} 
+		
+		return claimBonus;
+	}
+
+	private int computePackagingMalus(List<PackMaterialListDataItem> packMaterialList) {
+		
+		int packagingMalus = 0;
+		
+		if (packMaterialList != null) {
+
+			Double totalWeight = 0d;
+			
+			for (PackMaterialListDataItem material : packMaterialList) {
+				totalWeight += material.getPmlWeight();
+			}
+			
+			if (totalWeight == 0d) {
+				totalWeight = 1d;
+			}
+			
+			Double score = 100d;
+			for (PackMaterialListDataItem material : packMaterialList) {
+
+				Integer materialScore = (Integer) nodeService.getProperty(material.getPmlMaterial(), PackModel.PROP_PM_ECOSCORE);
+				if (materialScore == null) {
+					materialScore = 0;
+				}
+
+				/**
+				 * Pas de prise en compte du ratio par type d'emballage car nous travaillons
+				 * en qté exacte de matériaux
+				 */
+				score -= (100 - materialScore) * material.getPmlWeight() / totalWeight;
+
+			}
+
+			packagingMalus = (int) Math.round((score / 10) - 10);
+		}
+		
+		return packagingMalus;
 	}
 
 	private int computeEFScore(String categoryCode, boolean isDrink) {
@@ -370,8 +444,10 @@ public class FrenchEcoScore implements ListValuePlugin, ScoreCalculatingPlugin {
 
 	//	SUSTAINABLE_PALM_OIL_RSPO
 
-	private int computeTransportAndPoliticalScore(ProductData productData) {
+	private int[] computeTransportAndPoliticalScore(ProductData productData) {
 
+		int[] result = new int[2];
+		
 		//Defers loading
 		if (countryScores == null) {
 			loadCountryScores();
@@ -421,7 +497,10 @@ public class FrenchEcoScore implements ListValuePlugin, ScoreCalculatingPlugin {
 
 		}
 
-		return (int) (Math.round((transportScore * 0.15d)) + Math.round(((politicalScore / 10d) - 5)));
+		result[0] = (int) Math.round((transportScore * 0.15d));
+		result[1] = (int) Math.round(((politicalScore / 10d) - 5));
+		
+		return result;
 	}
 
 	private boolean isWater(NodeRef ing) {
