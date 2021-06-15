@@ -59,6 +59,8 @@ public enum LabelingRuleType {
 
 	ShowPerc,
 
-	ShowGeo
+	ShowGeo,
+	
+	ShowBio
 
 }
