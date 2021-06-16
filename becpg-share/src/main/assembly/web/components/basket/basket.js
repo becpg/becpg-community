@@ -63,7 +63,7 @@
 			              me.services.basket.toggle({"nodeRef":rel});
                           
                           anchor.parentNode.parentNode.removeChild(anchor.parentNode);
-							
+						  YAHOO.Bubbling.fire("metadataRefresh");
               			  return true;
 			         };
 
