@@ -70,7 +70,7 @@ public class FrenchEcoScoreIT extends AbstractFinishedProductTest {
 			
 			Assert.assertEquals((Double) 50d, finishedProductData.getEcoScore());
 			
-			JSONObject result = new JSONObject(finishedProductData.getEcoScoreResult());
+			JSONObject result = new JSONObject(finishedProductData.getEcoScoreClass());
 			Assert.assertEquals("C", result.get("scoreClass"));
 			
 			alfrescoRepository.save(finishedProductData);
@@ -109,7 +109,7 @@ public class FrenchEcoScoreIT extends AbstractFinishedProductTest {
 			frenchEcoScore.formulateScore(finishedProductData);
 			
 			Assert.assertEquals((Double) 79d, finishedProductData.getEcoScore());
-			JSONObject result = new JSONObject(finishedProductData.getEcoScoreResult());
+			JSONObject result = new JSONObject(finishedProductData.getEcoScoreClass());
 			Assert.assertEquals("B", result.get("scoreClass"));
 			
 			alfrescoRepository.save(finishedProductData);
@@ -150,7 +150,7 @@ public class FrenchEcoScoreIT extends AbstractFinishedProductTest {
 			frenchEcoScore.formulateScore(finishedProductData);
 			
 			Assert.assertEquals((Double) 59d, finishedProductData.getEcoScore());
-			JSONObject result = new JSONObject(finishedProductData.getEcoScoreResult());
+			JSONObject result = new JSONObject(finishedProductData.getEcoScoreClass());
 			Assert.assertEquals("C", result.get("scoreClass"));
 			
 			alfrescoRepository.save(finishedProductData);

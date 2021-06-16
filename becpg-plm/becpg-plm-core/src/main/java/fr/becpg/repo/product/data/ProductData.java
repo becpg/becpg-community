@@ -1294,13 +1294,13 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	}
 
 	@AlfProp
-	@AlfQname(qname = "bcpg:ecoScoreResult")
-	public String getEcoScoreResult() {
-		return ecoScoreResult;
+	@AlfQname(qname = "bcpg:ecoScoreClass")
+	public String getEcoScoreClass() {
+		return ecoScoreClass;
 	}
 
-	public void setEcoScoreResult(String ecoScoreResult) {
-		this.ecoScoreResult = ecoScoreResult;
+	public void setEcoScoreClass(String ecoScoreClass) {
+		this.ecoScoreClass = ecoScoreClass;
 	}
 
 	@AlfProp

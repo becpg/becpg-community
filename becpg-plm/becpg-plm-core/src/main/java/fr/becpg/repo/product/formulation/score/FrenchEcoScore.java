@@ -280,26 +280,26 @@ public class FrenchEcoScore implements ListValuePlugin, ScoreCalculatingPlugin {
 
 			}
 
-			JSONObject ecoScoreResult = new JSONObject();
+			JSONObject ecoScoreClass = new JSONObject();
 			
 			try {
-				ecoScoreResult.put("ecoScore", ecoScore);
-				ecoScoreResult.put("scoreClass", computeScoreClass(ecoScore));
-				ecoScoreResult.put("acvScore", acvScore);
-				ecoScoreResult.put("claimBonus", claimBonus);
-				ecoScoreResult.put("transportScore", transportScore);
-				ecoScoreResult.put("politicalScore", politicalScore);
-				ecoScoreResult.put("packagingMalus", packagingMalus);
+				ecoScoreClass.put("ecoScore", ecoScore);
+				ecoScoreClass.put("scoreClass", computeScoreClass(ecoScore));
+				ecoScoreClass.put("acvScore", acvScore);
+				ecoScoreClass.put("claimBonus", claimBonus);
+				ecoScoreClass.put("transportScore", transportScore);
+				ecoScoreClass.put("politicalScore", politicalScore);
+				ecoScoreClass.put("packagingMalus", packagingMalus);
 			} catch (JSONException e) {
 				logger.error(e.getMessage(), e);
 			}
 			
 			productData.setEcoScore(ecoScore * 1d);
-			productData.setEcoScoreResult(ecoScoreResult.toString());
+			productData.setEcoScoreClass(ecoScoreClass.toString());
 			
 		} else {
 			productData.setEcoScore(null);
-			productData.setEcoScoreResult(null);
+			productData.setEcoScoreClass(null);
 		}
 
 		return true;
