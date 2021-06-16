@@ -162,7 +162,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	 */
 
 	private Double ecoScore;
-	private String ecoScoreResult;
+	private String ecoScoreClass;
 	private String ecoScoreCategory;
 
 	/*
