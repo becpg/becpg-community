@@ -228,7 +228,7 @@
 					
 					<!-- Eco score -->
 				    <show id="bcpg:ecoScore"  for-mode="view"/>
-					<show id="bcpg:ecoScoreResult"  for-mode="view"/>
+					<show id="bcpg:ecoScoreClass"  for-mode="view"/>
 					<show id="bcpg:ecoScoreCategory"   />
 
 					<!-- Consumer -->
@@ -687,7 +687,7 @@
 					
 					<!-- Eco score -->
 					<field id="bcpg:ecoScore"  set="ecoscore"/>
-					<field id="bcpg:ecoScoreResult"  set="ecoscore">
+					<field id="bcpg:ecoScoreClass"  set="ecoscore">
 						<control template="/org/alfresco/components/form/controls/ecoscore-class.ftl" />
 					</field>
 					<field id="bcpg:ecoScoreCategory" set="ecoscore">
