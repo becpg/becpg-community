@@ -11,6 +11,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
 import fr.becpg.repo.listvalue.ListValueEntry;
 import fr.becpg.repo.listvalue.ListValuePage;
-import fr.becpg.repo.product.data.RawMaterialData;
+import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
@@ -59,17 +60,21 @@ public class FrenchEcoScoreIT extends AbstractFinishedProductTest {
 		properties.put(PackModel.PROP_PM_ISNOTRECYCLABLE, false);
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> fillMaterial(packMaterial1, properties, 1d), false, true);
 		
-		final NodeRef rawMaterial1 = createRawMaterial("Biscuit sec chocolaté, préemballé", "24036", "Prince goût chocolat", geoOrigin1, 48d, ing1, packMaterial1, null);
+		final NodeRef finishedProduct1 = createFinishedProduct("Biscuit sec chocolaté, préemballé", "24036", "Prince goût chocolat", geoOrigin1, 48d, ing1, packMaterial1, null);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			
-			RawMaterialData rawMaterialData = (RawMaterialData) alfrescoRepository.findOne(rawMaterial1);
+			FinishedProductData finishedProductData = (FinishedProductData) alfrescoRepository.findOne(finishedProduct1);
 			
-			frenchEcoScore.formulateScore(rawMaterialData);
+			frenchEcoScore.formulateScore(finishedProductData);
 			
-			Assert.assertEquals((Double) 50d, rawMaterialData.getEcoScore());
-			Assert.assertEquals("C", rawMaterialData.getEcoScoreClass());
+			Assert.assertEquals((Double) 50d, finishedProductData.getEcoScore());
 			
+			JSONObject result = new JSONObject(finishedProductData.getEcoScoreClass());
+			Assert.assertEquals("C", result.get("scoreClass"));
+			
+			alfrescoRepository.save(finishedProductData);
+
 			return null;
 		}, false, true);
 		
@@ -95,17 +100,20 @@ public class FrenchEcoScoreIT extends AbstractFinishedProductTest {
 			return null;
 		}, false, true);
 
-		final NodeRef rawMaterial2 = createRawMaterial("Muesli croustillant au chocolat (non enrichi en vitamines et minéraux)", "32109", "Cruesli Chocolat noir", geoOrigin2, 37d, ing2, packMaterial2, null);
+		final NodeRef finishedProduct2 = createFinishedProduct("Muesli croustillant au chocolat (non enrichi en vitamines et minéraux)", "32109", "Cruesli Chocolat noir", geoOrigin2, 37d, ing2, packMaterial2, null);
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			
-			RawMaterialData rawMaterialData = (RawMaterialData) alfrescoRepository.findOne(rawMaterial2);
+			FinishedProductData finishedProductData = (FinishedProductData) alfrescoRepository.findOne(finishedProduct2);
 			
-			frenchEcoScore.formulateScore(rawMaterialData);
+			frenchEcoScore.formulateScore(finishedProductData);
 			
-			Assert.assertEquals((Double) 79d, rawMaterialData.getEcoScore());
-			Assert.assertEquals("B", rawMaterialData.getEcoScoreClass());
+			Assert.assertEquals((Double) 79d, finishedProductData.getEcoScore());
+			JSONObject result = new JSONObject(finishedProductData.getEcoScoreClass());
+			Assert.assertEquals("B", result.get("scoreClass"));
 			
+			alfrescoRepository.save(finishedProductData);
+
 			return null;
 		}, false, true);
 		
@@ -131,18 +139,21 @@ public class FrenchEcoScoreIT extends AbstractFinishedProductTest {
 			return null;
 		}, false, true);
 
-		final NodeRef rawMaterial3 = createRawMaterial("Sardine, filets sans arêtes à l'huile d'olive, appertisés, égouttés", "26231", "Sardines de Bretagne", geoOrigin2, 100d, ing2, packMaterial3, labelClaimList);
+		final NodeRef finishedProduct3 = createFinishedProduct("Sardine, filets sans arêtes à l'huile d'olive, appertisés, égouttés", "26231", "Sardines de Bretagne", geoOrigin2, 100d, ing2, packMaterial3, labelClaimList);
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			
-			RawMaterialData rawMaterialData = (RawMaterialData) alfrescoRepository.findOne(rawMaterial3);
+			FinishedProductData finishedProductData = (FinishedProductData) alfrescoRepository.findOne(finishedProduct3);
 			
-			rawMaterialData.setLabelClaimList(labelClaimList);
+			finishedProductData.setLabelClaimList(labelClaimList);
 			
-			frenchEcoScore.formulateScore(rawMaterialData);
+			frenchEcoScore.formulateScore(finishedProductData);
 			
-			Assert.assertEquals((Double) 59d, rawMaterialData.getEcoScore());
-			Assert.assertEquals("C", rawMaterialData.getEcoScoreClass());
+			Assert.assertEquals((Double) 59d, finishedProductData.getEcoScore());
+			JSONObject result = new JSONObject(finishedProductData.getEcoScoreClass());
+			Assert.assertEquals("C", result.get("scoreClass"));
+			
+			alfrescoRepository.save(finishedProductData);
 			
 			return null;
 		}, false, true);
@@ -173,7 +184,7 @@ public class FrenchEcoScoreIT extends AbstractFinishedProductTest {
 		return packMaterial;
 	}
 
-	private NodeRef createRawMaterial(String query, String categoryCode, String name, NodeRef geoOrigin, double ingQty, NodeRef ing, List<PackMaterialListDataItem> packMaterial, List<LabelClaimListDataItem> labelClaimList) {
+	private NodeRef createFinishedProduct(String query, String categoryCode, String name, NodeRef geoOrigin, double ingQty, NodeRef ing, List<PackMaterialListDataItem> packMaterial, List<LabelClaimListDataItem> labelClaimList) {
 		
 		ListValuePage ret = frenchEcoScore.suggest(FrenchEcoScore.ECO_SCORE_SOURCE_TYPE, query, 1, 500, null);
 		
@@ -190,30 +201,30 @@ public class FrenchEcoScoreIT extends AbstractFinishedProductTest {
 		
 		Assert.assertTrue(found);
 		
-		NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			
-			RawMaterialData rawMaterialData = new RawMaterialData();
-			rawMaterialData.setName(name);
+			FinishedProductData finishedProductData = new FinishedProductData();
+			finishedProductData.setName(name);
 			
-			rawMaterialData.setEcoScoreCategory(categoryCode);
+			finishedProductData.setEcoScoreCategory(categoryCode);
 			
 			List<IngListDataItem> ingList = new ArrayList<>();
 			
 			ingList.add(new IngListDataItem(null, ingQty, Arrays.asList(geoOrigin), new ArrayList<>(), true, true, false, ing, false));
 			
-			rawMaterialData.setIngList(ingList);
+			finishedProductData.setIngList(ingList);
 			
-			rawMaterialData.setPackMaterialList(packMaterial);
+			finishedProductData.setPackMaterialList(packMaterial);
 			
 			if (labelClaimList != null) {
-				rawMaterialData.setLabelClaimList(labelClaimList);
+				finishedProductData.setLabelClaimList(labelClaimList);
 			}
 			
-			return alfrescoRepository.create(getTestFolderNodeRef(), rawMaterialData).getNodeRef();
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProductData).getNodeRef();
 			
 		}, false, true);
 		
-		return rawMaterialNodeRef;
+		return finishedProductNodeRef;
 		
 	}
 

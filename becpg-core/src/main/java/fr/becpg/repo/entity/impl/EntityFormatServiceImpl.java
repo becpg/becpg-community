@@ -244,16 +244,19 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 			
 			NodeRef listContainer = entityListDAO.getListContainer(entityNodeRef);
 			
-			List<ChildAssociationRef> childAssocs = dbNodeService.getChildAssocs(listContainer);
-			
-			for (ChildAssociationRef childAssoc : childAssocs) {
-				if (dbNodeService.getType(childAssoc.getChildRef()).equals(DataListModel.TYPE_DATALIST)) {
-					List<ChildAssociationRef> listItems = dbNodeService.getChildAssocs(childAssoc.getChildRef());
-					for (ChildAssociationRef listItem : listItems) {
-						dbNodeService.removeChild(childAssoc.getChildRef(), listItem.getChildRef());
+			if (listContainer != null) {
+				List<ChildAssociationRef> childAssocs = dbNodeService.getChildAssocs(listContainer);
+				
+				for (ChildAssociationRef childAssoc : childAssocs) {
+					if (dbNodeService.getType(childAssoc.getChildRef()).equals(DataListModel.TYPE_DATALIST)) {
+						List<ChildAssociationRef> listItems = dbNodeService.getChildAssocs(childAssoc.getChildRef());
+						for (ChildAssociationRef listItem : listItems) {
+							dbNodeService.removeChild(childAssoc.getChildRef(), listItem.getChildRef());
+						}
 					}
 				}
 			}
+			
 			
 		} else if (EntityFormat.JSON.toString().equals(fromFormat) && EntityFormat.NODE.equals(toFormat)) {
 
