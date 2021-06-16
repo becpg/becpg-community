@@ -281,8 +281,8 @@ public class EntityCatalogService<T extends RepositoryEntity> {
 			if ((condition != null) && !(condition.startsWith("spel") || condition.startsWith("js"))) {
 				condition = "spel(" + condition + ")";
 			}
-
-			if (!Boolean.parseBoolean(expressionService.eval(condition, entity).toString())) {
+			Object filter = expressionService.eval(condition, entity);
+			if (filter==null || !Boolean.parseBoolean(filter.toString())) {
 				logger.debug("Skipping condition doesn't match : [" + condition + "]");
 				return false;
 			}
