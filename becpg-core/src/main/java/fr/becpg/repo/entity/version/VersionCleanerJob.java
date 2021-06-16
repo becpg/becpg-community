@@ -86,24 +86,40 @@ public class VersionCleanerJob  extends AbstractScheduledLockedJob implements Jo
 		
 		List<NodeRef> temporaryNodes = BeCPGQueryBuilder.createQuery().withAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION).withAspect(ContentModel.ASPECT_TEMPORARY).inDB().ftsLanguage().maxResults(10).andBetween(ContentModel.PROP_MODIFIED, "MIN", "'" + ISO8601DateFormat.format(cal.getTime()) + "'").list();
 		
+		String tenantName = "default";
+		
+		if (!tenantAdminService.getCurrentUserDomain().equals("")) {
+			tenantName = tenantAdminService.getTenant(tenantAdminService.getCurrentUserDomain()).getTenantDomain();
+		}
+
 		for (NodeRef temporaryNode: temporaryNodes) {
+			
+			long start = System.currentTimeMillis();
+
 			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 				nodeService.deleteNode(nodeService.getPrimaryParent(temporaryNode).getParentRef());
 				return null;
 			}, false, false);
 			
-			logger.info("deleted node : " + temporaryNode);
+			long timeElapsed = System.currentTimeMillis() - start;
+
+			logger.info("deleted node : " + temporaryNode + ", tenant : " + tenantName + ", time elapsed : " + timeElapsed + " ms");
 		}
 		
 		List<NodeRef> notConvertedNodes = BeCPGQueryBuilder.createQuery().withAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION).excludeAspect(BeCPGModel.ASPECT_ENTITY_FORMAT).excludeAspect(ContentModel.ASPECT_TEMPORARY).inDB().ftsLanguage().maxResults(10).andBetween(ContentModel.PROP_MODIFIED, "MIN", "'" + ISO8601DateFormat.format(cal.getTime()) + "'").list();
 		
 		for (NodeRef notConvertedNode : notConvertedNodes) {
+			
+			long start = System.currentTimeMillis();
+			
 			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 				entityFormatService.convert(notConvertedNode, EntityFormat.JSON);
 				return null;
 			}, false, false);
 			
-			logger.info("converted node : " + notConvertedNode);
+			long timeElapsed = System.currentTimeMillis() - start;
+			
+			logger.info("converted node : " + notConvertedNode + ", tenant : " + tenantName + ", time elapsed : " + timeElapsed + " ms");
 		}
 		
 		return true;
