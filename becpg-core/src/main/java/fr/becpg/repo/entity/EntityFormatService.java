@@ -38,6 +38,8 @@ public interface EntityFormatService {
 	
 	public void convert(NodeRef entityNodeRef, EntityFormat	toFormat);
 	
+	public void convert(NodeRef from, NodeRef to, EntityFormat toFormat);
+	
 	public String extractEntityData(NodeRef entityNodeRef, EntityFormat toFormat);
 
 	void createOrUpdateEntityFromJson(NodeRef entityNodeRef, String entityJson);
