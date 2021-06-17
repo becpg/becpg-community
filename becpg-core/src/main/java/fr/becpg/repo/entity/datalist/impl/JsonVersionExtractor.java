@@ -405,7 +405,7 @@ public class JsonVersionExtractor extends ActivityListExtractor {
 
 		for (AttributeExtractorStructure field : metadataFields) {
 			if (field.isNested()) {
-				List<Map<String, Object>> extracted = extractNestedField(properties, field, mode);
+				List<Map<String, Object>> extracted = extractNestedField(properties, field);
 				
 				ret.put(field.getFieldName(), extracted);
 			} else {
@@ -416,7 +416,7 @@ public class JsonVersionExtractor extends ActivityListExtractor {
 		return ret;
 	}
 
-	private List<Map<String, Object>> extractNestedField(JSONObject properties, AttributeExtractorStructure field, FormatMode mode) throws JSONException {
+	private List<Map<String, Object>> extractNestedField(JSONObject properties, AttributeExtractorStructure field) throws JSONException {
 		List<Map<String, Object>> ret = new ArrayList<>();
 		if (field.getFieldDef() instanceof AssociationDefinition) {
 			ret.add(extractJSON(null, properties, field.getChildrens(), field));
@@ -467,15 +467,13 @@ public class JsonVersionExtractor extends ActivityListExtractor {
 			ret.put(PROP_MODIFIED, convertDateValue(Date.from(instantModified), FormatMode.JSON));
 			ret.put(PROP_MODIFIER_DISPLAY, extractPerson(properties.getString(ContentModel.PROP_MODIFIER.toPrefixString(namespaceService))));
 			
-			if (field != null) {
-				if (properties.has(field.getFieldQname().toPrefixString(namespaceService))) {
-					String id = ((JSONObject) properties.get(field.getFieldQname().toPrefixString(namespaceService))).getString("id");
-					NodeRef node = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, id);
-					if (nodeService.exists(node)) {
-						String color = (String) nodeService.getProperty(node, BeCPGModel.PROP_COLOR);
-						if (color != null) {
-							ret.put(PROP_COLOR, color);
-						}
+			if (field != null && properties.has(field.getFieldQname().toPrefixString(namespaceService))) {
+				String id = ((JSONObject) properties.get(field.getFieldQname().toPrefixString(namespaceService))).getString("id");
+				NodeRef node = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, id);
+				if (nodeService.exists(node)) {
+					String color = (String) nodeService.getProperty(node, BeCPGModel.PROP_COLOR);
+					if (color != null) {
+						ret.put(PROP_COLOR, color);
 					}
 				}
 			}
