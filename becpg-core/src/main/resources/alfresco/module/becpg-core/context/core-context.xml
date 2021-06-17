@@ -340,6 +340,9 @@
 	           <entry key="tenantAdminService">
                     <ref bean="tenantAdminService" />
                </entry>
+	           <entry key="versionService">
+                    <ref bean="versionService" />
+               </entry>
 			</map>
 		</property>
         
