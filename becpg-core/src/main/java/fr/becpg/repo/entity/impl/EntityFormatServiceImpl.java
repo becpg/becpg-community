@@ -8,6 +8,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.model.ForumModel;
+import org.alfresco.model.RenditionModel;
 import org.alfresco.repo.content.MimetypeMap;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentReader;
@@ -15,6 +17,9 @@ import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.view.ExporterCrawlerParameters;
+import org.alfresco.service.cmr.view.ExporterService;
+import org.alfresco.service.cmr.view.Location;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -28,12 +33,15 @@ import org.springframework.stereotype.Service;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.BeCPGModel.EntityFormat;
 import fr.becpg.model.DataListModel;
+import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityFormatService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.entity.remote.RemoteParams;
+import fr.becpg.repo.entity.version.VersionExporter;
+import fr.becpg.repo.report.entity.EntityReportService;
 
 @Service("entityFormatService")
 public class EntityFormatServiceImpl implements EntityFormatService {
@@ -53,7 +61,14 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 
 	@Autowired
 	protected NamespaceService namespaceService;
-
+	
+	@Autowired
+	private EntityReportService entityReportService;
+	
+	@Autowired
+	@Qualifier("exporterComponent")
+	private ExporterService exporterService;
+	
 	private static final Log logger = LogFactory.getLog(EntityFormatServiceImpl.class);
 
 	@Override
@@ -237,16 +252,14 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 		String fromFormat = getEntityFormat(entityNodeRef);
 
 		if (!EntityFormat.JSON.toString().equals(fromFormat) && EntityFormat.JSON.equals(toFormat)) {
-
+			
 			setEntityData(entityNodeRef, extractEntityData(entityNodeRef, EntityFormat.JSON));
-
 			setEntityFormat(entityNodeRef, EntityFormat.JSON);
-			
+
 			NodeRef listContainer = entityListDAO.getListContainer(entityNodeRef);
-			
+
 			if (listContainer != null) {
 				List<ChildAssociationRef> childAssocs = dbNodeService.getChildAssocs(listContainer);
-				
 				for (ChildAssociationRef childAssoc : childAssocs) {
 					if (dbNodeService.getType(childAssoc.getChildRef()).equals(DataListModel.TYPE_DATALIST)) {
 						List<ChildAssociationRef> listItems = dbNodeService.getChildAssocs(childAssoc.getChildRef());
@@ -256,7 +269,6 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 					}
 				}
 			}
-			
 			
 		} else if (EntityFormat.JSON.toString().equals(fromFormat) && EntityFormat.NODE.equals(toFormat)) {
 
@@ -269,6 +281,32 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 			
 			setEntityFormat(entityNodeRef, EntityFormat.NODE);
 		}
+		
+	}
+
+	@Override
+	public void convert(NodeRef from, NodeRef to, EntityFormat toFormat) {
+		
+		setEntityData(to, extractEntityData(from, toFormat));
+		
+		setEntityFormat(to, toFormat);
+		
+		entityReportService.generateReports(from, to);
+		
+		ExporterCrawlerParameters crawlerParameters = new ExporterCrawlerParameters();
+		
+		Location exportFrom = new Location(from);
+		crawlerParameters.setExportFrom(exportFrom);
+		
+		crawlerParameters.setCrawlSelf(true);
+		crawlerParameters.setExcludeChildAssocs(new QName[] { RenditionModel.ASSOC_RENDITION, ForumModel.ASSOC_DISCUSSION, BeCPGModel.ASSOC_ENTITYLISTS, ContentModel.ASSOC_RATINGS});
+		
+		crawlerParameters.setExcludeNamespaceURIs(Arrays.asList(ReportModel.TYPE_REPORT.getNamespaceURI()).toArray(new String[0]));
+		
+		exporterService.exportView(new VersionExporter(from, to, dbNodeService), crawlerParameters, null);
+
+		dbNodeService.deleteNode(from);
+		
 	}
 
 	@Override

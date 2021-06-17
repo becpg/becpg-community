@@ -7,9 +7,13 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.tenant.Tenant;
 import org.alfresco.repo.tenant.TenantAdminService;
+import org.alfresco.repo.version.Version2Model;
 import org.alfresco.schedule.AbstractScheduledLockedJob;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.repository.StoreRef;
+import org.alfresco.service.cmr.version.VersionHistory;
+import org.alfresco.service.cmr.version.VersionService;
 import org.alfresco.service.transaction.TransactionService;
 import org.alfresco.util.ISO8601DateFormat;
 import org.apache.commons.logging.Log;
@@ -43,6 +47,8 @@ public class VersionCleanerJob  extends AbstractScheduledLockedJob implements Jo
 	private TransactionService transactionService;
 
 	private NodeService nodeService;
+	
+	private VersionService versionService;
 
 	TenantAdminService tenantAdminService;
 
@@ -61,6 +67,7 @@ public class VersionCleanerJob  extends AbstractScheduledLockedJob implements Jo
 		transactionService = (TransactionService) jobData.get("transactionService");
 		nodeService = (NodeService) jobData.get("nodeService");
 		tenantAdminService = (TenantAdminService) jobData.get("tenantAdminService");
+		versionService = (VersionService) jobData.get("versionService");
 		
 		AuthenticationUtil.runAsSystem(this::cleanVersions);
 
@@ -110,16 +117,32 @@ public class VersionCleanerJob  extends AbstractScheduledLockedJob implements Jo
 		
 		for (NodeRef notConvertedNode : notConvertedNodes) {
 			
-			long start = System.currentTimeMillis();
+			String name = (String) nodeService.getProperty(notConvertedNode, ContentModel.PROP_NAME);
 			
-			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-				entityFormatService.convert(notConvertedNode, EntityFormat.JSON);
-				return null;
-			}, false, false);
+			String versionLabel = (String) nodeService.getProperty(notConvertedNode, BeCPGModel.PROP_VERSION_LABEL);
 			
-			long timeElapsed = System.currentTimeMillis() - start;
+			NodeRef parentNode = nodeService.getPrimaryParent(notConvertedNode).getParentRef();
 			
-			logger.info("converted node : " + notConvertedNode + ", tenant : " + tenantName + ", time elapsed : " + timeElapsed + " ms");
+			String parentName = (String) nodeService.getProperty(parentNode, ContentModel.PROP_NAME);
+			
+			NodeRef originalNode = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, parentName);
+			
+			VersionHistory versionHistory = nodeService.exists(originalNode) ? versionService.getVersionHistory(originalNode) : null;
+			
+			if (versionHistory != null) {
+				NodeRef versionNode = new NodeRef(StoreRef.PROTOCOL_WORKSPACE, Version2Model.STORE_ID, versionHistory.getVersion(versionLabel).getFrozenStateNodeRef().getId());
+				long start = System.currentTimeMillis();
+				
+				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+					entityFormatService.convert(notConvertedNode, versionNode, EntityFormat.JSON);
+					return null;
+				}, false, false);
+				
+				long timeElapsed = System.currentTimeMillis() - start;
+				
+				logger.info("Converted entity '" + name + "', from " + notConvertedNode + " to " + versionNode + ", tenant : " + tenantName + ", time elapsed : " + timeElapsed + " ms");
+				
+			}
 		}
 		
 		return true;
