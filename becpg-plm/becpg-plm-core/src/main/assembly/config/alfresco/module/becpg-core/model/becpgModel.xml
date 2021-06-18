@@ -28,7 +28,7 @@
 			</parameter>
 		</constraint>
 		
-		<constraint name="bcpg:nutrientCategory" type="LIST">
+		<constraint name="bcpg:nutrientProfileCategories" type="LIST">
 			<parameter name="allowedValues">
 				<list>
 					<value>Others</value>
@@ -3882,7 +3882,7 @@
 <!-- 						<tokenised>false</tokenised> -->
 <!-- 					</index> -->
 <!-- 					<constraints> -->
-<!-- 						<constraint ref="bcpg:nutrientCategory" /> -->
+<!-- 						<constraint ref="bcpg:nutrientProfileCategories" /> -->
 <!-- 					</constraints> -->
 <!-- 				</property> -->
 			</properties>

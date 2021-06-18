@@ -9,9 +9,9 @@ import org.alfresco.service.namespace.QName;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.GS1Model;
 import fr.becpg.model.NutrientProfileCategory;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.importer.impl.ImportHelper;
@@ -35,15 +35,15 @@ public class NutriScoreIT extends PLMBaseTestCase {
 	@Test
 	public void testNutriScore() {
 		
-		NodeRef energyKjNode = ImportHelper.findCharact(QName.createQName(BCPG_NUT, namespaceService), BeCPGModel.PROP_CHARACT_NAME, I18NUtil.getMessage("plm.nut.energykj"), nodeService);
-		NodeRef satFatNode = ImportHelper.findCharact(QName.createQName(BCPG_NUT, namespaceService), BeCPGModel.PROP_CHARACT_NAME, I18NUtil.getMessage("plm.nut.satfat"), nodeService);
-		NodeRef totalFatNode = ImportHelper.findCharact(QName.createQName(BCPG_NUT, namespaceService), BeCPGModel.PROP_CHARACT_NAME, I18NUtil.getMessage("plm.nut.totalfat"), nodeService);
-		NodeRef totalSugarNode = ImportHelper.findCharact(QName.createQName(BCPG_NUT, namespaceService), BeCPGModel.PROP_CHARACT_NAME, I18NUtil.getMessage("plm.nut.sugar"), nodeService);
-		NodeRef sodiumNode = ImportHelper.findCharact(QName.createQName(BCPG_NUT, namespaceService), BeCPGModel.PROP_CHARACT_NAME, I18NUtil.getMessage("plm.nut.sodium"), nodeService);
-		NodeRef percFruitsAndVetgsNode = ImportHelper.findCharact(QName.createQName(BCPG_PHYSICO_CHEM, namespaceService), BeCPGModel.PROP_CHARACT_NAME, I18NUtil.getMessage("plm.nut.fruitsandveg"), nodeService);
-		NodeRef nspFibreNode = ImportHelper.findCharact(QName.createQName(BCPG_NUT, namespaceService), BeCPGModel.PROP_CHARACT_NAME, I18NUtil.getMessage("plm.nut.psacns"), nodeService);
-		NodeRef aoacFibreNode = ImportHelper.findCharact(QName.createQName(BCPG_NUT, namespaceService), BeCPGModel.PROP_CHARACT_NAME, I18NUtil.getMessage("plm.nut.fibtg"), nodeService);
-		NodeRef proteinNode = ImportHelper.findCharact(QName.createQName(BCPG_NUT, namespaceService), BeCPGModel.PROP_CHARACT_NAME, I18NUtil.getMessage("plm.nut.protein"), nodeService);
+		NodeRef energyKjNode = ImportHelper.findCharact(QName.createQName(BCPG_NUT, namespaceService), GS1Model.PROP_NUTRIENT_TYPE_CODE, "ENER-KJO", nodeService);
+		NodeRef satFatNode = ImportHelper.findCharact(QName.createQName(BCPG_NUT, namespaceService), GS1Model.PROP_NUTRIENT_TYPE_CODE, "FASAT", nodeService);
+		NodeRef totalFatNode = ImportHelper.findCharact(QName.createQName(BCPG_NUT, namespaceService), GS1Model.PROP_NUTRIENT_TYPE_CODE, "FAT", nodeService);
+		NodeRef totalSugarNode = ImportHelper.findCharact(QName.createQName(BCPG_NUT, namespaceService), GS1Model.PROP_NUTRIENT_TYPE_CODE, "SUGAR", nodeService);
+		NodeRef sodiumNode = ImportHelper.findCharact(QName.createQName(BCPG_NUT, namespaceService), GS1Model.PROP_NUTRIENT_TYPE_CODE, "NA", nodeService);
+		NodeRef percFruitsAndVetgsNode = ImportHelper.findCharact(QName.createQName(BCPG_PHYSICO_CHEM, namespaceService), BeCPGModel.PROP_CHARACT_NAME, "Teneur en fruits et légumes", nodeService);
+		NodeRef nspFibreNode = ImportHelper.findCharact(QName.createQName(BCPG_NUT, namespaceService), GS1Model.PROP_NUTRIENT_TYPE_CODE, "PSACNS", nodeService);
+		NodeRef aoacFibreNode = ImportHelper.findCharact(QName.createQName(BCPG_NUT, namespaceService), GS1Model.PROP_NUTRIENT_TYPE_CODE, "FIBTG", nodeService);
+		NodeRef proteinNode = ImportHelper.findCharact(QName.createQName(BCPG_NUT, namespaceService), GS1Model.PROP_NUTRIENT_TYPE_CODE, "PRO-", nodeService);
 		
 		// 2084d, 2.8d, 22.9d, 4.73d, 672d, 0d, 0d, 4.13d, 5.81d, "Others"
 
