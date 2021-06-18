@@ -27,6 +27,17 @@
 				<value>true</value>
 			</parameter>
 		</constraint>
+		
+		<constraint name="bcpg:nutrientCategory" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>Others</value>
+					<value>Fats</value>
+					<value>Beverages</value>
+					<value>Cheeses</value>
+				</list>
+			</parameter>
+		</constraint>
 
 
 		<constraint name="bcpg:systemState" type="LIST">
@@ -3862,6 +3873,18 @@
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 				</property>
+<!-- 				<property name="bcpg:nutrientProfileCategory"> -->
+<!-- 					<type>d:text</type> -->
+<!-- 					<default>Others</default> -->
+<!-- 					<index enabled="true"> -->
+<!-- 						<atomic>false</atomic> -->
+<!-- 						<stored>false</stored> -->
+<!-- 						<tokenised>false</tokenised> -->
+<!-- 					</index> -->
+<!-- 					<constraints> -->
+<!-- 						<constraint ref="bcpg:nutrientCategory" /> -->
+<!-- 					</constraints> -->
+<!-- 				</property> -->
 			</properties>
 			<associations>
 				<association name="bcpg:nutrientProfileRef">
