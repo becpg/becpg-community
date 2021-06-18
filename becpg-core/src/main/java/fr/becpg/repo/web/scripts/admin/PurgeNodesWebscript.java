@@ -192,6 +192,7 @@ public class PurgeNodesWebscript extends AbstractWebScript {
 		                        {
 		                        	
 		    						if (nodeService.exists(nodeRef)) {
+		    							//TODO bug here disabling behaviour make association cache not working
 		    							policyBehaviourFilter.disableBehaviour();
 		    							try {
 		    								nodeService.addAspect(nodeRef, ContentModel.ASPECT_TEMPORARY, new HashMap<>());

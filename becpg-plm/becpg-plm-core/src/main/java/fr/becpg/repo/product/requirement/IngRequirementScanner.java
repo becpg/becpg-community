@@ -105,7 +105,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 										ReqCtrlListDataItem reqCtrl = reqCtrlMap.get(fil.getNodeRef());
 										if (reqCtrl == null) {
 											reqCtrl = new ReqCtrlListDataItem(null, fil.getReqType(), fil.getReqMessage(), ingListDataItem.getIng(),
-													new ArrayList<NodeRef>(), RequirementDataType.Specification);
+													new ArrayList<>(), RequirementDataType.Specification);
 											reqCtrlMap.put(fil.getNodeRef(), reqCtrl);
 										} else {
 											reqCtrl.setReqDataType(RequirementDataType.Specification);

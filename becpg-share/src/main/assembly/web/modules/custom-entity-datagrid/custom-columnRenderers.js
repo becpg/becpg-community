@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (C) 2010-2020 beCPG. 
+ *  Copyright (C) 2010-2021 beCPG. 
  *   
  *  This file is part of beCPG 
  *   
@@ -131,8 +131,11 @@ if (beCPG.module.EntityDataGridRenderers) {
 						var before = prop.before;
 						var after = prop.after;
 						var locale = "";
-
-						if (before != null && before.length > 0 && before[0] != null && typeof before[0] == 'object'){
+	
+						var hasBefore = before != null && before.length > 0 && before[0] != null && typeof before[0] == 'object';
+						var hasAfter = after != null && after.length > 0 && after[0] != null && typeof after[0] == 'object';
+						
+						if (hasBefore){
 							var beforePerLocale = before[0];
 							var afterPerLocale = after[0];
 							Object.keys(beforePerLocale).forEach(function(key){
@@ -163,6 +166,20 @@ if (beCPG.module.EntityDataGridRenderers) {
 									}
 								});
 							}
+						} else if (hasAfter) {
+							var afterPerLocale = after[0];
+							html += '      <td> </td>';
+							Object.keys(afterPerLocale).forEach(function(key){
+								locale = key;
+								if (key.indexOf("_") > -1){
+									locale = key.substring(3,5).toLowerCase();
+								}
+								html += '      <tr '+(count%2 == 0 ? '':'class="grey"')+'><td>' + prop.title +
+								' <img class="icon16_11" src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/flags/' + locale + '.png" /></td>';
+								html += '      <td> </td>';
+								html += '      <td>' + afterPerLocale[key] + '</td></tr>';
+								count++;
+							});
 						} else {
 							html += '      <tr '+(count%2 == 0 ? '':'class="grey"')+'><td>' + prop.title + '</td>';
 							if (before != null){

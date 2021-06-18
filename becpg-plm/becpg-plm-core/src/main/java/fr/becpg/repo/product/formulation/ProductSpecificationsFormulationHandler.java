@@ -23,7 +23,6 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
@@ -63,45 +62,62 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 	private NodeService nodeService;
 
 	/**
-	 * <p>Setter for the field <code>policyBehaviourFilter</code>.</p>
+	 * <p>
+	 * Setter for the field <code>policyBehaviourFilter</code>.
+	 * </p>
 	 *
-	 * @param policyBehaviourFilter a {@link org.alfresco.repo.policy.BehaviourFilter} object.
+	 * @param policyBehaviourFilter
+	 *            a {@link org.alfresco.repo.policy.BehaviourFilter} object.
 	 */
 	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
 		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
 
 	/**
-	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
+	 * <p>
+	 * Setter for the field <code>alfrescoRepository</code>.
+	 * </p>
 	 *
-	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
+	 * @param alfrescoRepository
+	 *            a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
 	 */
 	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
 	/**
-	 * <p>Setter for the field <code>transactionService</code>.</p>
+	 * <p>
+	 * Setter for the field <code>transactionService</code>.
+	 * </p>
 	 *
-	 * @param transactionService a {@link org.alfresco.service.transaction.TransactionService} object.
+	 * @param transactionService
+	 *            a {@link org.alfresco.service.transaction.TransactionService}
+	 *            object.
 	 */
 	public void setTransactionService(TransactionService transactionService) {
 		this.transactionService = transactionService;
 	}
 
 	/**
-	 * <p>Setter for the field <code>requirementScanners</code>.</p>
+	 * <p>
+	 * Setter for the field <code>requirementScanners</code>.
+	 * </p>
 	 *
-	 * @param requirementScanners a {@link java.util.List} object.
+	 * @param requirementScanners
+	 *            a {@link java.util.List} object.
 	 */
 	public void setRequirementScanners(List<RequirementScanner> requirementScanners) {
 		this.requirementScanners = requirementScanners;
 	}
 
 	/**
-	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 * <p>
+	 * Setter for the field <code>nodeService</code>.
+	 * </p>
 	 *
-	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 * @param nodeService
+	 *            a {@link org.alfresco.service.cmr.repository.NodeService}
+	 *            object.
 	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
@@ -111,7 +127,7 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 
 	/** {@inheritDoc} */
 	@Override
-	public boolean process(ProductData formulatedProduct) throws FormulateException {
+	public boolean process(ProductData formulatedProduct)  {
 
 		if (formulatedProduct instanceof ProductSpecificationData) {
 			if (!FormulationService.FAST_FORMULATION_CHAINID.equals(formulatedProduct.getFormulationChainId())) {
@@ -122,15 +138,15 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 						if (alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_SPEC_COMPATIBILTY_LIST)) {
 							StopWatch stopWatch = new StopWatch();
 							stopWatch.start();
-							String logs = "Start formulate specification at " + Calendar.getInstance().getTime().toString() + ":\n";
+							StringBuilder logs = new StringBuilder( "Start formulate specification at " + Calendar.getInstance().getTime().toString() + ":\n");
 
 							Map<NodeRef, String> toUpdate = new HashMap<>();
 							Set<NodeRef> toSkipProduct = new HashSet<>();
 							List<NodeRef> productNodeRefs = getProductNodeRefs((ProductSpecificationData) formulatedProduct);
-							logs += "- found " + productNodeRefs.size() + " products to test specification on\n";
+							logs.append( "- found " + productNodeRefs.size() + " products to test specification on\n");
 
 							if (logger.isDebugEnabled()) {
-								logger.debug(logs);
+								logger.debug(logs.toString());
 							}
 
 							for (NodeRef productNodeRef : productNodeRefs) {
@@ -147,17 +163,17 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 
 										for (RequirementScanner scanner : requirementScanners) {
 
-											String reqDetails = null;
+											StringBuilder reqDetails = null;
 
 											for (ReqCtrlListDataItem reqCtrlListDataItem : scanner.checkRequirements(productData,
 													Arrays.asList((ProductSpecificationData) formulatedProduct))) {
 												if (RequirementType.Forbidden.equals(reqCtrlListDataItem.getReqType())
 														&& RequirementDataType.Specification.equals(reqCtrlListDataItem.getReqDataType())) {
 													if (reqDetails == null) {
-														reqDetails = reqCtrlListDataItem.getReqMessage();
+														reqDetails = new StringBuilder(reqCtrlListDataItem.getReqMessage());
 													} else {
-														reqDetails += RepoConsts.LABEL_SEPARATOR;
-														reqDetails += reqCtrlListDataItem.getReqMessage();
+														reqDetails.append(RepoConsts.LABEL_SEPARATOR);
+														reqDetails.append(reqCtrlListDataItem.getReqMessage());
 													}
 												}
 											}
@@ -165,7 +181,7 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 												if (logger.isDebugEnabled()) {
 													logger.debug("Adding Forbidden for " + productNodeRef);
 												}
-												toUpdate.put(productNodeRef, reqDetails);
+												toUpdate.put(productNodeRef, reqDetails.toString());
 											}
 										}
 										return productData;
@@ -198,12 +214,12 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 
 							stopWatch.stop();
 
-							logs += "- found " + toUpdate.size() + " new forbidden products,\n";
-							logs += "- found " + toSkipProduct.size() + " products to skip,\n";
-							logs += "- found " + toRemove.size() + " products to remove,\n";
-							logs += "formulation end in " + stopWatch.getTotalTimeSeconds() + "s at " + Calendar.getInstance().getTime().toString()
-									+ "\n";
-							specificationData.setSpecCompatibilityLog(logs);
+							logs.append( "- found " + toUpdate.size() + " new forbidden products,\n");
+							logs.append( "- found " + toSkipProduct.size() + " products to skip,\n");
+							logs.append( "- found " + toRemove.size() + " products to remove,\n");
+							logs.append( "formulation end in " + stopWatch.getTotalTimeSeconds() + "s at " + Calendar.getInstance().getTime().toString()
+									+ "\n");
+							specificationData.setSpecCompatibilityLog(logs.toString());
 
 						} else {
 							logger.debug("No change unit list");
@@ -225,10 +241,10 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 			}
 
 			for (RequirementScanner scanner : requirementScanners) {
-				if(logger.isDebugEnabled()) {
-					logger.debug("Running RequirementScanner: "+scanner.getClass().getName());
+				if (logger.isDebugEnabled()) {
+					logger.debug("Running RequirementScanner: " + scanner.getClass().getName());
 				}
-				
+
 				formulatedProduct.getReqCtrlList().addAll(scanner.checkRequirements(formulatedProduct, formulatedProduct.getProductSpecifications()));
 			}
 		}
@@ -238,14 +254,16 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 	}
 
 	/**
-	 * <p>run.</p>
+	 * <p>
+	 * run.
+	 * </p>
 	 *
 	 * @return a boolean.
 	 */
 	public boolean run() {
-		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		try {
+			return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-			try {
 				for (NodeRef productSpecificationNodeRef : BeCPGQueryBuilder.createQuery().ofType(PLMModel.TYPE_PRODUCT_SPECIFICATION)
 						.excludeDefaults().list()) {
 					if (Boolean.TRUE.equals(nodeService.getProperty(productSpecificationNodeRef, PLMModel.PROP_SPEC_COMPATIBILITY_JOB_ON))) {
@@ -285,16 +303,15 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 
 					}
 				}
-			} catch (Exception e) {
-				if (e instanceof ConcurrencyFailureException) {
-					throw (ConcurrencyFailureException) e;
-				}
-				logger.error(e, e);
-				return false;
-			}
-			return true;
 
-		}, false, true);
+				return true;
+
+			}, false, true);
+
+		} catch (Exception e) {
+			logger.error(e, e);
+			return false;
+		}
 
 	}
 

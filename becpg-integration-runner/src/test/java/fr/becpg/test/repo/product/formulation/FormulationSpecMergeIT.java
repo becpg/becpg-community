@@ -26,7 +26,6 @@ import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
-import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
@@ -382,17 +381,17 @@ public class FormulationSpecMergeIT extends FormulationLabelClaimIT {
 		logger.info("/*************************************/");
 
 		NodeRef fp3 = createTestProduct("Finished Product 3");
-		ProductData finishedProduct = alfrescoRepository.findOne(fp3);
-		final String name = finishedProduct.getName();
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			ProductData finishedProduct = alfrescoRepository.findOne(fp3);
+			final String name = finishedProduct.getName();
+			
 			Map<QName, Serializable> properties = new HashMap<>();
 			properties.put(ContentModel.PROP_NAME, name + " Spec Allergen globale");
 			NodeRef productSpecificationNodeRef1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
 					PLMModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();
-
-			ProductSpecificationData productSpecification = (ProductSpecificationData) alfrescoRepository.findOne(productSpecificationNodeRef1);
 
 			// two catalogs
 			properties.clear();
@@ -426,14 +425,13 @@ public class FormulationSpecMergeIT extends FormulationLabelClaimIT {
 					PLMModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();
 			ProductSpecificationData productSpecification3 = (ProductSpecificationData) alfrescoRepository.findOne(productSpecificationNodeRef3);
 
-			allergens.clear();
+			allergens = new ArrayList<>();
 			allergens.add(new AllergenListDataItem(null, null, true, false, null, null, allergen4, false));
 			allergens.add(new AllergenListDataItem(null, null, true, true, null, null, allergen3, false));
 			allergens.add(new AllergenListDataItem(null, null, false, true, null, null, allergen2, false));
 			productSpecification3.setAllergenList(allergens);
 			alfrescoRepository.save(productSpecification3);
 
-			alfrescoRepository.save(productSpecification);
 
 			List<CompoListDataItem> compoList = new ArrayList<>();
 			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
@@ -482,21 +480,32 @@ public class FormulationSpecMergeIT extends FormulationLabelClaimIT {
 			rm4.getAllergenList().clear();
 			alfrescoRepository.save(rm4);
 
+			logger.debug("Create spec association");
 			// Binding specifications
 			nodeService.createAssociation(productSpecificationNodeRef1, productSpecificationNodeRef3, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
 			nodeService.createAssociation(productSpecificationNodeRef1, productSpecificationNodeRef2, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
-			nodeService.createAssociation(finishedProduct.getNodeRef(), productSpecificationNodeRef1, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
+			nodeService.createAssociation(fp3, productSpecificationNodeRef1, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
 
+			finishedProduct = alfrescoRepository.findOne(fp3);
+			assertEquals(1,finishedProduct.getProductSpecifications().size());
+			assertEquals(2,finishedProduct.getProductSpecifications().get(0).getProductSpecifications().size());
+			
+			
 			/*
 			 * ============= Formulation =============
 			 */
+			
+			logger.debug("Formulate Finished Product 3");
 			productService.formulate(fp3);
+			
+			logger.debug("Find one Finished Product 3");
 
-			ProductData formulatedProduct = alfrescoRepository.findOne(fp3);
+			finishedProduct = alfrescoRepository.findOne(fp3);
 
 			int checkMissingFields = 0;
 			int checks = 0;
-			for (ReqCtrlListDataItem r : formulatedProduct.getReqCtrlList()) {
+			for (ReqCtrlListDataItem r : finishedProduct.getReqCtrlList()) {
+				if(RequirementType.Forbidden.equals(r.getReqType())) {
 				logger.debug("Checking rclDataItem " + r.getReqMessage());
 				if (I18NUtil
 						.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Précautions d'emploi", "EU 1169/2011 (INCO)")
@@ -530,10 +539,11 @@ public class FormulationSpecMergeIT extends FormulationLabelClaimIT {
 					assertEquals(RequirementType.Forbidden, r.getReqType());
 					
 					checks++;
-				} else if (!RequirementDataType.Completion.equals(r.getReqDataType())) {
+				} /*else if (!RequirementDataType.Completion.equals(r.getReqDataType())) {
 					logger.debug("Unexpected rclDataItem: " + r.getReqMessage());
 					fail();
-				}
+				}*/
+			}
 			}
 			logger.debug("Missing fields : " + checkMissingFields + " (should be 2)");
 			assertEquals(2, checkMissingFields);

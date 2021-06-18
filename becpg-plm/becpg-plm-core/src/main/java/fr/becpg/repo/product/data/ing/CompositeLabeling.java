@@ -25,7 +25,7 @@ import fr.becpg.repo.product.data.constraints.DeclarationType;
 public class CompositeLabeling extends LabelingComponent {
 
 	/** Constant <code>ROOT="root"</code> */
-	public final static String ROOT = "root";
+	public static final String ROOT = "root";
 
 	private static final long serialVersionUID = 7903326038199131582L;
 
@@ -69,6 +69,7 @@ public class CompositeLabeling extends LabelingComponent {
 		super(compositeLabeling);
 		this.ingType = compositeLabeling.ingType;
 		this.ingList = clone(compositeLabeling.ingList);
+		this.ingListAtEnd = clone(compositeLabeling.ingListAtEnd);
 		this.qtyTotal = compositeLabeling.qtyTotal;
 		this.evaporatingLoss = compositeLabeling.evaporatingLoss;
 		this.volumeTotal = compositeLabeling.volumeTotal;
@@ -334,7 +335,7 @@ public class CompositeLabeling extends LabelingComponent {
 	private void print(StringBuilder sb, String prefix, boolean isTail) {
 		sb.append(prefix).append(isTail ? "└──[" : "├──[")
 				.append(getLegalName(I18NUtil.getContentLocaleLang()) == null ? ROOT : getLegalName(I18NUtil.getContentLocaleLang()))
-				.append(" ( plural:" + isPlural() + ") ").append(" - ").append(getQty()).append(" (").append(getQtyTotal()).append(", vol: ")
+				.append(" ( allergens:" + getAllergens() + ") ").append(" ( plural:" + isPlural() + ") ").append(" - ").append(getQty()).append(" (").append(getQtyTotal()).append(", vol: ")
 				.append(getVolumeTotal()).append(") ").append(declarationType != null ? declarationType.toString() : "").append("]\n");
 		for (Iterator<CompositeLabeling> iterator = ingList.values().iterator(); iterator.hasNext();) {
 			CompositeLabeling labelingComponent = iterator.next();

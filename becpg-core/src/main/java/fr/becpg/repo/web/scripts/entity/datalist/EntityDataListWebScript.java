@@ -398,49 +398,59 @@ public class EntityDataListWebScript extends AbstractWebScript {
 			DataListExtractor extractor = dataListExtractorFactory.getExtractor(dataListFilter);
 
 			boolean hasWriteAccess = !dataListFilter.isVersionFilter();
-			if (hasWriteAccess && !entityNodeRefsList.isEmpty()) {
-
+			boolean hasReadAccess = true;
+			if(!entityNodeRefsList.isEmpty()) {
 				NodeRef entityNodeRef = entityNodeRefsList.get(0);
 				QName entityNodeRefType = nodeService.getType(entityNodeRef);
+				
+				int accessMode = securityService.computeAccessMode(entityNodeRef, entityNodeRefType, itemType);
+				hasReadAccess = accessMode != SecurityService.NONE_ACCESS;
+				
+				if (hasReadAccess && hasWriteAccess) {
 
-				hasWriteAccess = extractor.hasWriteAccess() && !nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_CHECKED_OUT)
-						&& !nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)
-						&& (lockService.getLockStatus(entityNodeRef) == LockStatus.NO_LOCK)
-						&& (securityService.computeAccessMode(entityNodeRefType, itemType) == SecurityService.WRITE_ACCESS)
-						&& isExternalUserAllowed(dataListFilter);
-
-				if (hasWriteAccess && (dataListFilter.getParentNodeRef() != null) && dataType!=null && !dataType.getLocalName().equals(dataListFilter.getDataListName())) {
-					String dataListType = (String) nodeService.getProperty(dataListFilter.getParentNodeRef(), DataListModel.PROP_DATALISTITEMTYPE);
-
-					if ((dataListType != null) && !dataListType.isEmpty()) {
-						QName dataListTypeQName = QName.createQName(dataListType, namespaceService);
-						hasWriteAccess = securityService.computeAccessMode(entityNodeRefType, dataListTypeQName) == SecurityService.WRITE_ACCESS;
+					hasWriteAccess = extractor.hasWriteAccess() && !nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_CHECKED_OUT)
+							&& !nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)
+							&& (lockService.getLockStatus(entityNodeRef) == LockStatus.NO_LOCK)
+							&& (accessMode == SecurityService.WRITE_ACCESS)
+							&& isExternalUserAllowed(dataListFilter);
+	
+					if (hasWriteAccess && (dataListFilter.getParentNodeRef() != null) && dataType!=null && !dataType.getLocalName().equals(dataListFilter.getDataListName())) {
+						String dataListType = (String) nodeService.getProperty(dataListFilter.getParentNodeRef(), DataListModel.PROP_DATALISTITEMTYPE);
+	
+						if ((dataListType != null) && !dataListType.isEmpty()) {
+							QName dataListTypeQName = QName.createQName(dataListType, namespaceService);
+							hasWriteAccess = securityService.computeAccessMode(entityNodeRef, entityNodeRefType, dataListTypeQName) == SecurityService.WRITE_ACCESS;
+						}
 					}
 				}
 			}
-
-			dataListFilter.setHasWriteAccess(hasWriteAccess);
-
-			Date lastModified = extractor.computeLastModified(dataListFilter);
-
-			if (BrowserCacheHelper.shouldReturnNotModified(req, lastModified)) {
-				res.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-				if (logger.isDebugEnabled()) {
-					logger.debug("Send Not_MODIFIED status");
+			PaginatedExtractedItems extractedItems;
+			if(hasReadAccess) {
+				dataListFilter.setHasWriteAccess(hasWriteAccess);
+	
+				Date lastModified = extractor.computeLastModified(dataListFilter);
+	
+				if (BrowserCacheHelper.shouldReturnNotModified(req, lastModified)) {
+					res.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+					if (logger.isDebugEnabled()) {
+						logger.debug("Send Not_MODIFIED status");
+					}
+					return;
 				}
-				return;
+	
+				Cache cache = new Cache(getDescription().getRequiredCache());
+				cache.setIsPublic(false);
+				cache.setMustRevalidate(true);
+				cache.setNeverCache(false);
+				cache.setMaxAge(0L);
+				cache.setLastModified(lastModified);
+				res.setCache(cache);
+	
+				 extractedItems = extractor.extract(dataListFilter, metadataFields);
+			} else {
+				extractedItems = new PaginatedExtractedItems(dataListFilter.getPagination().getPageSize());
 			}
-
-			Cache cache = new Cache(getDescription().getRequiredCache());
-			cache.setIsPublic(false);
-			cache.setMustRevalidate(true);
-			cache.setNeverCache(false);
-			cache.setMaxAge(0L);
-			cache.setLastModified(lastModified);
-			res.setCache(cache);
-
-			PaginatedExtractedItems extractedItems = extractor.extract(dataListFilter, metadataFields);
-
+			
 			datalistOutputWriterFactory.write(req, res, dataListFilter, extractedItems);
 
 		} catch (JSONException e) {

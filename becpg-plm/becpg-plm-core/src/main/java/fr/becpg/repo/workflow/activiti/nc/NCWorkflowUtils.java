@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -27,12 +27,11 @@ import java.util.Set;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
+import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.repo.workflow.WorkflowModel;
 import org.alfresco.repo.workflow.activiti.ActivitiScriptNode;
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.dictionary.AspectDefinition;
-import org.alfresco.service.cmr.model.FileExistsException;
-import org.alfresco.service.cmr.model.FileNotFoundException;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -41,7 +40,6 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.RegexQNamePattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.dao.ConcurrencyFailureException;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.QualityModel;
@@ -87,8 +85,7 @@ public class NCWorkflowUtils {
 	 * @throws org.alfresco.service.cmr.model.FileExistsException if any.
 	 * @throws org.alfresco.service.cmr.model.FileNotFoundException if any.
 	 */
-	public static void updateNC(NodeRef ncNodeRef, NCWorkflowUtilsTask task, ServiceRegistry serviceRegistry)
-			throws FileExistsException, FileNotFoundException {
+	public static void updateNC(NodeRef ncNodeRef, NCWorkflowUtilsTask task, ServiceRegistry serviceRegistry) {
 
 		RunAsWork<NodeRef> actionRunAs = () -> {
 			try {
@@ -162,10 +159,10 @@ public class NCWorkflowUtils {
 				}
 
 			} catch (Exception e) {
-				if (e instanceof ConcurrencyFailureException) {
-					throw (ConcurrencyFailureException) e;
+				if (RetryingTransactionHelper.extractRetryCause(e) == null) {
+					logger.error("Failed to update nc", e);
 				}
-				logger.error("Failed to create nc", e);
+
 				throw e;
 			}
 

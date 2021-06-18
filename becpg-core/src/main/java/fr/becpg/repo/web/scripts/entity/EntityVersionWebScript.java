@@ -1,5 +1,5 @@
 /*
- * 
+ *
  */
 package fr.becpg.repo.web.scripts.entity;
 
@@ -10,7 +10,6 @@ import java.util.List;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.ServiceRegistry;
-import org.alfresco.service.cmr.repository.InvalidNodeRefException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.NoSuchPersonException;
@@ -45,6 +44,8 @@ public class EntityVersionWebScript extends AbstractWebScript {
 	private static final String DISPLAY_FORMAT = "dd MMM yyyy HH:mm:ss 'GMT'Z '('zzz')'";
 	private static final String PARAM_MODE = "mode";
 
+	private static final int MAX_DESCRIPTION_LENGTH = 200;
+	
 	private static final Log logger = LogFactory.getLog(EntityVersionWebScript.class);
 
 	private EntityVersionService entityVersionService;
@@ -112,28 +113,6 @@ public class EntityVersionWebScript extends AbstractWebScript {
 
 		NodeRef nodeRef = new NodeRef(req.getParameter(PARAM_NODEREF));
 
-//		Date lastModified = (Date) nodeService.getProperty(nodeRef, ContentModel.PROP_MODIFIED);
-//
-//		if (lastModified != null && BrowserCacheHelper.shouldReturnNotModified(req, lastModified)) {
-//			res.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-//			if (logger.isDebugEnabled()) {
-//				logger.debug("Send Not_MODIFIED status");
-//			}
-//			return;
-//		}
-//
-//		if (lastModified == null) {
-//			lastModified = new Date();
-//		}
-//
-//		Cache cache = new Cache(getDescription().getRequiredCache());
-//		cache.setIsPublic(false);
-//		cache.setMustRevalidate(true);
-//		cache.setNeverCache(false);
-//		cache.setMaxAge(0L);
-//		cache.setLastModified(lastModified);
-//		res.setCache(cache);
-		
 		String mode = req.getParameter(PARAM_MODE);
 		SimpleDateFormat displayFormat = new SimpleDateFormat(DISPLAY_FORMAT);
 
@@ -165,9 +144,23 @@ public class EntityVersionWebScript extends AbstractWebScript {
 					JSONObject jsonVersion = new JSONObject();
 					// Version info
 					jsonVersion.put("nodeRef", version.getEntityVersionNodeRef());
-					jsonVersion.put("name", nodeService.getProperty(version.getFrozenStateNodeRef(), ContentModel.PROP_NAME));
+
+					String name = (String) nodeService.getProperty(version.getFrozenStateNodeRef(), ContentModel.PROP_NAME);
+
+					if (name.endsWith(RepoConsts.VERSION_NAME_DELIMITER + version.getVersionLabel())) {
+						name = name.replace(RepoConsts.VERSION_NAME_DELIMITER + version.getVersionLabel(), "");
+					}
+
+					jsonVersion.put("name", name);
 					jsonVersion.put("label", version.getVersionLabel());
-					jsonVersion.put("description", version.getDescription());
+					
+					String description = version.getDescription();
+					
+					if (description != null && description.length() > MAX_DESCRIPTION_LENGTH) {
+						description = description.substring(0, MAX_DESCRIPTION_LENGTH) + " ...";
+					}
+					
+					jsonVersion.put("description", description);
 
 					Date createdDate = version.getFrozenModifiedDate();
 
@@ -183,6 +176,11 @@ public class EntityVersionWebScript extends AbstractWebScript {
 					jsonVersion.put("siteId", attributeExtractorService.extractSiteId(version.getEntityNodeRef()));
 					jsonVersion.put("itemType", itemType.toPrefixString(serviceRegistry.getNamespaceService()));
 
+					String referenceLabel = (String) nodeService.getProperty(version.getEntityNodeRef(), ContentModel.PROP_VERSION_LABEL);
+					if (referenceLabel == null || referenceLabel.equals(version.getVersionLabel())) {
+						jsonVersion.put("clickableNode", version.getEntityNodeRef());
+					}
+					
 					jsonVersions.put(jsonVersion);
 				}
 			}
@@ -204,7 +202,13 @@ public class EntityVersionWebScript extends AbstractWebScript {
 						jsonBranch.put("label", RepoConsts.INITIAL_VERSION);
 					}
 
-					jsonBranch.put("description", nodeService.getProperty(branchNodeRef, ContentModel.PROP_DESCRIPTION));
+					String description = (String) nodeService.getProperty(branchNodeRef, ContentModel.PROP_DESCRIPTION);
+					
+					if (description != null && description.length() > MAX_DESCRIPTION_LENGTH) {
+						description = description.substring(0, MAX_DESCRIPTION_LENGTH) + " ...";
+					}
+					
+					jsonBranch.put("description", description);
 					jsonBranch.put("createdDate", displayFormat.format((Date) nodeService.getProperty(branchNodeRef, ContentModel.PROP_CREATED)));
 					jsonBranch.put("createdDateISO",
 							ISO8601DateFormat.format((Date) nodeService.getProperty(branchNodeRef, ContentModel.PROP_CREATED)));
@@ -231,7 +235,7 @@ public class EntityVersionWebScript extends AbstractWebScript {
 		}
 	}
 
-	private JSONObject getPerson(String frozenModifier) throws InvalidNodeRefException, JSONException {
+	private JSONObject getPerson(String frozenModifier) throws JSONException {
 		JSONObject jsonCreator = new JSONObject();
 		try {
 			NodeRef creatorNodeRef = personService.getPerson(frozenModifier);

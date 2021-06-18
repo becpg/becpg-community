@@ -94,7 +94,7 @@ public class AutoNumServiceImpl implements AutoNumService {
 		} else {
 			// create autonum node in db
 			prefix = getDefaultPrefix(className, propertyName);
-			autoNumValue = createAutoNum(className, propertyName, autoNumValue, prefix);
+			createAutoNum(className, propertyName, autoNumValue, prefix);
 		}
 
 		return formatCode(prefix, autoNumValue);
@@ -123,7 +123,7 @@ public class AutoNumServiceImpl implements AutoNumService {
 	@Override
 	public String getAutoNumMatchPattern(QName type, QName propertyName) {
 		String prefix = DEFAULT_PREFIX;
-		if (dictionaryService.getSubTypes(type, true).size() > 0) {
+		if (!dictionaryService.getSubTypes(type, true).isEmpty()) {
 			for (QName subType : dictionaryService.getSubTypes(type, true)) {
 				if (prefix.length() != 0) {
 					prefix += "|";

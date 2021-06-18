@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!--
-  Copyright (C) 2010-2020 beCPG. 
+  Copyright (C) 2010-2021 beCPG. 
    
   This file is part of beCPG 
    
@@ -190,7 +190,6 @@
    <!-- Worker -->
 	<bean id="projectFormulationWorker" class="fr.becpg.repo.project.impl.ProjectFormulationWorker">
 		<property name="projectService" ref="projectService" />
-		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
 		<property name="transactionService" ref="transactionService" />
 	</bean>
 
@@ -200,6 +199,8 @@
         <property name="jobClass">
             <value>fr.becpg.repo.project.impl.ProjectFormulationJob</value>
         </property>
+        <property name="group" value="beCPG"/>
+        <property name="description" value="Run project formulation" />
         <property name="jobDataAsMap">
             <map>
                 <entry key="projectFormulationWorker">
@@ -208,6 +209,9 @@
                 <entry key="tenantAdminService">
                     <ref bean="tenantAdminService" />
                 </entry>
+	            <entry key="jobLockService">
+	               <ref bean="jobLockService" />
+	           </entry>
             </map>
         </property>
     </bean>

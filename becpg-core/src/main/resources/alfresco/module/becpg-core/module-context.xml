@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!--
-  Copyright (C) 2010-2020 beCPG. 
+  Copyright (C) 2010-2021 beCPG. 
    
   This file is part of beCPG 
    
@@ -25,7 +25,8 @@
            http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
 
-   <import resource="classpath:alfresco/module/${artifactId}/context/model-context.xml" />   
+   <import resource="classpath:alfresco/module/${artifactId}/context/model-context.xml" /> 
+   <import resource="classpath:alfresco/module/${artifactId}/context/cache-context.xml" />  
    <import resource="classpath:alfresco/module/${artifactId}/context/core-context.xml" />
    <import resource="classpath:alfresco/module/${artifactId}/context/action-context.xml" />
    <import resource="classpath:alfresco/module/${artifactId}/context/policy-context.xml" />

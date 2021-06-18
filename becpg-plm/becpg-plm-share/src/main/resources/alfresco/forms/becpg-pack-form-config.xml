@@ -1,4 +1,4 @@
-<!-- Copyright (C) 2010-2020 beCPG. This file is part of beCPG beCPG is free 
+<!-- Copyright (C) 2010-2021 beCPG. This file is part of beCPG beCPG is free 
 	software: you can redistribute it and/or modify it under the terms of the 
 	GNU Lesser General Public License as published by the Free Software Foundation, 
 	either version 3 of the License, or (at your option) any later version. beCPG 
@@ -207,7 +207,7 @@
 				<appearance>
 					<field id="pack:pmlMaterial">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/listvalue/values/System/Lists/bcpg:entityLists/pmMaterials
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pack:packMaterial
 							</control-param>
 						</control>
 					</field>
@@ -216,11 +216,13 @@
 
 			<form id="datagrid">
 				<field-visibility>
+					<show id="pack:pmlLevel" />
 					<show id="pack:pmlMaterial" />
-					<show id="pack:pmlWeight" />
+					<show id="pack:pmlWeight" />	
 					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
+					<field id="pack:pmlLevel"  read-only="true" />
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 				</appearance>
 			</form>
@@ -228,6 +230,7 @@
 			
 			<form id="filter">
 				<field-visibility>
+					<show id="pack:pmlLevel" />
 					<show id="pack:pmlMaterial" />
 					<show id="entity_pack:pmlMaterial_bcpg:product"
 						for-mode="view" />
@@ -235,7 +238,7 @@
 				<appearance>
 					<field id="pack:pmlMaterial">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/listvalue/values/System/Lists/bcpg:entityLists/pmMaterials
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pack:packMaterial
 							</control-param>
 						</control>
 					</field>
@@ -256,11 +259,60 @@
 				<appearance>
 					<field id="pack:pmlMaterial">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/listvalue/values/System/Lists/bcpg:entityLists/pmMaterials
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pack:packMaterial
 							</control-param>
 						</control>
 					</field>
 				</appearance>
+			</form>
+		</forms>
+	</config>
+	
+	
+		<!-- bcpg:ListValue type (existing nodes) -->
+	<config evaluator="node-type" condition="pack:packMaterial">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="bcpg:lvCode" />
+					<show id="bcpg:lvValue" />
+					<show id="pack:pmEcoTaxeCategory" />
+					<show id="pack:pmEcoScore" />
+					<show id="pack:pmIsNotRecyclable" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+
+	<config evaluator="model-type" condition="pack:packMaterial">
+		<forms>
+			<!-- Create item form -->
+			<form>
+				<field-visibility>
+				    <show id="bcpg:lvCode" />
+					<show id="bcpg:lvValue" />
+					<show id="pack:pmEcoTaxeCategory" />
+					<show id="pack:pmEcoScore" />
+					<show id="pack:pmIsNotRecyclable" />
+				</field-visibility>
+			</form>
+
+			<!-- Data Grid view -->
+			<form id="filter">
+				<field-visibility>
+					<show id="bcpg:lvCode" />
+					<show id="bcpg:lvValue" />
+				</field-visibility>
+			</form>
+
+			<form id="datagrid">
+				<field-visibility>
+					<show id="bcpg:lvCode" />
+					<show id="bcpg:lvValue" />
+					<show id="pack:pmEcoTaxeCategory" />
+					<show id="pack:pmEcoScore" />
+					<show id="pack:pmIsNotRecyclable" />
+				</field-visibility>
 			</form>
 		</forms>
 	</config>

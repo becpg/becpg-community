@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright (C) 2010-2020 beCPG. 
+  Copyright (C) 2010-2021 beCPG. 
    
   This file is part of beCPG 
    
@@ -124,6 +124,52 @@
 		</constraint>
 
 	</constraints>
+	<types>
+
+		<type name="gs1:targetMarket">
+			<parent>bcpg:entityListItem</parent>
+
+			<associations>
+				<association name="gs1:targetMarketCountries">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:geoOrigin</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+
+			</associations>
+		</type>
+
+		<type name="gs1:dutyFeeTax">
+			<parent>bcpg:entityListItem</parent>
+			<properties>
+				<property name="gs1:dutyFeeTaxCode">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+				</property>
+			</properties>
+			<associations>
+				<association name="gs1:dutyFeeTaxCountry">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:geoOrigin</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+
+			</associations>
+		</type>
+	</types>
+
 	<aspects>
 
 		<aspect name="gs1:temperatureMeasurementAspect">
@@ -629,7 +675,33 @@
 
 		<aspect name="gs1:gs1Aspect">
 			<properties />
-			<associations />
+			<associations>
+
+				<association name="gs1:targetMarkets">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>gs1:targetMarket</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+
+				<association name="gs1:dutyFeeTaxes">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>gs1:dutyFeeTax</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+
+			</associations>
 			<overrides />
 			<mandatory-aspects>
 				<aspect>gs1:measuresAspect</aspect>

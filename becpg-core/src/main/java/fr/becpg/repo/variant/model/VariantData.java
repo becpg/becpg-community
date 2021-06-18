@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG. 
+ * Copyright (C) 2010-2021 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -37,6 +37,7 @@ public class VariantData extends BeCPGDataObject {
 	 */
 	private static final long serialVersionUID = 6714268508538918393L;
 	protected Boolean isDefaultVariant;
+	protected String variantColumn;
 	private Double recipeQtyUsed = 0d;
 	private Double recipeQtyUsedWithLossPerc = 0d;
 	private Double recipeVolumeUsed = 0d;
@@ -70,6 +71,27 @@ public class VariantData extends BeCPGDataObject {
 	public void setIsDefaultVariant(Boolean isDefaultVariant) {
 		this.isDefaultVariant = isDefaultVariant;
 	}
+	
+	/**
+	 * <p>Getter for the field <code>variantColumn</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
+	@AlfProp
+	@AlfQname(qname="bcpg:variantColumn")
+	public String getVariantColumn() {
+		return variantColumn;
+	}
+
+	/**
+	 * <p>Setter for the field <code>variantColumn</code>.</p>
+	 *
+	 * @param variantColumn a {@link java.lang.String} object.
+	 */
+	public void setVariantColumn(String variantColumn) {
+		this.variantColumn = variantColumn;
+	}
+
 
 	/**
 	 * <p>Getter for the field <code>recipeQtyUsed</code>.</p>

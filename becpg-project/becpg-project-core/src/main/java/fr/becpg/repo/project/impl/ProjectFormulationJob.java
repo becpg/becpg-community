@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -22,12 +22,15 @@ import java.util.List;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.tenant.Tenant;
 import org.alfresco.repo.tenant.TenantAdminService;
+import org.alfresco.schedule.AbstractScheduledLockedJob;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.quartz.PersistJobDataAfterExecution;
 
 /**
  * <p>ProjectFormulationJob class.</p>
@@ -35,7 +38,9 @@ import org.quartz.JobExecutionException;
  * @author matthieu
  * @version $Id: $Id
  */
-public class ProjectFormulationJob implements Job {
+@PersistJobDataAfterExecution
+@DisallowConcurrentExecution
+public class ProjectFormulationJob extends AbstractScheduledLockedJob implements Job {
 
 	private static final String KEY_PROJECT_FORMULATION_WORKER = "projectFormulationWorker";
 	private static final String KEY_TENANT_ADMIN_SERVICE = "tenantAdminService";
@@ -44,7 +49,7 @@ public class ProjectFormulationJob implements Job {
 
 	/** {@inheritDoc} */
 	@Override
-	public void execute(JobExecutionContext context) throws JobExecutionException {
+	public void executeJob(JobExecutionContext context) throws JobExecutionException {
 
 		logger.info("Start of Project Formulation Job.");
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG. 
+ * Copyright (C) 2010-2021 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -21,6 +21,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -229,21 +230,11 @@ public  abstract class  BeCPGDataObject  extends BaseObject implements Repositor
 		this.isTransient = isTransient;
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((aspects == null) ? 0 : aspects.hashCode());
-		result = prime * result + ((extraProperties == null) ? 0 : extraProperties.hashCode());
-		result = prime * result + (isTransient ? 1231 : 1237);
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((nodeRef == null) ? 0 : nodeRef.hashCode());
-		result = prime * result + ((parentNodeRef == null) ? 0 : parentNodeRef.hashCode());
-		return result;
+		return Objects.hash(aspects, aspectsToRemove, extraProperties, name, nodeRef, parentNodeRef);
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -253,34 +244,9 @@ public  abstract class  BeCPGDataObject  extends BaseObject implements Repositor
 		if (getClass() != obj.getClass())
 			return false;
 		BeCPGDataObject other = (BeCPGDataObject) obj;
-		if (aspects == null) {
-			if (other.aspects != null)
-				return false;
-		} else if (!aspects.equals(other.aspects))
-			return false;
-		if (extraProperties == null) {
-			if (other.extraProperties != null)
-				return false;
-		} else if (!extraProperties.equals(other.extraProperties))
-			return false;
-		if (isTransient != other.isTransient)
-			return false;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
-		if (nodeRef == null) {
-			if (other.nodeRef != null)
-				return false;
-		} else if (!nodeRef.equals(other.nodeRef))
-			return false;
-		if (parentNodeRef == null) {
-			if (other.parentNodeRef != null)
-				return false;
-		} else if (!parentNodeRef.equals(other.parentNodeRef))
-			return false;
-		return true;
+		return Objects.equals(aspects, other.aspects) && Objects.equals(aspectsToRemove, other.aspectsToRemove)
+				&& Objects.equals(extraProperties, other.extraProperties) && Objects.equals(name, other.name)
+				&& Objects.equals(nodeRef, other.nodeRef) && Objects.equals(parentNodeRef, other.parentNodeRef);
 	}
 
 	/** {@inheritDoc} */

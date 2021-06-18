@@ -33,6 +33,7 @@ import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.report.search.SearchReportRenderer;
+import fr.becpg.repo.report.search.actions.AbstractExportSearchAction;
 import fr.becpg.repo.report.search.actions.ExcelSearchAction;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.report.client.ReportFormat;
@@ -46,7 +47,7 @@ import fr.becpg.report.client.ReportFormat;
 @Service
 public class ExcelReportSearchRenderer implements SearchReportRenderer {
 
-	private final static Log logger = LogFactory.getLog(ExcelReportSearchRenderer.class);
+	private static final Log logger = LogFactory.getLog(ExcelReportSearchRenderer.class);
 	
 	@Autowired
 	private ActionService actionService;
@@ -327,9 +328,10 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 	/** {@inheritDoc} */
 	@Override
 	public void executeAction(NodeRef templateNodeRef, NodeRef downloadNode, ReportFormat reportFormat) {
-		Action action = actionService.createAction("excelSearchAction");
+		Action action = actionService.createAction(ExcelSearchAction.NAME);
 		action.setExecuteAsynchronously(true);
-		action.setParameterValue(ExcelSearchAction.PARAM_TPL_NODEREF, templateNodeRef);
+		action.setParameterValue(AbstractExportSearchAction.PARAM_TPL_NODEREF, templateNodeRef);
+		action.setParameterValue(AbstractExportSearchAction.PARAM_FORMAT, reportFormat.toString());
 		actionService.executeAction(action, downloadNode);
 
 	}

@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2010-2020 beCPG. 
+  Copyright (C) 2010-2021 beCPG. 
    
   This file is part of beCPG 
    
@@ -249,6 +249,7 @@
 					<show id="mpm:plQtyResource" />
 					<show id="mpm:plRateResource" />
 					<show id="mpm:plUnit" />
+					<show id="bcpg:variantIds" force="true" />
 				</field-visibility>
 				<appearance>	
 					<field id="mpm:plUnit">
@@ -269,7 +270,37 @@
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
+					<field id="bcpg:variantIds">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/variantList
+							</control-param>
+						</control>
+					</field>
 				</appearance>
+			</form>
+			<form id="security">
+				<field-visibility>
+					<show id="bcpg:variantIds" force="true"/>
+					<show id="mpm:plStep" />->									
+					<show id="mpm:plResource" />
+					<show id="mpm:plQtyResource" />
+					<show id="mpm:plRateResource" />
+					<show id="mpm:plUnit" />
+					<show id="mpm:plRateProduct" />		
+				    <show id="bcpg:dynamicCharactColumn1" force="true" />
+					<show id="bcpg:dynamicCharactColumn2" force="true" />
+					<show id="bcpg:dynamicCharactColumn3" force="true" />
+					<show id="bcpg:dynamicCharactColumn4" force="true" />
+					<show id="bcpg:dynamicCharactColumn5" force="true"/>
+					<show id="bcpg:dynamicCharactColumn6" force="true" />
+					<show id="bcpg:dynamicCharactColumn7" force="true" />
+					<show id="bcpg:dynamicCharactColumn8" force="true" />
+					<show id="bcpg:dynamicCharactColumn9" force="true" />
+					<show id="bcpg:dynamicCharactColumn10" force="true" />
+					<show id="bcpg:startEffectivity" force="true" />
+					<show id="bcpg:endEffectivity" force="true" />
+					<show id="bcpg:instruction" force="true"/>
+				</field-visibility>
 			</form>
 			<!-- Data Grid view -->
 			<form id="datagrid">

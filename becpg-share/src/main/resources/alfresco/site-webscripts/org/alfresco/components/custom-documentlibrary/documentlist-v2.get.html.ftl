@@ -9,7 +9,6 @@
    <#-- JavaScript Dependencies -->
    <@script type="text/javascript" src="${url.context}/res/components/documentlibrary/custom-documentlist.js"  group="documentlibrary" />
    <@script type="text/javascript" src="${url.context}/res/components/documentlibrary/custom-toolbar.js"  group="documentlibrary" />
-	
 </@>
 
 <@markup id="entityFolderInstructions" target="documentListContainer" action="before">

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -39,7 +39,6 @@ import fr.becpg.repo.activity.data.ActivityEvent;
 import fr.becpg.repo.activity.data.ActivityType;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityTplService;
-import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationPlugin;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.product.data.CharactDetails;
@@ -48,6 +47,9 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.lexer.CompositionLexer;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
+import io.opencensus.common.Scope;
+import io.opencensus.trace.Tracer;
+import io.opencensus.trace.Tracing;
 
 /**
  * <p>ProductServiceImpl class.</p>
@@ -59,7 +61,9 @@ import fr.becpg.repo.repository.L2CacheSupport;
 public class ProductServiceImpl implements ProductService, InitializingBean, FormulationPlugin {
 
 
-	private static Log logger = LogFactory.getLog(ProductService.class);
+	private static final Log logger = LogFactory.getLog(ProductServiceImpl.class);
+	
+	private static final Tracer tracer = Tracing.getTracer();
 
 	@Autowired
 	private AlfrescoRepository<ProductData> alfrescoRepository;
@@ -92,30 +96,28 @@ public class ProductServiceImpl implements ProductService, InitializingBean, For
 
 	/** {@inheritDoc} */
 	@Override
-	public void formulate(NodeRef productNodeRef) throws FormulateException {
-		formulate(productNodeRef, false);
+	public void formulate(NodeRef productNodeRef){
+		formulate(productNodeRef, null);
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public void formulate(NodeRef productNodeRef, boolean fast) throws FormulateException {
-		try {
+	public void formulate(NodeRef productNodeRef, String chainId) {
+		try (Scope scope = tracer.spanBuilder("productService.Formulate").startScopedSpan()){
 			policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
 			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 
-			L2CacheSupport.doInCacheContext(() -> {
+			L2CacheSupport.doInCacheContext(() -> 
 				AuthenticationUtil.runAsSystem(() -> {
-					if (!fast) {
+					if (chainId == null) {
 						formulationService.formulate(productNodeRef);
 						entityActivityService.postEntityActivity(productNodeRef, ActivityType.Formulation, ActivityEvent.Update, null);
 					} else {
-						formulationService.formulate(productNodeRef, FormulationService.FAST_FORMULATION_CHAINID);
+						formulationService.formulate(productNodeRef, chainId);
 					}
 					return true;
-				});
-
-			}, false, true);
+				}), false, true);
 
 		} finally {
 			policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
@@ -127,15 +129,14 @@ public class ProductServiceImpl implements ProductService, InitializingBean, For
 
 	/** {@inheritDoc} */
 	@Override
-	public ProductData formulate(ProductData productData) throws FormulateException {
+	public ProductData formulate(ProductData productData) {
 		return formulationService.formulate(productData);
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public CharactDetails formulateDetails(NodeRef productNodeRef, QName datatType, String dataListName, List<NodeRef> elements, Integer level)
-			throws FormulateException {
-
+		{
 		ProductData productData = alfrescoRepository.findOne(productNodeRef);
 
 		CharactDetailsVisitor visitor = charactDetailsVisitorFactory.getCharactDetailsVisitor(datatType, dataListName);
@@ -150,7 +151,7 @@ public class ProductServiceImpl implements ProductService, InitializingBean, For
 
 	/** {@inheritDoc} */
 	@Override
-	public ProductData formulateText(String recipe) throws FormulateException {
+	public ProductData formulateText(String recipe){
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Formulate text: " + recipe);
@@ -167,18 +168,19 @@ public class ProductServiceImpl implements ProductService, InitializingBean, For
 		productData.getCompoListView().setDynamicCharactList(new ArrayList<>());
 		productData.getPackagingListView().setPackagingList(new ArrayList<>());
 		productData.getPackagingListView().setDynamicCharactList(new ArrayList<>());
+		productData.getProcessListView().setProcessList(new ArrayList<>());
+		productData.getProcessListView().setDynamicCharactList(new ArrayList<>());
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Lexer result: " + productData);
 		}
 
-		L2CacheSupport.doInCacheContext(() -> {
+		L2CacheSupport.doInCacheOnly(() -> 
 			AuthenticationUtil.runAsSystem(() -> {
 				formulationService.formulate(productData);
 				return true;
-			});
-
-		}, true);
+			})
+		);
 
 		return productData;
 	}
@@ -192,8 +194,8 @@ public class ProductServiceImpl implements ProductService, InitializingBean, For
 
 	/** {@inheritDoc} */
 	@Override
-	public void runFormulation(NodeRef entityNodeRef) throws FormulateException {
-		formulate(entityNodeRef, false);
+	public void runFormulation(NodeRef entityNodeRef, String chainId) {
+		formulate(entityNodeRef, chainId);
 	}
 
 }

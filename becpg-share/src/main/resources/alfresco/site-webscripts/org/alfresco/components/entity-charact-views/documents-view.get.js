@@ -16,6 +16,7 @@ function widgets()
     	 rootNode : page.url.args.nodeRef!=null ?page.url.args.nodeRef : "null",
     	 disableSiteMode : true,
          hideNavBar: false,
+		 entityMode: true, 
          repositoryBrowsing: false,
          useTitle: false,
          syncMode: model.syncMode != null ? model.syncMode : "",
@@ -29,7 +30,8 @@ function widgets()
       name : "beCPG.custom.DocumentList",
       options : {
          syncMode : model.syncMode != null ? model.syncMode : "",        
-         disableSiteMode : true,		 
+         disableSiteMode : true,		
+ 		 entityMode: true, 
          siteId : (page.url.templateArgs.site != null) ? page.url.templateArgs.site : "",
          containerId : template.properties.container != null ? template.properties.container : "documentLibrary",
          rootNode : page.url.args.nodeRef!=null ?page.url.args.nodeRef : "null",

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  * 
  * This file is part of beCPG
  * 
@@ -183,7 +183,7 @@
 				Alfresco.util.Ajax.request({
 					method : Alfresco.util.Ajax.GET,
 					responseContentType : Alfresco.util.Ajax.JSON,
-					url : Alfresco.constants.PROXY_URI + "becpg/product/formulate/node/" + this.options.entityNodeRef.replace(":/", "") + "?fast=true",
+					url : Alfresco.constants.PROXY_URI + "becpg/remote/formulate?nodeRef=" + this.options.entityNodeRef + "&chainId=fastFormulationChain&format=json",
 					successCallback : {
 						fn : function(response) {
 							if(beCPG.util.lockCount() == localCount){

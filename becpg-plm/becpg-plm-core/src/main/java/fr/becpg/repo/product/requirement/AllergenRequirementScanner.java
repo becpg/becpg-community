@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.service.cmr.repository.MLText;
-import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
@@ -53,7 +52,7 @@ public class AllergenRequirementScanner extends AbstractRequirementScanner<Aller
 								if (!isAllergenAllowed) {
 									MLText message = MLTextHelper.getI18NMessage(MESSAGE_FORBIDDEN_ALLERGEN, extractName(listDataItem.getAllergen()));
 									ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message,
-											listDataItem.getAllergen(), new ArrayList<NodeRef>(), RequirementDataType.Specification);
+											listDataItem.getAllergen(), new ArrayList<>(), RequirementDataType.Specification);
 
 									if (specification.getRegulatoryCode() != null && !specification.getRegulatoryCode().isBlank()) {
 										rclDataItem.setRegulatoryCode(specification.getRegulatoryCode());

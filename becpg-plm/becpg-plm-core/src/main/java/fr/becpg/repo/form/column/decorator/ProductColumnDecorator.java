@@ -1,16 +1,15 @@
 package fr.becpg.repo.form.column.decorator;
 
-import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.PLMModel;
-import fr.becpg.repo.entity.EntityListDAO;
 import org.alfresco.repo.forms.Item;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-
-import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+
+import fr.becpg.model.PLMModel;
+import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.entity.datalist.data.DataListFilter;
 
 /**
  * <p>ProductColumnDecorator class.</p>

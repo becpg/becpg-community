@@ -262,16 +262,22 @@
                         			             '@beCPG.avg($arrayOfDouble)',
                         			             '@beCPG.min($arrayOfDouble)',
                         			             '@beCPG.max($arrayOfDouble)',
+												 '@beCPG.findDuplicates($range)',
                         			             '@beCPG.formatNumber($number,$format?)',
                         			             '@beCPG.formatDate($date,$format?)',
                         			             '@beCPG.filter($range,$formula)',
+												 '@beCPG.filterByAssoc($range, $assocQname, $values)',
+												 '@beCPG.join($pattern, $range)',
+												 '@beCPG.getOrDefault($range, $index, $defaultValue)',
                         			             '@beCPG.children($parent, $compositeList)',
                         			             '@beCPG.applyFormulaToList($range,$formula)',
                         			             '@beCPG.findOne($nodeRef)',
                         			             '@beCPG.propValue($nodeRef?,"bcpg:productQty")',
                         			             '@beCPG.assocValue($nodeRef?,"bcpg:client")',
                         			             '@beCPG.assocValues($nodeRef?,"bcpg:client")',
+ 												 '@beCPG.sourcesAssocValues($nodeRef?,"bcpg:client")',
                         			             '@beCPG.assocPropValues($nodeRef?,"bcpg:client","cm:name")',
+												 '@beCPG.assocAssocValues($nodeRef?,"bcpg:client","bcpg:plant")',
                         			             '@beCPG.setValue($entity?, $qname, $value)',
                         			             '@beCPG.updateMLText($mlText,$locale,$value)',
                         			             '@beCPG.copy($fromNodeRef,propQnames,listQNames)',
@@ -284,7 +290,9 @@
                         			             'isPackaging()',
                         			             'isPackagingKit()',
                         			             'isSemiFinished()',
-                        			             'isLocalSemiFinished()'
+                        			             'isLocalSemiFinished()',
+												 'addError($msg)',
+											     'addWarning($msg)'
                         			             ],
                         			             
                         			      from: CodeMirror.Pos(cur.line, start),
@@ -487,11 +495,28 @@
                   _renderFormula : function SpelEditor__renderFormula(updateTextArea) {
 
 
-                     var items = [], instance = this, regexp = new RegExp("(workspace://SpacesStore/[a-z0-9A-Z\-]*)",
+                     var nodeRefs = null, instance = this, regexp = new RegExp("(workspace://SpacesStore/[a-z0-9A-Z\-]*)",
                            "gi");
                      
                      
-                     items = this.options.currentValue.match(regexp);
+                     nodeRefs = this.options.currentValue.match(regexp);
+
+
+					function removeDups(names) {
+					  var unique = {};
+					  names.forEach(function(i) {
+					    if(!unique[i]) {
+					      unique[i] = true;
+					    }
+					  });
+					  return Object.keys(unique);
+					}
+
+
+					var uniqueNodeRefs = [];
+					if(nodeRefs!=null){
+						uniqueNodeRefs = removeDups(nodeRefs);
+					}
 
                      function itemsCallBack(response) {
                         var items = null,item,span;
@@ -531,20 +556,20 @@
 
                      }
 
-                     if (items != null && items.length > 0) {
+                     if (uniqueNodeRefs != null && uniqueNodeRefs.length > 0) {
 
                         Alfresco.util.Ajax.jsonRequest({
                            url : Alfresco.constants.PROXY_URI + "api/forms/picker/items",
                            method : "POST",
                            dataObj : {
-                              items : items
+                              items : uniqueNodeRefs
                            },
                            successCallback : {
                               fn : itemsCallBack,
                               scope : this
                            },
                            failureCallback : {
-                              fn : function(response) {
+                              fn : function() {
 
                                  Alfresco.util.PopupManager.displayMessage({
                                     text : this.msg("message.spel-editor.failure")
@@ -583,11 +608,11 @@
                      Dom.get(this.editorId + "-itemType-button").name = "-";
 
                      this.widgets.itemTypeMenu.getMenu().subscribe("click", function(p_sType, p_aArgs) {
-                        var menuItem = p_aArgs[1];
-                        if (menuItem) {
+                        var mItem = p_aArgs[1];
+                        if (mItem) {
                            YAHOO.Bubbling.fire("parentTypeChanged", {
                               eventGroup : me,
-                              item : menuItem.value
+                              item : mItem.value
                            });
                         }
                      });
@@ -775,7 +800,7 @@
                         this.widgets.dataTable1.doBeforeLoadData = function(sRequest, oResponse, oPayload) {
                            if (me.options.selectedParentType) {
 
-                              label = "<span class='" + me.options.selectedParentType.name + "' style='padding-left: 20px;' >" + me
+                             var label = "<span class='" + me.options.selectedParentType.name + "' style='padding-left: 20px;' >" + me
                                     ._formatLabel(me.options.selectedParentType.name) + "</span>";
 
                               me.widgets.itemTypeMenu.set("label", label);

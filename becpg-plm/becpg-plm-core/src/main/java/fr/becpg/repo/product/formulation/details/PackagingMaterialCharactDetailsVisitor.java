@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -18,7 +18,6 @@
 package fr.becpg.repo.product.formulation.details;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.util.Arrays;
 import java.util.List;
 
@@ -30,7 +29,6 @@ import org.springframework.stereotype.Service;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
-import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.product.data.CharactDetails;
 import fr.becpg.repo.product.data.CharactDetailsValue;
 import fr.becpg.repo.product.data.EffectiveFilters;
@@ -42,7 +40,6 @@ import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.PackMaterialListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.formulation.FormulationHelper;
-import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
 /**
@@ -60,7 +57,7 @@ public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetails
 
 	/** {@inheritDoc} */
 	@Override
-	public CharactDetails visit(ProductData formulatedProduct, List<NodeRef> dataListItems, Integer level) throws FormulateException {
+	public CharactDetails visit(ProductData formulatedProduct, List<NodeRef> dataListItems, Integer level)  {
 
 		CharactDetails ret = createCharactDetails(dataListItems);
 
@@ -74,7 +71,7 @@ public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetails
 		Double netWeight = FormulationHelper.getNetWeight(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
 		Double netVol = FormulationHelper.getNetVolume(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
 
-		if ((formulatedProduct.getDropPackagingOfComponents() == null) || !formulatedProduct.getDropPackagingOfComponents()) {
+		if ( !Boolean.TRUE.equals(formulatedProduct.getDropPackagingOfComponents())) {
 			visitRecurPMaterial(formulatedProduct, ret, 0, level, netWeight, netVol, netQty);
 		}
 
@@ -94,11 +91,11 @@ public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetails
 	}
 
 	private void visitMaterial(NodeRef parent, PackagingListDataItem packagingListDataItem, CharactDetails charactDetails, Integer currLevel,
-			double subQty) throws FormulateException {
+			double subQty)  {
 
 		if (nodeService.getType(packagingListDataItem.getProduct()).equals(PLMModel.TYPE_PACKAGINGKIT)) {
 			if ((packagingListDataItem.getQty() != null) && ProductUnit.P.equals(packagingListDataItem.getPackagingListUnit())
-					&& PackagingLevel.Primary.equals(packagingListDataItem.getPkgLevel())) {
+					&& PackagingLevel.Primary.equals(packagingListDataItem.getPkgLevel()) ) {
 				subQty *= packagingListDataItem.getQty();
 			}
 			ProductData packagingListDataItemProduct = (ProductData) alfrescoRepository.findOne(packagingListDataItem.getProduct());
@@ -114,78 +111,70 @@ public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetails
 	}
 
 	private void visitMaterialPackaging(NodeRef parent, PackagingListDataItem packagingListDataItem, CharactDetails charactDetails, Integer currLevel,
-			double subQty) throws FormulateException {
+			double subQty)  {
 
 		if ((packagingListDataItem.getProduct() != null) && PackagingLevel.Primary.equals(packagingListDataItem.getPkgLevel())) {
 
-			@SuppressWarnings("unchecked")
-			List<SimpleCharactDataItem> simpleCharactDataList = (List<SimpleCharactDataItem>) alfrescoRepository.loadDataList(parent, dataListType,
-					dataListType);
+			PackagingMaterialData packagingMaterial = (PackagingMaterialData) alfrescoRepository.findOne(packagingListDataItem.getProduct());
 
-			PackagingMaterialData packagingProduct = (PackagingMaterialData) alfrescoRepository.findOne(packagingListDataItem.getProduct());
+			BigDecimal tare = FormulationHelper.getTareInKg(packagingListDataItem, packagingMaterial).multiply(BigDecimal.valueOf(subQty*1000d));
 
-			BigDecimal tare = FormulationHelper.getTareInKg(packagingListDataItem, packagingProduct).multiply(new BigDecimal(subQty*1000d));
+			if (alfrescoRepository.hasDataList(packagingMaterial, PackModel.PACK_MATERIAL_LIST_TYPE)
+					&& (packagingMaterial.getPackMaterialList() != null)) {
 
-			if (alfrescoRepository.hasDataList(packagingProduct, PackModel.PACK_MATERIAL_LIST_TYPE)
-					&& (packagingProduct.getPackMaterialList() != null)) {
-
-				for (PackMaterialListDataItem packMateriDataItem : packagingProduct.getPackMaterialList()) {
+				for (PackMaterialListDataItem packMateriDataItem : packagingMaterial.getPackMaterialList()) {
 					if (packMateriDataItem.getPmlWeight() != null) {
 
-						for (SimpleCharactDataItem simpleCharact : simpleCharactDataList) {
-							if ((simpleCharact != null) && packMateriDataItem.getPmlMaterial().equals(simpleCharact.getCharactNodeRef())
-									&& charactDetails.hasElement(simpleCharact.getCharactNodeRef())) {
+							if (charactDetails.hasElement(packMateriDataItem.getCharactNodeRef())) {
 
-								BigDecimal plmWeight = new BigDecimal(packMateriDataItem.getPmlWeight(), MathContext.DECIMAL64).multiply(tare);
+								BigDecimal plmWeight = BigDecimal.valueOf(packMateriDataItem.getPmlWeight()).multiply(tare);
 
-								BigDecimal productTare = FormulationHelper.getTareInKg(packagingProduct);
+								BigDecimal productTare = FormulationHelper.getTareInKg(packagingMaterial);
 								if(productTare!=null) {
 									 plmWeight = plmWeight.divide(productTare.multiply(BigDecimal.valueOf(1000d)));
 								}
 								
 								Double value = plmWeight.doubleValue();
 
-								if ((value != null) && (simpleCharact.shouldDetailIfZero() || (value != 0d))) {
+								if ((value != null)) {
 									if (logger.isDebugEnabled()) {
-										logger.debug("Add new charact detail. Charact: "
-												+ nodeService.getProperty(simpleCharact.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME)
-												+ " - entityNodeRef: " + packagingProduct.getName() + " - value: " + value);
+										logger.debug("Add new charact detail - 1 . Charact: "
+												+ nodeService.getProperty(packMateriDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME)
+												+ " - entityNodeRef: " + packagingMaterial.getName() + " - value: " + value);
 									}
 
-									CharactDetailsValue currentCharactDetailsValue = new CharactDetailsValue(parent, packagingProduct.getNodeRef(),
+									CharactDetailsValue currentCharactDetailsValue = new CharactDetailsValue(parent, packagingMaterial.getNodeRef(),
 											packagingListDataItem.getNodeRef(), value, currLevel, null);
 
-									charactDetails.addKeyValue(simpleCharact.getCharactNodeRef(), currentCharactDetailsValue);
+									charactDetails.addKeyValue(packMateriDataItem.getCharactNodeRef(), currentCharactDetailsValue);
 
 								}
 
 							}
-						}
 					}
 				}
 
-			} else if ((packagingProduct.getPackagingMaterials() != null) && (packagingProduct.getPackagingMaterials().size() > 0)) {
+			} else if ((packagingMaterial.getPackagingMaterials() != null) && !packagingMaterial.getPackagingMaterials().isEmpty()) {
 
-				for (SimpleCharactDataItem simpleCharact : simpleCharactDataList) {
-					if ((simpleCharact != null) && packagingProduct.getPackagingMaterials().contains(simpleCharact.getCharactNodeRef())
-							&& charactDetails.hasElement(simpleCharact.getCharactNodeRef())) {
+				for (NodeRef simpleCharact : packagingMaterial.getPackagingMaterials()) {
+					if ((simpleCharact != null) && charactDetails.hasElement(simpleCharact)) {
 
 						BigDecimal tareByMaterial = tare
-								.divide(new BigDecimal(packagingProduct.getPackagingMaterials().size(), MathContext.DECIMAL64));
+								.divide(BigDecimal.valueOf(packagingMaterial.getPackagingMaterials().size()));
 
 						Double value = tareByMaterial.doubleValue();
 
-						if ((value != null) && (simpleCharact.shouldDetailIfZero() || (value != 0d))) {
+						if ((value != null)) {
 							if (logger.isDebugEnabled()) {
-								logger.debug("Add new charact detail. Charact: "
-										+ nodeService.getProperty(simpleCharact.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME)
-										+ " - entityNodeRef: " + packagingProduct.getName() + " - value: " + value);
+								logger.debug("Add new charact detail - 2. Charact: "
+										+ nodeService.getProperty(simpleCharact, BeCPGModel.PROP_CHARACT_NAME)
+										+ " - entityNodeRef: " + packagingMaterial.getName() + " - value: " + value);
 							}
 
-							CharactDetailsValue currentCharactDetailsValue = new CharactDetailsValue(parent, packagingProduct.getNodeRef(),
+							CharactDetailsValue currentCharactDetailsValue = new CharactDetailsValue(parent, packagingMaterial.getNodeRef(),
 									packagingListDataItem.getNodeRef(), value, currLevel, null);
 
-							charactDetails.addKeyValue(simpleCharact.getCharactNodeRef(), currentCharactDetailsValue);
+							charactDetails.addKeyValue(simpleCharact, currentCharactDetailsValue);
 
 						}
 					}
@@ -218,7 +207,7 @@ public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetails
 	 *             if any.
 	 */
 	public CharactDetails visitRecurPMaterial(ProductData subProductData, CharactDetails ret, Integer currLevel, Integer maxLevel, Double subWeight,
-			Double subVol, Double netQty) throws FormulateException {
+			Double subVol, Double netQty)  {
 
 		if (subProductData.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 

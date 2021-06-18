@@ -110,6 +110,7 @@
 					<value>TaskStart</value>
 					<value>TaskEnd</value>
 					<value>TaskRefused</value>
+					<value>Properties</value>
 					<value>NotifyDisabled</value>
 					<value>NotifyOnRefused</value>
 				</list>
@@ -407,6 +408,9 @@
 				<property name="pjt:tlIsMilestone">
 					<type>d:boolean</type>
 				</property>
+				<property name="pjt:tlIsCritical">
+					<type>d:boolean</type>
+				</property>
 				<property name="pjt:tlIsGroup">
 					<type>d:boolean</type>
 				</property>
@@ -490,6 +494,30 @@
 						<tokenised>false</tokenised>
 					</index>
 				</property>
+				<property name="pjt:tlDue">
+					<type>d:date</type>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>false</tokenised>
+					</index>
+				</property>
+				<property name="pjt:tlTargetStart">
+					<type>d:date</type>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>false</tokenised>
+					</index>
+				</property>
+				<property name="pjt:tlTargetEnd">
+					<type>d:date</type>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>false</tokenised>
+					</index>
+				</property>
 				<property name="pjt:tlState">
 					<type>d:text</type>
 					<default>Planned</default>
@@ -498,6 +526,12 @@
 						<stored>false</stored>
 						<tokenised>false</tokenised>
 					</index>
+					<constraints>
+						<constraint ref="pjt:taskStates" />
+					</constraints>
+				</property>
+                                <property name="pjt:tlPreviousState">
+					<type>d:text</type>
 					<constraints>
 						<constraint ref="pjt:taskStates" />
 					</constraints>

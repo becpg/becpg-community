@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!--
-  Copyright (C) 2010-2020 beCPG. 
+  Copyright (C) 2010-2021 beCPG. 
    
   This file is part of beCPG 
    
@@ -137,7 +137,6 @@
 				<bean class="fr.becpg.repo.product.formulation.IngsCalculatingFormulationHandler">
 					<property name="nodeService" ref="nodeService" />
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
-					<property name="ingsCalculatingWithYield" value="${beCPG.formulation.ingsCalculatingWithYield}" />
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.MeatContentFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
@@ -175,7 +174,6 @@
 				<ref bean="productSpecificationsFormulationHandler" />
 				<bean class="fr.becpg.repo.product.formulation.CompletionReqCtrlCalculatingFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
-					<property name="formulaService" ref="formulaService" />
 					<property name="entityCatalogService" ref="entityCatalogService" />
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.MergeReqCtrlFormulationHandler">
@@ -184,6 +182,12 @@
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.ScoreCalculatingFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
+					<property name="scorePlugins">
+						<list>
+							<ref bean="ecoScore"/>
+							<ref bean="nutriScore"/>
+						</list>
+					</property>
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.CompareFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
@@ -215,6 +219,8 @@
 		<property name="jobClass">
 			<value>fr.becpg.repo.product.requirement.ProductSpecificationFormulationJob</value>
 		</property>
+	    <property name="group" value="beCPG"/>
+        <property name="description" value="Run product specification formulation" />
 		<property name="jobDataAsMap">
 			<map>
 				<entry key="productSpecificationsFormulationHandler">
@@ -223,6 +229,9 @@
 				<entry key="tenantAdminService">
 					<ref bean="tenantAdminService" />
 				</entry>
+				<entry key="jobLockService">
+	               <ref bean="jobLockService" />
+	           </entry>
 			</map>
 		</property>
 	</bean>

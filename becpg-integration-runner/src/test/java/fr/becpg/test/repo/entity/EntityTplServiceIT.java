@@ -56,13 +56,13 @@ public class EntityTplServiceIT extends PLMBaseTestCase {
 		}, false, true);
 
 		final NodeRef rm1NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-
+			
 			RawMaterialData rmTplData = (RawMaterialData) alfrescoRepository.findOne(rmTplNodeRef);
 			RawMaterialData rm1Data = new RawMaterialData();
-			rm1Data.setName("Raw material 1");
+			rm1Data.setName("Raw material 1");			
 			rm1Data.setEntityTpl(rmTplData);
 			rm1Data = (RawMaterialData) alfrescoRepository.create(getTestFolderNodeRef(), rm1Data);
-
+			
 			assertTrue(rm1Data.getCostList() == null);
 
 			// add costList on template
@@ -73,7 +73,8 @@ public class EntityTplServiceIT extends PLMBaseTestCase {
 			alfrescoRepository.save(rmTplData);
 
 			assertEquals(2, rmTplData.getCostList().size());
-
+					
+			
 			return rm1Data.getNodeRef();
 		}, false, true);
 

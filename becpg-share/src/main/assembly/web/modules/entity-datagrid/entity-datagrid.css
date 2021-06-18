@@ -644,6 +644,48 @@ div.filterButtonsBar {
 }
 
 
+.datagrid .yui-dt th.align-right {
+	text-align: right;
+}
+
+.datagrid .yui-dt th.align-center {
+	text-align: center;
+}
+
+.datagrid .yui-dt th.align-justify {
+	text-align: justify;
+}
+
+
+.datagrid .mtl-level-2 td.indent {
+	padding-left: 25px;
+}
+
+.datagrid .mtl-level-3 td.indent {
+	padding-left: 50px;
+}
+
+.datagrid .mtl-expanded td.hide-ifopen > div,
+.datagrid .mtl-level-2.mtl-leaf td.hide-ifchild > div,
+.datagrid .mtl-level-3.mtl-leaf td.hide-ifchild > div  {
+	
+	display:none;
+}
+
+.datagrid .mtl-expanded td.bold-ifopen {
+	font-weight: bold;
+}
+
+.datagrid .mtl-level-2.mtl-leaf td.italic-ifchild,
+.datagrid .mtl-level-3.mtl-leaf td.italic-ifchild {
+	font-style: italic;
+}
+
+.datagrid .mtl-collapsed  td.bold-ifclose{
+	font-weight: bold;
+}
+
+
 /* Tooltip */
 
 div.dt-tooltip {

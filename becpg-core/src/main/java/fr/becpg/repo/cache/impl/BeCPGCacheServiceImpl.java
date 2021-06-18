@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -17,30 +17,27 @@
  ******************************************************************************/
 package fr.becpg.repo.cache.impl;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 
 import org.alfresco.repo.cache.DefaultSimpleCache;
 import org.alfresco.repo.cache.SimpleCache;
-import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.repo.tenant.TenantUtil;
 import org.alfresco.repo.transaction.AlfrescoTransactionSupport;
+import org.alfresco.util.cache.AsynchronouslyRefreshedCacheRegistry;
+import org.alfresco.util.cache.RefreshableCacheEvent;
+import org.alfresco.util.cache.RefreshableCacheListener;
 import org.alfresco.util.transaction.TransactionListenerAdapter;
 import org.alfresco.util.transaction.TransactionSupportUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 
-import fr.becpg.repo.cache.BeCPGCacheDataProviderCallBack;
 import fr.becpg.repo.cache.BeCPGCacheService;
 
 /**
@@ -49,11 +46,9 @@ import fr.becpg.repo.cache.BeCPGCacheService;
  * @author matthieu
  * @version $Id: $Id
  */
-public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBean {
+public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBean, RefreshableCacheListener {
 
 	private static final Log logger = LogFactory.getLog(BeCPGCacheServiceImpl.class);
-
-	private int maxCacheItems = 100;
 
 	Map<String, Integer> cacheSizes = new HashMap<>(10);
 
@@ -61,32 +56,26 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 
 	private boolean disableAllCache = false;
 
-	private TenantAdminService tenantAdminService;
+	private AsynchronouslyRefreshedCacheRegistry registry;
 
-	private final Map<String, DefaultSimpleCache<String, ?>> caches = new ConcurrentHashMap<>();
-
-	/**
-	 * <p>Setter for the field <code>maxCacheItems</code>.</p>
-	 *
-	 * @param maxCacheItems a int.
-	 */
-	public void setMaxCacheItems(int maxCacheItems) {
-		this.maxCacheItems = maxCacheItems;
-	}
-
-	/**
-	 * <p>Getter for the field <code>caches</code>.</p>
-	 *
-	 * @return a {@link java.util.Map} object.
-	 */
-	public Map<String, DefaultSimpleCache<String, ?>> getCaches() {
-		return Collections.unmodifiableMap(caches);
-	}
+	private Map<String, SimpleCache<String, ?>> caches = Collections.synchronizedMap(new HashMap<>(10, 2.f));
 
 	/** {@inheritDoc} */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		isDebugEnable = logger.isDebugEnabled();
+
+		for (Map.Entry<String, Integer> cacheEntry : cacheSizes.entrySet()) {
+
+			Integer cacheSize = cacheEntry.getValue();
+
+			DefaultSimpleCache<String, ?> cache = new DefaultSimpleCache(cacheSize, cacheEntry.getKey());
+
+			caches.put(cacheEntry.getKey(), cache);
+		}
+
+		registry.register(this);
 
 	}
 
@@ -99,14 +88,7 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 		this.disableAllCache = disableAllCache;
 	}
 
-	/**
-	 * <p>Setter for the field <code>tenantAdminService</code>.</p>
-	 *
-	 * @param tenantAdminService a {@link org.alfresco.repo.tenant.TenantAdminService} object.
-	 */
-	public void setTenantAdminService(TenantAdminService tenantAdminService) {
-		this.tenantAdminService = tenantAdminService;
-	}
+	
 
 	/**
 	 * <p>Setter for the field <code>cacheSizes</code>.</p>
@@ -117,9 +99,13 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 		this.cacheSizes = cacheSizes;
 	}
 
+	public void setRegistry(AsynchronouslyRefreshedCacheRegistry registry) {
+		this.registry = registry;
+	}
+
 	/** {@inheritDoc} */
 	@Override
-	public <T> T getFromCache(String cacheName, String cacheKey, BeCPGCacheDataProviderCallBack<T> cacheDataProviderCallBack) {
+	public <T> T getFromCache(String cacheName, String cacheKey, Supplier<T> cacheDataProviderCallBack) {
 		return getFromCache(cacheName, cacheKey, cacheDataProviderCallBack, false);
 	}
 
@@ -129,7 +115,7 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 		if (!disableAllCache) {
 			cacheKey = computeCacheKey(cacheKey);
 			@SuppressWarnings("unchecked")
-			SimpleCache<String, T> cache = (DefaultSimpleCache<String, T>) getCache(cacheName);
+			SimpleCache<String, T> cache = (SimpleCache<String, T>) caches.get(cacheName);
 			cache.put(cacheKey, data);
 		}
 	}
@@ -144,12 +130,16 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 
 	/** {@inheritDoc} */
 	@Override
-	public <T> T getFromCache(final String cacheName, String cacheKey, BeCPGCacheDataProviderCallBack<T> cacheDataProviderCallBack,
-			boolean deleteOnTxRollback) {
+	public <T> T getFromCache(final String cacheName, String cacheKey, Supplier<T> cacheDataProviderCallBack, boolean deleteOnTxRollback) {
 
 		cacheKey = computeCacheKey(cacheKey);
 		@SuppressWarnings("unchecked")
-		SimpleCache<String, T> cache = (DefaultSimpleCache<String, T>) getCache(cacheName);
+		SimpleCache<String, T> cache = (SimpleCache<String, T>) caches.get(cacheName);
+		
+		if(cache == null) {
+			logger.error(caches.keySet().toString()+ " doesn't contains: "+ cacheName);
+			return null;
+		}
 		T ret = null;
 		try {
 			ret = disableAllCache ? null : cache.get(cacheKey);
@@ -162,7 +152,7 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 				logger.error("Cache miss " + cacheKey);
 			}
 
-			ret = cacheDataProviderCallBack.getData();
+			ret = cacheDataProviderCallBack.get();
 			if (!disableAllCache && (ret != null)) {
 
 				if (deleteOnTxRollback && TransactionSupportUtil.isActualTransactionActive()) {
@@ -197,8 +187,8 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 				}
 
 				cache.put(cacheKey, ret);
-			} else if(isDebugEnable && ret==null ){
-				logger.error("Data provider is null for "+cacheKey);
+			} else if (isDebugEnable && (ret == null)) {
+				logger.error("Data provider is null for " + cacheKey);
 			}
 		} else if (isDebugEnable) {
 			logger.debug("Cache Hit " + cacheKey);
@@ -211,10 +201,10 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 	@Override
 	public void removeFromCache(String cacheName, String cacheKey) {
 		cacheKey = computeCacheKey(cacheKey);
-		if(isDebugEnable){
-			logger.debug("Delete from cache " + cacheKey );
+		if (isDebugEnable) {
+			logger.debug("Delete from cache " + cacheKey);
 		}
-		SimpleCache<String, ?> cache = getCache(cacheName);
+		SimpleCache<String, ?> cache = caches.get(cacheName);
 		if (isDebugEnable && (cache.get(cacheKey) == null)) {
 			logger.info("Cache " + cacheKey + " object doesn't exists");
 		}
@@ -224,27 +214,18 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 
 	/** {@inheritDoc} */
 	@Override
-	public Collection<String> getCacheKeys(String cacheName) {
-		SimpleCache<String, ?> cache = getCache(cacheName);
-		return cache.getKeys();
+	public void clearCache(String cacheName) {
+		registry.broadcastEvent(new BeCPGRefreshableCacheEvent(getCacheId(), cacheName), false);
 	}
 
-	/** {@inheritDoc} */
-	@Override
-	public void clearCache(String cacheName) {
-		logger.debug("Clear specific cache: " + cacheName);
-		SimpleCache<String, ?> cache = getCache(cacheName);
-		cache.clear();
-	}
+
 
 	/** {@inheritDoc} */
 	@Override
 	public void clearAllCaches() {
-		logger.debug("Clear all cache");
-		for (SimpleCache<String, ?> cache : caches.values()) {
-			cache.clear();
-		}
+		registry.broadcastEvent(new BeCPGRefreshableCacheEvent(getCacheId(), "all"), true);
 	}
+
 
 	private String computeCacheKey(String cacheKey) {
 
@@ -255,45 +236,38 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 		return cacheKey;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes", "deprecation" })
-	private DefaultSimpleCache<String, ?> getCache(String cacheName) {
-		DefaultSimpleCache<String, ?> cache = caches.get(cacheName);
-
-		if (cache == null) {
-			Integer cacheSize = cacheSizes.get(cacheName);
-			if (cacheSize == null) {
-				cacheSize = maxCacheItems;
-			}
-
-			if (tenantAdminService.isEnabled()) {
-				cacheSize *= tenantAdminService.getAllTenants().size();
-			}
-
-			cache = new DefaultSimpleCache(cacheSize, cacheName);
-
-			caches.put(cacheName, cache);
-		}
-		return cache;
-	}
-
 	/** {@inheritDoc} */
 	@Override
 	public void printCacheInfos() {
 		for (String cacheName : caches.keySet()) {
 			logger.info("Cache - " + cacheName);
 			logger.info(" - Elements - " + caches.get(cacheName).getKeys().size());
-			logger.info(" - Capacity - " + caches.get(cacheName).getMaxItems());
-			try {
-				ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				ObjectOutputStream oos = new ObjectOutputStream(baos);
-				oos.writeObject(caches.get(cacheName));
-				oos.close();
-				logger.info(" - Data Size: " + baos.size() + "bytes");
-			} catch (IOException e) {
-				logger.warn(" - Data Size: (no serializable data)");
+			logger.info(" - Capacity - " + ((DefaultSimpleCache<?, ?>) caches.get(cacheName)).getMaxItems());
+
+		}
+
+	}
+
+	@Override
+	public void onRefreshableCacheEvent(RefreshableCacheEvent refreshableCacheEvent) {
+		if (getCacheId().equals(refreshableCacheEvent.getCacheId())) {
+			if ("all".equals(refreshableCacheEvent.getKey())) {
+				logger.info("Clear all cache");
+				for (SimpleCache<String, ?> cache : caches.values()) {
+					cache.clear();
+				}
+			} else {
+				logger.info("Clear specific cache: " + refreshableCacheEvent.getKey());
+				SimpleCache<String, ?> cache = caches.get(refreshableCacheEvent.getKey());
+				cache.clear();
 			}
 		}
 
+	}
+
+	@Override
+	public String getCacheId() {
+		return BeCPGCacheServiceImpl.class.getName();
 	}
 
 }

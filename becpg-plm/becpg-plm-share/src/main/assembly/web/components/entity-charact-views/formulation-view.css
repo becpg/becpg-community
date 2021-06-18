@@ -96,6 +96,19 @@ div.constraintsList .scrollableList {
 	padding-left: 22px;
 }
 
+.datalist-toolbar .onActionGroup, .datagrid .onActionGroup a {
+	background: transparent
+		url(../../components/documentlibrary/actions/document-copy-to-16.png)
+		no-repeat 12px 4px;
+	padding-left: 22px;
+}
+
+.datalist-toolbar .onActionDuplicateChilds, .datagrid .onActionDuplicateChilds a {
+	background: transparent
+		url(../../components/documentlibrary/actions/folder-manage-rules-16.png)
+		no-repeat 12px 4px;
+	padding-left: 22px;
+}
 
 .formulation-view .datagrid-bar .new-row span.first-child {
 	background: url(../images/add-row-16.png) no-repeat 8px 4px;
@@ -291,3 +304,22 @@ td.yui-dt-col-assoc_bcpg_packagingListProduct,
 th.yui-dt-col-assoc_bcpg_packagingListProduct {
 	min-width: 350px;
 }
+
+
+.formulation-view div.warning {
+    margin: 10px;
+    padding: 0.5em 0;
+    color: black;
+    text-align: left;
+	 padding-left: 5px; 
+    background: none repeat scroll 0 0 #fefdca;
+    box-shadow: -2px 2px 2px #c8c8c8;
+    font-size: 108%;
+}
+
+.formulation-view div.warning span.info {
+   background: url("../images/states/warning-16.png") no-repeat scroll 0 0 transparent;
+   display: inline;
+   padding-left: 20px;
+}
+

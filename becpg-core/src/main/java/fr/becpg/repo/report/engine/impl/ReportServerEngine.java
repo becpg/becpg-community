@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -31,9 +31,9 @@ import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.apache.http.client.ClientProtocolException;
 import org.springframework.util.StopWatch;
 
+import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.report.engine.BeCPGReportEngine;
 import fr.becpg.repo.report.entity.EntityImageInfo;
 import fr.becpg.repo.report.entity.EntityReportData;
@@ -42,6 +42,9 @@ import fr.becpg.report.client.AbstractBeCPGReportClient;
 import fr.becpg.report.client.ReportException;
 import fr.becpg.report.client.ReportFormat;
 import fr.becpg.report.client.ReportParams;
+import io.opencensus.common.Scope;
+import io.opencensus.trace.Tracer;
+import io.opencensus.trace.Tracing;
 
 /**
  * beCPGReportServerClient used to interact with reporting server
@@ -54,8 +57,12 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 	private NodeService nodeService;
 
 	private ContentService contentService;
+
+	private EntityService entityService;
 	
-	
+	private String instanceName;
+
+	private static final Tracer tracer = Tracing.getTracer();
 
 	/**
 	 * <p>Setter for the field <code>nodeService</code>.</p>
@@ -75,6 +82,16 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 		this.contentService = contentService;
 	}
 
+	public void setEntityService(EntityService entityService) {
+		this.entityService = entityService;
+	}
+	
+	
+
+	public void setInstanceName(String instanceName) {
+		this.instanceName = instanceName;
+	}
+
 	/** {@inheritDoc} */
 	@Override
 	public boolean isApplicable(NodeRef templateNodeRef, ReportFormat reportFormat) {
@@ -84,61 +101,66 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 	/** {@inheritDoc} */
 	@Override
 	public void createReport(NodeRef tplNodeRef, EntityReportData reportData, OutputStream out, Map<String, Object> params) throws ReportException {
-		StopWatch watch = null;
-		if (logger.isDebugEnabled()) {
-			watch = new StopWatch();
-			watch.start();
-		}
-
-		final ReportFormat format = (ReportFormat) params.get(ReportParams.PARAM_FORMAT);
-
-		if (format == null) {
-			throw new IllegalArgumentException("Format is a mandatory param");
-		}
-
-		try (InputStream in = new ByteArrayInputStream(reportData.getXmlDataSource().asXML().getBytes())) {
-
+		
+		try (Scope scope = tracer.spanBuilder("reportEngine.Create").startScopedSpan()) {
+			
+			StopWatch watch = null;
+			if (logger.isDebugEnabled()) {
+				watch = new StopWatch();
+				watch.start();
+			}
+			
+			final ReportFormat format = (ReportFormat) params.get(ReportParams.PARAM_FORMAT);
+			
+			if (format == null) {
+				throw new IllegalArgumentException("Format is a mandatory param");
+			}
+			
 			executeInSession(reportSession -> {
-
-				String templateId = tplNodeRef.toString();
-
+				
+				String templateId = (instanceName!=null? instanceName:"") + tplNodeRef.toString();
+				
+				tracer.getCurrentSpan().addAnnotation("sendReportTpl");
+				
 				sendTplFile(reportSession, templateId, tplNodeRef);
-
+				
 				@SuppressWarnings("unchecked")
 				List<NodeRef> associatedTplFiles = (List<NodeRef>) params.get(ReportParams.PARAM_ASSOCIATED_TPL_FILES);
-
+				
 				if (associatedTplFiles != null) {
 					for (NodeRef nodeRef : associatedTplFiles) {
 						String assocFileId = getAssociatedTplFileId(templateId, (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME));
 						sendTplFile(reportSession, assocFileId, nodeRef);
 					}
 				}
-
+				
 				reportSession.setTemplateId(templateId);
-
-				@SuppressWarnings("unchecked")
-				final Map<EntityImageInfo, byte[]> images = (Map<EntityImageInfo, byte[]>) params.get(ReportParams.PARAM_IMAGES);
-
-				if (images != null) {
-					for (Map.Entry<EntityImageInfo, byte[]> entry : images.entrySet()) {
-						sendImage(reportSession, entry.getKey().getId(), new ByteArrayInputStream(entry.getValue()));
+				
+				tracer.getCurrentSpan().addAnnotation("sendReportImages");
+				
+				for (EntityImageInfo entry : reportData.getImages()) {
+					byte[] imageBytes = entityService.getImage(entry.getImageNodeRef());
+					if (imageBytes != null) {
+						try (InputStream in = new ByteArrayInputStream(imageBytes)) {
+							sendImage(reportSession, entry.getId(), in);
+						}
 					}
 				}
-
+				
+				tracer.getCurrentSpan().addAnnotation("sendReportData");
 				reportSession.setFormat(format.toString());
 				reportSession.setLang((String) params.get(ReportParams.PARAM_LANG));
-
-				generateReport(reportSession, in, out);
+				try (InputStream in = new ByteArrayInputStream(reportData.getXmlDataSource().asXML().getBytes())) {
+					generateReport(reportSession, in, out);
+				}
 			});
-
-		} catch (IOException e) {
-			throw new ReportException(e);
+			
+			if (logger.isDebugEnabled() && (watch != null)) {
+				watch.stop();
+				logger.debug(" Report generated by server in  " + watch.getTotalTimeSeconds() + " seconds ");
+			}
 		}
 
-		if (logger.isDebugEnabled() && watch!=null) {
-			watch.stop();
-			logger.debug(" Report generated by server in  " + watch.getTotalTimeSeconds() + " seconds ");
-		}
 
 	}
 
@@ -146,8 +168,7 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 		return templateId + "-" + name;
 	}
 
-	private void sendTplFile(ReportSession reportSession, String templateId, NodeRef tplNodeRef)
-			throws ReportException, ClientProtocolException, IOException {
+	private void sendTplFile(ReportSession reportSession, String templateId, NodeRef tplNodeRef) throws ReportException, IOException {
 
 		Date dateModified = (Date) nodeService.getProperty(tplNodeRef, ContentModel.PROP_MODIFIED);
 		// Timestamp or -1

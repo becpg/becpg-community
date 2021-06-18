@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -161,7 +161,7 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 					Serializable value = serviceRegistry.getNodeService().getProperty(formNodeRef, fieldQname);
 					if (value instanceof MLText) {
 						mlText = (MLText) value;
-					} else if ((value != null) && (value instanceof String)) {
+					} else if (value instanceof String) {
 						mlText = new MLText();
 						mlText.addValue(toSaveUnderLocale, (String) value);
 					} else {
@@ -194,8 +194,8 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 							if (!"-".equals(key)) {
 								Locale loc = MLTextHelper.parseLocale(key);
 								if (json.getString(key) != null) {
-									if (json.getString(key).length() > 0) {
-										mlText.addValue(loc, json.getString(key));
+									if (!json.getString(key).isBlank()) {
+										mlText.addValue(loc, json.getString(key).trim());
 									} else {
 										mlText.removeValue(loc);
 									}

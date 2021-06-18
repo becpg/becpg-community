@@ -14,6 +14,7 @@ import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
 import fr.becpg.repo.product.data.productList.ResourceParamDataItem;
 import fr.becpg.repo.product.data.productList.SpecCompatibilityDataItem;
+import fr.becpg.repo.repository.annotation.AlfCacheable;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
@@ -29,6 +30,7 @@ import fr.becpg.repo.repository.annotation.DataList;
  */
 @AlfType
 @AlfQname(qname = "bcpg:productSpecification")
+@AlfCacheable
 public class ProductSpecificationData extends ProductData {
 
 	private static final long serialVersionUID = -3890483893356522048L;

@@ -1,5 +1,6 @@
 package fr.becpg.repo.product.data.meat;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -13,7 +14,9 @@ import org.json.JSONObject;
  * @author matthieu
  * @version $Id: $Id
  */
-public class MeatContentData {
+public class MeatContentData implements Serializable{
+
+	private static final long serialVersionUID = 194540761026268870L;
 
 	Double qtyPerc = 0d;
 	

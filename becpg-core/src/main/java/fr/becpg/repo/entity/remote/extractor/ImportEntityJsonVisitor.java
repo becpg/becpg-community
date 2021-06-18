@@ -1,9 +1,9 @@
 package fr.becpg.repo.entity.remote.extractor;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,16 +18,21 @@ import java.util.UUID;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.rest.framework.core.exceptions.InvalidArgumentException;
+import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.AssociationRef;
+import org.alfresco.service.cmr.repository.ContentService;
+import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.MLText;
+import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.codec.binary.Base64InputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
@@ -36,10 +41,14 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import fr.becpg.common.BeCPGException;
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
+import fr.becpg.repo.entity.remote.RemoteParams;
+import fr.becpg.repo.entity.remote.extractor.RemoteJSONContext.JsonVisitNodeType;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
@@ -58,26 +67,35 @@ public class ImportEntityJsonVisitor {
 
 	{
 		ignoredKeys.add(RemoteEntityService.ATTR_TYPE);
+		ignoredKeys.add(RemoteEntityService.ATTR_NAME);
 		ignoredKeys.add(RemoteEntityService.ATTR_PATH);
 		ignoredKeys.add(RemoteEntityService.ATTR_NODEREF);
 		ignoredKeys.add(RemoteEntityService.ELEM_ATTRIBUTES);
 		ignoredKeys.add(RemoteEntityService.ELEM_DATALISTS);
 		ignoredKeys.add(RemoteEntityService.ATTR_SITE);
 		ignoredKeys.add(RemoteEntityService.ATTR_PARENT_ID);
+		ignoredKeys.add(RemoteEntityService.ELEM_CONTENT);
 	}
 
-	EntityDictionaryService entityDictionaryService;
+	private EntityDictionaryService entityDictionaryService;
 
-	NamespaceService namespaceService;
+	private NamespaceService namespaceService;
 
-	AssociationService associationService;
+	private AssociationService associationService;
 
-	NodeService nodeService;
+	private NodeService nodeService;
 
-	EntityListDAO entityListDAO;
+	private EntityListDAO entityListDAO;
+
+	private ContentService contentService;
+
+	private MimetypeService mimetypeService;
+
+	private RemoteParams remoteParams;
 
 	/**
 	 * <p>Constructor for ImportEntityJsonVisitor.</p>
+	 * @param serviceRegistry
 	 *
 	 * @param entityDictionaryService a {@link fr.becpg.repo.entity.EntityDictionaryService} object.
 	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
@@ -85,14 +103,16 @@ public class ImportEntityJsonVisitor {
 	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
 	 * @param entityListDAO a {@link fr.becpg.repo.entity.EntityListDAO} object.
 	 */
-	public ImportEntityJsonVisitor(EntityDictionaryService entityDictionaryService, NamespaceService namespaceService,
-			AssociationService associationService, NodeService nodeService, EntityListDAO entityListDAO) {
+	public ImportEntityJsonVisitor(ServiceRegistry serviceRegistry, EntityDictionaryService entityDictionaryService,
+			NamespaceService namespaceService, AssociationService associationService, NodeService nodeService, EntityListDAO entityListDAO) {
 		super();
 		this.entityDictionaryService = entityDictionaryService;
 		this.namespaceService = namespaceService;
 		this.associationService = associationService;
 		this.nodeService = nodeService;
 		this.entityListDAO = entityListDAO;
+		this.mimetypeService = serviceRegistry.getMimetypeService();
+		this.contentService = serviceRegistry.getContentService();
 	}
 
 	/**
@@ -105,38 +125,60 @@ public class ImportEntityJsonVisitor {
 	 * @throws org.json.JSONException if any.
 	 * @throws fr.becpg.common.BeCPGException if any.
 	 */
-	public NodeRef visit(NodeRef entityNodeRef, InputStream in) throws IOException, JSONException, BeCPGException {
+	public NodeRef visit(NodeRef entityNodeRef, InputStream in) throws IOException, JSONException {
 
-		try (Reader reader = new InputStreamReader(in)) {
+		JSONTokener tokener = new JSONTokener(new InputStreamReader(in));
+		JSONObject root = new JSONObject(tokener);
 
-			JSONTokener tokener = new JSONTokener(reader);
-			JSONObject root = new JSONObject(tokener);
-
-			if (logger.isDebugEnabled()) {
-				logger.debug("Visiting: " + root.toString(3));
-			}
-			if (root.has(RemoteEntityService.ELEM_ENTITY)) {
-
-				JSONObject entity = root.getJSONObject(RemoteEntityService.ELEM_ENTITY);
-
-				if (entityNodeRef != null) {
-					entity.put(RemoteEntityService.ATTR_ID, entityNodeRef.getId());
-				}
-
-				return visit(entity, false, null);
-			}
-			return null;
-
+		if (logger.isDebugEnabled()) {
+			logger.debug("Visiting: " + root.toString(3));
 		}
+		if (root.has(RemoteEntityService.ELEM_ENTITY)) {
+
+			JSONObject entity = root.getJSONObject(RemoteEntityService.ELEM_ENTITY);
+
+			remoteParams = new RemoteParams(RemoteEntityFormat.json);
+
+			if (entity.has(RemoteEntityService.ELEM_PARAMS)) {
+				remoteParams.setJsonParams(entity.getJSONObject(RemoteEntityService.ELEM_PARAMS));
+			}
+
+			if (entityNodeRef != null) {
+				entity.put(RemoteEntityService.ATTR_ID, entityNodeRef.getId());
+			}
+
+			RemoteJSONContext context = new RemoteJSONContext();
+			NodeRef ret = null;
+			int retryCount = 0;
+			while (context.isRetry() && (retryCount < 3)) {
+				if (retryCount == 1) {
+					logger.debug("Last retry");
+					context.setLastRetry(true);
+				}
+				context.setRetry(false);
+				ret = visit(entity, JsonVisitNodeType.ENTITY, null, context);
+				retryCount++;
+				logger.debug("Retrying count:" + retryCount);
+			}
+
+			return ret;
+		}
+
+		throw new BeCPGException("No entity found in JSON");
 
 	}
 
-	private NodeRef visit(JSONObject entity, boolean lookupOnly, QName assocName) throws JSONException, BeCPGException {
+	private NodeRef visit(JSONObject entity, JsonVisitNodeType jsonType, QName assocName, RemoteJSONContext context) throws JSONException {
 
 		QName type = null;
-		String path = null;
 
 		QName propName = ContentModel.PROP_NAME;
+		if(assocName == null) {
+			assocName = ContentModel.ASSOC_CONTAINS;
+		}
+		
+		boolean isInPath = false;
+		String path = null;
 
 		if (entity.has(RemoteEntityService.ATTR_TYPE)) {
 			type = createQName(entity.getString(RemoteEntityService.ATTR_TYPE));
@@ -145,30 +187,97 @@ public class ImportEntityJsonVisitor {
 
 		if (entity.has(RemoteEntityService.ATTR_PATH)) {
 			path = entity.getString(RemoteEntityService.ATTR_PATH);
+			if (path.startsWith("~")) {
+				isInPath = true;
+				if (context.getEntityNodeRef() != null) {
+					path = path.replace("~", context.getEntityPath(nodeService, namespaceService));
+				} else {
+					logger.debug("Path not found for: "+path);
+					path = null;
+				}
+			}
+
 		}
 
 		NodeRef parentNodeRef = null;
 
-		if (entity.has(RemoteEntityService.ATTR_PARENT_ID)) {
+		if (JsonVisitNodeType.CHILD_ASSOC.equals(jsonType) && (context.getCurrentNodeRef() != null)) {
+			parentNodeRef = context.getCurrentNodeRef();
+			isInPath = true;
+		} else if (entity.has(RemoteEntityService.ATTR_PARENT_ID)) {
 			parentNodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, entity.getString(RemoteEntityService.ATTR_PARENT_ID));
+			if (context.getCache().containsKey(parentNodeRef)) {
+				parentNodeRef = context.getCache().get(parentNodeRef);
+			}
 		}
 
-		Map<QName, Serializable> properties = jsonToProperties(entity);
-		Map<QName, List<NodeRef>> associations = jsonToAssocs(entity);
+		if (((parentNodeRef == null) || !nodeService.exists(parentNodeRef))) {
+			if (path != null) {
+				parentNodeRef = findNodeByPath(path);
+			} else {
+				parentNodeRef = null;
+			}
+
+		}
+
+		if (JsonVisitNodeType.ASSOC.equals(jsonType) && !isInPath && (parentNodeRef != null) && (context.getEntityNodeRef() != null)) {
+			int i = 0;
+
+			NodeRef folder = parentNodeRef;
+
+			while ((folder != null) && (i < 4)) {
+				i++;
+
+				if (context.getEntityNodeRef().equals(folder)) {
+					isInPath = true;
+					break;
+				}
+
+				folder = nodeService.getPrimaryParent(folder).getParentRef();
+			}
+		}
+
+		Map<QName, Serializable> properties = jsonToProperties(entity, context);
+		Map<QName, List<NodeRef>> associations = jsonToAssocs(entity, context);
+
+		if (!properties.containsKey(propName) && entity.has(RemoteEntityService.ATTR_NAME)) {
+			properties.put(propName, entity.getString(RemoteEntityService.ATTR_NAME));
+		}
 
 		NodeRef entityNodeRef = null;
-
+		NodeRef jsonEntityNodeRef = null;
 		if (entity.has(RemoteEntityService.ATTR_ID)) {
-			entityNodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, entity.getString(RemoteEntityService.ATTR_ID));
+			jsonEntityNodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, entity.getString(RemoteEntityService.ATTR_ID));
+			if (context.getCache().containsKey(jsonEntityNodeRef)) {
+				entityNodeRef = context.getCache().get(jsonEntityNodeRef);
+			} else {
+				entityNodeRef = jsonEntityNodeRef;
+			}
+
 		}
 
 		if ((entityNodeRef == null) || !nodeService.exists(entityNodeRef)) {
 
-			entityNodeRef = findNode(type, parentNodeRef, path, properties, associations);
+			if (JsonVisitNodeType.CHILD_ASSOC.equals(jsonType)) {
+				if (parentNodeRef != null) {
+					if(logger.isDebugEnabled()) {
+						logger.debug("Try to find child: "+assocName+ " "+ (String) properties.get(propName));
+					}
+					entityNodeRef = nodeService.getChildByName(parentNodeRef, assocName, (String) properties.get(propName));
+				}
+			} else {
+				entityNodeRef = findNode(type, parentNodeRef, properties, associations);
+			}
+			if (jsonEntityNodeRef != null) {
+				context.getCache().put(jsonEntityNodeRef, entityNodeRef);
+			}
+
 		}
 
-		if (lookupOnly) {
+		if (JsonVisitNodeType.ASSOC.equals(jsonType)) {
+
 			if (entityNodeRef == null) {
+
 				String errMsg = "Cannot find node";
 				if (assocName != null) {
 					errMsg += " for association " + assocName.toPrefixString(namespaceService);
@@ -181,41 +290,64 @@ public class ImportEntityJsonVisitor {
 					errMsg += ", with associations " + associations.toString();
 				}
 
-				throw new BeCPGException(errMsg);
+				if (parentNodeRef != null) {
+					errMsg += ", in path " + parentNodeRef;
+				}
+				
+				errMsg += ", isInPath " + isInPath+ ", lastRetry:"+context.isLastRetry();
+
+				if (isInPath && !context.isLastRetry()) {
+					// will be create later retry
+					context.setRetry(true);
+					logger.debug("Mark retring for :" + errMsg);
+				} else {
+				
+					throw new BeCPGException(errMsg);
+				}
 			}
 
 			return entityNodeRef;
 		}
 
 		if (entity.has(RemoteEntityService.ELEM_ATTRIBUTES)) {
-			properties.putAll(jsonToProperties(entity.getJSONObject(RemoteEntityService.ELEM_ATTRIBUTES)));
-			associations.putAll(jsonToAssocs(entity.getJSONObject(RemoteEntityService.ELEM_ATTRIBUTES)));
+			properties.putAll(jsonToProperties(entity.getJSONObject(RemoteEntityService.ELEM_ATTRIBUTES), context));
+		}
+
+		String name = (String) properties.get(propName);
+
+		if ((name == null) || name.trim().isEmpty()) {
+			name = RemoteEntityService.EMPTY_NAME_PREFIX + UUID.randomUUID().toString();
 		}
 
 		if (entityNodeRef == null) {
 
-			if ((parentNodeRef == null) || !nodeService.exists(parentNodeRef)) {
-				parentNodeRef = findNodeByPath(path);
+			if (parentNodeRef == null) {
+				if (JsonVisitNodeType.CHILD_ASSOC.equals(jsonType)) {
+					context.setRetry(true);
+					if(logger.isDebugEnabled()) {
+						logger.debug("Parent not found for child assoc retrying, with properties: " + properties.toString());
+					}
+					return null;
+				}
 
-			}
-
-			String name = (String) properties.get(propName);
-
-			if ((name == null) || name.trim().isEmpty()) {
-				name = RemoteEntityService.EMPTY_NAME_PREFIX + UUID.randomUUID().toString();
+				parentNodeRef = findNodeByPath(null);
 			}
 
 			if (logger.isDebugEnabled()) {
-				logger.debug("Node not found creating: " + name + " in " + parentNodeRef);
-
+				logger.debug(" - Node not found creating: " + name + " in " + parentNodeRef);
 			}
 
 			entityNodeRef = nodeService
-					.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
+					.createNode(parentNodeRef, assocName,
 							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name)), type, properties)
 					.getChildRef();
 
+			if (jsonEntityNodeRef != null) {
+				context.getCache().put(jsonEntityNodeRef, entityNodeRef);
+			}
+
 		} else {
+
 			for (Entry<QName, Serializable> prop : properties.entrySet()) {
 				if (prop.getValue() == null) {
 					nodeService.removeProperty(entityNodeRef, prop.getKey());
@@ -225,46 +357,78 @@ public class ImportEntityJsonVisitor {
 			}
 		}
 
-		for (Entry<QName, List<NodeRef>> assocEntry : associations.entrySet()) {
-			associationService.update(entityNodeRef, assocEntry.getKey(), assocEntry.getValue());
+		if (JsonVisitNodeType.ENTITY.equals(jsonType)) {
+			context.setEntityNodeRef(entityNodeRef);
+		} 
+			
+		NodeRef prevCurrentNodeRef = context.getCurrentNodeRef();
+		try {
+			context.setCurrentNodeRef(entityNodeRef);
+			if (entity.has(RemoteEntityService.ELEM_ATTRIBUTES)) {
+				associations.putAll(jsonToAssocs(entity.getJSONObject(RemoteEntityService.ELEM_ATTRIBUTES), context));
+			}
+	
+			for (Entry<QName, List<NodeRef>> assocEntry : associations.entrySet()) {
+				associationService.update(entityNodeRef, assocEntry.getKey(), assocEntry.getValue());
+			}
+	
+			if (entity.has(RemoteEntityService.ELEM_DATALISTS)) {
+				visitDataLists(entityNodeRef, entity.getJSONObject(RemoteEntityService.ELEM_DATALISTS), context);
+			}
+	
+			if (entity.has(RemoteEntityService.ELEM_CONTENT)) {
+				visitContent(entityNodeRef, name, entity.getString(RemoteEntityService.ELEM_CONTENT));
+			}
+			
+		} finally {
+			context.setCurrentNodeRef(prevCurrentNodeRef);
 		}
-
-		if (entity.has(RemoteEntityService.ELEM_DATALISTS)) {
-			visitDataLists(entity, entityNodeRef, entity.getJSONObject(RemoteEntityService.ELEM_DATALISTS));
-		}
-
+		
 		return entityNodeRef;
 	}
 
-	@SuppressWarnings("unchecked")
-	private <T> T extractParams(JSONObject entity, String paramKey, T defaultValue) throws JSONException {
-		if (entity.has(RemoteEntityService.ELEM_PARAMS)) {
-			JSONObject params = entity.getJSONObject(RemoteEntityService.ELEM_PARAMS);
-			if (params.has(paramKey)) {
-				return (T) params.get(paramKey);
-			}
-
+	private void visitContent(NodeRef entityNodeRef, String fileName, String content) {
+		String mimetype = mimetypeService.guessMimetype(fileName);
+		ContentWriter writer = contentService.getWriter(entityNodeRef, ContentModel.PROP_CONTENT, true);
+		writer.setMimetype(mimetype);
+		try (InputStream contentStream = new ByteArrayInputStream(content.getBytes());
+				InputStream in = new Base64InputStream(contentStream, false, -1, null)) {
+			writer.putContent(in);
+		} catch (IOException e) {
+			throw new BeCPGException("Cannot import JSON content");
 		}
-		return defaultValue;
+
 	}
 
-	private NodeRef findNode(QName type, NodeRef parentNodeRef, String path, Map<QName, Serializable> properties,
-			Map<QName, List<NodeRef>> associations) {
+	private NodeRef findNode(QName type, NodeRef parentNodeRef, Map<QName, Serializable> properties, Map<QName, List<NodeRef>> associations) throws JSONException {
+		if (properties.isEmpty() && associations.isEmpty()) {
+			return null;
+		}
+
 		if (logger.isDebugEnabled()) {
-			logger.debug("Try to find node of type: " + type + " in " + path);
-			logger.debug(" - properties : " + properties.toString());
-			logger.debug(" - assocs : " + associations.toString());
+			logger.debug("Try to find node of type: " + type + " in " + parentNodeRef);
+			if (!properties.isEmpty()) {
+				logger.debug(" - properties : " + properties.toString());
+			}
+			if (!associations.isEmpty()) {
+				logger.debug(" - assocs : " + associations.toString());
+			}
 		}
 
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery();
 		if (type != null) {
 			queryBuilder = queryBuilder.ofType(type);
 		}
-		if (path != null) {
-			queryBuilder = queryBuilder.inPath(path);
+		
+		boolean ignorePath = false;
+		if(properties.containsKey(BeCPGModel.PROP_CODE)  || properties.containsKey(BeCPGModel.PROP_ERP_CODE)
+			&& 	Boolean.TRUE.equals(remoteParams.extractParams(RemoteParams.PARAM_IGNORE_PATH_FOR_SEARCH, Boolean.FALSE))
+				) {
+			ignorePath = true;
 		}
+		
 
-		if (parentNodeRef != null) {
+		if (parentNodeRef != null && !ignorePath) {
 			queryBuilder = queryBuilder.inParent(parentNodeRef);
 		}
 
@@ -276,7 +440,7 @@ public class ImportEntityJsonVisitor {
 
 		if ((associations != null) && !associations.isEmpty()) {
 
-			List<NodeRef> nodes = queryBuilder.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).inDBIfPossible().list();
+			List<NodeRef> nodes = queryBuilder.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).excludeVersions().inDBIfPossible().list();
 
 			for (Map.Entry<QName, List<NodeRef>> nestedEntry : associations.entrySet()) {
 
@@ -305,17 +469,17 @@ public class ImportEntityJsonVisitor {
 			return (nodes != null) && !nodes.isEmpty() ? nodes.get(0) : null;
 
 		} else {
-			return queryBuilder.inDBIfPossible().ftsLanguage().singleValue();
+			return queryBuilder.inDBIfPossible().excludeVersions().ftsLanguage().singleValue();
 		}
 
 	}
 
 	@SuppressWarnings("unchecked")
-	private void visitDataLists(JSONObject entity, NodeRef entityNodeRef, JSONObject datalists) throws JSONException, BeCPGException {
+	private void visitDataLists(NodeRef entityNodeRef, JSONObject datalists, RemoteJSONContext context) throws JSONException {
 
-		boolean replaceExisting = extractParams(entity, "replaceExistingLists", false);
-		String dataListsToReplace =  extractParams(entity, "dataListsToReplace", "");
-		
+		boolean replaceExisting = remoteParams.extractParams(RemoteParams.PARAM_REPLACE_EXISTING_LISTS, false);
+		String dataListsToReplace = remoteParams.extractParams(RemoteParams.PARAM_DATALISTS_TO_REPLACE, "");
+
 		NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
 		if (listContainerNodeRef == null) {
 			listContainerNodeRef = entityListDAO.createListContainer(entityNodeRef);
@@ -343,7 +507,14 @@ public class ImportEntityJsonVisitor {
 				if (!listItem.has(RemoteEntityService.ATTR_TYPE)) {
 					listItem.put(RemoteEntityService.ATTR_TYPE, dataListQName);
 				}
-				listItemToKeep.add(visit(listItem, false, null));
+				try {
+					listItemToKeep.add(visit(listItem, JsonVisitNodeType.DATALIST, null, context));
+				} catch (BeCPGException e) {
+					if (Boolean.TRUE.equals(remoteParams.extractParams(RemoteParams.PARAM_FAIL_ON_ASSOC_NOT_FOUND, Boolean.TRUE))) {
+						throw e;
+					}
+
+				}
 			}
 
 			if (replaceExisting || dataListsToReplace.contains(key)) {
@@ -359,7 +530,7 @@ public class ImportEntityJsonVisitor {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Map<QName, List<NodeRef>> jsonToAssocs(JSONObject entity) throws JSONException, BeCPGException {
+	private Map<QName, List<NodeRef>> jsonToAssocs(JSONObject entity, RemoteJSONContext context) throws JSONException {
 		Map<QName, List<NodeRef>> assocs = new HashMap<>();
 
 		Iterator<String> iterator = entity.keys();
@@ -382,26 +553,24 @@ public class ImportEntityJsonVisitor {
 							for (int i = 0; i < values.length(); i++) {
 
 								JSONObject assocEntity = values.getJSONObject(i);
-								if (!assocEntity.has(RemoteEntityService.ATTR_TYPE)) {
-									assocEntity.put(RemoteEntityService.ATTR_TYPE, ad.getTargetClass().getName());
-								}
 
-								tmp.add(visit(assocEntity, true, propQName));
+								appendAssoc(tmp, assocEntity, ad.getTargetClass().getName(), propQName, ad.isChild(), context);
 
 							}
 
 						} else {
 
 							JSONObject assocEntity = entity.getJSONObject(key);
-							if (!assocEntity.has(RemoteEntityService.ATTR_TYPE)) {
-								assocEntity.put(RemoteEntityService.ATTR_TYPE, ad.getTargetClass().getName());
-							}
 
-							tmp.add(visit(assocEntity, true, propQName));
-
+							appendAssoc(tmp, assocEntity, ad.getTargetClass().getName(), propQName, ad.isChild(), context);
 						}
 
 					}
+
+					if (ad.isTargetMandatory() && tmp.isEmpty()) {
+						throw new BeCPGException("Mandatory association not found");
+					}
+
 					assocs.put(propQName, tmp);
 
 				}
@@ -411,8 +580,28 @@ public class ImportEntityJsonVisitor {
 		return assocs;
 	}
 
+	private void appendAssoc(List<NodeRef> nodes, JSONObject assocEntity, QName type, QName propQName, boolean isChild, RemoteJSONContext context)
+			throws JSONException {
+		if (!assocEntity.has(RemoteEntityService.ATTR_TYPE)) {
+			assocEntity.put(RemoteEntityService.ATTR_TYPE, type);
+		}
+
+		try {
+			NodeRef tmp = visit(assocEntity, isChild ? JsonVisitNodeType.CHILD_ASSOC : JsonVisitNodeType.ASSOC, propQName, context);
+			if (tmp != null) {
+				nodes.add(tmp);
+			}
+		} catch (BeCPGException e) {
+			if (Boolean.TRUE.equals(remoteParams.extractParams(RemoteParams.PARAM_FAIL_ON_ASSOC_NOT_FOUND, Boolean.TRUE))) {
+				throw e;
+			}
+
+		}
+
+	}
+
 	@SuppressWarnings("unchecked")
-	private Map<QName, Serializable> jsonToProperties(JSONObject entity) throws JSONException, BeCPGException {
+	private Map<QName, Serializable> jsonToProperties(JSONObject entity, RemoteJSONContext context) throws JSONException {
 		Map<QName, Serializable> nodeProps = new HashMap<>();
 
 		Iterator<String> iterator = entity.keys();
@@ -421,8 +610,10 @@ public class ImportEntityJsonVisitor {
 
 			String key = iterator.next();
 			String propName = key;
+			boolean isMlText = false;
 			if (key.contains("_")) {
 				propName = key.split("_")[0];
+				isMlText = true;
 			}
 
 			if (!ignoredKeys.contains(propName)) {
@@ -467,13 +658,40 @@ public class ImportEntityJsonVisitor {
 
 						} else {
 							value = entity.getString(key);
-							nodeProps.put(propQName, value);
+
+							if (value.startsWith("{") && value.endsWith("}")) {
+
+								MLText mlText = new MLText();
+
+								String content = value.substring(1, value.length() - 1);
+								
+								String[] contents = content.split("\",\"");
+
+								for (String cont : contents) {
+									if (cont.contains(":")) {
+										String locale = cont.split(":")[0];
+										
+										int index = cont.indexOf(":");
+										String actualValue = cont.substring(index + 1);
+										
+										if (actualValue.length() > 1 && actualValue.startsWith("\"") && actualValue.endsWith("\"")) {
+											actualValue = actualValue.substring(1, actualValue.length() - 1);
+										}
+										
+										mlText.addValue(MLTextHelper.parseLocale(locale), actualValue);
+									}
+								}
+
+								nodeProps.put(propQName, mlText);
+							} else {
+								nodeProps.put(propQName, value);
+							}
 						}
 
-					} else {
+					} else if (!isMlText) {
 						Serializable value = null;
-						if (entity.get(key) != null  && ! JSONObject.NULL.equals(entity.get(key))) {
-							if (pd.isMultiValued() && (entity.getJSONArray(key) != null)) {
+						if ((entity.get(key) != null) && !JSONObject.NULL.equals(entity.get(key))) {
+							if (pd.isMultiValued() && entity.get(key) instanceof JSONArray ) {
 
 								value = new ArrayList<Serializable>();
 								JSONArray values = entity.getJSONArray(key);
@@ -482,7 +700,7 @@ public class ImportEntityJsonVisitor {
 									Serializable val;
 
 									if (pd.getDataType().getName().equals(DataTypeDefinition.NODE_REF)) {
-										val = visit(values.getJSONObject(i), true, propQName);
+										val = visit(values.getJSONObject(i), JsonVisitNodeType.ASSOC, propQName, context);
 									} else {
 										if (RemoteHelper.isJSONValue(propQName)) {
 											val = values.getJSONObject(i).toString();
@@ -495,7 +713,7 @@ public class ImportEntityJsonVisitor {
 
 							} else {
 								if (pd.getDataType().getName().equals(DataTypeDefinition.NODE_REF)) {
-									value = visit(entity.getJSONObject(key), true, propQName);
+									value = visit(entity.getJSONObject(key), JsonVisitNodeType.ASSOC, propQName, context);
 								} else {
 									if (RemoteHelper.isJSONValue(propQName)) {
 										value = entity.getJSONObject(key).toString();
@@ -549,8 +767,12 @@ public class ImportEntityJsonVisitor {
 	 */
 	public QName createQName(String qnameStr) {
 		try {
+			if ((qnameStr != null) && qnameStr.contains("|")) {
+				qnameStr = qnameStr.split("|")[0];
+			}
+
 			QName qname;
-			if (qnameStr.indexOf(QName.NAMESPACE_BEGIN) != -1) {
+			if ((qnameStr != null) && (qnameStr.indexOf(QName.NAMESPACE_BEGIN) != -1)) {
 				qname = QName.createQName(qnameStr);
 			} else {
 				qname = QName.createQName(qnameStr, namespaceService);

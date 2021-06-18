@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG. 
+private * Copyright (C) 2010-2021 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -55,8 +55,10 @@ public class ControlListDataItem extends BeCPGDataObject{
 	String textCriteria;
 	QualityControlState state;	
 	String temperature;
+	String timePeriod;
 	NodeRef method;
 	List<NodeRef> characts = new ArrayList<>();
+	NodeRef controlPoint;
 	
 	/**
 	 * <p>Getter for the field <code>type</code>.</p>
@@ -323,7 +325,45 @@ public class ControlListDataItem extends BeCPGDataObject{
 		this.characts = characts;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>controlPoint</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
+	@AlfSingleAssoc
+	@AlfQname(qname = "qa:clControlPoint")
+	public NodeRef getControlPoint() {
+		return controlPoint;
+	}
+
+	/**
+	 * <p>Setter for the field <code>controlPoint</code>.</p>
+	 *
+	 * @param controlPoint a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
+	public void setControlPoint(NodeRef controlPoint) {
+		this.controlPoint = controlPoint;
+	}
 	
+	/**
+	 * <p>Getter for the field <code>timePeriod</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
+	@AlfProp
+	@AlfQname(qname = "qa:clTimePeriod")
+	public String getTimePeriod() {
+		return timePeriod;
+	}
+
+	/**
+	 * <p>Setter for the field <code>timePeriod</code>.</p>
+	 *
+	 * @param timePeriod a {@link java.lang.String} object.
+	 */
+	public void setTimePeriod(String timePeriod) {
+		this.timePeriod = timePeriod;
+	}
 
 	/**
 	 * <p>Constructor for ControlListDataItem.</p>
@@ -359,8 +399,9 @@ public class ControlListDataItem extends BeCPGDataObject{
 	 * @param temperature a {@link java.lang.String} object.
 	 * @param method a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param characts a {@link java.util.List} object.
+	 * @param controlPoint a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
-	public ControlListDataItem(NodeRef nodeRef, String type, Double mini, Double maxi, Boolean required, String sampleId, Double value, Double target, String unit,String textCriteria, QualityControlState state, String temperature, NodeRef method, List<NodeRef> characts){
+	public ControlListDataItem(NodeRef nodeRef, String type, Double mini, Double maxi, Boolean required, String sampleId, Double value, Double target, String unit,String textCriteria, QualityControlState state, String temperature, String timePeriod, NodeRef method, List<NodeRef> characts, NodeRef controlPoint){
 		
 		setNodeRef(nodeRef);
 		setType(type);
@@ -374,8 +415,10 @@ public class ControlListDataItem extends BeCPGDataObject{
 		setTextCriteria(textCriteria);
 		setState(state);
 		setTemperature(temperature);
+		setTimePeriod(timePeriod);
 		setMethod(method);
 		setCharacts(characts);
+		setControlPoint(controlPoint);
 	}
 	
 	/**

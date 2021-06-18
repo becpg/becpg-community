@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -24,12 +24,15 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.site.SiteInfo;
+import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -47,6 +50,7 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.RepoService;
+import fr.becpg.repo.jscript.SupplierPortalHelper;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.ProjectState;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -79,6 +83,8 @@ public class SupplierPortalWebScript extends AbstractWebScript {
 	private RepoService repoService;
 
 	private EntityVersionService entityVersionService;
+	
+	private SiteService siteService;
 
 	private AlfrescoRepository<ProjectData> alfrescoRepository;
 
@@ -89,7 +95,7 @@ public class SupplierPortalWebScript extends AbstractWebScript {
 	private boolean createBranch;
 
 	private String entityNameTpl = "{entity_cm:name} - UPDATE - {date_YYYY}";
-	private String projectNameTpl = "PJT - {entity_cm:name} - {supplier_cm:name} - UPDATE - {date_YYYY}";
+	private String projectNameTpl = "{entity_cm:name} - {supplier_cm:name} - UPDATE - {date_YYYY}";
 
 	/**
 	 * <p>Setter for the field <code>nodeService</code>.</p>
@@ -179,6 +185,10 @@ public class SupplierPortalWebScript extends AbstractWebScript {
 	 */
 	public void setCreateBranch(boolean createBranch) {
 		this.createBranch = createBranch;
+	}
+	
+	public void setSiteService(SiteService siteService) {
+		this.siteService = siteService;
 	}
 
 	/** {@inheritDoc} */
@@ -280,10 +290,18 @@ public class SupplierPortalWebScript extends AbstractWebScript {
 		}
 		NodeRef branchNodeRef = entityNodeRef;
 		if(createBranch) {
+			
+			String branchName = repoService.getAvailableName(destNodeRef, createName(entityNodeRef, supplierNodeRef, entityNameTpl, currentDate), false);
+			
+			NodeRef supplierDestFolder = getSupplierDestFolder(supplierNodeRef);
+			
+			if (supplierDestFolder != null && nodeService.getChildByName(supplierDestFolder, ContentModel.ASSOC_CONTAINS, branchName) != null) {
+				throw new IllegalStateException(I18NUtil.getMessage("message.supplier.entity-already-exists"));
+			}
+			
 			branchNodeRef = entityVersionService.createBranch(entityNodeRef, destNodeRef);
 			associationService.update(branchNodeRef, BeCPGModel.ASSOC_AUTO_MERGE_TO, entityNodeRef);
-			nodeService.setProperty(branchNodeRef, ContentModel.PROP_NAME,
-					repoService.getAvailableName(destNodeRef, createName(entityNodeRef, supplierNodeRef, entityNameTpl, currentDate), false));
+			nodeService.setProperty(branchNodeRef, ContentModel.PROP_NAME, branchName);
 		}
 		
 
@@ -336,7 +354,18 @@ public class SupplierPortalWebScript extends AbstractWebScript {
 	private String extractPropText(String propQname, NodeRef entityNodeRef, NodeRef supplierNodeRef, Date currentDate) {
 		if (propQname != null) {
 			if ((propQname.indexOf("supplier_") == 0) && (supplierNodeRef != null) && !supplierNodeRef.equals(entityNodeRef)) {
-				return (String) nodeService.getProperty(supplierNodeRef, QName.createQName(propQname.replace("supplier_", ""), namespaceService));
+				
+				QName prop = QName.createQName(propQname.replace("supplier_", ""), namespaceService);
+				
+				String entityProp = (String) nodeService.getProperty(entityNodeRef, prop);
+				String supplierProp = (String) nodeService.getProperty(supplierNodeRef, prop);
+				
+				// case of supplier name already contained in entity name
+				if (entityProp != null && supplierProp != null && entityProp.toLowerCase().contains(supplierProp.toLowerCase())) {
+					return null;
+				}
+				
+				return supplierProp;
 			} else if (propQname.indexOf("entity_") == 0) {
 				return (String) nodeService.getProperty(entityNodeRef, QName.createQName(propQname.replace("entity_", ""), namespaceService));
 			} else if ("date".equals(propQname)) {
@@ -373,6 +402,44 @@ public class SupplierPortalWebScript extends AbstractWebScript {
 		}
 
 		return supplierNodeRef;
+	}
+	
+	private NodeRef getSupplierDestFolder(NodeRef supplierNodeRef) {
+		NodeRef destFolder = null;
+
+		if (supplierNodeRef != null) {
+			SiteInfo siteInfo = siteService.getSite(SupplierPortalHelper.SUPPLIER_SITE_ID);
+
+			if (siteInfo != null) {
+
+				Locale currentLocal = I18NUtil.getLocale();
+				Locale currentContentLocal = I18NUtil.getContentLocale();
+				
+				try {
+					I18NUtil.setLocale(Locale.getDefault());
+					I18NUtil.setContentLocale(null);
+					
+					NodeRef documentLibraryNodeRef = siteService.getContainer(SupplierPortalHelper.SUPPLIER_SITE_ID, SiteService.DOCUMENT_LIBRARY);
+					if (documentLibraryNodeRef != null) {
+						
+						destFolder = nodeService.getChildByName(documentLibraryNodeRef, ContentModel.ASSOC_CONTAINS, I18NUtil.getMessage("path.referencing"));
+						
+						if (destFolder != null) {
+							
+							String supplierName = (String) nodeService.getProperty(supplierNodeRef, ContentModel.PROP_NAME);
+							
+							destFolder = nodeService.getChildByName(destFolder, ContentModel.ASSOC_CONTAINS, supplierName);
+						}
+					}
+				} finally {
+					I18NUtil.setLocale(currentLocal);
+					I18NUtil.setContentLocale(currentContentLocal);
+				}
+
+			}
+		}
+
+		return destFolder;
 	}
 
 }

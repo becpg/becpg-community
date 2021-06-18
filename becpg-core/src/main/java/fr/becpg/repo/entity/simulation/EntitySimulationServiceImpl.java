@@ -15,14 +15,15 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.repo.mail.BeCPGMailService;
 
 /**
- * <p>EntitySimulationServiceImpl class.</p>
+ * <p>
+ * EntitySimulationServiceImpl class.
+ * </p>
  *
  * @author matthieu
  * @version $Id: $Id
@@ -95,29 +96,25 @@ public class EntitySimulationServiceImpl implements EntitySimulationService {
 				runWithSuccess = true;
 
 			} catch (Exception e) {
-				if (e instanceof ConcurrencyFailureException) {
-					throw (ConcurrencyFailureException) e;
-				}
 				runWithSuccess = false;
 				logger.error("Unable to simulate entities ", e);
 
-			} finally {
-				// Send Mail after simulation
-				AuthenticationUtil.runAs(() -> {
-					transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-						watch.stop();
-						Path folderPath = nodeService.getPath(destNodeRef);
-						String destinationPath = folderPath.subPath(2, folderPath.size() - 1).toDisplayPath(nodeService, permissionService) + "/"
-								+ nodeService.getProperty(destNodeRef, ContentModel.PROP_NAME);
-
-						beCPGMailService.sendMailOnAsyncAction(userName, "simulation", ASYNC_ACTION_URL_PREFIX + destinationPath, runWithSuccess,
-								watch.getTotalTimeSeconds());
-
-						return null;
-					}, true, false);
-					return null;
-				}, userName);
 			}
+			// Send Mail after simulation
+			AuthenticationUtil.runAs(() -> {
+				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+					watch.stop();
+					Path folderPath = nodeService.getPath(destNodeRef);
+					String destinationPath = folderPath.subPath(2, folderPath.size() - 1).toDisplayPath(nodeService, permissionService) + "/"
+							+ nodeService.getProperty(destNodeRef, ContentModel.PROP_NAME);
+
+					beCPGMailService.sendMailOnAsyncAction(userName, "simulation", ASYNC_ACTION_URL_PREFIX + destinationPath, runWithSuccess,
+							watch.getTotalTimeSeconds());
+
+					return null;
+				}, true, false);
+				return null;
+			}, userName);
 
 		}
 

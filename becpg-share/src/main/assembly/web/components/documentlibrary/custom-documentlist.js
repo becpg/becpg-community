@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  * 
  * This file is part of beCPG
  * 
@@ -34,7 +34,7 @@
 		beCPG.custom.DocumentList.superclass.constructor.call(this, htmlId);
 
 		YAHOO.Bubbling.on("doclistMetadata", this.onDoclistMetadata, this);
-
+		
 		return this;
 	};
 
@@ -53,7 +53,7 @@
 							if (metadata !== null && beCPG.util.isEntity(metadata.parent)) {
 								var div = Dom.get(me.id + "-becpg-entityFolder-message"), entityClassName = metadata.parent.type.split(":")[1], instructions;
 
-								var instructionKey = "product";
+								var instructionKey = "entity";
 
 								// same message for every product
 								if (entityClassName == "rawMaterial" || entityClassName == "finishedProduct"
@@ -64,9 +64,7 @@
 								} else if (entityClassName == "projet" || entityClassName == "systemEntity" || entityClassName == "aclGroup"
 										|| entityClassName == "entityTplFolder") {
 									instructionKey = entityClassName;
-								} else {
-									instructionKey = "entity";
-								}
+								} 
 
 								instructions = "<img  src='" + Alfresco.constants.PROXY_URI + "/api/node/"
 										+ metadata.parent.nodeRef.replace(':/', '')
@@ -92,6 +90,75 @@
 							}
 							// End beCPG
 						},
+						
+						
+						/**
+				       * Configure standard metadata renderers
+				       *
+				       * @method _setupMetadataRenderers
+				       */
+				      _setupMetadataRenderers: function DL__setupMetadataRenderers()
+				      {
+						var me = this;
+					
+                       	 beCPG.custom.DocumentList.superclass._setupMetadataRenderers.call(this);				
+					 	 var supressComponentConfig = {};
+					      if (this.options.suppressComponent)
+					        {
+					            supressComponentConfig = JSON.parse(this.options.suppressComponent);
+					         }
+
+					     this.services.basket = new beCPG.service.Basket();
+		
+       
+
+				         /**
+				          * Social
+				          */
+				         this.registerRenderer("social", function(record)
+				         {
+				            var jsNode = record.jsNode,
+				               html = "";
+				            var supressSocialFolder = Alfresco.util.isSuppressed(record.node, supressComponentConfig.social.browse.folder);
+				            var supressSocialFile = Alfresco.util.isSuppressed(record.node, supressComponentConfig.social.browse.file);
+				
+				            if (!supressSocialFolder && !supressSocialFile)
+				            {
+				               /* Favourite / Likes / Comments */
+				               html += '<span class="item item-social">' + Alfresco.DocumentList.generateFavourite(this, record) + '</span>';
+				               html += '<span class="item item-social item-separator">' + Alfresco.DocumentList.generateLikes(this, record) + '</span>';
+				               if (jsNode.permissions.user.CreateChildren)
+				               {
+				                  html += '<span class="item item-social item-separator">' + Alfresco.DocumentList.generateComments(this, record) + '</span>';
+				               }
+								//beCPG 
+                           	   if (!record.node.isContainer ){
+   								   html += '<span class="item  item-social  item-separator">' + Alfresco.DocumentList.generateBasket(this, record) + '</span>';
+								}
+				               if (!record.node.isContainer && Alfresco.constants.QUICKSHARE_URL)
+				               {
+				                  html += '<span class="item item-separator">' + Alfresco.DocumentList.generateQuickShare(this, record) + '</span>';
+				               }
+                              
+				            }
+				            return html;
+				         });
+
+
+						// Hook favourite document/folder events
+				         var fnBasketHandler = function DL_fnBasketHandler(layer, args)
+				         {
+				            var owner = YAHOO.Bubbling.getOwnerByTagName(args[1].anchor, "div");
+				            if (owner !== null)
+				            {
+				               me.onBasket.call(me, args[1].target.offsetParent, owner);
+				            }
+				            return true;
+				         };
+				         YAHOO.Bubbling.addDefaultAction("basket-action", fnBasketHandler);
+
+				      },
+										
 
 						/**
 						 * Build URI parameter string for doclist JSON data
@@ -532,7 +599,26 @@
 							e.stopPropagation();
 							e.preventDefault();
 						},
-
+						
+						/**
+						 * basket event handler
+						 * 
+						 * @method onBasket
+						 * @param row
+						 *            {HTMLElement} DOM reference to a TR
+						 *            element (or child thereof)
+						 */
+						onBasket : function DL_onBasket(row) {
+							var elIdentifier = row;
+							if (typeof this.viewRenderers[this.options.viewRendererName] === "object") {
+								elIdentifier = this.viewRenderers[this.options.viewRendererName].getDataTableRecordIdFromRowElement(this, row);
+							}
+							var oRecord = this.widgets.dataTable.getRecord(elIdentifier), record = oRecord.getData();
+							this.services.basket.toggle(record);
+							this.widgets.dataTable.updateRow(oRecord, record);
+						},
+						
+						
 						/**
 						 * Like/Unlike event handler
 						 * 
@@ -824,6 +910,29 @@
 		}
 
 		html += '<span class="likes-count">' + $html(likes.totalLikes) + '</span>';
+
+		return html;
+	};
+	
+	/**
+	 * Generate "Basket" UI
+	 * 
+	 * @method generateBasket
+	 * @param scope
+	 *            {object} DocumentLibrary instance
+	 * @param record
+	 *            {object} File record
+	 * @return {string} HTML mark-up for Likes UI
+	 */
+	Alfresco.DocumentList.generateBasket = function DL_generateBasket(scope, record) {
+		var  html = "";
+
+		if (scope.services.basket.isInBasket(record)) {
+			html = '<a class="basket-action enabled" title="' + scope.msg("basket.remove.tip") + '" tabindex="0"></a>';
+		} else {
+			html = '<a class="basket-action" title="' + scope.msg("basket.add.tip") + '" tabindex="0">' + scope.msg("basket.add.label") + '</a>';
+		}
+
 
 		return html;
 	};

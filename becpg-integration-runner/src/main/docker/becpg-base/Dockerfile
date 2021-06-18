@@ -5,7 +5,7 @@ ENV ALF_VERSION=${alfresco.platform.version}
 ENV VTI_VERSION=${alfresco.aos.version}
 ENV ALF_SHARE_VERSION=${alfresco.share.version}
 ENV MYSQL_CONNECTOR=${mysql.connector.version}
-ENV SUPPORT_TOOLS_VERSION=1.1.0.0-amp
+ENV SUPPORT_TOOLS_VERSION=1.2.0.0-beCPG-amp
 
 WORKDIR /usr/local/tomcat/
 
@@ -146,13 +146,13 @@ RUN mkdir -p /opt/cprof && \
 
 RUN set -x && \
     curl --silent --location \
-      https://readonly:YLdy9W5v@www.becpg.fr/becpg-repo/releases/addons/share-becpg-i18n-1.0-55.jar  \
-      -o webapps/share/WEB-INF/lib/share-becpg-i18n-1.0-55.jar  
+      https://readonly:YLdy9W5v@www.becpg.fr/becpg-repo/releases/addons/share-becpg-i18n-1.0-67.jar  \
+      -o webapps/share/WEB-INF/lib/share-becpg-i18n-1.0-67.jar  
 
 RUN set -x && \
     curl --silent --location \
-      https://readonly:YLdy9W5v@www.becpg.fr/becpg-repo/releases/addons/alfresco-becpg-i18n-1.0-55.jar  \
-      -o webapps/alfresco/WEB-INF/lib/alfresco-becpg-i18n-1.0-55.jar  
+      https://readonly:YLdy9W5v@www.becpg.fr/becpg-repo/releases/addons/alfresco-becpg-i18n-1.0-67.jar  \
+      -o webapps/alfresco/WEB-INF/lib/alfresco-becpg-i18n-1.0-67.jar  
       
       
 COPY tomcat/share.xml /usr/local/tomcat/conf/Catalina/localhost/
@@ -162,7 +162,7 @@ COPY tomcat/logging.properties /usr/local/tomcat/conf/logging.properties
 
 COPY becpg/classes /usr/local/tomcat/shared/classes
 
-ENV JAVA_OPTS "-server -Ddir.root=/usr/local/tomcat/data -Djava.awt.headless=true -XX:-DisableExplicitGC -Djava.security.egd=file:/dev/./urandom -Djava.awt.headless=true -Dfile.encoding=UTF-8"
+ENV JAVA_OPTS "-server -Ddir.root=/usr/local/tomcat/data -XX:-DisableExplicitGC -Djava.security.egd=file:/dev/./urandom -Djava.awt.headless=true -Dfile.encoding=UTF-8"
 
 WORKDIR /root
 

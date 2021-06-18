@@ -94,7 +94,8 @@ public class InitEntityListPolicy extends AbstractBeCPGPolicy implements NodeSer
 
 					String dataListName = (String) nodeService.getProperty(dataListNodeRef, ContentModel.PROP_NAME);
 					if (!dataListName.startsWith(RepoConsts.WUSED_PREFIX) && !dataListName.startsWith(RepoConsts.CUSTOM_VIEW_PREFIX)
-							&& !dataListTypeQName.getLocalName().equals(dataListName)) {
+							&& !dataListTypeQName.getLocalName().equals(dataListName) 	&& !BeCPGModel.TYPE_LIST_VALUE.equals(dataListTypeQName)) {
+
 						nodeService.setProperty(dataListNodeRef, ContentModel.PROP_NAME,
 								createName(dataListNodeRef, dataListTypeQName.getLocalName()));
 					}
@@ -105,7 +106,7 @@ public class InitEntityListPolicy extends AbstractBeCPGPolicy implements NodeSer
 
 	private Serializable createName(NodeRef dataListNodeRef, String localName) {
 		int count = 0;
-		if (localName.indexOf("@") > 0) {
+		if (localName.contains("@")) {
 			count = Integer.parseInt(localName.split("@")[1]);
 		}
 		count++;

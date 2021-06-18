@@ -1,3 +1,4 @@
+<import resource="classpath:/alfresco/templates/org/alfresco/import/alfresco-util.js">
 <import resource="classpath:/alfresco/site-webscripts/org/alfresco/modules/entity-datagrid/include/actions.lib.js">
 
 
@@ -9,6 +10,9 @@ function main()
 
    model.pagination = true;
    model.filter = true;
+
+   model.preferences = AlfrescoUtil.getPreferences("org.alfresco.share.project.gantt");
+
    
    parseActions(model.listName);
 
@@ -22,6 +26,7 @@ function main()
        useFilter: model.filter,
        entityNodeRef: page.url.args.nodeRef!=null ?page.url.args.nodeRef : "",
        list:  model.listName!=null ? model.listName : "",
+	   viewMode :  model.preferences.mode ?  model.preferences.mode  : "gantt",
        pageSize : 100,
        sortable : true,
        sortUrl : page.url.context+"/proxy/alfresco/becpg/entity/datalists/sort/node",

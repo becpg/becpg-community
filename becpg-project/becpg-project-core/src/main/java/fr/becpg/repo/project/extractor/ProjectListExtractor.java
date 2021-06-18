@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +54,8 @@ import fr.becpg.repo.entity.datalist.data.DataListPagination;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.project.ProjectService;
+import fr.becpg.repo.project.data.ProjectState;
+import fr.becpg.repo.project.data.projectList.TaskState;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.security.SecurityService;
 
@@ -69,18 +72,26 @@ public class ProjectListExtractor extends ActivityListExtractor {
 	private static final String FILTER_DATA = "filterData";
 	private static final String PAGINATION = "pagination";
 
-	private static final String VIEW_FAVOURITES = "favourites";
 	private static final String VIEW_TASKS = "tasks";
-	private static final String VIEW_MY_TASKS = "my-tasks";
-	private static final String VIEW_MY_PROJECTS = "my-projects";
-	private static final String VIEW_PROJECTS = "projects";
 	private static final String VIEW_RESOURCES = "resources";
-	private static final String VIEW_ENTITY_PROJECTS = "entity-projects";
+	private static final String FILTER_ENTITY_PROJECTS = "entity-projects";
+	private static final String FILTER_FAVOURITES = "favourites";
+	private static final String FILTER_TASKS = "tasks";
+	private static final String FILTER_MY_TASKS = "my-tasks";
+	private static final String FILTER_MY_PROJECTS = "my-projects";
+	private static final String FILTER_PROJECTS = "projects";
+	
 	private static final String PROJECT_LIST = "projectList";
+	
+	private static final String PROP_PROJECT_STATE = "prop_pjt_projectState";
+	
+	private static final String PROP_PROJECT_LEGEND = "prop_pjt_projectLegends";
 	
 	private static final String PROP_SORT = "sort";
 
 	private String myProjectAttributes = "pjt:projectManager,cm:creator";
+	
+	private String projectSearchTemplate = "%(cm:name bcpg:code cm:title)";
 
 	private ProjectService projectService;
 
@@ -157,10 +168,10 @@ public class ProjectListExtractor extends ActivityListExtractor {
 		List<NodeRef> results = getListNodeRef(dataListFilter, dataListFilter.getPagination(), favorites);
 
 		Map<String, Object> props = new HashMap<>();
-		if (VIEW_MY_TASKS.equals(dataListFilter.getFilterId()) || VIEW_TASKS.equals(dataListFilter.getFilterId())
+		if (FILTER_MY_TASKS.equals(dataListFilter.getFilterId()) || FILTER_TASKS.equals(dataListFilter.getFilterId())
 				|| VIEW_RESOURCES.equals(dataListFilter.getExtraParams()) || VIEW_TASKS.equals(dataListFilter.getExtraParams())) {
 			props.put(PROP_ACCESSRIGHT, dataListFilter.hasWriteAccess()
-					&& (securityService.computeAccessMode(ProjectModel.TYPE_PROJECT, ProjectModel.TYPE_TASK_LIST) == SecurityService.WRITE_ACCESS));
+					&& (securityService.computeAccessMode(dataListFilter.getEntityNodeRef(), ProjectModel.TYPE_PROJECT, ProjectModel.TYPE_TASK_LIST) == SecurityService.WRITE_ACCESS));
 		} else {
 			props.put(PROP_ACCESSRIGHT, dataListFilter.hasWriteAccess());
 		}
@@ -183,12 +194,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 								nodeRef, ret.getComputedFields(), props, cache));
 					} else {
 						Map<String, Object> extracted = extractJSON(nodeRef, ret.getComputedFields(), props, cache);
-						if (favorites.contains(nodeRef)) {
-							extracted.put(PROP_IS_FAVOURITE, true);
-						} else {
-							extracted.put(PROP_IS_FAVOURITE, false);
-						}
-
+						extracted.put(PROP_IS_FAVOURITE, favorites.contains(nodeRef));
 						ret.addItem(extracted);
 					}
 
@@ -215,12 +221,14 @@ public class ProjectListExtractor extends ActivityListExtractor {
 
 		if (favorites != null) {
 			for (String favorite : favorites.split(",")) {
+				if(favorite!=null && !favorite.isBlank()) {
 				try {
 					ret.add(new NodeRef(favorite));
 				} catch (MalformedNodeRefException e) {
 					logger.warn("Favorite nodeRef is malformed : " + favorite);
 				}
 			}
+		}
 		}
 		return ret;
 	}
@@ -230,10 +238,17 @@ public class ProjectListExtractor extends ActivityListExtractor {
 		List<NodeRef> results = new LinkedList<>();
 
 		// pjt:project
-		QName dataType = dataListFilter.getDataType();
-		BeCPGQueryBuilder beCPGQueryBuilder = dataListFilter.getSearchQuery().excludeDefaults();
+		if (dataListFilter.isDefaultSort()) {
+			Map<String, Boolean> sortMap = new LinkedHashMap<>();
+			sortMap.put("@cm:created", false);
+			dataListFilter.setSortMap(sortMap);
+		}
 
-		if (VIEW_ENTITY_PROJECTS.equals(dataListFilter.getFilterId())) {
+		BeCPGQueryBuilder beCPGQueryBuilder = dataListFilter.getSearchQuery().excludeDefaults()
+				.andOperator().inSearchTemplate(projectSearchTemplate);
+	
+
+		if (FILTER_ENTITY_PROJECTS.equals(dataListFilter.getFilterId())) {
 			results = associationService.getSourcesAssocs(dataListFilter.getEntityNodeRef(), ProjectModel.ASSOC_PROJECT_ENTITY);
 		} else {
 
@@ -247,45 +262,50 @@ public class ProjectListExtractor extends ActivityListExtractor {
 
 				List<NodeRef> projectResults = null;
 
-				if (!(VIEW_MY_TASKS.equals(dataListFilter.getFilterId()) || VIEW_TASKS.equals(dataListFilter.getFilterId()))) {
+				if (FILTER_MY_PROJECTS.equals(dataListFilter.getFilterId())
+						|| !( FILTER_MY_TASKS.equals(dataListFilter.getFilterId()) || (VIEW_RESOURCES.equals(dataListFilter.getExtraParams()) || VIEW_TASKS.equals(dataListFilter.getExtraParams()) )	
+						)) {
 					projectResults = getProjectResults(dataListFilter, beCPGQueryBuilder, pagination);
 				}
 
-				if (VIEW_MY_TASKS.equals(dataListFilter.getFilterId()) || VIEW_TASKS.equals(dataListFilter.getFilterId())
+				if (FILTER_MY_TASKS.equals(dataListFilter.getFilterId()) || FILTER_TASKS.equals(dataListFilter.getFilterId())
 						|| VIEW_RESOURCES.equals(dataListFilter.getExtraParams()) || VIEW_TASKS.equals(dataListFilter.getExtraParams())) {
 
-					if (securityService.computeAccessMode(ProjectModel.TYPE_PROJECT, ProjectModel.TYPE_TASK_LIST) == SecurityService.NONE_ACCESS) {
+					if (securityService.computeAccessMode(dataListFilter.getEntityNodeRef(), ProjectModel.TYPE_PROJECT, ProjectModel.TYPE_TASK_LIST) == SecurityService.NONE_ACCESS) {
 						return new ArrayList<>();
 					}
 
-					if (VIEW_PROJECTS.equals(dataListFilter.getFilterId())) {
+					if (FILTER_PROJECTS.equals(dataListFilter.getFilterId())) {
 						beCPGQueryBuilder.clearFTSQuery();
 					}
 
-					dataType = ProjectModel.TYPE_TASK_LIST;
+					QName dataType = ProjectModel.TYPE_TASK_LIST;
 					beCPGQueryBuilder.ofType(dataType);
 
 					beCPGQueryBuilder.excludeProp(ProjectModel.PROP_TL_IS_EXCLUDE_FROM_SEARCH, Boolean.TRUE.toString());
 					beCPGQueryBuilder.excludeProp(ProjectModel.PROP_TL_IS_GROUP, Boolean.TRUE.toString());
-					
-					if ((dataListFilter.getCriteriaMap() != null) && !dataListFilter.getCriteriaMap().containsKey("prop_pjt_tlState")) {
-						dataListFilter.getCriteriaMap().put("prop_pjt_tlState", "\"Planned\",\"InProgress\"");
+
+					if ((dataListFilter.getCriteriaMap() != null) && !dataListFilter.getCriteriaMap().containsKey("prop_pjt_tlState") 
+							&& ((dataListFilter.getFilterParams() == null) || !dataListFilter.getFilterParams().contains("tlState"))
+							) {
+						dataListFilter.getCriteriaMap().put("prop_pjt_tlState", TaskState.InProgress.toString());
 					}
 
 					if ((dataListFilter.getCriteriaMap() != null)) {
-						if (dataListFilter.getCriteriaMap().containsKey("prop_pjt_projectState")) {
-							dataListFilter.getCriteriaMap().remove("prop_pjt_projectState");
+						if (dataListFilter.getCriteriaMap().containsKey(PROP_PROJECT_STATE)) {
+							dataListFilter.getCriteriaMap().remove(PROP_PROJECT_STATE);
 						}
 
-						if (dataListFilter.getCriteriaMap().containsKey("prop_pjt_projectLegends")) {
+						if (dataListFilter.getCriteriaMap().containsKey(PROP_PROJECT_LEGEND)) {
 							dataListFilter.getCriteriaMap().put("assoc_pjt_tlTaskLegend_added",
-									dataListFilter.getCriteriaMap().get("prop_pjt_projectLegends"));
-							dataListFilter.getCriteriaMap().remove("prop_pjt_projectLegends");
+									dataListFilter.getCriteriaMap().get(PROP_PROJECT_LEGEND));
+							dataListFilter.getCriteriaMap().remove(PROP_PROJECT_LEGEND);
 						}
 					}
 
+					//5000 results is Unlimited 
 					results = advSearchService.queryAdvSearch(dataType, beCPGQueryBuilder, dataListFilter.getCriteriaMap(),
-							pagination.getMaxResults());
+							FILTER_MY_TASKS.equals(dataListFilter.getFilterId()) ? RepoConsts.MAX_RESULTS_5000 : pagination.getMaxResults());
 
 					if (VIEW_RESOURCES.equals(dataListFilter.getExtraParams())) {
 						for (Iterator<NodeRef> iterator = results.iterator(); iterator.hasNext();) {
@@ -305,7 +325,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 								iterator.remove();
 							}
 						}
-					} else if (VIEW_MY_TASKS.equals(dataListFilter.getFilterId())) {
+					} else if (FILTER_MY_TASKS.equals(dataListFilter.getFilterId())) {
 						logger.debug("Keep only tasks for  " + AuthenticationUtil.getFullyAuthenticatedUser());
 						NodeRef currentUserNodeRef = personService.getPerson(AuthenticationUtil.getFullyAuthenticatedUser());
 						if (logger.isDebugEnabled()) {
@@ -318,7 +338,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 					results = projectResults;
 				}
 
-				if (VIEW_FAVOURITES.equals(dataListFilter.getFilterId())) {
+				if (FILTER_FAVOURITES.equals(dataListFilter.getFilterId())) {
 					logger.debug("Keep only favorites");
 					results.retainAll(favorites);
 				}
@@ -340,18 +360,21 @@ public class ProjectListExtractor extends ActivityListExtractor {
 
 	private List<NodeRef> getProjectResults(DataListFilter dataListFilter, BeCPGQueryBuilder beCPGQueryBuilder, DataListPagination pagination) {
 
-		List<NodeRef> results = new LinkedList<>();
+		List<NodeRef> results = null;
 		List<NodeRef> unionResults = new LinkedList<>();
 		QName dataType = ProjectModel.TYPE_PROJECT;
 		beCPGQueryBuilder.ofType(ProjectModel.TYPE_PROJECT);
 
 		Map<String, String> criteriaMap = new HashMap<>();
+		
+		Integer maxResults = pagination.getMaxResults();
 
 		if (!VIEW_RESOURCES.equals(dataListFilter.getExtraParams()) && !VIEW_TASKS.equals(dataListFilter.getExtraParams())) {
 			criteriaMap.putAll(dataListFilter.getCriteriaMap());
+			maxResults = RepoConsts.MAX_RESULTS_5000;
 		}
 
-		if (VIEW_MY_PROJECTS.equals(dataListFilter.getFilterId())) {
+		if (FILTER_MY_PROJECTS.equals(dataListFilter.getFilterId())) {
 			String userName = AuthenticationUtil.getFullyAuthenticatedUser();
 
 			NodeRef currentUserNodeRef = personService.getPerson(userName);
@@ -363,26 +386,34 @@ public class ProjectListExtractor extends ActivityListExtractor {
 				} else {
 					BeCPGQueryBuilder creatorQuery = dataListFilter.getSearchQuery().excludeDefaults().clone().ofType(ProjectModel.TYPE_PROJECT);
 
-					if (!criteriaMap.containsKey("prop_pjt_projectState")
+					if (!criteriaMap.containsKey(PROP_PROJECT_STATE)
 							&& ((dataListFilter.getFilterParams() == null) || !dataListFilter.getFilterParams().contains("projectState"))) {
-						creatorQuery.andPropQuery(ProjectModel.PROP_PROJECT_STATE, "Planned OR InProgress");
+						creatorQuery.andPropQuery(ProjectModel.PROP_PROJECT_STATE, ProjectState.InProgress.toString());
+					} else {
+						if(criteriaMap.containsKey(PROP_PROJECT_STATE)) {
+							creatorQuery.andPropQuery(ProjectModel.PROP_PROJECT_STATE,criteriaMap.get(PROP_PROJECT_STATE));
+						} else {
+							creatorQuery.andFTSQuery(dataListFilter.getFilterParams());
+						}
 					}
 
 					creatorQuery.andPropEquals(QName.createQName(prop, namespaceService), AuthenticationUtil.getFullyAuthenticatedUser());
 
-					results.addAll(creatorQuery.list());
+					unionResults.addAll(creatorQuery.list());
 				}
 
 			}
 
-			if (!criteriaMap.containsKey("prop_pjt_projectState")
+			if (!criteriaMap.containsKey(PROP_PROJECT_STATE)
 					&& ((dataListFilter.getFilterParams() == null) || !dataListFilter.getFilterParams().contains("projectState"))) {
-				criteriaMap.put("prop_pjt_projectState", "\"Planned\",\"InProgress\"");
+				criteriaMap.put(PROP_PROJECT_STATE, ProjectState.InProgress.toString());
 			}
 
 		}
-
-		results = advSearchService.queryAdvSearch(dataType, beCPGQueryBuilder.clone(), criteriaMap, pagination.getMaxResults());
+		
+		results = advSearchService.queryAdvSearch(dataType, beCPGQueryBuilder.clone(), criteriaMap
+				, maxResults );
+		
 
 		if (unionResults != null) {
 			for (NodeRef tmp : unionResults) {
@@ -398,14 +429,14 @@ public class ProjectListExtractor extends ActivityListExtractor {
 
 	/** {@inheritDoc} */
 	@Override
-	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields, final FormatMode mode,
+	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields,  FormatMode mode,
 			Map<QName, Serializable> properties, final Map<String, Object> props, final Map<NodeRef, Map<String, Object>> cache) {
 
 		Map<String, Object> ret = attributeExtractorService.extractNodeData(nodeRef, itemType, properties, metadataFields, mode,
 				new AttributeExtractorService.DataListCallBack() {
 
 					@Override
-					public List<Map<String, Object>> extractNestedField(NodeRef nodeRef, AttributeExtractorStructure field) {
+					public List<Map<String, Object>> extractNestedField(NodeRef nodeRef, AttributeExtractorStructure field, FormatMode mode) {
 						DataListPagination pagination = (DataListPagination) props.get(PAGINATION);
 						List<Map<String, Object>> ret = new ArrayList<>();
 						if (field.isDataListItems()) {
@@ -425,7 +456,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 
 								for (NodeRef itemNodeRef : assocRefs) {
 									if ((permissionService.hasPermission(itemNodeRef, "Read") == AccessStatus.ALLOWED)
-											&& (securityService.computeAccessMode(itemType, field.getFieldQname()) >= SecurityService.READ_ACCESS)) {
+											&& (securityService.computeAccessMode(nodeRef, itemType, field.getFieldQname()) >= SecurityService.READ_ACCESS)) {
 
 										Map<String, Object> tmp = new HashMap<>(4);
 
@@ -435,7 +466,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 										permissions.put("userAccess", userAccess);
 										userAccess.put("edit",
 												(permissionService.hasPermission(itemNodeRef, "Write") == AccessStatus.ALLOWED) && (securityService
-														.computeAccessMode(itemType, field.getFieldQname()) == SecurityService.WRITE_ACCESS));
+														.computeAccessMode(nodeRef,itemType, field.getFieldQname()) == SecurityService.WRITE_ACCESS));
 
 										QName itemType = nodeService.getType(itemNodeRef);
 										Map<QName, Serializable> properties = nodeService.getProperties(itemNodeRef);

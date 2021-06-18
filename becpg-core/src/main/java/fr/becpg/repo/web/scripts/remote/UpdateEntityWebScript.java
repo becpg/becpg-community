@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -18,15 +18,21 @@
 package fr.becpg.repo.web.scripts.remote;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.alfresco.repo.version.VersionBaseModel;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.springframework.extensions.webscripts.WebScriptException;
+import org.alfresco.service.cmr.version.Version;
+import org.alfresco.service.cmr.version.VersionType;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
-import fr.becpg.common.BeCPGException;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
+import fr.becpg.repo.entity.remote.RemoteParams;
+import fr.becpg.repo.entity.version.EntityVersionService;
+import io.opencensus.common.Scope;
 
 /**
  * Update entity with POST xml
@@ -36,20 +42,50 @@ import fr.becpg.repo.entity.remote.RemoteEntityFormat;
  */
 public class UpdateEntityWebScript extends AbstractEntityWebScript {
 
+	private static final String PARAM_CREATE_VERSION = "createVersion";
+	private static final String PARAM_MAJOR_VERSION = "majorVersion";
+	private static final String PARAM_DESCRIPTION = "versionDescription";
+
+	private EntityVersionService entityVersionService;
+
+	public void setEntityVersionService(EntityVersionService entityVersionService) {
+		this.entityVersionService = entityVersionService;
+	}
+
 	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
+		try (Scope scope = tracer.spanBuilder("/remote/post").startScopedSpan()) {
+			NodeRef entityNodeRef = findEntity(req);
 
-		NodeRef entityNodeRef = findEntity(req);
+			if ("true".equals(req.getParameter(PARAM_CREATE_VERSION))) {
+				String description = "";
 
-		logger.debug("Update entity: " + entityNodeRef);
-		try (InputStream in = req.getContent().getInputStream()) {
+				if (req.getParameter(PARAM_DESCRIPTION) != null) {
+					description = req.getParameter(PARAM_DESCRIPTION);
+				}
+
+				VersionType versionType = VersionType.MINOR;
+
+				if (req.getParameter(PARAM_MAJOR_VERSION) != null) {
+					versionType = "true".equals(req.getParameter(PARAM_MAJOR_VERSION)) ? VersionType.MAJOR : VersionType.MINOR;
+				}
+
+				Map<String, Serializable> properties = new HashMap<>();
+				properties.put(VersionBaseModel.PROP_VERSION_TYPE, versionType);
+				properties.put(Version.PROP_DESCRIPTION, description);
+
+				// Create first version if needed
+				entityVersionService.createInitialVersion(entityNodeRef);
+
+				entityVersionService.createVersion(entityNodeRef, properties);
+
+			}
+			logger.debug("Update entity: " + entityNodeRef);
 			RemoteEntityFormat format = getFormat(req);
-			sendOKStatus(remoteEntityService.createOrUpdateEntity(entityNodeRef, in, format, getEntityProviderCallback(req)), resp, format);
-		} catch (BeCPGException e) {
-			logger.error("Cannot import entity", e);
-			throw new WebScriptException(e.getMessage());
+			NodeRef newNodeRef = remoteEntityService.createOrUpdateEntity(entityNodeRef, req.getContent().getInputStream(), new RemoteParams(format),
+					getEntityProviderCallback(req));
+			sendOKStatus(newNodeRef, resp, format);
 		}
-
 	}
 }

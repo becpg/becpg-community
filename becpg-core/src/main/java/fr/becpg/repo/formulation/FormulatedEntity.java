@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG. 
+ * Copyright (C) 2010-2021 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -65,6 +65,7 @@ public interface FormulatedEntity extends RepositoryEntity {
 	 * @return a {@link java.util.Date} object.
 	 */
 	Date getFormulatedDate();
+	
 
 	/**
 	 * <p>setFormulatedDate.</p>
@@ -114,5 +115,6 @@ public interface FormulatedEntity extends RepositoryEntity {
 	 * @return a {@link java.lang.String} object.
 	 */
 	public String getRequirementChecksum();
+	
 
 }

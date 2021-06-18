@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -40,6 +40,7 @@ public class VariantFilters<T extends VariantDataItem> implements DataListFilter
 
 	private Boolean isDefaultVariant = true;
 
+
 	/**
 	 * <p>Constructor for VariantFilters.</p>
 	 */
@@ -71,8 +72,7 @@ public class VariantFilters<T extends VariantDataItem> implements DataListFilter
 	/** {@inheritDoc} */
 	@Override
 	public Predicate<T> createPredicate(final ProductData entity) {
-
-		if ((variantNodeRefs.isEmpty()) && (entity.getVariants() != null)) {
+		if ((variantNodeRefs.isEmpty()) && (entity.getVariants() != null)) {			
 			for (VariantData variant : entity.getVariants()) {
 				if (variant.getIsDefaultVariant()) {
 					this.variantNodeRefs.add(variant.getNodeRef());
@@ -81,35 +81,33 @@ public class VariantFilters<T extends VariantDataItem> implements DataListFilter
 		}
 
 		return obj -> {
-			if ((!variantNodeRefs.isEmpty()) && (obj instanceof VariantDataItem)) {
+			if (obj instanceof VariantDataItem) {
 				VariantDataItem item = (obj);
-
-				if (isDefaultVariant != null) {
-
-					if ((item.getVariants() == null) || item.getVariants().isEmpty()) {
-						if ((isDefaultVariant != null) && isDefaultVariant) {
+				if (!variantNodeRefs.isEmpty()) {
+					if (isDefaultVariant != null) {
+						if (isDefaultVariant && (item.getVariants() == null) || item.getVariants().isEmpty()) {
 							return true;
 						}
-					}
-
-					for(NodeRef variantNodeRef : variantNodeRefs) {
-						if (isDefaultVariant && item.getVariants().contains(variantNodeRef)) {
-							return true;
+						for(NodeRef variantNodeRef : variantNodeRefs) {
+							if (isDefaultVariant && item.getVariants().contains(variantNodeRef)) {
+								return true;
+							}
+						}
+					} else {
+						for(NodeRef variantNodeRef : variantNodeRefs) {
+							if (item.getVariants().contains(variantNodeRef)) {
+								return true;
+							}
 						}
 					}
-
-				} else if (!variantNodeRefs.isEmpty()) {
-					for(NodeRef variantNodeRef : variantNodeRefs) {
-						if (item.getVariants().contains(variantNodeRef)) {
-							return true;
-						}
+					return false;
+				} else {
+					if (item.getVariants() == null || item.getVariants().isEmpty()) {
+						return true;
 					}
-					
-		
 				}
-				return false;
 			}
-			return true;
+			return false;
 		};
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -28,7 +28,6 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authority.UnknownAuthorityException;
 import org.alfresco.service.cmr.dictionary.AspectDefinition;
-import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.dictionary.TypeDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -47,12 +46,14 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SecurityModel;
 import fr.becpg.model.SystemGroup;
 import fr.becpg.repo.cache.BeCPGCacheService;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.security.SecurityService;
 import fr.becpg.repo.security.data.ACLGroupData;
 import fr.becpg.repo.security.data.dataList.ACLEntryDataItem;
 import fr.becpg.repo.security.data.dataList.ACLEntryDataItem.PermissionModel;
+import fr.becpg.repo.security.plugins.SecurityServicePlugin;
 
 /**
  * Security Service : is in charge to compute acls by node Type. And provide
@@ -67,7 +68,7 @@ public class SecurityServiceImpl implements SecurityService {
 	private static final String ACLS_CACHE_KEY = "ACLS_CACHE_KEY";
 	private static final String USER_ROLE_CACHE_KEY = "ACLS_CACHE_KEY";
 
-	private final static Log logger = LogFactory.getLog(SecurityServiceImpl.class);
+	private static final Log logger = LogFactory.getLog(SecurityServiceImpl.class);
 
 	@Autowired
 	private AlfrescoRepository<ACLGroupData> alfrescoRepository;
@@ -76,23 +77,26 @@ public class SecurityServiceImpl implements SecurityService {
 	private AuthorityService authorityService;
 
 	@Autowired
-	private DictionaryService dictionaryService;
+	private EntityDictionaryService dictionaryService;
 
 	@Autowired
 	private NamespaceService namespaceService;
 
 	@Autowired
 	private BeCPGCacheService beCPGCacheService;
+	
+	@Autowired
+	private SecurityServicePlugin[] securityPlugins;
 
 	/** {@inheritDoc} */
 	@Override
-	public int computeAccessMode(QName nodeType, QName propName) {
-		return computeAccessMode(nodeType, propName.toPrefixString(namespaceService));
+	public int computeAccessMode(NodeRef nodeRef, QName nodeType, QName propName) {
+		return computeAccessMode(nodeRef, nodeType, dictionaryService.toPrefixString(propName));
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public int computeAccessMode(QName nodeType, String propName) {
+	public int computeAccessMode(NodeRef nodeRef, QName nodeType, String propName) {
 		StopWatch stopWatch = null;
 		if (logger.isDebugEnabled()) {
 			stopWatch = new StopWatch();
@@ -101,7 +105,6 @@ public class SecurityServiceImpl implements SecurityService {
 		try {
 
 			String key = computeAclKey(nodeType, propName);
-			logger.debug("Compute acl for: " + key);
 			Map<String, List<PermissionModel>> acls = getAcls();
 
 			if (acls.containsKey(key)) {
@@ -118,7 +121,7 @@ public class SecurityServiceImpl implements SecurityService {
 
 				for (PermissionModel permissionModel : perms) {
 
-					if (isInGroup(permissionModel)) {
+					if (isInGroup(nodeRef, nodeType , permissionModel)) {
 						if (permissionModel.isWrite()) {
 							return SecurityService.WRITE_ACCESS;
 						} else if (permissionModel.isReadOnly()) {
@@ -141,7 +144,7 @@ public class SecurityServiceImpl implements SecurityService {
 
 			return SecurityService.WRITE_ACCESS;
 		} finally {
-			if (logger.isDebugEnabled()) {
+			if (logger.isDebugEnabled() && stopWatch!=null) {
 				stopWatch.stop();
 				logger.debug("Compute Access Mode takes : " + stopWatch.getTotalTimeSeconds() + "s");
 			}
@@ -246,12 +249,12 @@ public class SecurityServiceImpl implements SecurityService {
 	}
 
 	/**
-	 * Check if current user is in corresponding group
+	 * Check if current user is in corresponding group or role
 	 */
-	private boolean isInGroup(PermissionModel permissionModel) {
-
-		for (String currAuth : authorityService.getAuthorities()) {
-			if (permissionModel.getGroups().contains(authorityService.getAuthorityNodeRef(currAuth))) {
+	private boolean isInGroup(NodeRef nodeRef, QName nodeType, PermissionModel permissionModel) {
+		
+		for(SecurityServicePlugin plugin : securityPlugins ) {
+			if(plugin.accept(nodeType) && plugin.checkIsInSecurityGroup(nodeRef, permissionModel)) {
 				return true;
 			}
 		}
@@ -293,11 +296,6 @@ public class SecurityServiceImpl implements SecurityService {
 						aspects = new ArrayList<>();
 					}
 
-					// for (QName aspect : aclGroup.getNodeAspects()) {
-					// AspectDefinition aspectDefinition =
-					// dictionaryService.getAspect(aspect);
-					// aspects.add(aspectDefinition);
-					// }
 
 					for (AspectDefinition aspect : aspects) {
 						if ((aspect != null) && (aspect.getProperties() != null)) {

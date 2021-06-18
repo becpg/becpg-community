@@ -72,16 +72,16 @@ public class EuropeanNutrientRegulation extends AbstractNutrientRegulation {
 					|| nutrientTypeCode.equals(NutrientCode.Magnesium)
 					|| nutrientTypeCode.equals(NutrientCode.Iodine)
 					|| nutrientTypeCode.equals(NutrientCode.Potassium)) {
-				BigDecimal bd = new BigDecimal(value);
+				BigDecimal bd = BigDecimal.valueOf(value);
 				bd = bd.round(new MathContext(3,RoundingMode.HALF_EVEN));
 				return bd.doubleValue();
 			} else if(isVitamin(nutrientTypeCode) || isMineral(nutrientTypeCode)){
-				BigDecimal bd = new BigDecimal(value);
+				BigDecimal bd = BigDecimal.valueOf(value);
 				bd = bd.round(new MathContext(2,RoundingMode.HALF_EVEN));
 				return bd.doubleValue();
 			}
 		}
-		BigDecimal bd = new BigDecimal(value);
+		BigDecimal bd = BigDecimal.valueOf(value);
 		bd = bd.round(new MathContext(3,RoundingMode.HALF_EVEN));
 		return bd.doubleValue();
 	}
@@ -89,7 +89,9 @@ public class EuropeanNutrientRegulation extends AbstractNutrientRegulation {
 	/** {@inheritDoc} */
 	@Override
 	protected String displayValueByCode(Double value, Double roundedValue, String nutrientTypeCode, Locale locale) {
-		
+		if ("MM".equals(locale.getCountry())) {
+			locale = new Locale("en");
+		}
 		if(value != null && roundedValue != null && nutrientTypeCode != null){
 			if (nutrientTypeCode.equals(NutrientCode.FatSaturated) && value<=0.1) {
 				return "< " + formatDouble(0.1, locale);

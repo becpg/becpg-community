@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2010-2020 beCPG. 
+Copyright (C) 2010-2021 beCPG. 
  
 This file is part of beCPG 
  
@@ -52,7 +52,9 @@ public class JsonFormulaHelper {
     /** Constant <code>JSON_DISPLAY_VALUE="displayValue"</code> */
     public static final String JSON_DISPLAY_VALUE = "displayValue";
 	
-	
+	private JsonFormulaHelper() {
+		//Singleton
+	}
 	
 	/**
 	 * <p>cleanCompareJSON.</p>
@@ -61,29 +63,34 @@ public class JsonFormulaHelper {
 	 * @return a {@link java.lang.Object} object.
 	 */
 	public static Object cleanCompareJSON(String value) {
-		if(value!=null && value.contains(JSON_COMP_ITEMS)) {
-			try {
-				JSONTokener tokener = new JSONTokener(value);
-				JSONObject jsonObject = new JSONObject(tokener);
-				JSONArray array = (JSONArray) jsonObject.get(JSON_COMP_ITEMS);
-				return((JSONObject)array.get(0)).get(JSON_VALUE);
-			} catch (Exception e) {
-				logger.warn("Cannot parse "+value,e);
-			}
-		}
-		
-		if(value!=null && value.contains(JSON_SUB_VALUES)) {
-			try {
-				JSONObject jsonObject = new JSONObject(value);
-				if(jsonObject.has(JSON_VALUE)){
-					return jsonObject.get(JSON_VALUE);
+		if (value != null) {
+			if (value.contains(JSON_COMP_ITEMS) && value.contains("{")) {
+				try {
+					JSONTokener tokener = new JSONTokener(value);
+					JSONObject jsonObject = new JSONObject(tokener);
+					JSONArray array = (JSONArray) jsonObject.get(JSON_COMP_ITEMS);
+					JSONObject comp1 = ((JSONObject) array.get(0));
+					if (comp1.has(JSON_VALUE)) {
+						return comp1.get(JSON_VALUE);
+					}
+					return null;
+				} catch (Exception e) {
+					logger.debug("Cannot parse " + value, e);
 				}
-				return "";
-			} catch (Exception e) {
-				logger.warn("Cannot parse "+value,e);
+			} else if (value.contains(JSON_SUB_VALUES) && value.contains("{")) {
+				try {
+					JSONTokener tokener = new JSONTokener(value);
+					JSONObject jsonObject = new JSONObject(tokener);
+					if (jsonObject.has(JSON_VALUE)) {
+						return jsonObject.get(JSON_VALUE);
+					}
+					return "";
+				} catch (Exception e) {
+					logger.debug("Cannot parse " + value, e);
+				}
 			}
 		}
-		
+
 		return value;
 	}
 	

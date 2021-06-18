@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!--
-  Copyright (C) 2010-2020 beCPG. 
+  Copyright (C) 2010-2021 beCPG. 
    
   This file is part of beCPG 
    
@@ -74,7 +74,7 @@
             <ref bean="policyBehaviourFilter"/>
         </property>
         <property name="ruleService" ref="ruleService"/>
-        <property name="dictionaryService" ref="dictionaryService"></property>
+        <property name="dictionaryService" ref="cachedDictionaryService"></property>
 	</bean>
 	
 	<bean id="patch.bcpg.charactNamePatch" class="fr.becpg.repo.admin.patch.CharactNamePatch" parent="beCPGBasePatch" >
@@ -99,7 +99,7 @@
             <ref bean="policyBehaviourFilter"/>
         </property>
         <property name="ruleService" ref="ruleService"/>
-        <property name="dictionaryService" ref="dictionaryService" />
+        <property name="dictionaryService" ref="cachedDictionaryService" />
 	</bean>
 	
 	

@@ -51,13 +51,13 @@ public class EntityProcessListWebscript extends AbstractWorkflowWebscript {
 		for(EntityProcessListPlugin processPlugin : processPlugins){
 			List<Map<String, Object>> tmp = processPlugin.buildModel(nodeRef);
 			results.addAll(tmp);
-			if(tmp.size() > 0){
+			if(!tmp.isEmpty()){
 				processTypes.add(processPlugin.getType());
 			}
 			
 		}
 		
-		Map<String, Object> model = new HashMap<String, Object>();
+		Map<String, Object> model = new HashMap<>();
 		// build the model for ftl
 		model.put("processInstances", results);
 		model.put("processTypes", processTypes);

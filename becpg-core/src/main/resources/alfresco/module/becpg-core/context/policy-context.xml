@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!--
-  Copyright (C) 2010-2020 beCPG. 
+  Copyright (C) 2010-2021 beCPG. 
    
   This file is part of beCPG 
    
@@ -56,7 +56,7 @@
 	</bean>
 
 	<bean id="effectivityAspectPolicy" class="fr.becpg.repo.entity.policy.EffectivityAspectPolicy" init-method="init" parent="abstractBeCPGPolicy">
-		<property name="entityDictionaryService" ref="entityDictionaryService" />
+		<property name="entityDictionaryService" ref="cachedDictionaryService" />
 	</bean>
 
 	<bean id="entityCheckOutCheckInServicePolicy" class="fr.becpg.repo.entity.policy.EntityCheckOutCheckInServicePolicy" parent="abstractBeCPGPolicy">
@@ -71,7 +71,7 @@
 		<property name="contentService" ref="contentService" />
 		<property name="nodeDAO" ref="nodeDAO"/>
 		<property name="entityDictionaryService" ref="entityDictionaryService"/>
-		<property name="dictionaryService" ref="dictionaryService"/>
+		<property name="dictionaryService" ref="cachedDictionaryService"/>
 		<property name="attributeExtractorService" ref="attributeExtractorService"/>
 		<property name="entityListDAO" ref="entityListDAO"/>
 		<property name="tenantService" ref="tenantService"/>
@@ -81,7 +81,7 @@
 	<!-- Entity Datalist Policies -->
 	<bean id="initEntityListPolicy" class="fr.becpg.repo.entity.datalist.policy.InitEntityListPolicy" parent="abstractBeCPGPolicy">
 		<property name="namespaceService" ref="namespaceService" />
-		<property name="dictionaryService" ref="dictionaryService" />
+		<property name="dictionaryService" ref="cachedDictionaryService" />
 	</bean>
 	<bean id="auditEntityListItemPolicy" class="fr.becpg.repo.entity.datalist.policy.AuditEntityListItemPolicy" parent="abstractBeCPGPolicy">
 		<property name="authenticationService" ref="authenticationService" />
@@ -89,8 +89,9 @@
 	</bean>
 	<bean id="sortableListPolicy" class="fr.becpg.repo.entity.datalist.policy.SortableListPolicy" parent="abstractBeCPGPolicy">
 		<property name="dataListSortService" ref="dataListSortService" />
-		<property name="entityDictionaryService" ref="entityDictionaryService" />
+		<property name="entityDictionaryService" ref="cachedDictionaryService" />
 		<property name="entityListDAO" ref="entityListDAO" />
+		<property name="repoService" ref="repoService" />
 	</bean>
 
 

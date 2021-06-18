@@ -131,7 +131,7 @@ public class ResourcesSortPlugin implements DataListSortPlugin {
 			}
 		});
 
-		if (logger.isDebugEnabled()) {
+		if (logger.isDebugEnabled() && watch!=null) {
 			watch.stop();
 			logger.debug("Task List sorted in " + watch.getTotalTimeSeconds() + " seconds - size results " + taskList.size());
 		}

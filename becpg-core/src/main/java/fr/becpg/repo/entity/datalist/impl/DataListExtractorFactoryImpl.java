@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG. 
+ * Copyright (C) 2010-2021 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -18,6 +18,7 @@
 package fr.becpg.repo.entity.datalist.impl;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import fr.becpg.repo.entity.datalist.DataListExtractor;
@@ -35,6 +36,8 @@ public class DataListExtractorFactoryImpl implements DataListExtractorFactory {
 
 	DataListExtractor defaultExtractor;
 	
+	// extractor with the highest priority goes first
+	private static final Comparator<DataListExtractor> extractorComparator = (DataListExtractor e1, DataListExtractor e2) -> ((Integer) e2.getPriority()).compareTo((Integer) e1.getPriority());	
 	
 	final List<DataListExtractor> extractors = new ArrayList<>();
 	
@@ -53,11 +56,19 @@ public class DataListExtractorFactoryImpl implements DataListExtractorFactory {
 	@Override
 	public DataListExtractor getExtractor(DataListFilter dataListFilter) {
 	
-		for(DataListExtractor extractor : extractors){
-			 if(extractor.applyTo(dataListFilter )){
-				 return extractor;
+		List<DataListExtractor> candidateExtractors = new ArrayList<>();
+		
+		for (DataListExtractor extractor : extractors) {
+			 if (extractor.applyTo(dataListFilter)) {
+				 candidateExtractors.add(extractor);
 			 }
 		}
+		
+		if (!candidateExtractors.isEmpty()) {
+			candidateExtractors.sort(extractorComparator);
+			return candidateExtractors.get(0);
+		}
+		
 		return defaultExtractor;
 	}
 

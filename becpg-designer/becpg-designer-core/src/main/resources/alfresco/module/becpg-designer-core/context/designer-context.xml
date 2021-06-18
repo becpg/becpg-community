@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!--
-  Copyright (C) 2010-2020 beCPG. 
+  Copyright (C) 2010-2021 beCPG. 
    
   This file is part of beCPG 
    
@@ -72,7 +72,7 @@
 		<property name="formModelVisitor" ref="formModelVisitor" />
 		<property name="designerTreeVisitor" ref="designerTreeVisitor" />
 		<property name="configPath" value="${beCPG.designer.configPath}" />
-		<property name="dictionaryService" ref="dictionaryService" />
+		<property name="dictionaryService" ref="cachedDictionaryService" />
 		<property name="designerInitService" ref="designerInitService" />
 		<property name="mimetypeService" ref="mimetypeService" />
 		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
@@ -86,7 +86,7 @@
 		<property name="nodeService" ref="nodeService" />
 		<property name="contentService" ref="contentService" />
 		<property name="namespaceService" ref="namespaceService" />
-	 	<property name="dictionaryService" ref="dictionaryService" />
+	 	<property name="dictionaryService" ref="cachedDictionaryService" />
 	 	<property name="designerService" ref="designerService" />
 	</bean>
 

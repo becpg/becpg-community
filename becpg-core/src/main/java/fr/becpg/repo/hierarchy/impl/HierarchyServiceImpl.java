@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -83,6 +83,10 @@ public class HierarchyServiceImpl implements HierarchyService {
 
 		if (hierarchyNodeRef == null) {
 			hierarchyNodeRef = getLuceneQuery(path, parentNodeRef, BeCPGModel.PROP_LKV_VALUE, value, false).singleValue();
+		}
+		
+		if (hierarchyNodeRef == null) {
+			hierarchyNodeRef = getLuceneQuery(path, parentNodeRef, BeCPGModel.PROP_ERP_CODE, value, false).singleValue();
 		}
 
 		return hierarchyNodeRef;

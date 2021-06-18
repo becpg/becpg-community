@@ -184,6 +184,12 @@ public class PlmRepoConsts {
 	public static final String PATH_PRECAUTIONARY_STATEMENTS= "PrecautionaryStatements";
 	/** Constant <code>PATH_HAZARD_CATEGORIES="HazardCategories"</code> */
 	public static final String PATH_HAZARD_CATEGORIES = "HazardCategories";
+	/** Constant <code>PATH_HAZARD_CATEGORIES="OnuCodes"</code> */
+	public static final String PATH_ONU_CODES = "OnuCodes";
+	/** Constant <code>PATH_HAZARD_CATEGORIES="ClassCodes"</code> */
+	public static final String PATH_CLASS_CODES = "ClassCodes";
+	/** Constant <code>PATH_HAZARD_CATEGORIES="PackagingGroupCodes"</code> */
+	public static final String PATH_PACKAGING_GROUP_CODES = "PackagingGroupCodes";
 
 	
 	/** Constant <code>PATH_COMPANIES="Companies"</code> */
@@ -246,6 +252,11 @@ public class PlmRepoConsts {
 	public static final String PATH_GS1_PLATFORM_TERM_AND_CONDITIONS_CODES = "PlatformTermsAndConditionsCodes";
 	/** Constant <code>PATH_GS1_SORTING_BONUS_CRITERIA="SortingBonusCriteria"</code> */
 	public static final String PATH_GS1_SORTING_BONUS_CRITERIA = "SortingBonusCriteria";
+	
+	/** Constant <code>PATH_GS1_TARGET_MARKETS="SortingBonusCriteria"</code> */
+	public static final String PATH_GS1_TARGET_MARKETS = "TargetMarkets";
+	/** Constant <code>PATH_GS1_TARGET_MARKETS="PATH_GS1_DUTY_FEE_TAXES"</code> */
+	public static final String PATH_GS1_DUTY_FEE_TAXES = "DutyFeeTaxes";
 
 
 	

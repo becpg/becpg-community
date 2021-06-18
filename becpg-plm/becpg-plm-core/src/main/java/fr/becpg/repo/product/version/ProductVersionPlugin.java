@@ -64,6 +64,7 @@ public class ProductVersionPlugin implements EntityVersionPlugin {
 	}
 
 	/** {@inheritDoc} */
+	@SuppressWarnings("deprecation")
 	@Override
 	public void doBeforeCheckin(NodeRef origNodeRef, NodeRef workingCopyNodeRef) {
 		if(entityDictionaryService.isSubClass(nodeService.getType(origNodeRef), PLMModel.TYPE_PRODUCT)){
@@ -96,20 +97,25 @@ public class ProductVersionPlugin implements EntityVersionPlugin {
 	        	}
 	        }
 	        
+		} else if (nodeService.getProperty(origNodeRef, PLMModel.PROP_SUPPLIER_STATE) != null) {
+	        nodeService.setProperty(workingCopyNodeRef, PLMModel.PROP_SUPPLIER_STATE, nodeService.getProperty(origNodeRef, PLMModel.PROP_SUPPLIER_STATE));
 		}
 		
 	}
 
+	
+	
+	
 	/** {@inheritDoc} */
 	@Override
 	public void cancelCheckout(NodeRef origNodeRef, NodeRef workingCopyNodeRef) {
-		
+		//Do nothing
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public void impactWUsed(NodeRef entityNodeRef, VersionType versionType, String description) {
-			
+		//Do nothing
 	}
 
 

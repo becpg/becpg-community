@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  * 
  * This file is part of beCPG
  * 
@@ -20,7 +20,7 @@
 	/**
 	 * YUI Library aliases
 	 */
-	var Dom = YAHOO.util.Dom, Event = YAHOO.util.Event, Selector = YAHOO.util.Selector;
+	var Dom = YAHOO.util.Dom;
 	/**
 	 * Alfresco Slingshot aliases
 	 */
@@ -74,7 +74,9 @@
 
 							containerDiv : null,
 
-							list : null
+							list : null,
+							
+							maxResults: 50
 
 						},
 
@@ -140,13 +142,13 @@
 									var dataType = splits[1].charAt(0).toUpperCase() + splits[1].slice(1);
 									instance.filterId = (type === "all" && dataType === "All" ? "all" : "filterform");
 									
-									if(dataType == "Regulatorycodes") {
-										instance.filterData =  "{\"prop_bcpg_regulatoryCode\":\"=" + type.replace("@"," ").replace("$","-") +"\"}";
+									if(dataType == "Regulatorycodes" && type!=null) {
+										instance.filterData =  "{\"prop_bcpg_regulatoryCode\":\"=" + type.replace(/@/gi," ").replace(/\$/gi,"-") +"\"}";
 									} else {
 									
 										instance.filterData = (type === "all" && dataType === "All" ? undefined : "{"
 												+ (type !== undefined ? ("\"prop_bcpg_rclReqType\":\"" + type+"\"") : "")
-												+ (dataType !== null ? (type !== undefined ? "," : "") + ("\"prop_bcpg_rclDataType\":\"" + dataType+"\"") : "")
+												+ (dataType != null ? (type !== undefined ? "," : "") + ("\"prop_bcpg_rclDataType\":\"" + dataType+"\"") : "")
 												+ "}");
 									}
 									
@@ -234,10 +236,10 @@
 									success : function DataTable_loadDataTable_success(oRequest, oResponse, oPayload) {
 										instance.widgets.notificationsDataTable.onDataReturnReplaceRows(oRequest, oResponse, oPayload);
 
-										if (instance.widgets.paginator) {
+									/* if (instance.widgets.paginator) {
 											instance.widgets.paginator.set('totalRecords', oResponse.meta.totalRecords);
 											instance.widgets.paginator.setPage(oResponse.meta.startIndex, true);
-										}
+										} */
 
 									},
 									failure : instance.widgets.notificationsDataTable.onDataReturnReplaceRows,
@@ -259,7 +261,7 @@
 										title : instance.msg("empty.notifications.title"),
 										description : instance.msg("empty.notifications.description")
 									});
-								}
+								} 
 
 								return original_doBeforeLoadData.apply(this, arguments);
 							};
@@ -324,7 +326,7 @@
 														this.options.containerDiv.appendChild(errorSpan);
 													}
 
-													errorSpan.innerHTML = (totalForbidden !== undefined && totalForbidden !== null
+													errorSpan.innerHTML = (totalForbidden != undefined && totalForbidden != null
 															&& totalForbidden > 0 ? totalForbidden : "");
 												}
 
@@ -356,7 +358,7 @@
 														for ( var type in types[dataTypeName]) {
 															var value = types[dataTypeName][type];
 															if(dataTypeName == "RegulatoryCodes"){
-																html += '<li><span class="req-' + dataTypeName.toString().toLowerCase() + '-' + type.replace(" ","@").replace("-","$")
+																html += '<li><span class="req-' + dataTypeName.toString().toLowerCase() + '-' + type.replace(/ /gi,"@").replace(/-/gi,"$")
 																+ '" ><a class="req-filter tag '
 																+ REQFILTER_EVENTCLASS + '" href="#"><span>' + type + 
 																' ('+ value + ')</span></a></li>';
@@ -400,7 +402,7 @@
 						 */
 						getWebscriptUrl : function ProductNotifications_getWebscriptUrl() {
 							return Alfresco.constants.PROXY_URI + "becpg/entity/datalists/data/node"
-									+ "?guessContainer=true&repo=true&itemType=bcpg:reqCtrlList&pageSize=20&dataListName=reqCtrlList&entityNodeRef="
+									+ "?guessContainer=true&repo=true&itemType=bcpg:reqCtrlList&pageSize="+this.options.maxResults+"&dataListName=reqCtrlList&entityNodeRef="
 									+ this.options.entityNodeRef+"&locale="+Alfresco.constants.JS_LOCALE;
 
 						},
@@ -489,7 +491,7 @@
 
 									}
 								}
-								+'</ul></div>';
+								desc += '</ul></div>';
 								desc += '   </div>';
 								desc += '   <div class="clear"></div>';
 								desc += '</div>';

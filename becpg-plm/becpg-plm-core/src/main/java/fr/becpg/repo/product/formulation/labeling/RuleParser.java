@@ -49,12 +49,25 @@ public abstract class RuleParser {
 	protected final List<ShowRule> showPercRulesByThreshold = new ArrayList<>();
 	protected final Map<NodeRef, ShowRule> showPercRules = new HashMap<>();
 	protected final Map<NodeRef, ShowRule> showGeoRules = new HashMap<>();
+	protected final Map<NodeRef, ShowRule> showBioRules = new HashMap<>();
 
 	protected String defaultPercFormat = "0.#%";
 	protected RoundingMode defaultRoundingMode = RoundingMode.HALF_DOWN;
 
 	protected boolean showAllPerc = false;
 	protected boolean showAllGeo = false;
+	protected boolean showAllBio = false;
+	
+
+	protected List<LabelingDecorator> labelingDecorators = new LinkedList<>();
+	
+	
+	{
+		labelingDecorators.add(new CapitalizeDecorator());
+		labelingDecorators.add(new LowerCaseDecorator());
+		labelingDecorators.add(new UppercaseDecorator());		
+		labelingDecorators.add(new FrenchTypoDecorator());
+	}
 	
 	
 	/**
@@ -203,7 +216,15 @@ public abstract class RuleParser {
 					showAllGeo = true;
 				} else {
 					for (NodeRef component : components) {
-						showGeoRules.put(component, new ShowRule(formula, locales));
+						showGeoRules.put(component, new ShowRule((formula != null) && !formula.isEmpty() ? formula : "", locales));
+					}
+				}
+			} else if (LabelingRuleType.ShowBio.equals(labeLabelingRuleType)) {
+				if (components.isEmpty()) {
+					showAllBio = true;
+				} else {
+					for (NodeRef component : components) {
+						showBioRules.put(component, new ShowRule((formula != null) && !formula.isEmpty() ? formula : "", locales));
 					}
 				}
 			} else if (LabelingRuleType.Type.equals(labeLabelingRuleType)
@@ -302,7 +323,7 @@ public abstract class RuleParser {
 				try {
 					aggregateRule.setQty(Double.valueOf(qtys[i]));
 				} catch (NumberFormatException e) {
-					logger.error(e, e);
+					logger.info("Cannot read double value" +qtys[i]+" for rule: "+ ruleNodeRef);
 				}
 			}
 			aggregateRule.setComponents(components);

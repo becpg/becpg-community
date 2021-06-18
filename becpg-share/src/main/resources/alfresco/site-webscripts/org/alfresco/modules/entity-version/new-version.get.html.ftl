@@ -64,6 +64,14 @@
                   <input type="checkbox" id="${el}-impact-wused-checkbox" name="impactWused" value="true" />
                </div>
             </div>
+             <div class="yui-gd">
+               <div class="yui-u first">
+                  <label for="${el}-renameOnMerge-checkbox">${msg("label.renameOnMerge")}</label>
+               </div>
+               <div class="yui-u">
+                  <input type="checkbox" id="${el}-renameOnMerge-checkbox" name="renameOnMerge" value="true" />
+               </div>
+            </div>
          </div>
 
          <div class="bdft">

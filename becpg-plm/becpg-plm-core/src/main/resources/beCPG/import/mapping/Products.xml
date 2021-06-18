@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright (C) 2010-2020 beCPG. 
+  Copyright (C) 2010-2021 beCPG. 
    
   This file is part of beCPG 
    
@@ -27,66 +27,69 @@
 			<nodeColumnKey attribute="bcpg:erpCode" />
 		</nodeColumnKeys>
 	</mapping>
-		
+
 	<mapping name="bcpg:packagingMaterial">
 		<nodeColumnKeys>
 			<nodeColumnKey attribute="bcpg:erpCode" />
 		</nodeColumnKeys>
 		<columns>
 
-			<column id="bcpg:productHierarchy1" type="Hierarchy"
-				attribute="bcpg:productHierarchy1" />
-			<column id="bcpg:productHierarchy2" type="Hierarchy"
-				attribute="bcpg:productHierarchy2" parentLevel="bcpg:productHierarchy1"
+			<column id="bcpg:productHierarchy1" type="Hierarchy" attribute="bcpg:productHierarchy1" />
+			<column id="bcpg:productHierarchy2" type="Hierarchy" attribute="bcpg:productHierarchy2" parentLevel="bcpg:productHierarchy1"
 				parentLevelAttribute="bcpg:parentLevel" />
 		</columns>
 	</mapping>
-	
+
 	<mapping name="bcpg:packagingKit">
 		<nodeColumnKeys>
 			<nodeColumnKey attribute="bcpg:erpCode" />
 		</nodeColumnKeys>
 		<columns>
 
-			<column id="bcpg:productHierarchy1" type="Hierarchy"
-				attribute="bcpg:productHierarchy1" />
-			<column id="bcpg:productHierarchy2" type="Hierarchy"
-				attribute="bcpg:productHierarchy2" parentLevel="bcpg:productHierarchy1"
+			<column id="bcpg:productHierarchy1" type="Hierarchy" attribute="bcpg:productHierarchy1" />
+			<column id="bcpg:productHierarchy2" type="Hierarchy" attribute="bcpg:productHierarchy2" parentLevel="bcpg:productHierarchy1"
 				parentLevelAttribute="bcpg:parentLevel" />
 		</columns>
 	</mapping>
-	
+
 	<mapping name="bcpg:semiFinishedProduct">
 		<nodeColumnKeys>
 			<nodeColumnKey attribute="bcpg:erpCode" />
 		</nodeColumnKeys>
 		<columns>
 
-			<column id="bcpg:productHierarchy1" type="Hierarchy"
-				attribute="bcpg:productHierarchy1" />
-			<column id="bcpg:productHierarchy2" type="Hierarchy"
-				attribute="bcpg:productHierarchy2" parentLevel="bcpg:productHierarchy1"
+			<column id="bcpg:productHierarchy1" type="Hierarchy" attribute="bcpg:productHierarchy1" />
+			<column id="bcpg:productHierarchy2" type="Hierarchy" attribute="bcpg:productHierarchy2" parentLevel="bcpg:productHierarchy1"
 				parentLevelAttribute="bcpg:parentLevel" />
 			<column id="bcpg:ingTypeV2" attribute="bcpg:ingTypeV2" type="Attribute" targetClass="bcpg:ingTypeItem" />
 		</columns>
 	</mapping>
-	
+
 	<mapping name="bcpg:finishedProduct">
 		<nodeColumnKeys>
 			<nodeColumnKey attribute="bcpg:erpCode" />
 		</nodeColumnKeys>
 		<columns>
 
-			<column id="bcpg:productHierarchy1" type="Hierarchy"
-				attribute="bcpg:productHierarchy1" />
-			<column id="bcpg:productHierarchy2" type="Hierarchy"
-				attribute="bcpg:productHierarchy2" parentLevel="bcpg:productHierarchy1"
+			<column id="bcpg:productHierarchy1" type="Hierarchy" attribute="bcpg:productHierarchy1" />
+			<column id="bcpg:productHierarchy2" type="Hierarchy" attribute="bcpg:productHierarchy2" parentLevel="bcpg:productHierarchy1"
 				parentLevelAttribute="bcpg:parentLevel" />
 			<column id="bcpg:ingTypeV2" attribute="bcpg:ingTypeV2" type="Attribute" targetClass="bcpg:ingTypeItem" />
+			<column id="gs1:productHierarchy1" type="Hierarchy" path="/System/ProductHierarchy/bcpg:entityLists/gs1_Hierarchy"
+				attribute="gs1:productHierarchy1" />
+			<column id="gs1:productHierarchy2" type="Hierarchy" path="/System/ProductHierarchy/bcpg:entityLists/gs1_Hierarchy"
+				attribute="gs1:productHierarchy2" parentLevel="gs1:productHierarchy1" parentLevelAttribute="bcpg:parentLevel" />
+			<column id="gs1:productHierarchy3" type="Hierarchy" path="/System/ProductHierarchy/bcpg:entityLists/gs1_Hierarchy"
+				attribute="gs1:productHierarchy3" parentLevel="gs1:productHierarchy2" parentLevelAttribute="bcpg:parentLevel" />
+			<column id="gs1:productHierarchy4" type="Hierarchy" path="/System/ProductHierarchy/bcpg:entityLists/gs1_Hierarchy"
+				attribute="gs1:productHierarchy4" parentLevel="gs1:productHierarchy3" parentLevelAttribute="bcpg:parentLevel" />
+			<column id="gs1:productHierarchy5" type="Hierarchy" path="/System/ProductHierarchy/bcpg:entityLists/gs1_Hierarchy"
+				attribute="gs1:productHierarchy5" parentLevel="gs1:productHierarchy4" parentLevelAttribute="bcpg:parentLevel" />
+
 		</columns>
 	</mapping>
 
-	 <mapping name="bcpg:ingTypeItem">
+	<mapping name="bcpg:ingTypeItem">
 		<nodeColumnKeys>
 			<nodeColumnKey attribute="bcpg:lvValue" />
 		</nodeColumnKeys>
@@ -98,16 +101,12 @@
 		</nodeColumnKeys>
 		<columns>
 
-			<column id="bcpg:productHierarchy1" type="Hierarchy"
-				attribute="bcpg:productHierarchy1" />
-			<column id="bcpg:productHierarchy2" type="Hierarchy"
-				attribute="bcpg:productHierarchy2" parentLevel="bcpg:productHierarchy1"
+			<column id="bcpg:productHierarchy1" type="Hierarchy" attribute="bcpg:productHierarchy1" />
+			<column id="bcpg:productHierarchy2" type="Hierarchy" attribute="bcpg:productHierarchy2" parentLevel="bcpg:productHierarchy1"
 				parentLevelAttribute="bcpg:parentLevel" />
 			<column id="bcpg:ingTypeV2" attribute="bcpg:ingTypeV2" type="Attribute" targetClass="bcpg:ingTypeItem" />
-			<column id="img1Path" attribute="cm:content" path="Images/product.jpg"
-						type="File" />
-			<column id="img1Name" attribute="cm:name" path="Images/product.jpg"
-						type="File" />	
+			<column id="img1Path" attribute="cm:content" path="Images/product.jpg" type="File" />
+			<column id="img1Name" attribute="cm:name" path="Images/product.jpg" type="File" />
 		</columns>
 	</mapping>
 
@@ -117,14 +116,12 @@
 		</nodeColumnKeys>
 		<columns>
 
-			<column id="bcpg:productHierarchy1" type="Hierarchy"
-				attribute="bcpg:productHierarchy1" />
-			<column id="bcpg:productHierarchy2" type="Hierarchy"
-				attribute="bcpg:productHierarchy2" parentLevel="bcpg:productHierarchy1"
+			<column id="bcpg:productHierarchy1" type="Hierarchy" attribute="bcpg:productHierarchy1" />
+			<column id="bcpg:productHierarchy2" type="Hierarchy" attribute="bcpg:productHierarchy2" parentLevel="bcpg:productHierarchy1"
 				parentLevelAttribute="bcpg:parentLevel" />
 		</columns>
 	</mapping>
-	
+
 	<mapping name="bcpg:compoList">
 		<nodeColumnKeys>
 			<nodeColumnKey attribute="bcpg:erpCode" />
@@ -135,8 +132,8 @@
 		<columns>
 		</columns>
 	</mapping>
-	
-	
+
+
 	<mapping name="bcpg:dynamicCharactList">
 		<nodeColumnKeys>
 			<nodeColumnKey attribute="bcpg:erpCode" />
@@ -147,7 +144,7 @@
 		<columns>
 		</columns>
 	</mapping>
-	
+
 	<mapping name="bcpg:packagingList">
 		<nodeColumnKeys>
 			<nodeColumnKey attribute="bcpg:erpCode" />
@@ -158,7 +155,7 @@
 		<columns>
 		</columns>
 	</mapping>
-		
+
 	<mapping name="bcpg:nutList">
 		<nodeColumnKeys>
 			<nodeColumnKey attribute="bcpg:erpCode" />
@@ -169,7 +166,7 @@
 		<columns>
 		</columns>
 	</mapping>
-	
+
 	<mapping name="bcpg:allergenList">
 		<nodeColumnKeys>
 			<nodeColumnKey attribute="bcpg:erpCode" />
@@ -180,7 +177,7 @@
 		<columns>
 		</columns>
 	</mapping>
-	
+
 	<mapping name="bcpg:costList">
 		<nodeColumnKeys>
 			<nodeColumnKey attribute="bcpg:erpCode" />
@@ -191,7 +188,7 @@
 		<columns>
 		</columns>
 	</mapping>
-	
+
 	<mapping name="bcpg:physicoChemList">
 		<nodeColumnKeys>
 			<nodeColumnKey attribute="bcpg:erpCode" />
@@ -202,7 +199,7 @@
 		<columns>
 		</columns>
 	</mapping>
-	
+
 	<mapping name="bcpg:nutList">
 		<nodeColumnKeys>
 			<nodeColumnKey attribute="bcpg:erpCode" />
@@ -213,7 +210,7 @@
 		<columns>
 		</columns>
 	</mapping>
-	
+
 	<mapping name="bcpg:organoList">
 		<nodeColumnKeys>
 			<nodeColumnKey attribute="bcpg:erpCode" />
@@ -224,7 +221,7 @@
 		<columns>
 		</columns>
 	</mapping>
-	
+
 	<mapping name="bcpg:ingList">
 		<nodeColumnKeys>
 			<nodeColumnKey attribute="bcpg:erpCode" />
@@ -235,7 +232,7 @@
 		<columns>
 		</columns>
 	</mapping>
-	
+
 	<mapping name="bcpg:labelClaimList">
 		<nodeColumnKeys>
 			<nodeColumnKey attribute="bcpg:erpCode" />
@@ -246,7 +243,7 @@
 		<columns>
 		</columns>
 	</mapping>
-	
+
 	<mapping name="pack:labelingList">
 		<nodeColumnKeys>
 			<nodeColumnKey attribute="bcpg:erpCode" />
@@ -257,7 +254,7 @@
 		<columns>
 		</columns>
 	</mapping>
-	
+
 	<mapping name="bcpg:ingLabelingList">
 		<nodeColumnKeys>
 			<nodeColumnKey attribute="bcpg:erpCode" />
@@ -267,16 +264,16 @@
 		</dataListColumnKeys>
 		<columns>
 		</columns>
-	</mapping>	
-	
+	</mapping>
+
 	<mapping name="bcpg:labelingRuleList">
-        <nodeColumnKeys>
-            <nodeColumnKey attribute="cm:name" />
-        </nodeColumnKeys>
-        <columns>
-        </columns>
-    </mapping>
-    
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="cm:name" />
+		</nodeColumnKeys>
+		<columns>
+		</columns>
+	</mapping>
+
 	<mapping name="bcpg:client">
 		<nodeColumnKeys>
 			<nodeColumnKey attribute="bcpg:erpCode" />
@@ -284,14 +281,13 @@
 		</nodeColumnKeys>
 		<columns>
 
-			<column id="bcpg:clientHierarchy1" type="Hierarchy" attribute="bcpg:clientHierarchy1"  path="/System/ProductHierarchy/bcpg:entityLists/client_Hierarchy" />
-			<column id="bcpg:clientHierarchy2" type="Hierarchy" attribute="bcpg:clientHierarchy2" path="/System/ProductHierarchy/bcpg:entityLists/client_Hierarchy"
-				parentLevel="bcpg:clientHierarchy1" />
-				
-			<column id="img1Path" attribute="cm:content" path="Images/logo.jpg"
-				type="File" />
-			<column id="img1Title" attribute="cm:title" path="Images/logo.jpg"
-				type="File" />
+			<column id="bcpg:clientHierarchy1" type="Hierarchy" attribute="bcpg:clientHierarchy1"
+				path="/System/ProductHierarchy/bcpg:entityLists/client_Hierarchy" />
+			<column id="bcpg:clientHierarchy2" type="Hierarchy" attribute="bcpg:clientHierarchy2"
+				path="/System/ProductHierarchy/bcpg:entityLists/client_Hierarchy" parentLevel="bcpg:clientHierarchy1" />
+
+			<column id="img1Path" attribute="cm:content" path="Images/logo.jpg" type="File" />
+			<column id="img1Title" attribute="cm:title" path="Images/logo.jpg" type="File" />
 		</columns>
 	</mapping>
 
@@ -313,7 +309,7 @@
 		<columns>
 		</columns>
 	</mapping>
-	
+
 	<mapping name="qa:controlDefList">
 		<nodeColumnKeys>
 			<nodeColumnKey attribute="bcpg:erpCode" />
@@ -324,7 +320,7 @@
 		<columns>
 		</columns>
 	</mapping>
-	
+
 	<mapping name="mpm:processList">
 		<nodeColumnKeys>
 			<nodeColumnKey attribute="bcpg:erpCode" />
@@ -335,7 +331,7 @@
 		<columns>
 		</columns>
 	</mapping>
-	
+
 	<mapping name="bcpg:microbioList">
 		<nodeColumnKeys>
 			<nodeColumnKey attribute="cm:name" />
@@ -346,7 +342,7 @@
 		<columns>
 		</columns>
 	</mapping>
-	
+
 	<mapping name="bcpg:productMicrobioCriteria">
 		<nodeColumnKeys>
 			<nodeColumnKey attribute="cm:name" />
@@ -355,22 +351,30 @@
 	</mapping>
 	
 	<!-- Subsidiary -->
-    <mapping name="bcpg:subsidiary">
-        <nodeColumnKeys>
-            <nodeColumnKey attribute="cm:name" />
-        </nodeColumnKeys>
-        <columns>
-        </columns>
-    </mapping>
+	<mapping name="bcpg:subsidiary">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="cm:name" />
+		</nodeColumnKeys>
+		<columns>
+		</columns>
+	</mapping>
 
     <!-- Trademark -->
-    <mapping name="bcpg:trademark">
-        <nodeColumnKeys>
-            <nodeColumnKey attribute="bcpg:erpCode" />
-            <nodeColumnKey attribute="cm:name" />
-        </nodeColumnKeys>
-        <columns>
-        </columns>
-    </mapping>
-	
+	<mapping name="bcpg:trademark">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:erpCode" />
+			<nodeColumnKey attribute="cm:name" />
+		</nodeColumnKeys>
+		<columns>
+		</columns>
+	</mapping>
+
+	<mapping name="qa:stockList">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:erpCode" />
+		</nodeColumnKeys>
+		<columns>
+		</columns>
+	</mapping>
+
 </mappings>

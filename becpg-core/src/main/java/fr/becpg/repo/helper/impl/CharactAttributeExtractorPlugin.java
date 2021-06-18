@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2010-2020 beCPG. 
+Copyright (C) 2010-2021 beCPG. 
  
 This file is part of beCPG 
  
@@ -60,7 +60,7 @@ public class CharactAttributeExtractorPlugin extends AbstractExprNameExtractor {
 	/** {@inheritDoc} */
 	@Override
 	public String extractMetadata(QName type, NodeRef nodeRef) {
-		return type.toPrefixString(namespaceService).split(":")[1];
+		return entityDictionaryService.toPrefixString(type).split(":")[1];
 	}
 
 }

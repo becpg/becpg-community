@@ -63,6 +63,8 @@ function main()
    model.searchForms = searchForms;
    model.searchPath = "{site}search?t={terms}&q={query}&r=true";
 
+   model.hideDescription = config.scoped["AdvancedSearch"]["hide-description"] && config.scoped["AdvancedSearch"]["hide-description"].getValue() == "true";
+
    // Widget instantiation metadata...
    var advancedSearch = {
       id : "AdvancedSearch", 

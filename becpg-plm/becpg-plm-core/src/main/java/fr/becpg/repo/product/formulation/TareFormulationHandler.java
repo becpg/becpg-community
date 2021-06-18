@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -27,7 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.GS1Model;
 import fr.becpg.model.PackModel;
-import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.FinishedProductData;
@@ -56,7 +55,7 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 
 	/** {@inheritDoc} */
 	@Override
-	public boolean process(ProductData formulatedProduct) throws FormulateException {
+	public boolean process(ProductData formulatedProduct) {
 
 		logger.debug("Tare visitor");
 
@@ -83,8 +82,8 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 			tarePrimary = tarePrimary.add(variantPackagingData.getTarePrimary());
 		}
 
-		BigDecimal netWeightPrimary = new BigDecimal(
-				FormulationHelper.getNetWeight(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT).toString());
+		BigDecimal netWeightPrimary = BigDecimal.valueOf(
+				FormulationHelper.getNetWeight(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT));
 
 		BigDecimal weightPrimary = tarePrimary.add(netWeightPrimary);
 
@@ -92,20 +91,20 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 
 		if ((variantPackagingData != null) && (variantPackagingData.getProductPerBoxes() != null)) {
 
-			BigDecimal tareSecondary = tarePrimary.multiply(new BigDecimal(variantPackagingData.getProductPerBoxes()))
+			BigDecimal tareSecondary = tarePrimary.multiply(BigDecimal.valueOf(variantPackagingData.getProductPerBoxes()))
 					.add(variantPackagingData.getTareSecondary());
 
-			BigDecimal netWeightSecondary = netWeightPrimary.multiply(new BigDecimal(variantPackagingData.getProductPerBoxes()));
+			BigDecimal netWeightSecondary = netWeightPrimary.multiply(BigDecimal.valueOf(variantPackagingData.getProductPerBoxes()));
 			BigDecimal weightSecondary = tareSecondary.add(netWeightSecondary);
 			formulatedProduct.setWeightSecondary(weightSecondary.doubleValue());
 			formulatedProduct.setNetWeightSecondary(netWeightSecondary.doubleValue());
 
 			if (variantPackagingData.getBoxesPerPallet() != null) {
 
-				BigDecimal tareTertiary = tareSecondary.multiply(new BigDecimal(variantPackagingData.getBoxesPerPallet()))
+				BigDecimal tareTertiary = tareSecondary.multiply(BigDecimal.valueOf(variantPackagingData.getBoxesPerPallet()))
 						.add(variantPackagingData.getTareTertiary());
 
-				BigDecimal netWeightTertiary = netWeightSecondary.multiply(new BigDecimal(variantPackagingData.getBoxesPerPallet()));
+				BigDecimal netWeightTertiary = netWeightSecondary.multiply(BigDecimal.valueOf(variantPackagingData.getBoxesPerPallet()));
 				BigDecimal weightTertiary = tareTertiary.add(netWeightTertiary);
 				formulatedProduct.setWeightTertiary(weightTertiary.doubleValue());
 				formulatedProduct.setNetWeightTertiary(netWeightTertiary.doubleValue());
@@ -139,6 +138,9 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 				if (!variantPackagingData.isManualTertiary()) {
 					formulatedProduct.getExtraProperties().put(GS1Model.PROP_TERTIARY_WIDTH, variantPackagingData.getTertiaryWidth());
 					formulatedProduct.getExtraProperties().put(GS1Model.PROP_TERTIARY_DEPTH, variantPackagingData.getTertiaryDepth());
+				}
+				
+				if(!variantPackagingData.isManualPalletInformations()) {
 					formulatedProduct.getExtraProperties().put(GS1Model.PROP_PALLET_TYPE_CODE, variantPackagingData.getPalletTypeCode());
 					formulatedProduct.getExtraProperties().put(GS1Model.PROP_PLATFORMTERMSANSCONDITION_CODE, variantPackagingData.getPlatformTermsAndConditionsCode());
 				

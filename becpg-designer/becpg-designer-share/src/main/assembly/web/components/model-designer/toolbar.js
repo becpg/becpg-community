@@ -96,7 +96,7 @@
 			                     });
 		               
 		               
-		               this.widgets.publishButton = Alfresco.util.createYUIButton(this, "exportButton", this.onExport,
+		               this.widgets.exportButton = Alfresco.util.createYUIButton(this, "exportButton", this.onExport,
 			                     {
 			                        disabled : true,
 			                        value : "export"

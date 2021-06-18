@@ -20,24 +20,6 @@
 	</namespaces>
 
 	<constraints>
-		<!-- Deprecated to remove in 3.0 -->
-		<constraint name="pack:pmMaterials"
-				type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
-					<parameter name="path">
-						<list>
-							<value>/System/Lists/bcpg:entityLists/pmMaterials</value>
-						</list>
-					</parameter>
-					<parameter name="addEmptyValue">
-						<value>true</value>
-					</parameter>
-					<parameter name="constraintType">
-						<value>bcpg:listValue</value>
-					</parameter>
-					<parameter name="constraintProp">
-						<value>bcpg:lvValue</value>
-					</parameter>
-		</constraint>
 	
 		<constraint name="pack:pmPrintTypes"
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
@@ -196,6 +178,12 @@
 					<type>d:double</type>
 					<index enabled="false"/>
 				</property>
+				<property name="pack:pmlLevel">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="bcpg:packagingLevel" />
+					</constraints>
+				</property>
 			</properties>
 			
 			<associations>
@@ -205,7 +193,7 @@
 						<many>true</many>
 					</source>
 					<target>
-						<class>bcpg:listValue</class>
+						<class>pack:packMaterial</class>
 						<mandatory>true</mandatory>
 						<many>false</many>
 					</target>
@@ -214,9 +202,29 @@
 			<mandatory-aspects>
 				<aspect>bcpg:sortableListAspect</aspect>
 			</mandatory-aspects>
-		</type> 
+		</type>
+
+	<type name="pack:packMaterial">
+		<parent>bcpg:listValue</parent>
+		<properties>
+			<property name="pack:pmIsNotRecyclable">
+				<type>d:boolean</type>
+				<index enabled="false" />
+			</property>
+			<property name="pack:pmEcoTaxeCategory">
+				<type>d:text</type>
+				<index enabled="false" />
+			</property>
+			<property name="pack:pmEcoScore">
+				<type>d:int</type>
+				<index enabled="false" />
+			</property>
+		</properties>
+	</type>
+	
 		
 	</types>
+	
 
 	<aspects>
 
@@ -356,16 +364,6 @@
 		</aspect>
 		<aspect name="pack:pmMaterialAspect">
 			<properties>
-				<!-- Deprecated to Remove in 3.0 -->
-				<property name="pack:pmMaterial">
-					<type>d:text</type>
-					<mandatory>false</mandatory>
-					<multiple>true</multiple>
-					<index enabled="false" />
-					<constraints>
-						<constraint ref="pack:pmMaterials" />
-					</constraints>
-				</property>
 				<property name="pack:pmAdditionnalMaterial">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
@@ -383,7 +381,7 @@
 							<many>true</many>
 						</source>
 						<target>
-							<class>bcpg:listValue</class>
+							<class>pack:packMaterial</class>
 							<mandatory>false</mandatory>
 							<many>true</many>
 						</target>

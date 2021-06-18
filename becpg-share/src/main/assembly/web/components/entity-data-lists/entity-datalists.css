@@ -33,7 +33,7 @@
 
 
 .datalists div.filter:hover {
-	max-height:2000px;
+	max-height:5000px;
     transition: max-height 1s ease;
 }
 

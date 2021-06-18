@@ -29,7 +29,8 @@
    <title><@region id="head-title" scope="global" chromeless="true"/></title>
    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
    <#--  beCPG Mobile Fix -->
-   <meta name="viewport" content="initial-scale=1.0">
+   <meta name="viewport" content="initial-scale=1.0" />
+   <meta charset="utf-8"/>
    
    <#-- This MUST be placed before the <@outputJavaScript> directive to ensure that the Alfresco namespace
         gets setup before any of the other Alfresco JavaScript dependencies try to make use of it. -->
@@ -68,11 +69,13 @@
    <#assign tabletCSS><@checksumResource src="${url.context}/res/css/tablet.css"/></#assign>
    <!-- Android & iPad CSS overrides -->
    <script type="text/javascript">
+    //<![CDATA[
       if (navigator.userAgent.indexOf(" Android ") !== -1 || navigator.userAgent.indexOf("iPad;") !== -1 || navigator.userAgent.indexOf("iPhone;") !== -1 )
       {
          document.write("<link media='only screen and (max-device-width: 1024px)' rel='stylesheet' type='text/css' href='${tabletCSS}'/>");
          document.write("<link rel='stylesheet' type='text/css' href='${tabletCSS}'/>");
       }
+      //]]>
    </script>
    </@markup>
 </head>

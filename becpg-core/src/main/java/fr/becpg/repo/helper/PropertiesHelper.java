@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG. 
+ * Copyright (C) 2010-2021 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -30,6 +30,10 @@ import org.alfresco.service.namespace.QName;
 public class PropertiesHelper {
 
 
+	private PropertiesHelper() {
+		//Do Nothing
+	}
+	
 	/*(.*[\"\*\\\>\<\?\/\:\|]+.*)|(.*[\.]?.*[\.]+$)|(.*[ ]+$)*/
 	
 	/** Constant <code>namePattern</code> */
@@ -57,9 +61,11 @@ public class PropertiesHelper {
 	 */
 	public static String cleanName(String name) {
 		return name!=null? name.replaceAll("([\"*\\><?/:|])", "-")
-				.replaceAll("(\n)|(')|(\")", " ")
+				.replaceAll("(\n)|(\")", " ")
 				.replaceAll(Pattern.quote("*"), " ")
-				.replaceAll("\\.$", "").trim(): null;
+				.replaceAll("\\.$", "")
+				.replace("/", "-")
+				.replace("_x0020_", " ").trim(): null;
 	}	
 	
 	/**
@@ -75,8 +81,7 @@ public class PropertiesHelper {
 			name = QName.splitPrefixedQName(name)[1];
 		}
 		
-		String ret = name!=null? name.replaceAll("([\"*\\><?/:|])", "-").trim(): null;
-		return ret!=null ? ret.replaceAll("\\.","-"): null;
+		return cleanName(name);
 	}	
 	
 	

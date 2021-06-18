@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -37,6 +37,7 @@ import org.springframework.stereotype.Service;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.datalist.DataListSortService;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
@@ -53,6 +54,9 @@ public class DataListSortServiceImpl implements DataListSortService {
 	@Autowired
 	@Qualifier("NodeService")
 	private NodeService nodeService;
+	
+	@Autowired
+	private AssociationService associationService;
 
 	@Autowired
 	private BehaviourFilter policyBehaviourFilter;
@@ -86,9 +90,8 @@ public class DataListSortServiceImpl implements DataListSortService {
 
 			AtomicInteger newSort = new AtomicInteger(RepoConsts.SORT_DEFAULT_STEP);
 			BeCPGQueryBuilder.createQuery().parent(listContainer).ofType(dataType).isNotNull(BeCPGModel.PROP_SORT).addSort(BeCPGModel.PROP_SORT, true)
-					.inDB().maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list().forEach(listItem -> {
-						nodeService.setProperty(listItem, BeCPGModel.PROP_SORT, newSort.getAndAdd(RepoConsts.SORT_DEFAULT_STEP));
-					});
+					.inDB().maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list().forEach(listItem -> 
+						nodeService.setProperty(listItem, BeCPGModel.PROP_SORT, newSort.getAndAdd(RepoConsts.SORT_DEFAULT_STEP)));
 		}
 
 		/*
@@ -323,6 +326,8 @@ public class DataListSortServiceImpl implements DataListSortService {
 					}
 
 					pendingNodeRefs.remove(nodeRef);
+					
+					associationService.removeChildCachedAssoc(nodeService.getPrimaryParent(nodeRef).getParentRef(), ContentModel.ASSOC_CONTAINS);
 
 				}
 			}
@@ -383,16 +388,11 @@ public class DataListSortServiceImpl implements DataListSortService {
 			NodeRef destNodeRef = list.getNextSiblingNode(nodeRef, moveUp);
 			logger.debug("destNodeRef " + destNodeRef);
 
-			if (destNodeRef == null) {
-
-				// sort = list.getExtractSortOrNormalize(nodeRef, sort, );
-
-				if (!list.checkSortIsFree(sort, nodeRef)) {
-					// several node with same sort
-					list.normalize();
-					sort = (Integer) nodeService.getProperty(nodeRef, BeCPGModel.PROP_SORT);
-					destNodeRef = list.getNextSiblingNode(nodeRef, moveUp);
-				}
+			if (destNodeRef == null && !list.checkSortIsFree(sort, nodeRef)) {
+				// several node with same sort
+				list.normalize();
+				sort = (Integer) nodeService.getProperty(nodeRef, BeCPGModel.PROP_SORT);
+				destNodeRef = list.getNextSiblingNode(nodeRef, moveUp);
 			}
 
 			if (destNodeRef != null) {
@@ -438,9 +438,12 @@ public class DataListSortServiceImpl implements DataListSortService {
 				logger.debug("swap parent");
 				nodeService.setProperty(nodeRef, BeCPGModel.PROP_SORT, moveUp ? destSort : newSort + 1);
 				nodeService.setProperty(destNodeRef, BeCPGModel.PROP_SORT, sort);
+
 			} else {
 				logger.debug("Cannot swap.");
 			}
+			//Purge assoc cache
+			associationService.removeChildCachedAssoc(nodeService.getPrimaryParent(nodeRef).getParentRef(), ContentModel.ASSOC_CONTAINS);
 		} finally {
 			policyBehaviourFilter.enableBehaviour( BeCPGModel.ASPECT_SORTABLE_LIST);
 			policyBehaviourFilter.enableBehaviour( BeCPGModel.ASPECT_DEPTH_LEVEL);
@@ -461,6 +464,11 @@ public class DataListSortServiceImpl implements DataListSortService {
 			SortableDataList list = new SortableDataList(nodeRef);
 
 			NodeRef parentLevel = (NodeRef) nodeService.getProperty(nodeRef, BeCPGModel.PROP_PARENT_LEVEL);
+			
+			if (logger.isDebugEnabled()) {
+				logger.debug("node: " + tryGetName(selectedNodeRef));
+				logger.debug("insertAfter: " + tryGetName(nodeRef));
+			}
 
 			// Put at same level
 			if ((parentLevel != null) || (nodeService.getProperty(selectedNodeRef, BeCPGModel.PROP_PARENT_LEVEL) != null)) {
@@ -468,8 +476,13 @@ public class DataListSortServiceImpl implements DataListSortService {
 			}
 
 			if (list.exists()) {
-				insertAfter(list, nodeRef, selectedNodeRef, new HashSet<NodeRef>());
+				insertAfter(list, nodeRef, selectedNodeRef, new HashSet<>());
+			} else {
+				logger.debug("list doesn't exists");
 			}
+			
+			//Purge assoc cache
+			associationService.removeChildCachedAssoc(nodeService.getPrimaryParent(nodeRef).getParentRef(), ContentModel.ASSOC_CONTAINS);
 		} finally {
 			policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
 			policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);

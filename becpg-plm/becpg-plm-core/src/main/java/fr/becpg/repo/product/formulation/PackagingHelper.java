@@ -40,13 +40,12 @@ public class PackagingHelper implements InitializingBean {
 
 	private static final Log logger = LogFactory.getLog(PackagingHelper.class);
 
-	private static PackagingHelper INSTANCE = null;
+	private static PackagingHelper instance = null;
 
 	/** {@inheritDoc} */
 	@Override
 	public void afterPropertiesSet() {
-		INSTANCE = this;
-
+		instance = this;
 	}
 
 	private PackagingHelper() {
@@ -101,14 +100,19 @@ public class PackagingHelper implements InitializingBean {
 
 			}
 			if (variantPackagingData.isManualTertiary()) {
-
+				variantPackagingData.setTertiaryWidth((Float) nodeService.getProperty(productData.getNodeRef(), GS1Model.PROP_TERTIARY_WIDTH));
+				variantPackagingData.setTertiaryDepth((Float) nodeService.getProperty(productData.getNodeRef(), GS1Model.PROP_TERTIARY_DEPTH));
+			}
+			
+			if(variantPackagingData.isManualPalletInformations()) {
 				variantPackagingData
-						.setProductPerBoxes((Integer) nodeService.getProperty(productData.getNodeRef(), PackModel.PROP_PALLET_PRODUCTS_PER_BOX));
-
+				.setProductPerBoxes((Integer) nodeService.getProperty(productData.getNodeRef(), PackModel.PROP_PALLET_PRODUCTS_PER_BOX));
+		
 				if (productData.getAspects().contains(PackModel.ASPECT_PALLET)) {
 					extractPalletInformations(productData.getNodeRef(), variantPackagingData);
 				}
 			}
+			
 		}
 
 		return packagingData;
@@ -118,7 +122,7 @@ public class PackagingHelper implements InitializingBean {
 		NodeRef defaultVariantNodeRef = null;
 		if (productData.getVariants() != null) {
 			for (VariantData variantData : productData.getVariants()) {
-				if (variantData.getIsDefaultVariant()) {
+				if (Boolean.TRUE.equals(variantData.getIsDefaultVariant())) {
 					defaultVariantNodeRef = variantData.getNodeRef();
 				}
 			}
@@ -141,7 +145,7 @@ public class PackagingHelper implements InitializingBean {
 		// Sum tare (don't take in account packagingKit)
 		if ((dataItem.getPkgLevel() != null) && !PLMModel.TYPE_PACKAGINGKIT.equals(nodeType) && (dataItem.getProduct() != null)) {
 			for (VariantPackagingData variantPackagingData : packagingData.getVariantPackagingData(currentVariants)) {
-				BigDecimal tare = FormulationHelper.getTareInKg(dataItem, alfrescoRepository.findOne(dataItem.getProduct())).multiply(new BigDecimal(subQty));
+				BigDecimal tare = FormulationHelper.getTareInKg(dataItem, alfrescoRepository.findOne(dataItem.getProduct())).multiply( BigDecimal.valueOf(subQty));
 
 				if (PackagingLevel.Primary.equals(dataItem.getPkgLevel())) {
 					variantPackagingData.addTarePrimary(tare);
@@ -171,6 +175,14 @@ public class PackagingHelper implements InitializingBean {
 					}
 
 				} else if (PackagingLevel.Tertiary.equals(dataItem.getPkgLevel())) {
+					
+					if (Boolean.TRUE.equals(dataItem.getIsMaster())) {
+						variantPackagingData.setManualTertiary(false);
+						variantPackagingData.setTertiaryWidth(parseFloat((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_WIDTH)));
+						variantPackagingData.setTertiaryDepth(parseFloat((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_LENGTH)));
+					}
+				
+					
 					variantPackagingData.addTareTertiary(tare);
 				}
 			}
@@ -180,7 +192,7 @@ public class PackagingHelper implements InitializingBean {
 				&& ProductUnit.PP.equals(dataItem.getPackagingListUnit()) && PLMModel.TYPE_PACKAGINGKIT.equals(nodeType)) {
 			logger.debug("load pallet aspect ");
 			for (VariantPackagingData variantPackagingData : packagingData.getVariantPackagingData(currentVariants)) {
-				variantPackagingData.setManualTertiary(false);
+				variantPackagingData.setManualPalletInformations(false);
 
 				// product per box and boxes per pallet
 				if (dataItem.getQty() != null) {
@@ -189,6 +201,12 @@ public class PackagingHelper implements InitializingBean {
 				}
 
 				extractPalletInformations(dataItem.getProduct(), variantPackagingData);
+				
+				if (Boolean.TRUE.equals(dataItem.getIsMaster())) {
+					variantPackagingData.setManualTertiary(false);
+					variantPackagingData.setTertiaryWidth((Float) nodeService.getProperty(dataItem.getProduct(), GS1Model.PROP_TERTIARY_WIDTH));
+					variantPackagingData.setTertiaryDepth((Float) nodeService.getProperty(dataItem.getProduct(), GS1Model.PROP_TERTIARY_DEPTH));
+				}
 
 			}
 
@@ -215,9 +233,6 @@ public class PackagingHelper implements InitializingBean {
 		variantPackagingData
 				.setPlatformTermsAndConditionsCode((String) nodeService.getProperty(product, GS1Model.PROP_PLATFORMTERMSANSCONDITION_CODE));
 
-		variantPackagingData.setTertiaryWidth((Float) nodeService.getProperty(product, GS1Model.PROP_TERTIARY_WIDTH));
-		variantPackagingData.setTertiaryDepth((Float) nodeService.getProperty(product, GS1Model.PROP_TERTIARY_DEPTH));
-
 	}
 
 	// manage 2 level depth
@@ -243,7 +258,7 @@ public class PackagingHelper implements InitializingBean {
 	 * @return a {@link java.util.List} object.
 	 */
 	public static List<PackagingListDataItem> flatPackagingList(ProductData productData) {
-		return INSTANCE.flatPackagingList(productData, 1d);
+		return instance.flatPackagingList(productData, 1d);
 	}
 
 	private List<PackagingListDataItem> flatPackagingList(ProductData productData, Double subQty) {

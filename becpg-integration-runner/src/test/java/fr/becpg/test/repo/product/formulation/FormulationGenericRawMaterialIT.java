@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -34,6 +34,7 @@ import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
+import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
@@ -104,6 +105,22 @@ public class FormulationGenericRawMaterialIT extends AbstractFinishedProductTest
 				}
 			}
 			assertEquals(2, checks);
+			
+			checks = 0;
+			for (IngListDataItem ing : formulatedProduct.getIngList()) {
+				if (ing.getIng().equals(ing1) && ing.getMini() != null && ing.getMaxi() != null) {
+					logger.info("ing1 mini: " + ing.getMini() + " maxi: " + ing.getMaxi());
+					assertEquals(ing.getMini(), 1500.0);
+					assertEquals(ing.getMaxi(), 9000.0);
+					checks++;
+				} else if (ing.getIng().equals(ing2) && ing.getMini() != null && ing.getMaxi() != null) {
+					logger.info("ing2 mini: " + ing.getMini() + " maxi: " + ing.getMaxi());
+					assertEquals(ing.getMini(), 1800.0);
+					assertEquals(ing.getMaxi(), 8600.0);
+					checks++;
+				}
+			}
+			assertEquals(2, checks);
 
 			checks = 0;
 			for (PhysicoChemListDataItem p : formulatedProduct.getPhysicoChemList()) {
@@ -122,6 +139,7 @@ public class FormulationGenericRawMaterialIT extends AbstractFinishedProductTest
 			Assert.assertNotNull(listContainerNodeRef);
 			Assert.assertNotNull(entityListDAO.getList(listContainerNodeRef, PLMModel.TYPE_COSTLIST));
 
+			
 			return null;
 
 		}, false, true);

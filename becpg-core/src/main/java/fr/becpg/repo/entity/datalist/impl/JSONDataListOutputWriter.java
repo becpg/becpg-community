@@ -15,6 +15,7 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.datalist.DataListOutputWriter;
 import fr.becpg.repo.entity.datalist.DataListSortService;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
@@ -64,7 +65,8 @@ public class JSONDataListOutputWriter implements DataListOutputWriter {
 			userAccess.put("create",
 					((((dataListFilter.getSiteId() != null) && !dataListFilter.getSiteId().isEmpty()) || (dataListFilter.getParentNodeRef() != null))
 							&& dataListFilter.hasWriteAccess()
-							&& (permissionService.hasPermission(dataListFilter.getParentNodeRef(), "CreateChildren") == AccessStatus.ALLOWED)));
+							&& (permissionService.hasPermission(dataListFilter.getParentNodeRef(), "CreateChildren") == AccessStatus.ALLOWED))
+					        && !((dataListFilter.getDataListName() != null) && dataListFilter.getDataListName().startsWith(RepoConsts.WUSED_PREFIX)));
 
 			permissions.put("userAccess", userAccess);
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (C) 2010-2020 beCPG. 
+ *  Copyright (C) 2010-2021 beCPG. 
  *   
  *  This file is part of beCPG 
  *   
@@ -107,121 +107,6 @@
           });
     
 	
-	
-//
-//	YAHOO.Bubbling.fire("registerAction", {
-//	   actionName : "onActionCheckOutEntity",
-//	   fn : function onActionCheckOutEntity(asset) {
-//		   var displayName = asset.displayName, nodeRef = new Alfresco.util.NodeRef(asset.nodeRef);
-//
-//		   Alfresco.util.PopupManager.displayMessage({
-//		      displayTime : 0,
-//		      effect : null,
-//		      text : this.msg("message.checkout-entity.inprogress", displayName),
-//		   });
-//
-//		   this.modules.actions.genericAction({
-//		      success : {
-//			      callback : {
-//			         fn : function DocumentActions_oAEO_success(data) {
-//				         this.recordData.jsNode.setNodeRef(data.json.results[0].nodeRef);
-//				         window.location.href = this.getActionUrls(this.recordData).documentDetailsUrl.replace("document-details?","entity-data-lists?list=View-properties&");
-//			         },
-//			         scope : this
-//			      }
-//		      },
-//		      failure : {
-//			      message : this.msg("message.checkout-entity.failure", displayName)
-//		      },
-//		      webscript : {
-//		         method : Alfresco.util.Ajax.POST,
-//		         name : "checkout/node/{nodeRef}",
-//		         params : {
-//			         nodeRef : nodeRef.uri
-//		         }
-//		      }
-//		   });
-//	   }
-//	});
-//
-//	YAHOO.Bubbling
-//	      .fire(
-//	            "registerAction",
-//	            {
-//	               actionName : "onActionCheckInEntity",
-//	               fn : function onActionCheckInEntity(asset) {
-//		               var displayName = asset.displayName, nodeRef = new Alfresco.util.NodeRef(asset.nodeRef), version = asset.version;
-//
-//		               if (asset.workingCopy && asset.workingCopy.workingCopyVersion) {
-//			               version = asset.workingCopy.workingCopyVersion;
-//		               }
-//
-//		               if (!this.newEntityVersion) {
-//			               this.newEntityVersion = Alfresco.module.getNewEntityVersionInstance();
-//		               }
-//
-//		               this.newEntityVersion.show({
-//		                  filename : displayName,
-//		                  nodeRef : nodeRef,
-//		                  version : version,
-//		                  merge : false,
-//		                  onNewEntityVersionComplete : {
-//		                     fn : function EntityActions_oACI_success(data) {
-//			                     this.recordData.jsNode.setNodeRef(data.successful[0].nodeRef);
-//			                     window.location.href = this.getActionUrls(this.recordData).documentDetailsUrl.replace("document-details?","entity-data-lists?list=View-properties&");
-//		                     },
-//		                     scope : this
-//		                  }
-//		               });
-//
-//	               }
-//	            });
-//
-//	
-//	
-//	YAHOO.Bubbling.fire("registerAction", {
-//		   actionName : "onActionCancelCheckOutEntity",
-//		   fn : function onActionCancelCheckOutEntity(asset) {
-//			   var displayName = asset.displayName, nodeRef = new Alfresco.util.NodeRef(asset.nodeRef);
-//
-//			   this.modules.actions.genericAction(
-//		         {
-//		            success:
-//		            {
-//		               callback:
-//		               {
-//		                  fn: function DocumentActions_oACE_success(data)
-//		                  {
-//		                      var oldNodeRef = this.recordData.jsNode.nodeRef.nodeRef,
-//		                      newNodeRef = data.json.results[0].nodeRef;
-//		                      this.recordData.jsNode.setNodeRef(newNodeRef);
-//		                      window.location = this.getActionUrls(this.recordData).documentDetailsUrl.replace("document-details?","entity-data-lists?list=View-properties&") + "#editCancelled";
-//		                      // ALF-16598 fix, page is not refreshed if only hash was changed, force page reload for cancel online editing
-//		                      if (oldNodeRef == newNodeRef)
-//		                      {
-//		                          window.location.reload();
-//		                      }
-//		                  },
-//		                  scope: this
-//		               }
-//		            },
-//		            failure:
-//		            {
-//		               message: this.msg("message.edit-cancel.failure", displayName)
-//		            },
-//		            webscript:
-//		            {
-//		               method: Alfresco.util.Ajax.POST,
-//		               name: "cancel-checkout/node/{nodeRef}",
-//		               params:
-//		               {
-//		                  nodeRef: nodeRef.uri
-//		               }
-//		            }
-//		         });			   
-//		   }
-//		});	
-
 	YAHOO.Bubbling.fire("registerAction", {
 	   actionName : "onActionRefreshReport",
 	   fn : function onActionRefreshReport(asset) {
@@ -292,13 +177,13 @@
     	   
     	   if(dt!=null && dt.length >0 && dt[0].datalistMeta.nodeRef!=null){
 
-    		    var actionUrl = Alfresco.constants.PROXY_URI + 'becpg/entity/datalists/copy/node/' + dt[0].datalistMeta.nodeRef.replace(":/", "");
+    		    var actionUrl = Alfresco.constants.PROXY_URI + 'becpg/entity/datalists/copy/node/' + dt[0].datalistMeta.nodeRef.replace(":/", "")+"?destination=to";
 
 	            this.modules.entityPicker = new Alfresco.module.SimpleDialog(this.id + "-entityPicker").setOptions({
 	               width : "33em",
 	               templateUrl : Alfresco.constants.URL_SERVICECONTEXT + "modules/entity-picker/entity-picker?title="
 	               							+encodeURIComponent(this.msg("message.copy-datalist-to",dt[0].datalistMeta.title))
-	               							+"&entityNodeRef="+p_record.nodeRef,
+	               							+"&entityNodeRef="+p_record.nodeRef+"&showActions=true",
 	               actionUrl : actionUrl,
 	               validateOnSubmit : false,
 	               firstFocus : this.id + "-entityPicker-entity-field",
@@ -321,6 +206,53 @@
     	   } else {
     		   Alfresco.util.PopupManager.displayMessage({
     			   text : this.msg("message.copy-datalist-to.notselected")
+    		   });  
+    	   }
+       }
+    });
+
+
+	
+	YAHOO.Bubbling.fire("registerAction", {
+	       actionName : "onActionImportDataListFrom",
+       fn : function onActionImportDataListFrom(p_record) {
+    	   var dt = Alfresco.util.ComponentManager.find({
+				name : "beCPG.module.EntityDataGrid"
+			});
+    	   
+    	   if(dt!=null && dt.length >0 && dt[0].datalistMeta.nodeRef!=null){
+
+    		    var actionUrl = Alfresco.constants.PROXY_URI + 'becpg/entity/datalists/copy/node/' + dt[0].datalistMeta.nodeRef.replace(":/", "")+"?destination=from";
+
+	            this.modules.entityPicker = new Alfresco.module.SimpleDialog(this.id + "-entityPicker").setOptions({
+	               width : "33em",
+	               templateUrl : Alfresco.constants.URL_SERVICECONTEXT + "modules/entity-picker/entity-picker?title="
+	               							+encodeURIComponent(this.msg("message.import-datalist-from",dt[0].datalistMeta.title))
+	               							+"&entityNodeRef="+p_record.nodeRef+"&showActions=true",
+	               actionUrl : actionUrl,
+	               validateOnSubmit : false,
+	               firstFocus : this.id + "-entityPicker-entity-field",
+	               onSuccess:
+	               {
+	                  fn: function onActionImportDataListFrom_success(response)
+	                  {
+	                	  if(response.json) {            	
+
+							 Alfresco.util.PopupManager.displayMessage({
+						    			   text : this.msg("message.import-datalist-from.success")
+						      }); 
+							  document.location.reload();
+	                	  }
+	                  },
+	                  scope: this
+	               }
+	            });
+	            
+	            this.modules.entityPicker.show();
+    		   
+    	   } else {
+    		   Alfresco.util.PopupManager.displayMessage({
+    			   text : this.msg("message.import-datalist-from.notselected")
     		   });  
     	   }
        }

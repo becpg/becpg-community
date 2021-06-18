@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright (C) 2010-2020 beCPG. 
+  Copyright (C) 2010-2021 beCPG. 
    
   This file is part of beCPG 
    
@@ -255,7 +255,21 @@
 					<duplicate>false</duplicate>
 					<propagateTimestamps>false</propagateTimestamps>
 				</child-association>
+				<child-association name="dsg:constraints">
+					<title>Constraints</title>
+					<source>
+						<many>false</many>
+					</source>
+					<target>
+						<class>dsg:formConstraint</class>
+						<mandatory enforced="false">false</mandatory>
+						<many>false</many>
+					</target>
+					<duplicate>false</duplicate>
+					<propagateTimestamps>false</propagateTimestamps>
+				</child-association>
 			</associations>
+			
 			<mandatory-aspects>
 				<aspect>dsg:identifierAspect</aspect>
 				<aspect>dsg:labelAspect</aspect>
@@ -311,6 +325,45 @@
 			<mandatory-aspects>
 				<aspect>dsg:identifierAspect</aspect>
 			</mandatory-aspects>
+		</type>
+		
+		<type name="dsg:formConstraint">
+			<title>Form constraint</title>
+			<parent>cm:content</parent>
+			<associations>
+				<child-association name="dsg:constraintAssoc">
+					<title>Constraint association</title>
+					<source>
+						<many>false</many>
+					</source>
+					<target>
+						<class>dsg:constraintParameter</class>
+						<mandatory enforced="false">false</mandatory>
+						<many>true</many>
+					</target>
+					<duplicate>false</duplicate>
+					<propagateTimestamps>false</propagateTimestamps>
+				</child-association>
+			</associations>
+		</type>
+		
+		<type name="dsg:constraintParameter">
+			<title>Control parameter</title>
+			<parent>cm:content</parent>
+			<properties>
+				<property name="dsg:type">
+					<title>Type</title>
+					<type>d:text</type>
+				</property>
+				<property name="dsg:event">
+					<title>Event</title>
+					<type>d:text</type>
+				</property>
+				<property name="dsg:validation-handler">
+					<title>Constraint handler</title>
+					<type>d:text</type>
+				</property>
+			</properties>
 		</type>
 
 	</types>

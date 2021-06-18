@@ -3,6 +3,9 @@
  */
 package fr.becpg.repo;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.alfresco.repo.version.Version2Model;
 import org.alfresco.service.cmr.repository.StoreRef;
 
@@ -12,8 +15,12 @@ import org.alfresco.service.cmr.repository.StoreRef;
  * @author querephi
  * @version $Id: $Id
  */
-public class RepoConsts {
+public class RepoConsts
+{
 
+	private RepoConsts() {
+		//Private constructor
+	}
 	
 	/** Constant <code>FULL_PATH_THUMBNAIL="/cm:System/cm:Icons"</code> */
 	public static final String FULL_PATH_THUMBNAIL = "/cm:System/cm:Icons";	
@@ -35,6 +42,8 @@ public class RepoConsts {
 	//Notification
 	/** Constant <code>PATH_NOTIFICATIONS="Notifications"</code> */
 	public static final String PATH_NOTIFICATIONS = "Notifications";
+	
+	public static final String FORMULATION_ERRORS_NOTIFICATION = "formulationErrorsNotification";
 			
 	//Security
 	/** Constant <code>PATH_SECURITY="Security"</code> */
@@ -116,7 +125,16 @@ public class RepoConsts {
 	/** Constant <code>MAX_RESULTS_5000</code> */
 	public static final Integer MAX_RESULTS_5000 = 5000;
 	
+
 	
+	public static final Map<String, Boolean> DEFAULT_SORT = new LinkedHashMap<>();
+	
+	static {
+
+		DEFAULT_SORT.put("@bcpg:sort", true);
+		DEFAULT_SORT.put("@cm:created", true);
+		
+	}
 	
 	/*-- IHM --*/
 	/** Constant <code>LABEL_SEPARATOR=", "</code> */
@@ -244,8 +262,11 @@ public class RepoConsts {
 	/** Constant <code>PATH_LICENSE="license"</code> */
 	public static final String PATH_LICENSE = "license";
 
-	/** Constant <code>SUPPORTED_UI_LOCALES="en,en_US,fr,sv_SE,fi,es,it,pt,ru,de"</code> */
-	public static final String SUPPORTED_UI_LOCALES =  "en,en_US,fr,sv_SE,fi,es,it,pt,ru,de";
+	/** Constant <code>SUPPORTED_UI_LOCALES="en,en_US,fr,sv_SE,fi,es,it,pt,ru,de,tr"</code> */
+	public static final String SUPPORTED_UI_LOCALES =  "en,en_US,fr,sv_SE,fi,es,it,pt,ru,de,tr";
+	
+	/** Constant <code>CATALOGS_PATH="/app:company_home/cm:System/cm:Property"{trunked}</code> */
+	public static final String CATALOGS_PATH = "/app:company_home/cm:System/cm:PropertyCatalogs";
 
 	
 }

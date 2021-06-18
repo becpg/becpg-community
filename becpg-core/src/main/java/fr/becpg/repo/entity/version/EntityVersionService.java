@@ -177,9 +177,10 @@ public interface EntityVersionService {
 	 * @param versionType a {@link org.alfresco.service.cmr.version.VersionType} object.
 	 * @param description a {@link java.lang.String} object.
 	 * @param impactWused a boolean.
+	 * @param rename a boolean.
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
-	NodeRef mergeBranch(NodeRef branchNodeRef, NodeRef branchToNodeRef, VersionType versionType, String description, boolean impactWused);
+	NodeRef mergeBranch(NodeRef branchNodeRef, NodeRef branchToNodeRef, VersionType versionType, String description, boolean impactWused, boolean rename);
 
 	/**
 	 * <p>mergeBranch.</p>
@@ -188,5 +189,20 @@ public interface EntityVersionService {
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
 	NodeRef mergeBranch(NodeRef branchNodeRef);
+
+
+	/**
+	 * <p>updateLastVersionLabel.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param versionLabel a {@link java.lang.String} object.
+	 */
+	void updateLastVersionLabel(NodeRef entityNodeRef, String versionLabel);
+
+	boolean isVersion(NodeRef entity1);
+
+	NodeRef extractVersion(NodeRef entity1);
+	
+	boolean isV2Service();
 
 }

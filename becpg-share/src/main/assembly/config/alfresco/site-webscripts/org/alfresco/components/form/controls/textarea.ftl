@@ -15,7 +15,7 @@
 					YAHOO.util.Event.addListener("${fieldHtmlId}#${form.arguments.itemId}#${field.name}", "click", function() {
 							var nodeRef = "${form.arguments.itemId}" , field="${field.name?replace("prop_","")}";
 							new Alfresco.module.SimpleDialog(nodeRef+"-multilingualForm").setOptions({
-				              templateUrl : Alfresco.constants.URL_SERVICECONTEXT + "modules/multilingual-form/multilingual-form?nodeRef=" + nodeRef + "&field=" + field + "&readonly=true" + "&title=${field.label?html}&hideCancel=true",
+				              templateUrl : Alfresco.constants.URL_SERVICECONTEXT + "modules/multilingual-form/multilingual-form?nodeRef=" + nodeRef + "&field=" + field + "&readonly=true" + "&title=${field.label?url}&hideCancel=true",
 				              actionUrl : Alfresco.constants.PROXY_URI + "becpg/form/multilingual/field/" + field + "?nodeRef=" + nodeRef,
 				              validateOnSubmit : false,
 				              destroyOnHide : true,
@@ -44,7 +44,7 @@
 	         <span  id="${fieldHtmlId}-${field.id?replace("prop_","")}" class="viewmode-value <#if field.dataType == "mltext">viewmode-mltext</#if>" ><#if fieldValue == "">${msg("form.control.novalue")}<#else>${fieldValue}</#if></span>
 	      </div>
 	   <#else>
-      <label for="${fieldHtmlId}">${field.label?html}:<#if field.mandatory><span class="mandatory-indicator">${msg("form.required.fields.marker")}</span></#if> <@formLib.renderLocaleImage field=field textarea=true/></label>
+      <label for="${fieldHtmlId}">${field.label?html}:<#if field.mandatory><span class="mandatory-indicator">${msg("form.required.fields.marker")}</span></#if><#if field.control.params.maxLength??><@formLib.renderLocaleImage field=field textarea=true maxLength=field.control.params.maxLength?number/> <#else><@formLib.renderLocaleImage field=field textarea=true/></#if></label>
 	      <textarea id="${fieldHtmlId}" name="${field.name}" rows="${rows}" cols="${columns}" tabindex="0"
 	                <#if field.description??>title="${field.description}"</#if>
 	                <#if field.control.params.styleClass??>class="${field.control.params.styleClass}"</#if>

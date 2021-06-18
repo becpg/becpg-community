@@ -11,12 +11,12 @@ import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.annotation.InternalField;
-import fr.becpg.repo.repository.model.AbstractManualDataItem;
 import fr.becpg.repo.repository.model.ControlableListDataItem;
 import fr.becpg.repo.repository.model.FormulatedCharactDataItem;
 import fr.becpg.repo.repository.model.MinMaxValueDataItem;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
 import fr.becpg.repo.repository.model.UnitAwareDataItem;
+import fr.becpg.repo.repository.model.VariantAwareDataItem;
 
 /**
  * <p>PhysicoChemListDataItem class.</p>
@@ -26,7 +26,7 @@ import fr.becpg.repo.repository.model.UnitAwareDataItem;
  */
 @AlfType
 @AlfQname(qname = "bcpg:physicoChemList")
-public class PhysicoChemListDataItem extends AbstractManualDataItem implements SimpleListDataItem, MinMaxValueDataItem, UnitAwareDataItem, FormulatedCharactDataItem, ControlableListDataItem{
+public class PhysicoChemListDataItem extends VariantAwareDataItem implements SimpleListDataItem, MinMaxValueDataItem, UnitAwareDataItem, FormulatedCharactDataItem, ControlableListDataItem{
 			
 	
 	private static final long serialVersionUID = -3018711765028656339L;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (C) 2010-2020 beCPG. 
+ *  Copyright (C) 2010-2021 beCPG. 
  *   
  *  This file is part of beCPG 
  *   
@@ -251,9 +251,14 @@
                             {
                                 this.refresh('components/entity-charact-views/reports-view?currVersionNodeRef='+(this.options.currVersionNodeRef!=null ? this.options.currVersionNodeRef : '{nodeRef}')+'&nodeRef='+ obj.filterData+ (this.options.siteId ? '&site={siteId}' :  ''));
                                 this.updateCurrentVersionUrlQueryParams(obj.filterData);
-                             } else if(this.options.currVersionNodeRef!=null){
-                                 this.refresh('components/entity-charact-views/reports-view?nodeRef='+ this.options.currVersionNodeRef+ (this.options.siteId ? '&site={siteId}' :  ''));   
+                             } else {
+	
+							 var node = YAHOO.util.History.getQueryStringParameter('nodeRef');
+						
+							 if(node!=null){
+                                 this.refresh('components/entity-charact-views/reports-view?nodeRef='+node+ (this.options.siteId ? '&site={siteId}' :  ''));   
                                  this.updateCurrentVersionUrlQueryParams(null);
+								}
                              }
                             
                             

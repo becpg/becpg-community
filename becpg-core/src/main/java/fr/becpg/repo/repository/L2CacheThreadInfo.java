@@ -3,6 +3,7 @@ package fr.becpg.repo.repository;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
@@ -10,10 +11,10 @@ class L2CacheThreadInfo implements Serializable{
 
 
 	private static final long serialVersionUID = -7958215882212282888L;
-	boolean isCacheOnlyEnable = false;
-	boolean isThreadCacheEnable = false;
-	boolean isThreadLockEnable = false;
-	final Map<NodeRef, RepositoryEntity> cache = new HashMap<>();
+	private boolean isCacheOnlyEnable = false;
+	private boolean isThreadLockEnable = false;
+	private boolean isThreadCacheEnable = false;
+	private Map<NodeRef, RepositoryEntity> cache = new HashMap<>(500);
 	
 	/**
 	 * <p>Constructor for L2CacheThreadInfo.</p>
@@ -29,6 +30,26 @@ class L2CacheThreadInfo implements Serializable{
 		this.isThreadLockEnable = isThreadLockEnable;
 	}
 
+	
+	public Map<NodeRef, RepositoryEntity> getCache() {
+		return cache;
+	}
+
+	
+	public boolean isCacheOnlyEnable() {
+		return isCacheOnlyEnable;
+	}
+
+
+	public boolean isThreadCacheEnable() {
+		return isThreadCacheEnable;
+	}
+
+	public boolean isThreadLockEnable() {
+		return isThreadLockEnable;
+	}
+
+
 	/**
 	 * <p>Constructor for L2CacheThreadInfo.</p>
 	 */
@@ -42,19 +63,11 @@ class L2CacheThreadInfo implements Serializable{
 		return "L2CacheThreadInfo [isCacheOnlyEnable=" + isCacheOnlyEnable + ", isThreadCacheEnable=" + isThreadCacheEnable + ", isThreadLockEnable=" + isThreadLockEnable + "]";
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((cache == null) ? 0 : cache.hashCode());
-		result = prime * result + (isCacheOnlyEnable ? 1231 : 1237);
-		result = prime * result + (isThreadCacheEnable ? 1231 : 1237);
-		result = prime * result + (isThreadLockEnable ? 1231 : 1237);
-		return result;
+		return Objects.hash(cache, isCacheOnlyEnable, isThreadCacheEnable, isThreadLockEnable);
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -64,18 +77,8 @@ class L2CacheThreadInfo implements Serializable{
 		if (getClass() != obj.getClass())
 			return false;
 		L2CacheThreadInfo other = (L2CacheThreadInfo) obj;
-		if (cache == null) {
-			if (other.cache != null)
-				return false;
-		} else if (!cache.equals(other.cache))
-			return false;
-		if (isCacheOnlyEnable != other.isCacheOnlyEnable)
-			return false;
-		if (isThreadCacheEnable != other.isThreadCacheEnable)
-			return false;
-		if (isThreadLockEnable != other.isThreadLockEnable)
-			return false;
-		return true;
+		return Objects.equals(cache, other.cache) && isCacheOnlyEnable == other.isCacheOnlyEnable && isThreadCacheEnable == other.isThreadCacheEnable
+				&& isThreadLockEnable == other.isThreadLockEnable;
 	}
 	
 	

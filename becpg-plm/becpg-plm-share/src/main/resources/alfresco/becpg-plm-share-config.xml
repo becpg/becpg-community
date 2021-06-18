@@ -1,4 +1,4 @@
-<!-- Copyright (C) 2010-2020 beCPG. This file is part of beCPG beCPG is free 
+<!-- Copyright (C) 2010-2021 beCPG. This file is part of beCPG beCPG is free 
 	software: you can redistribute it and/or modify it under the terms of the 
 	GNU Lesser General Public License as published by the Free Software Foundation, 
 	either version 3 of the License, or (at your option) any later version. beCPG 
@@ -15,7 +15,7 @@
 	 	<hideMyFiles>false</hideMyFiles>
 	</config>
 
-
+	<!-- Deprecated -->
 	<config evaluator="string-compare" condition="Workflow">
 		<permission-workflows default="allow">
 			<permission-workflow name="activiti$claimProcess">
@@ -137,29 +137,32 @@
             <list id="calculatedCharactList" index="210" />
             <list id="changeUnitList" index="220" />
             <!-- Characteristics -->
-            <list id="Notifications" index="0"/>
-            <list id="GeoOrigins" index="10"/>
-            <list id="Subsidiaries" index="20"/>
-            <list id="Certifications" index="30"/>
-            <list id="Plants" index="40"/>
-            <list id="CustomsCodes" index="50"/>
+            <list id="Ings" index="0"/>
+            <list id="Allergens" index="10"/>
+            <list id="LabelClaims" index="15"/>
+            <list id="Costs" index="20"/>
+            <list id="Nuts" index="30"/>
+            <list id="Organos" index="40"/>
+            <list id="Microbios" index="50"/>
+            <list id="PhysicoChems" index="55"/>
             <list id="StorageConditions" index="60"/>
             <list id="PrecautionOfUse" index="70"/>
-            <list id="Organos" index="80"/>
-            <list id="Microbios" index="90"/>
-            <list id="PhysicoChems" index="100"/>
-            <list id="BioOrigins" index="110"/>
-            <list id="Allergens" index="120"/>
-            <list id="Nuts" index="130"/>
-            <list id="NutrientProfiles" index="140"/>
-            <list id="Ings" index="150"/>
-            <list id="ResourceParams" index="160"/>
-            <list id="Labels" index="170"/>
-            <list id="LabelClaims" index="180"/>
-            <list id="LabelingTemplates" index="190"/>
-            <list id="Trademarks" index="190"/>
-            <list id="ProcessSteps" index="200"/>
-            <list id="Costs" index="210"/>
+            <list id="GeoOrigins" index="80"/>
+            <list id="BioOrigins" index="90"/>
+            <list id="Trademarks" index="100"/>
+            <list id="Subsidiaries" index="110"/>
+            <list id="TargetMarkets" index="120"/>
+            <list id="DutyFeeTax" index="130"/>
+            <list id="CustomsCodes" index="140"/>
+            <list id="Plants" index="150"/>
+            <list id="Certifications" index="160"/>
+            <list id="ProcessSteps" index="170"/>
+            <list id="ResourceParams" index="180"/>
+            <list id="Notifications" index="190"/>
+            <list id="NutrientProfiles" index="200"/>
+            <list id="LabelingTemplates" index="210"/>
+            <list id="Labels" index="220"/>
+            
             <!-- Lists of values -->
             <list id="ReportParams" index="0"/>
             <list id="ReportKindList" index="10"/>
@@ -261,6 +264,8 @@
 				
 				<!-- Nutrient score -->
 				<css src="/components/form/controls/nutrient-class.css" />
+				<!-- ECO score -->
+				<css src="/components/form/controls/ecoscore-class.css" />
 				<!-- Decision tree -->
 				<css src="/components/form/controls/decision-tree.css" />
 				<js src="/components/form/controls/decision-tree.js" />

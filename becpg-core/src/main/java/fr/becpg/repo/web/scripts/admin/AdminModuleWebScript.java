@@ -256,7 +256,8 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 				break;
 			case ACTION_RELOAD_MODEL:
 				logger.debug("Reload models");
-				beCPGCacheService.clearCache(DynListConstraint.DYN_LIST_CACHE_NAME);
+				beCPGCacheService.clearCache(DynListConstraint.class.getName());
+				//TODO Cluster cache ? 
 				dictionaryDAO.reset();
 				break;
 			case ACTION_GET_SYSTEM_ENTITIES:

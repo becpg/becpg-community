@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -103,6 +103,8 @@ public class EntityListsWebScript extends AbstractWebScript {
 	private static final String KEY_NAME_DESCRIPTION = "description";
 
 	private static final String KEY_NAME_ENTITY_NAME = "entityName";
+	
+	private static final String KEY_NAME_ENTITY_TYPE = "entityType";
 
 	private static final String KEY_NAME_NODE_REF = "nodeRef";
 
@@ -274,14 +276,14 @@ public class EntityListsWebScript extends AbstractWebScript {
 	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
 		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
-        
 
-        /**
-         * <p>Setter for the field <code>reportAssociationDecorator</code>.</p>
-         *
-         * @param reportAssociationDecorator a {@link fr.becpg.repo.report.jscript.ReportAssociationDecorator} object.
-         */
-        public void setReportAssociationDecorator(ReportAssociationDecorator reportAssociationDecorator) {
+
+	/**
+	 * <p>Setter for the field <code>reportAssociationDecorator</code>.</p>
+	 *
+	 * @param reportAssociationDecorator a {@link fr.becpg.repo.report.jscript.ReportAssociationDecorator} object.
+	 */
+	public void setReportAssociationDecorator(ReportAssociationDecorator reportAssociationDecorator) {
 		this.reportAssociationDecorator = reportAssociationDecorator;
 	}
 
@@ -399,14 +401,23 @@ public class EntityListsWebScript extends AbstractWebScript {
 
 		result.put(KEY_NAME_PATH, path);
 
+		List<NodeRef> nodeRefs = new ArrayList<>();
+		nodeRefs.add(entity);
 		List<ChildAssociationRef> variantsAssociations = new ArrayList<>();
-		if (nodeService.hasAspect(entity, BeCPGModel.ASPECT_ENTITY_VARIANT)) {
-			for (ChildAssociationRef association : nodeService.getChildAssocs(entity)) {
-				if (association.getTypeQName().isMatch(BeCPGModel.ASSOC_VARIANTS)) {
-					variantsAssociations.add(association);
+		NodeRef entityTplNodeRef = associationService.getTargetAssoc(entity, BeCPGModel.ASSOC_ENTITY_TPL_REF);
+		if (entityTplNodeRef != null) {
+			nodeRefs.add(entityTplNodeRef);
+		}
+		for (NodeRef nodeRef : nodeRefs) {
+			if ((permissionService.hasPermission(nodeRef, "Read")== AccessStatus.ALLOWED) && nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_VARIANT)) {
+				for (ChildAssociationRef association : nodeService.getChildAssocs(nodeRef)) {
+					if (association.getTypeQName().isMatch(BeCPGModel.ASSOC_VARIANTS)) {
+						variantsAssociations.add(association);
+					}
 				}
 			}
 		}
+		
 		if (!variantsAssociations.isEmpty()) {
 			JSONArray variants = new JSONArray();
 			for (ChildAssociationRef association : variantsAssociations) {
@@ -420,7 +431,7 @@ public class EntityListsWebScript extends AbstractWebScript {
 				variants.put(obj);
 			}
 			result.put(KEY_NAME_VARIANT, variants);
-		}
+		}		
 
 		List<AssociationRef> compareAssociations = new ArrayList<>();
 		if (nodeService.hasAspect(entity, BeCPGModel.ASPECT_COMPARE_WITH)) {
@@ -449,7 +460,7 @@ public class EntityListsWebScript extends AbstractWebScript {
 	 * </code>
 	 */
 	@Override
-	final public void execute(WebScriptRequest req, WebScriptResponse res) throws WebScriptException {
+	public final void execute(WebScriptRequest req, WebScriptResponse res)  {
 		JSONObject result = new JSONObject();
 		try {
 			// Always return in browser local
@@ -460,9 +471,7 @@ public class EntityListsWebScript extends AbstractWebScript {
 			String storeId = templateArgs.get(PARAM_STORE_ID);
 			String nodeId = templateArgs.get(PARAM_ID);
 			String aclMode = req.getParameter(PARAM_ACL_MODE);
-
-			logger.debug("entityListsWebScript executeImpl()");
-
+			
 			List<NodeRef> listsNodeRef = new ArrayList<>();
 			final NodeRef nodeRef = new NodeRef(storeType, storeId, nodeId);
 			NodeRef listContainerNodeRef = null;
@@ -473,8 +482,6 @@ public class EntityListsWebScript extends AbstractWebScript {
 			// entity
 			// lists
 			boolean skipFilter = false;
-
-			// Date lastModified = null;
 
 			// We get datalist for a given aclGroup
 			if ((aclMode != null) && SecurityModel.TYPE_ACL_GROUP.equals(nodeType)) {
@@ -593,11 +600,11 @@ public class EntityListsWebScript extends AbstractWebScript {
 				while (it.hasNext()) {
 					NodeRef temp = it.next();
 					String dataListType = (String) nodeService.getProperty(temp, DataListModel.PROP_DATALISTITEMTYPE);
-					int accessMode = securityService.computeAccessMode(nodeType, dataListType);
+					int accessMode = securityService.computeAccessMode(nodeRef, nodeType, dataListType);
 
 					if (SecurityService.NONE_ACCESS != accessMode) {
 						String dataListName = (String) nodeService.getProperty(temp, ContentModel.PROP_NAME);
-						int newAccessMode = securityService.computeAccessMode(nodeType, dataListName);
+						int newAccessMode = securityService.computeAccessMode(nodeRef, nodeType, dataListName);
 						if (newAccessMode < accessMode) {
 							accessMode = newAccessMode;
 						}
@@ -623,8 +630,8 @@ public class EntityListsWebScript extends AbstractWebScript {
 			String displayPath = path.toDisplayPath(nodeService, permissionService);
 
 			String retPath = SiteHelper.extractDisplayPath(stringPath, displayPath);
-			
-                        if (nodeService.hasAspect(nodeRef, ReportModel.ASPECT_REPORT_ENTITY)) {
+
+			if (nodeService.hasAspect(nodeRef, ReportModel.ASPECT_REPORT_ENTITY)) {
 				result.put(RESULT_REPORTS, reportAssociationDecorator.decorate(ReportModel.ASSOC_REPORTS, nodeRef,
 						associationService.getTargetAssocs(nodeRef, ReportModel.ASSOC_REPORTS)));
 			}

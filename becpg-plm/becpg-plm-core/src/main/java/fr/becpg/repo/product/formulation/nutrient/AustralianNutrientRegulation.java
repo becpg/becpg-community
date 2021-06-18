@@ -26,7 +26,7 @@ public class AustralianNutrientRegulation extends AbstractNutrientRegulation {
 	@Override
 	protected Double roundByCode(Double value, String nutrientTypeCode) {
 		if(value != null){
-			BigDecimal bd = new BigDecimal(value);
+			BigDecimal bd = BigDecimal.valueOf(value);
 			bd = bd.round(new MathContext(3,RoundingMode.HALF_EVEN));
 			return bd.doubleValue();
 		}

@@ -8,6 +8,7 @@ import java.util.Map;
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.activity.data.ActivityEvent;
 import fr.becpg.repo.activity.data.ActivityType;
+import fr.becpg.repo.entity.catalog.EntityCatalogObserver;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.mail.BeCPGMailService;
 import fr.becpg.repo.project.ProjectNotificationService;
@@ -32,7 +34,7 @@ import fr.becpg.repo.project.data.projectList.TaskState;
  * @version $Id: $Id
  */
 @Service("projectNotificationService")
-public class ProjectNotificationServiceImpl implements ProjectNotificationService {
+public class ProjectNotificationServiceImpl implements ProjectNotificationService, EntityCatalogObserver {
 
 	private static final Log logger = LogFactory.getLog(ProjectNotificationServiceImpl.class);
 
@@ -160,15 +162,32 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 		}
 
 		if (!observerNodeRefs.isEmpty()) {
-
-			logger.debug("Notify "+observerNodeRefs.size()+" observers");
-			
+			logger.debug("Notify "+observerNodeRefs.size()+" observers");	
 			observerNodeRefs = projectService.extractResources(projectNodeRef, observerNodeRefs);
 			Map<String, Object> argsMap = new HashMap<>();
 			argsMap.put("args", templateArgs);
 			beCPGMailService.sendMail(observerNodeRefs, subject, templateName, argsMap, false);
 		}
 	}
+	
+
+	@Override
+	public void notifyAuditedFieldChange(String catalogId, NodeRef projectNodeRef) {
+		logger.debug("Notifying properties");
+		String subject = createSubject(projectNodeRef, null, null);
+
+		Map<String, Object> templateArgs = new HashMap<>(7);
+		templateArgs.put(ARG_ACTIVITY_TYPE, ActivityType.Entity);
+		templateArgs.put(ARG_ACTIVITY_EVENT, ActivityEvent.Update);
+		templateArgs.put(ARG_PROJECT, projectNodeRef);
+		notifyObservers(projectNodeRef, null, subject, templateArgs, MAIL_TEMPLATE);
+	}
+
+	@Override
+	public boolean accept(QName type, NodeRef entityNodeRef) {
+		return ProjectModel.TYPE_PROJECT.equals(type);
+	}
+	
 
 	@SuppressWarnings("unchecked")
 	private boolean shouldNotify(NodeRef nodeRef, Map<String, Object> templateArgs) {
@@ -209,7 +228,12 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 						notify = true;
 					}
 					break;
-
+				case Properties:
+					if (ActivityType.Entity.equals(type)) {
+						notify = true;
+					}
+					break;
+					
 				default:
 					break;
 				}
@@ -223,4 +247,5 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 		}
 		return false;
 	}
+
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -47,7 +47,6 @@ import org.alfresco.service.cmr.repository.ContentIOException;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.ContentWriter;
-import org.alfresco.service.cmr.repository.InvalidNodeRefException;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -74,7 +73,9 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
 /**
- * <p>DesignerServiceImpl class.</p>
+ * <p>
+ * DesignerServiceImpl class.
+ * </p>
  *
  * @author "Matthieu Laborie"
  * @version $Id: $Id
@@ -82,7 +83,7 @@ import freemarker.template.TemplateException;
 public class DesignerServiceImpl implements DesignerService {
 
 	private static String BECPG_CONFIG_CUSTOM = "becpg-config-custom.xml";
-	
+
 	private NodeService nodeService;
 
 	private ContentService contentService;
@@ -92,7 +93,7 @@ public class DesignerServiceImpl implements DesignerService {
 	private MetaModelVisitor metaModelVisitor;
 
 	private FormModelVisitor formModelVisitor;
-	
+
 	private FormJsonVisitor formJsonVisitor;
 
 	private DesignerTreeVisitor designerTreeVisitor;
@@ -116,115 +117,159 @@ public class DesignerServiceImpl implements DesignerService {
 	private static final Log logger = LogFactory.getLog(DesignerServiceImpl.class);
 
 	/**
-	 * <p>Setter for the field <code>designerInitService</code>.</p>
+	 * <p>
+	 * Setter for the field <code>designerInitService</code>.
+	 * </p>
 	 *
-	 * @param designerInitService a {@link fr.becpg.repo.designer.DesignerInitService} object.
+	 * @param designerInitService
+	 *            a {@link fr.becpg.repo.designer.DesignerInitService} object.
 	 */
 	public void setDesignerInitService(DesignerInitService designerInitService) {
 		this.designerInitService = designerInitService;
 	}
 
 	/**
-	 * <p>Setter for the field <code>mimetypeService</code>.</p>
+	 * <p>
+	 * Setter for the field <code>mimetypeService</code>.
+	 * </p>
 	 *
-	 * @param mimetypeService a {@link org.alfresco.service.cmr.repository.MimetypeService} object.
+	 * @param mimetypeService
+	 *            a {@link org.alfresco.service.cmr.repository.MimetypeService}
+	 *            object.
 	 */
 	public void setMimetypeService(MimetypeService mimetypeService) {
 		this.mimetypeService = mimetypeService;
 	}
 
 	/**
-	 * <p>Setter for the field <code>policyBehaviourFilter</code>.</p>
+	 * <p>
+	 * Setter for the field <code>policyBehaviourFilter</code>.
+	 * </p>
 	 *
-	 * @param policyBehaviourFilter a {@link org.alfresco.repo.policy.BehaviourFilter} object.
+	 * @param policyBehaviourFilter
+	 *            a {@link org.alfresco.repo.policy.BehaviourFilter} object.
 	 */
 	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
 		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
 
 	/**
-	 * <p>Setter for the field <code>dictionaryDAO</code>.</p>
+	 * <p>
+	 * Setter for the field <code>dictionaryDAO</code>.
+	 * </p>
 	 *
-	 * @param dictionaryDAO a {@link org.alfresco.repo.dictionary.DictionaryDAO} object.
+	 * @param dictionaryDAO
+	 *            a {@link org.alfresco.repo.dictionary.DictionaryDAO} object.
 	 */
 	public void setDictionaryDAO(DictionaryDAO dictionaryDAO) {
 		this.dictionaryDAO = dictionaryDAO;
 	}
 
 	/**
-	 * <p>Setter for the field <code>dictionaryService</code>.</p>
+	 * <p>
+	 * Setter for the field <code>dictionaryService</code>.
+	 * </p>
 	 *
-	 * @param dictionaryService a {@link org.alfresco.service.cmr.dictionary.DictionaryService} object.
+	 * @param dictionaryService
+	 *            a
+	 *            {@link org.alfresco.service.cmr.dictionary.DictionaryService}
+	 *            object.
 	 */
 	public void setDictionaryService(DictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
 	}
 
-        /**
-         * <p>Setter for the field <code>formJsonVisitor</code>.</p>
-         *
-         * @param formJsonVisitor a {@link fr.becpg.repo.designer.impl.FormJsonVisitor} object.
-         */
-        public void setFormJsonVisitor(FormJsonVisitor formJsonVisitor) {
-		this.formJsonVisitor = formJsonVisitor;
-	}
-
 	/**
-	 * <p>Setter for the field <code>configPath</code>.</p>
+	 * <p>
+	 * Setter for the field <code>configPath</code>.
+	 * </p>
 	 *
-	 * @param configPath a {@link java.lang.String} object.
+	 * @param configPath
+	 *            a {@link java.lang.String} object.
 	 */
 	public void setConfigPath(String configPath) {
 		this.configPath = configPath;
 	}
 
 	/**
-	 * <p>Setter for the field <code>contentService</code>.</p>
+	 * <p>
+	 * Setter for the field <code>contentService</code>.
+	 * </p>
 	 *
-	 * @param contentService a {@link org.alfresco.service.cmr.repository.ContentService} object.
+	 * @param contentService
+	 *            a {@link org.alfresco.service.cmr.repository.ContentService}
+	 *            object.
 	 */
 	public void setContentService(ContentService contentService) {
 		this.contentService = contentService;
 	}
 
 	/**
-	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 * <p>
+	 * Setter for the field <code>nodeService</code>.
+	 * </p>
 	 *
-	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 * @param nodeService
+	 *            a {@link org.alfresco.service.cmr.repository.NodeService}
+	 *            object.
 	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
 	/**
-	 * <p>Setter for the field <code>metaModelVisitor</code>.</p>
+	 * <p>
+	 * Setter for the field <code>metaModelVisitor</code>.
+	 * </p>
 	 *
-	 * @param metaModelVisitor a {@link fr.becpg.repo.designer.impl.MetaModelVisitor} object.
+	 * @param metaModelVisitor
+	 *            a {@link fr.becpg.repo.designer.impl.MetaModelVisitor} object.
 	 */
 	public void setMetaModelVisitor(MetaModelVisitor metaModelVisitor) {
 		this.metaModelVisitor = metaModelVisitor;
 	}
 
 	/**
-	 * <p>Setter for the field <code>formModelVisitor</code>.</p>
+	 * <p>
+	 * Setter for the field <code>formModelVisitor</code>.
+	 * </p>
 	 *
-	 * @param formModelVisitor a {@link fr.becpg.repo.designer.impl.FormModelVisitor} object.
+	 * @param formModelVisitor
+	 *            a {@link fr.becpg.repo.designer.impl.FormModelVisitor} object.
 	 */
 	public void setFormModelVisitor(FormModelVisitor formModelVisitor) {
 		this.formModelVisitor = formModelVisitor;
 	}
 
 	/**
-	 * <p>Setter for the field <code>designerTreeVisitor</code>.</p>
+	 * <p>
+	 * Setter for the field <code>designerTreeVisitor</code>.
+	 * </p>
 	 *
-	 * @param designerTreeVisitor a {@link fr.becpg.repo.designer.impl.DesignerTreeVisitor} object.
+	 * @param designerTreeVisitor
+	 *            a {@link fr.becpg.repo.designer.impl.DesignerTreeVisitor}
+	 *            object.
 	 */
 	public void setDesignerTreeVisitor(DesignerTreeVisitor designerTreeVisitor) {
 		this.designerTreeVisitor = designerTreeVisitor;
 	}
 
 	/**
-	 * <p>init.</p>
+	 * <p>
+	 * Setter for the field <code>formJsonVisitor</code>.
+	 * </p>
+	 *
+	 * @param formJsonVisitor
+	 *            a {@link fr.becpg.repo.designer.impl.FormJsonVisitor} object.
+	 */
+	public void setFormJsonVisitor(FormJsonVisitor formJsonVisitor) {
+		this.formJsonVisitor = formJsonVisitor;
+	}
+
+	/**
+	 * <p>
+	 * init.
+	 * </p>
 	 */
 	public void init() {
 		logger.debug("Init DesignerServiceImpl");
@@ -319,14 +364,13 @@ public class DesignerServiceImpl implements DesignerService {
 			logger.debug("Publish config under " + path);
 			ContentReader reader = contentService.getReader(nodeRef, ContentModel.PROP_CONTENT);
 			try {
-				if(reader!=null) {
+				if (reader != null) {
 					File file = new File(path);
-					if (!file.exists()) {
-						file.createNewFile();
-					}
 	
-					try (InputStream in = reader.getContentInputStream(); OutputStream out = new FileOutputStream(file)) {
-						IOUtils.copy(in, out);
+					if (file.exists() || file.createNewFile()) {
+						try (OutputStream out = new FileOutputStream(file)) {
+							IOUtils.copy(reader.getContentInputStream(), out);
+						}
 					}
 				}
 
@@ -369,9 +413,12 @@ public class DesignerServiceImpl implements DesignerService {
 	}
 
 	/**
-	 * <p>findConfigNodeRef.</p>
+	 * <p>
+	 * findConfigNodeRef.
+	 * </p>
 	 *
-	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param nodeRef
+	 *            a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
 	public NodeRef findConfigNodeRef(NodeRef nodeRef) {
@@ -571,8 +618,9 @@ public class DesignerServiceImpl implements DesignerService {
 	 * {@inheritDoc}
 	 *
 	 * Handle move of properties from type to aspect from aspect to type from
-	 * type or aspect to form or set --&gt; create field move of field from set to
-	 * form from form to set move of type from model to config --&gt; create form
+	 * type or aspect to form or set --&gt; create field move of field from set
+	 * to form from form to set move of type from model to config --&gt; create
+	 * form
 	 */
 	@Override
 	public NodeRef moveElement(NodeRef from, NodeRef to) {
@@ -761,7 +809,7 @@ public class DesignerServiceImpl implements DesignerService {
 			nodeService.addAspect(configNodeRef, ContentModel.ASPECT_TEMPORARY, new HashMap<>());
 		}
 
-		if (nodeService.hasAspect(nodeRef, DesignerModel.ASPECT_CONFIG) && nodeRef!=null) {
+		if (nodeService.hasAspect(nodeRef, DesignerModel.ASPECT_CONFIG) && (nodeRef != null)) {
 			publish(nodeRef);
 		}
 
@@ -782,7 +830,9 @@ public class DesignerServiceImpl implements DesignerService {
 		File file = new File(path);
 		logger.debug("Deleting file at path " + path + ", exists ? " + file.exists());
 		if (file.exists()) {
-			file.delete();
+			if(!file.delete()) {
+				logger.error("Cannot delete file: "+file.getName());
+			}
 		}
 
 	}
@@ -791,18 +841,18 @@ public class DesignerServiceImpl implements DesignerService {
 	@Override
 	public String export(NodeRef nodeRef) {
 		try {
-			 JSONObject ret = new JSONObject();
-			
+			JSONObject ret = new JSONObject();
+
 			if (nodeService.hasAspect(nodeRef, DesignerModel.ASPECT_CONFIG)) {
 				logger.debug("Write config XML");
 				NodeRef configNodeRef = findConfigNodeRef(nodeRef);
 				formJsonVisitor.visit(configNodeRef, ret);
-	
+
 			}
-			
+
 			return ret.toString(3);
 		} catch (JSONException e) {
-			logger.error(e,e);
+			logger.error(e, e);
 		}
 		return null;
 	}

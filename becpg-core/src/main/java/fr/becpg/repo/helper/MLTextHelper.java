@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -32,8 +33,10 @@ public class MLTextHelper {
 
 	private static List<Locale> supportedLocales = new LinkedList<>();
 	private static String supportedLocalesText = "";
-
 	private static boolean shouldExtractMLText;
+
+	private static Map<String, MLText> mlTextCache = new ConcurrentHashMap<>();
+
 
 	/**
 	 * <p>Setter for the field <code>supportedLocales</code>.</p>
@@ -318,7 +321,7 @@ public class MLTextHelper {
 		}
 		return ret;
 	}
-
+	
 	/**
 	 * <p>getI18NMessage.</p>
 	 *
@@ -327,6 +330,17 @@ public class MLTextHelper {
 	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object.
 	 */
 	public static MLText getI18NMessage(String messageKey, Object... variables) {
+	
+		if(variables==null) {
+			return mlTextCache.computeIfAbsent(messageKey, MLTextHelper::internalI18NMessage);
+		}
+		
+		return internalI18NMessage(messageKey, variables);
+	}
+	
+	private static MLText internalI18NMessage(String messageKey, Object... variables) {
+		
+		
 		MLText ret = new MLText();
 		for (String key : RepoConsts.SUPPORTED_UI_LOCALES.split(",")) {
 
@@ -342,8 +356,11 @@ public class MLTextHelper {
 						}
 					}
 				}
-
-				ret.addValue(locale, I18NUtil.getMessage(messageKey, locale, parsedVariable.toArray()));
+				if(parsedVariable.isEmpty()) {
+					ret.addValue(locale, I18NUtil.getMessage(messageKey, locale));
+				} else {
+					ret.addValue(locale, I18NUtil.getMessage(messageKey, locale, parsedVariable.toArray()));
+				}
 
 			}
 

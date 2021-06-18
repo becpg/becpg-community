@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG. 
+ * Copyright (C) 2010-2021 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -141,6 +141,14 @@ public interface RepositoryEntityDefReader<T> {
 	 * @return a {@link org.alfresco.service.namespace.QName} object.
 	 */
 	QName getMultiLevelSecondaryPivot(QName dataListItemType);
+	
+	/**
+	 * <p>getMultiLevelGroupProperty.</p>
+	 *
+	 * @param dataListItemType a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link org.alfresco.service.namespace.QName} object.
+	 */
+	QName getMultiLevelGroupProperty(QName dataListItemType);
 	
 	
 	

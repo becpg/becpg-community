@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright (C) 2010-2020 beCPG. This file is part of beCPG beCPG is free 
+<!-- Copyright (C) 2010-2021 beCPG. This file is part of beCPG beCPG is free 
 	software: you can redistribute it and/or modify it under the terms of the 
 	GNU Lesser General Public License as published by the Free Software Foundation, 
 	either version 3 of the License, or (at your option) any later version. beCPG 
@@ -210,6 +210,27 @@
 				<field id="rep:reportTpls" />
 			</appearance>		
          </form>
+          <form id="project-metadata">
+				<field-visibility>
+					<show id="pjt:projectState" />
+					<show id="pjt:projectManager" />
+					<show id="pjt:projectObservers" />
+					<show id="pjt:observersEvents" force="true"  />
+					<show id="pjt:projectEntity" />
+					<show id="pjt:projectDueDate" />
+					<show id="pjt:projectOverdue" />
+					<show id="pjt:projectCompletionDate"  />
+				
+				</field-visibility>
+				<appearance>
+					<field id="pjt:projectManager" help-id="becpg.forms.help.projectManager"/>
+					<field id="pjt:projectObservers" help-id="becpg.forms.help.projectObservers" />
+					<field id="pjt:projectEntity" help-id="becpg.forms.help.projectEntity"  />
+					<field id="pjt:projectPlanningMode" help-id="becpg.forms.help.projectPlanningMode"  />
+					<field id="pjt:projectCompletionDate" read-only="true" />
+					<field id="pjt:projectOverdue"  read-only="true" />
+				</appearance>
+			</form>
 			<!-- Document Library pop-up Edit Metadata form -->
 			<form id="doclib-simple-metadata">
 				<field-visibility>
@@ -357,6 +378,39 @@
 					<field id="cm:categories" set="categories">
 						<control>
 							<control-param name="compactMode">true</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+			<form id="create-process">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="bcpg:entityTplRef" force="true" />
+					<show id="pjt:projectEntity" />
+					<show id="pjt:projectState" />
+				</field-visibility>
+				<appearance>
+					<field id="cm:name" />
+					<field id="bcpg:entityTplRef">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pjt:project?classNames=pjt:project,bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse
+							</control-param>
+							<control-param name="showTooltip">false</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+			<form id="associate-process">
+				<field-visibility>
+					<show id="bcpg:entityTplRef" force="true" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:entityTplRef" label-id="becpg.forms.set.project.label">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pjt:project</control-param>
+							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 				</appearance>
@@ -1119,6 +1173,7 @@
 			<!-- Data Grid view -->
 			<form id="filter">
 				<field-visibility>
+				    <show id="pjt:tlTaskName" />
 					<show id="bcpg:depthLevel" />
 					<show id="pjt:tlTaskLegend" />
 					<show id="pjt:tlResources" />
@@ -1311,9 +1366,13 @@
 					<show id="bcpg:parentLevel" />
 					<show id="pjt:subProjectRef" force="true" />
 					<show id="pjt:tlIsGroup" />
+					<show id="pjt:tlIsCritical" />
 					<show id="pjt:tlTaskName" />
+					<show id="pjt:tlDue" />
 					<show id="pjt:tlStart" />
 					<show id="pjt:tlEnd" />
+					<show id="pjt:tlTargetStart" />
+					<show id="pjt:tlTargetEnd" />
 					<show id="pjt:tlIsMilestone" />
 					<show id="pjt:tlState" />
 					<show id="pjt:tlResources" />
@@ -1333,12 +1392,16 @@
 					<field id="bcpg:parentLevel" label="hidden" />
 					<field id="pjt:subProjectRef" label="hidden" />
 					<field id="pjt:tlIsGroup" label="hidden" />
+					<field id="pjt:tlIsCritical" label="hidden" />
 					<field id="pjt:tlPrevTasks" label="hidden" />
 					<field id="pjt:invoice" read-only="true" />
 					<field id="pjt:expense" read-only="true" />					
 					<field id="pjt:tlIsMilestone" label="hidden" />
+					<field id="pjt:tlDue" read-only="true" />
 					<field id="pjt:tlStart" read-only="true" />
 					<field id="pjt:tlEnd" read-only="true" />
+					<field id="pjt:tlTargetStart" read-only="true" />
+					<field id="pjt:tlTargetEnd" read-only="true" />
 					<field id="pjt:tlRealDuration" read-only="true" />
 					<field id="pjt:tlCapacity" read-only="true" />
 					<field id="pjt:expense" read-only="true" />
@@ -1362,6 +1425,7 @@
 					<show id="pjt:tlTaskLegend" />
 					<show id="pjt:tlState" />
 					<show id="pjt:completionPercent" />
+					<show id="pjt:tlDue" />
 					<show id="pjt:tlStart" />
 					<show id="pjt:tlEnd" />
 					<!--  <show id="pjt:tlWorkflowInstance" /> -->
@@ -1395,6 +1459,7 @@
 					
 				 <!--  <show id="dataList_pjt:deliverableList" />  -->
 					
+					<show id="pjt:tlDue" />
 					<show id="pjt:tlStart" />
 					<show id="pjt:tlEnd" />
 					<show id="pjt:completionPercent" />
@@ -1414,6 +1479,7 @@
 					<field id="pjt:invoice" read-only="true" />
 					<field id="pjt:expense" read-only="true" />					
 					<field id="pjt:tlIsMilestone" label="datasource" />
+					<field id="pjt:tlDue" read-only="true" />
 					<field id="pjt:tlStart" read-only="true" />
 					<field id="pjt:tlEnd" read-only="true" />
 					<field id="pjt:tlRealDuration" read-only="true" />

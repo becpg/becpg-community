@@ -5227,38 +5227,44 @@ previousCharact;</expression>
                 <structure>
                     <property name="name">value5</property>
                     <text-property name="displayName">value5</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["value5"]</expression>
+                    <expression name="expression" type="javascript">formatWeight(dataSetRow["value5"]);</expression>
                     <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
                 </structure>
                 <structure>
                     <property name="name">value6</property>
                     <text-property name="displayName">value6</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["value6"]</expression>
+                    <expression name="expression" type="javascript">formatWeight(dataSetRow["value6"]);</expression>
                     <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
                 </structure>
                 <structure>
                     <property name="name">value7</property>
                     <text-property name="displayName">value7</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["value7"]</expression>
+                    <expression name="expression" type="javascript">formatWeight(dataSetRow["value7"]);</expression>
                     <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
                 </structure>
                 <structure>
                     <property name="name">value8</property>
                     <text-property name="displayName">value8</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["value8"]</expression>
+                    <expression name="expression" type="javascript">formatWeight(dataSetRow["value8"]);</expression>
                     <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
                 </structure>
                 <structure>
                     <property name="name">value9</property>
                     <text-property name="displayName">value9</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["value9"]</expression>
+                    <expression name="expression" type="javascript">formatWeight(dataSetRow["value9"]);</expression>
                     <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
                 </structure>
                 <structure>
                     <property name="name">value10</property>
                     <text-property name="displayName">value10</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["value10"]</expression>
+                    <expression name="expression" type="javascript">formatWeight(dataSetRow["value10"]);</expression>
                     <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
                 </structure>
                 <structure>
                     <property name="name">entity11</property>
@@ -5323,62 +5329,72 @@ previousCharact;</expression>
                 <structure>
                     <property name="name">value11</property>
                     <text-property name="displayName">value11</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["value11"]</expression>
+                    <expression name="expression" type="javascript">formatWeight(dataSetRow["value11"]);</expression>
                     <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
                 </structure>
                 <structure>
                     <property name="name">value12</property>
                     <text-property name="displayName">value12</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["value12"]</expression>
+                    <expression name="expression" type="javascript">formatWeight(dataSetRow["value12"]);</expression>
                     <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
                 </structure>
                 <structure>
                     <property name="name">value13</property>
                     <text-property name="displayName">value13</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["value13"]</expression>
+                    <expression name="expression" type="javascript">formatWeight(dataSetRow["value13"]);</expression>
                     <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
                 </structure>
                 <structure>
                     <property name="name">value14</property>
                     <text-property name="displayName">value14</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["value14"]</expression>
+                    <expression name="expression" type="javascript">formatWeight(dataSetRow["value14"]);</expression>
                     <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
                 </structure>
                 <structure>
                     <property name="name">value15</property>
                     <text-property name="displayName">value15</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["value15"]</expression>
+                    <expression name="expression" type="javascript">formatWeight(dataSetRow["value15"]);</expression>
                     <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
                 </structure>
                 <structure>
                     <property name="name">value16</property>
                     <text-property name="displayName">value16</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["value16"]</expression>
+                    <expression name="expression" type="javascript">formatWeight(dataSetRow["value16"]);</expression>
                     <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
                 </structure>
                 <structure>
                     <property name="name">value17</property>
                     <text-property name="displayName">value17</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["value17"]</expression>
+                    <expression name="expression" type="javascript">formatWeight(dataSetRow["value17"]);</expression>
                     <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
                 </structure>
                 <structure>
                     <property name="name">value18</property>
                     <text-property name="displayName">value18</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["value18"]</expression>
+                    <expression name="expression" type="javascript">formatWeight(dataSetRow["value18"]);</expression>
                     <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
                 </structure>
                 <structure>
                     <property name="name">value19</property>
                     <text-property name="displayName">value19</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["value19"]</expression>
+                    <expression name="expression" type="javascript">formatWeight(dataSetRow["value19"]);</expression>
                     <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
                 </structure>
                 <structure>
                     <property name="name">value20</property>
                     <text-property name="displayName">value20</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["value20"]</expression>
+                    <expression name="expression" type="javascript">formatWeight(dataSetRow["value20"]);</expression>
                     <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
                 </structure>
                 <structure>
                     <property name="name">entity21</property>
@@ -5413,32 +5429,37 @@ previousCharact;</expression>
                 <structure>
                     <property name="name">value21</property>
                     <text-property name="displayName">value21</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["value21"]</expression>
+                    <expression name="expression" type="javascript">formatWeight(dataSetRow["value21"]);</expression>
                     <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
                 </structure>
                 <structure>
                     <property name="name">value22</property>
                     <text-property name="displayName">value22</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["value22"]</expression>
+                    <expression name="expression" type="javascript">formatWeight(dataSetRow["value22"]);</expression>
                     <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
                 </structure>
                 <structure>
                     <property name="name">value23</property>
                     <text-property name="displayName">value23</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["value23"]</expression>
+                    <expression name="expression" type="javascript">formatWeight(dataSetRow["value23"]);</expression>
                     <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
                 </structure>
                 <structure>
                     <property name="name">value24</property>
                     <text-property name="displayName">value24</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["value24"]</expression>
+                    <expression name="expression" type="javascript">formatWeight(dataSetRow["value24"]);</expression>
                     <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
                 </structure>
                 <structure>
                     <property name="name">value25</property>
                     <text-property name="displayName">value25</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["value25"]</expression>
+                    <expression name="expression" type="javascript">formatWeight(dataSetRow["value25"]);</expression>
                     <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
                 </structure>
                 <structure>
                     <property name="name">entity26</property>
@@ -5473,32 +5494,37 @@ previousCharact;</expression>
                 <structure>
                     <property name="name">value26</property>
                     <text-property name="displayName">value26</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["value26"]</expression>
+                    <expression name="expression" type="javascript">formatWeight(dataSetRow["value26"]);</expression>
                     <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
                 </structure>
                 <structure>
                     <property name="name">value27</property>
                     <text-property name="displayName">value27</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["value27"]</expression>
+                    <expression name="expression" type="javascript">formatWeight(dataSetRow["value27"]);</expression>
                     <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
                 </structure>
                 <structure>
                     <property name="name">value28</property>
                     <text-property name="displayName">value28</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["value28"]</expression>
+                    <expression name="expression" type="javascript">formatWeight(dataSetRow["value28"]);</expression>
                     <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
                 </structure>
                 <structure>
                     <property name="name">value29</property>
                     <text-property name="displayName">value29</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["value29"]</expression>
+                    <expression name="expression" type="javascript">formatWeight(dataSetRow["value29"]);</expression>
                     <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
                 </structure>
                 <structure>
                     <property name="name">value30</property>
                     <text-property name="displayName">value30</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["value30"]</expression>
+                    <expression name="expression" type="javascript">formatWeight(dataSetRow["value30"]);</expression>
                     <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
                 </structure>
             </list-property>
             <property name="pageBreakInterval">100000</property>

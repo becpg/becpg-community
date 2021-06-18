@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -17,13 +17,9 @@
  ******************************************************************************/
 package fr.becpg.repo.entity.impl;
 
-import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -37,7 +33,6 @@ import javax.imageio.ImageIO;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.coci.CheckOutCheckInServiceImpl;
-import org.alfresco.repo.content.MimetypeMap;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.virtual.VirtualContentModel;
 import org.alfresco.service.cmr.model.FileFolderService;
@@ -56,6 +51,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StreamUtils;
 
 import fr.becpg.common.BeCPGException;
 import fr.becpg.model.BeCPGModel;
@@ -99,7 +95,7 @@ public class EntityServiceImpl implements EntityService {
 	@Autowired
 	private EntityDictionaryService entityDictionaryService;
 
-	private static Integer MAX_DEPTH_LEVEL = 6;
+	private static final Integer MAX_DEPTH_LEVEL = 6;
 
 	private static final Set<QName> IGNORE_PARENT_ASSOC_TYPES = new HashSet<>(7);
 	static {
@@ -113,7 +109,7 @@ public class EntityServiceImpl implements EntityService {
 	 * Load an image in the folder Images.
 	 */
 	@Override
-	public NodeRef getImage(NodeRef nodeRef, String imgName) throws BeCPGException {
+	public NodeRef getImage(NodeRef nodeRef, String imgName) {
 
 		NodeRef imagesFolderNodeRef = getImageFolder(nodeRef);
 
@@ -132,10 +128,9 @@ public class EntityServiceImpl implements EntityService {
 		return imageNodeRef;
 	}
 
-	
 	/** {@inheritDoc} */
 	@Override
-	public List<NodeRef> getImages(NodeRef nodeRef) throws BeCPGException {
+	public List<NodeRef> getImages(NodeRef nodeRef) {
 
 		NodeRef imagesFolderNodeRef = getImageFolder(nodeRef);
 
@@ -151,7 +146,7 @@ public class EntityServiceImpl implements EntityService {
 
 	/** {@inheritDoc} */
 	@Override
-	public NodeRef getImageFolder(NodeRef nodeRef) throws BeCPGException {
+	public NodeRef getImageFolder(NodeRef nodeRef) {
 
 		NodeRef imagesFolderNodeRef = nodeService.getChildByName(nodeRef, ContentModel.ASSOC_CONTAINS,
 				TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));
@@ -177,47 +172,26 @@ public class EntityServiceImpl implements EntityService {
 	 *
 	 * Load the image associated to the node.
 	 */
+
 	@Override
 	public byte[] getImage(NodeRef nodeRef) {
-
-		byte[] imageBytes = null;
 
 		ContentReader reader = contentService.getReader(nodeRef, ContentModel.PROP_CONTENT);
 
 		if (reader != null) {
-			try (InputStream in = reader.getContentInputStream(); OutputStream out = new ByteArrayOutputStream()) {
-				Image image = ImageIO.read(in);
-
-				if (image != null) {
-					ImageIO.write((RenderedImage) image, guessImageFormat(reader.getMimetype()), out);
-					imageBytes = ((ByteArrayOutputStream) out).toByteArray();
-				}
-
+			try {
+				return StreamUtils.copyToByteArray(reader.getContentInputStream());
 			} catch (IOException e) {
 				logger.error("Failed to get the content for " + nodeRef, e);
 			}
 		}
 
-		return imageBytes;
-	}
-
-	private String guessImageFormat(String mimeType) {
-
-		switch (mimeType) {
-		case MimetypeMap.MIMETYPE_IMAGE_PNG:
-			return "png";
-		case MimetypeMap.MIMETYPE_IMAGE_TIFF:
-			return "tiff";
-		case MimetypeMap.MIMETYPE_IMAGE_GIF:
-			return "gif";
-		}
-
-		return "jpg";
+		return null;
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public void writeImages(NodeRef nodeRef, Map<String, byte[]> images) throws BeCPGException {
+	public void writeImages(NodeRef nodeRef, Map<String, byte[]> images) {
 
 		NodeRef imagesFolderNodeRef = getImageFolder(nodeRef);
 
@@ -257,7 +231,7 @@ public class EntityServiceImpl implements EntityService {
 
 	/** {@inheritDoc} */
 	@Override
-	public NodeRef getEntityDefaultImage(NodeRef entityNodeRef) throws BeCPGException {
+	public NodeRef getEntityDefaultImage(NodeRef entityNodeRef) {
 
 		String imgName = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
 
@@ -297,7 +271,7 @@ public class EntityServiceImpl implements EntityService {
 		String name = getDefaultImageName(nodeService.getType(entityNodeRef));
 		Map<QName, Serializable> props = new HashMap<>();
 		props.put(ContentModel.PROP_NAME, name);
-		if(logger.isDebugEnabled()) {
+		if (logger.isDebugEnabled()) {
 			logger.debug("Create new Image node: " + name + " under " + imagesFolderNodeRef);
 		}
 		return nodeService
@@ -449,7 +423,7 @@ public class EntityServiceImpl implements EntityService {
 	@Override
 	public void deleteFiles(NodeRef entityNodeRef, boolean deleteArchivedNodes) {
 
-		if (entityNodeRef != null && !nodeService.hasAspect(entityNodeRef, VirtualContentModel.ASPECT_VIRTUAL)) {
+		if ((entityNodeRef != null) && !nodeService.hasAspect(entityNodeRef, VirtualContentModel.ASPECT_VIRTUAL)) {
 			for (FileInfo file : fileFolderService.list(entityNodeRef)) {
 
 				if (logger.isDebugEnabled()) {
@@ -485,7 +459,7 @@ public class EntityServiceImpl implements EntityService {
 	/** {@inheritDoc} */
 	@Override
 	public NodeRef getEntityNodeRef(NodeRef nodeRef, QName itemType) {
-		return getEntityNodeRef(nodeRef, itemType, new HashSet<NodeRef>());
+		return getEntityNodeRef(nodeRef, itemType, new HashSet<>());
 	}
 
 	private NodeRef getEntityNodeRef(NodeRef nodeRef, QName itemType, Set<NodeRef> visitedNodeRefs) {
@@ -506,7 +480,7 @@ public class EntityServiceImpl implements EntityService {
 
 			// This check prevents stack over flow when we have a cyclic node
 			// graph
-			if ((visitedNodeRefs.contains(nodeRef) == false) && (visitedNodeRefs.size() < MAX_DEPTH_LEVEL)) {
+			if ((!visitedNodeRefs.contains(nodeRef)) && (visitedNodeRefs.size() < MAX_DEPTH_LEVEL)) {
 				visitedNodeRefs.add(nodeRef);
 
 				List<ChildAssociationRef> parents = nodeService.getParentAssocs(nodeRef);

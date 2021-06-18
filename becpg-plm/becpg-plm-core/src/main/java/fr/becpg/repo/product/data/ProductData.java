@@ -21,9 +21,13 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
 
 import fr.becpg.model.SystemState;
+import fr.becpg.repo.decernis.DecernisMode;
 import fr.becpg.repo.formulation.FormulatedEntity;
+import fr.becpg.repo.formulation.ReportableEntity;
 import fr.becpg.repo.hierarchy.HierarchicalEntity;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
+import fr.becpg.repo.product.data.constraints.RequirementDataType;
+import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.constraints.TareUnit;
 import fr.becpg.repo.product.data.ing.IngTypeItem;
 import fr.becpg.repo.product.data.meat.MeatContentData;
@@ -45,6 +49,7 @@ import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.data.productList.ResourceParamListItem;
 import fr.becpg.repo.quality.data.dataList.ControlDefListDataItem;
+import fr.becpg.repo.quality.data.dataList.StockListDataItem;
 import fr.becpg.repo.repository.annotation.AlfMlText;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
@@ -67,7 +72,7 @@ import fr.becpg.repo.variant.model.VariantEntity;
  * @author matthieu
  * @version $Id: $Id
  */
-public class ProductData extends AbstractEffectiveDataItem implements FormulatedEntity, HierarchicalEntity, StateableEntity, AspectAwareDataItem, VariantEntity {
+public class ProductData extends AbstractEffectiveDataItem implements FormulatedEntity, HierarchicalEntity, StateableEntity, AspectAwareDataItem, VariantEntity, ReportableEntity {
 
 	
 	private static final long serialVersionUID = 764534088277737617L;
@@ -124,6 +129,12 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private Double profitability;
 	private Long breakEven;
 	private Long projectedQty;
+	
+	/* 
+	 * Parent entity
+	 */
+	private ProductData parentEntity;
+	
 
 	/*
 	 * Formulation
@@ -144,6 +155,15 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private Double nutrientScore;
 	private String nutrientClass;
 	private NodeRef nutrientProfile;
+	
+	
+	/*
+	 * Eco Score
+	 */
+
+	private Double ecoScore;
+	private String ecoScoreClass;
+	private String ecoScoreCategory;
 
 	/*
 	 * Meat aspect
@@ -155,12 +175,13 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	/*
 	 * Compliance 
 	 */
-
 	private List<String> regulatoryCountries = new ArrayList<>();
 	private List<String> regulatoryUsages = new ArrayList<>();
 	private Date regulatoryFormulatedDate;
+	private DecernisMode regulatoryMode = DecernisMode.BECPG_ONLY;
+	private String regulatoryRecipeId;
 	
-	/* 
+	/** 
 	 * JSON Data { 
 	 *   decernis: "checksum" 
 	 * }
@@ -187,6 +208,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private List<ResourceParamListItem> resourceParamList;
 	private List<ReqCtrlListDataItem> reqCtrlList;
 	private List<PackMaterialListDataItem> packMaterialList;
+	private List<StockListDataItem> stockList;
 
 	/*
 	 * View
@@ -200,7 +222,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	 * Variants
 	 */
 
-	private List<VariantData> variants;
+	private List<VariantData> localVariants;
 	private VariantPackagingData defaultVariantPackagingData;
 	private VariantData defaultVariantData;
 
@@ -295,8 +317,8 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	@AlfMultiAssoc(isChildAssoc = true, isEntity = true)
 	@AlfQname(qname = "bcpg:variants")
 	@AlfReadOnly
-	public List<VariantData> getVariants() {
-		return variants;
+	public List<VariantData> getLocalVariants() {
+		return localVariants;
 	}
 
 	/**
@@ -304,8 +326,24 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	 *
 	 * @param variants a {@link java.util.List} object.
 	 */
-	public void setVariants(List<VariantData> variants) {
-		this.variants = variants;
+	public void setLocalVariants(List<VariantData> localVariants) {
+		this.localVariants = localVariants;
+	}
+	
+	/**
+	 * <p>Getter for the all variants.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
+	public List<VariantData> getVariants() {
+		List<VariantData> variants = localVariants != null ? new ArrayList<>(localVariants): new ArrayList<>();
+		if (entityTpl != null) {
+			List<VariantData> entityTplVariants = entityTpl.getLocalVariants();
+			if (entityTplVariants != null && !entityTplVariants.isEmpty()) {
+				variants.addAll(entityTplVariants);
+			}
+		}
+		return variants;
 	}
 
 	/**
@@ -563,7 +601,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	 *
 	 * @return a {@link fr.becpg.repo.product.data.ProductData} object.
 	 */
-	@AlfSingleAssoc(isEntity = true)
+	@AlfSingleAssoc(isEntity = true, isCacheable = true)
 	@AlfQname(qname = "bcpg:entityTplRef")
 	public ProductData getEntityTpl() {
 		return entityTpl;
@@ -586,6 +624,17 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	 */
 	public void setEntityTpl(ProductData entityTpl) {
 		this.entityTpl = entityTpl;
+	}
+	
+	
+	@AlfSingleAssoc(isEntity = true)
+	@AlfQname(qname = "bcpg:parentEntityRef")
+	public ProductData getParentEntity() {
+		return parentEntity;
+	}
+
+	public void setParentEntity(ProductData parentEntity) {
+		this.parentEntity = parentEntity;
 	}
 
 	/**
@@ -1231,6 +1280,38 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	public void setProfitability(Double profitability) {
 		this.profitability = profitability;
 	}
+	
+	
+	
+	@AlfProp
+	@AlfQname(qname = "bcpg:ecoScore")
+	public Double getEcoScore() {
+		return ecoScore;
+	}
+
+	public void setEcoScore(Double ecoScore) {
+		this.ecoScore = ecoScore;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "bcpg:ecoScoreClass")
+	public String getEcoScoreClass() {
+		return ecoScoreClass;
+	}
+
+	public void setEcoScoreClass(String ecoScoreClass) {
+		this.ecoScoreClass = ecoScoreClass;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "bcpg:ecoScoreCategory")
+	public String getEcoScoreCategory() {
+		return ecoScoreCategory;
+	}
+
+	public void setEcoScoreCategory(String ecoScoreCategory) {
+		this.ecoScoreCategory = ecoScoreCategory;
+	}
 
 	/**
 	 * <p>Getter for the field <code>nutrientScore</code>.</p>
@@ -1363,11 +1444,11 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	 * @return a {@link java.lang.String} object.
 	 */
 	public String meatContentApplied() {
-	  String ret = "";
-	  for(String key : meatContentData.keySet()) {
-		  ret+= key +": "+ meatContentData.get(key).getMeatContent()+"%\n";
+	  StringBuilder ret  = new StringBuilder();
+	  for(Map.Entry<String, MeatContentData> val : meatContentData.entrySet()) {
+		  ret.append(val.getKey() +": "+ val.getValue().getMeatContent()+"%\n");
 	   }
-	  return ret;
+	  return ret.toString();
 		
 	}
 	
@@ -1721,6 +1802,17 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	public void setPackMaterialList(List<PackMaterialListDataItem> packMaterialList) {
 		this.packMaterialList = packMaterialList;
 	}
+	
+
+	@DataList
+	@AlfQname(qname = "qa:stockList")
+	public List<StockListDataItem> getStockList() {
+		return stockList;
+	}
+
+	public void setStockList(List<StockListDataItem> stockList) {
+		this.stockList = stockList;
+	}
 
 	/**
 	 * <p>Getter for the field <code>compoListView</code>.</p>
@@ -1773,6 +1865,36 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		this.reportLocales = reportLocales;
 	}
 	
+
+	
+	public DecernisMode getRegulatoryMode() {
+		return regulatoryMode;
+	}
+
+	public void setRegulatoryMode(String regulatoryMode) {
+		this.regulatoryMode = DecernisMode.valueOf(regulatoryMode);
+	}
+
+	/**
+	 * <p>Getter for the field <code>regulatoryRecipeId</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
+	@AlfProp
+	@AlfQname(qname = "bcpg:regulatoryRecipeId")
+	public String getRegulatoryRecipeId() {
+		return this.regulatoryRecipeId;
+	}
+	
+	/**
+	 * <p>Setter for the field <code>regulatoryRecipeId</code>.</p>
+	 *
+	 * @param regulatoryRecipeId a {@link java.lang.String} object.
+	 */
+	public void setRegulatoryRecipeId(String regulatoryRecipeId) {
+		this.regulatoryRecipeId = regulatoryRecipeId;
+	}
+
 	/**
 	 * <p>Getter for the field <code>regulatoryCountries</code>.</p>
 	 *
@@ -2109,6 +2231,31 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 
 	// Formula helpers
 
+	@Override
+	public void addWarning(String msg) {
+		addMessage( new MLText(msg),  RequirementType.Tolerated);
+	}
+	
+	@Override
+	public void addError(String msg) {
+		addMessage( new MLText(msg),  RequirementType.Forbidden);
+	}
+	
+	@Override
+	public void addError(MLText msg) {
+		addMessage( msg,  RequirementType.Forbidden);
+	}
+	
+	@Override
+	public void addInfo(String msg) {
+		addMessage( new MLText(msg),  RequirementType.Info);
+	}
+	
+	private void addMessage(MLText msg,  RequirementType type) {
+		reqCtrlList.add(new ReqCtrlListDataItem(null, type, msg, null, new ArrayList<>(),
+				RequirementDataType.Formulation));
+	}
+	
 	
 	/**
 	 * <p>isLiquid.</p>
@@ -2230,7 +2377,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		result = prime * result + Objects.hash(clients, density, erpCode, formulatedDate, futureUnitTotalCost, hierarchy1, hierarchy2, ingType,
 				legalName, netVolume, netWeight, netWeightSecondary, netWeightTertiary, nutrientClass, nutrientProfile, nutrientScore, plants,
 				profitability, projectedQty, qty, recipeQtyUsed, recipeQtyUsedWithLossPerc, recipeVolumeUsed, reformulateCount, regulatoryCountries,
-				regulatoryUsages, reportLocales, servingSize, servingSizeByCountry, servingSizeUnit, state, tare, tareUnit, title, unit, unitPrice,
+				regulatoryUsages, regulatoryMode, regulatoryRecipeId, reportLocales, servingSize, servingSizeByCountry, servingSizeUnit, state, tare, tareUnit, title, unit, unitPrice,
 				unitTotalCost, updateFormulatedDate, weightPrimary, weightSecondary, weightTertiary, yield, yieldVolume);
 		return result;
 	}
@@ -2257,6 +2404,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 				&& Objects.equals(recipeQtyUsed, other.recipeQtyUsed) && Objects.equals(recipeQtyUsedWithLossPerc, other.recipeQtyUsedWithLossPerc)
 				&& Objects.equals(recipeVolumeUsed, other.recipeVolumeUsed) && Objects.equals(reformulateCount, other.reformulateCount)
 				&& Objects.equals(regulatoryCountries, other.regulatoryCountries) && Objects.equals(regulatoryUsages, other.regulatoryUsages)
+				&& Objects.equals(regulatoryMode, other.regulatoryMode) && Objects.equals(regulatoryRecipeId, other.regulatoryRecipeId)
 				&& Objects.equals(reportLocales, other.reportLocales) && Objects.equals(servingSize, other.servingSize)
 				&& Objects.equals(servingSizeByCountry, other.servingSizeByCountry) && servingSizeUnit == other.servingSizeUnit
 				&& state == other.state && Objects.equals(tare, other.tare) && tareUnit == other.tareUnit && Objects.equals(title, other.title)

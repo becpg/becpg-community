@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -94,7 +94,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 	 */
 	public XmlEntityVisitor(NodeService mlNodeService, NodeService nodeService, NamespaceService namespaceService,
 			EntityDictionaryService entityDictionaryService, ContentService contentService, SiteService siteService,
-			 AssociationService associationService) {
+			AssociationService associationService) {
 		super(mlNodeService, nodeService, namespaceService, entityDictionaryService, contentService, siteService);
 		this.associationService = associationService;
 	}
@@ -147,7 +147,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 		xmlw.writeStartElement(BeCPGModel.BECPG_PREFIX, RemoteEntityService.ELEM_ENTITIES, BeCPGModel.BECPG_URI);
 
 		for (NodeRef nodeRef : entities) {
-			if ((this.filteredProperties != null) && !this.filteredProperties.isEmpty()) {
+			if ((params.getFilteredProperties() != null) && !params.getFilteredProperties().isEmpty()) {
 				entityList = true;
 				visitNode(nodeRef, xmlw, true, true, false);
 			} else {
@@ -163,7 +163,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 
 	}
 
-	/** {@inheritDoc} */
+	/** {@inheritDoc} **/
 	@Override
 	public void visitData(NodeRef entityNodeRef, OutputStream result) throws XMLStreamException {
 
@@ -180,7 +180,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 
 		// Write XML prologue
 		xmlw.writeStartDocument();
-		if ((this.filteredProperties != null) && !this.filteredProperties.isEmpty()) {
+		if ((params.getFilteredProperties() != null) && !params.getFilteredProperties().isEmpty()) {
 			entityList = true;
 			visitNode(entityNodeRef, xmlw, true, true, true);
 		} else {
@@ -203,14 +203,14 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 		String prefix = nodeType.getPrefixString().split(":")[0];
 		String name = (String) nodeService.getProperty(nodeRef, RemoteHelper.getPropName(nodeType, entityDictionaryService));
 		// lists filter
-		if (DataListModel.TYPE_DATALIST.equals(nodeType) && (filteredLists != null) && !filteredLists.isEmpty() && !filteredLists.contains(name)) {
+		if (DataListModel.TYPE_DATALIST.equals(nodeType) && !params.shouldExtractList(name)) {
 			extractLevel--;
 			return;
 		}
 		xmlw.writeStartElement(prefix, nodeType.getLocalName(), nodeType.getNamespaceURI());
 		boolean isCharact = false;
 
-		if (light && entityDictionaryService.isSubClass(nodeType, BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
+		if (isLight() && entityDictionaryService.isSubClass(nodeType, BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
 
 			QName pivotAssoc = entityDictionaryService.getDefaultPivotAssoc(nodeType);
 
@@ -218,7 +218,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 				NodeRef part = associationService.getTargetAssoc(nodeRef, pivotAssoc);
 				if ((part != null)) {
 					isCharact = true;
-					writeStdAttributes(xmlw, part, nodeType, name, isCharact);
+					writeStdAttributes(xmlw, part, name, isCharact);
 				}
 
 			}
@@ -226,7 +226,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 		}
 
 		if (!isCharact) {
-			writeStdAttributes(xmlw, nodeRef, nodeType, name, false);
+			writeStdAttributes(xmlw, nodeRef, name, false);
 		}
 
 		// Assoc first
@@ -246,7 +246,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 		extractLevel--;
 	}
 
-	private void writeStdAttributes(XMLStreamWriter xmlw, NodeRef nodeRef, QName nodeType, String name, boolean isCharact) throws XMLStreamException {
+	private void writeStdAttributes(XMLStreamWriter xmlw, NodeRef nodeRef, String name, boolean isCharact) throws XMLStreamException {
 		Path path = null;
 
 		if (nodeService.getPrimaryParent(nodeRef) != null) {
@@ -285,7 +285,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 		}
 
 		if ((path != null) && !isCharact) {
-			visitSite(nodeRef, xmlw, path);
+			visitSite(xmlw, path);
 		}
 
 	}
@@ -338,12 +338,20 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 					QName nodeType = assocDef.getName().getPrefixedQName(namespaceService);
 					String prefix = nodeType.getPrefixString().split(":")[0];
 					// fields & child assocs filter
-					if (((filteredProperties != null) && !filteredProperties.isEmpty() && !filteredProperties.contains(nodeType)
-							&& (extractLevel == 1) && !nodeType.equals(BeCPGModel.ASSOC_ENTITYLISTS))
+					if (((params.getFilteredProperties() != null) && !params.getFilteredProperties().isEmpty()
+							&& !params.getFilteredProperties().contains(nodeType) && (extractLevel == 1)
+							&& !nodeType.equals(BeCPGModel.ASSOC_ENTITYLISTS))
 							|| (nodeType.equals(BeCPGModel.ASSOC_ENTITYLISTS) && entityList && (extractLevel == 1))) {
 
 						continue;
 					}
+					
+					// Assoc properties filter
+					if ((cachedAssocRef != null) && (cachedAssocRef.get(nodeRef) != null) && cachedAssocRef.containsKey(nodeRef)
+							&& !cachedAssocRef.get(nodeRef).contains(nodeType)) {
+						continue;
+					}
+
 
 					xmlw.writeStartElement(prefix, nodeType.getLocalName(), nodeType.getNamespaceURI());
 					xmlw.writeAttribute(RemoteEntityService.ATTR_TYPE, RemoteEntityService.CHILD_ASSOC_TYPE);
@@ -351,7 +359,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 					for (ChildAssociationRef assocRef : assocRefs) {
 						if (assocRef.getTypeQName().equals(assocDef.getName())) {
 							NodeRef childRef = assocRef.getChildRef();
-							visitNode(childRef, xmlw, light ? false : true, light ? false : true, false);
+							visitNode(childRef, xmlw, isLight() ? false : true, isLight() ? false : true, false);
 						}
 					}
 
@@ -370,8 +378,14 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 					QName nodeType = assocDef.getName().getPrefixedQName(namespaceService);
 					String prefix = nodeType.getPrefixString().split(":")[0];
 					// fields & assocs filter
-					if ((filteredProperties != null) && !filteredProperties.isEmpty() && !filteredProperties.contains(nodeType)
-							&& (extractLevel == 1)) {
+					if ((params.getFilteredProperties() != null) && !params.getFilteredProperties().isEmpty()
+							&& !params.getFilteredProperties().contains(nodeType) && (extractLevel == 1)) {
+						continue;
+					}
+					
+					// Assoc properties filter
+					if ((cachedAssocRef != null) && (cachedAssocRef.get(nodeRef) != null) && cachedAssocRef.containsKey(nodeRef)
+							&& !cachedAssocRef.get(nodeRef).contains(nodeType)) {
 						continue;
 					}
 
@@ -382,9 +396,9 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 					for (AssociationRef assocRef : assocRefs) {
 						NodeRef childRef = assocRef.getTargetRef();
 						// extract assoc properties
-						if (filteredAssocProperties.containsKey(nodeType)) {
-							cachedAssocRef = Collections.singletonMap(childRef, filteredAssocProperties.get((nodeType)));
-							visitNode(childRef, xmlw, shouldDumpAll(childRef), true, false);
+						if (params.getFilteredAssocProperties().containsKey(nodeType)) {
+							cachedAssocRef = Collections.singletonMap(childRef, params.getFilteredAssocProperties().get((nodeType)));
+							visitNode(childRef, xmlw, true, true, false);
 
 						} else {
 							visitNode(childRef, xmlw, shouldDumpAll(childRef), shouldDumpAll(childRef), false);
@@ -416,8 +430,8 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 						QName propName = entry.getKey().getPrefixedQName(namespaceService);
 						String prefix = propName.getPrefixString().split(":")[0];
 						// filter props
-						if ((filteredProperties != null) && !filteredProperties.isEmpty() && !filteredProperties.contains(propName)
-								&& (extractLevel == 1)) {
+						if ((params.getFilteredProperties() != null) && !params.getFilteredProperties().isEmpty()
+								&& !params.getFilteredProperties().contains(propName) && (extractLevel == 1)) {
 							continue;
 						}
 						// Assoc properties filter
@@ -430,7 +444,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 
 						xmlw.writeStartElement(prefix, propName.getLocalName(), propName.getNamespaceURI());
 						xmlw.writeAttribute(RemoteEntityService.ATTR_TYPE,
-								propertyDefinition.getDataType().getName().toPrefixString(namespaceService));
+								entityDictionaryService.toPrefixString(propertyDefinition.getDataType().getName()));
 
 						MLText mlValues = null;
 						if (DataTypeDefinition.MLTEXT.equals(propertyDefinition.getDataType().getName())
@@ -469,13 +483,13 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 			for (Map.Entry<Locale, String> mlEntry : mlValues.entrySet()) {
 				String code = MLTextHelper.localeKey(mlEntry.getKey());
 				if ((code != null) && !code.isEmpty()) {
-					xmlw.writeAttribute(code.replaceAll(":", "_"), writeCDATA(mlEntry.getValue()));
+					xmlw.writeAttribute(code.replace(":", "_"), writeCDATA(mlEntry.getValue()));
 				}
 			}
 		}
 	}
 
-	private void visitSite(NodeRef nodeRef, XMLStreamWriter xmlw, Path path) throws XMLStreamException {
+	private void visitSite(XMLStreamWriter xmlw, Path path) throws XMLStreamException {
 
 		String siteId = SiteHelper.extractSiteId(path.toPrefixString(namespaceService));
 

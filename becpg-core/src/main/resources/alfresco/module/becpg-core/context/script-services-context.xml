@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright (C) 2010-2020 beCPG. 
+  Copyright (C) 2010-2021 beCPG. 
    
   This file is part of beCPG 
    
@@ -56,7 +56,7 @@
 		<property name="quickShareService" ref="quickShareService"/>
 		<property name="mlNodeService" ref="mlAwareNodeService"/>
 		<property name="namespaceService" ref="namespaceService"/>
-		<property name="dictionaryService" ref="dictionaryService"/>
+		<property name="dictionaryService" ref="cachedDictionaryService"/>
 		<property name="entityDictionaryService" ref="entityDictionaryService"/>
 		<property name="entityVersionService" ref="entityVersionService"/>
 		<property name="serviceRegistry" ref="ServiceRegistry"/>
@@ -71,6 +71,7 @@
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="showUnauthorizedWarning" value="${beCPG.licence.showWarning}"/>
 		<property name="alfrescoRepository" ref="alfrescoRepository"/>
+		<property name="siteService" ref="siteService"/>
 	</bean>
 	
 	<bean id="pdfScriptHelper" parent="baseJavaScriptExtension" class="fr.becpg.repo.jscript.PDFScriptHelper">
@@ -79,7 +80,7 @@
 		</property>
 		<property name="nodeService" ref="nodeService"/>
 		<property name="contentService" ref="contentService"/>
-		<property name="dictionaryService" ref="dictionaryService"/>
+		<property name="dictionaryService" ref="cachedDictionaryService"/>
 	</bean>
 	
 

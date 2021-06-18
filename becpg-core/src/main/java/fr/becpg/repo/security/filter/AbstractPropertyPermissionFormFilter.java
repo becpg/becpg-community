@@ -56,14 +56,14 @@ public abstract class AbstractPropertyPermissionFormFilter<ItemType> extends Abs
 	 * @param nodeType a {@link org.alfresco.service.namespace.QName} object.
 	 * @param form a {@link org.alfresco.repo.forms.Form} object.
 	 */
-	protected void filterFormFields(QName nodeType, Form form) {
+	protected void filterFormFields(NodeRef item, QName nodeType, Form form) {
 		if (form != null && form.getFieldDefinitions() != null) {
 			Iterator<FieldDefinition> it = form.getFieldDefinitions().iterator();
 			while (it.hasNext()) {
 				FieldDefinition fieldDefinition = it.next();
-				int access_mode = securityService.computeAccessMode(nodeType, fieldDefinition.getName());
+				int accessMode = securityService.computeAccessMode(item, nodeType, fieldDefinition.getName());
 
-				switch (access_mode) {
+				switch (accessMode) {
 				case SecurityService.READ_ACCESS:
 					if (logger.isDebugEnabled()) {
 						logger.debug("Mark as read only :" + fieldDefinition.getName());

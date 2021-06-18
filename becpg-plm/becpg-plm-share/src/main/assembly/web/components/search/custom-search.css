@@ -95,12 +95,12 @@ div.selected-items, div.item-select {
 
 .toolbar-file-list span.folder
 {
-   background-image: url(images/folder-open-16.png);
+   background-image: url("../../components/documentlibrary/images/folder-open-16.png");
 }
 
 .toolbar-file-list span.document
 {
-   background-image: url(images/generic-16.png);
+   background-image: url("../../components/documentlibrary/images/generic-16.png");
 }
 .search div.nutriscore {
 	margin-left: 60%;

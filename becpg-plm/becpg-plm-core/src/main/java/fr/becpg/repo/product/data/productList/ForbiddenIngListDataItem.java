@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG. 
+ * Copyright (C) 2010-2021 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -46,11 +46,11 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject{
 	 * 
 	 */
 	private static final long serialVersionUID = 8044333209643017576L;
-	RequirementType reqType;
-	MLText reqMessage;
-	Double qtyPercMaxi;
-	String isGMO;
-	String isIonized;
+	private RequirementType reqType;
+	private MLText reqMessage;
+	private Double qtyPercMaxi;
+	private String isGMO;
+	private String isIonized;
 	private List<NodeRef> ings = new ArrayList<>();
 	private List<NodeRef> geoOrigins = new ArrayList<>();
 	private List<NodeRef> requiredGeoOrigins = new ArrayList<>();

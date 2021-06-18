@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2010-2020 beCPG. 
+  Copyright (C) 2010-2021 beCPG. 
    
   This file is part of beCPG 
    
@@ -23,5 +23,5 @@
 	<url>/becpg/report/{type}/templates</url>
 	<format default="json">argument</format>
 	<authentication>user</authentication>
-	<transaction allow="readonly" buffersize="0">required</transaction>
+	<transaction allow="readonly" >required</transaction>
 </webscript>

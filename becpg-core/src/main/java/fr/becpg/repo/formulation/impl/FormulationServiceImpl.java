@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -25,12 +25,12 @@ import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.node.integrity.IntegrityChecker;
+import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.util.StopWatch;
 
@@ -41,9 +41,15 @@ import fr.becpg.repo.formulation.FormulationChain;
 import fr.becpg.repo.formulation.FormulationPlugin;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import io.opencensus.common.Scope;
+import io.opencensus.trace.AttributeValue;
+import io.opencensus.trace.Tracer;
+import io.opencensus.trace.Tracing;
 
 /**
- * <p>FormulationServiceImpl class.</p>
+ * <p>
+ * FormulationServiceImpl class.
+ * </p>
  *
  * @author matthieu
  * @since 1.5
@@ -51,8 +57,6 @@ import fr.becpg.repo.repository.AlfrescoRepository;
  * @version $Id: $Id
  */
 public class FormulationServiceImpl<T extends FormulatedEntity> implements FormulationService<T>, FormulationPlugin {
-
-	
 
 	private AlfrescoRepository<T> alfrescoRepository;
 
@@ -62,19 +66,28 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 
 	private static final Log logger = LogFactory.getLog(FormulationServiceImpl.class);
 
+	private static final Tracer tracer = Tracing.getTracer();
+
 	/**
-	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
+	 * <p>
+	 * Setter for the field <code>alfrescoRepository</code>.
+	 * </p>
 	 *
-	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
+	 * @param alfrescoRepository
+	 *            a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
 	 */
 	public void setAlfrescoRepository(AlfrescoRepository<T> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
 	/**
-	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 * <p>
+	 * Setter for the field <code>nodeService</code>.
+	 * </p>
 	 *
-	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 * @param nodeService
+	 *            a {@link org.alfresco.service.cmr.repository.NodeService}
+	 *            object.
 	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
@@ -102,13 +115,13 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 
 	/** {@inheritDoc} */
 	@Override
-	public T formulate(NodeRef entityNodeRef) throws FormulateException {
+	public T formulate(NodeRef entityNodeRef)  {
 		return formulate(entityNodeRef, DEFAULT_CHAIN_ID);
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public T formulate(T repositoryEntity) throws FormulateException {
+	public T formulate(T repositoryEntity)  {
 		Locale currentLocal = I18NUtil.getLocale();
 		Locale currentContentLocal = I18NUtil.getContentLocale();
 		try {
@@ -123,9 +136,18 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 
 	/** {@inheritDoc} */
 	@Override
-	public T formulate(NodeRef entityNodeRef, String chainId) throws FormulateException {
+	public T formulate(NodeRef entityNodeRef, String chainId)  {
 		Locale currentLocal = I18NUtil.getLocale();
-		try {
+		try(Scope scope = tracer.spanBuilder("formulationService.Formulate").startScopedSpan()) {
+			
+			if(entityNodeRef!=null) {
+				tracer.getCurrentSpan().putAttribute("becpg/entityNodeRef", AttributeValue.stringAttributeValue(entityNodeRef.toString()));
+			}
+			if(chainId!=null) {
+				tracer.getCurrentSpan().putAttribute("becpg/chainId", AttributeValue.stringAttributeValue(chainId));
+			}
+			tracer.getCurrentSpan().addAnnotation("findOne");
+			
 			I18NUtil.setLocale(Locale.getDefault());
 			T entity = alfrescoRepository.findOne(entityNodeRef);
 
@@ -137,16 +159,17 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 
 			entity = formulate(entity, chainId);
 
-			if (logger.isDebugEnabled() && watch!=null) {
+			if (logger.isDebugEnabled() && (watch != null)) {
 				watch.stop();
 				logger.debug("Formulate : " + this.getClass().getName() + " takes " + watch.getTotalTimeSeconds() + " seconds");
 				watch = new StopWatch();
 				watch.start();
 			}
 
+			tracer.getCurrentSpan().addAnnotation("save");
 			alfrescoRepository.save(entity);
 
-			if (logger.isDebugEnabled() && watch!=null) {
+			if (logger.isDebugEnabled() && (watch != null)) {
 				watch.stop();
 				logger.debug("Save : " + this.getClass().getName() + " takes " + watch.getTotalTimeSeconds() + " seconds");
 			}
@@ -159,8 +182,15 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 
 	/** {@inheritDoc} */
 	@Override
-	public T formulate(T repositoryEntity, String chainId) throws FormulateException {
-		try {
+	public T formulate(T repositoryEntity, String chainId) {
+		try(Scope scope = tracer.spanBuilder("formulationService.FormulateEntity").startScopedSpan()) {
+			
+			if( repositoryEntity.getName()!=null) {
+				tracer.getCurrentSpan().putAttribute("becpg/entityName", AttributeValue.stringAttributeValue(repositoryEntity.getName()));
+			}
+			if( repositoryEntity.getNodeRef()!=null) {
+				tracer.getCurrentSpan().putAttribute("becpg/entityNodeRef", AttributeValue.stringAttributeValue(repositoryEntity.getNodeRef().toString()));
+			}
 
 			FormulationChain<T> chain = getChain(repositoryEntity.getClass(), chainId);
 
@@ -170,7 +200,7 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 					logger.debug("Look for superClass :" + repositoryEntity.getClass().getSuperclass().getName());
 				}
 				chain = getChain(repositoryEntity.getClass().getSuperclass(), chainId);
-				
+
 			}
 
 			if (chain != null) {
@@ -193,21 +223,24 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 			} else {
 				logger.error("No formulation chain define for :" + repositoryEntity.getClass().getName());
 			}
-		} catch (Exception e) {
+		} catch (Throwable e) {
+
+			 if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+				 throw e;
+              }
 
 			if (e instanceof FormulateException) {
-				logger.error(e,e);
 				throw (FormulateException) e;
-			} else if (e instanceof ConcurrencyFailureException) {
-				throw (ConcurrencyFailureException) e;
 			}
-			logger.error(e,e);
-			throw new FormulateException(I18NUtil.getMessage("message.formulate.failure", repositoryEntity!=null ? repositoryEntity.getNodeRef() : null), e);
 
-		} catch (StackOverflowError e) {
-			logger.error(e,e);
-			throw new FormulateException(I18NUtil.getMessage("message.formulate.failure.loop", repositoryEntity.getName(), repositoryEntity.getNodeRef()), e);
-			
+			if (e instanceof StackOverflowError) {
+				throw new FormulateException(
+						I18NUtil.getMessage("message.formulate.failure.loop", repositoryEntity.getName(), repositoryEntity.getNodeRef()), e);
+			}
+
+			throw new FormulateException(
+					I18NUtil.getMessage("message.formulate.failure", repositoryEntity != null ? repositoryEntity.getNodeRef() : null), e);
+
 		}
 
 		return repositoryEntity;
@@ -232,9 +265,9 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 	private FormulationChain<T> getChain(Class<?> clazz, String chainId) {
 		Map<String, FormulationChain<T>> claims = formulationChains.get(clazz);
 		if (claims != null) {
-			if(claims.containsKey(chainId)) {
+			if (claims.containsKey(chainId)) {
 				return claims.get(chainId);
-			} 
+			}
 			return claims.get(DEFAULT_CHAIN_ID);
 		}
 
@@ -249,9 +282,8 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 
 	/** {@inheritDoc} */
 	@Override
-	public void runFormulation(NodeRef entityNodeRef) throws FormulateException {
-		formulate(entityNodeRef);
+	public void runFormulation(NodeRef entityNodeRef, String chainId) {
+		formulate(entityNodeRef, chainId);
 	}
-
 
 }

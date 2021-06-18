@@ -19,6 +19,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.NamespaceService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
@@ -32,6 +33,7 @@ import org.w3c.dom.NodeList;
 import fr.becpg.common.BeCPGException;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
+import fr.becpg.repo.entity.remote.RemoteParams;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
@@ -51,6 +53,9 @@ public class RemoteEntityServiceIT extends PLMBaseTestCase {
 
 	@Autowired
 	private RemoteEntityService remoteEntityService;
+	
+	@Autowired
+	private NamespaceService namespaceService;
 
 	@Test
 	public void testRemoteEntity() throws FileNotFoundException {
@@ -68,21 +73,21 @@ public class RemoteEntityServiceIT extends PLMBaseTestCase {
 				List<NodeRef> entities = new ArrayList<>();
 				entities.add(sfNodeRef);
 
-				remoteEntityService.listEntities(entities, new FileOutputStream(tempFile2), RemoteEntityFormat.xml,null);
+				remoteEntityService.listEntities(entities, new FileOutputStream(tempFile2), new RemoteParams(RemoteEntityFormat.xml));
 
-				remoteEntityService.getEntity(sfNodeRef, new FileOutputStream(tempFile), RemoteEntityFormat.xml);
+				remoteEntityService.getEntity(sfNodeRef, new FileOutputStream(tempFile),new RemoteParams(RemoteEntityFormat.xml));
 
 				nodeService.deleteNode(sfNodeRef);
 
-				NodeRef tmpNodeRef = remoteEntityService.createOrUpdateEntity(sfNodeRef, new FileInputStream(tempFile), RemoteEntityFormat.xml, null);
+				NodeRef tmpNodeRef = remoteEntityService.createOrUpdateEntity(sfNodeRef, new FileInputStream(tempFile),new RemoteParams(RemoteEntityFormat.xml),null);
 
-				remoteEntityService.getEntity(tmpNodeRef, new FileOutputStream(tempFile2), RemoteEntityFormat.xml);
+				remoteEntityService.getEntity(tmpNodeRef, new FileOutputStream(tempFile2), new RemoteParams(RemoteEntityFormat.xml));
 
-				remoteEntityService.getEntityData(tmpNodeRef, new FileOutputStream(tempFile2), RemoteEntityFormat.xml,null);
+				remoteEntityService.getEntityData(tmpNodeRef, new FileOutputStream(tempFile2), new RemoteParams(RemoteEntityFormat.xml));
 
-				remoteEntityService.getEntityData(tmpNodeRef, new FileOutputStream(tempFile), RemoteEntityFormat.xml,null);
+				remoteEntityService.getEntityData(tmpNodeRef, new FileOutputStream(tempFile),new RemoteParams(RemoteEntityFormat.xml));
 
-				remoteEntityService.addOrUpdateEntityData(tmpNodeRef, new FileInputStream(tempFile), RemoteEntityFormat.xml);
+				remoteEntityService.addOrUpdateEntityData(tmpNodeRef, new FileInputStream(tempFile), new RemoteParams(RemoteEntityFormat.xml));
 
 				tempFile.delete();
 
@@ -103,7 +108,7 @@ public class RemoteEntityServiceIT extends PLMBaseTestCase {
 				ruleService.disableRules();
 				ClassPathResource res = new ClassPathResource("beCPG/remote/entity_fullxml.xml");
 
-				NodeRef tmpNodeRef = remoteEntityService.createOrUpdateEntity(null, res.getInputStream(), RemoteEntityFormat.xml, null);
+				NodeRef tmpNodeRef = remoteEntityService.createOrUpdateEntity(null, res.getInputStream(), new RemoteParams(RemoteEntityFormat.xml), null);
 				Assert.assertNotNull(tmpNodeRef);
 
 			} catch (BeCPGException e) {
@@ -128,7 +133,11 @@ public class RemoteEntityServiceIT extends PLMBaseTestCase {
 			List<String> filteredFields = Arrays.asList(new String[] { "bcpg:legalName", "bcpg:compoListProduct|cm:name" });
 			NodeRef nodeRef = createFinishedProduct();
 			OutputStream out = new ByteArrayOutputStream();
-			remoteEntityService.getEntity(nodeRef, out, RemoteEntityFormat.xml, filteredFields, filteredLists);
+			RemoteParams params = new RemoteParams(RemoteEntityFormat.xml);
+			params.setFilteredLists(filteredLists);
+			params.setFilteredFields(filteredFields, namespaceService);
+			
+			remoteEntityService.getEntity(nodeRef, out,params);
 			ByteArrayOutputStream buffer = (ByteArrayOutputStream) out;
 			String xmlString = new String(buffer.toByteArray());
 

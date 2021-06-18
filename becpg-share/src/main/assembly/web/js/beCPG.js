@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (C) 2010-2020 beCPG. 
+ *  Copyright (C) 2010-2021 beCPG. 
  *   
  *  This file is part of beCPG 
  *   
@@ -26,6 +26,14 @@ if (typeof beCPG == "undefined" || !beCPG)
 {
    var beCPG = {};
 }
+
+/**
+ * beCPG top-level service namespace.
+ * 
+ * @namespace beCPG
+ * @class beCPG.service
+ */
+beCPG.service = beCPG.service || {};
 
 /**
  * beCPG top-level component namespace.

@@ -66,13 +66,11 @@
 }
 
 
-".project"
 .project-list.project-task a.active-comments {
 	cursor: pointer;
 	margin-left: 5px;
 	margin-bottom: -3px;
 	display: inline-table;
-	font-color:white;
 	font-weight:bold;	
 	border-radius: 50%;
     width: 10px;

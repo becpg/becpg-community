@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (C) 2010-2020 beCPG. 
+ *  Copyright (C) 2010-2021 beCPG. 
  *   
  *  This file is part of beCPG 
  *   
@@ -169,6 +169,71 @@
 	       }
 
     });
+    
+    
+
+		YAHOO.Bubbling
+			.fire(
+				"registerToolbarButtonAction",
+				{
+					actionName: "formulate",
+					hideLabel: true,
+					evaluate: function(asset, entity) {
+						return asset.name != null &&
+							(asset.name != "View-documents" && asset.name != "View-reports" && asset.name != "activityList" && asset.name != "WUsed")
+							&& entity != null && (beCPG.util.contains(entity.aspects,
+								"bcpg:productAspect") || entity.type == "bcpg:productSpecification" || entity.type == "qa:batch" || entity.type == "pjt:project") && entity.userAccess.edit;
+					},
+					fn: function(instance) {
+
+
+						Alfresco.util.PopupManager.displayMessage({
+							text: this.msg("message.formulate.please-wait")
+						});
+
+						var formulateButton = YAHOO.util.Selector.query('div.formulate');
+
+						Dom.addClass(formulateButton, "loading");
+
+						Alfresco.util.Ajax
+							.request({
+								method: Alfresco.util.Ajax.GET,
+								responseContentType: Alfresco.util.Ajax.JSON,
+								url: Alfresco.constants.PROXY_URI + "becpg/remote/formulate?nodeRef=" + this.options.entityNodeRef+"&format=json",
+								successCallback: {
+									fn: function(response) {
+										Alfresco.util.PopupManager.displayMessage({
+											text: this.msg("message.formulate.success")
+										});
+
+										YAHOO.Bubbling.fire("refreshDataGrids");
+										Dom.removeClass(formulateButton, "loading");
+									},
+									scope: this
+								},
+								failureCallback: {
+									fn: function(response) {
+										if (response.json && response.json.message) {
+											Alfresco.util.PopupManager.displayPrompt({
+												title: this.msg("message.formulate.failure"),
+												text: response.json.message
+											});
+										} else {
+											Alfresco.util.PopupManager.displayMessage({
+												text: this.msg("message.formulate.failure")
+											});
+										}
+										Dom.removeClass(formulateButton, "loading");
+									},
+									scope: this
+								}
+
+							});
+
+					}
+				});
+
+    
    
    
 

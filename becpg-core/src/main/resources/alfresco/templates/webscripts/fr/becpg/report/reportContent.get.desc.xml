@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2010-2020 beCPG. 
+  Copyright (C) 2010-2021 beCPG. 
    
   This file is part of beCPG 
    
@@ -24,6 +24,9 @@
   <url>/becpg/report/node/{store_type}/{store_id}/{id}/content{property}?a={attach?}&amp;streamId={streamId?}&amp;entityNodeRef={entityNodeRef?}</url>
   <url>/becpg/report/path/{store_type}/{store_id}/{nodepath}/content{property}?a={attach?}&amp;streamId={streamId?}&amp;entityNodeRef={entityNodeRef?}</url>
   <authentication>user</authentication>
-  <transaction >required</transaction>
+  <!-- beCPG Do not remove buffersize=0 
+      buffersize wrap response for transactional concurrency failure but it will not work for large stream 
+  -->
+  <transaction buffersize="0" allow="readwrite" >required</transaction>
   <lifecycle>internal</lifecycle>
 </webscript>

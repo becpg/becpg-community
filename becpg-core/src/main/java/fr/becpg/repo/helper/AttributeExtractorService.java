@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG. 
+ * Copyright (C) 2010-2021 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -28,7 +28,6 @@ import org.alfresco.service.namespace.QName;
 
 import fr.becpg.config.format.FormatMode;
 import fr.becpg.config.format.PropertyFormats;
-import fr.becpg.repo.helper.extractors.AbstractNodeDataExtractor;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 
 /**
@@ -49,7 +48,7 @@ public interface AttributeExtractorService {
 	
 	interface DataListCallBack {
 		
-		List<Map<String,Object>> extractNestedField(NodeRef nodeRef, AttributeExtractorStructure field);
+		List<Map<String,Object>> extractNestedField(NodeRef nodeRef, AttributeExtractorStructure field, FormatMode mode);
 
 	}
 	
@@ -182,6 +181,15 @@ public interface AttributeExtractorService {
 	 * @return a {@link java.lang.String} object.
 	 */
 	String extractPropName(QName type, NodeRef nodeRef);
+	
+	/**
+	 * <p>extractPropName.</p>
+	 *
+	 * @param format a {@link java.lang.String} object.
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link java.lang.String} object.
+	 */
+	String extractExpr(String format, NodeRef nodeRef);
 
 	/**
 	 * <p>extractSiteId.</p>

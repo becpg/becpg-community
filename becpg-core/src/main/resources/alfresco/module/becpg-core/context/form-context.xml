@@ -8,7 +8,7 @@
 
 	<bean id="productColumnDecorator" class="fr.becpg.repo.form.column.decorator.ProductColumnDecorator">
 		<property name="nodeService" ref="nodeService" />
-		<property name="dictionaryService" ref="dictionaryService" />
+		<property name="dictionaryService" ref="cachedDictionaryService" />
 		<property name="namespaceService" ref="namespaceService" />
 		<property name="entityListDAO" ref="entityListDAO" />
 	</bean>

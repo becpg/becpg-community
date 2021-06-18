@@ -7,8 +7,10 @@ services:
   becpg:
     image: ${docker.becpg.url}/becpg-${becpg.dockerbuild.name}:${docker.becpg.tag}
     environment:
-      CATALINA_OPTS: "-Xmx4G -Duser.language=fr -Duser.country=FR 
+      CATALINA_OPTS: "-Xmx4G -XX:HotswapAgent=external -Duser.language=fr -Duser.country=FR 
                      -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:8888 
+                     -XX:HotswapAgent=fatjar
+                     -XX:+UseG1GC
                      -Dcom.sun.management.jmxremote.rmi.port=9091
                      -Dcom.sun.management.jmxremote=true
                      -Dcom.sun.management.jmxremote.port=9091
@@ -16,7 +18,7 @@ services:
                      -Dcom.sun.management.jmxremote.authenticate=false
                      -Dcom.sun.management.jmxremote.local.only=false
                      -Djava.rmi.server.hostname=127.0.0.1"
-      JAVA_HOME: /usr/java/dcevm-11.0.8+1
+      JAVA_HOME: /usr/java/dcevm-11.0.10+5
     ports:
       - "8080:8080"
       - "8888:8888"  
@@ -88,7 +90,9 @@ services:
           - "8983:8983"  
 
   becpg-report:
-    image:  ${docker.becpg.url}/becpg-report:3.2.0
+    image:  ${docker.becpg.url}/becpg-report:3.2.1
+    user: root
+    
 
   becpg-glop:
     image:  ${docker.becpg.url}/becpg-glop:${docker.becpg.tag}

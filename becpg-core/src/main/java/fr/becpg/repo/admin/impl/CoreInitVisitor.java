@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -131,9 +131,6 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 		// Icons
 		visitFolder(systemNodeRef, RepoConsts.PATH_ICON);
 
-		// OLAP
-		visitFolder(systemNodeRef, RepoConsts.PATH_OLAP_QUERIES);
-
 		// Reports
 		visitFolder(systemNodeRef, RepoConsts.PATH_REPORTS);
 
@@ -216,13 +213,10 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 	 * Add resources to folder
 	 */
 	@Override
-	protected void visitFiles(NodeRef folderNodeRef, String folderName) {
+	protected void visitFiles(NodeRef folderNodeRef, String folderName, boolean folderExists) {
 
 		if (RepoConsts.PATH_ICON.equals(folderName)) {
 			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/images/*.png");
-		}
-		if (RepoConsts.PATH_OLAP_QUERIES.equals(folderName)) {
-			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/olap/*.saiku");
 		}
 		if (RepoConsts.PATH_LICENSE.equals(folderName)) {
 			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/license/*.sample");

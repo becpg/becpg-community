@@ -123,6 +123,11 @@
 					<mandatory>false</mandatory>
 					<index enabled="false"/>
 				</property>
+				<property name="rep:reportTplSearchLimit">
+					<type>d:int</type>
+					<mandatory>false</mandatory>
+					<index enabled="false"/>
+				</property>
 				<property name="rep:reportTplIsDisabled">
 					<type>d:boolean</type>
 				</property>

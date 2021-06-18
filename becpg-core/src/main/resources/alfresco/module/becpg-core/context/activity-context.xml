@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!--
-  Copyright (C) 2010-2020 beCPG. 
+  Copyright (C) 2010-2021 beCPG. 
    
   This file is part of beCPG 
    
@@ -32,7 +32,7 @@
 
 	<bean id="activityListExtractor" class="fr.becpg.repo.activity.extractor.ActivityListExtractor" parent="simpleExtractor">
 		<property name="entityActivityService" ref="entityActivityService" />
-		<property name="dictionaryService" ref="dictionaryService" />
+		<property name="dictionaryService" ref="cachedDictionaryService" />
 		<property name="securityService" ref="securityService" />
 		<property name="defaultExtractor" value="false" />
 	</bean>
@@ -43,6 +43,8 @@
 		<property name="jobClass">
 			<value>fr.becpg.repo.activity.EntityActivityJob</value>
 		</property>
+		<property name="group" value="beCPG"/>
+        <property name="description" value="Run activities cleanup" />
 		<property name="jobDataAsMap">
 			<map>
 				<entry key="entityActivityService">
@@ -51,6 +53,9 @@
 				<entry key="tenantAdminService">
 					<ref bean="tenantAdminService" />
 				</entry>
+				<entry key="jobLockService">
+	               <ref bean="jobLockService" />
+	           </entry>
 			</map>
 		</property>
 	</bean>

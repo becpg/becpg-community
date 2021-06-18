@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG. 
+ * Copyright (C) 2010-2021 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -153,6 +153,7 @@ public interface DesignerService {
 	 */
 	void unpublish(String fileName);
 
+
 	/**
 	 * <p>export.</p>
 	 *
@@ -160,7 +161,5 @@ public interface DesignerService {
 	 * @return a {@link java.lang.String} object.
 	 */
 	String export(NodeRef nodeRef) ;
-	
-
 	
 }

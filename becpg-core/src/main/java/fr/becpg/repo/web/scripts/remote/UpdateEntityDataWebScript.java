@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -18,15 +18,14 @@
 package fr.becpg.repo.web.scripts.remote;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
-import fr.becpg.common.BeCPGException;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
+import fr.becpg.repo.entity.remote.RemoteParams;
+import io.opencensus.common.Scope;
 
 /**
  * Update entity with POST xml
@@ -39,18 +38,14 @@ public class UpdateEntityDataWebScript extends AbstractEntityWebScript {
 	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
+		try (Scope scope = tracer.spanBuilder("/remote/post/data").startScopedSpan()) {
+			NodeRef entityNodeRef = findEntity(req);
 
-		NodeRef entityNodeRef = findEntity(req);
+			logger.debug("Update entity: " + entityNodeRef);
 
-		logger.debug("Update entity: " + entityNodeRef);
-		try (InputStream in = req.getContent().getInputStream()) {
 			RemoteEntityFormat format = getFormat(req);
-			remoteEntityService.addOrUpdateEntityData(entityNodeRef, in, format);
+			remoteEntityService.addOrUpdateEntityData(entityNodeRef, req.getContent().getInputStream(), new RemoteParams(format));
 			sendOKStatus(entityNodeRef, resp, format);
-		} catch (BeCPGException e) {
-			logger.error("Cannot import entity data", e);
-			throw new WebScriptException(e.getMessage());
 		}
-
 	}
 }

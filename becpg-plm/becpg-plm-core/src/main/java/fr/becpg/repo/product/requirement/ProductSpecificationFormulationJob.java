@@ -6,12 +6,18 @@ import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.repo.tenant.Tenant;
 import org.alfresco.repo.tenant.TenantAdminService;
+import org.alfresco.schedule.AbstractScheduledLockedJob;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.quartz.PersistJobDataAfterExecution;
 
 import fr.becpg.repo.product.formulation.ProductSpecificationsFormulationHandler;
+import fr.becpg.repo.project.impl.ProjectFormulationJob;
 
 // Un cron régulier qui formule et recalcul tous les cahiers des charges
 
@@ -40,12 +46,18 @@ import fr.becpg.repo.product.formulation.ProductSpecificationsFormulationHandler
  * @author matthieu
  * @version $Id: $Id
  */
-public class ProductSpecificationFormulationJob implements Job {
+@PersistJobDataAfterExecution
+@DisallowConcurrentExecution
+public class ProductSpecificationFormulationJob extends AbstractScheduledLockedJob implements Job {
 
+	private static final Log logger = LogFactory.getLog(ProductSpecificationFormulationJob.class);
+	
 	/** {@inheritDoc} */
 	@Override
-	public void execute(JobExecutionContext context) throws JobExecutionException {
+	public void executeJob(JobExecutionContext context) throws JobExecutionException {
 		JobDataMap jobData = context.getJobDetail().getJobDataMap();
+		
+		logger.info("Start of Product Specification Formulation Job.");
 
 		final ProductSpecificationsFormulationHandler productSpecificationsFormulationHandler = (ProductSpecificationsFormulationHandler) jobData.get("productSpecificationsFormulationHandler");
 		final TenantAdminService tenantAdminService = (TenantAdminService) jobData.get("tenantAdminService");
@@ -58,6 +70,7 @@ public class ProductSpecificationFormulationJob implements Job {
 		});
 		
 		if ((tenantAdminService != null) && tenantAdminService.isEnabled()) {
+			@SuppressWarnings("deprecation")
 			List<Tenant> tenants = tenantAdminService.getAllTenants();
 			for (Tenant tenant : tenants) {
 				String tenantDomain = tenant.getTenantDomain();
@@ -69,7 +82,7 @@ public class ProductSpecificationFormulationJob implements Job {
 				}, tenantAdminService.getDomainUser(AuthenticationUtil.getSystemUserName(), tenantDomain));
 			}
 		} 
-
+		logger.info("End of Product Specification Formulation Job.");
 	}
 
 }

@@ -16,7 +16,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
-import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
 
@@ -129,7 +128,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 
 		
 		
-		ExpressionParser parser = new SpelExpressionParser();
+		ExpressionParser parser = formulaService.getSpelParser();
 		StandardEvaluationContext context = formulaService.createEntitySpelContext(productData);
 
 		if ((productData.getLabelClaimList() != null) && !productData.getLabelClaimList().isEmpty()) {
@@ -319,11 +318,17 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 	}
 
 	private void addMissingLabelClaims(ProductData partProduct, LabelClaimListDataItem labelClaimItem) {
-		logger.debug("Adding part " + partProduct.getName() + " (" + partProduct.getNodeRef() + ") to missing list");
-		labelClaimItem.getMissingLabelClaims().add(partProduct.getNodeRef());
-		List<LabelClaimListDataItem> partMatchingLclItems = getLclItemFromProduct(partProduct, labelClaimItem.getLabelClaim());
-		for (LabelClaimListDataItem matchingLclItem : partMatchingLclItems) {
-			labelClaimItem.getMissingLabelClaims().addAll(matchingLclItem.getMissingLabelClaims());
+		if(!labelClaimItem.getMissingLabelClaims().contains(partProduct.getNodeRef())) {
+			logger.debug("Adding part " + partProduct.getName() + " (" + partProduct.getNodeRef() + ") to missing list");
+			labelClaimItem.getMissingLabelClaims().add(partProduct.getNodeRef());
+			List<LabelClaimListDataItem> partMatchingLclItems = getLclItemFromProduct(partProduct, labelClaimItem.getLabelClaim());
+			for (LabelClaimListDataItem matchingLclItem : partMatchingLclItems) {
+				for(NodeRef toAdd : matchingLclItem.getMissingLabelClaims()) {
+					if(!labelClaimItem.getMissingLabelClaims().contains(toAdd)) {
+						labelClaimItem.getMissingLabelClaims().add(toAdd);
+					}
+				}
+			}
 		}
 	}
 
@@ -394,7 +399,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 									MLTextHelper.getI18NMessage(MESSAGE_LABELCLAIM_ERROR,
 											mlNodeService.getProperty(labelClaimListDataItem.getLabelClaim(), BeCPGModel.PROP_CHARACT_NAME),
 											labelClaimListDataItem.getErrorLog()),
-									labelClaimListDataItem.getLabelClaim(), new ArrayList<NodeRef>(), RequirementDataType.Labelclaim));
+									labelClaimListDataItem.getLabelClaim(), new ArrayList<>(), RequirementDataType.Labelclaim));
 				}
 
 			}

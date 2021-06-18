@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -26,7 +26,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
@@ -74,7 +73,7 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 
 	/** {@inheritDoc} */
 	@Override
-	public boolean process(ProductData formulatedProduct) throws FormulateException {
+	public boolean process(ProductData formulatedProduct) {
 
 		logger.debug("process calculating visitor");
 
@@ -130,10 +129,8 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 							param.setName(null);
 							param.setNodeRef(null);
 							param.setParentNodeRef(null);
-							if (!isMultiLevel || (param.getStep() == null)) {
-								param.setStep(p.getStep());
-							}
 							if (!isMultiLevel || (param.getResource() == null)) {
+								param.setStep(p.getStep());
 								param.setResource(resource.getNodeRef());
 							}
 							param.setVariants(p.getVariants());

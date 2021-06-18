@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -38,7 +38,7 @@ import fr.becpg.repo.entity.datalist.WUsedFilter;
 import fr.becpg.repo.entity.datalist.WUsedListService;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 import fr.becpg.repo.helper.AssociationService;
-import fr.becpg.repo.helper.impl.AssociationServiceImpl.EntitySourceAssoc;
+import fr.becpg.repo.helper.impl.EntitySourceAssoc;
 
 /**
  * <p>WUsedListServiceImpl class.</p>
@@ -98,7 +98,7 @@ public class WUsedListServiceImpl implements WUsedListService {
 		if ((entityNodeRefs != null) && !entityNodeRefs.isEmpty() && !parentNodeRefs.contains(entityNodeRefs.get(0))) {
 			parentNodeRefs.addAll(entityNodeRefs);
 
-			appendAssocs(ret, associationService.getEntitySourceAssocs(entityNodeRefs, associationName, WUsedOperator.OR.equals(operator)),
+			appendAssocs(ret, associationService.getEntitySourceAssocs(entityNodeRefs, associationName, WUsedOperator.OR.equals(operator), null),
 					depthLevel, maxDepthLevel, associationName, filter, parentNodeRefs, permCache, WUsedOperator.OR.equals(operator));
 
 		}

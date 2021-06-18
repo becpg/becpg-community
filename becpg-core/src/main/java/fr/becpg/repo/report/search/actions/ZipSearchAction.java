@@ -8,7 +8,6 @@ import java.util.List;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.action.ParameterDefinitionImpl;
-import org.alfresco.repo.action.executer.ActionExecuter;
 import org.alfresco.repo.action.executer.ActionExecuterAbstractBase;
 import org.alfresco.repo.download.ContentServiceHelper;
 import org.alfresco.repo.download.DownloadCancelledException;
@@ -35,6 +34,8 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ParameterCheck;
 import org.alfresco.util.TempFileProvider;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,6 +58,9 @@ public class ZipSearchAction extends ActionExecuterAbstractBase {
 
 	/** Constant <code>PARAM_TPL_NODEREF="templateNodeRef"</code> */
 	public static final String PARAM_TPL_NODEREF = "templateNodeRef";
+	private static final Log logger = LogFactory.getLog(ZipSearchAction.class);
+
+	public static final String NAME = "zipSearchAction";
 
 	// Dependencies
 	private CheckOutCheckInService checkOutCheckInService;
@@ -178,7 +182,7 @@ public class ZipSearchAction extends ActionExecuterAbstractBase {
 
 		NodeRef templateNodeRef =  (NodeRef) action.getParameterValue(PARAM_TPL_NODEREF);
 		
-		ParameterCheck.mandatory("templateNodeRef", templateNodeRef);
+		ParameterCheck.mandatory(PARAM_TPL_NODEREF, templateNodeRef);
 		
 		// Get the download request data and set up the exporter crawler
 		// parameters.
@@ -217,7 +221,9 @@ public class ZipSearchAction extends ActionExecuterAbstractBase {
 				} catch (DownloadCancelledException ex) {
 					downloadCancelled(actionedUponNodeRef, handler);
 				} finally {
-					tempFile.delete();
+					if(!tempFile.delete()) {
+						logger.error("Cannot delete dir: "+tempFile.getName());
+					}
 				}
 			}
 			return null;

@@ -1,18 +1,65 @@
-<html>
 
+<html>
    <head>
       <style type="text/css"><!--
-      body
+     body
       {
          font-family: Arial, sans-serif;
          font-size: 14px;
          color: #4c4c4c;
       }
-      
-      a, a:visited
-      {
-         color: #0072cf;
+     button 
+     {
+        background-color: white ;
+         border-radius: 5px;
+         border : solid 1px #ff642d;
+         color:#ff642d;
+         padding: 10px 22px;
+         text-align: center;
+         text-decoration: none;
+         font-size: 13px;
+         cursor : pointer;
+         margin-bottom: 5px;
       }
+      button:hover {
+         background-color : #ff642d;
+         border : solid 1px #ff642d;
+         color: white;
+      }
+      button:focus {
+         outline:none;
+      }
+
+   
+      @media (min-width: 660px) {
+         td .flex {
+            display:flex;
+         }
+         .img {
+            padding-right:20px;
+         }
+         .table {
+            width:70%;
+         }
+      }
+      @media (max-width: 660px) {
+         td .flex {
+            text-align:center;
+         }
+         td .title {
+            margin-top : 5px;
+            margin-bottom : 0px;
+         }
+       .img {
+            padding-right:0;
+            margin-top:3px;
+         }
+         .table {
+            width:100%;
+         }
+      }
+      
+       
       --></style>
    </head>
    
@@ -20,7 +67,7 @@
       <table width="100%" cellpadding="20" cellspacing="0" border="0" bgcolor="#dddddd">
          <tr>
             <td width="100%" align="center">
-               <table width="70%" cellpadding="0" cellspacing="0" bgcolor="white" style="background-color: white; border: 1px solid #aaaaaa;">
+               <table class="table" cellpadding="0" cellspacing="0" bgcolor="white" style="background-color: white; border: 1px solid #cccccc; border-radius: 15px;">
                   <tr>
                      <td width="100%">
                         <table width="100%" cellpadding="0" cellspacing="0" border="0">
@@ -29,33 +76,28 @@
                                  <table width="100%" cellpadding="0" cellspacing="0" border="0">
                                     <tr>
                                        <td>
-                                          <table cellpadding="0" cellspacing="0" border="0">
+                                          <table width="100%" cellpadding="0" cellspacing="0" border="0">
                                              <tr>
-                                                <td>
-                                                   <img src="${shareUrl}/res/components/site-finder/images/site-64.png" alt="" width="64" height="64" border="0" style="padding-right: 20px;" />
-                                                </td>
-                                                <td>
-                                                   <div style="font-size: 22px; padding-bottom: 4px;">
-                                                      Compte beCPG
-                                                   </div>
-                                                   <div style="font-size: 13px;">
-                                                      ${date?datetime?string.full}
-                                                   </div>
+                                                <td class ="flex">
+                                                   <img class="img" src="${shareUrl}/res/components/site-finder/images/project-email-logo.png" alt="" height="64" border="0" />
+                                                  <p class="title" style="font-size: 20px; color: #004254; font-weight: bold;">Compte beCPG</p>
+   
                                                 </td>
                                              </tr>
                                           </table>
                                           <div style="font-size: 14px; margin: 12px 0px 24px 0px; padding-top: 10px; border-top: 1px solid #aaaaaa;">
-                                             <p>Bonjour ${person.properties["cm:firstName"]!""},</p>
+                                             <p style="color:#004254; margin-bottom:0px; font-size:18px;font-weight:bold">Bonjour ${person.properties["cm:firstName"]!""},</p>
                                              
-                                             <p>Voici votre compte beCPG:
-															<br />- Url : <a href="${shareUrl}">${shareUrl}</a>
-															<br />- Compte : ${username}
-															<br />- Mot de passe : ${password}</p>
+                                             <p style="margin-top:0px">
+															<br /><a href="${shareUrl}""><button ><b>Accéder à votre compte</b></button></a>
+															<br /><b>Compte : </b>${username}
+															<br /><b>Mot de passe : </b>${password}</p>
 															
-															<p>Nous vous conseillons d'utiliser le navigateur Firefox ou Chrome.<br />															
+															<p>Je vous conseille d'utiliser le navigateur Firefox ou Chrome.<br />															
 															</p>
 															
-                                             <p>Cordialement,<br />
+                                          
+                                            <p>Cordialement,<br />
                                              beCPG</p>
                                           </div>
                                        </td> 
@@ -70,7 +112,7 @@
                            </tr>
                            <tr>
                               <td style="padding: 0px 30px; font-size: 13px;">
-                                 Pour en savoir plus sur beCPG, visiter <a href="http://www.becpg.net">http://www.becpg.net</a>
+                                 Pour en savoir plus sur beCPG, vister <a style="text-decoration:none; color:#EF6236" href="http://www.becpg.net">http://www.becpg.net</a>
                               </td>
                            </tr>
                            <tr>
@@ -80,7 +122,7 @@
                            </tr>
                            <tr>
                               <td style="padding: 10px 30px;">
-                                 <img src="${shareUrl}/themes/default/images/app-logo.png" alt="" width="117" height="48" border="0" />
+                                 <img style="padding :10px 0px" src="${shareUrl}/res/components/images/becpg-footer-logo.png" />
                               </td>
                            </tr>
                         </table>

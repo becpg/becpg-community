@@ -50,7 +50,9 @@ public class CopyDataListWebScript extends AbstractEntityWebScript {
 		try {
 
 			JSONArray ret = new JSONArray();
-
+			
+			boolean isImport = "from".equals(req.getParameter("destination"));
+			
 			Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();
 			if (templateArgs != null) {
 				String storeType = templateArgs.get(PARAM_STORE_TYPE);
@@ -60,11 +62,36 @@ public class CopyDataListWebScript extends AbstractEntityWebScript {
 					NodeRef dataListNodeRef = new NodeRef(storeType, storeId, nodeId);
 					NodeRef entityNodeRef = null;
 
+
 					JSONObject json = (JSONObject) req.parseContent();
+					String action = "Override";
+					
+					if ((json != null) && json.has("action")) {
+						action = (String) json.get("action");
+					}
+					
 					if ((json != null) && json.has("entity")) {
 						entityNodeRef = new NodeRef((String) json.get("entity"));
+						
+						NodeRef targetEntityNodeRef = null;
+						NodeRef sourceListNodeRef = null;
+						
+						if(isImport) {
+							targetEntityNodeRef =  entityListDAO.getEntityFromList(dataListNodeRef);
+							 NodeRef sourceListContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
+					         sourceListNodeRef = entityListDAO.findMatchingList(dataListNodeRef,sourceListContainerNodeRef);
+						} else {
+							sourceListNodeRef = dataListNodeRef;
+							targetEntityNodeRef = entityNodeRef;
+						}
 
-						entityListDAO.copyDataList(dataListNodeRef, entityNodeRef, true);
+						if("Add".equals(action)) {
+							entityListDAO.mergeDataList(sourceListNodeRef, targetEntityNodeRef, true);
+						} else if ("Merge".equals(action)) {
+							entityListDAO.mergeDataList(sourceListNodeRef, targetEntityNodeRef, false);
+						} else {
+							entityListDAO.copyDataList(sourceListNodeRef, targetEntityNodeRef, true);
+						}
 
 						ret.put(entityNodeRef);
 

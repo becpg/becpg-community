@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -44,6 +44,8 @@ public class SearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 		String url = "/becpg/search?site=&term=MP*&tag=&maxResults=251&sort=&query=&repo=true&metadataFields=bcpg_legalName%2Cbcpg_productHierarchy1%2Cbcpg_productHierarchy2%2Cbcpg_productState%2Cbcpg_code%2Cbcpg_erpCode%2Cbcpg_eanCode%2Cbcpg_suppliers%2Cbcpg_clients";
 
 		Response response = TestWebscriptExecuters.sendRequest(new GetRequest(url), 200, "admin");
+		
+		assertEquals(response.getStatus(),200);
 
 		logger.debug("response: " + response.getContentAsString());
 

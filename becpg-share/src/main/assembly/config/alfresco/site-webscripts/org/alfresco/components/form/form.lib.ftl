@@ -269,13 +269,13 @@
 <#macro renderFieldHelp field>
    <#if field.help?? && field.help?length &gt; 0>
       <span class="help-icon">
-         <img class="icon16" id="${fieldHtmlId}-help-icon" src="${url.context}/res/components/form/images/help.png" title="${msg("form.field.help")}" tabindex="-1"/>
+         <img class="icon16" tabindex="-1" id="${fieldHtmlId}-help-icon" src="${url.context}/res/components/form/images/help.png" title="${msg("form.field.help")}" alt="help" width="16" height="16" />
       </span>
       <div class="help-text" id="${fieldHtmlId}-help"><#if field.helpEncodeHtml>${field.help?html}<#else>${stringUtils.stripUnsafeHTML(field.help)}</#if></div>
    </#if>
 </#macro>
 
-<#macro renderLocaleImage field textarea=false htmlEditor=false>
+<#macro renderLocaleImage field textarea=false maxLength=100000 htmlEditor=false>
   <#if !isHiddenField(field) && field.dataType == "mltext" && form.mode == "edit" && form.arguments.itemKind == "node">
    
     <#if userContentLocale??>
@@ -294,7 +294,7 @@
 	
     <#if form.arguments.itemId??>
 	    <span class="locale-icon">
-			<img class="icon16_11" id="${fieldHtmlId}-locale-icon" src="${url.context}/res/components/images/flags/${localeshort}.png" title="${msg("form.field.locale")}"  tabindex="-1"/>
+			<img class="icon16_11" tabindex="-1" id="${fieldHtmlId}-locale-icon" src="${url.context}/res/components/images/flags/${localeshort}.png" alt="${localeshort}" title="${msg("form.field.locale")}"  width="16" height="11" />
 		 </span>
 		 <script type="text/javascript">//<![CDATA[
 		 	YAHOO.util.Event.onAvailable("${fieldHtmlId}-locale-icon", function (){
@@ -302,7 +302,7 @@
 				Alfresco.util.useAsButton("${fieldHtmlId}-locale-icon", function (event, fieldId)
 		            {
 		                new Alfresco.module.SimpleDialog("${fieldHtmlId}-${.now?long}-multilingualForm").setOptions({
-		                  templateUrl : Alfresco.constants.URL_SERVICECONTEXT + "modules/multilingual-form/multilingual-form?nodeRef=${form.arguments.itemId}&label=${field.label?url}&field="+fieldId<#if textarea >+"&textarea=true"</#if><#if field.disabled >+"&readonly=true"</#if><#if htmlEditor >+"&htmlEditor=true"</#if>,
+		                  templateUrl : Alfresco.constants.URL_SERVICECONTEXT + "modules/multilingual-form/multilingual-form?nodeRef=${form.arguments.itemId}&label=${field.label?url}&field="+fieldId<#if textarea >+"&textarea=true"</#if><#if field.disabled >+"&readonly=true"</#if><#if htmlEditor >+"&htmlEditor=true"</#if><#if maxLength < 100000>+"&maxLength=${maxLength?string}"</#if>,
 		                  actionUrl : Alfresco.constants.PROXY_URI + "becpg/form/multilingual/field/"+fieldId+"?nodeRef=${form.arguments.itemId}",
 		                  validateOnSubmit : false,
 		                  destroyOnHide : false,

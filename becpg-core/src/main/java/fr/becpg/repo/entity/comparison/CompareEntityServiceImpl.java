@@ -45,6 +45,7 @@ import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.datalist.MultiLevelDataListService;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
+import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 
@@ -74,6 +75,9 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 	private NamespaceService namespaceService;
 	
 	@Autowired
+	private EntityVersionService entityVersionService;
+	
+	@Autowired
 	private AssociationService associationService;
 
 	@Autowired
@@ -93,18 +97,31 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 
 	@Value("${beCPG.comparison.pivots}")
 	private String customPivots;
+	
+	@Value("${beCPG.comparison.name.format}")
+	private String customNames;
 
 	/** {@inheritDoc} */
 	@Override
 	public List<CompareResultDataItem> compare(NodeRef entity1, List<NodeRef> entities, List<CompareResultDataItem> compareResult,
 			Map<String, List<StructCompareResultDataItem>> structCompareResults) {
 
+				
+		if (entityVersionService.isVersion(entity1)) {
+			entity1 = entityVersionService.extractVersion(entity1);
+		}
+		
 		Map<String, CompareResultDataItem> comparisonMap = new LinkedHashMap<>();
 		int pos = 1;
 		int nbEntities = entities.size() + 1;
 
 		for (NodeRef entity : entities) {
 			logger.debug("compare entity " + entity1 + " with entity " + entity + " nbEntities " + nbEntities + " pos " + pos);
+			
+			if (entityVersionService.isVersion(entity)) {
+				entity = entityVersionService.extractVersion(entity);
+			}
+			
 			compareEntities(entity1, entity, nbEntities, pos, comparisonMap, structCompareResults);
 			pos++;
 		}
@@ -214,12 +231,12 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 
 				if (fileName1.equals(fileName2)) {
 					ContentData contentRef1 = (ContentData) nodeService.getProperty(fileNodeRef1, ContentModel.PROP_CONTENT);
-					long size1 = contentRef1.getSize();
+					Long size1 = contentRef1!=null ? contentRef1.getSize() :null;
 
 					ContentData contentRef2 = (ContentData) nodeService.getProperty(fileNodeRef2, ContentModel.PROP_CONTENT);
-					long size2 = contentRef2.getSize();
+					Long size2 = contentRef2!=null ? contentRef2.getSize(): null;
 
-					if (size1 != size2) {
+					if (size1!=null && !size1.equals(size2)) {
 						properties1 = new TreeMap<>();
 						properties2 = new TreeMap<>();
 
@@ -522,7 +539,25 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 
 			// compare properties of characteristics
 			for (CharacteristicToCompare c : characteristicsToCmp) {
-				compareNode(dataListType, extractCharactName(c, entityDictionaryService.getDefaultPivotAssoc(dataListType))
+				String dataListShortName = dataListType.getPrefixString();
+				NodeRef itemNodeRef = (c.getNodeRef1() == null ? c.getNodeRef2() : c.getNodeRef1());
+				String charactName = extractCharactName(itemNodeRef, entityDictionaryService.getDefaultPivotAssoc(dataListType));
+				if ((customNames != null) && customNames.contains(dataListShortName)) {
+					String nameFormat = "";
+					String[] dataTypesSplit = customNames.split(",");
+					for (String dataType : dataTypesSplit) {
+						if (dataType.contains(dataListShortName)) {
+							// example of custom names string:
+							// bcpg:compoList|{bcpg:compoListProduct}-{bcpg:instruction},qa:controlList|{qa:clCharacts}-{qa:clDayNumber}-{qa:clUnit}
+							nameFormat = dataType.split(Pattern.quote("|"))[1];
+						}
+					}
+					if (!nameFormat.isEmpty() && itemNodeRef != null) {
+						charactName = attributeExtractorService.extractExpr(nameFormat, itemNodeRef);
+					}
+				}
+
+				compareNode(dataListType, charactName
 						, c.getPivotKey(), c.getNodeRef1(), c.getNodeRef2(), nbEntities, comparisonPosition,
 						true, comparisonMap);
 			}
@@ -530,11 +565,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		}
 	}
 
-	private String extractCharactName(CharacteristicToCompare c, QName pivotAssoc) {
-		NodeRef itemNodeRef =  c.getNodeRef1();
-		if(itemNodeRef==null) {
-			itemNodeRef = c.getNodeRef2();
-		}
+	private String extractCharactName(NodeRef itemNodeRef, QName pivotAssoc) {
 		if(itemNodeRef!=null) {
 			if (pivotAssoc != null) {
 				NodeRef part = associationService.getTargetAssoc(itemNodeRef, pivotAssoc);
@@ -967,7 +998,8 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 				|| qName.equals(ReportModel.ASSOC_REPORTS) || qName.equals(BeCPGModel.PROP_VERSION_LABEL) || qName.equals(BeCPGModel.PROP_COLOR)
 				// TODO plugin
 				|| qName.getLocalName().contains("compareWithDynColumn")
-				|| qName.getLocalName().contains("ErrorLog") ) {
+				|| qName.getLocalName().contains("ErrorLog")
+				|| qName.equals(ContentModel.PROP_IS_INDEXED) || qName.equals(ContentModel.PROP_IS_CONTENT_INDEXED)) {
 
 			isCompareable = false;
 		}

@@ -1,6 +1,6 @@
 <import resource="classpath:/alfresco/templates/org/alfresco/import/alfresco-util.js">
 /*******************************************************************************
- *  Copyright (C) 2010-2020 beCPG. 
+ *  Copyright (C) 2010-2021 beCPG. 
  *   
  *  This file is part of beCPG 
  *   
@@ -52,9 +52,9 @@ function getArgument(argName, defValue) {
  *            form
  * @return Object representing the configuration or null
  */
-function getFormConfig(itemId, formId, mode, prefixedSiteId) {
+function getFormConfig(itemId, formId, mode, prefixedSiteId, prefixedEntityType) {
 	var formConfig = null;
-
+	
 	// query for configuration for item
 	var nodeConfig = config.scoped[itemId];
 
@@ -65,9 +65,15 @@ function getFormConfig(itemId, formId, mode, prefixedSiteId) {
 		if (formsConfig !== null) {
 			if (formId !== null && formId.length > 0) {
 				// look up the specific form
-				if(formsConfig.getForm(formId + prefixedSiteId) !== null){
+				if (prefixedEntityType!=null && prefixedEntityType.length > 0 && prefixedSiteId!=null && prefixedSiteId.length > 0 
+				    &&  formsConfig.getForm(formId + prefixedEntityType + prefixedSiteId) !== null) {
+					formId = formId + prefixedEntityType + prefixedSiteId;
+			    } else if (prefixedSiteId!=null && prefixedSiteId.length > 0 && formsConfig.getForm(formId + prefixedSiteId) !== null) {
 					formId += prefixedSiteId;
+				} else if(prefixedEntityType!=null && prefixedEntityType.length > 0 && formsConfig.getForm(formId + prefixedEntityType ) !== null) {
+					formId += prefixedEntityType;
 				}
+				
 				formConfig = formsConfig.getForm(formId);
 			}
 
@@ -75,7 +81,7 @@ function getFormConfig(itemId, formId, mode, prefixedSiteId) {
 				// look up the specific form
 				formConfig = formsConfig.getForm("create");
 			}
-			
+
 			// drop back to default form if formId config missing
 			if (formConfig === null && formId != "taskList") {
 				// look up the default form
@@ -106,21 +112,21 @@ function getVisibleFields(mode, formConfig) {
 	if (formConfig !== null) {
 		// get visible fields for the current mode
 		switch (mode) {
-		case "view":
-			visibleFields = formConfig.visibleViewFieldNames;
-			break;
-		case "edit":
-			visibleFields = formConfig.visibleEditFieldNames;
-			break;
-		case "create":
-			visibleFields = formConfig.visibleCreateFieldNames;
-			break;
-		default:
-			visibleFields = formConfig.visibleViewFieldNames;
-			break;
+			case "view":
+				visibleFields = formConfig.visibleViewFieldNames;
+				break;
+			case "edit":
+				visibleFields = formConfig.visibleEditFieldNames;
+				break;
+			case "create":
+				visibleFields = formConfig.visibleCreateFieldNames;
+				break;
+			default:
+				visibleFields = formConfig.visibleViewFieldNames;
+				break;
 		}
 	}
-	
+
 	if (logger.isLoggingEnabled()) {
 		var listOfVisibleFields = visibleFields;
 		if (visibleFields !== null) {
@@ -162,16 +168,22 @@ function createPostBody(itemKind, itemId, visibleFields, formConfig, mode) {
 		for (var f = 0; f < visibleFields.length; f++) {
 			fieldId = visibleFields[f];
 			if (fieldId.indexOf("dataList_") < 0 && fieldId.indexOf("entity_") < 0) {
-				
-				//delete field if it's unchecked
-				if(isAllowedOrChecked(fieldId, formConfig, "fields") || mode == "datagrid-prefs"){
-					postBodyFields.push(fieldId);	
-				}
-				//add not forced fields if they're checked 
-				if(isAllowedOrChecked(fieldId, formConfig, "forcedFields") || mode == "datagrid-prefs"){
+
+				postBodyFields.push(fieldId);
+				if (formConfig.isFieldForced(fieldId) || mode == "datagrid-prefs") {
 					postBodyForcedFields.push(fieldId);
+				} else  {
+					var preferences = AlfrescoUtil.getPreferences("fr.becpg.formulation.dashlet.custom.datagrid-prefs" + "." + itemId.replace(":", "_") + "." + fieldId.replace(":", "_"));
+					
+					if(existInPref(preferences) && isChecked(preferences)){
+						if (logger.isLoggingEnabled()) {
+							logger.log("CHECKED: fr.becpg.formulation.dashlet.custom.datagrid-prefs" + "." + itemId.replace(":", "_") + "." + fieldId.replace(":", "_"));
+						}
+						postBodyForcedFields.push(fieldId);
+					}
+					
 				}
-				
+
 			}
 		}
 
@@ -179,10 +191,6 @@ function createPostBody(itemKind, itemId, visibleFields, formConfig, mode) {
 		if (postBodyForcedFields.length > 0) {
 			postBody.force = postBodyForcedFields;
 		}
-	}
-
-	if (logger.isLoggingEnabled()) {
-		logger.log("postBody = " + jsonUtils.toJSONString(postBody));
 	}
 
 	return postBody;
@@ -194,35 +202,41 @@ function createPostBody(itemKind, itemId, visibleFields, formConfig, mode) {
  * @method main
  */
 function main() {
-	var itemType = getArgument("itemType"), list = getArgument("list"), formId = getArgument("formId"),mode = getArgument("mode"), clearCache = getArgument("clearCache"), siteId = getArgument("siteId");// beCPG
-	
+	var itemType = getArgument("itemType"), list = getArgument("list"), formId = getArgument("formId")
+	, mode = getArgument("mode"), clearCache = getArgument("clearCache"), siteId = getArgument("siteId")
+	, entityType = getArgument("entityType");
+
 	cache.maxAge = 3600; // in seconds
-	
-	if(clearCache){
+
+	if (clearCache) {
 		cache.maxAge = 0;
 	}
-	
+
 	var prefixedSiteId = siteId ? "-" + siteId : "";
 	
-	prefs = "fr.becpg.formulation.dashlet.custom.datagrid-prefs"+"."+itemType.replace(":","_");
+	var prefixedEntityType = "";
 	
+	if(entityType && entityType.includes(":")){
+		prefixedEntityType = "-"+entityType.split(":")[1];
+	}
+
 	// pass form ui model to FTL
-	model.columns = getColumns(itemType, list, formId, mode, prefixedSiteId);
-	
+	model.columns = getColumns(itemType, list, formId, mode, prefixedSiteId, prefixedEntityType);
+
 }
 
-function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId) {
-	
+function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEntityType ) {
+
 	var columns = [], defaultColumns = [], ret = [];
 
 	if (itemType != null && itemType.length > 0) {
 		// get the config for the form
 		// beCPG : WUsed
-		
+
 		var formId = mode == "bulk-edit" ? "bulk-edit" : "datagrid";
-		
+
 		if (formIdArgs == null || formIdArgs.length == 0) {
-			if (list!=null && list.indexOf("WUsed") == 0) {
+			if (list != null && list.indexOf("WUsed") == 0) {
 				formId = "datagridWUsed";
 			} else if (list == "sub-datagrid") {
 				formId = "sub-datagrid";
@@ -230,32 +244,33 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId) {
 		} else {
 			formId = formIdArgs;
 		}
-		
-		var formConfig = getFormConfig(itemType, formId, mode, prefixedSiteId);
-		
-		if(formConfig!=null){
-				
+
+		var formConfig = getFormConfig(itemType, formId, mode, prefixedSiteId, prefixedEntityType);
+
+		if (formConfig != null) {
+
 			// get the configured visible fields
 			var visibleFields = getVisibleFields(mode == "bulk-edit" ? "edit" : "view", formConfig);
-			
+
 			// build the JSON object to send to the server
 			var postBody = createPostBody("type", itemType, visibleFields, formConfig, mode);
-	
+
+
 			// make remote call to service
 			var connector = remote.connect("alfresco");
 			var json = connector.post("/api/formdefinitions", jsonUtils.toJSONString(postBody), "application/json");
-	
+
 			if (logger.isLoggingEnabled()) {
 				logger.log("json = " + json);
 			}
-	
+
 			if (json.status == 401) {
 				status.setCode(json.status, "Not authenticated");
 				return;
 			}
-	
+
 			var formModel = eval('(' + json + ')');
-	
+
 			// if we got a successful response attempt to render the form
 			if (json.status == 200) {
 				columns = formModel.data.definition.fields;
@@ -270,89 +285,106 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId) {
 			if(mode == "datagrid-prefs"){			
 				postBody.force = [];
 				var jsonDefaultFields = connector.post("/api/formdefinitions", jsonUtils.toJSONString(postBody), "application/json");
-				formModel = eval('(' + jsonDefaultFields + ')');
-				defaultColumns = formModel.data.definition.fields;
+				formModel = eval('(' + jsonDefaultFields + ')');			
+			    defaultColumns = formModel.data.definition.fields;
 			}
-	
-			for ( var i in visibleFields) {
-	
-				var fieldId = visibleFields[i];
-	
+
+
+			for (var i in visibleFields) {
+
+				var fieldId = visibleFields[i], name, column,
+					preferences = AlfrescoUtil.getPreferences("fr.becpg.formulation.dashlet.custom.datagrid-prefs" + "." + itemType.replace(":", "_") + "." + fieldId.replace(":", "_"));
+
 				if (fieldId.indexOf("dataList_") == 0) {
-	
-					var name = fieldId.replace("dataList_", ""), column = {
-						type : "dataList",
-						name : name,
-						"dataType" : "nested"
+
+					name = fieldId.replace("dataList_", "");
+					column = {
+						type: "dataList",
+						name: name,
+						"dataType": "nested"
 					};
-					
+
 					if (formConfig.fields[fieldId].label != null || formConfig.fields[fieldId].labelId != null) {
 						column.label = formConfig.fields[fieldId].label != null ? formConfig.fields[fieldId].label
-								: formConfig.fields[fieldId].labelId;
+							: formConfig.fields[fieldId].labelId;
 					}
-					
+
 					if (formConfig.fields[fieldId].getHelpText() != null) {
 						column.help = formConfig.fields[fieldId].getHelpText();
 					}
-					
-					
+
+
 					column.columns = getColumns(name + "", "sub-datagrid");
-	
+
 					ret.push(column);
-	
+
 				} else if (fieldId.indexOf("entity_") == 0) {
 					var splitted = fieldId.replace("entity_", "").split("_");
-					var name = splitted[0], column = {
-						type : "entity",
-						name : name,
-						"dataType" : "nested"
+					name = splitted[0];
+					column = {
+						type: "entity",
+						name: name,
+						"dataType": "nested"
 					};
-					
+
 					if (formConfig.fields[fieldId].label != null || formConfig.fields[fieldId].labelId != null) {
 						column.label = formConfig.fields[fieldId].label != null ? formConfig.fields[fieldId].label
-								: formConfig.fields[fieldId].labelId;
+							: formConfig.fields[fieldId].labelId;
 					}
-					
+
 					if (formConfig.fields[fieldId].getHelpText() != null) {
 						column.help = formConfig.fields[fieldId].getHelpText();
 					}
-	
-					
 					
 					if (formIdArgs != null) {
 						column.columns = getColumns(splitted[1] + "", "sub-datagrid", "sub-datagrid-" + formIdArgs);
 					} else {
 						column.columns = getColumns(splitted[1] + "", "sub-datagrid");
 					}
-	
+
 					ret.push(column);
-	
+
 				} else {
-	
-					for ( var j in columns) {
+
+					for (var j in columns) {
 						if (columns[j].name == fieldId) {
 							if (formConfig.fields[fieldId].label != null || formConfig.fields[fieldId].labelId != null) {
 								columns[j].label = formConfig.fields[fieldId].label != null ? formConfig.fields[fieldId].label
-										: formConfig.fields[fieldId].labelId;
+									: formConfig.fields[fieldId].labelId;
 							}
-							
+
 							if (formConfig.fields[fieldId].getHelpText() != null) {
 								columns[j].help = formConfig.fields[fieldId].getHelpText();
-							} 
-	
-							columns[j].readOnly = formConfig.fields[fieldId].isReadOnly();
-							
-							if(mode == "datagrid-prefs"){
-								columns[j].checked = isAllowedOrChecked(fieldId, formConfig, "popup", defaultColumns);
 							}
-							
+
+							columns[j].readOnly = formConfig.fields[fieldId].isReadOnly();
+
+							if (mode == "datagrid-prefs") {
+
+								if(existInPref(preferences)){
+									columns[j].checked = isChecked(preferences);
+								} else {
+									if(isDefault(fieldId, defaultColumns) || formConfig.isFieldForced(fieldId)) {
+										columns[j].checked = true;
+									} else {
+										columns[j].checked = false;
+									}
+									
+								}
+								
+							} else {
+								if (existInPref(preferences) && !isChecked(preferences)) {
+									columns[j].label = "datasource";
+								}
+							}
+
 							ret.push(columns[j]);
 						}
 					}
 				}
-	
+
 			}
-	
+
 		}
 	}
 
@@ -361,58 +393,32 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId) {
 
 
 
-function isAllowedOrChecked(fieldId, formConfig, mode, defaultColumns){
-	
-	var key = fieldId.replace(":","_");
-	var prfs = prefs+"."+key;
-	var preferences = AlfrescoUtil.getPreferences(prfs);
-	
-	// get checked or not 
-	if(mode == "popup"){
-		if( (isDefault(fieldId, defaultColumns) && !existInPref(preferences))
-				||(!existInPref(preferences) && formConfig.isFieldForced(fieldId) ) ){			
-			return true;
-		}
-		else {
-			return isChecked(preferences);
-		}
+function isChecked(preferences) {
+	if (existInPref(preferences)) {
+		return preferences.checked;
 	}
-	// get allowed or not
-	if ( ((!existInPref(preferences) || isChecked(preferences)) && mode == "fields") 
-		|| ((isChecked(preferences) || (formConfig.isFieldForced(fieldId) && !existInPref(preferences))) && mode == "forcedFields")){
-		
+
+	return false;
+}
+
+function existInPref(preferences) {
+	if (typeof (preferences) !== "undefined" && preferences != null && typeof (preferences.checked) === "boolean") {
 		return true;
 	}
-	
+
 	return false;
 }
 
-function isChecked(preferences){
-	if(existInPref(preferences)){
-		return  preferences.checked;
-	}
-	
-	return false;
-}
-
-function existInPref(preferences){	
-	if(typeof(preferences) !== "undefined" && preferences!=null && typeof(preferences.checked) === "boolean" ){
-		return true;
-	}
-	
-	return false;
-}
-
-function isDefault(fieldId, defaultColums){
-	for ( var i in defaultColums) {
-		if (defaultColums[i].name == fieldId){			
+function isDefault(fieldId, defaultColums) {
+	for (var i in defaultColums) {
+		if (defaultColums[i].name == fieldId) {
 			return true;
 		}
 	}
-	
+
 	return false;
 }
 
-	
+
 
 main();

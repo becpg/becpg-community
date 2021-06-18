@@ -1,5 +1,6 @@
 package fr.becpg.repo.product.data.packaging;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
@@ -8,8 +9,10 @@ import java.math.BigDecimal;
  * @author quere
  * @version $Id: $Id
  */
-public class VariantPackagingData {
+public class VariantPackagingData implements Serializable {
 
+	private static final long serialVersionUID = -3460131741476715569L;
+	
 	private BigDecimal tarePrimary = BigDecimal.valueOf(0d);
 	private BigDecimal tareSecondary = BigDecimal.valueOf(0d);
 	private BigDecimal tareTertiary = BigDecimal.valueOf(0d);
@@ -39,6 +42,7 @@ public class VariantPackagingData {
 	private boolean isManualPrimary = true;
 	private boolean isManualTertiary = true;
 	private boolean isManualSecondary = true;
+	private boolean isManualPalletInformations = true;
 
 	/**
 	 * <p>Getter for the field <code>tarePrimary</code>.</p>
@@ -446,6 +450,15 @@ public class VariantPackagingData {
 	 */
 	public void setManualTertiary(boolean isManualTertiary) {
 		this.isManualTertiary = isManualTertiary;
+	}
+
+	
+	public boolean isManualPalletInformations() {
+		return isManualPalletInformations;
+	}
+
+	public void setManualPalletInformations(boolean isManualPalletInformations) {
+		this.isManualPalletInformations = isManualPalletInformations;
 	}
 
 	/**

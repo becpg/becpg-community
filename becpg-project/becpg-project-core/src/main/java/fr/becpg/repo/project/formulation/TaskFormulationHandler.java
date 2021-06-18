@@ -1,6 +1,7 @@
 package fr.becpg.repo.project.formulation;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -12,8 +13,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import com.ibm.icu.util.Calendar;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DeliverableUrl;
@@ -184,8 +183,6 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 
 	private void visitParents(ProjectData projectData, Set<TaskWrapper> tasks, boolean calculateState) {
 
-		Date now = Calendar.getInstance().getTime();
-
 		// tasks whose critical cost has been calculated
 		List<TaskWrapper> completed = new LinkedList<>();
 		// tasks whose critical cost needs to be calculated
@@ -201,7 +198,7 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 				if (completed.containsAll(task.getChilds())) {
 					if (task.getTask() != null) {
 
-						if (task.isGroup()) {
+						if (task.isParent()) {
 
 							Double work = 0d;
 							boolean hasTaskInProgress = false;
@@ -211,6 +208,10 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 
 							task.getTask().setStart(null);
 							task.getTask().setEnd(null);
+							task.getTask().setDue(null);
+							task.getTask().setTargetStart(null);
+							task.getTask().setTargetEnd(null);
+							task.getTask().setManualDate(null);
 
 							for (TaskWrapper child : task.getChilds()) {
 
@@ -222,6 +223,21 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 								if ((child.getTask().getEnd() != null)
 										&& ((task.getTask().getEnd() == null) || task.getTask().getEnd().before(child.getTask().getEnd()))) {
 									ProjectHelper.setTaskEndDate(task.getTask(), child.getTask().getEnd());
+								}
+								
+								if ((child.getTask().getDue() != null)
+										&& ((task.getTask().getDue() == null) || task.getTask().getDue().before(child.getTask().getDue()))) {
+									task.getTask().setDue(child.getTask().getDue());
+								}
+
+								if ((child.getTask().getTargetStart() != null) && ((task.getTask().getTargetStart() == null)
+										|| task.getTask().getTargetStart().after(child.getTask().getTargetStart()))) {
+									task.getTask().setTargetStart(child.getTask().getTargetStart());
+								}
+
+								if ((child.getTask().getTargetEnd() != null) && ((task.getTask().getTargetEnd() == null)
+										|| task.getTask().getTargetEnd().before(child.getTask().getTargetEnd()))) {
+									task.getTask().setTargetEnd(child.getTask().getTargetEnd());
 								}
 
 								if (child.getTask().getWork() != null) {
@@ -243,15 +259,22 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 
 							}
 
-							Integer duration = ProjectHelper.calculateTaskDuration(task.getTask().getStart(), task.getTask().getEnd());
+							Integer duration = ProjectHelper.calculateTaskDuration(task.getTask().getTargetStart(), task.getTask().getTargetEnd());
+							Integer realDuration = ProjectHelper.calculateTaskDuration(task.getTask().getStart(), task.getTask().getEnd());
 
+
+							if (duration == null) {
+								logger.warn("Parent task duration is null:" + task.getTask().getTaskName());
+							}
+							
 							task.getTask().setDuration(duration);
-							task.getTask().setRealDuration(task.getRealDuration());
+							task.getTask().setRealDuration(realDuration);
 							task.getTask().setWork(work);
 
-							if (calculateState && (task.getTask().getStart() != null) && task.getTask().getStart().before(now)) {
+							if (calculateState) {
 
 								if (hasTaskInProgress) {
+
 									ProjectHelper.setTaskState(task.getTask(), TaskState.InProgress, projectActivityService);
 								} else if (allTasksPlanned && !allTasksCancelled) {
 									ProjectHelper.setTaskState(task.getTask(), TaskState.Planned, projectActivityService);
@@ -260,7 +283,7 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 								} else {
 									ProjectHelper.setTaskState(task.getTask(), TaskState.Completed, projectActivityService);
 								}
-								task.getTask().setCompletionPercent(completionPerc / tasks.size());
+								task.getTask().setCompletionPercent(completionPerc / task.getChilds().size());
 
 							}
 
@@ -292,18 +315,30 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 
 		if (PlanningMode.Planning.equals(projectData.getPlanningMode())) {
 			Date startDate = null;
+			Date targetStartDate = null;
 
 			if (!isTpl) {
 				startDate = ProjectHelper.getFirstStartDate(tasks);
-			}
-			if (startDate == null) {
-				if (projectData.getStartDate() == null) {
-					startDate = ProjectHelper.calculateNextStartDate(projectData.getCreated());
-				} else {
-					startDate = projectData.getStartDate();
+				if (startDate == null) {
+					if (projectData.getStartDate() == null) {
+						startDate = ProjectHelper.calculateNextStartDate(projectData.getCreated());
+					} else {
+						startDate = projectData.getStartDate();
+					}
 				}
+				if (projectData.getDueDate() == null) {
+					targetStartDate = startDate;
+				} else {
+					targetStartDate = ProjectHelper.calculateStartDate(projectData.getDueDate(), TaskWrapper.calculateMaxDuration(tasks));
+				}
+			} else {
+				startDate = ProjectHelper.calculateNextStartDate(new Date());
+				targetStartDate = startDate;
 			}
+			
+
 			projectData.setStartDate(startDate);
+			projectData.setTargetStartDate(targetStartDate);
 			projectData.setCompletionDate(startDate);
 
 		} else {
@@ -311,6 +346,8 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 			Date endDate = null;
 			if (!isTpl) {
 				endDate = ProjectHelper.getLastEndDate(tasks);
+			} else {
+				endDate = ProjectHelper.calculatePrevEndDate(new Date());
 			}
 
 			if (endDate == null) {
@@ -323,6 +360,7 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 			}
 			if (!isTpl) {
 				projectData.setStartDate(ProjectHelper.calculateStartDate(endDate, TaskWrapper.calculateMaxDuration(tasks)));
+				projectData.setTargetStartDate(projectData.getStartDate());
 			}
 
 		}
@@ -374,10 +412,8 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 							currTasks.add(task.getTask().getNodeRef());
 						}
 
-						if (!task.isGroup()) {
-							if (task.getTask().getWork() != null) {
-								work += task.getTask().getWork();
-							}
+						if (!task.isParent() && (task.getTask().getWork() != null)) {
+							work += task.getTask().getWork();
 						}
 
 					}
@@ -396,8 +432,13 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 				projectData.setProjectState(ProjectState.Completed);
 			} else {
 				projectData.setCompletionPercent(totalWork != 0 ? (100 * workDone) / totalWork : 0);
+				// ici realduration est fausse
+
 				projectData.setCompletionDate(ProjectHelper.calculateEndDate(projectData.getStartDate(), projectData.getRealDuration()));
 			}
+		}
+		if (logger.isDebugEnabled()) {
+			logger.debug("Project completion date: " + projectData.getCompletionDate());
 		}
 
 		projectData.setCurrTasks(currTasks);
@@ -424,7 +465,7 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 				TaskWrapper task = it.next();
 				if (completed.containsAll(task.getAncestors())) {
 
-					if (task.getTask() != null) {
+					if ((task.getTask() != null) && !task.isParent()) {
 
 						calculatePlanning(projectData, task);
 
@@ -433,16 +474,21 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 						}
 						if ((task.getMaxRealDuration() != null) && (projectRealDuration < task.getMaxRealDuration())) {
 							projectRealDuration = task.getMaxRealDuration();
+							if(logger.isDebugEnabled()) {
+								logger.debug(task.getTask().getTaskName() + " - maxRealDuration: " + task.getMaxRealDuration());
+								for (TaskWrapper tmp : task.getAncestors()) {
+									logger.debug("###-" + tmp.getTask().getTaskName());
+								}
+							}
 						}
 
 						if (calculateState) {
 							reformulate = calculateState(projectData, task) || reformulate;
 						}
-
-						// set task as calculated an remove
-						completed.add(task);
-
 					}
+					// set task as calculated and remove
+					completed.add(task);
+
 					it.remove();
 					// note we are making progress
 					progress = true;
@@ -454,6 +500,12 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 				logger.warn("Cyclic dependency, algorithm stopped for " + projectData.getName() + " (" + projectData.getNodeRef() + ")");
 				return false;
 			}
+		}
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("Project theoric duration: " + projectDuration);
+			logger.debug("Project real duration: " + projectRealDuration);
+			logger.debug("Project overdue: " + (projectRealDuration - projectDuration));
 		}
 
 		projectData.setDuration(projectDuration);
@@ -503,8 +555,6 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 			boolean shouldRefused = true;
 			logger.debug("Enter refused task");
 			// Check if all brothers are closed
-			// TODO refactor brethen tasks
-
 			for (TaskListDataItem brotherTask : ProjectHelper.getBrethrenTask(projectData, task.getTask())) {
 				if (!task.getTask().getRefusedTask().equals(brotherTask) && TaskState.InProgress.equals(brotherTask.getTaskState())) {
 					shouldRefused = false;
@@ -525,7 +575,7 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 
 		}
 
-		// Order is important otherwise visiDeliverables is not called
+		// Order is important otherwise visitDeliverables is not called
 		reformulate = visitDeliverables(projectData, task.getTask(), deliverables) || reformulate;
 
 		if (TaskState.InProgress.equals(task.getTask().getTaskState())) {
@@ -539,8 +589,11 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 
 		}
 
-		logger.debug("Visit task : " + task.getTask().getTaskName() + " - state before: " + currentTaskState + ", after: "
-				+ task.getTask().getTaskState() + ", reformulate: " + reformulate);
+		if (logger.isDebugEnabled()) {
+			logger.debug("Visit task : " + task.getTask().getTaskName() + " - state before: " + currentTaskState + ", after: "
+					+ task.getTask().getTaskState() + ", reformulate: " + reformulate + " isRefused: " + task.getTask().getIsRefused());
+
+		}
 
 		return reformulate;
 	}
@@ -548,14 +601,10 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 	private boolean previousDone(TaskWrapper task) {
 
 		for (TaskWrapper t : task.getAncestors()) {
-			if (!(TaskState.Completed.equals(t.getTask().getTaskState()) || TaskState.Cancelled.equals(t.getTask().getTaskState()))) {
+			if ((!(TaskState.Completed.equals(t.getTask().getTaskState()) || TaskState.Cancelled.equals(t.getTask().getTaskState())))
+					|| (TaskState.Cancelled.equals(t.getTask().getTaskState()) && !previousDone(t))) {
 				return false;
-			} else if (TaskState.Cancelled.equals(t.getTask().getTaskState())) {
-				if (!previousDone(t)) {
-					return false;
-				}
 			}
-
 		}
 
 		return true;
@@ -568,6 +617,7 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 
 			for (NodeRef resource : projectService.extractResources(projectData.getNodeRef(), taskListDataItem.getResources())) {
 				NodeRef reassignResource = projectService.getReassignedResource(resource);
+				
 				NodeRef toAdd = resource;
 				// check delegation
 				if (reassignResource != null) {
@@ -600,6 +650,8 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 			}
 
 			taskListDataItem.setResources(resources);
+			taskListDataItem.setObservers(projectService.extractResources(projectData.getNodeRef(), taskListDataItem.getObservers()));
+
 
 		}
 
@@ -607,17 +659,16 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 		// workflow properties
 		projectWorkflowService.checkWorkflowInstance(projectData, taskListDataItem, deliverables);
 
-		if ((taskListDataItem.getResources() != null) && !taskListDataItem.getResources().isEmpty()) {
+		// workflow (task may have been set as InProgress
+		// with
+		// UI)
+		if (((taskListDataItem.getResources() != null) && !taskListDataItem.getResources().isEmpty())
+				&& (((taskListDataItem.getWorkflowInstance() == null) || taskListDataItem.getWorkflowInstance().isEmpty())
+						&& (taskListDataItem.getWorkflowName() != null) && !taskListDataItem.getWorkflowName().isEmpty())) {
 
-			// workflow (task may have been set as InProgress
-			// with
-			// UI)
-			if (((taskListDataItem.getWorkflowInstance() == null) || taskListDataItem.getWorkflowInstance().isEmpty())
-					&& (taskListDataItem.getWorkflowName() != null) && !taskListDataItem.getWorkflowName().isEmpty()) {
+			// start workflow
+			projectWorkflowService.startWorkflow(projectData, taskListDataItem, deliverables);
 
-				// start workflow
-				projectWorkflowService.startWorkflow(projectData, taskListDataItem, deliverables);
-			}
 		}
 
 	}
@@ -630,15 +681,24 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 		int maxRealDuration = 0;
 
 		Date startDate = null;
+		Date targetStart = null;
 
 		if (task.isRoot()) {
+
 			startDate = projectData.getStartDate();
+			targetStart = projectData.getTargetStartDate();
+
 		} else {
 
+			TaskWrapper criticalTask = null;
 			for (TaskWrapper t : task.getAncestors()) {
 
 				if ((t.getMaxDuration() != null) && (t.getMaxDuration() > maxDuration)) {
 					maxDuration = t.getMaxDuration();
+				}
+
+				if ((t.getMaxDuration() != null) && (t.getMaxDuration() >= maxDuration)) {
+					criticalTask = t;
 				}
 
 				if ((t.getMaxRealDuration() != null) && (t.getMaxRealDuration() > maxRealDuration)) {
@@ -646,48 +706,84 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 				}
 
 				Date endDate = t.getTask().getEnd() != null ? t.getTask().getEnd() : t.getTask().getStart();
+				Date targetEnd = t.getTask().getTargetEnd() != null ? t.getTask().getTargetEnd() : t.getTask().getTargetStart();
 
 				if (TaskState.Cancelled.equals(t.getTask().getTaskState())) {
 					endDate = ProjectHelper.calculatePrevEndDate(t.getTask().getStart());
+					targetEnd = ProjectHelper.calculatePrevEndDate(t.getTask().getTargetStart());
 				}
 
-				if ((startDate == null) || startDate.before(endDate)) {
+				if ((startDate == null) || ((endDate != null) && startDate.before(endDate))) {
 					startDate = endDate;
 				}
+
+				if ((targetStart == null) || ((targetEnd != null) && targetStart.before(targetEnd))) {
+					targetStart = targetEnd;
+				}
 			}
+
+			if (criticalTask != null) {
+				criticalTask.getTask().setIsCritical(true);
+			}
+
 			if (startDate != null) {
 				startDate = ProjectHelper.calculateNextStartDate(startDate);
 			}
 
+			if (targetStart != null) {
+				targetStart = ProjectHelper.calculateNextStartDate(targetStart);
+			}
+
 		}
+		if ((task.getTask().getSubProject() == null)) {
 
-		if (startDate != null) {
-
-			if (task.getTask().getSubProject() == null) {
-
+			if ((startDate != null)) {
 				ProjectHelper.setTaskStartDate(task.getTask(), startDate);
 
 				if (((task.getTask().getDuration() != null) || (Boolean.TRUE.equals(task.getTask().getIsMilestone())))) {
-					Date endDate = ProjectHelper.calculateEndDate(task.getTask().getStart(), task.getTask().getDuration());
+					Date dueDate = ProjectHelper.calculateEndDate(task.getTask().getStart(), task.getTask().getDuration());
+					
+					Date endDate = dueDate;
+					Date now = Calendar.getInstance().getTime();
+
+					if (TaskState.OnHold.equals(task.getTask().getTaskState()) || TaskState.InProgress.equals(task.getTask().getTaskState()) && (endDate != null) && endDate.before(now)) {
+						endDate = now;
+					}
+
+					task.getTask().setDue(dueDate!=null ? ProjectHelper.removeTime(dueDate): null);
 					ProjectHelper.setTaskEndDate(task.getTask(), endDate);
 				}
+
 			}
 
+			if (targetStart != null) {
+				task.getTask().setTargetStart(ProjectHelper.removeTime(targetStart));
+
+				if (((task.getTask().getDuration() != null) || (Boolean.TRUE.equals(task.getTask().getIsMilestone())))) {
+					Date targetEnd = ProjectHelper.calculateEndDate(task.getTask().getTargetStart(), task.getTask().getDuration());
+					task.getTask().setTargetEnd(ProjectHelper.removeTime(targetEnd));
+				}
+
+			}
 		}
 		if (!TaskState.Cancelled.equals(task.getTask().getTaskState())) {
 			if (task.getDuration() != null) {
 				task.setMaxDuration(maxDuration + task.getDuration());
 			}
-			
+
 		} else {
 			task.setMaxDuration(maxDuration);
 		}
-		
-		Integer realDuration = task.getRealDuration();
+
+		Integer realDuration = task.computeRealDuration();
 		task.getTask().setRealDuration(realDuration);
-		
-		if (realDuration != null) {
-			task.setMaxRealDuration(maxRealDuration + realDuration);
+
+		if (TaskState.Completed.equals(task.getTask().getTaskState())) {
+			task.setMaxRealDuration(ProjectHelper.calculateTaskDuration(projectData.getStartDate(), task.getTask().getEnd()));
+		} else {
+			if (realDuration != null) {
+				task.setMaxRealDuration(maxRealDuration + realDuration);
+			}
 		}
 
 	}
@@ -729,13 +825,12 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 					}
 				}
 
-				if (TaskState.Completed.equals(taskListDataItem.getTaskState())) {
-					if (DeliverableState.InProgress.equals(deliverable.getState())) {
-						if (DeliverableScriptOrder.Post.equals(deliverable.getScriptOrder())) {
-							projectService.runScript(projectData, taskListDataItem, deliverable.getContent());
-						}
-						deliverable.setState(DeliverableState.Completed);
+				if (TaskState.Completed.equals(taskListDataItem.getTaskState()) && DeliverableState.InProgress.equals(deliverable.getState())) {
+					if (DeliverableScriptOrder.Post.equals(deliverable.getScriptOrder())) {
+						projectService.runScript(projectData, taskListDataItem, deliverable.getContent());
 					}
+					deliverable.setState(DeliverableState.Completed);
+
 				}
 
 			}
@@ -749,6 +844,8 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 				return true;
 			}
 
+		} else if (TaskState.Planned.equals(taskListDataItem.getTaskState())) {
+			taskListDataItem.setCompletionPercent(0);
 		}
 
 		return false;

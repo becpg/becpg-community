@@ -14,13 +14,13 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
-import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
+import fr.becpg.repo.repository.model.VariantAwareDataItem;
 
 /**
  * <p>PhysicoChemCalculatingFormulationHandler class.</p>
@@ -41,13 +41,13 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 
 	/** {@inheritDoc} */
 	@Override
-	public boolean process(ProductData formulatedProduct) throws FormulateException {
+	public boolean process(ProductData formulatedProduct) {
 
 		if (accept(formulatedProduct)) {
 			logger.debug("Physico chemical calculating visitor");
 
 			if (formulatedProduct.getPhysicoChemList() == null) {
-				formulatedProduct.setPhysicoChemList(new LinkedList<PhysicoChemListDataItem>());
+				formulatedProduct.setPhysicoChemList(new LinkedList<>());
 			}
 
 			formulateSimpleList(formulatedProduct, formulatedProduct.getPhysicoChemList(),
@@ -64,6 +64,11 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 				n.setFormulatedValue(FormulationHelper.flatPercValue(n.getFormulatedValue(), unit));
 				n.setMaxi(FormulationHelper.flatPercValue(n.getMaxi(), unit));
 				n.setMini(FormulationHelper.flatPercValue(n.getMini(), unit));
+				if (n instanceof VariantAwareDataItem) {
+					for (int i=1; i<=VariantAwareDataItem.VARIANT_COLUMN_SIZE ; i++) {
+						(n).setValue(FormulationHelper.flatPercValue((n).getValue(VariantAwareDataItem.VARIANT_COLUMN_NAME+i), unit), VariantAwareDataItem.VARIANT_COLUMN_NAME+i);
+					}
+				}
 				n.setType((String) nodeService.getProperty(n.getPhysicoChem(), PLMModel.PROP_PHYSICO_CHEM_TYPE));
 
 			});

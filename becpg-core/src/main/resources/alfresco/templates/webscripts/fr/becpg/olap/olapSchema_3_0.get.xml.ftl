@@ -24,24 +24,40 @@
 				</SQL>
 			</View>
 			<Level name="Year" caption="${msg("jsolap.year.title")}" column="Year" type="Numeric"  levelType="TimeYears"  />
+			
 			<Level approxRowCount="12" name="Month" caption="${msg("jsolap.month.title")}" column="Month" type="Numeric" levelType="TimeMonths" >
-				<NameExpression>
-					<SQL dialect="generic" >
-					  <![CDATA[CASE WHEN Month='1' THEN '${msg("jsolap.month.january.title")[0..2]}'
-	                            WHEN Month='2' THEN '${msg("jsolap.month.february.title")[0..2]}'
-	                            WHEN Month='3' THEN '${msg("jsolap.month.march.title")[0..2]}'
-	                            WHEN Month='4' THEN '${msg("jsolap.month.april.title")[0..2]}'
-	                            WHEN Month='5' THEN '${msg("jsolap.month.may.title")[0..2]}'
-	                            WHEN Month='6' THEN '${msg("jsolap.month.june.title")[0..2]}'
-	                            WHEN Month='7' THEN '${msg("jsolap.month.july.title")[0..2]}'
-	                            WHEN Month='8' THEN '${msg("jsolap.month.august.title")[0..2]}'
-	                            WHEN Month='9' THEN '${msg("jsolap.month.septembre.title")[0..2]}'
-	                            WHEN Month='10' THEN '${msg("jsolap.month.october.title")[0..2]}'
-	                            WHEN Month='11' THEN '${msg("jsolap.month.november.title")[0..2]}'
-	                            WHEN Month='12' THEN '${msg("jsolap.month.december.title")[0..2]}'
-	                            ELSE 'Vide'
-	                           END]]></SQL>
-				</NameExpression>
+				<MemberFormatter>
+				<Script language="JavaScript">
+				switch (member.getName()) {
+				   case '1' :
+				      return  '${msg("jsolap.month.january.title")[0..2]}';
+				   case '2' :
+				    return  '${msg("jsolap.month.february.title")[0..2]}';
+				   case '3' :
+				    return   '${msg("jsolap.month.march.title")[0..2]}';
+				   case '4' :
+				    return   '${msg("jsolap.month.april.title")[0..2]}';
+				   case '5' :
+				    return   '${msg("jsolap.month.may.title")[0..2]}';
+				   case '6' :
+				    return   '${msg("jsolap.month.june.title")[0..2]}';
+				   case '7' :
+				    return   '${msg("jsolap.month.july.title")[0..2]}';
+				   case '8' :
+				    return   '${msg("jsolap.month.august.title")[0..2]}';
+				   case '9' :
+				    return   '${msg("jsolap.month.septembre.title")[0..2]}';
+				   case '10' :
+				    return   '${msg("jsolap.month.october.title")[0..2]}';
+				   case '11' :
+				    return   '${msg("jsolap.month.november.title")[0..2]}';
+				   case '12' :
+				    return   '${msg("jsolap.month.december.title")[0..2]}';
+				   default:
+				    return member.getName();
+				}
+				</Script>
+				</MemberFormatter>
 			</Level>
 			<#if .locale == "fr" >
 				<Level name="Week" caption="${msg("jsolap.week.title")}" column="nWeek" type="String"  levelType="TimeWeeks"  />
@@ -51,9 +67,9 @@
 				<Level name="Quarter" caption="${msg("jsolap.quarter.title")}" column="enNQuarter" type="String"  levelType="TimeQuarters"  />
 			</#if>
 			<#if .locale == "en_US" >
-				<Level name="Day" caption="${msg("jsolap.day.title")}" column="Day" nameColumn="NDayUsFormat" ordinalColumn="Day" type="Numeric"  levelType="TimeDays"  />
+				<Level name="Day" caption="${msg("jsolap.day.title")}" column="Day" nameColumn="NDayUsFormat" ordinalColumn="Day" uniqueMembers="false" type="Numeric"  levelType="TimeDays"  />
 			<#else>
-				<Level name="Day" caption="${msg("jsolap.day.title")}" column="Day" nameColumn="NDay" ordinalColumn="Day" type="Numeric"  levelType="TimeDays"  />
+				<Level name="Day" caption="${msg("jsolap.day.title")}" column="Day" nameColumn="NDay" ordinalColumn="Day" uniqueMembers="false" type="Numeric"  levelType="TimeDays"  />
 			</#if>
 		</Hierarchy>		
 	</Dimension>
@@ -134,7 +150,7 @@
 							doc->>"$.bcpg_erpCode" as erpCode,
 							doc->>"$.bcpg_legalName" as legalName,
 							doc->>"$.bcpg_productState" as productState,
-							doc->>"$.bcpg_productType" as productType,
+							doc->>"$.type" as productType,
 							doc->>"$.cm_versionLabel" as versionLabel
 						from
 							bcpg_product
@@ -146,119 +162,71 @@
 				</View>
 	
 				<Level approxRowCount="5" name="productState" caption="${msg("jsolap.productState.title")}" table="products_dim" column="productState"  type="String"   >
-				  <NameExpression>
-					  <SQL dialect="generic" >
-					  <![CDATA[CASE WHEN productState='Simulation' THEN '${msg("listconstraint.bcpg_systemState.Simulation")}'
-	                            WHEN productState='ToValidate' THEN '${msg("listconstraint.bcpg_systemState.ToValidate")}'
-	                            WHEN productState='Valid' THEN '${msg("listconstraint.bcpg_systemState.Valid")}'
-	                            WHEN productState='Refused' THEN '${msg("listconstraint.bcpg_systemState.Refused")}'
-	                            WHEN productState='Archived' THEN '${msg("listconstraint.bcpg_systemState.Archived")}'
-	                            ELSE 'Vide'
-	                           END]]></SQL>
-             		 </NameExpression>
+				  <MemberFormatter>
+						<Script language="JavaScript">
+							switch (member.getName()) {
+				   				case 'Simulation' :
+				      				return  '${msg("listconstraint.bcpg_systemState.Simulation")}';
+				   				case 'ToValidate' :
+				    				return  '${msg("listconstraint.bcpg_systemState.ToValidate")}';
+				   				case 'Valid' :
+				    				return   '${msg("listconstraint.bcpg_systemState.Valid")}';
+				   				case 'Refused' :
+				    				return   '${msg("listconstraint.bcpg_systemState.Refused")}';
+				   				case 'Archived' :
+				    				return   '${msg("listconstraint.bcpg_systemState.Archived")}'; 
+				    			case 'Stopped' :
+				    				return   '${msg("listconstraint.bcpg_systemState.Stopped")}';   
+							   default:
+								    return member.getName();
+								}
+						</Script>
+					</MemberFormatter>
 				</Level>
 				<Level approxRowCount="10" name="entity_type" caption="${msg("jsolap.productType.title")}" table="products_dim" column="productType" nameColumn="productType" type="String"   >
-					<NameExpression>
-					  <SQL dialect="generic" >
-					  <![CDATA[CASE WHEN productType='bcpg:rawMaterial' THEN "${msg('bcpg_bcpgmodel.type.bcpg_rawMaterial.title')}"
-	                            WHEN productType='bcpg:finishedProduct' THEN "${msg('bcpg_bcpgmodel.type.bcpg_finishedProduct.title')}"
-	                            WHEN productType='bcpg:semiFinishedProduct' THEN "${msg('bcpg_bcpgmodel.type.bcpg_semiFinishedProduct.title')}"
-	                            WHEN productType='bcpg:packagingMaterial' THEN "${msg('bcpg_bcpgmodel.type.bcpg_packagingMaterial.title')}"
-	                            WHEN productType='bcpg:packagingKit' THEN "${msg('bcpg_bcpgmodel.type.bcpg_packagingKit.title')}"
-	                            WHEN productType='bcpg:localSemiFinishedProduct' THEN "${msg('bcpg_bcpgmodel.type.bcpg_localSemiFinishedProduct.title')}"
-	                            WHEN productType='bcpg:resourceProduct' THEN "${msg('bcpg_bcpgmodel.type.bcpg_resourceProduct.title')}"
-	                            ELSE 'Vide'
-	                           END]]></SQL>
-             		 </NameExpression>
+					<MemberFormatter>
+						<Script language="JavaScript">
+							switch (member.getName()) {
+				   				case 'bcpg:rawMaterial' :
+				      				return  '${msg("bcpg_bcpgmodel.type.bcpg_rawMaterial.title")}';
+				   				case 'bcpg:finishedProduct' :
+				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_finishedProduct.title")}';
+				   				case 'bcpg:semiFinishedProduct' :
+				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_semiFinishedProduct.title")}';
+				    			case 'bcpg:packagingMaterial' :
+				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_packagingMaterial.title")}';
+				   				case 'bcpg:packagingKit' :
+				    				return  '${msg("jsolap.packagingKit.title")}';
+				   				case 'bcpg:localSemiFinishedProduct' :
+				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_localSemiFinishedProduct.title")}';
+				    			case 'bcpg:resourceProduct' :
+				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_resourceProduct.title")}';
+							   default:
+								    return member.getName();
+								}
+						</Script>
+					</MemberFormatter>
 				</Level>		
 				<Level name="productHierarchy1" caption="${msg("jsolap.productFamily.title")}" table="products_dim" column="productHierarchy1"  type="String"    />
 				<Level name="productHierarchy2" caption="${msg("jsolap.productSubFamily.title")}" table="products_dim" column="productHierarchy2"  type="String"    />
-				<Level name="name" caption="${msg("jsolap.productName.title")}" table="products_dim" column="name"  type="String"    />
-				<Level name="code" caption="${msg("jsolap.productCode.title")}" table="products_dim" column="code"  type="String"   />
+				<Level name="name" caption="${msg("jsolap.productName.title")}" table="products_dim" column="name"  type="String"  highCardinality="true"  />
+				<Level name="code" caption="${msg("jsolap.productCode.title")}" table="products_dim" column="code"  type="String" uniqueMembers="true" highCardinality="true"  />
 				<Level name="erpCode" caption="${msg("jsolap.productErpCode.title")}" table="products_dim" column="erpCode"  type="String"   />
 				<Level name="legalName" caption="${msg("jsolap.productLegalName.title")}" table="products_dim" column="legalName" type="String"    />
-				<Level name="versionLabel" caption="${msg("jsolap.productVersionLabel.title")}" table="products_dim" column="versionLabel" type="String" />
+				<Level name="versionLabel" caption="${msg("jsolap.productVersionLabel.title")}" table="products_dim" column="versionLabel" type="String" >
+				<MemberFormatter>
+					<Script language="JavaScript">
+							if (member.getName() == "#null") {
+					      		return  '1.0';
+							}else{
+								return member.getName();
+							}
+					</Script>
+				</MemberFormatter>
+				</Level>
 			</Hierarchy>
 			
 		</Dimension>
-		
-		
-		
-		<Dimension name="projectsDimension" caption="${msg("jsolap.project.title")}">
-			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.project.caption")}" primaryKey="nodeRef">
-				<View name="projects_dim" alias="projects_dim">
-					<SQL dialect="generic">
-						select
-							nodeRef,
-							doc->>"$.cm_name" as name,
-							doc->>"$.pjt_projectHierarchy1[0]" as	projectHierarchy1,
-							doc->>"$.pjt_projectHierarchy2[0]" as	projectHierarchy2	
-						from
-							pjt_project
-						<#if !isAdmin>	
-						 where 
-						    instanceId = ${instanceId}
-						</#if>
-					</SQL>
-				 </View>
-				<Level name="projectHierarchy1" caption="${msg("jsolap.projectFamily.title")}" table="projects_dim" column="projectHierarchy1" type="String"   >
-				</Level>
-				<Level name="projectHierarchy2" caption="${msg("jsolap.projectSubFamily.title")}" table="projects_dim" column="projectHierarchy2" type="String"   >
-				</Level>
-				<Level name="entity_noderef" caption="${msg("jsolap.project.title")}" table="projects_dim" column="noderef" nameColumn="name" type="String"   >
-				</Level>
-			</Hierarchy>
-		</Dimension>
-		
-		<Dimension  name="projectStateDimension" caption="${msg("jsolap.projectState.title")}" >
-			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.projectState.caption")}" primaryKey="nodeRef" >
-				<View name="project_state" alias="project_state">
-					<SQL dialect="generic">
-						select
-							nodeRef,
-							doc->>"$.pjt_projectState" as projectState
-						from
-							pjt_project
-						<#if !isAdmin>	
-						 where 
-						    instanceId = ${instanceId}
-						</#if>
-					</SQL>
-				 </View>				 
-				<Level approxRowCount="5" name="projectState" caption="${msg("jsolap.projectState.title")}" column="projectState" type="String">
-				  <NameExpression>
-					  <SQL dialect="generic" >
-					  <![CDATA[CASE WHEN projectState='Planned' THEN '${msg("listconstraint.pjt_projectStates.Planned")}'
-	                            WHEN projectState='InProgress' THEN '${msg("listconstraint.pjt_projectStates.InProgress")}'
-	                            WHEN projectState='OnHold' THEN '${msg("listconstraint.pjt_projectStates.OnHold")}'
-	                            WHEN projectState='Cancelled' THEN '${msg("listconstraint.pjt_projectStates.Cancelled")}'
-	                            WHEN projectState='Completed' THEN '${msg("listconstraint.pjt_projectStates.Completed")}'
-	                            ELSE 'Vide'
-	                           END]]></SQL>
-              </NameExpression>
-				</Level>
-			</Hierarchy>
-		</Dimension>
-		
-			<Dimension name="projectManagerDimension" caption="${msg("jsolap.projectManager.title")}">
-			<Hierarchy hasAll="true" caption="${msg("jsolap.projectManager.title")}" allMemberCaption="${msg("jsolap.projectManager.caption")}" primaryKey="nodeRef">
-				<View name="project_manager_dim" alias="project_manager_dim">
-					<SQL dialect="generic">
-						select
-							nodeRef,
-							doc->>"$.pjt_projectManager[0]" as projectManager
-						from
-							pjt_project
-						<#if !isAdmin>	
-						 where 
-						    instanceId = ${instanceId}
-						</#if>
-					</SQL>
-				 </View>
-				<Level name="projectManager" caption="${msg("jsolap.projectManager.title")}" column="projectManager"  type="String" />
-			</Hierarchy>
-		</Dimension>
-		
 	
 	<Cube name="software_usage" caption="${msg("jsolap.statistics.title")}" cache="false" enabled="true">
 		<#if isAdmin>
@@ -271,60 +239,8 @@
 			</Table>
 		</#if>
 		
-		<Dimension type="TimeDimension" name="frequency" caption="${msg("jsolap.date.title")}" foreignKey="olap_date">	
-			<Hierarchy name="date" hasAll="true" allMemberName="${msg("jsolap.allPeriods.title")}" allMemberCaption="${msg("jsolap.date.caption")}"  primaryKey="Date" caption="${msg("jsolap.date.title")}">
-				<View name="olapDate" alias="olapDate">
-					<SQL dialect="generic">
-						select
-							id,
-							Date,
-							Year,
-							NWeek,
-							concat ( 'W', Week ,'/', Year) enNWeek,
-							NQuarter,
-							concat ( 'Q', Quarter,'/', Year) enNQuarter,
-							Month,
-							Day,
-							NDay,
-							NDayUsFormat
-						from
-							becpg_dimdate
-					</SQL>
-				</View>
-				<Level name="Year" caption="${msg("jsolap.year.title")}" column="Year" type="Numeric"  levelType="TimeYears"  />
-				<Level approxRowCount="12" name="Month" caption="${msg("jsolap.month.title")}" column="Month" type="Numeric" levelType="TimeMonths" >
-					<NameExpression>
-						<SQL dialect="generic" >
-						  <![CDATA[CASE WHEN Month='1' THEN '${msg("jsolap.month.january.title")[0..2]}'
-		                            WHEN Month='2' THEN '${msg("jsolap.month.february.title")[0..2]}'
-		                            WHEN Month='3' THEN '${msg("jsolap.month.march.title")[0..2]}'
-		                            WHEN Month='4' THEN '${msg("jsolap.month.april.title")[0..2]}'
-		                            WHEN Month='5' THEN '${msg("jsolap.month.may.title")[0..2]}'
-		                            WHEN Month='6' THEN '${msg("jsolap.month.june.title")[0..2]}'
-		                            WHEN Month='7' THEN '${msg("jsolap.month.july.title")[0..2]}'
-		                            WHEN Month='8' THEN '${msg("jsolap.month.august.title")[0..2]}'
-		                            WHEN Month='9' THEN '${msg("jsolap.month.septembre.title")[0..2]}'
-		                            WHEN Month='10' THEN '${msg("jsolap.month.october.title")[0..2]}'
-		                            WHEN Month='11' THEN '${msg("jsolap.month.november.title")[0..2]}'
-		                            WHEN Month='12' THEN '${msg("jsolap.month.december.title")[0..2]}'
-		                            ELSE 'Vide'
-		                           END]]></SQL>
-					</NameExpression>
-				</Level>
-				<#if .locale == "fr" >
-					<Level name="Week" caption="${msg("jsolap.week.title")}" column="nWeek" type="String"  levelType="TimeWeeks"  />
-					<Level name="Quarter" caption="${msg("jsolap.quarter.title")}" column="nQuarter" type="String"  levelType="TimeQuarters"  />
-				<#else>
-					<Level name="Week" caption="${msg("jsolap.week.title")}" column="enNWeek" type="String"  levelType="TimeWeeks"  />
-					<Level name="Quarter" caption="${msg("jsolap.quarter.title")}" column="enNQuarter" type="String"  levelType="TimeQuarters"  />
-				</#if>
-				<#if .locale == "en_US" >
-					<Level name="Day" caption="${msg("jsolap.day.title")}" column="Day" nameColumn="NDayUsFormat" ordinalColumn="Day" type="Numeric"  levelType="TimeDays"  />
-				<#else>
-					<Level name="Day" caption="${msg("jsolap.day.title")}" column="Day" nameColumn="NDay" ordinalColumn="Day" type="Numeric"  levelType="TimeDays"  />
-				</#if>
-			</Hierarchy>		
-		</Dimension>
+		<DimensionUsage name="frequency" caption="${msg("jsolap.date.title")}" source="timeDimension"  foreignKey="olap_date" />
+
 		
 		<#if isAdmin>
 			<DimensionUsage name="instance" caption="${msg("jsolap.instance.title")}" source="instancesDimension" foreignKey="instance_id" />
@@ -394,6 +310,7 @@
 		
 		<#if isAdmin>
 			<DimensionUsage name="instance" caption="${msg("jsolap.instance.title")}" source="instancesDimension" foreignKey="instance_id" />
+			
 		</#if>	
 		
 		<DimensionUsage name="date" caption="${msg("jsolap.activityDate.title")}" source="timeDimension"  foreignKey="activity_date" />
@@ -409,8 +326,14 @@
 			</Hierarchy>
 		</Dimension>
 		
+		<Dimension  name="userName" caption="${msg("jsolap.userName.title")}" >
+			<Hierarchy name="users" caption="${msg("jsolap.userName.caption")}" hasAll="true" allMemberCaption="${msg("jsolap.userName.caption")}" >
+				<Level name="userName" caption="${msg("jsolap.userName.title")}" column="user_id" type="String" />
+			</Hierarchy>
+		</Dimension>
+		
 		<Dimension  name="user" caption="${msg("jsolap.user.title")}" foreignKey="user_id" >
-			<Hierarchy name="users" caption="${msg("jsolap.users.title")}" primaryKey="user_id" hasAll="true" allMemberCaption="${msg("jsolap.users.title")}" >
+			<Hierarchy name="users" caption="${msg("jsolap.user.caption")}" primaryKey="user_id" hasAll="true" allMemberCaption="${msg("jsolap.user.caption")}" >
 			   <Table name="becpg_activities_names" alias="becpg_activities_names">
 					<SQL dialect="generic">
 						<#if !isAdmin>becpg_activities_names.instance_id = ${instanceId} AND </#if> becpg_activities_names.site_id IS NULL AND becpg_activities_names.entity_id IS NULL
@@ -437,19 +360,30 @@
 		<Dimension name="type" caption="${msg("jsolap.activityType.title")}">
 			<Hierarchy name="type" caption="${msg("jsolap.activityType.title")}" hasAll="true" allMemberCaption="${msg("jsolap.activityType.title")}">
 				<Level name="type" caption="${msg("jsolap.activityType.title")}" column="activity_type" nameColumn="activity_type" type="String" >
-					<NameExpression>
-					  <SQL dialect="generic" >
-					  <![CDATA[CASE WHEN activity_type='comment-created' THEN '${msg("jsolap.activityType.comment-created")}'
-	                           WHEN activity_type='entity-created' THEN '${msg("jsolap.activityType.entity-created")}'
-	                           WHEN activity_type='file-added' THEN '${msg("jsolap.activityType.file-added")}'
-	                           WHEN activity_type='file-deleted' THEN '${msg("jsolap.activityType.file-deleted")}'
-	                           WHEN activity_type='file-downloaded' THEN '${msg("jsolap.activityType.file-downloaded")}'
-	                           WHEN activity_type='file-previewed' THEN '${msg("jsolap.activityType.file-previewed")}'
-	                           WHEN activity_type='state-changed' THEN '${msg("jsolap.activityType.state-changed")}'
-	                           WHEN activity_type='comment-deleted' THEN '${msg("jsolap.activityType.comment-deleted")}'
-	                           ELSE 'Vide'
-	                           END]]></SQL>
-              		 </NameExpression>
+					<MemberFormatter>
+						<Script language="JavaScript">
+							switch (member.getName()) {
+				   				case 'comment-created' :
+				      				return  '${msg("jsolap.activityType.comment-created")}';
+				   				case 'entity-created' :
+				    				return  '${msg("jsolap.activityType.entity-created")}';
+				   				case 'file-added' :
+				    				return   '${msg("jsolap.activityType.file-added")}';
+				   				case 'file-deleted' :
+				    				return   '${msg("jsolap.activityType.file-deleted")}';
+				   				case 'file-downloaded' :
+				    				return   '${msg("jsolap.activityType.file-downloaded")}'; 
+				    			case 'file-previewed' :
+				    				return   '${msg("jsolap.activityType.file-previewed")}';
+				    			case 'state-changed' :
+				    				return   '${msg("jsolap.activityType.state-changed")}';
+				    			case 'comment-deleted' :
+				    				return   '${msg("jsolap.activityType.comment-deleted")}';  
+							   default:
+								    return member.getName();
+								}
+						</Script>
+					</MemberFormatter>
 				</Level>
 			</Hierarchy>
 		</Dimension>
@@ -488,14 +422,20 @@
 		<Dimension  name="rclReqType" caption="${msg("jsolap.requirementsLevels.title")}">
 			<Hierarchy name="rclReqType" caption="${msg("jsolap.requirementsLevels.title")}" hasAll="true" allMemberCaption="${msg("jsolap.requirementsLevels.caption")}">
 				<Level name="rclReqType" caption="${msg("jsolap.requirementsLevels.title")}" column="rclReqType"  type="String"    >
-					 <NameExpression>
-					  <SQL dialect="generic" >
-					  <![CDATA[CASE WHEN rclReqType='Forbidden' THEN '${msg("listconstraint.bcpg_reqTypes.Forbidden")}'
-	                            WHEN rclReqType='Tolerated' THEN '${msg("listconstraint.bcpg_reqTypes.Tolerated")}'
-	                            WHEN rclReqType='Info' THEN '${msg("listconstraint.bcpg_reqTypes.Info")}'
-	                            ELSE 'Vide'
-	                           END]]></SQL>
-              		 </NameExpression>
+					 <MemberFormatter>
+						<Script language="JavaScript">
+							switch (member.getName()) {
+				   				case 'Forbidden' :
+				      				return  '${msg("listconstraint.bcpg_reqTypes.Forbidden")}';
+				   				case 'Tolerated' :
+				    				return  '${msg("listconstraint.bcpg_reqTypes.Tolerated")}';
+				   				case 'Info' :
+				    				return   '${msg("listconstraint.bcpg_reqTypes.Info")}';
+							   default:
+								    return member.getName();
+								}
+						</Script>
+					</MemberFormatter>
 				</Level>
 			</Hierarchy>
 		</Dimension>
@@ -525,30 +465,50 @@
 						</SQL>
 				</View>
 				<Level approxRowCount="5" name="productState" caption="${msg("jsolap.srcProductState.title")}"  column="productState"  type="String"  >
-				  <NameExpression>
-					  <SQL dialect="generic" >
-					  <![CDATA[CASE WHEN productState='Simulation' THEN '${msg("listconstraint.bcpg_systemState.Simulation")}'
-	                            WHEN productState='ToValidate' THEN '${msg("listconstraint.bcpg_systemState.ToValidate")}'
-	                            WHEN productState='Valid' THEN '${msg("listconstraint.bcpg_systemState.Valid")}'
-	                            WHEN productState='Refused' THEN '${msg("listconstraint.bcpg_systemState.Refused")}'
-	                            WHEN productState='Archived' THEN '${msg("listconstraint.bcpg_systemState.Archived")}'
-	                            ELSE 'Vide'
-	                           END]]></SQL>
-             		 </NameExpression>
+				  <MemberFormatter>
+						<Script language="JavaScript">
+							switch (member.getName()) {
+				   				case 'Simulation' :
+				      				return  '${msg("listconstraint.bcpg_systemState.Simulation")}';
+				   				case 'ToValidate' :
+				    				return  '${msg("listconstraint.bcpg_systemState.ToValidate")}';
+				   				case 'Valid' :
+				    				return   '${msg("listconstraint.bcpg_systemState.Valid")}';
+				   				case 'Refused' :
+				    				return   '${msg("listconstraint.bcpg_systemState.Refused")}';
+				   				case 'Archived' :
+				    				return   '${msg("listconstraint.bcpg_systemState.Archived")}';   
+							   case 'Stopped' :
+				    				return   '${msg("listconstraint.bcpg_systemState.Stopped")}'; 
+							   default:
+								    return member.getName();
+								}
+						</Script>
+					</MemberFormatter>
 				</Level>	
 				<Level approxRowCount="10" name="entity_type" caption="${msg("jsolap.srcProductType.title")}" column="productType" nameColumn="productType" type="String"   >
-					<NameExpression>
-					  <SQL dialect="generic" >
-					  <![CDATA[CASE WHEN productType='bcpg:rawMaterial' THEN "${msg('bcpg_bcpgmodel.type.bcpg_rawMaterial.title')}"
-	                            WHEN productType='bcpg:finishedProduct' THEN "${msg('bcpg_bcpgmodel.type.bcpg_finishedProduct.title')}"
-	                            WHEN productType='bcpg:semiFinishedProduct' THEN "${msg('bcpg_bcpgmodel.type.bcpg_semiFinishedProduct.title')}"
-	                            WHEN productType='bcpg:packagingMaterial' THEN "${msg('bcpg_bcpgmodel.type.bcpg_packagingMaterial.title')}"
-	                            WHEN productType='bcpg:packagingKit' THEN "${msg('bcpg_bcpgmodel.type.bcpg_packagingKit.title')}"
-	                            WHEN productType='bcpg:localSemiFinishedProduct' THEN "${msg('bcpg_bcpgmodel.type.bcpg_localSemiFinishedProduct.title')}"
-	                            WHEN productType='bcpg:resourceProduct' THEN "${msg('bcpg_bcpgmodel.type.bcpg_resourceProduct.title')}"
-	                            ELSE 'Vide'
-	                           END]]></SQL>
-             	</NameExpression>
+					<MemberFormatter>
+						<Script language="JavaScript">
+							switch (member.getName()) {
+				   				case 'bcpg:rawMaterial' :
+				      				return  '${msg("bcpg_bcpgmodel.type.bcpg_rawMaterial.title")}';
+				   				case 'bcpg:finishedProduct' :
+				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_finishedProduct.title")}';
+				   				case 'bcpg:semiFinishedProduct' :
+				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_semiFinishedProduct.title")}';
+				    			case 'bcpg:packagingMaterial' :
+				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_packagingMaterial.title")}';
+				   				case 'bcpg:packagingKit' :
+				    				return  '${msg("jsolap.packagingKit.title")}';
+				   				case 'bcpg:localSemiFinishedProduct' :
+				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_localSemiFinishedProduct.title")}';
+				    			case 'bcpg:resourceProduct' :
+				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_resourceProduct.title")}';
+							   default:
+								    return member.getName();
+								}
+						</Script>
+					</MemberFormatter>
 				</Level>
 				<Level name="productHierarchy1" caption="${msg("jsolap.srcProductFamily.title")}" table="rclSources" column="productHierarchy1" type="String"   >
 				</Level>
@@ -556,7 +516,17 @@
 				</Level>
 				<Level name="entity_noderef" caption="${msg("jsolap.srcProductComponent.title")}" table="rclSources" column="nodeRef" nameColumn="name" type="String"   >
 				</Level>
-				<Level name="versionLabel" caption="${msg("jsolap.srcProductVersionLabel.title")}" table="rclSources" column="versionLabel" type="String" />
+				<Level name="versionLabel" caption="${msg("jsolap.srcProductVersionLabel.title")}" table="rclSources" column="versionLabel" type="String" >
+				<MemberFormatter>
+					<Script language="JavaScript">
+							if (member.getName() == "#null") {
+					      		return  '1.0';
+							}else{
+								return member.getName();
+							}
+					</Script>
+				</MemberFormatter>
+				</Level>
 			</Hierarchy>
 		</Dimension>
 		
@@ -579,8 +549,6 @@
 					select
 						nodeRef,
 						doc->>"$.cm_name" as name,
-						doc->>"$.metadata_siteId" as siteId,
-						doc->>"$.metadata_siteName" as siteName,
 						doc->>"$.bcpg_code" as code,
 						doc->>"$.qa_ncType" as ncType,
 						doc->>"$.qa_ncPriority" as ncPriority,
@@ -605,18 +573,11 @@
 					</#if>
 				</SQL>
 			</View>
-			
-		
-		<Dimension name="site" caption="${msg("jsolap.site.title")}">
-			<Hierarchy name="site" caption="${msg("jsolap.site.title")}" hasAll="true" allMemberCaption="${msg("jsolap.site.caption")}">
-				<Level name="site" caption="${msg("jsolap.site.title")}" column="siteName"  type="String" />
-			</Hierarchy>
-		</Dimension>
 		
 		<Dimension  name="designation" caption="${msg("jsolap.incident.title")}" >
 			<Hierarchy name="incident" caption="${msg("jsolap.incident.title")}" hasAll="true" allMemberCaption="${msg("jsolap.incident.caption")}">
 				<Level name="name" caption="${msg("jsolap.incidentName.title")}" column="name"  type="String"    />
-				<Level name="code" caption="${msg("jsolap.ncCode.title")}" column="code"  type="String"    />
+				<Level name="code" caption="${msg("jsolap.ncCode.title")}" column="code"  type="String" uniqueMembers="true"   />
 			</Hierarchy>
 		</Dimension>
 		
@@ -642,14 +603,20 @@
 		<Dimension  name="priority" caption="${msg("jsolap.priority.title")}">
 			<Hierarchy name="priority" caption="${msg("jsolap.priority.title")}" hasAll="true" allMemberCaption="${msg("jsolap.priority.caption")}">
 				<Level name="ncPriority" caption="${msg("jsolap.priority.title")}" column="ncPriority"  type="String"   >
-					 <NameExpression>
-					  <SQL dialect="generic" >
-					  <![CDATA[CASE WHEN ncPriority=1 THEN '${msg("listconstraint.qa_ncPriority.1")}'
-	                            WHEN ncPriority=2 THEN '${msg("listconstraint.qa_ncPriority.2")}'
-	                            WHEN ncPriority=3 THEN '${msg("listconstraint.qa_ncPriority.3")}'
-	                            ELSE 'Vide'
-	                           END]]></SQL>
-              </NameExpression>
+					 <MemberFormatter>
+						<Script language="JavaScript">
+							switch (member.getName()) {
+				   				case '1' :
+				      				return  '${msg("listconstraint.qa_ncPriority.1")}';
+				   				case '2' :
+				    				return  '${msg("listconstraint.qa_ncPriority.2")}';
+				   				case '3' :
+				    				return   '${msg("listconstraint.qa_ncPriority.3")}';
+							   default:
+								    return member.getName();
+								}
+						</Script>
+					</MemberFormatter>
 				</Level>
 			</Hierarchy>
 		</Dimension>
@@ -657,13 +624,18 @@
 		<Dimension  name="type" caption="${msg("jsolap.ncType.title")}" >
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.ncType.caption")}" >
 				<Level approxRowCount="2" name="ncType" caption="${msg("jsolap.ncType.title")}"  column="ncType"  type="String"    >
-				<NameExpression>
-					  <SQL dialect="generic" >
-					  <![CDATA[CASE WHEN ncType='Claim' THEN '${msg("listconstraint.qa_ncTypes.Claim")}'
-	                            WHEN ncType='NonConformity' THEN '${msg("listconstraint.qa_ncTypes.NonConformity")}'
-	                            ELSE 'Vide'
-	                           END]]></SQL>
-              </NameExpression>
+					<MemberFormatter>
+						<Script language="JavaScript">
+							switch (member.getName()) {
+				   				case 'Claim' :
+				      				return  '${msg("listconstraint.qa_ncTypes.Claim")}';
+				   				case 'NonConformity' :
+				    				return  '${msg("listconstraint.qa_ncTypes.NonConformity")}';
+							   default:
+								    return member.getName();
+								}
+						</Script>
+					</MemberFormatter>
 				</Level>
 			</Hierarchy>
 		</Dimension>
@@ -671,17 +643,47 @@
 		<Dimension  name="state" caption="${msg("jsolap.state.title")}" >
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.state.caption")}" >
 				<Level approxRowCount="7" name="ncState" caption="${msg("jsolap.state.title")}"  column="ncState"  type="String"    >
-				<NameExpression>
-					  <SQL dialect="generic" >
-					  <![CDATA[CASE WHEN ncState='analysis' THEN '${msg("listconstraint.qa_ncStates.analysis")}'
-	                            WHEN ncState='treatment' THEN '${msg("listconstraint.qa_ncStates.treatment")}'
-	                            WHEN ncState='response' THEN '${msg("listconstraint.qa_ncStates.response")}'
-	                            WHEN ncState='classification' THEN '${msg("listconstraint.qa_ncStates.classification")}'
-	                            WHEN ncState='closing' THEN '${msg("listconstraint.qa_ncStates.closing")}'
-	                            WHEN ncState='closed' THEN '${msg("listconstraint.qa_ncStates.closed")}'
-	                            ELSE 'Vide'
-	                           END]]></SQL>
-              </NameExpression>
+				<MemberFormatter>
+						<Script language="JavaScript">
+							switch (member.getName()) {
+				   				case 'analysis' :
+				      				return  '${msg("listconstraint.qa_ncStates.analysis")}';
+				   				case 'treatment' :
+				    				return  '${msg("listconstraint.qa_ncStates.treatment")}';
+				   				case 'response' :
+				    				return   '${msg("listconstraint.qa_ncStates.response")}';
+				   				case 'classification' :
+				    				return   '${msg("listconstraint.qa_ncStates.classification")}';
+				   				case 'closing' :
+				    				return   '${msg("listconstraint.qa_ncStates.closing")}'; 
+				    			case 'closed' :
+				    				return   '${msg("listconstraint.qa_ncStates.closed")}'; 
+				    			    
+							   default:
+								    return member.getName();
+								}
+						</Script>
+					</MemberFormatter>
+				</Level>
+			</Hierarchy>
+		</Dimension>
+		
+		<Dimension foreignKey="nodeRef"  name="plant" caption="${msg("jsolap.plant.title")}">
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.plant.caption")}" primaryKey="entityNodeRef">
+				<View name="plant" alias="plant">
+								<SQL dialect="generic">
+									select  
+										entityNodeRef,
+										doc->>"$.name" as name,
+										nodeRef
+									from
+										assoc_bcpg_plants
+									<#if !isAdmin>	
+									  where instanceId = ${instanceId}
+									</#if>
+								</SQL>
+				</View>
+				<Level name="name" caption="${msg("jsolap.plant.title")}" column="nodeRef" nameColumn="name" type="String"  >
 				</Level>
 			</Hierarchy>
 		</Dimension>
@@ -719,20 +721,29 @@
 							a.doc->>"$.pjt_tlRealDuration" as tlRealDuration,
 							CAST(a.doc->>"$.pjt_tlStart" as DATE) as tlStart,
 							CAST(a.doc->>"$.pjt_tlEnd" as DATE) as tlEnd,
+							CAST(a.doc->>"$.pjt_tlTargetStart" as DATE) as tlTargetStart,
+							CAST(a.doc->>"$.pjt_tlTargetEnd" as DATE) as tlTargetEnd,
 							a.doc->>"$.pjt_tlState" as tlState,
-							a.doc->>"$.pjt_tlResources[0]" as tlResources,
 							a.doc->>"$.pjt_tlWork" as tlWork,
 							a.doc->>"$.pjt_tlLoggedTime" as tlLoggedTime,
 							a.doc->>"$.bcpg_sort" as sortOrder,
 							CAST(a.doc->>"$.cm_modified" as DATE) as projectDateModified,
 							a.instanceId,
+							b.doc->>"$.pjt_projectManager[0]" as projectManager,
+							b.doc->>"$.pjt_projectState" as projectState,
+							b.nodeRef as projectNodeRef,
+							b.doc->>"$.cm_name" as projectName,
+							b.doc->>"$.pjt_projectHierarchy1[0]" as	projectHierarchy1,
+							b.doc->>"$.pjt_projectHierarchy2[0]" as	projectHierarchy2,
+							b.doc->>"$.metadata_siteId" as siteId,
+							b.doc->>"$.metadata_siteName" as siteName,	
 							CASE 
-								 WHEN a.doc->>"$.pjt_tlResources[0]" LIKE 'GROUP_PROJECT%'
-								 	THEN
-								 	  REGEXP_REPLACE(json_extract(b.doc,CONCAT('$.', SUBSTRING_INDEX (a.doc->>"$.pjt_tlResources[0]","_",-2))),'[\\[\\"\\]]*','')
-								 ELSE
-								 	a.doc->>"$.pjt_tlResources[0]"
-								 END as taskResources
+								WHEN a.doc->>"$.pjt_tlResources" LIKE '%GROUP_PROJECT%' AND a.doc->>"$.pjt_tlResources" NOT LIKE '%GROUP_PROJECT%,%' 
+									THEN
+								 		REGEXP_REPLACE(json_extract(b.doc,CONCAT('$.', SUBSTRING_INDEX (REGEXP_REPLACE(a.doc->>"$.pjt_tlResources", '[\\[\\"\\]]*', ''),"_",-2))),'[\\[\\"\\]]*','')
+									ELSE
+								 		REPLACE(REPLACE(REGEXP_REPLACE(a.doc->>"$.pjt_tlResources", '[\\[\\"\\]]*', ''),'GROUP_PROJECT_paladone_',''), 'GROUP_PROJECT_pjt_', '')
+							END as taskResources
 						from
 							taskList a inner join pjt_project b on a.entityNodeRef = b.nodeRef 
 						<#if !isAdmin>	
@@ -742,47 +753,42 @@
 				</View>
 
 		
-		<Dimension type="StandardDimension" foreignKey="entityNodeRef"   name="site" caption="${msg("jsolap.site.title")}">
-			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.site.caption")}" primaryKey="nodeRef">
-				<View name="projects_site" alias="projects_site">
-				<SQL dialect="generic">
-					select
-						nodeRef,
-						doc->>"$.metadata_siteId" as siteId,
-						doc->>"$.metadata_siteName" as siteName		
-					from
-						pjt_project
-					<#if !isAdmin>	
-					 where 
-					    instanceId = ${instanceId}
-					</#if>
-				</SQL>
-			 </View>
-			<Level name="site" caption="${msg("jsolap.site.title")}" column="siteId"  nameColumn="siteName" type="String" />
+		<Dimension type="StandardDimension"  name="site" caption="${msg("jsolap.site.title")}">
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.site.caption")}">
+				<Level name="site" caption="${msg("jsolap.site.title")}" column="siteId"  nameColumn="siteName" type="String" />
 			</Hierarchy>
 		</Dimension>			
 		
 		<Dimension  name="designation" caption="${msg("jsolap.task.title")}" >
 			<Hierarchy name="taskPerName" caption="${msg("jsolap.taskPerName.title")}" hasAll="true" allMemberCaption="${msg("jsolap.task.caption")}">
-				<Level name="tlTaskName" caption="${msg("jsolap.taskName.title")}" column="tlTaskName" type="String" ordinalColumn="sortOrder" />
+				<Level name="tlTaskName" caption="${msg("jsolap.taskName.title")}" column="tlTaskName" type="String" highCardinality="true" ordinalColumn="sortOrder" />
 			</Hierarchy>
 		</Dimension>
 		
 		
 		<Dimension  name="taskState" caption="${msg("jsolap.taskState.title")}" >
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.taskState.caption")}" >
-				<Level approxRowCount="5" name="tlState" caption="${msg("jsolap.taskState.title")}"  column="tlState"  type="String"    >
-				  <NameExpression>
-					  <SQL dialect="generic" >
-					  <![CDATA[CASE WHEN tlState='Planned' THEN '${msg("listconstraint.pjt_taskStates.Planned")}'
-	                            WHEN tlState='InProgress' THEN '${msg("listconstraint.pjt_taskStates.InProgress")}'
-	                            WHEN tlState='OnHold' THEN '${msg("listconstraint.pjt_taskStates.OnHold")}'
-	                            WHEN tlState='Cancelled' THEN '${msg("listconstraint.pjt_taskStates.Cancelled")}'
-	                            WHEN tlState='Refused' THEN '${msg("listconstraint.pjt_taskStates.Refused")}'
-	                            WHEN tlState='Completed' THEN '${msg("listconstraint.pjt_taskStates.Completed")}'
-	                            ELSE 'Vide'
-	                           END]]></SQL>
-              </NameExpression>
+				<Level approxRowCount="6" name="tlState" caption="${msg("jsolap.taskState.title")}"  column="tlState"  type="String"    >
+				  <MemberFormatter>
+						<Script language="JavaScript">
+							switch (member.getName()) {
+				   				case 'Planned' :
+				      				return  '${msg("listconstraint.pjt_taskStates.Planned")}';
+				   				case 'InProgress' :
+				    				return  '${msg("listconstraint.pjt_taskStates.InProgress")}';
+				   				case 'OnHold' :
+				    				return   '${msg("listconstraint.pjt_taskStates.OnHold")}';
+				   				case 'Cancelled' :
+				    				return   '${msg("listconstraint.pjt_taskStates.Cancelled")}';
+				    			case 'Refused' :
+				    				return   '${msg("listconstraint.pjt_taskStates.Refused")}';
+				   				case 'Completed' :
+				    				return   '${msg("listconstraint.pjt_taskStates.Completed")}';   
+							   default:
+								    return member.getName();
+								}
+						</Script>
+					</MemberFormatter>
 				</Level>
 			</Hierarchy>
 		</Dimension>
@@ -793,20 +799,80 @@
 			</Hierarchy>
 		</Dimension>
 		
-		<DimensionUsage name="project" caption="${msg("jsolap.project.title")}" source="projectsDimension" foreignKey="entityNodeRef" />
-			
-		<DimensionUsage name="tags" caption="${msg("jsolap.tags.title")}" source="tagsDimension" foreignKey="entityNodeRef" />
+		<Dimension  name="projectManager" caption="${msg("jsolap.projectManager.title")}" >
+			<Hierarchy name="projectManager" caption="${msg("jsolap.projectManager.title")}" hasAll="true" allMemberCaption="${msg("jsolap.projectManager.caption")}">
+				<Level name="projectManager" caption="${msg("jsolap.projectManager.title")}" column="projectManager"  type="String"    />
+			</Hierarchy>
+		</Dimension>
 		
-		<DimensionUsage name="projectState" caption="${msg("jsolap.projectState.title")}" source="projectStateDimension" foreignKey="entityNodeRef" />
+		<Dimension name="project" caption="${msg("jsolap.project.title")}">
+			<Hierarchy name="project_dim" hasAll="true" allMemberCaption="${msg("jsolap.project.caption")}">
+				<Level name="entity_noderef" caption="${msg("jsolap.project.title")}" column="projectNodeRef" nameColumn="projectName" type="String" highCardinality="true"  />
+				<Level name="projectHierarchy1" caption="${msg("jsolap.projectFamily.title")}" column="projectHierarchy1" type="String"   />
+				<Level name="projectHierarchy2" caption="${msg("jsolap.projectSubFamily.title")}" column="projectHierarchy2" type="String"   />
+				</Hierarchy>
+		</Dimension>
 		
-		<DimensionUsage name="projectManager" caption="${msg("jsolap.projectManager.title")}" source="projectManagerDimension" foreignKey="entityNodeRef" />		
+		<Dimension  name="state" caption="${msg("jsolap.projectState.title")}" >
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.state.caption")}" >
+				<Level approxRowCount="5" name="projectState" caption="${msg("jsolap.projectState.title")}" column="projectState" type="String">
+				  <MemberFormatter>
+						<Script language="JavaScript">
+							switch (member.getName()) {
+				   				case 'Planned' :
+				      				return  '${msg("listconstraint.pjt_projectStates.Planned")}';
+				      			case 'InProgress' :
+				    				return  '${msg("listconstraint.pjt_projectStates.InProgress")}';
+				   				case 'OnHold' :
+				    				return   '${msg("listconstraint.pjt_projectStates.OnHold")}';
+				   				case 'Cancelled' :
+				    				return   '${msg("listconstraint.pjt_projectStates.Cancelled")}';
+				   				case 'Completed' :
+				    				return   '${msg("listconstraint.pjt_projectStates.Completed")}';   
+							   default:
+								    return member.getName();
+								}
+						</Script>
+					</MemberFormatter>
+				</Level>
+			</Hierarchy>
+		</Dimension>
+		
+		<Dimension type="StandardDimension" foreignKey="nodeRef" name="logTime" caption="${msg("jsolap.loggedTime.title")}">
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.loggedTime.caption")}" primaryKey="ltlTaskNodeRef" >
+					<View name="logTimeList" alias="logTimeList">
+								<SQL dialect="generic">
+									select  
+										doc->>"$.pjt_ltlTask_bcpg_nodeRef[0]" as ltlTaskNodeRef,
+										doc->>"$.pjt_ltlTime" as ltlTime,
+										doc->>"$.cm_creator" as ltlcreator,
+										doc->>"$.pjt_ltlType" as ltlType,
+										DATE_FORMAT(doc->>"$.pjt_ltlDate", "%d/%m/%Y") as ltlDate
+									from
+										logTimeList
+									<#if !isAdmin>	
+									  where instanceId = ${instanceId}
+									</#if>
+								</SQL>
+					</View>
+				<Level name="ltlTime" caption="${msg("jsolap.loggedTime.title")}" column="ltlTime" type="String"   />
+				<Level name="ltlcreator" caption="${msg("jsolap.ltlcreator.title")}" column="ltlcreator" type="String"   />
+				<Level name="ltlType" caption="${msg("jsolap.ltlType.title")}" column="ltlType" type="String"   />
+				<Level name="ltlDate" caption="${msg("jsolap.ltlDate.title")}" column="ltlDate" type="String"   />
+			</Hierarchy>
+		</Dimension>
+					
+		<DimensionUsage name="tags" caption="${msg("jsolap.tags.title")}" source="tagsDimension" foreignKey="entityNodeRef" />		
 		
 		<#if isAdmin>
 			<DimensionUsage name="instance" caption="${msg("jsolap.instance.title")}" source="instancesDimension" foreignKey="instanceId" />
 		</#if>
 		<DimensionUsage name="tlStart" caption="${msg("jsolap.startDate.title")}" source="timeDimension" foreignKey="tlStart" />
 		<DimensionUsage name="tlEnd" caption="${msg("jsolap.endDate.title")}" source="timeDimension" foreignKey="tlEnd" />
+		<DimensionUsage name="tlTargetStart" caption="${msg("jsolap.tlTargetStart.title")}" source="timeDimension" foreignKey="tlTargetStart" />
+		<DimensionUsage name="tlTargetEnd" caption="${msg("jsolap.tlTargetEnd.title")}" source="timeDimension" foreignKey="tlTargetEnd" />
 		<DimensionUsage name="projectDateModified" caption="${msg("jsolap.modificationDate.title")}" source="timeDimension"  foreignKey="projectDateModified" />	
+		
 		<Measure name="stepsNumber" caption="${msg("jsolap.tasksNumber.title")}" column="noderef" datatype="Numeric" aggregator="distinct-count" visible="true" />
 		<Measure name="averageForecastDurations" caption="${msg("jsolap.averageForecastDurations.title")}" column="tlDuration" datatype="Numeric" aggregator="avg" visible="true"  />
 		<Measure name="averageActualDurations" caption="${msg("jsolap.averageActualDurations.title")}" column="tlRealDuration" datatype="Numeric" aggregator="avg" visible="true"  />
@@ -827,52 +893,79 @@
 				<View name="scoreList" alias="scoreList">
 					<SQL dialect="generic">
 						select  
-							entityNodeRef,
-							doc->>"$.pjt_slCriterion" as slCriterion,
-							doc->>"$.pjt_slWeight" as slWeight,
-							doc->>"$.pjt_slScore" as slScore,
-							instanceId
+							a.entityNodeRef,
+							a.doc->>"$.pjt_slCriterion" as slCriterion,
+							a.doc->>"$.pjt_slWeight" as slWeight,
+							a.doc->>"$.pjt_slScore" as slScore,
+							a.instanceId,
+							b.nodeRef as projectNodeRef,
+							b.doc->>"$.cm_name" as projectName,
+							b.doc->>"$.pjt_projectHierarchy1[0]" as	projectHierarchy1,
+							b.doc->>"$.pjt_projectHierarchy2[0]" as	projectHierarchy2,
+							b.doc->>"$.pjt_projectManager[0]" as projectManager,
+							b.doc->>"$.pjt_projectState" as projectState,
+							b.doc->>"$.metadata_siteId" as siteId,
+							b.doc->>"$.metadata_siteName" as siteName	
 						from
-							scoreList
+							scoreList a inner join pjt_project b on a.entityNodeRef = b.nodeRef 
+
 						<#if !isAdmin>	
-						  where instanceId = ${instanceId}
+						  where a.instanceId = ${instanceId}
 						</#if>
 					</SQL>
 				</View>
 		
-		
-		
-		<Dimension type="StandardDimension" foreignKey="entityNodeRef"   name="site" caption="${msg("jsolap.site.title")}">
-			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.site.caption")}" primaryKey="nodeRef">
-				<View name="projects_site" alias="projects_site">
-				<SQL dialect="generic">
-					select
-						nodeRef,
-						doc->>"$.metadata_siteId" as siteId,
-						doc->>"$.metadata_siteName" as siteName		
-					from
-						pjt_project
-					<#if !isAdmin>	
-					 where 
-					    instanceId = ${instanceId}
-					</#if>
-				</SQL>
-			 </View>
-			<Level name="site" caption="${msg("jsolap.site.title")}" column="siteId"  nameColumn="siteName" type="String" />
+		<Dimension type="StandardDimension"   name="site" caption="${msg("jsolap.site.title")}">
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.site.caption")}">
+				<Level name="site" caption="${msg("jsolap.site.title")}" column="siteId"  nameColumn="siteName" type="String" />
 			</Hierarchy>
-		</Dimension>			
+		</Dimension>				
 		
 		<Dimension  name="designation" caption="${msg("jsolap.criterion.title")}" >
 			<Hierarchy name="criterionByName" caption="${msg("jsolap.criterionByName.title")}" hasAll="true" allMemberCaption="${msg("jsolap.criterion.caption")}">
 				<Level name="slCriterion" caption="${msg("jsolap.criterion.title")}" column="slCriterion"  type="String"    />
 			</Hierarchy>
 		</Dimension>		
-		
-		<DimensionUsage name="project" caption="${msg("jsolap.project.title")}" source="projectsDimension" foreignKey="entityNodeRef" />
 
-		<DimensionUsage name="projectState" caption="${msg("jsolap.projectState.title")}" source="projectStateDimension" foreignKey="entityNodeRef" />
+		<Dimension  name="projectManager" caption="${msg("jsolap.projectManager.title")}" >
+			<Hierarchy name="projectManager" caption="${msg("jsolap.projectManager.title")}" hasAll="true" allMemberCaption="${msg("jsolap.projectManager.caption")}">
+				<Level name="projectManager" caption="${msg("jsolap.projectManager.title")}" column="projectManager"  type="String"    />
+			</Hierarchy>
+		</Dimension>
 		
-		<DimensionUsage name="projectManager" caption="${msg("jsolap.projectManager.title")}" source="projectManagerDimension" foreignKey="entityNodeRef" />
+		<Dimension name="project" caption="${msg("jsolap.project.title")}">
+			<Hierarchy name="project_dim" hasAll="true" allMemberCaption="${msg("jsolap.project.caption")}">
+				<Level name="entity_noderef" caption="${msg("jsolap.project.title")}" column="projectNodeRef" nameColumn="projectName" type="String" highCardinality="true"  />
+				<Level name="projectHierarchy1" caption="${msg("jsolap.projectFamily.title")}" column="projectHierarchy1" type="String"   />
+				<Level name="projectHierarchy2" caption="${msg("jsolap.projectSubFamily.title")}" column="projectHierarchy2" type="String"   />
+				</Hierarchy>
+		</Dimension>
+		
+		<Dimension  name="state" caption="${msg("jsolap.projectState.title")}" >
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.state.caption")}" >
+				<Level approxRowCount="5" name="projectState" caption="${msg("jsolap.projectState.title")}" column="projectState" type="String">
+				  <MemberFormatter>
+						<Script language="JavaScript">
+							switch (member.getName()) {
+				   				case 'Planned' :
+				      				return  '${msg("listconstraint.pjt_projectStates.Planned")}';
+				      			case 'InProgress' :
+				    				return  '${msg("listconstraint.pjt_projectStates.InProgress")}';
+				   				case 'OnHold' :
+				    				return   '${msg("listconstraint.pjt_projectStates.OnHold")}';
+				   				case 'Cancelled' :
+				    				return   '${msg("listconstraint.pjt_projectStates.Cancelled")}';
+				   				case 'Completed' :
+				    				return   '${msg("listconstraint.pjt_projectStates.Completed")}';   
+							   default:
+								    return member.getName();
+								}
+						</Script>
+					</MemberFormatter>
+				</Level>
+			</Hierarchy>
+		</Dimension>
+				
 		
 		<DimensionUsage name="tags" caption="${msg("jsolap.tags.title")}" source="tagsDimension" foreignKey="entityNodeRef" />
 		
@@ -937,12 +1030,12 @@
 			<Hierarchy name="projectPerFamily" caption="${msg("jsolap.projectPerFamily.title")}" hasAll="true" allMemberCaption="${msg("jsolap.project.caption")}">
 				<Level name="projectHierarchy1" caption="${msg("jsolap.projectFamily.title")}" column="projectHierarchy1"  type="String"    />
 				<Level name="projectHierarchy2" caption="${msg("jsolap.projectSubFamily.title")}" column="projectHierarchy2"  type="String"    />
-				<Level name="name" caption="${msg("jsolap.projectName.title")}" column="name"  type="String"    />
-				<Level name="code" caption="${msg("jsolap.projectCode.title")}" column="code"  type="String"    />
+				<Level name="name" caption="${msg("jsolap.projectName.title")}" column="name"  type="String"  highCardinality="true"  />
+				<Level name="code" caption="${msg("jsolap.projectCode.title")}" column="code"  type="String"  highCardinality="true" uniqueMembers="true"   />
 			</Hierarchy>
 			<Hierarchy name="projectPerName" caption="${msg("jsolap.projectPerName.title")}" hasAll="true" allMemberCaption="${msg("jsolap.project.caption")}">
-				<Level name="name" caption="${msg("jsolap.projectName.title")}" column="name"  type="String"    />
-				<Level name="code" caption="${msg("jsolap.projectCode.title")}" column="code"  type="String"    />
+				<Level name="name" caption="${msg("jsolap.projectName.title")}" column="name"  type="String"  highCardinality="true"  />
+				<Level name="code" caption="${msg("jsolap.projectCode.title")}" column="code"  type="String"  highCardinality="true" uniqueMembers="true"  />
 			</Hierarchy>
 		</Dimension>
 		
@@ -950,30 +1043,44 @@
 		<Dimension  name="priority" caption="${msg("jsolap.priority.title")}">
 			<Hierarchy name="priority" caption="${msg("jsolap.priority.title")}" hasAll="true" allMemberCaption="${msg("jsolap.priority.caption")}">
 				<Level name="projectPriority" caption="${msg("jsolap.priority.title")}" column="projectPriority"  type="String"    >
-				 <NameExpression>
-					  <SQL dialect="generic" >
-					  <![CDATA[CASE WHEN projectPriority=1 THEN '${msg("listconstraint.qa_ncPriority.1")}'
-	                            WHEN projectPriority=2 THEN '${msg("listconstraint.qa_ncPriority.2")}'
-	                            WHEN projectPriority=3 THEN '${msg("listconstraint.qa_ncPriority.3")}'
-	                            ELSE 'Vide'
-	                           END]]></SQL>
-              </NameExpression>
+				 <MemberFormatter>
+						<Script language="JavaScript">
+							switch (member.getName()) {
+				   				case '1' :
+				      				return  '${msg("listconstraint.qa_ncPriority.1")}';
+				   				case '2' :
+				    				return  '${msg("listconstraint.qa_ncPriority.2")}';
+				   				case '3' :
+				    				return   '${msg("listconstraint.qa_ncPriority.3")}';
+							   default:
+								    return member.getName();
+								}
+						</Script>
+					</MemberFormatter>
 				</Level>
 			</Hierarchy>
 		</Dimension>
 		<Dimension  name="state" caption="${msg("jsolap.projectState.title")}" >
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.state.caption")}" >
 				<Level approxRowCount="5" name="projectState" caption="${msg("jsolap.projectState.title")}" column="projectState" type="String">
-				  <NameExpression>
-					  <SQL dialect="generic" >
-					  <![CDATA[CASE WHEN projectState='Planned' THEN '${msg("listconstraint.pjt_projectStates.Planned")}'
-	                            WHEN projectState='InProgress' THEN '${msg("listconstraint.pjt_projectStates.InProgress")}'
-	                            WHEN projectState='OnHold' THEN '${msg("listconstraint.pjt_projectStates.OnHold")}'
-	                            WHEN projectState='Cancelled' THEN '${msg("listconstraint.pjt_projectStates.Cancelled")}'
-	                            WHEN projectState='Completed' THEN '${msg("listconstraint.pjt_projectStates.Completed")}'
-	                            ELSE 'Vide'
-	                           END]]></SQL>
-              </NameExpression>
+				  <MemberFormatter>
+						<Script language="JavaScript">
+							switch (member.getName()) {
+				   				case 'Planned' :
+				      				return  '${msg("listconstraint.pjt_projectStates.Planned")}';
+				   				case 'InProgress' :
+				    				return  '${msg("listconstraint.pjt_projectStates.InProgress")}';
+				   				case 'OnHold' :
+				    				return   '${msg("listconstraint.pjt_projectStates.OnHold")}';
+				   				case 'Cancelled' :
+				    				return   '${msg("listconstraint.pjt_projectStates.Cancelled")}';
+				   				case 'Completed' :
+				    				return   '${msg("listconstraint.pjt_projectStates.Completed")}';   
+							   default:
+								    return member.getName();
+								}
+						</Script>
+					</MemberFormatter>
 				</Level>
 			</Hierarchy>
 		</Dimension>
@@ -1051,79 +1158,113 @@
 		<View name="nutList" alias="nutList">
 					<SQL dialect="generic">
 						select  
-							entityNodeRef,
-							doc->>"$.bcpg_nutListNut[0]" as name,
-							doc->>"$.bcpg_nutListNut_bcpg_nodeRef[0]" as nodeRef,
-							doc->>"$.bcpg_nutListGroup" as nutGroup,
-							doc->>"$.bcpg_nutListValue" as nutValue,
-							doc->>"$.bcpg_nutListFormulatedValue" as nutFormulatedValue,
-							doc->>"$.bcpg_nutListGDAPerc" as nutListGDAPerc,
-							doc->>"$.bcpg_nutListValuePerServing" as nutListValuePerServing,
-							instanceId
+							a.entityNodeRef,
+							a.doc->>"$.bcpg_nutListNut[0]" as name,
+							a.doc->>"$.bcpg_nutListNut_bcpg_nodeRef[0]" as nodeRef,
+							a.doc->>"$.bcpg_nutListGroup" as nutGroup,
+							a.doc->>"$.bcpg_nutListValue" as nutValue,
+							a.doc->>"$.bcpg_nutListFormulatedValue" as nutFormulatedValue,
+							a.doc->>"$.bcpg_nutListGDAPerc" as nutListGDAPerc,
+							a.doc->>"$.bcpg_nutListValuePerServing" as nutListValuePerServing,
+							a.instanceId,
+							b.nodeRef as productNodeRef,
+							b.doc->>"$.cm_name" as productName,
+							b.doc->>"$.bcpg_productHierarchy1[0]" as productHierarchy1,
+							b.doc->>"$.bcpg_productHierarchy2[0]" as productHierarchy2,
+							b.doc->>"$.bcpg_code" as productCode,
+							b.doc->>"$.bcpg_erpCode" as productErpCode,
+							b.doc->>"$.bcpg_legalName" as productLegalName,
+							b.doc->>"$.bcpg_productState" as productState,
+							b.doc->>"$.type" as productType,
+							b.doc->>"$.cm_versionLabel" as productVersionLabel,
+							b.doc->>"$.metadata_siteId" as siteId,
+							b.doc->>"$.metadata_siteName" as siteName	
 						from
-							nutList
+							nutList a inner join bcpg_product b on a.entityNodeRef = b.nodeRef 
+
 						<#if !isAdmin>	
-						  where instanceId = ${instanceId}
+						  where a.instanceId = ${instanceId}
 						</#if>
 					</SQL>
 		</View>
 	
 
-		<Dimension  name="site" caption="${msg("jsolap.site.title")}" type="StandardDimension" foreignKey="entityNodeRef" >
-			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.site.caption")}" primaryKey="noderef">
-			<View name="products" alias="products">
-				<SQL dialect="generic">
-					select
-						nodeRef,
-						doc->>"$.metadata_siteId" as siteId,
-						doc->>"$.metadata_siteName" as siteName		
-					from
-						bcpg_product
-					<#if !isAdmin>	
-					 where 
-					    instanceId = ${instanceId}
-					</#if>
-				</SQL>
-			</View>
-				<Level name="site" caption="${msg("jsolap.site.title")}" column="siteId"  nameColumn="siteName" type="String" />
+		<Dimension name="site" caption="${msg("jsolap.site.title")}">
+			<Hierarchy name="site" caption="${msg("jsolap.site.title")}" hasAll="true" allMemberCaption="${msg("jsolap.site.caption")}">
+				<Level name="site" caption="${msg("jsolap.site.title")}" column="siteName"  type="String" />
 			</Hierarchy>
 		</Dimension>
 
-		<DimensionUsage name="designation" caption="${msg("jsolap.designation.title")}" source="productsDimension" foreignKey="entityNodeRef" />
-
+		<Dimension  name="designation" caption="${msg("jsolap.product.title")}" >
+			<Hierarchy name="productPerFamily" caption="${msg("jsolap.productPerFamily.title")}" hasAll="true" allMemberCaption="${msg("jsolap.product.caption")}">
+				<Level approxRowCount="5" name="productState" caption="${msg("jsolap.productState.title")}" column="productState"  type="String"   >
+				  <MemberFormatter>
+						<Script language="JavaScript">
+							switch (member.getName()) {
+				   				case 'Simulation' :
+				      				return  '${msg("listconstraint.bcpg_systemState.Simulation")}';
+				   				case 'ToValidate' :
+				    				return  '${msg("listconstraint.bcpg_systemState.ToValidate")}';
+				   				case 'Valid' :
+				    				return   '${msg("listconstraint.bcpg_systemState.Valid")}';
+				   				case 'Refused' :
+				    				return   '${msg("listconstraint.bcpg_systemState.Refused")}';
+				   				case 'Archived' :
+				    				return   '${msg("listconstraint.bcpg_systemState.Archived")}'; 
+				    			case 'Stopped' :
+				    				return   '${msg("listconstraint.bcpg_systemState.Stopped")}';   
+							   default:
+								    return member.getName();
+								}
+						</Script>
+					</MemberFormatter>
+				</Level>
+				<Level name="productHierarchy1" caption="${msg("jsolap.productFamily.title")}" column="productHierarchy1"  type="String"    />
+				<Level name="productHierarchy2" caption="${msg("jsolap.productSubFamily.title")}" column="productHierarchy2"  type="String"    />
+				<Level name="code" caption="${msg("jsolap.productCode.title")}" column="productCode"  type="String" highCardinality="true" uniqueMembers="true"  />
+				<Level name="name" caption="${msg("jsolap.productName.title")}" column="productName"  type="String" highCardinality="true" />
+			    <Level name="erpCode" caption="${msg("jsolap.productErpCode.title")}" column="productErpCode"  type="String" />
+				<Level name="legalName" caption="${msg("jsolap.productLegalName.title")}" column="productLegalName"  type="String" />
+				<Level name="versionLabel" caption="${msg("jsolap.productVersionLabel.title")}" column="productVersionLabel" type="String" >
+				<MemberFormatter>
+					<Script language="JavaScript">
+							if (member.getName() == "#null") {
+					      		return  '1.0';
+							}else{
+								return member.getName();
+							}
+					</Script>
+				</MemberFormatter>
+				</Level>
+			</Hierarchy>
+		</Dimension>
 		
-		<Dimension foreignKey="entityNodeRef"  name="productType" caption="${msg("jsolap.productType.title")}">
-			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.productType.caption")}" primaryKey="nodeRef" >
-			
-			<View name="products_type" alias="products_type">
-					<SQL dialect="generic">
-						select
-							nodeRef,
-							doc->>"$.type" as productType
-						from
-							bcpg_product
-						<#if !isAdmin>	
-						 where 
-						    instanceId = ${instanceId}
-						</#if>
-					</SQL>
-				</View>
-				
-			<Level approxRowCount="10" name="entity_type" caption="${msg("jsolap.type.title")}" column="productType"  type="String"   >
-				<NameExpression>
-					  <SQL dialect="generic" >
-					  <![CDATA[CASE WHEN productType='bcpg:rawMaterial' THEN "${msg('bcpg_bcpgmodel.type.bcpg_rawMaterial.title')}"
-	                            WHEN productType='bcpg:finishedProduct' THEN "${msg('bcpg_bcpgmodel.type.bcpg_finishedProduct.title')}"
-	                            WHEN productType='bcpg:semiFinishedProduct' THEN "${msg('bcpg_bcpgmodel.type.bcpg_semiFinishedProduct.title')}"
-	                            WHEN productType='bcpg:packagingMaterial' THEN "${msg('bcpg_bcpgmodel.type.bcpg_packagingMaterial.title')}"
-	                            WHEN productType='bcpg:packagingKit' THEN "${msg('bcpg_bcpgmodel.type.bcpg_packagingKit.title')}"
-	                            WHEN productType='bcpg:localSemiFinishedProduct' THEN "${msg('bcpg_bcpgmodel.type.bcpg_localSemiFinishedProduct.title')}"
-	                            WHEN productType='bcpg:resourceProduct' THEN "${msg('bcpg_bcpgmodel.type.bcpg_resourceProduct.title')}"
-	                            ELSE 'Vide'
-	                           END]]></SQL>
-             		 </NameExpression>
-			
-			</Level>
+		<Dimension name="productType" caption="${msg("jsolap.productType.title")}">
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.productType.caption")}"  >
+			<Level approxRowCount="10" name="entity_type" caption="${msg("jsolap.productType.title")}" column="productType" nameColumn="productType" type="String"   >
+				<MemberFormatter>
+						<Script language="JavaScript">
+							switch (member.getName()) {
+				   				case 'bcpg:rawMaterial' :
+				      				return  '${msg("bcpg_bcpgmodel.type.bcpg_rawMaterial.title")}';
+				   				case 'bcpg:finishedProduct' :
+				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_finishedProduct.title")}';
+				   				case 'bcpg:semiFinishedProduct' :
+				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_semiFinishedProduct.title")}';
+				    			case 'bcpg:packagingMaterial' :
+				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_packagingMaterial.title")}';
+				   				case 'bcpg:packagingKit' :
+				    				return  '${msg("jsolap.packagingKit.title")}';
+				   				case 'bcpg:localSemiFinishedProduct' :
+				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_localSemiFinishedProduct.title")}';
+				    			case 'bcpg:resourceProduct' :
+				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_resourceProduct.title")}';
+							   default:
+								    return member.getName();
+								}
+						</Script>
+					</MemberFormatter>
+				</Level>
 			</Hierarchy>
 		</Dimension>
 
@@ -1150,7 +1291,6 @@
 	
 	<Cube name="products" caption="${msg("jsolap.products.title")}" cache="true" enabled="true" defaultMeasure="${msg("jsolap.productsNumber.title")}">
 		
-		
 			<View name="products" alias="products">
 				<SQL dialect="generic">
 					select
@@ -1164,6 +1304,7 @@
 						doc->>"$.bcpg_code" as code,
 						doc->>"$.bcpg_erpCode" as erpCode,
 						doc->>"$.bcpg_legalName" as legalName,
+						doc->>"$.bcpg_nutrientProfilingScore" as nutrientProfilingScore,
 						doc->>"$.bcpg_nutrientProfilingClass" as nutrientProfilingClass,
 						CAST( doc->>"$.cm_created" as DATE) as productDateCreated,
 						CAST( doc->>"$.cm_modified" as DATE) as productDateModified,
@@ -1198,27 +1339,47 @@
 			<Hierarchy name="productPerFamily" caption="${msg("jsolap.productPerFamily.title")}" hasAll="true" allMemberCaption="${msg("jsolap.product.caption")}">
 				<Level name="productHierarchy1" caption="${msg("jsolap.productFamily.title")}" column="productHierarchy1"  type="String"    />
 				<Level name="productHierarchy2" caption="${msg("jsolap.productSubFamily.title")}" column="productHierarchy2"  type="String"    />
-				<Level name="code" caption="${msg("jsolap.productCode.title")}" column="code"  type="String"  uniqueKeyLevelname="" highCardinality="true"  />
-				<Level name="name" caption="${msg("jsolap.productName.title")}" column="name"  type="String" />
+				<Level name="code" caption="${msg("jsolap.productCode.title")}" column="code"  type="String" highCardinality="true" uniqueMembers="true"  />
+				<Level name="name" caption="${msg("jsolap.productName.title")}" column="name"  type="String" highCardinality="true" />
 			    <Level name="erpCode" caption="${msg("jsolap.productErpCode.title")}" column="erpCode"  type="String" />
 				<Level name="legalName" caption="${msg("jsolap.productLegalName.title")}" column="legalName"  type="String" />
-				<Level name="versionLabel" caption="${msg("jsolap.productVersionLabel.title")}" column="versionLabel" type="String" />
+				<Level name="versionLabel" caption="${msg("jsolap.productVersionLabel.title")}" column="versionLabel" type="String" >
+				<MemberFormatter>
+					<Script language="JavaScript">
+							if (member.getName() == "#null") {
+					      		return  '1.0';
+							}else{
+								return member.getName();
+							}
+					</Script>
+				</MemberFormatter>
+				</Level>
 			</Hierarchy>
 		</Dimension>
 		
 		<Dimension  name="state" caption="${msg("jsolap.productState.title")}">
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.productState.caption")}" >
 				<Level approxRowCount="5" name="productState" caption="${msg("jsolap.productState.title")}"  column="productState"  type="String"   >
-				  <NameExpression>
-					  <SQL dialect="generic" >
-					  <![CDATA[CASE WHEN productState='Simulation' THEN '${msg("listconstraint.bcpg_systemState.Simulation")}'
-	                            WHEN productState='ToValidate' THEN '${msg("listconstraint.bcpg_systemState.ToValidate")}'
-	                            WHEN productState='Valid' THEN '${msg("listconstraint.bcpg_systemState.Valid")}'
-	                            WHEN productState='Refused' THEN '${msg("listconstraint.bcpg_systemState.Refused")}'
-	                            WHEN productState='Archived' THEN '${msg("listconstraint.bcpg_systemState.Archived")}'
-	                            ELSE 'Vide'
-	                           END]]></SQL>
-             		 </NameExpression>
+				  <MemberFormatter>
+						<Script language="JavaScript">
+							switch (member.getName()) {
+				   				case 'Simulation' :
+				      				return  '${msg("listconstraint.bcpg_systemState.Simulation")}';
+				   				case 'ToValidate' :
+				    				return  '${msg("listconstraint.bcpg_systemState.ToValidate")}';
+				   				case 'Valid' :
+				    				return   '${msg("listconstraint.bcpg_systemState.Valid")}';
+				   				case 'Refused' :
+				    				return   '${msg("listconstraint.bcpg_systemState.Refused")}';
+				   				case 'Archived' :
+				    				return   '${msg("listconstraint.bcpg_systemState.Archived")}'; 
+				    			case 'Stopped' :
+				    				return   '${msg("listconstraint.bcpg_systemState.Stopped")}';   
+							   default:
+								    return member.getName();
+								}
+						</Script>
+					</MemberFormatter>
 				</Level>
 			</Hierarchy>
 		</Dimension>
@@ -1326,21 +1487,30 @@
 		
 		<Dimension name="productType" caption="${msg("jsolap.productType.title")}">
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.productType.caption")}"  >
-				
-			<Level approxRowCount="10" name="entity_type" caption="${msg("jsolap.productType.title")}" column="productType" nameColumn="entity_label" type="String"   >
-				<NameExpression>
-					  <SQL dialect="generic" >
-					  <![CDATA[CASE WHEN productType='bcpg:rawMaterial' THEN "${msg('bcpg_bcpgmodel.type.bcpg_rawMaterial.title')}"
-	                            WHEN productType='bcpg:finishedProduct' THEN "${msg('bcpg_bcpgmodel.type.bcpg_finishedProduct.title')}"
-	                            WHEN productType='bcpg:semiFinishedProduct' THEN "${msg('bcpg_bcpgmodel.type.bcpg_semiFinishedProduct.title')}"
-	                            WHEN productType='bcpg:packagingMaterial' THEN "${msg('bcpg_bcpgmodel.type.bcpg_packagingMaterial.title')}"
-	                            WHEN productType='bcpg:packagingKit' THEN "${msg('bcpg_bcpgmodel.type.bcpg_packagingKit.title')}"
-	                            WHEN productType='bcpg:localSemiFinishedProduct' THEN "${msg('bcpg_bcpgmodel.type.bcpg_localSemiFinishedProduct.title')}"
-	                            WHEN productType='bcpg:resourceProduct' THEN "${msg('bcpg_bcpgmodel.type.bcpg_resourceProduct.title')}"
-	                            ELSE 'Vide'
-	                           END]]></SQL>
-             		 </NameExpression>
-			</Level>
+			<Level approxRowCount="10" name="entity_type" caption="${msg("jsolap.productType.title")}" column="productType" nameColumn="productType" type="String"   >
+				<MemberFormatter>
+						<Script language="JavaScript">
+							switch (member.getName()) {
+				   				case 'bcpg:rawMaterial' :
+				      				return  '${msg("bcpg_bcpgmodel.type.bcpg_rawMaterial.title")}';
+				   				case 'bcpg:finishedProduct' :
+				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_finishedProduct.title")}';
+				   				case 'bcpg:semiFinishedProduct' :
+				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_semiFinishedProduct.title")}';
+				    			case 'bcpg:packagingMaterial' :
+				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_packagingMaterial.title")}';
+				   				case 'bcpg:packagingKit' :
+				    				return  '${msg("jsolap.packagingKit.title")}';
+				   				case 'bcpg:localSemiFinishedProduct' :
+				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_localSemiFinishedProduct.title")}';
+				    			case 'bcpg:resourceProduct' :
+				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_resourceProduct.title")}';
+							   default:
+								    return member.getName();
+								}
+						</Script>
+					</MemberFormatter>
+				</Level>
 			</Hierarchy>
 		</Dimension>
 		
@@ -1378,6 +1548,7 @@
 		
 	    <Dimension name="nutritionScale" caption="${msg("jsolap.nutrientScore.title")}">
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.nutrientScore.caption")}" >
+				<Level name="nutrientProfilingScore" caption="${msg("jsolap.nutrientScore.title")}" column="nutrientProfilingScore"  type="String"    />
 				<Level name="nutrientProfilingClass" caption="${msg("jsolap.nutritionClass.title")}" column="nutrientProfilingClass"  type="String"    />
 			</Hierarchy>
 		</Dimension>
@@ -1478,6 +1649,8 @@
 										b.nodeRef,
 										b.doc->>"$.bcpg_productHierarchy1[0]" as productHierarchy1,
 										b.doc->>"$.bcpg_productHierarchy2[0]" as productHierarchy2,
+										b.doc->>"$.bcpg_productState" as productState,
+										b.doc->>"$.type" as productType,
 										b.doc->>"$.cm_versionLabel" as versionLabel
 									from
 										compoList a left join  bcpg_product b on a.doc->>"$.bcpg_compoListProduct_bcpg_nodeRef[0]" = b.nodeRef
@@ -1493,7 +1666,63 @@
 				</Level>
 				<Level name="entity_noderef" caption="${msg("jsolap.componentName.title")}" table="compoList" column="nodeRef" nameColumn="name" type="String"   >
 				</Level>
-				<Level name="versionLabel" caption="${msg("jsolap.componentVersionLabel.title")}" table="compoList" column="versionLabel" type="String" />
+				<Level approxRowCount="5" name="productState" caption="${msg("jsolap.componentState.title")}" table="compoList" column="productState"  type="String"   >
+				  <MemberFormatter>
+						<Script language="JavaScript">
+							switch (member.getName()) {
+				   				case 'Simulation' :
+				      				return  '${msg("listconstraint.bcpg_systemState.Simulation")}';
+				   				case 'ToValidate' :
+				    				return  '${msg("listconstraint.bcpg_systemState.ToValidate")}';
+				   				case 'Valid' :
+				    				return   '${msg("listconstraint.bcpg_systemState.Valid")}';
+				   				case 'Refused' :
+				    				return   '${msg("listconstraint.bcpg_systemState.Refused")}';
+				   				case 'Archived' :
+				    				return   '${msg("listconstraint.bcpg_systemState.Archived")}'; 
+				    			case 'Stopped' :
+				    				return   '${msg("listconstraint.bcpg_systemState.Stopped")}';   
+							   default:
+								    return member.getName();
+								}
+						</Script>
+					</MemberFormatter>
+				</Level>
+				<Level approxRowCount="10" name="productType" caption="${msg("jsolap.componentType.title")}" table="compoList" column="productType" nameColumn="productType" type="String"   >
+					<MemberFormatter>
+						<Script language="JavaScript">
+							switch (member.getName()) {
+				   				case 'bcpg:rawMaterial' :
+				      				return  '${msg("bcpg_bcpgmodel.type.bcpg_rawMaterial.title")}';
+				   				case 'bcpg:finishedProduct' :
+				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_finishedProduct.title")}';
+				   				case 'bcpg:semiFinishedProduct' :
+				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_semiFinishedProduct.title")}';
+				    			case 'bcpg:packagingMaterial' :
+				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_packagingMaterial.title")}';
+				   				case 'bcpg:packagingKit' :
+				    				return  '${msg("jsolap.packagingKit.title")}';
+				   				case 'bcpg:localSemiFinishedProduct' :
+				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_localSemiFinishedProduct.title")}';
+				    			case 'bcpg:resourceProduct' :
+				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_resourceProduct.title")}';
+							   default:
+								    return member.getName();
+								}
+						</Script>
+					</MemberFormatter>
+				</Level>		
+				<Level name="versionLabel" caption="${msg("jsolap.componentVersionLabel.title")}" table="compoList" column="versionLabel" type="String" >
+				<MemberFormatter>
+					<Script language="JavaScript">
+							if (member.getName() == "#null") {
+					      		return  '1.0';
+							}else{
+								return member.getName();
+							}
+					</Script>
+				</MemberFormatter>
+				</Level>
 			</Hierarchy>
 		</Dimension>
 	
@@ -1521,7 +1750,17 @@
 				</Level>
 				<Level name="entity_noderef" caption="${msg("jsolap.packagingName.title")}" table="packagingList" column="nodeRef" nameColumn="name" type="String"   >
 				</Level>
-				<Level name="versionLabel" caption="${msg("jsolap.packagingVersionLabel.title")}" table="packagingList" column="versionLabel" type="String" />
+				<Level name="versionLabel" caption="${msg("jsolap.packagingVersionLabel.title")}" table="packagingList" column="versionLabel" type="String" >
+				<MemberFormatter>
+					<Script language="JavaScript">
+							if (member.getName() == "#null") {
+					      		return  '1.0';
+							}else{
+								return member.getName();
+							}
+					</Script>
+				</MemberFormatter>
+				</Level>
 			</Hierarchy>
 		</Dimension>
 		

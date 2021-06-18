@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -152,7 +152,7 @@ public class ParentValuePlugin extends EntityListValuePlugin {
 		} else {
 			String searchTemplate = "%(";
 			for (QName propertyQName : propertyQNames) {
-				searchTemplate += " " + propertyQName.toPrefixString(namespaceService);
+				searchTemplate += " " + entityDictionaryService.toPrefixString(propertyQName);
 			}
 			searchTemplate += ")";
 

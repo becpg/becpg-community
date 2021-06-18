@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG. 
+ * Copyright (C) 2010-2021 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -59,6 +59,9 @@ public interface QualityModel {
 
 	/** Quality control **/
 	QName TYPE_QUALITY_CONTROL = QName.createQName(QUALITY_URI, "qualityControl");
+	
+
+	QName TYPE_BATCH = QName.createQName(QUALITY_URI, "batch");
 
 	/** Constant <code>PROP_QC_SAMPLES_COUNTER</code> */
 	QName PROP_QC_SAMPLES_COUNTER = QName.createQName(QUALITY_URI, "qcSamplesCounter");
@@ -137,6 +140,7 @@ public interface QualityModel {
 	/** Constant <code>PROP_SDL_FREQUNIT</code> */
 	QName PROP_SDL_FREQUNIT = QName.createQName(QUALITY_URI, "sdlFreqUnit");
 
+	QName TYPE_BATCH_ALLOCATION_LIST = QName.createQName(QUALITY_URI, "batchAllocationList");
 	/** sampling list **/
 	QName TYPE_SAMPLING_LIST = QName.createQName(QUALITY_URI, "samplingList");
 	/** Constant <code>PROP_SL_DATETIME</code> */
@@ -198,6 +202,7 @@ public interface QualityModel {
 
 	/** Constant <code>ASPECT_CONTROL_LIST</code> */
 	QName ASPECT_CONTROL_LIST = QName.createQName(QUALITY_URI, "controlListAspect");
+
 
 
 }

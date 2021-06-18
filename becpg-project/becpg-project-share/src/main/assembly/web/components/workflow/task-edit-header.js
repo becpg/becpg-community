@@ -124,7 +124,9 @@
             if (dateEls[i].getAttribute('data-datatype') === 'date') {
                formatString = 'date-format.mediumDate';
             }
-            dateEls[i].innerHTML = Alfresco.util.formatDate(dateEls[i].innerHTML, Alfresco.util.message(formatString));
+			if (dateEls[i].innerHTML != "") {
+            	dateEls[i].innerHTML = Alfresco.util.formatDate(dateEls[i].innerHTML, Alfresco.util.message(formatString));
+			}
          };
 
       },      
