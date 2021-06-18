@@ -895,8 +895,8 @@
         <property name="id"><value>patch.bcpg.plm.packagingMaterialPatch</value></property>
         <property name="description"><value>patch.bcpg.plm.packagingMaterialPatch.description</value></property>
         <property name="fixesFromSchema" value="0"/>
-        <property name="fixesToSchema" value="10057" />
-        <property name="targetSchema" value="13000"/>
+        <property name="fixesToSchema" value="13001" />
+        <property name="targetSchema" value="13002"/>
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>
         <property name="policyBehaviourFilter">
@@ -908,8 +908,8 @@
         <property name="id"><value>patch.bcpg.plm.nutListMiniMaxiPatch</value></property>
         <property name="description"><value>patch.bcpg.plm.nutListMiniMaxiPatch.description</value></property>
         <property name="fixesFromSchema" value="0"/>
-        <property name="fixesToSchema" value="10057" />
-        <property name="targetSchema" value="13000 "/>
+        <property name="fixesToSchema" value="13001" />
+        <property name="targetSchema" value="13002"/>
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>
          <property name="integrityChecker" ref="integrityChecker"/>
