@@ -54,12 +54,19 @@ public class NutriScore implements ScoreCalculatingPlugin {
 	@Override
 	public boolean formulateScore(ProductData productData) {
 		
-		Serializable nutrientProfileCategory = nodeService.getProperty(productData.getNodeRef(), QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfileCategory"));
+		Serializable prop = nodeService.getProperty(productData.getNodeRef(), QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfileCategory"));
 		
-		if (nutrientProfileCategory instanceof String) {
+		if (prop != null) {
 			
 			try {
-				String category = (String) nutrientProfileCategory;
+				
+				NutrientProfileCategory nutrientProfileCategory = null;
+				
+				if (prop instanceof String) {
+					nutrientProfileCategory = NutrientProfileCategory.valueOf((String) prop);
+				} else if (prop instanceof NutrientProfileCategory) {
+					nutrientProfileCategory = (NutrientProfileCategory) prop;
+				}
 				
 				List<Double> ranges = null;
 				
@@ -73,13 +80,25 @@ public class NutriScore implements ScoreCalculatingPlugin {
 				NodeRef aoacFibreNode = ImportHelper.findCharact(QName.createQName(BCPG_NUT, namespaceService), BeCPGModel.PROP_CHARACT_NAME, I18NUtil.getMessage("plm.nut.fibtg"), nodeService);
 				NodeRef proteinNode = ImportHelper.findCharact(QName.createQName(BCPG_NUT, namespaceService), BeCPGModel.PROP_CHARACT_NAME, I18NUtil.getMessage("plm.nut.protein"), nodeService);
 				
-				if (NutrientProfileCategory.Beverages.toString().equals(category)) {
+				switch (nutrientProfileCategory) {
+				
+				case Beverages:
 					ranges = Arrays.asList(9d, 5d, 1d, 0d);
-				} else if (NutrientProfileCategory.Cheeses.toString().equals(category)) {
+					break;
+				case Cheeses:
+				case Fats:
+				case Others:
 					ranges = Arrays.asList(18d, 10d, 2d, -1d);
-				} else if (NutrientProfileCategory.Fats.toString().equals(category)) {
+					break;
+				}
+				
+				if (NutrientProfileCategory.Beverages.equals(nutrientProfileCategory)) {
+					ranges = Arrays.asList(9d, 5d, 1d, 0d);
+				} else if (NutrientProfileCategory.Cheeses.equals(nutrientProfileCategory)) {
 					ranges = Arrays.asList(18d, 10d, 2d, -1d);
-				} else if (NutrientProfileCategory.Others.toString().equals(category)) {
+				} else if (NutrientProfileCategory.Fats.equals(nutrientProfileCategory)) {
+					ranges = Arrays.asList(18d, 10d, 2d, -1d);
+				} else if (NutrientProfileCategory.Others.equals(nutrientProfileCategory)) {
 					ranges = Arrays.asList(18d, 10d, 2d, -1d);
 				}
 				
@@ -119,7 +138,7 @@ public class NutriScore implements ScoreCalculatingPlugin {
 					}
 				}
 				
-				int nutriScore = Nutrient5CHelper.compute5CScore(energyKj, satFat, totalFat, totalSugar, sodium, percFruitsAndVetgs, nspFibre, aoacFibre, protein, category);
+				int nutriScore = Nutrient5CHelper.compute5CScore(energyKj, satFat, totalFat, totalSugar, sodium, percFruitsAndVetgs, nspFibre, aoacFibre, protein, nutrientProfileCategory.toString());
 				
 				String nutrientClass = Nutrient5CHelper.buildNutrientClass((double) nutriScore, ranges, NUTRIENT_PROFILE_CLASSES);
 				
@@ -142,8 +161,9 @@ public class NutriScore implements ScoreCalculatingPlugin {
 				return false;
 			}
 		} else {
-			productData.setNutrientScore(null);
-			productData.setNutrientClass(null);
+			// TODO uncomment this when nutriScore is calculated with this class
+//			productData.setNutrientScore(null);
+//			productData.setNutrientClass(null);
 		}
 		
 		return true;
