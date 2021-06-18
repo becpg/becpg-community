@@ -316,8 +316,7 @@ public class ImportServiceIT extends PLMBaseTestCase {
 			assertEquals("check product has 2 suppliers defined", 2, supplierAssocRefs.size());
 			String supplier1Code = (String) nodeService.getProperty(supplierAssocRefs.get(0).getTargetRef(), BeCPGModel.PROP_ERP_CODE);
 			String supplier2Code = (String) nodeService.getProperty(supplierAssocRefs.get(1).getTargetRef(), BeCPGModel.PROP_ERP_CODE);
-			assertEquals("check supplier name", "1000012", supplier1Code);
-			assertEquals("check supplier name", "1000013", supplier2Code);
+			assertTrue("check supplier name", supplier1Code.equals("1000012") && supplier2Code.equals("1000013") || supplier2Code.equals("1000012") && supplier1Code.equals("1000013"));
 			// does space between association values work ?
 
 			/*
@@ -332,8 +331,7 @@ public class ImportServiceIT extends PLMBaseTestCase {
 			assertEquals("check product has 2 suppliers defined", 2, supplierAssocRefs.size());
 			supplier1Code = (String) nodeService.getProperty(supplierAssocRefs.get(0).getTargetRef(), BeCPGModel.PROP_ERP_CODE);
 			supplier2Code = (String) nodeService.getProperty(supplierAssocRefs.get(1).getTargetRef(), BeCPGModel.PROP_ERP_CODE);
-			assertEquals("check supplier name", "1000012", supplier1Code);
-			assertEquals("check supplier name", "1000014", supplier2Code);
+			assertTrue("check supplier name", supplier1Code.equals("1000012") && supplier2Code.equals("1000014") || supplier2Code.equals("1000012") && supplier1Code.equals("1000014"));
 
 			/*-- check productLists --*/
 			assertEquals("costs should exist", 2, productData.getCostList().size());

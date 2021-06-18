@@ -18,7 +18,6 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
-import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
@@ -34,7 +33,9 @@ import fr.becpg.repo.product.data.productList.NutDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.formulation.nutrient.RegulationFormulationHelper;
+import fr.becpg.repo.repository.model.VariantAwareDataItem;
 import fr.becpg.repo.variant.filters.VariantFilters;
+import fr.becpg.repo.variant.model.VariantData;
 
 /**
  * The Class NutsCalculatingVisitor.
@@ -77,90 +78,95 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 
 	/** {@inheritDoc} */
 	@Override
-	public boolean process(ProductData formulatedProduct) throws FormulateException {
+	public boolean process(ProductData formulatedProduct)  {
+		
 
 		if (accept(formulatedProduct)) {
 			logger.debug("Nuts calculating visitor");
 
 			if (formulatedProduct.getNutList() == null) {
-				formulatedProduct.setNutList(new LinkedList<NutListDataItem>());
+				formulatedProduct.setNutList(new LinkedList<>());
 			}
-
-			boolean hasCompo = formulatedProduct.hasCompoListEl(new VariantFilters<>());
-
 			
-			cleanSimpleList(formulatedProduct.getNutList(), hasCompo || formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL));
+			cleanSimpleList(formulatedProduct.getNutList(), formulatedProduct.hasCompoListEl(new VariantFilters<>()) || formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL));
 
 			
 			synchronizeTemplate(formulatedProduct, formulatedProduct.getNutList());
 			
-
-			if (hasCompo) {
-
-				if (!propagateModeEnable) {
-					
-					visitChildren(formulatedProduct, formulatedProduct.getNutList(), 
-							FormulationHelper.getNetQtyForNuts(formulatedProduct));
-
-				} else {
-
-					List<NutListDataItem> retainNodes = new ArrayList<>();
-					Map<NodeRef, Double> totalQtiesValue = new HashMap<>();
-
-					boolean isGenericRawMaterial = formulatedProduct instanceof RawMaterialData;
-
-					// compoList
-					Double netQty = FormulationHelper.getNetQtyForNuts(formulatedProduct);
-					
-					for (CompoListDataItem compoItem : formulatedProduct.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-
-						if (compoItem.getDeclType() != DeclarationType.Omit) {
-
-							NodeRef part = compoItem.getProduct();
-							ProductData partProduct = (ProductData) alfrescoRepository.findOne(part);
-
-							Double weight = FormulationHelper.getQtyInKg(compoItem);
-							Double vol = FormulationHelper.getNetVolume(compoItem, partProduct);
-
-							Double qtyUsed = partProduct.isLiquid() ? vol : weight;
-
-							if (qtyUsed != null) {
-								if (!(partProduct instanceof LocalSemiFinishedProductData)) {
-									visitPart(formulatedProduct, partProduct, formulatedProduct.getNutList(), retainNodes, qtyUsed, netQty, isGenericRawMaterial,
-											totalQtiesValue);
-								}
-							}
-						}
-					}
-
-					formulatedProduct.getNutList().retainAll(retainNodes);
-
-					for (Map.Entry<NodeRef, List<NodeRef>> mandatoryCharact : getMandatoryCharacts(formulatedProduct, null).entrySet()) {
-						if ((mandatoryCharact.getValue() != null) && !mandatoryCharact.getValue().isEmpty()) {
-							MLText message = MLTextHelper.getI18NMessage(MESSAGE_UNDEFINED_CHARACT,
-									mlNodeService.getProperty(mandatoryCharact.getKey(), BeCPGModel.PROP_CHARACT_NAME));
-
-							formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message,
-									mandatoryCharact.getKey(), mandatoryCharact.getValue(), RequirementDataType.Nutrient));
-						}
-					}
-
-					if (isGenericRawMaterial) {
-						formulateGenericRawMaterial(formulatedProduct.getNutList(), totalQtiesValue, netQty);
-					}
-				}
+			nutsCalculatingProcess(formulatedProduct, null);
+			for (VariantData variant: formulatedProduct.getVariants()) {
+				nutsCalculatingProcess(formulatedProduct, variant);
 			}
-
+			
 			if (formulatedProduct.getNutList() != null) {
 
-				calculateNutListDataItem(formulatedProduct, false, hasCompo);
+				calculateNutListDataItem(formulatedProduct, false, formulatedProduct.hasCompoListEl(new VariantFilters<>()));
 				computeFormulatedList(formulatedProduct, formulatedProduct.getNutList(), PLMModel.PROP_NUT_FORMULA,
 						"message.formulate.nutList.error");
-				calculateNutListDataItem(formulatedProduct, true, hasCompo);
+				calculateNutListDataItem(formulatedProduct, true, formulatedProduct.hasCompoListEl(new VariantFilters<>()));
 
 			}
 		} 
 		return true;
+	}
+	
+	private void nutsCalculatingProcess(ProductData formulatedProduct, VariantData variant) {
+		boolean hasCompo = formulatedProduct.hasCompoListEl((variant != null ? new VariantFilters<>(variant.getNodeRef()) : new VariantFilters<>()));
+		if (hasCompo) {
+
+			if (!propagateModeEnable) {
+				
+				visitChildren(formulatedProduct, formulatedProduct.getNutList(), 
+						FormulationHelper.getNetQtyForNuts(formulatedProduct), variant);
+
+			} else {
+
+				List<NutListDataItem> retainNodes = new ArrayList<>();
+				Map<NodeRef, Double> totalQtiesValue = new HashMap<>();
+
+				boolean isGenericRawMaterial = formulatedProduct instanceof RawMaterialData;
+
+				// compoList
+				Double netQty = FormulationHelper.getNetQtyForNuts(formulatedProduct);
+				
+				for (CompoListDataItem compoItem : formulatedProduct.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+
+					if (compoItem.getDeclType() != DeclarationType.Omit) {
+
+						NodeRef part = compoItem.getProduct();
+						ProductData partProduct = (ProductData) alfrescoRepository.findOne(part);
+
+						Double weight = FormulationHelper.getQtyInKg(compoItem);
+						Double vol = FormulationHelper.getNetVolume(compoItem, partProduct);
+
+						Double qtyUsed = partProduct.isLiquid() ? vol : weight;
+
+						if (qtyUsed != null) {
+							if (!(partProduct instanceof LocalSemiFinishedProductData)) {
+								visitPart(formulatedProduct, partProduct, formulatedProduct.getNutList(), retainNodes, qtyUsed, netQty, isGenericRawMaterial,
+										totalQtiesValue, variant);
+							}
+						}
+					}
+				}
+
+				formulatedProduct.getNutList().retainAll(retainNodes);
+
+				for (Map.Entry<NodeRef, List<NodeRef>> mandatoryCharact : getMandatoryCharacts(formulatedProduct, null).entrySet()) {
+					if ((mandatoryCharact.getValue() != null) && !mandatoryCharact.getValue().isEmpty()) {
+						MLText message = MLTextHelper.getI18NMessage(MESSAGE_UNDEFINED_CHARACT,
+								mlNodeService.getProperty(mandatoryCharact.getKey(), BeCPGModel.PROP_CHARACT_NAME));
+
+						formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message,
+								mandatoryCharact.getKey(), mandatoryCharact.getValue(), RequirementDataType.Nutrient));
+					}
+				}
+
+				if (isGenericRawMaterial) {
+					formulateGenericRawMaterial(formulatedProduct.getNutList(), totalQtiesValue, netQty);
+				}
+			}
+		}
 	}
 	
 	private void calculateNutListDataItem(ProductData formulatedProduct, boolean onlyFormulaNutrient, boolean hasCompo){
@@ -183,6 +189,13 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 						if (n.getMaxi() != null) {
 							n.setMaxi((n.getMaxi() * (100 - n.getLossPerc())) / 100);
 						}
+						if (n instanceof VariantAwareDataItem) {
+							for (int i=1; i<=VariantAwareDataItem.VARIANT_COLUMN_SIZE ; i++) {
+								if (((VariantAwareDataItem)n).getValue(VariantAwareDataItem.VARIANT_COLUMN_NAME+i) != null){
+									((VariantAwareDataItem)n).setValue(((((VariantAwareDataItem)n).getValue(VariantAwareDataItem.VARIANT_COLUMN_NAME+i) * (100 - n.getLossPerc())) / 100), VariantAwareDataItem.VARIANT_COLUMN_NAME+i);
+								}
+							}
+						}
 					}
 
 					Double servingSize = FormulationHelper.getServingSizeInLorKg(formulatedProduct);
@@ -200,7 +213,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 										nut.getCharactName());
 
 								formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message,
-										n.getNut(), new ArrayList<NodeRef>(), RequirementDataType.Specification));
+										n.getNut(), new ArrayList<>(), RequirementDataType.Specification));
 							}
 						}
 					} else {
@@ -227,7 +240,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 
 	
 	private List<ReqCtrlListDataItem> visitPart(ProductData formulatedProduct, ProductData partProduct, List<NutListDataItem> nutList, List<NutListDataItem> retainNodes,
-			Double qtyUsed, Double netQty, Boolean isGenericRawMaterial, Map<NodeRef, Double> totalQtiesValue) {
+			Double qtyUsed, Double netQty, Boolean isGenericRawMaterial, Map<NodeRef, Double> totalQtiesValue, VariantData variant) {
 
 		List<ReqCtrlListDataItem> ret = new ArrayList<>();
 
@@ -249,7 +262,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 
 				if ((nutListDataItem != null) && (qtyUsed != null)) {
 
-					calculate(formulatedProduct, partProduct, newNutListDataItem, nutListDataItem, qtyUsed, netQty, isGenericRawMaterial);
+					calculate(formulatedProduct, partProduct, newNutListDataItem, nutListDataItem, qtyUsed, netQty, isGenericRawMaterial, variant);
 
 					if ((totalQtiesValue != null) && (nutListDataItem.getValue() != null)) {
 						Double currentQty = totalQtiesValue.get(newNutListDataItem.getCharactNodeRef());
@@ -288,7 +301,8 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 		if ((nutUnit == null) || nutUnit.contains("/")) {
 			return nutUnit;
 		}
-		return nutUnit += calculateSuffixUnit(productUnit, servingSizeUnit);
+		nutUnit += calculateSuffixUnit(productUnit, servingSizeUnit);
+		return nutUnit;
 	}
 
 	/**

@@ -1,20 +1,3 @@
-/*******************************************************************************
- * Copyright (C) 2010-2020 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
- * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
- ******************************************************************************/
 package fr.becpg.repo.entity.impl;
 
 import java.util.ArrayList;
@@ -23,18 +6,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.alfresco.service.cmr.dictionary.AspectDefinition;
+import org.alfresco.repo.dictionary.DictionaryComponent;
+import org.alfresco.repo.dictionary.DictionaryDAO;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
-import org.alfresco.service.cmr.dictionary.PropertyDefinition;
-import org.alfresco.service.cmr.dictionary.TypeDefinition;
+import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.alfresco.util.cache.AsynchronouslyRefreshedCacheRegistry;
+import org.alfresco.util.cache.RefreshableCacheEvent;
+import org.alfresco.util.cache.RefreshableCacheListener;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.extensions.surf.util.ParameterCheck;
 
-import fr.becpg.repo.cache.BeCPGCacheDataProviderCallBack;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.repository.RepositoryEntity;
@@ -46,21 +33,50 @@ import fr.becpg.repo.repository.RepositoryEntityDefReader;
  * @author matthieu Fast and cached access to dataDictionnary
  * @version $Id: $Id
  */
-@Service("entityDictionaryService")
-public class EntityDictionaryServiceImpl implements EntityDictionaryService {
+public class EntityDictionaryServiceImpl extends DictionaryComponent implements DictionaryService, EntityDictionaryService, RefreshableCacheListener, InitializingBean {
 
-	private Map<QName,QName> propDefMapping = new HashMap<>();
+	private static Log logger = LogFactory.getLog(EntityDictionaryServiceImpl.class);
+
+	private DictionaryDAO dictionaryDAO;
+
+	private BeCPGCacheService beCPGCacheService;
+
+	private AsynchronouslyRefreshedCacheRegistry registry;
+
+	private RepositoryEntityDefReader<RepositoryEntity> repositoryEntityDefReader;
+	
+	protected NamespaceService namespaceService;
+
+	private Map<QName, QName> propDefMapping = new HashMap<>();
+
+	public void setRepositoryEntityDefReader(RepositoryEntityDefReader<RepositoryEntity> repositoryEntityDefReader) {
+		this.repositoryEntityDefReader = repositoryEntityDefReader;
+	}
+
+	public void setRegistry(AsynchronouslyRefreshedCacheRegistry registry) {
+		this.registry = registry;
+	}
+
+	public void setBeCPGCacheService(BeCPGCacheService beCPGCacheService) {
+		this.beCPGCacheService = beCPGCacheService;
+	}
 	
 	
-	
-	@Autowired
-	public DictionaryService dictionaryService;
 
-	@Autowired
-	public BeCPGCacheService beCPGCacheService;
+	public void setNamespaceService(NamespaceService namespaceService) {
+		this.namespaceService = namespaceService;
+	}
 
-	@Autowired
-	public RepositoryEntityDefReader<RepositoryEntity> repositoryEntityDefReader;
+	/**
+	 * Sets the Meta Model DAO
+	 *
+	 * @param dictionaryDAO  dictionary DAO
+	 */
+	@Override
+	public void setDictionaryDAO(DictionaryDAO dictionaryDAO) {
+		super.setDictionaryDAO(dictionaryDAO);
+		this.dictionaryDAO = dictionaryDAO;
+	}
 
 	/** {@inheritDoc} */
 	@Override
@@ -73,33 +89,45 @@ public class EntityDictionaryServiceImpl implements EntityDictionaryService {
 	public boolean isMultiLevelDataList(QName dataListItemType) {
 		return repositoryEntityDefReader.isMultiLevelDataList(dataListItemType);
 	}
-	
+
 	/** {@inheritDoc} */
 	@Override
 	public boolean isMultiLevelLeaf(QName entityType) {
 		return repositoryEntityDefReader.isMultiLevelLeaf(entityType);
 	}
-	
+
 	/** {@inheritDoc} */
 	@Override
 	public QName getMultiLevelSecondaryPivot(QName dataListItemType) {
 		return repositoryEntityDefReader.getMultiLevelSecondaryPivot(dataListItemType);
 	}
 	
-   /** {@inheritDoc} */
-   @Override
-   public void registerPropDefMapping(QName orig, QName dest){
-	   propDefMapping.put(orig, dest);
-   }
-	
-	
+	/** {@inheritDoc} */
+	@Override
+	public QName getMultiLevelGroupProperty(QName dataListItemType) {
+		return repositoryEntityDefReader.getMultiLevelGroupProperty(dataListItemType);
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public void registerPropDefMapping(QName orig, QName dest) {
+		propDefMapping.put(orig, dest);
+	}
+
 	/** {@inheritDoc} */
 	@Override
 	public List<AssociationDefinition> getPivotAssocDefs(QName sourceType) {
+		return getPivotAssocDefs(sourceType, false);
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public List<AssociationDefinition> getPivotAssocDefs(QName sourceType, boolean exactMatch) {
 		List<AssociationDefinition> ret = new ArrayList<>();
-		for (QName assocQName : dictionaryService.getAllAssociations()) {
-			AssociationDefinition assocDef = dictionaryService.getAssociation(assocQName);
-			if (isSubClass(assocDef.getTargetClass().getName(), sourceType)) {
+		for (QName assocQName : getAllAssociations()) {
+			AssociationDefinition assocDef = getAssociation(assocQName);
+			if ((exactMatch && assocDef.getTargetClass().getName().equals(sourceType))
+					|| (!exactMatch && isSubClass(assocDef.getTargetClass().getName(), sourceType))) {
 				ret.add(assocDef);
 			}
 		}
@@ -109,118 +137,154 @@ public class EntityDictionaryServiceImpl implements EntityDictionaryService {
 	/** {@inheritDoc} */
 	@Override
 	public QName getTargetType(QName assocName) {
-		return dictionaryService.getAssociation(assocName).getTargetClass().getName();
+		return getAssociation(assocName).getTargetClass().getName();
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public ClassAttributeDefinition findMatchingPropDef(QName itemType, QName newItemType, QName fieldQname) {
-		
-		if(propDefMapping.containsKey(fieldQname)){
+
+		if (propDefMapping.containsKey(fieldQname)) {
 			return getPropDef(propDefMapping.get(fieldQname));
 		}
-		
-		if( fieldQname.getLocalName().contains(itemType.getLocalName())){
-			QName newQname = QName.createQName(fieldQname.getNamespaceURI(),fieldQname.getLocalName().replace(itemType.getLocalName(), newItemType.getLocalName()) );
+
+		if (fieldQname.getLocalName().contains(itemType.getLocalName())) {
+			QName newQname = QName.createQName(fieldQname.getNamespaceURI(),
+					fieldQname.getLocalName().replace(itemType.getLocalName(), newItemType.getLocalName()));
 			ClassAttributeDefinition ret = getPropDef(newQname);
-			if(ret!=null){
+			if (ret != null) {
 				return ret;
 			}
 		}
-		
+
 		return getPropDef(fieldQname);
 	}
-	
-	
+
 	/** {@inheritDoc} */
 	@Override
 	public ClassAttributeDefinition getPropDef(final QName fieldQname) {
 
-		return beCPGCacheService.getFromCache(EntityDictionaryServiceImpl.class.getName(), fieldQname.toString() + ".propDef",
-				new BeCPGCacheDataProviderCallBack<ClassAttributeDefinition>() {
-					public ClassAttributeDefinition getData() {
-						ClassAttributeDefinition propDef = dictionaryService.getProperty(fieldQname);
-						if (propDef == null) {
-							propDef = dictionaryService.getAssociation(fieldQname);
-						}
+		return beCPGCacheService.getFromCache(EntityDictionaryServiceImpl.class.getName(), fieldQname.toString() + ".propDef", () -> {
+			ClassAttributeDefinition propDef = getProperty(fieldQname);
+			if (propDef == null) {
+				propDef = getAssociation(fieldQname);
+			}
+			return propDef;
+		});
 
-						return propDef;
-					}
-				});
 	}
-
-	/** {@inheritDoc} */
-	@Override
-	public boolean isSubClass(final QName className, final QName ofClassName) {
-		return beCPGCacheService.getFromCache(EntityDictionaryServiceImpl.class.getName(), className.toString() + "_" + ofClassName.toString() + ".isSubClass",
-				new BeCPGCacheDataProviderCallBack<Boolean>() {
-					public Boolean getData() {
-						return dictionaryService.isSubClass(className, ofClassName);
-					}
-				});
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public Collection<QName> getSubTypes(final QName typeQname) {
-		return beCPGCacheService.getFromCache(EntityDictionaryServiceImpl.class.getName(), typeQname.toString() + ".getSubTypes",
-				new BeCPGCacheDataProviderCallBack<Collection<QName>>() {
-					public Collection<QName> getData() {
-						return dictionaryService.getSubTypes(typeQname, true);
-					}
-				});
-	}
-
-	
 
 	/** {@inheritDoc} */
 	@Override
 	public boolean isAssoc(QName assocName) {
-		return dictionaryService.getAssociation(assocName)!=null;
+		return getAssociation(assocName) != null;
 	}
-
 
 	
-	/** {@inheritDoc} */
 	@Override
-	public TypeDefinition getType(QName type) {
-		return dictionaryService.getType(type);
+	public Collection<QName> getSubTypes(QName typeQname) {
+		return getSubTypes(typeQname, true);
 	}
 
-	/** {@inheritDoc} */
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.alfresco.service.cmr.dictionary.DictionaryService#getSubTypes(org.alfresco.service.namespace.QName, boolean)
+	 */
 	@Override
-	public AspectDefinition getAspect(QName aspect) {
-		return dictionaryService.getAspect(aspect);
-	}
+	public Collection<QName> getSubTypes(QName superType, boolean follow) {
 
-	/** {@inheritDoc} */
-	@Override
-	public PropertyDefinition getProperty(QName key) {
-		return dictionaryService.getProperty(key);
-	}
+		return beCPGCacheService.getFromCache(EntityDictionaryServiceImpl.class.getName(), superType.toString() + ".getSubTypes." + follow,
+				() -> dictionaryDAO.getSubTypes(superType, follow));
 
-	/** {@inheritDoc} */
-	@Override
-	public AssociationDefinition getAssociation(QName qName) {
-		return dictionaryService.getAssociation(qName);
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public DictionaryService getDictionaryService() {
-		return dictionaryService;
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public ClassDefinition getClass(QName type) {
-		return dictionaryService.getClass(type);
 	}
 
 
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.alfresco.service.cmr.dictionary.DictionaryService#getSubAspects(org.alfresco.service.namespace.QName, boolean)
+	 */
+	@Override
+	public Collection<QName> getSubAspects(QName superAspect, boolean follow) {
+
+		return beCPGCacheService.getFromCache(EntityDictionaryServiceImpl.class.getName(), superAspect.toString() + ".getSubAspects." + follow,
+				() -> dictionaryDAO.getSubAspects(superAspect, follow));
+
+	}
+
+
+	@Override
+	public String toPrefixString(QName propertyQName) {
+		return beCPGCacheService.getFromCache(EntityDictionaryServiceImpl.class.getName(), propertyQName.toString() + ".toPrefixString" ,
+				() -> propertyQName.toPrefixString(namespaceService));
+	}
+	
+	
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.alfresco.repo.dictionary.DictionaryService#isSubClass(org.alfresco.repo.ref.QName, org.alfresco.repo.ref.QName)
+	 */
+	@Override
+	public boolean isSubClass(QName className, QName ofClassName) {
+
+		return beCPGCacheService.getFromCache(EntityDictionaryServiceImpl.class.getName(),
+				className.toString() + "_" + ofClassName.toString() + ".isSubClass", () -> {
+
+					// Validate arguments
+					ParameterCheck.mandatory("className", className);
+					ParameterCheck.mandatory("ofClassName", ofClassName);
+					ClassDefinition classDef = getClass(className);
+					if (classDef == null) {
+						return false;
+					}
+					ClassDefinition ofClassDef = getClass(ofClassName);
+					if (ofClassDef == null) {
+						return false;
+					}
+
+					// Only check if both ends are either a type or an aspect
+					boolean subClassOf = false;
+					if (classDef.isAspect() == ofClassDef.isAspect()) {
+						while (classDef != null) {
+							if (classDef.equals(ofClassDef)) {
+								subClassOf = true;
+								break;
+							}
+
+							// No match yet, so go to parent class
+							QName parentClassName = classDef.getParentName();
+							classDef = (parentClassName == null) ? null : getClass(parentClassName);
+						}
+					}
+					return subClassOf;
+				});
+
+	}
 
 
 
+	@Override
+	public void onRefreshableCacheEvent(RefreshableCacheEvent refreshableCacheEvent) {
+		if("compiledModelsCache".equals(refreshableCacheEvent.getCacheId())){
+			if (logger.isInfoEnabled()) {
+				logger.info("Refreshing CachedDictionaryService cache: "+ refreshableCacheEvent.getCacheId() );
+			}
+			beCPGCacheService.clearCache(EntityDictionaryServiceImpl.class.getName());
+		}
+	}
+
+	@Override
+	public String getCacheId() {
+		return EntityDictionaryServiceImpl.class.getName();
+	}
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		registry.register(this);
+		
+	}
 
 
 }

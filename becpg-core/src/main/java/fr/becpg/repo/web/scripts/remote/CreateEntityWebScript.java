@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -22,12 +22,12 @@ import java.io.InputStream;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.io.IOUtils;
-import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
-import fr.becpg.common.BeCPGException;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
+import fr.becpg.repo.entity.remote.RemoteParams;
+import io.opencensus.common.Scope;
 
 /**
  * Create entity with POST xml
@@ -40,27 +40,26 @@ public class CreateEntityWebScript extends AbstractEntityWebScript {
 	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
-		logger.debug("Create entity");
-		if (logger.isTraceEnabled()) {
-			logger.trace("Request details: " + req.getContentType() + " " + req.getFormat());
-			logger.trace("XML request DUMP: ");
-			InputStream in = req.getContent().getInputStream();
-			IOUtils.copy(in, System.out);
-			if (in.markSupported()) {
-				in.reset();
+		
+		try (Scope scope = tracer.spanBuilder("/remote/put").startScopedSpan()) {
+			logger.debug("Create entity");
+			if (logger.isTraceEnabled()) {
+				logger.trace("Request details: " + req.getContentType() + " " + req.getFormat());
+				logger.trace("XML request DUMP: ");
+				InputStream in = req.getContent().getInputStream();
+				IOUtils.copy(in, System.out);
+				if (in.markSupported()) {
+					in.reset();
+				}
 			}
-		}
-
-		try (InputStream in = req.getContent().getInputStream()) {
+	
 			RemoteEntityFormat format = getFormat(req);
-			
-			NodeRef entityNodeRef = remoteEntityService.createOrUpdateEntity(null, in, format, getEntityProviderCallback(req));
+	
+			NodeRef entityNodeRef = remoteEntityService.createOrUpdateEntity(null, req.getContent().getInputStream(), new RemoteParams(format),
+					getEntityProviderCallback(req));
+	
 			sendOKStatus(entityNodeRef, resp, format);
-		} catch (BeCPGException e) {
-			logger.error("Cannot import entity", e);
-			throw new WebScriptException(e.getMessage());
 		}
-
 	}
 
 }

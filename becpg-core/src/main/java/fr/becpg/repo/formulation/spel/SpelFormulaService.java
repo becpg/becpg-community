@@ -9,6 +9,8 @@ import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.spel.SpelCompilerMode;
+import org.springframework.expression.spel.SpelParserConfiguration;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Service;
@@ -36,6 +38,8 @@ public class SpelFormulaService {
 
 	@Autowired
 	private CustomSpelFunctions[] customSpelFunctions;
+	
+	private ExpressionParser parser;
 
 	private <T extends RepositoryEntity> void registerCustomFunctions(T entity, StandardEvaluationContext context) {
 
@@ -65,6 +69,20 @@ public class SpelFormulaService {
 		return ((T) factory.getProxy());
 	}
 
+	
+	public ExpressionParser getSpelParser() {
+		
+		//  https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#expressions-spel-compilation
+		if(parser == null) {
+			SpelParserConfiguration config = new SpelParserConfiguration(SpelCompilerMode.MIXED,
+				    this.getClass().getClassLoader());
+			
+			 parser = new SpelExpressionParser(config);
+		}
+		return parser;
+	}
+
+	
 	/**
 	 * <p>createEntitySpelContext.</p>
 	 *
@@ -148,8 +166,7 @@ public class SpelFormulaService {
 			logger.debug("Running aggregate fonction [" + formula + "] on range (" + range.size() + ") for operator " + operator);
 		}
 
-		ExpressionParser parser = new SpelExpressionParser();
-		Expression exp = parser.parseExpression(formula);
+		Expression exp = getSpelParser().parseExpression(formula);
 		Double sum = 0d;
 		int count = 0;
 		for (RepositoryEntity item : range) {
@@ -183,14 +200,11 @@ public class SpelFormulaService {
 	 * @param formula a {@link java.lang.String} object.
 	 */
 	public void applyToList(RepositoryEntity entity, Collection<RepositoryEntity> range, String formula) {
-
-		ExpressionParser parser = new SpelExpressionParser();
-		Expression exp = parser.parseExpression(formula);
+		Expression exp = getSpelParser().parseExpression(formula);
 
 		for (RepositoryEntity item : range) {
 			StandardEvaluationContext context = createDataListItemSpelContext(entity, item, false);
-			exp.getValue(context, Double.class);
-
+			exp.getValue(context);
 		}
 
 	}

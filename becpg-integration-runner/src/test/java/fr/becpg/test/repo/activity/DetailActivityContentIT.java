@@ -46,10 +46,12 @@ public class DetailActivityContentIT extends AbstractFinishedProductTest {
 	}
 
 	protected List<NodeRef> getActivities(NodeRef entityNodeRef, Map<String, Boolean> sortMap) {
-		beCPGCacheService.clearAllCaches();
+	
 
 		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			List<NodeRef> ret = new ArrayList<>();
+			beCPGCacheService.clearAllCaches();
+			
 			NodeRef activityListNodeRef = getActivityList(entityNodeRef);
 			if (activityListNodeRef != null) {
 				// All activities of product
@@ -140,7 +142,7 @@ public class DetailActivityContentIT extends AbstractFinishedProductTest {
 		assertEquals("Check if No Activity", 1, getActivities(finishedProductNodeRef, null).size());
 
 		// Add Client to product
-		 transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			ClientData client1 = new ClientData();
 			client1.setName("Client1");
 			client1 = clientRepository.create(getTestFolderNodeRef(), client1);
@@ -185,7 +187,7 @@ public class DetailActivityContentIT extends AbstractFinishedProductTest {
 				JSONObject dataProp = data.getJSONArray("properties").getJSONObject(0);
 				if (dataProp != null) {
 					assertEquals("Check client title modification", PLMModel.ASSOC_CLIENTS.toString(), dataProp.getString("title"));
-					assertEquals("Check client before modification", "[]",dataProp.getString("before"));
+					assertEquals("Check client before modification", "[]" ,dataProp.getString("before"));
 					assertEquals("Check client after modification", "[\"("+client2NodeRef+", Client2)\"]",dataProp.getString("after"));
 				}
 			}

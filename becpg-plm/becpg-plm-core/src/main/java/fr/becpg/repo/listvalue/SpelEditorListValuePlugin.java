@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG. 
+ * Copyright (C) 2010-2021 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -63,7 +63,7 @@ public class SpelEditorListValuePlugin extends EntityListValuePlugin {
 		String className = (String) props.get(ListValueService.PROP_CLASS_NAME);
 
 		if (className != null && className.length() > 0 && className.contains(PARAM_VALUES_SEPARATOR)) {
-			String[] arrClassNames = className != null ? className.split(PARAM_VALUES_SEPARATOR) : null;
+			String[] arrClassNames = className.split(PARAM_VALUES_SEPARATOR);
 			return suggestTargetAssoc(null,PLMModel.TYPE_PRODUCT, query, pageNum, pageSize, arrClassNames, props);
 		}
 		// Class is a Java class

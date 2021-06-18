@@ -1,5 +1,5 @@
 /*
- * 
+ *
  */
 package fr.becpg.repo.workflow.activiti.nc;
 
@@ -13,9 +13,7 @@ import org.alfresco.repo.workflow.activiti.ActivitiScriptNode;
 import org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.RegexQNamePattern;
-import org.alfresco.service.transaction.TransactionService;
 
 import fr.becpg.model.QualityModel;
 
@@ -28,53 +26,44 @@ import fr.becpg.model.QualityModel;
  */
 public class UpdateNC extends ScriptTaskListener {
 
-
 	private static final long serialVersionUID = 7309540412175915634L;
-
-	private NodeService nodeService;
-	private TransactionService transactionService;
 
 	/** {@inheritDoc} */
 	@Override
 	public void notify(final DelegateTask task) {
 
-		nodeService = getServiceRegistry().getNodeService();
-		transactionService = getServiceRegistry().getTransactionService();
-
 		final NodeRef pkgNodeRef = ((ActivitiScriptNode) task.getVariable("bpm_package")).getNodeRef();
 
 		// use retrying transaction to avoid exception
-		// ConcurrencyFailureException
-		RetryingTransactionCallback<List<String>> actionCallback = new RetryingTransactionCallback<List<String>>() {
-			@Override
-			public List<String> execute() throws Exception {
-				// update state and comments
-				List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(pkgNodeRef, WorkflowModel.ASSOC_PACKAGE_CONTAINS, RegexQNamePattern.MATCH_ALL);
-				for (ChildAssociationRef childAssoc : childAssocs) {
+		RetryingTransactionCallback<List<String>> actionCallback = () -> {
+			// update state and comments
+			List<ChildAssociationRef> childAssocs = getServiceRegistry().getNodeService().getChildAssocs(pkgNodeRef,
+					WorkflowModel.ASSOC_PACKAGE_CONTAINS, RegexQNamePattern.MATCH_ALL);
+			for (ChildAssociationRef childAssoc : childAssocs) {
 
-					if (QualityModel.TYPE_NC.equals(nodeService.getType(childAssoc.getChildRef()))) {
+				if (QualityModel.TYPE_NC.equals(getServiceRegistry().getNodeService().getType(childAssoc.getChildRef()))) {
 
-						NodeRef ncNodeRef = childAssoc.getChildRef();
+					NodeRef ncNodeRef = childAssoc.getChildRef();
 
-						NCWorkflowUtils.updateNC(ncNodeRef, new fr.becpg.repo.workflow.activiti.nc.NCWorkflowUtils.NCWorkflowUtilsTask() {
-							
-							public Object getVariable(String name) {
-								
-								return task.getVariable(name);
-							}
-							
-							public Set<String> getVariableNames(){
-								return task.getVariableNames();
-							}
-							
-							
-						} , getServiceRegistry());
-					}
+					NCWorkflowUtils.updateNC(ncNodeRef, new fr.becpg.repo.workflow.activiti.nc.NCWorkflowUtils.NCWorkflowUtilsTask() {
+
+						@Override
+						public Object getVariable(String name) {
+
+							return task.getVariable(name);
+						}
+
+						@Override
+						public Set<String> getVariableNames() {
+							return task.getVariableNames();
+						}
+
+					}, getServiceRegistry());
 				}
-
-				return null;
 			}
+
+			return null;
 		};
-		transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback, false, true);
+		getServiceRegistry().getRetryingTransactionHelper().doInTransaction(actionCallback, false, true);
 	}
 }

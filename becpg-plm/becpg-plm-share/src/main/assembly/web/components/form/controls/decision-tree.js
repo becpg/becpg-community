@@ -314,16 +314,19 @@
                              var choice = question.choices[j];
                              
                              if(this.formRuntime!=null && question.mandatory){
-                                 if(choice.list!=null && !choice.checkboxes && !choice.hasValidation){
-                                	 choice.hasValidation = true;
-                                     this.formRuntime.addValidation(this.id+'-select_'+question.id+'_'+choice.id, Alfresco.forms.validation.mandatory, null, "keyup");
+                                 if(choice.list!=null && !choice.checkboxes){
+									if(!choice.hasValidation){
+	                                	 choice.hasValidation = true;
+	                                     this.formRuntime.addValidation(this.id+'-select_'+question.id+'_'+choice.id, Alfresco.forms.validation.mandatory, null, "keyup");
+									}
+									
                                  } else {
-                                	 if(choice.label != "hidden" && !choice.hasValidation){
+                                	 if(choice.label != "hidden" && !choice.checkboxes && !choice.hasValidation){
                                 		 choice.hasValidation = true;
 	                                     this.formRuntime.addValidation(this.id+'-choice_'+question.id+'_'+choice.id, Alfresco.forms.validation.mandatory, null, "keyup");
                                 	 }
 	                                 if(choice.comment){
-	                                      if(choice.label == "hidden" || Dom.get(this.id+"-choice_"+question.id+'_'+choice.id).checked){
+	                                      if(choice.label == "hidden" || (choice.list!=null && choice.checkboxes )  || Dom.get(this.id+"-choice_"+question.id+'_'+choice.id).checked){
 	                                         if( !choice.hasCommentValidation){
 	                                        	 choice.hasCommentValidation = true;
 	                                        	 this.formRuntime.addValidation(this.id+"-comment_"+question.id+"-input", Alfresco.forms.validation.mandatory, null, "keyup");

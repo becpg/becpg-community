@@ -5,11 +5,8 @@
 	<groupId>fr.becpg</groupId>
 	<artifactId>becpg-parent</artifactId>
 	<packaging>pom</packaging>
-	<version>3.2.1</version>
+	<version>3.2.3</version>
 	<name>beCPG</name>
-	<prerequisites>
-        <maven>3.3.0</maven>
-    </prerequisites>
 	
 	<description>BeCPG Parent Project</description>
 	<organization>
@@ -37,7 +34,7 @@
 		<license>
 			<name>GNU LESSER GENERAL PUBLIC LICENSE</name>
 			<url>http://www.gnu.org/licenses/lgpl-3.0.en.html</url>
-			<comments>Copyright (C) 2010-2020 beCPG. 
+			<comments>Copyright (C) 2010-2021 beCPG. 
   
 			  beCPG is free software: you can redistribute it and/or modify 
 			  it under the terms of the GNU Lesser General Public License as published by 
@@ -51,37 +48,37 @@
 			 </comments>
 		</license>
 	</licenses>
-	
-	  <repositories>
-        <repository>
-            <id>alfresco-public</id>
-            <url>https://artifacts.alfresco.com/nexus/content/groups/public</url>
-        </repository>
-        <repository>
-            <id>alfresco-public-snapshots</id>
-            <url>https://artifacts.alfresco.com/nexus/content/groups/public-snapshots</url>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>daily</updatePolicy>
-            </snapshots>
-        </repository>
-       
-    </repositories>
 
-    <pluginRepositories>
-        <pluginRepository>
-            <id>alfresco-plugin-public</id>
-            <url>https://artifacts.alfresco.com/nexus/content/groups/public</url>
-        </pluginRepository>
-        <pluginRepository>
-            <id>alfresco-plugin-public-snapshots</id>
-            <url>https://artifacts.alfresco.com/nexus/content/groups/public-snapshots</url>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>daily</updatePolicy>
-            </snapshots>
-        </pluginRepository>
-    </pluginRepositories>
+	<repositories>
+		<repository>
+			<id>alfresco-public</id>
+			<url>https://artifacts.alfresco.com/nexus/content/groups/public</url>
+		</repository>
+		<repository>
+			<id>alfresco-public-snapshots</id>
+			<url>https://artifacts.alfresco.com/nexus/content/groups/public-snapshots</url>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>daily</updatePolicy>
+			</snapshots>
+		</repository>
+
+	</repositories>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>alfresco-plugin-public</id>
+			<url>https://artifacts.alfresco.com/nexus/content/groups/public</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>alfresco-plugin-public-snapshots</id>
+			<url>https://artifacts.alfresco.com/nexus/content/groups/public-snapshots</url>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>daily</updatePolicy>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
 
 	<developers>
 		<developer>
@@ -105,27 +102,28 @@
 	<properties>
 	
 	 <!-- Alfresco Maven Plugin version to use -->
-        <alfresco.sdk.version>4.0.0</alfresco.sdk.version>
+		<alfresco.sdk.version>4.1.0</alfresco.sdk.version>
 
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- Properties used in dependency declarations, you don't need to change these -->
-        <alfresco.groupId>org.alfresco</alfresco.groupId>
-        <alfresco.bomDependencyArtifactId>alfresco-platform</alfresco.bomDependencyArtifactId>
+		<alfresco.groupId>org.alfresco</alfresco.groupId>
+		<alfresco.bomDependencyArtifactId>alfresco-platform</alfresco.bomDependencyArtifactId>
         
          <!-- Alfresco 6 -->
-	     <alfresco.platform.version>6.2.0-ga</alfresco.platform.version>
-		 <alfresco.share.version>6.2.0</alfresco.share.version>
-		 <alfresco-repository.version>7.134.1</alfresco-repository.version>
-		 <alfresco-remote-api.version>7.107.1</alfresco-remote-api.version>
-		 <alfresco-data-model.version>8.50.2</alfresco-data-model.version>
-		 <alfresco-core.version>7.22</alfresco-core.version>
-		 
-		 
-		 
-			       
+		<alfresco.platform.version>6.2.0-ga</alfresco.platform.version>
+		<alfresco.share.version>6.2.0</alfresco.share.version>
+		<alfresco-repository.version>7.134.1</alfresco-repository.version>
+		<alfresco-remote-api.version>7.107.1</alfresco-remote-api.version>
+		<alfresco-data-model.version>8.50.2</alfresco-data-model.version>
+		<alfresco-core.version>7.22</alfresco-core.version>
+
+
+		<spring-webscripts.version>7.9</spring-webscripts.version>
+
 		<alfresco.aos.version>1.3.1</alfresco.aos.version>
-		<mysql.connector.version>8.0.19</mysql.connector.version>
+		<!--  <mysql.connector.version>8.0.23</mysql.connector.version> Not yet supported for java11--> 
+		<mysql.connector.version>5.1.48</mysql.connector.version>
 		<alfresco.bomDependencyArtifactId>acs-community-packaging</alfresco.bomDependencyArtifactId>
         
     
@@ -135,25 +133,26 @@
  		-->
 
         <!-- Environment configuration properties -->
-        <share.port>8180</share.port>
-        <share.debug.port>9898</share.debug.port>
-        <acs.host>becpg</acs.host>
-        <acs.port>8080</acs.port>
-        <acs.debug.port>8888</acs.debug.port>
+		<share.port>8180</share.port>
+		<share.debug.port>9898</share.debug.port>
+		<acs.host>becpg</acs.host>
+		<acs.port>8080</acs.port>
+		<acs.debug.port>8888</acs.debug.port>
         <!-- This parameter is only required for those cases in which ACS is not exposed in http://localhost:8080/alfresco (i.e. Windows Docker) -->
-        <test.acs.endpoint.path/>
-        
-        <becpg.dockerbuild.name>test</becpg.dockerbuild.name>
-		<docker.becpg.url>docker.becpg.fr:443/becpg</docker.becpg.url>
-	    <docker.becpg.tag>3.2.1</docker.becpg.tag>
-	   	<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
+		<test.acs.endpoint.path />
+
+		<becpg.dockerbuild.name>test</becpg.dockerbuild.name>
+		<docker.becpg.url>becpg</docker.becpg.url>
+		<docker.becpg.tag>3.2.3</docker.becpg.tag>
+		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
-	    <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
-        <sonar.jacoco.reportPaths>${maven.multiModuleProjectDirectory}/target/jacoco.exec</sonar.jacoco.reportPaths>
-	    <sonar.scm.disabled>true</sonar.scm.disabled>
-	    <sonar.ws.timeout>3600</sonar.ws.timeout>
-	    <sonar.language>java</sonar.language>
-	    
+		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+		<sonar.jacoco.reportPaths>${maven.multiModuleProjectDirectory}/target/jacoco.exec</sonar.jacoco.reportPaths>
+		<sonar.coverage.jacoco.xmlReportPaths>${maven.multiModuleProjectDirectory}/becpg-integration-runner/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+		<sonar.scm.disabled>true</sonar.scm.disabled>
+		<sonar.ws.timeout>3600</sonar.ws.timeout>
+		<sonar.language>java</sonar.language>
+
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -164,252 +163,254 @@
                  NOTE: It defaults to the latest version this SDK pom has been tested with,
                        but alfresco version can/should be overridden in your project's pom
             -->
-            <dependency>
-                <groupId>${alfresco.groupId}</groupId>
-                <artifactId>${alfresco.bomDependencyArtifactId}</artifactId>
-                <version>${alfresco.platform.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            
-            <dependency>
-	            <groupId>org.alfresco</groupId>
-	            <artifactId>alfresco-remote-api</artifactId>
-	            <version>${alfresco-remote-api.version}</version>
-	            <scope>provided</scope>
-	         </dependency>
+			<dependency>
+				<groupId>${alfresco.groupId}</groupId>
+				<artifactId>${alfresco.bomDependencyArtifactId}</artifactId>
+				<version>${alfresco.platform.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.alfresco</groupId>
+				<artifactId>alfresco-remote-api</artifactId>
+				<version>${alfresco-remote-api.version}</version>
+				<scope>provided</scope>
+			</dependency>
             
             
             
             <!-- Redefine the following Share dependencies as they have different version numbers than platform.
-                 They are defined in alfresco-platform-distribution... -->     
-            <dependency>
-                <groupId>${alfresco.groupId}</groupId>
-                <artifactId>share</artifactId>
-                <version>${alfresco.share.version}</version>
-                <type>war</type>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>${alfresco.groupId}</groupId>
-                <artifactId>share</artifactId>
-                <version>${alfresco.share.version}</version>
-                <classifier>classes</classifier>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>${alfresco.groupId}</groupId>
-                <artifactId>alfresco-web-framework-commons</artifactId>
-                <version>${alfresco.share.version}</version>
-                <classifier>classes</classifier>
-                <scope>provided</scope>
-            </dependency>
-         
-        </dependencies>
-			
-		
+                 They are defined in alfresco-platform-distribution... -->
+			<dependency>
+				<groupId>${alfresco.groupId}</groupId>
+				<artifactId>share</artifactId>
+				<version>${alfresco.share.version}</version>
+				<type>war</type>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>${alfresco.groupId}</groupId>
+				<artifactId>share</artifactId>
+				<version>${alfresco.share.version}</version>
+				<classifier>classes</classifier>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>${alfresco.groupId}</groupId>
+				<artifactId>alfresco-web-framework-commons</artifactId>
+				<version>${alfresco.share.version}</version>
+				<classifier>classes</classifier>
+				<scope>provided</scope>
+			</dependency>
+
+		</dependencies>
+
+
 	</dependencyManagement>
-	
+
 	<build>
-	   <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
-	   <pluginManagement>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+		<pluginManagement>
 			<plugins>
-			   	<plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-assembly-plugin</artifactId>
-                    <version>2.6</version>
-                    <executions>
-                        <execution>
-                            <id>build-amp-file</id>
-                            <phase>package</phase>
-                            <goals>
-                                <goal>single</goal>
-                            </goals>
-                            <configuration>
-                                <appendAssemblyId>false</appendAssemblyId>
-                                <descriptor>src/main/assembly/amp.xml</descriptor>
-                            </configuration>
-                        </execution>
-                    </executions>
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.alfresco.maven.plugin</groupId>
-                            <artifactId>alfresco-maven-plugin</artifactId>
-                            <version>${alfresco.sdk.version}</version>
-                        </dependency>
-                    </dependencies>
-           		</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-assembly-plugin</artifactId>
+					<version>2.6</version>
+					<executions>
+						<execution>
+							<id>build-amp-file</id>
+							<phase>package</phase>
+							<goals>
+								<goal>single</goal>
+							</goals>
+							<configuration>
+								<appendAssemblyId>false</appendAssemblyId>
+								<descriptor>src/main/assembly/amp.xml</descriptor>
+							</configuration>
+						</execution>
+					</executions>
+					<dependencies>
+						<dependency>
+							<groupId>org.alfresco.maven.plugin</groupId>
+							<artifactId>alfresco-maven-plugin</artifactId>
+							<version>${alfresco.sdk.version}</version>
+						</dependency>
+					</dependencies>
+				</plugin>
                 <!-- Filter resources in any sub-project with this config -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-resources-plugin</artifactId>
-                    <version>3.1.0</version>
-                    <configuration>
-                        <encoding>UTF-8</encoding>
-                        <nonFilteredFileExtensions> <!-- jpg, jpeg, gif, bmp and png are added automatically -->
-                            <nonFilteredFileExtension>ftl</nonFilteredFileExtension>
-                            <nonFilteredFileExtension>acp</nonFilteredFileExtension>
-                            <nonFilteredFileExtension>svg</nonFilteredFileExtension>
-                            <nonFilteredFileExtension>pdf</nonFilteredFileExtension>
-                            <nonFilteredFileExtension>doc</nonFilteredFileExtension>
-                            <nonFilteredFileExtension>docx</nonFilteredFileExtension>
-                            <nonFilteredFileExtension>xls</nonFilteredFileExtension>
-                            <nonFilteredFileExtension>xlsx</nonFilteredFileExtension>
-                            <nonFilteredFileExtension>ppt</nonFilteredFileExtension>
-                            <nonFilteredFileExtension>pptx</nonFilteredFileExtension>
-                            <nonFilteredFileExtension>bin</nonFilteredFileExtension>
-                            <nonFilteredFileExtension>lic</nonFilteredFileExtension>
-                            <nonFilteredFileExtension>swf</nonFilteredFileExtension>
-                            <nonFilteredFileExtension>zip</nonFilteredFileExtension>
-                            <nonFilteredFileExtension>msg</nonFilteredFileExtension>
-                            <nonFilteredFileExtension>jar</nonFilteredFileExtension>
-                            <nonFilteredFileExtension>ttf</nonFilteredFileExtension>
-                            <nonFilteredFileExtension>eot</nonFilteredFileExtension>
-                            <nonFilteredFileExtension>woff</nonFilteredFileExtension>
-                            <nonFilteredFileExtension>woff2</nonFilteredFileExtension>
-                            <nonFilteredFileExtension>css</nonFilteredFileExtension>
-                            <nonFilteredFileExtension>ico</nonFilteredFileExtension>
-                            <nonFilteredFileExtension>psd</nonFilteredFileExtension>
-                            <nonFilteredFileExtension>js</nonFilteredFileExtension>
-                        </nonFilteredFileExtensions>
-                    </configuration>
-                </plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-resources-plugin</artifactId>
+					<version>3.1.0</version>
+					<configuration>
+						<encoding>UTF-8</encoding>
+						<nonFilteredFileExtensions> <!-- jpg, jpeg, gif, bmp and png are added automatically -->
+							<nonFilteredFileExtension>ftl</nonFilteredFileExtension>
+							<nonFilteredFileExtension>acp</nonFilteredFileExtension>
+							<nonFilteredFileExtension>svg</nonFilteredFileExtension>
+							<nonFilteredFileExtension>pdf</nonFilteredFileExtension>
+							<nonFilteredFileExtension>doc</nonFilteredFileExtension>
+							<nonFilteredFileExtension>docx</nonFilteredFileExtension>
+							<nonFilteredFileExtension>xls</nonFilteredFileExtension>
+							<nonFilteredFileExtension>xlsx</nonFilteredFileExtension>
+							<nonFilteredFileExtension>ppt</nonFilteredFileExtension>
+							<nonFilteredFileExtension>pptx</nonFilteredFileExtension>
+							<nonFilteredFileExtension>bin</nonFilteredFileExtension>
+							<nonFilteredFileExtension>lic</nonFilteredFileExtension>
+							<nonFilteredFileExtension>swf</nonFilteredFileExtension>
+							<nonFilteredFileExtension>zip</nonFilteredFileExtension>
+							<nonFilteredFileExtension>msg</nonFilteredFileExtension>
+							<nonFilteredFileExtension>jar</nonFilteredFileExtension>
+							<nonFilteredFileExtension>ttf</nonFilteredFileExtension>
+							<nonFilteredFileExtension>eot</nonFilteredFileExtension>
+							<nonFilteredFileExtension>woff</nonFilteredFileExtension>
+							<nonFilteredFileExtension>woff2</nonFilteredFileExtension>
+							<nonFilteredFileExtension>css</nonFilteredFileExtension>
+							<nonFilteredFileExtension>ico</nonFilteredFileExtension>
+							<nonFilteredFileExtension>psd</nonFilteredFileExtension>
+							<nonFilteredFileExtension>js</nonFilteredFileExtension>
+						</nonFilteredFileExtensions>
+					</configuration>
+				</plugin>
 
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.1.0</version>
-                </plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-jar-plugin</artifactId>
+					<version>3.1.0</version>
+				</plugin>
 
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-failsafe-plugin</artifactId>
-                    <version>3.0.0-M1</version>
-                    <executions>
-                        <execution>
-                            <id>integration-test</id>
-                            <phase>integration-test</phase>
-                            <goals>
-                                <goal>integration-test</goal>
-                            </goals>
-                        </execution>
-                        <execution>
-                            <id>verify-test</id>
-                            <phase>verify</phase>
-                            <goals>
-                                <goal>verify</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                    <configuration>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-failsafe-plugin</artifactId>
+					<version>3.0.0-M1</version>
+					<executions>
+						<execution>
+							<id>integration-test</id>
+							<phase>integration-test</phase>
+							<goals>
+								<goal>integration-test</goal>
+							</goals>
+						</execution>
+						<execution>
+							<id>verify-test</id>
+							<phase>verify</phase>
+							<goals>
+								<goal>verify</goal>
+							</goals>
+						</execution>
+					</executions>
+					<configuration>
 						<runOrder>alphabetical</runOrder>
 					</configuration>
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.apache.maven.surefire</groupId>
-                            <artifactId>surefire-junit47</artifactId>
-                            <version>3.0.0-M1</version>
-                        </dependency>
-                    </dependencies>
-                </plugin>
+					<dependencies>
+						<dependency>
+							<groupId>org.apache.maven.surefire</groupId>
+							<artifactId>surefire-junit47</artifactId>
+							<version>3.0.0-M1</version>
+						</dependency>
+					</dependencies>
+				</plugin>
 
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-dependency-plugin</artifactId>
-                    <version>3.1.1</version>
-                </plugin>
-			
-			
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-dependency-plugin</artifactId>
+					<version>3.1.1</version>
+				</plugin>
+
+
 			</plugins>
 		</pluginManagement>
 		<plugins>
             <!-- Filter the test resource files in the AIO parent project, and do property substitutions.
                  We need this config so this is done before the Alfresco Maven Plugin 'run' is executed. -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <inherited>false</inherited>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<inherited>false</inherited>
                 <!-- Run only for the AIO parent Project -->
-                <executions>
-                    <execution>
-                        <id>copy-and-filter-docker-resources</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.outputDirectory}/docker</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>docker</directory>
-                                    <filtering>true</filtering>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+				<executions>
+					<execution>
+						<id>copy-and-filter-docker-resources</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.outputDirectory}/docker</outputDirectory>
+							<resources>
+								<resource>
+									<directory>docker</directory>
+									<filtering>true</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 
             <!-- Compress JavaScript files and store as *-min.js -->
-            <plugin>
-                <groupId>net.alchim31.maven</groupId>
-                <artifactId>yuicompressor-maven-plugin</artifactId>
-                <version>1.5.1</version>
-                <executions>
+			<plugin>
+				<groupId>net.alchim31.maven</groupId>
+				<artifactId>yuicompressor-maven-plugin</artifactId>
+				<version>1.5.1</version>
+				<executions>
                     <!-- Compress the JS files under the assembly folder -->
-                    <execution>
-                        <id>compress-assembly</id>
-                        <goals>
-                            <goal>compress</goal>
-                        </goals>
-                        <configuration>
-                            <sourceDirectory>${project.basedir}/src/main/assembly/web</sourceDirectory>
-                            <outputDirectory>${project.basedir}/src/main/assembly/web</outputDirectory>
-                            <excludes>
-                            	<exclude>**/templates/**</exclude>
-                                <exclude>**/webscripts/**</exclude>
-                                <exclude>**/rules/**</exclude>
-                                <exclude>**/site-webscripts/**</exclude>
-                                <exclude>**/META-INF/**</exclude>
-                                <exclude>**/*.lib.js</exclude>
-                                <exclude>**/*.css</exclude>
-                                <exclude>**/*-min.js</exclude>
-                                <exclude>**/*-min.css</exclude>
-                            </excludes>
-                            <force>true</force>
-                            <jswarn>false</jswarn>
-                        </configuration>
-                    </execution>
+					<execution>
+						<id>compress-assembly</id>
+						<goals>
+							<goal>compress</goal>
+						</goals>
+						<configuration>
+							<sourceDirectory>${project.basedir}/src/main/assembly/web</sourceDirectory>
+							<outputDirectory>${project.basedir}/src/main/assembly/web</outputDirectory>
+							<excludes>
+								<exclude>**/templates/**</exclude>
+								<exclude>**/webscripts/**</exclude>
+								<exclude>**/rules/**</exclude>
+								<exclude>**/script/**</exclude>
+								<exclude>**/site-webscripts/**</exclude>
+								<exclude>**/META-INF/**</exclude>
+								<exclude>**/*.lib.js</exclude>
+								<exclude>**/*.css</exclude>
+								<exclude>**/*-min.js</exclude>
+								<exclude>**/*-min.css</exclude>
+							</excludes>
+							<force>true</force>
+							<jswarn>false</jswarn>
+						</configuration>
+					</execution>
                     <!-- Compress the JS files under the resources folder -->
-                    <execution>
-                        <id>compress-resources</id>
-                        <goals>
-                            <goal>compress</goal>
-                        </goals>
-                        <configuration>
-                            <excludes>
-                            	<exclude>**/templates/**</exclude>
-                                <exclude>**/webscripts/**</exclude>
-                                 <exclude>**/rules/**</exclude>
-                                <exclude>**/site-webscripts/**</exclude>
-                                <exclude>**/*.lib.js</exclude>
-                                <exclude>**/*.css</exclude>
-                                <exclude>**/*-min.js</exclude>
-                                <exclude>**/*-min.css</exclude>
-                            </excludes>
-                            <force>true</force>
-                            <jswarn>false</jswarn>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+					<execution>
+						<id>compress-resources</id>
+						<goals>
+							<goal>compress</goal>
+						</goals>
+						<configuration>
+							<excludes>
+								<exclude>**/templates/**</exclude>
+								<exclude>**/webscripts/**</exclude>
+								<exclude>**/rules/**</exclude>
+								<exclude>**/script/**</exclude>
+								<exclude>**/site-webscripts/**</exclude>
+								<exclude>**/*.lib.js</exclude>
+								<exclude>**/*.css</exclude>
+								<exclude>**/*-min.js</exclude>
+								<exclude>**/*-min.css</exclude>
+							</excludes>
+							<force>true</force>
+							<jswarn>false</jswarn>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 
-	 		<plugin>
+			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>buildnumber-maven-plugin</artifactId>
 				<version>1.2</version>
@@ -426,105 +427,114 @@
 					<doupdate>false</doupdate>
 					<getRevisionOnlyOnce>true</getRevisionOnlyOnce>
 				</configuration>
-			</plugin> 
-			
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-surefire-plugin</artifactId>
-					<version>3.0.0-M1</version>
-					<configuration>
-						<runOrder>alphabetical</runOrder>
-					</configuration>
-				</plugin>
-				
-			  <plugin>
-		        <groupId>org.apache.maven.plugins</groupId>
-		        <artifactId>maven-javadoc-plugin</artifactId>
-		        <version>3.2.0</version>
-		        <configuration>
-		        </configuration>
-		      </plugin>
-				
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.0.0-M1</version>
+				<configuration>
+					<runOrder>alphabetical</runOrder>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.2.0</version>
+				<configuration>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.0</version>
+				<configuration>
+					<release>11</release>
+				</configuration>
+			</plugin>
+
 		</plugins>
-	</build> 
+	</build>
 
 	<modules>
 		<module>becpg-core</module>
 		<module>becpg-project/becpg-project-core</module>
-	  	<module>becpg-designer/becpg-designer-core</module>
+		<module>becpg-designer/becpg-designer-core</module>
 		<module>becpg-plm/becpg-plm-core</module>
 		<module>becpg-share</module>
-   		<module>becpg-project/becpg-project-share</module>
+		<module>becpg-project/becpg-project-share</module>
 		<module>becpg-designer/becpg-designer-share</module>
 		<module>becpg-plm/becpg-plm-share</module>
-	    <module>becpg-integration-runner</module> 
-	 </modules>
-	 
-	 <reporting>
-	    <excludeDefaults>true</excludeDefaults>
-	    <plugins>
-	      <plugin>
-	        <groupId>org.apache.maven.plugins</groupId>
-	        <artifactId>maven-javadoc-plugin</artifactId>
-	        <version>3.2.0</version>
-	        <reportSets>
-	          <reportSet>
-	            <reports>
-	              <report>aggregate-no-fork</report>
-	            </reports>
-	          </reportSet>
-	        </reportSets>
-	      </plugin>
-	    </plugins>
-	  </reporting>
+		<module>becpg-integration-runner</module>
+	</modules>
+
+	<reporting>
+		<excludeDefaults>true</excludeDefaults>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.2.0</version>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>aggregate-no-fork</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
+		</plugins>
+	</reporting>
 
 	<dependencies>
 
-		
-		 <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-            <version>1.9.5</version><!--$NO-MVN-MAN-VER$-->
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <scope>test</scope>
-        </dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<version>1.9.5</version><!--$NO-MVN-MAN-VER$-->
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<scope>test</scope>
+		</dependency>
 
         <!-- The main Alfresco Repo dependency for compiling Java code in src/main/java -->
-        <dependency>
-            <groupId>${alfresco.groupId}</groupId>
-            <artifactId>alfresco-remote-api</artifactId>
-            <scope>provided</scope>
-            <exclusions>
+		<dependency>
+			<groupId>${alfresco.groupId}</groupId>
+			<artifactId>alfresco-remote-api</artifactId>
+			<scope>provided</scope>
+			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>
 					<artifactId>*</artifactId>
 				</exclusion>
 			</exclusions>
-        </dependency>
+		</dependency>
 
         <!-- Bring in Alfresco RAD so we get access to AlfrescoTestRunner classes -->
-        <dependency>
-            <groupId>org.alfresco.maven</groupId>
-            <artifactId>alfresco-rad</artifactId>
-          	<version>${alfresco.sdk.version}</version>
-            <scope>test</scope>
-        </dependency>
+		<dependency>
+			<groupId>org.alfresco.maven</groupId>
+			<artifactId>alfresco-rad</artifactId>
+			<version>${alfresco.sdk.version}</version>
+			<scope>test</scope>
+		</dependency>
 
 
-        <dependency>
-        	<groupId>org.alfresco</groupId>
-        	<artifactId>alfresco-repository</artifactId>
-        	<scope>provided</scope>
-        	<exclusions>
+		<dependency>
+			<groupId>org.alfresco</groupId>
+			<artifactId>alfresco-repository</artifactId>
+			<scope>provided</scope>
+			<exclusions>
 				<exclusion>
 					<groupId>com.sun.xml.bind</groupId>
 					<artifactId>jaxb-impl</artifactId>
@@ -550,60 +560,10 @@
 					<artifactId>xml-apis</artifactId>
 				</exclusion>
 			</exclusions>
-        </dependency>
-        
-        
+		</dependency>
+
 	</dependencies>
-	<profiles>
-	
-	
-        <profile>
-            <id>java11</id>
-           <activation>
-               <activeByDefault>true</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-compiler-plugin</artifactId>
-                        <version>3.8.0</version>
-                        <configuration>
-                            <release>11</release>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-	
-		<profile>
-		 <id>sonar</id>
-		 <build>
-		 	<plugins>
-				<plugin>
-					    <groupId>org.jacoco</groupId>
-					    <artifactId>jacoco-maven-plugin</artifactId>
-					    <version>0.8.4</version>
-					    <configuration>
-					        <destFile>${sonar.jacoco.reportPaths}</destFile>
-					        <append>true</append>
-					         <excludes>
-	                            <exclude>org/alfresco/**</exclude>
-	                        </excludes>
-					    </configuration>
-					    <executions>
-					        <execution>
-					            <id>agent</id>
-					            <goals>
-					                <goal>prepare-agent</goal>
-					            </goals>
-					        </execution>
-					    </executions>
-					</plugin>
-			 </plugins>
-			</build> 
-		</profile>
-	</profiles>
-	
-    
+
+
+
 </project>

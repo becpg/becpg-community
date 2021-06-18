@@ -43,6 +43,7 @@ import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
+import fr.becpg.repo.entity.remote.RemoteParams;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.PropertiesHelper;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
@@ -73,6 +74,9 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 	private EntityListDAO entityListDAO;
 
 	private TenantService tenantService;
+	
+
+	private static final String REMOTE_FILE_NAME = "entity_deleted";
 
 	/**
 	 * <p>Setter for the field <code>tenantService</code>.</p>
@@ -101,7 +105,6 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 		this.entityDictionaryService = entityDictionaryService;
 	}
 
-	private final static String REMOTE_FILE_NAME = "entity_deleted";
 
 	/**
 	 * <p>Setter for the field <code>remoteEntityService</code>.</p>
@@ -211,14 +214,11 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 							ContentReader reader = contentService.getReader(entityDeletedFileNodeRef, ContentModel.PROP_CONTENT);
 							if (reader != null) {
 								try (InputStream in = reader.getContentInputStream()) {
-									policyBehaviourFilter.disableBehaviour(entityNodeRef);
 
 									IntegrityChecker.setWarnInTransaction();
-									remoteEntityService.createOrUpdateEntity(entityNodeRef, in, RemoteEntityFormat.xml, null);
+									remoteEntityService.createOrUpdateEntity(entityNodeRef, in, new RemoteParams(RemoteEntityFormat.xml), null);
 								} catch (IOException e) {
 									logger.error(e, e);
-								} finally {
-									policyBehaviourFilter.enableBehaviour(entityNodeRef);
 								}
 							} else {
 								logger.error("Cannot read content of " + REMOTE_FILE_NAME + "_" + entityNodeRef.getId());
@@ -278,7 +278,7 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 			writer.setMimetype(MimetypeMap.MIMETYPE_XML);
 
 			try (OutputStream out = writer.getContentOutputStream()) {
-				remoteEntityService.getEntity(entityNodeRef, out, RemoteEntityFormat.xml);
+				remoteEntityService.getEntity(entityNodeRef, out, new RemoteParams(RemoteEntityFormat.xml));
 			} catch (ContentIOException | IOException | BeCPGException e) {
 				logger.error(e, e);
 			}

@@ -20,73 +20,39 @@
 			<language locale="fi">Finnish</language>
 			<language locale="es">Spanish</language>
 			<language locale="it">Italian</language>
-			<language locale="pt">Portuguese</language>
+			<language locale="pt_BR">Portuguese - Brazil</language>
 			<language locale="ru">Russian</language>
 			<language locale="de">German</language>
+			<language locale="tr">Turkish</language>
 		</ui-languages>
 	
 	
 		<!-- the list of available language files -->
 		<languages> 
+		
 			<language locale="en">English</language>
 			<language locale="en_CA">English - Canada</language>
 			<language locale="en_US">English - United States</language>
 			<language locale="en_AU">English - Australia</language>
-			<language locale="en_GH">English - Ghana</language>
-			<language locale="en_IN">English - India</language>
-			<language locale="en_KE">English - Kenya</language>
-			<language locale="en_MW">English - Malawi</language>
-			<language locale="en_NG">English - Nigeria</language>
-			<language locale="en_PK">English - Pakistan</language>
-			<language locale="en_UG">English - Uganda</language>
-			<language locale="en_ZA">English - South Africa</language>
-			<language locale="en_ZW">English - Zibabwe</language>
 			<language locale="de">German</language>
 			<language locale="es">Spanish</language>
-			<language locale="es_CL">Spanish - Chile</language>
-			<language locale="es_CO">Spanish - Colombia</language>
-			<language locale="es_MX">Spanish - Mexico</language>
-			<language locale="es_PR">Spanish - Puerto Rico</language>
-			<language locale="es_UY">Spanish - Uruguay</language>
 			<language locale="fr">French</language>
 			<language locale="fr_CA">French - Canada</language>
-			<language locale="fr_CI">French - Côte d'Ivoire</language>
 			<language locale="it">Italian</language>
-			<language locale="in_ID">Indonesian - Indonesia</language>
-			<language locale="iw_IL">Hebrew - Israel</language>
 			<language locale="ja_JP">Japanese - Japan</language>
-			<language locale="ko_KR">Korean - South Korea</language>
-			<language locale="ms_MY">Malay - Malaysia</language>
 			<language locale="nl">Dutch</language>
 			<language locale="ru">Russian</language>
+			<language locale="zh_CN">Chinese (Simplified) - China</language>
 			<language locale="pt">Portuguese</language>
-			<language locale="pt_BR">Portuguese - Brazil</language>
 			<language locale="no">Norwegian</language>
-			<language locale="sr_RS">Serbian - Serbia</language>
 			<language locale="sv_SE">Swedish - Sweden</language>
-			<language locale="sw_TZ">Swahili - Tanzania</language>
+			<language locale="fi">Finnish</language>
 			<language locale="el">Greek</language>
 			<language locale="pl">Polish</language>
-			<language locale="pt_MZ">Portuguese - Mozambique</language>
-			<language locale="fi_FI">Finnish - Finland</language>
-			<language locale="th_TH">Thai - Thailand</language>
-			<language locale="tr_TR">Turkish - Turkey</language>
-			<language locale="zh_CN">Chinese (Simplified) - China</language>
-			<language locale="zh_HK">Chinese - Hong Kong</language>
-			<language locale="zh_SG">Chinese - Singapore</language>
-			<language locale="ar_AE">Arabic - United Arab Emirates</language>
-			<language locale="ar_BH">Arabic - Bahrain</language>
-			<language locale="ar_DZ">Arabic - Algeria</language>
-			<language locale="ar_EG">Arabic - Egypt</language>
-			<language locale="ar_KW">Arabic - Kuwait</language>
-			<language locale="ar_MA">Arabic - Morocco</language>
-			<language locale="ar_OM">Arabic - Oman</language>
-			<language locale="ar_QA">Arabic - Qatar</language>
-			<language locale="ar_SA">Arabic - Saudi Arabia</language>
-			<language locale="ar_TN">Arabic - Tunisia</language>
-			<language locale="bem_ZM">Bemba - Zambia</language>
+			<language locale="tr">Turkish</language>
 			
-			
+		
+		
 			<!-- Others can be use in language only way if country is same than language 
 			
 			<language locale="ar_AE">Arabic - United Arab Emirates</language>
@@ -275,6 +241,7 @@
 				<aspect name="rep:reportKindAspect" />
 				<aspect name="bp:cataloguable" />
 				<aspect name="bcpg:entityTplAspect" />
+				<aspect name="bcpg:subEntityAspect" />
 				<aspect name="bcpg:entityBranchAspect" />
 				<aspect name="bcpg:docLinkedEntitiesAspect" />
 				<aspect name="bcpg:autoMergeAspect" />
@@ -378,35 +345,6 @@
 			</action>
 			
 
-		<!-- 	<action id="entity-checkin" type="javascript" label="actions.document.checkin-entity">
-				<param name="function">onActionCheckInEntity</param>
-				<permissions>
-					<permission allow="true">Write</permission>
-				</permissions>
-				<evaluator>evaluator.becpg.doclib.action.entity.isWorkingCopy
-				</evaluator>
-			</action>
-			
-			
-			<action id="entity-checkout" type="javascript" label="actions.document.checkout-entity">
-				<param name="function">onActionCheckOutEntity</param>
-				<permissions>
-					<permission allow="true">Write</permission>
-				</permissions>
-				<evaluator negate="true">evaluator.becpg.doclib.action.entity.isSystemEntity</evaluator>
-				<evaluator negate="true">evaluator.becpg.doclib.action.entity.isWorkingCopy</evaluator>
-				<evaluator negate="true">evaluator.doclib.action.notEditable</evaluator>
-			</action>
-			Cancel editing (cancel checkout)
-			<action id="entity-cancel-editing" type="javascript" label="actions.document.cancel-checkout-entity">
-				<param name="function">onActionCancelCheckOutEntity</param>
-				<permissions>
-					<permission allow="true">CancelCheckOut</permission>
-				</permissions>
-				<evaluator>evaluator.doclib.action.isWorkingCopy</evaluator>
-			</action>
-		 -->
-
 			<action id="entity-view-documents" type="javascript" label="actions.entity.view-documents">
 				<param name="function">onActionShowDocs</param>
 			</action>
@@ -466,13 +404,7 @@
 				<evaluator>evaluator.doclib.metadata.isLocked</evaluator>
 				<evaluator>evaluator.doclib.action.isWorkingCopy</evaluator>
 			</action>
-			
-			<action id="view-associated-workflow" type="javascript" icon="document-assign-workflow" label="actions.entity.associated-workflow">
-				<param name="function">onActionViewAssociatedWorkflow</param>
-				<evaluator>evaluator.becpg.doclib.action.entity</evaluator>
-			</action>
-			
-			
+
 			<!-- Associated process -->
 			<action id="entity-show-associated-process" type="javascript" label="actions.entity.associated-process" icon="document-assign-workflow">
 				<param name="function">onActionShowAssociatedProcess</param>
@@ -485,6 +417,14 @@
 			
          <action id="datalist-copy-to" type="javascript" label="actions.datalist.copy-to">
             <param name="function">onActionCopyDataListTo</param>
+            <permissions>
+				 <permission allow="true">Write</permission>
+			</permissions>
+            <evaluator>evaluator.doclib.action.editableByCurrentUser</evaluator>
+         </action>
+         
+          <action id="datalist-import-from" type="javascript" label="actions.datalist.import-from">
+            <param name="function">onActionImportDataListFrom</param>
             <evaluator>evaluator.doclib.action.editableByCurrentUser</evaluator>
          </action>
 			
@@ -533,6 +473,7 @@
 				<action index="120" id="document-reject" icon="document-reject" />
 				<action index="130" id="document-copy-to" icon="folder-copy-to" label="actions.folder.copy-to" />
 				<action index="131" id="datalist-copy-to" icon="folder-copy-to" label="actions.datalist.copy-to" />
+				<action index="131" id="datalist-import-from" icon="folder-copy-to" label="actions.datalist.import-from" />
 				<action index="140" id="document-move-to" icon="folder-move-to" label="actions.folder.move-to" />
 				<action index="150" id="folder-manage-rules" />
 				<action index="151" id="entity-wused" />
@@ -546,7 +487,6 @@
 				<action index="370" id="document-cloud-unsync" />
 				<action index="380" id="document-view-in-cloud" />
 				<action index="390" id="document-request-sync" />
-				<!-- <action index="500" id="view-associated-workflow" /> -->
 				<action index="510" id="entity-show-associated-process" />
 				
 			</actionGroup>

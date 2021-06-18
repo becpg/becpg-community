@@ -57,6 +57,17 @@
 			</parameter>
 		</constraint>
 		
+		<constraint name="bcpg:entityFormat" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>JSON</value>
+					<value>XML</value>
+					<value>NODE</value>
+				</list>
+			</parameter>
+		</constraint>
+		
 		<constraint name="bcpg:activityTypes" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -438,6 +449,9 @@
 				<property name="bcpg:regulatoryFormulatedDate">
 					<type>d:datetime</type>
 				</property>
+				<property name="bcpg:regulatoryRecipeId">
+					<type>d:text</type>
+				</property>
 				<property name="bcpg:requirementChecksum">
 					<type>d:text</type>
 					<index enabled="false"></index>
@@ -590,6 +604,49 @@
 					</constraints>
 				</property>
 			</properties>
+		</aspect>
+
+		<aspect name="bcpg:entityFormatAspect">
+			<properties>
+				<property name="bcpg:entityFormat">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>false</tokenised>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:entityFormat" />
+					</constraints>
+				</property>
+				<property name="bcpg:entityData">
+					<type>d:content</type>
+					<mandatory>false</mandatory>
+					<index enabled="false">
+                        <atomic>true</atomic>
+                        <stored>false</stored>
+                        <tokenised>false</tokenised>
+                    </index>
+				</property>
+			</properties>
+		</aspect>
+		
+		
+		<aspect name="bcpg:subEntityAspect">
+			<associations>
+					<association name="bcpg:parentEntityRef">
+						<source>
+							<mandatory>true</mandatory>
+							<many>true</many>
+						</source>
+						<target>
+							<class>bcpg:entityV2</class>
+							<mandatory>false</mandatory>
+							<many>false</many>
+						</target>
+				   </association>
+			</associations>
 		</aspect>
 
 		<aspect name="bcpg:hiddenFolder">

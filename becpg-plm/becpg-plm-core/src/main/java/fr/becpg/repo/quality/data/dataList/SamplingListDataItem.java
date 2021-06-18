@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG. 
+ * Copyright (C) 2010-2021 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -41,6 +41,7 @@ public class SamplingListDataItem extends AbstractSamplingListDataItem {
 	 */
 	private static final long serialVersionUID = 6184834607047086429L;
 	private Date dateTime;
+	private String timePeriod;
 	private String sampleId;
 	private QualityControlState sampleState;
 
@@ -63,6 +64,27 @@ public class SamplingListDataItem extends AbstractSamplingListDataItem {
 	public void setDateTime(Date dateTime) {
 		this.dateTime = dateTime;
 	}
+	
+	/**
+	 * <p>Getter for the field <code>timePeriod</code>.</p>
+	 *
+	 * @return a {@link java.util.String} object.
+	 */
+	@AlfProp
+	@AlfQname(qname = "qa:slTimePeriod")
+	public String getTimePeriod() {
+		return timePeriod;
+	}
+
+	/**
+	 * <p>Setter for the field <code>timePeriod</code>.</p>
+	 *
+	 * @param timePeriod a {@link java.util.String} object.
+	 */
+	public void setTimePeriod(String timePeriod) {
+		this.timePeriod = timePeriod;
+	}
+
 
 	/**
 	 * <p>Getter for the field <code>sampleId</code>.</p>
@@ -123,9 +145,10 @@ public class SamplingListDataItem extends AbstractSamplingListDataItem {
 	 * @param fixingGroup a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param reaction a {@link java.lang.String} object.
 	 */
-	public SamplingListDataItem(Date dateTime, QualityControlState sampleState, NodeRef controlPoint, NodeRef controlStep, NodeRef samplingGroup, NodeRef controlingGroup, NodeRef fixingGroup, String reaction) {
+	public SamplingListDataItem(Date dateTime, String timePeriod, QualityControlState sampleState, NodeRef controlPoint, NodeRef controlStep, NodeRef samplingGroup, NodeRef controlingGroup, NodeRef fixingGroup, String reaction) {
 		super();
 		this.dateTime = dateTime;
+		this.timePeriod = timePeriod;
 		this.sampleState = sampleState;
 		this.controlPoint = controlPoint;
 		this.controlStep = controlStep;

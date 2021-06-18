@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG. 
+ * Copyright (C) 2010-2021 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -29,7 +29,7 @@ import org.alfresco.service.namespace.QName;
  * @author matthieu
  * @version $Id: $Id
  */
-public interface RepositoryEntity {
+public interface RepositoryEntity extends Serializable{
 
 	/**
 	 * <p>getNodeRef.</p>

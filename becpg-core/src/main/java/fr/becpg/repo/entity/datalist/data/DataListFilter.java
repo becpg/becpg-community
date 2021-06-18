@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -33,6 +33,7 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ISO9075;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
@@ -106,13 +107,14 @@ public class DataListFilter {
 
 	private boolean hasWriteAccess = false;
 
+	private boolean isDefaultSort = true;
+
 	/**
 	 * <p>Constructor for DataListFilter.</p>
 	 */
 	public DataListFilter() {
 		super();
-		sortMap.put("@bcpg:sort", true);
-		sortMap.put("@cm:created", true);
+		sortMap.putAll(RepoConsts.DEFAULT_SORT);
 	}
 
 	/**
@@ -218,6 +220,15 @@ public class DataListFilter {
 	}
 
 	/**
+	 * <p>isDefaultSort.</p>
+	 *
+	 * @return a boolean.
+	 */
+	public boolean isDefaultSort() {
+		return isDefaultSort;
+	}
+
+	/**
 	 * <p>Setter for the field <code>guessContainer</code>.</p>
 	 *
 	 * @param guessContainer a boolean.
@@ -243,7 +254,7 @@ public class DataListFilter {
 	public void setRepo(boolean isRepo) {
 		this.isRepo = isRepo;
 	}
-	
+
 	/**
 	 * <p>isEffectiveFilterOn.</p>
 	 *
@@ -419,6 +430,7 @@ public class DataListFilter {
 	 */
 	public void setSortMap(Map<String, Boolean> sortMap) {
 		if ((sortMap != null) && !sortMap.isEmpty()) {
+			this.isDefaultSort = false;
 			this.sortMap = sortMap;
 		}
 	}
@@ -578,10 +590,10 @@ public class DataListFilter {
 			Calendar startCal = Calendar.getInstance();
 
 			String fromQuery = startCal.get(Calendar.YEAR) + "\\-" + (startCal.get(Calendar.MONTH) + 1) + "\\-" + startCal.get(Calendar.DAY_OF_MONTH);
-			
+
 			queryBuilder.andBetweenOrNull(BeCPGModel.PROP_START_EFFECTIVITY, "MIN", fromQuery);
-			queryBuilder.andBetweenOrNull(BeCPGModel.PROP_END_EFFECTIVITY,  fromQuery, "MAX");
-			
+			queryBuilder.andBetweenOrNull(BeCPGModel.PROP_END_EFFECTIVITY, fromQuery, "MAX");
+
 		}
 
 		if (filterId != null) {

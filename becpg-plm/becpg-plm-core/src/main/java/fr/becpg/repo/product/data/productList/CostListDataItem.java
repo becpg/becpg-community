@@ -17,13 +17,13 @@ import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.annotation.InternalField;
-import fr.becpg.repo.repository.model.AbstractManualDataItem;
 import fr.becpg.repo.repository.model.ForecastValueDataItem;
 import fr.becpg.repo.repository.model.FormulatedCharactDataItem;
 import fr.becpg.repo.repository.model.MinMaxValueDataItem;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
 import fr.becpg.repo.repository.model.Synchronisable;
 import fr.becpg.repo.repository.model.UnitAwareDataItem;
+import fr.becpg.repo.repository.model.VariantAwareDataItem;
 
 /**
  * <p>CostListDataItem class.</p>
@@ -33,7 +33,7 @@ import fr.becpg.repo.repository.model.UnitAwareDataItem;
  */
 @AlfType
 @AlfQname(qname = "bcpg:costList")
-public class CostListDataItem extends AbstractManualDataItem implements SimpleListDataItem,
+public class CostListDataItem extends VariantAwareDataItem implements SimpleListDataItem,
 MinMaxValueDataItem, UnitAwareDataItem, FormulatedCharactDataItem, ForecastValueDataItem, CompositeDataItem<CostListDataItem> , Synchronisable {
 	
 	
@@ -54,6 +54,7 @@ MinMaxValueDataItem, UnitAwareDataItem, FormulatedCharactDataItem, ForecastValue
 	private CostListDataItem parent;
 	private NodeRef componentNodeRef;
 	private Double simulatedValue;	
+
 		
 	/**
 	 * <p>Getter for the field <code>value</code>.</p>
@@ -196,7 +197,9 @@ MinMaxValueDataItem, UnitAwareDataItem, FormulatedCharactDataItem, ForecastValue
 	public void setFutureValuePerProduct(Double futureValuePerProduct) {
 		this.futureValuePerProduct = futureValuePerProduct;
 	}
-
+	
+	
+	
 
 	/**
 	 * <p>Getter for the field <code>cost</code>.</p>

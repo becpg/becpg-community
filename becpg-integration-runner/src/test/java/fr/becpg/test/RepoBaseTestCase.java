@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -32,6 +32,7 @@ import org.alfresco.repo.security.authentication.AuthenticationComponent;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.MutableAuthenticationDao;
 import org.alfresco.repo.transaction.RetryingTransactionHelper;
+import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.ContentService;
@@ -380,4 +381,15 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 	protected void doInitRepo(boolean shouldInit) {
 	}
+	
+	protected <R> R inReadTx(RetryingTransactionCallback<R> callBack) {
+		return transactionService.getRetryingTransactionHelper()
+		.doInTransaction(callBack , true, true);
+	}
+	
+	protected <R> R inWriteTx(RetryingTransactionCallback<R> callBack) {
+		return transactionService.getRetryingTransactionHelper()
+		.doInTransaction(callBack , false, true);
+	}
+	
 }

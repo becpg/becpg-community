@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -69,10 +69,8 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 	
 	protected BeCPGPolicyTransactionListener postTransactionListener = new BeCPGPolicyTransactionListener("post");
 
-
-	private final Set<String> keys = new LinkedHashSet<>();
-	
-	private final Set<String> assocKeys = new LinkedHashSet<>();
+	protected static final String KEY_REGISTRY = "key_registry";
+	protected static final String ASSOC_REGISTRY = "assoc_registry";
 
 	private static final Log logger = LogFactory.getLog(AbstractBeCPGPolicy.class);
 
@@ -245,15 +243,6 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 	}
 
 	/**
-	 * <p>Getter for the field <code>keys</code>.</p>
-	 *
-	 * @return a {@link java.util.Set} object.
-	 */
-	public Set<String> getKeys() {
-		return keys;
-	}
-
-	/**
 	 * <p>doAfterCommit.</p>
 	 *
 	 * @param key a {@link java.lang.String} object.
@@ -279,17 +268,38 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 	 * @param key a {@link java.lang.String} object.
 	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
-	protected void queueNode(String key, NodeRef nodeRef) {
+	protected void queueNode(String key, NodeRef nodeRef) {	
+	
+		addKeyRegistry(KEY_REGISTRY, key);
+		
 		Set<NodeRef> pendingNodes = TransactionSupportUtil.getResource(key);
 		if (pendingNodes == null) {
 			pendingNodes = new LinkedHashSet<>();
-			keys.add(key);
 			TransactionSupportUtil.bindResource(key, pendingNodes);
 			AlfrescoTransactionSupport.bindListener(transactionListener);
 		}
+	
+		
 		pendingNodes.add(nodeRef);
 	}
 	
+	private void addKeyRegistry(String registry, String key) {
+		Set<String> keys = getKeyRegistry(registry);
+
+		keys.add(key);
+		
+	}
+	
+	protected Set<String> getKeyRegistry(String registry) {
+		Set<String> keys = TransactionSupportUtil.getResource(generateDefaultKey()+"_"+registry);
+		if (keys == null) {
+			keys = new HashSet<>();
+			TransactionSupportUtil.bindResource(generateDefaultKey()+"_"+registry, keys);
+		}
+		return keys;
+	}
+	
+
 	/**
 	 * <p>queueAssoc.</p>
 	 *
@@ -308,10 +318,13 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 	 * @param associationRef a {@link org.alfresco.service.cmr.repository.AssociationRef} object.
 	 */
 	protected void queueAssoc(String key, AssociationRef associationRef) {
+		addKeyRegistry(ASSOC_REGISTRY, key);
+		
+		
 		Set<AssociationRef> pendingNodes = TransactionSupportUtil.getResource(key);
 		if (pendingNodes == null) {
 			pendingNodes = new LinkedHashSet<>();
-			assocKeys.add(key);
+
 			TransactionSupportUtil.bindResource(key, pendingNodes);
 			AlfrescoTransactionSupport.bindListener(transactionListener);
 		}
@@ -405,10 +418,10 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 
 			StopWatch watch = null;
 
-			Set<String> keysToRemove = new HashSet<>();
-			Set<String> assocsToRemove = new HashSet<>();
+			boolean setPostTransactionListener = false;
 			
-			for (String key : keys) {
+			//Avoid concurrency issue by making a copy
+			for (String key : new HashSet<>(getKeyRegistry(KEY_REGISTRY))) {
 
 				Set<NodeRef> pendingNodes = TransactionSupportUtil.getResource(key);
 
@@ -420,7 +433,10 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 					}
 
 					if(doBeforeCommit(key, pendingNodes)) {
-						keysToRemove.add(key);
+						//Nodes has been consumed by doBeforeCommit unbind it and set postTransaction 
+						//else keep it in the transaction for after commit use
+						TransactionSupportUtil.bindResource(key, null);
+						setPostTransactionListener = true;
 					}
 
 					if (logger.isDebugEnabled() && watch!=null) {
@@ -432,7 +448,7 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 				}
 			}
 			
-			for (String key : assocKeys) {
+			for (String key : new HashSet<>(getKeyRegistry(ASSOC_REGISTRY))) {
 
 				Set<AssociationRef> pendingAssocs = TransactionSupportUtil.getResource(key);
 
@@ -444,7 +460,10 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 					}
 
 					if(doBeforeAssocsCommit(key, pendingAssocs)) {
-						assocsToRemove.add(key);
+						//Nodes has been consumed by doBeforeCommit unbind it and set postTransaction 
+						//else keep it in the transaction for after commit use
+						TransactionSupportUtil.bindResource(key, null);
+						setPostTransactionListener = true;
 					}
 
 					if (logger.isDebugEnabled()  && watch!=null) {
@@ -457,20 +476,10 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 			}
 			
 			
-			
-			if(keysToRemove!=null && !keysToRemove.isEmpty()) {
-				for (String key : keys) {
-					TransactionSupportUtil.bindResource(key, null);
-				}
-				AlfrescoTransactionSupport.bindListener(postTransactionListener);
+			if(setPostTransactionListener) {
+			   AlfrescoTransactionSupport.bindListener(postTransactionListener);
 			}
 			
-			if(assocsToRemove!=null && !assocsToRemove.isEmpty()) {
-				for (String key : assocKeys) {
-					TransactionSupportUtil.bindResource(key, null);
-				}
-				AlfrescoTransactionSupport.bindListener(postTransactionListener);
-			}
 		}
 
 		@Override
@@ -478,7 +487,7 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 
 			StopWatch watch = null;
 
-			for (String key : keys) {
+			for (String key : getKeyRegistry(KEY_REGISTRY)) {
 
 				Set<NodeRef> pendingNodes = TransactionSupportUtil.getResource(key);
 

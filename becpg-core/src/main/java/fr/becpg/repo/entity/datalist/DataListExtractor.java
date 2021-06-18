@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG. 
+ * Copyright (C) 2010-2021 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -68,5 +68,12 @@ public interface DataListExtractor {
 	 * @return a boolean.
 	 */
 	boolean hasWriteAccess();
+	
+	/**
+	 * <p>Defines the extractor priority. Extractor with the highest priority is chosen first. Default priority is 0.</p>
+	 *
+	 * @return an integer.
+	 */
+	int getPriority();
 
 }

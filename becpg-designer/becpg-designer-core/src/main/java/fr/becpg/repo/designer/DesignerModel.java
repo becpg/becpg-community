@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG. 
+ * Copyright (C) 2010-2021 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -62,7 +62,7 @@ public class DesignerModel {
 
 	/** Constant <code>TYPE_M2_CONSTRAINT</code> */
 	public static final QName TYPE_M2_CONSTRAINT = QName.createQName(M2_URI, "constraint");
-
+	
 	/** Constant <code>TYPE_DSG_FORM</code> */
 	public static final QName TYPE_DSG_FORM = QName.createQName(DESIGNER_URI, "form");
 
@@ -87,6 +87,9 @@ public class DesignerModel {
 	/** Constant <code>TYPE_WORKFLOW_DEFINITION</code> */
 	public static final QName TYPE_WORKFLOW_DEFINITION = QName.createQName(DESIGNER_URI, "workflowDefinition");
 
+	public static final QName TYPE_DSG_FORMCONSTRAINT = QName.createQName(DESIGNER_URI, "formConstraint");
+
+	public static final QName TYPE_DSG_CONSTRAINTPARAMETER = QName.createQName(DESIGNER_URI, "constraintParameter");
 	/**
 	 * Aspects
 	 */
@@ -201,6 +204,12 @@ public class DesignerModel {
 
 	/** Constant <code>PROP_DSG_MANDATORY</code> */
 	public static final QName PROP_DSG_MANDATORY = QName.createQName(DESIGNER_URI, "mandatory");
+	
+	public static final QName PROP_DSG_VALIDATION_HANDLER = QName.createQName(DESIGNER_URI, "validation-handler");
+	
+	public static final QName PROP_DSG_TYPE = QName.createQName(DESIGNER_URI, "type");
+	
+	public static final QName PROP_DSG_EVENT = QName.createQName(DESIGNER_URI, "event");
 
 	/** Constant <code>PROP_WORKFLOW_DEFINITION_ACTIVE</code> */
 	public static final QName PROP_WORKFLOW_DEFINITION_ACTIVE = QName.createQName(DESIGNER_URI, "workflowDefinitionActive");
@@ -270,6 +279,11 @@ public class DesignerModel {
 
 	/** Constant <code>ASSOC_DSG_CONFIG</code> */
 	public static final QName ASSOC_DSG_CONFIG = QName.createQName(DESIGNER_URI, "config");
+	
+	public static final QName ASSOC_DSG_CONSTRAINTS = QName.createQName(DESIGNER_URI, "constraints");
+	
+	public static final QName ASSOC_DSG_CONSTRAINT_ASSOC = QName.createQName(DESIGNER_URI, "constraintAssoc");
+
 
 
 }

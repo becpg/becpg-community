@@ -40,6 +40,8 @@
  * 
  * setValue(node, propName, value) Set property value checking if property changed returns if property has changed
  * 
+ * setExtraValue(entity, propName, value) Set property value on repositoryEntity
+ * 
  * updateMLText(node, propQName, locale, value) Update multilingual value
  * 
  * i18n(key, params?) returns i18n message for current locale
@@ -66,7 +68,7 @@
  * 
  * generateEAN13Code(prefix) returns generate EAN13 code with autonum corresponding to prefix
  * 
- * setPermissionAsSystem(node, permission, authority) Set permissions as system
+ * setPermissionAsSystem(node, permission, authority) Set permissions as system, node can be node or nodeRef
  * 
  * allowWrite(node, authority) Set write permissions as system bypassing rights
  * 
@@ -74,7 +76,7 @@
  *  
  * deleteGroupPermission(node, group) Remove specific group permissions
  *  
- * clearPermissions(node, inherit) Remove permissions set on node
+ * clearPermissions(node, inherit) Remove permissions as system set on node, node can be node or nodeRef
  * 
  * copyList( sourceNode, destNode ,  listQname)  Copy one list from sourceNode to destNode
  * 
@@ -82,6 +84,7 @@
  * 
  * listItems( node,  listQname) returns list items
  * 
+ * toISO8601(dateObject, options) convert date toISO8601
  */
 
 
@@ -305,6 +308,20 @@ function setValue(node, propName, value){
 	}
 	return false;
 }
+
+
+/**
+ * Set property value on entity
+ * @param entity
+ * @param propName
+ * @param value
+ * @returns if property has changed
+ */
+function setExtraValue(entity, propName, value){
+	bcpg.setExtraValue(entity,propName,value);
+	return true
+}
+
 
 /**
  * Copy association association value to node association
@@ -552,7 +569,7 @@ function createBranch(node, dest, autoMerge){
  * @returns void
  */
 function mergeBranch( node, branchToNode, description, type){
-	bcpg.createBranch( node, branchToNode, description, type);
+	bcpg.mergeBranch( node, branchToNode, description, type);
 }
 
 
@@ -582,8 +599,7 @@ function generateEAN13Code(prefix){
  * @returns document library folder for site
  */
 function getDocumentLibraryNodeRef(siteId) {
-	var site = siteService.getSite(siteId);
-	return site.getContainer("documentLibrary");
+	return bcpg.getDocumentLibraryNodeRef(siteId);
 }
 
 
@@ -682,5 +698,61 @@ function listItems( node,  listQname) {
 }
 
 
+
+/**
+ * Converts a JavaScript native Date object into a ISO8601-formatted string
+ *
+ * Original code:
+ *    dojo.date.stamp.toISOString
+ *    Copyright (c) 2005-2008, The Dojo Foundation
+ *    All rights reserved.
+ *    BSD license (http://trac.dojotoolkit.org/browser/dojo/trunk/LICENSE)
+ *
+ * @method toISO8601
+ * @param dateObject {Date} JavaScript Date object
+ * @param options {object} Optional conversion options
+ *    zulu = true|false
+ *    selector = "time|date"
+ *    milliseconds = true|false
+ * @return {string}
+ * @static
+ */
+
+function  toISO8601(dateObject, options) {
+		 var _ = function(n){ return (n < 10) ? "0" + n : n; };
+		
+         options = options || {};
+         var formattedDate = [];
+         var getter = options.zulu ? "getUTC" : "get";
+         var date = "";
+         if (options.selector != "time")
+         {
+            var year = dateObject[getter+"FullYear"]();
+            date = ["0000".substr((year+"").length)+year, _(dateObject[getter+"Month"]()+1), _(dateObject[getter+"Date"]())].join('-');
+         }
+         formattedDate.push(date);
+         if (options.selector != "date")
+         {
+            var time = [_(dateObject[getter+"Hours"]()), _(dateObject[getter+"Minutes"]()), _(dateObject[getter+"Seconds"]())].join(':');
+            var millis = dateObject[getter+"Milliseconds"]();
+            if (options.milliseconds === undefined || options.milliseconds)
+            {
+               time += "."+ (millis < 100 ? "0" : "") + _(millis);
+            }
+            if (options.zulu)
+            {
+               time += "Z";
+            }
+            else if (options.selector != "time")
+            {
+               var timezoneOffset = dateObject.getTimezoneOffset();
+               var absOffset = Math.abs(timezoneOffset);
+               time += (timezoneOffset > 0 ? "-" : "+") +
+                     _(Math.floor(absOffset/60)) + ":" + _(absOffset%60);
+            }
+            formattedDate.push(time);
+         }
+         return formattedDate.join('T'); // String
+}
 
 

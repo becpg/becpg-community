@@ -1,0 +1,53 @@
+
+.basket {
+	right: 5%;
+	bottom: 5%;
+	display: flex;
+	z-index: 99999;
+	position: fixed;
+	transition: all 250ms ease-in-out 0s;
+	flex-direction: column-reverse;
+	background-color: transparent;
+}
+
+.basket  .yui-button .first-child, .basket .yui-button {
+	border: none;
+	background-color: transparent;
+}
+
+
+.basket .yui-button button {
+	background: #0c79bf none no-repeat scroll center center/cover;
+	box-shadow: rgba(0, 0, 0, 0.16) 0px 2px 5px 0px, rgba(0, 0, 0, 0.12) 0px
+		2px 10px 0px;
+	transition: all 250ms ease-in-out 0s;
+	border-radius: 50%;
+	width: 56px;
+	height: 56px;
+	text-align: center;
+	cursor: pointer;
+	color: rgb(255, 255, 255);
+	font-size: 20px;
+	font-weight: bold;
+}
+
+.basket-popup  span.content {
+    background-image: url("../../components/images/filetypes/generic-file-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat;
+}
+
+
+.basket-popup li {
+	
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.basket-delete {
+	background-image: url("../images/delete-16.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    cursor: pointer;
+    padding: 1em;
+}

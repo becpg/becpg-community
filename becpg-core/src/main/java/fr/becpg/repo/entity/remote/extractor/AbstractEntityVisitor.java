@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -17,9 +17,6 @@
  ******************************************************************************/
 package fr.becpg.repo.entity.remote.extractor;
 
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +31,8 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 
 import fr.becpg.repo.entity.EntityDictionaryService;
+import fr.becpg.repo.entity.remote.RemoteEntityFormat;
+import fr.becpg.repo.entity.remote.RemoteParams;
 
 /**
  * <p>Abstract AbstractEntityVisitor class.</p>
@@ -41,7 +40,7 @@ import fr.becpg.repo.entity.EntityDictionaryService;
  * @author matthieu
  * @version $Id: $Id
  */
-public abstract class AbstractEntityVisitor {
+public abstract class AbstractEntityVisitor implements RemoteEntityVisitor {
 
 	protected final NodeService mlNodeService;
 	protected final NodeService nodeService;
@@ -50,91 +49,30 @@ public abstract class AbstractEntityVisitor {
 	protected final ContentService contentService;
 	protected final SiteService siteService;
 
-	private boolean dumpAll = false;
-	protected boolean light = false;
+	protected RemoteParams params;
+
 	protected boolean entityList = false;
 	protected int extractLevel = 0;
 
-	protected List<QName> filteredProperties = new ArrayList<>();
-	protected List<String> filteredLists = new ArrayList<>();
-	protected Map<QName, List<QName>> filteredAssocProperties = new HashMap<>();
 	protected Map<NodeRef, List<QName>> cachedAssocRef = null;
 
 	protected final Set<NodeRef> cacheList = new HashSet<>();
 
-	/**
-	 * <p>Setter for the field <code>dumpAll</code>.</p>
-	 *
-	 * @param dumpAll a boolean.
-	 */
-	public void setDumpAll(boolean dumpAll) {
-		this.dumpAll = dumpAll;
+	protected boolean isLight() {
+		return RemoteEntityFormat.xml_light.equals(params.getFormat());
 	}
 
-	/**
-	 * <p>Setter for the field <code>light</code>.</p>
-	 *
-	 * @param light a boolean.
-	 */
-	public void setLight(boolean light) {
-		this.light = light;
+	protected boolean isAll() {
+		return RemoteEntityFormat.xml_all.equals(params.getFormat()) || RemoteEntityFormat.json_all.equals(params.getFormat());
 	}
 
-	/**
-	 * <p>Setter for the field <code>filteredLists</code>.</p>
-	 *
-	 * @param filteredLists a {@link java.util.List} object.
-	 */
-	public void setFilteredLists(List<String> filteredLists) {
-		this.filteredLists = filteredLists;
+	public RemoteParams getParams() {
+		return params;
 	}
 
-	/**
-	 * <p>setFilteredFields.</p>
-	 *
-	 * @param fields a {@link java.util.List} object.
-	 */
-	public void setFilteredFields(List<String> fields) {
-
-		if ((fields != null) && !fields.isEmpty()) {
-			for (String el : fields) {
-				String[] assoc = el.split("\\|");
-				if (!isValidQNameString(assoc[0])) {
-					continue;
-				}
-				QName propQname = QName.createQName(assoc[0], namespaceService);
-				if ((assoc != null) && (assoc.length > 1)) {
-					if (!isValidQNameString(assoc[1])) {
-						continue;
-					}
-					QName assocPropQName = QName.createQName(assoc[1], namespaceService);
-					if (filteredAssocProperties.containsKey(propQname)) {
-						filteredAssocProperties.get(propQname).add(assocPropQName);
-					} else {
-						List<QName> tmp = new ArrayList<>();
-						tmp.add(assocPropQName);
-						filteredAssocProperties.put(propQname, tmp);
-					}
-				} else {
-					filteredProperties.add(propQname);
-				}
-			}
-		}
-
-	}
-
-	/**
-	 * <p>isValidQNameString.</p>
-	 *
-	 * @param qName a {@link java.lang.String} object.
-	 * @return a boolean.
-	 */
-	protected boolean isValidQNameString(String qName) {
-		String[] qnameArray = qName.split(":");
-		if ((qName.indexOf(":") > 0) && (qnameArray.length > 1)) {
-			return true;
-		}
-		return false;
+	@Override
+	public void setParams(RemoteParams params) {
+		this.params = params;
 	}
 
 	/**
@@ -159,33 +97,6 @@ public abstract class AbstractEntityVisitor {
 	}
 
 	/**
-	 * <p>visit.</p>
-	 *
-	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param result a {@link java.io.OutputStream} object.
-	 * @throws java.lang.Exception if any.
-	 */
-	public abstract void visit(NodeRef entityNodeRef, OutputStream result) throws Exception;
-
-	/**
-	 * <p>visit.</p>
-	 *
-	 * @param entities a {@link java.util.List} object.
-	 * @param result a {@link java.io.OutputStream} object.
-	 * @throws java.lang.Exception if any.
-	 */
-	public abstract void visit(List<NodeRef> entities, OutputStream result) throws Exception;
-
-	/**
-	 * <p>visitData.</p>
-	 *
-	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param result a {@link java.io.OutputStream} object.
-	 * @throws java.lang.Exception if any.
-	 */
-	public abstract void visitData(NodeRef entityNodeRef, OutputStream result) throws Exception;
-
-	/**
 	 * <p>writeCDATA.</p>
 	 *
 	 * @param attribute a {@link java.lang.String} object.
@@ -196,7 +107,6 @@ public abstract class AbstractEntityVisitor {
 				? attribute.replace("&", "&amp;").replace("\"", "&quot;").replace("\'", "&apos;").replace("<", "&lt;").replace(">", "&gt;")
 				: "";
 	}
-	
 
 	/**
 	 * <p>shouldDumpAll.</p>
@@ -207,7 +117,7 @@ public abstract class AbstractEntityVisitor {
 	protected boolean shouldDumpAll(NodeRef nodeRef) {
 		QName nodeType = nodeService.getType(nodeRef).getPrefixedQName(namespaceService);
 
-		return dumpAll && !cacheList.contains(nodeRef) && !(ContentModel.TYPE_AUTHORITY.equals(nodeType) || ContentModel.TYPE_PERSON.equals(nodeType)
+		return isAll() && !cacheList.contains(nodeRef) && !(ContentModel.TYPE_AUTHORITY.equals(nodeType) || ContentModel.TYPE_PERSON.equals(nodeType)
 				|| ContentModel.TYPE_AUTHORITY_CONTAINER.equals(nodeType));
 	}
 

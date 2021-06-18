@@ -5074,23 +5074,28 @@ else{
                             <structure>
                                 <property name="name">compoListQty</property>
                                 <text-property name="displayName">compoListQty</text-property>
-                                <expression name="expression" type="javascript">if (BirtStr.toLower( reportContext.getLocale().toString()) == "en_us") {
-	BirtMath.round(dataSetRow["compoListQty"]  * 35.27396195, 2 ) ; 
-} else {
-
-	if(dataSetRow["compoListQty"] > 1000){
-		BirtMath.round(dataSetRow["compoListQty"] / 1000,2) + " t";
-	}
-	else if(dataSetRow["compoListQty"] >= 1){
-		BirtMath.round(dataSetRow["compoListQty"], 2) + " kg";
-	}
-	else if(dataSetRow["compoListQty"] >= 0.001){
-		BirtMath.round(dataSetRow["compoListQty"] * 1000, 2) + " g";
-	}
-	else {
-		BirtMath.round(dataSetRow["compoListQty"] * 1000000, 2)+ " mg";
-	}
-	
+                                <expression name="expression" type="javascript">var qty = dataSetRow["compoListQty"];&#13;
+&#13;
+if ( qty &lt; 0 ) {&#13;
+	qty = Math.abs(qty);&#13;
+ }&#13;
+ &#13;
+if (BirtStr.toLower( reportContext.getLocale().toString()) == "en_us") {&#13;
+	BirtMath.round(dataSetRow["compoListQty"]  * 35.27396195, 2 ) ;&#13;
+} else {&#13;
+&#13;
+	if( qty > 1000){&#13;
+		BirtMath.round(dataSetRow["compoListQty"] / 1000,2) + " t";&#13;
+	}&#13;
+	else if( qty >= 1){&#13;
+		BirtMath.round(dataSetRow["compoListQty"], 2) + " kg";&#13;
+	}&#13;
+	else if( qty >= 0.001){&#13;
+		BirtMath.round(dataSetRow["compoListQty"] * 1000, 2) + " g";&#13;
+	}&#13;
+	else {&#13;
+		BirtMath.round(dataSetRow["compoListQty"] * 1000000, 2)+ " mg";&#13;
+	}&#13;
 }</expression>
                                 <property name="dataType">string</property>
                                 <property name="allowExport">true</property>

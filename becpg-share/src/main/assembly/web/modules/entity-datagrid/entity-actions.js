@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (C) 2010-2020 beCPG. 
+ *  Copyright (C) 2010-2021 beCPG. 
  *   
  *  This file is part of beCPG 
  *   
@@ -63,10 +63,16 @@
                   Dom.addClass(p_dialog.id+"-dialog","large-dialog");
                 }
 			   
-		        if(this.parentInputNodeRef!=null ){
-                	Dom.get(p_dialog.id + "_prop_bcpg_parentLevel-added").value = this.parentInputNodeRef;
-		        	Bubbling.fire(p_dialog.id + "_prop_bcpg_parentLevel" + "refreshContent", this.parentInputNodeRef, this );
-		        }
+			   var propInputNodeRefs = {};
+			   propInputNodeRefs["bcpg_parentLevel"] = this.parentInputNodeRef;
+			   propInputNodeRefs["bcpg_variantIds"] = this.variantInputNodeRef;
+			   
+			   for(var prop in propInputNodeRefs) {
+				   if(propInputNodeRefs[prop] != null) {
+	                	Dom.get(p_dialog.id + "_prop_"+prop+"-added").value = propInputNodeRefs[prop];
+			        	Bubbling.fire(p_dialog.id + "_prop_"+prop + "refreshContent", propInputNodeRefs[prop], this );
+			        }
+			   }
 
 		   };
 
@@ -100,13 +106,16 @@
 		      doBeforeFormSubmit : {
 		         fn : function() {
 			         var checkBoxEl = Dom.get(this.id + "-createRow" + "-form-bulkAction");
-
-			         var parentInput =   Dom.get(this.id + "-createRow_prop_bcpg_parentLevel-added");
 			         
+			         var parentInput =   Dom.get(this.id + "-createRow_prop_bcpg_parentLevel-added");
+			         var variantInput =   Dom.get(this.id + "-createRow_prop_bcpg_variantIds-added");
+			         me.parentInputNodeRef = null;
+			         me.variantInputNodeRef = null;
 			         if(parentInput !=null && parentInput.value!=null && parentInput.value.length>0){
 			        	 me.parentInputNodeRef = parentInput.value;
-			         } else {
-			        	 me.parentInputNodeRef = null;
+			         }
+			         if(variantInput !=null && variantInput.value!=null && variantInput.value.length>0){
+			        	 me.variantInputNodeRef = variantInput.value;
 			         }
 	
 			         if (checkBoxEl && checkBoxEl.checked) {
@@ -507,40 +516,40 @@
 		 *           be actioned, or an Array thereof
 		 */
 	   onActionDuplicate : function EntityDataGrid_onActionDuplicate(p_items) {
-		   var me = this, items = YAHOO.lang.isArray(p_items) ? p_items : [ p_items ], destinationNodeRef = this.modules.dataGrid.datalistMeta.nodeRef!=null ? new Alfresco.util.NodeRef(
-		         this.modules.dataGrid.datalistMeta.nodeRef): new Alfresco.util.NodeRef(
-				         this.modules.dataGrid.options.parentNodeRef), nodeRefs = [];
-
-		   var fnActionDuplicateConfirm = function EntityDataGrid__onActionDuplicate_confirm(items) {
-		   for ( var i = 0, ii = items.length; i < ii; i++) {
-			   nodeRefs.push(items[i].nodeRef);
+			   var me = this, items = YAHOO.lang.isArray(p_items) ? p_items : [ p_items ], destinationNodeRef = this.modules.dataGrid.datalistMeta.nodeRef!=null ? new Alfresco.util.NodeRef(
+			         this.modules.dataGrid.datalistMeta.nodeRef): new Alfresco.util.NodeRef(
+					         this.modules.dataGrid.options.parentNodeRef), nodeRefs = [];
+	
+			   var fnActionDuplicateConfirm = function EntityDataGrid__onActionDuplicate_confirm(items) {
+			   for ( var i = 0, ii = items.length; i < ii; i++) {
+				   nodeRefs.push(items[i].nodeRef);
+			   }
+	
+			   this.modules.actions.genericAction({
+			      success : {
+			         event : {
+			            name : this.scopeId + "dataItemsDuplicated",
+			            obj : {
+				            items : items
+			            }
+			         },
+			         message : this.msg("message.duplicate.success", items.length)
+			      },
+			      failure : {
+				      message : this.msg("message.duplicate.failure")
+			      },
+			      webscript : {
+			         method : Alfresco.util.Ajax.POST,
+			         name : "duplicate/node/" + destinationNodeRef.uri
+			      },
+			      config : {
+			         requestContentType : Alfresco.util.Ajax.JSON,
+			         dataObj : {
+				         nodeRefs : nodeRefs
+			         }
+			      }
+			   });
 		   }
-
-		   this.modules.actions.genericAction({
-		      success : {
-		         event : {
-		            name : this.scopeId + "dataItemsDuplicated",
-		            obj : {
-			            items : items
-		            }
-		         },
-		         message : this.msg("message.duplicate.success", items.length)
-		      },
-		      failure : {
-			      message : this.msg("message.duplicate.failure")
-		      },
-		      webscript : {
-		         method : Alfresco.util.Ajax.POST,
-		         name : "duplicate/node/" + destinationNodeRef.uri
-		      },
-		      config : {
-		         requestContentType : Alfresco.util.Ajax.JSON,
-		         dataObj : {
-			         nodeRefs : nodeRefs
-		         }
-		      }
-		   });
-	   }
 		   Alfresco.util.PopupManager.displayPrompt({
 			      title : this.msg("message.confirm.duplicate.title", items.length),
 			      text : this.msg("message.confirm.duplicate.description", items.length),
@@ -600,7 +609,9 @@
 				var siteId = this.options.siteId 
 					
 				Alfresco.util.Ajax.jsonGet({
-				url : Alfresco.constants.URL_SERVICECONTEXT + "module/entity-datagrid/config/columns?mode=datagrid-prefs&itemType=" + encodeURIComponent(itemType) + "&clearCache=true" + (this.options.siteId ? "&siteId=" + this.options.siteId : ""),
+				url : Alfresco.constants.URL_SERVICECONTEXT + "module/entity-datagrid/config/columns?mode=datagrid-prefs&itemType=" + encodeURIComponent(itemType) + "&clearCache=true" 
+					+ (this.options.siteId ? "&siteId=" + this.options.siteId : "")
+					+ (this.entity!=null ? "&entityType="+encodeURIComponent(this.entity.type) : ""),
 				successCallback : {
 					fn : function (response) {
 						var prefs = "fr.becpg.formulation.dashlet.custom.datagrid-prefs"+"."+itemType.replace(":","_");
@@ -641,7 +652,7 @@
 			            	this.widgets.columnsListPanel.hide();
 			            	
 			            	setTimeout(function(){
-			            		YAHOO.Bubbling.fire(me.scopeId + "scopedActiveDataListChanged", 
+			            		YAHOO.Bubbling.fire("activeDataListChanged", 
 			            	    		{clearCache :true}
 			            	    );
 			            	}, 1000);

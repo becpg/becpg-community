@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -24,13 +24,14 @@ import java.util.Set;
 import org.alfresco.repo.copy.CopyBehaviourCallback;
 import org.alfresco.repo.copy.CopyDetails;
 import org.alfresco.repo.copy.CopyServicePolicies;
-import org.alfresco.repo.copy.DefaultCopyBehaviourCallback;
+import org.alfresco.repo.copy.DoNothingCopyBehaviourCallback;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.Behaviour.NotificationFrequency;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
@@ -47,7 +48,7 @@ import fr.becpg.repo.quality.QualityControlService;
  * @version $Id: $Id
  */
 public class QualityControlPolicies extends AbstractBeCPGPolicy implements NodeServicePolicies.OnCreateAssociationPolicy,
-		NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.BeforeDeleteNodePolicy,CopyServicePolicies.OnCopyNodePolicy {
+NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.BeforeDeleteNodePolicy,CopyServicePolicies.OnCopyNodePolicy {
 
 	private static final Log logger = LogFactory.getLog(QualityControlPolicies.class);
 
@@ -88,7 +89,7 @@ public class QualityControlPolicies extends AbstractBeCPGPolicy implements NodeS
 
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, QualityModel.TYPE_QUALITY_CONTROL,
 				QualityModel.ASSOC_PRODUCT, new JavaBehaviour(this, "onCreateAssociation", NotificationFrequency.TRANSACTION_COMMIT));
-		
+
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, QualityModel.TYPE_SAMPLING_LIST,
 				QualityModel.ASSOC_SL_CONTROL_POINT, new JavaBehaviour(this, "onCreateAssociation", NotificationFrequency.TRANSACTION_COMMIT));
 
@@ -100,16 +101,19 @@ public class QualityControlPolicies extends AbstractBeCPGPolicy implements NodeS
 
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnCreateNodePolicy.QNAME, QualityModel.TYPE_SAMPLING_LIST,
 				new JavaBehaviour(this, "onCreateNode", NotificationFrequency.TRANSACTION_COMMIT));
-		
-		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyNodePolicy.QNAME, QualityModel.TYPE_QUALITY_CONTROL,
+
+		policyComponent.bindClassBehaviour(QName.createQName(NamespaceService.ALFRESCO_URI, "getCopyCallback"), QualityModel.TYPE_CONTROL_LIST,
 				new JavaBehaviour(this, "getCopyCallback"));
 		
+		policyComponent.bindClassBehaviour(QName.createQName(NamespaceService.ALFRESCO_URI, "getCopyCallback"), QualityModel.TYPE_SAMPLING_LIST,
+				new JavaBehaviour(this, "getCopyCallback"));
+
 		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME, QualityModel.TYPE_SAMPLING_LIST,
 				new JavaBehaviour(this, "beforeDeleteNode"));
 
 		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME, QualityModel.TYPE_CONTROL_LIST,
 				new JavaBehaviour(this, "beforeDeleteNode"));
-		
+
 	}
 
 	/** {@inheritDoc} */
@@ -145,20 +149,14 @@ public class QualityControlPolicies extends AbstractBeCPGPolicy implements NodeS
 	public void onCreateNode(ChildAssociationRef childAssocRef) {
 		qualityControlService.createSamplingListId(childAssocRef.getChildRef());
 	}
-	
-	
+
+
 	/** {@inheritDoc} */
 	@Override
 	public CopyBehaviourCallback getCopyCallback(QName classRef, CopyDetails copyDetails) {
-		if (policyBehaviourFilter.isEnabled(QualityModel.TYPE_QUALITY_CONTROL)) {
-			policyBehaviourFilter.disableBehaviour(QualityModel.TYPE_QUALITY_CONTROL);
-		}
-		if (policyBehaviourFilter.isEnabled(QualityModel.TYPE_SAMPLING_LIST)) {
-			policyBehaviourFilter.disableBehaviour(QualityModel.TYPE_SAMPLING_LIST);
-		}
-		return new DefaultCopyBehaviourCallback();
+		return DoNothingCopyBehaviourCallback.getInstance();
 	}
-	
+
 
 	/** {@inheritDoc} */
 	@Override
@@ -169,7 +167,7 @@ public class QualityControlPolicies extends AbstractBeCPGPolicy implements NodeS
 					if (key.startsWith(KEY_PREFIX_CTRL_PLAN_ASSOC)) {
 						qualityControlService.createSamplingList(new NodeRef(key.replaceFirst(KEY_PREFIX_CTRL_PLAN_ASSOC, "")), nodeRef);
 					} else if (key.startsWith(KEY_PREFIX_PRODUCT_ASSOC)) {
-						qualityControlService.copyProductDataList(new NodeRef(key.replaceFirst(KEY_PREFIX_PRODUCT_ASSOC, "")), nodeRef, false);
+						qualityControlService.copyProductDataList(new NodeRef(key.replaceFirst(KEY_PREFIX_PRODUCT_ASSOC, "")), nodeRef);
 					}
 				}
 			}
@@ -181,11 +179,11 @@ public class QualityControlPolicies extends AbstractBeCPGPolicy implements NodeS
 	/** {@inheritDoc} */
 	@Override
 	public void beforeDeleteNode(NodeRef nodeRef) {
-			if (QualityModel.TYPE_CONTROL_LIST.equals(nodeService.getType(nodeRef))) {
-				qualityControlService.updateControlListState(nodeRef);
-			} else {
-				qualityControlService.deleteSamplingListId(nodeRef);
-			}
+		if (QualityModel.TYPE_CONTROL_LIST.equals(nodeService.getType(nodeRef))) {
+			qualityControlService.updateControlListState(nodeRef);
+		} else {
+			qualityControlService.deleteSamplingListId(nodeRef);
+		}
 
 	}
 }

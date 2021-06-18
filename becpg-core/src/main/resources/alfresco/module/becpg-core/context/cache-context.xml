@@ -1,0 +1,143 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+  Copyright (C) 2010-2021 beCPG. 
+   
+  This file is part of beCPG 
+   
+  beCPG is free software: you can redistribute it and/or modify 
+  it under the terms of the GNU Lesser General Public License as published by 
+  the Free Software Foundation, either version 3 of the License, or 
+  (at your option) any later version. 
+   
+  beCPG is distributed in the hope that it will be useful, 
+  but WITHOUT ANY WARRANTY; without even the implied warranty of 
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+  GNU Lesser General Public License for more details. 
+   
+  You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+
+		
+	<!-- Cache -->
+
+	<bean id="beCPGCacheService" class="fr.becpg.repo.cache.impl.BeCPGCacheServiceImpl">
+		<property name="registry" ref="asynchronouslyRefreshedCacheRegistry"/>
+		<property name="disableAllCache" value="false"/>
+		<property name="cacheSizes">
+		   <!-- Cache define here are tenant aware and local (not clustered)-->
+			<map>
+			  <entry key="fr.becpg.repo.security.SecurityService" value="50" />
+			  <entry key="fr.becpg.repo.entity.version.EntityVersionService" value="10" />
+			  <entry key="fr.becpg.repo.helper.AttributeExtractorService" value="100" />
+			  <entry key="fr.becpg.repo.entity.catalog.EntityCatalogService" value="5" />
+			  <entry key="fr.becpg.repo.jscript.Thumbnail" value="20" />
+			  <entry key="fr.becpg.repo.search.PaginatedSearchCache" value="300" />
+			  <entry key="fr.becpg.repo.search.PaginatedSearchCache.multiLevel" value="300" />
+			  <entry key="fr.becpg.repo.entity.datalist.MultiLevelDataListService" value="50" />
+			  <entry key="fr.becpg.repo.entity.impl.EntityDictionaryServiceImpl" value="500" />
+			  <entry key="fr.becpg.repo.license.BeCPGLicenseManager" value="20" />
+			  <entry key="fr.becpg.repo.dictionary.constraint.DynListConstraint" value="100" />
+			  <entry key="fr.becpg.repo.dictionary.constraint.CurrencyConstraint" value="100" />
+			  <entry key="fr.becpg.repo.entity.impl.AutoNumServiceImpl" value="10" />
+			  <entry key="fr.becpg.repo.report.entity.impl.EntityReportServiceImpl" value="10" />
+			  <entry key="fr.becpg.repo.search.AdvSearchService" value="100" />
+			</map>
+		</property>
+	</bean>
+	
+
+	<!--  Clusterable cache -->
+  
+
+   <bean name="becpgRepositorySharedCache" factory-bean="cacheFactory" factory-method="createCache">
+      <constructor-arg value="cache.becpgRepositoryCache"/>      
+   </bean>
+
+	 <bean name="becpgRepositoryCache" class="org.alfresco.repo.cache.TransactionalCache">
+      <property name="sharedCache">
+         <ref bean="becpgRepositorySharedCache" />
+      </property>
+      <property name="name">
+         <value>fr.becpg.cache.repositoryTransactionnalCache</value>
+      </property>
+      <property name="maxCacheSize" value="${cache.becpgRepositoryCache.tx.maxItems}" />
+      <property name="mutable" value="true" />
+      <property name="allowEqualsChecks" value="false" />
+      <property name="disableSharedCache" value="false" />
+      <property name="tenantAware" value="true" />
+      <property name="cacheStats" ref="cacheStatistics"/>
+      <property name="cacheStatsEnabled" value="${cache.becpgRepositoryCache.tx.statsEnabled}"/> 
+   </bean>
+
+
+   <bean name="becpgCharactSharedCache" factory-bean="cacheFactory" factory-method="createCache">
+      <constructor-arg value="cache.becpgCharactCache"/>      
+   </bean>
+
+	 <bean name="becpgCharactCache" class="org.alfresco.repo.cache.TransactionalCache">
+      <property name="sharedCache">
+         <ref bean="becpgCharactSharedCache" />
+      </property>
+      <property name="name">
+         <value>fr.becpg.cache.charactTransactionnalCache</value>
+      </property>
+      <property name="maxCacheSize" value="${cache.becpgCharactCache.tx.maxItems}" />
+      <property name="mutable" value="true" />
+      <property name="allowEqualsChecks" value="false" />
+      <property name="disableSharedCache" value="false" />
+      <property name="tenantAware" value="true" />
+      <property name="cacheStats" ref="cacheStatistics"/>
+      <property name="cacheStatsEnabled" value="${cache.becpgCharactCache.tx.statsEnabled}"/> 
+   </bean>
+
+
+  <bean name="becpgAssocsSharedCache" factory-bean="cacheFactory" factory-method="createCache">
+      <constructor-arg value="cache.becpgAssocsCache"/>      
+   </bean>
+   
+
+   <bean name="becpgAssocsCache" class="org.alfresco.repo.cache.TransactionalCache">
+      <property name="sharedCache">
+         <ref bean="becpgAssocsSharedCache" />
+      </property>
+      <property name="name">
+         <value>fr.becpg.cache.associationTransactionnalCache</value>
+      </property>
+      <property name="maxCacheSize" value="${cache.becpgAssocsCache.tx.maxItems}" />
+      <property name="mutable" value="true" />
+      <property name="disableSharedCache" value="false" />
+      <property name="tenantAware" value="true" />
+      <property name="cacheStats" ref="cacheStatistics"/>
+      <property name="cacheStatsEnabled" value="${cache.becpgAssocsCache.tx.statsEnabled}"/> 
+   </bean>
+   
+    
+   <bean name="becpgChildAssocsSharedCache" factory-bean="cacheFactory" factory-method="createCache">
+      <constructor-arg value="cache.becpgChildAssocsCache"/>      
+   </bean>
+   
+   <bean name="becpgChildAssocsCache" class="org.alfresco.repo.cache.TransactionalCache">
+      <property name="sharedCache">
+         <ref bean="becpgChildAssocsSharedCache" />
+      </property>
+      <property name="name">
+         <value>fr.becpg.cache.childAssociationTransactionnalCache</value>
+      </property>
+      <property name="maxCacheSize" value="${cache.becpgChildAssocsCache.tx.maxItems}" />
+      <property name="mutable" value="true" />
+      <property name="disableSharedCache" value="false" />
+      <property name="tenantAware" value="true" />
+      <property name="cacheStats" ref="cacheStatistics"/>
+      <property name="cacheStatsEnabled" value="${cache.becpgChildAssocsCache.tx.statsEnabled}"/> 
+   </bean>
+   
+
+</beans>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG. 
+ * Copyright (C) 2010-2021 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -100,8 +100,6 @@ public class SortDataListWebScript extends DeclarativeWebScript {
 			String[] selectedNodeRefs = selectedNodeRefsArgs.split(",");
 
 
-				model.put("origSort", nodeService.getProperty(nodeRef, BeCPGModel.PROP_SORT));
-
 				if (dir != null || selectedNodeRefs.length > 1) {
 					
 					if (!SORT_DIR_UP.equals(dir)) {
@@ -113,10 +111,13 @@ public class SortDataListWebScript extends DeclarativeWebScript {
 					}
 
 				} else if (selectedNodeRefs.length == 1) {
-					dataListSortService.insertAfter(new NodeRef(selectedNodeRefs[0]), nodeRef);
+					NodeRef toSortNodeRef = new NodeRef(selectedNodeRefs[0]);
+					
+					model.put("origSort", nodeService.getProperty(toSortNodeRef, BeCPGModel.PROP_SORT));
+					dataListSortService.insertAfter(toSortNodeRef, nodeRef);
+					model.put("destSort", nodeService.getProperty(toSortNodeRef, BeCPGModel.PROP_SORT));
 				}
 
-				model.put("destSort", nodeService.getProperty(nodeRef, BeCPGModel.PROP_SORT));
 				return model;
 			
 		}

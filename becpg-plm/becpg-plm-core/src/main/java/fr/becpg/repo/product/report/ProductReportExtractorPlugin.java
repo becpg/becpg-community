@@ -68,6 +68,7 @@ import fr.becpg.repo.product.formulation.CostsCalculatingFormulationHandler;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.product.formulation.PackagingHelper;
 import fr.becpg.repo.product.formulation.nutrient.RegulationFormulationHelper;
+import fr.becpg.repo.report.entity.EntityReportParameters;
 import fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
@@ -138,6 +139,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	@Value("${beCPG.product.report.showDeprecatedXml}")
 	private Boolean showDeprecated = false;
+	
+	@Value("${beCPG.product.report.nutList.localesToExtract}")
+	private String nutLocalesToExtract;
 
 	@Autowired
 	protected PackagingHelper packagingHelper;
@@ -391,15 +395,16 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	private boolean shouldExtractList(boolean isExtractedProduct, DefaultExtractorContext context, QName type, QName dataListQName) {
 		if(isExtractedProduct) {
-			if(context.isNotEmptyPrefs("entityDatalistsToExtract", null) && !context.prefsContains("lists", null, dataListQName.toPrefixString(namespaceService))) {
+			if(context.isNotEmptyPrefs(EntityReportParameters.PARAM_ENTITY_DATALISTS_TO_EXTRACT , null) && 
+					!context.multiPrefsEquals(EntityReportParameters.PARAM_ENTITY_DATALISTS_TO_EXTRACT, null, entityDictionaryService.toPrefixString(dataListQName))) {
 				return false;
 			}
 			return true;
 		}
 		
-		return context.multiPrefsEquals("componentDatalistsToExtract", componentDatalistsToExtract,
-				dataListQName.toPrefixString(namespaceService)) || context.multiPrefsEquals("componentDatalistsToExtract", componentDatalistsToExtract,
-						dataListQName.toPrefixString(namespaceService)+"|"+type.toPrefixString(namespaceService));
+		return context.multiPrefsEquals(EntityReportParameters.PARAM_COMPONENT_DATALISTS_TO_EXTRACT, componentDatalistsToExtract,
+				entityDictionaryService.toPrefixString(dataListQName)) || context.multiPrefsEquals(EntityReportParameters.PARAM_COMPONENT_DATALISTS_TO_EXTRACT, componentDatalistsToExtract,
+						entityDictionaryService.toPrefixString(dataListQName)+"|"+entityDictionaryService.toPrefixString(type));
 	}
 
 	/**
@@ -477,7 +482,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				loadProcessListItem(productData.getNodeRef(), dataItem, subProductData, processListElt, 1, qty, qtyForCost, context);
 			}
 
-			if (context.isPrefOn("extractInMultiLevel", extractInMultiLevel) && isExtractedProduct) {
+			if (context.isPrefOn(EntityReportParameters.PARAM_EXTRACT_IN_MULTILEVEL, extractInMultiLevel) && isExtractedProduct) {
 
 				if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 
@@ -514,8 +519,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			Element packagingListElt = dataListsElt.addElement(PLMModel.TYPE_PACKAGINGLIST.getLocalName() + "s");
 			addDataListState(packagingListElt, productData.getPackagingList().get(0).getParentNodeRef());
 
-			BigDecimal netWeightPrimary = new BigDecimal(
-					FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT).toString());
+			BigDecimal netWeightPrimary = BigDecimal.valueOf(FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT));
 
 			// display tare, net weight and gross weight
 			BigDecimal tarePrimary = FormulationHelper.getTareInKg(productData.getTare(), productData.getTareUnit());
@@ -544,10 +548,10 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 				if (variantPackagingData.getProductPerBoxes() != null) {
 
-					BigDecimal tareSecondary = tarePrimary.multiply(new BigDecimal(variantPackagingData.getProductPerBoxes()))
+					BigDecimal tareSecondary = tarePrimary.multiply(BigDecimal.valueOf(variantPackagingData.getProductPerBoxes()))
 							.add(variantPackagingData.getTareSecondary());
 
-					BigDecimal netWeightSecondary = netWeightPrimary.multiply(new BigDecimal(variantPackagingData.getProductPerBoxes()));
+					BigDecimal netWeightSecondary = netWeightPrimary.multiply(BigDecimal.valueOf(variantPackagingData.getProductPerBoxes()));
 					BigDecimal grossWeightSecondary = tareSecondary.add(netWeightSecondary);
 
 					packgLevelMesuresElt.addAttribute(ATTR_PKG_TARE_LEVEL_2, toString(tareSecondary));
@@ -557,9 +561,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 					if (variantPackagingData.getBoxesPerPallet() != null) {
 
-						BigDecimal tareTertiary = tareSecondary.multiply(new BigDecimal(variantPackagingData.getBoxesPerPallet()))
+						BigDecimal tareTertiary = tareSecondary.multiply(BigDecimal.valueOf(variantPackagingData.getBoxesPerPallet()))
 								.add(variantPackagingData.getTareTertiary());
-						BigDecimal netWeightTertiary = netWeightSecondary.multiply(new BigDecimal(variantPackagingData.getBoxesPerPallet()));
+						BigDecimal netWeightTertiary = netWeightSecondary.multiply(BigDecimal.valueOf(variantPackagingData.getBoxesPerPallet()));
 						packgLevelMesuresElt.addAttribute(ATTR_PKG_TARE_LEVEL_3, toString(tareTertiary));
 						packgLevelMesuresElt.addAttribute(ATTR_PKG_NET_WEIGHT_LEVEL_3, toString(netWeightTertiary));
 						packgLevelMesuresElt.addAttribute(ATTR_PKG_GROSS_WEIGHT_LEVEL_3, toString(tareTertiary.add(netWeightTertiary)));
@@ -577,7 +581,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				}
 			}
 
-			if (context.isPrefOn("extractInMultiLevel", extractInMultiLevel) && isExtractedProduct) {
+			if (context.isPrefOn(EntityReportParameters.PARAM_EXTRACT_IN_MULTILEVEL, extractInMultiLevel) && isExtractedProduct) {
 
 				if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 
@@ -824,12 +828,12 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			}
 
 			Element dataListsElt = null;
-			if (context.isNotEmptyPrefs("componentDatalistsToExtract", componentDatalistsToExtract)) {
+			if (context.isNotEmptyPrefs(EntityReportParameters.PARAM_COMPONENT_DATALISTS_TO_EXTRACT, componentDatalistsToExtract)) {
 				dataListsElt = partElt.addElement(TAG_DATALISTS);
 				loadDataLists(dataItem.getProduct(), dataListsElt, context, false);
 			}
 
-			if (context.isPrefOn("extractInMultiLevel", extractInMultiLevel)) {
+			if (context.isPrefOn(EntityReportParameters.PARAM_EXTRACT_IN_MULTILEVEL, extractInMultiLevel)) {
 
 				if ((nodeService.getType(dataItem.getProduct()).equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT)
 						|| nodeService.getType(dataItem.getProduct()).equals(PLMModel.TYPE_FINISHEDPRODUCT))) {
@@ -904,6 +908,18 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 						value = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_FORMULATED_VALUE.getLocalName());
 						nutListElt.addAttribute(PLMModel.PROP_NUTLIST_VALUE.getLocalName(), value);
 					}
+					
+					value = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_MINI.getLocalName());
+					if ((value == null) || value.isEmpty()) {
+						value = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_FORMULATED_MINI.getLocalName());
+						nutListElt.addAttribute(PLMModel.PROP_NUTLIST_MINI.getLocalName(), value);
+					}
+					
+					value = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_MAXI.getLocalName());
+					if ((value == null) || value.isEmpty()) {
+						value = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_FORMULATED_MAXI.getLocalName());
+						nutListElt.addAttribute(PLMModel.PROP_NUTLIST_MAXI.getLocalName(), value);
+					}
 
 					if (dataListItem.getErrorLog() != null && !dataListItem.getErrorLog().isEmpty()) {
 						nutListElt.addAttribute(PLMModel.PROP_NUTLIST_FORMULA_ERROR.getLocalName(), "Error");
@@ -911,7 +927,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 					nutListElt.addAttribute(RegulationFormulationHelper.ATTR_NUT_CODE, nut.getNutCode());
 					nutListElt.addAttribute(BeCPGModel.PROP_COLOR.getLocalName(), nut.getNutColor());
 					boolean isDisplayed = isCharactDisplayedForLocale(dataListItem.getNut());
-					RegulationFormulationHelper.extractXMLAttribute(nutListElt, dataListItem.getRoundedValue(), I18NUtil.getLocale(), isDisplayed);
+					
+					
+					RegulationFormulationHelper.extractXMLAttribute(nutListElt, dataListItem.getRoundedValue(), I18NUtil.getLocale(), isDisplayed, context.getPrefValue("nutLocalesToExtract", nutLocalesToExtract));
 
 					if (showDeprecated) {
 
@@ -1439,7 +1457,13 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		}
 
 		partElt.addAttribute(BeCPGModel.PROP_DEPTH_LEVEL.getLocalName(), Integer.toString(level));
-		if ((dataItem.getPkgLevel() != null) && (dataItem.getQty() != null) && (dataItem.getPackagingListUnit() != null)) {
+		PackagingLevel packLevel = dataItem.getPkgLevel();
+		
+		if(packLevel == null) {
+			packLevel = PackagingLevel.Primary;
+		}
+
+		if ((dataItem.getQty() != null) && (dataItem.getPackagingListUnit() != null)) {
 			double sfQty = sfQtyForCost / (1 + (parentLossRatio / 100));
 			// we display the quantity used in the SF
 			// partElt.addAttribute(PLMModel.PROP_PACKAGINGLIST_QTY.getLocalName(),
@@ -1449,12 +1473,12 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				qty = qty / dataItem.getPackagingListUnit().getUnitFactor();
 			}
 			Double qtyForProduct = 0d;
-			if (dataItem.getPkgLevel().equals(PackagingLevel.Primary)) {
+			if (packLevel.equals(PackagingLevel.Primary)) {
 				qtyForProduct = qty * sfQty;
-			} else if (dataItem.getPkgLevel().equals(PackagingLevel.Secondary) && (defaultVariantPackagingData.getProductPerBoxes() != null)
+			} else if (packLevel.equals(PackagingLevel.Secondary) && (defaultVariantPackagingData.getProductPerBoxes() != null)
 					&& (defaultVariantPackagingData.getProductPerBoxes() != 0)) {
 				qtyForProduct = (qty * sfQty) / defaultVariantPackagingData.getProductPerBoxes();
-			} else if (dataItem.getPkgLevel().equals(PackagingLevel.Tertiary) && (defaultVariantPackagingData.getProductPerPallet() != null)
+			} else if (packLevel.equals(PackagingLevel.Tertiary) && (defaultVariantPackagingData.getProductPerPallet() != null)
 					&& (defaultVariantPackagingData.getProductPerPallet() != 0)) {
 				qtyForProduct = (qty * sfQty) / defaultVariantPackagingData.getProductPerPallet();
 			}
@@ -1462,8 +1486,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			partElt.addAttribute(ATTR_QTY_FOR_COST, Double.toString(
 					qtyForProduct * (1 + (parentLossRatio / 100)) * (1 + ((dataItem.getLossPerc() != null ? dataItem.getLossPerc() : 0d) / 100))));
 			
-			partElt.addAttribute(PLMModel.PROP_PRODUCT_DROP_PACKAGING_OF_COMPONENTS.getLocalName(), Boolean.toString((!dataItem.getPkgLevel().equals(PackagingLevel.Primary) && isPackagingOfComponent) || dropPackagingOfComponents));
-		}
+			partElt.addAttribute(PLMModel.PROP_PRODUCT_DROP_PACKAGING_OF_COMPONENTS.getLocalName(), Boolean.toString((!packLevel.equals(PackagingLevel.Primary) && isPackagingOfComponent) || dropPackagingOfComponents));
+		} 
 		return partElt;
 	}
 
@@ -1554,7 +1578,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				}
 
 			}
-			dataItemElt.addAttribute(BeCPGModel.PROP_IS_DEFAULT_VARIANT.getLocalName(), isDefault.toString());
+			dataItemElt.addAttribute(BeCPGModel.PROP_IS_DEFAULT_VARIANT.getLocalName(), isDefault!=null ? isDefault.toString(): Boolean.FALSE.toString());
 			dataItemElt.addAttribute(BeCPGModel.PROP_VARIANTIDS.getLocalName(), variantNames);
 		} else {
 			dataItemElt.addAttribute(BeCPGModel.PROP_VARIANTIDS.getLocalName(), "");
@@ -1574,8 +1598,12 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		for (DynamicCharactListItem dc : dynamicCharactList) {
 			Element dynamicCharact = dynCharactListElt.addElement(PLMModel.TYPE_DYNAMICCHARACTLIST.getLocalName());
 			dynamicCharact.addAttribute(PLMModel.PROP_DYNAMICCHARACT_TITLE.getLocalName(), dc.getTitle());
+			Object ret = null;
+			if(dc.getValue() !=null ) {
+				ret = JsonFormulaHelper.cleanCompareJSON(dc.getValue().toString());
+			}
 			dynamicCharact.addAttribute(PLMModel.PROP_DYNAMICCHARACT_VALUE.getLocalName(),
-					dc.getValue() == null ? VALUE_NULL : JsonFormulaHelper.cleanCompareJSON(dc.getValue().toString()).toString());
+					ret == null ? VALUE_NULL :ret.toString());
 		}
 	}
 
@@ -1622,7 +1650,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			});
 			extractCost(entityNodeRef, partProductNodeRef, dataListItemElt, costType);
 
-			dataListItemElt.addAttribute(ATTR_ITEM_TYPE, nodeService.getType(partProductNodeRef).toPrefixString(namespaceService));
+			dataListItemElt.addAttribute(ATTR_ITEM_TYPE, entityDictionaryService.toPrefixString(nodeService.getType(partProductNodeRef)));
 			dataListItemElt.addAttribute(ATTR_ASPECTS, extractAspects(partProductNodeRef));
 		}
 	}

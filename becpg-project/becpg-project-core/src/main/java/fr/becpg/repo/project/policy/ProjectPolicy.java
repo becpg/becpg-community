@@ -4,7 +4,7 @@
 package fr.becpg.repo.project.policy;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -23,9 +23,6 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.project.ProjectWorkflowService;
 import fr.becpg.repo.project.data.ProjectData;
-import fr.becpg.repo.project.data.ProjectState;
-import fr.becpg.repo.project.data.projectList.TaskListDataItem;
-import fr.becpg.repo.project.impl.ProjectHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 
 /**
@@ -105,35 +102,24 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 	@Override
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 
-		boolean formulateProject = false;
+		Set<NodeRef> toReformulates = new HashSet<>();
 		String beforeState = (String) before.get(ProjectModel.PROP_PROJECT_STATE);
 		String afterState = (String) after.get(ProjectModel.PROP_PROJECT_STATE);
 
 		// change state
 		if ((afterState != null) && !afterState.equals(beforeState)) {
-
-			if (afterState.equals(ProjectState.InProgress.toString())) {
-				Date startDate = ProjectHelper.removeTime(new Date());
-				nodeService.setProperty(nodeRef, ProjectModel.PROP_PROJECT_START_DATE, startDate);
-				ProjectData projectData = alfrescoRepository.findOne(nodeRef);
-				for (TaskListDataItem taskListDataItem : ProjectHelper.getNextTasks(projectData, null)) {
-					if(taskListDataItem.getSubProject() == null) {
-						nodeService.setProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_START, startDate);
-					}
-				}
-				formulateProject = true;
-			} else if (afterState.equals(ProjectState.Cancelled.toString()) || afterState.equals(ProjectState.OnHold.toString())) {
-				formulateProject = true;
-			}
+			toReformulates.addAll( projectService.updateProjectState(nodeRef, beforeState, afterState));
 		}
 
 		// change startdate, duedate
 		if (isPropChanged(before, after, ProjectModel.PROP_PROJECT_START_DATE) || isPropChanged(before, after, ProjectModel.PROP_PROJECT_DUE_DATE)) {
-			formulateProject = true;
+			toReformulates.add(nodeRef);
 		}
 
-		if (formulateProject) {
-			queueNode(nodeRef);
+		if (!toReformulates.isEmpty()) {
+			for(NodeRef n : toReformulates) {
+				queueNode(n);
+			}
 		}
 	}
 
@@ -198,8 +184,7 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 	/** {@inheritDoc} */
 	@Override
 	public void impactWUsed(NodeRef entityNodeRef, VersionType versionType, String description) {
-		// TODO Auto-generated method stub
-		
+		// Empty
 	}
 
 }

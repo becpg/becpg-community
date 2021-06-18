@@ -53,11 +53,15 @@ public class EntityTplProjectPlugin implements EntityTplPlugin {
 				logger.debug("beforeSynchronizeEntity check completion perc:"+ completionPerc);
 				if(completionPerc == null || completionPerc == 0) {
 					try {
-						policyBehaviourFilter.disableBehaviour();
+						policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+						policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_VERSIONABLE);
+						policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 						nodeService.deleteNode(listContainerNodeRef);
 						logger.debug("beforeSynchronizeEntity deleting datalist container");
 					} finally {
-						policyBehaviourFilter.enableBehaviour();
+						policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+						policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_VERSIONABLE);
+						policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 					}
 				}	
 			}

@@ -43,6 +43,7 @@
 			               </div>
 			         </div>
 			         <button id="${el}-show-button">${msg("menu.show")}</button>
+			         <button id="${el}-checkAll-button">${msg("menu.check.all")}</button>
 			      </div>
 			      <div id="${el}-itemProps-container" class="bulk-edit-props-container"></div>
 			   </div>

@@ -36,7 +36,7 @@ import fr.becpg.repo.jscript.Thumbnail;
  * @version $Id: $Id
  */
 public class ReportQuickShareThumbnailContentGet extends QuickShareContentGet {
-	private static final Log logger = LogFactory.getLog(QuickShareContentGet.class);
+	private static final Log logger = LogFactory.getLog(ReportQuickShareThumbnailContentGet.class);
 
 	private ThumbnailService thumbnailService;
 	private ScriptThumbnailService scriptThumbnailService;

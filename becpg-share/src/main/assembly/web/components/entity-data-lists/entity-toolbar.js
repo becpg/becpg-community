@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (C) 2010-2020 beCPG. 
+ *  Copyright (C) 2010-2021 beCPG. 
  *   
  *  This file is part of beCPG 
  *   
@@ -51,6 +51,9 @@
       this.toolbarButtonActions = {};
       
       this.widgets.actionButtons = {};
+
+       // Preferences service
+       this.services.preferences = new Alfresco.service.Preferences();
 
       // Renderers
       Bubbling.on("registerToolbarButtonAction", this.onRegisterToolbarButtonAction, this);

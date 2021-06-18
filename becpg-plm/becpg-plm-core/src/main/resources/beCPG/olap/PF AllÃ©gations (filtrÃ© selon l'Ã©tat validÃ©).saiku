@@ -6,7 +6,7 @@
         <Dimensions>
           <Dimension name="productType" hierarchizeMode="PRE" hierarchyConsistent="true">
             <Inclusions>
-              <Selection dimension="productType" type="member" node="[productType].[Produit fini]" operator="MEMBER" />
+              <Selection dimension="productType" type="member" node="[productType].[bcpg:finishedProduct]" operator="MEMBER" />
             </Inclusions>
             <Exclusions />
           </Dimension>
@@ -32,7 +32,7 @@
         <Dimensions>
           <Dimension name="state">
             <Inclusions>
-              <Selection dimension="state" type="member" node="[state].[Validé]" operator="MEMBER" />
+              <Selection dimension="state" type="member" node="[state].[Valid]" operator="MEMBER" />
             </Inclusions>
             <Exclusions />
           </Dimension>

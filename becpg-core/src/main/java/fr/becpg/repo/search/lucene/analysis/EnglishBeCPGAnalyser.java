@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG. 
+ * Copyright (C) 2010-2021 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -41,7 +41,7 @@ public class EnglishBeCPGAnalyser extends AbstractBeCPGAnalyzer {
 	 * An array containing some common English words that are usually not useful
 	 * for searching.
 	 */
-	public static final String[] STOP_WORDS = StopAnalyzer.ENGLISH_STOP_WORDS;
+	protected static final String[] STOP_WORDS = StopAnalyzer.ENGLISH_STOP_WORDS;
 
 	/**
 	 * Builds an analyzer.

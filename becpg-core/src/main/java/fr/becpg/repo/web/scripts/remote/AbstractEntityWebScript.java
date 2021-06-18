@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -18,10 +18,13 @@
 package fr.becpg.repo.web.scripts.remote;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
@@ -31,6 +34,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.PermissionService;
+import org.alfresco.service.namespace.NamespaceService;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -49,6 +53,8 @@ import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.entity.remote.impl.HttpEntityProviderCallback;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
+import io.opencensus.trace.Tracer;
+import io.opencensus.trace.Tracing;
 
 /**
  * Abstract remote entity webscript
@@ -60,6 +66,8 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 
 	/** Constant <code>logger</code> */
 	protected static final Log logger = LogFactory.getLog(AbstractEntityWebScript.class);
+	
+	protected static final Tracer tracer = Tracing.getTracer();
 
 	/** Constant <code>PARAM_QUERY="query"</code> */
 	protected static final String PARAM_QUERY = "query";
@@ -75,6 +83,8 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	protected static final String PARAM_FIELDS = "fields";
 	/** Constant <code>PARAM_LISTS="lists"</code> */
 	protected static final String PARAM_LISTS = "lists";
+	/** Constant <code>PARAM_EXCLUDE_SYSTEMS="excludeSystems"</code> */
+	protected static final String PARAM_EXCLUDE_SYSTEMS = "excludeSystems";
 
 	/** http://localhost:8080/alfresco/services/becpg/remote/entity **/
 	protected static final String PARAM_CALLBACK = "callback";
@@ -98,6 +108,13 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	protected MimetypeService mimetypeService;
 
 	protected PermissionService permissionService;
+	
+	protected NamespaceService namespaceService;
+	
+	
+	public void setNamespaceService(NamespaceService namespaceService) {
+		this.namespaceService = namespaceService;
+	}
 
 	/**
 	 * <p>Setter for the field <code>mimetypeService</code>.</p>
@@ -147,6 +164,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		String query = decodeParam(req.getParameter(PARAM_QUERY));
 		String maxResultsString = req.getParameter(PARAM_MAX_RESULTS);
 
+
 		Integer maxResults = null;
 		if (maxResultsString != null) {
 			try {
@@ -162,9 +180,15 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		}
 
 		if ((req.getParameter(PARAM_ALL_VERSION) == null) || "false".equalsIgnoreCase(req.getParameter(PARAM_ALL_VERSION))) {
-			queryBuilder.excludeDefaults();
+			if((req.getParameter(PARAM_EXCLUDE_SYSTEMS) == null) || "true".equalsIgnoreCase(req.getParameter(PARAM_EXCLUDE_SYSTEMS))){
+				queryBuilder.excludeDefaults();
+			} else {
+				queryBuilder.excludeVersions();
+			}
 		} else {
-			queryBuilder.excludeSystems();
+			if((req.getParameter(PARAM_EXCLUDE_SYSTEMS) == null) || "true".equalsIgnoreCase(req.getParameter(PARAM_EXCLUDE_SYSTEMS))){
+				queryBuilder.excludeSystems();
+			}
 		}
 
 		if (maxResults == null) {
@@ -185,8 +209,9 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		List<NodeRef> refs = queryBuilder.inDBIfPossible().list();
 
 		if ((refs != null) && !refs.isEmpty()) {
-			logger.info("Returning " + refs.size() + " entities");
-
+			if (logger.isDebugEnabled()) {
+				logger.debug("Returning " + refs.size() + " entities");
+			}
 			return refs;
 		}
 
@@ -241,7 +266,6 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	protected void sendOKStatus(NodeRef entityNodeRef, WebScriptResponse resp, RemoteEntityFormat format) throws IOException {
 		if ((resp != null) && (resp.getWriter() != null) && (entityNodeRef != null)) {
 			if(RemoteEntityFormat.json.equals(format)) {
-				
 				JSONObject ret = new JSONObject();
 				try {
 					ret.put("nodeRef", entityNodeRef);
@@ -354,33 +378,56 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	public List<String> extractLists(WebScriptRequest req) {
 		List<String> lists = new ArrayList<>();
 		String listsParams = req.getParameter(PARAM_LISTS);
-		if ((listsParams != null) && (listsParams.length() > 0)) {
+		
+		if ((listsParams != null) && (!listsParams.isEmpty())) {
 
 			String[] splitted = decodeParam(listsParams).split(",");
 			for (String list : splitted) {
 				String[] listName = list.split(":");
-				if ((listName != null) && (listName.length > 1)) {
-					lists.add(listName[1]);
+				if ((listName != null) ) {
+					if(listName.length > 1){
+						if(listName[0].startsWith("!")) {
+							lists.add("!"+listName[1]);
+						} else {
+							lists.add(listName[1]);
+						}
+					} else {
+						lists.add(listName[0]);
+					}
 				}
 			}
 		}
 		return lists;
 	}
 
-	private String decodeParam(String param)   {
-		if ((param != null) && Base64.isBase64(param)) {
+
+	//TODO move that to CompressParamHelper in becpg-tools
+	private static final String BASE_64_PREFIX = "b64-";
+	
+	private static final Map<String,String> replacementMaps = new HashMap<>();
+	{
+		replacementMaps.put("bcpg:", "§");
+	}
+	
+	
+	private static  String decodeParam(String param)   {
+		if ((param != null) && param.startsWith(BASE_64_PREFIX) ) {
 		     try {
 				 Inflater decompresser = new Inflater();
-				 byte[] compressedData = Base64.decodeBase64(param);
+				 byte[] compressedData = Base64.decodeBase64(param.replaceFirst(BASE_64_PREFIX, ""));
 			     decompresser.setInput(compressedData, 0, compressedData.length);
 			     byte[] output = new byte[100000];
 			     
 			     int decompressedDataLength = decompresser.inflate(output);
 			     decompresser.end();
-
-		    	 return (new String(output, 0, decompressedDataLength, "UTF-8")).replaceAll("=", "bcpg:");
-			} catch (DataFormatException | UnsupportedEncodingException e) {
-				logger.error(e,e);
+			     String ret = (new String(output, 0, decompressedDataLength, StandardCharsets.UTF_8));
+			     for(Entry<String,String> entry: replacementMaps.entrySet()) {
+			    	 ret = ret.replaceAll( entry.getValue(), entry.getKey());
+					}
+			     
+		    	 return ret;
+			} catch (DataFormatException e) {
+				logger.error("Error decoding param: "+ param,e);
 			}
 		}
 		return param;

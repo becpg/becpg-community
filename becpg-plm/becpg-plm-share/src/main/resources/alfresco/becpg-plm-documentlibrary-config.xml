@@ -19,6 +19,7 @@
 				<aspect name="pack:sizeAspect" />
 				<aspect name="pack:tareAspect" />
 				<aspect name="bcpg:nutrientProfilingScoreAspect" />
+				<aspect name="bcpg:ecoScoreAspect" />
 				<aspect name="pack:pmThicknessAspect" />
 				<aspect name="pack:pmMaterialAspect" />
 				<aspect name="pack:pmIntSizeAspect" />
@@ -61,6 +62,7 @@
 				<subtype name="bcpg:productSpecification" />
 				
 				<subtype name="qa:nc" />
+				<subtype name="qa:batch" />
 				<subtype name="bcpg:supplier" />
 				<subtype name="bcpg:client" />
 				<subtype name="ecm:changeOrder" />	
@@ -143,7 +145,10 @@
 				
 
 		</indicators>
+		
 	</config>
+	
+	
 	<config evaluator="string-compare" condition="DocumentLibrary" replace="true">
 		<create-content>
 			 <content id="folder" label="create-content.folder" icon="folder" index="5" type="javascript">
@@ -205,6 +210,10 @@
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=qa:qualityControl&amp;formId=create&amp;isEntity=true
 				</param>
 			</content>
+			<content id="batch" label="menu.create-content.batch" type="pagelink" index="160" icon="batch">
+				<param name="page">create-content?destination={nodeRef}&amp;itemId=qa:batch&amp;formId=create&amp;isEntity=true
+				</param>
+			</content>
 			<content id="changeOrder" label="menu.create-content.eco" type="pagelink" index="170" icon="changeOrder">
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=ecm:changeOrder&amp;formId=create&amp;isEntity=true</param>
 				<permissions>
@@ -222,6 +231,23 @@
 			</content>
 		</create-content>
 		<create-content-by-template>true</create-content-by-template>
+
+	  <multi-select>
+         <action type="action-link" id="onActionDownload" icon="document-download" label="menu.selected-items.download" />
+      	 <!-- beCPG -->
+         <action type="action-link" asset="document" id="onActionQuickShare" icon="quickshare-action-16.png" label="menu.selected-items.quick-share" />
+         <action type="action-link" id="onActionCopyTo" icon="document-copy-to" label="menu.selected-items.copy" notAspect="smf:smartFolder,smf:smartFolderChild"/>
+         <action type="action-link" id="onActionMoveTo" icon="document-move-to" permission="Delete" label="menu.selected-items.move" notAspect="smf:smartFolder,smf:smartFolderChild"/>
+         <!-- beCPG -->
+         <action type="action-link" id="onActionAssignWorkflow" icon="document-assign-workflow" label="menu.selected-items.assign-process"/>
+         <action type="action-link" id="onActionDelete" icon="document-delete" permission="Delete" label="menu.selected-items.delete" notAspect="hwf:hybridWorkflow,sys:undeletable,smf:smartFolder" />
+         <action type="action-link" id="onActionCloudSync" asset="document" icon="document-cloud-sync"  permission="CreateChildren" label="menu.selected-items.cloudSync" notAspect="sync:syncSetMemberNode,smf:smartFolder,smf:smartFolderChild" syncMode="ON_PREMISE" />
+         <action type="action-link" id="onActionCloudSyncRequest" icon="document-request-sync" label="menu.selected-items.cloudRequestSync" hasAspect="sync:syncSetMemberNode" notAspect="smf:smartFolder,smf:smartFolderChild" syncMode="ON_PREMISE" />
+     	 <!-- beCPG -->
+     	 <action type="action-link" asset="document" id="onActionAddToBasket" icon="basket-action-16.png" label="menu.selected-items.basket" />
+      </multi-select>
+	
+		
 	</config>
 	
 	
@@ -275,13 +301,10 @@
 				<evaluator negate="true">evaluator.becpg.doclib.action.entity.isSystemEntity</evaluator>
 			</action>
 			
-			<!-- Send to validation 
-			 // For next release
-			<action id="start-process" type="javascript" label="actions.entity.start-process" icon="document-assign-workflow">
-				<param name="function">onActionStartProcess</param>
-			</action>
-			
-			-->
+			  <!-- Assign process -->
+	         <action id="document-assign-workflow" type="javascript" label="actions.document.assign-process">
+	            <param name="function">onActionAssignWorkflow</param>
+	         </action>
 			
 		</actions>
 
@@ -294,16 +317,10 @@
 				<action index="111" id="entityTpl-synchronize-entities" />
 				<action index="112" id="entityTpl-formulate-entities" />
 				<action index="113" id="entityTpl-wused" />
-				<action index="400" id="start-process" />
 			</actionGroup>
 
-
-			<actionGroup id="document-details">
-				<action index="400" id="start-process" />
-			</actionGroup>
-
-			<actionGroup id="document-browse">
-				<action index="400" id="start-process" />
+			<actionGroup id="entity-browse">
+				  <action index="280" id="document-assign-workflow" />
 			</actionGroup>
 
 		</actionGroups>

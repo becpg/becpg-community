@@ -13,9 +13,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.alfresco.error.ExceptionStackUtil;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.service.cmr.preference.PreferenceService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -25,7 +27,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
@@ -54,6 +55,9 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
+import io.opencensus.common.Scope;
+import io.opencensus.trace.Tracer;
+import io.opencensus.trace.Tracing;
 
 /**
  * <p>AutomaticECOServiceImpl class.</p>
@@ -67,6 +71,8 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 	private static final String CURRENT_ECO_PREF = "fr.becpg.ecm.currentEcmNodeRef";
 
 	private static final Log logger = LogFactory.getLog(AutomaticECOService.class);
+	
+	private static final Tracer tracer = Tracing.getTracer();
 
 	@Autowired
 	private RepoService repoService;
@@ -258,9 +264,9 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 								try {
 									ecoService.calculateWUsedList(ecoNodeRef, true);
 								} catch (Exception e) {
-									if (e instanceof ConcurrencyFailureException) {
-										throw (ConcurrencyFailureException) e;
-									}
+									if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+										 throw e;
+					                }
 									logger.error(e, e);
 									return false;
 								}
@@ -281,9 +287,9 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 										}
 
 									} catch (Exception e) {
-										if (e instanceof ConcurrencyFailureException) {
-											throw (ConcurrencyFailureException) e;
-										}
+										if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+											 throw e;
+						                }
 										logger.error(e, e);
 										return false;
 									}
@@ -328,9 +334,9 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 					});
 
 				} catch (Exception e) {
-					if (e instanceof ConcurrencyFailureException) {
-						throw (ConcurrencyFailureException) e;
-					}
+					 if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+						 throw e;
+	                  }
 					logger.error("Cannot merge node:" + entityNodeRef, e);
 				}
 
@@ -360,7 +366,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 
 		final Set<NodeRef> formulatedEntities = new HashSet<>();
 
-		for (NodeRef entityNodeRef : nodeRefs) {
+		for (final NodeRef entityNodeRef : nodeRefs) {
 
 			List<NodeRef> toReformulates = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 				if (accept(entityNodeRef)) {
@@ -386,8 +392,9 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 							return wUsedData.getAllLeafs();
 						}
 					} catch (Exception e) {
-						if (e instanceof ConcurrencyFailureException) {
-							throw (ConcurrencyFailureException) e;
+						Throwable validCause = ExceptionStackUtil.getCause(e, RetryingTransactionHelper.RETRY_EXCEPTIONS);
+						if (validCause != null) {
+							throw (RuntimeException) validCause;
 						}
 						logger.error(e, e);
 					}
@@ -404,13 +411,13 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 				if (!formulatedEntities.contains(toReformulate)) {
 
 					ret = ret && formulatedEntities.add(toReformulate);
-
+					
 					transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 						if (logger.isDebugEnabled()) {
 							logger.debug("Reformulating product: " + nodeService.getProperty(toReformulate, ContentModel.PROP_NAME) + " ("
 									+ toReformulate + ") ");
 						}
-						try {
+						try (Scope scope = tracer.spanBuilder("automaticEcoService.Reformulate").startScopedSpan()){
 							policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
 							policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 							policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
@@ -425,9 +432,9 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 							}, false, true);
 
 						} catch (Exception e) {
-							if (e instanceof ConcurrencyFailureException) {
-								throw (ConcurrencyFailureException) e;
-							}
+							 if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+								 throw e;
+			                  }
 							logger.error("Cannot reformulate node:" + toReformulate, e);
 							return false;
 						} finally {

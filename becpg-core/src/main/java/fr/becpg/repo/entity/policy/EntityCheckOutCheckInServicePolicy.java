@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -31,10 +31,14 @@ import org.alfresco.repo.node.NodeArchiveServicePolicies.BeforePurgeNodePolicy;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.Behaviour;
 import org.alfresco.repo.policy.JavaBehaviour;
+import org.alfresco.repo.version.Version2Model;
+import org.alfresco.repo.version.VersionServicePolicies;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.cmr.rule.RuleService;
+import org.alfresco.service.cmr.version.Version;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -54,7 +58,7 @@ import fr.becpg.repo.report.entity.EntityReportAsyncGenerator;
 public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy
 		implements CheckOutCheckInServicePolicies.OnCheckOut, CheckOutCheckInServicePolicies.BeforeCheckIn, CheckOutCheckInServicePolicies.OnCheckIn,
 		CheckOutCheckInServicePolicies.BeforeCancelCheckOut, NodeServicePolicies.OnRemoveAspectPolicy,
-		NodeArchiveServicePolicies.BeforePurgeNodePolicy, CheckOutCheckInServicePolicies.OnCancelCheckOut, NodeServicePolicies.OnDeleteNodePolicy {
+		NodeArchiveServicePolicies.BeforePurgeNodePolicy, CheckOutCheckInServicePolicies.OnCancelCheckOut, NodeServicePolicies.OnDeleteNodePolicy, VersionServicePolicies.AfterCreateVersionPolicy {
 
 	private static final Log logger = LogFactory.getLog(EntityCheckOutCheckInServicePolicy.class);
 
@@ -111,7 +115,10 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy
 
 		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.OnCancelCheckOut.QNAME, BeCPGModel.ASPECT_ENTITYLISTS,
 				new JavaBehaviour(this, "onCancelCheckOut"));
-
+		
+		policyComponent.bindClassBehaviour(VersionServicePolicies.AfterCreateVersionPolicy.QNAME, BeCPGModel.ASPECT_ENTITYLISTS,
+				new JavaBehaviour(this, "afterCreateVersion"));
+		
 		this.policyComponent.bindClassBehaviour(QName.createQName(NamespaceService.ALFRESCO_URI, "onRemoveAspect"), ContentModel.ASPECT_VERSIONABLE,
 				new JavaBehaviour(this, "onRemoveAspect", Behaviour.NotificationFrequency.TRANSACTION_COMMIT));
 
@@ -125,6 +132,8 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy
 
 	/** {@inheritDoc} */
 	@Override
+	//TODO delete in 3.2.3
+	@Deprecated
 	public void onCheckOut(final NodeRef workingCopyNodeRef) {
 		ruleService.disableRules();
 		try {
@@ -251,5 +260,13 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy
 		}
 
 	}
+
+	@Override
+	public void afterCreateVersion(NodeRef versionableNode, Version version) {
+		if (entityVersionService.isV2Service()) {
+			queueNode(new NodeRef(StoreRef.PROTOCOL_WORKSPACE, Version2Model.STORE_ID, version.getFrozenStateNodeRef().getId()));
+		}
+	}
+
 
 }

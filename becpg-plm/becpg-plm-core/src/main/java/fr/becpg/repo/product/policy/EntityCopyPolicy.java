@@ -80,15 +80,10 @@ public class EntityCopyPolicy extends AbstractBeCPGPolicy implements CopyService
 	@Override
 	public void onCopyComplete(QName classRef, NodeRef sourceNodeRef, NodeRef destinationRef, boolean copyToNewNode, Map<NodeRef, NodeRef> copyMap) {
 
-		if (policyBehaviourFilter.isEnabled(ContentModel.ASPECT_AUDITABLE)
-				&& policyBehaviourFilter.isEnabled(sourceNodeRef, ContentModel.ASPECT_AUDITABLE) && !isWorkingCopyOrVersion(destinationRef)
-				&& !isWorkingCopyOrVersion(sourceNodeRef)
-
+		//If we are creating a branch we force
+		if (policyBehaviourFilter.isEnabled(ContentModel.ASPECT_VERSIONABLE) && !isWorkingCopyOrVersion(destinationRef)
+				&& !isWorkingCopyOrVersion(sourceNodeRef) 
 		) {
-			
-			if(nodeService.hasAspect(destinationRef, BeCPGModel.ASPECT_ERP_CODE)) {
-				nodeService.setProperty(destinationRef, BeCPGModel.PROP_ERP_CODE, null);
-			}
 			
 			entityService.changeEntityListStates(destinationRef, EntityListState.ToValidate);
 			
@@ -102,6 +97,10 @@ public class EntityCopyPolicy extends AbstractBeCPGPolicy implements CopyService
 			
 			if(nodeService.hasAspect(destinationRef, PLMModel.ASPECT_PRODUCT)) {
 				nodeService.setProperty(destinationRef, PLMModel.PROP_PRODUCT_STATE, SystemState.Simulation);
+			}
+			
+			if (nodeService.getProperty(destinationRef, PLMModel.PROP_SUPPLIER_STATE) != null) {
+				nodeService.setProperty(destinationRef, PLMModel.PROP_SUPPLIER_STATE, SystemState.Simulation);
 			}
 			
 			if (nodeService.hasAspect(destinationRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT)) {

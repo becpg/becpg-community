@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!--
-  Copyright (C) 2010-2020 beCPG. 
+  Copyright (C) 2010-2021 beCPG. 
    
   This file is part of beCPG 
    
@@ -39,6 +39,23 @@
 		</property>
 	</bean>
 
+	<bean id="jsonVersionExtractor" class="fr.becpg.repo.entity.datalist.impl.JsonVersionExtractor" init-method="init">
+		<property name="dataListExtractorFactory" ref="dataListExtractorFactory" />
+		<property name="attributeExtractorService" ref="attributeExtractorService" />
+		<property name="paginatedSearchCache" ref="paginatedSearchCache" />
+		<property name="entityDictionaryService" ref="entityDictionaryService" />
+		<property name="nodeService" ref="nodeService" />
+		<property name="entityActivityService" ref="entityActivityService" />
+		<property name="dictionaryService" ref="cachedDictionaryService" />
+		<property name="securityService" ref="securityService" />
+		<property name="defaultExtractor" value="false" />
+		<property name="advSearchService" ref="AdvSearchService" />
+		<property name="services" ref="ServiceRegistry" />
+		<property name="permissionService" ref="permissionService" />
+		<property name="ratingService" ref="ratingService"/>
+		<property name="priority" value="1"/>
+	</bean>
+
 	<bean id="becpgCoreBootstrapMessages" class="org.alfresco.i18n.ResourceBundleBootstrapComponent">
 		<property name="resourceBundles">
 			<list>
@@ -53,6 +70,19 @@
 		</property>
 	</bean>
 
+	<!-- cached dictionary -->
+
+    <bean id="entityDictionaryService" class="fr.becpg.repo.entity.impl.EntityDictionaryServiceImpl" parent="dictionaryService" depends-on="bcpg.dictionaryBootstrap" >   
+        <property name="beCPGCacheService" ref="beCPGCacheService"/>
+        <property name="registry" ref="asynchronouslyRefreshedCacheRegistry"/>
+        <property name="repositoryEntityDefReader" ref="repositoryEntityDefReader"/> 
+        <property name="namespaceService" ref="namespaceService" />	    
+    </bean>
+    
+    <alias alias="cachedDictionaryService" name="entityDictionaryService"></alias>
+    
+    
+    
 	<!-- Helper -->
 	<bean id="contentHelper" class="fr.becpg.repo.helper.ContentHelper">
 		<property name="contentService" ref="contentService" />
@@ -61,13 +91,16 @@
 	</bean>
 	
 
-	<bean id="associationService"  parent="abstractBeCPGPolicy" class="fr.becpg.repo.helper.impl.AssociationServiceImpl">
-		<property name="beCPGCacheService" ref="beCPGCacheService"/>
+	<bean id="associationService"  parent="abstractBeCPGPolicy" class="fr.becpg.repo.helper.impl.AssociationServiceImplV2">
 		<property name="entityDictionaryService" ref="entityDictionaryService"/>
 		<property name="namespaceService" ref="namespaceService" />		
 		<property name="tenantService" ref="tenantService" />	
 		<property name="dataSource" ref="dataSource" />	
-		<property name="qnameDAO" ref="qnameDAO" />		
+		<property name="qnameDAO" ref="qnameDAO" />
+		<!-- Caches -->
+		<property name="childsAssocsCache" ref="becpgChildAssocsCache" />
+		<property name="assocsCache" ref="becpgAssocsCache" />
+		<property name="registry" ref="asynchronouslyRefreshedCacheRegistry"/>
 	</bean>
 
 
@@ -93,7 +126,6 @@
 	<alias name="remoteEntityService" alias="RemoteEntityService"/>
 
 	<!-- DataLists -->
-	
 	
 	<bean id="dataListExtractorFactory"
 		class="fr.becpg.repo.entity.datalist.impl.DataListExtractorFactoryImpl"/>
@@ -160,33 +192,7 @@
 	
 	<alias name="advSearchService" alias="AdvSearchService"/>
 	
-	
-	<!-- Cache -->
 
-	<bean id="beCPGCacheService" class="fr.becpg.repo.cache.impl.BeCPGCacheServiceImpl">
-		<property name="tenantAdminService" ref="tenantAdminService"/>
-		<property name="disableAllCache" value="false"/>
-		<!-- If cache size is not define -->
-		<property name="maxCacheItems" value="100"/>
-		<property name="cacheSizes">
-		   <!-- Cache size is by tenant -->
-			<map>
-			  <entry key="fr.becpg.repo.security.SecurityService" value="50" />
-			  <entry key="fr.becpg.repo.entity.version.EntityVersionService" value="10" />
-			  <entry key="fr.becpg.repo.helper.AttributeExtractorService" value="100" />
-			  <entry key="fr.becpg.repo.helper.AssociationService.childs" value="10000" />
-			  <entry key="fr.becpg.repo.helper.AssociationService.assocs" value="200000" />
-			  <entry key="fr.becpg.repo.entity.catalog.EntityCatalogService" value="5" />
-			  <entry key="fr.becpg.repo.jscript.Thumbnail" value="20" />
-			  <entry key="fr.becpg.repo.search.PaginatedSearchCache" value="300" />
-			  <entry key="fr.becpg.repo.search.PaginatedSearchCache.multiLevel" value="300" />
-			  <entry key="fr.becpg.repo.entity.datalist.MultiLevelDataListService" value="50" />
-			  <entry key="fr.becpg.repo.entity.impl.EntityDictionaryServiceImpl" value="1000" />
-			  <entry key="fr.becpg.repo.license.BeCPGLicenseManager" value="20" />
-			</map>
-		</property>
-	</bean>
-	
 	
 	<bean id="applicationContextHelper" class="fr.becpg.util.ApplicationContextHelper"/>
 
@@ -201,7 +207,7 @@
          <ref bean="multilingualContentService" />
       </property>
       <property name="dictionaryService">
-         <ref bean="dictionaryService" />
+         <ref bean="cachedDictionaryService" />
       </property>
    </bean>
 
@@ -212,6 +218,8 @@
         <property name="jobClass">
             <value>fr.becpg.repo.notification.NotificationRuleJob</value>
         </property>
+        <property name="group" value="beCPG"/>
+        <property name="description" value="Run notification rules" />
         <property name="jobDataAsMap">
             <map>
                 <entry key="notificationRuleService">
@@ -223,6 +231,9 @@
                 <entry key="transactionService">
                     <ref bean="transactionService" />
                 </entry>
+                <entry key="jobLockService">
+	               <ref bean="jobLockService" />
+	           </entry>
             </map>
         </property>
     </bean>
@@ -249,7 +260,7 @@
   	<!--  Overload of IntegrityChecker --> 
     <bean id="integrityChecker" class="fr.becpg.repo.node.integrity.BeCPGIntegrityChecker" init-method="init">
       <property name="policyComponent" ref="policyComponent"/>
-      <property name="dictionaryService" ref="dictionaryService" />
+      <property name="dictionaryService" ref="cachedDictionaryService" />
       <property name="nodeService" ref="nodeService" />
       <property name="entityDictionaryService" ref="entityDictionaryService" />
       <property name="entityListDAO" ref="entityListDAO" />
@@ -269,7 +280,7 @@
     <!-- Ovverride alfresco copy service -->
     <bean id="copyService" class="fr.becpg.repo.copy.BecpgCopyServiceImpl" parent="abstractBaseCopyService" init-method="init">
         <property name="cannedQueryRegistry" ref="copyServiceCannedQueryRegistry"/>
-        <property name="dictionaryService" ref="entityDictionaryService" />
+        <property name="dictionaryService" ref="cachedDictionaryService" />
         <property name="nodeService" ref="NodeService" />
         <property name="policyComponent" ref="policyComponent" />
         <property name="behaviourFilter" ref="policyBehaviourFilter" />
@@ -280,33 +291,168 @@
         <property name="contentPropertyRestrictionInterceptor" ref="contentPropertyRestrictionInterceptor" />
     </bean>
     
+    <!-- Ovveride alfresco rule service -->
     
-     <!-- Ovverride alfresco version service -->
-    <bean id="versionService" class="fr.becpg.repo.entity.version.BecpgVersionServiceImpl" init-method="initialise">
-        <property name="nodeService">
-            <ref bean="NodeService" />
+     <bean id="ruleService" class="org.alfresco.repo.rule.RuleServiceImpl" init-method="init">
+        <property name="nodeService" ref="NodeService"/>
+        <property name="runtimeNodeService" ref="nodeService"/>
+        <property name="copyService" ref="copyService"/>
+        <property name="actionService" ref="ActionService"/>
+        <property name="runtimeActionService" ref="actionService"/>
+        <property name="dictionaryService" ref="cachedDictionaryService"/>
+        <property name="policyComponent" ref="policyComponent"/>
+        <property name="permissionService" ref="permissionService"/>
+	    <property name="nodeRulesCache" ref="nodeRulesCache"/>
+        <property name="rulesDisabled">
+            <value>false</value>
         </property>
-        <property name="dbNodeService">
-            <ref bean="mtAwareNodeService" />
+   </bean>
+
+ <!--  Site role precedence - higher number - more important role -->    
+    <bean id="siteRoleComparator" class="org.alfresco.repo.site.RoleComparatorImpl" init-method="init">
+       <property name="rolePrecedence">
+       		<map>
+       			<entry key="SiteManager" value="5" />
+       			<entry key="SiteCollaborator" value="4" />
+       			<entry key="SiteContributor" value="3" />
+       			<entry key="SiteBranchManager" value="2" />
+       			<entry key="SiteConsumer" value="1" />
+       		</map>
+       </property>
+    </bean>
+   
+   	<bean id="versionCleanerJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<property name="jobClass">
+			<value>fr.becpg.repo.entity.version.VersionCleanerJob</value>
+		</property>
+		<property name="group" value="beCPG"/>
+        <property name="description" value="Run version cleanup" />
+       	<property name="jobDataAsMap">
+			<map>
+				<entry key="jobLockService">
+	               <ref bean="jobLockService" />
+	           </entry>
+				<entry key="entityVersionService">
+	               <ref bean="entityVersionService" />
+	           </entry>
+				<entry key="entityFormatService">
+	               <ref bean="entityFormatService" />
+	           </entry>
+				<entry key="nodeService">
+	               <ref bean="nodeService" />
+	           </entry>
+				<entry key="transactionService">
+	               <ref bean="transactionService" />
+	           </entry>
+				<entry key="entityListDAO">
+	               <ref bean="entityListDAO" />
+	           </entry>
+	           <entry key="tenantAdminService">
+                    <ref bean="tenantAdminService" />
+               </entry>
+	           <entry key="versionService">
+                    <ref bean="versionService" />
+               </entry>
+			</map>
+		</property>
+        
+	</bean>
+	
+	<bean id="versionCleanerSchedulerAccessor" class="org.alfresco.schedule.AlfrescoSchedulerAccessorBean">
+		<property name="scheduler" ref="schedulerFactory" />
+		<property name="triggers">
+			<list>
+				<bean id="versionCleanerJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+					<property name="jobDetail" ref="versionCleanerJob"/>
+					<property name="cronExpression" value="${beCPG.version.cleaner.cronExpression}"/>
+				</bean>
+			</list>
+		</property>
+		<property name="enabled" value="${beCPG.version.cleaner.enabled}" />
+	</bean>
+  
+   
+   <!-- 
+    <bean id="search.fts.alfresco.db" class="org.alfresco.repo.search.impl.solr.DbAftsQueryLanguage" >
+        <property name="dictionaryService" ref="cachedDictionaryService" />
+        <property name="namespaceService" ref="namespaceService" />
+        <property name="factories">
+            <list>
+                <ref bean="search.indexerAndSearcherFactory" />
+            </list>
         </property>
-        <property name="searcher">
-            <ref bean="versionSearchService" />
+        <property name="queryEngine">
+            <ref bean="search.dbQueryEngine" />
         </property>
-        <property name="dictionaryService">
-            <ref bean="dictionaryService" />
+         <property name="metadataIndexCheck1">
+            <ref bean="metadataQueryIndexesCheck" />
         </property>
-        <property name="policyComponent">
-            <ref bean="policyComponent" />
-        </property>
-        <property name="policyBehaviourFilter">
-            <ref bean="policyBehaviourFilter" />
-        </property>
-        <property name="permissionService">
-            <ref bean="permissionService" />
-        </property>
-        <property name="versionComparatorClass">
-            <value>${version.store.versionComparatorClass}</value>
+        <property name="metadataIndexCheck2">
+            <ref bean="metadataQueryIndexesCheck2" />
         </property>
     </bean>
     
+    <bean id="search.dbQueryEngineImpl" class="org.alfresco.repo.search.impl.querymodel.impl.db.DBQueryEngine" >
+        <property name="dictionaryService" ref="cachedDictionaryService" />
+        <property name="namespaceService" ref="namespaceService" />
+        <property name="sqlSessionTemplate" ref="repoSqlSessionTemplate"/>
+        <property name="qnameDAO" ref="qnameDAO"/>
+        <property name="nodeService" ref="nodeService"/>
+        <property name="nodeDAO" ref="nodeDAO"/>
+        <property name="tenantService" ref="tenantService"/>
+        <property name="metadataIndexCheck2">
+            <ref bean="metadataQueryIndexesCheck2" />
+        </property>
+    </bean>
+    
+     -->
+     
+     <!-- Override SOLR cron backup 
+     
+     
+    <bean id="search.alfrescoCoreSolrBackupClient" class="org.alfresco.repo.search.impl.solr.SolrBackupClient" >
+        <property name="jobLockService">
+            <ref bean="jobLockService" />
+        </property>
+        <property name="remoteBackupLocation">
+            <value>${solr.backup.alfresco.remoteBackupLocation}</value>
+        </property>
+        <property name="numberToKeep">
+            <value>${solr.backup.alfresco.numberToKeep}</value>
+        </property>
+        <property name="core">
+            <value>${beCPG.solr.alfresco.core}</value>
+        </property>
+        <property name="solrAdminClient">
+            <ref bean="solrAdminClient" />
+        </property>
+        <property name="solrQueryHTTPClient">
+            <ref bean="search.solrQueryHTTPCLient" />
+        </property>
+    </bean>
+    
+    
+    <bean id="search.archiveCoreSolrBackupClient" class="org.alfresco.repo.search.impl.solr.SolrBackupClient" >
+        <property name="jobLockService">
+            <ref bean="jobLockService" />
+        </property>
+        <property name="remoteBackupLocation">
+            <value>${solr.backup.archive.remoteBackupLocation}</value>
+        </property>
+         <property name="numberToKeep">
+            <value>${solr.backup.archive.numberToKeep}</value>
+        </property>
+        <property name="core">
+            <value>${beCPG.solr.archive.core}</value>
+        </property>
+        <property name="solrAdminClient">
+            <ref bean="solrAdminClient" />
+        </property>
+        <property name="solrQueryHTTPClient">
+            <ref bean="search.solrQueryHTTPCLient" />
+        </property>
+    </bean>
+    
+    -->
+     
 </beans>

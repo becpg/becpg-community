@@ -5,10 +5,13 @@ import java.util.List;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.tenant.Tenant;
 import org.alfresco.repo.tenant.TenantAdminService;
+import org.alfresco.schedule.AbstractScheduledLockedJob;
+import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.quartz.PersistJobDataAfterExecution;
 
 /**
  * <p>AutomaticECOJob class.</p>
@@ -25,11 +28,13 @@ import org.quartz.JobExecutionException;
 // - Product , entity
 // On fait un wused à chaud ?
 // On les mets tous ?
-public class AutomaticECOJob implements Job {
+@PersistJobDataAfterExecution
+@DisallowConcurrentExecution
+public class AutomaticECOJob extends AbstractScheduledLockedJob implements Job {
 
 	/** {@inheritDoc} */
 	@Override
-	public void execute(JobExecutionContext context) throws JobExecutionException {
+	public void executeJob(JobExecutionContext context) throws JobExecutionException {
 		JobDataMap jobData = context.getJobDetail().getJobDataMap();
 
 		final AutomaticECOService automaticECOService = (AutomaticECOService) jobData.get("automaticECOService");

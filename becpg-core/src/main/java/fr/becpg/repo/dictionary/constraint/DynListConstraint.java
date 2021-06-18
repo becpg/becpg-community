@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2010-2020 beCPG. All rights reserved.
+ *  Copyright (C) 2010-2021 beCPG. All rights reserved.
  */
 package fr.becpg.repo.dictionary.constraint;
 
@@ -45,8 +45,6 @@ import fr.becpg.repo.search.impl.AbstractBeCPGQueryBuilder;
  */
 public class DynListConstraint extends ListOfValuesConstraint {
 
-	/** Constant <code>DYN_LIST_CACHE_NAME="DynListConstraintCache"</code> */
-	public static final String DYN_LIST_CACHE_NAME = "DynListConstraintCache";
 	/** Constant <code>UNDIFINED_CONSTRAINT_VALUE="-"</code> */
 	public static final String UNDIFINED_CONSTRAINT_VALUE = "-";
 
@@ -93,7 +91,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 	 *
 	 * @param serviceRegistry a {@link org.alfresco.service.ServiceRegistry} object.
 	 */
-	public void setServiceRegistry(ServiceRegistry serviceRegistry) {
+	public static void setServiceRegistry(ServiceRegistry serviceRegistry) {
 		DynListConstraint.serviceRegistry = serviceRegistry;
 	}
 
@@ -102,7 +100,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 	 *
 	 * @param beCPGCacheService a {@link fr.becpg.repo.cache.BeCPGCacheService} object.
 	 */
-	public void setBeCPGCacheService(BeCPGCacheService beCPGCacheService) {
+	public static void setBeCPGCacheService(BeCPGCacheService beCPGCacheService) {
 		DynListConstraint.beCPGCacheService = beCPGCacheService;
 	}
 
@@ -182,7 +180,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 		if (values.isEmpty()) {
 			return Collections.singletonList(UNDIFINED_CONSTRAINT_VALUE);
 		} else {
-			return new LinkedList<String>(values.keySet());
+			return new LinkedList<>(values.keySet());
 		}
 
 	}
@@ -212,9 +210,9 @@ public class DynListConstraint extends ListOfValuesConstraint {
 	 */
 	public String getDisplayLabel(String constraintAllowableValue) {
 
-		return getDisplayLabel(constraintAllowableValue,I18NUtil.getLocale());
+		return getDisplayLabel(constraintAllowableValue, I18NUtil.getLocale());
 	}
-	
+
 	/**
 	 * <p>getDisplayLabel.</p>
 	 *
@@ -227,8 +225,8 @@ public class DynListConstraint extends ListOfValuesConstraint {
 		MLText mlText = getMLAwareAllowedValues().get(constraintAllowableValue);
 
 		String ret = MLTextHelper.getClosestValue(mlText, locale);
-		
-		if ((ret != null) &&  !ret.isEmpty()) {
+
+		if ((ret != null) && !ret.isEmpty()) {
 			return ret;
 		}
 
@@ -247,14 +245,14 @@ public class DynListConstraint extends ListOfValuesConstraint {
 	 * @return a {@link java.util.Map} object.
 	 */
 	public Map<String, MLText> getMLAwareAllowedValues() {
-		return beCPGCacheService.getFromCache(DYN_LIST_CACHE_NAME, getShortName(),
-				() -> serviceRegistry.getTransactionService().getRetryingTransactionHelper().doInTransaction(() -> {
+		return beCPGCacheService.getFromCache(DynListConstraint.class.getName(), getShortName(),
+				() -> serviceRegistry.getRetryingTransactionHelper().doInTransaction(() -> {
 
 					logger.debug("Fill allowedValues  for :" + TenantUtil.getCurrentDomain());
 
-					Map<String, MLText> allowedValues = new LinkedHashMap<String, MLText>();
+					Map<String, MLText> allowedValues = new LinkedHashMap<>();
 
-					if ((addEmptyValue != null) && addEmptyValue) {
+					if (Boolean.TRUE.equals(addEmptyValue)) {
 						allowedValues.put("", null);
 					}
 
@@ -332,7 +330,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 
 					return allowedValues;
 
-				} , true, false));
+				}, true, false));
 	}
 
 }

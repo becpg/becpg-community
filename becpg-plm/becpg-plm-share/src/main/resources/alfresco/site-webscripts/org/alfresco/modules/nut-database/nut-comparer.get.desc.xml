@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2010-2020 beCPG. 
+  Copyright (C) 2010-2021 beCPG. 
    
   This file is part of beCPG 
    
@@ -20,5 +20,5 @@
   <description>Compare nutrients from different products</description>
   <url>/modules/nut-database/nut-comparer</url>
   <authentication>user</authentication>
-  <transaction allow="readonly" buffersize="0">required</transaction>
+  <transaction allow="readonly" >required</transaction>
 </webscript>

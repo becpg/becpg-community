@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!--
-  Copyright (C) 2010-2020 beCPG. 
+  Copyright (C) 2010-2021 beCPG. 
    
   This file is part of beCPG 
    
@@ -37,7 +37,8 @@
 			<list>
 				<value>alfresco/module/${pom.artifactId}/messages/paths</value>
 				<value>alfresco/module/${pom.artifactId}/messages/plm</value>
-				<value>alfresco/module/${pom.artifactId}/messages/import-service</value>					
+				<value>alfresco/module/${pom.artifactId}/messages/import-service</value>	
+				<value>alfresco/module/${pom.artifactId}/messages/becpg-forms</value>				
 			</list>
 		</property>
 	</bean>
@@ -99,10 +100,6 @@
 
 
 	<!-- Product formulate -->
-	<bean id="webscript.fr.becpg.product.productFormulation.get" class="fr.becpg.repo.web.scripts.product.FormulateWebScript" parent="webscript">
-		<property name="productService" ref="productService" />
-	</bean>
-
    <bean id="webscript.fr.becpg.product.recipeFormulation.post" class="fr.becpg.repo.web.scripts.product.FormulateRecipeWebScript" parent="webscript">
 		<property name="productService" ref="productService" />
 	</bean>
@@ -150,6 +147,16 @@
 		<property name="associationService" ref="associationService" />
 		<property name="repoService" ref="repoService" />
 	</bean>
+	
+	<!-- Formulation javascript helper -->
+	
+	<bean id="bFormulationScriptHelper" parent="baseJavaScriptExtension" class="fr.becpg.repo.jscript.FormulationScriptHelper">
+		<property name="extensionName">
+			<value>bFormulation</value>
+		</property>
+		<property name="nodeService" ref="NodeService" />
+	</bean>
+
 
 	<!-- Supplier portal -->
 	<bean id="bSupplierPortalScript" parent="baseJavaScriptExtension" class="fr.becpg.repo.jscript.SupplierPortalHelper">
@@ -176,6 +183,7 @@
 		<property name="projectNameTpl" value="${beCPG.sendToSupplier.projectName.format}"/>	
 		<property name="repoService" ref="repoService"/>
 		<property name="createBranch" value="${beCPG.sendToSupplier.createBranch}"/>	
+		<property name="siteService" ref="siteService"/>
 	</bean>
 	
 	<bean id="webscript.fr.becpg.project.sendToProject.post" class="fr.becpg.repo.web.scripts.project.ProjectEntityAssociationWebScript" parent="webscript">
@@ -197,12 +205,13 @@
 	
 	<bean id="webscript.fr.becpg.workflow.startProcess.get" class="fr.becpg.repo.web.scripts.workflow.StartProcessWebscript" parent="webscript">
 		<property name="nodeService" ref="NodeService" />
-		<property name="namespaceService" ref="NamespaceService" />
+		<property name="serviceRegistry" ref="ServiceRegistry" />
 		<property name="scriptService" ref="scriptService"/>
 		<property name="repository" ref="repositoryHelper" />
-		<property name="searchService" ref="searchService" />
+		<property name="expressionService" ref="expressionService"/>
 		<property name="contentService" ref="contentService"/>
-		<property name="authorityService" ref="authorityService"/>	
+		<property name="authorityService" ref="authorityService"/>
+		<property name="workflowService" ref="WorkflowService"/>	
 	</bean>
 
 	<alias name="webscript.fr.becpg.workflow.startProcess.get" alias="webscript.fr.becpg.workflow.startProcess.post" />

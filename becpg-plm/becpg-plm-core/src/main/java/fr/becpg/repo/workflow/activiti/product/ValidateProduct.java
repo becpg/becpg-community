@@ -1,5 +1,5 @@
 /*
- * 
+ *
  */
 package fr.becpg.repo.workflow.activiti.product;
 
@@ -8,6 +8,7 @@ import java.util.List;
 import org.activiti.engine.delegate.DelegateExecution;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
+import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.repo.workflow.WorkflowModel;
 import org.alfresco.repo.workflow.activiti.ActivitiScriptNode;
 import org.alfresco.repo.workflow.activiti.BaseJavaDelegate;
@@ -19,7 +20,6 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.RegexQNamePattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.dao.ConcurrencyFailureException;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemState;
@@ -36,7 +36,7 @@ public class ValidateProduct extends BaseJavaDelegate {
 
 	private NodeService nodeService;
 	private DictionaryService dictionaryService;
-	
+
 	/**
 	 * <p>Setter for the field <code>nodeService</code>.</p>
 	 *
@@ -55,47 +55,41 @@ public class ValidateProduct extends BaseJavaDelegate {
 		this.dictionaryService = dictionaryService;
 	}
 
-
 	/** {@inheritDoc} */
 	@Override
 	public void execute(final DelegateExecution task) throws Exception {
 
 		logger.debug("start ApproveActionHandler");
 
-		RunAsWork<Object> actionRunAs = new RunAsWork<Object>() {
-			@Override
-			public Object doWork() throws Exception {
-				try {
-					NodeRef pkgNodeRef = ((ActivitiScriptNode) task.getVariable("bpm_package")).getNodeRef();
-					
-					// change state and classify products
-					List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(pkgNodeRef,
-							WorkflowModel.ASSOC_PACKAGE_CONTAINS, RegexQNamePattern.MATCH_ALL);
-					for (ChildAssociationRef childAssoc : childAssocs) {
+		RunAsWork<Object> actionRunAs = () -> {
+			try {
+				NodeRef pkgNodeRef = ((ActivitiScriptNode) task.getVariable("bpm_package")).getNodeRef();
 
-						NodeRef nodeRef = childAssoc.getChildRef();
-						QName nodeType = nodeService.getType(nodeRef);
+				// change state and classify products
+				List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(pkgNodeRef, WorkflowModel.ASSOC_PACKAGE_CONTAINS,
+						RegexQNamePattern.MATCH_ALL);
+				for (ChildAssociationRef childAssoc : childAssocs) {
 
-						if (dictionaryService.isSubClass(nodeType, PLMModel.TYPE_PRODUCT)) {
-							nodeService.setProperty(nodeRef, PLMModel.PROP_PRODUCT_STATE, SystemState.Valid);
-						}
-						else if (dictionaryService.isSubClass(nodeType, PLMModel.TYPE_CLIENT)) {
-							nodeService.setProperty(nodeRef, PLMModel.PROP_CLIENT_STATE, SystemState.Valid);
-						}
-						if (dictionaryService.isSubClass(nodeType, PLMModel.TYPE_SUPPLIER)) {
-							nodeService.setProperty(nodeRef, PLMModel.PROP_SUPPLIER_STATE, SystemState.Valid);
-						}
+					NodeRef nodeRef = childAssoc.getChildRef();
+					QName nodeType = nodeService.getType(nodeRef);
+
+					if (dictionaryService.isSubClass(nodeType, PLMModel.TYPE_PRODUCT)) {
+						nodeService.setProperty(nodeRef, PLMModel.PROP_PRODUCT_STATE, SystemState.Valid);
+					} else if (dictionaryService.isSubClass(nodeType, PLMModel.TYPE_CLIENT)) {
+						nodeService.setProperty(nodeRef, PLMModel.PROP_CLIENT_STATE, SystemState.Valid);
 					}
-				} catch (Exception e) {
-					if (e instanceof ConcurrencyFailureException) {
-						throw (ConcurrencyFailureException) e;
+					if (dictionaryService.isSubClass(nodeType, PLMModel.TYPE_SUPPLIER)) {
+						nodeService.setProperty(nodeRef, PLMModel.PROP_SUPPLIER_STATE, SystemState.Valid);
 					}
-					logger.error("Failed to approve product", e);
-					throw e;
 				}
-
-				return null;
+			} catch (Exception e) {
+				if (RetryingTransactionHelper.extractRetryCause(e) == null) {
+					logger.error("Failed to approve product", e);
+				}
+				throw e;
 			}
+
+			return null;
 		};
 		AuthenticationUtil.runAsSystem(actionRunAs);
 

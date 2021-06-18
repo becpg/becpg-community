@@ -5,19 +5,18 @@
       <Axis location="ROWS" nonEmpty="true">
         <Dimensions>
           <Dimension name="project" hierarchizeMode="PRE" hierarchyConsistent="true">
-            <Inclusions>
-              <Selection dimension="project" type="level" node="[project].[entity_noderef]" operator="MEMBERS" />
-            </Inclusions>
-            <Exclusions />
-          </Dimension>
-          <Dimension name="designation" hierarchizeMode="PRE" hierarchyConsistent="true">
-            <Inclusions>
-              <Selection dimension="designation" type="member" node="[designation.taskPerName].[Demande de référencement]" operator="MEMBER" />
-              <Selection dimension="designation" type="member" node="[designation.taskPerName].[Validation référencement]" operator="MEMBER" />
-            </Inclusions>
-            <Exclusions />
-          </Dimension>
-        </Dimensions>
+		    <Inclusions>
+			  <Selection dimension="project" type="level" node="[project.project_dim].[entity_noderef]" operator="MEMBERS"/>
+			</Inclusions>
+			<Exclusions/>
+		  </Dimension>
+		  <Dimension name="designation" hierarchizeMode="PRE" hierarchyConsistent="true">
+			<Inclusions>
+			  <Selection dimension="designation" type="level" node="[designation.taskPerName].[tlTaskName]" operator="MEMBERS"/>
+			</Inclusions>
+			<Exclusions/>
+		  </Dimension>
+		</Dimensions>
       </Axis>
       <Axis location="COLUMNS" nonEmpty="true">
         <Dimensions>
@@ -30,7 +29,16 @@
           </Dimension>
         </Dimensions>
       </Axis>
-      <Axis location="FILTER" nonEmpty="false" />
+      <Axis location="FILTER" nonEmpty="false">
+		<Dimensions>
+		  <Dimension name="site">
+			<Inclusions>
+			  <Selection dimension="site" type="member" node="[site].[Portail fournisseur]" operator="MEMBER"/>
+			</Inclusions>
+		  <Exclusions/>
+		  </Dimension>
+		</Dimensions>
+	  </Axis>
     </Axes>
   </QueryModel>
   <MDX>SELECT

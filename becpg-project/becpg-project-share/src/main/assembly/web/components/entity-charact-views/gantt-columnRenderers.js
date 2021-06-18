@@ -48,7 +48,7 @@
                                                 if (recordSet.getLength() != 0)
                                                 {
                                                     g = new JSGantt.GanttChart('g', Dom.get(this.id + "-gantt"), g != null ? g
-                                                            .getFormat() : null);
+                                                            .getFormat() : null, true);
                                                     g.setDateInputFormat("mediumDate");
                                                     g.setDateDisplayFormat("mediumDate");
                                                     g.setCaptionType('Resource');
@@ -85,7 +85,7 @@
                                                         
                                                         var pGroupOpen = 1;
                                                         
-                                                        if ( pSubProject!=null && !task["itemData"]["open"])
+                                                        if (!task["itemData"]["open"])
                                                         {
                                                         	pGroupOpen = 0;
                                                         }	
@@ -112,6 +112,7 @@
 
                                                         var tlIsMilestone = task["itemData"]["prop_pjt_tlIsMilestone"].value;
                                                         var tlPercent = task["itemData"]["prop_pjt_completionPercent"].value;
+														var tlIsCritical =task["itemData"]["prop_pjt_tlIsCritical"]!=null ? task["itemData"]["prop_pjt_tlIsCritical"].value : false;
                                                         
                                                         var taskOwner = null;
                                                         
@@ -132,10 +133,16 @@
                                                             this.cache[taskId] = tdates;
                                                         }
 
-                                                        g.AddTaskItem(new JSGantt.TaskItem(taskId, this.getTaskTitle(task,
-                                                                this.options.entityNodeRef), tdates.start,
-                                                                tdates.end, this.getTaskColor(task), null, tlIsMilestone ? 1 : 0,
-                                                                taskOwner, tlPercent, pGroup, pParent, pGroupOpen, precTaskIds,null,task.color, pSubProject));
+
+														var taskItem = new JSGantt.TaskItem(taskId, this.getTaskTitle(task,
+                                                                this.options.entityNodeRef), tdates.start,  
+                                                                tdates.end, this.getTaskColor(task), null, (tlIsMilestone ? 1 : 0),
+                                                                taskOwner, tlPercent, pGroup, pParent, pGroupOpen, precTaskIds,null,
+																task.color  , pSubProject, tdates.targetStart, tdates.targetEnd,
+																tlIsCritical ? 1 : 0);
+
+
+                                                        g.AddTaskItem(taskItem);
                                                     }
 
                                                     this.refreshView();

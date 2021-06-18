@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG. 
+ * Copyright (C) 2010-2021 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -61,6 +61,7 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	private NodeRef hierarchy1;
 	private NodeRef hierarchy2;
 	private Date startDate;
+	private Date targetStartDate;
 	private Date dueDate;
 	private Date completionDate;
 	private PlanningMode planningMode = PlanningMode.Planning;
@@ -87,6 +88,7 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	 * Formulation
 	 */
 	private Date formulatedDate;
+	
 	private Integer reformulateCount;
 	private Integer currentReformulateCount;
 	private String formulationChainId;
@@ -231,6 +233,14 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	}
 	
 
+	public Date getTargetStartDate() {
+		return targetStartDate;
+	}
+
+	public void setTargetStartDate(Date targetStartDate) {
+		this.targetStartDate = targetStartDate;
+	}
+
 	/**
 	 * <p>Getter for the field <code>formulatedDate</code>.</p>
 	 *
@@ -248,6 +258,7 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	}
 	
 
+	
 	/**
 	 * <p>Getter for the field <code>requirementChecksum</code>.</p>
 	 *

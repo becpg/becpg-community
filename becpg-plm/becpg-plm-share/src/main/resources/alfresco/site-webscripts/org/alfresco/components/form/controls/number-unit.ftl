@@ -38,7 +38,7 @@
 	<#assign currUnits="mL,cL,L,fl_oz,cp,gal">
    <#elseif unit=="m" || unit=="mm" >	
 	<#assign currUnits="mil,in,ft,mm,cm,m">
-   <#elseif unit=="d">
+   <#elseif unit=="d" ||  unit=="mo">
 	<#assign currUnits="d,mo">
    <#elseif unit=="-">
 	<#assign currUnits="-,mega,milli,micro">
@@ -111,12 +111,14 @@
 		<#assign currUnit="mL" >
 		<#assign currValue=field.value*1000 >
   	 </#if>
-   <#elseif currUnit=="d">
+   <#elseif currUnit=="d" || currUnit=="mo">
 		<#if field.value == 0  >
        		 <#assign currUnit="d">
      	<#elseif field.value/30 &gt; 1 && field.value%30 == 0>
 			<#assign currUnit="mo">
 			<#assign currValue=field.value/30 >
+		<#else>
+		  	 <#assign currUnit="d">
 		</#if>
     <#elseif currUnit=="-">
 		 <#if field.value == 0  >
@@ -163,7 +165,7 @@
 	               </#list>
 	        </select>
 	        	</#if>
-	        <input  id="${fieldHtmlId}-val"  name="${field.name}" type="hidden"  <#if field.value?is_number>value="${field.value?c}"<#else>value="${field.value?html}"</#if>> 
+	        <input  id="${fieldHtmlId}-val"  name="${field.name}" type="hidden"  <#if field.value?is_number>value="${field.value?c}"<#else>value="${field.value?html}"</#if> /> 
 	        <script type="text/javascript">//<![CDATA[
 			(function()
 			{

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG. 
+ * Copyright (C) 2010-2021 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -17,7 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.cache;
 
-import java.util.Collection;
+import java.util.function.Supplier;
 
 /**
  * <p>BeCPGCacheService interface.</p>
@@ -36,7 +36,8 @@ public interface BeCPGCacheService {
 	 * @param <T> a T object.
 	 * @return a T object.
 	 */
-	<T> T getFromCache(String cacheName, String cacheKey, BeCPGCacheDataProviderCallBack<T> cacheDataProviderCallBack);
+	<T> T getFromCache(String cacheName, String cacheKey, Supplier<T> cacheDataProviderCallBack);
+	
 
 	/**
 	 * <p>clearAllCaches.</p>
@@ -51,13 +52,6 @@ public interface BeCPGCacheService {
 	 */
 	void removeFromCache(String name, String cacheKey);
 	
-	/**
-	 * <p>getCacheKeys.</p>
-	 *
-	 * @param cacheName a {@link java.lang.String} object.
-	 * @return a {@link java.util.Collection} object.
-	 */
-	Collection<String> getCacheKeys(String cacheName);
 
 	/**
 	 * <p>printCacheInfos.</p>
@@ -74,7 +68,7 @@ public interface BeCPGCacheService {
 	 * @param <T> a T object.
 	 * @return a T object.
 	 */
-	<T> T getFromCache(String cacheName, String cacheKey, BeCPGCacheDataProviderCallBack<T> cacheDataProviderCallBack, boolean deleteOnTxRollback);
+	<T> T getFromCache(String cacheName, String cacheKey, Supplier<T> cacheDataProviderCallBack, boolean deleteOnTxRollback);
 
 	/**
 	 * <p>clearCache.</p>

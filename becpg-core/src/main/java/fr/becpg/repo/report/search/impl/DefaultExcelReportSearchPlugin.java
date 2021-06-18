@@ -189,7 +189,7 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 				new AttributeExtractorService.DataListCallBack() {
 
 					@Override
-					public List<Map<String, Object>> extractNestedField(NodeRef nodeRef, AttributeExtractorStructure field) {
+					public List<Map<String, Object>> extractNestedField(NodeRef nodeRef, AttributeExtractorStructure field, FormatMode mode) {
 						List<Map<String, Object>> ret = new ArrayList<>();
 						
 						if (field.isDataListItems()) {

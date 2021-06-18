@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -191,7 +191,7 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 						if (task.getResources() != null) {
 							task.getResources().clear();
 						} else {
-							task.setResources(new ArrayList<NodeRef>());
+							task.setResources(new ArrayList<>());
 						}
 						task.getResources().addAll(accountNodeRefs);
 

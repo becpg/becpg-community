@@ -11,13 +11,13 @@ import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.util.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
-import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.PackagingMaterialData;
@@ -74,66 +74,67 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 
 	/** {@inheritDoc} */
 	@Override
-	public boolean process(ProductData formulatedProduct) throws FormulateException {
+	public boolean process(ProductData formulatedProduct) {
 
-		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) || (formulatedProduct instanceof ProductSpecificationData)) {
-			return true;
-		}
+		if (!(formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) || (formulatedProduct instanceof ProductSpecificationData))) {
 
-		if (alfrescoRepository.hasDataList(formulatedProduct.getNodeRef(), PackModel.PACK_MATERIAL_LIST_TYPE)) {
+			if (alfrescoRepository.hasDataList(formulatedProduct.getNodeRef(), PackModel.PACK_MATERIAL_LIST_TYPE)) {
 
-			// no compo, no packagingList => no formulation
-			if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)
-					|| (!formulatedProduct.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))
-							&& !formulatedProduct
-									.hasPackagingListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())))) {
-				logger.debug("no compoList, no packagingList => no formulation");
-				return true;
-			}
-			// CompoList
-			Map<NodeRef, BigDecimal> toUpdate = calculateMaterialOfComposition(formulatedProduct);
-
-			// PackagingList
-			for (PackagingListDataItem packagingItem : formulatedProduct.getPackagingList()) {
-				calculateTareByMaterialItem(packagingItem, toUpdate, 1);
-			}
-
-			// Create/Update Packaging Material List
-			if (formulatedProduct.getPackMaterialList() == null) {
-				formulatedProduct.setPackMaterialList(new LinkedList<PackMaterialListDataItem>());
-			}
-
-			List<PackMaterialListDataItem> toRemove = new ArrayList<>();
-			for (PackMaterialListDataItem packmaterial : formulatedProduct.getPackMaterialList()) {
-				if (!toUpdate.containsKey(packmaterial.getPmlMaterial())) {
-					toRemove.add(packmaterial);
-				} else {
-					packmaterial.setPmlWeight(toUpdate.get(packmaterial.getPmlMaterial()).doubleValue());
-					toUpdate.remove(packmaterial.getPmlMaterial());
+				// no compo, no packagingList => no formulation
+				if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) || (!formulatedProduct
+						.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))
+						&& !formulatedProduct
+								.hasPackagingListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())))) {
+					logger.debug("no compoList, no packagingList => no formulation");
+					return true;
 				}
-			}
+				// CompoList
+				Map<Pair<PackagingLevel, NodeRef>, BigDecimal> toUpdate = calculateMaterialOfComposition(formulatedProduct);
 
-			for (Map.Entry<NodeRef, BigDecimal> entry : toUpdate.entrySet()) {
-				formulatedProduct.getPackMaterialList().add(new PackMaterialListDataItem(entry.getKey(), entry.getValue().doubleValue()));
-			}
-
-			formulatedProduct.getPackMaterialList().removeAll(toRemove);
-
-			// add detailable aspect
-			for (PackMaterialListDataItem packMaterialListDataItem : formulatedProduct.getPackMaterialList()) {
-				if (!packMaterialListDataItem.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM)) {
-					packMaterialListDataItem.getAspects().add(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM);
+				// PackagingList
+				for (PackagingListDataItem packagingItem : formulatedProduct.getPackagingList()) {
+					calculateTareByMaterialItem(packagingItem, toUpdate, 1);
 				}
-			}
 
+				// Create/Update Packaging Material List
+				if (formulatedProduct.getPackMaterialList() == null) {
+					formulatedProduct.setPackMaterialList(new LinkedList<>());
+				}
+
+				List<PackMaterialListDataItem> toRemove = new ArrayList<>();
+				for (PackMaterialListDataItem packmaterial : formulatedProduct.getPackMaterialList()) {
+					Pair<PackagingLevel, NodeRef> key = new Pair<>(packmaterial.getPkgLevel(), packmaterial.getPmlMaterial());
+					if (!toUpdate.containsKey(key)) {
+						toRemove.add(packmaterial);
+					} else {
+						packmaterial.setPmlWeight(toUpdate.get(key).doubleValue());
+						toUpdate.remove(key);
+					}
+				}
+
+				for (Map.Entry<Pair<PackagingLevel, NodeRef>, BigDecimal> entry : toUpdate.entrySet()) {
+					formulatedProduct.getPackMaterialList()
+							.add(new PackMaterialListDataItem(entry.getKey().getSecond(), entry.getValue().doubleValue(), entry.getKey().getFirst()));
+				}
+
+				formulatedProduct.getPackMaterialList().removeAll(toRemove);
+
+				// add detailable aspect
+				for (PackMaterialListDataItem packMaterialListDataItem : formulatedProduct.getPackMaterialList()) {
+					if (!packMaterialListDataItem.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM)) {
+						packMaterialListDataItem.getAspects().add(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM);
+					}
+				}
+
+			}
 		}
 		return true;
 	}
 
-	private Map<NodeRef, BigDecimal> calculateMaterialOfComposition(ProductData formulatedProduct) {
+	private Map<Pair<PackagingLevel, NodeRef>, BigDecimal> calculateMaterialOfComposition(ProductData formulatedProduct) {
 
-		Map<NodeRef, BigDecimal> toUpdate = new HashMap<>();
-		if ((formulatedProduct.getDropPackagingOfComponents() == null) || !formulatedProduct.getDropPackagingOfComponents()) {
+		Map<Pair<PackagingLevel, NodeRef>, BigDecimal> toUpdate = new HashMap<>();
+		if (!Boolean.TRUE.equals(formulatedProduct.getDropPackagingOfComponents())) {
 
 			for (CompoListDataItem compoList : formulatedProduct
 					.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
@@ -169,12 +170,16 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 									if ((compoProductQty != null) && !compoProductQty.isNaN() && !compoProductQty.isInfinite()
 											&& (compoProductQty != 0d)) {
 										BigDecimal plmWeight = BigDecimal.valueOf(packMateriDataItem.getPmlWeight())
-												.multiply(BigDecimal.valueOf(qtyUsed)).divide(BigDecimal.valueOf(compoProductQty), MathContext.DECIMAL64);
-										if (toUpdate.containsKey(packMateriDataItem.getNodeRef())) {
-											BigDecimal newPlmWeight = toUpdate.get(packMateriDataItem.getPmlMaterial()).add(plmWeight);
-											toUpdate.put(packMateriDataItem.getPmlMaterial(), newPlmWeight);
+												.multiply(BigDecimal.valueOf(qtyUsed))
+												.divide(BigDecimal.valueOf(compoProductQty), MathContext.DECIMAL64);
+										Pair<PackagingLevel, NodeRef> key = new Pair<>(packMateriDataItem.getPkgLevel(),
+												packMateriDataItem.getPmlMaterial());
+
+										if (toUpdate.containsKey(key)) {
+											BigDecimal newPlmWeight = toUpdate.get(key).add(plmWeight);
+											toUpdate.put(key, newPlmWeight);
 										} else {
-											toUpdate.put(packMateriDataItem.getPmlMaterial(), plmWeight);
+											toUpdate.put(key, plmWeight);
 										}
 									} else {
 										logger.error("QtyUsed/CompoProductQty is NaN or 0 or infinite:" + qtyUsed + " " + compoProductQty + " for "
@@ -190,10 +195,10 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 		return toUpdate;
 	}
 
-	private void calculateTareByMaterialItem(PackagingListDataItem dataItem, Map<NodeRef, BigDecimal> toUpdate, double subQty) {
+	private void calculateTareByMaterialItem(PackagingListDataItem dataItem, Map<Pair<PackagingLevel, NodeRef>, BigDecimal> toUpdate, double subQty) {
 
 		if (nodeService.getType(dataItem.getProduct()).equals(PLMModel.TYPE_PACKAGINGKIT)) {
-			if (dataItem.getQty()!=null &&  ProductUnit.P.equals(dataItem.getPackagingListUnit()) &&  PackagingLevel.Primary.equals(dataItem.getPkgLevel()) ) {
+			if ((dataItem.getQty() != null) && ProductUnit.P.equals(dataItem.getPackagingListUnit())) {
 				subQty *= dataItem.getQty();
 			}
 			ProductData packagingKitData = alfrescoRepository.findOne(dataItem.getProduct());
@@ -208,49 +213,51 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 		}
 	}
 
-	private void calculateTareByMaterial(PackagingListDataItem dataItem, Map<NodeRef, BigDecimal> toUpdate, double subQty) {
+	private void calculateTareByMaterial(PackagingListDataItem dataItem, Map<Pair<PackagingLevel, NodeRef>, BigDecimal> toUpdate, double subQty) {
 
 		// Keep materials of primary packaging (without packaging kit)
-		if ((dataItem.getProduct() != null) &&  PackagingLevel.Primary.equals(dataItem.getPkgLevel())) {
+		if ((dataItem.getProduct() != null)) {
 
 			PackagingMaterialData packagingProduct = (PackagingMaterialData) alfrescoRepository.findOne(dataItem.getProduct());
 
-			BigDecimal tare = FormulationHelper.getTareInKg(dataItem, packagingProduct).multiply(BigDecimal.valueOf(subQty*1000d));
+			BigDecimal tare = FormulationHelper.getTareInKg(dataItem, packagingProduct).multiply(BigDecimal.valueOf(subQty * 1000d));
 
-			if (alfrescoRepository.hasDataList(packagingProduct, PackModel.PACK_MATERIAL_LIST_TYPE) 
-					&& packagingProduct.getPackMaterialList() != null ) {
+			if (alfrescoRepository.hasDataList(packagingProduct, PackModel.PACK_MATERIAL_LIST_TYPE)
+					&& (packagingProduct.getPackMaterialList() != null)) {
 
 				for (PackMaterialListDataItem packMateriDataItem : packagingProduct.getPackMaterialList()) {
 					if (packMateriDataItem.getPmlWeight() != null) {
-						
-						BigDecimal plmWeight = BigDecimal.valueOf(packMateriDataItem.getPmlWeight())
-								.multiply(tare);
-						
-						
+
+						BigDecimal plmWeight = BigDecimal.valueOf(packMateriDataItem.getPmlWeight()).multiply(tare);
+
 						BigDecimal productTare = FormulationHelper.getTareInKg(packagingProduct);
-						if(productTare!=null) {
-							 plmWeight = plmWeight.divide(productTare.multiply(BigDecimal.valueOf(1000d)));
+						if (productTare != null) {
+							plmWeight = plmWeight.divide(productTare.multiply(BigDecimal.valueOf(1000d)));
 						}
-							
-						if (toUpdate.containsKey(packMateriDataItem.getNodeRef())) {
-							BigDecimal newPlmWeight = toUpdate.get(packMateriDataItem.getPmlMaterial()).add(plmWeight);
-							toUpdate.put(packMateriDataItem.getPmlMaterial(), newPlmWeight);
+
+						Pair<PackagingLevel, NodeRef> key = new Pair<>(dataItem.getPkgLevel(), packMateriDataItem.getPmlMaterial());
+
+						if (toUpdate.containsKey(key)) {
+							BigDecimal newPlmWeight = toUpdate.get(key).add(plmWeight);
+							toUpdate.put(key, newPlmWeight);
 						} else {
-							toUpdate.put(packMateriDataItem.getPmlMaterial(), plmWeight);
+							toUpdate.put(key, plmWeight);
 						}
 					}
 				}
 
-			} else if ((packagingProduct.getPackagingMaterials() != null) && (packagingProduct.getPackagingMaterials().size() > 0)) {
-
+			} else if ((packagingProduct.getPackagingMaterials() != null) && (!packagingProduct.getPackagingMaterials().isEmpty())) {
 
 				BigDecimal tareByMaterial = tare.divide(BigDecimal.valueOf(packagingProduct.getPackagingMaterials().size()));
 				for (NodeRef packagingMaterial : packagingProduct.getPackagingMaterials()) {
-					if (toUpdate.containsKey(packagingMaterial)) {
-						BigDecimal newTare = toUpdate.get(packagingMaterial).add(tareByMaterial);
-						toUpdate.put(packagingMaterial, newTare);
+
+					Pair<PackagingLevel, NodeRef> key = new Pair<>(dataItem.getPkgLevel(), packagingMaterial);
+
+					if (toUpdate.containsKey(key)) {
+						BigDecimal newTare = toUpdate.get(key).add(tareByMaterial);
+						toUpdate.put(key, newTare);
 					} else {
-						toUpdate.put(packagingMaterial, tareByMaterial);
+						toUpdate.put(key, tareByMaterial);
 					}
 				}
 			}

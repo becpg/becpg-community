@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2010-2020 beCPG. 
+  Copyright (C) 2010-2021 beCPG. 
    
   This file is part of beCPG 
    
@@ -22,6 +22,6 @@
 	<url>/becpg/product/formulate/recipe</url>
 	<format default="json">argument</format>
 	<authentication>user</authentication>
-	<transaction allow="readonly" buffersize="0">required</transaction>
+	<transaction allow="readonly" >required</transaction>
 	<lifecycle>public_api</lifecycle>
 </webscript>

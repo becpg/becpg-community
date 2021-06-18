@@ -1,11 +1,15 @@
 package fr.becpg.test.repo.report;
 
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.Iterator;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.content.MimetypeMap;
+import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
@@ -13,7 +17,7 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.util.Assert;
+import org.springframework.util.FastByteArrayOutputStream;
 
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.test.RepoBaseTestCase;
@@ -28,14 +32,14 @@ public class ReportImageServiceIT extends RepoBaseTestCase {
 	@Test
 	public void testExtractImage() {
 
-		extractImage("beCPG/birt/productImage2.jpg");
-		extractImage("beCPG/birt/productImage.jpg");
+		assertTrue(extractImage("beCPG/birt/productImage2.jpg"));
+		assertTrue(extractImage("beCPG/birt/productImage.jpg"));
 
 	}
 
-	private void extractImage(final String path) {
+	private boolean extractImage(final String path) {
 
-		Assert.notNull(transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			NodeRef tempImgNodeRef = nodeService
 					.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, ContentModel.TYPE_CONTENT)
@@ -61,10 +65,50 @@ public class ReportImageServiceIT extends RepoBaseTestCase {
 				logger.info("reader: " + readers.next());
 			}
 
-			return entityService.getImage(tempImgNodeRef);
+			byte[] image1Byte = entityService.getImage(tempImgNodeRef);
+		//	byte[] image2Byte = twelveMonkeyExtractor(tempImgNodeRef);
 
-		}, false, true),"Image should'nt be null");
+		
+			return (image1Byte != null); //&& (image2Byte == null);
+
+		}, false, true);
 
 	}
+	// Assert twelve monkey is not used because to slow
+//	private byte[] twelveMonkeyExtractor(NodeRef nodeRef) {
+//		ContentReader reader = contentService.getReader(nodeRef, ContentModel.PROP_CONTENT);
+//
+//		if (reader != null) {
+//
+//			try (FastByteArrayOutputStream out = new FastByteArrayOutputStream()) {
+//
+//				BufferedImage image = ImageIO.read(reader.getContentInputStream());
+//
+//				if (image != null) {
+//					ImageIO.write(image, guessImageFormat(reader.getMimetype()), out);
+//					return out.toByteArrayUnsafe();
+//				}
+//
+//			} catch (IOException e) {
+//				logger.error("Failed to get the content for " + nodeRef, e);
+//			}
+//		}
+//		return null;
+//	}
+//
+//	private String guessImageFormat(String mimeType) {
+//
+//		switch (mimeType) {
+//		case MimetypeMap.MIMETYPE_IMAGE_PNG:
+//			return "png";
+//		case MimetypeMap.MIMETYPE_IMAGE_TIFF:
+//			return "tiff";
+//		case MimetypeMap.MIMETYPE_IMAGE_GIF:
+//			return "gif";
+//		default:
+//			return "jpg";
+//		}
+//
+//	}
 
 }

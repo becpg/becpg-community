@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -140,7 +140,7 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 
 	/** {@inheritDoc} */
 	@Override
-	public boolean process(final ProductData productData) throws FormulateException {
+	public boolean process(final ProductData productData)  {
 
 		if (productData.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)) {
 			return true;
@@ -148,7 +148,7 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 
 		if (!L2CacheSupport.isCacheOnlyEnable() && (productData.getAspects().contains(BeCPGModel.ASPECT_COMPARE_WITH)
 				|| ((productData.getNodeRef() != null) && nodeService.hasAspect(productData.getNodeRef(), BeCPGModel.ASPECT_COMPARE_WITH)))) {
-			L2CacheSupport.doInCacheContext(new Action() {
+			L2CacheSupport.doInCacheOnly(new Action() {
 
 				@Override
 				public void run() {
@@ -171,43 +171,37 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 									addCompareValueColumn(PLMModel.PROP_COMPARE_WITH_DYN_COLUMN, view, toCompareWith, dynamicColumnToTreat, true);
 
 									// map each duplicated column to its last occurrence in the dynamicCharactList
-									
+
 									Map<String, Integer> duplicateDynCharactColumnsMap = new HashMap<>();
-									
-									Map<String, Long> columnNameOccurrences = view.getDynamicCharactList()
-											.stream()
-											.filter(charact -> charact.getColumnName() != null)
-											.map(charact -> charact.getColumnName())
-											.collect(Collectors.groupingBy(Function.identity(), Collectors.counting()) );
-									
-									columnNameOccurrences.forEach( (column, occurrences) -> {
-										if(occurrences > 1) {
-											duplicateDynCharactColumnsMap.put(column, view.getDynamicCharactList()
-													.stream()
-													.map(charact -> charact.getColumnName())
-													.collect(Collectors.toList())
-													.lastIndexOf(column));
+
+									Map<String, Long> columnNameOccurrences = view.getDynamicCharactList().stream()
+											.filter(charact -> charact.getColumnName() != null).map(charact -> charact.getColumnName())
+											.collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+
+									columnNameOccurrences.forEach((column, occurrences) -> {
+										if (occurrences > 1) {
+											duplicateDynCharactColumnsMap.put(column, view.getDynamicCharactList().stream()
+													.map(charact -> charact.getColumnName()).collect(Collectors.toList()).lastIndexOf(column));
 										}
 									});
 
 									DynamicCharactListItem dynamicCharactListItem;
-									for (int i=0; i< view.getDynamicCharactList().size(); ++i) {
+									for (int i = 0; i < view.getDynamicCharactList().size(); ++i) {
 										dynamicCharactListItem = view.getDynamicCharactList().get(i);
-										
-										// if this column is duplicated and not the last occurrence, we don't compare
-										boolean shouldCompare = dynamicCharactListItem.getColumnName() == null 
-												|| "".equals(dynamicCharactListItem.getColumnName())
-												|| !duplicateDynCharactColumnsMap.containsKey(dynamicCharactListItem.getColumnName()) 
-												|| i == duplicateDynCharactColumnsMap.get(dynamicCharactListItem.getColumnName());
-										
-										if (!Boolean.TRUE.equals(dynamicCharactListItem.getMultiLevelFormula())
-												&& dynamicCharactListItem.getFormula()!= null && !dynamicCharactListItem.getFormula().isEmpty()) {
 
-											
+										// if this column is duplicated and not the last occurrence, we don't compare
+										boolean shouldCompare = (dynamicCharactListItem.getColumnName() == null)
+												|| "".equals(dynamicCharactListItem.getColumnName())
+												|| !duplicateDynCharactColumnsMap.containsKey(dynamicCharactListItem.getColumnName())
+												|| (i == duplicateDynCharactColumnsMap.get(dynamicCharactListItem.getColumnName()));
+
+										if (!Boolean.TRUE.equals(dynamicCharactListItem.getMultiLevelFormula())
+												&& (dynamicCharactListItem.getFormula() != null) && !dynamicCharactListItem.getFormula().isEmpty()) {
+
 											DynamicCharactListItem toCompareDynamicCharactListItem = getMatchingCharact(dynamicCharactListItem,
 													getMatchingView(toCompareWith, view).getDynamicCharactList());
-											
-											if (toCompareDynamicCharactListItem != null && shouldCompare) {
+
+											if ((toCompareDynamicCharactListItem != null) && shouldCompare) {
 
 												if (logger.isDebugEnabled()) {
 													logger.debug(" - Found matching charact to compare: ");
@@ -287,7 +281,7 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 
 				}
 
-			}, true);
+			});
 		}
 		return true;
 	}
@@ -389,14 +383,18 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 	}
 
 	private boolean approxMatch(NodeRef refProductNodeRef, NodeRef toCompareProductNoRef) {
-		// TODO test fuzzy match
-		NodeRef copiedFromRef = associationService.getTargetAssoc(refProductNodeRef, ContentModel.ASSOC_ORIGINAL);
-		NodeRef copiedFromComp = associationService.getTargetAssoc(toCompareProductNoRef, ContentModel.ASSOC_ORIGINAL);
 
-		return ((copiedFromRef != null) && copiedFromRef.equals(toCompareProductNoRef))
-				|| ((copiedFromComp != null) && copiedFromComp.equals(refProductNodeRef))
-				|| nodeService.getProperty(refProductNodeRef, ContentModel.PROP_NAME)
-						.equals(nodeService.getProperty(toCompareProductNoRef, ContentModel.PROP_NAME));
+		if ((refProductNodeRef != null) && (toCompareProductNoRef != null)) {
+			// TODO test fuzzy match
+			NodeRef copiedFromRef = associationService.getTargetAssoc(refProductNodeRef, ContentModel.ASSOC_ORIGINAL);
+			NodeRef copiedFromComp = associationService.getTargetAssoc(toCompareProductNoRef, ContentModel.ASSOC_ORIGINAL);
+
+			return ((copiedFromRef != null) && copiedFromRef.equals(toCompareProductNoRef))
+					|| ((copiedFromComp != null) && copiedFromComp.equals(refProductNodeRef))
+					|| nodeService.getProperty(refProductNodeRef, ContentModel.PROP_NAME)
+							.equals(nodeService.getProperty(toCompareProductNoRef, ContentModel.PROP_NAME));
+		}
+		return false;
 	}
 
 	private DynamicCharactListItem getMatchingCharact(DynamicCharactListItem dynamicCharactListItem,
@@ -425,9 +423,10 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 					ret.add(productService.formulate(tmpData));
 				} catch (FormulateException e) {
 					logger.warn(e, e);
-					productData.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, MLTextHelper.getI18NMessage("message.formulate.comparewith.formulate.entity.error",
-							tmpData.getName()), null,
-							new ArrayList<NodeRef>(), RequirementDataType.Nutrient));
+					productData.getReqCtrlList()
+							.add(new ReqCtrlListDataItem(null, RequirementType.Tolerated,
+									MLTextHelper.getI18NMessage("message.formulate.comparewith.formulate.entity.error", tmpData.getName()), null,
+									new ArrayList<NodeRef>(), RequirementDataType.Nutrient));
 				}
 			}
 

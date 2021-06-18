@@ -1,7 +1,10 @@
 package fr.becpg.repo.product.data.productList;
 
+import java.util.Objects;
+
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
@@ -29,6 +32,9 @@ public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleC
 
 	private Double pmlWeight;
 	private NodeRef pmlMaterial;
+	private PackagingLevel pkgLevel = PackagingLevel.Primary;
+	
+	
 
 	/** {@inheritDoc} */
 	@Override
@@ -46,15 +52,26 @@ public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleC
 	@Override
 	@InternalField
 	public NodeRef getCharactNodeRef() {
-		return pmlMaterial;
+		return getPmlMaterial();
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public Double getValue() {
-		return pmlWeight;
+		return getPmlWeight();
 	}
 
+	
+	
+	@AlfProp
+	@AlfQname(qname="pack:pmlLevel")
+	public PackagingLevel getPkgLevel() {
+		return pkgLevel;
+	}
+
+	public void setPkgLevel(PackagingLevel pkgLevel) {
+		this.pkgLevel = pkgLevel;
+	}
 
 	/**
 	 * <p>Getter for the field <code>pmlWeight</code>.</p>
@@ -113,24 +130,22 @@ public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleC
 	 * @param pmlMaterial a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param pmlWeight a {@link java.lang.Double} object.
 	 */
-	public PackMaterialListDataItem(NodeRef pmlMaterial,Double pmlWeight){
+	public PackMaterialListDataItem(NodeRef pmlMaterial,Double pmlWeight, PackagingLevel pkgLevel){
 		super();
 		this.pmlMaterial = pmlMaterial;
 		this.pmlWeight = pmlWeight;
+		this.pkgLevel = pkgLevel;
 	}
 
 
-	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + ((pmlMaterial == null) ? 0 : pmlMaterial.hashCode());
-		result = prime * result + ((pmlWeight == null) ? 0 : pmlWeight.hashCode());
+		result = prime * result + Objects.hash(pkgLevel, pmlMaterial, pmlWeight);
 		return result;
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -140,17 +155,7 @@ public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleC
 		if (getClass() != obj.getClass())
 			return false;
 		PackMaterialListDataItem other = (PackMaterialListDataItem) obj;
-		if (pmlMaterial == null) {
-			if (other.pmlMaterial != null)
-				return false;
-		} else if (!pmlMaterial.equals(other.pmlMaterial))
-			return false;
-		if (pmlWeight == null) {
-			if (other.pmlWeight != null)
-				return false;
-		} else if (!pmlWeight.equals(other.pmlWeight))
-			return false;
-		return true;
+		return pkgLevel == other.pkgLevel && Objects.equals(pmlMaterial, other.pmlMaterial) && Objects.equals(pmlWeight, other.pmlWeight);
 	}
 
 	/** {@inheritDoc} */
@@ -158,6 +163,7 @@ public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleC
 	public String toString() {
 		return "PackMaterialListDataItem [pmlWeight=" + pmlWeight + ", pmlMaterial=" + pmlMaterial + "]";
 	}
+
 
 
 }

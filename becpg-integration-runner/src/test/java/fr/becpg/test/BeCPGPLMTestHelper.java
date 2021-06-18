@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -245,6 +245,10 @@ public class BeCPGPLMTestHelper {
 
 		return rawMaterial.getNodeRef();
 
+	}
+
+	public static void deleteUser(String userName) {
+		PLMBaseTestCase.INSTANCE2.personService.deletePerson(userName);
 	}
 
 }

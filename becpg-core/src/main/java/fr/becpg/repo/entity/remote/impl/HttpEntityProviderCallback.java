@@ -2,9 +2,6 @@ package fr.becpg.repo.entity.remote.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,7 +12,6 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -30,6 +26,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.remote.EntityProviderCallBack;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
+import fr.becpg.repo.entity.remote.RemoteParams;
 
 /**
  * <p>HttpEntityProviderCallback class.</p>
@@ -69,13 +66,13 @@ public class HttpEntityProviderCallback implements EntityProviderCallBack {
 
 	/** {@inheritDoc} */
 	@Override
-	public NodeRef provideNode(NodeRef nodeRef, Map<NodeRef, NodeRef> cache) throws BeCPGException {
+	public NodeRef provideNode(NodeRef nodeRef, Map<NodeRef, NodeRef> cache) {
 		return provideNode(nodeRef, null, cache);
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public NodeRef provideNode(NodeRef nodeRef, NodeRef destNodeRef, Map<NodeRef, NodeRef> cache) throws BeCPGException {
+	public NodeRef provideNode(NodeRef nodeRef, NodeRef destNodeRef, Map<NodeRef, NodeRef> cache)  {
 		try {
 			String url = remoteServer + "?nodeRef=" + nodeRef.toString();
 			logger.debug("Try getting nodeRef  from : " + url);
@@ -107,7 +104,7 @@ public class HttpEntityProviderCallback implements EntityProviderCallBack {
 							remoteEntityService.getPolicyBehaviourFilter().disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 							remoteEntityService.getPolicyBehaviourFilter().disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
 
-							return remoteEntityService.internalCreateOrUpdateEntity(nodeRef, destNodeRef, entityStream, RemoteEntityFormat.xml, this,
+							return remoteEntityService.internalCreateOrUpdateEntity(nodeRef, destNodeRef, entityStream, new RemoteParams(RemoteEntityFormat.xml), this,
 									cache);
 
 						}, false, false);
@@ -123,11 +120,11 @@ public class HttpEntityProviderCallback implements EntityProviderCallBack {
 					logger.debug("Error calling " + url + " " + EntityUtils.toString(httpResponse.getEntity(), "UTF-8") + " status "
 							+ httpResponse.getStatusLine().getStatusCode());
 				}
-				
+
 				return null;
 			}
 
-		} catch (IOException | KeyManagementException | NoSuchAlgorithmException | KeyStoreException e) {
+		} catch (IOException e) {
 			throw new BeCPGException(e);
 		}
 
@@ -135,7 +132,7 @@ public class HttpEntityProviderCallback implements EntityProviderCallBack {
 
 	/** {@inheritDoc} */
 	@Override
-	public void provideContent(NodeRef origNodeRef, NodeRef destNodeRef) throws BeCPGException {
+	public void provideContent(NodeRef origNodeRef, NodeRef destNodeRef){
 
 		try {
 			String url = remoteServer + "/data?nodeRef=" + origNodeRef.toString();
@@ -149,16 +146,15 @@ public class HttpEntityProviderCallback implements EntityProviderCallBack {
 			HttpEntity responseEntity = httpResponse.getEntity();
 
 			try (InputStream dataStream = responseEntity.getContent()) {
-				remoteEntityService.addOrUpdateEntityData(destNodeRef, dataStream, RemoteEntityFormat.xml);
+				remoteEntityService.addOrUpdateEntityData(destNodeRef, dataStream, new RemoteParams(RemoteEntityFormat.xml));
 			}
-		} catch (IOException | KeyManagementException | NoSuchAlgorithmException | KeyStoreException e) {
+		} catch (IOException e) {
 			throw new BeCPGException(e);
 		}
 
 	}
 
-	private HttpResponse getResponse(HttpGet entityUrl)
-			throws ClientProtocolException, IOException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
+	private HttpResponse getResponse(HttpGet entityUrl) throws IOException {
 
 		HttpClientBuilder cb = HttpClientBuilder.create();
 

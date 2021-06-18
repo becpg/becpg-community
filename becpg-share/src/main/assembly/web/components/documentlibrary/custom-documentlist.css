@@ -31,7 +31,6 @@ div.entityFolderInstructions {
 }
 
 
-
 .entityFolderInstructions .entityFolderToolbar-buttons {
     min-height: 1.7em;
     padding: 4px 0.5em 9px;
@@ -61,3 +60,12 @@ div.entityFolderInstructions {
     background-repeat: no-repeat;
     padding-left: 16px;
 }
+
+.item-social a.basket-action {
+	background-image: url(../basket/images/basket-deselected_16x16.png);
+}
+
+.item-social a.basket-action.enabled {
+	background-image: url(../basket/images/basket-selected_16x16.png);
+}
+

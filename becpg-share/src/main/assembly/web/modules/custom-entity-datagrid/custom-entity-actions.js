@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (C) 2010-2020 beCPG. 
+ *  Copyright (C) 2010-2021 beCPG. 
  *   
  *  This file is part of beCPG 
  *   
@@ -375,7 +375,7 @@
 		},
 		
 
-	onActionShowComments : function EntityDataGrid_onActionShowComments(item) {
+		onActionShowComments : function EntityDataGrid_onActionShowComments(item) {
 
 			var url = Alfresco.constants.URL_SERVICECONTEXT + "modules/comments/list?nodeRef=" + item.nodeRef + "&activityType=datalist"
 					+ (item.siteId ? "&site=" + item.siteId : "")
@@ -511,6 +511,118 @@
 				});
 			}
 		},
+		onActionGroup  : function EntityDataGrid_onActionGroup(p_items) {
+			   var me = this, items = YAHOO.lang.isArray(p_items) ? p_items : [ p_items ], destinationNodeRef = this.modules.dataGrid.datalistMeta.nodeRef!=null ? new Alfresco.util.NodeRef(
+			         this.modules.dataGrid.datalistMeta.nodeRef): new Alfresco.util.NodeRef(
+					         this.modules.dataGrid.options.parentNodeRef), nodeRefs = [];
+	
+			   var fnActionGroupConfirm = function EntityDataGrid__onActionGroup_confirm(p_items) {
+				   for ( var i = 0, ii = p_items.length; i < ii; i++) {
+					   nodeRefs.push(p_items[i].nodeRef);
+				   }
+		
+				   this.modules.actions.genericAction({
+				      success : {
+				         event : {
+				            name : me.scopeId + "refreshDataGrid",
+				            obj : {
+					            items : p_items
+				            }
+				         },
+				         message : me.msg("message.group.success", p_items.length)
+				      },
+				      failure : {
+					      message : me.msg("message.group.failure")
+				      },
+				      webscript : {
+				         method : Alfresco.util.Ajax.POST,
+                         stem : Alfresco.constants.PROXY_URI + "becpg/datalists/action/",
+				         name : "group/node/" + destinationNodeRef.uri+"?allPages="+me.allPages+"&queryExecutionId="+me.queryExecutionId
+				      },
+				      config : {
+				         requestContentType : Alfresco.util.Ajax.JSON,
+				         dataObj : {
+					         nodeRefs : nodeRefs
+				         }
+				      }
+				   });
+			   }
+		   Alfresco.util.PopupManager.displayPrompt({
+			      title : me.msg("message.confirm.group.title", items.length),
+			      text : me.msg("message.confirm.group.description", items.length),
+			      buttons : [ {
+			         text : me.msg("button.group"),
+			         handler : function () {
+				         this.destroy();
+				         fnActionGroupConfirm.call(me, items);
+			         }
+			      }, {
+			         text : this.msg("button.cancel"),
+			         handler : function () {
+				         this.destroy();
+			         },
+			         isDefault : true
+			      } ]
+			   });   
+		   
+	   },
+
+	   onActionDuplicateChilds  : function EntityDataGrid_onActionDplicateChild(p_items) {
+			   var me = this, items = YAHOO.lang.isArray(p_items) ? p_items : [ p_items ], destinationNodeRef = this.modules.dataGrid.datalistMeta.nodeRef!=null ? new Alfresco.util.NodeRef(
+			         this.modules.dataGrid.datalistMeta.nodeRef): new Alfresco.util.NodeRef(
+					         this.modules.dataGrid.options.parentNodeRef), nodeRefs = [];
+	
+			   var fnActionGroupConfirm = function EntityDataGrid__onActionGroup_confirm(p_items) {
+				   for ( var i = 0, ii = p_items.length; i < ii; i++) {
+					   nodeRefs.push(p_items[i].nodeRef);
+				   }
+		
+				   this.modules.actions.genericAction({
+				      success : {
+				         event : {
+				            name : me.scopeId + "refreshDataGrid",
+				            obj : {
+					            items : p_items
+				            }
+				         },
+				         message : me.msg("message.duplicate-childs.success", p_items.length)
+				      },
+				      failure : {
+					      message : me.msg("message.duplicate-childs.failure")
+				      },
+				      webscript : {
+				         method : Alfresco.util.Ajax.POST,
+                         stem : Alfresco.constants.PROXY_URI + "becpg/datalists/action/",
+				         name : "duplicate/childs/node/" + destinationNodeRef.uri
+				      },
+				      config : {
+				         requestContentType : Alfresco.util.Ajax.JSON,
+				         dataObj : {
+					         nodeRefs : nodeRefs
+				         }
+				      }
+				   });
+			   }
+		   Alfresco.util.PopupManager.displayPrompt({
+			      title : me.msg("message.confirm.duplicate-childs.title", items.length),
+			      text : me.msg("message.confirm.duplicate-childs.description", items.length),
+			      buttons : [ {
+			         text : this.msg("button.ok"),
+			         handler : function () {
+				         this.destroy();
+				         fnActionGroupConfirm.call(me, items);
+			         }
+			      }, {
+			         text : this.msg("button.cancel"),
+			         handler : function () {
+				         this.destroy();
+			         },
+			         isDefault : true
+			      } ]
+			   });   
+		   
+	   },
+		
 		onActionSimulate : function EntityDataGrid_onActionSimulate(p_items) {
 			var items = YAHOO.lang.isArray(p_items) ? p_items : [ p_items ], me = this, nodeRefs = "";
 

@@ -13,6 +13,7 @@ RUN apt-get -y install apache2 apache2-utils python3 libapache2-mod-wsgi-py3 pyt
 RUN python3 -m pip install --no-cache-dir ortools Flask
 
 RUN a2enmod wsgi
+RUN a2enmod status
 
 COPY linrest.com.conf /etc/apache2/sites-available/000-default.conf
 

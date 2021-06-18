@@ -1,4 +1,4 @@
-<!-- Copyright (C) 2010-2020 beCPG. This file is part of beCPG beCPG is free 
+<!-- Copyright (C) 2010-2021 beCPG. This file is part of beCPG beCPG is free 
 	software: you can redistribute it and/or modify it under the terms of the 
 	GNU Lesser General Public License as published by the Free Software Foundation, 
 	either version 3 of the License, or (at your option) any later version. beCPG 
@@ -109,6 +109,15 @@
 	</config>
 
 
+   <config evaluator="model-type" condition="cm:content">
+		<forms>
+				<form id="content-validation">
+					<field-visibility>
+						<show id="cm:name" />
+					</field-visibility>
+			</form>
+		</forms>
+	</config>
 
 
 

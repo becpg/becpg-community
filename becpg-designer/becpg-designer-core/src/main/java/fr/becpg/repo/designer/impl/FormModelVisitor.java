@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG. 
+ * Copyright (C) 2010-2021 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -285,6 +285,8 @@ public class FormModelVisitor {
 		for (ChildAssociationRef assoc : assocs) {
 			if (assoc.getTypeQName().equals(DesignerModel.ASSOC_DSG_CONTROLS)) {
 				visitControlXml(assoc.getChildRef(), field);
+			} else if (assoc.getTypeQName().equals(DesignerModel.ASSOC_DSG_CONSTRAINTS)) {
+				visitConstraintXml(assoc.getChildRef(), field);
 			}
 		}
 
@@ -329,13 +331,44 @@ public class FormModelVisitor {
 			}
 		}
 	}
-
+	
 	private void visitParameterXml(NodeRef parameterRef, Element control) {
 		String value = (String) nodeService.getProperty(parameterRef, DesignerModel.PROP_DSG_PARAMETERVALUE);
 		if (!StringUtils.isEmpty(value)) {
 			Element controlParam = DOMUtils.createElement(control, "control-param");
 			controlParam.setAttribute("name", (String) nodeService.getProperty(parameterRef, DesignerModel.PROP_DSG_ID));
 			controlParam.setTextContent(value);
+		}
+	}
+	
+	private void visitConstraintXml(NodeRef controlRef, Element field) {
+		Element control = DOMUtils.createElement(field, "constraint-handlers");
+		List<ChildAssociationRef> assocs = nodeService.getChildAssocs(controlRef);
+		DesignerHelper.sort(assocs,nodeService);
+		for (ChildAssociationRef assoc : assocs) {
+			if (assoc.getTypeQName().equals(DesignerModel.ASSOC_DSG_CONSTRAINT_ASSOC)) {
+				visitConstraintAssocXml(assoc.getChildRef(), control);
+			}
+		}
+	}
+
+	private void visitConstraintAssocXml(NodeRef parameterRef, Element constraint) {
+		
+		Element constraintParam = DOMUtils.createElement(constraint, "constraint");
+		
+		String type = (String) nodeService.getProperty(parameterRef, DesignerModel.PROP_DSG_TYPE);
+		if (type != null) {
+			constraintParam.setAttribute("type", type);
+		}
+		
+		String validationHandler = (String) nodeService.getProperty(parameterRef, DesignerModel.PROP_DSG_VALIDATION_HANDLER);
+		if (validationHandler != null) {
+			constraintParam.setAttribute("validation-handler", validationHandler);
+		}
+		
+		String event = (String) nodeService.getProperty(parameterRef, DesignerModel.PROP_DSG_EVENT);
+		if (event != null) {
+			constraintParam.setAttribute("event", event);
 		}
 	}
 
@@ -541,6 +574,7 @@ public class FormModelVisitor {
 				nodeService.setProperty(fieldNodeRef, DesignerModel.PROP_DSG_MANDATORY, field.getAttribute("mandatory"));
 			}
 			visitFormControl(fieldNodeRef, field);
+			visitFormConstraint(fieldNodeRef, field);
 		}
 
 	}
@@ -564,6 +598,26 @@ public class FormModelVisitor {
 				nodeService.setProperty(paramRef, DesignerModel.PROP_DSG_ID, param.getAttribute("name"));
 				nodeService.setProperty(paramRef, DesignerModel.PROP_DSG_PARAMETERVALUE, param.getTextContent());
 
+			}
+		}
+	}
+	
+	private void visitFormConstraint(NodeRef parentNodeRef, Element parentEl) {
+		logger.debug("visitFormConstraint");
+		NodeList list = parentEl.getElementsByTagName("constraint-handlers");
+		for (int i = 0; i < list.getLength(); i++) {
+			Element elem = (Element) list.item(i);
+			ChildAssociationRef childAssociationRef = nodeService.createNode(parentNodeRef, DesignerModel.ASSOC_DSG_CONSTRAINTS, DesignerModel.ASSOC_DSG_CONSTRAINTS,
+					DesignerModel.TYPE_DSG_FORMCONSTRAINT);
+			NodeRef ret = childAssociationRef.getChildRef();
+			NodeList params = elem.getElementsByTagName("constraint");
+			for (int j = 0; j < params.getLength(); j++) {
+				Element param = (Element) params.item(j);
+				childAssociationRef = nodeService.createNode(ret, DesignerModel.ASSOC_DSG_CONSTRAINT_ASSOC, DesignerModel.ASSOC_DSG_CONSTRAINT_ASSOC, DesignerModel.TYPE_DSG_CONSTRAINTPARAMETER);
+				NodeRef paramRef = childAssociationRef.getChildRef();
+				nodeService.setProperty(paramRef, DesignerModel.PROP_DSG_TYPE, param.getAttribute("type"));
+				nodeService.setProperty(paramRef, DesignerModel.PROP_DSG_VALIDATION_HANDLER, param.getAttribute("validation-handler"));
+				nodeService.setProperty(paramRef, DesignerModel.PROP_DSG_EVENT, param.getAttribute("event"));
 			}
 		}
 	}

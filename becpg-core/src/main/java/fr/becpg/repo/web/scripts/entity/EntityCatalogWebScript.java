@@ -25,6 +25,7 @@ import fr.becpg.repo.entity.catalog.EntityCatalogService;
 import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.repository.L2CacheSupport;
+import fr.becpg.repo.repository.RepositoryEntity;
 
 /**
  * Gathers product's missing fields info : which ones are missing, and what is
@@ -47,7 +48,7 @@ public class EntityCatalogWebScript extends AbstractWebScript {
 
 	private RuleService ruleService;
 
-	private EntityCatalogService entityCatalogService;
+	private EntityCatalogService<RepositoryEntity> entityCatalogService;
 
 	/**
 	 * <p>Setter for the field <code>ruleService</code>.</p>
@@ -90,82 +91,79 @@ public class EntityCatalogWebScript extends AbstractWebScript {
 	 *
 	 * @param entityCatalogService a {@link fr.becpg.repo.entity.catalog.EntityCatalogService} object.
 	 */
-	public void setEntityCatalogService(EntityCatalogService entityCatalogService) {
+	public void setEntityCatalogService(EntityCatalogService<RepositoryEntity> entityCatalogService) {
 		this.entityCatalogService = entityCatalogService;
 	}
-
 
 	/** {@inheritDoc} */
 	@SuppressWarnings("unchecked")
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
-		Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();
-		String storeType = templateArgs.get("store_type");
-		String storeId = templateArgs.get("store_id");
-		String nodeId = templateArgs.get("id");
-		String catalogId = req.getParameter("catalogId");
-
-		NodeRef productNodeRef = new NodeRef(storeType, storeId, nodeId);
-
-		if (!nodeService.exists(productNodeRef)) {
-			throw new WebScriptException("Node " + productNodeRef + " does not exist");
-		}
-
-		try {
-			JSONObject jsonObject = new JSONObject();
-
-			if (catalogId == null) {
-
-				boolean formulated = false;
-				if (formulationService.shouldFormulate(productNodeRef)) {
-
-					try {
-						policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
-						policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
-						policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-						ruleService.disableRules();
-
-						L2CacheSupport.doInCacheContext(() -> {
-							AuthenticationUtil.runAsSystem(() -> {
-								formulationService.formulate(productNodeRef,FormulationService.FAST_FORMULATION_CHAINID);
-								return true;
-							});
-
-						}, false, true);
-
-						formulated = true;
-
-					} finally {
-						ruleService.enableRules();
-						policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
-						policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
-						policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-					}
-
-				}
-
-				String scores = (String) nodeService.getProperty(productNodeRef, BeCPGModel.PROP_ENTITY_SCORE);
-
-				if ((scores != null) && !scores.isEmpty()) {
-					jsonObject = new JSONObject(scores);
-				}
-
-				jsonObject.put("formulated", formulated);
-			} else {
-				jsonObject = new JSONObject();
-
-				jsonObject.put(EntityCatalogService.PROP_CATALOGS, entityCatalogService.formulateCatalog(catalogId, productNodeRef,
-						(List<String>) nodeService.getProperty(productNodeRef, ReportModel.PROP_REPORT_LOCALES), null));
+			
+			Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();
+			String storeType = templateArgs.get("store_type");
+			String storeId = templateArgs.get("store_id");
+			String nodeId = templateArgs.get("id");
+			String catalogId = req.getParameter("catalogId");
+			
+			NodeRef productNodeRef = new NodeRef(storeType, storeId, nodeId);
+			
+			if (!nodeService.exists(productNodeRef)) {
+				throw new WebScriptException("Node " + productNodeRef + " does not exist");
 			}
-
-			res.setContentType("application/json");
-			res.setContentEncoding("UTF-8");
-			jsonObject.write(res.getWriter());
-
-		} catch (JSONException e) {
-			logger.error(e, e);
-			throw new WebScriptException("Unable to serialize JSON", e);
-		}
+			
+			try {
+				JSONObject jsonObject = new JSONObject();
+				
+				if (catalogId == null) {
+					
+					boolean formulated = false;
+					if (formulationService.shouldFormulate(productNodeRef)) {
+						
+						try {
+							policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
+							policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+							policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+							ruleService.disableRules();
+							
+							L2CacheSupport.doInCacheContext(() -> AuthenticationUtil.runAsSystem(() -> {
+								formulationService.formulate(productNodeRef, FormulationService.FAST_FORMULATION_CHAINID);
+								return true;
+							}), false, true);
+							
+							formulated = true;
+							
+						} finally {
+							ruleService.enableRules();
+							policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
+							policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+							policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+						}
+						
+					}
+					
+					String scores = (String) nodeService.getProperty(productNodeRef, BeCPGModel.PROP_ENTITY_SCORE);
+					
+					if ((scores != null) && !scores.isEmpty()) {
+						jsonObject = new JSONObject(scores);
+					}
+					
+					jsonObject.put("formulated", formulated);
+				} else {
+					jsonObject = new JSONObject();
+					
+					jsonObject.put(EntityCatalogService.PROP_CATALOGS, entityCatalogService.formulateCatalog(catalogId, productNodeRef,
+							(List<String>) nodeService.getProperty(productNodeRef, ReportModel.PROP_REPORT_LOCALES)));
+				}
+				
+				res.setContentType("application/json");
+				res.setContentEncoding("UTF-8");
+				jsonObject.write(res.getWriter());
+				
+			} catch (JSONException e) {
+				logger.error(e, e);
+				throw new WebScriptException("Unable to serialize JSON", e);
+			}
 
 	}
 

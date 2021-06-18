@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -61,6 +61,8 @@ public interface GS1Model {
 
 	/** Constant <code>PROP_HEIGHT</code> */
 	QName PROP_HEIGHT = QName.createQName(GS1_URI, "height");
+	
+	QName PROP_PACKAGING_TYPE_CODE = QName.createQName(GS1_URI, "gs1:packagingTypeCode");
 
 	/** Constant <code>PROP_SECONDARY_WIDTH</code> */
 	QName PROP_SECONDARY_WIDTH = QName.createQName(GS1_URI, "secondaryWidth");
@@ -82,5 +84,12 @@ public interface GS1Model {
 
 	/** Constant <code>PROP_PLATFORMTERMSANSCONDITION_CODE</code> */
 	QName PROP_PLATFORMTERMSANSCONDITION_CODE  = QName.createQName(GS1_URI, "platformTermsAndConditionsCode");
+
+	/** Constant <code>TYPE_TARGET_MARKET</code> */
+	QName TYPE_TARGET_MARKET  = QName.createQName(GS1_URI, "targetMarket");
+	
+	/** Constant <code>TYPE_DUTY_FEE_TAX</code> */
+	QName TYPE_DUTY_FEE_TAX  = QName.createQName(GS1_URI, "dutyFeeTax");
+	
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -468,6 +468,8 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			geoOrigin1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_GEO_ORIGIN, properties).getChildRef();
+			nodeService.setProperty(geoOrigin1, PLMModel.PROP_GEO_ORIGIN_ISOCODE, "FR");
+			
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "geoOrigin2");
 			geoOrigin2 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
@@ -589,13 +591,23 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			bioOrigins.add(bioOrigin1);
 			List<NodeRef> geoOrigins = new ArrayList<>();
 			geoOrigins.add(geoOrigin1);
-			ingList.add(new IngListDataItem(null, 100 / 3d, geoOrigins, bioOrigins, false, false, false, ing1, false));
+			
+			IngListDataItem rawMaterial1Ing1 = new IngListDataItem(null, 100 / 3d, geoOrigins, bioOrigins, false, false, false, ing1, false);
+			rawMaterial1Ing1.setMini(25d);
+			rawMaterial1Ing1.setMaxi(90d);
+			ingList.add(rawMaterial1Ing1);
+			
 			geoOrigins = new ArrayList<>();
 			geoOrigins.add(geoOrigin1);
 			geoOrigins.add(geoOrigin2);
 			List<NodeRef> geoTransfo = new ArrayList<>();
 			geoTransfo.add(geoOrigin2);
-			ingList.add(new IngListDataItem(null, null, 200 / 3d, geoOrigins, geoTransfo, bioOrigins, false, false, false, false, ing2, false));
+			
+			IngListDataItem rawMaterial1Ing2 = new IngListDataItem(null, null, 200 / 3d, geoOrigins, geoTransfo, bioOrigins, false, false, false, false, ing2, false);
+			rawMaterial1Ing2.setMini(18d);
+			rawMaterial1Ing2.setMaxi(80d);
+			ingList.add(rawMaterial1Ing2);
+			
 			rawMaterial1.setIngList(ingList);
 			// physicoChem
 			List<PhysicoChemListDataItem> physicoChemList;
@@ -641,12 +653,22 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			bioOrigins.add(bioOrigin1);
 			geoOrigins = new ArrayList<>();
 			geoOrigins.add(geoOrigin1);
-			ingList.add(new IngListDataItem(null, 100 / 4d, geoOrigins, bioOrigins, true, true, false, ing1, false));
+			
+			IngListDataItem rawMaterial2Ing1 = new IngListDataItem(null, 100 / 4d, geoOrigins, bioOrigins, true, true, false, ing1, false);
+			rawMaterial2Ing1.setMini(15d);
+			rawMaterial2Ing1.setMaxi(75d);
+			ingList.add(rawMaterial2Ing1);
+
 			bioOrigins = new ArrayList<>();
 			bioOrigins.add(bioOrigin2);
 			geoOrigins = new ArrayList<>();
 			geoOrigins.add(geoOrigin2);
-			ingList.add(new IngListDataItem(null, 300 / 4d, geoOrigins, bioOrigins, false, false, false, ing2, false));
+			
+			IngListDataItem rawMaterial2Ing2 = new IngListDataItem(null, 300 / 4d, geoOrigins, bioOrigins, false, false, false, ing2, false);
+			rawMaterial2Ing2.setMini(25d);
+			rawMaterial2Ing2.setMaxi(86d);
+			ingList.add(rawMaterial2Ing2);
+
 			// physicoChem
 			physicoChemList = new ArrayList<>();
 			physicoChemList.add(new PhysicoChemListDataItem(null, 1d, "-", null, 2.1d, physicoChem1));

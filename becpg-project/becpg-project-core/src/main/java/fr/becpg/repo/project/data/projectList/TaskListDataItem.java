@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG. 
+ * Copyright (C) 2010-2021 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -19,6 +19,7 @@ package fr.becpg.repo.project.data.projectList;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
@@ -29,7 +30,9 @@ import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
+import fr.becpg.repo.repository.annotation.InternalField;
 import fr.becpg.repo.repository.annotation.MultiLevelDataList;
+import fr.becpg.repo.repository.annotation.MultiLevelGroup;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 /**
@@ -52,6 +55,7 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	private Boolean isGroup = false;
 	private Boolean isExcludeFromSearch;
 	private Boolean isRefused;
+	private Boolean isCritical;
 	private Integer duration;
 	private Integer realDuration;
 	private Integer capacity;
@@ -59,6 +63,10 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	private Double loggedTime;
 	private Date start;
 	private Date end;
+	private Date due;
+	private Date targetStart;
+	private Date targetEnd;
+	
 	private TaskState taskState = TaskState.Planned;
 	private Integer completionPercent = 0;
 	
@@ -159,6 +167,7 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:tlIsGroup")
+	@MultiLevelGroup
 	public Boolean getIsGroup() {
 		return isGroup;
 	}
@@ -211,6 +220,18 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	 */
 	public void setIsExcludeFromSearch(Boolean isExcludeFromSearch) {
 		this.isExcludeFromSearch = isExcludeFromSearch;
+	}
+
+	
+	
+	@AlfProp
+	@AlfQname(qname = "pjt:tlIsCritical")
+	public Boolean getIsCritical() {
+		return isCritical;
+	}
+
+	public void setIsCritical(Boolean isCritical) {
+		this.isCritical = isCritical;
 	}
 
 	/**
@@ -351,6 +372,39 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	 */
 	public void setEnd(Date end) {
 		this.end = end;
+	}
+
+	
+	
+	
+	@AlfProp
+	@AlfQname(qname = "pjt:tlDue")
+	public Date getDue() {
+		return due;
+	}
+
+	public void setDue(Date due) {
+		this.due = due;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "pjt:tlTargetStart")
+	public Date getTargetStart() {
+		return targetStart;
+	}
+
+	public void setTargetStart(Date targetStart) {
+		this.targetStart = targetStart;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "pjt:tlTargetEnd")
+	public Date getTargetEnd() {
+		return targetEnd;
+	}
+
+	public void setTargetEnd(Date targetEnd) {
+		this.targetEnd = targetEnd;
 	}
 
 	/**
@@ -616,6 +670,7 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	@Override
 	@AlfProp
 	@AlfQname(qname = "bcpg:parentLevel")
+	@InternalField
 	public TaskListDataItem getParent() {
 		return this.parent;
 	}
@@ -911,50 +966,17 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 		this.expense = expense;
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + ((budgetedCost == null) ? 0 : budgetedCost.hashCode());
-		result = prime * result + ((capacity == null) ? 0 : capacity.hashCode());
-		result = prime * result + ((completionPercent == null) ? 0 : completionPercent.hashCode());
-		result = prime * result + ((depthLevel == null) ? 0 : depthLevel.hashCode());
-		result = prime * result + ((duration == null) ? 0 : duration.hashCode());
-		result = prime * result + ((end == null) ? 0 : end.hashCode());
-		result = prime * result + ((expense == null) ? 0 : expense.hashCode());
-		result = prime * result + ((fixedCost == null) ? 0 : fixedCost.hashCode());
-		result = prime * result + ((initialNotification == null) ? 0 : initialNotification.hashCode());
-		result = prime * result + ((invoice == null) ? 0 : invoice.hashCode());
-		result = prime * result + ((isExcludeFromSearch == null) ? 0 : isExcludeFromSearch.hashCode());
-		result = prime * result + ((isGroup == null) ? 0 : isGroup.hashCode());
-		result = prime * result + ((isMilestone == null) ? 0 : isMilestone.hashCode());
-		result = prime * result + ((isRefused == null) ? 0 : isRefused.hashCode());
-		result = prime * result + ((lastNotification == null) ? 0 : lastNotification.hashCode());
-		result = prime * result + ((loggedTime == null) ? 0 : loggedTime.hashCode());
-		result = prime * result + ((manualDate == null) ? 0 : manualDate.hashCode());
-		result = prime * result + ((notificationAuthorities == null) ? 0 : notificationAuthorities.hashCode());
-		result = prime * result + ((notificationFrequency == null) ? 0 : notificationFrequency.hashCode());
-		result = prime * result + ((observers == null) ? 0 : observers.hashCode());
-		result = prime * result + ((parent == null) ? 0 : parent.hashCode());
-		result = prime * result + ((prevTasks == null) ? 0 : prevTasks.hashCode());
-		result = prime * result + ((realDuration == null) ? 0 : realDuration.hashCode());
-		result = prime * result + ((refusedTask == null) ? 0 : refusedTask.hashCode());
-		result = prime * result + ((refusedTasksToReopen == null) ? 0 : refusedTasksToReopen.hashCode());
-		result = prime * result + ((resourceCost == null) ? 0 : resourceCost.hashCode());
-		result = prime * result + ((resources == null) ? 0 : resources.hashCode());
-		result = prime * result + ((start == null) ? 0 : start.hashCode());
-		result = prime * result + ((subProject == null) ? 0 : subProject.hashCode());
-		result = prime * result + ((taskLegend == null) ? 0 : taskLegend.hashCode());
-		result = prime * result + ((taskName == null) ? 0 : taskName.hashCode());
-		result = prime * result + ((taskState == null) ? 0 : taskState.hashCode());
-		result = prime * result + ((work == null) ? 0 : work.hashCode());
-		result = prime * result + ((workflowInstance == null) ? 0 : workflowInstance.hashCode());
-		result = prime * result + ((workflowName == null) ? 0 : workflowName.hashCode());
+		result = prime * result + Objects.hash(budgetedCost, capacity, completionPercent, depthLevel, duration, end, expense, fixedCost,
+				initialNotification, invoice, isExcludeFromSearch, isGroup, isMilestone, isRefused, lastNotification, loggedTime, manualDate,
+				notificationAuthorities, notificationFrequency, observers, realDuration, resourceCost, resources, start, subProject, taskLegend,
+				taskName, taskState, work, workflowInstance, workflowName, workflowTaskInstance);
 		return result;
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -964,176 +986,21 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 		if (getClass() != obj.getClass())
 			return false;
 		TaskListDataItem other = (TaskListDataItem) obj;
-		if (budgetedCost == null) {
-			if (other.budgetedCost != null)
-				return false;
-		} else if (!budgetedCost.equals(other.budgetedCost))
-			return false;
-		if (capacity == null) {
-			if (other.capacity != null)
-				return false;
-		} else if (!capacity.equals(other.capacity))
-			return false;
-		if (completionPercent == null) {
-			if (other.completionPercent != null)
-				return false;
-		} else if (!completionPercent.equals(other.completionPercent))
-			return false;
-		if (depthLevel == null) {
-			if (other.depthLevel != null)
-				return false;
-		} else if (!depthLevel.equals(other.depthLevel))
-			return false;
-		if (duration == null) {
-			if (other.duration != null)
-				return false;
-		} else if (!duration.equals(other.duration))
-			return false;
-		if (end == null) {
-			if (other.end != null)
-				return false;
-		} else if (!end.equals(other.end))
-			return false;
-		if (expense == null) {
-			if (other.expense != null)
-				return false;
-		} else if (!expense.equals(other.expense))
-			return false;
-		if (fixedCost == null) {
-			if (other.fixedCost != null)
-				return false;
-		} else if (!fixedCost.equals(other.fixedCost))
-			return false;
-		if (initialNotification == null) {
-			if (other.initialNotification != null)
-				return false;
-		} else if (!initialNotification.equals(other.initialNotification))
-			return false;
-		if (invoice == null) {
-			if (other.invoice != null)
-				return false;
-		} else if (!invoice.equals(other.invoice))
-			return false;
-		if (isExcludeFromSearch == null) {
-			if (other.isExcludeFromSearch != null)
-				return false;
-		} else if (!isExcludeFromSearch.equals(other.isExcludeFromSearch))
-			return false;
-		if (isGroup == null) {
-			if (other.isGroup != null)
-				return false;
-		} else if (!isGroup.equals(other.isGroup))
-			return false;
-		if (isMilestone == null) {
-			if (other.isMilestone != null)
-				return false;
-		} else if (!isMilestone.equals(other.isMilestone))
-			return false;
-		if (isRefused == null) {
-			if (other.isRefused != null)
-				return false;
-		} else if (!isRefused.equals(other.isRefused))
-			return false;
-		if (lastNotification == null) {
-			if (other.lastNotification != null)
-				return false;
-		} else if (!lastNotification.equals(other.lastNotification))
-			return false;
-		if (loggedTime == null) {
-			if (other.loggedTime != null)
-				return false;
-		} else if (!loggedTime.equals(other.loggedTime))
-			return false;
-		if (manualDate != other.manualDate)
-			return false;
-		if (notificationAuthorities == null) {
-			if (other.notificationAuthorities != null)
-				return false;
-		} else if (!notificationAuthorities.equals(other.notificationAuthorities))
-			return false;
-		if (notificationFrequency == null) {
-			if (other.notificationFrequency != null)
-				return false;
-		} else if (!notificationFrequency.equals(other.notificationFrequency))
-			return false;
-		if (observers == null) {
-			if (other.observers != null)
-				return false;
-		} else if (!observers.equals(other.observers))
-			return false;
-		if (parent == null) {
-			if (other.parent != null)
-				return false;
-		} else if (!parent.equals(other.parent))
-			return false;
-		if (prevTasks == null) {
-			if (other.prevTasks != null)
-				return false;
-		} else if (!prevTasks.equals(other.prevTasks))
-			return false;
-		if (realDuration == null) {
-			if (other.realDuration != null)
-				return false;
-		} else if (!realDuration.equals(other.realDuration))
-			return false;
-		if (refusedTask == null) {
-			if (other.refusedTask != null)
-				return false;
-		} else if (!refusedTask.equals(other.refusedTask))
-			return false;
-		if (refusedTasksToReopen == null) {
-			if (other.refusedTasksToReopen != null)
-				return false;
-		} else if (!refusedTasksToReopen.equals(other.refusedTasksToReopen))
-			return false;
-		if (resourceCost == null) {
-			if (other.resourceCost != null)
-				return false;
-		} else if (!resourceCost.equals(other.resourceCost))
-			return false;
-		if (resources == null) {
-			if (other.resources != null)
-				return false;
-		} else if (!resources.equals(other.resources))
-			return false;
-		if (start == null) {
-			if (other.start != null)
-				return false;
-		} else if (!start.equals(other.start))
-			return false;
-		if (subProject == null) {
-			if (other.subProject != null)
-				return false;
-		} else if (!subProject.equals(other.subProject))
-			return false;
-		if (taskLegend == null) {
-			if (other.taskLegend != null)
-				return false;
-		} else if (!taskLegend.equals(other.taskLegend))
-			return false;
-		if (taskName == null) {
-			if (other.taskName != null)
-				return false;
-		} else if (!taskName.equals(other.taskName))
-			return false;
-		if (taskState != other.taskState)
-			return false;
-		if (work == null) {
-			if (other.work != null)
-				return false;
-		} else if (!work.equals(other.work))
-			return false;
-		if (workflowInstance == null) {
-			if (other.workflowInstance != null)
-				return false;
-		} else if (!workflowInstance.equals(other.workflowInstance))
-			return false;
-		if (workflowName == null) {
-			if (other.workflowName != null)
-				return false;
-		} else if (!workflowName.equals(other.workflowName))
-			return false;
-		return true;
+		return Objects.equals(budgetedCost, other.budgetedCost) && Objects.equals(capacity, other.capacity)
+				&& Objects.equals(completionPercent, other.completionPercent) && Objects.equals(depthLevel, other.depthLevel)
+				&& Objects.equals(duration, other.duration) && Objects.equals(end, other.end) && Objects.equals(expense, other.expense)
+				&& Objects.equals(fixedCost, other.fixedCost) && Objects.equals(initialNotification, other.initialNotification)
+				&& Objects.equals(invoice, other.invoice) && Objects.equals(isExcludeFromSearch, other.isExcludeFromSearch)
+				&& Objects.equals(isGroup, other.isGroup) && Objects.equals(isMilestone, other.isMilestone)
+				&& Objects.equals(isRefused, other.isRefused) && Objects.equals(lastNotification, other.lastNotification)
+				&& Objects.equals(loggedTime, other.loggedTime) && manualDate == other.manualDate
+				&& Objects.equals(notificationAuthorities, other.notificationAuthorities)
+				&& Objects.equals(notificationFrequency, other.notificationFrequency) && Objects.equals(observers, other.observers)
+				&& Objects.equals(realDuration, other.realDuration) && Objects.equals(resourceCost, other.resourceCost)
+				&& Objects.equals(resources, other.resources) && Objects.equals(start, other.start) && Objects.equals(subProject, other.subProject)
+				&& Objects.equals(taskLegend, other.taskLegend) && Objects.equals(taskName, other.taskName) && taskState == other.taskState
+				&& Objects.equals(work, other.work) && Objects.equals(workflowInstance, other.workflowInstance)
+				&& Objects.equals(workflowName, other.workflowName) && Objects.equals(workflowTaskInstance, other.workflowTaskInstance);
 	}
 
 	/** {@inheritDoc} */

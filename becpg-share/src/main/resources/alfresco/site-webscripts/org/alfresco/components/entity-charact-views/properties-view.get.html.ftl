@@ -34,7 +34,7 @@
          <!-- Parameters and libs -->
          <#include "../../include/alfresco-macros.lib.ftl" />
          <#assign el=args.htmlid?html>
-		      <div id="{el}">
+		      <div id="${el}">
 			      <div class="yui-gc properties-view" >
 			         <div  class="yui-u first ">
 					        <div id="${el}-formContainer"></div>
@@ -52,7 +52,7 @@
 					                 <span class="item-modifier">
 					                     <#assign modifyUser = node.properties["cm:modifier"]>
 					                     <#assign modifyDate = node.properties["cm:modified"]>
-					                     <#assign modifierLink = userProfileLink(modifyUser.userName, modifyUser.displayName, 'class="theme-color-1"') >
+					                     <#assign modifierLink = userProfileLink(modifyUser.userName, modifyUser.displayName, "class='theme-color-1'") >
 					                     ${msg("label.modified-by-user-on-date", modifierLink, "<span id='${el}-modifyDate'>${modifyDate.iso8601}</span>")}
 					                 </span>
                      				<span id="${el}-favourite" class="item"></span>                   					

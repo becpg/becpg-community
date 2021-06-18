@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2010-2020 beCPG. 
+Copyright (C) 2010-2021 beCPG. 
  
 This file is part of beCPG 
  
@@ -39,7 +39,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import fr.becpg.repo.cache.BeCPGCacheDataProviderCallBack;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorPlugin;
@@ -123,8 +122,7 @@ public class PersonAttributeExtractorPlugin implements AttributeExtractorPlugin 
 		
 		final String finalUserId = userId;
 		
-		return beCPGCacheService.getFromCache(AttributeExtractorService.class.getName(), userId + ".person", new BeCPGCacheDataProviderCallBack<String>() {
-			public String getData() {
+		return beCPGCacheService.getFromCache(AttributeExtractorService.class.getName(), userId + ".person", () -> {
 				String displayName = "";
 				try {
 					
@@ -138,8 +136,7 @@ public class PersonAttributeExtractorPlugin implements AttributeExtractorPlugin 
 					return finalUserId;
 				}
 				return displayName;
-			}
-		});
+			});
 
 	}
 

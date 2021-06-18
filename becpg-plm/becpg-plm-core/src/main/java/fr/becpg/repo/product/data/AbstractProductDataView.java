@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG. 
+ * Copyright (C) 2010-2021 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -38,7 +38,7 @@ public abstract class AbstractProductDataView extends BaseObject {
 	 */
 	private static final long serialVersionUID = -8864829069100366849L;
 
-	protected List<DynamicCharactListItem> dynamicCharactList;
+	private List<DynamicCharactListItem> dynamicCharactList;
 	
 	/**
 	 * <p>getMainDataList.</p>

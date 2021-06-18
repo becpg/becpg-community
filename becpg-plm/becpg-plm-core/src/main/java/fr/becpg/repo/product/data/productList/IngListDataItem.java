@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG. 
+ * Copyright (C) 2010-2021 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -24,6 +24,7 @@ import java.util.Objects;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.data.hierarchicalList.CompositeDataItem;
+import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
@@ -53,6 +54,8 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 
 	private Double qtyPerc = 0d;
 	
+	private Double qtyPercWithYield = null;
+	
 	private Double volumeQtyPerc;
 	
 	private List<NodeRef> geoOrigin = new LinkedList<>();
@@ -79,6 +82,8 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 	
 	private Double maxi;
 	
+	private DeclarationType declType = DeclarationType.Detail;
+	
 	
 	/**
 	 * <p>Getter for the field <code>qtyPerc</code>.</p>
@@ -101,6 +106,17 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 	}
 	
 	
+	
+	@AlfProp
+	@AlfQname(qname="bcpg:ingListQtyPercWithYield")
+	public Double getQtyPercWithYield() {
+		return qtyPercWithYield;
+	}
+
+	public void setQtyPercWithYield(Double qtyPercWithYield) {
+		this.qtyPercWithYield = qtyPercWithYield;
+	}
+
 	/**
 	 * <p>Getter for the field <code>mini</code>.</p>
 	 *
@@ -339,6 +355,39 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 		this.ing = ing;
 	}
 	
+	
+	/**
+	 * <p>
+	 * Getter for the field <code>declType</code>.
+	 * </p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.constraints.DeclarationType}
+	 *         object.
+	 */
+	@AlfProp
+	@AlfQname(qname = "bcpg:ingListDeclType")
+	public DeclarationType getDeclType() {
+		return declType;
+	}
+
+	/**
+	 * <p>
+	 * Setter for the field <code>declType</code>.
+	 * </p>
+	 *
+	 * @param declType
+	 *            a
+	 *            {@link fr.becpg.repo.product.data.constraints.DeclarationType}
+	 *            object.
+	 */
+	public void setDeclType(DeclarationType declType) {
+		if (declType == null) {
+			declType = DeclarationType.Detail;
+		}
+
+		this.declType = declType;
+	}
+	
 	//////////////////////////////
 	
 	/** {@inheritDoc} */
@@ -489,17 +538,15 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 		setIsSupport(i.getIsSupport());
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + Objects.hash(bioOrigin, depthLevel, geoOrigin, geoTransfo, ing, isGMO, isIonized, isProcessingAid, isSupport, maxi,
-				mini, parent, qtyPerc, volumeQtyPerc);
+				mini, parent, qtyPerc, qtyPercWithYield, volumeQtyPerc);
 		return result;
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -514,16 +561,16 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 				&& Objects.equals(isGMO, other.isGMO) && Objects.equals(isIonized, other.isIonized)
 				&& Objects.equals(isProcessingAid, other.isProcessingAid) && Objects.equals(isSupport, other.isSupport)
 				&& Objects.equals(maxi, other.maxi) && Objects.equals(mini, other.mini) && Objects.equals(parent, other.parent)
-				&& Objects.equals(qtyPerc, other.qtyPerc) && Objects.equals(volumeQtyPerc, other.volumeQtyPerc);
+				&& Objects.equals(qtyPerc, other.qtyPerc) && Objects.equals(qtyPercWithYield, other.qtyPercWithYield)
+				&& Objects.equals(volumeQtyPerc, other.volumeQtyPerc);
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return "IngListDataItem [qtyPerc=" + qtyPerc + ", volumeQtyPerc=" + volumeQtyPerc + ", geoOrigin=" + geoOrigin + ", geoTransfo=" + geoTransfo
-				+ ", bioOrigin=" + bioOrigin + ", isGMO=" + isGMO + ", isIonized=" + isIonized + ", ing=" + ing + ", isProcessingAid="
-				+ isProcessingAid + ", isSupport=" + isSupport + ", depthLevel=" + depthLevel + ", parent=" + parent + ", mini=" + mini + ", maxi="
-				+ maxi + "]";
+		return "IngListDataItem [qtyPerc=" + qtyPerc + ", qtyPercWithYield=" + qtyPercWithYield + ", volumeQtyPerc=" + volumeQtyPerc + ", geoOrigin="
+				+ geoOrigin + ", geoTransfo=" + geoTransfo + ", bioOrigin=" + bioOrigin + ", isGMO=" + isGMO + ", isIonized=" + isIonized + ", ing="
+				+ ing + ", isProcessingAid=" + isProcessingAid + ", isSupport=" + isSupport + ", depthLevel=" + depthLevel + ", parent=" + parent
+				+ ", mini=" + mini + ", maxi=" + maxi + "]";
 	}
 
 	/** {@inheritDoc} */

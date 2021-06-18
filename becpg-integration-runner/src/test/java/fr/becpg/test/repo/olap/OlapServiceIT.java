@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -17,13 +17,18 @@
  ******************************************************************************/
 package fr.becpg.test.repo.olap;
 
+import static org.junit.Assert.assertNotEquals;
+
 import java.util.List;
 
+import org.alfresco.model.ContentModel;
+import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.olap.OlapService;
 import fr.becpg.repo.olap.data.OlapChart;
 import fr.becpg.repo.olap.data.OlapChartData;
@@ -31,7 +36,6 @@ import fr.becpg.test.RepoBaseTestCase;
 
 public class OlapServiceIT extends RepoBaseTestCase {
 
-	
 	private static final Log logger = LogFactory.getLog(OlapServiceIT.class);
 
 	@Autowired
@@ -56,6 +60,64 @@ public class OlapServiceIT extends RepoBaseTestCase {
 
 		}, false, true);
 
+	}
+
+	@Test
+	public void testOlapInit() {
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			
+			// First initialization
+			initRepoVisitorService.run(repositoryHelper.getCompanyHome());
+			NodeRef systemNodeRef = repoService.getFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM);
+			NodeRef OLAPfolderNodeRef = repoService.getFolderByPath(systemNodeRef, RepoConsts.PATH_OLAP_QUERIES);
+
+			// Test every file is present (ie : nb of files == 17)
+			int numberOfChilds = nodeService.getChildAssocs(OLAPfolderNodeRef).size();
+			assertEquals(numberOfChilds, 17);
+
+			// Delete the first file found
+			NodeRef firstChildNode = nodeService.getChildAssocs(OLAPfolderNodeRef).get(0).getChildRef();
+			String firstChildFileName = (String) nodeService.getProperty(firstChildNode, ContentModel.PROP_NAME);
+			nodeService.deleteNode(firstChildNode);
+
+			// Test one file was deleted (ie : nb of files == 16)
+			numberOfChilds = nodeService.getChildAssocs(OLAPfolderNodeRef).size();
+			assertEquals(numberOfChilds, 16);
+
+			// Test the new first file found is different from  the previous one
+			NodeRef newFirstChildNode = nodeService.getChildAssocs(OLAPfolderNodeRef).get(0).getChildRef();
+			String newfirstChildFileName = (String) nodeService.getProperty(newFirstChildNode, ContentModel.PROP_NAME);
+			assertNotEquals(firstChildFileName, newfirstChildFileName);
+
+			// Second initialization
+			initRepoVisitorService.run(repositoryHelper.getCompanyHome());
+			systemNodeRef = repoService.getFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM);
+			OLAPfolderNodeRef = repoService.getFolderByPath(systemNodeRef, RepoConsts.PATH_OLAP_QUERIES);
+
+			// Test the file is still deleted (ie : nb of files == 16)
+			numberOfChilds = nodeService.getChildAssocs(OLAPfolderNodeRef).size();
+			assertEquals(numberOfChilds, 16);
+
+			// Test the new first file found is the same as the previous one
+			NodeRef newNewFirstChildNode = nodeService.getChildAssocs(OLAPfolderNodeRef).get(0).getChildRef();
+			String newNewfirstChildFileName = (String) nodeService.getProperty(newNewFirstChildNode, ContentModel.PROP_NAME);
+			assertEquals(newfirstChildFileName, newNewfirstChildFileName);
+
+			// Delete the OLAP requests folder
+			nodeService.deleteNode(OLAPfolderNodeRef);
+
+			// Third initialization
+			initRepoVisitorService.run(repositoryHelper.getCompanyHome());
+			systemNodeRef = repoService.getFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM);
+			OLAPfolderNodeRef = repoService.getFolderByPath(systemNodeRef, RepoConsts.PATH_OLAP_QUERIES);
+
+			// Test every file is present (ie : nb of files == 17)
+			numberOfChilds = nodeService.getChildAssocs(OLAPfolderNodeRef).size();
+			assertEquals(numberOfChilds, 17);
+			return true;
+
+		}, false, true);
 	}
 
 }

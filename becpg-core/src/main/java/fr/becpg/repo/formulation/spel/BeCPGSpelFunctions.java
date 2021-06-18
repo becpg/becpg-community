@@ -2,6 +2,7 @@ package fr.becpg.repo.formulation.spel;
 
 import java.beans.PropertyDescriptor;
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,10 +11,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.node.MLPropertyInterceptor;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.MLText;
@@ -28,10 +31,8 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
-import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.config.format.FormatMode;
@@ -45,7 +46,14 @@ import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.RepositoryEntityDefReader;
+import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
+import fr.becpg.repo.repository.annotation.AlfReadOnly;
+import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
+import fr.becpg.repo.repository.annotation.DataList;
+import fr.becpg.repo.repository.annotation.DataListView;
+import fr.becpg.repo.repository.impl.LazyLoadingDataList;
+import fr.becpg.repo.repository.model.BaseObject;
 
 /**
  *
@@ -113,9 +121,10 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		/**
 		 * Helper @beCPG.findOne($nodeRef)
 		 *
-		 *<code>
+		 * <code>
 		 * 	Example : @beCPG.findOne(nodeRef).qty
 		 *</code>
+		 *
 		 * @param nodeRef
 		 * @return repository entity for nodeRef
 		 */
@@ -127,10 +136,10 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * Helper @beCPG.propValue($nodeRef, $qname)
-		 *<code>
+		 * Helper @beCPG.propValue($nodeRef, $qname) <code>
 		 * Example : @beCPG.propValue(nodeRef,'bcpg:productQty')
 		 *</code>
+		 *
 		 * @param nodeRef
 		 * @param qname
 		 * @return node property value
@@ -160,6 +169,59 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 			}
 			return null;
 		}
+		
+		/**
+		 * Helper @beCPG.propMLValue($entity, $qname, $locale)
+		 * 
+		 * @param item
+		 * @param qname
+		 * @param locale
+		 * @return
+		 */
+		public String propMLValue(RepositoryEntity item, String qname, String locale) {
+			Serializable value;
+
+			boolean isMLAware = MLPropertyInterceptor.isMLAware();
+			try {
+				MLPropertyInterceptor.setMLAware(true);
+				value = propValue(item, qname);
+			} finally {
+				MLPropertyInterceptor.setMLAware(isMLAware);
+			}
+
+			if (value instanceof MLText) {
+				return MLTextHelper.getClosestValue((MLText) value, MLTextHelper.parseLocale(locale));
+			}
+
+			return null;
+		}
+
+		/**
+		 * Helper @beCPG.propMLValue($nodeRef, $qname, $locale)
+		 * 
+		 * @param nodeRef
+		 * @param qname
+		 * @param locale
+		 * @return
+		 */
+		public String propMLValue(NodeRef nodeRef, String qname, String locale) {
+			MLText value;
+
+			boolean isMLAware = MLPropertyInterceptor.isMLAware();
+			try {
+				MLPropertyInterceptor.setMLAware(true);
+				value = (MLText) nodeService.getProperty(nodeRef, getQName(qname));
+				if(value!=null) {
+					return MLTextHelper.getClosestValue(value, MLTextHelper.parseLocale(locale));
+				}
+				
+			} finally {
+				MLPropertyInterceptor.setMLAware(isMLAware);
+			}
+
+			return null;
+		}
+		
 
 		/**
 		 * Helper @beCPG.propValue( $qname)
@@ -202,28 +264,45 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		public Serializable setValue(String qname, Serializable value) {
 			return setValue(entity, qname, value);
 		}
-		
-		
+
 		/**
 		 * Helper @beCPG.setAssocs($nodeRef, $qname, $assocNodeRefs)
+		 *
 		 * @param nodeRef
 		 * @param qname
 		 * @param assocNodeRefs
 		 */
 		public void setAssocs(NodeRef nodeRef, String qname, List<NodeRef> assocNodeRefs) {
-			associationService.update(nodeRef,getQName(qname), assocNodeRefs, true);
+			associationService.update(nodeRef, getQName(qname), assocNodeRefs);
+		}
+
+		public void setAssocs(RepositoryEntity entity, String qname, List<NodeRef> assocNodeRefs) {
+			associationService.update(entity.getNodeRef(), getQName(qname), assocNodeRefs);
+		}
+
+		public void setAssocs(String qname, List<NodeRef> assocNodeRefs) {
+			associationService.update(entity.getNodeRef(), getQName(qname), assocNodeRefs);
 		}
 
 		/**
 		 * Helper @beCPG.setAssoc($nodeRef, $qname, $assocNodeRef)
+		 *
 		 * @param nodeRef
 		 * @param qname
 		 * @param assocNodeRef
 		 */
 		public void setAssoc(NodeRef nodeRef, String qname, NodeRef assocNodeRef) {
-			associationService.update(nodeRef,getQName(qname), assocNodeRef);
+			associationService.update(nodeRef, getQName(qname), assocNodeRef);
 		}
-		
+
+		public void setAssoc(String qname, NodeRef assocNodeRef) {
+			associationService.update(entity.getNodeRef(), getQName(qname), assocNodeRef);
+		}
+
+		public void setAssoc(RepositoryEntity entity, String qname, NodeRef assocNodeRef) {
+			associationService.update(entity.getNodeRef(), getQName(qname), assocNodeRef);
+		}
+
 		/**
 		 * Helper @beCPG.assocValue($nodeRef, $qname)
 		 *
@@ -242,6 +321,10 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 			return assocValue(entity.getNodeRef(), qname);
 		}
 
+		public NodeRef assocValue(RepositoryEntity entity, String qname) {
+			return assocValue(entity.getNodeRef(), qname);
+		}
+
 		/**
 		 * Helper @beCPG.assocValues($entity, $qname)
 		 *
@@ -256,8 +339,34 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 			return null;
 		}
 
+		public List<NodeRef> assocValues(RepositoryEntity entity, String qname) {
+			return assocValues(entity.getNodeRef(), qname);
+		}
+
 		public List<NodeRef> assocValues(String qname) {
 			return assocValues(entity.getNodeRef(), qname);
+		}
+
+		/**
+		 * Helper @beCPG.sourcesAssocValues($nodeRef, $qname)
+		 *
+		 * @param nodeRef
+		 * @param qname
+		 * @return association nodeRef
+		 */
+		public List<NodeRef> sourcesAssocValues(NodeRef nodeRef, String qname) {
+			if (nodeRef != null) {
+				return associationService.getSourcesAssocs(nodeRef, getQName(qname));
+			}
+			return null;
+		}
+
+		public List<NodeRef> sourcesAssocValues(RepositoryEntity entity, String qname) {
+			return sourcesAssocValues(entity.getNodeRef(), qname);
+		}
+
+		public List<NodeRef> sourcesAssocValues(String qname) {
+			return sourcesAssocValues(entity.getNodeRef(), qname);
 		}
 
 		/**
@@ -271,14 +380,41 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		public List<Serializable> assocPropValues(NodeRef nodeRef, String assocQname, String propQName) {
 			if (nodeRef != null) {
 				return associationService.getTargetAssocs(nodeRef, getQName(assocQname)).stream().map(o -> propValue(o, propQName))
-						.filter(o-> o!=null)
-						.collect(Collectors.toList());
+						.filter(Objects::nonNull).collect(Collectors.toList());
 			}
 			return null;
 		}
 
+		public List<Serializable> assocPropValues(RepositoryEntity entity, String assocQname, String propQName) {
+			return assocPropValues(entity.getNodeRef(), assocQname, propQName);
+		}
+
 		public List<Serializable> assocPropValues(String assocQname, String propQName) {
 			return assocPropValues(entity.getNodeRef(), assocQname, propQName);
+		}
+
+		/**
+		 * Helper @beCPG.assocAssocValues($nodeRef, $assocQname, $assocAssocQName)
+		 *
+		 * @param nodeRef
+		 * @param assocAssocQName
+		 * @param propQName
+		 * @return collection of association association values
+		 */
+		public List<NodeRef> assocAssocValues(NodeRef nodeRef, String assocQname, String assocAssocQName) {
+			if (nodeRef != null) {
+				return associationService.getTargetAssocs(nodeRef, getQName(assocQname)).stream().map(o -> assocValue(o, assocAssocQName))
+						.filter(Objects::nonNull).collect(Collectors.toList());
+			}
+			return null;
+		}
+
+		public List<NodeRef> assocAssocValues(RepositoryEntity entity, String assocQname, String assocAssocQName) {
+			return assocAssocValues(entity.getNodeRef(), assocQname, assocAssocQName);
+		}
+
+		public List<NodeRef> assocAssocValues(String assocQname, String assocAssocQName) {
+			return assocAssocValues(entity.getNodeRef(), assocQname, assocAssocQName);
 		}
 
 		/**
@@ -309,6 +445,16 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 
 		public Serializable assocPropValue(String assocQname, String propQName) {
 			return assocPropValue(entity.getNodeRef(), assocQname, propQName);
+		}
+
+		/**
+		 * Helper @beCPG.findDuplicates($collection)
+		 *
+		 * @return Set of duplicates
+		 */
+		public <T> Set<T> findDuplicates(Collection<? extends T> collection) {
+			Set<T> uniques = new HashSet<>();
+			return collection.stream().filter(e -> !uniques.add(e)).collect(Collectors.toSet());
 		}
 
 		/**
@@ -349,7 +495,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		/**
 		 * @beCPG.runScript($nodeRef)
 		 *
-		 *                            @param scriptNode
+		 * @param scriptNode
 		 */
 		public void runScript(String scriptNode) {
 			runScript(new NodeRef(scriptNode));
@@ -391,7 +537,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		/**
 		 * @beCPG.sum($range)
 		 *
-		 *                    @param range
+		 * @param range
 		 * @return sum range of double
 		 */
 		public Double sum(Collection<Double> range) {
@@ -401,7 +547,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		/**
 		 * @beCPG.avg($range, $formula)
 		 *
-		 *                    @param range
+		 * @param range
 		 * @param formula
 		 * @return average of formula results apply on range
 		 */
@@ -418,12 +564,11 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		public Double avg(Collection<Double> range) {
 			return range.stream().mapToDouble(Double::doubleValue).average().getAsDouble();
 		}
-		
-		
+
 		/**
 		 * @beCPG.max($range, $formula)
 		 *
-		 *                    @param range
+		 * @param range
 		 * @param formula
 		 * @return get max of formula results apply on range
 		 */
@@ -434,7 +579,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		/**
 		 * @beCPG.max($range)
 		 *
-		 *                    @param range
+		 * @param range
 		 * @return get max of range of double
 		 */
 		public Double max(Collection<Double> range) {
@@ -442,9 +587,39 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 		
 		/**
+		 * @beCPG.join($pattern, $range)
+		 *
+		 * @param pattern
+		 * @param range
+		 * @return get join from pattern and range
+		 */
+		public String join(String pattern, List<String> range) {
+			return String.join(pattern, range);	
+		}
+
+		/**
+		 * @beCPG.join($pattern, $range)
+		 * @beCPG.join($pattern, $range1, $range2)
+		 *
+		 * @param pattern
+		 * @param ranges
+		 * @return get join from pattern and ranges
+		 */
+		public String join(String pattern, List<String> range1, List<String> range2) {
+			
+			StringBuilder ret = new StringBuilder();
+			if (range1 != null && range2 != null && range1.size() == range2.size()) {
+				for(int i =0; i<range1.size();i++) {
+					ret.append(String.format(pattern,  range1.get(i), range2.get(i)));	
+				}
+			}
+			return ret.toString();
+		}
+
+		/**
 		 * @beCPG.min($range, $formula)
 		 *
-		 *                    @param range
+		 * @param range
 		 * @param formula
 		 * @return get min of formula results apply on range
 		 */
@@ -455,33 +630,29 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		/**
 		 * @beCPG.min($range)
 		 *
-		 *                    @param range
+		 * @param range
 		 * @return get min of range of double
 		 */
 		public Double min(Collection<Double> range) {
 			return range.stream().mapToDouble(Double::doubleValue).min().getAsDouble();
 		}
-		
-		
+
 		/**
-		 * @beCPG.extractCustomList($nodeRef, $listType)
-		 * @param listType
+		 * @beCPG.extractCustomList($nodeRef, $listType) @param listType
 		 * @return list
 		 */
-		public Collection<RepositoryEntity> extractCustomList(NodeRef nodeRef, String listType){
-			return alfrescoRepository.loadDataList(entity.getNodeRef(),  getQName(listType), getQName(listType));
+		public Collection<RepositoryEntity> extractCustomList(NodeRef nodeRef, String listType) {
+			return alfrescoRepository.loadDataList(entity.getNodeRef(), getQName(listType), getQName(listType));
 		}
-		
+
 		/**
-		 * @beCPG.extractCustomList($listType)
-		 * @param listType
+		 * @beCPG.extractCustomList($listType) @param listType
 		 * @return list
 		 */
-		public Collection<RepositoryEntity> extractCustomList(String listType){
+		public Collection<RepositoryEntity> extractCustomList(String listType) {
 			return extractCustomList(entity.getNodeRef(), listType);
 		}
-		
-		
+
 		/**
 		 * @beCPG.saveCustomList($range)
 		 *
@@ -491,7 +662,6 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 			alfrescoRepository.save(range);
 		}
 
-		
 		/**
 		 * @beCPG.applyFormulaToList($range, $formula)
 		 *
@@ -503,16 +673,16 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * @beCPG.filter($range, formula)
+		 * Helper @beCPG.filter($range, formula)
 		 *
-		 *                       @param <T>
+		 * @param <T>
 		 * @param range
 		 * @param formula
 		 * @return filter collection with spel formula
 		 */
 		public <T> Collection<T> filter(Collection<T> range, String formula) {
 			if (range != null) {
-				ExpressionParser parser = new SpelExpressionParser();
+				ExpressionParser parser = formulaService.getSpelParser();
 				Expression exp = parser.parseExpression(formula);
 
 				return range.stream().filter(p -> {
@@ -522,33 +692,65 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 			return null;
 		}
 
-		
 		/**
-		 * @beCPG.children($parent, $compositeList)
-		 * 
+		 * Helper @beCPG.filterByAssoc($range, $assocQname, $values)
+		 *
+		 * @param <T>
+		 * @param range
+		 * @param assocName
+		 * @param values
+		 * @return filter nodeRef collection by assoc values
+		 */
+		public List<NodeRef> filterByAssoc(Collection<NodeRef> range, String assocName, Collection<NodeRef> values) {
+			if (range != null) {
+				return range.stream().filter(nodeRef -> {
+					List<NodeRef> assocs = associationService.getTargetAssocs(nodeRef, getQName(assocName));
+					return assocs.containsAll(values);
+				}).collect(Collectors.toList());
+			}
+			return null;
+		}
+
+		/**
+		 * Helper @beCPG.getOrDefault($range, $index, $defaultValue)
+		 *
+		 * @param <T>
+		 * @param range
+		 * @param index
+		 * @param defaultValue
+		 * @return defaultValue id list index doesn't exists
+		 */
+		public <T> T getOrDefault(List<T> range, int index, T defaultValue) {
+			if ((range != null) && !range.isEmpty() && (index >= 0) && (index < range.size())) {
+				return range.get(index);
+			}
+			return defaultValue;
+		}
+
+		/**
+		 * Helper  @beCPG.children($parent, $compositeList)
+		 *
 		 * @param <T>
 		 * @param parent
 		 * @param compositeList
 		 * @return children of parent item
 		 */
 		public <T> Collection<CompositeDataItem<T>> children(CompositeDataItem<T> parent, Collection<CompositeDataItem<T>> compositeList) {
-				List<CompositeDataItem<T>> ret = new ArrayList<>();
-				for (CompositeDataItem<T> item : compositeList) {
-					if (item.getParent() != null) {
-						if (parent.equals(item.getParent())) {
-							ret.add(item);
-						}
+			List<CompositeDataItem<T>> ret = new ArrayList<>();
+			for (CompositeDataItem<T> item : compositeList) {
+				if (item.getParent() != null) {
+					if (parent.equals(item.getParent())) {
+						ret.add(item);
 					}
 				}
-				return ret;
 			}
-			
-		
-		
+			return ret;
+		}
+
 		/**
-		 * @beCPG.formatNumber($number)
+		 * Helper @beCPG.formatNumber($number)
 		 *
-		 *                              @param number
+		 * @param number
 		 * @return standard becpg number format
 		 */
 		public String formatNumber(Number number) {
@@ -556,9 +758,9 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * @beCPG.formatNumber($number, $format )
+		 * Helper @beCPG.formatNumber($number, $format )
 		 *
-		 *                              Example: @beCPG.formatNumber(10,00005,
+		 *    Example: @beCPG.formatNumber(10,00005,
 		 *                              "0.##")
 		 *
 		 * @param number
@@ -570,9 +772,9 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * @beCPG.formatDate($date )
+		 * Helper  @beCPG.formatDate($date )
 		 *
-		 *                         Example: @beCPG.formatNumber(10,00005,
+		 *  Example: @beCPG.formatNumber(10,00005,
 		 *                         "0.##")
 		 *
 		 * @param date
@@ -585,7 +787,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		/**
 		 * @beCPG.formatDate($date, $format )
 		 *
-		 *                          Example: @beCPG.formatDate(new
+		 *  Example: @beCPG.formatDate(new
 		 *                          java.util.Date(),"dd/mm/YYYY" )
 		 *
 		 * @param date
@@ -597,106 +799,193 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 
 		/**
 		 *
-		 * @beCPG.copy($fromNodeRef, $propQNames, $listQNames)
+		 * Helper  @beCPG.copy($fromNodeRef, $propQNames, $listQNames)
 		 *
-		 *                           Copy properties from a entity to
-		 *                           current entity
+		 *  Copy properties from an entity to current
+		 *  entity
 		 *
-		 *                           Example: @beCPG.copy(compoListView.compoList[0].product,{"bcpg:suppliers","bcpg:legalName"},{"bcpg:costList"});
+		 *  Example: @beCPG.copy(compoListView.compoList[0].product,{"bcpg:suppliers","bcpg:legalName"},{"bcpg:costList"});
 		 *
 		 * @param fromNodeRef
 		 * @param propQNames
 		 * @param listQNames
 		 */
 		public void copy(NodeRef fromNodeRef, Collection<String> propQNames, Collection<String> listQNames) {
+			if (fromNodeRef != null) {
+				copy(alfrescoRepository.findOne(fromNodeRef), propQNames, listQNames);
+			}
+		}
+
+		public void copy(RepositoryEntity from, Collection<String> propQNames, Collection<String> listQNames) {
+			copy(entity, from, propQNames, listQNames);
+		}
+
+
+		@SuppressWarnings({ "rawtypes", "unchecked" })
+		public void copy(RepositoryEntity to, RepositoryEntity from, Collection<String> propQNames, Collection<String> listQNames) {
 			try {
 				Set<QName> treatedProp = new HashSet<>();
 				Set<QName> treatedList = new HashSet<>();
 
-				RepositoryEntity from = alfrescoRepository.findOne(fromNodeRef);
-
 				if (from != null) {
-					BeanWrapper beanWrapper = new BeanWrapperImpl(entity);
+					BeanWrapper beanWrapper = new BeanWrapperImpl(to);
 
 					for (final PropertyDescriptor pd : beanWrapper.getPropertyDescriptors()) {
 
 						Method readMethod = pd.getReadMethod();
 
 						if (readMethod != null) {
-							if (readMethod.isAnnotationPresent(AlfProp.class)) {
+							if ((readMethod.isAnnotationPresent(AlfProp.class) || readMethod.isAnnotationPresent(AlfMultiAssoc.class)
+									|| readMethod.isAnnotationPresent(AlfSingleAssoc.class)) ) {
 								QName qname = repositoryEntityDefReader.readQName(readMethod);
 								for (String propQName2 : propQNames) {
 									QName propQName = QName.createQName(propQName2, namespaceService);
 									if (qname.equals(propQName)) {
-										logger.debug("Setting property : " + propQName + " from repository entity");
+										logger.debug("Setting property/assoc : " + propQName + " from repository entity: "+  pd.getName());
 
-										PropertyUtils.setProperty(from, pd.getName(), PropertyUtils.getProperty(from, pd.getName()));
-
-										treatedProp.add(propQName);
+										PropertyUtils.setProperty(to, pd.getName(), PropertyUtils.getProperty(from, pd.getName()));
+										if(!readMethod.isAnnotationPresent(AlfReadOnly.class)) {
+											treatedProp.add(propQName);
+										}
 									}
 
 								}
+							} else if (readMethod.isAnnotationPresent(DataList.class)) {
+								QName qname = repositoryEntityDefReader.readQName(readMethod);
 
 								for (String listQName1 : listQNames) {
 									QName listQName = QName.createQName(listQName1, namespaceService);
 									if (qname.equals(listQName)) {
 										logger.debug("Setting list : " + listQName + " from repository entity");
-										PropertyUtils.setProperty(from, pd.getName(), PropertyUtils.getProperty(from, pd.getName()));
+
+										Object data = PropertyUtils.getProperty(from, pd.getName());
+										Object oldData = PropertyUtils.getProperty(to, pd.getName());
+
+										if(data instanceof LazyLoadingDataList) {
+
+											if(oldData instanceof LazyLoadingDataList) {
+												((LazyLoadingDataList) oldData).clear();
+												((LazyLoadingDataList) oldData).addAll(((LazyLoadingDataList) data).copy());
+											} else {
+												PropertyUtils.setProperty(to, pd.getName(),((LazyLoadingDataList) data).copy() );
+											}
+										} else if(data instanceof Collection){
+											if(oldData instanceof LazyLoadingDataList) {
+												((LazyLoadingDataList) oldData).clear();
+												((LazyLoadingDataList) oldData).addAll((Collection)data);
+											} else {
+												PropertyUtils.setProperty(to, pd.getName(),data );
+											}
+										}
 										treatedList.add(listQName);
 									}
 
 								}
+							} else if (readMethod.isAnnotationPresent(DataListView.class)) {
+								QName qname = repositoryEntityDefReader.readQName(readMethod);
 
-							}
-						}
-					}
+								for (String listQName1 : listQNames) {
+									QName listQName = QName.createQName(listQName1, namespaceService);
+									if (qname.equals(listQName)) {
 
-					Map<QName, Serializable> extraPropToCopy = nodeService.getProperties(from.getNodeRef());
+										BaseObject fromView = (BaseObject) PropertyUtils.getProperty(from, pd.getName());
+										BaseObject toView = (BaseObject) PropertyUtils.getProperty(to, pd.getName());
 
-					for (String propQName2 : propQNames) {
-						QName propQName = QName.createQName(propQName2, namespaceService);
-						if (!treatedProp.contains(propQName)) {
-							PropertyDefinition propertyDef = entityDictionaryService.getProperty(propQName);
-							if (propertyDef != null) {
-								if (extraPropToCopy.containsKey(propQName)) {
-									logger.debug("Setting property : " + propQName + " from nodeRef");
-									nodeService.setProperty(entity.getNodeRef(), propQName, extraPropToCopy.get(propQName));
-								} else {
-									logger.debug("Removing property : " + propQName);
-									nodeService.removeProperty(entity.getNodeRef(), propQName);
+
+										for (final PropertyDescriptor pdView : (new BeanWrapperImpl(toView)).getPropertyDescriptors()) {
+
+											Method viewReadMethod = pdView.getReadMethod();
+
+											if (viewReadMethod.isAnnotationPresent(DataList.class)) {
+												QName viewQname = repositoryEntityDefReader.readQName(viewReadMethod);
+												if (viewQname.equals(listQName)) {
+
+													logger.debug("Setting view : " + listQName + " from repository entity");
+
+													Object data = PropertyUtils.getProperty(fromView, pdView.getName());
+													Object oldData = PropertyUtils.getProperty(toView, pdView.getName());
+
+													if(data instanceof LazyLoadingDataList) {
+
+														if(oldData instanceof LazyLoadingDataList) {
+															((LazyLoadingDataList) oldData).clear();
+															((LazyLoadingDataList) oldData).addAll(((LazyLoadingDataList) data).copy());
+														} else {
+															PropertyUtils.setProperty(toView, pdView.getName(),((LazyLoadingDataList) data).copy() );
+														}
+													} else if(data instanceof Collection){
+														if(oldData instanceof LazyLoadingDataList) {
+															((LazyLoadingDataList) oldData).clear();
+															((LazyLoadingDataList) oldData).addAll((Collection)data);
+														} else {
+															PropertyUtils.setProperty(toView, pdView.getName(),data );
+														}
+													}
+
+
+													treatedList.add(listQName);
+												}
+
+											}
+
+										}
+
+									}
+
 								}
-
-							} else {
-								logger.debug("Setting association : " + propQName + " from nodeRef");
-								associationService.update(entity.getNodeRef(), propQName,
-										associationService.getTargetAssocs(from.getNodeRef(), propQName));
 							}
-							treatedProp.add(propQName);
+						}
+					}
+					if (to.getNodeRef() != null) {
+
+						Map<QName, Serializable> extraPropToCopy = nodeService.getProperties(from.getNodeRef());
+
+						for (String propQName2 : propQNames) {
+							QName propQName = QName.createQName(propQName2, namespaceService);
+							if (!treatedProp.contains(propQName)) {
+								PropertyDefinition propertyDef = entityDictionaryService.getProperty(propQName);
+								if (propertyDef != null) {
+									if (extraPropToCopy.containsKey(propQName)) {
+										logger.debug("Setting property : " + propQName + " from nodeRef");
+										nodeService.setProperty(to.getNodeRef(), propQName, extraPropToCopy.get(propQName));
+									} else {
+										logger.debug("Removing property : " + propQName);
+										nodeService.removeProperty(to.getNodeRef(), propQName);
+									}
+
+								} else {
+									logger.debug("Setting association : " + propQName + " from nodeRef");
+									associationService.update(to.getNodeRef(), propQName,
+											associationService.getTargetAssocs(from.getNodeRef(), propQName));
+								}
+								treatedProp.add(propQName);
+
+							}
 
 						}
 
-					}
+						NodeRef listContainerNodeRef = entityListDAO.getListContainer(from.getNodeRef());
 
-					NodeRef listContainerNodeRef = entityListDAO.getListContainer(from.getNodeRef());
+						for (String listQName2 : listQNames) {
+							QName listQName = QName.createQName(listQName2, namespaceService);
 
-					for (String listQName2 : listQNames) {
-						QName listQName = QName.createQName(listQName2, namespaceService);
+							if (!treatedList.contains(listQName)) {
+								logger.debug("Copy list : " + listQName + " from nodeRef");
+								entityListDAO.copyDataList(entityListDAO.getList(listContainerNodeRef, listQName), to.getNodeRef(), true);
 
-						if (!treatedList.contains(listQName)) {
-							logger.debug("Copy list : " + listQName + " from nodeRef");
-							entityListDAO.copyDataList(entityListDAO.getList(listContainerNodeRef, listQName), entity.getNodeRef(), true);
-
-							treatedList.add(listQName);
+								treatedList.add(listQName);
+							}
 						}
 					}
 				}
-			} catch (ConcurrencyFailureException e) {
-				throw e;
-			} catch (Exception e) {
+
+			} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
 				logger.error(e, e);
 			}
 		}
 
 	}
+
+
 
 }

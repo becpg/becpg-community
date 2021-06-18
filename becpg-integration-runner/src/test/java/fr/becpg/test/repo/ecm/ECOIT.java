@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -591,7 +591,9 @@ public class ECOIT extends AbstractFinishedProductTest {
 			return null;
 
 		}, false, true);
-
+		
+		waitForSolr();
+		
 		logger.info("APTER");
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -669,6 +671,8 @@ public class ECOIT extends AbstractFinishedProductTest {
 
 		}, false, true);
 
+		waitForSolr();
+		
 		logger.info("APTER 2");
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 

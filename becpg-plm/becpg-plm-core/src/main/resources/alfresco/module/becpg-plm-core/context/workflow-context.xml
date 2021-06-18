@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright (C) 2010-2020 beCPG. 
+  Copyright (C) 2010-2021 beCPG. 
    
   This file is part of beCPG 
    
@@ -93,7 +93,7 @@
 	<bean id="ValidateProduct" parent="baseJavaDelegate"
 		class="fr.becpg.repo.workflow.activiti.product.ValidateProduct">
 		<property name="nodeService" ref="nodeService" />
-		<property name="dictionaryService" ref="dictionaryService" />
+		<property name="dictionaryService" ref="cachedDictionaryService" />
 	</bean>
 
 </beans>

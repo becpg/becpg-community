@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -216,27 +216,27 @@ public class FormulationPackMaterialIT extends PLMBaseTestCase {
 			properties.put(BeCPGModel.PROP_LV_VALUE, "Alluminium");
 			packMaterial1NodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_VALUE)),
-					BeCPGModel.TYPE_LIST_VALUE, properties).getChildRef();
+					PackModel.TYPE_PACKAGING_MATERIAL, properties).getChildRef();
 			properties.clear();
 			properties.put(BeCPGModel.PROP_LV_VALUE, "Carton");
 			packMaterial2NodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_VALUE)),
-					BeCPGModel.TYPE_LIST_VALUE, properties).getChildRef();
+					PackModel.TYPE_PACKAGING_MATERIAL, properties).getChildRef();
 			properties.clear();
 			properties.put(BeCPGModel.PROP_LV_VALUE, "Fer");
 			packMaterial3NodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_VALUE)),
-					BeCPGModel.TYPE_LIST_VALUE, properties).getChildRef();
+					PackModel.TYPE_PACKAGING_MATERIAL, properties).getChildRef();
 			properties.clear();
 			properties.put(BeCPGModel.PROP_LV_VALUE, "Plastique");
 			packMaterial4NodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_VALUE)),
-					BeCPGModel.TYPE_LIST_VALUE, properties).getChildRef();
+					PackModel.TYPE_PACKAGING_MATERIAL, properties).getChildRef();
 			properties.clear();
 			properties.put(BeCPGModel.PROP_LV_VALUE, "Verre");
 			packMaterial5NodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_VALUE)),
-					BeCPGModel.TYPE_LIST_VALUE, properties).getChildRef();
+					PackModel.TYPE_PACKAGING_MATERIAL, properties).getChildRef();
 
 			/*-- Creation of CompoList Elements --*/
 
@@ -252,8 +252,8 @@ public class FormulationPackMaterialIT extends PLMBaseTestCase {
 			PF1.setUnit(ProductUnit.g);
 
 			List<PackMaterialListDataItem> packMaterial = new ArrayList<>();
-			packMaterial.add(new PackMaterialListDataItem(packMaterial1NodeRef, 10d));
-			packMaterial.add(new PackMaterialListDataItem(packMaterial2NodeRef, 20d));
+			packMaterial.add(new PackMaterialListDataItem(packMaterial1NodeRef, 10d, PackagingLevel.Primary));
+			packMaterial.add(new PackMaterialListDataItem(packMaterial2NodeRef, 20d, PackagingLevel.Primary));
 			PF1.setPackMaterialList(packMaterial);
 			PF1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), PF1).getNodeRef();
 
@@ -269,8 +269,8 @@ public class FormulationPackMaterialIT extends PLMBaseTestCase {
 			SF1.setUnit(ProductUnit.g);
 
 			packMaterial = new ArrayList<>();
-			packMaterial.add(new PackMaterialListDataItem(packMaterial3NodeRef, 30d));
-			packMaterial.add(new PackMaterialListDataItem(packMaterial4NodeRef, 40d));
+			packMaterial.add(new PackMaterialListDataItem(packMaterial3NodeRef, 30d, PackagingLevel.Primary));
+			packMaterial.add(new PackMaterialListDataItem(packMaterial4NodeRef, 40d, PackagingLevel.Primary));
 			SF1.setPackMaterialList(packMaterial);
 			SF1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), SF1).getNodeRef();
 
@@ -286,7 +286,7 @@ public class FormulationPackMaterialIT extends PLMBaseTestCase {
 			rawMaterial1.setUnit(ProductUnit.g);
 
 			packMaterial = new ArrayList<>();
-			packMaterial.add(new PackMaterialListDataItem(packMaterial5NodeRef, 50d));
+			packMaterial.add(new PackMaterialListDataItem(packMaterial5NodeRef, 50d, PackagingLevel.Primary));
 			rawMaterial1.setPackMaterialList(packMaterial);
 			rawMaterial1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial1).getNodeRef();
 

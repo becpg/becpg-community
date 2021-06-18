@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG. 
+ * Copyright (C) 2010-2021 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -26,7 +26,8 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.QNamePattern;
 
-import fr.becpg.repo.helper.impl.AssociationServiceImpl.EntitySourceAssoc;
+import fr.becpg.repo.helper.impl.AssociationCriteriaFilter;
+import fr.becpg.repo.helper.impl.EntitySourceAssoc;
 
 /**
  * <p>AssociationService interface.</p>
@@ -36,15 +37,7 @@ import fr.becpg.repo.helper.impl.AssociationServiceImpl.EntitySourceAssoc;
  */
 public interface AssociationService {
 
-	/**
-	 * <p>update.</p>
-	 *
-	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param qName a {@link org.alfresco.service.namespace.QName} object.
-	 * @param assocNodeRefs a {@link java.util.List} object.
-	 * @param resetCache a boolean.
-	 */
-	void update(NodeRef nodeRef, QName qName, List<NodeRef> assocNodeRefs, boolean resetCache);
+
 	/**
 	 * <p>update.</p>
 	 *
@@ -69,24 +62,6 @@ public interface AssociationService {
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
 	NodeRef getTargetAssoc(NodeRef nodeRef, QName qName);
-	/**
-	 * <p>getTargetAssoc.</p>
-	 *
-	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param qName a {@link org.alfresco.service.namespace.QName} object.
-	 * @param fromCache a boolean.
-	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 */
-	NodeRef getTargetAssoc(NodeRef nodeRef, QName qName, boolean fromCache);
-	/**
-	 * <p>getTargetAssocs.</p>
-	 *
-	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param qName a {@link org.alfresco.service.namespace.QName} object.
-	 * @param fromCache a boolean.
-	 * @return a {@link java.util.List} object.
-	 */
-	List<NodeRef> getTargetAssocs(NodeRef nodeRef, QName qName, boolean fromCache);
 	/**
 	 * <p>getTargetAssocs.</p>
 	 *
@@ -146,6 +121,11 @@ public interface AssociationService {
 	 * @param isOrOperator a boolean.
 	 * @return a {@link java.util.List} object.
 	 */
-	List<EntitySourceAssoc> getEntitySourceAssocs(List<NodeRef> nodeRefs, QName assocQName, boolean isOrOperator);
+	List<EntitySourceAssoc> getEntitySourceAssocs(List<NodeRef> nodeRefs, QName assocQName, boolean isOrOperator, List<AssociationCriteriaFilter> criteriaFilters);
+	
+	
+	void removeChildCachedAssoc(NodeRef nodeRef, QName qName);
+	
+	void removeAllCacheAssocs(NodeRef nodeRef);
 	
 }

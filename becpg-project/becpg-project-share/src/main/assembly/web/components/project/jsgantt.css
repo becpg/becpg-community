@@ -174,36 +174,53 @@ td.ggtaskCheckbox {
 	visibility: visible;
 }
 
-.yui-skin-becpg .ggline {
-	background-color: #009dcc;
-	border-top: 1px solid  #009dcc;
-	border-left: 1px solid  #009dcc;
-}
-
 
 .ggtask {
 	background: none repeat scroll 0 0 #FFBC00;
 	border: 1px solid red;
 	height: 7px;
 	color: red;
-	 z-index:5;
 }
+
 
 .ggcomplete {
 	background-color: #FFF3A5;
 	height: 7px;
 	overflow: auto;
 	float: left;
-	z-index: -4;
+}
+
+.gtaskdiv {
+	top:4px;
 }
 
 .gtask {
 	background: none repeat scroll 0 0 #E5ECF5;
 	border: 1px solid #3172D7;
-	border-radius: 5px;
+	border-radius: 0px;
 	height: 13px;
 	opacity: 0.8;
-	z-index:5;
+}
+
+.gtaskplandiv {
+	top:3px;
+	display:none;
+}
+
+.show-target-dates .gtaskplandiv {
+	display:block;
+}
+
+.show-critical .critical {
+	border: 2px solid red !important;
+}
+
+.gtaskplan {
+	background: none repeat scroll 0 0 #E5ECF5;
+	border: 1px solid #3172D7;
+	border-radius: 0px;
+	height: 15px;
+	opacity: 0.5;
 }
 
 .gcaption{
@@ -221,17 +238,10 @@ td.ggtaskCheckbox {
 	
 	height: 13px;
 	overflow: auto;
-	background-image: url("../../themes/default/images/title-button-bg.png"); 
-    background-color: black;
-	z-index: -4;
 	float: left;
-	border-radius: 5px;
-}
-
-.yui-skin-becpg .gcomplete {
-	z-index: 5;
+	border-radius: 0px;
+	border-color: #ccc;
 	background: 
-	  /* On "top" */
 	  repeating-linear-gradient(
 	    45deg,
 	    transparent,
@@ -239,15 +249,14 @@ td.ggtaskCheckbox {
 	    #ccc 10px,
 	    #ccc 20px
 	  ),
-	  /* on "bottom" */
 	  linear-gradient(
 	    to bottom,
 	    #eee,
 	    #999
 	  );
-
 	
 }
+
 
 
 
@@ -310,18 +319,7 @@ div.scroll {
 	margin:2px;
 	height: 11px; 
 	width:11px;	
-	background-image: url("../../themes/default/images/title-button-bg.png");
-}
-
-.yui-skin-becpg .projects div.milestone {
-  height:12px;
-  width:12px;
- 
-}
-.yui-skin-becpg .projects div.completed.milestone {
-
 	background: 
-	  /* On "top" */
 	  repeating-linear-gradient(
 	    45deg,
 	    transparent,
@@ -329,14 +327,14 @@ div.scroll {
 	    #ccc 10px,
 	    #ccc 20px
 	  ),
-	  /* on "bottom" */
 	  linear-gradient(
 	    to bottom,
 	    #eee,
 	    #999
 	  );
-
-	
 }
+
+
+
 
 

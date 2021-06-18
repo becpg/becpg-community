@@ -9,6 +9,7 @@ import org.activiti.engine.delegate.DelegateExecution;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
+import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.repo.workflow.WorkflowModel;
 import org.alfresco.repo.workflow.activiti.ActivitiScriptNode;
 import org.alfresco.repo.workflow.activiti.BaseJavaDelegate;
@@ -20,7 +21,6 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.RegexQNamePattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.dao.ConcurrencyFailureException;
 
 import com.sun.star.lang.NullPointerException;
 
@@ -194,18 +194,21 @@ public class CreateProduct extends BaseJavaDelegate {
 				try {
 					productService.formulate(productNodeRef);
 				} catch (Exception e1) {
+					if (RetryingTransactionHelper.extractRetryCause(e1) != null) {
+						throw e1;
+					}
 					logger.debug(e1, e1); // newly created cannot be formulate
 				}
 
 				// Assoc product to project
 				nodeService.createAssociation(projectNodeRef, productNodeRef, ProjectModel.ASSOC_PROJECT_ENTITY);
 
-			} catch (Exception e2) {
-				if (e2 instanceof ConcurrencyFailureException) {
-					throw (ConcurrencyFailureException) e2;
+			} catch (Exception e) {
+				if (RetryingTransactionHelper.extractRetryCause(e) == null) {
+					logger.error("Failed to create product", e);
 				}
-				logger.error("Failed to create product", e2);
-				throw e2;
+
+				throw e;
 			}
 
 			return null;

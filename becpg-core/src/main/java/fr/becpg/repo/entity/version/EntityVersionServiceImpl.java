@@ -18,6 +18,7 @@ import org.alfresco.repo.node.MLPropertyInterceptor;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.rule.RuntimeRuleService;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.repo.version.Version2Model;
 import org.alfresco.repo.version.VersionBaseModel;
 import org.alfresco.repo.version.common.VersionImpl;
@@ -54,7 +55,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
@@ -85,7 +85,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  *
  * @version $Id: $Id
  */
-@Service("entityVersionService")
+@Service("entityVersionServiceV1")
 public class EntityVersionServiceImpl implements EntityVersionService {
 
 	private static final QName QNAME_ENTITIES_HISTORY = QName.createQName(BeCPGModel.BECPG_URI, RepoConsts.ENTITIES_HISTORY_NAME);
@@ -99,10 +99,14 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 	private static final String EXTENSION_CHARACTER = ".";
 
-	private final static Log logger = LogFactory.getLog(EntityVersionServiceImpl.class);
+	private static final  Log logger = LogFactory.getLog(EntityVersionServiceImpl.class);
 
 	@Autowired
 	private NodeService nodeService;
+
+	@Autowired
+	@Qualifier("mtAwareNodeService")
+	private NodeService dbNodeService;
 
 	@Autowired
 	private CopyService copyService;
@@ -207,6 +211,28 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 	/** {@inheritDoc} */
 	@Override
+	public void updateLastVersionLabel(final NodeRef entityNodeRef, final String versionLabel) {
+
+		// Create first version if needed
+		createInitialVersion(entityNodeRef);
+
+		Version currentVersion = versionService.getCurrentVersion(entityNodeRef);
+		if (currentVersion != null) {
+			NodeRef versionNodeRef = new NodeRef(new StoreRef(StoreRef.PROTOCOL_WORKSPACE, Version2Model.STORE_ID),
+					currentVersion.getFrozenStateNodeRef().getId());
+			dbNodeService.setProperty(versionNodeRef, Version2Model.PROP_QNAME_VERSION_LABEL, versionLabel);
+
+			NodeRef entityVersion = getEntityVersion(currentVersion);
+			if (entityVersion != null) {
+				nodeService.setProperty(entityVersion, BeCPGModel.PROP_VERSION_LABEL, versionLabel);
+			}
+
+			nodeService.setProperty(entityNodeRef, ContentModel.PROP_VERSION_LABEL, versionLabel);
+		}
+	}
+
+	/** {@inheritDoc} */
+	@Override
 	public void cancelCheckOut(final NodeRef origNodeRef, final NodeRef workingCopyNodeRef) {
 
 		AuthenticationUtil.runAsSystem(() -> {
@@ -243,16 +269,17 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 	private NodeRef internalCreateVersionAndCheckin(final NodeRef origNodeRef, final NodeRef workingCopyNodeRef,
 			Map<String, Serializable> versionProperties, boolean createAlfrescoVersion) {
-		StopWatch watch = new StopWatch();
+		StopWatch watch = null;
 
 		if (logger.isDebugEnabled()) {
+			watch = new StopWatch();
 			watch.start();
 			logger.debug("createEntityVersion: " + origNodeRef + " versionProperties: " + versionProperties);
 		}
 
 		try {
 			NodeRef versionHistoryRef = getVersionHistoryNodeRef(origNodeRef);
-			boolean isInitialVersion = versionHistoryRef == null ? true : false;
+			boolean isInitialVersion = (versionHistoryRef == null);
 
 			if (!isInitialVersion && (entityVersionPlugins != null) && !createAlfrescoVersion) {
 				for (EntityVersionPlugin entityVersionPlugin : entityVersionPlugins) {
@@ -326,8 +353,6 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 			});
 
-			// Map<QName, Serializable> versionProperties =
-			// nodeService.getProperties(versionNodeRef);
 			String versionLabel = getVersionLabel(origNodeRef, versionProperties, isInitialVersion, createAlfrescoVersion);
 
 			String name = nodeService.getProperty(origNodeRef, ContentModel.PROP_NAME) + RepoConsts.VERSION_NAME_DELIMITER + versionLabel;
@@ -356,7 +381,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			return versionNodeRef;
 
 		} finally {
-			if (logger.isDebugEnabled() && watch!=null) {
+			if (logger.isDebugEnabled() && (watch != null)) {
 				watch.stop();
 				logger.debug("internalCreateVersionAndCheckin run in  " + watch.getTotalTimeSeconds() + " s");
 			}
@@ -378,7 +403,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 		List<EntityVersion> versions = getAllVersions(origNodeRef);
 
-		if ((versions != null) && (versions.size() > 0)) {
+		if ((versions != null) && (!versions.isEmpty())) {
 
 			int index = 0;
 
@@ -491,7 +516,6 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	@Override
 	public NodeRef createVersion(final NodeRef origNodeRef, Map<String, Serializable> versionProperties) {
 		return internalCreateVersionAndCheckin(origNodeRef, null, versionProperties, true);
-
 	}
 
 	/**
@@ -543,8 +567,8 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 					});
 				}
 			} catch (Exception e) {
-				if (e instanceof ConcurrencyFailureException) {
-					throw (ConcurrencyFailureException) e;
+				if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+					throw e;
 				}
 				logger.error("Failed to get entitysHistory", e);
 			}
@@ -563,6 +587,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			}
 			try {
 				policyBehaviourFilter.disableBehaviour();
+				//TODO bug here disabling behaviour make association cache not working
 				nodeService.addAspect(versionHistoryRef, ContentModel.ASPECT_TEMPORARY, null);
 				nodeService.deleteNode(versionHistoryRef);
 			} finally {
@@ -707,20 +732,18 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		// Look for primary parent
 		NodeRef tmp;
 
-
 		List<NodeRef> ret = new LinkedList<>();
-		if(primaryParentNodeRef!=null) {
+		if (primaryParentNodeRef != null) {
 			do {
 				tmp = associationService.getTargetAssoc(primaryParentNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY);
 				if (tmp != null) {
 					primaryParentNodeRef = tmp;
 				}
 			} while (tmp != null);
-	
-			
+
 			ret.add(primaryParentNodeRef);
 			ret.addAll(getAllChildVersionBranches(primaryParentNodeRef));
-	
+
 			Collections.sort(ret, (o1, o2) -> {
 				Date d1 = (Date) nodeService.getProperty(o1, ContentModel.PROP_CREATED);
 				Date d2 = (Date) nodeService.getProperty(o2, ContentModel.PROP_CREATED);
@@ -868,48 +891,42 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			throw new CheckOutCheckInServiceException(MSG_ERR_NOT_AUTHENTICATED);
 		}
 	}
-	
 
 	/** {@inheritDoc} */
 	@Override
 	public NodeRef mergeBranch(NodeRef branchNodeRef) {
 
-		String versionType = (String)nodeService.getProperty(branchNodeRef,  BeCPGModel.PROP_AUTO_MERGE_VERSIONTYPE);
-		if(versionType == null) {
+		String versionType = (String) nodeService.getProperty(branchNodeRef, BeCPGModel.PROP_AUTO_MERGE_VERSIONTYPE);
+		if (versionType == null) {
 			versionType = VersionType.MINOR.toString();
 		}
-		Boolean impactWused = (Boolean)nodeService.getProperty(branchNodeRef,  BeCPGModel.PROP_AUTO_MERGE_IMPACTWUSED);
-		if(impactWused == null) {
+		Boolean impactWused = (Boolean) nodeService.getProperty(branchNodeRef, BeCPGModel.PROP_AUTO_MERGE_IMPACTWUSED);
+		if (impactWused == null) {
 			impactWused = false;
 		}
-		String description = (String)nodeService.getProperty(branchNodeRef,  BeCPGModel.PROP_AUTO_MERGE_COMMENTS);
-		if(description == null) {
+		String description = (String) nodeService.getProperty(branchNodeRef, BeCPGModel.PROP_AUTO_MERGE_COMMENTS);
+		if (description == null) {
 			description = "";
 		}
-		
-		return mergeBranch(branchNodeRef, null
-				, VersionType.valueOf(versionType), description, impactWused);
+
+		return mergeBranch(branchNodeRef, null, VersionType.valueOf(versionType), description, impactWused, false);
 	}
-	
 
 	/** {@inheritDoc} */
 	@Override
 	public NodeRef mergeBranch(NodeRef branchNodeRef, NodeRef branchToNodeRef, VersionType versionType, String description) {
-		return mergeBranch(branchNodeRef, branchToNodeRef, versionType, description, false);
+		return mergeBranch(branchNodeRef, branchToNodeRef, versionType, description, false, false);
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public NodeRef mergeBranch(NodeRef branchNodeRef, NodeRef branchToNodeRef, VersionType versionType, String description, boolean impactWused) {
+	public NodeRef mergeBranch(NodeRef branchNodeRef, NodeRef branchToNodeRef, VersionType versionType, String description, boolean impactWused, boolean rename) {
 
 		if (branchToNodeRef == null) {
 			branchToNodeRef = associationService.getTargetAssoc(branchNodeRef, BeCPGModel.ASSOC_AUTO_MERGE_TO);
 		}
 
-		
-		if (permissionService.hasPermission(branchToNodeRef, BeCPGPermissions.MERGE_ENTITY) == AccessStatus.ALLOWED) {
-		
-			if (branchToNodeRef != null) {
+		if (permissionService.hasPermission(branchToNodeRef, BeCPGPermissions.MERGE_ENTITY) == AccessStatus.ALLOWED && branchToNodeRef != null) {
 
 				StopWatch watch = null;
 
@@ -933,7 +950,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 							policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_ENTITY_BRANCH);
 							policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
 
-							prepareBranchBeforeMerge(branchNodeRef, internalBranchToNodeRef);
+							prepareBranchBeforeMerge(branchNodeRef, internalBranchToNodeRef, rename);
 
 							Map<String, Serializable> properties = new HashMap<>();
 							properties.put(VersionBaseModel.PROP_VERSION_TYPE, versionType);
@@ -964,18 +981,19 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				} finally {
 					MLPropertyInterceptor.setMLAware(mlAware);
 
-					if (logger.isDebugEnabled() && watch!=null) {
+					if (logger.isDebugEnabled() && (watch != null)) {
 						watch.stop();
 						logger.debug("createBranch run in  " + watch.getTotalTimeSeconds() + " seconds ");
 
 					}
 				}
-			}
+			
 		}
 		return null;
 	}
 
-	private void prepareBranchBeforeMerge(NodeRef branchNodeRef, NodeRef branchToNodeRef) {
+	@SuppressWarnings("deprecation")
+	private void prepareBranchBeforeMerge(NodeRef branchNodeRef, NodeRef branchToNodeRef, boolean rename) {
 		if (nodeService.hasAspect(branchToNodeRef, ContentModel.ASPECT_CHECKED_OUT)) {
 			throw new CheckOutCheckInServiceException(MSG_ALREADY_CHECKEDOUT);
 		}
@@ -1016,6 +1034,10 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				mergeComments(branchNodeRef, branchToNodeRef);
 
 				String copyName = (String) this.nodeService.getProperty(branchToNodeRef, ContentModel.PROP_NAME);
+				if(rename) {
+					copyName = (String) this.nodeService.getProperty(branchNodeRef, ContentModel.PROP_NAME);
+				}
+					
 				String workingCopyLabel = I18NUtil.getMessage(MSG_WORKING_COPY_LABEL);
 				copyName = createWorkingCopyName(copyName, workingCopyLabel);
 
@@ -1042,17 +1064,17 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				for (NodeRef sourceNodeRef : sources) {
 					policyBehaviourFilter.disableBehaviour(sourceNodeRef, ContentModel.ASPECT_AUDITABLE);
 					try {
-						//nodeService.removeAspect(sourceNodeRef, BeCPGModel.ASPECT_ENTITY_BRANCH);
+						// nodeService.removeAspect(sourceNodeRef,
+						// BeCPGModel.ASPECT_ENTITY_BRANCH);
 						associationService.update(sourceNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY, branchToNodeRef);
-						
+
 						if (nodeService.hasAspect(branchToNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
 							nodeService.setProperty(sourceNodeRef, BeCPGModel.PROP_BRANCH_FROM_VERSION_LABEL,
 									nodeService.getProperty(branchToNodeRef, ContentModel.PROP_VERSION_LABEL));
 						} else {
 							nodeService.setProperty(sourceNodeRef, BeCPGModel.PROP_BRANCH_FROM_VERSION_LABEL, RepoConsts.INITIAL_VERSION);
 						}
-						
-						
+
 					} finally {
 						policyBehaviourFilter.enableBehaviour(sourceNodeRef, ContentModel.ASPECT_AUDITABLE);
 					}
@@ -1162,7 +1184,8 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				// Only for transaction do not reenable it
 				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 				policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
-				policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_ENTITY_BRANCH);
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_ENTITY_BRANCH);	
+				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 
 				String newEntityName = repoService.getAvailableName(parentRef,
 						(String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME), true);
@@ -1173,6 +1196,9 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				} else {
 					nodeService.setProperty(branchNodeRef, BeCPGModel.PROP_BRANCH_FROM_VERSION_LABEL, RepoConsts.INITIAL_VERSION);
 				}
+				nodeService.setProperty(branchNodeRef, ContentModel.PROP_CREATED, new Date());
+				nodeService.setProperty(branchNodeRef, ContentModel.PROP_MODIFIED, new Date());
+				nodeService.setProperty(branchNodeRef, ContentModel.PROP_MODIFIER, AuthenticationUtil.getFullyAuthenticatedUser());
 				nodeService.setAssociations(branchNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY, Collections.singletonList(entityNodeRef));
 				return branchNodeRef;
 
@@ -1181,7 +1207,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		} finally {
 			MLPropertyInterceptor.setMLAware(mlAware);
 
-			if (logger.isDebugEnabled()) {
+			if (logger.isDebugEnabled() && (watch != null)) {
 				watch.stop();
 				logger.debug("createBranch run in  " + watch.getTotalTimeSeconds() + " seconds ");
 
@@ -1241,5 +1267,19 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		return name;
 	}
 
+	@Override
+	public boolean isVersion(NodeRef entity1) {
+		return false;
+	}
+
+	@Override
+	public NodeRef extractVersion(NodeRef entity1) {
+		return null;
+	}
+
+	@Override
+	public boolean isV2Service() {
+		return false;
+	}
 
 }

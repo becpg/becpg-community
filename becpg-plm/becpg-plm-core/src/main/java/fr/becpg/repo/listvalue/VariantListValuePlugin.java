@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG. 
+ * Copyright (C) 2010-2021 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -60,25 +60,42 @@ public class VariantListValuePlugin extends EntityListValuePlugin {
 	/** {@inheritDoc} */
 	@Override
 	public ListValuePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
-		NodeRef entityNodeRef = new NodeRef((String) props.get(ListValueService.PROP_NODEREF));
+		
+		
+		NodeRef entityNodeRef = null;
+		String entityNodeRefStr = (String) props.get(ListValueService.PROP_NODEREF);
+		if(entityNodeRefStr !=null && NodeRef.isNodeRef(entityNodeRefStr)) {
+			entityNodeRef = new NodeRef(entityNodeRefStr);
+		}
 		
 		@SuppressWarnings("unchecked")
 		Map<String, String> extra =  (Map<String, String>) props.get(ListValueService.EXTRA_PARAM);
-		if(extra != null && !extra.isEmpty()){
+		if((entityNodeRef == null || !nodeService.exists(entityNodeRef)) && extra != null && !extra.isEmpty()){
 			NodeRef itemRef =  new NodeRef (extra.get("itemId"));
 			entityNodeRef = getParentEntity(itemRef);
 		}
 		if(logger.isDebugEnabled()){
 			logger.debug("VariantListValuePlugin sourceType: " + sourceType + " - entityNodeRef: " + entityNodeRef);
 		}
-
-		List<NodeRef> ret = associationService.getChildAssocs(entityNodeRef, BeCPGModel.ASSOC_VARIANTS);
-	
+		List<NodeRef> ret = new ArrayList<>(associationService.getChildAssocs(entityNodeRef, BeCPGModel.ASSOC_VARIANTS));
+		NodeRef entityTplNodeRef = associationService.getTargetAssoc(entityNodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF);
+		if (entityTplNodeRef != null) {
+			List<NodeRef> entityTplVariants = associationService.getChildAssocs(entityTplNodeRef, BeCPGModel.ASSOC_VARIANTS);
+			if (entityTplVariants != null && !entityTplVariants.isEmpty()) {
+				ret.addAll(entityTplVariants);
+			}
+		}
+			
 		return new ListValuePage(ret, pageNum, pageSize, new VariantListValueExtractor());
 
 	}
 	
 	private NodeRef getParentEntity(NodeRef itemRef){
+		
+		if(dictionaryService.isSubClass(nodeService.getType(itemRef), PLMModel.TYPE_PRODUCT)) {
+			return itemRef;
+		}
+	
 		ChildAssociationRef childAssociationRef = nodeService.getPrimaryParent(itemRef);
 		NodeRef parent = childAssociationRef.getParentRef();
 

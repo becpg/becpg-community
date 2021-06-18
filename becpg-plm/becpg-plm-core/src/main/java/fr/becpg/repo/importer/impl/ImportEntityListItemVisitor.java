@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG. 
+ * Copyright (C) 2010-2021 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -62,7 +62,7 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 	private static final Log logger = LogFactory.getLog(ImportEntityListItemVisitor.class);
 
 	private FileFolderService fileFolderService;
-
+	
 	/**
 	 * <p>Setter for the field <code>fileFolderService</code>.</p>
 	 *
@@ -295,7 +295,15 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 		
 		NodeRef entityNodeRef = importContext.getEntityNodeRef();
 		if (entityNodeRef != null && value != null && !value.isEmpty()) {
-			List<NodeRef> variants = associationService.getChildAssocs(entityNodeRef, BeCPGModel.ASSOC_VARIANTS);
+			List<NodeRef> variants = new ArrayList<NodeRef>(associationService.getChildAssocs(entityNodeRef, BeCPGModel.ASSOC_VARIANTS));
+			NodeRef entityTplNodeRef = associationService.getTargetAssoc(entityNodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF);
+			if (entityTplNodeRef != null) {
+				List<NodeRef> entityTplVariants = associationService.getChildAssocs(entityTplNodeRef, BeCPGModel.ASSOC_VARIANTS);
+				if (entityTplVariants != null && !entityTplVariants.isEmpty()) {
+					variants.addAll(entityTplVariants);
+				}
+			}
+			
 			boolean isDefault = false;
 			String name = value;
 			if (value.contains("|")) {

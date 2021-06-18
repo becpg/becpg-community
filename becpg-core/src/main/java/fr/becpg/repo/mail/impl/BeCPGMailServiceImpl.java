@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -194,7 +194,7 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 		_logger.debug("Finding template named " + templateName + " in folder " + folderNR);
 		NodeRef templateNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(folderNR, templateName);
 		if (templateNodeRef == null) {
-			throw new RuntimeException("Template " + templateName + " not found in folder");
+			throw new IllegalStateException("Template " + templateName + " not found in folder");
 		}
 
 		return templateNodeRef;
@@ -210,7 +210,7 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 	public void sendMail(List<NodeRef> recipientNodeRefs, String subject, String mailTemplate, Map<String, Object> templateArgs, boolean sendToSelf) {
 
 		NodeRef templateNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(), mailTemplate);
-		_logger.debug("emails to receive email: " + recipientNodeRefs);
+	
 		Set<String> authorities = new HashSet<>();
 		for (NodeRef recipientNodeRef : recipientNodeRefs) {
 			String authorityName;
@@ -220,19 +220,25 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 				authorities.addAll(extractAuthoritiesFromGroup(recipientNodeRef, sendToSelf));
 			} else {
 				authorityName = (String) nodeService.getProperty(recipientNodeRef, ContentModel.PROP_USERNAME);
-				if (_logger.isDebugEnabled()) {
-					_logger.debug("authorityName : " + authorityName);
-				}
+				
 				if (!authorityName.equals(AuthenticationUtil.getFullyAuthenticatedUser()) || (sendToSelf)) {
+					if (_logger.isDebugEnabled()) {
+						_logger.debug("Adding mail authorityName : " + authorityName);
+					}
 					authorities.add(authorityName);
+				} else if(_logger.isDebugEnabled()){
+					_logger.debug("Skipping self : " + authorityName);
 				}
+					
 			}
 
 		}
 
-		if(authorities!=null && !authorities.isEmpty()) {
-			_logger.debug("TemplateNodeRef: " + templateNodeRef);
-			_logger.debug("TemplateArgs: " + templateArgs);
+		if(!authorities.isEmpty()) {
+			if(_logger.isTraceEnabled()) {
+				_logger.trace("TemplateNodeRef: " + templateNodeRef);
+				_logger.trace("TemplateArgs: " + templateArgs);
+			}
 	
 			Action mailAction = actionService.createAction(MailActionExecuter.NAME);
 			mailAction.setParameterValue(MailActionExecuter.PARAM_SUBJECT, subject);
@@ -317,7 +323,7 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 			NodeRef base = nodeRefs.get(0);
 			return fileFolderService.getLocalizedSibling(base);
 		} else {
-			throw new RuntimeException("Cannot find the email template folder !");
+			throw new IllegalStateException("Cannot find the email template folder !");
 		}
 	}
 }

@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!--
-  Copyright (C) 2010-2020 beCPG. 
+  Copyright (C) 2010-2021 beCPG. 
    
   This file is part of beCPG 
    
@@ -27,7 +27,6 @@
 		<property name="alfrescoRepository" ref="alfrescoRepository" />
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="entityTplService" ref="entityTplService" />
-		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
 		<property name="repositoryEntityDefReader" ref="repositoryEntityDefReader" />
 		<property name="namespaceService" ref="namespaceService" />
 		<property name="sampleIdPattern" value="${beCPG.quality.sampleId.format}"></property>
@@ -55,4 +54,19 @@
     	<property name="autoNumService" ref="autoNumService" />
     	<property name="entityService" ref="entityService"/>
     </bean>    
+    
+    <!--  batch -->
+	<bean id="batchFormulationChain" class="fr.becpg.repo.formulation.FormulationChain" init-method="init">
+		<property name="handlers">
+			<list>
+				<bean class="fr.becpg.repo.quality.formulation.BatchFormulationHandler">
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
+				</bean>
+			</list>
+		</property>
+		<property name="formulationService" ref="formulationService" />
+		<property name="contextClass" value="fr.becpg.repo.quality.data.BatchData" />
+	</bean>
+	
+    
 </beans>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  * 
  * This file is part of beCPG
  * 
@@ -28,9 +28,12 @@ if (beCPG.module.EntityDataGridRenderers) {
 			var url = beCPG.util.entityURL(data.siteId, data.value), version = "";
 			var toogleGroupButton = null;
 			var padding = 0;
+			var tr = scope.widgets.dataTable.getTrEl(elCell);
 
 			if (oRecord.getData("itemData")["prop_bcpg_depthLevel"] && oRecord.getData("itemData")["prop_bcpg_depthLevel"].value) {
 				 padding = (oRecord.getData("itemData")["prop_bcpg_depthLevel"].value - 1) * 25;
+			
+				Dom.addClass( tr , "mtl-level-"+oRecord.getData("itemData")["prop_bcpg_depthLevel"].value);
 			}
 			
 			if (label == "mpm:plProduct" || label == "bcpg:compoListProduct" || label == "bcpg:packagingListProduct" || label == "mpm:plResource") {
@@ -53,8 +56,12 @@ if (beCPG.module.EntityDataGridRenderers) {
 					toogleGroupButton = '<div id="group_'+( oRecord.getData("itemData")["open"]?"expanded":"collapsed")+'_'+ oRecord.getData("nodeRef")+'" style="margin-left:' + padding
 							+ 'px;" class="onCollapsedAndExpanded" ><a href="#" class="'+scope.id + '-action-link"><span class="gicon ggroup-'
 							+( oRecord.getData("itemData")["open"]?"expanded":"collapsed")+'"></span></a></div>';
+					Dom.addClass( tr, "mtl-"+( oRecord.getData("itemData")["open"]?"expanded":"collapsed"));		
+							
 				} else if( true === oRecord.getData("itemData")["isLeaf"] ){
 					padding +=25;
+					
+					Dom.addClass( tr, "mtl-leaf");
 				}
 			}
 			
@@ -79,7 +86,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 		renderer : function(oRecord, data, label, scope) {
 			if (data.value) {
 				return '<span class="red">' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
-			}
+			} 
 			return Alfresco.util.encodeHTML(data.displayValue);
 		}
 
@@ -165,7 +172,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 	});
 
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-		propertyName : [ "qa:slControlPoint" ],
+		propertyName : [ "qa:slControlPoint", "qa:clControlPoint" ],
 		renderer : function(oRecord, data, label, scope) {
 			var url = beCPG.util.entityURL(data.siteId, data.value);
 			return '<span class="controlPoint"><a href="' + url + '">' + Alfresco.util.encodeHTML(data.displayValue) + '</a></span>';
@@ -287,7 +294,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 	
 	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-      propertyName : "bcpg:nutListValue",
+      propertyName : ["bcpg:nutListValue","bcpg:nutListMini","bcpg:nutListMaxi"],
       renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
           var ret = "";
           
@@ -314,7 +321,16 @@ if (beCPG.module.EntityDataGridRenderers) {
         	  ret+=data.value+" "+unit;
           }
           
-          var formulatedValue = oRecord.getData("itemData")["prop_bcpg_nutListFormulatedValue"];
+          var key ="prop_bcpg_nutListFormulatedValue";
+
+		if(oColumn.field == "prop_bcpg_nutListMini"){
+			key = "prop_bcpg_nutListFormulatedMini";
+		} else if(oColumn.field == "prop_bcpg_nutListMaxi"){
+			key = "prop_bcpg_nutListFormulatedMaxi";
+		}
+
+          
+          var formulatedValue = oRecord.getData("itemData")[key];
           if(formulatedValue!=null && formulatedValue.value!=null ){
               if(ret.length>0){
                   ret+= '&nbsp;&nbsp;(' + exp(formulatedValue.value) + ')';
@@ -327,9 +343,8 @@ if (beCPG.module.EntityDataGridRenderers) {
       }
 
   });
-	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-      propertyName : ["bcpg:nutListMini", "bcpg:nutListMaxi", "bcpg:nutListValuePerServing"],
+      propertyName : ["bcpg:nutListValuePerServing"],
       renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
       	if(data.value != null){
       		return Alfresco.util.encodeHTML(beCPG.util.sigFigs(data.value,3).toLocaleString());
@@ -349,7 +364,7 @@ if (beCPG.module.EntityDataGridRenderers) {
   });
 	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-      propertyName : ["bcpg:allergenListQtyPerc", "bcpg:filQtyPercMaxi", "bcpg:allergenRegulatoryThreshold", "bcpg:ingListQtyPerc"],
+      propertyName : ["bcpg:allergenListQtyPerc", "bcpg:filQtyPercMaxi", "bcpg:allergenRegulatoryThreshold", "bcpg:ingListQtyPerc", "bcpg:ingListQtyPercWithYield"],
       renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
       	if(data.value != null){
       		var unit, qty;
@@ -370,6 +385,7 @@ if (beCPG.module.EntityDataGridRenderers) {
       	return "";
       }
   });
+	
 	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
       propertyName : "bcpg:cost",
@@ -619,6 +635,28 @@ if (beCPG.module.EntityDataGridRenderers) {
 			return null;
 		}
 	});
+	
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+		propertyName : ["bcpg:variantColumn1","bcpg:variantColumn2","bcpg:variantColumn3","bcpg:variantColumn4","bcpg:variantColumn5"],
+		renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
+
+			if (data.value != null){
+				if (oColumn.label == ""){
+					var columnLabel = scope.msg("becpg.forms.variant") + " " +  label.charAt(label.length-1);
+					YAHOO.Bubbling.fire("columnRenamed", {
+						columnId : "prop_" + label.replace(":","_"),
+						label : columnLabel
+					});
+					Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
+				}
+				if (scope.datalistMeta.name == "nutList"){
+					return beCPG.util.sigFigs(data.value,3).toLocaleString();
+				}
+				return data.displayValue;
+			}
+			return "";
+		}
+	});
 
 	YAHOO.Bubbling.on("onDatalistColumnsReady", function(layer, args) {
 		var obj = args[1];
@@ -797,10 +835,12 @@ if (beCPG.module.EntityDataGridRenderers) {
 				
 				if (data.value != null){
 					if(data.displayValue == null || data.displayValue == ""){
-						displayValue = "<i>"+scope.msg("label.empty")+"</i>";
+						displayValue = "<i>"+scope.msg("label.labelling.available")+"</i>";
 					}
-				}else {
-					displayValue = "";
+				} else {
+					if(data.displayValue == null || data.displayValue == ""){
+						displayValue = "<i>"+scope.msg("label.labelling.empty")+"</i>";
+					}	
 				}
 					
 					
@@ -823,8 +863,10 @@ if (beCPG.module.EntityDataGridRenderers) {
 					html += '<span id="' +htmlId+"#"+ nodeRef+"#"+ label+ "#false" + '" class="onShowTranslation"><a href="#" title="'+ scope.msg("label.edit.translation.title") +'" class="labeling-action edit-translation"></a> </span>';
 					html += '<span>&nbsp;</span>';
 				}
-				html += '<span id="' +htmlId+"#"+ nodeRef+"#"+ label+ "#true" + '" class="onShowTranslation"><a href="#" title="'+ scope.msg("label.show.translation.title") +'" class="labeling-action show-translation" ></a></span>';
-				html += '</div>';
+				if (data.value != null){
+					html += '<span id="' +htmlId+"#"+ nodeRef+"#"+ label+ "#true" + '" class="onShowTranslation"><a href="#" title="'+ scope.msg("label.show.translation.title") +'" class="labeling-action show-translation" ></a></span>';
+					html += '</div>';
+				}
 			
 			
 				html += '</div>';

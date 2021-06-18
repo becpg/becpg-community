@@ -6,8 +6,8 @@
         <Dimensions>
           <Dimension name="designation" hierarchizeMode="PRE" hierarchyConsistent="true">
             <Inclusions>
-              <Selection dimension="designation" type="member" node="[designation].[Validé]" operator="MEMBER" />
-              <Selection dimension="designation" type="level" node="[designation].[name]" operator="MEMBERS" />
+              <Selection dimension="designation" type="member" node="[designation.productPerFamily].[Valid]" operator="MEMBER" />
+              <Selection dimension="designation" type="level" node="[designation.productPerFamily].[name]" operator="MEMBERS" />
             </Inclusions>
             <Exclusions />
           </Dimension>
@@ -40,7 +40,7 @@
         <Dimensions>
           <Dimension name="productType">
             <Inclusions>
-              <Selection dimension="productType" type="member" node="[productType].[Matière première]" operator="MEMBER" />
+              <Selection dimension="productType" type="member" node="[productType].[bcpg:rawMaterial]" operator="MEMBER" />
             </Inclusions>
             <Exclusions />
           </Dimension>

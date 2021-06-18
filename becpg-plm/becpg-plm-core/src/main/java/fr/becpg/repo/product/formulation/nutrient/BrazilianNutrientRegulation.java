@@ -42,8 +42,8 @@ public class BrazilianNutrientRegulation extends AbstractNutrientRegulation {
 			if (nutrientTypeCode.equals(NutrientCode.CarbohydrateWithFiber) || nutrientTypeCode.equals(NutrientCode.CarbohydrateByDiff)
 					|| nutrientTypeCode.equals(NutrientCode.Sugar) || nutrientTypeCode.equals(NutrientCode.SugarAdded)
 					|| nutrientTypeCode.equals(NutrientCode.Protein) || nutrientTypeCode.equals(NutrientCode.Fat)
-					|| nutrientTypeCode.equals(NutrientCode.FiberDietary) || nutrientTypeCode.contentEquals(NutrientCode.FiberSoluble)
-					|| nutrientTypeCode.contentEquals(NutrientCode.FiberInsoluble)) {
+					|| nutrientTypeCode.equals(NutrientCode.FiberDietary) || nutrientTypeCode.equals(NutrientCode.FiberSoluble)
+					|| nutrientTypeCode.equals(NutrientCode.FiberInsoluble)) {
 				if (value <= 0.5){
 					return 0.0;
 				} else if (value < 10) {
@@ -69,14 +69,14 @@ public class BrazilianNutrientRegulation extends AbstractNutrientRegulation {
 				}
 			} else if (isVitamin(nutrientTypeCode) || isMineral(nutrientTypeCode)) {
 				if (value < 1) {
-					BigDecimal bd = new BigDecimal(value);
+					BigDecimal bd = BigDecimal.valueOf(value);
 					bd = bd.round(new MathContext(2,RoundingMode.HALF_EVEN));
 					return bd.doubleValue();
 				}
 			}
 		}
 		
-		BigDecimal bd = new BigDecimal(value);
+		BigDecimal bd = BigDecimal.valueOf(value);
 		bd = bd.round(new MathContext(3,RoundingMode.HALF_EVEN));
 		return bd.doubleValue();
 	}

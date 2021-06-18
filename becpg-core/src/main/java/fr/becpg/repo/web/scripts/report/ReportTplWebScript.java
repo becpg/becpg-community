@@ -92,7 +92,7 @@ public class ReportTplWebScript extends AbstractWebScript {
 
 	/** {@inheritDoc} */
 	@Override
-	public void execute(WebScriptRequest req, WebScriptResponse res) throws WebScriptException {
+	public void execute(WebScriptRequest req, WebScriptResponse res)  {
 		logger.debug("start report webscript");
 		Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();
 		String storeType = templateArgs.get(PARAM_STORE_TYPE);
@@ -129,7 +129,7 @@ public class ReportTplWebScript extends AbstractWebScript {
 		QName classType = (QName) nodeService.getProperty(nodeRef, ReportModel.PROP_REPORT_TPL_CLASS_NAME);
 		List<NodeRef> refs = null;
 
-		if ((isSystem != null) && isSystem && (classType != null)) {
+		if (Boolean.TRUE.equals(isSystem) && (classType != null)) {
 
 			refs = BeCPGQueryBuilder.createQuery().ofType(classType).withAspect(ReportModel.ASPECT_REPORT_ENTITY).excludeVersions()
 					.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list();

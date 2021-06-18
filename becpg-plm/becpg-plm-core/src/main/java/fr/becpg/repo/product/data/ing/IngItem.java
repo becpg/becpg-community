@@ -10,6 +10,7 @@ import java.util.Set;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.helper.MLTextHelper;
+import fr.becpg.repo.repository.annotation.AlfCacheable;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
@@ -23,6 +24,7 @@ import fr.becpg.repo.repository.annotation.AlfType;
  */
 @AlfType
 @AlfQname(qname="bcpg:ing")
+@AlfCacheable(isCharact = true)
 public class IngItem extends CompositeLabeling {	
 
 	/**
@@ -41,7 +43,6 @@ public class IngItem extends CompositeLabeling {
 	private IngTypeItem ingType;
 	
 	private Set<NodeRef> pluralParents = new HashSet<>();
-
 	
 	
 	/**
@@ -85,6 +86,7 @@ public class IngItem extends CompositeLabeling {
 	public void setCharactName(String charactName) {
 		this.charactName = charactName;
 	}
+	
 	
 
 	/** {@inheritDoc} */

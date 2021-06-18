@@ -15,7 +15,6 @@ import fr.becpg.test.repo.product.lexer.CompositionLexerIT;
 import fr.becpg.test.repo.project.NPDServiceIT;
 import fr.becpg.test.repo.project.ProjectListSortIT;
 import fr.becpg.test.repo.web.scripts.admin.AdminModuleWebScriptIT;
-import fr.becpg.test.repo.web.scripts.entity.CheckOutCheckInWebScriptIT;
 import fr.becpg.test.repo.web.scripts.entity.EntityDictionnaryWebScriptIT;
 import fr.becpg.test.repo.web.scripts.entity.EntityListsWebScriptIT;
 import fr.becpg.test.repo.web.scripts.entity.EntityVersionWebScriptIT;
@@ -43,7 +42,7 @@ import fr.becpg.test.repo.web.scripts.search.SearchWebScriptIT;
 		EntityVersionWebScriptIT.class,
 
 		// Bug
-		CheckOutCheckInWebScriptIT.class, RemoteEntityWebScriptIT.class, ExportSearchWebScriptIT.class, CompareProductReportWebScriptIT.class,
+		RemoteEntityWebScriptIT.class, ExportSearchWebScriptIT.class, CompareProductReportWebScriptIT.class,
 
 		// Project
 		NPDServiceIT.class, ProjectListSortIT.class })

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -17,18 +17,19 @@
  ******************************************************************************/
 package fr.becpg.repo.project.impl;
 
-import java.util.Date;
 import java.util.List;
 
-import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.transaction.TransactionService;
 import org.alfresco.util.ISO8601DateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.dao.ConcurrencyFailureException;
 
+import com.ibm.icu.util.Calendar;
+
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.project.data.ProjectState;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
@@ -56,14 +57,6 @@ public class ProjectFormulationWorker {
 	}
 
 	/**
-	 * <p>setPolicyBehaviourFilter.</p>
-	 *
-	 * @param policyBehaviourFilter a {@link org.alfresco.repo.policy.BehaviourFilter} object.
-	 */
-	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
-	}
-
-	/**
 	 * <p>Setter for the field <code>transactionService</code>.</p>
 	 *
 	 * @param transactionService a {@link org.alfresco.service.transaction.TransactionService} object.
@@ -79,17 +72,31 @@ public class ProjectFormulationWorker {
 
 		List<NodeRef> projectNodeRefs = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
+			Calendar cal = Calendar.getInstance();
+			
+			cal.set(Calendar.HOUR_OF_DAY, 0);
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.SECOND, 0);
+			cal.set(Calendar.MILLISECOND, 0);
+			
 			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(ProjectModel.TYPE_PROJECT)
-					.andPropEquals(ProjectModel.PROP_PROJECT_STATE, ProjectState.InProgress.toString());
+					.andPropEquals(ProjectModel.PROP_PROJECT_STATE, ProjectState.InProgress.toString())
+					.andBetween(BeCPGModel.PROP_FORMULATED_DATE, "MIN", ISO8601DateFormat.format(cal.getTime()));
 
-			List<NodeRef> ret = queryBuilder.inDB().list();
+			List<NodeRef> ret = queryBuilder.inDB().ftsLanguage().maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list();
 
+			queryBuilder = BeCPGQueryBuilder.createQuery().ofType(ProjectModel.TYPE_PROJECT)
+					.andPropEquals(ProjectModel.PROP_PROJECT_STATE, ProjectState.OnHold.toString())
+					.andBetween(BeCPGModel.PROP_FORMULATED_DATE, "MIN", ISO8601DateFormat.format(cal.getTime()));
+			
+			ret.addAll(queryBuilder.inDB().ftsLanguage().maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list());
+			
 			// query
 			queryBuilder = BeCPGQueryBuilder.createQuery().ofType(ProjectModel.TYPE_PROJECT)
 					.andPropEquals(ProjectModel.PROP_PROJECT_STATE, ProjectState.Planned.toString())
-					.andBetween(ProjectModel.PROP_PROJECT_START_DATE, "MIN", ISO8601DateFormat.format(new Date()));
+					.andBetween(ProjectModel.PROP_PROJECT_START_DATE, "MIN", ISO8601DateFormat.format(Calendar.getInstance().getTime()));
 
-			ret.addAll(queryBuilder.ftsLanguage().list());
+			ret.addAll(queryBuilder.inDB().ftsLanguage().maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list());
 
 			return ret;
 
@@ -108,9 +115,6 @@ public class ProjectFormulationWorker {
 				}, false, true);
 
 			} catch (Exception e) {
-				if (e instanceof ConcurrencyFailureException) {
-					throw (ConcurrencyFailureException) e;
-				}
 				logger.error("Cannot reformulate project:" + projectNodeRef, e);
 			}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG. 
+ * Copyright (C) 2010-2021 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -69,7 +69,6 @@ public interface QualityControlService {
 	 *
 	 * @param qcNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param productNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param isnewQC a boolean.
 	 */
-	void copyProductDataList(NodeRef qcNodeRef, NodeRef productNodeRef, boolean isnewQC);
+	void copyProductDataList(NodeRef qcNodeRef, NodeRef productNodeRef);
 }

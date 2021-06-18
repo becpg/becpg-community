@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -37,6 +37,7 @@ import org.springframework.stereotype.Service;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.listvalue.impl.EntityListValuePlugin;
 import fr.becpg.repo.listvalue.impl.NodeRefListValueExtractor;
 import fr.becpg.repo.report.template.ReportTplService;
@@ -56,7 +57,10 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 
 	private static final String SOURCE_TYPE_PRODUCT_REPORT = "productreport";
 
-	private final static Log logger = LogFactory.getLog(ProductListValuePlugin.class);
+	private static final Log logger = LogFactory.getLog(ProductListValuePlugin.class);
+	
+	@Autowired
+	private AttributeExtractorService attributeExtractorService;
 	
 	
 	@Value("${beCPG.product.searchTemplate}")
@@ -143,10 +147,9 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 
 			String filterValue = splitted[1];
 			if ((filterValue != null) && !filterValue.isEmpty()) {
-				if (filterValue.contains("{")) {
-					
+				if (filterValue.contains("{")) {	
 					if (entityNodeRef != null) {
-						filterValue = extractExpr(entityNodeRef, filterValue);
+						filterValue = attributeExtractorService.extractExpr(filterValue,entityNodeRef);
 					}
 				}
 				if ((filterValue != null) && !filterValue.isEmpty() && !filterValue.contains("{")) {

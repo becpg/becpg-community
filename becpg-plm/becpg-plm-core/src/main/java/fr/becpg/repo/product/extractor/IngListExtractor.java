@@ -38,6 +38,7 @@ public class IngListExtractor extends SimpleExtractor {
 	private static final String LABEL_ASSOC_KEY = "assoc_bcpg_ingListIng";
 
 	private static final String TOTAL_KEY = "prop_bcpg_ingListQtyPerc";
+	private static final String TOTAL_WITHYIELD_KEY = "prop_bcpg_ingListQtyPercWithYield";
 
 	/** {@inheritDoc} */
 	@Override
@@ -66,7 +67,28 @@ public class IngListExtractor extends SimpleExtractor {
 
 			Map<String, Object> totalNodeDataRow = new HashMap<>(20);
 
-			Double totalQtyPerc = computeTotal(ret, TOTAL_KEY);
+			
+			Double totalQtyPerc = 0d;
+			Double totalQtyPercWithYield= 0d;
+
+			for (Map<String, Object> row : ret.getPageItems()) {
+				NodeRef nodeRef = (NodeRef) row.get(PROP_NODE);
+				if (nodeRef != null) {
+					Integer depthLevel = (Integer) nodeService.getProperty(nodeRef, BeCPGModel.PROP_DEPTH_LEVEL);
+					if ((depthLevel == null) || (depthLevel == 1)) {
+						Double value = (Double) nodeService.getProperty(nodeRef, PLMModel.PROP_INGLIST_QTY_PERC);
+						
+						if (value != null) {
+							totalQtyPerc += value;
+						}
+						Double yieldValue = (Double) nodeService.getProperty(nodeRef, PLMModel.PROP_INGLIST_QTY_PERCWITHYIELD);
+						if (yieldValue != null) {
+							totalQtyPercWithYield += yieldValue;
+						}
+					}
+				}
+			}
+			
 
 			HashMap<String, Object> tmp = new HashMap<>(3);
 
@@ -84,6 +106,14 @@ public class IngListExtractor extends SimpleExtractor {
 			tmp.put("value", totalQtyPerc);
 
 			totalNodeDataRow.put(TOTAL_KEY, tmp);
+			
+
+			tmp = new HashMap<>(3);
+			tmp.put("metadata", "double");
+			tmp.put("displayValue", attributeExtractorService.getPropertyFormats(FormatMode.JSON, false).formatDecimal(totalQtyPercWithYield));
+			tmp.put("value", totalQtyPercWithYield);
+
+			totalNodeDataRow.put(TOTAL_WITHYIELD_KEY, tmp);
 
 			totalRow.put(PROP_NODEDATA, totalNodeDataRow);
 
@@ -95,37 +125,17 @@ public class IngListExtractor extends SimpleExtractor {
 
 	}
 
-	private Double computeTotal(PaginatedExtractedItems ret, String totalKey) {
-		Double total = 0d;
-
-		for (Map<String, Object> row : ret.getPageItems()) {
-			NodeRef nodeRef = (NodeRef) row.get(PROP_NODE);
-			if (nodeRef != null) {
-				Integer depthLevel = (Integer) nodeService.getProperty(nodeRef, BeCPGModel.PROP_DEPTH_LEVEL);
-				if ((depthLevel == null) || (depthLevel == 1)) {
-					Double value = (Double) nodeService.getProperty(nodeRef, PLMModel.PROP_INGLIST_QTY_PERC);
-					if (value != null) {
-						total += value;
-					}
-
-				}
-			}
-		}
-
-		return total;
-	}
 
 	/** {@inheritDoc} */
-	// TODO Extend super instead of duplicate codes
 	@Override
-	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields, final FormatMode mode,
+	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields,  FormatMode mode,
 			Map<QName, Serializable> properties, final Map<String, Object> props, final Map<NodeRef, Map<String, Object>> cache) {
 
 		return attributeExtractorService.extractNodeData(nodeRef, itemType, properties, metadataFields, mode,
 				new AttributeExtractorService.DataListCallBack() {
 
 					@Override
-					public List<Map<String, Object>> extractNestedField(NodeRef nodeRef, AttributeExtractorStructure field) {
+					public List<Map<String, Object>> extractNestedField(NodeRef nodeRef, AttributeExtractorStructure field, FormatMode mode) {
 						List<Map<String, Object>> ret = new ArrayList<>();
 						if (field.isDataListItems()) {
 

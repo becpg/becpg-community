@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!--
-  Copyright (C) 2010-2020 beCPG. 
+  Copyright (C) 2010-2021 beCPG. 
    
   This file is part of beCPG 
    
@@ -29,6 +29,7 @@
       	<property name="automaticECOService" ref="automaticECOService"/>
       	<property name="alfrescoRepository" ref="alfrescoRepository"/>
       	<property name="nodeService" ref="NodeService"/>
+      	<property name="transactionService" ref="transactionService"/>
    	</bean>
    	
    	<alias alias="webscript.fr.becpg.ecm.changeOrder.post" name="webscript.fr.becpg.ecm.changeOrder.get"/>
@@ -63,6 +64,8 @@
         <property name="jobClass">
             <value>fr.becpg.repo.ecm.AutomaticECOJob</value>
         </property>
+        <property name="group" value="beCPG"/>
+        <property name="description" value="Run modified where used formulation" />
         <property name="jobDataAsMap">
             <map>
                 <entry key="automaticECOService">
@@ -71,6 +74,10 @@
                 <entry key="tenantAdminService">
                     <ref bean="tenantAdminService" />
                 </entry>
+                <entry key="jobLockService">
+	               <ref bean="jobLockService" />
+	           </entry>
+                
             </map>
         </property>
     </bean>

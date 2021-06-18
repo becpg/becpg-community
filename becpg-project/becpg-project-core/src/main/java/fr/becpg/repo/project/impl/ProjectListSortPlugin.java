@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2021 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.project.impl;
@@ -20,7 +20,6 @@ package fr.becpg.repo.project.impl;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -60,6 +59,7 @@ public class ProjectListSortPlugin implements DataListSortPlugin {
 	}
 
 	/** {@inheritDoc} */
+	@Override
 	public List<NodeRef> sort(List<NodeRef> projectList, Map<String, Boolean> sortMap) {
 
 		StopWatch watch = null;
@@ -95,9 +95,9 @@ public class ProjectListSortPlugin implements DataListSortPlugin {
 
 					if (EQUAL == comp) {
 						if (sortDir) {
-							comp = compare(toString(nodeService.getProperty(n1, sortProp)), toString(nodeService.getProperty(n2, sortProp)));
+							comp = compare(extract(nodeService.getProperty(n1, sortProp)), extract(nodeService.getProperty(n2, sortProp)));
 						} else {
-							comp = compare(toString(nodeService.getProperty(n2, sortProp)), toString(nodeService.getProperty(n1, sortProp)));
+							comp = compare(extract(nodeService.getProperty(n2, sortProp)), extract(nodeService.getProperty(n1, sortProp)));
 						}
 					}
 				}
@@ -105,10 +105,10 @@ public class ProjectListSortPlugin implements DataListSortPlugin {
 				return comp;
 			}
 
-			private String toString(Serializable property) {
+			private Comparable<?> extract(Serializable property) {
 				if (property != null) {
-					if (property instanceof Date) {
-						return "" + ((Date) property).getTime();
+					if (property instanceof Comparable) {
+						return (Comparable<?>) property;
 					}
 					return property.toString();
 				}
@@ -121,18 +121,19 @@ public class ProjectListSortPlugin implements DataListSortPlugin {
 				return HierarchyHelper.getHierachyName(hierarchyNodeRef, nodeService);
 			}
 
-			private int compare(String n1, String n2) {
+			@SuppressWarnings({ "rawtypes", "unchecked" })
+			private int compare(Comparable n1, Comparable n2) {
 
-				if (n1 != null && n2 != null) {
+				if ((n1 != null) && (n2 != null)) {
 					if (n1.equals(n2)) {
 						return EQUAL;
 					}
 
 					return n1.compareTo(n2);
 
-				} else if (n1 == null && n2 != null) {
+				} else if ((n1 == null) && (n2 != null)) {
 					return AFTER;
-				} else if (n2 == null && n1 != null) {
+				} else if (n1 != null) {
 					return BEFORE;
 				} else {
 					return EQUAL;
@@ -140,7 +141,7 @@ public class ProjectListSortPlugin implements DataListSortPlugin {
 			}
 		});
 
-		if (logger.isDebugEnabled()) {
+		if (logger.isDebugEnabled() && (watch != null)) {
 			watch.stop();
 			logger.debug("Project List sorted in " + watch.getTotalTimeSeconds() + " seconds - size results " + projectList.size());
 		}

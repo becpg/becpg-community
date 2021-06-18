@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -101,8 +101,10 @@ public interface ProjectModel {
 	QName PROP_TL_END = QName.createQName(PROJECT_URI, "tlEnd");
 	/** Constant <code>PROP_TL_STATE</code> */
 	QName PROP_TL_STATE = QName.createQName(PROJECT_URI, "tlState");
-	/** Constant <code>ASSOC_TL_PREV_TASKS</code> */
-	QName ASSOC_TL_PREV_TASKS = QName.createQName(PROJECT_URI, "tlPrevTasks");
+	/** Constant <code>PROP_TL_PREVIOUS_STATE</code> */
+        QName PROP_TL_PREVIOUS_STATE = QName.createQName(PROJECT_URI, "tlPreviousState");
+	/** Constant <code>ASSOC_TL_PREV_TASKS</code> */	
+        QName ASSOC_TL_PREV_TASKS = QName.createQName(PROJECT_URI, "tlPrevTasks");
 	/** Constant <code>ASSOC_TL_REFUSED_TASK_REF</code> */
 	QName ASSOC_TL_REFUSED_TASK_REF = QName.createQName(PROJECT_URI, "tlRefusedTaskRef");
 	/** Constant <code>ASSOC_TL_RESOURCES</code> */

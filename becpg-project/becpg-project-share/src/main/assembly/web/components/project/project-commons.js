@@ -195,13 +195,19 @@
       },
       extractDates : function(record, start, isTask) {
 
-         var startDate = null, endDate = null, dueDate = null;
+         var startDate = null, endDate = null, dueDate = null,targetStartDate = null, targetEndDate= null;
 
          if (isTask) {
             startDate = record["itemData"]["prop_pjt_tlStart"].value;
-            endDate = record["itemData"]["prop_pjt_tlEnd"].value;
+            endDate = record["itemData"]["prop_pjt_tlEnd"]!=null ?record["itemData"]["prop_pjt_tlEnd"].value:null;
+ 			dueDate = record["itemData"]["prop_pjt_tlDue"]!=null ?record["itemData"]["prop_pjt_tlDue"].value: null;
+			targetStartDate = record["itemData"]["prop_pjt_tlTargetStart"]!=null ?  record["itemData"]["prop_pjt_tlTargetStart"].value : null;
+			targetEndDate = record["itemData"]["prop_pjt_tlTargetEnd"]!=null ? record["itemData"]["prop_pjt_tlTargetEnd"].value : null;
 
+ 			targetStartDate = targetStartDate != null ? this.resetDate(Alfresco.util.fromISO8601(targetStartDate)) : null;
+			targetEndDate = targetEndDate != null ? this.resetDate(Alfresco.util.fromISO8601(targetEndDate)) : null;
             endDate = endDate != null ? this.resetDate(Alfresco.util.fromISO8601(endDate)) : null;
+			dueDate = dueDate != null ? this.resetDate(Alfresco.util.fromISO8601(dueDate)) : null;
             startDate = startDate != null ? this.resetDate(Alfresco.util.fromISO8601(startDate)) : this
                   .resetDate(start);
 
@@ -221,7 +227,10 @@
 
             return {
                start : startDate,
-               end : endDate
+               end : endDate,
+			   due: dueDate,
+			   targetStart : targetStartDate,
+   			   targetEnd : targetEndDate
             };
 
          }
@@ -229,22 +238,28 @@
          startDate = record.itemData["prop_pjt_projectStartDate"].value;
          endDate = record.itemData["prop_pjt_projectCompletionDate"].value;
          dueDate = record.itemData["prop_pjt_projectDueDate"].value;
+		 targetStartDate =  record.itemData["prop_pjt_tlTargetStart"]!=null ?  record.itemData["prop_pjt_tlTargetStart"].value : null;
+		 targetEndDate = record.itemData["prop_pjt_tlTargetEnd"]!=null ? record.itemData["prop_pjt_tlTargetEnd"].value : null;
 
          startDate = startDate != null ? this.resetDate(Alfresco.util.fromISO8601(startDate)) : new Date();
          endDate = endDate != null ? this.resetDate(Alfresco.util.fromISO8601(endDate)) : null;
          dueDate = dueDate != null ? this.resetDate(Alfresco.util.fromISO8601(dueDate)) : this.computeDueDate(
                startDate, record);
+		targetStartDate = targetStartDate != null ? this.resetDate(Alfresco.util.fromISO8601(targetStartDate)) : null;
+		targetEndDate = targetEndDate != null ? this.resetDate(Alfresco.util.fromISO8601(targetEndDate)) : null;
          return {
             start : startDate,
             end : endDate,
-            due : dueDate
+            due : dueDate,
+			targetStart : targetStartDate,
+   			targetEnd : targetEndDate
          };
 
       },
       computeDueDate : function(start, record) {
          var taskList = record.itemData["dt_pjt_taskList"];
          var ret = start, vstart = start;
-         for (j in taskList) {
+         for (var j in taskList) {
             var task = taskList[j];
             var taskId = task.nodeRef;
 
@@ -281,7 +296,7 @@
          return date;
       },
 
-      getTaskTitle : function PL_getTaskTitle(task, entityNodeRef, showLegend, size) {
+      getTaskTitle : function PL_getTaskTitle(task, entityNodeRef, showLegend, size, hideState, hideDuration) {
     	  var subProject = null, subProjectClass = "";
     	  
     	  if (task["itemData"]["assoc_pjt_subProjectRef"] != null
@@ -301,13 +316,17 @@
     	  }
     	  
     	  
-          var ret = legend + '<span class="task-status task-status-' + task["itemData"]["prop_pjt_tlState"].value +classGroup+subProjectClass+ '">', duration ='';
-          
+          var ret = legend, duration ='';
+
+		  if(!hideState){
+			 ret += '<span class="task-status task-status-' + task["itemData"]["prop_pjt_tlState"].value +classGroup+subProjectClass+ '">';
+		  }          
+
           var text = task["itemData"]["prop_pjt_tlTaskName"].displayValue;
           
-          if(task.permissions.userAccess.edit && classGroup == "" ){
+          if(task.permissions.userAccess.edit ){
         	  
-        	  if(size && text.length>size){
+        	  if(size && size > -1 && text.length>size){
         		  ret += '<span class="node-' + (subProject!=null ? subProject.value : task.nodeRef) + '|' + entityNodeRef 
         		  + ' text-tooltip se" data-tooltip="'+ beCPG.util.encodeAttr(text) +'"><a href="" class="theme-color-1 ' + TASK_EVENTCLASS + '" title="' + this
 		          .msg("link.title.task-edit") + '" >' + Alfresco.util.encodeHTML(text.substring(0,size).trim())+"..." +"</span>";
@@ -316,7 +335,7 @@
 		          .msg("link.title.task-edit") + '" >' + text +"</span>";
         	  }
           } else {
-        	  if(size && text.length>size){
+        	  if(size && size > -1 && text.length>size){
         		   ret += '<span class="node-' + (subProject!=null ? subProject.value : task.nodeRef) + '|' + entityNodeRef 
     	    		    + ' text-tooltip se" data-tooltip="'+ beCPG.util.encodeAttr(text) +'"><span>'
     	    		  +Alfresco.util.encodeHTML(text.substring(0,size).trim())+"..."+'</span></span>';
@@ -324,28 +343,31 @@
 	        	  ret += '<span class="node-' + (subProject!=null ? subProject.value : task.nodeRef) + '|' + entityNodeRef + '">' + text +"</span>";
         	  }
           }
-          
-          if( task["itemData"]["prop_pjt_tlState"].value == "InProgress"){
-              if(task["itemData"]["prop_pjt_completionPercent"] && 
-                      task["itemData"]["prop_pjt_completionPercent"].value != null)  {
-                  duration += '<span title="' + this.msg("completion.title") + '">' + task["itemData"]["prop_pjt_completionPercent"].displayValue + '%</span>';
-              }              
-          }
-          
-          if(task["itemData"]["prop_pjt_tlRealDuration"] && task["itemData"]["prop_pjt_tlRealDuration"].value!=null &&
-         		 task["itemData"]["prop_pjt_tlRealDuration"].value > task["itemData"]["prop_pjt_tlDuration"].value)  {             
-         	 if(duration.length>0){
-         		 duration+=" - ";
-         	 }
-         	 duration += '<span class="red" title="' + this.msg("overdue.title") + '">' + Alfresco.util.encodeHTML(task["itemData"]["prop_pjt_tlRealDuration"].value - task["itemData"]["prop_pjt_tlDuration"].value)+" "+this
-             .msg("overdue.day")+ '</span>';
-         } 
+		
+		if(!hideDuration){
+		          
+		          if( task["itemData"]["prop_pjt_tlState"].value == "InProgress"){
+		              if(task["itemData"]["prop_pjt_completionPercent"] && 
+		                      task["itemData"]["prop_pjt_completionPercent"].value != null)  {
+		                  duration += '<span title="' + this.msg("completion.title") + '">' + task["itemData"]["prop_pjt_completionPercent"].displayValue + '%</span>';
+		              }              
+		          }
+		          
+		          if(task["itemData"]["prop_pjt_tlRealDuration"] && task["itemData"]["prop_pjt_tlRealDuration"].value!=null &&
+		         		 task["itemData"]["prop_pjt_tlRealDuration"].value > task["itemData"]["prop_pjt_tlDuration"].value)  {             
+		         	 if(duration.length>0){
+		         		 duration+=" - ";
+		         	 }
+		         	 duration += '<span class="red" title="' + this.msg("overdue.title") + '">' + Alfresco.util.encodeHTML(task["itemData"]["prop_pjt_tlRealDuration"].value - task["itemData"]["prop_pjt_tlDuration"].value)+" "+this
+		             .msg("overdue.day")+ '</span>';
+		         }
+		} 
 
          if(task.permissions.userAccess.edit){
         	 ret += '</a>';
          }
 
-         if(duration.length>0){
+         if(!hideDuration && duration.length>0){
              ret +=' ('+duration+')';
          }
          
@@ -370,7 +392,7 @@
              	beCPG.util.entityURL(subProject.siteId, subProject.value,"pjt:project") +'" >';
              ret +="&nbsp;</a>";
           } else {
-	          if(task.permissions.userAccess.edit && task["itemData"]["prop_pjt_tlState"].value == "InProgress"){
+	          if(task.permissions.userAccess.edit && task["itemData"]["prop_pjt_tlState"].value == "InProgress" && classGroup == "" ){
 		          ret += '<span class="node-' + task.nodeRef + '|' + entityNodeRef + '">';
 		          ret += '<a class="submit-task '+SUBMITTASK_EVENTCLASS+'" title="' + this.msg("link.title.submit-task") + '" href="" >';
 		          ret +="&nbsp;";
@@ -395,7 +417,11 @@
         	  ret += '<a class="task-comments '+COMMENT_EVENTCLASS+'" title="' + this.msg("link.title.comment-task") + '" href="" >';
               ret +="&nbsp;";
           }
-          ret += "</a></span></span>";
+          ret += "</a></span>";
+
+		if(!hideState){
+			ret +="</span>";
+		}
           
 
           return ret;
@@ -490,7 +516,6 @@
       
       getProjectTitleV2 : function PL_getProjectTitle(record, full, oColumn) {
     	  
-          var propertiesUrl = null, dataListUrl = null, version = "";
 
           var title = record.itemData["prop_cm_name"].displayValue, code = record.itemData["prop_bcpg_code"]!=null ? record.itemData["prop_bcpg_code"].displayValue : "", 
           overdue = '', ret = "", state = record.itemData["prop_pjt_projectState"].value;
@@ -571,7 +596,7 @@
     		   
               ret+="<li>";
               
-              var overdue = record.itemData["prop_pjt_projectOverdue"];
+              overdue = record.itemData["prop_pjt_projectOverdue"];
               if(overdue!=null && overdue.value!=null){
             	  ret +=  '<span class="small ' + this.getOverdueClass(record,32) + '" title="'+$html(overdue.value)+ '&nbsp;' + this.msg("overdue.day")+'"></span>';
               }
@@ -600,7 +625,7 @@
       	if(task["itemData"]["assoc_pjt_tlTaskLegend"][0] != null){
       		var id = task["itemData"]["assoc_pjt_tlTaskLegend"][0].value;
 
-            for (i in this.taskLegends) {
+            for (var i in this.taskLegends) {
                if (this.taskLegends[i].id == id) {
                   return this.taskLegends[i].color.replace('#','');
                }

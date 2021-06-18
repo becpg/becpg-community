@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright (C) 2010-2020 beCPG. 
+  Copyright (C) 2010-2021 beCPG. 
    
   This file is part of beCPG 
    
@@ -42,8 +42,20 @@
     	<property name="entityDictionaryService" ref="entityDictionaryService" />
     	<property name="entityVersionService" ref="entityVersionService" />
     </bean>
-    
-    
+
+
+	<bean id="createDownloadArchiveAction" class="fr.becpg.repo.download.BeCPGCreateDownloadArchiveAction" parent="action-executer">
+		<property name="checkOutCheckInSerivce" ref="checkOutCheckInService" />
+		<property name="contentServiceHelper" ref="downloadContentServiceHelper" />
+		<property name="downloadStorage" ref="downloadStorage" />
+		<property name="exporterService" ref="exporterComponent" />
+		<property name="maximumContentSize" value="${download.maxContentSize}" />
+		<property name="nodeService" ref="nodeService" />
+		<property name="publicAction" value="false" />
+		<property name="transactionHelper" ref="retryingTransactionHelper" />
+		<property name="updateService" ref="downloadStatusUpdateService" />
+	</bean>  
+	
     <!-- Export Search actions -->
     
    <bean id="zipSearchAction" class="fr.becpg.repo.report.search.actions.ZipSearchAction" parent="action-executer">
@@ -72,8 +84,22 @@
       <property name="contentService" ref="contentService"/>
       <property name="updateService" ref="downloadStatusUpdateService"/>
       <property name="excelReportSearchRenderer" ref="excelReportSearchRenderer"/>
+      <property name="mimetypeService" ref="MimetypeService" />
    </bean>
     
+    
+    <bean id="reportSearchAction" class="fr.becpg.repo.report.search.actions.ReportSearchAction" parent="action-executer">
+      <property name="contentServiceHelper" ref="downloadContentServiceHelper" />
+      <property name="downloadStorage" ref="downloadStorage" />
+      <property name="exporterService" ref="downloadExporterComponent" />
+      <property name="nodeService" ref="nodeService" />
+      <property name="publicAction" value="false"/>
+      <property name="transactionHelper" ref="retryingTransactionHelper"/>
+      <property name="contentService" ref="contentService"/>
+      <property name="updateService" ref="downloadStatusUpdateService"/>
+      <property name="reportServerSearchRenderer" ref="reportServerSearchRenderer"/>
+      <property name="mimetypeService" ref="MimetypeService" />
+   </bean>
     
     
     <!-- I18N -->

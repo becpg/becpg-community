@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG. 
+ * Copyright (C) 2010-2021 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -22,11 +22,11 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.xml.sax.Attributes;
@@ -57,8 +57,9 @@ public class BPMN2XmlParser {
 	 */
 	public void parse(InputStream in) throws IOException, SAXException, ParserConfigurationException {
 
-		try {
+		try (in) {
 			SAXParserFactory factory = SAXParserFactory.newInstance();
+			factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
 			SAXParser saxParser = factory.newSAXParser();
 
 			BPMN2XmlHandler handler = new BPMN2XmlHandler();
@@ -66,8 +67,6 @@ public class BPMN2XmlParser {
 			
 			processId = handler.getId();
 
-		} finally {
-			IOUtils.closeQuietly(in);
 		}
 
 	}

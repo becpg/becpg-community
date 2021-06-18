@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -140,7 +140,7 @@ public class BeCPGJSONConversionComponent extends JSONConversionComponent {
 				if (nodeService.hasAspect(nodeRef, associationDecorators.get(assoc).getAspect())) {
 					try {
 
-						String key = nameToString(assoc, useShortQNames);
+						String key = qnameToString(assoc, useShortQNames);
 						if (logger.isDebugEnabled()) {
 							logger.debug("look for assoc decorator: " + assoc.toPrefixString(namespaceService));
 						}
@@ -165,7 +165,7 @@ public class BeCPGJSONConversionComponent extends JSONConversionComponent {
 	 * Convert a qname to a string - either full or short prefixed named.
 	 *
 	 */
-	private String nameToString(final QName qname, final boolean isShortName) {
+	private String qnameToString(final QName qname, final boolean isShortName) {
 		String result;
 		if (isShortName) {
 			final Map<String, String> cache = namespacePrefixCache.get();

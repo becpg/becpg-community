@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -326,7 +326,7 @@ public class ReportTplServiceImpl implements ReportTplService {
 	/** {@inheritDoc} */
 	@Override
 	public NodeRef getAssociatedReportTemplate(NodeRef nodeRef) {
-		return associationService.getTargetAssoc(nodeRef, ReportModel.ASSOC_REPORT_TPL, false);
+		return associationService.getTargetAssoc(nodeRef, ReportModel.ASSOC_REPORT_TPL);
 
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -37,6 +37,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AccessPermission;
 import org.alfresco.service.cmr.security.PermissionService;
+import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -110,6 +111,8 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	private EntityListDAO entityListDAO;
 
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
+
+	private SiteService siteService;
 
 	private boolean useBrowserLocale;
 
@@ -355,6 +358,10 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
+	
+	public void setSiteService(SiteService siteService) {
+		this.siteService = siteService;
+	}
 
 	/**
 	 * <p>getMLProperty.</p>
@@ -391,9 +398,13 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 			for (ConstraintDefinition constraint : propertyDef.getConstraints()) {
 				if (constraint.getConstraint() instanceof DynListConstraint) {
 					dynListConstraint = (DynListConstraint) constraint.getConstraint();
-					break;
+					
 				} else if ("LIST".equals(constraint.getConstraint().getType())) {
 					constraintName = constraint.getRef().toPrefixString(namespaceService).replace(":", "_");
+					
+				}
+				
+				if(constraintName!=null || dynListConstraint!=null) {
 					break;
 				}
 			}
@@ -743,6 +754,14 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		}
 		return null;
 	}
+	
+	public RepositoryEntity save(RepositoryEntity entity) {
+		return alfrescoRepository.save(entity);
+	}
+	
+	public void setExtraValue(RepositoryEntity entity, String qName,  Object value) {
+		 entity.getExtraProperties().put(getQName(qName), (Serializable) ScriptValueConverter.unwrapValue(value));
+	}
 
 	/**
 	 * <p>getMessage.</p>
@@ -817,6 +836,12 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 				VersionType.valueOf(type), description);
 
 		return new ScriptNode(retNodeRef, serviceRegistry);
+	}
+	
+	
+	
+	public void updateLastVersionLabel(ScriptNode entity,String versionLabel) {
+		entityVersionService.updateLastVersionLabel(entity.getNodeRef(), versionLabel);
 	}
 
 	/**
@@ -923,12 +948,12 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public String[] getSearchResults(String queryId) {
 		List<NodeRef> ret = paginatedSearchCache.getSearchResults(queryId);
 		if (ret != null) {
-			return ret.stream().map(n -> n.toString()).toArray(String[]::new);
+			return ret.stream().map(NodeRef::toString).toArray(String[]::new);
 		} else {
 			logger.warn("No results found for queryId: " + queryId);
 		}
 
-		return null;
+		return new String[] {};
 	}
 
 	/**
@@ -940,8 +965,16 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 * @return a boolean.
 	 */
 	public boolean setPermissionAsSystem(ScriptNode sourceNode, String permission, String authority) {
+		return setPermissionAsSystem(sourceNode.getNodeRef(),permission,authority);
+	}
+	
+	public boolean setPermissionAsSystem(String nodeRef, String permission, String authority) {
+		return setPermissionAsSystem(new NodeRef(nodeRef),permission,authority);
+	}
+	
+	public boolean setPermissionAsSystem(NodeRef nodeRef, String permission, String authority) {
 		return AuthenticationUtil.runAsSystem(() -> {
-			permissionService.setPermission(sourceNode.getNodeRef(), authority, permission, true);
+			permissionService.setPermission(nodeRef, authority, permission, true);
 			return true;
 		});
 	}
@@ -954,8 +987,16 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 * @return a boolean.
 	 */
 	public boolean allowWrite(ScriptNode sourceNode, String authority) {
+		return allowWrite(sourceNode.getNodeRef(), authority);
+	}
+	
+	public boolean allowWrite(String nodeRef,  String authority) {
+		return allowWrite(new NodeRef(nodeRef), authority);
+	}
+	
+	public boolean allowWrite(NodeRef nodeRef, String authority) {
 		return AuthenticationUtil.runAsSystem(() -> {
-			permissionService.setPermission(sourceNode.getNodeRef(), authority, PermissionService.EDITOR, true);
+			permissionService.setPermission(nodeRef, authority, PermissionService.EDITOR, true);
 			return true;
 		});
 	}
@@ -968,8 +1009,16 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 * @return a boolean.
 	 */
 	public boolean allowRead(ScriptNode sourceNode, String authority) {
+		return allowRead(sourceNode.getNodeRef(), authority);
+	}
+
+	public boolean allowRead(String nodeRef, String authority) {
+		return allowWrite(new NodeRef(nodeRef), authority);
+	}
+
+	public boolean allowRead(NodeRef nodeRef, String authority) {
 		return AuthenticationUtil.runAsSystem(() -> {
-			permissionService.setPermission(sourceNode.getNodeRef(), authority, PermissionService.READ, true);
+			permissionService.setPermission(nodeRef, authority, PermissionService.READ, true);
 			return true;
 		});
 	}
@@ -982,13 +1031,21 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 * @return a boolean.
 	 */
 	public boolean clearPermissions(ScriptNode sourceNode, boolean inherit) {
+		return clearPermissions(sourceNode.getNodeRef(),inherit);
+	}
+
+	public boolean clearPermissions(String nodeRef, boolean inherit) {
+		return clearPermissions(new NodeRef(nodeRef),inherit);
+	}
+	
+	public boolean clearPermissions(NodeRef nodeRef, boolean inherit) {
 		return AuthenticationUtil.runAsSystem(() -> {
-			permissionService.deletePermissions(sourceNode.getNodeRef());
-			permissionService.setInheritParentPermissions(sourceNode.getNodeRef(), inherit);
+			permissionService.deletePermissions(nodeRef);
+			permissionService.setInheritParentPermissions(nodeRef, inherit);
 			return true;
 		});
 	}
-
+	
 	/**
 	 * <p>deleteGroupPermission.</p>
 	 *
@@ -997,12 +1054,20 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 * @return a boolean.
 	 */
 	public boolean deleteGroupPermission(ScriptNode sourceNode, String authority) {
+		return deleteGroupPermission(sourceNode.getNodeRef(), authority);
+	}
+	
+	public boolean deleteGroupPermission(String nodeRef, String authority) {
+		return deleteGroupPermission(new NodeRef(nodeRef), authority);
+	}
+	
+	public boolean deleteGroupPermission(NodeRef nodeRef, String authority) {
 		return AuthenticationUtil.runAsSystem(() -> {
-			Set<AccessPermission> permissions = permissionService.getAllSetPermissions(sourceNode.getNodeRef());
-			clearPermissions(sourceNode, false);
+			Set<AccessPermission> permissions = permissionService.getAllSetPermissions(nodeRef);
+			clearPermissions(nodeRef, false);
 			for (AccessPermission permission : permissions) {
 				if (!permission.getAuthority().equals(authority)) {
-					permissionService.setPermission(sourceNode.getNodeRef(), permission.getAuthority(), permission.getPermission(), true);
+					permissionService.setPermission(nodeRef, permission.getAuthority(), permission.getPermission(), true);
 				}
 			}
 			return true;
@@ -1054,5 +1119,9 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 */
 	public static String generateEAN13Code(String prefix) throws CheckDigitException {
 		return GTINHelper.createEAN13Code(prefix, AutoNumHelper.getAutoNumValue("bcpg:eanCode", "bcpg:ean13Pref" + prefix));
+	}
+	
+	public NodeRef getDocumentLibraryNodeRef(String siteId) {
+		return AuthenticationUtil.runAsSystem(() -> siteService.getContainer(siteId, "documentLibrary"));
 	}
 }

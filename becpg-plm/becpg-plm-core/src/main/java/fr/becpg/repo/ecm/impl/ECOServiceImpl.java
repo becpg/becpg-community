@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -36,7 +36,6 @@ import java.util.stream.Collectors;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.forum.CommentService;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.repo.version.VersionBaseModel;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -49,7 +48,6 @@ import org.alfresco.util.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
@@ -74,6 +72,7 @@ import fr.becpg.repo.entity.datalist.WUsedListService.WUsedOperator;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 import fr.becpg.repo.entity.version.EntityVersionPlugin;
 import fr.becpg.repo.entity.version.EntityVersionService;
+import fr.becpg.repo.helper.LargeTextHelper;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.AbstractProductDataView;
@@ -269,7 +268,7 @@ public class ECOServiceImpl implements ECOService {
 			if (ecoData.getReplacementList() != null) {
 
 				int sort = 1;
-				
+
 				for (ReplacementListDataItem replacementListDataItem : ecoData.getReplacementList()) {
 
 					List<NodeRef> replacements = getSourceItems(ecoData, replacementListDataItem);
@@ -281,7 +280,7 @@ public class ECOServiceImpl implements ECOService {
 						parent.setIsWUsedImpacted(true);
 						parent.setDepthLevel(1);
 						parent.setSort(sort++);
-						
+
 						// parent.setLink(replacementListDataItem.getNodeRef());
 
 						ecoData.getWUsedList().add(parent);
@@ -513,14 +512,10 @@ public class ECOServiceImpl implements ECOService {
 					};
 
 					try {
-						RunAsWork<Object> actionRunAs = () -> transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback,
-								isSimulation, true);
-						AuthenticationUtil.runAsSystem(actionRunAs);
+						AuthenticationUtil.runAsSystem(() -> transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback,
+								isSimulation, true));
 					} catch (Exception e) {
-						if (e instanceof ConcurrencyFailureException) {
-							throw (ConcurrencyFailureException) e;
-						}
-
+					
 						changeUnitDataItem.setTreated(false);
 						changeUnitDataItem.setErrorMsg(e.getMessage());
 						errors.add("Change unit in Error: " + changeUnitDataItem.getNodeRef());
@@ -701,7 +696,7 @@ public class ECOServiceImpl implements ECOService {
 
 		for (Map.Entry<NodeRef, Set<Pair<NodeRef, Integer>>> replacement : replacements.entrySet()) {
 			Set<T> components = items.stream().filter(filter).filter(c -> replacement.getKey().equals(c.getComponent())).collect(Collectors.toSet());
-			if (components.size() > 0) {
+			if (!components.isEmpty()) {
 				boolean first = true;
 				for (Pair<NodeRef, Integer> target : replacement.getValue()) {
 
@@ -840,7 +835,7 @@ public class ECOServiceImpl implements ECOService {
 	private void checkRequirements(ChangeUnitDataItem changeUnitDataItem, ProductData targetData) {
 
 		RequirementType reqType = null;
-		String reqDetails = null;
+		StringBuilder reqDetails = null;
 
 		if ((targetData.getCompoListView() != null) && (targetData.getReqCtrlList() != null)) {
 			for (ReqCtrlListDataItem rcl : targetData.getReqCtrlList()) {
@@ -851,30 +846,35 @@ public class ECOServiceImpl implements ECOService {
 					reqType = newReqType;
 				} else {
 
-					if (RequirementType.Tolerated.equals(newReqType) && reqType.equals(RequirementType.Info)) {
-						reqType = newReqType;
-					} else if (RequirementType.Forbidden.equals(newReqType) && !reqType.equals(RequirementType.Forbidden)) {
+					if ((RequirementType.Tolerated.equals(newReqType) && reqType.equals(RequirementType.Info))
+							|| (RequirementType.Forbidden.equals(newReqType) && !reqType.equals(RequirementType.Forbidden))) {
 						reqType = newReqType;
 					}
 				}
 
 				if (reqDetails == null) {
-					reqDetails = rcl.getReqMessage();
+					reqDetails = new StringBuilder();
+					reqDetails.append(rcl.getReqMessage());
 				} else {
-					reqDetails += RepoConsts.LABEL_SEPARATOR;
-					reqDetails += rcl.getReqMessage();
+					
+					reqDetails.append(RepoConsts.LABEL_SEPARATOR);
+					reqDetails.append(rcl.getReqMessage());
+					
 				}
 			}
 		}
-
 		changeUnitDataItem.setReqType(reqType);
-		changeUnitDataItem.setReqDetails(reqDetails);
+		changeUnitDataItem.setReqDetails(reqDetails!=null ? LargeTextHelper.elipse(reqDetails.toString()): null);
+		
 	}
 
 	/**
-	 * <p>evaluateWUsedAssociations.</p>
+	 * <p>
+	 * evaluateWUsedAssociations.
+	 * </p>
 	 *
-	 * @param targetAssocNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param targetAssocNodeRef
+	 *            a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @return a {@link java.util.List} object.
 	 */
 	public List<QName> evaluateWUsedAssociations(NodeRef targetAssocNodeRef) {
@@ -981,20 +981,18 @@ public class ECOServiceImpl implements ECOService {
 		List<String> errors = new ArrayList<>();
 
 		ChangeOrderData ecoData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
-		if (!(e instanceof ConcurrencyFailureException)) {
 
-			errors.add("OM in error ");
-			errors.add("Error message: " + e.getMessage());
+		errors.add("OM in error ");
+		errors.add("Error message: " + e.getMessage());
 
-			try (StringWriter buffer = new StringWriter()) {
-				try (PrintWriter printer = new PrintWriter(buffer)) {
-					e.printStackTrace(printer);
-				}
-				errors.add("StackTrace : " + buffer.toString());
-			} catch (IOException e1) {
-				// Nothing can be done here
-
+		try (StringWriter buffer = new StringWriter()) {
+			try (PrintWriter printer = new PrintWriter(buffer)) {
+				e.printStackTrace(printer);
 			}
+			errors.add("StackTrace : " + buffer.toString());
+		} catch (IOException e1) {
+			// Nothing can be done here
+
 		}
 
 		if (!ECOState.InError.equals(ecoData.getEcoState())) {

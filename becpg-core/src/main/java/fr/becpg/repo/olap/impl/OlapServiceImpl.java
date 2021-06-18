@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG. 
+ * Copyright (C) 2010-2021 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -239,7 +239,7 @@ public class OlapServiceImpl implements OlapService {
 	 * :null,"type":"DATA_CELL"}]]
 	 */
 	@Override
-	public OlapChartData retrieveChartData(String olapQueryId) throws IOException, JSONException {
+	public OlapChartData retrieveChartData(String olapQueryId) throws IOException {
 
 		try (OlapContext olapContext = new OlapContext(getCurrentOlapUserName(), getCurrentAuthToken())) {
 
@@ -254,30 +254,37 @@ public class OlapServiceImpl implements OlapService {
 
 				if (data != null && data.length() > 0) {
 
-					JSONArray jsonArray = (new JSONObject(data)).getJSONArray("cellset");
-
-					if (jsonArray != null) {
-
-						int lowest_level = 0;
-						for (int row = 0; row < jsonArray.length(); row++) {
-							JSONArray cur = jsonArray.getJSONArray(row);
-							if (ROW_HEADER.equals(cur.getJSONObject(0).getString("type"))) {
-								for (int field = 0; field < cur.length(); field++) {
-									if (ROW_HEADER.equals(cur.getJSONObject(field).getString("type"))) {
-										ret.shiftMetadata();
-										lowest_level = field;
+					try {
+						JSONArray jsonArray = (new JSONObject(data)).getJSONArray("cellset");
+	
+						if (jsonArray != null) {
+	
+							int lowestLevel = 0;
+							for (int row = 0; row < jsonArray.length(); row++) {
+								JSONArray cur = jsonArray.getJSONArray(row);
+								if (ROW_HEADER.equals(cur.getJSONObject(0).getString("type"))) {
+									for (int field = 0; field < cur.length(); field++) {
+										if (ROW_HEADER.equals(cur.getJSONObject(field).getString("type"))) {
+											ret.shiftMetadata();
+											lowestLevel = field;
+										}
+										ret.addMetadata(new OlapChartMetadata(field, retrieveDataType(jsonArray.getJSONArray(row + 1).getJSONObject(field).getString("value")), cur.getJSONObject(field)
+												.getString("value")));
 									}
-									ret.addMetadata(new OlapChartMetadata(field, retrieveDataType(jsonArray.getJSONArray(row + 1).getJSONObject(field).getString("value")), cur.getJSONObject(field)
-											.getString("value")));
+								} else if (cur.getJSONObject(0).getString("value") != null) {
+									List<Object> record = new ArrayList<>();
+									for (int col = lowestLevel; col < cur.length(); col++) {
+										String value = cur.getJSONObject(col).getString("value");
+										record.add(OlapUtils.convert(value));
+									}
+									ret.getResultsets().add(record);
 								}
-							} else if (cur.getJSONObject(0).getString("value") != null) {
-								List<Object> record = new ArrayList<>();
-								for (int col = lowest_level; col < cur.length(); col++) {
-									String value = cur.getJSONObject(col).getString("value");
-									record.add(OlapUtils.convert(value));
-								}
-								ret.getResultsets().add(record);
 							}
+						}
+					} catch (JSONException e) {
+						logger.error("Incorrect data return by saiku for "+buildDataUrl(olapQueryId, olapContext));
+						if(logger.isDebugEnabled()) {
+							logger.debug("Data: "+data);
 						}
 					}
 				} else {
@@ -306,13 +313,13 @@ public class OlapServiceImpl implements OlapService {
 	/** {@inheritDoc} */
 	@Override
 	public String getSSOUrl() {
-		if(enabled){
+		if(Boolean.TRUE.equals(enabled)){
 			return olapPublicUrl + "?ticket=" + getCurrentAuthToken();
 		} 
 		return null;
 	}
 
-	private OlapChart getOlapChart(String olapQueryId) throws JSONException, IOException {
+	private OlapChart getOlapChart(String olapQueryId)  {
 		for (OlapChart chart : retrieveOlapCharts()) {
 			if (chart.getQueryId().equals(olapQueryId)) {
 				return chart;

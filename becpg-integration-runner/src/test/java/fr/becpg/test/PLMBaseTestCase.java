@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -256,7 +256,13 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 			NodeRef allergenFolder = entitySystemService.getSystemEntityDataList(charactsFolder, PlmRepoConsts.PATH_ALLERGENS);
 			List<NodeRef> allergensNodeRef = entityListDAO.getListItems(allergenFolder, PLMModel.TYPE_ALLERGEN);
 
-			if (allergensNodeRef.size() == 0) {
+			for (NodeRef fileInfo : allergensNodeRef) {
+				if (((String) nodeService.getProperty(fileInfo, BeCPGModel.PROP_CHARACT_NAME)).startsWith("Allergen")) {
+					allergens.add(fileInfo);
+				}
+			}
+
+			if (allergens.isEmpty()) {
 				for (int i = 0; i < 10; i++) {
 					Map<QName, Serializable> properties = new HashMap<>();
 					properties.put(BeCPGModel.PROP_CHARACT_NAME, "Allergen " + i);
@@ -265,12 +271,6 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 							PLMModel.TYPE_ALLERGEN, properties);
 					allergens.add(childAssocRef.getChildRef());
-				}
-			} else {
-				for (NodeRef fileInfo : allergensNodeRef) {
-					if (((String) nodeService.getProperty(fileInfo, BeCPGModel.PROP_CHARACT_NAME)).startsWith("Allergen")) {
-						allergens.add(fileInfo);
-					}
 				}
 			}
 
@@ -284,9 +284,19 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 			NodeRef costFolder = entitySystemService.getSystemEntityDataList(charactsFolder, PlmRepoConsts.PATH_COSTS);
 			List<NodeRef> costsNodeRef = entityListDAO.getListItems(costFolder, PLMModel.TYPE_COST);
 			String[] costNames = { "Coût MP", "Coût prév MP", "Coût Emb", "Coût prév Emb" };
-			if (costsNodeRef.size() == 0) {
 
-				
+			for (NodeRef fileInfo : costsNodeRef) {
+				String name = (String) nodeService.getProperty(fileInfo, BeCPGModel.PROP_CHARACT_NAME);
+				for (String costName : costNames) {
+					if (name.equals(costName)) {
+						costs.add(fileInfo);
+
+					}
+				}
+
+			}
+
+			if (costs.isEmpty()) {
 				for (String costName : costNames) {
 					Map<QName, Serializable> properties = new HashMap<>();
 					properties.put(BeCPGModel.PROP_CHARACT_NAME, costName);
@@ -296,17 +306,17 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 							PLMModel.TYPE_COST, properties);
 					costs.add(childAssocRef.getChildRef());
 				}
-			} else {
-			
-				for (NodeRef fileInfo : costsNodeRef) {
-					String name = (String) nodeService.getProperty(fileInfo, BeCPGModel.PROP_CHARACT_NAME);
-					for (int i = 0; i < costNames.length; i++) {
-						if (name.equals(costNames[i])) {
-							costs.add(fileInfo);
-						}
-					}
-					
+			} else if (costs.size() != 4) {
+				for (String costName : new String[] { "Coût prév MP", "Coût prév Emb" }) {
+					Map<QName, Serializable> properties = new HashMap<>();
+					properties.put(BeCPGModel.PROP_CHARACT_NAME, costName);
+					properties.put(PLMModel.PROP_COSTCURRENCY, VALUE_COST_CURRENCY);
+					ChildAssociationRef childAssocRef = nodeService.createNode(costFolder, ContentModel.ASSOC_CONTAINS,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+							PLMModel.TYPE_COST, properties);
+					costs.add(childAssocRef.getChildRef());
 				}
+
 			}
 
 			Assert.assertEquals(4, costs.size());
@@ -317,7 +327,14 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 		if (ings.isEmpty()) {
 			NodeRef ingFolder = entitySystemService.getSystemEntityDataList(charactsFolder, PlmRepoConsts.PATH_INGS);
 			List<NodeRef> ingsNodeRef = entityListDAO.getListItems(ingFolder, PLMModel.TYPE_ING);
-			if (ingsNodeRef.size() == 0) {
+
+			for (NodeRef fileInfo : ingsNodeRef) {
+				if (((String) nodeService.getProperty(fileInfo, BeCPGModel.PROP_CHARACT_NAME)).startsWith("Ing ")) {
+					ings.add(fileInfo);
+				}
+			}
+
+			if (ings.isEmpty()) {
 				for (int i = 0; i < 10; i++) {
 					Map<QName, Serializable> properties = new HashMap<>();
 					properties.put(BeCPGModel.PROP_CHARACT_NAME, "Ing " + i);
@@ -325,12 +342,6 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 							PLMModel.TYPE_ING, properties);
 					ings.add(childAssocRef.getChildRef());
-				}
-			} else {
-				for (NodeRef fileInfo : ingsNodeRef) {
-					if (((String) nodeService.getProperty(fileInfo, BeCPGModel.PROP_CHARACT_NAME)).startsWith("Ing ")) {
-						ings.add(fileInfo);
-					}
 				}
 			}
 
@@ -342,7 +353,14 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 		if (nuts.isEmpty()) {
 			NodeRef nutFolder = entitySystemService.getSystemEntityDataList(charactsFolder, PlmRepoConsts.PATH_NUTS);
 			List<NodeRef> nutsNodeRef = entityListDAO.getListItems(nutFolder, PLMModel.TYPE_NUT);
-			if (nutsNodeRef.size() == 0) {
+
+			for (NodeRef fileInfo : nutsNodeRef) {
+				if (((String) nodeService.getProperty(fileInfo, BeCPGModel.PROP_CHARACT_NAME)).startsWith("Nut ")) {
+					nuts.add(fileInfo);
+				}
+			}
+
+			if (nuts.isEmpty()) {
 				for (int i = 0; i < 10; i++) {
 					Map<QName, Serializable> properties = new HashMap<>();
 					properties.put(GS1Model.PROP_NUTRIENT_TYPE_CODE, "Nut " + i);
@@ -354,13 +372,8 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 							PLMModel.TYPE_NUT, properties);
 					nuts.add(childAssocRef.getChildRef());
 				}
-			} else {
-				for (NodeRef fileInfo : nutsNodeRef) {
-					if (((String) nodeService.getProperty(fileInfo, BeCPGModel.PROP_CHARACT_NAME)).startsWith("Nut ")) {
-						nuts.add(fileInfo);
-					}
-				}
 			}
+
 			Assert.assertEquals(10, nuts.size());
 			nuts = Collections.unmodifiableList(nuts);
 		}
@@ -369,7 +382,14 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 		if (organos.isEmpty()) {
 			NodeRef organoFolder = entitySystemService.getSystemEntityDataList(charactsFolder, PlmRepoConsts.PATH_ORGANOS);
 			List<NodeRef> organosNodeRef = entityListDAO.getListItems(organoFolder, PLMModel.TYPE_ORGANO);
-			if (organosNodeRef.size() == 0) {
+
+			for (NodeRef fileInfo : organosNodeRef) {
+				if (((String) nodeService.getProperty(fileInfo, BeCPGModel.PROP_CHARACT_NAME)).startsWith("Organo ")) {
+					organos.add(fileInfo);
+				}
+			}
+
+			if (organos.isEmpty()) {
 				for (int i = 0; i < 10; i++) {
 					Map<QName, Serializable> properties = new HashMap<>();
 					properties.put(BeCPGModel.PROP_CHARACT_NAME, "Organo " + i);
@@ -378,13 +398,8 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 							PLMModel.TYPE_ORGANO, properties);
 					organos.add(childAssocRef.getChildRef());
 				}
-			} else {
-				for (NodeRef fileInfo : organosNodeRef) {
-					if (((String) nodeService.getProperty(fileInfo, BeCPGModel.PROP_CHARACT_NAME)).startsWith("Organo ")) {
-						organos.add(fileInfo);
-					}
-				}
 			}
+
 			Assert.assertEquals(10, organos.size());
 			organos = Collections.unmodifiableList(organos);
 		}
@@ -393,7 +408,15 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 		if (labelClaims.isEmpty()) {
 			NodeRef labelClaimListsFolder = entitySystemService.getSystemEntityDataList(charactsFolder, PlmRepoConsts.PATH_LABELCLAIMS);
 			List<NodeRef> labelClaimsNodeRef = entityListDAO.getListItems(labelClaimListsFolder, PLMModel.TYPE_LABEL_CLAIM);
-			if (labelClaimsNodeRef.size() == 0) {
+
+			for (NodeRef fileInfo : labelClaimsNodeRef) {
+				if (((String) nodeService.getProperty(fileInfo, BeCPGModel.PROP_CHARACT_NAME)).startsWith("Faible valeur énergétique")
+						|| ((String) nodeService.getProperty(fileInfo, BeCPGModel.PROP_CHARACT_NAME)).startsWith("Sans apport énergétique")) {
+					labelClaims.add(fileInfo);
+				}
+			}
+
+			if (labelClaims.isEmpty()) {
 
 				String[] labelClaimNames = { "Faible valeur énergétique", "Sans apport énergétique" };
 				for (String labelClaim : labelClaimNames) {
@@ -406,14 +429,8 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 							PLMModel.TYPE_LABEL_CLAIM, properties);
 					labelClaims.add(childAssocRef.getChildRef());
 				}
-			} else {
-				for (NodeRef fileInfo : labelClaimsNodeRef) {
-					if (((String) nodeService.getProperty(fileInfo, BeCPGModel.PROP_CHARACT_NAME)).startsWith("Faible valeur énergétique")
-							|| ((String) nodeService.getProperty(fileInfo, BeCPGModel.PROP_CHARACT_NAME)).startsWith("Sans apport énergétique")) {
-						labelClaims.add(fileInfo);
-					}
-				}
 			}
+
 			Assert.assertEquals(2, labelClaims.size());
 			labelClaims = Collections.unmodifiableList(labelClaims);
 		}

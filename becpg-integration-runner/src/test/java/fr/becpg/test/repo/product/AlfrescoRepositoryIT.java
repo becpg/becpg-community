@@ -17,6 +17,7 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -155,6 +156,34 @@ public class AlfrescoRepositoryIT extends PLMBaseTestCase {
 
 	}
 
+	@Test
+	public void testNullProperties() {
+		inWriteTx(() -> {
+			
+			NodeRef rawMaterialNodeRef = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test properties");
+			ProductData rawMaterial = alfrescoRepository.findOne(rawMaterialNodeRef);
+			
+			Assert.assertFalse(rawMaterial.getAspects().contains(PLMModel.ASPECT_NUTRIENT_PROFILING_SCORE));
+			
+			rawMaterial.setTitle("Test update property");
+
+			alfrescoRepository.save(rawMaterial);
+			
+			Assert.assertFalse(rawMaterial.getAspects().contains(PLMModel.ASPECT_NUTRIENT_PROFILING_SCORE));
+			
+			rawMaterial.setNutrientClass("A");
+			
+			alfrescoRepository.save(rawMaterial);
+			
+			Assert.assertTrue(rawMaterial.getAspects().contains(PLMModel.ASPECT_NUTRIENT_PROFILING_SCORE));
+			
+			return true;
+			
+		});
+		
+	}
+	
+	
 	/**
 	 * Test ing labeling list.
 	 */

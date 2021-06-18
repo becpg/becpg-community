@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG. 
+ * Copyright (C) 2010-2021 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 
+import fr.becpg.repo.repository.RepositoryEntity;
+
 /**
  * <p>LazyLoadingDataList class.</p>
  *
@@ -31,7 +33,7 @@ import java.util.Set;
  * @param <E>
  * @version $Id: $Id
  */
-public class LazyLoadingDataList<E> implements List<E>  {
+public class LazyLoadingDataList<E extends RepositoryEntity> implements List<E>, Collection<E>  {
 
 	
 	List<E> backedList = null;
@@ -88,6 +90,17 @@ public class LazyLoadingDataList<E> implements List<E>  {
 		return backedList;
 	}
 	
+	
+
+	public List<E> copy() {
+	   List<E> ret = new java.util.LinkedList<>();
+	   	for(E item : getList()) {
+	   		item.setNodeRef(null);
+	   		ret.add(item);
+	   	}
+		return ret;
+	}
+
 
 	// List interfaces methods
 	
@@ -278,6 +291,7 @@ public class LazyLoadingDataList<E> implements List<E>  {
 	public String toString() {
 		return "LazyLoadingDataList [backedList=" + backedList + ", loaded=" + loaded + ", deletedNodes=" + deletedNodes + "]";
 	}
+
 
 	
 	

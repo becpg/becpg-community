@@ -6,6 +6,7 @@ package fr.becpg.test.project.formulation;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -47,39 +48,71 @@ public class ProjectMultiLevelPlanningIT extends AbstractProjectTestCase {
 			assertNotNull(projectData);
 			assertNotNull(projectData.getTaskList());
 			assertEquals(6, projectData.getTaskList().size());
-			assertEquals(dateFormat.parse("15/11/2012"), projectData.getTaskList().get(0).getStart());
-			assertEquals(dateFormat.parse("20/11/2012"), projectData.getTaskList().get(0).getEnd());
+			 
+			Calendar now = Calendar.getInstance();
+			now.set(Calendar.HOUR_OF_DAY, 0);
+			now.set(Calendar.MINUTE, 0);
+			now.set(Calendar.SECOND, 0);
+			now.set(Calendar.MILLISECOND, 0);
+			
+		
 			assertEquals(dateFormat.parse("15/11/2012"), projectData.getTaskList().get(1).getStart());
-			assertEquals(dateFormat.parse("16/11/2012"), projectData.getTaskList().get(1).getEnd());
-			assertEquals(dateFormat.parse("19/11/2012"), projectData.getTaskList().get(2).getStart());
-			assertEquals(dateFormat.parse("20/11/2012"), projectData.getTaskList().get(2).getEnd());
-			assertEquals(dateFormat.parse("21/11/2012"), projectData.getTaskList().get(3).getStart());
-			assertEquals(dateFormat.parse("26/11/2012"), projectData.getTaskList().get(3).getEnd());
-			assertEquals(dateFormat.parse("21/11/2012"), projectData.getTaskList().get(4).getStart());
-			assertEquals(dateFormat.parse("22/11/2012"), projectData.getTaskList().get(4).getEnd());
-			assertEquals(dateFormat.parse("23/11/2012"), projectData.getTaskList().get(5).getStart());
-			assertEquals(dateFormat.parse("26/11/2012"), projectData.getTaskList().get(5).getEnd());
-
+			assertEquals(projectData.getTaskList().get(1).getStart(), projectData.getTaskList().get(0).getStart());
+			assertEquals(projectData.getTaskList().get(2).getEnd(), projectData.getTaskList().get(0).getEnd()); 
+			assertEquals(projectData.getTaskList().get(4).getStart(), projectData.getTaskList().get(3).getStart());
+			assertEquals(projectData.getTaskList().get(5).getEnd(), projectData.getTaskList().get(3).getEnd());
+			
+			assertEquals(now.getTime(), projectData.getTaskList().get(1).getEnd());
+			calculateNextDate(now,1);
+			assertEquals(now.getTime(), projectData.getTaskList().get(2).getStart());
+		
+			calculateNextDate(now,1);
+			assertEquals(now.getTime(), projectData.getTaskList().get(2).getEnd());
+			calculateNextDate(now,1);
+			assertEquals(now.getTime(), projectData.getTaskList().get(4).getStart());
+			calculateNextDate(now,1);
+			assertEquals(now.getTime(), projectData.getTaskList().get(4).getEnd());
+			calculateNextDate(now,1);
+			assertEquals(now.getTime(), projectData.getTaskList().get(5).getStart());
+			calculateNextDate(now,1);
+			assertEquals(now.getTime(), projectData.getTaskList().get(5).getEnd());
+			
+			
 			// modify some tasks
 			projectData.getTaskList().get(1).setStart(dateFormat.parse("19/11/2012"));
 			projectData.getTaskList().get(1).setDuration(4);
 			alfrescoRepository.save(projectData);
 			projectService.formulate(projectNodeRef);
 
+			 now = Calendar.getInstance();
+				now.set(Calendar.HOUR_OF_DAY, 0);
+				now.set(Calendar.MINUTE, 0);
+				now.set(Calendar.SECOND, 0);
+				now.set(Calendar.MILLISECOND, 0);
+			
 			// check
 			projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 			assertEquals(dateFormat.parse("19/11/2012"), projectData.getTaskList().get(0).getStart());
-			assertEquals(dateFormat.parse("26/11/2012"), projectData.getTaskList().get(0).getEnd());
-			assertEquals(dateFormat.parse("19/11/2012"), projectData.getTaskList().get(1).getStart());
-			assertEquals(dateFormat.parse("22/11/2012"), projectData.getTaskList().get(1).getEnd());
-			assertEquals(dateFormat.parse("23/11/2012"), projectData.getTaskList().get(2).getStart());
-			assertEquals(dateFormat.parse("26/11/2012"), projectData.getTaskList().get(2).getEnd());
-			assertEquals(dateFormat.parse("27/11/2012"), projectData.getTaskList().get(3).getStart());
-			assertEquals(dateFormat.parse("30/11/2012"), projectData.getTaskList().get(3).getEnd());
-			assertEquals(dateFormat.parse("27/11/2012"), projectData.getTaskList().get(4).getStart());
-			assertEquals(dateFormat.parse("28/11/2012"), projectData.getTaskList().get(4).getEnd());
-			assertEquals(dateFormat.parse("29/11/2012"), projectData.getTaskList().get(5).getStart());
-			assertEquals(dateFormat.parse("30/11/2012"), projectData.getTaskList().get(5).getEnd());
+			
+			assertEquals(projectData.getTaskList().get(1).getStart(), projectData.getTaskList().get(0).getStart());
+			assertEquals(projectData.getTaskList().get(2).getEnd(), projectData.getTaskList().get(0).getEnd()); 
+			assertEquals(projectData.getTaskList().get(4).getStart(), projectData.getTaskList().get(3).getStart());
+			assertEquals(projectData.getTaskList().get(5).getEnd(), projectData.getTaskList().get(3).getEnd());
+			
+			assertEquals(now.getTime(), projectData.getTaskList().get(1).getEnd());
+			calculateNextDate(now,1);
+			assertEquals(now.getTime(), projectData.getTaskList().get(2).getStart());
+		
+			calculateNextDate(now,1);
+			assertEquals(now.getTime(), projectData.getTaskList().get(2).getEnd());
+			calculateNextDate(now,1);
+			assertEquals(now.getTime(), projectData.getTaskList().get(4).getStart());
+			calculateNextDate(now,1);
+			assertEquals(now.getTime(), projectData.getTaskList().get(4).getEnd());
+			calculateNextDate(now,1);
+			assertEquals(now.getTime(), projectData.getTaskList().get(5).getStart());
+			calculateNextDate(now,1);
+			assertEquals(now.getTime(), projectData.getTaskList().get(5).getEnd());
 
 			return null;
 		}, false, true);
@@ -180,6 +213,23 @@ public class ProjectMultiLevelPlanningIT extends AbstractProjectTestCase {
 		}, false, true);
 	}
 
+
+	private void  calculateNextDate(Calendar calendar, Integer duration) {
+
+		int i = 0;
+		while (i < duration) {
+			
+				calendar.add(Calendar.DATE, 1);
+			
+			if (ProjectHelper.isWorkingDate(calendar)) {
+				i++;
+			}
+		}
+
+	}
+
+	
+	
 	@Test
 	public void testRetroCalculatePlanningDates() throws ParseException {
 		final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -19,6 +19,7 @@ package fr.becpg.test.project;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -294,14 +295,15 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 			prevTasks.add(projectTplData.getTaskList().get(0).getNodeRef());
 			projectTplData.getTaskList().get(1).setPrevTasks(prevTasks);
 
-				prevTasks = new ArrayList<>();
-				prevTasks.add(projectTplData.getTaskList().get(1).getNodeRef());
-				projectTplData.getTaskList().get(2).setPrevTasks(prevTasks);
-				projectTplData.getTaskList().get(2).setRefusedTask(projectTplData.getTaskList().get(1));
+			prevTasks = new ArrayList<>();
+			prevTasks.add(projectTplData.getTaskList().get(1).getNodeRef());
+			projectTplData.getTaskList().get(2).setPrevTasks(prevTasks);
+			projectTplData.getTaskList().get(2).setRefusedTask(projectTplData.getTaskList().get(1));
 
 			prevTasks = new ArrayList<>();
 			prevTasks.add(projectTplData.getTaskList().get(2).getNodeRef());
 			projectTplData.getTaskList().get(3).setPrevTasks(prevTasks);
+		
 
 			prevTasks = new ArrayList<>();
 			prevTasks.add(projectTplData.getTaskList().get(2).getNodeRef());
@@ -311,6 +313,8 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 			prevTasks.add(projectTplData.getTaskList().get(3).getNodeRef());
 			prevTasks.add(projectTplData.getTaskList().get(4).getNodeRef());
 			projectTplData.getTaskList().get(5).setPrevTasks(prevTasks);
+			projectTplData.getTaskList().get(5).setRefusedTask(projectTplData.getTaskList().get(2));
+			projectTplData.getTaskList().get(5).setRefusedTasksToReopen(Arrays.asList(projectTplData.getTaskList().get(4).getNodeRef()));
 
 			List<DeliverableListDataItem> deliverableList = new LinkedList<>();
 			deliverableList.add(new DeliverableListDataItem(null, Collections.singletonList(projectTplData.getTaskList().get(0).getNodeRef()), null,

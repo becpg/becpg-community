@@ -18,14 +18,19 @@
 }
 
 
-div.legend.project-list  {
-	float:right;
-	margin-top:10px;
+.project-details {
+	margin: 5px 0px 0px 10px !important;
+	z-index: 3;
+	position: relative;
+}
+
+.project-details .white-block {
+	margin: 5px !important;
 }
 
 /* Data Table */
 
-div.legend.project-list  {
+.project-list div.legend {
 	float:right;
 	margin-top:10px;
 }

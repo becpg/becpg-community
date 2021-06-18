@@ -87,6 +87,11 @@ XML :
  * @version $Id: $Id
  */
 public class EntityReportParameters {
+	
+	
+	public static final String PARAM_COMPONENT_DATALISTS_TO_EXTRACT = "componentDatalistsToExtract";
+	public static final String PARAM_ENTITY_DATALISTS_TO_EXTRACT = "entityDatalistsToExtract";
+	public static final String PARAM_EXTRACT_IN_MULTILEVEL = "extractInMultiLevel";
 
 	private static Log logger = LogFactory.getLog(EntityReportParameters.class);
 

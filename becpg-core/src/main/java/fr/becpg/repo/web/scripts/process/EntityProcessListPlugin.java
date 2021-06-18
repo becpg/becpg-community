@@ -5,8 +5,6 @@ import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
-import fr.becpg.config.format.PropertyFormats;
-
 /**
  * <p>EntityProcessListPlugin interface.</p>
  *

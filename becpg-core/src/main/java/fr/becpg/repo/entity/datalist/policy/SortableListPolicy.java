@@ -7,7 +7,6 @@ import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.repo.copy.CopyBehaviourCallback;
 import org.alfresco.repo.copy.CopyDetails;
 import org.alfresco.repo.copy.CopyServicePolicies;
@@ -27,6 +26,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.datalist.DataListSortService;
+import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
@@ -48,6 +48,15 @@ public class SortableListPolicy extends AbstractBeCPGPolicy
 	private EntityDictionaryService entityDictionaryService;
 
 	private EntityListDAO entityListDAO;
+	
+	private RepoService repoService;
+	
+	
+	
+
+	public void setRepoService(RepoService repoService) {
+		this.repoService = repoService;
+	}
 
 	/**
 	 * <p>Setter for the field <code>entityDictionaryService</code>.</p>
@@ -124,7 +133,7 @@ public class SortableListPolicy extends AbstractBeCPGPolicy
 
 			// has changed ?
 			boolean hasChanged;
-			if ((afterParentLevel != null) && !afterParentLevel.equals(beforeParentLevel)) {
+			if ((afterParentLevel != null) && !afterParentLevel.equals(beforeParentLevel) && nodeService.exists(nodeRef) && nodeService.exists(afterParentLevel)) {
 
 				if (entityDictionaryService.isSubClass(nodeService.getType(afterParentLevel), BeCPGModel.TYPE_ENTITY_V2)) {
 
@@ -132,7 +141,7 @@ public class SortableListPolicy extends AbstractBeCPGPolicy
 					if (listContainerNodeRef != null) {
 						NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, nodeService.getType(nodeRef));
 						if (listNodeRef != null) {
-							nodeService.moveNode(nodeRef, listNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
+							repoService.moveNode(nodeRef, listNodeRef);
 						}
 					}
 					nodeService.setProperty(nodeRef, BeCPGModel.PROP_PARENT_LEVEL, null);
@@ -141,17 +150,14 @@ public class SortableListPolicy extends AbstractBeCPGPolicy
 
 					if (!nodeService.getPrimaryParent(afterParentLevel).getParentRef().equals(nodeService.getPrimaryParent(nodeRef).getParentRef())) {
 
-						nodeService.moveNode(nodeRef, nodeService.getPrimaryParent(afterParentLevel).getParentRef(), ContentModel.ASSOC_CONTAINS,
-								ContentModel.ASSOC_CONTAINS);
+						repoService.moveNode(nodeRef, nodeService.getPrimaryParent(afterParentLevel).getParentRef());
 
 					}
 
 				}
 
 				hasChanged = true;
-			} else if ((beforeParentLevel != null) && !beforeParentLevel.equals(afterParentLevel)) {// parentLevel
-																									// is
-																									// null
+			} else if ((beforeParentLevel != null) && !beforeParentLevel.equals(afterParentLevel)) {// parentLevel																							// null
 				hasChanged = true;
 			} else {
 				hasChanged = false;
@@ -185,7 +191,7 @@ public class SortableListPolicy extends AbstractBeCPGPolicy
 							if (listContainerNodeRef != null) {
 								NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, nodeService.getType(nodeRef));
 								if (listNodeRef != null) {
-									nodeService.moveNode(nodeRef, listNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
+									repoService.moveNode(nodeRef, listNodeRef);
 								}
 							}
 							nodeService.setProperty(nodeRef, BeCPGModel.PROP_PARENT_LEVEL, null);
@@ -194,9 +200,9 @@ public class SortableListPolicy extends AbstractBeCPGPolicy
 
 							if (!nodeService.getPrimaryParent(parentNodeRef).getParentRef()
 									.equals(nodeService.getPrimaryParent(nodeRef).getParentRef())) {
+								
 
-								nodeService.moveNode(nodeRef, nodeService.getPrimaryParent(parentNodeRef).getParentRef(), ContentModel.ASSOC_CONTAINS,
-										ContentModel.ASSOC_CONTAINS);
+								repoService.moveNode(nodeRef, nodeService.getPrimaryParent(parentNodeRef).getParentRef());
 
 							}
 						}

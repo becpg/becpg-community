@@ -7,9 +7,12 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
@@ -17,10 +20,14 @@ import org.alfresco.repo.forum.CommentService;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
+import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
+import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
+import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.version.VersionType;
@@ -36,7 +43,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
@@ -53,6 +59,7 @@ import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
+import fr.becpg.repo.helper.LargeTextHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
@@ -66,9 +73,12 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 @Service("entityActivityService")
 public class EntityActivityServiceImpl implements EntityActivityService {
 
+
 	private static Log logger = LogFactory.getLog(EntityActivityServiceImpl.class);
 
 	private static final int MAX_PAGE = 50;
+	
+	public static final int ML_TEXT_SIZE_LIMIT = 200;
 
 	private static final Map<String, Boolean> SORT_MAP;
 	static {
@@ -351,7 +361,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					QName type = nodeService.getType(datalistNodeRef);
 
 					data.put(PROP_CLASSNAME, attributeExtractorService.extractMetadata(type, datalistNodeRef));
-					data.put(PROP_DATALIST_TYPE, type.toPrefixString(namespaceService));
+					data.put(PROP_DATALIST_TYPE, entityDictionaryService.toPrefixString(type));
 
 					NodeRef charactNodeRef = getMatchingCharactNodeRef(datalistNodeRef);
 
@@ -371,10 +381,112 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 						}
 					}
 					if (activityEvent.equals(ActivityEvent.Update) && updatedProperties != null) {
-						List<JSONObject> properties = new ArrayList<JSONObject>();
+						List<JSONObject> properties = new ArrayList<>();
 						for (Map.Entry<QName, Pair<Serializable, Serializable>> entry : updatedProperties.entrySet()) {
 							JSONObject property = new JSONObject();
+							
+							MLText mlTextBefore = null;
+							MLText mlTextAfter = null;
+							MLText newMlTextBefore = null;
+							MLText newMlTextAfter = null;
+							
+							if (entry.getValue().getFirst() instanceof List) {
+								for (Object obj : (List<?>) entry.getValue().getFirst()) {
+									if (obj instanceof MLText) {
+										mlTextBefore = (MLText) obj;
+									}
+								}
+							}
+							if (entry.getValue().getSecond() instanceof List) {
+								for (Object obj : (List<?>) entry.getValue().getSecond()) {
+									if (obj instanceof MLText) {
+										mlTextAfter = (MLText) obj;
+									}
+								}
+							}
+							
+							if (mlTextBefore != null) {
+								
+								LargeTextHelper.elipse(mlTextBefore);
+								
+								newMlTextBefore = new MLText();
+								
+								Iterator<Entry<Locale, String>> it = mlTextBefore.entrySet().iterator();
+								
+								while (it.hasNext()) {
+									Locale locale = it.next().getKey();
+									
+									String textBefore = mlTextBefore.get(locale);
+									
+									newMlTextBefore.put(locale, textBefore);
+									
+									if (textBefore != null && textBefore.length() > ML_TEXT_SIZE_LIMIT) {
+										String textAfter = mlTextAfter != null ? mlTextAfter.get(locale) : null;
+										if (textAfter == null || textAfter.length() <= ML_TEXT_SIZE_LIMIT) {
+											textBefore = textBefore.substring(0, ML_TEXT_SIZE_LIMIT) + " ...";
+											newMlTextBefore.put(locale, textBefore);
+										} else {
+											Pair<String,String> diffs = LargeTextHelper.createTextDiffs(textBefore, textAfter);
+											
+											textBefore = diffs.getFirst().replace(" ", "").equals("") ? textBefore :  diffs.getFirst();
+											textBefore = textBefore.length() > ML_TEXT_SIZE_LIMIT ? textBefore.substring(0, ML_TEXT_SIZE_LIMIT) + " ..." : textBefore;
+											
+											newMlTextBefore.put(locale, textBefore);
+										}
+									}
+								}
+							}
+							
+							if (mlTextAfter != null) {
+								
+								LargeTextHelper.elipse(mlTextAfter);
 
+								newMlTextAfter = new MLText();
+								
+								Iterator<Entry<Locale, String>> it = mlTextAfter.entrySet().iterator();
+
+								while (it.hasNext()) {
+									Locale locale = it.next().getKey();
+									
+									String textAfter = mlTextAfter.get(locale);
+									
+									newMlTextAfter.put(locale, textAfter);
+
+									if (textAfter != null && textAfter.length() > ML_TEXT_SIZE_LIMIT) {
+										String textBefore = mlTextBefore != null ? mlTextBefore.get(locale) : null;
+										if (textBefore == null || textBefore.length() <= ML_TEXT_SIZE_LIMIT) {
+											textAfter = textAfter.substring(0, ML_TEXT_SIZE_LIMIT) + " ...";
+											newMlTextAfter.put(locale, textAfter);
+										} else {
+											Pair<String,String> diffs = LargeTextHelper.createTextDiffs(textBefore, textAfter);
+											
+											textAfter = diffs.getSecond().replace(" ", "").equals("") ? textAfter : diffs.getSecond();
+											textAfter = textAfter.length() > ML_TEXT_SIZE_LIMIT ? textAfter.substring(0, ML_TEXT_SIZE_LIMIT) + " ..." : textAfter;
+
+											newMlTextAfter.put(locale, textAfter);
+										}
+									}
+								}
+							}
+							
+							if (newMlTextBefore != null) {
+								Iterator<Entry<Locale, String>> it = mlTextBefore.entrySet().iterator();
+
+								while (it.hasNext()) {
+									Locale locale = it.next().getKey();
+									mlTextBefore.put(locale, newMlTextBefore.get(locale));
+								}
+							}
+							
+							if (newMlTextAfter != null) {
+								Iterator<Entry<Locale, String>> it = mlTextAfter.entrySet().iterator();
+								
+								while (it.hasNext()) {
+									Locale locale = it.next().getKey();
+									mlTextAfter.put(locale, newMlTextAfter.get(locale));
+								}
+							}
+							
 							property.put(PROP_TITLE, entry.getKey());
 							property.put(BEFORE, entry.getValue().getFirst());
 							if (entry.getKey().equals(ContentModel.PROP_NAME)) {
@@ -410,6 +522,9 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 	}
 
+	
+
+	// TODO Slow better to have it async
 	private void mergeWithLastActivity(ActivityListDataItem item) {
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.HOUR, -1);
@@ -471,11 +586,16 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 							JSONObject itemProperty = itemProperties.getJSONObject(j);
 							if (itemProperty.get(PROP_TITLE).equals(activityProperty.get(PROP_TITLE))) {
 								isSameProperty = true;
-								if (activityProperty.has(BEFORE)) {
-									itemProperty.put(BEFORE,activityProperty.get(BEFORE));
-								}else {
-									itemProperty.put(BEFORE,"");
+								PropertyDefinition property = dictionaryService.getProperty(QName.createQName((String) activityProperty.get(PROP_TITLE)));
+								
+								if (property == null || property.getDataType() == null || !DataTypeDefinition.TEXT.equals(property.getDataType().getName()) && !DataTypeDefinition.MLTEXT.equals(property.getDataType().getName())) {
+									if (activityProperty.has(BEFORE)) {
+										itemProperty.put(BEFORE,activityProperty.get(BEFORE));
+									} else {
+										itemProperty.put(BEFORE,"");
+									}
 								}
+								
 							}
 						}
 						if (!isSameProperty) {
@@ -670,8 +790,110 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 
 							property.put(PROP_TITLE, entry.getKey());
-							property.put(BEFORE, entry.getValue().getFirst());
+							
+							MLText mlTextBefore = null;
+							MLText mlTextAfter = null;
+							MLText newMlTextBefore = null;
+							MLText newMlTextAfter = null;
+							
+							if (entry.getValue().getFirst() instanceof List) {
+								for (Object obj : (List<?>) entry.getValue().getFirst()) {
+									if (obj instanceof MLText) {
+										mlTextBefore = (MLText) obj;
+									}
+								}
+							}
+							if (entry.getValue().getSecond() instanceof List) {
+								for (Object obj : (List<?>) entry.getValue().getSecond()) {
+									if (obj instanceof MLText) {
+										mlTextAfter = (MLText) obj;
+									}
+								}
+							}
+							
+							if (mlTextBefore != null) {
+								
+								LargeTextHelper.elipse(mlTextBefore);
 
+								newMlTextBefore = new MLText();
+								
+								Iterator<Entry<Locale, String>> it = mlTextBefore.entrySet().iterator();
+								
+								while (it.hasNext()) {
+									Locale locale = it.next().getKey();
+									
+									String textBefore = mlTextBefore.get(locale);
+									
+									newMlTextBefore.put(locale, textBefore);
+									
+									if (textBefore != null && textBefore.length() > ML_TEXT_SIZE_LIMIT) {
+										String textAfter = mlTextAfter != null ? mlTextAfter.get(locale) : null;
+										if (textAfter == null || textAfter.length() <= ML_TEXT_SIZE_LIMIT) {
+											textBefore = textBefore.substring(0, ML_TEXT_SIZE_LIMIT) + " ...";
+											newMlTextBefore.put(locale, textBefore);
+										} else {
+											Pair<String,String> diffs = LargeTextHelper.createTextDiffs(textBefore, textAfter);
+											
+											textBefore = diffs.getFirst().replace(" ", "").equals("") ? textBefore : diffs.getFirst();
+											textBefore = textBefore.length() > ML_TEXT_SIZE_LIMIT ? textBefore.substring(0, ML_TEXT_SIZE_LIMIT) + " ..." : textBefore;
+											
+											newMlTextBefore.put(locale, textBefore);
+										}
+									}
+								}
+							}
+							
+							if (mlTextAfter != null) {
+								
+								LargeTextHelper.elipse(mlTextAfter);
+
+								newMlTextAfter = new MLText();
+								
+								Iterator<Entry<Locale, String>> it = mlTextAfter.entrySet().iterator();
+
+								while (it.hasNext()) {
+									Locale locale = it.next().getKey();
+									
+									String textAfter = mlTextAfter.get(locale);
+									
+									newMlTextAfter.put(locale, textAfter);
+
+									if (textAfter != null && textAfter.length() > ML_TEXT_SIZE_LIMIT) {
+										String textBefore = mlTextBefore != null ? mlTextBefore.get(locale) : null;
+										if (textBefore == null || textBefore.length() <= ML_TEXT_SIZE_LIMIT) {
+											textAfter = textAfter.substring(0, ML_TEXT_SIZE_LIMIT) + " ...";
+											newMlTextAfter.put(locale, textAfter);
+										} else {
+											Pair<String,String> diffs = LargeTextHelper.createTextDiffs(textBefore, textAfter);
+											
+											textAfter = diffs.getSecond().replace(" ", "").equals("") ? textAfter :  diffs.getSecond();
+											textAfter = textAfter.length() > ML_TEXT_SIZE_LIMIT ? textAfter.substring(0, ML_TEXT_SIZE_LIMIT) + " ..." : textAfter;
+
+											newMlTextAfter.put(locale, textAfter);
+										}
+									}
+								}
+							}
+							
+							if (newMlTextBefore != null) {
+								Iterator<Entry<Locale, String>> it = mlTextBefore.entrySet().iterator();
+
+								while (it.hasNext()) {
+									Locale locale = it.next().getKey();
+									mlTextBefore.put(locale, newMlTextBefore.get(locale));
+								}
+							}
+							
+							if (newMlTextAfter != null) {
+								Iterator<Entry<Locale, String>> it = mlTextAfter.entrySet().iterator();
+								
+								while (it.hasNext()) {
+									Locale locale = it.next().getKey();
+									mlTextAfter.put(locale, newMlTextAfter.get(locale));
+								}
+							}
+							
+							property.put(BEFORE, entry.getValue().getFirst());
 							if (data.has(PROP_TITLE) && data.get(PROP_TITLE) != null
 									&& entry.getKey().equals(ContentModel.PROP_NAME)) {
 								property.put(AFTER, data.get(PROP_TITLE));
@@ -924,9 +1146,9 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 							}
 
 						} catch (Exception e) {
-							if (e instanceof ConcurrencyFailureException) {
-								throw (ConcurrencyFailureException) e;
-							}
+							 if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+								 throw e;
+			                  }
 							logger.error(e,e);
 						} finally {
 							logger.debug("Purge terminated with sucess: ");

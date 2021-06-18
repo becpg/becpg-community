@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2010-2020 beCPG. 
+  Copyright (C) 2010-2021 beCPG. 
    
   This file is part of beCPG 
    
@@ -163,5 +163,104 @@
 			</form>
 		</forms>
 	</config>
+	
+	<config evaluator="node-type" condition="ghs:onuCode">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="ghs:onuCodeNumber" />
+					<show id="bcpg:charactName" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	<config evaluator="model-type" condition="ghs:onuCode">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="ghs:onuCodeNumber" />
+					<show id="bcpg:charactName" />
+				</field-visibility>
+			</form>
+			<form id="filter">
+				<field-visibility>
+					<show id="ghs:onuCodeNumber" />
+					<show id="bcpg:charactName" />
+				</field-visibility>
+			</form>
+			<form id="datagrid">
+				<field-visibility>
+					<show id="ghs:onuCodeNumber" />
+					<show id="bcpg:charactName" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>	
+	
+	<config evaluator="node-type" condition="ghs:classCode">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="ghs:classCodeNumber" />
+					<show id="bcpg:charactName" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	<config evaluator="model-type" condition="ghs:classCode">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="ghs:classCodeNumber" />
+					<show id="bcpg:charactName" />
+				</field-visibility>
+			</form>
+			<form id="filter">
+				<field-visibility>
+					<show id="ghs:classCodeNumber" />
+					<show id="bcpg:charactName" />
+				</field-visibility>
+			</form>
+			<form id="datagrid">
+				<field-visibility>
+					<show id="ghs:classCodeNumber" />
+					<show id="bcpg:charactName" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+		
+	<config evaluator="node-type" condition="ghs:packagingGroupCode">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="ghs:packagingGroupCodeNumber" />
+					<show id="bcpg:charactName" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	<config evaluator="model-type" condition="ghs:packagingGroupCode">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="ghs:packagingGroupCodeNumber" />
+					<show id="bcpg:charactName" />
+				</field-visibility>
+			</form>
+			<form id="filter">
+				<field-visibility>
+					<show id="ghs:packagingGroupCodeNumber" />
+					<show id="bcpg:charactName" />
+				</field-visibility>
+			</form>
+			<form id="datagrid">
+				<field-visibility>
+					<show id="ghs:packagingGroupCodeNumber" />
+					<show id="bcpg:charactName" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>	
 		
 </alfresco-config>

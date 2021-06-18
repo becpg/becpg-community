@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2010-2020 beCPG. 
+  Copyright (C) 2010-2021 beCPG. 
    
   This file is part of beCPG 
    
@@ -23,6 +23,6 @@
 	<url>/becpg/remote/entity/data?query={query}</url>
 	<format default="xml">argument</format>
 	<authentication>user</authentication>
-	<transaction allow="readwrite" buffersize="0">required</transaction>
+	<transaction allow="readwrite" >required</transaction>
 	<lifecycle>public_api</lifecycle>
 </webscript>

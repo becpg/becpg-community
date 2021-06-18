@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -66,6 +66,9 @@ public class ReportModel {
 
 	/** Constant <code>PROP_REPORT_TPL_SEARCH_QUERY</code> */
 	public static final QName PROP_REPORT_TPL_SEARCH_QUERY = QName.createQName(REPORT_URI, "reportTplSearchQuery");
+
+	/** Constant <code>PROP_REPORT_TPL_SEARCH_LIMIT</code> */
+	public static final QName PROP_REPORT_TPL_SEARCH_LIMIT = QName.createQName(REPORT_URI, "reportTplSearchLimit");
 
 	// reportEntity
 	/** Constant <code>ASPECT_REPORT_ENTITY</code> */

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -20,9 +20,11 @@ package fr.becpg.repo.entity.impl;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.alfresco.model.ContentModel;
@@ -32,11 +34,14 @@ import org.alfresco.repo.rule.RuntimeRuleService;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
+import org.alfresco.repo.transfer.TransferModel;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.InvalidAspectException;
 import org.alfresco.service.cmr.dictionary.TypeDefinition;
+import org.alfresco.service.cmr.model.FileExistsException;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
+import org.alfresco.service.cmr.model.FileNotFoundException;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.InvalidNodeRefException;
 import org.alfresco.service.cmr.repository.MLText;
@@ -51,7 +56,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
@@ -80,9 +84,14 @@ import fr.becpg.repo.repository.RepositoryEntityDefReader;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.repository.model.Synchronisable;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
+import io.opencensus.common.Scope;
+import io.opencensus.trace.Tracer;
+import io.opencensus.trace.Tracing;
 
 /**
- * <p>EntityTplServiceImpl class.</p>
+ * <p>
+ * EntityTplServiceImpl class.
+ * </p>
  *
  * @author matthieu
  * @version $Id: $Id
@@ -95,6 +104,11 @@ public class EntityTplServiceImpl implements EntityTplService {
 	private static final String ENTITY_DATALIST_KEY_PREFIX = "entity-datalist-";
 
 	private static final Log logger = LogFactory.getLog(EntityTplServiceImpl.class);
+
+	
+	private static final Tracer tracer = Tracing.getTracer();
+	
+	private static final Set<QName> isIgnoredAspect = new HashSet<>();
 
 	@Autowired
 	private NodeService nodeService;
@@ -144,6 +158,19 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 	private ReentrantLock lock = new ReentrantLock();
 
+	static {
+		isIgnoredAspect.add(ContentModel.ASPECT_VERSIONABLE);
+		isIgnoredAspect.add(ContentModel.ASPECT_TEMPORARY);
+		isIgnoredAspect.add(ContentModel.ASPECT_WORKING_COPY);
+		isIgnoredAspect.add(ContentModel.ASPECT_COPIEDFROM);
+		isIgnoredAspect.add(TransferModel.ASPECT_TRANSFERRED);
+		isIgnoredAspect.add(RuleModel.ASPECT_RULES);
+		isIgnoredAspect.add(BeCPGModel.ASPECT_ENTITY_TPL);
+	};
+
+	private boolean ignoreAspect(QName aspect) {
+		return (aspect.getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI) || isIgnoredAspect.contains(aspect));
+	}
 
 	/** {@inheritDoc} */
 	@Override
@@ -152,7 +179,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 		TypeDefinition typeDef = entityDictionaryService.getType(entityType);
 		if (entityTplName == null) {
-			entityTplName = typeDef.getTitle(entityDictionaryService.getDictionaryService());
+			entityTplName = typeDef.getTitle(entityDictionaryService);
 		}
 		// entityTpl
 		Map<QName, Serializable> properties = new HashMap<>();
@@ -220,8 +247,13 @@ public class EntityTplServiceImpl implements EntityTplService {
 					MLText classTitleMLText = TranslateHelper.getTemplateTitleMLText(classDef.getName());
 					MLText classDescritptionMLText = TranslateHelper.getTemplateDescriptionMLText(classDef.getName());
 
-					mlNodeService.setProperty(listNodeRef, ContentModel.PROP_TITLE, MLTextHelper.merge(title, classTitleMLText));
-					mlNodeService.setProperty(listNodeRef, ContentModel.PROP_DESCRIPTION, MLTextHelper.merge(description, classDescritptionMLText));
+					if ((title != null) && (classTitleMLText != null)) {
+						mlNodeService.setProperty(listNodeRef, ContentModel.PROP_TITLE, MLTextHelper.merge(title, classTitleMLText));
+					}
+					if ((description != null) && (classDescritptionMLText != null)) {
+						mlNodeService.setProperty(listNodeRef, ContentModel.PROP_DESCRIPTION,
+								MLTextHelper.merge(description, classDescritptionMLText));
+					}
 
 				}
 			}
@@ -328,22 +360,21 @@ public class EntityTplServiceImpl implements EntityTplService {
 	@SuppressWarnings("unchecked")
 	public void synchronizeEntities(NodeRef tplNodeRef) {
 
-		boolean runWithSuccess = true;
+		boolean runWithSuccess = false;
 		StopWatch watch = new StopWatch();
 		watch.start();
 
 		if (lock.tryLock()) {
 			try {
 
-				logger.debug("synchronizeEntities");
 				RepositoryEntity entityTpl = alfrescoRepository.findOne(tplNodeRef);
 
-				logger.debug("entityTpl" + entityTpl.toString());
-
 				List<NodeRef> entityNodeRefs = getEntitiesToUpdate(tplNodeRef);
-				logger.debug("synchronize entityNodeRefs, size " + entityNodeRefs.size());
+				if (logger.isInfoEnabled()) {
+					logger.info("Launch synchronizeEntities, size " + entityNodeRefs.size());
+				}
 
-				doInBatch(entityNodeRefs, 10, entityNodeRef -> {
+				runWithSuccess = doInBatch(entityNodeRefs, 10, entityNodeRef -> {
 
 					final Map<QName, List<? extends RepositoryEntity>> datalistsTpl = repositoryEntityDefReader.getDataLists(entityTpl);
 
@@ -462,20 +493,22 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 							try {
 								fileFolderService.copy(folder.getNodeRef(), entityNodeRef, null);
-							} catch (ConcurrencyFailureException e) {
-								throw e;
-							} catch (Exception e) {
+							} catch (FileExistsException | FileNotFoundException e) {
 								logger.warn("Unable to synchronize folder " + folder.getName() + " of node " + entityNodeRef + ": " + e.getMessage());
 							}
 						}
 					}
 
+					// synchronize aspects
+					// copy missing aspects
+					Set<QName> aspects = nodeService.getAspects(tplNodeRef);
+					for (QName aspect : aspects) {
+						if (!nodeService.hasAspect(entityNodeRef, aspect) && !ignoreAspect(aspect)) {
+							nodeService.addAspect(entityNodeRef, aspect, null);
+						}
+					}
+
 				});
-			} catch (ConcurrencyFailureException e) {
-				throw e;
-			} catch (Exception e) {
-				runWithSuccess = false;
-				logger.error(e, e);
 
 			} finally {
 				lock.unlock();
@@ -548,15 +581,21 @@ public class EntityTplServiceImpl implements EntityTplService {
 	/** {@inheritDoc} */
 	@Override
 	public void formulateEntities(NodeRef tplNodeRef) {
-		boolean runWithSuccess = true;
+		boolean runWithSuccess = false;
 		StopWatch watch = new StopWatch();
 		watch.start();
 
 		if (lock.tryLock()) {
-			try {
+			try (Scope scope = tracer.spanBuilder("templateService.Formulate").startScopedSpan()) {
+			
+
 				List<NodeRef> entityNodeRefs = getEntitiesToUpdate(tplNodeRef);
 
-				doInBatch(entityNodeRefs, 5, entityNodeRef -> {
+				if (logger.isInfoEnabled()) {
+					logger.info("Launch formulateEntities, size " + entityNodeRefs.size());
+				}
+
+				runWithSuccess = doInBatch(entityNodeRefs, 5, entityNodeRef -> {
 					try {
 						if (logger.isDebugEnabled()) {
 							logger.debug("Formulate : " + entityNodeRef);
@@ -568,10 +607,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 					}
 
 				});
-			} catch (ConcurrencyFailureException e) {
-				throw e;
-			} catch (Exception e) {
-				runWithSuccess = false;
+
 			} finally {
 				lock.unlock();
 				watch.stop();
@@ -588,17 +624,24 @@ public class EntityTplServiceImpl implements EntityTplService {
 		void run(NodeRef entityNodeRef);
 	}
 
-	private void doInBatch(final List<NodeRef> entityNodeRefs, final int batchSize, final BatchCallBack batchCallBack) {
+	private boolean doInBatch(final List<NodeRef> entityNodeRefs, final int batchSize, final BatchCallBack batchCallBack) {
 
 		StopWatch watch = null;
 		if (logger.isInfoEnabled()) {
 			watch = new StopWatch();
 			watch.start();
 		}
+		AtomicInteger batchCount = new AtomicInteger(0);
+		AtomicInteger errorCount = new AtomicInteger(0);
+		int total = entityNodeRefs.size() / batchSize;
+
 		L2CacheSupport.doInCacheContext(() -> {
+
 			for (final List<NodeRef> subList : Lists.partition(entityNodeRefs, batchSize)) {
+
 				RunAsWork<Object> actionRunAs = () -> {
 					RetryingTransactionCallback<Object> actionCallback = () -> {
+
 						for (final NodeRef entityNodeRef : subList) {
 							try {
 
@@ -621,8 +664,16 @@ public class EntityTplServiceImpl implements EntityTplService {
 					};
 					return transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback, false, true);
 				};
-				AuthenticationUtil.runAsSystem(actionRunAs);
 
+				try {
+
+					logger.info(" - Run batch:" + (batchCount.getAndIncrement()) + " over " + total);
+					AuthenticationUtil.runAsSystem(actionRunAs);
+				} catch (Exception e) {
+					errorCount.incrementAndGet();
+					logger.error("Error running batch: " + batchCount.get(), e);
+
+				}
 			}
 
 		}, false, true);
@@ -632,6 +683,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 			logger.info("Batch takes " + watch.getTotalTimeSeconds() + " seconds");
 		}
 
+		return errorCount.get() == 0;
 	}
 
 	private List<NodeRef> getEntitiesToUpdate(NodeRef tplNodeRef) {
@@ -680,7 +732,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 				// copy missing aspects
 				Set<QName> aspects = nodeService.getAspects(entityTplNodeRef);
 				for (QName aspect : aspects) {
-					if (!nodeService.hasAspect(entityNodeRef, aspect) && !BeCPGModel.ASPECT_ENTITY_TPL.isMatch(aspect)) {
+					if (!nodeService.hasAspect(entityNodeRef, aspect) && !ignoreAspect(aspect)) {
 						nodeService.addAspect(entityNodeRef, aspect, null);
 					}
 				}
@@ -750,7 +802,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 	@Override
 	public void removeDataListOnEntities(NodeRef entityTplNodeRef, String entityListName) {
 
-		boolean runWithSuccess = true;
+		boolean runWithSuccess = false;
 		StopWatch watch = new StopWatch();
 		watch.start();
 
@@ -759,7 +811,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 				List<NodeRef> entities = getEntitiesToUpdate(entityTplNodeRef);
 
-				doInBatch(entities, 10, entityNodeRef -> {
+				runWithSuccess = doInBatch(entities, 10, entityNodeRef -> {
 
 					NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
 					NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, entityListName);
@@ -783,13 +835,6 @@ public class EntityTplServiceImpl implements EntityTplService {
 					nodeService.deleteNode(tplListNodeRef);
 				}
 
-			} catch (ConcurrencyFailureException e) {
-				throw e;
-			}
-
-			catch (Exception e) {
-
-				runWithSuccess = false;
 			} finally {
 				lock.unlock();
 				watch.stop();

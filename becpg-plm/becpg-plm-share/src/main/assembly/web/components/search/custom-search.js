@@ -17,7 +17,7 @@
 		this.selectedItems = {};
 
 		YAHOO.Bubbling.on("selectedItemsChanged", this.onSelectedItemsChanged, this);
-		
+		YAHOO.Bubbling.on("registerAction", this.onRegisterAction, this);
 
 		return this;
 	};
@@ -370,7 +370,7 @@
 
 							// add search data webscript arguments
 							url += "search?t=" + encodeURIComponent(searchTerm);
-							url += "&s=" + searchSort;
+							url += "&s=" + encodeURIComponent(searchSort);
 							if (searchQuery.length !== 0) {
 								// if we have a query (already encoded), then
 								// apply it
@@ -740,6 +740,11 @@
 					            searchAllSites = args.searchAllSites;
 					         }
 
+							var searchRepository = this.searchRepository;
+							if (args.searchRepository !== undefined) {
+								searchRepository = args.searchRepository;
+							}
+
 							// call webscript
 							var url = Alfresco.constants.PROXY_URI + "becpg/report/exportsearch/" + args.reportTpl.replace("://", "/") + "/"
 									+ encodeURI(args.reportFileName);
@@ -757,19 +762,31 @@
 								}
 							}
 							
-							 if(this.options.siteId.length !== 0 && !searchAllSites) { 
+							 if(this.options.siteId.length !== 0 && !searchAllSites && !searchRepository) { 
 							    url +="&site=" + this.options.siteId + "&repo=false"; } 
 							 else {
 								url += "&site=&repo=true";
 							}
 
-							if (args.reportFileName.indexOf(".zip") > 0 || args.reportTplName.indexOf(".xlsx") > 0 || args.reportTplName.indexOf(".xlsm") > 0) {
+							if (args.reportFileName.indexOf(".zip") > 0 || args.reportTplName.indexOf(".xlsx") > 0 || args.reportTplName.indexOf(".xlsm") > 0 || args.reportTplName.indexOf(".rptdesign") > 0) {
 
 								url += "&async=true";
 
 								var downloadDialog = Alfresco.getArchiveAndDownloadInstance();
-
-								downloadDialog.mimeType = args.reportFileName.indexOf(".xlsx") > 0 || args.reportFileName.indexOf(".xlsm") > 0 ? "-excel" : "";
+								
+								if(args.reportFileName.indexOf(".xlsx") > 0 || args.reportFileName.indexOf(".xlsm") > 0){
+									downloadDialog.mimeType = "-excel";
+								} else if(args.reportFileName.indexOf(".pdf") > 0 ){
+									downloadDialog.mimeType = "-pdf";
+								}else if(args.reportFileName.indexOf(".doc") > 0 || args.reportFileName.indexOf(".docx") > 0 || args.reportFileName.indexOf(".odt") > 0){
+									downloadDialog.mimeType = "-doc";
+								}else if(args.reportFileName.indexOf(".ppt") > 0 || args.reportFileName.indexOf(".pptx") > 0 ){
+									downloadDialog.mimeType = "-ppt";
+								}else {		
+									downloadDialog.mimeType = "";
+								}
+								
+								
 
 								downloadDialog._resetGUI = function() {
 									// Reset references and the gui before
@@ -793,6 +810,46 @@
 											json.totalFiles);
 								};
 
+							   downloadDialog.handleArchiveComplete =  function() {
+								         // Hide the panel and initiate the download...
+								         this.widgets.cancelOkButton.set("disabled", false);
+								         this.panel.hide();
+								
+								         // Create an empty form and post it to a hidden ifram using GET to avoid confusing the browser to believe we
+								         // are leaving the current page (which would abort the currently running requests, i.e. deletion of the archive
+								
+								         var form = document.createElement("form");
+								         form.method = "GET";
+								         form.action = Alfresco.constants.PROXY_URI + "becpg/report/node/" + this._currentArchiveNodeURL + "/content/" + Alfresco.util.encodeURIPath(this._currentArchiveName);
+								         document.body.appendChild(form);
+									
+								
+								         var d = form.ownerDocument;
+ 			                             var input1 = d.createElement("input");
+											 input1.name="isSearch";
+											 input1.value="true";
+											 form.appendChild(input1);
+
+		 							     var input2 = d.createElement("input");
+											 input2.name="a";
+											 input2.value="true";
+											 form.appendChild(input2);
+										
+							
+								         var iframe = d.createElement("iframe");
+								         iframe.style.display = "none";
+								         YAHOO.util.Dom.generateId(iframe, "downloadArchive");
+								         iframe.name = iframe.id;
+								         document.body.appendChild(iframe);
+								
+								         // makes it possible to target the frame properly in IE.
+								         window.frames[iframe.name].name = iframe.name;
+								
+								         form.target = iframe.name;
+								         form.submit();
+								  };
+
+
 								downloadDialog.showExport = function(reportName) {
 
 									// Reset the dialog...
@@ -804,7 +861,7 @@
 									this.panel.show();
 
 									this._currentArchiveName = reportName;
-
+									
 									// Kick off the request...
 
 									// Post the details of the nodeRefs to
@@ -1229,7 +1286,7 @@
 					       */
 					      _onActionDeleteConfirm: function DLTB__onActionDeleteConfirm(records)
 					      {
-					         var multipleRecords = [], i, ii;
+					         var multipleRecords = [], i, ii, me = this;
 					         for (i = 0, ii = records.length; i < ii; i++)
 					         {
 					            multipleRecords.push(records[i].nodeRef);
@@ -1239,8 +1296,7 @@
 					         var fnSuccess = function DLTB__oADC_success(data, records)
 					         {
 					            var result;
-					            var successFileCount = 0;
-					            var successFolderCount = 0;
+					            var successCount = 0;
 					            
 					            // Did the operation succeed?
 					            if (!data.json.overallSuccess)
@@ -1252,7 +1308,6 @@
 					               return;
 					            }
 					            
-					            YAHOO.Bubbling.fire("filesDeleted");
 					            
 					            for (i = 0, ii = data.json.totalResults; i < ii; i++)
 					            {
@@ -1260,86 +1315,18 @@
 					               
 					               if (result.success)
 					               {
-					                  if (result.type == "folder")
-					                  {
-					                     successFolderCount++;
-					                  }
-					                  else
-					                  {
-					                     successFileCount++;
-					                  }
 					                  
-					                  YAHOO.Bubbling.fire(result.type == "folder" ? "folderDeleted" : "fileDeleted",
-					                  {
-					                     multiple: true,
-					                     nodeRef: result.nodeRef
-					                  });
+					                  successCount++;
+					                
 					               }
 					            }
-					            
-					            // Activities, in Site mode only
-					            var successCount = successFolderCount + successFileCount;
-					            if (Alfresco.util.isValueSet(this.options.siteId))
-					            {
-					               var activityData;
-					               
-					               if (successCount > 0)
-					               {
-					                  if (successCount < this.options.groupActivitiesAt)
-					                  {
-					                     // Below cutoff for grouping Activities into one
-					                     for (i = 0; i < successCount; i++)
-					                     {
-					                        activityData =
-					                        {
-					                           fileName: data.json.results[i].id,
-					                           nodeRef: data.json.results[i].nodeRef,
-					                           path: this.currentPath,
-					                           parentNodeRef : this.doclistMetadata.parent.nodeRef
-					                        };
-					                        
-					                        if (data.json.results[i].type == "folder")
-					                        {
-					                           this.modules.actions.postActivity(this.options.siteId, "folder-deleted", "documentlibrary", activityData);
-					                        }
-					                        else
-					                        {
-					                           this.modules.actions.postActivity(this.options.siteId, "file-deleted", "documentlibrary", activityData);
-					                        }
-					                     }
-					                  }
-					                  else
-					                  {
-					                     if (successFileCount > 0)
-					                     {
-					                        // grouped into one message
-					                        activityData =
-					                        {
-					                           fileCount: successFileCount,
-					                           path: this.currentPath,
-					                           parentNodeRef : this.doclistMetadata.parent.nodeRef
-					                        };
-					                        this.modules.actions.postActivity(this.options.siteId, "files-deleted", "documentlibrary", activityData);
-					                     }
-					                     if (successFolderCount > 0)
-					                     {
-					                        // grouped into one message
-					                        activityData =
-					                        {
-					                           fileCount: successFolderCount,
-					                           path: this.currentPath,
-					                           parentNodeRef : this.doclistMetadata.parent.nodeRef
-					                        };
-					                        this.modules.actions.postActivity(this.options.siteId, "folders-deleted", "documentlibrary", activityData);
-					                     }
-					                  }
-					               }
-					            }
-
+					          
 					            Alfresco.util.PopupManager.displayMessage(
 					            {
 					               text: this.msg("message.multiple-delete.success", successCount)
 					            });
+
+								me.refreshSearch({});
 					         };
 					         
 					         // Construct the data object for the genericAction call
@@ -1376,7 +1363,7 @@
 					               }
 					            }
 					         });
-					      },
+					      }
 
 
 					});

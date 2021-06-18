@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2010-2020 beCPG. 
+Copyright (C) 2010-2021 beCPG. 
  
 This file is part of beCPG 
  
@@ -24,7 +24,6 @@ import java.util.Collections;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,9 +44,6 @@ public class LinkedValueAttributeExtractorPlugin implements AttributeExtractorPl
 	@Autowired
 	private NodeService nodeService;
 	
-	@Autowired
-	private  NamespaceService namespaceService;
-	 
 	
 	/** {@inheritDoc} */
 	@Override
@@ -66,7 +62,7 @@ public class LinkedValueAttributeExtractorPlugin implements AttributeExtractorPl
 	/** {@inheritDoc} */
 	@Override
 	public String extractMetadata(QName type, NodeRef nodeRef) {
-		return BeCPGModel.PROP_LKV_VALUE.toPrefixString(namespaceService).split(":")[1];
+		return BeCPGModel.PROP_LKV_VALUE.getLocalName();
 	}
 
 

@@ -43,6 +43,16 @@
         "i18nMessages" :{
 			"cm:title":"becpg.forms.field.tradeName"
 		}
+    },{
+        "id":"project",
+        "label":"Audited fields",
+        "entityType":[
+            "pjt:project"
+        ],
+        "auditedFields": [
+           "pjt:projectDueDate"
+        ],
+        "modifiedField": "bcpg:modifiedCatalog1"
     }
 
 ]

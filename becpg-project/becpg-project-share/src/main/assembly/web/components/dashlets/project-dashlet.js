@@ -18,9 +18,8 @@
     * Preferences
     */
    var PREFERENCES_PROJECT__DASHLET = "org.alfresco.share.project.catalog.dashlet",
-
-   PREFERENCES_PROJECT__DASHLET_FILTER = PREFERENCES_PROJECT__DASHLET + ".filter", PREFERENCES_PROJECT__DASHLET_VIEW = PREFERENCES_PROJECT__DASHLET + ".view";
-   PREFERENCES_PROJECT__DASHLET_SIMPLEVIEW = PREFERENCES_PROJECT__DASHLET + ".simpleView";
+	   PREFERENCES_PROJECT__DASHLET_FILTER = PREFERENCES_PROJECT__DASHLET + ".filter", PREFERENCES_PROJECT__DASHLET_VIEW = PREFERENCES_PROJECT__DASHLET + ".view",
+       PREFERENCES_PROJECT__DASHLET_SIMPLEVIEW = PREFERENCES_PROJECT__DASHLET + ".simpleView";
 
    /**
     * Use the getDomId function to get unique names for global event handling
@@ -276,11 +275,11 @@
 
                      if (isTask) {
                         if (this.widgets.filter.value == "InProgress") {
-                           sort = "pjt:tlEnd|true";
+                           sort = "pjt:tlDue|true";
                         } else if (this.widgets.filter.value == "Planned") {
                            sort = "pjt:tlStart|true";
                         } else {
-                           sort = "pjt:tlEnd|false";
+                           sort = "pjt:tlDue|false";
                         }
                      }
 
@@ -293,7 +292,13 @@
                      }
 
                      if (this.searchTerm !== null && this.searchTerm.length > 0) {
-                        req += "AND  +@" + (isTask ? "pjt\\:tlTaskName" : "cm\\:name") + ":(" + this.searchTerm + ")";
+						if(isTask){
+							req += "AND  +@pjt\\:tlTaskName:(" + this.searchTerm + ")";
+						} else {
+							req += "AND (" + this.searchTerm + ")";
+						}
+		
+                       
                      }
 
                      req += ')';
@@ -306,7 +311,7 @@
                               "pjt_completionPercent",
                               "bcpg_code",
                               "cm_name",
-                              "pjt_taskList|pjt_tlTaskName|pjt_tlDuration|pjt_tlRealDuration|pjt_tlPrevTasks|pjt_tlState|pjt_completionPercent|pjt_tlStart|pjt_tlEnd|pjt_tlWorkflowInstance|fm_commentCount",
+                              "pjt_taskList|pjt_tlTaskName|pjt_tlDuration|pjt_tlRealDuration|pjt_tlPrevTasks|pjt_tlState|pjt_completionPercent|pjt_tlStart|pjt_tlDue|pjt_tlWorkflowInstance|fm_commentCount",
                               "pjt_deliverableList|pjt_dlDescription|pjt_dlContent|pjt_dlState|pjt_dlScriptExecOrder|fm_commentCount",
                               "pjt_projectManager", "pjt_projectStartDate", "pjt_projectCompletionDate",
                               "pjt_projectDueDate", "pjt_projectState" ],
@@ -321,7 +326,7 @@
                                            "pjt_projectDueDate", "pjt_projectState" ],
                         "task" : [ "pjt_tlTaskName", "pjt_tlDuration","pjt_tlRealDuration",
                               "pjt_tlResources", "pjt_tlTaskLegend", "pjt_tlState", "pjt_completionPercent",
-                              "pjt_tlStart", "pjt_tlEnd", "pjt_tlWorkflowInstance","fm_commentCount",
+                              "pjt_tlStart", "pjt_tlDue", "pjt_tlWorkflowInstance","fm_commentCount",
                               "pjt_project|cm_name|pjt_projectHierarchy1|pjt_projectHierarchy2|pjt_completionPercent|bcpg_code" ]
                      };
 
@@ -604,20 +609,6 @@
                      elCell.innerHTML = desc;
                   },
 
-                  generateFavourite : function ProjectDashlet_generateFavourite(scope, record) {
-                     var i18n = "favourite.document.", html = "";
-
-                     if (record.getData("isFavourite")) {
-                        html = '<a class="favourite-action ' + FAVOURITE_EVENTCLASS + ' enabled" title="' + scope
-                              .msg(i18n + "remove.tip") + '" tabindex="0"></a>';
-                     } else {
-                        html = '<a class="favourite-action ' + FAVOURITE_EVENTCLASS + '" title="' + scope
-                              .msg(i18n + "add.tip") + '" tabindex="0">' + scope.msg(i18n + "add.label") + '</a>';
-                     }
-
-                     return html;
-                  },
-
                   renderResourcesList : function ProjectDashlet_renderResourcesList(oRecord) {
 
                      var resources = oRecord.getData("itemData")["assoc_pjt_tlResources"];
@@ -697,7 +688,7 @@
 
                      var elController = args[1].anchor;
 
-                     elPanel = Dom.getNextSibling(elController);
+                     var elPanel = Dom.getNextSibling(elController);
 
                      if (Dom.hasClass(elController, "alfresco-twister-closed")) {
                         Dom.removeClass(elPanel, "hidden");

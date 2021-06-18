@@ -2,7 +2,7 @@
 # 
 #  beCPG developers README
 #
-#  Copyright (C) 2010-2019 beCPG. 
+#  Copyright (C) 2010-2021 beCPG. 
 #   
 #  This file is part of beCPG 
 #   
@@ -56,7 +56,7 @@ $> ./run.sh test
 
 To run specific test
 
-$> mvn test -Dtest=MyTest.java -DfailIfNoTests=false
+$> mvnw test -Dtest=MyTest.java -DfailIfNoTests=false
 
 Integrations tests require beCPG server to be launch first (./run.sh build_start).
 

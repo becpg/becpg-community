@@ -1,0 +1,44 @@
+
+
+.ecoscore-class-a,
+.ecoscore-class-b,
+.ecoscore-class-c,
+.ecoscore-class-d,
+.ecoscore-class-e
+ {
+    height: 50px;
+    width: 100px;
+    display: block;
+}
+
+
+.ecoscore-class-a{
+	background-image: url("../../images/states/ecoscore-class-A.svg") ;
+	background-size: cover;
+}
+
+
+.ecoscore-class-b{	
+	background-image: url("../../images/states/ecoscore-class-B.svg")  ;
+	background-size: cover;
+}
+
+.ecoscore-class-c{	
+	background-image: url("../../images/states/ecoscore-class-C.svg")  ;
+	background-size: cover;
+}
+
+.ecoscore-class-d{	
+	background-image: url("../../images/states/ecoscore-class-D.svg")  ;
+	background-size: cover;
+}
+
+.ecoscore-class-e{	
+	background-image: url("../../images/states/ecoscore-class-E.svg")  ;
+	background-size: cover;
+}
+
+.ecoscore-class-error
+{
+	background: url("../../images/states/warning-16.png") no-repeat;
+}

@@ -3,9 +3,9 @@
    <#-- CSS Dependencies -->
   <#include "../form/form.css.ftl"/>
   
-  <@link rel="stylesheet" type="text/css" href="${url.context}/res/components/documentlibrary/actions.css" group="search"/>
-	<@link rel="stylesheet" type="text/css" href="${url.context}/res/modules/documentlibrary/global-folder.css" group="search"/>
-	<@link rel="stylesheet" type="text/css" href="${url.context}/res/components/people-finder/people-finder.css" group="search"/>
+   <@link rel="stylesheet" type="text/css" href="${url.context}/res/components/documentlibrary/actions.css" group="search"/>
+   <@link rel="stylesheet" type="text/css" href="${url.context}/res/modules/documentlibrary/global-folder.css" group="search"/>
+   <@link rel="stylesheet" type="text/css" href="${url.context}/res/components/people-finder/people-finder.css" group="search"/>
 	
 	
   <@link href="${url.context}/res/css/beCPG.css" group="search"/>
@@ -15,28 +15,32 @@
 <@markup id="customSearch-js" target="js" action="replace">
    <#-- JavaScript Dependencies -->
    <#include "../form/form.js.ftl"/>
-   
+    <@script src="${url.context}/res/components/form/date-range.js" group="form"/>
+    <@script src="${url.context}/res/components/form/number-range.js" group="form"/>
    
     <@script type="text/javascript" src="${url.context}/res/components/documentlibrary/actions.js" group="search"/>
     <@script type="text/javascript" src="${url.context}/res/modules/documentlibrary/doclib-actions.js" group="search"/> 
 	<@script type="text/javascript" src="${url.context}/res/components/common/common-component-style-filter-chain.js" group="search"/>
 	<@script type="text/javascript" src="${url.context}/res/components/documentlibrary/actions-util.js" group="search"/>
-	<@script type="text/javascript" src="${url.context}/res/components/common/common-component-style-filter-chain.js" group="search"/>
 	<@script type="text/javascript" src="${url.context}/res/modules/simple-dialog.js" group="search"/>
 	<@script type="text/javascript" src="${url.context}/res/modules/documentlibrary/global-folder.js" group="search"/>
 	<@script type="text/javascript" src="${url.context}/res/modules/documentlibrary/copy-move-to.js" group="search"/>
 	<@script type="text/javascript" src="${url.context}/res/components/people-finder/people-finder.js" group="search"/>
 
-  <@script src="${url.context}/res/components/search/search-lib.js" group="search"/>
-   <@script src="${url.context}/res/components/search/search.js" group="search"/>
-   
-   
+	<@script src="${url.context}/res/components/search/search-lib.js" group="search"/>
+	<@script src="${url.context}/res/components/search/search.js" group="search"/>
 
-   <@script src="${url.context}/res/components/search/custom-search.js"  group="search" />
-   <@script src="${url.context}/res/components/form/date-range.js" group="search"/>
-   <@script src="${url.context}/res/components/form/number-range.js" group="search"/>
+    <@script src="${url.context}/res/components/search/custom-search.js"  group="search" />
+  
    <@script src="${url.context}/res/components/search/advsearch.js" group="search"/>
+   
 </@>
+<#--
+<@markup id="customAction-js" target="widgets" action="after">
+  <@script type="text/javascript" src="${url.context}/res/components/documentlibrary/becpg/core-docLibAction.js" group="custom-actions"/> 
+  <@script type="text/javascript" src="${url.context}/res/components/documentlibrary/becpg/plm-docLibAction.js" group="custom-actions"/> 
+</@>	
+-->
 
 <@markup id="customSearch-html" target="html" action="replace">
    <@uniqueIdDiv>
@@ -135,8 +139,9 @@
 					         <div class="bd">
 					             <ul>			                
 					                 <li><a type="" rel="" href="#" ><span class="onActionDownload">${msg("menu.selected-items.download")}</span></a></li>
-					                 <li><a type="" rel="" href="#" ><span class="onActionSendToProject">${msg("menu.actions.entity.send-to-project")}</span></a></li>
+					                 <li><a type="" rel="" href="#" ><span class="onActionAssignWorkflow">${msg("menu.selected-items.assign-process")}</span></a></li>
 					                 <li><a type="" rel="content" href="#" ><span class="onActionQuickShare">${msg("menu.selected-items.quick-share")}</span></a></li>
+					                 <li><a type="" rel="content" href="#" ><span class="onActionAddToBasket">${msg("menu.selected-items.basket")}</span></a></li>
 	                                 <#-- <li><a type="" rel="" href="#" ><span class="onActionCopyTo">${msg("menu.selected-items.copy")}</span></a></li> -->
 	                                 <#-- <li><a type="" rel="delete" href="#" ><span class="onActionMoveTo">${msg("menu.selected-items.move")}</span></a></li> -->
 	                                 <li><a type="" rel="delete" href="#" ><span class="onActionDeleteMultiple">${msg("menu.selected-items.delete")}</span></a></li>

@@ -38,7 +38,17 @@ public final class BeCPGModel {
 
 	/** Constant <code>PROP_ENTITYLIST_STATE</code> */
 	public static final QName PROP_ENTITYLIST_STATE = QName.createQName(BECPG_URI, "entityDataListState");
+	
+	// Format
+	public static final QName ASPECT_ENTITY_FORMAT = QName.createQName(BECPG_URI, "entityFormatAspect");
+	
+	public static final QName PROP_ENTITY_FORMAT = QName.createQName(BECPG_URI, "entityFormat");
+	
+	public static final QName PROP_ENTITY_DATA = QName.createQName(BECPG_URI, "entityData");
 
+	public enum EntityFormat {
+		NODE, JSON, XML
+	}
 	// Caract
 	/** Constant <code>TYPE_CHARACT</code> */
 	public static final QName TYPE_CHARACT = QName.createQName(BeCPGModel.BECPG_URI, "charact");
@@ -268,5 +278,7 @@ public final class BeCPGModel {
 	public static final QName PROP_VARIANTIDS = QName.createQName(BECPG_URI, "variantIds");
 	/** Constant <code>PROP_IS_DEFAULT_VARIANT</code> */
 	public static final QName PROP_IS_DEFAULT_VARIANT = QName.createQName(BECPG_URI, "isDefaultVariant");
-
+	/** Constant <code>PROP_IS_DEFAULT_VARIANT</code> */
+	public static final QName PROP_VARIANT_COLUMN = QName.createQName(BECPG_URI, "variantColumn");
+	
 }

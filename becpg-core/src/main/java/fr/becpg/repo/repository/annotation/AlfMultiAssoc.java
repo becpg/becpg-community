@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG. 
+ * Copyright (C) 2010-2021 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -33,4 +33,5 @@ import java.lang.annotation.Target;
 public @interface AlfMultiAssoc {
 	boolean isChildAssoc() default false;
 	boolean isEntity() default false;
+	boolean isCacheable()  default false;
 }

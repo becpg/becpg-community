@@ -27,6 +27,17 @@
 				<value>true</value>
 			</parameter>
 		</constraint>
+		
+		<constraint name="bcpg:nutrientCategory" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>Others</value>
+					<value>Fats</value>
+					<value>Beverages</value>
+					<value>Cheeses</value>
+				</list>
+			</parameter>
+		</constraint>
 
 
 		<constraint name="bcpg:systemState" type="LIST">
@@ -111,6 +122,18 @@
 					<value>oz</value>
 					<value>cp</value>
 					<value>fl_oz</value>
+				</list>
+			</parameter>
+		</constraint>
+		
+		
+		<constraint name="bcpg:entityFormat" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>JSON</value>
+					<value>XML</value>
+					<value>NODE</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -283,6 +306,7 @@
 				<list>
 					<value>ShowPerc</value>
 					<value>ShowGeo</value>
+					<value>ShowBio</value>
 					<value>Rename</value>
 					<value>Detail</value>
 					<value>DoNotDetails</value>
@@ -480,6 +504,8 @@
 				</list>
 			</parameter>
 		</constraint>
+		
+		
 		<constraint name="bcpg:labelClaimTypes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
@@ -526,6 +552,18 @@
 					<value>bcpg_dynamicCharactColumn8</value>
 					<value>bcpg_dynamicCharactColumn9</value>
 					<value>bcpg_dynamicCharactColumn10</value>
+				</list>
+			</parameter>
+		</constraint>
+		<constraint name="bcpg:variantColumns" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>bcpg_variantColumn1</value>
+					<value>bcpg_variantColumn2</value>
+					<value>bcpg_variantColumn3</value>
+					<value>bcpg_variantColumn4</value>
+					<value>bcpg_variantColumn5</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -751,6 +789,7 @@
 			</associations>
 
 			<mandatory-aspects>
+				<aspect>bcpg:entityTplRefAspect</aspect>
 				<aspect>bcpg:codeAspect</aspect>
 				<aspect>bcpg:entityListsAspect</aspect>
 			</mandatory-aspects>
@@ -1470,13 +1509,9 @@
 				</property>
 				<property name="bcpg:allergenListVoluntary">
 					<type>d:boolean</type>
-					<mandatory enforced="true">true</mandatory>
-					<default>false</default>
 				</property>
 				<property name="bcpg:allergenListInVoluntary">
 					<type>d:boolean</type>
-					<mandatory enforced="true">true</mandatory>
-					<default>false</default>
 				</property>
 				<property name="bcpg:allergenListDecisionTree">
 					<type>d:text</type>
@@ -1794,6 +1829,11 @@
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
+				<property name="bcpg:ingListQtyPercWithYield">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
 				<property name="bcpg:ingListQtyMini">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
@@ -1961,6 +2001,16 @@
 					<index enabled="false" />
 				</property>
 				<property name="bcpg:nutListMaxi">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:nutListFormulatedMini">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:nutListFormulatedMaxi">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="false" />
@@ -2484,6 +2534,17 @@
 				<property name="bcpg:isDefaultVariant">
 					<type>d:boolean</type>
 				</property>
+				 <property name="bcpg:variantColumn">
+                    <type>d:text</type>
+                    <index enabled="true">
+                        <atomic>false</atomic>
+                        <stored>false</stored>
+                        <tokenised>false</tokenised>
+                    </index>
+                    <constraints>
+                        <constraint ref="bcpg:variantColumns" />
+                    </constraints>
+                </property>
 			</properties>
 		</type>
 
@@ -3373,6 +3434,49 @@
 				</property>
 			</properties>
 		</aspect>
+		
+		<aspect name="bcpg:entityFormatAspect">
+			<properties>
+				<property name="bcpg:entityFormat">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>false</tokenised>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:entityFormat" />
+					</constraints>
+				</property>
+				<property name="bcpg:entityData">
+					<type>d:content</type>
+					<mandatory>false</mandatory>
+					<index enabled="false">
+                        <atomic>true</atomic>
+                        <stored>false</stored>
+                        <tokenised>false</tokenised>
+                    </index>
+				</property>
+			</properties>
+		</aspect>
+		
+		<aspect name="bcpg:subEntityAspect">
+			<associations>
+					<association name="bcpg:parentEntityRef">
+						<source>
+							<mandatory>true</mandatory>
+							<many>true</many>
+						</source>
+						<target>
+							<class>bcpg:entityV2</class>
+							<mandatory>false</mandatory>
+							<many>false</many>
+						</target>
+				   </association>
+			</associations>
+		</aspect>
+
 
 		<aspect name="bcpg:erpCodeAspect">
 			<properties>
@@ -3622,6 +3726,31 @@
 				</property>
 			</properties>
 		</aspect>
+		
+		<aspect name="bcpg:variantColumnsAspect">
+			<properties>
+				<property name="bcpg:variantColumn1">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:variantColumn2">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:variantColumn3">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:variantColumn4">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:variantColumn5">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+			</properties>
+		</aspect>
 
 		<aspect name="bcpg:instructionAspect">
 			<properties>
@@ -3744,6 +3873,18 @@
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 				</property>
+<!-- 				<property name="bcpg:nutrientProfileCategory"> -->
+<!-- 					<type>d:text</type> -->
+<!-- 					<default>Others</default> -->
+<!-- 					<index enabled="true"> -->
+<!-- 						<atomic>false</atomic> -->
+<!-- 						<stored>false</stored> -->
+<!-- 						<tokenised>false</tokenised> -->
+<!-- 					</index> -->
+<!-- 					<constraints> -->
+<!-- 						<constraint ref="bcpg:nutrientCategory" /> -->
+<!-- 					</constraints> -->
+<!-- 				</property> -->
 			</properties>
 			<associations>
 				<association name="bcpg:nutrientProfileRef">
@@ -3759,6 +3900,24 @@
 					</target>
 				</association>
 			</associations>
+		</aspect>
+		
+		
+		<aspect name="bcpg:ecoScoreAspect">
+			<properties>
+				<property name="bcpg:ecoScore">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="bcpg:ecoScoreClass">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="bcpg:ecoScoreCategory">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+				</property>
+			</properties>
 		</aspect>
 
 		<aspect name="bcpg:userLanguageAspect">

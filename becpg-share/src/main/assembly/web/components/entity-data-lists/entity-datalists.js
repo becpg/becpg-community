@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (C) 2010-2020 beCPG. 
+ *  Copyright (C) 2010-2021 beCPG. 
  *   
  *  This file is part of beCPG 
  *   
@@ -223,7 +223,7 @@
                                             if(listId2.name.indexOf(me.options.sortOptions[z].id)>-1){
                                                 val2 = me.options.sortOptions[z].sortIndex;
                                             }
-                                            if(val1!=500 && val1!=500){
+                                            if(val1!=500 && val2!=500){
                                             	break;
                                             }
                                         }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  * 
  * This file is part of beCPG
  * 
@@ -30,8 +30,6 @@
 	beCPG.component.ProjectDetails.superclass.constructor.call(this,
 				"beCPG.component.ProjectDetails", htmlId, [ "button",
 						"container" ]);
-		var me = this;
-
 	
 		YAHOO.Bubbling.addDefaultAction("filter-details-action", this.onFilterDetailsAction);
 	
@@ -78,10 +76,10 @@
 								"colName" : me.msg("projectdetails.graph.yaxis")
 							} ]
 						};
-						var myChart = new pvc.StackedAreaChart({
+						new pvc.StackedAreaChart({
 	
 							canvas : me.id+"-chart",
-							width : 430,
+							width : 400,
 							height : 150,
 							animate : true,
 							selectable : false,
@@ -152,7 +150,7 @@
 									.split("#")[1];
 							var filteredDivEls = Dom.getElementsByClassName(idSpan0);
 
-							for (i in filteredDivEls) {
+							for (var i in filteredDivEls) {
 
 								Dom.removeClass(filteredDivEls[i], "hidden");
 								if (!Dom.hasClass(filteredDivEls[i], idSpan1)) {

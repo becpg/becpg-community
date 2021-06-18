@@ -13,14 +13,19 @@
       <action type="action-link" id="onActionShowProjectFolder" label="link.title.open-folder"  list="dataTable"/>
    </actionSetDataGrid>
    	 <filters>
-      <filtermenu id="projects" data="Planned" view="" />
-      <filtermenu id="projects" data="InProgress" view=""/>
-      <filtermenu id="projects" data="OnHold"     view=""/>
-      <filtermenu id="projects" data="Cancelled"  view=""/>
-      <filtermenu id="projects" data="Completed"  view=""/>
+      <filtermenu id="projects" data="Planned" view="dataTable,gantt" />
+      <filtermenu id="projects" data="InProgress" view="dataTable,gantt"/>
+      <filtermenu id="projects" data="OnHold"     view="dataTable,gantt"/>
+      <filtermenu id="projects" data="Cancelled"  view="dataTable,gantt"/>
+      <filtermenu id="projects" data="Completed"  view="dataTable,gantt"/>
+      <filtermenu id="tasks" data="Planned" view="tasks,resources"/>
+      <filtermenu id="tasks" data="InProgress" view="tasks,resources"/>
+      <filtermenu id="tasks" data="OnHold" view="tasks,resources"/>
+      <filtermenu id="tasks" data="Cancelled" view="tasks,resources"/>
+      <filtermenu id="tasks" data="Completed" view="tasks,resources"/>
       <filtermenu id="my-projects" data="" view="" />
       <filtermenu id="my-tasks" data="" view="tasks" />
-      <filtermenu id="all"  data="" view=""/>
+      <filtermenu id="all"  data="" view="dataTable,gantt"/>
       <filtermenu id="due" data="today" view="dataTable,gantt"/>
       <filtermenu id="due" data="tomorrow" view="dataTable,gantt"/>
       <filtermenu id="due" data="next7Days"  view="dataTable,gantt"/>
@@ -29,6 +34,15 @@
       <filtermenu id="started" data="last7Days" view="dataTable,gantt"/>
       <filtermenu id="started" data="last14Days"  view="dataTable,gantt"/>
       <filtermenu id="started" data="last28Days" view="dataTable,gantt"/>
+      
+      <filtermenu id="tasks-due" data="today" view="tasks,resources"/>
+      <filtermenu id="tasks-due" data="tomorrow" view="tasks,resources"/>
+      <filtermenu id="tasks-due" data="next7Days"  view="tasks,resources"/>
+      <filtermenu id="tasks-due" data="overdue" view="tasks,resources"/>
+      <filtermenu id="tasks-started" data="last7Days" view="tasks,resources"/>
+      <filtermenu id="tasks-started" data="last14Days"  view="tasks,resources"/>
+      <filtermenu id="tasks-started" data="last28Days" view="tasks,resources"/>
+      
       <filtermenu id="cancelled" data="last7Days" view="dataTable,gantt"/>
       <filtermenu id="cancelled" data="last14Days"  view="dataTable,gantt"/>
       <filtermenu id="cancelled" data="last28Days" view="dataTable,gantt"/>
@@ -50,7 +64,8 @@
           * {-7d} -  resolves to a iso8601 date respresentation of the current day rolled the given number of days back
           * {+7d} -  resolves to a iso8601 date respresentation of the current day rolled the given number of days forward
       -->
-      <filter id="projects"      data="*"      		 parameters="fts(=@pjt\:projectState:&quot;{data}&quot;)"/>
+      <filter id="tasks"       data="*"      		 parameters="fts(+@pjt\:tlState:&quot;{data}&quot;)"/>
+      <filter id="projects"      data="*"      		 parameters="fts(+@pjt\:projectState:&quot;{data}&quot;)"/>
       <filter id="my-project"      data="*"      	 parameters="fts(+TYPE:pjt\:project)"/>
       <filter id="due"           data="today"        parameters="fts(+@pjt\:projectDueDate:['{-1d}' TO '{0d}'])"/>
       <filter id="due"           data="tomorrow"     parameters="fts(+@pjt\:projectDueDate:['{0d}' TO '{1d}'])"/>
@@ -60,9 +75,18 @@
       <filter id="started"       data="last7Days"    parameters="fts(+@pjt\:projectStartDate:['{-7d}' TO MAX])"/>
       <filter id="started"       data="last14Days"   parameters="fts(+@pjt\:projectStartDate:['{-14d}' TO MAX])"/>
       <filter id="started"       data="last28Days"   parameters="fts(+@pjt\:projectStartDate:['{-28d}' TO MAX])"/>
-      <filter id="cancelled"     data="last7Days"    parameters="fts(=@pjt\:projectState:&quot;Cancelled&quot; +@bcpg\:stateActivityModified:['{-7d}' TO MAX])"/>
-      <filter id="cancelled"     data="last14Days"   parameters="fts(=@pjt\:projectState:&quot;Cancelled&quot; +@bcpg\:stateActivityModified:['{-14d}' TO MAX])"/>
-      <filter id="cancelled"     data="last28Days"   parameters="fts(=@pjt\:projectState:&quot;Cancelled&quot; +@bcpg\:stateActivityModified:['{-28d}' TO MAX])"/>
-      <filter id="priority"      data="*"            parameters="fts(=@pjt\:projectPriority:{data})"/>
+      
+      <filter id="tasks-due"           data="today"        parameters="fts(+@pjt\:tlDue:['{-1d}' TO '{0d}'])"/>
+      <filter id="tasks-due"           data="tomorrow"     parameters="fts(+@pjt\:tlDue:['{0d}' TO '{1d}'])"/>
+      <filter id="tasks-due"           data="next7Days"    parameters="fts(+@pjt\:tlDue:['{0d}' TO '{8d}'])"/>
+      <filter id="tasks-due"           data="overdue"      parameters="fts(+@pjt\:tlDue:[MIN TO NOW])"/>
+      <filter id="tasks-started"       data="last7Days"    parameters="fts(+@pjt\:tlStart:['{-7d}' TO MAX])"/>
+      <filter id="tasks-started"       data="last14Days"   parameters="fts(+@pjt\:tlStart:['{-14d}' TO MAX])"/>
+      <filter id="tasks-started"       data="last28Days"   parameters="fts(+@pjt\:tlStart:['{-28d}' TO MAX])"/>
+      
+      <filter id="cancelled"     data="last7Days"    parameters="fts(+@pjt\:projectState:&quot;Cancelled&quot; +@bcpg\:stateActivityModified:['{-7d}' TO MAX])"/>
+      <filter id="cancelled"     data="last14Days"   parameters="fts(+@pjt\:projectState:&quot;Cancelled&quot; +@bcpg\:stateActivityModified:['{-14d}' TO MAX])"/>
+      <filter id="cancelled"     data="last28Days"   parameters="fts(+@pjt\:projectState:&quot;Cancelled&quot; +@bcpg\:stateActivityModified:['{-28d}' TO MAX])"/>
+      <filter id="priority"      data="*"            parameters="fts(+@pjt\:projectPriority:{data})"/>
    </filters-parameters>
 </config>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -157,7 +157,7 @@ public class ActivityListExtractor extends SimpleExtractor {
 						}
 	
 						if (((entityType != null)
-								&& (postLookup.has(EntityActivityService.PROP_DATALIST_TYPE) && (securityService.computeAccessMode(entityType,
+								&& (postLookup.has(EntityActivityService.PROP_DATALIST_TYPE) && (securityService.computeAccessMode(entityNodeRef, entityType,
 										postLookup.getString(EntityActivityService.PROP_DATALIST_TYPE)) == SecurityService.NONE_ACCESS)))
 								|| ((charactNodeRef != null) && (permissionService.hasPermission(charactNodeRef, "Read") != AccessStatus.ALLOWED))) {
 	
@@ -179,7 +179,7 @@ public class ActivityListExtractor extends SimpleExtractor {
 								QName propertyName = QName.createQName(activityProperty.getString(EntityActivityService.PROP_TITLE));
 	
 								if ((entityType != null)
-										&& (securityService.computeAccessMode(entityType, propertyName) != SecurityService.NONE_ACCESS)) {
+										&& (securityService.computeAccessMode(entityNodeRef, entityType, propertyName) != SecurityService.NONE_ACCESS)) {
 									// Property Title
 									PropertyDefinition propertyDef = dictionaryService.getProperty(propertyName);
 									ClassAttributeDefinition propDef = entityDictionaryService.getPropDef(propertyName);
@@ -249,8 +249,8 @@ public class ActivityListExtractor extends SimpleExtractor {
 			try {
 				if (propertyArray.getString(i).contains("workspace")) {
 					NodeRef nodeRef = null;
-					String name = null;
-					if (Pattern.matches("(.*,.*)", propertyArray.getString(i))) {
+				 	String name = null;
+					if (Pattern.matches("\\(.*,.*\\)", propertyArray.getString(i))) {
 						String nodeRefString = propertyArray.getString(i).substring(propertyArray.getString(i).indexOf("(") + 1,
 								propertyArray.getString(i).indexOf(","));
 						nodeRef = new NodeRef(nodeRefString);

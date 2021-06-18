@@ -1,90 +1,142 @@
 <html>
 
-   <head>
-      <style type="text/css"><!--
-      body
-      {
+<head>
+   <style type="text/css">
+      <!--
+      body {
          font-family: Arial, sans-serif;
          font-size: 14px;
          color: #4c4c4c;
       }
-      
-      a, a:visited
-      {
+
+      a,
+      a:visited {
          color: #0072cf;
       }
-      --></style>
-   </head>
-   
-   <body bgcolor="#dddddd">
-      <table width="100%" cellpadding="20" cellspacing="0" border="0" bgcolor="#dddddd">
-         <tr>
-            <td width="100%" align="center">
-               <table width="70%" cellpadding="0" cellspacing="0" bgcolor="white" style="background-color: white; border: 1px solid #aaaaaa;">
-                  <tr>
-                     <td width="100%">
-                        <table width="100%" cellpadding="0" cellspacing="0" border="0">
-                           <tr>
-                              <td style="padding: 10px 30px 0px;">
-                                 <table width="100%" cellpadding="0" cellspacing="0" border="0">
-                                    <tr>
-                                       <td>
-                                          <table cellpadding="0" cellspacing="0" border="0">
-                                             <tr>
-                                                <td>
-                                                  <img src="${shareUrl}/res/components/images/page-64.png" alt="" width="64" height="64" border="0" style="padding-right: 20px; float: left" />
-                                                   <div style="font-size: 22px; padding-bottom: 4px; white-space: nowrap;">
-                                                      Reminder of task "${args.task}"
-                                                   </div>
-                                                   <div style="font-size: 13px; white-space: nowrap;">
-                                                      ${args.date?datetime?string.full}
-                                                   </div>
-                                                </td>
-                                             </tr>
-                                          </table>
-                                          <div style="font-size: 14px; margin: 12px 0px 24px 0px; padding-top: 10px; border-top: 1px solid #aaaaaa;">
-                                             <p>Hello,</p>
+      
+      
+      button 
+     {
+        background-color: white ;
+         border-radius: 5px;
+         border : solid 1px #ff642d;
+         color:#ff642d;
+         padding: 15px 32px;
+         text-align: center;
+         text-decoration: none;
+         font-size: 16px;
+         cursor : pointer;
+         margin-bottom: 5px;
+      }
+      button:hover {
+         background-color : #ff642d;
+         border : solid 1px #ff642d;
+         color: white;
+      }
+      button:focus {
+         outline:none;
+      }
+      .img {
+            padding-right:20px;
+      }
+      .line {
+         height:4px;
+         width:30px;
+         background-color:#ff642d;
+         margin:4px 0px 14px 0px;
+         border-radius:5px;
+      }
+      @media (min-width: 660px) {
+         td .flex {
+            display:flex;
+         }
+         .img {
+            padding-right:20px;
+         }
+         .table {
+            width:70%;
+         }
+      }
+      @media (max-width: 660px) {
+         td .flex {
+            text-align:center;
+         }
+         td .title {
+            margin-top : 5px;
+margin-bottom : 0px;
+
+         }
+       .img {
+            padding-right:0;
+margin-top:3px;
+
+         }
+         .table {
+            width:100%;
+         }
+         button {
+            width:100%;
+         }
+      }
+      -->
+   </style>
+</head>
+
+<body bgcolor="#dddddd">
+   <table width="100%" cellpadding="20" cellspacing="0" border="0" bgcolor="#dddddd">
+      <tr>
+         <td width="100%" align="center">
+            <table class="table" cellpadding="0" cellspacing="0" bgcolor="white"
+               style="background-color: white; border: 1px solid #cccccc; border-radius: 15px;">
+               <tr>
+                  <td width="100%">
+                     <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                        <tr>
+                           <td style="padding: 10px 30px 0px;">
+                              <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                 <tr>
+                                    <td>
+                                       <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                          <tr>
+                                             <td class="flex">
+                                                <img class="img" src="${shareUrl}/res/components/images/project-email-logo.png"alt="" height="64" border="0" />
+                                                <p class="title" style="font-size: 20px; color: #0f515f; font-weight: bold;">${args.project}</p>
+                                             </td>
+                                          </tr>
+                                       </table>
+                                       <div style="font-size: 14px; margin: 12px 0px 0px 0px; padding-top: 10px; border-top: 1px solid #aaaaaa;">
+
                                              
-                                             	<p>This is an automatic reminder of the task "<b>${args.task}</b>" of project "${args.project}".
+                                                <p style="padding-top:10px; margin:3px 0px 0px 0px">Reminder</p><div class="line"></div>
+                                                <p style="margin:0px">Relaunched task : <b>${args.task}</b>
+                                                <br /><span>Due : <b>${args.dueDate?date}</b></span>.
+                                                </p>
+                                              
+                                                <br /><a htref="${shareUrl}/page/task-edit?taskId=${args.taskId}"><button ><b>View the task</b></button></a>
+                                       </div>
+                                    </td>
+                                 </tr>
+                              </table>
+                           </td>
+                        </tr>
+                        <tr>
+                           <td>
+                              <div style="border-bottom: 1px solid #a1a8aa;">&nbsp;</div>
+                           </td>
+                        </tr>
+                        <tr>
+                           <td style="padding: 10px 30px;">
+                              <img style="padding :10px 0px"
+                                 src="${shareUrl}/res/components/images/becpg-footer-logo.png" />
+                           </td>
+                        </tr>
+                     </table>
+                  </td>
+               </tr>
+            </table>
+         </td>
+      </tr>
+   </table>
+</body>
 
-												<br />This task is due for <b>${args.dueDate?date}</b>.
-												</p>												
-                       				                      
-                                              	<p>You can complete it using the dashlet "My tasks", on the homepage
-	                                              <#if args.taskId??>
-	                                              <br/>or by clicking <a href="${shareUrl}/page/task-edit?taskId=${args.taskId}">on this link</a>
-	                                              </#if>
-												</p>
-
-                                             <p>Regards,
-                                             <br />beCPG</p>
-                                          </div>
-                                       </td>
-                                    </tr>
-                                 </table>
-                              </td>
-                           </tr>
-                           <tr>
-                              <td>
-                                 <div style="border-top: 1px solid #aaaaaa;">&nbsp;</div>
-                              </td>
-                           </tr>
-                           <tr>
-                              <td style="padding: 0px 30px; font-size: 13px;">
-                                <img src="${shareUrl}/themes/default/images/app-logo.png" alt="" width="117" height="48" border="0" />
-                              </td>
-                           </tr>
-                           <tr>
-                              <td>
-                                 <div style="border-bottom: 1px solid #aaaaaa;">&nbsp;</div>
-                              </td>
-                           </tr>
-                        </table>
-                     </td>
-                  </tr>
-               </table>
-            </td>
-         </tr>
-      </table>
-   </body>
 </html>

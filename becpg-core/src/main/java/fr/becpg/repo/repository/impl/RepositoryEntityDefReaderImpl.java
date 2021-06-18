@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG. 
+ * Copyright (C) 2010-2021 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -24,6 +24,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
@@ -53,6 +54,7 @@ import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.annotation.DataListView;
 import fr.becpg.repo.repository.annotation.MultiLevelDataList;
+import fr.becpg.repo.repository.annotation.MultiLevelGroup;
 import fr.becpg.repo.repository.annotation.MultiLevelLeaf;
 import fr.becpg.repo.repository.model.BaseObject;
 
@@ -71,7 +73,9 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 	private NamespaceService namespaceService;
 
 	
-	private final Map<QName, Class<T>> domainMapping = new HashMap<>();
+	private final Map<QName, Class<T>> domainMapping = new ConcurrentHashMap<>();
+	
+	private final Map<String, QName> qnameCache = new ConcurrentHashMap<>();
 
 	/** {@inheritDoc} */
 	@Override
@@ -155,17 +159,16 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 		if (clazz.getAnnotation(AlfQname.class) != null) {
 
 			String qName = clazz.getAnnotation(AlfQname.class).qname();
-			return QName.createQName(qName, namespaceService);
+			return  qnameCache.computeIfAbsent(qName, id -> QName.createQName(id, namespaceService)) ;
 		}
-		throw new RuntimeException("No @AlfQname annotation in class : "+clazz.getName());
+		throw new IllegalStateException("No @AlfQname annotation in class : "+clazz.getName());
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public QName readQName(Method readMethod) {
 		String qName = readMethod.getAnnotation(AlfQname.class).qname();
-		QName fieldQname = QName.createQName(qName, namespaceService);
-		return fieldQname;
+		return qnameCache.computeIfAbsent(qName, id -> QName.createQName(id, namespaceService));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -257,10 +260,37 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 		if(entityClass != null && entityClass.isAnnotationPresent(MultiLevelDataList.class)){
 			String qName = entityClass.getAnnotation(MultiLevelDataList.class).secondaryPivot();
 			if(qName!=null && !qName.isEmpty()){
-				QName fieldQname = QName.createQName(qName, namespaceService);
-				return fieldQname;
+				return qnameCache.computeIfAbsent(qName, id -> QName.createQName(id, namespaceService));
 			}
 			
+		}
+		return null;
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public QName getMultiLevelGroupProperty(QName entityDataListQname) {
+		Class<T> entityClass = getEntityClass(entityDataListQname);
+		if (entityClass == null) {
+			if(logger.isDebugEnabled()){
+				logger.debug("Type is not registered : " + entityDataListQname);
+			}
+			return null;
+		}
+
+		BeanWrapper beanWrapper = new BeanWrapperImpl(entityClass);
+
+		for (PropertyDescriptor pd : beanWrapper.getPropertyDescriptors()) {
+			Method readMethod = pd.getReadMethod();
+			if (readMethod != null) {
+				if (readMethod.isAnnotationPresent(MultiLevelGroup.class) && readMethod.isAnnotationPresent(AlfQname.class) 
+					 ) {
+					return readQName(readMethod);
+				}
+			}
+		}
+		if(logger.isDebugEnabled()){
+			logger.debug("No MultiLevelGroup found for "+entityDataListQname);
 		}
 		return null;
 	}

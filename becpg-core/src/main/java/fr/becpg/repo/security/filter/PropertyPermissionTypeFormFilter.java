@@ -34,7 +34,7 @@ public class PropertyPermissionTypeFormFilter  extends AbstractPropertyPermissio
 			List<String> forcedFields, Form form, Map<String, Object> context) {
 		
 		logger.debug("afterGenerate"+form.toString());
-		filterFormFields(type.getName(), form);			
+		filterFormFields(null, type.getName(), form);			
 	
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -46,7 +46,6 @@ import fr.becpg.repo.entity.datalist.DataListExtractorFactory;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.SiteHelper;
-import fr.becpg.repo.helper.extractors.AbstractNodeDataExtractor;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.search.AdvSearchService;
 
@@ -75,6 +74,8 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 	protected RatingService ratingService;
 
 	private boolean isDefaultExtractor = false;
+	
+	private int priority = 0;
 
 	/** {@inheritDoc} */
 	@Override
@@ -203,7 +204,7 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 	/** Constant <code>PROP_USERACCESS="userAccess"</code> */
 	public static final String PROP_USERACCESS = "userAccess";
 
-	private static final Log logger = LogFactory.getLog(AbstractNodeDataExtractor.class);
+	private static final Log logger = LogFactory.getLog(AbstractDataListExtractor.class);
 
 	/**
 	 * <p>init.</p>
@@ -441,6 +442,15 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 
 	private boolean isDetaillable(NodeRef nodeRef) {
 		return nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM);
+	}
+	
+	@Override
+	public int getPriority() {
+		return priority;
+	}
+	
+	public void setPriority(int priority) {
+		this.priority = priority;
 	}
 
 	/**
