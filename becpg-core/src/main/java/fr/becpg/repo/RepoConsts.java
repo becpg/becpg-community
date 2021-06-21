@@ -262,8 +262,8 @@ public class RepoConsts
 	/** Constant <code>PATH_LICENSE="license"</code> */
 	public static final String PATH_LICENSE = "license";
 
-	/** Constant <code>SUPPORTED_UI_LOCALES="en,en_US,fr,sv_SE,fi,es,it,pt,ru,de,tr"</code> */
-	public static final String SUPPORTED_UI_LOCALES =  "en,en_US,fr,sv_SE,fi,es,it,pt,ru,de,tr";
+	/** Constant <code>SUPPORTED_UI_LOCALES="en,en_US,fr,sv_SE,fi,es,it,pt_BR,ru,de,tr,ja_JP"</code> */
+	public static final String SUPPORTED_UI_LOCALES =  "en,en_US,fr,sv_SE,fi,es,it,pt_BR,ru,de,tr,ja_JP";
 	
 	/** Constant <code>CATALOGS_PATH="/app:company_home/cm:System/cm:Property"{trunked}</code> */
 	public static final String CATALOGS_PATH = "/app:company_home/cm:System/cm:PropertyCatalogs";
