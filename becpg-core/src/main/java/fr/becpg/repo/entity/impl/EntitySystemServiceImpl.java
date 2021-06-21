@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.node.MLPropertyInterceptor;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -37,6 +38,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntitySystemService;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.search.impl.AbstractBeCPGQueryBuilder;
@@ -91,6 +93,8 @@ public class EntitySystemServiceImpl implements EntitySystemService {
 				entityNodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
 						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(entityPath)),
 						BeCPGModel.TYPE_SYSTEM_ENTITY, properties).getChildRef();
+			} else {
+				mergeTitle(entityNodeRef, translatedPathMLText);
 			}
 
 			// entityLists
@@ -103,11 +107,13 @@ public class EntitySystemServiceImpl implements EntitySystemService {
 				for (Map.Entry<String, QName> entityList : entitySystemDataLists.entrySet()) {
 
 					NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, entityList.getKey());
+					MLText entityListTranslated = TranslateHelper.getTranslatedPathMLText(entityList.getKey());
 					if (listNodeRef == null) {
-						MLText entityListTranslated = TranslateHelper.getTranslatedPathMLText(entityList.getKey());
 						NodeRef newDataList = entityListDAO.createList(listContainerNodeRef, entityList.getKey(), entityList.getValue());
 						nodeService.setProperty(newDataList, ContentModel.PROP_TITLE, entityListTranslated);
-
+					} else {
+						mergeTitle(listNodeRef, entityListTranslated);
+						
 					}
 				}
 			}
@@ -117,6 +123,24 @@ public class EntitySystemServiceImpl implements EntitySystemService {
 		} finally {
 			policyBehaviourFilter.enableBehaviour(DataListModel.TYPE_DATALIST);
 		}
+	}
+
+	private void mergeTitle(NodeRef entityNodeRef, MLText translatedPathMLText) {
+		boolean isMLAware = MLPropertyInterceptor.isMLAware();
+		try {
+			MLPropertyInterceptor.setMLAware(true);
+
+			MLText title = (MLText) nodeService.getProperty(entityNodeRef, ContentModel.PROP_TITLE);
+			if (title == null) {
+				nodeService.setProperty(entityNodeRef, ContentModel.PROP_TITLE, translatedPathMLText);
+			} else {
+				nodeService.setProperty(entityNodeRef, ContentModel.PROP_TITLE, MLTextHelper.merge(title, translatedPathMLText));
+			}
+		} finally {
+			MLPropertyInterceptor.setMLAware(isMLAware);
+		}
+
+		
 	}
 
 	/** {@inheritDoc} */
