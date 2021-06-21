@@ -144,15 +144,17 @@ RUN mkdir -p /opt/cprof && \
 
 # I18N
 
-RUN set -x && \
-    curl --silent --location \
-      https://readonly:YLdy9W5v@www.becpg.fr/becpg-repo/releases/addons/share-becpg-i18n-1.0-67.jar  \
-      -o webapps/share/WEB-INF/lib/share-becpg-i18n-1.0-67.jar  
 
 RUN set -x && \
     curl --silent --location \
-      https://readonly:YLdy9W5v@www.becpg.fr/becpg-repo/releases/addons/alfresco-becpg-i18n-1.0-67.jar  \
-      -o webapps/alfresco/WEB-INF/lib/alfresco-becpg-i18n-1.0-67.jar  
+      https://github.com/becpg/becpg-i18n/releases/download/1.0-69/alfresco-becpg-i18n-1.0-69.jar  \
+      -o webapps/alfresco/WEB-INF/lib/alfresco-becpg-i18n-1.0-67.jar
+
+RUN set -x && \
+   curl --silent --location \
+      https://github.com/becpg/becpg-i18n/releases/download/1.0-69/share-becpg-i18n-1.0-69.jar  \
+     -o webapps/share/WEB-INF/lib/share-becpg-i18n-1.0-67.jar 
+
       
       
 COPY tomcat/share.xml /usr/local/tomcat/conf/Catalina/localhost/
