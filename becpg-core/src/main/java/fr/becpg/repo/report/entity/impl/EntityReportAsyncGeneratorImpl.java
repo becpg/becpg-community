@@ -23,8 +23,12 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.tenant.Tenant;
+import org.alfresco.repo.tenant.TenantAdminService;
+import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -63,6 +67,9 @@ public class EntityReportAsyncGeneratorImpl implements EntityReportAsyncGenerato
 	
 	@Autowired
 	private NodeService nodeService;
+	
+	@Autowired
+	private TenantAdminService tenantAdminService;
 
 	/**
 	 * <p>
@@ -102,6 +109,10 @@ public class EntityReportAsyncGeneratorImpl implements EntityReportAsyncGenerato
 
 		for (NodeRef entityNodeRef : pendingNodes) {
 
+			if (entityVersionService.isVersion(entityNodeRef)) {
+				entityNodeRef = entityVersionService.getVersionedNodeRef(entityNodeRef.getId());
+			}
+			
 			Runnable command = new ProductReportGenerator(entityNodeRef, callBack);
 			if (!threadExecuter.getQueue().contains(command)) {
 
@@ -166,26 +177,43 @@ public class EntityReportAsyncGeneratorImpl implements EntityReportAsyncGenerato
 			}
 		}
 		
+		@SuppressWarnings("deprecation")
 		@Override
 		public void run() {
 			try {
 				
-				AuthenticationUtil.runAsSystem(() ->
+				String userName = AuthenticationUtil.getSystemUserName();
 				
-				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-					
-					NodeRef extractedNode = null;
-					
-					if (entityVersionService.isVersion(entityNodeRef) && nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_ENTITY_FORMAT) != null) {
-						extractedNode = entityVersionService.extractVersion(entityNodeRef);
+				NodeRef tempNodeRef = entityNodeRef;
+				
+				for (Tenant tenant : tenantAdminService.getAllTenants()) {
+					if (!TenantService.DEFAULT_DOMAIN.equals(tenant.getTenantDomain()) && entityNodeRef.getStoreRef().getIdentifier().contains(tenant.getTenantDomain())) {
+						userName = tenantAdminService.getDomainUser(AuthenticationUtil.getSystemUserName(), tenant.getTenantDomain());
+						String newIdentifier = entityNodeRef.getStoreRef().getIdentifier().replace("@", "").replace(tenant.getTenantDomain(), "");
+						tempNodeRef = new NodeRef(StoreRef.PROTOCOL_WORKSPACE, newIdentifier, entityNodeRef.getId());
+						break;
 					}
-					
-					entityReportService.generateReports(extractedNode, entityNodeRef);
-					
-					return null;
-					
-				}, false, true));
+				}
 				
+				final NodeRef finalNodeRef = tempNodeRef;
+				
+				AuthenticationUtil.runAs(() -> {
+					transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+						
+						NodeRef extractedNode = null;
+						
+						if (entityVersionService.isVersion(finalNodeRef) && nodeService.getProperty(finalNodeRef, BeCPGModel.PROP_ENTITY_FORMAT) != null) {
+							extractedNode = entityVersionService.extractVersion(finalNodeRef);
+						}
+						
+						entityReportService.generateReports(extractedNode, finalNodeRef);
+						
+						return null;
+						
+					}, false, true);
+					return null;
+				}, userName);
+
 			} catch (Exception e) {
 
 				logger.error("Unable to generate product reports ", e);

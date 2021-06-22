@@ -7,6 +7,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.tenant.Tenant;
 import org.alfresco.repo.tenant.TenantAdminService;
+import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.repo.version.Version2Model;
 import org.alfresco.schedule.AbstractScheduledLockedJob;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -95,7 +96,7 @@ public class VersionCleanerJob  extends AbstractScheduledLockedJob implements Jo
 		
 		String tenantName = "default";
 		
-		if (!tenantAdminService.getCurrentUserDomain().equals("")) {
+		if (!TenantService.DEFAULT_DOMAIN.equals(tenantAdminService.getCurrentUserDomain())) {
 			tenantName = tenantAdminService.getTenant(tenantAdminService.getCurrentUserDomain()).getTenantDomain();
 		}
 
