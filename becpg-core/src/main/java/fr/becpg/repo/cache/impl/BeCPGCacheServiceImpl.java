@@ -230,7 +230,7 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 	private String computeCacheKey(String cacheKey) {
 
 		final String tenantDomain = TenantUtil.getCurrentDomain();
-		if (!tenantDomain.equals(TenantService.DEFAULT_DOMAIN)) {
+		if (!TenantService.DEFAULT_DOMAIN.equals(tenantDomain) && !cacheKey.endsWith("@" + tenantDomain)) {
 			return cacheKey + "@" + tenantDomain;
 		}
 		return cacheKey;

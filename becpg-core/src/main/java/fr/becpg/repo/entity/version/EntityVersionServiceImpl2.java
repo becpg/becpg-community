@@ -21,6 +21,8 @@ import org.alfresco.repo.node.MLPropertyInterceptor;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.rule.RuntimeRuleService;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.tenant.TenantAdminService;
+import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.repo.version.Version2Model;
 import org.alfresco.repo.version.VersionBaseModel;
@@ -161,6 +163,10 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 	@Autowired
 	private LockService lockService;
 	
+	@Autowired
+	private TenantAdminService tenantAdminService;
+
+	
 	/** {@inheritDoc} */
 	@Override
 	public NodeRef createVersionAndCheckin(final NodeRef origNodeRef, final NodeRef workingCopyNodeRef, Map<String, Serializable> versionProperties) {
@@ -194,8 +200,7 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 
 		Version currentVersion = versionService.getCurrentVersion(entityNodeRef);
 		if (currentVersion != null) {
-			NodeRef versionNodeRef = new NodeRef(new StoreRef(StoreRef.PROTOCOL_WORKSPACE, Version2Model.STORE_ID),
-					currentVersion.getFrozenStateNodeRef().getId());
+			NodeRef versionNodeRef = getVersionedNodeRef(currentVersion.getFrozenStateNodeRef().getId());
 			dbNodeService.setProperty(versionNodeRef, Version2Model.PROP_QNAME_VERSION_LABEL, versionLabel);
 
 			//Old version type
@@ -408,7 +413,7 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 	/** {@inheritDoc} */
 	@Override
 	public NodeRef getEntityVersion(Version version) {
-		return new NodeRef(StoreRef.PROTOCOL_WORKSPACE, Version2Model.STORE_ID, version.getFrozenStateNodeRef().getId());
+		return getVersionedNodeRef(version.getFrozenStateNodeRef().getId());
 	}
 
 	/** {@inheritDoc} */
@@ -431,7 +436,7 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 						entityVersion = new EntityVersion(version, entityNodeRef, entityVersionNodeRef, branchFromNodeRef);
 					} else {
 						entityVersion = new EntityVersion(version, entityNodeRef,
-								new NodeRef(StoreRef.PROTOCOL_WORKSPACE, Version2Model.STORE_ID, version.getFrozenStateNodeRef().getId()),
+								getVersionedNodeRef(version.getFrozenStateNodeRef().getId()),
 								branchFromNodeRef);
 					}
 					if (RepoConsts.INITIAL_VERSION.equals(version.getVersionLabel())) {
@@ -445,6 +450,20 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 		return entityVersions;
 	}
 
+	@Override
+	public NodeRef getVersionedNodeRef(String id) {
+		
+		String identifier = Version2Model.STORE_ID;
+		
+		if (!TenantService.DEFAULT_DOMAIN.equals(tenantAdminService.getCurrentUserDomain())) {
+			String tenantDomain = tenantAdminService.getTenant(tenantAdminService.getCurrentUserDomain()).getTenantDomain();
+			identifier = "@" + tenantDomain + "@" + identifier;
+		}
+		
+		return 	new NodeRef(StoreRef.PROTOCOL_WORKSPACE, identifier, id);
+		
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 *
@@ -920,7 +939,7 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 				// extract the JSON data of the current node
 				String jsonData = entityFormatService.extractEntityData(entityNodeRef, EntityFormat.JSON);
 
-				NodeRef versionNode = new NodeRef(StoreRef.PROTOCOL_WORKSPACE, Version2Model.STORE_ID, newVersion.getFrozenStateNodeRef().getId());
+				NodeRef versionNode = getVersionedNodeRef(newVersion.getFrozenStateNodeRef().getId());
 				
 				// add child assocs to versions
 				ExporterCrawlerParameters crawlerParameters = new ExporterCrawlerParameters();
@@ -1100,8 +1119,8 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 
 	@Override
 	public boolean isVersion(NodeRef nodeRef) {
-		return nodeRef.getStoreRef().getProtocol().equals(VersionBaseModel.STORE_PROTOCOL)
-				|| nodeRef.getStoreRef().getIdentifier().equals(Version2Model.STORE_ID);
+		return nodeRef.getStoreRef().getProtocol().contains(VersionBaseModel.STORE_PROTOCOL)
+				|| nodeRef.getStoreRef().getIdentifier().contains(Version2Model.STORE_ID);
 	}
 
 	/**
@@ -1165,9 +1184,7 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 
 		QName type = dbNodeService.getType(versionNodeRef);
 
-		return AuthenticationUtil.runAsSystem(() ->
-
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			NodeRef entity = null;
 
@@ -1253,7 +1270,7 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 
 			return entity;
 
-		}, false, false));
+		}, false, false);
 
 	}
 
