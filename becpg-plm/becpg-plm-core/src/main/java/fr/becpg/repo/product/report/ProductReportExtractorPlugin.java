@@ -296,7 +296,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				loadAllergenLists(productData, dataListsElt, context);
 			}
 
-			if (isExtractedProduct) {
+			if (context.isPrefOn(EntityReportParameters.PARAM_EXTRACT_IN_MULTILEVEL, extractInMultiLevel) || shouldExtractList(isExtractedProduct,context,type, PLMModel.TYPE_COMPOLIST)) {
 				loadCompoList(productData, dataListsElt, context);
 			}
 
