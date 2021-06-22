@@ -1282,4 +1282,9 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		return false;
 	}
 
+	@Override
+	public NodeRef getVersionedNodeRef(String id) {
+		return null;
+	}
+
 }
