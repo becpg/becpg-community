@@ -86,11 +86,14 @@ public class FormulationCalcILWithYieldOnCompIT extends AbstractFinishedProductT
 			assertEquals(1d, formulatedProduct.getCompoListView().getCompoList().get(0).getQty());
 			assertEquals(1.5d, formulatedProduct.getCompoListView().getCompoList().get(1).getQty());
 
-			// RM1 : 1 * (100/3 ing1 + 200/3 ing2)
-			// RM2 : 3 * (100/4 ing1 + 300/4 ing2)
+			// RM1 : 1 * (100/3 ing1 + 200/3 ing2) 
+			// RM2 : 3 * (100/4 ing1 + 300/4 ing2) RDMT 200
 			//
-			// ing 1 : 27,083333333
-			// ing 2 : 72,916666667
+			// ing 1 : 27,083333333 = (100÷3 + 3×100÷4)÷ 4
+			// ing 2 : 72,916666667 = (100÷3 + 3×100÷4)÷ 4
+			
+			// ing 1 withYield : 44,7917 =  (200÷3+1.5×(300÷4))÷4
+			// ing 2 withYield : 17,7083 = (100÷3+1.5×(100÷4))÷4 
 
 			assertEquals(100d, formulatedProduct.getYield());
 			assertEquals(2, formulatedProduct.getIngList().size());
@@ -103,6 +106,9 @@ public class FormulationCalcILWithYieldOnCompIT extends AbstractFinishedProductT
 					+ df.format(formulatedProduct.getIngList().get(1).getQtyPerc()));
 			assertEquals(df.format(72.916666667d), df.format(formulatedProduct.getIngList().get(0).getQtyPerc()));
 			assertEquals(df.format(27.083333333d), df.format(formulatedProduct.getIngList().get(1).getQtyPerc()));
+			
+			assertEquals(df.format(44.7917d), df.format(formulatedProduct.getIngList().get(0).getQtyPercWithYield()));
+			assertEquals(df.format(17.7083d), df.format(formulatedProduct.getIngList().get(1).getQtyPercWithYield()));
 
 			return null;
 
