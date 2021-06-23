@@ -262,7 +262,7 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 		List<NodeRef> activities = getActivities(finishedProductNodeRef, SORT_MAP);
 
 		// activities number after clean
-		assertTrue("number formulation activities in second page = 52", activities.size() == 52);
+		assertEquals("number formulation activities in second page = 52", activities.size() , 52);
 
 		Collections.reverse(activities);
 		activities = activities.subList(50, 52);
