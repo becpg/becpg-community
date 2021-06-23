@@ -193,16 +193,31 @@ public class ActivityListExtractor extends SimpleExtractor {
 									if (activityProperty.has(EntityActivityService.BEFORE)) {
 										Object beforeProperty = activityProperty.get(EntityActivityService.BEFORE);
 										if ((beforeProperty instanceof JSONArray) && (((JSONArray) beforeProperty).length() > 0)) {
-											postProperty.put(EntityActivityService.BEFORE, checkProperty(beforeProperty, propertyDef));
+											
+											Object afterProperty = activityProperty.get(EntityActivityService.AFTER);
+											
+											if ((afterProperty instanceof JSONArray) && (((JSONArray) afterProperty).length() > 0)) {
+												adaptProperty((JSONArray) beforeProperty, (JSONArray) afterProperty);
+											}
+											
+											postProperty.put(EntityActivityService.BEFORE, checkProperty((JSONArray) beforeProperty, propertyDef));
 										} else {
 											postProperty.put(EntityActivityService.BEFORE, beforeProperty);
 										}
 									}
+									
 									// AfterProperty
 									if (activityProperty.has(EntityActivityService.AFTER)) {
 										Object afterProperty = activityProperty.get(EntityActivityService.AFTER);
 										if ((afterProperty instanceof JSONArray) && (((JSONArray) afterProperty).length() > 0)) {
-											postProperty.put(EntityActivityService.AFTER, checkProperty(afterProperty, propertyDef));
+											
+											Object beforeProperty = activityProperty.get(EntityActivityService.BEFORE);
+											
+											if ((beforeProperty instanceof JSONArray) && (((JSONArray) beforeProperty).length() > 0)) {
+												adaptProperty((JSONArray) afterProperty, (JSONArray) beforeProperty);
+											}
+											
+											postProperty.put(EntityActivityService.AFTER, checkProperty((JSONArray) afterProperty, propertyDef));
 										} else {
 											postProperty.put(EntityActivityService.AFTER, afterProperty);
 										}
@@ -234,6 +249,26 @@ public class ActivityListExtractor extends SimpleExtractor {
 
 	}
 
+	private void adaptProperty(JSONArray propToAdapt, JSONArray propRef) throws JSONException {
+
+		if (propToAdapt.get(0) == JSONObject.NULL && propRef.get(0) instanceof JSONArray) {
+
+			JSONArray newArray = new JSONArray();
+
+			for (int k = 0; k < ((JSONArray) propRef.get(0)).length(); k++) {
+				newArray.put("");
+			}
+
+			propToAdapt.put(0, newArray);
+
+		} else if (propToAdapt.get(0) instanceof JSONArray && propRef.get(0) instanceof JSONArray
+				&& ((JSONArray) propToAdapt.get(0)).length() < ((JSONArray) propRef.get(0)).length()) {
+			for (int k = 0; k < ((JSONArray) propRef.get(0)).length() - ((JSONArray) propToAdapt.get(0)).length(); k++) {
+				((JSONArray) propToAdapt.get(0)).put("");
+			}
+		}
+	}
+
 	/**
 	 * <p>checkProperty.</p>
 	 *
@@ -241,9 +276,8 @@ public class ActivityListExtractor extends SimpleExtractor {
 	 * @param propertyDef a {@link org.alfresco.service.cmr.dictionary.PropertyDefinition} object.
 	 * @return a {@link org.json.JSONArray} object.
 	 */
-	public JSONArray checkProperty(Object property, PropertyDefinition propertyDef) {
+	public JSONArray checkProperty(JSONArray propertyArray, PropertyDefinition propertyDef) {
 		boolean updateProperty = true;
-		JSONArray propertyArray = (JSONArray) property;
 		JSONArray postproperty = new JSONArray();
 		for (int i = 0; i < propertyArray.length(); i++) {
 			try {
