@@ -111,7 +111,7 @@
                  handler : function() {
                 	 Alfresco.util.Ajax
                      .jsonRequest({
-                        url : Alfresco.constants.PROXY_URI + "/becpg/project/complete/task?nodeRef="+taskNodeRef,
+                        url : Alfresco.constants.PROXY_URI + "becpg/project/complete/task?nodeRef="+taskNodeRef,
                         method : "POST",
                         successCallback : {
                            fn : function(response) {
