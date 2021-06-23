@@ -5,20 +5,25 @@
 parseActions(page.url.args.list!=null ?page.url.args.list : null);
 
 
-function getCustomLists()
+
+function getCustomLists(itemType)
 {
    var myConfig = new XML(config.script),
    customLists = [];
 
    for each (var xmlCustomList in myConfig..customList)
    {
-	   customLists.push(
-      {
-    	 id: xmlCustomList.@id.toString(),
-         type: xmlCustomList.@type.toString(),
-         selected: xmlCustomList.@selected.toString(),
-         formId: xmlCustomList.@formId.toString()
-      });
+		var filter = xmlCustomList.@filter.toString();
+		if(filter == null || filter.length == 0 ||  filter === itemType || ( filter.indexOf("!") == 0 && filter !== ("!"+itemType))){
+			   customLists.push(
+		      {
+		    	 id: xmlCustomList.@id.toString(),
+				 filter: filter,
+		         type: xmlCustomList.@type.toString(),
+		         selected: xmlCustomList.@selected.toString(),
+		         formId: xmlCustomList.@formId.toString()
+		      });
+		}
    }
    return customLists;
 }
@@ -26,16 +31,22 @@ function getCustomLists()
 
 function main()
 {
- 
-
-	var prefs = "fr.becpg.formulation.dashlet.custom";
-
+	
+	
+    AlfrescoUtil.param("nodeRef");
+    AlfrescoUtil.param("api", "api");
+    AlfrescoUtil.param("proxy", "alfresco");
+    var nodeDetails = AlfrescoUtil.getNodeDetails(model.nodeRef, model.site);
+	var type = nodeDetails.item.node.type;
+	var prefs = "fr.becpg.formulation.dashlet.custom."+type.replace(":","_");
+	
 	if(page.url.args.list!=null && page.url.args.list.length>0){
 	   prefs+="."+page.url.args.list;
 	}
-
+	
+	
 	model.preferences = AlfrescoUtil.getPreferences(prefs);
-	model.customLists = getCustomLists();
+	model.customLists = getCustomLists(type);
 
 
 	if(model.preferences.list!=null ){
@@ -48,21 +59,26 @@ function main()
 		model.effectiveFilterOn = true;
 	}
 
+	var found = false;
+	var customListName, customListType;
+	
 	for(var j in model.customLists){
 		var customList = model.customLists[j];
-		if(model.customListName!=null){
-			if(model.customListName == customList.id ){
-				model.customListType = customList.type;
-				break;
-			}
-		} else if (customList.selected == "true"){
-			model.customListName = customList.id;
+		if(model.customListName == customList.id ){
 			model.customListType = customList.type;
-			break;
+			found = true;
+			break;	
+		 } else if (customList.selected == "true"){
+			customListName = customList.id;
+			customListType = customList.type;
 		}
 		
 	}
 	
+	if(!found){
+		model.customListName = customListName;
+		model.customListType = customListType;
+	}
 	
 	
  
@@ -76,7 +92,8 @@ var formulationView = {
       list : (page.url.args.list != null) ? page.url.args.list : "",
       customLists : model.customLists,
       customListName : model.customListName,
-      effectiveFilterOn : model.effectiveFilterOn
+      effectiveFilterOn : model.effectiveFilterOn,
+	  entityType: type
    }
 };
 

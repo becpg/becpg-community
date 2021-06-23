@@ -399,7 +399,7 @@
 						|| asset.name === "ingLabelingList" || asset.name === "nutList" || asset.name === "labelClaimList"
 						|| asset.name === "costList" || asset.name === "physicoChemList" || asset.name === "ingList" || asset.name === "allergenList"
 						|| asset.name === "priceList" || asset.name === "View-properties") && beCPG.util.contains(entity.aspects,
-							"bcpg:productAspect");
+							"bcpg:entityScoreAspect") ;
 			},
 			createWidget: function(containerDiv, instance) {
 
@@ -410,13 +410,12 @@
 
 				containerDiv.appendChild(divEl);
 
-				var productNotifications = new beCPG.component.ProductNotifications(instance.id + "-productNotifications").setOptions({
+				return new beCPG.component.ProductNotifications(instance.id + "-productNotifications").setOptions({
 					entityNodeRef: instance.options.entityNodeRef,
 					list: instance.options.list,
 					containerDiv: divEl
 				});
 
-				return productNotifications;
 			}
 		});
 
@@ -494,7 +493,7 @@
 				var dataListNodeRef = instance.datalistMeta.nodeRef != null ? instance.datalistMeta.nodeRef
 					: instance.options.parentNodeRef;
 
-				var picker = new beCPG.component.RapidLinkToolbar(instance.id + "-rapidLink").setOptions({
+				return new beCPG.component.RapidLinkToolbar(instance.id + "-rapidLink").setOptions({
 					dataListNodeRef: dataListNodeRef,
 					entity: instance.entity,
 					containerDiv: divEl,
@@ -503,7 +502,6 @@
 					siteId: instance.options.siteId
 				});
 
-				return picker;
 			}
 		});
 
@@ -530,14 +528,12 @@
 
 						Dom.addClass(divEl, "variantPicker");
 
-						var picker = new beCPG.component.VariantPicker(instance.id + "-variantPicker").setOptions({
+						return  new beCPG.component.VariantPicker(instance.id + "-variantPicker").setOptions({
 							entityNodeRef: instance.options.entityNodeRef,
 							entity: instance.entity,
 							containerDiv: divEl,
 							toolBarInstance: instance
 						});
-
-						return picker;
 					}
 				});
 

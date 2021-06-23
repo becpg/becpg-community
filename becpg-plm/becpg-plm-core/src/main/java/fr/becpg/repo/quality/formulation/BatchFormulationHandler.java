@@ -1,14 +1,17 @@
 package fr.becpg.repo.quality.formulation;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.extensions.surf.util.I18NUtil;
 
 import com.ibm.icu.util.Calendar;
 
@@ -20,7 +23,10 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
+import fr.becpg.repo.product.data.constraints.RequirementDataType;
+import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
+import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.quality.data.BatchData;
 import fr.becpg.repo.quality.data.dataList.AllocationListDataItem;
@@ -30,6 +36,8 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 public class BatchFormulationHandler extends FormulationBaseHandler<BatchData> {
 
 	private static Log logger = LogFactory.getLog(BatchFormulationHandler.class);
+	
+	private static final String MESSAGE_MISSING_STOCK = "message.formulate.missing.stock";
 
 	private AlfrescoRepository<ProductData> alfrescoRepository;
 
@@ -40,27 +48,42 @@ public class BatchFormulationHandler extends FormulationBaseHandler<BatchData> {
 	@Override
 	public boolean process(BatchData batchData) {
 
-		if (batchData.getProduct() != null) {
+		if (batchData.getProduct() != null && batchData.hasCompoListEl()) {
 
-			ProductData productData = batchData.getProduct();
-
-			Double productNetWeight = FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT);
-			Double batchQty = batchData.getBatchQty();
-
-			if (batchQty == null) {
-				batchQty = 1d;
-			}
+		
 
 			boolean isVolume = false;
 
-			if ((batchData.getUnit() != null) && (batchData.getUnit().isVolume() || batchData.getUnit().isWeight())) {
+			if ((batchData.getUnit() != null)) {
 				isVolume = batchData.getUnit().isVolume();
-				batchQty = batchQty / batchData.getUnit().getUnitFactor();
 			}
 			
-
+			ReqCtrlListDataItem reqCtrl = null;
 			Map<NodeRef, Double> rawMaterials = new HashMap<>();
-			extractRawMaterials(productData, rawMaterials, productNetWeight);
+			for (CompoListDataItem compoList : batchData.getCompoList()) {
+				NodeRef productNodeRef = compoList.getProduct();
+				if ((productNodeRef != null) && !DeclarationType.Omit.equals(compoList.getDeclType())) {
+
+					Double qty = FormulationHelper.getQtyInKg(compoList);
+					
+					if (qty != null) {
+						ProductData subProductData = alfrescoRepository.findOne(productNodeRef);
+						if(!(subProductData instanceof LocalSemiFinishedProductData)) {
+							if (!DeclarationType.Declare.equals(compoList.getDeclType()) || subProductData instanceof RawMaterialData) {
+	
+								Double rmQty = rawMaterials.get(productNodeRef);
+								if (rmQty == null) {
+									rmQty = 0d;
+								}
+								rmQty += qty;
+								rawMaterials.put(productNodeRef, rmQty);
+							} else  {
+								extractRawMaterials(subProductData, rawMaterials, qty);
+							}
+						}
+					}
+				}
+			}
 
 			// sort
 			List<Map.Entry<NodeRef, Double>> sortedRawMaterials = new LinkedList<>(rawMaterials.entrySet());
@@ -69,17 +92,8 @@ public class BatchFormulationHandler extends FormulationBaseHandler<BatchData> {
 			List<AllocationListDataItem> toRetain = new LinkedList<>();
 			
 			boolean canApply = true;
+			int sort = 0;
 			for (Map.Entry<NodeRef, Double> entry : sortedRawMaterials) {
-
-				Double qtyInKgOrL = (entry.getValue() * batchQty);
-				
-				if(logger.isDebugEnabled()) {
-					logger.debug(batchQty+ " "+ entry.getValue() + " " + productNetWeight);
-				}
-				
-				if (productNetWeight != 0d) {
-					qtyInKgOrL /= productNetWeight;
-				}
 
 				AllocationListDataItem item = batchData.getAllocationList().stream().filter(a -> entry.getKey().equals(a.getProduct())).findFirst()
 						.orElse(null);
@@ -90,22 +104,36 @@ public class BatchFormulationHandler extends FormulationBaseHandler<BatchData> {
 					batchData.getAllocationList().add(item);
 				} 
 				
+				item.setSort(sort++);
+		
 				toRetain.add(item);
 
 				if (!SystemState.Valid.equals(item.getState())) {
 					ProductData rawMaterialData = alfrescoRepository.findOne(entry.getKey());
 					Double totalStockInKgOrL = computeTotalStock(rawMaterialData);
 
-					item.setBatchQty(qtyInKgOrL);
+					item.setBatchQty(entry.getValue());
 					item.setUnit(isVolume ? ProductUnit.L : ProductUnit.kg);
 					item.setState(SystemState.Simulation);
 					
 					if(logger.isDebugEnabled()) {
-						logger.debug("Compare asked qty " + qtyInKgOrL + " vs stock " + totalStockInKgOrL);
+						logger.debug("Compare asked qty " + entry.getValue() + " vs stock " + totalStockInKgOrL);
 					}
 					
-					if (totalStockInKgOrL < qtyInKgOrL) {
+					if (totalStockInKgOrL < entry.getValue()) {
 						item.setState(SystemState.Refused);
+
+						if (reqCtrl == null) {
+							reqCtrl = new ReqCtrlListDataItem(null, RequirementType.Forbidden, new MLText(I18NUtil.getMessage(MESSAGE_MISSING_STOCK)), null, new ArrayList<>(),  RequirementDataType.Formulation);
+							batchData.getReqCtrlList()
+							.add(reqCtrl);
+						} 
+
+						if (!reqCtrl.getSources().contains(entry.getKey())) {
+							reqCtrl.getSources().add(entry.getKey());
+						}
+						
+						
 						canApply = false;
 					} else {
 						item.setState(SystemState.Simulation);
