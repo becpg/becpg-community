@@ -14,8 +14,10 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
@@ -45,6 +47,7 @@ public class DefaultProductReportExtractorIT extends AbstractFinishedProductTest
 	private static final Log logger = LogFactory.getLog(DefaultProductReportExtractorIT.class);
 
 	@Autowired
+	@Qualifier("productReportExtractor")
 	private ProductReportExtractorPlugin defaultProductReportExtractor;
 
 	@Autowired
@@ -122,6 +125,7 @@ public class DefaultProductReportExtractorIT extends AbstractFinishedProductTest
 			productService.formulate(finishedProductNodeRef);
 
 			EntityReportData entityReportData = defaultProductReportExtractor.extract(finishedProductNodeRef, new HashMap<>());
+			Assert.assertNotNull( entityReportData.getXmlDataSource());
 			logger.info("XmlData : " + entityReportData.getXmlDataSource().asXML());
 
 			return null;

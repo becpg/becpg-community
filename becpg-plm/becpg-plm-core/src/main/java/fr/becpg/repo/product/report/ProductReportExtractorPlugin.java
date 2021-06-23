@@ -82,7 +82,7 @@ import fr.becpg.repo.variant.model.VariantData;
  * @author matthieu
  * @version $Id: $Id
  */
-@Service
+@Service("productReportExtractor")
 public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	/** Constant <code>KEY_PRODUCT_IMAGE="productImage"</code> */
