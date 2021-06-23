@@ -18,13 +18,14 @@ import fr.becpg.model.SystemState;
 import fr.becpg.repo.entity.catalog.EntityCatalogService;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.AbstractProductDataView;
-import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.ScorableEntity;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.formulation.score.ScoreCalculatingPlugin;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.model.CompositionDataItem;
+import fr.becpg.repo.repository.model.StateableEntity;
 
 /**
  * Computes product completion score
@@ -32,12 +33,12 @@ import fr.becpg.repo.repository.model.CompositionDataItem;
  * @author steven
  * @version $Id: $Id
  */
-public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<ProductData> {
+public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<ScorableEntity> {
 
 	private static final Log logger = LogFactory.getLog(ScoreCalculatingFormulationHandler.class);
 
-	private AlfrescoRepository<ProductData> alfrescoRepository;
-	
+	private AlfrescoRepository<ScorableEntity> alfrescoRepository;
+
 	private ScoreCalculatingPlugin[] scorePlugins;
 
 	/**
@@ -45,44 +46,39 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 	 *
 	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
 	 */
-	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
+	public void setAlfrescoRepository(AlfrescoRepository<ScorableEntity> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
-
-	
-
 
 	public void setScorePlugins(ScoreCalculatingPlugin[] scorePlugins) {
 		this.scorePlugins = scorePlugins;
 	}
 
-
-
-
 	/** {@inheritDoc} */
 	@Override
-	public boolean process(ProductData product) {
-		
-		for(ScoreCalculatingPlugin plugin : scorePlugins) {
-			if(plugin.accept(product)) {
-				plugin.formulateScore(product);
+	public boolean process(ScorableEntity scorableEntity) {
+
+		if (scorePlugins != null) {
+			for (ScoreCalculatingPlugin plugin : scorePlugins) {
+				if (plugin.accept(scorableEntity)) {
+					plugin.formulateScore(scorableEntity);
+				}
 			}
 		}
-		
 
 		JSONObject scores = new JSONObject();
 
 		try {
 
-			if (product.getEntityScore() != null) {
-				scores = new JSONObject(product.getEntityScore());
+			if (scorableEntity.getEntityScore() != null) {
+				scores = new JSONObject(scorableEntity.getEntityScore());
 			}
 			Integer childScore = 0;
 			Integer childrenSize = 0;
 			Double specificationScore = 100d;
 			Double mandatoryFieldsScore = 100d;
 
-			for (AbstractProductDataView view : product.getViews()) {
+			for (AbstractProductDataView view : scorableEntity.getViews()) {
 				if (view.getMainDataList() != null) {
 					for (CompositionDataItem dataItem : view.getMainDataList()) {
 						if (dataItem.getComponent() != null) {
@@ -101,8 +97,8 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 			Map<String, Integer> reqNbByRegulatoryCode = new HashMap<>();
 			Set<String> visitedRclItems = new HashSet<>();
 
-			if (product.getReqCtrlList() != null) {
-				for (ReqCtrlListDataItem rclDataItem : product.getReqCtrlList()) {
+			if (scorableEntity.getReqCtrlList() != null) {
+				for (ReqCtrlListDataItem rclDataItem : scorableEntity.getReqCtrlList()) {
 					RequirementDataType key = rclDataItem.getReqDataType();
 					RequirementType type = rclDataItem.getReqType();
 					// make sure we don't put duplicates rclDataItems
@@ -150,6 +146,7 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 					visitedRclItems.add(rclDataItem.getKey());
 				}
 			}
+			Double completionPercent = 100d;
 
 			// checks if mandatory fields are present
 			if (scores.has(EntityCatalogService.PROP_CATALOGS)) {
@@ -170,18 +167,21 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 				if (logger.isDebugEnabled()) {
 					logger.debug("Child score: " + childScore + ", childSize: " + childrenSize + "\n\n mandatoryFields: " + mandatoryFields);
 				}
-				Double completionPercent = (componentsValidationScore + mandatoryFieldsScore + specificationScore) / 3d;
+				completionPercent = (componentsValidationScore + mandatoryFieldsScore + specificationScore) / 3d;
 
-				JSONObject details = new JSONObject();
-				details.put("mandatoryFields", mandatoryFieldsScore);
-
-				details.put("specifications", specificationScore);
-				details.put("componentsValidation", componentsValidationScore);
-
-				scores.put("global", completionPercent);
-				scores.put("details", details);
+				
 
 			}
+			
+			
+			JSONObject details = new JSONObject();
+			details.put("mandatoryFields", mandatoryFieldsScore);
+
+			details.put("specifications", specificationScore);
+			details.put("componentsValidation", componentsValidationScore);
+
+			scores.put("global", completionPercent);
+			scores.put("details", details);
 
 			List<JSONObject> ctrlArray = new ArrayList<>();
 
@@ -234,7 +234,7 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 			logger.error("Cannot create Json Score", e);
 		}
 
-		product.setEntityScore(scores.toString());
+		scorableEntity.setEntityScore(scores.toString());
 
 		return true;
 	}
@@ -246,11 +246,11 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 	 * @return a boolean.
 	 */
 	public boolean checkProductValidity(NodeRef node) {
-		ProductData found = alfrescoRepository.findOne(node);
-		if (found != null) {
-			return SystemState.Valid.equals(found.getState());
+		ScorableEntity found = alfrescoRepository.findOne(node);
+		if (found instanceof StateableEntity) {
+			return SystemState.Valid.toString().equals(((StateableEntity) found).getEntityState());
 		}
-		return false;
+		return true;
 	}
 
 	private int getForbiddenCtrlAmount(Map<String, Map<String, Integer>> reqCtrlList) {

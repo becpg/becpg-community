@@ -443,6 +443,7 @@
 		<type name="qa:batch">
 			<parent>bcpg:entityV2</parent>
 			<mandatory-aspects>
+				<aspect>bcpg:codeAspect</aspect>
 				<aspect>qa:batchAspect</aspect>
 			</mandatory-aspects>
 		</type>
@@ -650,7 +651,6 @@
 					<index enabled="true" />
 				</property>
 				<property name="qa:productUseByDate">
-					<title>DLC produit</title>
 					<type>d:date</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
