@@ -149,7 +149,7 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 	}
 
 	public boolean isCancelled() {
-		return TaskState.Cancelled.equals(task.getTaskState());
+		return (task != null) && TaskState.Cancelled.equals(task.getTaskState());
 	}
 
 	/**
