@@ -23,12 +23,14 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.importer.impl.ImportHelper;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.ScorableEntity;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.helper.Nutrient5CHelper;
+import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 @Service("nutriScore")
 public class NutriScore implements ScoreCalculatingPlugin {
@@ -47,12 +49,13 @@ public class NutriScore implements ScoreCalculatingPlugin {
 	private static final List<String> NUTRIENT_PROFILE_CLASSES = Arrays.asList("E","D","C","B","A");
 
 	@Override
-	public boolean accept(ProductData productData) {
-		return productData.getAspects().contains(PLMModel.ASPECT_NUTRIENT_PROFILING_SCORE);
+	public boolean accept(ScorableEntity productData) {
+		return (productData instanceof ProductData) &&  ((BeCPGDataObject) productData).getAspects().contains(PLMModel.ASPECT_NUTRIENT_PROFILING_SCORE);
 	}
 
 	@Override
-	public boolean formulateScore(ProductData productData) {
+	public boolean formulateScore(ScorableEntity scorableEntity) {
+		ProductData productData  = (ProductData) scorableEntity;
 		
 		Serializable prop = nodeService.getProperty(productData.getNodeRef(), QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfileCategory"));
 		
