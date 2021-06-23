@@ -41,6 +41,7 @@ import fr.becpg.repo.product.data.PackagingMaterialData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.ResourceProductData;
+import fr.becpg.repo.product.data.ScorableEntity;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
@@ -56,12 +57,12 @@ import fr.becpg.repo.repository.model.FormulatedCharactDataItem;
  * @author quere
  * @version $Id: $Id
  */
-public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<ProductData> {
+public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<ScorableEntity> {
 
 	/** Constant <code>logger</code> */
 	protected static Log logger = LogFactory.getLog(MergeReqCtrlFormulationHandler.class);
 
-	private AlfrescoRepository<ProductData> alfrescoRepository;
+	private AlfrescoRepository<ScorableEntity> alfrescoRepository;
 
 	private NodeService nodeService;
 
@@ -70,7 +71,7 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 	 *
 	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
 	 */
-	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
+	public void setAlfrescoRepository(AlfrescoRepository<ScorableEntity> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
@@ -85,15 +86,19 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 
 	/** {@inheritDoc} */
 	@Override
-	public boolean process(ProductData productData) {
+	public boolean process(ScorableEntity scorableEntity) {
 
 		// Add child requirements
-		if (productData.getReqCtrlList() != null) {
-			appendChildReq(productData, productData.getReqCtrlList());
+		if (scorableEntity.getReqCtrlList() != null) {
+			if(scorableEntity instanceof ProductData) {
+				appendChildReq((ProductData)scorableEntity, scorableEntity.getReqCtrlList());
+			}
 
-			mergeReqCtrlList(productData, productData.getReqCtrlList());
+			mergeReqCtrlList(scorableEntity, scorableEntity.getReqCtrlList());
 
-			updateFormulatedCharactInError(productData, productData.getReqCtrlList());
+			if(scorableEntity instanceof ProductData) {
+				updateFormulatedCharactInError((ProductData)scorableEntity, scorableEntity.getReqCtrlList());
+			}
 		}
 
 		return true;
@@ -103,7 +108,7 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 		for (CompoListDataItem compoListDataItem : productData.getCompoListView().getCompoList()) {
 			NodeRef componentProductNodeRef = compoListDataItem.getProduct();
 			if (componentProductNodeRef != null) {
-				ProductData componentProductData = alfrescoRepository.findOne(componentProductNodeRef);
+				ProductData componentProductData = (ProductData) alfrescoRepository.findOne(componentProductNodeRef);
 				if (((!componentProductNodeRef.equals(productData.getNodeRef()) && (componentProductData instanceof SemiFinishedProductData))
 						|| (componentProductData instanceof FinishedProductData) || (componentProductData instanceof RawMaterialData))
 					&& ((componentProductData.getCompoListView() != null) && (componentProductData.getReqCtrlList() != null))) {					
@@ -115,7 +120,7 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 		for (PackagingListDataItem packagingListDataItem : productData.getPackagingListView().getPackagingList()) {
 			NodeRef componentProductNodeRef = packagingListDataItem.getProduct();
 			if (componentProductNodeRef != null) {
-				ProductData componentProductData = alfrescoRepository.findOne(componentProductNodeRef);
+				ProductData componentProductData = (ProductData) alfrescoRepository.findOne(componentProductNodeRef);
 				if (((!componentProductNodeRef.equals(productData.getNodeRef()) && (componentProductData instanceof PackagingKitData))
 						|| (componentProductData instanceof PackagingMaterialData)) 
 					&& ((componentProductData.getPackagingListView() != null) && (componentProductData.getReqCtrlList() != null))) {					
@@ -127,7 +132,7 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 		for (ProcessListDataItem processListDataItem : productData.getProcessListView().getProcessList()) {
 			NodeRef componentProductNodeRef = processListDataItem.getResource();
 			if (componentProductNodeRef != null) {
-				ProductData componentProductData = alfrescoRepository.findOne(componentProductNodeRef);
+				ProductData componentProductData = (ProductData) alfrescoRepository.findOne(componentProductNodeRef);
 				if (componentProductData instanceof ResourceProductData
 					&& ((componentProductData.getProcessList() != null) && (componentProductData.getReqCtrlList() != null))) {					
 					reqCtrlList.addAll(reqCtrlToAdd(componentProductData));
@@ -149,7 +154,7 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 		return toAdd;
 	}
 
-	private void mergeReqCtrlList(ProductData productData, List<ReqCtrlListDataItem> reqCtrlList) {
+	private void mergeReqCtrlList(ScorableEntity scorableEntity, List<ReqCtrlListDataItem> reqCtrlList) {
 
 		if (reqCtrlList != null) {
 			Map<String, ReqCtrlListDataItem> dbReqCtrlList = new HashMap<>();
@@ -172,7 +177,7 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 				if (!newReqCtrlList.containsKey(dbKV.getKey())) {
 
 					if ((dbKV.getValue().getFormulationChainId() == null)
-							|| dbKV.getValue().getFormulationChainId().equals(productData.getFormulationChainId())) {
+							|| dbKV.getValue().getFormulationChainId().equals(scorableEntity.getFormulationChainId())) {
 						// remove
 						reqCtrlList.remove(dbKV.getValue());
 					}

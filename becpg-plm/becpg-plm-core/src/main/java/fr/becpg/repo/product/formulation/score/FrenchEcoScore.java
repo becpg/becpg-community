@@ -29,9 +29,11 @@ import fr.becpg.repo.listvalue.ListValueEntry;
 import fr.becpg.repo.listvalue.ListValuePage;
 import fr.becpg.repo.listvalue.ListValuePlugin;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.ScorableEntity;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.PackMaterialListDataItem;
+import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 @Service("ecoScore")
 public class FrenchEcoScore implements ListValuePlugin, ScoreCalculatingPlugin {
@@ -216,13 +218,15 @@ public class FrenchEcoScore implements ListValuePlugin, ScoreCalculatingPlugin {
 	}
 
 	@Override
-	public boolean accept(ProductData productData) {
-		return productData.getAspects().contains(PLMModel.ASPECT_ECO_SCORE);
+	public boolean accept(ScorableEntity productData) {
+		return (productData instanceof ProductData) &&  ((BeCPGDataObject) productData).getAspects().contains(PLMModel.ASPECT_ECO_SCORE);
 	}
 
 	@Override
-	public boolean formulateScore(ProductData productData) {
+	public boolean formulateScore(ScorableEntity scorableEntity) {
 
+		ProductData productData  = (ProductData) scorableEntity;
+		
 		if ((productData.getEcoScoreCategory() != null) && !productData.getEcoScoreCategory().isEmpty()) {
 			Boolean threatenedSpecies = false;
 			Boolean notRecyclable = false;

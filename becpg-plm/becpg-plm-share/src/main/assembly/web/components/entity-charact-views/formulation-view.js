@@ -112,7 +112,11 @@
 			/**
 			 *  Effective filter
 			 */
-			effectiveFilterOn : true
+			effectiveFilterOn : true,
+			/**
+			 * entityType
+			 */
+			entityType: null
 		},
 
 		/**
@@ -149,10 +153,16 @@
 
 			this.widgets.effectivityCkeckbox.on("checkedChange", function (){
 				var prefs = "fr.becpg.formulation.dashlet.custom";
+				
+				
+				if (instance.options.entityType != null && instance.options.entityType.length > 0) {
+					prefs += "." + instance.options.entityType.replace(":","_");
+				}
 
 				if (instance.options.list != null && instance.options.list.length > 0) {
 					prefs += "." + instance.options.list;
 				}
+				
 				
 				instance.options.effectiveFilterOn = !instance.options.effectiveFilterOn;
 
@@ -224,6 +234,11 @@
 					this.widgets.customList.value = menuItem.value;
 
 					var prefs = "fr.becpg.formulation.dashlet.custom";
+
+					
+					if (this.options.entityType != null && this.options.entityType.length > 0) {
+						prefs += "." + this.options.entityType.replace(":","_");
+					}
 
 					if (this.options.list != null && this.options.list.length > 0) {
 						prefs += "." + this.options.list;

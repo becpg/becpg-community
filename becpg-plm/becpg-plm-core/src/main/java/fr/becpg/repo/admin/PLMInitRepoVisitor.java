@@ -1114,6 +1114,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		
 		//visit batch
 		dataLists.clear();
+		dataLists.add(PLMModel.TYPE_COMPOLIST);
 		dataLists.add(QualityModel.TYPE_BATCH_ALLOCATION_LIST);
 		entityTplNodeRef = entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_BATCH, null, true, true, dataLists, null);
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);

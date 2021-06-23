@@ -17,22 +17,37 @@
  ******************************************************************************/
 package fr.becpg.repo.quality.data;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.model.SystemState;
-import fr.becpg.repo.formulation.FormulatedEntity;
+import fr.becpg.repo.formulation.ReportableEntity;
+import fr.becpg.repo.product.data.AbstractProductDataView;
+import fr.becpg.repo.product.data.CompoListView;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.ScorableEntity;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
+import fr.becpg.repo.product.data.constraints.RequirementDataType;
+import fr.becpg.repo.product.data.constraints.RequirementType;
+import fr.becpg.repo.product.data.productList.CompoListDataItem;
+import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.quality.data.dataList.AllocationListDataItem;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataList;
+import fr.becpg.repo.repository.annotation.DataListView;
+import fr.becpg.repo.repository.filters.DataListFilter;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 /**
@@ -43,7 +58,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
  */
 @AlfType
 @AlfQname(qname = "qa:batch")
-public class BatchData extends BeCPGDataObject implements FormulatedEntity {
+public class BatchData extends BeCPGDataObject implements ScorableEntity, ReportableEntity {
 
 	/**
 	 *
@@ -55,7 +70,9 @@ public class BatchData extends BeCPGDataObject implements FormulatedEntity {
 	private ProductUnit unit = ProductUnit.kg;
 	private ProductData product;
 
-	private NodeRef entityTpl;
+	private BatchData entityTpl;
+	
+	private String entityScore;
 
 	/*
 	 * Formulation
@@ -68,6 +85,14 @@ public class BatchData extends BeCPGDataObject implements FormulatedEntity {
 	private String requirementChecksum;
 
 	private List<AllocationListDataItem> allocationList;
+	
+	private List<ReqCtrlListDataItem> reqCtrlList;
+
+	private CompoListView compoListView = new CompoListView();
+	
+	public List<AbstractProductDataView> getViews() {
+		return Arrays.asList(compoListView);
+	}
 
 	/**
 	 * <p>Getter for the field <code>batchId</code>.</p>
@@ -148,15 +173,149 @@ public class BatchData extends BeCPGDataObject implements FormulatedEntity {
 	public void setAllocationList(List<AllocationListDataItem> allocationList) {
 		this.allocationList = allocationList;
 	}
+	
+	/**
+	 * <p>Getter for the field <code>reqCtrlList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
+	@DataList
+	@AlfQname(qname = "bcpg:reqCtrlList")
+	public List<ReqCtrlListDataItem> getReqCtrlList() {
+		return reqCtrlList;
+	}
+
+	/**
+	 * <p>Setter for the field <code>reqCtrlList</code>.</p>
+	 *
+	 * @param reqCtrlList a {@link java.util.List} object.
+	 */
+	public void setReqCtrlList(List<ReqCtrlListDataItem> reqCtrlList) {
+		this.reqCtrlList = reqCtrlList;
+	}
+	
+	
+
+	/**
+	 * <p>Getter for the field <code>entityScore</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
+	@AlfProp
+	@AlfQname(qname = "bcpg:entityScore")
+	public String getEntityScore() {
+		return entityScore;
+	}
+
+	/**
+	 * <p>Setter for the field <code>entityScore</code>.</p>
+	 *
+	 * @param string a {@link java.lang.String} object.
+	 */
+	public void setEntityScore(String string) {
+		this.entityScore = string;
+	}
+
+	/**
+	 * <p>Getter for the field <code>compoListView</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.CompoListView} object.
+	 */
+	@DataListView
+	@AlfQname(qname = "bcpg:compoList")
+	public CompoListView getCompoListView() {
+		return compoListView;
+	}
+
+	private <T> List<T> filterList(List<T> list, List<DataListFilter<BatchData, T>> filters) {
+		if ((filters != null) && !filters.isEmpty()) {
+			Stream<T> stream = list.stream();
+			for (DataListFilter<BatchData, T> filter : filters) {
+				stream = stream.filter(filter.createPredicate(this));
+			}
+			return stream.collect(Collectors.toList());
+		}
+		return list;
+	}
+
+	/**
+	 * <p>getCompoList.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
+	public List<CompoListDataItem> getCompoList() {
+		return getCompoList(Collections.emptyList());
+	}
+
+	/**
+	 * <p>getCompoList.</p>
+	 *
+	 * @param filter a {@link fr.becpg.repo.repository.filters.DataListFilter} object.
+	 * @return a {@link java.util.List} object.
+	 */
+	public List<CompoListDataItem> getCompoList(DataListFilter<BatchData, CompoListDataItem> filter) {
+		return getCompoList(Collections.singletonList(filter));
+	}
+
+	/**
+	 * <p>getCompoList.</p>
+	 *
+	 * @param filters a {@link java.util.List} object.
+	 * @return a {@link java.util.List} object.
+	 */
+	public List<CompoListDataItem> getCompoList(List<DataListFilter<BatchData, CompoListDataItem>> filters) {
+		if ((compoListView != null) && (compoListView.getCompoList() != null)) {
+			return filterList(compoListView.getCompoList(), filters);
+		}
+		return null;
+	}
+
+	/**
+	 * <p>hasCompoListEl.</p>
+	 *
+	 * @return a boolean.
+	 */
+	public boolean hasCompoListEl() {
+		return hasCompoListEl(Collections.emptyList());
+	}
+
+	/**
+	 * <p>hasCompoListEl.</p>
+	 *
+	 * @param filter a {@link fr.becpg.repo.repository.filters.DataListFilter} object.
+	 * @return a boolean.
+	 */
+	public boolean hasCompoListEl(DataListFilter<BatchData, CompoListDataItem> filter) {
+		return hasCompoListEl(Collections.singletonList(filter));
+	}
+
+	/**
+	 * <p>hasCompoListEl.</p>
+	 *
+	 * @param filters a {@link java.util.List} object.
+	 * @return a boolean.
+	 */
+	public boolean hasCompoListEl(List<DataListFilter<BatchData, CompoListDataItem>> filters) {
+		return (compoListView != null) && (compoListView.getCompoList() != null) && !getCompoList(filters).isEmpty();
+	}
+
+	/**
+	 * <p>Setter for the field <code>compoListView</code>.</p>
+	 *
+	 * @param compoListView a {@link fr.becpg.repo.product.data.CompoListView} object.
+	 */
+	public void setCompoListView(CompoListView compoListView) {
+		this.compoListView = compoListView;
+	}
 
 	/**
 	 * <p>Getter for the field <code>projectTpl</code>.</p>
 	 *
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
-	@AlfSingleAssoc
+	@AlfSingleAssoc(isEntity = true, isCacheable = true)
 	@AlfQname(qname = "bcpg:entityTplRef")
-	public NodeRef getEntityTpl() {
+	public BatchData getEntityTpl() {
 		return entityTpl;
 	}
 
@@ -167,7 +326,7 @@ public class BatchData extends BeCPGDataObject implements FormulatedEntity {
 	 */
 	@Override
 	public NodeRef getFormulatedEntityTpl() {
-		return getEntityTpl();
+		return entityTpl!=null ? entityTpl.getNodeRef() : null;
 	}
 
 	/**
@@ -175,7 +334,7 @@ public class BatchData extends BeCPGDataObject implements FormulatedEntity {
 	 *
 	 * @param projectTpl a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
-	public void setEntityTpl(NodeRef entityTpl) {
+	public void setEntityTpl(BatchData entityTpl) {
 		this.entityTpl = entityTpl;
 	}
 
@@ -277,42 +436,68 @@ public class BatchData extends BeCPGDataObject implements FormulatedEntity {
 	public void setFormulationChainId(String formulationChainId) {
 		this.formulationChainId = formulationChainId;
 	}
+	
+	@Override
+	public void addWarning(String msg) {
+		addMessage( new MLText(msg),  RequirementType.Tolerated);
+	}
+	
+	@Override
+	public void addError(String msg) {
+		addMessage( new MLText(msg),  RequirementType.Forbidden);
+	}
+	
+	@Override
+	public void addError(MLText msg) {
+		addMessage( msg,  RequirementType.Forbidden);
+	}
+	
+	@Override
+	public void addInfo(String msg) {
+		addMessage( new MLText(msg),  RequirementType.Info);
+	}
+	
+	private void addMessage(MLText msg,  RequirementType type) {
+		reqCtrlList.add(new ReqCtrlListDataItem(null, type, msg, null, new ArrayList<>(),
+				RequirementDataType.Formulation));
+	}
+	
 
 	@Override
 	public String toString() {
 		return "BatchData [batchId=" + batchId + ", batchQty=" + batchQty + ", state=" + state + ", unit=" + unit + ", product=" + product
-				+ ", entityTpl=" + entityTpl + ", formulatedDate=" + formulatedDate + ", reformulateCount=" + reformulateCount
-				+ ", currentReformulateCount=" + currentReformulateCount + ", formulationChainId=" + formulationChainId + ", updateFormulatedDate="
-				+ updateFormulatedDate + ", requirementChecksum=" + requirementChecksum + ", allocationList=" + allocationList + "]";
+				+ ", entityTpl=" + entityTpl + ", entityScore=" + entityScore + ", formulatedDate=" + formulatedDate + ", reformulateCount="
+				+ reformulateCount + ", currentReformulateCount=" + currentReformulateCount + ", formulationChainId=" + formulationChainId
+				+ ", updateFormulatedDate=" + updateFormulatedDate + ", requirementChecksum=" + requirementChecksum + ", allocationList="
+				+ allocationList + ", reqCtrlList=" + reqCtrlList + ", compoListView=" + compoListView + "]";
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = (prime * result) + Objects.hash(allocationList, batchId, batchQty, currentReformulateCount, entityTpl, formulatedDate,
-				formulationChainId, product, reformulateCount, requirementChecksum, state, unit, updateFormulatedDate);
+		result = prime * result + Objects.hash(allocationList, batchId, batchQty, compoListView, currentReformulateCount, entityScore, entityTpl,
+				formulatedDate, formulationChainId, product, reformulateCount, reqCtrlList, requirementChecksum, state, unit, updateFormulatedDate);
 		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
+		if (this == obj)
 			return true;
-		}
-		if (!super.equals(obj)) {
+		if (!super.equals(obj))
 			return false;
-		}
-		if (getClass() != obj.getClass()) {
+		if (getClass() != obj.getClass())
 			return false;
-		}
 		BatchData other = (BatchData) obj;
 		return Objects.equals(allocationList, other.allocationList) && Objects.equals(batchId, other.batchId)
-				&& Objects.equals(batchQty, other.batchQty) && Objects.equals(currentReformulateCount, other.currentReformulateCount)
+				&& Objects.equals(batchQty, other.batchQty) && Objects.equals(compoListView, other.compoListView)
+				&& Objects.equals(currentReformulateCount, other.currentReformulateCount) && Objects.equals(entityScore, other.entityScore)
 				&& Objects.equals(entityTpl, other.entityTpl) && Objects.equals(formulatedDate, other.formulatedDate)
 				&& Objects.equals(formulationChainId, other.formulationChainId) && Objects.equals(product, other.product)
-				&& Objects.equals(reformulateCount, other.reformulateCount) && Objects.equals(requirementChecksum, other.requirementChecksum)
-				&& (state == other.state) && (unit == other.unit) && Objects.equals(updateFormulatedDate, other.updateFormulatedDate);
+				&& Objects.equals(reformulateCount, other.reformulateCount) && Objects.equals(reqCtrlList, other.reqCtrlList)
+				&& Objects.equals(requirementChecksum, other.requirementChecksum) && state == other.state && unit == other.unit
+				&& Objects.equals(updateFormulatedDate, other.updateFormulatedDate);
 	}
 
 }

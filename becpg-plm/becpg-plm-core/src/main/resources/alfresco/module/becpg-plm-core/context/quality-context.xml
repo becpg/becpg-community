@@ -59,7 +59,20 @@
 	<bean id="batchFormulationChain" class="fr.becpg.repo.formulation.FormulationChain" init-method="init">
 		<property name="handlers">
 			<list>
+				<bean class="fr.becpg.repo.quality.formulation.BatchCompositionFormulationHandler">
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
+					<property name="namespaceService" ref="namespaceService" />
+					<property name="formulaService" ref="formulaService" />
+					<property name="nodeService" ref="nodeService" />
+				</bean>
 				<bean class="fr.becpg.repo.quality.formulation.BatchFormulationHandler">
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
+				</bean>
+				<bean  class="fr.becpg.repo.product.formulation.MergeReqCtrlFormulationHandler">
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
+					<property name="nodeService" ref="nodeService" />
+				</bean>
+				<bean  class="fr.becpg.repo.product.formulation.ScoreCalculatingFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 				</bean>
 			</list>

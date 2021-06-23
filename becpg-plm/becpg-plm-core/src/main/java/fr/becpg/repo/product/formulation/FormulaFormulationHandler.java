@@ -80,7 +80,7 @@ import fr.becpg.repo.security.BeCPGAccessDeniedException;
  * @author matthieu
  * @version $Id: $Id
  */
-public class FormulaFormulationHandler extends FormulationBaseHandler<ProductData> {
+public  class FormulaFormulationHandler extends FormulationBaseHandler<ProductData> {
 
 	private static final Log logger = LogFactory.getLog(FormulaFormulationHandler.class);
 
@@ -89,7 +89,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 	/** Constant <code>DYN_COLUMN_NAME="bcpg:dynamicCharactColumn"</code> */
 	public static final String DYN_COLUMN_NAME = "bcpg:dynamicCharactColumn";
 
-	private static final String JSON_PATH_SEPARATOR = "/";
+	public static final String JSON_PATH_SEPARATOR = "/";
 
 	static {
 		SpelHelper

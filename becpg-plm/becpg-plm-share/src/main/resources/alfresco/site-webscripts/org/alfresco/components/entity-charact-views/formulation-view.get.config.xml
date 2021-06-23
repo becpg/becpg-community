@@ -1,8 +1,9 @@
 <formulation-view>
    <customLists>
-   	    <customList id="nutList" type="bcpg:nutList"  selected="true" />
-   	    <customList id="costList" type="bcpg:costList"  />
-   	    <customList id="physicoChemList" type="bcpg:physicoChemList"  />
+   	    <customList id="nutList" type="bcpg:nutList"  selected="true" filter="!qa:batch" />
+   	    <customList id="costList" type="bcpg:costList" filter="!qa:batch" />
+   	    <customList id="physicoChemList" type="bcpg:physicoChemList"  filter="!qa:batch" />
+   	    <customList id="batchAllocationList" type="qa:batchAllocationList" selected="true" filter="qa:batch" />
    </customLists>
  
    <actionSetToolbar>

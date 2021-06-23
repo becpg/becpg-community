@@ -27,7 +27,9 @@ import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.annotation.InternalField;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
+import fr.becpg.repo.repository.model.SortableDataItem;
 
 /**
  * <p>BatchListDataItem class.</p>
@@ -37,7 +39,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
  */
 @AlfType
 @AlfQname(qname = "qa:batchAllocationList")
-public class AllocationListDataItem extends BeCPGDataObject {
+public class AllocationListDataItem extends BeCPGDataObject implements SortableDataItem {
 
 	/**
 	 *
@@ -48,6 +50,7 @@ public class AllocationListDataItem extends BeCPGDataObject {
 	private SystemState state = SystemState.Simulation;
 	private ProductUnit unit = ProductUnit.kg;
 	private NodeRef product;
+	private Integer sort;
 
 	/**
 	 * <p>Getter for the field <code>batchId</code>.</p>
@@ -119,18 +122,36 @@ public class AllocationListDataItem extends BeCPGDataObject {
 	public void setUnit(ProductUnit unit) {
 		this.unit = unit;
 	}
+	
+
+	/**
+	 * <p>Getter for the field <code>sort</code>.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object.
+	 */
+	@AlfProp
+	@InternalField
+	@AlfQname(qname="bcpg:sort")
+	public Integer getSort() {
+		return sort;
+	}
+
+	/** {@inheritDoc} */
+	public void setSort(Integer sort) {
+		this.sort = sort;
+	}
 
 	@Override
 	public String toString() {
 		return "AllocationListDataItem [batchId=" + batchId + ", batchQty=" + batchQty + ", state=" + state + ", unit=" + unit + ", product="
-				+ product + "]";
+				+ product + ", sort=" + sort + "]";
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(batchId, batchQty, product, state, unit);
+		result = prime * result + Objects.hash(batchId, batchQty, product, sort, state, unit);
 		return result;
 	}
 
@@ -144,7 +165,7 @@ public class AllocationListDataItem extends BeCPGDataObject {
 			return false;
 		AllocationListDataItem other = (AllocationListDataItem) obj;
 		return Objects.equals(batchId, other.batchId) && Objects.equals(batchQty, other.batchQty) && Objects.equals(product, other.product)
-				&& state == other.state && unit == other.unit;
+				&& Objects.equals(sort, other.sort) && state == other.state && unit == other.unit;
 	}
 
 }

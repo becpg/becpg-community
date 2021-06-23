@@ -72,7 +72,7 @@ import fr.becpg.repo.variant.model.VariantEntity;
  * @author matthieu
  * @version $Id: $Id
  */
-public class ProductData extends AbstractEffectiveDataItem implements FormulatedEntity, HierarchicalEntity, StateableEntity, AspectAwareDataItem, VariantEntity, ReportableEntity {
+public class ProductData extends AbstractEffectiveDataItem implements FormulatedEntity, HierarchicalEntity, StateableEntity, AspectAwareDataItem, VariantEntity, ReportableEntity, ScorableEntity {
 
 	
 	private static final long serialVersionUID = 764534088277737617L;
