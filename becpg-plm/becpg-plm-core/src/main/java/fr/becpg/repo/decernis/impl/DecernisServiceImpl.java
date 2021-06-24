@@ -560,7 +560,21 @@ public class DecernisServiceImpl implements DecernisService {
 		} catch (HttpClientErrorException | HttpServerErrorException e) {
 			logger.error("Decernis HTTP ERROR STATUS:" + e.getStatusText());
 			logger.error("- error body:" + e.getResponseBodyAsString());
-			throw new FormulateException("Error calling decernis service", e);
+			StringBuilder message = new StringBuilder();
+			if (HttpStatus.BAD_REQUEST.equals(e.getStatusCode())) {
+				try {
+					JSONObject eObject = new JSONObject(e.getResponseBodyAsString());
+					if (eObject.has("country") && eObject.getJSONArray("country") != null) {
+						message.append("\n Country: " + eObject.getJSONArray("country").getString(0));
+					}
+					if (eObject.has("usage") && eObject.getJSONArray("usage") != null) {
+						message.append("\n Usage: " + eObject.getJSONArray("usage").getString(0));
+					}
+				} catch (JSONException e1) {
+					logger.error(e1, e1);
+				}
+			}
+			throw new FormulateException("Error calling decernis service: " + e.getLocalizedMessage() + message, e);
 		} catch (Exception e) {
 			throw new FormulateException("Unexpected decernis error", e);
 		}
