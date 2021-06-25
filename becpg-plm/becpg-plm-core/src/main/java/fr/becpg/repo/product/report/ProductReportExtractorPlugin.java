@@ -864,8 +864,19 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 							Double newLossPerc = FormulationHelper.getComponentLossPerc(subProductData, subDataItem);
 
-							loadCompoListItem(entityNodeRef, dataItem, subDataItem, subProductData, compoListElt, level + 1, subQty, subQtyForCost,
-									newLossPerc, context);
+							boolean extractNextLevel = true;
+							
+							if (context.getPreferences().containsKey(EntityReportParameters.PARAM_MAX_COMPOLIST_LEVEL_TO_EXTRACT)) {
+								int maxLevel = Integer.parseInt(context.getPreferences().get(EntityReportParameters.PARAM_MAX_COMPOLIST_LEVEL_TO_EXTRACT));
+								if (maxLevel < level + 1) {
+									extractNextLevel = false;
+								}
+							}
+							
+							if (extractNextLevel) {
+								loadCompoListItem(entityNodeRef, dataItem, subDataItem, subProductData, compoListElt, level + 1, subQty, subQtyForCost,
+										newLossPerc, context);
+							}
 
 						}
 
