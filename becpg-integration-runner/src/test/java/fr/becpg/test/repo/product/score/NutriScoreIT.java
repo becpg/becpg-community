@@ -1,8 +1,12 @@
 package fr.becpg.test.repo.product.score;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -25,25 +29,19 @@ public class NutriScoreIT extends PLMBaseTestCase {
 
 	@Autowired
 	NutriScore nutriScore;
-	
-	@Autowired
-	private NamespaceService namespaceService;
-
-	private static final String BCPG_PHYSICO_CHEM = "bcpg:physicoChem";
-	private static final String BCPG_NUT = "bcpg:nut";
 
 	@Test
 	public void testNutriScore() {
 		
-		NodeRef energyKjNode = ImportHelper.findCharact(QName.createQName(BCPG_NUT, namespaceService), GS1Model.PROP_NUTRIENT_TYPE_CODE, "ENER-KJO", nodeService);
-		NodeRef satFatNode = ImportHelper.findCharact(QName.createQName(BCPG_NUT, namespaceService), GS1Model.PROP_NUTRIENT_TYPE_CODE, "FASAT", nodeService);
-		NodeRef totalFatNode = ImportHelper.findCharact(QName.createQName(BCPG_NUT, namespaceService), GS1Model.PROP_NUTRIENT_TYPE_CODE, "FAT", nodeService);
-		NodeRef totalSugarNode = ImportHelper.findCharact(QName.createQName(BCPG_NUT, namespaceService), GS1Model.PROP_NUTRIENT_TYPE_CODE, "SUGAR", nodeService);
-		NodeRef sodiumNode = ImportHelper.findCharact(QName.createQName(BCPG_NUT, namespaceService), GS1Model.PROP_NUTRIENT_TYPE_CODE, "NA", nodeService);
-		NodeRef percFruitsAndVetgsNode = ImportHelper.findCharact(QName.createQName(BCPG_PHYSICO_CHEM, namespaceService), BeCPGModel.PROP_CHARACT_NAME, "Teneur en fruits et légumes", nodeService);
-		NodeRef nspFibreNode = ImportHelper.findCharact(QName.createQName(BCPG_NUT, namespaceService), GS1Model.PROP_NUTRIENT_TYPE_CODE, "PSACNS", nodeService);
-		NodeRef aoacFibreNode = ImportHelper.findCharact(QName.createQName(BCPG_NUT, namespaceService), GS1Model.PROP_NUTRIENT_TYPE_CODE, "FIBTG", nodeService);
-		NodeRef proteinNode = ImportHelper.findCharact(QName.createQName(BCPG_NUT, namespaceService), GS1Model.PROP_NUTRIENT_TYPE_CODE, "PRO-", nodeService);
+		NodeRef energyKjNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "ENER-KJO");
+		NodeRef satFatNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "FASAT");
+		NodeRef totalFatNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "FAT");
+		NodeRef totalSugarNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "SUGAR");
+		NodeRef sodiumNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "NA");
+		NodeRef percFruitsAndVetgsNode = findOrCreateNode(PLMModel.TYPE_PHYSICO_CHEM, BeCPGModel.PROP_CHARACT_NAME, "Teneur en fruits et légumes");
+		NodeRef nspFibreNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "PSACNS");
+		NodeRef aoacFibreNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "FIBTG");
+		NodeRef proteinNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "PRO-");
 		
 		// 2084d, 2.8d, 22.9d, 4.73d, 672d, 0d, 0d, 4.13d, 5.81d, "Others"
 
@@ -134,5 +132,28 @@ public class NutriScoreIT extends PLMBaseTestCase {
 		}, false, true);
 
 	}
-	
+
+	private NodeRef findOrCreateNode(QName type, QName property, String value) {
+		NodeRef node = ImportHelper.findCharact(type, property, value, nodeService);
+		
+		if (node == null) {
+			Map<QName, Serializable> properties = new HashMap<>();
+			properties.put(BeCPGModel.PROP_CHARACT_NAME, value);
+			properties.put(property, value);
+			if (type.equals(PLMModel.TYPE_NUT)) {
+				properties.put(PLMModel.PROP_NUTUNIT, "g");
+			} else if (type.equals(PLMModel.TYPE_PHYSICO_CHEM)) {
+				properties.put(PLMModel.PROP_PHYSICO_CHEM_UNIT, "%");
+			}
+			
+			node = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				return nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+						type, properties).getChildRef();
+			}, false, true);	
+		}
+		
+		return node;
+		
+	}
 }
