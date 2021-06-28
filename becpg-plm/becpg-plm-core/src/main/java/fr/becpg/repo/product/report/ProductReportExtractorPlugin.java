@@ -867,7 +867,17 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 							boolean extractNextLevel = true;
 							
 							if (context.getPreferences().containsKey(EntityReportParameters.PARAM_MAX_COMPOLIST_LEVEL_TO_EXTRACT)) {
-								int maxLevel = Integer.parseInt(context.getPreferences().get(EntityReportParameters.PARAM_MAX_COMPOLIST_LEVEL_TO_EXTRACT));
+							
+								List<String> maxLevelPrefs = Arrays.asList(context.getPreferences().get(EntityReportParameters.PARAM_MAX_COMPOLIST_LEVEL_TO_EXTRACT).split(","));
+								
+								List<Integer> maxLevels = new ArrayList<>();
+								
+								for (String pref : maxLevelPrefs) {
+									maxLevels.add(Integer.parseInt(pref));
+								}
+								
+								int maxLevel = Collections.min(maxLevels);
+								
 								if (maxLevel < level + 1) {
 									extractNextLevel = false;
 								}
