@@ -741,35 +741,6 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 					continue;
 				}
 				
-				boolean isNodeRefProp = false;
-				
-				if (DataTypeDefinition.NODE_REF.toString().equals(propertyDef.getDataType().toString()) && context.prefsContains("assocsToExtract", assocsToExtract, propertyDef.getName().toPrefixString(namespaceService))) {
-					
-					isNodeRefProp = true;
-					
-					NodeRef dNodeRef = (NodeRef) property.getValue();
-					
-					if (dNodeRef != null) {
-						Element newElement = nodeElt.addElement(propertyDef.getName().getLocalName());
-						
-						appendPrefix(propertyDef.getName(), newElement);
-						
-						if (entityDictionaryService.isSubClass(propertyDef.getName(), BeCPGModel.TYPE_CHARACT)) {
-							List<QName> hiddentAttributes = new ArrayList<>();
-							hiddentAttributes.addAll(hiddenNodeAttributes);
-							hiddentAttributes.addAll(hiddenDataListItemAttributes);
-							
-							loadAttributes(dNodeRef, newElement, true, hiddentAttributes, context);
-						} else {
-							loadNodeAttributes(dNodeRef, newElement, true, context);
-						}
-					}
-				}
-
-				if (isNodeRefProp) {
-					continue;
-				}
-				
 				String value = attributeExtractorService.extractPropertyForReport(propertyDef, property.getValue(), false);
 
 				boolean isDyn = false;
@@ -793,7 +764,26 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 					}
 				}
 
-				if (isDyn || isList) {
+				if (DataTypeDefinition.NODE_REF.toString().equals(propertyDef.getDataType().toString()) && context.prefsContains("assocsToExtract", assocsToExtract, propertyDef.getName().toPrefixString(namespaceService))) {
+					
+					NodeRef dNodeRef = (NodeRef) property.getValue();
+					
+					if (dNodeRef != null) {
+						Element newElement = nodeElt.addElement(propertyDef.getName().getLocalName());
+						
+						appendPrefix(propertyDef.getName(), newElement);
+						
+						if (entityDictionaryService.isSubClass(propertyDef.getName(), BeCPGModel.TYPE_CHARACT)) {
+							List<QName> hiddentAttributes = new ArrayList<>();
+							hiddentAttributes.addAll(hiddenNodeAttributes);
+							hiddentAttributes.addAll(hiddenDataListItemAttributes);
+							
+							loadAttributes(dNodeRef, newElement, true, hiddentAttributes, context);
+						} else {
+							loadNodeAttributes(dNodeRef, newElement, true, context);
+						}
+					}
+				} else if (isDyn || isList) {
 					String displayValue = attributeExtractorService.extractPropertyForReport(propertyDef, property.getValue(), true);
 					if (useCData) {
 						if (isList) {
