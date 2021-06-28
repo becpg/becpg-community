@@ -1121,7 +1121,10 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		return GTINHelper.createEAN13Code(prefix, AutoNumHelper.getAutoNumValue("bcpg:eanCode", "bcpg:ean13Pref" + prefix));
 	}
 	
-	public NodeRef getDocumentLibraryNodeRef(String siteId) {
-		return AuthenticationUtil.runAsSystem(() -> siteService.getContainer(siteId, "documentLibrary"));
+	public ScriptNode getDocumentLibraryNodeRef(String siteId) {
+		
+		NodeRef nodeRef = AuthenticationUtil.runAsSystem(() -> siteService.getContainer(siteId, "documentLibrary"));
+		
+		return new ScriptNode(nodeRef, serviceRegistry);
 	}
 }
