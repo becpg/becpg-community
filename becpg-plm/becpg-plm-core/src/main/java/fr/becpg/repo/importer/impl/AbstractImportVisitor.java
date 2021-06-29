@@ -270,7 +270,9 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			if (logger.isDebugEnabled()) {
 				logger.debug("update node. Properties: " + properties);
 			}
-			nodeService.setType(nodeRef, importContext.getType());
+			if(entityDictionaryService.isSubClass(importContext.getType(), nodeService.getType(nodeRef))) {
+				nodeService.setType(nodeRef, importContext.getType());
+			}
 
 			for (Map.Entry<QName, Serializable> entry : properties.entrySet()) {
 				if ((entry.getValue() != null) && ImportHelper.NULL_VALUE.equals(entry.getValue())) {
