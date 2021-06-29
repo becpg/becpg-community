@@ -198,7 +198,10 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 		} else if (importContext.isDoUpdate()) {
 
 			logger.debug("update entity list item. Properties: " + entityListItemProperties);
-			nodeService.setType(entityListItemNodeRef, importContext.getType());
+			if(entityDictionaryService.isSubClass(importContext.getType(), nodeService.getType(entityListItemNodeRef))) {
+				nodeService.setType(entityListItemNodeRef, importContext.getType());
+			}
+			
 
 			for (Map.Entry<QName, Serializable> entry : entityListItemProperties.entrySet()) {
 				if (entry.getValue() != null && ImportHelper.NULL_VALUE.equals(entry.getValue())) {
