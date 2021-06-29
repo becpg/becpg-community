@@ -432,31 +432,21 @@ public class EntityCatalogService<T extends RepositoryEntity> {
 		List<JSONArray> catalogs = getCatalogsDef();
 
 		if ((!catalogs.isEmpty()) && (formulatedEntity.getNodeRef() != null) && nodeService.exists(formulatedEntity.getNodeRef())) {
-			// Break rules !!!!
-			Map<QName, Serializable> properties = nodeService.getProperties(formulatedEntity.getNodeRef());
+			NodeRef entityNodeRef = formulatedEntity.getNodeRef() ;
+			QName entityType = nodeService.getType(entityNodeRef);
+			Map<QName, Serializable> properties = null;
 			String defaultLocale = Locale.getDefault().getLanguage();
-			QName productType = nodeService.getType(formulatedEntity.getNodeRef());
 
 			for (JSONArray catalogDef : catalogs) {
 				for (int i = 0; i < catalogDef.length(); i++) {
 					JSONObject catalog = catalogDef.getJSONObject(i);
 
 					if (((catalogId == null) || catalog.getString(PROP_ID).equals(catalogId))
-							&& (isMatchEntityType(catalog, productType, namespaceService)) && isMatchFilter(catalog, formulatedEntity)) {
+							&& (isMatchEntityType(catalog, entityType, namespaceService)) && isMatchFilter(catalog, formulatedEntity)) {
+
 
 						if (logger.isDebugEnabled()) {
-							logger.debug("\n\t\t== Catalog \"" + catalog.getString(EntityCatalogService.PROP_LABEL) + "\" ==");
-							logger.debug("Type of product: " + productType);
-							logger.debug("Catalog json: " + catalog);
-						}
-
-						// if this catalog applies to this type, or this catalog
-						// has
-						// no
-						// type defined (it applies to every entity type)
-
-						if (logger.isDebugEnabled()) {
-							logger.debug("Formulating for catalog \"" + catalog.getString(EntityCatalogService.PROP_LABEL) + "\"");
+							logger.debug("Formulating catalog \"" + catalog.getString(EntityCatalogService.PROP_LABEL) + "\"");
 						}
 						List<String> langs = new LinkedList<>(getLocales(locales, catalog));
 
@@ -482,15 +472,17 @@ public class EntityCatalogService<T extends RepositoryEntity> {
 								? catalog.getJSONArray(EntityCatalogService.PROP_UNIQUE_FIELDS)
 								: new JSONArray();
 
-						JSONArray nonUniqueFields = extractNonUniqueFields(formulatedEntity.getNodeRef(), uniqueFields, i18nMessages);
+						JSONArray nonUniqueFields = extractNonUniqueFields(entityType,entityNodeRef, uniqueFields, i18nMessages);
 
 						for (String lang : langs) {
 
 							JSONObject catalogDesc = new JSONObject();
+							
+							if(properties == null) {
+								properties = nodeService.getProperties(entityNodeRef);
+							}
 
-							logger.debug("=== Catalog name: " + catalog.getString(EntityCatalogService.PROP_LABEL) + ", lang: " + lang);
-
-							JSONArray missingFields = extractMissingFields(formulatedEntity.getNodeRef(), properties, reqFields, i18nMessages,
+							JSONArray missingFields = extractMissingFields(formulatedEntity, properties, reqFields, i18nMessages,
 									defaultLocale.equals(lang) ? null : lang);
 							if ((missingFields.length() > 0) || (nonUniqueFields.length() > 0)) {
 
@@ -525,20 +517,19 @@ public class EntityCatalogService<T extends RepositoryEntity> {
 		return ret;
 	}
 
-	private JSONArray extractNonUniqueFields(NodeRef productNodeRef, JSONArray uniqueFields, JSONObject i18nMessages) throws JSONException {
+	private JSONArray extractNonUniqueFields(QName entityType, NodeRef entityNodeRef, JSONArray uniqueFields, JSONObject i18nMessages) throws JSONException {
 		JSONArray res = new JSONArray();
 
-		if (productNodeRef != null) {
+		if (entityNodeRef != null) {
 			for (int i = 0; i < uniqueFields.length(); i++) {
 
 				String fieldDef = uniqueFields.getString(i);
 				String field;
-				QName typeQName = nodeService.getType(productNodeRef);
 				QName propQName = null;
 
 				if (fieldDef.contains("|")) {
 					propQName = QName.createQName(fieldDef.split("\\|")[0], namespaceService);
-					typeQName = QName.createQName(fieldDef.split("\\|")[1], namespaceService);
+					entityType = QName.createQName(fieldDef.split("\\|")[1], namespaceService);
 					field = fieldDef.split("\\|")[0];
 
 				} else {
@@ -546,11 +537,11 @@ public class EntityCatalogService<T extends RepositoryEntity> {
 					field = fieldDef;
 				}
 
-				Serializable propValue = nodeService.getProperty(productNodeRef, propQName);
+				Serializable propValue = nodeService.getProperty(entityNodeRef, propQName);
 
 				if (propValue != null) {
 
-					List<NodeRef> propDuplicates = getPropertyDuplicates(productNodeRef, typeQName, propQName, propValue.toString());
+					List<NodeRef> propDuplicates = getPropertyDuplicates(entityNodeRef, entityType, propQName, propValue.toString());
 
 					if (!(propDuplicates.isEmpty())) {
 
@@ -634,7 +625,7 @@ public class EntityCatalogService<T extends RepositoryEntity> {
 		return queryResults;
 	}
 
-	private JSONArray extractMissingFields(NodeRef entityNodeRef, Map<QName, Serializable> properties, JSONArray reqFields, JSONObject i18nMessages,
+	private JSONArray extractMissingFields(T formulatedEntity, Map<QName, Serializable> properties, JSONArray reqFields, JSONObject i18nMessages,
 			String lang) throws JSONException {
 		JSONArray ret = new JSONArray();
 
@@ -666,7 +657,7 @@ public class EntityCatalogService<T extends RepositoryEntity> {
 
 				if ((propDef != null) && (DataTypeDefinition.MLTEXT.equals(propDef.getDataType().getName()))) {
 					// prop is present
-					if (mlTextIsPresent(currentField, entityNodeRef, lang, properties)) {
+					if (mlTextIsPresent(currentField, formulatedEntity.getNodeRef(), lang, properties)) {
 						logger.debug("mlProp is present");
 						present = true;
 						break;
@@ -688,7 +679,7 @@ public class EntityCatalogService<T extends RepositoryEntity> {
 				} else if ((propDef == null) && (lang == null)) {
 					// only check assoc when lang is null
 					logger.debug("Checking if assoc is found");
-					if (associationService.getTargetAssoc(entityNodeRef, fieldQname) != null) {
+					if (associationService.getTargetAssoc(formulatedEntity.getNodeRef(), fieldQname) != null) {
 						present = true;
 						break;
 					}
