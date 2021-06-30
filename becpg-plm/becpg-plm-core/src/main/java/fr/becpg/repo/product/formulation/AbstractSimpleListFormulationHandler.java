@@ -639,7 +639,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 						&& (formulatedCharactDataItem.getCharactNodeRef() != null)) {
 
 					String formulaText = (String) nodeService.getProperty(formulatedCharactDataItem.getCharactNodeRef(), propFormula);
-					if ((formulaText != null) && (formulaText.length() > 0)) {
+					if ((formulaText != null) && !formulaText.trim().isBlank()) {
 						try {
 
 							formulatedCharactDataItem.setIsFormulated(true);
