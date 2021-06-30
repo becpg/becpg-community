@@ -95,10 +95,12 @@
 				},
 				fn: function(instance) {
 
-					var styleSheets = document.getElementsByTagName("style");
+					var styleSheets = document.getElementsByTagName("link");
 					for (var i in styleSheets) {
 						var sheet = styleSheets[i];
-						sheet.media = "all";
+						if(sheet.rel == "stylesheet"){
+							sheet.media = "all";
+						}
 					}
 
 					Dom.addClass("alf-hd", "hidden");
