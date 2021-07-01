@@ -236,14 +236,12 @@ public class EntityCatalogService<T extends RepositoryEntity> {
 
 								}
 
-								
-								
 								if (changedField != null) {
 									QName catalogModifiedDate = QName.createQName(catalog.getString(PROP_CATALOG_MODIFIED_FIELD), namespaceService);
 									if (logger.isDebugEnabled()) {
 										logger.debug("Audited field " + changedField + " has changed, update date: " + catalogModifiedDate);
 									}
-									
+
 									nodeService.setProperty(entityNodeRef, catalogModifiedDate, new Date());
 									for (EntityCatalogObserver observer : observers) {
 										if (observer.accept(type, entityNodeRef)) {
@@ -276,18 +274,23 @@ public class EntityCatalogService<T extends RepositoryEntity> {
 
 		if (catalog.has(EntityCatalogService.PROP_ENTITY_FILTER)) {
 
-			String condition = catalog.getString(EntityCatalogService.PROP_ENTITY_FILTER);
-
-			if ((condition != null) && !(condition.startsWith("spel") || condition.startsWith("js"))) {
-				condition = "spel(" + condition + ")";
-			}
-			Object filter = expressionService.eval(condition, entity);
-			if (filter==null || !Boolean.parseBoolean(filter.toString())) {
-				logger.debug("Skipping condition doesn't match : [" + condition + "]");
-				return false;
-			}
+			return testCondition(catalog.getString(EntityCatalogService.PROP_ENTITY_FILTER), entity);
 
 		}
+		return true;
+	}
+
+	private boolean testCondition(String condition, T entity) {
+
+		if ((condition != null) && !(condition.startsWith("spel") || condition.startsWith("js"))) {
+			condition = "spel(" + condition + ")";
+		}
+		Object filter = expressionService.eval(condition, entity);
+		if ((filter == null) || !Boolean.parseBoolean(filter.toString())) {
+			logger.debug("Skipping condition doesn't match : [" + condition + "]");
+			return false;
+		}
+
 		return true;
 	}
 
@@ -432,7 +435,7 @@ public class EntityCatalogService<T extends RepositoryEntity> {
 		List<JSONArray> catalogs = getCatalogsDef();
 
 		if ((!catalogs.isEmpty()) && (formulatedEntity.getNodeRef() != null) && nodeService.exists(formulatedEntity.getNodeRef())) {
-			NodeRef entityNodeRef = formulatedEntity.getNodeRef() ;
+			NodeRef entityNodeRef = formulatedEntity.getNodeRef();
 			QName entityType = nodeService.getType(entityNodeRef);
 			Map<QName, Serializable> properties = null;
 			String defaultLocale = Locale.getDefault().getLanguage();
@@ -443,7 +446,6 @@ public class EntityCatalogService<T extends RepositoryEntity> {
 
 					if (((catalogId == null) || catalog.getString(PROP_ID).equals(catalogId))
 							&& (isMatchEntityType(catalog, entityType, namespaceService)) && isMatchFilter(catalog, formulatedEntity)) {
-
 
 						if (logger.isDebugEnabled()) {
 							logger.debug("Formulating catalog \"" + catalog.getString(EntityCatalogService.PROP_LABEL) + "\"");
@@ -472,13 +474,13 @@ public class EntityCatalogService<T extends RepositoryEntity> {
 								? catalog.getJSONArray(EntityCatalogService.PROP_UNIQUE_FIELDS)
 								: new JSONArray();
 
-						JSONArray nonUniqueFields = extractNonUniqueFields(entityType,entityNodeRef, uniqueFields, i18nMessages);
+						JSONArray nonUniqueFields = extractNonUniqueFields(entityType, entityNodeRef, uniqueFields, i18nMessages);
 
 						for (String lang : langs) {
 
 							JSONObject catalogDesc = new JSONObject();
-							
-							if(properties == null) {
+
+							if (properties == null) {
 								properties = nodeService.getProperties(entityNodeRef);
 							}
 
@@ -517,7 +519,8 @@ public class EntityCatalogService<T extends RepositoryEntity> {
 		return ret;
 	}
 
-	private JSONArray extractNonUniqueFields(QName entityType, NodeRef entityNodeRef, JSONArray uniqueFields, JSONObject i18nMessages) throws JSONException {
+	private JSONArray extractNonUniqueFields(QName entityType, NodeRef entityNodeRef, JSONArray uniqueFields, JSONObject i18nMessages)
+			throws JSONException {
 		JSONArray res = new JSONArray();
 
 		if (entityNodeRef != null) {
@@ -638,63 +641,143 @@ public class EntityCatalogService<T extends RepositoryEntity> {
 			// if this field can be ignored (do not raise ctrl if absent)
 			boolean ignore = false;
 
-			for (String currentField : splitFields) {
-				QName fieldQname = null;
+			String currLang = null;
+			StringBuilder id = new StringBuilder();
+			MLText displayName = new MLText();
 
-				try {
-					fieldQname = QName.createQName(currentField.split("_")[0], namespaceService);
-				} catch (NamespaceException e) {
-					// happens if namespace does not exist
-					ignore = true;
+			if ((splitFields.size() == 2) && splitFields.get(0).startsWith("formula")) {
+				present = testCondition(splitFields.get(1), formulatedEntity);
+				id.append(splitFields.get(0));
+				String i18nkey = i18nMessages.has(splitFields.get(0)) ? i18nMessages.getString(splitFields.get(0)) : splitFields.get(0);
+				
+				displayName = MLTextHelper
+						.getI18NMessage(i18nkey);
+				if(displayName.get(Locale.getDefault()) == null) {
+					displayName.addValue(Locale.getDefault(), i18nkey);
+				}
+				
+			} else {
+
+				for (String currentField : splitFields) {
+
+					if (currentField.contains("_")) {
+						currLang = currentField.split("_")[1];
+						currentField = currentField.split("_")[0];
+					}
+
+					QName fieldQname = null;
+
+					try {
+						fieldQname = QName.createQName(currentField, namespaceService);
+						String i18nKey = i18nMessages.has(currentField) ? i18nMessages.getString(currentField) : null;
+
+						if (logger.isDebugEnabled()) {
+							logger.debug("Test missing field qname: " + fieldQname + ", lang: " + lang);
+						}
+
+						ClassAttributeDefinition propDef = dictionaryService.getProperty(fieldQname);
+
+						if ((propDef instanceof PropertyDefinition)
+								&& (DataTypeDefinition.MLTEXT.equals(((PropertyDefinition) propDef).getDataType().getName()))) {
+							// prop is present
+							if (mlTextIsPresent(fieldQname, formulatedEntity.getNodeRef(), lang, currLang, properties)) {
+								logger.debug("mlProp is present");
+								present = true;
+							}
+
+						} else if ((propDef instanceof PropertyDefinition) && (lang == null)) {
+							// non ML field case
+							if ((properties.get(fieldQname) != null) && !properties.get(fieldQname).toString().isEmpty()) {
+								logger.debug("regular prop is present");
+								present = true;
+							}
+						} else if ((propDef instanceof PropertyDefinition)
+								&& !DataTypeDefinition.MLTEXT.equals(((PropertyDefinition) propDef).getDataType().getName()) && (lang != null)) {
+							logger.debug("Non ml prop with non null lang, skipping");
+							// case non ml prop with not null lang, we don't care
+							ignore = true;
+
+						} else if ((propDef == null) && (lang == null)) {
+
+							propDef = dictionaryService.getAssociation(fieldQname);
+
+							// only check assoc when lang is null
+							logger.debug("Checking if assoc is found");
+							if (associationService.getTargetAssoc(formulatedEntity.getNodeRef(), fieldQname) != null) {
+								present = true;
+							}
+
+						} else {
+							// lang is not null and it's not a prop
+							logger.debug("Skipping associations on localized catalogs");
+							ignore = true;
+						}
+
+						if (!ignore) {
+							if (!id.toString().isBlank()) {
+								id.append("|");
+							}
+							id.append(currentField);
+
+							for (String key : RepoConsts.SUPPORTED_UI_LOCALES.split(",")) {
+								if (MLTextHelper.getSupportedLocalesList().contains(key)) {
+									Locale loc = MLTextHelper.parseLocale(key);
+									String label = displayName.get(loc) != null ? displayName.get(loc) : "";
+									Locale old = I18NUtil.getLocale();
+									try {
+										I18NUtil.setLocale(loc);
+										if (!label.isBlank()) {
+											label += " " + I18NUtil.getMessage(MESSAGE_OR) + " ";
+										}
+										label += getFieldDisplayName(propDef, i18nKey);
+
+										displayName.addValue(loc, label);
+									} finally {
+										I18NUtil.setLocale(old);
+									}
+
+								}
+							}
+
+						}
+
+					} catch (NamespaceException e) {
+						// happens if namespace does not exist
+						ignore = true;
+					}
+				}
+
+				if (ignore) {
 					break;
 				}
 
-				if (logger.isDebugEnabled()) {
-					logger.debug("Test missing field qname: " + fieldQname + ", lang: " + lang);
-				}
-
-				PropertyDefinition propDef = dictionaryService.getProperty(fieldQname);
-
-				if ((propDef != null) && (DataTypeDefinition.MLTEXT.equals(propDef.getDataType().getName()))) {
-					// prop is present
-					if (mlTextIsPresent(currentField, formulatedEntity.getNodeRef(), lang, properties)) {
-						logger.debug("mlProp is present");
-						present = true;
-						break;
-					}
-
-				} else if ((propDef != null) && (lang == null)) {
-					// non ML field case
-					if ((properties.get(fieldQname) != null) && !properties.get(fieldQname).toString().isEmpty()) {
-						logger.debug("regular prop is present");
-						present = true;
-						break;
-					}
-				} else if ((propDef != null) && !DataTypeDefinition.MLTEXT.equals(propDef.getDataType().getName()) && (lang != null)) {
-					logger.debug("Non ml prop with non null lang, skipping");
-					// case non ml prop with not null lang, we don't care
-					ignore = true;
-					break;
-
-				} else if ((propDef == null) && (lang == null)) {
-					// only check assoc when lang is null
-					logger.debug("Checking if assoc is found");
-					if (associationService.getTargetAssoc(formulatedEntity.getNodeRef(), fieldQname) != null) {
-						present = true;
-						break;
-					}
-
-				} else {
-					// lang is not null and it's not a prop
-					logger.debug("Skipping associations on localized catalogs");
-					ignore = true;
-					break;
-				}
 			}
 
 			if (!present && !ignore) {
-				logger.debug("\tfield " + field + " is absent...");
-				ret.put(createMissingFields(splitFields, i18nMessages));
+				if (logger.isDebugEnabled()) {
+					logger.debug("\tfield " + field + " is absent...");
+				}
+
+				JSONObject missingField = new JSONObject();
+
+				missingField.put(EntityCatalogService.PROP_ID, id.toString());
+
+				if (currLang != null) {
+					missingField.put(EntityCatalogService.PROP_LOCALE, currLang);
+				}
+
+				
+				for (Map.Entry<Locale, String> mlEntry : displayName.entrySet()) {
+					String code = MLTextHelper.localeKey(mlEntry.getKey());
+					if ((code != null) && !code.isEmpty() && (mlEntry.getValue() != null)) {
+						missingField.put(EntityCatalogService.PROP_DISPLAY_NAME + "_" + code, mlEntry.getValue());
+						if (MLTextHelper.isDefaultLocale(mlEntry.getKey())) {
+							missingField.put(EntityCatalogService.PROP_DISPLAY_NAME, mlEntry.getValue());
+						}
+					}
+				}
+
+				ret.put(missingField);
 			}
 
 		}
@@ -702,17 +785,16 @@ public class EntityCatalogService<T extends RepositoryEntity> {
 		return ret;
 	}
 
-	private boolean mlTextIsPresent(String field, NodeRef entityNodeRef, String lang, Map<QName, Serializable> properties) {
+	private boolean mlTextIsPresent(QName fieldQname, NodeRef entityNodeRef, String lang, String curLang, Map<QName, Serializable> properties) {
 		boolean res = true;
-		QName fieldQname = QName.createQName(field.split("_")[0], namespaceService);
 		MLText mlText = (MLText) mlNodeService.getProperty(entityNodeRef, fieldQname);
 		Locale loc = null;
 		if (lang != null) {
 			loc = MLTextHelper.parseLocale(lang);
 		}
-		if (field.contains("_")) {
-			String fieldSpecificLang = field.split("_")[1];
-			if ((mlText == null) || ((loc != null) || (mlText.getValue(loc) == null)) || mlText.getValue(new Locale(fieldSpecificLang)).isEmpty()) {
+		if (curLang != null) {
+			if ((mlText == null) || ((loc != null) || (mlText.getValue(loc) == null))
+					|| mlText.getValue(MLTextHelper.parseLocale(curLang)).isEmpty()) {
 				res = false;
 			}
 		} else if ((loc != null) && ((mlText == null) || (mlText.getValue(loc) == null) || mlText.getValue(loc).isEmpty())) {
@@ -725,83 +807,6 @@ public class EntityCatalogService<T extends RepositoryEntity> {
 		}
 
 		return res;
-	}
-
-	private JSONObject createMissingFields(List<String> fields, JSONObject i18nMessages) throws JSONException {
-
-		JSONObject field = new JSONObject();
-
-		StringBuilder id = new StringBuilder();
-		StringBuilder displayName = new StringBuilder();
-		String lang = null;
-
-		for (int i = 0; i < fields.size(); ++i) {
-			String currentField = fields.get(i);
-			ClassAttributeDefinition classDef = formatQnameString(currentField);
-
-			if (currentField.contains("_")) {
-				lang = currentField.split("_")[1];
-			} else {
-				lang = null;
-			}
-
-			if (classDef == null) {
-				logger.debug("classDef for field " + currentField + " returned null");
-				break;
-			}
-
-			String i18nKey = i18nMessages.has(currentField) ? i18nMessages.getString(currentField) : null;
-
-			id.append(classDef.getName().toPrefixString(namespaceService) + (i == (fields.size() - 1) ? "" : "|"));
-			displayName
-					.append(getFieldDisplayName(classDef, i18nKey) + (i == (fields.size() - 1) ? "" : " " + I18NUtil.getMessage(MESSAGE_OR) + " "));
-
-		}
-
-		if (lang != null) {
-			field.put(EntityCatalogService.PROP_LOCALE, lang);
-		}
-
-		field.put(EntityCatalogService.PROP_ID, id.toString());
-		field.put(EntityCatalogService.PROP_DISPLAY_NAME, displayName.toString());
-
-		MLText displayMLName = MLTextHelper.createMLTextI18N(loc -> {
-			Locale old = I18NUtil.getLocale();
-			StringBuilder ret = new StringBuilder();
-			try {
-				I18NUtil.setLocale(loc);
-
-				for (int i = 0; i < fields.size(); ++i) {
-					String currentField = fields.get(i);
-					ClassAttributeDefinition classDef = formatQnameString(currentField);
-
-					String i18nKey = i18nMessages.has(currentField) ? i18nMessages.getString(currentField) : null;
-
-					ret.append(
-							getFieldDisplayName(classDef, i18nKey) + (i == (fields.size() - 1) ? "" : " " + I18NUtil.getMessage(MESSAGE_OR) + " "));
-				}
-			} catch (JSONException e) {
-				logger.error(e, e);
-			} finally {
-				I18NUtil.setLocale(old);
-			}
-
-			return ret.toString();
-
-		});
-
-		if (displayMLName != null) {
-			for (Map.Entry<Locale, String> mlEntry : displayMLName.entrySet()) {
-				String code = MLTextHelper.localeKey(mlEntry.getKey());
-				if ((code != null) && !code.isEmpty() && (mlEntry.getValue() != null)) {
-					field.put(EntityCatalogService.PROP_DISPLAY_NAME + "_" + code, mlEntry.getValue());
-
-				}
-			}
-		}
-
-		return field;
-
 	}
 
 	/**
@@ -826,7 +831,7 @@ public class EntityCatalogService<T extends RepositoryEntity> {
 		ClassAttributeDefinition res = null;
 
 		qNameString = qNameString.trim();
-		PropertyDefinition propDef = dictionaryService.getProperty(QName.createQName(qNameString.split("_")[0], namespaceService));
+		PropertyDefinition propDef = dictionaryService.getProperty(QName.createQName(qNameString, namespaceService));
 
 		if (propDef != null) {
 			res = propDef;
