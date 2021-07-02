@@ -11,17 +11,22 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.model.ForumModel;
 import org.alfresco.model.RenditionModel;
 import org.alfresco.repo.content.MimetypeMap;
+import org.alfresco.repo.version.Version2Model;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.repository.StoreRef;
+import org.alfresco.service.cmr.version.VersionHistory;
+import org.alfresco.service.cmr.version.VersionService;
 import org.alfresco.service.cmr.view.ExporterCrawlerParameters;
 import org.alfresco.service.cmr.view.ExporterService;
 import org.alfresco.service.cmr.view.Location;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
@@ -41,6 +46,7 @@ import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.entity.remote.RemoteParams;
 import fr.becpg.repo.entity.version.VersionExporter;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.report.entity.EntityReportService;
 
 @Service("entityFormatService")
@@ -66,9 +72,24 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 	private EntityReportService entityReportService;
 	
 	@Autowired
+	private TransactionService transactionService;
+
+	@Autowired
+	private VersionService versionService;
+	
+	@Autowired
+	private EntityFormatService entityFormatService;
+	
+	@Autowired
 	@Qualifier("exporterComponent")
 	private ExporterService exporterService;
 	
+	@Autowired
+	private AssociationService associationService;
+	
+	@Autowired
+	private NodeService nodeService;
+
 	private static final Log logger = LogFactory.getLog(EntityFormatServiceImpl.class);
 
 	@Override
@@ -233,6 +254,7 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 				JSONObject jsonParams = new JSONObject();
 				jsonParams.put(RemoteParams.PARAM_APPEND_MLTEXT_CONSTRAINT, false);
 				jsonParams.put(RemoteParams.PARAM_UPDATE_ENTITY_NODEREFS, true);
+				jsonParams.put(RemoteParams.PARAM_REPLACE_HISTORY_NODEREFS, true);
 				
 				remoteParams.setJsonParams(jsonParams);
 				
@@ -286,6 +308,10 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 
 	@Override
 	public void convert(NodeRef from, NodeRef to, EntityFormat toFormat) {
+		
+		String fromName = (String) dbNodeService.getProperty(from, ContentModel.PROP_NAME);
+		
+		dbNodeService.setProperty(to, ContentModel.PROP_NAME, fromName);
 		
 		setEntityData(to, extractEntityData(from, toFormat));
 		
@@ -367,6 +393,46 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 			return prop == null ? null : prop.toString();
 		}
 		return null;
+	}
+
+	@Override
+	public NodeRef convertVersionHistoryNodeRef(NodeRef node) {
+		
+		for (NodeRef source : associationService.getSourcesAssocs(node, QName.createQName(BeCPGModel.BECPG_URI, "compoListProduct"))) {
+			NodeRef datalistFolder = nodeService.getPrimaryParent(source).getParentRef();
+			NodeRef entitylistFolder = nodeService.getPrimaryParent(datalistFolder).getParentRef();
+			NodeRef parentProduct = nodeService.getPrimaryParent(entitylistFolder).getParentRef();
+
+			if (nodeService.hasAspect(parentProduct, BeCPGModel.ASPECT_COMPOSITE_VERSION)
+					&& !nodeService.hasAspect(parentProduct, BeCPGModel.ASPECT_ENTITY_FORMAT)
+					&& !nodeService.hasAspect(parentProduct, ContentModel.ASPECT_TEMPORARY)) {
+				return null;
+			}
+		}
+		
+		String versionLabel = (String) dbNodeService.getProperty(node, BeCPGModel.PROP_VERSION_LABEL);
+		
+		NodeRef parentNode = dbNodeService.getPrimaryParent(node).getParentRef();
+		
+		String parentName = (String) dbNodeService.getProperty(parentNode, ContentModel.PROP_NAME);
+		
+		NodeRef originalNode = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, parentName);
+		
+		VersionHistory versionHistory = dbNodeService.exists(originalNode) ? versionService.getVersionHistory(originalNode) : null;
+		
+		if (versionHistory != null) {
+			NodeRef versionNode = new NodeRef(StoreRef.PROTOCOL_WORKSPACE, Version2Model.STORE_ID, versionHistory.getVersion(versionLabel).getFrozenStateNodeRef().getId());
+			
+			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				entityFormatService.convert(node, versionNode, EntityFormat.JSON);
+				return null;
+			}, false, false);
+			
+			return versionNode;
+		}
+		
+		return null;
+
 	}
 
 }

@@ -72,6 +72,8 @@
 		<property name="showUnauthorizedWarning" value="${beCPG.licence.showWarning}"/>
 		<property name="alfrescoRepository" ref="alfrescoRepository"/>
 		<property name="siteService" ref="siteService"/>
+		<property name="entityFormatService" ref="entityFormatService"/>
+		<property name="tenantAdminService" ref="tenantAdminService"/>
 	</bean>
 	
 	<bean id="pdfScriptHelper" parent="baseJavaScriptExtension" class="fr.becpg.repo.jscript.PDFScriptHelper">
