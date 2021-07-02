@@ -24,9 +24,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.repo.jscript.BaseScopableProcessorExtension;
 import org.alfresco.repo.jscript.ScriptNode;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.tenant.TenantAdminService;
+import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.dictionary.ConstraintDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
@@ -53,6 +56,7 @@ import fr.becpg.model.EntityListState;
 import fr.becpg.repo.dictionary.constraint.DynListConstraint;
 import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.entity.EntityDictionaryService;
+import fr.becpg.repo.entity.EntityFormatService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.entity.version.EntityVersionService;
@@ -113,6 +117,10 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
 	private SiteService siteService;
+	
+	private EntityFormatService entityFormatService;
+	
+	private TenantAdminService tenantAdminService;
 
 	private boolean useBrowserLocale;
 
@@ -120,6 +128,14 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 	private boolean showUnauthorizedWarning = true;
 
+	
+	public void setEntityFormatService(EntityFormatService entityFormatService) {
+		this.entityFormatService = entityFormatService;
+	}
+	
+	public void setTenantAdminService(TenantAdminService tenantAdminService) {
+		this.tenantAdminService = tenantAdminService;
+	}
 	/**
 	 * <p>Setter for the field <code>useBrowserLocale</code>.</p>
 	 *
@@ -1126,5 +1142,35 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		NodeRef nodeRef = AuthenticationUtil.runAsSystem(() -> siteService.getContainer(siteId, "documentLibrary"));
 		
 		return new ScriptNode(nodeRef, serviceRegistry);
+	}
+	
+	public String convert(ScriptNode scriptNode) {
+		
+		NodeRef notConvertedNode = scriptNode.getNodeRef();
+		
+		String name = (String) nodeService.getProperty(notConvertedNode, ContentModel.PROP_NAME);
+
+		String tenantName = "default";
+		
+		if (!TenantService.DEFAULT_DOMAIN.equals(tenantAdminService.getCurrentUserDomain())) {
+			tenantName = tenantAdminService.getTenant(tenantAdminService.getCurrentUserDomain()).getTenantDomain();
+		}
+
+		long start = System.currentTimeMillis();
+
+		NodeRef convertedNode = entityFormatService.convertVersionHistoryNodeRef(notConvertedNode);
+		
+		if (convertedNode != null) {
+			long timeElapsed = System.currentTimeMillis() - start;
+			
+			String message = "Converted entity '" + name + "', from " + notConvertedNode + " to " + convertedNode + ", tenant : " + tenantName + ", time elapsed : " + timeElapsed + " ms";
+			
+			logger.info(message);
+			
+			return message;
+		} else {
+			return "The node couldn't be converted";
+		}
+		
 	}
 }

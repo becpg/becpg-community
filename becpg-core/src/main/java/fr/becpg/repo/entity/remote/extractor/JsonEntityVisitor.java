@@ -225,7 +225,18 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 					
 					entity.put(RemoteEntityService.ATTR_ID, newNode.getId());
 				} else {
-					entity.put(RemoteEntityService.ATTR_ID, nodeRef.getId());
+					
+					if (Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_REPLACE_HISTORY_NODEREFS, Boolean.FALSE)) && nodeService.getPath(nodeRef).toPrefixString(namespaceService).contains(RepoConsts.ENTITIES_HISTORY_XPATH)) {
+						NodeRef parentNode = nodeService.getPrimaryParent(nodeRef).getParentRef();
+						
+						String parentName = (String) nodeService.getProperty(parentNode, ContentModel.PROP_NAME);
+						
+						NodeRef originalNode = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, parentName);
+
+						entity.put(RemoteEntityService.ATTR_ID, originalNode.getId());
+					} else {
+						entity.put(RemoteEntityService.ATTR_ID, nodeRef.getId());
+					}
 				}
 			}
 		}
