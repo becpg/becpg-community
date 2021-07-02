@@ -42,7 +42,9 @@ public interface EntityFormatService {
 	
 	public String extractEntityData(NodeRef entityNodeRef, EntityFormat toFormat);
 
-	void createOrUpdateEntityFromJson(NodeRef entityNodeRef, String entityJson);
+	public void createOrUpdateEntityFromJson(NodeRef entityNodeRef, String entityJson);
+
+	public NodeRef convertVersionHistoryNodeRef(NodeRef from);
 
 
 }

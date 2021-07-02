@@ -250,7 +250,7 @@ public class JsonVersionExtractor extends ActivityListExtractor {
 		if (object.has(RemoteEntityService.ATTR_VERSION)) {
 			String versionLabel = (String) object.get(RemoteEntityService.ATTR_VERSION);
 			ret.put(VERSION, versionLabel);
-			displayValue += RepoConsts.VERSION_NAME_DELIMITER + versionLabel;
+			displayValue += displayValue.endsWith(RepoConsts.VERSION_NAME_DELIMITER + versionLabel) ? "" : RepoConsts.VERSION_NAME_DELIMITER + versionLabel;
 		}
 		
 		ret.put(DISPLAY_VALUE, displayValue);
