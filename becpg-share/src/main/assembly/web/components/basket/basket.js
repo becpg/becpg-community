@@ -113,7 +113,7 @@
 
 				},
 				onBasketChanged: function() {
-					if (Alfresco.doclib && Alfresco.doclib.Actions) {
+					if (Alfresco.doclib && Alfresco.doclib.Actions && Alfresco.getArchiveAndDownloadInstance) {
 						var count = this.services.basket.count();
 						
 
