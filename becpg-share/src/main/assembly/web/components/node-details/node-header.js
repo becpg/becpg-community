@@ -164,7 +164,7 @@
           * @type boolean
           * @default: true
           */
-         showBasket: true,
+         showBasket: false,
 
          /**
           * Flag indicating whether or not to show download button
@@ -332,7 +332,10 @@
 							nodeRef: me.options.nodeRef,
 							siteId: me.options.siteId,
 							type: me.nodeType,
-							displayName: me.options.displayName
+							displayName: me.options.displayName,
+							jsNode: {
+								isContainer : false
+							}
 						};
 
 						var html = "", basketService = new beCPG.service.Basket();
@@ -343,13 +346,16 @@
 							html = '<a class="basket-action" title="' + me.msg("basket.add.tip") + '" tabindex="0">' + me.msg("basket.add.label") + '</a>';
 						}
 						var spanEl = Dom.get(me.id + '-basket');
-						spanEl.innerHTML = html;
-
-						Alfresco.util.useAsButton(Selector.query("a", spanEl, true), function(e) {
-							basketService.toggle(record);
-							renderBasket();
-							YAHOO.util.Event.preventDefault(e);
-						}, null, me);
+						if(spanEl!=null){
+							spanEl.innerHTML = html;
+	
+							Alfresco.util.useAsButton(Selector.query("a", spanEl, true), function(e) {
+								basketService.toggle(record);
+								renderBasket();
+								YAHOO.util.Event.preventDefault(e);
+								
+							}, null, me);
+						}
 
 					}
 

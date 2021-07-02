@@ -17,7 +17,6 @@ import org.quartz.JobExecutionException;
 import org.quartz.PersistJobDataAfterExecution;
 
 import fr.becpg.repo.product.formulation.ProductSpecificationsFormulationHandler;
-import fr.becpg.repo.project.impl.ProjectFormulationJob;
 
 // Un cron régulier qui formule et recalcul tous les cahiers des charges
 
