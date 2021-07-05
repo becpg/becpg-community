@@ -371,12 +371,6 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 
 		if (ret != null) {
 			cache.add(ret);
-			// if ((columnName != null) &&
-			// Objects.equals(ret.getExtraProperties().get(columnName),
-			// dataListItem.getExtraProperties().get(columnName))) {
-			// // Match but same value
-			// ret = null;
-			// }
 		}
 
 		return ret;
@@ -385,7 +379,6 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 	private boolean approxMatch(NodeRef refProductNodeRef, NodeRef toCompareProductNoRef) {
 
 		if ((refProductNodeRef != null) && (toCompareProductNoRef != null)) {
-			// TODO test fuzzy match
 			NodeRef copiedFromRef = associationService.getTargetAssoc(refProductNodeRef, ContentModel.ASSOC_ORIGINAL);
 			NodeRef copiedFromComp = associationService.getTargetAssoc(toCompareProductNoRef, ContentModel.ASSOC_ORIGINAL);
 
@@ -426,7 +419,7 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 					productData.getReqCtrlList()
 							.add(new ReqCtrlListDataItem(null, RequirementType.Tolerated,
 									MLTextHelper.getI18NMessage("message.formulate.comparewith.formulate.entity.error", tmpData.getName()), null,
-									new ArrayList<NodeRef>(), RequirementDataType.Nutrient));
+									new ArrayList<>(), RequirementDataType.Nutrient));
 				}
 			}
 

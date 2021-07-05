@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.service.cmr.repository.MLText;
-import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -39,50 +38,45 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 		List<ReqCtrlListDataItem> ret = new LinkedList<>();
 
 		if (getDataListVisited(formulatedProduct) != null) {
-			
 
 			for (Map.Entry<ProductSpecificationData, List<LabelClaimListDataItem>> entry : extractRequirements(specifications).entrySet()) {
 				List<LabelClaimListDataItem> requirements = entry.getValue();
 				ProductSpecificationData specification = entry.getKey();
 
 				Map<LabelClaimListDataItem, Boolean> specLabelClaimsVisitedMap = new HashMap<>();
-				
-				requirements.forEach(extracedSpecDataItem -> {
-					specLabelClaimsVisitedMap.put(extracedSpecDataItem, false);
-				});
 
-				specLabelClaimsVisitedMap.keySet().forEach(specDataItem -> {
-					getDataListVisited(formulatedProduct).forEach(listDataItem -> {
-						if (listDataItem.getLabelClaim().equals(specDataItem.getLabelClaim())) {
-							if (logger.isDebugEnabled()) {
-								logger.debug(extractName(specDataItem.getLabelClaim()) + " has been visited");
-							}
-							specLabelClaimsVisitedMap.put(specDataItem, true);
+				requirements.forEach(extracedSpecDataItem -> specLabelClaimsVisitedMap.put(extracedSpecDataItem, false));
 
-							boolean add = false;
+				specLabelClaimsVisitedMap.keySet().forEach(specDataItem -> getDataListVisited(formulatedProduct).forEach(listDataItem -> {
+					if (listDataItem.getLabelClaim().equals(specDataItem.getLabelClaim())) {
+						if (logger.isDebugEnabled()) {
+							logger.debug(extractName(specDataItem.getLabelClaim()) + " has been visited");
+						}
+						specLabelClaimsVisitedMap.put(specDataItem, true);
 
+						boolean add = false;
+
+						if ((specDataItem.getLabelClaimValue() != null) && !specDataItem.getLabelClaimValue().isEmpty()) {
 							if ((listDataItem.getLabelClaimValue() == null) || listDataItem.getLabelClaimValue().isEmpty()) {
 								add = true;
 							} else if (!LabelClaimListDataItem.VALUE_NA.equals(listDataItem.getLabelClaimValue())) {
-								if (LabelClaimListDataItem.VALUE_TRUE.equals(specDataItem.getLabelClaimValue())
-										&& !LabelClaimListDataItem.VALUE_TRUE.equals(listDataItem.getLabelClaimValue())) {
-									add = true;
-								} else if (LabelClaimListDataItem.VALUE_FALSE.equals(specDataItem.getLabelClaimValue())
-										&& !LabelClaimListDataItem.VALUE_FALSE.equals(listDataItem.getLabelClaimValue())) {
-									add = true;
-								} else if (LabelClaimListDataItem.VALUE_SUITABLE.equals(specDataItem.getLabelClaimValue())
-										&& !LabelClaimListDataItem.VALUE_SUITABLE.equals(listDataItem.getLabelClaimValue())) {
+								if ((LabelClaimListDataItem.VALUE_TRUE.equals(specDataItem.getLabelClaimValue())
+										&& !LabelClaimListDataItem.VALUE_TRUE.equals(listDataItem.getLabelClaimValue()))
+										|| (LabelClaimListDataItem.VALUE_FALSE.equals(specDataItem.getLabelClaimValue())
+												&& !LabelClaimListDataItem.VALUE_FALSE.equals(listDataItem.getLabelClaimValue()))
+										|| (LabelClaimListDataItem.VALUE_SUITABLE.equals(specDataItem.getLabelClaimValue())
+												&& !LabelClaimListDataItem.VALUE_SUITABLE.equals(listDataItem.getLabelClaimValue()))) {
 									add = true;
 								}
 							}
-
-							if (add) {
-								addSpecificationUnclaimedLabelClaim(ret, specification, listDataItem, specDataItem.getLabelClaimValue());
-							}
-
 						}
-					});
-				});
+
+						if (add) {
+							addSpecificationUnclaimedLabelClaim(ret, specification, listDataItem, specDataItem.getLabelClaimValue());
+						}
+
+					}
+				}));
 
 				// check that all the labelClaim in specs have been visited in
 				// product
@@ -91,7 +85,7 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 						if (logger.isDebugEnabled()) {
 							logger.debug(extractName(specDataItem.getLabelClaim()) + " was not found, raising rclDataItem for spec");
 						}
-						addMissingLabelClaim(ret, specification , specDataItem);
+						addMissingLabelClaim(ret, specification, specDataItem);
 					}
 				});
 			}
@@ -102,10 +96,10 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 	private void addSpecificationUnclaimedLabelClaim(List<ReqCtrlListDataItem> ret, ProductSpecificationData specification,
 			LabelClaimListDataItem labelClaim, String labelClaimValue) {
 		MLText message = MLTextHelper.getI18NMessage(MESSAGE_NOT_CLAIM, extractName(labelClaim.getLabelClaim()), extractClaimValue(labelClaimValue));
-		ReqCtrlListDataItem reqCtrl = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, labelClaim.getLabelClaim(),
-				new ArrayList<NodeRef>(), RequirementDataType.Specification);
+		ReqCtrlListDataItem reqCtrl = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, labelClaim.getLabelClaim(), new ArrayList<>(),
+				RequirementDataType.Specification);
 
-		if (specification.getRegulatoryCode() != null && !specification.getRegulatoryCode().isBlank()) {
+		if ((specification.getRegulatoryCode() != null) && !specification.getRegulatoryCode().isBlank()) {
 			reqCtrl.setRegulatoryCode(specification.getRegulatoryCode());
 		} else {
 			reqCtrl.setRegulatoryCode(specification.getName());
@@ -121,16 +115,16 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 
 	private void addMissingLabelClaim(List<ReqCtrlListDataItem> ret, ProductSpecificationData specification, LabelClaimListDataItem labelClaim) {
 		MLText message = MLTextHelper.getI18NMessage(LabelClaimFormulationHandler.MESSAGE_MISSING_CLAIM, extractName(labelClaim.getLabelClaim()));
-		
-		ReqCtrlListDataItem reqCtrl = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, labelClaim.getLabelClaim(), new ArrayList<NodeRef>(),
+
+		ReqCtrlListDataItem reqCtrl = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, labelClaim.getLabelClaim(), new ArrayList<>(),
 				RequirementDataType.Specification);
 
-		if (specification.getRegulatoryCode() != null && !specification.getRegulatoryCode().isBlank()) {
+		if ((specification.getRegulatoryCode() != null) && !specification.getRegulatoryCode().isBlank()) {
 			reqCtrl.setRegulatoryCode(specification.getRegulatoryCode());
 		} else {
 			reqCtrl.setRegulatoryCode(specification.getName());
 		}
-		
+
 		ret.add(reqCtrl);
 	}
 
