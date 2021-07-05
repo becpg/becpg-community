@@ -53,7 +53,8 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 
 				specLabelClaimsVisitedMap.keySet().forEach(specDataItem -> {
 					getDataListVisited(formulatedProduct).forEach(listDataItem -> {
-						if (listDataItem.getLabelClaim().equals(specDataItem.getLabelClaim())) {
+						if (listDataItem.getLabelClaim().equals(specDataItem.getLabelClaim()) 
+								 ) {
 							if (logger.isDebugEnabled()) {
 								logger.debug(extractName(specDataItem.getLabelClaim()) + " has been visited");
 							}
@@ -61,18 +62,18 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 
 							boolean add = false;
 
-							if ((listDataItem.getLabelClaimValue() == null) || listDataItem.getLabelClaimValue().isEmpty()) {
-								add = true;
-							} else if (!LabelClaimListDataItem.VALUE_NA.equals(listDataItem.getLabelClaimValue())) {
-								if (LabelClaimListDataItem.VALUE_TRUE.equals(specDataItem.getLabelClaimValue())
-										&& !LabelClaimListDataItem.VALUE_TRUE.equals(listDataItem.getLabelClaimValue())) {
+							if(specDataItem.getLabelClaimValue()!=null && !specDataItem.getLabelClaimValue().isEmpty()) {
+								if ((listDataItem.getLabelClaimValue() == null) || listDataItem.getLabelClaimValue().isEmpty()) {
 									add = true;
-								} else if (LabelClaimListDataItem.VALUE_FALSE.equals(specDataItem.getLabelClaimValue())
-										&& !LabelClaimListDataItem.VALUE_FALSE.equals(listDataItem.getLabelClaimValue())) {
-									add = true;
-								} else if (LabelClaimListDataItem.VALUE_SUITABLE.equals(specDataItem.getLabelClaimValue())
-										&& !LabelClaimListDataItem.VALUE_SUITABLE.equals(listDataItem.getLabelClaimValue())) {
-									add = true;
+								} else if (!LabelClaimListDataItem.VALUE_NA.equals(listDataItem.getLabelClaimValue())) {
+									if (LabelClaimListDataItem.VALUE_TRUE.equals(specDataItem.getLabelClaimValue())
+											&& !LabelClaimListDataItem.VALUE_TRUE.equals(listDataItem.getLabelClaimValue())
+											|| (LabelClaimListDataItem.VALUE_FALSE.equals(specDataItem.getLabelClaimValue())
+											&& !LabelClaimListDataItem.VALUE_FALSE.equals(listDataItem.getLabelClaimValue()))
+											|| (LabelClaimListDataItem.VALUE_SUITABLE.equals(specDataItem.getLabelClaimValue())
+											&& !LabelClaimListDataItem.VALUE_SUITABLE.equals(listDataItem.getLabelClaimValue()))) {
+										add = true;
+									}
 								}
 							}
 
@@ -103,7 +104,7 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 			LabelClaimListDataItem labelClaim, String labelClaimValue) {
 		MLText message = MLTextHelper.getI18NMessage(MESSAGE_NOT_CLAIM, extractName(labelClaim.getLabelClaim()), extractClaimValue(labelClaimValue));
 		ReqCtrlListDataItem reqCtrl = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, labelClaim.getLabelClaim(),
-				new ArrayList<NodeRef>(), RequirementDataType.Specification);
+				new ArrayList<>(), RequirementDataType.Specification);
 
 		if (specification.getRegulatoryCode() != null && !specification.getRegulatoryCode().isBlank()) {
 			reqCtrl.setRegulatoryCode(specification.getRegulatoryCode());
@@ -122,7 +123,7 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 	private void addMissingLabelClaim(List<ReqCtrlListDataItem> ret, ProductSpecificationData specification, LabelClaimListDataItem labelClaim) {
 		MLText message = MLTextHelper.getI18NMessage(LabelClaimFormulationHandler.MESSAGE_MISSING_CLAIM, extractName(labelClaim.getLabelClaim()));
 		
-		ReqCtrlListDataItem reqCtrl = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, labelClaim.getLabelClaim(), new ArrayList<NodeRef>(),
+		ReqCtrlListDataItem reqCtrl = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, labelClaim.getLabelClaim(), new ArrayList<>(),
 				RequirementDataType.Specification);
 
 		if (specification.getRegulatoryCode() != null && !specification.getRegulatoryCode().isBlank()) {
