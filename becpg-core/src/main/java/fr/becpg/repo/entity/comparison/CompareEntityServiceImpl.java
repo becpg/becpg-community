@@ -16,6 +16,9 @@ import java.util.regex.Pattern;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.model.ForumModel;
+import org.alfresco.repo.tenant.Tenant;
+import org.alfresco.repo.tenant.TenantAdminService;
+import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
@@ -25,6 +28,7 @@ import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ContentData;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.RegexQNamePattern;
@@ -95,6 +99,9 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 	@Autowired
 	private FileFolderService fileFolderService;
 
+	@Autowired
+	private TenantAdminService tenantAdminService;
+
 	@Value("${beCPG.comparison.pivots}")
 	private String customPivots;
 	
@@ -102,11 +109,19 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 	private String customNames;
 
 	/** {@inheritDoc} */
+	@SuppressWarnings("deprecation")
 	@Override
 	public List<CompareResultDataItem> compare(NodeRef entity1, List<NodeRef> entities, List<CompareResultDataItem> compareResult,
 			Map<String, List<StructCompareResultDataItem>> structCompareResults) {
 
-				
+		for (Tenant tenant : tenantAdminService.getAllTenants()) {
+			if (!TenantService.DEFAULT_DOMAIN.equals(tenant.getTenantDomain()) && entity1.getStoreRef().getIdentifier().contains(tenant.getTenantDomain())) {
+				String newIdentifier = entity1.getStoreRef().getIdentifier().replace("@", "").replace(tenant.getTenantDomain(), "");
+				entity1 = new NodeRef(StoreRef.PROTOCOL_WORKSPACE, newIdentifier, entity1.getId());
+				break;
+			}
+		}
+		
 		if (entityVersionService.isVersion(entity1)) {
 			entity1 = entityVersionService.extractVersion(entity1);
 		}
