@@ -650,12 +650,17 @@ public class EntityCatalogService<T extends RepositoryEntity> {
 				id.append(splitFields.get(0));
 				String i18nkey = i18nMessages.has(splitFields.get(0)) ? i18nMessages.getString(splitFields.get(0)) : splitFields.get(0);
 				
-				displayName = MLTextHelper
-						.getI18NMessage(i18nkey);
-				if(displayName.get(Locale.getDefault()) == null) {
-					displayName.addValue(Locale.getDefault(), i18nkey);
+				for (String key : RepoConsts.SUPPORTED_UI_LOCALES.split(",")) {
+					if (MLTextHelper.getSupportedLocalesList().contains(key)) {
+						Locale loc = MLTextHelper.parseLocale(key);
+						String label =  I18NUtil.getMessage(i18nkey, loc);
+						if(label!=null && !label.isBlank()) {
+							displayName.addValue(loc,label);
+						} else {
+							displayName.addValue(loc,i18nkey);
+						}
+					}
 				}
-				
 			} else {
 
 				for (String currentField : splitFields) {
