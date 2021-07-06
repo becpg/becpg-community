@@ -19,7 +19,9 @@
 	             <#if field.control.params.maxLength??>maxlength="${field.control.params.maxLength}"</#if> 
 	             <#if field.control.params.size??>size="${field.control.params.size}"</#if> 
 	             <#if field.disabled && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true")>disabled="true"</#if> />
-	      <@formLib.renderFieldHelp field=field />
+	             <#if !field.disabled || (field.control.params.forceEditable?? && field.control.params.forceEditable == "true")>
+			      	<@formLib.renderFieldHelp field=field />
+			      </#if>
 	   </#if>
    </#if>
 </div>
