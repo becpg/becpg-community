@@ -32,10 +32,10 @@
 }
 
 /*2 Column set */
-	:not(.bd) > .form-container .yui-g .form-field input[type="text"]:not(.number-range):not(.date-range):not(.number-unit):not(.yui-ac-input), 
+	:not(.bd) > .form-container .yui-g .form-field input[type="text"]:not(.number-range,.date-range,.date-entry,.number-unit,.yui-ac-input), 
 	:not(.bd) > .form-container .yui-g .form-field input[type="file"],
 	:not(.bd) > .form-container .yui-g .form-field input[type="password"],
-	:not(.bd) > .form-container .yui-g .form-field input:not(.number-range):not(.date-range):not(.number-unit):not(.yui-ac-input):not(.formsCheckBox), 
+	:not(.bd) > .form-container .yui-g .form-field input:not(.number-range,.date-range,.date-entry,.number-unit,.yui-ac-input,.formsCheckBox), 
 	:not(.bd) > .form-container .yui-g .form-field select,
 	:not(.bd) > .form-container .yui-g .form-field textarea, .form-container .yui-g .yui-ac .ac-body
 	{
@@ -48,12 +48,27 @@
 }
 
 
-.form-container .yui-g .form-field input[type="text"].number.number-unit {
-	width: 23em !important;
+.form-container .yui-g .form-field input[type="text"].number.number-unit{
+	width: 22em !important;
 }
+
+.form-container .yui-g .form-field input[type="text"].number.date-entry {
+	width: 25em !important;
+}
+
+.form-container .yui-g .form-field input[type="text"].number.number-unit:disabled {
+	width: 26em !important;
+}
+
 
 .form-container .yui-g .form-field select.number-unit {
 	width: 4em !important;
+}
+
+
+.form-container  .yui-g .alf-textarea .help-icon {
+	position: absolute;
+	float: none;
 }
 
 /* 1-2 Column Tabbed Set */
@@ -61,10 +76,10 @@
 	padding-bottom: 0em;
 }
 
-	 :not(.bd) > .form-container .yui-navset .form-field input[type="text"]:not(.number-range):not(.date-range):not(.number-unit):not(.yui-ac-input),
+	 :not(.bd) > .form-container .yui-navset .form-field input[type="text"]:not(.date-entry,.number-range,.date-range,.number-unit,.yui-ac-input),
 	 :not(.bd) > .form-container .yui-navset .form-field input[type="file"],
 	 :not(.bd) > .form-container .yui-navset .form-field input[type="password"],
-	 :not(.bd) > .form-container .yui-navset .form-field input:not(.number-range):not(.date-range):not(.number-unit):not(.yui-ac-input):not(.formsCheckBox), 
+	 :not(.bd) > .form-container .yui-navset .form-field input:not(.number-range,.date-entry,.date-range,.number-unit,.yui-ac-input,.formsCheckBox), 
 	 :not(.bd) > .form-container .yui-navset .form-field select,
 	 :not(.bd) > .form-container .yui-navset .form-field textarea, .form-container .yui-navset .yui-ac .ac-body
 	{
@@ -75,9 +90,15 @@
 	width: 22em !important;
 }
 
+.form-container .yui-navset .form-field input.date-entry {
+	width: 25em !important;
+}
+
+
 .form-container .yui-navset .form-field select.number-unit {
 	width: 4em !important;
 }
+
 
 
 /* 3 Column set */
@@ -145,8 +166,9 @@
 /** Boolean **/
 
 .form-field-boolean {
-	display: flex;
+	display: inline-flex;
 	overflow: hidden;
+	width: 26em !important;
 }
 
 .form-field-boolean input {
@@ -159,7 +181,7 @@
 }
 
 .form-field-boolean label {
-	line-height: 1;
+	line-height: 0.5em;
 	text-align: center;
 	padding: 10px !important;
 	margin-right: -1px;

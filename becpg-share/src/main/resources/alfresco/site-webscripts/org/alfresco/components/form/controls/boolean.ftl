@@ -19,9 +19,8 @@
       </div>
    <#else>
         <label >${field.label?html}:</label>
-        <@formLib.renderFieldHelp field=field />
         <div class="form-field-boolean" id="${fieldHtmlId}" >
-		 
+ 
 		    <input type="radio" id="${fieldHtmlId}-true" name="${field.name}" tabindex="0" value="true" 
 		        <#if field.description??>title="${field.description}"</#if>
 		        <#if field.disabled && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true")>disabled="true"</#if>
@@ -40,9 +39,9 @@
 		    <#if field.description??>title="${field.description}"</#if>
 		    <#if field.disabled && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true")>disabled="true"</#if> 
 		    <#if !isTrue && !isFalse>checked="checked"</#if>  >
-		     <label for="${fieldHtmlId}-empty"> ${msg("data.boolean.empty")} </label>
+		    <label for="${fieldHtmlId}-empty"> ${msg("data.boolean.empty")} </label>
 		
 		</div>
-      
+      	<@formLib.renderFieldHelp field=field />
    </#if>
 </div>
