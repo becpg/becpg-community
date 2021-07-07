@@ -11,6 +11,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.model.ForumModel;
 import org.alfresco.model.RenditionModel;
 import org.alfresco.repo.content.MimetypeMap;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.version.Version2Model;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentReader;
@@ -78,9 +79,6 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 	private VersionService versionService;
 	
 	@Autowired
-	private EntityFormatService entityFormatService;
-	
-	@Autowired
 	@Qualifier("exporterComponent")
 	private ExporterService exporterService;
 	
@@ -89,7 +87,7 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 	
 	@Autowired
 	private NodeService nodeService;
-
+	
 	private static final Log logger = LogFactory.getLog(EntityFormatServiceImpl.class);
 
 	@Override
@@ -307,32 +305,62 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 	}
 
 	@Override
-	public void convert(NodeRef from, NodeRef to, EntityFormat toFormat) {
-		
-		String fromName = (String) dbNodeService.getProperty(from, ContentModel.PROP_NAME);
-		
-		dbNodeService.setProperty(to, ContentModel.PROP_NAME, fromName);
-		
-		setEntityData(to, extractEntityData(from, toFormat));
-		
-		setEntityFormat(to, toFormat);
-		
-		entityReportService.generateReports(from, to);
-		
-		ExporterCrawlerParameters crawlerParameters = new ExporterCrawlerParameters();
-		
-		Location exportFrom = new Location(from);
-		crawlerParameters.setExportFrom(exportFrom);
-		
-		crawlerParameters.setCrawlSelf(true);
-		crawlerParameters.setExcludeChildAssocs(new QName[] { RenditionModel.ASSOC_RENDITION, ForumModel.ASSOC_DISCUSSION, BeCPGModel.ASSOC_ENTITYLISTS, ContentModel.ASSOC_RATINGS});
-		
-		crawlerParameters.setExcludeNamespaceURIs(Arrays.asList(ReportModel.TYPE_REPORT.getNamespaceURI()).toArray(new String[0]));
-		
-		exporterService.exportView(new VersionExporter(from, to, dbNodeService), crawlerParameters, null);
+	public void convert(final NodeRef from, final NodeRef to, EntityFormat toFormat) {
 
-		dbNodeService.deleteNode(from);
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			
+			ExporterCrawlerParameters crawlerParameters = new ExporterCrawlerParameters();
+			
+			Location exportFrom = new Location(from);
+			crawlerParameters.setExportFrom(exportFrom);
+			
+			crawlerParameters.setCrawlSelf(true);
+			crawlerParameters.setExcludeChildAssocs(new QName[] { RenditionModel.ASSOC_RENDITION, ForumModel.ASSOC_DISCUSSION,
+					BeCPGModel.ASSOC_ENTITYLISTS, ContentModel.ASSOC_RATINGS });
+			
+			crawlerParameters.setExcludeNamespaceURIs(Arrays.asList(ReportModel.TYPE_REPORT.getNamespaceURI()).toArray(new String[0]));
+			
+			exporterService.exportView(new VersionExporter(from, to, dbNodeService), crawlerParameters, null);
+			
+			return null;
+		}, false, true);
 		
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			
+			String fromName = (String) dbNodeService.getProperty(from, ContentModel.PROP_NAME);
+			dbNodeService.setProperty(to, ContentModel.PROP_NAME, fromName);
+			
+			String versionLabel = (String) dbNodeService.getProperty(to, BeCPGModel.PROP_VERSION_LABEL);
+			dbNodeService.setProperty(to, ContentModel.PROP_VERSION_LABEL, versionLabel);
+			
+			setEntityData(to, extractEntityData(from, toFormat));
+			
+			setEntityFormat(to, toFormat);
+			
+			return null;
+			
+		}, false, true);
+		
+		AuthenticationUtil.runAs(() -> {
+			
+			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				
+				entityReportService.generateReports(from, to);
+				
+				return null;
+				
+			}, false, true);
+			return null;
+		}, AuthenticationUtil.getAdminUserName());
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			dbNodeService.deleteNode(from);
+			return null;
+
+		}, false, true);
+
 	}
 
 	@Override
@@ -424,7 +452,7 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 			NodeRef versionNode = new NodeRef(StoreRef.PROTOCOL_WORKSPACE, Version2Model.STORE_ID, versionHistory.getVersion(versionLabel).getFrozenStateNodeRef().getId());
 			
 			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-				entityFormatService.convert(node, versionNode, EntityFormat.JSON);
+				convert(node, versionNode, EntityFormat.JSON);
 				return null;
 			}, false, false);
 			

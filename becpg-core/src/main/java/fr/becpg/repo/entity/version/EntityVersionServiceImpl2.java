@@ -21,8 +21,6 @@ import org.alfresco.repo.node.MLPropertyInterceptor;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.rule.RuntimeRuleService;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.repo.tenant.TenantAdminService;
-import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.repo.version.Version2Model;
 import org.alfresco.repo.version.VersionBaseModel;
@@ -163,10 +161,6 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 	@Autowired
 	private LockService lockService;
 	
-	@Autowired
-	private TenantAdminService tenantAdminService;
-
-	
 	/** {@inheritDoc} */
 	@Override
 	public NodeRef createVersionAndCheckin(final NodeRef origNodeRef, final NodeRef workingCopyNodeRef, Map<String, Serializable> versionProperties) {
@@ -200,7 +194,7 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 
 		Version currentVersion = versionService.getCurrentVersion(entityNodeRef);
 		if (currentVersion != null) {
-			NodeRef versionNodeRef = getVersionedNodeRef(currentVersion.getFrozenStateNodeRef().getId());
+			NodeRef versionNodeRef = getEntityVersion(currentVersion);
 			dbNodeService.setProperty(versionNodeRef, Version2Model.PROP_QNAME_VERSION_LABEL, versionLabel);
 
 			//Old version type
@@ -413,7 +407,7 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 	/** {@inheritDoc} */
 	@Override
 	public NodeRef getEntityVersion(Version version) {
-		return getVersionedNodeRef(version.getFrozenStateNodeRef().getId());
+		return new NodeRef(StoreRef.PROTOCOL_WORKSPACE, Version2Model.STORE_ID, version.getFrozenStateNodeRef().getId());
 	}
 
 	/** {@inheritDoc} */
@@ -436,7 +430,7 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 						entityVersion = new EntityVersion(version, entityNodeRef, entityVersionNodeRef, branchFromNodeRef);
 					} else {
 						entityVersion = new EntityVersion(version, entityNodeRef,
-								getVersionedNodeRef(version.getFrozenStateNodeRef().getId()),
+								getEntityVersion(version),
 								branchFromNodeRef);
 					}
 					if (RepoConsts.INITIAL_VERSION.equals(version.getVersionLabel())) {
@@ -450,20 +444,6 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 		return entityVersions;
 	}
 
-	@Override
-	public NodeRef getVersionedNodeRef(String id) {
-		
-		String identifier = Version2Model.STORE_ID;
-		
-		if (!TenantService.DEFAULT_DOMAIN.equals(tenantAdminService.getCurrentUserDomain())) {
-			String tenantDomain = tenantAdminService.getTenant(tenantAdminService.getCurrentUserDomain()).getTenantDomain();
-			identifier = "@" + tenantDomain + "@" + identifier;
-		}
-		
-		return 	new NodeRef(StoreRef.PROTOCOL_WORKSPACE, identifier, id);
-		
-	}
-	
 	/**
 	 * {@inheritDoc}
 	 *
@@ -939,7 +919,7 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 				// extract the JSON data of the current node
 				String jsonData = entityFormatService.extractEntityData(entityNodeRef, EntityFormat.JSON);
 
-				NodeRef versionNode = getVersionedNodeRef(newVersion.getFrozenStateNodeRef().getId());
+				NodeRef versionNode = getEntityVersion(newVersion);
 				
 				// add child assocs to versions
 				ExporterCrawlerParameters crawlerParameters = new ExporterCrawlerParameters();
@@ -1235,7 +1215,7 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 					crawlerParameters.setExcludeNamespaceURIs(Arrays.asList(ReportModel.TYPE_REPORT.getNamespaceURI()).toArray(new String[0]));
 
 					// reconstructs the folder hierarchy
-					exporterService.exportView(new VersionExporter(versionNodeRef, entity, dbNodeService), crawlerParameters, null);
+					exporterService.exportView(new VersionExporter(versionNodeRef, entity, nodeService), crawlerParameters, null);
 
 					entityFormatService.createOrUpdateEntityFromJson(entity, entityJson);
 
