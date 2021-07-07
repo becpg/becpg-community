@@ -23,12 +23,9 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.repo.tenant.Tenant;
 import org.alfresco.repo.tenant.TenantAdminService;
-import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -109,11 +106,7 @@ public class EntityReportAsyncGeneratorImpl implements EntityReportAsyncGenerato
 
 		for (NodeRef entityNodeRef : pendingNodes) {
 
-			if (entityVersionService.isVersion(entityNodeRef)) {
-				entityNodeRef = entityVersionService.getVersionedNodeRef(entityNodeRef.getId());
-			}
-			
-			Runnable command = new ProductReportGenerator(entityNodeRef, callBack);
+			Runnable command = new ProductReportGenerator(entityNodeRef, callBack, tenantAdminService.getCurrentUserDomain());
 			if (!threadExecuter.getQueue().contains(command)) {
 
 				threadExecuter.execute(command);
@@ -169,50 +162,45 @@ public class EntityReportAsyncGeneratorImpl implements EntityReportAsyncGenerato
 
 		private final EntityReportAsyncNotificationCallback callback;
 		
-		private ProductReportGenerator(NodeRef entityNodeRef, EntityReportAsyncNotificationCallback callback) {
+		private final String tenantDomain;
+		
+		private ProductReportGenerator(NodeRef entityNodeRef, EntityReportAsyncNotificationCallback callback, String tenantDomain) {
 			this.entityNodeRef = entityNodeRef;
 			this.callback = callback;
 			if (callback != null) {
 				this.callback.register();
 			}
+			this.tenantDomain = tenantDomain;
 		}
 		
-		@SuppressWarnings("deprecation")
 		@Override
 		public void run() {
 			try {
-				
-				String userName = AuthenticationUtil.getSystemUserName();
-				
-				NodeRef tempNodeRef = entityNodeRef;
-				
-				for (Tenant tenant : tenantAdminService.getAllTenants()) {
-					if (!TenantService.DEFAULT_DOMAIN.equals(tenant.getTenantDomain()) && entityNodeRef.getStoreRef().getIdentifier().contains(tenant.getTenantDomain())) {
-						userName = tenantAdminService.getDomainUser(AuthenticationUtil.getSystemUserName(), tenant.getTenantDomain());
-						String newIdentifier = entityNodeRef.getStoreRef().getIdentifier().replace("@", "").replace(tenant.getTenantDomain(), "");
-						tempNodeRef = new NodeRef(StoreRef.PROTOCOL_WORKSPACE, newIdentifier, entityNodeRef.getId());
-						break;
+
+				String systemUserName = tenantAdminService.getDomainUser(AuthenticationUtil.getSystemUserName(), tenantDomain);
+				String adminUserName = tenantAdminService.getDomainUser(AuthenticationUtil.getAdminUserName(), tenantDomain);
+
+				final NodeRef extractedNode = AuthenticationUtil.runAs(() -> transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+					if (entityVersionService.isVersion(entityNodeRef)
+							&& nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_ENTITY_FORMAT) != null) {
+						return entityVersionService.extractVersion(entityNodeRef);
 					}
-				}
-				
-				final NodeRef finalNodeRef = tempNodeRef;
-				
+
+					return entityNodeRef;
+
+				}, false, true), systemUserName);
+
 				AuthenticationUtil.runAs(() -> {
 					transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-						
-						NodeRef extractedNode = null;
-						
-						if (entityVersionService.isVersion(finalNodeRef) && nodeService.getProperty(finalNodeRef, BeCPGModel.PROP_ENTITY_FORMAT) != null) {
-							extractedNode = entityVersionService.extractVersion(finalNodeRef);
-						}
-						
-						entityReportService.generateReports(extractedNode, finalNodeRef);
-						
+
+						entityReportService.generateReports(extractedNode, entityNodeRef);
+
 						return null;
-						
+
 					}, false, true);
 					return null;
-				}, userName);
+				}, adminUserName);
 
 			} catch (Exception e) {
 
