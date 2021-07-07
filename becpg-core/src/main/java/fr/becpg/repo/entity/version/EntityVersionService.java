@@ -205,6 +205,4 @@ public interface EntityVersionService {
 	
 	boolean isV2Service();
 
-	NodeRef getVersionedNodeRef(String id);
-
 }
