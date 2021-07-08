@@ -54,11 +54,12 @@ public class ListEntitiesWebScript extends AbstractEntityWebScript {
 				RemoteParams params = new RemoteParams(getFormat(req));
 				params.setFilteredFields(extractFields(req), namespaceService);
 				params.setFilteredLists(extractLists(req));
+				
+				resp.setContentType(getContentType(req));
+				resp.setContentEncoding("UTF-8");
 
 				remoteEntityService.listEntities(entities, out, params);
 
-				resp.setContentType(getContentType(req));
-				resp.setContentEncoding("UTF-8");
 				resp.setStatus(Status.STATUS_OK);
 
 			} catch (BeCPGException e) {

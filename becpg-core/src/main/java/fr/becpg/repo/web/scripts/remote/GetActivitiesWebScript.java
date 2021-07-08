@@ -145,13 +145,14 @@ public class GetActivitiesWebScript extends AbstractWebScript {
 
 			PagingResults<ActivityFeedEntity> feedEntries = activityService.getPagedUserFeedEntries(feedUserId, null, false, false, feedDBID,
 					new PagingRequest(1000));
-
+			
+			resp.setContentType("application/xml");
+			resp.setContentEncoding("UTF-8");
 			visit(feedEntries, out);
 
 			// set mimetype for the content and the character encoding + length
 			// for the stream
-			resp.setContentType("application/xml");
-			resp.setContentEncoding("UTF-8");
+			
 			resp.setStatus(Status.STATUS_OK);
 		} catch (SocketException e1) {
 
