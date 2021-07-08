@@ -60,11 +60,12 @@ public class GetEntityWebScript extends AbstractEntityWebScript {
 				params.setFilteredFields(extractFields(req), namespaceService);
 				params.setFilteredLists(extractLists(req));
 				params.setJsonParams(extractParams(req));
+				resp.setContentType(getContentType(req));
+				resp.setContentEncoding("UTF-8");
 
 				remoteEntityService.getEntity(entityNodeRef, out, params);
 
-				resp.setContentType(getContentType(req));
-				resp.setContentEncoding("UTF-8");
+			
 				resp.setStatus(Status.STATUS_OK);
 			} catch (BeCPGException e) {
 				logger.error("Cannot export entity", e);
