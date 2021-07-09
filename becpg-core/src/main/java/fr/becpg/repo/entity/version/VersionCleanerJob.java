@@ -182,16 +182,18 @@ public class VersionCleanerJob extends AbstractScheduledLockedJob implements Job
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			if (nodeService.exists(temporaryNode)) {
+				
 				NodeRef parentNode = nodeService.getPrimaryParent(temporaryNode).getParentRef();
 				
-				if (parentNode != null && nodeService.exists(parentNode)) {
+				nodeService.deleteNode(temporaryNode);
+				long timeElapsed = System.currentTimeMillis() - start;
+				logger.info("deleted node : " + temporaryNode + ", tenant : " + tenantName + ", time elapsed : " + timeElapsed + " ms");
+				
+				if (parentNode != null && nodeService.exists(parentNode) && nodeService.getChildAssocs(parentNode).isEmpty()) {
 					nodeService.deleteNode(parentNode);
-					long timeElapsed = System.currentTimeMillis() - start;
-					
-					logger.info("deleted node : " + parentNode + ", tenant : " + tenantName + ", time elapsed : " + timeElapsed + " ms");
+					logger.info("also deleted parent node : " + parentNode + ", tenant : " + tenantName);
 				}
 			}
-
 			
 			return null;
 		}, false, false);
