@@ -366,7 +366,7 @@ function i18n(key, params){
  * @returns void
  */
 function updateMLText(node, propQName, locale, value){
-	bcpg.setMLProperty( sourceNode,  propQName,  locale,  value);
+	bcpg.setMLProperty(node, propQName, locale, value);
 }
 
 
