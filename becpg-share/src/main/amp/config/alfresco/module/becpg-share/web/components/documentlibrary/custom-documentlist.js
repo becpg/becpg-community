@@ -640,7 +640,7 @@
 			var fileName = $isValueSet(jsNode.linkedNode.properties) ? jsNode.linkedNode.properties.name : null;
 			var linkedNodeIsContainer = jsNode.linkedNode.isContainer;
 
-			if (!linkedNodeIsContainer && (Alfresco.constants.PAGECONTEXT == "shared" || Alfresco.constants.PAGECONTEXT == "mine")) {
+			if (!linkedNodeIsContainer && (Alfresco.constants.PAGECONTEXT == "shared" || Alfresco.constants.PAGECONTEXT == "mine") && jsNode.linkedNode.nodeRef) {
 				var strNodeRef = jsNode.linkedNode.nodeRef.toString();
 				html = window.location.protocol + "//" + window.location.host + Alfresco.constants.URL_PAGECONTEXT + "document-details?nodeRef="
 						+ strNodeRef;
