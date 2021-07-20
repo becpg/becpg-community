@@ -31,12 +31,16 @@ import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.report.engine.BeCPGReportEngine;
 import fr.becpg.repo.report.entity.EntityImageInfo;
 import fr.becpg.repo.report.entity.EntityReportData;
+import fr.becpg.repo.report.entity.ReportLogInfo;
+import fr.becpg.repo.report.entity.ReportLogInfoType;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.report.client.AbstractBeCPGReportClient;
 import fr.becpg.report.client.ReportException;
@@ -54,6 +58,8 @@ import io.opencensus.trace.Tracing;
  */
 public class ReportServerEngine extends AbstractBeCPGReportClient implements BeCPGReportEngine {
 
+	public static final String REPORT_FORMULATION_CHAIN_ID = "ReportFormulationChainId";
+
 	private NodeService nodeService;
 
 	private ContentService contentService;
@@ -61,6 +67,8 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 	private EntityService entityService;
 	
 	private String instanceName;
+
+	private long reportMaxSize;
 
 	private static final Tracer tracer = Tracing.getTracer();
 
@@ -86,7 +94,10 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 		this.entityService = entityService;
 	}
 	
-	
+	@Value("${beCPG.report.maxSize}")
+	public void setReportMaxSize(long reportMaxSize) {
+		this.reportMaxSize = reportMaxSize;
+	}
 
 	public void setInstanceName(String instanceName) {
 		this.instanceName = instanceName;
@@ -137,10 +148,15 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 				reportSession.setTemplateId(templateId);
 				
 				tracer.getCurrentSpan().addAnnotation("sendReportImages");
-				
+
 				for (EntityImageInfo entry : reportData.getImages()) {
 					byte[] imageBytes = entityService.getImage(entry.getImageNodeRef());
 					if (imageBytes != null) {
+						
+						if (imageBytes.length > reportMaxSize) {
+							reportData.getLogInfos().add(new ReportLogInfo(ReportLogInfoType.WARNING, "Image size exceeds 1024 kB : " + entry, I18NUtil.getMessage("message.report.image.size") + "'" + entry.getName() + "'", tplNodeRef));
+						}
+						
 						try (InputStream in = new ByteArrayInputStream(imageBytes)) {
 							sendImage(reportSession, entry.getId(), in);
 						}
@@ -151,8 +167,17 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 				reportSession.setFormat(format.toString());
 				reportSession.setLang((String) params.get(ReportParams.PARAM_LANG));
 				try (InputStream in = new ByteArrayInputStream(reportData.getXmlDataSource().asXML().getBytes())) {
-					generateReport(reportSession, in, out);
-				}
+					
+					if (reportData.getXmlDataSource().asXML().getBytes().length > reportMaxSize) {
+						reportData.getLogInfos().add(new ReportLogInfo(ReportLogInfoType.WARNING, "Datasource size exceeds 1024 kB : " + params, I18NUtil.getMessage("message.report.datasource.size"), tplNodeRef));
+					}
+					
+					List<String> errors = generateReport(reportSession, in, out);
+					
+					for (String error : errors) {
+						reportData.getLogInfos().add(new ReportLogInfo(ReportLogInfoType.ERROR, error, I18NUtil.getMessage("message.report.error") + error, tplNodeRef));
+					}
+				}	
 			});
 			
 			if (logger.isDebugEnabled() && (watch != null)) {

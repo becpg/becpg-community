@@ -36,6 +36,8 @@ public class EntityReportData {
 	
 	private Set<EntityImageInfo> images = new HashSet<>();
 	
+	private Set<ReportLogInfo> reportLogInfos = new HashSet<>();
+	
 	/**
 	 * <p>Getter for the field <code>xmlDataSource</code>.</p>
 	 *
@@ -61,6 +63,15 @@ public class EntityReportData {
 	public void setImages(Set<EntityImageInfo> images) {
 		this.images = images;
 	}
+
+	public Set<ReportLogInfo> getLogInfos() {
+		return reportLogInfos;
+	}
+	
+	public void setLogInfos(Set<ReportLogInfo> reportLogInfos) {
+		this.reportLogInfos = reportLogInfos;
+	}
+	
 	/**
 	 * <p>setParameters.</p>
 	 *

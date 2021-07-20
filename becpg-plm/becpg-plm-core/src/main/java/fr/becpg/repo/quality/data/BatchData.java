@@ -48,6 +48,7 @@ import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.annotation.DataListView;
 import fr.becpg.repo.repository.filters.DataListFilter;
+import fr.becpg.repo.repository.impl.LazyLoadingDataList;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 /**
@@ -447,6 +448,36 @@ public class BatchData extends BeCPGDataObject implements ScorableEntity, Report
 		addMessage( new MLText(msg),  RequirementType.Forbidden);
 	}
 	
+	@Override
+	public void addError(String msg, String formulationChainId, List<NodeRef> sources) {
+		addMessage( new MLText(msg), RequirementType.Forbidden, formulationChainId, sources);
+	}
+	
+	@Override
+	public void cleanErrors(NodeRef source) {
+		
+		List<ReqCtrlListDataItem> cleanlist = new ArrayList<>();
+		
+		for (ReqCtrlListDataItem item : reqCtrlList) {
+			if (item.getSources().contains(source)) {
+				cleanlist.add(item);
+			}
+		}
+		
+		for (ReqCtrlListDataItem item : cleanlist) {
+			reqCtrlList.remove(item);
+			if (reqCtrlList instanceof LazyLoadingDataList) {
+				((LazyLoadingDataList<ReqCtrlListDataItem>) reqCtrlList).getDeletedNodes().add(item);
+			}
+		}
+	}
+	
+	private void addMessage(MLText msg, RequirementType type, String formulationChainId, List<NodeRef> sources) {
+		ReqCtrlListDataItem item = new ReqCtrlListDataItem(null, type, msg, null, sources, null);
+		item.setFormulationChainId(formulationChainId);
+		reqCtrlList.add(item);
+	}
+
 	@Override
 	public void addError(MLText msg) {
 		addMessage( msg,  RequirementType.Forbidden);

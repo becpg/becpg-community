@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -94,6 +95,8 @@ import fr.becpg.repo.report.entity.EntityReportExtractorPlugin.EntityReportExtra
 import fr.becpg.repo.report.entity.EntityReportParameters;
 import fr.becpg.repo.report.entity.EntityReportParameters.EntityReportParameter;
 import fr.becpg.repo.report.entity.EntityReportService;
+import fr.becpg.repo.report.entity.ReportLogInfo;
+import fr.becpg.repo.report.entity.ReportLogInfoType;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
 import fr.becpg.repo.repository.L2CacheSupport;
@@ -322,8 +325,21 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 							if (documentNodeRef != null) {
 
+								
+								EntityReportExtractorPlugin extractor = null;
+								
+
+								Set<ReportLogInfo> reportLogs = new HashSet<>();
+
 								// Run report
 								try {
+									
+									BeCPGReportEngine engine = getReportEngine(tplNodeRef, ReportFormat.valueOf(reportFormat));
+									
+									extractor = retrieveExtractor(entityNodeRef, engine);
+									
+									extractor.cleanTemplateLogInfos(entityNodeRef, tplNodeRef);
+									
 									policyBehaviourFilter.disableBehaviour(documentNodeRef, ContentModel.ASPECT_AUDITABLE);
 
 									ContentWriter writer = contentService.getWriter(documentNodeRef, ContentModel.PROP_CONTENT, true);
@@ -339,9 +355,6 @@ public class EntityReportServiceImpl implements EntityReportService {
 												|| ((selectedReportNodeRef == null) && Boolean.TRUE.equals(isDefault))
 												|| !entityNodeRef.equals(entityNodeTo)) {
 
-											BeCPGReportEngine engine = getReportEngine(tplNodeRef,
-													ReportFormat.valueOf(reportFormat));
-
 											HashMap<String, AttributeValue> map = new HashMap<>();
 											
 											map.put("locale", AttributeValue.stringAttributeValue(MLTextHelper.localeKey(locale)));
@@ -350,8 +363,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 											tracer.getCurrentSpan().addAnnotation(Annotation.fromDescriptionAndAttributes("extract", map));
 
-											EntityReportData reportData = retrieveExtractor(entityNodeRef, engine)
-													.extract(entityNodeRef, reportParameters.getPreferences());
+											EntityReportData reportData = extractor.extract(entityNodeRef, reportParameters.getPreferences());
 
 											reportData.setParameters(reportParameters);
 
@@ -390,6 +402,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 											
 											engine.createReport(tplNodeRef, reportData, writer.getContentOutputStream(), params);
 
+											reportLogs.addAll(reportData.getLogInfos());
+											
 											nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_IS_DIRTY, false);
 										} else {
 											writer.setMimetype("text/plain");
@@ -434,9 +448,18 @@ public class EntityReportServiceImpl implements EntityReportService {
 									}
 
 								} catch (ReportException e) {
-									logger.error("Failed to execute report for template : " + tplNodeRef, e);
+									
+									String message = "Failed to execute report for template : " + tplNodeRef;
+									
+									reportLogs.add(new ReportLogInfo(ReportLogInfoType.ERROR, message, message, tplNodeRef));
+									
+									logger.error(message, e);
 								} finally {
 									policyBehaviourFilter.enableBehaviour(documentNodeRef, ContentModel.ASPECT_AUDITABLE);
+									
+									if (extractor != null) {
+										extractor.handleReportLogInfos(entityNodeRef, reportLogs);
+									}
 								}
 
 								// Set Assoc
@@ -862,8 +885,6 @@ public class EntityReportServiceImpl implements EntityReportService {
 							String documentTitle = getReportDocumentName(entityNodeRef, tplNodeRef, null, locale, reportParameters,
 									reportParameters.getReportTitleFormat(reportTitleFormat));
 							
-							BeCPGReportEngine engine = getReportEngine(tplNodeRef, ReportFormat.valueOf(reportFormat));
-							
 							HashMap<String, AttributeValue> map = new HashMap<>();
 							map.put("locale", AttributeValue.stringAttributeValue(MLTextHelper.localeKey(locale)));
 							map.put("format", AttributeValue.stringAttributeValue(reportFormat));
@@ -871,11 +892,18 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 							tracer.getCurrentSpan().addAnnotation(Annotation.fromDescriptionAndAttributes("extract", map));
 
-							EntityReportData reportData = retrieveExtractor(entityNodeRef, engine).extract(entityNodeRef,
-									reportParameters.getPreferences());
+							BeCPGReportEngine engine = getReportEngine(tplNodeRef, ReportFormat.valueOf(reportFormat));
+
+							EntityReportExtractorPlugin extractor = retrieveExtractor(entityNodeRef, engine);
+							
+							extractor.cleanTemplateLogInfos(entityNodeRef, tplNodeRef);
+
+							EntityReportData reportData = extractor.extract(entityNodeRef, reportParameters.getPreferences());
 							
 							reportData.setParameters(reportParameters);
 							
+							Set<ReportLogInfo> reportLogs = new HashSet<>();
+
 							try {
 								policyBehaviourFilter.disableBehaviour(documentNodeRef, ContentModel.ASPECT_AUDITABLE);
 								
@@ -912,6 +940,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 									
 									engine.createReport(tplNodeRef, reportData, writer.getContentOutputStream(), params);
 									
+									reportLogs.addAll(reportData.getLogInfos());
+
 									I18NUtil.setLocale(Locale.getDefault());
 									I18NUtil.setContentLocale(Locale.getDefault());
 									
@@ -944,8 +974,18 @@ public class EntityReportServiceImpl implements EntityReportService {
 								}
 								
 							} catch (ReportException e) {
-								logger.error("Failed to execute report for template : " + tplNodeRef, e);
+								
+								String message = "Failed to execute report for template : " + tplNodeRef;
+								
+								reportLogs.add(new ReportLogInfo(ReportLogInfoType.ERROR, message, message, tplNodeRef));
+								
+								logger.error(message, e);
 							} finally {
+								
+								if (extractor != null) {
+									extractor.handleReportLogInfos(entityNodeRef, reportLogs);
+								}
+								
 								policyBehaviourFilter.enableBehaviour(documentNodeRef, ContentModel.ASPECT_AUDITABLE);
 							}
 							
@@ -976,6 +1016,15 @@ public class EntityReportServiceImpl implements EntityReportService {
 		AuthenticationUtil.runAsSystem(() -> {
 			Locale currentLocal = I18NUtil.getLocale();
 			Locale currentContentLocal = I18NUtil.getContentLocale();
+			
+			BeCPGReportEngine engine = getReportEngine(templateNodeRef, reportFormat);
+
+			EntityReportExtractorPlugin extractor = retrieveExtractor(entityNodeRef, engine);
+			
+			extractor.cleanTemplateLogInfos(entityNodeRef, templateNodeRef);
+
+			Set<ReportLogInfo> reportLogs = new HashSet<>();
+			
 			try (Scope scope = tracer.spanBuilder("reportService.Generate").startScopedSpan()) {
 				
 				tracer.getCurrentSpan().putAttribute("becpg/entityNodeRef", AttributeValue.stringAttributeValue(entityNodeRef.toString()));
@@ -984,15 +1033,13 @@ public class EntityReportServiceImpl implements EntityReportService {
 				I18NUtil.setLocale(locale);
 				I18NUtil.setContentLocale(locale);
 
-				BeCPGReportEngine engine = getReportEngine(templateNodeRef, reportFormat);
-
 				HashMap<String, AttributeValue> map = new HashMap<>();
 				map.put("locale", AttributeValue.stringAttributeValue(MLTextHelper.localeKey(locale)));
 				map.put("format", AttributeValue.stringAttributeValue(reportFormat.toString()));
 
 				tracer.getCurrentSpan().addAnnotation(Annotation.fromDescriptionAndAttributes("extract", map));
 
-				EntityReportData reportData = retrieveExtractor(entityNodeRef, engine).extract(entityNodeRef, reportParameters.getPreferences());
+				EntityReportData reportData = extractor.extract(entityNodeRef, reportParameters.getPreferences());
 
 				reportData.setParameters(reportParameters);
 
@@ -1021,11 +1068,23 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 					engine.createReport(templateNodeRef, reportData, outputStream, params);
 
+					reportLogs.addAll(reportData.getLogInfos());
+
 				} catch (ReportException e) {
-					logger.error("Failed to execute report for template : " + templateNodeRef, e);
+					
+					String message = "Failed to execute report for template : " + templateNodeRef;
+					
+					reportLogs.add(new ReportLogInfo(ReportLogInfoType.ERROR, message, message, templateNodeRef));
+					
+					logger.error(message, e);
 				}
 
 			} finally {
+				
+				if (extractor != null) {
+					extractor.handleReportLogInfos(entityNodeRef, reportLogs);
+				}
+				
 				I18NUtil.setLocale(currentLocal);
 				I18NUtil.setContentLocale(currentContentLocal);
 			}
