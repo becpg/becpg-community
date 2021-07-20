@@ -48,7 +48,9 @@ import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.report.engine.impl.ReportServerEngine;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.impl.LazyLoadingDataList;
 import fr.becpg.repo.repository.model.CompositionDataItem;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
@@ -148,7 +150,23 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 
 		// Reset
 		if ((productData.getReqCtrlList() != null)) {
+
+			List<ReqCtrlListDataItem> retainedItems = new ArrayList<>();
+
+			for (ReqCtrlListDataItem item : productData.getReqCtrlList()) {
+				if (ReportServerEngine.REPORT_FORMULATION_CHAIN_ID.equals(item.getFormulationChainId())) {
+					retainedItems.add(item);
+				}
+			}
+
 			productData.getReqCtrlList().clear();
+
+			for (ReqCtrlListDataItem item : retainedItems) {
+				productData.getReqCtrlList().add(item);
+				if (productData.getReqCtrlList() instanceof LazyLoadingDataList) {
+					((LazyLoadingDataList<ReqCtrlListDataItem>) productData.getReqCtrlList()).getDeletedNodes().remove(item);
+				}
+			}
 		}
 
 		return true;

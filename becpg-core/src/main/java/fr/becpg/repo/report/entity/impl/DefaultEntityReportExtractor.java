@@ -75,14 +75,18 @@ import fr.becpg.repo.dictionary.constraint.DynListConstraint;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
+import fr.becpg.repo.formulation.ReportableEntity;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.helper.TranslateHelper;
+import fr.becpg.repo.report.engine.impl.ReportServerEngine;
 import fr.becpg.repo.report.entity.EntityImageInfo;
 import fr.becpg.repo.report.entity.EntityReportData;
 import fr.becpg.repo.report.entity.EntityReportExtractorPlugin;
 import fr.becpg.repo.report.entity.EntityReportService;
+import fr.becpg.repo.report.entity.ReportLogInfo;
+import fr.becpg.repo.report.entity.ReportLogInfoType;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.RepositoryEntityDefReader;
@@ -1174,6 +1178,34 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			if (!avatorAssocs.isEmpty()) {
 				extractImage(creatorNodeRef, avatorAssocs.get(0).getTargetRef(), AVATAR_IMG_ID, imgsElt, context);
 			}
+		}
+	}
+
+	@Override
+	public void handleReportLogInfos(NodeRef entityNodeRef, Set<ReportLogInfo> logInfos) {
+		
+		BeCPGDataObject entity = alfrescoRepository.findOne(entityNodeRef);
+		
+		for (ReportLogInfo logInfo : logInfos) {
+			if (logInfo.getType() == ReportLogInfoType.WARNING) {
+				logger.warn(logInfo.getLogMessage());
+			} else if (logInfo.getType() == ReportLogInfoType.ERROR) {
+				logger.error(logInfo.getLogMessage());
+			}
+			if (entity instanceof ReportableEntity) {
+				((ReportableEntity) entity).addError(logInfo.getDisplayMessage(), ReportServerEngine.REPORT_FORMULATION_CHAIN_ID, Arrays.asList(logInfo.getTplNodeRef()));
+			}
+		}
+		
+		alfrescoRepository.save(entity);
+	}
+
+	@Override
+	public void cleanTemplateLogInfos(NodeRef entityNodeRef, NodeRef tplNodeRef) {
+		BeCPGDataObject entity = alfrescoRepository.findOne(entityNodeRef);
+		
+		if (entity instanceof ReportableEntity) {
+			((ReportableEntity) entity).cleanErrors(tplNodeRef);
 		}
 	}
 }

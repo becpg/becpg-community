@@ -5,6 +5,7 @@ package fr.becpg.repo.report.entity;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
@@ -57,6 +58,10 @@ public interface EntityReportExtractorPlugin {
 	 * @return a {@link fr.becpg.repo.report.entity.EntityReportExtractorPlugin.EntityReportExtractorPriority} object.
 	 */
 	EntityReportExtractorPriority getMatchPriority(QName type);
+
+	void handleReportLogInfos(NodeRef entityNodeRef, Set<ReportLogInfo> logInfos);
+
+	void cleanTemplateLogInfos(NodeRef entityNodeRef, NodeRef tplNodeRef);
 
 
 }

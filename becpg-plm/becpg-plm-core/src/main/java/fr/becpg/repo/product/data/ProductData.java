@@ -60,6 +60,7 @@ import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.annotation.DataListView;
 import fr.becpg.repo.repository.annotation.InternalField;
 import fr.becpg.repo.repository.filters.DataListFilter;
+import fr.becpg.repo.repository.impl.LazyLoadingDataList;
 import fr.becpg.repo.repository.model.AbstractEffectiveDataItem;
 import fr.becpg.repo.repository.model.AspectAwareDataItem;
 import fr.becpg.repo.repository.model.StateableEntity;
@@ -2237,8 +2238,38 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	}
 	
 	@Override
+	public void addError(String msg, String formulationChainId, List<NodeRef> sources) {
+		addMessage( new MLText(msg), RequirementType.Forbidden, formulationChainId, sources);
+	}
+	
+	@Override
 	public void addError(String msg) {
 		addMessage( new MLText(msg),  RequirementType.Forbidden);
+	}
+	
+	private void addMessage(MLText msg, RequirementType type, String formulationChainId, List<NodeRef> sources) {
+		ReqCtrlListDataItem item = new ReqCtrlListDataItem(null, type, msg, null, sources, null);
+		item.setFormulationChainId(formulationChainId);
+		reqCtrlList.add(item);
+	}
+	
+	@Override
+	public void cleanErrors(NodeRef source) {
+		
+		List<ReqCtrlListDataItem> cleanlist = new ArrayList<>();
+		
+		for (ReqCtrlListDataItem item : reqCtrlList) {
+			if (item.getSources().contains(source)) {
+				cleanlist.add(item);
+			}
+		}
+		
+		for (ReqCtrlListDataItem item : cleanlist) {
+			reqCtrlList.remove(item);
+			if (reqCtrlList instanceof LazyLoadingDataList) {
+				((LazyLoadingDataList<ReqCtrlListDataItem>) reqCtrlList).getDeletedNodes().add(item);
+			}
+		}
 	}
 	
 	@Override
