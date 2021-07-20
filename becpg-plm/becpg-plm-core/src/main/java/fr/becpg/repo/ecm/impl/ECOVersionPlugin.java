@@ -179,6 +179,12 @@ public class ECOVersionPlugin implements EntityVersionPlugin {
 						}, false, true);
 
 						if (ret) {
+							
+							transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+								ecoService.setInProgress(ecoNodeRef);
+								return true;
+							}, false, true);
+
 							transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 								if (ecoService.apply(ecoNodeRef) && Boolean.TRUE.equals(deleteOnApply)) {
 									logger.debug("It's applied and deleteOnApply is set to true, deleting ECO with NR=" + ecoNodeRef);
