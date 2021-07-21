@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.tenant.TenantAdminService;
+import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AuthorityService;
@@ -60,6 +62,8 @@ public class SupplierAccountWebScript extends AbstractWebScript {
 	MutableAuthenticationService authenticationService;
 
 	AssociationService associationService;
+	
+	TenantAdminService tenantAdminService;
 
 	/**
 	 * <p>Setter for the field <code>nodeService</code>.</p>
@@ -123,6 +127,10 @@ public class SupplierAccountWebScript extends AbstractWebScript {
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
+	
+	public void setTenantAdminService(TenantAdminService tenantAdminService) {
+		this.tenantAdminService = tenantAdminService;
+	}
 
 	/** {@inheritDoc} */
 	@Override
@@ -135,8 +143,12 @@ public class SupplierAccountWebScript extends AbstractWebScript {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			String userName = SUPPLIER_PREFIX + "-" + (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_CODE);
+			if (!TenantService.DEFAULT_DOMAIN.equals(tenantAdminService.getCurrentUserDomain())) {
+				userName += "@" + tenantAdminService.getCurrentUserDomain();
+			}
+			
 			String password = UUID.randomUUID().toString();
-
+			
 			List<NodeRef> associations = associationService.getTargetAssocs(nodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
 			if (associations == null) {
 				associations = new ArrayList<>();
