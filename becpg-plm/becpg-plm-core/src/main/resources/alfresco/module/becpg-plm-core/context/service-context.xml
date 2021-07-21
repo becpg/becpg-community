@@ -196,6 +196,7 @@
 		<property name="authenticationService" ref="authenticationService"/>
 		<property name="mailService" ref="beCPGMailService"/>
 		<property name="transactionService" ref="transactionService"/>
+		<property name="tenantAdminService" ref="tenantAdminService"/>
 	</bean>
 	
 	
