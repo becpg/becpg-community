@@ -184,6 +184,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	private static final String PRODUCT_REPORT_PT_RESOURCE = "beCPG/birt/document/product/default/ProductReport_pt.properties";
 	private static final String PRODUCT_REPORT_RU_RESOURCE = "beCPG/birt/document/product/default/ProductReport_ru.properties";
 	private static final String PRODUCT_REPORT_SV_RESOURCE = "beCPG/birt/document/product/default/ProductReport_sv.properties";
+	private static final String PRODUCT_REPORT_SETTINGS_RESOURCE = "beCPG/birt/document/product/default/settings.properties";
+	private static final String PRODUCT_REPORT_LOGO_RESOURCE = "beCPG/birt/document/product/default/logo.png";
 	private static final String PRODUCT_REPORT_CSS_RESOURCE = "beCPG/birt/document/product/default/becpg-report.css";
 	private static final String PRODUCT_REPORT_IMG_CCCCCC = "beCPG/birt/document/product/default/cccccc-200X30.png";
 	private static final String PRODUCT_REPORT_IMG_TRAFFICLIGHTS_ENERGY = "beCPG/birt/document/product/default/images/trafficLights_Energy.png";
@@ -1193,7 +1195,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 					PRODUCT_REPORT_NL_RESOURCE, PRODUCT_REPORT_PT_RESOURCE, PRODUCT_REPORT_RU_RESOURCE, PRODUCT_REPORT_SV_RESOURCE,
 					PRODUCT_REPORT_CSS_RESOURCE, PRODUCT_REPORT_IMG_CCCCCC, PRODUCT_REPORT_IMG_TRAFFICLIGHTS_ENERGY,
 					PRODUCT_REPORT_IMG_TRAFFICLIGHTS_GREEN, PRODUCT_REPORT_IMG_TRAFFICLIGHTS_ORANGE, PRODUCT_REPORT_IMG_TRAFFICLIGHTS_RED,
-					PRODUCT_REPORT_IMG_TRAFFICLIGHTS_SERVING };
+					PRODUCT_REPORT_IMG_TRAFFICLIGHTS_SERVING, PRODUCT_REPORT_LOGO_RESOURCE, PRODUCT_REPORT_SETTINGS_RESOURCE };
 
 			Map<String, Map<QName, Serializable>> reportKindDefaultValues = new HashMap<>();
 			Map<String ,Map<QName, Serializable>> reportKindTplAssoc = new HashMap<>();
@@ -1319,7 +1321,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 		try {
 
-			String[] qualityReportResource = { QUALITY_REPORT_EN_RESSOURCE, QUALITY_REPORT_RESSOURCE, PRODUCT_REPORT_CSS_RESOURCE };
+			String[] qualityReportResource = { QUALITY_REPORT_EN_RESSOURCE, QUALITY_REPORT_RESSOURCE, PRODUCT_REPORT_CSS_RESOURCE, PRODUCT_REPORT_LOGO_RESOURCE };
 
 			ClassDefinition classDef = dictionaryService.getClass(QualityModel.TYPE_QUALITY_CONTROL);
 			if (repoService.getFolderByPath(qualityReportTplsNodeRef, classDef.getTitle(dictionaryService)) == null) {
