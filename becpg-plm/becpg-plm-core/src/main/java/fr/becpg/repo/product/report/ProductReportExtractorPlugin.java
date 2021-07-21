@@ -229,7 +229,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 								}
 							}
 						}
-					} else if (!BeCPGModel.TYPE_ACTIVITY_LIST.equals(dataListQName)) {
+					} else if (!BeCPGModel.TYPE_ACTIVITY_LIST.equals(dataListQName) && shouldExtractList(isExtractedProduct, context, type, dataListQName)) {
 						// extract specific datalists
 						loadDataList(dataListsElt, listNodeRef, dataListQName, context);
 					}
