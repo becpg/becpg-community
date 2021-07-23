@@ -223,6 +223,19 @@
 				<value>bcpg:lvValue</value>
 			</parameter>
 		</constraint>
+		<constraint name="bcpg:contactTypes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/Lists/bcpg:entityLists/ContactTypes</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>bcpg:lvValue</value>
+			</parameter>
+		</constraint>
 		<constraint name="bcpg:nutUnit" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -1355,6 +1368,7 @@
 					</constraints>
 				</property>
 			</properties>
+
 		</type>
 
 		<type name="bcpg:customsCode">
@@ -2328,6 +2342,15 @@
 		<type name="bcpg:contactList">
 			<parent>bcpg:entityListItem</parent>
 			<properties>
+				<property name="bcpg:contactListType">
+					<title>Contact type</title>
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<constraints>
+						<constraint ref="bcpg:contactTypes" />
+					</constraints>
+				</property>
+			
 				<property name="bcpg:contactListFirstName">
 					<title>First Name</title>
 					<type>d:text</type>
@@ -3050,6 +3073,25 @@
 				</association>
 			</associations>
 		</aspect>
+		
+		
+		
+		<aspect name="bcpg:contactsAspect">
+			<associations>
+				<association name="bcpg:contacts">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:contactList</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+			</associations>
+		</aspect>
+		
 		
 		<aspect name="bcpg:regulatoryCodeAspect">
 			<properties>

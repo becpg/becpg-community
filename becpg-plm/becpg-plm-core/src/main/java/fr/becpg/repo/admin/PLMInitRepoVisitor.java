@@ -839,6 +839,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_LABEL, PackModel.TYPE_LABEL);
 		entityLists.put(PlmRepoConsts.PATH_GS1_TARGET_MARKETS, GS1Model.TYPE_TARGET_MARKET);
 		entityLists.put(PlmRepoConsts.PATH_GS1_DUTY_FEE_TAXES, GS1Model.TYPE_DUTY_FEE_TAX);
+		entityLists.put(PlmRepoConsts.PATH_CONTACTS,PLMModel.TYPE_CONTACTLIST);
 
 		entityLists.put(RepoConsts.PATH_NOTIFICATIONS, BeCPGModel.TYPE_NOTIFICATIONRULELIST);
 
@@ -900,6 +901,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_GS1_PLATFORM_TERM_AND_CONDITIONS_CODES, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_GS1_SORTING_BONUS_CRITERIA, BeCPGModel.TYPE_LIST_VALUE);
 
+		entityLists.put(PlmRepoConsts.PATH_CONTACT_TYPES, BeCPGModel.TYPE_LIST_VALUE);
 		
 		entityLists.put(RepoConsts.PATH_REPORT_PARAMS, BeCPGModel.TYPE_LIST_VALUE);
 		

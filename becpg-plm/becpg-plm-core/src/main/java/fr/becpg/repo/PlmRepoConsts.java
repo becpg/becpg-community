@@ -199,6 +199,10 @@ public class PlmRepoConsts {
 	/** Constant <code>PATH_CLIENTS="Clients"</code> */
 	public static final String PATH_CLIENTS	= "Clients";
 	
+	public static final String PATH_CONTACTS = "Contacts";
+	
+	public static final String PATH_CONTACT_TYPES = "ContactTypes";
+	
 	/** Constant <code>PATH_PRODUCT_REPORTTEMPLATES="ProductReportTemplates"</code> */
 	public static final String PATH_PRODUCT_REPORTTEMPLATES = "ProductReportTemplates";
 	/** Constant <code>PATH_QUALITY_REPORTTEMPLATES="QualityReportTemplates"</code> */
