@@ -22,8 +22,6 @@ import org.json.JSONException;
 
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.decernis.DecernisMode;
-import fr.becpg.repo.formulation.FormulatedEntity;
-import fr.becpg.repo.formulation.ReportableEntity;
 import fr.becpg.repo.hierarchy.HierarchicalEntity;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
@@ -60,9 +58,8 @@ import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.annotation.DataListView;
 import fr.becpg.repo.repository.annotation.InternalField;
 import fr.becpg.repo.repository.filters.DataListFilter;
-import fr.becpg.repo.repository.impl.LazyLoadingDataList;
-import fr.becpg.repo.repository.model.AbstractEffectiveDataItem;
 import fr.becpg.repo.repository.model.AspectAwareDataItem;
+import fr.becpg.repo.repository.model.EffectiveDataItem;
 import fr.becpg.repo.repository.model.StateableEntity;
 import fr.becpg.repo.variant.model.VariantData;
 import fr.becpg.repo.variant.model.VariantEntity;
@@ -73,7 +70,7 @@ import fr.becpg.repo.variant.model.VariantEntity;
  * @author matthieu
  * @version $Id: $Id
  */
-public class ProductData extends AbstractEffectiveDataItem implements FormulatedEntity, HierarchicalEntity, StateableEntity, AspectAwareDataItem, VariantEntity, ReportableEntity, ScorableEntity {
+public class ProductData extends AbstractScorableEntity implements EffectiveDataItem, HierarchicalEntity, StateableEntity, AspectAwareDataItem, VariantEntity {
 
 	
 	private static final long serialVersionUID = 764534088277737617L;
@@ -89,6 +86,10 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private ProductUnit unit = ProductUnit.kg;
 	private ProductData entityTpl;
 	private List<NodeRef> plants = new ArrayList<>();
+
+	protected Date startEffectivity;
+	
+	protected Date endEffectivity;
 
 	/*
 	 * Transformable properties
@@ -246,6 +247,37 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private String entityScore;
 	private List<String> reportLocales;
 	private List<ProductData> compareWithEntities;
+
+	
+	/** {@inheritDoc} */
+	@AlfProp
+	@AlfQname(qname="bcpg:startEffectivity")
+	@InternalField
+	@Override
+	public Date getStartEffectivity() {
+		return startEffectivity;
+	}
+	
+	/** {@inheritDoc} */
+	@Override
+	public void setStartEffectivity(Date startEffectivity) {
+		this.startEffectivity = startEffectivity;
+	}
+
+	/** {@inheritDoc} */
+	@AlfProp
+	@AlfQname(qname="bcpg:endEffectivity")
+	@InternalField
+	@Override
+	public Date getEndEffectivity() {
+		return endEffectivity;
+	}
+	
+	/** {@inheritDoc} */
+	@Override
+	public void setEndEffectivity(Date endEffectivity) {
+		this.endEffectivity = endEffectivity;
+	}
 
 	/**
 	 * <p>Getter for the field <code>productSpecifications</code>.</p>
@@ -2238,38 +2270,8 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	}
 	
 	@Override
-	public void addError(String msg, String formulationChainId, List<NodeRef> sources) {
-		addMessage( new MLText(msg), RequirementType.Forbidden, formulationChainId, sources);
-	}
-	
-	@Override
 	public void addError(String msg) {
 		addMessage( new MLText(msg),  RequirementType.Forbidden);
-	}
-	
-	private void addMessage(MLText msg, RequirementType type, String formulationChainId, List<NodeRef> sources) {
-		ReqCtrlListDataItem item = new ReqCtrlListDataItem(null, type, msg, null, sources, null);
-		item.setFormulationChainId(formulationChainId);
-		reqCtrlList.add(item);
-	}
-	
-	@Override
-	public void cleanErrors(NodeRef source) {
-		
-		List<ReqCtrlListDataItem> cleanlist = new ArrayList<>();
-		
-		for (ReqCtrlListDataItem item : reqCtrlList) {
-			if (item.getSources().contains(source)) {
-				cleanlist.add(item);
-			}
-		}
-		
-		for (ReqCtrlListDataItem item : cleanlist) {
-			reqCtrlList.remove(item);
-			if (reqCtrlList instanceof LazyLoadingDataList) {
-				((LazyLoadingDataList<ReqCtrlListDataItem>) reqCtrlList).getDeletedNodes().add(item);
-			}
-		}
 	}
 	
 	@Override
@@ -2285,6 +2287,13 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private void addMessage(MLText msg,  RequirementType type) {
 		reqCtrlList.add(new ReqCtrlListDataItem(null, type, msg, null, new ArrayList<>(),
 				RequirementDataType.Formulation));
+	}
+	
+	@Override
+	public void addError(String msg, String formulationChainId, List<NodeRef> sources) {
+		ReqCtrlListDataItem item = new ReqCtrlListDataItem(null, RequirementType.Forbidden, new MLText(msg), null, sources, null);
+		item.setFormulationChainId(formulationChainId);
+		reqCtrlList.add(item);
 	}
 	
 	
