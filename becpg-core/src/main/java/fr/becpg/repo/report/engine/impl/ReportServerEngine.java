@@ -39,8 +39,8 @@ import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.report.engine.BeCPGReportEngine;
 import fr.becpg.repo.report.entity.EntityImageInfo;
 import fr.becpg.repo.report.entity.EntityReportData;
-import fr.becpg.repo.report.entity.ReportLogInfo;
-import fr.becpg.repo.report.entity.ReportLogInfoType;
+import fr.becpg.repo.report.entity.ReportEngineLog;
+import fr.becpg.repo.report.entity.ReportEngineLog.ReportLogType;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.report.client.AbstractBeCPGReportClient;
 import fr.becpg.report.client.ReportException;
@@ -58,7 +58,6 @@ import io.opencensus.trace.Tracing;
  */
 public class ReportServerEngine extends AbstractBeCPGReportClient implements BeCPGReportEngine {
 
-	public static final String REPORT_FORMULATION_CHAIN_ID = "ReportFormulationChainId";
 
 	private NodeService nodeService;
 
@@ -161,7 +160,7 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 					if (imageBytes != null) {
 						
 						if (imageBytes.length > reportImageMaxSizeInBytes) {
-							reportData.getLogInfos().add(new ReportLogInfo(ReportLogInfoType.WARNING, "Image size exceeds 1024 kB : " + entry, I18NUtil.getMessage("message.report.image.size") + "'" + entry.getName() + "'", tplNodeRef));
+							reportData.getLogs().add(new ReportEngineLog(ReportLogType.WARNING, "Image size exceeds 1024 kB : " + entry, I18NUtil.getMessage("message.report.image.size") + "'" + entry.getName() + "'", tplNodeRef));
 						}
 						
 						try (InputStream in = new ByteArrayInputStream(imageBytes)) {
@@ -179,13 +178,13 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 				try (InputStream in = new ByteArrayInputStream(datasourceBytes)) {
 					
 					if (datasourceBytes.length > reportDatasourceMaxSizeInBytes) {
-						reportData.getLogInfos().add(new ReportLogInfo(ReportLogInfoType.WARNING, "Datasource size exceeds 1024 kB : " + params, I18NUtil.getMessage("message.report.datasource.size"), tplNodeRef));
+						reportData.getLogs().add(new ReportEngineLog(ReportLogType.WARNING, "Datasource size exceeds 1024 kB : " + params, I18NUtil.getMessage("message.report.datasource.size"), tplNodeRef));
 					}
 					
 					List<String> errors = generateReport(reportSession, in, out);
 					
 					for (String error : errors) {
-						reportData.getLogInfos().add(new ReportLogInfo(ReportLogInfoType.ERROR, error, I18NUtil.getMessage("message.report.error") + error, tplNodeRef));
+						reportData.getLogs().add(new ReportEngineLog(ReportLogType.ERROR, error, I18NUtil.getMessage("message.report.error") + error, tplNodeRef));
 					}
 				}	
 			});

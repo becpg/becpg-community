@@ -24,8 +24,6 @@ import fr.becpg.model.SystemState;
 import fr.becpg.repo.decernis.DecernisMode;
 import fr.becpg.repo.hierarchy.HierarchicalEntity;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
-import fr.becpg.repo.product.data.constraints.RequirementDataType;
-import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.constraints.TareUnit;
 import fr.becpg.repo.product.data.ing.IngTypeItem;
 import fr.becpg.repo.product.data.meat.MeatContentData;
@@ -44,7 +42,6 @@ import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.product.data.productList.PriceListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.data.productList.ResourceParamListItem;
 import fr.becpg.repo.quality.data.dataList.ControlDefListDataItem;
 import fr.becpg.repo.quality.data.dataList.StockListDataItem;
@@ -208,7 +205,6 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	private List<ControlDefListDataItem> controlDefList;
 	private List<LabelingListDataItem> labelingList;
 	private List<ResourceParamListItem> resourceParamList;
-	private List<ReqCtrlListDataItem> reqCtrlList;
 	private List<PackMaterialListDataItem> packMaterialList;
 	private List<StockListDataItem> stockList;
 
@@ -1797,26 +1793,6 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	}
 
 	/**
-	 * <p>Getter for the field <code>reqCtrlList</code>.</p>
-	 *
-	 * @return a {@link java.util.List} object.
-	 */
-	@DataList
-	@AlfQname(qname = "bcpg:reqCtrlList")
-	public List<ReqCtrlListDataItem> getReqCtrlList() {
-		return reqCtrlList;
-	}
-
-	/**
-	 * <p>Setter for the field <code>reqCtrlList</code>.</p>
-	 *
-	 * @param reqCtrlList a {@link java.util.List} object.
-	 */
-	public void setReqCtrlList(List<ReqCtrlListDataItem> reqCtrlList) {
-		this.reqCtrlList = reqCtrlList;
-	}
-	
-	/**
 	 * <p>Getter for the field <code>packMaterialList</code>.</p>
 	 *
 	 * @return a {@link java.util.List} object.
@@ -2262,40 +2238,6 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 		return state != null ? state.toString() : null;
 	}
 
-	// Formula helpers
-
-	@Override
-	public void addWarning(String msg) {
-		addMessage( new MLText(msg),  RequirementType.Tolerated);
-	}
-	
-	@Override
-	public void addError(String msg) {
-		addMessage( new MLText(msg),  RequirementType.Forbidden);
-	}
-	
-	@Override
-	public void addError(MLText msg) {
-		addMessage( msg,  RequirementType.Forbidden);
-	}
-	
-	@Override
-	public void addInfo(String msg) {
-		addMessage( new MLText(msg),  RequirementType.Info);
-	}
-	
-	private void addMessage(MLText msg,  RequirementType type) {
-		reqCtrlList.add(new ReqCtrlListDataItem(null, type, msg, null, new ArrayList<>(),
-				RequirementDataType.Formulation));
-	}
-	
-	@Override
-	public void addError(String msg, String formulationChainId, List<NodeRef> sources) {
-		ReqCtrlListDataItem item = new ReqCtrlListDataItem(null, RequirementType.Forbidden, new MLText(msg), null, sources, null);
-		item.setFormulationChainId(formulationChainId);
-		reqCtrlList.add(item);
-	}
-	
 	
 	/**
 	 * <p>isLiquid.</p>

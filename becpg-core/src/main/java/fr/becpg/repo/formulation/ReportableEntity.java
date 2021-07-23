@@ -7,16 +7,16 @@ import org.alfresco.service.cmr.repository.NodeRef;
 
 public interface ReportableEntity extends FormulatedEntity {
 
-	public void addError(String error);
-	
-	public void addWarning(String warning);
-	
-	public void addInfo(String information);
+	void addError(String error);
 
-	public void addError(MLText i18nMessage);
-	
-	public void addError(String msg, String formulationChainId, List<NodeRef> sources);
-	
-	boolean mergeRequirements(boolean removeItemsWithoutFormulationId);
+	void addWarning(String warning);
+
+	void addInfo(String information);
+
+	void addError(MLText i18nMessage);
+
+	void addError(String msg, String formulationChainId, List<NodeRef> sources);
+
+	boolean merge();
 
 }

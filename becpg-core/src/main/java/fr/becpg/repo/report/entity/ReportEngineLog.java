@@ -2,9 +2,14 @@ package fr.becpg.repo.report.entity;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
-public class ReportLogInfo {
+public class ReportEngineLog {
+	
+	public enum ReportLogType {
 
-	private ReportLogInfoType type;
+		WARNING, ERROR
+	}
+
+	private ReportLogType type;
 	
 	private String logMessage;
 	
@@ -12,14 +17,14 @@ public class ReportLogInfo {
 	
 	private NodeRef tplNodeRef;
 	
-	public ReportLogInfo(ReportLogInfoType type, String logMessage, String displayMessage, NodeRef tplNodeRef) {
+	public ReportEngineLog(ReportLogType type, String logMessage, String displayMessage, NodeRef tplNodeRef) {
 		this.type = type;
 		this.logMessage = logMessage;
 		this.displayMessage = displayMessage;
 		this.tplNodeRef = tplNodeRef;
 	}
 	
-	public ReportLogInfoType getType() {
+	public ReportLogType getType() {
 		return type;
 	}
 	

@@ -17,7 +17,6 @@
  ******************************************************************************/
 package fr.becpg.repo.quality.data;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -26,7 +25,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.model.SystemState;
@@ -35,10 +33,7 @@ import fr.becpg.repo.product.data.AbstractScorableEntity;
 import fr.becpg.repo.product.data.CompoListView;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
-import fr.becpg.repo.product.data.constraints.RequirementDataType;
-import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.quality.data.dataList.AllocationListDataItem;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
@@ -69,7 +64,7 @@ public class BatchData extends AbstractScorableEntity {
 	private ProductData product;
 
 	private BatchData entityTpl;
-	
+
 	private String entityScore;
 
 	/*
@@ -83,11 +78,10 @@ public class BatchData extends AbstractScorableEntity {
 	private String requirementChecksum;
 
 	private List<AllocationListDataItem> allocationList;
-	
-	private List<ReqCtrlListDataItem> reqCtrlList;
 
 	private CompoListView compoListView = new CompoListView();
-	
+
+	@Override
 	public List<AbstractProductDataView> getViews() {
 		return Arrays.asList(compoListView);
 	}
@@ -171,34 +165,13 @@ public class BatchData extends AbstractScorableEntity {
 	public void setAllocationList(List<AllocationListDataItem> allocationList) {
 		this.allocationList = allocationList;
 	}
-	
-	/**
-	 * <p>Getter for the field <code>reqCtrlList</code>.</p>
-	 *
-	 * @return a {@link java.util.List} object.
-	 */
-	@DataList
-	@AlfQname(qname = "bcpg:reqCtrlList")
-	public List<ReqCtrlListDataItem> getReqCtrlList() {
-		return reqCtrlList;
-	}
-
-	/**
-	 * <p>Setter for the field <code>reqCtrlList</code>.</p>
-	 *
-	 * @param reqCtrlList a {@link java.util.List} object.
-	 */
-	public void setReqCtrlList(List<ReqCtrlListDataItem> reqCtrlList) {
-		this.reqCtrlList = reqCtrlList;
-	}
-	
-	
 
 	/**
 	 * <p>Getter for the field <code>entityScore</code>.</p>
 	 *
 	 * @return a {@link java.lang.String} object.
 	 */
+	@Override
 	@AlfProp
 	@AlfQname(qname = "bcpg:entityScore")
 	public String getEntityScore() {
@@ -210,6 +183,7 @@ public class BatchData extends AbstractScorableEntity {
 	 *
 	 * @param string a {@link java.lang.String} object.
 	 */
+	@Override
 	public void setEntityScore(String string) {
 		this.entityScore = string;
 	}
@@ -324,7 +298,7 @@ public class BatchData extends AbstractScorableEntity {
 	 */
 	@Override
 	public NodeRef getFormulatedEntityTpl() {
-		return entityTpl!=null ? entityTpl.getNodeRef() : null;
+		return entityTpl != null ? entityTpl.getNodeRef() : null;
 	}
 
 	/**
@@ -434,38 +408,6 @@ public class BatchData extends AbstractScorableEntity {
 	public void setFormulationChainId(String formulationChainId) {
 		this.formulationChainId = formulationChainId;
 	}
-	
-	@Override
-	public void addWarning(String msg) {
-		addMessage( new MLText(msg),  RequirementType.Tolerated);
-	}
-	
-	@Override
-	public void addError(String msg) {
-		addMessage( new MLText(msg),  RequirementType.Forbidden);
-	}
-	
-	@Override
-	public void addError(MLText msg) {
-		addMessage( msg,  RequirementType.Forbidden);
-	}
-	
-	@Override
-	public void addInfo(String msg) {
-		addMessage( new MLText(msg),  RequirementType.Info);
-	}
-	
-	private void addMessage(MLText msg,  RequirementType type) {
-		reqCtrlList.add(new ReqCtrlListDataItem(null, type, msg, null, new ArrayList<>(),
-				RequirementDataType.Formulation));
-	}
-	
-	@Override
-	public void addError(String msg, String formulationChainId, List<NodeRef> sources) {
-		ReqCtrlListDataItem item = new ReqCtrlListDataItem(null, RequirementType.Forbidden, new MLText(msg), null, sources, null);
-		item.setFormulationChainId(formulationChainId);
-		reqCtrlList.add(item);
-	}
 
 	@Override
 	public String toString() {
@@ -473,35 +415,37 @@ public class BatchData extends AbstractScorableEntity {
 				+ ", entityTpl=" + entityTpl + ", entityScore=" + entityScore + ", formulatedDate=" + formulatedDate + ", reformulateCount="
 				+ reformulateCount + ", currentReformulateCount=" + currentReformulateCount + ", formulationChainId=" + formulationChainId
 				+ ", updateFormulatedDate=" + updateFormulatedDate + ", requirementChecksum=" + requirementChecksum + ", allocationList="
-				+ allocationList + ", reqCtrlList=" + reqCtrlList + ", compoListView=" + compoListView + "]";
+				+ allocationList + ", compoListView=" + compoListView + "]";
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(allocationList, batchId, batchQty, compoListView, currentReformulateCount, entityScore, entityTpl,
-				formulatedDate, formulationChainId, product, reformulateCount, reqCtrlList, requirementChecksum, state, unit, updateFormulatedDate);
+		result = (prime * result) + Objects.hash(allocationList, batchId, batchQty, compoListView, currentReformulateCount, entityScore, entityTpl,
+				formulatedDate, formulationChainId, product, reformulateCount, requirementChecksum, state, unit, updateFormulatedDate);
 		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (!super.equals(obj))
+		}
+		if (!super.equals(obj)) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		BatchData other = (BatchData) obj;
 		return Objects.equals(allocationList, other.allocationList) && Objects.equals(batchId, other.batchId)
 				&& Objects.equals(batchQty, other.batchQty) && Objects.equals(compoListView, other.compoListView)
 				&& Objects.equals(currentReformulateCount, other.currentReformulateCount) && Objects.equals(entityScore, other.entityScore)
 				&& Objects.equals(entityTpl, other.entityTpl) && Objects.equals(formulatedDate, other.formulatedDate)
 				&& Objects.equals(formulationChainId, other.formulationChainId) && Objects.equals(product, other.product)
-				&& Objects.equals(reformulateCount, other.reformulateCount) && Objects.equals(reqCtrlList, other.reqCtrlList)
-				&& Objects.equals(requirementChecksum, other.requirementChecksum) && state == other.state && unit == other.unit
-				&& Objects.equals(updateFormulatedDate, other.updateFormulatedDate);
+				&& Objects.equals(reformulateCount, other.reformulateCount) && Objects.equals(requirementChecksum, other.requirementChecksum)
+				&& (state == other.state) && (unit == other.unit) && Objects.equals(updateFormulatedDate, other.updateFormulatedDate);
 	}
 
 }
