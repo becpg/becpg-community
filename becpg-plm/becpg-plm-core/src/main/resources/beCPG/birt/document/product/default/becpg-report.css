@@ -48,6 +48,12 @@
 	width: 1.931in;
 }
 
+
+.becpg-header-logo 
+{
+  background-size: contain;
+  background-repeat: no-repeat;
+}
 /* ---- BODY ----- */
 .becpg-chapter-header
 {
@@ -288,3 +294,7 @@
 }
 
 /* ----- FOOTER ----- */
+
+.color-adress-website {
+	color:#126683;
+}
