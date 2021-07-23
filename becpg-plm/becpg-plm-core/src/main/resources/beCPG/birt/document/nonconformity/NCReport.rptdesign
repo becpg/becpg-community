@@ -2,7 +2,9 @@
 <report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
     <property name="createdBy">Eclipse BIRT Designer Version 4.4.2.v201410272105 Build &lt;4.4.2.v20150217-1805></property>
     <simple-property-list name="includeResource">
+        <value>./ProductReport</value>
         <value>./NCReport</value>
+        <value>./settings</value>
     </simple-property-list>
     <property name="units">in</property>
     <property name="iconFile">/templates/blank_report.gif</property>
@@ -10,8 +12,8 @@
     <property name="imageDPI">131</property>
     <list-property name="cssStyleSheets">
         <structure>
-            <property name="fileName">becpg-report.css</property>
-            <property name="useExternalCss">false</property>
+            <property name="fileName">./becpg-report.css</property>
+            <property name="useExternalCss">true</property>
         </structure>
     </list-property>
     <data-sources>
@@ -1291,8 +1293,8 @@
     </styles>
     <page-setup>
         <simple-master-page name="Simple MasterPage" id="2">
-            <property name="headerHeight">0.8in</property>
-            <property name="footerHeight">0.3in</property>
+            <property name="headerHeight">1in</property>
+            <property name="footerHeight">1.4in</property>
             <page-header>
                 <grid id="765">
                     <property name="style">becpg-table</property>
@@ -1310,23 +1312,27 @@
                     <property name="borderTopStyle">solid</property>
                     <property name="borderTopWidth">thin</property>
                     <property name="pageBreakAfter">auto</property>
-                    <property name="width">100%</property>
+                    <property name="height">1.0104166666666667in</property>
+                    <property name="width">7.84375in</property>
                     <column id="766">
-                        <property name="width">2.0972222222222223in</property>
+                        <property name="repeat">1</property>
+                        <property name="width">2.6458333333333335in</property>
                     </column>
                     <column id="767">
-                        <property name="width">2.4305555555555554in</property>
+                        <property name="width">2.5625in</property>
                     </column>
                     <column id="768">
-                        <property name="width">2.2777777777777777in</property>
+                        <property name="width">2.6354166666666665in</property>
                     </column>
                     <row id="769">
+                        <property name="height">1.0104166666666667in</property>
                         <cell id="770">
-                            <image id="771">
-                                <property name="width">0.85in</property>
-                                <property name="source">embed</property>
-                                <property name="imageName">logo.png</property>
-                            </image>
+                            <property name="backgroundImage">./logo.png</property>
+                            <property name="backgroundRepeat">no-repeat</property>
+                            <property name="backgroundSizeHeight">cover</property>
+                            <property name="backgroundSizeWidth">cover</property>
+                            <property name="paddingLeft">1pt</property>
+                            <property name="textAlign">left</property>
                         </cell>
                         <cell id="772">
                             <property name="borderBottomColor">#FFFFFF</property>
@@ -1385,50 +1391,140 @@
                 </grid>
             </page-header>
             <page-footer>
-                <grid id="777">
-                    <property name="style">becpg-meta-grid</property>
-                    <property name="fontFamily">"Arial"</property>
-                    <property name="borderTopStyle">none</property>
-                    <property name="textAlign">right</property>
-                    <property name="width">100%</property>
-                    <column id="3145">
-                        <property name="width">2.482142857142857in</property>
-                    </column>
-                    <column id="1519">
-                        <property name="width">2.482142857142857in</property>
-                    </column>
-                    <row id="923">
-                        <property name="fontSize">9pt</property>
-                        <property name="textAlign">left</property>
-                        <cell id="3144">
-                            <text id="3">
-                                <property name="contentType">html</property>
-                                <text-property name="content"><![CDATA[<value-of>new Date()</value-of>]]></text-property>
-                            </text>
-                        </cell>
-                        <cell id="1518">
-                            <label id="925">
-                                <property name="fontFamily">"arial"</property>
-                                <property name="marginLeft">85%</property>
-                                <property name="display">inline</property>
-                                <text-property name="text">Page : </text-property>
+                <grid id="10541">
+                    <property name="textAlign">center</property>
+                    <property name="height">1.4583333333333333in</property>
+                    <column id="10542"/>
+                    <row id="10543">
+                        <property name="height">1.125in</property>
+                        <cell id="10544">
+                            <property name="fontFamily">sans-serif</property>
+                            <property name="verticalAlign">bottom</property>
+                            <label id="10552">
+                                <property name="fontFamily">sans-serif</property>
+                                <property name="fontSize">8pt</property>
+                                <property name="textAlign">center</property>
+                                <list-property name="visibility">
+                                    <structure>
+                                        <property name="format">all</property>
+                                        <expression name="valueExpr" type="javascript">reportContext.getMessage("footer1", reportContext.getLocale()) == null || reportContext.getMessage("footer1", reportContext.getLocale())  == ""</expression>
+                                    </structure>
+                                </list-property>
+                                <text-property name="text" key="footer1"></text-property>
                             </label>
-                            <auto-text id="933">
-                                <property name="color">#000000</property>
-                                <property name="display">inline</property>
-                                <property name="type">page-number</property>
-                            </auto-text>
-                            <text id="935">
-                                <property name="color">#000000</property>
-                                <property name="display">inline</property>
-                                <property name="contentType">plain</property>
-                                <text-property name="content"><![CDATA[/]]></text-property>
-                            </text>
-                            <auto-text id="937">
-                                <property name="color">#000000</property>
-                                <property name="display">inline</property>
-                                <property name="type">total-page</property>
-                            </auto-text>
+                            <label id="10553">
+                                <property name="fontSize">8pt</property>
+                                <property name="marginTop">2pt</property>
+                                <property name="textAlign">center</property>
+                                <list-property name="visibility">
+                                    <structure>
+                                        <property name="format">all</property>
+                                        <expression name="valueExpr" type="javascript">reportContext.getMessage("footer2", reportContext.getLocale()) == null || reportContext.getMessage("footer2", reportContext.getLocale())  == ""</expression>
+                                    </structure>
+                                </list-property>
+                                <text-property name="text" key="footer2"></text-property>
+                            </label>
+                            <label id="10554">
+                                <property name="style">color-adress-website</property>
+                                <property name="fontSize">8pt</property>
+                                <property name="marginTop">2pt</property>
+                                <property name="marginBottom">2pt</property>
+                                <property name="textAlign">center</property>
+                                <list-property name="visibility">
+                                    <structure>
+                                        <property name="format">all</property>
+                                        <expression name="valueExpr" type="javascript">reportContext.getMessage("footer3", reportContext.getLocale()) == null || reportContext.getMessage("footer3", reportContext.getLocale())  == ""</expression>
+                                    </structure>
+                                </list-property>
+                                <text-property name="text" key="footer3"></text-property>
+                            </label>
+                            <label id="10551">
+                                <property name="fontSize">7pt</property>
+                                <property name="fontStyle">italic</property>
+                                <property name="color">black</property>
+                                <property name="marginTop">6pt</property>
+                                <property name="marginLeft">0pt</property>
+                                <property name="marginBottom">0pt</property>
+                                <property name="paddingLeft">20pt</property>
+                                <property name="paddingRight">20pt</property>
+                                <property name="textAlign">center</property>
+                                <list-property name="visibility">
+                                    <structure>
+                                        <property name="format">all</property>
+                                        <expression name="valueExpr" type="javascript">reportContext.getMessage("footer4", reportContext.getLocale()) == null || reportContext.getMessage("footer4", reportContext.getLocale())  == ""</expression>
+                                    </structure>
+                                </list-property>
+                                <text-property name="text" key="footer4"></text-property>
+                            </label>
+                        </cell>
+                    </row>
+                    <row id="10545">
+                        <property name="textAlign">right</property>
+                        <property name="height">0.3333333333333333in</property>
+                        <cell id="10546">
+                            <grid id="10555">
+                                <property name="width">7.104166666666667in</property>
+                                <column id="10556">
+                                    <property name="width">1.4270833333333333in</property>
+                                </column>
+                                <column id="10560">
+                                    <property name="width">1.5833333333333333in</property>
+                                </column>
+                                <row id="10561">
+                                    <cell id="10562">
+                                        <property name="textAlign">center</property>
+                                    </cell>
+                                    <cell id="10566">
+                                        <property name="fontSize">8pt</property>
+                                        <property name="paddingTop">1pt</property>
+                                        <property name="textAlign">center</property>
+                                        <grid id="10593">
+                                            <property name="width">3.5625in</property>
+                                            <column id="10594">
+                                                <property name="width">2.78125in</property>
+                                            </column>
+                                            <column id="10595">
+                                                <property name="width">0.2708333333333333in</property>
+                                            </column>
+                                            <column id="10596">
+                                                <property name="width">0.21875in</property>
+                                            </column>
+                                            <column id="10597">
+                                                <property name="width">0.2916666666666667in</property>
+                                            </column>
+                                            <row id="10598">
+                                                <property name="textAlign">right</property>
+                                                <cell id="10599">
+                                                    <property name="textAlign">right</property>
+                                                    <label id="7347">
+                                                        <property name="fontFamily">"arial"</property>
+                                                        <property name="fontSize">8pt</property>
+                                                        <property name="textAlign">center</property>
+                                                        <property name="display">inline</property>
+                                                        <text-property name="text" key="page">Page : </text-property>
+                                                    </label>
+                                                </cell>
+                                                <cell id="10600">
+                                                    <auto-text id="10592">
+                                                        <property name="type">page-number</property>
+                                                    </auto-text>
+                                                </cell>
+                                                <cell id="10601">
+                                                    <text id="10604">
+                                                        <property name="contentType">auto</property>
+                                                        <text-property name="content"><![CDATA[/]]></text-property>
+                                                    </text>
+                                                </cell>
+                                                <cell id="10602">
+                                                    <auto-text id="10603">
+                                                        <property name="type">total-page</property>
+                                                    </auto-text>
+                                                </cell>
+                                            </row>
+                                        </grid>
+                                    </cell>
+                                </row>
+                            </grid>
                         </cell>
                     </row>
                 </grid>
