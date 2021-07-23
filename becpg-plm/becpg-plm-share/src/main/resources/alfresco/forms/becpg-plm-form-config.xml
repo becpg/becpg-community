@@ -7185,9 +7185,11 @@
 				<field-visibility>
 					<show id="cm:name" />
 					<show id="bcpg:erpCode" force="true" />
+					<show force="true" id="bcpg:eanCode"/>
 					<show id="bcpg:trademarkType"  />
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
+					<show id="bcpg:contacts" force="true" />
 					<!-- hide exif:exif -->
 					<hide id="exif:dateTimeOriginal" />
 					<hide id="exif:pixelXDimension" />
@@ -7211,6 +7213,12 @@
 							<control-param name="activateLinks">true</control-param>
 						</control>
 					</field>
+					<field id="bcpg:contacts">
+					<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+								<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:contactList?path=System/Characts/bcpg:entityLists/Contacts</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 		</forms>
@@ -7225,13 +7233,20 @@
 					
 					<show id="cm:name" />
 					<show id="bcpg:erpCode" force="true" />
+					 <show force="true" id="bcpg:eanCode"/>
 					<show id="bcpg:trademarkType"  />
 					<show id="cm:title" force="true" />
 					<show id="cm:description"  />
-					
+					<show id="bcpg:contacts" force="true" />
 				</field-visibility>
 
 				<appearance>
+					<field id="bcpg:contacts">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+								<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:contactList?path=System/Characts/bcpg:entityLists/Contacts</control-param>
+						</control>
+					</field>
 					<field id="cm:description">
 						<control>
 							<control-param name="activateLinks">true</control-param>
@@ -7260,10 +7275,12 @@
 			<form id="datagrid">
 				<field-visibility>
 					<show id="bcpg:erpCode" force="true" />
+					<show force="true" id="bcpg:eanCode"/>
 					<show id="cm:name" />
 					<show id="bcpg:trademarkType"  />
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
+				    <show id="bcpg:contacts" force="true" />
 					<show id="cm:content"  />
 				</field-visibility>
 			</form>
@@ -10346,6 +10363,9 @@
 			<!-- Create item form -->
 			<form>
 				<field-visibility>
+				    <show id="bcpg:contactListType" />
+				   <show force="true" id="bcpg:eanCode"/>
+					<show id="bcpg:contactListFirstName" />
 					<show id="bcpg:contactListFirstName" />
 					<show id="bcpg:contactListLastName" />
 					<show id="bcpg:contactListEmail" />
@@ -10354,8 +10374,18 @@
 					<show id="bcpg:contactListPhoneMobile" />
 					<show id="bcpg:contactListFax" />
 					<show id="bcpg:contactListNotes" />
+					<show id="bcpg:locationAddress1" force="true" />
+					<show id="bcpg:locationAddress2" force="true"/>
+					<show id="bcpg:locationAddress3" force="true"/>
+					<show id="bcpg:locationCity" force="true"/>
+					<show id="bcpg:locationZip" force="true"/>
+					<show id="bcpg:locationState" force="true"/>
+					<show id="bcpg:locationCountry" force="true"/>
 				</field-visibility>
 				<appearance>
+				
+					<field id="bcpg:locationAddress1"  help-id="becpg.forms.help.locationAddress1" />
+					<field id="bcpg:locationAddress2"  help-id="becpg.forms.help.locationAddress2" />
 					<field id="bcpg:contactListNotes">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
@@ -10365,13 +10395,13 @@
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
+					<show force="true" id="bcpg:eanCode"/>
+				    <show id="bcpg:contactListType" />
 					<show id="bcpg:contactListFirstName" />
 					<show id="bcpg:contactListLastName" />
 					<show id="bcpg:contactListEmail" />
-					<show id="bcpg:contactListJobTitle" />
 					<show id="bcpg:contactListPhoneOffice" />
 					<show id="bcpg:contactListPhoneMobile" />
-					<show id="bcpg:contactListFax" />
 					<show id="bcpg:contactListNotes" />
 					<show id="fm:commentCount" force="true" />
 				</field-visibility>
@@ -10387,6 +10417,8 @@
 			<!-- Data List pop-up edit form -->
 			<form>
 				<field-visibility>
+				    <show id="bcpg:contactListType" />
+				     <show force="true" id="bcpg:eanCode"/>
 					<show id="bcpg:contactListFirstName" />
 					<show id="bcpg:contactListLastName" />
 					<show id="bcpg:contactListEmail" />
@@ -10395,9 +10427,18 @@
 					<show id="bcpg:contactListPhoneMobile" />
 					<show id="bcpg:contactListFax" />
 					<show id="bcpg:contactListNotes" />
+					<show id="bcpg:locationAddress1" force="true" />
+					<show id="bcpg:locationAddress2" force="true"/>
+					<show id="bcpg:locationAddress3" force="true"/>
+					<show id="bcpg:locationCity" force="true"/>
+					<show id="bcpg:locationZip" force="true"/>
+					<show id="bcpg:locationState" force="true"/>
+					<show id="bcpg:locationCountry" force="true"/>
 				</field-visibility>
 
 				<appearance>
+					<field id="bcpg:locationAddress1"  help-id="becpg.forms.help.locationAddress1" />
+					<field id="bcpg:locationAddress2"  help-id="becpg.forms.help.locationAddress2" />
 					<field id="bcpg:contactListNotes">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
