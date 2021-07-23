@@ -20,14 +20,11 @@ package fr.becpg.repo.ecm.report;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
-import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -42,8 +39,6 @@ import fr.becpg.repo.ecm.data.dataList.SimulationListDataItem;
 import fr.becpg.repo.hierarchy.HierarchyHelper;
 import fr.becpg.repo.report.entity.EntityReportData;
 import fr.becpg.repo.report.entity.EntityReportExtractorPlugin;
-import fr.becpg.repo.report.entity.ReportLogInfo;
-import fr.becpg.repo.report.entity.ReportLogInfoType;
 import fr.becpg.repo.repository.AlfrescoRepository;
 
 /**
@@ -68,8 +63,6 @@ public class ECOReportExtractor implements EntityReportExtractorPlugin {
 	private static final String ATTR_IS_COST = "isCost";
 
 	private static final Integer DEFAULT_PROJECTED_QTY = 1;
-
-	private static final Log logger = LogFactory.getLog(ECOReportExtractor.class);
 
 	@Autowired
 	private NodeService nodeService;
@@ -148,19 +141,4 @@ public class ECOReportExtractor implements EntityReportExtractorPlugin {
 		return ECMModel.TYPE_ECO.equals(type) ? EntityReportExtractorPriority.NORMAL: EntityReportExtractorPriority.NONE;
 	}
 
-	@Override
-	public void handleReportLogInfos(NodeRef entityNodeRef, Set<ReportLogInfo> logInfos) {
-		for (ReportLogInfo logInfo : logInfos) {
-			if (logInfo.getType() == ReportLogInfoType.WARNING) {
-				logger.warn(logInfo.getLogMessage());
-			} else if (logInfo.getType() == ReportLogInfoType.ERROR) {
-				logger.error(logInfo.getLogMessage());
-			}
-		}
-	}
-
-	@Override
-	public void cleanTemplateLogInfos(NodeRef entityNodeRef, NodeRef tplNodeRef) {
-		// nothing
-	}
 }
