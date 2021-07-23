@@ -30,11 +30,10 @@ import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.model.SystemState;
-import fr.becpg.repo.formulation.ReportableEntity;
 import fr.becpg.repo.product.data.AbstractProductDataView;
+import fr.becpg.repo.product.data.AbstractScorableEntity;
 import fr.becpg.repo.product.data.CompoListView;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.ScorableEntity;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
@@ -48,8 +47,6 @@ import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.annotation.DataListView;
 import fr.becpg.repo.repository.filters.DataListFilter;
-import fr.becpg.repo.repository.impl.LazyLoadingDataList;
-import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 /**
  * <p>BatchData class.</p>
@@ -59,7 +56,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
  */
 @AlfType
 @AlfQname(qname = "qa:batch")
-public class BatchData extends BeCPGDataObject implements ScorableEntity, ReportableEntity {
+public class BatchData extends AbstractScorableEntity {
 
 	/**
 	 *
@@ -449,36 +446,6 @@ public class BatchData extends BeCPGDataObject implements ScorableEntity, Report
 	}
 	
 	@Override
-	public void addError(String msg, String formulationChainId, List<NodeRef> sources) {
-		addMessage( new MLText(msg), RequirementType.Forbidden, formulationChainId, sources);
-	}
-	
-	@Override
-	public void cleanErrors(NodeRef source) {
-		
-		List<ReqCtrlListDataItem> cleanlist = new ArrayList<>();
-		
-		for (ReqCtrlListDataItem item : reqCtrlList) {
-			if (item.getSources().contains(source)) {
-				cleanlist.add(item);
-			}
-		}
-		
-		for (ReqCtrlListDataItem item : cleanlist) {
-			reqCtrlList.remove(item);
-			if (reqCtrlList instanceof LazyLoadingDataList) {
-				((LazyLoadingDataList<ReqCtrlListDataItem>) reqCtrlList).getDeletedNodes().add(item);
-			}
-		}
-	}
-	
-	private void addMessage(MLText msg, RequirementType type, String formulationChainId, List<NodeRef> sources) {
-		ReqCtrlListDataItem item = new ReqCtrlListDataItem(null, type, msg, null, sources, null);
-		item.setFormulationChainId(formulationChainId);
-		reqCtrlList.add(item);
-	}
-
-	@Override
 	public void addError(MLText msg) {
 		addMessage( msg,  RequirementType.Forbidden);
 	}
@@ -493,6 +460,12 @@ public class BatchData extends BeCPGDataObject implements ScorableEntity, Report
 				RequirementDataType.Formulation));
 	}
 	
+	@Override
+	public void addError(String msg, String formulationChainId, List<NodeRef> sources) {
+		ReqCtrlListDataItem item = new ReqCtrlListDataItem(null, RequirementType.Forbidden, new MLText(msg), null, sources, null);
+		item.setFormulationChainId(formulationChainId);
+		reqCtrlList.add(item);
+	}
 
 	@Override
 	public String toString() {

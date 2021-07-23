@@ -18,13 +18,9 @@
 package fr.becpg.repo.product.formulation;
 
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -94,8 +90,8 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Scora
 				appendChildReq((ProductData)scorableEntity, scorableEntity.getReqCtrlList());
 			}
 
-			mergeReqCtrlList(scorableEntity, scorableEntity.getReqCtrlList());
-
+			scorableEntity.mergeRequirements(true);
+			
 			if(scorableEntity instanceof ProductData) {
 				updateFormulatedCharactInError((ProductData)scorableEntity, scorableEntity.getReqCtrlList());
 			}
@@ -154,68 +150,6 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Scora
 		return toAdd;
 	}
 
-	private void mergeReqCtrlList(ScorableEntity scorableEntity, List<ReqCtrlListDataItem> reqCtrlList) {
-
-		if (reqCtrlList != null) {
-			Map<String, ReqCtrlListDataItem> dbReqCtrlList = new HashMap<>();
-			Map<String, ReqCtrlListDataItem> newReqCtrlList = new HashMap<>();
-			List<ReqCtrlListDataItem> duplicates = new ArrayList<>();
-
-			for (ReqCtrlListDataItem r : reqCtrlList) {
-				if (r.getNodeRef() != null) {
-					merge(dbReqCtrlList, r, duplicates);
-				} else {
-					merge(newReqCtrlList, r, duplicates);
-				}
-			}
-
-			for (ReqCtrlListDataItem dup : duplicates) {
-				reqCtrlList.remove(dup);
-			}
-
-			for (Map.Entry<String, ReqCtrlListDataItem> dbKV : dbReqCtrlList.entrySet()) {
-				if (!newReqCtrlList.containsKey(dbKV.getKey())) {
-
-					if ((dbKV.getValue().getFormulationChainId() == null)
-							|| dbKV.getValue().getFormulationChainId().equals(scorableEntity.getFormulationChainId())) {
-						// remove
-						reqCtrlList.remove(dbKV.getValue());
-					}
-				} else {
-					// update
-					ReqCtrlListDataItem newReqCtrlListDataItem = newReqCtrlList.get(dbKV.getKey());
-					dbKV.getValue().setReqType(newReqCtrlListDataItem.getReqType());
-					dbKV.getValue().setReqMaxQty(newReqCtrlListDataItem.getReqMaxQty());
-					dbKV.getValue().setSources(newReqCtrlListDataItem.getSources());
-					dbKV.getValue().setCharact(newReqCtrlListDataItem.getCharact());
-					dbKV.getValue().setReqDataType(newReqCtrlListDataItem.getReqDataType());
-					reqCtrlList.remove(newReqCtrlListDataItem);
-				}
-			}
-
-			// sort
-			sort(reqCtrlList);
-		}
-	}
-
-	private void merge(Map<String, ReqCtrlListDataItem> reqCtrlList, ReqCtrlListDataItem r, List<ReqCtrlListDataItem> duplicates) {
-		if (reqCtrlList.containsKey(r.getKey())) {
-			ReqCtrlListDataItem dbReq = reqCtrlList.get(r.getKey());
-
-			duplicates.add(r);
-			// Merge sources
-			for (NodeRef tmpref : r.getSources()) {
-				if (!dbReq.getSources().contains(tmpref)) {
-					dbReq.getSources().add(tmpref);
-				}
-			}
-
-		} else {
-			reqCtrlList.put(r.getKey(), r);
-		}
-
-	}
-
 	@SuppressWarnings("unchecked")
 	private void updateFormulatedCharactInError(ProductData productData, List<ReqCtrlListDataItem> reqCtrlList) {
 		for (ReqCtrlListDataItem r : reqCtrlList) {
@@ -258,14 +192,4 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Scora
 		}
 	}
 
-	/**
-	 * Sort by type
-	 *
-	 */
-	private void sort(List<ReqCtrlListDataItem> reqCtrlList) {
-
-		AtomicInteger index = new AtomicInteger();
-		reqCtrlList.stream().sorted(Comparator.comparing(ReqCtrlListDataItem::getReqType,Comparator.nullsFirst(Comparator.naturalOrder()))).forEach(r -> r.setSort(index.getAndIncrement()));
-
-	}
 }
